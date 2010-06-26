@@ -10,19 +10,23 @@ from OpenGL.GLU import *
 import pygame, pygame.image
 from pygame.locals import *
 
+import numpy
+
 textures = [0,0]
+buflist = False
 
 def resize((width, height)):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(0, width, height, 0, 0, 1);
+    glOrtho(0, width, height, 0, -1, 10);
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
 def init():
     glEnable(GL_TEXTURE_2D)
     load_textures()
+    make_vbo()
     glShadeModel(GL_SMOOTH)
     glClearColor(0.0, 0.0, 0.0, 0.0)
     glClearDepth(1.0)
@@ -41,24 +45,65 @@ def load_textures():
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
+def make_vbo():
+    global buflist
+    buflist = glGenBuffers(3)
+
+    vertices = [False] * (20 * 15)
+    for y in range(15):
+        for x in range(20):
+            ty = y * 32
+            tx = x * 32
+            # Z coord is used for blit order
+            vertices[x + y * 20] = [tx, ty, y * 0.01,
+                                    tx + 32, ty, y * 0.01,
+                                    tx + 32, ty + 32, y * 0.01,
+                                    tx, ty + 32, y * 0.01]
+    vertices = numpy.array(vertices, dtype=numpy.float32)
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[0])
+    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+
+    indices = numpy.array([x for x in range(4 * 20 * 15)], dtype=numpy.int)
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[2])
+    glBufferData(GL_ARRAY_BUFFER, indices, GL_STATIC_DRAW)
+
 def put_map(themap):
-    glBegin(GL_QUADS)
-    y = 0.0
+    uvs = [False] * (20 * 15)
+    index = 0
     for line in themap:
-        x = 0.0
         for tile in line:
-            sy = .0625 * (15 - tile / 16)
-            sx = .0625 * (tile % 16)
-            glTexCoord2f(sx, sy); glVertex2f(x, y + 32.0);
-            glTexCoord2f(sx + .0625, sy); glVertex2f(x + 32.0, y + 32.0);
-            glTexCoord2f(sx + .0625, sy + .0625); glVertex2f(x + 32.0, y);
-            glTexCoord2f(sx, sy + .0625); glVertex2f(x, y);
-            x += 32.0
-        y += 32.0
-    glEnd();				
+            ty = .0625 * (15 - tile / 16)
+            tx = .0625 * (tile % 16)
+            uvs[index] = [tx, ty + .0625,
+                          tx + .0625, ty + .0625,
+                          tx + .0625, ty,
+                          tx, ty]
+            index += 1
+    uvs = numpy.array(uvs, dtype=numpy.float32)
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[1])
+    glBufferData(GL_ARRAY_BUFFER, uvs, GL_STATIC_DRAW)
+
+    glEnableClientState(GL_VERTEX_ARRAY)
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+    glEnableClientState(GL_INDEX_ARRAY)
+
+    glBindTexture(GL_TEXTURE_2D, textures[0])
+
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[0])
+    glVertexPointer(3, GL_FLOAT, 0, None)
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[1])
+    glTexCoordPointer(2, GL_FLOAT, 0, None)
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[2])
+    glIndexPointer(GL_INT, 0, None)
+
+    glDrawArrays(GL_QUADS, 0, 4 * 20 * 15)
+
+    glDisableClientState(GL_VERTEX_ARRAY)
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+    glDisableClientState(GL_INDEX_ARRAY)
 
 def draw():
-    #glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glClear(GL_DEPTH_BUFFER_BIT) # Full redraw: no need to clear color buffer
     glLoadIdentity()
 
     themap = [
@@ -106,8 +151,8 @@ def main():
         draw()
         pygame.display.flip()
         frames = frames+1
-#        if frames > 200:
-#            break
+        #if frames > 200:
+        #    break
 
     print "fps:  %d" % ((frames*1000)/(pygame.time.get_ticks()-start))
 
