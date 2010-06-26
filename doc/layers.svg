@@ -39,9 +39,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="408.92709"
-     inkscape:cy="729.27146"
+     inkscape:zoom="1.4"
+     inkscape:cx="403.92709"
+     inkscape:cy="627.1286"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1047,7 +1047,7 @@
          y="424.69196"
          x="242.44171"
          id="tspan3825"
-         sodipodi:role="line">z = 0.01</tspan></text>
+         sodipodi:role="line">z = 1.00</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1057,7 +1057,7 @@
          sodipodi:role="line"
          id="tspan3829"
          x="242.44171"
-         y="460.69196">z = 0.02</tspan></text>
+         y="460.69196">z = 2.00</tspan></text>
     <text
        id="text3831"
        y="496.69196"
@@ -1067,7 +1067,7 @@
          y="496.69196"
          x="242.44171"
          id="tspan3833"
-         sodipodi:role="line">z = 0.03</tspan></text>
+         sodipodi:role="line">z = 3.00</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1077,7 +1077,7 @@
          sodipodi:role="line"
          id="tspan3838"
          x="242.44171"
-         y="532.69196">z = 0.04</tspan></text>
+         y="532.69196">z = 4.00</tspan></text>
     <text
        id="text3840"
        y="388.69196"
@@ -1087,7 +1087,7 @@
          y="388.69196"
          x="522.44171"
          id="tspan3842"
-         sodipodi:role="line">z = 1.00</tspan></text>
+         sodipodi:role="line">z = 0.01</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1107,7 +1107,7 @@
          y="460.69196"
          x="522.44171"
          id="tspan3850"
-         sodipodi:role="line">z = 1.02</tspan></text>
+         sodipodi:role="line">z = 2.01</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1117,7 +1117,7 @@
          sodipodi:role="line"
          id="tspan3854"
          x="522.44171"
-         y="496.69196">z = 1.03</tspan></text>
+         y="496.69196">z = 3.01</tspan></text>
     <text
        id="text3856"
        y="532.69196"
@@ -1127,7 +1127,7 @@
          y="532.69196"
          x="522.44171"
          id="tspan3858"
-         sodipodi:role="line">z = 1.04</tspan></text>
+         sodipodi:role="line">z = 4.01</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1137,7 +1137,7 @@
          sodipodi:role="line"
          id="tspan3862"
          x="654.44171"
-         y="470.69196">z = 1.015</tspan></text>
+         y="470.69196">z = 2.50</tspan></text>
     <text
        id="text3864"
        y="516.69196"
@@ -1147,7 +1147,7 @@
          y="516.69196"
          x="654.44171"
          id="tspan3866"
-         sodipodi:role="line">z = 1.025</tspan></text>
+         sodipodi:role="line">z = 3.50</tspan></text>
     <rect
        y="179.32152"
        x="443.85797"
@@ -1206,5 +1206,15 @@
          y="572.26068"
          x="661.32336"
          sodipodi:role="line">Characters</tspan></text>
+    <text
+       id="text3037"
+       y="592.26068"
+       x="441.32336"
+       style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         id="tspan3039"
+         y="592.26068"
+         x="441.32336"
+         sodipodi:role="line">(next enviro layer has z = 0.02, 1.02, 2.02...)</tspan></text>
   </g>
 </svg>
