@@ -49,30 +49,6 @@ void LoadGLTextures(void)
 void MakeVBOs(void)
 {
     glGenBuffers(3, buflist);
-
-    float vertices[8 * 20 * 15];
-    for (int y = 0; y < 15; y++)
-        for (int x = 0; x < 20; x++)
-        {
-            vertices[8 * (20 * y + x) + 0] = x * 32;
-            vertices[8 * (20 * y + x) + 1] = y * 32;
-            vertices[8 * (20 * y + x) + 2] = x * 32 + 32;
-            vertices[8 * (20 * y + x) + 3] = y * 32;
-            vertices[8 * (20 * y + x) + 4] = x * 32 + 32;
-            vertices[8 * (20 * y + x) + 5] = y * 32 + 32;
-            vertices[8 * (20 * y + x) + 6] = x * 32;
-            vertices[8 * (20 * y + x) + 7] = y * 32 + 32;
-        }
-    glBindBuffer(GL_ARRAY_BUFFER, buflist[0]);
-    glBufferData(GL_ARRAY_BUFFER,
-                 8 * 20 * 15 * sizeof(float), vertices, GL_STATIC_DRAW);
-
-    int indices[4 * 20 * 15];
-    for (int n = 0; n < 4 * 20 * 15; n++)
-        indices[n] = n;
-    glBindBuffer(GL_ARRAY_BUFFER, buflist[2]);
-    glBufferData(GL_ARRAY_BUFFER,
-                 4 * 20 * 15 * sizeof(int), indices, GL_STATIC_DRAW);
 }
 
 void InitGL(int Width, int Height)
@@ -123,6 +99,30 @@ void PutMap(int const *themap)
     glBindBuffer(GL_ARRAY_BUFFER, buflist[1]);
     glBufferData(GL_ARRAY_BUFFER,
                  8 * 20 * 15 * sizeof(float), uvs, GL_STATIC_DRAW);
+
+    float vertices[8 * 20 * 15];
+    for (int y = 0; y < 15; y++)
+        for (int x = 0; x < 20; x++)
+        {
+            vertices[8 * (20 * y + x) + 0] = x * 32;
+            vertices[8 * (20 * y + x) + 1] = y * 32;
+            vertices[8 * (20 * y + x) + 2] = x * 32 + 32;
+            vertices[8 * (20 * y + x) + 3] = y * 32;
+            vertices[8 * (20 * y + x) + 4] = x * 32 + 32;
+            vertices[8 * (20 * y + x) + 5] = y * 32 + 32;
+            vertices[8 * (20 * y + x) + 6] = x * 32;
+            vertices[8 * (20 * y + x) + 7] = y * 32 + 32;
+        }
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[0]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 8 * 20 * 15 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+    int indices[4 * 20 * 15];
+    for (int n = 0; n < 4 * 20 * 15; n++)
+        indices[n] = n;
+    glBindBuffer(GL_ARRAY_BUFFER, buflist[2]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 4 * 20 * 15 * sizeof(int), indices, GL_STATIC_DRAW);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -197,6 +197,7 @@ void DrawScene()
 
 int main(int argc, char **argv)
 {
+  SDL_Surface *video;
   int done;
 
   /* Initialize SDL for video output */
@@ -207,7 +208,8 @@ int main(int argc, char **argv)
   }
 
   /* Create a 640x480 OpenGL screen */
-  if (SDL_SetVideoMode(640, 480, 0, SDL_OPENGL) == NULL)
+  video = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL);
+  if (!video)
   {
     fprintf(stderr, "Unable to create OpenGL screen: %s\n", SDL_GetError());
     SDL_Quit();
@@ -235,8 +237,12 @@ int main(int argc, char **argv)
       if (event.type == SDL_QUIT)
         done = 1;
       if (event.type == SDL_KEYDOWN)
-        if (event.key.keysym.sym == SDLK_ESCAPE)
+      {
+        if (event.key.keysym.sym == SDLK_RETURN)
+          SDL_WM_ToggleFullScreen(video);
+        else if (event.key.keysym.sym == SDLK_ESCAPE)
           done = 1;
+      }
     }
 
     while (SDL_GetTicks() < ticks + 33)
