@@ -11,6 +11,7 @@ import pygame, pygame.image
 from pygame.locals import *
 
 import numpy
+from math import sin, cos
 
 textures = [0,0]
 buflist = False
@@ -34,10 +35,16 @@ def init():
     glDepthFunc(GL_LEQUAL)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
+    #glEnable(GL_ALPHA_TEST)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    #glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+
+
 def load_textures():
     texturefile = os.path.join('art','test','groundtest.png')
     textureSurface = pygame.image.load(texturefile)
-    textureData = pygame.image.tostring(textureSurface, "RGBX", 1)
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
 
     glBindTexture(GL_TEXTURE_2D, textures[0])
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, textureSurface.get_width(), textureSurface.get_height(), 0,
@@ -103,7 +110,8 @@ def put_map(themap):
     glDisableClientState(GL_INDEX_ARRAY)
 
 def draw():
-    glClear(GL_DEPTH_BUFFER_BIT) # Full redraw: no need to clear color buffer
+    #glClear(GL_DEPTH_BUFFER_BIT) # Full redraw: no need to clear color buffer
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
     themap = [
@@ -116,16 +124,24 @@ def draw():
         [ 17, 32,  1,  1,  1,  1,  1,  1,  1,  1, 33,  1, 34,  1, 35, 17, 17, 17, 17, 17 ],
         [ 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17 ],
         [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
-        [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
-        [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
-        [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
-        [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
+        [ 51, 51, 52, 52, 52, 51, 52, 52, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
+        [ 51, 51, 52, 52, 52, 51, 51, 52, 51, 52, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
+        [ 51, 51, 52, 52, 52, 51, 51, 51, 51, 51, 51, 52, 52, 51, 51, 51, 51, 51, 51, 51 ],
+        [ 51, 51, 52, 52, 52, 51, 51, 51, 51, 51, 51, 52, 52, 51, 51, 51, 51, 51, 51, 51 ],
         [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
         [ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51 ],
     ]
+    glPushMatrix()
+    glTranslatef(50.0 * sin(frames * 0.05), 50.0 * cos(frames * 0.08), 0)
+    put_map(themap)
+    glPopMatrix()
+    glTranslatef(0, 0, 0.2)
     put_map(themap)
 
+frames = 0
+
 def main():
+    global frames
 
     video_flags = OPENGL|DOUBLEBUF
 
