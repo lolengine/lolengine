@@ -17,7 +17,7 @@
 
 #include <math.h>
 
-int frames;
+#include "video.h"
 
 /* Storage for one texture  */
 GLuint texture[1];
@@ -49,31 +49,6 @@ void LoadGLTextures(void)
 void MakeVBOs(void)
 {
     glGenBuffers(3, buflist);
-}
-
-void InitGL(int Width, int Height)
-{
-    // Resize method
-    glViewport(0, 0, Width, Height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, Width, Height, 0, -1, 10);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // Init method
-    glEnable(GL_TEXTURE_2D);
-    LoadGLTextures();
-    MakeVBOs();
-    glShadeModel(GL_SMOOTH);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void PutMap(int const *themap)
@@ -191,67 +166,43 @@ void DrawScene()
     PutMap(ground);
     //glTranslatef(10.0f * sinf(0.16f * frames), 10.0f * cosf(0.16f * frames), 0.0f);
     PutMap(l1objects);
-
-    SDL_GL_SwapBuffers();
 }
 
 int main(int argc, char **argv)
 {
-  SDL_Surface *video;
-  int done;
+    Video *video = new Video("Deus Hax", 640, 480);
 
-  /* Initialize SDL for video output */
-  if (SDL_Init(SDL_INIT_VIDEO) < 0)
-  {
-    fprintf(stderr, "Unable to initialize SDL: %s\n", SDL_GetError());
-    exit(1);
-  }
+    int done;
 
-  /* Create a 640x480 OpenGL screen */
-  video = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL);
-  if (!video)
-  {
-    fprintf(stderr, "Unable to create OpenGL screen: %s\n", SDL_GetError());
-    SDL_Quit();
-    exit(2);
-  }
+    /* Loop, drawing and checking events */
+    LoadGLTextures();
+    MakeVBOs();
 
-  /* Set the title bar in environments that support it */
-  SDL_WM_SetCaption("Deus Hax", NULL);
-
-  /* Loop, drawing and checking events */
-  InitGL(640, 480);
-  done = 0;
-  frames = 0;
-  Uint32 ticks = SDL_GetTicks();
-  Uint32 start = ticks;
-  while (!done)
-  {
-    DrawScene();
-    frames++;
-
-    /* This could go in a separate function */
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+    done = 0;
+    while (!done)
     {
-      if (event.type == SDL_QUIT)
-        done = 1;
-      if (event.type == SDL_KEYDOWN)
-      {
-        if (event.key.keysym.sym == SDLK_RETURN)
-          SDL_WM_ToggleFullScreen(video);
-        else if (event.key.keysym.sym == SDLK_ESCAPE)
-          done = 1;
-      }
+        DrawScene();
+
+        video->Refresh(33.33333f);
+
+        /* This could go in a separate function */
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+                done = 1;
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_RETURN)
+                    video->FullScreen();
+                else if (event.key.keysym.sym == SDLK_ESCAPE)
+                    done = 1;
+            }
+        }
     }
 
-    while (SDL_GetTicks() < ticks + 33)
-        SDL_Delay(1);
-    ticks = SDL_GetTicks();
-  }
-  printf("%i fps\n", frames * 1000 / (SDL_GetTicks() - start));
-  SDL_Quit();
+    delete video;
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
