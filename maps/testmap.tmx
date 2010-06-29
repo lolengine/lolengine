@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
-  <image source="art/test/groundtest.png"/>
+  <image source="../art/test/groundtest.png"/>
  </tileset>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
@@ -10,27 +10,32 @@
  </layer>
  <layer name="Layer 1.5" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3TwQkAIAhGYVdpBZug/ZfqFISHItD+y/sG0AeWGZahDrhYfa1wx8vsrA5PmlOx/8eb8NBQed/TfuUd3LQdcf/e0EUNKur/CAAAgDoTUy0wRgAQAAA=
+   H4sIAAAAAAAAA+3TsQ0AIAhEUVZxBTZw/6WsaCg0JuBZ/DcAdwlghjDVBQ6i32jMuJld1cOL5nTkv7gJTx0697vLV+7BTdsj5//QQUX9jwAAAOizAOK0B+4AEAAA
+  </data>
+ </layer>
+ <layer name="Layer perso" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3BAQkAAAACoD71/1s/Qm0AAACAdwMtfmIFABAAAA==
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGDzAcKAdQAAMdvcNRzAa5rgBFxBz0skudiBWR7NbA4i16GQ/sjvMgVgTii3obD/MDepQLD4A9o8EwIgHjwT7R8EoGAWjYBSMglEwCmgFAEc8wqAAEAAA
+   H4sIAAAAAAAAA+2SQQqAMAwE60n0A4IfaOvNk/r/j5lACkuoChKoSAbm0KhsTBPCd1hbN/DA1/v7I61mPpNDo2zmIBM5iqnyDtetetT/u5FZTGJW2VxbjPI5b4dzT0bxkBw8l372YAPnTRfPSr4+x5tv3nC1c7VdsJo7ou8A61lpNXcE76ADcReKlnOvgfmO4ziO4zh/4gSy+XWyABAAAA==
   </data>
  </layer>
  <layer name="Layer 3" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OMQ0AIBAEwXMBKMC/Qz5BAdVTzCTbbwL8blWzeyL3Y1ejewQAAHh2AJ7ne/0AEAAA
+   H4sIAAAAAAAAA+3RsQkAIBAEwc+0A7EC++9QxRaUN5iByxcuAvhdWRvZEUuP09GyQ7huf1uzIwAAeGoCAAVL1wAQAAA=
   </data>
  </layer>
  <layer name="Layer 4" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OsQ0AIAwDwbQwAhPABGT/yXCRgg0M0p/0tR0BvG+oXjXD/lZLzcrx4f6Rpn0AAAAA/zpR9K8YABAAAA==
+   H4sIAAAAAAAAA+3RwQkAIAxDUY/qBjqBTqD7T2YLHlxAIvIf5JyShgC8r1ryThL0D0u3tB3FDecdU9R/k/9YtavzbZW7FksU9gMAAOB/C0yy2/0AEAAA
   </data>
  </layer>
  <layer name="Layer 4.5" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3NMQ0AMAgAQSxRB/g3xYKBToTkLvn5I+BPLn3fVEt/AACAyxpif1G3ABAAAA==
+   H4sIAAAAAAAAA2NgGAWjgDRgOED2GkGx4wDZPwowgeJAO2CEAFjaZ0CiB8INo2AUjIJRMApGwSgYBaNgaAMAylMPngAQAAA=
   </data>
  </layer>
 </map>

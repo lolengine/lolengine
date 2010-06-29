@@ -31,6 +31,9 @@ int *layers[128];
 int width = 32, height = 32;
 int nlayers = 0;
 
+/* Player coordinates */
+int playerx = 0, playery = 0;
+
 // Load Bitmaps And Convert To Textures
 void LoadGLTextures(void)
 {	
@@ -196,7 +199,13 @@ void DrawScene()
     glLoadIdentity();
 
     for (int i = 0; i < nlayers; i++)
+    {
+        glPushMatrix();
+        if (i == 2)
+            glTranslatef(playerx, playery, 0.0f);
         PutMap(layers[i], width, height);
+        glPopMatrix();
+    }
 }
 
 int main(int argc, char **argv)
@@ -216,6 +225,8 @@ int main(int argc, char **argv)
         DrawScene();
 
         video->Refresh(33.33333f);
+
+        SDL_GetMouseState(&playerx, &playery);
 
         /* This could go in a separate function */
         SDL_Event event;
