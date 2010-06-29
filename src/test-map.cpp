@@ -15,6 +15,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include <stdio.h>
 #include <math.h>
 
 #include "video.h"
@@ -24,6 +25,11 @@ GLuint texture[1];
 
 /* Storage for 3 vertex buffers */
 GLuint buflist[3];
+
+/* Storage for map layers */
+int *layers[128];
+int width = 32, height = 32;
+int nlayers = 0;
 
 // Load Bitmaps And Convert To Textures
 void LoadGLTextures(void)
@@ -51,53 +57,77 @@ void MakeVBOs(void)
     glGenBuffers(3, buflist);
 }
 
-void PutMap(int const *themap)
+void LoadMap(void)
+{
+    FILE *fp = popen("grep '^   ' maps/testmap.tmx | while read i; do echo -n \"$i\" | perl -MMIME::Base64 -ne 'print decode_base64($_)' | gunzip; done", "r");
+    while (fp && !feof(fp))
+    {
+        layers[nlayers] = (int *)malloc(width * height * sizeof(int));
+        fread(layers[nlayers], sizeof(int), width * height, fp);
+        if (feof(fp))
+        {
+            free(layers[nlayers]);
+            layers[nlayers] = 0;
+            fclose(fp);
+            break;
+        }
+        for (int n = 0; n < width * height; n++)
+        {
+            unsigned int i = layers[nlayers][n];
+            //i = (i >> 24) | ((i >> 8) & 0xff00) | ((i << 8) & 0xff0000) | (i << 24);
+            layers[nlayers][n] = i ? i - 1 : 0;
+        }
+        nlayers++;
+    }
+}
+
+void PutMap(int const *themap, int width, int height)
 {
     // Put map
-    float uvs[8 * 20 * 15];
+    float uvs[8 * width * height];
 
-    for (int y = 0; y < 15; y++)
-        for (int x = 0; x < 20; x++)
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
         {
-            int tile = themap[20 * y + x];
+            int tile = themap[width * y + x];
             float ty = .0625f * (tile / 16);
             float tx = .0625f * (tile % 16);
-            uvs[8 * (20 * y + x) + 0] = tx;
-            uvs[8 * (20 * y + x) + 1] = ty;
-            uvs[8 * (20 * y + x) + 2] = tx + .0625f;
-            uvs[8 * (20 * y + x) + 3] = ty;
-            uvs[8 * (20 * y + x) + 4] = tx + .0625f;
-            uvs[8 * (20 * y + x) + 5] = ty + .0625f;
-            uvs[8 * (20 * y + x) + 6] = tx;
-            uvs[8 * (20 * y + x) + 7] = ty + .0625f;
+            uvs[8 * (width * y + x) + 0] = tx;
+            uvs[8 * (width * y + x) + 1] = ty;
+            uvs[8 * (width * y + x) + 2] = tx + .0625f;
+            uvs[8 * (width * y + x) + 3] = ty;
+            uvs[8 * (width * y + x) + 4] = tx + .0625f;
+            uvs[8 * (width * y + x) + 5] = ty + .0625f;
+            uvs[8 * (width * y + x) + 6] = tx;
+            uvs[8 * (width * y + x) + 7] = ty + .0625f;
         }
     glBindBuffer(GL_ARRAY_BUFFER, buflist[1]);
     glBufferData(GL_ARRAY_BUFFER,
-                 8 * 20 * 15 * sizeof(float), uvs, GL_STATIC_DRAW);
+                 8 * width * height * sizeof(float), uvs, GL_STATIC_DRAW);
 
-    float vertices[8 * 20 * 15];
-    for (int y = 0; y < 15; y++)
-        for (int x = 0; x < 20; x++)
+    float vertices[8 * width * height];
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
         {
-            vertices[8 * (20 * y + x) + 0] = x * 32;
-            vertices[8 * (20 * y + x) + 1] = y * 32;
-            vertices[8 * (20 * y + x) + 2] = x * 32 + 32;
-            vertices[8 * (20 * y + x) + 3] = y * 32;
-            vertices[8 * (20 * y + x) + 4] = x * 32 + 32;
-            vertices[8 * (20 * y + x) + 5] = y * 32 + 32;
-            vertices[8 * (20 * y + x) + 6] = x * 32;
-            vertices[8 * (20 * y + x) + 7] = y * 32 + 32;
+            vertices[8 * (width * y + x) + 0] = x * 32;
+            vertices[8 * (width * y + x) + 1] = y * 32;
+            vertices[8 * (width * y + x) + 2] = x * 32 + 32;
+            vertices[8 * (width * y + x) + 3] = y * 32;
+            vertices[8 * (width * y + x) + 4] = x * 32 + 32;
+            vertices[8 * (width * y + x) + 5] = y * 32 + 32;
+            vertices[8 * (width * y + x) + 6] = x * 32;
+            vertices[8 * (width * y + x) + 7] = y * 32 + 32;
         }
     glBindBuffer(GL_ARRAY_BUFFER, buflist[0]);
     glBufferData(GL_ARRAY_BUFFER,
-                 8 * 20 * 15 * sizeof(float), vertices, GL_STATIC_DRAW);
+                 8 * width * height * sizeof(float), vertices, GL_STATIC_DRAW);
 
-    int indices[4 * 20 * 15];
-    for (int n = 0; n < 4 * 20 * 15; n++)
+    int indices[4 * width * height];
+    for (int n = 0; n < 4 * width * height; n++)
         indices[n] = n;
     glBindBuffer(GL_ARRAY_BUFFER, buflist[2]);
     glBufferData(GL_ARRAY_BUFFER,
-                 4 * 20 * 15 * sizeof(int), indices, GL_STATIC_DRAW);
+                 4 * width * height * sizeof(int), indices, GL_STATIC_DRAW);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -112,7 +142,7 @@ void PutMap(int const *themap)
     glBindBuffer(GL_ARRAY_BUFFER, buflist[2]);
     glIndexPointer(GL_INT, 0, NULL);
 
-    glDrawArrays(GL_QUADS, 0, 4 * 20 * 15);
+    glDrawArrays(GL_QUADS, 0, 4 * width * height);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -122,6 +152,7 @@ void PutMap(int const *themap)
 /* The main drawing function. */
 void DrawScene()
 {
+/*
     int ground[20 * 15] =
     {
 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
@@ -151,21 +182,21 @@ void DrawScene()
  0,  0,  0,  0, 49, 49,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
  0,  0,  0,  0, 49, 49, 49, 49, 49, 49,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
- 0,  0,  0,  0,  0, 49, 49, 49, 49,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
- 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 48,  0, 32, 49,  0,  0,  0,
- 0,  0,  0, 49, 49, 32,  0, 50,  0,  0,  0, 48,  0, 64,  0, 49, 49,  0,  0,  0,
- 0,  0,  0,  0,  0,  0,  0,  0,  0, 32,  0, 64,  0,  0,  0,  0,  0,  0,  0,  0,
- 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 32,  0,  0,  0,  0,  0,
- 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+ 0,  0,  0,  0,  0, 49, 49, 49, 49,  0,  0,  0,  0, 25,  9,  9,  9,  8,  0,  0,
+ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 54, 40, 39, 39, 41,  0,  0,
+ 0,  0,  0, 49, 49, 32,  0, 50,  0,  0,  0, 48,  0, 24, 23, 54, 40, 55,  0,  0,
+ 0,  0,  0,  0,  0,  0,  0,  0,  0, 32,  0, 64,  0, 24, 23, 24, 23,  7,  0,  0,
+ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  6, 38, 24, 23,  7,  0,  0,
+ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  6, 38, 22,  0,  0,
  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     };
+*/
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    PutMap(ground);
-    //glTranslatef(10.0f * sinf(0.16f * frames), 10.0f * cosf(0.16f * frames), 0.0f);
-    PutMap(l1objects);
+    for (int i = 0; i < nlayers; i++)
+        PutMap(layers[i], width, height);
 }
 
 int main(int argc, char **argv)
@@ -177,6 +208,7 @@ int main(int argc, char **argv)
     /* Loop, drawing and checking events */
     LoadGLTextures();
     MakeVBOs();
+    LoadMap();
 
     done = 0;
     while (!done)

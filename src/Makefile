@@ -10,5 +10,5 @@ test-map: $(SRC:%.cpp=%.o)
 	g++ -Wall -O3 -c $^ -o $@ `pkg-config --cflags sdl gl SDL_image`
 
 clean:
-	rm -f test-map
+	rm -f *.o test-map
 
