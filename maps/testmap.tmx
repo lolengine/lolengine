@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
+  <image source="art/test/groundtest.png"/>
+ </tileset>
+ <layer name="Layer 1" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3QyQ2AMAxEUSuQAsJWQCD0XyITyWnBIPQPT5ZPY08xs/IBSSaZJfueA/MXWWWTKofsgTdU//3yzL43uV/oYMzkPUTl959P72DMFpgPAAAAAH/2ACvSWwAAEAAA
+  </data>
+ </layer>
+ <layer name="Layer 1.5" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3TwQkAIAhGYVdpBZug/ZfqFISHItD+y/sG0AeWGZahDrhYfa1wx8vsrA5PmlOx/8eb8NBQed/TfuUd3LQdcf/e0EUNKur/CAAAgDoTUy0wRgAQAAA=
+  </data>
+ </layer>
+ <layer name="Layer 2" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGDzAcKAdQAAMdvcNRzAa5rgBFxBz0skudiBWR7NbA4i16GQ/sjvMgVgTii3obD/MDepQLD4A9o8EwIgHjwT7R8EoGAWjYBSMglEwCmgFAEc8wqAAEAAA
+  </data>
+ </layer>
+ <layer name="Layer 3" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OMQ0AIBAEwXMBKMC/Qz5BAdVTzCTbbwL8blWzeyL3Y1ejewQAAHh2AJ7ne/0AEAAA
+  </data>
+ </layer>
+ <layer name="Layer 4" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OsQ0AIAwDwbQwAhPABGT/yXCRgg0M0p/0tR0BvG+oXjXD/lZLzcrx4f6Rpn0AAAAA/zpR9K8YABAAAA==
+  </data>
+ </layer>
+ <layer name="Layer 4.5" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3NMQ0AMAgAQSxRB/g3xYKBToTkLvn5I+BPLn3fVEt/AACAyxpif1G3ABAAAA==
+  </data>
+ </layer>
+</map>
