@@ -9,6 +9,7 @@ public:
 
     int GetWidth() const;
     int GetHeight() const;
+    void Clear();
     void Refresh(float milliseconds);
     void FullScreen();
 

@@ -90,6 +90,12 @@ int Video::GetHeight() const
     return data->video->h;
 }
 
+void Video::Clear()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+}
+
 void Video::Refresh(float milliseconds)
 {
     if (milliseconds > 0.0f)

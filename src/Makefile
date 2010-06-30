@@ -1,5 +1,5 @@
 
-SRC = test-map.cpp video.cpp
+SRC = test-map.cpp video.cpp tiler.cpp
 
 all: test-map
 
