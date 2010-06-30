@@ -20,12 +20,12 @@
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2SQQqAMAwE60n0A4IfaOvNk/r/j5lACkuoChKoSAbm0KhsTBPCd1hbN/DA1/v7I61mPpNDo2zmIBM5iqnyDtetetT/u5FZTGJW2VxbjPI5b4dzT0bxkBw8l372YAPnTRfPSr4+x5tv3nC1c7VdsJo7ou8A61lpNXcE76ADcReKlnOvgfmO4ziO4zh/4gSy+XWyABAAAA==
+   H4sIAAAAAAAAA+2SSwqAMAwF60r0AoIX6Gfnyur9D2aCLYTQKkigRTIwi0blxTTG9MPWuoEXeu/vj7Sa+QpOjbKRA3TgnHSFd7Au1SP/3x30SZf0LBtrQSgf8yI5j+AJWnPPIrBz7icaGTBvqTzL+fxsH775Qm3nSrsgNXcKvwNa90ypuVPoHQxErNtk3gHJuZeg+YqiKIqiKH/iAnTxBh8AEAAA
   </data>
  </layer>
  <layer name="Layer 3" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3RsQkAIBAEwc+0A7EC++9QxRaUN5iByxcuAvhdWRvZEUuP09GyQ7huf1uzIwAAeGoCAAVL1wAQAAA=
+   H4sIAAAAAAAAA+3RsQkAIBAEQTPtQKzAHuy/MN8elDeYgc0PrhTgdzWa2SPCiFbUs4dw3fm2ZY8AAOCpDZX+fl8AEAAA
   </data>
  </layer>
  <layer name="Layer 4" width="32" height="32">
