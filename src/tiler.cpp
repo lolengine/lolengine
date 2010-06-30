@@ -27,6 +27,14 @@ class TilerData
     friend class Tiler;
 
 private:
+    static int Compare(void const *p1, void const *p2)
+    {
+        int const *n1 = (int const *)p1;
+        int const *n2 = (int const *)p2;
+
+        return n1[2] + 32 * n1[3] - (n2[2] + 32 * n2[3]);
+    }
+
     int *tiles;
     int ntiles;
 
@@ -90,6 +98,9 @@ void Tiler::AddTile(int n, int x, int y, int z)
 
 void Tiler::Render()
 {
+    /* Sort tiles */
+    qsort(data->tiles, data->ntiles, 4 * sizeof(int), TilerData::Compare);
+
     /* Texture coord buffer */
     float uvs[8 * data->ntiles];
     for (int n = 0; n < data->ntiles; n++)

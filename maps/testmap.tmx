@@ -3,39 +3,29 @@
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
  </tileset>
- <layer name="Layer 1" width="32" height="32">
+ <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3QyQ2AMAxEUSuQAsJWQCD0XyITyWnBIPQPT5ZPY08xs/IBSSaZJfueA/MXWWWTKofsgTdU//3yzL43uV/oYMzkPUTl959P72DMFpgPAAAAAH/2ACvSWwAAEAAA
   </data>
  </layer>
- <layer name="Layer 1.5" width="32" height="32">
+ <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3TsQ0AIAhEUVZxBTZw/6WsaCg0JuBZ/DcAdwlghjDVBQ6i32jMuJld1cOL5nTkv7gJTx0697vLV+7BTdsj5//QQUX9jwAAAOizAOK0B+4AEAAA
-  </data>
- </layer>
- <layer name="Layer perso" width="32" height="32">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3BAQkAAAACoD71/1s/Qm0AAACAdwMtfmIFABAAAA==
+   H4sIAAAAAAAAA+2SzQqEMAyE62nRFxD25snq0cv+3Hz/lzLBBoagyEK6C8t8MGAKdoZpUiLG+usAF1i+oaLHJ3dH5ViC7on0v4va9J2dWFwG7fUlyqKuKB/8p+dtoD9meIimolw0OW89mwP8LQN+30Rv0Zj2LmY3W55nJX+czd/PmqUP8vdZvL/fhajez/wR3AVTVO+Ivrn12YD0fCyyHajRO4L+hBBCCCH/xAZZWJEpABAAAA==
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2SSwqAMAwF60r0AoIX6Gfnyur9D2aCLYTQKkigRTIwi0blxTTG9MPWuoEXeu/vj7Sa+QpOjbKRA3TgnHSFd7Au1SP/3x30SZf0LBtrQSgf8yI5j+AJWnPPIrBz7icaGTBvqTzL+fxsH775Qm3nSrsgNXcKvwNa90ypuVPoHQxErNtk3gHJuZeg+YqiKIqiKH/iAnTxBh8AEAAA
+   H4sIAAAAAAAAA+3RMQ6AIBAEQDrEDxj5AFpSafz/w9hLuITOCo7oTrItt1mcm0e2LvBi9n5fpJtHZK0JBj0u5ESOmtEdPJKaHvfg+2pHHmTr8Lb8scXfKtnWalch2y4/vk9ERERE/RUNp14bABAAAA==
   </data>
  </layer>
  <layer name="Layer 3" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3RsQkAIBAEQTPtQKzAHuy/MN8elDeYgc0PrhTgdzWa2SPCiFbUs4dw3fm2ZY8AAOCpDZX+fl8AEAAA
+   H4sIAAAAAAAAA+3SMQ0AIAxFwVrBAg7wb4oFGhw0DXfJT9c3NAJ6mGerOoQ0qgM+cX8/nlvRAABAbxsfaCDKABAAAA==
   </data>
  </layer>
  <layer name="Layer 4" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3RwQkAIAxDUY/qBjqBTqD7T2YLHlxAIvIf5JyShgC8r1ryThL0D0u3tB3FDecdU9R/k/9YtavzbZW7FksU9gMAAOB/C0yy2/0AEAAA
-  </data>
- </layer>
- <layer name="Layer 4.5" width="32" height="32">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjgDRgOED2GkGx4wDZPwowgeJAO2CEAFjaZ0CiB8INo2AUjIJRMApGwSgYBaNgaAMAylMPngAQAAA=
+   H4sIAAAAAAAAA+3OMQEAAAwCICutf7ll8PKBBCTQuXUAAACA2gPEOzOTABAAAA==
   </data>
  </layer>
 </map>

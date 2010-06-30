@@ -54,7 +54,7 @@ void DrawScene()
     /* Test stuff */
     int playerx, playery;
     SDL_GetMouseState(&playerx, &playery);
-    tiler->AddTile(50, playerx, playery, nlayers);
+    tiler->AddTile(50, playerx, playery, 1);
 
     tiler->Render();
     video->Refresh(33.33333f);
