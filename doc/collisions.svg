@@ -15,7 +15,10 @@
    inkscape:version="0.47 r22583"
    width="640"
    height="352"
-   sodipodi:docname="collisions-bg.png">
+   sodipodi:docname="collisions.svg"
+   inkscape:export-filename="collisions.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -51,21 +54,28 @@
      inkscape:window-height="726"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="1.0030731"
-     inkscape:cx="267.48677"
-     inkscape:cy="130.98231"
+     inkscape:zoom="0.50153655"
+     inkscape:cx="466.87403"
+     inkscape:cy="286.25514"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <image
+     sodipodi:absref="collisions-bg.png"
      xlink:href="collisions-bg.png"
-     width="640"
-     height="352"
-     id="image12"
-     x="0"
      y="0"
-     sodipodi:absref="collisions-bg.png" />
+     x="0"
+     id="image12"
+     height="352"
+     width="640" />
+  <rect
+     style="fill:#ffb5dc;fill-opacity:1;stroke:#ff0d0d;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0"
+     id="rect2839"
+     width="192.40871"
+     height="28.911154"
+     x="390.79901"
+     y="18.026335" />
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
