@@ -2,30 +2,34 @@
 <map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
+  <tile id="57">
+   <properties>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+   </properties>
+  </tile>
+  <tile id="58">
+   <properties>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3QyQ2AMAxEUSuQAsJWQCD0XyITyWnBIPQPT5ZPY08xs/IBSSaZJfueA/MXWWWTKofsgTdU//3yzL43uV/oYMzkPUTl959P72DMFpgPAAAAAH/2ACvSWwAAEAAA
+   H4sIAAAAAAAAA+3NsQkAAAzDsPza/3/omLljQQLPTqDmmL+/PwAA/LBo9xNcABAAAA==
   </data>
  </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2SzQqEMAyE62nRFxD25snq0cv+3Hz/lzLBBoagyEK6C8t8MGAKdoZpUiLG+usAF1i+oaLHJ3dH5ViC7on0v4va9J2dWFwG7fUlyqKuKB/8p+dtoD9meIimolw0OW89mwP8LQN+30Rv0Zj2LmY3W55nJX+czd/PmqUP8vdZvL/fhajez/wR3AVTVO+Ivrn12YD0fCyyHajRO4L+hBBCCCH/xAZZWJEpABAAAA==
+   H4sIAAAAAAAAA+3OMQ0AQAjAQKzgDf8aXsNPQLhLujeCSeoz7snuAQAAYKUHP2XIhQAQAAA=
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGDzAcKAdQAAMdvcNRwALcykg5oJizgFwhzkQawKxBhTT2w3sQKyO5A4LOtsPA5JAbAXE4lC+4gC5Y6QBIyhmQKKpDUBxy0HADaNgFIyCUTAKRsEoGAWjYGgDALjNdNcAEAAA
-  </data>
- </layer>
- <layer name="Layer 3" width="32" height="32">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OsQ0AIAwDwZQwAoxBQ1r2XwoXrIAs0J/0tR0BvGGclvsIruiqGvenSuN+U8W4DwAAgP9tqgIKBgAQAAA=
-  </data>
- </layer>
- <layer name="Layer 4" width="32" height="32">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OMQEAAAwCICutf7ll8PKBBCTQuXUAAACA2gPEOzOTABAAAA==
+   H4sIAAAAAAAAA+3DsQkAAAgDsB7p/7e4dnUUEkhCm2MAAAD4YAH5p6peABAAAA==
   </data>
  </layer>
 </map>
