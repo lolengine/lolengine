@@ -19,7 +19,7 @@ int nlayers = 0;
 
 void LoadMap(void)
 {
-    FILE *fp = popen("grep '^   ' maps/testmap.tmx | while read i; do echo -n \"$i\" | perl -MMIME::Base64 -ne 'print decode_base64($_)' | gunzip; done", "r");
+    FILE *fp = popen("grep '^   [^< ]' maps/testmap.tmx | while read i; do echo -n \"$i\" | perl -MMIME::Base64 -ne 'print decode_base64($_)' | gunzip; done", "r");
     while (fp && !feof(fp))
     {
         layers[nlayers] = (int *)malloc(width * height * sizeof(int));

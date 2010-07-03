@@ -5,30 +5,24 @@
   <tile id="57">
    <properties>
     <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
    </properties>
   </tile>
   <tile id="58">
    <properties>
     <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
    </properties>
   </tile>
- </tileset>
- <tileset firstgid="257" name="charatest" tilewidth="32" tileheight="32">
-  <image source="../art/test/charatest.png"/>
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3NsQ0AAAjDsB7N/2LqA0wMtpQ5CTXH/P39/QEA4LsFgb7suQAQAAA=
   </data>
  </layer>
- <layer name="Perso" width="32" height="32">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OIRUAIABDQaISAU8EOhGBTFgeEjPEnZv6K4WfzHB/hfs/6uH+uHZNnDi0cB8AAHizAQGLAwYAEAAA
-  </data>
- </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWDBSRC6RQScDoV7S8kQ0/5qP2j9o/aPwpGwSgYBaNgFIyCUTAKRsGQAAAgqWCmABAAAA==
+   H4sIAAAAAAAAA2NgGAWDBSQC8T4gTiEBp1PR/kIgPkeinnIq208qoIf91QNsfzcaP4HO9qODggG2HxkMJ/tHwSgYBaNgFIyCUTAKRsEooDUAADAif2cAEAAA
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">
