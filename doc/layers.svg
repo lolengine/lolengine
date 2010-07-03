@@ -62,86 +62,86 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.8914474"
-     inkscape:cx="578.61642"
-     inkscape:cy="382.5268"
+     inkscape:cx="414.83783"
+     inkscape:cy="169.39028"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <image
-     sodipodi:absref="layers-bg.png"
+     sodipodi:absref="/home/sam/deushax/doc/layers-bg.png"
      xlink:href="layers-bg.png"
-     width="800"
-     height="416"
-     id="image12"
+     y="0"
      x="0"
-     y="0" />
+     id="image12"
+     height="416"
+     width="800" />
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="64.799515"
-     y="210.53288"
+     y="212.53288"
      id="text2818"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2820"
        x="64.799515"
-       y="210.53288">Ground 0</tspan></text>
+       y="212.53288">Ground 0</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="232.68079"
-     y="210.53288"
+     y="212.53288"
      id="text2822"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2824"
        x="232.68079"
-       y="210.53288">Ground Decal 0</tspan></text>
+       y="212.53288">Ground Decal 0</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="460.89014"
-     y="210.53288"
+     y="212.53288"
      id="text2826"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2828"
        x="460.89014"
-       y="210.53288">Object 0</tspan></text>
+       y="212.53288">Object 0</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="82.975502"
-     y="383.14136"
+     y="405.14136"
      id="text2830"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2832"
        x="82.975502"
-       y="383.14136">Wall 0</tspan></text>
+       y="405.14136">Wall 0</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="250.44931"
-     y="383.14136"
+     y="405.14136"
      id="text2834"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2836"
        x="250.44931"
-       y="383.14136">Wall Decal 0</tspan></text>
+       y="405.14136">Wall Decal 0</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      x="459.75125"
-     y="383.14136"
+     y="405.14136"
      id="text2838"
      sodipodi:linespacing="125%"><tspan
        sodipodi:role="line"
        id="tspan2840"
        x="459.75125"
-       y="383.14136">Ground 1</tspan></text>
+       y="405.14136">Ground 1</tspan></text>
   <text
      sodipodi:linespacing="125%"
      id="text2842"
@@ -156,19 +156,19 @@
   <rect
      style="fill:#ffb5dc;fill-opacity:1;stroke:#ff0d0d;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0"
      id="rect2829"
-     width="208.61476"
+     width="142.43027"
      height="29.348845"
-     x="573.88892"
-     y="13.427936" />
+     x="616.07343"
+     y="19.427937" />
   <text
      sodipodi:linespacing="125%"
      id="text2842-5"
-     y="33.52507"
-     x="580.67261"
+     y="39.52507"
+     x="626.67261"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      xml:space="preserve"><tspan
-       y="33.52507"
-       x="580.67261"
+       y="39.52507"
+       x="626.67261"
        sodipodi:role="line"
-       id="tspan2826-4">Layer naming scheme</tspan></text>
+       id="tspan2826-4">Layer naming</tspan></text>
 </svg>
