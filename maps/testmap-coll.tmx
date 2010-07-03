@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
+  <image source="../art/test/groundtest.png"/>
+  <tile id="57">
+   <properties>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+   </properties>
+  </tile>
+  <tile id="58">
+   <properties>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Layer 0" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PsQ0AIAwEsZ8tozE5SyCFRC5cXHmVpJqdxz2Nf//+9/4BAMAvLtThgrMAEAAA
+  </data>
+ </layer>
+ <layer name="Props" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjYBSMglEwChBACoi5gJiTTvYZQ2lFKM0OxFZALE4n+wcbaELC9LIPHz3SwGj6HwWjYBSMglEwnAEAO8hRagAQAAA=
+  </data>
+ </layer>
+ <layer name="Layer 1" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3VOQ6EMBAFUSMB978aOylrzjITIwIHFCmY7Vf2RNJGVtuY66vhCg69rVN8nw+ex3UR3MA9nMG/Y8dxXgKPcAm3sI/78bQmmPc/hzs4ePj5B7iA/64GUeomrW9CbPa78azsDrW7xL7JfJu/kv6/UkqpN7cAOtcl+QAQAAA=
+  </data>
+ </layer>
+</map>
