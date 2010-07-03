@@ -13,9 +13,12 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.47 r22583"
-   width="608"
-   height="608"
-   sodipodi:docname="layers.svg">
+   width="800"
+   height="416"
+   sodipodi:docname="layers.svg"
+   inkscape:export-filename="layers.png"
+   inkscape:export-xdpi="40.990002"
+   inkscape:export-ydpi="40.990002">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -24,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -37,6 +40,13 @@
        inkscape:vp_z="1 : 0.5 : 1"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
        id="perspective10" />
+    <inkscape:perspective
+       id="perspective2836"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -52,20 +62,20 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="1.260697"
-     inkscape:cx="288.30082"
-     inkscape:cy="223.65208"
+     inkscape:cx="385.07269"
+     inkscape:cy="193.51002"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <image
-     sodipodi:absref="/home/sam/deushax/doc/layers-bg.png"
+     sodipodi:absref="layers-bg.png"
      xlink:href="layers-bg.png"
-     y="0"
-     x="0"
+     width="800"
+     height="416"
      id="image12"
-     height="608"
-     width="608" />
+     x="0"
+     y="0" />
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
@@ -135,12 +145,23 @@
   <text
      sodipodi:linespacing="125%"
      id="text2842"
-     y="501.55493"
-     x="206.14835"
+     y="281.45557"
+     x="666.51678"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
      xml:space="preserve"><tspan
-       y="501.55493"
-       x="206.14835"
-       id="tspan2844"
-       sodipodi:role="line">All combined layers</tspan></text>
+       y="281.45557"
+       x="666.51678"
+       sodipodi:role="line"
+       id="tspan2826">Final</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     id="text2842-5"
+     y="33.52507"
+     x="580.67261"
+     style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
+     xml:space="preserve"><tspan
+       y="33.52507"
+       x="580.67261"
+       sodipodi:role="line"
+       id="tspan2826-4">Layer naming scheme</tspan></text>
 </svg>
