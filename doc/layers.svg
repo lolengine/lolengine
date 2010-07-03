@@ -17,8 +17,8 @@
    height="416"
    sodipodi:docname="layers.svg"
    inkscape:export-filename="layers.png"
-   inkscape:export-xdpi="40.990002"
-   inkscape:export-ydpi="40.990002">
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -69,13 +69,13 @@
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <image
-     sodipodi:absref="layers-bg.png"
+     sodipodi:absref="/home/sam/deushax/doc/layers-bg.png"
      xlink:href="layers-bg.png"
-     width="800"
-     height="416"
-     id="image12"
+     y="0"
      x="0"
-     y="0" />
+     id="image12"
+     height="416"
+     width="800" />
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
