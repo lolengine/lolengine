@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="19" height="19" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="25" height="13" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
  </tileset>
- <layer name="White" width="19" height="19">
+ <layer name="White" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2tiYGBoGsWjeBSP4lE8KDEAS7kitKQFAAA=
+   H4sIAAAAAAAAA2tiYGBoGsWjeBSP4lEMxgAn9XNtFAUAAA==
   </data>
  </layer>
- <layer name="Ground 0" width="19" height="19">
+ <layer name="Ground 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgoC4QxIJHzaKPWaNgFKCDwZpWR4JZ1AIASSPeEKQFAAA=
+   H4sIAAAAAAAAA2NgoA8QxIJHsh34zBkudlALDBc7RsHQAACWDth8FAUAAA==
   </data>
  </layer>
- <layer name="Ground Decal 0" width="19" height="19">
+ <layer name="Ground Decal 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAUwYArF1DKHErNMseBRMAqGIxjNd/gBAHNsDwKkBQAA
+   H4sIAAAAAAAAA2NgGAXUBqZQTGvzaWGHKRZMql5agcHq71EwvAAA51wQ1xQFAAA=
   </data>
  </layer>
- <layer name="Object 0" width="19" height="19">
+ <layer name="Object 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGL7AaJibpUglc0bBKCAHDMY8QU2zBkv+AgDxXHjYpAUAAA==
+   H4sIAAAAAAAAA2NgGAUwYDTM7aCW3Ypk2E1NQGs78PlvFAx/AAD2PWFbFAUAAA==
   </data>
  </layer>
- <layer name="Wall 0" width="19" height="19">
+ <layer name="Wall 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYOgBKyAWp9AMdiqYMQooA6PxSBgAAAORqYKkBQAA
+   H4sIAAAAAAAAA2NgGAWjgHJgBcTiNDKbnYZmDzYwGo4DDwCoc/KYFAUAAA==
   </data>
  </layer>
- <layer name="Wall Decal 0" width="19" height="19">
+ <layer name="Wall Decal 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYHgBswHWPwpIA6PxhR8AAHkTJiakBQAA
+   H4sIAAAAAAAAA2NgGAWjgDrAbIiZO9TAaPjSBwAA0pXanxQFAAA=
   </data>
  </layer>
- <layer name="Ground 1" width="19" height="19">
+ <layer name="Ground 1" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjgHzgCqWlgJgLijnJNMsFSlsCsQYQawKxBZnucYbS5mSYAQPOhJUMeoAeL674leMF6PHigl85XgCLF5gZ1Ajr4RBf2AAAbJ+4VKQFAAA=
+   H4sIAAAAAAAAA2NgGAUDAaSAmAuKOYHYlQZ2WAKxBhBrArEFELvQwA5zNLOdaWAHDFBiNix80cOdmgAWBujhTg0Acz8sDGDhTk1Ay7gbSgAAQxGoVBQFAAA=
   </data>
  </layer>
- <layer name="Character" width="19" height="19">
+ <layer name="Character" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBQMZzCfimatp6JZMFBHRbP6qGjWYAEAdIJ4iKQFAAA=
+   H4sIAAAAAAAAA2NgGAUDBebTwY71dLADBuroYEcfHewYBSMbAAAygkWoFAUAAA==
   </data>
  </layer>
 </map>
