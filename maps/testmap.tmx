@@ -15,17 +15,17 @@
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3NoQ0AAAzDsF67/08Y6gNDA7YUnISaY/7+/v4AAPDdArViGmwAEAAA
+   H4sIAAAAAAAAA+3NsQ0AAAjDsB7N/2LqA0wMtpQ5CTXH/P39/QEA4LsFgb7suQAQAAA=
   </data>
  </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAUwEEyGnlAq2p8MxCkk4lQq2l9Mhp7SUfvpbr/iANuPDEbtHwWjYBSMglEwCkbBKBgFo2DoAAAewHzSABAAAA==
+   H4sIAAAAAAAAA2NgGAWDBSRC6RQScDoV7S8kQ0/5qP2j9o/aPwpGwSgYBaNgFIyCUTAKRsGQAAAgqWCmABAAAA==
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3DsQkAAAgDsB7p/7e4dnUUEkhCm2MAAAD4YAH5p6peABAAAA==
+   H4sIAAAAAAAAA+3DsQkAIAwAsD7nAYrg/5/YwQNEHDokkIg62uNfeh55Xl4nAAAAVLcBApw20AAQAAA=
   </data>
  </layer>
 </map>
