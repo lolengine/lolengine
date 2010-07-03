@@ -5,12 +5,12 @@
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3NsQ0AAAjDsB7N/2LqA0wMtpQ5CTXH/P39/QEA4LsFgb7suQAQAAA=
+   H4sIAAAAAAAAA+2SwQ2DMAxFudIbYgnoApQ9gAmaDToxB0bgXCN9S1ZkQHUJB/CXnqwkjp8UJcs8nI8R97vf/e73XCNVQn71b/07bf5e/x39PbD4+w00v9bXAYt/IEbUKVqv+UfUCTUAi5/vvokZldH8QTALr/X/M0+iINqV85gXURLNyf5auJkG+/UBfjlL6yl3+Ncvid8ipX/hAfLEfo/nLvkCeLiqcgAQAAA=
   </data>
  </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWDBSQC8T4gTiEBp1PR/kIgPkeinnIq208qoIf91QNsfzcaP4HO9qODggG2HxkMJ/tHwSgYBaNgFIyCUTAKRsEooDUAADAif2cAEAAA
+   H4sIAAAAAAAAA2NgGAWDBSQC8T4gTiEBp1PR/kIgPkeinnIq208qoIf91QNsfzcaP4HO9qODggG2HxkMJ/tHwdAFRlA8UPYOhP2uJNrvSmX7XYi02wWNpoX9pkjiZljUmVHJfmSzXaD2wjAuALPXmUI7d6GJw8wjZD+59qKDU0hsUyyYXgCb3fjcgK/9QE13wEA0mjr09gOt3ZBNQ/uw2T8KRsEoIA8AAF8Uc2EAEAAA
   </data>
  </layer>
  <layer name="Layer 2" width="32" height="32">

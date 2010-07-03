@@ -20,22 +20,22 @@
  </layer>
  <layer name="Object 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGD7AaIiYpUhFs0fBKKAXGM1fAwMAIV5+uKQFAAA=
+   H4sIAAAAAAAAA2NgGL7AaJibpUglc0bBKCAHDMY8QU2zBkv+AgDxXHjYpAUAAA==
   </data>
  </layer>
  <layer name="Wall 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYGgCKyAWp9AMdiqYMQooA6PxiB8AAAGTSdqkBQAA
+   H4sIAAAAAAAAA2NgGAWjYOgBKyAWp9AMdiqYMQooA6PxSBgAAAORqYKkBQAA
   </data>
  </layer>
  <layer name="Wall Decal 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYPgBswHWPwpIA6PxhRsAACUAaZGkBQAA
+   H4sIAAAAAAAAA2NgGAWjYHgBswHWPwpIA6PxhR8AAHkTJiakBQAA
   </data>
  </layer>
  <layer name="Ground 1" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjgDpACoi5oJiTQrMsgVgDiDWB2IJCs8ypYMZQBqPxMrQBAFYjOpukBQAA
+   H4sIAAAAAAAAA2NgGAWjgHzgCqWlgJgLijnJNMsFSlsCsQYQawKxBZnucYbS5mSYAQPOhJUMeoAeL674leMF6PHigl85XgCLF5gZ1Ajr4RBf2AAAbJ+4VKQFAAA=
   </data>
  </layer>
  <layer name="Character" width="19" height="19">
