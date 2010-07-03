@@ -4,6 +4,9 @@
  * The tile manager
  */
 
+#if !defined __TILER_H__
+#define __TILER_H__
+
 class TilerData;
 
 class Tiler
@@ -19,4 +22,6 @@ public:
 private:
     TilerData *data;
 };
+
+#endif // __TILER_H__
 
