@@ -6,10 +6,24 @@
    <properties>
     <property name="coll" value="LR"/>
     <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
    </properties>
   </tile>
   <tile id="58">
    <properties>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
+    <property name="coll" value="LR"/>
     <property name="coll" value="LR"/>
     <property name="coll" value="LR"/>
    </properties>
@@ -17,17 +31,17 @@
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3PsQ0AIAwEsZ8tozE5SyCFRC5cXHmVpJqdxz2Nf//+9/4BAMAvLtThgrMAEAAA
+   H4sIAAAAAAAAA+3DAQkAAAwEocv2/UOtx1Bw1VRVVdXXD/3ApwYAEAAA
   </data>
  </layer>
  <layer name="Props" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBSMglEwChBACoi5gJiTTvYZQ2lFKM0OxFZALE4n+wcbaELC9LIPHz3SwGj6HwWjYBSMglEwnAEAO8hRagAQAAA=
+   H4sIAAAAAAAAA2NgGHjQRCQ9GEACGl8KiLmAmJMCM0nxfwGUVoTS7EBsBcTiFNg/0ICS+G9CwvQAtEijo+kfO40NDMf0PwpGwSgYBaNgFIyCUTAKRgG9AADTn/sEABAAAA==
   </data>
  </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3VOQ6EMBAFUSMB978aOylrzjITIwIHFCmY7Vf2RNJGVtuY66vhCg69rVN8nw+ex3UR3MA9nMG/Y8dxXgKPcAm3sI/78bQmmPc/hzs4ePj5B7iA/64GUeomrW9CbPa78azsDrW7xL7JfJu/kv6/UkqpN7cAOtcl+QAQAAA=
+   H4sIAAAAAAAAA+3SSwtAQBSG4ZnC//9r7raue9e15JuikIU5lO/ZvKnB6TRKva9Ac9TTayM8D8LzSPPREm3QGB1lxxEXoh2aoRXq6PN3l90Fm2/YZmZxUXN3i8PT9/Souf8JWqv9v77oif23aIpOF2dt7J+IiIiI6C9mu1t86AAQAAA=
   </data>
  </layer>
 </map>
