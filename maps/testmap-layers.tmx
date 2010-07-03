@@ -5,7 +5,7 @@
  </tileset>
  <layer name="White" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2tiYGBoGsWjeBSP4lEMxgAn9XNtFAUAAA==
+   H4sIAAAAAAAAA3NiYGBwGsWjeBSP4lEMxgCzfEBdFAUAAA==
   </data>
  </layer>
  <layer name="Ground 0" width="25" height="13">
@@ -25,7 +25,7 @@
  </layer>
  <layer name="Wall 0" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjgHJgBcTiNDKbnYZmDzYwGo4DDwCoc/KYFAUAAA==
+   H4sIAAAAAAAAA2NgGAWjgHJgBcTiNDKbnYZmEwNM0DAt7RjO4ThUAACkY/h6FAUAAA==
   </data>
  </layer>
  <layer name="Wall Decal 0" width="25" height="13">
