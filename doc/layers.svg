@@ -13,9 +13,9 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.47 r22583"
-   width="607"
+   width="608"
    height="608"
-   sodipodi:docname="layers-bg.png">
+   sodipodi:docname="layers.svg">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,13 +59,13 @@
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <image
+     sodipodi:absref="/home/sam/deushax/doc/layers-bg.png"
      xlink:href="layers-bg.png"
-     width="607"
-     height="608"
-     id="image12"
-     x="0"
      y="0"
-     sodipodi:absref="layers-bg.png" />
+     x="0"
+     id="image12"
+     height="608"
+     width="608" />
   <text
      xml:space="preserve"
      style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
