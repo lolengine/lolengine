@@ -2,18 +2,6 @@
 <map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
-  <tile id="57">
-   <properties>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-   </properties>
-  </tile>
-  <tile id="58">
-   <properties>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-   </properties>
-  </tile>
  </tileset>
  <layer name="Layer 0" width="32" height="32">
   <data encoding="base64" compression="gzip">

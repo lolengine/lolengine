@@ -1,75 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="19" height="19" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
-  <tile id="57">
-   <properties>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-   </properties>
-  </tile>
-  <tile id="58">
-   <properties>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-    <property name="coll" value="LR"/>
-   </properties>
-  </tile>
  </tileset>
- <layer name="White" width="32" height="32">
+ <layer name="White" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3DAQkAAAwEocv+yddjKLhqqqqq6usHJMXGCgAQAAA=
+   H4sIAAAAAAAAA2tiYGBoGsWjeBSP4lE8KDEAS7kitKQFAAA=
   </data>
  </layer>
- <layer name="Ground 0" width="32" height="32">
+ <layer name="Ground 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3TMQ0AAAgDQSzg3ywG2JvAXdL5p1bl9TJ9feC+9P/1f/cB4JsBL8bCIgAQAAA=
+   H4sIAAAAAAAAA2NgoC4QxIJHzaKPWaNgFKCDwZpWR4JZ1AIASSPeEKQFAAA=
   </data>
  </layer>
- <layer name="Ground Decal 0" width="32" height="32">
+ <layer name="Ground Decal 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3UsQ0AMAgDQZZi/9VoUqYNiOhO+tqdI9ggT5Pb3ft5CeBXft7PA8BrBboUPZUAEAAA
+   H4sIAAAAAAAAA2NgGAUwYArF1DKHErNMseBRMAqGIxjNd/gBAHNsDwKkBQAA
   </data>
  </layer>
- <layer name="Object 0" width="32" height="32">
+ <layer name="Object 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3UsQ0AMAgDQVbJCuw/HDVlREEU3S3wrhzBrdRvzsoKgLnX/nS7788B4G8FZH/lXwAQAAA=
+   H4sIAAAAAAAAA2NgGD7AaIiYpUhFs0fBKKAXGM1fAwMAIV5+uKQFAAA=
   </data>
  </layer>
- <layer name="Wall 0" width="32" height="32">
+ <layer name="Wall 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SsQ0AMAgDQbqMwC7sP1hSsgAixZ3k+htHAPyh3nKhe5a60Pk/ADDtApz92mkAEAAA
+   H4sIAAAAAAAAA2NgGAWjYGgCKyAWp9AMdiqYMQooA6PxiB8AAAGTSdqkBQAA
   </data>
  </layer>
- <layer name="Wall Decal 0" width="32" height="32">
+ <layer name="Wall Decal 0" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SQQ0AAAgDsanCvzRUkJCsNXCfSwD+m5Im3XwOAFxa6WQyjgAQAAA=
+   H4sIAAAAAAAAA2NgGAWjYPgBswHWPwpIA6PxhRsAACUAaZGkBQAA
   </data>
  </layer>
- <layer name="Ground 1" width="32" height="32">
+ <layer name="Ground 1" width="19" height="19">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SMQ0AIBBD0VtBAgpAAYd/Y3TAAjQk/yV/7tIIAL9pqp6KYX+proZKw/407eIO/syfAQDAGxv+QZ+iABAAAA==
+   H4sIAAAAAAAAA2NgGAWjgDpACoi5oJiTQrMsgVgDiDWB2IJCs8ypYMZQBqPxMrQBAFYjOpukBQAA
+  </data>
+ </layer>
+ <layer name="Character" width="19" height="19">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjYBQMZzCfimatp6JZMFBHRbP6qGjWYAEAdIJ4iKQFAAA=
   </data>
  </layer>
 </map>
