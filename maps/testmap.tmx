@@ -15,12 +15,12 @@
  </layer>
  <layer name="Layer 2" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3RMQ6AIBAEQDrEDxj5AFpSafz/w9hLuITOCo7oTrItt1mcm0e2LvBi9n5fpJtHZK0JBj0u5ESOmtEdPJKaHvfg+2pHHmTr8Lb8scXfKtnWalch2y4/vk9ERERE/RUNp14bABAAAA==
+   H4sIAAAAAAAAA2NgGDzAcKAdQAAMdvcNRwALcykg5oJizgFwhzkQawKxBhTT2w3sQKyO5A4LOtsPA5JAbAXE4lC+4gC5Y6QBIyhmQKKpDUBxy0HADaNgFIyCUTAKRsEoGAWjYGgDALjNdNcAEAAA
   </data>
  </layer>
  <layer name="Layer 3" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SMQ0AIAxFwVrBAg7wb4oFGhw0DXfJT9c3NAJ6mGerOoQ0qgM+cX8/nlvRAABAbxsfaCDKABAAAA==
+   H4sIAAAAAAAAA+3OsQ0AIAwDwZQwAoxBQ1r2XwoXrIAs0J/0tR0BvGGclvsIruiqGvenSuN+U8W4DwAAgP9tqgIKBgAQAAA=
   </data>
  </layer>
  <layer name="Layer 4" width="32" height="32">
