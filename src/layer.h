@@ -1,21 +1,26 @@
 
-#if !defined __LAYER_H__
-#define __LAYER_H__
+/*
+ * The layer object
+ */
+
+#if !defined __DH_LAYER_H__
+#define __DH_LAYER_H__
 
 #include <cstdio>
 
 class Layer
 {
 public:
-    Layer(int w, int h, FILE *fp);
+    Layer(char const *name, int w, int h, FILE *fp);
     ~Layer();
 
+    int GetZ();
     unsigned int GetTile(int x, int y);
 
-//private:
-    int width, height;
+private:
+    int width, height, z;
     unsigned int *data;
 };
 
-#endif // __LAYER_H__
+#endif // __DH_LAYER_H__
 

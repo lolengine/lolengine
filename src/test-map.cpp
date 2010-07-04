@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
     Video *video = new Video("Deus Hax", 640, 480);
     Tiler *tiler = new Tiler();
-    Map *map = new Map("maps/testmap-coll.tmx");
+    Map *map = new Map("maps/testmap-grass.tmx");
 
     for (int done = 0; !done; )
     {
@@ -24,9 +24,10 @@ int main(int argc, char **argv)
         /* Test stuff */
         int playerx, playery;
         SDL_GetMouseState(&playerx, &playery);
+        playerx = playerx * (640 - 32) / 640;
+        playery = playery * (480 - 32) / 480;
 
         tiler->AddTile(50, playerx, playery, 1);
-        tiler->AddTile(50, playerx + 64, playery + 32, 3);
 
         tiler->Render();
         video->Refresh(33.33333f);

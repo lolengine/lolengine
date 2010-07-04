@@ -1,4 +1,11 @@
 
+/*
+ * The map object
+ */
+
+#if !defined __DH_MAP_H__
+#define __DH_MAP_H__
+
 #include <cstdio>
 
 #include "layer.h"
@@ -16,4 +23,6 @@ private:
     Layer **layers;
     int nlayers;
 };
+
+#endif // __DH_MAP_H__
 
