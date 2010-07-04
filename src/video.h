@@ -1,4 +1,11 @@
 
+/*
+ * The video driver
+ */
+
+#if !defined __DH_VIDEO_H__
+#define __DH_VIDEO_H__
+
 class VideoData;
 
 class Video
@@ -16,3 +23,6 @@ public:
 private:
     VideoData *data;
 };
+
+#endif // __DH_VIDEO_H__
+

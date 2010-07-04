@@ -27,7 +27,7 @@ Map::Map(char const *path) :
         fscanf(fp, "height=\"%u\" ", &height);
         fgets(tmp, 1024, fp); // Ignore rest of line
         layers = (Layer **)realloc(layers, sizeof(Layer **) * (nlayers + 1));
-        layers[nlayers] = new Layer(width, height, fp);
+        layers[nlayers] = new Layer(name, width, height, fp);
         nlayers++;
     }
 
@@ -44,8 +44,12 @@ Map::~Map()
 void Map::Draw(Tiler *tiler)
 {
     for (int i = 0; i < nlayers; i++)
+    {
+        int z = layers[i]->GetZ();
+
         for (int y = 0; y < 32; y++)
             for (int x = 0; x < 32; x++)
-                tiler->AddTile(layers[i]->GetTile(x, y), x * 32, y * 32, i);
+                tiler->AddTile(layers[i]->GetTile(x, y), x * 32, y * 32, z);
+    }
 }
 

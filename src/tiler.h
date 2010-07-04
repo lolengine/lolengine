@@ -1,11 +1,10 @@
 
-
 /*
  * The tile manager
  */
 
-#if !defined __TILER_H__
-#define __TILER_H__
+#if !defined __DH_TILER_H__
+#define __DH_TILER_H__
 
 class TilerData;
 
@@ -23,5 +22,5 @@ private:
     TilerData *data;
 };
 
-#endif // __TILER_H__
+#endif // __DH_TILER_H__
 

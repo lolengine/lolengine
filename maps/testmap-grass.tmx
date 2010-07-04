@@ -3,27 +3,57 @@
  <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
   <image source="../art/test/groundtest.png"/>
  </tileset>
- <layer name="Layer 0" width="32" height="32">
+ <layer name="Ground 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3QyQ2AMAxEUSuQAsJWQCD0XyITyWnBIPQPT5ZPY08xs/IBSSaZJfueA/MXWWWTKofsgTdU//3yzL43uV/oYMzkPUTl959P72DMFpgPAAAAAH/2ACvSWwAAEAAA
   </data>
  </layer>
  <layer name="Layer 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2SwQqDQAxEtyfZ/kDBW0+uHr1oe+v//5QJ7kAILaWQtSDzYMCsuDOMSYmA178DfAH57g09frk7KsccdE+kfy/K6ZidmF0G7fUhKqJrVXnznZ7nQH+bYRGNVaVqdN56NgX4I4N97kRP0ZD2LiY3I8/ayN/O8PezZrkF+fss3t/vQlTvn/wtdhegqN4B/jf6vBjpu6EKO9Cid4v1J4QQQgg5Ext/7GfGABAAAA==
+   H4sIAAAAAAAAA2NgGAUw4DjQDiAAYO5TpKEdpJhNLXcYUckcWthPjzRhhOYGWsYvPvsHMh6McLAHyv6BDouBtn+kA0YkPApGwSgYBaNgFIyCUTCcAABQE1isABAAAA==
   </data>
  </layer>
- <layer name="Layer 2" width="32" height="32">
+ <layer name="Wall 0" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGDzAcKAdQAAMdvcNRwALcykg5oJizgFwhzkQawKxBhTT2w3sQKyO5A4LOtsPA5JAbAXE4lC+4gC5Y6QBIyhmQKKpCUDxag3EHATcMApGwSgYBaNgFIyCUTAKhjYAAE/faMAAEAAA
+   H4sIAAAAAAAAA2NgGAWjYBQQAiZomF724XMHPewnBtMCsAOxFRCrI9mDzh+ouIDxQW4Rp6P9tPQ3PnPpYT8svmHhyYiEQXLqUAxLA7QOd2T7R8EoGAWjYBSMglEwCoYTAACc6uxXABAAAA==
   </data>
  </layer>
- <layer name="Layer 3" width="32" height="32">
+ <layer name="Ground 1" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3OsQkAIBAEwQ/VDrQDUxMFI/tvygssQXjEHdj4zgx4Qzst7yO4rqikotN+V1UNp/2spgpO+wAAAPjDBmeeUZcAEAAA
+   H4sIAAAAAAAAA+2SwQnAIAwA7bMdoRNEF2jdf7FGUAih35jPHdwnCBfFUgDAc6tnYr+rol5T+Tkz5lE7PmqdyrS69pi1oL6lu856m7HPm9TfcW/b839hZ9/+hWX0ux/GDDLbAAAAAJF8EOMQKwAQAAA=
   </data>
  </layer>
- <layer name="Layer 4" width="32" height="32">
+ <layer name="Object 1" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3QsQ0AIAwDQa/CCLD/cGko6CjtwJ9kpX1FyjHdARfpfS/i59mGO+ATa0/HdTQAAACgtwJ8x6WQABAAAA==
+  </data>
+ </layer>
+ <layer name="Wall 1" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3RsQkAIAxE0XS6gTiBC1jp/nt5tjZ2ich/8OsLxAzATT/yllQLvmGraqgStP+rF/46VQ7aBwAAgI8FOcHtzAAQAAA=
+  </data>
+ </layer>
+ <layer name="Ground 2" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OsQ0AIAwDwbQwAhPABGT/yXCRgg0M0p/0tR0BvG+oXjXD/lZLzcrx4f6Rpn0AAAAA/zpR9K8YABAAAA==
+  </data>
+ </layer>
+ <layer name="Object 2" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OQQkAAAgEQTPZwP6l/NhBDmZg/1sFGfqa7xEAAIBAC7dEfuMAEAAA
+  </data>
+ </layer>
+ <layer name="Wall 2" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3NoREAMAgAMSQrdI869t+ryG6AILl7/REAu92vCaerLof+AADs8ABYXepiABAAAA==
+  </data>
+ </layer>
+ <layer name="Ground 3" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3NMREAIBAEsW9BAg5QAP6VcSr4JpnZeqsAeq0002j6n7TTbfoDAMAPD4e462AAEAAA
+  </data>
+ </layer>
+ <layer name="Object 3" width="32" height="32">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3OMQEAAAwCICutf7ll8PKBBCTQuXUAAACA2gPEOzOTABAAAA==
   </data>
