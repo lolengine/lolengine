@@ -12,7 +12,7 @@ Layer::Layer(char const *name, int w, int h, FILE *fp)
     else if (sscanf(name, "Ground Decal %d", &z) == 1)
         ;
     else if (sscanf(name, "Object %d", &z) == 1)
-        ;
+        z++;
     else if (sscanf(name, "Wall %d", &z) == 1)
         z++;
     else if (sscanf(name, "Wall Decal %d", &z) == 1)
