@@ -106,16 +106,16 @@ void Tiler::Render()
     for (int n = 0; n < data->ntiles; n++)
     {
         int tile = data->tiles[4 * n];
-        float ty = .03125f * (tile / 16);
+        float ty = .0208333333f * (tile / 16);
         float tx = .0625f * (tile % 16);
         uvs[8 * n + 0] = tx;
         uvs[8 * n + 1] = ty;
         uvs[8 * n + 2] = tx + .0625f;
         uvs[8 * n + 3] = ty;
         uvs[8 * n + 4] = tx + .0625f;
-        uvs[8 * n + 5] = ty + .03125f;
+        uvs[8 * n + 5] = ty + .0208333333f;
         uvs[8 * n + 6] = tx;
-        uvs[8 * n + 7] = ty + .03125f;
+        uvs[8 * n + 7] = ty + .0208333333f;
     }
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[1]);
     glBufferData(GL_ARRAY_BUFFER,
