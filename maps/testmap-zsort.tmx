@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="11" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
+  <image source="../art/test/groundtest.png"/>
+ </tileset>
+ <layer name="White" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA3NiYGBwGqbYEkprDQK30BoLEuCP4sGBAb0yfLBwAwAA
+  </data>
+ </layer>
+ <layer name="Ground 0" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgoA2QAmIuIOakkh52ILYCYnESzMOlB2SPBhImxo3k6BkFowAdAAAtR89ZcAMAAA==
+  </data>
+ </layer>
+ <layer name="Ground Decal 0" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAW0AuZArImELYiUwwXYgdgKiNWhWJxIOVxAEAsmRm4UkA8AenOE7HADAAA=
+  </data>
+ </layer>
+ <layer name="Object 0" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjADdQBGIjKB4qYDC7GQArDVEzcAMAAA==
+  </data>
+ </layer>
+ <layer name="Wall 0" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjgPZAEAseCXajAwCeJRkJcAMAAA==
+  </data>
+ </layer>
+ <layer name="Wall Decal 0" width="20" height="11">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjgD7ACAkPBjAQ7gEA9GyF1nADAAA=
+  </data>
+ </layer>
+ <layer name="Ground 1" width="20" height="11" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGJxACoi5qGieJRBrUNE8cyC2oKJ5o2BkAAAl3trCcAMAAA==
+  </data>
+ </layer>
+ <layer name="Character" width="20" height="11" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGLxgPpXNW09l80bBKCAVAACKFEyUcAMAAA==
+  </data>
+ </layer>
+</map>
