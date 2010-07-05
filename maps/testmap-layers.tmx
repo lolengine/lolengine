@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="13" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
-  <image source="../art/test/groundtest.png"/>
+ <tileset firstgid="1" name="Grass Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/grasstest.png"/>
+ </tileset>
+ <tileset firstgid="257" name="Character Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/charactertest.png"/>
+ </tileset>
+ <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/roomtest.png"/>
  </tileset>
  <layer name="White" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA3NiYGBwogNuwoLJER+1Y+jYQQ88XMJq1I7Bk64AEDSL/hQFAAA=
+   H4sIAAAAAAAAA3NiYGBwogM2YsLE5IiP2jF07KAHHi5hNWrH4ElXAMCbRDMUBQAA
   </data>
  </layer>
  <layer name="Ground 0" width="25" height="13">
@@ -40,7 +46,7 @@
  </layer>
  <layer name="Character" width="25" height="13">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAUDBebTwY71dLADBuroYEcfHewYBSMbAAAygkWoFAUAAA==
+   H4sIAAAAAAAAA2NgGAUDBfwZaW9HPB3sgAE9OthlR0f/jIKRCQBFUvcmFAUAAA==
   </data>
  </layer>
 </map>

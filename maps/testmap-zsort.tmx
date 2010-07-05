@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="20" height="11" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
-  <image source="../art/test/groundtest.png"/>
+ <tileset firstgid="1" name="Grass Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/grasstest.png"/>
+ </tileset>
+ <tileset firstgid="257" name="Character Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/charactertest.png"/>
+ </tileset>
+ <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/roomtest.png"/>
  </tileset>
  <layer name="White" width="20" height="11">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA3NiYGBwGqbYEkprDQK30BoLEuCP4sGBAb0yfLBwAwAA
+   H4sIAAAAAAAAA3NiYGBwGgJYA40mBltCaa1B4H5qYEE8fHxyo3jwYABWzDG4cAMAAA==
   </data>
  </layer>
  <layer name="Ground 0" width="20" height="11">
@@ -31,16 +37,6 @@
  <layer name="Wall Decal 0" width="20" height="11">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAWjgD7ACAkPBjAQ7gEA9GyF1nADAAA=
-  </data>
- </layer>
- <layer name="Ground 1" width="20" height="11" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGJxACoi5qGieJRBrUNE8cyC2oKJ5o2BkAAAl3trCcAMAAA==
-  </data>
- </layer>
- <layer name="Character" width="20" height="11" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGLxgPpXNW09l80bBKCAVAACKFEyUcAMAAA==
   </data>
  </layer>
 </map>

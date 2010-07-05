@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="20" height="11" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="Road" tilewidth="32" tileheight="32">
-  <image source="../art/test/groundtest.png"/>
+ <tileset firstgid="1" name="Grass Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/grasstest.png"/>
+ </tileset>
+ <tileset firstgid="257" name="Character Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/charactertest.png"/>
+ </tileset>
+ <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/roomtest.png"/>
  </tileset>
  <layer name="Layer 0" width="20" height="11">
   <data encoding="base64" compression="gzip">
@@ -10,12 +16,12 @@
  </layer>
  <layer name="Props" width="20" height="11">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgoD5oIpKmBUhA40sBMRcQcyKJkeK+AiitCKXZgdgKiMUpdSgeQEn4NSFhWthNqfsoBQlofFLiFxugd/wCAAKxUp5wAwAA
+   H4sIAAAAAAAAA2NgoD4wYiKOpgUQYETlSwExFxBzkuk+Bah5ilA+OxBbAbE4tRyMBVASfiA5GKaF3ZS6j1JASfxiA/SOXwD9xPDxcAMAAA==
   </data>
  </layer>
  <layer name="Layer 1" width="20" height="11">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA73RSQuAIBCGYYXq//+19q7Zcm89R/QKRgsJ5nd5EJzRYYRwH4U1RvIw4zz/8KZNYmywxxwXv9+5JMURK2wxkM+1+2yJ0cM2uneIepfKuDOh3m+BnTjX+sjdvAOWuL7Uf5nXZTbp20PJcAMAAA==
+   H4sIAAAAAAAAA8XRyQqAIBSFYX305rZZuW98gur5QvojkJAEq7P53HgHrhDho+RhhRumOMoXmnokon+NGjOcfp4voX+PJTa4OOYzu8XyquGbs/aKytJksO6bY2v9/SJ3+3a8C5wd8zzZN2R2SHYnLHADAAA=
   </data>
  </layer>
 </map>
