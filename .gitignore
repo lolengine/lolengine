@@ -1,2 +1,4 @@
 *.o
 src/test-map
+art/*.png
+art/test/*.png
