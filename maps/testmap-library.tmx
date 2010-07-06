@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Grass Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/grasstest.png"/>
+ </tileset>
+ <tileset firstgid="257" name="Character Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/charactertest.png"/>
+ </tileset>
+ <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/roomtest.png"/>
+ </tileset>
+ <tileset firstgid="769" name="City Test" tilewidth="32" tileheight="32">
+  <image source="../art/test/citytest.png"/>
+ </tileset>
+ <layer name="Layer 0" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAUwoMKEiQfafmKwEAmYFvaTgkftH7V/uNqPL9/B5KkJSPUfIaBBBzxq/6j9o/YPTvuvMtMe4wPuzLTHo2AUjIJRMAogAACsub38ABAAAA==
+  </data>
+ </layer>
+ <layer name="Layer 1" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAUwwMgEoVmYaIfxAUGgfB4jA4MIE22wOAH7FYHydYzUCUsQaAOa145kpzoR9oPALCA9G0ktufxpQDydCcEn1v5VQHo1klpq8Ym1HwTmo6mlBp8U+9ejqaUGnxT7aQEGu/2jYHAAo4F2wCAAo2EwCkbBKBgFo2AUDF8AAPH0VU8AEAAA
+  </data>
+ </layer>
+ <layer name="Layer 2" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAXYgB4T8TgfDe8F4p1AvAuIdwPxHqgYISCFpMYOyLZnIo6uR8NngfgkEJ8C4tNAfAYqJkXADVpEuJESQMh+QvKUAkL+G2j/D7T9MPlZQHo2klpq8Ym1fxWQXo2kllp8Wof/FiZUmtrmEwJHmFDpUTAKRsEoGAWjYBSMglEwCtABACsipisAEAAA
+  </data>
+ </layer>
+ <layer name="layer3" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2S0QmAMAxEa6oDqPXHEdzSERzBEdzQfLQIJS33UVDkHhw0IddwtM6RL7JKm7NVI2zS5mzVhHyRQTD1UYlUI94aQTAtUYlUI96WdN45UXlV79vejTDqzkk1q8IL+8U/+kv+3fgjpV6X5Ue9NQ5jvtTL86PeGqcxX+rl7496a1zGfKknMb/E/KiXEEIIuQFOOdU2ABAAAA==
+  </data>
+ </layer>
+ <layer name="layer 4" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWjgD5AnYk4dWuZaMMn1n5agaFiP7nh28WIX57W/p/FiF+e1vZvQTLfjIr2YzPLEIvYERzmY9NPKXCkgZmDFRgNsP6hYudIBtjyIz3BSMqPo2AUjIJRMAooBwBKHGayABAAAA==
+  </data>
+ </layer>
+ <layer name="layer 5" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3BAQ0AAADCoPdPbQ8HFAAAAPBuEQAcxwAQAAA=
+  </data>
+ </layer>
+ <layer name="layer 6" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3BAQ0AAADCoPdPbQ8HFAAAAPBuEQAcxwAQAAA=
+  </data>
+ </layer>
+</map>
