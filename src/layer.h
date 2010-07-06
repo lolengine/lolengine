@@ -11,14 +11,14 @@
 class Layer
 {
 public:
-    Layer(char const *name, int w, int h, FILE *fp);
+    Layer(int w, int h, int z, char const *base64);
     ~Layer();
 
     int GetZ();
     unsigned int GetTile(int x, int y);
 
 private:
-    int width, height, z;
+    int width, height, level;
     unsigned int *data;
 };
 

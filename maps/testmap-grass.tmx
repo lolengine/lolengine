@@ -9,62 +9,62 @@
  <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
   <image source="../art/test/roomtest.png"/>
  </tileset>
- <layer name="Ground 0" width="20" height="15">
+ <layer name="H0A (ground)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAAxNkYGAQHMWjeBSP4iGAAXa2kMCwBAAA
   </data>
  </layer>
- <layer name="Ground Decal 0" width="20" height="15">
+ <layer name="H0B (flowers)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgoA1gAmJmIGYBYlYon5UC84SAWBiIRYBYCYjFgFiUAjOVoG5TgZoB4qsCsRoV3AijmaDuJBeA3KQMdSOMVqXAvFEwCoY6AAA8w2LgsAQAAA==
   </data>
  </layer>
- <layer name="Object 0" width="20" height="15">
+ <layer name="V0A (rocks)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGDrAcYDsU6SR+bjMNaKyPfjMIydMjdDMpDR8jBgwzaQUGOFgU8s8aruVVn4frIARCZMCAAtPgriwBAAA
   </data>
  </layer>
- <layer name="Wall 0" width="20" height="15">
+ <layer name="V0B (walls)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAWjgIHBBA2Tqx+fuZS4Bx8mBrADsRUQqyPpQ+dTy+8wPshscQrMI8Vd+NSRYx4svGDuZ0TCIDl1KIaFIan+RDaPFAAAATWdT7AEAAA=
   </data>
  </layer>
- <layer name="Ground 1" width="20" height="15">
+ <layer name="H1A (mid ground)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAUjEUgBMScVzbMEYg0g5oJiDSxquEiw0xyINaFYA4o10cwCiWmR6VYtND7MfAsqmUeOu9DdgxyWlJiHHJYwTKo/GZEwNQC5ZgEAj7AOJ7AEAAA=
   </data>
  </layer>
- <layer name="Object 1" width="20" height="15">
+ <layer name="V1A (mid objects)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgoB0wpKHZg8G+gQAjwY+kAMWBdgCNgBEUMyDR1DBzqAMAjCH/frAEAAA=
   </data>
  </layer>
- <layer name="Wall 1" width="20" height="15">
+ <layer name="V1B (mid walls)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAWjgIHBBA1TCtiBWJ3KZoKAJBBbAbE4lcwbKECLcLEGYg4qmTdYAQCub7nWsAQAAA==
   </data>
  </layer>
- <layer name="Ground 2" width="20" height="15">
+ <layer name="H2A (upper ground)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAVDEUgBMRcUc1LBPHMg1gRiDSimhpnI5lpQybxRMLIBANElvy+wBAAA
   </data>
  </layer>
- <layer name="Object 2" width="20" height="15">
+ <layer name="V2A (upper objects)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAVDFRhBseNAO2QUjAI6AQDJ5AfJsAQAAA==
   </data>
  </layer>
- <layer name="Wall 2" width="20" height="15">
+ <layer name="V2B (upper walls)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAWjYBQQAiZImBpAEoitgZiDSuaNFAAAEtPDprAEAAA=
   </data>
  </layer>
- <layer name="Ground 3" width="20" height="15">
+ <layer name="H3A (high ground)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAWjYPgBKSDmAmJOKplnDsSaQGxBJfNGAXkAACtdiWSwBAAA
   </data>
  </layer>
- <layer name="Object 3" width="20" height="15">
+ <layer name="V3A (high objects)" width="20" height="15">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA2NgGAX0BoYD7YBRMAqGKAAAeZc2/bAEAAA=
   </data>
