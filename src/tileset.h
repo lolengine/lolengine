@@ -6,20 +6,20 @@
 #if !defined __DH_TILER_H__
 #define __DH_TILER_H__
 
-class TilerData;
+class TilesetData;
 
-class Tiler
+class Tileset
 {
 public:
-    Tiler();
-    ~Tiler();
+    Tileset();
+    ~Tileset();
 
     void AddTile(int n, int x, int y, int z);
 
     void Render();
 
 private:
-    TilerData *data;
+    TilesetData *data;
 };
 
 #endif // __DH_TILER_H__

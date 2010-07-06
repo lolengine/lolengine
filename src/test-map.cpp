@@ -6,20 +6,20 @@
 #include <math.h>
 
 #include "video.h"
-#include "tiler.h"
+#include "tileset.h"
 #include "map.h"
 
 int main(int argc, char **argv)
 {
     Video *video = new Video("Deus Hax", 640, 480);
-    Tiler *tiler = new Tiler();
+    Tileset *tileset = new Tileset();
     Map *map = new Map("maps/testmap-grass.tmx");
 
     for (int done = 0; !done; )
     {
         video->Clear();
 
-        map->Draw(tiler);
+        map->Draw(tileset);
 
         /* Test stuff */
         int playerx, playery;
@@ -27,9 +27,9 @@ int main(int argc, char **argv)
         playerx = playerx * (640 - 32) / 640;
         playery = playery * (480 - 32) / 480;
 
-        tiler->AddTile(50, playerx, playery, 1);
+        tileset->AddTile(50, playerx, playery, 1);
 
-        tiler->Render();
+        tileset->Render();
         video->Refresh(33.33333f);
 
         /* This could go in a separate function */
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     }
 
     delete map;
-    delete tiler;
+    delete tileset;
     delete video;
 
     return EXIT_SUCCESS;

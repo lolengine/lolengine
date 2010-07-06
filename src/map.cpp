@@ -1,6 +1,9 @@
 
 #include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include <malloc.h>
+#include <ctype.h>
 
 #include "map.h"
 #include "layer.h"
@@ -10,7 +13,9 @@ Map::Map(char const *path) :
     nlayers(0)
 {
     char tmp[BUFSIZ];
-    int firstgid = 0, width = 0, height = 0, level = 0, data = 0;
+    uint32_t *data = NULL;
+    int width = 0, height = 0, level = 0, orientation = 0;
+    int firstgid = 0, ntiles = 0;
 
     FILE *fp = fopen(path, "r");
 
@@ -27,63 +32,51 @@ Map::Map(char const *path) :
 
         if (data)
         {
-            if (--data == 0)
+            /* We are in the process of reading layer data. Only stop
+             * when we have read the expected number of tiles. */
+            char const *parser = tmp;
+            while (ntiles < width * height)
             {
-                layers[nlayers] = new Layer(width, height, level, tmp);
+                data[ntiles++] = atoi(parser);
+                while (isdigit(*parser))
+                    parser++;
+                if (*parser == ',')
+                    parser++;
+                if (!isdigit(*parser))
+                    break;
+            }
+
+            if (ntiles == width * height)
+            {
+                layers[nlayers] = new Layer(width, height, level, data);
                 nlayers++;
+                data = NULL;
             }
         }
         else if (sscanf(tmp, " <tileset firstgid=\"%i\"", &i) == 1)
         {
+            /* This is a tileset description. Remember its firstgid value. */
             firstgid = i;
-            fprintf(stderr, "found tileset, firstgid %i\n", firstgid);
         }
         else if (sscanf(tmp, " <image source=\"%[^\"]\"", str) == 1)
         {
-            fprintf(stderr, "image %s\n", str);
+            /* This is a tileset image file. Associate it with firstgid. */
         }
-        else if (sscanf(tmp, " <layer name=\"%c%i%c%*[^\"]\" width=\"%i\" height=\"%i\"",
-                        &a, &i, &b, &j, &k) == 5)
+        else if (sscanf(tmp, " <layer name=\"%c%i%c%*[^\"]\" "
+                        "width=\"%i\" height=\"%i\"", &a, &i, &b, &j, &k) == 5)
         {
-            fprintf(stderr, "%s layer, level %i, sublevel %c, %ix%i\n",
-                    a == 'H' ? "horizontal" : "vertical", i, b, j, k);
-            layers = (Layer **)realloc(layers, sizeof(Layer **) * (nlayers + 1));
+            /* This is a layer description. Prepare to read the data. */
+            layers = (Layer **)realloc(layers,
+                                       sizeof(Layer **) * (nlayers + 1));
+            orientation = toupper(a) == 'V' ? 1 : 0;
             width = j;
             height = k;
-            data = 2;
-        }
-        else
-        {
-            fprintf(stderr, ".");
+            ntiles = 0;
+            data = (uint32_t *)malloc(width * height * sizeof(uint32_t));
         }
     }
 
     fclose(fp);
-
-/*
-    char tmp[1024];
-
-    sprintf(tmp, "grep '\\(^   [^< ]\\|layer name\\)' %s | while read i; do echo \"$i\"; read i; echo -n \"$i\" | perl -MMIME::Base64 -ne 'print decode_base64($_)' | gunzip; done", path);
-
-    FILE *fp = popen(tmp, "r");
-
-    while (fp && !feof(fp))
-    {
-        int width, height;
-
-        fscanf(fp, "<layer name=\"%[^\"]\" ", name);
-        if (feof(fp))
-            break;
-        fscanf(fp, "width=\"%u\" ", &width);
-        fscanf(fp, "height=\"%u\" ", &height);
-        fgets(tmp, 1024, fp); // Ignore rest of line
-        layers = (Layer **)realloc(layers, sizeof(Layer **) * (nlayers + 1));
-        layers[nlayers] = new Layer(name, width, height, fp);
-        nlayers++;
-    }
-
-    pclose(fp);
-*/
 }
 
 Map::~Map()
@@ -93,7 +86,7 @@ Map::~Map()
     free(layers);
 }
 
-void Map::Draw(Tiler *tiler)
+void Map::Draw(Tileset *tileset)
 {
     for (int i = 0; i < nlayers; i++)
     {
@@ -101,7 +94,7 @@ void Map::Draw(Tiler *tiler)
 
         for (int y = 0; y < 32; y++)
             for (int x = 0; x < 32; x++)
-                tiler->AddTile(layers[i]->GetTile(x, y), x * 32, y * 32, z);
+                tileset->AddTile(layers[i]->GetTile(x, y), x * 32, y * 32, z);
     }
 }
 

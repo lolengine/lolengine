@@ -1,12 +1,12 @@
 
 #include "layer.h"
 
-Layer::Layer(int w, int h, int z, char const *base64)
+Layer::Layer(int w, int h, int in_z, uint32_t *in_data)
 {
     width = w;
     height = h;
-    level = z;
-    data = new unsigned int[w * h];
+    z = in_z;
+    data = in_data;
 
 #if 0
     fread(data, sizeof(unsigned int), width * height, fp);
@@ -26,7 +26,7 @@ Layer::~Layer()
 
 int Layer::GetZ()
 {
-    return level;
+    return z;
 }
 
 unsigned int Layer::GetTile(int x, int y)
