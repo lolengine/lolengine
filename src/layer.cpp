@@ -1,25 +1,14 @@
 
 #include "layer.h"
 
-Layer::Layer(char const *name, int w, int h, FILE *fp)
+Layer::Layer(int w, int h, int z, char const *base64)
 {
     width = w;
     height = h;
+    level = z;
     data = new unsigned int[w * h];
 
-    if (sscanf(name, "Ground %d", &z) == 1)
-        ;
-    else if (sscanf(name, "Ground Decal %d", &z) == 1)
-        ;
-    else if (sscanf(name, "Object %d", &z) == 1)
-        z++;
-    else if (sscanf(name, "Wall %d", &z) == 1)
-        z++;
-    else if (sscanf(name, "Wall Decal %d", &z) == 1)
-        z++;
-    else
-        z = -1;
-
+#if 0
     fread(data, sizeof(unsigned int), width * height, fp);
     for (int n = 0; n < width * height; n++)
     {
@@ -27,6 +16,7 @@ Layer::Layer(char const *name, int w, int h, FILE *fp)
         // XXX: endianness swapping might be necessary here
         data[n] = i ? i - 1 : 0;
     }
+#endif
 }
 
 Layer::~Layer()
@@ -36,7 +26,7 @@ Layer::~Layer()
 
 int Layer::GetZ()
 {
-    return z;
+    return level;
 }
 
 unsigned int Layer::GetTile(int x, int y)
