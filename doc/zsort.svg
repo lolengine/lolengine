@@ -22,6 +22,45 @@
   <defs
      id="defs4">
     <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mstart"
+       style="overflow:visible">
+      <path
+         id="path3706"
+         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mend"
+       style="overflow:visible;">
+      <path
+         id="path3709"
+         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) rotate(180) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;">
+      <path
+         id="path3691"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
        inkscape:stockid="DotM"
        orient="auto"
        refY="0.0"
@@ -82,16 +121,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="312.33277"
-     inkscape:cy="296.7313"
+     inkscape:zoom="2.8"
+     inkscape:cx="226.26134"
+     inkscape:cy="474.94559"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1221"
      inkscape:window-height="901"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="91"
+     inkscape:window-y="48"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -168,8 +207,8 @@
        id="path4258" />
     <path
        id="path4444"
-       d="M 181.63684,208.68905 288.86261,101.20393"
-       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1.99999999;stroke-dashoffset:0;marker-end:none" />
+       d="M 181.63684,208.68904 359.93404,29.962182"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:0.99999999, 1.99999997;stroke-dashoffset:0;marker-end:none" />
     <path
        id="path4634"
        d="m 77.626433,199.84645 0,-156.233348"
@@ -184,7 +223,7 @@
          id="tspan4640"
          sodipodi:role="line"
          x="184.78867"
-         y="-0.89694405">Camera</tspan><tspan
+         y="-0.89694405">camera</tspan><tspan
          sodipodi:role="line"
          x="184.78867"
          y="19.103056"
@@ -192,7 +231,7 @@
          sodipodi:role="line"
          x="184.78867"
          y="39.103058"
-         id="tspan4658"> (45⁰)</tspan></text>
+         id="tspan4658">(45⁰)</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4646"
@@ -233,13 +272,13 @@
     <text
        sodipodi:linespacing="125%"
        id="text4676"
-       y="78.603058"
-       x="323.86014"
+       y="126.81734"
+       x="288.14584"
        style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
        xml:space="preserve"><tspan
          id="tspan4678"
-         y="78.603058"
-         x="323.86014"
+         y="126.81734"
+         x="288.14584"
          sodipodi:role="line">1</tspan></text>
     <text
        sodipodi:linespacing="125%"
@@ -432,5 +471,33 @@
        id="path3727"
        d="m 503.77271,532.93939 20.20293,-47.47715"
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#DotM)" />
+    <path
+       id="path2883"
+       d="M 358.69843,90.689053 315.33717,47.22276"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 2;stroke-dashoffset:0;marker-end:none" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.00000012;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.00000003, 2.00000003;stroke-dashoffset:0;marker-end:none"
+       d="M 334.69845,114.68905 291.69348,71.579902"
+       id="path2885" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow2Mstart);marker-end:url(#Arrow2Mend)"
+       d="M 318.13865,50.908544 295.50003,73.547559"
+       id="path2887" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4523"
+       y="235.53616"
+       x="172.46225"
+       style="font-size:11.21726513px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif Bold"
+       xml:space="preserve"
+       transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)"><tspan
+         id="tspan4525"
+         y="235.53616"
+         x="172.46225"
+         sodipodi:role="line">tile size</tspan><tspan
+         y="249.55774"
+         x="172.46225"
+         sodipodi:role="line"
+         id="tspan4527">(screen)</tspan></text>
   </g>
 </svg>
