@@ -54,7 +54,7 @@ Video::Video(char const *title, int width, int height)
 
     SDL_WM_SetCaption(title, NULL);
     SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
 
     /* Initialise OpenGL */
     glViewport(0, 0, data->video->w, data->video->h);

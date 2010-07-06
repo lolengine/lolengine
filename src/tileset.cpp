@@ -16,15 +16,15 @@
 
 #include <malloc.h>
 
-#include "tiler.h"
+#include "tileset.h"
 
 /*
- * Tiler implementation class
+ * Tileset implementation class
  */
 
-class TilerData
+class TilesetData
 {
-    friend class Tiler;
+    friend class Tileset;
 
 private:
     static int Compare(void const *p1, void const *p2)
@@ -43,12 +43,12 @@ private:
 };
 
 /*
- * Public Tiler class
+ * Public Tileset class
  */
 
-Tiler::Tiler()
+Tileset::Tileset()
 {
-    data = new TilerData();
+    data = new TilesetData();
     data->tiles = NULL;
     data->ntiles = 0;
 
@@ -74,13 +74,13 @@ Tiler::Tiler()
     glGenBuffers(3, data->buflist);
 }
 
-Tiler::~Tiler()
+Tileset::~Tileset()
 {
     free(data->tiles);
     delete data;
 }
 
-void Tiler::AddTile(int n, int x, int y, int z)
+void Tileset::AddTile(int n, int x, int y, int z)
 {
     if ((data->ntiles % 1024) == 0)
     {
@@ -96,10 +96,10 @@ void Tiler::AddTile(int n, int x, int y, int z)
     data->ntiles++;
 }
 
-void Tiler::Render()
+void Tileset::Render()
 {
     /* Sort tiles */
-    qsort(data->tiles, data->ntiles, 4 * sizeof(int), TilerData::Compare);
+    qsort(data->tiles, data->ntiles, 4 * sizeof(int), TilesetData::Compare);
 
     /* Texture coord buffer */
     float uvs[8 * data->ntiles];

@@ -9,7 +9,7 @@
 #include <cstdio>
 
 #include "layer.h"
-#include "tiler.h"
+#include "tileset.h"
 
 class Map
 {
@@ -17,7 +17,7 @@ public:
     Map(char const *path);
     ~Map();
 
-    void Draw(Tiler *tiler);
+    void Draw(Tileset *tileset);
 
 private:
     Layer **layers;
