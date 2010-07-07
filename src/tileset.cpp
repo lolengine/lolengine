@@ -19,12 +19,12 @@
 #include "tileset.h"
 
 /*
- * Tileset implementation class
+ * TileSet implementation class
  */
 
-class TilesetData
+class TileSetData
 {
-    friend class Tileset;
+    friend class TileSet;
 
 private:
     static int Compare(void const *p1, void const *p2)
@@ -35,6 +35,8 @@ private:
         return n1[2] + 32 * n1[3] - (n2[2] + 32 * n2[3]);
     }
 
+    char *name;
+    int ref;
     int *tiles;
     int ntiles;
 
@@ -43,17 +45,23 @@ private:
 };
 
 /*
- * Public Tileset class
+ * Public TileSet class
  */
 
-Tileset::Tileset()
+TileSet::TileSet(char const *path)
 {
-    data = new TilesetData();
+    SDL_Surface *img = NULL;
+
+    data = new TileSetData();
+    data->name = strdup(path);
+    data->ref = 0;
     data->tiles = NULL;
     data->ntiles = 0;
 
     /* One tile texture */
-    SDL_Surface *img = IMG_Load("art/test/grasstest.png");
+    for (char const *name = path; *name; name++)
+        if ((img = IMG_Load(name)))
+            break;
 
     if (!img)
     {
@@ -61,7 +69,7 @@ Tileset::Tileset()
         exit(1);
     }
 
-    glGenTextures(1, &data->texture[0]);
+    glGenTextures(1, data->texture);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, img->w, img->h, 0,
@@ -74,13 +82,32 @@ Tileset::Tileset()
     glGenBuffers(3, data->buflist);
 }
 
-Tileset::~Tileset()
+TileSet::~TileSet()
 {
+    glDeleteTextures(1, data->texture);
+    glDeleteBuffers(3, data->buflist);
+
     free(data->tiles);
+    free(data->name);
     delete data;
 }
 
-void Tileset::AddTile(int n, int x, int y, int z)
+void TileSet::Ref()
+{
+    data->ref++;
+}
+
+int TileSet::Unref()
+{
+    return --data->ref;
+}
+
+char const *TileSet::GetName()
+{
+    return data->name;
+}
+
+void TileSet::AddTile(int n, int x, int y, int z)
 {
     if ((data->ntiles % 1024) == 0)
     {
@@ -96,10 +123,10 @@ void Tileset::AddTile(int n, int x, int y, int z)
     data->ntiles++;
 }
 
-void Tileset::Render()
+void TileSet::Render()
 {
     /* Sort tiles */
-    qsort(data->tiles, data->ntiles, 4 * sizeof(int), TilesetData::Compare);
+    qsort(data->tiles, data->ntiles, 4 * sizeof(int), TileSetData::Compare);
 
     /* Texture coord buffer */
     float uvs[8 * data->ntiles];

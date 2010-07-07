@@ -3,24 +3,29 @@
  * The tile manager
  */
 
-#if !defined __DH_TILER_H__
-#define __DH_TILER_H__
+#if !defined __DH_TILESET_H__
+#define __DH_TILESET_H__
 
-class TilesetData;
+class TileSetData;
 
-class Tileset
+class TileSet
 {
 public:
-    Tileset();
-    ~Tileset();
+    TileSet(char const *path);
+    ~TileSet();
+
+    void Ref();
+    int Unref();
+
+    char const *GetName();
 
     void AddTile(int n, int x, int y, int z);
 
     void Render();
 
 private:
-    TilesetData *data;
+    TileSetData *data;
 };
 
-#endif // __DH_TILER_H__
+#endif // __DH_TILESET_H__
 

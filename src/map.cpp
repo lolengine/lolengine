@@ -7,15 +7,40 @@
 
 #include "map.h"
 #include "layer.h"
+#include "tiler.h"
 
-Map::Map(char const *path) :
-    layers(0),
-    nlayers(0)
+#define MAX_TILERS 128
+
+/*
+ * Map implementation class
+ */
+
+class MapData
 {
+    friend class Map;
+
+private:
+    int tilers[MAX_TILERS];
+    int ntilers;
+    Layer **layers;
+    int nlayers;
+};
+
+/*
+ * Public Map class
+ */
+
+Map::Map(char const *path)
+{
+    data = new MapData();
+    data->ntilers = 0;
+    data->layers = NULL;
+    data->nlayers = 0;
+
     char tmp[BUFSIZ];
-    uint32_t *data = NULL;
-    int width = 0, height = 0, level = 0, orientation = 0;
-    int firstgid = 0, ntiles = 0;
+    int gids[MAX_TILERS];
+    uint32_t *tiles = NULL;
+    int width = 0, height = 0, level = 0, orientation = 0, ntiles = 0;
 
     FILE *fp = fopen(path, "r");
 
@@ -28,16 +53,34 @@ Map::Map(char const *path) :
         int i, j, k;
         char a, b;
 
+        /* Read a line, then decide what to do with it. */
         fgets(tmp, BUFSIZ, fp);
 
-        if (data)
+        if (tiles)
         {
             /* We are in the process of reading layer data. Only stop
              * when we have read the expected number of tiles. */
             char const *parser = tmp;
             while (ntiles < width * height)
             {
-                data[ntiles++] = atoi(parser);
+                uint32_t code = 0;
+                int id = atoi(parser);
+                if (id)
+                {
+                    for (int n = 0; n < data->ntilers; n++)
+                    {
+                        if (id < gids[n])
+                            continue;
+                        if (n == data->ntilers - 1
+                             || id < gids[n + 1])
+                        {
+                            code = (data->tilers[n] << 16) | (id - 1);
+                            break;
+                        }
+                    }
+                }
+
+                tiles[ntiles++] = code;
                 while (isdigit(*parser))
                     parser++;
                 if (*parser == ',')
@@ -48,31 +91,33 @@ Map::Map(char const *path) :
 
             if (ntiles == width * height)
             {
-                layers[nlayers] = new Layer(width, height, level, data);
-                nlayers++;
-                data = NULL;
+                data->layers[data->nlayers] = new Layer(width, height, level, tiles);
+                data->nlayers++;
+                tiles = NULL;
             }
         }
         else if (sscanf(tmp, " <tileset firstgid=\"%i\"", &i) == 1)
         {
-            /* This is a tileset description. Remember its firstgid value. */
-            firstgid = i;
+            /* This is a tileset description. Remember its first gid value. */
+            gids[data->ntilers] = i;
         }
         else if (sscanf(tmp, " <image source=\"%[^\"]\"", str) == 1)
         {
             /* This is a tileset image file. Associate it with firstgid. */
+            data->tilers[data->ntilers] = Tiler::Register(str);
+            data->ntilers++;
         }
         else if (sscanf(tmp, " <layer name=\"%c%i%c%*[^\"]\" "
                         "width=\"%i\" height=\"%i\"", &a, &i, &b, &j, &k) == 5)
         {
             /* This is a layer description. Prepare to read the data. */
-            layers = (Layer **)realloc(layers,
-                                       sizeof(Layer **) * (nlayers + 1));
+            data->layers = (Layer **)realloc(data->layers,
+                                       sizeof(Layer **) * (data->nlayers + 1));
             orientation = toupper(a) == 'V' ? 1 : 0;
             width = j;
             height = k;
+            tiles = (uint32_t *)malloc(width * height * sizeof(uint32_t));
             ntiles = 0;
-            data = (uint32_t *)malloc(width * height * sizeof(uint32_t));
         }
     }
 
@@ -81,20 +126,17 @@ Map::Map(char const *path) :
 
 Map::~Map()
 {
-    for (int i = 0; i < nlayers; i++)
-        delete layers[i];
-    free(layers);
+    for (int i = 0; i < data->ntilers; i++)
+        Tiler::Deregister(data->tilers[i]);
+    for (int i = 0; i < data->nlayers; i++)
+        delete data->layers[i];
+    free(data->layers);
+    delete data;
 }
 
-void Map::Draw(Tileset *tileset)
+void Map::Draw()
 {
-    for (int i = 0; i < nlayers; i++)
-    {
-        int z = layers[i]->GetZ();
-
-        for (int y = 0; y < 32; y++)
-            for (int x = 0; x < 32; x++)
-                tileset->AddTile(layers[i]->GetTile(x, y), x * 32, y * 32, z);
-    }
+    for (int i = 0; i < data->nlayers; i++)
+        data->layers[i]->Draw();
 }
 
