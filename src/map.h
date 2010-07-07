@@ -9,7 +9,8 @@
 #include <cstdio>
 
 #include "layer.h"
-#include "tileset.h"
+
+class MapData;
 
 class Map
 {
@@ -17,11 +18,10 @@ public:
     Map(char const *path);
     ~Map();
 
-    void Draw(Tileset *tileset);
+    void Draw();
 
 private:
-    Layer **layers;
-    int nlayers;
+    MapData *data;
 };
 
 #endif // __DH_MAP_H__

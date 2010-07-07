@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+
 #include "layer.h"
 
 Layer::Layer(int w, int h, int in_z, uint32_t *in_data)
@@ -21,7 +23,14 @@ Layer::Layer(int w, int h, int in_z, uint32_t *in_data)
 
 Layer::~Layer()
 {
-    delete data;
+    free(data);
+}
+
+void Layer::Draw()
+{
+    for (int y = 0; y < 32; y++)
+        for (int x = 0; x < 32; x++)
+            ;//tileset->AddTile(GetTile(x, y), x * 32, y * 32, z);
 }
 
 int Layer::GetZ()

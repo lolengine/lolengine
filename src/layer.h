@@ -18,6 +18,8 @@ public:
     int GetZ();
     unsigned int GetTile(int x, int y);
 
+    void Draw();
+
 private:
     int width, height, z;
     uint32_t *data;
