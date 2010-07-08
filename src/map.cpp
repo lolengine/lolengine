@@ -56,7 +56,7 @@ Map::Map(char const *path)
         /* Read a line, then decide what to do with it. */
         fgets(tmp, BUFSIZ, fp);
 
-        if (tiles)
+        if (tiles && !strchr(tmp, '<'))
         {
             /* We are in the process of reading layer data. Only stop
              * when we have read the expected number of tiles. */
@@ -94,6 +94,7 @@ Map::Map(char const *path)
                 data->layers[data->nlayers] = new Layer(width, height, level, tiles);
                 data->nlayers++;
                 tiles = NULL;
+                //fprintf(stderr, "new layer %ix%i\n", width, height);
             }
         }
         else if (sscanf(tmp, " <tileset firstgid=\"%i\"", &i) == 1)
@@ -106,6 +107,7 @@ Map::Map(char const *path)
             /* This is a tileset image file. Associate it with firstgid. */
             data->tilers[data->ntilers] = Tiler::Register(str);
             data->ntilers++;
+            //fprintf(stderr, "new tiler %s\n", str);
         }
         else if (sscanf(tmp, " <layer name=\"%c%i%c%*[^\"]\" "
                         "width=\"%i\" height=\"%i\"", &a, &i, &b, &j, &k) == 5)
@@ -134,9 +136,9 @@ Map::~Map()
     delete data;
 }
 
-void Map::Draw()
+void Map::Render(Scene *scene, int x, int y, int z)
 {
     for (int i = 0; i < data->nlayers; i++)
-        data->layers[i]->Draw();
+        data->layers[i]->Render(scene, x, y, z);
 }
 
