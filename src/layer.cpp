@@ -3,11 +3,11 @@
 
 #include "layer.h"
 
-Layer::Layer(int w, int h, int in_z, uint32_t *in_data)
+Layer::Layer(int w, int h, int z, uint32_t *in_data)
 {
     width = w;
     height = h;
-    z = in_z;
+    altitude = z;
     data = in_data;
 
 #if 0
@@ -26,20 +26,17 @@ Layer::~Layer()
     free(data);
 }
 
-void Layer::Draw()
+void Layer::Render(Scene *scene, int x, int y, int z)
 {
-    for (int y = 0; y < 32; y++)
-        for (int x = 0; x < 32; x++)
-            ;//tileset->AddTile(GetTile(x, y), x * 32, y * 32, z);
+    for (int j = 0; j < height; j++)
+        for (int i = 0; i < width; i++)
+            if (data[j * width + i])
+                scene->AddTile(data[j * width + i],
+                               i * 32 - x, j * 32 - y, altitude + z);
 }
 
 int Layer::GetZ()
 {
-    return z;
-}
-
-unsigned int Layer::GetTile(int x, int y)
-{
-    return data[y * width + x];
+    return altitude;
 }
 

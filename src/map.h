@@ -6,9 +6,7 @@
 #if !defined __DH_MAP_H__
 #define __DH_MAP_H__
 
-#include <cstdio>
-
-#include "layer.h"
+#include "scene.h"
 
 class MapData;
 
@@ -18,7 +16,7 @@ public:
     Map(char const *path);
     ~Map();
 
-    void Draw();
+    void Render(Scene *scene, int x, int y, int z);
 
 private:
     MapData *data;

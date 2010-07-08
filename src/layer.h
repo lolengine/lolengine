@@ -6,8 +6,9 @@
 #if !defined __DH_LAYER_H__
 #define __DH_LAYER_H__
 
-#include <cstdio>
 #include <stdint.h>
+
+#include "scene.h"
 
 class Layer
 {
@@ -16,12 +17,11 @@ public:
     ~Layer();
 
     int GetZ();
-    unsigned int GetTile(int x, int y);
 
-    void Draw();
+    void Render(Scene *scene, int x, int y, int z);
 
 private:
-    int width, height, z;
+    int width, height, altitude;
     uint32_t *data;
 };
 

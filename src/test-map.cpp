@@ -6,29 +6,23 @@
 #include <math.h>
 
 #include "video.h"
-#include "tiler.h"
-#include "map.h"
+#include "game.h"
 
 int main(int argc, char **argv)
 {
     Video *video = new Video("Deus Hax", 640, 480);
-    Map *map = new Map("maps/testmap-grass.tmx");
+    Game *game = new Game("maps/testmap-library.tmx");
 
     for (int done = 0; !done; )
     {
         video->Clear();
 
-        //map->Draw(tiler);
-
         /* Test stuff */
-        int playerx, playery;
-        SDL_GetMouseState(&playerx, &playery);
-        playerx = playerx * (640 - 32) / 640;
-        playery = playery * (480 - 32) / 480;
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+        game->SetMouse(mx * (640 - 32) / 640, my * (480 - 32) / 480);
 
-        //tiler->AddTile(50, playerx, playery, 1);
-
-        //tiler->Render();
+        game->Render();
         video->Refresh(33.33333f);
 
         /* This could go in a separate function */
@@ -47,7 +41,7 @@ int main(int argc, char **argv)
         }
     }
 
-    delete map;
+    delete game;
     delete video;
 
     return EXIT_SUCCESS;

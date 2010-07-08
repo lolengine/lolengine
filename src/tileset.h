@@ -6,6 +6,8 @@
 #if !defined __DH_TILESET_H__
 #define __DH_TILESET_H__
 
+#include <stdint.h>
+
 class TileSetData;
 
 class TileSet
@@ -19,9 +21,7 @@ public:
 
     char const *GetName();
 
-    void AddTile(int n, int x, int y, int z);
-
-    void Render();
+    void BlitTile(uint32_t id, int x, int y);
 
 private:
     TileSetData *data;

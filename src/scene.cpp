@@ -1,5 +1,14 @@
 
+#include <stdlib.h>
+
 #include "scene.h"
+#include "tiler.h"
+
+struct Tile
+{
+    uint32_t prio, code;
+    int x, y;
+};
 
 /*
  * Scene implementation class
@@ -10,7 +19,16 @@ class SceneData
     friend class Scene;
 
 private:
-    int dummy;
+    static int Compare(void const *p1, void const *p2)
+    {
+        Tile const *t1 = (Tile const *)p1;
+        Tile const *t2 = (Tile const *)p2;
+
+        return t1->prio - t2->prio;
+    }
+
+    Tile *tiles;
+    int ntiles;
 };
 
 /*
@@ -20,10 +38,36 @@ private:
 Scene::Scene()
 {
     data = new SceneData();
+    data->tiles = 0;
+    data->ntiles = 0;
 }
 
 Scene::~Scene()
 {
     delete data;
+}
+
+void Scene::AddTile(uint32_t code, int x, int y, int z)
+{
+    if ((data->ntiles % 1024) == 0)
+        data->tiles = (Tile *)realloc(data->tiles,
+                                      (data->ntiles + 1024) * sizeof(Tile));
+    data->tiles[data->ntiles].prio = 0;
+    data->tiles[data->ntiles].code = code;
+    data->tiles[data->ntiles].x = x;
+    data->tiles[data->ntiles].y = y;
+    data->ntiles++;
+}
+
+void Scene::Render() // XXX: rename to Blit()
+{
+    qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
+
+    for (int i = 0; i < data->ntiles; i++)
+        Tiler::Render(data->tiles[i].code, data->tiles[i].x, data->tiles[i].y);
+
+    free(data->tiles);
+    data->tiles = 0;
+    data->ntiles = 0;
 }
 
