@@ -9,7 +9,7 @@
  <tileset firstgid="513" name="Room Test" tilewidth="32" tileheight="32">
   <image source="../art/test/roomtest.png"/>
  </tileset>
- <layer name="White" width="20" height="11">
+ <layer name="h0a (White)" width="20" height="11">
   <data encoding="csv">
 66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
 66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
@@ -24,7 +24,7 @@
 66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66
 </data>
  </layer>
- <layer name="Ground 0" width="20" height="11">
+ <layer name="h0b (Ground 0)" width="20" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,26,10,9,0,0,0,0,0,0,0,0,0,0,26,10,9,0,0,
@@ -39,7 +39,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Ground Decal 0" width="20" height="11">
+ <layer name="h0c (Ground Decal 0)" width="20" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -54,7 +54,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Object 0" width="20" height="11">
+ <layer name="h0d (Object 0)" width="20" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -69,7 +69,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Wall 0" width="20" height="11">
+ <layer name="h0e (Wall 0)" width="20" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -84,7 +84,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Wall Decal 0" width="20" height="11">
+ <layer name="h0f (Wall Decal 0)" width="20" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
