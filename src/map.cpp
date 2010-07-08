@@ -74,7 +74,7 @@ Map::Map(char const *path)
                         if (n == data->ntilers - 1
                              || id < gids[n + 1])
                         {
-                            code = (data->tilers[n] << 16) | (id - 1);
+                            code = (data->tilers[n] << 16) | (id - gids[n]);
                             break;
                         }
                     }
