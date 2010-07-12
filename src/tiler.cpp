@@ -6,6 +6,10 @@
 #include "tiler.h"
 #include "tileset.h"
 
+#if defined WIN32
+#   define strcasecmp _stricmp
+#endif
+
 /*
  * Tiler implementation class
  */
