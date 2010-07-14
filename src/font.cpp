@@ -13,47 +13,28 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include <malloc.h>
-
-#include "tileset.h"
+#include "font.h"
 
 /*
- * TileSet implementation class
+ * Font implementation class
  */
 
-class TileSetData
+class FontData
 {
-    friend class TileSet;
+    friend class Font;
 
 private:
-    static int Compare(void const *p1, void const *p2)
-    {
-        int const *n1 = (int const *)p1;
-        int const *n2 = (int const *)p2;
-
-        return n1[2] + 32 * n1[3] - (n2[2] + 32 * n2[3]);
-    }
-
-    char *name;
-    int ref;
-    int *tiles;
-    int ntiles;
-
     SDL_Surface *img;
     GLuint texture[1];
 };
 
 /*
- * Public TileSet class
+ * Public Font class
  */
 
-TileSet::TileSet(char const *path)
+Font::Font(char const *path)
 {
-    data = new TileSetData();
-    data->name = strdup(path);
-    data->ref = 0;
-    data->tiles = NULL;
-    data->ntiles = 0;
+    data = new FontData();
     data->img = NULL;
 
     for (char const *name = path; *name; name++)
@@ -76,45 +57,38 @@ TileSet::TileSet(char const *path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-TileSet::~TileSet()
+Font::~Font()
 {
     glDeleteTextures(1, data->texture);
+    SDL_FreeSurface(data->img);
 
-    free(data->tiles);
-    free(data->name);
     delete data;
 }
 
-void TileSet::Ref()
+void Font::Print(int x, int y, char const *str)
 {
-    data->ref++;
-}
-
-int TileSet::Unref()
-{
-    return --data->ref;
-}
-
-char const *TileSet::GetName()
-{
-    return data->name;
-}
-
-void TileSet::BlitTile(uint32_t id, int x, int y)
-{
-    float tx = .0625f * (id & 0xf);
-    float ty = .0625f * ((id >> 4) & 0xf);
+    int w = data->img->w / 16;
+    int h = data->img->h / 16;
 
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glBegin(GL_QUADS);
+    while (*str)
+    {
+        uint32_t ch = (uint8_t)*str++;
+        float tx = .0625f * (ch & 0xf);
+        float ty = .0625f * ((ch >> 4) & 0xf);
+
         glTexCoord2f(tx, ty);
         glVertex2f(x, y);
         glTexCoord2f(tx + .0625f, ty);
-        glVertex2f(x + 32, y);
+        glVertex2f(x + w, y);
         glTexCoord2f(tx + .0625f, ty + .0625f);
-        glVertex2f(x + 32, y + 32);
+        glVertex2f(x + w, y + h);
         glTexCoord2f(tx, ty + .0625f);
-        glVertex2f(x, y + 32);
+        glVertex2f(x, y + h);
+
+        x += w;
+    }
     glEnd();
 }
 
