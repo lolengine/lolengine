@@ -1,4 +1,6 @@
 *.o
 src/test-map
+tools/make-font
 art/*.png
 art/test/*.png
+gfx/font/*.png
