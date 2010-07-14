@@ -1,6 +1,9 @@
 
+#include <cstdio>
+
 #include "game.h"
 #include "map.h"
+#include "font.h"
 
 /*
  * Game implementation class
@@ -12,8 +15,11 @@ class GameData
 
 private:
     Map *map;
+    Font *font;
     int x, y;
     int mousex, mousey;
+
+    int frame;
 };
 
 /*
@@ -24,11 +30,14 @@ Game::Game(char const *mapname)
 {
     data = new GameData();
     data->map = new Map(mapname);
+    data->font = new Font("gfx/font/ascii.png");
     data->x = data->y = 0;
+    data->frame = 0;
 }
 
 Game::~Game()
 {
+    delete data->font;
     delete data->map;
     delete data;
 }
@@ -47,5 +56,9 @@ void Game::Render()
 
     scene->Render();
     delete scene;
+
+    char buf[1024];
+    sprintf(buf, "Frame %i", data->frame++);
+    data->font->Print(10, 10, buf);
 }
 
