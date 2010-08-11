@@ -21,6 +21,8 @@ public:
 
     void SetMouse(int x, int y);
     void Render();
+    void Quit();
+    int Finished();
 
 private:
     GameData *data;
