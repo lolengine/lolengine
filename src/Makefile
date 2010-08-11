@@ -1,11 +1,16 @@
 
-SRC = test-map.cpp \
-      game.cpp video.cpp tiler.cpp tileset.cpp scene.cpp \
-      font.cpp layer.cpp map.cpp
+COMMON = test-map.cpp \
+      game.cpp tiler.cpp tileset.cpp scene.cpp \
+      font.cpp layer.cpp map.cpp joystick.cpp
+TEST_SRC = test-map.cpp sdlvideo.cpp $(COMMON)
+EDITOR_SRC = editor.cpp gtkvideo.cpp $(COMMON)
 
 all: test-map
 
-test-map: $(SRC:%.cpp=%.o)
+test-map: $(TEST_SRC:%.cpp=%.o)
+	g++ -g -Wall -O3 $^ -o $@ `pkg-config --libs sdl gl SDL_image`
+
+editor-map: $(EDITOR_SRC:%.cpp=%.o)
 	g++ -g -Wall -O3 $^ -o $@ `pkg-config --libs sdl gl SDL_image`
 
 %.o: %.cpp
