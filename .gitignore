@@ -1,6 +1,32 @@
+# Autotools cruft
 *.o
+*.lo
+*.a
+*.la
+*.exe
+*.userprefs
+*.usertasks
+*.pidb
+.auto
+.libs
+.deps
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+config.h.in
+config.h
+config.log
+config.status
+configure
+libtool
+stamp-*
+*-stamp
+# Our binaries
 src/test-map
+src/editor
 tools/make-font
+# Our data
 art/*.png
 art/test/*.png
 gfx/font/*.png
