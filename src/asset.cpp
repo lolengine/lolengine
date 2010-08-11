@@ -28,6 +28,11 @@ Asset::~Asset()
 {
 }
 
+Asset::Group Asset::GetGroup()
+{
+    return GROUP_DEFAULT;
+}
+
 void Asset::TickGame(float delta_time)
 {
 

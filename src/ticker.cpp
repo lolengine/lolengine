@@ -24,9 +24,10 @@ static class TickerData
 
 public:
     TickerData() :
-        list(0),
         nassets(0)
     {
+        for (int i = 0; i < Asset::GROUP_COUNT; i++)
+            list[i] = NULL;
     }
 
     ~TickerData()
@@ -36,7 +37,7 @@ public:
     }
 
 private:
-    Asset *list;
+    Asset *list[Asset::GROUP_COUNT];
     int nassets;
 }
 tickerdata;
@@ -49,37 +50,39 @@ static TickerData * const data = &tickerdata;
 
 void Ticker::Register(Asset *asset)
 {
-    asset->next = data->list;
-    data->list = asset;
+    int i = asset->GetGroup();
+    asset->next = data->list[i];
+    data->list[i] = asset;
     data->nassets++;
 }
 
 void Ticker::TickGame(float delta_time)
 {
     /* Garbage collect objects that can be destroyed */
-    for (Asset *asset = data->list, *prev = NULL;
-         asset;
-         prev = asset, asset = asset->next)
-        if (asset->destroy)
-        {
-            if (prev)
-                prev->next = asset->next;
-            else
-                data->list = asset->next;
+    for (int i = 0; i < Asset::GROUP_COUNT; i++)
+        for (Asset *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)
+            if (a->destroy)
+            {
+                if (prev)
+                    prev->next = a->next;
+                else
+                    data->list[i] = a->next;
 
-            data->nassets--;
-            delete asset;
-        }
+                data->nassets--;
+                delete a;
+            }
 
     /* Tick objects for the game loop */
-    for (Asset *asset = data->list; asset; asset = asset->next)
-        asset->TickGame(delta_time);
+    for (int i = 0; i < Asset::GROUP_COUNT; i++)
+        for (Asset *a = data->list[i]; a; a = a->next)
+            a->TickGame(delta_time);
 }
 
 void Ticker::TickRender(float delta_time)
 {
     /* Tick objects for the render loop */
-    for (Asset *asset = data->list; asset; asset = asset->next)
-        asset->TickRender(delta_time);
+    for (int i = 0; i < Asset::GROUP_COUNT; i++)
+        for (Asset *a = data->list[i]; a; a = a->next)
+            a->TickRender(delta_time);
 }
 
