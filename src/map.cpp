@@ -2,7 +2,6 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
-#include <malloc.h>
 #include <ctype.h>
 
 #include "map.h"

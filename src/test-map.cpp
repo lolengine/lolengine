@@ -1,9 +1,9 @@
 // Test stuff
 
-#include <SDL.h>
+#include <cstdio>
+#include <cmath>
 
-#include <stdio.h>
-#include <math.h>
+#include <SDL.h>
 
 #include "sdlvideo.h"
 #include "game.h"

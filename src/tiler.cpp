@@ -1,7 +1,7 @@
 
 #include <cstring>
 #include <cstdio>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "tiler.h"
 #include "tileset.h"
@@ -28,6 +28,8 @@ public:
 
     ~TilerData()
     {
+        if (ntilesets)
+            fprintf(stderr, "ERROR: still %i tilesets in tiler\n", ntilesets);
         free(tilesets);
     }
 
@@ -81,10 +83,7 @@ void Tiler::Deregister(int id)
     --id; /* ID 0 is for the empty tileset */
 
     if (data->tilesets[id]->Unref() == 0)
-    {
-        delete data->tilesets[id];
         data->tilesets[id] = NULL;
-    }
 }
 
 void Tiler::Render(uint32_t code, int x, int y)
