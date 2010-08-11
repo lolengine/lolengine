@@ -27,7 +27,6 @@ class TileSetData
 
 private:
     char *name;
-    int ref;
     int *tiles;
     int ntiles;
 
@@ -43,7 +42,6 @@ TileSet::TileSet(char const *path)
 {
     data = new TileSetData();
     data->name = strdup(path);
-    data->ref = 0;
     data->tiles = NULL;
     data->ntiles = 0;
     data->img = NULL;
@@ -75,16 +73,6 @@ TileSet::~TileSet()
     free(data->tiles);
     free(data->name);
     delete data;
-}
-
-void TileSet::Ref()
-{
-    data->ref++;
-}
-
-int TileSet::Unref()
-{
-    return --data->ref;
 }
 
 char const *TileSet::GetName()

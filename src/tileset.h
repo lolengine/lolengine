@@ -8,16 +8,15 @@
 
 #include <stdint.h>
 
+#include "asset.h"
+
 class TileSetData;
 
-class TileSet
+class TileSet : public Asset
 {
 public:
     TileSet(char const *path);
     ~TileSet();
-
-    void Ref();
-    int Unref();
 
     char const *GetName();
 
