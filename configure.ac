@@ -34,7 +34,9 @@ fi
 
 dnl conditional builds
 AC_ARG_ENABLE(debug,
-  [  --enable-debug          build debug versions of the library (default no)])
+  [  --enable-debug          build debug versions of the game (default no)])
+AC_ARG_ENABLE(release,
+  [  --enable-release        build final release of the game (default no)])
 
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
@@ -67,6 +69,10 @@ fi
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(DEBUG, 1, Define to 1 to activate debug)
+fi
+
+if test "${enable_release}" = "yes"; then
+  AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
 fi
 
 AC_SUBST(MATH_LIBS)
