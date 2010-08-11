@@ -1,16 +1,16 @@
+
+#include <cstdio>
+#include <cmath>
+
 #include <SDL.h>
 
-#include <stdio.h>
-#include <math.h>
+#include <gtk/gtk.h>
+#include <gtkgl/gtkglarea.h>
+#include <GL/gl.h>
 
 #include "gtkvideo.h"
 #include "ticker.h"
 #include "game.h"
-
-#include <math.h>
-#include <gtk/gtk.h>
-#include <gtkgl/gtkglarea.h>
-#include <GL/gl.h>
 
 volatile int quit = 0;
 

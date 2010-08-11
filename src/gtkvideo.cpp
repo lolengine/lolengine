@@ -1,4 +1,6 @@
 
+#include <cstdlib>
+
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
 
@@ -12,8 +14,6 @@
 #   define GL_GLEXT_PROTOTYPES
 #   include <GL/gl.h>
 #endif
-
-#include <stdlib.h>
 
 #include "gtkvideo.h"
 

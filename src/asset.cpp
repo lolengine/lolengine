@@ -1,5 +1,5 @@
 
-#include <malloc.h>
+#include <cstdlib>
 
 #include "asset.h"
 #include "ticker.h"
@@ -9,7 +9,7 @@
  */
 
 Asset::Asset() :
-    index(0),
+    next(0),
     ref(0),
     destroy(0)
 {

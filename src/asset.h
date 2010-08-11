@@ -23,7 +23,8 @@ public:
     virtual int Unref();
 
 protected:
-    int index, ref, destroy;
+    Asset *next;
+    int ref, destroy;
 };
 
 #endif // __DH_ASSET_H__

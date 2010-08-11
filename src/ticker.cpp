@@ -3,8 +3,9 @@
  * The ticker
  */
 
+#include <cstdlib>
+#include <cstdio>
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "ticker.h"
 #include "asset.h"
@@ -19,19 +20,19 @@ static class TickerData
 
 public:
     TickerData() :
-        assets(0),
+        list(0),
         nassets(0)
     {
-        /* Nothing to do */
     }
 
     ~TickerData()
     {
-        free(assets);
+        if (nassets)
+            fprintf(stderr, "ERROR: still %i assets in ticker\n", nassets);
     }
 
 private:
-    Asset **assets;
+    Asset *list;
     int nassets;
 }
 tickerdata;
@@ -44,23 +45,37 @@ static TickerData * const data = &tickerdata;
 
 void Ticker::Register(Asset *asset)
 {
-    int tmp = data->nassets++;
-    data->assets = (Asset **)realloc(data->assets,
-                                     data->nassets * sizeof(Asset *));
-    data->assets[tmp] = asset;
-
-    asset->index = tmp;
+    asset->next = data->list;
+    data->list = asset;
+    data->nassets++;
 }
 
 void Ticker::TickGame(float delta_time)
 {
-    for (int i = 0; i < data->nassets; i++)
-        data->assets[i]->TickGame(delta_time);
+    /* Garbage collect objects that can be destroyed */
+    for (Asset *asset = data->list, *prev = NULL;
+         asset;
+         prev = asset, asset = asset->next)
+        if (asset->destroy)
+        {
+            if (prev)
+                prev->next = asset->next;
+            else
+                data->list = asset->next;
+
+            data->nassets--;
+            delete asset;
+        }
+
+    /* Tick objects for the game loop */
+    for (Asset *asset = data->list; asset; asset = asset->next)
+        asset->TickGame(delta_time);
 }
 
 void Ticker::TickRender(float delta_time)
 {
-    for (int i = 0; i < data->nassets; i++)
-        data->assets[i]->TickRender(delta_time);
+    /* Tick objects for the render loop */
+    for (Asset *asset = data->list; asset; asset = asset->next)
+        asset->TickRender(delta_time);
 }
 
