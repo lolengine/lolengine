@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     Video *video = new SdlVideo("Deus Hax", 640, 480);
     Game *game = new Game("maps/testmap.tmx");
 
-    for (int done = 0; !done; )
+    while (!game->Finished())
     {
         /* Test stuff */
         int mx, my;
@@ -40,13 +40,13 @@ int main(int argc, char **argv)
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
-                done = 1;
+                game->Quit();
             if (event.type == SDL_KEYDOWN)
             {
                 if (event.key.keysym.sym == SDLK_RETURN)
                     video->FullScreen();
                 else if (event.key.keysym.sym == SDLK_ESCAPE)
-                    done = 1;
+                    game->Quit();
             }
         }
     }

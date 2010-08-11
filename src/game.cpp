@@ -26,6 +26,7 @@ private:
     Font *font;
     int x, y;
     int mousex, mousey;
+    int done;
 
     int frame;
 };
@@ -40,6 +41,7 @@ Game::Game(char const *mapname)
     data->map = new Map(mapname);
     data->font = new Font("gfx/font/ascii.png");
     data->x = data->y = 0;
+    data->done = 0;
     data->frame = 0;
 }
 
@@ -68,5 +70,15 @@ void Game::Render()
     char buf[1024];
     sprintf(buf, "Frame %i", data->frame++);
     data->font->Print(10, 10, buf);
+}
+
+void Game::Quit()
+{
+    data->done = 1;
+}
+
+int Game::Finished()
+{
+    return data->done;
 }
 
