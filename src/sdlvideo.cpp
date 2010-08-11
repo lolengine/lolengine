@@ -89,13 +89,13 @@ int SdlVideo::GetHeight() const
     return data->video->h;
 }
 
-void SdlVideo::Clear()
+void SdlVideo::PreRender()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 }
 
-void SdlVideo::Refresh(float milliseconds)
+void SdlVideo::PostRender(float milliseconds)
 {
     if (milliseconds > 0.0f)
         while (SDL_GetTicks() < data->ticks + (milliseconds - 0.5f))

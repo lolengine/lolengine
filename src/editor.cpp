@@ -51,16 +51,31 @@ int main(int argc, char **argv)
     GtkVideo *video = new GtkVideo("LOL", 640, 480);
     glarea = GTK_WIDGET(video->GetWidget());
 
-
     /* put glarea into window and show it all */
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(glarea));
     gtk_widget_show(GTK_WIDGET(glarea));
     gtk_widget_show(GTK_WIDGET(window));
 
-    while (!quit)
+while (g_main_context_iteration(NULL, FALSE));
+if (gtk_gl_area_make_current(GTK_GL_AREA(glarea))) fprintf(stderr, "OK\n");
+    Game *game = new Game("maps/testmap.tmx");
+
+    for (;;)
     {
+        // Do GTK stuff until the user wants to quit
         while (g_main_context_iteration(NULL, FALSE));
+
+        if (quit)
+            break;
+
+        video->PreRender();
+        game->SetMouse(0, 0);
+        game->Render();
+        video->PostRender(33.33333f);
     }
+
+    delete game;
+    delete video;
 
     return 0;
 }

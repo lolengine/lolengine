@@ -22,8 +22,8 @@ public:
     // Inherited
     virtual int GetWidth() const;
     virtual int GetHeight() const;
-    virtual void Clear();
-    virtual void Refresh(float milliseconds);
+    virtual void PreRender();
+    virtual void PostRender(float milliseconds);
     virtual void FullScreen();
 
 private:

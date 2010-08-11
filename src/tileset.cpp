@@ -26,14 +26,6 @@ class TileSetData
     friend class TileSet;
 
 private:
-    static int Compare(void const *p1, void const *p2)
-    {
-        int const *n1 = (int const *)p1;
-        int const *n2 = (int const *)p2;
-
-        return n1[2] + 32 * n1[3] - (n2[2] + 32 * n2[3]);
-    }
-
     char *name;
     int ref;
     int *tiles;
