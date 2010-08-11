@@ -12,15 +12,15 @@
 
 #include <SDL.h>
 
-#include "video.h"
+#include "sdlvideo.h"
 
 /*
- * Video implementation class
+ * SDL Video implementation class
  */
 
-class VideoData
+class SdlVideoData
 {
-    friend class Video;
+    friend class SdlVideo;
 
 private:
     SDL_Surface *video;
@@ -29,12 +29,12 @@ private:
 };
 
 /*
- * Public Video class
+ * Public SdlVideo class
  */
 
-Video::Video(char const *title, int width, int height)
+SdlVideo::SdlVideo(char const *title, int width, int height)
 {
-    data = new VideoData();
+    data = new SdlVideoData();
 
     /* Initialise SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -79,23 +79,23 @@ Video::Video(char const *title, int width, int height)
     data->frames = 0;
 }
 
-int Video::GetWidth() const
+int SdlVideo::GetWidth() const
 {
     return data->video->w;
 }
 
-int Video::GetHeight() const
+int SdlVideo::GetHeight() const
 {
     return data->video->h;
 }
 
-void Video::Clear()
+void SdlVideo::Clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 }
 
-void Video::Refresh(float milliseconds)
+void SdlVideo::Refresh(float milliseconds)
 {
     if (milliseconds > 0.0f)
         while (SDL_GetTicks() < data->ticks + (milliseconds - 0.5f))
@@ -106,12 +106,12 @@ void Video::Refresh(float milliseconds)
     SDL_GL_SwapBuffers();
 }
 
-void Video::FullScreen()
+void SdlVideo::FullScreen()
 {
     SDL_WM_ToggleFullScreen(data->video);
 }
 
-Video::~Video()
+SdlVideo::~SdlVideo()
 {
     Uint32 total = SDL_GetTicks() - data->start;
     printf("%f fps\n", 1000.0f * data->frames / total);

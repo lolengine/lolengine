@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "video.h"
+#include "sdlvideo.h"
 #include "game.h"
 
 int main(int argc, char **argv)
 {
-    Video *video = new Video("Deus Hax", 640, 480);
+    Video *video = new SdlVideo("Deus Hax", 640, 480);
     Game *game = new Game("maps/testmap-library.tmx");
 
     for (int done = 0; !done; )
