@@ -1,7 +1,12 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The font object
- */
+//
+// The Font class
+// --------------
+//
 
 #if !defined __DH_FONT_H__
 #define __DH_FONT_H__

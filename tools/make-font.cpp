@@ -1,8 +1,16 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-#include <caca.h>
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <cstdlib>
 #include <cstdio>
+
+#include <caca.h>
 
 int main(void)
 {
@@ -17,7 +25,6 @@ int main(void)
     fwrite(buffer, len, 1, stdout);
     free(buffer);
 
-    /* Free everything */
     caca_free_canvas(cv);
 
     return 0;

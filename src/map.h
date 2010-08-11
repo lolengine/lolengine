@@ -1,7 +1,14 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The map object
- */
+//
+// The Map class
+// -------------
+// A Map object is a collection of Layers and other information (to be
+// determined later).
+//
 
 #if !defined __DH_MAP_H__
 #define __DH_MAP_H__

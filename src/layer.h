@@ -1,7 +1,13 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The layer object
- */
+//
+// The Layer class
+// ---------------
+// A Layer object is a subset of a Map.
+//
 
 #if !defined __DH_LAYER_H__
 #define __DH_LAYER_H__

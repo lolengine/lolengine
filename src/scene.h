@@ -1,7 +1,12 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The scene object
- */
+//
+// The Scene class
+// ---------------
+//
 
 #if !defined __DH_SCENE_H__
 #define __DH_SCENE_H__

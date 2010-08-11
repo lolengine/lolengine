@@ -1,7 +1,15 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The asset object
- */
+//
+// The Asset class
+// ---------------
+// Assets are objects that can be ticked by the game loop and/or the render
+// loop. Assets are implemented as one or several linked lists. See the
+// Ticker class for the ticking logic and the linked list implementation.
+//
 
 #if !defined __DH_ASSET_H__
 #define __DH_ASSET_H__
