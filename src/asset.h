@@ -22,7 +22,7 @@ public:
     virtual void Ref();
     virtual int Unref();
 
-private:
+protected:
     int index, ref, destroy;
 };
 

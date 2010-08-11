@@ -7,6 +7,7 @@
 
 #include "sdlvideo.h"
 #include "game.h"
+#include "ticker.h"
 
 int main(int argc, char **argv)
 {
@@ -15,13 +16,15 @@ int main(int argc, char **argv)
 
     for (int done = 0; !done; )
     {
-        video->PreRender();
-
         /* Test stuff */
         int mx, my;
         SDL_GetMouseState(&mx, &my);
         game->SetMouse(mx * (640 - 32) / 640, my * (480 - 32) / 480);
 
+        Ticker::TickGame(33.33333f);
+
+        video->PreRender();
+        Ticker::TickRender(33.33333f);
         game->Render();
         video->PostRender(33.33333f);
 

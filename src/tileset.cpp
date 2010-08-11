@@ -31,7 +31,7 @@ private:
     int ntiles;
 
     SDL_Surface *img;
-    GLuint texture[1];
+    GLuint texture;
 };
 
 /*
@@ -45,6 +45,7 @@ TileSet::TileSet(char const *path)
     data->tiles = NULL;
     data->ntiles = 0;
     data->img = NULL;
+    data->texture = 0;
 
     for (char const *name = path; *name; name++)
         if ((data->img = IMG_Load(name)))
@@ -55,24 +56,38 @@ TileSet::TileSet(char const *path)
         SDL_Quit();
         exit(1);
     }
-
-    glGenTextures(1, data->texture);
-    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, data->img->w, data->img->h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, data->img->pixels);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 TileSet::~TileSet()
 {
-    glDeleteTextures(1, data->texture);
-
     free(data->tiles);
     free(data->name);
     delete data;
+}
+
+void TileSet::TickRender(float delta_time)
+{
+    Asset::TickRender(delta_time);
+
+    if (data->img)
+    {
+        glGenTextures(1, &data->texture);
+        glBindTexture(GL_TEXTURE_2D, data->texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, data->img->w, data->img->h, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, data->img->pixels);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        SDL_FreeSurface(data->img);
+        data->img = NULL;
+    }
+    else if (ref == 0)
+    {
+        glDeleteTextures(1, &data->texture);
+        destroy = 1;
+    }
 }
 
 char const *TileSet::GetName()
@@ -85,16 +100,19 @@ void TileSet::BlitTile(uint32_t id, int x, int y)
     float tx = .0625f * (id & 0xf);
     float ty = .0625f * ((id >> 4) & 0xf);
 
-    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
-    glBegin(GL_QUADS);
-        glTexCoord2f(tx, ty);
-        glVertex2f(x, y);
-        glTexCoord2f(tx + .0625f, ty);
-        glVertex2f(x + 32, y);
-        glTexCoord2f(tx + .0625f, ty + .0625f);
-        glVertex2f(x + 32, y + 32);
-        glTexCoord2f(tx, ty + .0625f);
-        glVertex2f(x, y + 32);
-    glEnd();
+    if (!data->img)
+    {
+        glBindTexture(GL_TEXTURE_2D, data->texture);
+        glBegin(GL_QUADS);
+            glTexCoord2f(tx, ty);
+            glVertex2f(x, y);
+            glTexCoord2f(tx + .0625f, ty);
+            glVertex2f(x + 32, y);
+            glTexCoord2f(tx + .0625f, ty + .0625f);
+            glVertex2f(x + 32, y + 32);
+            glTexCoord2f(tx, ty + .0625f);
+            glVertex2f(x, y + 32);
+        glEnd();
+    }
 }
 
