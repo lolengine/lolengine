@@ -14,8 +14,8 @@ public:
 
     virtual int GetWidth() const = 0;
     virtual int GetHeight() const = 0;
-    virtual void Clear() = 0;
-    virtual void Refresh(float milliseconds) = 0;
+    virtual void PreRender() = 0;
+    virtual void PostRender(float milliseconds) = 0;
     virtual void FullScreen() = 0;
 };
 

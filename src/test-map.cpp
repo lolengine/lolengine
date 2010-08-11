@@ -11,11 +11,11 @@
 int main(int argc, char **argv)
 {
     Video *video = new SdlVideo("Deus Hax", 640, 480);
-    Game *game = new Game("maps/testmap-library.tmx");
+    Game *game = new Game("maps/testmap.tmx");
 
     for (int done = 0; !done; )
     {
-        video->Clear();
+        video->PreRender();
 
         /* Test stuff */
         int mx, my;
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
         game->SetMouse(mx * (640 - 32) / 640, my * (480 - 32) / 480);
 
         game->Render();
-        video->Refresh(33.33333f);
+        video->PostRender(33.33333f);
 
         /* This could go in a separate function */
         SDL_Event event;

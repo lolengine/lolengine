@@ -28,6 +28,9 @@ class GtkVideoData
 private:
     static gint init(GtkWidget *widget)
     {
+        GtkVideoData *data = (GtkVideoData *)
+            gtk_object_get_data(GTK_OBJECT(widget), "data");
+
         /* OpenGL functions can be called only if make_current returns true */
         if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         {
@@ -38,14 +41,38 @@ private:
             glOrtho(0,100, 100,0, -1,1);
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, data->widget->allocation.width,
+               data->widget->allocation.height, 0, -1, 10);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearDepth(1.0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         }
         return TRUE;
     }
 
     static gint draw(GtkWidget *widget, GdkEventExpose *event)
     {
-        if (event->count == 0 && gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+        GtkVideoData *data = (GtkVideoData *)
+            gtk_object_get_data(GTK_OBJECT(widget), "data");
+
+        if (event->count == 0 && data->drawing == 2
+             && gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         {
+#if 0
             /* Draw simple triangle */
             glClearColor(0,0,0,1);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -55,6 +82,9 @@ private:
             glVertex2f(10,90);
             glVertex2f(90,90);
             glEnd();
+#endif
+
+            data->drawing = 0;
 
             /* Swap backbuffer to front */
             gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
@@ -65,15 +95,38 @@ private:
 
     static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
     {
+        GtkVideoData *data = (GtkVideoData *)
+            gtk_object_get_data(GTK_OBJECT(widget), "data");
+
         if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         {
             glViewport(0,0, widget->allocation.width,
                             widget->allocation.height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, data->widget->allocation.width,
+               data->widget->allocation.height, 0, -1, 10);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearDepth(1.0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         }
         return TRUE;
     }
 
     GtkWidget *widget;
+    int drawing;
 };
 
 /*
@@ -102,6 +155,9 @@ GtkVideo::GtkVideo(char const *title, int width, int height)
     }
 
     data->widget = gtk_gl_area_new(attrlist);
+    data->drawing = 0;
+
+    gtk_object_set_data(GTK_OBJECT(data->widget), "data", data);
     gtk_widget_set_events(GTK_WIDGET(data->widget),
                           GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
 
@@ -152,14 +208,22 @@ int GtkVideo::GetHeight() const
     return data->widget->allocation.height;
 }
 
-void GtkVideo::Clear()
+void GtkVideo::PreRender()
 {
+/// XXX: is this right?
+gtk_gl_area_make_current(GTK_GL_AREA(data->widget));
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+
+    data->drawing = 1;
 }
 
-void GtkVideo::Refresh(float milliseconds)
+void GtkVideo::PostRender(float milliseconds)
 {
+    data->drawing = 2;
+
+    gtk_widget_draw(GTK_WIDGET(data->widget), NULL);
 #if 0
     if (milliseconds > 0.0f)
         while (SDL_GetTicks() < data->ticks + (milliseconds - 0.5f))
