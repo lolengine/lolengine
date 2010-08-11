@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "gtkvideo.h"
+#include "ticker.h"
 #include "game.h"
 
 #include <math.h>
@@ -56,8 +57,6 @@ int main(int argc, char **argv)
     gtk_widget_show(GTK_WIDGET(glarea));
     gtk_widget_show(GTK_WIDGET(window));
 
-while (g_main_context_iteration(NULL, FALSE));
-if (gtk_gl_area_make_current(GTK_GL_AREA(glarea))) fprintf(stderr, "OK\n");
     Game *game = new Game("maps/testmap.tmx");
 
     for (;;)
@@ -68,8 +67,12 @@ if (gtk_gl_area_make_current(GTK_GL_AREA(glarea))) fprintf(stderr, "OK\n");
         if (quit)
             break;
 
-        video->PreRender();
         game->SetMouse(0, 0);
+        Ticker::TickGame(33.33333f);
+
+        video->PreRender();
+        Ticker::TickRender(33.33333f);
+
         game->Render();
         video->PostRender(33.33333f);
     }

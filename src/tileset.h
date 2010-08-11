@@ -16,8 +16,12 @@ class TileSet : public Asset
 {
 public:
     TileSet(char const *path);
-    ~TileSet();
+    virtual ~TileSet();
 
+    /* Inherited from Asset */
+    virtual void TickRender(float delta_time);
+
+    /* New implementations */
     char const *GetName();
 
     void BlitTile(uint32_t id, int x, int y);
