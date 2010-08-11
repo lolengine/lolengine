@@ -19,18 +19,30 @@
 class Asset
 {
     friend class Ticker;
+    friend class TickerData;
 
 public:
     Asset();
     virtual ~Asset();
 
-    virtual void TickGame(float delta_time);
-    virtual void TickRender(float delta_time);
-
     virtual void Ref();
     virtual int Unref();
 
 protected:
+    typedef enum
+    {
+        GROUP_BEFORE = 0,
+        GROUP_DEFAULT,
+        GROUP_AFTER,
+        GROUP_COUNT
+    }
+    Group;
+
+    virtual Group GetGroup();
+
+    virtual void TickGame(float delta_time);
+    virtual void TickRender(float delta_time);
+
     Asset *next;
     int ref, destroy;
 };
