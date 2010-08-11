@@ -1,7 +1,12 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The video driver
- */
+//
+// The SdlVideo class
+// ------------------
+//
 
 #if !defined __DH_SDLVIDEO_H__
 #define __DH_SDLVIDEO_H__

@@ -1,7 +1,12 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The game object
- */
+//
+// The Game class
+// --------------
+//
 
 #if !defined __DH_GAME_H__
 #define __DH_GAME_H__

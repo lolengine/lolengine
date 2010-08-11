@@ -1,7 +1,11 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The ticker
- */
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <cstdlib>
 #include <cstdio>

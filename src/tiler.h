@@ -1,7 +1,13 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The tile manager
- */
+//
+// The Tiler class
+// ---------------
+// The Tiler is a static class that manages tilesets.
+//
 
 #if !defined __DH_TILER_H__
 #define __DH_TILER_H__

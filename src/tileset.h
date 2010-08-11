@@ -1,7 +1,14 @@
+//
+// Deus Hax (working title)
+// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+//
 
-/*
- * The tile manager
- */
+//
+// The TileSet class
+// -----------------
+// A TileSet contains the information necesary to blit tiles to the game
+// screen.
+//
 
 #if !defined __DH_TILESET_H__
 #define __DH_TILESET_H__
