@@ -101,14 +101,15 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* Create new top level window. */
-    GtkWidget *window = gtk_window_new( GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Simple");
-    gtk_container_set_border_width(GTK_CONTAINER(window), 5);
+    GtkBuilder *builder = gtk_builder_new();
+    if (!gtk_builder_add_from_file(builder, "src/gtk/editor.xml", NULL))
+    {
+        g_print("Cannot build from XML\n");
+        return EXIT_FAILURE;
+    }
 
-    /* Quit form main if got delete event */
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event",
-                       GTK_SIGNAL_FUNC(main_quit), NULL);
+    /* Create new top level window. */
+    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
 
     /* You should always delete gtk_gl_area widgets before exit or else
        GLX contexts are left undeleted, this may cause problems (=core dump)
@@ -136,6 +137,8 @@ int main(int argc, char **argv)
     gtk_widget_set_events(GTK_WIDGET(glarea),
                           GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
 
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+                       GTK_SIGNAL_FUNC(main_quit), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
                        GTK_SIGNAL_FUNC(draw), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "configure_event",
@@ -143,13 +146,12 @@ int main(int argc, char **argv)
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
                        GTK_SIGNAL_FUNC(init), NULL);
 
-    // FIXME: is this needed?
-    gtk_widget_set_usize(GTK_WIDGET(glarea), 400, 300);
+    // Create a scrolled window around our GL widget
+    GtkWidget *sw = GTK_WIDGET(gtk_builder_get_object(builder, "scrolledwindow1"));
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), glarea);
 
-    /* Put glarea into window and show it all */
-    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(glarea));
-    gtk_widget_show(GTK_WIDGET(glarea));
-    gtk_widget_show(GTK_WIDGET(window));
+    /* Put scrolled window into main window */
+    gtk_widget_show_all(GTK_WIDGET(window));
 
     // FIXME: detect when the game is killed
     new Game("maps/testmap.tmx");
@@ -163,3 +165,4 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
+

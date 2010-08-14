@@ -20,4 +20,5 @@ editor_SOURCES = gtk/editor.cpp
 editor_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image gtk+-2.0 gtkgl-2.0`
 editor_LDADD = libcommon.a
 editor_LDFLAGS = `pkg-config --libs sdl gl gtk+-2.0 gtkgl-2.0 SDL_image`
+EXTRA_DIST = gtk/editor.xml
 
