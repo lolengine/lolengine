@@ -27,7 +27,7 @@ Asset::Asset() :
 
 Asset::~Asset()
 {
-#if !defined FINAL_RELEASE
+#if !FINAL_RELEASE
     if (!destroy)
         fprintf(stderr, "ERROR: asset destructor called directly\n");
 #endif

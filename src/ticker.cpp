@@ -24,6 +24,7 @@ static class TickerData
 
 public:
     TickerData() :
+        todo(0),
         nassets(0)
     {
         for (int i = 0; i < Asset::GROUP_COUNT; i++)
@@ -32,11 +33,14 @@ public:
 
     ~TickerData()
     {
+#if !FINAL_RELEASE
         if (nassets)
             fprintf(stderr, "ERROR: still %i assets in ticker\n", nassets);
+#endif
     }
 
 private:
+    Asset *todo;
     Asset *list[Asset::GROUP_COUNT];
     int nassets;
 }
@@ -50,14 +54,27 @@ static TickerData * const data = &tickerdata;
 
 void Ticker::Register(Asset *asset)
 {
-    int i = asset->GetGroup();
-    asset->next = data->list[i];
-    data->list[i] = asset;
-    data->nassets++;
+    /* If we are called from its constructor, the object's vtable is not
+     * ready yet, so we do not know which group this asset belongs to. Wait
+     * until the first tick. */
+    asset->next = data->todo;
+    data->todo = asset;
 }
 
 void Ticker::TickGame(float delta_time)
 {
+    /* Insert waiting objects in the appropriate lists */
+    while (data->todo)
+    {
+        Asset *a = data->todo;
+        data->todo = a->next;
+
+        int i = a->GetGroup();
+        a->next = data->list[i];
+        data->list[i] = a;
+        data->nassets++;
+    }
+
     /* Garbage collect objects that can be destroyed */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)

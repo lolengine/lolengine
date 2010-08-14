@@ -32,6 +32,8 @@ class FontData
     friend class Font;
 
 private:
+    char *name;
+
     SDL_Surface *img;
     GLuint texture[1];
 };
@@ -43,6 +45,7 @@ private:
 Font::Font(char const *path)
 {
     data = new FontData();
+    data->name = strdup(path);
     data->img = NULL;
 
     for (char const *name = path; *name; name++)
@@ -71,6 +74,21 @@ Font::~Font()
     SDL_FreeSurface(data->img);
 
     delete data;
+}
+
+Asset::Group Font::GetGroup()
+{
+    return GROUP_BEFORE;
+}
+
+void Font::TickRender(float delta_time)
+{
+    Asset::TickRender(delta_time);
+}
+
+char const *Font::GetName()
+{
+    return data->name;
 }
 
 void Font::Print(int x, int y, char const *str)
