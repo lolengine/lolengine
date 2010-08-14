@@ -22,6 +22,7 @@ configure
 libtool
 stamp-*
 *-stamp
+deushax-*.tar.*
 # Our binaries
 src/test-map
 src/editor
