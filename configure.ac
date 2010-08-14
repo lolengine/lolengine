@@ -85,6 +85,7 @@ AC_CONFIG_FILES([
   art/test/Makefile
   gfx/Makefile
   gfx/font/Makefile
+  maps/Makefile
 ])
 
 AC_OUTPUT
