@@ -11,21 +11,19 @@
 #if !defined __DH_SDLVIDEO_H__
 #define __DH_SDLVIDEO_H__
 
-#include "video.h"
-
 class SdlVideoData;
 
-class SdlVideo : public Video
+class SdlVideo
 {
 public:
     SdlVideo(char const *title, int width, int height);
-    virtual ~SdlVideo();
+    ~SdlVideo();
 
-    virtual int GetWidth() const;
-    virtual int GetHeight() const;
-    virtual void PreRender();
-    virtual void PostRender(float milliseconds);
-    virtual void FullScreen();
+    int GetWidth() const;
+    int GetHeight() const;
+    void PreRender();
+    void PostRender(float milliseconds);
+    void FullScreen();
 
 private:
     SdlVideoData *data;

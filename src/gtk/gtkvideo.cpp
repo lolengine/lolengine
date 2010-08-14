@@ -12,18 +12,8 @@
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
 
-#ifdef WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#endif
-#if defined __APPLE__ && defined __MACH__
-#   include <OpenGL/gl.h>
-#else
-#   define GL_GLEXT_PROTOTYPES
-#   include <GL/gl.h>
-#endif
-
 #include "gtkvideo.h"
+#include "video.h"
 
 /*
  * Gtk Video implementation class
@@ -34,30 +24,6 @@ class GtkVideoData
     friend class GtkVideo;
 
 private:
-    void SetupView()
-    {
-        glViewport(0, 0, widget->allocation.width,
-                         widget->allocation.height);
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, widget->allocation.width,
-                   widget->allocation.height, 0, -1, 10);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        glEnable(GL_TEXTURE_2D);
-        glShadeModel(GL_SMOOTH);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClearDepth(1.0);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
     static gint init(GtkWidget *widget)
     {
         GtkVideoData *data = (GtkVideoData *)
@@ -66,7 +32,8 @@ private:
         /* OpenGL functions can be called only if make_current returns true */
         if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         {
-            data->SetupView();
+            Video::Setup(widget->allocation.width,
+                         widget->allocation.height);
         }
         return TRUE;
     }
@@ -95,7 +62,8 @@ private:
 
         if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         {
-            data->SetupView();
+            Video::Setup(widget->allocation.width,
+                         widget->allocation.height);
         }
         return TRUE;
     }
@@ -167,8 +135,7 @@ void GtkVideo::PreRender()
     /// XXX: is this right?
     gtk_gl_area_make_current(GTK_GL_AREA(data->widget));
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
+    Video::Clear();
 
     data->drawing = 1;
 }
@@ -187,15 +154,5 @@ void GtkVideo::PostRender(float milliseconds)
 
     SDL_GL_SwapBuffers();
 #endif
-}
-
-void GtkVideo::FullScreen()
-{
-    // FIXME
-}
-
-GtkVideo::~GtkVideo()
-{
-    // FIXME
 }
 

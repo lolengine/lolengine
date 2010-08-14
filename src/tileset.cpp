@@ -73,6 +73,11 @@ TileSet::~TileSet()
     delete data;
 }
 
+Asset::Group TileSet::GetGroup()
+{
+    return GROUP_BEFORE;
+}
+
 void TileSet::TickRender(float delta_time)
 {
     Asset::TickRender(delta_time);

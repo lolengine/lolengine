@@ -10,11 +10,8 @@
 #include <cstdio>
 #include <cmath>
 
-#include <SDL.h>
-
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
-#include <GL/gl.h>
 
 #include "gtkvideo.h"
 #include "ticker.h"

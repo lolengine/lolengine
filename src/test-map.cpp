@@ -19,7 +19,7 @@
 
 int main(int argc, char **argv)
 {
-    Video *video = new SdlVideo("Deus Hax", 640, 480);
+    SdlVideo *video = new SdlVideo("Deus Hax", 640, 480);
     Game *game = new Game("maps/testmap.tmx");
 
     /* Register the input driver */

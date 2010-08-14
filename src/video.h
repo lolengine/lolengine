@@ -6,7 +6,7 @@
 //
 // The Video interface
 // -------------------
-// Not sure yet whether this should exist.
+// Helper GL functions to set up the scene.
 //
 
 #if !defined __DH_VIDEO_H__
@@ -15,11 +15,8 @@
 class Video
 {
 public:
-    virtual int GetWidth() const = 0;
-    virtual int GetHeight() const = 0;
-    virtual void PreRender() = 0;
-    virtual void PostRender(float milliseconds) = 0;
-    virtual void FullScreen() = 0;
+    static void Setup(int width, int height);
+    static void Clear();
 };
 
 #endif // __DH_VIDEO_H__
