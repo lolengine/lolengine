@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     /* Create new top level window. */
     window = gtk_window_new( GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Simple");
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 
     /* Quit form main if got delete event */
     gtk_signal_connect(GTK_OBJECT(window), "delete_event",
@@ -77,12 +77,9 @@ int main(int argc, char **argv)
 
         video->PreRender();
         Ticker::TickRender(33.33333f);
-
-        game->Render();
         video->PostRender(33.33333f);
     }
 
-    delete game;
     delete video;
 
     return 0;

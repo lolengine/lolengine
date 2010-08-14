@@ -32,7 +32,7 @@ protected:
     virtual void TickRender(float delta_time);
 
 public:
-    /* New implementations */
+    /* New methods */
     char const *GetName();
 
     void BlitTile(uint32_t id, int x, int y);

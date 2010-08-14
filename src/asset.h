@@ -22,9 +22,6 @@ class Asset
     friend class TickerData;
 
 public:
-    Asset();
-    virtual ~Asset();
-
     virtual void Ref();
     virtual int Unref();
 
@@ -37,6 +34,9 @@ protected:
         GROUP_COUNT
     }
     Group;
+
+    Asset();
+    virtual ~Asset();
 
     virtual Group GetGroup();
 

@@ -52,14 +52,20 @@ Game::~Game()
     delete data;
 }
 
-void Game::SetMouse(int x, int y)
+Asset::Group Game::GetGroup()
 {
-    data->mousex = x;
-    data->mousey = y;
+    return Asset::GetGroup();
 }
 
-void Game::Render()
+void Game::TickGame(float delta_time)
 {
+    Asset::TickGame(delta_time);
+}
+
+void Game::TickRender(float delta_time)
+{
+    Asset::TickRender(delta_time);
+
     Scene *scene = new Scene();
 
     data->map->Render(scene, data->mousex, data->mousey, 0);
@@ -70,6 +76,12 @@ void Game::Render()
     char buf[1024];
     sprintf(buf, "Frame %i", data->frame++);
     data->font->Print(10, 10, buf);
+}
+
+void Game::SetMouse(int x, int y)
+{
+    data->mousex = x;
+    data->mousey = y;
 }
 
 void Game::Quit()

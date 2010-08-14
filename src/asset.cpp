@@ -8,6 +8,7 @@
 #endif
 
 #include <cstdlib>
+#include <cstdio>
 
 #include "asset.h"
 #include "ticker.h"
@@ -26,6 +27,10 @@ Asset::Asset() :
 
 Asset::~Asset()
 {
+#if !defined FINAL_RELEASE
+    if (!destroy)
+        fprintf(stderr, "ERROR: asset destructor called directly\n");
+#endif
 }
 
 Asset::Group Asset::GetGroup()

@@ -11,16 +11,25 @@
 #if !defined __DH_GAME_H__
 #define __DH_GAME_H__
 
+#include "asset.h"
+
 class GameData;
 
-class Game
+class Game : public Asset
 {
 public:
     Game(char const *mapname);
     ~Game();
 
+protected:
+    /* Inherited from Asset */
+    virtual Group GetGroup();
+    virtual void TickGame(float delta_time);
+    virtual void TickRender(float delta_time);
+
+public:
+    /* New methods */
     void SetMouse(int x, int y);
-    void Render();
     void Quit();
     int Finished();
 

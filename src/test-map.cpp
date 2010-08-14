@@ -31,11 +31,9 @@ int main(int argc, char **argv)
 
         video->PreRender();
         Ticker::TickRender(33.33333f);
-        game->Render();
         video->PostRender(33.33333f);
     }
 
-    delete game;
     delete video;
 
     return EXIT_SUCCESS;
