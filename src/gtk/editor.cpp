@@ -8,39 +8,104 @@
 #endif
 
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
 
-#include "gtkvideo.h"
 #include "ticker.h"
+#include "video.h"
 #include "game.h"
 
 volatile int quit = 0;
 
 static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 {
+    (void)widget;
+    (void)event;
+
     quit = 1;
+    gtk_main_quit();
     return FALSE;
+}
+
+static gboolean tick(void *widget)
+{
+    float const delta_time = 33.33333f;
+
+    // FIXME: do not do anything if the previous tick was too recent?
+
+    // FIXME: only quit if all assets have been cleaned
+    if (quit)
+        return FALSE;
+
+    /* Tick the game */
+    Ticker::TickGame(delta_time);
+
+    gtk_widget_draw(GTK_WIDGET(widget), NULL);
+
+    return TRUE;
+}
+
+static gint init(GtkWidget *widget)
+{
+    /* OpenGL functions can be called only if make_current returns true */
+    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+    {
+        Video::Setup(widget->allocation.width,
+                     widget->allocation.height);
+    }
+    return TRUE;
+}
+
+static gint draw(GtkWidget *widget, GdkEventExpose *event)
+{
+    if (event->count == 0 && gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+    {
+        // FIXME: do not do anything if the game tick wasn't called?
+        float const delta_time = 33.33333f;
+
+        /* Clear the screen, tick the renderer, and show the frame */
+        Video::Clear();
+        Ticker::TickRender(delta_time);
+        gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
+    }
+
+    return TRUE;
+}
+
+static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
+{
+    (void)event;
+
+    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+    {
+        Video::Setup(widget->allocation.width,
+                     widget->allocation.height);
+    }
+    return TRUE;
 }
 
 int main(int argc, char **argv)
 {
-    GtkWidget *window, *glarea;
-
-    /* initialize gtk */
+    /* Initialize GTK */
     gtk_init(&argc, &argv);
 
+    if (gdk_gl_query() == FALSE)
+    {
+        g_print("OpenGL not supported\n");
+        return EXIT_FAILURE;
+    }
+
     /* Create new top level window. */
-    window = gtk_window_new( GTK_WINDOW_TOPLEVEL);
+    GtkWidget *window = gtk_window_new( GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Simple");
     gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 
     /* Quit form main if got delete event */
     gtk_signal_connect(GTK_OBJECT(window), "delete_event",
                        GTK_SIGNAL_FUNC(main_quit), NULL);
-
 
     /* You should always delete gtk_gl_area widgets before exit or else
        GLX contexts are left undeleted, this may cause problems (=core dump)
@@ -52,35 +117,43 @@ int main(int argc, char **argv)
     */
     gtk_quit_add_destroy(1, GTK_OBJECT(window));
 
-
     /* Create new OpenGL widget. */
-    GtkVideo *video = new GtkVideo("LOL", 640, 480);
-    glarea = GTK_WIDGET(video->GetWidget());
+    int attrlist[] =
+    {
+        GDK_GL_RGBA,
+        GDK_GL_RED_SIZE, 1,
+        GDK_GL_GREEN_SIZE, 1,
+        GDK_GL_BLUE_SIZE, 1,
+        GDK_GL_DOUBLEBUFFER,
+        GDK_GL_NONE
+    };
 
-    /* put glarea into window and show it all */
+    GtkWidget *glarea = gtk_gl_area_new(attrlist);
+
+    gtk_widget_set_events(GTK_WIDGET(glarea),
+                          GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
+
+    gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
+                       GTK_SIGNAL_FUNC(draw), NULL);
+    gtk_signal_connect(GTK_OBJECT(glarea), "configure_event",
+                       GTK_SIGNAL_FUNC(reshape), NULL);
+    gtk_signal_connect(GTK_OBJECT(glarea), "realize",
+                       GTK_SIGNAL_FUNC(init), NULL);
+
+    // FIXME: is this needed?
+    gtk_widget_set_usize(GTK_WIDGET(glarea), 400, 300);
+
+    /* Put glarea into window and show it all */
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(glarea));
     gtk_widget_show(GTK_WIDGET(glarea));
     gtk_widget_show(GTK_WIDGET(window));
 
-    Game *game = new Game("maps/testmap.tmx");
+    // FIXME: detect when the game is killed
+    new Game("maps/testmap.tmx");
 
-    for (;;)
-    {
-        // Do GTK stuff until the user wants to quit
-        while (g_main_context_iteration(NULL, FALSE));
+    //gtk_idle_add(tick, glarea);
+    gtk_timeout_add(33, tick, glarea);
+    gtk_main();
 
-        if (quit)
-            break;
-
-        game->SetMouse(0, 0);
-        Ticker::TickGame(33.33333f);
-
-        video->PreRender();
-        Ticker::TickRender(33.33333f);
-        video->PostRender(33.33333f);
-    }
-
-    delete video;
-
-    return 0;
+    return EXIT_SUCCESS;
 }
