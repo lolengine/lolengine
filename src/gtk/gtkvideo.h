@@ -11,22 +11,18 @@
 #if !defined __DH_GTKVIDEO_H__
 #define __DH_GTKVIDEO_H__
 
-#include "video.h"
-
 class GtkVideoData;
 
-class GtkVideo : public Video
+class GtkVideo
 {
 public:
     GtkVideo(char const *title, int width, int height);
-    virtual ~GtkVideo();
 
     // Inherited
-    virtual int GetWidth() const;
-    virtual int GetHeight() const;
-    virtual void PreRender();
-    virtual void PostRender(float milliseconds);
-    virtual void FullScreen();
+    int GetWidth() const;
+    int GetHeight() const;
+    void PreRender();
+    void PostRender(float milliseconds);
 
     // New
     void *GetWidget();

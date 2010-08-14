@@ -7,20 +7,10 @@
 #   include "config.h"
 #endif
 
-#ifdef WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#endif
-#if defined __APPLE__ && defined __MACH__
-#   include <OpenGL/gl.h>
-#else
-#   define GL_GLEXT_PROTOTYPES
-#   include <GL/gl.h>
-#endif
-
 #include <SDL.h>
 
 #include "sdlvideo.h"
+#include "video.h"
 
 /*
  * SDL Video implementation class
@@ -63,24 +53,7 @@ SdlVideo::SdlVideo(char const *title, int width, int height)
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
-    /* Initialise OpenGL */
-    glViewport(0, 0, data->video->w, data->video->h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, data->video->w, data->video->h, 0, -1, 10);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Video::Setup(data->video->w, data->video->h);
 
     /* Initialise timer */
     data->start = data->ticks = SDL_GetTicks();
@@ -99,8 +72,7 @@ int SdlVideo::GetHeight() const
 
 void SdlVideo::PreRender()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
+    Video::Clear();
 }
 
 void SdlVideo::PostRender(float milliseconds)

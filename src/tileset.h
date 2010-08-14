@@ -26,9 +26,12 @@ public:
     TileSet(char const *path);
     virtual ~TileSet();
 
+protected:
     /* Inherited from Asset */
+    virtual Group GetGroup();
     virtual void TickRender(float delta_time);
 
+public:
     /* New implementations */
     char const *GetName();
 
