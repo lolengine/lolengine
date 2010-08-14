@@ -75,7 +75,8 @@ void Ticker::TickGame(float delta_time)
     /* Tick objects for the game loop */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
-            a->TickGame(delta_time);
+            if (!a->destroy)
+                a->TickGame(delta_time);
 }
 
 void Ticker::TickRender(float delta_time)
@@ -83,6 +84,7 @@ void Ticker::TickRender(float delta_time)
     /* Tick objects for the render loop */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
-            a->TickRender(delta_time);
+            if (!a->destroy)
+                a->TickRender(delta_time);
 }
 
