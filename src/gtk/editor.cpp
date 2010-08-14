@@ -50,18 +50,26 @@ static gboolean tick(void *widget)
 
 static gint init(GtkWidget *widget)
 {
-    /* OpenGL functions can be called only if make_current returns true */
     if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
-    {
-        Video::Setup(widget->allocation.width,
-                     widget->allocation.height);
-    }
+        Video::Setup(widget->allocation.width, widget->allocation.height);
+
     return TRUE;
+}
+
+static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
+{
+    (void)event;
+
+    return init(widget);
 }
 
 static gint draw(GtkWidget *widget, GdkEventExpose *event)
 {
-    if (event->count == 0 && gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+    if (event->count > 0)
+        return TRUE;
+
+    /* OpenGL functions can be called only if make_current returns true */
+    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
     {
         // FIXME: do not do anything if the game tick wasn't called?
         float const delta_time = 33.33333f;
@@ -72,18 +80,6 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
         gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
     }
 
-    return TRUE;
-}
-
-static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
-{
-    (void)event;
-
-    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
-    {
-        Video::Setup(widget->allocation.width,
-                     widget->allocation.height);
-    }
     return TRUE;
 }
 
