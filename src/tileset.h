@@ -6,8 +6,9 @@
 //
 // The TileSet class
 // -----------------
-// A TileSet contains the information necesary to blit tiles to the game
-// screen.
+// A TileSet is a collection of tiles stored in a texture. Texture uploading
+// and freeing is done in the render tick method. When the refcount drops to
+// zero, the texture is freed.
 //
 
 #if !defined __DH_TILESET_H__
