@@ -40,9 +40,7 @@ int main(int argc, char **argv)
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
     /* Initialise timer */
-    Uint32 start, ticks;
-    start = ticks = SDL_GetTicks();
-    int frames = 0;
+    Uint32 ticks = SDL_GetTicks();
 
     /* Initialise OpenGL */
     Video::Setup(video->w, video->h);
@@ -56,7 +54,10 @@ int main(int argc, char **argv)
 
     while (!game->Finished())
     {
-        float const delta_time = 33.33333f;
+        /* Compute delta time */
+        Uint32 newticks = SDL_GetTicks();
+        float delta_time = (float)(newticks - ticks);
+        ticks = newticks;
 
         /* Tick the game */
         Ticker::TickGame(delta_time);
@@ -67,14 +68,10 @@ int main(int argc, char **argv)
         SDL_GL_SwapBuffers();
 
         /* Clamp to desired framerate */
-        while (SDL_GetTicks() < ticks + (delta_time - 0.5f))
+        while (SDL_GetTicks() < ticks + (33.33333f - 0.5f))
             SDL_Delay(1);
-        ticks = SDL_GetTicks();
-        frames++;
     }
 
-    Uint32 total = SDL_GetTicks() - start;
-    printf("%f fps\n", 1000.0f * frames / total);
     SDL_Quit();
 
     return EXIT_SUCCESS;

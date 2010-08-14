@@ -19,7 +19,11 @@
 #include "video.h"
 #include "game.h"
 
-volatile int quit = 0;
+static volatile int quit = 0;
+
+static GTimer *timer;
+static float delta_time;
+static int ticking = 0;
 
 static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 {
@@ -33,13 +37,15 @@ static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 
 static gboolean tick(void *widget)
 {
-    float const delta_time = 33.33333f;
-
     // FIXME: do not do anything if the previous tick was too recent?
+    delta_time = 1000.0f * g_timer_elapsed(timer, NULL);
+    g_timer_start(timer);
 
     // FIXME: only quit if all assets have been cleaned
     if (quit)
         return FALSE;
+
+    ticking = 1;
 
     /* Tick the game */
     Ticker::TickGame(delta_time);
@@ -70,10 +76,9 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
         return TRUE;
 
     /* OpenGL functions can be called only if make_current returns true */
-    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
+    if (ticking && gtk_gl_area_make_current(GTK_GL_AREA(widget)))
     {
-        // FIXME: do not do anything if the game tick wasn't called?
-        float const delta_time = 33.33333f;
+        ticking = 0;
 
         /* Clear the screen, tick the renderer, and show the frame */
         Video::Clear();
@@ -87,6 +92,7 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
 int main(int argc, char **argv)
 {
     /* Initialize GTK */
+    g_thread_init(NULL);
     gtk_init(&argc, &argv);
 
     if (gdk_gl_query() == FALSE)
@@ -151,6 +157,8 @@ int main(int argc, char **argv)
 
     //gtk_idle_add(tick, glarea);
     gtk_timeout_add(33, tick, glarea);
+
+    timer = g_timer_new();
     gtk_main();
 
     return EXIT_SUCCESS;
