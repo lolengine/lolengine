@@ -13,6 +13,7 @@
 #include <SDL.h>
 
 #include "sdlinput.h"
+#include "debugfps.h"
 #include "game.h"
 #include "ticker.h"
 #include "video.h"
@@ -49,8 +50,9 @@ int main(int argc, char **argv)
     /* Create a game */
     Game *game = new Game("maps/testmap.tmx");
 
-    /* Register an input driver */
+    /* Register an input driver and some debug stuff */
     new SdlInput(game);
+    new DebugFps();
 
     while (!game->Finished())
     {

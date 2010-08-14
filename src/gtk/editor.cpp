@@ -15,6 +15,7 @@
 #include <gtkgl/gtkglarea.h>
 
 #include "ticker.h"
+#include "debugfps.h"
 #include "video.h"
 #include "game.h"
 
@@ -146,6 +147,7 @@ int main(int argc, char **argv)
 
     // FIXME: detect when the game is killed
     new Game("maps/testmap.tmx");
+    new DebugFps();
 
     //gtk_idle_add(tick, glarea);
     gtk_timeout_add(33, tick, glarea);
