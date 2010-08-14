@@ -1,0 +1,29 @@
+
+Important stuff
+---------------
+[ ] Something to move a character around.
+  - [ ] Joystick input.
+  - [ ] Event listeners for keyboard or joystick.
+[ ] Map collisions?
+[ ] Add scripting support (lua?).
+[ ] Open several maps at the same time.
+
+
+Editor
+------
+[ ] File requester for maps.
+[ ] Scroller/panner for maps.
+[ ] Allow to modify maps.
+
+
+Specs
+-----
+[ ] Write a map file format.
+[ ] Add special zones to the map.
+
+
+Architecture
+------------
+[ ] Tiler and Forge are almost the same, try to refactor them.
+
+
