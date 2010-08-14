@@ -120,16 +120,6 @@ void *GtkVideo::GetWidget()
     return data->widget;
 }
 
-int GtkVideo::GetWidth() const
-{
-    return data->widget->allocation.width;
-}
-
-int GtkVideo::GetHeight() const
-{
-    return data->widget->allocation.height;
-}
-
 void GtkVideo::PreRender()
 {
     /// XXX: is this right?

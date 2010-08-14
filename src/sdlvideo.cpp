@@ -60,16 +60,6 @@ SdlVideo::SdlVideo(char const *title, int width, int height)
     data->frames = 0;
 }
 
-int SdlVideo::GetWidth() const
-{
-    return data->video->w;
-}
-
-int SdlVideo::GetHeight() const
-{
-    return data->video->h;
-}
-
 void SdlVideo::PreRender()
 {
     Video::Clear();
