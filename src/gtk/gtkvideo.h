@@ -19,8 +19,6 @@ public:
     GtkVideo(char const *title, int width, int height);
 
     // Inherited
-    int GetWidth() const;
-    int GetHeight() const;
     void PreRender();
     void PostRender(float milliseconds);
 

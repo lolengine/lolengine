@@ -19,8 +19,6 @@ public:
     SdlVideo(char const *title, int width, int height);
     ~SdlVideo();
 
-    int GetWidth() const;
-    int GetHeight() const;
     void PreRender();
     void PostRender(float milliseconds);
     void FullScreen();
