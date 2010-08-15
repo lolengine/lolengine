@@ -8,7 +8,7 @@ libcommon_a_SOURCES = \
     scene.cpp scene.h font.cpp font.h layer.cpp layer.h map.cpp map.h \
     joystick.cpp joystick.h asset.cpp asset.h ticker.cpp ticker.h \
     forge.cpp forge.h video.cpp video.h timer.cpp timer.h \
-    debugfps.cpp debugfps.h
+    profiler.cpp profiler.h debugfps.cpp debugfps.h
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
 
 test_map_SOURCES = test-map.cpp sdlinput.cpp sdlinput.h

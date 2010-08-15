@@ -11,6 +11,7 @@
 
 #include "debugfps.h"
 #include "forge.h"
+#include "profiler.h"
 
 /*
  * DebugFps implementation class
@@ -20,10 +21,7 @@ class DebugFpsData
 {
     friend class DebugFps;
 
-    static int const HISTORY = 30;
-
 private:
-    float history[HISTORY];
     Font *font;
     int frame;
 };
@@ -36,8 +34,6 @@ DebugFps::DebugFps()
 {
     data = new DebugFpsData();
 
-    for (int i = 0; i < DebugFpsData::HISTORY; i++)
-        data->history[i] = 0.0f;
     data->font = Forge::GetFont("gfx/font/ascii.png");
     data->frame = 0;
 }
@@ -51,24 +47,33 @@ void DebugFps::TickRender(float delta_time)
 {
     Asset::TickGame(delta_time);
 
-    data->history[data->frame % DebugFpsData::HISTORY] = delta_time;
     data->frame++;
 
-    float mean = 0.0f, max = 0.0f;
-    for (int i = 0; i < DebugFpsData::HISTORY; i++)
-    {
-        mean += data->history[i];
-        if (data->history[i] > max)
-            max = data->history[i];
-    }
-    mean /= DebugFpsData::HISTORY;
-
     char buf[1024];
-    sprintf(buf, "%3.2f ms (%3.2f fps) -- max %3.2f ms -- #%i",
-            1000.0f * mean, 1.0f / mean, 1000.0f * max, data->frame);
-    data->font->Print(10, 10, buf);
-    data->font->Print(11, 10, buf);
-    data->font->Print(10, 11, buf);
+
+    sprintf(buf, "%2.2f fps (%i)",
+            1.0f / Profiler::GetMean(Profiler::STAT_TICK_FRAME), data->frame);
+    data->font->PrintBold(10, 10, buf);
+
+    sprintf(buf, "Game   % 7.2f % 7.2f",
+            1e3f * Profiler::GetMean(Profiler::STAT_TICK_GAME),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_GAME));
+    data->font->PrintBold(10, 28, buf);
+
+    sprintf(buf, "Render % 7.2f % 7.2f",
+            1e3f * Profiler::GetMean(Profiler::STAT_TICK_RENDER),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_RENDER));
+    data->font->PrintBold(10, 46, buf);
+
+    sprintf(buf, "Blit   % 7.2f % 7.2f",
+            1e3f * Profiler::GetMean(Profiler::STAT_TICK_BLIT),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_BLIT));
+    data->font->PrintBold(10, 64, buf);
+
+    sprintf(buf, "Frame  % 7.2f % 7.2f",
+            1e3f * Profiler::GetMean(Profiler::STAT_TICK_FRAME),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_FRAME));
+    data->font->PrintBold(10, 82, buf);
 }
 
 DebugFps::~DebugFps()

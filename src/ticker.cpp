@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <stdint.h>
 
+#include "profiler.h"
 #include "ticker.h"
 #include "asset.h"
 #include "timer.h"
@@ -30,7 +31,6 @@ public:
     {
         for (int i = 0; i < Asset::GROUP_COUNT; i++)
             list[i] = NULL;
-        timer = new Timer();
         bias = 0.0f;
     }
 
@@ -40,7 +40,6 @@ public:
         if (nassets)
             fprintf(stderr, "ERROR: still %i assets in ticker\n", nassets);
 #endif
-        delete timer;
     }
 
 private:
@@ -49,10 +48,9 @@ private:
     Asset *list[Asset::GROUP_COUNT];
     int nassets;
 
-    /* FPS management */
-    float delta_time;
-    Timer *timer;
-    float bias;
+    /* Fixed framerate management */
+    Timer timer;
+    float delta_time, bias;
 }
 tickerdata;
 
@@ -73,7 +71,11 @@ void Ticker::Register(Asset *asset)
 
 void Ticker::TickGame()
 {
-    data->delta_time = data->timer->GetSeconds();
+    Profiler::Stop(Profiler::STAT_TICK_FRAME);
+    Profiler::Start(Profiler::STAT_TICK_FRAME);
+    Profiler::Start(Profiler::STAT_TICK_GAME);
+
+    data->delta_time = data->timer.GetSeconds();
     data->bias += data->delta_time;
 
     /* Insert waiting objects in the appropriate lists */
@@ -107,22 +109,31 @@ void Ticker::TickGame()
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
                 a->TickGame(data->delta_time);
+
+    Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
 
 void Ticker::TickRender()
 {
+    Profiler::Start(Profiler::STAT_TICK_RENDER);
+
     /* Tick objects for the render loop */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
                 a->TickRender(data->delta_time);
+
+    Profiler::Stop(Profiler::STAT_TICK_RENDER);
+    Profiler::Start(Profiler::STAT_TICK_BLIT);
 }
 
 void Ticker::ClampFps(float fps)
 {
-    float ideal_time = 1.0f / fps;
+    Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    data->timer->WaitSeconds(ideal_time - data->bias);
+    float ideal_time = 1.0f / fps;
+    if (ideal_time > data->bias)
+        data->timer.WaitSeconds(ideal_time - data->bias);
     data->bias -= ideal_time;
 }
 
