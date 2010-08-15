@@ -29,8 +29,9 @@ private:
 
 SdlInput::SdlInput(Game *game)
 {
-    data = new SdlInputData();
+    SDL_Init(SDL_INIT_TIMER);
 
+    data = new SdlInputData();
     data->game = game;
 }
 
