@@ -156,9 +156,9 @@ int main(int argc, char **argv)
     new Game("maps/testmap.tmx");
     new DebugFps();
 
-    //gtk_idle_add(tick, glarea);
-    gtk_timeout_add(1000 / FPS, tick, glarea);
-
+    /* We tick from the idle function instead of a timeout to avoid
+     * stealing time from the GTK loop. */
+    gtk_idle_add(tick, glarea);
     gtk_main();
 
     return EXIT_SUCCESS;
