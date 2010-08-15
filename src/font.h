@@ -31,6 +31,7 @@ public:
     char const *GetName();
 
     void Print(int x, int y, char const *str);
+    void PrintBold(int x, int y, char const *str);
 
 private:
     FontData *data;
