@@ -118,3 +118,10 @@ void Font::Print(int x, int y, char const *str)
     glEnd();
 }
 
+void Font::PrintBold(int x, int y, char const *str)
+{
+    Print(x, y, str);
+    Print(x + 1, y, str);
+    Print(x, y + 1, str);
+}
+
