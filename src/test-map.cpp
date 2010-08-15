@@ -18,7 +18,7 @@
 #include "ticker.h"
 #include "video.h"
 
-static int const FPS = 30.0f;
+static float const FPS = 30.0f;
 
 int main(int argc, char **argv)
 {

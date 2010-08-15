@@ -13,15 +13,14 @@
 
 #if defined __linux__
 #   include <sys/time.h>
+#   include <unistd.h>
 #elif defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   include <SDL.h> // FIXME: this should not be needed
 #else
 #   include <SDL.h>
 #endif
-
-// XXX
-#include <SDL.h>
 
 #include "timer.h"
 
@@ -73,6 +72,18 @@ private:
         return ret;
     }
 
+    void WaitSeconds(float seconds)
+    {
+#if defined __linux__
+        usleep((int)(seconds * 1000000.0f));
+#elif defined _WIN32
+        /* FIXME: use native Win32 stuff */
+        SDL_Delay((int)(seconds * 1000.0f + 0.5f));
+#else
+        SDL_Delay((int)(seconds * 1000.0f + 0.5f));
+#endif
+    }
+
 #if defined __linux__
     struct timeval tv0;
 #elif defined _WIN32
@@ -105,9 +116,7 @@ float Timer::GetSeconds()
 void Timer::WaitSeconds(float seconds)
 {
     float sleep = seconds - data->GetSeconds(false);
-    if (sleep <= 1e-4f)
-        return;
-
-    SDL_Delay((int)(sleep * 1000.0f + 0.5f));
+    if (sleep > 1e-4f)
+        data->WaitSeconds(sleep);
 }
 
