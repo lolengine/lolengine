@@ -16,6 +16,7 @@
 #include "debugfps.h"
 #include "game.h"
 #include "ticker.h"
+#include "profiler.h"
 #include "video.h"
 
 static float const FPS = 30.0f;
@@ -56,12 +57,11 @@ int main(int argc, char **argv)
         /* Tick the game */
         Ticker::TickGame();
 
-        /* Clear the screen, tick the renderer, and show the frame */
+        /* Clear the screen, tick the renderer, show the frame and
+         * clamp to desired framerate. */
         Video::Clear();
         Ticker::TickRender();
         SDL_GL_SwapBuffers();
-
-        /* Clamp to desired framerate */
         Ticker::ClampFps(FPS);
     }
 
