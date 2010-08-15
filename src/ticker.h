@@ -21,8 +21,9 @@ class Ticker
 public:
     static void Register(Asset *asset);
 
-    static void TickGame(float delta_time);
-    static void TickRender(float delta_time);
+    static void TickGame();
+    static void TickRender();
+    static void ClampFps(float fps);
 };
 
 #endif // __DH_TICKER_H__

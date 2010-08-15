@@ -18,6 +18,8 @@
 #include "ticker.h"
 #include "video.h"
 
+static int const FPS = 30.0f;
+
 int main(int argc, char **argv)
 {
     /* Initialise SDL */
@@ -39,9 +41,6 @@ int main(int argc, char **argv)
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
-    /* Initialise timer */
-    Uint32 ticks = SDL_GetTicks();
-
     /* Initialise OpenGL */
     Video::Setup(video->w, video->h);
 
@@ -54,22 +53,16 @@ int main(int argc, char **argv)
 
     while (!game->Finished())
     {
-        /* Compute delta time */
-        Uint32 newticks = SDL_GetTicks();
-        float delta_time = (float)(newticks - ticks);
-        ticks = newticks;
-
         /* Tick the game */
-        Ticker::TickGame(delta_time);
+        Ticker::TickGame();
 
         /* Clear the screen, tick the renderer, and show the frame */
         Video::Clear();
-        Ticker::TickRender(delta_time);
+        Ticker::TickRender();
         SDL_GL_SwapBuffers();
 
         /* Clamp to desired framerate */
-        while (SDL_GetTicks() < ticks + (33.33333f - 0.5f))
-            SDL_Delay(1);
+        Ticker::ClampFps(FPS);
     }
 
     SDL_Quit();

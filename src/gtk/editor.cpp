@@ -21,9 +21,8 @@
 
 static volatile int quit = 0;
 
-static GTimer *timer;
-static float delta_time;
 static int ticking = 0;
+static float const FPS = 30.0f;
 
 static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 {
@@ -38,8 +37,6 @@ static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 static gboolean tick(void *widget)
 {
     // FIXME: do not do anything if the previous tick was too recent?
-    delta_time = 1000.0f * g_timer_elapsed(timer, NULL);
-    g_timer_start(timer);
 
     // FIXME: only quit if all assets have been cleaned
     if (quit)
@@ -48,7 +45,7 @@ static gboolean tick(void *widget)
     ticking = 1;
 
     /* Tick the game */
-    Ticker::TickGame(delta_time);
+    Ticker::TickGame();
 
     gtk_widget_draw(GTK_WIDGET(widget), NULL);
 
@@ -82,8 +79,9 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
 
         /* Clear the screen, tick the renderer, and show the frame */
         Video::Clear();
-        Ticker::TickRender(delta_time);
+        Ticker::TickRender();
         gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
+        Ticker::ClampFps(FPS);
     }
 
     return TRUE;
@@ -158,9 +156,8 @@ int main(int argc, char **argv)
     new DebugFps();
 
     //gtk_idle_add(tick, glarea);
-    gtk_timeout_add(33, tick, glarea);
+    gtk_timeout_add(1000 / FPS, tick, glarea);
 
-    timer = g_timer_new();
     gtk_main();
 
     return EXIT_SUCCESS;

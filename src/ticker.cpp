@@ -13,6 +13,7 @@
 
 #include "ticker.h"
 #include "asset.h"
+#include "timer.h"
 
 /*
  * Ticker implementation class
@@ -29,6 +30,8 @@ public:
     {
         for (int i = 0; i < Asset::GROUP_COUNT; i++)
             list[i] = NULL;
+        timer = new Timer();
+        bias = 0.0f;
     }
 
     ~TickerData()
@@ -37,12 +40,19 @@ public:
         if (nassets)
             fprintf(stderr, "ERROR: still %i assets in ticker\n", nassets);
 #endif
+        delete timer;
     }
 
 private:
+    /* Asset management */
     Asset *todo;
     Asset *list[Asset::GROUP_COUNT];
     int nassets;
+
+    /* FPS management */
+    float delta_time;
+    Timer *timer;
+    float bias;
 }
 tickerdata;
 
@@ -61,8 +71,11 @@ void Ticker::Register(Asset *asset)
     data->todo = asset;
 }
 
-void Ticker::TickGame(float delta_time)
+void Ticker::TickGame()
 {
+    data->delta_time = data->timer->GetSeconds();
+    data->bias += data->delta_time;
+
     /* Insert waiting objects in the appropriate lists */
     while (data->todo)
     {
@@ -93,15 +106,23 @@ void Ticker::TickGame(float delta_time)
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
-                a->TickGame(delta_time);
+                a->TickGame(data->delta_time);
 }
 
-void Ticker::TickRender(float delta_time)
+void Ticker::TickRender()
 {
     /* Tick objects for the render loop */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
-                a->TickRender(delta_time);
+                a->TickRender(data->delta_time);
+}
+
+void Ticker::ClampFps(float fps)
+{
+    float ideal_time = 1.0f / fps;
+
+    data->timer->WaitSeconds(ideal_time - data->bias);
+    data->bias -= ideal_time;
 }
 
