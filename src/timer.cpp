@@ -48,40 +48,38 @@ private:
 #endif
     }
 
-    float GetSeconds(bool update)
+    float GetOrWait(float seconds)
     {
-        float ret;
+        float ret, delta_time;
 #if defined __linux__
         struct timeval tv;
         gettimeofday(&tv, NULL);
         ret = 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);
-        if (update)
+        delta_time = seconds - ret;
+        if (!seconds)
             tv0 = tv;
+        else if (delta_time > 0.0f)
+            usleep((int)(delta_time * 1e6f));
 #elif defined _WIN32
         LARGE_INTEGER cycles;
         QueryPerformanceCounter(&cycles);
         ret = seconds_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
-        if (update)
+        delta_time = seconds - ret;
+        if (!seconds)
             cycles0 = cycles;
+        else if (delta_time > 5e-4f) // FIXME: use native Win32 stuff
+            SDL_Delay((int)(delta_time * 1e3f + 0.5f));
 #else
+        /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
         ret = 1e-3f * (ticks - ticks0);
-        if (update)
+        delta_time = seconds - ret;
+        if (!seconds)
             ticks0 = ticks;
+        else if (delta_time > 5e-4f)
+            SDL_Delay((int)(delta_time * 1e3f + 0.5f));
 #endif
         return ret;
-    }
-
-    void WaitSeconds(float seconds)
-    {
-#if defined __linux__
-        usleep((int)(seconds * 1000000.0f));
-#elif defined _WIN32
-        /* FIXME: use native Win32 stuff */
-        SDL_Delay((int)(seconds * 1000.0f + 0.5f));
-#else
-        SDL_Delay((int)(seconds * 1000.0f + 0.5f));
-#endif
     }
 
 #if defined __linux__
@@ -110,13 +108,11 @@ Timer::~Timer()
 
 float Timer::GetSeconds()
 {
-    return data->GetSeconds(true);
+    return data->GetOrWait(0.0f);
 }
 
 void Timer::WaitSeconds(float seconds)
 {
-    float sleep = seconds - data->GetSeconds(false);
-    if (sleep > 1e-4f)
-        data->WaitSeconds(sleep);
+    (void)data->GetOrWait(seconds);
 }
 
