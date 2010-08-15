@@ -7,7 +7,7 @@ libcommon_a_SOURCES = \
     game.cpp game.h tiler.cpp tiler.h tileset.cpp tileset.h \
     scene.cpp scene.h font.cpp font.h layer.cpp layer.h map.cpp map.h \
     joystick.cpp joystick.h asset.cpp asset.h ticker.cpp ticker.h \
-    forge.cpp forge.h video.cpp video.h \
+    forge.cpp forge.h video.cpp video.h timer.cpp timer.h \
     debugfps.cpp debugfps.h
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
 

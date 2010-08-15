@@ -65,7 +65,7 @@ void DebugFps::TickRender(float delta_time)
 
     char buf[1024];
     sprintf(buf, "%3.2f ms (%3.2f fps) -- max %3.2f ms -- #%i",
-            mean, 1000.0f / mean, max, data->frame);
+            1000.0f * mean, 1.0f / mean, 1000.0f * max, data->frame);
     data->font->Print(10, 10, buf);
     data->font->Print(11, 10, buf);
     data->font->Print(10, 11, buf);
