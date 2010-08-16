@@ -9,12 +9,17 @@ Important stuff
 [ ] Open several maps at the same time.
 
 
+Performances
+------------
+[ ] Switch rendering to vertex/index buffer objects
+
+
 Editor
 ------
 [ ] File requester for maps.
 [ ] Scroller/panner for maps.
 [ ] Allow to modify maps.
-
+[ ] Do GTK stuff instead of waiting for the framerate
 
 Specs
 -----
