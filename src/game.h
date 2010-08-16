@@ -12,6 +12,7 @@
 #define __DH_GAME_H__
 
 #include "asset.h"
+#include "scene.h"
 
 class GameData;
 
@@ -29,6 +30,7 @@ protected:
 
 public:
     /* New methods */
+    Scene *GetScene();
     void SetMouse(int x, int y);
     void Quit();
     int Finished();
