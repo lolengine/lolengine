@@ -14,6 +14,7 @@
 
 #include "sdlinput.h"
 #include "debugfps.h"
+#include "debugsprite.h"
 #include "game.h"
 #include "ticker.h"
 #include "profiler.h"
@@ -51,6 +52,7 @@ int main(int argc, char **argv)
     /* Register an input driver and some debug stuff */
     new SdlInput(game);
     new DebugFps();
+    new DebugSprite(game);
 
     while (!game->Finished())
     {
