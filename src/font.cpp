@@ -104,14 +104,17 @@ void Font::Print(int x, int y, char const *str)
         float tx = .0625f * (ch & 0xf);
         float ty = .0625f * ((ch >> 4) & 0xf);
 
-        glTexCoord2f(tx, ty);
-        glVertex2f(x, y);
-        glTexCoord2f(tx + .0625f, ty);
-        glVertex2f(x + w, y);
-        glTexCoord2f(tx + .0625f, ty + .0625f);
-        glVertex2f(x + w, y + h);
-        glTexCoord2f(tx, ty + .0625f);
-        glVertex2f(x, y + h);
+        if (ch != ' ')
+        {
+            glTexCoord2f(tx, ty);
+            glVertex2f(x, y);
+            glTexCoord2f(tx + .0625f, ty);
+            glVertex2f(x + w, y);
+            glTexCoord2f(tx + .0625f, ty + .0625f);
+            glVertex2f(x + w, y + h);
+            glTexCoord2f(tx, ty + .0625f);
+            glVertex2f(x, y + h);
+        }
 
         x += w;
     }
@@ -120,8 +123,24 @@ void Font::Print(int x, int y, char const *str)
 
 void Font::PrintBold(int x, int y, char const *str)
 {
-    Print(x, y, str);
-    Print(x + 1, y, str);
-    Print(x, y + 1, str);
+    static struct { int dx, dy; float r, g, b; } tab[] =
+    {
+        { -1,  0, 0.0, 0.0, 0.0 },
+        {  0, -1, 0.0, 0.0, 0.0 },
+        {  0,  1, 0.0, 0.0, 0.0 },
+        {  1, -1, 0.0, 0.0, 0.0 },
+        {  1,  1, 0.0, 0.0, 0.0 },
+        {  2,  0, 0.0, 0.0, 0.0 },
+        {  1,  0, 0.5, 0.5, 0.5 },
+        {  0,  0, 1.0, 1.0, 1.0 },
+    };
+
+    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
+    for (unsigned int i = 0; i < sizeof(tab) / sizeof(*tab); i++)
+    {
+        glColor3f(tab[i].r, tab[i].g, tab[i].b);
+        Print(x + tab[i].dx, y + tab[i].dy, str);
+    }
+    glPopAttrib();
 }
 
