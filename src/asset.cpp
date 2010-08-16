@@ -22,6 +22,9 @@ Asset::Asset() :
     ref(0),
     destroy(0)
 {
+#if !FINAL_RELEASE
+    state = STATE_IDLE;
+#endif
     Ticker::Register(this);
 }
 
@@ -40,12 +43,20 @@ Asset::Group Asset::GetGroup()
 
 void Asset::TickGame(float delta_time)
 {
-
+#if !FINAL_RELEASE
+    if (state != STATE_PRETICK_GAME)
+        fprintf(stderr, "ERROR: invalid asset game tick\n");
+    state = STATE_POSTTICK_GAME;
+#endif
 }
 
 void Asset::TickRender(float delta_time)
 {
-
+#if !FINAL_RELEASE
+    if (state != STATE_PRETICK_RENDER)
+        fprintf(stderr, "ERROR: invalid asset render tick\n");
+    state = STATE_POSTTICK_RENDER;
+#endif
 }
 
 void Asset::Ref()
