@@ -19,7 +19,7 @@
 class Layer
 {
 public:
-    Layer(int w, int h, int z, uint32_t *data);
+    Layer(int w, int h, int z, int o, uint32_t *data);
     ~Layer();
 
     int GetZ();
@@ -27,7 +27,7 @@ public:
     void Render(Scene *scene, int x, int y, int z);
 
 private:
-    int width, height, altitude;
+    int width, height, altitude, orientation;
     uint32_t *data;
 };
 

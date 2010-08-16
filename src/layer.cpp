@@ -11,11 +11,12 @@
 
 #include "layer.h"
 
-Layer::Layer(int w, int h, int z, uint32_t *in_data)
+Layer::Layer(int w, int h, int z, int o, uint32_t *in_data)
 {
     width = w;
     height = h;
     altitude = z;
+    orientation = o;
     data = in_data;
 
 #if 0
@@ -39,8 +40,8 @@ void Layer::Render(Scene *scene, int x, int y, int z)
     for (int j = 0; j < height; j++)
         for (int i = 0; i < width; i++)
             if (data[j * width + i])
-                scene->AddTile(data[j * width + i],
-                               i * 32 - x, j * 32 - y, altitude + z);
+                scene->AddTile(data[j * width + i], i * 32 - x, j * 32 - y,
+                               altitude + z, orientation);
 }
 
 int Layer::GetZ()
