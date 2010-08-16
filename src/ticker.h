@@ -23,7 +23,7 @@ public:
 
     static void TickGame();
     static void TickRender();
-    static void ClampFps(float fps);
+    static void ClampFps(float delta_time);
 };
 
 #endif // __DH_TICKER_H__

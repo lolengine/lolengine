@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         Video::Clear();
         Ticker::TickRender();
         SDL_GL_SwapBuffers();
-        Ticker::ClampFps(FPS);
+        Ticker::ClampFps(1.0f / FPS);
     }
 
     SDL_Quit();

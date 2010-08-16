@@ -24,6 +24,8 @@ public:
     ~Map();
 
     void Render(Scene *scene, int x, int y, int z);
+    int GetWidth();
+    int GetHeight();
 
 private:
     MapData *data;

@@ -128,13 +128,14 @@ void Ticker::TickRender()
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 }
 
-void Ticker::ClampFps(float fps)
+void Ticker::ClampFps(float delta_time)
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    float ideal_time = 1.0f / fps;
-    if (ideal_time > data->bias)
-        data->timer.WaitSeconds(ideal_time - data->bias);
-    data->bias -= ideal_time;
+    if (delta_time > data->bias + 0.2f)
+        delta_time = data->bias + 0.2f; // Don't go below 5 fps
+    if (delta_time > data->bias)
+        data->timer.WaitSeconds(delta_time - data->bias);
+    data->bias -= delta_time;
 }
 
