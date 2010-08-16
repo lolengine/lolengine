@@ -16,8 +16,6 @@
 #include "layer.h"
 #include "tiler.h"
 
-#define MAX_TILERS 128
-
 /*
  * Map implementation class
  */
@@ -26,11 +24,16 @@ class MapData
 {
     friend class Map;
 
+    static int const MAX_TILERS = 128;
+
 private:
     int tilers[MAX_TILERS];
     int ntilers;
+
     Layer **layers;
     int nlayers;
+
+    int width, height;
 };
 
 /*
@@ -43,11 +46,13 @@ Map::Map(char const *path)
     data->ntilers = 0;
     data->layers = NULL;
     data->nlayers = 0;
+    data->width = 0;
+    data->height = 0;
 
     char tmp[BUFSIZ];
-    int gids[MAX_TILERS];
+    int gids[MapData::MAX_TILERS];
     uint32_t *tiles = NULL;
-    int width = 0, height = 0, level = 0, orientation = 0, ntiles = 0;
+    int level = 0, orientation = 0, ntiles = 0;
 
     FILE *fp = fopen(path, "r");
 
@@ -68,7 +73,7 @@ Map::Map(char const *path)
             /* We are in the process of reading layer data. Only stop
              * when we have read the expected number of tiles. */
             char const *parser = tmp;
-            while (ntiles < width * height)
+            while (ntiles < data->width * data->height)
             {
                 uint32_t code = 0;
                 int id = atoi(parser);
@@ -96,12 +101,13 @@ Map::Map(char const *path)
                     break;
             }
 
-            if (ntiles == width * height)
+            if (ntiles == data->width * data->height)
             {
-                data->layers[data->nlayers] = new Layer(width, height, level, tiles);
+                data->layers[data->nlayers] = new Layer(data->width,
+                                                   data->height, level, tiles);
                 data->nlayers++;
                 tiles = NULL;
-                //fprintf(stderr, "new layer %ix%i\n", width, height);
+                //fprintf(stderr, "new layer %ix%i\n", data->width, data->height);
             }
         }
         else if (sscanf(tmp, " <tileset firstgid=\"%i\"", &i) == 1)
@@ -123,9 +129,9 @@ Map::Map(char const *path)
             data->layers = (Layer **)realloc(data->layers,
                                        sizeof(Layer **) * (data->nlayers + 1));
             orientation = toupper(a) == 'V' ? 1 : 0;
-            width = j;
-            height = k;
-            tiles = (uint32_t *)malloc(width * height * sizeof(uint32_t));
+            data->width = j;
+            data->height = k;
+            tiles = (uint32_t *)malloc(j * k * sizeof(uint32_t));
             ntiles = 0;
         }
     }
@@ -147,5 +153,15 @@ void Map::Render(Scene *scene, int x, int y, int z)
 {
     for (int i = 0; i < data->nlayers; i++)
         data->layers[i]->Render(scene, x, y, z);
+}
+
+int Map::GetWidth()
+{
+    return data->width * 32;
+}
+
+int Map::GetHeight()
+{
+    return data->height * 32;
 }
 
