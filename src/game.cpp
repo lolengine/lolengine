@@ -26,7 +26,7 @@ private:
     int mousex, mousey;
     int done;
 
-    int frame;
+    Scene *scene;
 };
 
 /*
@@ -39,7 +39,7 @@ Game::Game(char const *mapname)
     data->map = new Map(mapname);
     data->x = data->y = 0;
     data->done = 0;
-    data->frame = 0;
+    data->scene = NULL;
 }
 
 Game::~Game()
@@ -62,12 +62,20 @@ void Game::TickRender(float delta_time)
 {
     Asset::TickRender(delta_time);
 
-    Scene *scene = new Scene();
+    GetScene();
 
-    data->map->Render(scene, data->mousex, data->mousey, 0);
+    data->map->Render(data->scene, data->mousex, data->mousey, 0);
+    data->scene->Render();
 
-    scene->Render();
-    delete scene;
+    delete data->scene;
+    data->scene = NULL;
+}
+
+Scene *Game::GetScene()
+{
+    if (!data->scene)
+        data->scene = new Scene();
+    return data->scene;
 }
 
 void Game::SetMouse(int x, int y)
