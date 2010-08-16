@@ -45,6 +45,18 @@ protected:
 
     Asset *next;
     int ref, destroy;
+
+#if !FINAL_RELEASE
+    enum
+    {
+        STATE_IDLE = 0,
+        STATE_PRETICK_GAME,
+        STATE_POSTTICK_GAME,
+        STATE_PRETICK_RENDER,
+        STATE_POSTTICK_RENDER,
+    }
+    state;
+#endif
 };
 
 #endif // __DH_ASSET_H__

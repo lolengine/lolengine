@@ -45,7 +45,7 @@ Asset::Group DebugFps::GetGroup()
 
 void DebugFps::TickRender(float delta_time)
 {
-    Asset::TickGame(delta_time);
+    Asset::TickRender(delta_time);
 
     data->frame++;
 

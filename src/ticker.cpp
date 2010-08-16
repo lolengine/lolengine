@@ -111,7 +111,19 @@ void Ticker::TickGame()
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
+            {
+#if !FINAL_RELEASE
+                if (a->state != Asset::STATE_IDLE)
+                    fprintf(stderr, "ERROR: asset not idle for game tick\n");
+                a->state = Asset::STATE_PRETICK_GAME;
+#endif
                 a->TickGame(data->delta_time);
+#if !FINAL_RELEASE
+                if (a->state != Asset::STATE_POSTTICK_GAME)
+                    fprintf(stderr, "ERROR: asset missed super game tick\n");
+                a->state = Asset::STATE_IDLE;
+#endif
+            }
 
     Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
@@ -124,7 +136,19 @@ void Ticker::TickRender()
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
+            {
+#if !FINAL_RELEASE
+                if (a->state != Asset::STATE_IDLE)
+                    fprintf(stderr, "ERROR: asset not idle for render tick\n");
+                a->state = Asset::STATE_PRETICK_RENDER;
+#endif
                 a->TickRender(data->delta_time);
+#if !FINAL_RELEASE
+                if (a->state != Asset::STATE_POSTTICK_RENDER)
+                    fprintf(stderr, "ERROR: asset missed super render tick\n");
+                a->state = Asset::STATE_IDLE;
+#endif
+            }
 
     Profiler::Stop(Profiler::STAT_TICK_RENDER);
     Profiler::Start(Profiler::STAT_TICK_BLIT);
