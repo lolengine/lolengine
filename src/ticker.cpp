@@ -79,19 +79,9 @@ void Ticker::TickGame()
     data->delta_time = data->timer.GetSeconds();
     data->bias += data->delta_time;
 
-    /* Insert waiting objects in the appropriate lists */
-    while (data->todo)
-    {
-        Asset *a = data->todo;
-        data->todo = a->next;
-
-        int i = a->GetGroup();
-        a->next = data->list[i];
-        data->list[i] = a;
-        data->nassets++;
-    }
-
-    /* Garbage collect objects that can be destroyed */
+    /* Garbage collect objects that can be destroyed. We can do this
+     * before inserting awaiting objects, because there is no way these
+     * are already marked for destruction. */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
         for (Asset *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)
             if (a->destroy)
@@ -104,6 +94,18 @@ void Ticker::TickGame()
                 data->nassets--;
                 delete a;
             }
+
+    /* Insert waiting objects into the appropriate lists */
+    while (data->todo)
+    {
+        Asset *a = data->todo;
+        data->todo = a->next;
+
+        int i = a->GetGroup();
+        a->next = data->list[i];
+        data->list[i] = a;
+        data->nassets++;
+    }
 
     /* Tick objects for the game loop */
     for (int i = 0; i < Asset::GROUP_COUNT; i++)
