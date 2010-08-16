@@ -21,7 +21,7 @@ public:
     Scene();
     ~Scene();
 
-    void AddTile(uint32_t code, int x, int y, int z);
+    void AddTile(uint32_t code, int x, int y, int z, int o);
     void Render();
 
 private:

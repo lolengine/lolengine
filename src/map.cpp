@@ -103,8 +103,9 @@ Map::Map(char const *path)
 
             if (ntiles == data->width * data->height)
             {
-                data->layers[data->nlayers] = new Layer(data->width,
-                                                   data->height, level, tiles);
+                Layer *l = new Layer(data->width, data->height,
+                                     level, orientation, tiles);
+                data->layers[data->nlayers] = l;
                 data->nlayers++;
                 tiles = NULL;
                 //fprintf(stderr, "new layer %ix%i\n", data->width, data->height);

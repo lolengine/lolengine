@@ -52,8 +52,8 @@ void DebugSprite::TickRender(float delta_time)
 {
     Asset::TickRender(delta_time);
 
-    data->game->GetScene()->AddTile((data->tiler << 16) | 15, 300, 200, 200);
-    data->game->GetScene()->AddTile((data->tiler << 16) | 31, 300, 232, 200);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 15, 300, 200, 32, 1);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 31, 300, 232, 0, 1);
 }
 
 DebugSprite::~DebugSprite()
