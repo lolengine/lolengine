@@ -58,17 +58,17 @@ void DebugFps::TickRender(float delta_time)
     sprintf(buf, "Game   % 7.2f % 7.2f",
             1e3f * Profiler::GetMean(Profiler::STAT_TICK_GAME),
             1e3f * Profiler::GetMax(Profiler::STAT_TICK_GAME));
-    data->font->PrintBold(10, 28, buf);
+    data->font->PrintBold(10, 34, buf);
 
     sprintf(buf, "Render % 7.2f % 7.2f",
             1e3f * Profiler::GetMean(Profiler::STAT_TICK_RENDER),
             1e3f * Profiler::GetMax(Profiler::STAT_TICK_RENDER));
-    data->font->PrintBold(10, 46, buf);
+    data->font->PrintBold(10, 50, buf);
 
     sprintf(buf, "Blit   % 7.2f % 7.2f",
             1e3f * Profiler::GetMean(Profiler::STAT_TICK_BLIT),
             1e3f * Profiler::GetMax(Profiler::STAT_TICK_BLIT));
-    data->font->PrintBold(10, 64, buf);
+    data->font->PrintBold(10, 66, buf);
 
     sprintf(buf, "Frame  % 7.2f % 7.2f",
             1e3f * Profiler::GetMean(Profiler::STAT_TICK_FRAME),
