@@ -20,6 +20,7 @@ public:
     ~Timer();
 
     float GetSeconds();
+    float PollSeconds();
     void WaitSeconds(float milliseconds);
 
 private:
