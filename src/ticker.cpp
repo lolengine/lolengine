@@ -73,6 +73,7 @@ void Ticker::TickGame()
 {
     Profiler::Stop(Profiler::STAT_TICK_FRAME);
     Profiler::Start(Profiler::STAT_TICK_FRAME);
+
     Profiler::Start(Profiler::STAT_TICK_GAME);
 
     data->delta_time = data->timer.GetSeconds();
