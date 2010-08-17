@@ -28,11 +28,6 @@ void Video::Setup(int width, int height)
 {
     /* Initialise OpenGL */
     glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, width, height, 0, -1, 10);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 
     glEnable(GL_TEXTURE_2D);
     glShadeModel(GL_SMOOTH);
@@ -44,11 +39,18 @@ void Video::Setup(int width, int height)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    /* Projection matrix: once and for all */
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, width, height, 0, -(width + height), width + height);
 }
 
 void Video::Clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    /* Model view matrix: for each frame, just in case */
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-
