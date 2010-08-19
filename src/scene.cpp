@@ -90,8 +90,9 @@ void Scene::Render() // XXX: rename to Blit()
     static float f = 0.0f;
     f += 0.05f;
     glTranslatef(320.0f, 240.0f, 0.0f);
-    glRotatef(50.0f + 3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
-    glRotatef(20.0f * cosf(f), 0.0f, 0.0f, 1.0f);
+    glRotatef(45.0f, 1.0f, 0.0f, 0.0f);
+    //glRotatef(5.0f + 3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
+    //glRotatef(20.0f * cosf(f), 0.0f, 0.0f, 1.0f);
     //glRotatef(30.0f, 0.0f, 0.0f, 1.0f);
     glTranslatef(-320.0f, -240.0f, 0.0f);
 

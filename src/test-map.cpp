@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     new SdlInput(game);
     new DebugFps();
     new DebugSprite(game);
-    //new DebugRecord("movie.ogg");
+    //new DebugRecord("lolengine.ogg");
 
     while (!game->Finished())
     {
