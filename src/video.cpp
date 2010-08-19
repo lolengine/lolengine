@@ -33,7 +33,7 @@ void Video::Setup(int width, int height)
     glShadeModel(GL_SMOOTH);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0);
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
