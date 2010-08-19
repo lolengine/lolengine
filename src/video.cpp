@@ -54,3 +54,18 @@ void Video::Clear()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
+
+int Video::GetWidth()
+{
+    GLint v[4];
+    glGetIntegerv(GL_VIEWPORT, v);
+    return v[2];
+}
+
+int Video::GetHeight()
+{
+    GLint v[4];
+    glGetIntegerv(GL_VIEWPORT, v);
+    return v[3];
+}
+
