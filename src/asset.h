@@ -31,6 +31,8 @@ protected:
         GROUP_BEFORE = 0,
         GROUP_DEFAULT,
         GROUP_AFTER,
+        GROUP_RENDER_CAPTURE,
+        // Must be the last element
         GROUP_COUNT
     }
     Group;
