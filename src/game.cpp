@@ -64,7 +64,7 @@ void Game::TickRender(float delta_time)
 
     GetScene();
 
-    data->map->Render(data->scene, data->mousex, data->mousey, 0);
+    data->map->Render(data->scene, -data->mousex, -data->mousey, 0);
     data->scene->Render();
 
     delete data->scene;
