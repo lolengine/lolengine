@@ -72,7 +72,7 @@ void Scene::AddTile(uint32_t code, int x, int y, int z, int o)
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
-    data->tiles[data->ntiles].prio = y - 2 * 32 * z + (o ? 0 : 32);
+    data->tiles[data->ntiles].prio = -y - 2 * 32 * z + (o ? 0 : 32);
     data->tiles[data->ntiles].code = code;
     data->tiles[data->ntiles].x = x;
     data->tiles[data->ntiles].y = y;

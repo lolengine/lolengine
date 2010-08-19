@@ -130,6 +130,7 @@ Map::Map(char const *path)
             data->layers = (Layer **)realloc(data->layers,
                                        sizeof(Layer **) * (data->nlayers + 1));
             orientation = toupper(a) == 'V' ? 1 : 0;
+            level = i * 32;
             data->width = j;
             data->height = k;
             tiles = (uint32_t *)malloc(j * k * sizeof(uint32_t));
