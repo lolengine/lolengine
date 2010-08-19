@@ -17,6 +17,8 @@ class Video
 public:
     static void Setup(int width, int height);
     static void Clear();
+    static int GetWidth();
+    static int GetHeight();
 };
 
 #endif // __DH_VIDEO_H__
