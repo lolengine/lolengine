@@ -55,6 +55,26 @@ void Video::Clear()
     glLoadIdentity();
 }
 
+void Video::Capture(uint32_t *buffer)
+{
+    GLint v[4];
+    glGetIntegerv(GL_VIEWPORT, v);
+    int width = v[2], height = v[3];
+
+    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+
+    for (int j = 0; j < height / 2; j++)
+        for (int i = 0; i < width; i++)
+        {
+            uint32_t tmp = buffer[j * width + i];
+            buffer[j * width + i] = buffer[(height - j - 1) * width + i];
+            buffer[(height - j - 1) * width + i] = tmp;
+        }
+}
+
 int Video::GetWidth()
 {
     GLint v[4];

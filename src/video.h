@@ -17,6 +17,7 @@ class Video
 public:
     static void Setup(int width, int height);
     static void Clear();
+    static void Capture(uint32_t *buffer);
     static int GetWidth();
     static int GetHeight();
 };
