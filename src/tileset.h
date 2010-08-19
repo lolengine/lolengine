@@ -35,7 +35,7 @@ public:
     /* New methods */
     char const *GetName();
 
-    void BlitTile(uint32_t id, int x, int y);
+    void BlitTile(uint32_t id, int x, int y, int z, int o);
 
 private:
     TileSetData *data;

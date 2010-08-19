@@ -20,7 +20,7 @@ public:
     static int Register(char const *path);
     static void Deregister(int id);
 
-    static void Render(uint32_t code, int x, int y);
+    static void BlitTile(uint32_t code, int x, int y, int z, int o);
 };
 
 #endif // __DH_TILER_H__

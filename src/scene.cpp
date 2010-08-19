@@ -7,7 +7,19 @@
 #   include "config.h"
 #endif
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <cmath>
+
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#endif
+#if defined __APPLE__ && defined __MACH__
+#   include <OpenGL/gl.h>
+#else
+#   define GL_GLEXT_PROTOTYPES
+#   include <GL/gl.h>
+#endif
 
 #include "scene.h"
 #include "tiler.h"
@@ -15,7 +27,7 @@
 struct Tile
 {
     uint32_t prio, code;
-    int x, y;
+    int x, y, z, o;
 };
 
 /*
@@ -64,6 +76,8 @@ void Scene::AddTile(uint32_t code, int x, int y, int z, int o)
     data->tiles[data->ntiles].code = code;
     data->tiles[data->ntiles].x = x;
     data->tiles[data->ntiles].y = y;
+    data->tiles[data->ntiles].z = z;
+    data->tiles[data->ntiles].o = o;
     data->ntiles++;
 }
 
@@ -71,8 +85,22 @@ void Scene::Render() // XXX: rename to Blit()
 {
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
+    // XXX: debug stuff
+    glPushMatrix();
+    static float f = 0.0f;
+    f += 0.05f;
+    glTranslatef(320.0f, 240.0f, 0.0f);
+    glRotatef(45.0f, 1.0f, 0.0f, 0.0f);
+    glRotatef(30.0f * sinf(f), 0.0f, 0.0f, 1.0f);
+    //glRotatef(30.0f, 0.0f, 0.0f, 1.0f);
+    glTranslatef(-320.0f, -240.0f, 0.0f);
+
     for (int i = 0; i < data->ntiles; i++)
-        Tiler::Render(data->tiles[i].code, data->tiles[i].x, data->tiles[i].y);
+        Tiler::BlitTile(data->tiles[i].code, data->tiles[i].x,
+                        data->tiles[i].y, data->tiles[i].z, data->tiles[i].o);
+
+    glPopMatrix();
+    // XXX: end of debug stuff
 
     free(data->tiles);
     data->tiles = 0;
