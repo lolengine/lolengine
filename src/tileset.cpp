@@ -8,6 +8,7 @@
 #endif
 
 #include <cstdlib>
+#include <cmath>
 
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -108,23 +109,26 @@ char const *TileSet::GetName()
     return data->name;
 }
 
-void TileSet::BlitTile(uint32_t id, int x, int y)
+void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 {
     float tx = .0625f * (id & 0xf);
     float ty = .0625f * ((id >> 4) & 0xf);
+
+    float sqrt2 = sqrtf(2.0f);
+    int off = o ? 32 : 0;
 
     if (!data->img)
     {
         glBindTexture(GL_TEXTURE_2D, data->texture);
         glBegin(GL_QUADS);
             glTexCoord2f(tx, ty);
-            glVertex2f(x, y);
+            glVertex3f(x, sqrt2 * (y + off), sqrt2 * (z + off));
             glTexCoord2f(tx + .0625f, ty);
-            glVertex2f(x + 32, y);
+            glVertex3f(x + 32, sqrt2 * (y + off), sqrt2 * (z + off));
             glTexCoord2f(tx + .0625f, ty + .0625f);
-            glVertex2f(x + 32, y + 32);
+            glVertex3f(x + 32, sqrt2 * (y + 32), sqrt2 * z);
             glTexCoord2f(tx, ty + .0625f);
-            glVertex2f(x, y + 32);
+            glVertex3f(x, sqrt2 * (y + 32), sqrt2 * z);
         glEnd();
     }
 }

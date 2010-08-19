@@ -94,10 +94,10 @@ void Tiler::Deregister(int id)
         data->tilesets[id] = NULL;
 }
 
-void Tiler::Render(uint32_t code, int x, int y)
+void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
 {
     int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
 
-    data->tilesets[id]->BlitTile(code & 0xffff, x, y);
+    data->tilesets[id]->BlitTile(code & 0xffff, x, y, z, o);
 }
 

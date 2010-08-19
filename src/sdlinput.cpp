@@ -50,7 +50,7 @@ void SdlInput::TickGame(float delta_time)
     /* Handle mouse input */
     int mx, my;
     SDL_GetMouseState(&mx, &my);
-    data->game->SetMouse(mx * (640 - 32) / 640, my * (480 - 32) / 480);
+    data->game->SetMouse(mx * (640 - 32) / 320 - 320, my * (480 - 32) / 240 - 240);
 
     /* Handle keyboard and WM input */
     SDL_Event event;
