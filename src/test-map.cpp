@@ -15,6 +15,7 @@
 #include "sdlinput.h"
 #include "debugfps.h"
 #include "debugsprite.h"
+#include "debugrecord.h"
 #include "game.h"
 #include "ticker.h"
 #include "profiler.h"
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    SDL_WM_SetCaption("Deus Hax (SDL)", NULL);
+    SDL_WM_SetCaption("Map Test (SDL)", NULL);
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
     new SdlInput(game);
     new DebugFps();
     new DebugSprite(game);
+    //new DebugRecord("movie.ogg");
 
     while (!game->Finished())
     {
