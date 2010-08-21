@@ -38,7 +38,7 @@ static gboolean tick(void *widget)
 {
     // FIXME: do not do anything if the previous tick was too recent?
 
-    // FIXME: only quit if all assets have been cleaned
+    // FIXME: only quit if all entities have been cleaned
     if (quit)
         return FALSE;
 

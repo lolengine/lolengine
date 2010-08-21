@@ -10,14 +10,14 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "asset.h"
+#include "entity.h"
 #include "ticker.h"
 
 /*
- * Public Asset class
+ * Public Entity class
  */
 
-Asset::Asset() :
+Entity::Entity() :
     next(0),
     ref(0),
     destroy(0)
@@ -28,43 +28,43 @@ Asset::Asset() :
     Ticker::Register(this);
 }
 
-Asset::~Asset()
+Entity::~Entity()
 {
 #if !FINAL_RELEASE
     if (!destroy)
-        fprintf(stderr, "ERROR: asset destructor called directly\n");
+        fprintf(stderr, "ERROR: entity destructor called directly\n");
 #endif
 }
 
-Asset::Group Asset::GetGroup()
+Entity::Group Entity::GetGroup()
 {
     return GROUP_DEFAULT;
 }
 
-void Asset::TickGame(float delta_time)
+void Entity::TickGame(float delta_time)
 {
 #if !FINAL_RELEASE
     if (state != STATE_PRETICK_GAME)
-        fprintf(stderr, "ERROR: invalid asset game tick\n");
+        fprintf(stderr, "ERROR: invalid entity game tick\n");
     state = STATE_POSTTICK_GAME;
 #endif
 }
 
-void Asset::TickRender(float delta_time)
+void Entity::TickRender(float delta_time)
 {
 #if !FINAL_RELEASE
     if (state != STATE_PRETICK_RENDER)
-        fprintf(stderr, "ERROR: invalid asset render tick\n");
+        fprintf(stderr, "ERROR: invalid entity render tick\n");
     state = STATE_POSTTICK_RENDER;
 #endif
 }
 
-void Asset::Ref()
+void Entity::Ref()
 {
     ref++;
 }
 
-int Asset::Unref()
+int Entity::Unref()
 {
     return --ref;
 }

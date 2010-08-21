@@ -11,12 +11,12 @@
 #if !defined __DH_SDLINPUT_H__
 #define __DH_SDLINPUT_H__
 
-#include "asset.h"
+#include "entity.h"
 #include "game.h"
 
 class SdlInputData;
 
-class SdlInput : public Asset
+class SdlInput : public Entity
 {
 public:
     SdlInput(Game *game);

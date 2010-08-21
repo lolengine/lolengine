@@ -6,7 +6,7 @@
 //
 // The Ticker class
 // ----------------
-// The Ticker is a static class that registers assets and ticks them.
+// The Ticker is a static class that registers entities and ticks them.
 //
 
 #if !defined __DH_TICKER_H__
@@ -14,12 +14,12 @@
 
 #include <stdint.h>
 
-#include "asset.h"
+#include "entity.h"
 
 class Ticker
 {
 public:
-    static void Register(Asset *asset);
+    static void Register(Entity *entity);
 
     static void TickGame();
     static void TickRender();

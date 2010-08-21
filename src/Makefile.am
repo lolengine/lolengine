@@ -6,7 +6,7 @@ noinst_LIBRARIES = libcommon.a
 libcommon_a_SOURCES = \
     game.cpp game.h tiler.cpp tiler.h tileset.cpp tileset.h \
     scene.cpp scene.h font.cpp font.h layer.cpp layer.h map.cpp map.h \
-    joystick.cpp joystick.h asset.cpp asset.h ticker.cpp ticker.h \
+    joystick.cpp joystick.h entity.cpp entity.h ticker.cpp ticker.h \
     forge.cpp forge.h video.cpp video.h timer.cpp timer.h \
     profiler.cpp profiler.h \
     debugfps.cpp debugfps.h debugsprite.cpp debugsprite.h \

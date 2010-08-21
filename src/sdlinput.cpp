@@ -35,14 +35,14 @@ SdlInput::SdlInput(Game *game)
     data->game = game;
 }
 
-Asset::Group SdlInput::GetGroup()
+Entity::Group SdlInput::GetGroup()
 {
     return GROUP_BEFORE;
 }
 
 void SdlInput::TickGame(float delta_time)
 {
-    Asset::TickGame(delta_time);
+    Entity::TickGame(delta_time);
 
     if (data->game->Finished())
         destroy = 1;

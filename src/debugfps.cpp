@@ -38,14 +38,14 @@ DebugFps::DebugFps()
     data->frame = 0;
 }
 
-Asset::Group DebugFps::GetGroup()
+Entity::Group DebugFps::GetGroup()
 {
     return GROUP_AFTER;
 }
 
 void DebugFps::TickRender(float delta_time)
 {
-    Asset::TickRender(delta_time);
+    Entity::TickRender(delta_time);
 
     data->frame++;
 

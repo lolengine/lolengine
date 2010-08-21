@@ -11,11 +11,11 @@
 #if !defined __DH_DEBUGFPS_H__
 #define __DH_DEBUGFPS_H__
 
-#include "asset.h"
+#include "entity.h"
 
 class DebugFpsData;
 
-class DebugFps : public Asset
+class DebugFps : public Entity
 {
 public:
     DebugFps();
