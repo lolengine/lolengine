@@ -9,9 +9,8 @@
 
 #include <cstdio>
 
+#include "core.h"
 #include "debugfps.h"
-#include "forge.h"
-#include "profiler.h"
 
 /*
  * DebugFps implementation class

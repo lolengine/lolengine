@@ -11,8 +11,7 @@
 #include <cstdio>
 #include <stdint.h>
 
-#include "profiler.h"
-#include "timer.h"
+#include "core.h"
 
 /*
  * Profiler implementation class

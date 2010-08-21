@@ -18,7 +18,7 @@
 #   include <GL/gl.h>
 #endif
 
-#include "video.h"
+#include "core.h"
 
 /*
  * Public Video class

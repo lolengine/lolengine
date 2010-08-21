@@ -12,6 +12,8 @@
 #if !defined __DH_VIDEO_H__
 #define __DH_VIDEO_H__
 
+#include <stdint.h>
+
 class Video
 {
 public:

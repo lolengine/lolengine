@@ -10,8 +10,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "entity.h"
-#include "ticker.h"
+#include "core.h"
 
 /*
  * Public Entity class

@@ -21,7 +21,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "font.h"
+#include "core.h"
 
 /*
  * Font implementation class
