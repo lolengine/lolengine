@@ -43,36 +43,36 @@ Entity::Group DebugFps::GetGroup()
     return GROUP_AFTER;
 }
 
-void DebugFps::TickRender(float delta_time)
+void DebugFps::TickRender(float deltams)
 {
-    Entity::TickRender(delta_time);
+    Entity::TickRender(deltams);
 
     data->frame++;
 
     char buf[1024];
 
     sprintf(buf, "%2.2f fps (%i)",
-            1.0f / Profiler::GetMean(Profiler::STAT_TICK_FRAME), data->frame);
+            1e3f / Profiler::GetMean(Profiler::STAT_TICK_FRAME), data->frame);
     data->font->PrintBold(10, 10, buf);
 
     sprintf(buf, "Game   % 7.2f % 7.2f",
-            1e3f * Profiler::GetMean(Profiler::STAT_TICK_GAME),
-            1e3f * Profiler::GetMax(Profiler::STAT_TICK_GAME));
+            Profiler::GetMean(Profiler::STAT_TICK_GAME),
+            Profiler::GetMax(Profiler::STAT_TICK_GAME));
     data->font->PrintBold(10, 34, buf);
 
     sprintf(buf, "Render % 7.2f % 7.2f",
-            1e3f * Profiler::GetMean(Profiler::STAT_TICK_RENDER),
-            1e3f * Profiler::GetMax(Profiler::STAT_TICK_RENDER));
+            Profiler::GetMean(Profiler::STAT_TICK_RENDER),
+            Profiler::GetMax(Profiler::STAT_TICK_RENDER));
     data->font->PrintBold(10, 50, buf);
 
     sprintf(buf, "Blit   % 7.2f % 7.2f",
-            1e3f * Profiler::GetMean(Profiler::STAT_TICK_BLIT),
-            1e3f * Profiler::GetMax(Profiler::STAT_TICK_BLIT));
+            Profiler::GetMean(Profiler::STAT_TICK_BLIT),
+            Profiler::GetMax(Profiler::STAT_TICK_BLIT));
     data->font->PrintBold(10, 66, buf);
 
     sprintf(buf, "Frame  % 7.2f % 7.2f",
-            1e3f * Profiler::GetMean(Profiler::STAT_TICK_FRAME),
-            1e3f * Profiler::GetMax(Profiler::STAT_TICK_FRAME));
+            Profiler::GetMean(Profiler::STAT_TICK_FRAME),
+            Profiler::GetMax(Profiler::STAT_TICK_FRAME));
     data->font->PrintBold(10, 82, buf);
 }
 

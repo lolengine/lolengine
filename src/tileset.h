@@ -29,7 +29,7 @@ public:
 protected:
     /* Inherited from Entity */
     virtual Group GetGroup();
-    virtual void TickRender(float delta_time);
+    virtual void TickRender(float deltams);
 
 public:
     /* New methods */

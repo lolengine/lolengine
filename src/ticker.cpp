@@ -50,7 +50,7 @@ private:
 
     /* Fixed framerate management */
     Timer timer;
-    float delta_time, bias;
+    float deltams, bias;
 }
 tickerdata;
 
@@ -76,8 +76,8 @@ void Ticker::TickGame()
 
     Profiler::Start(Profiler::STAT_TICK_GAME);
 
-    data->delta_time = data->timer.GetSeconds();
-    data->bias += data->delta_time;
+    data->deltams = data->timer.GetMs();
+    data->bias += data->deltams;
 
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because there is no way these
@@ -117,7 +117,7 @@ void Ticker::TickGame()
                     fprintf(stderr, "ERROR: entity not idle for game tick\n");
                 a->state = Entity::STATE_PRETICK_GAME;
 #endif
-                a->TickGame(data->delta_time);
+                a->TickGame(data->deltams);
 #if !FINAL_RELEASE
                 if (a->state != Entity::STATE_POSTTICK_GAME)
                     fprintf(stderr, "ERROR: entity missed super game tick\n");
@@ -142,7 +142,7 @@ void Ticker::TickRender()
                     fprintf(stderr, "ERROR: entity not idle for render tick\n");
                 a->state = Entity::STATE_PRETICK_RENDER;
 #endif
-                a->TickRender(data->delta_time);
+                a->TickRender(data->deltams);
 #if !FINAL_RELEASE
                 if (a->state != Entity::STATE_POSTTICK_RENDER)
                     fprintf(stderr, "ERROR: entity missed super render tick\n");
@@ -154,14 +154,14 @@ void Ticker::TickRender()
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 }
 
-void Ticker::ClampFps(float delta_time)
+void Ticker::ClampFps(float deltams)
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    if (delta_time > data->bias + 0.2f)
-        delta_time = data->bias + 0.2f; // Don't go below 5 fps
-    if (delta_time > data->bias)
-        data->timer.WaitSeconds(delta_time - data->bias);
-    data->bias -= delta_time;
+    if (deltams > data->bias + 200.0f)
+        deltams = data->bias + 200.0f; // Don't go below 5 fps
+    if (deltams > data->bias)
+        data->timer.WaitMs(deltams - data->bias);
+    data->bias -= deltams;
 }
 

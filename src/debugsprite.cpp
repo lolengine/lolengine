@@ -43,14 +43,14 @@ Entity::Group DebugSprite::GetGroup()
     return GROUP_DEFAULT;
 }
 
-void DebugSprite::TickGame(float delta_time)
+void DebugSprite::TickGame(float deltams)
 {
-    Entity::TickGame(delta_time);
+    Entity::TickGame(deltams);
 }
 
-void DebugSprite::TickRender(float delta_time)
+void DebugSprite::TickRender(float deltams)
 {
-    Entity::TickRender(delta_time);
+    Entity::TickRender(deltams);
 
     data->game->GetScene()->AddTile((data->tiler << 16) | 15, 320, 240, 32, 1);
     data->game->GetScene()->AddTile((data->tiler << 16) | 31, 320, 240, 0, 1);

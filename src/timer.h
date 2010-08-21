@@ -19,9 +19,9 @@ public:
     Timer();
     ~Timer();
 
-    float GetSeconds();
-    float PollSeconds();
-    void WaitSeconds(float milliseconds);
+    float GetMs();
+    float PollMs();
+    void WaitMs(float deltams);
 
 private:
     TimerData *data;

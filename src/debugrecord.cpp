@@ -47,14 +47,14 @@ Entity::Group DebugRecord::GetGroup()
     return GROUP_RENDER_CAPTURE;
 }
 
-void DebugRecord::TickGame(float delta_time)
+void DebugRecord::TickGame(float deltams)
 {
-    Entity::TickGame(delta_time);
+    Entity::TickGame(deltams);
 }
 
-void DebugRecord::TickRender(float delta_time)
+void DebugRecord::TickRender(float deltams)
 {
-    Entity::TickRender(delta_time);
+    Entity::TickRender(deltams);
 
     int width = Video::GetWidth();
     int height = Video::GetHeight();

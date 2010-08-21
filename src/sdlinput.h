@@ -24,7 +24,7 @@ public:
 
 protected:
     virtual Group GetGroup();
-    virtual void TickGame(float delta_time);
+    virtual void TickGame(float deltams);
 
 private:
     SdlInputData *data;
