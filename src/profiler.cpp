@@ -47,14 +47,14 @@ data[Profiler::STAT_COUNT];
 
 void Profiler::Start(int id)
 {
-    data[id].timer.GetSeconds();
+    data[id].timer.GetMs();
 }
 
 void Profiler::Stop(int id)
 {
-    float delta_time = data[id].timer.GetSeconds();
+    float deltams = data[id].timer.GetMs();
 
-    data[id].history[data->frame % ProfilerData::HISTORY] = delta_time;
+    data[id].history[data->frame % ProfilerData::HISTORY] = deltams;
     data[id].frame++;
     data[id].mean = 0.0f;
     data[id].max = 0.0f;

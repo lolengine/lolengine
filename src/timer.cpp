@@ -40,7 +40,7 @@ private:
 #elif defined _WIN32
         LARGE_INTEGER tmp;
         QueryPerformanceFrequency(&tmp);
-        seconds_per_cycle = 1.0f / tmp.QuadPart;
+        ms_per_cycle = 1e3f / tmp.QuadPart;
         QueryPerformanceCounter(&cycles0);
 #else
         SDL_Init(SDL_INIT_TIMER);
@@ -48,36 +48,37 @@ private:
 #endif
     }
 
-    float GetOrWait(float seconds, bool update)
+    float GetOrWait(float deltams, bool update)
     {
-        float ret, delta_time;
+        float ret, towait;
 #if defined __linux__
         struct timeval tv;
         gettimeofday(&tv, NULL);
-        ret = 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);
+        ret = 1e-3f * (tv.tv_usec - tv0.tv_usec)
+            + 1e3f * (tv.tv_sec - tv0.tv_sec);
         if (update)
             tv0 = tv;
-        delta_time = seconds - ret;
-        if (delta_time > 0.0f)
-            usleep((int)(delta_time * 1e6f));
+        towait = deltams - ret;
+        if (towait > 0.0f)
+            usleep((int)(towait * 1e3f));
 #elif defined _WIN32
         LARGE_INTEGER cycles;
         QueryPerformanceCounter(&cycles);
-        ret = seconds_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
+        ret = ms_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
         if (update)
             cycles0 = cycles;
-        delta_time = seconds - ret;
-        if (delta_time > 5e-4f) // FIXME: use native Win32 stuff
-            SDL_Delay((int)(delta_time * 1e3f + 0.5f));
+        towait = deltams - ret;
+        if (towait > 5e-4f) // FIXME: use native Win32 stuff
+            SDL_Delay((int)(towait * 1e3f + 0.5f));
 #else
         /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
-        ret = 1e-3f * (ticks - ticks0);
+        ret = 1e-6f * (ticks - ticks0);
         if (update)
             ticks0 = ticks;
-        delta_time = seconds - ret;
-        if (delta_time > 5e-4f)
-            SDL_Delay((int)(delta_time * 1e3f + 0.5f));
+        towait = deltams - ret;
+        if (towait > 0.5f)
+            SDL_Delay((int)(towait + 0.5f));
 #endif
         return ret;
     }
@@ -85,7 +86,7 @@ private:
 #if defined __linux__
     struct timeval tv0;
 #elif defined _WIN32
-    float seconds_per_cycle;
+    float ms_per_cycle;
     LARGE_INTEGER cycles0;
 #else
     Uint32 ticks0;
@@ -106,18 +107,18 @@ Timer::~Timer()
     delete data;
 }
 
-float Timer::GetSeconds()
+float Timer::GetMs()
 {
     return data->GetOrWait(0.0f, true);
 }
 
-float Timer::PollSeconds()
+float Timer::PollMs()
 {
     return data->GetOrWait(0.0f, false);
 }
 
-void Timer::WaitSeconds(float seconds)
+void Timer::WaitMs(float deltams)
 {
-    (void)data->GetOrWait(seconds, false);
+    (void)data->GetOrWait(deltams, false);
 }
 

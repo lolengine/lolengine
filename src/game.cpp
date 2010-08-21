@@ -53,14 +53,14 @@ Entity::Group Game::GetGroup()
     return Entity::GetGroup();
 }
 
-void Game::TickGame(float delta_time)
+void Game::TickGame(float deltams)
 {
-    Entity::TickGame(delta_time);
+    Entity::TickGame(deltams);
 }
 
-void Game::TickRender(float delta_time)
+void Game::TickRender(float deltams)
 {
-    Entity::TickRender(delta_time);
+    Entity::TickRender(deltams);
 
     GetScene();
 

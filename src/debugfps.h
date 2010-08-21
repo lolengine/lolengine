@@ -23,7 +23,7 @@ public:
 
 protected:
     virtual Group GetGroup();
-    virtual void TickRender(float delta_time);
+    virtual void TickRender(float deltams);
 
 private:
     DebugFpsData *data;

@@ -84,7 +84,7 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
         gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
         while (g_main_context_iteration(NULL, FALSE))
             ;
-        Ticker::ClampFps(1.0f / FPS);
+        Ticker::ClampFps(1000.0f / FPS);
     }
 
     return TRUE;

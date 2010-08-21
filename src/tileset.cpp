@@ -79,9 +79,9 @@ Entity::Group TileSet::GetGroup()
     return GROUP_BEFORE;
 }
 
-void TileSet::TickRender(float delta_time)
+void TileSet::TickRender(float deltams)
 {
-    Entity::TickRender(delta_time);
+    Entity::TickRender(deltams);
 
     if (data->img)
     {

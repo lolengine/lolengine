@@ -41,7 +41,7 @@ Entity::Group Entity::GetGroup()
     return GROUP_DEFAULT;
 }
 
-void Entity::TickGame(float delta_time)
+void Entity::TickGame(float deltams)
 {
 #if !FINAL_RELEASE
     if (state != STATE_PRETICK_GAME)
@@ -50,7 +50,7 @@ void Entity::TickGame(float delta_time)
 #endif
 }
 
-void Entity::TickRender(float delta_time)
+void Entity::TickRender(float deltams)
 {
 #if !FINAL_RELEASE
     if (state != STATE_PRETICK_RENDER)

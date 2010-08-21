@@ -40,9 +40,9 @@ Entity::Group SdlInput::GetGroup()
     return GROUP_BEFORE;
 }
 
-void SdlInput::TickGame(float delta_time)
+void SdlInput::TickGame(float deltams)
 {
-    Entity::TickGame(delta_time);
+    Entity::TickGame(deltams);
 
     if (data->game->Finished())
         destroy = 1;

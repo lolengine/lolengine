@@ -42,8 +42,8 @@ protected:
 
     virtual Group GetGroup();
 
-    virtual void TickGame(float delta_time);
-    virtual void TickRender(float delta_time);
+    virtual void TickGame(float deltams);
+    virtual void TickRender(float deltams);
 
     Entity *next;
     int ref, destroy;
