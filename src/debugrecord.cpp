@@ -12,8 +12,8 @@
 
 #include <pipi.h>
 
+#include "core.h"
 #include "debugrecord.h"
-#include "video.h"
 
 /*
  * DebugRecord implementation class

@@ -12,9 +12,7 @@
 #include <cstdlib>
 #include <ctype.h>
 
-#include "map.h"
-#include "layer.h"
-#include "tiler.h"
+#include "core.h"
 
 /*
  * Map implementation class

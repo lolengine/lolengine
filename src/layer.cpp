@@ -9,7 +9,7 @@
 
 #include <cstdlib>
 
-#include "layer.h"
+#include "core.h"
 
 Layer::Layer(int w, int h, int z, int o, uint32_t *in_data)
 {

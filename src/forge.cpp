@@ -11,7 +11,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "forge.h"
+#include "core.h"
 
 #if defined WIN32
 #   define strcasecmp _stricmp

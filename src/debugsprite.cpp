@@ -9,9 +9,8 @@
 
 #include <cstdio>
 
+#include "core.h"
 #include "debugsprite.h"
-#include "game.h"
-#include "tiler.h"
 
 /*
  * DebugSprite implementation class
@@ -24,7 +23,7 @@ class DebugSpriteData
 private:
     Game *game;
     int tiler;
-    int frame;
+    float x, y, z;
 };
 
 /*
@@ -36,6 +35,9 @@ DebugSprite::DebugSprite(Game *game)
     data = new DebugSpriteData();
     data->game = game;
     data->tiler = Tiler::Register("art/test/character-dress.png");
+    data->x = 320;
+    data->y = 206;
+    data->z = 0;
 }
 
 Entity::Group DebugSprite::GetGroup()
@@ -46,14 +48,22 @@ Entity::Group DebugSprite::GetGroup()
 void DebugSprite::TickGame(float deltams)
 {
     Entity::TickGame(deltams);
+
+    Float2 axis = Input::GetAxis(0);
+    data->x += 0.1f * deltams * axis.x;
+    data->y += 0.1f * deltams * axis.y;
 }
 
 void DebugSprite::TickRender(float deltams)
 {
     Entity::TickRender(deltams);
 
-    data->game->GetScene()->AddTile((data->tiler << 16) | 15, 320, 240, 32, 1);
-    data->game->GetScene()->AddTile((data->tiler << 16) | 31, 320, 240, 0, 1);
+    int x = data->x;
+    int y = data->y;
+    int z = data->z;
+
+    data->game->GetScene()->AddTile((data->tiler << 16) | 15, x, y, z + 32, 1);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 31, x, y, z, 1);
 }
 
 DebugSprite::~DebugSprite()

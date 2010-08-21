@@ -11,8 +11,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "tiler.h"
-#include "tileset.h"
+#include "core.h"
 
 #if defined WIN32
 #   define strcasecmp _stricmp

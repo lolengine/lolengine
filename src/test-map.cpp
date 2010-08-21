@@ -12,14 +12,11 @@
 
 #include <SDL.h>
 
+#include "core.h"
 #include "sdlinput.h"
 #include "debugfps.h"
 #include "debugsprite.h"
 #include "debugrecord.h"
-#include "game.h"
-#include "ticker.h"
-#include "profiler.h"
-#include "video.h"
 
 static float const FPS = 30.0f;
 
@@ -42,7 +39,7 @@ int main(int argc, char **argv)
 
     SDL_WM_SetCaption("Map Test (SDL)", NULL);
     SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
 
     /* Initialise OpenGL */
     Video::Setup(video->w, video->h);

@@ -22,7 +22,7 @@
 #   include <SDL.h>
 #endif
 
-#include "timer.h"
+#include "core.h"
 
 /*
  * Timer implementation class

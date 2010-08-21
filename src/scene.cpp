@@ -21,8 +21,7 @@
 #   include <GL/gl.h>
 #endif
 
-#include "scene.h"
-#include "tiler.h"
+#include "core.h"
 
 struct Tile
 {

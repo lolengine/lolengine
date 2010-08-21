@@ -14,10 +14,8 @@
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
 
-#include "ticker.h"
+#include "core.h"
 #include "debugfps.h"
-#include "video.h"
-#include "game.h"
 
 static volatile int quit = 0;
 

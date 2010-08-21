@@ -24,7 +24,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "tileset.h"
+#include "core.h"
 
 /*
  * TileSet implementation class

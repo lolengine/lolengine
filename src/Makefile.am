@@ -4,11 +4,11 @@ noinst_PROGRAMS = test-map editor
 noinst_LIBRARIES = libcommon.a
 
 libcommon_a_SOURCES = \
-    game.cpp game.h tiler.cpp tiler.h tileset.cpp tileset.h \
+    core.h matrix.h game.cpp game.h tiler.cpp tiler.h \
     scene.cpp scene.h font.cpp font.h layer.cpp layer.h map.cpp map.h \
-    joystick.cpp joystick.h entity.cpp entity.h ticker.cpp ticker.h \
-    forge.cpp forge.h video.cpp video.h timer.cpp timer.h \
-    profiler.cpp profiler.h \
+    entity.cpp entity.h ticker.cpp ticker.h tileset.cpp tileset.h \
+    forge.cpp forge.h video.cpp video.h timer.cpp timer.h bitfield.h \
+    profiler.cpp profiler.h input.h input.cpp \
     debugfps.cpp debugfps.h debugsprite.cpp debugsprite.h \
     debugrecord.cpp debugrecord.h
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`

@@ -11,10 +11,7 @@
 #include <cstdio>
 #include <stdint.h>
 
-#include "profiler.h"
-#include "ticker.h"
-#include "entity.h"
-#include "timer.h"
+#include "core.h"
 
 /*
  * Ticker implementation class

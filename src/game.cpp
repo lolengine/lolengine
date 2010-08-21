@@ -9,8 +9,7 @@
 
 #include <cstdio>
 
-#include "game.h"
-#include "map.h"
+#include "core.h"
 
 /*
  * Game implementation class
