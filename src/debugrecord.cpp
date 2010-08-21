@@ -42,19 +42,19 @@ DebugRecord::DebugRecord(char const *path)
     data->sequence = NULL;
 }
 
-Asset::Group DebugRecord::GetGroup()
+Entity::Group DebugRecord::GetGroup()
 {
     return GROUP_RENDER_CAPTURE;
 }
 
 void DebugRecord::TickGame(float delta_time)
 {
-    Asset::TickGame(delta_time);
+    Entity::TickGame(delta_time);
 }
 
 void DebugRecord::TickRender(float delta_time)
 {
-    Asset::TickRender(delta_time);
+    Entity::TickRender(delta_time);
 
     int width = Video::GetWidth();
     int height = Video::GetHeight();

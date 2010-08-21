@@ -76,14 +76,14 @@ Font::~Font()
     delete data;
 }
 
-Asset::Group Font::GetGroup()
+Entity::Group Font::GetGroup()
 {
     return GROUP_BEFORE;
 }
 
 void Font::TickRender(float delta_time)
 {
-    Asset::TickRender(delta_time);
+    Entity::TickRender(delta_time);
 }
 
 char const *Font::GetName()

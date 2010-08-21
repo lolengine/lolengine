@@ -13,7 +13,7 @@
 
 #include "profiler.h"
 #include "ticker.h"
-#include "asset.h"
+#include "entity.h"
 #include "timer.h"
 
 /*
@@ -27,9 +27,9 @@ static class TickerData
 public:
     TickerData() :
         todo(0),
-        nassets(0)
+        nentities(0)
     {
-        for (int i = 0; i < Asset::GROUP_COUNT; i++)
+        for (int i = 0; i < Entity::GROUP_COUNT; i++)
             list[i] = NULL;
         bias = 0.0f;
     }
@@ -37,16 +37,16 @@ public:
     ~TickerData()
     {
 #if !FINAL_RELEASE
-        if (nassets)
-            fprintf(stderr, "ERROR: still %i assets in ticker\n", nassets);
+        if (nentities)
+            fprintf(stderr, "ERROR: still %i entities in ticker\n", nentities);
 #endif
     }
 
 private:
-    /* Asset management */
-    Asset *todo;
-    Asset *list[Asset::GROUP_COUNT];
-    int nassets;
+    /* Entity management */
+    Entity *todo;
+    Entity *list[Entity::GROUP_COUNT];
+    int nentities;
 
     /* Fixed framerate management */
     Timer timer;
@@ -60,13 +60,13 @@ static TickerData * const data = &tickerdata;
  * Ticker public class
  */
 
-void Ticker::Register(Asset *asset)
+void Ticker::Register(Entity *entity)
 {
     /* If we are called from its constructor, the object's vtable is not
-     * ready yet, so we do not know which group this asset belongs to. Wait
+     * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    asset->next = data->todo;
-    data->todo = asset;
+    entity->next = data->todo;
+    data->todo = entity;
 }
 
 void Ticker::TickGame()
@@ -82,8 +82,8 @@ void Ticker::TickGame()
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because there is no way these
      * are already marked for destruction. */
-    for (int i = 0; i < Asset::GROUP_COUNT; i++)
-        for (Asset *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)
+    for (int i = 0; i < Entity::GROUP_COUNT; i++)
+        for (Entity *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)
             if (a->destroy)
             {
                 if (prev)
@@ -91,37 +91,37 @@ void Ticker::TickGame()
                 else
                     data->list[i] = a->next;
 
-                data->nassets--;
+                data->nentities--;
                 delete a;
             }
 
     /* Insert waiting objects into the appropriate lists */
     while (data->todo)
     {
-        Asset *a = data->todo;
+        Entity *a = data->todo;
         data->todo = a->next;
 
         int i = a->GetGroup();
         a->next = data->list[i];
         data->list[i] = a;
-        data->nassets++;
+        data->nentities++;
     }
 
     /* Tick objects for the game loop */
-    for (int i = 0; i < Asset::GROUP_COUNT; i++)
-        for (Asset *a = data->list[i]; a; a = a->next)
+    for (int i = 0; i < Entity::GROUP_COUNT; i++)
+        for (Entity *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
             {
 #if !FINAL_RELEASE
-                if (a->state != Asset::STATE_IDLE)
-                    fprintf(stderr, "ERROR: asset not idle for game tick\n");
-                a->state = Asset::STATE_PRETICK_GAME;
+                if (a->state != Entity::STATE_IDLE)
+                    fprintf(stderr, "ERROR: entity not idle for game tick\n");
+                a->state = Entity::STATE_PRETICK_GAME;
 #endif
                 a->TickGame(data->delta_time);
 #if !FINAL_RELEASE
-                if (a->state != Asset::STATE_POSTTICK_GAME)
-                    fprintf(stderr, "ERROR: asset missed super game tick\n");
-                a->state = Asset::STATE_IDLE;
+                if (a->state != Entity::STATE_POSTTICK_GAME)
+                    fprintf(stderr, "ERROR: entity missed super game tick\n");
+                a->state = Entity::STATE_IDLE;
 #endif
             }
 
@@ -133,20 +133,20 @@ void Ticker::TickRender()
     Profiler::Start(Profiler::STAT_TICK_RENDER);
 
     /* Tick objects for the render loop */
-    for (int i = 0; i < Asset::GROUP_COUNT; i++)
-        for (Asset *a = data->list[i]; a; a = a->next)
+    for (int i = 0; i < Entity::GROUP_COUNT; i++)
+        for (Entity *a = data->list[i]; a; a = a->next)
             if (!a->destroy)
             {
 #if !FINAL_RELEASE
-                if (a->state != Asset::STATE_IDLE)
-                    fprintf(stderr, "ERROR: asset not idle for render tick\n");
-                a->state = Asset::STATE_PRETICK_RENDER;
+                if (a->state != Entity::STATE_IDLE)
+                    fprintf(stderr, "ERROR: entity not idle for render tick\n");
+                a->state = Entity::STATE_PRETICK_RENDER;
 #endif
                 a->TickRender(data->delta_time);
 #if !FINAL_RELEASE
-                if (a->state != Asset::STATE_POSTTICK_RENDER)
-                    fprintf(stderr, "ERROR: asset missed super render tick\n");
-                a->state = Asset::STATE_IDLE;
+                if (a->state != Entity::STATE_POSTTICK_RENDER)
+                    fprintf(stderr, "ERROR: entity missed super render tick\n");
+                a->state = Entity::STATE_IDLE;
 #endif
             }
 

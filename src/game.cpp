@@ -48,19 +48,19 @@ Game::~Game()
     delete data;
 }
 
-Asset::Group Game::GetGroup()
+Entity::Group Game::GetGroup()
 {
-    return Asset::GetGroup();
+    return Entity::GetGroup();
 }
 
 void Game::TickGame(float delta_time)
 {
-    Asset::TickGame(delta_time);
+    Entity::TickGame(delta_time);
 }
 
 void Game::TickRender(float delta_time)
 {
-    Asset::TickRender(delta_time);
+    Entity::TickRender(delta_time);
 
     GetScene();
 

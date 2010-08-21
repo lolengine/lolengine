@@ -11,11 +11,11 @@
 #if !defined __DH_DEBUGRECORD_H__
 #define __DH_DEBUGRECORD_H__
 
-#include "asset.h"
+#include "entity.h"
 
 class DebugRecordData;
 
-class DebugRecord : public Asset
+class DebugRecord : public Entity
 {
 public:
     DebugRecord(char const *path);

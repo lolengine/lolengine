@@ -11,12 +11,12 @@
 #if !defined __DH_DEBUGSPRITE_H__
 #define __DH_DEBUGSPRITE_H__
 
-#include "asset.h"
+#include "entity.h"
 #include "game.h"
 
 class DebugSpriteData;
 
-class DebugSprite : public Asset
+class DebugSprite : public Entity
 {
 public:
     DebugSprite(Game *game);

@@ -11,18 +11,18 @@
 #if !defined __DH_FONT_H__
 #define __DH_FONT_H__
 
-#include "asset.h"
+#include "entity.h"
 
 class FontData;
 
-class Font : public Asset
+class Font : public Entity
 {
 public:
     Font(char const *path);
     ~Font();
 
 protected:
-    /* Inherited from Asset */
+    /* Inherited from Entity */
     virtual Group GetGroup();
     virtual void TickRender(float delta_time);
 

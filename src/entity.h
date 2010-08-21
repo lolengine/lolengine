@@ -4,19 +4,19 @@
 //
 
 //
-// The Asset class
+// The Entity class
 // ---------------
-// Assets are objects that can be ticked by the game loop and/or the render
-// loop. Assets are implemented as one or several linked lists. See the
+// Entities are objects that can be ticked by the game loop and/or the render
+// loop. Entities are implemented as one or several linked lists. See the
 // Ticker class for the ticking logic and the linked list implementation.
 //
 
-#if !defined __DH_ASSET_H__
-#define __DH_ASSET_H__
+#if !defined __DH_ENTITY_H__
+#define __DH_ENTITY_H__
 
 #include <stdint.h>
 
-class Asset
+class Entity
 {
     friend class Ticker;
     friend class TickerData;
@@ -37,15 +37,15 @@ protected:
     }
     Group;
 
-    Asset();
-    virtual ~Asset();
+    Entity();
+    virtual ~Entity();
 
     virtual Group GetGroup();
 
     virtual void TickGame(float delta_time);
     virtual void TickRender(float delta_time);
 
-    Asset *next;
+    Entity *next;
     int ref, destroy;
 
 #if !FINAL_RELEASE
@@ -61,5 +61,5 @@ protected:
 #endif
 };
 
-#endif // __DH_ASSET_H__
+#endif // __DH_ENTITY_H__
 

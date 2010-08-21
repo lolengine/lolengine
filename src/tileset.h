@@ -16,18 +16,18 @@
 
 #include <stdint.h>
 
-#include "asset.h"
+#include "entity.h"
 
 class TileSetData;
 
-class TileSet : public Asset
+class TileSet : public Entity
 {
 public:
     TileSet(char const *path);
     virtual ~TileSet();
 
 protected:
-    /* Inherited from Asset */
+    /* Inherited from Entity */
     virtual Group GetGroup();
     virtual void TickRender(float delta_time);
 

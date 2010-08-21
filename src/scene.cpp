@@ -83,6 +83,16 @@ void Scene::AddTile(uint32_t code, int x, int y, int z, int o)
 
 void Scene::Render() // XXX: rename to Blit()
 {
+#if 0
+    // Randomise, then sort.
+    for (int i = 0; i < data->ntiles; i++)
+    {
+        Tile tmp = data->tiles[i];
+        int j = rand() % data->ntiles;
+        data->tiles[i] = data->tiles[j];
+        data->tiles[j] = tmp;
+    }
+#endif
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
@@ -91,9 +101,10 @@ void Scene::Render() // XXX: rename to Blit()
     f += 0.05f;
     glTranslatef(320.0f, 240.0f, 0.0f);
     glRotatef(45.0f, 1.0f, 0.0f, 0.0f);
-    //glRotatef(5.0f + 3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
-    //glRotatef(20.0f * cosf(f), 0.0f, 0.0f, 1.0f);
-    //glRotatef(30.0f, 0.0f, 0.0f, 1.0f);
+#if 0
+    glRotatef(3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
+    glRotatef(8.0f * cosf(f), 0.0f, 0.0f, 1.0f);
+#endif
     glTranslatef(-320.0f, -240.0f, 0.0f);
 
     for (int i = 0; i < data->ntiles; i++)

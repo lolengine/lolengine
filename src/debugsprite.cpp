@@ -38,19 +38,19 @@ DebugSprite::DebugSprite(Game *game)
     data->tiler = Tiler::Register("art/test/character-dress.png");
 }
 
-Asset::Group DebugSprite::GetGroup()
+Entity::Group DebugSprite::GetGroup()
 {
     return GROUP_DEFAULT;
 }
 
 void DebugSprite::TickGame(float delta_time)
 {
-    Asset::TickGame(delta_time);
+    Entity::TickGame(delta_time);
 }
 
 void DebugSprite::TickRender(float delta_time)
 {
-    Asset::TickRender(delta_time);
+    Entity::TickRender(delta_time);
 
     data->game->GetScene()->AddTile((data->tiler << 16) | 15, 320, 240, 32, 1);
     data->game->GetScene()->AddTile((data->tiler << 16) | 31, 320, 240, 0, 1);
