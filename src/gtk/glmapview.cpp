@@ -141,6 +141,16 @@ gboolean GlMapView::Draw(GdkEventExpose *e)
     return TRUE;
 }
 
+gboolean GlMapView::Scroll(double dx, double dy)
+{
+    gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj) + dx);
+    gtk_adjustment_set_value(vadj, gtk_adjustment_get_value(vadj) + dy);
+
+    UpdateAdjustments();
+
+    return TRUE;
+}
+
 gboolean GlMapView::UpdateAdjustments()
 {
     float w = mapviewer ? mapviewer->GetWidth() : glarea->allocation.width;
@@ -173,19 +183,6 @@ gboolean GlMapView::UpdateAdjustments()
     return TRUE;
 }
 
-gboolean GlMapView::MoveAdjustments(double dx, double dy)
-{
-    if (dx)
-        gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj) + dx);
-
-    if (dy)
-        gtk_adjustment_set_value(vadj, gtk_adjustment_get_value(vadj) + dy);
-
-    UpdateAdjustments();
-
-    return TRUE;
-}
-
 gboolean GlMapView::MouseButton(GdkEventButton *e)
 {
     if (e->type == GDK_BUTTON_PRESS && e->button == 2)
@@ -212,29 +209,9 @@ gboolean GlMapView::MouseMotion(GdkEventMotion *e)
 {
     if (panning)
     {
-        if (e->x != xpan)
-        {
-            double val = gtk_adjustment_get_value(hadj);
-            int map_width = mapviewer->GetWidth();
-            val += xpan - e->x;
-            xpan = e->x;
-            if (val + glarea->allocation.width > map_width)
-                val = map_width - glarea->allocation.width;
-            gtk_adjustment_set_value(hadj, val);
-            gtk_adjustment_value_changed(hadj);
-        }
-
-        if (e->y != ypan)
-        {
-            double val = gtk_adjustment_get_value(vadj);
-            int map_height = mapviewer->GetHeight();
-            val += ypan - e->y;
-            ypan = e->y;
-            if (val + glarea->allocation.height > map_height)
-                val = map_height - glarea->allocation.height;
-            gtk_adjustment_set_value(vadj, val);
-            gtk_adjustment_value_changed(vadj);
-        }
+        Scroll(xpan - e->x, ypan - e->y);
+        xpan = e->x;
+        ypan = e->y;
     }
 
     return TRUE;
@@ -244,10 +221,10 @@ gboolean GlMapView::KeyPress(GdkEventKey *e)
 {
     switch (e->keyval)
     {
-    case GDK_Up:    MoveAdjustments(  0.0, -10.0); break;
-    case GDK_Down:  MoveAdjustments(  0.0,  10.0); break;
-    case GDK_Left:  MoveAdjustments(-10.0,  0.0); break;
-    case GDK_Right: MoveAdjustments( 10.0,  0.0); break;
+    case GDK_Up:    Scroll(  0.0, -10.0); break;
+    case GDK_Down:  Scroll(  0.0,  10.0); break;
+    case GDK_Left:  Scroll(-10.0,  0.0); break;
+    case GDK_Right: Scroll( 10.0,  0.0); break;
     default: return FALSE;
     }
 
