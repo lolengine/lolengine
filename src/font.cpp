@@ -35,7 +35,8 @@ private:
     char *name;
 
     SDL_Surface *img;
-    GLuint texture[1];
+    int width, height;
+    GLuint texture;
 };
 
 /*
@@ -57,22 +58,10 @@ Font::Font(char const *path)
         SDL_Quit();
         exit(1);
     }
-
-    glGenTextures(1, data->texture);
-    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, data->img->w, data->img->h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, data->img->pixels);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 Font::~Font()
 {
-    glDeleteTextures(1, data->texture);
-    SDL_FreeSurface(data->img);
-
     delete data;
 }
 
@@ -84,6 +73,29 @@ Entity::Group Font::GetGroup()
 void Font::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
+
+    if (data->img)
+    {
+        data->width = data->img->w / 16;
+        data->height = data->img->h / 16;
+
+        glGenTextures(1, &data->texture);
+        glBindTexture(GL_TEXTURE_2D, data->texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, data->img->w, data->img->h, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, data->img->pixels);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        SDL_FreeSurface(data->img);
+        data->img = NULL;
+    }
+    else if (ref == 0)
+    {
+        glDeleteTextures(1, &data->texture);
+        destroy = 1;
+    }
 }
 
 char const *Font::GetName()
@@ -93,10 +105,10 @@ char const *Font::GetName()
 
 void Font::Print(int x, int y, char const *str)
 {
-    int w = data->img->w / 16;
-    int h = data->img->h / 16;
+    if (data->img)
+        return;
 
-    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
+    glBindTexture(GL_TEXTURE_2D, data->texture);
     glBegin(GL_QUADS);
     while (*str)
     {
@@ -109,14 +121,14 @@ void Font::Print(int x, int y, char const *str)
             glTexCoord2f(tx, ty);
             glVertex2f(x, y);
             glTexCoord2f(tx + .0625f, ty);
-            glVertex2f(x + w, y);
+            glVertex2f(x + data->width, y);
             glTexCoord2f(tx + .0625f, ty + .0625f);
-            glVertex2f(x + w, y + h);
+            glVertex2f(x + data->width, y + data->height);
             glTexCoord2f(tx, ty + .0625f);
-            glVertex2f(x, y + h);
+            glVertex2f(x, y + data->height);
         }
 
-        x += w;
+        x += data->width;
     }
     glEnd();
 }
@@ -134,6 +146,9 @@ void Font::PrintBold(int x, int y, char const *str)
         {  1,  0, 0.5, 0.5, 0.5 },
         {  0,  0, 1.0, 1.0, 1.0 },
     };
+
+    if (data->img)
+        return;
 
     glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
     for (unsigned int i = 0; i < sizeof(tab) / sizeof(*tab); i++)
