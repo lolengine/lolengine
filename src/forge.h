@@ -17,8 +17,9 @@
 class Forge
 {
 public:
-    static Font *GetFont(char const *path);
-    static void ReleaseFont(Font *font);
+    static int Register(char const *path);
+    static void Deregister(int id);
+    static Font *GetFont(int id);
 };
 
 #endif // __DH_FORGE_H__

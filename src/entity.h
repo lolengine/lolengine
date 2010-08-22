@@ -20,6 +20,7 @@ class Entity
 {
     friend class Ticker;
     friend class TickerData;
+    friend class Dict;
 
 public:
     virtual void Ref();
@@ -40,6 +41,7 @@ protected:
     Entity();
     virtual ~Entity();
 
+    virtual char const *GetName();
     virtual Group GetGroup();
 
     virtual void TickGame(float deltams);
