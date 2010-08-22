@@ -22,6 +22,10 @@ static volatile int quit = 0;
 static int ticking = 0;
 static float const FPS = 30.0f;
 
+static MapViewer *mv;
+static GtkWidget *glarea;
+static GtkAdjustment *hadj, *vadj;
+
 static gint main_quit(GtkWidget *widget, GdkEventExpose *event)
 {
     (void)widget;
@@ -42,6 +46,8 @@ static gboolean tick(void *widget)
 
     ticking = 1;
 
+    mv->SetPOV(gtk_adjustment_get_value(hadj), gtk_adjustment_get_value(vadj));
+
     /* Tick the game */
     Ticker::TickGame();
 
@@ -52,13 +58,40 @@ static gboolean tick(void *widget)
 
 static gint init(GtkWidget *widget)
 {
+    struct
+    {
+        GtkAdjustment *adj;
+        float map_size, sw_size;
+    }
+    s[2] =
+    {
+        { hadj, mv->GetWidth(), widget->allocation.width },
+        { vadj, mv->GetHeight(), widget->allocation.height },
+    };
+
+    for (int i = 0; i < 2; i++)
+    {
+        gtk_adjustment_set_lower(s[i].adj, 0);
+        gtk_adjustment_set_upper(s[i].adj, s[i].map_size);
+        gtk_adjustment_set_step_increment(s[i].adj, 1);
+        gtk_adjustment_set_page_increment(s[i].adj, s[i].sw_size);
+        gtk_adjustment_set_page_size(s[i].adj, s[i].sw_size);
+
+        float hval = gtk_adjustment_get_value(s[i].adj);
+        if (hval + s[i].sw_size > s[i].map_size)
+        {
+            gtk_adjustment_set_value(s[i].adj, s[i].map_size - s[i].sw_size);
+            gtk_adjustment_value_changed(s[i].adj);
+        }
+    }
+
     if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         Video::Setup(widget->allocation.width, widget->allocation.height);
 
     return TRUE;
 }
 
-static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
+static gint reshape_gl(GtkWidget *widget, GdkEventConfigure *event)
 {
     (void)event;
 
@@ -100,7 +133,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* Build the rest of the application */
+    /* Build the application interface and keep a few member pointers */
     GtkBuilder *builder = gtk_builder_new();
     if (!gtk_builder_add_from_file(builder, "src/gtk/editor.xml", NULL))
     {
@@ -109,7 +142,12 @@ int main(int argc, char **argv)
     }
 
     GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
-    GtkWidget *sw = GTK_WIDGET(gtk_builder_get_object(builder, "sw1"));
+    GtkWidget *viewport = GTK_WIDGET(
+                              gtk_builder_get_object(builder, "viewport1"));
+    hadj = gtk_range_get_adjustment(GTK_RANGE(
+                              gtk_builder_get_object(builder, "hscrollbar1")));
+    vadj = gtk_range_get_adjustment(GTK_RANGE(
+                              gtk_builder_get_object(builder, "vscrollbar1")));
     g_object_unref(G_OBJECT(builder));
 
     /* Create new OpenGL widget */
@@ -123,29 +161,30 @@ int main(int argc, char **argv)
         GDK_GL_NONE
     };
 
-    GtkWidget *glarea = gtk_gl_area_new(attrlist);
+    glarea = gtk_gl_area_new(attrlist);
+    gtk_widget_set_usize(glarea, 400, 300);
     gtk_widget_set_events(glarea, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
-    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), glarea);
+    gtk_container_add(GTK_CONTAINER(viewport), glarea);
 
     /* Connect signals and show window */
     gtk_signal_connect(GTK_OBJECT(window), "delete_event",
                        GTK_SIGNAL_FUNC(main_quit), NULL);
+
     gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
                        GTK_SIGNAL_FUNC(draw), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "configure_event",
-                       GTK_SIGNAL_FUNC(reshape), NULL);
+                       GTK_SIGNAL_FUNC(reshape_gl), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
                        GTK_SIGNAL_FUNC(init), NULL);
 
-    gtk_widget_show_all(window);
-
     // FIXME: detect when the map viewer is killed
-    new MapViewer("maps/testmap.tmx");
+    mv = new MapViewer("maps/testmap.tmx");
     new DebugFps();
 
     /* We tick from the idle function instead of a timeout to avoid
      * stealing time from the GTK loop when the callback time exceeds
      * the timeout value. */
+    gtk_widget_show_all(window);
     gtk_idle_add(tick, glarea);
     gtk_main();
 

@@ -31,7 +31,9 @@ protected:
 public:
     /* New methods */
     Scene *GetScene();
-    void SetMouse(int x, int y);
+    int GetWidth();
+    int GetHeight();
+    void SetPOV(int x, int y);
 
 private:
     MapViewerData *data;
