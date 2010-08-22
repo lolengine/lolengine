@@ -22,7 +22,7 @@ class MapViewerData
 private:
     Map *map;
     int x, y;
-    int mousex, mousey;
+    int povx, povy;
     int done;
 
     Scene *scene;
@@ -63,7 +63,7 @@ void MapViewer::TickDraw(float deltams)
 
     GetScene();
 
-    data->map->Render(data->scene, -data->mousex, -data->mousey, 0);
+    data->map->Render(data->scene, -data->povx, -data->povy, 0);
     data->scene->Render();
 
     delete data->scene;
@@ -77,9 +77,19 @@ Scene *MapViewer::GetScene()
     return data->scene;
 }
 
-void MapViewer::SetMouse(int x, int y)
+int MapViewer::GetWidth()
 {
-    data->mousex = x;
-    data->mousey = y;
+    return data->map->GetWidth();
+}
+
+int MapViewer::GetHeight()
+{
+    return data->map->GetHeight();
+}
+
+void MapViewer::SetPOV(int x, int y)
+{
+    data->povx = x;
+    data->povy = y;
 }
 
