@@ -69,12 +69,13 @@ void GlMapView::LoadMap(char const *path)
 {
     // FIXME: detect when the map viewer is killed
     mapviewer = new MapViewer(path);
+
+    UpdateAdjustments();
 }
 
 gboolean GlMapView::IdleTick()
 {
     // FIXME: do not do anything if the previous tick was too recent?
-
     ticking = TRUE;
 
     if (mapviewer)
@@ -91,36 +92,11 @@ gboolean GlMapView::IdleTick()
 
 gboolean GlMapView::Setup()
 {
-    if (mapviewer)
-    {
-        /* Manage adjustments */
-        struct { GtkAdjustment *adj; float map_size, sw_size; } s[2] =
-        {
-            { hadj, mapviewer->GetWidth(), glarea->allocation.width },
-            { vadj, mapviewer->GetHeight(), glarea->allocation.height },
-        };
-
-        for (int i = 0; i < 2; i++)
-        {
-            gtk_adjustment_set_lower(s[i].adj, 0);
-            gtk_adjustment_set_upper(s[i].adj, s[i].map_size);
-            gtk_adjustment_set_step_increment(s[i].adj, 1);
-            gtk_adjustment_set_page_increment(s[i].adj, s[i].sw_size);
-            gtk_adjustment_set_page_size(s[i].adj, s[i].sw_size);
-
-            float val = gtk_adjustment_get_value(s[i].adj);
-            if (val + s[i].sw_size > s[i].map_size)
-            {
-                gtk_adjustment_set_value(s[i].adj,
-                                         s[i].map_size - s[i].sw_size);
-                gtk_adjustment_value_changed(s[i].adj);
-            }
-        }
-    }
-
     /* Set up display */
     if (gtk_gl_area_make_current(GTK_GL_AREA(glarea)))
         Video::Setup(glarea->allocation.width, glarea->allocation.height);
+
+    UpdateAdjustments();
 
     return TRUE;
 }
@@ -149,6 +125,38 @@ gboolean GlMapView::Draw(GdkEventExpose *event)
         while (g_main_context_iteration(NULL, FALSE))
             ;
         Ticker::ClampFps(1000.0f / FPS);
+    }
+
+    return TRUE;
+}
+
+gboolean GlMapView::UpdateAdjustments()
+{
+    float w = mapviewer ? mapviewer->GetWidth() : glarea->allocation.width;
+    float h = mapviewer ? mapviewer->GetHeight() : glarea->allocation.height;
+
+    /* Manage adjustments */
+    struct { GtkAdjustment *adj; float map_size, sw_size; } s[2] =
+    {
+        { hadj, w, glarea->allocation.width },
+        { vadj, h, glarea->allocation.height },
+    };
+
+    for (int i = 0; i < 2; i++)
+    {
+        gtk_adjustment_set_lower(s[i].adj, 0);
+        gtk_adjustment_set_upper(s[i].adj, s[i].map_size);
+        gtk_adjustment_set_step_increment(s[i].adj, 1);
+        gtk_adjustment_set_page_increment(s[i].adj, s[i].sw_size);
+        gtk_adjustment_set_page_size(s[i].adj, s[i].sw_size);
+
+        float val = gtk_adjustment_get_value(s[i].adj);
+        if (val + s[i].sw_size > s[i].map_size)
+        {
+            gtk_adjustment_set_value(s[i].adj,
+                                     s[i].map_size - s[i].sw_size);
+            gtk_adjustment_value_changed(s[i].adj);
+        }
     }
 
     return TRUE;

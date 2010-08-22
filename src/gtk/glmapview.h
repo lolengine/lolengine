@@ -20,6 +20,7 @@ private:
     gboolean Setup();
     gboolean Destroy();
     gboolean Draw(GdkEventExpose *event);
+    gboolean UpdateAdjustments();
     gboolean MouseButton(GdkEventButton *event);
     gboolean MouseMotion(GdkEventMotion *event);
 
