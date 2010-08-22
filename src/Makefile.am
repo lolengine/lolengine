@@ -4,7 +4,7 @@ noinst_PROGRAMS = test-map editor
 noinst_LIBRARIES = libcommon.a
 
 libcommon_a_SOURCES = \
-    core.h matrix.h game.cpp game.h tiler.cpp tiler.h \
+    core.h matrix.h game.cpp game.h tiler.cpp tiler.h dict.cpp dict.h \
     scene.cpp scene.h font.cpp font.h layer.cpp layer.h map.cpp map.h \
     entity.cpp entity.h ticker.cpp ticker.h tileset.cpp tileset.h \
     forge.cpp forge.h video.cpp video.h timer.cpp timer.h bitfield.h \

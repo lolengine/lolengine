@@ -28,6 +28,7 @@
 #include "tileset.h"
 
 // Other objects
+#include "dict.h"
 #include "map.h"
 #include "layer.h"
 

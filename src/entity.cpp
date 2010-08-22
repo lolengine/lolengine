@@ -35,6 +35,11 @@ Entity::~Entity()
 #endif
 }
 
+char const *Entity::GetName()
+{
+    return "Generic entity";
+}
+
 Entity::Group Entity::GetGroup()
 {
     return GROUP_DEFAULT;

@@ -23,13 +23,12 @@ public:
 
 protected:
     /* Inherited from Entity */
+    virtual char const *GetName();
     virtual Group GetGroup();
     virtual void TickRender(float deltams);
 
 public:
     /* New methods */
-    char const *GetName();
-
     void Print(int x, int y, char const *str);
     void PrintBold(int x, int y, char const *str);
 

@@ -28,13 +28,12 @@ public:
 
 protected:
     /* Inherited from Entity */
+    virtual char const *GetName();
     virtual Group GetGroup();
     virtual void TickRender(float deltams);
 
 public:
     /* New methods */
-    char const *GetName();
-
     void BlitTile(uint32_t id, int x, int y, int z, int o);
 
 private:
