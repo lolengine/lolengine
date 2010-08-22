@@ -1,27 +1,34 @@
 
 Important stuff
 ---------------
-[ ] Something to move a character around.
-  - [ ] Joystick input.
-  - [ ] Event listeners for keyboard or joystick.
-[ ] Map collisions?
 [ ] Add scripting support (lua?).
 [ ] Open several maps at the same time.
 [ ] See whether we should use floats or at least subpixel coordinates for
     on-screen objects, in order to handle velocity and other physics stuff
     (with rounding when displaying, of course)
 
-Performances
-------------
+Needed for game
+---------------
+[ ] Something to move a character around.
+  - [ ] Joystick input.
+  - [ ] Event listeners for keyboard or joystick.
+[ ] Map collisions!
+  - [ ] Find where to store world collisions
+  - [ ] Handle entity/world collisions
+  - [ ] Handle entity/entity collisions
+[ ] Pathfinding
+
+Performance
+-----------
 [ ] Switch rendering to vertex/index buffer objects
 
 Editor
 ------
 [ ] File requester for maps.
-[ ] Scroller/panner for maps.
+[X] Scroller/panner for maps.
 [ ] Allow to modify maps.
-[x] Do GTK stuff instead of waiting for the framerate
-[ ] "map viewer" object/asset, as opposed to more complex in-game manager
+[X] Do GTK stuff instead of waiting for the framerate
+[X] "map viewer" object/asset, as opposed to more complex in-game manager
 
 Specs
 -----
