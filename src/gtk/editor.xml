@@ -4,6 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="window1">
     <property name="title" translatable="yes">Deus Hax Editor</property>
+    <signal name="delete_event" handler="gtk_main_quit"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -160,6 +161,7 @@
                 <child>
                   <object class="GtkHScrollbar" id="hscrollbar1">
                     <property name="visible">True</property>
+                    <property name="adjustment">gl_hadj</property>
                   </object>
                   <packing>
                     <property name="top_attach">1</property>
@@ -171,6 +173,7 @@
                   <object class="GtkVScrollbar" id="vscrollbar1">
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
+                    <property name="adjustment">gl_vadj</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -179,7 +182,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkViewport" id="viewport1">
+                  <object class="GtkViewport" id="gl_container">
                     <property name="visible">True</property>
                     <property name="resize_mode">queue</property>
                     <child>
@@ -228,5 +231,17 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="gl_hadj">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
+  <object class="GtkAdjustment" id="gl_vadj">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
   </object>
 </interface>
