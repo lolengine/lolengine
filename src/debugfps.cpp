@@ -22,7 +22,6 @@ class DebugFpsData
 
 private:
     int fontid;
-    int frame;
 };
 
 /*
@@ -34,7 +33,6 @@ DebugFps::DebugFps()
     data = new DebugFpsData();
 
     data->fontid = Forge::Register("gfx/font/ascii.png");
-    data->frame = 0;
 }
 
 Entity::Group DebugFps::GetGroup()
@@ -46,13 +44,12 @@ void DebugFps::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    data->frame++;
-
     char buf[1024];
     Font *font = Forge::GetFont(data->fontid);
 
     sprintf(buf, "%2.2f fps (%i)",
-            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME), data->frame);
+            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            Ticker::GetFrameNum());
     font->PrintBold(10, 10, buf);
 
     sprintf(buf, "Game  % 7.2f % 7.2f",
