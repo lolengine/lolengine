@@ -22,16 +22,18 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem1">
-                        <property name="label">gtk-new</property>
                         <property name="visible">True</property>
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">action_new</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem2">
-                        <property name="label">gtk-open</property>
                         <property name="visible">True</property>
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">action_open</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -151,7 +153,61 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkToolbar" id="toolbar1">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkToolButton" id="toolbutton2">
+                <property name="visible">True</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">action_new</property>
+                <property name="label" translatable="yes">toolbutton</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbutton1">
+                <property name="visible">True</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">action_open</property>
+                <property name="label" translatable="yes">Open...</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbutton4">
+                <property name="visible">True</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">action_save</property>
+                <property name="label" translatable="yes">Save</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="toolbutton3">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">1</property>
+          </packing>
         </child>
         <child>
           <object class="GtkHPaned" id="hpaned1">
@@ -281,5 +337,17 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAction" id="action_open">
+    <property name="label">Open...</property>
+    <property name="stock_id">gtk-open</property>
+    <property name="always_show_image">True</property>
+  </object>
+  <object class="GtkAction" id="action_new">
+    <property name="stock_id">gtk-new</property>
+  </object>
+  <object class="GtkAction" id="action_save">
+    <property name="label">Save</property>
+    <property name="stock_id">gtk-save</property>
   </object>
 </interface>
