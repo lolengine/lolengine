@@ -8,6 +8,7 @@
 #endif
 
 #include <cstdio>
+#include <cmath>
 
 #include "core.h"
 #include "debugsprite.h"
@@ -50,7 +51,7 @@ void DebugSprite::TickGame(float deltams)
     Entity::TickGame(deltams);
 
     Float2 axis = Input::GetAxis(0);
-    data->x += 0.1f * deltams * axis.x;
+    data->x += 0.1f * sqrtf(2.0f) * deltams * axis.x;
     data->y += 0.1f * deltams * axis.y;
 }
 
