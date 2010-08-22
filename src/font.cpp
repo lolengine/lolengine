@@ -81,9 +81,9 @@ Entity::Group Font::GetGroup()
     return GROUP_BEFORE;
 }
 
-void Font::TickRender(float deltams)
+void Font::TickDraw(float deltams)
 {
-    Entity::TickRender(deltams);
+    Entity::TickDraw(deltams);
 }
 
 char const *Font::GetName()

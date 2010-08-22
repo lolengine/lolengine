@@ -78,7 +78,7 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
         /* Clear the screen, tick the renderer, show the frame and
          * clamp to desired framerate. */
         Video::Clear();
-        Ticker::TickRender();
+        Ticker::TickDraw();
         gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
         while (g_main_context_iteration(NULL, FALSE))
             ;

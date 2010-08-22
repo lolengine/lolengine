@@ -37,7 +37,7 @@ Entity::~Entity()
 
 char const *Entity::GetName()
 {
-    return "Generic entity";
+    return "<entity>";
 }
 
 Entity::Group Entity::GetGroup()
@@ -54,12 +54,12 @@ void Entity::TickGame(float deltams)
 #endif
 }
 
-void Entity::TickRender(float deltams)
+void Entity::TickDraw(float deltams)
 {
 #if !FINAL_RELEASE
-    if (state != STATE_PRETICK_RENDER)
-        fprintf(stderr, "ERROR: invalid entity render tick\n");
-    state = STATE_POSTTICK_RENDER;
+    if (state != STATE_PRETICK_DRAW)
+        fprintf(stderr, "ERROR: invalid entity draw tick\n");
+    state = STATE_POSTTICK_DRAW;
 #endif
 }
 

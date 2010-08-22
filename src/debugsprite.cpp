@@ -55,16 +55,18 @@ void DebugSprite::TickGame(float deltams)
     data->y += 0.1f * deltams * axis.y;
 }
 
-void DebugSprite::TickRender(float deltams)
+void DebugSprite::TickDraw(float deltams)
 {
-    Entity::TickRender(deltams);
+    Entity::TickDraw(deltams);
 
     int x = data->x;
     int y = data->y;
     int z = data->z;
 
-    data->game->GetScene()->AddTile((data->tiler << 16) | 15, x, y, z + 32, 1);
-    data->game->GetScene()->AddTile((data->tiler << 16) | 31, x, y, z, 1);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 15,
+                                    x - 16, y - 32, z + 32, 1);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 31,
+                                    x - 16, y - 32, z, 1);
 }
 
 DebugSprite::~DebugSprite()

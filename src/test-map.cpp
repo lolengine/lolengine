@@ -61,7 +61,7 @@ int main(int argc, char **argv)
         /* Clear the screen, tick the renderer, show the frame and
          * clamp to desired framerate. */
         Video::Clear();
-        Ticker::TickRender();
+        Ticker::TickDraw();
         SDL_GL_SwapBuffers();
         Ticker::ClampFps(1000.0f / FPS);
     }
