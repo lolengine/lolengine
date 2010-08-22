@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 
     new DebugFps();
     glmapview->LoadMap("maps/testmap.tmx");
+    glmapview->SetFocus();
 
     gtk_main();
 

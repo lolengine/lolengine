@@ -13,6 +13,7 @@ class GlMapView
 public:
     GlMapView(GtkBuilder *builder);
     void LoadMap(char const *path);
+    void SetFocus();
 
 private:
     /* Private methods */
@@ -21,8 +22,10 @@ private:
     gboolean Destroy();
     gboolean Draw(GdkEventExpose *event);
     gboolean UpdateAdjustments();
+    gboolean MoveAdjustments(double dx, double dy);
     gboolean MouseButton(GdkEventButton *event);
     gboolean MouseMotion(GdkEventMotion *event);
+    gboolean KeyPress(GdkEventKey *event);
 
     /* Private signal slots */
     static gboolean IdleTickSignal(GlMapView *that);
@@ -36,6 +39,8 @@ private:
                                       GlMapView *that);
     static gboolean MouseMotionSignal(GtkWidget *w, GdkEventMotion *event,
                                       GlMapView *that);
+    static gboolean KeyPressSignal(GtkWidget *w, GdkEventKey *event,
+                                   GlMapView *that);
 
 private:
     GtkAdjustment *hadj, *vadj;
