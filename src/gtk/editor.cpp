@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     GlMapView *glmapview = new GlMapView(builder);
 
     /* Show window. We're good to go! */
-    gtk_widget_show_all(GTK_WIDGET(gtk_builder_get_object(builder, "window1")));
+    gtk_widget_show_all(GTK_WIDGET(gtk_builder_get_object(builder, "window")));
     g_object_unref(G_OBJECT(builder));
 
     new DebugFps();
