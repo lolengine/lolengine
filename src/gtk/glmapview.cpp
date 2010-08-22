@@ -9,6 +9,7 @@
 
 #include <gtk/gtk.h>
 #include <gtkgl/gtkglarea.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "core.h"
 #include "glmapview.h"
@@ -39,6 +40,8 @@ GlMapView::GlMapView(GtkBuilder *builder)
                                   GDK_POINTER_MOTION_MASK |
                                   GDK_BUTTON_PRESS_MASK |
                                   GDK_BUTTON_RELEASE_MASK);
+    gtk_widget_set_can_focus(glarea, TRUE);
+
     GtkContainer *cont = GTK_CONTAINER(gtk_builder_get_object(builder,
                                                               "gl_container"));
     gtk_container_add(cont, glarea);
@@ -63,6 +66,9 @@ GlMapView::GlMapView(GtkBuilder *builder)
                        GTK_SIGNAL_FUNC(MouseButtonSignal), this);
     gtk_signal_connect(GTK_OBJECT(glarea), "motion_notify_event",
                        GTK_SIGNAL_FUNC(MouseMotionSignal), this);
+
+    gtk_signal_connect(GTK_OBJECT(glarea), "key_press_event",
+                       GTK_SIGNAL_FUNC(KeyPressSignal), this);
 }
 
 void GlMapView::LoadMap(char const *path)
@@ -71,6 +77,11 @@ void GlMapView::LoadMap(char const *path)
     mapviewer = new MapViewer(path);
 
     UpdateAdjustments();
+}
+
+void GlMapView::SetFocus()
+{
+    gtk_widget_grab_focus(glarea);
 }
 
 gboolean GlMapView::IdleTick()
@@ -162,6 +173,19 @@ gboolean GlMapView::UpdateAdjustments()
     return TRUE;
 }
 
+gboolean GlMapView::MoveAdjustments(double dx, double dy)
+{
+    if (dx)
+        gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj) + dx);
+
+    if (dy)
+        gtk_adjustment_set_value(vadj, gtk_adjustment_get_value(vadj) + dy);
+
+    UpdateAdjustments();
+
+    return TRUE;
+}
+
 gboolean GlMapView::MouseButton(GdkEventButton *event)
 {
     if (event->type == GDK_BUTTON_PRESS && event->button == 2)
@@ -216,6 +240,20 @@ gboolean GlMapView::MouseMotion(GdkEventMotion *event)
     return TRUE;
 }
 
+gboolean GlMapView::KeyPress(GdkEventKey *event)
+{
+    switch (event->keyval)
+    {
+    case GDK_Up:    MoveAdjustments(  0.0, -10.0); break;
+    case GDK_Down:  MoveAdjustments(  0.0,  10.0); break;
+    case GDK_Left:  MoveAdjustments(-10.0,  0.0); break;
+    case GDK_Right: MoveAdjustments( 10.0,  0.0); break;
+    default: return FALSE;
+    }
+
+    return TRUE;
+}
+
 /* Private signal slots */
 gboolean GlMapView::IdleTickSignal(GlMapView *that)
 {
@@ -261,5 +299,12 @@ gboolean GlMapView::MouseMotionSignal(GtkWidget *w, GdkEventMotion *event,
 {
     (void)w;
     return that->MouseMotion(event);
+}
+
+gboolean GlMapView::KeyPressSignal(GtkWidget *w, GdkEventKey *event,
+                                   GlMapView *that)
+{
+    (void)w;
+    return that->KeyPress(event);
 }
 
