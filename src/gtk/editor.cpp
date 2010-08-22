@@ -76,7 +76,7 @@ static gint draw(GtkWidget *widget, GdkEventExpose *event)
         ticking = 0;
 
         /* Clear the screen, tick the renderer, show the frame and
-         * clamp to desired framerate. */
+         * clamp to desired framerate */
         Video::Clear();
         Ticker::TickDraw();
         gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
@@ -100,6 +100,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    /* Build the rest of the application */
     GtkBuilder *builder = gtk_builder_new();
     if (!gtk_builder_add_from_file(builder, "src/gtk/editor.xml", NULL))
     {
@@ -107,20 +108,11 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* Create new top level window. */
     GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
+    GtkWidget *sw = GTK_WIDGET(gtk_builder_get_object(builder, "sw1"));
+    g_object_unref(G_OBJECT(builder));
 
-    /* You should always delete gtk_gl_area widgets before exit or else
-       GLX contexts are left undeleted, this may cause problems (=core dump)
-       in some systems.
-       Destroy method of objects is not automatically called on exit.
-       You need to manually enable this feature. Do gtk_quit_add_destroy()
-       for all your top level windows unless you are certain that they get
-       destroy signal by other means.
-    */
-    gtk_quit_add_destroy(1, GTK_OBJECT(window));
-
-    /* Create new OpenGL widget. */
+    /* Create new OpenGL widget */
     int attrlist[] =
     {
         GDK_GL_RGBA,
@@ -132,10 +124,10 @@ int main(int argc, char **argv)
     };
 
     GtkWidget *glarea = gtk_gl_area_new(attrlist);
+    gtk_widget_set_events(glarea, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), glarea);
 
-    gtk_widget_set_events(GTK_WIDGET(glarea),
-                          GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
-
+    /* Connect signals and show window */
     gtk_signal_connect(GTK_OBJECT(window), "delete_event",
                        GTK_SIGNAL_FUNC(main_quit), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
@@ -145,19 +137,15 @@ int main(int argc, char **argv)
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
                        GTK_SIGNAL_FUNC(init), NULL);
 
-    // Create a scrolled window around our GL widget
-    GtkWidget *sw = GTK_WIDGET(gtk_builder_get_object(builder, "scrolledwindow1"));
-    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), glarea);
+    gtk_widget_show_all(window);
 
-    /* Put scrolled window into main window */
-    gtk_widget_show_all(GTK_WIDGET(window));
-
-    // FIXME: detect when the game is killed
-    new Game("maps/testmap.tmx");
+    // FIXME: detect when the map viewer is killed
+    new MapViewer("maps/testmap.tmx");
     new DebugFps();
 
     /* We tick from the idle function instead of a timeout to avoid
-     * stealing time from the GTK loop. */
+     * stealing time from the GTK loop when the callback time exceeds
+     * the timeout value. */
     gtk_idle_add(tick, glarea);
     gtk_main();
 

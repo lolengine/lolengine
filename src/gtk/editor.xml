@@ -153,7 +153,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow1">
+              <object class="GtkScrolledWindow" id="sw1">
                 <property name="width_request">640</property>
                 <property name="height_request">480</property>
                 <property name="visible">True</property>
