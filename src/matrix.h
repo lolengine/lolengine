@@ -21,6 +21,9 @@ struct Float2
 
 struct Float3
 {
+    Float3() { x = y = z = 0.0f; }
+    Float3(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+
     float x, y, z;
 };
 
