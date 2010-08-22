@@ -24,6 +24,7 @@ public:
     static void TickGame();
     static void TickDraw();
     static void ClampFps(float deltams);
+    static int GetFrameNum();
 };
 
 #endif // __DH_TICKER_H__

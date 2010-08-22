@@ -118,9 +118,9 @@ gboolean GlMapView::Destroy()
     return TRUE;
 }
 
-gboolean GlMapView::Draw(GdkEventExpose *event)
+gboolean GlMapView::Draw(GdkEventExpose *e)
 {
-    if (event->count > 0)
+    if (e->count > 0)
         return TRUE;
 
     /* OpenGL functions can be called only if make_current returns true */
@@ -186,19 +186,19 @@ gboolean GlMapView::MoveAdjustments(double dx, double dy)
     return TRUE;
 }
 
-gboolean GlMapView::MouseButton(GdkEventButton *event)
+gboolean GlMapView::MouseButton(GdkEventButton *e)
 {
-    if (event->type == GDK_BUTTON_PRESS && event->button == 2)
+    if (e->type == GDK_BUTTON_PRESS && e->button == 2)
     {
         panning = TRUE;
-        xpan = event->x;
-        ypan = event->y;
+        xpan = e->x;
+        ypan = e->y;
         GdkCursor *cursor = gdk_cursor_new(GDK_HAND1);
         gdk_window_set_cursor(glarea->window, cursor);
         gdk_cursor_unref(cursor);
         return FALSE;
     }
-    else if (event->type == GDK_BUTTON_RELEASE && event->button == 2)
+    else if (e->type == GDK_BUTTON_RELEASE && e->button == 2)
     {
         panning = FALSE;
         gdk_window_set_cursor(glarea->window, NULL);
@@ -208,28 +208,28 @@ gboolean GlMapView::MouseButton(GdkEventButton *event)
     return TRUE;
 }
 
-gboolean GlMapView::MouseMotion(GdkEventMotion *event)
+gboolean GlMapView::MouseMotion(GdkEventMotion *e)
 {
     if (panning)
     {
-        if (event->x != xpan)
+        if (e->x != xpan)
         {
             double val = gtk_adjustment_get_value(hadj);
             int map_width = mapviewer->GetWidth();
-            val += xpan - event->x;
-            xpan = event->x;
+            val += xpan - e->x;
+            xpan = e->x;
             if (val + glarea->allocation.width > map_width)
                 val = map_width - glarea->allocation.width;
             gtk_adjustment_set_value(hadj, val);
             gtk_adjustment_value_changed(hadj);
         }
 
-        if (event->y != ypan)
+        if (e->y != ypan)
         {
             double val = gtk_adjustment_get_value(vadj);
             int map_height = mapviewer->GetHeight();
-            val += ypan - event->y;
-            ypan = event->y;
+            val += ypan - e->y;
+            ypan = e->y;
             if (val + glarea->allocation.height > map_height)
                 val = map_height - glarea->allocation.height;
             gtk_adjustment_set_value(vadj, val);
@@ -240,9 +240,9 @@ gboolean GlMapView::MouseMotion(GdkEventMotion *event)
     return TRUE;
 }
 
-gboolean GlMapView::KeyPress(GdkEventKey *event)
+gboolean GlMapView::KeyPress(GdkEventKey *e)
 {
-    switch (event->keyval)
+    switch (e->keyval)
     {
     case GDK_Up:    MoveAdjustments(  0.0, -10.0); break;
     case GDK_Down:  MoveAdjustments(  0.0,  10.0); break;
@@ -272,39 +272,39 @@ gboolean GlMapView::DestroySignal(GtkWidget *w, GlMapView *that)
     return that->Destroy();
 }
 
-gboolean GlMapView::DrawSignal(GtkWidget *w, GdkEventExpose *event,
+gboolean GlMapView::DrawSignal(GtkWidget *w, GdkEventExpose *e,
                                GlMapView *that)
 {
     (void)w;
-    return that->Draw(event);
+    return that->Draw(e);
 }
 
-gboolean GlMapView::ReshapeSignal(GtkWidget *w, GdkEventConfigure *event,
+gboolean GlMapView::ReshapeSignal(GtkWidget *w, GdkEventConfigure *e,
                                   GlMapView *that)
 {
     (void)w;
-    (void)event;
+    (void)e;
     return that->Setup();
 }
 
-gboolean GlMapView::MouseButtonSignal(GtkWidget *w, GdkEventButton *event,
+gboolean GlMapView::MouseButtonSignal(GtkWidget *w, GdkEventButton *e,
                                       GlMapView *that)
 {
     (void)w;
-    return that->MouseButton(event);
+    return that->MouseButton(e);
 }
 
-gboolean GlMapView::MouseMotionSignal(GtkWidget *w, GdkEventMotion *event,
+gboolean GlMapView::MouseMotionSignal(GtkWidget *w, GdkEventMotion *e,
                                       GlMapView *that)
 {
     (void)w;
-    return that->MouseMotion(event);
+    return that->MouseMotion(e);
 }
 
-gboolean GlMapView::KeyPressSignal(GtkWidget *w, GdkEventKey *event,
+gboolean GlMapView::KeyPressSignal(GtkWidget *w, GdkEventKey *e,
                                    GlMapView *that)
 {
     (void)w;
-    return that->KeyPress(event);
+    return that->KeyPress(e);
 }
 

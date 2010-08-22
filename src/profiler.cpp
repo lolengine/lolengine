@@ -21,21 +21,19 @@ static class ProfilerData
 {
     friend class Profiler;
 
-    static int const HISTORY = 30;
+    static int const HISTORY = 32;
 
 public:
     ProfilerData()
     {
         for (int i = 0; i < HISTORY; i++)
             history[i] = 0.0f;
-        frame = 0;
         avg = max = 0.0f;
     }
 
 private:
     float history[HISTORY];
     Timer timer;
-    int frame;
     float avg, max;
 }
 data[Profiler::STAT_COUNT];
@@ -53,8 +51,7 @@ void Profiler::Stop(int id)
 {
     float deltams = data[id].timer.GetMs();
 
-    data[id].history[data->frame % ProfilerData::HISTORY] = deltams;
-    data[id].frame++;
+    data[id].history[Ticker::GetFrameNum() % ProfilerData::HISTORY] = deltams;
     data[id].avg = 0.0f;
     data[id].max = 0.0f;
 

@@ -23,12 +23,11 @@ static class TickerData
 
 public:
     TickerData() :
-        todo(0),
-        nentities(0)
+        todo(0), nentities(0),
+        frame(0), deltams(0), bias(0)
     {
         for (int i = 0; i < Entity::GROUP_COUNT; i++)
             list[i] = NULL;
-        bias = 0.0f;
     }
 
     ~TickerData()
@@ -46,6 +45,7 @@ private:
     int nentities;
 
     /* Fixed framerate management */
+    int frame;
     Timer timer;
     float deltams, bias;
 }
@@ -72,6 +72,8 @@ void Ticker::TickGame()
     Profiler::Start(Profiler::STAT_TICK_FRAME);
 
     Profiler::Start(Profiler::STAT_TICK_GAME);
+
+    data->frame++;
 
     data->deltams = data->timer.GetMs();
     data->bias += data->deltams;
@@ -160,5 +162,10 @@ void Ticker::ClampFps(float deltams)
     if (deltams > data->bias)
         data->timer.WaitMs(deltams - data->bias);
     data->bias -= deltams;
+}
+
+int Ticker::GetFrameNum()
+{
+    return data->frame;
 }
 
