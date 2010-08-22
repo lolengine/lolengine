@@ -20,6 +20,8 @@
 static volatile int quit = 0;
 
 static int ticking = 0;
+static int panning = 0;
+static double xpan = 0.0f, ypan = 0.0f;
 static float const FPS = 30.0f;
 
 static MapViewer *mv;
@@ -56,8 +58,63 @@ static gboolean tick(void *widget)
     return TRUE;
 }
 
+static gboolean mouse_button(GtkWidget *widget, GdkEventButton *event,
+                                                gpointer user_data)
+{
+    if (event->type == GDK_BUTTON_PRESS && event->button == 2)
+    {
+        panning = 1;
+        xpan = event->x;
+        ypan = event->y;
+        GdkCursor *cursor = gdk_cursor_new(GDK_HAND1);
+        gdk_window_set_cursor(widget->window, cursor);
+        gdk_cursor_unref(cursor);
+        return FALSE;
+    }
+    else if (event->type == GDK_BUTTON_RELEASE && event->button == 2)
+    {
+        panning = 0;
+        gdk_window_set_cursor(widget->window, NULL);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean mouse_motion(GtkWidget *widget, GdkEventMotion *event,
+                                                gpointer user_data)
+{
+    if (panning)
+    {
+        if (event->x != xpan)
+        {
+            double val = gtk_adjustment_get_value(hadj);
+            val += xpan - event->x;
+            xpan = event->x;
+            if (val + widget->allocation.width > mv->GetWidth())
+                val = mv->GetWidth() - widget->allocation.width;
+            gtk_adjustment_set_value(hadj, val);
+            gtk_adjustment_value_changed(hadj);
+        }
+
+        if (event->y != ypan)
+        {
+            double val = gtk_adjustment_get_value(vadj);
+            val += ypan - event->y;
+            ypan = event->y;
+            if (val + widget->allocation.height > mv->GetHeight())
+                val = mv->GetHeight() - widget->allocation.height;
+            gtk_adjustment_set_value(vadj, val);
+            gtk_adjustment_value_changed(vadj);
+        }
+    }
+
+    return TRUE;
+}
+
 static gint init(GtkWidget *widget)
 {
+    /* Manage adjustments */
     struct
     {
         GtkAdjustment *adj;
@@ -77,21 +134,22 @@ static gint init(GtkWidget *widget)
         gtk_adjustment_set_page_increment(s[i].adj, s[i].sw_size);
         gtk_adjustment_set_page_size(s[i].adj, s[i].sw_size);
 
-        float hval = gtk_adjustment_get_value(s[i].adj);
-        if (hval + s[i].sw_size > s[i].map_size)
+        float val = gtk_adjustment_get_value(s[i].adj);
+        if (val + s[i].sw_size > s[i].map_size)
         {
             gtk_adjustment_set_value(s[i].adj, s[i].map_size - s[i].sw_size);
             gtk_adjustment_value_changed(s[i].adj);
         }
     }
 
+    /* Set up display */
     if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
         Video::Setup(widget->allocation.width, widget->allocation.height);
 
     return TRUE;
 }
 
-static gint reshape_gl(GtkWidget *widget, GdkEventConfigure *event)
+static gint reshape(GtkWidget *widget, GdkEventConfigure *event)
 {
     (void)event;
 
@@ -163,8 +221,14 @@ int main(int argc, char **argv)
 
     glarea = gtk_gl_area_new(attrlist);
     gtk_widget_set_usize(glarea, 400, 300);
-    gtk_widget_set_events(glarea, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
+    gtk_widget_set_events(glarea, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK
+                           | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
     gtk_container_add(GTK_CONTAINER(viewport), glarea);
+
+    /* We tick from the idle function instead of a timeout to avoid
+     * stealing time from the GTK loop when the callback time exceeds
+     * the timeout value. */
+    gtk_idle_add(tick, glarea);
 
     /* Connect signals and show window */
     gtk_signal_connect(GTK_OBJECT(window), "delete_event",
@@ -173,19 +237,21 @@ int main(int argc, char **argv)
     gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
                        GTK_SIGNAL_FUNC(draw), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "configure_event",
-                       GTK_SIGNAL_FUNC(reshape_gl), NULL);
+                       GTK_SIGNAL_FUNC(reshape), NULL);
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
                        GTK_SIGNAL_FUNC(init), NULL);
+    gtk_signal_connect(GTK_OBJECT(glarea), "button_press_event",
+                       GTK_SIGNAL_FUNC(mouse_button), NULL);
+    gtk_signal_connect(GTK_OBJECT(glarea), "button_release_event",
+                       GTK_SIGNAL_FUNC(mouse_button), NULL);
+    gtk_signal_connect(GTK_OBJECT(glarea), "motion_notify_event",
+                       GTK_SIGNAL_FUNC(mouse_motion), NULL);
 
     // FIXME: detect when the map viewer is killed
     mv = new MapViewer("maps/testmap.tmx");
     new DebugFps();
 
-    /* We tick from the idle function instead of a timeout to avoid
-     * stealing time from the GTK loop when the callback time exceeds
-     * the timeout value. */
     gtk_widget_show_all(window);
-    gtk_idle_add(tick, glarea);
     gtk_main();
 
     return EXIT_SUCCESS;
