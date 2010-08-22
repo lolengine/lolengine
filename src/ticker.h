@@ -22,7 +22,7 @@ public:
     static void Register(Entity *entity);
 
     static void TickGame();
-    static void TickRender();
+    static void TickDraw();
     static void ClampFps(float deltams);
 };
 

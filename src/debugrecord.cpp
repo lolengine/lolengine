@@ -44,7 +44,7 @@ DebugRecord::DebugRecord(char const *path)
 
 Entity::Group DebugRecord::GetGroup()
 {
-    return GROUP_RENDER_CAPTURE;
+    return GROUP_DRAW_CAPTURE;
 }
 
 void DebugRecord::TickGame(float deltams)
@@ -52,9 +52,9 @@ void DebugRecord::TickGame(float deltams)
     Entity::TickGame(deltams);
 }
 
-void DebugRecord::TickRender(float deltams)
+void DebugRecord::TickDraw(float deltams)
 {
-    Entity::TickRender(deltams);
+    Entity::TickDraw(deltams);
 
     int width = Video::GetWidth();
     int height = Video::GetHeight();

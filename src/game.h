@@ -26,7 +26,7 @@ protected:
     /* Inherited from Entity */
     virtual Group GetGroup();
     virtual void TickGame(float deltams);
-    virtual void TickRender(float deltams);
+    virtual void TickDraw(float deltams);
 
 public:
     /* New methods */

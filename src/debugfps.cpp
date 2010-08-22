@@ -42,9 +42,9 @@ Entity::Group DebugFps::GetGroup()
     return GROUP_AFTER;
 }
 
-void DebugFps::TickRender(float deltams)
+void DebugFps::TickDraw(float deltams)
 {
-    Entity::TickRender(deltams);
+    Entity::TickDraw(deltams);
 
     data->frame++;
 
@@ -52,26 +52,26 @@ void DebugFps::TickRender(float deltams)
     Font *font = Forge::GetFont(data->fontid);
 
     sprintf(buf, "%2.2f fps (%i)",
-            1e3f / Profiler::GetMean(Profiler::STAT_TICK_FRAME), data->frame);
+            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME), data->frame);
     font->PrintBold(10, 10, buf);
 
-    sprintf(buf, "Game   % 7.2f % 7.2f",
-            Profiler::GetMean(Profiler::STAT_TICK_GAME),
+    sprintf(buf, "Game  % 7.2f % 7.2f",
+            Profiler::GetAvg(Profiler::STAT_TICK_GAME),
             Profiler::GetMax(Profiler::STAT_TICK_GAME));
     font->PrintBold(10, 34, buf);
 
-    sprintf(buf, "Render % 7.2f % 7.2f",
-            Profiler::GetMean(Profiler::STAT_TICK_RENDER),
-            Profiler::GetMax(Profiler::STAT_TICK_RENDER));
+    sprintf(buf, "Draw  % 7.2f % 7.2f",
+            Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
+            Profiler::GetMax(Profiler::STAT_TICK_DRAW));
     font->PrintBold(10, 50, buf);
 
-    sprintf(buf, "Blit   % 7.2f % 7.2f",
-            Profiler::GetMean(Profiler::STAT_TICK_BLIT),
+    sprintf(buf, "Blit  % 7.2f % 7.2f",
+            Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
             Profiler::GetMax(Profiler::STAT_TICK_BLIT));
     font->PrintBold(10, 66, buf);
 
-    sprintf(buf, "Frame  % 7.2f % 7.2f",
-            Profiler::GetMean(Profiler::STAT_TICK_FRAME),
+    sprintf(buf, "Frame % 7.2f % 7.2f",
+            Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Profiler::GetMax(Profiler::STAT_TICK_FRAME));
     font->PrintBold(10, 82, buf);
 }

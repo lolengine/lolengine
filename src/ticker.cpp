@@ -80,74 +80,74 @@ void Ticker::TickGame()
      * before inserting awaiting objects, because there is no way these
      * are already marked for destruction. */
     for (int i = 0; i < Entity::GROUP_COUNT; i++)
-        for (Entity *a = data->list[i], *prev = NULL; a; prev = a, a = a->next)
-            if (a->destroy)
+        for (Entity *e = data->list[i], *prev = NULL; e; prev = e, e = e->next)
+            if (e->destroy)
             {
                 if (prev)
-                    prev->next = a->next;
+                    prev->next = e->next;
                 else
-                    data->list[i] = a->next;
+                    data->list[i] = e->next;
 
                 data->nentities--;
-                delete a;
+                delete e;
             }
 
     /* Insert waiting objects into the appropriate lists */
     while (data->todo)
     {
-        Entity *a = data->todo;
-        data->todo = a->next;
+        Entity *e = data->todo;
+        data->todo = e->next;
 
-        int i = a->GetGroup();
-        a->next = data->list[i];
-        data->list[i] = a;
+        int i = e->GetGroup();
+        e->next = data->list[i];
+        data->list[i] = e;
         data->nentities++;
     }
 
     /* Tick objects for the game loop */
     for (int i = 0; i < Entity::GROUP_COUNT; i++)
-        for (Entity *a = data->list[i]; a; a = a->next)
-            if (!a->destroy)
+        for (Entity *e = data->list[i]; e; e = e->next)
+            if (!e->destroy)
             {
 #if !FINAL_RELEASE
-                if (a->state != Entity::STATE_IDLE)
+                if (e->state != Entity::STATE_IDLE)
                     fprintf(stderr, "ERROR: entity not idle for game tick\n");
-                a->state = Entity::STATE_PRETICK_GAME;
+                e->state = Entity::STATE_PRETICK_GAME;
 #endif
-                a->TickGame(data->deltams);
+                e->TickGame(data->deltams);
 #if !FINAL_RELEASE
-                if (a->state != Entity::STATE_POSTTICK_GAME)
+                if (e->state != Entity::STATE_POSTTICK_GAME)
                     fprintf(stderr, "ERROR: entity missed super game tick\n");
-                a->state = Entity::STATE_IDLE;
+                e->state = Entity::STATE_IDLE;
 #endif
             }
 
     Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
 
-void Ticker::TickRender()
+void Ticker::TickDraw()
 {
-    Profiler::Start(Profiler::STAT_TICK_RENDER);
+    Profiler::Start(Profiler::STAT_TICK_DRAW);
 
-    /* Tick objects for the render loop */
+    /* Tick objects for the draw loop */
     for (int i = 0; i < Entity::GROUP_COUNT; i++)
-        for (Entity *a = data->list[i]; a; a = a->next)
-            if (!a->destroy)
+        for (Entity *e = data->list[i]; e; e = e->next)
+            if (!e->destroy)
             {
 #if !FINAL_RELEASE
-                if (a->state != Entity::STATE_IDLE)
-                    fprintf(stderr, "ERROR: entity not idle for render tick\n");
-                a->state = Entity::STATE_PRETICK_RENDER;
+                if (e->state != Entity::STATE_IDLE)
+                    fprintf(stderr, "ERROR: entity not idle for draw tick\n");
+                e->state = Entity::STATE_PRETICK_DRAW;
 #endif
-                a->TickRender(data->deltams);
+                e->TickDraw(data->deltams);
 #if !FINAL_RELEASE
-                if (a->state != Entity::STATE_POSTTICK_RENDER)
-                    fprintf(stderr, "ERROR: entity missed super render tick\n");
-                a->state = Entity::STATE_IDLE;
+                if (e->state != Entity::STATE_POSTTICK_DRAW)
+                    fprintf(stderr, "ERROR: entity missed super draw tick\n");
+                e->state = Entity::STATE_IDLE;
 #endif
             }
 
-    Profiler::Stop(Profiler::STAT_TICK_RENDER);
+    Profiler::Stop(Profiler::STAT_TICK_DRAW);
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 }
 

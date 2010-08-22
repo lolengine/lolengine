@@ -32,7 +32,7 @@ protected:
         GROUP_BEFORE = 0,
         GROUP_DEFAULT,
         GROUP_AFTER,
-        GROUP_RENDER_CAPTURE,
+        GROUP_DRAW_CAPTURE,
         // Must be the last element
         GROUP_COUNT
     }
@@ -45,7 +45,7 @@ protected:
     virtual Group GetGroup();
 
     virtual void TickGame(float deltams);
-    virtual void TickRender(float deltams);
+    virtual void TickDraw(float deltams);
 
     Entity *next;
     int ref, destroy;
@@ -56,8 +56,8 @@ protected:
         STATE_IDLE = 0,
         STATE_PRETICK_GAME,
         STATE_POSTTICK_GAME,
-        STATE_PRETICK_RENDER,
-        STATE_POSTTICK_RENDER,
+        STATE_PRETICK_DRAW,
+        STATE_POSTTICK_DRAW,
     }
     state;
 #endif

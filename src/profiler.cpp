@@ -29,14 +29,14 @@ public:
         for (int i = 0; i < HISTORY; i++)
             history[i] = 0.0f;
         frame = 0;
-        mean = max = 0.0f;
+        avg = max = 0.0f;
     }
 
 private:
     float history[HISTORY];
     Timer timer;
     int frame;
-    float mean, max;
+    float avg, max;
 }
 data[Profiler::STAT_COUNT];
 
@@ -55,21 +55,21 @@ void Profiler::Stop(int id)
 
     data[id].history[data->frame % ProfilerData::HISTORY] = deltams;
     data[id].frame++;
-    data[id].mean = 0.0f;
+    data[id].avg = 0.0f;
     data[id].max = 0.0f;
 
     for (int i = 0; i < ProfilerData::HISTORY; i++)
     {
-        data[id].mean += data[id].history[i];
+        data[id].avg += data[id].history[i];
         if (data[id].history[i] > data[id].max)
             data[id].max = data[id].history[i];
     }
-    data[id].mean /= ProfilerData::HISTORY;
+    data[id].avg /= ProfilerData::HISTORY;
 }
 
-float Profiler::GetMean(int id)
+float Profiler::GetAvg(int id)
 {
-    return data[id].mean;
+    return data[id].avg;
 }
 
 float Profiler::GetMax(int id)

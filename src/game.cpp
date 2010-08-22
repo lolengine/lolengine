@@ -57,9 +57,9 @@ void Game::TickGame(float deltams)
     Entity::TickGame(deltams);
 }
 
-void Game::TickRender(float deltams)
+void Game::TickDraw(float deltams)
 {
-    Entity::TickRender(deltams);
+    Entity::TickDraw(deltams);
 
     GetScene();
 

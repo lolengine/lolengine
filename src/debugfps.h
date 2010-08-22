@@ -23,7 +23,7 @@ public:
 
 protected:
     virtual Group GetGroup();
-    virtual void TickRender(float deltams);
+    virtual void TickDraw(float deltams);
 
 private:
     DebugFpsData *data;

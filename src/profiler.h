@@ -21,14 +21,14 @@ public:
     {
         STAT_TICK_FRAME = 0,
         STAT_TICK_GAME,
-        STAT_TICK_RENDER,
+        STAT_TICK_DRAW,
         STAT_TICK_BLIT,
         STAT_COUNT
     };
 
     static void Start(int id);
     static void Stop(int id);
-    static float GetMean(int id);
+    static float GetAvg(int id);
     static float GetMax(int id);
 };
 
