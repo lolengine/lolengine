@@ -23,6 +23,12 @@ libtool
 stamp-*
 *-stamp
 deushax-*.tar.*
+# Debugging cruft
+core
+core.*
+# Editor cruft
+.*.swp
+*~
 # Our binaries
 src/test-map
 src/editor
