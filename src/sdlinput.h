@@ -19,7 +19,7 @@ class SdlInputData;
 class SdlInput : public Entity
 {
 public:
-    SdlInput(Game *game);
+    SdlInput();
     virtual ~SdlInput();
 
 protected:

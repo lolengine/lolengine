@@ -85,7 +85,7 @@ int Dict::MakeSlot(char const *name)
     }
     else
     {
-        data->entities[id]->Ref();
+        Ticker::Ref(data->entities[id]);
     }
 
     return id;
@@ -93,14 +93,14 @@ int Dict::MakeSlot(char const *name)
 
 void Dict::RemoveSlot(int id)
 {
-    if (data->entities[id]->Unref() == 0)
+    if (Ticker::Unref(data->entities[id]) == 0)
         data->entities[id] = NULL;
 }
 
 
 void Dict::SetEntity(int id, Entity *entity)
 {
-    entity->Ref();
+    Ticker::Ref(entity);
     data->entities[id] = entity;
 }
 

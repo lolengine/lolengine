@@ -74,7 +74,14 @@ void Font::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    if (data->img)
+    if (destroy)
+    {
+        if (data->img)
+            SDL_FreeSurface(data->img);
+        else
+            glDeleteTextures(1, &data->texture);
+    }
+    else if (data->img)
     {
         data->width = data->img->w / 16;
         data->height = data->img->h / 16;
@@ -90,11 +97,6 @@ void Font::TickDraw(float deltams)
 
         SDL_FreeSurface(data->img);
         data->img = NULL;
-    }
-    else if (ref == 0)
-    {
-        glDeleteTextures(1, &data->texture);
-        destroy = 1;
     }
 }
 

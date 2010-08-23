@@ -22,10 +22,6 @@ class Entity
     friend class TickerData;
     friend class Dict;
 
-public:
-    virtual void Ref();
-    virtual int Unref();
-
 protected:
     typedef enum
     {
@@ -47,8 +43,8 @@ protected:
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 
-    Entity *next;
-    int ref, destroy;
+    Entity *next, *autonext;
+    int ref, autorelease, destroy;
 
 #if !FINAL_RELEASE
     enum

@@ -48,12 +48,12 @@ int main(int argc, char **argv)
     Game *game = new Game("maps/testmap.tmx");
 
     /* Register an input driver and some debug stuff */
-    new SdlInput(game);
+    new SdlInput();
     new DebugFps();
     new DebugSprite(game);
     //new DebugRecord("lolengine.ogg");
 
-    while (!game->Finished())
+    while (!Ticker::Finished())
     {
         /* Tick the game */
         Ticker::TickGame();
