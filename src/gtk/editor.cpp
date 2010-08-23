@@ -16,6 +16,15 @@
 #include "glmapview.h"
 #include "debugfps.h"
 
+static gboolean delayed_quit(GtkWidget *w, GdkEvent *e, void *data)
+{
+    (void)w;
+    (void)e;
+    (void)data;
+    gtk_main_quit();
+    return TRUE;
+}
+
 int main(int argc, char **argv)
 {
     /* Initialize GTK */
@@ -41,12 +50,14 @@ int main(int argc, char **argv)
     GlMapView *glmapview = new GlMapView(builder);
 
     /* Show window. We're good to go! */
-    gtk_widget_show_all(GTK_WIDGET(gtk_builder_get_object(builder, "window")));
+    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    gtk_widget_show_all(window);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+                       GTK_SIGNAL_FUNC(delayed_quit), NULL);
     g_object_unref(G_OBJECT(builder));
 
-    new DebugFps();
     glmapview->LoadMap("maps/testmap.tmx");
-    glmapview->SetFocus();
+    new DebugFps();
 
     gtk_main();
 

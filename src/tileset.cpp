@@ -83,7 +83,14 @@ void TileSet::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    if (data->img)
+    if (destroy)
+    {
+        if (data->img)
+            SDL_FreeSurface(data->img);
+        else
+            glDeleteTextures(1, &data->texture);
+    }
+    else if (data->img)
     {
         glGenTextures(1, &data->texture);
         glBindTexture(GL_TEXTURE_2D, data->texture);
@@ -96,11 +103,6 @@ void TileSet::TickDraw(float deltams)
 
         SDL_FreeSurface(data->img);
         data->img = NULL;
-    }
-    else if (ref == 0)
-    {
-        glDeleteTextures(1, &data->texture);
-        destroy = 1;
     }
 }
 

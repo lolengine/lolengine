@@ -35,6 +35,7 @@ DebugSprite::DebugSprite(Game *game)
 {
     data = new DebugSpriteData();
     data->game = game;
+    Ticker::Ref(game);
     data->tiler = Tiler::Register("art/test/character-dress.png");
     data->x = 320;
     data->y = 206;
@@ -71,6 +72,7 @@ void DebugSprite::TickDraw(float deltams)
 
 DebugSprite::~DebugSprite()
 {
+    Ticker::Unref(data->game);
     Tiler::Deregister(data->tiler);
     delete data;
 }

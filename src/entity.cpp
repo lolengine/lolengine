@@ -63,13 +63,3 @@ void Entity::TickDraw(float deltams)
 #endif
 }
 
-void Entity::Ref()
-{
-    ref++;
-}
-
-int Entity::Unref()
-{
-    return --ref;
-}
-

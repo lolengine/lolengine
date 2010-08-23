@@ -50,11 +50,10 @@ GlMapView::GlMapView(GtkBuilder *builder)
      * stealing time from the GTK loop when the callback time exceeds
      * the timeout value. */
     g_idle_add((GSourceFunc)IdleTickSignal, this);
+    gtk_quit_add(0, (GtkFunction)ShutdownSignal, this);
 
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
                        GTK_SIGNAL_FUNC(SetupSignal), this);
-    gtk_signal_connect(GTK_OBJECT(glarea), "destroy",
-                       GTK_SIGNAL_FUNC(DestroySignal), this);
     gtk_signal_connect(GTK_OBJECT(glarea), "expose_event",
                        GTK_SIGNAL_FUNC(DrawSignal), this);
     gtk_signal_connect(GTK_OBJECT(glarea), "configure_event",
@@ -75,17 +74,28 @@ void GlMapView::LoadMap(char const *path)
 {
     // FIXME: detect when the map viewer is killed
     mapviewer = new MapViewer(path);
+    Ticker::Ref(mapviewer);
 
     UpdateAdjustments();
 }
 
-void GlMapView::SetFocus()
+void GlMapView::CloseMap()
 {
-    gtk_widget_grab_focus(glarea);
+    if (mapviewer)
+        Ticker::Unref(mapviewer);
+    mapviewer = NULL;
+
+    UpdateAdjustments();
 }
 
 gboolean GlMapView::IdleTick()
 {
+    if (Ticker::Finished())
+    {
+        gtk_main_quit();
+        return FALSE;
+    }
+
     // FIXME: do not do anything if the previous tick was too recent?
     ticking = TRUE;
 
@@ -104,6 +114,7 @@ gboolean GlMapView::IdleTick()
 gboolean GlMapView::Setup()
 {
     /* Set up display */
+    gtk_widget_grab_focus(glarea);
     if (gtk_gl_area_make_current(GTK_GL_AREA(glarea)))
         Video::Setup(glarea->allocation.width, glarea->allocation.height);
 
@@ -112,9 +123,13 @@ gboolean GlMapView::Setup()
     return TRUE;
 }
 
-gboolean GlMapView::Destroy()
+gboolean GlMapView::Shutdown()
 {
-    g_idle_remove_by_data(this);
+    CloseMap();
+    Ticker::Shutdown();
+    /* Hijack the exit process by adding another level of gtk_main */
+    gtk_widget_set_sensitive(gtk_widget_get_toplevel(glarea), FALSE);
+    gtk_main();
     return TRUE;
 }
 
@@ -239,10 +254,9 @@ gboolean GlMapView::SetupSignal(GtkWidget *w, GlMapView *that)
     return that->Setup();
 }
 
-gboolean GlMapView::DestroySignal(GtkWidget *w, GlMapView *that)
+gboolean GlMapView::ShutdownSignal(GlMapView *that)
 {
-    (void)w;
-    return that->Destroy();
+    return that->Shutdown();
 }
 
 gboolean GlMapView::DrawSignal(GtkWidget *w, GdkEventExpose *e,

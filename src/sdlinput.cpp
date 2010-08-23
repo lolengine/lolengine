@@ -21,7 +21,6 @@ class SdlInputData
     friend class SdlInput;
 
 private:
-    Game *game;
     int mx, my;
 };
 
@@ -29,12 +28,11 @@ private:
  * Public SdlInput class
  */
 
-SdlInput::SdlInput(Game *game)
+SdlInput::SdlInput()
 {
     SDL_Init(SDL_INIT_TIMER);
 
     data = new SdlInputData();
-    data->game = game;
     SDL_GetMouseState(&data->mx, &data->my);
 }
 
@@ -47,9 +45,6 @@ void SdlInput::TickGame(float deltams)
 {
     Entity::TickGame(deltams);
 
-    if (data->game->Finished())
-        destroy = 1;
-
     /* Handle mouse input */
     SDL_GetMouseState(&data->mx, &data->my);
 
@@ -58,7 +53,7 @@ void SdlInput::TickGame(float deltams)
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT)
-            data->game->Quit();
+            Ticker::Shutdown();
 #if 0
         else if (event.type == SDL_KEYDOWN)
             Input::KeyPressed(event.key.keysym.sym, deltams);

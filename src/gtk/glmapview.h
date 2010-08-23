@@ -13,13 +13,13 @@ class GlMapView
 public:
     GlMapView(GtkBuilder *builder);
     void LoadMap(char const *path);
-    void SetFocus();
+    void CloseMap();
 
 private:
     /* Private methods */
     gboolean IdleTick();
     gboolean Setup();
-    gboolean Destroy();
+    gboolean Shutdown();
     gboolean Draw(GdkEventExpose *e);
     void Scroll(double dx, double dy);
     void UpdateAdjustments();
@@ -30,7 +30,7 @@ private:
     /* Private signal slots */
     static gboolean IdleTickSignal(GlMapView *that);
     static gboolean SetupSignal(GtkWidget *w, GlMapView *that);
-    static gboolean DestroySignal(GtkWidget *w, GlMapView *that);
+    static gboolean ShutdownSignal(GlMapView *that);
     static gboolean DrawSignal(GtkWidget *w, GdkEventExpose *e,
                                GlMapView *that);
     static gboolean ReshapeSignal(GtkWidget *w, GdkEventConfigure *e,
