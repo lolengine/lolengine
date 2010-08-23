@@ -13,6 +13,10 @@
 
 #include "core.h"
 
+#if defined WIN32
+#   define strcasecmp _stricmp
+#endif
+
 /*
  * Dict implementation class
  */
