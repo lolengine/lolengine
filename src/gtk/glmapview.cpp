@@ -141,17 +141,15 @@ gboolean GlMapView::Draw(GdkEventExpose *e)
     return TRUE;
 }
 
-gboolean GlMapView::Scroll(double dx, double dy)
+void GlMapView::Scroll(double dx, double dy)
 {
     gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj) + dx);
     gtk_adjustment_set_value(vadj, gtk_adjustment_get_value(vadj) + dy);
 
     UpdateAdjustments();
-
-    return TRUE;
 }
 
-gboolean GlMapView::UpdateAdjustments()
+void GlMapView::UpdateAdjustments()
 {
     float w = mapviewer ? mapviewer->GetWidth() : glarea->allocation.width;
     float h = mapviewer ? mapviewer->GetHeight() : glarea->allocation.height;
@@ -179,8 +177,6 @@ gboolean GlMapView::UpdateAdjustments()
             gtk_adjustment_value_changed(s[i].adj);
         }
     }
-
-    return TRUE;
 }
 
 gboolean GlMapView::MouseButton(GdkEventButton *e)
@@ -212,23 +208,23 @@ gboolean GlMapView::MouseMotion(GdkEventMotion *e)
         Scroll(xpan - e->x, ypan - e->y);
         xpan = e->x;
         ypan = e->y;
+        return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 gboolean GlMapView::KeyPress(GdkEventKey *e)
 {
     switch (e->keyval)
     {
-    case GDK_Up:    Scroll(  0.0, -10.0); break;
-    case GDK_Down:  Scroll(  0.0,  10.0); break;
-    case GDK_Left:  Scroll(-10.0,  0.0); break;
-    case GDK_Right: Scroll( 10.0,  0.0); break;
-    default: return FALSE;
+    case GDK_Up:    Scroll(  0.0, -10.0); return TRUE;
+    case GDK_Down:  Scroll(  0.0,  10.0); return TRUE;
+    case GDK_Left:  Scroll(-10.0,   0.0); return TRUE;
+    case GDK_Right: Scroll( 10.0,   0.0); return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 /* Private signal slots */
