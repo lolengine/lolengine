@@ -21,8 +21,8 @@ private:
     gboolean Setup();
     gboolean Destroy();
     gboolean Draw(GdkEventExpose *e);
-    gboolean Scroll(double dx, double dy);
-    gboolean UpdateAdjustments();
+    void Scroll(double dx, double dy);
+    void UpdateAdjustments();
     gboolean MouseButton(GdkEventButton *e);
     gboolean MouseMotion(GdkEventMotion *e);
     gboolean KeyPress(GdkEventKey *e);
