@@ -69,7 +69,7 @@ private:
             cycles0 = cycles;
         towait = deltams - ret;
         if (towait > 5e-4f) // FIXME: use native Win32 stuff
-            SDL_Delay((int)(towait * 1e3f + 0.5f));
+            SDL_Delay((int)(towait + 0.5f));
 #else
         /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
