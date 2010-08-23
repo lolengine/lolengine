@@ -10,7 +10,9 @@
 #include <cstdio>
 #include <cstring>
 
-#include <pipi.h>
+#if defined HAVE_PIPI_H
+#   include <pipi.h>
+#endif
 
 #include "core.h"
 #include "debugrecord.h"
@@ -26,7 +28,9 @@ class DebugRecordData
 private:
     char const *path;
     int width, height;
+#if defined HAVE_PIPI_H
     pipi_sequence_t *sequence;
+#endif
 };
 
 /*
@@ -39,7 +43,9 @@ DebugRecord::DebugRecord(char const *path)
     data->path = strdup(path);
     data->width = 0;
     data->height = 0;
+#if defined HAVE_PIPI_H
     data->sequence = NULL;
+#endif
 }
 
 Entity::Group DebugRecord::GetGroup()
@@ -64,12 +70,15 @@ void DebugRecord::TickDraw(float deltams)
         data->width = width;
         data->height = height;
 
+#if defined HAVE_PIPI_H
         if (data->sequence)
             pipi_close_sequence(data->sequence);
 
         data->sequence = pipi_open_sequence(data->path, width, height, 30);
+#endif
     }
 
+#if defined HAVE_PIPI_H
     if (data->sequence)
     {
         uint32_t *buffer = new uint32_t[width * height];
@@ -77,10 +86,10 @@ void DebugRecord::TickDraw(float deltams)
         pipi_feed_sequence(data->sequence, (uint8_t *)buffer, width, height);
         delete[] buffer;
     }
+#endif
 }
 
 DebugRecord::~DebugRecord()
 {
     delete data;
 }
-
