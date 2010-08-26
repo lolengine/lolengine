@@ -17,7 +17,6 @@
 #elif defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#   include <SDL.h> // FIXME: this should not be needed
 #else
 #   include <SDL.h>
 #endif
@@ -69,7 +68,7 @@ private:
             cycles0 = cycles;
         towait = deltams - ret;
         if (towait > 5e-4f) // FIXME: use native Win32 stuff
-            SDL_Delay((int)(towait + 0.5f));
+            Sleep((int)(towait + 0.5f));
 #else
         /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
