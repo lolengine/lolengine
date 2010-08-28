@@ -11,6 +11,8 @@
 #if !defined __DH_BITFIELD_H__
 #define __DH_BITFIELD_H__
 
+#include <stdint.h>
+
 template class BitField<unsigned int COUNT>
 {
 public:
@@ -36,8 +38,7 @@ public:
 
 
 private:
-    /* FIXME: use uint32_t here instead */
-    unsigned int bits[(COUNT + 31) / 32];
+    uint32_t bits[(COUNT + 31) / 32];
 };
 
 #endif // __DH_BITFIELD_H__

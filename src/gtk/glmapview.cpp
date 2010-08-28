@@ -100,7 +100,6 @@ gboolean GlMapView::IdleTick()
         return FALSE;
     }
 
-    // FIXME: do not do anything if the previous tick was too recent?
     ticking = TRUE;
 
     if (mapviewer)
@@ -154,6 +153,8 @@ gboolean GlMapView::Draw(GdkEventExpose *e)
         gtk_gl_area_swapbuffers(GTK_GL_AREA(glarea));
         while (g_main_context_iteration(NULL, FALSE))
             ;
+
+        // FIXME: do some GTK stuff in here
         Ticker::ClampFps(1000.0f / FPS);
     }
 

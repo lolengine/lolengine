@@ -67,7 +67,7 @@ private:
         if (update)
             cycles0 = cycles;
         towait = deltams - ret;
-        if (towait > 5e-4f) // FIXME: use native Win32 stuff
+        if (towait > 5e-4f)
             Sleep((int)(towait + 0.5f));
 #else
         /* The crappy SDL fallback */
