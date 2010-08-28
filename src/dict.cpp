@@ -99,6 +99,7 @@ void Dict::RemoveSlot(int id)
 {
     if (Ticker::Unref(data->entities[id]) == 0)
         data->entities[id] = NULL;
+    data->nentities--;
 }
 
 
