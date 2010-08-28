@@ -27,6 +27,7 @@
 #include "game.h"
 #include "tileset.h"
 #include "mapviewer.h"
+#include "world.h"
 
 // Other objects
 #include "dict.h"
