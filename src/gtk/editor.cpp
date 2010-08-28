@@ -56,7 +56,7 @@ int main(int argc, char **argv)
                        GTK_SIGNAL_FUNC(delayed_quit), NULL);
     g_object_unref(G_OBJECT(builder));
 
-    glmapview->LoadMap("maps/testmap.tmx");
+    glmapview->LoadMap("maps/testmap2.tmx");
     new DebugFps();
 
     gtk_main();

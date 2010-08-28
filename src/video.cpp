@@ -43,7 +43,7 @@ void Video::Setup(int width, int height)
     /* Projection matrix: once and for all */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, width, height, 0, -(width + height), width + height);
+    glOrtho(0, width, 0, height, -(width + height), width + height);
 }
 
 void Video::Clear()

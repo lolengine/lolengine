@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     Video::Setup(video->w, video->h);
 
     /* Create a game */
-    Game *game = new Game("maps/testmap.tmx");
+    Game *game = new Game("maps/testmap2.tmx");
 
     /* Register an input driver and some debug stuff */
     new SdlInput();
