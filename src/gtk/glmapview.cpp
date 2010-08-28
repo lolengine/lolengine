@@ -50,6 +50,10 @@ GlMapView::GlMapView(GtkBuilder *builder)
      * stealing time from the GTK loop when the callback time exceeds
      * the timeout value. */
     g_idle_add((GSourceFunc)IdleTickSignal, this);
+
+    /* We must divert gtk_main_quit() to release our resources when the
+     * GL widget is still realised. We'll call gtk_main_quit() when we
+     * are sure that everything has been cleaned. */
     gtk_quit_add(0, (GtkFunction)ShutdownSignal, this);
 
     gtk_signal_connect(GTK_OBJECT(glarea), "realize",
