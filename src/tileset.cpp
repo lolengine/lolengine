@@ -37,7 +37,8 @@ class TileSetData
 private:
     char *name;
     int *tiles;
-    int ntiles;
+    int nw, nh, ntiles;
+    float tx, ty;
 
     SDL_Surface *img;
     GLuint texture;
@@ -52,7 +53,6 @@ TileSet::TileSet(char const *path)
     data = new TileSetData();
     data->name = strdup(path);
     data->tiles = NULL;
-    data->ntiles = 0;
     data->img = NULL;
     data->texture = 0;
 
@@ -65,6 +65,12 @@ TileSet::TileSet(char const *path)
         SDL_Quit();
         exit(1);
     }
+
+    data->nw = data->img->w / 32;
+    data->nh = data->img->h / 32;
+    data->ntiles = data->nw * data->nh;
+    data->tx = 32.0f / data->img->w;
+    data->ty = 32.0f / data->img->h;
 }
 
 TileSet::~TileSet()
@@ -113,8 +119,8 @@ char const *TileSet::GetName()
 
 void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 {
-    float tx = .0625f * (id & 0xf);
-    float ty = .0625f * ((id >> 4) & 0xf);
+    float tx = data->tx * ((id & 0xffff) % data->nw);
+    float ty = data->ty * ((id & 0xffff) / data->nw);
 
     float sqrt2 = sqrtf(2.0f);
     int off = o ? 32 : 0;
@@ -123,14 +129,14 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
     {
         glBindTexture(GL_TEXTURE_2D, data->texture);
         glBegin(GL_QUADS);
+            glTexCoord2f(tx, ty + data->ty);
+            glVertex3f(x, sqrt2 * (y - 70 + off), sqrt2 * (z + off));
+            glTexCoord2f(tx + data->tx, ty + data->ty);
+            glVertex3f(x + 32, sqrt2 * (y - 70 + off), sqrt2 * (z + off));
+            glTexCoord2f(tx + data->tx, ty);
+            glVertex3f(x + 32, sqrt2 * (y - 38), sqrt2 * z);
             glTexCoord2f(tx, ty);
-            glVertex3f(x, sqrt2 * (y + off), sqrt2 * (z + off));
-            glTexCoord2f(tx + .0625f, ty);
-            glVertex3f(x + 32, sqrt2 * (y + off), sqrt2 * (z + off));
-            glTexCoord2f(tx + .0625f, ty + .0625f);
-            glVertex3f(x + 32, sqrt2 * (y + 32), sqrt2 * z);
-            glTexCoord2f(tx, ty + .0625f);
-            glVertex3f(x, sqrt2 * (y + 32), sqrt2 * z);
+            glVertex3f(x, sqrt2 * (y - 38), sqrt2 * z);
         glEnd();
     }
 }

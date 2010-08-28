@@ -120,13 +120,13 @@ void Font::Print(int x, int y, char const *str)
 
         if (ch != ' ')
         {
-            glTexCoord2f(tx, ty);
-            glVertex2f(x, y);
-            glTexCoord2f(tx + .0625f, ty);
-            glVertex2f(x + data->width, y);
-            glTexCoord2f(tx + .0625f, ty + .0625f);
-            glVertex2f(x + data->width, y + data->height);
             glTexCoord2f(tx, ty + .0625f);
+            glVertex2f(x, y);
+            glTexCoord2f(tx + .0625f, ty + .0625f);
+            glVertex2f(x + data->width, y);
+            glTexCoord2f(tx + .0625f, ty);
+            glVertex2f(x + data->width, y + data->height);
+            glTexCoord2f(tx, ty);
             glVertex2f(x, y + data->height);
         }
 

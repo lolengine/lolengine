@@ -104,7 +104,8 @@ gboolean GlMapView::IdleTick()
 
     if (mapviewer)
         mapviewer->SetPOV(gtk_adjustment_get_value(hadj),
-                          gtk_adjustment_get_value(vadj));
+                          mapviewer->GetHeight() - glarea->allocation.height
+                           - gtk_adjustment_get_value(vadj));
 
     /* Tick the game */
     Ticker::TickGame();

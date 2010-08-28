@@ -64,10 +64,10 @@ void DebugSprite::TickDraw(float deltams)
     int y = data->y;
     int z = data->z;
 
-    data->game->GetScene()->AddTile((data->tiler << 16) | 15,
-                                    x - 16, y - 32, z + 32, 1);
     data->game->GetScene()->AddTile((data->tiler << 16) | 31,
-                                    x - 16, y - 32, z, 1);
+                                    x - 16, y, z + 32, 1);
+    data->game->GetScene()->AddTile((data->tiler << 16) | 15,
+                                    x - 16, y, z, 1);
 }
 
 DebugSprite::~DebugSprite()

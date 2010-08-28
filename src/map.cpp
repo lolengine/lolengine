@@ -90,7 +90,11 @@ Map::Map(char const *path)
                     }
                 }
 
-                tiles[ntiles++] = code;
+                int x = ntiles % data->width;
+                int y = data->height - 1 - (ntiles / data->width);
+                tiles[y * data->width + x] = code;
+                ntiles++;
+
                 while (isdigit(*parser))
                     parser++;
                 if (*parser == ',')
