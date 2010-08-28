@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <cstring>
 
-#if defined HAVE_PIPI_H
+#if defined USE_PIPI
 #   include <pipi.h>
 #endif
 
@@ -28,7 +28,7 @@ class DebugRecordData
 private:
     char const *path;
     int width, height;
-#if defined HAVE_PIPI_H
+#if defined USE_PIPI
     pipi_sequence_t *sequence;
 #endif
 };
@@ -43,7 +43,7 @@ DebugRecord::DebugRecord(char const *path)
     data->path = strdup(path);
     data->width = 0;
     data->height = 0;
-#if defined HAVE_PIPI_H
+#if defined USE_PIPI
     data->sequence = NULL;
 #endif
 }
@@ -70,7 +70,7 @@ void DebugRecord::TickDraw(float deltams)
         data->width = width;
         data->height = height;
 
-#if defined HAVE_PIPI_H
+#if defined USE_PIPI
         if (data->sequence)
             pipi_close_sequence(data->sequence);
 
@@ -78,7 +78,7 @@ void DebugRecord::TickDraw(float deltams)
 #endif
     }
 
-#if defined HAVE_PIPI_H
+#if defined USE_PIPI
     if (data->sequence)
     {
         uint32_t *buffer = new uint32_t[width * height];

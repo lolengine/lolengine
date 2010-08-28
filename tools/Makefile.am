@@ -1,7 +1,11 @@
 
-noinst_PROGRAMS = make-font
+noinst_PROGRAMS = $(make_font)
 
 make_font_SOURCES = make-font.cpp
-make_font_CXXFLAGS = `pkg-config --cflags caca`
-make_font_LDFLAGS = `pkg-config --libs caca`
+make_font_CXXFLAGS = @CACA_CFLAGS@
+make_font_LDFLAGS = @CACA_LIBS@
+
+if USE_CACA
+make_font = make-font
+endif
 

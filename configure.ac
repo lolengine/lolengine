@@ -67,9 +67,24 @@ if test "${ac_cv_my_have_sdl}" = "no" -a "${ac_cv_my_have_imlib2}" = "no"; then
   AC_MSG_ERROR([[cannot find SDL_Image or GTK+, please install one of them]])
 fi
 
-if test "${enable_debug}" = "yes"; then
-  AC_DEFINE(DEBUG, 1, Define to 1 to activate debug)
+
+# Use libcaca? (required for font generation)
+ac_cv_my_have_caca="no"
+PKG_CHECK_MODULES(CACA, caca >= 0.99.beta17, [ac_cv_my_have_caca="yes"], [:])
+if test "${ac_cv_my_have_caca}" != "no"; then
+  AC_DEFINE(USE_CACA, 1, Define to 1 to use libcaca)
 fi
+AM_CONDITIONAL(USE_CACA, test "${ac_cv_my_have_caca}" != "no")
+
+
+# Use libpipi? (required for video recording)
+ac_cv_my_have_pipi="no"
+PKG_CHECK_MODULES(PIPI, pipi, [ac_cv_my_have_pipi="yes"], [:])
+if test "${ac_cv_my_have_pipi}" != "no"; then
+  AC_DEFINE(USE_PIPI, 1, Define to 1 to use libpipi)
+fi
+AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
+
 
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
