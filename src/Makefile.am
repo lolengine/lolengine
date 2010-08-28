@@ -14,9 +14,9 @@ libcommon_a_SOURCES = \
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
 
 test_map_SOURCES = test-map.cpp sdlinput.cpp sdlinput.h
-test_map_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
+test_map_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image` @PIPI_CFLAGS@
 test_map_LDADD = libcommon.a
-test_map_LDFLAGS = `pkg-config --libs sdl gl SDL_image` -lpipi
+test_map_LDFLAGS = `pkg-config --libs sdl gl SDL_image` @PIPI_LIBS@
 
 editor_SOURCES = gtk/editor.cpp gtk/glmapview.cpp gtk/glmapview.h
 editor_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image gtk+-2.0 gtkgl-2.0`

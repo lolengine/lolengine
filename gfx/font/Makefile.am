@@ -1,4 +1,5 @@
 
+if USE_CACA
 all: ascii.png
 
 ascii.png:
@@ -6,4 +7,5 @@ ascii.png:
 
 clean:
 	rm -f ascii.png
+endif
 
