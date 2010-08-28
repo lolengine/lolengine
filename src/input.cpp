@@ -41,12 +41,11 @@ Float2 Input::GetAxis(int axis)
 
     /* Simulate a joystick using the keyboard. This SDL call is free. */
     Uint8 *keystate = SDL_GetKeyState(NULL);
-    f.y -= keystate[SDLK_e];
-    f.y += keystate[SDLK_d];
-    f.x -= keystate[SDLK_s];
-    f.x += keystate[SDLK_f];
-    if (keystate[SDLK_e] + keystate[SDLK_d]
-         == keystate[SDLK_s] + keystate[SDLK_f])
+    int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
+    int up = keystate[SDLK_s] - (keystate[SDLK_w] | keystate[SDLK_z]);
+    f.y += up;
+    f.x += left;
+    if (left && up)
     {
         f.x *= invsqrt2;
         f.y *= invsqrt2;
