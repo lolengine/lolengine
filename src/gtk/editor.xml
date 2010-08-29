@@ -22,8 +22,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem1">
                         <property name="visible">True</property>
-                        <property name="related_action">action_new</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">action_new</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -31,8 +31,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem2">
                         <property name="visible">True</property>
-                        <property name="related_action">action_open</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">action_open</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -157,8 +157,8 @@
             <child>
               <object class="GtkToolButton" id="toolbutton2">
                 <property name="visible">True</property>
-                <property name="related_action">action_new</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">action_new</property>
                 <property name="label" translatable="yes">toolbutton</property>
                 <property name="use_underline">True</property>
               </object>
@@ -170,8 +170,8 @@
             <child>
               <object class="GtkToolButton" id="toolbutton1">
                 <property name="visible">True</property>
-                <property name="related_action">action_open</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">action_open</property>
                 <property name="label" translatable="yes">Open...</property>
                 <property name="use_underline">True</property>
               </object>
@@ -183,8 +183,8 @@
             <child>
               <object class="GtkToolButton" id="toolbutton4">
                 <property name="visible">True</property>
-                <property name="related_action">action_save</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">action_save</property>
                 <property name="label" translatable="yes">Save</property>
                 <property name="use_underline">True</property>
               </object>
@@ -195,6 +195,41 @@
             </child>
             <child>
               <object class="GtkSeparatorToolItem" id="toolbutton3">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbutton5">
+                <property name="visible">True</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">action_undo</property>
+                <property name="label" translatable="yes">toolbutton5</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbutton6">
+                <property name="visible">True</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">action_redo</property>
+                <property name="label" translatable="yes">toolbutton6</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="toolbutton7">
                 <property name="visible">True</property>
               </object>
               <packing>
@@ -349,6 +384,16 @@
   <object class="GtkAction" id="action_save">
     <property name="label">Save</property>
     <property name="stock_id">gtk-save</property>
+    <property name="always_show_image">True</property>
+  </object>
+  <object class="GtkAction" id="action_undo">
+    <property name="label">Undo</property>
+    <property name="stock_id">gtk-undo</property>
+    <property name="always_show_image">True</property>
+  </object>
+  <object class="GtkAction" id="action_redo">
+    <property name="label">Redo</property>
+    <property name="stock_id">gtk-redo</property>
     <property name="always_show_image">True</property>
   </object>
 </interface>
