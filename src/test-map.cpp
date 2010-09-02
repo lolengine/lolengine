@@ -17,6 +17,7 @@
 #include "debugfps.h"
 #include "debugsprite.h"
 #include "debugrecord.h"
+#include "debugstats.h"
 
 static float const FPS = 30.0f;
 
@@ -52,6 +53,7 @@ int main(int argc, char **argv)
     new DebugFps();
     new DebugSprite(game);
     //new DebugRecord("lolengine.ogg");
+    new DebugStats("stats.txt");
 
     while (!Ticker::Finished())
     {
