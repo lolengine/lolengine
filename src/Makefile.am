@@ -10,7 +10,8 @@ libcommon_a_SOURCES = \
     forge.cpp forge.h video.cpp video.h timer.cpp timer.h bitfield.h \
     profiler.cpp profiler.h input.h input.cpp world.cpp world.h \
     debugfps.cpp debugfps.h debugsprite.cpp debugsprite.h \
-    debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h
+    debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h \
+    debugsphere.cpp debugsphere.h
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
 
 test_map_SOURCES = test-map.cpp sdlinput.cpp sdlinput.h
