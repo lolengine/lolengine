@@ -41,7 +41,7 @@ void Layer::Render(Scene *scene, int x, int y, int z)
         for (int i = 0; i < width; i++)
             if (data[j * width + i])
                 scene->AddTile(data[j * width + i],
-                               x + i * 32, y + j * 32 + altitude,
+                               x + i * 32, y + j * 32 - altitude,
                                altitude + z, orientation);
 }
 
