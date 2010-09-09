@@ -16,6 +16,7 @@
 #include "sdlinput.h"
 #include "debugfps.h"
 #include "debugsprite.h"
+#include "debugsphere.h"
 #include "debugrecord.h"
 #include "debugstats.h"
 
@@ -48,12 +49,13 @@ int main(int argc, char **argv)
     Video::Setup(video->w, video->h);
 
     /* Create a game */
-    Game *game = new Game("maps/testmap2.tmx");
+    Game *game = new Game("maps/testmap.tmx");
 
     /* Register an input driver and some debug stuff */
     new SdlInput();
     new DebugFps();
     new DebugSprite(game);
+    new DebugSphere();
     //new DebugRecord("lolengine.ogg");
     new DebugStats("stats.txt");
 
