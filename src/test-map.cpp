@@ -30,6 +30,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_Surface *video = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL);
     if (!video)
     {

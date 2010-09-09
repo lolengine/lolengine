@@ -30,6 +30,7 @@ GlMapView::GlMapView(GtkBuilder *builder)
         GDK_GL_RED_SIZE, 1,
         GDK_GL_GREEN_SIZE, 1,
         GDK_GL_BLUE_SIZE, 1,
+        GDK_GL_DEPTH_SIZE, 16,
         GDK_GL_DOUBLEBUFFER,
         GDK_GL_NONE
     };
