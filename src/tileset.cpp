@@ -129,14 +129,14 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
     {
         glBindTexture(GL_TEXTURE_2D, data->texture);
         glBegin(GL_QUADS);
-            glTexCoord2f(tx, ty + data->ty);
-            glVertex3f(x, sqrt2 * (y - 70 + off), sqrt2 * (z + off));
-            glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex3f(x + 32, sqrt2 * (y - 70 + off), sqrt2 * (z + off));
-            glTexCoord2f(tx + data->tx, ty);
-            glVertex3f(x + 32, sqrt2 * (y - 38), sqrt2 * z);
             glTexCoord2f(tx, ty);
-            glVertex3f(x, sqrt2 * (y - 38), sqrt2 * z);
+            glVertex3f(x, sqrt2 * (y - 38 - off), sqrt2 * (z + off));
+            glTexCoord2f(tx + data->tx, ty);
+            glVertex3f(x + 32, sqrt2 * (y - 38 - off), sqrt2 * (z + off));
+            glTexCoord2f(tx + data->tx, ty + data->ty);
+            glVertex3f(x + 32, sqrt2 * (y - 70), sqrt2 * z);
+            glTexCoord2f(tx, ty + data->ty);
+            glVertex3f(x, sqrt2 * (y - 70), sqrt2 * z);
         glEnd();
     }
 }
