@@ -221,6 +221,17 @@ void Ticker::TickDraw()
 
     /* Tick objects for the draw loop */
     for (int i = Entity::DRAWGROUP_BEGIN; i < Entity::DRAWGROUP_END; i++)
+    {
+        switch (i)
+        {
+        case Entity::DRAWGROUP_HUD:
+            Video::SetDepth(false);
+            break;
+        default:
+            Video::SetDepth(true);
+            break;
+        }
+
         for (Entity *e = data->list[i]; e; e = e->drawnext)
             if (!e->destroy)
             {
@@ -236,6 +247,7 @@ void Ticker::TickDraw()
                 e->state = Entity::STATE_IDLE;
 #endif
             }
+    }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
     Profiler::Start(Profiler::STAT_TICK_BLIT);

@@ -36,13 +36,6 @@ void Video::Setup(int width, int height)
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0);
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.01f);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
 
@@ -89,8 +82,23 @@ void Video::SetFov(float theta)
     glLoadIdentity();
 }
 
+void Video::SetDepth(bool set)
+{
+    if (set)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+}
+
 void Video::Clear()
 {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     SetFov(0.0f);
