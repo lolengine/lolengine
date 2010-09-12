@@ -7,6 +7,8 @@
 #   include "config.h"
 #endif
 
+#include <math.h>
+
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
@@ -42,20 +44,56 @@ void Video::Setup(int width, int height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+}
 
-    /* Projection matrix: once and for all */
+void Video::SetFov(float theta)
+{
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, width, 0, height, -(width + height), width + height);
+
+    float width = GetWidth();
+    float height = GetHeight();
+    float near = -width - height;
+    float far = width + height;
+
+    /* Set the projection matrix */
+    if (theta < 1e-4f)
+    {
+        /* The easy way: purely orthogonal projection. */
+        glOrtho(0, width, 0, height, near, far);
+    }
+    else
+    {
+        /* Compute a view that approximates the glOrtho view when theta
+         * approaches zero. This view ensures that the z=0 plane fills
+         * the screen. */
+        float t1 = tanf(theta / 2);
+        float t2 = t1 * height / width;
+        float dist = (float)width / (2.0f * t1);
+
+        near += dist;
+        far += dist;
+
+        if (near <= 0.0f)
+        {
+            far -= (near - 1.0f);
+            near = 1.0f;
+        }
+
+        glFrustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
+        glTranslatef(-0.5f * width, -0.5f * height, -dist);
+    }
+
+    /* Reset the model view matrix, just in case */
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void Video::Clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /* Model view matrix: for each frame, just in case */
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    SetFov(0.0f);
 }
 
 void Video::Capture(uint32_t *buffer)
