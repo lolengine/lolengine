@@ -22,7 +22,6 @@ public:
     virtual ~DebugRecord();
 
 protected:
-    virtual Group GetGroup();
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 

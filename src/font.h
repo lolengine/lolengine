@@ -24,7 +24,6 @@ public:
 protected:
     /* Inherited from Entity */
     virtual char const *GetName();
-    virtual Group GetGroup();
     virtual void TickDraw(float deltams);
 
 public:

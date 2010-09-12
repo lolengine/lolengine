@@ -33,11 +33,8 @@ DebugFps::DebugFps()
     data = new DebugFpsData();
 
     data->fontid = Forge::Register("gfx/font/ascii.png");
-}
 
-Entity::Group DebugFps::GetGroup()
-{
-    return GROUP_AFTER;
+    drawgroup = DRAWGROUP_HUD;
 }
 
 void DebugFps::TickDraw(float deltams)

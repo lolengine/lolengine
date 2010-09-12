@@ -34,11 +34,8 @@ SdlInput::SdlInput()
 
     data = new SdlInputData();
     SDL_GetMouseState(&data->mx, &data->my);
-}
 
-Entity::Group SdlInput::GetGroup()
-{
-    return GROUP_BEFORE;
+    gamegroup = GAMEGROUP_BEFORE;
 }
 
 void SdlInput::TickGame(float deltams)

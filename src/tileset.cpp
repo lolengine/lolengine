@@ -71,6 +71,8 @@ TileSet::TileSet(char const *path)
     data->ntiles = data->nw * data->nh;
     data->tx = 32.0f / data->img->w;
     data->ty = 32.0f / data->img->h;
+
+    drawgroup = DRAWGROUP_BEFORE;
 }
 
 TileSet::~TileSet()
@@ -78,11 +80,6 @@ TileSet::~TileSet()
     free(data->tiles);
     free(data->name);
     delete data;
-}
-
-Entity::Group TileSet::GetGroup()
-{
-    return GROUP_BEFORE;
 }
 
 void TileSet::TickDraw(float deltams)

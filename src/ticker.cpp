@@ -27,7 +27,7 @@ public:
         nentities(0),
         frame(0), deltams(0), bias(0)
     {
-        for (int i = 0; i < Entity::GROUP_COUNT; i++)
+        for (int i = 0; i < Entity::ALLGROUP_END; i++)
             list[i] = NULL;
     }
 
@@ -51,7 +51,7 @@ public:
 private:
     /* Entity management */
     Entity *todolist, *autolist;
-    Entity *list[Entity::GROUP_COUNT];
+    Entity *list[Entity::ALLGROUP_END];
     int nentities;
 
     /* Fixed framerate management */
@@ -72,7 +72,7 @@ void Ticker::Register(Entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    entity->next = data->todolist;
+    entity->gamenext = data->todolist;
     data->todolist = entity;
     /* Objects are autoreleased by default. Put them in a circular list. */
     entity->autorelease = 1;
@@ -99,10 +99,7 @@ void Ticker::Ref(Entity *entity)
         {
             if (e == entity)
             {
-                if (prev)
-                    prev->autonext = e->autonext;
-                else
-                    data->autolist = e->autonext;
+                (prev ? prev->autonext : data->autolist) = e->autonext;
                 break;
             }
         }
@@ -132,12 +129,16 @@ void Ticker::TickGame()
 
 #if 0
     fprintf(stderr, "-------------------------------------\n");
-    for (int i = 0; i < Entity::GROUP_COUNT; i++)
+    for (int i = 0; i < Entity::ALLGROUP_END; i++)
     {
-        fprintf(stderr, "Group %i\n", i);
+        fprintf(stderr, "%s Group %i\n",
+                (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
 
-        for (Entity *e = data->list[i]; e; e = e->next)
+        for (Entity *e = data->list[i]; e; )
+        {
             fprintf(stderr, "  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
+            e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
+        }
     }
 #endif
 
@@ -147,30 +148,37 @@ void Ticker::TickGame()
     data->bias += data->deltams;
 
     /* Garbage collect objects that can be destroyed. We can do this
-     * before inserting awaiting objects, because there is no way these
-     * are already marked for destruction. */
-    for (int i = 0; i < Entity::GROUP_COUNT; i++)
+     * before inserting awaiting objects, because only objects already in
+     * the tick lists can be marked for destruction. */
+    for (int i = 0; i < Entity::ALLGROUP_END; i++)
         for (Entity *e = data->list[i], *prev = NULL; e; )
         {
-            if (e->destroy)
+            if (e->destroy && i < Entity::GAMEGROUP_END)
             {
-                if (prev)
-                    prev->next = e->next;
-                else
-                    data->list[i] = e->next;
+                /* If entity is to be destroyed, remove it from the
+                 * game tick list. */
+                (prev ? prev->gamenext : data->list[i]) = e->gamenext;
+
+                e = e->gamenext;
+            }
+            else if (e->destroy)
+            {
+                /* If entity is to be destroyed, remove it from the
+                 * draw tick list and destroy it. */
+                (prev ? prev->drawnext : data->list[i]) = e->drawnext;
 
                 Entity *tmp = e;
-                e = e->next;
+                e = e->drawnext; /* Can only be in a draw group list */
                 delete tmp;
 
                 data->nentities--;
             }
             else
             {
-                if (e->ref <= 0)
+                if (e->ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
                     e->destroy = 1;
                 prev = e;
-                e = e->next;
+                e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
             }
         }
 
@@ -178,16 +186,17 @@ void Ticker::TickGame()
     while (data->todolist)
     {
         Entity *e = data->todolist;
-        data->todolist = e->next;
+        data->todolist = e->gamenext;
 
-        int i = e->GetGroup();
-        e->next = data->list[i];
-        data->list[i] = e;
+        e->gamenext = data->list[e->gamegroup];
+        data->list[e->gamegroup] = e;
+        e->drawnext = data->list[e->drawgroup];
+        data->list[e->drawgroup] = e;
     }
 
     /* Tick objects for the game loop */
-    for (int i = 0; i < Entity::GROUP_COUNT; i++)
-        for (Entity *e = data->list[i]; e; e = e->next)
+    for (int i = Entity::GAMEGROUP_BEGIN; i < Entity::GAMEGROUP_END; i++)
+        for (Entity *e = data->list[i]; e; e = e->gamenext)
             if (!e->destroy)
             {
 #if !FINAL_RELEASE
@@ -211,8 +220,8 @@ void Ticker::TickDraw()
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
     /* Tick objects for the draw loop */
-    for (int i = 0; i < Entity::GROUP_COUNT; i++)
-        for (Entity *e = data->list[i]; e; e = e->next)
+    for (int i = Entity::DRAWGROUP_BEGIN; i < Entity::DRAWGROUP_END; i++)
+        for (Entity *e = data->list[i]; e; e = e->drawnext)
             if (!e->destroy)
             {
 #if !FINAL_RELEASE

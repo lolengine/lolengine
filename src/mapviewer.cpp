@@ -47,11 +47,6 @@ MapViewer::~MapViewer()
     delete data;
 }
 
-Entity::Group MapViewer::GetGroup()
-{
-    return Entity::GetGroup();
-}
-
 void MapViewer::TickGame(float deltams)
 {
     Entity::TickGame(deltams);

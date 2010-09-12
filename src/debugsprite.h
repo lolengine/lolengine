@@ -23,7 +23,6 @@ public:
     virtual ~DebugSprite();
 
 protected:
-    virtual Group GetGroup();
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 

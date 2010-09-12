@@ -22,7 +22,6 @@ public:
     virtual ~DebugSphere();
 
 protected:
-    virtual Group GetGroup();
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 

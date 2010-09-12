@@ -22,7 +22,6 @@ public:
     virtual ~DebugFps();
 
 protected:
-    virtual Group GetGroup();
     virtual void TickDraw(float deltams);
 
 private:

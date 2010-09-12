@@ -35,16 +35,13 @@ World::World()
     data = new WorldData();
     data->width = 0;
     data->height = 0;
+
+    drawgroup = DRAWGROUP_BEFORE;
 }
 
 World::~World()
 {
     delete data;
-}
-
-Entity::Group World::GetGroup()
-{
-    return GROUP_BEFORE;
 }
 
 char const *World::GetName()
