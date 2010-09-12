@@ -32,11 +32,8 @@ DebugStats::DebugStats(char const *path)
 {
     data = new DebugStatsData();
     data->fp = fopen(path, "w+");
-}
 
-Entity::Group DebugStats::GetGroup()
-{
-    return GROUP_AFTER;
+    gamegroup = GAMEGROUP_AFTER;
 }
 
 void DebugStats::TickGame(float deltams)

@@ -47,11 +47,6 @@ Game::~Game()
     delete data;
 }
 
-Entity::Group Game::GetGroup()
-{
-    return Entity::GetGroup();
-}
-
 void Game::TickGame(float deltams)
 {
     Entity::TickGame(deltams);

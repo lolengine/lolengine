@@ -46,11 +46,8 @@ DebugRecord::DebugRecord(char const *path)
 #if defined USE_PIPI
     data->sequence = NULL;
 #endif
-}
 
-Entity::Group DebugRecord::GetGroup()
-{
-    return GROUP_DRAW_CAPTURE;
+    drawgroup = DRAWGROUP_CAPTURE;
 }
 
 void DebugRecord::TickGame(float deltams)

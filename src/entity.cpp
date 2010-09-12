@@ -17,13 +17,16 @@
  */
 
 Entity::Entity() :
-    next(0),
+    gamenext(0),
+    drawnext(0),
     ref(0),
     destroy(0)
 {
 #if !FINAL_RELEASE
     state = STATE_IDLE;
 #endif
+    gamegroup = GAMEGROUP_DEFAULT;
+    drawgroup = DRAWGROUP_DEFAULT;
     Ticker::Register(this);
 }
 
@@ -38,11 +41,6 @@ Entity::~Entity()
 char const *Entity::GetName()
 {
     return "<entity>";
-}
-
-Entity::Group Entity::GetGroup()
-{
-    return GROUP_DEFAULT;
 }
 
 void Entity::TickGame(float deltams)

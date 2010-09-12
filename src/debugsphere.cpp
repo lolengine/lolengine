@@ -110,11 +110,6 @@ DebugSphere::DebugSphere()
     data->time = 0.0f;
 }
 
-Entity::Group DebugSphere::GetGroup()
-{
-    return GROUP_DEFAULT;
-}
-
 void DebugSphere::TickGame(float deltams)
 {
     Entity::TickGame(deltams);

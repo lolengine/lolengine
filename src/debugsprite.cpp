@@ -42,11 +42,6 @@ DebugSprite::DebugSprite(Game *game)
     data->z = 0;
 }
 
-Entity::Group DebugSprite::GetGroup()
-{
-    return GROUP_DEFAULT;
-}
-
 void DebugSprite::TickGame(float deltams)
 {
     Entity::TickGame(deltams);

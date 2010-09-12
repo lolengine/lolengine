@@ -58,16 +58,13 @@ Font::Font(char const *path)
         SDL_Quit();
         exit(1);
     }
+
+    drawgroup = DRAWGROUP_BEFORE;
 }
 
 Font::~Font()
 {
     delete data;
-}
-
-Entity::Group Font::GetGroup()
-{
-    return GROUP_BEFORE;
 }
 
 void Font::TickDraw(float deltams)

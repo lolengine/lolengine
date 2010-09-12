@@ -23,28 +23,41 @@ class Entity
     friend class Dict;
 
 protected:
-    typedef enum
-    {
-        GROUP_BEFORE = 0,
-        GROUP_DEFAULT,
-        GROUP_AFTER,
-        GROUP_DRAW_CAPTURE,
-        // Must be the last element
-        GROUP_COUNT
-    }
-    Group;
-
     Entity();
     virtual ~Entity();
 
     virtual char const *GetName();
-    virtual Group GetGroup();
 
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 
-    Entity *next, *autonext;
+    Entity *gamenext, *drawnext, *autonext;
     int ref, autorelease, destroy;
+
+    enum
+    {
+        GAMEGROUP_BEFORE = 0,
+        GAMEGROUP_DEFAULT,
+        GAMEGROUP_AFTER,
+        // Must be the last element
+        GAMEGROUP_END
+    }
+    gamegroup;
+
+    enum
+    {
+        DRAWGROUP_BEFORE = GAMEGROUP_END,
+        DRAWGROUP_DEFAULT,
+        DRAWGROUP_HUD,
+        DRAWGROUP_CAPTURE,
+        // Must be the last element
+        DRAWGROUP_END
+    }
+    drawgroup;
+
+    static int const GAMEGROUP_BEGIN = 0;
+    static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
+    static int const ALLGROUP_END = DRAWGROUP_END;
 
 #if !FINAL_RELEASE
     enum

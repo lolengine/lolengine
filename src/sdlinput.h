@@ -23,7 +23,6 @@ public:
     virtual ~SdlInput();
 
 protected:
-    virtual Group GetGroup();
     virtual void TickGame(float deltams);
 
 private:
