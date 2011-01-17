@@ -36,7 +36,7 @@ DebugSprite::DebugSprite(Game *game)
     data = new DebugSpriteData();
     data->game = game;
     Ticker::Ref(game);
-    data->tiler = Tiler::Register("art/test/character-dress.png");
+    data->tiler = Tiler::Register("art/test/character-dress.png", 32);
     data->x = 320;
     data->y = 206;
     data->z = 0;
