@@ -7,10 +7,8 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-#include <cmath>
-
 #ifdef WIN32
+#   define _USE_MATH_DEFINES /* for M_PI */
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #endif
@@ -20,6 +18,9 @@
 #   define GL_GLEXT_PROTOTYPES
 #   include <GL/gl.h>
 #endif
+
+#include <cstdio>
+#include <cmath>
 
 #include "core.h"
 #include "debugsphere.h"
@@ -128,9 +129,9 @@ void DebugSphere::TickDraw(float deltams)
 
     glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
     glBindTexture(GL_TEXTURE_2D, NULL);
-    glColor4f(1.0f, b, a, 0.2f);
+    glColor4f(1.0f, b, a, 0.1f);
     glTranslatef(320.0f, 240.0f, 32.0f);
-    for (float t = 0.01f; t < 1.0f; t *= 1.3f)
+    for (float t = 0.01f; t < 1.0f; t *= 1.1f)
         data->DrawSphere(2, t * (60.0f + 40.0f * a));
     glTranslatef(-320.0f, -240.0f, -32.0f);
     glPopAttrib();
