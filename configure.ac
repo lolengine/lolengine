@@ -86,15 +86,23 @@ fi
 AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
 
 
+# How to use the Lol Engine inside this tree
+LOL_CFLAGS="-I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
+LOL_LIBS="`pkg-config --libs sdl gl SDL_image`"
+
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
 fi
 
 AC_SUBST(MATH_LIBS)
+AC_SUBST(LOL_CFLAGS)
+AC_SUBST(LOL_LIBS)
 
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
+  monsterz/Makefile
+  deushax/Makefile
   tools/Makefile
   art/Makefile
   art/test/Makefile

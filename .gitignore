@@ -30,8 +30,9 @@ core.*
 .*.swp
 *~
 # Our binaries
-src/test-map
-src/editor
+deushax/deushax
+deushax/editor
+monsterz/monsterz
 tools/make-font
 # Our data
 art/*.png
