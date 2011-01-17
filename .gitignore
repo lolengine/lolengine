@@ -22,7 +22,7 @@ configure
 libtool
 stamp-*
 *-stamp
-deushax-*.tar.*
+lolengine-*.tar.*
 # Debugging cruft
 core
 core.*

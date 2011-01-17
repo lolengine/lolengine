@@ -1,6 +1,11 @@
 //
-// Deus Hax (working title)
-// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+// Lol Engine
+//
+// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
 //
 
 #if defined HAVE_CONFIG_H
@@ -37,7 +42,7 @@ class TileSetData
 private:
     char *name;
     int *tiles;
-    int size, nw, nh, ntiles;
+    int w, h, nw, nh, ntiles;
     float tx, ty;
 
     SDL_Surface *img;
@@ -48,7 +53,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, int size)
+TileSet::TileSet(char const *path, int w, int h)
 {
     data = new TileSetData();
     data->name = strdup(path);
@@ -66,15 +71,19 @@ TileSet::TileSet(char const *path, int size)
         exit(1);
     }
 
-    if (size <= 0) 
-        size = 32;
+    if (w <= 0)
+        w = 32;
+    if (h <= 0)
+        h = 32;
 
-    data->size = size;
-    data->nw = data->img->w / size;
-    data->nh = data->img->h / size;
+    data->w = w;
+    data->h = h;
+    /* FIXME: check for non-zero here */
+    data->nw = data->img->w / w;
+    data->nh = data->img->h / h;
     data->ntiles = data->nw * data->nh;
-    data->tx = (float)size / data->img->w;
-    data->ty = (float)size / data->img->h;
+    data->tx = (float)w / data->img->w;
+    data->ty = (float)h / data->img->h;
 
     drawgroup = DRAWGROUP_BEFORE;
 }
@@ -99,11 +108,14 @@ void TileSet::TickDraw(float deltams)
     }
     else if (data->img)
     {
+        GLuint format = data->img->format->Amask ? GL_RGBA : GL_RGB;
+        int planes = data->img->format->Amask ? 4 : 3;
+
         glGenTextures(1, &data->texture);
         glBindTexture(GL_TEXTURE_2D, data->texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, data->img->w, data->img->h, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, data->img->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, planes, data->img->w, data->img->h, 0,
+                     format, GL_UNSIGNED_BYTE, data->img->pixels);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -124,10 +136,10 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
     float ty = data->ty * ((id & 0xffff) / data->nw);
 
     float sqrt2 = sqrtf(2.0f);
-    int off = o ? data->size : 0;
-    int dx = data->size;
-    int dy = data->size * 38 / 32; /* Magic... fix this one day */
-    int dy2 = data->size * 70 / 32;
+    int off = o ? data->h : 0;
+    int dx = data->w;
+    int dy = data->h * 38 / 32; /* Magic... fix this one day */
+    int dy2 = data->h * 70 / 32;
 
     if (!data->img)
     {

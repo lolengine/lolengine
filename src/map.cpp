@@ -1,6 +1,11 @@
 //
-// Deus Hax (working title)
-// Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
+// Lol Engine
+//
+// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
 //
 
 #if defined HAVE_CONFIG_H
@@ -121,7 +126,7 @@ Map::Map(char const *path)
         else if (sscanf(tmp, " <image source=\"%[^\"]\"", str) == 1)
         {
             /* This is a tileset image file. Associate it with firstgid. */
-            data->tilers[data->ntilers] = Tiler::Register(str, 32);
+            data->tilers[data->ntilers] = Tiler::Register(str, 32, 32);
             data->ntilers++;
             //fprintf(stderr, "new tiler %s\n", str);
         }
