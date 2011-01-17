@@ -11,7 +11,7 @@ libcommon_a_SOURCES = \
     profiler.cpp profiler.h input.h input.cpp world.cpp world.h \
     debugfps.cpp debugfps.h debugsprite.cpp debugsprite.h \
     debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h \
-    debugsphere.cpp debugsphere.h
+    debugsphere.cpp debugsphere.h debugboard.cpp debugboard.h
 libcommon_a_CXXFLAGS = `pkg-config --cflags sdl gl SDL_image`
 
 test_map_SOURCES = test-map.cpp sdlinput.cpp sdlinput.h

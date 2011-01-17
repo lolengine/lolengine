@@ -9,12 +9,16 @@
 
 #include <cstdio>
 #include <cmath>
+#if defined _WIN32
+#   include <direct.h>
+#endif
 
 #include <SDL.h>
 
 #include "core.h"
 #include "sdlinput.h"
 #include "debugfps.h"
+#include "debugboard.h"
 #include "debugsprite.h"
 #include "debugsphere.h"
 #include "debugrecord.h"
@@ -49,12 +53,17 @@ int main(int argc, char **argv)
     Video::Setup(video->w, video->h);
 
     /* Create a game */
+#if defined _WIN32
+    _chdir(".."); /* Temporary Win32 hack */
+#endif
     Game *game = new Game("maps/testmap.tmx");
+    game->SetMouse(160, 96);
 
     /* Register an input driver and some debug stuff */
     new SdlInput();
     new DebugFps();
     new DebugSprite(game);
+    new DebugBoard(game);
     new DebugSphere();
     //new DebugRecord("lolengine.ogg");
     new DebugStats("stats.txt");

@@ -17,7 +17,7 @@
 class Tiler
 {
 public:
-    static int Register(char const *path);
+    static int Register(char const *path, int size);
     static void Deregister(int id);
 
     static void BlitTile(uint32_t code, int x, int y, int z, int o);
