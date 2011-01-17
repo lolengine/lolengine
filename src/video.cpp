@@ -7,7 +7,7 @@
 #   include "config.h"
 #endif
 
-#include <math.h>
+#include <cmath>
 
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -41,6 +41,8 @@ void Video::Setup(int width, int height)
 
 void Video::SetFov(float theta)
 {
+#undef near /* Fuck Microsoft */
+#undef far /* Fuck Microsoft again */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -113,7 +115,7 @@ void Video::Capture(uint32_t *buffer)
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-    glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
     for (int j = 0; j < height / 2; j++)
         for (int i = 0; i < width; i++)
