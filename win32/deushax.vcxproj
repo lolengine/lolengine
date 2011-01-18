@@ -11,50 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\debugboard.cpp" />
-    <ClCompile Include="..\src\debugfps.cpp" />
-    <ClCompile Include="..\src\debugrecord.cpp" />
-    <ClCompile Include="..\src\debugsphere.cpp" />
-    <ClCompile Include="..\src\debugsprite.cpp" />
-    <ClCompile Include="..\src\debugstats.cpp" />
-    <ClCompile Include="..\src\dict.cpp" />
-    <ClCompile Include="..\src\entity.cpp" />
-    <ClCompile Include="..\src\font.cpp" />
-    <ClCompile Include="..\src\forge.cpp" />
-    <ClCompile Include="..\src\game.cpp" />
-    <ClCompile Include="..\src\input.cpp" />
-    <ClCompile Include="..\src\layer.cpp" />
-    <ClCompile Include="..\src\map.cpp" />
-    <ClCompile Include="..\src\mapviewer.cpp" />
-    <ClCompile Include="..\src\profiler.cpp" />
-    <ClCompile Include="..\src\scene.cpp" />
-    <ClCompile Include="..\src\sdlinput.cpp" />
-    <ClCompile Include="..\src\test-map.cpp" />
-    <ClCompile Include="..\src\ticker.cpp" />
-    <ClCompile Include="..\src\tiler.cpp" />
-    <ClCompile Include="..\src\tileset.cpp" />
-    <ClCompile Include="..\src\timer.cpp" />
-    <ClCompile Include="..\src\video.cpp" />
-    <ClCompile Include="..\src\world.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\deushax\debugsprite.h" />
+    <ClInclude Include="..\deushax\game.h" />
     <ClInclude Include="..\src\bitfield.h" />
     <ClInclude Include="..\src\core.h" />
-    <ClInclude Include="..\src\debugboard.h" />
     <ClInclude Include="..\src\debugfps.h" />
     <ClInclude Include="..\src\debugrecord.h" />
     <ClInclude Include="..\src\debugsphere.h" />
-    <ClInclude Include="..\src\debugsprite.h" />
     <ClInclude Include="..\src\debugstats.h" />
     <ClInclude Include="..\src\dict.h" />
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
-    <ClInclude Include="..\src\game.h" />
     <ClInclude Include="..\src\input.h" />
     <ClInclude Include="..\src\layer.h" />
     <ClInclude Include="..\src\map.h" />
-    <ClInclude Include="..\src\mapviewer.h" />
     <ClInclude Include="..\src\matrix.h" />
     <ClInclude Include="..\src\profiler.h" />
     <ClInclude Include="..\src\scene.h" />
@@ -66,8 +37,33 @@
     <ClInclude Include="..\src\video.h" />
     <ClInclude Include="..\src\world.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\deushax\debugsprite.cpp" />
+    <ClCompile Include="..\deushax\deushax.cpp" />
+    <ClCompile Include="..\deushax\game.cpp" />
+    <ClCompile Include="..\src\debugfps.cpp" />
+    <ClCompile Include="..\src\debugrecord.cpp" />
+    <ClCompile Include="..\src\debugsphere.cpp" />
+    <ClCompile Include="..\src\debugstats.cpp" />
+    <ClCompile Include="..\src\dict.cpp" />
+    <ClCompile Include="..\src\entity.cpp" />
+    <ClCompile Include="..\src\font.cpp" />
+    <ClCompile Include="..\src\forge.cpp" />
+    <ClCompile Include="..\src\input.cpp" />
+    <ClCompile Include="..\src\layer.cpp" />
+    <ClCompile Include="..\src\map.cpp" />
+    <ClCompile Include="..\src\profiler.cpp" />
+    <ClCompile Include="..\src\scene.cpp" />
+    <ClCompile Include="..\src\sdlinput.cpp" />
+    <ClCompile Include="..\src\ticker.cpp" />
+    <ClCompile Include="..\src\tiler.cpp" />
+    <ClCompile Include="..\src\tileset.cpp" />
+    <ClCompile Include="..\src\timer.cpp" />
+    <ClCompile Include="..\src\video.cpp" />
+    <ClCompile Include="..\src\world.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D77D4446-2556-44AA-A3B5-AC236CA02901}</ProjectGuid>
+    <ProjectGuid>{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>testmap</RootNamespace>
   </PropertyGroup>
@@ -108,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\s.hocevar\Desktop\deushax\contrib\SDL_image-1.2.10\include;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\s.hocevar\Desktop\deushax\src;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL_image-1.2.10\include;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,7 +122,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\s.hocevar\Desktop\deushax\contrib\SDL_image-1.2.10\include;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\s.hocevar\Desktop\deushax\src;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL_image-1.2.10\include;C:\Users\s.hocevar\Desktop\deushax\contrib\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
