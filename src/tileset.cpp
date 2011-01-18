@@ -43,7 +43,7 @@ private:
     char *name;
     int *tiles;
     int w, h, nw, nh, ntiles;
-    float tx, ty;
+    float dilate, tx, ty;
 
     SDL_Surface *img;
     GLuint texture;
@@ -53,7 +53,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, int w, int h)
+TileSet::TileSet(char const *path, int w, int h, float dilate)
 {
     data = new TileSetData();
     data->name = strdup(path);
@@ -78,6 +78,7 @@ TileSet::TileSet(char const *path, int w, int h)
 
     data->w = w;
     data->h = h;
+    data->dilate = dilate;
     /* FIXME: check for non-zero here */
     data->nw = data->img->w / w;
     data->nh = data->img->h / h;
@@ -134,8 +135,8 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 {
     float tx = data->tx * ((id & 0xffff) % data->nw);
     float ty = data->ty * ((id & 0xffff) / data->nw);
+    float dilate = data->dilate;
 
-    float sqrt2 = sqrtf(2.0f);
     int off = o ? data->h : 0;
     int dx = data->w;
     int dy = data->h * 38 / 32; /* Magic... fix this one day */
@@ -146,13 +147,13 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
         glBindTexture(GL_TEXTURE_2D, data->texture);
         glBegin(GL_QUADS);
             glTexCoord2f(tx, ty);
-            glVertex3f(x, sqrt2 * (y - dy - off), sqrt2 * (z + off));
+            glVertex3f(x, dilate * (y - dy - off), dilate * (z + off));
             glTexCoord2f(tx + data->tx, ty);
-            glVertex3f(x + dx, sqrt2 * (y - dy - off), sqrt2 * (z + off));
+            glVertex3f(x + dx, dilate * (y - dy - off), dilate * (z + off));
             glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex3f(x + dx, sqrt2 * (y - dy2), sqrt2 * z);
+            glVertex3f(x + dx, dilate * (y - dy2), dilate * z);
             glTexCoord2f(tx, ty + data->ty);
-            glVertex3f(x, sqrt2 * (y - dy2), sqrt2 * z);
+            glVertex3f(x, dilate * (y - dy2), dilate * z);
         glEnd();
     }
 }
