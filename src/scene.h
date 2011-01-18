@@ -23,7 +23,7 @@ class SceneData;
 class Scene
 {
 public:
-    Scene();
+    Scene(float angle);
     ~Scene();
 
     void AddTile(uint32_t code, int x, int y, int z, int o);

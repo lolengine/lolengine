@@ -53,17 +53,19 @@ private:
 
     Tile *tiles;
     int ntiles;
+    float angle;
 };
 
 /*
  * Public Scene class
  */
 
-Scene::Scene()
+Scene::Scene(float angle)
 {
     data = new SceneData();
     data->tiles = 0;
     data->ntiles = 0;
+    data->angle = angle;
 }
 
 Scene::~Scene()
@@ -104,7 +106,7 @@ void Scene::Render() // XXX: rename to Blit()
     static float f = 0.0f;
     f += 0.05f;
     glTranslatef(320.0f, 240.0f, 0.0f);
-    glRotatef(-45.0f, 1.0f, 0.0f, 0.0f);
+    glRotatef(-data->angle, 1.0f, 0.0f, 0.0f);
 #if 0
     glRotatef(3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
     glRotatef(8.0f * cosf(f), 0.0f, 0.0f, 1.0f);

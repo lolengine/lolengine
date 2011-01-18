@@ -33,13 +33,13 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-int Tiler::Register(char const *path, int w, int h)
+int Tiler::Register(char const *path, int w, int h, float dilate)
 {
     int id = data->tilesets.MakeSlot(path);
 
     if (!data->tilesets.GetEntity(id))
     {
-        TileSet *tileset = new TileSet(path, w, h);
+        TileSet *tileset = new TileSet(path, w, h, dilate);
         data->tilesets.SetEntity(id, tileset);
     }
 
