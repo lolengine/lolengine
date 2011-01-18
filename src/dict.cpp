@@ -40,8 +40,10 @@ public:
 
     ~DictData()
     {
+#if !FINAL_RELEASE
         if (nentities)
             fprintf(stderr, "ERROR: still %i entities in dict\n", nentities);
+#endif
         free(entities);
     }
 
@@ -103,8 +105,15 @@ int Dict::MakeSlot(char const *name)
 void Dict::RemoveSlot(int id)
 {
     if (Ticker::Unref(data->entities[id]) == 0)
+    {
         data->entities[id] = NULL;
-    data->nentities--;
+        if (data->nentities)
+            data->nentities--;
+#if !FINAL_RELEASE
+        else
+            fprintf(stderr, "ERROR: removing entity from empty dict\n");
+#endif
+    }
 }
 
 
