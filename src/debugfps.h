@@ -23,7 +23,7 @@ class DebugFpsData;
 class DebugFps : public Entity
 {
 public:
-    DebugFps();
+    DebugFps(int x, int y);
     virtual ~DebugFps();
 
 protected:
