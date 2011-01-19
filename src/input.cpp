@@ -29,7 +29,12 @@ static class InputData
     friend class Input;
 
 public:
-    int dummy;
+    InputData()
+    {
+        mouse.x = mouse.y = -1;
+    }
+
+    Int2 mouse;
 }
 inputdata;
 
@@ -57,5 +62,15 @@ Float2 Input::GetAxis(int axis)
     }
 
     return f;
+}
+
+void Input::SetMousePos(Int2 coord)
+{
+    data->mouse = coord;
+}
+
+Int2 Input::GetMousePos()
+{
+    return data->mouse;
 }
 
