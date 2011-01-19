@@ -16,32 +16,54 @@
 #if !defined __DH_MATRIX_H__
 #define __DH_MATRIX_H__
 
-template <typename T> struct Vector2
+#define OPERATORS(elems) \
+    inline Vec##elems<T> operator+(Vec##elems<T> const &op) const \
+    { \
+        Vec##elems<T> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = (*this)[n] + op[n]; \
+        return ret; \
+    } \
+ \
+    inline Vec##elems<T> operator-(Vec##elems<T> const &op) const \
+    { \
+        Vec##elems<T> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = (*this)[n] - op[n]; \
+        return ret; \
+    }
+
+template <typename T> struct Vec2
 {
-    Vector2() { x = y = 0; }
-    Vector2(T _x, T _y) { x = _x; y = _y; }
+    Vec2() { x = y = 0; }
+    Vec2(T _x, T _y) { x = _x; y = _y; }
     T& operator[](int n) { return *(&x + n); }
+    T const& operator[](int n) const { return *(&x + n); }
+
+    OPERATORS(2)
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
 };
 
-typedef Vector2<float> Float2;
-typedef Vector2<int> Int2;
+typedef Vec2<float> Float2;
+typedef Vec2<int> Int2;
 
-template <typename T> struct Vector3
+template <typename T> struct Vec3
 {
-    Vector3() { x = y = z = 0; }
-    Vector3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
+    Vec3() { x = y = z = 0; }
+    Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
     T& operator[](int n) { return *(&x + n); }
+
+    OPERATORS(3)
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
     union { T z; T c; T k; };
 };
 
-typedef Vector3<float> Float3;
-typedef Vector3<int> Int3;
+typedef Vec3<float> Float3;
+typedef Vec3<int> Int3;
 
 #endif // __DH_MATRIX_H__
 
