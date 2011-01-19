@@ -20,6 +20,7 @@ template <typename T> struct Vector2
 {
     Vector2() { x = y = 0; }
     Vector2(T _x, T _y) { x = _x; y = _y; }
+    T& operator[](int n) { return *(&x + n); }
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
@@ -32,6 +33,7 @@ template <typename T> struct Vector3
 {
     Vector3() { x = y = z = 0; }
     Vector3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
+    T& operator[](int n) { return *(&x + n); }
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
