@@ -19,7 +19,8 @@
 #include <cmath>
 
 #define VECTOR_OP(elems, op) \
-    inline Vec##elems<T> operator op(Vec##elems<T> const &val) const \
+    template<typename U> \
+    inline Vec##elems<T> operator op(Vec##elems<U> const &val) const \
     { \
         Vec##elems<T> ret; \
         for (int n = 0; n < elems; n++) \
@@ -37,8 +38,8 @@
     }
 
 #define OPERATORS(elems) \
-    T& operator[](int n) { return *(&x + n); } \
-    T const& operator[](int n) const { return *(&x + n); } \
+    inline T& operator[](int n) { return *(&x + n); } \
+    inline T const& operator[](int n) const { return *(&x + n); } \
     \
     VECTOR_OP(elems, -) \
     VECTOR_OP(elems, +) \
@@ -50,6 +51,15 @@
     SCALAR_OP(elems, *) \
     SCALAR_OP(elems, /) \
     \
+    template<typename U> \
+    inline operator Vec##elems<U>() const \
+    { \
+        Vec##elems<U> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = static_cast<U>((*this)[n]); \
+        return ret; \
+    } \
+    \
     inline float len() const \
     { \
         T acc = 0; \
@@ -60,8 +70,9 @@
 
 template <typename T> struct Vec2
 {
-    Vec2() { x = y = 0; }
-    Vec2(T _x, T _y) { x = _x; y = _y; }
+    inline Vec2() { x = y = 0; }
+    inline Vec2(T val) { x = y = val; }
+    inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
     OPERATORS(2)
 
@@ -74,8 +85,9 @@ typedef Vec2<int> Int2;
 
 template <typename T> struct Vec3
 {
-    Vec3() { x = y = z = 0; }
-    Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
+    inline Vec3() { x = y = z = 0; }
+    inline Vec3(T val) { x = y = z = val; }
+    inline Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
 
     OPERATORS(3)
 
@@ -86,6 +98,30 @@ template <typename T> struct Vec3
 
 typedef Vec3<float> Float3;
 typedef Vec3<int> Int3;
+
+#define SCALAR_GLOBAL(elems, op, U) \
+    template<typename T> \
+    static inline Vec##elems<U> operator op(U const &val, \
+                                            Vec##elems<T> const &that) \
+    { \
+        Vec##elems<U> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = val op that[n]; \
+        return ret; \
+    }
+
+#define SCALAR_GLOBAL2(elems, op) \
+    SCALAR_GLOBAL(elems, op, int) \
+    SCALAR_GLOBAL(elems, op, float)
+
+#define GLOBALS(elems) \
+    SCALAR_GLOBAL2(elems, -) \
+    SCALAR_GLOBAL2(elems, +) \
+    SCALAR_GLOBAL2(elems, *) \
+    SCALAR_GLOBAL2(elems, /)
+
+GLOBALS(2)
+GLOBALS(3)
 
 #endif // __DH_MATRIX_H__
 
