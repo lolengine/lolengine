@@ -16,29 +16,52 @@
 #if !defined __DH_MATRIX_H__
 #define __DH_MATRIX_H__
 
+#include <cmath>
+
+#define VECTOR_OP(elems, op) \
+    inline Vec##elems<T> operator op(Vec##elems<T> const &val) const \
+    { \
+        Vec##elems<T> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = (*this)[n] op val[n]; \
+        return ret; \
+    }
+
+#define SCALAR_OP(elems, op) \
+    inline Vec##elems<T> operator op(T const &val) const \
+    { \
+        Vec##elems<T> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = (*this)[n] op val; \
+        return ret; \
+    }
+
 #define OPERATORS(elems) \
-    inline Vec##elems<T> operator+(Vec##elems<T> const &op) const \
+    T& operator[](int n) { return *(&x + n); } \
+    T const& operator[](int n) const { return *(&x + n); } \
+    \
+    VECTOR_OP(elems, -) \
+    VECTOR_OP(elems, +) \
+    VECTOR_OP(elems, *) \
+    VECTOR_OP(elems, /) \
+    \
+    SCALAR_OP(elems, -) \
+    SCALAR_OP(elems, +) \
+    SCALAR_OP(elems, *) \
+    SCALAR_OP(elems, /) \
+    \
+    inline float len() const \
     { \
-        Vec##elems<T> ret; \
+        T acc = 0; \
         for (int n = 0; n < elems; n++) \
-            ret[n] = (*this)[n] + op[n]; \
-        return ret; \
-    } \
- \
-    inline Vec##elems<T> operator-(Vec##elems<T> const &op) const \
-    { \
-        Vec##elems<T> ret; \
-        for (int n = 0; n < elems; n++) \
-            ret[n] = (*this)[n] - op[n]; \
-        return ret; \
+            acc += (*this)[n] * (*this)[n]; \
+        return sqrtf((float)acc); \
     }
 
 template <typename T> struct Vec2
 {
     Vec2() { x = y = 0; }
     Vec2(T _x, T _y) { x = _x; y = _y; }
-    T& operator[](int n) { return *(&x + n); }
-    T const& operator[](int n) const { return *(&x + n); }
 
     OPERATORS(2)
 
@@ -53,7 +76,6 @@ template <typename T> struct Vec3
 {
     Vec3() { x = y = z = 0; }
     Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
-    T& operator[](int n) { return *(&x + n); }
 
     OPERATORS(3)
 
