@@ -16,21 +16,30 @@
 #if !defined __DH_MATRIX_H__
 #define __DH_MATRIX_H__
 
-struct Float2
+template <typename T> struct Vector2
 {
-    Float2() { x = y = 0.0f; }
-    Float2(float _x, float _y) { x = _x; y = _y; }
+    Vector2() { x = y = 0; }
+    Vector2(T _x, T _y) { x = _x; y = _y; }
 
-    float x, y;
+    union { T x; T a; T i; };
+    union { T y; T b; T j; };
 };
 
-struct Float3
-{
-    Float3() { x = y = z = 0.0f; }
-    Float3(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+typedef Vector2<float> Float2;
+typedef Vector2<int> Int2;
 
-    float x, y, z;
+template <typename T> struct Vector3
+{
+    Vector3() { x = y = z = 0; }
+    Vector3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
+
+    union { T x; T a; T i; };
+    union { T y; T b; T j; };
+    union { T z; T c; T k; };
 };
+
+typedef Vector3<float> Float3;
+typedef Vector3<int> Int3;
 
 #endif // __DH_MATRIX_H__
 
