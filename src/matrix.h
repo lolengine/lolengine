@@ -60,12 +60,17 @@
         return ret; \
     } \
     \
-    inline float len() const \
+    inline T sqlen() const \
     { \
         T acc = 0; \
         for (int n = 0; n < elems; n++) \
             acc += (*this)[n] * (*this)[n]; \
-        return sqrtf((float)acc); \
+        return acc; \
+    } \
+    \
+    inline float len() const \
+    { \
+        return sqrtf((float)sqlen()); \
     }
 
 template <typename T> struct Vec2
