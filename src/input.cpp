@@ -30,11 +30,12 @@ static class InputData
 
 public:
     InputData()
-    {
-        mouse.x = mouse.y = -1;
-    }
+      : mouse(-1, -1),
+        buttons(0, 0, 0)
+    { }
 
     Int2 mouse;
+    Int3 buttons;
 }
 inputdata;
 
@@ -72,5 +73,20 @@ void Input::SetMousePos(Int2 coord)
 Int2 Input::GetMousePos()
 {
     return data->mouse;
+}
+
+void Input::SetMouseButton(int index)
+{
+    data->buttons[index] = 1;
+}
+
+void Input::UnsetMouseButton(int index)
+{
+    data->buttons[index] = 0;
+}
+
+Int3 Input::GetMouseButtons()
+{
+    return data->buttons;
 }
 

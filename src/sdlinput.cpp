@@ -65,6 +65,10 @@ void SdlInput::TickGame(float deltams)
         else if (event.type == SDL_KEYDOWN)
             Input::KeyPressed(event.key.keysym.sym, deltams);
 #endif
+        else if (event.type == SDL_MOUSEBUTTONDOWN)
+            Input::SetMouseButton(event.button.button - 1);
+        else if (event.type == SDL_MOUSEBUTTONUP)
+            Input::UnsetMouseButton(event.button.button - 1);
     }
 
     /* Send the whole keyboard state to the input system */
