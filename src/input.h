@@ -22,6 +22,8 @@ class Input
 {
 public:
     static Float2 GetAxis(int axis);
+    static void SetMousePos(Int2 coord);
+    static Int2 GetMousePos();
 };
 
 #endif // __DH_INPUT_H__
