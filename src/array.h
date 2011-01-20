@@ -28,15 +28,6 @@
         return ret; \
     }
 
-#define BOOL_OP(elems, op, ret) \
-    inline bool operator op(Vec##elems<T> const &val) const \
-    { \
-        for (int n = 0; n < elems; n++) \
-            if ((*this)[n] != val[n]) \
-                return ret; \
-        return !ret; \
-    }
-
 #define SCALAR_OP(elems, op) \
     inline Vec##elems<T> operator op(T const &val) const \
     { \
@@ -54,9 +45,6 @@
     VECTOR_OP(elems, +) \
     VECTOR_OP(elems, *) \
     VECTOR_OP(elems, /) \
-    \
-    BOOL_OP(elems, ==, false) \
-    BOOL_OP(elems, !=, true) \
     \
     SCALAR_OP(elems, -) \
     SCALAR_OP(elems, +) \
