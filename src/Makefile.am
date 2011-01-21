@@ -7,6 +7,7 @@ liblol_a_SOURCES = \
     entity.cpp entity.h ticker.cpp ticker.h tileset.cpp tileset.h \
     forge.cpp forge.h video.cpp video.h timer.cpp timer.h bitfield.h \
     profiler.cpp profiler.h input.h input.cpp world.cpp world.h \
+    sample.cpp sample.h sampler.cpp sampler.h \
     \
     sdlinput.cpp sdlinput.h \
     \
