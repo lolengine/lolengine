@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\monsterz\board.h" />
     <ClInclude Include="..\monsterz\game.h" />
+    <ClInclude Include="..\monsterz\mash.h" />
     <ClInclude Include="..\monsterz\piece.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
@@ -44,6 +45,7 @@
   <ItemGroup>
     <ClCompile Include="..\monsterz\board.cpp" />
     <ClCompile Include="..\monsterz\game.cpp" />
+    <ClCompile Include="..\monsterz\mash.cpp" />
     <ClCompile Include="..\monsterz\monsterz.cpp" />
     <ClCompile Include="..\monsterz\piece.cpp" />
     <ClCompile Include="..\src\audio.cpp" />
