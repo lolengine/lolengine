@@ -48,23 +48,24 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Ws
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 
 # Use SDL?
-ac_cv_my_have_sdl="no"
+ac_cv_my_have_sdl="yes"
 save_CPPFLAGS="${CPPFLAGS}"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
 if test "${SDL_CONFIG}" != "no"; then
   CPPFLAGS="${CPPFLAGS} `sdl-config --cflags`"
 fi
 AC_CHECK_HEADERS(SDL_image.h,
- [ac_cv_my_have_sdl="yes"],
- [ac_cv_my_have_sdl="no"])
+ [:],[ac_cv_my_have_sdl="no"])
+AC_CHECK_HEADERS(SDL_mixer.h,
+ [:],[ac_cv_my_have_sdl="no"])
 CPPFLAGS="${save_CPPFLAGS}"
 if test "${ac_cv_my_have_sdl}" != "no"; then
   AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL_image)
 fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 
-if test "${ac_cv_my_have_sdl}" = "no" -a "${ac_cv_my_have_imlib2}" = "no"; then
-  AC_MSG_ERROR([[cannot find SDL_Image or GTK+, please install one of them]])
+if test "${ac_cv_my_have_sdl}" = "no"; then
+  AC_MSG_ERROR([[One of SDL, SDL_Image or SDL_Mixer not found]])
 fi
 
 
@@ -88,7 +89,7 @@ AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
 
 # How to use the Lol Engine inside this tree
 LOL_CFLAGS="-I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
-LOL_LIBS="`pkg-config --libs sdl gl SDL_image`"
+LOL_LIBS="`pkg-config --libs sdl gl SDL_image` -lSDL_mixer"
 
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)

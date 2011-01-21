@@ -53,7 +53,7 @@ void Sampler::Deregister(int id)
 
 void Sampler::PlaySample(int id)
 {
-    Sample *sample = (Sample *)data->samples.GetEntity(id);
+    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
     sample->Play();
 }
 
