@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <cmath>
 
-#include <SDL.h>
+#include <SDL_mixer.h>
 
 #include "core.h"
 
@@ -29,6 +29,7 @@ class SampleData
 
 private:
     char *name;
+    Mix_Chunk *chunk;
 };
 
 /*
@@ -39,10 +40,12 @@ Sample::Sample(char const *path)
 {
     data = new SampleData();
     data->name = strdup(path);
+    data->chunk = Mix_LoadWAV(path);
 }
 
 Sample::~Sample()
 {
+    Mix_FreeChunk(data->chunk);
     free(data->name);
     delete data;
 }
@@ -59,5 +62,6 @@ char const *Sample::GetName()
 
 void Sample::Play()
 {
+    Mix_PlayChannel(-1, data->chunk, 0);
 }
 

@@ -22,6 +22,7 @@
 
 // Static classes
 #include "video.h"
+#include "audio.h"
 #include "scene.h"
 #include "input.h"
 #include "profiler.h"

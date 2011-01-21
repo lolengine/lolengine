@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\deushax\debugsprite.h" />
     <ClInclude Include="..\deushax\game.h" />
+    <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
     <ClInclude Include="..\src\core.h" />
     <ClInclude Include="..\src\debugfps.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="..\deushax\debugsprite.cpp" />
     <ClCompile Include="..\deushax\deushax.cpp" />
     <ClCompile Include="..\deushax\game.cpp" />
+    <ClCompile Include="..\src\audio.cpp" />
     <ClCompile Include="..\src\debugfps.cpp" />
     <ClCompile Include="..\src\debugrecord.cpp" />
     <ClCompile Include="..\src\debugsphere.cpp" />
