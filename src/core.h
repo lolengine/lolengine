@@ -30,6 +30,7 @@
 #include "entity.h"
 #include "font.h"
 #include "tileset.h"
+#include "sample.h"
 #include "world.h"
 
 // Other objects
@@ -41,6 +42,7 @@
 #include "ticker.h"
 #include "forge.h"
 #include "tiler.h"
+#include "sampler.h"
 
 #endif // __DH_CORE_H__
 

@@ -29,6 +29,8 @@
     <ClInclude Include="..\src\map.h" />
     <ClInclude Include="..\src\matrix.h" />
     <ClInclude Include="..\src\profiler.h" />
+    <ClInclude Include="..\src\sample.h" />
+    <ClInclude Include="..\src\sampler.h" />
     <ClInclude Include="..\src\scene.h" />
     <ClInclude Include="..\src\sdlinput.h" />
     <ClInclude Include="..\src\ticker.h" />
@@ -55,6 +57,8 @@
     <ClCompile Include="..\src\layer.cpp" />
     <ClCompile Include="..\src\map.cpp" />
     <ClCompile Include="..\src\profiler.cpp" />
+    <ClInclude Include="..\src\sample.cpp" />
+    <ClInclude Include="..\src\sampler.cpp" />
     <ClCompile Include="..\src\scene.cpp" />
     <ClCompile Include="..\src\sdlinput.cpp" />
     <ClCompile Include="..\src\ticker.cpp" />
