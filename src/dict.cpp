@@ -57,8 +57,8 @@ private:
  */
 
 Dict::Dict()
+  : data(new DictData())
 {
-    data = new DictData();
 }
 
 Dict::~Dict()

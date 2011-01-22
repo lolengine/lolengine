@@ -43,8 +43,8 @@ private:
  */
 
 DebugRecord::DebugRecord(char const *path)
+  : data(new DebugRecordData())
 {
-    data = new DebugRecordData();
     data->path = strdup(path);
     data->width = 0;
     data->height = 0;

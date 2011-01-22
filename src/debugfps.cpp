@@ -35,9 +35,8 @@ private:
  */
 
 DebugFps::DebugFps(int x, int y)
+  : data(new DebugFpsData())
 {
-    data = new DebugFpsData();
-
     data->fontid = Forge::Register("gfx/font/ascii.png");
     data->x = x;
     data->y = y;

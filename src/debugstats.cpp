@@ -34,8 +34,8 @@ private:
  */
 
 DebugStats::DebugStats(char const *path)
+  : data(new DebugStatsData())
 {
-    data = new DebugStatsData();
     data->fp = fopen(path, "w+");
 
     gamegroup = GAMEGROUP_AFTER;

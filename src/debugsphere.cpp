@@ -111,8 +111,8 @@ GLuint const DebugSphereData::tindices[20][3] =
  */
 
 DebugSphere::DebugSphere()
+  : data(new DebugSphereData())
 {
-    data = new DebugSphereData();
     data->time = 0.0f;
 }
 

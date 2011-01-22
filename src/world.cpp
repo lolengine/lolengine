@@ -36,8 +36,8 @@ private:
  */
 
 World::World()
+  : data(new WorldData())
 {
-    data = new WorldData();
     data->width = 0;
     data->height = 0;
 

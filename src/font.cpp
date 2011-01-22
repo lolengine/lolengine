@@ -49,8 +49,8 @@ private:
  */
 
 Font::Font(char const *path)
+  : data(new FontData())
 {
-    data = new FontData();
     data->name = strdup(path);
     data->img = NULL;
 

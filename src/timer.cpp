@@ -102,8 +102,8 @@ private:
  */
 
 Timer::Timer()
+  : data(new TimerData())
 {
-    data = new TimerData();
 }
 
 Timer::~Timer()
