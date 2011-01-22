@@ -54,8 +54,8 @@ private:
  */
 
 TileSet::TileSet(char const *path, int w, int h, float dilate)
+  : data(new TileSetData())
 {
-    data = new TileSetData();
     data->name = strdup(path);
     data->tiles = NULL;
     data->img = NULL;

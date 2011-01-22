@@ -45,8 +45,8 @@ private:
  */
 
 Map::Map(char const *path)
+  : data(new MapData())
 {
-    data = new MapData();
     data->ntilers = 0;
     data->layers = NULL;
     data->nlayers = 0;

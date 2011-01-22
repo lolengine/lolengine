@@ -61,8 +61,8 @@ private:
  */
 
 Scene::Scene(float angle)
+  : data(new SceneData())
 {
-    data = new SceneData();
     data->tiles = 0;
     data->ntiles = 0;
     data->angle = angle;

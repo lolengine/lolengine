@@ -37,8 +37,8 @@ private:
  */
 
 Sample::Sample(char const *path)
+  : data(new SampleData())
 {
-    data = new SampleData();
     data->name = strdup(path);
     data->chunk = Mix_LoadWAV(path);
 }

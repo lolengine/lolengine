@@ -34,10 +34,10 @@ private:
  */
 
 SdlInput::SdlInput()
+  : data(new SdlInputData())
 {
     SDL_Init(SDL_INIT_TIMER);
 
-    data = new SdlInputData();
     SDL_GetMouseState(&data->mx, &data->my);
 
     gamegroup = GAMEGROUP_BEFORE;
