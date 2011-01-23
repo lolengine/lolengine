@@ -41,6 +41,7 @@ private:
 
     SDL_Surface *img;
     int width, height;
+    float tx, ty;
     GLuint texture;
 };
 
@@ -64,6 +65,11 @@ Font::Font(char const *path)
         exit(1);
     }
 
+    data->width = data->img->w / 16;
+    data->height = data->img->h / 16;
+    data->tx = 7.0f / PotUp(data->img->w);
+    data->ty = 15.0f / PotUp(data->img->h);
+
     drawgroup = DRAWGROUP_BEFORE;
 }
 
@@ -85,9 +91,6 @@ void Font::TickDraw(float deltams)
     }
     else if (data->img)
     {
-        data->width = data->img->w / 16;
-        data->height = data->img->h / 16;
-
         GLuint format = data->img->format->Amask ? GL_RGBA : GL_RGB;
         int planes = data->img->format->Amask ? 4 : 3;
 
@@ -136,16 +139,16 @@ void Font::Print(int x, int y, char const *str)
     while (*str)
     {
         uint32_t ch = (uint8_t)*str++;
-        float tx = .0625f * (ch & 0xf);
-        float ty = .0625f * ((ch >> 4) & 0xf);
+        float tx = data->tx * (ch & 0xf);
+        float ty = data->ty * ((ch >> 4) & 0xf);
 
         if (ch != ' ')
         {
-            glTexCoord2f(tx, ty + .0625f);
+            glTexCoord2f(tx, ty + data->ty);
             glVertex2f(x, y);
-            glTexCoord2f(tx + .0625f, ty + .0625f);
+            glTexCoord2f(tx + data->tx, ty + data->ty);
             glVertex2f(x + data->width, y);
-            glTexCoord2f(tx + .0625f, ty);
+            glTexCoord2f(tx + data->tx, ty);
             glVertex2f(x + data->width, y + data->height);
             glTexCoord2f(tx, ty);
             glVertex2f(x, y + data->height);
