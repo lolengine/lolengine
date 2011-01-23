@@ -83,8 +83,8 @@ TileSet::TileSet(char const *path, int w, int h, float dilate)
     data->nw = data->img->w / w;
     data->nh = data->img->h / h;
     data->ntiles = data->nw * data->nh;
-    data->tx = (float)w / data->img->w;
-    data->ty = (float)h / data->img->h;
+    data->tx = (float)w / PotUp(data->img->w);
+    data->ty = (float)h / PotUp(data->img->h);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
@@ -112,15 +112,31 @@ void TileSet::TickDraw(float deltams)
         GLuint format = data->img->format->Amask ? GL_RGBA : GL_RGB;
         int planes = data->img->format->Amask ? 4 : 3;
 
+        int w = PotUp(data->img->w);
+        int h = PotUp(data->img->h);
+
+        uint8_t *pixels = (uint8_t *)data->img->pixels;
+        if (w != data->img->w || h != data->img->h)
+        {
+            uint8_t *tmp = (uint8_t *)malloc(planes * w * h);
+            for (int line = 0; line < data->img->h; line++)
+                memcpy(tmp + planes * w * line,
+                       pixels + planes * data->img->w * line,
+                       planes * data->img->w);
+            pixels = tmp;
+        }
+
         glGenTextures(1, &data->texture);
         glBindTexture(GL_TEXTURE_2D, data->texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, planes, data->img->w, data->img->h, 0,
-                     format, GL_UNSIGNED_BYTE, data->img->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, planes, w, h, 0,
+                     format, GL_UNSIGNED_BYTE, pixels);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+        if (pixels != data->img->pixels)
+            free(pixels);
         SDL_FreeSurface(data->img);
         data->img = NULL;
     }
