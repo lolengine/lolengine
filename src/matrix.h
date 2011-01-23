@@ -140,5 +140,19 @@ typedef Vec3<int> Int3;
 GLOBALS(2)
 GLOBALS(3)
 
+/* A few utility functions */
+template <typename T> static inline T PotUp(T val)
+{
+    val = val - 1;
+    //if (sizeof(val) > 8) val = val | (val >> 64);
+    //if (sizeof(val) > 4) val = val | (val >> 32);
+    if (sizeof(val) > 2) val = val | (val >> 16);
+    if (sizeof(val) > 1) val = val | (val >> 8);
+    val = val | (val >> 4);
+    val = val | (val >> 2);
+    val = val | (val >> 1);
+    return val + 1;
+}
+
 #endif // __DH_MATRIX_H__
 
