@@ -35,6 +35,3 @@ deushax/editor
 monsterz/monsterz
 tools/make-font
 # Our data
-art/*.png
-art/test/*.png
-gfx/font/*.png
