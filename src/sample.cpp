@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cmath>
 
+#include <SDL.h>
 #include <SDL_mixer.h>
 
 #include "core.h"
@@ -41,6 +42,14 @@ Sample::Sample(char const *path)
 {
     data->name = strdup(path);
     data->chunk = Mix_LoadWAV(path);
+    if (!data->chunk)
+    {
+#if !FINAL_RELEASE
+        fprintf(stderr, "ERROR: could not load %s\n", path);
+#endif
+        SDL_Quit();
+        exit(1);
+    }
 }
 
 Sample::~Sample()
