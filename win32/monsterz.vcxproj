@@ -14,6 +14,7 @@
     <ClInclude Include="..\monsterz\board.h" />
     <ClInclude Include="..\monsterz\game.h" />
     <ClInclude Include="..\monsterz\mash.h" />
+    <ClInclude Include="..\monsterz\monsterz.h" />
     <ClInclude Include="..\monsterz\piece.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
