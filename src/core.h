@@ -30,8 +30,9 @@
 // Entities
 #include "entity.h"
 #include "font.h"
-#include "tileset.h"
 #include "sample.h"
+#include "text.h"
+#include "tileset.h"
 #include "world.h"
 
 // Other objects
