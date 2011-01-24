@@ -9,29 +9,32 @@
 //
 
 //
-// The DebugFps class
-// ------------------
+// The Text class
+// --------------
 //
 
-#if !defined __DH_DEBUGFPS_H__
-#define __DH_DEBUGFPS_H__
+#if !defined __DH_TEXT_H__
+#define __DH_TEXT_H__
 
 #include "entity.h"
 
-class DebugFpsData;
+class TextData;
 
-class DebugFps : public Entity
+class Text : public Entity
 {
 public:
-    DebugFps(int x, int y);
-    virtual ~DebugFps();
+    Text(char const *text, char const *font);
+    virtual ~Text();
+
+    void SetText(char const *text);
+    void SetPos(Int3 pos);
 
 protected:
-    virtual void TickGame(float deltams);
+    virtual void TickDraw(float deltams);
 
 private:
-    DebugFpsData *data;
+    TextData *data;
 };
 
-#endif // __DH_DEBUGFPS_H__
+#endif // __DH_TEXT_H__
 

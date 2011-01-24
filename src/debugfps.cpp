@@ -26,8 +26,7 @@ class DebugFpsData
     friend class DebugFps;
 
 private:
-    int x, y;
-    int fontid;
+    Text *lines[5];
 };
 
 /*
@@ -37,52 +36,50 @@ private:
 DebugFps::DebugFps(int x, int y)
   : data(new DebugFpsData())
 {
-    data->fontid = Forge::Register("gfx/font/ascii.png");
-    data->x = x;
-    data->y = y;
-
-    drawgroup = DRAWGROUP_HUD;
+    for (int i = 0; i < 5; i ++)
+    {
+        data->lines[i] = new Text(NULL, "gfx/font/ascii.png");
+        data->lines[i]->SetPos(Int3(x, y + (i ? 8 : 0) + 16 * i, 0));
+        Ticker::Ref(data->lines[i]);
+    }
 }
 
-void DebugFps::TickDraw(float deltams)
+void DebugFps::TickGame(float deltams)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickGame(deltams);
 
     char buf[1024];
-    Font *font = Forge::GetFont(data->fontid);
-
-    int x = data->x;
-    int y = data->y;
 
     sprintf(buf, "%2.2f fps (%i)",
             1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Ticker::GetFrameNum());
-    font->PrintBold(x, y, buf);
+    data->lines[0]->SetText(buf);
 
     sprintf(buf, "Game  % 7.2f % 7.2f",
             Profiler::GetAvg(Profiler::STAT_TICK_GAME),
             Profiler::GetMax(Profiler::STAT_TICK_GAME));
-    font->PrintBold(x, y + 24, buf);
+    data->lines[1]->SetText(buf);
 
     sprintf(buf, "Draw  % 7.2f % 7.2f",
             Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
             Profiler::GetMax(Profiler::STAT_TICK_DRAW));
-    font->PrintBold(x, y + 40, buf);
+    data->lines[2]->SetText(buf);
 
     sprintf(buf, "Blit  % 7.2f % 7.2f",
             Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
             Profiler::GetMax(Profiler::STAT_TICK_BLIT));
-    font->PrintBold(x, y + 56, buf);
+    data->lines[3]->SetText(buf);
 
     sprintf(buf, "Frame % 7.2f % 7.2f",
             Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Profiler::GetMax(Profiler::STAT_TICK_FRAME));
-    font->PrintBold(x, y + 72, buf);
+    data->lines[4]->SetText(buf);
 }
 
 DebugFps::~DebugFps()
 {
-    Forge::Deregister(data->fontid);
+    for (int i = 0; i < 5; i ++)
+        Ticker::Unref(data->lines[i]);
     delete data;
 }
 

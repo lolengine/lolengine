@@ -36,6 +36,7 @@
     <ClInclude Include="..\src\sampler.h" />
     <ClInclude Include="..\src\scene.h" />
     <ClInclude Include="..\src\sdlinput.h" />
+    <ClInclude Include="..\src\text.h" />
     <ClInclude Include="..\src\ticker.h" />
     <ClInclude Include="..\src\tiler.h" />
     <ClInclude Include="..\src\tileset.h" />
@@ -66,6 +67,7 @@
     <ClCompile Include="..\src\sampler.cpp" />
     <ClCompile Include="..\src\scene.cpp" />
     <ClCompile Include="..\src\sdlinput.cpp" />
+    <ClCompile Include="..\src\text.cpp" />
     <ClCompile Include="..\src\ticker.cpp" />
     <ClCompile Include="..\src\tiler.cpp" />
     <ClCompile Include="..\src\tileset.cpp" />
