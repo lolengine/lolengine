@@ -26,6 +26,8 @@ public:
     Emitter(int tiler, Float3 gravity);
     virtual ~Emitter();
 
+    void AddParticle(int id, Float3 pos, Float3 vel);
+
 protected:
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);

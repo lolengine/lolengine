@@ -48,12 +48,42 @@ Emitter::Emitter(int tiler, Float3 gravity)
 
 void Emitter::TickGame(float deltams)
 {
+    for (int i = 0; i < data->nparticles; i++)
+    {
+        data->velocities[i] = data->velocities[i] + deltams * data->gravity;
+        data->positions[i] = data->positions[i] + deltams * data->velocities[i];
+        if (data->positions[i].y < -100)
+        {
+            data->particles[i] = data->particles[data->nparticles - 1];
+            data->positions[i] = data->positions[data->nparticles - 1];
+            data->velocities[i] = data->velocities[data->nparticles - 1];
+            data->nparticles--;
+        }
+    }
+
     Entity::TickGame(deltams);
 }
 
 void Emitter::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
+
+    for (int i = 0; i < data->nparticles; i++)
+        Scene::GetDefault()->AddTile((data->tiler << 16) | data->particles[i],
+                                     data->positions[i].x,
+                                     data->positions[i].y,
+                                     data->positions[i].z, 0);
+}
+
+void Emitter::AddParticle(int id, Float3 pos, Float3 vel)
+{
+    if (data->nparticles >= 100)
+        return;
+
+    data->particles[data->nparticles] = id;
+    data->positions[data->nparticles] = pos;
+    data->velocities[data->nparticles] = vel;
+    data->nparticles++;
 }
 
 Emitter::~Emitter()
