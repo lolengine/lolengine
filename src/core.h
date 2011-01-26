@@ -18,6 +18,7 @@
 
 // Base types
 #include "matrix.h"
+#include "numeric.h"
 #include "timer.h"
 
 // Static classes

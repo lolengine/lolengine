@@ -29,6 +29,7 @@
     <ClInclude Include="..\src\layer.h" />
     <ClInclude Include="..\src\map.h" />
     <ClInclude Include="..\src\matrix.h" />
+    <ClInclude Include="..\src\numeric.h" />
     <ClInclude Include="..\src\profiler.h" />
     <ClInclude Include="..\src\sample.h" />
     <ClInclude Include="..\src\sampler.h" />
