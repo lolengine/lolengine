@@ -27,6 +27,9 @@
     <ClInclude Include="..\src\dict.h">
       <Filter>lolengine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\emitter.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\entity.h">
       <Filter>lolengine</Filter>
     </ClInclude>
@@ -107,6 +110,9 @@
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\dict.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\emitter.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\entity.cpp">

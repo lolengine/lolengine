@@ -21,6 +21,7 @@
     <ClInclude Include="..\src\debugsphere.h" />
     <ClInclude Include="..\src\debugstats.h" />
     <ClInclude Include="..\src\dict.h" />
+    <ClInclude Include="..\src\emitter.h" />
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="..\src\debugsphere.cpp" />
     <ClCompile Include="..\src\debugstats.cpp" />
     <ClCompile Include="..\src\dict.cpp" />
+    <ClCompile Include="..\src\emitter.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
