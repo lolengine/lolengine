@@ -54,7 +54,11 @@ private:
     Tile *tiles;
     int ntiles;
     float angle;
+
+    static Scene *scene;
 };
+
+Scene *SceneData::scene = NULL;
 
 /*
  * Public Scene class
@@ -71,6 +75,20 @@ Scene::Scene(float angle)
 Scene::~Scene()
 {
     delete data;
+}
+
+Scene *Scene::GetDefault()
+{
+    if (!SceneData::scene)
+        SceneData::scene = new Scene(0.0f);
+    return SceneData::scene;
+}
+
+void Scene::Reset()
+{
+    if (SceneData::scene)
+        delete SceneData::scene;
+    SceneData::scene = NULL;
 }
 
 void Scene::AddTile(uint32_t code, int x, int y, int z, int o)

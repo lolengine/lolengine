@@ -26,6 +26,9 @@ public:
     Scene(float angle);
     ~Scene();
 
+    static Scene *GetDefault();
+    static void Reset();
+
     void AddTile(uint32_t code, int x, int y, int z, int o);
     void Render();
 
