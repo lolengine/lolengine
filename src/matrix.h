@@ -46,6 +46,15 @@
         return ret; \
     }
 
+#define CAST_OP(elems, dest) \
+    inline operator Vec##dest<T>() const \
+    { \
+        Vec##dest<T> ret; \
+        for (int n = 0; n < elems && n < dest; n++) \
+            ret[n] = (*this)[n]; \
+        return ret; \
+    }
+
 #define OPERATORS(elems) \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
@@ -62,6 +71,10 @@
     SCALAR_OP(elems, +) \
     SCALAR_OP(elems, *) \
     SCALAR_OP(elems, /) \
+    \
+    CAST_OP(elems, 2) \
+    CAST_OP(elems, 3) \
+    CAST_OP(elems, 4) \
     \
     template<typename U> \
     inline operator Vec##elems<U>() const \
@@ -84,6 +97,10 @@
     { \
         return sqrtf((float)sqlen()); \
     }
+
+template <typename T> struct Vec2;
+template <typename T> struct Vec3;
+template <typename T> struct Vec4;
 
 template <typename T> struct Vec2
 {
