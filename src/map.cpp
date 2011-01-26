@@ -160,10 +160,10 @@ Map::~Map()
     delete data;
 }
 
-void Map::Render(Scene *scene, int x, int y, int z)
+void Map::Render(int x, int y, int z)
 {
     for (int i = 0; i < data->nlayers; i++)
-        data->layers[i]->Render(scene, x, y, z);
+        data->layers[i]->Render(x, y, z);
 }
 
 int Map::GetWidth()

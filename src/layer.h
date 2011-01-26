@@ -19,8 +19,6 @@
 
 #include <stdint.h>
 
-#include "scene.h"
-
 class Layer
 {
 public:
@@ -29,7 +27,7 @@ public:
 
     int GetZ();
 
-    void Render(Scene *scene, int x, int y, int z);
+    void Render(int x, int y, int z);
 
 private:
     int width, height, altitude, orientation;

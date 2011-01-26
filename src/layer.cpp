@@ -40,8 +40,9 @@ Layer::~Layer()
     free(data);
 }
 
-void Layer::Render(Scene *scene, int x, int y, int z)
+void Layer::Render(int x, int y, int z)
 {
+    Scene *scene = Scene::GetDefault();
     for (int j = 0; j < height; j++)
         for (int i = 0; i < width; i++)
             if (data[j * width + i])
