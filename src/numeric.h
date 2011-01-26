@@ -18,6 +18,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <stdint.h>
 
 /* Random float value */
 static inline float RandF()
