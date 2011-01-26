@@ -29,6 +29,7 @@
 
 // Entities
 #include "entity.h"
+#include "emitter.h"
 #include "font.h"
 #include "sample.h"
 #include "text.h"
