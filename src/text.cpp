@@ -29,7 +29,7 @@ class TextData
 private:
     int font;
     char *text;
-    Int3 pos;
+    int3 pos;
 };
 
 /*
@@ -41,7 +41,7 @@ Text::Text(char const *text, char const *font)
 {
     data->font = Forge::Register(font);
     data->text = text ? strdup(text) : NULL;
-    data->pos = Int3(0, 0, 0);
+    data->pos = int3(0, 0, 0);
 
     drawgroup = DRAWGROUP_HUD;
 }
@@ -53,7 +53,7 @@ void Text::SetText(char const *text)
     data->text = text ? strdup(text) : NULL;
 }
 
-void Text::SetPos(Int3 pos)
+void Text::SetPos(int3 pos)
 {
     data->pos = pos;
 }

@@ -34,8 +34,8 @@ public:
         buttons(0, 0, 0)
     { }
 
-    Int2 mouse;
-    Int3 buttons;
+    int2 mouse;
+    int3 buttons;
 }
 inputdata;
 
@@ -45,10 +45,10 @@ static InputData * const data = &inputdata;
  * Public Input class
  */
 
-Float2 Input::GetAxis(int axis)
+float2 Input::GetAxis(int axis)
 {
     float invsqrt2 = sqrtf(0.5f);
-    Float2 f;
+    float2 f;
 
     /* Simulate a joystick using the keyboard. This SDL call is free. */
     Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -65,12 +65,12 @@ Float2 Input::GetAxis(int axis)
     return f;
 }
 
-void Input::SetMousePos(Int2 coord)
+void Input::SetMousePos(int2 coord)
 {
     data->mouse = coord;
 }
 
-Int2 Input::GetMousePos()
+int2 Input::GetMousePos()
 {
     return data->mouse;
 }
@@ -85,7 +85,7 @@ void Input::UnsetMouseButton(int index)
     data->buttons[index] = 0;
 }
 
-Int3 Input::GetMouseButtons()
+int3 Input::GetMouseButtons()
 {
     return data->buttons;
 }

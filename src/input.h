@@ -21,12 +21,12 @@
 class Input
 {
 public:
-    static Float2 GetAxis(int axis);
-    static void SetMousePos(Int2 coord);
-    static Int2 GetMousePos();
+    static float2 GetAxis(int axis);
+    static void SetMousePos(int2 coord);
+    static int2 GetMousePos();
     static void SetMouseButton(int index);
     static void UnsetMouseButton(int index);
-    static Int3 GetMouseButtons();
+    static int3 GetMouseButtons();
 };
 
 #endif // __DH_INPUT_H__

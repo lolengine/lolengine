@@ -27,7 +27,7 @@ public:
     virtual ~Text();
 
     void SetText(char const *text);
-    void SetPos(Int3 pos);
+    void SetPos(int3 pos);
 
 protected:
     virtual void TickDraw(float deltams);

@@ -97,8 +97,8 @@ template <typename T> struct Vec2
     union { T y; T b; T j; };
 };
 
-typedef Vec2<float> Float2;
-typedef Vec2<int> Int2;
+typedef Vec2<float> float2;
+typedef Vec2<int> int2;
 
 template <typename T> struct Vec3
 {
@@ -113,8 +113,25 @@ template <typename T> struct Vec3
     union { T z; T c; T k; };
 };
 
-typedef Vec3<float> Float3;
-typedef Vec3<int> Int3;
+typedef Vec3<float> float3;
+typedef Vec3<int> int3;
+
+template <typename T> struct Vec4
+{
+    inline Vec4() { x = y = z = w = 0; }
+    inline Vec4(T val) { x = y = z = w = val; }
+    inline Vec4(T _x, T _y, T _z, T _w) { x = _x; y = _y; z = _z; w = _w; }
+
+    OPERATORS(4)
+
+    union { T x; T a; T i; };
+    union { T y; T b; T j; };
+    union { T z; T c; T k; };
+    union { T w; T d; T l; };
+};
+
+typedef Vec4<float> float4;
+typedef Vec4<int> int4;
 
 #define SCALAR_GLOBAL(elems, op, U) \
     template<typename T> \
@@ -139,6 +156,7 @@ typedef Vec3<int> Int3;
 
 GLOBALS(2)
 GLOBALS(3)
+GLOBALS(4)
 
 #endif // __DH_MATRIX_H__
 

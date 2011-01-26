@@ -39,7 +39,7 @@ DebugFps::DebugFps(int x, int y)
     for (int i = 0; i < 5; i ++)
     {
         data->lines[i] = new Text(NULL, "gfx/font/ascii.png");
-        data->lines[i]->SetPos(Int3(x, y + (i ? 8 : 0) + 16 * i, 0));
+        data->lines[i]->SetPos(int3(x, y + (i ? 8 : 0) + 16 * i, 0));
         Ticker::Ref(data->lines[i]);
     }
 }
