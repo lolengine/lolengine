@@ -57,10 +57,7 @@ float2 Input::GetAxis(int axis)
     f.x += left;
     f.y += up;
     if (left && up)
-    {
-        f.x *= invsqrt2;
-        f.y *= invsqrt2;
-    }
+        f = f * invsqrt2;
 
     return f;
 }
