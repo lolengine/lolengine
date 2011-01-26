@@ -29,6 +29,12 @@ core.*
 # Editor cruft
 .*.swp
 *~
+# Visual Studio cruft
+win32/Debug
+win32/Release
+win32/*.vcxproj.user
+win32/*.sdf
+win32/*.suo
 # Our binaries
 deushax/deushax
 deushax/editor
