@@ -25,12 +25,14 @@ class EmitterData
 {
     friend class Emitter;
 
+    static const int MAX_PARTICLES = 1000;
+
 private:
     int tiler;
     float3 gravity;
-    int particles[100];
-    float3 positions[100];
-    float3 velocities[100];
+    int particles[MAX_PARTICLES];
+    float3 positions[MAX_PARTICLES];
+    float3 velocities[MAX_PARTICLES];
     int nparticles;
 };
 
@@ -77,7 +79,7 @@ void Emitter::TickDraw(float deltams)
 
 void Emitter::AddParticle(int id, float3 pos, float3 vel)
 {
-    if (data->nparticles >= 100)
+    if (data->nparticles >= EmitterData::MAX_PARTICLES)
         return;
 
     data->particles[data->nparticles] = id;
