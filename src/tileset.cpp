@@ -156,23 +156,22 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
     float ty = data->ty * ((id & 0xffff) / data->nw);
     float dilate = data->dilate;
 
-    int off = o ? data->h : 0;
     int dx = data->w;
-    int dy = data->h * 38 / 32; /* Magic... fix this one day */
-    int dy2 = data->h * 70 / 32;
+    int dy = o ? 0 : data->h;
+    int dz = o ? data->h : 0;
 
     if (!data->img)
     {
         glBindTexture(GL_TEXTURE_2D, data->texture);
         glBegin(GL_QUADS);
             glTexCoord2f(tx, ty);
-            glVertex3f(x, dilate * (y - dy - off), dilate * (z + off));
+            glVertex3f(x, dilate * (y + dy), dilate * (z + dz));
             glTexCoord2f(tx + data->tx, ty);
-            glVertex3f(x + dx, dilate * (y - dy - off), dilate * (z + off));
+            glVertex3f(x + dx, dilate * (y + dy), dilate * (z + dz));
             glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex3f(x + dx, dilate * (y - dy2), dilate * z);
+            glVertex3f(x + dx, dilate * y, dilate * z);
             glTexCoord2f(tx, ty + data->ty);
-            glVertex3f(x, dilate * (y - dy2), dilate * z);
+            glVertex3f(x, dilate * y, dilate * z);
         glEnd();
     }
 }
