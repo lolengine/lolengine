@@ -65,7 +65,7 @@ void Text::TickDraw(float deltams)
     if (data->text)
     {
         Font *font = Forge::GetFont(data->font);
-        font->PrintBold(data->pos.x, data->pos.y, data->text);
+        font->Print(data->pos.x, data->pos.y, data->text);
     }
 }
 
