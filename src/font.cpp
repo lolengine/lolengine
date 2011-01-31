@@ -132,7 +132,7 @@ char const *Font::GetName()
     return data->name;
 }
 
-void Font::Print(int x, int y, char const *str)
+void Font::Print(int3 pos, char const *str)
 {
     if (data->img)
         return;
@@ -148,21 +148,21 @@ void Font::Print(int x, int y, char const *str)
         if (ch != ' ')
         {
             glTexCoord2f(tx, ty + data->ty);
-            glVertex2f(x, y);
+            glVertex2f(pos.x, pos.y);
             glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex2f(x + data->width, y);
+            glVertex2f(pos.x + data->width, pos.y);
             glTexCoord2f(tx + data->tx, ty);
-            glVertex2f(x + data->width, y + data->height);
+            glVertex2f(pos.x + data->width, pos.y + data->height);
             glTexCoord2f(tx, ty);
-            glVertex2f(x, y + data->height);
+            glVertex2f(pos.x, pos.y + data->height);
         }
 
-        x += data->width;
+        pos.x += data->width;
     }
     glEnd();
 }
 
-void Font::PrintBold(int x, int y, char const *str)
+void Font::PrintBold(int3 pos, char const *str)
 {
     static struct { int dx, dy; float r, g, b; } tab[] =
     {
@@ -183,7 +183,7 @@ void Font::PrintBold(int x, int y, char const *str)
     for (unsigned int i = 0; i < sizeof(tab) / sizeof(*tab); i++)
     {
         glColor3f(tab[i].r, tab[i].g, tab[i].b);
-        Print(x + tab[i].dx, y + tab[i].dy, str);
+        Print(pos + int3(tab[i].dx, tab[i].dy, 0), str);
     }
     glPopAttrib();
 }

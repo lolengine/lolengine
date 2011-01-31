@@ -33,8 +33,8 @@ protected:
 
 public:
     /* New methods */
-    void Print(int x, int y, char const *str);
-    void PrintBold(int x, int y, char const *str);
+    void Print(int3 pos, char const *str);
+    void PrintBold(int3 pos, char const *str);
 
 private:
     FontData *data;
