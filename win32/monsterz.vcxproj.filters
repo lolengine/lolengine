@@ -81,6 +81,9 @@
     <ClInclude Include="..\src\video.h">
       <Filter>lolengine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\worldentity.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\world.h">
       <Filter>lolengine</Filter>
     </ClInclude>
@@ -164,6 +167,9 @@
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\world.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\worldentity.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\monsterz\board.cpp" />

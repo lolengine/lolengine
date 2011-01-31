@@ -35,6 +35,7 @@
 #include "sample.h"
 #include "text.h"
 #include "tileset.h"
+#include "worldentity.h"
 #include "world.h"
 
 // Other objects
