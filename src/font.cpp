@@ -70,8 +70,8 @@ Font::Font(char const *path)
 
     data->width = data->img->w / 16;
     data->height = data->img->h / 16;
-    data->tx = 7.0f / PotUp(data->img->w);
-    data->ty = 15.0f / PotUp(data->img->h);
+    data->tx = (float)data->width / PotUp(data->img->w);
+    data->ty = (float)data->height / PotUp(data->img->h);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
