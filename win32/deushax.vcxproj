@@ -41,6 +41,7 @@
     <ClInclude Include="..\src\tileset.h" />
     <ClInclude Include="..\src\timer.h" />
     <ClInclude Include="..\src\video.h" />
+    <ClInclude Include="..\src\worldentity.h" />
     <ClInclude Include="..\src\world.h" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +73,7 @@
     <ClCompile Include="..\src\timer.cpp" />
     <ClCompile Include="..\src\video.cpp" />
     <ClCompile Include="..\src\world.cpp" />
+    <ClCompile Include="..\src\worldentity.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}</ProjectGuid>
