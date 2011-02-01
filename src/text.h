@@ -27,6 +27,7 @@ public:
     virtual ~Text();
 
     void SetText(char const *text);
+    void SetInt(int val);
     void SetPos(int3 pos);
 
 protected:

@@ -53,6 +53,15 @@ void Text::SetText(char const *text)
     data->text = text ? strdup(text) : NULL;
 }
 
+void Text::SetInt(int val)
+{
+    if (data->text)
+        free(data->text);
+    char buf[128];
+    sprintf(buf, "%i", val);
+    data->text = strdup(buf);
+}
+
 void Text::SetPos(int3 pos)
 {
     data->pos = pos;
