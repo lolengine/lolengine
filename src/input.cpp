@@ -103,7 +103,27 @@ void Input::SetMousePos(int2 coord)
 {
     data->mouse = coord;
 
-    /* FIXME: parse all subscribed entities and update them */
+    WorldEntity *best = NULL;
+
+    for (int n = 0; n < data->nentities; n++)
+    {
+        if (coord.x < data->entities[n]->bbox[0].x
+             || coord.x >= data->entities[n]->bbox[1].x
+             || coord.y < data->entities[n]->bbox[0].y
+             || coord.y >= data->entities[n]->bbox[1].y)
+            continue;
+
+        if (!best || best->bbox[1].z < data->entities[n]->bbox[1].z)
+            best = data->entities[n];
+    }
+
+    for (int n = 0; n < data->nentities; n++)
+    {
+        if (data->entities[n] == best)
+            data->entities[n]->mousepos = (int2)((int3)coord - best->bbox[0]);
+        else
+            data->entities[n]->mousepos = int2(-1);
+    }
 }
 
 void Input::SetMouseButton(int index)
