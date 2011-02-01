@@ -27,7 +27,7 @@ class TextData
     friend class Text;
 
 private:
-    int font;
+    int font, align, length;
     char *text;
     int3 pos;
 };
@@ -41,6 +41,7 @@ Text::Text(char const *text, char const *font)
 {
     data->font = Forge::Register(font);
     data->text = text ? strdup(text) : NULL;
+    data->length = text ? strlen(text) : 0;
     data->pos = int3(0, 0, 0);
 
     drawgroup = DRAWGROUP_HUD;
@@ -51,20 +52,27 @@ void Text::SetText(char const *text)
     if (data->text)
         free(data->text);
     data->text = text ? strdup(text) : NULL;
+    data->length = text ? strlen(text) : 0;
 }
 
 void Text::SetInt(int val)
 {
     if (data->text)
         free(data->text);
-    char buf[128];
-    sprintf(buf, "%i", val);
-    data->text = strdup(buf);
+    char text[128];
+    sprintf(text, "%i", val);
+    data->text = strdup(text);
+    data->length = strlen(text);
 }
 
 void Text::SetPos(int3 pos)
 {
     data->pos = pos;
+}
+
+void Text::SetAlign(int align)
+{
+    data->align = align;
 }
 
 void Text::TickDraw(float deltams)
@@ -74,7 +82,12 @@ void Text::TickDraw(float deltams)
     if (data->text)
     {
         Font *font = Forge::GetFont(data->font);
-        font->Print(data->pos, data->text);
+        int3 delta = 0;
+        if (data->align == ALIGN_RIGHT)
+            delta.x -= data->length * font->GetSize().x;
+        else if (data->align == ALIGN_CENTER)
+            delta.x -= data->length * font->GetSize().x / 2;
+        font->Print(data->pos + delta, data->text);
     }
 }
 

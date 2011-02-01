@@ -29,6 +29,14 @@ public:
     void SetText(char const *text);
     void SetInt(int val);
     void SetPos(int3 pos);
+    void SetAlign(int align);
+
+    enum
+    {
+        ALIGN_LEFT,
+        ALIGN_RIGHT,
+        ALIGN_CENTER,
+    };
 
 protected:
     virtual void TickDraw(float deltams);

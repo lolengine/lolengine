@@ -40,7 +40,7 @@ private:
     char *name;
 
     SDL_Surface *img;
-    int width, height;
+    int2 size;
     float tx, ty;
     GLuint texture;
 };
@@ -68,10 +68,9 @@ Font::Font(char const *path)
         exit(1);
     }
 
-    data->width = data->img->w / 16;
-    data->height = data->img->h / 16;
-    data->tx = (float)data->width / PotUp(data->img->w);
-    data->ty = (float)data->height / PotUp(data->img->h);
+    data->size = int2(data->img->w, data->img->h) / 16;
+    data->tx = (float)data->size.x / PotUp(data->img->w);
+    data->ty = (float)data->size.y / PotUp(data->img->h);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
@@ -150,14 +149,14 @@ void Font::Print(int3 pos, char const *str)
             glTexCoord2f(tx, ty + data->ty);
             glVertex2f(pos.x, pos.y);
             glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex2f(pos.x + data->width, pos.y);
+            glVertex2f(pos.x + data->size.x, pos.y);
             glTexCoord2f(tx + data->tx, ty);
-            glVertex2f(pos.x + data->width, pos.y + data->height);
+            glVertex2f(pos.x + data->size.x, pos.y + data->size.y);
             glTexCoord2f(tx, ty);
-            glVertex2f(pos.x, pos.y + data->height);
+            glVertex2f(pos.x, pos.y + data->size.y);
         }
 
-        pos.x += data->width;
+        pos.x += data->size.x;
     }
     glEnd();
 }
@@ -186,5 +185,10 @@ void Font::PrintBold(int3 pos, char const *str)
         Print(pos + int3(tab[i].dx, tab[i].dy, 0), str);
     }
     glPopAttrib();
+}
+
+int2 Font::GetSize() const
+{
+    return data->size;
 }
 
