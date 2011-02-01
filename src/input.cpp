@@ -31,11 +31,17 @@ static class InputData
 public:
     InputData()
       : mouse(-1, -1),
-        buttons(0, 0, 0)
+        buttons(0, 0, 0),
+        nentities(0)
     { }
 
+private:
     int2 mouse;
     int3 buttons;
+
+    static int const MAX_ENTITIES = 100;
+    WorldEntity *entities[MAX_ENTITIES];
+    int nentities;
 }
 inputdata;
 
@@ -62,28 +68,55 @@ float2 Input::GetAxis(int axis)
     return f;
 }
 
-void Input::SetMousePos(int2 coord)
-{
-    data->mouse = coord;
-}
-
 int2 Input::GetMousePos()
 {
     return data->mouse;
 }
 
+int3 Input::GetMouseButtons()
+{
+    return data->buttons;
+}
+
+void Input::TrackMouse(WorldEntity *e)
+{
+    if (data->nentities >= InputData::MAX_ENTITIES)
+        return;
+    data->entities[data->nentities] = e;
+    data->nentities++;
+}
+
+void Input::UntrackMouse(WorldEntity *e)
+{
+    for (int n = 0; n < data->nentities; n++)
+    {
+        if (data->entities[n] != e)
+            continue;
+
+        data->entities[n] = data->entities[data->nentities - 1];
+        data->nentities--;
+        n--;
+    }
+}
+
+void Input::SetMousePos(int2 coord)
+{
+    data->mouse = coord;
+
+    /* FIXME: parse all subscribed entities and update them */
+}
+
 void Input::SetMouseButton(int index)
 {
     data->buttons[index] = 1;
+
+    /* FIXME: parse all subscribed entities and update them */
 }
 
 void Input::UnsetMouseButton(int index)
 {
     data->buttons[index] = 0;
-}
 
-int3 Input::GetMouseButtons()
-{
-    return data->buttons;
+    /* FIXME: parse all subscribed entities and update them */
 }
 

@@ -26,6 +26,9 @@ public:
     float3 velocity;
     float3 bbox[2];
 
+    int2 mousepos;
+    int3 mousebuttons;
+
 protected:
     WorldEntity();
     virtual ~WorldEntity();

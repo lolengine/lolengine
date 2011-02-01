@@ -29,8 +29,8 @@ public:
     static int3 GetMouseButtons();
 
     /* Entities can subscribe to events */
-    static void ListenMouse(WorldEntity *e);
-    static void UnlistenMouse(WorldEntity *e);
+    static void TrackMouse(WorldEntity *e);
+    static void UntrackMouse(WorldEntity *e);
 
     /* These methods are called by the underlying input listeners */
     static void SetMousePos(int2 coord);
