@@ -35,6 +35,7 @@ public:
     /* New methods */
     void Print(int3 pos, char const *str);
     void PrintBold(int3 pos, char const *str);
+    int2 GetSize() const;
 
 private:
     FontData *data;
