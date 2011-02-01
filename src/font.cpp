@@ -84,7 +84,7 @@ void Font::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    if (destroy)
+    if (IsDestroying())
     {
         if (data->img)
             SDL_FreeSurface(data->img);
