@@ -32,12 +32,10 @@ protected:
     virtual ~Entity();
 
     virtual char const *GetName();
+    inline int IsDestroying() { return destroy; }
 
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
-
-    Entity *gamenext, *drawnext, *autonext;
-    int ref, autorelease, destroy;
 
     enum
     {
@@ -75,6 +73,10 @@ protected:
     }
     state;
 #endif
+
+private:
+    Entity *gamenext, *drawnext, *autonext;
+    int ref, autorelease, destroy;
 };
 
 #endif // __DH_ENTITY_H__
