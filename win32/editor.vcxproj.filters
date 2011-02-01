@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lolengine">
+      <UniqueIdentifier>{755186eb-cee6-4c2e-822f-24e728ac6fb8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\bitfield.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debugfps.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debugrecord.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debugsphere.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debugstats.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dict.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\emitter.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\entity.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\font.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\forge.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\input.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\layer.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\map.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\matrix.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\numeric.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\profiler.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\scene.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sdlinput.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\text.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ticker.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiler.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tileset.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\timer.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\video.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\worldentity.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sampler.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sample.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\deushax\gtk\glmapview.h" />
+    <ClInclude Include="..\deushax\mapviewer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\debugfps.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debugrecord.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debugsphere.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debugstats.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dict.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\emitter.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entity.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\font.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\forge.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\input.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\layer.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\map.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\profiler.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\scene.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sdlinput.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\text.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ticker.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiler.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tileset.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\timer.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\video.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\worldentity.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sample.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sampler.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\deushax\gtk\editor.cpp" />
+    <ClCompile Include="..\deushax\gtk\glmapview.cpp" />
+    <ClCompile Include="..\deushax\mapviewer.cpp" />
+  </ItemGroup>
+</Project>
