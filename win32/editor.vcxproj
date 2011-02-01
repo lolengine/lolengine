@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\deushax\gtk\glmapview.h" />
+    <ClInclude Include="..\deushax\mapviewer.h" />
+    <ClInclude Include="..\src\audio.h" />
+    <ClInclude Include="..\src\bitfield.h" />
+    <ClInclude Include="..\src\core.h" />
+    <ClInclude Include="..\src\debugfps.h" />
+    <ClInclude Include="..\src\debugrecord.h" />
+    <ClInclude Include="..\src\debugsphere.h" />
+    <ClInclude Include="..\src\debugstats.h" />
+    <ClInclude Include="..\src\dict.h" />
+    <ClInclude Include="..\src\emitter.h" />
+    <ClInclude Include="..\src\entity.h" />
+    <ClInclude Include="..\src\font.h" />
+    <ClInclude Include="..\src\forge.h" />
+    <ClInclude Include="..\src\input.h" />
+    <ClInclude Include="..\src\layer.h" />
+    <ClInclude Include="..\src\map.h" />
+    <ClInclude Include="..\src\matrix.h" />
+    <ClInclude Include="..\src\numeric.h" />
+    <ClInclude Include="..\src\profiler.h" />
+    <ClInclude Include="..\src\sample.h" />
+    <ClInclude Include="..\src\sampler.h" />
+    <ClInclude Include="..\src\scene.h" />
+    <ClInclude Include="..\src\sdlinput.h" />
+    <ClInclude Include="..\src\text.h" />
+    <ClInclude Include="..\src\ticker.h" />
+    <ClInclude Include="..\src\tiler.h" />
+    <ClInclude Include="..\src\tileset.h" />
+    <ClInclude Include="..\src\timer.h" />
+    <ClInclude Include="..\src\video.h" />
+    <ClInclude Include="..\src\worldentity.h" />
+    <ClInclude Include="..\src\world.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\deushax\gtk\editor.cpp" />
+    <ClCompile Include="..\deushax\gtk\glmapview.cpp" />
+    <ClCompile Include="..\deushax\mapviewer.cpp" />
+    <ClCompile Include="..\src\audio.cpp" />
+    <ClCompile Include="..\src\debugfps.cpp" />
+    <ClCompile Include="..\src\debugrecord.cpp" />
+    <ClCompile Include="..\src\debugsphere.cpp" />
+    <ClCompile Include="..\src\debugstats.cpp" />
+    <ClCompile Include="..\src\dict.cpp" />
+    <ClCompile Include="..\src\emitter.cpp" />
+    <ClCompile Include="..\src\entity.cpp" />
+    <ClCompile Include="..\src\font.cpp" />
+    <ClCompile Include="..\src\forge.cpp" />
+    <ClCompile Include="..\src\input.cpp" />
+    <ClCompile Include="..\src\layer.cpp" />
+    <ClCompile Include="..\src\map.cpp" />
+    <ClCompile Include="..\src\profiler.cpp" />
+    <ClCompile Include="..\src\sample.cpp" />
+    <ClCompile Include="..\src\sampler.cpp" />
+    <ClCompile Include="..\src\scene.cpp" />
+    <ClCompile Include="..\src\sdlinput.cpp" />
+    <ClCompile Include="..\src\text.cpp" />
+    <ClCompile Include="..\src\ticker.cpp" />
+    <ClCompile Include="..\src\tiler.cpp" />
+    <ClCompile Include="..\src\tileset.cpp" />
+    <ClCompile Include="..\src\timer.cpp" />
+    <ClCompile Include="..\src\video.cpp" />
+    <ClCompile Include="..\src\world.cpp" />
+    <ClCompile Include="..\src\worldentity.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9C66B179-0737-4BDA-AB42-2ADE478A9008}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>testmap</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Contribs.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Contribs.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>Debug\$(ProjectName)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>Release\$(ProjectName)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\deushax;$(SdlIncludes);$(GtkIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GtkDeps);opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SdlLibs);$(GtkLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\deushax;$(SdlIncludes);$(GtkIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GtkDeps);opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SdlLibs);$(GtkLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
