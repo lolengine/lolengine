@@ -82,9 +82,8 @@ TileSet::TileSet(char const *path, int w, int h, float dilate)
     data->w = w;
     data->h = h;
     data->dilate = dilate;
-    /* FIXME: check for non-zero here */
-    data->nw = data->img->w / w;
-    data->nh = data->img->h / h;
+    data->nw = data->img->w > w ? data->img->w / w : 1;
+    data->nh = data->img->h > h ? data->img->h / h : 1;
     data->ntiles = data->nw * data->nh;
     data->tx = (float)w / PotUp(data->img->w);
     data->ty = (float)h / PotUp(data->img->h);
