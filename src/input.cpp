@@ -30,9 +30,10 @@ static class InputData
 
 public:
     InputData()
-      : mouse(-1, -1),
-        buttons(0, 0, 0),
-        nentities(0)
+      : mouse(-1),
+        buttons(0),
+        nentities(0),
+        lastfocus(0)
     { }
 
 private:
@@ -42,6 +43,7 @@ private:
     static int const MAX_ENTITIES = 100;
     WorldEntity *entities[MAX_ENTITIES];
     int nentities;
+    WorldEntity *lastfocus;
 }
 inputdata;
 
@@ -120,23 +122,47 @@ void Input::SetMousePos(int2 coord)
     for (int n = 0; n < data->nentities; n++)
     {
         if (data->entities[n] == best)
+        {
             data->entities[n]->mousepos = (int2)((int3)coord - best->bbox[0]);
+            if (best != data->lastfocus)
+                data->entities[n]->pressed = data->buttons;
+        }
         else
+        {
             data->entities[n]->mousepos = int2(-1);
+            /* FIXME */
+            data->entities[n]->released = 0;
+            data->entities[n]->pressed = 0;
+            data->entities[n]->clicked = 0;
+        }
     }
+
+    data->lastfocus = best;
 }
 
 void Input::SetMouseButton(int index)
 {
     data->buttons[index] = 1;
 
-    /* FIXME: parse all subscribed entities and update them */
+    if (data->lastfocus)
+    {
+        if (!data->lastfocus->pressed[index])
+            data->lastfocus->clicked[index] = 1;
+        data->lastfocus->pressed[index] = 1;
+        data->lastfocus->released[index] = 0;
+    }
 }
 
 void Input::UnsetMouseButton(int index)
 {
     data->buttons[index] = 0;
 
-    /* FIXME: parse all subscribed entities and update them */
+    if (data->lastfocus)
+    {
+        if (data->lastfocus->pressed[index])
+            data->lastfocus->released[index] = 1;
+        data->lastfocus->pressed[index] = 0;
+        data->lastfocus->clicked[index] = 0;
+    }
 }
 
