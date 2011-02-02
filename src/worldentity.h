@@ -28,6 +28,7 @@ public:
 
     int2 mousepos;
     int3 mousebuttons;
+    int3 pressed, clicked, released;
 
 protected:
     WorldEntity();
