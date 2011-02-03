@@ -126,6 +126,8 @@ void Input::SetMousePos(int2 coord)
             data->entities[n]->mousepos = (int2)((int3)coord - best->bbox[0]);
             if (best != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
+            else
+                data->entities[n]->clicked = 0;
         }
         else
         {
