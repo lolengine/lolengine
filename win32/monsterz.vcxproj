@@ -17,6 +17,7 @@
     <ClInclude Include="..\monsterz\mash.h" />
     <ClInclude Include="..\monsterz\monsterz.h" />
     <ClInclude Include="..\monsterz\piece.h" />
+    <ClInclude Include="..\monsterz\thumbs.h" />
     <ClInclude Include="..\monsterz\title.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="..\monsterz\mash.cpp" />
     <ClCompile Include="..\monsterz\monsterz.cpp" />
     <ClCompile Include="..\monsterz\piece.cpp" />
+    <ClCompile Include="..\monsterz\thumbs.cpp" />
     <ClCompile Include="..\monsterz\title.cpp" />
     <ClCompile Include="..\src\audio.cpp" />
     <ClCompile Include="..\src\debugfps.cpp" />
