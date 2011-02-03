@@ -30,7 +30,8 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), deltams(0), bias(0)
+        frame(0), deltams(0), bias(0),
+        quit(0), quitframe(0), quitdelay(20)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
             list[i] = NULL;
@@ -60,9 +61,12 @@ private:
     int nentities;
 
     /* Fixed framerate management */
-    int frame, quitframe;
+    int frame;
     Timer timer;
     float deltams, bias;
+
+    /* Shutdown management */
+    int quit, quitframe, quitdelay;
 }
 tickerdata;
 
@@ -151,6 +155,26 @@ void Ticker::TickGame()
 
     data->deltams = data->timer.GetMs();
     data->bias += data->deltams;
+
+    /* If shutdown is stuck, kick the first entity we meet and see
+     * whether it makes things better. Note that it is always a bug to
+     * have referenced entities after 20 frames, but at least this
+     * safeguard makes it possible to exit the program cleanly. */
+    if (data->quit && !((data->frame - data->quitframe) % data->quitdelay))
+    {
+        Entity *entity = NULL;
+        for (int i = 0; i < Entity::ALLGROUP_END && !entity; i++)
+            entity = data->list[i];
+        if (entity && entity->ref)
+        {
+#if !FINAL_RELEASE
+            fprintf(stderr, "ERROR: %i entities stuck after %i frames\n",
+                    data->nentities, data->quitdelay);
+#endif
+            entity->ref--;
+            data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
+        }
+    }
 
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already in
@@ -288,6 +312,7 @@ void Ticker::Shutdown()
         data->autolist = data->autolist->autonext;
     }
 
+    data->quit = 1;
     data->quitframe = data->frame;
 }
 
