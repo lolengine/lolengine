@@ -95,6 +95,11 @@ void Ticker::Register(Entity *entity)
 void Ticker::Ref(Entity *entity)
 {
 #if !FINAL_RELEASE
+    if (!entity)
+    {
+        fprintf(stderr, "ERROR: refing NULL entity\n");
+        return;
+    }
     if (entity->destroy)
         fprintf(stderr, "ERROR: refing entity scheduled for destruction\n");
 #endif
@@ -121,6 +126,11 @@ void Ticker::Ref(Entity *entity)
 int Ticker::Unref(Entity *entity)
 {
 #if !FINAL_RELEASE
+    if (!entity)
+    {
+        fprintf(stderr, "ERROR: dereferencing NULL entity\n");
+        return 0;
+    }
     if (entity->ref <= 0)
         fprintf(stderr, "ERROR: dereferencing unreferenced entity\n");
     if (entity->autorelease)
@@ -162,20 +172,24 @@ void Ticker::TickGame()
      * safeguard makes it possible to exit the program cleanly. */
     if (data->quit && !((data->frame - data->quitframe) % data->quitdelay))
     {
-        Entity *entity = NULL;
-        for (int i = 0; i < Entity::ALLGROUP_END && !entity; i++)
-            entity = data->list[i];
-        if (entity && entity->ref)
-        {
+        int n = 0;
+        data->panic = 2 * (data->panic + 1);
+
+        for (int i = 0; i < Entity::ALLGROUP_END && n < data->panic; i++)
+        for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
+            if (e->ref)
+            {
+                e->ref--;
+                n++;
+            }
+
 #if !FINAL_RELEASE
-            if (!data->panic)
-                fprintf(stderr, "ERROR: %i entities stuck after %i frames\n",
-                        data->nentities, data->quitdelay);
-            data->panic = 1;
+        if (n)
+            fprintf(stderr, "ERROR: %i entities stuck after %i frames, "
+                    "poked %i\n", data->nentities, data->quitdelay, n);
 #endif
-            entity->ref--;
-            data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
-        }
+
+        data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
     }
 
     /* Garbage collect objects that can be destroyed. We can do this
