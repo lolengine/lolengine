@@ -31,7 +31,7 @@ public:
         todolist(0), autolist(0),
         nentities(0),
         frame(0), deltams(0), bias(0),
-        quit(0), quitframe(0), quitdelay(20)
+        quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
             list[i] = NULL;
@@ -66,7 +66,7 @@ private:
     float deltams, bias;
 
     /* Shutdown management */
-    int quit, quitframe, quitdelay;
+    int quit, quitframe, quitdelay, panic;
 }
 tickerdata;
 
@@ -168,8 +168,10 @@ void Ticker::TickGame()
         if (entity && entity->ref)
         {
 #if !FINAL_RELEASE
-            fprintf(stderr, "ERROR: %i entities stuck after %i frames\n",
-                    data->nentities, data->quitdelay);
+            if (!data->panic)
+                fprintf(stderr, "ERROR: %i entities stuck after %i frames\n",
+                        data->nentities, data->quitdelay);
+            data->panic = 1;
 #endif
             entity->ref--;
             data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
