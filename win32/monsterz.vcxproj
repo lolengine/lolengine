@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\monsterz\board.h" />
-    <ClInclude Include="..\monsterz\fusion.h" />
     <ClInclude Include="..\monsterz\interface.h" />
     <ClInclude Include="..\monsterz\mash.h" />
     <ClInclude Include="..\monsterz\monsterz.h" />
@@ -52,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\monsterz\board.cpp" />
-    <ClCompile Include="..\monsterz\fusion.cpp" />
     <ClCompile Include="..\monsterz\interface.cpp" />
     <ClCompile Include="..\monsterz\mash.cpp" />
     <ClCompile Include="..\monsterz\monsterz.cpp" />
