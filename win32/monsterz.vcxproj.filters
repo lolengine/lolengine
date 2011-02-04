@@ -88,7 +88,6 @@
       <Filter>lolengine</Filter>
     </ClInclude>
     <ClInclude Include="..\monsterz\board.h" />
-    <ClInclude Include="..\monsterz\fusion.h" />
     <ClInclude Include="..\monsterz\interface.h" />
     <ClInclude Include="..\monsterz\piece.h" />
     <ClInclude Include="..\monsterz\thumbs.h" />
@@ -176,7 +175,6 @@
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\monsterz\board.cpp" />
-    <ClCompile Include="..\monsterz\fusion.cpp" />
     <ClCompile Include="..\monsterz\interface.cpp" />
     <ClCompile Include="..\monsterz\monsterz.cpp" />
     <ClCompile Include="..\monsterz\piece.cpp" />
