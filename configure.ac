@@ -40,6 +40,10 @@ AC_ARG_ENABLE(release,
 
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
+if test "${enable_debug}" = "yes"; then
+  AC_DEFINE(_DEBUG, 1, Define to 1 to activate debug)
+fi
+
 # Optimizations
 CXXFLAGS="${CXXFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
 # Code qui fait des warnings == code de porc == deux baffes dans ta gueule
