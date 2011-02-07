@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include <cstdio>
+
 #include "core.h"
 
 /*
@@ -23,7 +25,17 @@ static class TilerData
     friend class Tiler;
 
 public:
+    TilerData()
+#if !FINAL_RELEASE
+      : lasterror(-1)
+#endif
+    { }
+
+private:
     Dict tilesets;
+#if !FINAL_RELEASE
+    int lasterror;
+#endif
 }
 tilerdata;
 
@@ -41,6 +53,10 @@ int Tiler::Register(char const *path, int w, int h, float dilate)
     {
         TileSet *tileset = new TileSet(path, w, h, dilate);
         data->tilesets.SetEntity(id, tileset);
+#if !FINAL_RELEASE
+        if (id == data->lasterror)
+            data->lasterror = -1;
+#endif
     }
 
     return id + 1; /* ID 0 is for the empty tileset */
@@ -56,6 +72,14 @@ void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
     int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
 
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
+#if !FINAL_RELEASE
+    if (!tileset && id != data->lasterror)
+    {
+        fprintf(stderr, "ERROR: blitting to null tiler #%i\n", id);
+        data->lasterror = id;
+        return;
+    }
+#endif
     tileset->BlitTile(code & 0xffff, x, y, z, o);
 }
 
