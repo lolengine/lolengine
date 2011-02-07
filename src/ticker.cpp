@@ -179,6 +179,9 @@ void Ticker::TickGame()
         for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
             if (e->ref)
             {
+#if !FINAL_RELEASE
+                fprintf(stderr, "ERROR: poking %s\n", e->GetName());
+#endif
                 e->ref--;
                 n++;
             }
