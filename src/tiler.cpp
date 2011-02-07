@@ -73,9 +73,10 @@ void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
 
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
 #if !FINAL_RELEASE
-    if (!tileset && id != data->lasterror)
+    if (!tileset)
     {
-        fprintf(stderr, "ERROR: blitting to null tiler #%i\n", id);
+        if (id != data->lasterror)
+            fprintf(stderr, "ERROR: blitting to null tiler #%i\n", id);
         data->lasterror = id;
         return;
     }
