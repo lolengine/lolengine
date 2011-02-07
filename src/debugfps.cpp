@@ -36,12 +36,18 @@ private:
 DebugFps::DebugFps(int x, int y)
   : data(new DebugFpsData())
 {
+#if 0
     for (int i = 0; i < 5; i ++)
     {
         data->lines[i] = new Text(NULL, "gfx/font/ascii.png");
         data->lines[i]->SetPos(int3(x, y + (i ? 8 : 0) + 16 * i, 0));
         Ticker::Ref(data->lines[i]);
     }
+#else
+    data->lines[0] = new Text(NULL, "gfx/font/ascii.png");
+    data->lines[0]->SetPos(int3(x, y, 0));
+    Ticker::Ref(data->lines[0]);
+#endif
 }
 
 void DebugFps::TickGame(float deltams)
@@ -50,6 +56,7 @@ void DebugFps::TickGame(float deltams)
 
     char buf[1024];
 
+#if 0
     sprintf(buf, "%2.2f fps (%i)",
             1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Ticker::GetFrameNum());
@@ -74,12 +81,26 @@ void DebugFps::TickGame(float deltams)
             Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Profiler::GetMax(Profiler::STAT_TICK_FRAME));
     data->lines[4]->SetText(buf);
+#else
+    sprintf(buf, "%2.2f/%2.2f/%2.2f/%2.2f %2.2f fps (%i)",
+            Profiler::GetAvg(Profiler::STAT_TICK_GAME),
+            Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
+            Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
+            Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            Ticker::GetFrameNum());
+    data->lines[0]->SetText(buf);
+#endif
 }
 
 DebugFps::~DebugFps()
 {
+#if 0
     for (int i = 0; i < 5; i ++)
         Ticker::Unref(data->lines[i]);
+#else
+    Ticker::Unref(data->lines[0]);
+#endif
     delete data;
 }
 
