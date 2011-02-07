@@ -33,6 +33,7 @@ class DictData
 public:
     DictData() :
         entities(0),
+        maxid(0),
         nentities(0)
     {
         /* Nothing to do */
@@ -49,7 +50,7 @@ public:
 
 private:
     Entity **entities;
-    int nentities;
+    int maxid, nentities;
 };
 
 /*
@@ -72,11 +73,14 @@ int Dict::MakeSlot(char const *name)
 
     /* If the entry is already registered, remember its ID. Look for an
      * empty slot at the same time. */
-    for (id = 0; id < data->nentities; id++)
+    for (id = 0; id < data->maxid; id++)
     {
         Entity *e = data->entities[id];
         if (!e)
+        {
             empty = id;
+            break;
+        }
         else
         {
             char const *oldname = e->GetName();
@@ -96,17 +100,18 @@ int Dict::MakeSlot(char const *name)
     }
 
     /* If this is a new entry, create a new slot for it. */
-    if (id == data->nentities)
+    if (id == data->maxid || !data->entities[id])
     {
-        if (empty == -1)
+        if (id == data->maxid)
         {
-            empty = data->nentities++;
+            empty = data->maxid++;
             data->entities = (Entity **)realloc(data->entities,
-                                           data->nentities * sizeof(Entity *));
+                                                data->maxid * sizeof(Entity *));
         }
 
         data->entities[empty] = NULL;
         id = empty;
+        data->nentities++;
     }
     else
     {
@@ -121,12 +126,7 @@ void Dict::RemoveSlot(int id)
     if (Ticker::Unref(data->entities[id]) == 0)
     {
         data->entities[id] = NULL;
-        if (data->nentities)
-            data->nentities--;
-#if !FINAL_RELEASE
-        else
-            fprintf(stderr, "ERROR: removing entity from empty dict\n");
-#endif
+        data->nentities--;
     }
 }
 
