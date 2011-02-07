@@ -77,8 +77,22 @@ int Dict::MakeSlot(char const *name)
         Entity *e = data->entities[id];
         if (!e)
             empty = id;
-        else if (!strcasecmp(name, e->GetName()))
-            break;
+        else
+        {
+            char const *oldname = e->GetName();
+            if (*oldname == '<')
+            {
+                while (*oldname && *oldname != '>')
+                    oldname++;
+                while (*oldname == '>')
+                    oldname++;
+                while (*oldname == ' ')
+                    oldname++;
+            }
+
+            if (!strcasecmp(name, oldname))
+                break;
+        }
     }
 
     /* If this is a new entry, create a new slot for it. */

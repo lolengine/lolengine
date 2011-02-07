@@ -40,7 +40,7 @@ class TileSetData
     friend class TileSet;
 
 private:
-    char *name;
+    char *name, *path;
     int *tiles;
     int w, h, nw, nh, ntiles;
     float dilate, tx, ty;
@@ -56,7 +56,10 @@ private:
 TileSet::TileSet(char const *path, int w, int h, float dilate)
   : data(new TileSetData())
 {
-    data->name = strdup(path);
+    data->name = (char *)malloc(10 + strlen(path) + 1);
+    data->path = data->name + 10;
+    sprintf(data->name, "<tileset> %s", path);
+
     data->tiles = NULL;
     data->img = NULL;
     data->texture = 0;
