@@ -29,7 +29,7 @@ class SampleData
     friend class Sample;
 
 private:
-    char *name;
+    char *name, *path;
     Mix_Chunk *chunk;
 };
 
@@ -40,7 +40,10 @@ private:
 Sample::Sample(char const *path)
   : data(new SampleData())
 {
-    data->name = strdup(path);
+    data->name = (char *)malloc(9 + strlen(path) + 1);
+    data->path = data->name + 9;
+    sprintf(data->name, "<sample> %s", path);
+
     data->chunk = Mix_LoadWAV(path);
     if (!data->chunk)
     {
