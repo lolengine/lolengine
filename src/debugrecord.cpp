@@ -32,7 +32,7 @@ class DebugRecordData
 
 private:
     char const *path;
-    int width, height;
+    int width, height, fps;
 #if defined USE_PIPI
     pipi_sequence_t *sequence;
 #endif
@@ -42,12 +42,13 @@ private:
  * Public DebugRecord class
  */
 
-DebugRecord::DebugRecord(char const *path)
+DebugRecord::DebugRecord(char const *path, float fps)
   : data(new DebugRecordData())
 {
     data->path = strdup(path);
     data->width = 0;
     data->height = 0;
+    data->fps = (int)(fps + 0.5f);
 #if defined USE_PIPI
     data->sequence = NULL;
 #endif
@@ -76,7 +77,9 @@ void DebugRecord::TickDraw(float deltams)
         if (data->sequence)
             pipi_close_sequence(data->sequence);
 
-        data->sequence = pipi_open_sequence(data->path, width, height, 30);
+        data->sequence = pipi_open_sequence(data->path, width, height,
+                                            1 /* RGB */, data->fps,
+                                            1, 1, 60 * 1024 * 1024);
 #endif
     }
 

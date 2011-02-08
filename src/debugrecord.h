@@ -23,7 +23,7 @@ class DebugRecordData;
 class DebugRecord : public Entity
 {
 public:
-    DebugRecord(char const *path);
+    DebugRecord(char const *path, float fps);
     virtual ~DebugRecord();
 
 protected:
