@@ -120,7 +120,11 @@ void Video::Capture(uint32_t *buffer)
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
+#if defined GL_BGRA
+    glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+#else
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+#endif
 
     for (int j = 0; j < height / 2; j++)
         for (int i = 0; i < width; i++)
