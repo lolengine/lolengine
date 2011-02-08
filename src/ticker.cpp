@@ -30,7 +30,7 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), deltams(0), bias(0),
+        frame(0), deltams(0), bias(0), fps(0),
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -63,7 +63,7 @@ private:
     /* Fixed framerate management */
     int frame;
     Timer timer;
-    float deltams, bias;
+    float deltams, bias, fps;
 
     /* Shutdown management */
     int quit, quitframe, quitdelay, panic;
@@ -266,6 +266,8 @@ void Ticker::TickGame()
 void Ticker::TickDraw()
 {
     Profiler::Start(Profiler::STAT_TICK_DRAW);
+
+    Video::Clear();
 
     Scene::GetDefault();
 
