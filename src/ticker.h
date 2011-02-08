@@ -28,9 +28,10 @@ public:
     static void Ref(Entity *entity);
     static int Unref(Entity *entity);
 
+    static void Setup(float fps);
     static void TickGame();
     static void TickDraw();
-    static void ClampFps(float deltams);
+    static void ClampFps();
     static int GetFrameNum();
 
     static void Shutdown();

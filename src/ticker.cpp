@@ -139,6 +139,11 @@ int Ticker::Unref(Entity *entity)
     return --entity->ref;
 }
 
+void Ticker::Setup(float fps)
+{
+    data->fps = fps;
+}
+
 void Ticker::TickGame()
 {
     Profiler::Stop(Profiler::STAT_TICK_FRAME);
@@ -308,9 +313,11 @@ void Ticker::TickDraw()
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 }
 
-void Ticker::ClampFps(float deltams)
+void Ticker::ClampFps()
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
+
+    float deltams = data->fps ? 1000.0f / data->fps : 0.0f;
 
     if (deltams > data->bias + 200.0f)
         deltams = data->bias + 200.0f; // Don't go below 5 fps
