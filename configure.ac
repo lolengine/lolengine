@@ -22,15 +22,21 @@ AC_LIBTOOL_CXX
 AC_C_CONST
 AC_C_INLINE
 
+dnl Ensure an error is thrown if pkg-config M4 files are not found.
+m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
+m4_pattern_forbid([^PKG_CHECK_MODULES$])
+m4_pattern_forbid([^PKG_PROG_PKG_CONFIG$])
+
+dnl Do not use PKG_CONFIG_LIBDIR when cross-compiling.
+if test "${build}" != "${host}" -a "${PKG_CONFIG_LIBDIR}" = ""; then
+  export PKG_CONFIG_LIBDIR=/dev/null
+fi
+
 dnl AC_PROG_EGREP only exists in autoconf 2.54+, so we use AC_EGREP_CPP right
 dnl now otherwise it might be set in an obscure if statement. Same thing for
 dnl PKG_PROG_PKG_CONFIG which needs to be called first.
 AC_EGREP_CPP(yes, foo)
 PKG_PROG_PKG_CONFIG()
-m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
-if test "${build}" != "${host}" -a "${PKG_CONFIG_LIBDIR}" = ""; then
-  export PKG_CONFIG_LIBDIR=/dev/null
-fi
 
 dnl conditional builds
 AC_ARG_ENABLE(debug,
@@ -73,7 +79,7 @@ if test "${ac_cv_my_have_sdl}" = "no"; then
 fi
 
 
-# Use libcaca? (required for font generation)
+dnl Use libcaca? (required for font generation)
 ac_cv_my_have_caca="no"
 PKG_CHECK_MODULES(CACA, caca >= 0.99.beta17, [ac_cv_my_have_caca="yes"], [:])
 if test "${ac_cv_my_have_caca}" != "no"; then
@@ -82,7 +88,7 @@ fi
 AM_CONDITIONAL(USE_CACA, test "${ac_cv_my_have_caca}" != "no")
 
 
-# Use libpipi? (required for video recording)
+dnl Use libpipi? (required for video recording)
 ac_cv_my_have_pipi="no"
 PKG_CHECK_MODULES(PIPI, pipi, [ac_cv_my_have_pipi="yes"], [:])
 if test "${ac_cv_my_have_pipi}" != "no"; then
@@ -91,15 +97,21 @@ fi
 AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
 
 
+dnl Use GTK+? (required for the deushax editor)
+GTK_CFLAGS="$GTK_CFLAGS `pkg-config --cflags gtk+-2.0 gtkgl-2.0`"
+GTK_LIBS="$GTK_LIBS `pkg-config --libs gtk+-2.0 gtkgl-2.0`"
+
 # How to use the Lol Engine inside this tree
-LOL_CFLAGS="-I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
-LOL_LIBS="`pkg-config --libs sdl gl SDL_image` -lSDL_mixer"
+LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
+LOL_LIBS="$LOL_LIBS `pkg-config --libs sdl gl SDL_image` -lSDL_mixer"
 
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
 fi
 
 AC_SUBST(MATH_LIBS)
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 
