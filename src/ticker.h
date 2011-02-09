@@ -32,6 +32,8 @@ public:
     static void TickGame();
     static void TickDraw();
     static void ClampFps();
+    static void StartBenchmark();
+    static void StopBenchmark();
     static int GetFrameNum();
 
     static void Shutdown();

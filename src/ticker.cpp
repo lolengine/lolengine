@@ -30,7 +30,7 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), deltams(0), bias(0), fps(0),
+        frame(0), benchmark(0), deltams(0), bias(0), fps(0),
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -61,7 +61,7 @@ private:
     int nentities;
 
     /* Fixed framerate management */
-    int frame;
+    int frame, benchmark;
     Timer timer;
     float deltams, bias, fps;
 
@@ -168,8 +168,15 @@ void Ticker::TickGame()
 
     data->frame++;
 
-    data->deltams = data->timer.GetMs();
-    data->bias += data->deltams;
+    if (data->benchmark && data->fps)
+    {
+        data->deltams = 1000.0f / data->fps;
+    }
+    else
+    {
+        data->deltams = data->timer.GetMs();
+        data->bias += data->deltams;
+    }
 
     /* If shutdown is stuck, kick the first entity we meet and see
      * whether it makes things better. Note that it is always a bug to
@@ -317,13 +324,30 @@ void Ticker::ClampFps()
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    float deltams = data->fps ? 1000.0f / data->fps : 0.0f;
+    if (data->benchmark)
+    {
+        data->bias = 0.0f;
+    }
+    else
+    {
+        float deltams = data->fps ? 1000.0f / data->fps : 0.0f;
 
-    if (deltams > data->bias + 200.0f)
-        deltams = data->bias + 200.0f; // Don't go below 5 fps
-    if (deltams > data->bias)
-        data->timer.WaitMs(deltams - data->bias);
-    data->bias -= deltams;
+        if (deltams > data->bias + 200.0f)
+            deltams = data->bias + 200.0f; // Don't go below 5 fps
+        if (deltams > data->bias)
+            data->timer.WaitMs(deltams - data->bias);
+        data->bias -= deltams;
+    }
+}
+
+void Ticker::StartBenchmark()
+{
+    data->benchmark++;
+}
+
+void Ticker::StopBenchmark()
+{
+    data->benchmark--;
 }
 
 int Ticker::GetFrameNum()
