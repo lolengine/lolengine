@@ -45,6 +45,8 @@ private:
 DebugRecord::DebugRecord(char const *path, float fps)
   : data(new DebugRecordData())
 {
+    Ticker::StartRecording();
+
     data->path = strdup(path);
     data->width = 0;
     data->height = 0;
@@ -96,5 +98,7 @@ void DebugRecord::TickDraw(float deltams)
 
 DebugRecord::~DebugRecord()
 {
+    Ticker::StopRecording();
+
     delete data;
 }

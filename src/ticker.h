@@ -34,6 +34,8 @@ public:
     static void ClampFps();
     static void StartBenchmark();
     static void StopBenchmark();
+    static void StartRecording();
+    static void StopRecording();
     static int GetFrameNum();
 
     static void Shutdown();

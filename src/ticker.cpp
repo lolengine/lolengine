@@ -30,7 +30,7 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), benchmark(0), deltams(0), bias(0), fps(0),
+        frame(0), benchmark(0), recording(0), deltams(0), bias(0), fps(0),
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -61,7 +61,7 @@ private:
     int nentities;
 
     /* Fixed framerate management */
-    int frame, benchmark;
+    int frame, benchmark, recording;
     Timer timer;
     float deltams, bias, fps;
 
@@ -168,7 +168,7 @@ void Ticker::TickGame()
 
     data->frame++;
 
-    if (data->benchmark && data->fps)
+    if (data->recording && data->fps)
     {
         data->deltams = 1000.0f / data->fps;
     }
@@ -324,20 +324,21 @@ void Ticker::ClampFps()
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    if (data->benchmark)
-    {
-        data->bias = 0.0f;
-    }
-    else
-    {
-        float deltams = data->fps ? 1000.0f / data->fps : 0.0f;
+    /* If benchmarking, set wait time to 0. If FPS are fixed, force wait
+     * time to 1/FPS. Otherwise, set wait time to 0. */
+    float framems = (!data->benchmark && data->fps) ? 1000.0f / data->fps
+                                                    : 0.0f;
 
-        if (deltams > data->bias + 200.0f)
-            deltams = data->bias + 200.0f; // Don't go below 5 fps
-        if (deltams > data->bias)
-            data->timer.WaitMs(deltams - data->bias);
-        data->bias -= deltams;
+    if (!data->benchmark)
+    {
+        if (framems > data->bias + 200.0f)
+            framems = data->bias + 200.0f; // Don't go below 5 fps
+        if (framems > data->bias)
+            data->timer.WaitMs(framems - data->bias);
     }
+
+    if (!data->recording)
+        data->bias -= framems;
 }
 
 void Ticker::StartBenchmark()
@@ -348,6 +349,16 @@ void Ticker::StartBenchmark()
 void Ticker::StopBenchmark()
 {
     data->benchmark--;
+}
+
+void Ticker::StartRecording()
+{
+    data->recording++;
+}
+
+void Ticker::StopRecording()
+{
+    data->recording--;
 }
 
 int Ticker::GetFrameNum()
