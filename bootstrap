@@ -112,6 +112,17 @@ if test -n "$auxdir"; then
   aclocalflags="${aclocalflags} -I $auxdir -I ."
 fi
 
+# Honour M4PATH because sometimes M4 doesn't
+save_IFS=$IFS
+IFS=:
+tmp="$M4PATH"
+for x in "$tmp"; do
+  if test -n "$x"; then
+    aclocalflags="${aclocalflags} -I $x"
+  fi
+done
+IFS=$save_IFS
+
 # Explain what we are doing from now
 set -x
 
