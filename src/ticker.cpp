@@ -30,7 +30,7 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), benchmark(0), recording(0), deltams(0), bias(0), fps(0),
+        frame(0), recording(0), deltams(0), bias(0), fps(0),
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -61,7 +61,7 @@ private:
     int nentities;
 
     /* Fixed framerate management */
-    int frame, benchmark, recording;
+    int frame, recording;
     Timer timer;
     float deltams, bias, fps;
 
@@ -168,6 +168,7 @@ void Ticker::TickGame()
 
     data->frame++;
 
+    /* If recording with fixed framerate, set deltams to a fixed value */
     if (data->recording && data->fps)
     {
         data->deltams = 1000.0f / data->fps;
@@ -324,31 +325,18 @@ void Ticker::ClampFps()
 {
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-    /* If benchmarking, set wait time to 0. If FPS are fixed, force wait
-     * time to 1/FPS. Otherwise, set wait time to 0. */
-    float framems = (!data->benchmark && data->fps) ? 1000.0f / data->fps
-                                                    : 0.0f;
+    /* If framerate is fixed, force wait time to 1/FPS. Otherwise, set wait
+     * time to 0. */
+    float framems = data->fps ? 1000.0f / data->fps : 0.0f;
 
-    if (!data->benchmark)
-    {
-        if (framems > data->bias + 200.0f)
-            framems = data->bias + 200.0f; // Don't go below 5 fps
-        if (framems > data->bias)
-            data->timer.WaitMs(framems - data->bias);
-    }
+    if (framems > data->bias + 200.0f)
+        framems = data->bias + 200.0f; // Don't go below 5 fps
+    if (framems > data->bias)
+        data->timer.WaitMs(framems - data->bias);
 
+    /* If recording, do not try to compensate for lag. */
     if (!data->recording)
         data->bias -= framems;
-}
-
-void Ticker::StartBenchmark()
-{
-    data->benchmark++;
-}
-
-void Ticker::StopBenchmark()
-{
-    data->benchmark--;
 }
 
 void Ticker::StartRecording()
