@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -ex
-
-./bootstrap
-./configure
-make clean
-make
-

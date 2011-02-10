@@ -1,5 +1,7 @@
 #!/bin/sh
 
+##  Native MinGW compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
+
 set -e
 
 PATH="$PATH:./contrib/gtk-2.22.1/bin"

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+##  Native Linux compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
+
+set -ex
+
+./bootstrap
+./configure
+make clean
+make
+
