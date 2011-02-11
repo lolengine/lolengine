@@ -12,19 +12,8 @@
 #   include "config.h"
 #endif
 
-#ifdef WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#endif
-#if defined __APPLE__ && defined __MACH__
-#   include <OpenGL/gl.h>
-#else
-#   define GL_GLEXT_PROTOTYPES
-#   include <GL/gl.h>
-#endif
-
-#include <SDL.h>
-#include <SDL_image.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "core.h"
 
@@ -38,11 +27,8 @@ class FontData
 
 private:
     char *name;
-
-    SDL_Surface *img;
+    int tiler;
     int2 size;
-    float tx, ty;
-    GLuint texture;
 };
 
 /*
@@ -52,78 +38,25 @@ private:
 Font::Font(char const *path)
   : data(new FontData())
 {
-    data->name = strdup(path);
-    data->img = NULL;
+    data->name = (char *)malloc(7 + strlen(path) + 1);
+    sprintf(data->name, "<font> %s", path);
 
-    for (char const *name = path; *name; name++)
-        if ((data->img = IMG_Load(name)))
-            break;
-
-    if (!data->img)
-    {
-#if !FINAL_RELEASE
-        fprintf(stderr, "ERROR: could not load %s\n", path);
-#endif
-        SDL_Quit();
-        exit(1);
-    }
-
-    data->size = int2(data->img->w, data->img->h) / 16;
-    data->tx = (float)data->size.x / PotUp(data->img->w);
-    data->ty = (float)data->size.y / PotUp(data->img->h);
+    data->tiler = Tiler::Register(path, 0, 16, 1.0f);
+    data->size = Tiler::GetSize(data->tiler);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
 
 Font::~Font()
 {
+    Tiler::Deregister(data->tiler);
+    free(data->name);
     delete data;
 }
 
 void Font::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
-
-    if (IsDestroying())
-    {
-        if (data->img)
-            SDL_FreeSurface(data->img);
-        else
-            glDeleteTextures(1, &data->texture);
-    }
-    else if (data->img)
-    {
-        GLuint format = data->img->format->Amask ? GL_RGBA : GL_RGB;
-        int planes = data->img->format->Amask ? 4 : 3;
-
-        int w = PotUp(data->img->w);
-        int h = PotUp(data->img->h);
-
-        uint8_t *pixels = (uint8_t *)data->img->pixels;
-        if (w != data->img->w || h != data->img->h)
-        {
-            uint8_t *tmp = (uint8_t *)malloc(planes * w * h);
-            for (int line = 0; line < data->img->h; line++)
-                memcpy(tmp + planes * w * line,
-                       pixels + planes * data->img->w * line,
-                       planes * data->img->w);
-            pixels = tmp;
-        }
-
-        glGenTextures(1, &data->texture);
-        glBindTexture(GL_TEXTURE_2D, data->texture);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, planes, w, h, 0,
-                     format, GL_UNSIGNED_BYTE, pixels);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        if (pixels != data->img->pixels)
-            free(pixels);
-        SDL_FreeSurface(data->img);
-        data->img = NULL;
-    }
 }
 
 char const *Font::GetName()
@@ -133,58 +66,18 @@ char const *Font::GetName()
 
 void Font::Print(int3 pos, char const *str)
 {
-    if (data->img)
-        return;
+    Scene *scene = Scene::GetDefault();
 
-    glBindTexture(GL_TEXTURE_2D, data->texture);
-    glBegin(GL_QUADS);
     while (*str)
     {
         uint32_t ch = (uint8_t)*str++;
-        float tx = data->tx * (ch & 0xf);
-        float ty = data->ty * ((ch >> 4) & 0xf);
 
         if (ch != ' ')
-        {
-            glTexCoord2f(tx, ty + data->ty);
-            glVertex2f(pos.x, pos.y);
-            glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex2f(pos.x + data->size.x, pos.y);
-            glTexCoord2f(tx + data->tx, ty);
-            glVertex2f(pos.x + data->size.x, pos.y + data->size.y);
-            glTexCoord2f(tx, ty);
-            glVertex2f(pos.x, pos.y + data->size.y);
-        }
+            scene->AddTile((data->tiler << 16) | (ch & 255),
+                           pos.x, pos.y, pos.z, 0);
 
         pos.x += data->size.x;
     }
-    glEnd();
-}
-
-void Font::PrintBold(int3 pos, char const *str)
-{
-    static struct { int dx, dy; float r, g, b; } tab[] =
-    {
-        { -1,  0, 0.0, 0.0, 0.0 },
-        {  0, -1, 0.0, 0.0, 0.0 },
-        {  0,  1, 0.0, 0.0, 0.0 },
-        {  1, -1, 0.0, 0.0, 0.0 },
-        {  1,  1, 0.0, 0.0, 0.0 },
-        {  2,  0, 0.0, 0.0, 0.0 },
-        {  1,  0, 0.5, 0.5, 0.5 },
-        {  0,  0, 1.0, 1.0, 1.0 },
-    };
-
-    if (data->img)
-        return;
-
-    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
-    for (unsigned int i = 0; i < sizeof(tab) / sizeof(*tab); i++)
-    {
-        glColor3f(tab[i].r, tab[i].g, tab[i].b);
-        Print(pos + int3(tab[i].dx, tab[i].dy, 0), str);
-    }
-    glPopAttrib();
 }
 
 int2 Font::GetSize() const
