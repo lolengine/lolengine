@@ -67,6 +67,32 @@ void Tiler::Deregister(int id)
     data->tilesets.RemoveSlot(id - 1); /* ID 0 is for the empty tileset */
 }
 
+int2 Tiler::GetSize(int id)
+{
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
+#if !FINAL_RELEASE
+    if (!tileset)
+    {
+        fprintf(stderr, "ERROR: getting size for null tiler #%i\n", id);
+        return 0;
+    }
+#endif
+    return tileset->GetSize();
+}
+
+int2 Tiler::GetCount(int id)
+{
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
+#if !FINAL_RELEASE
+    if (!tileset)
+    {
+        fprintf(stderr, "ERROR: getting count for null tiler #%i\n", id);
+        return 0;
+    }
+#endif
+    return tileset->GetCount();
+}
+
 void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
 {
     int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */

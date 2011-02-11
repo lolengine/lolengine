@@ -157,6 +157,16 @@ char const *TileSet::GetName()
     return data->name;
 }
 
+int2 TileSet::GetSize() const
+{
+    return data->size;
+}
+
+int2 TileSet::GetCount() const
+{
+    return data->count;
+}
+
 void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 {
     float tx = data->tx * ((id & 0xffff) % data->count.i);
