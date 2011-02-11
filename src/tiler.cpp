@@ -45,13 +45,13 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-int Tiler::Register(char const *path, int w, int h, float dilate)
+int Tiler::Register(char const *path, int2 size, int2 count, float dilate)
 {
     int id = data->tilesets.MakeSlot(path);
 
     if (!data->tilesets.GetEntity(id))
     {
-        TileSet *tileset = new TileSet(path, w, h, dilate);
+        TileSet *tileset = new TileSet(path, size, count, dilate);
         data->tilesets.SetEntity(id, tileset);
 #if !FINAL_RELEASE
         if (id == data->lasterror)

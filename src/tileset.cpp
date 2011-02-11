@@ -41,8 +41,8 @@ class TileSetData
 
 private:
     char *name, *path;
-    int *tiles;
-    int w, h, nw, nh, ntiles;
+    int *tiles, ntiles;
+    int2 size, count;
     float dilate, tx, ty;
 
     SDL_Surface *img;
@@ -53,7 +53,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, int w, int h, float dilate)
+TileSet::TileSet(char const *path, int2 size, int2 count, float dilate)
   : data(new TileSetData())
 {
     data->name = (char *)malloc(10 + strlen(path) + 1);
@@ -77,19 +77,24 @@ TileSet::TileSet(char const *path, int w, int h, float dilate)
         exit(1);
     }
 
-    if (w <= 0)
-        w = 32;
-    if (h <= 0)
-        h = 32;
+    if (count.i > 0 && count.j > 0)
+    {
+        data->count = count;
+        data->size = int2(data->img->w, data->img->h) / count;
+    }
+    else
+    {
+        if (size.x <= 0 || size.y <= 0)
+            size = 32;
+        data->count.i = data->img->w > size.i ? data->img->w / size.i : 1;
+        data->count.j = data->img->h > size.j ? data->img->h / size.j : 1;
+        data->size = size;
+    }
 
-    data->w = w;
-    data->h = h;
     data->dilate = dilate;
-    data->nw = data->img->w > w ? data->img->w / w : 1;
-    data->nh = data->img->h > h ? data->img->h / h : 1;
-    data->ntiles = data->nw * data->nh;
-    data->tx = (float)w / PotUp(data->img->w);
-    data->ty = (float)h / PotUp(data->img->h);
+    data->ntiles = data->count.i * data->count.j;
+    data->tx = (float)data->size.x / PotUp(data->img->w);
+    data->ty = (float)data->size.y / PotUp(data->img->h);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
@@ -154,13 +159,13 @@ char const *TileSet::GetName()
 
 void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 {
-    float tx = data->tx * ((id & 0xffff) % data->nw);
-    float ty = data->ty * ((id & 0xffff) / data->nw);
+    float tx = data->tx * ((id & 0xffff) % data->count.i);
+    float ty = data->ty * ((id & 0xffff) / data->count.i);
     float dilate = data->dilate;
 
-    int dx = data->w;
-    int dy = o ? 0 : data->h;
-    int dz = o ? data->h : 0;
+    int dx = data->size.x;
+    int dy = o ? 0 : data->size.y;
+    int dz = o ? data->size.y : 0;
 
     if (!data->img)
     {
