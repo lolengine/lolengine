@@ -98,8 +98,15 @@ AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
 
 
 dnl Use GTK+? (required for the deushax editor)
-GTK_CFLAGS="$GTK_CFLAGS `pkg-config --cflags gtk+-2.0 gtkgl-2.0`"
-GTK_LIBS="$GTK_LIBS `pkg-config --libs gtk+-2.0 gtkgl-2.0`"
+ac_cv_my_have_gtkgl="no"
+PKG_CHECK_MODULES(GTK, gtk+-2.0, [ac_cv_my_have_gtkgl="yes"], [:])
+PKG_CHECK_MODULES(GTKGL, gtkgl-2.0, [:], [ac_cv_my_have_gtkgl="no"])
+if test "${ac_cv_my_have_gtkgl}" != "no"; then
+  AC_DEFINE(USE_GTKGL, 1, Define to 1 to use GtkGl)
+fi
+AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
+#GTK_CFLAGS="$GTK_CFLAGS `pkg-config --cflags gtk+-2.0 gtkgl-2.0`"
+#GTK_LIBS="$GTK_LIBS `pkg-config --libs gtk+-2.0 gtkgl-2.0`"
 
 # How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
