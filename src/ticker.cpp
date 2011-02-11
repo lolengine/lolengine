@@ -315,6 +315,7 @@ void Ticker::TickDraw()
             }
     }
 
+    Scene::GetDefault()->Render();
     Scene::Reset();
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
