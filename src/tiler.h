@@ -22,7 +22,7 @@
 class Tiler
 {
 public:
-    static int Register(char const *path, int w, int h, float dilate);
+    static int Register(char const *path, int2 size, int2 count, float dilate);
     static void Deregister(int id);
 
     static void BlitTile(uint32_t code, int x, int y, int z, int o);

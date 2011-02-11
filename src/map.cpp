@@ -127,7 +127,7 @@ Map::Map(char const *path)
         else if (sscanf(tmp, " <image source=\"%[^\"]\"", str) == 1)
         {
             /* This is a tileset image file. Associate it with firstgid. */
-            data->tilers[data->ntilers] = Tiler::Register(str, 32, 32,
+            data->tilers[data->ntilers] = Tiler::Register(str, 32, 0,
                                                           sqrtf(2));
             data->ntilers++;
             //fprintf(stderr, "new tiler %s\n", str);
