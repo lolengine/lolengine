@@ -66,7 +66,7 @@ if test "${SDL_CONFIG}" != "no"; then
 fi
 PKG_CHECK_MODULES(SDL, sdl, [:],
  [SDL_LIBS="${SDL_LIBS} -lSDL"])
-SDL_LIBS="${SDL_LIBS} -lGL" # FIXME: quite hackish
+AC_CHECK_LIB(GL, glLoadIdentity, SDL_LIBS="${SDL_LIBS} -lGL") # FIXME: hackish
 PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [:],
  [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"])
 PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [:],
