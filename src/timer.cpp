@@ -77,7 +77,7 @@ private:
 #else
         /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
-        ret = 1e-6f * (ticks - ticks0);
+        ret = ticks - ticks0;
         if (update)
             ticks0 = ticks;
         towait = deltams - ret;
