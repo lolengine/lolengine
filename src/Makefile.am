@@ -14,5 +14,5 @@ liblol_a_SOURCES = \
     \
     debugfps.cpp debugfps.h debugsphere.cpp debugsphere.h \
     debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h
-liblol_a_CXXFLAGS = @LOL_CFLAGS@
+liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
