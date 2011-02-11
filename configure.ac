@@ -57,26 +57,34 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Ws
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 
-# Use SDL?
+# Use SDL? (always required)
 ac_cv_my_have_sdl="yes"
-save_CPPFLAGS="${CPPFLAGS}"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
 if test "${SDL_CONFIG}" != "no"; then
-  CPPFLAGS="${CPPFLAGS} `sdl-config --cflags`"
+  SDL_CFLAGS="${SDL_CFLAGS} `sdl-config --cflags`"
+  SDL_LIBS="${SDL_LIBS} `sdl-config --libs`"
 fi
-AC_CHECK_HEADERS(SDL_image.h,
- [:],[ac_cv_my_have_sdl="no"])
-AC_CHECK_HEADERS(SDL_mixer.h,
- [:],[ac_cv_my_have_sdl="no"])
+PKG_CHECK_MODULES(SDL, sdl, [:],
+ [SDL_LIBS="${SDL_LIBS} -lSDL"])
+SDL_LIBS="${SDL_LIBS} -lGL" # FIXME: quite hackish
+PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [:],
+ [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"])
+PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [:],
+ [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"])
+save_CPPFLAGS="${CPPFLAGS}"
+SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
+SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
+
+CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
+AC_CHECK_HEADERS(SDL_mixer.h, [:], [ac_cv_my_have_sdl="no"])
+AC_CHECK_HEADERS(SDL_image.h, [:], [ac_cv_my_have_sdl="no"])
 CPPFLAGS="${save_CPPFLAGS}"
-if test "${ac_cv_my_have_sdl}" != "no"; then
+if test "${ac_cv_my_have_sdl}" = "no"; then
+  AC_MSG_ERROR([[One of SDL, SDL_Image or SDL_Mixer not found]])
+else
   AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL_image)
 fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
-
-if test "${ac_cv_my_have_sdl}" = "no"; then
-  AC_MSG_ERROR([[One of SDL, SDL_Image or SDL_Mixer not found]])
-fi
 
 
 dnl Use libcaca? (required for font generation)
@@ -107,8 +115,8 @@ fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 # How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
-LOL_LIBS="$LOL_LIBS `pkg-config --libs sdl gl SDL_image` -lSDL_mixer"
+LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS"
 
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
