@@ -105,8 +105,6 @@ if test "${ac_cv_my_have_gtkgl}" != "no"; then
   AC_DEFINE(USE_GTKGL, 1, Define to 1 to use GtkGl)
 fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
-#GTK_CFLAGS="$GTK_CFLAGS `pkg-config --cflags gtk+-2.0 gtkgl-2.0`"
-#GTK_LIBS="$GTK_LIBS `pkg-config --libs gtk+-2.0 gtkgl-2.0`"
 
 # How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src `pkg-config --cflags sdl gl SDL_image`"
@@ -117,8 +115,6 @@ if test "${enable_release}" = "yes"; then
 fi
 
 AC_SUBST(MATH_LIBS)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 
