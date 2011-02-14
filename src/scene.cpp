@@ -55,6 +55,9 @@ private:
     int ntiles;
     float angle;
 
+    GLuint *bufs;
+    int nbufs;
+
     static Scene *scene;
 };
 
@@ -70,10 +73,16 @@ Scene::Scene(float angle)
     data->tiles = 0;
     data->ntiles = 0;
     data->angle = angle;
+
+    data->bufs = 0;
+    data->nbufs = 0;
 }
 
 Scene::~Scene()
 {
+    /* FIXME: this must be done while the GL context is still active.
+     * Change the architecture to make sure of that. */
+    glDeleteBuffers(data->nbufs, data->bufs);
     delete data;
 }
 
@@ -131,13 +140,58 @@ void Scene::Render() // XXX: rename to Blit()
     glRotatef(8.0f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
     glTranslatef(-320.0f, -240.0f, 0.0f);
+    // XXX: end of debug stuff
 
-    for (int i = 0; i < data->ntiles; i++)
-        Tiler::BlitTile(data->tiles[i].code, data->tiles[i].x,
-                        data->tiles[i].y, data->tiles[i].z, data->tiles[i].o);
+    for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
+    {
+        /* Generate new vertex / texture coord buffers if necessary */
+        if (buf + 2 > data->nbufs)
+        {
+            data->bufs = (GLuint *)realloc(data->bufs, (buf + 2) * sizeof(GLuint));
+            glGenBuffers(buf + 2 - data->nbufs, data->bufs + data->nbufs);
+            data->nbufs = buf + 2;
+        }
+
+        /* Count how many quads will be needed */
+        for (n = i + 1; n < data->ntiles; n++)
+            if (data->tiles[i].code >> 16 != data->tiles[n].code >> 16)
+                break;
+
+        /* Create a vertex array object */
+        float *vertex = (float *)malloc(6 * 3 * (n - i) * sizeof(float));
+        float *texture = (float *)malloc(6 * 2 * (n - i) * sizeof(float));
+
+        for (int j = i; j < n; j++)
+        {
+            Tiler::BlitTile(data->tiles[j].code, data->tiles[j].x,
+                            data->tiles[j].y, data->tiles[j].z, data->tiles[j].o,
+                            vertex + 18 * (j - i), texture + 12 * (j - i));
+        }
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
+        glBufferData(GL_ARRAY_BUFFER, 6 * 3 * (n - i) * sizeof(float),
+                     vertex, GL_DYNAMIC_DRAW);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
+        glBufferData(GL_ARRAY_BUFFER, 6 * 2 * (n - i) * sizeof(float),
+                     texture, GL_DYNAMIC_DRAW);
+        glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+        Tiler::Bind(data->tiles[i].code);
+        glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        free(vertex);
+        free(texture);
+    }
 
     glPopMatrix();
-    // XXX: end of debug stuff
 
     free(data->tiles);
     data->tiles = 0;

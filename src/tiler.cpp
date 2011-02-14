@@ -93,7 +93,25 @@ int2 Tiler::GetCount(int id)
     return tileset->GetCount();
 }
 
-void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
+void Tiler::Bind(uint32_t code)
+{
+    int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
+
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
+#if !FINAL_RELEASE
+    if (!tileset)
+    {
+        if (id != data->lasterror)
+            fprintf(stderr, "ERROR: binding null tiler #%i\n", id);
+        data->lasterror = id;
+        return;
+    }
+#endif
+    tileset->Bind();
+}
+
+void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o,
+                     float *vertex, float *texture)
 {
     int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
 
@@ -107,6 +125,6 @@ void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o)
         return;
     }
 #endif
-    tileset->BlitTile(code & 0xffff, x, y, z, o);
+    tileset->BlitTile(code & 0xffff, x, y, z, o, vertex, texture);
 }
 

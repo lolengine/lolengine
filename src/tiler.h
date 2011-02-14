@@ -27,7 +27,9 @@ public:
 
     static int2 GetSize(int id);
     static int2 GetCount(int id);
-    static void BlitTile(uint32_t code, int x, int y, int z, int o);
+    static void Bind(uint32_t code);
+    static void BlitTile(uint32_t code, int x, int y, int z, int o,
+                         float *vertex, float *texture);
 };
 
 #endif // __DH_TILER_H__

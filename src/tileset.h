@@ -40,7 +40,9 @@ public:
     /* New methods */
     int2 GetSize() const;
     int2 GetCount() const;
-    void BlitTile(uint32_t id, int x, int y, int z, int o);
+    void Bind();
+    void BlitTile(uint32_t id, int x, int y, int z, int o,
+                  float *vertex, float *texture);
 
 private:
     TileSetData *data;
