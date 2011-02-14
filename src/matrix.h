@@ -104,7 +104,7 @@ template <typename T> struct Vec4;
 
 template <typename T> struct Vec2
 {
-    inline Vec2() { x = y = 0; }
+    inline Vec2() { }
     inline Vec2(T val) { x = y = val; }
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
@@ -119,7 +119,7 @@ typedef Vec2<int> int2;
 
 template <typename T> struct Vec3
 {
-    inline Vec3() { x = y = z = 0; }
+    inline Vec3() { }
     inline Vec3(T val) { x = y = z = val; }
     inline Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
 
@@ -135,7 +135,7 @@ typedef Vec3<int> int3;
 
 template <typename T> struct Vec4
 {
-    inline Vec4() { x = y = z = w = 0; }
+    inline Vec4() { }
     inline Vec4(T val) { x = y = z = w = val; }
     inline Vec4(T _x, T _y, T _z, T _w) { x = _x; y = _y; z = _z; w = _w; }
 
@@ -177,7 +177,7 @@ GLOBALS(4)
 
 template <typename T> struct Vec4x4
 {
-    inline Vec4x4() { v[0] = v[1] = v[2] = v[3] = 0; }
+    inline Vec4x4() { }
     inline Vec4x4(T val) { v[0] = v[1] = v[2] = v[3] = val; }
     inline Vec4x4(Vec4<T> v0, Vec4<T> v1, Vec4<T> v2, Vec4<T> v3)
         { v[0] = v0; v[1] = v1; v[2] = v2; v[3] = v3; }
