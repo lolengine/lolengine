@@ -167,7 +167,14 @@ int2 TileSet::GetCount() const
     return data->count;
 }
 
-void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
+void TileSet::Bind()
+{
+    if (!data->img)
+        glBindTexture(GL_TEXTURE_2D, data->texture);
+}
+
+void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
+                       float *vertex, float *texture)
 {
     float tx = data->tx * ((id & 0xffff) % data->count.i);
     float ty = data->ty * ((id & 0xffff) / data->count.i);
@@ -179,17 +186,48 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o)
 
     if (!data->img)
     {
-        glBindTexture(GL_TEXTURE_2D, data->texture);
-        glBegin(GL_QUADS);
-            glTexCoord2f(tx, ty);
-            glVertex3f(x, dilate * (y + dy), dilate * (z + dz));
-            glTexCoord2f(tx + data->tx, ty);
-            glVertex3f(x + dx, dilate * (y + dy), dilate * (z + dz));
-            glTexCoord2f(tx + data->tx, ty + data->ty);
-            glVertex3f(x + dx, dilate * y, dilate * z);
-            glTexCoord2f(tx, ty + data->ty);
-            glVertex3f(x, dilate * y, dilate * z);
-        glEnd();
+        float tmp[10];
+
+        *vertex++ = tmp[0] = x;
+        *vertex++ = tmp[1] = dilate * (y + dy);
+        *vertex++ = tmp[2] = dilate * (z + dz);
+        *texture++ = tmp[3] = tx;
+        *texture++ = tmp[4] = ty;
+
+        *vertex++ = x + dx;
+        *vertex++ = dilate * (y + dy);
+        *vertex++ = dilate * (z + dz);
+        *texture++ = tx + data->tx;
+        *texture++ = ty;
+
+        *vertex++ = tmp[5] = x + dx;
+        *vertex++ = tmp[6] = dilate * y;
+        *vertex++ = tmp[7] = dilate * z;
+        *texture++ = tmp[8] = tx + data->tx;
+        *texture++ = tmp[9] = ty + data->ty;
+
+        *vertex++ = tmp[0];
+        *vertex++ = tmp[1];
+        *vertex++ = tmp[2];
+        *texture++ = tmp[3];
+        *texture++ = tmp[4];
+
+        *vertex++ = tmp[5];
+        *vertex++ = tmp[6];
+        *vertex++ = tmp[7];
+        *texture++ = tmp[8];
+        *texture++ = tmp[9];
+
+        *vertex++ = x;
+        *vertex++ = dilate * y;
+        *vertex++ = dilate * z;
+        *texture++ = tx;
+        *texture++ = ty + data->ty;
+    }
+    else
+    {
+        memset(vertex, 0, 3 * sizeof(float));
+        memset(texture, 0, 2 * sizeof(float));
     }
 }
 
