@@ -22,31 +22,94 @@
 class MatrixTest : public CppUnit::TestCase
 {
     CPPUNIT_TEST_SUITE(MatrixTest);
+    CPPUNIT_TEST(test_mat_det);
     CPPUNIT_TEST(test_mat_mul);
+    CPPUNIT_TEST(test_mat_inv);
     CPPUNIT_TEST_SUITE_END();
 
 public:
     MatrixTest() : CppUnit::TestCase("Matrix Test") {}
 
-    void setUp() {}
+    void setUp()
+    {
+        identity = float4x4::identity();
+        triangular = float4x4(float4(1.0f, 0.0f, 0.0f, 0.0f),
+                              float4(7.0f, 2.0f, 0.0f, 0.0f),
+                              float4(1.0f, 5.0f, 3.0f, 0.0f),
+                              float4(8.0f, 9.0f, 2.0f, 4.0f));
+        invertible = float4x4(float4( 1.0f,  1.0f,  2.0f, -1.0f),
+                              float4(-2.0f, -1.0f, -2.0f,  2.0f),
+                              float4( 4.0f,  2.0f,  5.0f, -4.0f),
+                              float4( 5.0f, -3.0f, -7.0f, -6.0f));
+    }
 
     void tearDown() {}
 
+    void test_mat_det()
+    {
+        float d1 = triangular.det();
+        CPPUNIT_ASSERT(d1 == 24.0f);
+        float d2 = invertible.det();
+        CPPUNIT_ASSERT(d2 == -1.0f);
+    }
+
     void test_mat_mul()
     {
-        float4 v0(1.0f, 0.0f, 0.0f, 0.0f);
-        float4 v1(0.0f, 1.0f, 0.0f, 0.0f);
-        float4 v2(0.0f, 0.0f, 1.0f, 0.0f);
-        float4 v3(0.0f, 0.0f, 0.0f, 1.0f);
-        float4x4 m0(v0, v1, v2, v3);
-        float4x4 m1(v0, v1, v2, v3);
+        float4x4 m0 = identity;
+        float4x4 m1 = identity;
         float4x4 m2 = m0 * m1;
 
         CPPUNIT_ASSERT(m2[0][0] == 1.0f);
+        CPPUNIT_ASSERT(m2[1][0] == 0.0f);
+        CPPUNIT_ASSERT(m2[2][0] == 0.0f);
+        CPPUNIT_ASSERT(m2[3][0] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][1] == 0.0f);
         CPPUNIT_ASSERT(m2[1][1] == 1.0f);
+        CPPUNIT_ASSERT(m2[2][1] == 0.0f);
+        CPPUNIT_ASSERT(m2[3][1] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][2] == 0.0f);
+        CPPUNIT_ASSERT(m2[1][2] == 0.0f);
         CPPUNIT_ASSERT(m2[2][2] == 1.0f);
+        CPPUNIT_ASSERT(m2[3][2] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][3] == 0.0f);
+        CPPUNIT_ASSERT(m2[1][3] == 0.0f);
+        CPPUNIT_ASSERT(m2[2][3] == 0.0f);
         CPPUNIT_ASSERT(m2[3][3] == 1.0f);
     }
+
+    void test_mat_inv()
+    {
+        float4x4 m0 = invertible;
+        float4x4 m1 = m0.invert();
+
+        float4x4 m2 = m0 * m1;
+
+        CPPUNIT_ASSERT(m2[0][0] == 1.0f);
+        CPPUNIT_ASSERT(m2[1][0] == 0.0f);
+        CPPUNIT_ASSERT(m2[2][0] == 0.0f);
+        CPPUNIT_ASSERT(m2[3][0] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][1] == 0.0f);
+        CPPUNIT_ASSERT(m2[1][1] == 1.0f);
+        CPPUNIT_ASSERT(m2[2][1] == 0.0f);
+        CPPUNIT_ASSERT(m2[3][1] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][2] == 0.0f);
+        CPPUNIT_ASSERT(m2[1][2] == 0.0f);
+        CPPUNIT_ASSERT(m2[2][2] == 1.0f);
+        CPPUNIT_ASSERT(m2[3][2] == 0.0f);
+
+        CPPUNIT_ASSERT(m2[0][3] == 0.0f);
+        CPPUNIT_ASSERT(m2[1][3] == 0.0f);
+        CPPUNIT_ASSERT(m2[2][3] == 0.0f);
+        CPPUNIT_ASSERT(m2[3][3] == 1.0f);
+    }
+
+private:
+    float4x4 triangular, identity, invertible;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
