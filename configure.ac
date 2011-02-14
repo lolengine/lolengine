@@ -51,10 +51,20 @@ AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(_DEBUG, 1, Define to 1 to activate debug)
+  OPT="-O0"
+else
+  OPT="-O2"
+fi
+
+if test "${enable_release}" = "yes"; then
+  AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
+  REL=""
+else
+  REL="-g"
 fi
 
 # Optimizations
-CXXFLAGS="${CXXFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
+CXXFLAGS="${CXXFLAGS} ${REL} ${OPT} -fno-strength-reduce -fomit-frame-pointer"
 # Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
@@ -126,10 +136,6 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 # How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS"
-
-if test "${enable_release}" = "yes"; then
-  AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
-fi
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
