@@ -44,6 +44,9 @@ AC_ARG_ENABLE(debug,
 AC_ARG_ENABLE(release,
   [  --enable-release        build final release of the game (default no)])
 
+AC_ARG_ENABLE(cppunit,
+  [  --enable-cppunit        use cppunit for unit tests (autodetected)])
+
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
 if test "${enable_debug}" = "yes"; then
@@ -114,6 +117,12 @@ if test "${ac_cv_my_have_gtkgl}" != "no"; then
 fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
+
+dnl Use cppunit for unit tests?
+PKG_CHECK_MODULES(CPPUNIT, cppunit, [CPPUNIT="yes"], [CPPUNIT="no"])
+AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
+
+
 # How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS"
@@ -129,6 +138,7 @@ AC_SUBST(LOL_LIBS)
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
+  test/Makefile
   monsterz/Makefile
   deushax/Makefile
   tools/Makefile
