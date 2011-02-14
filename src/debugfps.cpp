@@ -45,7 +45,7 @@ DebugFps::DebugFps(int x, int y)
     }
 #else
     data->lines[0] = new Text(NULL, "gfx/font/ascii.png");
-    data->lines[0]->SetPos(int3(x, y, 0));
+    data->lines[0]->SetPos(int3(x, y, 100));
     Ticker::Ref(data->lines[0]);
 #endif
 }
