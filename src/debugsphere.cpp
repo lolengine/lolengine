@@ -38,24 +38,25 @@ class DebugSphereData
 {
     friend class DebugSphere;
 
-    void DrawSphere(int ndiv, GLfloat r)
+    void DrawSphere(int ndiv, GLfloat r, float *&vertex, float *&normal)
     {
-        glBegin(GL_TRIANGLES);
         for (int i = 0; i < 20; i++)
             DrawTriangle(vdata[tindices[i][0]],
                          vdata[tindices[i][2]],
-                         vdata[tindices[i][1]], ndiv, r);
-        glEnd();
+                         vdata[tindices[i][1]], ndiv, r, vertex, normal);
     }
 
     void DrawTriangle(GLfloat const *a, GLfloat const *b, GLfloat const *c,
-                      int div, GLfloat r)
+                      int div, GLfloat r, float *&vertex, float *&normal)
     {
         if (div <= 0)
         {
-            glNormal3fv(a); glVertex3f(a[0] * r, a[1] * r, a[2] * r);
-            glNormal3fv(b); glVertex3f(b[0] * r, b[1] * r, b[2] * r);
-            glNormal3fv(c); glVertex3f(c[0] * r, c[1] * r, c[2] * r);
+            *normal++ = a[0]; *normal++ = a[1]; *normal++ = a[2];
+            *vertex++ = a[0] * r; *vertex++ = a[1] * r; *vertex++ = a[2] * r;
+            *normal++ = b[0]; *normal++ = b[1]; *normal++ = b[2];
+            *vertex++ = b[0] * r; *vertex++ = b[1] * r; *vertex++ = b[2] * r;
+            *normal++ = c[0]; *normal++ = c[1]; *normal++ = c[2];
+            *vertex++ = c[0] * r; *vertex++ = c[1] * r; *vertex++ = c[2] * r;
         }
         else
         {
@@ -67,10 +68,10 @@ class DebugSphereData
                 bc[i] = (b[i] + c[i]) * 0.5;
             }
             Normalize(ab); Normalize(ac); Normalize(bc);
-            DrawTriangle(a, ab, ac, div - 1, r);
-            DrawTriangle(b, bc, ab, div - 1, r);
-            DrawTriangle(c, ac, bc, div - 1, r);
-            DrawTriangle(ab, bc, ac, div - 1, r);
+            DrawTriangle(a, ab, ac, div - 1, r, vertex, normal);
+            DrawTriangle(b, bc, ab, div - 1, r, vertex, normal);
+            DrawTriangle(c, ac, bc, div - 1, r, vertex, normal);
+            DrawTriangle(ab, bc, ac, div - 1, r, vertex, normal);
         }
     }
 
@@ -82,6 +83,8 @@ class DebugSphereData
 
 private:
     float time;
+    int initialised;
+    GLuint buflist[2];
 
     static GLfloat const vdata[12][3];
     static GLuint const tindices[20][3];
@@ -114,6 +117,7 @@ DebugSphere::DebugSphere()
   : data(new DebugSphereData())
 {
     data->time = 0.0f;
+    data->initialised = 0;
 }
 
 void DebugSphere::TickGame(float deltams)
@@ -129,17 +133,68 @@ void DebugSphere::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
+    if (IsDestroying())
+    {
+        if (data->initialised)
+        {
+            glDeleteBuffers(2, data->buflist);
+            data->initialised = 0;
+        }
+    }
+    else if (!data->initialised)
+    {
+        glGenBuffers(2, data->buflist);
+        data->initialised = 1;
+    }
+
     float a = sinf(data->time);
     float b = sinf(data->time * 0.5f);
 
-    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
-    glBindTexture(GL_TEXTURE_2D, NULL);
-    glColor4f(1.0f, b, a, 0.1f);
-    glTranslatef(320.0f, 240.0f, 32.0f);
+    int const ndiv = 2;
+    int const ntriangles = 20 * (1 << (ndiv * 2))
+                              * (int)(log(1.0f / 0.01f) / log(1.1f) + 0.9999f);
+
+    float *vertex = (float *)malloc(ntriangles * 3 * 3 * sizeof(float));
+    float *normal = (float *)malloc(ntriangles * 3 * 3 * sizeof(float));
+
+    float *vertex_parser = vertex;
+    float *normal_parser = normal;
     for (float t = 0.01f; t < 1.0f; t *= 1.1f)
-        data->DrawSphere(2, t * (60.0f + 40.0f * a));
+        data->DrawSphere(ndiv, t * (60.0f + 40.0f * a),
+                         vertex_parser, normal_parser);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
+    glBufferData(GL_ARRAY_BUFFER, ntriangles * 3 * 3 * sizeof(float),
+                 vertex, GL_DYNAMIC_DRAW);
+    glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[1]);
+    glBufferData(GL_ARRAY_BUFFER, ntriangles * 3 * 3 * sizeof(float),
+                 normal, GL_DYNAMIC_DRAW);
+    glNormalPointer(GL_FLOAT, 0, NULL);
+
+#if 0
+    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
+#endif
+    glColor4f(1.0f, b, a, 0.1f);
+    glBindTexture(GL_TEXTURE_2D, NULL);
+
+    glTranslatef(320.0f, 240.0f, 32.0f);
+    glDrawArrays(GL_TRIANGLES, 0, ntriangles * 3);
     glTranslatef(-320.0f, -240.0f, -32.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+#if 0
     glPopAttrib();
+#endif
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    free(vertex);
+    free(normal);
 }
 
 DebugSphere::~DebugSphere()
