@@ -136,6 +136,9 @@
     <ClCompile Include="..\src\map.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\matrix.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\profiler.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>

@@ -70,6 +70,7 @@
     <ClCompile Include="..\src\input.cpp" />
     <ClCompile Include="..\src\layer.cpp" />
     <ClCompile Include="..\src\map.cpp" />
+    <ClCompile Include="..\src\matrix.cpp" />
     <ClCompile Include="..\src\profiler.cpp" />
     <ClCompile Include="..\src\sample.cpp" />
     <ClCompile Include="..\src\sampler.cpp" />
