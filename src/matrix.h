@@ -175,5 +175,66 @@ GLOBALS(2)
 GLOBALS(3)
 GLOBALS(4)
 
+template <typename T> struct Vec4x4
+{
+    inline Vec4x4() { v[0] = v[1] = v[2] = v[3] = 0; }
+    inline Vec4x4(T val) { v[0] = v[1] = v[2] = v[3] = val; }
+    inline Vec4x4(Vec4<T> v0, Vec4<T> v1, Vec4<T> v2, Vec4<T> v3)
+        { v[0] = v0; v[1] = v1; v[2] = v2; v[3] = v3; }
+
+    inline Vec4<T>& operator[](int n) { return v[n]; }
+    inline Vec4<T> const& operator[](int n) const { return v[n]; }
+
+    inline Vec4x4<T> operator +(Vec4x4<T> const val) const
+    {
+        Vec4x4<T> ret;
+        for (int j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+                ret[i][j] = v[i][j] + val[i][j];
+        return ret;
+    }
+
+    inline Vec4x4<T> operator -(Vec4x4<T> const val) const
+    {
+        Vec4x4<T> ret;
+        for (int j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+                ret[i][j] = v[i][j] - val[i][j];
+        return ret;
+    }
+
+    inline Vec4x4<T> operator *(Vec4x4<T> const val) const
+    {
+        Vec4x4<T> ret;
+        for (int j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+            {
+                T tmp = 0;
+                for (int k = 0; k < 4; k++)
+                    tmp += v[k][j] * val[i][k];
+                ret[i][j] = tmp;
+            }
+        return ret;
+    }
+
+    inline Vec4<T> operator *(Vec4<T> const val) const
+    {
+        Vec4<T> ret;
+        for (int j = 0; j < 4; j++)
+        {
+            T tmp = 0;
+            for (int i = 0; i < 4; i++)
+                tmp += v[i][j] * val[i];
+            ret[j] = tmp;
+        }
+        return ret;
+    }
+
+    Vec4<T> v[4];
+};
+
+typedef Vec4x4<float> float4x4;
+typedef Vec4x4<int> int4x4;
+
 #endif // __DH_MATRIX_H__
 
