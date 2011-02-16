@@ -178,21 +178,19 @@ GLOBALS(4)
 template <typename T> struct Mat4
 {
     inline Mat4() { }
-    inline Mat4(T val) { for (int i = 0; i < 4; i++) v[i] = val; }
+    inline Mat4(T val)
+    {
+        for (int j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+                v[i][j] = (i == j) ? val : 0;
+    }
     inline Mat4(Vec4<T> v0, Vec4<T> v1, Vec4<T> v2, Vec4<T> v3)
-        { v[0] = v0; v[1] = v1; v[2] = v2; v[3] = v3; }
+    {
+        v[0] = v0; v[1] = v1; v[2] = v2; v[3] = v3;
+    }
 
     inline Vec4<T>& operator[](int n) { return v[n]; }
     inline Vec4<T> const& operator[](int n) const { return v[n]; }
-
-    static inline Mat4<T> identity()
-    {
-        Mat4<T> ret;
-        for (int j = 0; j < 4; j++)
-            for (int i = 0; i < 4; i++)
-                ret[i][j] = i == j;
-        return ret;
-    }
 
     T det() const;
     Mat4<T> invert() const;

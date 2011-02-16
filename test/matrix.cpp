@@ -32,7 +32,7 @@ public:
 
     void setUp()
     {
-        identity = float4x4::identity();
+        identity = float4x4(1.0f);
         triangular = float4x4(float4(1.0f, 0.0f, 0.0f, 0.0f),
                               float4(7.0f, 2.0f, 0.0f, 0.0f),
                               float4(1.0f, 5.0f, 3.0f, 0.0f),
