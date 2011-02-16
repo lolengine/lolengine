@@ -195,6 +195,9 @@ template <typename T> struct Mat4
     T det() const;
     Mat4<T> invert() const;
 
+    static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
+    static Mat4<T> perspective(T theta, T width, T height, T near, T far);
+
     inline Mat4<T> operator +(Mat4<T> const val) const
     {
         Mat4<T> ret;

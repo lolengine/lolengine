@@ -62,3 +62,30 @@ template<> float4x4 float4x4::invert() const
     return ret;
 }
 
+template<> float4x4 float4x4::frustum(float left, float right, float bottom,
+                                      float top, float near, float far)
+{
+    float invrl = (right != left) ? 1.0f / right - left : 0.0f;
+    float invtb = (top != bottom) ? 1.0f / top - bottom : 0.0f;
+    float invfn = (far != near) ? 1.0f / far - near : 0.0f;
+
+    float4x4 ret(0.0f);
+    ret[0][0] = 2.0f * near * invrl;
+    ret[1][1] = 2.0f * near * invtb;
+    ret[2][0] = (right + left) * invrl;
+    ret[2][1] = (top + bottom) * invtb;
+    ret[2][2] = - (far + near) * invfn;
+    ret[2][3] = -1.0f;
+    ret[3][2] = -2.0f * far * near * invfn;
+    return ret;
+}
+
+template<> float4x4 float4x4::perspective(float theta, float width,
+                                          float height, float near, float far)
+{
+    float t1 = tanf(theta / 2.0f);
+    float t2 = t1 * height / width;
+
+    return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
+}
+
