@@ -73,20 +73,20 @@ Scene *SceneData::scene = NULL;
 
 #if SHADER_CRAP
 static char const *vertexshader =
-    "attribute vec4 position;\n"
-    "uniform mat4 mvp;\n"
+    "attribute vec4 position;\n"
+    "uniform mat4 mvp;\n"
     "\n"
-    "void main()\n"
+    "void main()\n"
     "{\n"
-    "    gl_Position = mvp * position;\n"
+    "    gl_Position = mvp * position;\n"
     "}\n";
 
 static char const *fragmentshader =
-    "uniform lowp vec4 color;\n"
+    "uniform /*lowp*/ vec4 color;\n"
     "\n"
-    "void main()\n"
+    "void main()\n"
     "{\n"
-    "    gl_FragColor = color;\n"
+    "    gl_FragColor = color;\n"
     "}\n";
 #endif
 
@@ -127,6 +127,7 @@ Scene::Scene(float angle)
 
     glBindAttribLocation(data->prog, ATTRIB_POSITION, "position");
     glLinkProgram(data->prog);
+    glValidateProgram(data->prog);
 
     data->uni_mvp = glGetUniformLocation(data->prog, "mvp");
     data->uni_color = glGetUniformLocation(data->prog, "color");
