@@ -23,6 +23,7 @@ class Video
 {
 public:
     static void Setup(int width, int height);
+    static void Destroy();
     static void SetFov(float theta);
     static void SetDepth(bool set);
     static void Clear();

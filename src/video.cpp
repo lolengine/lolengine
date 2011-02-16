@@ -13,6 +13,7 @@
 #endif
 
 #include <cmath>
+#include <cstdio>
 
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -26,6 +27,44 @@
 #endif
 
 #include "core.h"
+
+#if SHADER_CRAP
+#   define ATTRIB_POSITION 42 /* arbitrary id */
+    GLuint prog, sh1, sh2;
+    GLint uni_m1, uni_m2, uni_m3;
+
+    float4x4 projection_matrix, view_matrix, model_matrix;
+#endif
+
+#if SHADER_CRAP
+static char const *vertexshader =
+    "#version 130\n"
+    "\n"
+    "in vec3 in_Position;\n"
+    "in vec3 in_Color;\n"
+    "out vec3 pass_Color;\n"
+    "//attribute vec4 position;\n"
+    "uniform mat4 projection_matrix;\n"
+    "uniform mat4 view_matrix;\n"
+    "uniform mat4 model_matrix;\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
+    "    pass_Color = in_Color;\n"
+    "}\n";
+
+static char const *fragmentshader =
+    "#version 130\n"
+    "\n"
+    "in vec3 pass_Color;\n"
+    "out vec4 out_Color;\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "    gl_FragColor = pass_Color;\n"
+    "}\n";
+#endif
 
 /*
  * Public Video class
@@ -42,10 +81,51 @@ void Video::Setup(int width, int height)
     glClearDepth(1.0);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+#if SHADER_CRAP
+    sh1 = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(sh1, 1, &vertexshader, NULL);
+    glCompileShader(sh1);
+
+    char buf[4096];
+    GLsizei dummy;
+    glGetShaderInfoLog(sh1, 4096, &dummy, buf);
+    fprintf(stderr, "sh1 %i: %s", sh1, buf);
+
+    sh2 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(sh2, 1, &fragmentshader, NULL);
+    glCompileShader(sh2);
+
+    glGetShaderInfoLog(sh2, 4096, &dummy, buf);
+    fprintf(stderr, "sh2 %i: %s", sh2, buf);
+
+    prog = glCreateProgram();
+    glAttachShader(prog, sh1);
+    glAttachShader(prog, sh2);
+
+    //glBindAttribLocation(prog, ATTRIB_POSITION, "position");
+    glBindAttribLocation(prog, 0, "in_Position");
+    glBindAttribLocation(prog, 1, "in_Color");
+    glLinkProgram(prog);
+    glValidateProgram(prog);
+
+    uni_m1 = glGetUniformLocation(prog, "projection_matrix");
+    uni_m2 = glGetUniformLocation(prog, "view_matrix");
+    uni_m3 = glGetUniformLocation(prog, "model_matrix");
+
+    glClearColor(0.4f, 0.6f, 0.9f, 0.0f);
+#endif
 }
 
 void Video::SetFov(float theta)
 {
+#if SHADER_CRAP
+    float width = GetWidth();
+    float height = GetHeight();
+    float near = -width - height;
+    float far = width + height;
+    projection_matrix = float4x4::perspective(theta, width, height, near, far);
+#else
 #undef near /* Fuck Microsoft */
 #undef far /* Fuck Microsoft again */
     glMatrixMode(GL_PROJECTION);
@@ -87,6 +167,7 @@ void Video::SetFov(float theta)
     /* Reset the model view matrix, just in case */
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+#endif
 }
 
 void Video::SetDepth(bool set)
@@ -99,6 +180,24 @@ void Video::SetDepth(bool set)
 
 void Video::Clear()
 {
+#if SHADER_CRAP
+    glViewport(0, 0, GetWidth(), GetHeight());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    view_matrix = float4x4(1.0f);
+    view_matrix[3][0] = 0.0f;
+    view_matrix[3][0] = 0.0f;
+    view_matrix[3][0] = -5.0f;
+
+    model_matrix = float4x4(1.0f);
+    model_matrix[0][0] = 0.5f;
+    model_matrix[1][1] = 0.5f;
+    model_matrix[2][2] = 0.5f;
+
+    glUniformMatrix4fv(uni_m1, 1, GL_FALSE, &projection_matrix[0][0]);
+    glUniformMatrix4fv(uni_m2, 1, GL_FALSE, &view_matrix[0][0]);
+    glUniformMatrix4fv(uni_m3, 1, GL_FALSE, &model_matrix[0][0]);
+#else
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_ALPHA_TEST);
@@ -107,8 +206,20 @@ void Video::Clear()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif
 
     SetFov(0.0f);
+}
+
+void Video::Destroy()
+{
+#if SHADER_CRAP
+    glDetachShader(prog, sh1);
+    glDetachShader(prog, sh2);
+    glDeleteShader(sh1);
+    glDeleteShader(sh2);
+    glDeleteProgram(prog);
+#endif
 }
 
 void Video::Capture(uint32_t *buffer)
