@@ -29,14 +29,17 @@
 
 #include "core.h"
 
-#define ATTRIB_POSITION 42 /* arbitrary id */
-#define SHADER_CRAP 0
-
 struct Tile
 {
     uint32_t prio, code;
     int x, y, z, o;
 };
+
+#if SHADER_CRAP
+#   define ATTRIB_POSITION 42 /* arbitrary id */
+    extern GLuint prog;
+    extern GLint uni_mvp, uni_color;
+#endif
 
 /*
  * Scene implementation class
@@ -59,10 +62,6 @@ private:
     int ntiles;
     float angle;
 
-#if SHADER_CRAP
-    GLuint prog, sh1, sh2;
-    GLint uni_mvp, uni_color;
-#endif
     GLuint *bufs;
     int nbufs;
 
@@ -70,25 +69,6 @@ private:
 };
 
 Scene *SceneData::scene = NULL;
-
-#if SHADER_CRAP
-static char const *vertexshader =
-    "attribute vec4 position;\n"
-    "uniform mat4 mvp;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = mvp * position;\n"
-    "}\n";
-
-static char const *fragmentshader =
-    "uniform /*lowp*/ vec4 color;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    gl_FragColor = color;\n"
-    "}\n";
-#endif
 
 /*
  * Public Scene class
@@ -103,48 +83,12 @@ Scene::Scene(float angle)
 
     data->bufs = 0;
     data->nbufs = 0;
-
-#if SHADER_CRAP
-    data->sh1 = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(data->sh1, 1, &vertexshader, NULL);
-    glCompileShader(data->sh1);
-
-    char buf[4096];
-    GLsizei dummy;
-    glGetShaderInfoLog(data->sh1, 4096, &dummy, buf);
-    fprintf(stderr, "sh1 %i: %s", data->sh1, buf);
-
-    data->sh2 = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(data->sh2, 1, &fragmentshader, NULL);
-    glCompileShader(data->sh2);
-
-    glGetShaderInfoLog(data->sh2, 4096, &dummy, buf);
-    fprintf(stderr, "sh2 %i: %s", data->sh2, buf);
-
-    data->prog = glCreateProgram();
-    glAttachShader(data->prog, data->sh1);
-    glAttachShader(data->prog, data->sh2);
-
-    glBindAttribLocation(data->prog, ATTRIB_POSITION, "position");
-    glLinkProgram(data->prog);
-    glValidateProgram(data->prog);
-
-    data->uni_mvp = glGetUniformLocation(data->prog, "mvp");
-    data->uni_color = glGetUniformLocation(data->prog, "color");
-#endif
 }
 
 Scene::~Scene()
 {
     /* FIXME: this must be done while the GL context is still active.
      * Change the architecture to make sure of that. */
-#if SHADER_CRAP
-    glDetachShader(data->prog, data->sh1);
-    glDetachShader(data->prog, data->sh2);
-    glDeleteShader(data->sh1);
-    glDeleteShader(data->sh2);
-    glDeleteProgram(data->prog);
-#endif
     glDeleteBuffers(data->nbufs, data->bufs);
     delete data;
 }
@@ -234,11 +178,11 @@ void Scene::Render() // XXX: rename to Blit()
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #if SHADER_CRAP
-        glUseProgram(data->prog);
-        float4x4 mvp = float4x4::identity();
-        mvp = mvp - mvp;
-        glUniformMatrix4fv(data->uni_mvp, 1, GL_FALSE, (GLfloat *)&mvp[0][0]);
-        glUniform4f(data->uni_color, 1.0f, 0.0f, 1.0f, 1.0f);
+        glUseProgram(prog);
+        //float4x4 mvp(1.0f);
+        //mvp = mvp - mvp;
+        //glUniformMatrix4fv(uni_mvp, 1, GL_FALSE, (GLfloat *)&mvp[0][0]);
+        //glUniform4f(uni_color, 1.0f, 0.0f, 1.0f, 1.0f);
 #endif
 
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
