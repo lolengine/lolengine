@@ -16,9 +16,6 @@
 #if !defined __DH_CORE_H__
 #define __DH_CORE_H__
 
-// Temporary stuff
-//#define SHADER_CRAP 1
-
 // Base types
 #include "matrix.h"
 #include "numeric.h"

@@ -70,7 +70,7 @@ TileSet::TileSet(char const *path, int2 size, int2 count, float dilate)
 
     if (!data->img)
     {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
         fprintf(stderr, "ERROR: could not load %s\n", path);
 #endif
         SDL_Quit();

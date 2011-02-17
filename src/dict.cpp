@@ -41,7 +41,7 @@ public:
 
     ~DictData()
     {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
         if (nentities)
             fprintf(stderr, "ERROR: still %i entities in dict\n", nentities);
 #endif

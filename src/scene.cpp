@@ -35,7 +35,7 @@ struct Tile
     int x, y, z, o;
 };
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
 extern GLuint prog;
 #endif
 
@@ -134,7 +134,7 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     float *vertices = new float[18];
     vertices[0] = -0.5f; vertices[1] = 0.5f; vertices[2] = 0.0f;
     vertices[3] = 0.5f; vertices[4] = 0.5f; vertices[5] = 0.0f;

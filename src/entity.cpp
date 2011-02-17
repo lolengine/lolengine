@@ -27,7 +27,7 @@ Entity::Entity() :
     ref(0),
     destroy(0)
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     state = STATE_IDLE;
 #endif
     gamegroup = GAMEGROUP_DEFAULT;
@@ -37,7 +37,7 @@ Entity::Entity() :
 
 Entity::~Entity()
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     if (!destroy)
         fprintf(stderr, "ERROR: entity destructor called directly\n");
 #endif
@@ -50,7 +50,7 @@ char const *Entity::GetName()
 
 void Entity::TickGame(float deltams)
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     if (state != STATE_PRETICK_GAME)
         fprintf(stderr, "ERROR: invalid entity game tick\n");
     state = STATE_POSTTICK_GAME;
@@ -59,7 +59,7 @@ void Entity::TickGame(float deltams)
 
 void Entity::TickDraw(float deltams)
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     if (state != STATE_PRETICK_DRAW)
         fprintf(stderr, "ERROR: invalid entity draw tick\n");
     state = STATE_POSTTICK_DRAW;
