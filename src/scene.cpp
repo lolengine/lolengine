@@ -138,26 +138,34 @@ void Scene::Render() // XXX: rename to Blit()
 
 #if SHADER_CRAP
     float *vertices = new float[18];
-    vertices[0] = -0.5f; vertices[1] = -0.5f; vertices[2] = 0.0f;
-    vertices[3] = -0.5f; vertices[4] = 0.5f; vertices[5] = 0.0f;
-    vertices[6] = 0.5f; vertices[7] = 0.5f; vertices[8] = 0.0f;
+    vertices[0] = -0.5f; vertices[1] = 0.5f; vertices[2] = 0.0f;
+    vertices[3] = 0.5f; vertices[4] = 0.5f; vertices[5] = 0.0f;
+    vertices[6] = -0.5f; vertices[7] = -0.5f; vertices[8] = 0.0f;
 
     vertices[9] = 0.5f; vertices[10] = -0.5f; vertices[11] = 0.0f;
     vertices[12] = -0.5f; vertices[13] = -0.5f; vertices[14] = 0.0f;
     vertices[15] = 0.5f; vertices[16] = 0.5f; vertices[17] = 0.0f;
 
     const GLfloat colors[6][3] = {
-    {  1.0,  0.0,  0.0  },
-    {  0.0,  1.0,  0.0  },
     {  0.0,  0.0,  1.0  },
     {  1.0,  0.0,  0.0  },
     {  0.0,  1.0,  0.0  },
-    {  1.0,  1.0,  0.0  } };
+    {  1.0,  1.0,  0.0  },
+    {  0.0,  1.0,  0.0  },
+    {  1.0,  0.0,  0.0  } };
 
-    GLuint id[3];
+    const GLfloat tex[6][2] = {
+    {  0.0,  0.0  },
+    {  1.0,  0.0  },
+    {  0.0,  1.0  },
+    {  1.0,  1.0  },
+    {  0.0,  1.0  },
+    {  1.0,  0.0  } };
+
+    GLuint id[4];
     glGenVertexArrays(1, &id[0]);
     glBindVertexArray(id[0]);
-    glGenBuffers(2, &id[1]);
+    glGenBuffers(3, &id[1]);
 
     glBindBuffer(GL_ARRAY_BUFFER, id[1]);
     glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
@@ -169,10 +177,16 @@ void Scene::Render() // XXX: rename to Blit()
     glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
+    glBindBuffer(GL_ARRAY_BUFFER, id[3]);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tex, GL_STATIC_DRAW);
+    glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
     delete[] vertices;
 
     glUseProgram(prog);
     glBindVertexArray(id[0]);
+    Tiler::Bind(1 << 16);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 

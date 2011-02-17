@@ -42,6 +42,7 @@ static char const *vertexshader =
     "\n"
     "in vec3 in_Position;\n"
     "in vec3 in_Color;\n"
+    "in vec2 in_TexCoord;\n"
     "out vec3 pass_Color;\n"
     "uniform mat4 projection_matrix;\n"
     "uniform mat4 view_matrix;\n"
@@ -50,19 +51,22 @@ static char const *vertexshader =
     "void main()\n"
     "{\n"
     "    //gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
-    "    gl_Position = vec4(in_Position, 1.0f);\n"
+    "    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
+    "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
     "    pass_Color = in_Color;\n"
     "}\n";
 
 static char const *fragmentshader =
     "#version 130\n"
     "\n"
+    "uniform sampler2D in_Texture;\n"
     "in vec3 pass_Color;\n"
     "out vec4 out_Color;\n"
     "\n"
     "void main()\n"
     "{\n"
-    "    gl_FragColor = vec4(pass_Color, 1.0);\n"
+    "    gl_FragColor = 0.5 * (texture2D(in_Texture, vec2(gl_TexCoord[0]))\n"
+    "                           + vec4(pass_Color, 1.0));\n"
     "}\n";
 #endif
 
@@ -106,6 +110,7 @@ void Video::Setup(int width, int height)
     //glBindAttribLocation(prog, ATTRIB_POSITION, "position");
     glBindAttribLocation(prog, 0, "in_Position");
     glBindAttribLocation(prog, 1, "in_Color");
+    glBindAttribLocation(prog, 2, "in_TexCoord");
     glLinkProgram(prog);
     glValidateProgram(prog);
 
@@ -122,8 +127,10 @@ void Video::SetFov(float theta)
 #if SHADER_CRAP
     float width = GetWidth();
     float height = GetHeight();
-    float near = -width - height;
-    float far = width + height;
+    //float near = -width - height;
+    //float far = width + height;
+    float near = 20.0f;
+    float far = 0.1f;
     projection_matrix = float4x4::perspective(theta, width, height, near, far);
 #else
 #undef near /* Fuck Microsoft */
@@ -186,8 +193,8 @@ void Video::Clear()
 
     view_matrix = float4x4(1.0f);
     view_matrix[3][0] = 0.0f;
-    view_matrix[3][0] = 0.0f;
-    view_matrix[3][0] = -5.0f;
+    view_matrix[3][1] = 0.0f;
+    view_matrix[3][2] = -5.0f;
 
     model_matrix = float4x4(1.0f);
     model_matrix[0][0] = 0.5f;
@@ -208,7 +215,13 @@ void Video::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
 
-    SetFov(0.0f);
+#if SHADER_CRAP
+    static float time;
+    time += 0.01f;
+    SetFov(1.0f + sinf(time));
+#else
+    SetFov(0.5f);
+#endif
 }
 
 void Video::Destroy()
