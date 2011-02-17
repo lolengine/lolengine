@@ -43,14 +43,14 @@ static char const *vertexshader =
     "in vec3 in_Position;\n"
     "in vec3 in_Color;\n"
     "out vec3 pass_Color;\n"
-    "//attribute vec4 position;\n"
     "uniform mat4 projection_matrix;\n"
     "uniform mat4 view_matrix;\n"
     "uniform mat4 model_matrix;\n"
     "\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
+    "    //gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
+    "    gl_Position = vec4(in_Position, 1.0f);\n"
     "    pass_Color = in_Color;\n"
     "}\n";
 
@@ -62,7 +62,7 @@ static char const *fragmentshader =
     "\n"
     "void main()\n"
     "{\n"
-    "    gl_FragColor = pass_Color;\n"
+    "    gl_FragColor = vec4(pass_Color, 1.0);\n"
     "}\n";
 #endif
 
