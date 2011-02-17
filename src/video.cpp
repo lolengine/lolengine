@@ -28,14 +28,14 @@
 
 #include "core.h"
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     GLuint prog, sh1, sh2;
     GLint uni_m1, uni_m2, uni_m3;
 
     float4x4 projection_matrix, view_matrix, model_matrix;
 #endif
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
 static char const *vertexshader =
     "#version 130\n"
     "\n"
@@ -85,7 +85,7 @@ void Video::Setup(int width, int height)
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     sh1 = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(sh1, 1, &vertexshader, NULL);
     glCompileShader(sh1);
@@ -122,7 +122,7 @@ void Video::Setup(int width, int height)
 
 void Video::SetFov(float theta)
 {
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     float width = GetWidth();
     float height = GetHeight();
     //float near = -width - height;
@@ -185,7 +185,7 @@ void Video::SetDepth(bool set)
 
 void Video::Clear()
 {
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     glViewport(0, 0, GetWidth(), GetHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -213,7 +213,7 @@ void Video::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
 
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     static float time;
     time += 0.01f;
     SetFov(1.0f + sinf(time));
@@ -224,7 +224,7 @@ void Video::Clear()
 
 void Video::Destroy()
 {
-#if SHADER_CRAP
+#if LOL_EXPERIMENTAL
     glDetachShader(prog, sh1);
     glDetachShader(prog, sh2);
     glDeleteShader(sh1);

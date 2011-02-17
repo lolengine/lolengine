@@ -39,7 +39,7 @@ public:
 
     ~TickerData()
     {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
         if (nentities)
             fprintf(stderr, "ERROR: still %i entities in ticker\n", nentities);
         if (autolist)
@@ -94,7 +94,7 @@ void Ticker::Register(Entity *entity)
 
 void Ticker::Ref(Entity *entity)
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     if (!entity)
     {
         fprintf(stderr, "ERROR: refing NULL entity\n");
@@ -125,7 +125,7 @@ void Ticker::Ref(Entity *entity)
 
 int Ticker::Unref(Entity *entity)
 {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     if (!entity)
     {
         fprintf(stderr, "ERROR: dereferencing NULL entity\n");
@@ -192,14 +192,14 @@ void Ticker::TickGame()
         for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
             if (e->ref)
             {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
                 fprintf(stderr, "ERROR: poking %s\n", e->GetName());
 #endif
                 e->ref--;
                 n++;
             }
 
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
         if (n)
             fprintf(stderr, "ERROR: %i entities stuck after %i frames, "
                     "poked %i\n", data->nentities, data->quitdelay, n);
@@ -260,13 +260,13 @@ void Ticker::TickGame()
         for (Entity *e = data->list[i]; e; e = e->gamenext)
             if (!e->destroy)
             {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
                 if (e->state != Entity::STATE_IDLE)
                     fprintf(stderr, "ERROR: entity not idle for game tick\n");
                 e->state = Entity::STATE_PRETICK_GAME;
 #endif
                 e->TickGame(data->deltams);
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
                 if (e->state != Entity::STATE_POSTTICK_GAME)
                     fprintf(stderr, "ERROR: entity missed super game tick\n");
                 e->state = Entity::STATE_IDLE;
@@ -301,13 +301,13 @@ void Ticker::TickDraw()
         for (Entity *e = data->list[i]; e; e = e->drawnext)
             if (!e->destroy)
             {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
                 if (e->state != Entity::STATE_IDLE)
                     fprintf(stderr, "ERROR: entity not idle for draw tick\n");
                 e->state = Entity::STATE_PRETICK_DRAW;
 #endif
                 e->TickDraw(data->deltams);
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
                 if (e->state != Entity::STATE_POSTTICK_DRAW)
                     fprintf(stderr, "ERROR: entity missed super draw tick\n");
                 e->state = Entity::STATE_IDLE;

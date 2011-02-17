@@ -43,6 +43,8 @@ AC_ARG_ENABLE(debug,
   [  --enable-debug          build debug versions of the game (default no)])
 AC_ARG_ENABLE(release,
   [  --enable-release        build final release of the game (default no)])
+AC_ARG_ENABLE(experimental,
+  [  --enable-experimental   experimental build (default no)])
 
 AC_ARG_ENABLE(cppunit,
   [  --enable-cppunit        use cppunit for unit tests (autodetected)])
@@ -50,17 +52,21 @@ AC_ARG_ENABLE(cppunit,
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
 if test "${enable_debug}" = "yes"; then
-  AC_DEFINE(_DEBUG, 1, Define to 1 to activate debug)
+  AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
   OPT="-O0"
 else
   OPT="-O2"
 fi
 
 if test "${enable_release}" = "yes"; then
-  AC_DEFINE(FINAL_RELEASE, 1, Define to 1 to activate final release)
+  AC_DEFINE(LOL_RELEASE, 1, Define to 1 to activate final release)
   REL=""
 else
   REL="-g"
+fi
+
+if test "${enable_experimental}" = "yes"; then
+  AC_DEFINE(LOL_EXPERIMENTAL, 1, Define to 1 to activate experimental build)
 fi
 
 # Optimizations

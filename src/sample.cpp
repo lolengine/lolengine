@@ -47,7 +47,7 @@ Sample::Sample(char const *path)
     data->chunk = Mix_LoadWAV(path);
     if (!data->chunk)
     {
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
         fprintf(stderr, "ERROR: could not load %s\n", path);
 #endif
         SDL_Quit();

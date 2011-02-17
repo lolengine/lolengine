@@ -62,7 +62,7 @@ protected:
     static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
     static int const ALLGROUP_END = DRAWGROUP_END;
 
-#if !FINAL_RELEASE
+#if !LOL_RELEASE
     enum
     {
         STATE_IDLE = 0,
