@@ -65,9 +65,9 @@ template<> float4x4 float4x4::invert() const
 template<> float4x4 float4x4::frustum(float left, float right, float bottom,
                                       float top, float near, float far)
 {
-    float invrl = (right != left) ? 1.0f / right - left : 0.0f;
-    float invtb = (top != bottom) ? 1.0f / top - bottom : 0.0f;
-    float invfn = (far != near) ? 1.0f / far - near : 0.0f;
+    float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
+    float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
+    float invfn = (far != near) ? 1.0f / (far - near) : 0.0f;
 
     float4x4 ret(0.0f);
     ret[0][0] = 2.0f * near * invrl;
