@@ -29,7 +29,6 @@
 #include "core.h"
 
 #if SHADER_CRAP
-#   define ATTRIB_POSITION 42 /* arbitrary id */
     GLuint prog, sh1, sh2;
     GLint uni_m1, uni_m2, uni_m3;
 
@@ -50,8 +49,8 @@ static char const *vertexshader =
     "\n"
     "void main()\n"
     "{\n"
-    "    //gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
-    "    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_Position, 1.0f);\n"
+    "    gl_Position = projection_matrix * view_matrix *"
+    "                  model_matrix * vec4(in_Position, 1.0f);\n"
     "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
     "    pass_Color = in_Color;\n"
     "}\n";
@@ -107,7 +106,6 @@ void Video::Setup(int width, int height)
     glAttachShader(prog, sh1);
     glAttachShader(prog, sh2);
 
-    //glBindAttribLocation(prog, ATTRIB_POSITION, "position");
     glBindAttribLocation(prog, 0, "in_Position");
     glBindAttribLocation(prog, 1, "in_Color");
     glBindAttribLocation(prog, 2, "in_TexCoord");
