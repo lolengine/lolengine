@@ -36,7 +36,7 @@ struct Tile
 };
 
 #if LOL_EXPERIMENTAL
-extern GLuint prog;
+extern Shader *stdshader;
 #endif
 
 /*
@@ -160,29 +160,33 @@ void Scene::Render() // XXX: rename to Blit()
     {  0.0,  1.0  },
     {  1.0,  0.0  } };
 
-    GLuint vao, vbo[3];
+    GLuint vao, vbo[3], attr;
+
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glGenBuffers(3, &vbo[0]);
 
+    attr = stdshader->GetAttribLocation("in_Position");
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attr);
 
+    attr = stdshader->GetAttribLocation("in_Color");
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attr);
 
+    attr = stdshader->GetAttribLocation("in_TexCoord");
     glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tex, GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(attr, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attr);
 
     delete[] vertices;
 
-    glUseProgram(prog);
+    stdshader->Bind();
     glBindVertexArray(vao);
     Tiler::Bind(1 << 16);
     glDrawArrays(GL_TRIANGLES, 0, 6);

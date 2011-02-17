@@ -1,0 +1,37 @@
+//
+// Lol Engine
+//
+// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
+//
+
+//
+// The Shader class
+// --------------
+//
+
+#if !defined __DH_SHADER_H__
+#define __DH_SHADER_H__
+
+class ShaderData;
+
+class Shader
+{
+public:
+    Shader(char const *vert, char const *frag);
+    ~Shader();
+
+    int GetAttribLocation(char const *attr) const;
+    int GetUniformLocation(char const *uni) const;
+
+    void Bind() const;
+
+private:
+    ShaderData *data;
+};
+
+#endif // __DH_SHADER_H__
+

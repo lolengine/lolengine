@@ -29,8 +29,7 @@
 #include "core.h"
 
 #if LOL_EXPERIMENTAL
-    GLuint prog, sh1, sh2;
-    GLint uni_m1, uni_m2, uni_m3;
+Shader *stdshader;
 
     float4x4 projection_matrix, view_matrix, model_matrix;
 #endif
@@ -86,37 +85,7 @@ void Video::Setup(int width, int height)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 #if LOL_EXPERIMENTAL
-    sh1 = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(sh1, 1, &vertexshader, NULL);
-    glCompileShader(sh1);
-
-    char buf[4096];
-    GLsizei dummy;
-    glGetShaderInfoLog(sh1, 4096, &dummy, buf);
-    fprintf(stderr, "sh1 %i: %s", sh1, buf);
-
-    sh2 = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(sh2, 1, &fragmentshader, NULL);
-    glCompileShader(sh2);
-
-    glGetShaderInfoLog(sh2, 4096, &dummy, buf);
-    fprintf(stderr, "sh2 %i: %s", sh2, buf);
-
-    prog = glCreateProgram();
-    glAttachShader(prog, sh1);
-    glAttachShader(prog, sh2);
-
-    glBindAttribLocation(prog, 0, "in_Position");
-    glBindAttribLocation(prog, 1, "in_Color");
-    glBindAttribLocation(prog, 2, "in_TexCoord");
-    glLinkProgram(prog);
-    glValidateProgram(prog);
-
-    uni_m1 = glGetUniformLocation(prog, "projection_matrix");
-    uni_m2 = glGetUniformLocation(prog, "view_matrix");
-    uni_m3 = glGetUniformLocation(prog, "model_matrix");
-
-    glClearColor(0.4f, 0.6f, 0.9f, 0.0f);
+    stdshader = new Shader(vertexshader, fragmentshader);
 #endif
 }
 
@@ -199,9 +168,13 @@ void Video::Clear()
     model_matrix[1][1] = 0.5f;
     model_matrix[2][2] = 0.5f;
 
-    glUniformMatrix4fv(uni_m1, 1, GL_FALSE, &projection_matrix[0][0]);
-    glUniformMatrix4fv(uni_m2, 1, GL_FALSE, &view_matrix[0][0]);
-    glUniformMatrix4fv(uni_m3, 1, GL_FALSE, &model_matrix[0][0]);
+    GLuint uni;
+    uni = stdshader->GetUniformLocation("projection_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &projection_matrix[0][0]);
+    uni = stdshader->GetUniformLocation("view_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
+    uni = stdshader->GetUniformLocation("model_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &model_matrix[0][0]);
 #else
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -225,11 +198,7 @@ void Video::Clear()
 void Video::Destroy()
 {
 #if LOL_EXPERIMENTAL
-    glDetachShader(prog, sh1);
-    glDetachShader(prog, sh2);
-    glDeleteShader(sh1);
-    glDeleteShader(sh2);
-    glDeleteProgram(prog);
+    delete stdshader;
 #endif
 }
 

@@ -42,6 +42,7 @@
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
+#include "shader.h"
 
 // Managers
 #include "ticker.h"
