@@ -36,9 +36,7 @@ struct Tile
 };
 
 #if SHADER_CRAP
-#   define ATTRIB_POSITION 42 /* arbitrary id */
-    extern GLuint prog;
-    extern GLint uni_mvp, uni_color;
+extern GLuint prog;
 #endif
 
 /*
@@ -162,22 +160,22 @@ void Scene::Render() // XXX: rename to Blit()
     {  0.0,  1.0  },
     {  1.0,  0.0  } };
 
-    GLuint id[4];
-    glGenVertexArrays(1, &id[0]);
-    glBindVertexArray(id[0]);
-    glGenBuffers(3, &id[1]);
+    GLuint vao, vbo[3];
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glGenBuffers(3, &vbo[0]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, id[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, id[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, id[3]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tex, GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(2);
@@ -185,7 +183,7 @@ void Scene::Render() // XXX: rename to Blit()
     delete[] vertices;
 
     glUseProgram(prog);
-    glBindVertexArray(id[0]);
+    glBindVertexArray(vao);
     Tiler::Bind(1 << 16);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
@@ -232,22 +230,11 @@ void Scene::Render() // XXX: rename to Blit()
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-#if SHADER_CRAP
-        glUseProgram(prog);
-        //float4x4 mvp(1.0f);
-        //mvp = mvp - mvp;
-        //glUniformMatrix4fv(uni_mvp, 1, GL_FALSE, (GLfloat *)&mvp[0][0]);
-        //glUniform4f(uni_color, 1.0f, 0.0f, 1.0f, 1.0f);
-#endif
 
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
         glBufferData(GL_ARRAY_BUFFER, 6 * 3 * (n - i) * sizeof(float),
                      vertex, GL_DYNAMIC_DRAW);
         glVertexPointer(3, GL_FLOAT, 0, NULL);
-#if SHADER_CRAP
-        glVertexAttribPointer(ATTRIB_POSITION, (n - i) * 6, GL_FLOAT, false, 0, vertex);
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-#endif
 
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
         glBufferData(GL_ARRAY_BUFFER, 6 * 2 * (n - i) * sizeof(float),
