@@ -38,9 +38,9 @@ static char const *vertexshader =
     "#version 130\n"
     "\n"
     "in vec3 in_Position;\n"
-    "in vec3 in_Color;\n"
+    //"in vec3 in_Color;\n"
     "in vec2 in_TexCoord;\n"
-    "out vec3 pass_Color;\n"
+    //"out vec3 pass_Color;\n"
     "uniform mat4 proj_matrix;\n"
     "uniform mat4 view_matrix;\n"
     "uniform mat4 model_matrix;\n"
@@ -50,14 +50,14 @@ static char const *vertexshader =
     "    gl_Position = proj_matrix * view_matrix * model_matrix"
     "                * vec4(in_Position, 1.0f);\n"
     "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
-    "    pass_Color = in_Color;\n"
+    //"    pass_Color = in_Color;\n"
     "}\n";
 
 static char const *fragmentshader =
     "#version 130\n"
     "\n"
     "uniform sampler2D in_Texture;\n"
-    "in vec3 pass_Color;\n"
+    //"in vec3 pass_Color;\n"
     "out vec4 out_Color;\n"
     "\n"
     "void main()\n"
@@ -131,7 +131,13 @@ void Video::SetFov(float theta)
 
     view_matrix = mat4(1.0f);
 
-#if !LOL_EXPERIMENTAL
+#if LOL_EXPERIMENTAL
+    GLuint uni;
+    uni = stdshader->GetUniformLocation("proj_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
+    uni = stdshader->GetUniformLocation("view_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
+#else
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMultMatrixf(&proj_matrix[0][0]);
@@ -155,14 +161,6 @@ void Video::Clear()
 {
     glViewport(0, 0, GetWidth(), GetHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-#if LOL_EXPERIMENTAL
-    GLuint uni;
-    uni = stdshader->GetUniformLocation("proj_matrix");
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
-    uni = stdshader->GetUniformLocation("view_matrix");
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
-#endif
 
     SetFov(0.0f);
 }
