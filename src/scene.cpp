@@ -38,7 +38,7 @@ struct Tile
 #if LOL_EXPERIMENTAL
 extern Shader *stdshader;
 #endif
-extern mat4 projection_matrix, view_matrix, model_matrix;
+extern mat4 model_matrix;
 
 /*
  * Scene implementation class
@@ -210,6 +210,13 @@ void Scene::Render() // XXX: rename to Blit()
     glBindVertexArray(0);
 
 #else
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glLoadIdentity();
     glMultMatrixf(&model_matrix[0][0]);
 

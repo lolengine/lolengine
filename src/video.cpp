@@ -31,7 +31,7 @@
 #if LOL_EXPERIMENTAL
 Shader *stdshader;
 #endif
-mat4 projection_matrix, view_matrix, model_matrix;
+mat4 proj_matrix, view_matrix, model_matrix;
 
 #if LOL_EXPERIMENTAL
 static char const *vertexshader =
@@ -41,14 +41,14 @@ static char const *vertexshader =
     "in vec3 in_Color;\n"
     "in vec2 in_TexCoord;\n"
     "out vec3 pass_Color;\n"
-    "uniform mat4 projection_matrix;\n"
+    "uniform mat4 proj_matrix;\n"
     "uniform mat4 view_matrix;\n"
     "uniform mat4 model_matrix;\n"
     "\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = projection_matrix * view_matrix *"
-    "                  model_matrix * vec4(in_Position, 1.0f);\n"
+    "    gl_Position = proj_matrix * view_matrix * model_matrix"
+    "                * vec4(in_Position, 1.0f);\n"
     "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
     "    pass_Color = in_Color;\n"
     "}\n";
@@ -103,7 +103,7 @@ void Video::SetFov(float theta)
     if (theta < 1e-4f)
     {
         /* The easy way: purely orthogonal projection. */
-        proj = mat4::ortho(0, width, 0, height, near, far);
+        proj_matrix = mat4::ortho(0, width, 0, height, near, far);
     }
     else
     {
@@ -123,22 +123,22 @@ void Video::SetFov(float theta)
             near = 1.0f;
         }
 
-        proj = mat4::frustum(-near * t1, near * t1,
-                             -near * t2, near * t2, near, far)
-             * mat4::translate(-0.5f * width, -0.5f * height, -dist);
+        proj_matrix = mat4::frustum(-near * t1, near * t1,
+                                    -near * t2, near * t2, near, far)
+                    * mat4::translate(-0.5f * width, -0.5f * height, -dist);
     }
 
-#if LOL_EXPERIMENTAL
-    projection_matrix = proj;
     view_matrix = mat4(1.0f);
-#else
+
+#if !LOL_EXPERIMENTAL
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glMultMatrixf(&proj[0][0]);
+    glMultMatrixf(&proj_matrix[0][0]);
 
     /* Reset the model view matrix, just in case */
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glMultMatrixf(&view_matrix[0][0]);
 #endif
 }
 
@@ -152,24 +152,15 @@ void Video::SetDepth(bool set)
 
 void Video::Clear()
 {
-#if LOL_EXPERIMENTAL
     glViewport(0, 0, GetWidth(), GetHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+#if LOL_EXPERIMENTAL
     GLuint uni;
-    uni = stdshader->GetUniformLocation("projection_matrix");
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &projection_matrix[0][0]);
+    uni = stdshader->GetUniformLocation("proj_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
     uni = stdshader->GetUniformLocation("view_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
-#else
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.01f);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
 
     SetFov(0.0f);
