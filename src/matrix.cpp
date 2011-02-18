@@ -116,3 +116,35 @@ template<> float4x4 float4x4::translate(float x, float y, float z)
     return ret;
 }
 
+template<> float4x4 float4x4::rotate(float theta, float x, float y, float z)
+{
+    float st = sinf(theta);
+    float ct = cosf(theta);
+
+    float len = sqrtf(x * x + y * y + z * z);
+    float invlen = len ? 1.0f / len : 0.0f;
+    x *= invlen;
+    y *= invlen;
+    z *= invlen;
+
+    float mtx = (1.0f - ct) * x;
+    float mty = (1.0f - ct) * y;
+    float mtz = (1.0f - ct) * z;
+
+    float4x4 ret(1.0f);
+
+    ret[0][0] = x * mtx + ct;
+    ret[0][1] = x * mty + st * z;
+    ret[0][2] = x * mtz - st * y;
+
+    ret[1][0] = y * mtx - st * z;
+    ret[1][1] = y * mty + ct;
+    ret[1][2] = y * mtz + st * x;
+
+    ret[2][0] = z * mtx + st * y;
+    ret[2][1] = z * mty - st * x;
+    ret[2][2] = z * mtz + ct;
+
+    return ret;
+}
+

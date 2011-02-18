@@ -199,6 +199,7 @@ template <typename T> struct Mat4
     static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
     static Mat4<T> perspective(T theta, T width, T height, T near, T far);
     static Mat4<T> translate(T x, T y, T z);
+    static Mat4<T> rotate(T theta, T x, T y, T z);
 
     inline Mat4<T> operator +(Mat4<T> const val) const
     {
