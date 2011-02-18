@@ -148,67 +148,18 @@ void Scene::Render() // XXX: rename to Blit()
     // XXX: end of debug stuff
 
 #if LOL_EXPERIMENTAL
-    GLuint uni;
+    GLuint uni, attr_pos, attr_tex;
     uni = stdshader->GetUniformLocation("model_matrix");
+    attr_pos = stdshader->GetAttribLocation("in_Position");
+    attr_tex = stdshader->GetAttribLocation("in_TexCoord");
+
     glUniformMatrix4fv(uni, 1, GL_FALSE, &model_matrix[0][0]);
-
-    float *vertices = new float[18];
-    vertices[0] = 0.0f; vertices[1] = 480.0f; vertices[2] = 0.0f;
-    vertices[3] = 640.0f; vertices[4] = 480.0f; vertices[5] = 0.0f;
-    vertices[6] = 0.0f; vertices[7] = 0.0f; vertices[8] = 0.0f;
-
-    vertices[9] = 640.0f; vertices[10] = 0.0f; vertices[11] = 0.0f;
-    vertices[12] = 0.0f; vertices[13] = 0.0f; vertices[14] = 0.0f;
-    vertices[15] = 640.0f; vertices[16] = 480.0f; vertices[17] = 0.0f;
-
-    const GLfloat colors[6][3] = {
-    {  0.0,  0.0,  1.0  },
-    {  1.0,  0.0,  0.0  },
-    {  0.0,  1.0,  0.0  },
-    {  1.0,  1.0,  0.0  },
-    {  0.0,  1.0,  0.0  },
-    {  1.0,  0.0,  0.0  } };
-
-    const GLfloat tex[6][2] = {
-    {  0.0,  0.0  },
-    {  1.0,  0.0  },
-    {  0.0,  1.0  },
-    {  1.0,  1.0  },
-    {  0.0,  1.0  },
-    {  1.0,  0.0  } };
-
-    GLuint vao, vbo[3], attr;
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    glGenBuffers(3, &vbo[0]);
-
-    attr = stdshader->GetAttribLocation("in_Position");
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attr);
-
-    attr = stdshader->GetAttribLocation("in_Color");
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
-    glVertexAttribPointer(attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attr);
-
-    attr = stdshader->GetAttribLocation("in_TexCoord");
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tex, GL_STATIC_DRAW);
-    glVertexAttribPointer(attr, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attr);
-
-    delete[] vertices;
-
-    stdshader->Bind();
-    glBindVertexArray(vao);
-    Tiler::Bind(1 << 16);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #else
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -219,6 +170,7 @@ void Scene::Render() // XXX: rename to Blit()
 
     glLoadIdentity();
     glMultMatrixf(&model_matrix[0][0]);
+#endif
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
@@ -246,6 +198,25 @@ void Scene::Render() // XXX: rename to Blit()
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
+#if LOL_EXPERIMENTAL
+        GLuint vao, vbo[2], attr;
+
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+        glGenBuffers(2, &vbo[0]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
+        glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(attr_pos);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+        glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat), texture, GL_STATIC_DRAW);
+        glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(attr_tex);
+
+        stdshader->Bind();
+#else
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -258,17 +229,21 @@ void Scene::Render() // XXX: rename to Blit()
         glBufferData(GL_ARRAY_BUFFER, 6 * 2 * (n - i) * sizeof(float),
                      texture, GL_DYNAMIC_DRAW);
         glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+#endif
 
         Tiler::Bind(data->tiles[i].code);
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
+#if LOL_EXPERIMENTAL
+        glBindVertexArray(0);
+#else
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 
         free(vertex);
         free(texture);
     }
-#endif
 
     free(data->tiles);
     data->tiles = 0;
