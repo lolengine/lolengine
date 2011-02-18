@@ -48,7 +48,7 @@ void SdlInput::TickGame(float deltams)
     Entity::TickGame(deltams);
 
     /* Handle mouse input */
-    int2 mouse;
+    vec2i mouse;
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
     {
         SDL_GetMouseState(&mouse.x, &mouse.y);

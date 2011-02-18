@@ -27,7 +27,7 @@ static inline float det3(float a, float b, float c,
          + c * (d * h - g * e);
 }
 
-static inline float cofact3(float4x4 const &mat, int i, int j)
+static inline float cofact3(mat4 const &mat, int i, int j)
 {
     return det3(mat[(i + 1) & 3][(j + 1) & 3],
                 mat[(i + 2) & 3][(j + 1) & 3],
@@ -40,7 +40,7 @@ static inline float cofact3(float4x4 const &mat, int i, int j)
                 mat[(i + 3) & 3][(j + 3) & 3]) * (((i + j) & 1) ? -1.0f : 1.0f);
 }
 
-template<> float float4x4::det() const
+template<> float mat4::det() const
 {
     float ret = 0;
     for (int n = 0; n < 4; n++)
@@ -48,9 +48,9 @@ template<> float float4x4::det() const
     return ret;
 }
 
-template<> float4x4 float4x4::invert() const
+template<> mat4 mat4::invert() const
 {
-    float4x4 ret;
+    mat4 ret;
     float d = det();
     if (d)
     {
@@ -62,14 +62,14 @@ template<> float4x4 float4x4::invert() const
     return ret;
 }
 
-template<> float4x4 float4x4::ortho(float left, float right, float bottom,
-                                    float top, float near, float far)
+template<> mat4 mat4::ortho(float left, float right, float bottom,
+                            float top, float near, float far)
 {
     float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
     float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
     float invfn = (far != near) ? 1.0f / (far - near) : 0.0f;
 
-    float4x4 ret(0.0f);
+    mat4 ret(0.0f);
     ret[0][0] = 2.0f * invrl;
     ret[1][1] = 2.0f * invtb;
     ret[2][2] = -2.0f * invfn;
@@ -80,14 +80,14 @@ template<> float4x4 float4x4::ortho(float left, float right, float bottom,
     return ret;
 }
 
-template<> float4x4 float4x4::frustum(float left, float right, float bottom,
-                                      float top, float near, float far)
+template<> mat4 mat4::frustum(float left, float right, float bottom,
+                              float top, float near, float far)
 {
     float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
     float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
     float invfn = (far != near) ? 1.0f / (far - near) : 0.0f;
 
-    float4x4 ret(0.0f);
+    mat4 ret(0.0f);
     ret[0][0] = 2.0f * near * invrl;
     ret[1][1] = 2.0f * near * invtb;
     ret[2][0] = (right + left) * invrl;
@@ -98,8 +98,8 @@ template<> float4x4 float4x4::frustum(float left, float right, float bottom,
     return ret;
 }
 
-template<> float4x4 float4x4::perspective(float theta, float width,
-                                          float height, float near, float far)
+template<> mat4 mat4::perspective(float theta, float width,
+                                  float height, float near, float far)
 {
     float t1 = tanf(theta / 2.0f);
     float t2 = t1 * height / width;
@@ -107,16 +107,16 @@ template<> float4x4 float4x4::perspective(float theta, float width,
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
 }
 
-template<> float4x4 float4x4::translate(float x, float y, float z)
+template<> mat4 mat4::translate(float x, float y, float z)
 {
-    float4x4 ret(1.0f);
+    mat4 ret(1.0f);
     ret[3][0] = x;
     ret[3][1] = y;
     ret[3][2] = z;
     return ret;
 }
 
-template<> float4x4 float4x4::rotate(float theta, float x, float y, float z)
+template<> mat4 mat4::rotate(float theta, float x, float y, float z)
 {
     float st = sinf(theta);
     float ct = cosf(theta);
@@ -131,7 +131,7 @@ template<> float4x4 float4x4::rotate(float theta, float x, float y, float z)
     float mty = (1.0f - ct) * y;
     float mtz = (1.0f - ct) * z;
 
-    float4x4 ret(1.0f);
+    mat4 ret(1.0f);
 
     ret[0][0] = x * mtx + ct;
     ret[0][1] = x * mty + st * z;

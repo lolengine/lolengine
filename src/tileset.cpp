@@ -42,7 +42,7 @@ class TileSetData
 private:
     char *name, *path;
     int *tiles, ntiles;
-    int2 size, count;
+    vec2i size, count;
     float dilate, tx, ty;
 
     SDL_Surface *img;
@@ -53,7 +53,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, int2 size, int2 count, float dilate)
+TileSet::TileSet(char const *path, vec2i size, vec2i count, float dilate)
   : data(new TileSetData())
 {
     data->name = (char *)malloc(10 + strlen(path) + 1);
@@ -80,7 +80,7 @@ TileSet::TileSet(char const *path, int2 size, int2 count, float dilate)
     if (count.i > 0 && count.j > 0)
     {
         data->count = count;
-        data->size = int2(data->img->w, data->img->h) / count;
+        data->size = vec2i(data->img->w, data->img->h) / count;
     }
     else
     {
@@ -157,12 +157,12 @@ char const *TileSet::GetName()
     return data->name;
 }
 
-int2 TileSet::GetSize() const
+vec2i TileSet::GetSize() const
 {
     return data->size;
 }
 
-int2 TileSet::GetCount() const
+vec2i TileSet::GetCount() const
 {
     return data->count;
 }

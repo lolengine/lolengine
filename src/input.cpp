@@ -37,8 +37,8 @@ public:
     { }
 
 private:
-    int2 mouse;
-    int3 buttons;
+    vec2i mouse;
+    vec3i buttons;
 
     static int const MAX_ENTITIES = 100;
     WorldEntity *entities[MAX_ENTITIES];
@@ -53,10 +53,10 @@ static InputData * const data = &inputdata;
  * Public Input class
  */
 
-float2 Input::GetAxis(int axis)
+vec2 Input::GetAxis(int axis)
 {
     float invsqrt2 = sqrtf(0.5f);
-    float2 f;
+    vec2 f;
 
     /* Simulate a joystick using the keyboard. This SDL call is free. */
     Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -70,12 +70,12 @@ float2 Input::GetAxis(int axis)
     return f;
 }
 
-int2 Input::GetMousePos()
+vec2i Input::GetMousePos()
 {
     return data->mouse;
 }
 
-int3 Input::GetMouseButtons()
+vec3i Input::GetMouseButtons()
 {
     return data->buttons;
 }
@@ -101,7 +101,7 @@ void Input::UntrackMouse(WorldEntity *e)
     }
 }
 
-void Input::SetMousePos(int2 coord)
+void Input::SetMousePos(vec2i coord)
 {
     data->mouse = coord;
 
@@ -123,7 +123,7 @@ void Input::SetMousePos(int2 coord)
     {
         if (data->entities[n] == best)
         {
-            data->entities[n]->mousepos = (int2)((int3)coord - best->bbox[0]);
+            data->entities[n]->mousepos = (vec2i)((vec3i)coord - best->bbox[0]);
             if (best != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else
@@ -131,7 +131,7 @@ void Input::SetMousePos(int2 coord)
         }
         else
         {
-            data->entities[n]->mousepos = int2(-1);
+            data->entities[n]->mousepos = vec2i(-1);
             /* FIXME */
             data->entities[n]->released = 0;
             data->entities[n]->pressed = 0;

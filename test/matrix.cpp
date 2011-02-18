@@ -32,15 +32,15 @@ public:
 
     void setUp()
     {
-        identity = float4x4(1.0f);
-        triangular = float4x4(float4(1.0f, 0.0f, 0.0f, 0.0f),
-                              float4(7.0f, 2.0f, 0.0f, 0.0f),
-                              float4(1.0f, 5.0f, 3.0f, 0.0f),
-                              float4(8.0f, 9.0f, 2.0f, 4.0f));
-        invertible = float4x4(float4( 1.0f,  1.0f,  2.0f, -1.0f),
-                              float4(-2.0f, -1.0f, -2.0f,  2.0f),
-                              float4( 4.0f,  2.0f,  5.0f, -4.0f),
-                              float4( 5.0f, -3.0f, -7.0f, -6.0f));
+        identity = mat4(1.0f);
+        triangular = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+                          vec4(7.0f, 2.0f, 0.0f, 0.0f),
+                          vec4(1.0f, 5.0f, 3.0f, 0.0f),
+                          vec4(8.0f, 9.0f, 2.0f, 4.0f));
+        invertible = mat4(vec4( 1.0f,  1.0f,  2.0f, -1.0f),
+                          vec4(-2.0f, -1.0f, -2.0f,  2.0f),
+                          vec4( 4.0f,  2.0f,  5.0f, -4.0f),
+                          vec4( 5.0f, -3.0f, -7.0f, -6.0f));
     }
 
     void tearDown() {}
@@ -55,9 +55,9 @@ public:
 
     void test_mat_mul()
     {
-        float4x4 m0 = identity;
-        float4x4 m1 = identity;
-        float4x4 m2 = m0 * m1;
+        mat4 m0 = identity;
+        mat4 m1 = identity;
+        mat4 m2 = m0 * m1;
 
         CPPUNIT_ASSERT(m2[0][0] == 1.0f);
         CPPUNIT_ASSERT(m2[1][0] == 0.0f);
@@ -82,10 +82,10 @@ public:
 
     void test_mat_inv()
     {
-        float4x4 m0 = invertible;
-        float4x4 m1 = m0.invert();
+        mat4 m0 = invertible;
+        mat4 m1 = m0.invert();
 
-        float4x4 m2 = m0 * m1;
+        mat4 m2 = m0 * m1;
 
         CPPUNIT_ASSERT(m2[0][0] == 1.0f);
         CPPUNIT_ASSERT(m2[1][0] == 0.0f);
@@ -109,7 +109,7 @@ public:
     }
 
 private:
-    float4x4 triangular, identity, invertible;
+    mat4 triangular, identity, invertible;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);

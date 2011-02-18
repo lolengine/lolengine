@@ -21,14 +21,14 @@
 class WorldEntity : public Entity
 {
 public:
-    float3 position;
-    float3 rotation;
-    float3 velocity;
-    float3 bbox[2];
+    vec3 position;
+    vec3 rotation;
+    vec3 velocity;
+    vec3 bbox[2];
 
-    int2 mousepos;
-    int3 mousebuttons;
-    int3 pressed, clicked, released;
+    vec2i mousepos;
+    vec3i mousebuttons;
+    vec3i pressed, clicked, released;
 
 protected:
     WorldEntity();

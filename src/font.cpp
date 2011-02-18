@@ -28,7 +28,7 @@ class FontData
 private:
     char *name;
     int tiler;
-    int2 size;
+    vec2i size;
 };
 
 /*
@@ -64,7 +64,7 @@ char const *Font::GetName()
     return data->name;
 }
 
-void Font::Print(int3 pos, char const *str)
+void Font::Print(vec3i pos, char const *str)
 {
     Scene *scene = Scene::GetDefault();
 
@@ -80,7 +80,7 @@ void Font::Print(int3 pos, char const *str)
     }
 }
 
-int2 Font::GetSize() const
+vec2i Font::GetSize() const
 {
     return data->size;
 }
