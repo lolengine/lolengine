@@ -62,6 +62,24 @@ template<> float4x4 float4x4::invert() const
     return ret;
 }
 
+template<> float4x4 float4x4::ortho(float left, float right, float bottom,
+                                    float top, float near, float far)
+{
+    float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
+    float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
+    float invfn = (far != near) ? 1.0f / (far - near) : 0.0f;
+
+    float4x4 ret(0.0f);
+    ret[0][0] = 2.0f * invrl;
+    ret[1][1] = 2.0f * invtb;
+    ret[2][2] = -2.0f * invfn;
+    ret[3][0] = - (right + left) * invrl;
+    ret[3][1] = - (top + bottom) * invtb;
+    ret[3][2] = - (far + near) * invfn;
+    ret[3][3] = 1.0f;
+    return ret;
+}
+
 template<> float4x4 float4x4::frustum(float left, float right, float bottom,
                                       float top, float near, float far)
 {
@@ -87,5 +105,14 @@ template<> float4x4 float4x4::perspective(float theta, float width,
     float t2 = t1 * height / width;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
+}
+
+template<> float4x4 float4x4::translate(float x, float y, float z)
+{
+    float4x4 ret(1.0f);
+    ret[3][0] = x;
+    ret[3][1] = y;
+    ret[3][2] = z;
+    return ret;
 }
 
