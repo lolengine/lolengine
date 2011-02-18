@@ -23,10 +23,10 @@ class EmitterData;
 class Emitter : public Entity
 {
 public:
-    Emitter(int tiler, float3 gravity);
+    Emitter(int tiler, vec3 gravity);
     virtual ~Emitter();
 
-    void AddParticle(int id, float3 pos, float3 vel);
+    void AddParticle(int id, vec3 pos, vec3 vel);
 
 protected:
     virtual void TickGame(float deltams);

@@ -33,8 +33,8 @@ protected:
 
 public:
     /* New methods */
-    void Print(int3 pos, char const *str);
-    int2 GetSize() const;
+    void Print(vec3i pos, char const *str);
+    vec2i GetSize() const;
 
 private:
     FontData *data;

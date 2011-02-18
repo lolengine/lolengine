@@ -29,10 +29,10 @@ class EmitterData
 
 private:
     int tiler;
-    float3 gravity;
+    vec3 gravity;
     int particles[MAX_PARTICLES];
-    float3 positions[MAX_PARTICLES];
-    float3 velocities[MAX_PARTICLES];
+    vec3 positions[MAX_PARTICLES];
+    vec3 velocities[MAX_PARTICLES];
     int nparticles;
 };
 
@@ -40,7 +40,7 @@ private:
  * Public Emitter class
  */
 
-Emitter::Emitter(int tiler, float3 gravity)
+Emitter::Emitter(int tiler, vec3 gravity)
   : data(new EmitterData())
 {
     data->tiler = tiler;
@@ -77,7 +77,7 @@ void Emitter::TickDraw(float deltams)
                                      data->positions[i].z, 0);
 }
 
-void Emitter::AddParticle(int id, float3 pos, float3 vel)
+void Emitter::AddParticle(int id, vec3 pos, vec3 vel)
 {
     if (data->nparticles >= EmitterData::MAX_PARTICLES)
         return;

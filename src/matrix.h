@@ -278,15 +278,5 @@ template <typename T> struct Mat4
 typedef Mat4<float> mat4;
 typedef Mat4<int> mat4i;
 
-/* Aliases for deprecated stuff */
-typedef Vec2<float> float2;
-typedef Vec2<int> int2;
-typedef Vec3<float> float3;
-typedef Vec3<int> int3;
-typedef Vec4<float> float4;
-typedef Vec4<int> int4;
-typedef Mat4<float> float4x4;
-typedef Mat4<int> int4x4;
-
 #endif // __DH_MATRIX_H__
 

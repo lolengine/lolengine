@@ -29,7 +29,7 @@ class TextData
 private:
     int font, align, length;
     char *text;
-    int3 pos;
+    vec3i pos;
 };
 
 /*
@@ -42,7 +42,7 @@ Text::Text(char const *text, char const *font)
     data->font = Forge::Register(font);
     data->text = text ? strdup(text) : NULL;
     data->length = text ? strlen(text) : 0;
-    data->pos = int3(0, 0, 0);
+    data->pos = vec3i(0, 0, 0);
 
     drawgroup = DRAWGROUP_HUD;
 }
@@ -65,7 +65,7 @@ void Text::SetInt(int val)
     data->length = strlen(text);
 }
 
-void Text::SetPos(int3 pos)
+void Text::SetPos(vec3i pos)
 {
     data->pos = pos;
 }
@@ -82,7 +82,7 @@ void Text::TickDraw(float deltams)
     if (data->text)
     {
         Font *font = Forge::GetFont(data->font);
-        int3 delta = 0;
+        vec3i delta = 0;
         if (data->align == ALIGN_RIGHT)
             delta.x -= data->length * font->GetSize().x;
         else if (data->align == ALIGN_CENTER)

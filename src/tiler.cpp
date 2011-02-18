@@ -45,7 +45,7 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-int Tiler::Register(char const *path, int2 size, int2 count, float dilate)
+int Tiler::Register(char const *path, vec2i size, vec2i count, float dilate)
 {
     int id = data->tilesets.MakeSlot(path);
 
@@ -67,7 +67,7 @@ void Tiler::Deregister(int id)
     data->tilesets.RemoveSlot(id - 1); /* ID 0 is for the empty tileset */
 }
 
-int2 Tiler::GetSize(int id)
+vec2i Tiler::GetSize(int id)
 {
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
 #if !LOL_RELEASE
@@ -80,7 +80,7 @@ int2 Tiler::GetSize(int id)
     return tileset->GetSize();
 }
 
-int2 Tiler::GetCount(int id)
+vec2i Tiler::GetCount(int id)
 {
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
 #if !LOL_RELEASE

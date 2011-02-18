@@ -24,16 +24,16 @@ class Input
 {
 public:
     /* These methods are general queries */
-    static float2 GetAxis(int axis);
-    static int2 GetMousePos();
-    static int3 GetMouseButtons();
+    static vec2 GetAxis(int axis);
+    static vec2i GetMousePos();
+    static vec3i GetMouseButtons();
 
     /* Entities can subscribe to events */
     static void TrackMouse(WorldEntity *e);
     static void UntrackMouse(WorldEntity *e);
 
     /* These methods are called by the underlying input listeners */
-    static void SetMousePos(int2 coord);
+    static void SetMousePos(vec2i coord);
     static void SetMouseButton(int index);
     static void UnsetMouseButton(int index);
 };

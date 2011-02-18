@@ -38,7 +38,7 @@ struct Tile
 #if LOL_EXPERIMENTAL
 extern Shader *stdshader;
 #endif
-extern float4x4 projection_matrix, view_matrix, model_matrix;
+extern mat4 projection_matrix, view_matrix, model_matrix;
 
 /*
  * Scene implementation class
@@ -136,15 +136,15 @@ void Scene::Render() // XXX: rename to Blit()
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
-    model_matrix = float4x4::translate(320.0f, 240.0f, 0.0f);
-    model_matrix *= float4x4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
+    model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
+    model_matrix *= mat4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
 #if 0
     static float f = 0.0f;
     f += 0.01f;
-    model_matrix *= float4x4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
-    model_matrix *= float4x4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
+    model_matrix *= mat4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
+    model_matrix *= mat4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
-    model_matrix *= float4x4::translate(-320.0f, -240.0f, 0.0f);
+    model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
 #if LOL_EXPERIMENTAL

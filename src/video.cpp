@@ -31,7 +31,7 @@
 #if LOL_EXPERIMENTAL
 Shader *stdshader;
 #endif
-float4x4 projection_matrix, view_matrix, model_matrix;
+mat4 projection_matrix, view_matrix, model_matrix;
 
 #if LOL_EXPERIMENTAL
 static char const *vertexshader =
@@ -92,7 +92,7 @@ void Video::SetFov(float theta)
 {
 #undef near /* Fuck Microsoft */
 #undef far /* Fuck Microsoft again */
-    float4x4 proj;
+    mat4 proj;
 
     float width = GetWidth();
     float height = GetHeight();
@@ -103,7 +103,7 @@ void Video::SetFov(float theta)
     if (theta < 1e-4f)
     {
         /* The easy way: purely orthogonal projection. */
-        proj = float4x4::ortho(0, width, 0, height, near, far);
+        proj = mat4::ortho(0, width, 0, height, near, far);
     }
     else
     {
@@ -123,14 +123,14 @@ void Video::SetFov(float theta)
             near = 1.0f;
         }
 
-        proj = float4x4::frustum(-near * t1, near * t1,
-                                 -near * t2, near * t2, near, far)
-             * float4x4::translate(-0.5f * width, -0.5f * height, -dist);
+        proj = mat4::frustum(-near * t1, near * t1,
+                             -near * t2, near * t2, near, far)
+             * mat4::translate(-0.5f * width, -0.5f * height, -dist);
     }
 
 #if LOL_EXPERIMENTAL
     projection_matrix = proj;
-    view_matrix = float4x4(1.0f);
+    view_matrix = mat4(1.0f);
 #else
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
