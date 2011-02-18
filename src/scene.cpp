@@ -137,14 +137,14 @@ void Scene::Render() // XXX: rename to Blit()
 
     // XXX: debug stuff
     model_matrix = float4x4::translate(320.0f, 240.0f, 0.0f);
-    model_matrix = model_matrix * float4x4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
+    model_matrix *= float4x4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
 #if 0
     static float f = 0.0f;
     f += 0.01f;
-    model_matrix = model_matrix * float4x4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
-    model_matrix = model_matrix * float4x4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
+    model_matrix *= float4x4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
+    model_matrix *= float4x4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
-    model_matrix = model_matrix * float4x4::translate(-320.0f, -240.0f, 0.0f);
+    model_matrix *= float4x4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
 #if LOL_EXPERIMENTAL

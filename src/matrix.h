@@ -26,6 +26,12 @@
         for (int n = 0; n < elems; n++) \
             ret[n] = (*this)[n] op val[n]; \
         return ret; \
+    } \
+    \
+    template<typename U> \
+    inline Vec##elems<T> operator op##=(Vec##elems<U> const &val) \
+    { \
+        return *this = (*this) op val; \
     }
 
 #define BOOL_OP(elems, op, ret) \
@@ -44,6 +50,11 @@
         for (int n = 0; n < elems; n++) \
             ret[n] = (*this)[n] op val; \
         return ret; \
+    } \
+    \
+    inline Vec##elems<T> operator op##=(T const &val) \
+    { \
+        return *this = (*this) op val; \
     }
 
 #define CAST_OP(elems, dest) \
@@ -114,8 +125,8 @@ template <typename T> struct Vec2
     union { T y; T b; T j; };
 };
 
-typedef Vec2<float> float2;
-typedef Vec2<int> int2;
+typedef Vec2<float> vec2;
+typedef Vec2<int> vec2i;
 
 template <typename T> struct Vec3
 {
@@ -130,8 +141,8 @@ template <typename T> struct Vec3
     union { T z; T c; T k; };
 };
 
-typedef Vec3<float> float3;
-typedef Vec3<int> int3;
+typedef Vec3<float> vec3;
+typedef Vec3<int> vec3i;
 
 template <typename T> struct Vec4
 {
@@ -147,8 +158,8 @@ template <typename T> struct Vec4
     union { T w; T d; T l; };
 };
 
-typedef Vec4<float> float4;
-typedef Vec4<int> int4;
+typedef Vec4<float> vec4;
+typedef Vec4<int> vec4i;
 
 #define SCALAR_GLOBAL(elems, op, U) \
     template<typename T> \
@@ -210,6 +221,11 @@ template <typename T> struct Mat4
         return ret;
     }
 
+    inline Mat4<T> operator +=(Mat4<T> const val)
+    {
+        return *this = *this + val;
+    }
+
     inline Mat4<T> operator -(Mat4<T> const val) const
     {
         Mat4<T> ret;
@@ -217,6 +233,11 @@ template <typename T> struct Mat4
             for (int i = 0; i < 4; i++)
                 ret[i][j] = v[i][j] - val[i][j];
         return ret;
+    }
+
+    inline Mat4<T> operator -=(Mat4<T> const val)
+    {
+        return *this = *this - val;
     }
 
     inline Mat4<T> operator *(Mat4<T> const val) const
@@ -231,6 +252,11 @@ template <typename T> struct Mat4
                 ret[i][j] = tmp;
             }
         return ret;
+    }
+
+    inline Mat4<T> operator *=(Mat4<T> const val)
+    {
+        return *this = *this * val;
     }
 
     inline Vec4<T> operator *(Vec4<T> const val) const
@@ -249,6 +275,16 @@ template <typename T> struct Mat4
     Vec4<T> v[4];
 };
 
+typedef Mat4<float> mat4;
+typedef Mat4<int> mat4i;
+
+/* Aliases for deprecated stuff */
+typedef Vec2<float> float2;
+typedef Vec2<int> int2;
+typedef Vec3<float> float3;
+typedef Vec3<int> int3;
+typedef Vec4<float> float4;
+typedef Vec4<int> int4;
 typedef Mat4<float> float4x4;
 typedef Mat4<int> int4x4;
 
