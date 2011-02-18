@@ -38,6 +38,7 @@ struct Tile
 #if LOL_EXPERIMENTAL
 extern Shader *stdshader;
 #endif
+extern float4x4 projection_matrix, view_matrix, model_matrix;
 
 /*
  * Scene implementation class
@@ -134,15 +135,31 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
-#if LOL_EXPERIMENTAL
-    float *vertices = new float[18];
-    vertices[0] = -0.5f; vertices[1] = 0.5f; vertices[2] = 0.0f;
-    vertices[3] = 0.5f; vertices[4] = 0.5f; vertices[5] = 0.0f;
-    vertices[6] = -0.5f; vertices[7] = -0.5f; vertices[8] = 0.0f;
+    // XXX: debug stuff
+    model_matrix = float4x4::translate(320.0f, 240.0f, 0.0f);
+    model_matrix = model_matrix * float4x4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
+#if 0
+    static float f = 0.0f;
+    f += 0.01f;
+    model_matrix = model_matrix * float4x4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
+    model_matrix = model_matrix * float4x4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
+#endif
+    model_matrix = model_matrix * float4x4::translate(-320.0f, -240.0f, 0.0f);
+    // XXX: end of debug stuff
 
-    vertices[9] = 0.5f; vertices[10] = -0.5f; vertices[11] = 0.0f;
-    vertices[12] = -0.5f; vertices[13] = -0.5f; vertices[14] = 0.0f;
-    vertices[15] = 0.5f; vertices[16] = 0.5f; vertices[17] = 0.0f;
+#if LOL_EXPERIMENTAL
+    GLuint uni;
+    uni = stdshader->GetUniformLocation("model_matrix");
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &model_matrix[0][0]);
+
+    float *vertices = new float[18];
+    vertices[0] = 0.0f; vertices[1] = 480.0f; vertices[2] = 0.0f;
+    vertices[3] = 640.0f; vertices[4] = 480.0f; vertices[5] = 0.0f;
+    vertices[6] = 0.0f; vertices[7] = 0.0f; vertices[8] = 0.0f;
+
+    vertices[9] = 640.0f; vertices[10] = 0.0f; vertices[11] = 0.0f;
+    vertices[12] = 0.0f; vertices[13] = 0.0f; vertices[14] = 0.0f;
+    vertices[15] = 640.0f; vertices[16] = 480.0f; vertices[17] = 0.0f;
 
     const GLfloat colors[6][3] = {
     {  0.0,  0.0,  1.0  },
@@ -193,18 +210,8 @@ void Scene::Render() // XXX: rename to Blit()
     glBindVertexArray(0);
 
 #else
-    // XXX: debug stuff
-    glPushMatrix();
-    static float f = 0.0f;
-    f += 0.05f;
-    glTranslatef(320.0f, 240.0f, 0.0f);
-    glRotatef(-data->angle, 1.0f, 0.0f, 0.0f);
-#if 0
-    glRotatef(3.0f * sinf(f), 1.0f, 0.0f, 0.0f);
-    glRotatef(8.0f * cosf(f), 0.0f, 0.0f, 1.0f);
-#endif
-    glTranslatef(-320.0f, -240.0f, 0.0f);
-    // XXX: end of debug stuff
+    glLoadIdentity();
+    glMultMatrixf(&model_matrix[0][0]);
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
@@ -254,8 +261,6 @@ void Scene::Render() // XXX: rename to Blit()
         free(vertex);
         free(texture);
     }
-
-    glPopMatrix();
 #endif
 
     free(data->tiles);
