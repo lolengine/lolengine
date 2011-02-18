@@ -62,8 +62,9 @@ static char const *fragmentshader =
     "\n"
     "void main()\n"
     "{\n"
-    "    gl_FragColor = 0.5 * (texture2D(in_Texture, vec2(gl_TexCoord[0]))\n"
-    "                           + vec4(pass_Color, 1.0));\n"
+    //"    gl_FragColor = 0.5 * (texture2D(in_Texture, vec2(gl_TexCoord[0]))\n"
+    //"                           + vec4(pass_Color, 1.0));\n"
+    "    gl_FragColor = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
     "}\n";
 #endif
 
