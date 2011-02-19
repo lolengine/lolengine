@@ -44,6 +44,16 @@ private:
  * Public Shader class
  */
 
+Shader *Shader::Create(char const *vert, char const *frag)
+{
+    return new Shader(vert, frag);
+}
+
+void Shader::Destroy(Shader *shader)
+{
+    delete shader;
+}
+
 Shader::Shader(char const *vert, char const *frag)
   : data(new ShaderData())
 {
@@ -76,7 +86,7 @@ Shader::Shader(char const *vert, char const *frag)
 
 int Shader::GetAttribLocation(char const *attr) const
 {
-    return glGetAttribLocation(data->prog_id, attr);    
+    return glGetAttribLocation(data->prog_id, attr);
 }
 
 int Shader::GetUniformLocation(char const *uni) const

@@ -85,7 +85,7 @@ void Video::Setup(int width, int height)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 #if LOL_EXPERIMENTAL
-    stdshader = new Shader(vertexshader, fragmentshader);
+    stdshader = Shader::Create(vertexshader, fragmentshader);
 #endif
 }
 
@@ -168,7 +168,7 @@ void Video::Clear()
 void Video::Destroy()
 {
 #if LOL_EXPERIMENTAL
-    delete stdshader;
+    Shader::Destroy(stdshader);
 #endif
 }
 
