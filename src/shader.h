@@ -10,7 +10,7 @@
 
 //
 // The Shader class
-// --------------
+// ----------------
 //
 
 #if !defined __DH_SHADER_H__
@@ -21,13 +21,17 @@ class ShaderData;
 class Shader
 {
 public:
-    Shader(char const *vert, char const *frag);
-    ~Shader();
+    static Shader *Create(char const *vert, char const *frag);
+    static void Destroy(Shader *shader);
 
     int GetAttribLocation(char const *attr) const;
     int GetUniformLocation(char const *uni) const;
 
     void Bind() const;
+
+protected:
+    Shader(char const *vert, char const *frag);
+    ~Shader();
 
 private:
     ShaderData *data;
