@@ -39,6 +39,7 @@
 #include "world.h"
 
 // Other objects
+#include "hash.h"
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
