@@ -28,6 +28,7 @@
     <ClInclude Include="..\src\hash.h" />
     <ClInclude Include="..\src\input.h" />
     <ClInclude Include="..\src\layer.h" />
+    <ClInclude Include="..\src\lolgl.h" />
     <ClInclude Include="..\src\map.h" />
     <ClInclude Include="..\src\matrix.h" />
     <ClInclude Include="..\src\numeric.h" />

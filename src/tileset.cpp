@@ -19,17 +19,12 @@
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #endif
-#if defined __APPLE__ && defined __MACH__
-#   include <OpenGL/gl.h>
-#else
-#   define GL_GLEXT_PROTOTYPES
-#   include <GL/gl.h>
-#endif
 
 #include <SDL.h>
 #include <SDL_image.h>
 
 #include "core.h"
+#include "lolgl.h"
 
 /*
  * TileSet implementation class

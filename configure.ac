@@ -76,6 +76,28 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Ws
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 
+# Which version of OpenGL to use?
+ac_cv_my_have_gl="no"
+PKG_CHECK_MODULES(GLES1, glesv1_cm,
+ [ac_cv_my_have_gl="yes"
+  AC_DEFINE(HAVE_GLES_1X, 1, Define to 1 if GLES 1.x is available)
+  GL_CFLAGS="${GLES1_CFLAGS}"
+  GL_LIBS="${GLES1_LIBS}"],
+ [:])
+PKG_CHECK_MODULES(GLES2, glesv2,
+ [ac_cv_my_have_gl="yes"
+  AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+  GL_CFLAGS="${GLES2_CFLAGS}"
+  GL_LIBS="${GLES2_LIBS}"],
+ [:])
+AC_CHECK_LIB(GL, glLoadIdentity,
+ [ac_cv_my_have_gl="yes"
+  AC_DEFINE(HAVE_GL_1X, 1, Define to 1 if GL 1.x is available)
+  GL_LIBS="-lGL"]) # FIXME: hackish
+if test "${ac_cv_my_have_gl}" = "no"; then
+  AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
+fi
+
 # Use SDL? (always required)
 ac_cv_my_have_sdl="yes"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
@@ -83,17 +105,18 @@ if test "${SDL_CONFIG}" != "no"; then
   SDL_CFLAGS="${SDL_CFLAGS} `sdl-config --cflags`"
   SDL_LIBS="${SDL_LIBS} `sdl-config --libs`"
 fi
+SDL_CFLAGS="${SDL_CFLAGS} ${GL_CFLAGS}"
+SDL_LIBS="${SDL_LIBS} ${GL_LIBS}"
 PKG_CHECK_MODULES(SDL, sdl, [:],
  [SDL_LIBS="${SDL_LIBS} -lSDL"])
-AC_CHECK_LIB(GL, glLoadIdentity, SDL_LIBS="${SDL_LIBS} -lGL") # FIXME: hackish
 PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [:],
  [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"])
 PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [:],
  [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"])
-save_CPPFLAGS="${CPPFLAGS}"
 SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
 SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
 
+save_CPPFLAGS="${CPPFLAGS}"
 CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
 AC_CHECK_HEADERS(SDL_mixer.h, [:], [ac_cv_my_have_sdl="no"])
 AC_CHECK_HEADERS(SDL_image.h, [:], [ac_cv_my_have_sdl="no"])
