@@ -89,6 +89,7 @@ Scene::~Scene()
     /* FIXME: this must be done while the GL context is still active.
      * Change the architecture to make sure of that. */
     glDeleteBuffers(data->nbufs, data->bufs);
+    free(data->bufs);
     delete data;
 }
 
@@ -199,36 +200,37 @@ void Scene::Render() // XXX: rename to Blit()
         }
 
 #if LOL_EXPERIMENTAL
-        GLuint vao, vbo[2], attr;
+        GLuint vao;
 
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
-        glGenBuffers(2, &vbo[0]);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
-        glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(attr_pos);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-        glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat), texture, GL_STATIC_DRAW);
-        glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(attr_tex);
-
-        stdshader->Bind();
 #else
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
-        glBufferData(GL_ARRAY_BUFFER, 6 * 3 * (n - i) * sizeof(float),
-                     vertex, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
+                     vertex, GL_STATIC_DRAW);
+#if LOL_EXPERIMENTAL
+        glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(attr_pos);
+#else
         glVertexPointer(3, GL_FLOAT, 0, NULL);
+#endif
 
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
-        glBufferData(GL_ARRAY_BUFFER, 6 * 2 * (n - i) * sizeof(float),
-                     texture, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
+                     texture, GL_STATIC_DRAW);
+#if LOL_EXPERIMENTAL
+        glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(attr_tex);
+#else
         glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+#endif
+
+#if LOL_EXPERIMENTAL
+        stdshader->Bind();
 #endif
 
         Tiler::Bind(data->tiles[i].code);
