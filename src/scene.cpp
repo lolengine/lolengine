@@ -61,6 +61,9 @@ private:
     int ntiles;
     float angle;
 
+#if LOL_EXPERIMENTAL
+    GLuint vao;
+#endif
     GLuint *bufs;
     int nbufs;
 
@@ -82,6 +85,10 @@ Scene::Scene(float angle)
 
     data->bufs = 0;
     data->nbufs = 0;
+
+#if LOL_EXPERIMENTAL
+    glGenVertexArrays(1, &data->vao);
+#endif
 }
 
 Scene::~Scene()
@@ -89,6 +96,9 @@ Scene::~Scene()
     /* FIXME: this must be done while the GL context is still active.
      * Change the architecture to make sure of that. */
     glDeleteBuffers(data->nbufs, data->bufs);
+#if LOL_EXPERIMENTAL
+    glDeleteVertexArrays(1, &data->vao);
+#endif
     free(data->bufs);
     delete data;
 }
@@ -200,10 +210,7 @@ void Scene::Render() // XXX: rename to Blit()
         }
 
 #if LOL_EXPERIMENTAL
-        GLuint vao;
-
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        glBindVertexArray(data->vao);
 #else
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
