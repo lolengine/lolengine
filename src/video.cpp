@@ -53,7 +53,7 @@ static char const *fragmentshader =
     "\n"
     "uniform sampler2D in_Texture;\n"
     //"in vec3 pass_Color;\n"
-    "out vec4 out_Color;\n"
+    //"out vec4 out_Color;\n"
     "\n"
     "void main()\n"
     "{\n"

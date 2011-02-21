@@ -208,11 +208,10 @@ void Scene::Render() // XXX: rename to Blit()
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
+#   if !defined HAVE_GLES_2X
         glBindVertexArray(data->vao);
-        glEnableVertexAttribArray(attr_pos);
-        glEnableVertexAttribArray(attr_tex);
-#elif defined HAVE_GLES_2X
+#   endif
         glEnableVertexAttribArray(attr_pos);
         glEnableVertexAttribArray(attr_tex);
 #else
@@ -220,14 +219,11 @@ void Scene::Render() // XXX: rename to Blit()
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
         glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
                      vertex, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
-#elif defined HAVE_GLES_2X
-        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
-        glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, vertex);
 #elif defined HAVE_GL_1X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
         glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
@@ -237,14 +233,11 @@ void Scene::Render() // XXX: rename to Blit()
         glVertexPointer(3, GL_FLOAT, 0, vertex);
 #endif
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#elif defined HAVE_GLES_2X
-        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
-        glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, texture);
 #elif defined HAVE_GL_1X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
@@ -261,11 +254,10 @@ void Scene::Render() // XXX: rename to Blit()
         Tiler::Bind(data->tiles[i].code);
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
+#   if !defined HAVE_GLES_2X
         glBindVertexArray(0);
-        glDisableVertexAttribArray(attr_pos);
-        glDisableVertexAttribArray(attr_tex);
-#elif defined HAVE_GLES_2X
+#   endif
         glDisableVertexAttribArray(attr_pos);
         glDisableVertexAttribArray(attr_tex);
 #else
