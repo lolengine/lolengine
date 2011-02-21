@@ -8,27 +8,29 @@
 //   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+//
+// The SdlApp class
+// ----------------
+//
 
-#include <cmath>
+#if !defined __DH_SDLAPP_H__
+#define __DH_SDLAPP_H__
 
-#if defined USE_SDL
-#   include <SDL.h>
-#   include <SDL_mixer.h>
-#endif
+#include "matrix.h"
 
-#include "core.h"
+class SdlAppData;
 
-/*
- * Public Audio class
- */
-
-void Audio::Setup(int channels)
+class SdlApp
 {
-#if defined USE_SDL
-    Mix_OpenAudio(22050, AUDIO_S16, channels, 1024);
-#endif
-}
+public:
+    SdlApp(char const *title, vec2i res, float fps);
+    virtual ~SdlApp();
+
+    void Run();
+
+private:
+    SdlAppData *data;
+};
+
+#endif // __DH_SDLAPP_H__
 

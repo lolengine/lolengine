@@ -12,11 +12,13 @@
 #   include "config.h"
 #endif
 
-#include <SDL.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+
+#if defined USE_SDL
+#   include <SDL.h>
+#endif
 
 #include "core.h"
 
@@ -56,18 +58,22 @@ static InputData * const data = &inputdata;
 vec2 Input::GetAxis(int axis)
 {
     float invsqrt2 = sqrtf(0.5f);
-    vec2 f;
+    vec2 ret;
 
+#if defined USE_SDL
     /* Simulate a joystick using the keyboard. This SDL call is free. */
     Uint8 *keystate = SDL_GetKeyState(NULL);
     int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
     int up = (keystate[SDLK_w] | keystate[SDLK_z]) - keystate[SDLK_s] ;
-    f.x += left;
-    f.y += up;
+    ret.x += left;
+    ret.y += up;
     if (left && up)
-        f = f * invsqrt2;
+        ret = ret * invsqrt2;
+#else
+    ret = 0;
+#endif
 
-    return f;
+    return ret;
 }
 
 vec2i Input::GetMousePos()

@@ -13,10 +13,13 @@
 #endif
 
 #include <cstdlib>
+#include <cstdio>
 #include <cmath>
 
-#include <SDL.h>
-#include <SDL_mixer.h>
+#if defined USE_SDL
+#   include <SDL.h>
+#   include <SDL_mixer.h>
+#endif
 
 #include "core.h"
 
@@ -30,7 +33,9 @@ class SampleData
 
 private:
     char *name, *path;
+#if defined USE_SDL
     Mix_Chunk *chunk;
+#endif
 };
 
 /*
@@ -44,6 +49,7 @@ Sample::Sample(char const *path)
     data->path = data->name + 9;
     sprintf(data->name, "<sample> %s", path);
 
+#if defined USE_SDL
     data->chunk = Mix_LoadWAV(path);
     if (!data->chunk)
     {
@@ -53,11 +59,14 @@ Sample::Sample(char const *path)
         SDL_Quit();
         exit(1);
     }
+#endif
 }
 
 Sample::~Sample()
 {
+#if defined USE_SDL
     Mix_FreeChunk(data->chunk);
+#endif
     free(data->name);
     delete data;
 }
@@ -74,6 +83,8 @@ char const *Sample::GetName()
 
 void Sample::Play()
 {
+#if defined USE_SDL
     Mix_PlayChannel(-1, data->chunk, 0);
+#endif
 }
 

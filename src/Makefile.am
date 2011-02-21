@@ -11,7 +11,7 @@ liblol_a_SOURCES = \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h shader.cpp shader.h \
     \
-    sdlinput.cpp sdlinput.h \
+    sdlapp.cpp sdlapp.h sdlinput.cpp sdlinput.h \
     \
     debugfps.cpp debugfps.h debugsphere.cpp debugsphere.h \
     debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h
