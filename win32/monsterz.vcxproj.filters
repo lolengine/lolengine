@@ -66,6 +66,9 @@
     <ClInclude Include="..\src\scene.h">
       <Filter>lolengine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\sdlapp.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\sdlinput.h">
       <Filter>lolengine</Filter>
     </ClInclude>
@@ -160,6 +163,9 @@
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\scene.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sdlapp.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\sdlinput.cpp">

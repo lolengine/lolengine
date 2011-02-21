@@ -41,6 +41,7 @@
     <ClInclude Include="..\src\sample.h" />
     <ClInclude Include="..\src\sampler.h" />
     <ClInclude Include="..\src\scene.h" />
+    <ClInclude Include="..\src\sdlapp.h" />
     <ClInclude Include="..\src\sdlinput.h" />
     <ClInclude Include="..\src\shader.h" />
     <ClInclude Include="..\src\text.h" />
@@ -79,6 +80,7 @@
     <ClCompile Include="..\src\sample.cpp" />
     <ClCompile Include="..\src\sampler.cpp" />
     <ClCompile Include="..\src\scene.cpp" />
+    <ClCompile Include="..\src\sdlapp.cpp" />
     <ClCompile Include="..\src\sdlinput.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\text.cpp" />

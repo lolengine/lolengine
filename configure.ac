@@ -125,7 +125,7 @@ CPPFLAGS="${save_CPPFLAGS}"
 if test "${ac_cv_my_have_sdl}" = "no"; then
   AC_MSG_ERROR([[One of SDL, SDL_Image or SDL_Mixer not found]])
 else
-  AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL_image)
+  AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
 fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 
