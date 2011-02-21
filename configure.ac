@@ -93,6 +93,7 @@ PKG_CHECK_MODULES(GLES2, glesv2,
 AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
   AC_DEFINE(HAVE_GL_1X, 1, Define to 1 if GL 1.x is available)
+  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
   GL_LIBS="-lGL"]) # FIXME: hackish
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
