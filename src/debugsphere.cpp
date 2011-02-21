@@ -143,7 +143,9 @@ void DebugSphere::TickDraw(float deltams)
     }
 
     float a = sinf(data->time);
+#if 0
     float b = sinf(data->time * 0.5f);
+#endif
 
     int const ndiv = 2;
     int const ntriangles = 20 * (1 << (ndiv * 2))
@@ -158,6 +160,7 @@ void DebugSphere::TickDraw(float deltams)
         data->DrawSphere(ndiv, t * (60.0f + 40.0f * a),
                          vertex_parser, normal_parser);
 
+#if 0 // FIXME: does not work with GLES2
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
@@ -187,6 +190,7 @@ void DebugSphere::TickDraw(float deltams)
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 
     free(vertex);
     free(normal);

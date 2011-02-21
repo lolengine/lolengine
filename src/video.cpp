@@ -23,12 +23,12 @@
 #include "core.h"
 #include "lolgl.h"
 
-#if LOL_EXPERIMENTAL
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
 Shader *stdshader;
 #endif
 mat4 proj_matrix, view_matrix, model_matrix;
 
-#if LOL_EXPERIMENTAL
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
 static char const *vertexshader =
     "#version 130\n"
     "\n"
@@ -60,6 +60,7 @@ static char const *fragmentshader =
     //"    gl_FragColor = 0.5 * (texture2D(in_Texture, vec2(gl_TexCoord[0]))\n"
     //"                           + vec4(pass_Color, 1.0));\n"
     "    gl_FragColor = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
+    //"    gl_FragColor = vec4(0.5, 1.0, 0.0, 0.5);\n"
     "}\n";
 #endif
 
@@ -73,13 +74,17 @@ void Video::Setup(int width, int height)
     glViewport(0, 0, width, height);
 
     glEnable(GL_TEXTURE_2D);
+#if defined HAVE_GL_2X || defined HAVE_GLES_1X
     glShadeModel(GL_SMOOTH);
+#endif
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
+    glClearDepthf(1.0);
 
+#if defined HAVE_GL_2X || defined HAVE_GLES_1X
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+#endif
 
-#if LOL_EXPERIMENTAL
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     stdshader = Shader::Create(vertexshader, fragmentshader);
 #endif
 }
@@ -126,7 +131,8 @@ void Video::SetFov(float theta)
 
     view_matrix = mat4(1.0f);
 
-#if LOL_EXPERIMENTAL
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
+    stdshader->Bind(); /* Required on GLES 2.x? */
     GLuint uni;
     uni = stdshader->GetUniformLocation("proj_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
@@ -162,7 +168,7 @@ void Video::Clear()
 
 void Video::Destroy()
 {
-#if LOL_EXPERIMENTAL
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     Shader::Destroy(stdshader);
 #endif
 }
@@ -173,7 +179,9 @@ void Video::Capture(uint32_t *buffer)
     glGetIntegerv(GL_VIEWPORT, v);
     int width = v[2], height = v[3];
 
+#if defined HAVE_GL_1X || defined HAVE_GL_2X
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+#endif
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 #if defined GL_BGRA
