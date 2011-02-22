@@ -130,6 +130,16 @@ fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 
 
+dnl Use EGL?
+ac_cv_my_have_egl="no"
+PKG_CHECK_MODULES(EGL, egl, [ac_cv_my_have_egl="yes"], [:])
+if test "${ac_cv_my_have_egl}" != "no"; then
+  AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
+  EGL_LIBS="${EGL_LIBS} -lX11"
+fi
+AM_CONDITIONAL(USE_EGL, test "${ac_cv_my_have_egl}" != "no")
+
+
 dnl Use libcaca? (required for font generation)
 ac_cv_my_have_caca="no"
 PKG_CHECK_MODULES(CACA, caca >= 0.99.beta17, [ac_cv_my_have_caca="yes"], [:])
@@ -164,8 +174,8 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 
 # How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS"
+LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS $EGL_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
