@@ -30,13 +30,15 @@ mat4 proj_matrix, view_matrix, model_matrix;
 
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 static char const *vertexshader =
+#if !defined HAVE_GLES_2X
+    "#version 130\n"
+#endif
+    "\n"
 #if defined HAVE_GLES_2X
     "attribute vec3 in_Position;\n"
     "attribute vec2 in_TexCoord;\n"
     "varying vec2 pass_TexCoord;\n"
 #else
-    "#version 130\n"
-    "\n"
     "in vec3 in_Position;\n"
     "in vec2 in_TexCoord;\n"
 #endif
@@ -59,7 +61,9 @@ static char const *vertexshader =
     "}\n";
 
 static char const *fragmentshader =
+#if !defined HAVE_GLES_2X
     "#version 130\n"
+#endif
     "\n"
     "uniform sampler2D in_Texture;\n"
     //"in vec3 pass_Color;\n"
@@ -70,14 +74,13 @@ static char const *fragmentshader =
     "\n"
     "void main()\n"
     "{\n"
-    //"    gl_FragColor = 0.5 * (texture2D(in_Texture, vec2(gl_TexCoord[0]))\n"
-    //"                           + vec4(pass_Color, 1.0));\n"
 #if defined HAVE_GLES_2X
-    "    gl_FragColor = vec4(0.5, 1.0, 0.0, 0.5);\n"
+    "    gl_FragColor = texture2D(in_Texture, pass_TexCoord);\n"
+    //"    gl_FragColor = vec4(0.5, 1.0, 0.0, 0.5);\n"
+    //"    gl_FragColor = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
 #else
     "    gl_FragColor = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
 #endif
-    //"    gl_FragColor = texture2D(in_Texture, pass_TexCoord);\n"
     "}\n";
 #endif
 

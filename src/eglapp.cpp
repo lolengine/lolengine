@@ -24,6 +24,7 @@
 #endif
 
 #include "core.h"
+#include "lolgl.h"
 #include "eglapp.h"
 
 /*
