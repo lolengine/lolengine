@@ -16,6 +16,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 Layer::Layer(int w, int h, int z, int o, uint32_t *in_data)
 {
     width = w;
@@ -55,4 +58,6 @@ int Layer::GetZ()
 {
     return altitude;
 }
+
+} /* namespace lol */
 

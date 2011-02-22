@@ -19,6 +19,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 class MatrixTest : public CppUnit::TestCase
 {
     CPPUNIT_TEST_SUITE(MatrixTest);
@@ -113,4 +116,6 @@ private:
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
+
+} /* namespace lol */
 

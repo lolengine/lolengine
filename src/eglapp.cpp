@@ -27,6 +27,9 @@
 #include "lolgl.h"
 #include "eglapp.h"
 
+namespace lol
+{
+
 /*
  * EGL App implementation class
  */
@@ -188,4 +191,6 @@ EglApp::~EglApp()
 
     free(data);
 }
+
+} /* namespace lol */
 

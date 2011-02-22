@@ -21,6 +21,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Entity
 {
     friend class Ticker;
@@ -78,6 +81,8 @@ private:
     Entity *gamenext, *drawnext, *autonext;
     int ref, autorelease, destroy;
 };
+
+} /* namespace lol */
 
 #endif // __DH_ENTITY_H__
 

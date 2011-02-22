@@ -20,6 +20,9 @@
 #include <cstdlib>
 #include <stdint.h>
 
+namespace lol
+{
+
 /* Random float value */
 static inline float RandF()
 {
@@ -48,6 +51,8 @@ template <typename T> static inline T PotUp(T val)
     val = val | ((uint64_t)val >> 1);
     return val + 1;
 }
+
+} /* namespace lol */
 
 #endif // __DH_NUMERIC_H__
 

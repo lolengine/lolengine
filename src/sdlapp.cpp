@@ -19,6 +19,9 @@
 #include "core.h"
 #include "sdlapp.h"
 
+namespace lol
+{
+
 /*
  * SDL App implementation class
  */
@@ -89,4 +92,6 @@ SdlApp::~SdlApp()
 #endif
     free(data);
 }
+
+} /* namespace lol */
 

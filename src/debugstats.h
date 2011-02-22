@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class DebugStatsData;
 
 class DebugStats : public Entity
@@ -32,6 +35,8 @@ protected:
 private:
     DebugStatsData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_DEBUGSTATS_H__
 

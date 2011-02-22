@@ -24,6 +24,9 @@
 #include "core.h"
 #include "lolgl.h"
 
+namespace lol
+{
+
 struct Tile
 {
     uint32_t prio, code;
@@ -276,4 +279,6 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 }
+
+} /* namespace lol */
 

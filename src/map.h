@@ -18,6 +18,9 @@
 #if !defined __DH_MAP_H__
 #define __DH_MAP_H__
 
+namespace lol
+{
+
 class MapData;
 
 class Map
@@ -33,6 +36,8 @@ public:
 private:
     MapData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_MAP_H__
 

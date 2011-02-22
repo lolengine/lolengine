@@ -18,6 +18,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Profiler implementation class
  */
@@ -78,4 +81,6 @@ float Profiler::GetMax(int id)
 {
     return data[id].max;
 }
+
+} /* namespace lol */
 

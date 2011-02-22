@@ -17,6 +17,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Public Entity class
  */
@@ -65,4 +68,6 @@ void Entity::TickDraw(float deltams)
     state = STATE_POSTTICK_DRAW;
 #endif
 }
+
+} /* namespace lol */
 

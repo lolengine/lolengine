@@ -19,11 +19,16 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Audio
 {
 public:
     static void Setup(int channels);
 };
+
+} /* namespace lol */
 
 #endif // __DH_AUDIO_H__
 

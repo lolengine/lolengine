@@ -18,6 +18,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
@@ -147,4 +150,6 @@ template<> mat4 mat4::rotate(float theta, float x, float y, float z)
 
     return ret;
 }
+
+} /* namespace lol */
 

@@ -18,6 +18,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Text implementation class
  */
@@ -98,4 +101,6 @@ Text::~Text()
     Forge::Deregister(data->font);
     delete data;
 }
+
+} /* namespace lol */
 

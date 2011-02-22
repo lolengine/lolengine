@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class EmitterData;
 
 class Emitter : public Entity
@@ -35,6 +38,8 @@ protected:
 private:
     EmitterData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_EMITTER_H__
 

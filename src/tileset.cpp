@@ -29,6 +29,9 @@
 #include "core.h"
 #include "lolgl.h"
 
+namespace lol
+{
+
 /*
  * TileSet implementation class
  */
@@ -241,4 +244,6 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
         memset(texture, 0, 2 * sizeof(float));
     }
 }
+
+} /* namespace lol */
 

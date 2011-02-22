@@ -17,6 +17,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Emitter implementation class
  */
@@ -92,4 +95,6 @@ Emitter::~Emitter()
 {
     delete data;
 }
+
+} /* namespace lol */
 

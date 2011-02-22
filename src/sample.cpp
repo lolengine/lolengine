@@ -23,6 +23,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Sample implementation class
  */
@@ -87,4 +90,6 @@ void Sample::Play()
     Mix_PlayChannel(-1, data->chunk, 0);
 #endif
 }
+
+} /* namespace lol */
 

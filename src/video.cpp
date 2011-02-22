@@ -23,6 +23,9 @@
 #include "core.h"
 #include "lolgl.h"
 
+namespace lol
+{
+
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 Shader *stdshader;
 #endif
@@ -232,4 +235,6 @@ int Video::GetHeight()
     glGetIntegerv(GL_VIEWPORT, v);
     return v[3];
 }
+
+} /* namespace lol */
 

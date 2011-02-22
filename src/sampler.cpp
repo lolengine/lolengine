@@ -14,6 +14,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Sampler implementation class
  */
@@ -56,4 +59,6 @@ void Sampler::PlaySample(int id)
     Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
     sample->Play();
 }
+
+} /* namespace lol */
 

@@ -25,6 +25,9 @@
 #include "lolgl.h"
 #include "debugsphere.h"
 
+namespace lol
+{
+
 /*
  * DebugSphere implementation class
  */
@@ -200,4 +203,6 @@ DebugSphere::~DebugSphere()
 {
     delete data;
 }
+
+} /* namespace lol */
 

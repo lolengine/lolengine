@@ -18,6 +18,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class SceneData;
 
 class Scene
@@ -35,6 +38,8 @@ public:
 private:
     SceneData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_SCENE_H__
 

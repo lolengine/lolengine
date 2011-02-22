@@ -16,6 +16,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Tiler implementation class
  */
@@ -127,4 +130,6 @@ void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o,
 #endif
     tileset->BlitTile(code & 0xffff, x, y, z, o, vertex, texture);
 }
+
+} /* namespace lol */
 

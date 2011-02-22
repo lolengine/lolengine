@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Sampler
 {
 public:
@@ -27,6 +30,8 @@ public:
 
     static void PlaySample(int id);
 };
+
+} /* namespace lol */
 
 #endif // __DH_SAMPLER_H__
 

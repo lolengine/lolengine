@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class TextData;
 
 class Text : public Entity
@@ -44,6 +47,8 @@ protected:
 private:
     TextData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_TEXT_H__
 
