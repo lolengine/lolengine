@@ -15,11 +15,9 @@
 #include <cstdio>
 
 #if defined USE_EGL
-#   define Font Font_Diverted
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
-#   undef Font
 #   include <EGL/egl.h>
 #endif
 
