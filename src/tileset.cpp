@@ -15,15 +15,11 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <cstring>
 
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#endif
-
-#if defined USE_SDL
-#   include <SDL.h>
-#   include <SDL_image.h>
 #endif
 
 #include "core.h"
@@ -43,12 +39,10 @@ class TileSetData
 private:
     char *name, *path;
     int *tiles, ntiles;
-    vec2i size, count;
+    vec2i size, isize, count;
     float dilate, tx, ty;
 
-#if defined USE_SDL
-    SDL_Surface *img;
-#endif
+    Image *img;
     GLuint texture;
 };
 
@@ -64,42 +58,26 @@ TileSet::TileSet(char const *path, vec2i size, vec2i count, float dilate)
     sprintf(data->name, "<tileset> %s", path);
 
     data->tiles = NULL;
-#if defined USE_SDL
-    data->img = NULL;
-#endif
     data->texture = 0;
-
-#if defined USE_SDL
-    for (char const *name = path; *name; name++)
-        if ((data->img = IMG_Load(name)))
-            break;
-
-    if (!data->img)
-    {
-#if !LOL_RELEASE
-        fprintf(stderr, "ERROR: could not load %s\n", path);
-#endif
-        SDL_Quit();
-        exit(1);
-    }
+    data->img = new Image(path);
+    data->isize = data->img->GetSize();
 
     if (count.i > 0 && count.j > 0)
     {
         data->count = count;
-        data->size = vec2i(data->img->w, data->img->h) / count;
+        data->size = data->isize / count;
     }
     else
     {
         if (size.x <= 0 || size.y <= 0)
             size = 32;
-        data->count.i = data->img->w > size.i ? data->img->w / size.i : 1;
-        data->count.j = data->img->h > size.j ? data->img->h / size.j : 1;
+        data->count.i = data->isize.x > size.i ? data->isize.x / size.i : 1;
+        data->count.j = data->isize.y > size.j ? data->isize.y / size.j : 1;
         data->size = size;
     }
 
-    data->tx = (float)data->size.x / PotUp(data->img->w);
-    data->ty = (float)data->size.y / PotUp(data->img->h);
-#endif
+    data->tx = (float)data->size.x / PotUp(data->isize.x);
+    data->ty = (float)data->size.y / PotUp(data->isize.y);
 
     data->dilate = dilate;
     data->ntiles = data->count.i * data->count.j;
@@ -118,30 +96,42 @@ void TileSet::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-#if defined USE_SDL
     if (IsDestroying())
     {
         if (data->img)
-            SDL_FreeSurface(data->img);
+            delete data->img;
         else
             glDeleteTextures(1, &data->texture);
     }
     else if (data->img)
     {
-        GLuint format = data->img->format->Amask ? GL_RGBA : GL_RGB;
-        int planes = data->img->format->Amask ? 4 : 3;
+        GLuint format;
+        int planes;
 
-        int w = PotUp(data->img->w);
-        int h = PotUp(data->img->h);
+        switch (data->img->GetFormat())
+        {
+        case Image::FORMAT_RGB:
+           format = GL_RGB;
+           planes = 3;
+           break;
+        case Image::FORMAT_RGBA:
+        default:
+           format = GL_RGBA;
+           planes = 4;
+           break;
+        }
 
-        uint8_t *pixels = (uint8_t *)data->img->pixels;
-        if (w != data->img->w || h != data->img->h)
+        int w = PotUp(data->isize.x);
+        int h = PotUp(data->isize.y);
+
+        uint8_t *pixels = (uint8_t *)data->img->GetData();
+        if (w != data->isize.x || h != data->isize.y)
         {
             uint8_t *tmp = (uint8_t *)malloc(planes * w * h);
-            for (int line = 0; line < data->img->h; line++)
+            for (int line = 0; line < data->isize.y; line++)
                 memcpy(tmp + planes * w * line,
-                       pixels + planes * data->img->w * line,
-                       planes * data->img->w);
+                       pixels + planes * data->isize.x * line,
+                       planes * data->isize.x);
             pixels = tmp;
         }
 
@@ -154,12 +144,11 @@ void TileSet::TickDraw(float deltams)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        if (pixels != data->img->pixels)
+        if (pixels != data->img->GetData())
             free(pixels);
-        SDL_FreeSurface(data->img);
+        delete data->img;
         data->img = NULL;
     }
-#endif
 }
 
 char const *TileSet::GetName()
@@ -179,10 +168,8 @@ vec2i TileSet::GetCount() const
 
 void TileSet::Bind()
 {
-#if defined USE_SDL
-    if (!data->img)
+    if (!data->img && data->texture)
         glBindTexture(GL_TEXTURE_2D, data->texture);
-#endif
 }
 
 void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
@@ -196,8 +183,7 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
     int dy = o ? 0 : data->size.y;
     int dz = o ? data->size.y : 0;
 
-#if defined USE_SDL
-    if (!data->img)
+    if (!data->img && data->texture)
     {
         float tmp[10];
 
@@ -238,7 +224,6 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
         *texture++ = ty + data->ty;
     }
     else
-#endif
     {
         memset(vertex, 0, 3 * sizeof(float));
         memset(texture, 0, 2 * sizeof(float));
