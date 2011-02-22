@@ -154,13 +154,15 @@ void Scene::Render() // XXX: rename to Blit()
     // XXX: end of debug stuff
 
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
-    GLuint uni, attr_pos, attr_tex;
-    uni = stdshader->GetUniformLocation("model_matrix");
+    GLuint uni_mat, uni_tex, attr_pos, attr_tex;
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
 
     stdshader->Bind();
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &model_matrix[0][0]);
+    uni_mat = stdshader->GetUniformLocation("model_matrix");
+    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &model_matrix[0][0]);
+    uni_tex = stdshader->GetUniformLocation("in_Texture");
+    glUniform1i(uni_tex, 0);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -209,6 +211,12 @@ void Scene::Render() // XXX: rename to Blit()
         }
 
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
+        stdshader->Bind();
+#endif
+        glActiveTexture(GL_TEXTURE0);
+        Tiler::Bind(data->tiles[i].code);
+
+#if defined HAVE_GL_2X || defined HAVE_GLES_2X
 #   if !defined HAVE_GLES_2X
         glBindVertexArray(data->vao);
 #   endif
@@ -247,11 +255,6 @@ void Scene::Render() // XXX: rename to Blit()
         glTexCoordPointer(2, GL_FLOAT, 0, texture);
 #endif
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
-        stdshader->Bind();
-#endif
-
-        Tiler::Bind(data->tiles[i].code);
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
