@@ -42,6 +42,9 @@
     <ClInclude Include="..\src\hash.h">
       <Filter>lolengine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\image.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\input.h">
       <Filter>lolengine</Filter>
     </ClInclude>
@@ -145,6 +148,9 @@
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\hash.cpp">
+      <Filter>lolengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image.cpp">
       <Filter>lolengine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\input.cpp">

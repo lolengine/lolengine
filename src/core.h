@@ -44,6 +44,7 @@
 #include "map.h"
 #include "layer.h"
 #include "shader.h"
+#include "image.h"
 
 // Managers
 #include "ticker.h"

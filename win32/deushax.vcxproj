@@ -26,6 +26,7 @@
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
     <ClInclude Include="..\src\hash.h" />
+    <ClInclude Include="..\src\image.h" />
     <ClInclude Include="..\src\input.h" />
     <ClInclude Include="..\src\layer.h" />
     <ClInclude Include="..\src\lolgl.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
     <ClCompile Include="..\src\hash.cpp" />
+    <ClCompile Include="..\src\image.cpp" />
     <ClCompile Include="..\src\input.cpp" />
     <ClCompile Include="..\src\layer.cpp" />
     <ClCompile Include="..\src\map.cpp" />
