@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Video
 {
 public:
@@ -31,6 +34,8 @@ public:
     static int GetWidth();
     static int GetHeight();
 };
+
+} /* namespace lol */
 
 #endif // __DH_VIDEO_H__
 

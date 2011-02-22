@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class WorldEntity : public Entity
 {
 public:
@@ -39,6 +42,8 @@ protected:
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 };
+
+} /* namespace lol */
 
 #endif // __DH_WORLDENTITY_H__
 

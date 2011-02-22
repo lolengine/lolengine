@@ -18,6 +18,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Ticker implementation class
  */
@@ -372,4 +375,6 @@ int Ticker::Finished()
 {
     return !data->nentities;
 }
+
+} /* namespace lol */
 

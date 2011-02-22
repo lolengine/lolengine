@@ -21,6 +21,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Public Audio class
  */
@@ -31,4 +34,6 @@ void Audio::Setup(int channels)
     Mix_OpenAudio(22050, AUDIO_S16, channels, 1024);
 #endif
 }
+
+} /* namespace lol */
 

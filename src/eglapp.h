@@ -18,6 +18,9 @@
 
 #include "matrix.h"
 
+namespace lol
+{
+
 class EglAppData;
 
 class EglApp
@@ -31,6 +34,8 @@ public:
 private:
     EglAppData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_EGLAPP_H__
 

@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class DebugFpsData;
 
 class DebugFps : public Entity
@@ -32,6 +35,8 @@ protected:
 private:
     DebugFpsData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_DEBUGFPS_H__
 

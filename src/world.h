@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class WorldData;
 
 class World : public Entity
@@ -40,6 +43,8 @@ public:
 private:
     WorldData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_WORLD_H__
 

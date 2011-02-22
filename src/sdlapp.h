@@ -18,6 +18,9 @@
 
 #include "matrix.h"
 
+namespace lol
+{
+
 class SdlAppData;
 
 class SdlApp
@@ -31,6 +34,8 @@ public:
 private:
     SdlAppData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_SDLAPP_H__
 

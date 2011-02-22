@@ -22,6 +22,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Input implementation class
  */
@@ -173,4 +176,6 @@ void Input::UnsetMouseButton(int index)
         data->lastfocus->clicked[index] = 0;
     }
 }
+
+} /* namespace lol */
 

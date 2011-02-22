@@ -23,6 +23,9 @@
 #include "core.h"
 #include "lolgl.h"
 
+namespace lol
+{
+
 /*
  * Shader implementation class
  */
@@ -149,4 +152,6 @@ Shader::~Shader()
 #endif
     delete data;
 }
+
+} /* namespace lol */
 

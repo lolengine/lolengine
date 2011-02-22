@@ -21,6 +21,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class Ticker
 {
 public:
@@ -41,6 +44,8 @@ public:
     static void Shutdown();
     static int Finished();
 };
+
+} /* namespace lol */
 
 #endif // __DH_TICKER_H__
 

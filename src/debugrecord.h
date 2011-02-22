@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class DebugRecordData;
 
 class DebugRecord : public Entity
@@ -33,6 +36,8 @@ protected:
 private:
     DebugRecordData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_DEBUGRECORD_H__
 

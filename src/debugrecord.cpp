@@ -22,6 +22,9 @@
 #include "core.h"
 #include "debugrecord.h"
 
+namespace lol
+{
+
 /*
  * DebugRecord implementation class
  */
@@ -102,3 +105,6 @@ DebugRecord::~DebugRecord()
 
     delete data;
 }
+
+} /* namespace lol */
+

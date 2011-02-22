@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class FontData;
 
 class Font : public Entity
@@ -39,6 +42,8 @@ public:
 private:
     FontData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_FONT_H__
 

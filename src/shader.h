@@ -16,6 +16,9 @@
 #if !defined __DH_SHADER_H__
 #define __DH_SHADER_H__
 
+namespace lol
+{
+
 class ShaderData;
 
 class Shader
@@ -36,6 +39,8 @@ protected:
 private:
     ShaderData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_SHADER_H__
 

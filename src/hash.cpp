@@ -14,6 +14,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Hash implementation class
  */
@@ -55,4 +58,6 @@ uint32_t Hash::Crc32(char const *str)
 
     return ret ^ 0xffffffff;
 }
+
+} /* namespace lol */
 

@@ -17,6 +17,9 @@
 #include "core.h"
 #include "sdlinput.h"
 
+namespace lol
+{
+
 /*
  * SDL Input implementation class
  */
@@ -87,4 +90,6 @@ SdlInput::~SdlInput()
 {
     delete data;
 }
+
+} /* namespace lol */
 

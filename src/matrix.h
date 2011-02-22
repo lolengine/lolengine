@@ -18,6 +18,9 @@
 
 #include <cmath>
 
+namespace lol
+{
+
 #define VECTOR_OP(elems, op) \
     template<typename U> \
     inline Vec##elems<T> operator op(Vec##elems<U> const &val) const \
@@ -277,6 +280,8 @@ template <typename T> struct Mat4
 
 typedef Mat4<float> mat4;
 typedef Mat4<int> mat4i;
+
+} /* namespace lol */
 
 #endif // __DH_MATRIX_H__
 

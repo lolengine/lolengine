@@ -20,6 +20,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Map implementation class
  */
@@ -175,4 +178,6 @@ int Map::GetHeight()
 {
     return data->height * 32;
 }
+
+} /* namespace lol */
 

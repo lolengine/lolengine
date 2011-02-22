@@ -18,6 +18,9 @@
 
 #include "matrix.h"
 
+namespace lol
+{
+
 class WorldEntity;
 
 class Input
@@ -37,6 +40,8 @@ public:
     static void SetMouseButton(int index);
     static void UnsetMouseButton(int index);
 };
+
+} /* namespace lol */
 
 #endif // __DH_INPUT_H__
 

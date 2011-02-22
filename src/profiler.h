@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Profiler
 {
 public:
@@ -36,6 +39,8 @@ public:
     static float GetAvg(int id);
     static float GetMax(int id);
 };
+
+} /* namespace lol */
 
 #endif // __DH_PROFILER_H__
 

@@ -19,6 +19,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * World implementation class
  */
@@ -73,4 +76,6 @@ int World::GetHeight()
 {
     return data->height * 32;
 }
+
+} /* namespace lol */
 

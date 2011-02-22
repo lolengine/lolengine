@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class DebugSphereData;
 
 class DebugSphere : public Entity
@@ -33,6 +36,8 @@ protected:
 private:
     DebugSphereData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_DEBUGSPHERE_H__
 

@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Layer
 {
 public:
@@ -33,6 +36,8 @@ private:
     int width, height, altitude, orientation;
     uint32_t *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_LAYER_H__
 

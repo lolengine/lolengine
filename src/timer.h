@@ -16,6 +16,9 @@
 #if !defined __DH_TIMER_H__
 #define __DH_TIMER_H__
 
+namespace lol
+{
+
 class TimerData;
 
 class Timer
@@ -31,6 +34,8 @@ public:
 private:
     TimerData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_TIMER_H__
 

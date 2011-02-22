@@ -18,6 +18,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 template class BitField<unsigned int COUNT>
 {
 public:
@@ -45,6 +48,8 @@ public:
 private:
     uint32_t bits[(COUNT + 31) / 32];
 };
+
+} /* namespace lol */
 
 #endif // __DH_BITFIELD_H__
 

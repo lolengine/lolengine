@@ -16,11 +16,16 @@
 #if !defined __DH_HASH_H__
 #define __DH_HASH_H__
 
+namespace lol
+{
+
 class Hash
 {
 public:
     static uint32_t Crc32(char const *data);
 };
+
+} /* namespace lol */
 
 #endif // __DH_HASH_H__
 

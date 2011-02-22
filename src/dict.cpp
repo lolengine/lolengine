@@ -22,6 +22,9 @@
 #   define strcasecmp _stricmp
 #endif
 
+namespace lol
+{
+
 /*
  * Dict implementation class
  */
@@ -141,4 +144,6 @@ Entity *Dict::GetEntity(int id)
 {
     return data->entities[id];
 }
+
+} /* namespace lol */
 

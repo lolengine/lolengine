@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+namespace lol
+{
+
 class Tiler
 {
 public:
@@ -32,6 +35,8 @@ public:
     static void BlitTile(uint32_t code, int x, int y, int z, int o,
                          float *vertex, float *texture);
 };
+
+} /* namespace lol */
 
 #endif // __DH_TILER_H__
 

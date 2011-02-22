@@ -18,6 +18,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class DictData;
 
 class Dict
@@ -35,6 +38,8 @@ public:
 private:
     DictData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_DICT_H__
 

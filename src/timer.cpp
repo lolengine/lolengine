@@ -28,6 +28,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Timer implementation class
  */
@@ -125,4 +128,6 @@ void Timer::WaitMs(float deltams)
 {
     (void)data->GetOrWait(deltams, false);
 }
+
+} /* namespace lol */
 

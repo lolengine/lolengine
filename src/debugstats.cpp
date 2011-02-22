@@ -17,6 +17,9 @@
 #include "core.h"
 #include "debugstats.h"
 
+namespace lol
+{
+
 /*
  * DebugStats implementation class
  */
@@ -58,4 +61,6 @@ DebugStats::~DebugStats()
     fclose(data->fp);
     delete data;
 }
+
+} /* namespace lol */
 

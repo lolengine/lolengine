@@ -19,6 +19,9 @@
 
 #include "font.h"
 
+namespace lol
+{
+
 class Forge
 {
 public:
@@ -26,6 +29,8 @@ public:
     static void Deregister(int id);
     static Font *GetFont(int id);
 };
+
+} /* namespace lol */
 
 #endif // __DH_FORGE_H__
 

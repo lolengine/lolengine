@@ -17,6 +17,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Public WorldEntity class
  */
@@ -43,4 +46,6 @@ void WorldEntity::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 }
+
+} /* namespace lol */
 

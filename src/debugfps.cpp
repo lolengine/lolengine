@@ -17,6 +17,9 @@
 #include "core.h"
 #include "debugfps.h"
 
+namespace lol
+{
+
 /*
  * DebugFps implementation class
  */
@@ -103,4 +106,6 @@ DebugFps::~DebugFps()
 #endif
     delete data;
 }
+
+} /* namespace lol */
 

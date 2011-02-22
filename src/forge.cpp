@@ -14,6 +14,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Forge implementation class
  */
@@ -55,4 +58,6 @@ Font *Forge::GetFont(int id)
 {
     return (Font *)data->fonts.GetEntity(id);
 }
+
+} /* namespace lol */
 

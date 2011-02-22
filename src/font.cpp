@@ -17,6 +17,9 @@
 
 #include "core.h"
 
+namespace lol
+{
+
 /*
  * Font implementation class
  */
@@ -84,4 +87,6 @@ vec2i Font::GetSize() const
 {
     return data->size;
 }
+
+} /* namespace lol */
 

@@ -23,6 +23,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class TileSetData;
 
 class TileSet : public Entity
@@ -47,6 +50,8 @@ public:
 private:
     TileSetData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_TILESET_H__
 

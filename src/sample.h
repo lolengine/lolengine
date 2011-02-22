@@ -21,6 +21,9 @@
 
 #include "entity.h"
 
+namespace lol
+{
+
 class SampleData;
 
 class Sample : public Entity
@@ -41,6 +44,8 @@ public:
 private:
     SampleData *data;
 };
+
+} /* namespace lol */
 
 #endif // __DH_SAMPLE_H__
 
