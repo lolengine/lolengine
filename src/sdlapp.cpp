@@ -90,7 +90,7 @@ SdlApp::~SdlApp()
 #if defined USE_SDL
     SDL_Quit();
 #endif
-    free(data);
+    delete data;
 }
 
 } /* namespace lol */

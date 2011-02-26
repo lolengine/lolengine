@@ -187,7 +187,7 @@ EglApp::~EglApp()
     XCloseDisplay(data->dpy);
 #endif
 
-    free(data);
+    delete data;
 }
 
 } /* namespace lol */
