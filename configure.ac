@@ -53,9 +53,9 @@ AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
-  OPT="-O0"
+  OPT="-O"
 else
-  OPT="-O2"
+  OPT="-O2 --fno-strength-reduce -fomit-frame-pointer"
 fi
 
 if test "${enable_release}" = "yes"; then
@@ -70,7 +70,7 @@ if test "${enable_experimental}" = "yes"; then
 fi
 
 # Optimizations
-CXXFLAGS="${CXXFLAGS} ${REL} ${OPT} -fno-strength-reduce -fomit-frame-pointer"
+CXXFLAGS="${CXXFLAGS} ${REL} ${OPT}"
 # Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
