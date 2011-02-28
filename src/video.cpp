@@ -96,13 +96,12 @@ void Video::Setup(int width, int height)
     /* Initialise OpenGL */
     glViewport(0, 0, width, height);
 
-    glEnable(GL_TEXTURE_2D);
-#if defined HAVE_GL_2X || defined HAVE_GLES_1X
-    glShadeModel(GL_SMOOTH);
-#endif
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
     glClearDepthf(1.0);
 
+#if defined HAVE_GL_2X || defined HAVE_GLES_1X
+    glShadeModel(GL_SMOOTH);
+#endif
 #if defined HAVE_GL_2X || defined HAVE_GLES_1X
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif
