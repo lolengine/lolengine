@@ -17,6 +17,7 @@
 #define __DH_LOLDEBUG_H__
 
 #include "debugfps.h"
+#include "debugquad.h"
 #include "debugrecord.h"
 #include "debugsphere.h"
 #include "debugstats.h"

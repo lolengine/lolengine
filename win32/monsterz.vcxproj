@@ -22,6 +22,7 @@
     <ClInclude Include="..\src\bitfield.h" />
     <ClInclude Include="..\src\core.h" />
     <ClInclude Include="..\src\debugfps.h" />
+    <ClInclude Include="..\src\debugquad.h" />
     <ClInclude Include="..\src\debugrecord.h" />
     <ClInclude Include="..\src\debugsphere.h" />
     <ClInclude Include="..\src\debugstats.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="..\monsterz\title.cpp" />
     <ClCompile Include="..\src\audio.cpp" />
     <ClCompile Include="..\src\debugfps.cpp" />
+    <ClCompile Include="..\src\debugquad.cpp" />
     <ClCompile Include="..\src\debugrecord.cpp" />
     <ClCompile Include="..\src\debugsphere.cpp" />
     <ClCompile Include="..\src\debugstats.cpp" />
