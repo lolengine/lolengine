@@ -167,6 +167,7 @@ void Scene::Render() // XXX: rename to Blit()
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
 
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 #   if !defined HAVE_GLES_2X
