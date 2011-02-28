@@ -26,6 +26,10 @@
 namespace lol
 {
 
+#if defined ANDROID_NDK
+vec2i saved_viewport;
+#endif
+
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 Shader *stdshader;
 #endif
@@ -95,6 +99,10 @@ void Video::Setup(int width, int height)
 {
     /* Initialise OpenGL */
     glViewport(0, 0, width, height);
+
+#if defined ANDROID_NDK
+    saved_viewport = vec2i(width, height);
+#endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
     glClearDepthf(1.0);
@@ -223,16 +231,24 @@ void Video::Capture(uint32_t *buffer)
 
 int Video::GetWidth()
 {
+#if defined ANDROID_NDK
+    return saved_viewport.x;
+#else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
     return v[2];
+#endif
 }
 
 int Video::GetHeight()
 {
+#if defined ANDROID_NDK
+    return saved_viewport.y;
+#else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
     return v[3];
+#endif
 }
 
 } /* namespace lol */
