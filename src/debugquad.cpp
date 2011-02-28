@@ -52,6 +52,8 @@ DebugQuad::DebugQuad()
 {
     data->initialised = 0;
     data->time = 0.0f;
+
+    drawgroup = DRAWGROUP_HUD;
 }
 
 void DebugQuad::TickGame(float deltams)
@@ -121,7 +123,7 @@ void DebugQuad::TickDraw(float deltams)
                 data->image[0][(j * 32 + i) * 4 + 0] = wb;
                 data->image[0][(j * 32 + i) * 4 + 1] = wb;
                 data->image[0][(j * 32 + i) * 4 + 2] = wb;
-                data->image[0][(j * 32 + i) * 4 + 3] = 255;
+                data->image[0][(j * 32 + i) * 4 + 3] = wb;
             }
         /* Use GL_RGBA instead of 4 for the internal format (Android) */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0,
@@ -149,13 +151,13 @@ void DebugQuad::TickDraw(float deltams)
     /* Using only 3 components breaks on Android for some reason. */
     static GLfloat const cols[6][4] =
     {
-        { 0.8f, 0.2f, 0.2f, 1.0f },
-        { 0.2f, 0.2f, 0.8f, 1.0f },
-        { 0.8f, 0.8f, 0.2f, 1.0f },
+        { 1.0f, 0.2f, 0.2f, 1.0f },
+        { 0.2f, 0.2f, 1.0f, 1.0f },
+        { 1.0f, 1.0f, 0.2f, 1.0f },
 
-        { 0.8f, 0.8f, 0.2f, 1.0f },
-        { 0.2f, 0.2f, 0.8f, 1.0f },
-        { 0.2f, 0.8f, 0.2f, 1.0f },
+        { 1.0f, 1.0f, 0.2f, 1.0f },
+        { 0.2f, 0.2f, 1.0f, 1.0f },
+        { 0.2f, 1.0f, 0.2f, 1.0f },
     };
 
     static GLfloat const tcs[6][2] =
@@ -174,6 +176,10 @@ void DebugQuad::TickDraw(float deltams)
     glEnableVertexAttribArray(attr_pos);
     glEnableVertexAttribArray(attr_col);
     glEnableVertexAttribArray(attr_tex);
+
+    /* Bind texture */
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
@@ -202,11 +208,15 @@ void DebugQuad::TickDraw(float deltams)
     glLoadIdentity();
 
     /* Set up state machine */
+    glDisable(GL_DEPTH_TEST);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    /* Bind texture */
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
 
