@@ -29,6 +29,7 @@
     <ClInclude Include="..\src\image.h" />
     <ClInclude Include="..\src\input.h" />
     <ClInclude Include="..\src\layer.h" />
+    <ClInclude Include="..\src\loldebug.h" />
     <ClInclude Include="..\src\lolgl.h" />
     <ClInclude Include="..\src\map.h" />
     <ClInclude Include="..\src\matrix.h" />

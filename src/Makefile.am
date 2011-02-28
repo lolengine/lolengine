@@ -15,7 +15,7 @@ liblol_a_SOURCES = \
     \
     eglapp.cpp eglapp.h \
     \
-    debugfps.cpp debugfps.h debugsphere.cpp debugsphere.h \
+    loldebug.h debugfps.cpp debugfps.h debugsphere.cpp debugsphere.h \
     debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
