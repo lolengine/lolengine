@@ -55,7 +55,7 @@ if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
   OPT="-O"
 else
-  OPT="-O2 --fno-strength-reduce -fomit-frame-pointer"
+  OPT="-O2 -fno-strength-reduce -fomit-frame-pointer"
 fi
 
 if test "${enable_release}" = "yes"; then
