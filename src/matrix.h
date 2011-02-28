@@ -215,6 +215,8 @@ template <typename T> struct Mat4
     static Mat4<T> translate(T x, T y, T z);
     static Mat4<T> rotate(T theta, T x, T y, T z);
 
+    void printf() const;
+
     inline Mat4<T> operator +(Mat4<T> const val) const
     {
         Mat4<T> ret;
