@@ -1,4 +1,4 @@
-# $Id$
+dnl configure script for Lol Engine
 
 AC_INIT(lolengine, 0.0)
 AC_PREREQ(2.50)
@@ -69,14 +69,14 @@ if test "${enable_experimental}" = "yes"; then
   AC_DEFINE(LOL_EXPERIMENTAL, 1, Define to 1 to activate experimental build)
 fi
 
-# Optimizations
+dnl Optimizations
 CXXFLAGS="${CXXFLAGS} ${REL} ${OPT}"
-# Code qui fait des warnings == code de porc == deux baffes dans ta gueule
+dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 
-# Which version of OpenGL to use?
+dnl Which version of OpenGL to use?
 ac_cv_my_have_gl="no"
 PKG_CHECK_MODULES(GLES1, glesv1_cm,
  [ac_cv_my_have_gl="yes"
@@ -99,7 +99,7 @@ if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
 
-# Use SDL? (always required)
+dnl Use SDL? (always required)
 ac_cv_my_have_sdl="yes"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
 if test "${SDL_CONFIG}" != "no"; then
@@ -173,7 +173,7 @@ PKG_CHECK_MODULES(CPPUNIT, cppunit, [CPPUNIT="yes"], [CPPUNIT="no"])
 AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 
-# How to use the Lol Engine inside this tree
+dnl How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS $EGL_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS"
 
