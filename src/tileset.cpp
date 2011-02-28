@@ -136,9 +136,10 @@ void TileSet::TickDraw(float deltams)
         }
 
         glGenTextures(1, &data->texture);
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, data->texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, planes, w, h, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0,
                      format, GL_UNSIGNED_BYTE, pixels);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -169,7 +170,10 @@ vec2i TileSet::GetCount() const
 void TileSet::Bind()
 {
     if (!data->img && data->texture)
+    {
+        glClientActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->texture);
+    }
 }
 
 void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,

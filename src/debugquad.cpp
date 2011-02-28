@@ -51,7 +51,7 @@ DebugQuad::DebugQuad()
   : data(new DebugQuadData())
 {
     data->initialised = 0;
-    data->time = 0.0f;
+    data->time = RandF(10000.0f);
 
     drawgroup = DRAWGROUP_HUD;
 }
@@ -114,7 +114,7 @@ void DebugQuad::TickDraw(float deltams)
 #endif
         glGenTextures(1, data->texlist);
 
-        glActiveTexture(GL_TEXTURE0);
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
         for (int j = 0; j < 32; j++)
             for (int i = 0; i < 32; i++)
@@ -178,7 +178,7 @@ void DebugQuad::TickDraw(float deltams)
     glEnableVertexAttribArray(attr_tex);
 
     /* Bind texture */
-    glActiveTexture(GL_TEXTURE0);
+    glClientActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
@@ -217,7 +217,7 @@ void DebugQuad::TickDraw(float deltams)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Bind texture */
-    glActiveTexture(GL_TEXTURE0);
+    glClientActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
 
     /* Bind vertex, color and texture coordinate buffers */
