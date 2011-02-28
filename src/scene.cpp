@@ -36,7 +36,7 @@ struct Tile
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 extern Shader *stdshader;
 #endif
-extern mat4 model_matrix;
+extern mat4 proj_matrix, view_matrix, model_matrix;
 
 /*
  * Scene implementation class
@@ -177,15 +177,33 @@ void Scene::Render() // XXX: rename to Blit()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #else
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.01f);
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_LEQUAL);
+    //glEnable(GL_ALPHA_TEST);
+    //glAlphaFunc(GL_GEQUAL, 0.01f);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#if 0
+    /* Reset all model-view-projection matrices */
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMultMatrixf(&proj_matrix[0][0]);
+#endif
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    //glMultMatrixf(&model_matrix[0][0]);
+    glMultMatrixf(&view_matrix[0][0]);
+
+    /* Set up state machine */
+    glDisable(GL_DEPTH_TEST);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glLoadIdentity();
-    glMultMatrixf(&model_matrix[0][0]);
 #endif
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
@@ -217,48 +235,43 @@ void Scene::Render() // XXX: rename to Blit()
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
         stdshader->Bind();
 #endif
-        glActiveTexture(GL_TEXTURE0);
+
+        /* Bind texture */
         Tiler::Bind(data->tiles[i].code);
 
+        /* Bind vertex, color and texture coordinate buffers */
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 #   if !defined HAVE_GLES_2X
         glBindVertexArray(data->vao);
 #   endif
         glEnableVertexAttribArray(attr_pos);
         glEnableVertexAttribArray(attr_tex);
-#else
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
         glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
                      vertex, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
-#elif defined HAVE_GL_1X
-        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
-        glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
-                     vertex, GL_STATIC_DRAW);
-        glVertexPointer(3, GL_FLOAT, 0, NULL);
-#else
-        glVertexPointer(3, GL_FLOAT, 0, vertex);
-#endif
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
 #elif defined HAVE_GL_1X
+        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf]);
+        glBufferData(GL_ARRAY_BUFFER, 18 * (n - i) * sizeof(GLfloat),
+                     vertex, GL_STATIC_DRAW);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+
         glBindBuffer(GL_ARRAY_BUFFER, data->bufs[buf + 1]);
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 #else
+        glVertexPointer(3, GL_FLOAT, 0, vertex);
         glTexCoordPointer(2, GL_FLOAT, 0, texture);
 #endif
 
+        /* Draw arrays */
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
@@ -267,14 +280,23 @@ void Scene::Render() // XXX: rename to Blit()
 #   endif
         glDisableVertexAttribArray(attr_pos);
         glDisableVertexAttribArray(attr_tex);
-#else
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 
         free(vertex);
         free(texture);
     }
+
+#if defined HAVE_GL_1X || defined HAVE_GLES_1X
+    /* Disable state machine features */
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    /* Restore matrices */
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+#endif
 
     free(data->tiles);
     data->tiles = 0;
