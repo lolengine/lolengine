@@ -32,6 +32,7 @@ class DebugQuadData
 
 private:
     int initialised;
+    float time;
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint buflist[3];
     Shader *shader;
@@ -50,11 +51,14 @@ DebugQuad::DebugQuad()
   : data(new DebugQuadData())
 {
     data->initialised = 0;
+    data->time = 0.0f;
 }
 
 void DebugQuad::TickGame(float deltams)
 {
     Entity::TickGame(deltams);
+
+    data->time += deltams;
 }
 
 void DebugQuad::TickDraw(float deltams)
@@ -128,10 +132,18 @@ void DebugQuad::TickDraw(float deltams)
         data->initialised = 1;
     }
 
-    static GLfloat const verts[6][2] =
+    float const st = sinf(0.0005f * data->time);
+    float const ct = cosf(0.0005f * data->time);
+
+    GLfloat const verts[6][2] =
     {
-        { -0.9f,  0.9f }, {  0.9f,  0.9f }, { -0.9f, -0.9f },
-        { -0.9f, -0.9f }, {  0.9f,  0.9f }, {  0.9f, -0.9f },
+        { -0.7f * (st + ct),  0.7f * (st - ct) },
+        {  0.7f * (st - ct),  0.7f * (st + ct) },
+        { -0.7f * (st - ct), -0.7f * (st + ct) },
+
+        { -0.7f * (st - ct), -0.7f * (st + ct) },
+        {  0.7f * (st - ct),  0.7f * (st + ct) },
+        {  0.7f * (st + ct), -0.7f * (st - ct) },
     };
 
     /* Using only 3 components breaks on Android for some reason. */
