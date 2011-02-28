@@ -51,6 +51,9 @@
     <ClInclude Include="..\src\layer.h">
       <Filter>lolengine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\loldebug.h">
+      <Filter>lolengine</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\lolgl.h">
       <Filter>lolengine</Filter>
     </ClInclude>
