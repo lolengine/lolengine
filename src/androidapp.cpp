@@ -30,9 +30,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
     Ticker::Setup(10.0f);
     Video::Setup(320, 200);
 
-    new DebugQuad();
-    new DebugQuad();
-    //new Interface();
+    new Interface();
     new DebugFps(20, 20);
 }
 
