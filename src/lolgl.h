@@ -18,11 +18,6 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-/* Defines for exotic platforms (until they get their config.h) */
-#ifdef ANDROID_NDK
-#   define HAVE_GLES_1X
-#endif
-
 /* Only define one GL platform */
 #if defined HAVE_GL_1X
 #   undef HAVE_GLES_1X
