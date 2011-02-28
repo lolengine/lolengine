@@ -9,8 +9,8 @@
 //
 
 //
-// The DebugTri class
-// ------------------
+// The DebugQuad class
+// -------------------
 //
 
 #if !defined __DH_DEBUGTRI_H__
@@ -21,20 +21,20 @@
 namespace lol
 {
 
-class DebugTriData;
+class DebugQuadData;
 
-class DebugTri : public Entity
+class DebugQuad : public Entity
 {
 public:
-    DebugTri();
-    virtual ~DebugTri();
+    DebugQuad();
+    virtual ~DebugQuad();
 
 protected:
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
 
 private:
-    DebugTriData *data;
+    DebugQuadData *data;
 };
 
 } /* namespace lol */
