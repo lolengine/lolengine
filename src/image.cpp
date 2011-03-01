@@ -18,6 +18,9 @@
 #if defined USE_SDL
 #   include <SDL.h>
 #   include <SDL_image.h>
+#elif defined ANDROID_NDK
+#   include <jni.h>
+#   include <android/log.h>
 #endif
 
 #include "core.h"
@@ -25,6 +28,11 @@
 
 namespace lol
 {
+
+#if defined ANDROID_NDK
+extern JNIEnv *g_env;
+extern jobject g_ctx;
+#endif
 
 /*
  * Image implementation class
@@ -40,6 +48,10 @@ private:
 
 #if defined USE_SDL
     SDL_Surface *img;
+#elif defined ANDROID_NDK
+    jobject bmp;
+    jintArray array;
+    jint *pixels;
 #else
     uint8_t *dummy;
 #endif
@@ -68,6 +80,37 @@ Image::Image(char const *path)
 
     data->size = vec2i(data->img->w, data->img->h);
     data->format = data->img->format->Amask ? FORMAT_RGBA : FORMAT_RGB;
+#elif defined ANDROID_NDK
+    jclass cls = g_env->GetObjectClass(g_ctx);
+    jmethodID mid;
+
+    mid = g_env->GetMethodID(cls, "openImage",
+                             "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jstring name = g_env->NewStringUTF(path);
+    data->bmp = g_env->CallObjectMethod(g_ctx, mid, name);
+    g_env->DeleteLocalRef(name);
+    g_env->NewGlobalRef(data->bmp);
+
+    /* Get image dimensions */
+    mid = g_env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
+    data->size.x = g_env->CallIntMethod(g_ctx, mid, data->bmp);
+    mid = g_env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
+    data->size.y = g_env->CallIntMethod(g_ctx, mid, data->bmp);
+
+    /* Get pixels */
+    data->array = g_env->NewIntArray(data->size.x * data->size.y);
+    g_env->NewGlobalRef(data->array);
+    mid = g_env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
+    g_env->CallVoidMethod(g_ctx, mid, data->bmp, data->array);
+
+    data->pixels = g_env->GetIntArrayElements(data->array, 0);
+    for (int n = 0; n < data->size.x * data->size.y; n++)
+    {
+        uint32_t u = data->pixels[n];
+        u = (u & 0xff00ff00) | ((u & 0xff0000) >> 16) | ((u & 0xff) << 16);
+        data->pixels[n] = u;
+    }
+    data->format = FORMAT_RGBA;
 #else
     data->size = 256;
     data->format = FORMAT_RGBA;
@@ -98,6 +141,8 @@ void * Image::GetData() const
 {
 #if defined USE_SDL
     return data->img->pixels;
+#elif defined ANDROID_NDK
+    return data->pixels;
 #else
     return data->dummy;
 #endif
@@ -107,6 +152,17 @@ Image::~Image()
 {
 #if defined USE_SDL
     SDL_FreeSurface(data->img);
+#elif defined ANDROID_NDK
+    jclass cls = g_env->GetObjectClass(g_ctx);
+    jmethodID mid;
+
+    g_env->ReleaseIntArrayElements(data->array, data->pixels, 0);
+    g_env->DeleteGlobalRef(data->array);
+
+    /* Free image */
+    mid = g_env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
+    g_env->CallVoidMethod(g_ctx, mid, data->bmp);
+    g_env->DeleteGlobalRef(data->bmp);
 #else
     free(data->dummy);
 #endif
