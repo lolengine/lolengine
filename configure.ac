@@ -140,6 +140,15 @@ fi
 AM_CONDITIONAL(USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 
 
+dnl Use libpng? (replacement for SDL_image)
+ac_cv_my_have_libpng="no"
+PKG_CHECK_MODULES(LIBPNG, libpng, [ac_cv_my_have_libpng="yes"], [:])
+if test "${ac_cv_my_have_libpng}" != "no"; then
+  AC_DEFINE(USE_LIBPNG, 1, Define to 1 to use libpng)
+fi
+AM_CONDITIONAL(USE_LIBPNG, test "${ac_cv_my_have_libpng}" != "no")
+
+
 dnl Use libcaca? (required for font generation)
 ac_cv_my_have_caca="no"
 PKG_CHECK_MODULES(CACA, caca >= 0.99.beta17, [ac_cv_my_have_caca="yes"], [:])
@@ -174,8 +183,8 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 
 dnl How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS $EGL_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS"
+LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $LIBPNG_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
