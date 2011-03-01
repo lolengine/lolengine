@@ -35,7 +35,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject that,
+Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
     __android_log_print(ANDROID_LOG_INFO, "LOL", "resize w=%d h=%d", w, h);
