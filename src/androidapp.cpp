@@ -69,6 +69,27 @@ Java_org_zoy_LolEngine_LolGLSurfaceView_nativePause(JNIEnv* env)
     /* TODO: unimplemented */
 }
 
+extern "C" void
+Java_org_zoy_LolEngine_LolGLSurfaceView_nativeDown(JNIEnv* env)
+{
+    Input::SetMouseButton(0);
+}
+
+extern "C" void
+Java_org_zoy_LolEngine_LolGLSurfaceView_nativeUp(JNIEnv* env)
+{
+    Input::UnsetMouseButton(0);
+}
+
+extern "C" void
+Java_org_zoy_LolEngine_LolGLSurfaceView_nativeMove(JNIEnv* env, jobject thiz,
+                                                   jint x, jint y)
+{
+    vec2i pos(x * 640 / Video::GetWidth(),
+              480 - 1 - y * 480 / Video::GetHeight());
+    Input::SetMousePos(pos);
+}
+
 /* Call to render the next GL frame */
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
