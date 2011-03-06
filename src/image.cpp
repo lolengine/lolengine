@@ -16,7 +16,7 @@
 #include <cstdio>
 
 #if defined __APPLE__ && defined __MACH__
-#
+#   import <UIKit/UIKit.h>
 #elif defined USE_SDL
 #   include <SDL.h>
 #   include <SDL_image.h>
@@ -68,8 +68,13 @@ Image::Image(char const *path)
   : data(new ImageData())
 {
 #if defined __APPLE__ && defined __MACH__
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"ascii" ofType:@"png"];
-    NSData *pngdata = [[NSData alloc] initWithContentsOfFile:path];
+	NSString *fullpath = [NSString stringWithUTF8String:path];
+	NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
+	NSString *filename = [chunks objectAtIndex: [chunks count] - 1];
+	chunks = [filename componentsSeparatedByString: @"."];
+	NSString *prefix = [chunks objectAtIndex: 0];
+    NSString *mypath = [[NSBundle mainBundle] pathForResource:prefix ofType:@"png"];
+    NSData *pngdata = [[NSData alloc] initWithContentsOfFile:mypath];
     UIImage *image = [[UIImage alloc] initWithData:pngdata];
     if (!image)
     {

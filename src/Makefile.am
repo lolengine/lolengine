@@ -20,5 +20,3 @@ liblol_a_SOURCES = \
     debugquad.cpp debugquad.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
-EXTRA_DIST = image.mm
-
