@@ -178,7 +178,7 @@ void DebugQuad::TickDraw(float deltams)
     glEnableVertexAttribArray(attr_tex);
 
     /* Bind texture */
-    glClientActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);

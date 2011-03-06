@@ -171,7 +171,7 @@ void TileSet::Bind()
 {
     if (!data->img && data->texture)
     {
-        glClientActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->texture);
     }
 }
