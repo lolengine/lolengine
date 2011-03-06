@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <cstring>
 
 #if defined USE_SDL
 #   include <SDL.h>

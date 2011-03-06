@@ -60,7 +60,6 @@ static InputData * const data = &inputdata;
 
 vec2 Input::GetAxis(int axis)
 {
-    float invsqrt2 = sqrtf(0.5f);
     vec2 ret;
 
 #if defined USE_SDL
@@ -71,7 +70,7 @@ vec2 Input::GetAxis(int axis)
     ret.x += left;
     ret.y += up;
     if (left && up)
-        ret = ret * invsqrt2;
+        ret = ret * sqrtf(0.5f);
 #else
     ret = 0;
 #endif

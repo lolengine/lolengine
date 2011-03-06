@@ -16,7 +16,7 @@
 #include <cstdio>
 #include <stdint.h>
 
-#if defined __linux__
+#if defined __linux__ || defined __APPLE__
 #   include <sys/time.h>
 #   include <unistd.h>
 #elif defined _WIN32
@@ -42,7 +42,7 @@ class TimerData
 private:
     TimerData()
     {
-#if defined __linux__
+#if defined __linux__ || defined __APPLE__
         gettimeofday(&tv0, NULL);
 #elif defined _WIN32
         LARGE_INTEGER tmp;
@@ -58,7 +58,7 @@ private:
     float GetOrWait(float deltams, bool update)
     {
         float ret, towait;
-#if defined __linux__
+#if defined __linux__ || defined __APPLE__
         struct timeval tv;
         gettimeofday(&tv, NULL);
         ret = 1e-3f * (tv.tv_usec - tv0.tv_usec)
@@ -90,7 +90,7 @@ private:
         return ret;
     }
 
-#if defined __linux__
+#if defined __linux__ || defined __APPLE__
     struct timeval tv0;
 #elif defined _WIN32
     float ms_per_cycle;
