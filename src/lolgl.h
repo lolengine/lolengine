@@ -41,11 +41,21 @@
 #       include <GL/gl.h>
 #   endif
 #elif defined HAVE_GLES_1X
-#   include <GLES/gl.h>
-#   include <GLES/glext.h>
+#   if defined __APPLE__ && defined __MACH__
+#       include <OpenGLES/ES1/gl.h>
+#       include <OpenGLES/ES1/glext.h>
+#   else
+#       include <GLES/gl.h>
+#       include <GLES/glext.h>
+#   endif
 #elif defined HAVE_GLES_2X
-#   include <GLES2/gl2.h>
-#   include <GLES2/gl2ext.h>
+#   if defined __APPLE__ && defined __MACH__
+#       include <OpenGLES/ES2/gl.h>
+#       include <OpenGLES/ES2/glext.h>
+#   else
+#       include <GLES2/gl2.h>
+#       include <GLES2/gl2ext.h>
+#   endif
 #endif
 
 /* Redefine some function names */
