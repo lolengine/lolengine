@@ -15,7 +15,9 @@
 #include <cmath>
 #include <cstdio>
 
-#if defined USE_SDL
+#if defined __APPLE__ && defined __MACH__
+#
+#elif defined USE_SDL
 #   include <SDL.h>
 #   include <SDL_image.h>
 #elif defined ANDROID_NDK
@@ -45,14 +47,16 @@ private:
     vec2i size;
     Image::format_t format;
 
-#if defined USE_SDL
+#if defined __APPLE__ && defined __MACH__
+    uint8_t *pixels;
+#elif defined USE_SDL
     SDL_Surface *img;
 #elif defined ANDROID_NDK
     jobject bmp;
     jintArray array;
     jint *pixels;
 #else
-    uint8_t *dummy;
+    uint8_t *pixels;
 #endif
 };
 
@@ -63,7 +67,36 @@ private:
 Image::Image(char const *path)
   : data(new ImageData())
 {
-#if defined USE_SDL
+#if defined __APPLE__ && defined __MACH__
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"ascii" ofType:@"png"];
+    NSData *pngdata = [[NSData alloc] initWithContentsOfFile:path];
+    UIImage *image = [[UIImage alloc] initWithData:pngdata];
+    if (!image)
+    {
+#if !LOL_RELEASE
+        fprintf(stderr, "ERROR: could not load %s\n", path);
+#endif
+        exit(1);
+    }
+
+    int w = CGImageGetWidth(image.CGImage);
+    int h = CGImageGetHeight(image.CGImage);
+    data->size = vec2i(w, h);
+    data->format = FORMAT_RGBA;
+
+    CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+    data->pixels = (uint8_t *)malloc(w * h * 4);
+    CGContextRef ctx =
+            CGBitmapContextCreate(data->pixels, w, h, 8, 4 * w, cspace,
+                    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGColorSpaceRelease(cspace);
+    CGContextClearRect(ctx, CGRectMake(0, 0, w, h));
+    CGContextTranslateCTM(ctx, 0, h - h);
+    CGContextDrawImage(ctx, CGRectMake(0, 0, w, h), image.CGImage);
+    CGContextRelease(ctx);
+    [image release];
+    [pngdata release];
+#elif defined USE_SDL
     for (char const *name = path; *name; name++)
         if ((data->img = IMG_Load(name)))
             break;
@@ -113,8 +146,8 @@ Image::Image(char const *path)
 #else
     data->size = 256;
     data->format = FORMAT_RGBA;
-    data->dummy = (uint8_t *)malloc(256 * 256 * 4 * sizeof(*data->dummy));
-    uint8_t *parser = data->dummy;
+    data->pixels = (uint8_t *)malloc(256 * 256 * 4 * sizeof(*data->pixels));
+    uint8_t *parser = data->pixels;
     for (int j = 0; j < 256; j++)
         for (int i = 0; i < 256; i++)
         {
@@ -138,18 +171,22 @@ Image::format_t Image::GetFormat() const
 
 void * Image::GetData() const
 {
-#if defined USE_SDL
+#if defined __APPLE__ && defined __MACH__
+    return data->pixels;
+#elif defined USE_SDL
     return data->img->pixels;
 #elif defined ANDROID_NDK
     return data->pixels;
 #else
-    return data->dummy;
+    return data->pixels;
 #endif
 }
 
 Image::~Image()
 {
-#if defined USE_SDL
+#if defined __APPLE__ && defined __MACH__
+    free(data->pixels);
+#elif defined USE_SDL
     SDL_FreeSurface(data->img);
 #elif defined ANDROID_NDK
     jclass cls = g_env->GetObjectClass(g_ctx);
@@ -163,7 +200,7 @@ Image::~Image()
     g_env->CallVoidMethod(g_ctx, mid, data->bmp);
     g_env->DeleteGlobalRef(data->bmp);
 #else
-    free(data->dummy);
+    free(data->pixels);
 #endif
     delete data;
 }
