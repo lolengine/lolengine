@@ -130,6 +130,11 @@ void Video::SetFov(float theta)
     float near = -width - height;
     float far = width + height;
 
+#if defined ANDROID_NDK
+    width = 640.0f;
+    height = 480.0f;
+#endif
+
     /* Set the projection matrix */
     if (theta < 1e-4f)
     {
