@@ -36,7 +36,7 @@ struct Tile
 #if defined HAVE_GL_2X || defined HAVE_GLES_2X
 extern Shader *stdshader;
 #endif
-extern mat4 proj_matrix, view_matrix, model_matrix;
+extern mat4 model_matrix;
 
 /*
  * Scene implementation class
@@ -177,33 +177,22 @@ void Scene::Render() // XXX: rename to Blit()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #else
-    //glEnable(GL_DEPTH_TEST);
-    //glDepthFunc(GL_LEQUAL);
-    //glEnable(GL_ALPHA_TEST);
-    //glAlphaFunc(GL_GEQUAL, 0.01f);
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#if 0
-    /* Reset all model-view-projection matrices */
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMultMatrixf(&proj_matrix[0][0]);
-#endif
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    //glMultMatrixf(&model_matrix[0][0]);
-    glMultMatrixf(&view_matrix[0][0]);
+    glMultMatrixf(&model_matrix[0][0]);
 
     /* Set up state machine */
-    glDisable(GL_DEPTH_TEST);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
