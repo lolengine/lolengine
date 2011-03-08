@@ -26,6 +26,16 @@ namespace lol
 
 WorldEntity::WorldEntity()
 {
+    position = 0;
+    rotation = 0;
+    velocity = 0;
+    bbox[0] = bbox[1] = 0;
+
+    mousepos = 0;
+    mousebuttons = 0;
+    pressed = 0;
+    clicked = 0;
+    released = 0;
 }
 
 WorldEntity::~WorldEntity()
