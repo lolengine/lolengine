@@ -86,7 +86,20 @@ static char const *fragmentshader =
     //"    gl_FragColor = vec4(0.5, 1.0, 0.0, 0.5);\n"
     //"    gl_FragColor = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
 #else
-    "    gl_FragColor = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
+    "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
+#if 0
+    "    float dx1 = mod(gl_FragCoord.x, 2.0);\n"
+    "    float dy1 = mod(gl_FragCoord.y, 2.0);\n"
+    "    float t1 = mod(3.0 * dx1 + 2.0 * dy1, 4.0);\n"
+    "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
+    "    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);\n"
+    "    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);\n"
+    "    float t = (1.0 + 4.0 * t1 + t2) / 17.0;\n"
+    "    col.x = col.x > t ? 1.0 : 0.0;\n"
+    "    col.y = col.y > t ? 1.0 : 0.0;\n"
+    "    col.z = col.z > t ? 1.0 : 0.0;\n"
+#endif
+    "    gl_FragColor = col;\n"
 #endif
     "}\n";
 #endif
