@@ -12,7 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
 #include <cmath>
 
 #include "core.h"

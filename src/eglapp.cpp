@@ -12,8 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-
 #if defined USE_EGL
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>

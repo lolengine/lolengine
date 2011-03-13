@@ -13,7 +13,6 @@
 #endif
 
 #include <cstdlib>
-#include <cstdio>
 
 #include "core.h"
 

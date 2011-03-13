@@ -12,8 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-
 #include "core.h"
 
 namespace lol
