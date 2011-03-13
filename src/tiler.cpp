@@ -76,7 +76,7 @@ vec2i Tiler::GetSize(int id)
 #if !LOL_RELEASE
     if (!tileset)
     {
-        fprintf(stderr, "ERROR: getting size for null tiler #%i\n", id);
+        Log::Error("getting size for null tiler #%i\n", id);
         return 0;
     }
 #endif
@@ -89,7 +89,7 @@ vec2i Tiler::GetCount(int id)
 #if !LOL_RELEASE
     if (!tileset)
     {
-        fprintf(stderr, "ERROR: getting count for null tiler #%i\n", id);
+        Log::Error("getting count for null tiler #%i\n", id);
         return 0;
     }
 #endif
@@ -105,7 +105,7 @@ void Tiler::Bind(uint32_t code)
     if (!tileset)
     {
         if (id != data->lasterror)
-            fprintf(stderr, "ERROR: binding null tiler #%i\n", id);
+            Log::Error("binding null tiler #%i\n", id);
         data->lasterror = id;
         return;
     }
@@ -123,7 +123,7 @@ void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o,
     if (!tileset)
     {
         if (id != data->lasterror)
-            fprintf(stderr, "ERROR: blitting to null tiler #%i\n", id);
+            Log::Error("blitting to null tiler #%i\n", id);
         data->lasterror = id;
         return;
     }

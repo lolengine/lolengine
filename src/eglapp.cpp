@@ -57,7 +57,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
     data->dpy = XOpenDisplay(NULL);
     if (data->dpy == NULL)
     {
-        fprintf(stderr, "Cannot connect to X server\n");
+        Log::Error("cannot connect to X server\n");
         exit(EXIT_FAILURE);
     }
 
@@ -86,13 +86,13 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
     data->egl_dpy = eglGetDisplay((EGLNativeDisplayType)data->dpy);
     if (data->egl_dpy == EGL_NO_DISPLAY)
     {
-        fprintf(stderr, "Cannot get EGL display\n");
+        Log::Error("cannot get EGL display\n");
         exit(EXIT_FAILURE);
     }
 
     if (!eglInitialize(data->egl_dpy, NULL, NULL))
     {
-        fprintf(stderr, "Cannot initialize EGL\n");
+        Log::Error("cannot initialize EGL\n");
         exit(EXIT_FAILURE);
     }
 
@@ -112,13 +112,13 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
     EGLint num_config;
     if (!eglChooseConfig(data->egl_dpy, attr, &ecfg, 1, &num_config))
     {
-        fprintf(stderr, "Cannot choose EGL config (%i)\n", eglGetError());
+        Log::Error("cannot choose EGL config (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 
     if (num_config != 1)
     {
-        fprintf(stderr, "Cannot choose between %i EGL configs\n", num_config);
+        Log::Error("cannot choose between %i EGL configs\n", num_config);
         exit(EXIT_FAILURE);
     }
 
@@ -126,7 +126,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
                                             data->win, NULL);
     if (data->egl_surf == EGL_NO_SURFACE)
     {
-        fprintf(stderr, "Cannot create EGL surface (%i)\n", eglGetError());
+        Log::Error("cannot create EGL surface (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 
@@ -143,7 +143,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
                                      EGL_NO_CONTEXT, ctxattr);
     if (data->egl_ctx == EGL_NO_CONTEXT)
     {
-        fprintf(stderr, "Cannot create EGL context (%i)\n", eglGetError());
+        Log::Error("cannot create EGL context (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 

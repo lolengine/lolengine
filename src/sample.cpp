@@ -58,7 +58,7 @@ Sample::Sample(char const *path)
     if (!data->chunk)
     {
 #if !LOL_RELEASE
-        fprintf(stderr, "ERROR: could not load %s\n", path);
+        Log::Error("could not load %s\n", path);
 #endif
         SDL_Quit();
         exit(1);

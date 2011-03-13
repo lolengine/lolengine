@@ -12,10 +12,6 @@
 #   include "config.h"
 #endif
 
-#ifdef ANDROID_NDK
-#   include <android/log.h>
-#endif
-
 #include <cstdio>
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
@@ -73,25 +69,14 @@ template<> void mat4::printf() const
 {
     mat4 const &p = *this;
 
-#ifdef ANDROID_NDK
-    __android_log_print(ANDROID_LOG_INFO, "LOL",
-        "[ %6.6f %6.6f %6.6f %6.6f", p[0][0], p[1][0], p[2][0], p[3][0]);
-    __android_log_print(ANDROID_LOG_INFO, "LOL",
-        "  %6.6f %6.6f %6.6f %6.6f", p[0][1], p[1][1], p[2][1], p[3][1]);
-    __android_log_print(ANDROID_LOG_INFO, "LOL",
-        "  %6.6f %6.6f %6.6f %6.6f", p[0][2], p[1][2], p[2][2], p[3][2]);
-    __android_log_print(ANDROID_LOG_INFO, "LOL",
-        "  %6.6f %6.6f %6.6f %6.6f ]", p[0][3], p[1][3], p[2][3], p[3][3]);
-#else
-    fprintf(stderr, "[ %6.6f %6.6f %6.6f %6.6f\n",
-            p[0][0], p[1][0], p[2][0], p[3][0]);
-    fprintf(stderr, "  %6.6f %6.6f %6.6f %6.6f\n",
-            p[0][1], p[1][1], p[2][1], p[3][1]);
-    fprintf(stderr, "  %6.6f %6.6f %6.6f %6.6f\n",
-            p[0][2], p[1][2], p[2][2], p[3][2]);
-    fprintf(stderr, "  %6.6f %6.6f %6.6f %6.6f ]\n",
-            p[0][3], p[1][3], p[2][3], p[3][3]);
-#endif
+    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f\n",
+               p[0][0], p[1][0], p[2][0], p[3][0]);
+    Log::Debug("  %6.6f %6.6f %6.6f %6.6f\n",
+               p[0][1], p[1][1], p[2][1], p[3][1]);
+    Log::Debug("  %6.6f %6.6f %6.6f %6.6f\n",
+               p[0][2], p[1][2], p[2][2], p[3][2]);
+    Log::Debug("  %6.6f %6.6f %6.6f %6.6f ]\n",
+               p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 
 template<> mat4 mat4::ortho(float left, float right, float bottom,

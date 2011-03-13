@@ -92,7 +92,7 @@ Shader::Shader(char const *vert, char const *frag)
 
     glGetShaderInfoLog(data->vert_id, sizeof(buf), &len, buf);
     if (len > 0)
-        fprintf(stderr, "ERROR: failed to compile vertex shader: %s", buf);
+        Log::Error("failed to compile vertex shader: %s", buf);
 #endif
 
     data->frag_crc = Hash::Crc32(frag);
@@ -103,7 +103,7 @@ Shader::Shader(char const *vert, char const *frag)
 
     glGetShaderInfoLog(data->frag_id, sizeof(buf), &len, buf);
     if (len > 0)
-        fprintf(stderr, "ERROR: failed to compile fragment shader: %s", buf);
+        Log::Error("failed to compile fragment shader: %s", buf);
 
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);

@@ -119,7 +119,7 @@ Map::Map(char const *path)
                 data->layers[data->nlayers] = l;
                 data->nlayers++;
                 tiles = NULL;
-                //fprintf(stderr, "new layer %ix%i\n", data->width, data->height);
+                //Log::Debug("new layer %ix%i\n", data->width, data->height);
             }
         }
         else if (sscanf(tmp, " <tileset firstgid=\"%i\"", &i) == 1)
@@ -133,7 +133,7 @@ Map::Map(char const *path)
             data->tilers[data->ntilers] = Tiler::Register(str, 32, 0,
                                                           sqrtf(2));
             data->ntilers++;
-            //fprintf(stderr, "new tiler %s\n", str);
+            //Log::Debug("new tiler %s\n", str);
         }
         else if (sscanf(tmp, " <layer name=\"%c%i%c%*[^\"]\" "
                         "width=\"%i\" height=\"%i\"", &a, &i, &b, &j, &k) == 5)

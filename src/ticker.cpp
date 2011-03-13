@@ -44,15 +44,15 @@ public:
     {
 #if !LOL_RELEASE
         if (nentities)
-            fprintf(stderr, "ERROR: still %i entities in ticker\n", nentities);
+            Log::Error("still %i entities in ticker\n", nentities);
         if (autolist)
         {
             int count = 0;
             for (Entity *e = autolist; e; e = e->autonext, count++)
                 ;
-            fprintf(stderr, "ERROR: still %i autoreleased entities\n", count);
+            Log::Error("still %i autoreleased entities\n", count);
         }
-        fprintf(stderr, "INFO: %i frames required to quit\n",
+        Log::Debug("%i frames required to quit\n",
                 frame - quitframe);
 #endif
     }
@@ -100,11 +100,11 @@ void Ticker::Ref(Entity *entity)
 #if !LOL_RELEASE
     if (!entity)
     {
-        fprintf(stderr, "ERROR: refing NULL entity\n");
+        Log::Error("referencing NULL entity\n");
         return;
     }
     if (entity->destroy)
-        fprintf(stderr, "ERROR: refing entity scheduled for destruction\n");
+        Log::Error("referencing entity scheduled for destruction\n");
 #endif
     if (entity->autorelease)
     {
@@ -131,13 +131,13 @@ int Ticker::Unref(Entity *entity)
 #if !LOL_RELEASE
     if (!entity)
     {
-        fprintf(stderr, "ERROR: dereferencing NULL entity\n");
+        Log::Error("dereferencing NULL entity\n");
         return 0;
     }
     if (entity->ref <= 0)
-        fprintf(stderr, "ERROR: dereferencing unreferenced entity\n");
+        Log::Error("dereferencing unreferenced entity\n");
     if (entity->autorelease)
-        fprintf(stderr, "ERROR: dereferencing autoreleased entity\n");
+        Log::Error("dereferencing autoreleased entity\n");
 #endif
     return --entity->ref;
 }
@@ -155,15 +155,15 @@ void Ticker::TickGame()
     Profiler::Start(Profiler::STAT_TICK_GAME);
 
 #if 0
-    fprintf(stderr, "-------------------------------------\n");
+    Log::Debug("-------------------------------------\n");
     for (int i = 0; i < Entity::ALLGROUP_END; i++)
     {
-        fprintf(stderr, "%s Group %i\n",
-                (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
+        Log::Debug("%s Group %i\n",
+                   (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
 
         for (Entity *e = data->list[i]; e; )
         {
-            fprintf(stderr, "  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
+            Log::Debug("  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
             e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
         }
     }
@@ -196,7 +196,7 @@ void Ticker::TickGame()
             if (e->ref)
             {
 #if !LOL_RELEASE
-                fprintf(stderr, "ERROR: poking %s\n", e->GetName());
+                Log::Error("poking %s\n", e->GetName());
 #endif
                 e->ref--;
                 n++;
@@ -204,8 +204,8 @@ void Ticker::TickGame()
 
 #if !LOL_RELEASE
         if (n)
-            fprintf(stderr, "ERROR: %i entities stuck after %i frames, "
-                    "poked %i\n", data->nentities, data->quitdelay, n);
+            Log::Error("%i entities stuck after %i frames, poked %i\n",
+                       data->nentities, data->quitdelay, n);
 #endif
 
         data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
@@ -265,13 +265,13 @@ void Ticker::TickGame()
             {
 #if !LOL_RELEASE
                 if (e->state != Entity::STATE_IDLE)
-                    fprintf(stderr, "ERROR: entity not idle for game tick\n");
+                    Log::Error("entity not idle for game tick\n");
                 e->state = Entity::STATE_PRETICK_GAME;
 #endif
                 e->TickGame(data->deltams);
 #if !LOL_RELEASE
                 if (e->state != Entity::STATE_POSTTICK_GAME)
-                    fprintf(stderr, "ERROR: entity missed super game tick\n");
+                    Log::Error("entity missed super game tick\n");
                 e->state = Entity::STATE_IDLE;
 #endif
             }
@@ -306,13 +306,13 @@ void Ticker::TickDraw()
             {
 #if !LOL_RELEASE
                 if (e->state != Entity::STATE_IDLE)
-                    fprintf(stderr, "ERROR: entity not idle for draw tick\n");
+                    Log::Error("entity not idle for draw tick\n");
                 e->state = Entity::STATE_PRETICK_DRAW;
 #endif
                 e->TickDraw(data->deltams);
 #if !LOL_RELEASE
                 if (e->state != Entity::STATE_POSTTICK_DRAW)
-                    fprintf(stderr, "ERROR: entity missed super draw tick\n");
+                    Log::Error("entity missed super draw tick\n");
                 e->state = Entity::STATE_IDLE;
 #endif
             }
