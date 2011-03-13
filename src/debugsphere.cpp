@@ -18,7 +18,6 @@
 #   include <windows.h>
 #endif
 
-#include <cstdio>
 #include <cmath>
 
 #include "core.h"

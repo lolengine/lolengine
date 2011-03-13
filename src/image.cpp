@@ -13,7 +13,6 @@
 #endif
 
 #include <cmath>
-#include <cstdio>
 
 #if defined __APPLE__ && defined __MACH__
 #   import <UIKit/UIKit.h>

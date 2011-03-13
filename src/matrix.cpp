@@ -12,7 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
 
