@@ -79,7 +79,7 @@ Image::Image(char const *path)
     if (!image)
     {
 #if !LOL_RELEASE
-        fprintf(stderr, "ERROR: could not load %s\n", path);
+        Log::Error("could not load %s\n", path);
 #endif
         exit(1);
     }
@@ -109,7 +109,7 @@ Image::Image(char const *path)
     if (!data->img)
     {
 #if !LOL_RELEASE
-        fprintf(stderr, "ERROR: could not load %s\n", path);
+        Log::Error("could not load %s\n", path);
 #endif
         SDL_Quit();
         exit(1);

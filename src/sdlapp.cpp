@@ -45,7 +45,7 @@ SdlApp::SdlApp(char const *title, vec2i res, float fps) :
     /* Initialise SDL */
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
-        fprintf(stderr, "Cannot initialise SDL: %s\n", SDL_GetError());
+        Log::Error("cannot initialise SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
@@ -54,7 +54,7 @@ SdlApp::SdlApp(char const *title, vec2i res, float fps) :
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
     if (!video)
     {
-        fprintf(stderr, "Cannot create OpenGL screen: %s\n", SDL_GetError());
+        Log::Error("cannot create OpenGL screen: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }

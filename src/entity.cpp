@@ -42,7 +42,7 @@ Entity::~Entity()
 {
 #if !LOL_RELEASE
     if (!destroy)
-        fprintf(stderr, "ERROR: entity destructor called directly\n");
+        Log::Error("entity destructor called directly\n");
 #endif
 }
 
@@ -55,7 +55,7 @@ void Entity::TickGame(float deltams)
 {
 #if !LOL_RELEASE
     if (state != STATE_PRETICK_GAME)
-        fprintf(stderr, "ERROR: invalid entity game tick\n");
+        Log::Error("invalid entity game tick\n");
     state = STATE_POSTTICK_GAME;
 #endif
 }
@@ -64,7 +64,7 @@ void Entity::TickDraw(float deltams)
 {
 #if !LOL_RELEASE
     if (state != STATE_PRETICK_DRAW)
-        fprintf(stderr, "ERROR: invalid entity draw tick\n");
+        Log::Error("invalid entity draw tick\n");
     state = STATE_POSTTICK_DRAW;
 #endif
 }

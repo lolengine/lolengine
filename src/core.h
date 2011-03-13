@@ -22,6 +22,7 @@
 #include "timer.h"
 
 // Static classes
+#include "log.h"
 #include "video.h"
 #include "audio.h"
 #include "scene.h"
