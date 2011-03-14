@@ -57,7 +57,7 @@ static char const *vertexshader =
     "void main()\n"
     "{\n"
     "    gl_Position = proj_matrix * view_matrix * model_matrix"
-    "                * vec4(in_Position, 1.0f);\n"
+    "                * vec4(in_Position, 1.0);\n"
     //"    pass_Color = in_Color;\n"
 #if defined HAVE_GLES_2X
     "    pass_TexCoord = in_TexCoord;\n"
