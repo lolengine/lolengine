@@ -81,12 +81,13 @@ static char const *fragmentshader =
     "void main()\n"
     "{\n"
 #if defined HAVE_GLES_2X
-    "    gl_FragColor = texture2D(in_Texture, pass_TexCoord);\n"
-    //"    gl_FragColor = vec4(0.5, 1.0, 0.0, 0.5);\n"
-    //"    gl_FragColor = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
+    "    vec4 col = texture2D(in_Texture, pass_TexCoord);\n"
+    //"    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);\n"
+    //"    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
 #else
     "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
-#if 0
+#endif
+#if 1
     "    float mul = 2.0;\n"
     "    float dx1 = mod(gl_FragCoord.x, 2.0);\n"
     "    float dy1 = mod(gl_FragCoord.y, 2.0);\n"
@@ -109,7 +110,6 @@ static char const *fragmentshader =
     "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
 #endif
     "    gl_FragColor = col;\n"
-#endif
     "}\n";
 #endif
 
