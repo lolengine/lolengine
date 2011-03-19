@@ -19,34 +19,17 @@
 #define GL_GLEXT_PROTOTYPES
 
 /* Only define one GL platform */
-#if defined HAVE_GL_1X
-#   undef HAVE_GLES_1X
-#endif
-#if defined HAVE_GLES_2X
-#   undef HAVE_GL_1X
-#   undef HAVE_GLES_1X
-#endif
 #if defined HAVE_GL_2X
-#   undef HAVE_GL_1X
-#   undef HAVE_GLES_1X
 #   undef HAVE_GLES_2X
 #endif
 
 /* Include GL */
-#if defined HAVE_GL_1X || defined HAVE_GL_2X
+#if defined HAVE_GL_2X
 #   if defined __APPLE__ && defined __MACH__
 #       include <OpenGL/gl.h>
 #   else
 #       define GL_GLEXT_PROTOTYPES
 #       include <GL/gl.h>
-#   endif
-#elif defined HAVE_GLES_1X
-#   if defined __APPLE__ && defined __MACH__
-#       include <OpenGLES/ES1/gl.h>
-#       include <OpenGLES/ES1/glext.h>
-#   else
-#       include <GLES/gl.h>
-#       include <GLES/glext.h>
 #   endif
 #elif defined HAVE_GLES_2X
 #   if defined __APPLE__ && defined __MACH__
@@ -59,13 +42,8 @@
 #endif
 
 /* Redefine some function names */
-#if defined HAVE_GL_1X
+#if defined HAVE_GL_2X
 #   define glClearDepthf glClearDepth
-#elif defined HAVE_GL_2X
-#   define glClearDepthf glClearDepth
-#elif defined HAVE_GLES_1X
-#   define glGenVertexArrays glGenVertexArraysOES
-#   define glDeleteVertexArrays glDeleteVertexArraysOES
 #elif defined HAVE_GLES_2X
 #   define glGenVertexArrays glGenVertexArraysOES
 #   define glDeleteVertexArrays glDeleteVertexArraysOES

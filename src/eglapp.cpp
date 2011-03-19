@@ -98,9 +98,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
     {
         EGL_BUFFER_SIZE, 16,
         EGL_RENDERABLE_TYPE,
-#if defined HAVE_GLES_1X
-        EGL_OPENGL_ES_BIT,
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
         EGL_OPENGL_ES2_BIT,
 #endif
         EGL_NONE
@@ -130,9 +128,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
 
     EGLint ctxattr[] =
     {
-#if defined HAVE_GLES_1X
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
         EGL_CONTEXT_CLIENT_VERSION, 2,
 #endif
         EGL_NONE
