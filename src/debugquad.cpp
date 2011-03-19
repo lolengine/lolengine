@@ -32,12 +32,8 @@ class DebugQuadData
 private:
     int initialised;
     float time;
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint buflist[3];
     Shader *shader;
-#elif defined HAVE_GL_1X || defined HAVE_GLES_1X
-    GLuint buflist[3];
-#endif
     GLuint texlist[1];
     uint8_t image[1][32 * 32 * 4];
 };
@@ -70,19 +66,14 @@ void DebugQuad::TickDraw(float deltams)
     {
         if (data->initialised)
         {
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
             glDeleteBuffers(3, data->buflist);
             Shader::Destroy(data->shader);
-#elif defined HAVE_GL_1X || defined HAVE_GLES_1X
-            glDeleteBuffers(3, data->buflist);
-#endif
             glDeleteTextures(1, data->texlist);
             data->initialised = 0;
         }
     }
     else if (!data->initialised)
     {
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
         glGenBuffers(3, data->buflist);
 
         static char const *vertexshader =
@@ -108,9 +99,6 @@ void DebugQuad::TickDraw(float deltams)
             "    gl_FragColor = col * tex;\n"
             "}\n";
         data->shader = Shader::Create(vertexshader, fragmentshader);
-#elif defined HAVE_GL_1X || defined HAVE_GLES_1X
-        glGenBuffers(3, data->buflist);
-#endif
         glGenTextures(1, data->texlist);
 
         glEnable(GL_TEXTURE_2D);
@@ -165,7 +153,6 @@ void DebugQuad::TickDraw(float deltams)
         { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f },
     };
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     data->shader->Bind();
     GLuint attr_pos, attr_col, attr_tex;
     attr_pos = data->shader->GetAttribLocation("in_Position");
@@ -197,61 +184,6 @@ void DebugQuad::TickDraw(float deltams)
     glDisableVertexAttribArray(attr_pos);
     glDisableVertexAttribArray(attr_col);
     glDisableVertexAttribArray(attr_tex);
-#elif defined HAVE_GL_1X || defined HAVE_GLES_1X
-    /* Reset all model-view-projection matrices */
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    /* Set up state machine */
-    glDisable(GL_DEPTH_TEST);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    /* Bind texture */
-    glClientActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
-
-    /* Bind vertex, color and texture coordinate buffers */
-#if defined HAVE_GL_1X
-    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
-    glVertexPointer(2, GL_FLOAT, 0, NULL);
-
-    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[1]);
-    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), cols, GL_STATIC_DRAW);
-    glColorPointer(4, GL_FLOAT, 0, NULL);
-
-    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[2]);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tcs, GL_STATIC_DRAW);
-    glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-#else
-    glVertexPointer(2, GL_FLOAT, 0, verts);
-    glColorPointer(4, GL_FLOAT, 0, cols);
-    glTexCoordPointer(2, GL_FLOAT, 0, tcs);
-#endif
-
-    /* Draw arrays */
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    /* Disable state machine features */
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    /* Restore matrices */
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-#endif
 }
 
 DebugQuad::~DebugQuad()

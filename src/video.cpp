@@ -29,14 +29,11 @@ namespace lol
 vec2i saved_viewport;
 #endif
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
 Shader *stdshader;
-#endif
 mat4 proj_matrix, view_matrix, model_matrix;
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
 static char const *vertexshader =
-#if !defined HAVE_GLES_2X
+#if defined HAVE_GL_2X
     "#version 130\n"
 #endif
     "\n"
@@ -87,11 +84,10 @@ static char const *fragmentshader =
 #else
     "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
 #endif
-#if 1
+#if 0
     "    float mul = 2.0;\n"
-    "    float dx1 = mod(gl_FragCoord.x, 2.0);\n"
-    "    float dy1 = mod(gl_FragCoord.y, 2.0);\n"
-    "    float t1 = mod(3.0 * dx1 + 2.0 * dy1, 4.0);\n"
+    "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
+    "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
     "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
     "    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);\n"
     "    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);\n"
@@ -111,7 +107,6 @@ static char const *fragmentshader =
 #endif
     "    gl_FragColor = col;\n"
     "}\n";
-#endif
 
 /*
  * Public Video class
@@ -129,16 +124,12 @@ void Video::Setup(int width, int height)
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
     glClearDepthf(1.0);
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_1X
+#if defined HAVE_GL_2X
     glShadeModel(GL_SMOOTH);
-#endif
-#if defined HAVE_GL_2X || defined HAVE_GLES_1X
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     stdshader = Shader::Create(vertexshader, fragmentshader);
-#endif
 }
 
 void Video::SetFov(float theta)
@@ -188,23 +179,12 @@ void Video::SetFov(float theta)
 
     view_matrix = mat4(1.0f);
 
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     stdshader->Bind(); /* Required on GLES 2.x? */
     GLuint uni;
     uni = stdshader->GetUniformLocation("proj_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
     uni = stdshader->GetUniformLocation("view_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
-#else
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMultMatrixf(&proj_matrix[0][0]);
-
-    /* Reset the model view matrix, just in case */
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glMultMatrixf(&view_matrix[0][0]);
-#endif
 }
 
 void Video::SetDepth(bool set)
@@ -225,9 +205,7 @@ void Video::Clear()
 
 void Video::Destroy()
 {
-#if defined HAVE_GL_2X || defined HAVE_GLES_2X
     Shader::Destroy(stdshader);
-#endif
 }
 
 void Video::Capture(uint32_t *buffer)
@@ -236,7 +214,7 @@ void Video::Capture(uint32_t *buffer)
     glGetIntegerv(GL_VIEWPORT, v);
     int width = v[2], height = v[3];
 
-#if defined HAVE_GL_1X || defined HAVE_GL_2X
+#if defined HAVE_GL_2X
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
 #endif
     glPixelStorei(GL_PACK_ALIGNMENT, 1);

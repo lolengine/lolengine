@@ -78,12 +78,6 @@ AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 
 dnl Which version of OpenGL to use?
 ac_cv_my_have_gl="no"
-PKG_CHECK_MODULES(GLES1, glesv1_cm,
- [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GLES_1X, 1, Define to 1 if GLES 1.x is available)
-  GL_CFLAGS="${GLES1_CFLAGS}"
-  GL_LIBS="${GLES1_LIBS}"],
- [:])
 PKG_CHECK_MODULES(GLES2, glesv2,
  [ac_cv_my_have_gl="yes"
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
@@ -92,7 +86,6 @@ PKG_CHECK_MODULES(GLES2, glesv2,
  [:])
 AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GL_1X, 1, Define to 1 if GL 1.x is available)
   AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
   GL_LIBS="-lGL"]) # FIXME: hackish
 if test "${ac_cv_my_have_gl}" = "no"; then
