@@ -14,8 +14,8 @@
 // The Tiler is a static class that manages tilesets.
 //
 
-#if !defined __DH_TILER_H__
-#define __DH_TILER_H__
+#if !defined __LOL_TILER_H__
+#define __LOL_TILER_H__
 
 #include <stdint.h>
 
@@ -38,5 +38,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_TILER_H__
+#endif // __LOL_TILER_H__
 

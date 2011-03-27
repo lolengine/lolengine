@@ -13,8 +13,8 @@
 // -----------------
 //
 
-#if !defined __DH_EMITTER_H__
-#define __DH_EMITTER_H__
+#if !defined __LOL_EMITTER_H__
+#define __LOL_EMITTER_H__
 
 #include "entity.h"
 
@@ -41,5 +41,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_EMITTER_H__
+#endif // __LOL_EMITTER_H__
 

@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __DH_LOLGL_H__
-#define __DH_LOLGL_H__
+#if !defined __LOL_LOLGL_H__
+#define __LOL_LOLGL_H__
 
 #define GL_GLEXT_PROTOTYPES
 
@@ -50,5 +50,5 @@
 #   define glBindVertexArray glBindVertexArrayOES
 #endif
 
-#endif // __DH_LOLGL_H__
+#endif // __LOL_LOLGL_H__
 

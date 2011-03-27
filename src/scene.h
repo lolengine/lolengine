@@ -13,8 +13,8 @@
 // ---------------
 //
 
-#if !defined __DH_SCENE_H__
-#define __DH_SCENE_H__
+#if !defined __LOL_SCENE_H__
+#define __LOL_SCENE_H__
 
 #include <stdint.h>
 
@@ -41,5 +41,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_SCENE_H__
+#endif // __LOL_SCENE_H__
 

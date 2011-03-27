@@ -13,8 +13,8 @@
 // ---------------
 //
 
-#if !defined __DH_WORLD_H__
-#define __DH_WORLD_H__
+#if !defined __LOL_WORLD_H__
+#define __LOL_WORLD_H__
 
 #include "entity.h"
 
@@ -46,5 +46,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_WORLD_H__
+#endif // __LOL_WORLD_H__
 

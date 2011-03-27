@@ -14,8 +14,8 @@
 // The Sampler is a static class that manages samples.
 //
 
-#if !defined __DH_SAMPLER_H__
-#define __DH_SAMPLER_H__
+#if !defined __LOL_SAMPLER_H__
+#define __LOL_SAMPLER_H__
 
 #include <stdint.h>
 
@@ -33,5 +33,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_SAMPLER_H__
+#endif // __LOL_SAMPLER_H__
 

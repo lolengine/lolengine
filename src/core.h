@@ -13,8 +13,8 @@
 // ---------------
 //
 
-#if !defined __DH_CORE_H__
-#define __DH_CORE_H__
+#if !defined __LOL_CORE_H__
+#define __LOL_CORE_H__
 
 // Base types
 #include "matrix.h"
@@ -53,5 +53,5 @@
 #include "tiler.h"
 #include "sampler.h"
 
-#endif // __DH_CORE_H__
+#endif // __LOL_CORE_H__
 

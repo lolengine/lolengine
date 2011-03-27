@@ -15,8 +15,8 @@
 // determined later).
 //
 
-#if !defined __DH_MAP_H__
-#define __DH_MAP_H__
+#if !defined __LOL_MAP_H__
+#define __LOL_MAP_H__
 
 namespace lol
 {
@@ -39,5 +39,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_MAP_H__
+#endif // __LOL_MAP_H__
 

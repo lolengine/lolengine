@@ -13,8 +13,8 @@
 // ---------------------
 //
 
-#if !defined __DH_DEBUGRECORD_H__
-#define __DH_DEBUGRECORD_H__
+#if !defined __LOL_DEBUGRECORD_H__
+#define __LOL_DEBUGRECORD_H__
 
 #include "entity.h"
 
@@ -39,5 +39,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_DEBUGRECORD_H__
+#endif // __LOL_DEBUGRECORD_H__
 

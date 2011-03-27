@@ -13,8 +13,8 @@
 // ----------------------
 //
 
-#if !defined __DH_INPUT_H__
-#define __DH_INPUT_H__
+#if !defined __LOL_INPUT_H__
+#define __LOL_INPUT_H__
 
 #include "matrix.h"
 
@@ -43,5 +43,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_INPUT_H__
+#endif // __LOL_INPUT_H__
 

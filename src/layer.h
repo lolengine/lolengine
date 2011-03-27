@@ -14,8 +14,8 @@
 // A Layer object is a subset of a Map.
 //
 
-#if !defined __DH_LAYER_H__
-#define __DH_LAYER_H__
+#if !defined __LOL_LAYER_H__
+#define __LOL_LAYER_H__
 
 #include <stdint.h>
 
@@ -39,5 +39,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_LAYER_H__
+#endif // __LOL_LAYER_H__
 

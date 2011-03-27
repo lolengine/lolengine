@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __DH_SDLINPUT_H__
-#define __DH_SDLINPUT_H__
+#if !defined __LOL_SDLINPUT_H__
+#define __LOL_SDLINPUT_H__
 
 #include "entity.h"
 
@@ -38,5 +38,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_SDLINPUT_H__
+#endif // __LOL_SDLINPUT_H__
 

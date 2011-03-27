@@ -13,8 +13,8 @@
 // -------------------
 //
 
-#if !defined __DH_DEBUGTRI_H__
-#define __DH_DEBUGTRI_H__
+#if !defined __LOL_DEBUGTRI_H__
+#define __LOL_DEBUGTRI_H__
 
 #include "entity.h"
 
@@ -39,5 +39,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_DEBUGTRI_H__
+#endif // __LOL_DEBUGTRI_H__
 

@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __DH_DICT_H__
-#define __DH_DICT_H__
+#if !defined __LOL_DICT_H__
+#define __LOL_DICT_H__
 
 #include "entity.h"
 
@@ -41,5 +41,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_DICT_H__
+#endif // __LOL_DICT_H__
 

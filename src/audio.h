@@ -14,8 +14,8 @@
 // Helper functions to set up the audio device.
 //
 
-#if !defined __DH_AUDIO_H__
-#define __DH_AUDIO_H__
+#if !defined __LOL_AUDIO_H__
+#define __LOL_AUDIO_H__
 
 #include <stdint.h>
 
@@ -30,5 +30,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_AUDIO_H__
+#endif // __LOL_AUDIO_H__
 

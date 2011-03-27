@@ -16,8 +16,8 @@
 // Ticker class for the ticking logic and the linked list implementation.
 //
 
-#if !defined __DH_ENTITY_H__
-#define __DH_ENTITY_H__
+#if !defined __LOL_ENTITY_H__
+#define __LOL_ENTITY_H__
 
 #include <stdint.h>
 
@@ -84,5 +84,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_ENTITY_H__
+#endif // __LOL_ENTITY_H__
 

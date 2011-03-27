@@ -14,8 +14,8 @@
 // The Forge is a static class that manages fonts.
 //
 
-#if !defined __DH_FORGE_H__
-#define __DH_FORGE_H__
+#if !defined __LOL_FORGE_H__
+#define __LOL_FORGE_H__
 
 #include "font.h"
 
@@ -32,5 +32,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_FORGE_H__
+#endif // __LOL_FORGE_H__
 
