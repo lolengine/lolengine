@@ -86,6 +86,7 @@ static char const *fragmentshader =
 #endif
 #if 0
     "    float mul = 2.0;\n"
+#if 0
     "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
     "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
     "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
@@ -94,13 +95,22 @@ static char const *fragmentshader =
     "    float dx3 = mod(floor(gl_FragCoord.x * 0.25), 2.0);\n"
     "    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);\n"
     "    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);\n"
-    "    float t = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
+    "    float t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
+    "    float t2 = t1;
+    "    float t3 = t1;
+#else
+    "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
+    "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
+    "    float t1 = mod(sin(rand) * 17.13043, 1.0);\n"
+    "    float t2 = mod(sin(rand) * 27.13043, 1.0);\n"
+    "    float t3 = mod(sin(rand) * 37.13043, 1.0);\n"
+#endif
     "    float fracx = fract(col.x * mul);\n"
     "    float fracy = fract(col.y * mul);\n"
     "    float fracz = fract(col.z * mul);\n"
-    "    fracx = fracx > t ? 1.0 : 0.0;\n"
-    "    fracy = fracy > t ? 1.0 : 0.0;\n"
-    "    fracz = fracz > t ? 1.0 : 0.0;\n"
+    "    fracx = fracx > t1 ? 1.0 : 0.0;\n"
+    "    fracy = fracy > t2 ? 1.0 : 0.0;\n"
+    "    fracz = fracz > t3 ? 1.0 : 0.0;\n"
     "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
     "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
     "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
