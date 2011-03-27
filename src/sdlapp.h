@@ -13,8 +13,8 @@
 // ----------------
 //
 
-#if !defined __DH_SDLAPP_H__
-#define __DH_SDLAPP_H__
+#if !defined __LOL_SDLAPP_H__
+#define __LOL_SDLAPP_H__
 
 #include "matrix.h"
 
@@ -37,5 +37,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_SDLAPP_H__
+#endif // __LOL_SDLAPP_H__
 

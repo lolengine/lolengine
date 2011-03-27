@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __DH_HASH_H__
-#define __DH_HASH_H__
+#if !defined __LOL_HASH_H__
+#define __LOL_HASH_H__
 
 namespace lol
 {
@@ -27,5 +27,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_HASH_H__
+#endif // __LOL_HASH_H__
 

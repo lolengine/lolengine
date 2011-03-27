@@ -14,8 +14,8 @@
 // Helper GL functions to set up the scene.
 //
 
-#if !defined __DH_VIDEO_H__
-#define __DH_VIDEO_H__
+#if !defined __LOL_VIDEO_H__
+#define __LOL_VIDEO_H__
 
 #include <stdint.h>
 
@@ -37,5 +37,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_VIDEO_H__
+#endif // __LOL_VIDEO_H__
 

@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __DH_MATRIX_H__
-#define __DH_MATRIX_H__
+#if !defined __LOL_MATRIX_H__
+#define __LOL_MATRIX_H__
 
 #include <cmath>
 
@@ -285,5 +285,5 @@ typedef Mat4<int> mat4i;
 
 } /* namespace lol */
 
-#endif // __DH_MATRIX_H__
+#endif // __LOL_MATRIX_H__
 

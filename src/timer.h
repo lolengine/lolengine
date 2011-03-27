@@ -13,8 +13,8 @@
 // ---------------
 //
 
-#if !defined __DH_TIMER_H__
-#define __DH_TIMER_H__
+#if !defined __LOL_TIMER_H__
+#define __LOL_TIMER_H__
 
 namespace lol
 {
@@ -37,5 +37,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_TIMER_H__
+#endif // __LOL_TIMER_H__
 

@@ -14,8 +14,8 @@
 // The Ticker is a static class that registers entities and ticks them.
 //
 
-#if !defined __DH_TICKER_H__
-#define __DH_TICKER_H__
+#if !defined __LOL_TICKER_H__
+#define __LOL_TICKER_H__
 
 #include <stdint.h>
 
@@ -47,5 +47,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_TICKER_H__
+#endif // __LOL_TICKER_H__
 

@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __DH_FONT_H__
-#define __DH_FONT_H__
+#if !defined __LOL_FONT_H__
+#define __LOL_FONT_H__
 
 #include "entity.h"
 
@@ -45,5 +45,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_FONT_H__
+#endif // __LOL_FONT_H__
 

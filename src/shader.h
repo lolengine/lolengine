@@ -13,8 +13,8 @@
 // ----------------
 //
 
-#if !defined __DH_SHADER_H__
-#define __DH_SHADER_H__
+#if !defined __LOL_SHADER_H__
+#define __LOL_SHADER_H__
 
 namespace lol
 {
@@ -42,5 +42,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_SHADER_H__
+#endif // __LOL_SHADER_H__
 

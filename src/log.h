@@ -14,8 +14,8 @@
 // The central logging system.
 //
 
-#if !defined __DH_LOG_H__
-#define __DH_LOG_H__
+#if !defined __LOL_LOG_H__
+#define __LOL_LOG_H__
 
 #include <stdint.h>
 
@@ -37,5 +37,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_LOG_H__
+#endif // __LOL_LOG_H__
 

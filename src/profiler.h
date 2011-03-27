@@ -14,8 +14,8 @@
 // The Profiler is a static class that collects statistic counters.
 //
 
-#if !defined __DH_PROFILER_H__
-#define __DH_PROFILER_H__
+#if !defined __LOL_PROFILER_H__
+#define __LOL_PROFILER_H__
 
 #include <stdint.h>
 
@@ -52,5 +52,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __DH_PROFILER_H__
+#endif // __LOL_PROFILER_H__
 

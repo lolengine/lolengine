@@ -16,8 +16,8 @@
 // zero, the texture is freed.
 //
 
-#if !defined __DH_TILESET_H__
-#define __DH_TILESET_H__
+#if !defined __LOL_TILESET_H__
+#define __LOL_TILESET_H__
 
 #include <stdint.h>
 
@@ -53,5 +53,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_TILESET_H__
+#endif // __LOL_TILESET_H__
 

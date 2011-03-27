@@ -13,8 +13,8 @@
 // ---------------
 //
 
-#if !defined __DH_IMAGE_H__
-#define __DH_IMAGE_H__
+#if !defined __LOL_IMAGE_H__
+#define __LOL_IMAGE_H__
 
 #include "matrix.h"
 
@@ -47,5 +47,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_IMAGE_H__
+#endif // __LOL_IMAGE_H__
 

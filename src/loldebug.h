@@ -13,8 +13,8 @@
 // --------------------
 //
 
-#if !defined __DH_LOLDEBUG_H__
-#define __DH_LOLDEBUG_H__
+#if !defined __LOL_LOLDEBUG_H__
+#define __LOL_LOLDEBUG_H__
 
 #include "debugfps.h"
 #include "debugquad.h"
@@ -22,5 +22,5 @@
 #include "debugsphere.h"
 #include "debugstats.h"
 
-#endif // __DH_LOLDEBUG_H__
+#endif // __LOL_LOLDEBUG_H__
 

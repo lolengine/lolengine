@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __DH_BITFIELD_H__
-#define __DH_BITFIELD_H__
+#if !defined __LOL_BITFIELD_H__
+#define __LOL_BITFIELD_H__
 
 #include <stdint.h>
 
@@ -51,5 +51,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_BITFIELD_H__
+#endif // __LOL_BITFIELD_H__
 

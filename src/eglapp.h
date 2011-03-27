@@ -13,8 +13,8 @@
 // ----------------
 //
 
-#if !defined __DH_EGLAPP_H__
-#define __DH_EGLAPP_H__
+#if !defined __LOL_EGLAPP_H__
+#define __LOL_EGLAPP_H__
 
 #include "matrix.h"
 
@@ -37,5 +37,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_EGLAPP_H__
+#endif // __LOL_EGLAPP_H__
 

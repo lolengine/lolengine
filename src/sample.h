@@ -14,8 +14,8 @@
 // A Sample is a unique sound sample.
 //
 
-#if !defined __DH_SAMPLE_H__
-#define __DH_SAMPLE_H__
+#if !defined __LOL_SAMPLE_H__
+#define __LOL_SAMPLE_H__
 
 #include <stdint.h>
 
@@ -47,5 +47,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_SAMPLE_H__
+#endif // __LOL_SAMPLE_H__
 

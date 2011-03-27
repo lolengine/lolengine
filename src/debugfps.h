@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __DH_DEBUGFPS_H__
-#define __DH_DEBUGFPS_H__
+#if !defined __LOL_DEBUGFPS_H__
+#define __LOL_DEBUGFPS_H__
 
 #include "entity.h"
 
@@ -38,5 +38,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __DH_DEBUGFPS_H__
+#endif // __LOL_DEBUGFPS_H__
 

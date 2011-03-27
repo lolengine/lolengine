@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __DH_NUMERIC_H__
-#define __DH_NUMERIC_H__
+#if !defined __LOL_NUMERIC_H__
+#define __LOL_NUMERIC_H__
 
 #include <cmath>
 #include <cstdlib>
@@ -54,5 +54,5 @@ template <typename T> static inline T PotUp(T val)
 
 } /* namespace lol */
 
-#endif // __DH_NUMERIC_H__
+#endif // __LOL_NUMERIC_H__
 
