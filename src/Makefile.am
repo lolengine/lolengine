@@ -10,6 +10,7 @@ liblol_a_SOURCES = \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h shader.cpp shader.h image.cpp image.h \
+    platform.cpp platform.h \
     \
     sdlapp.cpp sdlapp.h sdlinput.cpp sdlinput.h \
     \

@@ -23,6 +23,7 @@
 
 // Static classes
 #include "log.h"
+#include "platform.h"
 #include "video.h"
 #include "audio.h"
 #include "scene.h"
