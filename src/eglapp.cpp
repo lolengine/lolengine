@@ -149,7 +149,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(gwa.width, gwa.height);
+    Video::Setup(vec2i(gwa.width, gwa.height));
     Audio::Setup(2);
 #endif
 }

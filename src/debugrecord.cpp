@@ -34,7 +34,8 @@ class DebugRecordData
 
 private:
     char const *path;
-    int width, height, fps;
+    vec2i size;
+    int fps;
 #if defined USE_PIPI
     pipi_sequence_t *sequence;
 #endif
@@ -50,8 +51,7 @@ DebugRecord::DebugRecord(char const *path, float fps)
     Ticker::StartRecording();
 
     data->path = strdup(path);
-    data->width = 0;
-    data->height = 0;
+    data->size = 0;
     data->fps = (int)(fps + 0.5f);
 #if defined USE_PIPI
     data->sequence = NULL;
@@ -69,19 +69,17 @@ void DebugRecord::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    int width = Video::GetWidth();
-    int height = Video::GetHeight();
+    vec2i size = Video::GetSize();
 
-    if (data->width != width || data->height != height)
+    if (data->size != size)
     {
-        data->width = width;
-        data->height = height;
+        data->size = size;
 
 #if defined USE_PIPI
         if (data->sequence)
             pipi_close_sequence(data->sequence);
 
-        data->sequence = pipi_open_sequence(data->path, width, height,
+        data->sequence = pipi_open_sequence(data->path, size.x, size.y,
                                             1 /* RGB */, data->fps,
                                             1, 1, 60 * 1024 * 1024);
 #endif
@@ -90,9 +88,9 @@ void DebugRecord::TickDraw(float deltams)
 #if defined USE_PIPI
     if (data->sequence)
     {
-        uint32_t *buffer = new uint32_t[width * height];
+        uint32_t *buffer = new uint32_t[size.x * size.y];
         Video::Capture(buffer);
-        pipi_feed_sequence(data->sequence, (uint8_t *)buffer, width, height);
+        pipi_feed_sequence(data->sequence, (uint8_t *)buffer, size.x, size.y);
         delete[] buffer;
     }
 #endif
