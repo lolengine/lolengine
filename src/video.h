@@ -25,15 +25,13 @@ namespace lol
 class Video
 {
 public:
-    static void Setup(int width, int height);
+    static void Setup(vec2i size);
     static void Destroy();
     static void SetFov(float theta);
     static void SetDepth(bool set);
     static void Clear();
     static void Capture(uint32_t *buffer);
     static vec2i GetSize();
-    static int GetWidth();
-    static int GetHeight();
 };
 
 } /* namespace lol */

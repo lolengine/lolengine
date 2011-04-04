@@ -55,7 +55,7 @@ void SdlInput::TickGame(float deltams)
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
     {
         SDL_GetMouseState(&mouse.x, &mouse.y);
-        mouse.y = Video::GetHeight() - 1 - mouse.y;
+        mouse.y = Video::GetSize().y - 1 - mouse.y;
     }
     else
         mouse.x = mouse.y = -1;

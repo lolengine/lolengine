@@ -96,8 +96,8 @@ static char const *fragmentshader =
     "    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);\n"
     "    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);\n"
     "    float t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
-    "    float t2 = t1;
-    "    float t3 = t1;
+    "    float t2 = t1;\n"
+    "    float t3 = t1;\n"
 #else
     "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
     "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
@@ -122,13 +122,13 @@ static char const *fragmentshader =
  * Public Video class
  */
 
-void Video::Setup(int width, int height)
+void Video::Setup(vec2i size)
 {
     /* Initialise OpenGL */
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, size.x, size.y);
 
 #if defined ANDROID_NDK
-    saved_viewport = vec2i(width, height);
+    saved_viewport = vec2i(size.x, size.y);
 #endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
@@ -148,21 +148,19 @@ void Video::SetFov(float theta)
 #undef far /* Fuck Microsoft again */
     mat4 proj;
 
-    float width = GetWidth();
-    float height = GetHeight();
-    float near = -width - height;
-    float far = width + height;
+    vec2 size = GetSize();
+    float near = -size.x - size.y;
+    float far = size.x + size.y;
 
 #if defined ANDROID_NDK
-    width = 640.0f;
-    height = 480.0f;
+    size = vec(640.0f, 480.0f);
 #endif
 
     /* Set the projection matrix */
     if (theta < 1e-4f)
     {
         /* The easy way: purely orthogonal projection. */
-        proj_matrix = mat4::ortho(0, width, 0, height, near, far);
+        proj_matrix = mat4::ortho(0, size.x, 0, size.y, near, far);
     }
     else
     {
@@ -170,8 +168,8 @@ void Video::SetFov(float theta)
          * approaches zero. This view ensures that the z=0 plane fills
          * the screen. */
         float t1 = tanf(theta / 2);
-        float t2 = t1 * height / width;
-        float dist = (float)width / (2.0f * t1);
+        float t2 = t1 * size.y / size.y;
+        float dist = size.x / (2.0f * t1);
 
         near += dist;
         far += dist;
@@ -184,7 +182,7 @@ void Video::SetFov(float theta)
 
         proj_matrix = mat4::frustum(-near * t1, near * t1,
                                     -near * t2, near * t2, near, far)
-                    * mat4::translate(-0.5f * width, -0.5f * height, -dist);
+                    * mat4::translate(-0.5f * size.x, -0.5f * size.y, -dist);
     }
 
     view_matrix = mat4(1.0f);
@@ -207,7 +205,8 @@ void Video::SetDepth(bool set)
 
 void Video::Clear()
 {
-    glViewport(0, 0, GetWidth(), GetHeight());
+    vec2i size = GetSize();
+    glViewport(0, 0, size.x, size.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     SetFov(0.0f);
@@ -253,16 +252,6 @@ vec2i Video::GetSize()
     glGetIntegerv(GL_VIEWPORT, v);
     return vec2i(v[2], v[3]);
 #endif
-}
-
-int Video::GetWidth()
-{
-    return GetSize().x;
-}
-
-int Video::GetHeight()
-{
-    return GetSize().y;
 }
 
 } /* namespace lol */

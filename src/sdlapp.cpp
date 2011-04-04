@@ -64,7 +64,7 @@ SdlApp::SdlApp(char const *title, vec2i res, float fps) :
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(video->w, video->h);
+    Video::Setup(vec2i(video->w, video->h));
     Audio::Setup(2);
 #endif
 }
