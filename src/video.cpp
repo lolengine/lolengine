@@ -244,26 +244,25 @@ void Video::Capture(uint32_t *buffer)
         }
 }
 
-int Video::GetWidth()
+vec2i Video::GetSize()
 {
 #if defined ANDROID_NDK
-    return saved_viewport.x;
+    return saved_viewport;
 #else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
-    return v[2];
+    return vec2i(v[2], v[3]);
 #endif
+}
+
+int Video::GetWidth()
+{
+    return GetSize().x;
 }
 
 int Video::GetHeight()
 {
-#if defined ANDROID_NDK
-    return saved_viewport.y;
-#else
-    GLint v[4];
-    glGetIntegerv(GL_VIEWPORT, v);
-    return v[3];
-#endif
+    return GetSize().y;
 }
 
 } /* namespace lol */
