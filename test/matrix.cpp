@@ -25,6 +25,8 @@ namespace lol
 class MatrixTest : public CppUnit::TestCase
 {
     CPPUNIT_TEST_SUITE(MatrixTest);
+    CPPUNIT_TEST(test_vec_eq);
+    CPPUNIT_TEST(test_vec_lt);
     CPPUNIT_TEST(test_mat_det);
     CPPUNIT_TEST(test_mat_mul);
     CPPUNIT_TEST(test_mat_inv);
@@ -47,6 +49,78 @@ public:
     }
 
     void tearDown() {}
+
+    void test_vec_eq()
+    {
+        vec2 a2(1.0f, 2.0f);
+        vec2 b2(0.0f, 2.0f);
+        vec2 c2(1.0f, 0.0f);
+
+        CPPUNIT_ASSERT(a2 == a2);
+        CPPUNIT_ASSERT(!(a2 != a2));
+
+        CPPUNIT_ASSERT(a2 != b2);
+        CPPUNIT_ASSERT(!(a2 == b2));
+        CPPUNIT_ASSERT(a2 != c2);
+        CPPUNIT_ASSERT(!(a2 == c2));
+
+        vec3 a3(1.0f, 2.0f, 3.0f);
+        vec3 b3(0.0f, 2.0f, 3.0f);
+        vec3 c3(1.0f, 0.0f, 3.0f);
+        vec3 d3(1.0f, 2.0f, 0.0f);
+
+        CPPUNIT_ASSERT(a3 == a3);
+        CPPUNIT_ASSERT(!(a3 != a3));
+
+        CPPUNIT_ASSERT(a3 != b3);
+        CPPUNIT_ASSERT(!(a3 == b3));
+        CPPUNIT_ASSERT(a3 != c3);
+        CPPUNIT_ASSERT(!(a3 == c3));
+        CPPUNIT_ASSERT(a3 != d3);
+        CPPUNIT_ASSERT(!(a3 == d3));
+
+        vec4 a4(1.0f, 2.0f, 3.0f, 4.0f);
+        vec4 b4(0.0f, 2.0f, 3.0f, 4.0f);
+        vec4 c4(1.0f, 0.0f, 3.0f, 4.0f);
+        vec4 d4(1.0f, 2.0f, 0.0f, 4.0f);
+        vec4 e4(1.0f, 2.0f, 3.0f, 0.0f);
+
+        CPPUNIT_ASSERT(a4 == a4);
+        CPPUNIT_ASSERT(!(a4 != a4));
+
+        CPPUNIT_ASSERT(a4 != b4);
+        CPPUNIT_ASSERT(!(a4 == b4));
+        CPPUNIT_ASSERT(a4 != c4);
+        CPPUNIT_ASSERT(!(a4 == c4));
+        CPPUNIT_ASSERT(a4 != d4);
+        CPPUNIT_ASSERT(!(a4 == d4));
+        CPPUNIT_ASSERT(a4 != e4);
+        CPPUNIT_ASSERT(!(a4 == e4));
+    }
+
+    void test_vec_lt()
+    {
+        vec2 a2(1.0f, 3.0f);
+        vec2 b2(0.0f, 0.0f);
+        vec2 c2(1.0f, 1.0f);
+        vec2 d2(2.0f, 2.0f);
+        vec2 e2(3.0f, 3.0f);
+        vec2 f2(4.0f, 4.0f);
+
+        CPPUNIT_ASSERT(a2 <= a2);
+        CPPUNIT_ASSERT(!(a2 < a2));
+
+        CPPUNIT_ASSERT(!(a2 <= b2));
+        CPPUNIT_ASSERT(!(a2 < b2));
+        CPPUNIT_ASSERT(!(a2 <= c2));
+        CPPUNIT_ASSERT(!(a2 < c2));
+        CPPUNIT_ASSERT(!(a2 <= d2));
+        CPPUNIT_ASSERT(!(a2 < d2));
+        CPPUNIT_ASSERT(a2 <= e2);
+        CPPUNIT_ASSERT(!(a2 < e2));
+        CPPUNIT_ASSERT(a2 <= f2);
+        CPPUNIT_ASSERT(a2 < f2);
+    }
 
     void test_mat_det()
     {
