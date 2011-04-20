@@ -37,13 +37,13 @@ namespace lol
         return *this = (*this) op val; \
     }
 
-#define BOOL_OP(elems, op, ret) \
+#define BOOL_OP(elems, op, op2, ret) \
     inline bool operator op(Vec##elems<T> const &val) const \
     { \
         for (int n = 0; n < elems; n++) \
-            if ((*this)[n] != val[n]) \
-                return ret; \
-        return !ret; \
+            if (!((*this)[n] op2 val[n])) \
+                return !ret; \
+        return ret; \
     }
 
 #define SCALAR_OP(elems, op) \
@@ -78,8 +78,12 @@ namespace lol
     VECTOR_OP(elems, *) \
     VECTOR_OP(elems, /) \
     \
-    BOOL_OP(elems, ==, false) \
-    BOOL_OP(elems, !=, true) \
+    BOOL_OP(elems, ==, ==, true) \
+    BOOL_OP(elems, !=, ==, false) \
+    BOOL_OP(elems, <=, <=, true) \
+    BOOL_OP(elems, >=, >=, true) \
+    BOOL_OP(elems, <, <, true) \
+    BOOL_OP(elems, >, >, true) \
     \
     SCALAR_OP(elems, -) \
     SCALAR_OP(elems, +) \
