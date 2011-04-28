@@ -26,7 +26,8 @@ namespace lol
 /* Random float value */
 static inline float RandF()
 {
-    return (float)std::rand() / RAND_MAX;
+    using namespace std;
+    return (float)rand() / RAND_MAX;
 }
 
 static inline float RandF(float val)

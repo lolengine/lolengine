@@ -113,7 +113,8 @@ namespace lol
     \
     inline float len() const \
     { \
-        return std::sqrtf((float)sqlen()); \
+        using namespace std; \
+        return sqrtf((float)sqlen()); \
     }
 
 template <typename T> struct Vec2;
