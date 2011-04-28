@@ -35,9 +35,7 @@ Shader *stdshader;
 mat4 proj_matrix, view_matrix, model_matrix;
 
 static char const *vertexshader =
-#if defined HAVE_GL_2X
     "#version 130\n"
-#endif
     "\n"
 #if defined HAVE_GLES_2X
     "attribute vec3 in_Position;\n"
@@ -66,9 +64,7 @@ static char const *vertexshader =
     "}\n";
 
 static char const *fragmentshader =
-#if !defined HAVE_GLES_2X
     "#version 130\n"
-#endif
     "\n"
     "uniform sampler2D in_Texture;\n"
     //"in vec3 pass_Color;\n"
