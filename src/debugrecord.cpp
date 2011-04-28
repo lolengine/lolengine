@@ -21,6 +21,8 @@
 #include "core.h"
 #include "debugrecord.h"
 
+using namespace std;
+
 namespace lol
 {
 

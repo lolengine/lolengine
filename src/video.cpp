@@ -22,6 +22,8 @@
 #include "core.h"
 #include "lolgl.h"
 
+using namespace std;
+
 namespace lol
 {
 
@@ -188,11 +190,13 @@ void Video::SetFov(float theta)
     view_matrix = mat4(1.0f);
 
     stdshader->Bind(); /* Required on GLES 2.x? */
+#if !defined __CELLOS_LV2__ // Use cgGetNamedParameter etc.
     GLuint uni;
     uni = stdshader->GetUniformLocation("proj_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
     uni = stdshader->GetUniformLocation("view_matrix");
     glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
+#endif
 }
 
 void Video::SetDepth(bool set)
@@ -220,7 +224,13 @@ void Video::Destroy()
 void Video::Capture(uint32_t *buffer)
 {
     GLint v[4];
+#if defined __CELLOS_LV2__
+    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
+    v[2] = 1920;
+    v[3] = 1080;
+#else
     glGetIntegerv(GL_VIEWPORT, v);
+#endif
     int width = v[2], height = v[3];
 
 #if defined HAVE_GL_2X
@@ -247,6 +257,9 @@ vec2i Video::GetSize()
 {
 #if defined ANDROID_NDK
     return saved_viewport;
+#elif defined __CELLOS_LV2__
+    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
+    return vec2i(1920, 1080);
 #else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);

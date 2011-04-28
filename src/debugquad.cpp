@@ -18,6 +18,8 @@
 #include "lolgl.h"
 #include "loldebug.h"
 
+using namespace std;
+
 namespace lol
 {
 
@@ -159,6 +161,7 @@ void DebugQuad::TickDraw(float deltams)
     attr_col = data->shader->GetAttribLocation("in_Color");
     attr_tex = data->shader->GetAttribLocation("in_TexCoord");
 
+#if !defined __CELLOS_LV2__
     glEnableVertexAttribArray(attr_pos);
     glEnableVertexAttribArray(attr_col);
     glEnableVertexAttribArray(attr_tex);
@@ -184,6 +187,7 @@ void DebugQuad::TickDraw(float deltams)
     glDisableVertexAttribArray(attr_pos);
     glDisableVertexAttribArray(attr_col);
     glDisableVertexAttribArray(attr_tex);
+#endif
 }
 
 DebugQuad::~DebugQuad()

@@ -21,6 +21,10 @@
 #elif defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#elif defined __CELLOS_LV2__
+#   include <sys/sys_time.h>
+#   include <sys/timer.h>
+#   include <sys/time_util.h>
 #else
 #   include <SDL.h>
 #endif
@@ -48,6 +52,9 @@ private:
         QueryPerformanceFrequency(&tmp);
         ms_per_cycle = 1e3f / tmp.QuadPart;
         QueryPerformanceCounter(&cycles0);
+#elif defined __CELLOS_LV2__
+        ms_per_cycle = 1e3f / sys_time_get_timebase_frequency();
+        SYS_TIMEBASE_GET(cycles0);
 #else
         SDL_Init(SDL_INIT_TIMER);
         ticks0 = SDL_GetTicks();
@@ -76,6 +83,15 @@ private:
         towait = deltams - ret;
         if (towait > 5e-4f)
             Sleep((int)(towait + 0.5f));
+#elif defined __CELLOS_LV2__
+        uint64_t cycles;
+        SYS_TIMEBASE_GET(cycles);
+        ret = ms_per_cycle * cycles;
+        if (update)
+            cycles0 = cycles;
+        towait = deltams - ret;
+        if (towait > 0.0f)
+            sys_timer_usleep((int)(towait * 1e3f));
 #else
         /* The crappy SDL fallback */
         Uint32 ticks = SDL_GetTicks();
@@ -94,6 +110,9 @@ private:
 #elif defined _WIN32
     float ms_per_cycle;
     LARGE_INTEGER cycles0;
+#elif defined __CELLOS_LV2__
+    float ms_per_cycle;
+    uint64_t cycles0;
 #else
     Uint32 ticks0;
 #endif

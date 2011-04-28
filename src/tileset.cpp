@@ -25,6 +25,8 @@
 #include "core.h"
 #include "lolgl.h"
 
+using namespace std;
+
 namespace lol
 {
 

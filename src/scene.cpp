@@ -157,11 +157,13 @@ void Scene::Render() // XXX: rename to Blit()
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
 
+#if !defined __CELLOS_LV2__ // Use cgGetNamedParameter etc.
     stdshader->Bind();
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &model_matrix[0][0]);
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
+#endif
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
@@ -208,6 +210,7 @@ void Scene::Render() // XXX: rename to Blit()
 #if defined HAVE_GL_2X
         glBindVertexArray(data->vao);
 #endif
+#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glEnableVertexAttribArray(attr_pos);
         glEnableVertexAttribArray(attr_tex);
 
@@ -220,6 +223,7 @@ void Scene::Render() // XXX: rename to Blit()
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+#endif
 
         /* Draw arrays */
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
@@ -227,8 +231,10 @@ void Scene::Render() // XXX: rename to Blit()
 #if defined HAVE_GL_2X
         glBindVertexArray(0);
 #endif
+#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glDisableVertexAttribArray(attr_pos);
         glDisableVertexAttribArray(attr_tex);
+#endif
 
         free(vertex);
         free(texture);
