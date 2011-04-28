@@ -79,6 +79,7 @@ Shader::Shader(char const *vert, char const *frag)
     char buf[4096];
     GLsizei len;
 
+#if !defined __CELLOS_LV2__
     data->vert_crc = Hash::Crc32(vert);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(data->vert_id, 1, &vert, NULL);
@@ -103,31 +104,48 @@ Shader::Shader(char const *vert, char const *frag)
 
     glLinkProgram(data->prog_id);
     glValidateProgram(data->prog_id);
+#endif
 }
 
 int Shader::GetAttribLocation(char const *attr) const
 {
+#if defined __CELLOS_LV2__
+    return 0;
+#else
     return glGetAttribLocation(data->prog_id, attr);
+#endif
 }
 
 int Shader::GetUniformLocation(char const *uni) const
 {
+#if defined __CELLOS_LV2__
+    return 0;
+#else
     return glGetUniformLocation(data->prog_id, uni);
+#endif
 }
 
 void Shader::Bind() const
 {
+#if defined __CELLOS_LV2__
+    ;
+#else
     glUseProgram(data->prog_id);
+#endif
 }
 
 Shader::~Shader()
 {
+#if defined __CELLOS_LV2__
+    ;
+#else
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
     delete data;
+#endif
 }
 
 } /* namespace lol */

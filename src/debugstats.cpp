@@ -17,6 +17,8 @@
 #include "core.h"
 #include "debugstats.h"
 
+using namespace std;
+
 namespace lol
 {
 

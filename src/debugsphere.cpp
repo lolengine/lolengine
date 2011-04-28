@@ -24,6 +24,8 @@
 #include "lolgl.h"
 #include "debugsphere.h"
 
+using namespace std;
+
 namespace lol
 {
 

@@ -21,6 +21,8 @@
 #   define strcasecmp _stricmp
 #endif
 
+using namespace std;
+
 namespace lol
 {
 

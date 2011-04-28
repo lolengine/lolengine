@@ -17,6 +17,8 @@
 #include "core.h"
 #include "debugfps.h"
 
+using namespace std;
+
 namespace lol
 {
 
