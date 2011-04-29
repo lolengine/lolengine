@@ -86,7 +86,7 @@ private:
 #elif defined __CELLOS_LV2__
         uint64_t cycles;
         SYS_TIMEBASE_GET(cycles);
-        ret = ms_per_cycle * cycles;
+        ret = ms_per_cycle * (cycles - cycles0);
         if (update)
             cycles0 = cycles;
         towait = deltams - ret;
