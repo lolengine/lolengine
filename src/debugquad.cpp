@@ -155,13 +155,38 @@ void DebugQuad::TickDraw(float deltams)
         { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f },
     };
 
+#if defined __CELLOS_LV2__
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
+    glVertexPointer(2, GL_FLOAT, GL_FALSE, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[1]);
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), cols, GL_STATIC_DRAW);
+    glColorPointer(4, GL_FLOAT, GL_FALSE, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buflist[2]);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tcs, GL_STATIC_DRAW);
+    glTexCoordPointer(2, GL_FLOAT, GL_FALSE, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#else
     data->shader->Bind();
     GLuint attr_pos, attr_col, attr_tex;
     attr_pos = data->shader->GetAttribLocation("in_Position");
     attr_col = data->shader->GetAttribLocation("in_Color");
     attr_tex = data->shader->GetAttribLocation("in_TexCoord");
 
-#if !defined __CELLOS_LV2__
     glEnableVertexAttribArray(attr_pos);
     glEnableVertexAttribArray(attr_col);
     glEnableVertexAttribArray(attr_tex);
