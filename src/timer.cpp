@@ -48,12 +48,8 @@ private:
 #if defined __linux__ || defined __APPLE__
         gettimeofday(&tv0, NULL);
 #elif defined _WIN32
-        LARGE_INTEGER tmp;
-        QueryPerformanceFrequency(&tmp);
-        ms_per_cycle = 1e3f / tmp.QuadPart;
         QueryPerformanceCounter(&cycles0);
 #elif defined __CELLOS_LV2__
-        ms_per_cycle = 1e3f / sys_time_get_timebase_frequency();
         SYS_TIMEBASE_GET(cycles0);
 #else
         SDL_Init(SDL_INIT_TIMER);
@@ -77,6 +73,7 @@ private:
 #elif defined _WIN32
         LARGE_INTEGER cycles;
         QueryPerformanceCounter(&cycles);
+        static float ms_per_cycle = GetMsPerCycle();
         ret = ms_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
         if (update)
             cycles0 = cycles;
@@ -86,6 +83,7 @@ private:
 #elif defined __CELLOS_LV2__
         uint64_t cycles;
         SYS_TIMEBASE_GET(cycles);
+        static float ms_per_cycle = GetMsPerCycle();
         ret = ms_per_cycle * (cycles - cycles0);
         if (update)
             cycles0 = cycles;
@@ -105,13 +103,26 @@ private:
         return ret;
     }
 
+    static float GetMsPerCycle()
+    {
+#if defined __linux__ || defined __APPLE__
+        return 1.0f;
+#elif defined _WIN32
+        LARGE_INTEGER tmp;
+        QueryPerformanceFrequency(&tmp);
+        return = 1e3f / tmp.QuadPart;
+#elif defined __CELLOS_LV2__
+        return 1e3f / sys_time_get_timebase_frequency();
+#else
+        return 1.0f;
+#endif
+    }
+
 #if defined __linux__ || defined __APPLE__
     struct timeval tv0;
 #elif defined _WIN32
-    float ms_per_cycle;
     LARGE_INTEGER cycles0;
 #elif defined __CELLOS_LV2__
-    float ms_per_cycle;
     uint64_t cycles0;
 #else
     Uint32 ticks0;
