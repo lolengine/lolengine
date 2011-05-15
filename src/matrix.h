@@ -103,6 +103,14 @@ namespace lol
         return ret; \
     } \
     \
+    inline Vec##elems<T> operator -() const \
+    { \
+        Vec##elems<T> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = -(*this)[n]; \
+        return ret; \
+    } \
+    \
     inline T sqlen() const \
     { \
         T acc = 0; \
