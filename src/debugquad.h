@@ -34,6 +34,8 @@ protected:
     virtual void TickDraw(float deltams);
 
 private:
+    void Advance();
+
     DebugQuadData *data;
 };
 
