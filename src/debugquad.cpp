@@ -13,6 +13,7 @@
 #endif
 
 #include <cmath>
+#include <cstdio>
 
 #include "core.h"
 #include "lolgl.h"
@@ -32,6 +33,8 @@ class DebugQuadData
     friend class DebugQuad;
 
 private:
+    vec2 orig, step, aa, bb;
+
     int initialised;
     float time;
     GLuint buflist[3];
@@ -64,41 +67,33 @@ void DebugQuad::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    if (IsDestroying())
-    {
-        if (data->initialised)
-        {
-            glDeleteBuffers(3, data->buflist);
-            Shader::Destroy(data->shader);
-            glDeleteTextures(1, data->texlist);
-            data->initialised = 0;
-        }
-    }
-    else if (!data->initialised)
+    if (!data->initialised && !IsDestroying())
     {
         glGenBuffers(3, data->buflist);
 
         static char const *vertexshader =
-            "#version 130\n"
-            "in vec2 in_Position;\n"
-            "in vec4 in_Color;\n"
-            "in vec2 in_TexCoord;\n"
-            "out vec4 pass_Color;\n"
+            "//#version 130\n"
+            "varying vec2 in_Position;\n"
+            "varying vec4 in_Color;\n"
+            "varying vec2 in_TexCoord;\n"
+            "varying vec4 pass_Color;\n"
             "void main()\n"
             "{\n"
+            "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
             "    gl_Position = vec4(in_Position, 0.0f, 1.0f);\n"
             "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
             "    pass_Color = in_Color;\n"
             "}\n";
         static char const *fragmentshader =
-            "#version 130\n"
-            "in vec4 pass_Color;\n"
+            "//#version 130\n"
+            "varying vec4 pass_Color;\n"
             "uniform sampler2D in_Texture;\n"
             "void main()\n"
             "{\n"
             "    vec4 col = pass_Color;\n"
             "    vec4 tex = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
             "    gl_FragColor = col * tex;\n"
+            "    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);\n"
             "}\n";
         data->shader = Shader::Create(vertexshader, fragmentshader);
         glGenTextures(1, data->texlist);
@@ -121,6 +116,14 @@ void DebugQuad::TickDraw(float deltams)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         data->initialised = 1;
+    }
+    else if (data->initialised && IsDestroying())
+    {
+        glDeleteBuffers(3, data->buflist);
+        Shader::Destroy(data->shader);
+        glDeleteTextures(1, data->texlist);
+
+        data->initialised = 0;
     }
 
     float const st = sinf(0.0005f * data->time);
@@ -213,6 +216,96 @@ void DebugQuad::TickDraw(float deltams)
     glDisableVertexAttribArray(attr_col);
     glDisableVertexAttribArray(attr_tex);
 #endif
+
+    /* Reset GL states */
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glUseProgram(0);
+
+    /* Prepare our quad coordinates */
+    vec2i const layout(4, 3);
+    data->step = vec2(2.0f, -2.0f) / (2 * layout + vec2i(1));
+    data->orig = vec2(-1.0f, 1.0f) + data->step;
+    data->aa = data->orig;
+    data->bb = data->orig + data->step;
+
+    /* Generate a few random numbers */
+    float f1 = 0.5f + 0.5f * sinf(0.00034f * data->time);
+    float f2 = 0.5f + 0.5f * sinf(0.00053f * data->time + 1.0f);
+    float f3 = 0.5f + 0.5f * sinf(0.00072f * data->time + 4.0f);
+    float f4 = 0.5f + 0.5f * sinf(0.00091f * data->time + 8.0f);
+
+    /* Quad #1: simple glBegin program */
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+
+    Advance();
+
+    /* Quad #2: glBegin program with varying color */
+    glBegin(GL_TRIANGLES);
+        glColor3f(f1, f2, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glColor3f(f4, f2, f1);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glColor3f(f3, f1, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glColor3f(f4, f3, f2);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glColor3f(f1, f2, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+
+    Advance();
+
+    /* Quad #3: textured quad */
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_TRIANGLES);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glTexCoord2f(f3, f2);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glTexCoord2f(f4, f1);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+
+    Advance();
+
+    /* Quad #4: vertex buffer */
+}
+
+void DebugQuad::Advance()
+{
+    data->aa.x += 2.0f * data->step.x;
+    data->bb.x += 2.0f * data->step.x;
+    if (data->bb.x > 1.0f)
+    {
+        data->aa.x = data->orig.x;
+        data->bb.x = data->orig.x + data->step.x;
+        data->aa.y += 2.0f * data->step.y;
+        data->bb.y += 2.0f * data->step.y;
+    }
 }
 
 DebugQuad::~DebugQuad()

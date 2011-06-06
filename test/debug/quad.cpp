@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 #if !defined HAVE_GLES_2X
     new SdlInput();
 #endif
-    new DebugFps(20, 20);
+    //new DebugFps(20, 20);
     new DebugQuad();
 
     app.Run();
