@@ -28,6 +28,8 @@ namespace lol
  * DebugQuad implementation class
  */
 
+#define NUM_SHADERS 3
+
 class DebugQuadData
 {
     friend class DebugQuad;
@@ -38,7 +40,7 @@ private:
     int initialised;
     float time;
     GLuint buflist[3];
-    Shader *shader;
+    Shader *shader[NUM_SHADERS];
     GLuint texlist[1];
     uint8_t image[1][32 * 32 * 4];
 };
@@ -95,7 +97,7 @@ void DebugQuad::TickDraw(float deltams)
             "    gl_FragColor = col * tex;\n"
             "    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);\n"
             "}\n";
-        data->shader = Shader::Create(vertexshader, fragmentshader);
+        data->shader[0] = Shader::Create(vertexshader, fragmentshader);
         glGenTextures(1, data->texlist);
 
         glEnable(GL_TEXTURE_2D);
@@ -115,12 +117,64 @@ void DebugQuad::TickDraw(float deltams)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+        /* Quad #4: create texture in fragment shader */
+        data->shader[0] = Shader::Create(
+            "#version 120\n"
+            "void main()"
+            "{"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 120\n"
+            "void main()"
+            "{"
+            "    float dx = mod(gl_FragCoord.x * gl_FragCoord.y, 2.0);"
+            "    float dy = mod(gl_FragCoord.x * 0.125, 1.0);"
+            "    float dz = mod(gl_FragCoord.y * 0.125, 1.0);"
+            "    gl_FragColor = vec4(dx, dy, dz, 1.0);"
+            "}");
+
+        /* Quad #5: pass color from vertex shader to fragment shader */
+        data->shader[1] = Shader::Create(
+            "#version 120\n"
+            "varying vec4 color;"
+            "void main()"
+            "{"
+            "    float r = gl_MultiTexCoord0.x;"
+            "    float g = gl_MultiTexCoord0.y;"
+            "    color = vec4(1.0 - r, 1.0 - g, r, 1.0);"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 120\n"
+            "varying vec4 color;"
+            "void main()"
+            "{"
+            "    gl_FragColor = color;"
+            "}");
+
+        /* Quad #6: apply texture in fragment shader */
+        data->shader[2] = Shader::Create(
+            "void main()"
+            "{"
+            "    gl_TexCoord[0] = gl_MultiTexCoord0;"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "uniform sampler2D tex;"
+            "void main()"
+            "{"
+            "    gl_FragColor = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
+            "}");
+
         data->initialised = 1;
     }
     else if (data->initialised && IsDestroying())
     {
         glDeleteBuffers(3, data->buflist);
-        Shader::Destroy(data->shader);
+        Shader::Destroy(data->shader[0]);
+        Shader::Destroy(data->shader[1]);
+        Shader::Destroy(data->shader[2]);
         glDeleteTextures(1, data->texlist);
 
         data->initialised = 0;
@@ -184,11 +238,11 @@ void DebugQuad::TickDraw(float deltams)
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #else
-    data->shader->Bind();
+    data->shader[0]->Bind();
     GLuint attr_pos, attr_col, attr_tex;
-    attr_pos = data->shader->GetAttribLocation("in_Position");
-    attr_col = data->shader->GetAttribLocation("in_Color");
-    attr_tex = data->shader->GetAttribLocation("in_TexCoord");
+    attr_pos = data->shader[0]->GetAttribLocation("in_Position");
+    attr_col = data->shader[0]->GetAttribLocation("in_Color");
+    attr_tex = data->shader[0]->GetAttribLocation("in_TexCoord");
 
     glEnableVertexAttribArray(attr_pos);
     glEnableVertexAttribArray(attr_col);
@@ -239,7 +293,7 @@ void DebugQuad::TickDraw(float deltams)
     float f4 = 0.5f + 0.5f * sinf(0.00091f * data->time + 8.0f);
 
     /* Quad #1: simple glBegin program */
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(0.8f, 0.5f, 0.2f);
     glBegin(GL_TRIANGLES);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
@@ -292,7 +346,68 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
 
-    /* Quad #4: vertex buffer */
+    /* Quad #4: set color in fragment shader */
+    data->shader[0]->Bind();
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+    glUseProgram(0);
+
+    Advance();
+
+    /* Quad #5: pass color from vertex shader to fragment shader */
+    data->shader[1]->Bind();
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glBegin(GL_TRIANGLES);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glTexCoord2f(f3, f2);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glTexCoord2f(f4, f1);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+    glUseProgram(0);
+
+    Advance();
+
+    /* Quad #6: apply texture in fragment shader */
+    data->shader[2]->Bind();
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glBegin(GL_TRIANGLES);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glTexCoord2f(f3, f2);
+        glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+
+        glTexCoord2f(f2, f4);
+        glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glTexCoord2f(f4, f1);
+        glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glTexCoord2f(f1, f3);
+        glVertex3f(data->aa.x, data->bb.y, 0.0f);
+    glEnd();
+    glUseProgram(0);
+
+    Advance();
+
 }
 
 void DebugQuad::Advance()
