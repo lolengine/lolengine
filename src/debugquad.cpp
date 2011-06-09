@@ -281,10 +281,10 @@ void DebugQuad::TickDraw(float deltams)
 
     /* Prepare our quad coordinates */
     vec2i const layout(4, 3);
-    data->step = vec2(2.0f, -2.0f) / (2 * layout + vec2i(1));
+    data->step = vec2(2.0f, -2.0f) / (3 * layout + vec2i(1));
     data->orig = vec2(-1.0f, 1.0f) + data->step;
     data->aa = data->orig;
-    data->bb = data->orig + data->step;
+    data->bb = data->orig + 2.0f * data->step;
 
     /* Generate a few random numbers */
     float f1 = 0.5f + 0.5f * sinf(0.00034f * data->time);
@@ -412,14 +412,14 @@ void DebugQuad::TickDraw(float deltams)
 
 void DebugQuad::Advance()
 {
-    data->aa.x += 2.0f * data->step.x;
-    data->bb.x += 2.0f * data->step.x;
+    data->aa.x += 3.0f * data->step.x;
+    data->bb.x += 3.0f * data->step.x;
     if (data->bb.x > 1.0f)
     {
         data->aa.x = data->orig.x;
-        data->bb.x = data->orig.x + data->step.x;
-        data->aa.y += 2.0f * data->step.y;
-        data->bb.y += 2.0f * data->step.y;
+        data->bb.x = data->orig.x + 2.0f * data->step.x;
+        data->aa.y += 3.0f * data->step.y;
+        data->bb.y += 3.0f * data->step.y;
     }
 }
 
