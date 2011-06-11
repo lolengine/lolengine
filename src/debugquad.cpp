@@ -109,7 +109,7 @@ void DebugQuad::TickDraw(float deltams)
                 data->image[0][(j * 32 + i) * 4 + 0] = wb;
                 data->image[0][(j * 32 + i) * 4 + 1] = wb;
                 data->image[0][(j * 32 + i) * 4 + 2] = wb;
-                data->image[0][(j * 32 + i) * 4 + 3] = wb;
+                data->image[0][(j * 32 + i) * 4 + 3] = 0xff;
             }
         /* Use GL_RGBA instead of 4 for the internal format (Android) */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0,
@@ -154,6 +154,7 @@ void DebugQuad::TickDraw(float deltams)
             "}");
 
         /* Quad #6: apply texture in fragment shader */
+        /* Quad #8: vertex buffer, apply texture in fragment shader */
         data->shader[2] = Shader::Create(
             "void main()"
             "{"
@@ -264,6 +265,8 @@ void DebugQuad::TickDraw(float deltams)
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), tcs, GL_STATIC_DRAW);
     glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glDisableVertexAttribArray(attr_pos);
@@ -277,6 +280,7 @@ void DebugQuad::TickDraw(float deltams)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(0);
 
     /* Prepare our quad coordinates */
@@ -343,6 +347,7 @@ void DebugQuad::TickDraw(float deltams)
         glTexCoord2f(f1, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
     Advance();
 
@@ -405,6 +410,51 @@ void DebugQuad::TickDraw(float deltams)
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
     glUseProgram(0);
+    glDisable(GL_TEXTURE_2D);
+
+    Advance();
+
+    /* Quad #7: simple vertex buffer */
+    GLfloat const v1[] = { data->aa.x, data->bb.y, 0.0f,
+                           data->bb.x, data->bb.y, 0.0f,
+                           data->bb.x, data->aa.y, 0.0f,
+                           data->bb.x, data->aa.y, 0.0f,
+                           data->aa.x, data->aa.y, 0.0f,
+                           data->aa.x, data->bb.y, 0.0f };
+    GLfloat const c1[] = { f1, f2, f3, f4, f2, f1, f3, f1, f4,
+                           f3, f1, f4, f4, f3, f2, f1, f2, f3 };
+
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glColorPointer(3, GL_FLOAT, 0, c1);
+    glVertexPointer(3, GL_FLOAT, 0, v1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    Advance();
+
+    /* Quad #8: vertex buffer, apply texture in fragment shader */
+    data->shader[2]->Bind();
+    GLfloat const v2[] = { data->aa.x, data->bb.y, 0.0f,
+                           data->bb.x, data->bb.y, 0.0f,
+                           data->bb.x, data->aa.y, 0.0f,
+                           data->bb.x, data->aa.y, 0.0f,
+                           data->aa.x, data->aa.y, 0.0f,
+                           data->aa.x, data->bb.y, 0.0f };
+    GLfloat const t2[] = { f1, f3, f3, f2, f2, f4, f2, f4, f4, f1, f1, f3 };
+
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, t2);
+    glVertexPointer(3, GL_FLOAT, 0, v2);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     Advance();
 
