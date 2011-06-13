@@ -37,33 +37,24 @@ mat4 proj_matrix, view_matrix, model_matrix;
 #define OLD
 
 static char const *vertexshader =
-#if !defined OLD
     "#version 130\n"
-#endif
     "\n"
 #if defined HAVE_GLES_2X
     "attribute vec3 in_Position;\n"
     "attribute vec2 in_TexCoord;\n"
     "varying vec2 pass_TexCoord;\n"
-#elif !defined OLD
+#else
     "in vec3 in_Position;\n"
     "in vec2 in_TexCoord;\n"
 #endif
-    //"in vec3 in_Color;\n"
-    //"out vec3 pass_Color;\n"
     "uniform mat4 proj_matrix;\n"
     "uniform mat4 view_matrix;\n"
     "uniform mat4 model_matrix;\n"
     "\n"
     "void main()\n"
     "{\n"
-#if defined OLD
-    "    vec3 in_Position = gl_Vertex.xyz;\n"
-    "    vec2 in_TexCoord = gl_MultiTexCoord0.xy;\n"
-#endif
     "    gl_Position = proj_matrix * view_matrix * model_matrix"
     "                * vec4(in_Position, 1.0);\n"
-    //"    pass_Color = in_Color;\n"
 #if defined HAVE_GLES_2X
     "    pass_TexCoord = in_TexCoord;\n"
 #else
@@ -72,13 +63,9 @@ static char const *vertexshader =
     "}\n";
 
 static char const *fragmentshader =
-#if !defined OLD
     "#version 130\n"
-#endif
     "\n"
     "uniform sampler2D in_Texture;\n"
-    //"in vec3 pass_Color;\n"
-    //"out vec4 out_Color;\n"
 #if defined HAVE_GLES_2X
     "varying vec2 pass_TexCoord;\n"
 #endif
