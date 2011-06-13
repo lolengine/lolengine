@@ -43,7 +43,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 
     __android_log_print(ANDROID_LOG_INFO, "LOL", "init");
     Ticker::Setup(30.0f);
-    Video::Setup(320, 200);
+    Video::Setup(vec2i(320, 200));
 
     new Interface();
     new DebugFps(20, 20);
@@ -54,7 +54,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
     __android_log_print(ANDROID_LOG_INFO, "LOL", "resize w=%d h=%d", w, h);
-    Video::Setup(w, h);
+    Video::Setup(vec2i(w, h));
 }
 
 extern "C" void
@@ -85,8 +85,7 @@ extern "C" void
 Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
                                           jint x, jint y)
 {
-    vec2i pos(x * 640 / Video::GetWidth(),
-              480 - 1 - y * 480 / Video::GetHeight());
+    vec2i pos = vec2i(0, 479) + vec2i(x * 640, -y * 480) / Video::GetSize();
     Input::SetMousePos(pos);
 }
 

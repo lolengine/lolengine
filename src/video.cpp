@@ -148,7 +148,7 @@ void Video::SetFov(float theta)
     float far = size.x + size.y;
 
 #if defined ANDROID_NDK
-    size = vec(640.0f, 480.0f);
+    size = vec2(640.0f, 480.0f);
 #endif
 
     /* Set the projection matrix */
