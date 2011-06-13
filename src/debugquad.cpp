@@ -122,13 +122,14 @@ void DebugQuad::TickDraw(float deltams)
 
         /* Quad #4: create texture in fragment shader */
         data->shader[0] = Shader::Create(
-            "#version 120\n"
+            "#version 130\n"
+            "in vec2 in_Vertex;"
             "void main()"
             "{"
-            "    gl_Position = gl_Vertex;"
+            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
             "}",
 
-            "#version 120\n"
+            "#version 130\n"
             "void main()"
             "{"
             "    float dx = mod(gl_FragCoord.x * gl_FragCoord.y, 2.0);"
@@ -139,33 +140,37 @@ void DebugQuad::TickDraw(float deltams)
 
         /* Quad #5: pass color from vertex shader to fragment shader */
         data->shader[1] = Shader::Create(
-            "#version 120\n"
-            "varying vec4 color;"
+            "#version 130\n"
+            "in vec2 in_Vertex;"
+            "in vec2 in_MultiTexCoord0;"
+            "varying vec4 pass_Color;"
             "void main()"
             "{"
-            "    float r = gl_MultiTexCoord0.x;"
-            "    float g = gl_MultiTexCoord0.y;"
-            "    color = vec4(1.0 - r, 1.0 - g, r, 1.0);"
-            "    gl_Position = gl_Vertex;"
+            "    float r = in_MultiTexCoord0.x;"
+            "    float g = in_MultiTexCoord0.y;"
+            "    pass_Color = vec4(1.0 - r, 1.0 - g, r, 1.0);"
+            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
             "}",
 
-            "#version 120\n"
-            "varying vec4 color;"
+            "#version 130\n"
+            "varying vec4 pass_Color;"
             "void main()"
             "{"
-            "    gl_FragColor = color;"
+            "    gl_FragColor = pass_Color;"
             "}");
 
         /* Quad #6: apply texture in fragment shader */
         data->shader[2] = Shader::Create(
-            "#version 120\n"
+            "#version 130\n"
+            "in vec2 in_Vertex;"
+            "in vec2 in_MultiTexCoord0;"
             "void main()"
             "{"
-            "    gl_TexCoord[0] = gl_MultiTexCoord0;"
-            "    gl_Position = gl_Vertex;"
+            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
+            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
             "}",
 
-            "#version 120\n"
+            "#version 130\n"
             "uniform sampler2D tex;"
             "void main()"
             "{"
@@ -174,22 +179,25 @@ void DebugQuad::TickDraw(float deltams)
 
         /* Quad #8: vertex buffer, apply texture in fragment shader */
         data->shader[3] = Shader::Create(
-            "#version 120\n"
-            "varying vec4 color;"
+            "#version 130\n"
+            "in vec2 in_Vertex;"
+            "in vec2 in_MultiTexCoord0;"
+            "in vec4 in_Color;"
+            "varying vec4 pass_Color;"
             "void main()"
             "{"
-            "    gl_TexCoord[0] = gl_MultiTexCoord0;"
-            "    color = gl_Color;"
-            "    gl_Position = gl_Vertex;"
+            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
+            "    pass_Color = in_Color;"
+            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
             "}",
 
-            "#version 120\n"
-            "varying vec4 color;"
+            "#version 130\n"
+            "varying vec4 pass_Color;"
             "uniform sampler2D tex;"
             "void main()"
             "{"
             "    vec4 tmp = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
-            "    gl_FragColor = vec4(abs(tmp.xyz - color.xyz), 1.0);"
+            "    gl_FragColor = vec4(abs(tmp.xyz - pass_Color.xyz), 1.0);"
             "}");
 
 
