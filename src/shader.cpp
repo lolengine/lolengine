@@ -41,7 +41,7 @@ private:
 
     /* Shader patcher */
     static int GetVersion();
-    static void Patch(char *dst, char const *src);
+    static void Patch(char *dst, char const *vert, char const *frag);
 
     /* Global shader cache */
     static Shader *shaders[];
@@ -88,8 +88,8 @@ Shader::Shader(char const *vert, char const *frag)
 
 #if !defined __CELLOS_LV2__
     /* Compile vertex shader */
-    ShaderData::Patch(buf, vert);
-    data->vert_crc = Hash::Crc32(buf);
+    data->vert_crc = Hash::Crc32(vert);
+    ShaderData::Patch(buf, vert, NULL);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(data->vert_id, 1, &shader, NULL);
     glCompileShader(data->vert_id);
@@ -102,8 +102,8 @@ Shader::Shader(char const *vert, char const *frag)
     }
 
     /* Compile fragment shader */
-    ShaderData::Patch(buf, frag);
-    data->frag_crc = Hash::Crc32(buf);
+    data->frag_crc = Hash::Crc32(frag);
+    ShaderData::Patch(buf, NULL, frag);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(data->frag_id, 1, &shader, NULL);
     glCompileShader(data->frag_id);
@@ -216,17 +216,21 @@ int ShaderData::GetVersion()
  * If supported version is 1.20:
  *  - replace "#version 130" with "#version 120"
  */
-void ShaderData::Patch(char *dst, char const *src)
+void ShaderData::Patch(char *dst, char const *vert, char const *frag)
 {
-    int version = GetVersion();
+    int ver_driver = GetVersion();
 
-    strcpy(dst, src);
-    if (version >= 130)
+    strcpy(dst, vert ? vert : frag);
+    if (ver_driver >= 130)
         return;
 
-    if (version >= 110)
+    int ver_shader = 110;
+    char *parser = strstr(dst, "#version");
+    if (parser)
+        ver_shader = atoi(parser + strlen("#version"));
+
+    if (ver_shader > 120 && ver_driver <= 120)
     {
-        char *parser, *main;
         char const *end = dst + strlen(dst) + 1;
 
         /* Find main() */
@@ -238,11 +242,12 @@ void ShaderData::Patch(char *dst, char const *src)
         if (!parser) return;
         parser = strstr(parser, "{");
         if (!parser) return;
-        main = parser + 1;
+        char *main = parser + 1;
 
         /* Perform main() replaces */
-        static char const * const main_replaces[] =
+        char const * const main_replaces[] =
         {
+#if 0
             "in vec2 in_Vertex;", "vec2 in_Vertex = gl_Vertex.xy;",
             "in vec3 in_Vertex;", "vec3 in_Vertex = gl_Vertex.xyz;",
             "in vec4 in_Vertex;", "vec4 in_Vertex = gl_Vertex.xyzw;",
@@ -267,6 +272,7 @@ void ShaderData::Patch(char *dst, char const *src)
                "vec2 in_MultiTexCoord6 = gl_MultiTexCoord6.xy;",
             "in vec2 in_MultiTexCoord7;",
                "vec2 in_MultiTexCoord7 = gl_MultiTexCoord7.xy;",
+#endif
 
             NULL
         };
@@ -287,13 +293,17 @@ void ShaderData::Patch(char *dst, char const *src)
         }
 
         /* Perform small replaces */
-        static char const * const fast_replaces[] =
+        char const * const fast_replaces[] =
         {
             "#version 130", "#version 120",
-            "\nin vec2", "\n   vec2",
-            "\nin vec3", "\n   vec3",
-            "\nin vec4", "\n   vec4",
-            "\nin mat4", "\n   mat4",
+            "in vec2", vert ? "attribute vec2" : "varying vec2",
+            "in vec3", vert ? "attribute vec3" : "varying vec3",
+            "in vec4", vert ? "attribute vec4" : "varying vec4",
+            "in mat4", vert ? "attribute mat4" : "varying mat4",
+            "out vec2", "varying vec2",
+            "out vec3", "varying vec3",
+            "out vec4", "varying vec4",
+            "out mat4", "varying mat4",
             NULL
         };
 
