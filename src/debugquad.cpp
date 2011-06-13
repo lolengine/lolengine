@@ -28,7 +28,11 @@ namespace lol
  * DebugQuad implementation class
  */
 
-#define NUM_SHADERS 4
+#define NUM_ARRAYS 2
+#define NUM_BUFFERS 6
+#define NUM_ATTRS 6
+#define NUM_SHADERS 6
+#define NUM_TEXTURES 1
 
 class DebugQuadData
 {
@@ -39,9 +43,11 @@ private:
 
     int initialised;
     float time;
-    GLuint buflist[3];
+    GLuint array[NUM_ARRAYS];
+    GLuint buffer[NUM_BUFFERS];
     Shader *shader[NUM_SHADERS];
-    GLuint texlist[1];
+    GLuint attr[NUM_ATTRS];
+    GLuint texture[NUM_TEXTURES];
     uint8_t image[1][32 * 32 * 4];
 };
 
@@ -71,8 +77,9 @@ void DebugQuad::TickDraw(float deltams)
 
     if (!data->initialised && !IsDestroying())
     {
+        glGenVertexArrays(NUM_ARRAYS, data->array);
+        glGenBuffers(NUM_BUFFERS, data->buffer);
 #if 0
-        glGenBuffers(3, data->buflist);
 
         static char const *vertexshader =
             "//#version 130\n"
@@ -99,12 +106,12 @@ void DebugQuad::TickDraw(float deltams)
             "    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);\n"
             "}\n";
         data->shader[0] = Shader::Create(vertexshader, fragmentshader);
-        glGenTextures(1, data->texlist);
+        glGenTextures(1, data->texture);
 #endif
 
         /* Checkerboard texture */
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+        glBindTexture(GL_TEXTURE_2D, data->texture[0]);
         for (int j = 0; j < 32; j++)
             for (int i = 0; i < 32; i++)
             {
@@ -120,16 +127,15 @@ void DebugQuad::TickDraw(float deltams)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        /* Quad #4: create texture in fragment shader */
+        /* Quad #4: create texture in 1.10 fragment shader */
         data->shader[0] = Shader::Create(
-            "#version 130\n"
-            "in vec2 in_Vertex;"
+            "#version 110\n"
             "void main()"
             "{"
-            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
+            "    gl_Position = gl_Vertex;"
             "}",
 
-            "#version 130\n"
+            "#version 110\n"
             "void main()"
             "{"
             "    float dx = mod(gl_FragCoord.x * gl_FragCoord.y, 2.0);"
@@ -138,60 +144,53 @@ void DebugQuad::TickDraw(float deltams)
             "    gl_FragColor = vec4(dx, dy, dz, 1.0);"
             "}");
 
-        /* Quad #5: pass color from vertex shader to fragment shader */
+        /* Quad #5: pass color from 1.10 vertex shader to fragment shader */
         data->shader[1] = Shader::Create(
-            "#version 130\n"
-            "in vec2 in_Vertex;"
-            "in vec2 in_MultiTexCoord0;"
+            "#version 110\n"
             "varying vec4 pass_Color;"
             "void main()"
             "{"
-            "    float r = in_MultiTexCoord0.x;"
-            "    float g = in_MultiTexCoord0.y;"
+            "    float r = gl_MultiTexCoord0.x;"
+            "    float g = gl_MultiTexCoord0.y;"
             "    pass_Color = vec4(1.0 - r, 1.0 - g, r, 1.0);"
-            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
+            "    gl_Position = gl_Vertex;"
             "}",
 
-            "#version 130\n"
+            "#version 110\n"
             "varying vec4 pass_Color;"
             "void main()"
             "{"
             "    gl_FragColor = pass_Color;"
             "}");
 
-        /* Quad #6: apply texture in fragment shader */
+        /* Quad #6: apply texture in 1.10 fragment shader */
         data->shader[2] = Shader::Create(
-            "#version 130\n"
-            "in vec2 in_Vertex;"
-            "in vec2 in_MultiTexCoord0;"
+            "#version 110\n"
             "void main()"
             "{"
-            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
-            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
+            "    gl_TexCoord[0] = gl_MultiTexCoord0;"
+            "    gl_Position = gl_Vertex;"
             "}",
 
-            "#version 130\n"
+            "#version 110\n"
             "uniform sampler2D tex;"
             "void main()"
             "{"
             "    gl_FragColor = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
             "}");
 
-        /* Quad #8: vertex buffer, apply texture in fragment shader */
+        /* Quad #8: vertex buffer, apply texture in 1.10 fragment shader */
         data->shader[3] = Shader::Create(
-            "#version 130\n"
-            "in vec2 in_Vertex;"
-            "in vec2 in_MultiTexCoord0;"
-            "in vec4 in_Color;"
+            "#version 110\n"
             "varying vec4 pass_Color;"
             "void main()"
             "{"
-            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
-            "    pass_Color = in_Color;"
-            "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
+            "    gl_TexCoord[0] = gl_MultiTexCoord0;"
+            "    pass_Color = gl_Color;"
+            "    gl_Position = gl_Vertex;"
             "}",
 
-            "#version 130\n"
+            "#version 110\n"
             "varying vec4 pass_Color;"
             "uniform sampler2D tex;"
             "void main()"
@@ -200,19 +199,69 @@ void DebugQuad::TickDraw(float deltams)
             "    gl_FragColor = vec4(abs(tmp.xyz - pass_Color.xyz), 1.0);"
             "}");
 
+        /* Quad #9: vertex buffer, apply texture and color in 1.20 shader */
+        data->shader[4] = Shader::Create(
+            "#version 120\n"
+            "attribute vec3 in_Vertex;"
+            "attribute vec3 in_Color;"
+            "attribute vec2 in_MultiTexCoord0;"
+            "varying vec4 pass_Color;"
+            "void main()"
+            "{"
+            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
+            "    pass_Color = vec4(in_Color, 1.0);"
+            "    gl_Position = vec4(in_Vertex, 1.0);"
+            "}",
+
+            "#version 120\n"
+            "varying vec4 pass_Color;"
+            "uniform sampler2D tex;"
+            "void main()"
+            "{"
+            "    vec4 tmp = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
+            "    gl_FragColor = vec4(abs(tmp.xyz - pass_Color.xyz), 1.0);"
+            "}");
+        data->attr[0] = data->shader[4]->GetAttribLocation("in_Vertex");
+        data->attr[1] = data->shader[4]->GetAttribLocation("in_Color");
+        data->attr[2] = data->shader[4]->GetAttribLocation("in_MultiTexCoord0");
+
+        /* Quad #10: vertex buffer, apply texture and color in 1.30 shader */
+        data->shader[5] = Shader::Create(
+            "#version 130\n"
+            "in vec3 in_Vertex;"
+            "in vec3 in_Color;"
+            "in vec2 in_MultiTexCoord0;"
+            "out vec4 pass_Color;"
+            "void main()"
+            "{"
+            "    gl_TexCoord[0] = vec4(in_MultiTexCoord0, 0.0, 0.0);"
+            "    pass_Color = vec4(in_Color, 1.0);"
+            "    gl_Position = vec4(in_Vertex, 1.0);"
+            "}",
+
+            "#version 130\n"
+            "in vec4 pass_Color;"
+            "uniform sampler2D tex;"
+            "void main()"
+            "{"
+            "    vec4 tmp = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
+            "    gl_FragColor = vec4(abs(tmp.xyz - pass_Color.xyz), 1.0);"
+            "}");
+        data->attr[3] = data->shader[4]->GetAttribLocation("in_Vertex");
+        data->attr[4] = data->shader[4]->GetAttribLocation("in_Color");
+        data->attr[5] = data->shader[4]->GetAttribLocation("in_MultiTexCoord0");
 
         data->initialised = 1;
     }
     else if (data->initialised && IsDestroying())
     {
-#if 0
-        glDeleteBuffers(3, data->buflist);
-#endif
+        glDeleteVertexArrays(NUM_ARRAYS, data->array);
+        glDeleteBuffers(NUM_BUFFERS, data->buffer);
         Shader::Destroy(data->shader[0]);
         Shader::Destroy(data->shader[1]);
         Shader::Destroy(data->shader[2]);
         Shader::Destroy(data->shader[3]);
-        glDeleteTextures(1, data->texlist);
+        glDeleteTextures(NUM_TEXTURES, data->texture);
 
         data->initialised = 0;
     }
@@ -256,7 +305,7 @@ void DebugQuad::TickDraw(float deltams)
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
@@ -288,7 +337,7 @@ void DebugQuad::TickDraw(float deltams)
 
     /* Bind texture */
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buflist[0]);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
@@ -322,7 +371,7 @@ void DebugQuad::TickDraw(float deltams)
     glUseProgram(0);
 
     /* Prepare our quad coordinates */
-    vec2i const layout(3, 3);
+    vec2i const layout(4, 3);
     data->step = vec2(2.0f, -2.0f) / (3 * layout + vec2i(1));
     data->orig = vec2(-1.0f, 1.0f) + data->step;
     data->aa = data->orig;
@@ -373,7 +422,7 @@ void DebugQuad::TickDraw(float deltams)
 
     /* Quad #3: textured quad */
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
         glTexCoord2f(f1, f3);
@@ -436,7 +485,7 @@ void DebugQuad::TickDraw(float deltams)
     data->shader[2]->Bind();
     glColor3f(0.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, data->texlist[0]);
+    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glBegin(GL_TRIANGLES);
         glTexCoord2f(f1, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
@@ -474,6 +523,7 @@ void DebugQuad::TickDraw(float deltams)
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+    glUseProgram(0);
 
     Advance();
 
@@ -498,6 +548,85 @@ void DebugQuad::TickDraw(float deltams)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glUseProgram(0);
+
+    Advance();
+
+    /* Quad #9: vertex buffer, apply texture and color in 1.20 shader */
+    data->shader[4]->Bind();
+    GLfloat const vertices3[] = { data->aa.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->bb.y, 0.0f };
+
+    glBindVertexArray(data->array[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices3), vertices3,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[1], 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[1]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[2], 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[2]);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glDisableVertexAttribArray(data->attr[0]);
+    glDisableVertexAttribArray(data->attr[1]);
+    glDisableVertexAttribArray(data->attr[2]);
+    glUseProgram(0);
+
+    Advance();
+
+    /* Quad #10: vertex buffer, apply texture and color in 1.30 shader */
+    data->shader[5]->Bind();
+    GLfloat const vertices4[] = { data->aa.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->bb.y, 0.0f };
+
+    glBindVertexArray(data->array[1]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[3]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices4), vertices4,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[3], 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[3]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[4]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[4], 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[4]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->buffer[5]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
+                 GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(data->attr[5], 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(data->attr[5]);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glDisableVertexAttribArray(data->attr[3]);
+    glDisableVertexAttribArray(data->attr[4]);
+    glDisableVertexAttribArray(data->attr[5]);
+    glUseProgram(0);
 
     Advance();
 }
