@@ -112,7 +112,7 @@ void Input::SetMousePos(vec2i coord)
 {
     data->mouse = coord;
 
-    WorldEntity *best = NULL;
+    WorldEntity *top = NULL;
 
     for (int n = 0; n < data->nentities; n++)
     {
@@ -122,16 +122,16 @@ void Input::SetMousePos(vec2i coord)
              || coord.y >= data->entities[n]->bbox[1].y)
             continue;
 
-        if (!best || best->bbox[1].z < data->entities[n]->bbox[1].z)
-            best = data->entities[n];
+        if (!top || top->bbox[1].z < data->entities[n]->bbox[1].z)
+            top = data->entities[n];
     }
 
     for (int n = 0; n < data->nentities; n++)
     {
-        if (data->entities[n] == best)
+        if (data->entities[n] == top)
         {
-            data->entities[n]->mousepos = (vec2i)((vec3i)coord - best->bbox[0]);
-            if (best != data->lastfocus)
+            data->entities[n]->mousepos = (vec2i)((vec3i)coord - top->bbox[0]);
+            if (top != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else
                 data->entities[n]->clicked = 0;
@@ -146,7 +146,7 @@ void Input::SetMousePos(vec2i coord)
         }
     }
 
-    data->lastfocus = best;
+    data->lastfocus = top;
 }
 
 void Input::SetMouseButton(int index)

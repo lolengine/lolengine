@@ -29,7 +29,7 @@ class SdlInputData
     friend class SdlInput;
 
 private:
-    int mx, my;
+    static vec2i GetMousePos();
 };
 
 /*
@@ -41,8 +41,6 @@ SdlInput::SdlInput()
 {
     SDL_Init(SDL_INIT_TIMER);
 
-    SDL_GetMouseState(&data->mx, &data->my);
-
     gamegroup = GAMEGROUP_BEFORE;
 }
 
@@ -51,30 +49,36 @@ void SdlInput::TickGame(float deltams)
     Entity::TickGame(deltams);
 
     /* Handle mouse input */
-    vec2i mouse;
-    if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
-    {
-        SDL_GetMouseState(&mouse.x, &mouse.y);
-        mouse.y = Video::GetSize().y - 1 - mouse.y;
-    }
-    else
-        mouse.x = mouse.y = -1;
+    vec2i mouse = SdlInputData::GetMousePos();;
     Input::SetMousePos(mouse);
 
     /* Handle keyboard and WM events */
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT)
+        switch (event.type)
+        {
+        case SDL_QUIT:
             Ticker::Shutdown();
+            break;
 #if 0
-        else if (event.type == SDL_KEYDOWN)
+        case SDL_KEYDOWN:
             Input::KeyPressed(event.key.keysym.sym, deltams);
+            break;
 #endif
-        else if (event.type == SDL_MOUSEBUTTONDOWN)
-            Input::SetMouseButton(event.button.button - 1);
-        else if (event.type == SDL_MOUSEBUTTONUP)
-            Input::UnsetMouseButton(event.button.button - 1);
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+        {
+            vec2i newmouse = SdlInputData::GetMousePos();
+            if (newmouse != mouse)
+                Input::SetMousePos(mouse = newmouse);
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+                Input::SetMouseButton(event.button.button - 1);
+            else
+                Input::UnsetMouseButton(event.button.button - 1);
+            break;
+        }
+        }
     }
 
     /* Send the whole keyboard state to the input system */
@@ -89,6 +93,18 @@ void SdlInput::TickGame(float deltams)
 SdlInput::~SdlInput()
 {
     delete data;
+}
+
+vec2i SdlInputData::GetMousePos()
+{
+    vec2i ret(-1, -1);
+
+    if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
+    {
+        SDL_GetMouseState(&ret.x, &ret.y);
+        ret.y = Video::GetSize().y - 1 - ret.y;
+    }
+    return ret;
 }
 
 } /* namespace lol */
