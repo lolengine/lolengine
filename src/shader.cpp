@@ -13,6 +13,8 @@
 #endif
 
 #include <cmath>
+#include <cstring>
+#include <cstdio>
 
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -36,6 +38,10 @@ class ShaderData
 private:
     GLuint prog_id, vert_id, frag_id;
     uint32_t vert_crc, frag_crc;
+
+    /* Shader patcher */
+    static int GetVersion();
+    static void Patch(char *dst, char const *src);
 
     /* Global shader cache */
     static Shader *shaders[];
@@ -77,21 +83,26 @@ Shader::Shader(char const *vert, char const *frag)
   : data(new ShaderData())
 {
     char buf[4096];
+    char const *shader = buf;
     GLsizei len;
 
 #if !defined __CELLOS_LV2__
-    data->vert_crc = Hash::Crc32(vert);
+
+    /* Compile vertex shader and fragment shader */
+    ShaderData::Patch(buf, vert);
+    data->vert_crc = Hash::Crc32(buf);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(data->vert_id, 1, &vert, NULL);
+    glShaderSource(data->vert_id, 1, &shader, NULL);
     glCompileShader(data->vert_id);
 
     glGetShaderInfoLog(data->vert_id, sizeof(buf), &len, buf);
     if (len > 0)
         Log::Error("failed to compile vertex shader: %s", buf);
 
-    data->frag_crc = Hash::Crc32(frag);
+    ShaderData::Patch(buf, frag);
+    data->frag_crc = Hash::Crc32(buf);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(data->frag_id, 1, &frag, NULL);
+    glShaderSource(data->frag_id, 1, &shader, NULL);
     glCompileShader(data->frag_id);
 
     glGetShaderInfoLog(data->frag_id, sizeof(buf), &len, buf);
@@ -146,6 +157,99 @@ Shader::~Shader()
     glDeleteProgram(data->prog_id);
     delete data;
 #endif
+}
+
+/* Try to detect shader compiler features */
+int ShaderData::GetVersion()
+{
+    static int version = 0;
+
+    if (!version)
+    {
+        char buf[4096];
+        GLsizei len;
+
+        int id = glCreateShader(GL_VERTEX_SHADER);
+
+        /* Can we compile 1.30 shaders? */
+        char const *test130 =
+            "#version 130\n"
+            "void main() { gl_Position = vec4(0.0, 0.0, 0.0, 0.0); }";
+        glShaderSource(id, 1, &test130, NULL);
+        glCompileShader(id);
+        glGetShaderInfoLog(id, sizeof(buf), &len, buf);
+        if (len <= 0)
+            version = 130;
+
+        /* If not, can we compile 1.20 shaders? */
+        if (!version)
+        {
+            char const *test120 =
+                "#version 120\n"
+                "void main() { gl_Position = vec4(0.0, 0.0, 0.0, 0.0); }";
+            glShaderSource(id, 1, &test120, NULL);
+            glCompileShader(id);
+            glGetShaderInfoLog(id, sizeof(buf), &len, buf);
+            if (len <= 0)
+                version = 120;
+        }
+
+        /* Otherwise, assume we can compile 1.10 shaders. */
+        if (!version)
+            version = 110;
+
+        glDeleteShader(id);
+    }
+
+    return version;
+}
+
+/* Simple shader source patching for old GLSL versions.
+ * If supported version is 1.30, do nothing.
+ * If supported version is 1.20:
+ *  - replace "#version 130" with "#version 120"
+ */
+void ShaderData::Patch(char *dst, char const *src)
+{
+    int version = GetVersion();
+
+    if (version >= 130)
+    {
+        strcpy(dst, src);
+        return;
+    }
+
+    if (version == 120)
+    {
+        static char const * const replaces[] =
+        {
+            "#version 130", "#version 120",
+            "\nin vec2", "\nvec2",
+            "\nin vec3", "\nvec3",
+            "\nin vec4", "\nvec4",
+            "\nin mat4", "\nmat4",
+            NULL
+        };
+
+        while (*src)
+        {
+            for (char const * const *rep = replaces; rep[0]; rep += 2)
+            {
+                size_t l0 = strlen(rep[0]);
+                if (!strncmp(src, rep[0], l0))
+                {
+                    src += l0;
+                    dst += sprintf(dst, "%s", rep[1]);
+                    goto next;
+                }
+            }
+
+            *dst++ = *src++;
+
+            next: continue;
+        }
+        *dst = '\0';
+    }
 }
 
 } /* namespace lol */
