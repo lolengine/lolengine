@@ -388,6 +388,7 @@ void DebugQuad::TickDraw(float deltams)
     GLfloat const texcoords[] = { f1, f3, f3, f2, f2, f4,
                                   f2, f4, f4, f1, f1, f3 };
 
+#if defined HAVE_GLBEGIN
     /* Quad #1: simple glBegin program */
     glColor3f(0.8f, 0.5f, 0.2f);
     glBegin(GL_TRIANGLES);
@@ -505,8 +506,9 @@ void DebugQuad::TickDraw(float deltams)
     glDisable(GL_TEXTURE_2D);
 
     Advance();
+#endif
 
-    /* Quad #7: simple vertex buffer */
+    /* Quad #7: simple vertex buffer, no shader */
     GLfloat const vertices1[] = { data->aa.x, data->bb.y, 0.0f,
                                   data->bb.x, data->bb.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
