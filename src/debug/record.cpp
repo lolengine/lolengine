@@ -19,7 +19,7 @@
 #endif
 
 #include "core.h"
-#include "debugrecord.h"
+#include "loldebug.h"
 
 using namespace std;
 

@@ -45,7 +45,7 @@
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
-#include "shader.h"
+#include "shader/shader.h"
 #include "image.h"
 
 // Managers

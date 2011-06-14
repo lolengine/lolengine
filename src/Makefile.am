@@ -9,15 +9,18 @@ liblol_a_SOURCES = \
     timer.cpp timer.h bitfield.h profiler.cpp profiler.h input.h input.cpp \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
-    worldentity.cpp worldentity.h shader.cpp shader.h image.cpp image.h \
+    worldentity.cpp worldentity.h image.cpp image.h \
     platform.cpp platform.h \
     \
     sdlapp.cpp sdlapp.h sdlinput.cpp sdlinput.h \
     \
     eglapp.cpp eglapp.h \
     \
-    loldebug.h debugfps.cpp debugfps.h debugsphere.cpp debugsphere.h \
-    debugrecord.cpp debugrecord.h debugstats.cpp debugstats.h \
-    debugquad.cpp debugquad.h
+    shader/shader.cpp shader/shader.h \
+    \
+    loldebug.h \
+    debug/fps.cpp debug/fps.h debug/sphere.cpp debug/sphere.h \
+    debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h \
+    debug/quad.cpp debug/quad.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 

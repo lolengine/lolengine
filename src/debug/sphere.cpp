@@ -22,7 +22,7 @@
 
 #include "core.h"
 #include "lolgl.h"
-#include "debugsphere.h"
+#include "loldebug.h"
 
 using namespace std;
 

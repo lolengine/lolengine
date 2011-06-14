@@ -15,7 +15,7 @@
 #include <cstdio>
 
 #include "core.h"
-#include "debugfps.h"
+#include "loldebug.h"
 
 using namespace std;
 

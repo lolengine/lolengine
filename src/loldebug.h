@@ -16,11 +16,11 @@
 #if !defined __LOL_LOLDEBUG_H__
 #define __LOL_LOLDEBUG_H__
 
-#include "debugfps.h"
-#include "debugquad.h"
-#include "debugrecord.h"
-#include "debugsphere.h"
-#include "debugstats.h"
+#include "debug/fps.h"
+#include "debug/quad.h"
+#include "debug/record.h"
+#include "debug/sphere.h"
+#include "debug/stats.h"
 
 #endif // __LOL_LOLDEBUG_H__
 
