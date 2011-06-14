@@ -92,6 +92,12 @@ if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
 
+dnl Poor man's GL feature detection.
+save_LIBS="${LIBS}"
+LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
+AC_CHECK_FUNCS(glBegin)
+LIBS="${save_LIBS}"
+
 dnl Use SDL? (always required)
 ac_cv_my_have_sdl="yes"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
