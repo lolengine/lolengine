@@ -27,91 +27,23 @@ using namespace std;
 namespace lol
 {
 
+class VideoData
+{
+    friend class Video;
+
+private:
+    static mat4 proj_matrix, view_matrix;
 #if defined ANDROID_NDK
-vec2i saved_viewport;
+    static vec2i saved_viewport;
 #endif
+};
 
-Shader *stdshader;
-mat4 proj_matrix, view_matrix, model_matrix;
+mat4 VideoData::proj_matrix;
+mat4 VideoData::view_matrix;
 
-#define OLD
-
-static char const *vertexshader =
-    "#version 130\n"
-    "\n"
-#if defined HAVE_GLES_2X
-    "attribute vec3 in_Position;\n"
-    "attribute vec2 in_TexCoord;\n"
-    "varying vec2 pass_TexCoord;\n"
-#else
-    "in vec3 in_Position;\n"
-    "in vec2 in_TexCoord;\n"
+#if defined ANDROID_NDK
+vec2i VideoData::saved_viewport = 0;
 #endif
-    "uniform mat4 proj_matrix;\n"
-    "uniform mat4 view_matrix;\n"
-    "uniform mat4 model_matrix;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = proj_matrix * view_matrix * model_matrix"
-    "                * vec4(in_Position, 1.0);\n"
-#if defined HAVE_GLES_2X
-    "    pass_TexCoord = in_TexCoord;\n"
-#else
-    "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
-#endif
-    "}\n";
-
-static char const *fragmentshader =
-    "#version 130\n"
-    "\n"
-    "uniform sampler2D in_Texture;\n"
-#if defined HAVE_GLES_2X
-    "varying vec2 pass_TexCoord;\n"
-#endif
-    "\n"
-    "void main()\n"
-    "{\n"
-#if defined HAVE_GLES_2X
-    "    vec4 col = texture2D(in_Texture, pass_TexCoord);\n"
-    //"    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);\n"
-    //"    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
-#else
-    "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
-#endif
-#if 0
-    "    float mul = 2.0;\n"
-#if 0
-    "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
-    "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
-    "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
-    "    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);\n"
-    "    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);\n"
-    "    float dx3 = mod(floor(gl_FragCoord.x * 0.25), 2.0);\n"
-    "    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);\n"
-    "    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);\n"
-    "    float t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
-    "    float t2 = t1;\n"
-    "    float t3 = t1;\n"
-#else
-    "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
-    "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
-    "    float t1 = mod(sin(rand) * 17.13043, 1.0);\n"
-    "    float t2 = mod(sin(rand) * 27.13043, 1.0);\n"
-    "    float t3 = mod(sin(rand) * 37.13043, 1.0);\n"
-#endif
-    "    float fracx = fract(col.x * mul);\n"
-    "    float fracy = fract(col.y * mul);\n"
-    "    float fracz = fract(col.z * mul);\n"
-    "    fracx = fracx > t1 ? 1.0 : 0.0;\n"
-    "    fracy = fracy > t2 ? 1.0 : 0.0;\n"
-    "    fracz = fracz > t3 ? 1.0 : 0.0;\n"
-    "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
-    "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
-    "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
-#endif
-    "    gl_FragColor = col;\n"
-    "}\n";
 
 /*
  * Public Video class
@@ -123,7 +55,7 @@ void Video::Setup(vec2i size)
     glViewport(0, 0, size.x, size.y);
 
 #if defined ANDROID_NDK
-    saved_viewport = vec2i(size.x, size.y);
+    VideoData::saved_viewport = size;
 #endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
@@ -133,16 +65,12 @@ void Video::Setup(vec2i size)
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif
-
-    stdshader = Shader::Create(vertexshader, fragmentshader);
 }
 
 void Video::SetFov(float theta)
 {
 #undef near /* Fuck Microsoft */
 #undef far /* Fuck Microsoft again */
-    mat4 proj;
-
     vec2 size = GetSize();
     float near = -size.x - size.y;
     float far = size.x + size.y;
@@ -155,7 +83,7 @@ void Video::SetFov(float theta)
     if (theta < 1e-4f)
     {
         /* The easy way: purely orthogonal projection. */
-        proj_matrix = mat4::ortho(0, size.x, 0, size.y, near, far);
+        VideoData::proj_matrix = mat4::ortho(0, size.x, 0, size.y, near, far);
     }
     else
     {
@@ -175,21 +103,13 @@ void Video::SetFov(float theta)
             near = 1.0f;
         }
 
-        proj_matrix = mat4::frustum(-near * t1, near * t1,
-                                    -near * t2, near * t2, near, far)
-                    * mat4::translate(-0.5f * size.x, -0.5f * size.y, -dist);
+        mat4 proj = mat4::frustum(-near * t1, near * t1,
+                                  -near * t2, near * t2, near, far);
+        mat4 trans = mat4::translate(-0.5f * size.x, -0.5f * size.y, -dist);
+        VideoData::proj_matrix = proj * trans;
     }
 
-    view_matrix = mat4(1.0f);
-
-    stdshader->Bind(); /* Required on GLES 2.x? */
-#if !defined __CELLOS_LV2__ // Use cgGetNamedParameter etc.
-    GLuint uni;
-    uni = stdshader->GetUniformLocation("proj_matrix");
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &proj_matrix[0][0]);
-    uni = stdshader->GetUniformLocation("view_matrix");
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &view_matrix[0][0]);
-#endif
+    VideoData::view_matrix = mat4(1.0f);
 }
 
 void Video::SetDepth(bool set)
@@ -211,7 +131,7 @@ void Video::Clear()
 
 void Video::Destroy()
 {
-    Shader::Destroy(stdshader);
+    ;
 }
 
 void Video::Capture(uint32_t *buffer)
@@ -249,7 +169,7 @@ void Video::Capture(uint32_t *buffer)
 vec2i Video::GetSize()
 {
 #if defined ANDROID_NDK
-    return saved_viewport;
+    return VideoData::saved_viewport;
 #elif defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
     return vec2i(1920, 1080);
@@ -258,6 +178,16 @@ vec2i Video::GetSize()
     glGetIntegerv(GL_VIEWPORT, v);
     return vec2i(v[2], v[3]);
 #endif
+}
+
+mat4 const & Video::GetProjMatrix()
+{
+    return VideoData::proj_matrix;
+}
+
+mat4 const & Video::GetViewMatrix()
+{
+    return VideoData::view_matrix;
 }
 
 } /* namespace lol */
