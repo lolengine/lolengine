@@ -32,8 +32,7 @@ struct Tile
     int x, y, z, o;
 };
 
-extern Shader *stdshader;
-extern mat4 model_matrix;
+static Shader *stdshader = NULL;
 
 /*
  * Scene implementation class
@@ -51,6 +50,8 @@ private:
 
         return t2->prio - t1->prio;
     }
+
+    mat4 model_matrix;
 
     Tile *tiles;
     int ntiles;
@@ -129,6 +130,85 @@ void Scene::AddTile(uint32_t code, int x, int y, int z, int o)
 
 void Scene::Render() // XXX: rename to Blit()
 {
+    if (!stdshader)
+    {
+        stdshader = Shader::Create(
+            "#version 130\n"
+            "\n"
+#if defined HAVE_GLES_2X
+            "attribute vec3 in_Position;\n"
+            "attribute vec2 in_TexCoord;\n"
+            "varying vec2 pass_TexCoord;\n"
+#else
+            "in vec3 in_Position;\n"
+            "in vec2 in_TexCoord;\n"
+#endif
+            "uniform mat4 proj_matrix;\n"
+            "uniform mat4 view_matrix;\n"
+            "uniform mat4 model_matrix;\n"
+            "\n"
+            "void main()\n"
+            "{\n"
+            "    gl_Position = proj_matrix * view_matrix * model_matrix"
+            "                * vec4(in_Position, 1.0);\n"
+#if defined HAVE_GLES_2X
+            "    pass_TexCoord = in_TexCoord;\n"
+#else
+            "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
+#endif
+            "}\n",
+
+            "#version 130\n"
+            "\n"
+            "uniform sampler2D in_Texture;\n"
+#if defined HAVE_GLES_2X
+            "varying vec2 pass_TexCoord;\n"
+#endif
+            "\n"
+            "void main()\n"
+            "{\n"
+#if defined HAVE_GLES_2X
+            "    vec4 col = texture2D(in_Texture, pass_TexCoord);\n"
+            //"    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);\n"
+            //"    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
+#else
+            "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
+#endif
+#if 0
+            "    float mul = 2.0;\n"
+#if 0
+            "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
+            "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
+            "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
+            "    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);\n"
+            "    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);\n"
+            "    float dx3 = mod(floor(gl_FragCoord.x * 0.25), 2.0);\n"
+            "    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);\n"
+            "    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);\n"
+            "    float t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
+            "    float t2 = t1;\n"
+            "    float t3 = t1;\n"
+#else
+            "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
+            "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
+            "    float t1 = mod(sin(rand) * 17.13043, 1.0);\n"
+            "    float t2 = mod(sin(rand) * 27.13043, 1.0);\n"
+            "    float t3 = mod(sin(rand) * 37.13043, 1.0);\n"
+#endif
+            "    float fracx = fract(col.x * mul);\n"
+            "    float fracy = fract(col.y * mul);\n"
+            "    float fracz = fract(col.z * mul);\n"
+            "    fracx = fracx > t1 ? 1.0 : 0.0;\n"
+            "    fracy = fracy > t2 ? 1.0 : 0.0;\n"
+            "    fracz = fracz > t3 ? 1.0 : 0.0;\n"
+            "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
+            "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
+            "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
+#endif
+            "    gl_FragColor = col;\n"
+            "}\n");
+    }
+
 #if 0
     // Randomise, then sort.
     for (int i = 0; i < data->ntiles; i++)
@@ -142,15 +222,15 @@ void Scene::Render() // XXX: rename to Blit()
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
-    model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
-    model_matrix *= mat4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
+    data->model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
+    data->model_matrix *= mat4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
 #if 0
     static float f = 0.0f;
     f += 0.01f;
-    model_matrix *= mat4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
-    model_matrix *= mat4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
+    data->model_matrix *= mat4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
+    data->model_matrix *= mat4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
-    model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
+    data->model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
     GLuint uni_mat, uni_tex, attr_pos, attr_tex;
@@ -159,8 +239,14 @@ void Scene::Render() // XXX: rename to Blit()
 
 #if !defined __CELLOS_LV2__ // Use cgGetNamedParameter etc.
     stdshader->Bind();
+
+    uni_mat = stdshader->GetUniformLocation("proj_matrix");
+    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &Video::GetProjMatrix()[0][0]);
+    uni_mat = stdshader->GetUniformLocation("view_matrix");
+    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &Video::GetViewMatrix()[0][0]);
     uni_mat = stdshader->GetUniformLocation("model_matrix");
-    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &model_matrix[0][0]);
+    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &data->model_matrix[0][0]);
+
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
 #endif
