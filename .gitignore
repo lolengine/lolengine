@@ -39,5 +39,7 @@ win32/*.suo
 deushax/deushax
 deushax/editor
 monsterz/monsterz
+test/lol-test
+test/quad
 tools/make-font
 # Our data

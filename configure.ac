@@ -193,14 +193,19 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   test/Makefile
-  monsterz/Makefile
-  deushax/Makefile
-  tools/Makefile
-  art/Makefile
-  art/test/Makefile
   gfx/Makefile
   gfx/font/Makefile
-  maps/Makefile
+  tools/Makefile
+])
+AC_CONFIG_FILES([
+  monsterz/Makefile
+])
+AC_CONFIG_FILES([
+  deushax/Makefile
+  deushax/art/Makefile
+  deushax/art/test/Makefile
+  deushax/gfx/Makefile
+  deushax/maps/Makefile
 ])
 
 AC_OUTPUT
