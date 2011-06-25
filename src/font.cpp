@@ -47,7 +47,7 @@ Font::Font(char const *path)
     sprintf(data->name, "<font> %s", path);
 
     data->tiler = Tiler::Register(path, 0, 16, 1.0f);
-    data->size = Tiler::GetSize(data->tiler);
+    data->size = Tiler::GetSize(data->tiler, 0);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
