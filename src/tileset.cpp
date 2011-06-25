@@ -159,14 +159,14 @@ char const *TileSet::GetName()
     return data->name;
 }
 
-vec2i TileSet::GetSize() const
-{
-    return data->size;
-}
-
 vec2i TileSet::GetCount() const
 {
     return data->count;
+}
+
+vec2i TileSet::GetSize(int tileid) const
+{
+    return data->size;
 }
 
 void TileSet::Bind()

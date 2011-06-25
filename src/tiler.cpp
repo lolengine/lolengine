@@ -68,19 +68,6 @@ void Tiler::Deregister(int id)
     data->tilesets.RemoveSlot(id - 1); /* ID 0 is for the empty tileset */
 }
 
-vec2i Tiler::GetSize(int id)
-{
-    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
-#if !LOL_RELEASE
-    if (!tileset)
-    {
-        Log::Error("getting size for null tiler #%i\n", id);
-        return 0;
-    }
-#endif
-    return tileset->GetSize();
-}
-
 vec2i Tiler::GetCount(int id)
 {
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
@@ -92,6 +79,19 @@ vec2i Tiler::GetCount(int id)
     }
 #endif
     return tileset->GetCount();
+}
+
+vec2i Tiler::GetSize(int id, int tileid)
+{
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
+#if !LOL_RELEASE
+    if (!tileset)
+    {
+        Log::Error("getting size for null tiler #%i\n", id);
+        return 0;
+    }
+#endif
+    return tileset->GetSize(tileid);
 }
 
 void Tiler::Bind(uint32_t code)
