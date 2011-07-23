@@ -31,6 +31,7 @@ public:
 
     int MakeSlot(char const *name);
     void RemoveSlot(int id);
+    void RemoveSlot(Entity *entity);
 
     void SetEntity(int id, Entity *entity);
     Entity *GetEntity(int id);
