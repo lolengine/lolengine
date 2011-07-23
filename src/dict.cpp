@@ -134,6 +134,19 @@ void Dict::RemoveSlot(int id)
     }
 }
 
+void Dict::RemoveSlot(Entity *entity)
+{
+    for (int id = 0; id < data->maxid; id++)
+        if (data->entities[id] == entity)
+        {
+            RemoveSlot(id);
+            return;
+        }
+
+#if !LOL_RELEASE
+    Log::Error("removing unregistered entity %p\n", entity);
+#endif
+}
 
 void Dict::SetEntity(int id, Entity *entity)
 {
