@@ -32,7 +32,7 @@ class FontData
 
 private:
     char *name;
-    int tiler;
+    TileSet *tileset;
     vec2i size;
 };
 
@@ -46,15 +46,15 @@ Font::Font(char const *path)
     data->name = (char *)malloc(7 + strlen(path) + 1);
     sprintf(data->name, "<font> %s", path);
 
-    data->tiler = Tiler::Register(path, 0, 16, 1.0f);
-    data->size = Tiler::GetSize(data->tiler, 0);
+    data->tileset = Tiler::Register(path, 0, 16, 1.0f);
+    data->size = data->tileset->GetSize(0);
 
     drawgroup = DRAWGROUP_BEFORE;
 }
 
 Font::~Font()
 {
-    Tiler::Deregister(data->tiler);
+    Tiler::Deregister(data->tileset);
     free(data->name);
     delete data;
 }
@@ -78,7 +78,7 @@ void Font::Print(vec3i pos, char const *str)
         uint32_t ch = (uint8_t)*str++;
 
         if (ch != ' ')
-            scene->AddTile((data->tiler << 16) | (ch & 255),
+            scene->AddTile(data->tileset, ch & 255,
                            pos.x, pos.y, pos.z, 0);
 
         pos.x += data->size.x;

@@ -18,6 +18,8 @@
 
 #include <stdint.h>
 
+#include "tileset.h"
+
 namespace lol
 {
 
@@ -32,7 +34,7 @@ public:
     static Scene *GetDefault();
     static void Reset();
 
-    void AddTile(uint32_t code, int x, int y, int z, int o);
+    void AddTile(TileSet *tileset, int id, int x, int y, int z, int o);
     void Render();
 
 private:

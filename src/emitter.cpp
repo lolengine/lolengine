@@ -30,7 +30,7 @@ class EmitterData
     static const int MAX_PARTICLES = 1000;
 
 private:
-    int tiler;
+    TileSet *tileset;
     vec3 gravity;
     int particles[MAX_PARTICLES];
     vec3 positions[MAX_PARTICLES];
@@ -42,10 +42,10 @@ private:
  * Public Emitter class
  */
 
-Emitter::Emitter(int tiler, vec3 gravity)
+Emitter::Emitter(TileSet *tileset, vec3 gravity)
   : data(new EmitterData())
 {
-    data->tiler = tiler;
+    data->tileset = tileset;
     data->gravity = gravity;
     data->nparticles = 0;
 }
@@ -73,7 +73,7 @@ void Emitter::TickDraw(float deltams)
     Entity::TickDraw(deltams);
 
     for (int i = 0; i < data->nparticles; i++)
-        Scene::GetDefault()->AddTile((data->tiler << 16) | data->particles[i],
+        Scene::GetDefault()->AddTile(data->tileset, data->particles[i],
                                      data->positions[i].x,
                                      data->positions[i].y,
                                      data->positions[i].z, 0);

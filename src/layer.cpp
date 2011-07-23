@@ -47,6 +47,8 @@ Layer::~Layer()
 
 void Layer::Render(int x, int y, int z)
 {
+    Log::Error("FIXME: Layer::Render no longer works\n");
+#if 0
     Scene *scene = Scene::GetDefault();
     for (int j = 0; j < height; j++)
         for (int i = 0; i < width; i++)
@@ -54,6 +56,7 @@ void Layer::Render(int x, int y, int z)
                 scene->AddTile(data[j * width + i],
                                x + i * 32, y + j * 32 - altitude,
                                altitude + z, orientation);
+#endif
 }
 
 int Layer::GetZ()

@@ -27,16 +27,10 @@ static class TilerData
 
 public:
     TilerData()
-#if !LOL_RELEASE
-      : lasterror(-1)
-#endif
     { }
 
 private:
     Dict tilesets;
-#if !LOL_RELEASE
-    int lasterror;
-#endif
 }
 tilerdata;
 
@@ -46,87 +40,24 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-int Tiler::Register(char const *path, vec2i size, vec2i count, float dilate)
+TileSet *Tiler::Register(char const *path, vec2i size, vec2i count,
+                         float dilate)
 {
     int id = data->tilesets.MakeSlot(path);
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
 
-    if (!data->tilesets.GetEntity(id))
+    if (!tileset)
     {
-        TileSet *tileset = new TileSet(path, size, count, dilate);
+        tileset = new TileSet(path, size, count, dilate);
         data->tilesets.SetEntity(id, tileset);
-#if !LOL_RELEASE
-        if (id == data->lasterror)
-            data->lasterror = -1;
-#endif
     }
 
-    return id + 1; /* ID 0 is for the empty tileset */
+    return tileset;
 }
 
-void Tiler::Deregister(int id)
+void Tiler::Deregister(TileSet *tileset)
 {
-    data->tilesets.RemoveSlot(id - 1); /* ID 0 is for the empty tileset */
-}
-
-vec2i Tiler::GetCount(int id)
-{
-    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
-#if !LOL_RELEASE
-    if (!tileset)
-    {
-        Log::Error("getting count for null tiler #%i\n", id);
-        return 0;
-    }
-#endif
-    return tileset->GetCount();
-}
-
-vec2i Tiler::GetSize(int id, int tileid)
-{
-    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id - 1);
-#if !LOL_RELEASE
-    if (!tileset)
-    {
-        Log::Error("getting size for null tiler #%i\n", id);
-        return 0;
-    }
-#endif
-    return tileset->GetSize(tileid);
-}
-
-void Tiler::Bind(uint32_t code)
-{
-    int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
-
-    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
-#if !LOL_RELEASE
-    if (!tileset)
-    {
-        if (id != data->lasterror)
-            Log::Error("binding null tiler #%i\n", id);
-        data->lasterror = id;
-        return;
-    }
-#endif
-    tileset->Bind();
-}
-
-void Tiler::BlitTile(uint32_t code, int x, int y, int z, int o,
-                     float *vertex, float *texture)
-{
-    int id = (code >> 16) - 1; /* ID 0 is for the empty tileset */
-
-    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
-#if !LOL_RELEASE
-    if (!tileset)
-    {
-        if (id != data->lasterror)
-            Log::Error("blitting to null tiler #%i\n", id);
-        data->lasterror = id;
-        return;
-    }
-#endif
-    tileset->BlitTile(code & 0xffff, x, y, z, o, vertex, texture);
+    data->tilesets.RemoveSlot(tileset);
 }
 
 } /* namespace lol */

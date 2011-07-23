@@ -19,21 +19,17 @@
 
 #include <stdint.h>
 
+#include "tileset.h"
+
 namespace lol
 {
 
 class Tiler
 {
 public:
-    static int Register(char const *path, vec2i size, vec2i count,
+    static TileSet *Register(char const *path, vec2i size, vec2i count,
                         float dilate);
-    static void Deregister(int id);
-
-    static vec2i GetCount(int id);
-    static vec2i GetSize(int id, int tileid);
-    static void Bind(uint32_t code);
-    static void BlitTile(uint32_t code, int x, int y, int z, int o,
-                         float *vertex, float *texture);
+    static void Deregister(TileSet *);
 };
 
 } /* namespace lol */
