@@ -17,6 +17,7 @@
 #define __LOL_EMITTER_H__
 
 #include "entity.h"
+#include "tileset.h"
 
 namespace lol
 {
@@ -26,7 +27,7 @@ class EmitterData;
 class Emitter : public Entity
 {
 public:
-    Emitter(int tiler, vec3 gravity);
+    Emitter(TileSet *tileset, vec3 gravity);
     virtual ~Emitter();
 
     void AddParticle(int id, vec3 pos, vec3 vel);

@@ -28,8 +28,9 @@ namespace lol
 
 struct Tile
 {
-    uint32_t prio, code;
-    int x, y, z, o;
+    TileSet *tileset;
+    uint32_t prio;
+    int id, x, y, z, o;
 };
 
 static Shader *stdshader = NULL;
@@ -113,14 +114,15 @@ void Scene::Reset()
     SceneData::scene = NULL;
 }
 
-void Scene::AddTile(uint32_t code, int x, int y, int z, int o)
+void Scene::AddTile(TileSet *tileset, int id, int x, int y, int z, int o)
 {
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
     /* FIXME: this sorting only works for a 45-degree camera */
     data->tiles[data->ntiles].prio = -y - 2 * 32 * z + (o ? 0 : 32);
-    data->tiles[data->ntiles].code = code;
+    data->tiles[data->ntiles].tileset = tileset;
+    data->tiles[data->ntiles].id = id;
     data->tiles[data->ntiles].x = x;
     data->tiles[data->ntiles].y = y;
     data->tiles[data->ntiles].z = z;
@@ -273,7 +275,7 @@ void Scene::Render() // XXX: rename to Blit()
 
         /* Count how many quads will be needed */
         for (n = i + 1; n < data->ntiles; n++)
-            if (data->tiles[i].code >> 16 != data->tiles[n].code >> 16)
+            if (data->tiles[i].tileset != data->tiles[n].tileset)
                 break;
 
         /* Create a vertex array object */
@@ -282,15 +284,16 @@ void Scene::Render() // XXX: rename to Blit()
 
         for (int j = i; j < n; j++)
         {
-            Tiler::BlitTile(data->tiles[j].code, data->tiles[j].x,
-                            data->tiles[j].y, data->tiles[j].z, data->tiles[j].o,
+            data->tiles[i].tileset->BlitTile(data->tiles[j].id,
+                            data->tiles[j].x, data->tiles[j].y,
+                            data->tiles[j].z, data->tiles[j].o,
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
         stdshader->Bind();
 
         /* Bind texture */
-        Tiler::Bind(data->tiles[i].code);
+        data->tiles[i].tileset->Bind();
 
         /* Bind vertex, color and texture coordinate buffers */
 #if defined HAVE_GL_2X

@@ -33,10 +33,10 @@ class MapData
 {
     friend class Map;
 
-    static int const MAX_TILERS = 128;
+    static int const MAX_TILESETS = 128;
 
 private:
-    int tilers[MAX_TILERS];
+    TileSet *tilesets[MAX_TILESETS];
     int ntilers;
 
     Layer **layers;
@@ -59,7 +59,7 @@ Map::Map(char const *path)
     data->height = 0;
 
     char tmp[BUFSIZ];
-    int gids[MapData::MAX_TILERS];
+    int gids[MapData::MAX_TILESETS];
     uint32_t *tiles = NULL;
     int level = 0, orientation = 0, ntiles = 0;
 
@@ -95,7 +95,8 @@ Map::Map(char const *path)
                         if (n == data->ntilers - 1
                              || id < gids[n + 1])
                         {
-                            code = (data->tilers[n] << 16) | (id - gids[n]);
+                            Log::Error("tilesets no longer work this way");
+                            //code = (data->tilesets[n] << 16) | (id - gids[n]);
                             break;
                         }
                     }
@@ -132,7 +133,7 @@ Map::Map(char const *path)
         else if (sscanf(tmp, " <image source=\"%[^\"]\"", str) == 1)
         {
             /* This is a tileset image file. Associate it with firstgid. */
-            data->tilers[data->ntilers] = Tiler::Register(str, 32, 0,
+            data->tilesets[data->ntilers] = Tiler::Register(str, 32, 0,
                                                           sqrtf(2));
             data->ntilers++;
             //Log::Debug("new tiler %s\n", str);
@@ -158,7 +159,7 @@ Map::Map(char const *path)
 Map::~Map()
 {
     for (int i = 0; i < data->ntilers; i++)
-        Tiler::Deregister(data->tilers[i]);
+        Tiler::Deregister(data->tilesets[i]);
     for (int i = 0; i < data->nlayers; i++)
         delete data->layers[i];
     free(data->layers);
