@@ -78,8 +78,7 @@ void Font::Print(vec3i pos, char const *str)
         uint32_t ch = (uint8_t)*str++;
 
         if (ch != ' ')
-            scene->AddTile(data->tileset, ch & 255,
-                           pos.x, pos.y, pos.z, 0);
+            scene->AddTile(data->tileset, ch & 255, pos, 0);
 
         pos.x += data->size.x;
     }

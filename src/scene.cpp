@@ -30,7 +30,8 @@ struct Tile
 {
     TileSet *tileset;
     uint32_t prio;
-    int id, x, y, z, o;
+    vec3i pos;
+    int id, o;
 };
 
 static Shader *stdshader = NULL;
@@ -114,18 +115,16 @@ void Scene::Reset()
     SceneData::scene = NULL;
 }
 
-void Scene::AddTile(TileSet *tileset, int id, int x, int y, int z, int o)
+void Scene::AddTile(TileSet *tileset, int id, vec3i pos, int o)
 {
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
     /* FIXME: this sorting only works for a 45-degree camera */
-    data->tiles[data->ntiles].prio = -y - 2 * 32 * z + (o ? 0 : 32);
+    data->tiles[data->ntiles].prio = -pos.y - 2 * 32 * pos.z + (o ? 0 : 32);
     data->tiles[data->ntiles].tileset = tileset;
     data->tiles[data->ntiles].id = id;
-    data->tiles[data->ntiles].x = x;
-    data->tiles[data->ntiles].y = y;
-    data->tiles[data->ntiles].z = z;
+    data->tiles[data->ntiles].pos = pos;
     data->tiles[data->ntiles].o = o;
     data->ntiles++;
 }
@@ -285,8 +284,7 @@ void Scene::Render() // XXX: rename to Blit()
         for (int j = i; j < n; j++)
         {
             data->tiles[i].tileset->BlitTile(data->tiles[j].id,
-                            data->tiles[j].x, data->tiles[j].y,
-                            data->tiles[j].z, data->tiles[j].o,
+                            data->tiles[j].pos, data->tiles[j].o,
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 

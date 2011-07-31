@@ -178,7 +178,7 @@ void TileSet::Bind()
     }
 }
 
-void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
+void TileSet::BlitTile(uint32_t id, vec3i pos, int o,
                        float *vertex, float *texture)
 {
     float tx = data->tx * ((id & 0xffff) % data->count.i);
@@ -193,21 +193,21 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
     {
         float tmp[10];
 
-        *vertex++ = tmp[0] = x;
-        *vertex++ = tmp[1] = dilate * (y + dy);
-        *vertex++ = tmp[2] = dilate * (z + dz);
+        *vertex++ = tmp[0] = pos.x;
+        *vertex++ = tmp[1] = dilate * (pos.y + dy);
+        *vertex++ = tmp[2] = dilate * (pos.z + dz);
         *texture++ = tmp[3] = tx;
         *texture++ = tmp[4] = ty;
 
-        *vertex++ = x + dx;
-        *vertex++ = dilate * (y + dy);
-        *vertex++ = dilate * (z + dz);
+        *vertex++ = pos.x + dx;
+        *vertex++ = dilate * (pos.y + dy);
+        *vertex++ = dilate * (pos.z + dz);
         *texture++ = tx + data->tx;
         *texture++ = ty;
 
-        *vertex++ = tmp[5] = x + dx;
-        *vertex++ = tmp[6] = dilate * y;
-        *vertex++ = tmp[7] = dilate * z;
+        *vertex++ = tmp[5] = pos.x + dx;
+        *vertex++ = tmp[6] = dilate * pos.y;
+        *vertex++ = tmp[7] = dilate * pos.z;
         *texture++ = tmp[8] = tx + data->tx;
         *texture++ = tmp[9] = ty + data->ty;
 
@@ -223,9 +223,9 @@ void TileSet::BlitTile(uint32_t id, int x, int y, int z, int o,
         *texture++ = tmp[8];
         *texture++ = tmp[9];
 
-        *vertex++ = x;
-        *vertex++ = dilate * y;
-        *vertex++ = dilate * z;
+        *vertex++ = pos.x;
+        *vertex++ = dilate * pos.y;
+        *vertex++ = dilate * pos.z;
         *texture++ = tx;
         *texture++ = ty + data->ty;
     }

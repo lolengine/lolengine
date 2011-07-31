@@ -74,9 +74,7 @@ void Emitter::TickDraw(float deltams)
 
     for (int i = 0; i < data->nparticles; i++)
         Scene::GetDefault()->AddTile(data->tileset, data->particles[i],
-                                     data->positions[i].x,
-                                     data->positions[i].y,
-                                     data->positions[i].z, 0);
+                                     data->positions[i], 0);
 }
 
 void Emitter::AddParticle(int id, vec3 pos, vec3 vel)
