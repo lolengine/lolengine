@@ -44,7 +44,7 @@ public:
     vec2i GetCount() const;
     vec2i GetSize(int tileid) const;
     void Bind();
-    void BlitTile(uint32_t id, int x, int y, int z, int o,
+    void BlitTile(uint32_t id, vec3i pos, int o,
                   float *vertex, float *texture);
 
 private:
