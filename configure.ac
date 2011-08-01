@@ -88,6 +88,12 @@ AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
   AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
   GL_LIBS="-lGL"]) # FIXME: hackish
+AC_CHECK_HEADER(GL/gl.h,
+ [AC_TRY_COMPILE([#include <GL/gl.h>],
+   [glLoadIdentity();],
+   [ac_cv_my_have_gl="yes"
+    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
+    GL_LIBS="-lopengl32"])]) # FIXME: hackish
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
@@ -189,19 +195,19 @@ AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 
-AC_CONFIG_FILES([
-  Makefile
+AC_CONFIG_FILES(
+ [Makefile
   src/Makefile
   test/Makefile
   gfx/Makefile
   gfx/font/Makefile
   tools/Makefile
 ])
-AC_CONFIG_FILES([
-  monsterz/Makefile
+AC_CONFIG_FILES(
+ [monsterz/Makefile
 ])
-AC_CONFIG_FILES([
-  deushax/Makefile
+AC_CONFIG_FILES(
+ [deushax/Makefile
   deushax/art/Makefile
   deushax/art/test/Makefile
   deushax/gfx/Makefile
