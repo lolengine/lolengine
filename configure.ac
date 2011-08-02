@@ -119,9 +119,9 @@ AC_CHECK_HEADER(GL/glew.h,
    [#include <GL/glew.h>],
    [glewInit();],
    [ac_cv_my_have_glew="yes"
+    GL_LIBS="-lglew32 ${GL_LIBS}"
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
-  GL_LIBS="-lglew32 ${GL_LIBS}"
   LIBS="${LIBS_save}"])
 if test "${ac_cv_my_have_glew}" != "no"; then
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
