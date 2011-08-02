@@ -17,6 +17,7 @@
 #endif
 
 #include "core.h"
+#include "lolgl.h"
 #include "sdlapp.h"
 
 namespace lol
@@ -58,6 +59,15 @@ SdlApp::SdlApp(char const *title, vec2i res, float fps) :
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
+#if defined USE_GLEW
+    GLenum glerr = glewInit();
+    if (glerr != GLEW_OK)
+    {
+        Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
+        SDL_Quit();
+        exit(EXIT_FAILURE);
+    }
+#endif
 
     SDL_WM_SetCaption(title, NULL);
     SDL_ShowCursor(0);

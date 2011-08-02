@@ -59,7 +59,7 @@ void Video::Setup(vec2i size)
 #endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
-    glClearDepthf(1.0);
+    glClearDepth(1.0);
 
 #if defined HAVE_GL_2X
     glShadeModel(GL_SMOOTH);

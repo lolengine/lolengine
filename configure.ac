@@ -104,6 +104,15 @@ if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
 
+dnl Use Glew?
+ac_cv_my_have_glew="no"
+PKG_CHECK_MODULES(GLEW, glew, [ac_cv_my_have_glew="yes"], [:])
+if test "${ac_cv_my_have_glew}" != "no"; then
+  AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+  AC_DEFINE(USE_GLEW, 1, Define to 1 to use libglew)
+fi
+AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
+
 dnl Poor man's GL feature detection.
 save_LIBS="${LIBS}"
 LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
@@ -194,8 +203,9 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 
 dnl How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src $SDL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $LIBPNG_LIBS"
+LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
+LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $EGL_CFLAGS $GLEW_CFLAGS $LIBPNG_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $GLEW_LIBS $LIBPNG_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
