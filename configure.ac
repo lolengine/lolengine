@@ -96,9 +96,9 @@ AC_CHECK_HEADER(GL/gl.h,
    [glLoadIdentity();],
    [ac_cv_my_have_gl="yes"
     AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hacky
-    AC_MSG_RESULT("yes")
+    AC_MSG_RESULT(yes)
     GL_LIBS="-lopengl32"],
-   [AC_MSG_RESULT("no")])
+   [AC_MSG_RESULT(no)])
   LIBS="$LIBS_save"])
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
@@ -107,6 +107,16 @@ fi
 dnl Use Glew?
 ac_cv_my_have_glew="no"
 PKG_CHECK_MODULES(GLEW, glew, [ac_cv_my_have_glew="yes"], [:])
+AC_CHECK_HEADER(GL/glew.h,
+ [LIBS_save="$LIBS"
+  LIBS="$LIBS -lglew32"
+  AC_MSG_CHECKING(for glewInit in -lglew32)
+  AC_TRY_LINK([#include <GL/glew.h>],
+   [glewInit();],
+   [ac_cv_my_have_glew="yes"
+    AC_MSG_RESULT(yes)],
+   [AC_MSG_RESULT(no)])
+  LIBS="$LIBS_save"])
 if test "${ac_cv_my_have_glew}" != "no"; then
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
   AC_DEFINE(USE_GLEW, 1, Define to 1 to use libglew)
