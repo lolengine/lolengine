@@ -84,6 +84,7 @@ Shader::Shader(char const *vert, char const *frag)
 {
     char buf[4096], errbuf[4096];
     char const *shader = buf;
+    GLint status;
     GLsizei len;
 
 #if !defined __CELLOS_LV2__
@@ -94,9 +95,10 @@ Shader::Shader(char const *vert, char const *frag)
     glShaderSource(data->vert_id, 1, &shader, NULL);
     glCompileShader(data->vert_id);
 
-    glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
-    if (len > 0)
+    glGetShaderiv(data->vert_id, GL_COMPILE_STATUS, &status);
+    if (status != GL_TRUE)
     {
+        glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
         Log::Error("failed to compile vertex shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
@@ -108,9 +110,10 @@ Shader::Shader(char const *vert, char const *frag)
     glShaderSource(data->frag_id, 1, &shader, NULL);
     glCompileShader(data->frag_id);
 
-    glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
-    if (len > 0)
+    glGetShaderiv(data->frag_id, GL_COMPILE_STATUS, &status);
+    if (status != GL_TRUE)
     {
+        glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
         Log::Error("failed to compile fragment shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
