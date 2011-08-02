@@ -24,7 +24,9 @@
 #endif
 
 /* Include GL */
-#if defined HAVE_GL_2X
+#if defined USE_GLEW
+#   include <GL/glew.h>
+#elif defined HAVE_GL_2X
 #   if defined __APPLE__ && defined __MACH__
 #       include <OpenGL/gl.h>
 #   else
@@ -46,8 +48,8 @@
 
 /* Redefine some function names */
 #if defined HAVE_GL_2X
-#   define glClearDepthf glClearDepth
 #elif defined HAVE_GLES_2X
+#   define glClearDepth glClearDepthf
 #   define glGenVertexArrays glGenVertexArraysOES
 #   define glDeleteVertexArrays glDeleteVertexArraysOES
 #   define glBindVertexArray glBindVertexArrayOES
