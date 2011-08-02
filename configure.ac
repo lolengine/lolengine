@@ -81,8 +81,8 @@ ac_cv_my_have_gl="no"
 PKG_CHECK_MODULES(GLES2, glesv2,
  [ac_cv_my_have_gl="yes"
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-  GL_CFLAGS="${GLES2_CFLAGS}"
-  GL_LIBS="${GLES2_LIBS}"],
+  GL_CFLAGS="${GL_CFLAGS} ${GLES2_CFLAGS}"
+  GL_LIBS="${GL_LIBS} ${GLES2_LIBS}"],
  [:])
 AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
@@ -106,24 +106,30 @@ fi
 
 dnl Use Glew?
 ac_cv_my_have_glew="no"
-PKG_CHECK_MODULES(GLEW, glew, [ac_cv_my_have_glew="yes"], [:])
+PKG_CHECK_MODULES(GLEW, glew,
+ [ac_cv_my_have_glew="yes"
+  GL_CFLAGS="${GLEW_CFLAGS} ${GL_CFLAGS}"
+  GL_LIBS="${GLEW_LIBS} ${GL_LIBS}"],
+ [:])
 AC_CHECK_HEADER(GL/glew.h,
- [LIBS_save="$LIBS"
-  LIBS="$LIBS -lglew32"
+ [LIBS_save="${LIBS}"
+  LIBS="${LIBS} -lglew32 ${GL_LIBS}"
   AC_MSG_CHECKING(for glewInit in -lglew32)
-  AC_TRY_LINK([#include <GL/glew.h>],
+  AC_TRY_LINK(
+   [#include <GL/glew.h>],
    [glewInit();],
    [ac_cv_my_have_glew="yes"
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
-  LIBS="$LIBS_save"])
+  GL_LIBS="-lglew32 ${GL_LIBS}"
+  LIBS="${LIBS_save}"])
 if test "${ac_cv_my_have_glew}" != "no"; then
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
   AC_DEFINE(USE_GLEW, 1, Define to 1 to use libglew)
 fi
 AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 
-dnl Poor man's GL feature detection.
+dnl Poor man's GL feature detection if all else failed.
 save_LIBS="${LIBS}"
 LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
 AC_CHECK_FUNCS(glBegin)
@@ -214,8 +220,8 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 dnl How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
-LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $EGL_CFLAGS $GLEW_CFLAGS $LIBPNG_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $GLEW_LIBS $LIBPNG_LIBS"
+LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $LIBPNG_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
