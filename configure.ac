@@ -86,14 +86,20 @@ PKG_CHECK_MODULES(GLES2, glesv2,
  [:])
 AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
-  GL_LIBS="-lGL"]) # FIXME: hackish
+  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hackish
+  GL_LIBS="-lGL"])
 AC_CHECK_HEADER(GL/gl.h,
- [AC_TRY_COMPILE([#include <GL/gl.h>],
+ [LIBS_save="$LIBS"
+  LIBS="$LIBS -lopengl32"
+  AC_MSG_CHECKING(for glLoadIdentity in -lopengl32)
+  AC_TRY_LINK([#include <GL/gl.h>],
    [glLoadIdentity();],
    [ac_cv_my_have_gl="yes"
-    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)
-    GL_LIBS="-lopengl32"])]) # FIXME: hackish
+    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hacky
+    AC_MSG_RESULT("yes")
+    GL_LIBS="-lopengl32"],
+   [AC_MSG_RESULT("no")])
+  LIBS="$LIBS_save"])
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
