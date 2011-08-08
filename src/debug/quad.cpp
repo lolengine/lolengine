@@ -334,7 +334,7 @@ void DebugQuad::TickDraw(float deltams)
 #endif
 
     /*
-     * Test #7: vertex buffer
+     * Test #7: vertex buffer + per-vertex coloring
      * Renders a multicolored square with varying colors.
      */
     GLfloat const vertices1[] = { data->aa.x, data->bb.y, 0.0f,
@@ -353,12 +353,41 @@ void DebugQuad::TickDraw(float deltams)
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    glUseProgram(0);
 
     Advance();
 
     /*
-     * Test #8: vertex buffer + texture & color in 1.10 fragment shader
+     * Test #8: vertex buffer + per-vertex coloring + texture
+     * Renders a multicolored square with varying colors multiplied with an
+     * animated distorted checkerboard.
+     */
+    GLfloat const vertices2[] = { data->aa.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->bb.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->bb.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->aa.y, 0.0f,
+                                  data->aa.x, data->bb.y, 0.0f };
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, data->texture[0]);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glColorPointer(3, GL_FLOAT, 0, colors);
+    glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+    glVertexPointer(3, GL_FLOAT, 0, vertices2);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisable(GL_TEXTURE_2D);
+
+    Advance();
+
+    /*
+     * Test #9: vertex buffer + texture & color in 1.10 fragment shader
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
@@ -383,7 +412,7 @@ void DebugQuad::TickDraw(float deltams)
             "}");
 
     data->shader[3]->Bind();
-    GLfloat const vertices2[] = { data->aa.x, data->bb.y, 0.0f,
+    GLfloat const vertices3[] = { data->aa.x, data->bb.y, 0.0f,
                                   data->bb.x, data->bb.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
@@ -394,7 +423,7 @@ void DebugQuad::TickDraw(float deltams)
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, vertices2);
+    glVertexPointer(3, GL_FLOAT, 0, vertices3);
     glColorPointer(3, GL_FLOAT, 0, colors);
     glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -407,7 +436,7 @@ void DebugQuad::TickDraw(float deltams)
     Advance();
 
     /*
-     * Test #8: vertex buffer + texture & color in 1.20 fragment shader
+     * Test #10: vertex buffer + texture & color in 1.20 fragment shader
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
@@ -439,7 +468,7 @@ void DebugQuad::TickDraw(float deltams)
         data->attr[2] = data->shader[4]->GetAttribLocation("in_MultiTexCoord0");
     }
     data->shader[4]->Bind();
-    GLfloat const vertices3[] = { data->aa.x, data->bb.y, 0.0f,
+    GLfloat const vertices4[] = { data->aa.x, data->bb.y, 0.0f,
                                   data->bb.x, data->bb.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
@@ -449,7 +478,7 @@ void DebugQuad::TickDraw(float deltams)
     glBindVertexArray(data->array[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices3), vertices3,
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices4), vertices4,
                  GL_DYNAMIC_DRAW);
     glVertexAttribPointer(data->attr[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(data->attr[0]);
@@ -477,7 +506,7 @@ void DebugQuad::TickDraw(float deltams)
     Advance();
 
     /*
-     * Test #8: vertex buffer + texture & color in 1.30 fragment shader
+     * Test #11: vertex buffer + texture & color in 1.30 fragment shader
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
@@ -509,7 +538,7 @@ void DebugQuad::TickDraw(float deltams)
         data->attr[5] = data->shader[4]->GetAttribLocation("in_MultiTexCoord0");
     }
     data->shader[5]->Bind();
-    GLfloat const vertices4[] = { data->aa.x, data->bb.y, 0.0f,
+    GLfloat const vertices5[] = { data->aa.x, data->bb.y, 0.0f,
                                   data->bb.x, data->bb.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
@@ -519,7 +548,7 @@ void DebugQuad::TickDraw(float deltams)
     glBindVertexArray(data->array[1]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->buffer[3]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices4), vertices4,
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices5), vertices5,
                  GL_DYNAMIC_DRAW);
     glVertexAttribPointer(data->attr[3], 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(data->attr[3]);
