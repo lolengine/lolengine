@@ -7,6 +7,8 @@ set -e
 PATH="$PATH:./contrib/gtk-2.22.1/bin"
 M4PATH="./contrib/gtk-2.22.1/share/aclocal"
 export M4PATH # This looks necessary
+PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/contrib/gtkglarea-2.0.1/lib/pkgconfig"
+export PKG_CONFIG_PATH # This looks necessary, too
 
 # SDL include path
 CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/sdl-1.2.14/include"
