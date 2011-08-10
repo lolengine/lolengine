@@ -51,6 +51,16 @@ vec2i VideoData::saved_viewport = 0;
 
 void Video::Setup(vec2i size)
 {
+#if defined USE_GLEW
+    /* Initialise GLEW if necessary */
+    GLenum glerr = glewInit();
+    if (glerr != GLEW_OK)
+    {
+        Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
+        exit(EXIT_FAILURE);
+    }
+#endif
+
     /* Initialise OpenGL */
     glViewport(0, 0, size.x, size.y);
 
