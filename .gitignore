@@ -23,9 +23,12 @@ libtool
 stamp-*
 *-stamp
 lolengine-*.tar.*
+# Personal stuff
+patch-*.diff
 # Debugging cruft
 core
 core.*
+vgcore.*
 # Editor cruft
 .*.swp
 *~
