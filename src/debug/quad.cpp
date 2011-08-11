@@ -124,6 +124,7 @@ void DebugQuad::TickDraw(float deltams)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
+    glClientActiveTexture(GL_TEXTURE0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(0);
 
