@@ -47,7 +47,9 @@ Layer::~Layer()
 
 void Layer::Render(int x, int y, int z)
 {
-    Log::Error("FIXME: Layer::Render no longer works\n");
+    static int error = 1;
+    if (error && !(error = 0))
+        Log::Error("FIXME: Layer::Render no longer works\n");
 #if 0
     Scene *scene = Scene::GetDefault();
     for (int j = 0; j < height; j++)

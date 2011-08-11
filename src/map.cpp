@@ -95,7 +95,9 @@ Map::Map(char const *path)
                         if (n == data->ntilers - 1
                              || id < gids[n + 1])
                         {
-                            Log::Error("tilesets no longer work this way\n");
+                            static int error = 1;
+                            if (error && !(error = 0))
+                                Log::Error("tilesets no longer work this way\n");
                             //code = (data->tilesets[n] << 16) | (id - gids[n]);
                             break;
                         }
