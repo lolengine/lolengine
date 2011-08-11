@@ -66,6 +66,8 @@ namespace lol
         Vec##dest<T> ret; \
         for (int n = 0; n < elems && n < dest; n++) \
             ret[n] = (*this)[n]; \
+        for (int n = elems; n < dest; n++) \
+            ret[n] = 0; \
         return ret; \
     }
 
