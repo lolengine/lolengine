@@ -81,7 +81,7 @@ void DebugQuad::TickDraw(float deltams)
 
     if (!data->initialised && !IsDestroying())
     {
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
         glGenVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glGenBuffers(NUM_BUFFERS, data->buffer);
@@ -111,7 +111,7 @@ void DebugQuad::TickDraw(float deltams)
     }
     else if (data->initialised && IsDestroying())
     {
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
         glDeleteVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glDeleteBuffers(NUM_BUFFERS, data->buffer);
@@ -353,6 +353,7 @@ void DebugQuad::TickDraw(float deltams)
 #endif
 #endif
 
+#if !defined ANDROID_NDK
     /*
      * Test #7: vertex buffer + per-vertex coloring
      *
@@ -377,6 +378,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #8: vertex buffer + per-vertex coloring + texture
@@ -384,6 +386,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors multiplied with an
      * animated distorted checkerboard.
      */
+#if !defined ANDROID_NDK
     GLfloat const vertices2[] = { data->aa.x, data->bb.y, 0.0f,
                                   data->bb.x, data->bb.y, 0.0f,
                                   data->bb.x, data->aa.y, 0.0f,
@@ -409,6 +412,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #9: vertex buffer + texture & color in 1.10 fragment shader
@@ -416,7 +420,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     if (!data->shader[3])
         data->shader[3] = Shader::Create(
             "#version 110\n"
@@ -471,7 +475,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     if (!data->shader[4])
     {
         data->shader[4] = Shader::Create(
@@ -547,7 +551,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     if (!data->shader[5])
     {
         data->shader[5] = Shader::Create(
@@ -621,14 +625,18 @@ void DebugQuad::TickDraw(float deltams)
 void DebugQuad::ResetState()
 {
     /* Reset GL states to something reasonably safe */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+#endif
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     glClientActiveTexture(GL_TEXTURE0);
+#endif
     glDisable(GL_TEXTURE_2D);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
