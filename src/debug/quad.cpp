@@ -45,7 +45,9 @@ private:
 
     int initialised;
     float time;
+#if !defined __CELLOS_LV2__
     GLuint array[NUM_ARRAYS];
+#endif
     GLuint buffer[NUM_BUFFERS];
     Shader *shader[NUM_SHADERS];
     GLuint attr[NUM_ATTRS];
@@ -79,7 +81,9 @@ void DebugQuad::TickDraw(float deltams)
 
     if (!data->initialised && !IsDestroying())
     {
+#if !defined __CELLOS_LV2__
         glGenVertexArrays(NUM_ARRAYS, data->array);
+#endif
         glGenBuffers(NUM_BUFFERS, data->buffer);
         glGenTextures(NUM_TEXTURES, data->texture);
         for (int i = 0; i < NUM_SHADERS; i++)
@@ -107,7 +111,9 @@ void DebugQuad::TickDraw(float deltams)
     }
     else if (data->initialised && IsDestroying())
     {
+#if !defined __CELLOS_LV2__
         glDeleteVertexArrays(NUM_ARRAYS, data->array);
+#endif
         glDeleteBuffers(NUM_BUFFERS, data->buffer);
         glDeleteTextures(NUM_TEXTURES, data->texture);
 
@@ -215,6 +221,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a static, coloured and tiled pattern.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[0])
         data->shader[0] = Shader::Create(
             "#version 110\n"
@@ -246,6 +253,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #5: glBegin + pass vertex coord from vertex shader to fragment
@@ -253,6 +261,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicolored square with varying colors.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[1])
         data->shader[1] = Shader::Create(
             "#version 110\n"
@@ -288,11 +297,11 @@ void DebugQuad::TickDraw(float deltams)
         glTexCoord3f(f1, f2, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
-    glEnd();
     glUseProgram(0);
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #6: glBegin + apply texture in fragment shader
@@ -303,6 +312,7 @@ void DebugQuad::TickDraw(float deltams)
      * Note: there is no need to glEnable(GL_TEXTURE_2D) when the
      * texture lookup is done in a shader.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[2])
         data->shader[2] = Shader::Create(
             "#version 110\n"
@@ -340,6 +350,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 #endif
 
     /*
@@ -405,6 +416,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[3])
         data->shader[3] = Shader::Create(
             "#version 110\n"
@@ -451,6 +463,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #10: vertex buffer + texture & color in 1.20 fragment shader
@@ -458,6 +471,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[4])
     {
         data->shader[4] = Shader::Create(
@@ -525,6 +539,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 
     /*
      * Test #11: vertex buffer + texture & color in 1.30 fragment shader
@@ -532,6 +547,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicolored square with varying colors xored with an
      * animated distorted checkerboard.
      */
+#if !defined __CELLOS_LV2__
     if (!data->shader[5])
     {
         data->shader[5] = Shader::Create(
@@ -599,6 +615,7 @@ void DebugQuad::TickDraw(float deltams)
 
     Advance();
     ResetState();
+#endif
 }
 
 void DebugQuad::ResetState()
@@ -615,7 +632,9 @@ void DebugQuad::ResetState()
     glDisable(GL_TEXTURE_2D);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#if !defined __CELLOS_LV2__
     glUseProgram(0);
+#endif
 }
 
 void DebugQuad::Advance()
