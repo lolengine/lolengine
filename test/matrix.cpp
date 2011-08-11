@@ -28,6 +28,7 @@ class MatrixTest : public CppUnit::TestCase
     CPPUNIT_TEST(test_vec_eq);
     CPPUNIT_TEST(test_vec_lt);
     CPPUNIT_TEST(test_vec_unary);
+    CPPUNIT_TEST(test_vec_cast);
     CPPUNIT_TEST(test_mat_det);
     CPPUNIT_TEST(test_mat_mul);
     CPPUNIT_TEST(test_mat_inv);
@@ -130,6 +131,26 @@ public:
 
         CPPUNIT_ASSERT(a == -b);
         CPPUNIT_ASSERT(-a == b);
+    }
+
+    void test_vec_cast()
+    {
+        vec2 a1(1.0f, 3.0f);
+
+        vec3 b(a1);
+        vec2 a2(b);
+        CPPUNIT_ASSERT(b.x == a1.x);
+        CPPUNIT_ASSERT(b.y == a1.y);
+        CPPUNIT_ASSERT(b.z == 0.0f);
+        CPPUNIT_ASSERT(a2 == a1);
+
+        vec4 c(a1);
+        vec2 a3(c);
+        CPPUNIT_ASSERT(c.x == a1.x);
+        CPPUNIT_ASSERT(c.y == a1.y);
+        CPPUNIT_ASSERT(c.z == 0.0f);
+        CPPUNIT_ASSERT(c.w == 0.0f);
+        CPPUNIT_ASSERT(a3 == a1);
     }
 
     void test_mat_det()
