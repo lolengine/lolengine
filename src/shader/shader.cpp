@@ -24,6 +24,8 @@
 #include "core.h"
 #include "lolgl.h"
 
+using namespace std;
+
 namespace lol
 {
 
@@ -174,6 +176,7 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
+#if !defined __CELLOS_LV2__
     if (!version)
     {
         char buf[4096];
@@ -210,6 +213,7 @@ int ShaderData::GetVersion()
 
         glDeleteShader(id);
     }
+#endif
 
     return version;
 }
