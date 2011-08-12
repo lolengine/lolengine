@@ -33,7 +33,7 @@ class VideoData
 
 private:
     static mat4 proj_matrix, view_matrix;
-#if defined ANDROID_NDK
+#if defined ANDROID_NDK || defined __CELLOS_LV2__
     static vec2i saved_viewport;
 #endif
 };
@@ -41,7 +41,7 @@ private:
 mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 
-#if defined ANDROID_NDK
+#if defined ANDROID_NDK || defined __CELLOS_LV2__
 vec2i VideoData::saved_viewport = 0;
 #endif
 
@@ -64,7 +64,7 @@ void Video::Setup(vec2i size)
     /* Initialise OpenGL */
     glViewport(0, 0, size.x, size.y);
 
-#if defined ANDROID_NDK
+#if defined ANDROID_NDK || defined __CELLOS_LV2__
     VideoData::saved_viewport = size;
 #endif
 
@@ -182,7 +182,7 @@ vec2i Video::GetSize()
     return VideoData::saved_viewport;
 #elif defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-    return vec2i(1920, 1080);
+    return VideoData::saved_viewport;
 #else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);

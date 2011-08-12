@@ -13,6 +13,7 @@
 #endif
 
 #if defined __CELLOS_LV2__
+#   include <sys/ppu_thread.h> /* sys_ppu_thread_get_stack_information */
 #   include <sys/spu_initialize.h>
 #   include <sys/paths.h> /* SYS_HOST_ROOT */
 #   include <cell/sysmodule.h>
@@ -78,10 +79,18 @@ Ps3App::Ps3App(char const *title, vec2i res, float fps) :
 
     psglInit(&psglio);
 
+#if 0
+    sys_ppu_thread_stack_t stack;
+    sys_ppu_thread_get_stack_information(&stack);
+    printf("stack starts at %p, ends at %p\n", stack.pst_addr,
+           (uint8_t *)stack.pst_addr + stack.pst_size);
+#endif
+
     PSGLdevice* psgl = psglCreateDeviceAuto(GL_ARGB_SCE, GL_DEPTH_COMPONENT24,
                                        GL_MULTISAMPLING_4X_SQUARE_ROTATED_SCE);
     GLuint w, h;
     psglGetDeviceDimensions(psgl, &w, &h);
+    res = vec2i(w, h);
 
     PSGLcontext *ctx = psglCreateContext();
     psglMakeCurrent(ctx, psgl);
