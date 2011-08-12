@@ -92,8 +92,10 @@ Scene::Scene(float angle)
 Scene::~Scene()
 {
     /* FIXME: this must be done while the GL context is still active.
-     * Change the architecture to make sure of that. */
-    glDeleteBuffers(data->nbufs, data->bufs);
+     * Change the code architecture to make sure of that. */
+    /* XXX: The test is necessary because of a crash with PSGL. */
+    if (data->nbufs > 0)
+        glDeleteBuffers(data->nbufs, data->bufs);
 #if defined HAVE_GL_2X
     glDeleteVertexArrays(1, &data->vao);
 #endif
