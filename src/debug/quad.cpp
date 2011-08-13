@@ -126,10 +126,10 @@ void DebugQuad::TickDraw(float deltams)
 
     /* Prepare our quad coordinates */
     vec2i const layout(4, 3);
-    data->step = vec2(2.0f, -2.0f) / (3 * layout + vec2i(1));
+    data->step = vec2(2.0f, -2.0f) / (4 * layout + vec2i(1));
     data->orig = vec2(-1.0f, 1.0f) + data->step;
     data->aa = data->orig;
-    data->bb = data->orig + 2.0f * data->step;
+    data->bb = data->orig + 3.0f * data->step;
 
     /* Generate a few random numbers */
     float f1 = 0.5f + 0.5f * sinf(0.00034f * data->time);
@@ -199,23 +199,29 @@ void DebugQuad::TickDraw(float deltams)
     /*
      * Test #3: glBegin + texture
      *
-     * Renders an animated black-and-white distorted checkerboard.
+     * Renders a multicoloured square with varying colors multiplied with an
+     * animated distorted checkerboard.
      */
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
+        glColor3f(f1, f2, f3);
         glTexCoord2f(f1, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
+        glColor3f(f4, f2, f1);
         glTexCoord2f(f3, f2);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
+        glColor3f(f3, f1, f4);
         glTexCoord2f(f2, f4);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
 
         glTexCoord2f(f2, f4);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
+        glColor3f(f4, f3, f2);
         glTexCoord2f(f4, f1);
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
+        glColor3f(f1, f2, f3);
         glTexCoord2f(f1, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
@@ -635,7 +641,7 @@ void DebugQuad::TickDraw(float deltams)
     glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors,
                  GL_DYNAMIC_DRAW);
     glVertexAttribPointer(attr[1], 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attr[2]);
+    glEnableVertexAttribArray(attr[1]);
 
     glBindBuffer(GL_ARRAY_BUFFER, *buffer++);
     glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
@@ -693,14 +699,14 @@ void DebugQuad::ResetState()
 
 void DebugQuad::Advance()
 {
-    data->aa.x += 3.0f * data->step.x;
-    data->bb.x += 3.0f * data->step.x;
+    data->aa.x += 4.0f * data->step.x;
+    data->bb.x += 4.0f * data->step.x;
     if (data->bb.x > 1.0f)
     {
         data->aa.x = data->orig.x;
-        data->bb.x = data->orig.x + 2.0f * data->step.x;
-        data->aa.y += 3.0f * data->step.y;
-        data->bb.y += 3.0f * data->step.y;
+        data->bb.x = data->orig.x + 3.0f * data->step.x;
+        data->aa.y += 4.0f * data->step.y;
+        data->bb.y += 4.0f * data->step.y;
     }
 }
 
