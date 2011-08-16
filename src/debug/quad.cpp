@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 #include "core.h"
 #include "lolgl.h"
@@ -28,11 +29,12 @@ namespace lol
  * DebugQuad implementation class
  */
 
-static int const NUM_ARRAYS = 2;
-static int const NUM_BUFFERS = 9;
-static int const NUM_ATTRS = 6;
-static int const NUM_SHADERS = 6;
-static int const NUM_TEXTURES = 1;
+static int const NUM_ARRAYS = 10;
+static int const NUM_BUFFERS = 20;
+static int const NUM_ATTRS = 20;
+static int const NUM_UNIFORMS = 20;
+static int const NUM_SHADERS = 20;
+static int const NUM_TEXTURES = 10;
 
 static int const TEX_SIZE = 32;
 
@@ -51,8 +53,18 @@ private:
     GLuint buffer[NUM_BUFFERS];
     Shader *shader[NUM_SHADERS];
     GLuint attr[NUM_ATTRS];
+    GLuint uni[NUM_UNIFORMS];
     GLuint texture[NUM_TEXTURES];
     uint8_t image[1][TEX_SIZE * TEX_SIZE * 4];
+
+    GLfloat const *GetVertexArray()
+    {
+        GLfloat tmp[18] = { aa.x, bb.y, 0, bb.x, bb.y, 0, bb.x, aa.y, 0,
+                            bb.x, aa.y, 0, aa.x, aa.y, 0, aa.x, bb.y, 0 };
+        memcpy(vertices, tmp, sizeof(tmp));
+        return vertices;
+    }
+    GLfloat vertices[18]; /* To cache quad coordinates */
 };
 
 /*
@@ -125,7 +137,7 @@ void DebugQuad::TickDraw(float deltams)
     }
 
     /* Prepare our quad coordinates */
-    vec2i const layout(4, 3);
+    vec2i const layout(5, 4);
     data->step = vec2(2.0f, -2.0f) / (4 * layout + vec2i(1));
     data->orig = vec2(-1.0f, 1.0f) + data->step;
     data->aa = data->orig;
@@ -149,15 +161,16 @@ void DebugQuad::TickDraw(float deltams)
     GLuint *buffer = data->buffer;
     Shader **shader = data->shader;
     GLuint *attr = data->attr;
+    GLuint *uni = data->uni;
 
     ResetState();
 
-#if defined HAVE_GLBEGIN || defined USE_GLEW
     /*
      * Test #1: simple glBegin code
      *
      * Renders an orange square.
      */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     glColor3f(0.8f, 0.5f, 0.2f);
     glBegin(GL_TRIANGLES);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
@@ -168,6 +181,7 @@ void DebugQuad::TickDraw(float deltams)
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
+#endif
 
     Advance();
     ResetState();
@@ -177,7 +191,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
-
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     glBegin(GL_TRIANGLES);
         glColor3f(f1, f2, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
@@ -192,6 +206,7 @@ void DebugQuad::TickDraw(float deltams)
         glColor3f(f1, f2, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
+#endif
 
     Advance();
     ResetState();
@@ -202,6 +217,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors multiplied with an
      * animated distorted checkerboard.
      */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -226,6 +242,7 @@ void DebugQuad::TickDraw(float deltams)
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+#endif
 
     Advance();
     ResetState();
@@ -235,6 +252,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a static, coloured and tiled pattern.
      */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     if (!shader[0])
         shader[0] = Shader::Create(
             "#version 110\n"
@@ -263,7 +281,7 @@ void DebugQuad::TickDraw(float deltams)
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
@@ -274,6 +292,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     if (!shader[0])
         shader[0] = Shader::Create(
             "#version 110\n"
@@ -310,7 +329,7 @@ void DebugQuad::TickDraw(float deltams)
         glTexCoord3f(f1, f2, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
@@ -324,6 +343,7 @@ void DebugQuad::TickDraw(float deltams)
      * Note: there is no need to glEnable(GL_TEXTURE_2D) when the
      * texture lookup is done in a shader.
      */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
     if (!shader[0])
         shader[0] = Shader::Create(
             "#version 110\n"
@@ -358,11 +378,10 @@ void DebugQuad::TickDraw(float deltams)
         glTexCoord2f(f1, f3);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
      * Test #7: simple vertex buffer
@@ -370,24 +389,17 @@ void DebugQuad::TickDraw(float deltams)
      * Renders an orange square.
      */
 #if !defined ANDROID_NDK
-    GLfloat const vertices1[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
-
     glColor4f(0.8f, 0.5f, 0.2f, 1.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, vertices1);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glDisableClientState(GL_VERTEX_ARRAY);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
      * Test #8: vertex buffer + per-vertex coloring
@@ -395,26 +407,19 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors.
      */
 #if !defined ANDROID_NDK
-    GLfloat const vertices2[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, vertices2);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
     glColorPointer(3, GL_FLOAT, 0, colors);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
      * Test #9: vertex buffer + per-vertex coloring + texture
@@ -423,20 +428,13 @@ void DebugQuad::TickDraw(float deltams)
      * animated distorted checkerboard.
      */
 #if !defined ANDROID_NDK
-    GLfloat const vertices3[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
-
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, vertices3);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
     glColorPointer(3, GL_FLOAT, 0, colors);
     glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 
@@ -446,19 +444,176 @@ void DebugQuad::TickDraw(float deltams)
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
-     * Test #10: vertex buffer + texture & color in 1.10 fragment shader
+     * Test #10: vertex buffer + hardcoded color in 1.10 fragment shader
+     * (GLSL) or in Cg fragment shader (PS3)
+     *
+     * Renders an orange square.
+     */
+#if !defined ANDROID_NDK
+    if (!shader[0])
+#if !defined __CELLOS_LV2__
+        shader[0] = Shader::Create(
+            "#version 110\n"
+            "void main()"
+            "{"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 110\n"
+            "void main()"
+            "{"
+            "    gl_FragColor = vec4(0.8, 0.5, 0.2, 1.0);"
+            "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          out float4 out_Position : POSITION)"
+            "{"
+            "    out_Position = in_Position;"
+            "}",
+
+            "void main(out float4 out_FragColor : COLOR)"
+            "{"
+            "    out_FragColor = float4(0.8, 0.5, 0.2, 1.0);"
+            "}");
+#endif
+    shader[0]->Bind();
+    shader++;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #11: vertex buffer + uniform color in 1.10 fragment shader
+     * (GLSL) or in Cg fragment shader (PS3)
+     *
+     * Renders an orange square.
+     */
+#if !defined ANDROID_NDK
+    if (!shader[0])
+    {
+#if !defined __CELLOS_LV2__
+        shader[0] = Shader::Create(
+            "#version 110\n"
+            "void main()"
+            "{"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 110\n"
+            "uniform vec4 in_Color;"
+            "void main()"
+            "{"
+            "    gl_FragColor = in_Color;"
+            "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          out float4 out_Position : POSITION)"
+            "{"
+            "    out_Position = in_Position;"
+            "}",
+
+            "uniform float4 in_Color;"
+            "void main(out float4 out_FragColor : COLOR)"
+            "{"
+            "    out_FragColor = in_Color;"
+            "}");
+#endif
+        uni[0] = shader[0]->GetUniformLocation("in_Color");
+    }
+    shader[0]->Bind();
+    shader++;
+#if !defined __CELLOS_LV2__
+    glUniform4f(uni[0], 0.8f, 0.5f, 0.2f, 1.0f);
+#else
+    cgGLSetParameter4f((CGparameter)(intptr_t)uni[0], 0.8f, 0.5f, 0.2f, 1.0f);
+#endif
+    uni++;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #12: vertex buffer + color in 1.10 fragment shader (GLSL) or
+     * in Cg fragment shader (PS3)
+     *
+     * Renders a static, coloured and tiled pattern.
+     */
+#if !defined ANDROID_NDK
+    if (!shader[0])
+#if !defined __CELLOS_LV2__
+        shader[0] = Shader::Create(
+            "#version 110\n"
+            "void main()"
+            "{"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 110\n"
+            "void main()"
+            "{"
+            "    float dx = mod(gl_FragCoord.x * gl_FragCoord.y, 2.0);"
+            "    float dy = mod(gl_FragCoord.x * 0.125, 1.0);"
+            "    float dz = mod(gl_FragCoord.y * 0.125, 1.0);"
+            "    gl_FragColor = vec4(dx, dy, dz, 1.0);"
+            "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          out float4 out_Position : POSITION)"
+            "{"
+            "    out_Position = in_Position;"
+            "}",
+
+            "void main(float4 in_FragCoord : WPOS,"
+            "          out float4 out_FragColor : COLOR)"
+            "{"
+            "    float dx = frac(in_FragCoord.x * in_FragCoord.y * 0.5) * 2.0;"
+            "    float dy = frac(in_FragCoord.x * 0.125);"
+            "    float dz = frac(in_FragCoord.y * 0.125);"
+            "    out_FragColor = float4(dx, dy, dz, 1.0);"
+            "}");
+#endif
+    shader[0]->Bind();
+    shader++;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #13: vertex buffer + texture & color in 1.10 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined ANDROID_NDK
     if (!shader[0])
+#if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
             "#version 110\n"
             "varying vec4 pass_Color;"
@@ -477,15 +632,32 @@ void DebugQuad::TickDraw(float deltams)
             "    vec4 tmp = texture2D(tex, gl_TexCoord[0].xy * 0.25);"
             "    gl_FragColor = vec4(abs(tmp.xyz - pass_Color.xyz), 1.0);"
             "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          float2 in_TexCoord : TEXCOORD0,"
+            "          float4 in_Color : COLOR,"
+            "          out float4 out_Color : COLOR,"
+            "          out float4 out_Position : POSITION,"
+            "          out float2 out_TexCoord : TEXCOORD0)"
+            "{"
+            "    out_TexCoord = in_TexCoord;"
+            "    out_Color = in_Color;"
+            "    out_Position = in_Position;"
+            "}",
+
+            "void main(float2 in_TexCoord : TEXCOORD0,"
+            "          float4 in_Color : COLOR,"
+            "          uniform sampler2D tex,"
+            "          out float4 out_FragColor : COLOR)"
+            "{"
+            "    float4 tmp = tex2D(tex, in_TexCoord * 0.25);"
+            "    out_FragColor = float4(abs(tmp.xyz - in_Color.xyz), 1);"
+            "}");
+#endif
 
     shader[0]->Bind();
     shader++;
-    GLfloat const vertices4[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
 
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
@@ -493,7 +665,7 @@ void DebugQuad::TickDraw(float deltams)
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, vertices4);
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
     glColorPointer(3, GL_FLOAT, 0, colors);
     glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -501,14 +673,13 @@ void DebugQuad::TickDraw(float deltams)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
-     * Test #11: vertex buffer + texture & color in 1.20 fragment shader
+     * Test #14: vertex buffer + texture & color in 1.20 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -543,20 +714,14 @@ void DebugQuad::TickDraw(float deltams)
     }
     shader[0]->Bind();
     shader++;
-    GLfloat const vertices5[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
 
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
     glBindVertexArray(*array++);
 
     glBindBuffer(GL_ARRAY_BUFFER, *buffer++);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices5), vertices5,
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 6 * sizeof(GLfloat),
+                 data->GetVertexArray(), GL_DYNAMIC_DRAW);
     glVertexAttribPointer(attr[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attr[0]);
 
@@ -578,14 +743,13 @@ void DebugQuad::TickDraw(float deltams)
     glDisableVertexAttribArray(*attr++);
     glDisableVertexAttribArray(*attr++);
     glDisableVertexAttribArray(*attr++);
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /*
-     * Test #12: vertex buffer + texture & color in 1.30 fragment shader
+     * Test #15: vertex buffer + texture & color in 1.30 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -620,20 +784,14 @@ void DebugQuad::TickDraw(float deltams)
     }
     shader[0]->Bind();
     shader++;
-    GLfloat const vertices6[] = { data->aa.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->bb.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->bb.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->aa.y, 0.0f,
-                                  data->aa.x, data->bb.y, 0.0f };
 
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
 
     glBindVertexArray(*array++);
 
     glBindBuffer(GL_ARRAY_BUFFER, *buffer++);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices6), vertices6,
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 6 * sizeof(GLfloat),
+                 data->GetVertexArray(), GL_DYNAMIC_DRAW);
     glVertexAttribPointer(attr[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attr[0]);
 
@@ -655,11 +813,10 @@ void DebugQuad::TickDraw(float deltams)
     glDisableVertexAttribArray(*attr++);
     glDisableVertexAttribArray(*attr++);
     glDisableVertexAttribArray(*attr++);
-    glUseProgram(0);
+#endif
 
     Advance();
     ResetState();
-#endif
 
     /* Check that we didn't overflow our list */
 #if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
@@ -677,12 +834,15 @@ void DebugQuad::TickDraw(float deltams)
 void DebugQuad::ResetState()
 {
     /* Reset GL states to something reasonably safe */
+
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 #endif
+
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -694,6 +854,9 @@ void DebugQuad::ResetState()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #if !defined __CELLOS_LV2__
     glUseProgram(0);
+#else
+    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
+    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
 }
 
