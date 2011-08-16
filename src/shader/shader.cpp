@@ -38,7 +38,11 @@ class ShaderData
     friend class Shader;
 
 private:
+#if !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
+#else
+    CGprogram vert_id, frag_id;
+#endif
     uint32_t vert_crc, frag_crc;
 
     /* Shader patcher */
@@ -84,14 +88,20 @@ void Shader::Destroy(Shader *shader)
 Shader::Shader(char const *vert, char const *frag)
   : data(new ShaderData())
 {
+#if !defined __CELLOS_LV2__
     char buf[4096], errbuf[4096];
     char const *shader = buf;
     GLint status;
     GLsizei len;
+#else
+    /* Initialise the runtime shader compiler. FIXME: this needs only
+     * to be done once. */
+    cgRTCgcInit();
+#endif
 
-#if !defined __CELLOS_LV2__
     /* Compile vertex shader */
     data->vert_crc = Hash::Crc32(vert);
+#if !defined __CELLOS_LV2__
     ShaderData::Patch(buf, vert, NULL);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(data->vert_id, 1, &shader, NULL);
@@ -104,9 +114,20 @@ Shader::Shader(char const *vert, char const *frag)
         Log::Error("failed to compile vertex shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
+#else
+    data->vert_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, vert,
+                                    cgGLGetLatestProfile(CG_GL_VERTEX),
+                                    NULL, NULL);
+    if (data->vert_id == NULL)
+    {
+        Log::Error("failed to compile vertex shader");
+        Log::Error("shader source:\n%s\n", vert);
+    }
+#endif
 
     /* Compile fragment shader */
     data->frag_crc = Hash::Crc32(frag);
+#if !defined __CELLOS_LV2__
     ShaderData::Patch(buf, NULL, frag);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(data->frag_id, 1, &shader, NULL);
@@ -119,7 +140,18 @@ Shader::Shader(char const *vert, char const *frag)
         Log::Error("failed to compile fragment shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
+#else
+    data->frag_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, frag,
+                                    cgGLGetLatestProfile(CG_GL_FRAGMENT),
+                                    NULL, NULL);
+    if (data->frag_id == NULL)
+    {
+        Log::Error("failed to compile fragment shader");
+        Log::Error("shader source:\n%s\n", frag);
+    }
+#endif
 
+#if !defined __CELLOS_LV2__
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -132,43 +164,53 @@ Shader::Shader(char const *vert, char const *frag)
 
 int Shader::GetAttribLocation(char const *attr) const
 {
-#if defined __CELLOS_LV2__
-    return 0;
-#else
+#if !defined __CELLOS_LV2__
     return glGetAttribLocation(data->prog_id, attr);
+#else
+    /* FIXME: need to differentiate between vertex and fragment program */
+    return 0;
 #endif
 }
 
 int Shader::GetUniformLocation(char const *uni) const
 {
-#if defined __CELLOS_LV2__
-    return 0;
-#else
+#if !defined __CELLOS_LV2__
     return glGetUniformLocation(data->prog_id, uni);
+#else
+    /* FIXME: need to differentiate between vertex and fragment program,
+     * and replace the ugly cast. */
+    CGparameter tmp = cgGetNamedParameter(data->vert_id, uni);
+    if (tmp == NULL)
+        tmp = cgGetNamedParameter(data->frag_id, uni);
+    return (int)(intptr_t)tmp;
 #endif
 }
 
 void Shader::Bind() const
 {
-#if defined __CELLOS_LV2__
-    ;
-#else
+#if !defined __CELLOS_LV2__
     glUseProgram(data->prog_id);
+#else
+    cgGLEnableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
+    cgGLBindProgram(data->vert_id);
+    cgGLEnableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
+    cgGLBindProgram(data->frag_id);
 #endif
 }
 
 Shader::~Shader()
 {
-#if defined __CELLOS_LV2__
-    ;
-#else
+#if !defined __CELLOS_LV2__
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
-    delete data;
+#else
+    cgDestroyProgram(data->vert_id);
+    cgDestroyProgram(data->frag_id);
 #endif
+    delete data;
 }
 
 /* Try to detect shader compiler features */
