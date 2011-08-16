@@ -38,6 +38,15 @@ win32/Release
 win32/*.vcxproj.user
 win32/*.sdf
 win32/*.suo
+# Do not exclude anything in contrib; this is currently one level
+# more than our current max
+!contrib/*
+!contrib/*/*
+!contrib/*/*/*
+!contrib/*/*/*/*
+!contrib/*/*/*/*/*
+!contrib/*/*/*/*/*/*
+!contrib/*/*/*/*/*/*/*
 # Our binaries
 deushax/deushax
 deushax/editor
