@@ -80,6 +80,24 @@ DebugQuad::DebugQuad()
     drawgroup = DRAWGROUP_HUD;
 }
 
+DebugQuad::~DebugQuad()
+{
+    delete data;
+}
+
+void DebugQuad::Advance()
+{
+    data->aa.x += 4.0f * data->step.x;
+    data->bb.x += 4.0f * data->step.x;
+    if (data->bb.x > 1.0f)
+    {
+        data->aa.x = data->orig.x;
+        data->bb.x = data->orig.x + 3.0f * data->step.x;
+        data->aa.y += 4.0f * data->step.y;
+        data->bb.y += 4.0f * data->step.y;
+    }
+}
+
 void DebugQuad::TickGame(float deltams)
 {
     Entity::TickGame(deltams);
@@ -143,16 +161,34 @@ void DebugQuad::TickDraw(float deltams)
     data->aa = data->orig;
     data->bb = data->orig + 3.0f * data->step;
 
-    /* Generate a few random numbers */
-    float f1 = 0.5f + 0.5f * sinf(0.00034f * data->time);
-    float f2 = 0.5f + 0.5f * sinf(0.00053f * data->time + 1.0f);
-    float f3 = 0.5f + 0.5f * sinf(0.00072f * data->time + 4.0f);
-    float f4 = 0.5f + 0.5f * sinf(0.00091f * data->time + 8.0f);
+    /* These points form a [0,1][0,1] square */
+    GLfloat points[12] = { 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                           0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
 
-    GLfloat const colors[] = { f1, f2, f3, f4, f2, f1, f3, f1, f4,
-                               f3, f1, f4, f4, f3, f2, f1, f2, f3 };
-    GLfloat const texcoords[] = { f1, f3, f3, f2, f2, f4,
-                                  f2, f4, f4, f1, f1, f3 };
+    GLfloat texcoords[12];
+    mat4 t1 = mat4::translate(0.5f, 0.5f, 0.0f)
+            * mat4::rotate(0.00054f * data->time, 0.0f, 0.0f, 1.0f)
+            * mat4::translate(-0.5f, -0.5f, 0.0f);
+    for (int i = 0; i < 6; i++)
+    {
+         vec4 p = t1 * vec4(points[i * 2], points[i * 2 + 1], 0.0f, 1.0f);
+         texcoords[i * 2] = p.x;
+         texcoords[i * 2 + 1] = p.y;
+    }
+
+    GLfloat colors[18];
+    mat4 t2 = mat4::translate(0.5f, 0.5f, 0.5f)
+            * mat4::rotate(0.00034f * data->time, 0.0f, 0.0f, 1.0f)
+            * mat4::rotate(0.00041f * data->time, 0.0f, 1.0f, 0.0f)
+            * mat4::rotate(0.00057f * data->time, 1.0f, 0.0f, 0.0f)
+            * mat4::translate(-0.5f, -0.5f, 0.0f);
+    for (int i = 0; i < 6; i++)
+    {
+         vec4 p = t2 * vec4(points[i * 2], points[i * 2 + 1], 0.0f, 1.0f);
+         colors[i * 3] = p.x;
+         colors[i * 3 + 1] = p.y;
+         colors[i * 3 + 2] = p.z;
+    }
 
     /* Cheap iterators */
 #if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
@@ -193,17 +229,18 @@ void DebugQuad::TickDraw(float deltams)
      */
 #if defined HAVE_GLBEGIN || defined USE_GLEW
     glBegin(GL_TRIANGLES);
-        glColor3f(f1, f2, f3);
+        glColor3f(colors[0], colors[1], colors[2]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
-        glColor3f(f4, f2, f1);
+        glColor3f(colors[3], colors[4], colors[5]);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
-        glColor3f(f3, f1, f4);
+        glColor3f(colors[6], colors[7], colors[8]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
 
+        glColor3f(colors[9], colors[10], colors[11]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
-        glColor3f(f4, f3, f2);
+        glColor3f(colors[12], colors[13], colors[14]);
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
-        glColor3f(f1, f2, f3);
+        glColor3f(colors[15], colors[16], colors[17]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
 #endif
@@ -222,23 +259,24 @@ void DebugQuad::TickDraw(float deltams)
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
-        glColor3f(f1, f2, f3);
-        glTexCoord2f(f1, f3);
+        glColor3f(colors[0], colors[1], colors[2]);
+        glTexCoord2f(texcoords[0], texcoords[1]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
-        glColor3f(f4, f2, f1);
-        glTexCoord2f(f3, f2);
+        glColor3f(colors[3], colors[4], colors[5]);
+        glTexCoord2f(texcoords[2], texcoords[3]);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
-        glColor3f(f3, f1, f4);
-        glTexCoord2f(f2, f4);
+        glColor3f(colors[6], colors[7], colors[8]);
+        glTexCoord2f(texcoords[4], texcoords[5]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
 
-        glTexCoord2f(f2, f4);
+        glColor3f(colors[9], colors[10], colors[11]);
+        glTexCoord2f(texcoords[6], texcoords[7]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
-        glColor3f(f4, f3, f2);
-        glTexCoord2f(f4, f1);
+        glColor3f(colors[12], colors[13], colors[14]);
+        glTexCoord2f(texcoords[8], texcoords[9]);
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
-        glColor3f(f1, f2, f3);
-        glTexCoord2f(f1, f3);
+        glColor3f(colors[15], colors[16], colors[17]);
+        glTexCoord2f(texcoords[10], texcoords[11]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -316,17 +354,18 @@ void DebugQuad::TickDraw(float deltams)
     shader++;
     glColor3f(0.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
-        glTexCoord3f(f1, f2, f3);
+        glTexCoord3f(colors[0], colors[1], colors[2]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
-        glTexCoord3f(f4, f2, f1);
+        glTexCoord3f(colors[3], colors[4], colors[5]);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
-        glTexCoord3f(f3, f1, f4);
+        glTexCoord3f(colors[6], colors[7], colors[8]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
 
+        glTexCoord3f(colors[9], colors[10], colors[11]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
-        glTexCoord3f(f4, f3, f2);
+        glTexCoord3f(colors[12], colors[13], colors[14]);
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
-        glTexCoord3f(f1, f2, f3);
+        glTexCoord3f(colors[15], colors[16], colors[17]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
 #endif
@@ -364,18 +403,18 @@ void DebugQuad::TickDraw(float deltams)
     glColor3f(0.0f, 1.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(f1, f3);
+        glTexCoord2f(texcoords[0], texcoords[1]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
-        glTexCoord2f(f3, f2);
+        glTexCoord2f(texcoords[2], texcoords[3]);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
-        glTexCoord2f(f2, f4);
+        glTexCoord2f(texcoords[4], texcoords[5]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
 
-        glTexCoord2f(f2, f4);
+        glTexCoord2f(texcoords[6], texcoords[7]);
         glVertex3f(data->bb.x, data->aa.y, 0.0f);
-        glTexCoord2f(f4, f1);
+        glTexCoord2f(texcoords[8], texcoords[9]);
         glVertex3f(data->aa.x, data->aa.y, 0.0f);
-        glTexCoord2f(f1, f3);
+        glTexCoord2f(texcoords[10], texcoords[11]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
 #endif
@@ -606,7 +645,76 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #13: vertex buffer + texture & color in 1.10 fragment shader
+     * Test #13: vertex buffer + uniform matrix for color transform in 1.10
+     * or Cg fragment shader
+     *
+     * Renders a multicoloured square with varying colors.
+     */
+#if !defined ANDROID_NDK
+    if (!shader[0])
+    {
+#if !defined __CELLOS_LV2__
+        shader[0] = Shader::Create(
+            "#version 110\n"
+            "varying vec4 pass_Color;"
+            "uniform mat4 in_Matrix;"
+            "void main()"
+            "{"
+            "    gl_Position = gl_Vertex;"
+            "    pass_Color = in_Matrix * vec4(gl_MultiTexCoord0.xy, 0.0, 1.0);"
+            "}",
+
+            "#version 110\n"
+            "varying vec4 pass_Color;"
+            "void main()"
+            "{"
+            "    gl_FragColor = pass_Color;"
+            "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          float2 in_TexCoord : TEXCOORD0,"
+            "          uniform float4x4 in_Matrix,"
+            "          out float4 out_Color : COLOR,"
+            "          out float4 out_Position : POSITION)"
+            "{"
+            "    out_Position = in_Position;"
+            "    out_Color = mul(in_Matrix, float4(in_TexCoord, 0, 1));"
+            "}",
+
+            "void main(float4 in_Color : COLOR,"
+            "          out float4 out_FragColor : COLOR)"
+            "{"
+            "    out_FragColor = in_Color;"
+            "}");
+#endif
+        uni[0] = shader[0]->GetUniformLocation("in_Matrix");
+    }
+    shader[0]->Bind();
+    shader++;
+#if !defined __CELLOS_LV2__
+    glUniformMatrix4fv(uni[0], 1, GL_FALSE, &t2[0][0]);
+#else
+    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni[0], &t2[0][0]);
+#endif
+    uni++;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
+    glTexCoordPointer(2, GL_FLOAT, 0, points);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #14: vertex buffer + texture & color in 1.10 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -679,7 +787,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #14: vertex buffer + texture & color in 1.20 fragment shader
+     * Test #15: vertex buffer + texture & color in 1.20 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -749,7 +857,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #15: vertex buffer + texture & color in 1.30 fragment shader
+     * Test #16: vertex buffer + texture & color in 1.30 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -858,24 +966,6 @@ void DebugQuad::ResetState()
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
-}
-
-void DebugQuad::Advance()
-{
-    data->aa.x += 4.0f * data->step.x;
-    data->bb.x += 4.0f * data->step.x;
-    if (data->bb.x > 1.0f)
-    {
-        data->aa.x = data->orig.x;
-        data->bb.x = data->orig.x + 3.0f * data->step.x;
-        data->aa.y += 4.0f * data->step.y;
-        data->bb.y += 4.0f * data->step.y;
-    }
-}
-
-DebugQuad::~DebugQuad()
-{
-    delete data;
 }
 
 } /* namespace lol */
