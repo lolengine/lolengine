@@ -186,6 +186,52 @@ int Shader::GetUniformLocation(char const *uni) const
 #endif
 }
 
+void Shader::SetUniform(int uni, float f)
+{
+#if !defined __CELLOS_LV2__
+    glUniform1f(uni, f);
+#else
+    cgGLSetParameter1f((CGparameter)(intptr_t)uni, f);
+#endif
+}
+
+void Shader::SetUniform(int uni, vec2 const &v)
+{
+#if !defined __CELLOS_LV2__
+    glUniform2f(uni, v.x, v.y);
+#else
+    cgGLSetParameter2f((CGparameter)(intptr_t)uni, v.x, v.y);
+#endif
+}
+
+void Shader::SetUniform(int uni, vec3 const &v)
+{
+#if !defined __CELLOS_LV2__
+    glUniform3f(uni, v.x, v.y, v.z);
+#else
+    cgGLSetParameter3f((CGparameter)(intptr_t)uni, v.x, v.y, v.z);
+#endif
+}
+
+void Shader::SetUniform(int uni, vec4 const &v)
+{
+    /* FIXME: use the array versions of these functions */
+#if !defined __CELLOS_LV2__
+    glUniform4f(uni, v.x, v.y, v.z, v.w);
+#else
+    cgGLSetParameter4f((CGparameter)(intptr_t)uni, v.x, v.y, v.z, v.w);
+#endif
+}
+
+void Shader::SetUniform(int uni, mat4 const &m)
+{
+#if !defined __CELLOS_LV2__
+    glUniformMatrix4fv(uni, 1, GL_FALSE, &m[0][0]);
+#else
+    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni, &m[0][0]);
+#endif
+}
+
 void Shader::Bind() const
 {
 #if !defined __CELLOS_LV2__

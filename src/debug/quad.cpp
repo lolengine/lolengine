@@ -190,6 +190,9 @@ void DebugQuad::TickDraw(float deltams)
          colors[i * 3 + 2] = p.z;
     }
 
+    /* Our default quad color */
+    vec4 orange(0.8f, 0.5f, 0.2f, 1.0f);
+
     /* Cheap iterators */
 #if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     GLuint *array = data->array;
@@ -207,7 +210,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders an orange square.
      */
 #if defined HAVE_GLBEGIN || defined USE_GLEW
-    glColor3f(0.8f, 0.5f, 0.2f);
+    glColor3f(orange.x, orange.y, orange.z);
     glBegin(GL_TRIANGLES);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
         glVertex3f(data->bb.x, data->bb.y, 0.0f);
@@ -428,7 +431,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders an orange square.
      */
 #if !defined ANDROID_NDK
-    glColor4f(0.8f, 0.5f, 0.2f, 1.0f);
+    glColor4f(orange.x, orange.y, orange.z, orange.w);
     glEnableClientState(GL_VERTEX_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, 0, data->GetVertexArray());
@@ -574,12 +577,8 @@ void DebugQuad::TickDraw(float deltams)
         uni[0] = shader[0]->GetUniformLocation("in_Color");
     }
     shader[0]->Bind();
+    shader[0]->SetUniform(uni[0], orange);
     shader++;
-#if !defined __CELLOS_LV2__
-    glUniform4f(uni[0], 0.8f, 0.5f, 0.2f, 1.0f);
-#else
-    cgGLSetParameter4f((CGparameter)(intptr_t)uni[0], 0.8f, 0.5f, 0.2f, 1.0f);
-#endif
     uni++;
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -691,12 +690,8 @@ void DebugQuad::TickDraw(float deltams)
         uni[0] = shader[0]->GetUniformLocation("in_Matrix");
     }
     shader[0]->Bind();
+    shader[0]->SetUniform(uni[0], t2);
     shader++;
-#if !defined __CELLOS_LV2__
-    glUniformMatrix4fv(uni[0], 1, GL_FALSE, &t2[0][0]);
-#else
-    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni[0], &t2[0][0]);
-#endif
     uni++;
 
     glEnableClientState(GL_VERTEX_ARRAY);
