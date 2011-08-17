@@ -266,24 +266,17 @@ void Scene::Render() // XXX: rename to Blit()
 
     stdshader->Bind();
 
-#if !defined __CELLOS_LV2__
     uni_mat = stdshader->GetUniformLocation("proj_matrix");
-    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &Video::GetProjMatrix()[0][0]);
+    stdshader->SetUniform(uni_mat, Video::GetProjMatrix());
     uni_mat = stdshader->GetUniformLocation("view_matrix");
-    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &Video::GetViewMatrix()[0][0]);
+    stdshader->SetUniform(uni_mat, Video::GetViewMatrix());
     uni_mat = stdshader->GetUniformLocation("model_matrix");
-    glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &data->model_matrix[0][0]);
+    stdshader->SetUniform(uni_mat, data->model_matrix);
 
+#if !defined __CELLOS_LV2__
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
 #else
-    uni_mat = stdshader->GetUniformLocation("proj_matrix");
-    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &Video::GetProjMatrix()[0][0]);
-    uni_mat = stdshader->GetUniformLocation("view_matrix");
-    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &Video::GetViewMatrix()[0][0]);
-    uni_mat = stdshader->GetUniformLocation("model_matrix");
-    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &data->model_matrix[0][0]);
-
     // WTF? this doesn't exist
     //uni_tex = stdshader->GetUniformLocation("in_Texture");
     //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);

@@ -28,7 +28,13 @@ public:
     static void Destroy(Shader *shader);
 
     int GetAttribLocation(char const *attr) const;
+
     int GetUniformLocation(char const *uni) const;
+    void SetUniform(int uni, float f);
+    void SetUniform(int uni, vec2 const &v);
+    void SetUniform(int uni, vec3 const &v);
+    void SetUniform(int uni, vec4 const &v);
+    void SetUniform(int uni, mat4 const &m);
 
     void Bind() const;
 
