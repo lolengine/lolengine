@@ -22,6 +22,9 @@
 #elif defined ANDROID_NDK
 #   include <jni.h>
 #   include <android/log.h>
+#elif defined __CELLOS_LV2__
+#   include <cell/sysmodule.h>
+#   include <cell/codec/pngdec.h>
 #endif
 
 #include "core.h"
@@ -56,6 +59,10 @@ private:
     jobject bmp;
     jintArray array;
     jint *pixels;
+#elif defined __CELLOS_LV2__
+    static void* Malloc(uint32_t size, void* data) { return malloc(size); };
+    static int32_t Free(void* ptr, void* data) { free(ptr); return 0; };
+    uint8_t *pixels;
 #else
     uint8_t *pixels;
 #endif
@@ -69,11 +76,11 @@ Image::Image(char const *path)
   : data(new ImageData())
 {
 #if defined __APPLE__ && defined __MACH__
-	NSString *fullpath = [NSString stringWithUTF8String:path];
-	NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
-	NSString *filename = [chunks objectAtIndex: [chunks count] - 1];
-	chunks = [filename componentsSeparatedByString: @"."];
-	NSString *prefix = [chunks objectAtIndex: 0];
+    NSString *fullpath = [NSString stringWithUTF8String:path];
+    NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
+    NSString *filename = [chunks objectAtIndex: [chunks count] - 1];
+    chunks = [filename componentsSeparatedByString: @"."];
+    NSString *prefix = [chunks objectAtIndex: 0];
     NSString *mypath = [[NSBundle mainBundle] pathForResource:prefix ofType:@"png"];
     NSData *pngdata = [[NSData alloc] initWithContentsOfFile:mypath];
     UIImage *image = [[UIImage alloc] initWithData:pngdata];
@@ -149,6 +156,138 @@ Image::Image(char const *path)
         data->pixels[n] = u;
     }
     data->format = FORMAT_RGBA;
+#elif defined __CELLOS_LV2__
+    int32_t err;
+
+    /* Initialise decoding library */
+    CellPngDecMainHandle hmain;
+
+    err = cellSysmoduleLoadModule(CELL_SYSMODULE_FS);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not open Fs sysmodule\n");
+#endif
+        exit(1);
+    }
+
+    err = cellSysmoduleLoadModule(CELL_SYSMODULE_PNGDEC);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not open PngDec sysmodule\n");
+#endif
+        exit(1);
+    }
+
+    CellPngDecThreadInParam in_param;
+    in_param.spuThreadEnable = CELL_PNGDEC_SPU_THREAD_ENABLE;
+    in_param.ppuThreadPriority = 1000;
+    in_param.spuThreadPriority = 200;
+    in_param.cbCtrlMallocFunc = ImageData::Malloc;
+    in_param.cbCtrlMallocArg = NULL;
+    in_param.cbCtrlFreeFunc = ImageData::Free;
+    in_param.cbCtrlFreeArg = NULL;
+    CellPngDecThreadOutParam out_param;
+    err = cellPngDecCreate(&hmain, &in_param, &out_param);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not create PngDec library\n");
+#endif
+        exit(1);
+    }
+
+    /* Create decoder */
+    CellPngDecSubHandle hsub;
+
+    char file[1024];
+    sprintf(file, "/app_home/c:/Users/s.hocevar/lolengine/%s", path);
+
+    CellPngDecSrc dec_src;
+    dec_src.srcSelect = CELL_PNGDEC_FILE;
+    dec_src.fileName = file;
+    dec_src.fileOffset = 0;
+    dec_src.fileSize = 0;
+    dec_src.streamPtr = NULL;
+    dec_src.streamSize = 0;
+    dec_src.spuThreadEnable  = CELL_PNGDEC_SPU_THREAD_ENABLE;
+    CellPngDecOpnInfo open_info;
+    err = cellPngDecOpen(hmain, &hsub, &dec_src, &open_info);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not open %s for decoding\n", file);
+#endif
+        exit(1);
+    }
+
+    CellPngDecInfo info;
+    err = cellPngDecReadHeader(hmain, hsub, &info);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not read image header\n");
+#endif
+        exit(1);
+    }
+
+    CellPngDecInParam in_dec_param;
+    in_dec_param.commandPtr = NULL;
+    in_dec_param.outputMode = CELL_PNGDEC_TOP_TO_BOTTOM;
+    in_dec_param.outputColorSpace = CELL_PNGDEC_RGBA;
+    in_dec_param.outputBitDepth = 8;
+    in_dec_param.outputPackFlag = CELL_PNGDEC_1BYTE_PER_1PIXEL;
+    in_dec_param.outputAlphaSelect = CELL_PNGDEC_STREAM_ALPHA;
+    in_dec_param.outputColorAlpha = 0xff;
+    CellPngDecOutParam out_dec_param;
+    err = cellPngDecSetParameter(hmain, hsub, &in_dec_param, &out_dec_param);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not configure PngDec decoder\n");
+#endif
+        exit(1);
+    }
+
+    /* Decode image */
+    data->size = vec2i(info.imageWidth, info.imageHeight);
+    data->format = FORMAT_RGBA;
+    data->pixels = (uint8_t *)malloc(info.imageWidth * 4 * info.imageHeight);
+    CellPngDecDataCtrlParam data_ctrl_param;
+    data_ctrl_param.outputBytesPerLine = info.imageWidth * 4;
+    CellPngDecDataOutInfo data_out_info;
+    err = cellPngDecDecodeData(hmain, hsub, data->pixels,
+                               &data_ctrl_param, &data_out_info);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not run PngDec decoder\n");
+#endif
+        exit(1);
+    }
+
+    /* Close decoder */
+    err = cellPngDecClose(hmain, hsub);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not close PngDec decoder\n");
+#endif
+        exit(1);
+    }
+
+    /* Deinitialise library */
+    err = cellPngDecDestroy(hmain);
+    if (err != CELL_OK)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not destroy PngDec decoder\n");
+#endif
+        exit(1);
+    }
+    err = cellSysmoduleUnloadModule(CELL_SYSMODULE_PNGDEC);
+    err = cellSysmoduleUnloadModule(CELL_SYSMODULE_FS);
 #else
     data->size = 256;
     data->format = FORMAT_RGBA;
@@ -183,6 +322,8 @@ void * Image::GetData() const
     return data->img->pixels;
 #elif defined ANDROID_NDK
     return data->pixels;
+#elif defined __CELLOS_LV2__
+    return data->pixels;
 #else
     return data->pixels;
 #endif
@@ -205,6 +346,8 @@ Image::~Image()
     mid = g_env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
     g_env->CallVoidMethod(g_ctx, mid, data->bmp);
     g_env->DeleteGlobalRef(data->bmp);
+#elif defined __CELLOS_LV2__
+    free(data->pixels);
 #else
     free(data->pixels);
 #endif
