@@ -135,6 +135,7 @@ void Scene::Render() // XXX: rename to Blit()
 {
     if (!stdshader)
     {
+#if !defined __CELLOS_LV2__
         stdshader = Shader::Create(
             "#version 130\n"
             "\n"
@@ -210,6 +211,27 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
             "    gl_FragColor = col;\n"
             "}\n");
+#else
+        stdshader = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          float2 in_TexCoord : TEXCOORD0,"
+            "          uniform float4x4 proj_matrix,"
+            "          uniform float4x4 view_matrix,"
+            "          uniform float4x4 model_matrix,"
+            "          out float2 out_TexCoord : TEXCOORD0,"
+            "          out float4 out_Position : POSITION)"
+            "{"
+            "    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Position)));"
+            "    out_TexCoord = in_TexCoord;"
+            "}",
+
+            "void main(float2 in_TexCoord : TEXCOORD0,"
+            "          uniform sampler2D tex,"
+            "          out float4 out_FragColor : COLOR)"
+            "{"
+            "    out_FragColor = tex2D(tex, in_TexCoord);"
+            "}");
+#endif
     }
 
 #if 0
@@ -237,12 +259,14 @@ void Scene::Render() // XXX: rename to Blit()
     // XXX: end of debug stuff
 
     GLuint uni_mat, uni_tex, attr_pos, attr_tex;
+#if !defined __CELLOS_LV2__
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
+#endif
 
-#if !defined __CELLOS_LV2__ // Use cgGetNamedParameter etc.
     stdshader->Bind();
 
+#if !defined __CELLOS_LV2__
     uni_mat = stdshader->GetUniformLocation("proj_matrix");
     glUniformMatrix4fv(uni_mat, 1, GL_FALSE, &Video::GetProjMatrix()[0][0]);
     uni_mat = stdshader->GetUniformLocation("view_matrix");
@@ -252,6 +276,17 @@ void Scene::Render() // XXX: rename to Blit()
 
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
+#else
+    uni_mat = stdshader->GetUniformLocation("proj_matrix");
+    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &Video::GetProjMatrix()[0][0]);
+    uni_mat = stdshader->GetUniformLocation("view_matrix");
+    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &Video::GetViewMatrix()[0][0]);
+    uni_mat = stdshader->GetUniformLocation("model_matrix");
+    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni_mat, &data->model_matrix[0][0]);
+
+    // WTF? this doesn't exist
+    //uni_tex = stdshader->GetUniformLocation("in_Texture");
+    //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);
 #endif
 
     glEnable(GL_TEXTURE_2D);
@@ -312,6 +347,12 @@ void Scene::Render() // XXX: rename to Blit()
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+#else
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glVertexPointer(3, GL_FLOAT, 0, vertex);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture);
 #endif
 
         /* Draw arrays */
@@ -323,6 +364,9 @@ void Scene::Render() // XXX: rename to Blit()
 #if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glDisableVertexAttribArray(attr_pos);
         glDisableVertexAttribArray(attr_tex);
+#else
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 
         free(vertex);
