@@ -134,6 +134,13 @@ Image::Image(char const *path)
     jstring name = g_env->NewStringUTF(path);
     data->bmp = g_env->CallObjectMethod(g_ctx, mid, name);
     g_env->DeleteLocalRef(name);
+    if (!data->bmp)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not load %s\n", path);
+#endif
+        exit(1);
+    }
     g_env->NewGlobalRef(data->bmp);
 
     /* Get image dimensions */
