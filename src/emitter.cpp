@@ -54,8 +54,10 @@ void Emitter::TickGame(float deltams)
 {
     for (int i = 0; i < data->nparticles; i++)
     {
-        data->velocities[i] = data->velocities[i] + deltams * data->gravity;
-        data->positions[i] = data->positions[i] + deltams * data->velocities[i];
+        vec3 oldvelocity = data->velocities[i];
+        data->velocities[i] += deltams * data->gravity;
+        data->positions[i] += deltams * 0.5f
+                                      * (oldvelocity + data->velocities[i]);
         if (data->positions[i].y < -100)
         {
             data->particles[i] = data->particles[data->nparticles - 1];
