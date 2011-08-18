@@ -29,6 +29,12 @@ jobject g_ctx;
 JNIEnv *g_env;
 };
 
+extern "C" jint
+JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    return JNI_VERSION_1_4;
+}
+
 extern "C" void
 Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 {
@@ -39,9 +45,11 @@ Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 {
+    /* We cannot use JNI_OnLoad for this because we're in a different
+     * thread now. */
     g_env = env;
 
-    __android_log_print(ANDROID_LOG_INFO, "LOL", "init");
+    Log::Info("initialising renderer");
     Ticker::Setup(30.0f);
     Video::Setup(vec2i(320, 200));
 
@@ -53,7 +61,7 @@ extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
-    __android_log_print(ANDROID_LOG_INFO, "LOL", "resize w=%d h=%d", w, h);
+    Log::Info("resizing to %i x %i", w, h);
     Video::Setup(vec2i(w, h));
 }
 
