@@ -16,6 +16,8 @@ liblol_a_SOURCES = \
     \
     eglapp.cpp eglapp.h \
     \
+    ps3app.cpp ps3app.h \
+    \
     shader/shader.cpp shader/shader.h \
     \
     loldebug.h \
