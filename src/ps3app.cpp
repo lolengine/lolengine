@@ -94,7 +94,8 @@ Ps3App::Ps3App(char const *title, vec2i res, float fps) :
 
     PSGLcontext *ctx = psglCreateContext();
     psglMakeCurrent(ctx, psgl);
-    psglLoadShaderLibrary(REMOTE_PATH "/shaders.bin");
+    /* TODO: load our shaders when we actually ship them */
+    //psglLoadShaderLibrary("/shaders.bin");
     psglResetCurrentContext();
 
     /* Initialise everything */

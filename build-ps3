@@ -1,0 +1,12 @@
+#!/bin/sh
+
+##  Native PS3 compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
+
+set -e
+
+# Bootstrap, configure and make
+# NOTE: ensure that $CELL_SDK is set and ppu-lv2-g++ is in the path
+./bootstrap
+./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
+make -j6
+

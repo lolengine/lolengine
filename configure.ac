@@ -69,12 +69,38 @@ if test "${enable_experimental}" = "yes"; then
   AC_DEFINE(LOL_EXPERIMENTAL, 1, Define to 1 to activate experimental build)
 fi
 
+dnl No exceptions
+CXXFLAGS="${CXXFLAGS} -fno-exceptions"
 dnl Optimizations
 CXXFLAGS="${CXXFLAGS} ${REL} ${OPT}"
 dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
+
+
+dnl Are we on the PS3?
+AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
+ [LOL_LIBS="${LOL_LIBS} -lsysmodule_stub -lsysutil_stub -lresc_stub"
+  dnl  For PSGL
+  AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available) # FIXME: hack
+  GL_LIBS="${GL_LIBS} -lPSGL -lgcm_cmd -lgcm_sys_stub"
+  if test "x${enable_debug}" = xyes; then
+    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/debug"
+  elif test "x${enable_release}" = xyes; then
+    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/ultra-opt"
+  else
+    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/opt"
+  fi
+  dnl  For the runtime Cg compiler
+  GL_LIBS="${GL_LIBS} -lcgc -lPSGLcgc"
+  dnl  For the PNG decoder
+  LOL_LIBS="${LOL_LIBS} -lpngdec_stub"
+  dnl  For the pad library
+  LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
+  AC_PATH_PROG(MAKE_FSELF, make_fself, no)
+  AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")])
+
 
 dnl Which version of OpenGL to use?
 ac_cv_my_have_gl="no"
@@ -95,11 +121,13 @@ AC_CHECK_HEADER(GL/gl.h,
   AC_TRY_LINK([#include <GL/gl.h>],
    [glLoadIdentity();],
    [ac_cv_my_have_gl="yes"
-    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hacky
+    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hack
     AC_MSG_RESULT(yes)
     GL_LIBS="-lopengl32"],
    [AC_MSG_RESULT(no)])
   LIBS="$LIBS_save"])
+AC_CHECK_HEADER(PSGL/psgl.h,
+ [ac_cv_my_have_gl="yes"])
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
@@ -135,10 +163,10 @@ LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
 AC_CHECK_FUNCS(glBegin)
 LIBS="${save_LIBS}"
 
-dnl Use SDL? (always required)
+dnl Use SDL? (always required on Linux or Win32)
 ac_cv_my_have_sdl="yes"
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-if test "${SDL_CONFIG}" != "no"; then
+if test "${SDL_CONFIG}" != "no" -a "x$cross_compiling" != xyes; then
   SDL_CFLAGS="${SDL_CFLAGS} `sdl-config --cflags`"
   SDL_LIBS="${SDL_LIBS} `sdl-config --libs`"
 fi
@@ -159,7 +187,7 @@ AC_CHECK_HEADERS(SDL_mixer.h, [:], [ac_cv_my_have_sdl="no"])
 AC_CHECK_HEADERS(SDL_image.h, [:], [ac_cv_my_have_sdl="no"])
 CPPFLAGS="${save_CPPFLAGS}"
 if test "${ac_cv_my_have_sdl}" = "no"; then
-  AC_MSG_ERROR([[One of SDL, SDL_Image or SDL_Mixer not found]])
+  AC_MSG_WARN([[One of SDL, SDL_Image or SDL_Mixer not found]])
 else
   AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
 fi
