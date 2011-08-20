@@ -12,7 +12,9 @@
 #   include "config.h"
 #endif
 
-#include <SDL.h>
+#if defined USE_SDL
+#   include <SDL.h>
+#endif
 
 #include "core.h"
 #include "sdlinput.h"
@@ -39,13 +41,16 @@ private:
 SdlInput::SdlInput()
   : data(new SdlInputData())
 {
+#if defined USE_SDL
     SDL_Init(SDL_INIT_TIMER);
 
     gamegroup = GAMEGROUP_BEFORE;
+#endif
 }
 
 void SdlInput::TickGame(float deltams)
 {
+#if defined USE_SDL
     Entity::TickGame(deltams);
 
     /* Handle mouse input */
@@ -88,6 +93,7 @@ void SdlInput::TickGame(float deltams)
         if (keystate[i])
             Input::KeyPressed(i, deltams);
 #endif
+#endif
 }
 
 SdlInput::~SdlInput()
@@ -99,11 +105,13 @@ vec2i SdlInputData::GetMousePos()
 {
     vec2i ret(-1, -1);
 
+#if defined USE_SDL
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
     {
         SDL_GetMouseState(&ret.x, &ret.y);
         ret.y = Video::GetSize().y - 1 - ret.y;
     }
+#endif
     return ret;
 }
 
