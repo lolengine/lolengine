@@ -38,11 +38,13 @@ class Ps3InputData
 {
     friend class Ps3Input;
 
+#if defined __CELLOS_LV2__
     vec2 mousepos;
     vec3i mousebuttons;
 
     CellPadFilterIIRSos filter_sos[NUM_PADS][4];
     bool circle_validates;
+#endif
 };
 
 /*
