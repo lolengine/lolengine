@@ -1,20 +1,13 @@
 <build xmlns:sh="http://bitten.edgewall.org/tools/sh"
        xmlns:svn="http://bitten.edgewall.org/tools/svn"
        xmlns:c="http://bitten.edgewall.org/tools/c">
-  <step id="init" description="Initialise builder">
-    <sh:exec file="sh" args="-c '
-      if test ${platform} = ppu-ps3; then
-         echo ps3; else echo not ps3; fi
-      '"/>
-    <sh:exec file="exit" args="1"/>
-  </step>
   <step id="checkout" description="Checkout source from repository">
     <svn:checkout url="svn://svn.zoy.org/lolengine/"
       path="${path}" revision="${revision}" />
   </step>
   <step id="bootstrap" description="Bootstrap build system">
     <sh:exec file="sh" args="-c '
-      case ${platform} in;
+      case ${platform} in
         android-arm|ios-arm|ps3-ppu) : ; ;;
         *) ./bootstrap ;;
       esac
@@ -22,7 +15,7 @@
   </step>
   <step id="configure" description="Configure tree">
     <sh:exec file="sh" args="-c '
-      case ${platform} in;
+      case ${platform} in
         android-arm|ios-arm|ps3-ppu) : ; ;;
         *) ./configure ;;
       esac
@@ -31,7 +24,7 @@
   </step>
   <step id="build" description="Build tree">
     <sh:exec file="sh" args="-c '
-      case ${platform} in;
+      case ${platform} in
         android-arm)
          cd monsterz/android;
          ndk-build;
@@ -51,7 +44,7 @@
   </step>
   <step id="test" description="Run tests">
     <sh:exec file="sh" args="-c '
-      case ${platform} in;
+      case ${platform} in
         android-arm|ios-arm|ps3-ppu) : ; ;;
         *) make check; ;;
       esac
@@ -59,7 +52,7 @@
   </step>
   <step id="clean" description="Clean tree">
     <sh:exec file="sh" args="-c '
-      case ${platform} in;
+      case ${platform} in
         android-arm|ios-arm) : ; ;;
         *) make distclean; ;;
       esac
