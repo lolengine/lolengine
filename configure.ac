@@ -98,8 +98,9 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   LOL_LIBS="${LOL_LIBS} -lpngdec_stub"
   dnl  For the pad library
   LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
-  AC_PATH_PROG(MAKE_FSELF, make_fself, no)
-  AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")])
+  AC_PATH_PROG(MAKE_FSELF, make_fself, no)],
+ [MAKE_FSELF=no])
+AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
 
 
 dnl Which version of OpenGL to use?
