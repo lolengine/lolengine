@@ -165,32 +165,32 @@ AC_CHECK_FUNCS(glBegin)
 LIBS="${save_LIBS}"
 
 dnl Use SDL? (always required on Linux or Win32)
-ac_cv_my_have_sdl="yes"
-AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-if test "${SDL_CONFIG}" != "no" -a "x$cross_compiling" != xyes; then
-  SDL_CFLAGS="${SDL_CFLAGS} `sdl-config --cflags`"
-  SDL_LIBS="${SDL_LIBS} `sdl-config --libs`"
-fi
-SDL_CFLAGS="${SDL_CFLAGS} ${GL_CFLAGS}"
-SDL_LIBS="${SDL_LIBS} ${GL_LIBS}"
-PKG_CHECK_MODULES(SDL, sdl, [:],
- [SDL_LIBS="${SDL_LIBS} -lSDL"])
-PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [:],
- [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"])
-PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [:],
- [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"])
-SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
-SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
-
-save_CPPFLAGS="${CPPFLAGS}"
-CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
-AC_CHECK_HEADERS(SDL_mixer.h, [:], [ac_cv_my_have_sdl="no"])
-AC_CHECK_HEADERS(SDL_image.h, [:], [ac_cv_my_have_sdl="no"])
-CPPFLAGS="${save_CPPFLAGS}"
-if test "${ac_cv_my_have_sdl}" = "no"; then
-  AC_MSG_WARN([[One of SDL, SDL_Image or SDL_Mixer not found]])
-else
-  AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
+ac_cv_my_have_sdl="no"
+if test "x$cross_compiling" != xyes; then
+  ac_cv_my_have_sdl="yes"
+  AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+  if test "${SDL_CONFIG}" != "no" -a "x$cross_compiling" != xyes; then
+    SDL_CFLAGS="${SDL_CFLAGS} `sdl-config --cflags`"
+    SDL_LIBS="${SDL_LIBS} `sdl-config --libs`"
+  fi
+  PKG_CHECK_MODULES(SDL, sdl, [:],
+   [SDL_LIBS="${SDL_LIBS} -lSDL"])
+  PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [:],
+   [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"])
+  PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [:],
+   [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"])
+  SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
+  SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
+  save_CPPFLAGS="${CPPFLAGS}"
+  CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
+  AC_CHECK_HEADERS(SDL_mixer.h, [:], [ac_cv_my_have_sdl="no"])
+  AC_CHECK_HEADERS(SDL_image.h, [:], [ac_cv_my_have_sdl="no"])
+  CPPFLAGS="${save_CPPFLAGS}"
+  if test "${ac_cv_my_have_sdl}" = "no"; then
+    AC_MSG_WARN([[One of SDL, SDL_Image or SDL_Mixer not found]])
+  else
+    AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
+  fi
 fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 
@@ -249,8 +249,8 @@ AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 dnl How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
-LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS $EGL_LIBS $LIBPNG_LIBS"
+LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
