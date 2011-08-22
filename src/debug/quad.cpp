@@ -945,7 +945,9 @@ void DebugQuad::ResetState()
     glLoadIdentity();
 #endif
 
+#if !defined ANDROID_NDK
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
