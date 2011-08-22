@@ -57,7 +57,14 @@ LOL_LIBS="$LOL_LIBS -lSDL_image -lSDL_mixer -lSDLmain -lSDL -lopengl32 -lglew32"
 
 # Bootstrap, configure and make
 ./bootstrap
-./configure CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" \
+# Only on Windows
+if test "x${MSYSTEM}" != xMINGW32; then
+  HOSTFLAGS=--host=i586-mingw32msvc
+  BUILDFLAGS=--build=none
+fi
+
+./configure $HOSTFLAGS $BUILDFLAGS \
+            CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" \
             GTK_LIBS="$GTK_LIBS" LOL_LIBS="$LOL_LIBS"
 make
 
