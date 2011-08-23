@@ -497,7 +497,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
@@ -649,7 +649,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     if (!shader[0])
     {
 #if !defined __CELLOS_LV2__
@@ -714,7 +714,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
@@ -945,7 +945,7 @@ void DebugQuad::ResetState()
     glLoadIdentity();
 #endif
 
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
