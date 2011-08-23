@@ -26,6 +26,18 @@ namespace lol
 {
 
 /*
+ * OpenGL Feature list:
+ *
+ * Android and iOS don't have GL_VERTEX_ARRAY.
+ *
+ * iOS does vertex buffers using glVertexAttribPointer(), and does not
+ * support glVertexPointer().
+ *
+ * PSGL (on the PS3) does vertex buffers using glVertexPointer(), and
+ * does not support glVertexAttribPointer().
+ */
+
+/*
  * DebugQuad implementation class
  */
 
@@ -543,7 +555,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     if (!shader[0])
     {
 #if !defined __CELLOS_LV2__
@@ -596,7 +608,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a static, coloured and tiled pattern.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
