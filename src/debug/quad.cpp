@@ -430,7 +430,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     glColor4f(orange.x, orange.y, orange.z, orange.w);
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -448,7 +448,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
@@ -469,7 +469,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors multiplied with an
      * animated distorted checkerboard.
      */
-#if !defined ANDROID_NDK
+#if !defined ANDROID_NDK && !defined __APPLE__
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glEnableClientState(GL_VERTEX_ARRAY);
