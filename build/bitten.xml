@@ -80,7 +80,7 @@
          ant compile || exit 1;
          ;;
         ios-arm)
-         : ;
+         cd monsterz/ios &amp;&amp; xcodebuild -configuration Release -sdk iphonesimulator4.3;
          ;;
         ps3-ppu)
          if test -f build-ps3; then make || exit 1; else cd monsterz/ps3 &amp;&amp; make || exit 1; fi ;
@@ -102,9 +102,12 @@
   <step id="clean" description="Clean tree">
     <sh:exec file="sh" args="-c '
       case ${platform} in
-        android-arm|ios-arm)
+        android-arm)
           : ;
           ;;
+        ios-arm)
+         cd monsterz/ios &amp;&amp; xcodebuild -configuration Release -sdk iphonesimulator4.3 clean;
+         ;;
         ps3-ppu)
           if test -f build-ps3; then make distclean || exit 1; fi ;
           ;;
