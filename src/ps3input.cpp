@@ -42,6 +42,7 @@ class Ps3InputData
     vec2 mousepos;
     vec3i mousebuttons;
 
+    CellPadData pad_data[NUM_PADS];
     CellPadFilterIIRSos filter_sos[NUM_PADS][4];
     bool circle_validates;
 #endif
@@ -95,33 +96,34 @@ void Ps3Input::TickGame(float deltams)
         if (!(pad_info2.port_status[i] & CELL_PAD_STATUS_CONNECTED))
             continue;
 
-        CellPadData pad_data;
-        ret = cellPadGetData(i, &pad_data);
-        if (ret != CELL_PAD_OK || pad_data.len == 0)
+        /* Get Pad status. If the data hasn't changed since the last call,
+         * data->pad[i].len will be 0 but we carry on anyway. */
+        ret = cellPadGetData(i, &data->pad_data[i]);
+        if (ret != CELL_PAD_OK)
             continue;
 
+        /* Right stick moves the mouse */
+        if (!(pad_info2.system_info & CELL_PAD_INFO_INTERCEPTED))
+        {
+            int x = data->pad_data[i].button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X];
+            int y = data->pad_data[i].button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X + 1];
+            vec2 delta(4e-3f * (abs(x - 127) < 16 ? 0 : x - 127),
+                       -4e-3f * (abs(y - 127) < 16 ? 0 : y - 127));
+            data->mousepos += delta * deltams;
+            Input::SetMousePos((vec2i)data->mousepos);
+        }
+
         /* L1 or R1 for mouse button */
-        int but = (pad_data.button[CELL_PAD_BTN_OFFSET_DIGITAL2]
-                                                          == CELL_PAD_CTRL_L1)
-               || (pad_data.button[CELL_PAD_BTN_OFFSET_DIGITAL2]
-                                                          == CELL_PAD_CTRL_R1);
+        int but = (data->pad_data[i].button[CELL_PAD_BTN_OFFSET_DIGITAL2]
+                                                          & CELL_PAD_CTRL_L1)
+               || (data->pad_data[i].button[CELL_PAD_BTN_OFFSET_DIGITAL2]
+                                                          & CELL_PAD_CTRL_R1);
         if (but && !data->mousebuttons.x)
             Input::SetMouseButton(0);
         else if (!but && data->mousebuttons.x)
             Input::UnsetMouseButton(0);
 
         data->mousebuttons.x = but;
-
-        /* Right stick moves the mouse */
-        if (!(pad_info2.system_info & CELL_PAD_INFO_INTERCEPTED))
-        {
-            int x = pad_data.button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X];
-            int y = pad_data.button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X + 1];
-            vec2 delta(4e-3f * (abs(x - 127) < 16 ? 0 : x - 127),
-                       -4e-3f * (abs(y - 127) < 16 ? 0 : y - 127));
-            data->mousepos += delta * deltams;
-            Input::SetMousePos((vec2i)data->mousepos);
-        }
 
         /* Only handle the first pad we meet */
         break;
