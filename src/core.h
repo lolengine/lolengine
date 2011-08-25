@@ -32,12 +32,14 @@
 
 // Entities
 #include "entity.h"
+#include "worldentity.h"
+
 #include "emitter.h"
 #include "font.h"
+#include "gradient.h"
 #include "sample.h"
 #include "text.h"
 #include "tileset.h"
-#include "worldentity.h"
 #include "world.h"
 
 // Other objects
