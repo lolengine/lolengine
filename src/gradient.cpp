@@ -68,15 +68,10 @@ void Gradient::TickDraw(float deltams)
         data->shader = Shader::Create(
             "#version 130\n"
             "\n"
-#if defined HAVE_GLES_2X
-            "attribute vec3 in_Vertex;\n"
-            "attribute vec4 in_Color;\n"
-            "varying vec4 pass_Color;\n"
-#else
             "in vec3 in_Vertex;\n"
             "in vec4 in_Color;\n"
             "out vec4 pass_Color;\n"
-#endif
+            "\n"
             "uniform mat4 proj_matrix;\n"
             "uniform mat4 view_matrix;\n"
             "uniform mat4 model_matrix;\n"
@@ -85,14 +80,7 @@ void Gradient::TickDraw(float deltams)
             "{\n"
             "    gl_Position = proj_matrix * view_matrix * model_matrix"
             "                * vec4(in_Vertex, 1.0);\n"
-//"gl_Position = vec4(in_Vertex, 1.0);\n"
-#if defined HAVE_GLES_2X
             "    pass_Color = in_Color;\n"
-            //"    pass_Color = vec4(in_Color, 1.0);\n"
-#else
-            "    pass_Color = in_Color;\n"
-            //"    pass_Color = vec4(in_Color, 1.0);\n"
-#endif
             "}\n",
 
             "#version 130\n"
@@ -115,43 +103,60 @@ void Gradient::TickDraw(float deltams)
             "    float t = cluster[int(mod(gl_FragCoord.x, 4.0))]"
             "                     [int(mod(gl_FragCoord.y, 4.0))];\n"
             "    t = (t + 0.5) / 17.0;\n"
-            "    col.x = col.x > t ? 1.0 : 0.0;\n"
-            "    col.y = col.y > t ? 1.0 : 0.0;\n"
-            "    col.z = col.z > t ? 1.0 : 0.0;\n"
+            "    col.x += fract(t - col.x) - t;\n"
+            "    col.y += fract(t - col.y) - t;\n"
+            "    col.z += fract(t - col.z) - t;\n"
             "    gl_FragColor = col;\n"
             "}\n");
 #else
         data->shader = Shader::Create(
             "void main(float4 in_Vertex : POSITION,"
-            "          float2 in_TexCoord : TEXCOORD0,"
+            "          float4 in_Color : COLOR,"
             "          uniform float4x4 proj_matrix,"
             "          uniform float4x4 view_matrix,"
             "          uniform float4x4 model_matrix,"
-            "          out float2 out_TexCoord : TEXCOORD0,"
+            "          out float4 out_Color : COLOR,"
             "          out float4 out_Position : POSITION)"
             "{"
             "    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Vertex)));"
-            "    out_TexCoord = in_TexCoord;"
+            "    out_Color = in_Color;"
             "}",
 
-            "void main(float2 in_TexCoord : TEXCOORD0,"
+            "float4x4 bayer = float4x4( 0.0, 12.0,  3.0, 15.0,"
+            "                           8.0,  4.0, 11.0,  7.0,"
+            "                           2.0, 14.0,  1.0, 13.0,"
+            "                          10.0,  6.0,  9.0,  5.0);\n"
+            ""
+#if 1
+            "float4x4 cluster = float4x4(12.0,  5.0,  6.0, 13.0,"
+            "                             4.0,  0.0,  1.0,  7.0,"
+            "                            11.0,  3.0,  2.0,  8.0,"
+            "                            15.0, 10.0,  9.0, 14.0);\n"
+#endif
+            "\n"
+            "void main(float4 in_Color : COLOR,"
             "          float4 in_FragCoord : WPOS,"
-            "          uniform sampler2D tex,"
             "          out float4 out_FragColor : COLOR)"
             "{"
-            "    float4 col = tex2D(tex, in_TexCoord);"
-#if 0
-            "    float t1, t2, t3;\n"
-            "    col.x = col.x > t1 ? 1.0 : 0.0;\n"
-            "    col.y = col.y > t2 ? 1.0 : 0.0;\n"
-            "    col.z = col.z > t3 ? 1.0 : 0.0;\n"
+            "    float4 col = in_Color;"
+#if 1
+            "    int x = (int)in_FragCoord.x;"
+            "    int y = (int)in_FragCoord.y;"
+            // FIXME: we cannot address this matrix directly on the PS3
+            "    float t = bayer[0][0];\n"
+            "    t = (t + 0.5) / 17.0 + z - x;\n"
+            "    col.x += frac(t - col.x) - t;\n"
+            "    col.y += frac(t - col.y) - t;\n"
+            "    col.z += frac(t - col.z) - t;\n"
 #endif
             "    out_FragColor = col;"
             "}");
 #endif
+#if !defined __CELLOS_LV2__
         glGenBuffers(2, data->bufs);
-#if defined HAVE_GL_2X
+#   if defined HAVE_GL_2X
         glGenVertexArrays(1, data->vaos);
+#   endif
 #endif
     }
 
@@ -172,72 +177,60 @@ void Gradient::TickDraw(float deltams)
     uni_mat = data->shader->GetUniformLocation("model_matrix");
     data->shader->SetUniform(uni_mat, model_matrix);
 
-//    glEnable(GL_TEXTURE_2D);
-//    glEnable(GL_DEPTH_TEST);
-//    glDepthFunc(GL_LEQUAL);
-#if defined HAVE_GL_2X
-//    glEnable(GL_ALPHA_TEST);
-//    glAlphaFunc(GL_GEQUAL, 0.01f);
-#endif
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    float const vertex[] = {   0.0f,   0.0f, 0.0f,
+                             640.0f,   0.0f, 0.0f,
+                               0.0f, 480.0f, 0.0f,
+                               0.0f, 480.0f, 0.0f,
+                             640.0f, 480.0f, 0.0f,
+                             640.0f,   0.0f, 0.0f, };
 
-        /* Create a vertex array object */
-float const vertex[] = {   0.0f,   0.0f, 0.0f,
-                         640.0f,   0.0f, 0.0f,
-                           0.0f, 480.0f, 0.0f,
-                           0.0f, 480.0f, 0.0f,
-                         640.0f, 480.0f, 0.0f,
-                         640.0f,   0.0f, 0.0f, };
+    float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
+                            0.73f, 0.85f, 0.85f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.73f, 0.85f, 0.85f, 1.0f, };
 
-float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
-                        0.73f, 0.85f, 0.85f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 1.0f,
-                        0.73f, 0.85f, 0.85f, 1.0f, };
+    data->shader->Bind();
 
-        data->shader->Bind();
+    /* Bind vertex, color and texture coordinate buffers */
+#if !defined __CELLOS_LV2__
+#   if defined HAVE_GL_2X
+    glBindVertexArray(data->vaos[0]);
+#   endif
+    glEnableVertexAttribArray(attr_pos);
+    glEnableVertexAttribArray(attr_col);
 
-        /* Bind vertex, color and texture coordinate buffers */
-#if defined HAVE_GL_2X
-        glBindVertexArray(data->vaos[0]);
-#endif
-#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
-        glEnableVertexAttribArray(attr_pos);
-        glEnableVertexAttribArray(attr_col);
+    glBindBuffer(GL_ARRAY_BUFFER, data->bufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat),
+                 vertex, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[0]);
-        glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat),
-                     vertex, GL_DYNAMIC_DRAW);
-        glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, data->bufs[1]);
-        glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat),
-                     color, GL_DYNAMIC_DRAW);
-        glVertexAttribPointer(attr_col, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, data->bufs[1]);
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat),
+                 color, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(attr_col, 4, GL_FLOAT, GL_FALSE, 0, 0);
 #else
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-        glVertexPointer(3, GL_FLOAT, 0, vertex);
-        glTexCoordPointer(4, GL_FLOAT, 0, color);
+    glVertexPointer(3, GL_FLOAT, 0, vertex);
+    glColorPointer(4, GL_FLOAT, 0, color);
 #endif
 
-        /* Draw arrays */
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+    /* Draw arrays */
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-#if defined HAVE_GL_2X
-        glBindVertexArray(0);
-#endif
-#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
-        glDisableVertexAttribArray(attr_pos);
-        glDisableVertexAttribArray(attr_col);
+#if !defined __CELLOS_LV2__
+#   if defined HAVE_GL_2X
+    glBindVertexArray(0);
+#   endif
+    glDisableVertexAttribArray(attr_pos);
+    glDisableVertexAttribArray(attr_col);
 #else
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 #endif
-   // END
 }
 
 Gradient::~Gradient()
