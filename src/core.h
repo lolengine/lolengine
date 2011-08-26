@@ -38,6 +38,7 @@
 #include "font.h"
 #include "gradient.h"
 #include "sample.h"
+#include "sprite.h"
 #include "text.h"
 #include "tileset.h"
 #include "world.h"
