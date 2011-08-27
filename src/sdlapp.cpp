@@ -39,7 +39,7 @@ private:
  * Public SdlApp class
  */
 
-SdlApp::SdlApp(char const *title, vec2i res, float fps) :
+SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
 #if defined USE_SDL
@@ -65,7 +65,7 @@ SdlApp::SdlApp(char const *title, vec2i res, float fps) :
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(vec2i(video->w, video->h));
+    Video::Setup(ivec2(video->w, video->h));
     Audio::Setup(2);
 #endif
 }

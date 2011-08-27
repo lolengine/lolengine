@@ -48,7 +48,7 @@ private:
  * Public EglApp class
  */
 
-EglApp::EglApp(char const *title, vec2i res, float fps) :
+EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data(new EglAppData())
 {
 #if defined USE_EGL
@@ -149,7 +149,7 @@ EglApp::EglApp(char const *title, vec2i res, float fps) :
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(vec2i(gwa.width, gwa.height));
+    Video::Setup(ivec2(gwa.width, gwa.height));
     Audio::Setup(2);
 #endif
 }

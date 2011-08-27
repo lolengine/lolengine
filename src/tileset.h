@@ -31,7 +31,7 @@ class TileSetData;
 class TileSet : public Entity
 {
 public:
-    TileSet(char const *path, vec2i size, vec2i count, float dilate);
+    TileSet(char const *path, ivec2 size, ivec2 count, float dilate);
     virtual ~TileSet();
 
 protected:
@@ -41,8 +41,8 @@ protected:
 
 public:
     /* New methods */
-    vec2i GetCount() const;
-    vec2i GetSize(int tileid) const;
+    ivec2 GetCount() const;
+    ivec2 GetSize(int tileid) const;
     void Bind();
     void BlitTile(uint32_t id, vec3i pos, int o,
                   float *vertex, float *texture);

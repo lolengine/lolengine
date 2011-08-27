@@ -49,7 +49,7 @@ private:
  * Public Ps3App class
  */
 
-Ps3App::Ps3App(char const *title, vec2i res, float fps) :
+Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
     data(new Ps3AppData())
 {
 #if defined __CELLOS_LV2__
@@ -90,7 +90,7 @@ Ps3App::Ps3App(char const *title, vec2i res, float fps) :
                                        GL_MULTISAMPLING_4X_SQUARE_ROTATED_SCE);
     GLuint w, h;
     psglGetDeviceDimensions(psgl, &w, &h);
-    res = vec2i(w, h);
+    res = ivec2(w, h);
 
     PSGLcontext *ctx = psglCreateContext();
     psglMakeCurrent(ctx, psgl);

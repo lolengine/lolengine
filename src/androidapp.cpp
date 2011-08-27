@@ -51,7 +51,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 
     Log::Info("initialising renderer");
     Ticker::Setup(30.0f);
-    Video::Setup(vec2i(320, 200));
+    Video::Setup(ivec2(320, 200));
 
     new Interface();
     new DebugFps(20, 20);
@@ -62,7 +62,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
     Log::Info("resizing to %i x %i", w, h);
-    Video::Setup(vec2i(w, h));
+    Video::Setup(ivec2(w, h));
 }
 
 extern "C" void
@@ -93,7 +93,7 @@ extern "C" void
 Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
                                           jint x, jint y)
 {
-    vec2i pos = vec2i(0, 479) + vec2i(x * 640, -y * 480) / Video::GetSize();
+    ivec2 pos = ivec2(0, 479) + ivec2(x * 640, -y * 480) / Video::GetSize();
     Input::SetMousePos(pos);
 }
 

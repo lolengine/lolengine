@@ -26,7 +26,7 @@ class EglAppData;
 class EglApp
 {
 public:
-    EglApp(char const *title, vec2i res, float fps);
+    EglApp(char const *title, ivec2 res, float fps);
     virtual ~EglApp();
 
     void Run();

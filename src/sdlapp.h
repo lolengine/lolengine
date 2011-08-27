@@ -26,7 +26,7 @@ class SdlAppData;
 class SdlApp
 {
 public:
-    SdlApp(char const *title, vec2i res, float fps);
+    SdlApp(char const *title, ivec2 res, float fps);
     virtual ~SdlApp();
 
     void Run();

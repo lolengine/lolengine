@@ -33,7 +33,7 @@ class FontData
 private:
     char *name;
     TileSet *tileset;
-    vec2i size;
+    ivec2 size;
 };
 
 /*
@@ -84,7 +84,7 @@ void Font::Print(vec3i pos, char const *str)
     }
 }
 
-vec2i Font::GetSize() const
+ivec2 Font::GetSize() const
 {
     return data->size;
 }

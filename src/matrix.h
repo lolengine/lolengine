@@ -144,7 +144,7 @@ template <typename T> struct Vec2
 };
 
 typedef Vec2<float> vec2;
-typedef Vec2<int> vec2i;
+typedef Vec2<int> ivec2;
 
 template <typename T> struct Vec3
 {
