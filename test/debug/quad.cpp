@@ -20,12 +20,12 @@ using namespace std;
 using namespace lol;
 
 #if defined __CELLOS_LV2__
-#   include "ps3app.h"
+#   include "platform/ps3/ps3app.h"
 #elif defined HAVE_GLES_2X
 #   include "eglapp.h"
 #else
-#   include "sdlapp.h"
-#   include "sdlinput.h"
+#   include "platform/sdl/sdlapp.h"
+#   include "platform/sdl/sdlinput.h"
 #endif
 
 #if defined _WIN32

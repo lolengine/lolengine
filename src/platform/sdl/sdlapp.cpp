@@ -18,7 +18,7 @@
 
 #include "core.h"
 #include "lolgl.h"
-#include "sdlapp.h"
+#include "platform/sdl/sdlapp.h"
 
 namespace lol
 {
