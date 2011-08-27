@@ -41,7 +41,7 @@ public:
     { }
 
 private:
-    vec2i mouse;
+    ivec2 mouse;
     vec3i buttons;
 
     static int const MAX_ENTITIES = 100;
@@ -77,7 +77,7 @@ vec2 Input::GetAxis(int axis)
     return ret;
 }
 
-vec2i Input::GetMousePos()
+ivec2 Input::GetMousePos()
 {
     return data->mouse;
 }
@@ -108,7 +108,7 @@ void Input::UntrackMouse(WorldEntity *e)
     }
 }
 
-void Input::SetMousePos(vec2i coord)
+void Input::SetMousePos(ivec2 coord)
 {
     data->mouse = coord;
 
@@ -130,7 +130,7 @@ void Input::SetMousePos(vec2i coord)
     {
         if (data->entities[n] == top)
         {
-            data->entities[n]->mousepos = (vec2i)((vec3i)coord - top->bbox[0]);
+            data->entities[n]->mousepos = (ivec2)((vec3i)coord - top->bbox[0]);
             if (top != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else
@@ -138,7 +138,7 @@ void Input::SetMousePos(vec2i coord)
         }
         else
         {
-            data->entities[n]->mousepos = vec2i(-1);
+            data->entities[n]->mousepos = ivec2(-1);
             /* FIXME */
             data->entities[n]->released = 0;
             data->entities[n]->pressed = 0;

@@ -35,11 +35,11 @@ using namespace lol;
 int main(int argc, char **argv)
 {
 #if defined __CELLOS_LV2__
-    Ps3App app("Quad", vec2i(640, 480), 60.0f);
+    Ps3App app("Quad", ivec2(640, 480), 60.0f);
 #elif defined HAVE_GLES_2X
-    EglApp app("Quad", vec2i(640, 480), 60.0f);
+    EglApp app("Quad", ivec2(640, 480), 60.0f);
 #else
-    SdlApp app("Quad", vec2i(640, 480), 60.0f);
+    SdlApp app("Quad", ivec2(640, 480), 60.0f);
 #endif
 
     /* Register an input driver and some debug stuff */

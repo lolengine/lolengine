@@ -41,7 +41,7 @@ class TileSetData
 private:
     char *name, *path;
     int *tiles, ntiles;
-    vec2i size, isize, count;
+    ivec2 size, isize, count;
     float dilate, tx, ty;
 
     Image *img;
@@ -52,7 +52,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, vec2i size, vec2i count, float dilate)
+TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
   : data(new TileSetData())
 {
     data->name = (char *)malloc(10 + strlen(path) + 1);
@@ -159,12 +159,12 @@ char const *TileSet::GetName()
     return data->name;
 }
 
-vec2i TileSet::GetCount() const
+ivec2 TileSet::GetCount() const
 {
     return data->count;
 }
 
-vec2i TileSet::GetSize(int tileid) const
+ivec2 TileSet::GetSize(int tileid) const
 {
     return data->size;
 }

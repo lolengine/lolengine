@@ -26,7 +26,7 @@ class Ps3AppData;
 class Ps3App
 {
 public:
-    Ps3App(char const *title, vec2i res, float fps);
+    Ps3App(char const *title, ivec2 res, float fps);
     virtual ~Ps3App();
 
     void Run();

@@ -110,7 +110,7 @@ void Ps3Input::TickGame(float deltams)
             vec2 delta(4e-3f * (abs(x - 127) < 16 ? 0 : x - 127),
                        -4e-3f * (abs(y - 127) < 16 ? 0 : y - 127));
             data->mousepos += delta * deltams;
-            Input::SetMousePos((vec2i)data->mousepos);
+            Input::SetMousePos((ivec2)data->mousepos);
         }
 
         /* L1 or R1 for mouse button */

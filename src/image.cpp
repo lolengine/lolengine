@@ -48,7 +48,7 @@ class ImageData
     friend class Image;
 
 private:
-    vec2i size;
+    ivec2 size;
     Image::format_t format;
 
 #if defined __APPLE__ && defined __MACH__
@@ -94,7 +94,7 @@ Image::Image(char const *path)
 
     int w = CGImageGetWidth(image.CGImage);
     int h = CGImageGetHeight(image.CGImage);
-    data->size = vec2i(w, h);
+    data->size = ivec2(w, h);
     data->format = FORMAT_RGBA;
 
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
@@ -123,7 +123,7 @@ Image::Image(char const *path)
         exit(1);
     }
 
-    data->size = vec2i(data->img->w, data->img->h);
+    data->size = ivec2(data->img->w, data->img->h);
     data->format = data->img->format->Amask ? FORMAT_RGBA : FORMAT_RGB;
 #elif defined ANDROID_NDK
     jclass cls = g_env->GetObjectClass(g_ctx);
@@ -258,7 +258,7 @@ Image::Image(char const *path)
     }
 
     /* Decode image */
-    data->size = vec2i(info.imageWidth, info.imageHeight);
+    data->size = ivec2(info.imageWidth, info.imageHeight);
     data->format = FORMAT_RGBA;
     data->pixels = (uint8_t *)malloc(info.imageWidth * 4 * info.imageHeight);
     CellPngDecDataCtrlParam data_ctrl_param;
@@ -311,7 +311,7 @@ Image::Image(char const *path)
 #endif
 }
 
-vec2i Image::GetSize() const
+ivec2 Image::GetSize() const
 {
     return data->size;
 }

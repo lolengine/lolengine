@@ -31,7 +31,7 @@ class SdlInputData
     friend class SdlInput;
 
 private:
-    static vec2i GetMousePos();
+    static ivec2 GetMousePos();
 };
 
 /*
@@ -54,7 +54,7 @@ void SdlInput::TickGame(float deltams)
     Entity::TickGame(deltams);
 
     /* Handle mouse input */
-    vec2i mouse = SdlInputData::GetMousePos();;
+    ivec2 mouse = SdlInputData::GetMousePos();;
     Input::SetMousePos(mouse);
 
     /* Handle keyboard and WM events */
@@ -74,7 +74,7 @@ void SdlInput::TickGame(float deltams)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
-            vec2i newmouse = SdlInputData::GetMousePos();
+            ivec2 newmouse = SdlInputData::GetMousePos();
             if (newmouse != mouse)
                 Input::SetMousePos(mouse = newmouse);
             if (event.type == SDL_MOUSEBUTTONDOWN)
@@ -101,9 +101,9 @@ SdlInput::~SdlInput()
     delete data;
 }
 
-vec2i SdlInputData::GetMousePos()
+ivec2 SdlInputData::GetMousePos()
 {
-    vec2i ret(-1, -1);
+    ivec2 ret(-1, -1);
 
 #if defined USE_SDL
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)

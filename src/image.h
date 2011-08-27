@@ -37,7 +37,7 @@ public:
     }
     format_t;
 
-    vec2i GetSize() const;
+    ivec2 GetSize() const;
     format_t GetFormat() const;
     void *GetData() const;
 

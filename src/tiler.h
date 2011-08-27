@@ -27,7 +27,7 @@ namespace lol
 class Tiler
 {
 public:
-    static TileSet *Register(char const *path, vec2i size, vec2i count,
+    static TileSet *Register(char const *path, ivec2 size, ivec2 count,
                         float dilate);
     static void Deregister(TileSet *);
 };

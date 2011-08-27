@@ -29,7 +29,7 @@ public:
     vec3 velocity;
     vec3 bbox[2];
 
-    vec2i mousepos;
+    ivec2 mousepos;
     vec3i mousebuttons;
     vec3i pressed, clicked, released;
 

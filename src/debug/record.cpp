@@ -36,7 +36,7 @@ class DebugRecordData
 
 private:
     char const *path;
-    vec2i size;
+    ivec2 size;
     int fps;
 #if defined USE_PIPI
     pipi_sequence_t *sequence;
@@ -71,7 +71,7 @@ void DebugRecord::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    vec2i size = Video::GetSize();
+    ivec2 size = Video::GetSize();
 
     if (data->size != size)
     {

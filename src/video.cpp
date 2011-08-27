@@ -34,7 +34,7 @@ class VideoData
 private:
     static mat4 proj_matrix, view_matrix;
 #if defined ANDROID_NDK || defined __CELLOS_LV2__
-    static vec2i saved_viewport;
+    static ivec2 saved_viewport;
 #endif
 };
 
@@ -42,14 +42,14 @@ mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 
 #if defined ANDROID_NDK || defined __CELLOS_LV2__
-vec2i VideoData::saved_viewport = 0;
+ivec2 VideoData::saved_viewport = 0;
 #endif
 
 /*
  * Public Video class
  */
 
-void Video::Setup(vec2i size)
+void Video::Setup(ivec2 size)
 {
 #if defined USE_GLEW
     /* Initialise GLEW if necessary */
@@ -132,7 +132,7 @@ void Video::SetDepth(bool set)
 
 void Video::Clear()
 {
-    vec2i size = GetSize();
+    ivec2 size = GetSize();
     glViewport(0, 0, size.x, size.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -176,7 +176,7 @@ void Video::Capture(uint32_t *buffer)
         }
 }
 
-vec2i Video::GetSize()
+ivec2 Video::GetSize()
 {
 #if defined ANDROID_NDK
     return VideoData::saved_viewport;
@@ -186,7 +186,7 @@ vec2i Video::GetSize()
 #else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
-    return vec2i(v[2], v[3]);
+    return ivec2(v[2], v[3]);
 #endif
 }
 

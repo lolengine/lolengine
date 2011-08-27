@@ -40,7 +40,7 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-TileSet *Tiler::Register(char const *path, vec2i size, vec2i count,
+TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count,
                          float dilate)
 {
     int id = data->tilesets.MakeSlot(path);
