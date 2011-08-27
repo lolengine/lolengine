@@ -9,7 +9,7 @@ liblol_a_SOURCES = \
     timer.cpp timer.h bitfield.h profiler.cpp profiler.h input.h input.cpp \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
-    worldentity.cpp worldentity.h image.cpp image.h gradient.cpp gradient.h \
+    worldentity.cpp worldentity.h gradient.cpp gradient.h \
     platform.cpp platform.h sprite.cpp sprite.h \
     \
     sdlapp.cpp sdlapp.h sdlinput.cpp sdlinput.h \
@@ -19,6 +19,8 @@ liblol_a_SOURCES = \
     ps3app.cpp ps3app.h ps3input.cpp ps3input.h \
     \
     shader/shader.cpp shader/shader.h \
+    \
+    image/image.cpp image/image.h \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/sphere.cpp debug/sphere.h \

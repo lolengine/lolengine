@@ -49,7 +49,7 @@
 #include "map.h"
 #include "layer.h"
 #include "shader/shader.h"
-#include "image.h"
+#include "image/image.h"
 
 // Managers
 #include "ticker.h"
