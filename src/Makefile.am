@@ -12,11 +12,13 @@ liblol_a_SOURCES = \
     worldentity.cpp worldentity.h gradient.cpp gradient.h \
     platform.cpp platform.h sprite.cpp sprite.h \
     \
-    sdlapp.cpp sdlapp.h sdlinput.cpp sdlinput.h \
-    \
     eglapp.cpp eglapp.h \
     \
-    ps3app.cpp ps3app.h ps3input.cpp ps3input.h \
+    platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
+    platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h \
+    \
+    platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
+    platform/ps3/ps3input.cpp platform/ps3/ps3input.h \
     \
     shader/shader.cpp shader/shader.h \
     \
