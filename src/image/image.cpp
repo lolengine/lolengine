@@ -35,8 +35,8 @@ namespace lol
 {
 
 #if defined ANDROID_NDK
-extern JNIEnv *g_env;
-extern jobject g_ctx;
+extern JavaVM *g_vm;
+extern jobject g_activity;
 #endif
 
 /*
@@ -126,14 +126,23 @@ Image::Image(char const *path)
     data->size = ivec2(data->img->w, data->img->h);
     data->format = data->img->format->Amask ? FORMAT_RGBA : FORMAT_RGB;
 #elif defined ANDROID_NDK
-    jclass cls = g_env->GetObjectClass(g_ctx);
+    JNIEnv *env;
+    jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
+    if (res < 0)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not get JVM environment\n");
+#endif
+        exit(1);
+    }
+    jclass cls = env->GetObjectClass(g_activity);
     jmethodID mid;
 
-    mid = g_env->GetMethodID(cls, "openImage",
-                             "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
-    jstring name = g_env->NewStringUTF(path);
-    data->bmp = g_env->CallObjectMethod(g_ctx, mid, name);
-    g_env->DeleteLocalRef(name);
+    mid = env->GetMethodID(cls, "openImage",
+                           "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jstring name = env->NewStringUTF(path);
+    data->bmp = env->CallObjectMethod(g_activity, mid, name);
+    env->DeleteLocalRef(name);
     if (!data->bmp)
     {
 #if !LOL_RELEASE
@@ -141,21 +150,21 @@ Image::Image(char const *path)
 #endif
         exit(1);
     }
-    g_env->NewGlobalRef(data->bmp);
+    env->NewGlobalRef(data->bmp);
 
     /* Get image dimensions */
-    mid = g_env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    data->size.x = g_env->CallIntMethod(g_ctx, mid, data->bmp);
-    mid = g_env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    data->size.y = g_env->CallIntMethod(g_ctx, mid, data->bmp);
+    mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
+    data->size.x = env->CallIntMethod(g_activity, mid, data->bmp);
+    mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
+    data->size.y = env->CallIntMethod(g_activity, mid, data->bmp);
 
     /* Get pixels */
-    data->array = g_env->NewIntArray(data->size.x * data->size.y);
-    g_env->NewGlobalRef(data->array);
-    mid = g_env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
-    g_env->CallVoidMethod(g_ctx, mid, data->bmp, data->array);
+    data->array = env->NewIntArray(data->size.x * data->size.y);
+    env->NewGlobalRef(data->array);
+    mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
+    env->CallVoidMethod(g_activity, mid, data->bmp, data->array);
 
-    data->pixels = g_env->GetIntArrayElements(data->array, 0);
+    data->pixels = env->GetIntArrayElements(data->array, 0);
     for (int n = 0; n < data->size.x * data->size.y; n++)
     {
         uint32_t u = data->pixels[n];
@@ -343,16 +352,25 @@ Image::~Image()
 #elif defined USE_SDL
     SDL_FreeSurface(data->img);
 #elif defined ANDROID_NDK
-    jclass cls = g_env->GetObjectClass(g_ctx);
+    JNIEnv *env;
+    jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
+    if (res < 0)
+    {
+#if !LOL_RELEASE
+        Log::Error("could not get JVM environment\n");
+#endif
+        exit(1);
+    }
+    jclass cls = env->GetObjectClass(g_activity);
     jmethodID mid;
 
-    g_env->ReleaseIntArrayElements(data->array, data->pixels, 0);
-    g_env->DeleteGlobalRef(data->array);
+    env->ReleaseIntArrayElements(data->array, data->pixels, 0);
+    env->DeleteGlobalRef(data->array);
 
     /* Free image */
-    mid = g_env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
-    g_env->CallVoidMethod(g_ctx, mid, data->bmp);
-    g_env->DeleteGlobalRef(data->bmp);
+    mid = env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
+    env->CallVoidMethod(g_activity, mid, data->bmp);
+    env->DeleteGlobalRef(data->bmp);
 #elif defined __CELLOS_LV2__
     free(data->pixels);
 #else

@@ -25,13 +25,14 @@ using namespace lol;
 
 namespace lol
 {
-jobject g_ctx;
-JNIEnv *g_env;
+JavaVM *g_vm;
+jobject g_activity;
 };
 
 extern "C" jint
 JNI_OnLoad(JavaVM* vm, void* reserved)
 {
+    g_vm = vm;
     return JNI_VERSION_1_4;
 }
 
@@ -39,16 +40,12 @@ extern "C" void
 Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 {
     env->NewGlobalRef(thiz); /* FIXME: never released! */
-    g_ctx = thiz;
+    g_activity = thiz;
 }
 
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 {
-    /* We cannot use JNI_OnLoad for this because we're in a different
-     * thread now. */
-    g_env = env;
-
     Log::Info("initialising renderer");
     Ticker::Setup(30.0f);
     Video::Setup(ivec2(320, 200));
