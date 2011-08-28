@@ -34,34 +34,43 @@ public:
         *this = makefast(f);
     }
 
-    static half makeslow(float f);
-    static half makefast(float f);
-
-    static inline half makebits(uint16_t x)
+    inline int isnan() const
     {
-        half ret;
-        ret.m_bits = x;
-        return ret;
+        return ((m_bits & 0x7c00u) == 0x7c00u) && (m_bits & 0x03ffu);
     }
 
-    inline operator float() const
+    inline int isfinite() const
     {
-        int s = m_bits & 0x8000u;
-        int e = m_bits & 0x7c00u;
-        int m = m_bits & 0x03ffu;
+        return (m_bits & 0x7c00u) != 0x7c00u;
+    }
 
-        union { float f; uint32_t x; } u;
-        u.x = 0;
-        u.x |= s << 16;
-        u.x |= (-15 + (e >> 10) + 127) << 23;
-        u.x |= m << 13;
+    inline int isinf() const
+    {
+        return (uint16_t)(m_bits << 1) == (0x7c00u << 1);
+    }
 
-        return u.f;
+    inline int isnormal() const
+    {
+        return (isfinite() && (m_bits & 0x7c00u)) || ((m_bits & 0x7fffu) == 0);
     }
 
     inline uint16_t bits()
     {
         return m_bits;
+    }
+
+    /* Cast to other types */
+    operator float() const;
+    inline operator int() const { return (int)(float)*this; }
+
+    /* Factories */
+    static half makeslow(float f);
+    static half makefast(float f);
+    static inline half makebits(uint16_t x)
+    {
+        half ret;
+        ret.m_bits = x;
+        return ret;
     }
 };
 
