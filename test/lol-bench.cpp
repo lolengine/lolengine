@@ -22,8 +22,19 @@ int main(int argc, char **argv)
 {
     Timer timer;
 
+    float ftotal = 0.0f;
+    for (uint32_t i = 0; i < 0xffffffffu; i += 7)
+    {
+        union { float f; uint32_t x; } u;
+        u.x = i;
+
+        float h = (float)half::makefast(u.f);
+        ftotal += h;
+    }
+    Log::Info("time for makeslow: %f (hash %f)\n", timer.GetMs(), ftotal);
+
     uint16_t total = 0;
-    for (uint32_t i = 0; i < 0xffffffffu; i++)
+    for (uint32_t i = 0; i < 0xffffffffu; i += 7)
     {
         union { float f; uint32_t x; } u;
         u.x = i;
@@ -33,7 +44,7 @@ int main(int argc, char **argv)
     }
     Log::Info("time for makeslow: %f (hash %04x)\n", timer.GetMs(), total);
 
-    for (uint32_t i = 0; i < 0xffffffffu; i++)
+    for (uint32_t i = 0; i < 0xffffffffu; i += 7)
     {
         union { float f; uint32_t x; } u;
         u.x = i;
