@@ -5,16 +5,24 @@ if USE_CPPUNIT
 cppunit_tests = lol-test
 endif
 
-noinst_PROGRAMS = quad $(cppunit_tests)
+bench: lol-bench
+	./lol-bench
+
+noinst_PROGRAMS = quad lol-bench $(cppunit_tests)
 
 TESTS = $(cppunit_tests)
 
-lol_test_SOURCES = lol-test.cpp matrix.cpp
+lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp
 lol_test_CXXFLAGS = $(CPPUNIT_CFLAGS)
 lol_test_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 lol_test_LDADD = $(CPPUNIT_LIBS)
 lol_test_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 lol_test_DEPENDENCIES = $(top_builddir)/src/liblol.a
+
+lol_bench_SOURCES = lol-bench.cpp
+lol_bench_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+lol_bench_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+lol_bench_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 quad_SOURCES = debug/quad.cpp
 quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
