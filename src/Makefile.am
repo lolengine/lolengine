@@ -9,7 +9,7 @@ liblol_a_SOURCES = \
     timer.cpp timer.h bitfield.h profiler.cpp profiler.h input.h input.cpp \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
-    worldentity.cpp worldentity.h gradient.cpp gradient.h \
+    worldentity.cpp worldentity.h gradient.cpp gradient.h half.cpp half.h \
     platform.cpp platform.h sprite.cpp sprite.h \
     \
     eglapp.cpp eglapp.h \
