@@ -17,9 +17,9 @@
 #define __LOL_CORE_H__
 
 // Base types
+#include "half.h"
 #include "matrix.h"
 #include "numeric.h"
-#include "half.h"
 #include "timer.h"
 
 // Static classes

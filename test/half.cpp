@@ -35,6 +35,8 @@ class HalfTest : public CppUnit::TestCase
     CPPUNIT_TEST(test_half_classify);
     CPPUNIT_TEST(test_half_to_float);
     CPPUNIT_TEST(test_half_to_int);
+    CPPUNIT_TEST(test_float_op_half);
+    CPPUNIT_TEST(test_half_op_float);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -205,6 +207,89 @@ public:
         CPPUNIT_ASSERT_EQUAL((int)(half)(-1.9f), -1);
         CPPUNIT_ASSERT_EQUAL((int)(half)(65504.0f), 65504);
         CPPUNIT_ASSERT_EQUAL((int)(half)(-65504.0f), -65504);
+    }
+
+    void test_float_op_half()
+    {
+        half zero = 0;
+        half one = 1;
+        half two = 2;
+
+        float a = zero + one;
+        CPPUNIT_ASSERT_EQUAL(1.0f, a);
+        a += zero;
+        CPPUNIT_ASSERT_EQUAL(1.0f, a);
+        a -= zero;
+        CPPUNIT_ASSERT_EQUAL(1.0f, a);
+        a *= one;
+        CPPUNIT_ASSERT_EQUAL(1.0f, a);
+        a /= one;
+        CPPUNIT_ASSERT_EQUAL(1.0f, a);
+
+        float b = one + zero;
+        CPPUNIT_ASSERT_EQUAL(1.0f, b);
+        b += one;
+        CPPUNIT_ASSERT_EQUAL(2.0f, b);
+        b *= two;
+        CPPUNIT_ASSERT_EQUAL(4.0f, b);
+        b -= two;
+        CPPUNIT_ASSERT_EQUAL(2.0f, b);
+        b /= two;
+        CPPUNIT_ASSERT_EQUAL(1.0f, b);
+
+        float c = one - zero;
+        CPPUNIT_ASSERT_EQUAL(1.0f, c);
+
+        float d = two - one;
+        CPPUNIT_ASSERT_EQUAL(1.0f, d);
+
+        float e = two + (-one);
+        CPPUNIT_ASSERT_EQUAL(1.0f, e);
+
+        float f = (two * two) / (one + one);
+        CPPUNIT_ASSERT_EQUAL(2.0f, f);
+    }
+
+    void test_half_op_float()
+    {
+        half zero = 0;
+        half one = 1;
+        half two = 2;
+        half four = 4;
+
+        half a = one + 0.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        a += 0.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        a -= 0.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        a *= 1.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        a /= 1.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+
+        half b = one + 0.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), b.bits());
+        b += 1.0f;
+        CPPUNIT_ASSERT_EQUAL(two.bits(), b.bits());
+        b *= 2.0f;
+        CPPUNIT_ASSERT_EQUAL(four.bits(), b.bits());
+        b -= 2.0f;
+        CPPUNIT_ASSERT_EQUAL(two.bits(), b.bits());
+        b /= 2.0f;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), b.bits());
+
+        half c = 1.0f - zero;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), c.bits());
+
+        half d = 2.0f - one;
+        CPPUNIT_ASSERT_EQUAL(one.bits(), d.bits());
+
+        half e = 2.0f + (-one);
+        CPPUNIT_ASSERT_EQUAL(one.bits(), e.bits());
+
+        half f = (2.0f * two) / (1.0f + one);
+        CPPUNIT_ASSERT_EQUAL(two.bits(), f.bits());
     }
 
 private:
