@@ -36,7 +36,7 @@ protected:
 
 public:
     /* New methods */
-    void Print(vec3i pos, char const *str);
+    void Print(vec3 pos, char const *str);
     ivec2 GetSize() const;
 
 private:

@@ -29,7 +29,7 @@ public:
     /* These methods are general queries */
     static vec2 GetAxis(int axis);
     static ivec2 GetMousePos();
-    static vec3i GetMouseButtons();
+    static ivec3 GetMouseButtons();
 
     /* Entities can subscribe to events */
     static void TrackMouse(WorldEntity *e);

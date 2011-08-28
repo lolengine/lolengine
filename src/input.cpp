@@ -42,7 +42,7 @@ public:
 
 private:
     ivec2 mouse;
-    vec3i buttons;
+    ivec3 buttons;
 
     static int const MAX_ENTITIES = 100;
     WorldEntity *entities[MAX_ENTITIES];
@@ -82,7 +82,7 @@ ivec2 Input::GetMousePos()
     return data->mouse;
 }
 
-vec3i Input::GetMouseButtons()
+ivec3 Input::GetMouseButtons()
 {
     return data->buttons;
 }
@@ -130,7 +130,7 @@ void Input::SetMousePos(ivec2 coord)
     {
         if (data->entities[n] == top)
         {
-            data->entities[n]->mousepos = (ivec2)((vec3i)coord - top->bbox[0]);
+            data->entities[n]->mousepos = (ivec2)((ivec3)coord - top->bbox[0]);
             if (top != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else

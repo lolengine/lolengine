@@ -69,7 +69,7 @@ char const *Font::GetName()
     return data->name;
 }
 
-void Font::Print(vec3i pos, char const *str)
+void Font::Print(vec3 pos, char const *str)
 {
     Scene *scene = Scene::GetDefault();
 

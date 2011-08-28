@@ -160,7 +160,7 @@ template <typename T> struct Vec3
 };
 
 typedef Vec3<float> vec3;
-typedef Vec3<int> vec3i;
+typedef Vec3<int> ivec3;
 
 template <typename T> struct Vec4
 {
@@ -177,7 +177,7 @@ template <typename T> struct Vec4
 };
 
 typedef Vec4<float> vec4;
-typedef Vec4<int> vec4i;
+typedef Vec4<int> ivec4;
 
 #define SCALAR_GLOBAL(elems, op, U) \
     template<typename T> \
@@ -296,7 +296,7 @@ template <typename T> struct Mat4
 };
 
 typedef Mat4<float> mat4;
-typedef Mat4<int> mat4i;
+typedef Mat4<int> imat4;
 
 } /* namespace lol */
 

@@ -44,7 +44,7 @@ public:
     ivec2 GetCount() const;
     ivec2 GetSize(int tileid) const;
     void Bind();
-    void BlitTile(uint32_t id, vec3i pos, int o,
+    void BlitTile(uint32_t id, vec3 pos, int o,
                   float *vertex, float *texture);
 
 private:

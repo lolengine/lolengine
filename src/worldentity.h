@@ -30,8 +30,8 @@ public:
     vec3 bbox[2];
 
     ivec2 mousepos;
-    vec3i mousebuttons;
-    vec3i pressed, clicked, released;
+    ivec3 mousebuttons;
+    ivec3 pressed, clicked, released;
 
 protected:
     WorldEntity();

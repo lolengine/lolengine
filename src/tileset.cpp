@@ -178,7 +178,7 @@ void TileSet::Bind()
     }
 }
 
-void TileSet::BlitTile(uint32_t id, vec3i pos, int o,
+void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
                        float *vertex, float *texture)
 {
     float tx = data->tx * ((id & 0xffff) % data->count.i);
