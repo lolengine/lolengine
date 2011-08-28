@@ -52,9 +52,7 @@ void Sprite::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    vec3i pos = (vec3i)data->pos;
-
-    Scene::GetDefault()->AddTile(data->tileset, data->id, pos, 0);
+    Scene::GetDefault()->AddTile(data->tileset, data->id, data->pos, 0);
 }
 
 Sprite::~Sprite()

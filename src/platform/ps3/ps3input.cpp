@@ -40,7 +40,7 @@ class Ps3InputData
 
 #if defined __CELLOS_LV2__
     vec2 mousepos;
-    vec3i mousebuttons;
+    ivec3 mousebuttons;
 
     CellPadData pad_data[NUM_PADS];
     CellPadFilterIIRSos filter_sos[NUM_PADS][4];
@@ -75,7 +75,7 @@ Ps3Input::Ps3Input()
                                  CELL_PADFILTER_IIR_CUTOFF_2ND_LPF_BT_010);
 
     data->mousepos = vec2(320.0f, 240.0f);
-    data->mousebuttons = vec3i(0, 0, 0);
+    data->mousebuttons = ivec3(0, 0, 0);
 
     gamegroup = GAMEGROUP_BEFORE;
 #endif

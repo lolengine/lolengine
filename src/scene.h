@@ -34,7 +34,7 @@ public:
     static Scene *GetDefault();
     static void Reset();
 
-    void AddTile(TileSet *tileset, int id, vec3i pos, int o);
+    void AddTile(TileSet *tileset, int id, vec3 pos, int o);
     void Render();
 
 private:

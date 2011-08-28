@@ -30,7 +30,7 @@ struct Tile
 {
     TileSet *tileset;
     uint32_t prio;
-    vec3i pos;
+    vec3 pos;
     int id, o;
 };
 
@@ -117,7 +117,7 @@ void Scene::Reset()
     SceneData::scene = NULL;
 }
 
-void Scene::AddTile(TileSet *tileset, int id, vec3i pos, int o)
+void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o)
 {
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
