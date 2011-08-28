@@ -63,6 +63,26 @@ public:
     operator float() const;
     inline operator int() const { return (int)(float)*this; }
 
+    /* Operations */
+    inline half operator -() { return makebits(m_bits ^ 0x8000u); }
+    inline half &operator +=(float f) { return (*this = (half)(*this + f)); }
+    inline half &operator -=(float f) { return (*this = (half)(*this - f)); }
+    inline half &operator *=(float f) { return (*this = (half)(*this * f)); }
+    inline half &operator /=(float f) { return (*this = (half)(*this / f)); }
+    inline half &operator +=(half h) { return (*this = (half)(*this + h)); }
+    inline half &operator -=(half h) { return (*this = (half)(*this - h)); }
+    inline half &operator *=(half h) { return (*this = (half)(*this * h)); }
+    inline half &operator /=(half h) { return (*this = (half)(*this / h)); }
+
+    inline float operator +(float f) const { return (float)*this + f; }
+    inline float operator -(float f) const { return (float)*this - f; }
+    inline float operator *(float f) const { return (float)*this * f; }
+    inline float operator /(float f) const { return (float)*this / f; }
+    inline float operator +(half h) const { return (float)*this + (float)h; }
+    inline float operator -(half h) const { return (float)*this - (float)h; }
+    inline float operator *(half h) const { return (float)*this * (float)h; }
+    inline float operator /(half h) const { return (float)*this / (float)h; }
+
     /* Factories */
     static half makeslow(float f);
     static half makefast(float f);
@@ -73,6 +93,16 @@ public:
         return ret;
     }
 };
+
+inline float &operator +=(float &f, half h) { return f += (float)h; }
+inline float &operator -=(float &f, half h) { return f -= (float)h; }
+inline float &operator *=(float &f, half h) { return f *= (float)h; }
+inline float &operator /=(float &f, half h) { return f /= (float)h; }
+
+inline float operator +(float f, half h) { return f + (float)h; }
+inline float operator -(float f, half h) { return f - (float)h; }
+inline float operator *(float f, half h) { return f * (float)h; }
+inline float operator /(float f, half h) { return f / (float)h; }
 
 } /* namespace lol */
 
