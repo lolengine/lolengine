@@ -23,9 +23,6 @@ namespace lol
 
 class half
 {
-private:
-    uint16_t m_bits;
-
 public:
     inline half() { }
 
@@ -36,27 +33,22 @@ public:
 
     inline int isnan() const
     {
-        return ((m_bits & 0x7c00u) == 0x7c00u) && (m_bits & 0x03ffu);
+        return ((bits & 0x7c00u) == 0x7c00u) && (bits & 0x03ffu);
     }
 
     inline int isfinite() const
     {
-        return (m_bits & 0x7c00u) != 0x7c00u;
+        return (bits & 0x7c00u) != 0x7c00u;
     }
 
     inline int isinf() const
     {
-        return (uint16_t)(m_bits << 1) == (0x7c00u << 1);
+        return (uint16_t)(bits << 1) == (0x7c00u << 1);
     }
 
     inline int isnormal() const
     {
-        return (isfinite() && (m_bits & 0x7c00u)) || ((m_bits & 0x7fffu) == 0);
-    }
-
-    inline uint16_t bits()
-    {
-        return m_bits;
+        return (isfinite() && (bits & 0x7c00u)) || ((bits & 0x7fffu) == 0);
     }
 
     /* Cast to other types */
@@ -64,7 +56,7 @@ public:
     inline operator int() const { return (int)(float)*this; }
 
     /* Operations */
-    inline half operator -() { return makebits(m_bits ^ 0x8000u); }
+    inline half operator -() { return makebits(bits ^ 0x8000u); }
     inline half &operator +=(float f) { return (*this = (half)(*this + f)); }
     inline half &operator -=(float f) { return (*this = (half)(*this - f)); }
     inline half &operator *=(float f) { return (*this = (half)(*this * f)); }
@@ -89,9 +81,12 @@ public:
     static inline half makebits(uint16_t x)
     {
         half ret;
-        ret.m_bits = x;
+        ret.bits = x;
         return ret;
     }
+
+    /* Internal representation */
+    uint16_t bits;
 };
 
 inline float &operator +=(float &f, half h) { return f += (float)h; }
