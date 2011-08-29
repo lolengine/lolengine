@@ -16,6 +16,7 @@
 #if !defined __LOL_HALF_H__
 #define __LOL_HALF_H__
 
+#include <cstdio>
 #include <stdint.h>
 
 namespace lol
@@ -54,6 +55,10 @@ public:
     /* Cast to other types */
     operator float() const;
     inline operator int() const { return (int)(float)*this; }
+
+    /* Array conversions */
+    static size_t copy(half *dst, float const *src, size_t nelem);
+    static size_t copy(float *dst, half const *src, size_t nelem);
 
     /* Operations */
     inline half operator -() { return makebits(bits ^ 0x8000u); }
