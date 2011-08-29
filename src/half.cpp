@@ -196,26 +196,34 @@ static inline uint32_t half_to_float_branch(uint16_t x)
     return s | (((e >> 10) + 112) << 23) | (m << 13);
 }
 
+/* Constructor from float. Uses the non-branching version because benchmarks
+ * indicate it is always twice as fast. The penalty of loading the lookup
+ * tables does not seem important. */
 half half::makefast(float f)
 {
     union { float f; uint32_t x; } u = { f };
     return makebits(float_to_half_nobranch(u.x));
 }
 
+/* Constructor from float with better precision. */
 half half::makeslow(float f)
 {
     union { float f; uint32_t x; } u = { f };
     return makebits(float_to_half_branch(u.x));
 }
 
+/* Cast to float. Uses the branching version because loading the tables
+ * for only one value is going to be cache-expensive. */
 half::operator float() const
 {
+    /* FIXME: there is a hidden "this" in this method. Export more
+     * code so that it can all work in registers instead. */
     union { float f; uint32_t x; } u;
     u.x = half_to_float_branch(bits);
     return u.f;
 }
 
-size_t half::copy(half *dst, float const *src, size_t nelem)
+size_t half::convert(half *dst, float const *src, size_t nelem)
 {
     for (size_t i = 0; i < nelem; i++)
     {
@@ -227,7 +235,7 @@ size_t half::copy(half *dst, float const *src, size_t nelem)
     return nelem;
 }
 
-size_t half::copy(float *dst, half const *src, size_t nelem)
+size_t half::convert(float *dst, half const *src, size_t nelem)
 {
     for (size_t i = 0; i < nelem; i++)
     {

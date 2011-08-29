@@ -33,9 +33,9 @@ namespace lol
 class HalfTest : public CppUnit::TestCase
 {
     CPPUNIT_TEST_SUITE(HalfTest);
-    CPPUNIT_TEST(test_half_makebits);
+    CPPUNIT_TEST(test_half_from_float);
     CPPUNIT_TEST(test_half_makeslow);
-    CPPUNIT_TEST(test_half_makefast);
+    CPPUNIT_TEST(test_half_makebits);
     CPPUNIT_TEST(test_half_is_nan);
     CPPUNIT_TEST(test_half_is_inf);
     CPPUNIT_TEST(test_half_is_finite);
@@ -56,12 +56,12 @@ public:
 
     void tearDown() {}
 
-    void test_half_makebits()
+    void test_half_from_float()
     {
-        for (unsigned int i = 0; i < 0x10000; i++)
+        for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
-            half a = half::makebits(i);
-            uint16_t b = i;
+            half a = (half)pairs[i].f;
+            uint16_t b = pairs[i].x;
             CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
@@ -76,12 +76,12 @@ public:
         }
     }
 
-    void test_half_makefast()
+    void test_half_makebits()
     {
-        for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
+        for (unsigned int i = 0; i < 0x10000; i++)
         {
-            half a = half::makefast(pairs[i].f);
-            uint16_t b = pairs[i].x;
+            half a = half::makebits(i);
+            uint16_t b = i;
             CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
