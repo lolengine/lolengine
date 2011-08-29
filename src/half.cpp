@@ -74,8 +74,14 @@ static inline uint16_t float_to_half_branch(uint32_t x)
 
     /* If zero, or denormal, or exponent underflows too much for a denormal,
      * return signed zero. */
+#if !defined __CELLOS_LV2__
     if (e < 103)
         return bits;
+#else
+    /* PS3 don't know bout my denormals */
+    if (e < 113)
+        return bits;
+#endif
 
     /* If NaN, return NaN. If Inf or exponent overflow, return Inf. */
     if (e > 142)
@@ -87,6 +93,7 @@ static inline uint16_t float_to_half_branch(uint32_t x)
         return bits;
     }
 
+#if !defined __CELLOS_LV2__
     /* If exponent underflows but not too much, return a denormal */
     if (e < 113)
     {
@@ -96,6 +103,7 @@ static inline uint16_t float_to_half_branch(uint32_t x)
         bits |= (m >> (114 - e)) + ((m >> (113 - e)) & 1);
         return bits;
     }
+#endif
 
     bits |= ((e - 112) << 10) | (m >> 1);
     /* Extra rounding. An overflow will set mantissa to 0 and increment
@@ -172,6 +180,7 @@ static inline uint32_t half_to_float_branch(uint16_t x)
 
     if (e == 0)
     {
+#if !defined __CELLOS_LV2__
         uint32_t v = m | (m >> 1);
         v |= v >> 2;
         v |= v >> 4;
@@ -182,6 +191,10 @@ static inline uint32_t half_to_float_branch(uint16_t x)
         /* We don't have to remove the 10th mantissa bit because it gets
          * added to our underestimated exponent. */
         return s | (((125 - e) << 23) + (m << e));
+#else
+        /* PS3 don't know bout my denormals */
+        return s;
+#endif
     }
 
     if (e == 0x7c00u)
@@ -202,11 +215,17 @@ static inline uint32_t half_to_float_branch(uint16_t x)
 half half::makefast(float f)
 {
     union { float f; uint32_t x; } u = { f };
+#if !defined __CELLOS_LV2__
     return makebits(float_to_half_nobranch(u.x));
+#else
+    /* This code is slightly faster on the PS3, mostly because we
+     * don't need to care about denormals. */
+    return makebits(float_to_half_branch(u.x));
+#endif
 }
 
 /* Constructor from float with better precision. */
-half half::makeslow(float f)
+half half::makeaccurate(float f)
 {
     union { float f; uint32_t x; } u = { f };
     return makebits(float_to_half_branch(u.x));
@@ -229,7 +248,13 @@ size_t half::convert(half *dst, float const *src, size_t nelem)
     {
         union { float f; uint32_t x; } u;
         u.f = *src++;
+#if !defined __CELLOS_LV2__
         *dst++ = makebits(float_to_half_nobranch(u.x));
+#else
+        /* This code is slightly faster on the PS3, mostly because we
+         * don't need to care about denormals. */
+        *dst++ = makebits(float_to_half_branch(u.x));
+#endif
     }
 
     return nelem;
@@ -240,7 +265,13 @@ size_t half::convert(float *dst, half const *src, size_t nelem)
     for (size_t i = 0; i < nelem; i++)
     {
         union { float f; uint32_t x; } u;
+#if !defined __CELLOS_LV2__
+        /* This code is really too slow on the PS3, even with the denormal
+         * handling stripped off. */
         u.x = half_to_float_nobranch((*src++).bits);
+#else
+        u.x = half_to_float_branch((*src++).bits);
+#endif
         *dst++ = u.f;
     }
 

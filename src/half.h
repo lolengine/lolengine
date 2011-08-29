@@ -79,8 +79,8 @@ public:
     inline float operator /(half h) const { return (float)*this / (float)h; }
 
     /* Factories */
-    static half makeslow(float f);
     static half makefast(float f);
+    static half makeaccurate(float f);
     static inline half makebits(uint16_t x)
     {
         half ret;
