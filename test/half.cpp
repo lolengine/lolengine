@@ -17,7 +17,15 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 
+#include <cmath>
+
 #include "core.h"
+
+/* This will not work with aggressive optimisation, but a reasonable
+ * assumption is that such environments do have a proper isnan(). */
+#if !defined isnan
+#   define isnan(x) (!((x) == (x)))
+#endif
 
 namespace lol
 {
