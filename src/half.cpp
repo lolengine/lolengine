@@ -114,8 +114,8 @@ static uint32_t const shiftmagic = 0x07c4acddu;
 /* Lookup table-based algorithm from “Fast Half Float Conversions”
  * by Jeroen van der Zijp, November 2008. Tables are generated using
  * the C++ preprocessor, thanks to a branchless implementation also
- * used in half_to_float_branch(). This code is actually almost always
- * slower than the branching one. */
+ * used in half_to_float_branch(). This code is very fast when performing
+ * conversions on arrays of values. */
 static inline uint32_t half_to_float_nobranch(uint16_t x)
 {
 #define M3(i) ((i) | ((i) >> 1))
@@ -157,7 +157,9 @@ static inline uint32_t half_to_float_nobranch(uint16_t x)
 }
 
 /* This algorithm is similar to the OpenEXR implementation, except it
- * uses branchless code in the denormal path. */
+ * uses branchless code in the denormal path. This is slower than the
+ * table version, but will be more friendly to the cache for occasional
+ * uses. */
 static inline uint32_t half_to_float_branch(uint16_t x)
 {
     uint32_t s = (x & 0x8000u) << 16;
@@ -211,6 +213,30 @@ half::operator float() const
     union { float f; uint32_t x; } u;
     u.x = half_to_float_branch(bits);
     return u.f;
+}
+
+size_t half::copy(half *dst, float const *src, size_t nelem)
+{
+    for (size_t i = 0; i < nelem; i++)
+    {
+        union { float f; uint32_t x; } u;
+        u.f = *src++;
+        *dst++ = makebits(float_to_half_nobranch(u.x));
+    }
+
+    return nelem;
+}
+
+size_t half::copy(float *dst, half const *src, size_t nelem)
+{
+    for (size_t i = 0; i < nelem; i++)
+    {
+        union { float f; uint32_t x; } u;
+        u.x = half_to_float_nobranch((*src++).bits);
+        *dst++ = u.f;
+    }
+
+    return nelem;
 }
 
 } /* namespace lol */
