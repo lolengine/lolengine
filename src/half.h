@@ -32,24 +32,24 @@ public:
         *this = makefast(f);
     }
 
-    inline int isnan() const
+    inline int is_nan() const
     {
         return ((bits & 0x7c00u) == 0x7c00u) && (bits & 0x03ffu);
     }
 
-    inline int isfinite() const
+    inline int is_finite() const
     {
         return (bits & 0x7c00u) != 0x7c00u;
     }
 
-    inline int isinf() const
+    inline int is_inf() const
     {
         return (uint16_t)(bits << 1) == (0x7c00u << 1);
     }
 
-    inline int isnormal() const
+    inline int is_normal() const
     {
-        return (isfinite() && (bits & 0x7c00u)) || ((bits & 0x7fffu) == 0);
+        return (is_finite() && (bits & 0x7c00u)) || ((bits & 0x7fffu) == 0);
     }
 
     /* Cast to other types */
