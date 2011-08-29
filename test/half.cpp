@@ -28,10 +28,10 @@ class HalfTest : public CppUnit::TestCase
     CPPUNIT_TEST(test_half_makebits);
     CPPUNIT_TEST(test_half_makeslow);
     CPPUNIT_TEST(test_half_makefast);
-    CPPUNIT_TEST(test_half_isnan);
-    CPPUNIT_TEST(test_half_isinf);
-    CPPUNIT_TEST(test_half_isfinite);
-    CPPUNIT_TEST(test_half_isnormal);
+    CPPUNIT_TEST(test_half_is_nan);
+    CPPUNIT_TEST(test_half_is_inf);
+    CPPUNIT_TEST(test_half_is_finite);
+    CPPUNIT_TEST(test_half_is_normal);
     CPPUNIT_TEST(test_half_classify);
     CPPUNIT_TEST(test_half_to_float);
     CPPUNIT_TEST(test_half_to_int);
@@ -78,71 +78,71 @@ public:
         }
     }
 
-    void test_half_isnan()
+    void test_half_is_nan()
     {
-        CPPUNIT_ASSERT(half::makebits(0x7c01).isnan());
-        CPPUNIT_ASSERT(half::makebits(0xfc01).isnan());
-        CPPUNIT_ASSERT(half::makebits(0x7e00).isnan());
-        CPPUNIT_ASSERT(half::makebits(0xfe00).isnan());
+        CPPUNIT_ASSERT(half::makebits(0x7c01).is_nan());
+        CPPUNIT_ASSERT(half::makebits(0xfc01).is_nan());
+        CPPUNIT_ASSERT(half::makebits(0x7e00).is_nan());
+        CPPUNIT_ASSERT(half::makebits(0xfe00).is_nan());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7c00).isnan());
-        CPPUNIT_ASSERT(!half::makebits(0xfc00).isnan());
+        CPPUNIT_ASSERT(!half::makebits(0x7c00).is_nan());
+        CPPUNIT_ASSERT(!half::makebits(0xfc00).is_nan());
 
-        CPPUNIT_ASSERT(!half(0.0f).isnan());
-        CPPUNIT_ASSERT(!half(-0.0f).isnan());
-        CPPUNIT_ASSERT(!half(2.0f).isnan());
-        CPPUNIT_ASSERT(!half(-2.0f).isnan());
+        CPPUNIT_ASSERT(!half(0.0f).is_nan());
+        CPPUNIT_ASSERT(!half(-0.0f).is_nan());
+        CPPUNIT_ASSERT(!half(2.0f).is_nan());
+        CPPUNIT_ASSERT(!half(-2.0f).is_nan());
     }
 
-    void test_half_isinf()
+    void test_half_is_inf()
     {
-        CPPUNIT_ASSERT(half(65536.0f).isinf());
-        CPPUNIT_ASSERT(half(-65536.0f).isinf());
+        CPPUNIT_ASSERT(half(65536.0f).is_inf());
+        CPPUNIT_ASSERT(half(-65536.0f).is_inf());
 
-        CPPUNIT_ASSERT(!half(0.0f).isinf());
-        CPPUNIT_ASSERT(!half(-0.0f).isinf());
-        CPPUNIT_ASSERT(!half(65535.0f).isinf());
-        CPPUNIT_ASSERT(!half(-65535.0f).isinf());
+        CPPUNIT_ASSERT(!half(0.0f).is_inf());
+        CPPUNIT_ASSERT(!half(-0.0f).is_inf());
+        CPPUNIT_ASSERT(!half(65535.0f).is_inf());
+        CPPUNIT_ASSERT(!half(-65535.0f).is_inf());
 
-        CPPUNIT_ASSERT(half::makebits(0x7c00).isinf());
-        CPPUNIT_ASSERT(half::makebits(0xfc00).isinf());
+        CPPUNIT_ASSERT(half::makebits(0x7c00).is_inf());
+        CPPUNIT_ASSERT(half::makebits(0xfc00).is_inf());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7e00).isinf());
-        CPPUNIT_ASSERT(!half::makebits(0xfe00).isinf());
+        CPPUNIT_ASSERT(!half::makebits(0x7e00).is_inf());
+        CPPUNIT_ASSERT(!half::makebits(0xfe00).is_inf());
     }
 
-    void test_half_isfinite()
+    void test_half_is_finite()
     {
-        CPPUNIT_ASSERT(half(0.0f).isfinite());
-        CPPUNIT_ASSERT(half(-0.0f).isfinite());
-        CPPUNIT_ASSERT(half(65535.0f).isfinite());
-        CPPUNIT_ASSERT(half(-65535.0f).isfinite());
+        CPPUNIT_ASSERT(half(0.0f).is_finite());
+        CPPUNIT_ASSERT(half(-0.0f).is_finite());
+        CPPUNIT_ASSERT(half(65535.0f).is_finite());
+        CPPUNIT_ASSERT(half(-65535.0f).is_finite());
 
-        CPPUNIT_ASSERT(!half(65536.0f).isfinite());
-        CPPUNIT_ASSERT(!half(-65536.0f).isfinite());
+        CPPUNIT_ASSERT(!half(65536.0f).is_finite());
+        CPPUNIT_ASSERT(!half(-65536.0f).is_finite());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7c00).isfinite());
-        CPPUNIT_ASSERT(!half::makebits(0xfc00).isfinite());
+        CPPUNIT_ASSERT(!half::makebits(0x7c00).is_finite());
+        CPPUNIT_ASSERT(!half::makebits(0xfc00).is_finite());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7e00).isfinite());
-        CPPUNIT_ASSERT(!half::makebits(0xfe00).isfinite());
+        CPPUNIT_ASSERT(!half::makebits(0x7e00).is_finite());
+        CPPUNIT_ASSERT(!half::makebits(0xfe00).is_finite());
     }
 
-    void test_half_isnormal()
+    void test_half_is_normal()
     {
-        CPPUNIT_ASSERT(half(0.0f).isnormal());
-        CPPUNIT_ASSERT(half(-0.0f).isnormal());
-        CPPUNIT_ASSERT(half(65535.0f).isnormal());
-        CPPUNIT_ASSERT(half(-65535.0f).isnormal());
+        CPPUNIT_ASSERT(half(0.0f).is_normal());
+        CPPUNIT_ASSERT(half(-0.0f).is_normal());
+        CPPUNIT_ASSERT(half(65535.0f).is_normal());
+        CPPUNIT_ASSERT(half(-65535.0f).is_normal());
 
-        CPPUNIT_ASSERT(!half(65536.0f).isnormal());
-        CPPUNIT_ASSERT(!half(-65536.0f).isnormal());
+        CPPUNIT_ASSERT(!half(65536.0f).is_normal());
+        CPPUNIT_ASSERT(!half(-65536.0f).is_normal());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7c00).isnormal());
-        CPPUNIT_ASSERT(!half::makebits(0xfc00).isnormal());
+        CPPUNIT_ASSERT(!half::makebits(0x7c00).is_normal());
+        CPPUNIT_ASSERT(!half::makebits(0xfc00).is_normal());
 
-        CPPUNIT_ASSERT(!half::makebits(0x7e00).isnormal());
-        CPPUNIT_ASSERT(!half::makebits(0xfe00).isnormal());
+        CPPUNIT_ASSERT(!half::makebits(0x7e00).is_normal());
+        CPPUNIT_ASSERT(!half::makebits(0xfe00).is_normal());
     }
 
     void test_half_classify()
@@ -150,20 +150,20 @@ public:
         for (uint32_t i = 0; i < 0x10000; i++)
         {
             half h = half::makebits(i);
-            if (h.isnan())
+            if (h.is_nan())
             {
-                CPPUNIT_ASSERT(!h.isinf());
-                CPPUNIT_ASSERT(!h.isnormal());
-                CPPUNIT_ASSERT(!h.isfinite());
+                CPPUNIT_ASSERT(!h.is_inf());
+                CPPUNIT_ASSERT(!h.is_normal());
+                CPPUNIT_ASSERT(!h.is_finite());
             }
-            else if (h.isinf())
+            else if (h.is_inf())
             {
-                CPPUNIT_ASSERT(!h.isnormal());
-                CPPUNIT_ASSERT(!h.isfinite());
+                CPPUNIT_ASSERT(!h.is_normal());
+                CPPUNIT_ASSERT(!h.is_finite());
             }
             else
             {
-                CPPUNIT_ASSERT(h.isfinite());
+                CPPUNIT_ASSERT(h.is_finite());
             }
         }
     }
@@ -182,10 +182,10 @@ public:
             half h = half::makebits(i);
             float f = (float)h;
             half g = (half)f;
-            if (h.isnan())
+            if (h.is_nan())
             {
                 CPPUNIT_ASSERT(isnan(f));
-                CPPUNIT_ASSERT(g.isnan());
+                CPPUNIT_ASSERT(g.is_nan());
             }
             else
             {
