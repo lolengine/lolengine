@@ -34,7 +34,7 @@ class HalfTest : public CppUnit::TestCase
 {
     CPPUNIT_TEST_SUITE(HalfTest);
     CPPUNIT_TEST(test_half_from_float);
-    CPPUNIT_TEST(test_half_makeslow);
+    CPPUNIT_TEST(test_half_makeaccurate);
     CPPUNIT_TEST(test_half_makebits);
     CPPUNIT_TEST(test_half_is_nan);
     CPPUNIT_TEST(test_half_is_inf);
@@ -66,11 +66,11 @@ public:
         }
     }
 
-    void test_half_makeslow()
+    void test_half_makeaccurate()
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
-            half a = half::makeslow(pairs[i].f);
+            half a = half::makeaccurate(pairs[i].f);
             uint16_t b = pairs[i].x;
             CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }

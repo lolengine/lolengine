@@ -66,30 +66,30 @@ static void bench_half(int mode)
         /* Convert half to float (array) */
         timer.GetMs();
         half::convert(pf, ph, HALF_TABLE_SIZE);
-        result[1] += timer.GetMs();
+        result[0] += timer.GetMs();
 
         /* Convert half to float (fast) */
         timer.GetMs();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = (float)ph[i];
-        result[0] += timer.GetMs();
+        result[1] += timer.GetMs();
 
         /* Convert float to half (array) */
         timer.GetMs();
         half::convert(ph, pf, HALF_TABLE_SIZE);
-        result[4] += timer.GetMs();
+        result[2] += timer.GetMs();
 
         /* Convert float to half (fast) */
         timer.GetMs();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = (half)pf[i];
-        result[2] += timer.GetMs();
+        result[3] += timer.GetMs();
 
-        /* Convert float to half (slow) */
+        /* Convert float to half (accurate) */
         timer.GetMs();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
-            ph[i] = half::makeslow(pf[i]);
-        result[3] += timer.GetMs();
+            ph[i] = half::makeaccurate(pf[i]);
+        result[4] += timer.GetMs();
 
         /* Change sign of every half */
         timer.GetMs();
@@ -116,14 +116,14 @@ static void bench_half(int mode)
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1000000.0f / (HALF_TABLE_SIZE * HALF_RUNS);
 
-    Log::Info("                         ns/elem\n");
-    Log::Info("float = half            %7.3f\n", result[0]);
-    Log::Info("float[] = half[]        %7.3f\n", result[1]);
-    Log::Info("half = float            %7.3f\n", result[2]);
-    Log::Info("half = makeslow(float)  %7.3f\n", result[3]);
-    Log::Info("half[] = float[]        %7.3f\n", result[4]);
-    Log::Info("half = -half            %7.3f\n", result[5]);
-    Log::Info("float += half           %7.3f\n", result[6]);
-    Log::Info("half += float           %7.3f\n", result[7]);
+    Log::Info("                          ns/elem\n");
+    Log::Info("float[] = half[]         %7.3f\n", result[0]);
+    Log::Info("float = half             %7.3f\n", result[1]);
+    Log::Info("half[] = float[]         %7.3f\n", result[2]);
+    Log::Info("half = float (fast)      %7.3f\n", result[3]);
+    Log::Info("half = float (accurate)  %7.3f\n", result[4]);
+    Log::Info("half = -half             %7.3f\n", result[5]);
+    Log::Info("float += half            %7.3f\n", result[6]);
+    Log::Info("half += float            %7.3f\n", result[7]);
 }
 
