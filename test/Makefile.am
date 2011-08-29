@@ -8,6 +8,12 @@ endif
 bench: lol-bench
 	./lol-bench
 
+all-local: quad$(EXEEXT) lol-bench$(EXEEXT)
+	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
+	test x$(MAKE_FSELF) = xno || make_fself lol-bench$(EXEEXT) lol-bench.self
+
+CLEANFILES = quad.self lol-bench.self
+
 noinst_PROGRAMS = quad lol-bench $(cppunit_tests)
 
 TESTS = $(cppunit_tests)
