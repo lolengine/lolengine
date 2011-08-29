@@ -5,3 +5,7 @@ DIST_SUBDIRS = $(SUBDIRS)
 EXTRA_DIST = bootstrap build-linux build-mingw
 AUTOMAKE_OPTIONS = dist-bzip2
 
+bench:
+	cd test && $(MAKE) $(AM_MAKEFLAGS) $@
+.PHONY: bench
+

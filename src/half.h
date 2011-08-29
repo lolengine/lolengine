@@ -25,12 +25,10 @@ namespace lol
 class half
 {
 public:
+    /* Constructors. Always inline so that the code can work in registers
+     * instead of calling routines with the hidden "this" parameter. */
     inline half() { }
-
-    inline half(float f)
-    {
-        *this = makefast(f);
-    }
+    inline half(float f) { *this = makefast(f); }
 
     inline int is_nan() const
     {
@@ -57,8 +55,8 @@ public:
     inline operator int() const { return (int)(float)*this; }
 
     /* Array conversions */
-    static size_t copy(half *dst, float const *src, size_t nelem);
-    static size_t copy(float *dst, half const *src, size_t nelem);
+    static size_t convert(half *dst, float const *src, size_t nelem);
+    static size_t convert(float *dst, half const *src, size_t nelem);
 
     /* Operations */
     inline half operator -() { return makebits(bits ^ 0x8000u); }
