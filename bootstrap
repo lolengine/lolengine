@@ -116,7 +116,7 @@ fi
 save_IFS=$IFS
 IFS=:
 tmp="$M4PATH"
-for x in "$tmp"; do
+for x in $tmp; do
   if test -n "$x"; then
     aclocalflags="${aclocalflags} -I $x"
   fi

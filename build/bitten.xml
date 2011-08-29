@@ -12,7 +12,10 @@
           : ;
           ;;
         windows-i386)
-          PATH=&quot;$''PATH:./contrib/gtk-2.22.1/bin&quot; M4PATH=&quot;./contrib/gtk-2.22.1/share/aclocal&quot; ./bootstrap;
+          PATH=&quot;$''PATH:./contrib/gtk-2.22.1/bin&quot;;
+          M4PATH=&quot;$''M4PATH:./contrib/gtk-2.22.1/share/aclocal&quot;;
+          M4PATH=&quot;$''M4PATH:./contrib/cppunit-1.12.2/share/aclocal&quot;;
+          PATH=&quot;$''PATH&quot; M4PATH=&quot;$''M4PATH&quot; ./bootstrap;
           ;;
         *)
           ./bootstrap
@@ -30,6 +33,8 @@
           : ;
           ;;
         windows-i386)
+          PKG_CONFIG_PATH=&quot;$''PKG_CONFIG_PATH:$''PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig&quot;;
+          PKG_CONFIG_PATH=&quot;$''PKG_CONFIG_PATH:$''PWD/contrib/cppunit-1.12.2/lib/pkgconfig&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/sdl-1.2.14/include&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/sdl-image-1.2.10/include&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/sdl-mixer-1.2.11/include&quot;;
@@ -43,6 +48,7 @@
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/gtk-2.22.1/include/atk-1.0&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/gtkglarea-2.0.1/include&quot;;
+          CPPFLAGS=&quot;$''CPPFLAGS -I$''PWD/contrib/cppunit-1.12.2/include&quot;;
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/sdl-1.2.14/lib&quot;;
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/sdl-image-1.2.10/lib&quot;;
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/sdl-mixer-1.2.11/lib&quot;;
@@ -50,6 +56,7 @@
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/gtk-2.22.1/lib&quot;;
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/gtk-2.22.1/bin&quot;;
           LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/gtkglarea-2.0.1/lib&quot;;
+          LDFLAGS=&quot;$''LDFLAGS -L$''PWD/contrib/cppunit-1.12.2/lib&quot;;
           CPPFLAGS=&quot;$''CPPFLAGS -mms-bitfields&quot;;
           LDFLAGS=&quot;$''LDFLAGS -static-libgcc -static-libstdc++&quot;;
           GTK_LIBS=&quot;$''GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32&quot;;
@@ -60,7 +67,7 @@
             HOSTFLAGS=--host=i586-mingw32msvc;
             BUILDFLAGS=--build=none;
           fi;
-          PKG_CONFIG_PATH=&quot;$''PKG_CONFIG_PATH:$''PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig&quot; ./configure $''HOSTFLAGS $''BUILDFLAGS CPPFLAGS=&quot;$''CPPFLAGS&quot; LDFLAGS=&quot;$''LDFLAGS&quot; GTK_LIBS=&quot;$''GTK_LIBS&quot; LOL_LIBS=&quot;$''LOL_LIBS&quot;;
+          PKG_CONFIG_PATH=&quot;$''PKG_CONFIG_PATH&quot; ./configure $''HOSTFLAGS $''BUILDFLAGS CPPFLAGS=&quot;$''CPPFLAGS&quot; LDFLAGS=&quot;$''LDFLAGS&quot; GTK_LIBS=&quot;$''GTK_LIBS&quot; LOL_LIBS=&quot;$''LOL_LIBS&quot;;
           ;;
         ps3-ppu)
           if test -f build-ps3; then ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none; fi;

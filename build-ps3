@@ -2,6 +2,9 @@
 
 ##  Native PS3 compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
 
+# This can't hurt
+make distclean
+
 set -e
 
 # Only on Windows
