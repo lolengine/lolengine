@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         u.x = i;
 
         half h = half::makeslow(u.f);
-        total ^= h.bits();
+        total ^= h.bits;
     }
     Log::Info("time for makeslow: %f (hash %04x)\n", timer.GetMs(), total);
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
         u.x = i;
 
         half h = half::makefast(u.f);
-        total ^= h.bits();
+        total ^= h.bits;
     }
     Log::Info("time for makefast: %f (hash %04x)\n", timer.GetMs(), total);
 

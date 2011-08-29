@@ -54,7 +54,7 @@ public:
         {
             half a = half::makebits(i);
             uint16_t b = i;
-            CPPUNIT_ASSERT_EQUAL(a.bits(), b);
+            CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
 
@@ -64,7 +64,7 @@ public:
         {
             half a = half::makeslow(pairs[i].f);
             uint16_t b = pairs[i].x;
-            CPPUNIT_ASSERT_EQUAL(a.bits(), b);
+            CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
 
@@ -74,7 +74,7 @@ public:
         {
             half a = half::makefast(pairs[i].f);
             uint16_t b = pairs[i].x;
-            CPPUNIT_ASSERT_EQUAL(a.bits(), b);
+            CPPUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
 
@@ -190,7 +190,7 @@ public:
             else
             {
                 CPPUNIT_ASSERT(!isnan(f));
-                CPPUNIT_ASSERT_EQUAL(g.bits(), h.bits());
+                CPPUNIT_ASSERT_EQUAL(g.bits, h.bits);
             }
         }
     }
@@ -258,38 +258,38 @@ public:
         half four = 4;
 
         half a = one + 0.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, a.bits);
         a += 0.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, a.bits);
         a -= 0.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, a.bits);
         a *= 1.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, a.bits);
         a /= 1.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), a.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, a.bits);
 
         half b = one + 0.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), b.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, b.bits);
         b += 1.0f;
-        CPPUNIT_ASSERT_EQUAL(two.bits(), b.bits());
+        CPPUNIT_ASSERT_EQUAL(two.bits, b.bits);
         b *= 2.0f;
-        CPPUNIT_ASSERT_EQUAL(four.bits(), b.bits());
+        CPPUNIT_ASSERT_EQUAL(four.bits, b.bits);
         b -= 2.0f;
-        CPPUNIT_ASSERT_EQUAL(two.bits(), b.bits());
+        CPPUNIT_ASSERT_EQUAL(two.bits, b.bits);
         b /= 2.0f;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), b.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, b.bits);
 
         half c = 1.0f - zero;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), c.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, c.bits);
 
         half d = 2.0f - one;
-        CPPUNIT_ASSERT_EQUAL(one.bits(), d.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, d.bits);
 
         half e = 2.0f + (-one);
-        CPPUNIT_ASSERT_EQUAL(one.bits(), e.bits());
+        CPPUNIT_ASSERT_EQUAL(one.bits, e.bits);
 
         half f = (2.0f * two) / (1.0f + one);
-        CPPUNIT_ASSERT_EQUAL(two.bits(), f.bits());
+        CPPUNIT_ASSERT_EQUAL(two.bits, f.bits);
     }
 
 private:

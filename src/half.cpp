@@ -19,16 +19,22 @@ using namespace std;
 namespace lol
 {
 
+/* These macros implement a finite iterator useful to build lookup
+ * tables. For instance, S64(0) will call S1(x) for all values of x
+ * between 0 and 63.
+ * Due to the exponential behaviour of the calls, the stress on the
+ * compiler may be important. */
+#define S4(x)    S1((x)),   S1((x)+1),     S1((x)+2),     S1((x)+3)
+#define S16(x)   S4((x)),   S4((x)+4),     S4((x)+8),     S4((x)+12)
+#define S64(x)   S16((x)),  S16((x)+16),   S16((x)+32),   S16((x)+48)
+#define S256(x)  S64((x)),  S64((x)+64),   S64((x)+128),  S64((x)+192)
+#define S1024(x) S256((x)), S256((x)+256), S256((x)+512), S256((x)+768)
+
 /* Lookup table-based algorithm from “Fast Half Float Conversions”
  * by Jeroen van der Zijp, November 2008. No rounding is performed,
  * and some NaN values may be incorrectly converted to Inf. */
-half half::makefast(float f)
+static inline uint16_t float_to_half_nobranch(uint32_t x)
 {
-#define S4(x)    S1(4*(x)),  S1(4*(x)+1),  S1(4*(x)+2),  S1(4*(x)+3)
-#define S16(x)   S4(4*(x)),  S4(4*(x)+1),  S4(4*(x)+2),  S4(4*(x)+3)
-#define S64(x)  S16(4*(x)), S16(4*(x)+1), S16(4*(x)+2), S16(4*(x)+3)
-#define S256(x) S64(4*(x)), S64(4*(x)+1), S64(4*(x)+2), S64(4*(x)+3)
-
     static uint16_t const basetable[512] =
     {
 #define S1(i) (((i) < 103) ? 0x0000: \
@@ -52,28 +58,24 @@ half half::makefast(float f)
 #undef S1
     };
 
-    union { float f; uint32_t x; } u = { f };
-
-    uint16_t bits = basetable[(u.x >> 23) & 0x1ff];
-    bits |= (u.x & 0x007fffff) >> shifttable[(u.x >> 23) & 0x1ff];
-    return makebits(bits);
+    uint16_t bits = basetable[(x >> 23) & 0x1ff];
+    bits |= (x & 0x007fffff) >> shifttable[(x >> 23) & 0x1ff];
+    return bits;
 }
 
 /* This method is faster than the OpenEXR implementation (very often
  * used, eg. in Ogre), with the additional benefit of rounding, inspired
  * by James Tursa’s half-precision code. */
-half half::makeslow(float f)
+static inline uint16_t float_to_half_branch(uint32_t x)
 {
-    union { float f; uint32_t x; } u = { f };
-
-    uint16_t bits = (u.x >> 16) & 0x8000; /* Get the sign */
-    uint16_t m = (u.x >> 12) & 0x07ff; /* Keep one extra bit for rounding */
-    unsigned int e = (u.x >> 23) & 0xff; /* Using int is faster here */
+    uint16_t bits = (x >> 16) & 0x8000; /* Get the sign */
+    uint16_t m = (x >> 12) & 0x07ff; /* Keep one extra bit for rounding */
+    unsigned int e = (x >> 23) & 0xff; /* Using int is faster here */
 
     /* If zero, or denormal, or exponent underflows too much for a denormal,
      * return signed zero. */
     if (e < 103)
-        return makebits(bits);
+        return bits;
 
     /* If NaN, return NaN. If Inf or exponent overflow, return Inf. */
     if (e > 142)
@@ -81,8 +83,8 @@ half half::makeslow(float f)
         bits |= 0x7c00u;
         /* If exponent was 0xff and one mantissa bit was set, it means NaN,
          * not Inf, so make sure we set one mantissa bit too. */
-        bits |= e == 255 && (u.x & 0x007fffffu);
-        return makebits(bits);
+        bits |= e == 255 && (x & 0x007fffffu);
+        return bits;
     }
 
     /* If exponent underflows but not too much, return a denormal */
@@ -92,51 +94,92 @@ half half::makeslow(float f)
         /* Extra rounding may overflow and set mantissa to 0 and exponent
          * to 1, which is OK. */
         bits |= (m >> (114 - e)) + ((m >> (113 - e)) & 1);
-        return makebits(bits);
+        return bits;
     }
 
     bits |= ((e - 112) << 10) | (m >> 1);
     /* Extra rounding. An overflow will set mantissa to 0 and increment
      * the exponent, which is OK. */
     bits += m & 1;
-    return makebits(bits);
+    return bits;
 }
 
-half::operator float() const
+static int const shifttable[32] =
 {
-    union { float f; uint32_t x; } u;
+    23, 14, 22, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 20, 0,
+    15, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 17, 0, 18, 19, 0,
+};
+static uint32_t const shiftmagic = 0x07c4acddu;
 
-    uint32_t s = (m_bits & 0x8000u) << 16;
+/* Lookup table-based algorithm from “Fast Half Float Conversions”
+ * by Jeroen van der Zijp, November 2008. Tables are generated using
+ * the C++ preprocessor, thanks to a branchless implementation also
+ * used in half_to_float_branch(). This code is actually almost always
+ * slower than the branching one. */
+static inline uint32_t half_to_float_nobranch(uint16_t x)
+{
+#define M3(i) ((i) | ((i) >> 1))
+#define M7(i) (M3(i) | (M3(i) >> 2))
+#define MF(i) (M7(i) | (M7(i) >> 4))
+#define MFF(i) (MF(i) | (MF(i) >> 8))
+#define E(i) shifttable[(unsigned int)(MFF(i) * shiftmagic) >> 27]
 
-    if ((m_bits & 0x7fffu) == 0)
+    static uint32_t const mantissatable[2048] =
     {
-        u.x = (uint32_t)m_bits << 16;
-        return u.f;
-    }
+#define S1(i) (((i) == 0) ? 0 : ((125 - E(i)) << 23) + ((i) << E(i)))
+        S1024(0),
+#undef S1
+#define S1(i) (0x38000000u + ((i) << 13))
+        S1024(0),
+#undef S1
+    };
 
-    uint32_t e = m_bits & 0x7c00u;
-    uint32_t m = m_bits & 0x03ffu;
+    static uint32_t const exponenttable[64] =
+    {
+#define S1(i) (((i) == 0) ? 0 : \
+               ((i) < 31) ? ((i) << 23) : \
+               ((i) == 31) ? 0x47800000u : \
+               ((i) == 32) ? 0x80000000u : \
+               ((i) < 63) ? (0x80000000u + (((i) - 32) << 23)) : 0xc7800000)
+        S64(0),
+#undef S1
+    };
+
+    static int const offsettable[64] =
+    {
+#define S1(i) (((i) == 0 || (i) == 32) ? 0 : 1024)
+        S64(0),
+#undef S1
+    };
+
+    return mantissatable[offsettable[x >> 10] + (x & 0x3ff)]
+            + exponenttable[x >> 10];
+}
+
+/* This algorithm is similar to the OpenEXR implementation, except it
+ * uses branchless code in the denormal path. */
+static inline uint32_t half_to_float_branch(uint16_t x)
+{
+    uint32_t s = (x & 0x8000u) << 16;
+
+    if ((x & 0x7fffu) == 0)
+        return (uint32_t)x << 16;
+
+    uint32_t e = x & 0x7c00u;
+    uint32_t m = x & 0x03ffu;
 
     if (e == 0)
     {
-        static int const shifttable[32] =
-        {
-            10, 1, 9, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 7, 0,
-            2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 4, 0, 5, 6, 0,
-        };
-
         uint32_t v = m | (m >> 1);
         v |= v >> 2;
         v |= v >> 4;
         v |= v >> 8;
 
-        e = shifttable[(v * 0x07C4ACDDU) >> 27];
-        m <<= e;
+        e = shifttable[(v * shiftmagic) >> 27];
 
         /* We don't have to remove the 10th mantissa bit because it gets
          * added to our underestimated exponent. */
-        u.x = s | (((112 - e) << 23) + (m << 13));
-        return u.f;
+        return s | (((125 - e) << 23) + (m << e));
     }
 
     if (e == 0x7c00u)
@@ -144,15 +187,29 @@ half::operator float() const
         /* The amd64 pipeline likes the if() better than a ternary operator
          * or any other trick I could find. --sam */
         if (m == 0)
-            u.x = s | 0x7f800000u;
-        else
-            u.x = s | 0x7fc00000u;
-
-        return u.f;
+            return s | 0x7f800000u;
+        return s | 0x7fc00000u;
     }
 
-    u.x = s | (((e >> 10) + 112) << 23) | (m << 13);
+    return s | (((e >> 10) + 112) << 23) | (m << 13);
+}
 
+half half::makefast(float f)
+{
+    union { float f; uint32_t x; } u = { f };
+    return makebits(float_to_half_nobranch(u.x));
+}
+
+half half::makeslow(float f)
+{
+    union { float f; uint32_t x; } u = { f };
+    return makebits(float_to_half_branch(u.x));
+}
+
+half::operator float() const
+{
+    union { float f; uint32_t x; } u;
+    u.x = half_to_float_branch(bits);
     return u.f;
 }
 
