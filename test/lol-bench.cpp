@@ -137,9 +137,6 @@ static void bench_half(int mode)
                 ph[i] = RandF(-2.0f, 2.0f);
             break;
         }
-#if defined __EXCEPTIONS
-#error lol
-#endif
 
         /* Copy float */
         timer.GetMs();
