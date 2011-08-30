@@ -13,7 +13,11 @@
 #endif
 
 #if defined __CELLOS_LV2__
-#   include <ppu_altivec_internals.h>
+#   if defined __SNC__
+#       include <ppu_altivec_internals.h>
+#   else
+#       include <altivec.h>
+#   endif
 #endif
 
 #include "core.h"
