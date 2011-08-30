@@ -51,8 +51,10 @@ public:
     }
 
     /* Cast to other types */
-    operator float() const;
-    inline operator int() const { return (int)(float)*this; }
+    inline operator float() const { return tofloat(*this); }
+    inline operator int() const { return (int)tofloat(*this); }
+
+    static float tofloat(half h);
 
     /* Array conversions */
     static size_t convert(half *dst, float const *src, size_t nelem);
