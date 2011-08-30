@@ -12,6 +12,10 @@
 #   include "config.h"
 #endif
 
+#if defined __CELLOS_LV2__
+#   include <ppu_altivec_internals.h>
+#endif
+
 #include "core.h"
 
 using namespace std;
@@ -37,13 +41,13 @@ static inline uint16_t float_to_half_nobranch(uint32_t x)
 {
     static uint16_t const basetable[512] =
     {
-#define S1(i) (((i) < 103) ? 0x0000: \
+#define S1(i) (((i) < 103) ? 0x0000 : \
                ((i) < 113) ? 0x0400 >> (113 - (i)) : \
                ((i) < 143) ? ((i) - 112) << 10 : 0x7c00)
         S256(0),
 #undef S1
 #define S1(i) (0x8000 | (((i) < 103) ? 0x0000 : \
-                         ((i) < 113) ? 0x0400 >> (113 - (i)): \
+                         ((i) < 113) ? 0x0400 >> (113 - (i)) : \
                          ((i) < 143) ? ((i) - 112) << 10 : 0x7c00))
         S256(0),
 #undef S1
@@ -72,16 +76,10 @@ static inline uint16_t float_to_half_branch(uint32_t x)
     uint16_t m = (x >> 12) & 0x07ff; /* Keep one extra bit for rounding */
     unsigned int e = (x >> 23) & 0xff; /* Using int is faster here */
 
-    /* If zero, or denormal, or exponent underflows too much for a denormal,
-     * return signed zero. */
-#if !defined __CELLOS_LV2__
+    /* If zero, or denormal, or exponent underflows too much for a denormal
+     * half, return signed zero. */
     if (e < 103)
         return bits;
-#else
-    /* PS3 don't know bout my denormals */
-    if (e < 113)
-        return bits;
-#endif
 
     /* If NaN, return NaN. If Inf or exponent overflow, return Inf. */
     if (e > 142)
@@ -93,7 +91,6 @@ static inline uint16_t float_to_half_branch(uint32_t x)
         return bits;
     }
 
-#if !defined __CELLOS_LV2__
     /* If exponent underflows but not too much, return a denormal */
     if (e < 113)
     {
@@ -103,7 +100,6 @@ static inline uint16_t float_to_half_branch(uint32_t x)
         bits |= (m >> (114 - e)) + ((m >> (113 - e)) & 1);
         return bits;
     }
-#endif
 
     bits |= ((e - 112) << 10) | (m >> 1);
     /* Extra rounding. An overflow will set mantissa to 0 and increment
@@ -111,6 +107,53 @@ static inline uint16_t float_to_half_branch(uint32_t x)
     bits += m & 1;
     return bits;
 }
+
+#if 0
+static inline void float_to_half_vector(half *dst, float const *src)
+{
+    vector unsigned int const v7 = vec_splat_u32(7);
+    vector unsigned short const v6 = vec_splat_u16(6);
+#if _XBOX
+    vector signed short const v9 = vec_splat_u16(9);
+    vector unsigned short const v10 = vec_splat_u16(10);
+#else
+    vector signed short const v0x0040 = {
+        0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040};
+    vector unsigned short const v0x0400 = {
+        0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400};
+#endif
+    vector unsigned char const shuffle_high = {
+        0, 1, 4, 5, 8, 9, 12, 13, 16, 17, 20, 21, 24, 25, 28, 29};
+    vector unsigned char const shuffle_low = {
+        2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31};
+    vector unsigned char const v0xbf70 = {
+        0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70,
+        0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70};
+
+    vector unsigned short v_mant, v_ret;
+    vector signed short v_exp;
+    vector unsigned int in0 = (vector unsigned int)vec_ld(0, src);
+    vector unsigned int in1 = (vector unsigned int)vec_ld(16, src);
+
+    in0 = vec_sra(in0, v7);
+    in1 = vec_sra(in1, v7);
+    v_exp = (vector signed short)vec_perm(in0, in1, shuffle_high);
+    v_mant = (vector unsigned short)vec_perm(in0, in1, shuffle_low);
+    v_exp = (vector signed short)vec_subs((vector unsigned char)v_exp, v0xbf70);
+#if _XBOX
+    v_ret = (vector unsigned short)vec_or(v_exp, vec_sr(v_exp, v9));
+#else
+    v_ret = (vector unsigned short)vec_madds(v_exp, v0x0040, v_exp);
+#endif
+    v_mant = vec_sr(v_mant, v6);
+#if _XBOX
+    v_ret = vec_or(v_mant, vec_sl(v_ret, v10));
+#else
+    v_ret = vec_mladd(v_ret, v0x0400, v_mant);
+#endif
+    vec_st(v_ret, 0, (uint16_t *)dst);
+}
+#endif
 
 static int const shifttable[32] =
 {
@@ -210,18 +253,12 @@ static inline uint32_t half_to_float_branch(uint16_t x)
 }
 
 /* Constructor from float. Uses the non-branching version because benchmarks
- * indicate it is always twice as fast. The penalty of loading the lookup
- * tables does not seem important. */
+ * indicate it is about 80% faster on amd64, and 20% faster on the PS3. The
+ * penalty of loading the lookup tables does not seem important. */
 half half::makefast(float f)
 {
     union { float f; uint32_t x; } u = { f };
-#if !defined __CELLOS_LV2__
     return makebits(float_to_half_nobranch(u.x));
-#else
-    /* This code is slightly faster on the PS3, mostly because we
-     * don't need to care about denormals. */
-    return makebits(float_to_half_branch(u.x));
-#endif
 }
 
 /* Constructor from float with better precision. */
@@ -233,12 +270,10 @@ half half::makeaccurate(float f)
 
 /* Cast to float. Uses the branching version because loading the tables
  * for only one value is going to be cache-expensive. */
-half::operator float() const
+float half::tofloat(half h)
 {
-    /* FIXME: there is a hidden "this" in this method. Export more
-     * code so that it can all work in registers instead. */
     union { float f; uint32_t x; } u;
-    u.x = half_to_float_branch(bits);
+    u.x = half_to_float_branch(h.bits);
     return u.f;
 }
 
@@ -248,12 +283,13 @@ size_t half::convert(half *dst, float const *src, size_t nelem)
     {
         union { float f; uint32_t x; } u;
         u.f = *src++;
-#if !defined __CELLOS_LV2__
         *dst++ = makebits(float_to_half_nobranch(u.x));
-#else
-        /* This code is slightly faster on the PS3, mostly because we
-         * don't need to care about denormals. */
-        *dst++ = makebits(float_to_half_branch(u.x));
+#if 0
+        /* AltiVec code. Will work one day. */
+        float_to_half_vector(dst, src);
+        src += 8;
+        dst += 8;
+        i += 7;
 #endif
     }
 
