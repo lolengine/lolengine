@@ -14,11 +14,18 @@
 
 #include <cstdio>
 
+#if defined HAVE_FASTMATH_H
+#   include <fastmath.h>
+#endif
+
 #include "core.h"
 #include "loldebug.h"
 
 using namespace std;
 using namespace lol;
+
+static size_t const TRIG_TABLE_SIZE = 128 * 1024;
+static size_t const TRIG_RUNS = 50;
 
 static size_t const MATRIX_TABLE_SIZE = 64 * 1024;
 static size_t const MATRIX_RUNS = 100;
@@ -26,11 +33,22 @@ static size_t const MATRIX_RUNS = 100;
 static size_t const HALF_TABLE_SIZE = 1024 * 1024;
 static size_t const HALF_RUNS = 50;
 
+static void bench_trig(int mode);
 static void bench_matrix(int mode);
 static void bench_half(int mode);
 
 int main(int argc, char **argv)
 {
+    Log::Info("--------------------------\n");
+    Log::Info(" Trigonometry [-1e5, 1e5]\n");
+    Log::Info("--------------------------\n");
+    bench_trig(1);
+
+    Log::Info("------------------------\n");
+    Log::Info(" Trigonometry [-pi, pi]\n");
+    Log::Info("------------------------\n");
+    bench_trig(2);
+
     Log::Info("----------------------------\n");
     Log::Info(" Float matrices [-2.0, 2.0]\n");
     Log::Info("----------------------------\n");
@@ -47,6 +65,78 @@ int main(int argc, char **argv)
     bench_half(2);
 
     return EXIT_SUCCESS;
+}
+
+static void bench_trig(int mode)
+{
+    float result[5] = { 0.0f };
+    Timer timer;
+
+    /* Set up tables */
+    float *pf = new float[TRIG_TABLE_SIZE];
+    float *pf2 = new float[TRIG_TABLE_SIZE];
+
+    for (size_t run = 0; run < TRIG_RUNS; run++)
+    {
+        switch (mode)
+        {
+        case 1:
+            for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+                pf[i] = RandF(-1e5f, 1e5f);
+            break;
+        case 2:
+            for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+                pf[i] = RandF(-M_PI, M_PI);
+            break;
+        }
+
+        /* Sin */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = __builtin_sinf(pf[i]);
+        result[0] += timer.GetMs();
+
+        /* Fast sin */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined HAVE_FASTMATH_H
+            pf2[i] = f_sinf(pf[i]);
+#else
+            pf2[i] = sinf(pf[i]);
+#endif
+        result[1] += timer.GetMs();
+
+        /* Lol sin */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = lol_sin(pf[i]);
+        result[2] += timer.GetMs();
+
+        /* Cos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = __builtin_cosf(pf[i]);
+        result[3] += timer.GetMs();
+
+        /* Tan */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = __builtin_tanf(pf[i]);
+        result[4] += timer.GetMs();
+    }
+
+    delete[] pf;
+    delete[] pf2;
+
+    for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
+        result[i] *= 1000000.0f / (TRIG_TABLE_SIZE * TRIG_RUNS);
+
+    Log::Info("                          ns/elem\n");
+    Log::Info("float = sinf(float)      %7.3f\n", result[0]);
+    Log::Info("float = fastsinf(float)  %7.3f\n", result[1]);
+    Log::Info("float = lol_sinf(float)  %7.3f\n", result[2]);
+    Log::Info("float = cosf(float)      %7.3f\n", result[3]);
+    Log::Info("float = tanf(float)      %7.3f\n", result[4]);
 }
 
 static void bench_matrix(int mode)
