@@ -49,13 +49,13 @@ AC_ARG_ENABLE(experimental,
 AC_ARG_ENABLE(cppunit,
   [  --enable-cppunit        use cppunit for unit tests (autodetected)])
 
-AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
+AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h fastmath.h)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
   OPT="-O"
 else
-  OPT="-O2 -fno-strength-reduce -fomit-frame-pointer"
+  OPT="-O3 -ffast-math -fno-strength-reduce -fomit-frame-pointer"
 fi
 
 if test "${enable_release}" = "yes"; then
