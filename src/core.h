@@ -17,6 +17,7 @@
 #define __LOL_CORE_H__
 
 // Base types
+#include "trig.h"
 #include "half.h"
 #include "matrix.h"
 #include "numeric.h"

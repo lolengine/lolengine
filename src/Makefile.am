@@ -10,7 +10,7 @@ liblol_a_SOURCES = \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h half.cpp half.h \
-    platform.cpp platform.h sprite.cpp sprite.h \
+    platform.cpp platform.h sprite.cpp sprite.h trig.cpp trig.h \
     \
     eglapp.cpp eglapp.h \
     \
