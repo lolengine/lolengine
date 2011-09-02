@@ -24,6 +24,7 @@ namespace lol
 {
 
 static const double PI     = 3.14159265358979323846;
+static const double NEG_PI = -3.14159265358979323846;
 static const double PI_2   = PI / 2.0;
 static const double PI_4   = PI / 4.0;
 static const double INV_PI = 1.0 / PI;
@@ -35,20 +36,20 @@ static const double NEG_ONE = -1.0;
 static const double HALF    = 0.5;
 static const double TWO     = 2.0;
 static const double VERY_SMALL_NUMBER = 0x1.0p-128;
-static const double VERY_LARGE_NUMBER = 4503599627370496.0;
-static const double EVEN_LARGER_NUMBER = 9007199254740992.0;
+static const double TWO_EXP_52 = 4503599627370496.0;
+static const double TWO_EXP_54 = 18014398509481984.0;
 
 /** sin Taylor series coefficients. */
 static const double SC[]    =
 {
-    -1.6666666666666666666667e-01, // 1/3!
-    +8.3333333333333333333333e-03, // 1/5!
-    -1.9841269841269841269841e-04, // 1/7!
-    +2.7557319223985890652557e-06, // 1/9!
-    -2.5052108385441718775052e-08, // 1/11!
-    +1.6059043836821614599392e-10, // 1/13!
-    -7.6471637318198164759011e-13, // 1/15!
-    +2.8114572543455207631989e-15, // 1/17!
+    -1.6449340668482264364724e-0, // pi^2/3!
+    +8.1174242528335364363700e-1, // pi^4/5!
+    -1.9075182412208421369647e-1, // pi^6/7!
+    +2.6147847817654800504653e-2, // pi^8/9!
+    -2.3460810354558236375089e-3, // pi^10/11!
+    +1.4842879303107100368487e-4, // pi^12/13!
+    -6.9758736616563804745344e-6, // pi^14/15!
+    +2.5312174041370276513517e-7, // pi^16/17!
 };
 
 /* Custom intrinsics */
@@ -165,32 +166,30 @@ static inline double lol_trunc(double x)
 
 double lol_sin(double x)
 {
-    double absx = lol_fabs(x);
-    double sign = lol_fsel(x, ONE, NEG_ONE);
+    double absx = lol_fabs(x * INV_PI);
+    double sign = lol_fsel(x, PI, NEG_PI);
 #if defined __CELLOS_LV2__
-    double num_cycles = lol_round(absx * INV_PI);
+    double num_cycles = lol_round(absx);
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
-#else
-    double num_cycles = absx * INV_PI + VERY_LARGE_NUMBER;
-    __asm__("" : "+m" (num_cycles));
-    num_cycles -= VERY_LARGE_NUMBER;
-
-    double is_even = num_cycles - HALF;
-    __asm__("" : "+m" (is_even));
-    is_even += EVEN_LARGER_NUMBER;
-    __asm__("" : "+m" (is_even));
-    is_even -= EVEN_LARGER_NUMBER;
-    __asm__("" : "+m" (is_even));
-    is_even -= num_cycles;
-#endif
-    double norm_x = absx - PI * num_cycles;
-    double y = norm_x * norm_x;
-    double taylor = ((((((((SC[7] * y + SC[6]) * y + SC[5])
-                                  * y + SC[4]) * y + SC[3])
-                                  * y + SC[2]) * y + SC[1])
-                                  * y + SC[0]) * y);
     sign = lol_fsel(is_even, sign, -sign);
-    double result = norm_x + norm_x * taylor;
+#else
+    double num_cycles = absx + TWO_EXP_52;
+    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+
+    double is_even = TWO * num_cycles - ONE;
+    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
+    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
+    __asm__("" : "+m" (is_even));
+    is_even -= TWO * num_cycles - ONE;
+    sign *= is_even;
+#endif
+    double norm_x = absx - num_cycles;
+    double y = norm_x * norm_x;
+    double taylor = (((((((SC[7] * y + SC[6]) * y + SC[5])
+                                 * y + SC[4]) * y + SC[3])
+                                 * y + SC[2]) * y + SC[1])
+                                 * y + SC[0]) * y + ONE;
+    double result = norm_x * taylor;
     return result * sign;
 }
 
