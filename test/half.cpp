@@ -21,10 +21,17 @@
 
 #include "core.h"
 
-/* This will not work with aggressive optimisation, but a reasonable
- * assumption is that such environments do have a proper isnan(). */
+/* Ensure isnan() is present even on systems that don't define it, or
+ * when -ffast-math is being used. */
+#if defined __FAST_MATH__
+#   undef isnan
+#endif
 #if !defined isnan
-#   define isnan(x) (!((x) == (x)))
+static inline int isnan(float f)
+{
+    union { float f; uint32_t x; } u = { f };
+    return (~u.x << 1) < 0x00fffffeu;
+}
 #endif
 
 namespace lol
