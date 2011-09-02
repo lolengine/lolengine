@@ -18,7 +18,7 @@ noinst_PROGRAMS = quad lol-bench $(cppunit_tests)
 
 TESTS = $(cppunit_tests)
 
-lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp
+lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp trig.cpp
 lol_test_CXXFLAGS = $(CPPUNIT_CFLAGS)
 lol_test_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 lol_test_LDADD = $(CPPUNIT_LIBS)
