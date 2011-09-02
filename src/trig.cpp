@@ -168,6 +168,10 @@ double lol_sin(double x)
 {
     double absx = lol_fabs(x * INV_PI);
     double sign = lol_fsel(x, PI, NEG_PI);
+
+    /* To compute sin(x) we build a Taylor series for |x|/pi wrapped to
+     * the range [-1, 1]. We also switch the result sign if the number
+     * of cycles is odd. */
 #if defined __CELLOS_LV2__
     double num_cycles = lol_round(absx);
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
@@ -184,11 +188,15 @@ double lol_sin(double x)
     sign *= is_even;
 #endif
     double norm_x = absx - num_cycles;
-    double y = norm_x * norm_x;
-    double taylor = (((((((SC[7] * y + SC[6]) * y + SC[5])
-                                 * y + SC[4]) * y + SC[3])
-                                 * y + SC[2]) * y + SC[1])
-                                 * y + SC[0]) * y + ONE;
+
+    /* Computing x^4 is one multiplication too many we do, but it helps
+     * interleave the Taylor series operations a lot better. */
+    double x2 = norm_x * norm_x;
+    double x4 = x2 * x2;
+    double sub1 = ((SC[7] * x4 + SC[5]) * x4 + SC[3]) * x4 + SC[1];
+    double sub2 = ((SC[6] * x4 + SC[4]) * x4 + SC[2]) * x4 + SC[0];
+    double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+
     double result = norm_x * taylor;
     return result * sign;
 }
