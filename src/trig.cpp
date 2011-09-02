@@ -36,6 +36,7 @@ static const double HALF    = 0.5;
 static const double TWO     = 2.0;
 static const double VERY_SMALL_NUMBER = 0x1.0p-128;
 static const double VERY_LARGE_NUMBER = 4503599627370496.0;
+static const double EVEN_LARGER_NUMBER = 9007199254740992.0;
 
 /** sin Taylor series coefficients. */
 static const double SC[]    =
@@ -126,7 +127,7 @@ static inline double lol_fsel(double c, double gte, double lt)
              : "=f"(r) : "f"(c), "f"(gte), "f"(lt));
     return r;
 #else
-    if (c >= 0) return gte; return lt;
+    return (c >= 0) ? gte : lt;
 #endif
 }
 
@@ -165,19 +166,22 @@ static inline double lol_trunc(double x)
 double lol_sin(double x)
 {
     double absx = lol_fabs(x);
+    double sign = lol_fsel(x, ONE, NEG_ONE);
 #if defined __CELLOS_LV2__
     double num_cycles = lol_round(absx * INV_PI);
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
 #else
-    double num_cycles = absx * INV_PI;
-    num_cycles += VERY_LARGE_NUMBER;
+    double num_cycles = absx * INV_PI + VERY_LARGE_NUMBER;
     __asm__("" : "+m" (num_cycles));
     num_cycles -= VERY_LARGE_NUMBER;
-    double is_even = num_cycles * HALF - HALF;
-    is_even += VERY_LARGE_NUMBER;
+
+    double is_even = num_cycles - HALF;
     __asm__("" : "+m" (is_even));
-    is_even -= VERY_LARGE_NUMBER;
-    is_even -= num_cycles * HALF;
+    is_even += EVEN_LARGER_NUMBER;
+    __asm__("" : "+m" (is_even));
+    is_even -= EVEN_LARGER_NUMBER;
+    __asm__("" : "+m" (is_even));
+    is_even -= num_cycles;
 #endif
     double norm_x = absx - PI * num_cycles;
     double y = norm_x * norm_x;
@@ -185,7 +189,7 @@ double lol_sin(double x)
                                   * y + SC[4]) * y + SC[3])
                                   * y + SC[2]) * y + SC[1])
                                   * y + SC[0]) * y);
-    double sign = lol_fsel(is_even * x, ONE, NEG_ONE);
+    sign = lol_fsel(is_even, sign, -sign);
     double result = norm_x + norm_x * taylor;
     return result * sign;
 }
