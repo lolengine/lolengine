@@ -30,7 +30,7 @@
 static inline int isnan(float f)
 {
     union { float f; uint32_t x; } u = { f };
-    return (~u.x << 1) < 0x00fffffeu;
+    return (u.x << 1) > 0xff000000u;
 }
 #endif
 
