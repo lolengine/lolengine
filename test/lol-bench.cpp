@@ -50,6 +50,11 @@ int main(int argc, char **argv)
     bench_trig(2);
 
     Log::Info("----------------------------\n");
+    Log::Info(" Trigonometry [-1e-2, 1e-2]\n");
+    Log::Info("----------------------------\n");
+    bench_trig(3);
+
+    Log::Info("----------------------------\n");
     Log::Info(" Float matrices [-2.0, 2.0]\n");
     Log::Info("----------------------------\n");
     bench_matrix(1);
@@ -87,6 +92,10 @@ static void bench_trig(int mode)
         case 2:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
                 pf[i] = RandF(-M_PI, M_PI);
+            break;
+        case 3:
+            for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+                pf[i] = RandF(-1e-2f, 1e-2f);
             break;
         }
 
