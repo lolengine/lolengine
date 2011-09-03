@@ -5,8 +5,8 @@ if USE_CPPUNIT
 cppunit_tests = lol-test
 endif
 
-bench: lol-bench
-	./lol-bench
+bench: lol-bench$(EXEEXT)
+	./lol-bench$(EXEEXT)
 
 all-local: quad$(EXEEXT) lol-bench$(EXEEXT)
 	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
