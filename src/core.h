@@ -17,6 +17,9 @@
 #define __LOL_CORE_H__
 
 // CPU features
+#undef LOL_FEATURE_CHEAP_BRANCHES
+#undef LOL_FEATURE_VERY_CHEAP_BRANCHES
+
 #if !defined __CELLOS_LV2__
 #   define LOL_FEATURE_CHEAP_BRANCHES
 #endif

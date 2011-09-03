@@ -54,6 +54,22 @@ public:
             double b = lol_sin(f);
             CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 1000.0);
+            double a = __builtin_cos(f);
+            double b = lol_cos(f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
+        }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 100000.0);
+            double a = __builtin_cos(f);
+            double b = lol_cos(f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
+        }
     }
 };
 
