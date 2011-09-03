@@ -10,11 +10,12 @@ bench: lol-bench
 
 all-local: quad$(EXEEXT) lol-bench$(EXEEXT)
 	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
+	test x$(MAKE_FSELF) = xno || make_fself sandbox$(EXEEXT) sandbox.self
 	test x$(MAKE_FSELF) = xno || make_fself lol-bench$(EXEEXT) lol-bench.self
 
-CLEANFILES = quad.self lol-bench.self
+CLEANFILES = quad.self sandbox lol-bench.self
 
-noinst_PROGRAMS = quad lol-bench $(cppunit_tests)
+noinst_PROGRAMS = quad sandbox lol-bench $(cppunit_tests)
 
 TESTS = $(cppunit_tests)
 
@@ -34,4 +35,9 @@ quad_SOURCES = debug/quad.cpp
 quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 quad_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 quad_DEPENDENCIES = $(top_builddir)/src/liblol.a
+
+sandbox_SOURCES = debug/sandbox.cpp
+sandbox_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+sandbox_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+sandbox_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
