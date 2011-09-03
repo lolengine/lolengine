@@ -190,9 +190,9 @@ double lol_sin(double x)
          * interleave the Taylor series operations a lot better. */
         double x2 = absx * absx;
         double x4 = x2 * x2;
-        double sub1 = SC[3] * x4 + SC[1];
+        double sub1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
         double sub2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
-        double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+        double taylor = sub2 * x2 + sub1;
         return x * taylor;
     }
 #endif
@@ -228,9 +228,9 @@ double lol_sin(double x)
         double x1 = HALF - lol_fabs(absx);
         double x2 = x1 * x1;
         double x4 = x2 * x2;
-        double sub1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
+        double sub1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
         double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
-        double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+        double taylor = sub2 * x2 + sub1;
 
         return taylor * sign;
     }
@@ -241,13 +241,13 @@ double lol_sin(double x)
     double x2 = absx * absx;
     double x4 = x2 * x2;
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
-    double sub1 = SC[3] * x4 + SC[1];
+    double sub1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
     double sub2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
 #else
-    double sub1 = ((SC[7] * x4 + SC[5]) * x4 + SC[3]) * x4 + SC[1];
+    double sub1 = (((SC[7] * x4 + SC[5]) * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
     double sub2 = ((SC[6] * x4 + SC[4]) * x4 + SC[2]) * x4 + SC[0];
 #endif
-    double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+    double taylor = sub2 * x2 + sub1;
 
     return absx * taylor * sign;
 }
@@ -302,13 +302,13 @@ double lol_cos(double x)
     double x2 = absx * absx;
     double x4 = x2 * x2;
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
-    double sub1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
+    double sub1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
     double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
 #else
-    double sub1 = ((CC[7] * x4 + CC[5]) * x4 + CC[3]) * x4 + CC[1];
+    double sub1 = (((CC[7] * x4 + CC[5]) * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
     double sub2 = ((CC[6] * x4 + CC[4]) * x4 + CC[2]) * x4 + CC[0];
 #endif
-    double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+    double taylor = sub2 * x2 + sub1;
 
     return taylor * sign;
 }
