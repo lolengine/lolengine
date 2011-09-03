@@ -206,7 +206,6 @@ double lol_sin(double x)
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
     sign = lol_fsel(is_even, sign, -sign);
 #else
-    double sign = (x >= 0.0) ? PI : NEG_PI;
     double num_cycles = absx + TWO_EXP_52;
     __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
 
@@ -215,17 +214,19 @@ double lol_sin(double x)
     __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
     __asm__("" : "+m" (is_even));
     is_even -= TWO * num_cycles - ONE;
-    sign *= is_even;
+    double sign = is_even;
 #endif
     absx -= num_cycles;
 
+    /* If branches are very cheap, we have the option to do the Taylor
+     * series at a much lower degree by splitting. */
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
     if (lol_fabs(absx) > QUARTER)
     {
-        sign = (x * absx >= 0.0) ? is_even : -is_even;
+        sign = (x * absx >= 0.0) ? sign : -sign;
 
-        double k = HALF - lol_fabs(absx);
-        double x2 = k * k;
+        double x1 = HALF - lol_fabs(absx);
+        double x2 = x1 * x1;
         double x4 = x2 * x2;
         double sub1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
         double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
@@ -234,6 +235,8 @@ double lol_sin(double x)
         return taylor * sign;
     }
 #endif
+
+    sign *= (x >= 0.0) ? PI : NEG_PI;
 
     double x2 = absx * absx;
     double x4 = x2 * x2;
@@ -247,6 +250,67 @@ double lol_sin(double x)
     double taylor = (sub1 * x2 + sub2) * x2 + ONE;
 
     return absx * taylor * sign;
+}
+
+double lol_cos(double x)
+{
+    double absx = lol_fabs(x * INV_PI);
+
+#if defined LOL_FEATURE_CHEAP_BRANCHES
+    if (absx < QUARTER)
+    {
+        double x2 = absx * absx;
+        double x4 = x2 * x2;
+        double sub1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
+        double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
+        double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+        return taylor;
+    }
+#endif
+
+#if defined __CELLOS_LV2__
+    double num_cycles = lol_round(absx);
+    double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
+    double sign = lol_fsel(is_even, ONE, NEG_ONE);
+#else
+    double num_cycles = absx + TWO_EXP_52;
+    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+
+    double is_even = TWO * num_cycles - ONE;
+    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
+    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
+    __asm__("" : "+m" (is_even));
+    is_even -= TWO * num_cycles - ONE;
+    double sign = is_even;
+#endif
+    absx -= num_cycles;
+
+#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+    if (lol_fabs(absx) > QUARTER)
+    {
+        double x1 = HALF - lol_fabs(absx);
+        double x2 = x1 * x1;
+        double x4 = x2 * x2;
+        double sub1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+        double sub2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
+        double taylor = sub2 * x2 + sub1;
+
+        return x1 * taylor * sign * PI;
+    }
+#endif
+
+    double x2 = absx * absx;
+    double x4 = x2 * x2;
+#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+    double sub1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
+    double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
+#else
+    double sub1 = ((CC[7] * x4 + CC[5]) * x4 + CC[3]) * x4 + CC[1];
+    double sub2 = ((CC[6] * x4 + CC[4]) * x4 + CC[2]) * x4 + CC[0];
+#endif
+    double taylor = (sub1 * x2 + sub2) * x2 + ONE;
+
+    return taylor * sign;
 }
 
 } /* namespace lol */

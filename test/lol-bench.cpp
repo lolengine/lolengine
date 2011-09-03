@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 static void bench_trig(int mode)
 {
-    float result[5] = { 0.0f };
+    float result[7] = { 0.0f };
     Timer timer;
 
     /* Set up tables */
@@ -127,11 +127,27 @@ static void bench_trig(int mode)
             pf2[i] = __builtin_cosf(pf[i]);
         result[3] += timer.GetMs();
 
+        /* Fast cos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined HAVE_FASTMATH_H
+            pf2[i] = f_cosf(pf[i]);
+#else
+            pf2[i] = cosf(pf[i]);
+#endif
+        result[4] += timer.GetMs();
+
+        /* Lol cos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = lol_cos(pf[i]);
+        result[5] += timer.GetMs();
+
         /* Tan */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             pf2[i] = __builtin_tanf(pf[i]);
-        result[4] += timer.GetMs();
+        result[6] += timer.GetMs();
     }
 
     delete[] pf;
@@ -145,7 +161,9 @@ static void bench_trig(int mode)
     Log::Info("float = fastsinf(float)  %7.3f\n", result[1]);
     Log::Info("float = lol_sinf(float)  %7.3f\n", result[2]);
     Log::Info("float = cosf(float)      %7.3f\n", result[3]);
-    Log::Info("float = tanf(float)      %7.3f\n", result[4]);
+    Log::Info("float = fastcosf(float)  %7.3f\n", result[4]);
+    Log::Info("float = lol_cosf(float)  %7.3f\n", result[5]);
+    Log::Info("float = tanf(float)      %7.3f\n", result[6]);
 }
 
 static void bench_matrix(int mode)
