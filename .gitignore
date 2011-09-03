@@ -4,6 +4,8 @@
 *.a
 *.la
 *.exe
+*.elf
+*.self
 *.userprefs
 *.usertasks
 *.pidb
@@ -52,6 +54,8 @@ deushax/deushax
 deushax/editor
 monsterz/monsterz
 test/lol-test
+test/lol-bench
 test/quad
+test/sandbox
 tools/make-font
 # Our data
