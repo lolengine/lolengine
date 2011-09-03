@@ -41,18 +41,18 @@ public:
     {
         for (int i = -10000; i < 10000; i++)
         {
-            float f = (float)i * (1.0f / 1000.0f);
+            double f = (double)i * (1.0 / 1000.0);
             double a = __builtin_sin(f);
             double b = lol_sin(f);
-            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-10f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
         {
-            float f = (float)i * (1.0f / 100000.0f);
+            double f = (double)i * (1.0 / 100000.0);
             double a = __builtin_sin(f);
             double b = lol_sin(f);
-            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-10f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
     }
 };
