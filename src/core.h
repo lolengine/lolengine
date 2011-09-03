@@ -16,6 +16,11 @@
 #if !defined __LOL_CORE_H__
 #define __LOL_CORE_H__
 
+// CPU features
+#if !defined __CELLOS_LV2__
+#   define LOL_FEATURE_CHEAP_BRANCHES
+#endif
+
 // Base types
 #include "trig.h"
 #include "half.h"
