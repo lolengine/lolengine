@@ -387,7 +387,8 @@ void lol_sincos(double x, double *sinx, double *cosx)
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
     if (lol_fabs(absx) > QUARTER)
     {
-        sign = (x * absx >= 0.0) ? sign : -sign;
+        cos_sign = sin_sign;
+        sin_sign = (x * absx >= 0.0) ? sin_sign : -sin_sign;
 
         double x1 = HALF - lol_fabs(absx);
         double x2 = x1 * x1;
@@ -396,23 +397,25 @@ void lol_sincos(double x, double *sinx, double *cosx)
         double subs1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
         double subs2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
         double taylors = subs2 * x2 + subs1;
-        *sinx = taylors * sign;
+        *sinx = taylors * sin_sign;
 
-        double subc1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+        double subc1 = ((SC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
         double subc2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
         double taylorc = subc2 * x2 + subc1;
-        *cosx = x1 * taylorc * sign * PI;
+        *cosx = x1 * taylorc * cos_sign * PI;
 
         return;
     }
 #endif
 
+#if !defined __CELLOS_LV2__
     sin_sign *= (x >= 0.0) ? PI : NEG_PI;
+#endif
 
     double x2 = absx * absx;
     double x4 = x2 * x2;
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
-    double subs1 = ((CC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
+    double subs1 = ((SC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
     double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
     double subc1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
     double subc2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
