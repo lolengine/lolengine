@@ -69,6 +69,7 @@ private:
     GLuint texture[NUM_TEXTURES];
     uint8_t image[1][TEX_SIZE * TEX_SIZE * 4];
 
+    /* Cache a list of points for a quad at the proper coordinates. */
     GLfloat const *GetVertexArray()
     {
         GLfloat tmp[18] = { aa.x, bb.y, 0, bb.x, bb.y, 0, bb.x, aa.y, 0,
@@ -76,7 +77,30 @@ private:
         memcpy(vertices, tmp, sizeof(tmp));
         return vertices;
     }
-    GLfloat vertices[18]; /* To cache quad coordinates */
+    GLfloat vertices[18];
+
+    /* Cache a list of points for a sine wave, ensuring constant spacing
+     * between consecutive points. */
+    static int const SINE_SIZE = 256;
+    static float const SINE_SPACE = 0.01f;
+    GLfloat const *GetSineArray()
+    {
+        float x = 0.0f;
+        for (npoints = 0; npoints < SINE_SIZE && x <= 1.0f; npoints++)
+        {
+            float y = 0.5f + 0.5f * lol_sin(x * 2.0f * M_PI + time * 2e-3f);
+            points[npoints * 2] = aa.x + (bb.x - aa.x) * x;
+            points[npoints * 2 + 1] = aa.y + (bb.y - aa.y) * y;
+
+            float dy = M_PI * lol_cos(x * 2.0f * M_PI + time * 2e-3f);
+            float dx = SINE_SPACE / sqrtf(1.0f + dy * dy);
+            x += dx;
+        }
+        return points;
+
+    }
+    GLfloat points[2 * SINE_SIZE];
+    int npoints;
 };
 
 /*
@@ -214,10 +238,13 @@ void DebugQuad::TickDraw(float deltams)
     GLuint *attr = data->attr;
     GLuint *uni = data->uni;
 
+    /* These may be shared across calls */
+    GLfloat const *sine;
+
     ResetState();
 
     /*
-     * Test #1: simple glBegin code
+     * Test #1: simple glBegin + GL_TRIANGLES code
      *
      * Renders an orange square.
      */
@@ -438,7 +465,26 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #7: simple vertex buffer
+     * Test #7: glBegin + GL_POINTS
+     *
+     * Renders a green sine wave made of 1-pixel points.
+     */
+#if defined HAVE_GLBEGIN || defined USE_GLEW
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glPointSize(1.0f);
+
+    sine = data->GetSineArray();
+    glBegin(GL_POINTS);
+        for (int i = 0; i < data->npoints; i++)
+            glVertex3f(sine[i * 2], sine[i * 2 + 1], 0.0f);
+    glEnd();
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #8: simple vertex buffer
      *
      * Renders an orange square.
      */
@@ -456,7 +502,26 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #8: vertex buffer + per-vertex coloring
+     * Test #9: simple point buffer
+     *
+     * Renders a green sine wave made of 1-pixel points.
+     */
+#if !defined ANDROID_NDK && !defined __APPLE__
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glPointSize(1.0f);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(2, GL_FLOAT, 0, data->GetSineArray());
+    glDrawArrays(GL_POINTS, 0, data->npoints);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #10: vertex buffer + per-vertex coloring
      *
      * Renders a multicoloured square with varying colors.
      */
@@ -476,7 +541,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #9: vertex buffer + per-vertex coloring + texture
+     * Test #11: vertex buffer + per-vertex coloring + texture
      *
      * Renders a multicoloured square with varying colors multiplied with an
      * animated distorted checkerboard.
@@ -504,7 +569,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #10: vertex buffer + hardcoded color in 1.10 fragment shader
+     * Test #12: vertex buffer + hardcoded color in 1.10 fragment shader
      * (GLSL) or in Cg fragment shader (PS3)
      *
      * Renders an orange square.
@@ -550,7 +615,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #11: vertex buffer + uniform color in 1.10 fragment shader
+     * Test #13: vertex buffer + uniform color in 1.10 fragment shader
      * (GLSL) or in Cg fragment shader (PS3)
      *
      * Renders an orange square.
@@ -603,7 +668,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #12: vertex buffer + color in 1.10 fragment shader (GLSL) or
+     * Test #14: vertex buffer + color in 1.10 fragment shader (GLSL) or
      * in Cg fragment shader (PS3)
      *
      * Renders a static, coloured and tiled pattern.
@@ -656,7 +721,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #13: vertex buffer + uniform matrix for color transform in 1.10
+     * Test #15: vertex buffer + uniform matrix for color transform in 1.10
      * or Cg fragment shader
      *
      * Renders a multicoloured square with varying colors.
@@ -721,7 +786,76 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #14: vertex buffer + texture & color in 1.10 fragment shader
+     * Test #16: simple point buffer
+     *
+     * Renders an antialiased green sine wave made of 1-pixel points.
+     */
+#if !defined ANDROID_NDK && !defined __APPLE__
+    if (!shader[0])
+#if !defined __CELLOS_LV2__
+        shader[0] = Shader::Create(
+            "#version 120\n"
+            "varying vec4 pass_Color;"
+            "void main()"
+            "{"
+            "    pass_Color = vec4(0.0, 1.0, 0.0, 1.0);"
+            "    gl_Position = gl_Vertex;"
+            "}",
+
+            "#version 120\n"
+            "varying vec4 pass_Color;"
+            "void main()"
+            "{"
+            "    vec2 d = gl_PointCoord.st - vec2(0.5, 0.5);"
+            "    float k = max(0.0, 2.0 * (0.5 - sqrt(dot(d, d))));"
+            "    gl_FragColor = vec4(pass_Color.xyz, k);"
+            "}");
+#else
+        shader[0] = Shader::Create(
+            "void main(float4 in_Position : POSITION,"
+            "          float2 in_TexCoord : TEXCOORD0,"
+            "          float4 in_Color : COLOR,"
+            "          out float4 out_Color : COLOR,"
+            "          out float4 out_Position : POSITION,"
+            "          out float2 out_TexCoord : TEXCOORD0)"
+            "{"
+            "    out_TexCoord = in_TexCoord;"
+            "    out_Color = in_Color;"
+            "    out_Position = in_Position;"
+            "}",
+
+            "void main(float2 in_TexCoord : TEXCOORD0,"
+            "          float4 in_Color : COLOR,"
+            "          uniform sampler2D tex,"
+            "          out float4 out_FragColor : COLOR)"
+            "{"
+            "    float4 tmp = tex2D(tex, in_TexCoord * 0.25);"
+            "    out_FragColor = float4(abs(tmp.xyz - in_Color.xyz), 1);"
+            "}");
+#endif
+
+    shader[0]->Bind();
+    shader++;
+
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_BLEND);
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    glPointSize(3.0f);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(2, GL_FLOAT, 0, data->GetSineArray());
+    glDrawArrays(GL_POINTS, 0, data->npoints);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisable(GL_POINT_SPRITE);
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
+#endif
+
+    Advance();
+    ResetState();
+
+    /*
+     * Test #17: vertex buffer + texture & color in 1.10 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -794,7 +928,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #15: vertex buffer + texture & color in 1.20 fragment shader
+     * Test #18: vertex buffer + texture & color in 1.20 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -864,7 +998,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /*
-     * Test #16: vertex buffer + texture & color in 1.30 fragment shader
+     * Test #19: vertex buffer + texture & color in 1.30 fragment shader
      *
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
@@ -966,7 +1100,11 @@ void DebugQuad::ResetState()
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glClientActiveTexture(GL_TEXTURE0);
 #endif
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
     glDisable(GL_TEXTURE_2D);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_POINT_SPRITE);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #if !defined __CELLOS_LV2__
@@ -975,6 +1113,8 @@ void DebugQuad::ResetState()
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
+
+    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 }
 
 } /* namespace lol */
