@@ -24,6 +24,10 @@
 #   define LOL_FEATURE_CHEAP_BRANCHES
 #endif
 
+// Optimisation helpers
+#define __likely(x)   __builtin_expect(!!(x), 1)
+#define __unlikely(x) __builtin_expect(!!(x), 0)
+
 // Base types
 #include "trig.h"
 #include "half.h"

@@ -70,6 +70,44 @@ public:
             double b = lol_cos(f);
             CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 1000.0);
+            double a1 = __builtin_sin(f);
+            double a2 = __builtin_cos(f);
+            double b1, b2;
+            lol_sincos(f, &b1, &b2);
+            CPPUNIT_ASSERT(fabs(a1 - b1) <= fabs(f) * 1e-11);
+            CPPUNIT_ASSERT(fabs(a2 - b2) <= fabs(f) * 1e-11);
+        }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 100000.0);
+            double a1 = __builtin_sin(f);
+            double a2 = __builtin_cos(f);
+            double b1, b2;
+            lol_sincos(f, &b1, &b2);
+            CPPUNIT_ASSERT(fabs(a1 - b1) <= fabs(f) * 1e-11);
+            CPPUNIT_ASSERT(fabs(a2 - b2) <= fabs(f) * 1e-11);
+        }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 1000.0);
+            double a = __builtin_tan(f);
+            double b = lol_tan(f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+        }
+
+        for (int i = -10000; i < 10000; i++)
+        {
+            double f = (double)i * (1.0 / 100000.0);
+            double a = __builtin_tan(f);
+            double b = lol_tan(f);
+            CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+        }
     }
 };
 

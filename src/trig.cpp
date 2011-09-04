@@ -65,6 +65,25 @@ static const double CC[] =
     +4.3030695870329470072978e-6, // pi^16/16!
 };
 
+/* These coefficients use Sloane’s http://oeis.org/A002430 and
+ * http://oeis.org/A036279 sequences for the Taylor series of tan().
+ * Note: the last value should be 443861162*pi^18/1856156927625, ie.
+ * 2.12485922978838540352881e5, but we tweak it in order to get
+ * sub 1e-11 precision in a larger range. */
+static const double TC[] =
+{
+    3.28986813369645287294483e0, // pi^2/3
+    1.29878788045336582981920e1, // 2*pi^4/15
+    5.18844961612069061254404e1, // 17*pi^6/315
+    2.07509320280908496804928e2, // 62*pi^8/2835
+    8.30024701695986756361561e2, // 1382*pi^10/155925
+    3.32009324029001216460018e3, // 21844*pi^12/6081075
+    1.32803704909665483598490e4, // 929569*pi^14/638512875
+    5.31214808666037709352112e4, // 6404582*pi^16/10854718875
+    2.373e5, // XXX: last value tweaked to improve precision
+    //2.12485922978838540352881e5, // 443861162*pi^18/1856156927625
+};
+
 /* Custom intrinsics */
 #define INLINEATTR __attribute__((always_inline))
 
@@ -236,6 +255,7 @@ double lol_sin(double x)
     }
 #endif
 
+    /* Compute a Tailor series for sin() and combine sign information. */
     sign *= (x >= 0.0) ? PI : NEG_PI;
 
     double x2 = absx * absx;
@@ -311,6 +331,141 @@ double lol_cos(double x)
     double taylor = sub2 * x2 + sub1;
 
     return taylor * sign;
+}
+
+void lol_sincos(double x, double *sinx, double *cosx)
+{
+    double absx = lol_fabs(x * INV_PI);
+
+#if defined LOL_FEATURE_CHEAP_BRANCHES
+    if (absx < QUARTER)
+    {
+        double x2 = absx * absx;
+        double x4 = x2 * x2;
+
+        double subs1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+        double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
+        double taylors = subs2 * x2 + subs1;
+        *sinx = x * taylors;
+
+        double subc1 = (CC[5] * x4 + CC[3]) * x4 + CC[1];
+        double subc2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
+        double taylorc = (subc1 * x2 + subc2) * x2 + ONE;
+        *cosx = taylorc;
+
+        return;
+    }
+#endif
+
+#if defined __CELLOS_LV2__
+    double num_cycles = lol_round(absx);
+    double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
+
+    double sin_sign = lol_fsel(x, PI, NEG_PI);
+    sin_sign = lol_fsel(is_even, sin_sign, -sin_sign);
+    double cos_sign = lol_fsel(is_even, ONE, NEG_ONE);
+#else
+    double num_cycles = absx + TWO_EXP_52;
+    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+
+    double is_even = TWO * num_cycles - ONE;
+    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
+    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
+    __asm__("" : "+m" (is_even));
+    is_even -= TWO * num_cycles - ONE;
+    double sin_sign = is_even;
+    double cos_sign = is_even;
+#endif
+    absx -= num_cycles;
+
+#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+    if (lol_fabs(absx) > QUARTER)
+    {
+        sign = (x * absx >= 0.0) ? sign : -sign;
+
+        double x1 = HALF - lol_fabs(absx);
+        double x2 = x1 * x1;
+        double x4 = x2 * x2;
+
+        double subs1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
+        double subs2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
+        double taylors = subs2 * x2 + subs1;
+        *sinx = taylors * sign;
+
+        double subc1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+        double subc2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
+        double taylorc = subc2 * x2 + subc1;
+        *cosx = x1 * taylorc * sign * PI;
+
+        return;
+    }
+#endif
+
+    sin_sign *= (x >= 0.0) ? PI : NEG_PI;
+
+    double x2 = absx * absx;
+    double x4 = x2 * x2;
+#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+    double subs1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+    double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
+    double subc1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
+    double subc2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
+#else
+    double subs1 = (((SC[7] * x4 + SC[5]) * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
+    double subs2 = ((SC[6] * x4 + SC[4]) * x4 + SC[2]) * x4 + SC[0];
+    double subc1 = (((CC[7] * x4 + CC[5]) * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
+    double subc2 = ((CC[6] * x4 + CC[4]) * x4 + CC[2]) * x4 + CC[0];
+#endif
+    double taylors = subs2 * x2 + subs1;
+    *sinx = absx * taylors * sin_sign;
+
+    double taylorc = subc2 * x2 + subc1;
+    *cosx = taylorc * cos_sign;
+}
+
+void lol_sincos(float x, float *sinx, float *cosx)
+{
+    double x2 = static_cast<double>(x);
+    double s2, c2;
+    lol_sincos(x2, &s2, &c2);
+    *sinx = static_cast<float>(s2);
+    *cosx = static_cast<float>(c2);
+}
+
+double lol_tan(double x)
+{
+#if defined LOL_FEATURE_CHEAP_BRANCHES
+    double absx = lol_fabs(x * INV_PI);
+
+    /* This value was determined empirically to ensure an error of no
+     * more than x * 1e-11 in this range. */
+    if (absx < 0.163)
+    {
+        double x2 = absx * absx;
+        double x4 = x2 * x2;
+        double sub1 = (((TC[7] * x4 + TC[5]) * x4
+                           + TC[3]) * x4 + TC[1]) * x4 + ONE;
+        double sub2 = (((TC[8] * x4 + TC[6]) * x4
+                           + TC[4]) * x4 + TC[2]) * x4 + TC[0];
+        double taylor = sub2 * x2 + sub1;
+        return x * taylor;
+    }
+#endif
+
+    double sinx, cosx;
+    lol_sincos(x, &sinx, &cosx);
+
+    /* Ensure cosx isn't zero. FIXME: we lose the cosx sign here. */
+    double absc = lol_fabs(cosx);
+#if defined __CELLOS_LV2__
+    double is_cos_not_zero = absc - VERY_SMALL_NUMBER;
+    cosx = lol_fsel(is_cos_not_zero, cosx, VERY_SMALL_NUMBER);
+    return __fdiv(sinx, cosx);
+#else
+    if (__unlikely(absc < VERY_SMALL_NUMBER))
+        cosx = VERY_SMALL_NUMBER;
+    return sinx / cosx;
+#endif
 }
 
 } /* namespace lol */

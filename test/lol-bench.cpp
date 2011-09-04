@@ -74,12 +74,13 @@ int main(int argc, char **argv)
 
 static void bench_trig(int mode)
 {
-    float result[7] = { 0.0f };
+    float result[12] = { 0.0f };
     Timer timer;
 
     /* Set up tables */
     float *pf = new float[TRIG_TABLE_SIZE];
     float *pf2 = new float[TRIG_TABLE_SIZE];
+    float *pf3 = new float[TRIG_TABLE_SIZE];
 
     for (size_t run = 0; run < TRIG_RUNS; run++)
     {
@@ -143,27 +144,78 @@ static void bench_trig(int mode)
             pf2[i] = lol_cos(pf[i]);
         result[5] += timer.GetMs();
 
+        /* Sin & cos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+        {
+            pf2[i] = __builtin_sinf(pf[i]);
+            pf3[i] = __builtin_cosf(pf[i]);
+        }
+        result[6] += timer.GetMs();
+
+        /* Fast sin & cos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+        {
+#if defined HAVE_FASTMATH_H
+            pf2[i] = f_sinf(pf[i]);
+            pf3[i] = f_cosf(pf[i]);
+#else
+            pf2[i] = sinf(pf[i]);
+            pf3[i] = cosf(pf[i]);
+#endif
+        }
+        result[7] += timer.GetMs();
+
+        /* Lol sincos */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            lol_sincos(pf[i], &pf2[i], &pf3[i]);
+        result[8] += timer.GetMs();
+
         /* Tan */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             pf2[i] = __builtin_tanf(pf[i]);
-        result[6] += timer.GetMs();
+        result[9] += timer.GetMs();
+
+        /* Fast tan */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined HAVE_FASTMATH_H
+            pf2[i] = f_tanf(pf[i]);
+#else
+            pf2[i] = tanf(pf[i]);
+#endif
+        result[10] += timer.GetMs();
+
+        /* Lol tan */
+        timer.GetMs();
+        for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+            pf2[i] = lol_tan(pf[i]);
+        result[11] += timer.GetMs();
     }
 
     delete[] pf;
     delete[] pf2;
+    delete[] pf3;
 
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1000000.0f / (TRIG_TABLE_SIZE * TRIG_RUNS);
 
-    Log::Info("                          ns/elem\n");
-    Log::Info("float = sinf(float)      %7.3f\n", result[0]);
-    Log::Info("float = fastsinf(float)  %7.3f\n", result[1]);
-    Log::Info("float = lol_sinf(float)  %7.3f\n", result[2]);
-    Log::Info("float = cosf(float)      %7.3f\n", result[3]);
-    Log::Info("float = fastcosf(float)  %7.3f\n", result[4]);
-    Log::Info("float = lol_cosf(float)  %7.3f\n", result[5]);
-    Log::Info("float = tanf(float)      %7.3f\n", result[6]);
+    Log::Info("                              ns/elem\n");
+    Log::Info("float = sinf(float)          %7.3f\n", result[0]);
+    Log::Info("float = f_sinf(float)        %7.3f\n", result[1]);
+    Log::Info("float = lol_sin(float)       %7.3f\n", result[2]);
+    Log::Info("float = cosf(float)          %7.3f\n", result[3]);
+    Log::Info("float = f_cosf(float)        %7.3f\n", result[4]);
+    Log::Info("float = lol_cos(float)       %7.3f\n", result[5]);
+    Log::Info("float = sinf,cosf(float)     %7.3f\n", result[6]);
+    Log::Info("float = f_sinf,f_cosf(float) %7.3f\n", result[7]);
+    Log::Info("float = lol_sincos(float)    %7.3f\n", result[8]);
+    Log::Info("float = tanf(float)          %7.3f\n", result[9]);
+    Log::Info("float = f_tanf(float)        %7.3f\n", result[10]);
+    Log::Info("float = lol_tanf(float)      %7.3f\n", result[11]);
 }
 
 static void bench_matrix(int mode)
