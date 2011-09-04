@@ -507,7 +507,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a green sine wave made of 1-pixel points.
      */
 #if !defined ANDROID_NDK && !defined __APPLE__
-    glColor3f(0.0f, 1.0f, 0.0f);
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
     glPointSize(1.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -790,9 +790,8 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an antialiased green sine wave made of 1-pixel points.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined ANDROID_NDK && !defined __APPLE__ && !defined __CELLOS_LV2__
     if (!shader[0])
-#if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
             "#version 120\n"
             "varying vec4 pass_Color;"
@@ -810,29 +809,6 @@ void DebugQuad::TickDraw(float deltams)
             "    float k = max(0.0, 2.0 * (0.5 - sqrt(dot(d, d))));"
             "    gl_FragColor = vec4(pass_Color.xyz, k);"
             "}");
-#else
-        shader[0] = Shader::Create(
-            "void main(float4 in_Position : POSITION,"
-            "          float2 in_TexCoord : TEXCOORD0,"
-            "          float4 in_Color : COLOR,"
-            "          out float4 out_Color : COLOR,"
-            "          out float4 out_Position : POSITION,"
-            "          out float2 out_TexCoord : TEXCOORD0)"
-            "{"
-            "    out_TexCoord = in_TexCoord;"
-            "    out_Color = in_Color;"
-            "    out_Position = in_Position;"
-            "}",
-
-            "void main(float2 in_TexCoord : TEXCOORD0,"
-            "          float4 in_Color : COLOR,"
-            "          uniform sampler2D tex,"
-            "          out float4 out_FragColor : COLOR)"
-            "{"
-            "    float4 tmp = tex2D(tex, in_TexCoord * 0.25);"
-            "    out_FragColor = float4(abs(tmp.xyz - in_Color.xyz), 1);"
-            "}");
-#endif
 
     shader[0]->Bind();
     shader++;
@@ -1100,11 +1076,15 @@ void DebugQuad::ResetState()
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glClientActiveTexture(GL_TEXTURE0);
 #endif
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
+#endif
     glDisable(GL_TEXTURE_2D);
 
     glDisable(GL_BLEND);
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     glDisable(GL_POINT_SPRITE);
+#endif
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #if !defined __CELLOS_LV2__
@@ -1114,7 +1094,9 @@ void DebugQuad::ResetState()
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
 
+#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
 }
 
 } /* namespace lol */
