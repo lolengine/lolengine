@@ -95,11 +95,11 @@ static inline double lol_fctid(double x) INLINEATTR;
 static inline double lol_fctidz(double x) INLINEATTR;
 static inline double lol_fcfid(double x) INLINEATTR;
 static inline double lol_frsqrte(double x) INLINEATTR;
-#endif
 static inline double lol_fsel(double c, double gte, double lt) INLINEATTR;
+static inline double lol_fres(double x) INLINEATTR;
+static inline double lol_fdiv(double a, double b) INLINEATTR;
+#endif
 static inline double lol_fabs(double x) INLINEATTR;
-static inline double lol_round(double x) INLINEATTR;
-static inline double lol_trunc(double x) INLINEATTR;
 static inline double lol_round(double x) INLINEATTR;
 static inline double lol_trunc(double x) INLINEATTR;
 
@@ -111,7 +111,7 @@ static inline double lol_fctid(double x)
     r = __builtin_fctid(x);
 #else
     __asm__ ("fctid %0, %1"
-             : "=f"(r) : "f"(x));
+             : "=f" (r) : "f" (x));
 #endif
     return r;
 }
@@ -123,7 +123,7 @@ static double lol_fctidz(double x)
     r = __builtin_fctidz(x);
 #else
     __asm__ ("fctidz %0, %1"
-             : "=f"(r) : "f"(x));
+             : "=f" (r) : "f" (x));
 #endif
     return r;
 }
@@ -135,7 +135,7 @@ static double lol_fcfid(double x)
     r = __builtin_fcfid(x);
 #else
     __asm__ ("fcfid %0, %1"
-             : "=f"(r) : "f"(x));
+             : "=f" (r) : "f" (x));
 #endif
     return r;
 }
@@ -147,11 +147,10 @@ static double lol_frsqrte(double x)
 #else
     double r;
     __asm__ ("frsqrte %0, %1"
-             : "=f"(r) : "f"(x));
+             : "=f" (r) : "f" (x));
     return r;
 #endif
 }
-#endif /* __CELLOS_LV2__ */
 
 static inline double lol_fsel(double c, double gte, double lt)
 {
@@ -160,12 +159,37 @@ static inline double lol_fsel(double c, double gte, double lt)
 #elif defined __CELLOS_LV2__
     double r;
     __asm__ ("fsel %0, %1, %2, %3"
-             : "=f"(r) : "f"(c), "f"(gte), "f"(lt));
+             : "=f" (r) : "f" (c), "f" (gte), "f" (lt));
     return r;
 #else
     return (c >= 0) ? gte : lt;
 #endif
 }
+
+static inline double lol_fres(double x)
+{
+    double ret;
+#if defined __SNC__
+    ret = __builtin_fre(x);
+#else
+    __asm__ ("fres %0, %1"
+             : "=f" (ret) : "f" (x));
+#endif
+    return ret;
+}
+
+static inline double lol_fdiv(double a, double b)
+{
+    /* Estimate */
+    double x0 = lol_fres(b);
+
+    /* Two steps of Newton-Raphson */
+    x0 = (b * x0 - ONE) * -x0 + x0;
+    x0 = (b * x0 - ONE) * -x0 + x0;
+
+    return a * x0;
+}
+#endif /* __CELLOS_LV2__ */
 
 static inline double lol_fabs(double x)
 {
@@ -174,7 +198,7 @@ static inline double lol_fabs(double x)
 #elif defined __CELLOS_LV2__
     double r;
     __asm__ ("fabs %0, %1"
-             : "=f"(r) : "f"(x));
+             : "=f" (r) : "f" (x));
     return r;
 #else
     return __builtin_fabs(x);
@@ -470,7 +494,7 @@ double lol_tan(double x)
 #if defined __CELLOS_LV2__
     double is_cos_not_zero = absc - VERY_SMALL_NUMBER;
     cosx = lol_fsel(is_cos_not_zero, cosx, VERY_SMALL_NUMBER);
-    return __fdiv(sinx, cosx);
+    return lol_fdiv(sinx, cosx);
 #else
     if (__unlikely(absc < VERY_SMALL_NUMBER))
         cosx = VERY_SMALL_NUMBER;
