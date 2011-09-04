@@ -93,12 +93,17 @@ public:
             CPPUNIT_ASSERT(fabs(a2 - b2) <= fabs(f) * 1e-11);
         }
 
-        for (int i = -10000; i < 10000; i++)
+        for (int i = -100000; i < 100000; i++)
         {
-            double f = (double)i * (1.0 / 1000.0);
+            double f = (double)i * (1.0 / 10000.0);
             double a = __builtin_tan(f);
             double b = lol_tan(f);
-            CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+            if (fabs(a) > 1e4)
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * fabs(a) * 1e-11);
+            else if (fabs(a) > 1.0)
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+            else
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -106,7 +111,12 @@ public:
             double f = (double)i * (1.0 / 100000.0);
             double a = __builtin_tan(f);
             double b = lol_tan(f);
-            CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+            if (fabs(a) > 1e4)
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * fabs(a) * 1e-11);
+            else if (fabs(a) > 1.0)
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(a) * 1e-11);
+            else
+               CPPUNIT_ASSERT(fabs(a - b) <= fabs(f) * 1e-11);
         }
     }
 };

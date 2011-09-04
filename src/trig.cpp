@@ -43,45 +43,48 @@ static const double TWO_EXP_54 = 18014398509481984.0;
 /** sin Taylor series coefficients. */
 static const double SC[] =
 {
-    -1.6449340668482264364724e-0, // pi^2/3!
-    +8.1174242528335364363700e-1, // pi^4/5!
-    -1.9075182412208421369647e-1, // pi^6/7!
-    +2.6147847817654800504653e-2, // pi^8/9!
-    -2.3460810354558236375089e-3, // pi^10/11!
-    +1.4842879303107100368487e-4, // pi^12/13!
-    -6.9758736616563804745344e-6, // pi^14/15!
-    +2.5312174041370276513517e-7, // pi^16/17!
+    -1.6449340668482264364724e-0, // π^2/3!
+    +8.1174242528335364363700e-1, // π^4/5!
+    -1.9075182412208421369647e-1, // π^6/7!
+    +2.6147847817654800504653e-2, // π^8/9!
+    -2.3460810354558236375089e-3, // π^10/11!
+    +1.4842879303107100368487e-4, // π^12/13!
+    -6.9758736616563804745344e-6, // π^14/15!
+    +2.5312174041370276513517e-7, // π^16/17!
 };
 
+/* Note: the last value should be -1.3878952462213772114468e-7 (ie.
+ * π^18/18!) but we tweak it in order to get the better average precision
+ * required for tan() computations when close to π/2+kπ values. */
 static const double CC[] =
 {
-    -4.9348022005446793094172e-0, // pi^2/2!
-    +4.0587121264167682181850e-0, // pi^4/4!
-    -1.3352627688545894958753e-0, // pi^6/6!
-    +2.3533063035889320454188e-1, // pi^8/8!
-    -2.5806891390014060012598e-2, // pi^10/10!
-    +1.9295743094039230479033e-3, // pi^12/12!
-    -1.0463810492484570711802e-4, // pi^14/14!
-    +4.3030695870329470072978e-6, // pi^16/16!
+    -4.9348022005446793094172e-0, // π^2/2!
+    +4.0587121264167682181850e-0, // π^4/4!
+    -1.3352627688545894958753e-0, // π^6/6!
+    +2.3533063035889320454188e-1, // π^8/8!
+    -2.5806891390014060012598e-2, // π^10/10!
+    +1.9295743094039230479033e-3, // π^12/12!
+    -1.0463810492484570711802e-4, // π^14/14!
+    +4.3030695870329470072978e-6, // π^16/16!
+    -1.3777e-7,
 };
 
 /* These coefficients use Sloane’s http://oeis.org/A002430 and
  * http://oeis.org/A036279 sequences for the Taylor series of tan().
- * Note: the last value should be 443861162*pi^18/1856156927625, ie.
- * 2.12485922978838540352881e5, but we tweak it in order to get
- * sub 1e-11 precision in a larger range. */
+ * Note: the last value should be 2.12485922978838540352881e5 (ie.
+ * 443861162*π^18/1856156927625), but we tweak it in order to get
+ * sub 1e-11 average precision in a larger range. */
 static const double TC[] =
 {
-    3.28986813369645287294483e0, // pi^2/3
-    1.29878788045336582981920e1, // 2*pi^4/15
-    5.18844961612069061254404e1, // 17*pi^6/315
-    2.07509320280908496804928e2, // 62*pi^8/2835
-    8.30024701695986756361561e2, // 1382*pi^10/155925
-    3.32009324029001216460018e3, // 21844*pi^12/6081075
-    1.32803704909665483598490e4, // 929569*pi^14/638512875
-    5.31214808666037709352112e4, // 6404582*pi^16/10854718875
-    2.373e5, // XXX: last value tweaked to improve precision
-    //2.12485922978838540352881e5, // 443861162*pi^18/1856156927625
+    3.28986813369645287294483e0, // π^2/3
+    1.29878788045336582981920e1, // 2*π^4/15
+    5.18844961612069061254404e1, // 17*π^6/315
+    2.07509320280908496804928e2, // 62*π^8/2835
+    8.30024701695986756361561e2, // 1382*π^10/155925
+    3.32009324029001216460018e3, // 21844*π^12/6081075
+    1.32803704909665483598490e4, // 929569*π^14/638512875
+    5.31214808666037709352112e4, // 6404582*π^16/10854718875
+    2.373e5,
 };
 
 /* Custom intrinsics */
@@ -343,7 +346,10 @@ void lol_sincos(double x, double *sinx, double *cosx)
         double x2 = absx * absx;
         double x4 = x2 * x2;
 
-        double subs1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+        /* Computing the Taylor series to the 11th order is enough to get
+         * x * 1e-11 precision, but we push it to the 13th order so that
+         * tan() has a better precision. */
+        double subs1 = ((SC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
         double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
         double taylors = subs2 * x2 + subs1;
         *sinx = x * taylors;
@@ -406,15 +412,16 @@ void lol_sincos(double x, double *sinx, double *cosx)
     double x2 = absx * absx;
     double x4 = x2 * x2;
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
-    double subs1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
+    double subs1 = ((CC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
     double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
     double subc1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
     double subc2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
 #else
     double subs1 = (((SC[7] * x4 + SC[5]) * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
     double subs2 = ((SC[6] * x4 + SC[4]) * x4 + SC[2]) * x4 + SC[0];
+    /* Push Taylor series to the 19th order to enhance tan() accuracy. */
     double subc1 = (((CC[7] * x4 + CC[5]) * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
-    double subc2 = ((CC[6] * x4 + CC[4]) * x4 + CC[2]) * x4 + CC[0];
+    double subc2 = (((CC[8] * x4 + CC[6]) * x4 + CC[4]) * x4 + CC[2]) * x4 + CC[0];
 #endif
     double taylors = subs2 * x2 + subs1;
     *sinx = absx * taylors * sin_sign;
