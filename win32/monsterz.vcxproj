@@ -18,43 +18,6 @@
     <ClInclude Include="..\monsterz\piece.h" />
     <ClInclude Include="..\monsterz\thumbs.h" />
     <ClInclude Include="..\monsterz\title.h" />
-    <ClInclude Include="..\src\audio.h" />
-    <ClInclude Include="..\src\bitfield.h" />
-    <ClInclude Include="..\src\core.h" />
-    <ClInclude Include="..\src\debugfps.h" />
-    <ClInclude Include="..\src\debugquad.h" />
-    <ClInclude Include="..\src\debugrecord.h" />
-    <ClInclude Include="..\src\debugsphere.h" />
-    <ClInclude Include="..\src\debugstats.h" />
-    <ClInclude Include="..\src\dict.h" />
-    <ClInclude Include="..\src\emitter.h" />
-    <ClInclude Include="..\src\entity.h" />
-    <ClInclude Include="..\src\font.h" />
-    <ClInclude Include="..\src\forge.h" />
-    <ClInclude Include="..\src\hash.h" />
-    <ClInclude Include="..\src\image.h" />
-    <ClInclude Include="..\src\input.h" />
-    <ClInclude Include="..\src\layer.h" />
-    <ClInclude Include="..\src\loldebug.h" />
-    <ClInclude Include="..\src\lolgl.h" />
-    <ClInclude Include="..\src\map.h" />
-    <ClInclude Include="..\src\matrix.h" />
-    <ClInclude Include="..\src\numeric.h" />
-    <ClInclude Include="..\src\profiler.h" />
-    <ClInclude Include="..\src\sample.h" />
-    <ClInclude Include="..\src\sampler.h" />
-    <ClInclude Include="..\src\scene.h" />
-    <ClInclude Include="..\src\sdlapp.h" />
-    <ClInclude Include="..\src\sdlinput.h" />
-    <ClInclude Include="..\src\shader.h" />
-    <ClInclude Include="..\src\text.h" />
-    <ClInclude Include="..\src\ticker.h" />
-    <ClInclude Include="..\src\tiler.h" />
-    <ClInclude Include="..\src\tileset.h" />
-    <ClInclude Include="..\src\timer.h" />
-    <ClInclude Include="..\src\video.h" />
-    <ClInclude Include="..\src\worldentity.h" />
-    <ClInclude Include="..\src\world.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\monsterz\board.cpp" />
@@ -64,38 +27,6 @@
     <ClCompile Include="..\monsterz\piece.cpp" />
     <ClCompile Include="..\monsterz\thumbs.cpp" />
     <ClCompile Include="..\monsterz\title.cpp" />
-    <ClCompile Include="..\src\audio.cpp" />
-    <ClCompile Include="..\src\debugfps.cpp" />
-    <ClCompile Include="..\src\debugquad.cpp" />
-    <ClCompile Include="..\src\debugrecord.cpp" />
-    <ClCompile Include="..\src\debugsphere.cpp" />
-    <ClCompile Include="..\src\debugstats.cpp" />
-    <ClCompile Include="..\src\dict.cpp" />
-    <ClCompile Include="..\src\emitter.cpp" />
-    <ClCompile Include="..\src\entity.cpp" />
-    <ClCompile Include="..\src\font.cpp" />
-    <ClCompile Include="..\src\forge.cpp" />
-    <ClCompile Include="..\src\hash.cpp" />
-    <ClCompile Include="..\src\image.cpp" />
-    <ClCompile Include="..\src\input.cpp" />
-    <ClCompile Include="..\src\layer.cpp" />
-    <ClCompile Include="..\src\map.cpp" />
-    <ClCompile Include="..\src\matrix.cpp" />
-    <ClCompile Include="..\src\profiler.cpp" />
-    <ClCompile Include="..\src\sample.cpp" />
-    <ClCompile Include="..\src\sampler.cpp" />
-    <ClCompile Include="..\src\scene.cpp" />
-    <ClCompile Include="..\src\sdlapp.cpp" />
-    <ClCompile Include="..\src\sdlinput.cpp" />
-    <ClCompile Include="..\src\shader.cpp" />
-    <ClCompile Include="..\src\text.cpp" />
-    <ClCompile Include="..\src\ticker.cpp" />
-    <ClCompile Include="..\src\tiler.cpp" />
-    <ClCompile Include="..\src\tileset.cpp" />
-    <ClCompile Include="..\src\timer.cpp" />
-    <ClCompile Include="..\src\video.cpp" />
-    <ClCompile Include="..\src\world.cpp" />
-    <ClCompile Include="..\src\worldentity.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{17f0f184-4436-4d08-b8aa-16572ea238db}</ProjectGuid>
@@ -142,14 +73,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;LOL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;$(LolDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);opengl32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GlDeps)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SdlLibs);$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>for %%I in ($(SdlLibs)) do xcopy /y /c /d %%I\*.dll $(TargetDir)</Command>
@@ -163,16 +94,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;$(LolDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);opengl32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GlDeps)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SdlLibs);$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>for %%I in ($(SdlLibs)) do xcopy /y /c /d %%I\*.dll $(TargetDir)</Command>

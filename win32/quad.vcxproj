@@ -11,16 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\deushax\debugsprite.h" />
-    <ClInclude Include="..\deushax\game.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\deushax\debugsprite.cpp" />
-    <ClCompile Include="..\deushax\deushax.cpp" />
-    <ClCompile Include="..\deushax\game.cpp" />
+    <ClCompile Include="..\test\debug\quad.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}</ProjectGuid>
+    <ProjectGuid>{53D9D96F-55C0-4044-BDB1-4A5E8EDBDF0E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>testmap</RootNamespace>
   </PropertyGroup>
@@ -70,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GlDeps)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(SdlDeps);$(GlDeps);$(OutDir)\lolcore.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SdlLibs);$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
