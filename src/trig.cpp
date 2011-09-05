@@ -16,6 +16,8 @@
 #   include <fastmath.h>
 #endif
 
+#include <cmath>
+
 #include "core.h"
 
 using namespace std;
@@ -36,7 +38,11 @@ static const double NEG_ONE = -1.0;
 static const double HALF    = 0.5;
 static const double QUARTER = 0.25;
 static const double TWO     = 2.0;
+#if defined __GNUC__
 static const double VERY_SMALL_NUMBER = 0x1.0p-128;
+#else
+static const double VERY_SMALL_NUMBER = 3e-39;
+#endif
 static const double TWO_EXP_52 = 4503599627370496.0;
 static const double TWO_EXP_54 = 18014398509481984.0;
 
@@ -88,7 +94,13 @@ static const double TC[] =
 };
 
 /* Custom intrinsics */
-#define INLINEATTR __attribute__((always_inline))
+#if defined __GNUC__
+#   define INLINEATTR __attribute__((always_inline))
+#   define FP_USE(x) __asm__("" : "+m" (x))
+#else
+#   define INLINEATTR
+#   define FP_USE(x) (void)(x)
+#endif
 
 #if defined __CELLOS_LV2__
 static inline double lol_fctid(double x) INLINEATTR;
@@ -100,8 +112,10 @@ static inline double lol_fres(double x) INLINEATTR;
 static inline double lol_fdiv(double a, double b) INLINEATTR;
 #endif
 static inline double lol_fabs(double x) INLINEATTR;
+#if defined __GNUC__
 static inline double lol_round(double x) INLINEATTR;
 static inline double lol_trunc(double x) INLINEATTR;
+#endif
 
 #if defined __CELLOS_LV2__
 static inline double lol_fctid(double x)
@@ -200,11 +214,14 @@ static inline double lol_fabs(double x)
     __asm__ ("fabs %0, %1"
              : "=f" (r) : "f" (x));
     return r;
-#else
+#elif defined __GNUC__
     return __builtin_fabs(x);
+#else
+    return fabs(x);
 #endif
 }
 
+#if defined __GNUC__
 static inline double lol_round(double x)
 {
 #if defined __CELLOS_LV2__
@@ -222,6 +239,7 @@ static inline double lol_trunc(double x)
     return __builtin_trunc(x);
 #endif
 }
+#endif
 
 double lol_sin(double x)
 {
@@ -253,12 +271,12 @@ double lol_sin(double x)
     sign = lol_fsel(is_even, sign, -sign);
 #else
     double num_cycles = absx + TWO_EXP_52;
-    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+    FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
     double is_even = TWO * num_cycles - ONE;
-    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
-    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
-    __asm__("" : "+m" (is_even));
+    FP_USE(is_even); is_even += TWO_EXP_54;
+    FP_USE(is_even); is_even -= TWO_EXP_54;
+    FP_USE(is_even);
     is_even -= TWO * num_cycles - ONE;
     double sign = is_even;
 #endif
@@ -321,12 +339,12 @@ double lol_cos(double x)
     double sign = lol_fsel(is_even, ONE, NEG_ONE);
 #else
     double num_cycles = absx + TWO_EXP_52;
-    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+    FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
     double is_even = TWO * num_cycles - ONE;
-    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
-    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
-    __asm__("" : "+m" (is_even));
+    FP_USE(is_even); is_even += TWO_EXP_54;
+    FP_USE(is_even); is_even -= TWO_EXP_54;
+    FP_USE(is_even);
     is_even -= TWO * num_cycles - ONE;
     double sign = is_even;
 #endif
@@ -396,12 +414,12 @@ void lol_sincos(double x, double *sinx, double *cosx)
     double cos_sign = lol_fsel(is_even, ONE, NEG_ONE);
 #else
     double num_cycles = absx + TWO_EXP_52;
-    __asm__("" : "+m" (num_cycles)); num_cycles -= TWO_EXP_52;
+    FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
     double is_even = TWO * num_cycles - ONE;
-    __asm__("" : "+m" (is_even)); is_even += TWO_EXP_54;
-    __asm__("" : "+m" (is_even)); is_even -= TWO_EXP_54;
-    __asm__("" : "+m" (is_even));
+    FP_USE(is_even); is_even += TWO_EXP_54;
+    FP_USE(is_even); is_even -= TWO_EXP_54;
+    FP_USE(is_even);
     is_even -= TWO * num_cycles - ONE;
     double sin_sign = is_even;
     double cos_sign = is_even;

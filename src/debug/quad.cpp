@@ -12,6 +12,12 @@
 #   include "config.h"
 #endif
 
+#ifdef WIN32
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#endif
+
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -82,9 +88,9 @@ private:
     /* Cache a list of points for a sine wave, ensuring constant spacing
      * between consecutive points. */
     static int const SINE_SIZE = 256;
-    static float const SINE_SPACE = 0.01f;
     GLfloat const *GetSineArray()
     {
+        static float const SINE_SPACE = 0.01f;
         float x = 0.0f;
         for (npoints = 0; npoints < SINE_SIZE && x <= 1.0f; npoints++)
         {
