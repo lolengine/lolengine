@@ -139,26 +139,26 @@ public:
 
         vec3 b(a1);
         vec2 a2(b);
-        CPPUNIT_ASSERT(b.x == a1.x);
-        CPPUNIT_ASSERT(b.y == a1.y);
-        CPPUNIT_ASSERT(b.z == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(b.x, a1.x);
+        CPPUNIT_ASSERT_EQUAL(b.y, a1.y);
+        CPPUNIT_ASSERT_EQUAL(b.z, 0.0f);
         CPPUNIT_ASSERT(a2 == a1);
 
         vec4 c(a1);
         vec2 a3(c);
-        CPPUNIT_ASSERT(c.x == a1.x);
-        CPPUNIT_ASSERT(c.y == a1.y);
-        CPPUNIT_ASSERT(c.z == 0.0f);
-        CPPUNIT_ASSERT(c.w == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(c.x, a1.x);
+        CPPUNIT_ASSERT_EQUAL(c.y, a1.y);
+        CPPUNIT_ASSERT_EQUAL(c.z, 0.0f);
+        CPPUNIT_ASSERT_EQUAL(c.w, 0.0f);
         CPPUNIT_ASSERT(a3 == a1);
     }
 
     void test_mat_det()
     {
         float d1 = triangular.det();
-        CPPUNIT_ASSERT(d1 == 24.0f);
+        CPPUNIT_ASSERT_EQUAL(d1, 24.0f);
         float d2 = invertible.det();
-        CPPUNIT_ASSERT(d2 == -1.0f);
+        CPPUNIT_ASSERT_EQUAL(d2, -1.0f);
     }
 
     void test_mat_mul()
@@ -167,25 +167,25 @@ public:
         mat4 m1 = identity;
         mat4 m2 = m0 * m1;
 
-        CPPUNIT_ASSERT(m2[0][0] == 1.0f);
-        CPPUNIT_ASSERT(m2[1][0] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][0] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][0] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][1] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][1] == 1.0f);
-        CPPUNIT_ASSERT(m2[2][1] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][1] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][2] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][2] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][2] == 1.0f);
-        CPPUNIT_ASSERT(m2[3][2] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][3] == 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
     }
 
     void test_mat_inv()
@@ -195,25 +195,25 @@ public:
 
         mat4 m2 = m0 * m1;
 
-        CPPUNIT_ASSERT(m2[0][0] == 1.0f);
-        CPPUNIT_ASSERT(m2[1][0] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][0] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][0] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][1] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][1] == 1.0f);
-        CPPUNIT_ASSERT(m2[2][1] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][1] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][2] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][2] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][2] == 1.0f);
-        CPPUNIT_ASSERT(m2[3][2] == 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
 
-        CPPUNIT_ASSERT(m2[0][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[1][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[2][3] == 0.0f);
-        CPPUNIT_ASSERT(m2[3][3] == 1.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
+        CPPUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
     }
 
 private:
