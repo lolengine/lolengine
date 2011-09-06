@@ -29,7 +29,7 @@
 #   define __likely(x)   __builtin_expect(!!(x), 1)
 #   define __unlikely(x) __builtin_expect(!!(x), 0)
 #   define INLINEATTR __attribute__((always_inline))
-#   define FP_USE(x) __asm__("" : "+m" (x))
+#   define FP_USE(x) __asm__("" : "+r" (x))
 #else
 #   define __likely(x)   x
 #   define __unlikely(x) x

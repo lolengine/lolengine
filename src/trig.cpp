@@ -93,15 +93,6 @@ static const double TC[] =
     2.373e5,
 };
 
-/* Custom intrinsics */
-#if defined __GNUC__
-#   define INLINEATTR __attribute__((always_inline))
-#   define FP_USE(x) __asm__("" : "+m" (x))
-#else
-#   define INLINEATTR
-#   define FP_USE(x) (void)(x)
-#endif
-
 #if defined __CELLOS_LV2__
 static inline double lol_fctid(double x) INLINEATTR;
 static inline double lol_fctidz(double x) INLINEATTR;
