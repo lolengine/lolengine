@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include <cstdio>
+
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 
@@ -20,6 +22,11 @@ int main(int argc, char *argv[])
     CppUnit::TextTestRunner runner;
     runner.addTest(CppUnit::TestFactoryRegistry::getRegistry().makeTest());
 
-    return !runner.run();
+    int ret = !runner.run();
+
+#if defined _WIN32
+    getchar();
+#endif
+    return ret;
 }
 
