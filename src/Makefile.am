@@ -12,6 +12,8 @@ liblol_a_SOURCES = \
     worldentity.cpp worldentity.h gradient.cpp gradient.h half.cpp half.h \
     platform.cpp platform.h sprite.cpp sprite.h trig.cpp trig.h \
     \
+    lol/unit.h \
+    \
     eglapp.cpp eglapp.h \
     \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \

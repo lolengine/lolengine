@@ -10,11 +10,9 @@ set -e
 PATH="$PATH:./contrib/gtk-2.22.1/bin"
 
 M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
-M4PATH="$M4PATH:./contrib/cppunit-1.12.2/share/aclocal"
 export M4PATH # This looks necessary
 
 PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/contrib/gtkglarea-2.0.1/lib/pkgconfig"
-PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/contrib/cppunit-1.12.2/lib/pkgconfig"
 export PKG_CONFIG_PATH # This looks necessary, too
 
 # SDL include path
@@ -36,9 +34,6 @@ CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
 CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/atk-1.0"
 CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtkglarea-2.0.1/include"
 
-# CppUnit include path
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/cppunit-1.12.2/include"
-
 # SDL library path
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-1.2.14/lib"
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-image-1.2.10/lib"
@@ -51,9 +46,6 @@ LDFLAGS="$LDFLAGS -L`pwd`/contrib/glew-1.6.0/lib"
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtk-2.22.1/lib"
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtk-2.22.1/bin"
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtkglarea-2.0.1/lib"
-
-# CppUnit library path
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/cppunit-1.12.2/lib"
 
 # Prevent issues with GTK+ internals
 CPPFLAGS="$CPPFLAGS -mms-bitfields"

@@ -12,32 +12,21 @@
 #   include "config.h"
 #endif
 
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/TestCaller.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/TestSuite.h>
-
 #include <cmath>
 
 #include "core.h"
+#include "lol/unit.h"
 
 namespace lol
 {
 
-class TrigTest : public CppUnit::TestCase
+LOLUNIT_FIXTURE(TrigTest)
 {
-    CPPUNIT_TEST_SUITE(TrigTest);
-    CPPUNIT_TEST(test_sin);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
-    TrigTest() : CppUnit::TestCase("Trigonometry Test") {}
-
     void setUp() {}
-
     void tearDown() {}
 
-    void test_sin()
+    LOLUNIT_TEST(test_sin)
     {
         for (int i = -10000; i < 10000; i++)
         {
@@ -48,7 +37,7 @@ public:
             double a = sin(f);
 #endif
             double b = lol_sin(f);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -60,9 +49,12 @@ public:
             double a = sin(f);
 #endif
             double b = lol_sin(f);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
+    }
 
+    LOLUNIT_TEST(test_cos)
+    {
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 1000.0);
@@ -72,7 +64,7 @@ public:
             double a = cos(f);
 #endif
             double b = lol_cos(f);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -84,9 +76,12 @@ public:
             double a = cos(f);
 #endif
             double b = lol_cos(f);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
+    }
 
+    LOLUNIT_TEST(test_sincos)
+    {
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 1000.0);
@@ -99,8 +94,8 @@ public:
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -115,10 +110,13 @@ public:
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
         }
+    }
 
+    LOLUNIT_TEST(test_tan)
+    {
         for (int i = -100000; i < 100000; i++)
         {
             double f = (double)i * (1.0 / 10000.0);
@@ -129,11 +127,11 @@ public:
 #endif
             double b = lol_tan(f);
             if (fabs(a) > 1e4)
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
             else
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -146,16 +144,16 @@ public:
 #endif
             double b = lol_tan(f);
             if (fabs(a) > 1e4)
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
             else
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TrigTest);
+LOLUNIT_SETUP_FIXTURE(TrigTest);
 
 } /* namespace lol */
 
