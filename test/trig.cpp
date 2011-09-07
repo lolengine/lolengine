@@ -153,7 +153,5 @@ public:
     }
 };
 
-LOLUNIT_SETUP_FIXTURE(TrigTest);
-
 } /* namespace lol */
 

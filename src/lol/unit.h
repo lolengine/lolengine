@@ -169,6 +169,11 @@ public:
 
 #define LOLUNIT_FIXTURE(FixtureName) \
     class FixtureName; \
+    template<typename T> struct Make##FixtureName \
+    { \
+        Make##FixtureName() { new T(); } \
+    }; \
+    Make##FixtureName<FixtureName> lol_unit_fixture_##FixtureName; \
     static char const *LolUnitFixtureName(FixtureName *p) \
     { \
         (void)p; \
@@ -189,10 +194,7 @@ public:
     TestCase##TestCaseName lol_unit_test_case_##TestCaseName; \
     void TestCaseName()
 
-#define LOLUNIT_SETUP_FIXTURE(ClassName) \
-    ClassName ClassName##Test_Instance;
-
-#define LOLUNIT_ASSERT(cond) \
+#define LOLUNIT_ASSERT_GENERIC(message, cond) \
     do { \
         m_asserts++; \
         if (True() && !(cond)) \
@@ -204,12 +206,13 @@ public:
                        << __FILE__ << std::endl; \
             m_errorlog << "assertion failed" << std::endl; \
             m_errorlog << "- Expression: " << #cond << std::endl; \
+            m_errorlog << message; \
             m_failure = true; \
             return; \
         } \
     } while(!True())
 
-#define LOLUNIT_ASSERT_EQUAL(a, b) \
+#define LOLUNIT_ASSERT_EQUAL_GENERIC(message, a, b) \
     do { \
         m_asserts++; \
         if (True() && (a) != (b)) \
@@ -228,7 +231,7 @@ public:
         } \
     } while(!True())
 
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
+#define LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(message, a, b, t) \
     do { \
         m_asserts++; \
         if (True() && fabs((a) - (b)) > fabs((t))) \
@@ -242,10 +245,43 @@ public:
             m_errorlog << "- Expected: " << (b) << std::endl; \
             m_errorlog << "- Actual  : " << (a) << std::endl; \
             m_errorlog << "- Delta   : " << (t) << std::endl; \
+            m_errorlog << message; \
             m_failure = true; \
             return; \
         } \
     } while(!True())
+
+#define LOLUNIT_FAIL(message) \
+    do { \
+        m_asserts++; \
+        m_errorlog << std::endl << std::endl; \
+        m_errorlog << ++m_failcases << ") test: " \
+                   << LolUnitFixtureName(this) << "::" << m_currentname \
+                   << " (F) line: " << __LINE__ << " " \
+                   << __FILE__ << std::endl; \
+        m_errorlog << "forced failure" << std::endl; \
+        m_errorlog << "- " << message << std::endl; \
+        m_failure = true; \
+        return; \
+    } while(!True())
+
+#define LOLUNIT_ASSERT(cond) \
+    LOLUNIT_ASSERT_GENERIC("", cond)
+
+#define LOLUNIT_ASSERT_MESSAGE(message, cond) \
+    LOLUNIT_ASSERT_GENERIC("- " << message << std::endl, cond)
+
+#define LOLUNIT_ASSERT_EQUAL(a, b) \
+    LOLUNIT_ASSERT_EQUAL_GENERIC("", a, b)
+
+#define LOLUNIT_ASSERT_EQUAL_MESSAGE(message, a, b) \
+    LOLUNIT_ASSERT_EQUAL_GENERIC("- " << message << std::endl, a, b)
+
+#define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
+    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("", a, b, t)
+
+#define LOLUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(message, a, b, t) \
+    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("- " << message << std::endl, a, b, t)
 
 } /* namespace lol */
 

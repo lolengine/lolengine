@@ -305,7 +305,5 @@ HalfTest::TestPair const HalfTest::pairs[] =
     { 31.0f / (1 << 19), 0x03e0 }, /* 0x1.fp-15, denormal */
 };
 
-LOLUNIT_SETUP_FIXTURE(HalfTest);
-
 } /* namespace lol */
 
