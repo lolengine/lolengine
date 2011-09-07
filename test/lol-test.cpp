@@ -13,13 +13,14 @@
 #endif
 
 #include <cstdio>
+#include <cstdlib>
 
 #include <lol/unit.h>
 
 int main(void)
 {
     lol::TestRunner runner;
-    int ret = !runner.Run();
-    return ret;
+    bool success = runner.Run();
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
