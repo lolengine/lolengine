@@ -29,7 +29,13 @@
 #   define __likely(x)   __builtin_expect(!!(x), 1)
 #   define __unlikely(x) __builtin_expect(!!(x), 0)
 #   define INLINEATTR __attribute__((always_inline))
-#   define FP_USE(x) __asm__("" : "+r" (x))
+#   if defined __CELLOS_LV2__
+#      define FP_USE(x) __asm__("" : "+f" (x))
+#   elif defined __x86_64__
+#      define FP_USE(x) __asm__("" : "+x" (x))
+#   elif defined __i386__
+#      define FP_USE(x) __asm__("" : "+t" (x))
+#   endif
 #else
 #   define __likely(x)   x
 #   define __unlikely(x) x
