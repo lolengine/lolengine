@@ -12,6 +12,12 @@
 #   include "config.h"
 #endif
 
+#ifdef WIN32
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#endif
+
 #include <cstdio>
 
 #if defined HAVE_FASTMATH_H
@@ -69,6 +75,10 @@ int main(int argc, char **argv)
     Log::Info("-----------------------------------\n");
     bench_half(2);
 
+#if defined _WIN32
+    getchar();
+#endif
+
     return EXIT_SUCCESS;
 }
 
@@ -103,7 +113,11 @@ static void bench_trig(int mode)
         /* Sin */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined __GNUC__
             pf2[i] = __builtin_sinf(pf[i]);
+#else
+            pf2[i] = sinf(pf[i]);
+#endif
         result[0] += timer.GetMs();
 
         /* Fast sin */
@@ -125,7 +139,11 @@ static void bench_trig(int mode)
         /* Cos */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined __GNUC__
             pf2[i] = __builtin_cosf(pf[i]);
+#else
+            pf2[i] = cosf(pf[i]);
+#endif
         result[3] += timer.GetMs();
 
         /* Fast cos */
@@ -148,8 +166,13 @@ static void bench_trig(int mode)
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
+#if defined __GNUC__
             pf2[i] = __builtin_sinf(pf[i]);
             pf3[i] = __builtin_cosf(pf[i]);
+#else
+            pf2[i] = sinf(pf[i]);
+            pf3[i] = cosf(pf[i]);
+#endif
         }
         result[6] += timer.GetMs();
 
@@ -176,7 +199,11 @@ static void bench_trig(int mode)
         /* Tan */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
+#if defined __GNUC__
             pf2[i] = __builtin_tanf(pf[i]);
+#else
+            pf2[i] = tanf(pf[i]);
+#endif
         result[9] += timer.GetMs();
 
         /* Fast tan */

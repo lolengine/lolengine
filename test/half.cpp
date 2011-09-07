@@ -324,9 +324,9 @@ HalfTest::TestPair const HalfTest::pairs[] =
     { 0.5f,      0x3800 },
     { 0.125f,    0x3000 },
     { 15.9375f,  0x4bf8 },
-    { 0x1.fp-10, 0x17c0 },
-    { 0x1.fp-14, 0x07c0 }, /* denormal */
-    { 0x1.fp-15, 0x03e0 }, /* denormal */
+    { 31.0f / (1 << 14), 0x17c0 }, /* 0x1.fp-10 */
+    { 31.0f / (1 << 18), 0x07c0 }, /* 0x1.fp-14, denormal */
+    { 31.0f / (1 << 19), 0x03e0 }, /* 0x1.fp-15, denormal */
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(HalfTest);
