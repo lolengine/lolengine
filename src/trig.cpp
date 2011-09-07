@@ -291,9 +291,11 @@ double lol_sin(double x)
     }
 #endif
 
-    /* Compute a Tailor series for sin() and combine sign information. */
+#if !defined __CELLOS_LV2__
     sign *= (x >= 0.0) ? PI : NEG_PI;
+#endif
 
+    /* Compute a Tailor series for sin() and combine sign information. */
     double x2 = absx * absx;
     double x4 = x2 * x2;
 #if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
