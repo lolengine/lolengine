@@ -14,19 +14,12 @@
 
 #include <cstdio>
 
-#include <cppunit/TextTestRunner.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <lol/unit.h>
 
-int main(int argc, char *argv[])
+int main(void)
 {
-    CppUnit::TextTestRunner runner;
-    runner.addTest(CppUnit::TestFactoryRegistry::getRegistry().makeTest());
-
-    int ret = !runner.run();
-
-#if defined _WIN32
-    getchar();
-#endif
+    lol::TestRunner runner;
+    int ret = !runner.Run();
     return ret;
 }
 

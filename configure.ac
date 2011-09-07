@@ -46,9 +46,6 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 
-AC_ARG_ENABLE(cppunit,
-  [  --enable-cppunit        use cppunit for unit tests (autodetected)])
-
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h fastmath.h)
 
 if test "${enable_debug}" = "yes"; then
@@ -240,11 +237,6 @@ if test "${ac_cv_my_have_gtkgl}" != "no"; then
   AC_DEFINE(USE_GTKGL, 1, Define to 1 to use GtkGl)
 fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
-
-
-dnl Use cppunit for unit tests?
-PKG_CHECK_MODULES(CPPUNIT, cppunit, [CPPUNIT="yes"], [CPPUNIT="no"])
-AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
 
 
 dnl How to use the Lol Engine inside this tree
