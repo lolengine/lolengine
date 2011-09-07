@@ -204,7 +204,5 @@ private:
     mat4 triangular, identity, invertible;
 };
 
-LOLUNIT_SETUP_FIXTURE(MatrixTest);
-
 } /* namespace lol */
 
