@@ -17,6 +17,7 @@
 #define __LOL_UNIT_H__
 
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <cmath>
 
@@ -34,7 +35,7 @@ public:
     virtual void tearDown(void) {};
 
 protected:
-    FixtureBase() : m_next(NULL), m_tests(0), m_fails(0) {}
+    FixtureBase() : m_next(NULL), m_testcases(0), m_failcases(0) {}
     virtual ~FixtureBase() {}
 
     /* The FixtureBase class keeps track of all instanciated children
@@ -53,13 +54,16 @@ protected:
         return head;
     }
 
-    virtual int RunFixture() = 0;
+    virtual void RunFixture() = 0;
 
     /* Prevent compiler complaints about unreachable code */
     static inline bool True() { return true; }
 
     FixtureBase *m_next;
-    int m_tests, m_fails;
+    int m_testcases, m_failcases;
+    int m_asserts, m_failure;
+    char const *m_fixturename, *m_currentname;
+    std::stringstream m_errorlog;
 };
 
 template<class T> class Fixture : protected FixtureBase
@@ -71,13 +75,13 @@ public:
     {
     public:
         void (FixtureClass::* m_fun)();
-        char const *m_name;
+        char const *m_testname;
         TestCase *m_next;
 
         static void AddTestCase(TestCase *that, char const *name,
                                 void (FixtureClass::*fun)())
         {
-            that->m_name = name;
+            that->m_testname = name;
             that->m_fun = fun;
             GetOrSetTestCase(that);
         }
@@ -89,14 +93,20 @@ public:
     }
 
     /* Run all test cases in this fixture. */
-    virtual int RunFixture()
+    virtual void RunFixture()
     {
-        for (TestCase *head = GetOrSetTestCase(); head; head = head->m_next)
+        m_errorlog.str("");
+        m_testcases = 0;
+        m_failcases = 0;
+        for (TestCase *c = GetOrSetTestCase(); c; c = c->m_next)
         {
-            (static_cast<FixtureClass *>(this)->*head->m_fun)();
-            std::cout << ".";
+            m_testcases++;
+            m_asserts = 0;
+            m_failure = false;
+            m_currentname = c->m_testname;
+            (static_cast<FixtureClass *>(this)->*c->m_fun)();
+            std::cout << (m_failure ? 'F' : '.');
         }
-        return 0;
     }
 
     /* Each Fixture class specialisation keeps track of its instanciated
@@ -117,22 +127,53 @@ public:
 class TestRunner
 {
 public:
-    int Run()
+    bool Run()
     {
-        int ret = 0;
-        for (FixtureBase *head = FixtureBase::GetOrSetTest(); head; head = head->m_next)
+        bool ret = true;
+        std::stringstream errors("");
+        int failcases = 0, testcases = 0;
+
+        for (FixtureBase *f = FixtureBase::GetOrSetTest(); f; f = f->m_next)
         {
-            head->setUp();
-            if (head->RunFixture())
-                ret = 1;
-            head->tearDown();
+            f->setUp();
+            f->RunFixture();
+            f->tearDown();
+
+            errors << f->m_errorlog.str();
+            testcases += f->m_testcases;
+            failcases += f->m_failcases;
         }
         std::cout << std::endl;
+
+        std::cout << std::endl << std::endl;
+        if (failcases)
+        {
+            std::cout << "!!!FAILURES!!!" << std::endl;
+            std::cout << "Test Results:" << std::endl;
+            std::cout << "Run:  " << testcases
+                      << "  Failures: " << failcases
+                      << "  Errors: 0" << std::endl; /* TODO: handle errors */
+
+            std::cout << errors.str();
+            ret = false;
+        }
+        else
+        {
+            std::cout << "OK (" << testcases << " tests)" << std::endl;
+        }
+        std::cout << std::endl << std::endl;
+
         return ret;
     }
 };
 
 #define LOLUNIT_FIXTURE(FixtureName) \
+    class FixtureName; \
+    static char const *LolUnitFixtureName(FixtureName *p) \
+    { \
+        (void)p; \
+        return #FixtureName; \
+    } \
     class FixtureName : public lol::Fixture<FixtureName>
 
 #define LOLUNIT_TEST(TestCaseName) \
@@ -145,36 +186,66 @@ public:
                     (void (FixtureClass::*)()) &FixtureClass::TestCaseName); \
         } \
     }; \
-    TestCase##TestCaseName test_case_##TestCaseName; \
+    TestCase##TestCaseName lol_unit_test_case_##TestCaseName; \
     void TestCaseName()
 
 #define LOLUNIT_SETUP_FIXTURE(ClassName) \
     ClassName ClassName##Test_Instance;
 
 #define LOLUNIT_ASSERT(cond) \
-    do { if (True() && !(cond)) \
-    { \
-        std::cout << "FAIL! " #cond << std::endl; \
-        return; \
-    } } while(!True())
+    do { \
+        m_asserts++; \
+        if (True() && !(cond)) \
+        { \
+            m_errorlog << std::endl << std::endl; \
+            m_errorlog << ++m_failcases << ") test: " \
+                       << LolUnitFixtureName(this) << "::" << m_currentname \
+                       << " (F) line: " << __LINE__ << " " \
+                       << __FILE__ << std::endl; \
+            m_errorlog << "assertion failed" << std::endl; \
+            m_errorlog << "- Expression: " << #cond << std::endl; \
+            m_failure = true; \
+            return; \
+        } \
+    } while(!True())
 
 #define LOLUNIT_ASSERT_EQUAL(a, b) \
-    do { if (True() && (a) != (b)) \
-    { \
-        std::cout << "FAIL! " #a " != " #b << std::endl; \
-        std::cout << "expected: " << (a) << std::endl; \
-        std::cout << "returned: " << (b) << std::endl; \
-        return; \
-    } } while(!True())
+    do { \
+        m_asserts++; \
+        if (True() && (a) != (b)) \
+        { \
+            m_errorlog << std::endl << std::endl; \
+            m_errorlog << ++m_failcases << ") test: " \
+                       << LolUnitFixtureName(this) << "::" << m_currentname \
+                       << " (F) line: " << __LINE__ << " " \
+                       << __FILE__ << std::endl; \
+            m_errorlog << "equality assertion failed" << std::endl; \
+            m_errorlog << "- Expected: " << (b) << std::endl; \
+            m_errorlog << "- Actual  : " << (a) << std::endl; \
+            m_errorlog << message; \
+            m_failure = true; \
+            return; \
+        } \
+    } while(!True())
 
 #define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
-    do { if (True() && fabs((a) - (b)) > fabs((t))) \
-    { \
-        std::cout << "FAIL! " #a " != " #b << std::endl; \
-        std::cout << "expected: " << (a) << std::endl; \
-        std::cout << "returned: " << (b) << std::endl; \
-        return; \
-    } } while(!True())
+    do { \
+        m_asserts++; \
+        if (True() && fabs((a) - (b)) > fabs((t))) \
+        { \
+            m_errorlog << std::endl << std::endl; \
+            m_errorlog << ++m_failcases << ") test: " \
+                       << LolUnitFixtureName(this) << "::" << m_currentname \
+                       << " (F) line: " << __LINE__ << " " \
+                       << __FILE__ << std::endl; \
+            m_errorlog << "double equality assertion failed" << std::endl; \
+            m_errorlog << "- Expected: " << (b) << std::endl; \
+            m_errorlog << "- Actual  : " << (a) << std::endl; \
+            m_errorlog << "- Delta   : " << (t) << std::endl; \
+            m_failure = true; \
+            return; \
+        } \
+    } while(!True())
 
 } /* namespace lol */
 
