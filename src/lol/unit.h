@@ -107,8 +107,10 @@ public:
             m_failure = false;
             m_currentname = c->m_testname;
             m_context.str("");
+
+            std::cout << '.';
             (static_cast<FixtureClass *>(this)->*c->m_fun)();
-            std::cout << (m_failure ? 'F' : '.');
+            if (m_failure) std::cout << 'F';
         }
     }
 
@@ -252,7 +254,7 @@ public:
             m_errorlog << std::setprecision(16); \
             m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
             m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
-            m_errorlog << "- Delta   : " << #t << " = " << (t) << std::endl; \
+            m_errorlog << "- Delta   : " << (t) << std::endl; \
             m_errorlog << std::setprecision(old_prec); \
             m_errorlog << message; \
             m_errorlog << m_context.str(); \
