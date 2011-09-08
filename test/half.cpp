@@ -45,6 +45,7 @@ public:
         {
             half a = (half)pairs[i].f;
             uint16_t b = pairs[i].x;
+            LOLUNIT_SET_CONTEXT(i);
             LOLUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
@@ -55,6 +56,7 @@ public:
         {
             half a = half::makeaccurate(pairs[i].f);
             uint16_t b = pairs[i].x;
+            LOLUNIT_SET_CONTEXT(i);
             LOLUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
@@ -65,6 +67,7 @@ public:
         {
             half a = half::makebits(i);
             uint16_t b = i;
+            LOLUNIT_SET_CONTEXT(i);
             LOLUNIT_ASSERT_EQUAL(a.bits, b);
         }
     }
@@ -140,6 +143,7 @@ public:
     {
         for (uint32_t i = 0; i < 0x10000; i++)
         {
+            LOLUNIT_SET_CONTEXT(i);
             half h = half::makebits(i);
             if (h.is_nan())
             {
@@ -165,6 +169,7 @@ public:
         {
             float a = (float)half::makebits(pairs[i].x);
             float b = pairs[i].f;
+            LOLUNIT_SET_CONTEXT(i);
             LOLUNIT_ASSERT_EQUAL(a, b);
         }
 
@@ -173,6 +178,7 @@ public:
             half h = half::makebits(i);
             float f = (float)h;
             half g = (half)f;
+            LOLUNIT_SET_CONTEXT(i);
             if (h.is_nan())
             {
                 LOLUNIT_ASSERT(isnan(f));
@@ -301,8 +307,8 @@ HalfTest::TestPair const HalfTest::pairs[] =
     { 0.125f,    0x3000 },
     { 15.9375f,  0x4bf8 },
     { 31.0f / (1 << 14), 0x17c0 }, /* 0x1.fp-10 */
-    { 31.0f / (1 << 18), 0x07c0 }, /* 0x1.fp-14, denormal */
-    { 31.0f / (1 << 19), 0x03e0 }, /* 0x1.fp-15, denormal */
+    { 31.0f / (1 << 18), 0x07c0 }, /* 0x1.fp-14, normal float, denormal half */
+    { 31.0f / (1 << 19), 0x03e0 }, /* 0x1.fp-15, normal float, denormal half */
 };
 
 } /* namespace lol */

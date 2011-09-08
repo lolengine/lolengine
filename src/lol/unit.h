@@ -17,6 +17,7 @@
 #define __LOL_UNIT_H__
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <cstdio>
 #include <cmath>
@@ -63,7 +64,7 @@ protected:
     int m_testcases, m_failcases;
     int m_asserts, m_failure;
     char const *m_fixturename, *m_currentname;
-    std::stringstream m_errorlog;
+    std::stringstream m_errorlog, m_context;
 };
 
 template<class T> class Fixture : protected FixtureBase
@@ -105,6 +106,7 @@ public:
             m_asserts = 0;
             m_failure = false;
             m_currentname = c->m_testname;
+            m_context.str("");
             (static_cast<FixtureClass *>(this)->*c->m_fun)();
             std::cout << (m_failure ? 'F' : '.');
         }
@@ -226,9 +228,10 @@ public:
                        << " (F) line: " << __LINE__ << " " \
                        << __FILE__ << std::endl; \
             m_errorlog << "equality assertion failed" << std::endl; \
-            m_errorlog << "- Expected: " << (a) << std::endl; \
-            m_errorlog << "- Actual  : " << (b) << std::endl; \
+            m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
+            m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
             m_errorlog << message; \
+            m_errorlog << m_context.str(); \
             m_failure = true; \
             return; \
         } \
@@ -245,10 +248,14 @@ public:
                        << " (F) line: " << __LINE__ << " " \
                        << __FILE__ << std::endl; \
             m_errorlog << "double equality assertion failed" << std::endl; \
-            m_errorlog << "- Expected: " << (a) << std::endl; \
-            m_errorlog << "- Actual  : " << (b) << std::endl; \
-            m_errorlog << "- Delta   : " << (t) << std::endl; \
+            std::streamsize old_prec = m_errorlog.precision(); \
+            m_errorlog << std::setprecision(16); \
+            m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
+            m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
+            m_errorlog << "- Delta   : " << #t << " = " << (t) << std::endl; \
+            m_errorlog << std::setprecision(old_prec); \
             m_errorlog << message; \
+            m_errorlog << m_context.str(); \
             m_failure = true; \
             return; \
         } \
@@ -264,9 +271,19 @@ public:
                    << __FILE__ << std::endl; \
         m_errorlog << "forced failure" << std::endl; \
         m_errorlog << "- " << message << std::endl; \
+        m_errorlog << m_context.str(); \
         m_failure = true; \
         return; \
     } while(!True())
+
+#define LOLUNIT_SET_CONTEXT(n) \
+    do { \
+        m_context.str(""); \
+        m_context << "- Context : " << #n << " = " << (n) << std::endl; \
+    } while(!True())
+
+#define LOLUNIT_UNSET_CONTEXT(n) \
+    m_context.str("")
 
 #define LOLUNIT_ASSERT(cond) \
     LOLUNIT_ASSERT_GENERIC("", cond)
