@@ -27,6 +27,11 @@ namespace lol
 
 using namespace std;
 
+/*
+ * This is the base class for all fixtures. It keeps track of all
+ * fixtures registered through the LOLUNIT_FIXTURE macro and puts them
+ * in a linked list.
+ */
 class FixtureBase
 {
     friend class TextTestRunner;
@@ -67,6 +72,26 @@ protected:
     std::stringstream m_errorlog, m_context;
 };
 
+#define LOLUNIT_FIXTURE(FixtureName) \
+    class FixtureName; \
+    template<typename T> struct Make##FixtureName \
+    { \
+        Make##FixtureName() { p = new T(); } \
+        ~Make##FixtureName() { delete p; } \
+        T *p; \
+    }; \
+    Make##FixtureName<FixtureName> lol_unit_fixture_##FixtureName; \
+    static char const *LolUnitFixtureName(FixtureName *p) \
+    { \
+        (void)p; \
+        return #FixtureName; \
+    } \
+    class FixtureName : public lol::Fixture<FixtureName>
+
+/*
+ * This template specialises FixtureBase and provides registration of
+ * test cases in a linked list through the LOLUNIT_TEST macro.
+ */
 template<class T> class Fixture : protected FixtureBase
 {
 public:
@@ -129,6 +154,23 @@ public:
     }
 };
 
+#define LOLUNIT_TEST(TestCaseName) \
+    class TestCase##TestCaseName : public TestCase \
+    { \
+    public: \
+        TestCase##TestCaseName() \
+        { \
+            AddTestCase(this, #TestCaseName, \
+                    (void (FixtureClass::*)()) &FixtureClass::TestCaseName); \
+        } \
+    }; \
+    TestCase##TestCaseName lol_unit_test_case_##TestCaseName; \
+    void TestCaseName()
+
+/*
+ * This simple class runs all automatically registered tests and reports
+ * on error and success in the standard output.
+ */
 class TextTestRunner
 {
 public:
@@ -171,35 +213,6 @@ public:
         return ret;
     }
 };
-
-#define LOLUNIT_FIXTURE(FixtureName) \
-    class FixtureName; \
-    template<typename T> struct Make##FixtureName \
-    { \
-        Make##FixtureName() { p = new T(); } \
-        ~Make##FixtureName() { delete p; } \
-        T *p; \
-    }; \
-    Make##FixtureName<FixtureName> lol_unit_fixture_##FixtureName; \
-    static char const *LolUnitFixtureName(FixtureName *p) \
-    { \
-        (void)p; \
-        return #FixtureName; \
-    } \
-    class FixtureName : public lol::Fixture<FixtureName>
-
-#define LOLUNIT_TEST(TestCaseName) \
-    class TestCase##TestCaseName : public TestCase \
-    { \
-    public: \
-        TestCase##TestCaseName() \
-        { \
-            AddTestCase(this, #TestCaseName, \
-                    (void (FixtureClass::*)()) &FixtureClass::TestCaseName); \
-        } \
-    }; \
-    TestCase##TestCaseName lol_unit_test_case_##TestCaseName; \
-    void TestCaseName()
 
 #define LOLUNIT_ASSERT_GENERIC(msg, cond) \
     do { \
@@ -266,6 +279,10 @@ public:
         } \
     } while(!True())
 
+/*
+ * Public assert macros
+ */
+
 #define LOLUNIT_FAIL(msg) \
     do { \
         m_asserts++; \
@@ -275,7 +292,7 @@ public:
                    << " (F) line: " << __LINE__ << " " \
                    << __FILE__ << std::endl; \
         m_errorlog << "forced failure" << std::endl; \
-        m_errorlog << "- " << msg << std::endl; \
+        m_errorlog << LOLUNIT_MSG(msg); \
         m_errorlog << m_context.str(); \
         m_failure = true; \
         return; \
@@ -286,6 +303,7 @@ public:
         m_context.str(""); \
         m_context << "- Context : " << #n << " = " << (n) << std::endl; \
     } while(!True())
+
 #define LOLUNIT_UNSET_CONTEXT(n) \
     m_context.str("")
 
@@ -349,7 +367,7 @@ public:
 #define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
     LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("", a, b, t)
 #define LOLUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(msg, a, b, t) \
-    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("- " << msg << std::endl, a, b, t)
+    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(LOLUNIT_MSG(msg), a, b, t)
 
 } /* namespace lol */
 
