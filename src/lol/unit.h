@@ -201,7 +201,7 @@ public:
     TestCase##TestCaseName lol_unit_test_case_##TestCaseName; \
     void TestCaseName()
 
-#define LOLUNIT_ASSERT_GENERIC(message, cond) \
+#define LOLUNIT_ASSERT_GENERIC(msg, cond) \
     do { \
         m_asserts++; \
         if (True() && !(cond)) \
@@ -213,33 +213,36 @@ public:
                        << __FILE__ << std::endl; \
             m_errorlog << "assertion failed" << std::endl; \
             m_errorlog << "- Expression: " << #cond << std::endl; \
-            m_errorlog << message; \
+            m_errorlog << msg; \
             m_failure = true; \
             return; \
         } \
     } while(!True())
 
-#define LOLUNIT_ASSERT_EQUAL_GENERIC(message, a, b) \
+#define LOLUNIT_ASSERT_OP(op, modifier, opdesc, msg, a, b) \
     do { \
         m_asserts++; \
-        if (True() && (a) != (b)) \
+        if (True() && !modifier((a) op (b))) \
         { \
             m_errorlog << std::endl << std::endl; \
             m_errorlog << ++m_failcases << ") test: " \
                        << LolUnitFixtureName(this) << "::" << m_currentname \
                        << " (F) line: " << __LINE__ << " " \
                        << __FILE__ << std::endl; \
-            m_errorlog << "equality assertion failed" << std::endl; \
+            m_errorlog << opdesc << " assertion failed" << std::endl; \
             m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
             m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
-            m_errorlog << message; \
+            m_errorlog << msg; \
             m_errorlog << m_context.str(); \
             m_failure = true; \
             return; \
         } \
     } while(!True())
 
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(message, a, b, t) \
+#define LOLUNIT_MSG(msg) \
+    "- " << msg << std::endl
+
+#define LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(msg, a, b, t) \
     do { \
         m_asserts++; \
         if (True() && fabs((a) - (b)) > fabs((t))) \
@@ -256,14 +259,14 @@ public:
             m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
             m_errorlog << "- Delta   : " << (t) << std::endl; \
             m_errorlog << std::setprecision(old_prec); \
-            m_errorlog << message; \
+            m_errorlog << msg; \
             m_errorlog << m_context.str(); \
             m_failure = true; \
             return; \
         } \
     } while(!True())
 
-#define LOLUNIT_FAIL(message) \
+#define LOLUNIT_FAIL(msg) \
     do { \
         m_asserts++; \
         m_errorlog << std::endl << std::endl; \
@@ -272,7 +275,7 @@ public:
                    << " (F) line: " << __LINE__ << " " \
                    << __FILE__ << std::endl; \
         m_errorlog << "forced failure" << std::endl; \
-        m_errorlog << "- " << message << std::endl; \
+        m_errorlog << "- " << msg << std::endl; \
         m_errorlog << m_context.str(); \
         m_failure = true; \
         return; \
@@ -283,27 +286,70 @@ public:
         m_context.str(""); \
         m_context << "- Context : " << #n << " = " << (n) << std::endl; \
     } while(!True())
-
 #define LOLUNIT_UNSET_CONTEXT(n) \
     m_context.str("")
 
 #define LOLUNIT_ASSERT(cond) \
     LOLUNIT_ASSERT_GENERIC("", cond)
+#define LOLUNIT_ASSERT_MESSAGE(m, cond) \
+    LOLUNIT_ASSERT_GENERIC(LOLUNIT_MSG(m), cond)
 
-#define LOLUNIT_ASSERT_MESSAGE(message, cond) \
-    LOLUNIT_ASSERT_GENERIC("- " << message << std::endl, cond)
 
 #define LOLUNIT_ASSERT_EQUAL(a, b) \
-    LOLUNIT_ASSERT_EQUAL_GENERIC("", a, b)
+    LOLUNIT_ASSERT_OP(==, !!, "equality", "", a, b)
+#define LOLUNIT_ASSERT_EQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(==, !!, "equality", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_DIFFERENT(a, b) \
+    LOLUNIT_ASSERT_OP(!=, !!, "inequality", "", a, b)
+#define LOLUNIT_ASSERT_DIFFERENT_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(!=, !!, "inequality", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_LESS(a, b) \
+    LOLUNIT_ASSERT_OP(<, !!, "less than", "", a, b)
+#define LOLUNIT_ASSERT_LESS_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(<, !!, "less than", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_LEQUAL(a, b) \
+    LOLUNIT_ASSERT_OP(<=, !!, "less than or equal", "", a, b)
+#define LOLUNIT_ASSERT_LEQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(<=, !!, "less than or equal", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_GREATER(a, b) \
+    LOLUNIT_ASSERT_OP(>, !!, "greater than", "", a, b)
+#define LOLUNIT_ASSERT_GREATER_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(>, !!, "greater than", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_GEQUAL(a, b) \
+    LOLUNIT_ASSERT_OP(>=, !!, "greater than or equal", "", a, b)
+#define LOLUNIT_ASSERT_GEQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(>=, !!, "greater than or equal", LOLUNIT_MSG(m), a, b)
 
-#define LOLUNIT_ASSERT_EQUAL_MESSAGE(message, a, b) \
-    LOLUNIT_ASSERT_EQUAL_GENERIC("- " << message << std::endl, a, b)
+
+#define LOLUNIT_ASSERT_NOT_EQUAL(a, b) \
+    LOLUNIT_ASSERT_OP(==, !, "not equality", "", a, b)
+#define LOLUNIT_ASSERT_NOT_EQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(==, !, "not equality", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_NOT_DIFFERENT(a, b) \
+    LOLUNIT_ASSERT_OP(!=, !, "not inequality", "", a, b)
+#define LOLUNIT_ASSERT_NOT_DIFFERENT_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(!=, !, "not inequality", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_NOT_LESS(a, b) \
+    LOLUNIT_ASSERT_OP(<, !, "not less than", "", a, b)
+#define LOLUNIT_ASSERT_NOT_LESS_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(<, !, "not less than", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_NOT_LEQUAL(a, b) \
+    LOLUNIT_ASSERT_OP(<=, !, "not less than or equal", "", a, b)
+#define LOLUNIT_ASSERT_NOT_LEQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(<=, !, "not less than or equal", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_NOT_GREATER(a, b) \
+    LOLUNIT_ASSERT_OP(>, !, "not greater than", "", a, b)
+#define LOLUNIT_ASSERT_NOT_GREATER_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(>, !, "not greater than", LOLUNIT_MSG(m), a, b)
+#define LOLUNIT_ASSERT_NOT_GEQUAL(a, b) \
+    LOLUNIT_ASSERT_OP(>=, !, "not greater than or equal", "", a, b)
+#define LOLUNIT_ASSERT_NOT_GEQUAL_MESSAGE(m, a, b) \
+    LOLUNIT_ASSERT_OP(>=, !, "not greater than or equal", LOLUNIT_MSG(m), a, b)
 
 #define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
     LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("", a, b, t)
-
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(message, a, b, t) \
-    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("- " << message << std::endl, a, b, t)
+#define LOLUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(msg, a, b, t) \
+    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("- " << msg << std::endl, a, b, t)
 
 } /* namespace lol */
 
