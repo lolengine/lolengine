@@ -81,8 +81,9 @@ public:
         static void AddTestCase(TestCase *that, char const *name,
                                 void (FixtureClass::*fun)())
         {
-            that->m_testname = name;
             that->m_fun = fun;
+            that->m_testname = name;
+            that->m_next = NULL;
             GetOrSetTestCase(that);
         }
     };
