@@ -226,8 +226,8 @@ public:
                        << " (F) line: " << __LINE__ << " " \
                        << __FILE__ << std::endl; \
             m_errorlog << "equality assertion failed" << std::endl; \
-            m_errorlog << "- Expected: " << (b) << std::endl; \
-            m_errorlog << "- Actual  : " << (a) << std::endl; \
+            m_errorlog << "- Expected: " << (a) << std::endl; \
+            m_errorlog << "- Actual  : " << (b) << std::endl; \
             m_errorlog << message; \
             m_failure = true; \
             return; \
@@ -245,8 +245,8 @@ public:
                        << " (F) line: " << __LINE__ << " " \
                        << __FILE__ << std::endl; \
             m_errorlog << "double equality assertion failed" << std::endl; \
-            m_errorlog << "- Expected: " << (b) << std::endl; \
-            m_errorlog << "- Actual  : " << (a) << std::endl; \
+            m_errorlog << "- Expected: " << (a) << std::endl; \
+            m_errorlog << "- Actual  : " << (b) << std::endl; \
             m_errorlog << "- Delta   : " << (t) << std::endl; \
             m_errorlog << message; \
             m_failure = true; \
