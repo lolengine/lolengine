@@ -37,6 +37,7 @@ public:
             double a = sin(f);
 #endif
             double b = lol_sin(f);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
 
@@ -49,6 +50,7 @@ public:
             double a = sin(f);
 #endif
             double b = lol_sin(f);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
     }
@@ -64,6 +66,7 @@ public:
             double a = cos(f);
 #endif
             double b = lol_cos(f);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
 
@@ -76,6 +79,7 @@ public:
             double a = cos(f);
 #endif
             double b = lol_cos(f);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
         }
     }
@@ -94,6 +98,7 @@ public:
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
         }
@@ -110,6 +115,7 @@ public:
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
+            LOLUNIT_SET_CONTEXT(f);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
         }
@@ -126,6 +132,7 @@ public:
             double a = tan(f);
 #endif
             double b = lol_tan(f);
+            LOLUNIT_SET_CONTEXT(f);
             if (fabs(a) > 1e4)
                 LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
@@ -143,6 +150,7 @@ public:
             double a = tan(f);
 #endif
             double b = lol_tan(f);
+            LOLUNIT_SET_CONTEXT(f);
             if (fabs(a) > 1e4)
                 LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
