@@ -7,5 +7,5 @@ set -ex
 ./bootstrap
 ./configure
 make clean
-make
+make -j6
 

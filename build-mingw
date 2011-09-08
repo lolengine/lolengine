@@ -71,5 +71,5 @@ fi
 ./configure $HOSTFLAGS $BUILDFLAGS \
             CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" \
             GTK_LIBS="$GTK_LIBS" LOL_LIBS="$LOL_LIBS"
-make
+make -j6
 
