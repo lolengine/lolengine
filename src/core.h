@@ -33,10 +33,10 @@
 #      define FP_USE(x) __asm__("" : "+f" (x))
 #   elif defined __x86_64__
 #      define FP_USE(x) __asm__("" : "+x" (x))
-#   elif defined _WIN32 /* FIXME: this isn't good */
+#   elif defined __i386__ /* FIXME: this isn't good */
 #      define FP_USE(x) __asm__("" : "+m" (x))
-#   elif defined __i386__
-#      define FP_USE(x) __asm__("" : "+t" (x))
+#   else
+#      define FP_USE(x) (void)(x)
 #   endif
 #else
 #   define __likely(x)   x
