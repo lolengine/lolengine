@@ -19,8 +19,8 @@
 
 int main(void)
 {
-    lol::TestRunner runner;
-    bool success = runner.Run();
+    lol::TextTestRunner runner;
+    bool success = runner.run();
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

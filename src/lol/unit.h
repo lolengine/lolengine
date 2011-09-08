@@ -28,7 +28,7 @@ using namespace std;
 
 class FixtureBase
 {
-    friend class TestRunner;
+    friend class TextTestRunner;
 
 public:
     virtual void setUp(void) {};
@@ -54,7 +54,7 @@ protected:
         return head;
     }
 
-    virtual void RunFixture() = 0;
+    virtual void runFixture() = 0;
 
     /* Prevent compiler complaints about unreachable code */
     static inline bool True() { return true; }
@@ -93,7 +93,7 @@ public:
     }
 
     /* Run all test cases in this fixture. */
-    virtual void RunFixture()
+    virtual void runFixture()
     {
         m_errorlog.str("");
         m_testcases = 0;
@@ -124,10 +124,10 @@ public:
     }
 };
 
-class TestRunner
+class TextTestRunner
 {
 public:
-    bool Run()
+    bool run()
     {
         bool ret = true;
         std::stringstream errors("");
@@ -136,7 +136,7 @@ public:
         for (FixtureBase *f = FixtureBase::GetOrSetTest(); f; f = f->m_next)
         {
             f->setUp();
-            f->RunFixture();
+            f->runFixture();
             f->tearDown();
 
             errors << f->m_errorlog.str();
@@ -171,7 +171,9 @@ public:
     class FixtureName; \
     template<typename T> struct Make##FixtureName \
     { \
-        Make##FixtureName() { new T(); } \
+        Make##FixtureName() { p = new T(); } \
+        ~Make##FixtureName() { delete p; } \
+        T *p; \
     }; \
     Make##FixtureName<FixtureName> lol_unit_fixture_##FixtureName; \
     static char const *LolUnitFixtureName(FixtureName *p) \
