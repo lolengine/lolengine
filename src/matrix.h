@@ -17,6 +17,7 @@
 #define __LOL_MATRIX_H__
 
 #include <cmath>
+#include <iostream>
 
 namespace lol
 {
@@ -125,7 +126,11 @@ namespace lol
     { \
         using namespace std; \
         return sqrtf((float)sqlen()); \
-    }
+    } \
+    \
+    template<typename U> \
+    friend std::ostream &operator<<(std::ostream &stream, \
+                                    Vec##elems<U> const &v);
 
 template <typename T> struct Vec2;
 template <typename T> struct Vec3;
@@ -231,6 +236,9 @@ template <typename T> struct Mat4
     static Mat4<T> rotate(T theta, T x, T y, T z);
 
     void printf() const;
+
+    template<class U>
+    friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
 
     inline Mat4<T> operator +(Mat4<T> const val) const
     {
