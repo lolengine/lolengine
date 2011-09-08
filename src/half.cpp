@@ -227,7 +227,6 @@ static inline uint32_t half_to_float_branch(uint16_t x)
 
     if (e == 0)
     {
-#if !defined __CELLOS_LV2__
         uint32_t v = m | (m >> 1);
         v |= v >> 2;
         v |= v >> 4;
@@ -238,10 +237,6 @@ static inline uint32_t half_to_float_branch(uint16_t x)
         /* We don't have to remove the 10th mantissa bit because it gets
          * added to our underestimated exponent. */
         return s | (((125 - e) << 23) + (m << e));
-#else
-        /* PS3 don't know bout my denormals */
-        return s;
-#endif
     }
 
     if (e == 0x7c00u)
