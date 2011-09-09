@@ -174,7 +174,7 @@ public:
 class TextTestRunner
 {
 public:
-    bool run()
+    bool Run()
     {
         bool ret = true;
         std::stringstream errors("");
