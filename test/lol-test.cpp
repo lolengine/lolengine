@@ -20,7 +20,7 @@
 int main(void)
 {
     lol::TextTestRunner runner;
-    bool success = runner.run();
+    bool success = runner.Run();
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
