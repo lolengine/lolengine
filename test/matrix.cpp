@@ -21,7 +21,7 @@ namespace lol
 LOLUNIT_FIXTURE(MatrixTest)
 {
 public:
-    void setUp()
+    void SetUp()
     {
         identity = mat4(1.0f);
         triangular = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
@@ -34,7 +34,7 @@ public:
                           vec4( 5.0f, -3.0f, -7.0f, -6.0f));
     }
 
-    void tearDown() {}
+    void TearDown() {}
 
     LOLUNIT_TEST(test_vec_eq)
     {

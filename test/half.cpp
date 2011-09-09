@@ -36,9 +36,6 @@ namespace lol
 LOLUNIT_FIXTURE(HalfTest)
 {
 public:
-    void setUp() {}
-    void tearDown() {}
-
     LOLUNIT_TEST(test_half_from_float)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
