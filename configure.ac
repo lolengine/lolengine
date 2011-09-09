@@ -67,7 +67,7 @@ if test "${enable_experimental}" = "yes"; then
 fi
 
 dnl No exceptions
-CXXFLAGS="${CXXFLAGS} -fno-exceptions"
+CXXFLAGS="${CXXFLAGS} -fno-exceptions -fno-rtti"
 dnl Optimizations
 CXXFLAGS="${CXXFLAGS} ${REL} ${OPT}"
 dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
