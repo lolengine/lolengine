@@ -37,8 +37,8 @@ class FixtureBase
     friend class TextTestRunner;
 
 public:
-    virtual void setUp(void) {};
-    virtual void tearDown(void) {};
+    virtual void SetUp(void) {};
+    virtual void TearDown(void) {};
 
 protected:
     FixtureBase() : m_next(NULL), m_testcases(0), m_failcases(0) {}
@@ -193,9 +193,9 @@ public:
 
         for (FixtureBase *f = FixtureBase::FixtureList(); f; f = f->m_next)
         {
-            f->setUp();
+            f->SetUp();
             f->RunFixture();
-            f->tearDown();
+            f->TearDown();
 
             errors << f->m_errorlog.str();
             testcases += f->m_testcases;

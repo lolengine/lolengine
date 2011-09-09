@@ -23,9 +23,6 @@ namespace lol
 LOLUNIT_FIXTURE(TrigTest)
 {
 public:
-    void setUp() {}
-    void tearDown() {}
-
     LOLUNIT_TEST(test_sin)
     {
         for (int i = -10000; i < 10000; i++)
