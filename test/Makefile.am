@@ -16,7 +16,7 @@ noinst_PROGRAMS = quad sandbox lol-bench lol-test
 
 TESTS = lol-test
 
-lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp trig.cpp
+lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp trig.cpp build.cpp
 lol_test_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 lol_test_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 lol_test_DEPENDENCIES = $(top_builddir)/src/liblol.a
