@@ -4,15 +4,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/src
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-all-local: quad$(EXEEXT) benchsuite$(EXEEXT)
+all-local: $(noinst_PROGRAMS)
 	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
 	test x$(MAKE_FSELF) = xno || make_fself sandbox$(EXEEXT) sandbox.self
 	test x$(MAKE_FSELF) = xno || make_fself benchsuite$(EXEEXT) benchsuite.self
 	test x$(MAKE_FSELF) = xno || make_fself testsuite$(EXEEXT) testsuite.self
 
 CLEANFILES = $(noinst_PROGRAMS:%=%.self) $(noinst_PROGRAMS:%=%.exe)
-#quad.self sandbox.self benchsuite.self testsuite.self \
-#             quad.exe sandbox.exe benchsuite.exe testsuite.exe
 
 noinst_PROGRAMS = quad sandbox benchsuite testsuite
 

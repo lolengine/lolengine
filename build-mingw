@@ -1,75 +1,9 @@
 #!/bin/sh
 
-##  Native MinGW compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
-
 # This can't hurt
 make distclean
 
-set -e
-
-PATH="$PATH:./contrib/gtk-2.22.1/bin"
-
-M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
-export M4PATH # This looks necessary
-
-PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/contrib/gtkglarea-2.0.1/lib/pkgconfig"
-export PKG_CONFIG_PATH # This looks necessary, too
-
-# SDL include path
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/sdl-1.2.14/include"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/sdl-image-1.2.10/include"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/sdl-mixer-1.2.11/include"
-
-# Glew include path
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/glew-1.7.0/include -DGLEW_STATIC"
-
-# GTK include path
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/lib/glib-2.0/include"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/lib/gtk-2.0/include"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/glib-2.0"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/gtk-2.0"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/cairo"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/pango-1.0"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtk-2.22.1/include/atk-1.0"
-CPPFLAGS="$CPPFLAGS -I`pwd`/contrib/gtkglarea-2.0.1/include"
-
-# SDL library path
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-1.2.14/lib"
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-image-1.2.10/lib"
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-mixer-1.2.11/lib"
-
-# Glew library path
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/glew-1.7.0/lib/i686-w64-mingw32"
-
-# GTK library path
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtk-2.22.1/lib"
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtk-2.22.1/bin"
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtkglarea-2.0.1/lib"
-
-# Prevent issues with GTK+ internals
-CPPFLAGS="$CPPFLAGS -mms-bitfields"
-
-# We don't want our binaries to depend on MinGW
-LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
-
-# Help our build scripts a bit here
-GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"
-GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
-GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
-
-LOL_LIBS="$LOL_LIBS -lSDL_image -lSDL_mixer -lSDLmain -lSDL -lopengl32 -lglew32"
-
-# Bootstrap, configure and make
-./bootstrap
-# Only on Windows
-if test "x${MSYSTEM}" != xMINGW32; then
-  HOSTFLAGS=--host=i686-w64-mingw32
-  BUILDFLAGS=--build=none
-fi
-
-./configure $HOSTFLAGS $BUILDFLAGS \
-            CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" \
-            GTK_LIBS="$GTK_LIBS" LOL_LIBS="$LOL_LIBS"
-make -j6
+./build/lol-build bootstrap windows-i386
+./build/lol-build configure windows-i386
+./build/lol-build build windows-i386
 
