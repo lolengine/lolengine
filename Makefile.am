@@ -9,3 +9,13 @@ bench:
 	cd test && $(MAKE) $(AM_MAKEFLAGS) $@
 .PHONY: bench
 
+dist: lolunit-$(LOLUNIT_VERSION).tar.gz
+
+lolunit-$(LOLUNIT_VERSION).tar.gz:
+	rm -rf lolunit-$(LOLUNIT_VERSION)
+	mkdir lolunit-$(LOLUNIT_VERSION)
+	mkdir lolunit-$(LOLUNIT_VERSION)/lol
+	cp $(top_srcdir)/src/lol/unit.h lolunit-$(LOLUNIT_VERSION)/lol
+	tar cvzf lolunit-$(LOLUNIT_VERSION).tar.gz lolunit-$(LOLUNIT_VERSION)
+	rm -rf lolunit-$(LOLUNIT_VERSION)
+
