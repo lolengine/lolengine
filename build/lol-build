@@ -66,7 +66,7 @@ configure()
                 HOSTFLAGS=--host=i686-w64-mingw32
                 BUILDFLAGS=--build=none
             else
-                echo "Error: could not find win32 compiler"
+                echo "Error: could not find win32 compiler" >&2
                 false
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
@@ -78,7 +78,7 @@ configure()
                 HOSTFLAGS=--host=x86_64-w64-mingw32
                 BUILDFLAGS=--build=none
             else
-                echo "Error: could not find win64 compiler"
+                echo "Error: could not find win64 compiler" >&2
                 false
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
@@ -184,5 +184,6 @@ clean()
     esac
 }
 
+echo "lol-build: executing action '$action' on platform '$platform'" >&2
 eval "$action"
 
