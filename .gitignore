@@ -53,8 +53,8 @@ win32/*.suo
 deushax/deushax
 deushax/editor
 monsterz/monsterz
-test/lol-test
-test/lol-bench
+test/testsuite
+test/benchsuite
 test/quad
 test/sandbox
 tools/make-font
