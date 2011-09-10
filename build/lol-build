@@ -1,0 +1,188 @@
+#!/bin/sh
+
+#
+# Lol Engine build script
+# Usage:
+#   lol-build <action> [<platform>]
+#
+# Where <action> is one of:
+#  - bootstrap
+#  - configure
+#  - build
+#  - check
+#  - clean
+#
+# And <platform> is one of:
+#  - linux-i386
+#  - linux-amd64
+#  - ios-arm
+#  - android-arm
+#  - ps3-ppu
+#  - windows-i386
+#  - windows-amd64
+#
+
+set -e
+
+action="$1"
+platform="$2"
+
+top_srcdir=$(dirname "$0")/..
+cd $top_srcdir
+top_srcdir="`pwd`"
+
+bootstrap()
+{
+    cd $top_srcdir
+    case "$platform" in
+        ios-arm)
+            # No bootstrapping needed
+            ;;
+        android-arm)
+            # No bootstrapping needed
+            ;;
+        windows-i386|windows-amd64)
+            PATH="$PATH:./contrib/gtk-2.22.1/bin"
+            M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
+            PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
+            ;;
+        *)
+            ./bootstrap
+            ;;
+    esac
+}
+
+configure()
+{
+    cd $top_srcdir
+    case "$platform" in
+        windows-i386)
+            if test "x${SYSTEM}" = xMINGW32; then
+                :
+            elif i586-mingw32msvc-g++ --version >/dev/null 2>&1; then
+                HOSTFLAGS=--host=i586-mingw32msvc
+                BUILDFLAGS=--build=none
+            elif i686-w64-mingw32-g++ --version >/dev/null 2>&1; then
+                HOSTFLAGS=--host=i686-w64-mingw32
+                BUILDFLAGS=--build=none
+            else
+                echo "Error: could not find win32 compiler"
+                false
+            fi
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
+            ;;
+        windows-amd64)
+            if test "x${SYSTEM}" = xMINGW64; then
+                :
+            elif x86_64-w64-mingw32-g++ --version >/dev/null 2>&1; then
+                HOSTFLAGS=--host=x86_64-w64-mingw32
+                BUILDFLAGS=--build=none
+            else
+                echo "Error: could not find win64 compiler"
+                false
+            fi
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
+            ;;
+    esac
+    case "$platform" in
+        ios-arm)
+            # No configuration needed
+            ;;
+        android-arm)
+            cd monsterz/android
+            android update project --path .
+            ;;
+        ps3-ppu)
+            ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
+            ;;
+        windows-i386|windows-amd64)
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.14/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-image-1.2.10/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-mixer-1.2.11/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/glew-1.7.0/include -DGLEW_STATIC"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/lib/glib-2.0/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/lib/gtk-2.0/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/glib-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gtk-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/cairo"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/pango-1.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/atk-1.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtkglarea-2.0.1/include"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/bin"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
+            CPPFLAGS="$CPPFLAGS -mms-bitfields"
+            LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
+            GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"
+            GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
+            GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
+            LOL_LIBS="$LOL_LIBS -lSDL_image -lSDL_mixer -lSDLmain -lSDL -lopengl32 -lglew32"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS" LOL_LIBS="$LOL_LIBS"
+            ;;
+        *)
+            ./configure
+            ;;
+    esac
+}
+
+build()
+{
+    cd $top_srcdir
+    case "$platform" in
+        ios-arm)
+            cd monsterz/ios
+            xcodebuild -configuration Release -sdk iphonesimulator4.3
+            ;;
+        android-arm)
+            cd monsterz/android
+            ndk-build
+            ant compile
+            ;;
+        *)
+            make -j6
+            ;;
+    esac
+}
+
+check()
+{
+    cd $top_srcdir
+    case "$platform" in
+        ios-arm)
+            ;;
+        android-arm)
+            ;;
+        ps3-ppu)
+            ;;
+        *)
+            make check
+            ;;
+    esac
+}
+
+clean()
+{
+    cd $top_srcdir
+    case "$platform" in
+        ios-arm)
+            cd monsterz/ios
+            xcodebuild -configuration Release -sdk iphonesimulator4.3 clean
+            ;;
+        android-arm)
+            cd monsterz/android
+            ndk-build distclean
+            ant clean
+            ;;
+        *)
+            make distclean
+            ;;
+    esac
+}
+
+eval "$action"
+

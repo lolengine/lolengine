@@ -1,24 +1,9 @@
 #!/bin/sh
 
-##  Native PS3 compilation for Lol Engine -- Sam Hocevar <sam@hocevar.net>
-
 # This can't hurt
 make distclean
 
-set -e
-
-# Only on Windows
-if test "x${MSYSTEM}" = xMINGW32; then
-  PATH="$PATH:./contrib/gtk-2.22.1/bin"
-  M4PATH="./contrib/gtk-2.22.1/share/aclocal"
-  export M4PATH # This looks necessary
-  PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/contrib/gtkglarea-2.0.1/lib/pkgconfig"
-  export PKG_CONFIG_PATH # This looks necessary, too
-fi
-
-# Bootstrap, configure and make
-# NOTE: ensure that $CELL_SDK is set and ppu-lv2-g++ is in the path
-./bootstrap
-./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
-make -j6
+./build/lol-build bootstrap ps3-ppu
+./build/lol-build configure ps3-ppu
+./build/lol-build build ps3-ppu
 
