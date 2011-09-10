@@ -112,6 +112,12 @@ PKG_CHECK_MODULES(GLES2, glesv2,
   GL_CFLAGS="${GL_CFLAGS} ${GLES2_CFLAGS}"
   GL_LIBS="${GL_LIBS} ${GLES2_LIBS}"],
  [:])
+
+PKG_CHECK_MODULES(GL, gl,
+ [ac_cv_my_have_gl="yes"
+  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)],
+ [:])
+
 AC_CHECK_LIB(GL, glLoadIdentity,
  [ac_cv_my_have_gl="yes"
   AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hackish
