@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <ContribDir>$(SolutionDir)\..\contrib</ContribDir>
-    <GlewDir>$(ContribDir)\glew-1.6.0</GlewDir>
+    <GlewDir>$(ContribDir)\glew-1.7.0</GlewDir>
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ContribDir)\gtkglarea-2.0.1</GtkGlDir>
     <SdlDir>$(ContribDir)\sdl-1.2.14</SdlDir>
@@ -12,7 +12,7 @@
     <GlIncludes>$(GlewDir)\include</GlIncludes>
     <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
-    <GlLibs>$(GlewDir)\lib</GlLibs>
+    <GlLibs>$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
     <GtkLibs>$(GtkDir)\lib;$(GtkDir)\bin;$(GtkGlDir)\lib</GtkLibs>
     <SdlLibs>$(SdlDir)\lib;$(SdlImageDir)\lib;$(SdlMixerDir)\lib</SdlLibs>
     <GlDeps>opengl32.lib;glew32.lib</GlDeps>
