@@ -17,19 +17,6 @@
 #include "core.h"
 #include "lol/unit.h"
 
-/* Ensure isnan() is present even on systems that don't define it, or
- * when -ffast-math is being used. */
-#if defined __FAST_MATH__
-#   undef isnan
-#endif
-#if !defined isnan
-static inline int isnan(float f)
-{
-    union { float f; uint32_t x; } u = { f };
-    return (u.x << 1) > 0xff000000u;
-}
-#endif
-
 namespace lol
 {
 
