@@ -1,30 +1,34 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-bench: lol-bench$(EXEEXT)
-	./lol-bench$(EXEEXT)
+bench: benchsuite$(EXEEXT)
+	./benchsuite$(EXEEXT)
 
-all-local: quad$(EXEEXT) lol-bench$(EXEEXT)
+all-local: quad$(EXEEXT) benchsuite$(EXEEXT)
 	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
 	test x$(MAKE_FSELF) = xno || make_fself sandbox$(EXEEXT) sandbox.self
-	test x$(MAKE_FSELF) = xno || make_fself lol-bench$(EXEEXT) lol-bench.self
-	test x$(MAKE_FSELF) = xno || make_fself lol-test$(EXEEXT) lol-test.self
+	test x$(MAKE_FSELF) = xno || make_fself benchsuite$(EXEEXT) benchsuite.self
+	test x$(MAKE_FSELF) = xno || make_fself testsuite$(EXEEXT) testsuite.self
 
-CLEANFILES = quad.self sandbox lol-bench.self lol-test.self
+CLEANFILES = $(noinst_PROGRAMS:%=%.self) $(noinst_PROGRAMS:%=%.exe)
+#quad.self sandbox.self benchsuite.self testsuite.self \
+#             quad.exe sandbox.exe benchsuite.exe testsuite.exe
 
-noinst_PROGRAMS = quad sandbox lol-bench lol-test
+noinst_PROGRAMS = quad sandbox benchsuite testsuite
 
-TESTS = lol-test
+TESTS = testsuite
 
-lol_test_SOURCES = lol-test.cpp matrix.cpp half.cpp trig.cpp build.cpp
-lol_test_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-lol_test_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-lol_test_DEPENDENCIES = $(top_builddir)/src/liblol.a
+testsuite_SOURCES = testsuite.cpp \
+    unit/matrix.cpp unit/half.cpp unit/trig.cpp unit/build.cpp
+testsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-lol_bench_SOURCES = lol-bench.cpp
-lol_bench_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-lol_bench_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-lol_bench_DEPENDENCIES = $(top_builddir)/src/liblol.a
+benchsuite_SOURCES = benchsuite.cpp \
+    benchmark/matrix.cpp benchmark/half.cpp benchmark/trig.cpp
+benchsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+benchsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 quad_SOURCES = debug/quad.cpp
 quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
