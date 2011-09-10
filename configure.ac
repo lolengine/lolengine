@@ -7,6 +7,10 @@ AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([no-define tar-ustar])
 dnl AM_MAINTAINER_MODE
 
+dnl Versioning of the separate software we ship
+LOLUNIT_VERSION=0.1
+AC_SUBST(LOLUNIT_VERSION)
+
 AM_CONFIG_HEADER(config.h)
 
 AM_PROG_CC_C_O
