@@ -15,7 +15,7 @@
 #include <cmath>
 #include <cstdio>
 
-#if defined ANDROID_NDK
+#if defined __ANDROID__
 #   include <android/log.h>
 #else
 #   include <cstdarg>
@@ -34,7 +34,7 @@ void Log::Debug(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined ANDROID_NDK
+#if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_DEBUG, "LOL", fmt, ap);
 #else
     fprintf(stderr, "DEBUG: ");
@@ -47,7 +47,7 @@ void Log::Info(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined ANDROID_NDK
+#if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_INFO, "LOL", fmt, ap);
 #else
     fprintf(stderr, "INFO: ");
@@ -60,7 +60,7 @@ void Log::Warn(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined ANDROID_NDK
+#if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_WARN, "LOL", fmt, ap);
 #else
     fprintf(stderr, "WARN: ");
@@ -73,7 +73,7 @@ void Log::Error(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined ANDROID_NDK
+#if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_ERROR, "LOL", fmt, ap);
 #else
     fprintf(stderr, "ERROR: ");

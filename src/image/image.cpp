@@ -19,7 +19,7 @@
 #elif defined USE_SDL
 #   include <SDL.h>
 #   include <SDL_image.h>
-#elif defined ANDROID_NDK
+#elif defined __ANDROID__
 #   include <jni.h>
 #   include <android/log.h>
 #elif defined __CELLOS_LV2__
@@ -34,7 +34,7 @@ using namespace std;
 namespace lol
 {
 
-#if defined ANDROID_NDK
+#if defined __ANDROID__
 extern JavaVM *g_vm;
 extern jobject g_activity;
 #endif
@@ -55,7 +55,7 @@ private:
     uint8_t *pixels;
 #elif defined USE_SDL
     SDL_Surface *img;
-#elif defined ANDROID_NDK
+#elif defined __ANDROID__
     jobject bmp;
     jintArray array;
     jint *pixels;
@@ -125,7 +125,7 @@ Image::Image(char const *path)
 
     data->size = ivec2(data->img->w, data->img->h);
     data->format = data->img->format->Amask ? FORMAT_RGBA : FORMAT_RGB;
-#elif defined ANDROID_NDK
+#elif defined __ANDROID__
     JNIEnv *env;
     jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)
@@ -336,7 +336,7 @@ void * Image::GetData() const
     return data->pixels;
 #elif defined USE_SDL
     return data->img->pixels;
-#elif defined ANDROID_NDK
+#elif defined __ANDROID__
     return data->pixels;
 #elif defined __CELLOS_LV2__
     return data->pixels;
@@ -351,7 +351,7 @@ Image::~Image()
     free(data->pixels);
 #elif defined USE_SDL
     SDL_FreeSurface(data->img);
-#elif defined ANDROID_NDK
+#elif defined __ANDROID__
     JNIEnv *env;
     jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)

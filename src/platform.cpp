@@ -25,7 +25,7 @@ namespace lol
 
 int Platform::GetMouseCount()
 {
-#if defined ANDROID_NDK
+#if defined __ANDROID__
     /* Assume Android devices are touch devices that don't have a mouse */
     return 0;
 #endif

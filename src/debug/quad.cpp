@@ -65,7 +65,7 @@ private:
 
     int initialised;
     float time;
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     GLuint array[NUM_ARRAYS];
 #endif
     GLuint buffer[NUM_BUFFERS];
@@ -153,7 +153,7 @@ void DebugQuad::TickDraw(float deltams)
 
     if (!data->initialised && !IsDestroying())
     {
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
         glGenVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glGenBuffers(NUM_BUFFERS, data->buffer);
@@ -183,7 +183,7 @@ void DebugQuad::TickDraw(float deltams)
     }
     else if (data->initialised && IsDestroying())
     {
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
         glDeleteVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glDeleteBuffers(NUM_BUFFERS, data->buffer);
@@ -236,7 +236,7 @@ void DebugQuad::TickDraw(float deltams)
     vec4 orange(0.8f, 0.5f, 0.2f, 1.0f);
 
     /* Cheap iterators */
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     GLuint *array = data->array;
 #endif
     GLuint *buffer = data->buffer;
@@ -494,7 +494,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     glColor4f(orange.x, orange.y, orange.z, orange.w);
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -512,7 +512,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a green sine wave made of 1-pixel points.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
     glPointSize(1.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -531,7 +531,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
@@ -552,7 +552,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors multiplied with an
      * animated distorted checkerboard.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -580,7 +580,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
@@ -626,7 +626,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an orange square.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
     {
 #if !defined __CELLOS_LV2__
@@ -679,7 +679,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a static, coloured and tiled pattern.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
@@ -732,7 +732,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders a multicoloured square with varying colors.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
     {
 #if !defined __CELLOS_LV2__
@@ -796,7 +796,7 @@ void DebugQuad::TickDraw(float deltams)
      *
      * Renders an antialiased green sine wave made of 1-pixel points.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__ && !defined __CELLOS_LV2__
+#if !defined __ANDROID__ && !defined __APPLE__ && !defined __CELLOS_LV2__
     if (!shader[0])
         shader[0] = Shader::Create(
             "#version 120\n"
@@ -842,7 +842,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
 #if !defined __CELLOS_LV2__
         shader[0] = Shader::Create(
@@ -915,7 +915,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     if (!shader[0])
     {
         shader[0] = Shader::Create(
@@ -985,7 +985,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     if (!shader[0])
     {
         shader[0] = Shader::Create(
@@ -1050,7 +1050,7 @@ void DebugQuad::TickDraw(float deltams)
     ResetState();
 
     /* Check that we didn't overflow our list */
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     if (array > data->array + NUM_ARRAYS)
         Log::Error("too many arrays used\n");
 #endif
@@ -1073,7 +1073,7 @@ void DebugQuad::ResetState()
     glLoadIdentity();
 #endif
 
-#if !defined ANDROID_NDK && !defined __APPLE__
+#if !defined __ANDROID__ && !defined __APPLE__
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
@@ -1082,13 +1082,13 @@ void DebugQuad::ResetState()
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glClientActiveTexture(GL_TEXTURE0);
 #endif
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
 #endif
     glDisable(GL_TEXTURE_2D);
 
     glDisable(GL_BLEND);
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     glDisable(GL_POINT_SPRITE);
 #endif
 
@@ -1100,7 +1100,7 @@ void DebugQuad::ResetState()
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
 
-#if !defined __CELLOS_LV2__ && !defined ANDROID_NDK
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
 }
