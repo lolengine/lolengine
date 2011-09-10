@@ -1082,13 +1082,13 @@ void DebugQuad::ResetState()
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glClientActiveTexture(GL_TEXTURE0);
 #endif
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
 #endif
     glDisable(GL_TEXTURE_2D);
 
     glDisable(GL_BLEND);
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
     glDisable(GL_POINT_SPRITE);
 #endif
 
@@ -1100,7 +1100,7 @@ void DebugQuad::ResetState()
     cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
 #endif
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
 }
