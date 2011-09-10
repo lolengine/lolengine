@@ -40,7 +40,7 @@ LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-image-1.2.10/lib"
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/sdl-mixer-1.2.11/lib"
 
 # Glew library path
-LDFLAGS="$LDFLAGS -L`pwd`/contrib/glew-1.7.0/lib/i686-w64-mingw32"
+LDFLAGS="$LDFLAGS -L`pwd`/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
 
 # GTK library path
 LDFLAGS="$LDFLAGS -L`pwd`/contrib/gtk-2.22.1/lib"
@@ -64,7 +64,7 @@ LOL_LIBS="$LOL_LIBS -lSDL_image -lSDL_mixer -lSDLmain -lSDL -lopengl32 -lglew32"
 ./bootstrap
 # Only on Windows
 if test "x${MSYSTEM}" != xMINGW32; then
-  HOSTFLAGS=--host=i686-w64-mingw32
+  HOSTFLAGS=--host=x86_64-w64-mingw32
   BUILDFLAGS=--build=none
 fi
 
