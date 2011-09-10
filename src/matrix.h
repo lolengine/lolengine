@@ -17,7 +17,9 @@
 #define __LOL_MATRIX_H__
 
 #include <cmath>
-#include <iostream>
+#if !defined __ANDROID__
+#   include <iostream>
+#endif
 
 namespace lol
 {
@@ -126,11 +128,7 @@ namespace lol
     { \
         using namespace std; \
         return sqrtf((float)sqlen()); \
-    } \
-    \
-    template<typename U> \
-    friend std::ostream &operator<<(std::ostream &stream, \
-                                    Vec##elems<U> const &v);
+    }
 
 template <typename T> struct Vec2;
 template <typename T> struct Vec3;
@@ -143,6 +141,11 @@ template <typename T> struct Vec2
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
     OPERATORS(2)
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
+#endif
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
@@ -159,6 +162,11 @@ template <typename T> struct Vec3
 
     OPERATORS(3)
 
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
+#endif
+
     union { T x; T a; T i; };
     union { T y; T b; T j; };
     union { T z; T c; T k; };
@@ -174,6 +182,11 @@ template <typename T> struct Vec4
     inline Vec4(T _x, T _y, T _z, T _w) { x = _x; y = _y; z = _z; w = _w; }
 
     OPERATORS(4)
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
+#endif
 
     union { T x; T a; T i; };
     union { T y; T b; T j; };
@@ -237,8 +250,10 @@ template <typename T> struct Mat4
 
     void printf() const;
 
+#if !defined __ANDROID__
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
+#endif
 
     inline Mat4<T> operator +(Mat4<T> const val) const
     {

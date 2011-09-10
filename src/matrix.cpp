@@ -80,6 +80,7 @@ template<> void mat4::printf() const
                p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 
+#if !defined __ANDROID__
 template<> std::ostream &operator<<(std::ostream &stream, ivec2 const &v)
 {
     return stream << "(" << v.x << ", " << v.y << ")";
@@ -124,6 +125,7 @@ template<> std::ostream &operator<<(std::ostream &stream, mat4 const &m)
            << ", " << m[2][3] << ", " << m[3][3] << "))";
     return stream;
 }
+#endif
 
 template<> mat4 mat4::ortho(float left, float right, float bottom,
                             float top, float near, float far)
