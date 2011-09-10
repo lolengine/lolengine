@@ -5,18 +5,18 @@
     <svn:checkout url="svn://svn.zoy.org/lolengine/" path="${path}" revision="${revision}" />
   </step>
   <step id="bootstrap" description="Bootstrap build system">
-    <sh:exec file="sh" args="-c ./build/lol-build bootstrap ${platform}"/>
+    <sh:exec file="./build/lol-build" args="bootstrap ${platform}"/>
   </step>
   <step id="configure" description="Configure tree">
-    <sh:exec file="sh" args="-c ./build/lol-build configure ${platform}"/>
+    <sh:exec file="./build/lol-build" args="configure ${platform}"/>
   </step>
   <step id="build" description="Build tree">
-    <sh:exec file="sh" args="-c ./build/lol-build build ${platform}"/>
+    <sh:exec file="./build/lol-build" args="build ${platform}"/>
   </step>
-  <step id="test" description="Run tests">
-    <sh:exec file="sh" args="-c ./build/lol-build test ${platform}"/>
+  <step id="check" description="Run tests">
+    <sh:exec file="./build/lol-build" args="check ${platform}"/>
   </step>
   <step id="clean" description="Clean tree">
-    <sh:exec file="sh" args="-c ./build/lol-build clean ${platform}"/>
+    <sh:exec file="./build/lol-build" args="clean ${platform}"/>
   </step>
 </build>

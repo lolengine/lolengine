@@ -70,6 +70,7 @@ configure()
                 false
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
             ;;
         windows-amd64)
             if test "x${SYSTEM}" = xMINGW64; then
@@ -82,6 +83,7 @@ configure()
                 false
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/x86_64-w64-mingw32"
             ;;
     esac
     case "$platform" in
@@ -110,7 +112,6 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/atk-1.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtkglarea-2.0.1/include"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
