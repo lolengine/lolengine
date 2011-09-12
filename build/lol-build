@@ -57,7 +57,7 @@ configure()
     cd $top_srcdir
     case "$platform" in
         windows-i386)
-            if test "x${SYSTEM}" = xMINGW32; then
+            if test "x${MSYSTEM}" = xMINGW32; then
                 :
             elif i586-mingw32msvc-g++ --version >/dev/null 2>&1; then
                 HOSTFLAGS=--host=i586-mingw32msvc
@@ -73,7 +73,7 @@ configure()
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
             ;;
         windows-amd64)
-            if test "x${SYSTEM}" = xMINGW64; then
+            if test "x${MSYSTEM}" = xMINGW64; then
                 :
             elif x86_64-w64-mingw32-g++ --version >/dev/null 2>&1; then
                 HOSTFLAGS=--host=x86_64-w64-mingw32
