@@ -219,9 +219,13 @@ else
 fi
 if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
   AC_MSG_WARN([SDL_mixer not found])
+else
+  AC_DEFINE(USE_SDL_MIXER, 1, Define to 1 to use SDL_mixer)
 fi
 if test "${ac_cv_my_have_sdl_image}" = "no"; then
   AC_MSG_WARN([SDL_image not found])
+else
+  AC_DEFINE(USE_SDL_IMAGE, 1, Define to 1 to use SDL_image)
 fi
 AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 AM_CONDITIONAL(USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" = "yes")

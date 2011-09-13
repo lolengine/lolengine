@@ -16,7 +16,7 @@
 
 #if defined __APPLE__ && defined __MACH__
 #   import <UIKit/UIKit.h>
-#elif defined USE_SDL
+#elif defined USE_SDL_IMAGE
 #   include <SDL.h>
 #   include <SDL_image.h>
 #elif defined __ANDROID__
@@ -53,7 +53,7 @@ private:
 
 #if defined __APPLE__ && defined __MACH__
     uint8_t *pixels;
-#elif defined USE_SDL
+#elif defined USE_SDL_IMAGE
     SDL_Surface *img;
 #elif defined __ANDROID__
     jobject bmp;
@@ -109,7 +109,7 @@ Image::Image(char const *path)
     CGContextRelease(ctx);
     [image release];
     [pngdata release];
-#elif defined USE_SDL
+#elif defined USE_SDL_IMAGE
     for (char const *name = path; *name; name++)
         if ((data->img = IMG_Load(name)))
             break;
@@ -334,7 +334,7 @@ void * Image::GetData() const
 {
 #if defined __APPLE__ && defined __MACH__
     return data->pixels;
-#elif defined USE_SDL
+#elif defined USE_SDL_IMAGE
     return data->img->pixels;
 #elif defined __ANDROID__
     return data->pixels;
@@ -349,7 +349,7 @@ Image::~Image()
 {
 #if defined __APPLE__ && defined __MACH__
     free(data->pixels);
-#elif defined USE_SDL
+#elif defined USE_SDL_IMAGE
     SDL_FreeSurface(data->img);
 #elif defined __ANDROID__
     JNIEnv *env;
