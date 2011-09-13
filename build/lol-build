@@ -27,9 +27,19 @@ set -e
 action="$1"
 platform="$2"
 
-top_srcdir=$(dirname "$0")/..
-cd $top_srcdir
-top_srcdir="`pwd`"
+__init__()
+{
+    top_srcdir=$(dirname "$0")/..
+    cd $top_srcdir
+    top_srcdir="`pwd`"
+
+    case "${MSYSTEM}" in
+        MINGW32|MINGW64)
+            PATH="$PATH:./contrib/gtk-2.22.1/bin"
+            M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
+            ;;
+    esac
+}
 
 bootstrap()
 {
@@ -41,13 +51,8 @@ bootstrap()
         android-arm)
             # No bootstrapping needed
             ;;
-        windows-i386|windows-amd64)
-            PATH="$PATH:./contrib/gtk-2.22.1/bin"
-            M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
-            PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
-            ;;
         *)
-            ./bootstrap
+            PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
             ;;
     esac
 }
@@ -69,8 +74,14 @@ configure()
                 echo "Error: could not find win32 compiler" >&2
                 false
             fi
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/bin"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
             ;;
         windows-amd64)
             if test "x${MSYSTEM}" = xMINGW64; then
@@ -84,6 +95,8 @@ configure()
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
             ;;
     esac
     case "$platform" in
@@ -95,10 +108,9 @@ configure()
             android update project --path .
             ;;
         ps3-ppu)
-            ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
+            PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
             ;;
         windows-i386|windows-amd64)
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.14/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-image-1.2.10/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-mixer-1.2.11/include"
@@ -112,21 +124,15 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/atk-1.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtkglarea-2.0.1/include"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/bin"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
             CPPFLAGS="$CPPFLAGS -mms-bitfields"
             LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
             GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"
             GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
             GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
-            LOL_LIBS="$LOL_LIBS -lSDL_image -lSDL_mixer -lSDLmain -lSDL -lopengl32 -lglew32"
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS" LOL_LIBS="$LOL_LIBS"
+            PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         *)
-            ./configure
+            PATH="$PATH" ./configure
             ;;
     esac
 }
@@ -185,6 +191,7 @@ clean()
     esac
 }
 
+__init__
 echo "lol-build: executing action '$action' on platform '$platform'" >&2
 eval "$action"
 
