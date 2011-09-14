@@ -9,7 +9,7 @@
     <SdlDir>$(ContribDir)\sdl-1.2.14</SdlDir>
     <SdlImageDir>$(ContribDir)\sdl-image-1.2.10</SdlImageDir>
     <SdlMixerDir>$(ContribDir)\sdl-mixer-1.2.11</SdlMixerDir>
-    <GlIncludes>$(GlewDir)\include</GlIncludes>
+    <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
     <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
     <GlLibs>$(GlewDir)\lib\i686-w64-mingw32</GlLibs>

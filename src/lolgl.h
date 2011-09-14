@@ -25,7 +25,7 @@
 
 /* Include GL */
 #if defined USE_GLEW
-#   include <GL/glew.h>
+#   include <glew.h>
 #elif defined HAVE_GL_2X
 #   if defined __APPLE__ && defined __MACH__
 #       include <OpenGL/gl.h>
