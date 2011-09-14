@@ -147,12 +147,12 @@ PKG_CHECK_MODULES(GLEW, glew,
   GL_CFLAGS="${GLEW_CFLAGS} ${GL_CFLAGS}"
   GL_LIBS="${GLEW_LIBS} ${GL_LIBS}"],
  [:])
-AC_CHECK_HEADER(GL/glew.h,
+AC_CHECK_HEADER(glew.h,
  [LIBS_save="${LIBS}"
   LIBS="${LIBS} -lglew32 ${GL_LIBS}"
   AC_MSG_CHECKING(for glewInit in -lglew32)
   AC_TRY_LINK(
-   [#include <GL/glew.h>],
+   [#include <glew.h>],
    [glewInit();],
    [ac_cv_my_have_glew="yes"
     GL_LIBS="-lglew32 ${GL_LIBS}"
