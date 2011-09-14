@@ -10,7 +10,9 @@ all-local: $(noinst_PROGRAMS)
 	test x$(MAKE_FSELF) = xno || make_fself benchsuite$(EXEEXT) benchsuite.self
 	test x$(MAKE_FSELF) = xno || make_fself testsuite$(EXEEXT) testsuite.self
 
-CLEANFILES = $(noinst_PROGRAMS:%=%.self) $(noinst_PROGRAMS:%=%.exe)
+CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
+             $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
+             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
 
 noinst_PROGRAMS = quad sandbox benchsuite testsuite
 
