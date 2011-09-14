@@ -74,6 +74,10 @@ configure()
                 echo "Error: could not find win32 compiler" >&2
                 false
             fi
+            if test "x${MSYSTEM}" = xMINGW64; then
+                # If using mingw64, we're not really cross-compiling
+                BUILDFLAGS=
+            fi
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
@@ -92,6 +96,10 @@ configure()
             else
                 echo "Error: could not find win64 compiler" >&2
                 false
+            fi
+            if test "x${MSYSTEM}" = xMINGW32; then
+                # If using mingw32, we're not really cross-compiling
+                BUILDFLAGS=
             fi
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/x86_64-w64-mingw32"
