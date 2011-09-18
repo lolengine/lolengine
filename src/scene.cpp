@@ -59,7 +59,7 @@ private:
     int ntiles;
     float angle;
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vao;
 #endif
     GLuint *bufs;
@@ -84,7 +84,7 @@ Scene::Scene(float angle)
     data->bufs = 0;
     data->nbufs = 0;
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     glGenVertexArrays(1, &data->vao);
 #endif
 }
@@ -96,7 +96,7 @@ Scene::~Scene()
     /* XXX: The test is necessary because of a crash with PSGL. */
     if (data->nbufs > 0)
         glDeleteBuffers(data->nbufs, data->bufs);
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     glDeleteVertexArrays(1, &data->vao);
 #endif
     free(data->bufs);
@@ -320,7 +320,7 @@ void Scene::Render() // XXX: rename to Blit()
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);
 #endif
@@ -359,7 +359,7 @@ void Scene::Render() // XXX: rename to Blit()
         data->tiles[i].tileset->Bind();
 
         /* Bind vertex, color and texture coordinate buffers */
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
         glBindVertexArray(data->vao);
 #endif
 #if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
@@ -386,7 +386,7 @@ void Scene::Render() // XXX: rename to Blit()
         /* Draw arrays */
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
         glBindVertexArray(0);
 #endif
 #if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.

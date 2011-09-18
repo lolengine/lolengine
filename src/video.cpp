@@ -33,7 +33,7 @@ class VideoData
 
 private:
     static mat4 proj_matrix, view_matrix;
-#if defined __ANDROID__ || defined __CELLOS_LV2__
+#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
     static ivec2 saved_viewport;
 #endif
 };
@@ -41,7 +41,7 @@ private:
 mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 
-#if defined __ANDROID__ || defined __CELLOS_LV2__
+#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
 ivec2 VideoData::saved_viewport = 0;
 #endif
 
@@ -51,7 +51,7 @@ ivec2 VideoData::saved_viewport = 0;
 
 void Video::Setup(ivec2 size)
 {
-#if defined USE_GLEW
+#if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
     GLenum glerr = glewInit();
     if (glerr != GLEW_OK)
@@ -64,14 +64,14 @@ void Video::Setup(ivec2 size)
     /* Initialise OpenGL */
     glViewport(0, 0, size.x, size.y);
 
-#if defined __ANDROID__ || defined __CELLOS_LV2__
+#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
     VideoData::saved_viewport = size;
 #endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
     glClearDepth(1.0);
 
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif
@@ -182,6 +182,8 @@ ivec2 Video::GetSize()
     return VideoData::saved_viewport;
 #elif defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
+    return VideoData::saved_viewport;
+#elif defined __APPLE__
     return VideoData::saved_viewport;
 #else
     GLint v[4];
