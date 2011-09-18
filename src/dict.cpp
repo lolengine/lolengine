@@ -73,16 +73,16 @@ Dict::~Dict()
 
 int Dict::MakeSlot(char const *name)
 {
-    int id, empty = -1;
+    int slotid, empty = -1;
 
     /* If the entry is already registered, remember its ID. Look for an
      * empty slot at the same time. */
-    for (id = 0; id < data->maxid; id++)
+    for (slotid = 0; slotid < data->maxid; slotid++)
     {
-        Entity *e = data->entities[id];
+        Entity *e = data->entities[slotid];
         if (!e)
         {
-            empty = id;
+            empty = slotid;
             break;
         }
         else
@@ -104,9 +104,9 @@ int Dict::MakeSlot(char const *name)
     }
 
     /* If this is a new entry, create a new slot for it. */
-    if (id == data->maxid || !data->entities[id])
+    if (slotid == data->maxid || !data->entities[slotid])
     {
-        if (id == data->maxid)
+        if (slotid == data->maxid)
         {
             empty = data->maxid++;
             data->entities = (Entity **)realloc(data->entities,
@@ -114,32 +114,32 @@ int Dict::MakeSlot(char const *name)
         }
 
         data->entities[empty] = NULL;
-        id = empty;
+        slotid = empty;
         data->nentities++;
     }
     else
     {
-        Ticker::Ref(data->entities[id]);
+        Ticker::Ref(data->entities[slotid]);
     }
 
-    return id;
+    return slotid;
 }
 
-void Dict::RemoveSlot(int id)
+void Dict::RemoveSlot(int slotid)
 {
-    if (Ticker::Unref(data->entities[id]) == 0)
+    if (Ticker::Unref(data->entities[slotid]) == 0)
     {
-        data->entities[id] = NULL;
+        data->entities[slotid] = NULL;
         data->nentities--;
     }
 }
 
 void Dict::RemoveSlot(Entity *entity)
 {
-    for (int id = 0; id < data->maxid; id++)
-        if (data->entities[id] == entity)
+    for (int slotid = 0; slotid < data->maxid; slotid++)
+        if (data->entities[slotid] == entity)
         {
-            RemoveSlot(id);
+            RemoveSlot(slotid);
             return;
         }
 
@@ -148,15 +148,15 @@ void Dict::RemoveSlot(Entity *entity)
 #endif
 }
 
-void Dict::SetEntity(int id, Entity *entity)
+void Dict::SetEntity(int slotid, Entity *entity)
 {
     Ticker::Ref(entity);
-    data->entities[id] = entity;
+    data->entities[slotid] = entity;
 }
 
-Entity *Dict::GetEntity(int id)
+Entity *Dict::GetEntity(int slotid)
 {
-    return data->entities[id];
+    return data->entities[slotid];
 }
 
 } /* namespace lol */

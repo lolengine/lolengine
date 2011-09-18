@@ -30,11 +30,11 @@ public:
     ~Dict();
 
     int MakeSlot(char const *name);
-    void RemoveSlot(int id);
+    void RemoveSlot(int slotid);
     void RemoveSlot(Entity *entity);
 
-    void SetEntity(int id, Entity *entity);
-    Entity *GetEntity(int id);
+    void SetEntity(int slotid, Entity *entity);
+    Entity *GetEntity(int slotid);
 
 private:
     DictData *data;

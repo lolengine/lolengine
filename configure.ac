@@ -232,6 +232,20 @@ AM_CONDITIONAL(USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" = "yes")
 AM_CONDITIONAL(USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" = "yes")
 
 
+dnl Use Cocoa?
+ac_cv_my_have_cocoa="no"
+LIBS_save="$LIBS"
+LIBS="$LIBS -Wl,-framework -Wl,Cocoa"
+AC_MSG_CHECKING(for -framework Cocoa)
+AC_TRY_LINK([], [],
+ [ac_cv_my_have_cocoa="yes"
+  AC_MSG_RESULT(yes)
+  CXXFLAGS="${CXXFLAGS} -ObjC++"],
+ [AC_MSG_RESULT(no)])
+LIBS="$LIBS_save"
+AM_CONDITIONAL(USE_COCOA, test "${ac_cv_my_have_cocoa}" != "no")
+
+
 dnl Use EGL?
 ac_cv_my_have_egl="no"
 PKG_CHECK_MODULES(EGL, egl, [ac_cv_my_have_egl="yes"], [:])

@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if defined __APPLE__ && defined __MACH__
+#if defined __APPLE__ && defined __MACH__ && defined __arm__
 
 #include <cmath>
 #import <UIKit/UIKit.h>
@@ -97,5 +97,5 @@ void * IosImageData::GetData() const
 
 } /* namespace lol */
 
-#endif /* defined __APPLE__ && defined __MACH__ */
+#endif /* defined __APPLE__ && defined __MACH__ && defined __arm__ */
 
