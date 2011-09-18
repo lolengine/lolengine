@@ -16,6 +16,7 @@
 #  - linux-i386
 #  - linux-amd64
 #  - ios-arm
+#  - osx-amd64
 #  - android-arm
 #  - ps3-ppu
 #  - windows-i386
