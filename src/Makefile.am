@@ -24,7 +24,12 @@ liblol_a_SOURCES = \
     \
     shader/shader.cpp shader/shader.h \
     \
-    image/image.cpp image/image.h \
+    image/image.cpp image/image.h image/image-private.h \
+    image/codec/android-image.cpp \
+    image/codec/ios-image.cpp \
+    image/codec/sdl-image.cpp \
+    image/codec/ps3-image.cpp \
+    image/codec/dummy-image.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/sphere.cpp debug/sphere.h \
