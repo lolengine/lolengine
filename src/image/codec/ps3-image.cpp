@@ -20,6 +20,7 @@
 #include <cell/codec/pngdec.h>
 
 #include "core.h"
+#include "image/image-private.h"
 
 using namespace std;
 

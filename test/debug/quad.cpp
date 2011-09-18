@@ -28,7 +28,7 @@ using namespace lol;
 #   include "platform/sdl/sdlinput.h"
 #endif
 
-#if USE_SDL
+#if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
 

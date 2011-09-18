@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if USE_SDL
+#if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
 

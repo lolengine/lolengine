@@ -18,6 +18,7 @@
 #import <UIKit/UIKit.h>
 
 #include "core.h"
+#include "image/image-private.h"
 
 using namespace std;
 
