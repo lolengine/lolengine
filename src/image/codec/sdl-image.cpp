@@ -58,8 +58,7 @@ bool SdlImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
-        SDL_Quit();
-        exit(1);
+        return false;
     }
 
     size = ivec2(img->w, img->h);

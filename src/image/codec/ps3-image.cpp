@@ -61,7 +61,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not open Fs sysmodule\n");
 #endif
-        exit(1);
+        return false;
     }
 
     err = cellSysmoduleLoadModule(CELL_SYSMODULE_PNGDEC);
@@ -70,7 +70,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not open PngDec sysmodule\n");
 #endif
-        exit(1);
+        return false;
     }
 
     CellPngDecThreadInParam in_param;
@@ -88,7 +88,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not create PngDec library\n");
 #endif
-        exit(1);
+        return false;
     }
 
     /* Create decoder */
@@ -112,7 +112,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not open %s for decoding\n", file);
 #endif
-        exit(1);
+        return false;
     }
 
     CellPngDecInfo info;
@@ -122,7 +122,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not read image header\n");
 #endif
-        exit(1);
+        return false;
     }
 
     CellPngDecInParam in_dec_param;
@@ -140,7 +140,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not configure PngDec decoder\n");
 #endif
-        exit(1);
+        return false;
     }
 
     /* Decode image */
@@ -157,7 +157,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not run PngDec decoder\n");
 #endif
-        exit(1);
+        return false;
     }
 
     /* Close decoder */
@@ -167,7 +167,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not close PngDec decoder\n");
 #endif
-        exit(1);
+        return false;
     }
 
     /* Deinitialise library */
@@ -177,7 +177,7 @@ bool Ps3ImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not destroy PngDec decoder\n");
 #endif
-        exit(1);
+        return false;
     }
     err = cellSysmoduleUnloadModule(CELL_SYSMODULE_PNGDEC);
     err = cellSysmoduleUnloadModule(CELL_SYSMODULE_FS);
