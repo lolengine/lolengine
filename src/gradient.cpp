@@ -33,7 +33,7 @@ class GradientData
 private:
     Shader *shader;
     GLuint bufs[2];
-#if defined HAVE_GL_2X
+#if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vaos[1];
 #endif
 };
@@ -154,7 +154,7 @@ void Gradient::TickDraw(float deltams)
 #endif
 #if !defined __CELLOS_LV2__
         glGenBuffers(2, data->bufs);
-#   if defined HAVE_GL_2X
+#   if defined HAVE_GL_2X && !defined __APPLE__
         glGenVertexArrays(1, data->vaos);
 #   endif
 #endif
@@ -195,7 +195,7 @@ void Gradient::TickDraw(float deltams)
 
     /* Bind vertex, color and texture coordinate buffers */
 #if !defined __CELLOS_LV2__
-#   if defined HAVE_GL_2X
+#   if defined HAVE_GL_2X && !defined __APPLE__
     glBindVertexArray(data->vaos[0]);
 #   endif
     glEnableVertexAttribArray(attr_pos);
@@ -222,7 +222,7 @@ void Gradient::TickDraw(float deltams)
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
 #if !defined __CELLOS_LV2__
-#   if defined HAVE_GL_2X
+#   if defined HAVE_GL_2X && !defined __APPLE__
     glBindVertexArray(0);
 #   endif
     glDisableVertexAttribArray(attr_pos);

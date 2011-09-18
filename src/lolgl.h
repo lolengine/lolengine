@@ -23,12 +23,20 @@
 #   undef HAVE_GLES_2X
 #endif
 
-/* Include GL */
-#if defined USE_GLEW
+/* Include GL development headers.
+ * Do not include glew.h on OS X, because the version shipped with Fink
+ * links with X11 whereas we want the system’s Cocoa-friendly GL libs. */
+#if defined USE_GLEW && !defined __APPLE__
 #   include <glew.h>
 #elif defined HAVE_GL_2X
-#   if defined __APPLE__ && defined __MACH__
+#   if defined __APPLE__ && defined __MACH__ && defined __arm__
 #       include <OpenGL/gl.h>
+#   elif defined __APPLE__ && defined __MACH__
+#       define MACOS_OPENGL
+#       define GL_GLEXT_PROTOTYPES
+#       include <OpenGL/OpenGL.h>
+#       include <OpenGL/gl.h>
+#       include <OpenGL/glext.h>
 #   else
 #       define GL_GLEXT_PROTOTYPES
 #       include <GL/gl.h>

@@ -153,7 +153,7 @@ void DebugQuad::TickDraw(float deltams)
 
     if (!data->initialised && !IsDestroying())
     {
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glGenVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glGenBuffers(NUM_BUFFERS, data->buffer);
@@ -183,7 +183,7 @@ void DebugQuad::TickDraw(float deltams)
     }
     else if (data->initialised && IsDestroying())
     {
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glDeleteVertexArrays(NUM_ARRAYS, data->array);
 #endif
         glDeleteBuffers(NUM_BUFFERS, data->buffer);
@@ -915,7 +915,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
     {
         shader[0] = Shader::Create(
@@ -985,7 +985,7 @@ void DebugQuad::TickDraw(float deltams)
      * Renders a multicoloured square with varying colors xored with an
      * animated distorted checkerboard.
      */
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
     if (!shader[0])
     {
         shader[0] = Shader::Create(
