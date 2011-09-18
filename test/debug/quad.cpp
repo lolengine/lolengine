@@ -28,6 +28,10 @@ using namespace lol;
 #   include "platform/sdl/sdlinput.h"
 #endif
 
+#if USE_SDL
+#   include <SDL_main.h>
+#endif
+
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #endif

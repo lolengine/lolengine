@@ -12,6 +12,10 @@
 #   include "config.h"
 #endif
 
+#if USE_SDL
+#   include <SDL_main.h>
+#endif
+
 #include "core.h"
 
 using namespace std;

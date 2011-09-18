@@ -15,9 +15,13 @@
 #include <cstdio>
 #include <cstdlib>
 
+#if USE_SDL
+#   include <SDL_main.h>
+#endif
+
 #include <lol/unit.h>
 
-int main(void)
+int main(int argc, char **argv)
 {
     lol::TextTestRunner runner;
     bool success = runner.Run();

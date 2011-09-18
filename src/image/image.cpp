@@ -28,7 +28,7 @@ bool ImageLoader::RegisterAllLoaders()
     REGISTER_IMAGE_LOADER(AndroidImageData)
 #endif
     REGISTER_IMAGE_LOADER(DummyImageData)
-#if defined __APPLE__ && defined __MACH__
+#if defined __APPLE__ && defined __MACH__ && defined __arm__
     REGISTER_IMAGE_LOADER(IosImageData)
 #endif
 #if defined __CELLOS_LV2__
