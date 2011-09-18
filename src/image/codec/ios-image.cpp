@@ -59,7 +59,7 @@ bool IosImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
-        exit(1);
+        return false;
     }
 
     int w = CGImageGetWidth(image.CGImage);

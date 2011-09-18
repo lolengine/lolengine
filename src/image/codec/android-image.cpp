@@ -57,7 +57,7 @@ bool AndroidImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not get JVM environment\n");
 #endif
-        exit(1);
+        return false;
     }
     jclass cls = env->GetObjectClass(g_activity);
     jmethodID mid;
@@ -72,7 +72,7 @@ bool AndroidImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
-        exit(1);
+        return false;
     }
     env->NewGlobalRef(bmp);
 
@@ -109,7 +109,7 @@ bool AndroidImageData::Close()
 #if !LOL_RELEASE
         Log::Error("could not get JVM environment\n");
 #endif
-        exit(1);
+        return false;
     }
     jclass cls = env->GetObjectClass(g_activity);
     jmethodID mid;
