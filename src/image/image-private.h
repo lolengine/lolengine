@@ -75,6 +75,8 @@ class ImageData
     friend class Image;
 
 public:
+    virtual ~ImageData() {}
+
     virtual bool Open(char const *) = 0;
     virtual bool Close() = 0;
 
@@ -83,8 +85,6 @@ public:
 protected:
     ivec2 size;
     Image::format_t format;
-
-private:
 };
 
 #define REGISTER_IMAGE_LOADER(name) \

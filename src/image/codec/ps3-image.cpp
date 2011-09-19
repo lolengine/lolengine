@@ -78,9 +78,9 @@ bool Ps3ImageData::Open(char const *path)
     in_param.spuThreadEnable = CELL_PNGDEC_SPU_THREAD_ENABLE;
     in_param.ppuThreadPriority = 1000;
     in_param.spuThreadPriority = 200;
-    in_param.cbCtrlMallocFunc = ImageData::Malloc;
+    in_param.cbCtrlMallocFunc = Ps3ImageData::Malloc;
     in_param.cbCtrlMallocArg = NULL;
-    in_param.cbCtrlFreeFunc = ImageData::Free;
+    in_param.cbCtrlFreeFunc = Ps3ImageData::Free;
     in_param.cbCtrlFreeArg = NULL;
     CellPngDecThreadOutParam out_param;
     err = cellPngDecCreate(&hmain, &in_param, &out_param);
@@ -146,7 +146,7 @@ bool Ps3ImageData::Open(char const *path)
 
     /* Decode image */
     size = ivec2(info.imageWidth, info.imageHeight);
-    format = FORMAT_RGBA;
+    format = Image::FORMAT_RGBA;
     pixels = (uint8_t *)malloc(info.imageWidth * 4 * info.imageHeight);
     CellPngDecDataCtrlParam data_ctrl_param;
     data_ctrl_param.outputBytesPerLine = info.imageWidth * 4;

@@ -95,7 +95,7 @@ bool AndroidImageData::Open(char const *path)
         u = (u & 0xff00ff00) | ((u & 0xff0000) >> 16) | ((u & 0xff) << 16);
         pixels[n] = u;
     }
-    format = FORMAT_RGBA;
+    format = Image::FORMAT_RGBA;
 
     return true;
 }
