@@ -20,7 +20,7 @@
 #include <android/log.h>
 
 #include "core.h"
-#include "image/image-private.h"
+#include "../../image/image-private.h"
 
 using namespace std;
 
