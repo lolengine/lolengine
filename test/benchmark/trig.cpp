@@ -63,7 +63,7 @@ void bench_trig(int mode)
         /* Sin */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             pf2[i] = __builtin_sinf(pf[i]);
 #else
             pf2[i] = sinf(pf[i]);
@@ -89,7 +89,7 @@ void bench_trig(int mode)
         /* Cos */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             pf2[i] = __builtin_cosf(pf[i]);
 #else
             pf2[i] = cosf(pf[i]);
@@ -116,7 +116,7 @@ void bench_trig(int mode)
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             pf2[i] = __builtin_sinf(pf[i]);
             pf3[i] = __builtin_cosf(pf[i]);
 #else
@@ -149,7 +149,7 @@ void bench_trig(int mode)
         /* Tan */
         timer.GetMs();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             pf2[i] = __builtin_tanf(pf[i]);
 #else
             pf2[i] = tanf(pf[i]);
