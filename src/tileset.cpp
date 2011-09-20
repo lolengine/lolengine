@@ -17,7 +17,7 @@
 #include <cmath>
 #include <cstring>
 
-#ifdef WIN32
+#if defined WIN32 && !defined _XBOX
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #endif
