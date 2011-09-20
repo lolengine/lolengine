@@ -21,8 +21,6 @@
 
 using namespace lol;
 
-#include "interface.h"
-
 namespace lol
 {
 JavaVM *g_vm;
