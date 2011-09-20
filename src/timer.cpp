@@ -18,6 +18,9 @@
 #if defined __linux__ || defined __APPLE__
 #   include <sys/time.h>
 #   include <unistd.h>
+#elif defined _XBOX
+#   include <xtl.h>
+#   include <xbox.h>
 #elif defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>

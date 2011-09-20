@@ -139,6 +139,9 @@
     <ClCompile Include="..\src\platform\sdl\sdlinput.cpp">
       <Filter>src\platform\sdl</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\real.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\audio.h">
@@ -275,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="..\src\platform\sdl\sdlapp.h">
       <Filter>src\platform\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\real.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
