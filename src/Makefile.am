@@ -11,6 +11,7 @@ liblol_a_SOURCES = \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h half.cpp half.h \
     platform.cpp platform.h sprite.cpp sprite.h trig.cpp trig.h \
+    real.cpp real.h \
     \
     lol/unit.h \
     \
