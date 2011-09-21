@@ -34,6 +34,11 @@ public:
         LOLUNIT_ASSERT_EQUAL(z, 1.5f);
     }
 
+    LOLUNIT_TEST(test_real_add)
+    {
+        LOLUNIT_ASSERT(true);
+    }
+
     LOLUNIT_TEST(test_real_mul)
     {
         real x(1.25f);
