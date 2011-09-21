@@ -21,20 +21,24 @@
 namespace lol
 {
 
-template<int NBITS> class Real
+class real
 {
+    static int const BIGITS = 10;
+
 public:
-    inline Real<NBITS>() {}
-    Real<NBITS>(float f);
+    inline real() { }
+    real(float f);
 
     operator float() const;
+    real operator *(real const &x) const;
+
+    void print() const;
 
 private:
+    uint32_t m_size;
     uint32_t m_signexp;
-    uint32_t m_mantissa[(NBITS + 31) / 32];
+    uint16_t m_mantissa[BIGITS];
 };
-
-typedef Real<4096> real4k;
 
 } /* namespace lol */
 
