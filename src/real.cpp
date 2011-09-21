@@ -47,6 +47,62 @@ real::operator float() const
     return u.f;
 }
 
+real real::operator -()
+{
+    m_signexp ^= 0x80000000u;
+    return *this;
+}
+
+real real::operator +(real const &x) const
+{
+    if ((m_signexp << 1) < (x.m_signexp << 1))
+        return x + *this;
+
+    /* For now, assume both numbers are positive. */
+    real ret;
+
+    int e1 = (m_signexp & 0x7fffffffu) - (1 << 30) + 1;
+    int e2 = (x.m_signexp & 0x7fffffffu) - (1 << 30) + 1;
+
+    int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
+    int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
+
+    ret.m_signexp = m_signexp;
+
+    uint32_t carry = 0;
+    for (int i = 0; i < BIGITS; i++)
+    {
+        carry = m_mantissa[BIGITS - 1 - i];
+        if (BIGITS - 1 - i - bigoff >= 0)
+            carry += x.m_mantissa[BIGITS - 1 - i - bigoff] >> off;
+        else if (BIGITS - 1 - i - bigoff == -1)
+            carry += 0x0001u >> off;
+
+        if (BIGITS - 1 - i - bigoff - 1 >= 0)
+            carry += (x.m_mantissa[BIGITS - 1 - i - bigoff - 1] << (16 - off)) & 0xffffu;
+        else if (BIGITS - 1 - i - bigoff - 1 == -1)
+            carry += 0x0001u << (16 - off);
+
+        ret.m_mantissa[BIGITS - 1 - i] = carry;
+        carry >>= 16;
+    }
+
+    /* Renormalise in case we overflowed the mantissa */
+    if (carry)
+    {
+        carry--;
+        for (int i = 0; i < BIGITS; i++)
+        {
+            uint16_t tmp = ret.m_mantissa[i];
+            ret.m_mantissa[i] = (carry << 15) | (tmp >> 1);
+            carry = tmp & 0x0001u;
+        }
+        ret.m_signexp++;
+    }
+
+    return ret;
+}
+
 real real::operator *(real const &x) const
 {
     real ret;

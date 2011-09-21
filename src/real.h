@@ -30,6 +30,8 @@ public:
     real(float f);
 
     operator float() const;
+    real operator -();
+    real operator +(real const &x) const;
     real operator *(real const &x) const;
 
     void print() const;
