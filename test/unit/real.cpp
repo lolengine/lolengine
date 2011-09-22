@@ -22,7 +22,6 @@ namespace lol
 
 LOLUNIT_FIXTURE(RealTest)
 {
-public:
     LOLUNIT_TEST(test_real_from_float)
     {
         float a1 = real(0.0f);
@@ -53,6 +52,30 @@ public:
 
     LOLUNIT_TEST(test_real_add)
     {
+        float a1 = real(1.0f) + real(0.0f);
+        float a2 = real(0.0f) + real(1.0f);
+        float a3 = real(1.0f) + real(1.0f);
+        float a4 = real(-1.0f) + real(-1.0f);
+        float a5 = real(1.0f) + real(0.125f);
+
+        LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(a3, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(a4, -2.0f);
+        LOLUNIT_ASSERT_EQUAL(a5, 1.125f);
+    }
+
+    LOLUNIT_TEST(test_real_sub)
+    {
+#if 0
+printf("\n");
+real k(1.25f);
+k.print();
+real l(1.0f);
+l.print();
+real m = k - l;
+m.print();
+#endif
         LOLUNIT_ASSERT(true);
     }
 
