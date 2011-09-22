@@ -23,12 +23,18 @@
 using namespace std;
 using namespace lol;
 
+void bench_real(int mode);
 void bench_trig(int mode);
 void bench_matrix(int mode);
 void bench_half(int mode);
 
 int main(int argc, char **argv)
 {
+    Log::Info("-----------------------\n");
+    Log::Info(" High precision floats\n");
+    Log::Info("-----------------------\n");
+    bench_real(1);
+
     Log::Info("--------------------------\n");
     Log::Info(" Trigonometry [-1e5, 1e5]\n");
     Log::Info("--------------------------\n");

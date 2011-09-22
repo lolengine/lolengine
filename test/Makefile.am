@@ -25,7 +25,8 @@ testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 benchsuite_SOURCES = benchsuite.cpp \
-    benchmark/matrix.cpp benchmark/half.cpp benchmark/trig.cpp
+    benchmark/matrix.cpp benchmark/half.cpp benchmark/trig.cpp \
+    benchmark/real.cpp
 benchsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 benchsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
