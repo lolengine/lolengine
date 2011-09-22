@@ -35,6 +35,11 @@ public:
     real operator -(real const &x) const;
     real operator *(real const &x) const;
 
+    bool operator <(real const &x) const;
+    bool operator >(real const &x) const;
+    bool operator <=(real const &x) const;
+    bool operator >=(real const &x) const;
+
     void print() const;
 
 private:

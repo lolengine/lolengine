@@ -50,6 +50,27 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a4, 0.0f);
     }
 
+    LOLUNIT_TEST(test_real_comp)
+    {
+        LOLUNIT_ASSERT(real(1.0f) > real(0.5f));
+        LOLUNIT_ASSERT(real(1.0f) >= real(0.5f));
+        LOLUNIT_ASSERT(real(1.0f) >= real(1.0f));
+
+        LOLUNIT_ASSERT(real(-1.0f) < real(-0.5f));
+        LOLUNIT_ASSERT(real(-1.0f) <= real(-0.5f));
+        LOLUNIT_ASSERT(real(-1.0f) <= real(-1.0f));
+
+        LOLUNIT_ASSERT(real(-1.0f) < real(0.5f));
+        LOLUNIT_ASSERT(real(-0.5f) < real(1.0f));
+        LOLUNIT_ASSERT(real(-1.0f) <= real(0.5f));
+        LOLUNIT_ASSERT(real(-0.5f) <= real(1.0f));
+
+        LOLUNIT_ASSERT(real(1.0f) > real(-0.5f));
+        LOLUNIT_ASSERT(real(0.5f) > real(-1.0f));
+        LOLUNIT_ASSERT(real(1.0f) >= real(-0.5f));
+        LOLUNIT_ASSERT(real(0.5f) >= real(-1.0f));
+    }
+
     LOLUNIT_TEST(test_real_add)
     {
         float a1 = real(1.0f) + real(0.0f);
