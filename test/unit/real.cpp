@@ -25,13 +25,30 @@ LOLUNIT_FIXTURE(RealTest)
 public:
     LOLUNIT_TEST(test_real_from_float)
     {
-        float x = real(0.0f);
-        float y = real(1.0f);
-        float z = real(1.5f);
+        float a1 = real(0.0f);
+        float a2 = real(-0.0f);
+        float a3 = real(1.0f);
+        float a4 = real(-1.0f);
+        float a5 = real(1.5f);
 
-        LOLUNIT_ASSERT_EQUAL(x, 0.0f);
-        LOLUNIT_ASSERT_EQUAL(y, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(z, 1.5f);
+        LOLUNIT_ASSERT_EQUAL(a1, 0.0f);
+        LOLUNIT_ASSERT_EQUAL(a2, -0.0f);
+        LOLUNIT_ASSERT_EQUAL(a3, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(a4, -1.0f);
+        LOLUNIT_ASSERT_EQUAL(a5, 1.5f);
+    }
+
+    LOLUNIT_TEST(test_real_neg)
+    {
+        float a1 = - real(1.0f);
+        float a2 = - real(-1.0f);
+        float a3 = - real(0.0f);
+        float a4 = - real(-0.0f);
+
+        LOLUNIT_ASSERT_EQUAL(a1, -1.0f);
+        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(a3, -0.0f);
+        LOLUNIT_ASSERT_EQUAL(a4, 0.0f);
     }
 
     LOLUNIT_TEST(test_real_add)
