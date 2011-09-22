@@ -24,45 +24,76 @@ namespace lol
 
 real::real(float f)
 {
-    union { float f; uint32_t x; } u = { f };
+    new(this) real((double)f);
+}
 
-    uint32_t sign = u.x & 0x80000000u;
-    uint32_t exponent = (u.x >> 23) & 0xff;
+real::real(double d)
+{
+    union { double d; uint64_t x; } u = { d };
+
+    uint32_t sign = (u.x >> 63) << 31;
+    uint32_t exponent = (u.x << 1) >> 53;
 
     switch (exponent)
     {
     case 0x00:
-    case 0xff:
-        m_signexp = sign | exponent;
+        m_signexp = sign;
+        break;
+    case 0x7ff:
+        m_signexp = sign | 0x7fffffffu;
         break;
     default:
-        m_signexp = sign | (exponent + (1 << 30) - (1 << 7));
+        m_signexp = sign | (exponent + (1 << 30) - (1 << 10));
         break;
     }
 
-    m_mantissa[0] = u.x >> 7;
-    m_mantissa[1] = u.x << 9;
-    memset(m_mantissa + 2, 0, sizeof(m_mantissa) - sizeof(m_mantissa[0]));
+    m_mantissa[0] = u.x >> 36;
+    m_mantissa[1] = u.x >> 20;
+    m_mantissa[2] = u.x >> 4;
+    m_mantissa[3] = u.x << 12;
+    memset(m_mantissa + 4, 0, sizeof(m_mantissa) - 4 * sizeof(m_mantissa[0]));
 }
 
 real::operator float() const
 {
-    union { float f; uint32_t x; } u;
+    return (float)(double)(*this);
+}
 
-    uint32_t sign = m_signexp & 0x80000000u;
-    uint32_t exponent = m_signexp & 0x7fffffffu;
-    uint32_t mantissa = (m_mantissa[0] << 7) | (m_mantissa[1] >> 9);
+real::operator double() const
+{
+    union { double d; uint64_t x; } u;
 
-    int e = (int)exponent - (1 << 30) + (1 << 7);
+    /* Get sign */
+    u.x = m_signexp >> 31;
+    u.x <<= 11;
+
+    /* Compute new exponent */
+    uint32_t exponent = (m_signexp << 1) >> 1;
+    int e = (int)exponent - (1 << 30) + (1 << 10);
 
     if (e < 0)
-        u.x = sign;
-    else if (e >= 0xff)
-        u.x = sign | (0xff << 23);
+        u.x <<= 52;
+    else if (e >= 0x7ff)
+    {
+        u.x |= 0x7ff;
+        u.x <<= 52;
+    }
     else
-        u.x = sign | (e << 23) | mantissa;
+    {
+        u.x |= e;
 
-    return u.f;
+        /* Store mantissa if necessary */
+        u.x <<= 16;
+        u.x |= m_mantissa[0];
+        u.x <<= 16;
+        u.x |= m_mantissa[1];
+        u.x <<= 16;
+        u.x |= m_mantissa[2];
+        u.x <<= 4;
+        u.x |= m_mantissa[3] >> 12;
+    }
+
+    return u.d;
 }
 
 real real::operator -() const
