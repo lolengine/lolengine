@@ -53,7 +53,7 @@ real::operator float() const
     uint32_t exponent = m_signexp & 0x7fffffffu;
     uint32_t mantissa = (m_mantissa[0] << 7) | (m_mantissa[1] >> 9);
 
-    int e = (int)(m_signexp & 0x7fffffffu) - (1 << 30) + (1 << 7);
+    int e = (int)exponent - (1 << 30) + (1 << 7);
 
     if (e < 0)
         u.x = sign;
@@ -65,25 +65,33 @@ real::operator float() const
     return u.f;
 }
 
-real real::operator -()
+real real::operator -() const
 {
-    m_signexp ^= 0x80000000u;
-    return *this;
+    real ret = *this;
+    ret.m_signexp ^= 0x80000000u;
+    return ret;
 }
 
 real real::operator +(real const &x) const
 {
-    if ((m_signexp << 1) < (x.m_signexp << 1))
-        return x + *this;
-
     if (x.m_signexp << 1 == 0)
         return *this;
 
-    /* For now, assume both numbers are positive. */
+    /* Ensure *this is the larger exponent, and both arguments are
+     * positive (otherwise, switch signs, or replace + with -). */
+    if ((m_signexp << 1) < (x.m_signexp << 1))
+        return x + *this;
+
+    if (m_signexp >> 31)
+        return -(-*this + -x);
+
+    if (x.m_signexp >> 31)
+        return *this - x;
+
     real ret;
 
-    int e1 = (m_signexp & 0x7fffffffu) - (1 << 30) + 1;
-    int e2 = (x.m_signexp & 0x7fffffffu) - (1 << 30) + 1;
+    int e1 = m_signexp - (1 << 30) + 1;
+    int e2 = x.m_signexp - (1 << 30) + 1;
 
     int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
     int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
@@ -91,20 +99,20 @@ real real::operator +(real const &x) const
     ret.m_signexp = m_signexp;
 
     uint32_t carry = 0;
-    for (int i = 0; i < BIGITS; i++)
+    for (int i = BIGITS; i--; )
     {
-        carry = m_mantissa[BIGITS - 1 - i];
-        if (BIGITS - 1 - i - bigoff >= 0)
-            carry += x.m_mantissa[BIGITS - 1 - i - bigoff] >> off;
-        else if (BIGITS - 1 - i - bigoff == -1)
+        carry = m_mantissa[i];
+        if (i - bigoff >= 0)
+            carry += x.m_mantissa[i - bigoff] >> off;
+        else if (i - bigoff == -1)
             carry += 0x0001u >> off;
 
-        if (BIGITS - 1 - i - bigoff - 1 >= 0)
-            carry += (x.m_mantissa[BIGITS - 1 - i - bigoff - 1] << (16 - off)) & 0xffffu;
-        else if (BIGITS - 1 - i - bigoff - 1 == -1)
+        if (i - bigoff > 0)
+            carry += (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
+        else if (i - bigoff == 0)
             carry += 0x0001u << (16 - off);
 
-        ret.m_mantissa[BIGITS - 1 - i] = carry;
+        ret.m_mantissa[i] = carry;
         carry >>= 16;
     }
 
@@ -120,6 +128,27 @@ real real::operator +(real const &x) const
         }
         ret.m_signexp++;
     }
+
+    return ret;
+}
+
+real real::operator -(real const &x) const
+{
+    if (x.m_signexp << 1 == 0)
+        return *this;
+
+    /* Ensure *this is the larger exponent, and both arguments are
+     * positive (otherwise, switch signs, or replace - with +). */
+    if ((m_signexp << 1) < (x.m_signexp << 1))
+        return -(x - *this);
+
+    if (m_signexp >> 31)
+        return -(-*this + x);
+
+    if (x.m_signexp >> 31)
+        return (*this) + (-x);
+
+    real ret;
 
     return ret;
 }
