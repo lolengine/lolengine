@@ -23,22 +23,26 @@ namespace lol
 
 class real
 {
-    static int const BIGITS = 10;
+    static int const BIGITS = 32;
 
 public:
     inline real() { }
     real(float f);
 
     operator float() const;
+
     real operator -() const;
     real operator +(real const &x) const;
     real operator -(real const &x) const;
     real operator *(real const &x) const;
+    real operator /(real const &x) const;
 
     bool operator <(real const &x) const;
     bool operator >(real const &x) const;
     bool operator <=(real const &x) const;
     bool operator >=(real const &x) const;
+
+    friend real fres(real const &x);
 
     void print() const;
 
