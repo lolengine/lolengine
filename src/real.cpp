@@ -77,16 +77,18 @@ real real::operator +(real const &x) const
     if (x.m_signexp << 1 == 0)
         return *this;
 
-    /* Ensure *this is the larger exponent, and both arguments are
-     * positive (otherwise, switch signs, or replace + with -). */
-    if ((m_signexp << 1) < (x.m_signexp << 1))
-        return x + *this;
-
+    /* Ensure both arguments are positive. Otherwise, switch signs,
+     * or replace + with -). */
     if (m_signexp >> 31)
         return -(-*this + -x);
 
     if (x.m_signexp >> 31)
         return *this - x;
+
+    /* Ensure *this is the larger exponent (no need to be strictly larger,
+     * as in subtraction). Otherwise, switch. */
+    if ((m_signexp << 1) < (x.m_signexp << 1))
+        return x + *this;
 
     real ret;
 
@@ -137,16 +139,17 @@ real real::operator -(real const &x) const
     if (x.m_signexp << 1 == 0)
         return *this;
 
-    /* Ensure *this is the larger exponent, and both arguments are
-     * positive (otherwise, switch signs, or replace - with +). */
-    if ((m_signexp << 1) < (x.m_signexp << 1))
-        return -(x - *this);
-
+    /* Ensure both arguments are positive. Otherwise, switch signs,
+     * or replace - with +). */
     if (m_signexp >> 31)
         return -(-*this + x);
 
     if (x.m_signexp >> 31)
         return (*this) + (-x);
+
+    /* Ensure *this is larger than x */
+    if (*this < x)
+        return -(x - *this);
 
     real ret;
 
@@ -200,6 +203,56 @@ real real::operator *(real const &x) const
     ret.m_signexp |= e + (1 << 30) - 1;
 
     return ret;
+}
+
+bool real::operator <(real const &x) const
+{
+    /* Ensure both numbers are positive */
+    if (m_signexp >> 31)
+        return (x.m_signexp >> 31) ? -*this > -x : true;
+
+    if (x.m_signexp >> 31)
+        return false;
+
+    /* Compare all relevant bits */
+    if (m_signexp != x.m_signexp)
+        return m_signexp < x.m_signexp;
+
+    for (int i = 0; i < BIGITS; i++)
+        if (m_mantissa[i] != x.m_mantissa[i])
+            return m_mantissa[i] < x.m_mantissa[i];
+
+    return false;
+}
+
+bool real::operator <=(real const &x) const
+{
+    return !(*this > x);
+}
+
+bool real::operator >(real const &x) const
+{
+    /* Ensure both numbers are positive */
+    if (m_signexp >> 31)
+        return (x.m_signexp >> 31) ? -*this < -x : false;
+
+    if (x.m_signexp >> 31)
+        return true;
+
+    /* Compare all relevant bits */
+    if (m_signexp != x.m_signexp)
+        return m_signexp > x.m_signexp;
+
+    for (int i = 0; i < BIGITS; i++)
+        if (m_mantissa[i] != x.m_mantissa[i])
+            return m_mantissa[i] > x.m_mantissa[i];
+
+    return false;
+}
+
+bool real::operator >=(real const &x) const
+{
+    return !(*this < x);
 }
 
 void real::print() const
