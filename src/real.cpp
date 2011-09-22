@@ -281,6 +281,11 @@ real real::operator *(real const &x) const
     return ret;
 }
 
+real real::operator /(real const &x) const
+{
+    return *this * fres(x);
+}
+
 bool real::operator <(real const &x) const
 {
     /* Ensure both numbers are positive */
@@ -329,6 +334,46 @@ bool real::operator >(real const &x) const
 bool real::operator >=(real const &x) const
 {
     return !(*this < x);
+}
+
+real fres(real const &x)
+{
+    if (!(x.m_signexp << 1))
+    {
+        real ret = x;
+        ret.m_signexp = x.m_signexp | 0x7fffffffu;
+        ret.m_mantissa[0] = 0;
+        return ret;
+    }
+
+    /* Use the system's float inversion to approximate 1/x */
+    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
+    v.x |= (uint32_t)x.m_mantissa[0] << 7;
+    v.x |= (uint32_t)x.m_mantissa[1] >> 9;
+    v.f = 1.0 / v.f;
+
+    real ret;
+    ret.m_mantissa[0] = (v.x >> 7) & 0xffffu;
+    ret.m_mantissa[1] = (v.x << 9) & 0xffffu;
+    /* Better convergence with the mantissa zeroed. */
+    memset(ret.m_mantissa + 2, 0, (real::BIGITS - 2) * sizeof(uint16_t));
+
+    uint32_t sign = x.m_signexp & 0x80000000u;
+    ret.m_signexp = sign;
+
+    int exponent = (x.m_signexp & 0x7fffffffu) + 1;
+    exponent = -exponent + (v.x >> 23) - (u.x >> 23);
+    ret.m_signexp |= (exponent - 1) & 0x7fffffffu;
+
+    /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
+    real two(2.0f);
+    ret = ret * (two - ret * x);
+    ret = ret * (two - ret * x);
+    ret = ret * (two - ret * x);
+    ret = ret * (two - ret * x);
+    ret = ret * (two - ret * x);
+
+    return ret;
 }
 
 void real::print() const

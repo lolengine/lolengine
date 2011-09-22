@@ -110,6 +110,22 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(m3, 1.99999f * 1.99999f);
         LOLUNIT_ASSERT_EQUAL(m4, -1.5f * -1.5f);
     }
+
+    LOLUNIT_TEST(test_real_div)
+    {
+        real a1(1.0f);
+        real a2(2.0f);
+
+        float m1 = a1 / a1;
+        float m2 = a2 / a1;
+        float m3 = a1 / a2;
+        float m4 = a2 / a2;
+
+        LOLUNIT_ASSERT_EQUAL(m1, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(m2, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(m3, 0.5f);
+        LOLUNIT_ASSERT_EQUAL(m4, 1.0f);
+    }
 };
 
 } /* namespace lol */
