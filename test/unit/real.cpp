@@ -88,16 +88,9 @@ LOLUNIT_FIXTURE(RealTest)
 
     LOLUNIT_TEST(test_real_sub)
     {
-#if 0
-printf("\n");
-real k(1.25f);
-k.print();
-real l(1.0f);
-l.print();
-real m = k - l;
-m.print();
-#endif
-        LOLUNIT_ASSERT(true);
+        float a1 = real(1.0f) + real(1e20f) - real(1e20f);
+
+        LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
     }
 
     LOLUNIT_TEST(test_real_mul)

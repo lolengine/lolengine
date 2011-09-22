@@ -103,7 +103,7 @@ real real::operator +(real const &x) const
     uint32_t carry = 0;
     for (int i = BIGITS; i--; )
     {
-        carry = m_mantissa[i];
+        carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry += x.m_mantissa[i - bigoff] >> off;
         else if (i - bigoff == -1)
@@ -152,6 +152,82 @@ real real::operator -(real const &x) const
         return -(x - *this);
 
     real ret;
+
+    int e1 = m_signexp - (1 << 30) + 1;
+    int e2 = x.m_signexp - (1 << 30) + 1;
+
+    int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
+    int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
+
+    ret.m_signexp = m_signexp;
+
+    int32_t carry = 0;
+    for (int i = 0; i < bigoff; i++)
+    {
+        carry -= x.m_mantissa[BIGITS - i];
+        carry = (carry & 0xffff0000u) | (carry >> 16);
+    }
+    carry -= x.m_mantissa[BIGITS - 1 - bigoff] & ((1 << off) - 1);
+    carry /= (1 << off);
+
+    for (int i = BIGITS; i--; )
+    {
+        carry += m_mantissa[i];
+        if (i - bigoff >= 0)
+            carry -= x.m_mantissa[i - bigoff] >> off;
+        else if (i - bigoff == -1)
+            carry -= 0x0001u >> off;
+
+        if (i - bigoff > 0)
+            carry -= (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
+        else if (i - bigoff == 0)
+            carry -= 0x0001u << (16 - off);
+
+        ret.m_mantissa[i] = carry;
+        carry = (carry & 0xffff0000u) | (carry >> 16);
+    }
+
+    carry += 1;
+
+    /* Renormalise if we underflowed the mantissa */
+    if (carry == 0)
+    {
+        /* How much do we need to shift the mantissa? FIXME: this could
+         * be computed above */
+        off = 0;
+        for (int i = 0; i < BIGITS; i++)
+        {
+            if (!ret.m_mantissa[i])
+            {
+                off += sizeof(uint16_t) * 8;
+                continue;
+            }
+
+            for (uint16_t tmp = ret.m_mantissa[i]; tmp < 0x8000u; tmp <<= 1)
+                off++;
+            break;
+        }
+        if (off == BIGITS * sizeof(uint16_t) * 8)
+            ret.m_signexp &= 0x80000000u;
+        else
+        {
+            off++; /* Shift one more to get rid of the leading one */
+            ret.m_signexp -= off;
+
+            bigoff = off / (sizeof(uint16_t) * 8);
+            off -= bigoff * sizeof(uint16_t) * 8;
+
+            for (int i = 0; i < BIGITS; i++)
+            {
+                uint16_t tmp = 0;
+                if (i + bigoff < BIGITS)
+                    tmp |= ret.m_mantissa[i + bigoff] << off;
+                if (i + bigoff + 1 < BIGITS)
+                    tmp |= ret.m_mantissa[i + bigoff + 1] >> (16 - off);
+                ret.m_mantissa[i] = tmp;
+            }
+        }
+    }
 
     return ret;
 }
