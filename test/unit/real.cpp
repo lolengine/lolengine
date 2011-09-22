@@ -29,12 +29,31 @@ LOLUNIT_FIXTURE(RealTest)
         float a3 = real(1.0f);
         float a4 = real(-1.0f);
         float a5 = real(1.5f);
+        float a6 = real(12345678.0f);
 
         LOLUNIT_ASSERT_EQUAL(a1, 0.0f);
         LOLUNIT_ASSERT_EQUAL(a2, -0.0f);
         LOLUNIT_ASSERT_EQUAL(a3, 1.0f);
         LOLUNIT_ASSERT_EQUAL(a4, -1.0f);
         LOLUNIT_ASSERT_EQUAL(a5, 1.5f);
+        LOLUNIT_ASSERT_EQUAL(a6, 12345678.0f);
+    }
+
+    LOLUNIT_TEST(test_real_from_double)
+    {
+        double a1 = real(0.0);
+        double a2 = real(-0.0);
+        double a3 = real(1.0);
+        double a4 = real(-1.0);
+        double a5 = real(1.5);
+        double a6 = real(1234567876543210.0);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, 0.0, 0.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, -0.0, 0.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a3, 1.0, 0.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a4, -1.0, 0.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a5, 1.5, 0.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 1234567876543210.0, 0.0);
     }
 
     LOLUNIT_TEST(test_real_neg)

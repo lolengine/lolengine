@@ -28,8 +28,10 @@ class real
 public:
     inline real() { }
     real(float f);
+    real(double f);
 
     operator float() const;
+    operator double() const;
 
     real operator -() const;
     real operator +(real const &x) const;
