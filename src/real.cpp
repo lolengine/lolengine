@@ -27,9 +27,19 @@ real::real(float f)
     union { float f; uint32_t x; } u = { f };
 
     uint32_t sign = u.x & 0x80000000u;
-    int e = ((u.x >> 23) & 0xff) + (1 << 30) - (1 << 7);
+    uint32_t exponent = (u.x >> 23) & 0xff;
 
-    m_signexp = sign | e;
+    switch (exponent)
+    {
+    case 0x00:
+    case 0xff:
+        m_signexp = sign | exponent;
+        break;
+    default:
+        m_signexp = sign | (exponent + (1 << 30) - (1 << 7));
+        break;
+    }
+
     m_mantissa[0] = u.x >> 7;
     m_mantissa[1] = u.x << 9;
     memset(m_mantissa + 2, 0, sizeof(m_mantissa) - sizeof(m_mantissa[0]));
@@ -39,10 +49,18 @@ real::operator float() const
 {
     union { float f; uint32_t x; } u;
 
-    u.x = m_mantissa[0] << 7;
-    u.x |= m_mantissa[1] >> 9;
-    u.x |= ((m_signexp & 0x7fffffffu) - (1 << 30) + (1 << 7)) << 23;
-    u.x |= m_signexp & 0x80000000u;
+    uint32_t sign = m_signexp & 0x80000000u;
+    uint32_t exponent = m_signexp & 0x7fffffffu;
+    uint32_t mantissa = (m_mantissa[0] << 7) | (m_mantissa[1] >> 9);
+
+    int e = (int)(m_signexp & 0x7fffffffu) - (1 << 30) + (1 << 7);
+
+    if (e < 0)
+        u.x = sign;
+    else if (e >= 0xff)
+        u.x = sign | (0xff << 23);
+    else
+        u.x = sign | (e << 23) | mantissa;
 
     return u.f;
 }
@@ -57,6 +75,9 @@ real real::operator +(real const &x) const
 {
     if ((m_signexp << 1) < (x.m_signexp << 1))
         return x + *this;
+
+    if (x.m_signexp << 1 == 0)
+        return *this;
 
     /* For now, assume both numbers are positive. */
     real ret;
