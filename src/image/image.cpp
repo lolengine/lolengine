@@ -28,6 +28,9 @@ bool ImageLoader::RegisterAllLoaders()
     REGISTER_IMAGE_LOADER(AndroidImageData)
 #endif
     REGISTER_IMAGE_LOADER(DummyImageData)
+#if defined USE_GDIPLUS
+    REGISTER_IMAGE_LOADER(GdiPlusImageData)
+#endif
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
     REGISTER_IMAGE_LOADER(IosImageData)
 #endif

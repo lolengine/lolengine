@@ -27,6 +27,7 @@ liblol_a_SOURCES = \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/android-image.cpp \
+    image/codec/gdiplus-image.cpp \
     image/codec/ios-image.cpp \
     image/codec/sdl-image.cpp \
     image/codec/ps3-image.cpp \

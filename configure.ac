@@ -263,6 +263,24 @@ fi
 AM_CONDITIONAL(USE_LIBPNG, test "${ac_cv_my_have_libpng}" != "no")
 
 
+dnl Use Windows GDI+?
+ac_cv_my_have_gdiplus="no"
+AC_LANG_PUSH(C++)
+AC_CHECK_HEADERS(Gdiplus.h,
+ [ac_cv_my_have_gdiplus="yes"
+  LOL_LIBS="${LOL_LIBS} -lgdiplus"],
+ [ac_cv_my_have_gdiplus="no"],
+ [#include <algorithm>
+  using std::min;
+  using std::max;
+  #include <windows.h>])
+AC_LANG_POP(C++)
+if test "${ac_cv_my_have_gdiplus}" != "no"; then
+  AC_DEFINE(USE_GDIPLUS, 1, Define to 1 to use GDI+)
+fi
+AM_CONDITIONAL(USE_GDIPLUS, test "${ac_cv_my_have_gdiplus}" = "yes")
+
+
 dnl Use libcaca? (required for font generation)
 ac_cv_my_have_caca="no"
 PKG_CHECK_MODULES(CACA, caca >= 0.99.beta17, [ac_cv_my_have_caca="yes"], [:])
