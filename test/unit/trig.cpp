@@ -22,8 +22,7 @@ namespace lol
 
 LOLUNIT_FIXTURE(TrigTest)
 {
-public:
-    LOLUNIT_TEST(test_sin)
+    LOLUNIT_TEST(Sin)
     {
         for (int i = -10000; i < 10000; i++)
         {
@@ -52,7 +51,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_cos)
+    LOLUNIT_TEST(Cos)
     {
         for (int i = -10000; i < 10000; i++)
         {
@@ -81,7 +80,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_sincos)
+    LOLUNIT_TEST(SinCos)
     {
         for (int i = -10000; i < 10000; i++)
         {
@@ -118,7 +117,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_tan)
+    LOLUNIT_TEST(Tan)
     {
         for (int i = -100000; i < 100000; i++)
         {

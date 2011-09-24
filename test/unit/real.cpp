@@ -22,7 +22,7 @@ namespace lol
 
 LOLUNIT_FIXTURE(RealTest)
 {
-    LOLUNIT_TEST(test_real_from_float)
+    LOLUNIT_TEST(FloatToReal)
     {
         float a1 = real(0.0f);
         float a2 = real(-0.0f);
@@ -39,7 +39,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a6, 12345678.0f);
     }
 
-    LOLUNIT_TEST(test_real_from_double)
+    LOLUNIT_TEST(DoubleToReal)
     {
         double a1 = real(0.0);
         double a2 = real(-0.0);
@@ -56,7 +56,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 1234567876543210.0, 0.0);
     }
 
-    LOLUNIT_TEST(test_real_neg)
+    LOLUNIT_TEST(UnaryMinus)
     {
         float a1 = - real(1.0f);
         float a2 = - real(-1.0f);
@@ -69,7 +69,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a4, 0.0f);
     }
 
-    LOLUNIT_TEST(test_real_comp)
+    LOLUNIT_TEST(RealComparison)
     {
         LOLUNIT_ASSERT(real(1.0f) > real(0.5f));
         LOLUNIT_ASSERT(real(1.0f) >= real(0.5f));
@@ -90,7 +90,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT(real(0.5f) >= real(-1.0f));
     }
 
-    LOLUNIT_TEST(test_real_add)
+    LOLUNIT_TEST(RealAddition)
     {
         float a1 = real(1.0f) + real(0.0f);
         float a2 = real(0.0f) + real(1.0f);
@@ -105,14 +105,14 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a5, 1.125f);
     }
 
-    LOLUNIT_TEST(test_real_sub)
+    LOLUNIT_TEST(RealSubtraction)
     {
         float a1 = real(1.0f) + real(1e20f) - real(1e20f);
 
         LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
     }
 
-    LOLUNIT_TEST(test_real_mul)
+    LOLUNIT_TEST(RealMultiplication)
     {
         real x(1.25f);
         real y(1.5f);
@@ -130,7 +130,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(m4, -1.5f * -1.5f);
     }
 
-    LOLUNIT_TEST(test_real_div)
+    LOLUNIT_TEST(RealDivision)
     {
         real a1(1.0f);
         real a2(2.0f);
