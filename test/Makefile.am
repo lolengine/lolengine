@@ -14,12 +14,15 @@ CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
 
+EXTRA_DIST = data/gradient.png
+
 noinst_PROGRAMS = quad sandbox benchsuite testsuite
 
 TESTS = testsuite
 
 testsuite_SOURCES = testsuite.cpp \
-    unit/matrix.cpp unit/half.cpp unit/trig.cpp unit/build.cpp unit/real.cpp
+    unit/matrix.cpp unit/half.cpp unit/trig.cpp unit/build.cpp \
+    unit/real.cpp unit/image.cpp
 testsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
