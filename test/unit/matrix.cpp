@@ -20,7 +20,6 @@ namespace lol
 
 LOLUNIT_FIXTURE(MatrixTest)
 {
-public:
     void SetUp()
     {
         identity = mat4(1.0f);
@@ -36,7 +35,7 @@ public:
 
     void TearDown() {}
 
-    LOLUNIT_TEST(test_vec_eq)
+    LOLUNIT_TEST(VectorEquality)
     {
         vec2 a2(1.0f, 2.0f);
         vec2 b2(0.0f, 2.0f);
@@ -84,7 +83,7 @@ public:
         LOLUNIT_ASSERT_NOT_EQUAL(a4, e4);
     }
 
-    LOLUNIT_TEST(test_vec_lt)
+    LOLUNIT_TEST(VectorInequality)
     {
         vec2 a2(1.0f, 3.0f);
         vec2 b2(0.0f, 0.0f);
@@ -108,7 +107,7 @@ public:
         LOLUNIT_ASSERT_LESS(a2, f2);
     }
 
-    LOLUNIT_TEST(test_vec_unary)
+    LOLUNIT_TEST(VectorUnaryMinus)
     {
         vec2 a(1.0f, 3.0f);
         vec2 b(-1.0f, -3.0f);
@@ -117,7 +116,7 @@ public:
         LOLUNIT_ASSERT_EQUAL(-a, b);
     }
 
-    LOLUNIT_TEST(test_vec_cast)
+    LOLUNIT_TEST(CastVector)
     {
         vec2 a1(1.0f, 3.0f);
 
@@ -137,7 +136,7 @@ public:
         LOLUNIT_ASSERT_EQUAL(a3, a1);
     }
 
-    LOLUNIT_TEST(test_mat_det)
+    LOLUNIT_TEST(MatrixDeterminant)
     {
         float d1 = triangular.det();
         LOLUNIT_ASSERT_EQUAL(d1, 24.0f);
@@ -145,7 +144,7 @@ public:
         LOLUNIT_ASSERT_EQUAL(d2, -1.0f);
     }
 
-    LOLUNIT_TEST(test_mat_mul)
+    LOLUNIT_TEST(MatrixMultiplication)
     {
         mat4 m0 = identity;
         mat4 m1 = identity;
@@ -172,7 +171,7 @@ public:
         LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
     }
 
-    LOLUNIT_TEST(test_mat_inv)
+    LOLUNIT_TEST(MatrixInverse)
     {
         mat4 m0 = invertible;
         mat4 m1 = m0.invert();
@@ -200,7 +199,6 @@ public:
         LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
     }
 
-private:
     mat4 triangular, identity, invertible;
 };
 

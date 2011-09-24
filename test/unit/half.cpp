@@ -22,8 +22,7 @@ namespace lol
 
 LOLUNIT_FIXTURE(HalfTest)
 {
-public:
-    LOLUNIT_TEST(test_half_from_float)
+    LOLUNIT_TEST(FloatToHalf)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -34,7 +33,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_half_makeaccurate)
+    LOLUNIT_TEST(FloatToHalfAccurate)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -45,7 +44,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_half_makebits)
+    LOLUNIT_TEST(BitsToHalf)
     {
         for (unsigned int i = 0; i < 0x10000; i++)
         {
@@ -56,7 +55,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_half_is_nan)
+    LOLUNIT_TEST(HalfIsNaN)
     {
         LOLUNIT_ASSERT(half::makebits(0x7c01).is_nan());
         LOLUNIT_ASSERT(half::makebits(0xfc01).is_nan());
@@ -72,7 +71,7 @@ public:
         LOLUNIT_ASSERT(!half(-2.0f).is_nan());
     }
 
-    LOLUNIT_TEST(test_half_is_inf)
+    LOLUNIT_TEST(HalfIsInf)
     {
         LOLUNIT_ASSERT(half(65536.0f).is_inf());
         LOLUNIT_ASSERT(half(-65536.0f).is_inf());
@@ -89,7 +88,7 @@ public:
         LOLUNIT_ASSERT(!half::makebits(0xfe00).is_inf());
     }
 
-    LOLUNIT_TEST(test_half_is_finite)
+    LOLUNIT_TEST(HalfIsFinite)
     {
         LOLUNIT_ASSERT(half(0.0f).is_finite());
         LOLUNIT_ASSERT(half(-0.0f).is_finite());
@@ -106,7 +105,7 @@ public:
         LOLUNIT_ASSERT(!half::makebits(0xfe00).is_finite());
     }
 
-    LOLUNIT_TEST(test_half_is_normal)
+    LOLUNIT_TEST(HalfIsNormal)
     {
         LOLUNIT_ASSERT(half(0.0f).is_normal());
         LOLUNIT_ASSERT(half(-0.0f).is_normal());
@@ -123,7 +122,7 @@ public:
         LOLUNIT_ASSERT(!half::makebits(0xfe00).is_normal());
     }
 
-    LOLUNIT_TEST(test_half_classify)
+    LOLUNIT_TEST(HalfClassify)
     {
         for (uint32_t i = 0; i < 0x10000; i++)
         {
@@ -147,7 +146,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_half_to_float)
+    LOLUNIT_TEST(HalfToFloat)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -176,7 +175,7 @@ public:
         }
     }
 
-    LOLUNIT_TEST(test_half_to_int)
+    LOLUNIT_TEST(HalfToInt)
     {
         LOLUNIT_ASSERT_EQUAL((int)(half)(0.0f), 0);
         LOLUNIT_ASSERT_EQUAL((int)(half)(-0.0f), 0);
@@ -190,7 +189,7 @@ public:
         LOLUNIT_ASSERT_EQUAL((int)(half)(-65504.0f), -65504);
     }
 
-    LOLUNIT_TEST(test_float_op_half)
+    LOLUNIT_TEST(FloatOpHalf)
     {
         half zero = 0;
         half one = 1;
@@ -231,7 +230,7 @@ public:
         LOLUNIT_ASSERT_EQUAL(2.0f, f);
     }
 
-    LOLUNIT_TEST(test_half_op_float)
+    LOLUNIT_TEST(HalfOpFloat)
     {
         half zero = 0;
         half one = 1;
@@ -273,7 +272,6 @@ public:
         LOLUNIT_ASSERT_EQUAL(two.bits, f.bits);
     }
 
-private:
     struct TestPair { float f; uint16_t x; };
 
     static TestPair const pairs[11];
