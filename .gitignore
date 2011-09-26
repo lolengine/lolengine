@@ -59,5 +59,6 @@ test/testsuite
 test/benchsuite
 test/quad
 test/sandbox
+test/math/pi
 tools/make-font
 # Our data
