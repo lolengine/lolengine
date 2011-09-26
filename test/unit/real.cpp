@@ -97,12 +97,19 @@ LOLUNIT_FIXTURE(RealTest)
         float a3 = real(1.0f) + real(1.0f);
         float a4 = real(-1.0f) + real(-1.0f);
         float a5 = real(1.0f) + real(0.125f);
+        double a6 = real(3.13609818956293918)
+                  + real(0.00005972154828114);
+        float a7 = real(1.0f) + real(-0.125f);
+        double a8 = real(0.10000000002) + real(-2.0e-11);
 
         LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
         LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
         LOLUNIT_ASSERT_EQUAL(a3, 2.0f);
         LOLUNIT_ASSERT_EQUAL(a4, -2.0f);
         LOLUNIT_ASSERT_EQUAL(a5, 1.125f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 3.1361579, 0.000001);
+        LOLUNIT_ASSERT_EQUAL(a7, 0.875f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a8, 0.1, 1.0e-13);
     }
 
     LOLUNIT_TEST(RealSubtraction)
@@ -139,11 +146,13 @@ LOLUNIT_FIXTURE(RealTest)
         float m2 = a2 / a1;
         float m3 = a1 / a2;
         float m4 = a2 / a2;
+        float m5 = a1 / -a2;
 
         LOLUNIT_ASSERT_EQUAL(m1, 1.0f);
         LOLUNIT_ASSERT_EQUAL(m2, 2.0f);
         LOLUNIT_ASSERT_EQUAL(m3, 0.5f);
         LOLUNIT_ASSERT_EQUAL(m4, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(m5, -0.5f);
     }
 };
 

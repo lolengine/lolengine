@@ -91,6 +91,8 @@ real::operator double() const
         u.x |= m_mantissa[2];
         u.x <<= 4;
         u.x |= m_mantissa[3] >> 12;
+        /* Rounding */
+        u.x += (m_mantissa[3] >> 11) & 1;
     }
 
     return u.d;
@@ -109,12 +111,12 @@ real real::operator +(real const &x) const
         return *this;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
-     * or replace + with -). */
+     * or replace + with -. */
     if (m_signexp >> 31)
         return -(-*this + -x);
 
     if (x.m_signexp >> 31)
-        return *this - x;
+        return *this - (-x);
 
     /* Ensure *this is the larger exponent (no need to be strictly larger,
      * as in subtraction). Otherwise, switch. */
@@ -137,8 +139,6 @@ real real::operator +(real const &x) const
         carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry += x.m_mantissa[i - bigoff] >> off;
-        else if (i - bigoff == -1)
-            carry += 0x0001u >> off;
 
         if (i - bigoff > 0)
             carry += (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
@@ -171,7 +171,7 @@ real real::operator -(real const &x) const
         return *this;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
-     * or replace - with +). */
+     * or replace - with +. */
     if (m_signexp >> 31)
         return -(-*this + x);
 
@@ -206,8 +206,6 @@ real real::operator -(real const &x) const
         carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry -= x.m_mantissa[i - bigoff] >> off;
-        else if (i - bigoff == -1)
-            carry -= 0x0001u >> off;
 
         if (i - bigoff > 0)
             carry -= (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
@@ -273,20 +271,20 @@ real real::operator *(real const &x) const
 
     /* Accumulate low order product; no need to store it, we just
      * want the carry value */
-    uint32_t carry = 0;
+    uint64_t carry = 0;
     for (int i = 0; i < BIGITS; i++)
     {
         for (int j = 0; j < i + 1; j++)
-            carry += m_mantissa[BIGITS - 1 - j]
-                   * x.m_mantissa[BIGITS - 1 + j - i];
+            carry += (uint32_t)m_mantissa[BIGITS - 1 - j]
+                   * (uint32_t)x.m_mantissa[BIGITS - 1 + j - i];
         carry >>= 16;
     }
 
     for (int i = 0; i < BIGITS; i++)
     {
         for (int j = i + 1; j < BIGITS; j++)
-            carry += m_mantissa[BIGITS - 1 - j]
-                   * x.m_mantissa[j - 1 - i];
+            carry += (uint32_t)m_mantissa[BIGITS - 1 - j]
+                   * (uint32_t)x.m_mantissa[j - 1 - i];
 
         carry += m_mantissa[BIGITS - 1 - i];
         carry += x.m_mantissa[BIGITS - 1 - i];
