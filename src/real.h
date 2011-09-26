@@ -27,18 +27,29 @@ class real
 
 public:
     inline real() { }
+
     real(float f);
     real(double f);
+    real(int i);
+    real(unsigned int i);
 
     operator float() const;
     operator double() const;
+    operator int() const;
+    operator unsigned int() const;
 
     real operator -() const;
     real operator +(real const &x) const;
     real operator -(real const &x) const;
     real operator *(real const &x) const;
     real operator /(real const &x) const;
+    real &operator +=(real const &x);
+    real &operator -=(real const &x);
+    real &operator *=(real const &x);
+    real &operator /=(real const &x);
 
+    bool operator ==(real const &x) const;
+    bool operator !=(real const &x) const;
     bool operator <(real const &x) const;
     bool operator >(real const &x) const;
     bool operator <=(real const &x) const;
