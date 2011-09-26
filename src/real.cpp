@@ -22,10 +22,9 @@ using namespace std;
 namespace lol
 {
 
-real::real(float f)
-{
-    new(this) real((double)f);
-}
+real::real(float f) { *this = (double)f; }
+real::real(int i) { *this = (double)i; }
+real::real(unsigned int i) { *this = (double)i; }
 
 real::real(double d)
 {
@@ -54,10 +53,9 @@ real::real(double d)
     memset(m_mantissa + 4, 0, sizeof(m_mantissa) - 4 * sizeof(m_mantissa[0]));
 }
 
-real::operator float() const
-{
-    return (float)(double)(*this);
-}
+real::operator float() const { return (float)(double)(*this); }
+real::operator int() const { return (int)(double)(*this); }
+real::operator unsigned int() const { return (unsigned int)(double)(*this); }
 
 real::operator double() const
 {
@@ -315,6 +313,43 @@ real real::operator /(real const &x) const
     return *this * fres(x);
 }
 
+real &real::operator +=(real const &x)
+{
+    real tmp = *this;
+    return *this = tmp + x;
+}
+
+real &real::operator -=(real const &x)
+{
+    real tmp = *this;
+    return *this = tmp - x;
+}
+
+real &real::operator *=(real const &x)
+{
+    real tmp = *this;
+    return *this = tmp * x;
+}
+
+real &real::operator /=(real const &x)
+{
+    real tmp = *this;
+    return *this = tmp / x;
+}
+
+bool real::operator ==(real const &x) const
+{
+    if (m_signexp != x.m_signexp)
+        return false;
+
+    return memcmp(m_mantissa, x.m_mantissa, sizeof(m_mantissa)) == 0;
+}
+
+bool real::operator !=(real const &x) const
+{
+    return !(*this == x);
+}
+
 bool real::operator <(real const &x) const
 {
     /* Ensure both numbers are positive */
@@ -384,8 +419,6 @@ real fres(real const &x)
     real ret;
     ret.m_mantissa[0] = (v.x >> 7) & 0xffffu;
     ret.m_mantissa[1] = (v.x << 9) & 0xffffu;
-    /* Better convergence with the mantissa zeroed. */
-    memset(ret.m_mantissa + 2, 0, (real::BIGITS - 2) * sizeof(uint16_t));
 
     uint32_t sign = x.m_signexp & 0x80000000u;
     ret.m_signexp = sign;
@@ -395,7 +428,7 @@ real fres(real const &x)
     ret.m_signexp |= (exponent - 1) & 0x7fffffffu;
 
     /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
-    real two(2.0f);
+    real two = 2;
     ret = ret * (two - ret * x);
     ret = ret * (two - ret * x);
     ret = ret * (two - ret * x);
@@ -407,9 +440,55 @@ real fres(real const &x)
 
 void real::print() const
 {
-    printf("%x  %08x  ", m_signexp >> 31, (m_signexp << 1) >> 1);
-    for (int i = 0; i < BIGITS; i++)
-        printf("%04x ", m_mantissa[i]);
+    real const r1 = 1, r10 = 10;
+    real x = *this;
+
+    if (x.m_signexp >> 31)
+    {
+        printf("-");
+        x = -x;
+    }
+
+    /* Normalise x so that mantissa is in [1..9.999] */
+    int exponent = 0;
+    for (real div = r1, newdiv; true; div = newdiv)
+    {
+        newdiv = div * r10;
+        if (x < newdiv)
+        {
+            x /= div;
+            break;
+        }
+        exponent++;
+    }
+    for (real mul = 1, newx; true; mul *= r10)
+    {
+        newx = x * mul;
+        if (newx >= r1)
+        {
+            x = newx;
+            break;
+        }
+        exponent--;
+    }
+
+    /* Print digits */
+    for (int i = 0; i < 150; i++)
+    {
+        int digit = (int)x;
+        printf("%i", digit);
+        if (i == 0)
+            printf(".");
+        x -= real(digit);
+        x *= r10;
+    }
+
+    /* Print exponent information */
+    if (exponent < 0)
+        printf("e-%i", -exponent);
+    else if (exponent > 0)
+        printf("e+%i", exponent);
+
     printf("\n");
 }
 
