@@ -1,4 +1,6 @@
 
+SUBDIRS = math
+
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
 bench: benchsuite$(EXEEXT)

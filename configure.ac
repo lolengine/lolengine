@@ -322,6 +322,7 @@ AC_CONFIG_FILES(
  [Makefile
   src/Makefile
   test/Makefile
+  test/math/Makefile
   gfx/Makefile
   gfx/font/Makefile
   tools/Makefile
