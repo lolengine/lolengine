@@ -438,7 +438,60 @@ real fres(real const &x)
     return ret;
 }
 
-void real::print() const
+real sqrt(real const &x)
+{
+    /* if zero, return x */
+    if (!(x.m_signexp << 1))
+        return x;
+
+    /* if negative, return NaN */
+    if (x.m_signexp >> 31)
+    {
+        real ret;
+        ret.m_signexp = 0x7fffffffu;
+        ret.m_mantissa[0] = 0xffffu;
+        return ret;
+    }
+
+    /* Use the system's float inversion to approximate 1/sqrt(x). First
+     * we construct a float in the [1..4[ range that has roughly the same
+     * mantissa as our real. Its exponent is 0 or 1, depending on the
+     * partity of x. The final exponent is 0, -1 or -2. We use the final
+     * exponent and final mantissa to pre-fill the result. */
+    union { float f; uint32_t x; } u = { 1.0f }, v = { 2.0f };
+    v.x -= ((x.m_signexp & 1) << 23);
+    v.x |= (uint32_t)x.m_mantissa[0] << 7;
+    v.x |= (uint32_t)x.m_mantissa[1] >> 9;
+    v.f = 1.0 / sqrtf(v.f);
+
+    real ret;
+    ret.m_mantissa[0] = (v.x >> 7) & 0xffffu;
+    ret.m_mantissa[1] = (v.x << 9) & 0xffffu;
+
+    uint32_t sign = x.m_signexp & 0x80000000u;
+    ret.m_signexp = sign;
+
+    int exponent = (x.m_signexp & 0x7fffffffu) - ((1 << 30) - 1);
+    exponent = - (exponent / 2) + (v.x >> 23) - (u.x >> 23);
+    ret.m_signexp |= (exponent + ((1 << 30) - 1)) & 0x7fffffffu;
+
+    /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
+    real three = 3;
+    ret = ret * (three - ret * ret * x);
+    ret.m_signexp--;
+    ret = ret * (three - ret * ret * x);
+    ret.m_signexp--;
+    ret = ret * (three - ret * ret * x);
+    ret.m_signexp--;
+    ret = ret * (three - ret * ret * x);
+    ret.m_signexp--;
+    ret = ret * (three - ret * ret * x);
+    ret.m_signexp--;
+
+    return ret * x;
+}
+
+void real::print(int ndigits) const
 {
     real const r1 = 1, r10 = 10;
     real x = *this;
@@ -473,7 +526,7 @@ void real::print() const
     }
 
     /* Print digits */
-    for (int i = 0; i < 150; i++)
+    for (int i = 0; i < ndigits; i++)
     {
         int digit = (int)x;
         printf("%i", digit);
