@@ -32,6 +32,18 @@ int main(int argc, char **argv)
 
     sum.print();
 
+    /* Bonus: compute e for fun. */
+    sum = 0.0;
+    x0 = 1.0;
+
+    for (int i = 1; i < 100; i++)
+    {
+        sum += fres(x0);
+        x0 *= (real)i;
+    }
+
+    sum.print();
+
     return EXIT_SUCCESS;
 }
 
