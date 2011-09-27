@@ -346,6 +346,9 @@ real &real::operator /=(real const &x)
 
 bool real::operator ==(real const &x) const
 {
+    if ((m_signexp << 1) == 0 && (x.m_signexp << 1) == 0)
+        return true;
+
     if (m_signexp != x.m_signexp)
         return false;
 
@@ -498,6 +501,34 @@ real sqrt(real const &x)
     return ret * x;
 }
 
+real exp(real const &x)
+{
+    int square = 0;
+
+    /* FIXME: this is slow. Find a better way to approximate exp(x) for
+     * large values. */
+    real tmp = x, one = 1.0;
+    while (tmp > one)
+    {
+        tmp.m_signexp--;
+        square++;
+    }
+
+    real ret = 1.0, fact = 1.0, xn = tmp;
+
+    for (int i = 1; i < 100; i++)
+    {
+        fact *= (real)i;
+        ret += xn / fact;
+        xn *= tmp;
+    }
+
+    for (int i = 0; i < square; i++)
+        ret = ret * ret;
+
+    return ret;
+}
+
 void real::print(int ndigits) const
 {
     real const r1 = 1, r10 = 10;
@@ -511,25 +542,28 @@ void real::print(int ndigits) const
 
     /* Normalise x so that mantissa is in [1..9.999] */
     int exponent = 0;
-    for (real div = r1, newdiv; true; div = newdiv)
+    if (x.m_signexp)
     {
-        newdiv = div * r10;
-        if (x < newdiv)
+        for (real div = r1, newdiv; true; div = newdiv)
         {
-            x /= div;
-            break;
+            newdiv = div * r10;
+            if (x < newdiv)
+            {
+                x /= div;
+                break;
+            }
+            exponent++;
         }
-        exponent++;
-    }
-    for (real mul = 1, newx; true; mul *= r10)
-    {
-        newx = x * mul;
-        if (newx >= r1)
+        for (real mul = 1, newx; true; mul *= r10)
         {
-            x = newx;
-            break;
+            newx = x * mul;
+            if (newx >= r1)
+            {
+                x = newx;
+                break;
+            }
+            exponent--;
         }
-        exponent--;
     }
 
     /* Print digits */
