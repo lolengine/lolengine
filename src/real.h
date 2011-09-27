@@ -55,6 +55,7 @@ public:
 
     friend real fres(real const &x);
     friend real sqrt(real const &x);
+    friend real exp(real const &x);
 
     void print(int ndigits = 150) const;
 
