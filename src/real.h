@@ -54,8 +54,9 @@ public:
     bool operator >=(real const &x) const;
 
     friend real fres(real const &x);
+    friend real sqrt(real const &x);
 
-    void print() const;
+    void print(int ndigits = 150) const;
 
 private:
     /* XXX: changing this requires tuning real::fres (the number of
