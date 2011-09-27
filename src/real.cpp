@@ -263,6 +263,13 @@ real real::operator *(real const &x) const
 {
     real ret;
 
+    if (m_signexp << 1 == 0 || x.m_signexp << 1 == 0)
+    {
+        ret = (m_signexp << 1 == 0) ? *this : x;
+        ret.m_signexp ^= x.m_signexp & 0x80000000u;
+        return ret;
+    }
+
     ret.m_signexp = (m_signexp ^ x.m_signexp) & 0x80000000u;
     int e = (m_signexp & 0x7fffffffu) - (1 << 30) + 1
           + (x.m_signexp & 0x7fffffffu) - (1 << 30) + 1;
