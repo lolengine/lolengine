@@ -350,6 +350,32 @@ real &real::operator /=(real const &x)
     return *this = tmp / x;
 }
 
+real real::operator <<(int x) const
+{
+    real tmp = *this;
+    return tmp <<= x;
+}
+
+real real::operator >>(int x) const
+{
+    real tmp = *this;
+    return tmp >>= x;
+}
+
+real &real::operator <<=(int x)
+{
+    if (m_signexp << 1)
+        m_signexp += x;
+    return *this;
+}
+
+real &real::operator >>=(int x)
+{
+    if (m_signexp << 1)
+        m_signexp -= x;
+    return *this;
+}
+
 bool real::operator ==(real const &x) const
 {
     if ((m_signexp << 1) == 0 && (x.m_signexp << 1) == 0)
@@ -541,9 +567,7 @@ static real fastlog(real const &x)
         zn *= z2;
     }
 
-    /* FIXME: sum.m_signexp += 2; (but needs private data access) */
-    sum *= (real)4;
-    return z * sum;
+    return z * (sum << 2);
 }
 
 static real LOG_2 = fastlog((real)2);
