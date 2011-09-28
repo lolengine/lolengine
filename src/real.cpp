@@ -711,5 +711,36 @@ void real::print(int ndigits) const
     printf("\n");
 }
 
+static real fast_pi()
+{
+    /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
+    real ret = 0.0, x0 = 5.0, x1 = 239.0;
+    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
+
+    /* Degree 240 is required for 512-bit mantissa precision */
+    for (int i = 1; i < 240; i += 2)
+    {
+        ret += r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
+        x0 *= m0;
+        x1 *= m1;
+    }
+
+    return ret;
+}
+
+real const real::R_E        = exp((real)1.0);
+real const real::R_LOG2E    = (real)1.0 / R_LN2;
+real const real::R_LOG10E   = (real)1.0 / R_LN10;
+real const real::R_LN2      = log((real)2.0);
+real const real::R_LN10     = log((real)10.0);
+real const real::R_PI       = fast_pi();
+real const real::R_PI_2     = R_PI >> 1;
+real const real::R_PI_4     = R_PI >> 2;
+real const real::R_1_PI     = (real)1.0 / R_PI;
+real const real::R_2_PI     = R_1_PI << 1;
+real const real::R_2_SQRTPI = (real)2.0 / sqrt(R_PI);
+real const real::R_SQRT2    = sqrt((real)2.0);
+real const real::R_SQRT1_2  = R_SQRT2 >> 1;
+
 } /* namespace lol */
 
