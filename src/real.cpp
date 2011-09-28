@@ -573,38 +573,27 @@ real exp(real const &x)
      * a value for E, which is approximately log2(exp(x)) = x / log(2).
      *
      * Let E0 be an integer close to x / log(2). We need to find a value x0
-     * such that exp(x) = 2^E0 * exp(x0). We get x0 = x - log(E0).
+     * such that exp(x) = 2^E0 * exp(x0). We get x0 = x - E0 log(2).
      *
      * Thus the final algorithm:
      *  int E0 = x / log(2)
-     *  real x0 = x - log(E0)
+     *  real x0 = x - E0 log(2)
      *  real x1 = exp(x0)
      *  return x1 * 2^E0
      */
-    int square = 0;
-
-    /* FIXME: this is slow. Find a better way to approximate exp(x) for
-     * large values. */
-    real tmp = x, one = 1.0;
-    while (tmp > one)
-    {
-        tmp.m_signexp--;
-        square++;
-    }
-
-    real ret = 1.0, fact = 1.0, xn = tmp;
+    int e0 = x / LOG_2;
+    real x0 = x - (real)e0 * LOG_2;
+    real x1 = 1.0, fact = 1.0, xn = x0;
 
     for (int i = 1; i < 100; i++)
     {
         fact *= (real)i;
-        ret += xn / fact;
-        xn *= tmp;
+        x1 += xn / fact;
+        xn *= x0;
     }
 
-    for (int i = 0; i < square; i++)
-        ret = ret * ret;
-
-    return ret;
+    x1.m_signexp += e0;
+    return x1;
 }
 
 real sin(real const &x)
