@@ -116,8 +116,8 @@ real real::operator +(real const &x) const
     if (x.m_signexp >> 31)
         return *this - (-x);
 
-    /* Ensure *this is the larger exponent (no need to be strictly larger,
-     * as in subtraction). Otherwise, switch. */
+    /* Ensure *this has the larger exponent (no need for the mantissa to
+     * be larger, as in subtraction). Otherwise, switch. */
     if ((m_signexp << 1) < (x.m_signexp << 1))
         return x + *this;
 
@@ -514,8 +514,73 @@ real fabs(real const &x)
     return ret;
 }
 
+static real fastlog(real const &x)
+{
+    /* This fast log method is tuned to work on the [1..2] range and
+     * no effort whatsoever was made to improve convergence outside this
+     * domain of validity. It can converge pretty fast, provided we use
+     * the following variable substitutions:
+     *    y = sqrt(x)
+     *    z = (y - 1) / (y + 1)
+     *
+     * And the following identities:
+     *    ln(x) = 2 ln(y)
+     *          = 2 ln((1 + z) / (1 - z))
+     *          = 4 z (1 + z^2 / 3 + z^4 / 5 + z^6 / 7...)
+     *
+     * Any additional sqrt() call would halve the convergence time, but
+     * would also impact the final precision. For now we stick with one
+     * sqrt() call. */
+    real y = sqrt(x);
+    real z = (y - (real)1) / (y + (real)1), z2 = z * z, zn = z2;
+    real sum = 1.0;
+
+    for (int i = 3; i < 200; i += 2)
+    {
+        sum += zn / (real)i;
+        zn *= z2;
+    }
+
+    /* FIXME: sum.m_signexp += 2; (but needs private data access) */
+    sum *= (real)4;
+    return z * sum;
+}
+
+static real LOG_2 = fastlog((real)2);
+
+real log(real const &x)
+{
+    /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
+     * with the property that M is in [1..2[, so fastlog() applies here. */
+    real tmp = x;
+    if (x.m_signexp >> 31 || x.m_signexp == 0)
+    {
+        tmp.m_signexp = 0xffffffffu;
+        tmp.m_mantissa[0] = 0xffffu;
+        return tmp;
+    }
+    tmp.m_signexp = (1 << 30) - 1;
+    return (real)(x.m_signexp - (1 << 30) + 1) * LOG_2 + fastlog(tmp);
+}
+
 real exp(real const &x)
 {
+    /* Strategy for exp(x): the Taylor series does not converge very fast
+     * with large positive or negative values.
+     *
+     * However, we know that the result is going to be in the form M*2^E,
+     * where M is the mantissa and E the exponent. We first try to predict
+     * a value for E, which is approximately log2(exp(x)) = x / log(2).
+     *
+     * Let E0 be an integer close to x / log(2). We need to find a value x0
+     * such that exp(x) = 2^E0 * exp(x0). We get x0 = x - log(E0).
+     *
+     * Thus the final algorithm:
+     *  int E0 = x / log(2)
+     *  real x0 = x - log(E0)
+     *  real x1 = exp(x0)
+     *  return x1 * 2^E0
+     */
     int square = 0;
 
     /* FIXME: this is slow. Find a better way to approximate exp(x) for

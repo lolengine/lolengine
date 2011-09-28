@@ -57,6 +57,7 @@ public:
 
     friend real fres(real const &x);
     friend real sqrt(real const &x);
+    friend real log(real const &x);
     friend real exp(real const &x);
 
     friend real sin(real const &x);
