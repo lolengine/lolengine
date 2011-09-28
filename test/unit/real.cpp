@@ -69,7 +69,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a4, 0.0f);
     }
 
-    LOLUNIT_TEST(RealComparison)
+    LOLUNIT_TEST(Comparison)
     {
         LOLUNIT_ASSERT(real(1.0f) > real(0.5f));
         LOLUNIT_ASSERT(real(1.0f) >= real(0.5f));
@@ -90,7 +90,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT(real(0.5f) >= real(-1.0f));
     }
 
-    LOLUNIT_TEST(RealAddition)
+    LOLUNIT_TEST(Addition)
     {
         float a1 = real(1.0f) + real(0.0f);
         float a2 = real(0.0f) + real(1.0f);
@@ -112,14 +112,14 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a8, 0.1, 1.0e-13);
     }
 
-    LOLUNIT_TEST(RealSubtraction)
+    LOLUNIT_TEST(Subtraction)
     {
         float a1 = real(1.0f) + real(1e20f) - real(1e20f);
 
         LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
     }
 
-    LOLUNIT_TEST(RealMultiplication)
+    LOLUNIT_TEST(Multiplication)
     {
         real x(1.25f);
         real y(1.5f);
@@ -137,7 +137,7 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(m4, -1.5f * -1.5f);
     }
 
-    LOLUNIT_TEST(RealDivision)
+    LOLUNIT_TEST(Division)
     {
         real a1(1.0f);
         real a2(2.0f);
@@ -153,6 +153,28 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(m3, 0.5f);
         LOLUNIT_ASSERT_EQUAL(m4, 1.0f);
         LOLUNIT_ASSERT_EQUAL(m5, -0.5f);
+    }
+
+    LOLUNIT_TEST(Shift)
+    {
+        real a1(1.5);
+        real a2(-1.5);
+        real a3(0.0);
+
+        LOLUNIT_ASSERT_EQUAL((double)(a1 >> 7), 0.01171875);
+        LOLUNIT_ASSERT_EQUAL((double)(a1 >> -7), 192.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a1 << 7), 192.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a1 << -7), 0.01171875);
+
+        LOLUNIT_ASSERT_EQUAL((double)(a2 >> 7), -0.01171875);
+        LOLUNIT_ASSERT_EQUAL((double)(a2 >> -7), -192.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a2 << 7), -192.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a2 << -7), -0.01171875);
+
+        LOLUNIT_ASSERT_EQUAL((double)(a3 >> 7), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a3 >> -7), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a3 << 7), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a3 << -7), 0.0);
     }
 };
 

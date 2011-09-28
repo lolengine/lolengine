@@ -46,6 +46,11 @@ public:
     real &operator *=(real const &x);
     real &operator /=(real const &x);
 
+    real operator <<(int x) const;
+    real operator >>(int x) const;
+    real &operator <<=(int x);
+    real &operator >>=(int x);
+
     bool operator ==(real const &x) const;
     bool operator !=(real const &x) const;
     bool operator <(real const &x) const;
