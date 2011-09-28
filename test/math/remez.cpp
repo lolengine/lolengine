@@ -19,13 +19,33 @@
 using namespace lol;
 
 /* The order of the approximation we're looking for */
-static int const ORDER = 4;
+static int const ORDER = 8;
+
+static real compute_pi()
+{
+    /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
+    real sum = 0.0, x0 = 5.0, x1 = 239.0;
+    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
+
+    /* Degree 240 is required for 512-bit mantissa precision */
+    for (int i = 1; i < 240; i += 2)
+    {
+        sum += r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
+        x0 *= m0;
+        x1 *= m1;
+    }
+    return sum;
+}
 
 /* The function we want to approximate */
-real myfun(real const &x)
+static real myfun(real const &x)
 {
+    static real const half_pi = compute_pi() * (real)0.5;
     static real const one = 1.0;
-    return cos(x) - one;
+    if (x == (real)0.0 || x == (real)-0.0)
+        return half_pi;
+    return sin(x * half_pi) / x;
+    //return cos(x) - one;
     //return exp(x);
 }
 
@@ -46,7 +66,7 @@ template<int N> struct Matrix
 
     Matrix<N> inv() const
     {
-        Matrix a = *this, b(real(1.0));
+        Matrix a = *this, b((real)1.0);
 
         /* Inversion method: iterate through all columns and make sure
          * all the terms are 1 on the diagonal and 0 everywhere else */
@@ -72,7 +92,7 @@ template<int N> struct Matrix
 
             /* Now we know the diagonal term is non-zero. Get its inverse
              * and use that to nullify all other terms in the column */
-            real x = fres(a.m[i][i]);
+            real x = (real)1.0 / a.m[i][i];
             for (int j = 0; j < N; j++)
             {
                 if (j == i)
@@ -162,7 +182,7 @@ static void remez_init(real *coeff, real *zeroes)
     real fxn[ORDER + 1];
     for (int i = 0; i < ORDER + 1; i++)
     {
-        zeroes[i] = real(2 * i - ORDER) / real(ORDER + 1);
+        zeroes[i] = (real)(2 * i - ORDER) / (real)(ORDER + 1);
         fxn[i] = myfun(zeroes[i]);
     }
 
@@ -183,7 +203,7 @@ static void remez_init(real *coeff, real *zeroes)
             real sum = 0.0;
             for (int k = 0; k < ORDER + 1; k++)
                 if (cheby[n][k])
-                    sum += real(cheby[n][k]) * powers[k];
+                    sum += (real)cheby[n][k] * powers[k];
             mat.m[i][n] = sum;
         }
     }
@@ -307,7 +327,7 @@ static void remez_step(real *coeff, real *control)
             real sum = 0.0;
             for (int k = 0; k < ORDER + 1; k++)
                 if (cheby[n][k])
-                    sum += real(cheby[n][k]) * powers[k];
+                    sum += (real)cheby[n][k] * powers[k];
             mat.m[i][n] = sum;
         }
         mat.m[i][ORDER + 1] = (real)(-1 + (i & 1) * 2);

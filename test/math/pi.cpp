@@ -18,30 +18,28 @@ using namespace lol;
 
 int main(int argc, char **argv)
 {
-    /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
-    real sum = 0.0, x0 = 5.0, x1 = 239.0;
-    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
+    printf("Pi: "); real::R_PI.print();
+    printf("e: "); real::R_E.print();
+    printf("ln(2): "); real::R_LN2.print();
+    printf("sqrt(2): "); real::R_SQRT2.print();
+    printf("sqrt(1/2): "); real::R_SQRT1_2.print();
 
-    /* Degree 240 is required for 512-bit mantissa precision */
-    for (int i = 1; i < 240; i += 2)
+    /* Gauss-Legendre computation of Pi -- doesn't work well at all,
+     * probably because we use finite precision. */
+    real a = 1.0, b = sqrt((real)0.5), t = 0.25, p = 1.0;
+
+    for (int i = 0; i < 3; i++)
     {
-        sum += r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
-        x0 *= m0;
-        x1 *= m1;
+        real a2 = (a + b) * (real)0.5;
+        real b2 = sqrt(a * b);
+        real tmp = a - a2;
+        real t2 = t - p * tmp * tmp;
+        real p2 = p + p;
+        a = a2; b = b2; t = t2; p = p2;
     }
 
-    sum.print();
-
-    /* Bonus: compute e for fun. */
-    sum = 0.0;
-    x0 = 1.0;
-
-    for (int i = 1; i < 100; i++)
-    {
-        sum += fres(x0);
-        x0 *= (real)i;
-    }
-
+    real sum = a + b;
+    sum = sum * sum / ((real)4 * t);
     sum.print();
 
     return EXIT_SUCCESS;
