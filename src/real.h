@@ -70,6 +70,20 @@ public:
 
     void print(int ndigits = 150) const;
 
+    static real const R_E;
+    static real const R_LOG2E;
+    static real const R_LOG10E;
+    static real const R_LN2;
+    static real const R_LN10;
+    static real const R_PI;
+    static real const R_PI_2;
+    static real const R_PI_4;
+    static real const R_1_PI;
+    static real const R_2_PI;
+    static real const R_2_SQRTPI;
+    static real const R_SQRT2;
+    static real const R_SQRT1_2;
+
 private:
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
