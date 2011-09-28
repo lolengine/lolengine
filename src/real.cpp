@@ -129,6 +129,9 @@ real real::operator +(real const &x) const
     int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
     int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
 
+    if (bigoff > BIGITS)
+        return *this;
+
     ret.m_signexp = m_signexp;
 
     uint32_t carry = 0;
@@ -187,6 +190,9 @@ real real::operator -(real const &x) const
 
     int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
     int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
+
+    if (bigoff > BIGITS)
+        return *this;
 
     ret.m_signexp = m_signexp;
 
@@ -501,6 +507,13 @@ real sqrt(real const &x)
     return ret * x;
 }
 
+real fabs(real const &x)
+{
+    real ret = x;
+    ret.m_signexp &= 0x7fffffffu;
+    return ret;
+}
+
 real exp(real const &x)
 {
     int square = 0;
@@ -525,6 +538,40 @@ real exp(real const &x)
 
     for (int i = 0; i < square; i++)
         ret = ret * ret;
+
+    return ret;
+}
+
+real sin(real const &x)
+{
+    real ret = 0.0, fact = 1.0, xn = x, x2 = x * x;
+
+    for (int i = 1; ; i += 2)
+    {
+        real newret = ret + xn / fact;
+        if (ret == newret)
+            break;
+        ret = newret;
+        xn *= x2;
+        fact *= (real)(-(i + 1) * (i + 2));
+    }
+
+    return ret;
+}
+
+real cos(real const &x)
+{
+    real ret = 0.0, fact = 1.0, xn = 1.0, x2 = x * x;
+
+    for (int i = 1; ; i += 2)
+    {
+        real newret = ret + xn / fact;
+        if (ret == newret)
+            break;
+        ret = newret;
+        xn *= x2;
+        fact *= (real)(-i * (i + 1));
+    }
 
     return ret;
 }
