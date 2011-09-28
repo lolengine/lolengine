@@ -53,9 +53,14 @@ public:
     bool operator <=(real const &x) const;
     bool operator >=(real const &x) const;
 
+    friend real fabs(real const &x);
+
     friend real fres(real const &x);
     friend real sqrt(real const &x);
     friend real exp(real const &x);
+
+    friend real sin(real const &x);
+    friend real cos(real const &x);
 
     void print(int ndigits = 150) const;
 
