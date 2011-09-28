@@ -19,23 +19,19 @@
 using namespace lol;
 
 /* The order of the approximation we're looking for */
-static int const ORDER = 3;
+static int const ORDER = 4;
 
 /* The function we want to approximate */
-double myfun(double x)
-{
-    return exp(x);
-}
-
 real myfun(real const &x)
 {
-    return exp(x);
+    static real const one = 1.0;
+    return cos(x) - one;
+    //return exp(x);
 }
 
 /* Naive matrix inversion */
-template<int N> class Matrix
+template<int N> struct Matrix
 {
-public:
     inline Matrix() {}
 
     Matrix(real x)
@@ -53,7 +49,7 @@ public:
         Matrix a = *this, b(real(1.0));
 
         /* Inversion method: iterate through all columns and make sure
-         * all the terms are zero except on the diagonal where it is one */
+         * all the terms are 1 on the diagonal and 0 everywhere else */
         for (int i = 0; i < N; i++)
         {
             /* If the expected coefficient is zero, add one of
@@ -117,7 +113,7 @@ public:
 static int cheby[ORDER + 1][ORDER + 1];
 
 /* Fill the Chebyshev tables */
-static void make_table()
+static void cheby_init()
 {
     memset(cheby, 0, sizeof(cheby));
 
@@ -132,53 +128,248 @@ static void make_table()
     }
 }
 
-int main(int argc, char **argv)
+static void cheby_coeff(real *coeff, real *bn)
 {
-    make_table();
+    for (int i = 0; i < ORDER + 1; i++)
+    {
+        bn[i] = 0;
+        for (int j = 0; j < ORDER + 1; j++)
+	    if (cheby[j][i])
+                bn[i] += coeff[j] * (real)cheby[j][i];
+    }
+}
 
-    /* We start with ORDER+1 points and their images through myfun() */
-    real xn[ORDER + 1];
+static real cheby_eval(real *coeff, real const &x)
+{
+    real ret = 0.0, xn = 1.0;
+
+    for (int i = 0; i < ORDER + 1; i++)
+    {
+        real mul = 0;
+        for (int j = 0; j < ORDER + 1; j++)
+	    if (cheby[j][i])
+                mul += coeff[j] * (real)cheby[j][i];
+        ret += mul * xn;
+        xn *= x;
+    }
+
+    return ret;
+}
+
+static void remez_init(real *coeff, real *zeroes)
+{
+    /* Pick up x_i where error will be 0 and compute f(x_i) */
     real fxn[ORDER + 1];
     for (int i = 0; i < ORDER + 1; i++)
     {
-        //xn[i] = real(2 * i - ORDER) / real(ORDER + 1);
-        xn[i] = real(2 * i - ORDER + 1) / real(ORDER - 1);
-        fxn[i] = myfun(xn[i]);
+        zeroes[i] = real(2 * i - ORDER) / real(ORDER + 1);
+        fxn[i] = myfun(zeroes[i]);
     }
 
-    /* We build a matrix of Chebishev evaluations: one row per point
-     * in our array, and column i is the evaluation of the ith order
-     * polynomial. */
+    /* We build a matrix of Chebishev evaluations: row i contains the
+     * evaluations of x_i for polynomial order n = 0, 1, ... */
     Matrix<ORDER + 1> mat;
-    for (int j = 0; j < ORDER + 1; j++)
+    for (int i = 0; i < ORDER + 1; i++)
     {
-        /* Compute the powers of x_j */
+        /* Compute the powers of x_i */
         real powers[ORDER + 1];
         powers[0] = 1.0;
-        for (int i = 1; i < ORDER + 1; i++)
-             powers[i] = powers[i - 1] * xn[j];
+        for (int n = 1; n < ORDER + 1; n++)
+             powers[n] = powers[n - 1] * zeroes[i];
 
-        /* Compute the Chebishev evaluations at x_j */
-        for (int i = 0; i < ORDER + 1; i++)
+        /* Compute the Chebishev evaluations at x_i */
+        for (int n = 0; n < ORDER + 1; n++)
         {
             real sum = 0.0;
             for (int k = 0; k < ORDER + 1; k++)
-                if (cheby[i][k])
-                    sum += real(cheby[i][k]) * powers[k];
-            mat.m[j][i] = sum;
+                if (cheby[n][k])
+                    sum += real(cheby[n][k]) * powers[k];
+            mat.m[i][n] = sum;
         }
     }
 
-    /* Invert the matrix and build interpolation coefficients */
+    /* Solve the system */
     mat = mat.inv();
-    real an[ORDER + 1];
+
+    /* Compute interpolation coefficients */
     for (int j = 0; j < ORDER + 1; j++)
     {
-        an[j] = 0;
+        coeff[j] = 0;
         for (int i = 0; i < ORDER + 1; i++)
-            an[j] += mat.m[j][i] * fxn[i];
-        an[j].print(10);
+            coeff[j] += mat.m[j][i] * fxn[i];
     }
+}
+
+static void remez_findzeroes(real *coeff, real *zeroes, real *control)
+{
+    /* FIXME: this is fake for now */
+    for (int i = 0; i < ORDER + 1; i++)
+    {
+        real a = control[i];
+        real ea = cheby_eval(coeff, a) - myfun(a);
+        real b = control[i + 1];
+        real eb = cheby_eval(coeff, b) - myfun(b);
+
+        while (fabs(a - b) > (real)1e-140)
+        {
+            real c = (a + b) * (real)0.5;
+            real ec = cheby_eval(coeff, c) - myfun(c);
+
+            if ((ea < (real)0 && ec < (real)0)
+                 || (ea > (real)0 && ec > (real)0))
+            {
+                a = c;
+                ea = ec;
+            }
+            else
+            {
+                b = c;
+                eb = ec;
+            }
+        }
+
+        zeroes[i] = a;
+    }
+}
+
+static void remez_finderror(real *coeff, real *zeroes, real *control)
+{
+    real final = 0;
+
+    for (int i = 0; i < ORDER + 2; i++)
+    {
+        real a = -1, b = 1;
+        if (i > 0)
+            a = zeroes[i - 1];
+        if (i < ORDER + 1)
+            b = zeroes[i];
+
+        printf("Error for [%g..%g]: ", (double)a, (double)b);
+        for (;;)
+        {
+            real c = a, delta = (b - a) / (real)10.0;
+            real maxerror = 0;
+            int best = -1;
+            for (int k = 0; k <= 10; k++)
+            {
+                real e = fabs(cheby_eval(coeff, c) - myfun(c));
+                if (e > maxerror)
+                {
+                    maxerror = e;
+                    best = k;
+                }
+                c += delta;
+            }
+
+            if (best == 0)
+                best = 1;
+            if (best == 10)
+                best = 9;
+
+            b = a + (real)(best + 1) * delta;
+            a = a + (real)(best - 1) * delta;
+
+            if (b - a < (real)1e-15)
+            {
+                if (maxerror > final)
+                    final = maxerror;
+                control[i] = (a + b) * (real)0.5;
+                printf("%g (in %g)\n", (double)maxerror, (double)control[i]);
+                break;
+            }
+        }
+    }
+
+    printf("Final error: %g\n", (double)final);
+}
+
+static void remez_step(real *coeff, real *control)
+{
+    /* Pick up x_i where error will be 0 and compute f(x_i) */
+    real fxn[ORDER + 2];
+    for (int i = 0; i < ORDER + 2; i++)
+        fxn[i] = myfun(control[i]);
+
+    /* We build a matrix of Chebishev evaluations: row i contains the
+     * evaluations of x_i for polynomial order n = 0, 1, ... */
+    Matrix<ORDER + 2> mat;
+    for (int i = 0; i < ORDER + 2; i++)
+    {
+        /* Compute the powers of x_i */
+        real powers[ORDER + 1];
+        powers[0] = 1.0;
+        for (int n = 1; n < ORDER + 1; n++)
+             powers[n] = powers[n - 1] * control[i];
+
+        /* Compute the Chebishev evaluations at x_i */
+        for (int n = 0; n < ORDER + 1; n++)
+        {
+            real sum = 0.0;
+            for (int k = 0; k < ORDER + 1; k++)
+                if (cheby[n][k])
+                    sum += real(cheby[n][k]) * powers[k];
+            mat.m[i][n] = sum;
+        }
+        mat.m[i][ORDER + 1] = (real)(-1 + (i & 1) * 2);
+    }
+
+    /* Solve the system */
+    mat = mat.inv();
+
+    /* Compute interpolation coefficients */
+    for (int j = 0; j < ORDER + 1; j++)
+    {
+        coeff[j] = 0;
+        for (int i = 0; i < ORDER + 2; i++)
+            coeff[j] += mat.m[j][i] * fxn[i];
+    }
+
+    /* Compute the error */
+    real error = 0;
+    for (int i = 0; i < ORDER + 2; i++)
+        error += mat.m[ORDER + 1][i] * fxn[i];
+}
+
+int main(int argc, char **argv)
+{
+    cheby_init();
+
+    /* ORDER + 1 chebyshev coefficients and 1 error value */
+    real coeff[ORDER + 2];
+    /* ORDER + 1 zeroes of the error function */
+    real zeroes[ORDER + 1];
+    /* ORDER + 2 control points */
+    real control[ORDER + 2];
+
+    real bn[ORDER + 1];
+
+    remez_init(coeff, zeroes);
+
+    cheby_coeff(coeff, bn);
+    for (int j = 0; j < ORDER + 1; j++)
+        printf("%s%12.10gx^%i", j ? "+" : "", (double)bn[j], j);
+    printf("\n");
+
+    for (int n = 0; n < 200; n++)
+    {
+        remez_finderror(coeff, zeroes, control);
+        remez_step(coeff, control);
+
+        cheby_coeff(coeff, bn);
+        for (int j = 0; j < ORDER + 1; j++)
+            printf("%s%12.10gx^%i", j ? "+" : "", (double)bn[j], j);
+        printf("\n");
+
+        remez_findzeroes(coeff, zeroes, control);
+    }
+
+    remez_finderror(coeff, zeroes, control);
+    remez_step(coeff, control);
+
+    cheby_coeff(coeff, bn);
+    for (int j = 0; j < ORDER + 1; j++)
+        printf("%s%12.10gx^%i", j ? "+" : "", (double)bn[j], j);
+    printf("\n");
 
     return EXIT_SUCCESS;
 }
