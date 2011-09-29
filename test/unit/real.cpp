@@ -176,6 +176,23 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL((double)(a3 << 7), 0.0);
         LOLUNIT_ASSERT_EQUAL((double)(a3 << -7), 0.0);
     }
+
+    LOLUNIT_TEST(Bool)
+    {
+        real a = 0.0;
+        LOLUNIT_ASSERT(!a);
+
+        a = -0.0;
+        LOLUNIT_ASSERT(!a);
+
+        a = 1234.0;
+        LOLUNIT_ASSERT(a);
+        LOLUNIT_ASSERT(!!a);
+
+        a = -1234.0;
+        LOLUNIT_ASSERT(a);
+        LOLUNIT_ASSERT(!!a);
+    }
 };
 
 } /* namespace lol */

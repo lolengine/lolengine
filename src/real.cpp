@@ -442,6 +442,19 @@ bool real::operator >=(real const &x) const
     return !(*this < x);
 }
 
+bool real::operator !() const
+{
+    return !(bool)*this;
+}
+
+real::operator bool() const
+{
+    /* A real is "true" if it is non-zero (exponent is non-zero) AND
+     * not NaN (exponent is not full bits OR higher order mantissa is zero) */
+    uint32_t exponent = m_signexp << 1;
+    return exponent && (~exponent || m_mantissa[0] == 0);
+}
+
 real fres(real const &x)
 {
     if (!(x.m_signexp << 1))

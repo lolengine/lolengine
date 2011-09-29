@@ -21,30 +21,13 @@ using namespace lol;
 /* The order of the approximation we're looking for */
 static int const ORDER = 8;
 
-static real compute_pi()
-{
-    /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
-    real sum = 0.0, x0 = 5.0, x1 = 239.0;
-    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
-
-    /* Degree 240 is required for 512-bit mantissa precision */
-    for (int i = 1; i < 240; i += 2)
-    {
-        sum += r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
-        x0 *= m0;
-        x1 *= m1;
-    }
-    return sum;
-}
-
 /* The function we want to approximate */
 static real myfun(real const &x)
 {
-    static real const half_pi = compute_pi() * (real)0.5;
     static real const one = 1.0;
-    if (x == (real)0.0 || x == (real)-0.0)
-        return half_pi;
-    return sin(x * half_pi) / x;
+    if (!x)
+        return real::R_PI_2;
+    return sin(x * real::R_PI_2) / x;
     //return cos(x) - one;
     //return exp(x);
 }
