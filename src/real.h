@@ -58,6 +58,9 @@ public:
     bool operator <=(real const &x) const;
     bool operator >=(real const &x) const;
 
+    bool operator !() const;
+    operator bool() const;
+
     friend real fabs(real const &x);
 
     friend real fres(real const &x);
