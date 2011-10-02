@@ -323,7 +323,7 @@ real real::operator *(real const &x) const
 
 real real::operator /(real const &x) const
 {
-    return *this * fres(x);
+    return *this * re(x);
 }
 
 real &real::operator +=(real const &x)
@@ -455,7 +455,7 @@ real::operator bool() const
     return exponent && (~exponent || m_mantissa[0] == 0);
 }
 
-real fres(real const &x)
+real re(real const &x)
 {
     if (!(x.m_signexp << 1))
     {
@@ -741,18 +741,23 @@ static real fast_pi()
     return ret;
 }
 
-real const real::R_E        = exp((real)1.0);
-real const real::R_LOG2E    = (real)1.0 / R_LN2;
-real const real::R_LOG10E   = (real)1.0 / R_LN10;
-real const real::R_LN2      = log((real)2.0);
-real const real::R_LN10     = log((real)10.0);
+real const real::R_0        = (real)0.0;
+real const real::R_1        = (real)1.0;
+real const real::R_2        = (real)2.0;
+real const real::R_10       = (real)10.0;
+
+real const real::R_E        = exp(R_1);
+real const real::R_LN2      = log(R_2);
+real const real::R_LN10     = log(R_10);
+real const real::R_LOG2E    = re(R_LN2);
+real const real::R_LOG10E   = re(R_LN10);
 real const real::R_PI       = fast_pi();
 real const real::R_PI_2     = R_PI >> 1;
 real const real::R_PI_4     = R_PI >> 2;
-real const real::R_1_PI     = (real)1.0 / R_PI;
+real const real::R_1_PI     = re(R_PI);
 real const real::R_2_PI     = R_1_PI << 1;
-real const real::R_2_SQRTPI = (real)2.0 / sqrt(R_PI);
-real const real::R_SQRT2    = sqrt((real)2.0);
+real const real::R_2_SQRTPI = re(sqrt(R_PI)) << 1;
+real const real::R_SQRT2    = sqrt(R_2);
 real const real::R_SQRT1_2  = R_SQRT2 >> 1;
 
 } /* namespace lol */

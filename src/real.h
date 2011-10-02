@@ -63,7 +63,7 @@ public:
 
     friend real fabs(real const &x);
 
-    friend real fres(real const &x);
+    friend real re(real const &x);
     friend real sqrt(real const &x);
     friend real log(real const &x);
     friend real exp(real const &x);
@@ -72,6 +72,11 @@ public:
     friend real cos(real const &x);
 
     void print(int ndigits = 150) const;
+
+    static real const R_0;
+    static real const R_1;
+    static real const R_2;
+    static real const R_10;
 
     static real const R_E;
     static real const R_LOG2E;
