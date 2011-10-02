@@ -22,6 +22,49 @@ namespace lol
 
 LOLUNIT_FIXTURE(RealTest)
 {
+    LOLUNIT_TEST(Constants)
+    {
+        double a0 = real::R_0;
+        double a1 = real::R_1;
+        double a2 = real::R_2;
+        double a10 = real::R_10;
+
+        LOLUNIT_ASSERT_EQUAL(a0, 0.0);
+        LOLUNIT_ASSERT_EQUAL(a1, 1.0);
+        LOLUNIT_ASSERT_EQUAL(a2, 2.0);
+        LOLUNIT_ASSERT_EQUAL(a10, 10.0);
+
+        double b0 = log(real::R_E);
+        LOLUNIT_ASSERT_EQUAL(b0, 1.0);
+
+        double b1 = exp(re(real::R_LOG2E));
+        LOLUNIT_ASSERT_EQUAL(b1, 2.0);
+
+        double b2 = exp(re(real::R_LOG10E));
+        LOLUNIT_ASSERT_EQUAL(b2, 10.0);
+
+        double b3 = exp(real::R_LN2);
+        LOLUNIT_ASSERT_EQUAL(b3, 2.0);
+
+        double b4 = exp(real::R_LN10);
+        LOLUNIT_ASSERT_EQUAL(b4, 10.0);
+
+        double b5 = sin(real::R_PI);
+        double b6 = cos(real::R_PI);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b5, 0.0, 1e-100);
+        LOLUNIT_ASSERT_EQUAL(b6, -1.0);
+
+        double b7 = sin(real::R_PI_2);
+        double b8 = cos(real::R_PI_2);
+        LOLUNIT_ASSERT_EQUAL(b7, 1.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b8, 0.0, 1e-100);
+
+        double b9 = sin(real::R_PI_4) * sin(real::R_PI_4);
+        double b10 = cos(real::R_PI_4) * cos(real::R_PI_4);
+        LOLUNIT_ASSERT_EQUAL(b9, 0.5);
+        LOLUNIT_ASSERT_EQUAL(b10, 0.5);
+    }
+
     LOLUNIT_TEST(FloatToReal)
     {
         float a1 = real(0.0f);
