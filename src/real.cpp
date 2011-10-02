@@ -707,8 +707,19 @@ real fmod(real const &x, real const &y)
 
 real sin(real const &x)
 {
-    real ret = 0.0, fact = 1.0, xn = x, x2 = x * x;
+    bool switch_sign = x.m_signexp & 0x80000000u;
 
+    real absx = fmod(fabs(x), real::R_PI << 1);
+    if (absx > real::R_PI)
+    {
+        absx -= real::R_PI;
+        switch_sign = !switch_sign;
+    }
+
+    if (absx > real::R_PI_2)
+        absx = real::R_PI - absx;
+
+    real ret = 0.0, fact = 1.0, xn = absx, x2 = absx * absx;
     for (int i = 1; ; i += 2)
     {
         real newret = ret + xn / fact;
@@ -719,13 +730,27 @@ real sin(real const &x)
         fact *= (real)(-(i + 1) * (i + 2));
     }
 
+    /* Propagate sign */
+    if (switch_sign)
+        ret.m_signexp ^= 0x80000000u;
     return ret;
 }
 
 real cos(real const &x)
 {
-    real ret = 0.0, fact = 1.0, xn = 1.0, x2 = x * x;
+    bool switch_sign = false;
+    real absx = fmod(fabs(x), real::R_PI << 1);
 
+    if (absx > real::R_PI)
+        absx = (real::R_PI << 1) - absx;
+
+    if (absx > real::R_PI_2)
+    {
+        absx = real::R_PI - absx;
+        switch_sign = true;
+    }
+
+    real ret = 0.0, fact = 1.0, xn = 1.0, x2 = absx * absx;
     for (int i = 1; ; i += 2)
     {
         real newret = ret + xn / fact;
@@ -736,6 +761,9 @@ real cos(real const &x)
         fact *= (real)(-i * (i + 1));
     }
 
+    /* Propagate sign */
+    if (switch_sign)
+        ret.m_signexp ^= 0x80000000u;
     return ret;
 }
 
