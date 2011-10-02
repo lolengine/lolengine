@@ -639,6 +639,52 @@ real exp(real const &x)
     return x1;
 }
 
+real floor(real const &x)
+{
+    /* Strategy for floor(x):
+     *  - if negative, return -ceil(-x)
+     *  - if zero or negative zero, return x
+     *  - if less than one, return zero
+     *  - otherwise, if e is the exponent, clear all bits except the
+     *    first e. */
+    if (x < -real::R_0)
+        return -ceil(-x);
+    if (!x)
+        return x;
+    if (x < real::R_1)
+        return real::R_0;
+
+    real ret = x;
+    int exponent = x.m_signexp - (1 << 30) + 1;
+
+    for (int i = 0; i < real::BIGITS; i++)
+    {
+        if (exponent <= 0)
+            ret.m_mantissa[i] = 0;
+        else if (exponent < 8 * (int)sizeof(uint16_t))
+            ret.m_mantissa[i] &= ~((1 << (16 - exponent)) - 1);
+
+        exponent -= 8 * sizeof(uint16_t);
+    }
+
+    return ret;
+}
+
+real ceil(real const &x)
+{
+    /* Strategy for ceil(x):
+     *  - if negative, return -floor(-x)
+     *  - if x == floor(x), return x
+     *  - otherwise, return floor(x) + 1 */
+    if (x < -real::R_0)
+        return -floor(-x);
+    real ret = floor(x);
+    if (x == ret)
+        return ret;
+    else
+        return ret + real::R_1;
+}
+
 real sin(real const &x)
 {
     real ret = 0.0, fact = 1.0, xn = x, x2 = x * x;
