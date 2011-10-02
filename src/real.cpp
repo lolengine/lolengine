@@ -685,6 +685,26 @@ real ceil(real const &x)
         return ret + real::R_1;
 }
 
+real round(real const &x)
+{
+    if (x < real::R_0)
+        return -round(-x);
+
+    return floor(x + (real::R_1 >> 1));
+}
+
+real fmod(real const &x, real const &y)
+{
+    if (!y)
+        return real::R_0; /* FIXME: return NaN */
+
+    if (!x)
+        return x;
+
+    real tmp = round(x / y);
+    return x - tmp * y;
+}
+
 real sin(real const &x)
 {
     real ret = 0.0, fact = 1.0, xn = x, x2 = x * x;
