@@ -71,6 +71,8 @@ public:
 
     friend real floor(real const &x);
     friend real ceil(real const &x);
+    friend real round(real const &x);
+    friend real fmod(real const &x, real const &y);
 
     friend real sin(real const &x);
     friend real cos(real const &x);
