@@ -69,6 +69,9 @@ public:
     friend real log(real const &x);
     friend real exp(real const &x);
 
+    friend real floor(real const &x);
+    friend real ceil(real const &x);
+
     friend real sin(real const &x);
     friend real cos(real const &x);
     friend real asin(real const &x);

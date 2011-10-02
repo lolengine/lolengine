@@ -239,13 +239,13 @@ LOLUNIT_FIXTURE(RealTest)
 
     LOLUNIT_TEST(AsinAcos)
     {
-        double tests[14] =
+        double tests[] =
         {
             -1024.0, -1023.0, -513.0, -512.0, -511.0, -1.0, -0.0,
             0.0, 1.0, 511.0, 512.0, 513.0, 1023.0, 1024.0
         };
 
-        for (int n = 0; n < 14; n++)
+        for (unsigned int n = 0; n < sizeof(tests) / sizeof(*tests); n++)
         {
             double a = tests[n] / 1024;
             double b = sin(asin((real)a));
@@ -254,6 +254,45 @@ LOLUNIT_FIXTURE(RealTest)
             LOLUNIT_SET_CONTEXT(a);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(b, a, 1e-100);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(c, a, 1e-100);
+        }
+    }
+
+    LOLUNIT_TEST(FloorCeil)
+    {
+        double tests[] =
+        {
+            -2.0,  -2.0, -2.0,
+            -1.5,  -2.0, -1.0,
+            -1.0,  -1.0, -1.0,
+            -0.0,  -0.0, -0.0,
+             0.0,   0.0,  0.0,
+             0.25,  0.0,  1.0,
+             0.375, 0.0,  1.0,
+             0.5,   0.0,  1.0,
+             1.0,   1.0,  1.0,
+             1.5,   1.0,  2.0,
+             2.0,   2.0,  2.0,
+             2.5,   2.0,  3.0,
+             3.0,   3.0,  3.0,
+            8192.0,     8192.0, 8192.0,
+            8192.03125, 8192.0, 8193.0,
+            8192.5,     8192.0, 8193.0,
+            8193.0,     8193.0, 8193.0,
+            549755813888.0,     549755813888.0, 549755813888.0,
+            549755813888.03125, 549755813888.0, 549755813889.0,
+            549755813888.5,     549755813888.0, 549755813889.0,
+            549755813889.0,     549755813889.0, 549755813889.0,
+        };
+
+        for (unsigned int n = 0; n < sizeof(tests) / sizeof(*tests); n += 3)
+        {
+            double a0 = floor((real)tests[n]);
+            double b0 = tests[n + 1];
+            double a1 = ceil((real)tests[n]);
+            double b1 = tests[n + 2];
+
+            LOLUNIT_ASSERT_EQUAL(b0, a0);
+            LOLUNIT_ASSERT_EQUAL(b1, a1);
         }
     }
 };
