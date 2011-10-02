@@ -236,6 +236,26 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT(a);
         LOLUNIT_ASSERT(!!a);
     }
+
+    LOLUNIT_TEST(AsinAcos)
+    {
+        double tests[14] =
+        {
+            -1024.0, -1023.0, -513.0, -512.0, -511.0, -1.0, -0.0,
+            0.0, 1.0, 511.0, 512.0, 513.0, 1023.0, 1024.0
+        };
+
+        for (int n = 0; n < 14; n++)
+        {
+            double a = tests[n] / 1024;
+            double b = sin(asin((real)a));
+            double c = cos(acos((real)a));
+
+            LOLUNIT_SET_CONTEXT(a);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(b, a, 1e-100);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(c, a, 1e-100);
+        }
+    }
 };
 
 } /* namespace lol */

@@ -36,6 +36,7 @@ public:
     operator int() const;
     operator unsigned int() const;
 
+    real operator +() const;
     real operator -() const;
     real operator +(real const &x) const;
     real operator -(real const &x) const;
@@ -70,6 +71,8 @@ public:
 
     friend real sin(real const &x);
     friend real cos(real const &x);
+    friend real asin(real const &x);
+    friend real acos(real const &x);
     friend real atan(real const &x);
 
     void print(int ndigits = 150) const;
