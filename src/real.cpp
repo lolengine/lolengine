@@ -667,6 +667,97 @@ real cos(real const &x)
     return ret;
 }
 
+real atan(real const &x)
+{
+    /* Computing atan(x): we choose a different Taylor series depending on
+     * the value of x to help with convergence.
+     *
+     * If |x| < 0.5 we evaluate atan(y) near 0:
+     *  atan(y) = y - y^3/3 + y^5/5 - y^7/7 + y^9/9 ...
+     *
+     * If 0.5 <= |x| < 1.5 we evaluate atan(1+y) near 0:
+     *  atan(1+y) = π/4 + y/(1*2^1) - y^2/(2*2^1) + y^3/(3*2^2)
+     *                  - y^5/(5*2^3) + y^6/(6*2^3) - y^7/(7*2^4)
+     *                  + y^9/(9*2^5) - y^10/(10*2^5) + y^11/(11*2^6) ...
+     *
+     * If 1.5 <= |x| < 2 we evaluate atan(sqrt(3)+2y) near 0:
+     *  atan(sqrt(3)+2y) = π/3 + 1/2 y - sqrt(3)/2 y^2/2
+     *                         + y^3/3 - sqrt(3)/2 y^4/4 + 1/2 y^5/5
+     *                         - 1/2 y^7/7 + sqrt(3)/2 y^8/8
+     *                         - y^9/9 + sqrt(3)/2 y^10/10 - 1/2 y^11/11
+     *                         + 1/2 y^13/13 - sqrt(3)/2 y^14/14
+     *                         + y^15/15 - sqrt(3)/2 y^16/16 + 1/2 y^17/17 ...
+     *
+     * If |x| >= 2 we evaluate atan(y) near +∞:
+     *  atan(y) = π/2 - y^-1 + y^-3/3 - y^-5/5 + y^-7/7 - y^-9/9 ...
+     */
+    real absx = fabs(x);
+
+    if (absx < (real::R_1 >> 1))
+    {
+        real ret = x, xn = x, mx2 = -x * x;
+        for (int i = 3; i < 100; i += 2)
+        {
+            xn *= mx2;
+            ret += xn / (real)i;
+        }
+        return ret;
+    }
+
+    real ret = 0;
+
+    if (absx < (real::R_3 >> 1))
+    {
+        real y = real::R_1 - absx;
+        real yn = y, my2 = -y * y;
+        for (int i = 0; i < 200; i += 2)
+        {
+            ret += (yn / (real)(2 * i + 1)) >> (i + 1);
+            yn *= y;
+            ret += (yn / (real)(2 * i + 2)) >> (i + 1);
+            yn *= y;
+            ret += (yn / (real)(2 * i + 3)) >> (i + 2);
+            yn *= my2;
+        }
+        ret = real::R_PI_4 - ret;
+    }
+    else if (absx < real::R_2)
+    {
+        real y = (absx - real::R_SQRT3) >> 1;
+        real yn = y, my2 = -y * y;
+        for (int i = 1; i < 200; i += 6)
+        {
+            ret += (yn / (real)i) >> 1;
+            yn *= y;
+            ret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 1);
+            yn *= y;
+            ret += yn / (real)(i + 2);
+            yn *= y;
+            ret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 3);
+            yn *= y;
+            ret += (yn / (real)(i + 4)) >> 1;
+            yn *= my2;
+        }
+        ret = real::R_PI_3 + ret;
+    }
+    else
+    {
+        real y = re(absx);
+        real yn = y, my2 = -y * y;
+        ret = y;
+        for (int i = 3; i < 120; i += 2)
+        {
+            yn *= my2;
+            ret += yn / (real)i;
+        }
+        ret = real::R_PI_2 - ret;
+    }
+
+    /* Propagate sign */
+    ret.m_signexp |= (x.m_signexp & 0x80000000u);
+    return ret;
+}
+
 void real::print(int ndigits) const
 {
     real const r1 = 1, r10 = 10;
@@ -744,6 +835,7 @@ static real fast_pi()
 real const real::R_0        = (real)0.0;
 real const real::R_1        = (real)1.0;
 real const real::R_2        = (real)2.0;
+real const real::R_3        = (real)3.0;
 real const real::R_10       = (real)10.0;
 
 real const real::R_E        = exp(R_1);
@@ -753,11 +845,13 @@ real const real::R_LOG2E    = re(R_LN2);
 real const real::R_LOG10E   = re(R_LN10);
 real const real::R_PI       = fast_pi();
 real const real::R_PI_2     = R_PI >> 1;
+real const real::R_PI_3     = R_PI / R_3;
 real const real::R_PI_4     = R_PI >> 2;
 real const real::R_1_PI     = re(R_PI);
 real const real::R_2_PI     = R_1_PI << 1;
 real const real::R_2_SQRTPI = re(sqrt(R_PI)) << 1;
 real const real::R_SQRT2    = sqrt(R_2);
+real const real::R_SQRT3    = sqrt(R_3);
 real const real::R_SQRT1_2  = R_SQRT2 >> 1;
 
 } /* namespace lol */
