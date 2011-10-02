@@ -70,12 +70,14 @@ public:
 
     friend real sin(real const &x);
     friend real cos(real const &x);
+    friend real atan(real const &x);
 
     void print(int ndigits = 150) const;
 
     static real const R_0;
     static real const R_1;
     static real const R_2;
+    static real const R_3;
     static real const R_10;
 
     static real const R_E;
@@ -85,11 +87,13 @@ public:
     static real const R_LN10;
     static real const R_PI;
     static real const R_PI_2;
+    static real const R_PI_3;
     static real const R_PI_4;
     static real const R_1_PI;
     static real const R_2_PI;
     static real const R_2_SQRTPI;
     static real const R_SQRT2;
+    static real const R_SQRT3;
     static real const R_SQRT1_2;
 
 private:
