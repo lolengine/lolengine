@@ -526,9 +526,10 @@ real sqrt(real const &x)
     uint32_t sign = x.m_signexp & 0x80000000u;
     ret.m_signexp = sign;
 
-    int exponent = (x.m_signexp & 0x7fffffffu) - ((1 << 30) - 1);
-    exponent = - (exponent / 2) + (v.x >> 23) - (u.x >> 23);
-    ret.m_signexp |= (exponent + ((1 << 30) - 1)) & 0x7fffffffu;
+    uint32_t exponent = (x.m_signexp & 0x7fffffffu);
+    exponent = ((1 << 30) + (1 << 29) -1) - (exponent + 1) / 2;
+    exponent = exponent + (v.x >> 23) - (u.x >> 23);
+    ret.m_signexp |= exponent & 0x7fffffffu;
 
     /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
     real three = 3;
