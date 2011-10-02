@@ -96,6 +96,11 @@ real::operator double() const
     return u.d;
 }
 
+real real::operator +() const
+{
+    return *this;
+}
+
 real real::operator -() const
 {
     real ret = *this;
@@ -666,6 +671,55 @@ real cos(real const &x)
     }
 
     return ret;
+}
+
+static real asinacos(real const &x, bool is_asin, bool is_negative)
+{
+    /* Strategy for asin(): in [-0.5..0.5], use a Taylor series around
+     * zero. In [0.5..1], use asin(x) = π/2 - 2*asin(sqrt((1-x)/2)), and
+     * in [-1..-0.5] just revert the sign.
+     * Strategy for acos(): use acos(x) = π/2 - asin(x) and try not to
+     * lose the precision around x=1. */
+    real absx = fabs(x);
+    bool around_zero = (absx < (real::R_1 >> 1));
+
+    if (!around_zero)
+        absx = sqrt((real::R_1 - absx) >> 1);
+
+    real ret = absx, xn = absx, x2 = absx * absx, fact1 = 2, fact2 = 1;
+    for (int i = 1; i < 280; i++)
+    {
+        xn *= x2;
+        ret += (fact1 * xn / ((real)(2 * i + 1) * fact2)) >> (i * 2);
+        fact1 *= (real)((2 * i + 1) * (2 * i + 2));
+        fact2 *= (real)((i + 1) * (i + 1));
+    }
+
+    if (is_negative)
+        ret = -ret;
+
+    if (around_zero)
+        ret = is_asin ? ret : real::R_PI_2 - ret;
+    else
+    {
+        real adjust = is_negative ? real::R_PI : real::R_0;
+        if (is_asin)
+            ret = real::R_PI_2 - adjust - (ret << 1);
+        else
+            ret = adjust + (ret << 1);
+    }
+
+    return ret;
+}
+
+real asin(real const &x)
+{
+    return asinacos(x, true, x.m_signexp >> 31);
+}
+
+real acos(real const &x)
+{
+    return asinacos(x, false, x.m_signexp >> 31);
 }
 
 real atan(real const &x)
