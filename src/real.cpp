@@ -738,33 +738,7 @@ real sin(real const &x)
 
 real cos(real const &x)
 {
-    bool switch_sign = false;
-    real absx = fmod(fabs(x), real::R_PI << 1);
-
-    if (absx > real::R_PI)
-        absx = (real::R_PI << 1) - absx;
-
-    if (absx > real::R_PI_2)
-    {
-        absx = real::R_PI - absx;
-        switch_sign = true;
-    }
-
-    real ret = 0.0, fact = 1.0, xn = 1.0, x2 = absx * absx;
-    for (int i = 1; ; i += 2)
-    {
-        real newret = ret + xn / fact;
-        if (ret == newret)
-            break;
-        ret = newret;
-        xn *= x2;
-        fact *= (real)(-i * (i + 1));
-    }
-
-    /* Propagate sign */
-    if (switch_sign)
-        ret.m_signexp ^= 0x80000000u;
-    return ret;
+    return sin(real::R_PI_2 - x);
 }
 
 static real asinacos(real const &x, bool is_asin, bool is_negative)
