@@ -18,6 +18,7 @@
 #include "core.h"
 
 using namespace lol;
+using namespace std;
 
 /* The order of the approximation we're looking for */
 static int const ORDER = 4;
