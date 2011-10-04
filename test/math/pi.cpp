@@ -12,9 +12,12 @@
 #   include "config.h"
 #endif
 
+#include <cstdio>
+
 #include "core.h"
 
 using namespace lol;
+using namespace std;
 
 int main(int argc, char **argv)
 {
