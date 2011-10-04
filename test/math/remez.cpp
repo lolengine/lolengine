@@ -13,23 +13,28 @@
 #endif
 
 #include <cstring>
+#include <cstdio>
 
 #include "core.h"
 
 using namespace lol;
 
 /* The order of the approximation we're looking for */
-static int const ORDER = 8;
+static int const ORDER = 4;
 
 /* The function we want to approximate */
 static real myfun(real const &x)
 {
-    static real const one = 1.0;
-    if (!x)
-        return real::R_PI_2;
-    return sin(x * real::R_PI_2) / x;
-    //return cos(x) - one;
-    //return exp(x);
+    return exp(x);
+    //if (!x)
+    //    return real::R_PI_2;
+    //return sin(x * real::R_PI_2) / x;
+}
+
+static real myerror(real const &x)
+{
+    return myfun(x);
+    //return real::R_1;
 }
 
 /* Naive matrix inversion */
@@ -205,7 +210,6 @@ static void remez_init(real *coeff, real *zeroes)
 
 static void remez_findzeroes(real *coeff, real *zeroes, real *control)
 {
-    /* FIXME: this is fake for now */
     for (int i = 0; i < ORDER + 1; i++)
     {
         real a = control[i];
@@ -277,7 +281,7 @@ static void remez_finderror(real *coeff, real *zeroes, real *control)
                 if (maxerror > final)
                     final = maxerror;
                 control[i] = (a + b) * (real)0.5;
-                printf("%g (in %g)\n", (double)maxerror, (double)control[i]);
+                printf("%g (at %g)\n", (double)maxerror, (double)control[i]);
                 break;
             }
         }
@@ -313,7 +317,10 @@ static void remez_step(real *coeff, real *control)
                     sum += (real)cheby[n][k] * powers[k];
             mat.m[i][n] = sum;
         }
-        mat.m[i][ORDER + 1] = (real)(-1 + (i & 1) * 2);
+        if (i & 1)
+            mat.m[i][ORDER + 1] = fabs(myerror(control[i]));
+        else
+            mat.m[i][ORDER + 1] = -fabs(myerror(control[i]));
     }
 
     /* Solve the system */
