@@ -18,30 +18,27 @@ public:
 
     RemezSolver()
     {
-        ChebyInit();
     }
 
-    void Run(RealFunc *func, RealFunc *error, int steps)
+    void Run(real a, real b, RealFunc *func, RealFunc *error, int steps)
     {
         m_func = func;
         m_error = error;
+        m_k1 = (b + a) >> 1;
+        m_k2 = (b - a) >> 1;
+        m_invk2 = re(m_k2);
+        m_invk1 = -m_k1 * m_invk2;
 
         Init();
 
-        ChebyCoeff();
-        for (int j = 0; j < ORDER + 1; j++)
-            printf("%s%14.12gx^%i", j && (bn[j] >= real::R_0) ? "+" : "", (double)bn[j], j);
-        printf("\n");
+        PrintPoly();
 
         for (int n = 0; n < steps; n++)
         {
             FindError();
             Step();
 
-            ChebyCoeff();
-            for (int j = 0; j < ORDER + 1; j++)
-                printf("%s%14.12gx^%i", j && (bn[j] >= real::R_0) ? "+" : "", (double)bn[j], j);
-            printf("\n");
+            PrintPoly();
 
             FindZeroes();
         }
@@ -49,37 +46,7 @@ public:
         FindError();
         Step();
 
-        ChebyCoeff();
-        for (int j = 0; j < ORDER + 1; j++)
-            printf("%s%14.12gx^%i", j && (bn[j] >= real::R_0) ? "+" : "", (double)bn[j], j);
-        printf("\n");
-    }
-
-    /* Fill the Chebyshev tables */
-    void ChebyInit()
-    {
-        memset(cheby, 0, sizeof(cheby));
-
-        cheby[0][0] = 1;
-        cheby[1][1] = 1;
-
-        for (int i = 2; i < ORDER + 1; i++)
-        {
-            cheby[i][0] = -cheby[i - 2][0];
-            for (int j = 1; j < ORDER + 1; j++)
-                cheby[i][j] = 2 * cheby[i - 1][j - 1] - cheby[i - 2][j];
-        }
-    }
-
-    void ChebyCoeff()
-    {
-        for (int i = 0; i < ORDER + 1; i++)
-        {
-            bn[i] = 0;
-            for (int j = 0; j < ORDER + 1; j++)
-    	    if (cheby[j][i])
-                    bn[i] += coeff[j] * (real)cheby[j][i];
-        }
+        PrintPoly();
     }
 
     real ChebyEval(real const &x)
@@ -90,8 +57,7 @@ public:
         {
             real mul = 0;
             for (int j = 0; j < ORDER + 1; j++)
-    	    if (cheby[j][i])
-                    mul += coeff[j] * (real)cheby[j][i];
+                mul += coeff[j] * (real)Cheby(j, i);
             ret += mul * xn;
             xn *= x;
         }
@@ -106,7 +72,7 @@ public:
         for (int i = 0; i < ORDER + 1; i++)
         {
             zeroes[i] = (real)(2 * i - ORDER) / (real)(ORDER + 1);
-            fxn[i] = m_func(zeroes[i]);
+            fxn[i] = Value(zeroes[i]);
         }
 
         /* We build a matrix of Chebishev evaluations: row i contains the
@@ -125,8 +91,7 @@ public:
             {
                 real sum = 0.0;
                 for (int k = 0; k < ORDER + 1; k++)
-                    if (cheby[n][k])
-                        sum += (real)cheby[n][k] * powers[k];
+                    sum += (real)Cheby(n, k) * powers[k];
                 mat.m[i][n] = sum;
             }
         }
@@ -148,14 +113,14 @@ public:
         for (int i = 0; i < ORDER + 1; i++)
         {
             real a = control[i];
-            real ea = ChebyEval(a) - m_func(a);
+            real ea = ChebyEval(a) - Value(a);
             real b = control[i + 1];
-            real eb = ChebyEval(b) - m_func(b);
+            real eb = ChebyEval(b) - Value(b);
 
             while (fabs(a - b) > (real)1e-140)
             {
                 real c = (a + b) * (real)0.5;
-                real ec = ChebyEval(c) - m_func(c);
+                real ec = ChebyEval(c) - Value(c);
 
                 if ((ea < (real)0 && ec < (real)0)
                      || (ea > (real)0 && ec > (real)0))
@@ -194,7 +159,7 @@ public:
                 int best = -1;
                 for (int k = 0; k <= 10; k++)
                 {
-                    real e = fabs(ChebyEval(c) - m_func(c));
+                    real e = fabs(ChebyEval(c) - Value(c));
                     if (e > maxerror)
                     {
                         maxerror = e;
@@ -222,7 +187,8 @@ public:
             }
         }
 
-        printf("Final error: %g\n", (double)final);
+        printf("Final error: ");
+        final.print(40);
     }
 
     void Step()
@@ -230,7 +196,7 @@ public:
         /* Pick up x_i where error will be 0 and compute f(x_i) */
         real fxn[ORDER + 2];
         for (int i = 0; i < ORDER + 2; i++)
-            fxn[i] = m_func(control[i]);
+            fxn[i] = Value(control[i]);
 
         /* We build a matrix of Chebishev evaluations: row i contains the
          * evaluations of x_i for polynomial order n = 0, 1, ... */
@@ -248,14 +214,13 @@ public:
             {
                 real sum = 0.0;
                 for (int k = 0; k < ORDER + 1; k++)
-                    if (cheby[n][k])
-                        sum += (real)cheby[n][k] * powers[k];
+                    sum += (real)Cheby(n, k) * powers[k];
                 mat.m[i][n] = sum;
             }
             if (i & 1)
-                mat.m[i][ORDER + 1] = fabs(m_error(control[i]));
+                mat.m[i][ORDER + 1] = fabs(Error(control[i]));
             else
-                mat.m[i][ORDER + 1] = -fabs(m_error(control[i]));
+                mat.m[i][ORDER + 1] = -fabs(Error(control[i]));
         }
 
         /* Solve the system */
@@ -275,20 +240,79 @@ public:
             error += mat.m[ORDER + 1][i] * fxn[i];
     }
 
-    int cheby[ORDER + 1][ORDER + 1];
+    int Cheby(int n, int k)
+    {
+        if (k > n || k < 0)
+            return 0;
+        if (n <= 1)
+            return (n ^ k ^ 1) & 1;
+        return 2 * Cheby(n - 1, k - 1) - Cheby(n - 2, k);
+    }
 
-    /* ORDER + 1 chebyshev coefficients and 1 error value */
+    int Comb(int n, int k)
+    {
+        if (k == 0 || k == n)
+            return 1;
+        return Comb(n - 1, k - 1) + Comb(n - 1, k);
+    }
+
+    void PrintPoly()
+    {
+        /* Transform Chebyshev polynomial weights into powers of X^i
+         * in the [-1..1] range. */
+        real bn[ORDER + 1];
+
+        for (int i = 0; i < ORDER + 1; i++)
+        {
+            bn[i] = 0;
+            for (int j = 0; j < ORDER + 1; j++)
+                bn[i] += coeff[j] * (real)Cheby(j, i);
+        }
+
+        /* Transform a polynomial in the [-1..1] range into a polynomial
+         * in the [a..b] range. */
+        real k1p[ORDER + 1], k2p[ORDER + 1];
+        real an[ORDER + 1];
+
+        for (int i = 0; i < ORDER + 1; i++)
+        {
+            k1p[i] = i ? k1p[i - 1] * m_invk1 : real::R_1;
+            k2p[i] = i ? k2p[i - 1] * m_invk2 : real::R_1;
+        }
+
+        for (int i = 0; i < ORDER + 1; i++)
+        {
+            an[i] = 0;
+            for (int j = i; j < ORDER + 1; j++)
+                an[i] += (real)Comb(j, i) * k1p[j - i] * bn[j];
+            an[i] *= k2p[i];
+        }
+
+        for (int j = 0; j < ORDER + 1; j++)
+            printf("%s%18.16gx^%i", j && (an[j] >= real::R_0) ? "+" : "", (double)an[j], j);
+        printf("\n");
+    }
+
+    real Value(real const &x)
+    {
+        return m_func(x * m_k2 + m_k1);
+    }
+
+    real Error(real const &x)
+    {
+        return m_error(x * m_k2 + m_k1);
+    }
+
+    /* ORDER + 1 Chebyshev coefficients and 1 error value */
     real coeff[ORDER + 2];
     /* ORDER + 1 zeroes of the error function */
     real zeroes[ORDER + 1];
     /* ORDER + 2 control points */
     real control[ORDER + 2];
 
-    real bn[ORDER + 1];
-
 private:
-    RealFunc *m_func;
-    RealFunc *m_error;
+    RealFunc *m_func, *m_error;
+    real m_k1, m_k2, m_invk1, m_invk2;
 };
 
 #endif /* __REMEZ_SOLVER_H__ */

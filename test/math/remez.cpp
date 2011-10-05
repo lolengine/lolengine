@@ -26,19 +26,23 @@ using namespace std;
 /* The function we want to approximate */
 static real myfun(real const &x)
 {
-    return exp(x);
+    real y = sqrt(x);
+    if (!y)
+        return real::R_PI_2;
+    return sin(real::R_PI_2 * y) / y;
 }
 
-static real myerror(real const &x)
+static real myerr(real const &x)
 {
-    return myfun(x);
+    return real::R_1;
 }
 
 int main(int argc, char **argv)
 {
     RemezSolver<4> solver;
-
-    solver.Run(myfun, myerror, 10);
+    solver.Run(0, 1, myfun, myfun, 15);
+    //solver.Run(-1, 1, myfun, myfun, 15);
+    //solver.Run(0, real::R_PI * real::R_PI >> 4, myfun, myfun, 15);
 
     return EXIT_SUCCESS;
 }
