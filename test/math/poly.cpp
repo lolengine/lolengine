@@ -19,9 +19,16 @@
 using namespace lol;
 using namespace std;
 
-static float adjust(float f, int i)
+static float adjustf(float f, int i)
 {
     union { float f; uint32_t x; } u = { f };
+    u.x += i;
+    return u.f;
+}
+
+static double adjust(double f, int i)
+{
+    union { double f; uint64_t x; } u = { f };
     u.x += i;
     return u.f;
 }
@@ -37,25 +44,44 @@ static void inspect(float f)
     printf("%i / 2^%i = %g\n", i, j, (float)i / (1LLu << j));
 }
 
+//#define float double
+#if 1
+static float const a0 = adjust(0.9999999999999376, 0);
+static float const a1 = adjust(-0.1666666666643236, 0);
+static float const a2 = adjust(0.008333333318766562, 0);
+static float const a3 = adjust(-0.0001984126641174625, 0);
+static float const a4 = adjust(2.755693193297308e-006, 0);
+static float const a5 = adjust(-2.502951900290311e-008, 0);
+static float const a6 = adjust(1.540117123154927e-010, 0);
+#elif 0
 static float const a0 = adjust(1.0, 0);
 static float const a1 = adjust(-0.1666666666372165, 0);
 static float const a2 = adjust(0.008333332748323419, 0);
 static float const a3 = adjust(-0.0001984108245332497, 0);
 static float const a4 = adjust(2.753619853326498e-06, 0);
 static float const a5 = adjust(-2.407483949485896e-08, 0);
+static float const a6 = 0.0;
+#else
+static float const a0 = adjust(0.9999999946887117, 0);
+static float const a1 = adjust(-0.1666665668590824, 0);
+static float const a2 = adjust(0.008333025160523476, 0);
+static float const a3 = adjust(-0.0001980741944205014, 0);
+static float const a4 = adjust(2.60190356966559e-06, 0); // -900 in floats
+static float const a5 = 0.0;
+static float const a6 = 0.0;
+#endif
 
 static float floatsin(float f)
 {
     //return lol_sin(f);
-//#define float double
     //static float const k = (float)real::R_2_PI;
 
     //f *= k;
     float f2 = f * f;
     float f4 = f2 * f2;
-    //return f * (a0 + f4 * (a2 + f4 * a4) + f2 * (a1 + f4 * (a3 + f4 * a5)));
-    //return f * (a0 + f2 * (a1 + f2 * (a2 + f2 * (a3 + f2 * (a4 + f2 * a5)))));
-    return f * (a0 + a1 * f2 + a2 * f2 * f2 + a3 * f2 * f2 * f2 + a4 * f2 * f2 * f2 * f2 + a5 * f2 * f2 * f2 * f2 * f2);
+    return f * (a0 + f4 * (a2 + f4 * (a4 + f4 * a6)) + f2 * (a1 + f4 * (a3 + f4 * a5)));
+    //return f * (a0 + f2 * (a1 + f2 * (a2 + f2 * (a3 + f2 * (a4 + f2 * (a5 + f2 * a6))))));
+    //return f * (a0 + a1 * f2 + a2 * f2 * f2 + a3 * f2 * f2 * f2 + a4 * f2 * f2 * f2 * f2 + a5 * f2 * f2 * f2 * f2 * f2 + a6 * f2 * f2 * f2 * f2 * f2 * f2);
 #undef float
 }
 
@@ -70,22 +96,23 @@ int main(void)
     inspect(a4);
     inspect(a5);
 
-    for (float f = (float)real::R_PI_2; f > 1e-30; f = adjust(f, -1))
+    for (float f = (float)real::R_PI_2; f > 1e-30; f = adjustf(f, -1))
     {
+        union { float f; uint32_t x; } u = { f };
         union { float f; uint32_t x; } s1 = { sinf(f) };
         union { float f; uint32_t x; } s2 = { floatsin(f) };
         int e = abs((int)(s1.x - s2.x));
         switch (e)
         {
-        case 0:
-        case 1:
-        case 2:
         case 3:
+            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
+                printf("%15.13g %08x: %15.13g %15.13g %08x %08x\n", f, u.x, s1.f, s2.f, s1.x, s2.x);
+        case 2:
+        case 1:
+        case 0:
             error[e]++;
             break;
         default:
-            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
-                printf("%16.14g: %16.14g %16.14g %08x %08x\n", f, s1.f, s2.f, s1.x, s2.x);
             error[4]++;
             break;
         }
