@@ -31,9 +31,7 @@ static real myfun(real const &x)
     static real const b1 = real(-1) / real(6);
     static real const b2 = real(1) / real(120);
     real y = sqrt(x);
-    if (!y)
-        return b2;
-    return ((sin(y) / y - a0) / x - a1) / x;
+    return sin(y) / y;
 }
 
 static real myerr(real const &x)
@@ -43,9 +41,9 @@ static real myerr(real const &x)
 
 int main(int argc, char **argv)
 {
-    RemezSolver<3> solver;
+    RemezSolver<6> solver;
     //solver.Run(0, 1, myfun, myfun, 15);
-    solver.Run(0, real::R_PI * real::R_PI >> 2, myfun, myfun, 15);
+    solver.Run(exp((real)-100), real::R_PI * real::R_PI >> 2, myfun, myfun, 15);
     //solver.Run(-1, 1, myfun, myfun, 15);
     //solver.Run(0, real::R_PI * real::R_PI >> 4, myfun, myfun, 15);
 
