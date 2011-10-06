@@ -1,0 +1,99 @@
+//
+// Lol Engine - Sample math program: chek trigonometric functions
+//
+// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include <cstdio>
+
+#include "core.h"
+
+using namespace lol;
+using namespace std;
+
+static float adjust(float f, int i)
+{
+    union { float f; uint32_t x; } u = { f };
+    u.x += i;
+    return u.f;
+}
+
+static void inspect(float f)
+{
+    union { float f; uint32_t x; } u = { f };
+    printf("%08x %g  --  ", u.x, u.f);
+    int i = (u.x & 0x7fffffu) | 0x800000u;
+    int j = 23 - ((u.x >> 23) & 0xff) + ((1 << 7) - 1);
+    if (u.f <= 0)
+        i = -i;
+    printf("%i / 2^%i = %g\n", i, j, (float)i / (1LLu << j));
+}
+
+static float const a0 = adjust(1.0, 0);
+static float const a1 = adjust(-0.1666666666372165, 0);
+static float const a2 = adjust(0.008333332748323419, 0);
+static float const a3 = adjust(-0.0001984108245332497, 0);
+static float const a4 = adjust(2.753619853326498e-06, 0);
+static float const a5 = adjust(-2.407483949485896e-08, 0);
+
+static float floatsin(float f)
+{
+    //return lol_sin(f);
+//#define float double
+    //static float const k = (float)real::R_2_PI;
+
+    //f *= k;
+    float f2 = f * f;
+    float f4 = f2 * f2;
+    //return f * (a0 + f4 * (a2 + f4 * a4) + f2 * (a1 + f4 * (a3 + f4 * a5)));
+    //return f * (a0 + f2 * (a1 + f2 * (a2 + f2 * (a3 + f2 * (a4 + f2 * a5)))));
+    return f * (a0 + a1 * f2 + a2 * f2 * f2 + a3 * f2 * f2 * f2 + a4 * f2 * f2 * f2 * f2 + a5 * f2 * f2 * f2 * f2 * f2);
+#undef float
+}
+
+int main(void)
+{
+    int error[5] = { 0 };
+
+    inspect(a0);
+    inspect(a1);
+    inspect(a2);
+    inspect(a3);
+    inspect(a4);
+    inspect(a5);
+
+    for (float f = (float)real::R_PI_2; f > 1e-30; f = adjust(f, -1))
+    {
+        union { float f; uint32_t x; } s1 = { sinf(f) };
+        union { float f; uint32_t x; } s2 = { floatsin(f) };
+        int e = abs((int)(s1.x - s2.x));
+        switch (e)
+        {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            error[e]++;
+            break;
+        default:
+            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
+                printf("%16.14g: %16.14g %16.14g %08x %08x\n", f, s1.f, s2.f, s1.x, s2.x);
+            error[4]++;
+            break;
+        }
+    }
+
+    printf("exact: %i  off by 1: %i  by 2: %i  by 3: %i  error: %i\n",
+           error[0], error[1], error[2], error[3], error[4]);
+
+    return EXIT_SUCCESS;
+}
+

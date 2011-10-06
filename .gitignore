@@ -60,6 +60,7 @@ test/benchsuite
 test/quad
 test/sandbox
 test/math/pi
+test/math/poly
 test/math/remez
 tools/make-font
 # Our data
