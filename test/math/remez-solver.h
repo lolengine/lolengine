@@ -20,10 +20,10 @@ public:
     {
     }
 
-    void Run(real a, real b, RealFunc *func, RealFunc *error, int steps)
+    void Run(real a, real b, RealFunc *func, RealFunc *weight, int steps)
     {
         m_func = func;
-        m_error = error;
+        m_weight = weight;
         m_k1 = (b + a) >> 1;
         m_k2 = (b - a) >> 1;
         m_invk2 = re(m_k2);
@@ -35,7 +35,7 @@ public:
 
         for (int n = 0; n < steps; n++)
         {
-            FindError();
+            FindExtrema();
             Step();
 
             PrintPoly();
@@ -43,7 +43,7 @@ public:
             FindZeroes();
         }
 
-        FindError();
+        FindExtrema();
         Step();
 
         PrintPoly();
@@ -110,37 +110,40 @@ public:
 
     void FindZeroes()
     {
+        /* Find ORDER + 1 zeroes of the error function. No need to
+         * compute the relative error: its zeroes are at the same
+         * place as the absolute error! */
         for (int i = 0; i < ORDER + 1; i++)
         {
-            real a = control[i];
-            real ea = ChebyEval(a) - Value(a);
-            real b = control[i + 1];
-            real eb = ChebyEval(b) - Value(b);
+            struct { real value, error; } left, right, mid;
 
-            while (fabs(a - b) > (real)1e-140)
+            left.value = control[i];
+            left.error = ChebyEval(left.value) - Value(left.value);
+            right.value = control[i + 1];
+            right.error = ChebyEval(right.value) - Value(right.value);
+
+            static real limit = real::R_1 >> 500;
+            while (fabs(left.value - right.value) > limit)
             {
-                real c = (a + b) * (real)0.5;
-                real ec = ChebyEval(c) - Value(c);
+                mid.value = (left.value + right.value) >> 1;
+                mid.error = ChebyEval(mid.value) - Value(mid.value);
 
-                if ((ea < (real)0 && ec < (real)0)
-                     || (ea > (real)0 && ec > (real)0))
-                {
-                    a = c;
-                    ea = ec;
-                }
+                if ((left.error < real::R_0 && mid.error < real::R_0)
+                     || (left.error > real::R_0 && mid.error > real::R_0))
+                    left = mid;
                 else
-                {
-                    b = c;
-                    eb = ec;
-                }
+                    right = mid;
             }
 
-            zeroes[i] = a;
+            zeroes[i] = mid.value;
         }
     }
 
-    void FindError()
+    void FindExtrema()
     {
+        /* Find ORDER + 2 extrema of the error function. We need to
+         * compute the relative error, since its extrema are at slightly
+         * different locations than the absolute error’s. */
         real final = 0;
 
         for (int i = 0; i < ORDER + 2; i++)
@@ -154,34 +157,33 @@ public:
             printf("Error for [%g..%g]: ", (double)a, (double)b);
             for (;;)
             {
-                real c = a, delta = (b - a) / (real)10.0;
+                real c = a, delta = (b - a) >> 3;
                 real maxerror = 0;
+                real maxweight = 0;
                 int best = -1;
-                for (int k = 0; k <= 10; k++)
+                for (int k = 1; k <= 7; k++)
                 {
-                    real e = fabs(ChebyEval(c) - Value(c));
-                    if (e > maxerror)
+                    real error = ChebyEval(c) - Value(c);
+                    real weight = Weight(c);
+                    if (fabs(error * maxweight) >= fabs(maxerror * weight))
                     {
-                        maxerror = e;
+                        maxerror = error;
+                        maxweight = weight;
                         best = k;
                     }
                     c += delta;
                 }
 
-                if (best == 0)
-                    best = 1;
-                if (best == 10)
-                    best = 9;
-
                 b = a + (real)(best + 1) * delta;
                 a = a + (real)(best - 1) * delta;
 
-                if (b - a < (real)1e-15)
+                if (b - a < (real)1e-18)
                 {
-                    if (maxerror > final)
-                        final = maxerror;
-                    control[i] = (a + b) * (real)0.5;
-                    printf("%g (at %g)\n", (double)maxerror, (double)control[i]);
+                    real e = maxerror / maxweight;
+                    if (e > final)
+                        final = e;
+                    control[i] = (a + b) >> 1;
+                    printf("%g (at %g)\n", (double)e, (double)control[i]);
                     break;
                 }
             }
@@ -218,9 +220,9 @@ public:
                 mat.m[i][n] = sum;
             }
             if (i & 1)
-                mat.m[i][ORDER + 1] = fabs(Error(control[i]));
+                mat.m[i][ORDER + 1] = fabs(Weight(control[i]));
             else
-                mat.m[i][ORDER + 1] = -fabs(Error(control[i]));
+                mat.m[i][ORDER + 1] = -fabs(Weight(control[i]));
         }
 
         /* Solve the system */
@@ -288,8 +290,14 @@ public:
             an[i] *= k2p[i];
         }
 
+        printf("Final polynomial:\n");
         for (int j = 0; j < ORDER + 1; j++)
-            printf("%s%18.16gx^%i", j && (an[j] >= real::R_0) ? "+" : "", (double)an[j], j);
+        {
+            if (j)
+                printf("+");
+            printf("x^%i*", j);
+            an[j].print(40);
+        }
         printf("\n");
     }
 
@@ -298,9 +306,9 @@ public:
         return m_func(x * m_k2 + m_k1);
     }
 
-    real Error(real const &x)
+    real Weight(real const &x)
     {
-        return m_error(x * m_k2 + m_k1);
+        return m_weight(x * m_k2 + m_k1);
     }
 
     /* ORDER + 1 Chebyshev coefficients and 1 error value */
@@ -311,7 +319,7 @@ public:
     real control[ORDER + 2];
 
 private:
-    RealFunc *m_func, *m_error;
+    RealFunc *m_func, *m_weight;
     real m_k1, m_k2, m_invk1, m_invk2;
 };
 
