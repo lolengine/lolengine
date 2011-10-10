@@ -487,13 +487,10 @@ real re(real const &x)
     exponent = -exponent + (v.x >> 23) - (u.x >> 23);
     ret.m_signexp |= (exponent - 1) & 0x7fffffffu;
 
-    /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
-    real two = 2;
-    ret = ret * (two - ret * x);
-    ret = ret * (two - ret * x);
-    ret = ret * (two - ret * x);
-    ret = ret * (two - ret * x);
-    ret = ret * (two - ret * x);
+    /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
+     * convergence, but this hasn't been checked seriously. */
+    for (int i = 1; i < real::BIGITS; i *= 2)
+        ret = ret * (real::R_2 - ret * x);
 
     return ret;
 }
@@ -532,22 +529,17 @@ real sqrt(real const &x)
     ret.m_signexp = sign;
 
     uint32_t exponent = (x.m_signexp & 0x7fffffffu);
-    exponent = ((1 << 30) + (1 << 29) -1) - (exponent + 1) / 2;
+    exponent = ((1 << 30) + (1 << 29) - 1) - (exponent + 1) / 2;
     exponent = exponent + (v.x >> 23) - (u.x >> 23);
     ret.m_signexp |= exponent & 0x7fffffffu;
 
-    /* Five steps of Newton-Raphson seems enough for 32-bigit reals. */
-    real three = 3;
-    ret = ret * (three - ret * ret * x);
-    ret.m_signexp--;
-    ret = ret * (three - ret * ret * x);
-    ret.m_signexp--;
-    ret = ret * (three - ret * ret * x);
-    ret.m_signexp--;
-    ret = ret * (three - ret * ret * x);
-    ret.m_signexp--;
-    ret = ret * (three - ret * ret * x);
-    ret.m_signexp--;
+    /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
+     * convergence, but this hasn't been checked seriously. */
+    for (int i = 1; i < real::BIGITS; i *= 2)
+    {
+        ret = ret * (real::R_3 - ret * ret * x);
+        ret.m_signexp--;
+    }
 
     return ret * x;
 }
@@ -559,7 +551,7 @@ real fabs(real const &x)
     return ret;
 }
 
-static real fastlog(real const &x)
+static real fast_log(real const &x)
 {
     /* This fast log method is tuned to work on the [1..2] range and
      * no effort whatsoever was made to improve convergence outside this
@@ -577,24 +569,25 @@ static real fastlog(real const &x)
      * would also impact the final precision. For now we stick with one
      * sqrt() call. */
     real y = sqrt(x);
-    real z = (y - (real)1) / (y + (real)1), z2 = z * z, zn = z2;
-    real sum = 1.0;
+    real z = (y - real::R_1) / (y + real::R_1), z2 = z * z, zn = z2;
+    real sum = real::R_1;
 
-    for (int i = 3; i < 200; i += 2)
+    for (int i = 3; ; i += 2)
     {
-        sum += zn / (real)i;
+        real newsum = sum + zn / (real)i;
+        if (newsum == sum)
+            break;
+        sum = newsum;
         zn *= z2;
     }
 
     return z * (sum << 2);
 }
 
-static real LOG_2 = fastlog((real)2);
-
 real log(real const &x)
 {
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
-     * with the property that M is in [1..2[, so fastlog() applies here. */
+     * with the property that M is in [1..2[, so fast_log() applies here. */
     real tmp = x;
     if (x.m_signexp >> 31 || x.m_signexp == 0)
     {
@@ -603,7 +596,7 @@ real log(real const &x)
         return tmp;
     }
     tmp.m_signexp = (1 << 30) - 1;
-    return (real)(x.m_signexp - (1 << 30) + 1) * LOG_2 + fastlog(tmp);
+    return (real)(x.m_signexp - (1 << 30) + 1) * real::R_LN2 + fast_log(tmp);
 }
 
 real exp(real const &x)
@@ -624,14 +617,17 @@ real exp(real const &x)
      *  real x1 = exp(x0)
      *  return x1 * 2^E0
      */
-    int e0 = x / LOG_2;
-    real x0 = x - (real)e0 * LOG_2;
-    real x1 = 1.0, fact = 1.0, xn = x0;
+    int e0 = x / real::R_LN2;
+    real x0 = x - (real)e0 * real::R_LN2;
+    real x1 = real::R_1, fact = real::R_1, xn = x0;
 
-    for (int i = 1; i < 100; i++)
+    for (int i = 1; ; i++)
     {
         fact *= (real)i;
-        x1 += xn / fact;
+        real newx1 = x1 + xn / fact;
+        if (newx1 == x1)
+            break;
+        x1 = newx1;
         xn *= x0;
     }
 
@@ -719,11 +715,11 @@ real sin(real const &x)
     if (absx > real::R_PI_2)
         absx = real::R_PI - absx;
 
-    real ret = 0.0, fact = 1.0, xn = absx, x2 = absx * absx;
+    real ret = real::R_0, fact = real::R_1, xn = absx, x2 = absx * absx;
     for (int i = 1; ; i += 2)
     {
         real newret = ret + xn / fact;
-        if (ret == newret)
+        if (newret == ret)
             break;
         ret = newret;
         xn *= x2;
@@ -755,10 +751,14 @@ static real asinacos(real const &x, bool is_asin, bool is_negative)
         absx = sqrt((real::R_1 - absx) >> 1);
 
     real ret = absx, xn = absx, x2 = absx * absx, fact1 = 2, fact2 = 1;
-    for (int i = 1; i < 280; i++)
+    for (int i = 1; ; i++)
     {
         xn *= x2;
-        ret += (fact1 * xn / ((real)(2 * i + 1) * fact2)) >> (i * 2);
+        real mul = (real)(2 * i + 1);
+        real newret = ret + ((fact1 * xn / (mul * fact2)) >> (i * 2));
+        if (newret == ret)
+            break;
+        ret = newret;
         fact1 *= (real)((2 * i + 1) * (2 * i + 2));
         fact2 *= (real)((i + 1) * (i + 1));
     }
@@ -819,10 +819,13 @@ real atan(real const &x)
     if (absx < (real::R_1 >> 1))
     {
         real ret = x, xn = x, mx2 = -x * x;
-        for (int i = 3; i < 100; i += 2)
+        for (int i = 3; ; i += 2)
         {
             xn *= mx2;
-            ret += xn / (real)i;
+            real newret = ret + xn / (real)i;
+            if (newret == ret)
+                break;
+            ret = newret;
         }
         return ret;
     }
@@ -833,13 +836,16 @@ real atan(real const &x)
     {
         real y = real::R_1 - absx;
         real yn = y, my2 = -y * y;
-        for (int i = 0; i < 200; i += 2)
+        for (int i = 0; ; i += 2)
         {
-            ret += (yn / (real)(2 * i + 1)) >> (i + 1);
+            real newret = ret + ((yn / (real)(2 * i + 1)) >> (i + 1));
             yn *= y;
-            ret += (yn / (real)(2 * i + 2)) >> (i + 1);
+            newret += (yn / (real)(2 * i + 2)) >> (i + 1);
             yn *= y;
-            ret += (yn / (real)(2 * i + 3)) >> (i + 2);
+            newret += (yn / (real)(2 * i + 3)) >> (i + 2);
+            if (newret == ret)
+                break;
+            ret = newret;
             yn *= my2;
         }
         ret = real::R_PI_4 - ret;
@@ -848,17 +854,20 @@ real atan(real const &x)
     {
         real y = (absx - real::R_SQRT3) >> 1;
         real yn = y, my2 = -y * y;
-        for (int i = 1; i < 200; i += 6)
+        for (int i = 1; ; i += 6)
         {
-            ret += (yn / (real)i) >> 1;
+            real newret = ret + ((yn / (real)i) >> 1);
             yn *= y;
-            ret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 1);
+            newret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 1);
             yn *= y;
-            ret += yn / (real)(i + 2);
+            newret += yn / (real)(i + 2);
             yn *= y;
-            ret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 3);
+            newret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 3);
             yn *= y;
-            ret += (yn / (real)(i + 4)) >> 1;
+            newret += (yn / (real)(i + 4)) >> 1;
+            if (newret == ret)
+                break;
+            ret = newret;
             yn *= my2;
         }
         ret = real::R_PI_3 + ret;
@@ -868,10 +877,13 @@ real atan(real const &x)
         real y = re(absx);
         real yn = y, my2 = -y * y;
         ret = y;
-        for (int i = 3; i < 120; i += 2)
+        for (int i = 3; ; i += 2)
         {
             yn *= my2;
-            ret += yn / (real)i;
+            real newret = ret + yn / (real)i;
+            if (newret == ret)
+                break;
+            ret = newret;
         }
         ret = real::R_PI_2 - ret;
     }
@@ -944,10 +956,12 @@ static real fast_pi()
     real ret = 0.0, x0 = 5.0, x1 = 239.0;
     real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
 
-    /* Degree 240 is required for 512-bit mantissa precision */
-    for (int i = 1; i < 240; i += 2)
+    for (int i = 1; ; i += 2)
     {
-        ret += r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
+        real newret = ret + r16 / (x0 * (real)i) - r4 / (x1 * (real)i);
+        if (newret == ret)
+            break;
+        ret = newret;
         x0 *= m0;
         x1 *= m1;
     }
@@ -961,11 +975,11 @@ real const real::R_2        = (real)2.0;
 real const real::R_3        = (real)3.0;
 real const real::R_10       = (real)10.0;
 
-real const real::R_E        = exp(R_1);
-real const real::R_LN2      = log(R_2);
+real const real::R_LN2      = fast_log(R_2);
 real const real::R_LN10     = log(R_10);
 real const real::R_LOG2E    = re(R_LN2);
 real const real::R_LOG10E   = re(R_LN10);
+real const real::R_E        = exp(R_1);
 real const real::R_PI       = fast_pi();
 real const real::R_PI_2     = R_PI >> 1;
 real const real::R_PI_3     = R_PI / R_3;
