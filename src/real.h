@@ -108,11 +108,11 @@ private:
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
      * digits) */
-    static int const BIGITS = 32;
+    static int const BIGITS = 16;
 
     uint32_t m_size;
     uint32_t m_signexp;
-    uint16_t m_mantissa[BIGITS];
+    uint32_t m_mantissa[BIGITS];
 };
 
 } /* namespace lol */
