@@ -19,14 +19,16 @@
 using namespace lol;
 using namespace std;
 
-static float adjustf(float f, int i)
+float adjustf(float f, int i) __attribute__((noinline));
+float adjustf(float f, int i)
 {
     union { float f; uint32_t x; } u = { f };
     u.x += i;
     return u.f;
 }
 
-static double adjust(double f, int i)
+double adjust(double f, int i) __attribute__((noinline));
+double adjust(double f, int i)
 {
     union { double f; uint64_t x; } u = { f };
     u.x += i;
@@ -36,16 +38,24 @@ static double adjust(double f, int i)
 static void inspect(float f)
 {
     union { float f; uint32_t x; } u = { f };
-    printf("%08x %g  --  ", u.x, u.f);
+    printf("%08x %14.12g  --  ", u.x, u.f);
     int i = (u.x & 0x7fffffu) | 0x800000u;
     int j = 23 - ((u.x >> 23) & 0xff) + ((1 << 7) - 1);
     if (u.f <= 0)
         i = -i;
-    printf("%i / 2^%i = %g\n", i, j, (float)i / (1LLu << j));
+    printf("%i / 2^%i = %14.12g\n", i, j, (float)i / (1LLu << j));
 }
 
 //#define float double
 #if 1
+static float const a0 = 1.0;
+static float const a1 = -0.1666666666663036;
+static float const a2 = 0.008333333325075758;
+static float const a3 = -0.0001984126372689299;
+static float const a4 = 2.755533925906394e-06;
+static float const a5 = -2.476042626296988e-08;
+static float const a6 = 0.0;
+#elif 0
 static float const a0 = adjust(0.9999999999999376, 0);
 static float const a1 = adjust(-0.1666666666643236, 0);
 static float const a2 = adjust(0.008333333318766562, 0);
@@ -73,7 +83,7 @@ static float const a6 = 0.0;
 
 static float floatsin(float f)
 {
-    //return lol_sin(f);
+    return lol_sin(f);
     //static float const k = (float)real::R_2_PI;
 
     //f *= k;
@@ -87,6 +97,8 @@ static float floatsin(float f)
 
 int main(void)
 {
+    typedef union { float f; uint32_t x; } flint;
+
     int error[5] = { 0 };
 
     inspect(a0);
@@ -96,19 +108,32 @@ int main(void)
     inspect(a4);
     inspect(a5);
 
-    for (float f = (float)real::R_PI_2; f > 1e-30; f = adjustf(f, -1))
+//flint v = { 1.433971524239 };
+flint v = { 1.555388212204 };
+inspect(v.f);
+printf("sinf: ");
+flint w = { sinf(adjustf(v.f, 0)) };
+inspect(w.f);
+printf("lols: ");
+flint z = { lol_sin(adjustf(v.f, 0)) };
+inspect(z.f);
+
+printf("-- START --\n");
+    for (flint u = { (float)real::R_PI_2 }; u.f > 1e-30; u.x -= 1)
     {
-        union { float f; uint32_t x; } u = { f };
-        union { float f; uint32_t x; } s1 = { sinf(f) };
-        union { float f; uint32_t x; } s2 = { floatsin(f) };
+        union { float f; uint32_t x; } s1 = { sinf(adjustf(u.f, 0)) };
+        union { float f; uint32_t x; } s2 = { floatsin(adjustf(u.f, 0)) };
         int e = abs((int)(s1.x - s2.x));
         switch (e)
         {
         case 3:
-            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
-                printf("%15.13g %08x: %15.13g %15.13g %08x %08x\n", f, u.x, s1.f, s2.f, s1.x, s2.x);
         case 2:
         case 1:
+inspect(u.f);
+printf("sinf: ");
+inspect(sinf(u.f));
+            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
+                printf("%15.13g %08x: %15.13g %15.13g %08x %08x\n", u.f, u.x, s1.f, s2.f, s1.x, s2.x);
         case 0:
             error[e]++;
             break;
