@@ -22,6 +22,8 @@ using namespace std;
 namespace lol
 {
 
+static int const BIGIT_BITS = 32;
+
 real::real(float f) { *this = (double)f; }
 real::real(int i) { *this = (double)i; }
 real::real(unsigned int i) { *this = (double)i; }
@@ -46,11 +48,9 @@ real::real(double d)
         break;
     }
 
-    m_mantissa[0] = u.x >> 36;
-    m_mantissa[1] = u.x >> 20;
-    m_mantissa[2] = u.x >> 4;
-    m_mantissa[3] = u.x << 12;
-    memset(m_mantissa + 4, 0, sizeof(m_mantissa) - 4 * sizeof(m_mantissa[0]));
+    m_mantissa[0] = u.x >> 20;
+    m_mantissa[1] = u.x << 12;
+    memset(m_mantissa + 2, 0, (BIGITS - 2) * sizeof(m_mantissa[0]));
 }
 
 real::operator float() const { return (float)(double)(*this); }
@@ -81,16 +81,12 @@ real::operator double() const
         u.x |= e;
 
         /* Store mantissa if necessary */
-        u.x <<= 16;
+        u.x <<= 32;
         u.x |= m_mantissa[0];
-        u.x <<= 16;
-        u.x |= m_mantissa[1];
-        u.x <<= 16;
-        u.x |= m_mantissa[2];
-        u.x <<= 4;
-        u.x |= m_mantissa[3] >> 12;
+        u.x <<= 20;
+        u.x |= m_mantissa[1] >> 12;
         /* Rounding */
-        u.x += (m_mantissa[3] >> 11) & 1;
+        u.x += (m_mantissa[1] >> 11) & 1;
     }
 
     return u.d;
@@ -131,28 +127,28 @@ real real::operator +(real const &x) const
     int e1 = m_signexp - (1 << 30) + 1;
     int e2 = x.m_signexp - (1 << 30) + 1;
 
-    int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
-    int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
+    int bigoff = (e1 - e2) / BIGIT_BITS;
+    int off = e1 - e2 - bigoff * BIGIT_BITS;
 
     if (bigoff > BIGITS)
         return *this;
 
     ret.m_signexp = m_signexp;
 
-    uint32_t carry = 0;
+    uint64_t carry = 0;
     for (int i = BIGITS; i--; )
     {
         carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry += x.m_mantissa[i - bigoff] >> off;
 
-        if (i - bigoff > 0)
-            carry += (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
+        if (off && i - bigoff > 0)
+            carry += (x.m_mantissa[i - bigoff - 1] << (BIGIT_BITS - off)) & 0xffffffffu;
         else if (i - bigoff == 0)
-            carry += 0x0001u << (16 - off);
+            carry += (uint64_t)1 << (BIGIT_BITS - off);
 
         ret.m_mantissa[i] = carry;
-        carry >>= 16;
+        carry >>= BIGIT_BITS;
     }
 
     /* Renormalise in case we overflowed the mantissa */
@@ -161,9 +157,9 @@ real real::operator +(real const &x) const
         carry--;
         for (int i = 0; i < BIGITS; i++)
         {
-            uint16_t tmp = ret.m_mantissa[i];
-            ret.m_mantissa[i] = (carry << 15) | (tmp >> 1);
-            carry = tmp & 0x0001u;
+            uint32_t tmp = ret.m_mantissa[i];
+            ret.m_mantissa[i] = (carry << (BIGIT_BITS - 1)) | (tmp >> 1);
+            carry = tmp & 1u;
         }
         ret.m_signexp++;
     }
@@ -193,22 +189,24 @@ real real::operator -(real const &x) const
     int e1 = m_signexp - (1 << 30) + 1;
     int e2 = x.m_signexp - (1 << 30) + 1;
 
-    int bigoff = (e1 - e2) / (sizeof(uint16_t) * 8);
-    int off = e1 - e2 - bigoff * (sizeof(uint16_t) * 8);
+    int bigoff = (e1 - e2) / BIGIT_BITS;
+    int off = e1 - e2 - bigoff * BIGIT_BITS;
 
     if (bigoff > BIGITS)
         return *this;
 
     ret.m_signexp = m_signexp;
 
-    int32_t carry = 0;
+    int64_t carry = 0;
     for (int i = 0; i < bigoff; i++)
     {
         carry -= x.m_mantissa[BIGITS - i];
-        carry = (carry & 0xffff0000u) | (carry >> 16);
+        /* Emulates a signed shift */
+        carry >>= BIGIT_BITS;
+        carry |= carry << BIGIT_BITS;
     }
-    carry -= x.m_mantissa[BIGITS - 1 - bigoff] & ((1 << off) - 1);
-    carry /= (1 << off);
+    carry -= x.m_mantissa[BIGITS - 1 - bigoff] & (((int64_t)1 << off) - 1);
+    carry /= (int64_t)1 << off;
 
     for (int i = BIGITS; i--; )
     {
@@ -216,13 +214,14 @@ real real::operator -(real const &x) const
         if (i - bigoff >= 0)
             carry -= x.m_mantissa[i - bigoff] >> off;
 
-        if (i - bigoff > 0)
-            carry -= (x.m_mantissa[i - bigoff - 1] << (16 - off)) & 0xffffu;
+        if (off && i - bigoff > 0)
+            carry -= (x.m_mantissa[i - bigoff - 1] << (BIGIT_BITS - off)) & 0xffffffffu;
         else if (i - bigoff == 0)
-            carry -= 0x0001u << (16 - off);
+            carry -= (uint64_t)1 << (BIGIT_BITS - off);
 
         ret.m_mantissa[i] = carry;
-        carry = (carry & 0xffff0000u) | (carry >> 16);
+        carry >>= BIGIT_BITS;
+        carry |= carry << BIGIT_BITS;
     }
 
     carry += 1;
@@ -237,31 +236,31 @@ real real::operator -(real const &x) const
         {
             if (!ret.m_mantissa[i])
             {
-                off += sizeof(uint16_t) * 8;
+                off += BIGIT_BITS;
                 continue;
             }
 
-            for (uint16_t tmp = ret.m_mantissa[i]; tmp < 0x8000u; tmp <<= 1)
+            for (uint32_t tmp = ret.m_mantissa[i]; tmp < 0x80000000u; tmp <<= 1)
                 off++;
             break;
         }
-        if (off == BIGITS * sizeof(uint16_t) * 8)
+        if (off == BIGITS * BIGIT_BITS)
             ret.m_signexp &= 0x80000000u;
         else
         {
             off++; /* Shift one more to get rid of the leading one */
             ret.m_signexp -= off;
 
-            bigoff = off / (sizeof(uint16_t) * 8);
-            off -= bigoff * sizeof(uint16_t) * 8;
+            bigoff = off / BIGIT_BITS;
+            off -= bigoff * BIGIT_BITS;
 
             for (int i = 0; i < BIGITS; i++)
             {
-                uint16_t tmp = 0;
+                uint32_t tmp = 0;
                 if (i + bigoff < BIGITS)
                     tmp |= ret.m_mantissa[i + bigoff] << off;
-                if (i + bigoff + 1 < BIGITS)
-                    tmp |= ret.m_mantissa[i + bigoff + 1] >> (16 - off);
+                if (off && i + bigoff + 1 < BIGITS)
+                    tmp |= ret.m_mantissa[i + bigoff + 1] >> (BIGIT_BITS - off);
                 ret.m_mantissa[i] = tmp;
             }
         }
@@ -287,25 +286,41 @@ real real::operator *(real const &x) const
 
     /* Accumulate low order product; no need to store it, we just
      * want the carry value */
-    uint64_t carry = 0;
+    uint64_t carry = 0, hicarry = 0, prev;
     for (int i = 0; i < BIGITS; i++)
     {
         for (int j = 0; j < i + 1; j++)
-            carry += (uint32_t)m_mantissa[BIGITS - 1 - j]
-                   * (uint32_t)x.m_mantissa[BIGITS - 1 + j - i];
-        carry >>= 16;
+        {
+            prev = carry;
+            carry += (uint64_t)m_mantissa[BIGITS - 1 - j]
+                   * (uint64_t)x.m_mantissa[BIGITS - 1 + j - i];
+            if (carry < prev)
+                hicarry++;
+        }
+        carry >>= BIGIT_BITS;
+        carry |= hicarry << BIGIT_BITS;
+        hicarry >>= BIGIT_BITS;
     }
 
     for (int i = 0; i < BIGITS; i++)
     {
         for (int j = i + 1; j < BIGITS; j++)
-            carry += (uint32_t)m_mantissa[BIGITS - 1 - j]
-                   * (uint32_t)x.m_mantissa[j - 1 - i];
-
+        {
+            prev = carry;
+            carry += (uint64_t)m_mantissa[BIGITS - 1 - j]
+                   * (uint64_t)x.m_mantissa[j - 1 - i];
+            if (carry < prev)
+                hicarry++;
+        }
+        prev = carry;
         carry += m_mantissa[BIGITS - 1 - i];
         carry += x.m_mantissa[BIGITS - 1 - i];
-        ret.m_mantissa[BIGITS - 1 - i] = carry & 0xffffu;
-        carry >>= 16;
+        if (carry < prev)
+            hicarry++;
+        ret.m_mantissa[BIGITS - 1 - i] = carry & 0xffffffffu;
+        carry >>= BIGIT_BITS;
+        carry |= hicarry << BIGIT_BITS;
+        hicarry >>= BIGIT_BITS;
     }
 
     /* Renormalise in case we overflowed the mantissa */
@@ -314,9 +329,9 @@ real real::operator *(real const &x) const
         carry--;
         for (int i = 0; i < BIGITS; i++)
         {
-            uint16_t tmp = ret.m_mantissa[i];
-            ret.m_mantissa[i] = (carry << 15) | (tmp >> 1);
-            carry = tmp & 0x0001u;
+            uint32_t tmp = ret.m_mantissa[i];
+            ret.m_mantissa[i] = (carry << (BIGIT_BITS - 1)) | (tmp >> 1);
+            carry = tmp & 1u;
         }
         e++;
     }
@@ -472,13 +487,11 @@ real re(real const &x)
 
     /* Use the system's float inversion to approximate 1/x */
     union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
-    v.x |= (uint32_t)x.m_mantissa[0] << 7;
-    v.x |= (uint32_t)x.m_mantissa[1] >> 9;
+    v.x |= x.m_mantissa[0] >> 9;
     v.f = 1.0 / v.f;
 
     real ret;
-    ret.m_mantissa[0] = (v.x >> 7) & 0xffffu;
-    ret.m_mantissa[1] = (v.x << 9) & 0xffffu;
+    ret.m_mantissa[0] = v.x << 9;
 
     uint32_t sign = x.m_signexp & 0x80000000u;
     ret.m_signexp = sign;
@@ -489,7 +502,7 @@ real re(real const &x)
 
     /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i < real::BIGITS; i *= 2)
+    for (int i = 2; i < real::BIGITS; i *= 2)
         ret = ret * (real::R_2 - ret * x);
 
     return ret;
@@ -517,13 +530,11 @@ real sqrt(real const &x)
      * exponent and final mantissa to pre-fill the result. */
     union { float f; uint32_t x; } u = { 1.0f }, v = { 2.0f };
     v.x -= ((x.m_signexp & 1) << 23);
-    v.x |= (uint32_t)x.m_mantissa[0] << 7;
-    v.x |= (uint32_t)x.m_mantissa[1] >> 9;
+    v.x |= x.m_mantissa[0] >> 9;
     v.f = 1.0 / sqrtf(v.f);
 
     real ret;
-    ret.m_mantissa[0] = (v.x >> 7) & 0xffffu;
-    ret.m_mantissa[1] = (v.x << 9) & 0xffffu;
+    ret.m_mantissa[0] = v.x << 9;
 
     uint32_t sign = x.m_signexp & 0x80000000u;
     ret.m_signexp = sign;
@@ -535,7 +546,7 @@ real sqrt(real const &x)
 
     /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i < real::BIGITS; i *= 2)
+    for (int i = 2; i < real::BIGITS; i *= 2)
     {
         ret = ret * (real::R_3 - ret * ret * x);
         ret.m_signexp--;
@@ -592,7 +603,7 @@ real log(real const &x)
     if (x.m_signexp >> 31 || x.m_signexp == 0)
     {
         tmp.m_signexp = 0xffffffffu;
-        tmp.m_mantissa[0] = 0xffffu;
+        tmp.m_mantissa[0] = 0xffffffffu;
         return tmp;
     }
     tmp.m_signexp = (1 << 30) - 1;
@@ -657,10 +668,10 @@ real floor(real const &x)
     {
         if (exponent <= 0)
             ret.m_mantissa[i] = 0;
-        else if (exponent < 8 * (int)sizeof(uint16_t))
-            ret.m_mantissa[i] &= ~((1 << (16 - exponent)) - 1);
+        else if (exponent < BIGIT_BITS)
+            ret.m_mantissa[i] &= ~((1 << (BIGIT_BITS - exponent)) - 1);
 
-        exponent -= 8 * sizeof(uint16_t);
+        exponent -= BIGIT_BITS;
     }
 
     return ret;
