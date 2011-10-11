@@ -22,8 +22,6 @@ using namespace std;
 namespace lol
 {
 
-static int const BIGIT_BITS = 32;
-
 real::real(float f) { *this = (double)f; }
 real::real(int i) { *this = (double)i; }
 real::real(unsigned int i) { *this = (double)i; }
@@ -500,9 +498,9 @@ real re(real const &x)
     exponent = -exponent + (v.x >> 23) - (u.x >> 23);
     ret.m_signexp |= (exponent - 1) & 0x7fffffffu;
 
-    /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
+    /* FIXME: 1+log2(BIGITS) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 2; i < real::BIGITS; i *= 2)
+    for (int i = 1; i <= real::BIGITS; i *= 2)
         ret = ret * (real::R_2 - ret * x);
 
     return ret;
@@ -544,9 +542,9 @@ real sqrt(real const &x)
     exponent = exponent + (v.x >> 23) - (u.x >> 23);
     ret.m_signexp |= exponent & 0x7fffffffu;
 
-    /* FIXME: log2(BIGITS) steps of Newton-Raphson seems to be enough for
+    /* FIXME: 1+log2(BIGITS) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 2; i < real::BIGITS; i *= 2)
+    for (int i = 1; i <= real::BIGITS; i *= 2)
     {
         ret = ret * (real::R_3 - ret * ret * x);
         ret.m_signexp--;
@@ -668,10 +666,10 @@ real floor(real const &x)
     {
         if (exponent <= 0)
             ret.m_mantissa[i] = 0;
-        else if (exponent < BIGIT_BITS)
-            ret.m_mantissa[i] &= ~((1 << (BIGIT_BITS - exponent)) - 1);
+        else if (exponent < real::BIGIT_BITS)
+            ret.m_mantissa[i] &= ~((1 << (real::BIGIT_BITS - exponent)) - 1);
 
-        exponent -= BIGIT_BITS;
+        exponent -= real::BIGIT_BITS;
     }
 
     return ret;
