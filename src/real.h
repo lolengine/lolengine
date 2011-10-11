@@ -76,6 +76,7 @@ public:
 
     friend real sin(real const &x);
     friend real cos(real const &x);
+    friend real tan(real const &x);
     friend real asin(real const &x);
     friend real acos(real const &x);
     friend real atan(real const &x);

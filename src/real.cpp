@@ -746,6 +746,30 @@ real cos(real const &x)
     return sin(real::R_PI_2 - x);
 }
 
+real tan(real const &x)
+{
+    /* Constrain input to [-π,π] */
+    real y = fmod(x, real::R_PI);
+
+    /* Constrain input to [-π/2,π/2] */
+    if (y < -real::R_PI_2)
+        y += real::R_PI;
+    else if (y > real::R_PI_2)
+        y -= real::R_PI;
+
+    /* In [-π/4,π/4] return sin/cos */
+    if (fabs(y) <= real::R_PI_4)
+        return sin(y) / cos(y);
+
+    /* Otherwise, return cos/sin */
+    if (y > real::R_0)
+        y = real::R_PI_2 - y;
+    else
+        y = -real::R_PI_2 - y;
+
+    return cos(y) / sin(y);
+}
+
 static real asinacos(real const &x, bool is_asin, bool is_negative)
 {
     /* Strategy for asin(): in [-0.5..0.5], use a Taylor series around
