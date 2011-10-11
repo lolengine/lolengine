@@ -180,22 +180,29 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(m4, -1.5f * -1.5f);
     }
 
-    LOLUNIT_TEST(Division)
+    LOLUNIT_TEST(ExactDivision)
     {
-        real a1(1.0f);
-        real a2(2.0f);
-
-        float m1 = a1 / a1;
-        float m2 = a2 / a1;
-        float m3 = a1 / a2;
-        float m4 = a2 / a2;
-        float m5 = a1 / -a2;
+        float m1 = real::R_1 / real::R_1;
+        float m2 = real::R_2 / real::R_1;
+        float m3 = real::R_1 / real::R_2;
+        float m4 = real::R_2 / real::R_2;
+        float m5 = real::R_1 / -real::R_2;
 
         LOLUNIT_ASSERT_EQUAL(m1, 1.0f);
         LOLUNIT_ASSERT_EQUAL(m2, 2.0f);
         LOLUNIT_ASSERT_EQUAL(m3, 0.5f);
         LOLUNIT_ASSERT_EQUAL(m4, 1.0f);
         LOLUNIT_ASSERT_EQUAL(m5, -0.5f);
+    }
+
+    LOLUNIT_TEST(InexactDivision)
+    {
+        /* 1 / 3 * 3 should be close to 1... check that it does not differ
+         * by more than 2^-k where k is the number of bits in the mantissa. */
+        real a = real::R_1 / real::R_3 * real::R_3;
+        real b = (real::R_1 - a) << (real::BIGITS * real::BIGIT_BITS);
+
+        LOLUNIT_ASSERT_LEQUAL((double)fabs(b), 1.0);
     }
 
     LOLUNIT_TEST(Shift)

@@ -104,12 +104,13 @@ public:
     static real const R_SQRT3;
     static real const R_SQRT1_2;
 
-private:
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
      * digits) */
     static int const BIGITS = 16;
+    static int const BIGIT_BITS = 32;
 
+private:
     uint32_t m_size;
     uint32_t m_signexp;
     uint32_t m_mantissa[BIGITS];
