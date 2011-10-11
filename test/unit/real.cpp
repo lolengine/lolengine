@@ -34,35 +34,39 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL(a2, 2.0);
         LOLUNIT_ASSERT_EQUAL(a10, 10.0);
 
-        double b0 = log(real::R_E);
-        LOLUNIT_ASSERT_EQUAL(b0, 1.0);
+        double b1 = log(real::R_E);
+        double b2 = log2(real::R_2);
+        LOLUNIT_ASSERT_EQUAL(b1, 1.0);
+        LOLUNIT_ASSERT_EQUAL(b2, 1.0);
 
-        double b1 = exp(re(real::R_LOG2E));
-        LOLUNIT_ASSERT_EQUAL(b1, 2.0);
+        double c1 = exp(re(real::R_LOG2E));
+        double c2 = log(exp2(real::R_LOG2E));
+        LOLUNIT_ASSERT_EQUAL(c1, 2.0);
+        LOLUNIT_ASSERT_EQUAL(c2, 1.0);
 
-        double b2 = exp(re(real::R_LOG10E));
-        LOLUNIT_ASSERT_EQUAL(b2, 10.0);
+        double d1 = exp(re(real::R_LOG10E));
+        LOLUNIT_ASSERT_EQUAL(d1, 10.0);
 
-        double b3 = exp(real::R_LN2);
-        LOLUNIT_ASSERT_EQUAL(b3, 2.0);
+        double e1 = exp(real::R_LN2);
+        LOLUNIT_ASSERT_EQUAL(e1, 2.0);
 
-        double b4 = exp(real::R_LN10);
-        LOLUNIT_ASSERT_EQUAL(b4, 10.0);
+        double f1 = exp(real::R_LN10);
+        LOLUNIT_ASSERT_EQUAL(f1, 10.0);
 
-        double b5 = sin(real::R_PI);
-        double b6 = cos(real::R_PI);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(b5, 0.0, 1e-100);
-        LOLUNIT_ASSERT_EQUAL(b6, -1.0);
+        double g1 = sin(real::R_PI);
+        double g2 = cos(real::R_PI);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(g1, 0.0, 1e-100);
+        LOLUNIT_ASSERT_EQUAL(g2, -1.0);
 
-        double b7 = sin(real::R_PI_2);
-        double b8 = cos(real::R_PI_2);
-        LOLUNIT_ASSERT_EQUAL(b7, 1.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(b8, 0.0, 1e-100);
+        double h1 = sin(real::R_PI_2);
+        double h2 = cos(real::R_PI_2);
+        LOLUNIT_ASSERT_EQUAL(h1, 1.0);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(h2, 0.0, 1e-100);
 
-        double b9 = sin(real::R_PI_4) * sin(real::R_PI_4);
-        double b10 = cos(real::R_PI_4) * cos(real::R_PI_4);
-        LOLUNIT_ASSERT_EQUAL(b9, 0.5);
-        LOLUNIT_ASSERT_EQUAL(b10, 0.5);
+        double i1 = sin(real::R_PI_4) * sin(real::R_PI_4);
+        double i2 = cos(real::R_PI_4) * cos(real::R_PI_4);
+        LOLUNIT_ASSERT_EQUAL(i1, 0.5);
+        LOLUNIT_ASSERT_EQUAL(i2, 0.5);
     }
 
     LOLUNIT_TEST(FloatToReal)

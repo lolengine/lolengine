@@ -553,6 +553,43 @@ real sqrt(real const &x)
     return ret * x;
 }
 
+real cbrt(real const &x)
+{
+    /* if zero, return x */
+    if (!(x.m_signexp << 1))
+        return x;
+
+    /* Use the system's float inversion to approximate cbrt(x). First
+     * we construct a float in the [1..8[ range that has roughly the same
+     * mantissa as our real. Its exponent is 0, 1 or 2, depending on the
+     * value of x. The final exponent is 0 or 1 (special case). We use
+     * the final exponent and final mantissa to pre-fill the result. */
+    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
+    v.x += ((x.m_signexp % 3) << 23);
+    v.x |= x.m_mantissa[0] >> 9;
+    v.f = powf(v.f, 0.33333333333333333f);
+
+    real ret;
+    ret.m_mantissa[0] = v.x << 9;
+
+    uint32_t sign = x.m_signexp & 0x80000000u;
+    ret.m_signexp = sign;
+
+    int exponent = (x.m_signexp & 0x7fffffffu) - (1 << 30) + 1;
+    exponent = exponent / 3 + (v.x >> 23) - (u.x >> 23);
+    ret.m_signexp |= (exponent + (1 << 30) - 1) & 0x7fffffffu;
+
+    /* FIXME: 1+log2(BIGITS) steps of Newton-Raphson seems to be enough for
+     * convergence, but this hasn't been checked seriously. */
+    for (int i = 1; i <= real::BIGITS; i *= 2)
+    {
+        static real third = re(real::R_3);
+        ret = third * (x / (ret * ret) + (ret << 1));
+    }
+
+    return ret;
+}
+
 real fabs(real const &x)
 {
     real ret = x;
@@ -608,6 +645,40 @@ real log(real const &x)
     return (real)(x.m_signexp - (1 << 30) + 1) * real::R_LN2 + fast_log(tmp);
 }
 
+real log2(real const &x)
+{
+    /* Strategy for log2(x): see log(x). */
+    real tmp = x;
+    if (x.m_signexp >> 31 || x.m_signexp == 0)
+    {
+        tmp.m_signexp = 0xffffffffu;
+        tmp.m_mantissa[0] = 0xffffffffu;
+        return tmp;
+    }
+    tmp.m_signexp = (1 << 30) - 1;
+    return (real)(x.m_signexp - (1 << 30) + 1) + fast_log(tmp) * real::R_LOG2E;
+}
+
+static real fast_exp(real const &x)
+{
+    /* This fast exp method is tuned to work on the [0..1] range and
+     * no effort whatsoever was made to improve convergence outside this
+     * domain of validity. */
+    real ret = real::R_1, fact = real::R_1, xn = x;
+
+    for (int i = 1; ; i++)
+    {
+        fact *= (real)i;
+        real newret = ret + xn / fact;
+        if (newret == ret)
+            break;
+        ret = newret;
+        xn *= x;
+    }
+
+    return ret;
+}
+
 real exp(real const &x)
 {
     /* Strategy for exp(x): the Taylor series does not converge very fast
@@ -628,20 +699,27 @@ real exp(real const &x)
      */
     int e0 = x / real::R_LN2;
     real x0 = x - (real)e0 * real::R_LN2;
-    real x1 = real::R_1, fact = real::R_1, xn = x0;
-
-    for (int i = 1; ; i++)
-    {
-        fact *= (real)i;
-        real newx1 = x1 + xn / fact;
-        if (newx1 == x1)
-            break;
-        x1 = newx1;
-        xn *= x0;
-    }
-
+    real x1 = fast_exp(x0);
     x1.m_signexp += e0;
     return x1;
+}
+
+real exp2(real const &x)
+{
+    /* Strategy for exp2(x): see strategy in exp(). */
+    int e0 = x;
+    real x0 = x - (real)e0;
+    real x1 = fast_exp(x0 * real::R_LN2);
+    x1.m_signexp += e0;
+    return x1;
+}
+
+real copysign(real const &x, real const &y)
+{
+    real ret = x;
+    ret.m_signexp &= 0x7fffffffu;
+    ret.m_signexp |= y.m_signexp & 0x80000000u;
+    return ret;
 }
 
 real floor(real const &x)
@@ -928,7 +1006,6 @@ real atan(real const &x)
 
 void real::print(int ndigits) const
 {
-    real const r1 = 1, r10 = 10;
     real x = *this;
 
     if (x.m_signexp >> 31)
@@ -941,9 +1018,9 @@ void real::print(int ndigits) const
     int exponent = 0;
     if (x.m_signexp)
     {
-        for (real div = r1, newdiv; true; div = newdiv)
+        for (real div = R_1, newdiv; true; div = newdiv)
         {
-            newdiv = div * r10;
+            newdiv = div * R_10;
             if (x < newdiv)
             {
                 x /= div;
@@ -951,10 +1028,10 @@ void real::print(int ndigits) const
             }
             exponent++;
         }
-        for (real mul = 1, newx; true; mul *= r10)
+        for (real mul = 1, newx; true; mul *= R_10)
         {
             newx = x * mul;
-            if (newx >= r1)
+            if (newx >= R_1)
             {
                 x = newx;
                 break;
@@ -971,7 +1048,7 @@ void real::print(int ndigits) const
         if (i == 0)
             printf(".");
         x -= real(digit);
-        x *= r10;
+        x *= R_10;
     }
 
     /* Print exponent information */

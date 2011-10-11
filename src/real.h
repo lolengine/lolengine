@@ -62,24 +62,38 @@ public:
     bool operator !() const;
     operator bool() const;
 
-    friend real fabs(real const &x);
-
-    friend real re(real const &x);
-    friend real sqrt(real const &x);
-    friend real log(real const &x);
-    friend real exp(real const &x);
-
-    friend real floor(real const &x);
-    friend real ceil(real const &x);
-    friend real round(real const &x);
-    friend real fmod(real const &x, real const &y);
-
+    /* Trigonometric functions */
     friend real sin(real const &x);
     friend real cos(real const &x);
     friend real tan(real const &x);
     friend real asin(real const &x);
     friend real acos(real const &x);
     friend real atan(real const &x);
+    /* FIXME: atan2 */
+
+    /* Hyperbolic functions */
+    /* FIXME: sinh cosh tanh */
+
+    /* Exponential and logarithmic functions */
+    friend real exp(real const &x);
+    friend real exp2(real const &x);
+    friend real log(real const &x);
+    friend real log2(real const &x);
+    /* FIXME: frexp ldexp log10 modf */
+
+    /* Power functions */
+    friend real re(real const &x);
+    friend real sqrt(real const &x);
+    friend real cbrt(real const &x);
+    /* FIXME: pow */
+
+    /* Rounding, absolute value, remainder etc. */
+    friend real ceil(real const &x);
+    friend real copysign(real const &x, real const &y);
+    friend real floor(real const &x);
+    friend real fabs(real const &x);
+    friend real round(real const &x);
+    friend real fmod(real const &x, real const &y);
 
     void print(int ndigits = 150) const;
 
