@@ -668,13 +668,16 @@ static real fast_exp(real const &x)
 
     for (int i = 1; ; i++)
     {
-        fact *= (real)i;
-        real newret = ret + xn / fact;
+        real newret = ret + xn;
         if (newret == ret)
             break;
         ret = newret;
+        real mul = (i + 1);
+        fact *= mul;
+        ret *= mul;
         xn *= x;
     }
+    ret /= fact;
 
     return ret;
 }
@@ -802,16 +805,19 @@ real sin(real const &x)
     if (absx > real::R_PI_2)
         absx = real::R_PI - absx;
 
-    real ret = real::R_0, fact = real::R_1, xn = absx, x2 = absx * absx;
+    real ret = real::R_0, fact = real::R_1, xn = absx, mx2 = -absx * absx;
     for (int i = 1; ; i += 2)
     {
-        real newret = ret + xn / fact;
+        real newret = ret + xn;
         if (newret == ret)
             break;
         ret = newret;
-        xn *= x2;
-        fact *= (real)(-(i + 1) * (i + 2));
+        real mul = (i + 1) * (i + 2);
+        fact *= mul;
+        ret *= mul;
+        xn *= mx2;
     }
+    ret /= fact;
 
     /* Propagate sign */
     if (switch_sign)
