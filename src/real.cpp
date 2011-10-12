@@ -642,7 +642,8 @@ real log(real const &x)
         return tmp;
     }
     tmp.m_signexp = (1 << 30) - 1;
-    return (real)(x.m_signexp - (1 << 30) + 1) * real::R_LN2 + fast_log(tmp);
+    return (real)(int)(x.m_signexp - (1 << 30) + 1) * real::R_LN2
+           + fast_log(tmp);
 }
 
 real log2(real const &x)
@@ -656,7 +657,8 @@ real log2(real const &x)
         return tmp;
     }
     tmp.m_signexp = (1 << 30) - 1;
-    return (real)(x.m_signexp - (1 << 30) + 1) + fast_log(tmp) * real::R_LOG2E;
+    return (real)(int)(x.m_signexp - (1 << 30) + 1)
+           + fast_log(tmp) * real::R_LOG2E;
 }
 
 static real fast_exp(real const &x)
