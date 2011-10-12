@@ -56,6 +56,16 @@ void bench_real(int mode)
         for (size_t i = 0; i < REAL_TABLE_SIZE; i++)
             invfact = invfact / real(1.0 + i);
         result[2] += timer.GetMs();
+
+        timer.GetMs();
+        for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
+            sin(real(0.01 * i));
+        result[3] += timer.GetMs() * 128;
+
+        timer.GetMs();
+        for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
+            exp((real)(int)(i - REAL_TABLE_SIZE / 256));
+        result[4] += timer.GetMs() * 128;
     }
 
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
@@ -65,5 +75,7 @@ void bench_real(int mode)
     Log::Info("real = real + real           %7.3f\n", result[0]);
     Log::Info("real = real * real           %7.3f\n", result[1]);
     Log::Info("real = real / real           %7.3f\n", result[2]);
+    Log::Info("real = sin(real)             %7.3f\n", result[3]);
+    Log::Info("real = exp(real)             %7.3f\n", result[4]);
 }
 
