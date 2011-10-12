@@ -590,6 +590,23 @@ real cbrt(real const &x)
     return ret;
 }
 
+real pow(real const &x, real const &y)
+{
+    if (!y)
+        return real::R_1;
+    if (!x)
+        return real::R_0;
+    if (x > real::R_0)
+        return exp(y * log(x));
+    else /* x < 0 */
+    {
+        if (y == round(y))
+            return -exp(y * log(-x));
+        /* FIXME: negative nth root */
+        return real::R_0;
+    }
+}
+
 real fabs(real const &x)
 {
     real ret = x;
@@ -1010,6 +1027,14 @@ real atan(real const &x)
     /* Propagate sign */
     ret.m_signexp |= (x.m_signexp & 0x80000000u);
     return ret;
+}
+
+void real::hexprint() const
+{
+    printf("%08x", m_signexp);
+    for (int i = 0; i < BIGITS; i++)
+        printf(" %08x", m_mantissa[i]);
+    printf("\n");
 }
 
 void real::print(int ndigits) const
