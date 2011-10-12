@@ -85,7 +85,7 @@ public:
     friend real re(real const &x);
     friend real sqrt(real const &x);
     friend real cbrt(real const &x);
-    /* FIXME: pow */
+    friend real pow(real const &x, real const &y);
 
     /* Rounding, absolute value, remainder etc. */
     friend real ceil(real const &x);
@@ -95,6 +95,7 @@ public:
     friend real round(real const &x);
     friend real fmod(real const &x, real const &y);
 
+    void hexprint() const;
     void print(int ndigits = 150) const;
 
     static real const R_0;
