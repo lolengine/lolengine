@@ -178,6 +178,16 @@ check()
             ;;
         ps3-ppu)
             ;;
+        windows-i386)
+            # If neither $MSYSTEM or $DISPLAY are set, and xvfb-run
+            # exists, use it to run the test suite.
+            if test "x${MSYSTEM}${DISPLAY}" = x \
+               && xvfb-run --help 2>&1 >/dev/null; then
+                xvfb-run make check
+            else
+                make check
+            fi
+            ;;
         windows-amd64)
             # No support for Wine64 yet
             ;;
