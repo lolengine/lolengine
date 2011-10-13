@@ -678,12 +678,18 @@ real log2(real const &x)
            + fast_log(tmp) * real::R_LOG2E;
 }
 
-static real fast_exp(real const &x)
+real log10(real const &x)
 {
-    /* This fast exp method is tuned to work on the [0..1] range and
+    return log(x) * real::R_LOG10E;
+}
+
+static real fast_exp_sub(real const &x, real const &y)
+{
+    /* This fast exp method is tuned to work on the [-1..1] range and
      * no effort whatsoever was made to improve convergence outside this
-     * domain of validity. */
-    real ret = real::R_1, fact = real::R_1, xn = x;
+     * domain of validity. The argument y is used for cases where we
+     * don't want the leading 1 in the Taylor series. */
+    real ret = real::R_1 - y, fact = real::R_1, xn = x;
 
     for (int i = 1; ; i++)
     {
@@ -721,7 +727,7 @@ real exp(real const &x)
      */
     int e0 = x / real::R_LN2;
     real x0 = x - (real)e0 * real::R_LN2;
-    real x1 = fast_exp(x0);
+    real x1 = fast_exp_sub(x0, real::R_0);
     x1.m_signexp += e0;
     return x1;
 }
@@ -731,9 +737,37 @@ real exp2(real const &x)
     /* Strategy for exp2(x): see strategy in exp(). */
     int e0 = x;
     real x0 = x - (real)e0;
-    real x1 = fast_exp(x0 * real::R_LN2);
+    real x1 = fast_exp_sub(x0 * real::R_LN2, real::R_0);
     x1.m_signexp += e0;
     return x1;
+}
+
+real sinh(real const &x)
+{
+    /* We cannot always use (exp(x)-exp(-x))/2 because we'll lose
+     * accuracy near zero. We only use this identity for |x|>0.5. If
+     * |x|<=0.5, we compute exp(x)-1 and exp(-x)-1 instead. */
+    bool near_zero = (fabs(x) < real::R_1 >> 1);
+    real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
+    real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
+    return (x1 - x2) >> 1;
+}
+
+real tanh(real const &x)
+{
+    /* See sinh() for the strategy here */
+    bool near_zero = (fabs(x) < real::R_1 >> 1);
+    real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
+    real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
+    real x3 = near_zero ? x1 + x2 + real::R_2 : x1 + x2;
+    return (x1 - x2) / x3;
+}
+
+real cosh(real const &x)
+{
+    /* No need to worry about accuracy here; maybe the last bit is slightly
+     * off, but that's about it. */
+    return (exp(x) + exp(-x)) >> 1;
 }
 
 real copysign(real const &x, real const &y)
