@@ -69,7 +69,7 @@ public:
     friend real asin(real const &x);
     friend real acos(real const &x);
     friend real atan(real const &x);
-    /* FIXME: atan2 */
+    friend real atan2(real const &y, real const &x);
 
     /* Hyperbolic functions */
     friend real sinh(real const &x);
@@ -82,7 +82,9 @@ public:
     friend real log(real const &x);
     friend real log2(real const &x);
     friend real log10(real const &x);
-    /* FIXME: frexp ldexp modf */
+    friend real frexp(real const &x, int *exp);
+    friend real ldexp(real const &x, int exp);
+    friend real modf(real const &x, real *iptr);
 
     /* Power functions */
     friend real re(real const &x);
