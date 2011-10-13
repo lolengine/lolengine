@@ -72,14 +72,17 @@ public:
     /* FIXME: atan2 */
 
     /* Hyperbolic functions */
-    /* FIXME: sinh cosh tanh */
+    friend real sinh(real const &x);
+    friend real cosh(real const &x);
+    friend real tanh(real const &x);
 
     /* Exponential and logarithmic functions */
     friend real exp(real const &x);
     friend real exp2(real const &x);
     friend real log(real const &x);
     friend real log2(real const &x);
-    /* FIXME: frexp ldexp log10 modf */
+    friend real log10(real const &x);
+    /* FIXME: frexp ldexp modf */
 
     /* Power functions */
     friend real re(real const &x);
