@@ -770,6 +770,38 @@ real cosh(real const &x)
     return (exp(x) + exp(-x)) >> 1;
 }
 
+real frexp(real const &x, int *exp)
+{
+    if (!x)
+    {
+        *exp = 0;
+        return x;
+    }
+
+    real ret = x;
+    int exponent = (ret.m_signexp & 0x7fffffffu) - (1 << 30) + 1;
+    *exp = exponent + 1;
+    ret.m_signexp -= exponent + 1;
+    return ret;
+}
+
+real ldexp(real const &x, int exp)
+{
+    real ret = x;
+    if (ret)
+        ret.m_signexp += exp;
+    return ret;
+}
+
+real modf(real const &x, real *iptr)
+{
+    real absx = fabs(x);
+    real tmp = floor(absx);
+
+    *iptr = copysign(tmp, x);
+    return copysign(absx - tmp, x);
+}
+
 real copysign(real const &x, real const &y)
 {
     real ret = x;
@@ -1060,6 +1092,32 @@ real atan(real const &x)
 
     /* Propagate sign */
     ret.m_signexp |= (x.m_signexp & 0x80000000u);
+    return ret;
+}
+
+real atan2(real const &y, real const &x)
+{
+    if (!y)
+    {
+        if ((x.m_signexp >> 31) == 0)
+            return y;
+        if (y.m_signexp >> 31)
+            return -real::R_PI;
+        return real::R_PI;
+    }
+
+    if (!x)
+    {
+        if (y.m_signexp >> 31)
+            return -real::R_PI;
+        return real::R_PI;
+    }
+
+    /* FIXME: handle the Inf and NaN cases */
+    real z = y / x;
+    real ret = atan(z);
+    if (x < real::R_0)
+        ret += (y > real::R_0) ? real::R_PI : -real::R_PI;
     return ret;
 }
 
