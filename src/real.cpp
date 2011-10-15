@@ -607,6 +607,33 @@ real pow(real const &x, real const &y)
     }
 }
 
+real gamma(real const &x)
+{
+    /* We use Spouge's formula. FIXME: precision is far from acceptable,
+     * especially with large values. We need to compute this with higher
+     * precision values in order to attain the desired accuracy. It might
+     * also be useful to sort the ck values by decreasing absolute value
+     * and do the addition in this order. */
+    int a = ceilf(logf(2) / logf(2 * M_PI) * real::BIGITS * real::BIGIT_BITS);
+
+    real ret = sqrt(real::R_PI << 1);
+    real fact_k_1 = real::R_1;
+
+    for (int k = 1; k < a; k++)
+    {
+        real a_k = (real)(a - k);
+        real ck = pow(a_k, (real)((float)k - 0.5)) * exp(a_k)
+                / (fact_k_1 * (x + (real)(k - 1)));
+        ret += ck;
+        fact_k_1 *= (real)-k;
+    }
+
+    ret *= pow(x + (real)(a - 1), x - (real::R_1 >> 1));
+    ret *= exp(-x - (real)(a - 1));
+
+    return ret;
+}
+
 real fabs(real const &x)
 {
     real ret = x;

@@ -91,6 +91,7 @@ public:
     friend real sqrt(real const &x);
     friend real cbrt(real const &x);
     friend real pow(real const &x, real const &y);
+    friend real gamma(real const &x);
 
     /* Rounding, absolute value, remainder etc. */
     friend real ceil(real const &x);
