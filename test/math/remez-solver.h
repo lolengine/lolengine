@@ -154,7 +154,6 @@ public:
             if (i < ORDER + 1)
                 b = zeroes[i];
 
-            printf("Error for [%g..%g]: ", (double)a, (double)b);
             for (;;)
             {
                 real c = a, delta = (b - a) >> 3;
@@ -183,7 +182,6 @@ public:
                     if (e > final)
                         final = e;
                     control[i] = (a + b) >> 1;
-                    printf("%g (at %g)\n", (double)e, (double)control[i]);
                     break;
                 }
             }
@@ -290,7 +288,7 @@ public:
             an[i] *= k2p[i];
         }
 
-        printf("Final polynomial:\n");
+        printf("Polynomial estimate:\n");
         for (int j = 0; j < ORDER + 1; j++)
         {
             if (j)

@@ -24,22 +24,22 @@ using namespace std;
 #include "remez-solver.h"
 
 /* The function we want to approximate */
-static real myfun(real const &x)
+real myfun(real const &y)
 {
-    real y = sqrt(x);
-    return (sin(y) - y) / (x * y);
+    real x = sqrt(y);
+    return (sin(x) - x) / (x * y);
 }
 
-static real myerr(real const &x)
+real myerr(real const &y)
 {
-    real y = sqrt(x);
-    return re(x * y);
+    real x = sqrt(y);
+    return sin(x) / (x * y);
 }
 
 int main(void)
 {
-    RemezSolver<4> solver;
-    solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 15);
+    RemezSolver<6> solver;
+    solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 40);
 
     return EXIT_SUCCESS;
 }
