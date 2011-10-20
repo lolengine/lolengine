@@ -20,6 +20,7 @@ namespace lol
 
 LOLUNIT_FIXTURE(BuildTest)
 {
+#if !defined LOL_DEBUG
     LOLUNIT_TEST(FastMath)
     {
         double x, y;
@@ -31,6 +32,7 @@ LOLUNIT_FIXTURE(BuildTest)
 
         LOLUNIT_ASSERT_EQUAL(x, y);
     }
+#endif
 
     LOLUNIT_TEST(FastMathOverride)
     {
