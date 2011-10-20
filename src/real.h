@@ -24,7 +24,10 @@ namespace lol
 class real
 {
 public:
-    inline real() { }
+    real();
+    real(real const &x);
+    real const &operator =(real const &x);
+    ~real();
 
     real(float f);
     real(double f);
@@ -42,15 +45,15 @@ public:
     real operator -(real const &x) const;
     real operator *(real const &x) const;
     real operator /(real const &x) const;
-    real &operator +=(real const &x);
-    real &operator -=(real const &x);
-    real &operator *=(real const &x);
-    real &operator /=(real const &x);
+    real const &operator +=(real const &x);
+    real const &operator -=(real const &x);
+    real const &operator *=(real const &x);
+    real const &operator /=(real const &x);
 
     real operator <<(int x) const;
     real operator >>(int x) const;
-    real &operator <<=(int x);
-    real &operator >>=(int x);
+    real const &operator <<=(int x);
+    real const &operator >>=(int x);
 
     bool operator ==(real const &x) const;
     bool operator !=(real const &x) const;
@@ -133,9 +136,8 @@ public:
     static int const BIGIT_BITS = 32;
 
 private:
-    uint32_t m_size;
+    uint32_t *m_mantissa;
     uint32_t m_signexp;
-    uint32_t m_mantissa[BIGITS];
 };
 
 } /* namespace lol */
