@@ -22,12 +22,43 @@ using namespace std;
 namespace lol
 {
 
-real::real(float f) { *this = (double)f; }
-real::real(int i) { *this = (double)i; }
-real::real(unsigned int i) { *this = (double)i; }
+real::real()
+{
+    m_mantissa = new uint32_t[BIGITS];
+    m_signexp = 0;
+}
+
+real::real(real const &x)
+{
+    m_mantissa = new uint32_t[BIGITS];
+    memcpy(m_mantissa, x.m_mantissa, BIGITS * sizeof(uint32_t));
+    m_signexp = x.m_signexp;
+}
+
+real const &real::operator =(real const &x)
+{
+    if (&x != this)
+    {
+        memcpy(m_mantissa, x.m_mantissa, BIGITS * sizeof(uint32_t));
+        m_signexp = x.m_signexp;
+    }
+
+    return *this;
+}
+
+real::~real()
+{
+    delete[] m_mantissa;
+}
+
+real::real(float f) { new(this) real((double)f); }
+real::real(int i) { new(this) real((double)i); }
+real::real(unsigned int i) { new(this) real((double)i); }
 
 real::real(double d)
 {
+    new(this) real();
+
     union { double d; uint64_t x; } u = { d };
 
     uint32_t sign = (u.x >> 63) << 31;
@@ -198,12 +229,13 @@ real real::operator -(real const &x) const
     int64_t carry = 0;
     for (int i = 0; i < bigoff; i++)
     {
-        carry -= x.m_mantissa[BIGITS - i];
+        carry -= x.m_mantissa[BIGITS - 1 - i];
         /* Emulates a signed shift */
         carry >>= BIGIT_BITS;
         carry |= carry << BIGIT_BITS;
     }
-    carry -= x.m_mantissa[BIGITS - 1 - bigoff] & (((int64_t)1 << off) - 1);
+    if (bigoff < BIGITS)
+        carry -= x.m_mantissa[BIGITS - 1 - bigoff] & (((int64_t)1 << off) - 1);
     carry /= (int64_t)1 << off;
 
     for (int i = BIGITS; i--; )
@@ -344,25 +376,25 @@ real real::operator /(real const &x) const
     return *this * re(x);
 }
 
-real &real::operator +=(real const &x)
+real const &real::operator +=(real const &x)
 {
     real tmp = *this;
     return *this = tmp + x;
 }
 
-real &real::operator -=(real const &x)
+real const &real::operator -=(real const &x)
 {
     real tmp = *this;
     return *this = tmp - x;
 }
 
-real &real::operator *=(real const &x)
+real const &real::operator *=(real const &x)
 {
     real tmp = *this;
     return *this = tmp * x;
 }
 
-real &real::operator /=(real const &x)
+real const &real::operator /=(real const &x)
 {
     real tmp = *this;
     return *this = tmp / x;
@@ -380,14 +412,14 @@ real real::operator >>(int x) const
     return tmp >>= x;
 }
 
-real &real::operator <<=(int x)
+real const &real::operator <<=(int x)
 {
     if (m_signexp << 1)
         m_signexp += x;
     return *this;
 }
 
-real &real::operator >>=(int x)
+real const &real::operator >>=(int x)
 {
     if (m_signexp << 1)
         m_signexp -= x;
@@ -402,7 +434,7 @@ bool real::operator ==(real const &x) const
     if (m_signexp != x.m_signexp)
         return false;
 
-    return memcmp(m_mantissa, x.m_mantissa, sizeof(m_mantissa)) == 0;
+    return memcmp(m_mantissa, x.m_mantissa, BIGITS * sizeof(uint32_t)) == 0;
 }
 
 bool real::operator !=(real const &x) const
