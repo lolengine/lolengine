@@ -27,7 +27,6 @@ class SpriteData
 
 private:
     TileSet *tileset;
-    vec3 pos;
     int id;
 };
 
@@ -39,7 +38,6 @@ Sprite::Sprite(TileSet *tileset, int id)
   : data(new SpriteData())
 {
     data->tileset = tileset;
-    data->pos = vec3(0);
     data->id = id;
 }
 
@@ -52,7 +50,7 @@ void Sprite::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    Scene::GetDefault()->AddTile(data->tileset, data->id, data->pos, 0);
+    Scene::GetDefault()->AddTile(data->tileset, data->id, position, 0);
 }
 
 Sprite::~Sprite()
