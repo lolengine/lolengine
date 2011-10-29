@@ -63,7 +63,11 @@ vec2 Input::GetAxis(int axis)
 
 #if defined USE_SDL
     /* Simulate a joystick using the keyboard. This SDL call is free. */
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+#else
     Uint8 *keystate = SDL_GetKeyState(NULL);
+#endif
     int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
     int up = (keystate[SDLK_w] | keystate[SDLK_z]) - keystate[SDLK_s] ;
     ret.x += left;
