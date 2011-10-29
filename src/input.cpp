@@ -130,7 +130,7 @@ void Input::SetMousePos(ivec2 coord)
     {
         if (data->entities[n] == top)
         {
-            data->entities[n]->mousepos = (ivec2)((ivec3)coord - top->bbox[0]);
+            data->entities[n]->mousepos = coord - top->bbox[0].xy();
             if (top != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else

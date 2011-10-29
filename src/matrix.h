@@ -63,17 +63,6 @@ namespace lol
         return *this = (*this) op val; \
     }
 
-#define CAST_OP(elems, dest) \
-    inline operator Vec##dest<T>() const \
-    { \
-        Vec##dest<T> ret; \
-        for (int n = 0; n < elems && n < dest; n++) \
-            ret[n] = (*this)[n]; \
-        for (int n = elems; n < dest; n++) \
-            ret[n] = 0; \
-        return ret; \
-    }
-
 #define OPERATORS(elems) \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
@@ -94,10 +83,6 @@ namespace lol
     SCALAR_OP(elems, +) \
     SCALAR_OP(elems, *) \
     SCALAR_OP(elems, /) \
-    \
-    CAST_OP(elems, 2) \
-    CAST_OP(elems, 3) \
-    CAST_OP(elems, 4) \
     \
     template<typename U> \
     inline operator Vec##elems<U>() const \
@@ -130,9 +115,74 @@ namespace lol
         return sqrtf((float)sqlen()); \
     }
 
+#define SWIZZLE2(e1, e2) \
+    inline Vec2<T> e1##e2() const \
+    { \
+        return Vec2<T>(e1, e2); \
+    }
+
+#define SWIZZLE3(e1, e2, e3) \
+    inline Vec3<T> e1##e2##e3() const \
+    { \
+        return Vec3<T>(e1, e2, e3); \
+    }
+
+#define SWIZZLE4(e1, e2, e3, e4) \
+    inline Vec4<T> e1##e2##e3##e4() const \
+    { \
+        return Vec4<T>(e1, e2, e3, e4); \
+    }
+
+#define SWIZZLE22(e1) \
+    SWIZZLE2(e1, x); SWIZZLE2(e1, y);
+#define SWIZZLE23(e1) \
+    SWIZZLE2(e1, x); SWIZZLE2(e1, y); SWIZZLE2(e1, z);
+#define SWIZZLE24(e1) \
+    SWIZZLE2(e1, x); SWIZZLE2(e1, y); SWIZZLE2(e1, z); SWIZZLE2(e1, w);
+
+#define SWIZZLE32(e1, e2) \
+    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y);
+#define SWIZZLE322(e1) \
+    SWIZZLE32(e1, x); SWIZZLE32(e1, y);
+#define SWIZZLE33(e1, e2) \
+    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y); SWIZZLE3(e1, e2, z);
+#define SWIZZLE333(e1) \
+    SWIZZLE33(e1, x); SWIZZLE33(e1, y); SWIZZLE33(e1, z);
+#define SWIZZLE34(e1, e2) \
+    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y); \
+    SWIZZLE3(e1, e2, z); SWIZZLE3(e1, e2, w);
+#define SWIZZLE344(e1) \
+    SWIZZLE34(e1, x); SWIZZLE34(e1, y); \
+    SWIZZLE34(e1, z); SWIZZLE34(e1, w);
+
+#define SWIZZLE42(e1, e2, e3) \
+    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y);
+#define SWIZZLE422(e1, e2) \
+    SWIZZLE42(e1, e2, x); SWIZZLE42(e1, e2, y);
+#define SWIZZLE4222(e1) \
+    SWIZZLE422(e1, x); SWIZZLE422(e1, y);
+#define SWIZZLE43(e1, e2, e3) \
+    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y); SWIZZLE4(e1, e2, e3, z);
+#define SWIZZLE433(e1, e2) \
+    SWIZZLE43(e1, e2, x); SWIZZLE43(e1, e2, y); SWIZZLE43(e1, e2, z);
+#define SWIZZLE4333(e1) \
+    SWIZZLE433(e1, x); SWIZZLE433(e1, y); SWIZZLE433(e1, z);
+#define SWIZZLE44(e1, e2, e3) \
+    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y); \
+    SWIZZLE4(e1, e2, e3, z); SWIZZLE4(e1, e2, e3, w);
+#define SWIZZLE444(e1, e2) \
+    SWIZZLE44(e1, e2, x); SWIZZLE44(e1, e2, y); \
+    SWIZZLE44(e1, e2, z); SWIZZLE44(e1, e2, w);
+#define SWIZZLE4444(e1) \
+    SWIZZLE444(e1, x); SWIZZLE444(e1, y); SWIZZLE444(e1, z); SWIZZLE444(e1, w);
+
 template <typename T> struct Vec2;
 template <typename T> struct Vec3;
 template <typename T> struct Vec4;
+
+/*
+ * 2-element vectors
+ */
 
 template <typename T> struct Vec2
 {
@@ -141,6 +191,10 @@ template <typename T> struct Vec2
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
     OPERATORS(2)
+
+    SWIZZLE22(x); SWIZZLE22(y);
+    SWIZZLE322(x); SWIZZLE322(y);
+    SWIZZLE4222(x); SWIZZLE4222(y);
 
 #if !defined __ANDROID__
     template<typename U>
@@ -154,13 +208,23 @@ template <typename T> struct Vec2
 typedef Vec2<float> vec2;
 typedef Vec2<int> ivec2;
 
+/*
+ * 3-element vectors
+ */
+
 template <typename T> struct Vec3
 {
     inline Vec3() { }
     inline Vec3(T val) { x = y = z = val; }
     inline Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
+    inline Vec3(Vec2<T> _xy, T _z) { x = _xy.x; y = _xy.y; z = _z; }
+    inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
     OPERATORS(3)
+
+    SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
+    SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
+    SWIZZLE4333(x); SWIZZLE4333(y); SWIZZLE4333(z);
 
 #if !defined __ANDROID__
     template<typename U>
@@ -175,13 +239,27 @@ template <typename T> struct Vec3
 typedef Vec3<float> vec3;
 typedef Vec3<int> ivec3;
 
+/*
+ * 4-element vectors
+ */
+
 template <typename T> struct Vec4
 {
     inline Vec4() { }
     inline Vec4(T val) { x = y = z = w = val; }
     inline Vec4(T _x, T _y, T _z, T _w) { x = _x; y = _y; z = _z; w = _w; }
+    inline Vec4(Vec2<T> _xy, T _z, T _w) { x = _xy.x; y = _xy.y; z = _z; w = _w; }
+    inline Vec4(T _x, Vec2<T> _yz, T _w) { x = _x; y = _yz.x; z = _yz.y; w = _w; }
+    inline Vec4(T _x, T _y, Vec2<T> _zw) { x = _x; y = _y; z = _zw.x; w = _zw.y; }
+    inline Vec4(Vec2<T> _xy, Vec2<T> _zw) { x = _xy.x; y = _xy.y; z = _zw.x; w = _zw.y; }
+    inline Vec4(Vec3<T> _xyz, T _w) { x = _xyz.x; y = _xyz.y; z = _xyz.z; w = _w; }
+    inline Vec4(T _x, Vec3<T> _yzw) { x = _x; y = _yzw.x; z = _yzw.y; w = _yzw.z; }
 
     OPERATORS(4)
+
+    SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
+    SWIZZLE344(x); SWIZZLE344(y); SWIZZLE344(z); SWIZZLE344(w);
+    SWIZZLE4444(x); SWIZZLE4444(y); SWIZZLE4444(z); SWIZZLE4444(w);
 
 #if !defined __ANDROID__
     template<typename U>
@@ -221,6 +299,10 @@ typedef Vec4<int> ivec4;
 GLOBALS(2)
 GLOBALS(3)
 GLOBALS(4)
+
+/*
+ * 4×4-element matrices
+ */
 
 template <typename T> struct Mat4
 {

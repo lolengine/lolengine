@@ -120,15 +120,15 @@ LOLUNIT_FIXTURE(MatrixTest)
     {
         vec2 a1(1.0f, 3.0f);
 
-        vec3 b(a1);
-        vec2 a2(b);
+        vec3 b(a1, 0.0f);
+        vec2 a2(b.xy());
         LOLUNIT_ASSERT_EQUAL(b.x, a1.x);
         LOLUNIT_ASSERT_EQUAL(b.y, a1.y);
         LOLUNIT_ASSERT_EQUAL(b.z, 0.0f);
         LOLUNIT_ASSERT_EQUAL(a2, a1);
 
-        vec4 c(a1);
-        vec2 a3(c);
+        vec4 c(a1, 0.0f, 0.0f);
+        vec2 a3(c.xy());
         LOLUNIT_ASSERT_EQUAL(c.x, a1.x);
         LOLUNIT_ASSERT_EQUAL(c.y, a1.y);
         LOLUNIT_ASSERT_EQUAL(c.z, 0.0f);
