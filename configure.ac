@@ -42,6 +42,10 @@ dnl PKG_PROG_PKG_CONFIG which needs to be called first.
 AC_EGREP_CPP(yes, foo)
 PKG_PROG_PKG_CONFIG()
 
+dnl  Available platforms: some of these are not public
+AM_CONDITIONAL(HAVE_PS3, test -f src/platform/ps3/ps3app.cpp)
+
+AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 dnl conditional builds
 AC_ARG_ENABLE(debug,
   [  --enable-debug          build debug versions of the game (default no)])

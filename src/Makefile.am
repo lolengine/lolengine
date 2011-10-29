@@ -17,11 +17,8 @@ liblol_a_SOURCES = \
     \
     eglapp.cpp eglapp.h \
     \
-    platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
-    platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h \
-    \
-    platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
-    platform/ps3/ps3input.cpp platform/ps3/ps3input.h \
+    $(ps3_sources) \
+    $(sdl_sources) \
     \
     shader/shader.cpp shader/shader.h \
     \
@@ -38,4 +35,14 @@ liblol_a_SOURCES = \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h \
     debug/quad.cpp debug/quad.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
+
+sdl_sources =  \
+    platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
+    platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
+
+if HAVE_PS3
+ps3_sources =  \
+    platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
+    platform/ps3/ps3input.cpp platform/ps3/ps3input.h
+endif
 
