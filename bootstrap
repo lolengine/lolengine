@@ -16,6 +16,16 @@
 # Die if an error occurs
 set -e
 
+# LolEngine specific:
+sed -ne '/AC_CONFIG_FILES/,$p' configure.ac \
+  | sed -ne 's/[ \[*]*\([a-z].*\).Makefile.*/\1/p' | while read p; do
+    if [ ! -f "$p/Makefile.am" ]; then
+        echo "bootstrap: $p/Makefile.am does not exist -- creating stub"
+        mkdir -p "$p"
+        echo "# Stub created by bootstrap" > "$p/Makefile.am"
+    fi
+done
+
 # Guess whether we are using configure.ac or configure.in
 if test -f configure.ac; then
   conffile="configure.ac"
