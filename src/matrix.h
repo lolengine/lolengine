@@ -358,14 +358,29 @@ template <typename T> struct Mat4
     T det() const;
     Mat4<T> invert() const;
 
-    static Mat4<T> ortho(T left, T right, T bottom, T top, T near, T far);
-    static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
-    static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
-    static Mat4<T> perspective(T theta, T width, T height, T near, T far);
+    /* Helpers for transformation matrices */
     static Mat4<T> translate(T x, T y, T z);
     static Mat4<T> translate(Vec3<T> v);
-    static Mat4<T> rotate(T theta, T x, T y, T z);
-    static Mat4<T> rotate(T theta, Vec3<T> v);
+    static Mat4<T> rotate(T angle, T x, T y, T z);
+    static Mat4<T> rotate(T angle, Vec3<T> v);
+
+    static inline Mat4<T> translate(Mat4<T> mat, Vec3<T> v)
+    {
+        return translate(v) * mat;
+    }
+
+    static inline Mat4<T> rotate(Mat4<T> mat, T angle, Vec3<T> v)
+    {
+        return rotate(angle, v) * mat;
+    }
+
+    /* Helpers for view matrices */
+    static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
+
+    /* Helpers for projection matrices */
+    static Mat4<T> ortho(T left, T right, T bottom, T top, T near, T far);
+    static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
+    static Mat4<T> perspective(T fov_y, T width, T height, T near, T far);
 
     void printf() const;
 

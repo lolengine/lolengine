@@ -12,6 +12,15 @@
 #   include "config.h"
 #endif
 
+#if defined WIN32 && !defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
+
+#include <cmath> /* for M_PI */
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
 
@@ -46,7 +55,7 @@ template<> vec3 cross(vec3 v1, vec3 v2)
 
 template<> vec2 normalize(vec2 v)
 {
-    float norm = v.sqlen();
+    float norm = v.len();
     if (!norm)
         return vec2(0);
     return v / norm;
@@ -54,7 +63,7 @@ template<> vec2 normalize(vec2 v)
 
 template<> vec3 normalize(vec3 v)
 {
-    float norm = v.sqlen();
+    float norm = v.len();
     if (!norm)
         return vec3(0);
     return v / norm;
@@ -62,7 +71,7 @@ template<> vec3 normalize(vec3 v)
 
 template<> vec4 normalize(vec4 v)
 {
-    float norm = v.sqlen();
+    float norm = v.len();
     if (!norm)
         return vec4(0);
     return v / norm;
@@ -188,6 +197,80 @@ template<> std::ostream &operator<<(std::ostream &stream, mat4 const &m)
 }
 #endif
 
+template<> mat4 mat4::translate(float x, float y, float z)
+{
+    mat4 ret(1.0f);
+    ret[3][0] = x;
+    ret[3][1] = y;
+    ret[3][2] = z;
+    return ret;
+}
+
+template<> mat4 mat4::translate(vec3 v)
+{
+    return translate(v.x, v.y, v.z);
+}
+
+template<> mat4 mat4::rotate(float angle, float x, float y, float z)
+{
+    angle *= (M_PI / 180.0f);
+
+    float st = sinf(angle);
+    float ct = cosf(angle);
+
+    float len = sqrtf(x * x + y * y + z * z);
+    float invlen = len ? 1.0f / len : 0.0f;
+    x *= invlen;
+    y *= invlen;
+    z *= invlen;
+
+    float mtx = (1.0f - ct) * x;
+    float mty = (1.0f - ct) * y;
+    float mtz = (1.0f - ct) * z;
+
+    mat4 ret(1.0f);
+
+    ret[0][0] = x * mtx + ct;
+    ret[0][1] = x * mty + st * z;
+    ret[0][2] = x * mtz - st * y;
+
+    ret[1][0] = y * mtx - st * z;
+    ret[1][1] = y * mty + ct;
+    ret[1][2] = y * mtz + st * x;
+
+    ret[2][0] = z * mtx + st * y;
+    ret[2][1] = z * mty - st * x;
+    ret[2][2] = z * mtz + ct;
+
+    return ret;
+}
+
+template<> mat4 mat4::rotate(float angle, vec3 v)
+{
+    return rotate(angle, v.x, v.y, v.z);
+}
+
+template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
+{
+    vec3 v3 = normalize(eye - center);
+    vec3 v2 = normalize(up);
+    vec3 v1 = normalize(cross(v2, v3));
+    v2 = cross(v3, v1);
+
+    mat4 orient(1.0f);
+    orient[0][0] = v1.x;
+    orient[0][1] = v2.x;
+    orient[0][2] = v3.x;
+    orient[1][0] = v1.y;
+    orient[1][1] = v2.y;
+    orient[1][2] = v3.y;
+    orient[2][0] = v1.z;
+    orient[2][1] = v2.z;
+    orient[2][2] = v3.z;
+
+    return orient * mat4::translate(-eye);
+}
+
 template<> mat4 mat4::ortho(float left, float right, float bottom,
                             float top, float near, float far)
 {
@@ -224,84 +307,15 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
     return ret;
 }
 
-template<> mat4 mat4::translate(float x, float y, float z)
-{
-    mat4 ret(1.0f);
-    ret[3][0] = x;
-    ret[3][1] = y;
-    ret[3][2] = z;
-    return ret;
-}
-
-template<> mat4 mat4::translate(vec3 v)
-{
-    return translate(v.x, v.y, v.z);
-}
-
-template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
-{
-    vec3 f = normalize(center - eye);
-    vec3 u = normalize(up);
-    vec3 s = normalize(cross(f, u));
-    u = cross(s, f);
-
-    mat4 ret(1.0f);
-    ret[0][0] = s.x;
-    ret[0][1] = s.y;
-    ret[0][2] = s.z;
-    ret[1][0] = u.x;
-    ret[1][1] = u.y;
-    ret[1][2] = u.z;
-    ret[2][0] =-f.x;
-    ret[2][1] =-f.y;
-    ret[2][2] =-f.z;
-    return ret * mat4::translate(-eye);
-}
-
-template<> mat4 mat4::perspective(float theta, float width,
+template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
-    float t1 = tanf(theta * 0.5f);
-    float t2 = t1 * height / width;
+    fov_y *= (M_PI / 180.0f);
+
+    float t2 = tanf(fov_y * 0.5f);
+    float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
-}
-
-template<> mat4 mat4::rotate(float theta, float x, float y, float z)
-{
-    float st = sinf(theta);
-    float ct = cosf(theta);
-
-    float len = sqrtf(x * x + y * y + z * z);
-    float invlen = len ? 1.0f / len : 0.0f;
-    x *= invlen;
-    y *= invlen;
-    z *= invlen;
-
-    float mtx = (1.0f - ct) * x;
-    float mty = (1.0f - ct) * y;
-    float mtz = (1.0f - ct) * z;
-
-    mat4 ret(1.0f);
-
-    ret[0][0] = x * mtx + ct;
-    ret[0][1] = x * mty + st * z;
-    ret[0][2] = x * mtz - st * y;
-
-    ret[1][0] = y * mtx - st * z;
-    ret[1][1] = y * mty + ct;
-    ret[1][2] = y * mtz + st * x;
-
-    ret[2][0] = z * mtx + st * y;
-    ret[2][1] = z * mty - st * x;
-    ret[2][2] = z * mtz + ct;
-
-    return ret;
-}
-
-template<> mat4 mat4::rotate(float theta, vec3 v)
-{
-    return rotate(theta, v.x, v.y, v.z);
 }
 
 } /* namespace lol */
