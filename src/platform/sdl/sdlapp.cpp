@@ -19,6 +19,7 @@
 #include "core.h"
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
+#include "platform/sdl/sdlinput.h"
 
 namespace lol
 {
@@ -67,6 +68,9 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     Ticker::Setup(fps);
     Video::Setup(ivec2(video->w, video->h));
     Audio::Setup(2);
+
+    /* Autoreleased objects */
+    new SdlInput();
 #endif
 }
 

@@ -98,6 +98,7 @@ static inline int isnan(float f)
 #include "layer.h"
 #include "shader/shader.h"
 #include "image/image.h"
+#include "application/application.h"
 
 // Managers
 #include "ticker.h"

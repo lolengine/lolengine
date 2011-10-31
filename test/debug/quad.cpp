@@ -19,15 +19,6 @@
 using namespace std;
 using namespace lol;
 
-#if defined __CELLOS_LV2__
-#   include "platform/ps3/ps3app.h"
-#elif defined HAVE_GLES_2X
-#   include "eglapp.h"
-#else
-#   include "platform/sdl/sdlapp.h"
-#   include "platform/sdl/sdlinput.h"
-#endif
-
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
@@ -38,18 +29,9 @@ using namespace lol;
 
 int main(int argc, char **argv)
 {
-#if defined __CELLOS_LV2__
-    Ps3App app("Quad", ivec2(640, 480), 60.0f);
-#elif defined HAVE_GLES_2X
-    EglApp app("Quad", ivec2(640, 480), 60.0f);
-#else
-    SdlApp app("Quad", ivec2(640, 480), 60.0f);
-#endif
+    Application app("Quad", ivec2(640, 480), 60.0f);
 
-    /* Register an input driver and some debug stuff */
-#if !defined HAVE_GLES_2X
-    new SdlInput();
-#endif
+    /* Register some debug stuff */
     new DebugFps(5, 5);
     new DebugQuad();
 
