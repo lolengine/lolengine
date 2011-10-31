@@ -404,6 +404,13 @@ void Scene::Render() // XXX: rename to Blit()
     free(data->tiles);
     data->tiles = 0;
     data->ntiles = 0;
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+#if defined HAVE_GL_2X && !defined __APPLE__
+    glDisable(GL_ALPHA_TEST);
+#endif
+    glDisable(GL_BLEND);
 }
 
 } /* namespace lol */
