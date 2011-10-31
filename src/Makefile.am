@@ -15,6 +15,7 @@ liblol_a_SOURCES = \
     \
     lol/unit.h \
     \
+    application/application.cpp application/application.h \
     eglapp.cpp eglapp.h \
     \
     $(ps3_sources) \

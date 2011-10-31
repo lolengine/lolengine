@@ -102,6 +102,9 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
     Ticker::Setup(fps);
     Video::Setup(res);
     Audio::Setup(2);
+
+    /* Autoreleased objects */
+    new Ps3Input();
 #endif
 }
 
