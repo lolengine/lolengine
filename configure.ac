@@ -327,6 +327,8 @@ AC_CONFIG_FILES(
   src/Makefile
   test/Makefile
   test/math/Makefile
+  test/tutorial/Makefile
+  test/xolotl/Makefile
   gfx/Makefile
   gfx/font/Makefile
   tools/Makefile
