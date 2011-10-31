@@ -287,8 +287,8 @@ void Scene::Render() // XXX: rename to Blit()
 #if 0
     static float f = 0.0f;
     f += 0.01f;
-    data->model_matrix *= mat4::rotate(0.1f * sinf(f), 1.0f, 0.0f, 0.0f);
-    data->model_matrix *= mat4::rotate(0.3f * cosf(f), 0.0f, 0.0f, 1.0f);
+    data->model_matrix *= mat4::rotate(6.0f * sinf(f), 1.0f, 0.0f, 0.0f);
+    data->model_matrix *= mat4::rotate(17.0f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
     data->model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff

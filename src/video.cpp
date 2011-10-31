@@ -17,6 +17,8 @@
 #if defined _WIN32 && !defined _XBOX
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 #include "core.h"
@@ -79,8 +81,6 @@ void Video::Setup(ivec2 size)
 
 void Video::SetFov(float theta)
 {
-#undef near /* Fuck Microsoft */
-#undef far /* Fuck Microsoft again */
     vec2 size = GetSize();
     float near = -size.x - size.y;
     float far = size.x + size.y;
