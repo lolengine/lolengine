@@ -28,7 +28,9 @@ public:
     /* Constructors. Always inline so that the code can work in registers
      * instead of calling routines with the hidden "this" parameter. */
     inline half() { }
+    inline half(int f) { *this = makefast(f); }
     inline half(float f) { *this = makefast(f); }
+    inline half(double f) { *this = makefast(f); }
 
     inline int is_nan() const
     {
@@ -50,9 +52,12 @@ public:
         return (is_finite() && (bits & 0x7c00u)) || ((bits & 0x7fffu) == 0);
     }
 
-    /* Cast to other types */
-    inline operator float() const { return tofloat(*this); }
+    /* Cast to other types -- always inline, see constructors */
+    inline half &operator =(int f) { return *this = makefast(f); }
+    inline half &operator =(float f) { return *this = makefast(f); }
+    inline half &operator =(double f) { return *this = makefast(f); }
     inline operator int() const { return (int)tofloat(*this); }
+    inline operator float() const { return tofloat(*this); }
 
     static float tofloat(half h);
 

@@ -113,7 +113,14 @@ namespace lol
     { \
         using namespace std; \
         return sqrtf((float)sqlen()); \
-    }
+    } \
+    \
+    template<typename U> \
+    friend U dot(Vec##elems<U>, Vec##elems<U>); \
+    template<typename U> \
+    friend Vec##elems<U> normalize(Vec##elems<U>); \
+    \
+    void printf() const;
 
 #define SWIZZLE2(e1, e2) \
     inline Vec2<T> e1##e2() const \
@@ -205,8 +212,16 @@ template <typename T> struct Vec2
     union { T y; T b; T j; };
 };
 
+typedef Vec2<half> f16vec2;
 typedef Vec2<float> vec2;
-typedef Vec2<int> ivec2;
+typedef Vec2<int8_t> i8vec2;
+typedef Vec2<uint8_t> u8vec2;
+typedef Vec2<int16_t> i16vec2;
+typedef Vec2<uint16_t> u16vec2;
+typedef Vec2<int32_t> ivec2;
+typedef Vec2<uint32_t> uvec2;
+typedef Vec2<int64_t> i64vec2;
+typedef Vec2<uint64_t> u64vec2;
 
 /*
  * 3-element vectors
@@ -226,6 +241,9 @@ template <typename T> struct Vec3
     SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
     SWIZZLE4333(x); SWIZZLE4333(y); SWIZZLE4333(z);
 
+    template<typename U>
+    friend Vec3<U> cross(Vec3<U>, Vec3<U>);
+
 #if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
@@ -236,8 +254,16 @@ template <typename T> struct Vec3
     union { T z; T c; T k; };
 };
 
+typedef Vec3<half> f16vec3;
 typedef Vec3<float> vec3;
-typedef Vec3<int> ivec3;
+typedef Vec3<int8_t> i8vec3;
+typedef Vec3<uint8_t> u8vec3;
+typedef Vec3<int16_t> i16vec3;
+typedef Vec3<uint16_t> u16vec3;
+typedef Vec3<int32_t> ivec3;
+typedef Vec3<uint32_t> uvec3;
+typedef Vec3<int64_t> i64vec3;
+typedef Vec3<uint64_t> u64vec3;
 
 /*
  * 4-element vectors
@@ -272,8 +298,16 @@ template <typename T> struct Vec4
     union { T w; T d; T l; };
 };
 
+typedef Vec4<half> f16vec4;
 typedef Vec4<float> vec4;
-typedef Vec4<int> ivec4;
+typedef Vec4<int8_t> i8vec4;
+typedef Vec4<uint8_t> u8vec4;
+typedef Vec4<int16_t> i16vec4;
+typedef Vec4<uint16_t> u16vec4;
+typedef Vec4<int32_t> ivec4;
+typedef Vec4<uint32_t> uvec4;
+typedef Vec4<int64_t> i64vec4;
+typedef Vec4<uint64_t> u64vec4;
 
 #define SCALAR_GLOBAL(elems, op, U) \
     template<typename T> \
@@ -326,9 +360,12 @@ template <typename T> struct Mat4
 
     static Mat4<T> ortho(T left, T right, T bottom, T top, T near, T far);
     static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
+    static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
     static Mat4<T> perspective(T theta, T width, T height, T near, T far);
     static Mat4<T> translate(T x, T y, T z);
+    static Mat4<T> translate(Vec3<T> v);
     static Mat4<T> rotate(T theta, T x, T y, T z);
+    static Mat4<T> rotate(T theta, Vec3<T> v);
 
     void printf() const;
 
@@ -400,8 +437,16 @@ template <typename T> struct Mat4
     Vec4<T> v[4];
 };
 
+typedef Mat4<half> f16mat4;
 typedef Mat4<float> mat4;
-typedef Mat4<int> imat4;
+typedef Mat4<int8_t> i8mat4;
+typedef Mat4<uint8_t> u8mat4;
+typedef Mat4<int16_t> i16mat4;
+typedef Mat4<uint16_t> u16mat4;
+typedef Mat4<int32_t> imat4;
+typedef Mat4<uint32_t> umat4;
+typedef Mat4<int64_t> i64mat4;
+typedef Mat4<uint64_t> u64mat4;
 
 } /* namespace lol */
 
