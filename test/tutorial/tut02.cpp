@@ -32,6 +32,8 @@ class Cube : public WorldEntity
 public:
     Cube()
     {
+        m_angle = 0;
+
         /* Front */
         m_vertices[0] = vec3(-1.0, -1.0,  1.0);
         m_vertices[1] = vec3( 1.0, -1.0,  1.0);
@@ -68,30 +70,16 @@ public:
 
     virtual void TickGame(float deltams)
     {
-real x(4.08f); x.print();
         WorldEntity::TickGame(deltams);
 
-        m_angle += deltams;
+        m_angle += deltams / 1000.0f * 45.0f;
 
-        vec3 axis_y(0, 1, 0);
-        mat4 anim = mat4::rotate(m_angle * 0.0001f, axis_y);
+        mat4 anim = mat4::rotate(m_angle, vec3(0, 1, 0));
         mat4 model = mat4::translate(vec3(0, 0, -4));
         mat4 view = mat4::lookat(vec3(0, 2, 0), vec3(0, 0, -4), vec3(0, 1, 0));
-        mat4 proj = mat4::perspective(M_PI / 4, 640.0f, 480.0f, -10.0f, 10.0f);
-anim = mat4(1.0f);
-model = mat4(1.0f);
-view = mat4(1.0f);
+        mat4 proj = mat4::perspective(45.0f, 640.0f, 480.0f, 0.1f, 10.0f);
+
         m_matrix = proj * view * model * anim;
-proj.printf();
-view.printf();
-model.printf();
-anim.printf();
-printf("\n");
-m_matrix.printf();
-printf("\n");
-m_vertices[0].printf();
-(m_matrix * vec4(m_vertices[0], 1)).printf();
-printf("\n");
     }
 
     virtual void TickDraw(float deltams)
@@ -102,24 +90,25 @@ printf("\n");
         {
             m_shader = Shader::Create(
                 "#version 120\n"
-                "attribute vec3 coord3d;"
-                "attribute vec3 v_color;"
-                "uniform mat4 mvp;"
-                "varying vec3 f_color;"
+                "attribute vec3 in_Vertex;"
+                "attribute vec3 in_Color;"
+                "uniform mat4 in_Matrix;"
+                "varying vec3 pass_Color;"
+                ""
                 "void main(void) {"
-                "    gl_Position = mvp * vec4(coord3d, 1.0);"
-                "    f_color = v_color;"
+                "    gl_Position = in_Matrix * vec4(in_Vertex, 1.0);"
+                "    pass_Color = in_Color;"
                 "}",
 
                 "#version 120\n"
-                "varying vec3 f_color;"
+                "varying vec3 pass_Color;"
+                ""
                 "void main(void) {"
-                "    gl_FragColor = vec4(f_color, 1.0);"
-                "    gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);"
+                "    gl_FragColor = vec4(pass_Color, 1.0);"
                 "}");
-            m_coord = m_shader->GetAttribLocation("coord3d");
-            m_color = m_shader->GetAttribLocation("v_color");
-            m_mvp = m_shader->GetUniformLocation("mvp");
+            m_coord = m_shader->GetAttribLocation("in_Vertex");
+            m_color = m_shader->GetAttribLocation("in_Color");
+            m_mvp = m_shader->GetUniformLocation("in_Matrix");
             m_ready = true;
 
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -143,6 +132,7 @@ printf("\n");
         }
 
         m_shader->Bind();
+        m_shader->SetUniform(m_mvp, m_matrix);
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glEnableVertexAttribArray(m_coord);
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -156,7 +146,8 @@ printf("\n");
         int size;
         glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 
-        glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+
+        glDrawElements(GL_TRIANGLES, size / sizeof(uint16_t), GL_UNSIGNED_SHORT, 0);
 
         glDisableVertexAttribArray(m_coord);
         glDisableVertexAttribArray(m_color);
