@@ -22,6 +22,52 @@ using namespace std;
 namespace lol
 {
 
+template<> float dot(vec2 v1, vec2 v2)
+{
+    return v1.x * v2.x + v1.y * v2.y;
+}
+
+template<> float dot(vec3 v1, vec3 v2)
+{
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+template<> float dot(vec4 v1, vec4 v2)
+{
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
+}
+
+template<> vec3 cross(vec3 v1, vec3 v2)
+{
+    return vec3(v1.y * v2.z - v1.z * v2.y,
+                v1.z * v2.x - v1.x * v2.z,
+                v1.x * v2.y - v1.y * v2.x);
+}
+
+template<> vec2 normalize(vec2 v)
+{
+    float norm = v.sqlen();
+    if (!norm)
+        return vec2(0);
+    return v / norm;
+}
+
+template<> vec3 normalize(vec3 v)
+{
+    float norm = v.sqlen();
+    if (!norm)
+        return vec3(0);
+    return v / norm;
+}
+
+template<> vec4 normalize(vec4 v)
+{
+    float norm = v.sqlen();
+    if (!norm)
+        return vec4(0);
+    return v / norm;
+}
+
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
@@ -64,6 +110,21 @@ template<> mat4 mat4::invert() const
                 ret[j][i] = cofact3(*this, i, j) * d;
     }
     return ret;
+}
+
+template<> void vec2::printf() const
+{
+    Log::Debug("[ %6.6f %6.6f ]\n", x, y);
+}
+
+template<> void vec3::printf() const
+{
+    Log::Debug("[ %6.6f %6.6f %6.6f ]\n", x, y, z);
+}
+
+template<> void vec4::printf() const
+{
+    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
 }
 
 template<> void mat4::printf() const
@@ -163,15 +224,6 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
     return ret;
 }
 
-template<> mat4 mat4::perspective(float theta, float width,
-                                  float height, float near, float far)
-{
-    float t1 = tanf(theta / 2.0f);
-    float t2 = t1 * height / width;
-
-    return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
-}
-
 template<> mat4 mat4::translate(float x, float y, float z)
 {
     mat4 ret(1.0f);
@@ -179,6 +231,40 @@ template<> mat4 mat4::translate(float x, float y, float z)
     ret[3][1] = y;
     ret[3][2] = z;
     return ret;
+}
+
+template<> mat4 mat4::translate(vec3 v)
+{
+    return translate(v.x, v.y, v.z);
+}
+
+template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
+{
+    vec3 f = normalize(center - eye);
+    vec3 u = normalize(up);
+    vec3 s = normalize(cross(f, u));
+    u = cross(s, f);
+
+    mat4 ret(1.0f);
+    ret[0][0] = s.x;
+    ret[0][1] = s.y;
+    ret[0][2] = s.z;
+    ret[1][0] = u.x;
+    ret[1][1] = u.y;
+    ret[1][2] = u.z;
+    ret[2][0] =-f.x;
+    ret[2][1] =-f.y;
+    ret[2][2] =-f.z;
+    return ret * mat4::translate(-eye);
+}
+
+template<> mat4 mat4::perspective(float theta, float width,
+                                  float height, float near, float far)
+{
+    float t1 = tanf(theta * 0.5f);
+    float t2 = t1 * height / width;
+
+    return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
 }
 
 template<> mat4 mat4::rotate(float theta, float x, float y, float z)
@@ -211,6 +297,11 @@ template<> mat4 mat4::rotate(float theta, float x, float y, float z)
     ret[2][2] = z * mtz + ct;
 
     return ret;
+}
+
+template<> mat4 mat4::rotate(float theta, vec3 v)
+{
+    return rotate(theta, v.x, v.y, v.z);
 }
 
 } /* namespace lol */
