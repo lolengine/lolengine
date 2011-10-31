@@ -56,11 +56,14 @@ deushax/deushax
 deushax/editor
 monsterz/monsterz
 test/testsuite
+test/tutorial/tut01
+test/tutorial/tut02
 test/benchsuite
 test/quad
 test/sandbox
 test/math/pi
 test/math/poly
 test/math/remez
+test/xolotl/xolotl
 tools/make-font
 # Our data
