@@ -46,7 +46,7 @@ Font::Font(char const *path)
     data->name = (char *)malloc(7 + strlen(path) + 1);
     sprintf(data->name, "<font> %s", path);
 
-    data->tileset = Tiler::Register(path, 0, 16, 1.0f);
+    data->tileset = Tiler::Register(path, ivec2(0), ivec2(16), 1.0f);
     data->size = data->tileset->GetSize(0);
 
     drawgroup = DRAWGROUP_BEFORE;

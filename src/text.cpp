@@ -87,7 +87,7 @@ void Text::TickDraw(float deltams)
     if (data->text)
     {
         Font *font = Forge::GetFont(data->font);
-        vec3 delta = 0;
+        vec3 delta(0.0f);
         if (data->align == ALIGN_RIGHT)
             delta.x -= data->length * font->GetSize().x;
         else if (data->align == ALIGN_CENTER)

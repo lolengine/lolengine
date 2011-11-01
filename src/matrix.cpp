@@ -73,7 +73,7 @@ template<> vec4 normalize(vec4 v)
 {
     float norm = v.len();
     if (!norm)
-        return vec4(0);
+        return vec4(0.0f);
     return v / norm;
 }
 
@@ -126,14 +126,29 @@ template<> void vec2::printf() const
     Log::Debug("[ %6.6f %6.6f ]\n", x, y);
 }
 
+template<> void ivec2::printf() const
+{
+    Log::Debug("[ %i %i ]\n", x, y);
+}
+
 template<> void vec3::printf() const
 {
     Log::Debug("[ %6.6f %6.6f %6.6f ]\n", x, y, z);
 }
 
+template<> void ivec3::printf() const
+{
+    Log::Debug("[ %i %i %i ]\n", x, y, z);
+}
+
 template<> void vec4::printf() const
 {
     Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
+}
+
+template<> void ivec4::printf() const
+{
+    Log::Debug("[ %i %i %i %i ]\n", x, y, z, w);
 }
 
 template<> void mat4::printf() const

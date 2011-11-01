@@ -138,15 +138,15 @@ void Input::SetMousePos(ivec2 coord)
             if (top != data->lastfocus)
                 data->entities[n]->pressed = data->buttons;
             else
-                data->entities[n]->clicked = 0;
+                data->entities[n]->clicked = ivec3(0);
         }
         else
         {
             data->entities[n]->mousepos = ivec2(-1);
             /* FIXME */
-            data->entities[n]->released = 0;
-            data->entities[n]->pressed = 0;
-            data->entities[n]->clicked = 0;
+            data->entities[n]->released = ivec3(0);
+            data->entities[n]->pressed = ivec3(0);
+            data->entities[n]->clicked = ivec3(0);
         }
     }
 

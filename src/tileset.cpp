@@ -72,7 +72,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     else
     {
         if (size.x <= 0 || size.y <= 0)
-            size = 32;
+            size = ivec2(32, 32);
         data->count.i = data->isize.x > size.i ? data->isize.x / size.i : 1;
         data->count.j = data->isize.y > size.j ? data->isize.y / size.j : 1;
         data->size = size;
