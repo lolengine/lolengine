@@ -53,30 +53,6 @@ template<> vec3 cross(vec3 v1, vec3 v2)
                 v1.x * v2.y - v1.y * v2.x);
 }
 
-template<> vec2 normalize(vec2 v)
-{
-    float norm = v.len();
-    if (!norm)
-        return vec2(0);
-    return v / norm;
-}
-
-template<> vec3 normalize(vec3 v)
-{
-    float norm = v.len();
-    if (!norm)
-        return vec3(0);
-    return v / norm;
-}
-
-template<> vec4 normalize(vec4 v)
-{
-    float norm = v.len();
-    if (!norm)
-        return vec4(0.0f);
-    return v / norm;
-}
-
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
@@ -151,6 +127,11 @@ template<> void ivec4::printf() const
     Log::Debug("[ %i %i %i %i ]\n", x, y, z, w);
 }
 
+template<> void quat::printf() const
+{
+    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
+}
+
 template<> void mat4::printf() const
 {
     mat4 const &p = *this;
@@ -182,6 +163,12 @@ template<> std::ostream &operator<<(std::ostream &stream, ivec4 const &v)
                          << v.z << ", " << v.w << ")";
 }
 
+template<> std::ostream &operator<<(std::ostream &stream, iquat const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ", "
+                         << v.z << ", " << v.w << ")";
+}
+
 template<> std::ostream &operator<<(std::ostream &stream, vec2 const &v)
 {
     return stream << "(" << v.x << ", " << v.y << ")";
@@ -193,6 +180,12 @@ template<> std::ostream &operator<<(std::ostream &stream, vec3 const &v)
 }
 
 template<> std::ostream &operator<<(std::ostream &stream, vec4 const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ", "
+                         << v.z << ", " << v.w << ")";
+}
+
+template<> std::ostream &operator<<(std::ostream &stream, quat const &v)
 {
     return stream << "(" << v.x << ", " << v.y << ", "
                          << v.z << ", " << v.w << ")";

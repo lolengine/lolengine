@@ -24,62 +24,60 @@
 namespace lol
 {
 
-#define VECTOR_OP(elems, op) \
-    template<typename U> \
-    inline Vec##elems<T> operator op(Vec##elems<U> const &val) const \
+#define VECTOR_OP(op) \
+    inline type_t operator op(type_t const &val) const \
     { \
-        Vec##elems<T> ret; \
-        for (int n = 0; n < elems; n++) \
+        type_t ret; \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = (*this)[n] op val[n]; \
         return ret; \
     } \
     \
-    template<typename U> \
-    inline Vec##elems<T> operator op##=(Vec##elems<U> const &val) \
+    inline type_t operator op##=(type_t const &val) \
     { \
         return *this = (*this) op val; \
     }
 
-#define BOOL_OP(elems, op, op2, ret) \
-    inline bool operator op(Vec##elems<T> const &val) const \
+#define BOOL_OP(op, op2, ret) \
+    inline bool operator op(type_t const &val) const \
     { \
-        for (int n = 0; n < elems; n++) \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             if (!((*this)[n] op2 val[n])) \
                 return !ret; \
         return ret; \
     }
 
-#define SCALAR_OP(elems, op) \
-    inline Vec##elems<T> operator op(T const &val) const \
+#define SCALAR_OP(op) \
+    inline type_t operator op(T const &val) const \
     { \
-        Vec##elems<T> ret; \
-        for (int n = 0; n < elems; n++) \
+        type_t ret; \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = (*this)[n] op val; \
         return ret; \
     } \
     \
-    inline Vec##elems<T> operator op##=(T const &val) \
+    inline type_t operator op##=(T const &val) \
     { \
         return *this = (*this) op val; \
     }
 
-#define LINEAR_OPS(elems) \
+#define LINEAR_OPS() \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
     \
-    VECTOR_OP(elems, -) \
-    VECTOR_OP(elems, +) \
+    VECTOR_OP(-) \
+    VECTOR_OP(+) \
     \
-    BOOL_OP(elems, ==, ==, true) \
-    BOOL_OP(elems, !=, ==, false) \
+    BOOL_OP(==, ==, true) \
+    BOOL_OP(!=, ==, false) \
     \
-    SCALAR_OP(elems, *) \
-    SCALAR_OP(elems, /) \
+    SCALAR_OP(*) \
+    SCALAR_OP(/) \
     \
-    inline Vec##elems<T> operator -() const \
+    inline type_t operator -() const \
     { \
-        Vec##elems<T> ret; \
-        for (int n = 0; n < elems; n++) \
+        type_t ret; \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = -(*this)[n]; \
         return ret; \
     } \
@@ -87,7 +85,7 @@ namespace lol
     inline T sqlen() const \
     { \
         T acc = 0; \
-        for (int n = 0; n < elems; n++) \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             acc += (*this)[n] * (*this)[n]; \
         return acc; \
     } \
@@ -98,25 +96,52 @@ namespace lol
         return sqrtf((float)sqlen()); \
     } \
     \
-    template<typename U> \
-    friend Vec##elems<U> normalize(Vec##elems<U>); \
-    \
     void printf() const;
 
-#define OTHER_OPS(elems) \
-    VECTOR_OP(elems, *) \
-    VECTOR_OP(elems, /) \
+#define QUATERNION_OPS() \
+    inline type_t operator *(type_t const &val) const \
+    { \
+        type_t ret; \
+        Vec3<T> v1(x, y, z); \
+        Vec3<T> v2(val.x, val.y, val.z); \
+        Vec3<T> v3 = cross(v1, v2) + w * v2 + val.w * v1; \
+        ret.x = v3.x; \
+        ret.y = v3.y; \
+        ret.z = v3.z; \
+        ret.w = w * val.w - dot(v1, v2); \
+        return ret; \
+    } \
     \
-    BOOL_OP(elems, <=, <=, true) \
-    BOOL_OP(elems, >=, >=, true) \
-    BOOL_OP(elems, <, <, true) \
-    BOOL_OP(elems, >, >, true) \
+    inline type_t operator *=(type_t const &val) \
+    { \
+        return *this = (*this) * val; \
+    } \
+    \
+    inline type_t operator ~() const \
+    { \
+        type_t ret; \
+        for (int n = 0; n < 3; n++) \
+            ret[n] = -(*this)[n]; \
+        ret[3] = (*this)[3]; \
+        return ret; \
+    } \
+    \
+    inline T norm() const { return sqlen(); }
+
+#define OTHER_OPS(elems) \
+    VECTOR_OP(*) \
+    VECTOR_OP(/) \
+    \
+    BOOL_OP(<=, <=, true) \
+    BOOL_OP(>=, >=, true) \
+    BOOL_OP(<, <, true) \
+    BOOL_OP(>, >, true) \
     \
     template<typename U> \
     inline operator Vec##elems<U>() const \
     { \
         Vec##elems<U> ret; \
-        for (int n = 0; n < elems; n++) \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = static_cast<U>((*this)[n]); \
         return ret; \
     } \
@@ -195,11 +220,13 @@ template <typename T> struct Vec4;
 
 template <typename T> struct Vec2
 {
+    typedef Vec2<T> type_t;
+
     inline Vec2() { }
     explicit inline Vec2(T val) { x = y = val; }
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
-    LINEAR_OPS(2)
+    LINEAR_OPS()
     OTHER_OPS(2)
 
     SWIZZLE22(x); SWIZZLE22(y);
@@ -232,13 +259,15 @@ typedef Vec2<uint64_t> u64vec2;
 
 template <typename T> struct Vec3
 {
+    typedef Vec3<T> type_t;
+
     inline Vec3() { }
     explicit inline Vec3(T val) { x = y = z = val; }
     inline Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
     inline Vec3(Vec2<T> _xy, T _z) { x = _xy.x; y = _xy.y; z = _z; }
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
-    LINEAR_OPS(3)
+    LINEAR_OPS()
     OTHER_OPS(3)
 
     SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
@@ -275,6 +304,8 @@ typedef Vec3<uint64_t> u64vec3;
 
 template <typename T> struct Vec4
 {
+    typedef Vec4<T> type_t;
+
     inline Vec4() { }
     explicit inline Vec4(T val) : x(val), y(val), z(val), w(val) { }
     inline Vec4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) { }
@@ -285,7 +316,7 @@ template <typename T> struct Vec4
     inline Vec4(Vec3<T> _xyz, T _w) : x(_xyz.x), y(_xyz.y), z(_xyz.z), w(_w) { }
     inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
-    LINEAR_OPS(4)
+    LINEAR_OPS()
     OTHER_OPS(4)
 
     SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
@@ -314,30 +345,90 @@ typedef Vec4<uint32_t> uvec4;
 typedef Vec4<int64_t> i64vec4;
 typedef Vec4<uint64_t> u64vec4;
 
-#define SCALAR_GLOBAL(elems, op, U) \
+/*
+ * 4-element quaternions
+ */
+
+template <typename T> struct Quat
+{
+    typedef Quat<T> type_t;
+
+    inline Quat() { }
+    inline Quat(T val) : x(0), y(0), z(0), w(val) { }
+    inline Quat(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) { }
+
+    LINEAR_OPS()
+    QUATERNION_OPS()
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
+#endif
+
+    T x, y, z, w;
+};
+
+template<typename T>
+static inline Quat<T> re(Quat<T> const &val)
+{
+    return ~val / val.norm();
+}
+
+template<typename T>
+static inline Quat<T> operator /(T x, Quat<T> const &y)
+{
+    return x * re(y);
+}
+
+template<typename T>
+static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
+{
+    return x * re(y);
+}
+
+typedef Quat<half> f16quat;
+typedef Quat<float> quat;
+typedef Quat<int8_t> i8quat;
+typedef Quat<uint8_t> u8quat;
+typedef Quat<int16_t> i16quat;
+typedef Quat<uint16_t> u16quat;
+typedef Quat<int32_t> iquat;
+typedef Quat<uint32_t> uquat;
+typedef Quat<int64_t> i64quat;
+typedef Quat<uint64_t> u64quat;
+
+/*
+ * Common operators for all vector types, including quaternions
+ */
+
+#define SCALAR_GLOBAL(tname, op, U) \
     template<typename T> \
-    static inline Vec##elems<U> operator op(U const &val, \
-                                            Vec##elems<T> const &that) \
+    static inline tname<U> operator op(U const &val, tname<T> const &that) \
     { \
-        Vec##elems<U> ret; \
-        for (int n = 0; n < elems; n++) \
+        tname<U> ret; \
+        for (unsigned int n = 0; n < sizeof(that) / sizeof(that[0]); n++) \
             ret[n] = val op that[n]; \
         return ret; \
     }
 
-#define SCALAR_GLOBAL2(elems, op) \
-    SCALAR_GLOBAL(elems, op, int) \
-    SCALAR_GLOBAL(elems, op, float)
+#define SCALAR_GLOBAL2(tname, op) \
+    SCALAR_GLOBAL(tname, op, int) \
+    SCALAR_GLOBAL(tname, op, float)
 
-#define GLOBALS(elems) \
-    SCALAR_GLOBAL2(elems, -) \
-    SCALAR_GLOBAL2(elems, +) \
-    SCALAR_GLOBAL2(elems, *) \
-    SCALAR_GLOBAL2(elems, /)
+#define GLOBALS(tname) \
+    SCALAR_GLOBAL2(tname, *) \
+    \
+    template<typename T> \
+    static inline tname<T> normalize(tname<T> const &val) \
+    { \
+        T norm = val.len(); \
+        return norm ? val / norm : val * 0; \
+    }
 
-GLOBALS(2)
-GLOBALS(3)
-GLOBALS(4)
+GLOBALS(Vec2)
+GLOBALS(Vec3)
+GLOBALS(Vec4)
+GLOBALS(Quat)
 
 /*
  * 4×4-element matrices
@@ -345,6 +436,8 @@ GLOBALS(4)
 
 template <typename T> struct Mat4
 {
+    typedef Mat4<T> type_t;
+
     inline Mat4() { }
     explicit inline Mat4(T val)
     {
