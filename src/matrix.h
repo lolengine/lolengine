@@ -63,35 +63,18 @@ namespace lol
         return *this = (*this) op val; \
     }
 
-#define OPERATORS(elems) \
+#define LINEAR_OPS(elems) \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
     \
     VECTOR_OP(elems, -) \
     VECTOR_OP(elems, +) \
-    VECTOR_OP(elems, *) \
-    VECTOR_OP(elems, /) \
     \
     BOOL_OP(elems, ==, ==, true) \
     BOOL_OP(elems, !=, ==, false) \
-    BOOL_OP(elems, <=, <=, true) \
-    BOOL_OP(elems, >=, >=, true) \
-    BOOL_OP(elems, <, <, true) \
-    BOOL_OP(elems, >, >, true) \
     \
-    SCALAR_OP(elems, -) \
-    SCALAR_OP(elems, +) \
     SCALAR_OP(elems, *) \
     SCALAR_OP(elems, /) \
-    \
-    template<typename U> \
-    inline operator Vec##elems<U>() const \
-    { \
-        Vec##elems<U> ret; \
-        for (int n = 0; n < elems; n++) \
-            ret[n] = static_cast<U>((*this)[n]); \
-        return ret; \
-    } \
     \
     inline Vec##elems<T> operator -() const \
     { \
@@ -116,28 +99,47 @@ namespace lol
     } \
     \
     template<typename U> \
-    friend U dot(Vec##elems<U>, Vec##elems<U>); \
-    template<typename U> \
     friend Vec##elems<U> normalize(Vec##elems<U>); \
     \
     void printf() const;
 
+#define OTHER_OPS(elems) \
+    VECTOR_OP(elems, *) \
+    VECTOR_OP(elems, /) \
+    \
+    BOOL_OP(elems, <=, <=, true) \
+    BOOL_OP(elems, >=, >=, true) \
+    BOOL_OP(elems, <, <, true) \
+    BOOL_OP(elems, >, >, true) \
+    \
+    template<typename U> \
+    inline operator Vec##elems<U>() const \
+    { \
+        Vec##elems<U> ret; \
+        for (int n = 0; n < elems; n++) \
+            ret[n] = static_cast<U>((*this)[n]); \
+        return ret; \
+    } \
+    \
+    template<typename U> \
+    friend U dot(Vec##elems<U>, Vec##elems<U>);
+
 #define SWIZZLE2(e1, e2) \
     inline Vec2<T> e1##e2() const \
     { \
-        return Vec2<T>(e1, e2); \
+        return Vec2<T>(this->e1, this->e2); \
     }
 
 #define SWIZZLE3(e1, e2, e3) \
     inline Vec3<T> e1##e2##e3() const \
     { \
-        return Vec3<T>(e1, e2, e3); \
+        return Vec3<T>(this->e1, this->e2, this->e3); \
     }
 
 #define SWIZZLE4(e1, e2, e3, e4) \
     inline Vec4<T> e1##e2##e3##e4() const \
     { \
-        return Vec4<T>(e1, e2, e3, e4); \
+        return Vec4<T>(this->e1, this->e2, this->e3, this->e4); \
     }
 
 #define SWIZZLE22(e1) \
@@ -194,10 +196,11 @@ template <typename T> struct Vec4;
 template <typename T> struct Vec2
 {
     inline Vec2() { }
-    inline Vec2(T val) { x = y = val; }
+    explicit inline Vec2(T val) { x = y = val; }
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
-    OPERATORS(2)
+    LINEAR_OPS(2)
+    OTHER_OPS(2)
 
     SWIZZLE22(x); SWIZZLE22(y);
     SWIZZLE322(x); SWIZZLE322(y);
@@ -230,12 +233,13 @@ typedef Vec2<uint64_t> u64vec2;
 template <typename T> struct Vec3
 {
     inline Vec3() { }
-    inline Vec3(T val) { x = y = z = val; }
+    explicit inline Vec3(T val) { x = y = z = val; }
     inline Vec3(T _x, T _y, T _z) { x = _x; y = _y; z = _z; }
     inline Vec3(Vec2<T> _xy, T _z) { x = _xy.x; y = _xy.y; z = _z; }
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
-    OPERATORS(3)
+    LINEAR_OPS(3)
+    OTHER_OPS(3)
 
     SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
     SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
@@ -272,16 +276,17 @@ typedef Vec3<uint64_t> u64vec3;
 template <typename T> struct Vec4
 {
     inline Vec4() { }
-    inline Vec4(T val) { x = y = z = w = val; }
-    inline Vec4(T _x, T _y, T _z, T _w) { x = _x; y = _y; z = _z; w = _w; }
-    inline Vec4(Vec2<T> _xy, T _z, T _w) { x = _xy.x; y = _xy.y; z = _z; w = _w; }
-    inline Vec4(T _x, Vec2<T> _yz, T _w) { x = _x; y = _yz.x; z = _yz.y; w = _w; }
-    inline Vec4(T _x, T _y, Vec2<T> _zw) { x = _x; y = _y; z = _zw.x; w = _zw.y; }
-    inline Vec4(Vec2<T> _xy, Vec2<T> _zw) { x = _xy.x; y = _xy.y; z = _zw.x; w = _zw.y; }
-    inline Vec4(Vec3<T> _xyz, T _w) { x = _xyz.x; y = _xyz.y; z = _xyz.z; w = _w; }
-    inline Vec4(T _x, Vec3<T> _yzw) { x = _x; y = _yzw.x; z = _yzw.y; w = _yzw.z; }
+    explicit inline Vec4(T val) : x(val), y(val), z(val), w(val) { }
+    inline Vec4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) { }
+    inline Vec4(Vec2<T> _xy, T _z, T _w) : x(_xy.x), y(_xy.y), z(_z), w(_w) { }
+    inline Vec4(T _x, Vec2<T> _yz, T _w) : x(_x), y(_yz.x), z(_yz.y), w(_w) { }
+    inline Vec4(T _x, T _y, Vec2<T> _zw) : x(_x), y(_y), z(_zw.x), w(_zw.y) { }
+    inline Vec4(Vec2<T> _xy, Vec2<T> _zw) : x(_xy.x), y(_xy.y), z(_zw.x), w(_zw.y) { }
+    inline Vec4(Vec3<T> _xyz, T _w) : x(_xyz.x), y(_xyz.y), z(_xyz.z), w(_w) { }
+    inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
-    OPERATORS(4)
+    LINEAR_OPS(4)
+    OTHER_OPS(4)
 
     SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
     SWIZZLE344(x); SWIZZLE344(y); SWIZZLE344(z); SWIZZLE344(w);
@@ -341,7 +346,7 @@ GLOBALS(4)
 template <typename T> struct Mat4
 {
     inline Mat4() { }
-    inline Mat4(T val)
+    explicit inline Mat4(T val)
     {
         for (int j = 0; j < 4; j++)
             for (int i = 0; i < 4; i++)
