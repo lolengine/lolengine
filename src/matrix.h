@@ -24,6 +24,25 @@
 namespace lol
 {
 
+#define VECTOR_TYPES(tname, suffix) \
+    template <typename T> struct tname; \
+    typedef tname<half> f16##suffix; \
+    typedef tname<float> suffix; \
+    typedef tname<int8_t> i8##suffix; \
+    typedef tname<uint8_t> u8##suffix; \
+    typedef tname<int16_t> i16##suffix; \
+    typedef tname<uint16_t> u16##suffix; \
+    typedef tname<int32_t> i##suffix; \
+    typedef tname<uint32_t> u##suffix; \
+    typedef tname<int64_t> i64##suffix; \
+    typedef tname<uint64_t> u64##suffix;
+
+VECTOR_TYPES(Vec2, vec2)
+VECTOR_TYPES(Vec3, vec3)
+VECTOR_TYPES(Vec4, vec4)
+VECTOR_TYPES(Quat, quat)
+VECTOR_TYPES(Mat4, mat4)
+
 #define VECTOR_OP(op) \
     inline type_t operator op(type_t const &val) const \
     { \
@@ -128,7 +147,7 @@ namespace lol
     \
     inline T norm() const { return sqlen(); }
 
-#define OTHER_OPS(elems) \
+#define OTHER_OPS(tname) \
     VECTOR_OP(*) \
     VECTOR_OP(/) \
     \
@@ -138,16 +157,16 @@ namespace lol
     BOOL_OP(>, >, true) \
     \
     template<typename U> \
-    inline operator Vec##elems<U>() const \
+    inline operator tname<U>() const \
     { \
-        Vec##elems<U> ret; \
+        tname<U> ret; \
         for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = static_cast<U>((*this)[n]); \
         return ret; \
     } \
     \
     template<typename U> \
-    friend U dot(Vec##elems<U>, Vec##elems<U>);
+    friend U dot(tname<U>, tname<U>);
 
 #define SWIZZLE2(e1, e2) \
     inline Vec2<T> e1##e2() const \
@@ -210,10 +229,6 @@ namespace lol
 #define SWIZZLE4444(e1) \
     SWIZZLE444(e1, x); SWIZZLE444(e1, y); SWIZZLE444(e1, z); SWIZZLE444(e1, w);
 
-template <typename T> struct Vec2;
-template <typename T> struct Vec3;
-template <typename T> struct Vec4;
-
 /*
  * 2-element vectors
  */
@@ -227,7 +242,7 @@ template <typename T> struct Vec2
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
     LINEAR_OPS()
-    OTHER_OPS(2)
+    OTHER_OPS(Vec2)
 
     SWIZZLE22(x); SWIZZLE22(y);
     SWIZZLE322(x); SWIZZLE322(y);
@@ -241,17 +256,6 @@ template <typename T> struct Vec2
     union { T x; T a; T i; };
     union { T y; T b; T j; };
 };
-
-typedef Vec2<half> f16vec2;
-typedef Vec2<float> vec2;
-typedef Vec2<int8_t> i8vec2;
-typedef Vec2<uint8_t> u8vec2;
-typedef Vec2<int16_t> i16vec2;
-typedef Vec2<uint16_t> u16vec2;
-typedef Vec2<int32_t> ivec2;
-typedef Vec2<uint32_t> uvec2;
-typedef Vec2<int64_t> i64vec2;
-typedef Vec2<uint64_t> u64vec2;
 
 /*
  * 3-element vectors
@@ -268,7 +272,7 @@ template <typename T> struct Vec3
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
     LINEAR_OPS()
-    OTHER_OPS(3)
+    OTHER_OPS(Vec3)
 
     SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
     SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
@@ -286,17 +290,6 @@ template <typename T> struct Vec3
     union { T y; T b; T j; };
     union { T z; T c; T k; };
 };
-
-typedef Vec3<half> f16vec3;
-typedef Vec3<float> vec3;
-typedef Vec3<int8_t> i8vec3;
-typedef Vec3<uint8_t> u8vec3;
-typedef Vec3<int16_t> i16vec3;
-typedef Vec3<uint16_t> u16vec3;
-typedef Vec3<int32_t> ivec3;
-typedef Vec3<uint32_t> uvec3;
-typedef Vec3<int64_t> i64vec3;
-typedef Vec3<uint64_t> u64vec3;
 
 /*
  * 4-element vectors
@@ -317,7 +310,7 @@ template <typename T> struct Vec4
     inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
     LINEAR_OPS()
-    OTHER_OPS(4)
+    OTHER_OPS(Vec4)
 
     SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
     SWIZZLE344(x); SWIZZLE344(y); SWIZZLE344(z); SWIZZLE344(w);
@@ -334,17 +327,6 @@ template <typename T> struct Vec4
     union { T w; T d; T l; };
 };
 
-typedef Vec4<half> f16vec4;
-typedef Vec4<float> vec4;
-typedef Vec4<int8_t> i8vec4;
-typedef Vec4<uint8_t> u8vec4;
-typedef Vec4<int16_t> i16vec4;
-typedef Vec4<uint16_t> u16vec4;
-typedef Vec4<int32_t> ivec4;
-typedef Vec4<uint32_t> uvec4;
-typedef Vec4<int64_t> i64vec4;
-typedef Vec4<uint64_t> u64vec4;
-
 /*
  * 4-element quaternions
  */
@@ -356,6 +338,8 @@ template <typename T> struct Quat
     inline Quat() { }
     inline Quat(T val) : x(0), y(0), z(0), w(val) { }
     inline Quat(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) { }
+
+    Quat(Mat4<T> const &m);
 
     LINEAR_OPS()
     QUATERNION_OPS()
@@ -386,17 +370,6 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     return x * re(y);
 }
 
-typedef Quat<half> f16quat;
-typedef Quat<float> quat;
-typedef Quat<int8_t> i8quat;
-typedef Quat<uint8_t> u8quat;
-typedef Quat<int16_t> i16quat;
-typedef Quat<uint16_t> u16quat;
-typedef Quat<int32_t> iquat;
-typedef Quat<uint32_t> uquat;
-typedef Quat<int64_t> i64quat;
-typedef Quat<uint64_t> u64quat;
-
 /*
  * Common operators for all vector types, including quaternions
  */
@@ -406,7 +379,7 @@ typedef Quat<uint64_t> u64quat;
     static inline tname<U> operator op(U const &val, tname<T> const &that) \
     { \
         tname<U> ret; \
-        for (unsigned int n = 0; n < sizeof(that) / sizeof(that[0]); n++) \
+        for (size_t n = 0; n < sizeof(that) / sizeof(that[0]); n++) \
             ret[n] = val op that[n]; \
         return ret; \
     }
@@ -461,6 +434,7 @@ template <typename T> struct Mat4
     static Mat4<T> translate(Vec3<T> v);
     static Mat4<T> rotate(T angle, T x, T y, T z);
     static Mat4<T> rotate(T angle, Vec3<T> v);
+    static Mat4<T> rotate(Quat<T> q);
 
     static inline Mat4<T> translate(Mat4<T> mat, Vec3<T> v)
     {
@@ -549,17 +523,6 @@ template <typename T> struct Mat4
 
     Vec4<T> v[4];
 };
-
-typedef Mat4<half> f16mat4;
-typedef Mat4<float> mat4;
-typedef Mat4<int8_t> i8mat4;
-typedef Mat4<uint8_t> u8mat4;
-typedef Mat4<int16_t> i16mat4;
-typedef Mat4<uint16_t> u16mat4;
-typedef Mat4<int32_t> imat4;
-typedef Mat4<uint32_t> umat4;
-typedef Mat4<int64_t> i64mat4;
-typedef Mat4<uint64_t> u64mat4;
 
 } /* namespace lol */
 
