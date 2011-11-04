@@ -258,6 +258,69 @@ template<> mat4 mat4::rotate(float angle, vec3 v)
     return rotate(angle, v.x, v.y, v.z);
 }
 
+template<> mat4 mat4::rotate(quat q)
+{
+    mat4 ret(1.0f);
+    float n = q.norm();
+
+    if (!n)
+        return ret;
+
+    float s = 2.0f / n;
+
+    ret[0][0] = 1.0f - s * (q.y * q.y + q.z * q.z);
+    ret[0][1] = s * (q.x * q.y - q.z * q.w);
+    ret[0][2] = s * (q.x * q.z + q.y * q.w);
+
+    ret[1][0] = s * (q.x * q.y + q.z * q.w);
+    ret[1][1] = 1.0f - s * (q.z * q.z + q.x * q.x);
+    ret[1][2] = s * (q.y * q.z - q.x * q.w);
+
+    ret[2][0] = s * (q.x * q.z - q.y * q.w);
+    ret[2][1] = s * (q.y * q.z + q.x * q.w);
+    ret[2][2] = 1.0f - s * (q.x * q.x + q.y * q.y);
+
+    return ret;
+}
+
+template<> quat::Quat(mat4 const &m)
+{
+    /* See http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/christian.htm for a version with no branches */
+    float t = m[0][0] + m[1][1] + m[2][2];
+    if (t > 0)
+    {
+        w = 0.5f * sqrtf(1.0f + t);
+        float s = 0.25f / w;
+        x = s * (m[2][1] - m[1][2]);
+        y = s * (m[0][2] - m[2][0]);
+        z = s * (m[1][0] - m[0][1]);
+    }
+    else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
+    {
+        x = 0.5f * sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]);
+        float s = 0.25f / x;
+        y = s * (m[1][0] + m[0][1]);
+        z = s * (m[0][2] + m[2][0]);
+        w = s * (m[2][1] - m[1][2]);
+    }
+    else if (m[1][1] > m[2][2])
+    {
+        y = 0.5f * sqrtf(1.0f - m[0][0] + m[1][1] - m[2][2]);
+        float s = 0.25f / y;
+        x = s * (m[1][0] + m[0][1]);
+        z = s * (m[2][1] + m[1][2]);
+        w = s * (m[0][2] - m[2][0]);
+    }
+    else
+    {
+        z = 0.5f * sqrtf(1.0f - m[0][0] - m[1][1] + m[2][2]);
+        float s = 0.25f / z;
+        x = s * (m[0][2] + m[2][0]);
+        y = s * (m[2][1] + m[1][2]);
+        w = s * (m[1][0] - m[0][1]);
+    }
+}
+
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
     vec3 v3 = normalize(eye - center);
