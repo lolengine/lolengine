@@ -15,6 +15,10 @@
 #include <cstring>
 #include <cstdio>
 
+#if USE_SDL && defined __APPLE__
+#   include <SDL_main.h>
+#endif
+
 #include "core.h"
 
 using namespace lol;
@@ -36,7 +40,7 @@ real myerr(real const &y)
     return sin(x) / (x * y);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     RemezSolver<6> solver;
     solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 40);

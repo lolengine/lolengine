@@ -14,6 +14,10 @@
 
 #include <cstdio>
 
+#if USE_SDL && defined __APPLE__
+#   include <SDL_main.h>
+#endif
+
 #include "core.h"
 
 using namespace lol;
@@ -95,7 +99,7 @@ static float floatsin(float f)
 #undef float
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     typedef union { float f; uint32_t x; } flint;
 

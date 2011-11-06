@@ -63,7 +63,7 @@ private:
     vec2 graph[2000];
 };
 
-int main()
+int main(int argc, char **argv)
 {
     Application app("Xolotl", ivec2(640, 480), 60.0f);
 
