@@ -110,7 +110,7 @@ private:
     bool m_ready;
 };
 
-int main()
+int main(int argc, char **argv)
 {
     Application app("Tutorial 1: Triangle", ivec2(640, 480), 60.0f);
 

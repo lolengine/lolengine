@@ -173,7 +173,7 @@ private:
     bool m_ready;
 };
 
-int main()
+int main(int argc, char **argv)
 {
     Application app("Tutorial 2: Cube", ivec2(640, 480), 60.0f);
 

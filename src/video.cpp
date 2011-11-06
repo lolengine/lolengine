@@ -44,7 +44,7 @@ mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 
 #if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
-ivec2 VideoData::saved_viewport = 0;
+ivec2 VideoData::saved_viewport(0, 0);
 #endif
 
 /*
