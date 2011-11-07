@@ -22,6 +22,7 @@ liblol_a_SOURCES = \
     $(sdl_sources) \
     \
     shader/shader.cpp shader/shader.h \
+    gpu/vbo.cpp gpu/vbo.h \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/android-image.cpp \

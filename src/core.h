@@ -96,6 +96,7 @@ static inline int isnan(float f)
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
+#include "gpu/vbo.h"
 #include "shader/shader.h"
 #include "image/image.h"
 #include "application/application.h"
