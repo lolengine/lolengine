@@ -38,6 +38,7 @@ namespace lol
     typedef tname<uint64_t> u64##suffix;
 
 VECTOR_TYPES(Vec2, vec2)
+VECTOR_TYPES(Cmplx, cmplx)
 VECTOR_TYPES(Vec3, vec3)
 VECTOR_TYPES(Vec4, vec4)
 VECTOR_TYPES(Quat, quat)
@@ -116,6 +117,24 @@ VECTOR_TYPES(Mat4, mat4)
     } \
     \
     void printf() const;
+
+#define COMPLEX_OPS() \
+    inline type_t operator *(type_t const &val) const \
+    { \
+        return type_t(x * val.x - y * val.y, x * val.y + y * val.x); \
+    } \
+    \
+    inline type_t operator *=(type_t const &val) \
+    { \
+        return *this = (*this) * val; \
+    } \
+    \
+    inline type_t operator ~() const \
+    { \
+        return type_t(x, -y); \
+    } \
+    \
+    inline T norm() const { return len(); }
 
 #define QUATERNION_OPS() \
     inline type_t operator *(type_t const &val) const \
@@ -256,6 +275,47 @@ template <typename T> struct Vec2
     union { T x; T a; T i; };
     union { T y; T b; T j; };
 };
+
+/*
+ * 2-element complexes
+ */
+
+template <typename T> struct Cmplx
+{
+    typedef Cmplx<T> type_t;
+
+    inline Cmplx() { }
+    inline Cmplx(T val) : x(val), y(0) { }
+    inline Cmplx(T _x, T _y) : x(_x), y(_y) { }
+
+    LINEAR_OPS()
+    COMPLEX_OPS()
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
+#endif
+
+    T x, y;
+};
+
+template<typename T>
+static inline Cmplx<T> re(Cmplx<T> const &val)
+{
+    return ~val / val.sqlen();
+}
+
+template<typename T>
+static inline Cmplx<T> operator /(T x, Cmplx<T> const &y)
+{
+    return x * re(y);
+}
+
+template<typename T>
+static inline Cmplx<T> operator /(Cmplx<T> x, Cmplx<T> const &y)
+{
+    return x * re(y);
+}
 
 /*
  * 3-element vectors
@@ -399,6 +459,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     }
 
 GLOBALS(Vec2)
+GLOBALS(Cmplx)
 GLOBALS(Vec3)
 GLOBALS(Vec4)
 GLOBALS(Quat)
