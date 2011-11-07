@@ -107,6 +107,11 @@ template<> void ivec2::printf() const
     Log::Debug("[ %i %i ]\n", x, y);
 }
 
+template<> void cmplx::printf() const
+{
+    Log::Debug("[ %6.6f %6.6f ]\n", x, y);
+}
+
 template<> void vec3::printf() const
 {
     Log::Debug("[ %6.6f %6.6f %6.6f ]\n", x, y, z);
@@ -152,6 +157,11 @@ template<> std::ostream &operator<<(std::ostream &stream, ivec2 const &v)
     return stream << "(" << v.x << ", " << v.y << ")";
 }
 
+template<> std::ostream &operator<<(std::ostream &stream, icmplx const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ")";
+}
+
 template<> std::ostream &operator<<(std::ostream &stream, ivec3 const &v)
 {
     return stream << "(" << v.x << ", " << v.y << ", " << v.z << ")";
@@ -170,6 +180,11 @@ template<> std::ostream &operator<<(std::ostream &stream, iquat const &v)
 }
 
 template<> std::ostream &operator<<(std::ostream &stream, vec2 const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ")";
+}
+
+template<> std::ostream &operator<<(std::ostream &stream, cmplx const &v)
 {
     return stream << "(" << v.x << ", " << v.y << ")";
 }
