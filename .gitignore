@@ -58,6 +58,7 @@ monsterz/monsterz
 test/testsuite
 test/tutorial/tut01
 test/tutorial/tut02
+test/tutorial/tut03
 test/benchsuite
 test/quad
 test/sandbox
