@@ -46,6 +46,44 @@ public:
         delete m_pixels;
     }
 
+    virtual void TickGame(float deltams)
+    {
+        WorldEntity::TickGame(deltams);
+
+        m_angle += deltams * 0.0005f;
+
+        cmplx r0(cosf(m_angle), sinf(m_angle));
+        for (int j = 0; j < m_size.y; j++)
+        for (int i = 0; i < m_size.x; i++)
+        {
+            float const maxlen = 128.0f;
+            int const maxiter = 20;
+
+            cmplx x0(4.0f / m_size.x * i - 2.5f, 3.0f / m_size.y * j - 1.5f);
+            cmplx r = x0;
+            cmplx z;
+            int iter = maxiter;
+            for (z = r; iter && z.sqlen() < maxlen * maxlen; z = z * z + r)
+                --iter;
+
+            float f = iter;
+            float n = z.len();
+            f += logf(logf(n) / logf(maxlen)) / logf(2.0f);
+
+            if (iter)
+            {
+                uint8_t red = 255 - f * 11;
+                uint8_t green = 255 - f * 11;
+                uint8_t blue = (f * 23 > 255) ? 511 - f * 23 : 255;
+                m_pixels[j * m_size.x + i] = u8vec4(red, green, blue, 0);
+            }
+            else
+            {
+                m_pixels[j * m_size.x + i] = u8vec4(0, 0, 0, 0);
+            }
+        }
+    }
+
     virtual void TickDraw(float deltams)
     {
         WorldEntity::TickDraw(deltams);
@@ -113,42 +151,6 @@ public:
 #endif
 
             /* FIXME: this object never cleans up */
-        }
-
-        m_angle += deltams * 0.0001f;
-
-        cmplx r0(cosf(m_angle), 0.5f * sinf(m_angle));
-        for (int j = 0; j < m_size.y; j++)
-        for (int i = 0; i < m_size.x; i++)
-        {
-            cmplx x0(4.0f / m_size.x * i - 2.5f, 3.0f / m_size.y * j - 1.5f);
-            cmplx r = x0 * r0;
-            cmplx z;
-            int iter = 20;
-            for (z = r; iter && z.sqlen() < 4.0f; z = z * z + r)
-                --iter;
-
-            float f = iter;
-            float n = z.sqlen();
-            if (n > 36.0f)
-                f += 2.0f;
-            if (n > 16.0f)
-                f += 1.0f + (n - 16.0f) / 20.0f;
-            else if (n > 4.0f)
-                f += (n - 4.0f) / 12.0f;
-
-            if (iter)
-            {
-                uint8_t red = 255 - f * 11;
-                uint8_t green = 255 - f * 11;
-                uint8_t blue = (f * 23 > 255) ? 511 - f * 23 : 255;
-                //uint8_t blue = f * 36 < 255 ? f * 36 : 255;
-                m_pixels[j * m_size.x + i] = u8vec4(red, green, blue, 0);
-            }
-            else
-            {
-                m_pixels[j * m_size.x + i] = u8vec4(0, 0, 0, 0);
-            }
         }
 
         glEnable(GL_TEXTURE_2D);
