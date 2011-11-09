@@ -23,6 +23,7 @@
 #include "core.h"
 #include "lolgl.h"
 #include "ps3app.h"
+#include "ps3input.h"
 
 namespace lol
 {

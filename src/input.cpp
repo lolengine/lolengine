@@ -75,7 +75,7 @@ vec2 Input::GetAxis(int axis)
     if (left && up)
         ret = ret * sqrtf(0.5f);
 #else
-    ret = 0;
+    ret = vec2(0, 0);
 #endif
 
     return ret;
