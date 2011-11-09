@@ -96,7 +96,7 @@ bool Ps3ImageData::Open(char const *path)
     CellPngDecSubHandle hsub;
 
     char file[1024];
-    sprintf(file, "/app_home/c:/Users/s.hocevar/lolengine/%s", path);
+    sprintf(file, "/app_home/c:/Users/s.hocevar/le/%s", path);
 
     CellPngDecSrc dec_src;
     dec_src.srcSelect = CELL_PNGDEC_FILE;
