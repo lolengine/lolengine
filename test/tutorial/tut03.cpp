@@ -37,7 +37,7 @@ public:
     {
         m_size = size;
         m_pixels = new u8vec4[size.x * size.y];
-        m_angle = 0.0f;
+        m_time = 0.0f;
         m_ready = false;
     }
 
@@ -50,33 +50,50 @@ public:
     {
         WorldEntity::TickGame(deltams);
 
-        m_angle += deltams * 0.0005f;
+        m_time += deltams * 0.0005f;
 
-        cmplx r0(cosf(m_angle), 0.8f * sinf(m_angle));
+        f64cmplx center(0.001643721971153, 0.822467633298876);
+        //f64cmplx center(0.28693186889504513, 0.014286693904085048);
+        double radius = 8.0 * pow(2.0, -m_time);
+        double step = radius / (m_size.x > m_size.y ? m_size.x : m_size.y);
+
         for (int j = 0; j < m_size.y; j++)
         for (int i = 0; i < m_size.x; i++)
         {
-            float const maxlen = 32.0f;
+            double const maxlen = 32;
             int const colors = 16;
-            int const maxiter = 30;
+            int const maxiter = 200;
 
-            cmplx x0(4.0f / m_size.x * i - 2.0f, 3.0f / m_size.y * j - 1.5f);
-            cmplx r = x0 * r0;
-            cmplx z;
+            f64cmplx delta(i - m_size.x / 2, j - m_size.y / 2);
+
+            f64cmplx z0 = center + step * delta;
+            f64cmplx r0 = z0;
+            //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
+            //f64cmplx r0(-0.824,0.1711);
+            //f64cmplx r0(0.001643721971153, 0.822467633298876);
+            f64cmplx z;
             int iter = maxiter;
-            for (z = r; iter && z.sqlen() < maxlen * maxlen; z = z * z + r)
+            for (z = z0; iter && z.sqlen() < maxlen * maxlen; z = z * z + r0)
                 --iter;
 
-            float f = iter % colors;
-            float n = z.len();
-            f += logf(logf(n) / logf(maxlen)) / logf(2.0f);
+            double f = iter;
+            double n = z.sqlen();
+
+            /* Approximate log2(x) with x-1 because x is in [1,2]. */
+            f += (log(n) * 0.5f / log(maxlen)) - 1.0f;
 
             if (iter)
             {
-                uint8_t red = 255 - f * (255.0f / (colors + 1));
-                uint8_t green = 255 - f * (255.0f / (colors + 1));
-                uint8_t blue = (f * 512.0f / (colors + 1) > 255)
-                             ? 511 - (f * 512.0f / (colors + 1)) : 255;
+                double r = fmod(f, (double)colors);
+                if (r > (double)colors / 2) r = (double)colors - r;
+                double g = fmod(f * 1.3 + 4.0f, (double)colors);
+                if (g > (double)colors / 2) g = (double)colors - g;
+                double b = fmod(f * 1.7 - 8.0f, (double)colors);
+                if (b > (double)colors / 2) b = (double)colors - b;
+
+                uint8_t red = 255 - r * (255.0f / (colors + 1));
+                uint8_t green = 255 - g * (255.0f / (colors + 1));
+                uint8_t blue = 255 - b * (255.0f / (colors + 1));
                 m_pixels[j * m_size.x + i] = u8vec4(red, green, blue, 0);
             }
             else
@@ -92,12 +109,12 @@ public:
 
         static float const vertices[] =
         {
-            -1.0f, -1.0f,
-             1.0f, -1.0f,
-             1.0f,  1.0f,
              1.0f,  1.0f,
             -1.0f,  1.0f,
             -1.0f, -1.0f,
+            -1.0f, -1.0f,
+             1.0f, -1.0f,
+             1.0f,  1.0f,
         };
 
         static float const texcoords[] =
@@ -231,7 +248,7 @@ private:
     GLuint m_tco;
 #endif
     int m_vertexattrib, m_texattrib;
-    float m_angle;
+    float m_time;
     bool m_ready;
 };
 
@@ -244,7 +261,7 @@ int main()
     Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
-    new Fractal(ivec2(640, 480));
+    new Fractal(ivec2(1280, 960));
 
     app.Run();
 
