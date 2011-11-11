@@ -28,6 +28,7 @@ namespace lol
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
     typedef tname<float> suffix; \
+    typedef tname<double> f64##suffix; \
     typedef tname<int8_t> i8##suffix; \
     typedef tname<uint8_t> u8##suffix; \
     typedef tname<int16_t> i16##suffix; \
@@ -110,10 +111,10 @@ VECTOR_TYPES(Mat4, mat4)
         return acc; \
     } \
     \
-    inline float len() const \
+    inline double len() const \
     { \
         using namespace std; \
-        return sqrtf((float)sqlen()); \
+        return sqrt((double)sqlen()); \
     } \
     \
     void printf() const;
@@ -446,7 +447,8 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 #define SCALAR_GLOBAL2(tname, op) \
     SCALAR_GLOBAL(tname, op, int) \
-    SCALAR_GLOBAL(tname, op, float)
+    SCALAR_GLOBAL(tname, op, float) \
+    SCALAR_GLOBAL(tname, op, double)
 
 #define GLOBALS(tname) \
     SCALAR_GLOBAL2(tname, *) \
