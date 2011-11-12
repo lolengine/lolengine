@@ -57,6 +57,10 @@ public:
         m_mousetext->SetPos(ivec3(5, m_size.y - 29, 1));
         Ticker::Ref(m_mousetext);
 
+        m_zoomtext = new Text(NULL, "gfx/font/ascii.png");
+        m_zoomtext->SetPos(ivec3(5, m_size.y - 43, 1));
+        Ticker::Ref(m_zoomtext);
+
         position = ivec3(0, 0, 0);
         bbox[0] = position;
         bbox[1] = ivec3(size, 0);
@@ -68,6 +72,7 @@ public:
         Input::UntrackMouse(this);
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
+        Ticker::Unref(m_zoomtext);
         delete m_pixels;
     }
 
@@ -90,8 +95,10 @@ public:
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
         {
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0015);
-            if (m_radius * zoom > 1.5)
-                zoom = 1.0;
+            if (m_radius * zoom > 8.0)
+                zoom = 8.0 / m_radius;
+            else if (m_radius * zoom < 1e-14)
+                zoom = 1e-14 / m_radius;
             m_radius *= zoom;
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
@@ -103,6 +110,8 @@ public:
         m_centertext->SetText(buf);
         sprintf(buf, " mouse: %+13.11f%+13.11fi", worldmouse.x, worldmouse.y);
         m_mousetext->SetText(buf);
+        sprintf(buf, "  zoom: %g", 1.0 / m_radius);
+        m_zoomtext->SetText(buf);
 
         u8vec4 *m_pixelstart = m_pixels + m_size.x * m_size.y / 4 * m_frame;
 
@@ -326,7 +335,7 @@ private:
     double m_radius, m_screenradius;
 
     /* Debug information */
-    Text *m_centertext, *m_mousetext;
+    Text *m_centertext, *m_mousetext, *m_zoomtext;
 };
 
 int main()
