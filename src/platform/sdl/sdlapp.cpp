@@ -62,7 +62,6 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     }
 
     SDL_WM_SetCaption(title, NULL);
-    SDL_ShowCursor(0);
 
     /* Initialise everything */
     Ticker::Setup(fps);
@@ -72,6 +71,11 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     /* Autoreleased objects */
     new SdlInput();
 #endif
+}
+
+void SdlApp::ShowPointer(bool show)
+{
+    SDL_ShowCursor(show ? 1 : 0);
 }
 
 void SdlApp::Run()
