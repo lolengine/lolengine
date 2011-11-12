@@ -37,7 +37,11 @@ public:
     {
         m_size = size;
         m_pixels = new u8vec4[size.x * size.y];
-        m_time = 0.0f;
+        m_frame = 0;
+        m_center = 0;
+        m_target = f64cmplx(0.001643721971153, 0.822467633298876);
+        //m_target = f64cmplx(0.28693186889504513, 0.014286693904085048);
+        m_radius = 8.0;
         m_ready = false;
     }
 
@@ -50,26 +54,26 @@ public:
     {
         WorldEntity::TickGame(deltams);
 
-        m_time += deltams * 0.0005f;
+        m_frame = (m_frame + 1) % 4;
 
-        f64cmplx center(0.001643721971153, 0.822467633298876);
-        //f64cmplx center(0.28693186889504513, 0.014286693904085048);
-        double radius = 8.0 * pow(2.0, -m_time);
-        double step = radius / (m_size.x > m_size.y ? m_size.x : m_size.y);
+        double zoom = pow(2.0, -deltams * 0.00015);
+        m_radius *= zoom;
+        m_center = (m_center - m_target) * zoom * zoom + m_target;
 
-        for (int j = 0; j < m_size.y; j++)
-        for (int i = 0; i < m_size.x; i++)
+        double step = m_radius / (m_size.x > m_size.y ? m_size.x : m_size.y);
+
+        for (int j = m_frame / 2; j < m_size.y; j += 2)
+        //for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
+        for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
             double const maxlen = 32;
-            int const colors = 16;
-            int const maxiter = 200;
+            int const maxiter = 170;
 
             f64cmplx delta(i - m_size.x / 2, j - m_size.y / 2);
 
-            f64cmplx z0 = center + step * delta;
+            f64cmplx z0 = m_center + step * delta;
             f64cmplx r0 = z0;
             //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
-            //f64cmplx r0(-0.824,0.1711);
             //f64cmplx r0(0.001643721971153, 0.822467633298876);
             f64cmplx z;
             int iter = maxiter;
@@ -79,21 +83,21 @@ public:
             double f = iter;
             double n = z.sqlen();
 
-            /* Approximate log2(x) with x-1 because x is in [1,2]. */
-            f += (log(n) * 0.5f / log(maxlen)) - 1.0f;
+            double k = log(n) * 0.5f / log(maxlen);
+            /* Approximate log2(k) in [1,2]. */
+            f += (- 0.344847817623168308695977510213252644185 * k
+                  + 2.024664188044341212602376988171727038739) * k
+                  - 1.674876738008591047163498125918330313237;
 
             if (iter)
             {
-                double r = fmod(f, (double)colors);
-                if (r > (double)colors / 2) r = (double)colors - r;
-                double g = fmod(f * 1.3 + 4.0f, (double)colors);
-                if (g > (double)colors / 2) g = (double)colors - g;
-                double b = fmod(f * 1.7 - 8.0f, (double)colors);
-                if (b > (double)colors / 2) b = (double)colors - b;
+                double r = 0.5 * sin(f * 0.27 - 2.0) + 0.5;
+                double g = 0.5 * sin(f * 0.13 + 1.0) + 0.5;
+                double b = 0.5 * sin(f * 0.21) + 0.5;
 
-                uint8_t red = 255 - r * (255.0f / (colors + 1));
-                uint8_t green = 255 - g * (255.0f / (colors + 1));
-                uint8_t blue = 255 - b * (255.0f / (colors + 1));
+                uint8_t red = r * 255.0f;
+                uint8_t green = g * 255.0f;
+                uint8_t blue = b * 255.0f;
                 m_pixels[j * m_size.x + i] = u8vec4(red, green, blue, 0);
             }
             else
@@ -119,12 +123,12 @@ public:
 
         static float const texcoords[] =
         {
-             0.0f,  0.0f,
              1.0f,  0.0f,
-             1.0f,  1.0f,
-             1.0f,  1.0f,
-             0.0f,  1.0f,
              0.0f,  0.0f,
+             0.0f,  1.0f,
+             0.0f,  1.0f,
+             1.0f,  1.0f,
+             1.0f,  0.0f,
         };
 
         if (!m_ready)
@@ -133,8 +137,8 @@ public:
             glBindTexture(GL_TEXTURE_2D, m_texid);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0,
                          GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
             m_shader = Shader::Create(
 #if !defined __CELLOS_LV2__
@@ -149,7 +153,8 @@ public:
                 "#version 120\n"
                 "uniform sampler2D in_Texture;\n"
                 "void main(void) {"
-                "    gl_FragColor = texture2D(in_Texture, gl_TexCoord[0].xy);"
+                "    vec2 coord = gl_TexCoord[0].xy;"
+                "    gl_FragColor = texture2D(in_Texture, coord);"
                 "}"
 #else
                 "void main(float4 in_Position : POSITION,"
@@ -248,8 +253,11 @@ private:
     GLuint m_tco;
 #endif
     int m_vertexattrib, m_texattrib;
-    float m_time;
+    int m_frame;
     bool m_ready;
+
+    f64cmplx m_center, m_target;
+    double m_radius;
 };
 
 int main()
@@ -261,7 +269,7 @@ int main()
     Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
-    new Fractal(ivec2(1280, 960));
+    new Fractal(ivec2(640, 480));
 
     app.Run();
 
