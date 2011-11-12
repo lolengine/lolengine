@@ -58,6 +58,11 @@ Application::Application(char const *name, ivec2 resolution, float framerate)
     data = new ApplicationData(name, resolution, framerate);
 }
 
+void Application::ShowPointer(bool show)
+{
+    data->app.ShowPointer(show);
+}
+
 void Application::Run()
 {
     data->app.Run();

@@ -109,6 +109,11 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
 #endif
 }
 
+void Ps3App::ShowPointer(bool show)
+{
+    ;
+}
+
 void Ps3App::Run()
 {
     while (!Ticker::Finished())

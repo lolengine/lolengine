@@ -29,6 +29,7 @@ public:
     Ps3App(char const *title, ivec2 res, float fps);
     virtual ~Ps3App();
 
+    void ShowPointer(bool show);
     void Run();
 
 private:

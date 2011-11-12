@@ -27,6 +27,7 @@ public:
     Application(char const *name, ivec2 resolution, float framerate);
     ~Application();
 
+    void ShowPointer(bool show);
     void Run();
 
 private:

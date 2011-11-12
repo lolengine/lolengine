@@ -29,6 +29,7 @@ public:
     SdlApp(char const *title, ivec2 res, float fps);
     virtual ~SdlApp();
 
+    void ShowPointer(bool show);
     void Run();
 
 private:
