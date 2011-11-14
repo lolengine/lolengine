@@ -50,6 +50,21 @@ public:
         m_screenradius = 0.5 * (m_size.x < m_size.y ? m_size.x : m_size.y);
         m_ready = false;
 
+        m_palette = new u8vec4[MAX_ITERATIONS * PALETTE_STEP];
+        for (int i = 0; i < MAX_ITERATIONS * PALETTE_STEP; i++)
+        {
+            float f = i / (double)PALETTE_STEP;
+
+            double r = 0.5 * sin(f * 0.27 - 1.5) + 0.5;
+            double g = 0.5 * sin(f * 0.13 + 1.3) + 0.5;
+            double b = 0.5 * sin(f * 0.21 + 0.4) + 0.5;
+
+            uint8_t red = r * 255.0f;
+            uint8_t green = g * 255.0f;
+            uint8_t blue = b * 255.0f;
+            m_palette[i] = u8vec4(red, green, blue, 0);
+        }
+
         m_centertext = new Text(NULL, "gfx/font/ascii.png");
         m_centertext->SetPos(ivec3(5, m_size.y - 15, 1));
         Ticker::Ref(m_centertext);
@@ -76,6 +91,7 @@ public:
         Ticker::Unref(m_zoomtext);
         delete m_pixels;
         delete m_tmppixels;
+        delete m_palette;
     }
 
     inline f64cmplx ScreenToWorldOffset(ivec2 pixel)
@@ -142,7 +158,6 @@ public:
             for (int i = m_frame % 2; i < m_size.x; i += 2)
             {
                 double const maxlen = 32;
-                int const maxiter = 170;
 
                 f64cmplx z0 = m_center + ScreenToWorldOffset(ivec2(i, j));
                 f64cmplx r0 = z0;
@@ -152,29 +167,22 @@ public:
                 //f64cmplx r0(-0.79192956889854, -0.14632423080102);
                 //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
                 f64cmplx z;
-                int iter = maxiter;
+                int iter = MAX_ITERATIONS;
                 for (z = z0; iter && z.sqlen() < maxlen * maxlen; z = z * z + r0)
                     --iter;
 
-                double f = iter;
-                double n = z.sqlen();
-
-                double k = log(n) * 0.5f / log(maxlen);
-                /* Approximate log2(k) in [1,2]. */
-                f += (- 0.344847817623168308695977510213252644185 * k
-                      + 2.024664188044341212602376988171727038739) * k
-                      - 1.674876738008591047163498125918330313237;
-
                 if (iter)
                 {
-                    double r = 0.5 * sin(f * 0.27 - 1.5) + 0.5;
-                    double g = 0.5 * sin(f * 0.13 + 1.3) + 0.5;
-                    double b = 0.5 * sin(f * 0.21 + 0.4) + 0.5;
+                    double f = iter;
+                    double n = z.sqlen();
 
-                    uint8_t red = r * 255.0f;
-                    uint8_t green = g * 255.0f;
-                    uint8_t blue = b * 255.0f;
-                    *m_pixelstart++ = u8vec4(red, green, blue, 0);
+                    double k = log(n) * 0.5f / log(maxlen);
+                    /* Approximate log2(k) in [1,2]. */
+                    f += (- 0.344847817623168308695977510213252644185 * k
+                          + 2.024664188044341212602376988171727038739) * k
+                          - 1.674876738008591047163498125918330313237;
+
+                    *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP + 0.25 * m_frame)];
                 }
                 else
                 {
@@ -305,7 +313,7 @@ public:
         }
 
 /* If other frames are dirty, upload fake data for now */
-for (int i = 0; i < 4; i++)
+if (0) for (int i = 0; i < 4; i++)
 {
     if (m_dirty[i])
     {
@@ -358,8 +366,11 @@ for (int i = 0; i < 4; i++)
     }
 
 private:
+    static int const MAX_ITERATIONS = 170;
+    static int const PALETTE_STEP = 32;
+
     ivec2 m_size;
-    u8vec4 *m_pixels, *m_tmppixels;
+    u8vec4 *m_pixels, *m_tmppixels, *m_palette;
     Shader *m_shader;
     GLuint m_texid;
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
