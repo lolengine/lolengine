@@ -37,14 +37,15 @@ public:
     {
         m_size = size;
         m_pixels = new u8vec4[size.x * size.y];
+        m_tmppixels = new u8vec4[size.x / 2 * size.y / 2];
         m_frame = -1;
-        m_dirty = 8;
+        for (int i = 0; i < 4; i++)
+        {
+            m_deltashift[i] = 0.0;
+            m_deltascale[i] = 1.0;
+            m_dirty[i] = 2;
+        }
         m_center = -0.75;
-        //f64cmplx(0.001643721971153, 0.822467633298876);
-        //f64cmplx(-1.207205434596, 0.315432814901);
-        //f64cmplx(-0.79192956889854, -0.14632423080102);
-        //f64cmplx(0.3245046418497685, 0.04855101129280834);
-        //f64cmplx(0.28693186889504513, 0.014286693904085048);
         m_radius = 1.5;
         m_screenradius = 0.5 * (m_size.x < m_size.y ? m_size.x : m_size.y);
         m_ready = false;
@@ -74,12 +75,13 @@ public:
         Ticker::Unref(m_mousetext);
         Ticker::Unref(m_zoomtext);
         delete m_pixels;
+        delete m_tmppixels;
     }
 
     inline f64cmplx ScreenToWorldOffset(ivec2 pixel)
     {
-        f64cmplx tmp = f64cmplx(pixel.x - m_size.x / 2,
-                                m_size.y / 2 - pixel.y);
+        f64cmplx tmp = f64cmplx(0.5 + pixel.x - m_size.x / 2,
+                                0.5 + m_size.y / 2 - pixel.y);
         return tmp * (m_radius / m_screenradius);
     }
 
@@ -94,6 +96,8 @@ public:
         ivec3 buttons = Input::GetMouseButtons();
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
         {
+            f64cmplx oldcenter = m_center;
+            double oldradius = m_radius;
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0015);
             if (m_radius * zoom > 8.0)
                 zoom = 8.0 / m_radius;
@@ -102,8 +106,23 @@ public:
             m_radius *= zoom;
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
-            m_dirty = 8;
+
+            /* Store the transformation properties to go from m_frame-1
+             * to m_frame. */
+            m_deltashift[m_frame] = (oldcenter - m_center) / m_radius;
+            m_deltascale[m_frame] = oldradius / m_radius;
+            m_dirty[0] = m_dirty[1] = m_dirty[2] = m_dirty[3] = 2;
         }
+        else
+        {
+            /* If settings didn't change, set transformation from previous
+             * frame to identity. */
+            m_deltashift[m_frame] = 0.0;
+            m_deltascale[m_frame] = 1.0;
+        }
+
+        if (buttons[1])
+            m_dirty[0] = m_dirty[1] = m_dirty[2] = m_dirty[3] = 2;
 
         char buf[128];
         sprintf(buf, "center: %+13.11f%+13.11fi", m_center.x, m_center.y);
@@ -115,9 +134,9 @@ public:
 
         u8vec4 *m_pixelstart = m_pixels + m_size.x * m_size.y / 4 * m_frame;
 
-        if (m_dirty)
+        if (m_dirty[m_frame])
         {
-            m_dirty--;
+            m_dirty[m_frame]--;
 
             for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
             for (int i = m_frame % 2; i < m_size.x; i += 2)
@@ -129,6 +148,9 @@ public:
                 f64cmplx r0 = z0;
                 //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
                 //f64cmplx r0(0.001643721971153, 0.822467633298876);
+                //f64cmplx r0(-1.207205434596, 0.315432814901);
+                //f64cmplx r0(-0.79192956889854, -0.14632423080102);
+                //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
                 f64cmplx z;
                 int iter = maxiter;
                 for (z = z0; iter && z.sqlen() < maxlen * maxlen; z = z * z + r0)
@@ -267,9 +289,9 @@ public:
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, m_texid);
 
-        if (m_dirty)
+        if (m_dirty[m_frame])
         {
-            m_dirty--;
+            m_dirty[m_frame]--;
 
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
@@ -281,6 +303,23 @@ public:
 #endif
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
         }
+
+/* If other frames are dirty, upload fake data for now */
+for (int i = 0; i < 4; i++)
+{
+    if (m_dirty[i])
+    {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i * m_size.y / 2,
+                            m_size.x / 2, m_size.y / 2,
+#if !defined __CELLOS_LV2__
+                            GL_RGBA, GL_UNSIGNED_BYTE,
+#else
+                            /* The PS3 is big-endian */
+                            GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
+#endif
+                            m_pixels + m_size.x * m_size.y / 4 * m_frame);
+    }
+}
 
         m_shader->Bind();
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -320,7 +359,7 @@ public:
 
 private:
     ivec2 m_size;
-    u8vec4 *m_pixels;
+    u8vec4 *m_pixels, *m_tmppixels;
     Shader *m_shader;
     GLuint m_texid;
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -328,11 +367,13 @@ private:
     GLuint m_tco;
 #endif
     int m_vertexattrib, m_texattrib;
-    int m_frame, m_dirty;
+    int m_frame, m_dirty[4];
     bool m_ready;
 
     f64cmplx m_center;
     double m_radius, m_screenradius;
+    f64cmplx m_deltashift[4];
+    double m_deltascale[4];
 
     /* Debug information */
     Text *m_centertext, *m_mousetext, *m_zoomtext;
