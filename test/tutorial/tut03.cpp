@@ -55,14 +55,14 @@ public:
         {
             float f = i / (double)PALETTE_STEP;
 
-            double r = 0.5 * sin(f * 0.27 - 1.5) + 0.5;
-            double g = 0.5 * sin(f * 0.13 + 1.3) + 0.5;
+            double r = 0.5 * sin(f * 0.27 - 2.5) + 0.5;
+            double g = 0.5 * sin(f * 0.13 + 1.1) + 0.5;
             double b = 0.5 * sin(f * 0.21 + 0.4) + 0.5;
 
             uint8_t red = r * 255.0f;
             uint8_t green = g * 255.0f;
             uint8_t blue = b * 255.0f;
-            m_palette[i] = u8vec4(red, green, blue, 0);
+            m_palette[i] = u8vec4(blue, green, red, 0);
         }
 
         m_centertext = new Text(NULL, "gfx/font/ascii.png");
@@ -114,7 +114,7 @@ public:
         {
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
-            double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0015);
+            double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
             if (m_radius * zoom > 8.0)
                 zoom = 8.0 / m_radius;
             else if (m_radius * zoom < 1e-14)
@@ -223,7 +223,7 @@ public:
             glGenTextures(1, &m_texid);
             glBindTexture(GL_TEXTURE_2D, m_texid);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x / 2, m_size.y * 2,
-                         0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
+                         0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, m_pixels);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -303,12 +303,7 @@ public:
 
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
-#if !defined __CELLOS_LV2__
-                            GL_RGBA, GL_UNSIGNED_BYTE,
-#else
-                            /* The PS3 is big-endian */
-                            GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
-#endif
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
         }
 
@@ -319,12 +314,7 @@ if (0) for (int i = 0; i < 4; i++)
     {
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
-#if !defined __CELLOS_LV2__
-                            GL_RGBA, GL_UNSIGNED_BYTE,
-#else
-                            /* The PS3 is big-endian */
-                            GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
-#endif
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
     }
 }
