@@ -166,7 +166,7 @@ public:
             for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
             for (int i = m_frame % 2; i < m_size.x; i += 2)
             {
-                double const maxlen = 32;
+                double const maxsqlen = 32;
 
                 f64cmplx z0 = m_center + ScreenToWorldOffset(ivec2(i, j));
                 f64cmplx r0 = z0;
@@ -177,7 +177,7 @@ public:
                 //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
                 f64cmplx z;
                 int iter = MAX_ITERATIONS;
-                for (z = z0; iter && z.sqlen() < maxlen * maxlen; z = z * z + r0)
+                for (z = z0; iter && z.sqlen() < maxsqlen; z = z * z + r0)
                     --iter;
 
                 if (iter)
@@ -185,13 +185,17 @@ public:
                     double f = iter;
                     double n = z.sqlen();
 
-                    double k = log(n) * 0.5f / log(maxlen);
+                    /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
+                    union { double n; uint64_t x; } u = { n };
+                    double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
+                    k *= 1.0 / (1 << 10) / log2(maxsqlen);
+
                     /* Approximate log2(k) in [1,2]. */
                     f += (- 0.344847817623168308695977510213252644185 * k
                           + 2.024664188044341212602376988171727038739) * k
                           - 1.674876738008591047163498125918330313237;
 
-                    *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP + 0.25 * m_frame)];
+                    *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP)];
                 }
                 else
                 {
