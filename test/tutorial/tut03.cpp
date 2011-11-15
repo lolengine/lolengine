@@ -110,10 +110,18 @@ public:
         f64cmplx worldmouse = m_center + ScreenToWorldOffset(mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
+#ifdef __CELLOS_LV2__
+        if (true)
+#else
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
+#endif
         {
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
+#ifdef __CELLOS_LV2__
+            m_radius *= pow(2.0, -deltams * 0.00015);
+            m_center = f64cmplx(0.001643721971153, 0.822467633298876);
+#else
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
             if (m_radius * zoom > 8.0)
                 zoom = 8.0 / m_radius;
@@ -122,6 +130,7 @@ public:
             m_radius *= zoom;
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
+#endif
 
             /* Store the transformation properties to go from m_frame-1
              * to m_frame. */
@@ -264,11 +273,18 @@ public:
                 "    out_Position = in_Position;"
                 "}",
 
-                "void main(float2 in_TexCoord : TEXCOORD0,"
-                "          uniform sampler2D tex,"
+                "void main(float4 in_FragCoord : WPOS,"
+                "          float2 in_TexCoord : TEXCOORD0,"
+                "          uniform sampler2D in_Texture,"
                 "          out float4 out_FragColor : COLOR)"
                 "{"
-                "    out_FragColor = tex2D(tex, in_TexCoord);"
+                "    float2 coord = in_TexCoord.xy;"
+                "    float i = frac((in_FragCoord.x - 0.5) * 0.5) * 2.0;"
+                "    float j = frac((in_FragCoord.y - 0.5 + i) * 0.5) * 2.0;"
+                "    coord.y += i + j * 2;"
+                "    coord.y *= 0.25;"
+                "    float4 p = tex2D(in_Texture, coord);"
+                "    out_FragColor = p;"
                 "}"
 #endif
             );

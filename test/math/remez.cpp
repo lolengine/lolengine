@@ -30,20 +30,25 @@ using namespace std;
 /* The function we want to approximate */
 real myfun(real const &y)
 {
+real k1024 = 1024;
+real klog32 = log((real)32);
+return (y - k1024) / log2(log(sqrt(y))/klog32);
     real x = sqrt(y);
     return (sin(x) - x) / (x * y);
 }
 
 real myerr(real const &y)
 {
+return myfun(y);
+return real::R_1;
     real x = sqrt(y);
     return sin(x) / (x * y);
 }
 
 int main(int argc, char **argv)
 {
-    RemezSolver<6> solver;
-    solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 40);
+    RemezSolver<3> solver;
+    solver.Run((real)(1024.001), (real)(1024 * 1024), myfun, myerr, 40);
 
     return EXIT_SUCCESS;
 }
