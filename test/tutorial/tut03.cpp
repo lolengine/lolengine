@@ -35,9 +35,14 @@ class Fractal : public WorldEntity
 public:
     Fractal(ivec2 const &size)
     {
+        /* Ensure size has even X and Y values */
         m_size = size;
-        m_pixels = new u8vec4[size.x * size.y];
-        m_tmppixels = new u8vec4[size.x / 2 * size.y / 2];
+        m_size.x = (m_size.x + 1) & ~1;
+        m_size.y = (m_size.y + 1) & ~1;
+
+        m_window_size = Video::GetSize();
+        m_pixels = new u8vec4[m_size.x * m_size.y];
+        m_tmppixels = new u8vec4[m_size.x / 2 * m_size.y / 2];
         m_frame = -1;
         for (int i = 0; i < 4; i++)
         {
@@ -47,11 +52,13 @@ public:
         }
         m_center = -0.75;
         m_radius = 1.5;
-        m_screenradius = 0.5 * (m_size.x < m_size.y ? m_size.x : m_size.y);
+        m_texture_radius = 0.5 * (m_size.x < m_size.y ? m_size.x : m_size.y);
+        m_window_radius = 0.5 * (m_window_size.x < m_window_size.y ? m_window_size.x : m_window_size.y);
+        m_pixel_delta = vec4(vec2(1.0, 1.0) / (vec2)m_size, m_size);
         m_ready = false;
 
-        m_palette = new u8vec4[MAX_ITERATIONS * PALETTE_STEP];
-        for (int i = 0; i < MAX_ITERATIONS * PALETTE_STEP; i++)
+        m_palette = new u8vec4[(MAX_ITERATIONS + 1) * PALETTE_STEP];
+        for (int i = 0; i < (MAX_ITERATIONS + 1) * PALETTE_STEP; i++)
         {
             float f = i / (double)PALETTE_STEP;
 
@@ -66,20 +73,20 @@ public:
         }
 
         m_centertext = new Text(NULL, "gfx/font/ascii.png");
-        m_centertext->SetPos(ivec3(5, m_size.y - 15, 1));
+        m_centertext->SetPos(ivec3(5, m_window_size.y - 15, 1));
         Ticker::Ref(m_centertext);
 
         m_mousetext = new Text(NULL, "gfx/font/ascii.png");
-        m_mousetext->SetPos(ivec3(5, m_size.y - 29, 1));
+        m_mousetext->SetPos(ivec3(5, m_window_size.y - 29, 1));
         Ticker::Ref(m_mousetext);
 
         m_zoomtext = new Text(NULL, "gfx/font/ascii.png");
-        m_zoomtext->SetPos(ivec3(5, m_size.y - 43, 1));
+        m_zoomtext->SetPos(ivec3(5, m_window_size.y - 43, 1));
         Ticker::Ref(m_zoomtext);
 
         position = ivec3(0, 0, 0);
         bbox[0] = position;
-        bbox[1] = ivec3(size, 0);
+        bbox[1] = ivec3(m_window_size, 0);
         Input::TrackMouse(this);
     }
 
@@ -94,11 +101,20 @@ public:
         delete m_palette;
     }
 
+    inline f64cmplx TexelToWorldOffset(ivec2 texel)
+    {
+        f64cmplx tmp = f64cmplx(0.5 + texel.x - m_size.x / 2,
+                                0.5 + m_size.y / 2 - texel.y);
+        return tmp * (m_radius / m_texture_radius);
+    }
+
     inline f64cmplx ScreenToWorldOffset(ivec2 pixel)
     {
-        f64cmplx tmp = f64cmplx(0.5 + pixel.x - m_size.x / 2,
-                                0.5 + m_size.y / 2 - pixel.y);
-        return tmp * (m_radius / m_screenradius);
+        /* No 0.5 offset here, because we want to be able to position the
+         * mouse at (0,0) exactly. */
+        f64cmplx tmp = f64cmplx(pixel.x - m_window_size.x / 2,
+                                m_window_size.y / 2 - pixel.y);
+        return tmp * (m_radius / m_window_radius);
     }
 
     virtual void TickGame(float deltams)
@@ -150,9 +166,9 @@ public:
             m_dirty[0] = m_dirty[1] = m_dirty[2] = m_dirty[3] = 2;
 
         char buf[128];
-        sprintf(buf, "center: %+13.11f%+13.11fi", m_center.x, m_center.y);
+        sprintf(buf, "center: %+16.14f%+16.14fi", m_center.x, m_center.y);
         m_centertext->SetText(buf);
-        sprintf(buf, " mouse: %+13.11f%+13.11fi", worldmouse.x, worldmouse.y);
+        sprintf(buf, " mouse: %+16.14f%+16.14fi", worldmouse.x, worldmouse.y);
         m_mousetext->SetText(buf);
         sprintf(buf, "  zoom: %g", 1.0 / m_radius);
         m_zoomtext->SetText(buf);
@@ -166,9 +182,9 @@ public:
             for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
             for (int i = m_frame % 2; i < m_size.x; i += 2)
             {
-                double const maxsqlen = 32;
+                double const maxsqlen = 1024;
 
-                f64cmplx z0 = m_center + ScreenToWorldOffset(ivec2(i, j));
+                f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
                 f64cmplx r0 = z0;
                 //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
                 //f64cmplx r0(0.001643721971153, 0.822467633298876);
@@ -184,6 +200,8 @@ public:
                 {
                     double f = iter;
                     double n = z.sqlen();
+                    if (n > maxsqlen * maxsqlen)
+                        n = maxsqlen * maxsqlen;
 
                     /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
                     union { double n; uint64_t x; } u = { n };
@@ -251,19 +269,20 @@ public:
                 "}",
 
                 "#version 120\n"
+                "uniform vec4 in_PixelDelta;\n"
                 "uniform sampler2D in_Texture;\n"
                 "void main(void) {"
                 "    vec2 coord = gl_TexCoord[0].xy;"
-                /* gl_FragCoord is centered inside the pixel, so we remove
-                 * 0.5 from gl_FragCoord.x. Also, (0,0) is at the bottom
-                 * left whereas our images have (0,0) at the top left, so we
-                 * _add_ 0.5 to gl_FragCoord.y. (XXX: this is no longer true
-                 * but will be again when mouse coordinates are back to
-                 * being top-left again). */
-                "    float i = mod(gl_FragCoord.x - 0.5, 2.0);"
-                "    float j = mod(gl_FragCoord.y - 0.5 + i, 2.0);"
+                /* i is 0 or 1, depending on the current X coordinate within
+                 * the current 2×2 texel. j is 0 or 1, depending on the Y
+                 * coordinate _and_ the value of i, in order to stay on the
+                 * Bayer dithering pattern. */
+                "    int i = int(mod(coord.x, 2.0 * in_PixelDelta.x) * in_PixelDelta.z);"
+                "    int j = int(mod(coord.y + i * in_PixelDelta.y, 2.0 * in_PixelDelta.y) * in_PixelDelta.w);"
+                /* Choose the best slice depending on the value of i and j. */
                 "    coord.y += i + j * 2;"
                 "    coord.y *= 0.25;"
+                /* Get a pixel from the best slice */
                 "    vec4 p = texture2D(in_Texture, coord);"
                 "    gl_FragColor = p;"
                 "}"
@@ -279,6 +298,7 @@ public:
 
                 "void main(float4 in_FragCoord : WPOS,"
                 "          float2 in_TexCoord : TEXCOORD0,"
+                "          uniform float4 in_PixelDelta,"
                 "          uniform sampler2D in_Texture,"
                 "          out float4 out_FragColor : COLOR)"
                 "{"
@@ -294,6 +314,7 @@ public:
             );
             m_vertexattrib = m_shader->GetAttribLocation("in_Vertex");
             m_texattrib = m_shader->GetAttribLocation("in_TexCoord");
+            m_pixeluni = m_shader->GetUniformLocation("in_PixelDelta");
             m_ready = true;
 
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -340,6 +361,7 @@ if (0) for (int i = 0; i < 4; i++)
 }
 
         m_shader->Bind();
+        m_shader->SetUniform(m_pixeluni, m_pixel_delta);
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glEnableVertexAttribArray(m_vertexattrib);
@@ -379,7 +401,7 @@ private:
     static int const MAX_ITERATIONS = 170;
     static int const PALETTE_STEP = 32;
 
-    ivec2 m_size;
+    ivec2 m_size, m_window_size;
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
     Shader *m_shader;
     GLuint m_texid;
@@ -387,12 +409,13 @@ private:
     GLuint m_vbo, m_tbo;
     GLuint m_tco;
 #endif
-    int m_vertexattrib, m_texattrib;
+    int m_vertexattrib, m_texattrib, m_pixeluni;
     int m_frame, m_dirty[4];
     bool m_ready;
 
     f64cmplx m_center;
-    double m_radius, m_screenradius;
+    double m_radius, m_texture_radius, m_window_radius;
+    vec4 m_pixel_delta;
     f64cmplx m_deltashift[4];
     double m_deltascale[4];
 
