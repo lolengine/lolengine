@@ -75,7 +75,9 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 
 void SdlApp::ShowPointer(bool show)
 {
+#if defined USE_SDL
     SDL_ShowCursor(show ? 1 : 0);
+#endif
 }
 
 void SdlApp::Run()
