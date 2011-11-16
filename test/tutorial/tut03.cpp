@@ -135,7 +135,7 @@ public:
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
 #ifdef __CELLOS_LV2__
-            m_radius *= pow(2.0, -deltams * 0.00015);
+            m_radius *= pow(2.0, -deltams * 0.0005);
             m_center = f64cmplx(0.001643721971153, 0.822467633298876);
 #else
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
@@ -314,7 +314,7 @@ public:
                 /* Slightly shift our pixel so that it does not lie at
                  * an exact texel boundary. This would lead to visual
                  * artifacts. */
-                "coord -= 0.1 * in_PixelDelta.x;"
+                "    coord -= 0.1 * in_PixelDelta.xy;"
                 /* Get a pixel from each slice */
                 "    vec4 p0 = texture2D(in_Texture, nearest0(coord).xy);"
                 "    vec4 p1 = texture2D(in_Texture, nearest1(coord).xy);"
@@ -332,19 +332,50 @@ public:
                 "    out_Position = in_Position;"
                 "}",
 
-                "void main(float4 in_FragCoord : WPOS,"
-                "          float2 in_TexCoord : TEXCOORD0,"
+                "float3 nearest0(float2 p, float4 in_PixelDelta) {"
+                "    float2 q = p + 0.5 * in_PixelDelta.xy;"
+                "    q -= fmod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += 0.5 * in_PixelDelta.xy;"
+                "    return float3(q * float2(1.0, 0.25),"
+                "                  length(q - p));"
+                "}"
+                ""
+                "float3 nearest1(float2 p, float4 in_PixelDelta) {"
+                "    float2 q = p - 0.5 * in_PixelDelta.xy;"
+                "    q -= fmod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += 1.5 * in_PixelDelta.xy;"
+                "    return float3(q * float2(1.0, 0.25) + float2(0.0, 0.25),"
+                "                  length(q - p));"
+                "}"
+                ""
+                "float3 nearest2(float2 p, float4 in_PixelDelta) {"
+                "    float2 q = p + float2(0.5, -0.5) * in_PixelDelta.xy;"
+                "    q -= fmod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += float2(0.5, 1.5) * in_PixelDelta.xy;"
+                "    return float3(q * float2(1.0, 0.25) + float2(0.0, 0.50),"
+                "                  length(q - p));"
+                "}"
+                ""
+                "float3 nearest3(float2 p, float4 in_PixelDelta) {"
+                "    float2 q = p + float2(-0.5, 0.5) * in_PixelDelta.xy;"
+                "    q -= fmod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += float2(1.5, 0.5) * in_PixelDelta.xy;"
+                "    return float3(q * float2(1.0, 0.25) + float2(0.0, 0.75),"
+                "                  length(q - p));"
+                "}"
+                ""
+                "void main(float2 in_TexCoord : TEXCOORD0,"
                 "          uniform float4 in_PixelDelta,"
                 "          uniform sampler2D in_Texture,"
                 "          out float4 out_FragColor : COLOR)"
                 "{"
                 "    float2 coord = in_TexCoord.xy;"
-                "    float i = frac((in_FragCoord.x - 0.5) * 0.5) * 2.0;"
-                "    float j = frac((in_FragCoord.y - 0.5 + i) * 0.5) * 2.0;"
-                "    coord.y += i + j * 2;"
-                "    coord.y *= 0.25;"
-                "    float4 p = tex2D(in_Texture, coord);"
-                "    out_FragColor = p;"
+                "    coord -= 0.1 * in_PixelDelta.xy;"
+                "    float4 p0 = tex2D(in_Texture, nearest0(coord, in_PixelDelta).xy);"
+                "    float4 p1 = tex2D(in_Texture, nearest1(coord, in_PixelDelta).xy);"
+                "    float4 p2 = tex2D(in_Texture, nearest2(coord, in_PixelDelta).xy);"
+                "    float4 p3 = tex2D(in_Texture, nearest3(coord, in_PixelDelta).xy);"
+                "    out_FragColor = 0.25 * (p0 + p1 + p2 + p3);"
                 "}"
 #endif
             );
