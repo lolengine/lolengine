@@ -269,22 +269,58 @@ public:
                 "}",
 
                 "#version 120\n"
-                "uniform vec4 in_PixelDelta;\n"
-                "uniform sampler2D in_Texture;\n"
+                ""
+                "uniform vec4 in_PixelDelta;"
+                "uniform sampler2D in_Texture;"
+                ""
+                /* Get the coordinate of the nearest point in slice 0 in xy,
+                 * and the squared distance to that point in z.
+                 * p is in normalised [0,1] texture coordinates.
+                 * return value has the 0.25 Y scaling. */
+                "vec3 nearest0(vec2 p) {"
+                "    vec2 q = p + 0.5 * in_PixelDelta.xy;"
+                "    q -= mod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += 0.5 * in_PixelDelta.xy;"
+                "    return vec3(q * vec2(1.0, 0.25),"
+                "                length(q - p));"
+                "}"
+                ""
+                "vec3 nearest1(vec2 p) {"
+                "    vec2 q = p - 0.5 * in_PixelDelta.xy;"
+                "    q -= mod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += 1.5 * in_PixelDelta.xy;"
+                "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.25),"
+                "                length(q - p));"
+                "}"
+                ""
+                "vec3 nearest2(vec2 p) {"
+                "    vec2 q = p + vec2(0.5, -0.5) * in_PixelDelta.xy;"
+                "    q -= mod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += vec2(0.5, 1.5) * in_PixelDelta.xy;"
+                "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.50),"
+                "                length(q - p));"
+                "}"
+                ""
+                "vec3 nearest3(vec2 p) {"
+                "    vec2 q = p + vec2(-0.5, 0.5) * in_PixelDelta.xy;"
+                "    q -= mod(q, 2.0 * in_PixelDelta.xy);"
+                "    q += vec2(1.5, 0.5) * in_PixelDelta.xy;"
+                "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.75),"
+                "                length(q - p));"
+                "}"
+                ""
                 "void main(void) {"
                 "    vec2 coord = gl_TexCoord[0].xy;"
-                /* i is 0 or 1, depending on the current X coordinate within
-                 * the current 2×2 texel. j is 0 or 1, depending on the Y
-                 * coordinate _and_ the value of i, in order to stay on the
-                 * Bayer dithering pattern. */
-                "    int i = int(mod(coord.x, 2.0 * in_PixelDelta.x) * in_PixelDelta.z);"
-                "    int j = int(mod(coord.y + i * in_PixelDelta.y, 2.0 * in_PixelDelta.y) * in_PixelDelta.w);"
-                /* Choose the best slice depending on the value of i and j. */
-                "    coord.y += i + j * 2;"
-                "    coord.y *= 0.25;"
-                /* Get a pixel from the best slice */
-                "    vec4 p = texture2D(in_Texture, coord);"
-                "    gl_FragColor = p;"
+                /* Slightly shift our pixel so that it does not lie at
+                 * an exact texel boundary. This would lead to visual
+                 * artifacts. */
+                "coord -= 0.1 * in_PixelDelta.x;"
+                /* Get a pixel from each slice */
+                "    vec4 p0 = texture2D(in_Texture, nearest0(coord).xy);"
+                "    vec4 p1 = texture2D(in_Texture, nearest1(coord).xy);"
+                "    vec4 p2 = texture2D(in_Texture, nearest2(coord).xy);"
+                "    vec4 p3 = texture2D(in_Texture, nearest3(coord).xy);"
+                "    gl_FragColor = 0.25 * (p0 + p1 + p2 + p3);"
                 "}"
 #else
                 "void main(float4 in_Position : POSITION,"
