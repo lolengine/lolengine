@@ -30,6 +30,17 @@ using namespace lol;
 #   include <direct.h>
 #endif
 
+#ifdef __CELLOS_LV2__
+static GLint const INTERNAL_FORMAT = GL_ARGB_SCE;
+static GLenum const TEXTURE_FORMAT = GL_BGRA;
+static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+/* Seems efficient for little endian textures */
+static GLint const INTERNAL_FORMAT = GL_RGBA;
+static GLenum const TEXTURE_FORMAT = GL_BGRA;
+static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
+#endif
+
 class Fractal : public WorldEntity
 {
 public:
@@ -135,7 +146,7 @@ public:
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
 #ifdef __CELLOS_LV2__
-            m_radius *= pow(2.0, -deltams * 0.0005);
+            m_radius *= pow(2.0, -deltams * 0.00005);
             m_center = f64cmplx(0.001643721971153, 0.822467633298876);
 #else
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
@@ -177,12 +188,14 @@ public:
 
         if (m_dirty[m_frame])
         {
+            double const maxsqlen = 1024;
+            double const k1 = 1.0 / (1 << 10) / log2(maxsqlen);
+
             m_dirty[m_frame]--;
 
             for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
             for (int i = m_frame % 2; i < m_size.x; i += 2)
             {
-                double const maxsqlen = 1024;
 
                 f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
                 f64cmplx r0 = z0;
@@ -206,7 +219,7 @@ public:
                     /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
                     union { double n; uint64_t x; } u = { n };
                     double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
-                    k *= 1.0 / (1 << 10) / log2(maxsqlen);
+                    k *= k1;
 
                     /* Approximate log2(k) in [1,2]. */
                     f += (- 0.344847817623168308695977510213252644185 * k
@@ -253,8 +266,13 @@ public:
              * so that we can upload four different subimages each frame. */
             glGenTextures(1, &m_texid);
             glBindTexture(GL_TEXTURE_2D, m_texid);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x / 2, m_size.y * 2,
-                         0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, m_pixels);
+            glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
+                         m_size.x / 2, m_size.y * 2, 0,
+                         TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
+#if !defined __CELLOS_LV2__
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
+                            GL_TEXTURE_TILED_GPU_SCE);
+#endif
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -411,7 +429,7 @@ public:
 
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
+                            TEXTURE_FORMAT, TEXTURE_TYPE,
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
         }
 
@@ -422,7 +440,7 @@ if (0) for (int i = 0; i < 4; i++)
     {
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
+                            TEXTURE_FORMAT, TEXTURE_TYPE,
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
     }
 }
