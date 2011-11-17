@@ -269,7 +269,7 @@ public:
             glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
                          m_size.x / 2, m_size.y * 2, 0,
                          TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
-#if !defined __CELLOS_LV2__
+#if defined __CELLOS_LV2__
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
                             GL_TEXTURE_TILED_GPU_SCE);
 #endif
