@@ -147,7 +147,8 @@ public:
             double oldradius = m_radius;
 #ifdef __CELLOS_LV2__
             m_radius *= pow(2.0, -deltams * 0.00005);
-            m_center = f64cmplx(0.001643721971153, 0.822467633298876);
+            m_center = f64cmplx(-.22815528839841, -1.11514249704382);
+            //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
 #else
             double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
             if (m_radius * zoom > 8.0)
@@ -270,6 +271,8 @@ public:
                          m_size.x / 2, m_size.y * 2, 0,
                          TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
 #if defined __CELLOS_LV2__
+            /* We need this hint because by default the storage type is
+             * GL_TEXTURE_SWIZZLED_GPU_SCE. */
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
                             GL_TEXTURE_TILED_GPU_SCE);
 #endif
@@ -427,10 +430,18 @@ public:
         {
             m_dirty[m_frame]--;
 
+#ifdef __CELLOS_LV2__
+            /* glTexSubImage2D is extremely slow on the PS3, to the point
+             * that uploading the whole texture is 40 times faster. */
+            glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
+                         m_size.x / 2, m_size.y * 2, 0,
+                         TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
+#else
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
                             TEXTURE_FORMAT, TEXTURE_TYPE,
                             m_pixels + m_size.x * m_size.y / 4 * m_frame);
+#endif
         }
 
 /* If other frames are dirty, upload fake data for now */
