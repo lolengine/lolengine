@@ -405,7 +405,7 @@ public:
             m_pixeluni = m_shader->GetUniformLocation("in_PixelDelta");
             m_ready = true;
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -415,7 +415,7 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
                          GL_STATIC_DRAW);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
             /* Method 2: upload vertex information at each frame */
 #else
 #endif
@@ -444,21 +444,9 @@ public:
 #endif
         }
 
-/* If other frames are dirty, upload fake data for now */
-if (0) for (int i = 0; i < 4; i++)
-{
-    if (m_dirty[i])
-    {
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i * m_size.y / 2,
-                            m_size.x / 2, m_size.y / 2,
-                            TEXTURE_FORMAT, TEXTURE_TYPE,
-                            m_pixels + m_size.x * m_size.y / 4 * m_frame);
-    }
-}
-
         m_shader->Bind();
         m_shader->SetUniform(m_pixeluni, m_pixel_delta);
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glEnableVertexAttribArray(m_vertexattrib);
         glVertexAttribPointer(m_vertexattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -466,7 +454,7 @@ if (0) for (int i = 0; i < 4; i++)
         glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
         glEnableVertexAttribArray(m_texattrib);
         glVertexAttribPointer(m_texattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
         /* Never used for now */
         //glEnableVertexAttribArray(m_vertexattrib);
         //glVertexAttribPointer(m_vertexattrib, 2, GL_FLOAT, GL_FALSE, 0, vertices);
@@ -479,11 +467,11 @@ if (0) for (int i = 0; i < 4; i++)
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
         glDisableVertexAttribArray(m_vertexattrib);
         glDisableVertexAttribArray(m_texattrib);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
         /* Never used for now */
         //glDisableVertexAttribArray(m_vertexattrib);
         //glDisableVertexAttribArray(m_texattrib);
@@ -501,7 +489,7 @@ private:
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
     Shader *m_shader;
     GLuint m_texid;
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__
     GLuint m_vbo, m_tbo;
     GLuint m_tco;
 #endif
@@ -519,7 +507,7 @@ private:
     Text *m_centertext, *m_mousetext, *m_zoomtext;
 };
 
-int main()
+int main(int argc, char **argv)
 {
 #if defined _WIN32
     _chdir("../..");
