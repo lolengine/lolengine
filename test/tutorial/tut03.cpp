@@ -72,6 +72,7 @@ public:
             m_dirty[i] = 2;
         }
         m_center = -0.75;
+        m_zoom_speed = 0.0;
         m_radius = 5.0;
         m_ready = false;
 
@@ -154,24 +155,37 @@ public:
 
         ivec3 buttons = Input::GetMouseButtons();
 #ifdef __CELLOS_LV2__
-        if (true)
+        m_zoom_speed = 0.0005;
 #else
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
+        {
+            double zoom = buttons[0] ? -0.0005 : 0.0005;
+            m_zoom_speed += deltams * zoom;
+            if (m_zoom_speed / zoom > 5)
+                m_zoom_speed = 5 * zoom;
+        }
+        else if (m_zoom_speed)
+        {
+            m_zoom_speed *= pow(2.0, -deltams * 0.005);
+            if (abs(m_zoom_speed) < 1e-5)
+                m_zoom_speed = 0.0;
+        }
 #endif
+
+        if (m_zoom_speed)
         {
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
-#ifdef __CELLOS_LV2__
-            m_radius *= pow(2.0, -deltams * 0.00005);
-            m_center = f64cmplx(-.22815528839841, -1.11514249704382);
-            //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
-#else
-            double zoom = pow(2.0, (buttons[0] ? -deltams : deltams) * 0.0025);
+            double zoom = pow(2.0, deltams * m_zoom_speed);
             if (m_radius * zoom > 8.0)
                 zoom = 8.0 / m_radius;
             else if (m_radius * zoom < 1e-14)
                 zoom = 1e-14 / m_radius;
             m_radius *= zoom;
+#ifdef __CELLOS_LV2__
+            m_center = f64cmplx(-.22815528839841, -1.11514249704382);
+            //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
+#else
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
 #endif
@@ -573,7 +587,7 @@ private:
     bool m_ready;
 
     f64cmplx m_center;
-    double m_radius;
+    double m_zoom_speed, m_radius;
     vec4 m_texel_settings;
     mat4 m_zoom_settings;
     f64cmplx m_deltashift[4];
