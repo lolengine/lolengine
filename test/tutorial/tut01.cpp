@@ -23,6 +23,10 @@ using namespace lol;
 #   include <SDL_main.h>
 #endif
 
+#if defined __native_client__
+#   define main old_main
+#endif
+
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #endif

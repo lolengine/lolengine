@@ -13,9 +13,9 @@
 #endif
 
 #if defined __native_client__
-#   include "ppapi/cpp/instance.h"
-#   include "ppapi/cpp/module.h"
-#   include "ppapi/cpp/var.h"
+#   include <ppapi/cpp/instance.h>
+#   include <ppapi/cpp/module.h>
+#   include <ppapi/cpp/var.h>
 #endif
 
 #include "core.h"

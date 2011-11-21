@@ -191,6 +191,7 @@ LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
 AC_CHECK_FUNCS(glBegin)
 LIBS="${save_LIBS}"
 
+
 dnl Use SDL? (always required on Linux or Win32)
 ac_cv_my_have_sdl="no"
 ac_cv_my_have_sdl_image="no"
@@ -251,6 +252,13 @@ AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
 AM_CONDITIONAL(USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" = "yes")
 AM_CONDITIONAL(USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" = "yes")
 
+
+dnl  Use NativeClient?
+ac_cv_my_have_nacl="no"
+AC_LANG_PUSH(C++)
+AC_CHECK_HEADERS(ppapi/cpp/instance.h, [ac_cv_my_have_nacl="yes"])
+AC_LANG_POP(C++)
+AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
 dnl Use EGL?
 ac_cv_my_have_egl="no"

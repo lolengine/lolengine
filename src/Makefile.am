@@ -43,8 +43,14 @@ sdl_sources = \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
 
+if USE_NACL
 nacl_sources = \
-    platform/nacl/naclapp.cpp platform/nacl/naclapp.h
+    platform/nacl/naclapp.cpp platform/nacl/naclapp.h \
+    platform/nacl/nacl_instance.cpp platform/nacl/nacl_instance.h \
+    platform/nacl/nacl_module.cpp \
+    platform/nacl/opengl_context.cpp platform/nacl/opengl_context.h \
+    platform/nacl/opengl_context_ptrs.h
+endif
 
 if HAVE_PS3
 ps3_sources =  \
