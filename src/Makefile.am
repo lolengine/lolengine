@@ -19,6 +19,7 @@ liblol_a_SOURCES = \
     eglapp.cpp eglapp.h \
     \
     $(ps3_sources) \
+    $(nacl_sources) \
     $(sdl_sources) \
     \
     shader/shader.cpp shader/shader.h \
@@ -38,9 +39,12 @@ liblol_a_SOURCES = \
     debug/quad.cpp debug/quad.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
-sdl_sources =  \
+sdl_sources = \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
+
+nacl_sources = \
+    platform/nacl/naclapp.cpp platform/nacl/naclapp.h
 
 if HAVE_PS3
 ps3_sources =  \

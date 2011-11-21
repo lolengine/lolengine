@@ -128,6 +128,9 @@ PKG_CHECK_MODULES(GLES2, glesv2,
   GL_CFLAGS="${GL_CFLAGS} ${GLES2_CFLAGS}"
   GL_LIBS="${GL_LIBS} ${GLES2_LIBS}"],
  [:])
+AC_CHECK_HEADER(GLES2/gl2.h,
+ [AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+  ac_cv_my_have_gl="yes"])
 
 PKG_CHECK_MODULES(GL, gl,
  [ac_cv_my_have_gl="yes"
@@ -152,6 +155,7 @@ AC_CHECK_HEADER(GL/gl.h,
   LIBS="$LIBS_save"])
 AC_CHECK_HEADER(PSGL/psgl.h,
  [ac_cv_my_have_gl="yes"])
+
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi

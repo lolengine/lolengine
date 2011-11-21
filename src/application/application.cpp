@@ -17,6 +17,8 @@
 
 #if defined __CELLOS_LV2__
 #   include "platform/ps3/ps3app.h"
+#elif defined __native_client__
+#   include "platform/nacl/naclapp.h"
 #elif defined HAVE_GLES_2X
 #   include "eglapp.h"
 #else
@@ -39,6 +41,8 @@ class ApplicationData
 
 #if defined __CELLOS_LV2__
     Ps3App app;
+#elif defined __native_client__
+    NaClApp app;
 #elif defined HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;
