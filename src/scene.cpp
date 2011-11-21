@@ -137,7 +137,9 @@ void Scene::Render() // XXX: rename to Blit()
     {
 #if !defined __CELLOS_LV2__
         stdshader = Shader::Create(
+#if !defined HAVE_GLES_2X
             "#version 130\n"
+#endif
             "\n"
 #if defined HAVE_GLES_2X
             "attribute vec3 in_Position;\n"
@@ -162,7 +164,11 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
             "}\n",
 
+#if !defined HAVE_GLES_2X
             "#version 130\n"
+#else
+            "precision mediump float;\n"
+#endif
             "\n"
             "uniform sampler2D in_Texture;\n"
 #if defined HAVE_GLES_2X
@@ -317,7 +323,9 @@ void Scene::Render() // XXX: rename to Blit()
     //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);
 #endif
 
+#if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
+#endif
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 #if defined HAVE_GL_2X && !defined __APPLE__
@@ -405,7 +413,9 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 
+#if !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
+#endif
     glDisable(GL_DEPTH_TEST);
 #if defined HAVE_GL_2X && !defined __APPLE__
     glDisable(GL_ALPHA_TEST);

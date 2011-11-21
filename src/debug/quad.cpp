@@ -162,7 +162,9 @@ void DebugQuad::TickDraw(float deltams)
             data->shader[i] = NULL;
 
         /* Checkerboard texture */
+#if !defined HAVE_GLES_2X
         glEnable(GL_TEXTURE_2D);
+#endif
         glBindTexture(GL_TEXTURE_2D, data->texture[0]);
         for (int j = 0; j < TEX_SIZE; j++)
             for (int i = 0; i < TEX_SIZE; i++)
@@ -303,7 +305,9 @@ void DebugQuad::TickDraw(float deltams)
      * animated distorted checkerboard.
      */
 #if defined HAVE_GLBEGIN || defined USE_GLEW
+#if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
+#endif
     glBindTexture(GL_TEXTURE_2D, data->texture[0]);
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
@@ -327,7 +331,9 @@ void DebugQuad::TickDraw(float deltams)
         glTexCoord2f(texcoords[10], texcoords[11]);
         glVertex3f(data->aa.x, data->bb.y, 0.0f);
     glEnd();
+#if !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
+#endif
 #endif
 
     Advance();
@@ -1077,7 +1083,9 @@ void DebugQuad::ResetState()
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
+#if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
+#endif
     glBindTexture(GL_TEXTURE_2D, 0);
 #if defined HAVE_GLBEGIN || defined USE_GLEW || defined __CELLOS_LV2__
     glClientActiveTexture(GL_TEXTURE0);
@@ -1085,7 +1093,9 @@ void DebugQuad::ResetState()
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined __native_client__
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE);
 #endif
+#if !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
+#endif
 
     glDisable(GL_BLEND);
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined __native_client__
