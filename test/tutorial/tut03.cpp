@@ -59,7 +59,12 @@ public:
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
+#if !defined __native_client__
         m_window_size = Video::GetSize();
+#else
+        /* FIXME: it's illegal to call this on the game thread! */
+        m_window_size = ivec2(640, 480);
+#endif
         if (m_window_size.y < m_window_size.x)
             m_window2world = 0.5 / m_window_size.y;
         else
@@ -76,7 +81,11 @@ public:
             m_dirty[i] = 2;
         }
         m_center = -0.75;
+#if defined __CELLOS_LV2__ || defined __native_client__
+        m_zoom_speed = -0.0025;
+#else
         m_zoom_speed = 0.0;
+#endif
         m_radius = 5.0;
         m_ready = false;
 
@@ -100,9 +109,14 @@ public:
             uint8_t red = r * 255.99f;
             uint8_t green = g * 255.99f;
             uint8_t blue = b * 255.99f;
-            m_palette[i] = u8vec4(blue, green, red, 0);
+#if defined __native_client__
+            m_palette[i] = u8vec4(red, green, blue, 255);
+#else
+            m_palette[i] = u8vec4(blue, green, red, 255);
+#endif
         }
 
+#if !defined __native_client__
         m_centertext = new Text(NULL, "gfx/font/ascii.png");
         m_centertext->SetPos(ivec3(5, m_window_size.y - 15, 1));
         Ticker::Ref(m_centertext);
@@ -114,6 +128,7 @@ public:
         m_zoomtext = new Text(NULL, "gfx/font/ascii.png");
         m_zoomtext->SetPos(ivec3(5, m_window_size.y - 43, 1));
         Ticker::Ref(m_zoomtext);
+#endif
 
         position = ivec3(0, 0, 0);
         bbox[0] = position;
@@ -124,9 +139,11 @@ public:
     ~Fractal()
     {
         Input::UntrackMouse(this);
+#if !defined __native_client__
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
         Ticker::Unref(m_zoomtext);
+#endif
         delete m_pixels;
         delete m_tmppixels;
         delete m_palette;
@@ -158,9 +175,7 @@ public:
         f64cmplx worldmouse = m_center + ScreenToWorldOffset(mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
-#ifdef __CELLOS_LV2__
-        m_zoom_speed = 0.0005;
-#else
+#if !defined __CELLOS_LV2__ && !defined __native_client__
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
         {
             double zoom = buttons[0] ? -0.0005 : 0.0005;
@@ -182,13 +197,20 @@ public:
             double oldradius = m_radius;
             double zoom = pow(2.0, deltams * m_zoom_speed);
             if (m_radius * zoom > 8.0)
+            {
+                m_zoom_speed *= -1.0;
                 zoom = 8.0 / m_radius;
+            }
             else if (m_radius * zoom < 1e-14)
+            {
+                m_zoom_speed *= -1.0;
                 zoom = 1e-14 / m_radius;
+            }
             m_radius *= zoom;
-#ifdef __CELLOS_LV2__
-            m_center = f64cmplx(-.22815528839841, -1.11514249704382);
+#if defined __CELLOS_LV2__ || defined __native_client__
+            //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
             //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
+            m_center = f64cmplx(-0.65823419062254, .50221777363480);
 #else
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
@@ -230,6 +252,7 @@ public:
             m_zoom_settings[cur_index][2] = m_zoom_settings[prev_index][2] * m_deltascale[cur_index];
         }
 
+#if !defined __native_client__
         char buf[128];
         sprintf(buf, "center: %+16.14f%+16.14fi", m_center.x, m_center.y);
         m_centertext->SetText(buf);
@@ -237,6 +260,7 @@ public:
         m_mousetext->SetText(buf);
         sprintf(buf, "  zoom: %g", 1.0 / m_radius);
         m_zoomtext->SetText(buf);
+#endif
 
         u8vec4 *m_pixelstart = m_pixels + m_size.x * m_size.y / 4 * m_frame;
 
@@ -284,7 +308,7 @@ public:
                 }
                 else
                 {
-                    *m_pixelstart++ = u8vec4(0, 0, 0, 0);
+                    *m_pixelstart++ = u8vec4(0, 0, 0, 255);
                 }
             }
         }
@@ -334,16 +358,35 @@ public:
 
             m_shader = Shader::Create(
 #if !defined __CELLOS_LV2__
+#if !defined HAVE_GLES_2X
                 "#version 120\n"
-                "attribute vec2 in_TexCoord;\n"
+#else
+                "precision highp float;"
+#endif
+                ""
+#if defined HAVE_GLES_2X
+                "varying vec2 pass_TexCoord;"
+#endif
+                "attribute vec2 in_TexCoord;"
                 "attribute vec2 in_Vertex;"
                 "void main(void) {"
                 "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
-                "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
+#if defined HAVE_GLES_2X
+                "    pass_TexCoord = in_TexCoord;"
+#else
+                "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);"
+#endif
                 "}",
 
+#if !defined HAVE_GLES_2X
                 "#version 120\n"
+#else
+                "precision highp float;"
+#endif
                 ""
+#if defined HAVE_GLES_2X
+                "varying vec2 pass_TexCoord;"
+#endif
                 "uniform vec4 in_TexelSize;"
                 "uniform mat4 in_ZoomSettings;"
                 "uniform sampler2D in_Texture;"
@@ -411,7 +454,11 @@ public:
                 "}"
                 ""
                 "void main(void) {"
+#if defined HAVE_GLES_2X
+                "    vec2 coord = pass_TexCoord;"
+#else
                 "    vec2 coord = gl_TexCoord[0].xy;"
+#endif
                 /* Slightly shift our pixel so that it does not lie at
                  * an exact texel boundary. This would lead to visual
                  * artifacts. */
@@ -513,7 +560,9 @@ public:
             /* FIXME: this object never cleans up */
         }
 
+#if !defined HAVE_GLES_2X
         glEnable(GL_TEXTURE_2D);
+#endif
         glBindTexture(GL_TEXTURE_2D, m_texid);
 
         if (m_dirty[m_frame])
@@ -598,7 +647,9 @@ private:
     double m_deltascale[4];
 
     /* Debug information */
+#if !defined __native_client__
     Text *m_centertext, *m_mousetext, *m_zoomtext;
+#endif
 };
 
 int main(int argc, char **argv)
