@@ -15,6 +15,7 @@
 # And <platform> is one of:
 #  - linux-i386
 #  - linux-amd64
+#  - nacl-amd64
 #  - ios-arm
 #  - osx-amd64
 #  - android-arm
@@ -118,6 +119,10 @@ configure()
             cd monsterz/android
             android update project --path .
             ;;
+        nacl-amd64)
+            # no need for "-u _ZN2pp12CreateModuleEv" but it could be helpful
+            ./configure CXX=x86_64-nacl-g++ CC=x86_64-nacl-gcc ac_cv_exeext=.nexe --host=none LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp"
+            ;;
         ps3-ppu)
             PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
             ;;
@@ -177,6 +182,8 @@ check()
         android-arm)
             ;;
         ps3-ppu)
+            ;;
+        nacl-*)
             ;;
         windows-i386)
             # If neither $MSYSTEM or $DISPLAY are set, and xvfb-run

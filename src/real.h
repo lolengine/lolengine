@@ -18,6 +18,9 @@
 
 #include <stdint.h>
 
+/* Avoid issues with NaCl headers */
+#undef log2
+
 namespace lol
 {
 
