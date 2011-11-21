@@ -70,7 +70,7 @@ void Video::Setup(ivec2 size)
     VideoData::saved_viewport = size;
 #endif
 
-    glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
+    glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
     glClearDepth(1.0);
 
 #if defined HAVE_GL_2X && !defined __APPLE__
