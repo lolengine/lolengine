@@ -80,10 +80,13 @@ public:
             m_deltascale[i] = 1.0;
             m_dirty[i] = 2;
         }
-        m_center = -0.75;
 #if defined __CELLOS_LV2__ || defined __native_client__
-        m_zoom_speed = -0.0025;
+        //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
+        //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
+        m_center = f64cmplx(-0.65823419062254, .50221777363480);
+        m_zoom_speed = 0;//-0.0025;
 #else
+        m_center = -0.75;
         m_zoom_speed = 0.0;
 #endif
         m_radius = 5.0;
@@ -207,11 +210,7 @@ public:
                 zoom = 1e-14 / m_radius;
             }
             m_radius *= zoom;
-#if defined __CELLOS_LV2__ || defined __native_client__
-            //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
-            //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
-            m_center = f64cmplx(-0.65823419062254, .50221777363480);
-#else
+#if !defined __CELLOS_LV2__ && !defined __native_client__
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
 #endif
@@ -369,7 +368,8 @@ public:
 #endif
                 "attribute vec2 in_TexCoord;"
                 "attribute vec2 in_Vertex;"
-                "void main(void) {"
+                "void main(void)"
+                "{"
                 "    gl_Position = vec4(in_Vertex, 0.0, 1.0);"
 #if defined HAVE_GLES_2X
                 "    pass_TexCoord = in_TexCoord;"
@@ -391,73 +391,93 @@ public:
                 "uniform mat4 in_ZoomSettings;"
                 "uniform sampler2D in_Texture;"
                 ""
-                "float mylen(vec2 p) {"
-                //"    return abs(p.x) + abs(p.y);"
-                "    return 0.001 + p.x * p.x + p.y * p.y;"
-                //"    return 0.001 + length(p);"
+                "float mylen(vec2 p)"
+                "{"
+                "    p *= in_TexelSize.zw;" /* Correct for aspect ratio */
+                //"    return 0.001 + abs(p.x) + abs(p.y);"
+                //"    return 0.1 + length(p);"
+                "    vec2 q = p * p;"
+                "    return 0.01 + q.x + q.y;"
                 "}"
                 ""
                 /* Get the coordinate of the nearest point in slice 0 in xy,
                  * and the squared distance to that point in z.
                  * p is in normalised [0,1] texture coordinates.
                  * return value has the 0.25 Y scaling. */
-                "vec3 nearest0(vec2 p) {"
+                "vec3 nearest0(vec2 p)"
+                "{"
+                     /* Step 1: center point in [-.5,.5], apply zoom and
+                      * translation transformation, and go back to texture
+                      * coordinates in [0,1]. That's the ideal point we
+                      * would like to compute the value for. */
                 "    p -= vec2(0.5, 0.5);"
                 "    p *= in_ZoomSettings[0][2];"
                 "    p += vec2(in_ZoomSettings[0][0], -in_ZoomSettings[0][1]);"
                 "    p += vec2(0.5, 0.5);"
-                "    vec2 q = p + 0.5 * in_TexelSize.xy;"
+                     /* Step 2: find out the (rounded) texel coordinates in
+                      * the half-resolution slice. We use an offset of 15/32
+                      * instead of 1/2 to avoid rounding issues at edges. */
+                "    vec2 q = p + 0.46875 * in_TexelSize.xy;"
                 "    q = in_TexelSize.xy"
                 "         * (1.0 + 2.0 * floor(q * 0.5 * in_TexelSize.zw));"
+                     /* Step 3: go back to full-resolution texel coordinates
+                      * so that we know the error between the pixel we get
+                      * and the pixel we wanted. */
                 "    vec2 r = q - 0.5 * in_TexelSize.xy;"
-                "    float l = (abs(q.x - 0.5) < 0.5 && abs(q.y - 0.5) < 0.5)"
+                "    float l = (abs(q.x - .5) < .5 && abs(q.y - .5) < .5)"
                 "             ? 1.0 / mylen(r - p) : 0.0;"
+                     /* Step 4: return final texel coordinates and
+                      * corresponding error value. */
                 "    return vec3(q * vec2(1.0, 0.25), l);"
                 "}"
                 ""
-                "vec3 nearest1(vec2 p) {"
+                "vec3 nearest1(vec2 p)"
+                "{"
                 "    p -= vec2(0.5, 0.5);"
                 "    p *= in_ZoomSettings[1][2];"
                 "    p += vec2(in_ZoomSettings[1][0], -in_ZoomSettings[1][1]);"
                 "    p += vec2(0.5, 0.5);"
-                "    vec2 q = p + -0.5 * in_TexelSize.xy;"
+                "    vec2 q = p + -0.46875 * in_TexelSize.xy;"
                 "    q = in_TexelSize.xy"
                 "         * (1.0 + 2.0 * floor(q * 0.5 * in_TexelSize.zw));"
                 "    vec2 r = q - -0.5 * in_TexelSize.xy;"
-                "    float l = (abs(q.x - 0.5) < 0.5 && abs(q.y - 0.5) < 0.5)"
+                "    float l = (abs(q.x - .5) < .5 && abs(q.y - .5) < .5)"
                 "             ? 1.0 / mylen(r - p) : 0.0;"
                 "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.25), l);"
                 "}"
                 ""
-                "vec3 nearest2(vec2 p) {"
+                "vec3 nearest2(vec2 p)"
+                "{"
                 "    p -= vec2(0.5, 0.5);"
                 "    p *= in_ZoomSettings[2][2];"
                 "    p += vec2(in_ZoomSettings[2][0], -in_ZoomSettings[2][1]);"
                 "    p += vec2(0.5, 0.5);"
-                "    vec2 q = p + vec2(0.5, -0.5) * in_TexelSize.xy;"
+                "    vec2 q = p + vec2(0.46875, -0.46875) * in_TexelSize.xy;"
                 "    q = in_TexelSize.xy"
                 "         * (1.0 + 2.0 * floor(q * 0.5 * in_TexelSize.zw));"
                 "    vec2 r = q - vec2(0.5, -0.5) * in_TexelSize.xy;"
-                "    float l = (abs(q.x - 0.5) < 0.5 && abs(q.y - 0.5) < 0.5)"
+                "    float l = (abs(q.x - .5) < .5 && abs(q.y - .5) < .5)"
                 "             ? 1.0 / mylen(r - p) : 0.0;"
                 "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.50), l);"
                 "}"
                 ""
-                "vec3 nearest3(vec2 p) {"
+                "vec3 nearest3(vec2 p)"
+                "{"
                 "    p -= vec2(0.5, 0.5);"
                 "    p *= in_ZoomSettings[3][2];"
                 "    p += vec2(in_ZoomSettings[3][0], -in_ZoomSettings[3][1]);"
                 "    p += vec2(0.5, 0.5);"
-                "    vec2 q = p + vec2(-0.5, 0.5) * in_TexelSize.xy;"
+                "    vec2 q = p + vec2(-0.46875, 0.46875) * in_TexelSize.xy;"
                 "    q = in_TexelSize.xy"
                 "         * (1.0 + 2.0 * floor(q * 0.5 * in_TexelSize.zw));"
                 "    vec2 r = q - vec2(-0.5, 0.5) * in_TexelSize.xy;"
-                "    float l = (abs(q.x - 0.5) < 0.5 && abs(q.y - 0.5) < 0.5)"
+                "    float l = (abs(q.x - .5) < .5 && abs(q.y - .5) < .5)"
                 "             ? 1.0 / mylen(r - p) : 0.0;"
                 "    return vec3(q * vec2(1.0, 0.25) + vec2(0.0, 0.75), l);"
                 "}"
                 ""
-                "void main(void) {"
+                "void main(void)"
+                "{"
 #if defined HAVE_GLES_2X
                 "    vec2 coord = pass_TexCoord;"
 #else
@@ -472,12 +492,12 @@ public:
                 "    vec4 p1 = texture2D(in_Texture, k1.xy);"
                 "    vec4 p2 = texture2D(in_Texture, k2.xy);"
                 "    vec4 p3 = texture2D(in_Texture, k3.xy);"
-//"if (k0.z >= k1.z && k0.z >= k2.z && k0.z >= k3.z) gl_FragColor = p0;"
-//"if (k1.z >= k0.z && k1.z >= k2.z && k1.z >= k3.z) gl_FragColor = p1;"
-//"if (k2.z >= k0.z && k2.z >= k1.z && k2.z >= k3.z) gl_FragColor = p2;"
-//"if (k3.z >= k0.z && k3.z >= k1.z && k3.z >= k2.z) gl_FragColor = p3;"
-                "    gl_FragColor = 1.0 / (k0.z + k1.z + k2.z + k3.z)"
-                "          * (k0.z * p0 + k1.z * p1 + k2.z * p2 + k3.z * p3);"
+"if (k0.z >= k1.z && k0.z >= k2.z && k0.z >= k3.z) gl_FragColor = p0;"
+"if (k1.z >= k0.z && k1.z >= k2.z && k1.z >= k3.z) gl_FragColor = p1;"
+"if (k2.z >= k0.z && k2.z >= k1.z && k2.z >= k3.z) gl_FragColor = p2;"
+"if (k3.z >= k0.z && k3.z >= k1.z && k3.z >= k2.z) gl_FragColor = p3;"
+//                "    gl_FragColor = 1.0 / (k0.z + k1.z + k2.z + k3.z)"
+//                "          * (k0.z * p0 + k1.z * p1 + k2.z * p2 + k3.z * p3);"
                 "}"
 #else
                 "void main(float4 in_Position : POSITION,"
@@ -489,7 +509,8 @@ public:
                 "    out_Position = in_Position;"
                 "}",
 
-                "float3 nearest0(float2 p, float4 in_TexelSize) {"
+                "float3 nearest0(float2 p, float4 in_TexelSize)"
+                "{"
                 "    float2 q = p + 0.5 * in_TexelSize.xy;"
                 "    q -= fmod(q, 2.0 * in_TexelSize.xy);"
                 "    q += 0.5 * in_TexelSize.xy;"
@@ -497,7 +518,8 @@ public:
                 "                  length(q - p));"
                 "}"
                 ""
-                "float3 nearest1(float2 p, float4 in_TexelSize) {"
+                "float3 nearest1(float2 p, float4 in_TexelSize)"
+                "{"
                 "    float2 q = p - 0.5 * in_TexelSize.xy;"
                 "    q -= fmod(q, 2.0 * in_TexelSize.xy);"
                 "    q += 1.5 * in_TexelSize.xy;"
@@ -505,7 +527,8 @@ public:
                 "                  length(q - p));"
                 "}"
                 ""
-                "float3 nearest2(float2 p, float4 in_TexelSize) {"
+                "float3 nearest2(float2 p, float4 in_TexelSize)"
+                "{"
                 "    float2 q = p + float2(0.5, -0.5) * in_TexelSize.xy;"
                 "    q -= fmod(q, 2.0 * in_TexelSize.xy);"
                 "    q += float2(0.5, 1.5) * in_TexelSize.xy;"
@@ -513,7 +536,8 @@ public:
                 "                  length(q - p));"
                 "}"
                 ""
-                "float3 nearest3(float2 p, float4 in_TexelSize) {"
+                "float3 nearest3(float2 p, float4 in_TexelSize)"
+                "{"
                 "    float2 q = p + float2(-0.5, 0.5) * in_TexelSize.xy;"
                 "    q -= fmod(q, 2.0 * in_TexelSize.xy);"
                 "    q += float2(1.5, 0.5) * in_TexelSize.xy;"
