@@ -80,7 +80,7 @@ public:
             m_deltascale[i] = 1.0;
             m_dirty[i] = 2;
         }
-#if defined __CELLOS_LV2__ || defined __native_client__
+#if defined __CELLOS_LV2__
         //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
         //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
         m_center = f64cmplx(-0.65823419062254, .50221777363480);
@@ -178,7 +178,7 @@ public:
         f64cmplx worldmouse = m_center + ScreenToWorldOffset(mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
-#if !defined __CELLOS_LV2__ && !defined __native_client__
+#if !defined __CELLOS_LV2__
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
         {
             double zoom = buttons[0] ? -0.0005 : 0.0005;
@@ -210,7 +210,7 @@ public:
                 zoom = 1e-14 / m_radius;
             }
             m_radius *= zoom;
-#if !defined __CELLOS_LV2__ && !defined __native_client__
+#if !defined __CELLOS_LV2__
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
 #endif

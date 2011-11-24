@@ -61,6 +61,8 @@ class OpenGLContext : public pp::Graphics3DClient {
   /// Resize the context.
   void ResizeContext(const pp::Size& size);
 
+  pp::Size const& GetSize() { return size_; }
+
   /// The OpenGL ES 2.0 interface.
   const struct PPB_OpenGLES2* gles2() const {
     return gles2_interface_;

@@ -17,6 +17,7 @@
 #include <ppapi/cpp/var.h>
 #include <ppapi/cpp/module.h>
 #include <ppapi/cpp/completion_callback.h>
+#include <ppapi/cpp/input_event.h>
 
 #include "core.h"
 #include "debug/quad.h"
@@ -31,7 +32,7 @@ NaClInstance::NaClInstance(PP_Instance instance)
     : pp::Instance(instance),
       m_size(0, 0)
 {
-    ;
+    RequestInputEvents(PP_INPUTEVENT_CLASS_MOUSE);
 }
 
 NaClInstance::~NaClInstance()
@@ -99,6 +100,25 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
     Video::Setup(m_size);
     DrawSelf();
+}
+
+bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
+{
+    switch (event.GetType())
+    {
+    case PP_INPUTEVENT_TYPE_MOUSEDOWN:
+        Input::SetMouseButton(pp::MouseInputEvent(event).GetButton());
+        break;
+    case PP_INPUTEVENT_TYPE_MOUSEUP:
+        Input::UnsetMouseButton(pp::MouseInputEvent(event).GetButton());
+        break;
+    case PP_INPUTEVENT_TYPE_MOUSEMOVE:
+        Input::SetMousePos(ivec2(pp::MouseInputEvent(event).GetPosition().x(), opengl_context_->GetSize().height() - 1 - pp::MouseInputEvent(event).GetPosition().y()));
+        break;
+    default:
+        break;
+    }
+    return true;
 }
 
 void NaClInstance::DrawSelf()

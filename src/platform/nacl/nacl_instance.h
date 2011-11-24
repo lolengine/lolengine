@@ -36,14 +36,13 @@ class NaClInstance : public pp::Instance {
   // Bind and publish the module's methods to JavaScript.
   //void InitializeMethods(ScriptingBridge* bridge);
 
+
   // Called to draw the contents of the module's browser area.
-  void DrawSelf();
+    virtual bool HandleInputEvent(const pp::InputEvent& event);
 
-// private:
-  // Browser connectivity and scripting support.
-//  ScriptingBridge scripting_bridge_;
+    void DrawSelf();
 
-  SharedOpenGLContext opengl_context_;
+    SharedOpenGLContext opengl_context_;
 
     ivec2 m_size;
 };
