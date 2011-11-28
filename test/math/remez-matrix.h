@@ -80,6 +80,8 @@ template<int N> struct Matrix
 
     void print() const
     {
+        using std::printf;
+
         for (int j = 0; j < N; j++)
         {
             for (int i = 0; i < N; i++)

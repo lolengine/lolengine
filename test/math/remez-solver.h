@@ -258,6 +258,8 @@ public:
 
     void PrintPoly()
     {
+        using std::printf;
+
         /* Transform Chebyshev polynomial weights into powers of X^i
          * in the [-1..1] range. */
         real bn[ORDER + 1];

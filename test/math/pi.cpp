@@ -20,8 +20,10 @@
 
 #include "core.h"
 
-using namespace lol;
-using namespace std;
+using std::printf;
+using std::sqrt;
+
+using lol::real;
 
 int main(int argc, char **argv)
 {
