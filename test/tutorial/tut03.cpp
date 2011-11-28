@@ -56,8 +56,8 @@ public:
         m_size = size;
         m_size.x = (m_size.x + 15) & ~15;
         m_size.y = (m_size.y + 15) & ~15;
-        m_texel_settings = vec4(vec2(1.0, 1.0) / (vec2)m_size,
-                                vec2(0.5, 0.5) * (vec2)m_size);
+        m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy();
+        m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy();
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
@@ -78,6 +78,7 @@ public:
         m_pixels = new u8vec4[m_size.x * m_size.y];
         m_tmppixels = new u8vec4[m_size.x / 2 * m_size.y / 2];
         m_frame = -1;
+        m_slices = 4;
         for (int i = 0; i < 4; i++)
         {
             m_deltashift[i] = 0.0;
@@ -96,6 +97,7 @@ public:
         m_translate = 0;
         m_radius = 5.0;
         m_ready = false;
+        m_drag = false;
 
         m_palette = new u8vec4[(MAX_ITERATIONS + 1) * PALETTE_STEP];
         for (int i = 0; i < (MAX_ITERATIONS + 1) * PALETTE_STEP; i++)
@@ -157,14 +159,14 @@ public:
         delete m_palette;
     }
 
-    inline f64cmplx TexelToWorldOffset(ivec2 texel)
+    inline f64cmplx TexelToWorldOffset(vec2 texel)
     {
         double dx = (0.5 + texel.x - m_size.x / 2) * m_texel2world.x;
         double dy = (0.5 + m_size.y / 2 - texel.y) * m_texel2world.y;
         return m_radius * f64cmplx(dx, dy);
     }
 
-    inline f64cmplx ScreenToWorldOffset(ivec2 pixel)
+    inline f64cmplx ScreenToWorldOffset(vec2 pixel)
     {
         /* No 0.5 offset here, because we want to be able to position the
          * mouse at (0,0) exactly. */
@@ -186,17 +188,30 @@ public:
 #if !defined __CELLOS_LV2__
         if (buttons[1])
         {
-            if (clicked[1])
+            if (!m_drag)
+            {
                 m_oldmouse = mousepos;
+                m_drag = true;
+            }
             m_translate = ScreenToWorldOffset(m_oldmouse)
                         - ScreenToWorldOffset(mousepos);
+            /* XXX: the purpose of this hack is to avoid translating by
+             * an exact number of pixels. If this were to happen, the step()
+             * optimisation for i915 cards in our shader would behave
+             * incorrectly because a quarter of the pixels in the image
+             * would have tie rankings in the distance calculation. */
+            m_translate *= 1023.0 / 1024.0;
             m_oldmouse = mousepos;
         }
-        else if (m_translate != 0.0)
+        else
         {
-            m_translate *= pow(2.0, -deltams * 0.005);
-            if (m_translate.norm() / m_radius < 1e-4)
-                m_translate = 0.0;
+            m_drag = false;
+            if (m_translate != 0.0)
+            {
+                m_translate *= pow(2.0, -deltams * 0.005);
+                if (m_translate.norm() / m_radius < 1e-4)
+                    m_translate = 0.0;
+            }
         }
 
         if ((buttons[0] || buttons[2]) && mousepos.x != -1)
@@ -209,7 +224,7 @@ public:
         else if (m_zoom_speed)
         {
             m_zoom_speed *= pow(2.0, -deltams * 0.005);
-            if (abs(m_zoom_speed) < 1e-5)
+            if (abs(m_zoom_speed) < 1e-5 || m_drag)
                 m_zoom_speed = 0.0;
         }
 #endif
@@ -286,54 +301,88 @@ public:
         m_zoomtext->SetText(buf);
 #endif
 
-        u8vec4 *m_pixelstart = m_pixels + m_size.x * m_size.y / 4 * m_frame;
-
         if (m_dirty[m_frame])
         {
-            double const maxsqlen = 1024;
-            double const k1 = 1.0 / (1 << 10) / log2(maxsqlen);
-
             m_dirty[m_frame]--;
 
-            for (int j = ((m_frame + 1) % 4) / 2; j < m_size.y; j += 2)
-            for (int i = m_frame % 2; i < m_size.x; i += 2)
+            /* FIXME: this is the ugliest, most pathetic excuse for a
+             * threading system that I have seen in a while. */
+            DoWorkHelper helpers[m_slices];
+            for (int slice = 0; slice < m_slices; slice++)
             {
+                helpers[slice].fractal = this;
+                helpers[slice].slice = slice;
+                helpers[slice].thread = new Thread(DoWorkHelper::Help,
+                                                   &helpers[slice]);
+            }
+            for (int slice = 0; slice < m_slices; slice++)
+            {
+                delete helpers[slice].thread;
+            }
+        }
+    }
 
-                f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
-                f64cmplx r0 = z0;
-                //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
-                //f64cmplx r0(0.001643721971153, 0.822467633298876);
-                //f64cmplx r0(-1.207205434596, 0.315432814901);
-                //f64cmplx r0(-0.79192956889854, -0.14632423080102);
-                //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
-                f64cmplx z;
-                int iter = MAX_ITERATIONS;
-                for (z = z0; iter && z.sqlen() < maxsqlen; z = z * z + r0)
-                    --iter;
+    struct DoWorkHelper
+    {
+        Fractal *fractal;
+        Thread *thread;
+        int slice;
 
-                if (iter)
-                {
-                    double f = iter;
-                    double n = z.sqlen();
-                    if (n > maxsqlen * maxsqlen)
-                        n = maxsqlen * maxsqlen;
+        static void *Help(void *data)
+        {
+            DoWorkHelper *helper = (DoWorkHelper *)data;
+            helper->fractal->DoWork(helper->slice);
+            return NULL;
+        }
+    };
 
-                    /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
-                    union { double n; uint64_t x; } u = { n };
-                    double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
-                    k *= k1;
+    void DoWork(int slice)
+    {
+        double const maxsqlen = 1024;
+        double const k1 = 1.0 / (1 << 10) / log2(maxsqlen);
 
-                    /* Approximate log2(k) in [1,2]. */
-                    f += (- 0.344847817623168308695977510213252644185 * k
-                          + 2.024664188044341212602376988171727038739) * k
-                          - 1.674876738008591047163498125918330313237;
+        int jmin = m_size.y * slice / m_slices;
+        int jmax = m_size.y * (slice + 1) / m_slices;
+        u8vec4 *m_pixelstart = m_pixels
+                             + m_size.x * (m_size.y / 4 * m_frame + jmin / 4);
 
-                    *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP)];
-                }
-                else
-                {
-                    *m_pixelstart++ = u8vec4(0, 0, 0, 255);
-                }
+        for (int j = ((m_frame + 1) % 4) / 2 + jmin; j < jmax; j += 2)
+        for (int i = m_frame % 2; i < m_size.x; i += 2)
+        {
+            f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
+            f64cmplx r0 = z0;
+            //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
+            //f64cmplx r0(0.001643721971153, 0.822467633298876);
+            //f64cmplx r0(-1.207205434596, 0.315432814901);
+            //f64cmplx r0(-0.79192956889854, -0.14632423080102);
+            //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
+            f64cmplx z;
+            int iter = MAX_ITERATIONS;
+            for (z = z0; iter && z.sqlen() < maxsqlen; z = z * z + r0)
+                --iter;
+
+            if (iter)
+            {
+                double f = iter;
+                double n = z.sqlen();
+                if (n > maxsqlen * maxsqlen)
+                    n = maxsqlen * maxsqlen;
+
+                /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
+                union { double n; uint64_t x; } u = { n };
+                double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
+                k *= k1;
+
+                /* Approximate log2(k) in [1,2]. */
+                f += (- 0.344847817623168308695977510213252644185 * k
+                      + 2.024664188044341212602376988171727038739) * k
+                      - 1.674876738008591047163498125918330313237;
+
+                *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP)];
+            }
+            else
+            {
+                *m_pixelstart++ = u8vec4(0, 0, 0, 255);
             }
         }
     }
@@ -390,6 +439,7 @@ public:
                 ""
                 "uniform mat4 u_ZoomSettings;"
                 "uniform vec4 u_TexelSize;"
+                "uniform vec4 u_ScreenSize;"
                 ""
                 "attribute vec2 a_TexCoord;"
                 "attribute vec2 a_Vertex;"
@@ -418,7 +468,6 @@ public:
                 "                       u_ZoomSettings[1][1],"
                 "                       u_ZoomSettings[2][1],"
                 "                       u_ZoomSettings[3][1]);"
-                     /* Pass all this to the fragment shader */
                 "    v_CenterX = zoomscale * a_TexCoord.x + zoomtx"
                 "              + offsets.xyxy * u_TexelSize.x;"
                 "    v_CenterY = zoomscale * a_TexCoord.y - zoomty"
@@ -427,8 +476,8 @@ public:
                       * point lies. The fragment shader will call floor() on
                       * this value. We add or remove a slight offset to avoid
                       * rounding issues at the image's edges. */
-                "    v_IndexX = v_CenterX * u_TexelSize.z - offsets.zwzw;"
-                "    v_IndexY = v_CenterY * u_TexelSize.w - offsets.zwwz;"
+                "    v_IndexX = v_CenterX * u_ScreenSize.z - (offsets.zwzw + vec4(0.001, 0.002, 0.003, 0.004));"
+                "    v_IndexY = v_CenterY * u_ScreenSize.w - (offsets.zwwz + vec4(0.0015, 0.0025, 0.0035, 0.0045));"
                 "}",
 
 #if !defined HAVE_GLES_2X
@@ -444,33 +493,59 @@ public:
                 ""
                 "void main(void)"
                 "{"
-                     /* Get a pixel coordinate from each slice into rx & ry */
-                "    vec4 rx = u_TexelSize.x * (1.0 + 2.0 * floor(v_IndexX));"
-                "    vec4 ry = u_TexelSize.y * (1.0 + 2.0 * floor(v_IndexY));"
-                     /* Compute distance to expected pixel in dd */
                 "    vec4 v05 = vec4(0.5, 0.5, 0.5, 0.5);"
-                "    vec4 t0 = step(abs(rx - v05), v05)"
-                "            * step(abs(ry - v05), v05);"
-                "    vec4 dx = rx - v_CenterX;"
-                "    vec4 dy = ry - v_CenterY;"
+                "    vec4 rx, ry, t0, dx, dy, dd;"
+                     /* Get a pixel coordinate from each slice into rx & ry */
+                "    rx = u_TexelSize.x + u_TexelSize.z * floor(v_IndexX);"
+                "    ry = u_TexelSize.y + u_TexelSize.w * floor(v_IndexY);"
+                     /* Compute inverse distance to expected pixel in dd,
+                      * and put zero if we fall outside the texture. */
+                "    t0 = step(abs(rx - v05), v05) * step(abs(ry - v05), v05);"
+                "    dx = rx - v_CenterX;"
+                "    dy = ry - v_CenterY;"
                 //"    vec4 dd = t0 * (abs(dx) + abs(dy));"
                 //"    vec4 dd = t0 / (0.001 + sqrt((dx * dx) + (dy * dy)));"
-                "    vec4 dd = t0 / (0.000001 + (dx * dx) + (dy * dy));"
+                "    dd = t0 / (0.000001 + (dx * dx) + (dy * dy));"
                      /* Modify Y coordinate to select proper quarter. */
                 "    ry = ry * 0.25 + vec4(0.0, 0.25, 0.5, 0.75);"
                 ""
 #if 1
-                     /* Put min(.x,.y) in .x and min(.z,.w) in .z */
-                "    vec4 t1 = step(dd, dd.yyww);"
-                "    rx = mix(rx, rx.yyww, t1);"
-                "    ry = mix(ry, ry.yyww, t1);"
-                "    dd = mix(dd, dd.yyww, t1);"
-                     /* Put min(x,z) in x */
-                "    vec4 t2 = step(dd, dd.zzzz);"
-                "    rx = mix(rx, rx.zzzz, t2);"
-                "    ry = mix(ry, ry.zzzz, t2);"
+                "\n#if 0\n" /* XXX: disabled until we can autodetect i915 */
+                     /* t1.x <-- dd.x > dd.y */
+                     /* t1.y <-- dd.z > dd.w */
+                "    vec2 t1 = step(dd.xz, dd.yw);"
+                     /* ret.x <-- max(rx.x, rx.y) wrt. t1.x */
+                     /* ret.y <-- max(rx.z, rx.w) wrt. t1.y */
+                     /* ret.z <-- max(ry.x, ry.y) wrt. t1.x */
+                     /* ret.w <-- max(ry.z, ry.w) wrt. t1.y */
+                "    vec4 ret = mix(vec4(rx.xz, ry.xz),"
+                "                   vec4(rx.yw, ry.yw), t1.xyxy);"
+                     /* dd.x <-- max(dd.x, dd.y) */
+                     /* dd.z <-- max(dd.z, dd.w) */
+                "    dd.xy = mix(dd.xz, dd.yw, t1);"
+                     /* t2 <-- dd.x > dd.z */
+                "    float t2 = step(dd.x, dd.y);"
+                     /* ret.x <-- max(ret.x, ret.y); */
+                     /* ret.y <-- max(ret.z, ret.yw; */
+                "    ret.xy = mix(ret.xz, ret.yw, t2);"
+                "\n#else\n"
+                     /* Fallback for i915 cards -- the trick to reduce the
+                      * number of operations is to compute both step(a,b)
+                      * and step(b,a) and hope that their sum is 1. This is
+                      * almost always the case, and when it isn't we can
+                      * afford to have a few wrong pixels. However, a real
+                      * problem is when panning the image, because half the
+                      * screen is likely to flicker. To avoid this problem,
+                      * we cheat a little (see m_translate comment above). */
+                "    vec4 t1 = step(dd.xzyw, dd.ywxz);"
+                "    vec4 ret = vec4(rx.xz, ry.xz) * t1.zwzw"
+                "             + vec4(rx.yw, ry.yw) * t1.xyxy;"
+                "    dd.xy = dd.xz * t1.zw + dd.yw * t1.xy;"
+                "    vec2 t2 = step(dd.xy, dd.yx);"
+                "    ret.xy = ret.xz * t2.yy + ret.yw * t2.xx;"
+                "\n#endif\n"
                      /* Nearest neighbour */
-                "    gl_FragColor = texture2D(in_Texture, vec2(rx.x, ry.x));"
+                "    gl_FragColor = texture2D(in_Texture, ret.xy);"
 #else
                      /* Alternate version: some kind of linear interpolation */
                 "    vec4 p0 = texture2D(in_Texture, vec2(rx.x, ry.x));"
@@ -545,6 +620,7 @@ public:
             m_vertexattrib = m_shader->GetAttribLocation("a_Vertex");
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord");
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
+            m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
             m_ready = true;
 
@@ -591,6 +667,7 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_texeluni, m_texel_settings);
+        m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -641,13 +718,13 @@ private:
     GLuint m_vbo, m_tbo;
     GLuint m_tco;
 #endif
-    int m_vertexattrib, m_texattrib, m_texeluni, m_zoomuni;
-    int m_frame, m_dirty[4];
-    bool m_ready;
+    int m_vertexattrib, m_texattrib, m_texeluni, m_screenuni, m_zoomuni;
+    int m_frame, m_slices, m_dirty[4];
+    bool m_ready, m_drag;
 
     f64cmplx m_center, m_translate;
     double m_zoom_speed, m_radius;
-    vec4 m_texel_settings;
+    vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
     f64cmplx m_deltashift[4];
     double m_deltascale[4];
