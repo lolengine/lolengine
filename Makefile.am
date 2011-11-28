@@ -2,7 +2,8 @@
 SUBDIRS = src test deushax monsterz tools gfx
 DIST_SUBDIRS = $(SUBDIRS)
 
-EXTRA_DIST = bootstrap build-linux build-mingw build-mingw64 build-ps3 build/lol-build
+EXTRA_DIST = bootstrap build-linux build-mingw build-mingw64 build-ps3 \
+             build-nacl32 build-nacl64 build/lol-build
 AUTOMAKE_OPTIONS = dist-bzip2
 
 bench:
