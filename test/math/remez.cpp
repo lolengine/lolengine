@@ -21,8 +21,7 @@
 
 #include "core.h"
 
-using namespace lol;
-using namespace std;
+using lol::real;
 
 #include "remez-matrix.h"
 #include "remez-solver.h"
