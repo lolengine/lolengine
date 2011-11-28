@@ -68,6 +68,7 @@ static inline int isnan(float f)
 #include "matrix.h"
 #include "numeric.h"
 #include "timer.h"
+#include "thread/thread.h"
 
 // Static classes
 #include "log.h"

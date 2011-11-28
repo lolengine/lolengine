@@ -82,7 +82,7 @@ dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
-
+AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
 
 dnl Are we on the PS3?
 AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
