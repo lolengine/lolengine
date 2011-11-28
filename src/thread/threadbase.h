@@ -18,6 +18,8 @@
 
 #if defined __linux__ || defined __native_client__
 #   include <pthread.h>
+#elif defined _WIN32
+#   include <windows.h>
 #else
 #   error No threading support yet :(
 #endif
@@ -32,6 +34,8 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_init(&m_mutex, NULL);
+#elif defined _WIN32
+        InitializeCriticalSection(&m_mutex);
 #endif
     }
 
@@ -39,6 +43,8 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_destroy(&m_mutex);
+#elif defined _WIN32
+        DeleteCriticalSection(&m_mutex);
 #endif
     }
 
@@ -46,6 +52,8 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_lock(&m_mutex);
+#elif defined _WIN32
+        EnterCriticalSection(&m_mutex);
 #endif
     }
 
@@ -53,12 +61,16 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_unlock(&m_mutex);
+#elif defined _WIN32
+        LeaveCriticalSection(&m_mutex);
 #endif
     }
 
 private:
 #if defined __linux__ || defined __native_client__
     pthread_mutex_t m_mutex;
+#elif defined _WIN32
+    CRITICAL_SECTION m_mutex;
 #endif
 };
 
@@ -123,6 +135,8 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_create(&m_thread, NULL, fn, data);
+#elif defined _WIN32
+        m_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)fn, data, 0, &m_tid);
 #endif
     }
 
@@ -130,12 +144,17 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_join(m_thread, NULL);
+#elif defined _WIN32
+        WaitForSingleObject(m_thread, INFINITE);
 #endif
     }
 
 private:
 #if defined __linux__ || defined __native_client__
     pthread_t m_thread;
+#elif defined _WIN32
+    HANDLE m_thread;
+    DWORD m_tid;
 #endif
 };
 
