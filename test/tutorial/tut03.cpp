@@ -88,8 +88,8 @@ public:
 #if defined __CELLOS_LV2__
         //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
         //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
-        m_center = f64cmplx(-0.65823419062254, .50221777363480);
-        m_zoom_speed = 0;//-0.0025;
+        m_center = f64cmplx(-0.65823419062254, 0.50221777363480);
+        m_zoom_speed = -0.000025;
 #else
         m_center = -0.75;
         m_zoom_speed = 0.0;
@@ -119,7 +119,9 @@ public:
             uint8_t red = r * 255.99f;
             uint8_t green = g * 255.99f;
             uint8_t blue = b * 255.99f;
-#if defined __native_client__
+#if defined __CELLOS_LV2__
+            m_palette[i] = u8vec4(255, red, green, blue);
+#elif defined __native_client__
             m_palette[i] = u8vec4(red, green, blue, 255);
 #else
             m_palette[i] = u8vec4(blue, green, red, 255);
@@ -312,12 +314,13 @@ public:
             {
                 helpers[slice].fractal = this;
                 helpers[slice].slice = slice;
-                helpers[slice].thread = new Thread(DoWorkHelper::Help,
-                                                   &helpers[slice]);
+//                helpers[slice].thread = new Thread(DoWorkHelper::Help,
+//                                                   &helpers[slice]);
+DoWork(slice);
             }
             for (int slice = 0; slice < m_slices; slice++)
             {
-                delete helpers[slice].thread;
+//                delete helpers[slice].thread;
             }
         }
     }
@@ -382,7 +385,11 @@ public:
             }
             else
             {
+#if defined __CELLOS_LV2__
+                *m_pixelstart++ = u8vec4(255, 0, 0, 0);
+#else
                 *m_pixelstart++ = u8vec4(0, 0, 0, 255);
+#endif
             }
         }
     }
@@ -476,8 +483,8 @@ public:
                       * point lies. The fragment shader will call floor() on
                       * this value. We add or remove a slight offset to avoid
                       * rounding issues at the image's edges. */
-                "    v_IndexX = v_CenterX * u_ScreenSize.z - (offsets.zwzw + vec4(0.001, 0.002, 0.003, 0.004));"
-                "    v_IndexY = v_CenterY * u_ScreenSize.w - (offsets.zwwz + vec4(0.0015, 0.0025, 0.0035, 0.0045));"
+                "    v_IndexX = v_CenterX * u_ScreenSize.z - offsets.zwzw;"
+                "    v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;"
                 "}",
 
 #if !defined HAVE_GLES_2X
@@ -586,22 +593,22 @@ public:
                 "              + offsets.xyxy * u_TexelSize.x;"
                 "    v_CenterY = zoomscale * a_TexCoord.y - zoomty"
                 "              + offsets.xyyx * u_TexelSize.y;"
-                "    v_IndexX = v_CenterX * u_ScreenSize.z - (offsets.zwzw + float4(0.001, 0.002, 0.003, 0.004));"
-                "    v_IndexY = v_CenterY * u_ScreenSize.w - (offsets.zwwz + float4(0.0015, 0.0025, 0.0035, 0.0045));"
+                "    v_IndexX = v_CenterX * u_ScreenSize.z - offsets.zwzw;"
+                "    v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;"
                 "}",
 
                 "void main(in float4 v_CenterX,"
                 "          in float4 v_CenterY,"
                 "          in float4 v_IndexX,"
                 "          in float4 v_IndexY,"
-                "          uniform float4 u_TexelSize,"
+                "          uniform float4 u_TexelSize2,"
                 "          uniform sampler2D u_Texture,"
                 "          out float4 out_FragColor : COLOR)"
                 "{"
                 "    float4 v05 = float4(0.5, 0.5, 0.5, 0.5);"
                 "    float4 rx, ry, t0, dx, dy, dd;"
-                "    rx = u_TexelSize.x + u_TexelSize.z * floor(v_IndexX);"
-                "    ry = u_TexelSize.y + u_TexelSize.w * floor(v_IndexY);"
+                "    rx = u_TexelSize2.x + u_TexelSize2.z * floor(v_IndexX);"
+                "    ry = u_TexelSize2.y + u_TexelSize2.w * floor(v_IndexY);"
                 "    t0 = step(abs(rx - v05), v05) * step(abs(ry - v05), v05);"
                 "    dx = rx - v_CenterX;"
                 "    dy = ry - v_CenterY;"
@@ -613,8 +620,6 @@ public:
                 "    dd.xy = lerp(dd.xz, dd.yw, t1);"
                 "    float t2 = step(dd.x, dd.y);"
                 "    ret.xy = lerp(ret.xz, ret.yw, t2);"
-                     /* FIXME: above currently broken; fall back to this */
-                "    ret.xy = float2(v_CenterX.x, v_CenterY.x * 0.25);"
                 "    out_FragColor = tex2D(u_Texture, ret.xy);"
                 "}"
 #endif
@@ -622,6 +627,9 @@ public:
             m_vertexattrib = m_shader->GetAttribLocation("a_Vertex");
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord");
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
+#if defined __CELLOS_LV2__
+            m_texeluni2 = m_shader->GetUniformLocation("u_TexelSize2");
+#endif
             m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
             m_ready = true;
@@ -669,6 +677,9 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_texeluni, m_texel_settings);
+#if defined __CELLOS_LV2__
+        m_shader->SetUniform(m_texeluni2, m_texel_settings);
+#endif
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__
@@ -721,6 +732,9 @@ private:
     GLuint m_tco;
 #endif
     int m_vertexattrib, m_texattrib, m_texeluni, m_screenuni, m_zoomuni;
+#if defined __CELLOS_LV2__
+    int m_texeluni2;
+#endif
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 
