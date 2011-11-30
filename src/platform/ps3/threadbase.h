@@ -52,34 +52,73 @@ private:
     sys_lwmutex_t m_mutex;
 };
 
-class ConditionBase
+class QueueBase
 {
 public:
-    ConditionBase()
+    QueueBase()
     {
+        m_start = m_count = 0;
+        m_poppers = m_pushers = 0;
+
+        sys_lwmutex_attribute_t mattr;
+        sys_lwmutex_attribute_initialize(mattr);
+        sys_lwmutex_create(&m_mutex, &mattr);
+
+        sys_lwcond_attribute_t cattr;
+        sys_lwcond_attribute_initialize(cattr);
+        sys_lwcond_create(&m_empty_cond, &m_mutex, &cattr);
+        sys_lwcond_create(&m_full_cond, &m_mutex, &cattr);
     }
 
-    ~ConditionBase()
+    ~QueueBase()
     {
+        while (sys_lwcond_destroy(&m_empty_cond) == EBUSY)
+            ;
+        while (sys_lwcond_destroy(&m_full_cond) == EBUSY)
+            ;
+        while (sys_lwmutex_destroy(&m_mutex) == EBUSY)
+            ;
     }
 
-    void Acquire()
+    void Push(int value)
     {
+        /* FIXME: this is a copy of the pthread implementation, but we
+         * should really use libsync2 instead. */
+        sys_lwmutex_lock(&m_mutex, 0);
+        m_pushers++;
+        while (m_count == CAPACITY)
+            sys_lwcond_wait(&m_full_cond, 0);
+        m_pushers--;
+        m_values[(m_start + m_count) % CAPACITY] = value;
+        m_count++;
+        if (m_poppers)
+            sys_lwcond_signal(&m_empty_cond);
+        sys_lwmutex_unlock(&m_mutex);
     }
 
-    void Release()
+    int Pop()
     {
-    }
-
-    void Wait()
-    {
-    }
-
-    void Notify()
-    {
+        sys_lwmutex_lock(&m_mutex, 0);
+        m_poppers++;
+        while (m_count == 0)
+            sys_lwcond_wait(&m_empty_cond, 0);
+        m_poppers--;
+        int ret = m_values[m_start];
+        m_start = (m_start + 1) % CAPACITY;
+        m_count--;
+        if (m_pushers)
+            sys_lwcond_signal(&m_full_cond);
+        sys_lwmutex_unlock(&m_mutex);
+        return ret;
     }
 
 private:
+    static size_t const CAPACITY = 100;
+    int m_values[CAPACITY];
+    size_t m_start, m_count;
+    size_t m_poppers, m_pushers;
+    sys_lwmutex_t m_mutex;
+    sys_lwcond_t m_empty_cond, m_full_cond;
 };
 
 class ThreadBase

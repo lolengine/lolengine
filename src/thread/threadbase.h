@@ -80,13 +80,16 @@ class QueueBase
 public:
     QueueBase()
     {
-#if defined __linux__ || defined __native_client__
-        memset(m_values, 0, sizeof(m_values));
         m_start = m_count = 0;
+#if defined __linux__ || defined __native_client__
         m_poppers = m_pushers = 0;
         pthread_mutex_init(&m_mutex, NULL);
         pthread_cond_init(&m_empty_cond, NULL);
         pthread_cond_init(&m_full_cond, NULL);
+#elif defined _WIN32
+        m_empty_sem = CreateSemaphore(NULL, CAPACITY, CAPACITY, NULL);
+        m_full_sem = CreateSemaphore(NULL, 0, CAPACITY, NULL);
+        InitializeCriticalSection(&m_mutex);
 #endif
     }
 
@@ -96,6 +99,10 @@ public:
         pthread_cond_destroy(&m_empty_cond);
         pthread_cond_destroy(&m_full_cond);
         pthread_mutex_destroy(&m_mutex);
+#elif defined _WIN32
+        CloseHandle(m_empty_sem);
+        CloseHandle(m_full_sem);
+        DeleteCriticalSection(&m_mutex);
 #endif
     }
 
@@ -105,16 +112,26 @@ public:
         pthread_mutex_lock(&m_mutex);
         /* If queue is full, wait on the "full" cond var. */
         m_pushers++;
-        while (m_count == 100)
+        while (m_count == CAPACITY)
             pthread_cond_wait(&m_full_cond, &m_mutex);
         m_pushers--;
+#elif defined _WIN32
+        WaitForSingleObject(m_empty_sem, INFINITE);
+        EnterCriticalSection(&m_mutex);
+#endif
+
         /* Push value */
-        m_values[(m_start + m_count) % 100] = value;
+        m_values[(m_start + m_count) % CAPACITY] = value;
         m_count++;
+
+#if defined __linux__ || defined __native_client__
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
         pthread_mutex_unlock(&m_mutex);
+#elif defined _WIN32
+        LeaveCriticalSection(&m_mutex);
+        ReleaseSemaphore(m_full_sem, 1, NULL);
 #endif
     }
 
@@ -129,24 +146,40 @@ public:
         while (m_count == 0)
             pthread_cond_wait(&m_empty_cond, &m_mutex);
         m_poppers--;
+#elif defined _WIN32
+        WaitForSingleObject(m_full_sem, INFINITE);
+        EnterCriticalSection(&m_mutex);
+#endif
+
         /* Pop value */
         int ret = m_values[m_start];
-        m_start = (m_start + 1) % 100;
+        m_start = (m_start + 1) % CAPACITY;
         m_count--;
+
+#if defined __linux__ || defined __native_client__
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
             pthread_cond_signal(&m_full_cond);
         pthread_mutex_unlock(&m_mutex);
-        return ret;
+#else
+        LeaveCriticalSection(&m_mutex);
+        ReleaseSemaphore(m_empty_sem, 1, NULL);
 #endif
+
+        return ret;
     }
 
 private:
+    static size_t const CAPACITY = 100;
+    int m_values[CAPACITY];
+    size_t m_start, m_count;
 #if defined __linux__ || defined __native_client__
-    int m_values[100];
-    size_t m_poppers, m_pushers, m_start, m_count;
+    size_t m_poppers, m_pushers;
     pthread_mutex_t m_mutex;
     pthread_cond_t m_empty_cond, m_full_cond;
+#elif defined _WIN32
+    HANDLE m_empty_sem, m_full_sem;
+    CRITICAL_SECTION m_mutex;
 #endif
 };
 
