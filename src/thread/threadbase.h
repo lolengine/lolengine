@@ -82,17 +82,19 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         memset(m_values, 0, sizeof(m_values));
-        m_waiting = 0;
-        m_size = 0;
+        m_start = m_count = 0;
+        m_poppers = m_pushers = 0;
         pthread_mutex_init(&m_mutex, NULL);
-        pthread_cond_init(&m_cond, NULL);
+        pthread_cond_init(&m_empty_cond, NULL);
+        pthread_cond_init(&m_full_cond, NULL);
 #endif
     }
 
     ~QueueBase()
     {
 #if defined __linux__ || defined __native_client__
-        pthread_cond_destroy(&m_cond);
+        pthread_cond_destroy(&m_empty_cond);
+        pthread_cond_destroy(&m_full_cond);
         pthread_mutex_destroy(&m_mutex);
 #endif
     }
@@ -101,10 +103,17 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_lock(&m_mutex);
-        m_values[m_size] = value;
-        m_size++;
-        if (m_waiting)
-            pthread_cond_signal(&m_cond);
+        /* If queue is full, wait on the "full" cond var. */
+        m_pushers++;
+        while (m_count == 100)
+            pthread_cond_wait(&m_full_cond, &m_mutex);
+        m_pushers--;
+        /* Push value */
+        m_values[(m_start + m_count) % 100] = value;
+        m_count++;
+        /* If there were poppers waiting, signal the "empty" cond var. */
+        if (m_poppers)
+            pthread_cond_signal(&m_empty_cond);
         pthread_mutex_unlock(&m_mutex);
 #endif
     }
@@ -113,18 +122,20 @@ public:
     {
 #if defined __linux__ || defined __native_client__
         pthread_mutex_lock(&m_mutex);
-        /* Loop until there is something in the queue. Be careful, we
+        /* Wait until there is something in the queue. Be careful, we
          * could get woken up but another thread may have eaten the
          * message in the meantime. */
-        while (!m_size)
-        {
-            m_waiting++;
-            pthread_cond_wait(&m_cond, &m_mutex);
-            m_waiting--;
-        }
-        m_size--;
-        int ret = m_values[0];
-        memmove(m_values, m_values + 1, m_size * sizeof(m_values[0]));
+        m_poppers++;
+        while (m_count == 0)
+            pthread_cond_wait(&m_empty_cond, &m_mutex);
+        m_poppers--;
+        /* Pop value */
+        int ret = m_values[m_start];
+        m_start = (m_start + 1) % 100;
+        m_count--;
+        /* If there were pushers waiting, signal the "full" cond var. */
+        if (m_pushers)
+            pthread_cond_signal(&m_full_cond);
         pthread_mutex_unlock(&m_mutex);
         return ret;
 #endif
@@ -133,9 +144,9 @@ public:
 private:
 #if defined __linux__ || defined __native_client__
     int m_values[100];
-    size_t m_waiting, m_size;
+    size_t m_poppers, m_pushers, m_start, m_count;
     pthread_mutex_t m_mutex;
-    pthread_cond_t m_cond;
+    pthread_cond_t m_empty_cond, m_full_cond;
 #endif
 };
 
