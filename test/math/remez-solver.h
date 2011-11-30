@@ -141,6 +141,8 @@ public:
 
     void FindExtrema()
     {
+        using std::printf;
+
         /* Find ORDER + 2 extrema of the error function. We need to
          * compute the relative error, since its extrema are at slightly
          * different locations than the absolute error’s. */
