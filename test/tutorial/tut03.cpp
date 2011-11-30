@@ -104,9 +104,9 @@ public:
         {
             double f = (double)i / PALETTE_STEP;
 
-            double r = 0.5 * sin(f * 0.27 - 2.5) + 0.5;
-            double g = 0.5 * sin(f * 0.13 + 1.1) + 0.5;
-            double b = 0.5 * sin(f * 0.21 + 0.4) + 0.5;
+            double r = 0.5 * sin(f * 0.27 + 2.0) + 0.5;
+            double g = 0.5 * sin(f * 0.17 - 1.8) + 0.5;
+            double b = 0.5 * sin(f * 0.21 - 2.6) + 0.5;
 
             if (f < 7.0)
             {
@@ -146,10 +146,20 @@ public:
         bbox[0] = position;
         bbox[1] = ivec3(m_window_size, 0);
         Input::TrackMouse(this);
+
+        /* Spawn worker threads and wait for their readiness. */
+        for (int i = 0; i < MAX_THREADS; i++)
+            m_threads[i] = new Thread(DoWorkHelper, this);
+        for (int i = 0; i < MAX_THREADS; i++)
+            m_spawnqueue.Pop();
     }
 
     ~Fractal()
     {
+        /* Signal worker threads for completion. */
+        for (int i = 0; i < MAX_THREADS; i++)
+            m_jobqueue.Push(-1);
+
         Input::UntrackMouse(this);
 #if !defined __native_client__
         Ticker::Unref(m_centertext);
@@ -307,49 +317,39 @@ public:
         {
             m_dirty[m_frame]--;
 
-            /* FIXME: this is the ugliest, most pathetic excuse for a
-             * threading system that I have seen in a while. */
-            DoWorkHelper helpers[m_slices];
-            for (int slice = 0; slice < m_slices; slice++)
-            {
-                helpers[slice].fractal = this;
-                helpers[slice].slice = slice;
-//                helpers[slice].thread = new Thread(DoWorkHelper::Help,
-//                                                   &helpers[slice]);
-DoWork(slice);
-            }
-            for (int slice = 0; slice < m_slices; slice++)
-            {
-//                delete helpers[slice].thread;
-            }
+            for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
+                m_jobqueue.Push(i);
         }
     }
 
-    struct DoWorkHelper
+    static void *DoWorkHelper(void *data)
     {
-        Fractal *fractal;
-        Thread *thread;
-        int slice;
-
-        static void *Help(void *data)
+        Fractal *that = (Fractal *)data;
+        that->m_spawnqueue.Push(0);
+        for ( ; ; )
         {
-            DoWorkHelper *helper = (DoWorkHelper *)data;
-            helper->fractal->DoWork(helper->slice);
-            return NULL;
+            int line = that->m_jobqueue.Pop();
+            if (line == -1)
+                break;
+            that->DoWork(line);
+            that->m_donequeue.Push(0);
         }
+        return NULL;
     };
 
-    void DoWork(int slice)
+    void DoWork(int line)
     {
         double const maxsqlen = 1024;
         double const k1 = 1.0 / (1 << 10) / log2(maxsqlen);
 
-        int jmin = m_size.y * slice / m_slices;
-        int jmax = m_size.y * (slice + 1) / m_slices;
+        int jmin = ((m_frame + 1) % 4) / 2 + line;
+        int jmax = jmin + MAX_LINES * 2;
+        if (jmax > m_size.y)
+            jmax = m_size.y;
         u8vec4 *m_pixelstart = m_pixels
-                             + m_size.x * (m_size.y / 4 * m_frame + jmin / 4);
+                             + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
-        for (int j = ((m_frame + 1) % 4) / 2 + jmin; j < jmax; j += 2)
+        for (int j = jmin; j < jmax; j += 2)
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
             f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
@@ -659,6 +659,9 @@ DoWork(slice);
 
         if (m_dirty[m_frame])
         {
+            for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
+                m_donequeue.Pop();
+
             m_dirty[m_frame]--;
 
 #ifdef __CELLOS_LV2__
@@ -718,8 +721,10 @@ DoWork(slice);
     }
 
 private:
-    static int const MAX_ITERATIONS = 170;
+    static int const MAX_ITERATIONS = 340;
     static int const PALETTE_STEP = 32;
+    static int const MAX_THREADS = 8;
+    static int const MAX_LINES = 8;
 
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
@@ -744,6 +749,10 @@ private:
     mat4 m_zoom_settings;
     f64cmplx m_deltashift[4];
     double m_deltascale[4];
+
+    /* Worker threads */
+    Thread *m_threads[MAX_THREADS];
+    Queue m_spawnqueue, m_jobqueue, m_donequeue;
 
     /* Debug information */
 #if !defined __native_client__
