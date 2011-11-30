@@ -31,10 +31,10 @@ public:
     Mutex() : MutexBase() {}
 };
 
-class Condition : public ConditionBase
+class Queue : public QueueBase
 {
 public:
-    Condition() : ConditionBase() {}
+    Queue() : QueueBase() {}
 };
 
 class Thread : ThreadBase
