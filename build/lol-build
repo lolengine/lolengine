@@ -121,13 +121,13 @@ configure()
             android update project --path .
             ;;
         nacl-i386)
-            ./configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=none LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
+            ./configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=i386 LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
             ;;
         nacl-amd64)
-            ./configure CXX=x86_64-nacl-g++ CC=x86_64-nacl-gcc ac_cv_exeext=.64.nexe --host=none LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
+            ./configure CXX=x86_64-nacl-g++ CC=x86_64-nacl-gcc ac_cv_exeext=.64.nexe --host=x86_64 LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
             ;;
         ps3-ppu)
-            PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=none
+            PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
             ;;
         windows-i386|windows-amd64)
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gdiplus/include"
