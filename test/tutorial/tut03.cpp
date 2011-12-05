@@ -353,25 +353,41 @@ public:
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
             f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
-            f64cmplx r0 = z0;
+            f64cmplx z1, z2, z3, r0 = z0;
             //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
             //f64cmplx r0(0.001643721971153, 0.822467633298876);
             //f64cmplx r0(-1.207205434596, 0.315432814901);
             //f64cmplx r0(-0.79192956889854, -0.14632423080102);
             //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
-            f64cmplx z;
-            int iter = MAX_ITERATIONS;
-            for (z = z0; iter && z.sqlen() < maxsqlen; z = z * z + r0)
-                --iter;
+            int iter = MAX_ITERATIONS - 4;
+            for (;;)
+            {
+                /* Unroll the loop: tests are more expensive to do at each
+                 * iteration than the few extra multiplications. */
+                z1 = z0 * z0 + r0;
+                z2 = z1 * z1 + r0;
+                z3 = z2 * z2 + r0;
+                z0 = z3 * z3 + r0;
+                if (z0.sqlen() >= maxsqlen)
+                    break;
+                iter -= 4;
+                if (iter < 4)
+                    break;
+            }
 
             if (iter)
             {
-                double f = iter;
-                double n = z.sqlen();
+                double n = z0.sqlen();
+
+                if (z1.sqlen() >= maxsqlen) { iter += 3; n = z1.sqlen(); }
+                else if (z2.sqlen() >= maxsqlen) { iter += 2; n = z2.sqlen(); }
+                else if (z3.sqlen() >= maxsqlen) { iter += 1; n = z3.sqlen(); }
+
                 if (n > maxsqlen * maxsqlen)
                     n = maxsqlen * maxsqlen;
 
                 /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
+                double f = iter;
                 union { double n; uint64_t x; } u = { n };
                 double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
                 k *= k1;
