@@ -68,5 +68,16 @@ void Entity::TickDraw(float deltams)
 #endif
 }
 
+void Entity::SetState(uint32_t state)
+{
+    Emcee::SetState(this, state);
+}
+
+void Entity::SetStateWhenMatch(uint32_t state,
+                               Entity *other_entity, uint32_t other_state)
+{
+    Emcee::SetStateWhenMatch(this, state, other_entity, other_state);
+}
+
 } /* namespace lol */
 

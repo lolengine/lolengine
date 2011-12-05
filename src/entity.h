@@ -77,6 +77,19 @@ protected:
     state;
 #endif
 
+    // Emcee begin
+private:
+    void SetState(uint32_t newstate);
+    void SetStateWhenMatch(uint32_t newstate,
+                           Entity *other_entity, uint32_t other_state);
+    virtual uint32_t OnStateChanged(uint32_t newstate)
+    {
+        return m_state = newstate;
+    }
+
+    uint32_t m_state;
+    // Emcee end
+
 private:
     Entity *gamenext, *drawnext, *autonext;
     int ref, autorelease, destroy;

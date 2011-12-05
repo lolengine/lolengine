@@ -59,6 +59,7 @@ class ApplicationData
 
 Application::Application(char const *name, ivec2 resolution, float framerate)
 {
+    Emcee::Setup();
     data = new ApplicationData(name, resolution, framerate);
 }
 
@@ -75,6 +76,7 @@ void Application::Run()
 Application::~Application()
 {
     delete data;
+    Emcee::Shutdown();
 }
 
 } /* namespace lol */
