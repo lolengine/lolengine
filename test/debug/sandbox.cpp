@@ -18,6 +18,13 @@
 
 #include "core.h"
 
+class Moo
+{
+    Moo() {}
+
+    virtual int SetState(int state) { return state; }
+};
+
 using namespace std;
 using namespace lol;
 

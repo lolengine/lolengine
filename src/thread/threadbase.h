@@ -17,7 +17,6 @@
 #define __LOL_THREADBASE_H__
 
 #if defined __linux__ || defined __native_client__
-#   include <cstring>
 #   include <pthread.h>
 #elif defined _WIN32
 #   include <windows.h>
