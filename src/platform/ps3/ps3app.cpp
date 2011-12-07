@@ -118,9 +118,6 @@ void Ps3App::Run()
 {
     while (!Ticker::Finished())
     {
-        /* Tick the game */
-        Ticker::TickGame();
-
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 
@@ -130,8 +127,6 @@ void Ps3App::Run()
         /* Check if exit callback was called */
         cellSysutilCheckCallback();
 #endif
-
-        Ticker::ClampFps();
     }
 }
 

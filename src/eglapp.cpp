@@ -158,16 +158,11 @@ void EglApp::Run()
 {
     while (!Ticker::Finished())
     {
-        /* Tick the game */
-        Ticker::TickGame();
-
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 #if defined USE_EGL
         eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif
-
-        Ticker::ClampFps();
     }
 }
 

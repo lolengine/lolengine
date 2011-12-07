@@ -84,15 +84,11 @@ void SdlApp::Run()
 {
     while (!Ticker::Finished())
     {
-        /* Tick the game */
-        Ticker::TickGame();
-
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 #if defined USE_SDL
         SDL_GL_SwapBuffers();
 #endif
-        Ticker::ClampFps();
     }
 }
 

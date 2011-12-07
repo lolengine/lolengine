@@ -29,6 +29,7 @@ class Entity
     friend class Ticker;
     friend class TickerData;
     friend class Dict;
+    friend class Emcee;
 
 protected:
     Entity();
