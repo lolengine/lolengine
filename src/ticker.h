@@ -32,14 +32,16 @@ public:
     static int Unref(Entity *entity);
 
     static void Setup(float fps);
-    static void TickGame();
     static void TickDraw();
-    static void ClampFps();
     static void StartBenchmark();
     static void StopBenchmark();
     static void StartRecording();
     static void StopRecording();
     static int GetFrameNum();
+
+    static void SetState(Entity *entity, uint32_t state);
+    static void SetStateWhenMatch(Entity *entity, uint32_t state,
+                                  Entity *other_entity, uint32_t other_state);
 
     static void Shutdown();
     static int Finished();

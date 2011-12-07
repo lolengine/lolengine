@@ -70,13 +70,13 @@ void Entity::TickDraw(float deltams)
 
 void Entity::SetState(uint32_t state)
 {
-    Emcee::SetState(this, state);
+    Ticker::SetState(this, state);
 }
 
 void Entity::SetStateWhenMatch(uint32_t state,
                                Entity *other_entity, uint32_t other_state)
 {
-    Emcee::SetStateWhenMatch(this, state, other_entity, other_state);
+    Ticker::SetStateWhenMatch(this, state, other_entity, other_state);
 }
 
 } /* namespace lol */

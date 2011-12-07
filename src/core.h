@@ -103,7 +103,6 @@ static inline int isnan(float f)
 #include "application/application.h"
 
 // Managers
-#include "emcee.h"
 #include "ticker.h"
 #include "forge.h"
 #include "tiler.h"

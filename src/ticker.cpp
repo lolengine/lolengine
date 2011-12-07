@@ -67,6 +67,12 @@ private:
     Timer timer;
     float deltams, bias, fps;
 
+    /* Background threads */
+    static void *GameThreadMain(void *p);
+    static void *DrawThreadMain(void *p); /* unused */
+    Thread *gamethread, *drawthread;
+    Queue gametick, drawtick;
+
     /* Shutdown management */
     int quit, quitframe, quitdelay, panic;
 }
@@ -141,145 +147,188 @@ int Ticker::Unref(Entity *entity)
     return --entity->ref;
 }
 
-void Ticker::Setup(float fps)
+void *TickerData::GameThreadMain(void *p)
 {
-    data->fps = fps;
-}
+    for (;;)
+    {
+        int tick = data->gametick.Pop();
+        if (!tick)
+            break;
 
-void Ticker::TickGame()
-{
-    Profiler::Stop(Profiler::STAT_TICK_FRAME);
-    Profiler::Start(Profiler::STAT_TICK_FRAME);
+        Profiler::Stop(Profiler::STAT_TICK_FRAME);
+        Profiler::Start(Profiler::STAT_TICK_FRAME);
 
-    Profiler::Start(Profiler::STAT_TICK_GAME);
+        Profiler::Start(Profiler::STAT_TICK_GAME);
 
 #if 0
-    Log::Debug("-------------------------------------\n");
-    for (int i = 0; i < Entity::ALLGROUP_END; i++)
-    {
-        Log::Debug("%s Group %i\n",
-                   (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
-
-        for (Entity *e = data->list[i]; e; )
+        Log::Debug("-------------------------------------\n");
+        for (int i = 0; i < Entity::ALLGROUP_END; i++)
         {
-            Log::Debug("  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
-            e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
-        }
-    }
-#endif
+            Log::Debug("%s Group %i\n",
+                       (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
 
-    data->frame++;
-
-    /* If recording with fixed framerate, set deltams to a fixed value */
-    if (data->recording && data->fps)
-    {
-        data->deltams = 1000.0f / data->fps;
-    }
-    else
-    {
-        data->deltams = data->timer.GetMs();
-        data->bias += data->deltams;
-    }
-
-    /* If shutdown is stuck, kick the first entity we meet and see
-     * whether it makes things better. Note that it is always a bug to
-     * have referenced entities after 20 frames, but at least this
-     * safeguard makes it possible to exit the program cleanly. */
-    if (data->quit && !((data->frame - data->quitframe) % data->quitdelay))
-    {
-        int n = 0;
-        data->panic = 2 * (data->panic + 1);
-
-        for (int i = 0; i < Entity::ALLGROUP_END && n < data->panic; i++)
-        for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
-            if (e->ref)
+            for (Entity *e = data->list[i]; e; )
             {
-#if !LOL_RELEASE
-                Log::Error("poking %s\n", e->GetName());
-#endif
-                e->ref--;
-                n++;
-            }
-
-#if !LOL_RELEASE
-        if (n)
-            Log::Error("%i entities stuck after %i frames, poked %i\n",
-                       data->nentities, data->quitdelay, n);
-#endif
-
-        data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
-    }
-
-    /* Garbage collect objects that can be destroyed. We can do this
-     * before inserting awaiting objects, because only objects already in
-     * the tick lists can be marked for destruction. */
-    for (int i = 0; i < Entity::ALLGROUP_END; i++)
-        for (Entity *e = data->list[i], *prev = NULL; e; )
-        {
-            if (e->destroy && i < Entity::GAMEGROUP_END)
-            {
-                /* If entity is to be destroyed, remove it from the
-                 * game tick list. */
-                (prev ? prev->gamenext : data->list[i]) = e->gamenext;
-
-                e = e->gamenext;
-            }
-            else if (e->destroy)
-            {
-                /* If entity is to be destroyed, remove it from the
-                 * draw tick list and destroy it. */
-                (prev ? prev->drawnext : data->list[i]) = e->drawnext;
-
-                Entity *tmp = e;
-                e = e->drawnext; /* Can only be in a draw group list */
-                delete tmp;
-
-                data->nentities--;
-            }
-            else
-            {
-                if (e->ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
-                    e->destroy = 1;
-                prev = e;
+                Log::Debug("  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
                 e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
             }
         }
+#endif
 
-    /* Insert waiting objects into the appropriate lists */
-    while (data->todolist)
-    {
-        Entity *e = data->todolist;
-        data->todolist = e->gamenext;
+        data->frame++;
 
-        e->gamenext = data->list[e->gamegroup];
-        data->list[e->gamegroup] = e;
-        e->drawnext = data->list[e->drawgroup];
-        data->list[e->drawgroup] = e;
-    }
+        /* If recording with fixed framerate, set deltams to a fixed value */
+        if (data->recording && data->fps)
+        {
+            data->deltams = 1000.0f / data->fps;
+        }
+        else
+        {
+            data->deltams = data->timer.GetMs();
+            data->bias += data->deltams;
+        }
 
-    /* Tick objects for the game loop */
-    for (int i = Entity::GAMEGROUP_BEGIN; i < Entity::GAMEGROUP_END; i++)
-        for (Entity *e = data->list[i]; e; e = e->gamenext)
-            if (!e->destroy)
+        /* If shutdown is stuck, kick the first entity we meet and see
+         * whether it makes things better. Note that it is always a bug to
+         * have referenced entities after 20 frames, but at least this
+         * safeguard makes it possible to exit the program cleanly. */
+        if (data->quit && !((data->frame - data->quitframe) % data->quitdelay))
+        {
+            int n = 0;
+            data->panic = 2 * (data->panic + 1);
+
+            for (int i = 0; i < Entity::ALLGROUP_END && n < data->panic; i++)
+            for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
+                if (e->ref)
+                {
+#if !LOL_RELEASE
+                    Log::Error("poking %s\n", e->GetName());
+#endif
+                    e->ref--;
+                    n++;
+                }
+
+#if !LOL_RELEASE
+            if (n)
+                Log::Error("%i entities stuck after %i frames, poked %i\n",
+                           data->nentities, data->quitdelay, n);
+#endif
+
+            data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
+        }
+
+        /* Garbage collect objects that can be destroyed. We can do this
+         * before inserting awaiting objects, because only objects already
+         * inthe tick lists can be marked for destruction. */
+        for (int i = 0; i < Entity::ALLGROUP_END; i++)
+            for (Entity *e = data->list[i], *prev = NULL; e; )
             {
-#if !LOL_RELEASE
-                if (e->state != Entity::STATE_IDLE)
-                    Log::Error("entity not idle for game tick\n");
-                e->state = Entity::STATE_PRETICK_GAME;
-#endif
-                e->TickGame(data->deltams);
-#if !LOL_RELEASE
-                if (e->state != Entity::STATE_POSTTICK_GAME)
-                    Log::Error("entity missed super game tick\n");
-                e->state = Entity::STATE_IDLE;
-#endif
+                if (e->destroy && i < Entity::GAMEGROUP_END)
+                {
+                    /* If entity is to be destroyed, remove it from the
+                     * game tick list. */
+                    (prev ? prev->gamenext : data->list[i]) = e->gamenext;
+
+                    e = e->gamenext;
+                }
+                else if (e->destroy)
+                {
+                    /* If entity is to be destroyed, remove it from the
+                     * draw tick list and destroy it. */
+                    (prev ? prev->drawnext : data->list[i]) = e->drawnext;
+
+                    Entity *tmp = e;
+                    e = e->drawnext; /* Can only be in a draw group list */
+                    delete tmp;
+
+                    data->nentities--;
+                }
+                else
+                {
+                    if (e->ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
+                        e->destroy = 1;
+                    prev = e;
+                    e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
+                }
             }
 
-    Profiler::Stop(Profiler::STAT_TICK_GAME);
+        /* Insert waiting objects into the appropriate lists */
+        while (data->todolist)
+        {
+            Entity *e = data->todolist;
+            data->todolist = e->gamenext;
+
+            e->gamenext = data->list[e->gamegroup];
+            data->list[e->gamegroup] = e;
+            e->drawnext = data->list[e->drawgroup];
+            data->list[e->drawgroup] = e;
+        }
+
+        /* Tick objects for the game loop */
+        for (int i = Entity::GAMEGROUP_BEGIN; i < Entity::GAMEGROUP_END; i++)
+            for (Entity *e = data->list[i]; e; e = e->gamenext)
+                if (!e->destroy)
+                {
+#if !LOL_RELEASE
+                    if (e->state != Entity::STATE_IDLE)
+                        Log::Error("entity not idle for game tick\n");
+                    e->state = Entity::STATE_PRETICK_GAME;
+#endif
+                    e->TickGame(data->deltams);
+#if !LOL_RELEASE
+                    if (e->state != Entity::STATE_POSTTICK_GAME)
+                        Log::Error("entity missed super game tick\n");
+                    e->state = Entity::STATE_IDLE;
+#endif
+                }
+
+        Profiler::Stop(Profiler::STAT_TICK_GAME);
+
+        data->drawtick.Push(1);
+    }
+
+    data->drawtick.Push(0);
+
+    return NULL;
+}
+
+void *TickerData::DrawThreadMain(void *p)
+{
+    for (;;)
+    {
+        int tick = data->drawtick.Pop();
+        if (!tick)
+            break;
+
+        data->gametick.Push(1);
+    }
+
+    return NULL;
+}
+
+void Ticker::SetState(Entity *entity, uint32_t state)
+{
+
+}
+
+void Ticker::SetStateWhenMatch(Entity *entity, uint32_t state,
+                               Entity *other_entity, uint32_t other_state)
+{
+
+}
+
+void Ticker::Setup(float fps)
+{
+    data->fps = fps;
+
+    data->gamethread = new Thread(TickerData::GameThreadMain, NULL);
+    data->gametick.Push(1);
 }
 
 void Ticker::TickDraw()
 {
+    data->drawtick.Pop();
+
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
     Video::Clear();
@@ -322,10 +371,11 @@ void Ticker::TickDraw()
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
     Profiler::Start(Profiler::STAT_TICK_BLIT);
-}
 
-void Ticker::ClampFps()
-{
+    /* Signal game thread that it can carry on */
+    data->gametick.Push(1);
+
+    /* Clamp FPS */
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
     /* If framerate is fixed, force wait time to 1/FPS. Otherwise, set wait
@@ -368,6 +418,9 @@ void Ticker::Shutdown()
 
     data->quit = 1;
     data->quitframe = data->frame;
+
+    data->gametick.Push(0);
+    delete data->gamethread;
 }
 
 int Ticker::Finished()

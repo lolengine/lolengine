@@ -96,8 +96,6 @@ Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
 {
-    Ticker::ClampFps();
-    Ticker::TickGame();
     Ticker::TickDraw();
 }
 

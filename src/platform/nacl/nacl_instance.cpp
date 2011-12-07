@@ -126,9 +126,6 @@ void NaClInstance::DrawSelf()
     if (opengl_context_ == NULL)
         return;
 
-    Ticker::ClampFps();
-    Ticker::TickGame();
-
     opengl_context_->MakeContextCurrent(this);
     Ticker::TickDraw();
     opengl_context_->FlushContext();

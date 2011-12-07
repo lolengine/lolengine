@@ -58,16 +58,11 @@ void NaClApp::Run()
 {
     while (!Ticker::Finished())
     {
-        /* Tick the game */
-        Ticker::TickGame();
-
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 
 #if defined __native_client__
 #endif
-
-        Ticker::ClampFps();
     }
 }
 
