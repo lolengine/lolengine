@@ -117,11 +117,17 @@ LOLUNIT_FIXTURE(QuaternionTest)
         quat a(2.0f, -2.0f, -8.0f, 3.0f);
         quat b = re(a);
 
-        LOLUNIT_ASSERT_EQUAL(a * b, b * a);
+        quat m1 = a * b;
+        quat m2 = b * a;
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.x, m2.x, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.y, m2.y, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.z, m2.z, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.w, m2.w, 1e-8);
 
-        quat c = 1.0f;
-
-        LOLUNIT_ASSERT_EQUAL(a * b, c);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.x, 0.0, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.y, 0.0, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.z, 0.0, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.w, 1.0, 1e-8);
     }
 };
 
