@@ -35,17 +35,13 @@ class VideoData
 
 private:
     static mat4 proj_matrix, view_matrix;
-#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
     static ivec2 saved_viewport;
-#endif
 };
 
 mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 
-#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
 ivec2 VideoData::saved_viewport(0, 0);
-#endif
 
 /*
  * Public Video class
@@ -65,10 +61,7 @@ void Video::Setup(ivec2 size)
 
     /* Initialise OpenGL */
     glViewport(0, 0, size.x, size.y);
-
-#if defined __ANDROID__ || defined __CELLOS_LV2__ || defined __APPLE__
     VideoData::saved_viewport = size;
-#endif
 
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
     glClearDepth(1.0);
@@ -178,13 +171,12 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-#if defined __ANDROID__
+    /* GetSize() is called too often on the game thread; we cannot rely on
+     * the GL context at this point */
+#if 1
     return VideoData::saved_viewport;
 #elif defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-    return VideoData::saved_viewport;
-#elif defined __APPLE__
-    return VideoData::saved_viewport;
 #else
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
