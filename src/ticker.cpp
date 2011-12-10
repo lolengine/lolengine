@@ -54,6 +54,8 @@ public:
         Log::Debug("%i frames required to quit\n",
                 frame - quitframe);
 #endif
+        gametick.Push(0);
+        delete gamethread;
     }
 
 private:
@@ -418,9 +420,6 @@ void Ticker::Shutdown()
 
     data->quit = 1;
     data->quitframe = data->frame;
-
-    data->gametick.Push(0);
-    delete data->gamethread;
 }
 
 int Ticker::Finished()
