@@ -54,7 +54,7 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 
-AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h fastmath.h)
+AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h fastmath.h pthread.h)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)

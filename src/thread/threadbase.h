@@ -16,7 +16,7 @@
 #if !defined __LOL_THREADBASE_H__
 #define __LOL_THREADBASE_H__
 
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
 #   include <pthread.h>
 #elif defined _WIN32
 #   include <windows.h>
@@ -32,7 +32,7 @@ class MutexBase
 public:
     MutexBase()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_init(&m_mutex, NULL);
 #elif defined _WIN32
         InitializeCriticalSection(&m_mutex);
@@ -41,7 +41,7 @@ public:
 
     ~MutexBase()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_destroy(&m_mutex);
 #elif defined _WIN32
         DeleteCriticalSection(&m_mutex);
@@ -50,7 +50,7 @@ public:
 
     void Lock()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
 #elif defined _WIN32
         EnterCriticalSection(&m_mutex);
@@ -59,7 +59,7 @@ public:
 
     void Unlock()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_unlock(&m_mutex);
 #elif defined _WIN32
         LeaveCriticalSection(&m_mutex);
@@ -67,7 +67,7 @@ public:
     }
 
 private:
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
     pthread_mutex_t m_mutex;
 #elif defined _WIN32
     CRITICAL_SECTION m_mutex;
@@ -80,7 +80,7 @@ public:
     QueueBase()
     {
         m_start = m_count = 0;
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         m_poppers = m_pushers = 0;
         pthread_mutex_init(&m_mutex, NULL);
         pthread_cond_init(&m_empty_cond, NULL);
@@ -94,7 +94,7 @@ public:
 
     ~QueueBase()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_cond_destroy(&m_empty_cond);
         pthread_cond_destroy(&m_full_cond);
         pthread_mutex_destroy(&m_mutex);
@@ -107,7 +107,7 @@ public:
 
     void Push(int value)
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* If queue is full, wait on the "full" cond var. */
         m_pushers++;
@@ -123,7 +123,7 @@ public:
         m_values[(m_start + m_count) % CAPACITY] = value;
         m_count++;
 
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
@@ -136,7 +136,7 @@ public:
 
     int Pop()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* Wait until there is something in the queue. Be careful, we
          * could get woken up but another thread may have eaten the
@@ -155,7 +155,7 @@ public:
         m_start = (m_start + 1) % CAPACITY;
         m_count--;
 
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
             pthread_cond_signal(&m_full_cond);
@@ -172,7 +172,7 @@ private:
     static size_t const CAPACITY = 100;
     int m_values[CAPACITY];
     size_t m_start, m_count;
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
     size_t m_poppers, m_pushers;
     pthread_mutex_t m_mutex;
     pthread_cond_t m_empty_cond, m_full_cond;
@@ -187,7 +187,7 @@ class ThreadBase
 public:
     ThreadBase(void *(*fn)(void *), void *data)
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         /* Set the joinable attribute for systems who don't play nice */
         pthread_attr_t attr;
         pthread_attr_init(&attr);
@@ -201,7 +201,7 @@ public:
 
     virtual ~ThreadBase()
     {
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
         pthread_join(m_thread, NULL);
 #elif defined _WIN32
         WaitForSingleObject(m_thread, INFINITE);
@@ -209,7 +209,7 @@ public:
     }
 
 private:
-#if defined __linux__ || defined __native_client__
+#if defined HAVE_PTHREAD_H
     pthread_t m_thread;
 #elif defined _WIN32
     HANDLE m_thread;
