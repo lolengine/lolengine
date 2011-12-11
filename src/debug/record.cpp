@@ -59,7 +59,7 @@ DebugRecord::DebugRecord(char const *path, float fps)
     data->sequence = NULL;
 #endif
 
-    drawgroup = DRAWGROUP_CAPTURE;
+    m_drawgroup = DRAWGROUP_CAPTURE;
 }
 
 void DebugRecord::TickGame(float deltams)

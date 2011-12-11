@@ -43,7 +43,7 @@ World::World()
     data->width = 0;
     data->height = 0;
 
-    drawgroup = DRAWGROUP_BEFORE;
+    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 World::~World()

@@ -84,7 +84,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     data->dilate = dilate;
     data->ntiles = data->count.i * data->count.j;
 
-    drawgroup = DRAWGROUP_BEFORE;
+    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 TileSet::~TileSet()

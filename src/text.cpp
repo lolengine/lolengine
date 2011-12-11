@@ -49,7 +49,7 @@ Text::Text(char const *text, char const *font)
     data->length = text ? strlen(text) : 0;
     data->pos = vec3(0, 0, 0);
 
-    drawgroup = DRAWGROUP_HUD;
+    m_drawgroup = DRAWGROUP_HUD;
 }
 
 void Text::SetText(char const *text)

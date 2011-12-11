@@ -119,7 +119,7 @@ DebugQuad::DebugQuad()
     data->initialised = 0;
     data->time = RandF(10000.0f);
 
-    drawgroup = DRAWGROUP_HUD;
+    m_drawgroup = DRAWGROUP_HUD;
 }
 
 DebugQuad::~DebugQuad()
