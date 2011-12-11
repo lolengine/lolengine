@@ -47,7 +47,7 @@ public:
         if (autolist)
         {
             int count = 0;
-            for (Entity *e = autolist; e; e = e->autonext, count++)
+            for (Entity *e = autolist; e; e = e->m_autonext, count++)
                 ;
             Log::Error("still %i autoreleased entities\n", count);
         }
@@ -91,13 +91,13 @@ void Ticker::Register(Entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    entity->gamenext = data->todolist;
+    entity->m_gamenext = data->todolist;
     data->todolist = entity;
     /* Objects are autoreleased by default. Put them in a circular list. */
-    entity->autorelease = 1;
-    entity->autonext = data->autolist;
+    entity->m_autorelease = 1;
+    entity->m_autonext = data->autolist;
     data->autolist = entity;
-    entity->ref = 1;
+    entity->m_ref = 1;
 
     data->nentities++;
 }
@@ -110,27 +110,27 @@ void Ticker::Ref(Entity *entity)
         Log::Error("referencing NULL entity\n");
         return;
     }
-    if (entity->destroy)
+    if (entity->m_destroy)
         Log::Error("referencing entity scheduled for destruction\n");
 #endif
-    if (entity->autorelease)
+    if (entity->m_autorelease)
     {
-        /* Get the entity out of the autorelease list. This is usually
+        /* Get the entity out of the m_autorelease list. This is usually
          * very fast since the first entry in autolist is the last
          * registered entity. */
         for (Entity *e = data->autolist, *prev = NULL; e;
-             prev = e, e = e->autonext)
+             prev = e, e = e->m_autonext)
         {
             if (e == entity)
             {
-                (prev ? prev->autonext : data->autolist) = e->autonext;
+                (prev ? prev->m_autonext : data->autolist) = e->m_autonext;
                 break;
             }
         }
-        entity->autorelease = 0;
+        entity->m_autorelease = 0;
     }
     else
-        entity->ref++;
+        entity->m_ref++;
 }
 
 int Ticker::Unref(Entity *entity)
@@ -141,12 +141,12 @@ int Ticker::Unref(Entity *entity)
         Log::Error("dereferencing NULL entity\n");
         return 0;
     }
-    if (entity->ref <= 0)
+    if (entity->m_ref <= 0)
         Log::Error("dereferencing unreferenced entity\n");
-    if (entity->autorelease)
+    if (entity->m_autorelease)
         Log::Error("dereferencing autoreleased entity\n");
 #endif
-    return --entity->ref;
+    return --entity->m_ref;
 }
 
 void *TickerData::GameThreadMain(void *p)
@@ -171,8 +171,8 @@ void *TickerData::GameThreadMain(void *p)
 
             for (Entity *e = data->list[i]; e; )
             {
-                Log::Debug("  \\-- %s (ref %i, destroy %i)\n", e->GetName(), e->ref, e->destroy);
-                e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
+                Log::Debug("  \\-- %s (m_ref %i, destroy %i)\n", e->GetName(), e->m_ref, e->m_destroy);
+                e = (i < Entity::GAMEGROUP_END) ? e->m_gamenext : e->m_drawnext;
             }
         }
 #endif
@@ -200,13 +200,13 @@ void *TickerData::GameThreadMain(void *p)
             data->panic = 2 * (data->panic + 1);
 
             for (int i = 0; i < Entity::ALLGROUP_END && n < data->panic; i++)
-            for (Entity *e = data->list[i]; e && n < data->panic; e = e->gamenext)
-                if (e->ref)
+            for (Entity *e = data->list[i]; e && n < data->panic; e = e->m_gamenext)
+                if (e->m_ref)
                 {
 #if !LOL_RELEASE
                     Log::Error("poking %s\n", e->GetName());
 #endif
-                    e->ref--;
+                    e->m_ref--;
                     n++;
                 }
 
@@ -225,32 +225,32 @@ void *TickerData::GameThreadMain(void *p)
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
             for (Entity *e = data->list[i], *prev = NULL; e; )
             {
-                if (e->destroy && i < Entity::GAMEGROUP_END)
+                if (e->m_destroy && i < Entity::GAMEGROUP_END)
                 {
                     /* If entity is to be destroyed, remove it from the
                      * game tick list. */
-                    (prev ? prev->gamenext : data->list[i]) = e->gamenext;
+                    (prev ? prev->m_gamenext : data->list[i]) = e->m_gamenext;
 
-                    e = e->gamenext;
+                    e = e->m_gamenext;
                 }
-                else if (e->destroy)
+                else if (e->m_destroy)
                 {
                     /* If entity is to be destroyed, remove it from the
                      * draw tick list and destroy it. */
-                    (prev ? prev->drawnext : data->list[i]) = e->drawnext;
+                    (prev ? prev->m_drawnext : data->list[i]) = e->m_drawnext;
 
                     Entity *tmp = e;
-                    e = e->drawnext; /* Can only be in a draw group list */
+                    e = e->m_drawnext; /* Can only be in a draw group list */
                     delete tmp;
 
                     data->nentities--;
                 }
                 else
                 {
-                    if (e->ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
-                        e->destroy = 1;
+                    if (e->m_ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
+                        e->m_destroy = 1;
                     prev = e;
-                    e = (i < Entity::GAMEGROUP_END) ? e->gamenext : e->drawnext;
+                    e = (i < Entity::GAMEGROUP_END) ? e->m_gamenext : e->m_drawnext;
                 }
             }
 
@@ -258,29 +258,29 @@ void *TickerData::GameThreadMain(void *p)
         while (data->todolist)
         {
             Entity *e = data->todolist;
-            data->todolist = e->gamenext;
+            data->todolist = e->m_gamenext;
 
-            e->gamenext = data->list[e->gamegroup];
-            data->list[e->gamegroup] = e;
-            e->drawnext = data->list[e->drawgroup];
-            data->list[e->drawgroup] = e;
+            e->m_gamenext = data->list[e->m_gamegroup];
+            data->list[e->m_gamegroup] = e;
+            e->m_drawnext = data->list[e->m_drawgroup];
+            data->list[e->m_drawgroup] = e;
         }
 
         /* Tick objects for the game loop */
         for (int i = Entity::GAMEGROUP_BEGIN; i < Entity::GAMEGROUP_END; i++)
-            for (Entity *e = data->list[i]; e; e = e->gamenext)
-                if (!e->destroy)
+            for (Entity *e = data->list[i]; e; e = e->m_gamenext)
+                if (!e->m_destroy)
                 {
 #if !LOL_RELEASE
-                    if (e->state != Entity::STATE_IDLE)
+                    if (e->m_tickstate != Entity::STATE_IDLE)
                         Log::Error("entity not idle for game tick\n");
-                    e->state = Entity::STATE_PRETICK_GAME;
+                    e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
                     e->TickGame(data->deltams);
 #if !LOL_RELEASE
-                    if (e->state != Entity::STATE_POSTTICK_GAME)
+                    if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
                         Log::Error("entity missed super game tick\n");
-                    e->state = Entity::STATE_IDLE;
+                    e->m_tickstate = Entity::STATE_IDLE;
 #endif
                 }
 
@@ -351,19 +351,19 @@ void Ticker::TickDraw()
             break;
         }
 
-        for (Entity *e = data->list[i]; e; e = e->drawnext)
-            if (!e->destroy)
+        for (Entity *e = data->list[i]; e; e = e->m_drawnext)
+            if (!e->m_destroy)
             {
 #if !LOL_RELEASE
-                if (e->state != Entity::STATE_IDLE)
+                if (e->m_tickstate != Entity::STATE_IDLE)
                     Log::Error("entity not idle for draw tick\n");
-                e->state = Entity::STATE_PRETICK_DRAW;
+                e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
                 e->TickDraw(data->deltams);
 #if !LOL_RELEASE
-                if (e->state != Entity::STATE_POSTTICK_DRAW)
+                if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity missed super draw tick\n");
-                e->state = Entity::STATE_IDLE;
+                e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
     }
@@ -411,11 +411,11 @@ int Ticker::GetFrameNum()
 
 void Ticker::Shutdown()
 {
-    /* We're bailing out. Release all autorelease objects. */
+    /* We're bailing out. Release all m_autorelease objects. */
     while (data->autolist)
     {
-        data->autolist->ref--;
-        data->autolist = data->autolist->autonext;
+        data->autolist->m_ref--;
+        data->autolist = data->autolist->m_autonext;
     }
 
     data->quit = 1;

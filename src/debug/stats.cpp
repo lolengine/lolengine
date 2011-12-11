@@ -43,7 +43,7 @@ DebugStats::DebugStats(char const *path)
 {
     data->fp = fopen(path, "w+");
 
-    gamegroup = GAMEGROUP_AFTER;
+    m_gamegroup = GAMEGROUP_AFTER;
 }
 
 void DebugStats::TickGame(float deltams)

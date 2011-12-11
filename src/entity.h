@@ -36,7 +36,7 @@ protected:
     virtual ~Entity();
 
     virtual char const *GetName();
-    inline int IsDestroying() { return destroy; }
+    inline int IsDestroying() { return m_destroy; }
 
     virtual void TickGame(float deltams);
     virtual void TickDraw(float deltams);
@@ -49,7 +49,7 @@ protected:
         // Must be the last element
         GAMEGROUP_END
     }
-    gamegroup;
+    m_gamegroup;
 
     enum
     {
@@ -60,7 +60,7 @@ protected:
         // Must be the last element
         DRAWGROUP_END
     }
-    drawgroup;
+    m_drawgroup;
 
     static int const GAMEGROUP_BEGIN = 0;
     static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
@@ -75,7 +75,7 @@ protected:
         STATE_PRETICK_DRAW,
         STATE_POSTTICK_DRAW,
     }
-    state;
+    m_tickstate;
 #endif
 
     // Emcee begin
@@ -85,15 +85,15 @@ private:
                            Entity *other_entity, uint32_t other_state);
     virtual uint32_t OnStateChanged(uint32_t newstate)
     {
-        return m_state = newstate;
+        return LOLm_state = newstate;
     }
 
-    uint32_t m_state;
+    uint32_t LOLm_state;
     // Emcee end
 
 private:
-    Entity *gamenext, *drawnext, *autonext;
-    int ref, autorelease, destroy;
+    Entity *m_gamenext, *m_drawnext, *m_autonext;
+    int m_ref, m_autorelease, m_destroy;
 };
 
 } /* namespace lol */

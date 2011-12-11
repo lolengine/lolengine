@@ -24,23 +24,23 @@ namespace lol
  */
 
 Entity::Entity() :
-    gamenext(0),
-    drawnext(0),
-    ref(0),
-    destroy(0)
+    m_gamenext(0),
+    m_drawnext(0),
+    m_ref(0),
+    m_destroy(0)
 {
 #if !LOL_RELEASE
-    state = STATE_IDLE;
+    m_tickstate = STATE_IDLE;
 #endif
-    gamegroup = GAMEGROUP_DEFAULT;
-    drawgroup = DRAWGROUP_DEFAULT;
+    m_gamegroup = GAMEGROUP_DEFAULT;
+    m_drawgroup = DRAWGROUP_DEFAULT;
     Ticker::Register(this);
 }
 
 Entity::~Entity()
 {
 #if !LOL_RELEASE
-    if (!destroy)
+    if (!m_destroy)
         Log::Error("entity destructor called directly\n");
 #endif
 }
@@ -53,18 +53,18 @@ char const *Entity::GetName()
 void Entity::TickGame(float deltams)
 {
 #if !LOL_RELEASE
-    if (state != STATE_PRETICK_GAME)
+    if (m_tickstate != STATE_PRETICK_GAME)
         Log::Error("invalid entity game tick\n");
-    state = STATE_POSTTICK_GAME;
+    m_tickstate = STATE_POSTTICK_GAME;
 #endif
 }
 
 void Entity::TickDraw(float deltams)
 {
 #if !LOL_RELEASE
-    if (state != STATE_PRETICK_DRAW)
+    if (m_tickstate != STATE_PRETICK_DRAW)
         Log::Error("invalid entity draw tick\n");
-    state = STATE_POSTTICK_DRAW;
+    m_tickstate = STATE_POSTTICK_DRAW;
 #endif
 }
 

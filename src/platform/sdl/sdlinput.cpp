@@ -44,7 +44,7 @@ SdlInput::SdlInput()
 #if defined USE_SDL
     SDL_Init(SDL_INIT_TIMER);
 
-    gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_BEFORE;
 #endif
 }
 

@@ -77,7 +77,7 @@ Ps3Input::Ps3Input()
     data->mousepos = vec2(320.0f, 240.0f);
     data->mousebuttons = ivec3(0, 0, 0);
 
-    gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_BEFORE;
 #endif
 }
 

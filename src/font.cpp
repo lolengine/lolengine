@@ -49,7 +49,7 @@ Font::Font(char const *path)
     data->tileset = Tiler::Register(path, ivec2(0), ivec2(16), 1.0f);
     data->size = data->tileset->GetSize(0);
 
-    drawgroup = DRAWGROUP_BEFORE;
+    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 Font::~Font()
