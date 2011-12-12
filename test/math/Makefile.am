@@ -3,7 +3,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/src
 
 all-local: $(noinst_PROGRAMS)
 	test x$(MAKE_FSELF) = xno || make_fself pi$(EXEEXT) pi.self
-	test x$(MAKE_FSELF) = xno || make_fself poly$(EXEEXT) pi.self
+	test x$(MAKE_FSELF) = xno || make_fself poly$(EXEEXT) poly.self
 	test x$(MAKE_FSELF) = xno || make_fself remez$(EXEEXT) remez.self
 
 CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \

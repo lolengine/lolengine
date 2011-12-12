@@ -62,7 +62,7 @@ test/tutorial/tut02
 test/tutorial/tut03
 test/benchsuite
 test/quad
-test/sandbox
+test/sandbox/sample
 test/math/pi
 test/math/poly
 test/math/remez

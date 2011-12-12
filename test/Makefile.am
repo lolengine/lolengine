@@ -1,5 +1,5 @@
 
-SUBDIRS = math tutorial xolotl
+SUBDIRS = math tutorial sandbox xolotl
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
@@ -8,7 +8,6 @@ bench: benchsuite$(EXEEXT)
 
 all-local: $(noinst_PROGRAMS)
 	test x$(MAKE_FSELF) = xno || make_fself quad$(EXEEXT) quad.self
-	test x$(MAKE_FSELF) = xno || make_fself sandbox$(EXEEXT) sandbox.self
 	test x$(MAKE_FSELF) = xno || make_fself benchsuite$(EXEEXT) benchsuite.self
 	test x$(MAKE_FSELF) = xno || make_fself testsuite$(EXEEXT) testsuite.self
 
@@ -18,7 +17,7 @@ CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
 
 EXTRA_DIST = data/gradient.png
 
-noinst_PROGRAMS = quad sandbox benchsuite testsuite
+noinst_PROGRAMS = quad benchsuite testsuite
 
 TESTS = testsuite
 
@@ -40,9 +39,4 @@ quad_SOURCES = debug/quad.cpp
 quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 quad_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 quad_DEPENDENCIES = $(top_builddir)/src/liblol.a
-
-sandbox_SOURCES = debug/sandbox.cpp
-sandbox_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-sandbox_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-sandbox_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
