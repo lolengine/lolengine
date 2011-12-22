@@ -103,6 +103,23 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 1234567876543210.0, 0.0);
     }
 
+    LOLUNIT_TEST(StringToReal)
+    {
+        float a1 = real("0");
+        float a2 = real("1");
+        float a3 = real("-1");
+        /* 2^-128 * 2^128 */
+        float a4 = real("0.0000000000000000000000000000000000000029387358770"
+                        "557187699218413430556141945466638919302188037718792"
+                        "6569604314863681793212890625")
+                 * real("340282366920938463463374607431768211456");
+
+        LOLUNIT_ASSERT_EQUAL(a1, 0.0f);
+        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
+        LOLUNIT_ASSERT_EQUAL(a3, -1.0f);
+        LOLUNIT_ASSERT_EQUAL(a4, 1.0f);
+    }
+
     LOLUNIT_TEST(UnaryMinus)
     {
         float a1 = - real(1.0f);

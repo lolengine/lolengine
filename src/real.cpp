@@ -121,6 +121,66 @@ real::operator double() const
     return u.d;
 }
 
+/*
+ * Create a real number from an ASCII representation
+ */
+real::real(char const *str)
+{
+    real ret = 0;
+    int exponent = 0;
+    bool comma = false, nonzero = false, negative = false, finished = false;
+
+    for (char const *p = str; *p && !finished; p++)
+    {
+        switch (*p)
+        {
+        case '-':
+        case '+':
+            if (p != str)
+                break;
+            negative = (*p == '-');
+            break;
+        case '.':
+            if (comma)
+                finished = true;
+            comma = true;
+            break;
+        case '0': case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8': case '9':
+            if (nonzero)
+            {
+                real x = ret + ret;
+                x = x + x + ret;
+                ret = x + x;
+            }
+            if (*p != '0')
+            {
+                ret += (int)(*p - '0');
+                nonzero = true;
+            }
+            if (comma)
+                exponent--;
+            break;
+        case 'e':
+        case 'E':
+            exponent += atoi(p + 1);
+            finished = true;
+            break;
+        default:
+            finished = true;
+            break;
+        }
+    }
+
+    if (exponent)
+        ret *= pow(R_10, (real)exponent);
+
+    if (negative)
+        ret = -ret;
+
+    new(this) real(ret);
+}
+
 real real::operator +() const
 {
     return *this;
