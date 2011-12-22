@@ -37,6 +37,8 @@ public:
     real(int i);
     real(unsigned int i);
 
+    real(char const *str);
+
     operator float() const;
     operator double() const;
     operator int() const;
