@@ -46,13 +46,11 @@ static inline uint16_t float_to_half_nobranch(uint32_t x)
     static uint16_t const basetable[512] =
     {
 #define S1(i) (((i) < 103) ? 0x0000 : \
-               ((i) < 113) ? 0x0400 >> (113 - (i)) : \
+               ((i) < 113) ? 0x0400 >> (0x1f & (113 - (i))) : \
                ((i) < 143) ? ((i) - 112) << 10 : 0x7c00)
         S256(0),
 #undef S1
-#define S1(i) (0x8000 | (((i) < 103) ? 0x0000 : \
-                         ((i) < 113) ? 0x0400 >> (113 - (i)) : \
-                         ((i) < 143) ? ((i) - 112) << 10 : 0x7c00))
+#define S1(i) (0x8000 | basetable[i])
         S256(0),
 #undef S1
     };
