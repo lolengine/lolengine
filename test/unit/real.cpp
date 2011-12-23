@@ -326,6 +326,17 @@ LOLUNIT_FIXTURE(RealTest)
             LOLUNIT_ASSERT_EQUAL(b2, a2);
         }
     }
+
+    LOLUNIT_TEST(Pow)
+    {
+        double a1 = pow(-real::R_2, real::R_2);
+        double b1 = 4.0;
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, 1.0e-13);
+
+        double a2 = pow(-real::R_2, real::R_3);
+        double b2 = -8.0;
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, 1.0e-13);
+    }
 };
 
 } /* namespace lol */

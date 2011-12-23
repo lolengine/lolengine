@@ -692,8 +692,14 @@ real pow(real const &x, real const &y)
         return exp(y * log(x));
     else /* x < 0 */
     {
+        /* Odd integer exponent */
+        if (y == (round(y >> 1) << 1))
+            return exp(y * log(-x));
+
+        /* Even integer exponent */
         if (y == round(y))
             return -exp(y * log(-x));
+
         /* FIXME: negative nth root */
         return real::R_0;
     }
