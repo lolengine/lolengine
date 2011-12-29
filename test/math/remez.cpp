@@ -12,38 +12,23 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-#include <cstdlib>
-
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
 
 #include "lol/math/real.h"
-#include "lol/math/matrix.h"
 #include "lol/math/remez.h"
 
 using lol::real;
 using lol::RemezSolver;
 
-/* The function we want to approximate */
-real myfun(real const &y)
-{
-    real x = sqrt(y);
-    return (sin(x) - x) / (x * y);
-}
-
-real myerr(real const &y)
-{
-    real x = sqrt(y);
-    return sin(x) / (x * y);
-}
+/* See the tutorial at http://lol.zoy.org/wiki/doc/maths/remez */
+real f(real const &x) { return exp(x); }
 
 int main(int argc, char **argv)
 {
-    RemezSolver<2, real> solver;
-    solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 40);
-
-    return EXIT_SUCCESS;
+    RemezSolver<4, real> solver;
+    solver.Run(-1, 1, f, 30);
+    return 0;
 }
 

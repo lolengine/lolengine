@@ -16,6 +16,7 @@
 #if !defined __LOL_MATH_MATRIX_H__
 #define __LOL_MATH_MATRIX_H__
 
+#include <stdint.h>
 #include <cmath>
 #if !defined __ANDROID__
 #   include <iostream>
