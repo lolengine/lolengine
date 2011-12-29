@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __LOL_REAL_H__
-#define __LOL_REAL_H__
+#if !defined __LOL_MATH_REAL_H__
+#define __LOL_MATH_REAL_H__
 
 #include <stdint.h>
 
@@ -147,5 +147,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_REAL_H__
+#endif // __LOL_MATH_REAL_H__
 
