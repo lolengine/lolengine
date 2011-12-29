@@ -12,8 +12,11 @@
 #   include "config.h"
 #endif
 
+#include <new>
 #include <cstring>
 #include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 #include "core.h"
 
