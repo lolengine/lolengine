@@ -13,8 +13,8 @@
 // ------------------
 //
 
-#if !defined __LOL_MATRIX_H__
-#define __LOL_MATRIX_H__
+#if !defined __LOL_MATH_MATRIX_H__
+#define __LOL_MATH_MATRIX_H__
 
 #include <cmath>
 #if !defined __ANDROID__
@@ -23,6 +23,9 @@
 
 namespace lol
 {
+
+class half;
+class real;
 
 #define VECTOR_TYPES(tname, suffix) \
     template <typename T> struct tname; \
@@ -587,7 +590,82 @@ template <typename T> struct Mat4
     Vec4<T> v[4];
 };
 
+/*
+ * Arbitrarily-sized square matrices; for now this only supports
+ * naive inversion and is used for the Remez inversion method.
+ */
+
+template<int N, typename T> struct Mat
+{
+    inline Mat<N, T>() {}
+
+    Mat(T x)
+    {
+        for (int j = 0; j < N; j++)
+            for (int i = 0; i < N; i++)
+                if (i == j)
+                    m[i][j] = x;
+                else
+                    m[i][j] = 0;
+    }
+
+    /* Naive matrix inversion */
+    Mat<N, T> inv() const
+    {
+        Mat a = *this, b((T)1);
+
+        /* Inversion method: iterate through all columns and make sure
+         * all the terms are 1 on the diagonal and 0 everywhere else */
+        for (int i = 0; i < N; i++)
+        {
+            /* If the expected coefficient is zero, add one of
+             * the other lines. The first we meet will do. */
+            if (!a.m[i][i])
+            {
+                for (int j = i + 1; j < N; j++)
+                {
+                    if (!a.m[i][j])
+                        continue;
+                    /* Add row j to row i */
+                    for (int n = 0; n < N; n++)
+                    {
+                        a.m[n][i] += a.m[n][j];
+                        b.m[n][i] += b.m[n][j];
+                    }
+                    break;
+                }
+            }
+
+            /* Now we know the diagonal term is non-zero. Get its inverse
+             * and use that to nullify all other terms in the column */
+            T x = (T)1 / a.m[i][i];
+            for (int j = 0; j < N; j++)
+            {
+                if (j == i)
+                    continue;
+                T mul = x * a.m[i][j];
+                for (int n = 0; n < N; n++)
+                {
+                    a.m[n][j] -= mul * a.m[n][i];
+                    b.m[n][j] -= mul * b.m[n][i];
+                }
+            }
+
+            /* Finally, ensure the diagonal term is 1 */
+            for (int n = 0; n < N; n++)
+            {
+                a.m[n][i] *= x;
+                b.m[n][i] *= x;
+            }
+        }
+
+        return b;
+    }
+
+    T m[N][N];
+};
+
 } /* namespace lol */
 
-#endif // __LOL_MATRIX_H__
+#endif // __LOL_MATH_MATRIX_H__
 

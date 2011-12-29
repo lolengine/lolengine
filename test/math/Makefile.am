@@ -22,7 +22,7 @@ poly_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 poly_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 poly_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-remez_SOURCES = remez.cpp remez-matrix.h remez-solver.h
+remez_SOURCES = remez.cpp
 remez_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 remez_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 remez_DEPENDENCIES = $(top_builddir)/src/liblol.a

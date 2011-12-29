@@ -16,7 +16,7 @@
 #if !defined __LOL_EGLAPP_H__
 #define __LOL_EGLAPP_H__
 
-#include "matrix.h"
+#include "lol/math/matrix.h"
 
 namespace lol
 {

@@ -12,19 +12,19 @@
 #   include "config.h"
 #endif
 
-#include <cstring>
 #include <cstdio>
+#include <cstdlib>
 
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
 
-#include "core.h"
+#include "lol/math/real.h"
+#include "lol/math/matrix.h"
+#include "lol/math/remez.h"
 
 using lol::real;
-
-#include "remez-matrix.h"
-#include "remez-solver.h"
+using lol::RemezSolver;
 
 /* The function we want to approximate */
 real myfun(real const &y)
@@ -41,7 +41,7 @@ real myerr(real const &y)
 
 int main(int argc, char **argv)
 {
-    RemezSolver<2> solver;
+    RemezSolver<2, real> solver;
     solver.Run(real::R_1 >> 400, real::R_PI_2 * real::R_PI_2, myfun, myerr, 40);
 
     return EXIT_SUCCESS;
