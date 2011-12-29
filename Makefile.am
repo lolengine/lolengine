@@ -28,9 +28,9 @@ lolremez-$(LOLREMEZ_VERSION).tar.gz:
 	mkdir lolremez-$(LOLREMEZ_VERSION)
 	mkdir lolremez-$(LOLREMEZ_VERSION)/lol
 	mkdir lolremez-$(LOLREMEZ_VERSION)/lol/math
-	cp $(top_srcdir)/src/real.cpp $(top_srcdir)/test/math/remez.cpp \
-	  lolremez-$(LOLREMEZ_VERSION)
-	cat $(top_srcdir)/src/real.cpp | sed 's@core.h@lol/math/real.h@' > \
+	cat $(top_srcdir)/test/math/remez.cpp | sed '/#if/,/^$$/d' > \
+	  lolremez-$(LOLREMEZ_VERSION)/remez.cpp
+	cat $(top_srcdir)/src/real.cpp | sed 's@core.h@lol/math/real.h@' | sed '/#if/,/^$$/d' > \
 	  lolremez-$(LOLREMEZ_VERSION)/real.cpp
 	cp $(top_srcdir)/src/lol/math/real.h \
 	   $(top_srcdir)/src/lol/math/matrix.h \
