@@ -9,12 +9,16 @@
 //
 
 //
-// The Remez class
-// ---------------
+// The RemezSolver class
+// ---------------------
 //
 
 #if !defined __LOL_MATH_REMEZ_H__
 #define __LOL_MATH_REMEZ_H__
+
+#include <cstdio>
+
+#include "lol/math/matrix.h"
 
 namespace lol
 {
@@ -55,6 +59,11 @@ public:
         Step();
 
         PrintPoly();
+    }
+
+    inline void Run(T a, T b, RealFunc *func, int steps)
+    {
+        Run(a, b, func, NULL, steps);
     }
 
     T ChebyEval(T const &x)
@@ -319,7 +328,9 @@ public:
 
     T Weight(T const &x)
     {
-        return m_weight(x * m_k2 + m_k1);
+        if (m_weight)
+            return m_weight(x * m_k2 + m_k1);
+        return 1;
     }
 
     /* ORDER + 1 Chebyshev coefficients and 1 error value */
