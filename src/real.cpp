@@ -1268,35 +1268,20 @@ void real::print(int ndigits) const
     }
 
     /* Normalise x so that mantissa is in [1..9.999] */
-    int exponent = 0;
-    if (x.m_signexp)
+    /* FIXME: better use int64_t when the cast is implemented */
+    int exponent = ceil(log10(x));
+    x /= pow(R_10, (real)exponent);
+
+    if (x < R_1)
     {
-        for (real div = R_1, newdiv; true; div = newdiv)
-        {
-            newdiv = div * R_10;
-            if (x < newdiv)
-            {
-                x /= div;
-                break;
-            }
-            exponent++;
-        }
-        for (real mul = 1, newx; true; mul *= R_10)
-        {
-            newx = x * mul;
-            if (newx >= R_1)
-            {
-                x = newx;
-                break;
-            }
-            exponent--;
-        }
+        x *= R_10;
+        exponent--;
     }
 
     /* Print digits */
     for (int i = 0; i < ndigits; i++)
     {
-        int digit = (int)x;
+        int digit = (int)floor(x);
         printf("%i", digit);
         if (i == 0)
             printf(".");
