@@ -463,32 +463,6 @@ real const &real::operator /=(real const &x)
     return *this = tmp / x;
 }
 
-real real::operator <<(int x) const
-{
-    real tmp = *this;
-    return tmp <<= x;
-}
-
-real real::operator >>(int x) const
-{
-    real tmp = *this;
-    return tmp >>= x;
-}
-
-real const &real::operator <<=(int x)
-{
-    if (m_signexp << 1)
-        m_signexp += x;
-    return *this;
-}
-
-real const &real::operator >>=(int x)
-{
-    if (m_signexp << 1)
-        m_signexp -= x;
-    return *this;
-}
-
 bool real::operator ==(real const &x) const
 {
     if ((m_signexp << 1) == 0 && (x.m_signexp << 1) == 0)
@@ -679,7 +653,7 @@ real cbrt(real const &x)
     for (int i = 1; i <= real::BIGITS; i *= 2)
     {
         static real third = re(real::R_3);
-        ret = third * (x / (ret * ret) + (ret << 1));
+        ret = third * (x / (ret * ret) + (ret / 2));
     }
 
     return ret;
@@ -696,7 +670,7 @@ real pow(real const &x, real const &y)
     else /* x < 0 */
     {
         /* Odd integer exponent */
-        if (y == (round(y >> 1) << 1))
+        if (y == (round(y / 2) * 2))
             return exp(y * log(-x));
 
         /* Even integer exponent */
@@ -717,7 +691,7 @@ real gamma(real const &x)
      * and do the addition in this order. */
     int a = ceilf(logf(2) / logf(2 * M_PI) * real::BIGITS * real::BIGIT_BITS);
 
-    real ret = sqrt(real::R_PI << 1);
+    real ret = sqrt(real::R_PI * 2);
     real fact_k_1 = real::R_1;
 
     for (int k = 1; k < a; k++)
@@ -729,7 +703,7 @@ real gamma(real const &x)
         fact_k_1 *= (real)-k;
     }
 
-    ret *= pow(x + (real)(a - 1), x - (real::R_1 >> 1));
+    ret *= pow(x + (real)(a - 1), x - (real::R_1 / 2));
     ret *= exp(-x - (real)(a - 1));
 
     return ret;
@@ -772,7 +746,7 @@ static real fast_log(real const &x)
         zn *= z2;
     }
 
-    return z * (sum << 2);
+    return z * sum * 4;
 }
 
 real log(real const &x)
@@ -875,16 +849,16 @@ real sinh(real const &x)
     /* We cannot always use (exp(x)-exp(-x))/2 because we'll lose
      * accuracy near zero. We only use this identity for |x|>0.5. If
      * |x|<=0.5, we compute exp(x)-1 and exp(-x)-1 instead. */
-    bool near_zero = (fabs(x) < real::R_1 >> 1);
+    bool near_zero = (fabs(x) < real::R_1 / 2);
     real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
     real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
-    return (x1 - x2) >> 1;
+    return (x1 - x2) / 2;
 }
 
 real tanh(real const &x)
 {
     /* See sinh() for the strategy here */
-    bool near_zero = (fabs(x) < real::R_1 >> 1);
+    bool near_zero = (fabs(x) < real::R_1 / 2);
     real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
     real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
     real x3 = near_zero ? x1 + x2 + real::R_2 : x1 + x2;
@@ -895,7 +869,7 @@ real cosh(real const &x)
 {
     /* No need to worry about accuracy here; maybe the last bit is slightly
      * off, but that's about it. */
-    return (exp(x) + exp(-x)) >> 1;
+    return (exp(x) + exp(-x)) / 2;
 }
 
 real frexp(real const &x, int *exp)
@@ -989,7 +963,7 @@ real round(real const &x)
     if (x < real::R_0)
         return -round(-x);
 
-    return floor(x + (real::R_1 >> 1));
+    return floor(x + (real::R_1 / 2));
 }
 
 real fmod(real const &x, real const &y)
@@ -1008,7 +982,7 @@ real sin(real const &x)
 {
     bool switch_sign = x.m_signexp & 0x80000000u;
 
-    real absx = fmod(fabs(x), real::R_PI << 1);
+    real absx = fmod(fabs(x), real::R_PI * 2);
     if (absx > real::R_PI)
     {
         absx -= real::R_PI;
@@ -1075,17 +1049,17 @@ static real asinacos(real const &x, bool is_asin, bool is_negative)
      * Strategy for acos(): use acos(x) = π/2 - asin(x) and try not to
      * lose the precision around x=1. */
     real absx = fabs(x);
-    bool around_zero = (absx < (real::R_1 >> 1));
+    bool around_zero = (absx < (real::R_1 / 2));
 
     if (!around_zero)
-        absx = sqrt((real::R_1 - absx) >> 1);
+        absx = sqrt((real::R_1 - absx) / 2);
 
     real ret = absx, xn = absx, x2 = absx * absx, fact1 = 2, fact2 = 1;
     for (int i = 1; ; i++)
     {
         xn *= x2;
         real mul = (real)(2 * i + 1);
-        real newret = ret + ((fact1 * xn / (mul * fact2)) >> (i * 2));
+        real newret = ret + ldexp(fact1 * xn / (mul * fact2), -2 * i);
         if (newret == ret)
             break;
         ret = newret;
@@ -1102,9 +1076,9 @@ static real asinacos(real const &x, bool is_asin, bool is_negative)
     {
         real adjust = is_negative ? real::R_PI : real::R_0;
         if (is_asin)
-            ret = real::R_PI_2 - adjust - (ret << 1);
+            ret = real::R_PI_2 - adjust - ret * 2;
         else
-            ret = adjust + (ret << 1);
+            ret = adjust + ret * 2;
     }
 
     return ret;
@@ -1146,7 +1120,7 @@ real atan(real const &x)
      */
     real absx = fabs(x);
 
-    if (absx < (real::R_1 >> 1))
+    if (absx < (real::R_1 / 2))
     {
         real ret = x, xn = x, mx2 = -x * x;
         for (int i = 3; ; i += 2)
@@ -1162,17 +1136,17 @@ real atan(real const &x)
 
     real ret = 0;
 
-    if (absx < (real::R_3 >> 1))
+    if (absx < (real::R_3 / 2))
     {
         real y = real::R_1 - absx;
         real yn = y, my2 = -y * y;
         for (int i = 0; ; i += 2)
         {
-            real newret = ret + ((yn / (real)(2 * i + 1)) >> (i + 1));
+            real newret = ret + ldexp(yn / (real)(2 * i + 1), -i - 1);
             yn *= y;
-            newret += (yn / (real)(2 * i + 2)) >> (i + 1);
+            newret += ldexp(yn / (real)(2 * i + 2), -i - 1);
             yn *= y;
-            newret += (yn / (real)(2 * i + 3)) >> (i + 2);
+            newret += ldexp(yn / (real)(2 * i + 3), -i - 2);
             if (newret == ret)
                 break;
             ret = newret;
@@ -1182,19 +1156,19 @@ real atan(real const &x)
     }
     else if (absx < real::R_2)
     {
-        real y = (absx - real::R_SQRT3) >> 1;
+        real y = (absx - real::R_SQRT3) / 2;
         real yn = y, my2 = -y * y;
         for (int i = 1; ; i += 6)
         {
-            real newret = ret + ((yn / (real)i) >> 1);
+            real newret = ret + ((yn / (real)i) / 2);
             yn *= y;
-            newret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 1);
+            newret -= (real::R_SQRT3 / 2) * yn / (real)(i + 1);
             yn *= y;
             newret += yn / (real)(i + 2);
             yn *= y;
-            newret -= (real::R_SQRT3 >> 1) * yn / (real)(i + 3);
+            newret -= (real::R_SQRT3 / 2) * yn / (real)(i + 3);
             yn *= y;
-            newret += (yn / (real)(i + 4)) >> 1;
+            newret += (yn / (real)(i + 4)) / 2;
             if (newret == ret)
                 break;
             ret = newret;
@@ -1329,15 +1303,15 @@ real const real::R_LOG2E    = re(R_LN2);
 real const real::R_LOG10E   = re(R_LN10);
 real const real::R_E        = exp(R_1);
 real const real::R_PI       = fast_pi();
-real const real::R_PI_2     = R_PI >> 1;
+real const real::R_PI_2     = R_PI / 2;
 real const real::R_PI_3     = R_PI / R_3;
-real const real::R_PI_4     = R_PI >> 2;
+real const real::R_PI_4     = R_PI / 4;
 real const real::R_1_PI     = re(R_PI);
-real const real::R_2_PI     = R_1_PI << 1;
-real const real::R_2_SQRTPI = re(sqrt(R_PI)) << 1;
+real const real::R_2_PI     = R_1_PI * 2;
+real const real::R_2_SQRTPI = re(sqrt(R_PI)) * 2;
 real const real::R_SQRT2    = sqrt(R_2);
 real const real::R_SQRT3    = sqrt(R_3);
-real const real::R_SQRT1_2  = R_SQRT2 >> 1;
+real const real::R_SQRT1_2  = R_SQRT2 / 2;
 
 } /* namespace lol */
 

@@ -221,31 +221,25 @@ LOLUNIT_FIXTURE(RealTest)
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
         real a = real::R_1 / real::R_3 * real::R_3;
-        real b = (real::R_1 - a) << (real::BIGITS * real::BIGIT_BITS);
+        real b = ldexp(real::R_1 - a, real::BIGITS * real::BIGIT_BITS);
 
         LOLUNIT_ASSERT_LEQUAL((double)fabs(b), 1.0);
     }
 
-    LOLUNIT_TEST(Shift)
+    LOLUNIT_TEST(LoadExp)
     {
         real a1(1.5);
         real a2(-1.5);
         real a3(0.0);
 
-        LOLUNIT_ASSERT_EQUAL((double)(a1 >> 7), 0.01171875);
-        LOLUNIT_ASSERT_EQUAL((double)(a1 >> -7), 192.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a1 << 7), 192.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a1 << -7), 0.01171875);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a1, 7), 192.0);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a1, -7), 0.01171875);
 
-        LOLUNIT_ASSERT_EQUAL((double)(a2 >> 7), -0.01171875);
-        LOLUNIT_ASSERT_EQUAL((double)(a2 >> -7), -192.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a2 << 7), -192.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a2 << -7), -0.01171875);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a2, 7), -192.0);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a2, -7), -0.01171875);
 
-        LOLUNIT_ASSERT_EQUAL((double)(a3 >> 7), 0.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a3 >> -7), 0.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a3 << 7), 0.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a3 << -7), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a3, 7), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)ldexp(a3, -7), 0.0);
     }
 
     LOLUNIT_TEST(Bool)

@@ -55,11 +55,6 @@ public:
     real const &operator *=(real const &x);
     real const &operator /=(real const &x);
 
-    real operator <<(int x) const;
-    real operator >>(int x) const;
-    real const &operator <<=(int x);
-    real const &operator >>=(int x);
-
     bool operator ==(real const &x) const;
     bool operator !=(real const &x) const;
     bool operator <(real const &x) const;
@@ -112,6 +107,44 @@ public:
     void hexprint() const;
     void print(int ndigits = 150) const;
 
+    /* Additional operators using base C++ types */
+#define __LOL_REAL_OP_HELPER_GENERIC(op, type) \
+    inline real operator op(type x) const { return *this op (real)x; } \
+    inline real const &operator op##=(type x) { return *this = (*this op x); }
+#define __LOL_REAL_OP_HELPER_FASTMULDIV(op, type) \
+    inline real operator op(type x) const \
+    { \
+        real tmp = *this; return tmp op##= x; \
+    } \
+    inline real const &operator op##=(type x) \
+    { \
+        /* If multiplying or dividing by a power of two, take a shortcut */ \
+        if ((m_signexp << 1) && x && !(x & (x - 1))) \
+        { \
+            while (x >>= 1) \
+                m_signexp += 1 op 2 - 1; /* 1 if op is *, -1 if op is / */ \
+        } \
+        else \
+            *this = *this op (real)x; \
+        return *this; \
+    }
+#define __LOL_REAL_OP_HELPER_INT(type) \
+    __LOL_REAL_OP_HELPER_GENERIC(+, type) \
+    __LOL_REAL_OP_HELPER_GENERIC(-, type) \
+    __LOL_REAL_OP_HELPER_FASTMULDIV(*, type) \
+    __LOL_REAL_OP_HELPER_FASTMULDIV(/, type)
+#define __LOL_REAL_OP_HELPER_FLOAT(type) \
+    __LOL_REAL_OP_HELPER_GENERIC(+, type) \
+    __LOL_REAL_OP_HELPER_GENERIC(-, type) \
+    __LOL_REAL_OP_HELPER_GENERIC(*, type) \
+    __LOL_REAL_OP_HELPER_GENERIC(/, type)
+
+    __LOL_REAL_OP_HELPER_INT(int)
+    __LOL_REAL_OP_HELPER_INT(unsigned int)
+    __LOL_REAL_OP_HELPER_FLOAT(float)
+    __LOL_REAL_OP_HELPER_FLOAT(double)
+
+    /* Constants */
     static real const R_0;
     static real const R_1;
     static real const R_2;

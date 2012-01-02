@@ -36,8 +36,8 @@ public:
     {
         m_func = func;
         m_weight = weight;
-        m_k1 = (b + a) >> 1;
-        m_k2 = (b - a) >> 1;
+        m_k1 = (b + a) / 2;
+        m_k2 = (b - a) / 2;
         m_invk2 = re(m_k2);
         m_invk1 = -m_k1 * m_invk2;
 
@@ -139,11 +139,11 @@ public:
             right.value = control[i + 1];
             right.error = ChebyEval(right.value) - Value(right.value);
 
-            static T limit = (T)1 >> 500;
+            static T limit = ldexp((T)1, -500);
             static T zero = (T)0;
             while (fabs(left.value - right.value) > limit)
             {
-                mid.value = (left.value + right.value) >> 1;
+                mid.value = (left.value + right.value) / 2;
                 mid.error = ChebyEval(mid.value) - Value(mid.value);
 
                 if ((left.error < zero && mid.error < zero)
@@ -176,7 +176,7 @@ public:
 
             for (;;)
             {
-                T c = a, delta = (b - a) >> 3;
+                T c = a, delta = (b - a) / 8;
                 T maxerror = 0;
                 T maxweight = 0;
                 int best = -1;
@@ -201,7 +201,7 @@ public:
                     T e = maxerror / maxweight;
                     if (e > final)
                         final = e;
-                    control[i] = (a + b) >> 1;
+                    control[i] = (a + b) / 2;
                     break;
                 }
             }
