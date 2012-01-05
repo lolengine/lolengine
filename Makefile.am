@@ -32,10 +32,14 @@ lolremez-$(LOLREMEZ_VERSION).tar.gz:
 	  lolremez-$(LOLREMEZ_VERSION)/remez.cpp
 	cat $(top_srcdir)/src/real.cpp | sed 's@core.h@lol/math/real.h@' | sed '/#if/,/^$$/d' > \
 	  lolremez-$(LOLREMEZ_VERSION)/real.cpp
+	cp $(top_srcdir)/test/math/lolremez.sln \
+	   $(top_srcdir)/test/math/remez.vcxproj \
+	   $(top_srcdir)/test/math/remez.vcxproj.filters \
+	  lolremez-$(LOLREMEZ_VERSION)/
 	cp $(top_srcdir)/src/lol/math/real.h \
 	   $(top_srcdir)/src/lol/math/matrix.h \
 	   $(top_srcdir)/src/lol/math/remez.h \
-	  lolremez-$(LOLREMEZ_VERSION)/lol/math
+	  lolremez-$(LOLREMEZ_VERSION)/lol/math/
 	printf 'remez: real.cpp remez.cpp\n' > lolremez-$(LOLREMEZ_VERSION)/Makefile
 	printf '\t$$(CXX) -I. -O2 -g -ggdb $$^ -o $$@\n' >> lolremez-$(LOLREMEZ_VERSION)/Makefile
 	printf 'clean:\n' >> lolremez-$(LOLREMEZ_VERSION)/Makefile
