@@ -56,6 +56,7 @@ public:
 #endif
         gametick.Push(0);
         delete gamethread;
+        delete diskthread;
     }
 
 private:
@@ -72,7 +73,8 @@ private:
     /* Background threads */
     static void *GameThreadMain(void *p);
     static void *DrawThreadMain(void *p); /* unused */
-    Thread *gamethread, *drawthread;
+    static void *DiskThreadMain(void *p);
+    Thread *gamethread, *drawthread, *diskthread;
     Queue gametick, drawtick;
 
     /* Shutdown management */
@@ -308,6 +310,11 @@ void *TickerData::DrawThreadMain(void *p)
     return NULL;
 }
 
+void *TickerData::DiskThreadMain(void *p)
+{
+    return NULL;
+}
+
 void Ticker::SetState(Entity *entity, uint32_t state)
 {
 
@@ -325,6 +332,8 @@ void Ticker::Setup(float fps)
 
     data->gamethread = new Thread(TickerData::GameThreadMain, NULL);
     data->gametick.Push(1);
+
+    data->diskthread = new Thread(TickerData::DiskThreadMain, NULL);
 }
 
 void Ticker::TickDraw()
