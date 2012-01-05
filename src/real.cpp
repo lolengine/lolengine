@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -10,6 +10,14 @@
 
 #if defined HAVE_CONFIG_H
 #   include "config.h"
+#endif
+
+#if defined WIN32 && !defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 #include <new>
@@ -80,8 +88,8 @@ real::real(double d)
         break;
     }
 
-    m_mantissa[0] = u.x >> 20;
-    m_mantissa[1] = u.x << 12;
+    m_mantissa[0] = (uint32_t)(u.x >> 20);
+    m_mantissa[1] = (uint32_t)(u.x << 12);
     memset(m_mantissa + 2, 0, (BIGITS - 2) * sizeof(m_mantissa[0]));
 }
 
@@ -239,7 +247,7 @@ real real::operator +(real const &x) const
         else if (i - bigoff == 0)
             carry += (uint64_t)1 << (BIGIT_BITS - off);
 
-        ret.m_mantissa[i] = carry;
+        ret.m_mantissa[i] = (uint32_t)carry;
         carry >>= BIGIT_BITS;
     }
 
@@ -250,7 +258,8 @@ real real::operator +(real const &x) const
         for (int i = 0; i < BIGITS; i++)
         {
             uint32_t tmp = ret.m_mantissa[i];
-            ret.m_mantissa[i] = (carry << (BIGIT_BITS - 1)) | (tmp >> 1);
+            ret.m_mantissa[i] = ((uint32_t)carry << (BIGIT_BITS - 1))
+                              | (tmp >> 1);
             carry = tmp & 1u;
         }
         ret.m_signexp++;
@@ -289,6 +298,7 @@ real real::operator -(real const &x) const
 
     ret.m_signexp = m_signexp;
 
+    /* int64_t instead of uint64_t to preserve sign through shifts */
     int64_t carry = 0;
     for (int i = 0; i < bigoff; i++)
     {
@@ -312,7 +322,7 @@ real real::operator -(real const &x) const
         else if (i - bigoff == 0)
             carry -= (uint64_t)1 << (BIGIT_BITS - off);
 
-        ret.m_mantissa[i] = carry;
+        ret.m_mantissa[i] = (uint32_t)carry;
         carry >>= BIGIT_BITS;
         carry |= carry << BIGIT_BITS;
     }
@@ -422,8 +432,9 @@ real real::operator *(real const &x) const
         carry--;
         for (int i = 0; i < BIGITS; i++)
         {
-            uint32_t tmp = ret.m_mantissa[i];
-            ret.m_mantissa[i] = (carry << (BIGIT_BITS - 1)) | (tmp >> 1);
+            uint32_t tmp = (uint32_t)ret.m_mantissa[i];
+            ret.m_mantissa[i] = ((uint32_t)carry << (BIGIT_BITS - 1))
+                              | (tmp >> 1);
             carry = tmp & 1u;
         }
         e++;
@@ -555,7 +566,7 @@ real re(real const &x)
     /* Use the system's float inversion to approximate 1/x */
     union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
     v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0 / v.f;
+    v.f = 1.0f / v.f;
 
     real ret;
     ret.m_mantissa[0] = v.x << 9;
@@ -598,7 +609,7 @@ real sqrt(real const &x)
     union { float f; uint32_t x; } u = { 1.0f }, v = { 2.0f };
     v.x -= ((x.m_signexp & 1) << 23);
     v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0 / sqrtf(v.f);
+    v.f = 1.0f / sqrtf(v.f);
 
     real ret;
     ret.m_mantissa[0] = v.x << 9;
@@ -980,7 +991,7 @@ real fmod(real const &x, real const &y)
 
 real sin(real const &x)
 {
-    bool switch_sign = x.m_signexp & 0x80000000u;
+    int switch_sign = x.m_signexp & 0x80000000u;
 
     real absx = fmod(fabs(x), real::R_PI * 2);
     if (absx > real::R_PI)
@@ -1041,7 +1052,7 @@ real tan(real const &x)
     return cos(y) / sin(y);
 }
 
-static real asinacos(real const &x, bool is_asin, bool is_negative)
+static inline real asinacos(real const &x, int is_asin, int is_negative)
 {
     /* Strategy for asin(): in [-0.5..0.5], use a Taylor series around
      * zero. In [0.5..1], use asin(x) = π/2 - 2*asin(sqrt((1-x)/2)), and
@@ -1049,7 +1060,7 @@ static real asinacos(real const &x, bool is_asin, bool is_negative)
      * Strategy for acos(): use acos(x) = π/2 - asin(x) and try not to
      * lose the precision around x=1. */
     real absx = fabs(x);
-    bool around_zero = (absx < (real::R_1 / 2));
+    int around_zero = (absx < (real::R_1 / 2));
 
     if (!around_zero)
         absx = sqrt((real::R_1 - absx) / 2);
@@ -1086,12 +1097,12 @@ static real asinacos(real const &x, bool is_asin, bool is_negative)
 
 real asin(real const &x)
 {
-    return asinacos(x, true, x.m_signexp >> 31);
+    return asinacos(x, 1, x.m_signexp >> 31);
 }
 
 real acos(real const &x)
 {
-    return asinacos(x, false, x.m_signexp >> 31);
+    return asinacos(x, 0, x.m_signexp >> 31);
 }
 
 real atan(real const &x)
