@@ -1274,6 +1274,12 @@ void real::print(int ndigits) const
         x = -x;
     }
 
+    if (!x)
+    {
+        printf("0.0\n");
+        return;
+    }
+
     /* Normalise x so that mantissa is in [1..9.999] */
     /* FIXME: better use int64_t when the cast is implemented */
     int exponent = ceil(log10(x));
