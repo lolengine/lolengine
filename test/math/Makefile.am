@@ -6,6 +6,8 @@ all-local: $(noinst_PROGRAMS)
 	test x$(MAKE_FSELF) = xno || make_fself poly$(EXEEXT) poly.self
 	test x$(MAKE_FSELF) = xno || make_fself remez$(EXEEXT) remez.self
 
+EXTRA_DIST = NEWS.txt lolremez.sln remez.vcxproj remez.vcxproj.filters
+
 CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
