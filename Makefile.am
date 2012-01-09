@@ -32,7 +32,8 @@ lolremez-$(LOLREMEZ_VERSION).tar.gz:
 	  lolremez-$(LOLREMEZ_VERSION)/remez.cpp
 	cat $(top_srcdir)/src/real.cpp | sed 's@core.h@lol/math/real.h@' | sed '/#if/,/^$$/d' > \
 	  lolremez-$(LOLREMEZ_VERSION)/real.cpp
-	cp $(top_srcdir)/test/math/lolremez.sln \
+	cp $(top_srcdir)/test/math/NEWS.txt \
+	   $(top_srcdir)/test/math/lolremez.sln \
 	   $(top_srcdir)/test/math/remez.vcxproj \
 	   $(top_srcdir)/test/math/remez.vcxproj.filters \
 	  lolremez-$(LOLREMEZ_VERSION)/
