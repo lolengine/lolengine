@@ -693,6 +693,32 @@ real pow(real const &x, real const &y)
     }
 }
 
+static real fast_fact(int x)
+{
+    real ret = real::R_1;
+    int i = 1, multiplier = 1, exponent = 0;
+
+    for (;;)
+    {
+        if (i++ >= x)
+            /* Multiplication is a no-op if multiplier == 1 */
+            return ldexp(ret * multiplier, exponent);
+
+        int tmp = i;
+        while ((tmp & 1) == 0)
+        {
+            tmp >>= 1;
+            exponent++;
+        }
+        if (multiplier * tmp / tmp != multiplier)
+        {
+            ret *= multiplier;
+            multiplier = 1;
+        }
+        multiplier *= tmp;
+    }
+}
+
 real gamma(real const &x)
 {
     /* We use Spouge's formula. FIXME: precision is far from acceptable,
@@ -802,22 +828,19 @@ static real fast_exp_sub(real const &x, real const &y)
      * no effort whatsoever was made to improve convergence outside this
      * domain of validity. The argument y is used for cases where we
      * don't want the leading 1 in the Taylor series. */
-    real ret = real::R_1 - y, fact = real::R_1, xn = x;
+    real ret = real::R_1 - y, xn = x;
+    int i = 1;
 
-    for (int i = 1; ; i++)
+    for (;;)
     {
         real newret = ret + xn;
         if (newret == ret)
             break;
-        ret = newret;
-        real mul = (i + 1);
-        fact *= mul;
-        ret *= mul;
+        ret = newret * ++i;
         xn *= x;
     }
-    ret /= fact;
 
-    return ret;
+    return ret / fast_fact(i);
 }
 
 real exp(real const &x)
@@ -1004,18 +1027,17 @@ real sin(real const &x)
         absx = real::R_PI - absx;
 
     real ret = real::R_0, fact = real::R_1, xn = absx, mx2 = -absx * absx;
-    for (int i = 1; ; i += 2)
+    int i = 1;
+    for (;;)
     {
         real newret = ret + xn;
         if (newret == ret)
             break;
-        ret = newret;
-        real mul = (i + 1) * (i + 2);
-        fact *= mul;
-        ret *= mul;
+        ret = newret * ((i + 1) * (i + 2));
         xn *= mx2;
+        i += 2;
     }
-    ret /= fact;
+    ret /= fast_fact(i);
 
     /* Propagate sign */
     if (switch_sign)
@@ -1286,8 +1308,8 @@ void real::print(int ndigits) const
 static real fast_pi()
 {
     /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
-    real ret = 0.0, x0 = 5.0, x1 = 239.0;
-    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16.0, r4 = 4.0;
+    real ret = 0, x0 = 5, x1 = 239;
+    real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16, r4 = 4;
 
     for (int i = 1; ; i += 2)
     {
@@ -1308,6 +1330,14 @@ real const real::R_2        = (real)2.0;
 real const real::R_3        = (real)3.0;
 real const real::R_10       = (real)10.0;
 
+/*
+ * Initialisation order is important here:
+ *  - fast_log() requires R_1
+ *  - log() requires R_LN2
+ *  - re() require R_2
+ *  - exp() requires R_0, R_1, R_LN2
+ *  - sqrt() requires R_3
+ */
 real const real::R_LN2      = fast_log(R_2);
 real const real::R_LN10     = log(R_10);
 real const real::R_LOG2E    = re(R_LN2);
