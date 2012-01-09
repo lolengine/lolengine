@@ -32,7 +32,7 @@ public:
     {
     }
 
-    void Run(T a, T b, RealFunc *func, RealFunc *weight, int steps)
+    void Run(T a, T b, RealFunc *func, RealFunc *weight, int decimals)
     {
         m_func = func;
         m_weight = weight;
@@ -40,30 +40,38 @@ public:
         m_k2 = (b - a) / 2;
         m_invk2 = re(m_k2);
         m_invk1 = -m_k1 * m_invk2;
+        m_decimals = decimals;
+        m_epsilon = pow((T)10, (T)-(decimals + 2));
 
         Init();
 
         PrintPoly();
 
-        for (int n = 0; n < steps; n++)
+        T error = -1;
+
+        for (int n = 0; ; n++)
         {
-            FindExtrema();
+            T newerror = FindExtrema();
+            printf("Step %i error: ", n);
+            newerror.print(m_decimals);
+
             Step();
+
+            if (error >= (T)0 && fabs(newerror - error) < error * m_epsilon)
+                break;
+            error = newerror;
 
             PrintPoly();
 
             FindZeroes();
         }
 
-        FindExtrema();
-        Step();
-
         PrintPoly();
     }
 
-    inline void Run(T a, T b, RealFunc *func, int steps)
+    inline void Run(T a, T b, RealFunc *func, int decimals)
     {
-        Run(a, b, func, NULL, steps);
+        Run(a, b, func, NULL, decimals);
     }
 
     T ChebyEval(T const &x)
@@ -157,7 +165,7 @@ public:
         }
     }
 
-    void FindExtrema()
+    real FindExtrema()
     {
         using std::printf;
 
@@ -174,29 +182,44 @@ public:
             if (i < ORDER + 1)
                 b = zeroes[i];
 
-            for (;;)
+            T maxerror = 0, maxweight = 0;
+            int best = -1;
+
+            for (int round = 0; ; round++)
             {
-                T c = a, delta = (b - a) / 8;
-                T maxerror = 0;
-                T maxweight = 0;
-                int best = -1;
-                for (int k = 1; k <= 7; k++)
+                T c = a, delta = (b - a) / 4;
+                for (int k = 0; k <= 4; k++)
                 {
-                    T error = ChebyEval(c) - Value(c);
-                    T weight = Weight(c);
-                    if (fabs(error * maxweight) >= fabs(maxerror * weight))
+                    if (round == 0 || (k & 1))
                     {
-                        maxerror = error;
-                        maxweight = weight;
-                        best = k;
+                        T error = ChebyEval(c) - Value(c);
+                        T weight = Weight(c);
+                        if (fabs(error * maxweight) >= fabs(maxerror * weight))
+                        {
+                            maxerror = error;
+                            maxweight = weight;
+                            best = k;
+                        }
                     }
                     c += delta;
                 }
 
-                b = a + (T)(best + 1) * delta;
-                a = a + (T)(best - 1) * delta;
+                switch (best)
+                {
+                case 0:
+                    b = a + delta * 2;
+                    break;
+                case 4:
+                    a = b - delta * 2;
+                    break;
+                default:
+                    b = a + delta * (best + 1);
+                    a = a + delta * (best - 1);
+                    best = 2;
+                    break;
+                }
 
-                if (b - a < (T)1e-18)
+                if (delta < m_epsilon)
                 {
                     T e = maxerror / maxweight;
                     if (e > final)
@@ -207,8 +230,7 @@ public:
             }
         }
 
-        printf("Final error: ");
-        final.print(40);
+        return final;
     }
 
     void Step()
@@ -316,7 +338,7 @@ public:
             if (j)
                 printf("+");
             printf("x**%i*", j);
-            an[j].print(40);
+            an[j].print(m_decimals);
         }
         printf("\n");
     }
@@ -342,7 +364,8 @@ public:
 
 private:
     RealFunc *m_func, *m_weight;
-    T m_k1, m_k2, m_invk1, m_invk2;
+    T m_k1, m_k2, m_invk1, m_invk2, m_epsilon;
+    int m_decimals;
 };
 
 } /* namespace lol */

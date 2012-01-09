@@ -29,7 +29,7 @@ real g(real const &x) { return exp(x); }
 int main(int argc, char **argv)
 {
     RemezSolver<4, real> solver;
-    solver.Run(-1, 1, f, g, 30);
+    solver.Run(-1, 1, f, g, 40);
     return 0;
 }
 
