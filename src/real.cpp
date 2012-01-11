@@ -938,6 +938,26 @@ real modf(real const &x, real *iptr)
     return copysign(absx - tmp, x);
 }
 
+real ulp(real const &x)
+{
+    real ret = real::R_1;
+    if (x)
+        ret.m_signexp = x.m_signexp + 1 - real::BIGITS * real::BIGIT_BITS;
+    else
+        ret.m_signexp = 0;
+    return ret;
+}
+
+real nextafter(real const &x, real const &y)
+{
+    if (x == y)
+        return x;
+    else if (x < y)
+        return x + ulp(x);
+    else
+        return x - ulp(x);
+}
+
 real copysign(real const &x, real const &y)
 {
     real ret = x;

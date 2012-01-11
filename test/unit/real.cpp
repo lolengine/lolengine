@@ -242,6 +242,14 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_EQUAL((double)ldexp(a3, -7), 0.0);
     }
 
+    LOLUNIT_TEST(Ulp)
+    {
+        real a1 = real::R_PI;
+
+        LOLUNIT_ASSERT_NOT_EQUAL((double)(a1 + ulp(a1) - a1), 0.0);
+        LOLUNIT_ASSERT_EQUAL((double)(a1 + ulp(a1) / 2 - a1), 0.0);
+    }
+
     LOLUNIT_TEST(Bool)
     {
         real a = 0.0;
