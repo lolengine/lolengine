@@ -88,6 +88,8 @@ public:
     friend real frexp(real const &x, int *exp);
     friend real ldexp(real const &x, int exp);
     friend real modf(real const &x, real *iptr);
+    friend real ulp(real const &x);
+    friend real nextafter(real const &x, real const &y);
 
     /* Power functions */
     friend real re(real const &x);
