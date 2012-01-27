@@ -49,6 +49,33 @@ VECTOR_TYPES(Vec4, vec4)
 VECTOR_TYPES(Quat, quat)
 VECTOR_TYPES(Mat4, mat4)
 
+/*
+ * Magic swizzling (part 1/2)
+ */
+
+template<typename T, int I, int J> struct MagicVec2
+{
+    inline Vec2<T> operator =(Vec2<T> that);
+
+    float ptr[1 + (I > J ? I : J)];
+};
+
+template<typename T, int I, int J, int K> struct MagicVec3
+{
+    inline Vec3<T> operator =(Vec3<T> that);
+
+    float ptr[1 + (I > J ? I > K ? I : K
+                         : J > K ? J : K)];
+};
+
+template<typename T, int I, int J, int K, int L> struct MagicVec4
+{
+    inline Vec4<T> operator =(Vec4<T> that);
+
+    float ptr[1 + (I > J ? I > K ? I > L ? I : L : K > L ? K : L
+                         : J > K ? J > L ? J : L : K > L ? K : L)];
+};
+
 #define MEMBER_OPS() \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
@@ -111,67 +138,6 @@ VECTOR_TYPES(Mat4, mat4)
         return ret; \
     }
 
-#define SWIZZLE2(e1, e2) \
-    inline Vec2<T> e1##e2() const \
-    { \
-        return Vec2<T>(this->e1, this->e2); \
-    }
-
-#define SWIZZLE3(e1, e2, e3) \
-    inline Vec3<T> e1##e2##e3() const \
-    { \
-        return Vec3<T>(this->e1, this->e2, this->e3); \
-    }
-
-#define SWIZZLE4(e1, e2, e3, e4) \
-    inline Vec4<T> e1##e2##e3##e4() const \
-    { \
-        return Vec4<T>(this->e1, this->e2, this->e3, this->e4); \
-    }
-
-#define SWIZZLE22(e1) \
-    SWIZZLE2(e1, x); SWIZZLE2(e1, y);
-#define SWIZZLE23(e1) \
-    SWIZZLE2(e1, x); SWIZZLE2(e1, y); SWIZZLE2(e1, z);
-#define SWIZZLE24(e1) \
-    SWIZZLE2(e1, x); SWIZZLE2(e1, y); SWIZZLE2(e1, z); SWIZZLE2(e1, w);
-
-#define SWIZZLE32(e1, e2) \
-    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y);
-#define SWIZZLE322(e1) \
-    SWIZZLE32(e1, x); SWIZZLE32(e1, y);
-#define SWIZZLE33(e1, e2) \
-    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y); SWIZZLE3(e1, e2, z);
-#define SWIZZLE333(e1) \
-    SWIZZLE33(e1, x); SWIZZLE33(e1, y); SWIZZLE33(e1, z);
-#define SWIZZLE34(e1, e2) \
-    SWIZZLE3(e1, e2, x); SWIZZLE3(e1, e2, y); \
-    SWIZZLE3(e1, e2, z); SWIZZLE3(e1, e2, w);
-#define SWIZZLE344(e1) \
-    SWIZZLE34(e1, x); SWIZZLE34(e1, y); \
-    SWIZZLE34(e1, z); SWIZZLE34(e1, w);
-
-#define SWIZZLE42(e1, e2, e3) \
-    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y);
-#define SWIZZLE422(e1, e2) \
-    SWIZZLE42(e1, e2, x); SWIZZLE42(e1, e2, y);
-#define SWIZZLE4222(e1) \
-    SWIZZLE422(e1, x); SWIZZLE422(e1, y);
-#define SWIZZLE43(e1, e2, e3) \
-    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y); SWIZZLE4(e1, e2, e3, z);
-#define SWIZZLE433(e1, e2) \
-    SWIZZLE43(e1, e2, x); SWIZZLE43(e1, e2, y); SWIZZLE43(e1, e2, z);
-#define SWIZZLE4333(e1) \
-    SWIZZLE433(e1, x); SWIZZLE433(e1, y); SWIZZLE433(e1, z);
-#define SWIZZLE44(e1, e2, e3) \
-    SWIZZLE4(e1, e2, e3, x); SWIZZLE4(e1, e2, e3, y); \
-    SWIZZLE4(e1, e2, e3, z); SWIZZLE4(e1, e2, e3, w);
-#define SWIZZLE444(e1, e2) \
-    SWIZZLE44(e1, e2, x); SWIZZLE44(e1, e2, y); \
-    SWIZZLE44(e1, e2, z); SWIZZLE44(e1, e2, w);
-#define SWIZZLE4444(e1) \
-    SWIZZLE444(e1, x); SWIZZLE444(e1, y); SWIZZLE444(e1, z); SWIZZLE444(e1, w);
-
 /*
  * 2-element vectors
  */
@@ -184,12 +150,12 @@ template <typename T> struct Vec2
     explicit inline Vec2(T val) { x = y = val; }
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
+    template<int I, int J>
+    inline Vec2<T>(MagicVec2<T, I, J> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]) {}
+
     MEMBER_OPS()
     OTHER_MEMBER_OPS(Vec2)
-
-    SWIZZLE22(x); SWIZZLE22(y);
-    SWIZZLE322(x); SWIZZLE322(y);
-    SWIZZLE4222(x); SWIZZLE4222(y);
 
 #if !defined __ANDROID__
     template<typename U>
@@ -201,6 +167,35 @@ template <typename T> struct Vec2
         struct { T x, y; };
         struct { T r, g; };
         struct { T s, t; };
+
+        MagicVec2<T,0,0> xx, rr, ss;
+        MagicVec2<T,0,1> xy, rg, st;
+        MagicVec2<T,1,0> yx, gr, ts;
+        MagicVec2<T,1,1> yy, gg, tt;
+        MagicVec3<T,0,0,0> xxx, rrr, sss;
+        MagicVec3<T,0,0,1> xxy, rrg, sst;
+        MagicVec3<T,0,1,0> xyx, rgr, sts;
+        MagicVec3<T,0,1,1> xyy, rgg, stt;
+        MagicVec3<T,1,0,0> yxx, grr, tss;
+        MagicVec3<T,1,0,1> yxy, grg, tst;
+        MagicVec3<T,1,1,0> yyx, ggr, tts;
+        MagicVec3<T,1,1,1> yyy, ggg, ttt;
+        MagicVec4<T,0,0,0,0> xxxx, rrrr, ssss;
+        MagicVec4<T,0,0,0,1> xxxy, rrrg, ssst;
+        MagicVec4<T,0,0,1,0> xxyx, rrgr, ssts;
+        MagicVec4<T,0,0,1,1> xxyy, rrgg, sstt;
+        MagicVec4<T,0,1,0,0> xyxx, rgrr, stss;
+        MagicVec4<T,0,1,0,1> xyxy, rgrg, stst;
+        MagicVec4<T,0,1,1,0> xyyx, rggr, stts;
+        MagicVec4<T,0,1,1,1> xyyy, rggg, sttt;
+        MagicVec4<T,1,0,0,0> yxxx, grrr, tsss;
+        MagicVec4<T,1,0,0,1> yxxy, grrg, tsst;
+        MagicVec4<T,1,0,1,0> yxyx, grgr, tsts;
+        MagicVec4<T,1,0,1,1> yxyy, grgg, tstt;
+        MagicVec4<T,1,1,0,0> yyxx, ggrr, ttss;
+        MagicVec4<T,1,1,0,1> yyxy, ggrg, ttst;
+        MagicVec4<T,1,1,1,0> yyyx, gggr, ttts;
+        MagicVec4<T,1,1,1,1> yyyy, gggg, tttt;
     };
 };
 
@@ -278,12 +273,12 @@ template <typename T> struct Vec3
     inline Vec3(Vec2<T> _xy, T _z) { x = _xy.x; y = _xy.y; z = _z; }
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
+    template<int I, int J, int K>
+    inline Vec3<T>(MagicVec3<T, I, J, K> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]) {}
+
     MEMBER_OPS()
     OTHER_MEMBER_OPS(Vec3)
-
-    SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
-    SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
-    SWIZZLE4333(x); SWIZZLE4333(y); SWIZZLE4333(z);
 
     template<typename U>
     friend Vec3<U> cross(Vec3<U>, Vec3<U>);
@@ -298,6 +293,124 @@ template <typename T> struct Vec3
         struct { T x, y, z; };
         struct { T r, g, b; };
         struct { T s, t, p; };
+
+        MagicVec2<T,0,0> xx, rr, ss;
+        MagicVec2<T,0,1> xy, rg, st;
+        MagicVec2<T,0,2> xz, rb, sp;
+        MagicVec2<T,1,0> yx, gr, ts;
+        MagicVec2<T,1,1> yy, gg, tt;
+        MagicVec2<T,1,2> yz, gb, tp;
+        MagicVec2<T,2,0> zx, br, ps;
+        MagicVec2<T,2,1> zy, bg, pt;
+        MagicVec2<T,2,2> zz, bb, pp;
+        MagicVec3<T,0,0,0> xxx, rrr, sss;
+        MagicVec3<T,0,0,1> xxy, rrg, sst;
+        MagicVec3<T,0,0,2> xxz, rrb, ssp;
+        MagicVec3<T,0,1,0> xyx, rgr, sts;
+        MagicVec3<T,0,1,1> xyy, rgg, stt;
+        MagicVec3<T,0,1,2> xyz, rgb, stp;
+        MagicVec3<T,0,2,0> xzx, rbr, sps;
+        MagicVec3<T,0,2,1> xzy, rbg, spt;
+        MagicVec3<T,0,2,2> xzz, rbb, spp;
+        MagicVec3<T,1,0,0> yxx, grr, tss;
+        MagicVec3<T,1,0,1> yxy, grg, tst;
+        MagicVec3<T,1,0,2> yxz, grb, tsp;
+        MagicVec3<T,1,1,0> yyx, ggr, tts;
+        MagicVec3<T,1,1,1> yyy, ggg, ttt;
+        MagicVec3<T,1,1,2> yyz, ggb, ttp;
+        MagicVec3<T,1,2,0> yzx, gbr, tps;
+        MagicVec3<T,1,2,1> yzy, gbg, tpt;
+        MagicVec3<T,1,2,2> yzz, gbb, tpp;
+        MagicVec3<T,2,0,0> zxx, brr, pss;
+        MagicVec3<T,2,0,1> zxy, brg, pst;
+        MagicVec3<T,2,0,2> zxz, brb, psp;
+        MagicVec3<T,2,1,0> zyx, bgr, pts;
+        MagicVec3<T,2,1,1> zyy, bgg, ptt;
+        MagicVec3<T,2,1,2> zyz, bgb, ptp;
+        MagicVec3<T,2,2,0> zzx, bbr, pps;
+        MagicVec3<T,2,2,1> zzy, bbg, ppt;
+        MagicVec3<T,2,2,2> zzz, bbb, ppp;
+        MagicVec4<T,0,0,0,0> xxxx, rrrr, ssss;
+        MagicVec4<T,0,0,0,1> xxxy, rrrg, ssst;
+        MagicVec4<T,0,0,0,2> xxxz, rrrb, sssp;
+        MagicVec4<T,0,0,1,0> xxyx, rrgr, ssts;
+        MagicVec4<T,0,0,1,1> xxyy, rrgg, sstt;
+        MagicVec4<T,0,0,1,2> xxyz, rrgb, sstp;
+        MagicVec4<T,0,0,2,0> xxzx, rrbr, ssps;
+        MagicVec4<T,0,0,2,1> xxzy, rrbg, sspt;
+        MagicVec4<T,0,0,2,2> xxzz, rrbb, sspp;
+        MagicVec4<T,0,1,0,0> xyxx, rgrr, stss;
+        MagicVec4<T,0,1,0,1> xyxy, rgrg, stst;
+        MagicVec4<T,0,1,0,2> xyxz, rgrb, stsp;
+        MagicVec4<T,0,1,1,0> xyyx, rggr, stts;
+        MagicVec4<T,0,1,1,1> xyyy, rggg, sttt;
+        MagicVec4<T,0,1,1,2> xyyz, rggb, sttp;
+        MagicVec4<T,0,1,2,0> xyzx, rgbr, stps;
+        MagicVec4<T,0,1,2,1> xyzy, rgbg, stpt;
+        MagicVec4<T,0,1,2,2> xyzz, rgbb, stpp;
+        MagicVec4<T,0,2,0,0> xzxx, rbrr, spss;
+        MagicVec4<T,0,2,0,1> xzxy, rbrg, spst;
+        MagicVec4<T,0,2,0,2> xzxz, rbrb, spsp;
+        MagicVec4<T,0,2,1,0> xzyx, rbgr, spts;
+        MagicVec4<T,0,2,1,1> xzyy, rbgg, sptt;
+        MagicVec4<T,0,2,1,2> xzyz, rbgb, sptp;
+        MagicVec4<T,0,2,2,0> xzzx, rbbr, spps;
+        MagicVec4<T,0,2,2,1> xzzy, rbbg, sppt;
+        MagicVec4<T,0,2,2,2> xzzz, rbbb, sppp;
+        MagicVec4<T,1,0,0,0> yxxx, grrr, tsss;
+        MagicVec4<T,1,0,0,1> yxxy, grrg, tsst;
+        MagicVec4<T,1,0,0,2> yxxz, grrb, tssp;
+        MagicVec4<T,1,0,1,0> yxyx, grgr, tsts;
+        MagicVec4<T,1,0,1,1> yxyy, grgg, tstt;
+        MagicVec4<T,1,0,1,2> yxyz, grgb, tstp;
+        MagicVec4<T,1,0,2,0> yxzx, grbr, tsps;
+        MagicVec4<T,1,0,2,1> yxzy, grbg, tspt;
+        MagicVec4<T,1,0,2,2> yxzz, grbb, tspp;
+        MagicVec4<T,1,1,0,0> yyxx, ggrr, ttss;
+        MagicVec4<T,1,1,0,1> yyxy, ggrg, ttst;
+        MagicVec4<T,1,1,0,2> yyxz, ggrb, ttsp;
+        MagicVec4<T,1,1,1,0> yyyx, gggr, ttts;
+        MagicVec4<T,1,1,1,1> yyyy, gggg, tttt;
+        MagicVec4<T,1,1,1,2> yyyz, gggb, tttp;
+        MagicVec4<T,1,1,2,0> yyzx, ggbr, ttps;
+        MagicVec4<T,1,1,2,1> yyzy, ggbg, ttpt;
+        MagicVec4<T,1,1,2,2> yyzz, ggbb, ttpp;
+        MagicVec4<T,1,2,0,0> yzxx, gbrr, tpss;
+        MagicVec4<T,1,2,0,1> yzxy, gbrg, tpst;
+        MagicVec4<T,1,2,0,2> yzxz, gbrb, tpsp;
+        MagicVec4<T,1,2,1,0> yzyx, gbgr, tpts;
+        MagicVec4<T,1,2,1,1> yzyy, gbgg, tptt;
+        MagicVec4<T,1,2,1,2> yzyz, gbgb, tptp;
+        MagicVec4<T,1,2,2,0> yzzx, gbbr, tpps;
+        MagicVec4<T,1,2,2,1> yzzy, gbbg, tppt;
+        MagicVec4<T,1,2,2,2> yzzz, gbbb, tppp;
+        MagicVec4<T,2,0,0,0> zxxx, brrr, psss;
+        MagicVec4<T,2,0,0,1> zxxy, brrg, psst;
+        MagicVec4<T,2,0,0,2> zxxz, brrb, pssp;
+        MagicVec4<T,2,0,1,0> zxyx, brgr, psts;
+        MagicVec4<T,2,0,1,1> zxyy, brgg, pstt;
+        MagicVec4<T,2,0,1,2> zxyz, brgb, pstp;
+        MagicVec4<T,2,0,2,0> zxzx, brbr, psps;
+        MagicVec4<T,2,0,2,1> zxzy, brbg, pspt;
+        MagicVec4<T,2,0,2,2> zxzz, brbb, pspp;
+        MagicVec4<T,2,1,0,0> zyxx, bgrr, ptss;
+        MagicVec4<T,2,1,0,1> zyxy, bgrg, ptst;
+        MagicVec4<T,2,1,0,2> zyxz, bgrb, ptsp;
+        MagicVec4<T,2,1,1,0> zyyx, bggr, ptts;
+        MagicVec4<T,2,1,1,1> zyyy, bggg, pttt;
+        MagicVec4<T,2,1,1,2> zyyz, bggb, pttp;
+        MagicVec4<T,2,1,2,0> zyzx, bgbr, ptps;
+        MagicVec4<T,2,1,2,1> zyzy, bgbg, ptpt;
+        MagicVec4<T,2,1,2,2> zyzz, bgbb, ptpp;
+        MagicVec4<T,2,2,0,0> zzxx, bbrr, ppss;
+        MagicVec4<T,2,2,0,1> zzxy, bbrg, ppst;
+        MagicVec4<T,2,2,0,2> zzxz, bbrb, ppsp;
+        MagicVec4<T,2,2,1,0> zzyx, bbgr, ppts;
+        MagicVec4<T,2,2,1,1> zzyy, bbgg, pptt;
+        MagicVec4<T,2,2,1,2> zzyz, bbgb, pptp;
+        MagicVec4<T,2,2,2,0> zzzx, bbbr, ppps;
+        MagicVec4<T,2,2,2,1> zzzy, bbbg, pppt;
+        MagicVec4<T,2,2,2,2> zzzz, bbbb, pppp;
     };
 };
 
@@ -319,12 +432,16 @@ template <typename T> struct Vec4
     inline Vec4(Vec3<T> _xyz, T _w) : x(_xyz.x), y(_xyz.y), z(_xyz.z), w(_w) { }
     inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
+    template<int I, int J, int K, int L>
+    inline Vec4<T>(MagicVec4<T, I, J, K, L> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]), w(v.ptr[L]) {}
+
+    template<typename U, int I, int J, int K, int L>
+    explicit inline Vec4<T>(MagicVec4<U, I, J, K, L> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]), w(v.ptr[L]) {}
+
     MEMBER_OPS()
     OTHER_MEMBER_OPS(Vec4)
-
-    SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
-    SWIZZLE344(x); SWIZZLE344(y); SWIZZLE344(z); SWIZZLE344(w);
-    SWIZZLE4444(x); SWIZZLE4444(y); SWIZZLE4444(z); SWIZZLE4444(w);
 
 #if !defined __ANDROID__
     template<typename U>
@@ -336,8 +453,350 @@ template <typename T> struct Vec4
         struct { T x, y, z, w; };
         struct { T r, g, b, a; };
         struct { T s, t, p, q; };
+
+        MagicVec2<T,0,0> xx, rr, ss;
+        MagicVec2<T,0,1> xy, rg, st;
+        MagicVec2<T,0,2> xz, rb, sp;
+        MagicVec2<T,0,3> xw, ra, sq;
+        MagicVec2<T,1,0> yx, gr, ts;
+        MagicVec2<T,1,1> yy, gg, tt;
+        MagicVec2<T,1,2> yz, gb, tp;
+        MagicVec2<T,1,3> yw, ga, tq;
+        MagicVec2<T,2,0> zx, br, ps;
+        MagicVec2<T,2,1> zy, bg, pt;
+        MagicVec2<T,2,2> zz, bb, pp;
+        MagicVec2<T,2,3> zw, ba, pq;
+        MagicVec2<T,3,0> wx, ar, qs;
+        MagicVec2<T,3,1> wy, ag, qt;
+        MagicVec2<T,3,2> wz, ab, qp;
+        MagicVec2<T,3,3> ww, aa, qq;
+        MagicVec3<T,0,0,0> xxx, rrr, sss;
+        MagicVec3<T,0,0,1> xxy, rrg, sst;
+        MagicVec3<T,0,0,2> xxz, rrb, ssp;
+        MagicVec3<T,0,0,3> xxw, rra, ssq;
+        MagicVec3<T,0,1,0> xyx, rgr, sts;
+        MagicVec3<T,0,1,1> xyy, rgg, stt;
+        MagicVec3<T,0,1,2> xyz, rgb, stp;
+        MagicVec3<T,0,1,3> xyw, rga, stq;
+        MagicVec3<T,0,2,0> xzx, rbr, sps;
+        MagicVec3<T,0,2,1> xzy, rbg, spt;
+        MagicVec3<T,0,2,2> xzz, rbb, spp;
+        MagicVec3<T,0,2,3> xzw, rba, spq;
+        MagicVec3<T,0,3,0> xwx, rar, sqs;
+        MagicVec3<T,0,3,1> xwy, rag, sqt;
+        MagicVec3<T,0,3,2> xwz, rab, sqp;
+        MagicVec3<T,0,3,3> xww, raa, sqq;
+        MagicVec3<T,1,0,0> yxx, grr, tss;
+        MagicVec3<T,1,0,1> yxy, grg, tst;
+        MagicVec3<T,1,0,2> yxz, grb, tsp;
+        MagicVec3<T,1,0,3> yxw, gra, tsq;
+        MagicVec3<T,1,1,0> yyx, ggr, tts;
+        MagicVec3<T,1,1,1> yyy, ggg, ttt;
+        MagicVec3<T,1,1,2> yyz, ggb, ttp;
+        MagicVec3<T,1,1,3> yyw, gga, ttq;
+        MagicVec3<T,1,2,0> yzx, gbr, tps;
+        MagicVec3<T,1,2,1> yzy, gbg, tpt;
+        MagicVec3<T,1,2,2> yzz, gbb, tpp;
+        MagicVec3<T,1,2,3> yzw, gba, tpq;
+        MagicVec3<T,1,3,0> ywx, gar, tqs;
+        MagicVec3<T,1,3,1> ywy, gag, tqt;
+        MagicVec3<T,1,3,2> ywz, gab, tqp;
+        MagicVec3<T,1,3,3> yww, gaa, tqq;
+        MagicVec3<T,2,0,0> zxx, brr, pss;
+        MagicVec3<T,2,0,1> zxy, brg, pst;
+        MagicVec3<T,2,0,2> zxz, brb, psp;
+        MagicVec3<T,2,0,3> zxw, bra, psq;
+        MagicVec3<T,2,1,0> zyx, bgr, pts;
+        MagicVec3<T,2,1,1> zyy, bgg, ptt;
+        MagicVec3<T,2,1,2> zyz, bgb, ptp;
+        MagicVec3<T,2,1,3> zyw, bga, ptq;
+        MagicVec3<T,2,2,0> zzx, bbr, pps;
+        MagicVec3<T,2,2,1> zzy, bbg, ppt;
+        MagicVec3<T,2,2,2> zzz, bbb, ppp;
+        MagicVec3<T,2,2,3> zzw, bba, ppq;
+        MagicVec3<T,2,3,0> zwx, bar, pqs;
+        MagicVec3<T,2,3,1> zwy, bag, pqt;
+        MagicVec3<T,2,3,2> zwz, bab, pqp;
+        MagicVec3<T,2,3,3> zww, baa, pqq;
+        MagicVec3<T,3,0,0> wxx, arr, qss;
+        MagicVec3<T,3,0,1> wxy, arg, qst;
+        MagicVec3<T,3,0,2> wxz, arb, qsp;
+        MagicVec3<T,3,0,3> wxw, ara, qsq;
+        MagicVec3<T,3,1,0> wyx, agr, qts;
+        MagicVec3<T,3,1,1> wyy, agg, qtt;
+        MagicVec3<T,3,1,2> wyz, agb, qtp;
+        MagicVec3<T,3,1,3> wyw, aga, qtq;
+        MagicVec3<T,3,2,0> wzx, abr, qps;
+        MagicVec3<T,3,2,1> wzy, abg, qpt;
+        MagicVec3<T,3,2,2> wzz, abb, qpp;
+        MagicVec3<T,3,2,3> wzw, aba, qpq;
+        MagicVec3<T,3,3,0> wwx, aar, qqs;
+        MagicVec3<T,3,3,1> wwy, aag, qqt;
+        MagicVec3<T,3,3,2> wwz, aab, qqp;
+        MagicVec3<T,3,3,3> www, aaa, qqq;
+        MagicVec4<T,0,0,0,0> xxxx, rrrr, ssss;
+        MagicVec4<T,0,0,0,1> xxxy, rrrg, ssst;
+        MagicVec4<T,0,0,0,2> xxxz, rrrb, sssp;
+        MagicVec4<T,0,0,0,3> xxxw, rrra, sssq;
+        MagicVec4<T,0,0,1,0> xxyx, rrgr, ssts;
+        MagicVec4<T,0,0,1,1> xxyy, rrgg, sstt;
+        MagicVec4<T,0,0,1,2> xxyz, rrgb, sstp;
+        MagicVec4<T,0,0,1,3> xxyw, rrga, sstq;
+        MagicVec4<T,0,0,2,0> xxzx, rrbr, ssps;
+        MagicVec4<T,0,0,2,1> xxzy, rrbg, sspt;
+        MagicVec4<T,0,0,2,2> xxzz, rrbb, sspp;
+        MagicVec4<T,0,0,2,3> xxzw, rrba, sspq;
+        MagicVec4<T,0,0,3,0> xxwx, rrar, ssqs;
+        MagicVec4<T,0,0,3,1> xxwy, rrag, ssqt;
+        MagicVec4<T,0,0,3,2> xxwz, rrab, ssqp;
+        MagicVec4<T,0,0,3,3> xxww, rraa, ssqq;
+        MagicVec4<T,0,1,0,0> xyxx, rgrr, stss;
+        MagicVec4<T,0,1,0,1> xyxy, rgrg, stst;
+        MagicVec4<T,0,1,0,2> xyxz, rgrb, stsp;
+        MagicVec4<T,0,1,0,3> xyxw, rgra, stsq;
+        MagicVec4<T,0,1,1,0> xyyx, rggr, stts;
+        MagicVec4<T,0,1,1,1> xyyy, rggg, sttt;
+        MagicVec4<T,0,1,1,2> xyyz, rggb, sttp;
+        MagicVec4<T,0,1,1,3> xyyw, rgga, sttq;
+        MagicVec4<T,0,1,2,0> xyzx, rgbr, stps;
+        MagicVec4<T,0,1,2,1> xyzy, rgbg, stpt;
+        MagicVec4<T,0,1,2,2> xyzz, rgbb, stpp;
+        MagicVec4<T,0,1,2,3> xyzw, rgba, stpq;
+        MagicVec4<T,0,1,3,0> xywx, rgar, stqs;
+        MagicVec4<T,0,1,3,1> xywy, rgag, stqt;
+        MagicVec4<T,0,1,3,2> xywz, rgab, stqp;
+        MagicVec4<T,0,1,3,3> xyww, rgaa, stqq;
+        MagicVec4<T,0,2,0,0> xzxx, rbrr, spss;
+        MagicVec4<T,0,2,0,1> xzxy, rbrg, spst;
+        MagicVec4<T,0,2,0,2> xzxz, rbrb, spsp;
+        MagicVec4<T,0,2,0,3> xzxw, rbra, spsq;
+        MagicVec4<T,0,2,1,0> xzyx, rbgr, spts;
+        MagicVec4<T,0,2,1,1> xzyy, rbgg, sptt;
+        MagicVec4<T,0,2,1,2> xzyz, rbgb, sptp;
+        MagicVec4<T,0,2,1,3> xzyw, rbga, sptq;
+        MagicVec4<T,0,2,2,0> xzzx, rbbr, spps;
+        MagicVec4<T,0,2,2,1> xzzy, rbbg, sppt;
+        MagicVec4<T,0,2,2,2> xzzz, rbbb, sppp;
+        MagicVec4<T,0,2,2,3> xzzw, rbba, sppq;
+        MagicVec4<T,0,2,3,0> xzwx, rbar, spqs;
+        MagicVec4<T,0,2,3,1> xzwy, rbag, spqt;
+        MagicVec4<T,0,2,3,2> xzwz, rbab, spqp;
+        MagicVec4<T,0,2,3,3> xzww, rbaa, spqq;
+        MagicVec4<T,0,3,0,0> xwxx, rarr, sqss;
+        MagicVec4<T,0,3,0,1> xwxy, rarg, sqst;
+        MagicVec4<T,0,3,0,2> xwxz, rarb, sqsp;
+        MagicVec4<T,0,3,0,3> xwxw, rara, sqsq;
+        MagicVec4<T,0,3,1,0> xwyx, ragr, sqts;
+        MagicVec4<T,0,3,1,1> xwyy, ragg, sqtt;
+        MagicVec4<T,0,3,1,2> xwyz, ragb, sqtp;
+        MagicVec4<T,0,3,1,3> xwyw, raga, sqtq;
+        MagicVec4<T,0,3,2,0> xwzx, rabr, sqps;
+        MagicVec4<T,0,3,2,1> xwzy, rabg, sqpt;
+        MagicVec4<T,0,3,2,2> xwzz, rabb, sqpp;
+        MagicVec4<T,0,3,2,3> xwzw, raba, sqpq;
+        MagicVec4<T,0,3,3,0> xwwx, raar, sqqs;
+        MagicVec4<T,0,3,3,1> xwwy, raag, sqqt;
+        MagicVec4<T,0,3,3,2> xwwz, raab, sqqp;
+        MagicVec4<T,0,3,3,3> xwww, raaa, sqqq;
+        MagicVec4<T,1,0,0,0> yxxx, grrr, tsss;
+        MagicVec4<T,1,0,0,1> yxxy, grrg, tsst;
+        MagicVec4<T,1,0,0,2> yxxz, grrb, tssp;
+        MagicVec4<T,1,0,0,3> yxxw, grra, tssq;
+        MagicVec4<T,1,0,1,0> yxyx, grgr, tsts;
+        MagicVec4<T,1,0,1,1> yxyy, grgg, tstt;
+        MagicVec4<T,1,0,1,2> yxyz, grgb, tstp;
+        MagicVec4<T,1,0,1,3> yxyw, grga, tstq;
+        MagicVec4<T,1,0,2,0> yxzx, grbr, tsps;
+        MagicVec4<T,1,0,2,1> yxzy, grbg, tspt;
+        MagicVec4<T,1,0,2,2> yxzz, grbb, tspp;
+        MagicVec4<T,1,0,2,3> yxzw, grba, tspq;
+        MagicVec4<T,1,0,3,0> yxwx, grar, tsqs;
+        MagicVec4<T,1,0,3,1> yxwy, grag, tsqt;
+        MagicVec4<T,1,0,3,2> yxwz, grab, tsqp;
+        MagicVec4<T,1,0,3,3> yxww, graa, tsqq;
+        MagicVec4<T,1,1,0,0> yyxx, ggrr, ttss;
+        MagicVec4<T,1,1,0,1> yyxy, ggrg, ttst;
+        MagicVec4<T,1,1,0,2> yyxz, ggrb, ttsp;
+        MagicVec4<T,1,1,0,3> yyxw, ggra, ttsq;
+        MagicVec4<T,1,1,1,0> yyyx, gggr, ttts;
+        MagicVec4<T,1,1,1,1> yyyy, gggg, tttt;
+        MagicVec4<T,1,1,1,2> yyyz, gggb, tttp;
+        MagicVec4<T,1,1,1,3> yyyw, ggga, tttq;
+        MagicVec4<T,1,1,2,0> yyzx, ggbr, ttps;
+        MagicVec4<T,1,1,2,1> yyzy, ggbg, ttpt;
+        MagicVec4<T,1,1,2,2> yyzz, ggbb, ttpp;
+        MagicVec4<T,1,1,2,3> yyzw, ggba, ttpq;
+        MagicVec4<T,1,1,3,0> yywx, ggar, ttqs;
+        MagicVec4<T,1,1,3,1> yywy, ggag, ttqt;
+        MagicVec4<T,1,1,3,2> yywz, ggab, ttqp;
+        MagicVec4<T,1,1,3,3> yyww, ggaa, ttqq;
+        MagicVec4<T,1,2,0,0> yzxx, gbrr, tpss;
+        MagicVec4<T,1,2,0,1> yzxy, gbrg, tpst;
+        MagicVec4<T,1,2,0,2> yzxz, gbrb, tpsp;
+        MagicVec4<T,1,2,0,3> yzxw, gbra, tpsq;
+        MagicVec4<T,1,2,1,0> yzyx, gbgr, tpts;
+        MagicVec4<T,1,2,1,1> yzyy, gbgg, tptt;
+        MagicVec4<T,1,2,1,2> yzyz, gbgb, tptp;
+        MagicVec4<T,1,2,1,3> yzyw, gbga, tptq;
+        MagicVec4<T,1,2,2,0> yzzx, gbbr, tpps;
+        MagicVec4<T,1,2,2,1> yzzy, gbbg, tppt;
+        MagicVec4<T,1,2,2,2> yzzz, gbbb, tppp;
+        MagicVec4<T,1,2,2,3> yzzw, gbba, tppq;
+        MagicVec4<T,1,2,3,0> yzwx, gbar, tpqs;
+        MagicVec4<T,1,2,3,1> yzwy, gbag, tpqt;
+        MagicVec4<T,1,2,3,2> yzwz, gbab, tpqp;
+        MagicVec4<T,1,2,3,3> yzww, gbaa, tpqq;
+        MagicVec4<T,1,3,0,0> ywxx, garr, tqss;
+        MagicVec4<T,1,3,0,1> ywxy, garg, tqst;
+        MagicVec4<T,1,3,0,2> ywxz, garb, tqsp;
+        MagicVec4<T,1,3,0,3> ywxw, gara, tqsq;
+        MagicVec4<T,1,3,1,0> ywyx, gagr, tqts;
+        MagicVec4<T,1,3,1,1> ywyy, gagg, tqtt;
+        MagicVec4<T,1,3,1,2> ywyz, gagb, tqtp;
+        MagicVec4<T,1,3,1,3> ywyw, gaga, tqtq;
+        MagicVec4<T,1,3,2,0> ywzx, gabr, tqps;
+        MagicVec4<T,1,3,2,1> ywzy, gabg, tqpt;
+        MagicVec4<T,1,3,2,2> ywzz, gabb, tqpp;
+        MagicVec4<T,1,3,2,3> ywzw, gaba, tqpq;
+        MagicVec4<T,1,3,3,0> ywwx, gaar, tqqs;
+        MagicVec4<T,1,3,3,1> ywwy, gaag, tqqt;
+        MagicVec4<T,1,3,3,2> ywwz, gaab, tqqp;
+        MagicVec4<T,1,3,3,3> ywww, gaaa, tqqq;
+        MagicVec4<T,2,0,0,0> zxxx, brrr, psss;
+        MagicVec4<T,2,0,0,1> zxxy, brrg, psst;
+        MagicVec4<T,2,0,0,2> zxxz, brrb, pssp;
+        MagicVec4<T,2,0,0,3> zxxw, brra, pssq;
+        MagicVec4<T,2,0,1,0> zxyx, brgr, psts;
+        MagicVec4<T,2,0,1,1> zxyy, brgg, pstt;
+        MagicVec4<T,2,0,1,2> zxyz, brgb, pstp;
+        MagicVec4<T,2,0,1,3> zxyw, brga, pstq;
+        MagicVec4<T,2,0,2,0> zxzx, brbr, psps;
+        MagicVec4<T,2,0,2,1> zxzy, brbg, pspt;
+        MagicVec4<T,2,0,2,2> zxzz, brbb, pspp;
+        MagicVec4<T,2,0,2,3> zxzw, brba, pspq;
+        MagicVec4<T,2,0,3,0> zxwx, brar, psqs;
+        MagicVec4<T,2,0,3,1> zxwy, brag, psqt;
+        MagicVec4<T,2,0,3,2> zxwz, brab, psqp;
+        MagicVec4<T,2,0,3,3> zxww, braa, psqq;
+        MagicVec4<T,2,1,0,0> zyxx, bgrr, ptss;
+        MagicVec4<T,2,1,0,1> zyxy, bgrg, ptst;
+        MagicVec4<T,2,1,0,2> zyxz, bgrb, ptsp;
+        MagicVec4<T,2,1,0,3> zyxw, bgra, ptsq;
+        MagicVec4<T,2,1,1,0> zyyx, bggr, ptts;
+        MagicVec4<T,2,1,1,1> zyyy, bggg, pttt;
+        MagicVec4<T,2,1,1,2> zyyz, bggb, pttp;
+        MagicVec4<T,2,1,1,3> zyyw, bgga, pttq;
+        MagicVec4<T,2,1,2,0> zyzx, bgbr, ptps;
+        MagicVec4<T,2,1,2,1> zyzy, bgbg, ptpt;
+        MagicVec4<T,2,1,2,2> zyzz, bgbb, ptpp;
+        MagicVec4<T,2,1,2,3> zyzw, bgba, ptpq;
+        MagicVec4<T,2,1,3,0> zywx, bgar, ptqs;
+        MagicVec4<T,2,1,3,1> zywy, bgag, ptqt;
+        MagicVec4<T,2,1,3,2> zywz, bgab, ptqp;
+        MagicVec4<T,2,1,3,3> zyww, bgaa, ptqq;
+        MagicVec4<T,2,2,0,0> zzxx, bbrr, ppss;
+        MagicVec4<T,2,2,0,1> zzxy, bbrg, ppst;
+        MagicVec4<T,2,2,0,2> zzxz, bbrb, ppsp;
+        MagicVec4<T,2,2,0,3> zzxw, bbra, ppsq;
+        MagicVec4<T,2,2,1,0> zzyx, bbgr, ppts;
+        MagicVec4<T,2,2,1,1> zzyy, bbgg, pptt;
+        MagicVec4<T,2,2,1,2> zzyz, bbgb, pptp;
+        MagicVec4<T,2,2,1,3> zzyw, bbga, pptq;
+        MagicVec4<T,2,2,2,0> zzzx, bbbr, ppps;
+        MagicVec4<T,2,2,2,1> zzzy, bbbg, pppt;
+        MagicVec4<T,2,2,2,2> zzzz, bbbb, pppp;
+        MagicVec4<T,2,2,2,3> zzzw, bbba, pppq;
+        MagicVec4<T,2,2,3,0> zzwx, bbar, ppqs;
+        MagicVec4<T,2,2,3,1> zzwy, bbag, ppqt;
+        MagicVec4<T,2,2,3,2> zzwz, bbab, ppqp;
+        MagicVec4<T,2,2,3,3> zzww, bbaa, ppqq;
+        MagicVec4<T,2,3,0,0> zwxx, barr, pqss;
+        MagicVec4<T,2,3,0,1> zwxy, barg, pqst;
+        MagicVec4<T,2,3,0,2> zwxz, barb, pqsp;
+        MagicVec4<T,2,3,0,3> zwxw, bara, pqsq;
+        MagicVec4<T,2,3,1,0> zwyx, bagr, pqts;
+        MagicVec4<T,2,3,1,1> zwyy, bagg, pqtt;
+        MagicVec4<T,2,3,1,2> zwyz, bagb, pqtp;
+        MagicVec4<T,2,3,1,3> zwyw, baga, pqtq;
+        MagicVec4<T,2,3,2,0> zwzx, babr, pqps;
+        MagicVec4<T,2,3,2,1> zwzy, babg, pqpt;
+        MagicVec4<T,2,3,2,2> zwzz, babb, pqpp;
+        MagicVec4<T,2,3,2,3> zwzw, baba, pqpq;
+        MagicVec4<T,2,3,3,0> zwwx, baar, pqqs;
+        MagicVec4<T,2,3,3,1> zwwy, baag, pqqt;
+        MagicVec4<T,2,3,3,2> zwwz, baab, pqqp;
+        MagicVec4<T,2,3,3,3> zwww, baaa, pqqq;
+        MagicVec4<T,3,0,0,0> wxxx, arrr, qsss;
+        MagicVec4<T,3,0,0,1> wxxy, arrg, qsst;
+        MagicVec4<T,3,0,0,2> wxxz, arrb, qssp;
+        MagicVec4<T,3,0,0,3> wxxw, arra, qssq;
+        MagicVec4<T,3,0,1,0> wxyx, argr, qsts;
+        MagicVec4<T,3,0,1,1> wxyy, argg, qstt;
+        MagicVec4<T,3,0,1,2> wxyz, argb, qstp;
+        MagicVec4<T,3,0,1,3> wxyw, arga, qstq;
+        MagicVec4<T,3,0,2,0> wxzx, arbr, qsps;
+        MagicVec4<T,3,0,2,1> wxzy, arbg, qspt;
+        MagicVec4<T,3,0,2,2> wxzz, arbb, qspp;
+        MagicVec4<T,3,0,2,3> wxzw, arba, qspq;
+        MagicVec4<T,3,0,3,0> wxwx, arar, qsqs;
+        MagicVec4<T,3,0,3,1> wxwy, arag, qsqt;
+        MagicVec4<T,3,0,3,2> wxwz, arab, qsqp;
+        MagicVec4<T,3,0,3,3> wxww, araa, qsqq;
+        MagicVec4<T,3,1,0,0> wyxx, agrr, qtss;
+        MagicVec4<T,3,1,0,1> wyxy, agrg, qtst;
+        MagicVec4<T,3,1,0,2> wyxz, agrb, qtsp;
+        MagicVec4<T,3,1,0,3> wyxw, agra, qtsq;
+        MagicVec4<T,3,1,1,0> wyyx, aggr, qtts;
+        MagicVec4<T,3,1,1,1> wyyy, aggg, qttt;
+        MagicVec4<T,3,1,1,2> wyyz, aggb, qttp;
+        MagicVec4<T,3,1,1,3> wyyw, agga, qttq;
+        MagicVec4<T,3,1,2,0> wyzx, agbr, qtps;
+        MagicVec4<T,3,1,2,1> wyzy, agbg, qtpt;
+        MagicVec4<T,3,1,2,2> wyzz, agbb, qtpp;
+        MagicVec4<T,3,1,2,3> wyzw, agba, qtpq;
+        MagicVec4<T,3,1,3,0> wywx, agar, qtqs;
+        MagicVec4<T,3,1,3,1> wywy, agag, qtqt;
+        MagicVec4<T,3,1,3,2> wywz, agab, qtqp;
+        MagicVec4<T,3,1,3,3> wyww, agaa, qtqq;
+        MagicVec4<T,3,2,0,0> wzxx, abrr, qpss;
+        MagicVec4<T,3,2,0,1> wzxy, abrg, qpst;
+        MagicVec4<T,3,2,0,2> wzxz, abrb, qpsp;
+        MagicVec4<T,3,2,0,3> wzxw, abra, qpsq;
+        MagicVec4<T,3,2,1,0> wzyx, abgr, qpts;
+        MagicVec4<T,3,2,1,1> wzyy, abgg, qptt;
+        MagicVec4<T,3,2,1,2> wzyz, abgb, qptp;
+        MagicVec4<T,3,2,1,3> wzyw, abga, qptq;
+        MagicVec4<T,3,2,2,0> wzzx, abbr, qpps;
+        MagicVec4<T,3,2,2,1> wzzy, abbg, qppt;
+        MagicVec4<T,3,2,2,2> wzzz, abbb, qppp;
+        MagicVec4<T,3,2,2,3> wzzw, abba, qppq;
+        MagicVec4<T,3,2,3,0> wzwx, abar, qpqs;
+        MagicVec4<T,3,2,3,1> wzwy, abag, qpqt;
+        MagicVec4<T,3,2,3,2> wzwz, abab, qpqp;
+        MagicVec4<T,3,2,3,3> wzww, abaa, qpqq;
+        MagicVec4<T,3,3,0,0> wwxx, aarr, qqss;
+        MagicVec4<T,3,3,0,1> wwxy, aarg, qqst;
+        MagicVec4<T,3,3,0,2> wwxz, aarb, qqsp;
+        MagicVec4<T,3,3,0,3> wwxw, aara, qqsq;
+        MagicVec4<T,3,3,1,0> wwyx, aagr, qqts;
+        MagicVec4<T,3,3,1,1> wwyy, aagg, qqtt;
+        MagicVec4<T,3,3,1,2> wwyz, aagb, qqtp;
+        MagicVec4<T,3,3,1,3> wwyw, aaga, qqtq;
+        MagicVec4<T,3,3,2,0> wwzx, aabr, qqps;
+        MagicVec4<T,3,3,2,1> wwzy, aabg, qqpt;
+        MagicVec4<T,3,3,2,2> wwzz, aabb, qqpp;
+        MagicVec4<T,3,3,2,3> wwzw, aaba, qqpq;
+        MagicVec4<T,3,3,3,0> wwwx, aaar, qqqs;
+        MagicVec4<T,3,3,3,1> wwwy, aaag, qqqt;
+        MagicVec4<T,3,3,3,2> wwwz, aaab, qqqp;
+        MagicVec4<T,3,3,3,3> wwww, aaaa, qqqq;
     };
 };
+
+inline Vec2<float> operator /(Vec2<float> a, Vec2<float> b)
+{
+    return Vec2<float>(a.x / b.x, a.y / b.y);
+}
 
 /*
  * 4-element quaternions
@@ -514,6 +973,31 @@ GLOBALS(Quat)
 OTHER_OPS(Vec2)
 OTHER_OPS(Vec3)
 OTHER_OPS(Vec4)
+
+/*
+ * Magic swizzling (part 2/2)
+ */
+
+template<typename T, int I, int J>
+inline Vec2<T> MagicVec2<T, I, J>::operator =(Vec2<T> that)
+{
+    ptr[I] = that.x; ptr[J] = that.y;
+    return *this;
+}
+
+template<typename T, int I, int J, int K>
+inline Vec3<T> MagicVec3<T, I, J, K>::operator =(Vec3<T> that)
+{
+    ptr[I] = that.x; ptr[J] = that.y; ptr[K] = that.z;
+    return *this;
+}
+
+template<typename T, int I, int J, int K, int L>
+inline Vec4<T> MagicVec4<T, I, J, K, L>::operator =(Vec4<T> that)
+{
+    ptr[I] = that.x; ptr[J] = that.y; ptr[K] = that.z; ptr[L] = that.w;
+    return *this;
+}
 
 /*
  * 4×4-element matrices
