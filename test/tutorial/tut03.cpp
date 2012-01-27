@@ -56,8 +56,8 @@ public:
         m_size = size;
         m_size.x = (m_size.x + 15) & ~15;
         m_size.y = (m_size.y + 15) & ~15;
-        m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy();
-        m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy();
+        m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy;
+        m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy;
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
