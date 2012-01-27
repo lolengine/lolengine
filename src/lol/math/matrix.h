@@ -49,77 +49,9 @@ VECTOR_TYPES(Vec4, vec4)
 VECTOR_TYPES(Quat, quat)
 VECTOR_TYPES(Mat4, mat4)
 
-#define VECTOR_OP(op) \
-    inline type_t operator op(type_t const &val) const \
-    { \
-        type_t ret; \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            ret[n] = (*this)[n] op val[n]; \
-        return ret; \
-    } \
-    \
-    inline type_t operator op##=(type_t const &val) \
-    { \
-        return *this = (*this) op val; \
-    }
-
-#define BOOL_OP(op, op2, ret) \
-    inline bool operator op(type_t const &val) const \
-    { \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            if (!((*this)[n] op2 val[n])) \
-                return !ret; \
-        return ret; \
-    }
-
-#define SCALAR_OP(op) \
-    inline type_t operator op(T const &val) const \
-    { \
-        type_t ret; \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            ret[n] = (*this)[n] op val; \
-        return ret; \
-    } \
-    \
-    inline type_t operator op##=(T const &val) \
-    { \
-        return *this = (*this) op val; \
-    }
-
-#define LINEAR_OPS() \
+#define MEMBER_OPS() \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
-    \
-    VECTOR_OP(-) \
-    VECTOR_OP(+) \
-    \
-    BOOL_OP(==, ==, true) \
-    BOOL_OP(!=, ==, false) \
-    \
-    SCALAR_OP(*) \
-    SCALAR_OP(/) \
-    \
-    inline type_t operator -() const \
-    { \
-        type_t ret; \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            ret[n] = -(*this)[n]; \
-        return ret; \
-    } \
-    \
-    inline T sqlen() const \
-    { \
-        T acc = 0; \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            acc += (*this)[n] * (*this)[n]; \
-        return acc; \
-    } \
-    \
-    inline double len() const \
-    { \
-        using namespace std; \
-        return sqrt((double)sqlen()); \
-    } \
     \
     void printf() const;
 
@@ -139,7 +71,7 @@ VECTOR_TYPES(Mat4, mat4)
         return type_t(x, -y); \
     } \
     \
-    inline T norm() const { return len(); }
+    inline T norm() const { return len(*this); }
 
 #define QUATERNION_OPS() \
     inline type_t operator *(type_t const &val) const \
@@ -167,19 +99,9 @@ VECTOR_TYPES(Mat4, mat4)
             ret[n] = -(*this)[n]; \
         ret[3] = (*this)[3]; \
         return ret; \
-    } \
-    \
-    inline T norm() const { return sqlen(); }
+    }
 
-#define OTHER_OPS(tname) \
-    VECTOR_OP(*) \
-    VECTOR_OP(/) \
-    \
-    BOOL_OP(<=, <=, true) \
-    BOOL_OP(>=, >=, true) \
-    BOOL_OP(<, <, true) \
-    BOOL_OP(>, >, true) \
-    \
+#define OTHER_MEMBER_OPS(tname) \
     template<typename U> \
     inline operator tname<U>() const \
     { \
@@ -187,10 +109,7 @@ VECTOR_TYPES(Mat4, mat4)
         for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = static_cast<U>((*this)[n]); \
         return ret; \
-    } \
-    \
-    template<typename U> \
-    friend U dot(tname<U>, tname<U>);
+    }
 
 #define SWIZZLE2(e1, e2) \
     inline Vec2<T> e1##e2() const \
@@ -265,8 +184,8 @@ template <typename T> struct Vec2
     explicit inline Vec2(T val) { x = y = val; }
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
-    LINEAR_OPS()
-    OTHER_OPS(Vec2)
+    MEMBER_OPS()
+    OTHER_MEMBER_OPS(Vec2)
 
     SWIZZLE22(x); SWIZZLE22(y);
     SWIZZLE322(x); SWIZZLE322(y);
@@ -297,7 +216,8 @@ template <typename T> struct Cmplx
     inline Cmplx(T val) : x(val), y(0) { }
     inline Cmplx(T _x, T _y) : x(_x), y(_y) { }
 
-    LINEAR_OPS()
+    MEMBER_OPS()
+
     COMPLEX_OPS()
 
 #if !defined __ANDROID__
@@ -311,20 +231,38 @@ template <typename T> struct Cmplx
 template<typename T>
 static inline Cmplx<T> re(Cmplx<T> const &val)
 {
-    return ~val / val.sqlen();
+    return ~val / sqlen(val);
 }
 
 template<typename T>
-static inline Cmplx<T> operator /(T x, Cmplx<T> const &y)
+static inline Cmplx<T> operator /(T a, Cmplx<T> const &b)
 {
-    return x * re(y);
+    return a * re(b);
 }
 
 template<typename T>
-static inline Cmplx<T> operator /(Cmplx<T> x, Cmplx<T> const &y)
+static inline Cmplx<T> operator /(Cmplx<T> a, Cmplx<T> const &b)
 {
-    return x * re(y);
+    return a * re(b);
 }
+
+template<typename T>
+static inline bool operator ==(Cmplx<T> const &a, T b)
+{
+    return (a.x == b) && !a.y;
+}
+
+template<typename T>
+static inline bool operator !=(Cmplx<T> const &a, T b)
+{
+    return (a.x != b) || a.y;
+}
+
+template<typename T>
+static inline bool operator ==(T a, Cmplx<T> const &b) { return b == a; }
+
+template<typename T>
+static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
 
 /*
  * 3-element vectors
@@ -340,8 +278,8 @@ template <typename T> struct Vec3
     inline Vec3(Vec2<T> _xy, T _z) { x = _xy.x; y = _xy.y; z = _z; }
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
-    LINEAR_OPS()
-    OTHER_OPS(Vec3)
+    MEMBER_OPS()
+    OTHER_MEMBER_OPS(Vec3)
 
     SWIZZLE23(x); SWIZZLE23(y); SWIZZLE23(z);
     SWIZZLE333(x); SWIZZLE333(y); SWIZZLE333(z);
@@ -381,8 +319,8 @@ template <typename T> struct Vec4
     inline Vec4(Vec3<T> _xyz, T _w) : x(_xyz.x), y(_xyz.y), z(_xyz.z), w(_w) { }
     inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
-    LINEAR_OPS()
-    OTHER_OPS(Vec4)
+    MEMBER_OPS()
+    OTHER_MEMBER_OPS(Vec4)
 
     SWIZZLE24(x); SWIZZLE24(y); SWIZZLE24(z); SWIZZLE24(w);
     SWIZZLE344(x); SWIZZLE344(y); SWIZZLE344(z); SWIZZLE344(w);
@@ -415,7 +353,8 @@ template <typename T> struct Quat
 
     Quat(Mat4<T> const &m);
 
-    LINEAR_OPS()
+    MEMBER_OPS()
+
     QUATERNION_OPS()
 
 #if !defined __ANDROID__
@@ -427,9 +366,15 @@ template <typename T> struct Quat
 };
 
 template<typename T>
+inline T norm(Quat<T> const &val)
+{
+    return sqlen(val);
+}
+
+template<typename T>
 static inline Quat<T> re(Quat<T> const &val)
 {
-    return ~val / val.norm();
+    return ~val / norm(val);
 }
 
 template<typename T>
@@ -448,29 +393,107 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
  * Common operators for all vector types, including quaternions
  */
 
-#define SCALAR_GLOBAL(tname, op, U) \
+#define VECTOR_OP(tname, op) \
     template<typename T> \
-    static inline tname<U> operator op(U const &val, tname<T> const &that) \
+    inline tname<T> operator op(tname<T> const &a, tname<T> const &b) \
     { \
-        tname<U> ret; \
-        for (size_t n = 0; n < sizeof(that) / sizeof(that[0]); n++) \
-            ret[n] = val op that[n]; \
+        tname<T> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret[n] = a[n] op b[n]; \
+        return ret; \
+    } \
+    \
+    template<typename T> \
+    inline tname<T> operator op##=(tname<T> &a, tname<T> const &b) \
+    { \
+        return a = a op b; \
+    }
+
+#define BOOL_OP(tname, op, op2, ret) \
+    template<typename T> \
+    inline bool operator op(tname<T> const &a, tname<T> const &b) \
+    { \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            if (!(a[n] op2 b[n])) \
+                return !ret; \
         return ret; \
     }
 
-#define SCALAR_GLOBAL2(tname, op) \
-    SCALAR_GLOBAL(tname, op, int) \
-    SCALAR_GLOBAL(tname, op, float) \
-    SCALAR_GLOBAL(tname, op, double)
+#define SCALAR_OP(tname, op) \
+    template<typename T> \
+    inline tname<T> operator op##=(tname<T> &a, T const &val) \
+    { \
+        return a = a op val; \
+    } \
+    \
+    template<typename T> \
+    static inline tname<T> operator op(tname<T> const &a, T const &val) \
+    { \
+        tname<T> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret[n] = a[n] op val; \
+        return ret; \
+    }
+
+#define SCALAR_PROMOTE_OP(tname, op, U) \
+    template<typename T> \
+    static inline tname<U> operator op(U const &val, tname<T> const &a) \
+    { \
+        tname<U> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret[n] = val op a[n]; \
+        return ret; \
+    }
 
 #define GLOBALS(tname) \
-    SCALAR_GLOBAL2(tname, *) \
+    SCALAR_OP(tname, *) \
+    SCALAR_OP(tname, /) \
+    \
+    SCALAR_PROMOTE_OP(tname, *, int) \
+    SCALAR_PROMOTE_OP(tname, *, float) \
+    SCALAR_PROMOTE_OP(tname, *, double) \
+    \
+    VECTOR_OP(tname, -) \
+    VECTOR_OP(tname, +) \
+    \
+    BOOL_OP(tname, ==, ==, true) \
+    BOOL_OP(tname, !=, ==, false) \
+    \
+    template<typename T> \
+    inline tname<T> operator -(tname<T> const &a) \
+    { \
+        tname<T> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret[n] = -a[n]; \
+        return ret; \
+    } \
+    \
+    template<typename T> \
+    inline T sqlen(tname<T> const &a) \
+    { \
+        T acc = 0; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            acc += a[n] * a[n]; \
+        return acc; \
+    } \
+    \
+    template<typename T> \
+    inline double len(tname<T> const &a) \
+    { \
+        using namespace std; \
+        return sqrt((double)sqlen(a)); \
+    } \
+    \
+    /* dot() does not take const refs because the function is not inlined, \
+     * so we try to avoid carrying a shitty pointer around. */ \
+    template<typename T> \
+    T dot(tname<T> a, tname<T> b); \
     \
     template<typename T> \
     static inline tname<T> normalize(tname<T> const &val) \
     { \
-        T norm = val.len(); \
-        return norm ? val / norm : val * 0; \
+        T norm = len(val); \
+        return norm ? val / norm : val * (T)0; \
     }
 
 GLOBALS(Vec2)
@@ -478,6 +501,19 @@ GLOBALS(Cmplx)
 GLOBALS(Vec3)
 GLOBALS(Vec4)
 GLOBALS(Quat)
+
+#define OTHER_OPS(tname) \
+    VECTOR_OP(tname, *) \
+    VECTOR_OP(tname, /) \
+    \
+    BOOL_OP(tname, <=, <=, true) \
+    BOOL_OP(tname, >=, >=, true) \
+    BOOL_OP(tname, <, <, true) \
+    BOOL_OP(tname, >, >, true)
+
+OTHER_OPS(Vec2)
+OTHER_OPS(Vec3)
+OTHER_OPS(Vec4)
 
 /*
  * 4×4-element matrices
