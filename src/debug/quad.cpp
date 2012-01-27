@@ -200,7 +200,7 @@ void DebugQuad::TickDraw(float deltams)
 
     /* Prepare our quad coordinates */
     ivec2 const layout(7, 5);
-    data->step = vec2(2.0f, -2.0f) / (4 * layout + ivec2(1));
+    data->step = vec2(2.0f, -2.0f) / vec2(4 * layout + ivec2(1));
     data->orig = vec2(-1.0f, 1.0f) + data->step;
     data->aa = data->orig;
     data->bb = data->orig + 3.0f * data->step;

@@ -71,7 +71,8 @@ public:
             m_window2world = 0.5 / m_window_size.y;
         else
             m_window2world = 0.5 / m_window_size.x;
-        m_texel2world = (vec2)m_window_size / (vec2)m_size * m_window2world;
+        m_texel2world = (vec2)m_window_size / (vec2)m_size
+                                            * (vec2)m_window2world;
 
         m_oldmouse = ivec2(0, 0);
 
@@ -368,7 +369,7 @@ public:
                 z2 = z1 * z1 + r0;
                 z3 = z2 * z2 + r0;
                 z0 = z3 * z3 + r0;
-                if (z0.sqlen() >= maxsqlen)
+                if (sqlen(z0) >= maxsqlen)
                     break;
                 iter -= 4;
                 if (iter < 4)
@@ -377,11 +378,11 @@ public:
 
             if (iter)
             {
-                double n = z0.sqlen();
+                double n = sqlen(z0);
 
-                if (z1.sqlen() >= maxsqlen) { iter += 3; n = z1.sqlen(); }
-                else if (z2.sqlen() >= maxsqlen) { iter += 2; n = z2.sqlen(); }
-                else if (z3.sqlen() >= maxsqlen) { iter += 1; n = z3.sqlen(); }
+                if (sqlen(z1) >= maxsqlen) { iter += 3; n = sqlen(z1); }
+                else if (sqlen(z2) >= maxsqlen) { iter += 2; n = sqlen(z2); }
+                else if (sqlen(z3) >= maxsqlen) { iter += 1; n = sqlen(z3); }
 
                 if (n > maxsqlen * maxsqlen)
                     n = maxsqlen * maxsqlen;

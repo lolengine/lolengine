@@ -67,16 +67,16 @@ LOLUNIT_FIXTURE(QuaternionTest)
     {
         quat a(2.0f, -2.0f, -8.0f, 3.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a.norm(), 81.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(a), 81.0f);
 
         quat b = a * ~a;
-        quat c(0.0f, 0.0f, 0.0f, a.norm());
+        quat c(0.0f, 0.0f, 0.0f, norm(a));
 
         LOLUNIT_ASSERT_EQUAL(b, c);
 
         quat d(2.0f, 3.0f, -4.0f, -1.0f);
 
-        LOLUNIT_ASSERT_EQUAL((a * d).norm(), a.norm() * d.norm());
+        LOLUNIT_ASSERT_EQUAL(norm(a * d), norm(a) * norm(d));
     }
 
     LOLUNIT_TEST(Base)
@@ -86,10 +86,10 @@ LOLUNIT_FIXTURE(QuaternionTest)
         quat k(0.0f, 0.0f, 1.0f, 0.0f);
         quat one(0.0f, 0.0f, 0.0f, 1.0f);
 
-        LOLUNIT_ASSERT_EQUAL(i.norm(), 1.0f);
-        LOLUNIT_ASSERT_EQUAL(j.norm(), 1.0f);
-        LOLUNIT_ASSERT_EQUAL(k.norm(), 1.0f);
-        LOLUNIT_ASSERT_EQUAL(one.norm(), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(i), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(j), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(k), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(one), 1.0f);
 
         LOLUNIT_ASSERT_EQUAL(i * i, -one);
         LOLUNIT_ASSERT_EQUAL(j * j, -one);
@@ -109,7 +109,7 @@ LOLUNIT_FIXTURE(QuaternionTest)
         quat a(2.0f, -2.0f, -8.0f, 3.0f);
         quat b = normalize(a);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.norm(), 1.0, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(b), 1.0, 1e-8);
     }
 
     LOLUNIT_TEST(Reciprocal)

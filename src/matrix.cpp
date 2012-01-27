@@ -276,7 +276,7 @@ template<> mat4 mat4::rotate(float angle, vec3 v)
 template<> mat4 mat4::rotate(quat q)
 {
     mat4 ret(1.0f);
-    float n = q.norm();
+    float n = norm(q);
 
     if (!n)
         return ret;
