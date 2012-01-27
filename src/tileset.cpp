@@ -64,7 +64,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     data->img = new Image(path);
     data->isize = data->img->GetSize();
 
-    if (count.i > 0 && count.j > 0)
+    if (count.x > 0 && count.y > 0)
     {
         data->count = count;
         data->size = data->isize / count;
@@ -73,8 +73,8 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     {
         if (size.x <= 0 || size.y <= 0)
             size = ivec2(32, 32);
-        data->count.i = data->isize.x > size.i ? data->isize.x / size.i : 1;
-        data->count.j = data->isize.y > size.j ? data->isize.y / size.j : 1;
+        data->count.x = data->isize.x > size.x ? data->isize.x / size.x : 1;
+        data->count.y = data->isize.y > size.y ? data->isize.y / size.y : 1;
         data->size = size;
     }
 
@@ -82,7 +82,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     data->ty = (float)data->size.y / PotUp(data->isize.y);
 
     data->dilate = dilate;
-    data->ntiles = data->count.i * data->count.j;
+    data->ntiles = data->count.x * data->count.y;
 
     m_drawgroup = DRAWGROUP_BEFORE;
 }
@@ -181,8 +181,8 @@ void TileSet::Bind()
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
                        float *vertex, float *texture)
 {
-    float tx = data->tx * ((id & 0xffff) % data->count.i);
-    float ty = data->ty * ((id & 0xffff) / data->count.i);
+    float tx = data->tx * ((id & 0xffff) % data->count.x);
+    float ty = data->ty * ((id & 0xffff) / data->count.x);
     float dilate = data->dilate;
 
     int dx = data->size.x;
