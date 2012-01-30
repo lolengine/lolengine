@@ -76,6 +76,10 @@ template<typename T, int I, int J, int K, int L> struct MagicVec4
                          : J > K ? J > L ? J : L : K > L ? K : L)];
 };
 
+/*
+ * Helper macros for vector type member functions
+ */
+
 #define MEMBER_OPS() \
     inline T& operator[](int n) { return *(&x + n); } \
     inline T const& operator[](int n) const { return *(&x + n); } \
@@ -151,7 +155,11 @@ template <typename T> struct Vec2
     inline Vec2(T _x, T _y) { x = _x; y = _y; }
 
     template<int I, int J>
-    inline Vec2<T>(MagicVec2<T, I, J> const &v)
+    inline Vec2(MagicVec2<T, I, J> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]) {}
+
+    template<typename U, int I, int J>
+    explicit inline Vec2(MagicVec2<U, I, J> const &v)
       : x(v.ptr[I]), y(v.ptr[J]) {}
 
     MEMBER_OPS()
@@ -274,7 +282,11 @@ template <typename T> struct Vec3
     inline Vec3(T _x, Vec2<T> _yz) { x = _x; y = _yz.x; z = _yz.y; }
 
     template<int I, int J, int K>
-    inline Vec3<T>(MagicVec3<T, I, J, K> const &v)
+    inline Vec3(MagicVec3<T, I, J, K> const &v)
+      : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]) {}
+
+    template<typename U, int I, int J, int K>
+    explicit inline Vec3(MagicVec3<U, I, J, K> const &v)
       : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]) {}
 
     MEMBER_OPS()
@@ -433,11 +445,11 @@ template <typename T> struct Vec4
     inline Vec4(T _x, Vec3<T> _yzw) : x(_x), y(_yzw.x), z(_yzw.y), w(_yzw.z) { }
 
     template<int I, int J, int K, int L>
-    inline Vec4<T>(MagicVec4<T, I, J, K, L> const &v)
+    inline Vec4(MagicVec4<T, I, J, K, L> const &v)
       : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]), w(v.ptr[L]) {}
 
     template<typename U, int I, int J, int K, int L>
-    explicit inline Vec4<T>(MagicVec4<U, I, J, K, L> const &v)
+    explicit inline Vec4(MagicVec4<U, I, J, K, L> const &v)
       : x(v.ptr[I]), y(v.ptr[J]), z(v.ptr[K]), w(v.ptr[L]) {}
 
     MEMBER_OPS()
@@ -793,11 +805,6 @@ template <typename T> struct Vec4
     };
 };
 
-inline Vec2<float> operator /(Vec2<float> a, Vec2<float> b)
-{
-    return Vec2<float>(a.x / b.x, a.y / b.y);
-}
-
 /*
  * 4-element quaternions
  */
@@ -852,9 +859,9 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
  * Common operators for all vector types, including quaternions
  */
 
-#define VECTOR_OP(tname, op) \
-    template<typename T> \
-    inline tname<T> operator op(tname<T> const &a, tname<T> const &b) \
+#define VECTOR_OP(tname, op, tprefix, T) \
+    tprefix \
+    static inline tname<T> operator op(tname<T> const &a, tname<T> const &b) \
     { \
         tname<T> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
@@ -862,15 +869,15 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     } \
     \
-    template<typename T> \
-    inline tname<T> operator op##=(tname<T> &a, tname<T> const &b) \
+    tprefix \
+    static inline tname<T> operator op##=(tname<T> &a, tname<T> const &b) \
     { \
         return a = a op b; \
     }
 
-#define BOOL_OP(tname, op, op2, ret) \
-    template<typename T> \
-    inline bool operator op(tname<T> const &a, tname<T> const &b) \
+#define BOOL_OP(tname, op, op2, ret, tprefix, T) \
+    tprefix \
+    static inline bool operator op(tname<T> const &a, tname<T> const &b) \
     { \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
             if (!(a[n] op2 b[n])) \
@@ -878,20 +885,29 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
-#define SCALAR_OP(tname, op) \
-    template<typename T> \
-    inline tname<T> operator op##=(tname<T> &a, T const &val) \
-    { \
-        return a = a op val; \
-    } \
-    \
-    template<typename T> \
+#define SCALAR_OP(tname, op, tprefix, T) \
+    tprefix \
     static inline tname<T> operator op(tname<T> const &a, T const &val) \
     { \
         tname<T> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
             ret[n] = a[n] op val; \
         return ret; \
+    } \
+    \
+    tprefix \
+    static inline tname<T> operator op(T const &val, tname<T> const &a) \
+    { \
+        tname<T> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret[n] = a[n] op val; \
+        return ret; \
+    } \
+    \
+    tprefix \
+    static inline tname<T> operator op##=(tname<T> &a, T const &val) \
+    { \
+        return a = a op val; \
     }
 
 #define SCALAR_PROMOTE_OP(tname, op, U) \
@@ -904,22 +920,18 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
-#define GLOBALS(tname) \
-    SCALAR_OP(tname, *) \
-    SCALAR_OP(tname, /) \
+#define GLOBAL_OPS(tname, tprefix, T) \
+    SCALAR_OP(tname, *, tprefix, T) \
+    SCALAR_OP(tname, /, tprefix, T) \
     \
-    SCALAR_PROMOTE_OP(tname, *, int) \
-    SCALAR_PROMOTE_OP(tname, *, float) \
-    SCALAR_PROMOTE_OP(tname, *, double) \
+    VECTOR_OP(tname, -, tprefix, T) \
+    VECTOR_OP(tname, +, tprefix, T) \
     \
-    VECTOR_OP(tname, -) \
-    VECTOR_OP(tname, +) \
+    BOOL_OP(tname, ==, ==, true, tprefix, T) \
+    BOOL_OP(tname, !=, ==, false, tprefix, T) \
     \
-    BOOL_OP(tname, ==, ==, true) \
-    BOOL_OP(tname, !=, ==, false) \
-    \
-    template<typename T> \
-    inline tname<T> operator -(tname<T> const &a) \
+    tprefix \
+    static inline tname<T> operator -(tname<T> const &a) \
     { \
         tname<T> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
@@ -927,8 +939,8 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     } \
     \
-    template<typename T> \
-    inline T sqlen(tname<T> const &a) \
+    tprefix \
+    static inline T sqlen(tname<T> const &a) \
     { \
         T acc = 0; \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
@@ -936,43 +948,64 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return acc; \
     } \
     \
-    template<typename T> \
-    inline double len(tname<T> const &a) \
+    tprefix \
+    static inline double len(tname<T> const &a) \
     { \
         using namespace std; \
         return sqrt((double)sqlen(a)); \
     } \
     \
-    /* dot() does not take const refs because the function is not inlined, \
-     * so we try to avoid carrying a shitty pointer around. */ \
-    template<typename T> \
-    T dot(tname<T> a, tname<T> b); \
+    tprefix \
+    static inline T dot(tname<T> const &a, tname<T> const &b) \
+    { \
+        T ret = 0; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+            ret += a[n] * b[n]; \
+        return ret; \
+    } \
     \
-    template<typename T> \
+    tprefix \
     static inline tname<T> normalize(tname<T> const &val) \
     { \
         T norm = len(val); \
         return norm ? val / norm : val * (T)0; \
     }
 
-GLOBALS(Vec2)
-GLOBALS(Cmplx)
-GLOBALS(Vec3)
-GLOBALS(Vec4)
-GLOBALS(Quat)
+#define GLOBAL_TEMPLATE_OPS(tname) \
+    GLOBAL_OPS(tname, template<typename T>, T)
 
-#define OTHER_OPS(tname) \
-    VECTOR_OP(tname, *) \
-    VECTOR_OP(tname, /) \
+#define ALL_GLOBAL_OPS(tname, tprefix, T) \
+    VECTOR_OP(tname, *, tprefix, T) \
+    VECTOR_OP(tname, /, tprefix, T) \
     \
-    BOOL_OP(tname, <=, <=, true) \
-    BOOL_OP(tname, >=, >=, true) \
-    BOOL_OP(tname, <, <, true) \
-    BOOL_OP(tname, >, >, true)
+    GLOBAL_OPS(tname, tprefix, T) \
+    \
+    BOOL_OP(tname, <=, <=, true, tprefix, T) \
+    BOOL_OP(tname, >=, >=, true, tprefix, T) \
+    BOOL_OP(tname, <, <, true, tprefix, T) \
+    BOOL_OP(tname, >, >, true, tprefix, T)
 
-OTHER_OPS(Vec2)
-OTHER_OPS(Vec3)
-OTHER_OPS(Vec4)
+/* FIXME: a few problems need to be fixed before we can use "half" here. It
+ * will probably never work until we switch to C++11 because it's not really
+ * a POD class. */
+#define GLOBAL_TYPED_OPS(tname) \
+    ALL_GLOBAL_OPS(tname, , float) \
+    ALL_GLOBAL_OPS(tname, , double) \
+    ALL_GLOBAL_OPS(tname, , int8_t) \
+    ALL_GLOBAL_OPS(tname, , uint8_t) \
+    ALL_GLOBAL_OPS(tname, , int16_t) \
+    ALL_GLOBAL_OPS(tname, , uint16_t) \
+    ALL_GLOBAL_OPS(tname, , int32_t) \
+    ALL_GLOBAL_OPS(tname, , uint32_t) \
+    ALL_GLOBAL_OPS(tname, , int64_t) \
+    ALL_GLOBAL_OPS(tname, , uint64_t)
+
+GLOBAL_TEMPLATE_OPS(Cmplx)
+GLOBAL_TEMPLATE_OPS(Quat)
+
+GLOBAL_TYPED_OPS(Vec2)
+GLOBAL_TYPED_OPS(Vec3)
+GLOBAL_TYPED_OPS(Vec4)
 
 /*
  * Magic swizzling (part 2/2)
