@@ -18,7 +18,7 @@
 
 #include <cstdio>
 
-#include "lol/math/matrix.h"
+#include "lol/math/vector.h"
 
 namespace lol
 {
