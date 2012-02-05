@@ -22,14 +22,14 @@ noinst_PROGRAMS = quad benchsuite testsuite
 TESTS = testsuite
 
 testsuite_SOURCES = testsuite.cpp \
-    unit/matrix.cpp unit/half.cpp unit/trig.cpp unit/build.cpp \
+    unit/vector.cpp unit/half.cpp unit/trig.cpp unit/build.cpp \
     unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp
 testsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 benchsuite_SOURCES = benchsuite.cpp \
-    benchmark/matrix.cpp benchmark/half.cpp benchmark/trig.cpp \
+    benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
     benchmark/real.cpp
 benchsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@

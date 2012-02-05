@@ -2,7 +2,7 @@
 noinst_LIBRARIES = liblol.a
 
 liblol_a_SOURCES = \
-    core.h matrix.cpp real.cpp tiler.cpp tiler.h dict.cpp dict.h \
+    core.h vector.cpp real.cpp tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
     map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h log.cpp log.h \
@@ -13,7 +13,7 @@ liblol_a_SOURCES = \
     platform.cpp platform.h sprite.cpp sprite.h trig.cpp trig.h \
     \
     lol/unit.h \
-    lol/math/matrix.h lol/math/real.h lol/math/remez.h \
+    lol/math/vector.h lol/math/real.h lol/math/remez.h \
     \
     application/application.cpp application/application.h \
     eglapp.cpp eglapp.h \

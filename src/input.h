@@ -16,7 +16,7 @@
 #if !defined __LOL_INPUT_H__
 #define __LOL_INPUT_H__
 
-#include "lol/math/matrix.h"
+#include "lol/math/vector.h"
 
 namespace lol
 {
