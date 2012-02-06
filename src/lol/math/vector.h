@@ -910,7 +910,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
-#define DECLARE_ALL_GLOBAL_OPS(tname, tprefix, T) \
+#define DECLARE_OTHER_GLOBAL_OPS(tname, tprefix, T) \
     DECLARE_SCALAR_OP(tname, *, tprefix, T) \
     DECLARE_SCALAR_OP(tname, /, tprefix, T) \
     \
@@ -962,13 +962,13 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     }
 
 #define DECLARE_GLOBAL_TEMPLATE_OPS(tname) \
-    DECLARE_ALL_GLOBAL_OPS(tname, template<typename T>, T)
+    DECLARE_OTHER_GLOBAL_OPS(tname, template<typename T>, T)
 
 #define DECLARE_ALL_GLOBAL_OPS(tname, tprefix, T) \
     DECLARE_VECTOR_OP(tname, *, tprefix, T) \
     DECLARE_VECTOR_OP(tname, /, tprefix, T) \
     \
-    DECLARE_ALL_GLOBAL_OPS(tname, tprefix, T) \
+    DECLARE_OTHER_GLOBAL_OPS(tname, tprefix, T) \
     \
     DECLARE_BOOL_OP(tname, <=, <=, true, tprefix, T) \
     DECLARE_BOOL_OP(tname, >=, >=, true, tprefix, T) \
@@ -1002,7 +1002,7 @@ DECLARE_GLOBAL_TYPED_OPS(Vec4)
 #undef DECLARE_VECTOR_OP
 #undef DECLARE_BOOL_OP
 #undef DECLARE_SCALAR_OP
-#undef DECLARE_ALL_GLOBAL_OPS
+#undef DECLARE_GLOBAL_OPS
 #undef DECLARE_GLOBAL_TEMPLATE_OPS
 #undef DECLARE_ALL_GLOBAL_OPS
 #undef DECLARE_GLOBAL_TYPED_OPS
