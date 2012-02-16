@@ -55,7 +55,7 @@ DECLARE_VECTOR_TYPEDEFS(Mat4, mat4)
 
 template<typename T, int N> struct XVec2
 {
-    inline Vec2<T> operator =(Vec2<T> that);
+    inline Vec2<T> operator =(Vec2<T> const &that);
 
     static int const I = (N >> 4) & 3;
     static int const J = (N >> 0) & 3;
@@ -64,7 +64,7 @@ template<typename T, int N> struct XVec2
 
 template<typename T, int N> struct XVec3
 {
-    inline Vec3<T> operator =(Vec3<T> that);
+    inline Vec3<T> operator =(Vec3<T> const &that);
 
     static int const I = (N >> 8) & 3;
     static int const J = (N >> 4) & 3;
@@ -75,7 +75,7 @@ template<typename T, int N> struct XVec3
 
 template<typename T, int N> struct XVec4
 {
-    inline Vec4<T> operator =(Vec4<T> that);
+    inline Vec4<T> operator =(Vec4<T> const &that);
 
     static int const I = (N >> 12) & 3;
     static int const J = (N >> 8) & 3;
@@ -1012,21 +1012,21 @@ DECLARE_GLOBAL_TYPED_OPS(Vec4)
  */
 
 template<typename T, int N>
-inline Vec2<T> XVec2<T, N>::operator =(Vec2<T> that)
+inline Vec2<T> XVec2<T, N>::operator =(Vec2<T> const &that)
 {
     ptr[I] = that[0]; ptr[J] = that[1];
     return *this;
 }
 
 template<typename T, int N>
-inline Vec3<T> XVec3<T, N>::operator =(Vec3<T> that)
+inline Vec3<T> XVec3<T, N>::operator =(Vec3<T> const &that)
 {
     ptr[I] = that[0]; ptr[J] = that[1]; ptr[K] = that[2];
     return *this;
 }
 
 template<typename T, int N>
-inline Vec4<T> XVec4<T, N>::operator =(Vec4<T> that)
+inline Vec4<T> XVec4<T, N>::operator =(Vec4<T> const &that)
 {
     ptr[I] = that[0]; ptr[J] = that[1]; ptr[K] = that[2]; ptr[L] = that[3];
     return *this;
