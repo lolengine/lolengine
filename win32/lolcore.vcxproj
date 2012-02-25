@@ -150,6 +150,7 @@
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
+    <ClCompile Include="..\src\gpu\vbo.cpp" />
     <ClCompile Include="..\src\gradient.cpp" />
     <ClCompile Include="..\src\half.cpp" />
     <ClCompile Include="..\src\hash.cpp" />
@@ -158,7 +159,6 @@
     <ClCompile Include="..\src\layer.cpp" />
     <ClCompile Include="..\src\log.cpp" />
     <ClCompile Include="..\src\map.cpp" />
-    <ClCompile Include="..\src\matrix.cpp" />
     <ClCompile Include="..\src\platform.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlapp.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlinput.cpp" />
@@ -175,6 +175,7 @@
     <ClCompile Include="..\src\tileset.cpp" />
     <ClCompile Include="..\src\timer.cpp" />
     <ClCompile Include="..\src\trig.cpp" />
+    <ClCompile Include="..\src\vector.cpp" />
     <ClCompile Include="..\src\video.cpp" />
     <ClCompile Include="..\src\world.cpp" />
     <ClCompile Include="..\src\worldentity.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
+    <ClInclude Include="..\src\gpu\vbo.h" />
     <ClInclude Include="..\src\gradient.h" />
     <ClInclude Include="..\src\half.h" />
     <ClInclude Include="..\src\hash.h" />
@@ -203,14 +205,16 @@
     <ClInclude Include="..\src\log.h" />
     <ClInclude Include="..\src\loldebug.h" />
     <ClInclude Include="..\src\lolgl.h" />
+    <ClInclude Include="..\src\lol\math\real.h" />
+    <ClInclude Include="..\src\lol\math\remez.h" />
+    <ClInclude Include="..\src\lol\math\vector.h" />
+    <ClInclude Include="..\src\lol\unit.h" />
     <ClInclude Include="..\src\map.h" />
-    <ClInclude Include="..\src\matrix.h" />
     <ClInclude Include="..\src\numeric.h" />
     <ClInclude Include="..\src\platform.h" />
     <ClInclude Include="..\src\platform\sdl\sdlapp.h" />
     <ClInclude Include="..\src\platform\sdl\sdlinput.h" />
     <ClInclude Include="..\src\profiler.h" />
-    <ClInclude Include="..\src\real.h" />
     <ClInclude Include="..\src\sample.h" />
     <ClInclude Include="..\src\sampler.h" />
     <ClInclude Include="..\src\scene.h" />
@@ -218,6 +222,8 @@
     <ClInclude Include="..\src\simd.h" />
     <ClInclude Include="..\src\sprite.h" />
     <ClInclude Include="..\src\text.h" />
+    <ClInclude Include="..\src\thread\thread.h" />
+    <ClInclude Include="..\src\thread\threadbase.h" />
     <ClInclude Include="..\src\ticker.h" />
     <ClInclude Include="..\src\tiler.h" />
     <ClInclude Include="..\src\tileset.h" />

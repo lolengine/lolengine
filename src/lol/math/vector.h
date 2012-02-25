@@ -957,7 +957,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     tprefix \
     static inline tname<T> normalize(tname<T> const &val) \
     { \
-        T norm = len(val); \
+        T norm = (T)len(val); \
         return norm ? val / norm : val * (T)0; \
     }
 

@@ -34,7 +34,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_sin(f);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -47,7 +47,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_sin(f);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
     }
 
@@ -63,7 +63,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_cos(f);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -76,7 +76,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_cos(f);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
     }
 
@@ -95,8 +95,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double b1, b2;
             lol_sincos(f, &b1, &b2);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, std::fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, std::fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -112,8 +112,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double b1, b2;
             lol_sincos(f, &b1, &b2);
             LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, std::fabs(f) * 1e-11);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, std::fabs(f) * 1e-11);
         }
     }
 
@@ -129,12 +129,12 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_tan(f);
             LOLUNIT_SET_CONTEXT(f);
-            if (fabs(a) > 1e4)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
-            else if (fabs(a) > 1.0)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+            if (std::fabs(a) > 1e4)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(a) * std::fabs(a) * 1e-11);
+            else if (std::fabs(a) > 1.0)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(a) * 1e-11);
             else
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -147,12 +147,12 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b = lol_tan(f);
             LOLUNIT_SET_CONTEXT(f);
-            if (fabs(a) > 1e4)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
-            else if (fabs(a) > 1.0)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+            if (std::fabs(a) > 1e4)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(a) * std::fabs(a) * 1e-11);
+            else if (std::fabs(a) > 1.0)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(a) * 1e-11);
             else
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, std::fabs(f) * 1e-11);
         }
     }
 };

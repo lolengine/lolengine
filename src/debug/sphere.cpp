@@ -76,7 +76,7 @@ class DebugSphereData
 
     void Normalize(GLfloat *a)
     {
-        GLfloat d = 1.0f / sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+        GLfloat d = 1.0f / std::sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
         a[0] *= d; a[1] *= d; a[2] *= d;
     }
 
