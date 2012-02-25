@@ -22,11 +22,11 @@
 #   include <iostream>
 #endif
 
+#include "half.h"
+#include "lol/math/real.h"
+
 namespace lol
 {
-
-class half;
-class real;
 
 #define DECLARE_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
@@ -40,7 +40,8 @@ class real;
     typedef tname<int32_t> i##suffix; \
     typedef tname<uint32_t> u##suffix; \
     typedef tname<int64_t> i64##suffix; \
-    typedef tname<uint64_t> u64##suffix;
+    typedef tname<uint64_t> u64##suffix; \
+    typedef tname<real> r##suffix; \
 
 DECLARE_VECTOR_TYPEDEFS(Vec2, vec2)
 DECLARE_VECTOR_TYPEDEFS(Cmplx, cmplx)
@@ -90,8 +91,8 @@ template<typename T, int N> struct XVec4
  */
 
 #define DECLARE_MEMBER_OPS(tname) \
-    inline T& operator[](int n) { return *(&x + n); } \
-    inline T const& operator[](int n) const { return *(&x + n); } \
+    inline T& operator[](int n) { return *(&this->x + n); } \
+    inline T const& operator[](int n) const { return *(&this->x + n); } \
     \
     void printf() const; \
     \
@@ -108,27 +109,10 @@ template<typename T, int N> struct XVec4
  * 2-element vectors
  */
 
-template <typename T> struct Vec2
+template <typename T> struct BVec2
 {
-    inline Vec2() {}
-    inline Vec2(T X, T Y) : x(X), y(Y) {}
-
-    explicit inline Vec2(T X) : x(X), y(X) {}
-
-    template<int N>
-    inline Vec2(XVec2<T, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]) {}
-
-    template<typename U, int N>
-    explicit inline Vec2(XVec2<U, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]) {}
-
-    DECLARE_MEMBER_OPS(Vec2)
-
-#if !defined __ANDROID__
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
-#endif
+    explicit inline BVec2() {}
+    explicit inline BVec2(T X, T Y) : x(X), y(Y) {}
 
     union
     {
@@ -167,6 +151,45 @@ template <typename T> struct Vec2
         XVec4<T,0x1110> const yyyx, gggr, ttts;
         XVec4<T,0x1111> const yyyy, gggg, tttt;
     };
+};
+
+template <> struct BVec2<half>
+{
+    explicit inline BVec2() {}
+    explicit inline BVec2(half X, half Y) : x(X), y(Y) {}
+
+    half x, y;
+};
+
+template <> struct BVec2<real>
+{
+    explicit inline BVec2() {}
+    explicit inline BVec2(real X, real Y) : x(X), y(Y) {}
+
+    real x, y;
+};
+
+template <typename T> struct Vec2 : BVec2<T>
+{
+    inline Vec2() {}
+    inline Vec2(T X, T Y) : BVec2<T>(X, Y) {}
+
+    explicit inline Vec2(T X) : BVec2<T>(X, X) {}
+
+    template<int N>
+    inline Vec2(XVec2<T, N> const &v)
+      : BVec2<T>(v.ptr[v.I], v.ptr[v.J]) {}
+
+    template<typename U, int N>
+    explicit inline Vec2(XVec2<U, N> const &v)
+      : BVec2<T>(v.ptr[v.I], v.ptr[v.J]) {}
+
+    DECLARE_MEMBER_OPS(Vec2)
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
+#endif
 };
 
 /*
@@ -245,32 +268,10 @@ static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
  * 3-element vectors
  */
 
-template <typename T> struct Vec3
+template <typename T> struct BVec3
 {
-    inline Vec3() {}
-    inline Vec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
-    inline Vec3(Vec2<T> XY, T Z) : x(XY.x), y(XY.y), z(Z) {}
-    inline Vec3(T X, Vec2<T> YZ) : x(X), y(YZ.x), z(YZ.y) {}
-
-    explicit inline Vec3(T X) : x(X), y(X), z(X) {}
-
-    template<int N>
-    inline Vec3(XVec3<T, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]), z(v.ptr[v.K]) {}
-
-    template<typename U, int N>
-    explicit inline Vec3(XVec3<U, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]), z(v.ptr[v.K]) {}
-
-    DECLARE_MEMBER_OPS(Vec3)
-
-    template<typename U>
-    friend Vec3<U> cross(Vec3<U>, Vec3<U>);
-
-#if !defined __ANDROID__
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
-#endif
+    explicit inline BVec3() {}
+    explicit inline BVec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
 
     union
     {
@@ -400,37 +401,58 @@ template <typename T> struct Vec3
     };
 };
 
+template <> struct BVec3<half>
+{
+    explicit inline BVec3() {}
+    explicit inline BVec3(half X, half Y, half Z) : x(X), y(Y), z(Z) {}
+
+    half x, y, z;
+};
+
+template <> struct BVec3<real>
+{
+    explicit inline BVec3() {}
+    explicit inline BVec3(real X, real Y, real Z) : x(X), y(Y), z(Z) {}
+
+    real x, y, z;
+};
+
+template <typename T> struct Vec3 : BVec3<T>
+{
+    inline Vec3() {}
+    inline Vec3(T X, T Y, T Z) : BVec3<T>(X, Y, Z) {}
+    inline Vec3(Vec2<T> XY, T Z) : BVec3<T>(XY.x, XY.y, Z) {}
+    inline Vec3(T X, Vec2<T> YZ) : BVec3<T>(X, YZ.x, YZ.y) {}
+
+    explicit inline Vec3(T X) : BVec3<T>(X, X, X) {}
+
+    template<int N>
+    inline Vec3(XVec3<T, N> const &v)
+      : BVec3<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K]) {}
+
+    template<typename U, int N>
+    explicit inline Vec3(XVec3<U, N> const &v)
+      : BVec3<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K]) {}
+
+    DECLARE_MEMBER_OPS(Vec3)
+
+    template<typename U>
+    friend Vec3<U> cross(Vec3<U>, Vec3<U>);
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
+#endif
+};
+
 /*
  * 4-element vectors
  */
 
-template <typename T> struct Vec4
+template <typename T> struct BVec4
 {
-    inline Vec4() {}
-    inline Vec4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
-    inline Vec4(Vec2<T> XY, T Z, T W) : x(XY.x), y(XY.y), z(Z), w(W) {}
-    inline Vec4(T X, Vec2<T> YZ, T W) : x(X), y(YZ.x), z(YZ.y), w(W) {}
-    inline Vec4(T X, T Y, Vec2<T> ZW) : x(X), y(Y), z(ZW.x), w(ZW.y) {}
-    inline Vec4(Vec2<T> XY, Vec2<T> ZW) : x(XY.x), y(XY.y), z(ZW.x), w(ZW.y) {}
-    inline Vec4(Vec3<T> XYZ, T W) : x(XYZ.x), y(XYZ.y), z(XYZ.z), w(W) {}
-    inline Vec4(T X, Vec3<T> YZW) : x(X), y(YZW.x), z(YZW.y), w(YZW.z) {}
-
-    explicit inline Vec4(T X) : x(X), y(X), z(X), w(X) {}
-
-    template<int N>
-    inline Vec4(XVec4<T, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]), z(v.ptr[v.K]), w(v.ptr[v.L]) {}
-
-    template<typename U, int N>
-    explicit inline Vec4(XVec4<U, N> const &v)
-      : x(v.ptr[v.I]), y(v.ptr[v.J]), z(v.ptr[v.K]), w(v.ptr[v.L]) {}
-
-    DECLARE_MEMBER_OPS(Vec4)
-
-#if !defined __ANDROID__
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
-#endif
+    explicit inline BVec4() {}
+    explicit inline BVec4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
 
     union
     {
@@ -777,6 +799,53 @@ template <typename T> struct Vec4
         XVec4<T,0x3332> const wwwz, aaab, qqqp;
         XVec4<T,0x3333> const wwww, aaaa, qqqq;
     };
+};
+
+template <> struct BVec4<half>
+{
+    explicit inline BVec4() {}
+    explicit inline BVec4(half X, half Y, half Z, half W)
+     : x(X), y(Y), z(Z), w(W) {}
+
+    half x, y, z, w;
+};
+
+template <> struct BVec4<real>
+{
+    explicit inline BVec4() {}
+    explicit inline BVec4(real X, real Y, real Z, real W)
+     : x(X), y(Y), z(Z), w(W) {}
+
+    real x, y, z, w;
+};
+
+template <typename T> struct Vec4 : BVec4<T>
+{
+    inline Vec4() {}
+    inline Vec4(T X, T Y, T Z, T W) : BVec4<T>(X, Y, Z, W) {}
+    inline Vec4(Vec2<T> XY, T Z, T W) : BVec4<T>(XY.x, XY.y, Z, W) {}
+    inline Vec4(T X, Vec2<T> YZ, T W) : BVec4<T>(X, YZ.x, YZ.y, W) {}
+    inline Vec4(T X, T Y, Vec2<T> ZW) : BVec4<T>(X, Y, ZW.x, ZW.y) {}
+    inline Vec4(Vec2<T> XY, Vec2<T> ZW) : BVec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
+    inline Vec4(Vec3<T> XYZ, T W) : BVec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
+    inline Vec4(T X, Vec3<T> YZW) : BVec4<T>(X, YZW.x, YZW.y, YZW.z) {}
+
+    explicit inline Vec4(T X) : BVec4<T>(X, X, X, X) {}
+
+    template<int N>
+    inline Vec4(XVec4<T, N> const &v)
+      : BVec4<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K], v.ptr[v.L]) {}
+
+    template<typename U, int N>
+    explicit inline Vec4(XVec4<U, N> const &v)
+      : BVec4<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K], v.ptr[v.L]) {}
+
+    DECLARE_MEMBER_OPS(Vec4)
+
+#if !defined __ANDROID__
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
+#endif
 };
 
 /*
