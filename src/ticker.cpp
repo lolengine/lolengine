@@ -75,7 +75,7 @@ private:
     static void *DrawThreadMain(void *p); /* unused */
     static void *DiskThreadMain(void *p);
     Thread *gamethread, *drawthread, *diskthread;
-    Queue gametick, drawtick;
+    Queue<int> gametick, drawtick;
 
     /* Shutdown management */
     int quit, quitframe, quitdelay, panic;
