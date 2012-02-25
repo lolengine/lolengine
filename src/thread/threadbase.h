@@ -74,7 +74,7 @@ private:
 #endif
 };
 
-class QueueBase
+template<typename T, int N> class QueueBase
 {
 public:
     QueueBase()
@@ -105,7 +105,7 @@ public:
 #endif
     }
 
-    void Push(int value)
+    void Push(T value)
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -134,7 +134,7 @@ public:
 #endif
     }
 
-    int Pop()
+    T Pop()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -151,7 +151,7 @@ public:
 #endif
 
         /* Pop value */
-        int ret = m_values[m_start];
+        T ret = m_values[m_start];
         m_start = (m_start + 1) % CAPACITY;
         m_count--;
 
@@ -169,8 +169,8 @@ public:
     }
 
 private:
-    static size_t const CAPACITY = 100;
-    int m_values[CAPACITY];
+    static size_t const CAPACITY = N;
+    T m_values[CAPACITY];
     size_t m_start, m_count;
 #if defined HAVE_PTHREAD_H
     size_t m_poppers, m_pushers;

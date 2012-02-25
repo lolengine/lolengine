@@ -31,10 +31,10 @@ public:
     Mutex() : MutexBase() {}
 };
 
-class Queue : public QueueBase
+template<typename T, int N = 128> class Queue : public QueueBase<T, N>
 {
 public:
-    Queue() : QueueBase() {}
+    Queue() : QueueBase<T, N>() {}
 };
 
 class Thread : ThreadBase

@@ -769,7 +769,7 @@ private:
 
     /* Worker threads */
     Thread *m_threads[MAX_THREADS];
-    Queue m_spawnqueue, m_jobqueue, m_donequeue;
+    Queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
 
     /* Debug information */
 #if !defined __native_client__
