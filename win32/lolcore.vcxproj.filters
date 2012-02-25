@@ -20,8 +20,47 @@
     <Filter Include="src\platform\sdl">
       <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\lol">
+      <UniqueIdentifier>{0edcf1a5-3c9c-4425-918c-aa2cbebc51c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\lol\math">
+      <UniqueIdentifier>{1e0b7a4c-425f-4d4f-945e-ba2ac9386ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\gpu">
+      <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\thread">
+      <UniqueIdentifier>{d31f75ec-73c8-4bda-9b8c-6d62a55bc30d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\image\image.cpp">
+      <Filter>src\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug\fps.cpp">
+      <Filter>src\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug\quad.cpp">
+      <Filter>src\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug\record.cpp">
+      <Filter>src\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug\sphere.cpp">
+      <Filter>src\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug\stats.cpp">
+      <Filter>src\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shader\shader.cpp">
+      <Filter>src\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\platform\sdl\sdlapp.cpp">
+      <Filter>src\platform\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\platform\sdl\sdlinput.cpp">
+      <Filter>src\platform\sdl</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\audio.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -64,13 +103,13 @@
     <ClCompile Include="..\src\map.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\matrix.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\platform.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\profiler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\real.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\sample.cpp">
@@ -103,6 +142,9 @@
     <ClCompile Include="..\src\trig.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vector.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\video.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -112,38 +154,38 @@
     <ClCompile Include="..\src\worldentity.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\image.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\debug\fps.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\debug\quad.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\debug\record.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\debug\sphere.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\debug\stats.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\shader\shader.cpp">
-      <Filter>src\shader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\platform\sdl\sdlapp.cpp">
-      <Filter>src\platform\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\platform\sdl\sdlinput.cpp">
-      <Filter>src\platform\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\real.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\gpu\vbo.cpp">
+      <Filter>src\gpu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\image\image.h">
+      <Filter>src\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug\fps.h">
+      <Filter>src\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug\quad.h">
+      <Filter>src\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug\record.h">
+      <Filter>src\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug\sphere.h">
+      <Filter>src\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug\stats.h">
+      <Filter>src\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shader\shader.h">
+      <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform\sdl\sdlinput.h">
+      <Filter>src\platform\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform\sdl\sdlapp.h">
+      <Filter>src\platform\sdl</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\audio.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -198,9 +240,6 @@
     <ClInclude Include="..\src\map.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\matrix.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\numeric.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -252,35 +291,26 @@
     <ClInclude Include="..\src\worldentity.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\image\image.h">
-      <Filter>src\image</Filter>
+    <ClInclude Include="..\src\lol\math\real.h">
+      <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\fps.h">
-      <Filter>src\debug</Filter>
+    <ClInclude Include="..\src\lol\math\remez.h">
+      <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\quad.h">
-      <Filter>src\debug</Filter>
+    <ClInclude Include="..\src\lol\math\vector.h">
+      <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\record.h">
-      <Filter>src\debug</Filter>
+    <ClInclude Include="..\src\lol\unit.h">
+      <Filter>src\lol</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\sphere.h">
-      <Filter>src\debug</Filter>
+    <ClInclude Include="..\src\gpu\vbo.h">
+      <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\stats.h">
-      <Filter>src\debug</Filter>
+    <ClInclude Include="..\src\thread\thread.h">
+      <Filter>src\thread</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\shader\shader.h">
-      <Filter>src\shader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\platform\sdl\sdlinput.h">
-      <Filter>src\platform\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\platform\sdl\sdlapp.h">
-      <Filter>src\platform\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\real.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\src\thread\threadbase.h">
+      <Filter>src\thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

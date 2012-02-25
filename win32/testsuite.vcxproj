@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\testsuite.cpp" />
     <ClCompile Include="..\test\unit\build.cpp" />
+    <ClCompile Include="..\test\unit\cmplx.cpp" />
     <ClCompile Include="..\test\unit\half.cpp" />
-    <ClCompile Include="..\test\unit\matrix.cpp" />
+    <ClCompile Include="..\test\unit\image.cpp" />
+    <ClCompile Include="..\test\unit\quat.cpp" />
     <ClCompile Include="..\test\unit\real.cpp" />
     <ClCompile Include="..\test\unit\trig.cpp" />
+    <ClCompile Include="..\test\unit\vector.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{80F81C11-8DA2-4990-91CB-9807783BA46E}</ProjectGuid>
