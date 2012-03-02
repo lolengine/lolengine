@@ -66,7 +66,18 @@ public:
     static size_t convert(float *dst, half const *src, size_t nelem);
 
     /* Operations */
-    inline half operator -() { return makebits(bits ^ 0x8000u); }
+    bool operator ==(half x) const { return (float)*this == (float)x; }
+    bool operator !=(half x) const { return (float)*this != (float)x; }
+    bool operator <(half x) const { return (float)*this < (float)x; }
+    bool operator >(half x) const { return (float)*this > (float)x; }
+    bool operator <=(half x) const { return (float)*this <= (float)x; }
+    bool operator >=(half x) const { return (float)*this >= (float)x; }
+
+    bool operator !() const { return !(bool)*this; }
+    operator bool() const { return bits & 0x7fffu; }
+
+    inline half operator -() const { return makebits(bits ^ 0x8000u); }
+    inline half operator +() const { return *this; }
     inline half &operator +=(float f) { return (*this = (half)(*this + f)); }
     inline half &operator -=(float f) { return (*this = (half)(*this - f)); }
     inline half &operator *=(float f) { return (*this = (half)(*this * f)); }

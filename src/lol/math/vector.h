@@ -1052,10 +1052,8 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_BOOL_OP(tname, <, <, true, tprefix, T) \
     DECLARE_BOOL_OP(tname, >, >, true, tprefix, T)
 
-/* FIXME: a few problems need to be fixed before we can use "half" here. It
- * will probably never work until we switch to C++11 because it's not really
- * a POD class. */
 #define DECLARE_GLOBAL_TYPED_OPS(tname) \
+    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, half) \
     DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, float) \
     DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, double) \
     DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, int8_t) \
