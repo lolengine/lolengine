@@ -925,53 +925,58 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
  * Common operators for all vector types, including quaternions
  */
 
-#define DECLARE_VECTOR_OP(tname, op, tprefix, T) \
+#define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
     tprefix \
-    static inline tname<T> operator op(tname<T> const &a, tname<T> const &b) \
+    static inline tname<type> operator op(tname<type> const &a, \
+                                          tname<type> const &b) \
     { \
-        tname<T> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = a[n] op b[n]; \
         return ret; \
     } \
     \
     tprefix \
-    static inline tname<T> operator op##=(tname<T> &a, tname<T> const &b) \
+    static inline tname<type> operator op##=(tname<type> &a, \
+                                             tname<type> const &b) \
     { \
         return a = a op b; \
     }
 
-#define DECLARE_BOOL_OP(tname, op, op2, ret, tprefix, T) \
+#define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, type) \
     tprefix \
-    static inline bool operator op(tname<T> const &a, tname<T> const &b) \
+    static inline bool operator op(tname<type> const &a, \
+                                   tname<type> const &b) \
     { \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             if (!(a[n] op2 b[n])) \
                 return !ret; \
         return ret; \
     }
 
-#define DECLARE_SCALAR_OP(tname, op, tprefix, T) \
+#define DECLARE_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
     tprefix \
-    static inline tname<T> operator op(tname<T> const &a, T const &val) \
+    static inline tname<type> operator op(tname<type> const &a, \
+                                          type const &val) \
     { \
-        tname<T> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = a[n] op val; \
         return ret; \
     } \
     \
     tprefix \
-    static inline tname<T> operator op(T const &val, tname<T> const &a) \
+    static inline tname<type> operator op(type const &val, \
+                                          tname<type> const &a) \
     { \
-        tname<T> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = a[n] op val; \
         return ret; \
     } \
     \
     tprefix \
-    static inline tname<T> operator op##=(tname<T> &a, T const &val) \
+    static inline tname<type> operator op##=(tname<type> &a, type const &val) \
     { \
         return a = a op val; \
     }
@@ -979,7 +984,8 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 /* FIXME: this is not used yet */
 #define SCALAR_PROMOTE_OP(tname, op, U) \
     template<typename T> \
-    static inline tname<U> operator op(U const &val, tname<T> const &a) \
+    static inline tname<U> operator op(U const &val, \
+                                       tname<T> const &a) \
     { \
         tname<U> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
@@ -987,100 +993,106 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
-#define DECLARE_OTHER_GLOBAL_OPS(tname, tprefix, T) \
-    DECLARE_SCALAR_OP(tname, *, tprefix, T) \
-    DECLARE_SCALAR_OP(tname, /, tprefix, T) \
-    \
-    DECLARE_VECTOR_OP(tname, -, tprefix, T) \
-    DECLARE_VECTOR_OP(tname, +, tprefix, T) \
-    \
-    DECLARE_BOOL_OP(tname, ==, ==, true, tprefix, T) \
-    DECLARE_BOOL_OP(tname, !=, ==, false, tprefix, T) \
-    \
+#define DECLARE_UNARY_OPS(tname, tprefix, type) \
     tprefix \
-    static inline tname<T> operator -(tname<T> const &a) \
+    static inline tname<type> operator -(tname<type> const &a) \
     { \
-        tname<T> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = -a[n]; \
         return ret; \
     } \
     \
     tprefix \
-    static inline T sqlen(tname<T> const &a) \
+    static inline type sqlen(tname<type> const &a) \
     { \
-        T acc = 0; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
+        type acc = 0; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             acc += a[n] * a[n]; \
         return acc; \
     } \
     \
     tprefix \
-    static inline double len(tname<T> const &a) \
+    static inline double len(tname<type> const &a) \
     { \
         using namespace std; \
         return sqrt((double)sqlen(a)); \
     } \
     \
     tprefix \
-    static inline T dot(tname<T> const &a, tname<T> const &b) \
+    static inline tname<type> normalize(tname<type> const &val) \
     { \
-        T ret = 0; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
-            ret += a[n] * b[n]; \
-        return ret; \
-    } \
-    \
-    tprefix \
-    static inline tname<T> normalize(tname<T> const &val) \
-    { \
-        T norm = (T)len(val); \
-        return norm ? val / norm : val * (T)0; \
+        type norm = (type)len(val); \
+        return norm ? val / norm : val * (type)0; \
     }
 
-#define DECLARE_GLOBAL_TEMPLATE_OPS(tname) \
-    DECLARE_OTHER_GLOBAL_OPS(tname, template<typename T>, T)
-
-#define DECLARE_ALL_GLOBAL_OPS(tname, tprefix, T) \
-    DECLARE_VECTOR_OP(tname, *, tprefix, T) \
-    DECLARE_VECTOR_OP(tname, /, tprefix, T) \
+#define DECLARE_BINARY_OPS(tname, tprefix, type) \
+    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
+    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
     \
-    DECLARE_OTHER_GLOBAL_OPS(tname, tprefix, T) \
+    DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
     \
-    DECLARE_BOOL_OP(tname, <=, <=, true, tprefix, T) \
-    DECLARE_BOOL_OP(tname, >=, >=, true, tprefix, T) \
-    DECLARE_BOOL_OP(tname, <, <, true, tprefix, T) \
-    DECLARE_BOOL_OP(tname, >, >, true, tprefix, T)
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, type) \
+    \
+    tprefix \
+    static inline type dot(tname<type> const &a, tname<type> const &b) \
+    { \
+        type ret = 0; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret += a[n] * b[n]; \
+        return ret; \
+    }
 
-#define DECLARE_GLOBAL_TYPED_OPS(tname) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, half) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, float) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, double) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, int8_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, uint8_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, int16_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, uint16_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, int32_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, uint32_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, int64_t) \
-    DECLARE_ALL_GLOBAL_OPS(tname, /* empty */, uint64_t)
+#define DECLARE_VECTOR_OPS(tname, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type) \
+    \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <=, <=, true, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >=, >=, true, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <, <, true, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >, >, true, tprefix, type)
 
-DECLARE_GLOBAL_TEMPLATE_OPS(Cmplx)
-DECLARE_GLOBAL_TEMPLATE_OPS(Quat)
+#define DECLARE_ALL_NONVECTOR_OPS(tname) \
+    DECLARE_BINARY_OPS(tname, template<typename T>, T) \
+    DECLARE_UNARY_OPS(tname, template<typename T>, T)
 
-DECLARE_GLOBAL_TYPED_OPS(Vec2)
-DECLARE_GLOBAL_TYPED_OPS(Vec3)
-DECLARE_GLOBAL_TYPED_OPS(Vec4)
+#define DECLARE_ALL_VECTOR_OPS_INNER(tname, tprefix, type) \
+    DECLARE_BINARY_OPS(tname, tprefix, type) \
+    DECLARE_UNARY_OPS(tname, tprefix, type) \
+    DECLARE_VECTOR_OPS(tname, tprefix, type) \
+
+#define DECLARE_ALL_VECTOR_OPS(tname) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, half) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, float) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, double) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int8_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint8_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int16_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint16_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int32_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint32_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int64_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint64_t)
+
+DECLARE_ALL_NONVECTOR_OPS(Cmplx)
+DECLARE_ALL_NONVECTOR_OPS(Quat)
+
+DECLARE_ALL_VECTOR_OPS(Vec2)
+DECLARE_ALL_VECTOR_OPS(Vec3)
+DECLARE_ALL_VECTOR_OPS(Vec4)
 
 #undef DECLARE_VECTOR_TYPEDEFS
 #undef DECLARE_MEMBER_OPS
-#undef DECLARE_VECTOR_OP
-#undef DECLARE_BOOL_OP
-#undef DECLARE_SCALAR_OP
-#undef DECLARE_GLOBAL_OPS
-#undef DECLARE_GLOBAL_TEMPLATE_OPS
-#undef DECLARE_ALL_GLOBAL_OPS
-#undef DECLARE_GLOBAL_TYPED_OPS
+#undef DECLARE_VECTOR_VECTOR_OP
+#undef DECLARE_VECTOR_VECTOR_BOOLOP
+#undef DECLARE_VECTOR_SCALAR_OP
+#undef DECLARE_BINARY_OPS
+#undef DECLARE_UNARY_OPS
+#undef DECLARE_ALL_NONVECTOR_OPS
+#undef DECLARE_ALL_VECTOR_OPS_INNER
+#undef DECLARE_ALL_VECTOR_OPS
 
 /*
  * Magic vector swizzling (part 2/2)
