@@ -94,7 +94,13 @@ template<typename T, int N> struct XVec4
     inline T& operator[](int n) { return *(&this->x + n); } \
     inline T const& operator[](int n) const { return *(&this->x + n); } \
     \
-    void printf() const; \
+    /* Visual Studio insists on having an assignment operator. */ \
+    inline tname<T> const & operator =(tname<T> const &that) \
+    { \
+        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
+            (*this)[n] = that[n]; \
+        return *this; \
+    } \
     \
     template<typename U> \
     inline operator tname<U>() const \
@@ -103,7 +109,9 @@ template<typename T, int N> struct XVec4
         for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
             ret[n] = static_cast<U>((*this)[n]); \
         return ret; \
-    }
+    } \
+    \
+    void printf() const;
 
 /*
  * 2-element vectors

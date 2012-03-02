@@ -312,7 +312,7 @@ template<> quat::Quat(mat4 const &m)
     }
     else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
     {
-        x = 0.5f * sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]);
+        x = 0.5f * sqrtf(1.0f + m[0][0] - m[1][1] - m[2][2]);
         float s = 0.25f / x;
         y = s * (m[1][0] + m[0][1]);
         z = s * (m[0][2] + m[2][0]);
