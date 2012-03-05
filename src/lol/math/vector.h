@@ -925,17 +925,18 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
  * Common operators for all vector types, including quaternions
  */
 
-#define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
+#define DECLARE_VECTOR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
-    static inline tname<type> operator op(tname<type> const &a, \
-                                          tname<type> const &b) \
+    static inline tname<tf> operator op(tname<t1> const &a, \
+                                        tname<t2> const &b) \
     { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+        tname<tf> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             ret[n] = a[n] op b[n]; \
         return ret; \
-    } \
-    \
+    }
+
+#define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
     tprefix \
     static inline tname<type> operator op##=(tname<type> &a, \
                                              tname<type> const &b) \
@@ -943,54 +944,41 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return a = a op b; \
     }
 
-#define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, type) \
+#define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, t1, t2) \
     tprefix \
-    static inline bool operator op(tname<type> const &a, \
-                                   tname<type> const &b) \
+    static inline bool operator op(tname<t1> const &a, \
+                                   tname<t2> const &b) \
     { \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             if (!(a[n] op2 b[n])) \
                 return !ret; \
         return ret; \
     }
 
+#define DECLARE_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
+    tprefix \
+    static inline tname<tf> operator op(tname<t1> const &a, t2 const &val) \
+    { \
+        tname<tf> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
+            ret[n] = a[n] op val; \
+        return ret; \
+    } \
+    \
+    tprefix \
+    static inline tname<tf> operator op(t1 const &val, tname<t2> const &a) \
+    { \
+        tname<tf> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t2); n++) \
+            ret[n] = a[n] op val; \
+        return ret; \
+    }
+
 #define DECLARE_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
-    tprefix \
-    static inline tname<type> operator op(tname<type> const &a, \
-                                          type const &val) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] op val; \
-        return ret; \
-    } \
-    \
-    tprefix \
-    static inline tname<type> operator op(type const &val, \
-                                          tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] op val; \
-        return ret; \
-    } \
-    \
     tprefix \
     static inline tname<type> operator op##=(tname<type> &a, type const &val) \
     { \
         return a = a op val; \
-    }
-
-/* FIXME: this is not used yet */
-#define SCALAR_PROMOTE_OP(tname, op, U) \
-    template<typename T> \
-    static inline tname<U> operator op(U const &val, \
-                                       tname<T> const &a) \
-    { \
-        tname<U> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(T); n++) \
-            ret[n] = val op a[n]; \
-        return ret; \
     }
 
 #define DECLARE_UNARY_OPS(tname, tprefix, type) \
@@ -1026,55 +1014,172 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return norm ? val / norm : val * (type)0; \
     }
 
-#define DECLARE_BINARY_OPS(tname, tprefix, type) \
-    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
-    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
+#define DECLARE_BINARY_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
     \
-    DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, -, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, +, tprefix, t1, t2, tf) \
     \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, t1, t2) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2) \
     \
     tprefix \
-    static inline type dot(tname<type> const &a, tname<type> const &b) \
+    static inline tf dot(tname<t1> const &a, tname<t2> const &b) \
     { \
-        type ret = 0; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+        tf ret = 0; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             ret += a[n] * b[n]; \
         return ret; \
     }
 
-#define DECLARE_VECTOR_OPS(tname, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type) \
+#define DECLARE_BINARY_OPS(tname, tprefix, type) \
+    DECLARE_BINARY_COERCE_OPS(tname, tprefix, type, type, type) \
     \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <=, <=, true, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >=, >=, true, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <, <, true, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >, >, true, tprefix, type)
+    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
+    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
+    \
+    DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type)
+
+#define DECLARE_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
+    \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <=, <=, true, tprefix, t1, t2) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >=, >=, true, tprefix, t1, t2) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <, <, true, tprefix, t1, t2) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >, >, true, tprefix, t1, t2)
+
+#define DECLARE_VECTOR_OPS(tname, tprefix, type) \
+    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, type, type, type) \
+    \
+    DECLARE_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
+    DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type)
 
 #define DECLARE_ALL_NONVECTOR_OPS(tname) \
     DECLARE_BINARY_OPS(tname, template<typename T>, T) \
     DECLARE_UNARY_OPS(tname, template<typename T>, T)
 
-#define DECLARE_ALL_VECTOR_OPS_INNER(tname, tprefix, type) \
-    DECLARE_BINARY_OPS(tname, tprefix, type) \
-    DECLARE_UNARY_OPS(tname, tprefix, type) \
-    DECLARE_VECTOR_OPS(tname, tprefix, type) \
+#define DECLARE_ALL_VECTOR_OPS_INNER(tname, type) \
+    DECLARE_BINARY_OPS(tname, /* empty */, type) \
+    DECLARE_UNARY_OPS(tname, /* empty */, type) \
+    DECLARE_VECTOR_OPS(tname, /* empty */, type) \
 
 #define DECLARE_ALL_VECTOR_OPS(tname) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, half) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, float) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, double) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int8_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint8_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int16_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint16_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int32_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint32_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, int64_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, /* empty */, uint64_t)
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, half) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, float) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, double) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, int8_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint8_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, int16_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint16_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, int32_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint32_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, int64_t) \
+    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint64_t)
+
+#define DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, tlow, thigh) \
+    DECLARE_BINARY_COERCE_OPS(tname, /* empty */, tlow, thigh, thigh) \
+    DECLARE_BINARY_COERCE_OPS(tname, /* empty */, thigh, tlow, thigh) \
+    \
+    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, tlow, thigh, thigh) \
+    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, thigh, tlow, thigh)
+
+#define DECLARE_ALL_VECTOR_COERCE_OPS(tname) \
+    /* Apply the same coercion rules as in the C++ standard. However,   */ \
+    /* instead of promoting int8_t etc. to int, we apply our own rules. */ \
+    /* FIXME: "half" and "real" are deactivated for now, because we do  */ \
+    /* not implement all combinations of operators for these types yet. */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint8_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int16_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint16_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int16_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint16_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint16_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, int32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, int32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, uint32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, uint32_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, int64_t) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, uint64_t) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, real) */ \
+    \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, half) */ \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, float) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, real) */ \
+    \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, float) */ \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, double) */ \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, long double) */ \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, double) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, real) */ \
+    \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, double, long double) \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, double, real) */ \
+    \
+    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, long double, real) */
 
 DECLARE_ALL_NONVECTOR_OPS(Cmplx)
 DECLARE_ALL_NONVECTOR_OPS(Quat)
@@ -1082,6 +1187,10 @@ DECLARE_ALL_NONVECTOR_OPS(Quat)
 DECLARE_ALL_VECTOR_OPS(Vec2)
 DECLARE_ALL_VECTOR_OPS(Vec3)
 DECLARE_ALL_VECTOR_OPS(Vec4)
+
+DECLARE_ALL_VECTOR_COERCE_OPS(Vec2)
+DECLARE_ALL_VECTOR_COERCE_OPS(Vec3)
+DECLARE_ALL_VECTOR_COERCE_OPS(Vec4)
 
 #undef DECLARE_VECTOR_TYPEDEFS
 #undef DECLARE_MEMBER_OPS
