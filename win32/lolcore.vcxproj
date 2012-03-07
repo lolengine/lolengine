@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\application\application.cpp" />
     <ClCompile Include="..\src\audio.cpp" />
     <ClCompile Include="..\src\debug\fps.cpp" />
     <ClCompile Include="..\src\debug\quad.cpp" />
@@ -154,6 +155,12 @@
     <ClCompile Include="..\src\gradient.cpp" />
     <ClCompile Include="..\src\half.cpp" />
     <ClCompile Include="..\src\hash.cpp" />
+    <ClCompile Include="..\src\image\codec\android-image.cpp" />
+    <ClCompile Include="..\src\image\codec\dummy-image.cpp" />
+    <ClCompile Include="..\src\image\codec\gdiplus-image.cpp" />
+    <ClCompile Include="..\src\image\codec\ios-image.cpp" />
+    <ClCompile Include="..\src\image\codec\ps3-image.cpp" />
+    <ClCompile Include="..\src\image\codec\sdl-image.cpp" />
     <ClCompile Include="..\src\image\image.cpp" />
     <ClCompile Include="..\src\input.cpp" />
     <ClCompile Include="..\src\layer.cpp" />
@@ -181,6 +188,7 @@
     <ClCompile Include="..\src\worldentity.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\application\application.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
     <ClInclude Include="..\src\core.h" />
@@ -199,6 +207,7 @@
     <ClInclude Include="..\src\gradient.h" />
     <ClInclude Include="..\src\half.h" />
     <ClInclude Include="..\src\hash.h" />
+    <ClInclude Include="..\src\image\image-private.h" />
     <ClInclude Include="..\src\image\image.h" />
     <ClInclude Include="..\src\input.h" />
     <ClInclude Include="..\src\layer.h" />

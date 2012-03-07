@@ -32,6 +32,12 @@
     <Filter Include="src\thread">
       <UniqueIdentifier>{d31f75ec-73c8-4bda-9b8c-6d62a55bc30d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\application">
+      <UniqueIdentifier>{459e2b92-4e46-4f07-89f7-62b55c7a2797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\image\codec">
+      <UniqueIdentifier>{123803f1-1722-4421-8245-098667654cda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -156,6 +162,27 @@
     </ClCompile>
     <ClCompile Include="..\src\gpu\vbo.cpp">
       <Filter>src\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\application\application.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\android-image.cpp">
+      <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\dummy-image.cpp">
+      <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\gdiplus-image.cpp">
+      <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\ios-image.cpp">
+      <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\ps3-image.cpp">
+      <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\image\codec\sdl-image.cpp">
+      <Filter>src\image\codec</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,6 +338,12 @@
     </ClInclude>
     <ClInclude Include="..\src\thread\threadbase.h">
       <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\application\application.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\image\image-private.h">
+      <Filter>src\image</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
