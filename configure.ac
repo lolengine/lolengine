@@ -284,7 +284,7 @@ AM_CONDITIONAL(USE_LIBPNG, test "${ac_cv_my_have_libpng}" != "no")
 dnl Use Windows GDI+?
 ac_cv_my_have_gdiplus="no"
 AC_LANG_PUSH(C++)
-AC_CHECK_HEADERS(Gdiplus.h,
+AC_CHECK_HEADERS(gdiplus.h,
  [ac_cv_my_have_gdiplus="yes"
   LOL_LIBS="${LOL_LIBS} -lgdiplus"],
  [ac_cv_my_have_gdiplus="no"],

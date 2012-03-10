@@ -21,7 +21,7 @@
 using namespace std;
 
 #include <windows.h>
-#include <Gdiplus.h>
+#include <gdiplus.h>
 
 #include "core.h"
 #include "../../image/image-private.h"
