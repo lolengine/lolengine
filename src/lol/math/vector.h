@@ -1225,12 +1225,22 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     \
     /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, long double, real) */
 
+/* Disable warning about unary operator applied to unsigned type */
+#if defined _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable: 4146)
+#endif
+
 DECLARE_ALL_NONVECTOR_OPS(Cmplx)
 DECLARE_ALL_NONVECTOR_OPS(Quat)
 
 DECLARE_ALL_VECTOR_OPS(Vec2)
 DECLARE_ALL_VECTOR_OPS(Vec3)
 DECLARE_ALL_VECTOR_OPS(Vec4)
+
+#if defined _MSC_VER
+#   pragma warning(pop)
+#endif
 
 /* Disable warnings in the >= > etc. operators about comparing signed and
  * unsigned. Ideally we would like to get these warnings only when the
