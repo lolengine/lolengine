@@ -1232,9 +1232,30 @@ DECLARE_ALL_VECTOR_OPS(Vec2)
 DECLARE_ALL_VECTOR_OPS(Vec3)
 DECLARE_ALL_VECTOR_OPS(Vec4)
 
+/* Disable warnings in the >= > etc. operators about comparing signed and
+ * unsigned. Ideally we would like to get these warnings only when the
+ * inlined operators are actually used, but they seem to be triggered at
+ * the code parsing step, so the compiler does not yet know whether they
+ * will be used.
+ * Also we do this for the whole block of declarations, because GCC prior
+ * to 4.6.3 does not appear to support _Pragma() inside a macro. */
+#if defined __GNUC__ && (__GNUC__ >= 4)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wsign-compare"
+#elif defined _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable: 4018)
+#endif
+
 DECLARE_ALL_VECTOR_COERCE_OPS(Vec2)
 DECLARE_ALL_VECTOR_COERCE_OPS(Vec3)
 DECLARE_ALL_VECTOR_COERCE_OPS(Vec4)
+
+#if defined __GNUC__ && (__GNUC__ >= 4)
+#   pragma GCC diagnostic pop
+#elif defined _MSC_VER
+#   pragma warning(pop)
+#endif
 
 #undef DECLARE_VECTOR_TYPEDEFS
 #undef DECLARE_MEMBER_OPS
