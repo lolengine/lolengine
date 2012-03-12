@@ -953,8 +953,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 #define DECLARE_VECTOR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
-    static inline tname<tf> operator op(tname<t1> const &a, \
-                                        tname<t2> const &b) \
+    inline tname<tf> operator op(tname<t1> const &a, tname<t2> const &b) \
     { \
         tname<tf> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
@@ -964,16 +963,14 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 #define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
     tprefix \
-    static inline tname<type> operator op##=(tname<type> &a, \
-                                             tname<type> const &b) \
+    inline tname<type> operator op##=(tname<type> &a, tname<type> const &b) \
     { \
         return a = a op b; \
     }
 
 #define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, t1, t2) \
     tprefix \
-    static inline bool operator op(tname<t1> const &a, \
-                                   tname<t2> const &b) \
+    inline bool operator op(tname<t1> const &a, tname<t2> const &b) \
     { \
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             if (!(a[n] op2 b[n])) \
@@ -983,7 +980,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 #define DECLARE_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
-    static inline tname<tf> operator op(tname<t1> const &a, t2 const &val) \
+    inline tname<tf> operator op(tname<t1> const &a, t2 const &val) \
     { \
         tname<tf> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
@@ -992,7 +989,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     } \
     \
     tprefix \
-    static inline tname<tf> operator op(t1 const &val, tname<t2> const &a) \
+    inline tname<tf> operator op(t1 const &val, tname<t2> const &a) \
     { \
         tname<tf> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(t2); n++) \
@@ -1002,14 +999,14 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 #define DECLARE_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
     tprefix \
-    static inline tname<type> operator op##=(tname<type> &a, type const &val) \
+    inline tname<type> operator op##=(tname<type> &a, type const &val) \
     { \
         return a = a op val; \
     }
 
 #define DECLARE_UNARY_OPS(tname, tprefix, type) \
     tprefix \
-    static inline tname<type> operator -(tname<type> const &a) \
+    inline tname<type> operator -(tname<type> const &a) \
     { \
         tname<type> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
@@ -1018,7 +1015,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     } \
     \
     tprefix \
-    static inline type sqlen(tname<type> const &a) \
+    inline type sqlen(tname<type> const &a) \
     { \
         type acc = 0; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
@@ -1027,14 +1024,14 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     } \
     \
     tprefix \
-    static inline double len(tname<type> const &a) \
+    inline double len(tname<type> const &a) \
     { \
         using namespace std; \
         return sqrt((double)sqlen(a)); \
     } \
     \
     tprefix \
-    static inline tname<type> normalize(tname<type> const &val) \
+    inline tname<type> normalize(tname<type> const &val) \
     { \
         type norm = (type)len(val); \
         return norm ? val / norm : val * (type)0; \
@@ -1051,7 +1048,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2) \
     \
     tprefix \
-    static inline tf dot(tname<t1> const &a, tname<t2> const &b) \
+    inline tf dot(tname<t1> const &a, tname<t2> const &b) \
     { \
         tf ret = 0; \
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
@@ -1078,19 +1075,19 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_VECTOR_BOOLOP(tname, >, >, true, tprefix, t1, t2)
 
 #define DECLARE_VECTOR_OPS(tname, tprefix, type) \
-    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, type, type, type) \
+    DECLARE_VECTOR_COERCE_OPS(tname, static, type, type, type) \
     \
     DECLARE_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
     DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type)
 
 #define DECLARE_ALL_NONVECTOR_OPS(tname) \
-    DECLARE_BINARY_OPS(tname, template<typename T>, T) \
-    DECLARE_UNARY_OPS(tname, template<typename T>, T)
+    DECLARE_BINARY_OPS(tname, template<typename T> static, T) \
+    DECLARE_UNARY_OPS(tname, template<typename T> static, T)
 
 #define DECLARE_ALL_VECTOR_OPS_INNER(tname, type) \
-    DECLARE_BINARY_OPS(tname, /* empty */, type) \
-    DECLARE_UNARY_OPS(tname, /* empty */, type) \
-    DECLARE_VECTOR_OPS(tname, /* empty */, type) \
+    DECLARE_BINARY_OPS(tname, static, type) \
+    DECLARE_UNARY_OPS(tname, static, type) \
+    DECLARE_VECTOR_OPS(tname, static, type) \
 
 #define DECLARE_ALL_VECTOR_OPS(tname) \
     DECLARE_ALL_VECTOR_OPS_INNER(tname, half) \
@@ -1106,11 +1103,11 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_ALL_VECTOR_OPS_INNER(tname, uint64_t)
 
 #define DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, tlow, thigh) \
-    DECLARE_BINARY_COERCE_OPS(tname, /* empty */, tlow, thigh, thigh) \
-    DECLARE_BINARY_COERCE_OPS(tname, /* empty */, thigh, tlow, thigh) \
+    DECLARE_BINARY_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    DECLARE_BINARY_COERCE_OPS(tname, static, thigh, tlow, thigh) \
     \
-    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, tlow, thigh, thigh) \
-    DECLARE_VECTOR_COERCE_OPS(tname, /* empty */, thigh, tlow, thigh)
+    DECLARE_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    DECLARE_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
 
 #define DECLARE_ALL_VECTOR_COERCE_OPS(tname) \
     /* Apply the same coercion rules as in the C++ standard. However,   */ \
