@@ -63,7 +63,7 @@ static inline int isnan(float f)
 
 // Base types
 #include "trig.h"
-#include "half.h"
+#include "lol/math/half.h"
 #include "lol/math/real.h"
 #include "lol/math/vector.h"
 #include "numeric.h"

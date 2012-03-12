@@ -22,7 +22,7 @@
 #   include <iostream>
 #endif
 
-#include "half.h"
+#include "lol/math/half.h"
 #include "lol/math/real.h"
 
 namespace lol
