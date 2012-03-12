@@ -73,8 +73,8 @@ public:
     bool operator <=(half x) const { return (float)*this <= (float)x; }
     bool operator >=(half x) const { return (float)*this >= (float)x; }
 
-    bool operator !() const { return !(bool)*this; }
-    operator bool() const { return bits & 0x7fffu; }
+    bool operator !() const { return !(bits & 0x7fffu); }
+    operator bool() const { return !!*this; }
 
     inline half operator -() const { return makebits(bits ^ 0x8000u); }
     inline half operator +() const { return *this; }
