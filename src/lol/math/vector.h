@@ -60,38 +60,59 @@ DECLARE_VECTOR_TYPEDEFS(Mat4, mat4)
 
 /*
  * Magic vector swizzling (part 1/2)
+ * These vectors are empty, but thanks to static_cast we can take their
+ * address and access the vector of T's that they are union'ed with. We
+ * use static_cast instead of reinterpret_cast because there is a stronger
+ * guarantee (by the standard) that the address will stay the same across
+ * casts.
  */
 
 template<typename T, int N> struct XVec2
 {
     inline Vec2<T> operator =(Vec2<T> const &that);
 
-    static int const I = (N >> 4) & 3;
-    static int const J = (N >> 0) & 3;
-    T ptr[1 + (I > J ? I : J)];
+    inline T& operator[](int n)
+    {
+        int i = (N >> (4 * (1 - n))) & 3;
+        return static_cast<T*>(static_cast<void*>(this))[i];
+    }
+    inline T const& operator[](int n) const
+    {
+        int i = (N >> (4 * (1 - n))) & 3;
+        return static_cast<T const*>(static_cast<void const *>(this))[i];
+    }
 };
 
 template<typename T, int N> struct XVec3
 {
     inline Vec3<T> operator =(Vec3<T> const &that);
 
-    static int const I = (N >> 8) & 3;
-    static int const J = (N >> 4) & 3;
-    static int const K = (N >> 0) & 3;
-    T ptr[1 + (I > J ? I > K ? I : K
-                     : J > K ? J : K)];
+    inline T& operator[](int n)
+    {
+        int i = (N >> (4 * (2 - n))) & 3;
+        return static_cast<T*>(static_cast<void*>(this))[i];
+    }
+    inline T const& operator[](int n) const
+    {
+        int i = (N >> (4 * (2 - n))) & 3;
+        return static_cast<T const*>(static_cast<void const *>(this))[i];
+    }
 };
 
 template<typename T, int N> struct XVec4
 {
     inline Vec4<T> operator =(Vec4<T> const &that);
 
-    static int const I = (N >> 12) & 3;
-    static int const J = (N >> 8) & 3;
-    static int const K = (N >> 4) & 3;
-    static int const L = (N >> 0) & 3;
-    T ptr[1 + (I > J ? I > K ? I > L ? I : L : K > L ? K : L
-                     : J > K ? J > L ? J : L : K > L ? K : L)];
+    inline T& operator[](int n)
+    {
+        int i = (N >> (4 * (3 - n))) & 3;
+        return static_cast<T*>(static_cast<void*>(this))[i];
+    }
+    inline T const& operator[](int n) const
+    {
+        int i = (N >> (4 * (3 - n))) & 3;
+        return static_cast<T const*>(static_cast<void const *>(this))[i];
+    }
 };
 
 /*
@@ -200,11 +221,11 @@ template <typename T> struct Vec2 : BVec2<T>
 
     template<int N>
     inline Vec2(XVec2<T, N> const &v)
-      : BVec2<T>(v.ptr[v.I], v.ptr[v.J]) {}
+      : BVec2<T>(v[0], v[1]) {}
 
     template<typename U, int N>
     explicit inline Vec2(XVec2<U, N> const &v)
-      : BVec2<T>(v.ptr[v.I], v.ptr[v.J]) {}
+      : BVec2<T>(v[0], v[1]) {}
 
     DECLARE_MEMBER_OPS(Vec2)
 
@@ -456,11 +477,11 @@ template <typename T> struct Vec3 : BVec3<T>
 
     template<int N>
     inline Vec3(XVec3<T, N> const &v)
-      : BVec3<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K]) {}
+      : BVec3<T>(v[0], v[1], v[2]) {}
 
     template<typename U, int N>
     explicit inline Vec3(XVec3<U, N> const &v)
-      : BVec3<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K]) {}
+      : BVec3<T>(v[0], v[1], v[2]) {}
 
     DECLARE_MEMBER_OPS(Vec3)
 
@@ -868,11 +889,11 @@ template <typename T> struct Vec4 : BVec4<T>
 
     template<int N>
     inline Vec4(XVec4<T, N> const &v)
-      : BVec4<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K], v.ptr[v.L]) {}
+      : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
     template<typename U, int N>
     explicit inline Vec4(XVec4<U, N> const &v)
-      : BVec4<T>(v.ptr[v.I], v.ptr[v.J], v.ptr[v.K], v.ptr[v.L]) {}
+      : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
     DECLARE_MEMBER_OPS(Vec4)
 
@@ -1237,21 +1258,24 @@ DECLARE_ALL_VECTOR_COERCE_OPS(Vec4)
 template<typename T, int N>
 inline Vec2<T> XVec2<T, N>::operator =(Vec2<T> const &that)
 {
-    ptr[I] = that[0]; ptr[J] = that[1];
+    for (int i = 0; i < 2; i++)
+        *this[i] = that[i];
     return *this;
 }
 
 template<typename T, int N>
 inline Vec3<T> XVec3<T, N>::operator =(Vec3<T> const &that)
 {
-    ptr[I] = that[0]; ptr[J] = that[1]; ptr[K] = that[2];
+    for (int i = 0; i < 3; i++)
+        *this[i] = that[i];
     return *this;
 }
 
 template<typename T, int N>
 inline Vec4<T> XVec4<T, N>::operator =(Vec4<T> const &that)
 {
-    ptr[I] = that[0]; ptr[J] = that[1]; ptr[K] = that[2]; ptr[L] = that[3];
+    for (int i = 0; i < 4; i++)
+        *this[i] = that[i];
     return *this;
 }
 
