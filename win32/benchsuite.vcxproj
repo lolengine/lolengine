@@ -20,8 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\test\benchmark\half.cpp" />
-    <ClCompile Include="..\test\benchmark\matrix.cpp" />
+    <ClCompile Include="..\test\benchmark\real.cpp" />
     <ClCompile Include="..\test\benchmark\trig.cpp" />
+    <ClCompile Include="..\test\benchmark\vector.cpp" />
     <ClCompile Include="..\test\benchsuite.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
