@@ -19,18 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\testsuite.cpp" />
-    <ClCompile Include="..\test\unit\build.cpp" />
-    <ClCompile Include="..\test\unit\cmplx.cpp" />
-    <ClCompile Include="..\test\unit\half.cpp" />
-    <ClCompile Include="..\test\unit\image.cpp" />
-    <ClCompile Include="..\test\unit\quat.cpp" />
-    <ClCompile Include="..\test\unit\real.cpp" />
-    <ClCompile Include="..\test\unit\trig.cpp" />
-    <ClCompile Include="..\test\unit\vector.cpp" />
+    <ClCompile Include="..\test\tutorial\tut03.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{80F81C11-8DA2-4990-91CB-9807783BA46E}</ProjectGuid>
+    <ProjectGuid>{6bf81b39-edc2-4227-9992-c2d8abea95af}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>testmap</RootNamespace>
   </PropertyGroup>
@@ -105,7 +97,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,7 +116,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_XBOX;_DEBUG;_CONSOLE;$(XboxDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +137,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,7 +160,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_XBOX;NDEBUG;_CONSOLE;$(XboxDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(GlIncludes);$(SdlIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

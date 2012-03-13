@@ -13,6 +13,7 @@
 #endif
 
 #include <cstring>
+#include <cmath>
 
 #include "core.h"
 #include "lolgl.h"
@@ -342,7 +343,7 @@ public:
     void DoWork(int line)
     {
         double const maxsqlen = 1024;
-        double const k1 = 1.0 / (1 << 10) / log2(maxsqlen);
+        double const k1 = 1.0 / (1 << 10) / (std::log(maxsqlen) / std::log(2.0));
 
         int jmin = ((m_frame + 1) % 4) / 2 + line;
         int jmax = jmin + MAX_LINES * 2;

@@ -22,8 +22,15 @@ using namespace std;
 namespace lol
 {
 
-bool ImageLoader::RegisterAllLoaders()
+static bool RegisterAllLoaders()
 {
+    /* We cannot make this an ImageLoader member function, because the
+     * REGISTER_IMAGE_LOADER macro forward-declares free functions from
+     * the "lol" namespace. An apparent bug in Visual Studio's compiler
+     * makes it think these functions are actually in the top-level
+     * namespace when the forward declaration is in a class member function.
+     * To avoid the problem, we make the forward declaration in a free
+     * function. */
 #if defined __ANDROID__
     REGISTER_IMAGE_LOADER(AndroidImageData)
 #endif
@@ -50,7 +57,7 @@ bool ImageLoader::RegisterAllLoaders()
 
 Image::Image(char const *path)
 {
-    static bool unused = ImageLoader::RegisterAllLoaders();
+    static bool unused = RegisterAllLoaders();
 
     data = ImageLoader::Load(path);
 }

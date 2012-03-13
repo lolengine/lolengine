@@ -31,8 +31,6 @@ public:
     ImageLoader *next;
     int priority;
 
-    static bool RegisterAllLoaders();
-
     static void RegisterLoader(ImageLoader *loader)
     {
         Helper(loader);
@@ -88,7 +86,7 @@ protected:
 };
 
 #define REGISTER_IMAGE_LOADER(name) \
-    extern void (Register##name)(); \
+    extern void Register##name(); \
     Register##name();
 
 #define DECLARE_IMAGE_LOADER(name, prio) \
