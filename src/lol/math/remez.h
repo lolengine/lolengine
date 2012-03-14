@@ -34,6 +34,8 @@ public:
 
     void Run(T a, T b, RealFunc *func, RealFunc *weight, int decimals)
     {
+        using std::printf;
+
         m_func = func;
         m_weight = weight;
         m_k1 = (b + a) / 2;
