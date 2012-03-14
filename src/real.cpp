@@ -33,20 +33,20 @@ using namespace std;
 namespace lol
 {
 
-real::real()
+template<> real::Real()
 {
     m_mantissa = new uint32_t[BIGITS];
     m_signexp = 0;
 }
 
-real::real(real const &x)
+template<> real::Real(real const &x)
 {
     m_mantissa = new uint32_t[BIGITS];
     memcpy(m_mantissa, x.m_mantissa, BIGITS * sizeof(uint32_t));
     m_signexp = x.m_signexp;
 }
 
-real const &real::operator =(real const &x)
+template<> real const &real::operator =(real const &x)
 {
     if (&x != this)
     {
@@ -57,16 +57,16 @@ real const &real::operator =(real const &x)
     return *this;
 }
 
-real::~real()
+template<> real::~Real()
 {
     delete[] m_mantissa;
 }
 
-real::real(float f) { new(this) real((double)f); }
-real::real(int i) { new(this) real((double)i); }
-real::real(unsigned int i) { new(this) real((double)i); }
+template<> real::Real(float f) { new(this) real((double)f); }
+template<> real::Real(int i) { new(this) real((double)i); }
+template<> real::Real(unsigned int i) { new(this) real((double)i); }
 
-real::real(double d)
+template<> real::Real(double d)
 {
     new(this) real();
 
@@ -93,11 +93,11 @@ real::real(double d)
     memset(m_mantissa + 2, 0, (BIGITS - 2) * sizeof(m_mantissa[0]));
 }
 
-real::operator float() const { return (float)(double)(*this); }
-real::operator int() const { return (int)(double)(*this); }
-real::operator unsigned int() const { return (unsigned int)(double)(*this); }
+template<> real::operator float() const { return (float)(double)(*this); }
+template<> real::operator int() const { return (int)(double)(*this); }
+template<> real::operator unsigned() const { return (unsigned)(double)(*this); }
 
-real::operator double() const
+template<> real::operator double() const
 {
     union { double d; uint64_t x; } u;
 
@@ -135,7 +135,7 @@ real::operator double() const
 /*
  * Create a real number from an ASCII representation
  */
-real::real(char const *str)
+template<> real::Real(char const *str)
 {
     real ret = 0;
     int exponent = 0;
@@ -192,19 +192,19 @@ real::real(char const *str)
     new(this) real(ret);
 }
 
-real real::operator +() const
+template<> real real::operator +() const
 {
     return *this;
 }
 
-real real::operator -() const
+template<> real real::operator -() const
 {
     real ret = *this;
     ret.m_signexp ^= 0x80000000u;
     return ret;
 }
 
-real real::operator +(real const &x) const
+template<> real real::operator +(real const &x) const
 {
     if (x.m_signexp << 1 == 0)
         return *this;
@@ -268,7 +268,7 @@ real real::operator +(real const &x) const
     return ret;
 }
 
-real real::operator -(real const &x) const
+template<> real real::operator -(real const &x) const
 {
     if (x.m_signexp << 1 == 0)
         return *this;
@@ -372,7 +372,7 @@ real real::operator -(real const &x) const
     return ret;
 }
 
-real real::operator *(real const &x) const
+template<> real real::operator *(real const &x) const
 {
     real ret;
 
@@ -445,36 +445,36 @@ real real::operator *(real const &x) const
     return ret;
 }
 
-real real::operator /(real const &x) const
+template<> real real::operator /(real const &x) const
 {
     return *this * re(x);
 }
 
-real const &real::operator +=(real const &x)
+template<> real const &real::operator +=(real const &x)
 {
     real tmp = *this;
     return *this = tmp + x;
 }
 
-real const &real::operator -=(real const &x)
+template<> real const &real::operator -=(real const &x)
 {
     real tmp = *this;
     return *this = tmp - x;
 }
 
-real const &real::operator *=(real const &x)
+template<> real const &real::operator *=(real const &x)
 {
     real tmp = *this;
     return *this = tmp * x;
 }
 
-real const &real::operator /=(real const &x)
+template<> real const &real::operator /=(real const &x)
 {
     real tmp = *this;
     return *this = tmp / x;
 }
 
-bool real::operator ==(real const &x) const
+template<> bool real::operator ==(real const &x) const
 {
     if ((m_signexp << 1) == 0 && (x.m_signexp << 1) == 0)
         return true;
@@ -485,12 +485,12 @@ bool real::operator ==(real const &x) const
     return memcmp(m_mantissa, x.m_mantissa, BIGITS * sizeof(uint32_t)) == 0;
 }
 
-bool real::operator !=(real const &x) const
+template<> bool real::operator !=(real const &x) const
 {
     return !(*this == x);
 }
 
-bool real::operator <(real const &x) const
+template<> bool real::operator <(real const &x) const
 {
     /* Ensure both numbers are positive */
     if (m_signexp >> 31)
@@ -510,12 +510,12 @@ bool real::operator <(real const &x) const
     return false;
 }
 
-bool real::operator <=(real const &x) const
+template<> bool real::operator <=(real const &x) const
 {
     return !(*this > x);
 }
 
-bool real::operator >(real const &x) const
+template<> bool real::operator >(real const &x) const
 {
     /* Ensure both numbers are positive */
     if (m_signexp >> 31)
@@ -535,17 +535,17 @@ bool real::operator >(real const &x) const
     return false;
 }
 
-bool real::operator >=(real const &x) const
+template<> bool real::operator >=(real const &x) const
 {
     return !(*this < x);
 }
 
-bool real::operator !() const
+template<> bool real::operator !() const
 {
     return !(bool)*this;
 }
 
-real::operator bool() const
+template<> real::operator bool() const
 {
     /* A real is "true" if it is non-zero (exponent is non-zero) AND
      * not NaN (exponent is not full bits OR higher order mantissa is zero) */
@@ -553,7 +553,7 @@ real::operator bool() const
     return exponent && (~exponent || m_mantissa[0] == 0);
 }
 
-real re(real const &x)
+template<> real re(real const &x)
 {
     if (!(x.m_signexp << 1))
     {
@@ -586,7 +586,7 @@ real re(real const &x)
     return ret;
 }
 
-real sqrt(real const &x)
+template<> real sqrt(real const &x)
 {
     /* if zero, return x */
     if (!(x.m_signexp << 1))
@@ -633,7 +633,7 @@ real sqrt(real const &x)
     return ret * x;
 }
 
-real cbrt(real const &x)
+template<> real cbrt(real const &x)
 {
     /* if zero, return x */
     if (!(x.m_signexp << 1))
@@ -670,7 +670,7 @@ real cbrt(real const &x)
     return ret;
 }
 
-real pow(real const &x, real const &y)
+template<> real pow(real const &x, real const &y)
 {
     if (!y)
         return real::R_1;
@@ -719,7 +719,7 @@ static real fast_fact(int x)
     }
 }
 
-real gamma(real const &x)
+template<> real gamma(real const &x)
 {
     /* We use Spouge's formula. FIXME: precision is far from acceptable,
      * especially with large values. We need to compute this with higher
@@ -746,7 +746,7 @@ real gamma(real const &x)
     return ret;
 }
 
-real fabs(real const &x)
+template<> real fabs(real const &x)
 {
     real ret = x;
     ret.m_signexp &= 0x7fffffffu;
@@ -786,7 +786,7 @@ static real fast_log(real const &x)
     return z * sum * 4;
 }
 
-real log(real const &x)
+template<> real log(real const &x)
 {
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
@@ -802,7 +802,7 @@ real log(real const &x)
            + fast_log(tmp);
 }
 
-real log2(real const &x)
+template<> real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
     real tmp = x;
@@ -817,7 +817,7 @@ real log2(real const &x)
            + fast_log(tmp) * real::R_LOG2E;
 }
 
-real log10(real const &x)
+template<> real log10(real const &x)
 {
     return log(x) * real::R_LOG10E;
 }
@@ -843,7 +843,7 @@ static real fast_exp_sub(real const &x, real const &y)
     return ret / fast_fact(i);
 }
 
-real exp(real const &x)
+template<> real exp(real const &x)
 {
     /* Strategy for exp(x): the Taylor series does not converge very fast
      * with large positive or negative values.
@@ -868,7 +868,7 @@ real exp(real const &x)
     return x1;
 }
 
-real exp2(real const &x)
+template<> real exp2(real const &x)
 {
     /* Strategy for exp2(x): see strategy in exp(). */
     int e0 = x;
@@ -878,7 +878,7 @@ real exp2(real const &x)
     return x1;
 }
 
-real sinh(real const &x)
+template<> real sinh(real const &x)
 {
     /* We cannot always use (exp(x)-exp(-x))/2 because we'll lose
      * accuracy near zero. We only use this identity for |x|>0.5. If
@@ -889,7 +889,7 @@ real sinh(real const &x)
     return (x1 - x2) / 2;
 }
 
-real tanh(real const &x)
+template<> real tanh(real const &x)
 {
     /* See sinh() for the strategy here */
     bool near_zero = (fabs(x) < real::R_1 / 2);
@@ -899,14 +899,14 @@ real tanh(real const &x)
     return (x1 - x2) / x3;
 }
 
-real cosh(real const &x)
+template<> real cosh(real const &x)
 {
     /* No need to worry about accuracy here; maybe the last bit is slightly
      * off, but that's about it. */
     return (exp(x) + exp(-x)) / 2;
 }
 
-real frexp(real const &x, int *exp)
+template<> real frexp(real const &x, int *exp)
 {
     if (!x)
     {
@@ -921,7 +921,7 @@ real frexp(real const &x, int *exp)
     return ret;
 }
 
-real ldexp(real const &x, int exp)
+template<> real ldexp(real const &x, int exp)
 {
     real ret = x;
     if (ret)
@@ -929,7 +929,7 @@ real ldexp(real const &x, int exp)
     return ret;
 }
 
-real modf(real const &x, real *iptr)
+template<> real modf(real const &x, real *iptr)
 {
     real absx = fabs(x);
     real tmp = floor(absx);
@@ -938,7 +938,7 @@ real modf(real const &x, real *iptr)
     return copysign(absx - tmp, x);
 }
 
-real ulp(real const &x)
+template<> real ulp(real const &x)
 {
     real ret = real::R_1;
     if (x)
@@ -948,7 +948,7 @@ real ulp(real const &x)
     return ret;
 }
 
-real nextafter(real const &x, real const &y)
+template<> real nextafter(real const &x, real const &y)
 {
     if (x == y)
         return x;
@@ -958,7 +958,7 @@ real nextafter(real const &x, real const &y)
         return x - ulp(x);
 }
 
-real copysign(real const &x, real const &y)
+template<> real copysign(real const &x, real const &y)
 {
     real ret = x;
     ret.m_signexp &= 0x7fffffffu;
@@ -966,7 +966,7 @@ real copysign(real const &x, real const &y)
     return ret;
 }
 
-real floor(real const &x)
+template<> real floor(real const &x)
 {
     /* Strategy for floor(x):
      *  - if negative, return -ceil(-x)
@@ -997,7 +997,7 @@ real floor(real const &x)
     return ret;
 }
 
-real ceil(real const &x)
+template<> real ceil(real const &x)
 {
     /* Strategy for ceil(x):
      *  - if negative, return -floor(-x)
@@ -1012,7 +1012,7 @@ real ceil(real const &x)
         return ret + real::R_1;
 }
 
-real round(real const &x)
+template<> real round(real const &x)
 {
     if (x < real::R_0)
         return -round(-x);
@@ -1020,7 +1020,7 @@ real round(real const &x)
     return floor(x + (real::R_1 / 2));
 }
 
-real fmod(real const &x, real const &y)
+template<> real fmod(real const &x, real const &y)
 {
     if (!y)
         return real::R_0; /* FIXME: return NaN */
@@ -1032,7 +1032,7 @@ real fmod(real const &x, real const &y)
     return x - tmp * y;
 }
 
-real sin(real const &x)
+template<> real sin(real const &x)
 {
     int switch_sign = x.m_signexp & 0x80000000u;
 
@@ -1065,12 +1065,12 @@ real sin(real const &x)
     return ret;
 }
 
-real cos(real const &x)
+template<> real cos(real const &x)
 {
     return sin(real::R_PI_2 - x);
 }
 
-real tan(real const &x)
+template<> real tan(real const &x)
 {
     /* Constrain input to [-π,π] */
     real y = fmod(x, real::R_PI);
@@ -1137,17 +1137,17 @@ static inline real asinacos(real const &x, int is_asin, int is_negative)
     return ret;
 }
 
-real asin(real const &x)
+template<> real asin(real const &x)
 {
     return asinacos(x, 1, x.m_signexp >> 31);
 }
 
-real acos(real const &x)
+template<> real acos(real const &x)
 {
     return asinacos(x, 0, x.m_signexp >> 31);
 }
 
-real atan(real const &x)
+template<> real atan(real const &x)
 {
     /* Computing atan(x): we choose a different Taylor series depending on
      * the value of x to help with convergence.
@@ -1250,7 +1250,7 @@ real atan(real const &x)
     return ret;
 }
 
-real atan2(real const &y, real const &x)
+template<> real atan2(real const &y, real const &x)
 {
     if (!y)
     {
@@ -1276,7 +1276,7 @@ real atan2(real const &y, real const &x)
     return ret;
 }
 
-void real::hexprint() const
+template<> void real::hexprint() const
 {
     printf("%08x", m_signexp);
     for (int i = 0; i < BIGITS; i++)
@@ -1284,7 +1284,7 @@ void real::hexprint() const
     printf("\n");
 }
 
-void real::print(int ndigits) const
+template<> void real::print(int ndigits) const
 {
     real x = *this;
 
@@ -1350,11 +1350,11 @@ static real fast_pi()
     return ret;
 }
 
-real const real::R_0        = (real)0.0;
-real const real::R_1        = (real)1.0;
-real const real::R_2        = (real)2.0;
-real const real::R_3        = (real)3.0;
-real const real::R_10       = (real)10.0;
+template<> real const real::R_0        = (real)0.0;
+template<> real const real::R_1        = (real)1.0;
+template<> real const real::R_2        = (real)2.0;
+template<> real const real::R_3        = (real)3.0;
+template<> real const real::R_10       = (real)10.0;
 
 /*
  * Initialisation order is important here:
@@ -1364,21 +1364,21 @@ real const real::R_10       = (real)10.0;
  *  - exp() requires R_0, R_1, R_LN2
  *  - sqrt() requires R_3
  */
-real const real::R_LN2      = fast_log(R_2);
-real const real::R_LN10     = log(R_10);
-real const real::R_LOG2E    = re(R_LN2);
-real const real::R_LOG10E   = re(R_LN10);
-real const real::R_E        = exp(R_1);
-real const real::R_PI       = fast_pi();
-real const real::R_PI_2     = R_PI / 2;
-real const real::R_PI_3     = R_PI / R_3;
-real const real::R_PI_4     = R_PI / 4;
-real const real::R_1_PI     = re(R_PI);
-real const real::R_2_PI     = R_1_PI * 2;
-real const real::R_2_SQRTPI = re(sqrt(R_PI)) * 2;
-real const real::R_SQRT2    = sqrt(R_2);
-real const real::R_SQRT3    = sqrt(R_3);
-real const real::R_SQRT1_2  = R_SQRT2 / 2;
+template<> real const real::R_LN2      = fast_log(R_2);
+template<> real const real::R_LN10     = log(R_10);
+template<> real const real::R_LOG2E    = re(R_LN2);
+template<> real const real::R_LOG10E   = re(R_LN10);
+template<> real const real::R_E        = exp(R_1);
+template<> real const real::R_PI       = fast_pi();
+template<> real const real::R_PI_2     = R_PI / 2;
+template<> real const real::R_PI_3     = R_PI / R_3;
+template<> real const real::R_PI_4     = R_PI / 4;
+template<> real const real::R_1_PI     = re(R_PI);
+template<> real const real::R_2_PI     = R_1_PI * 2;
+template<> real const real::R_2_SQRTPI = re(sqrt(R_PI)) * 2;
+template<> real const real::R_SQRT2    = sqrt(R_2);
+template<> real const real::R_SQRT3    = sqrt(R_3);
+template<> real const real::R_SQRT1_2  = R_SQRT2 / 2;
 
 } /* namespace lol */
 
