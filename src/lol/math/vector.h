@@ -1047,7 +1047,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     tprefix \
     inline double len(tname<type> const &a) \
     { \
-        using namespace std; \
+        using std::sqrt; \
         return sqrt((double)sqlen(a)); \
     } \
     \

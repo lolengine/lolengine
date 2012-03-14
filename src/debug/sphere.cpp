@@ -152,6 +152,7 @@ void DebugSphere::TickDraw(float deltams)
 #endif
 
     int const ndiv = 2;
+    using std::log;
     int const ntriangles = 20 * (1 << (ndiv * 2))
                               * (int)(log(1.0f / 0.01f) / log(1.1f) + 0.9999f);
 

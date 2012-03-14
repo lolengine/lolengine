@@ -269,6 +269,7 @@ public:
 #define LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(msg, a, b, t) \
     do { \
         m_asserts++; \
+        using std::fabs; \
         if (True() && fabs((a) - (b)) > fabs((t))) \
         { \
             m_errorlog << std::endl << std::endl; \
