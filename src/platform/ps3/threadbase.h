@@ -52,7 +52,7 @@ private:
     sys_lwmutex_t m_mutex;
 };
 
-class QueueBase
+template<typename T, int N> class QueueBase
 {
 public:
     QueueBase()
@@ -80,7 +80,7 @@ public:
             ;
     }
 
-    void Push(int value)
+    void Push(T value)
     {
         /* FIXME: this is a copy of the pthread implementation, but we
          * should really use libsync2 instead. */
@@ -96,14 +96,14 @@ public:
         sys_lwmutex_unlock(&m_mutex);
     }
 
-    int Pop()
+    T Pop()
     {
         sys_lwmutex_lock(&m_mutex, 0);
         m_poppers++;
         while (m_count == 0)
             sys_lwcond_wait(&m_empty_cond, 0);
         m_poppers--;
-        int ret = m_values[m_start];
+        T ret = m_values[m_start];
         m_start = (m_start + 1) % CAPACITY;
         m_count--;
         if (m_pushers)
@@ -113,8 +113,8 @@ public:
     }
 
 private:
-    static size_t const CAPACITY = 100;
-    int m_values[CAPACITY];
+    static size_t const CAPACITY = N;
+    T m_values[CAPACITY];
     size_t m_start, m_count;
     size_t m_poppers, m_pushers;
     sys_lwmutex_t m_mutex;
