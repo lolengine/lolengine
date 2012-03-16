@@ -8,6 +8,7 @@
     <ClInclude Include="..\monsterz\title.h" />
     <ClInclude Include="..\monsterz\mash.h" />
     <ClInclude Include="..\monsterz\monsterz.h" />
+    <ClInclude Include="..\monsterz\score.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\monsterz\board.cpp" />
@@ -17,5 +18,6 @@
     <ClCompile Include="..\monsterz\thumbs.cpp" />
     <ClCompile Include="..\monsterz\title.cpp" />
     <ClCompile Include="..\monsterz\mash.cpp" />
+    <ClCompile Include="..\monsterz\score.cpp" />
   </ItemGroup>
 </Project>

@@ -208,6 +208,7 @@ static inline double lol_fabs(double x)
 #elif defined __GNUC__
     return __builtin_fabs(x);
 #else
+    using std::fabs;
     return fabs(x);
 #endif
 }
