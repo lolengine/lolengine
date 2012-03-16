@@ -25,6 +25,7 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Sin)
     {
         using std::fabs;
+        using std::sin;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -56,6 +57,7 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Cos)
     {
         using std::fabs;
+        using std::cos;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -87,6 +89,8 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(SinCos)
     {
         using std::fabs;
+        using std::sin;
+        using std::cos;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -126,6 +130,7 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Tan)
     {
         using std::fabs;
+        using std::tan;
 
         for (int i = -100000; i < 100000; i++)
         {
