@@ -18,7 +18,7 @@
     <GlDeps>opengl32.lib;glew32.lib</GlDeps>
     <GtkDeps>gobject-2.0.lib;gthread-2.0.lib;glib-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkgl-2.0.lib</GtkDeps>
     <SdlDeps>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
-    <Win32Defines>USE_GLEW;GLEW_STATIC;HAVE_SDL_H</Win32Defines>
+    <Win32Defines>USE_GLEW;GLEW_STATIC;HAVE_SDL_H;USE_SDL</Win32Defines>
     <XboxDefines></XboxDefines>
   </PropertyGroup>
   <PropertyGroup />
