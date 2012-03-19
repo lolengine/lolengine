@@ -1,5 +1,8 @@
 
-SUBDIRS = src test deushax monsterz tools gfx
+SUBDIRS = src test tools gfx
+SUBDIRS += deushax
+SUBDIRS += monsterz
+SUBDIRS += mrpigeon
 DIST_SUBDIRS = $(SUBDIRS)
 
 EXTRA_DIST = bootstrap build-linux build-mingw build-mingw64 build-ps3 \

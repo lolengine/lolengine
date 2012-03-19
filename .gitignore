@@ -41,8 +41,6 @@ win32/Release
 win32/*.vcxproj.user
 win32/*.sdf
 win32/*.suo
-# Android cruft
-monsterz/android/assets
 # Do not exclude anything in contrib; this is currently one level
 # more than our current max
 !contrib/*
@@ -53,9 +51,6 @@ monsterz/android/assets
 !contrib/*/*/*/*/*/*
 !contrib/*/*/*/*/*/*/*
 # Our binaries
-deushax/deushax
-deushax/editor
-monsterz/monsterz
 test/testsuite
 test/tutorial/tut01
 test/tutorial/tut02

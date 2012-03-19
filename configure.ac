@@ -358,6 +358,9 @@ AC_CONFIG_FILES(
   deushax/gfx/Makefile
   deushax/maps/Makefile
 ])
+AC_CONFIG_FILES(
+ [mrpigeon/Makefile
+])
 
 AC_OUTPUT
 
