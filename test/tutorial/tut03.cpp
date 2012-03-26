@@ -159,9 +159,12 @@ public:
 
     ~Fractal()
     {
-        /* Signal worker threads for completion. */
+        /* Signal worker threads for completion and wait for
+         * them to quit. */
         for (int i = 0; i < MAX_THREADS; i++)
             m_jobqueue.Push(-1);
+        for (int i = 0; i < MAX_THREADS; i++)
+            m_donequeue.Pop();
 
         Input::UntrackMouse(this);
 #if !defined __native_client__
@@ -337,6 +340,7 @@ public:
             that->DoWork(line);
             that->m_donequeue.Push(0);
         }
+        that->m_donequeue.Push(0);
         return NULL;
     };
 

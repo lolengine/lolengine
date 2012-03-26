@@ -66,6 +66,8 @@ public:
         m_indices[9] = i16vec3(1, 0, 4);
         m_indices[10] = i16vec3(3, 2, 6);
         m_indices[11] = i16vec3(6, 7, 3);
+
+        m_ready = false;
     }
 
     virtual void TickGame(float deltams)
