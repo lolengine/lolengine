@@ -42,10 +42,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{E74CF679-CA2A-47E9-B1F4-3779D6AC6B04}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tut01", "tut01.vcxproj", "{B92ABADC-45BE-4CC5-B724-9426053123A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tut02", "tut02.vcxproj", "{7B083DA2-FE08-4F6D-BFDD-195D5C2783EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tut03", "tut03.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
