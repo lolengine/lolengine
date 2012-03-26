@@ -485,9 +485,6 @@ template <typename T> struct Vec3 : BVec3<T>
 
     DECLARE_MEMBER_OPS(Vec3)
 
-    template<typename U>
-    friend Vec3<U> cross(Vec3<U>, Vec3<U>);
-
 #if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
@@ -1077,6 +1074,15 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
+#define DECLARE_VEC_3_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    tprefix \
+    inline tname<tf> cross(tname<t1> const &a, tname<t2> const &b) \
+    { \
+        return tname<tf>((tf)(a.y * b.z) - (tf)(a.z * b.y), \
+                         (tf)(a.z * b.x) - (tf)(a.x * b.z), \
+                         (tf)(a.x * b.y) - (tf)(a.y * b.x)); \
+    }
+
 #define DECLARE_BINARY_OPS(tname, tprefix, type) \
     DECLARE_BINARY_COERCE_OPS(tname, tprefix, type, type, type) \
     \
@@ -1110,18 +1116,12 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_UNARY_OPS(tname, static, type) \
     DECLARE_VECTOR_OPS(tname, static, type) \
 
-#define DECLARE_ALL_VECTOR_OPS(tname) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, half) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, float) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, double) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, int8_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint8_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, int16_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint16_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, int32_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint32_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, int64_t) \
-    DECLARE_ALL_VECTOR_OPS_INNER(tname, uint64_t)
+#define DECLARE_ALL_VECTOR_OPS(type) \
+    DECLARE_ALL_VECTOR_OPS_INNER(Vec2, type) \
+    DECLARE_ALL_VECTOR_OPS_INNER(Vec3, type) \
+    DECLARE_ALL_VECTOR_OPS_INNER(Vec4, type) \
+    \
+    DECLARE_VEC_3_COERCE_OPS(Vec3, static, type, type, type)
 
 #define DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, tlow, thigh) \
     DECLARE_BINARY_COERCE_OPS(tname, static, tlow, thigh, thigh) \
@@ -1130,100 +1130,13 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
     DECLARE_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
 
-#define DECLARE_ALL_VECTOR_COERCE_OPS(tname) \
-    /* Apply the same coercion rules as in the C++ standard. However,   */ \
-    /* instead of promoting int8_t etc. to int, we apply our own rules. */ \
-    /* FIXME: "half" and "real" are deactivated for now, because we do  */ \
-    /* not implement all combinations of operators for these types yet. */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint8_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int16_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint16_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int8_t, real) */ \
+#define DECLARE_ALL_VECTOR_COERCE_OPS(tlow, thigh) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(Vec2, tlow, thigh) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(Vec3, tlow, thigh) \
+    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(Vec4, tlow, thigh) \
     \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int16_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint16_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint8_t, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint16_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, int32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int16_t, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, int32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, uint32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint16_t, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, uint32_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int32_t, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, int64_t) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint32_t, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, uint64_t) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, int64_t, real) */ \
-    \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, half) */ \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, float) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, uint64_t, real) */ \
-    \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, float) */ \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, double) */ \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, long double) */ \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, half, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, double) \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, float, real) */ \
-    \
-    DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, double, long double) \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, double, real) */ \
-    \
-    /* DECLARE_ALL_VECTOR_COERCE_OPS_INNER(tname, long double, real) */
+    DECLARE_VEC_3_COERCE_OPS(Vec3, static, tlow, thigh, thigh) \
+    DECLARE_VEC_3_COERCE_OPS(Vec3, static, thigh, tlow, thigh)
 
 /* Disable warning about unary operator applied to unsigned type */
 #if defined _MSC_VER
@@ -1234,9 +1147,17 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 DECLARE_ALL_NONVECTOR_OPS(Cmplx)
 DECLARE_ALL_NONVECTOR_OPS(Quat)
 
-DECLARE_ALL_VECTOR_OPS(Vec2)
-DECLARE_ALL_VECTOR_OPS(Vec3)
-DECLARE_ALL_VECTOR_OPS(Vec4)
+DECLARE_ALL_VECTOR_OPS(half)
+DECLARE_ALL_VECTOR_OPS(float)
+DECLARE_ALL_VECTOR_OPS(double)
+DECLARE_ALL_VECTOR_OPS(int8_t)
+DECLARE_ALL_VECTOR_OPS(uint8_t)
+DECLARE_ALL_VECTOR_OPS(int16_t)
+DECLARE_ALL_VECTOR_OPS(uint16_t)
+DECLARE_ALL_VECTOR_OPS(int32_t)
+DECLARE_ALL_VECTOR_OPS(uint32_t)
+DECLARE_ALL_VECTOR_OPS(int64_t)
+DECLARE_ALL_VECTOR_OPS(uint64_t)
 
 #if defined _MSC_VER
 #   pragma warning(pop)
@@ -1257,9 +1178,99 @@ DECLARE_ALL_VECTOR_OPS(Vec4)
 #   pragma warning(disable: 4018)
 #endif
 
-DECLARE_ALL_VECTOR_COERCE_OPS(Vec2)
-DECLARE_ALL_VECTOR_COERCE_OPS(Vec3)
-DECLARE_ALL_VECTOR_COERCE_OPS(Vec4)
+/* Apply the same coercion rules as in the C++ standard. However,   */
+/* instead of promoting int8_t etc. to int, we apply our own rules. */
+/* FIXME: "half" and "real" are deactivated for now, because we do  */
+/* not implement all combinations of operators for these types yet. */
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint8_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int16_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint16_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int16_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint16_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint16_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint32_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, int64_t)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, uint64_t)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, real) */
+
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, half) */
+DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, float)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, real) */
+
+/* DECLARE_ALL_VECTOR_COERCE_OPS(half, float) */
+/* DECLARE_ALL_VECTOR_COERCE_OPS(half, double) */
+/* DECLARE_ALL_VECTOR_COERCE_OPS(half, long double) */
+/* DECLARE_ALL_VECTOR_COERCE_OPS(half, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(float, double)
+DECLARE_ALL_VECTOR_COERCE_OPS(float, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(float, real) */
+
+DECLARE_ALL_VECTOR_COERCE_OPS(double, long double)
+/* DECLARE_ALL_VECTOR_COERCE_OPS(double, real) */
+
+/* DECLARE_ALL_VECTOR_COERCE_OPS(long double, real) */
 
 #if defined __GNUC__ && (__GNUC__ >= 4)
 #   pragma GCC diagnostic pop
