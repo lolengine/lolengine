@@ -19,6 +19,7 @@ liblol_a_SOURCES = \
     eglapp.cpp eglapp.h \
     \
     $(ps3_sources) \
+    $(xbox_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
     \
@@ -54,9 +55,14 @@ nacl_sources = \
 endif
 
 if HAVE_PS3
-ps3_sources =  \
+ps3_sources = \
     platform/ps3/threadbase.h \
     platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
     platform/ps3/ps3input.cpp platform/ps3/ps3input.h
+endif
+
+if HAVE_XBOX
+xbox_sources = \
+    platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h
 endif
 

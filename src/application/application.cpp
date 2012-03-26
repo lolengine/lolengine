@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -17,6 +17,8 @@
 
 #if defined __CELLOS_LV2__
 #   include "platform/ps3/ps3app.h"
+#elif defined _XBOX
+#   include "platform/xbox/xboxapp.h"
 #elif defined __native_client__
 #   include "platform/nacl/naclapp.h"
 #elif defined HAVE_GLES_2X
@@ -41,6 +43,8 @@ class ApplicationData
 
 #if defined __CELLOS_LV2__
     Ps3App app;
+#elif defined _XBOX
+    XboxApp app;
 #elif defined __native_client__
     NaClApp app;
 #elif defined HAVE_GLES_2X

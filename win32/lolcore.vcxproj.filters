@@ -38,6 +38,9 @@
     <Filter Include="src\image\codec">
       <UniqueIdentifier>{123803f1-1722-4421-8245-098667654cda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\xbox">
+      <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -183,6 +186,9 @@
     </ClCompile>
     <ClCompile Include="..\src\image\codec\sdl-image.cpp">
       <Filter>src\image\codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\platform\xbox\xboxapp.cpp">
+      <Filter>src\platform\xbox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="..\src\image\image-private.h">
       <Filter>src\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform\xbox\xboxapp.h">
+      <Filter>src\platform\xbox</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

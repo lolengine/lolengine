@@ -46,6 +46,7 @@ PKG_PROG_PKG_CONFIG()
 
 dnl  Available platforms: some of these are not public
 AM_CONDITIONAL(HAVE_PS3, test -f src/platform/ps3/ps3app.cpp)
+AM_CONDITIONAL(HAVE_XBOX, false)
 
 AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 dnl conditional builds
