@@ -36,28 +36,6 @@ using namespace std;
 namespace lol
 {
 
-float dot(vec2 v1, vec2 v2)
-{
-    return v1.x * v2.x + v1.y * v2.y;
-}
-
-float dot(vec3 v1, vec3 v2)
-{
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-}
-
-float dot(vec4 v1, vec4 v2)
-{
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
-}
-
-template<> vec3 cross(vec3 v1, vec3 v2)
-{
-    return vec3(v1.y * v2.z - v1.z * v2.y,
-                v1.z * v2.x - v1.x * v2.z,
-                v1.x * v2.y - v1.y * v2.x);
-}
-
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
