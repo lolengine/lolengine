@@ -31,6 +31,7 @@ public:
 
 protected:
     virtual void TickGame(float deltams);
+    virtual void TickDraw(float deltams);
 
 private:
     SdlInputData *data;

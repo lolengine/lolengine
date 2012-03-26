@@ -31,6 +31,8 @@ class SdlInputData
     friend class SdlInput;
 
 private:
+    void Tick(float deltams);
+
     static ivec2 GetMousePos();
 };
 
@@ -43,16 +45,32 @@ SdlInput::SdlInput()
 {
 #if defined USE_SDL
     SDL_Init(SDL_INIT_TIMER);
+#endif
 
     m_gamegroup = GAMEGROUP_BEFORE;
-#endif
 }
 
 void SdlInput::TickGame(float deltams)
 {
-#if defined USE_SDL
     Entity::TickGame(deltams);
 
+#if !defined _WIN32
+    data->Tick(deltams);
+#endif
+}
+
+void SdlInput::TickDraw(float deltams)
+{
+    Entity::TickDraw(deltams);
+
+#if defined _WIN32
+    data->Tick(deltams);
+#endif
+}
+
+void SdlInputData::Tick(float deltams)
+{
+#if defined USE_SDL
     /* Handle mouse input */
     ivec2 mouse = SdlInputData::GetMousePos();;
     Input::SetMousePos(mouse);
