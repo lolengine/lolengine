@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -11,6 +11,8 @@
 #if defined HAVE_CONFIG_H
 #   include "config.h"
 #endif
+
+#if !defined _XBOX /* This file is meaningless on Xbox */
 
 #include <cmath>
 
@@ -241,3 +243,4 @@ Gradient::~Gradient()
 
 } /* namespace lol */
 
+#endif /* !defined _XBOX */

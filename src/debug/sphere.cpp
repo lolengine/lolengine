@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -12,7 +12,9 @@
 #   include "config.h"
 #endif
 
-#if defined WIN32 && !defined _XBOX
+#if !defined _XBOX /* This file is meaningless on Xbox */
+
+#if defined WIN32
 #   define _USE_MATH_DEFINES /* for M_PI */
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
@@ -208,3 +210,4 @@ DebugSphere::~DebugSphere()
 
 } /* namespace lol */
 
+#endif /* !defined _XBOX */

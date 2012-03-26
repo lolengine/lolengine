@@ -12,7 +12,12 @@
 #   include "config.h"
 #endif
 
-#if defined WIN32 && !defined _XBOX
+#if defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#elif defined WIN32
 #   define _USE_MATH_DEFINES /* for M_PI */
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>

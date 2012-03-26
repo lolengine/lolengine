@@ -169,6 +169,7 @@
     <ClCompile Include="..\src\platform.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlapp.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlinput.cpp" />
+    <ClCompile Include="..\src\platform\xbox\xboxapp.cpp" />
     <ClCompile Include="..\src\profiler.cpp" />
     <ClCompile Include="..\src\real.cpp" />
     <ClCompile Include="..\src\sample.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="..\src\platform.h" />
     <ClInclude Include="..\src\platform\sdl\sdlapp.h" />
     <ClInclude Include="..\src\platform\sdl\sdlinput.h" />
+    <ClInclude Include="..\src\platform\xbox\xboxapp.h" />
     <ClInclude Include="..\src\profiler.h" />
     <ClInclude Include="..\src\sample.h" />
     <ClInclude Include="..\src\sampler.h" />

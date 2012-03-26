@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -38,6 +38,8 @@ class ShaderData
     friend class Shader;
 
 private:
+#if defined _XBOX
+
 #if !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
 #else

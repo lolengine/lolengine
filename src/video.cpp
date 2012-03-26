@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -14,7 +14,11 @@
 
 #include <cmath>
 
-#if defined _WIN32 && !defined _XBOX
+#if _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#elif defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   undef near /* Fuck Microsoft */
@@ -36,12 +40,20 @@ class VideoData
 private:
     static mat4 proj_matrix, view_matrix;
     static ivec2 saved_viewport;
+#if defined _XBOX
+    static Direct3D *d3d_ctx;
+    static D3DDevice *d3d_dev;
+#endif
 };
 
 mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
-
 ivec2 VideoData::saved_viewport(0, 0);
+
+#if defined _XBOX
+Direct3D *VideoData::d3d_ctx;
+D3DDevice *VideoData::d3d_dev;
+#endif
 
 /*
  * Public Video class
@@ -49,7 +61,43 @@ ivec2 VideoData::saved_viewport(0, 0);
 
 void Video::Setup(ivec2 size)
 {
-#if defined USE_GLEW && !defined __APPLE__
+#if defined _XBOX
+    VideoData::d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
+    if (!VideoData::d3d_ctx)
+    {
+        Log::Error("cannot initialise D3D\n");
+        exit(EXIT_FAILURE);
+    }
+
+    D3DPRESENT_PARAMETERS d3dpp;
+    memset(&d3dpp, 0, sizeof(d3dpp));
+
+    XVIDEO_MODE VideoMode;
+    XGetVideoMode( &VideoMode );
+    if (size.x > VideoMode.dwDisplayWidth)
+        size.x = VideoMode.dwDisplayWidth;
+    if (size.y > VideoMode.dwDisplayHeight)
+        size.y = VideoMode.dwDisplayHeight;
+    VideoData::saved_viewport = size;
+
+    d3dpp.BackBufferWidth = size.x;
+    d3dpp.BackBufferHeight = size.y;
+    d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+    d3dpp.BackBufferCount = 1;
+    d3dpp.EnableAutoDepthStencil = TRUE;
+    d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+
+    if (!VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, NULL,
+                                          D3DCREATE_HARDWARE_VERTEXPROCESSING,
+                                          &d3dpp, &VideoData::d3d_dev))
+    {
+        Log::Error("cannot create D3D device\n");
+        exit(EXIT_FAILURE);
+    }
+#else
+#   if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
     GLenum glerr = glewInit();
     if (glerr != GLEW_OK)
@@ -57,7 +105,7 @@ void Video::Setup(ivec2 size)
         Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
         exit(EXIT_FAILURE);
     }
-#endif
+#   endif
 
     /* Initialise OpenGL */
     glViewport(0, 0, size.x, size.y);
@@ -66,9 +114,10 @@ void Video::Setup(ivec2 size)
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
     glClearDepth(1.0);
 
-#if defined HAVE_GL_2X && !defined __APPLE__
+#   if defined HAVE_GL_2X && !defined __APPLE__
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+#   endif
 #endif
 }
 
@@ -126,8 +175,14 @@ void Video::SetDepth(bool set)
 void Video::Clear()
 {
     ivec2 size = GetSize();
+#if defined _XBOX
+    VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
+                                        | D3DCLEAR_STENCIL,
+                              D3DCOLOR_XRGB(26, 51, 77), 1.0f, 0);
+#else
     glViewport(0, 0, size.x, size.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#endif
 
     SetFov(0.0f);
 }
@@ -139,26 +194,29 @@ void Video::Destroy()
 
 void Video::Capture(uint32_t *buffer)
 {
+#if _XBOX
+    /* TODO */
+#else
     GLint v[4];
-#if defined __CELLOS_LV2__
+#   if defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
     v[2] = 1920;
     v[3] = 1080;
-#else
+#   else
     glGetIntegerv(GL_VIEWPORT, v);
-#endif
+#   endif
     int width = v[2], height = v[3];
 
-#if defined HAVE_GL_2X
+#   if defined HAVE_GL_2X
     glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-#endif
+#   endif
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-#if defined GL_BGRA
+#   if defined GL_BGRA
     glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
-#else
+#   else
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-#endif
+#   endif
 
     for (int j = 0; j < height / 2; j++)
         for (int i = 0; i < width; i++)
@@ -167,13 +225,16 @@ void Video::Capture(uint32_t *buffer)
             buffer[j * width + i] = buffer[(height - j - 1) * width + i];
             buffer[(height - j - 1) * width + i] = tmp;
         }
+#endif
 }
 
 ivec2 Video::GetSize()
 {
+#if _XBOX
+    return VideoData::saved_viewport;
+#elif 1
     /* GetSize() is called too often on the game thread; we cannot rely on
      * the GL context at this point */
-#if 1
     return VideoData::saved_viewport;
 #elif defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions

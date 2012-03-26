@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -18,8 +18,14 @@
 
 #if defined HAVE_PTHREAD_H
 #   include <pthread.h>
+#elif defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #elif defined _WIN32
 #   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #else
 #   error No threading support yet :(
 #endif
