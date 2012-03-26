@@ -40,7 +40,7 @@ class ShaderData
 private:
 #if defined _XBOX
 
-#if !defined __CELLOS_LV2__
+#elif !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
 #else
     CGprogram vert_id, frag_id;
