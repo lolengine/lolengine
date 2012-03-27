@@ -31,6 +31,7 @@ public:
     inline half(int f) { *this = makefast((float)f); }
     inline half(float f) { *this = makefast(f); }
     inline half(double f) { *this = makefast((float)f); }
+    inline half(long double f) { *this = makefast((float)f); }
 
     inline int is_nan() const
     {
@@ -56,8 +57,19 @@ public:
     inline half &operator =(int f) { return *this = makefast((float)f); }
     inline half &operator =(float f) { return *this = makefast(f); }
     inline half &operator =(double f) { return *this = makefast((float)f); }
-    inline operator int() const { return (int)tofloat(*this); }
+    inline half &operator =(long double f) { return *this = makefast((float)f); }
+    inline operator int8_t() const { return (int8_t)(float)*this; }
+    inline operator uint8_t() const { return (uint8_t)(float)*this; }
+    inline operator int16_t() const { return (int16_t)(float)*this; }
+    inline operator uint16_t() const { return (uint16_t)(float)*this; }
+    inline operator int32_t() const { return (int32_t)(float)*this; }
+    inline operator uint32_t() const { return (uint32_t)(float)*this; }
+    inline operator int64_t() const { return (int64_t)(float)*this; }
+    inline operator uint64_t() const { return (uint64_t)(float)*this; }
+
     inline operator float() const { return tofloat(*this); }
+    inline operator double() const { return tofloat(*this); }
+    inline operator long double() const { return tofloat(*this); }
 
     static float tofloat(half h);
 
@@ -78,19 +90,11 @@ public:
 
     inline half operator -() const { return makebits(bits ^ 0x8000u); }
     inline half operator +() const { return *this; }
-    inline half &operator +=(float f) { return (*this = (half)(*this + f)); }
-    inline half &operator -=(float f) { return (*this = (half)(*this - f)); }
-    inline half &operator *=(float f) { return (*this = (half)(*this * f)); }
-    inline half &operator /=(float f) { return (*this = (half)(*this / f)); }
     inline half &operator +=(half h) { return (*this = (half)(*this + h)); }
     inline half &operator -=(half h) { return (*this = (half)(*this - h)); }
     inline half &operator *=(half h) { return (*this = (half)(*this * h)); }
     inline half &operator /=(half h) { return (*this = (half)(*this / h)); }
 
-    inline float operator +(float f) const { return (float)*this + f; }
-    inline float operator -(float f) const { return (float)*this - f; }
-    inline float operator *(float f) const { return (float)*this * f; }
-    inline float operator /(float f) const { return (float)*this / f; }
     inline float operator +(half h) const { return (float)*this + (float)h; }
     inline float operator -(half h) const { return (float)*this - (float)h; }
     inline float operator *(half h) const { return (float)*this * (float)h; }
@@ -110,15 +114,52 @@ public:
     uint16_t bits;
 };
 
-inline float &operator +=(float &f, half h) { return f += (float)h; }
-inline float &operator -=(float &f, half h) { return f -= (float)h; }
-inline float &operator *=(float &f, half h) { return f *= (float)h; }
-inline float &operator /=(float &f, half h) { return f /= (float)h; }
+#define DECLARE_COERCE_HALF_NUMERIC_OPS(op, type, ret, x2, h2) \
+    inline ret operator op(type x, half h) { return x2 op h2; } \
+    inline ret operator op(half h, type x) { return h2 op x2; } \
+    inline type &operator op##=(type &x, half h) { return x = x op h2; } \
+    inline half &operator op##=(half &h, type x) { return h = h op x2; }
 
-inline float operator +(float f, half h) { return f + (float)h; }
-inline float operator -(float f, half h) { return f - (float)h; }
-inline float operator *(float f, half h) { return f * (float)h; }
-inline float operator /(float f, half h) { return f / (float)h; }
+#define DECLARE_COERCE_HALF_BOOL_OPS(op, type, x2, h2) \
+    inline bool operator op(type x, half h) { return x2 op h2; } \
+    inline bool operator op(half h, type x) { return h2 op x2; }
+
+#define DECLARE_COERCE_HALF_OPS(type, ret, x2, h2) \
+    DECLARE_COERCE_HALF_NUMERIC_OPS(+, type, ret, x2, h2) \
+    DECLARE_COERCE_HALF_NUMERIC_OPS(-, type, ret, x2, h2) \
+    DECLARE_COERCE_HALF_NUMERIC_OPS(*, type, ret, x2, h2) \
+    DECLARE_COERCE_HALF_NUMERIC_OPS(/, type, ret, x2, h2) \
+    \
+    DECLARE_COERCE_HALF_BOOL_OPS(==, type, x2, h2) \
+    DECLARE_COERCE_HALF_BOOL_OPS(!=, type, x2, h2) \
+    DECLARE_COERCE_HALF_BOOL_OPS(>=, type, x2, h2) \
+    DECLARE_COERCE_HALF_BOOL_OPS(<=, type, x2, h2) \
+    DECLARE_COERCE_HALF_BOOL_OPS(>, type, x2, h2) \
+    DECLARE_COERCE_HALF_BOOL_OPS(<, type, x2, h2)
+
+#define DECLARE_COERCE_TO_HALF_OPS(type) \
+    DECLARE_COERCE_HALF_OPS(type, half, (half)(int)x, h)
+
+#define DECLARE_COERCE_FROM_HALF_OPS(type) \
+    DECLARE_COERCE_HALF_OPS(type, type, x, (type)h)
+
+DECLARE_COERCE_TO_HALF_OPS(int8_t)
+DECLARE_COERCE_TO_HALF_OPS(uint8_t)
+DECLARE_COERCE_TO_HALF_OPS(int16_t)
+DECLARE_COERCE_TO_HALF_OPS(uint16_t)
+DECLARE_COERCE_TO_HALF_OPS(int32_t)
+DECLARE_COERCE_TO_HALF_OPS(uint32_t)
+DECLARE_COERCE_TO_HALF_OPS(int64_t)
+DECLARE_COERCE_TO_HALF_OPS(uint64_t)
+
+DECLARE_COERCE_FROM_HALF_OPS(float)
+DECLARE_COERCE_FROM_HALF_OPS(double)
+DECLARE_COERCE_FROM_HALF_OPS(long double)
+
+#undef DECLARE_COERCE_HALF_NUMERIC_OPS
+#undef DECLARE_COERCE_HALF_OPS
+#undef DECLARE_COERCE_TO_HALF_OPS
+#undef DECLARE_COERCE_FROM_HALF_OPS
 
 } /* namespace lol */
 
