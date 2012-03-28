@@ -118,6 +118,12 @@ int main(int argc, char **argv)
 {
     Application app("Tutorial 1: Triangle", ivec2(640, 480), 60.0f);
 
+#if defined _MSC_VER
+    _chdir("..");
+#elif defined _WIN32
+    _chdir("../..");
+#endif
+
     new DebugFps(5, 5);
     new Triangle();
 
