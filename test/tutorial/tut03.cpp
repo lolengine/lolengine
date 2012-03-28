@@ -785,11 +785,13 @@ private:
 
 int main(int argc, char **argv)
 {
-#if defined _WIN32
+    Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
+
+#if defined _MSC_VER
+    _chdir("..");
+#elif defined _WIN32
     _chdir("../..");
 #endif
-
-    Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
     new Fractal(ivec2(640, 480));
