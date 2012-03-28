@@ -1246,6 +1246,10 @@ DECLARE_ALL_VECTOR_COERCE_OPS(float, long double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(double, long double)
 
+/* FIXME: vectors of "half" are deactivated for now, because they
+ * induce extremely long compilation times (about 17 seconds per TU). */
+
+#if 0
 /* All integer types are promoted to half; all floating point types
  * cause half to be promoted. */
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, half)
@@ -1260,6 +1264,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, half)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, double)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, long double)
+#endif
 
 /* FIXME: vectors of "real" are deactivated for now, because we do
  * not implement all combinations of operators for these types yet. */
