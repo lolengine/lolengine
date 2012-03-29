@@ -45,7 +45,15 @@ private:
     float dilate, tx, ty;
 
     Image *img;
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet not implemented")
+#   undef STR
+#   undef STR0
+#else
     GLuint texture;
+#endif
 };
 
 /*
@@ -60,7 +68,15 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     sprintf(data->name, "<tileset> %s", path);
 
     data->tiles = NULL;
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
+#   undef STR
+#   undef STR0
+#else
     data->texture = 0;
+#endif
     data->img = new Image(path);
     data->isize = data->img->GetSize();
 
@@ -102,11 +118,26 @@ void TileSet::TickDraw(float deltams)
     {
         if (data->img)
             delete data->img;
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
+#   undef STR
+#   undef STR0
+#else
         else
             glDeleteTextures(1, &data->texture);
+#endif
     }
     else if (data->img)
     {
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
+#   undef STR
+#   undef STR0
+#else
         GLuint format;
         int planes;
 
@@ -149,6 +180,7 @@ void TileSet::TickDraw(float deltams)
 
         if (pixels != data->img->GetData())
             free(pixels);
+#endif
         delete data->img;
         data->img = NULL;
     }
@@ -171,11 +203,19 @@ ivec2 TileSet::GetSize(int tileid) const
 
 void TileSet::Bind()
 {
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::Bind() not implemented")
+#   undef STR
+#   undef STR0
+#else
     if (!data->img && data->texture)
     {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->texture);
     }
+#endif
 }
 
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
@@ -189,6 +229,13 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
     int dy = o ? 0 : data->size.y;
     int dz = o ? data->size.y : 0;
 
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
+#   undef STR
+#   undef STR0
+#else
     if (!data->img && data->texture)
     {
         float tmp[10];
@@ -234,6 +281,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
         memset(vertex, 0, 3 * sizeof(float));
         memset(texture, 0, 2 * sizeof(float));
     }
+#endif
 }
 
 } /* namespace lol */

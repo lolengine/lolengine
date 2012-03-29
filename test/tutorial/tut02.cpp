@@ -25,6 +25,7 @@ using namespace lol;
 
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
+#   include <direct.h>
 #endif
 
 class Cube : public WorldEntity

@@ -166,10 +166,16 @@ void Video::SetFov(float theta)
 
 void Video::SetDepth(bool set)
 {
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetDepth() not implemented")
+#else
     if (set)
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
+#endif
 }
 
 void Video::Clear()

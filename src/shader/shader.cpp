@@ -39,7 +39,9 @@ class ShaderData
 
 private:
 #if defined _XBOX
-
+    D3DVertexShader *vert_shader;
+    D3DPixelShader *frag_shader;
+    ID3DXConstantTable *vert_table, *frag_table;
 #elif !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
 #else
@@ -90,7 +92,11 @@ void Shader::Destroy(Shader *shader)
 Shader::Shader(char const *vert, char const *frag)
   : data(new ShaderData())
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    ID3DXBuffer *shader_code, *error_msg;
+    HRESULT hr;
+#elif !defined __CELLOS_LV2__
     char buf[4096], errbuf[4096];
     char const *shader = buf;
     GLint status;
@@ -103,7 +109,20 @@ Shader::Shader(char const *vert, char const *frag)
 
     /* Compile vertex shader */
     data->vert_crc = Hash::Crc32(vert);
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    hr = D3DXCompileShader(vert, (UINT)strlen(vert), NULL, NULL, "main",
+                           "vs_2_0", 0, &shader_code, &error_msg,
+                           &data->vert_table);
+    if (FAILED(hr))
+    {
+        Log::Error("failed to compile vertex shader: %s",
+                   error_msg ? error_msg->GetBufferPointer() : "error");
+        Log::Error("shader source:\n%s\n", vert);
+    }
+    g_d3ddevice->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
+                                    &data->vert_shader);
+    shader_code->Release();
+#elif !defined __CELLOS_LV2__
     ShaderData::Patch(buf, vert, NULL);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(data->vert_id, 1, &shader, NULL);
@@ -129,7 +148,20 @@ Shader::Shader(char const *vert, char const *frag)
 
     /* Compile fragment shader */
     data->frag_crc = Hash::Crc32(frag);
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    hr = D3DXCompileShader(frag, (UINT)strlen(frag), NULL, NULL, "main",
+                           "vs_2_0", 0, &shader_code, &error_msg,
+                           &data->frag_table);
+    if (FAILED(hr))
+    {
+        Log::Error("failed to compile fragment shader: %s",
+                   error_msg ? error_msg->GetBufferPointer() : "error");
+        Log::Error("shader source:\n%s\n", frag);
+    }
+    g_d3ddevice->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
+                                   &data->frag_shader);
+    shader_code->Release();
+#elif !defined __CELLOS_LV2__
     ShaderData::Patch(buf, NULL, frag);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(data->frag_id, 1, &shader, NULL);
@@ -153,7 +185,7 @@ Shader::Shader(char const *vert, char const *frag)
     }
 #endif
 
-#if !defined __CELLOS_LV2__
+#if !defined _XBOX && !defined __CELLOS_LV2__
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -166,7 +198,15 @@ Shader::Shader(char const *vert, char const *frag)
 
 int Shader::GetAttribLocation(char const *attr) const
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    D3DXHANDLE hr = data->frag_table->GetConstantByName(NULL, attr);
+    if (FAILED(hr))
+        return -1;
+    UINT count;
+    D3DXCONSTANT_DESC desc;
+    data->frag_table->GetConstantDesc(hr, &desc, &count);
+    return desc.RegisterIndex;
+#elif !defined __CELLOS_LV2__
     return glGetAttribLocation(data->prog_id, attr);
 #else
     /* FIXME: need to differentiate between vertex and fragment program */
@@ -176,7 +216,15 @@ int Shader::GetAttribLocation(char const *attr) const
 
 int Shader::GetUniformLocation(char const *uni) const
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    D3DXHANDLE hr = data->frag_table->GetConstantByName(NULL, uni);
+    if (FAILED(hr))
+        return -1;
+    UINT count;
+    D3DXCONSTANT_DESC desc;
+    data->frag_table->GetConstantDesc(hr, &desc, &count);
+    return desc.RegisterIndex;
+#elif !defined __CELLOS_LV2__
     return glGetUniformLocation(data->prog_id, uni);
 #else
     /* FIXME: need to differentiate between vertex and fragment program,
@@ -190,7 +238,11 @@ int Shader::GetUniformLocation(char const *uni) const
 
 void Shader::SetUniform(int uni, float f)
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    vec4 tmp(f, 0.0f, 0.0f, 0.0f);
+    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+#elif !defined __CELLOS_LV2__
     glUniform1f(uni, f);
 #else
     cgGLSetParameter1f((CGparameter)(intptr_t)uni, f);
@@ -199,7 +251,11 @@ void Shader::SetUniform(int uni, float f)
 
 void Shader::SetUniform(int uni, vec2 const &v)
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    vec4 tmp(v, 0.0f, 0.0f);
+    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+#elif !defined __CELLOS_LV2__
     glUniform2f(uni, v.x, v.y);
 #else
     cgGLSetParameter2f((CGparameter)(intptr_t)uni, v.x, v.y);
@@ -208,7 +264,11 @@ void Shader::SetUniform(int uni, vec2 const &v)
 
 void Shader::SetUniform(int uni, vec3 const &v)
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    vec4 tmp(v, 0.0f);
+    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+#elif !defined __CELLOS_LV2__
     glUniform3f(uni, v.x, v.y, v.z);
 #else
     cgGLSetParameter3f((CGparameter)(intptr_t)uni, v.x, v.y, v.z);
@@ -218,7 +278,10 @@ void Shader::SetUniform(int uni, vec3 const &v)
 void Shader::SetUniform(int uni, vec4 const &v)
 {
     /* FIXME: use the array versions of these functions */
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    g_d3ddevice->SetPixelShaderConstantF(uni, &v[0], 1);
+#elif !defined __CELLOS_LV2__
     glUniform4f(uni, v.x, v.y, v.z, v.w);
 #else
     cgGLSetParameter4f((CGparameter)(intptr_t)uni, v.x, v.y, v.z, v.w);
@@ -227,7 +290,10 @@ void Shader::SetUniform(int uni, vec4 const &v)
 
 void Shader::SetUniform(int uni, mat4 const &m)
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    g_d3ddevice->SetPixelShaderConstantF(uni, &m[0][0], 4);
+#elif !defined __CELLOS_LV2__
     glUniformMatrix4fv(uni, 1, GL_FALSE, &m[0][0]);
 #else
     cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni, &m[0][0]);
@@ -236,7 +302,11 @@ void Shader::SetUniform(int uni, mat4 const &m)
 
 void Shader::Bind() const
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    g_d3ddevice->SetVertexShader(data->vert_shader);
+    g_d3ddevice->SetPixelShader(data->frag_shader);
+#elif !defined __CELLOS_LV2__
     glUseProgram(data->prog_id);
 #else
     cgGLEnableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
@@ -248,7 +318,13 @@ void Shader::Bind() const
 
 Shader::~Shader()
 {
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+    extern D3DDevice *g_d3ddevice;
+    data->vert_shader->Release();
+    data->vert_table->Release();
+    data->frag_shader->Release();
+    data->frag_table->Release();
+#elif !defined __CELLOS_LV2__
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
@@ -266,7 +342,7 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
-#if !defined __CELLOS_LV2__
+#if !defined _XBOX && !defined __CELLOS_LV2__
     if (!version)
     {
         char buf[4096];
