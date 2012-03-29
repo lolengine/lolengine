@@ -59,11 +59,19 @@ private:
     int ntiles;
     float angle;
 
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene not implemented")
+#   undef STR
+#   undef STR0
+#else
 #if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vao;
 #endif
     GLuint *bufs;
     int nbufs;
+#endif
 
     static Scene *scene;
 };
@@ -81,8 +89,16 @@ Scene::Scene(float angle)
     data->ntiles = 0;
     data->angle = angle;
 
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Scene() not implemented")
+#   undef STR
+#   undef STR0
+#else
     data->bufs = 0;
     data->nbufs = 0;
+#endif
 
 #if defined HAVE_GL_2X && !defined __APPLE__
     glGenVertexArrays(1, &data->vao);
@@ -91,6 +107,13 @@ Scene::Scene(float angle)
 
 Scene::~Scene()
 {
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::~Scene() not implemented")
+#   undef STR
+#   undef STR0
+#else
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
     /* XXX: The test is necessary because of a crash with PSGL. */
@@ -100,6 +123,7 @@ Scene::~Scene()
     glDeleteVertexArrays(1, &data->vao);
 #endif
     free(data->bufs);
+#endif
     delete data;
 }
 
@@ -135,7 +159,7 @@ void Scene::Render() // XXX: rename to Blit()
 {
     if (!stdshader)
     {
-#if !defined __CELLOS_LV2__
+#if !defined _XBOX && !defined __CELLOS_LV2__
         stdshader = Shader::Create(
 #if !defined HAVE_GLES_2X
             "#version 130\n"
@@ -299,7 +323,7 @@ void Scene::Render() // XXX: rename to Blit()
     data->model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
-    GLuint uni_mat, uni_tex, attr_pos, attr_tex;
+    int uni_mat, uni_tex, attr_pos, attr_tex;
 #if !defined __CELLOS_LV2__
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
@@ -314,7 +338,13 @@ void Scene::Render() // XXX: rename to Blit()
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
-#if !defined __CELLOS_LV2__
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
+#   undef STR
+#   undef STR0
+#elif !defined __CELLOS_LV2__
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
 #else
@@ -323,6 +353,13 @@ void Scene::Render() // XXX: rename to Blit()
     //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);
 #endif
 
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
+#   undef STR
+#   undef STR0
+#else
 #if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #endif
@@ -334,16 +371,25 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
+#   undef STR
+#   undef STR0
+#else
         /* Generate new vertex / texture coord buffers if necessary */
         if (buf + 2 > data->nbufs)
         {
-            data->bufs = (GLuint *)realloc(data->bufs, (buf + 2) * sizeof(GLuint));
+            data->bufs = (uint32_t *)realloc(data->bufs, (buf + 2) * sizeof(uint32_t));
             glGenBuffers(buf + 2 - data->nbufs, data->bufs + data->nbufs);
             data->nbufs = buf + 2;
         }
+#endif
 
         /* Count how many quads will be needed */
         for (n = i + 1; n < data->ntiles; n++)
@@ -370,6 +416,13 @@ void Scene::Render() // XXX: rename to Blit()
 #if defined HAVE_GL_2X && !defined __APPLE__
         glBindVertexArray(data->vao);
 #endif
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
+#   undef STR
+#   undef STR0
+#else
 #if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glEnableVertexAttribArray(attr_pos);
         glEnableVertexAttribArray(attr_tex);
@@ -404,6 +457,7 @@ void Scene::Render() // XXX: rename to Blit()
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
+#endif
 
         free(vertex);
         free(texture);
@@ -413,6 +467,13 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 
+#if defined _XBOX
+#   define STR0(x) #x
+#   define STR(x) STR0(x)
+#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
+#   undef STR
+#   undef STR0
+#else
 #if !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
 #endif
@@ -421,6 +482,7 @@ void Scene::Render() // XXX: rename to Blit()
     glDisable(GL_ALPHA_TEST);
 #endif
     glDisable(GL_BLEND);
+#endif
 }
 
 } /* namespace lol */
