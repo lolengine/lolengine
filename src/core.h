@@ -62,7 +62,7 @@ static inline int isnan(float f)
 #endif
 
 // Base types
-#include "trig.h"
+#include "math/trig.h"
 #include "lol/math/half.h"
 #include "lol/math/real.h"
 #include "lol/math/vector.h"
@@ -97,8 +97,8 @@ static inline int isnan(float f)
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
+#include "gpu/shader.h"
 #include "gpu/vbo.h"
-#include "shader/shader.h"
 #include "image/image.h"
 #include "application/application.h"
 
