@@ -14,9 +14,6 @@
     <Filter Include="src\platform">
       <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\shader">
-      <UniqueIdentifier>{ae7aa503-aea5-4aa6-9f61-2f92cfade09c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\platform\sdl">
       <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
     </Filter>
@@ -25,6 +22,9 @@
     </Filter>
     <Filter Include="src\lol\math">
       <UniqueIdentifier>{1e0b7a4c-425f-4d4f-945e-ba2ac9386ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math">
+      <UniqueIdentifier>{2caadbda-b9f1-446d-bbd2-55c959db342c}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\gpu">
       <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
@@ -61,9 +61,6 @@
     <ClCompile Include="..\src\debug\stats.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\shader\shader.cpp">
-      <Filter>src\shader</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\platform\sdl\sdlapp.cpp">
       <Filter>src\platform\sdl</Filter>
     </ClCompile>
@@ -94,8 +91,8 @@
     <ClCompile Include="..\src\gradient.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\half.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\math\half.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="..\src\hash.cpp">
       <Filter>src</Filter>
@@ -118,8 +115,8 @@
     <ClCompile Include="..\src\profiler.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\real.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\math\real.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="..\src\sample.cpp">
       <Filter>src</Filter>
@@ -148,11 +145,11 @@
     <ClCompile Include="..\src\timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\trig.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\math\trig.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vector.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\math\vector.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="..\src\video.cpp">
       <Filter>src</Filter>
@@ -162,6 +159,9 @@
     </ClCompile>
     <ClCompile Include="..\src\worldentity.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gpu\shader.cpp">
+      <Filter>src\gpu</Filter>
     </ClCompile>
     <ClCompile Include="..\src\gpu\vbo.cpp">
       <Filter>src\gpu</Filter>
@@ -210,9 +210,6 @@
     <ClInclude Include="..\src\debug\stats.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\shader\shader.h">
-      <Filter>src\shader</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\platform\sdl\sdlinput.h">
       <Filter>src\platform\sdl</Filter>
     </ClInclude>
@@ -247,9 +244,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gradient.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\half.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\hash.h">
@@ -312,8 +306,8 @@
     <ClInclude Include="..\src\timer.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\trig.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\src\math\trig.h">
+      <Filter>src\math</Filter>
     </ClInclude>
     <ClInclude Include="..\src\video.h">
       <Filter>src</Filter>
@@ -323,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="..\src\worldentity.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lol\math\half.h">
+      <Filter>src\lol\math</Filter>
     </ClInclude>
     <ClInclude Include="..\src\lol\math\real.h">
       <Filter>src\lol\math</Filter>
@@ -335,6 +332,9 @@
     </ClInclude>
     <ClInclude Include="..\src\lol\unit.h">
       <Filter>src\lol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gpu\shader.h">
+      <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gpu\vbo.h">
       <Filter>src\gpu</Filter>

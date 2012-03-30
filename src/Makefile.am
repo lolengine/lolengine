@@ -2,15 +2,15 @@
 noinst_LIBRARIES = liblol.a
 
 liblol_a_SOURCES = \
-    core.h vector.cpp real.cpp tiler.cpp tiler.h dict.cpp dict.h \
+    core.h tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
     map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h log.cpp log.h \
     timer.cpp timer.h bitfield.h profiler.cpp profiler.h input.h input.cpp \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
-    worldentity.cpp worldentity.h gradient.cpp gradient.h half.cpp \
-    platform.cpp platform.h sprite.cpp sprite.h trig.cpp trig.h \
+    worldentity.cpp worldentity.h gradient.cpp gradient.h \
+    platform.cpp platform.h sprite.cpp sprite.h \
     \
     lol/unit.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
@@ -23,8 +23,11 @@ liblol_a_SOURCES = \
     $(nacl_sources) \
     $(sdl_sources) \
     \
-    shader/shader.cpp shader/shader.h \
     thread/threadbase.h thread/thread.h \
+    \
+    math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp math/trig.h \
+    \
+    gpu/shader.cpp gpu/shader.h \
     gpu/vbo.cpp gpu/vbo.h \
     \
     image/image.cpp image/image.h image/image-private.h \
