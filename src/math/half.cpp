@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -40,7 +40,8 @@ namespace lol
 
 /* Lookup table-based algorithm from “Fast Half Float Conversions”
  * by Jeroen van der Zijp, November 2008. No rounding is performed,
- * and some NaN values may be incorrectly converted to Inf. */
+ * and some NaN values may be incorrectly converted to Inf (because
+ * the lowest order bits in the mantissa are ignored). */
 static inline uint16_t float_to_half_nobranch(uint32_t x)
 {
     static uint16_t const basetable[512] =
@@ -157,6 +158,7 @@ static inline void float_to_half_vector(half *dst, float const *src)
 }
 #endif
 
+/* We use this De Bruijn sequence to compute a branchless integer log2 */
 static int const shifttable[32] =
 {
     23, 14, 22, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 20, 0,
