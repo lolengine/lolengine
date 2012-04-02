@@ -31,7 +31,7 @@ class TileSetData;
 class TileSet : public Entity
 {
 public:
-    TileSet(char const *path, ivec2 size, ivec2 count, float dilate);
+    TileSet(char const *path, ivec2 size, ivec2 count, vec2 scale);
     virtual ~TileSet();
 
 protected:
