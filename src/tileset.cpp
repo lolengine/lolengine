@@ -42,7 +42,8 @@ private:
     char *name, *path;
     int *tiles, ntiles;
     ivec2 size, isize, count;
-    float dilate, tx, ty;
+    vec2 scale;
+    float tx, ty;
 
     Image *img;
 #if defined _XBOX
@@ -60,7 +61,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
+TileSet::TileSet(char const *path, ivec2 size, ivec2 count, vec2 scale)
   : data(new TileSetData())
 {
     data->name = (char *)malloc(10 + strlen(path) + 1);
@@ -97,7 +98,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, float dilate)
     data->tx = (float)data->size.x / PotUp(data->isize.x);
     data->ty = (float)data->size.y / PotUp(data->isize.y);
 
-    data->dilate = dilate;
+    data->scale = scale;
     data->ntiles = data->count.x * data->count.y;
 
     m_drawgroup = DRAWGROUP_BEFORE;
@@ -223,7 +224,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
 {
     float tx = data->tx * ((id & 0xffff) % data->count.x);
     float ty = data->ty * ((id & 0xffff) / data->count.x);
-    float dilate = data->dilate;
+    vec2 scale = data->scale;
 
     int dx = data->size.x;
     int dy = o ? 0 : data->size.y;
@@ -240,21 +241,21 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
     {
         float tmp[10];
 
-        *vertex++ = tmp[0] = pos.x;
-        *vertex++ = tmp[1] = dilate * (pos.y + dy);
-        *vertex++ = tmp[2] = dilate * (pos.z + dz);
+        *vertex++ = tmp[0] = scale.x * pos.x;
+        *vertex++ = tmp[1] = scale.y * (pos.y + dy);
+        *vertex++ = tmp[2] = scale.y * (pos.z + dz);
         *texture++ = tmp[3] = tx;
         *texture++ = tmp[4] = ty;
 
-        *vertex++ = pos.x + dx;
-        *vertex++ = dilate * (pos.y + dy);
-        *vertex++ = dilate * (pos.z + dz);
+        *vertex++ = scale.x * (pos.x + dx);
+        *vertex++ = scale.y * (pos.y + dy);
+        *vertex++ = scale.y * (pos.z + dz);
         *texture++ = tx + data->tx;
         *texture++ = ty;
 
-        *vertex++ = tmp[5] = pos.x + dx;
-        *vertex++ = tmp[6] = dilate * pos.y;
-        *vertex++ = tmp[7] = dilate * pos.z;
+        *vertex++ = tmp[5] = scale.x * (pos.x + dx);
+        *vertex++ = tmp[6] = scale.y * pos.y;
+        *vertex++ = tmp[7] = scale.y * pos.z;
         *texture++ = tmp[8] = tx + data->tx;
         *texture++ = tmp[9] = ty + data->ty;
 
@@ -270,9 +271,9 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
         *texture++ = tmp[8];
         *texture++ = tmp[9];
 
-        *vertex++ = pos.x;
-        *vertex++ = dilate * pos.y;
-        *vertex++ = dilate * pos.z;
+        *vertex++ = scale.x * pos.x;
+        *vertex++ = scale.y * pos.y;
+        *vertex++ = scale.y * pos.z;
         *texture++ = tx;
         *texture++ = ty + data->ty;
     }

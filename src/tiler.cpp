@@ -41,14 +41,14 @@ static TilerData * const data = &tilerdata;
  */
 
 TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count,
-                         float dilate)
+                         vec2 scale)
 {
     int id = data->tilesets.MakeSlot(path);
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
 
     if (!tileset)
     {
-        tileset = new TileSet(path, size, count, dilate);
+        tileset = new TileSet(path, size, count, scale);
         data->tilesets.SetEntity(id, tileset);
     }
 

@@ -136,7 +136,7 @@ Map::Map(char const *path)
         {
             /* This is a tileset image file. Associate it with firstgid. */
             data->tilesets[data->ntilers] = Tiler::Register(str, ivec2(32),
-                                                            ivec2(0), sqrtf(2));
+                                               ivec2(0), vec2(1.0f, sqrtf(2)));
             data->ntilers++;
             //Log::Debug("new tiler %s\n", str);
         }
