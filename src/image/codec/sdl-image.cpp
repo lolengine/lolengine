@@ -39,6 +39,8 @@ public:
 
     virtual void *GetData() const;
 
+    static SDL_Surface *Create32BppSurface(ivec2 size);
+
 private:
     SDL_Surface *img;
 };
@@ -62,6 +64,15 @@ bool SdlImageData::Open(char const *path)
     }
 
     size = ivec2(img->w, img->h);
+
+    if (img->format->BytesPerPixel != 4)
+    {
+        SDL_Surface *tmp = Create32BppSurface(size);
+        SDL_BlitSurface(img, NULL, tmp, NULL);
+        SDL_FreeSurface(img);
+        img = tmp;
+    }
+
     format = img->format->Amask ? Image::FORMAT_RGBA : Image::FORMAT_RGB;
 
     return true;
@@ -77,6 +88,25 @@ bool SdlImageData::Close()
 void * SdlImageData::GetData() const
 {
     return img->pixels;
+}
+
+SDL_Surface *SdlImageData::Create32BppSurface(ivec2 size)
+{
+    uint32_t rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    return SDL_CreateRGBSurface(SDL_SWSURFACE, size.x, size.y, 32,
+                                rmask, gmask, bmask, amask);
 }
 
 } /* namespace lol */
