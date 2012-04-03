@@ -158,13 +158,14 @@ static inline void float_to_half_vector(half *dst, float const *src)
 }
 #endif
 
-/* We use this De Bruijn sequence to compute a branchless integer log2 */
-static int const shifttable[32] =
+/* We use this magic table, inspired by De Bruijn sequences, to compute a
+ * branchless integer log2. The actual value fetched is 24-log2(x+1) for x
+ * in 1, 3, 7, f, 1f, 3f, 7f, ff, 1fe, 1ff, 3fc, 3fd, 3fe, 3ff. */
+static int const shifttable[16] =
 {
-    23, 14, 22, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 20, 0,
-    15, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 17, 0, 18, 19, 0,
+    23, 22, 21, 15, -1, 20, 18, 14, 14, 16, 19, -1, 17, -1, -1, -1,
 };
-static uint32_t const shiftmagic = 0x07c4acddu;
+static uint32_t const shiftmagic = 0x05a1a1a2u;
 
 /* Lookup table-based algorithm from “Fast Half Float Conversions”
  * by Jeroen van der Zijp, November 2008. Tables are generated using
@@ -176,8 +177,7 @@ static inline uint32_t half_to_float_nobranch(uint16_t x)
 #define M3(i) ((i) | ((i) >> 1))
 #define M7(i) (M3(i) | (M3(i) >> 2))
 #define MF(i) (M7(i) | (M7(i) >> 4))
-#define MFF(i) (MF(i) | (MF(i) >> 8))
-#define E(i) shifttable[(unsigned int)(MFF(i) * shiftmagic) >> 27]
+#define E(i) shifttable[(uint32_t)((uint64_t)MF(i) * shiftmagic) >> 28]
 
     static uint32_t const mantissatable[2048] =
     {
@@ -192,10 +192,10 @@ static inline uint32_t half_to_float_nobranch(uint16_t x)
     static uint32_t const exponenttable[64] =
     {
 #define S1(i) (((i) == 0) ? 0 : \
-               ((i) < 31) ? ((i) << 23) : \
+               ((i) < 31) ? ((uint32_t)(i) << 23) : \
                ((i) == 31) ? 0x47800000u : \
                ((i) == 32) ? 0x80000000u : \
-               ((i) < 63) ? (0x80000000u + (((i) - 32) << 23)) : 0xc7800000)
+               ((i) < 63) ? (0x80000000u | (((i) - 32) << 23)) : 0xc7800000)
         S64(0),
 #undef S1
     };
@@ -227,12 +227,14 @@ static inline uint32_t half_to_float_branch(uint16_t x)
 
     if (e == 0)
     {
+        /* m has 10 significant bits but replicating the leading bit to
+         * 8 positions instead of 16 works just as well because of our
+         * handcrafted shiftmagic table. */
         uint32_t v = m | (m >> 1);
         v |= v >> 2;
         v |= v >> 4;
-        v |= v >> 8;
 
-        e = shifttable[(v * shiftmagic) >> 27];
+        e = shifttable[(v * shiftmagic) >> 28];
 
         /* We don't have to remove the 10th mantissa bit because it gets
          * added to our underestimated exponent. */
