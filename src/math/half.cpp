@@ -111,61 +111,16 @@ static inline uint16_t float_to_half_branch(uint32_t x)
     return bits;
 }
 
-#if 0
-static inline void float_to_half_vector(half *dst, float const *src)
-{
-    vector unsigned int const v7 = vec_splat_u32(7);
-    vector unsigned short const v6 = vec_splat_u16(6);
-#if _XBOX
-    vector signed short const v9 = vec_splat_u16(9);
-    vector unsigned short const v10 = vec_splat_u16(10);
-#else
-    vector signed short const v0x0040 = {
-        0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040};
-    vector unsigned short const v0x0400 = {
-        0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400};
-#endif
-    vector unsigned char const shuffle_high = {
-        0, 1, 4, 5, 8, 9, 12, 13, 16, 17, 20, 21, 24, 25, 28, 29};
-    vector unsigned char const shuffle_low = {
-        2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31};
-    vector unsigned char const v0xbf70 = {
-        0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70,
-        0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70, 0xbf, 0x70};
-
-    vector unsigned short v_mant, v_ret;
-    vector signed short v_exp;
-    vector unsigned int in0 = (vector unsigned int)vec_ld(0, src);
-    vector unsigned int in1 = (vector unsigned int)vec_ld(16, src);
-
-    in0 = vec_sra(in0, v7);
-    in1 = vec_sra(in1, v7);
-    v_exp = (vector signed short)vec_perm(in0, in1, shuffle_high);
-    v_mant = (vector unsigned short)vec_perm(in0, in1, shuffle_low);
-    v_exp = (vector signed short)vec_subs((vector unsigned char)v_exp, v0xbf70);
-#if _XBOX
-    v_ret = (vector unsigned short)vec_or(v_exp, vec_sr(v_exp, v9));
-#else
-    v_ret = (vector unsigned short)vec_madds(v_exp, v0x0040, v_exp);
-#endif
-    v_mant = vec_sr(v_mant, v6);
-#if _XBOX
-    v_ret = vec_or(v_mant, vec_sl(v_ret, v10));
-#else
-    v_ret = vec_mladd(v_ret, v0x0400, v_mant);
-#endif
-    vec_st(v_ret, 0, (uint16_t *)dst);
-}
-#endif
-
 /* We use this magic table, inspired by De Bruijn sequences, to compute a
  * branchless integer log2. The actual value fetched is 24-log2(x+1) for x
- * in 1, 3, 7, f, 1f, 3f, 7f, ff, 1fe, 1ff, 3fc, 3fd, 3fe, 3ff. */
+ * in 1, 3, 7, f, 1f, 3f, 7f, ff, 1fe, 1ff, 3fc, 3fd, 3fe, 3ff. See
+ * http://lol.zoy.org/blog/2012/4/3/beyond-de-bruijn for an explanation
+ * of how the value 0x5a1a1a2u was obtained. */
 static int const shifttable[16] =
 {
     23, 22, 21, 15, -1, 20, 18, 14, 14, 16, 19, -1, 17, -1, -1, -1,
 };
-static uint32_t const shiftmagic = 0x05a1a1a2u;
+static uint32_t const shiftmagic = 0x5a1a1a2u;
 
 /* Lookup table-based algorithm from “Fast Half Float Conversions”
  * by Jeroen van der Zijp, November 2008. Tables are generated using
@@ -285,13 +240,6 @@ size_t half::convert(half *dst, float const *src, size_t nelem)
         union { float f; uint32_t x; } u;
         u.f = *src++;
         *dst++ = makebits(float_to_half_nobranch(u.x));
-#if 0
-        /* AltiVec code. Will work one day. */
-        float_to_half_vector(dst, src);
-        src += 8;
-        dst += 8;
-        i += 7;
-#endif
     }
 
     return nelem;
