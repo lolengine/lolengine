@@ -1,7 +1,7 @@
 //
 // Lol Engine - Benchmark program
 //
-// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2005-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -12,7 +12,10 @@
 #   include "config.h"
 #endif
 
-#ifdef WIN32
+#if defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   include <xtl.h>
+#elif defined _WIN32
 #   define _USE_MATH_DEFINES /* for M_PI */
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>

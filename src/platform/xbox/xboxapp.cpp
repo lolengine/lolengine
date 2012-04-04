@@ -60,6 +60,8 @@ void XboxApp::Run()
         Ticker::TickDraw();
 
 #if defined _XBOX
+        extern D3DDevice *g_d3ddevice;
+        g_d3ddevice->Present(NULL, NULL, NULL, NULL);
 #endif
     }
 }
