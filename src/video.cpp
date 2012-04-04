@@ -30,6 +30,11 @@
 
 using namespace std;
 
+#if defined _XBOX
+/* FIXME: g_d3ddevice should never be exported */
+D3DDevice *g_d3ddevice;
+#endif
+
 namespace lol
 {
 
@@ -96,6 +101,8 @@ void Video::Setup(ivec2 size)
         Log::Error("cannot create D3D device\n");
         exit(EXIT_FAILURE);
     }
+
+    g_d3ddevice = VideoData::d3d_dev;
 #else
 #   if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */

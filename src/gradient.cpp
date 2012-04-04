@@ -12,8 +12,6 @@
 #   include "config.h"
 #endif
 
-#if !defined _XBOX /* This file is meaningless on Xbox */
-
 #include <cmath>
 
 #include "core.h"
@@ -34,9 +32,12 @@ class GradientData
 
 private:
     Shader *shader;
+#if !defined _XBOX /* This file is meaningless on Xbox */
+
     GLuint bufs[2];
 #if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vaos[1];
+#endif
 #endif
 };
 
@@ -64,6 +65,7 @@ void Gradient::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
+#if !defined _XBOX /* This file is meaningless on Xbox */
     if (!data->shader)
     {
 #if !defined __CELLOS_LV2__
@@ -233,6 +235,7 @@ void Gradient::TickDraw(float deltams)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 #endif
+#endif
 }
 
 Gradient::~Gradient()
@@ -242,5 +245,3 @@ Gradient::~Gradient()
 }
 
 } /* namespace lol */
-
-#endif /* !defined _XBOX */
