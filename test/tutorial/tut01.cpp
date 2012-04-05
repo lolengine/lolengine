@@ -40,6 +40,7 @@ public:
         m_vertices[0] = vec2( 0.0,  0.8);
         m_vertices[1] = vec2(-0.8, -0.8);
         m_vertices[2] = vec2( 0.8, -0.8);
+        m_ready = false;
     }
 
     virtual void TickDraw(float deltams)
