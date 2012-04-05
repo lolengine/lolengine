@@ -143,6 +143,7 @@ void Scene::Reset()
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o)
 {
+#if !defined _XBOX /* No WPOS on Xbox */
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
@@ -153,10 +154,12 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o)
     data->tiles[data->ntiles].pos = pos;
     data->tiles[data->ntiles].o = o;
     data->ntiles++;
+#endif
 }
 
 void Scene::Render() // XXX: rename to Blit()
 {
+#if !defined _XBOX /* No WPOS on Xbox */
     if (!stdshader)
     {
 #if !defined _XBOX && !defined __CELLOS_LV2__
@@ -483,6 +486,7 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     glDisable(GL_BLEND);
 #endif
+#endif /* _XBOX */
 }
 
 } /* namespace lol */

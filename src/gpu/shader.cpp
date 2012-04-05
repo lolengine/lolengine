@@ -150,7 +150,7 @@ Shader::Shader(char const *vert, char const *frag)
     data->frag_crc = Hash::Crc32(frag);
 #if defined _XBOX
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), NULL, NULL, "main",
-                           "vs_2_0", 0, &shader_code, &error_msg,
+                           "ps_2_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
     if (FAILED(hr))
     {
@@ -199,13 +199,8 @@ Shader::Shader(char const *vert, char const *frag)
 int Shader::GetAttribLocation(char const *attr) const
 {
 #if defined _XBOX
-    D3DXHANDLE hr = data->frag_table->GetConstantByName(NULL, attr);
-    if (FAILED(hr))
-        return -1;
-    UINT count;
-    D3DXCONSTANT_DESC desc;
-    data->frag_table->GetConstantDesc(hr, &desc, &count);
-    return desc.RegisterIndex;
+    /* FIXME: do we have attribs? */
+    return 0;
 #elif !defined __CELLOS_LV2__
     return glGetAttribLocation(data->prog_id, attr);
 #else
@@ -217,13 +212,9 @@ int Shader::GetAttribLocation(char const *attr) const
 int Shader::GetUniformLocation(char const *uni) const
 {
 #if defined _XBOX
-    D3DXHANDLE hr = data->frag_table->GetConstantByName(NULL, uni);
-    if (FAILED(hr))
-        return -1;
-    UINT count;
-    D3DXCONSTANT_DESC desc;
-    data->frag_table->GetConstantDesc(hr, &desc, &count);
-    return desc.RegisterIndex;
+    D3DXHANDLE hr1 = data->frag_table->GetConstantByName(NULL, uni);
+    D3DXHANDLE hr2 = data->vert_table->GetConstantByName(NULL, uni);
+    return (int)(((uint32_t)hr1 << 16) | (uint32_t)hr2);
 #elif !defined __CELLOS_LV2__
     return glGetUniformLocation(data->prog_id, uni);
 #else
@@ -239,9 +230,7 @@ int Shader::GetUniformLocation(char const *uni) const
 void Shader::SetUniform(int uni, float f)
 {
 #if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    vec4 tmp(f, 0.0f, 0.0f, 0.0f);
-    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+    SetUniform(uni, vec4(f, 0, 0, 0));
 #elif !defined __CELLOS_LV2__
     glUniform1f(uni, f);
 #else
@@ -252,9 +241,7 @@ void Shader::SetUniform(int uni, float f)
 void Shader::SetUniform(int uni, vec2 const &v)
 {
 #if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    vec4 tmp(v, 0.0f, 0.0f);
-    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+    SetUniform(uni, vec4(v, 0, 0));
 #elif !defined __CELLOS_LV2__
     glUniform2f(uni, v.x, v.y);
 #else
@@ -265,9 +252,7 @@ void Shader::SetUniform(int uni, vec2 const &v)
 void Shader::SetUniform(int uni, vec3 const &v)
 {
 #if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    vec4 tmp(v, 0.0f);
-    g_d3ddevice->SetPixelShaderConstantF(uni, &tmp[0], 1);
+    SetUniform(uni, vec4(v, 0));
 #elif !defined __CELLOS_LV2__
     glUniform3f(uni, v.x, v.y, v.z);
 #else
@@ -280,7 +265,10 @@ void Shader::SetUniform(int uni, vec4 const &v)
     /* FIXME: use the array versions of these functions */
 #if defined _XBOX
     extern D3DDevice *g_d3ddevice;
-    g_d3ddevice->SetPixelShaderConstantF(uni, &v[0], 1);
+    D3DXHANDLE hr1 = (uint32_t)uni >> 16;
+    D3DXHANDLE hr2 = (uint32_t)(uint16_t)uni;
+    g_d3ddevice->SetPixelShaderConstantF(hr1, &v[0], 1);
+    g_d3ddevice->SetVertexShaderConstantF(hr2, &v[0], 1);
 #elif !defined __CELLOS_LV2__
     glUniform4f(uni, v.x, v.y, v.z, v.w);
 #else
@@ -292,7 +280,10 @@ void Shader::SetUniform(int uni, mat4 const &m)
 {
 #if defined _XBOX
     extern D3DDevice *g_d3ddevice;
-    g_d3ddevice->SetPixelShaderConstantF(uni, &m[0][0], 4);
+    D3DXHANDLE hr1 = (uint32_t)uni >> 16;
+    D3DXHANDLE hr2 = (uint32_t)(uint16_t)uni;
+    g_d3ddevice->SetPixelShaderConstantF(hr1, &m[0][0], 4);
+    g_d3ddevice->SetVertexShaderConstantF(hr2, &m[0][0], 4);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix4fv(uni, 1, GL_FALSE, &m[0][0]);
 #else
