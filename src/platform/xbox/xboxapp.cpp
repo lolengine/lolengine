@@ -44,6 +44,8 @@ XboxApp::XboxApp(char const *title, ivec2 res, float fps) :
     data(new XboxAppData())
 {
 #if defined _XBOX
+    Ticker::Setup(fps);
+    Video::Setup(res);
 #endif
 }
 

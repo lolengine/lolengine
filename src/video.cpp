@@ -94,9 +94,9 @@ void Video::Setup(ivec2 size)
     d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-    if (!VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, NULL,
-                                          D3DCREATE_HARDWARE_VERTEXPROCESSING,
-                                          &d3dpp, &VideoData::d3d_dev))
+    if (FAILED(VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, NULL,
+                                                D3DCREATE_HARDWARE_VERTEXPROCESSING,
+                                                &d3dpp, &VideoData::d3d_dev)))
     {
         Log::Error("cannot create D3D device\n");
         exit(EXIT_FAILURE);

@@ -38,8 +38,13 @@ public:
     Triangle()
     {
         m_vertices[0] = vec2( 0.0,  0.8);
+#if defined _XBOX
+        m_vertices[2] = vec2(-0.8, -0.8);
+        m_vertices[1] = vec2( 0.8, -0.8);
+#else
         m_vertices[1] = vec2(-0.8, -0.8);
         m_vertices[2] = vec2( 0.8, -0.8);
+#endif
         m_ready = false;
     }
 
@@ -59,9 +64,10 @@ public:
 
                 "#version 120\n"
                 "void main(void) {"
-                "    gl_FragColor[0] = 0.0;"
-                "    gl_FragColor[1] = 0.0;"
-                "    gl_FragColor[2] = 1.0;"
+                "    gl_FragColor.r = 1.0;"
+                "    gl_FragColor.g = 1.0;"
+                "    gl_FragColor.b = 0.0;"
+                "    gl_FragColor.a = 1.0;"
                 "}"
 #else
                 "void main(float2 coord2d : POSITION,"
@@ -70,9 +76,10 @@ public:
                 "}",
 
                 "void main(out float4 out_FragColor : COLOR) {"
-                "    out_FragColor[0] = 0.0;"
-                "    out_FragColor[0] = 0.0;"
-                "    out_FragColor[0] = 1.0;"
+                "    out_FragColor.r = 1.0;"
+                "    out_FragColor.g = 1.0;"
+                "    out_FragColor.b = 0.0;"
+                "    out_FragColor.a = 0.0;"
                 "}"
 #endif
             );
@@ -89,16 +96,18 @@ public:
             /* Method 2: upload vertex information at each frame */
 #elif defined _XBOX
             extern D3DDevice *g_d3ddevice;
-            D3DVERTEXELEMENT9 const elements[3] =
+            D3DVERTEXELEMENT9 const elements[2] =
             {
                 { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
                 D3DDECL_END()
             };
             g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
-            g_d3ddevice->CreateVertexBuffer(sizeof(m_vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL);
+            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(m_vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
+                exit(0);
 
             vec2 *vertices;
-            m_vbo->Lock(0, 0, (void **)&vertices, 0);
+            if (FAILED(m_vbo->Lock(0, 0, (void **)&vertices, 0)))
+                exit(0);
             memcpy(vertices, m_vertices, sizeof(m_vertices));
             m_vbo->Unlock();
 #else
