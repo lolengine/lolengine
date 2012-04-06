@@ -46,6 +46,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <Import Project="Lol.Rules.props" />
+  <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

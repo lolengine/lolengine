@@ -40,16 +40,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <Import Project="Lol.Rules.props" />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-    <ClCompile>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
-    <ClCompile>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-    </ClCompile>
-  </ItemDefinitionGroup>
+  <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
