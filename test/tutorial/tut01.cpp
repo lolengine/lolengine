@@ -38,13 +38,8 @@ public:
     Triangle()
     {
         m_vertices[0] = vec2( 0.0,  0.8);
-#if defined _XBOX
-        m_vertices[2] = vec2(-0.8, -0.8);
-        m_vertices[1] = vec2( 0.8, -0.8);
-#else
         m_vertices[1] = vec2(-0.8, -0.8);
         m_vertices[2] = vec2( 0.8, -0.8);
-#endif
         m_ready = false;
     }
 
@@ -57,33 +52,29 @@ public:
             m_shader = Shader::Create(
 #if !defined __CELLOS_LV2__ && !defined _XBOX
                 "#version 120\n"
-                "attribute vec2 coord2d;"
+                "attribute vec2 in_Position;"
                 "void main(void) {"
-                "    gl_Position = vec4(coord2d, 0.0, 1.0);"
+                "    gl_Position = vec4(in_Position, 0.0, 1.0);"
                 "}",
 
                 "#version 120\n"
                 "void main(void) {"
-                "    gl_FragColor.r = 1.0;"
-                "    gl_FragColor.g = 1.0;"
-                "    gl_FragColor.b = 0.0;"
-                "    gl_FragColor.a = 1.0;"
-                "}"
+                "    gl_FragColor = vec4(0.7, 0.5, 0.2, 1.0);"
+                "}");
 #else
-                "void main(float2 coord2d : POSITION,"
+                "void main(float2 in_Position : POSITION,"
                 "          out float4 out_Position : POSITION) {"
-                "    out_Position = float4(coord2d, 0.0, 1.0);"
+                "    out_Position = float4(in_Position, 0.0, 1.0);"
                 "}",
 
                 "void main(out float4 out_FragColor : COLOR) {"
-                "    out_FragColor.r = 1.0;"
-                "    out_FragColor.g = 1.0;"
-                "    out_FragColor.b = 0.0;"
-                "    out_FragColor.a = 0.0;"
+                "    out_FragColor = float4(0.7, 0.5, 0.2, 1.0);"
                 "}"
 #endif
             );
-            m_attrib = m_shader->GetAttribLocation("coord2d");
+#if !defined _XBOX
+            m_attrib = m_shader->GetAttribLocation("in_Position");
+#endif
             m_ready = true;
 
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX
@@ -119,6 +110,7 @@ public:
         m_shader->Bind();
 #if defined _XBOX
         extern D3DDevice *g_d3ddevice;
+        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -159,10 +151,12 @@ private:
 #if defined _XBOX
     D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo;
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-    GLuint m_vbo;
-#endif
+#else
     int m_attrib;
+#   if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
+    GLuint m_vbo;
+#   endif
+#endif
     bool m_ready;
 };
 
