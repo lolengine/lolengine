@@ -29,6 +29,7 @@ public:
     static void Destroy();
     static void SetFov(float theta);
     static void SetDepth(bool set);
+    static void SetClearColor(vec4 color);
     static void Clear();
     static void Capture(uint32_t *buffer);
     static ivec2 GetSize();
