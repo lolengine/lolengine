@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -31,7 +31,7 @@ class TileSetData;
 class TileSet : public Entity
 {
 public:
-    TileSet(char const *path, ivec2 size, ivec2 count, vec2 scale);
+    TileSet(char const *path, ivec2 size, ivec2 count);
     virtual ~TileSet();
 
 protected:
@@ -44,7 +44,7 @@ public:
     ivec2 GetCount() const;
     ivec2 GetSize(int tileid) const;
     void Bind();
-    void BlitTile(uint32_t id, vec3 pos, int o,
+    void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                   float *vertex, float *texture);
 
 private:

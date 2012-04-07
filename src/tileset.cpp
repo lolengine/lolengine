@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -61,7 +61,7 @@ private:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path, ivec2 size, ivec2 count, vec2 scale)
+TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
   : data(new TileSetData())
 {
     data->name = (char *)malloc(10 + strlen(path) + 1);
@@ -98,7 +98,6 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count, vec2 scale)
     data->tx = (float)data->size.x / PotUp(data->isize.x);
     data->ty = (float)data->size.y / PotUp(data->isize.y);
 
-    data->scale = scale;
     data->ntiles = data->count.x * data->count.y;
 
     m_drawgroup = DRAWGROUP_BEFORE;
@@ -219,16 +218,15 @@ void TileSet::Bind()
 #endif
 }
 
-void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
+void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                        float *vertex, float *texture)
 {
     float tx = data->tx * ((id & 0xffff) % data->count.x);
     float ty = data->ty * ((id & 0xffff) / data->count.x);
-    vec2 scale = data->scale;
 
-    int dx = data->size.x;
-    int dy = o ? 0 : data->size.y;
-    int dz = o ? data->size.y : 0;
+    int dx = data->size.x * scale.x;
+    int dy = o ? 0 : data->size.y * scale.y;
+    int dz = o ? data->size.y * scale.y : 0;
 
 #if defined _XBOX
 #   define STR0(x) #x
@@ -241,21 +239,21 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
     {
         float tmp[10];
 
-        *vertex++ = tmp[0] = scale.x * pos.x;
-        *vertex++ = tmp[1] = scale.y * (pos.y + dy);
-        *vertex++ = tmp[2] = scale.y * (pos.z + dz);
+        *vertex++ = tmp[0] = pos.x;
+        *vertex++ = tmp[1] = pos.y + dy;
+        *vertex++ = tmp[2] = pos.z + dz;
         *texture++ = tmp[3] = tx;
         *texture++ = tmp[4] = ty;
 
-        *vertex++ = scale.x * (pos.x + dx);
-        *vertex++ = scale.y * (pos.y + dy);
-        *vertex++ = scale.y * (pos.z + dz);
+        *vertex++ = pos.x + dx;
+        *vertex++ = pos.y + dy;
+        *vertex++ = pos.z + dz;
         *texture++ = tx + data->tx;
         *texture++ = ty;
 
-        *vertex++ = tmp[5] = scale.x * (pos.x + dx);
-        *vertex++ = tmp[6] = scale.y * pos.y;
-        *vertex++ = tmp[7] = scale.y * pos.z;
+        *vertex++ = tmp[5] = pos.x + dx;
+        *vertex++ = tmp[6] = pos.y;
+        *vertex++ = tmp[7] = pos.z;
         *texture++ = tmp[8] = tx + data->tx;
         *texture++ = tmp[9] = ty + data->ty;
 
@@ -271,9 +269,9 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o,
         *texture++ = tmp[8];
         *texture++ = tmp[9];
 
-        *vertex++ = scale.x * pos.x;
-        *vertex++ = scale.y * pos.y;
-        *vertex++ = scale.y * pos.z;
+        *vertex++ = pos.x;
+        *vertex++ = pos.y;
+        *vertex++ = pos.z;
         *texture++ = tx;
         *texture++ = ty + data->ty;
     }
