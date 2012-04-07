@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -46,7 +46,7 @@ Font::Font(char const *path)
     data->name = (char *)malloc(7 + strlen(path) + 1);
     sprintf(data->name, "<font> %s", path);
 
-    data->tileset = Tiler::Register(path, ivec2(0), ivec2(16), vec2(1.0f));
+    data->tileset = Tiler::Register(path, ivec2(0), ivec2(16));
     data->size = data->tileset->GetSize(0);
 
     m_drawgroup = DRAWGROUP_BEFORE;
@@ -69,7 +69,7 @@ char const *Font::GetName()
     return data->name;
 }
 
-void Font::Print(vec3 pos, char const *str)
+void Font::Print(vec3 pos, char const *str, vec2 scale)
 {
     Scene *scene = Scene::GetDefault();
 
@@ -78,9 +78,9 @@ void Font::Print(vec3 pos, char const *str)
         uint32_t ch = (uint8_t)*str++;
 
         if (ch != ' ')
-            scene->AddTile(data->tileset, ch & 255, pos, 0);
+            scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
 
-        pos.x += data->size.x;
+        pos.x += data->size.x * scale.x;
     }
 }
 

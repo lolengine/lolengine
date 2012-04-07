@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -31,6 +31,7 @@ struct Tile
     TileSet *tileset;
     uint32_t prio;
     vec3 pos;
+    vec2 scale;
     int id, o;
 };
 
@@ -141,7 +142,7 @@ void Scene::Reset()
     SceneData::scene = NULL;
 }
 
-void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o)
+void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
 #if !defined _XBOX /* No WPOS on Xbox */
     if ((data->ntiles % 1024) == 0)
@@ -153,6 +154,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o)
     data->tiles[data->ntiles].id = id;
     data->tiles[data->ntiles].pos = pos;
     data->tiles[data->ntiles].o = o;
+    data->tiles[data->ntiles].scale = scale;
     data->ntiles++;
 #endif
 }
@@ -407,6 +409,7 @@ void Scene::Render() // XXX: rename to Blit()
         {
             data->tiles[i].tileset->BlitTile(data->tiles[j].id,
                             data->tiles[j].pos, data->tiles[j].o,
+                            data->tiles[j].scale,
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 

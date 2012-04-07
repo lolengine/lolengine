@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -76,7 +76,7 @@ void Emitter::TickDraw(float deltams)
 
     for (int i = 0; i < data->nparticles; i++)
         Scene::GetDefault()->AddTile(data->tileset, data->particles[i],
-                                     data->positions[i], 0);
+                                     data->positions[i], 0, vec2(1.0f));
 }
 
 void Emitter::AddParticle(int id, vec3 pos, vec3 vel)
