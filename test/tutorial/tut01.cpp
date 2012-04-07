@@ -60,7 +60,7 @@ public:
                 "#version 120\n"
                 "void main(void) {"
                 "    gl_FragColor = vec4(0.7, 0.5, 0.2, 1.0);"
-                "}");
+                "}"
 #else
                 "void main(float2 in_Position : POSITION,"
                 "          out float4 out_Position : POSITION) {"
