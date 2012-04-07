@@ -48,6 +48,7 @@ private:
 #if defined _XBOX
     static Direct3D *d3d_ctx;
     static D3DDevice *d3d_dev;
+    static D3DCOLOR clear_color;
 #endif
 };
 
@@ -58,6 +59,7 @@ ivec2 VideoData::saved_viewport(0, 0);
 #if defined _XBOX
 Direct3D *VideoData::d3d_ctx;
 D3DDevice *VideoData::d3d_dev;
+D3DCOLOR VideoData::clear_color;
 #endif
 
 /*
@@ -84,6 +86,8 @@ void Video::Setup(ivec2 size)
     if (size.y > VideoMode.dwDisplayHeight)
         size.y = VideoMode.dwDisplayHeight;
     VideoData::saved_viewport = size;
+
+    VideoData::clear_color = D3DCOLOR_XRGB(26, 51, 77);
 
     d3dpp.BackBufferWidth = size.x;
     d3dpp.BackBufferHeight = size.y;
@@ -185,13 +189,24 @@ void Video::SetDepth(bool set)
 #endif
 }
 
+void Video::SetClearColor(vec4 color)
+{
+#if defined _XBOX
+    VideoData::clear_color = D3DCOLOR_XRGB((int)(color.r * 255.999f),
+                                           (int)(color.g * 255.999f),
+                                           (int)(color.b * 255.999f));
+#else
+    glClearColor(color.r, color.g, color.b, color.a);
+#endif
+}
+
 void Video::Clear()
 {
     ivec2 size = GetSize();
 #if defined _XBOX
     VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
                                         | D3DCLEAR_STENCIL,
-                              D3DCOLOR_XRGB(26, 51, 77), 1.0f, 0);
+                              VideoData::clear_color, 1.0f, 0);
 #else
     glViewport(0, 0, size.x, size.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
