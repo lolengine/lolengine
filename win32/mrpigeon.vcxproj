@@ -19,10 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\mrpigeon\enemy.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\mrpigeon\mrpigeon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\mrpigeon\player.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mrpigeon\enemy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\mrpigeon\mrpigeon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mrpigeon\player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="lolcore.vcxproj">

@@ -102,11 +102,10 @@ bool GdiPlusImageData::Open(char const *path)
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
         {
-            uint8_t tmp = p[0];
-            *p++ = p[1];
-            *p++ = p[1];
-            *p++ = p[1];
-            *p++ = tmp;
+            uint8_t tmp = p[2];
+            p[2] = p[0];
+            p[0] = tmp;
+            p += 4;
         }
 
     return true;
