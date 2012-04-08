@@ -95,6 +95,20 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
+    /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
+     * know about ARGB, only RGBA. So we swap bytes. We could also fix
+     * this in the shader. */
+    uint8_t *p = static_cast<uint8_t *>(bdata.Scan0);
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
+        {
+            uint8_t tmp = p[0];
+            *p++ = p[1];
+            *p++ = p[1];
+            *p++ = p[1];
+            *p++ = tmp;
+        }
+
     return true;
 }
 
