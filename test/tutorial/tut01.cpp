@@ -137,7 +137,7 @@ public:
 #endif
 
 #if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 3);
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
 #else
         glDrawArrays(GL_TRIANGLES, 0, 3);
 #endif

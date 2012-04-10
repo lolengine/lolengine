@@ -16,8 +16,23 @@
 #if !defined __LOL_SHADER_H__
 #define __LOL_SHADER_H__
 
+#include <stdint.h>
+
 namespace lol
 {
+
+struct ShaderUniform
+{
+    friend class Shader;
+
+public:
+    ShaderUniform() : flags(0) {}
+
+private:
+    uintptr_t frag, vert;
+    /* FIXME: do we really need this to indicate which locations are valid? */
+    uint32_t flags;
+};
 
 class ShaderData;
 
@@ -29,12 +44,12 @@ public:
 
     int GetAttribLocation(char const *attr) const;
 
-    int GetUniformLocation(char const *uni) const;
-    void SetUniform(int uni, float f);
-    void SetUniform(int uni, vec2 const &v);
-    void SetUniform(int uni, vec3 const &v);
-    void SetUniform(int uni, vec4 const &v);
-    void SetUniform(int uni, mat4 const &m);
+    ShaderUniform GetUniformLocation(char const *uni) const;
+    void SetUniform(ShaderUniform const &uni, float f);
+    void SetUniform(ShaderUniform const &uni, vec2 const &v);
+    void SetUniform(ShaderUniform const &uni, vec3 const &v);
+    void SetUniform(ShaderUniform const &uni, vec4 const &v);
+    void SetUniform(ShaderUniform const &uni, mat4 const &m);
 
     void Bind() const;
 
