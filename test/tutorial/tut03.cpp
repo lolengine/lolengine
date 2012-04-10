@@ -572,7 +572,7 @@ public:
                      /* t2 <-- dd.x > dd.z */
                 "    float t2 = step(dd.x, dd.y);"
                      /* ret.x <-- max(ret.x, ret.y); */
-                     /* ret.y <-- max(ret.z, ret.yw; */
+                     /* ret.y <-- max(ret.z, ret.w); */
                 "    ret.xy = mix(ret.xz, ret.yw, t2);"
                 "\n#else\n"
                      /* Fallback for i915 cards -- the trick to reduce the
@@ -608,11 +608,11 @@ public:
                 "          uniform float4x4 u_ZoomSettings,"
                 "          uniform float4 u_TexelSize,"
                 "          uniform float4 u_ScreenSize,"
-                "          out float4 out_Position : POSITION,"
-                "          out float4 v_CenterX,"
-                "          out float4 v_CenterY,"
-                "          out float4 v_IndexX,"
-                "          out float4 v_IndexY)"
+                "          out float4 out_Position : POSITION0,"
+                "          out float4 v_CenterX : TEXCOORD0,"
+                "          out float4 v_CenterY : TEXCOORD1,"
+                "          out float4 v_IndexX : TEXCOORD2,"
+                "          out float4 v_IndexY : TEXCOORD3)"
                 "{"
                 "    out_Position = a_Vertex;"
                 "    float4 offsets = float4(0.5, -0.5, 0.015625, -0.015625);"
@@ -636,18 +636,18 @@ public:
                 "    v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;"
                 "}",
 
-                "void main(in float4 v_CenterX,"
-                "          in float4 v_CenterY,"
-                "          in float4 v_IndexX,"
-                "          in float4 v_IndexY,"
-                "          uniform float4 u_TexelSize2,"
+                "void main(in float4 v_CenterX : TEXCOORD0,"
+                "          in float4 v_CenterY : TEXCOORD1,"
+                "          in float4 v_IndexX : TEXCOORD2,"
+                "          in float4 v_IndexY : TEXCOORD3,"
+                "          uniform float4 u_TexelSize,"
                 "          uniform sampler2D u_Texture,"
                 "          out float4 out_FragColor : COLOR)"
                 "{"
                 "    float4 v05 = float4(0.5, 0.5, 0.5, 0.5);"
                 "    float4 rx, ry, t0, dx, dy, dd;"
-                "    rx = u_TexelSize2.x + u_TexelSize2.z * floor(v_IndexX);"
-                "    ry = u_TexelSize2.y + u_TexelSize2.w * floor(v_IndexY);"
+                "    rx = u_TexelSize.x + u_TexelSize.z * floor(v_IndexX);"
+                "    ry = u_TexelSize.y + u_TexelSize.w * floor(v_IndexY);"
                 "    t0 = step(abs(rx - v05), v05) * step(abs(ry - v05), v05);"
                 "    dx = rx - v_CenterX;"
                 "    dy = ry - v_CenterY;"
@@ -668,9 +668,6 @@ public:
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord");
 #endif
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
-#if defined __CELLOS_LV2__
-            m_texeluni2 = m_shader->GetUniformLocation("u_TexelSize2");
-#endif
             m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
             m_ready = true;
@@ -691,14 +688,13 @@ public:
             D3DVERTEXELEMENT9 const elements[] =
             {
                 { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-                { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+                { 1, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
                 D3DDECL_END()
             };
             g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
 
             if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
                 exit(0);
-
             vec2 *tmp1;
             if (FAILED(m_vbo->Lock(0, 0, (void **)&tmp1, 0)))
                 exit(0);
@@ -707,7 +703,6 @@ public:
 
             if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(texcoords), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_tbo, NULL)))
                 exit(0);
-
             vec2 *tmp2;
             if (FAILED(m_tbo->Lock(0, 0, (void **)&tmp2, 0)))
                 exit(0);
@@ -742,7 +737,7 @@ public:
             for (int j = 0; j < m_size.y * 2; j++)
             {
                 u8vec4 *line = (u8vec4 *)rect.pBits + j * rect.Pitch / 4;
-                for (int i = 0; i < m_size.x / 2; j++)
+                for (int i = 0; i < m_size.x / 2; i++)
                     line[i] = m_pixels[m_size.x / 2 * j + i];
             }
             m_tex->UnlockRect(0);
@@ -762,13 +757,12 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_texeluni, m_texel_settings);
-#if defined __CELLOS_LV2__
-        m_shader->SetUniform(m_texeluni2, m_texel_settings);
-#endif
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
 #if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+        g_d3ddevice->SetTexture(0, m_tex);
+        //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
         g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*vertices));
         g_d3ddevice->SetStreamSource(1, m_tbo, 0, sizeof(*texcoords));
@@ -792,7 +786,8 @@ public:
 #endif
 
 #if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6);
+        /* FIXME: what the fuck? Why does "2" not work here instead of 3? */
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 3);
 #else
         glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif
@@ -839,10 +834,8 @@ private:
     GLuint m_tco;
 #   endif
 #endif
-    int m_vertexattrib, m_texattrib, m_texeluni, m_screenuni, m_zoomuni;
-#if defined __CELLOS_LV2__
-    int m_texeluni2;
-#endif
+    int m_vertexattrib, m_texattrib;
+    ShaderUniform m_texeluni, m_screenuni, m_zoomuni;
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 

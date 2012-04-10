@@ -201,7 +201,26 @@ Shader::Shader(char const *vert, char const *frag)
     }
 #endif
 
-#if !defined USE_D3D9 && !defined _XBOX && !defined __CELLOS_LV2__
+#if defined USE_D3D9 || defined _XBOX
+    /* FIXME: this is only debug code, we don't need it. */
+    D3DXCONSTANTTABLE_DESC desc;
+    data->frag_table->GetDesc(&desc);
+    for (int i = 0; i < desc.Constants; i++)
+    {
+        D3DXCONSTANT_DESC cdesc;
+        UINT count = 1;
+        D3DXHANDLE h = data->frag_table->GetConstant(NULL, i);
+        data->frag_table->GetConstantDesc(h, &cdesc, &count);
+    }
+    data->vert_table->GetDesc(&desc);
+    for (int i = 0; i < desc.Constants; i++)
+    {
+        D3DXCONSTANT_DESC cdesc;
+        UINT count = 1;
+        D3DXHANDLE h = data->vert_table->GetConstant(NULL, i);
+        data->frag_table->GetConstantDesc(h, &cdesc, &count);
+    }
+#elif !defined __CELLOS_LV2__
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -215,7 +234,7 @@ Shader::Shader(char const *vert, char const *frag)
 int Shader::GetAttribLocation(char const *attr) const
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: do we have attribs? */
+    /* FIXME: do we have attribs on these platforms? */
     return 0;
 #elif !defined __CELLOS_LV2__
     return glGetAttribLocation(data->prog_id, attr);
@@ -225,83 +244,114 @@ int Shader::GetAttribLocation(char const *attr) const
 #endif
 }
 
-int Shader::GetUniformLocation(char const *uni) const
+ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
+    ShaderUniform ret;
 #if defined USE_D3D9 || defined _XBOX
-    UINT hr1 = (uintptr_t)data->frag_table->GetConstantByName(NULL, uni);
-    UINT hr2 = (uintptr_t)data->vert_table->GetConstantByName(NULL, uni);
-    return (int)(((uint32_t)hr1 << 16) | (uint32_t)hr2);
+    /* Global variables are prefixed with "$" */
+    char tmpname[128];
+    sprintf(tmpname, "$%s", uni);
+    D3DXCONSTANT_DESC cdesc;
+    D3DXHANDLE hr;
+    UINT count;
+
+    count = 0;
+    hr = data->frag_table->GetConstantByName(NULL, tmpname);
+    if (hr)
+        data->frag_table->GetConstantDesc(hr, &cdesc, &count);
+    if (count)
+    {
+        ret.frag = cdesc.RegisterIndex;
+        ret.flags |= 1;
+    }
+
+    count = 0;
+    hr = data->vert_table->GetConstantByName(NULL, tmpname);
+    if (hr)
+        data->vert_table->GetConstantDesc(hr, &cdesc, &count);
+    if (count)
+    {
+        ret.vert = cdesc.RegisterIndex;
+        ret.flags |= 2;
+    }
 #elif !defined __CELLOS_LV2__
-    return glGetUniformLocation(data->prog_id, uni);
+    ret.frag = (uintptr_t)glGetUniformLocation(data->prog_id, uni);
+    ret.vert = 0;
 #else
-    /* FIXME: need to differentiate between vertex and fragment program,
-     * and replace the ugly cast. */
-    CGparameter tmp = cgGetNamedParameter(data->vert_id, uni);
-    if (tmp == NULL)
-        tmp = cgGetNamedParameter(data->frag_id, uni);
-    return (int)(intptr_t)tmp;
+    ret.frag = (uintptr_t)cgGetNamedParameter(data->frag_id, uni);
+    ret.vert = (uintptr_t)cgGetNamedParameter(data->vert_id, uni);
 #endif
+    return ret;
 }
 
-void Shader::SetUniform(int uni, float f)
+void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(f, 0, 0, 0));
 #elif !defined __CELLOS_LV2__
-    glUniform1f(uni, f);
+    glUniform1f(uni.frag, f);
 #else
-    cgGLSetParameter1f((CGparameter)(intptr_t)uni, f);
+    if (uni.frag)
+        cgGLSetParameter1f((CGparameter)uni.frag, f);
+    if (uni.vert)
+        cgGLSetParameter1f((CGparameter)uni.vert, f);
 #endif
 }
 
-void Shader::SetUniform(int uni, vec2 const &v)
+void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0, 0));
 #elif !defined __CELLOS_LV2__
-    glUniform2f(uni, v.x, v.y);
+    glUniform2f(uni.frag, v.x, v.y);
 #else
-    cgGLSetParameter2f((CGparameter)(intptr_t)uni, v.x, v.y);
+    if (uni.frag)
+        cgGLSetParameter2f((CGparameter)uni.frag, v.x, v.y);
+    if (uni.vert)
+        cgGLSetParameter2f((CGparameter)uni.vert, v.x, v.y);
 #endif
 }
 
-void Shader::SetUniform(int uni, vec3 const &v)
+void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0));
 #elif !defined __CELLOS_LV2__
-    glUniform3f(uni, v.x, v.y, v.z);
+    glUniform3f(uni.frag, v.x, v.y, v.z);
 #else
-    cgGLSetParameter3f((CGparameter)(intptr_t)uni, v.x, v.y, v.z);
+    if (uni.frag)
+        cgGLSetParameter3f((CGparameter)uni.frag, v.x, v.y, v.z);
+    if (uni.vert)
+        cgGLSetParameter3f((CGparameter)uni.vert, v.x, v.y, v.z);
 #endif
 }
 
-void Shader::SetUniform(int uni, vec4 const &v)
+void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
     /* FIXME: use the array versions of these functions */
 #if defined USE_D3D9 || defined _XBOX
-    UINT hr1 = (uint32_t)uni >> 16;
-    UINT hr2 = (uint32_t)(uint16_t)uni;
-    g_d3ddevice->SetPixelShaderConstantF(hr1, &v[0], 1);
-    g_d3ddevice->SetVertexShaderConstantF(hr2, &v[0], 1);
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
     glUniform4f(uni, v.x, v.y, v.z, v.w);
 #else
-    cgGLSetParameter4f((CGparameter)(intptr_t)uni, v.x, v.y, v.z, v.w);
+    cgGLSetParameter4f((CGparameter)uni, v.x, v.y, v.z, v.w);
 #endif
 }
 
-void Shader::SetUniform(int uni, mat4 const &m)
+void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
-    UINT hr1 = (uint32_t)uni >> 16;
-    UINT hr2 = (uint32_t)(uint16_t)uni;
-    g_d3ddevice->SetPixelShaderConstantF(hr1, &m[0][0], 4);
-    g_d3ddevice->SetVertexShaderConstantF(hr2, &m[0][0], 4);
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix4fv(uni, 1, GL_FALSE, &m[0][0]);
 #else
-    cgGLSetMatrixParameterfc((CGparameter)(intptr_t)uni, &m[0][0]);
+    cgGLSetMatrixParameterfc((CGparameter)uni, &m[0][0]);
 #endif
 }
 

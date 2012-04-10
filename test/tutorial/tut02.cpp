@@ -256,7 +256,7 @@ private:
     GLuint m_vbo, m_cbo, m_ibo;
 #endif
 #endif
-    int m_mvp;
+    ShaderUniform m_mvp;
     bool m_ready;
 };
 
