@@ -22,6 +22,12 @@
 using namespace std;
 using namespace lol;
 
+#if defined _WIN32 && defined USE_D3D9
+#   define FAR
+#   define NEAR
+#   include <d3d9.h>
+#endif
+
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
@@ -31,7 +37,11 @@ using namespace lol;
 #   include <direct.h>
 #endif
 
-#ifdef __CELLOS_LV2__
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#elif __CELLOS_LV2__
 static GLint const INTERNAL_FORMAT = GL_ARGB_SCE;
 static GLenum const TEXTURE_FORMAT = GL_BGRA;
 static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
@@ -443,6 +453,7 @@ public:
 
         if (!m_ready)
         {
+#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
             /* Create a texture of half the width and twice the height
              * so that we can upload four different subimages each frame. */
             glGenTextures(1, &m_texid);
@@ -450,22 +461,27 @@ public:
             glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
                          m_size.x / 2, m_size.y * 2, 0,
                          TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
-#if defined __CELLOS_LV2__
+#   if defined __CELLOS_LV2__
             /* We need this hint because by default the storage type is
              * GL_TEXTURE_SWIZZLED_GPU_SCE. */
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
                             GL_TEXTURE_TILED_GPU_SCE);
-#endif
+#   endif
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#else
+            g_d3ddevice->CreateTexture(m_size.x / 2, m_size.y * 2, 1,
+                                       D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
+                                       D3DPOOL_SYSTEMMEM, &m_tex, NULL);
+#endif
 
             m_shader = Shader::Create(
-#if !defined __CELLOS_LV2__
-#if !defined HAVE_GLES_2X
+#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
+#   if !defined HAVE_GLES_2X
                 "#version 120\n"
-#else
+#   else
                 "precision highp float;"
-#endif
+#   endif
                 ""
                 "uniform mat4 u_ZoomSettings;"
                 "uniform vec4 u_TexelSize;"
@@ -510,11 +526,11 @@ public:
                 "    v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;"
                 "}",
 
-#if !defined HAVE_GLES_2X
+#   if !defined HAVE_GLES_2X
                 "#version 120\n"
-#else
+#   else
                 "precision highp float;"
-#endif
+#   endif
                 ""
                 "uniform vec4 u_TexelSize;"
                 "uniform sampler2D u_Texture;"
@@ -539,7 +555,7 @@ public:
                      /* Modify Y coordinate to select proper quarter. */
                 "    ry = ry * 0.25 + vec4(0.0, 0.25, 0.5, 0.75);"
                 ""
-#if 1
+#   if 1
                 "\n#if 0\n" /* XXX: disabled until we can autodetect i915 */
                      /* t1.x <-- dd.x > dd.y */
                      /* t1.y <-- dd.z > dd.w */
@@ -576,7 +592,7 @@ public:
                 "\n#endif\n"
                      /* Nearest neighbour */
                 "    gl_FragColor = texture2D(u_Texture, ret.xy);"
-#else
+#   else
                      /* Alternate version: some kind of linear interpolation */
                 "    vec4 p0 = texture2D(u_Texture, vec2(rx.x, ry.x));"
                 "    vec4 p1 = texture2D(u_Texture, vec2(rx.y, ry.y));"
@@ -584,7 +600,7 @@ public:
                 "    vec4 p3 = texture2D(u_Texture, vec2(rx.w, ry.w));"
                 "    gl_FragColor = 1.0 / (dd.x + dd.y + dd.z + dd.w)"
                 "          * (dd.x * p0 + dd.y * p1 + dd.z * p2 + dd.w * p3);"
-#endif
+#   endif
                 "}"
 #else
                 "void main(float4 a_Vertex : POSITION,"
@@ -647,8 +663,10 @@ public:
                 "}"
 #endif
             );
+#if !defined _XBOX && !defined USE_D3D9
             m_vertexattrib = m_shader->GetAttribLocation("a_Vertex");
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord");
+#endif
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
 #if defined __CELLOS_LV2__
             m_texeluni2 = m_shader->GetUniformLocation("u_TexelSize2");
@@ -657,7 +675,7 @@ public:
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
             m_ready = true;
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -667,18 +685,48 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
                          GL_STATIC_DRAW);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
             /* Method 2: upload vertex information at each frame */
+#elif defined _XBOX || defined USE_D3D9
+            D3DVERTEXELEMENT9 const elements[] =
+            {
+                { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+                { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+                D3DDECL_END()
+            };
+            g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
+
+            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
+                exit(0);
+
+            vec2 *tmp1;
+            if (FAILED(m_vbo->Lock(0, 0, (void **)&tmp1, 0)))
+                exit(0);
+            memcpy(tmp1, vertices, sizeof(vertices));
+            m_vbo->Unlock();
+
+            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(texcoords), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_tbo, NULL)))
+                exit(0);
+
+            vec2 *tmp2;
+            if (FAILED(m_tbo->Lock(0, 0, (void **)&tmp2, 0)))
+                exit(0);
+            memcpy(tmp2, texcoords, sizeof(texcoords));
+            m_tbo->Unlock();
 #else
 #endif
 
             /* FIXME: this object never cleans up */
         }
 
-#if !defined HAVE_GLES_2X
+#if defined _XBOX || defined USE_D3D9
+
+#else
+#   if !defined HAVE_GLES_2X
         glEnable(GL_TEXTURE_2D);
-#endif
+#   endif
         glBindTexture(GL_TEXTURE_2D, m_texid);
+#endif
 
         if (m_dirty[m_frame])
         {
@@ -687,7 +735,18 @@ public:
 
             m_dirty[m_frame]--;
 
-#ifdef __CELLOS_LV2__
+#if defined _XBOX || defined USE_D3D9
+            D3DLOCKED_RECT rect;
+            m_tex->LockRect(0, &rect, NULL,
+                            D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
+            for (int j = 0; j < m_size.y * 2; j++)
+            {
+                u8vec4 *line = (u8vec4 *)rect.pBits + j * rect.Pitch / 4;
+                for (int i = 0; i < m_size.x / 2; j++)
+                    line[i] = m_pixels[m_size.x / 2 * j + i];
+            }
+            m_tex->UnlockRect(0);
+#elif defined __CELLOS_LV2__
             /* glTexSubImage2D is extremely slow on the PS3, to the point
              * that uploading the whole texture is 40 times faster. */
             glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
@@ -708,7 +767,12 @@ public:
 #endif
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if defined _XBOX || defined USE_D3D9
+        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+        g_d3ddevice->SetVertexDeclaration(m_vdecl);
+        g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*vertices));
+        g_d3ddevice->SetStreamSource(1, m_tbo, 0, sizeof(*texcoords));
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glEnableVertexAttribArray(m_vertexattrib);
         glVertexAttribPointer(m_vertexattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -727,9 +791,15 @@ public:
         glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 #endif
 
+#if defined _XBOX || defined USE_D3D9
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6);
+#else
         glDrawArrays(GL_TRIANGLES, 0, 6);
+#endif
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#if defined _XBOX || defined USE_D3D9
+
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
         glDisableVertexAttribArray(m_vertexattrib);
         glDisableVertexAttribArray(m_texattrib);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -754,10 +824,20 @@ private:
     f64vec2 m_texel2world;
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
     Shader *m_shader;
+#if defined USE_D3D9
+    IDirect3DTexture9 *m_tex;
+    IDirect3DVertexDeclaration9 *m_vdecl;
+    IDirect3DVertexBuffer9 *m_vbo, *m_tbo;
+#elif defined _XBOX
+    D3DTexture *m_tex;
+    D3DVertexDeclaration *m_vdecl;
+    D3DVertexBuffer *m_vbo, *m_tbo;
+#else
     GLuint m_texid;
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__
+#   if !defined __CELLOS_LV2__ && !defined __ANDROID__
     GLuint m_vbo, m_tbo;
     GLuint m_tco;
+#   endif
 #endif
     int m_vertexattrib, m_texattrib, m_texeluni, m_screenuni, m_zoomuni;
 #if defined __CELLOS_LV2__
