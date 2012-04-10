@@ -25,8 +25,9 @@
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"
 
-#if defined USE_D3D9
+#if defined USE_SDL && defined USE_D3D9
 HWND g_hwnd = NULL;
+extern IDirect3DDevice9 *g_d3ddevice;
 #endif
 
 namespace lol
@@ -101,7 +102,6 @@ void SdlApp::Run()
     while (!Ticker::Finished())
     {
 #if defined USE_SDL && defined USE_D3D9
-        extern IDirect3DDevice9 *g_d3ddevice;
         g_d3ddevice->BeginScene();
 #endif
         /* Tick the renderer, show the frame and clamp to desired framerate. */

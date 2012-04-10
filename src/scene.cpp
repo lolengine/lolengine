@@ -61,11 +61,15 @@ private:
     float angle;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene not implemented")
-#   undef STR
-#   undef STR0
+#   if defined __GNUC__
+#       warning Scene not implemented
+#   else
+#      define STR0(x) #x
+#      define STR(x) STR0(x)
+#      pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene not implemented")
+#      undef STR
+#      undef STR0
+#   endif
 #else
 #if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vao;
@@ -91,29 +95,21 @@ Scene::Scene(float angle)
     data->angle = angle;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Scene() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
     data->bufs = 0;
     data->nbufs = 0;
-#endif
 
-#if defined HAVE_GL_2X && !defined __APPLE__
+#   if defined HAVE_GL_2X && !defined __APPLE__
     glGenVertexArrays(1, &data->vao);
+#   endif
 #endif
 }
 
 Scene::~Scene()
 {
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::~Scene() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
@@ -344,11 +340,7 @@ void Scene::Render() // XXX: rename to Blit()
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #elif !defined __CELLOS_LV2__
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     glUniform1i(uni_tex, 0);
@@ -359,11 +351,7 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
 #if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
@@ -381,11 +369,7 @@ void Scene::Render() // XXX: rename to Blit()
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
         /* Generate new vertex / texture coord buffers if necessary */
         if (buf + 2 > data->nbufs)
@@ -423,11 +407,7 @@ void Scene::Render() // XXX: rename to Blit()
         glBindVertexArray(data->vao);
 #endif
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
 #if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glEnableVertexAttribArray(attr_pos);
@@ -474,11 +454,7 @@ void Scene::Render() // XXX: rename to Blit()
     data->ntiles = 0;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
-#   undef STR
-#   undef STR0
+    /* TODO */
 #else
 #if !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);

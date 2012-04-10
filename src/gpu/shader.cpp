@@ -20,6 +20,9 @@
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   if defined USE_D3D9
+#       include <algorithm>
+        using std::min;
+        using std::max;
 #       include <d3d9.h>
 #       include <d3dx9shader.h>
 #   endif

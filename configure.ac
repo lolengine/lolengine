@@ -111,6 +111,16 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
 AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
 
 
+dnl Are we on a Direct3D 9 platform?
+ac_cv_my_have_d3d9="no"
+AC_CHECK_HEADERS(d3d9.h, [ac_cv_my_have_d3d9="yes"])
+if test "${ac_cv_my_have_d3d9}" != "no"; then
+  D3D_LIBS="${D3D_LIBS} -ld3d9 -ld3dx9"
+  AC_DEFINE(USE_D3D9, 1, Define to 1 to use DirectX 9)
+fi
+AM_CONDITIONAL(USE_D3D9, test "${ac_cv_my_have_d3d9}" != "no")
+
+
 LIBS_save="$LIBS"
 LIBS="$LIBS -Wl,-framework -Wl,OpenGL"
 AC_MSG_CHECKING(for -framework OpenGL)
@@ -331,7 +341,7 @@ AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 dnl How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
-LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS"
+LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 
 AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
