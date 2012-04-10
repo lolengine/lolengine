@@ -71,12 +71,12 @@ template<typename T, int N> struct XVec2
 {
     inline Vec2<T> operator =(Vec2<T> const &that);
 
-    inline T& operator[](int n)
+    inline T& operator[](size_t n)
     {
         int i = (N >> (4 * (1 - n))) & 3;
         return static_cast<T*>(static_cast<void*>(this))[i];
     }
-    inline T const& operator[](int n) const
+    inline T const& operator[](size_t n) const
     {
         int i = (N >> (4 * (1 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
@@ -87,12 +87,12 @@ template<typename T, int N> struct XVec3
 {
     inline Vec3<T> operator =(Vec3<T> const &that);
 
-    inline T& operator[](int n)
+    inline T& operator[](size_t n)
     {
         int i = (N >> (4 * (2 - n))) & 3;
         return static_cast<T*>(static_cast<void*>(this))[i];
     }
-    inline T const& operator[](int n) const
+    inline T const& operator[](size_t n) const
     {
         int i = (N >> (4 * (2 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
@@ -103,12 +103,12 @@ template<typename T, int N> struct XVec4
 {
     inline Vec4<T> operator =(Vec4<T> const &that);
 
-    inline T& operator[](int n)
+    inline T& operator[](size_t n)
     {
         int i = (N >> (4 * (3 - n))) & 3;
         return static_cast<T*>(static_cast<void*>(this))[i];
     }
-    inline T const& operator[](int n) const
+    inline T const& operator[](size_t n) const
     {
         int i = (N >> (4 * (3 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
@@ -120,8 +120,8 @@ template<typename T, int N> struct XVec4
  */
 
 #define DECLARE_MEMBER_OPS(tname) \
-    inline T& operator[](int n) { return *(&this->x + n); } \
-    inline T const& operator[](int n) const { return *(&this->x + n); } \
+    inline T& operator[](size_t n) { return *(&this->x + n); } \
+    inline T const& operator[](size_t n) const { return *(&this->x + n); } \
     \
     /* Visual Studio insists on having an assignment operator. */ \
     inline tname<T> const & operator =(tname<T> const &that) \
@@ -1350,8 +1350,8 @@ template <typename T> struct Mat4
         v2((T)0, (T)0, val, (T)0),
         v3((T)0, (T)0, (T)0, val) {}
 
-    inline Vec4<T>& operator[](int n) { return (&v0)[n]; }
-    inline Vec4<T> const& operator[](int n) const { return (&v0)[n]; }
+    inline Vec4<T>& operator[](size_t n) { return (&v0)[n]; }
+    inline Vec4<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     T det() const;
     Mat4<T> invert() const;
