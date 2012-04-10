@@ -284,6 +284,51 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     return ret;
 }
 
+void Shader::SetUniform(ShaderUniform const &uni, int i)
+{
+#if defined USE_D3D9 || defined _XBOX
+    SetUniform(uni, ivec4(i, 0, 0, 0));
+#elif !defined __CELLOS_LV2__
+    glUniform1i(uni.frag, i);
+#else
+    /* FIXME: does this exist at all? */
+    //cgGLSetParameter1i((CGparameter)uni.frag, i);
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    SetUniform(uni, ivec4(v, 0, 0));
+#elif !defined __CELLOS_LV2__
+    glUniform2i(uni.frag, v.x, v.y);
+#else
+    /* FIXME: does this exist at all? */
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    SetUniform(uni, ivec4(v, 0));
+#elif !defined __CELLOS_LV2__
+    glUniform3i(uni.frag, v.x, v.y, v.z);
+#else
+    /* FIXME: does this exist at all? */
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    SetUniform(uni, v);
+#elif !defined __CELLOS_LV2__
+    glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
+#else
+    /* FIXME: does this exist at all? */
+#endif
+}
+
 void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
 #if defined USE_D3D9 || defined _XBOX
@@ -335,9 +380,12 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
     if (uni.flags & 2)
         g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
-    glUniform4f(uni, v.x, v.y, v.z, v.w);
+    glUniform4f(uni.frag, v.x, v.y, v.z, v.w);
 #else
-    cgGLSetParameter4f((CGparameter)uni, v.x, v.y, v.z, v.w);
+    if (uni.frag)
+        cgGLSetParameter4f((CGparameter)uni.frag, v.x, v.y, v.z, v.w);
+    if (uni.vert)
+        cgGLSetParameter4f((CGparameter)uni.vert, v.x, v.y, v.z, v.w);
 #endif
 }
 
@@ -349,9 +397,12 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
     if (uni.flags & 2)
         g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
 #elif !defined __CELLOS_LV2__
-    glUniformMatrix4fv(uni, 1, GL_FALSE, &m[0][0]);
+    glUniformMatrix4fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    cgGLSetMatrixParameterfc((CGparameter)uni, &m[0][0]);
+    if (uni.frag)
+        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
+    if (uni.vert)
+        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
 #endif
 }
 

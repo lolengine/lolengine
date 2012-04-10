@@ -453,7 +453,7 @@ public:
 
         if (!m_ready)
         {
-#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
+#if !defined _XBOX && !defined USE_D3D9
             /* Create a texture of half the width and twice the height
              * so that we can upload four different subimages each frame. */
             glGenTextures(1, &m_texid);
