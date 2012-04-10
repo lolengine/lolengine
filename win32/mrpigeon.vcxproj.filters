@@ -2,8 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\mrpigeon\mrpigeon.h" />
+    <ClInclude Include="..\mrpigeon\enemy.h" />
+    <ClInclude Include="..\mrpigeon\player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mrpigeon\mrpigeon.cpp" />
+    <ClCompile Include="..\mrpigeon\enemy.cpp" />
+    <ClCompile Include="..\mrpigeon\player.cpp" />
   </ItemGroup>
 </Project>
