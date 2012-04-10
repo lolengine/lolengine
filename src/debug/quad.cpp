@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if !defined _XBOX /* This file is meaningless on Xbox */
+#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
 
 #if defined WIN32 && !_XBOX
 #   define _USE_MATH_DEFINES /* for M_PI */

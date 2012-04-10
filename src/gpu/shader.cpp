@@ -19,12 +19,22 @@
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   if defined USE_D3D9
+#       include <d3d9.h>
+#       include <d3dx9shader.h>
+#   endif
 #endif
 
 #include "core.h"
 #include "lolgl.h"
 
 using namespace std;
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#endif
 
 namespace lol
 {
@@ -38,7 +48,11 @@ class ShaderData
     friend class Shader;
 
 private:
-#if defined _XBOX
+#if defined USE_D3D9
+    IDirect3DVertexShader9 *vert_shader;
+    IDirect3DPixelShader9 *frag_shader;
+    ID3DXConstantTable *vert_table, *frag_table;
+#elif defined _XBOX
     D3DVertexShader *vert_shader;
     D3DPixelShader *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
@@ -92,8 +106,7 @@ void Shader::Destroy(Shader *shader)
 Shader::Shader(char const *vert, char const *frag)
   : data(new ShaderData())
 {
-#if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
+#if defined USE_D3D9 || defined _XBOX
     ID3DXBuffer *shader_code, *error_msg;
     HRESULT hr;
 #elif !defined __CELLOS_LV2__
@@ -109,7 +122,7 @@ Shader::Shader(char const *vert, char const *frag)
 
     /* Compile vertex shader */
     data->vert_crc = Hash::Crc32(vert);
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), NULL, NULL, "main",
                            "vs_2_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
@@ -148,7 +161,7 @@ Shader::Shader(char const *vert, char const *frag)
 
     /* Compile fragment shader */
     data->frag_crc = Hash::Crc32(frag);
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), NULL, NULL, "main",
                            "ps_2_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
@@ -185,7 +198,7 @@ Shader::Shader(char const *vert, char const *frag)
     }
 #endif
 
-#if !defined _XBOX && !defined __CELLOS_LV2__
+#if !defined USE_D3D9 && !defined _XBOX && !defined __CELLOS_LV2__
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -198,7 +211,7 @@ Shader::Shader(char const *vert, char const *frag)
 
 int Shader::GetAttribLocation(char const *attr) const
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     /* FIXME: do we have attribs? */
     return 0;
 #elif !defined __CELLOS_LV2__
@@ -211,9 +224,9 @@ int Shader::GetAttribLocation(char const *attr) const
 
 int Shader::GetUniformLocation(char const *uni) const
 {
-#if defined _XBOX
-    D3DXHANDLE hr1 = data->frag_table->GetConstantByName(NULL, uni);
-    D3DXHANDLE hr2 = data->vert_table->GetConstantByName(NULL, uni);
+#if defined USE_D3D9 || defined _XBOX
+    UINT hr1 = (uintptr_t)data->frag_table->GetConstantByName(NULL, uni);
+    UINT hr2 = (uintptr_t)data->vert_table->GetConstantByName(NULL, uni);
     return (int)(((uint32_t)hr1 << 16) | (uint32_t)hr2);
 #elif !defined __CELLOS_LV2__
     return glGetUniformLocation(data->prog_id, uni);
@@ -229,7 +242,7 @@ int Shader::GetUniformLocation(char const *uni) const
 
 void Shader::SetUniform(int uni, float f)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(f, 0, 0, 0));
 #elif !defined __CELLOS_LV2__
     glUniform1f(uni, f);
@@ -240,7 +253,7 @@ void Shader::SetUniform(int uni, float f)
 
 void Shader::SetUniform(int uni, vec2 const &v)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0, 0));
 #elif !defined __CELLOS_LV2__
     glUniform2f(uni, v.x, v.y);
@@ -251,7 +264,7 @@ void Shader::SetUniform(int uni, vec2 const &v)
 
 void Shader::SetUniform(int uni, vec3 const &v)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0));
 #elif !defined __CELLOS_LV2__
     glUniform3f(uni, v.x, v.y, v.z);
@@ -263,10 +276,9 @@ void Shader::SetUniform(int uni, vec3 const &v)
 void Shader::SetUniform(int uni, vec4 const &v)
 {
     /* FIXME: use the array versions of these functions */
-#if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    D3DXHANDLE hr1 = (uint32_t)uni >> 16;
-    D3DXHANDLE hr2 = (uint32_t)(uint16_t)uni;
+#if defined USE_D3D9 || defined _XBOX
+    UINT hr1 = (uint32_t)uni >> 16;
+    UINT hr2 = (uint32_t)(uint16_t)uni;
     g_d3ddevice->SetPixelShaderConstantF(hr1, &v[0], 1);
     g_d3ddevice->SetVertexShaderConstantF(hr2, &v[0], 1);
 #elif !defined __CELLOS_LV2__
@@ -278,10 +290,9 @@ void Shader::SetUniform(int uni, vec4 const &v)
 
 void Shader::SetUniform(int uni, mat4 const &m)
 {
-#if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    D3DXHANDLE hr1 = (uint32_t)uni >> 16;
-    D3DXHANDLE hr2 = (uint32_t)(uint16_t)uni;
+#if defined USE_D3D9 || defined _XBOX
+    UINT hr1 = (uint32_t)uni >> 16;
+    UINT hr2 = (uint32_t)(uint16_t)uni;
     g_d3ddevice->SetPixelShaderConstantF(hr1, &m[0][0], 4);
     g_d3ddevice->SetVertexShaderConstantF(hr2, &m[0][0], 4);
 #elif !defined __CELLOS_LV2__
@@ -293,10 +304,10 @@ void Shader::SetUniform(int uni, mat4 const &m)
 
 void Shader::Bind() const
 {
-#if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
-    g_d3ddevice->SetVertexShader(data->vert_shader);
-    g_d3ddevice->SetPixelShader(data->frag_shader);
+#if defined USE_D3D9 || defined _XBOX
+    HRESULT hr;
+    hr = g_d3ddevice->SetVertexShader(data->vert_shader);
+    hr = g_d3ddevice->SetPixelShader(data->frag_shader);
 #elif !defined __CELLOS_LV2__
     glUseProgram(data->prog_id);
 #else
@@ -309,8 +320,7 @@ void Shader::Bind() const
 
 Shader::~Shader()
 {
-#if defined _XBOX
-    extern D3DDevice *g_d3ddevice;
+#if defined USE_D3D9 || defined _XBOX
     data->vert_shader->Release();
     data->vert_table->Release();
     data->frag_shader->Release();
@@ -333,7 +343,7 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
-#if !defined _XBOX && !defined __CELLOS_LV2__
+#if !defined USE_D3D9 && !defined _XBOX && !defined __CELLOS_LV2__
     if (!version)
     {
         char buf[4096];

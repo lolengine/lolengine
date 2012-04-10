@@ -14,7 +14,9 @@
 
 #include <cmath>
 
-#if _XBOX
+#if defined USE_D3D9
+#   include <d3d9.h>
+#elif defined _XBOX
 #   include <xtl.h>
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
@@ -30,8 +32,13 @@
 
 using namespace std;
 
-#if defined _XBOX
 /* FIXME: g_d3ddevice should never be exported */
+#if defined USE_D3D9
+IDirect3DDevice9 *g_d3ddevice;
+#   if defined USE_SDL
+extern HWND g_hwnd;
+#   endif
+#elif defined _XBOX
 D3DDevice *g_d3ddevice;
 #endif
 
@@ -45,7 +52,11 @@ class VideoData
 private:
     static mat4 proj_matrix, view_matrix;
     static ivec2 saved_viewport;
-#if defined _XBOX
+#if defined USE_D3D9
+    static IDirect3D9 *d3d_ctx;
+    static IDirect3DDevice9 *d3d_dev;
+    static D3DCOLOR clear_color;
+#elif defined _XBOX
     static Direct3D *d3d_ctx;
     static D3DDevice *d3d_dev;
     static D3DCOLOR clear_color;
@@ -56,7 +67,11 @@ mat4 VideoData::proj_matrix;
 mat4 VideoData::view_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 
-#if defined _XBOX
+#if defined USE_D3D9
+IDirect3D9 *VideoData::d3d_ctx;
+IDirect3DDevice9 *VideoData::d3d_dev;
+D3DCOLOR VideoData::clear_color;
+#elif defined _XBOX
 Direct3D *VideoData::d3d_ctx;
 D3DDevice *VideoData::d3d_dev;
 D3DCOLOR VideoData::clear_color;
@@ -68,7 +83,7 @@ D3DCOLOR VideoData::clear_color;
 
 void Video::Setup(ivec2 size)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     VideoData::d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
     if (!VideoData::d3d_ctx)
     {
@@ -76,15 +91,22 @@ void Video::Setup(ivec2 size)
         exit(EXIT_FAILURE);
     }
 
+    HWND window = 0;
     D3DPRESENT_PARAMETERS d3dpp;
     memset(&d3dpp, 0, sizeof(d3dpp));
 
+#   if defined USE_SDL
+    window = g_hwnd;
+    d3dpp.hDeviceWindow = g_hwnd;
+    d3dpp.Windowed = TRUE;
+#   elif defined _XBOX
     XVIDEO_MODE VideoMode;
     XGetVideoMode( &VideoMode );
     if (size.x > VideoMode.dwDisplayWidth)
         size.x = VideoMode.dwDisplayWidth;
     if (size.y > VideoMode.dwDisplayHeight)
         size.y = VideoMode.dwDisplayHeight;
+#   endif
     VideoData::saved_viewport = size;
 
     VideoData::clear_color = D3DCOLOR_XRGB(26, 51, 77);
@@ -98,9 +120,10 @@ void Video::Setup(ivec2 size)
     d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-    if (FAILED(VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, NULL,
-                                                D3DCREATE_HARDWARE_VERTEXPROCESSING,
-                                                &d3dpp, &VideoData::d3d_dev)))
+    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, window,
+                                                  D3DCREATE_HARDWARE_VERTEXPROCESSING,
+                                                  &d3dpp, &VideoData::d3d_dev);
+    if (FAILED(hr))
     {
         Log::Error("cannot create D3D device\n");
         exit(EXIT_FAILURE);
@@ -177,7 +200,7 @@ void Video::SetFov(float theta)
 
 void Video::SetDepth(bool set)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetDepth() not implemented")
@@ -191,7 +214,7 @@ void Video::SetDepth(bool set)
 
 void Video::SetClearColor(vec4 color)
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     VideoData::clear_color = D3DCOLOR_XRGB((int)(color.r * 255.999f),
                                            (int)(color.g * 255.999f),
                                            (int)(color.b * 255.999f));
@@ -203,7 +226,7 @@ void Video::SetClearColor(vec4 color)
 void Video::Clear()
 {
     ivec2 size = GetSize();
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
     VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
                                         | D3DCLEAR_STENCIL,
                               VideoData::clear_color, 1.0f, 0);
@@ -222,7 +245,7 @@ void Video::Destroy()
 
 void Video::Capture(uint32_t *buffer)
 {
-#if _XBOX
+#if defined USE_D3D9 || defined _XBOX
     /* TODO */
 #else
     GLint v[4];
@@ -258,7 +281,7 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-#if _XBOX
+#if defined USE_D3D9 || defined _XBOX
     return VideoData::saved_viewport;
 #elif 1
     /* GetSize() is called too often on the game thread; we cannot rely on

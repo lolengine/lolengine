@@ -32,7 +32,7 @@ class GradientData
 
 private:
     Shader *shader;
-#if !defined _XBOX /* This file is meaningless on Xbox */
+#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
 
     GLuint bufs[2];
 #if defined HAVE_GL_2X && !defined __APPLE__
@@ -65,7 +65,7 @@ void Gradient::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-#if !defined _XBOX /* This file is meaningless on Xbox */
+#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
     if (!data->shader)
     {
 #if !defined __CELLOS_LV2__

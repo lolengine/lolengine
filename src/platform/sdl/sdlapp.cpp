@@ -14,12 +14,20 @@
 
 #if defined USE_SDL
 #   include <SDL.h>
+#   if defined USE_D3D9
+#       include <d3d9.h>
+#       include <SDL_syswm.h>
+#   endif
 #endif
 
 #include "core.h"
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"
+
+#if defined USE_D3D9
+HWND g_hwnd = NULL;
+#endif
 
 namespace lol
 {
@@ -51,12 +59,20 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
+#   if defined USE_D3D9
+    SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 16, 0);
+    SDL_SysWMinfo wminfo;
+    SDL_VERSION(&wminfo.version);
+    SDL_GetWMInfo(&wminfo);
+    g_hwnd = wminfo.window;
+#   else
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
+#   endif
     if (!video)
     {
-        Log::Error("cannot create OpenGL screen: %s\n", SDL_GetError());
+        Log::Error("cannot create rendering window: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
@@ -84,10 +100,19 @@ void SdlApp::Run()
 {
     while (!Ticker::Finished())
     {
+#if defined USE_SDL && defined USE_D3D9
+        extern IDirect3DDevice9 *g_d3ddevice;
+        g_d3ddevice->BeginScene();
+#endif
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 #if defined USE_SDL
+#   if defined USE_D3D9
+        g_d3ddevice->EndScene();
+        g_d3ddevice->Present(NULL, NULL, NULL, NULL);
+#   else
         SDL_GL_SwapBuffers();
+#   endif
 #endif
     }
 }

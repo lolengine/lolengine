@@ -19,6 +19,12 @@
 using namespace std;
 using namespace lol;
 
+#if defined _WIN32 && defined USE_D3D9
+#   define FAR
+#   define NEAR
+#   include <d3d9.h>
+#endif
+
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
@@ -26,6 +32,12 @@ using namespace lol;
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #   include <direct.h>
+#endif
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
 #endif
 
 class Cube : public WorldEntity
@@ -92,7 +104,7 @@ public:
         if (!m_ready)
         {
             m_shader = Shader::Create(
-#if !defined __CELLOS_LV2__ && !defined _XBOX
+#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
                 "#version 120\n"
                 "attribute vec3 in_Vertex;"
                 "attribute vec3 in_Color;"
@@ -126,14 +138,14 @@ public:
                 "}"
 #endif
             );
-#if !defined _XBOX
+#if !defined _XBOX && !defined USE_D3D9
             m_coord = m_shader->GetAttribLocation("in_Vertex");
             m_color = m_shader->GetAttribLocation("in_Color");
 #endif
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
             m_ready = true;
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -147,8 +159,7 @@ public:
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices,
                          GL_STATIC_DRAW);
-#elif defined _XBOX
-            extern D3DDevice *g_d3ddevice;
+#elif defined _XBOX || defined USE_D3D9
             D3DVERTEXELEMENT9 const elements[] =
             {
                 { 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
@@ -191,8 +202,7 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_mvp, m_matrix);
-#if defined _XBOX
-        extern D3DDevice *g_d3ddevice;
+#if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
@@ -232,7 +242,11 @@ private:
     vec3 m_colors[8];
     i16vec3 m_indices[12];
     Shader *m_shader;
-#if defined _XBOX
+#if defined USE_D3D9
+    IDirect3DVertexDeclaration9 *m_vdecl;
+    IDirect3DVertexBuffer9 *m_vbo, *m_cbo;
+    IDirect3DIndexBuffer9 *m_ibo;
+#elif defined _XBOX
     D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo, *m_cbo;
     D3DIndexBuffer *m_ibo;
