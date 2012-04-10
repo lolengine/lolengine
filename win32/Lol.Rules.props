@@ -11,7 +11,9 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Xbox 360'">_XBOX;$(XboxDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BufferSecurityCheck Condition="'$(Platform)'=='Xbox 360'">false</BufferSecurityCheck>
     </ClCompile>
@@ -34,6 +36,8 @@
       <!-- FIXME: not for the static library! -->
       <AdditionalDependencies Condition="'$(Platform)'=='Win32'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);$(GlDeps);$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32'">$(SdlLibs);$(GlLibs);$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);$(GlDeps);$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(SdlLibs);$(GlLibs);$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib;xboxkrnl.lib;xnetd.lib;xaudiod2.lib;xactd3.lib;x3daudiod.lib;xmcored.lib;xbdm.lib;vcompd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xapilib.lib;d3d9.lib;d3dx9.lib;xgraphics.lib;xboxkrnl.lib;xnet.lib;xaudio2.lib;xact3.lib;x3daudio.lib;xmcore.lib;vcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -44,6 +48,9 @@
 
     <!-- FIXME: not for the static library! -->
     <PostBuildEvent Condition="'$(Platform)'=='Win32'">
+      <Command>for %%I in ($(SdlLibs)) do xcopy /y /c /d %%I\*.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent Condition="'$(Platform)'=='x64'">
       <Command>for %%I in ($(SdlLibs)) do xcopy /y /c /d %%I\*.dll "$(TargetDir)"</Command>
     </PostBuildEvent>
 

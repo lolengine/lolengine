@@ -9,8 +9,10 @@
     <SdlImageDir>$(ContribDir)\sdl-image-1.2.10</SdlImageDir>
     <SdlMixerDir>$(ContribDir)\sdl-mixer-1.2.11</SdlMixerDir>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
-    <SdlLibs>$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-mingw32;$(SdlMixerDir)\lib\i686-w64-mingw32</SdlLibs>
-    <SdlDeps>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
+    <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-mingw32;$(SdlMixerDir)\lib\i686-w64-mingw32</SdlLibs>
+    <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-w64-mingw32</SdlLibs>
+    <SdlDeps Condition="'$(Platform)'=='Win32'">SDL.lib;SDLmain.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
+    <SdlDeps Condition="'$(Platform)'=='x64'">libSDL.a;libSDLmain.a</SdlDeps>
 
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
@@ -25,13 +27,14 @@
     <!-- OpenGL & GLEW -->
     <GlewDir>$(ContribDir)\glew-1.7.0</GlewDir>
     <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
-    <GlLibs>$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
+    <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
+    <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
     <GlDeps>opengl32.lib;glew32.lib</GlDeps>
 
     <!-- Direct3D 9 -->
     <D3d9Includes>$(DXSDK_DIR)\Include</D3d9Includes>
     <D3d9Libs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</D3d9Libs>
-    <D3d9Libs Condition="'$(Platform)'=='Win64'">$(DXSDK_DIR)\Lib\x64</D3d9Libs>
+    <D3d9Libs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</D3d9Libs>
     <D3d9Deps Condition="'$(Configuration)'=='Release'">d3d9.lib;d3dx9.lib</D3d9Deps>
     <D3d9Deps Condition="'$(Configuration)'=='Debug'">d3d9.lib;d3dx9d.lib</D3d9Deps>
 
