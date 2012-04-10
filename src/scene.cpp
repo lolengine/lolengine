@@ -60,7 +60,7 @@ private:
     int ntiles;
     float angle;
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene not implemented")
@@ -90,7 +90,7 @@ Scene::Scene(float angle)
     data->ntiles = 0;
     data->angle = angle;
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Scene() not implemented")
@@ -108,7 +108,7 @@ Scene::Scene(float angle)
 
 Scene::~Scene()
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::~Scene() not implemented")
@@ -144,7 +144,7 @@ void Scene::Reset()
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
-#if !defined _XBOX /* No WPOS on Xbox */
+#if !defined USE_D3D9 && !defined _XBOX
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
@@ -161,7 +161,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 
 void Scene::Render() // XXX: rename to Blit()
 {
-#if !defined _XBOX /* No WPOS on Xbox */
+#if !defined USE_D3D9 && !defined _XBOX /* No WPOS on Xbox, what about Win32? */
     if (!stdshader)
     {
 #if !defined _XBOX && !defined __CELLOS_LV2__
@@ -343,7 +343,7 @@ void Scene::Render() // XXX: rename to Blit()
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
@@ -358,7 +358,7 @@ void Scene::Render() // XXX: rename to Blit()
     //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);
 #endif
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
@@ -380,7 +380,7 @@ void Scene::Render() // XXX: rename to Blit()
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
@@ -422,7 +422,7 @@ void Scene::Render() // XXX: rename to Blit()
 #if defined HAVE_GL_2X && !defined __APPLE__
         glBindVertexArray(data->vao);
 #endif
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
@@ -473,7 +473,7 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene::Render() not implemented")
@@ -489,7 +489,7 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     glDisable(GL_BLEND);
 #endif
-#endif /* _XBOX */
+#endif /* _XBOX || USE_D3D9 */
 }
 
 } /* namespace lol */

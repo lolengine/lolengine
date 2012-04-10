@@ -19,6 +19,12 @@
 using namespace std;
 using namespace lol;
 
+#if defined _WIN32 && defined USE_D3D9
+#   define FAR
+#   define NEAR
+#   include <d3d9.h>
+#endif
+
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
 #endif
@@ -30,6 +36,12 @@ using namespace lol;
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #   include <direct.h>
+#endif
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
 #endif
 
 class Triangle : public WorldEntity
@@ -50,7 +62,7 @@ public:
         if (!m_ready)
         {
             m_shader = Shader::Create(
-#if !defined __CELLOS_LV2__ && !defined _XBOX
+#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
                 "#version 120\n"
                 "attribute vec2 in_Position;"
                 "void main(void) {"
@@ -72,21 +84,20 @@ public:
                 "}"
 #endif
             );
-#if !defined _XBOX
+#if !defined _XBOX && !defined USE_D3D9
             m_attrib = m_shader->GetAttribLocation("in_Position");
 #endif
             m_ready = true;
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX
+#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices,
                          GL_STATIC_DRAW);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 2: upload vertex information at each frame */
-#elif defined _XBOX
-            extern D3DDevice *g_d3ddevice;
+#elif defined _XBOX || defined USE_D3D9
             D3DVERTEXELEMENT9 const elements[2] =
             {
                 { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
@@ -108,8 +119,7 @@ public:
         }
 
         m_shader->Bind();
-#if defined _XBOX
-        extern D3DDevice *g_d3ddevice;
+#if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
@@ -126,13 +136,13 @@ public:
         glVertexPointer(3, GL_FLOAT, 0, m_vertices);
 #endif
 
-#if defined _XBOX
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
+#if defined _XBOX || defined USE_D3D9
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 3);
 #else
         glDrawArrays(GL_TRIANGLES, 0, 3);
 #endif
 
-#if defined _XBOX
+#if defined _XBOX || defined USE_D3D9
         /* FIXME: do we need to unset anything here? */
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glDisableVertexAttribArray(m_attrib);
@@ -148,7 +158,10 @@ public:
 private:
     vec2 m_vertices[3];
     Shader *m_shader;
-#if defined _XBOX
+#if defined USE_D3D9
+    IDirect3DVertexDeclaration9 *m_vdecl;
+    IDirect3DVertexBuffer9 *m_vbo;
+#elif defined _XBOX
     D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo;
 #else

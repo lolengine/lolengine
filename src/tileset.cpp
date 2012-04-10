@@ -46,7 +46,7 @@ private:
     float tx, ty;
 
     Image *img;
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet not implemented")
@@ -69,7 +69,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     sprintf(data->name, "<tileset> %s", path);
 
     data->tiles = NULL;
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
@@ -118,7 +118,7 @@ void TileSet::TickDraw(float deltams)
     {
         if (data->img)
             delete data->img;
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
@@ -131,7 +131,7 @@ void TileSet::TickDraw(float deltams)
     }
     else if (data->img)
     {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
@@ -203,7 +203,7 @@ ivec2 TileSet::GetSize(int tileid) const
 
 void TileSet::Bind()
 {
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::Bind() not implemented")
@@ -228,7 +228,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     int dy = o ? 0 : data->size.y * scale.y;
     int dz = o ? data->size.y * scale.y : 0;
 
-#if defined _XBOX
+#if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
