@@ -166,7 +166,8 @@ void Gradient::TickDraw(float deltams)
 
     mat4 model_matrix = mat4(1.0f);
 
-    GLuint uni_mat, attr_pos, attr_col;
+    ShaderUniform uni_mat;
+    GLuint attr_pos, attr_col;
 #if !defined __CELLOS_LV2__
     attr_pos = data->shader->GetAttribLocation("in_Vertex");
     attr_col = data->shader->GetAttribLocation("in_Color");

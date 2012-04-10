@@ -324,7 +324,8 @@ void Scene::Render() // XXX: rename to Blit()
     data->model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
-    int uni_mat, uni_tex, attr_pos, attr_tex;
+    ShaderUniform uni_mat, uni_tex;
+    int attr_pos, attr_tex;
 #if !defined __CELLOS_LV2__
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
@@ -339,16 +340,8 @@ void Scene::Render() // XXX: rename to Blit()
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
-#if defined USE_D3D9 || defined _XBOX
-    /* TODO */
-#elif !defined __CELLOS_LV2__
     uni_tex = stdshader->GetUniformLocation("in_Texture");
-    glUniform1i(uni_tex, 0);
-#else
-    // WTF? this doesn't exist
-    //uni_tex = stdshader->GetUniformLocation("in_Texture");
-    //cgGLSetParameter1i((CGparameter)(intptr_t)uni_tex, 0);
-#endif
+    stdshader->SetUniform(uni_tex, 0);
 
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */

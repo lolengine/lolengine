@@ -45,6 +45,10 @@ public:
     int GetAttribLocation(char const *attr) const;
 
     ShaderUniform GetUniformLocation(char const *uni) const;
+    void SetUniform(ShaderUniform const &uni, int i);
+    void SetUniform(ShaderUniform const &uni, ivec2 const &v);
+    void SetUniform(ShaderUniform const &uni, ivec3 const &v);
+    void SetUniform(ShaderUniform const &uni, ivec4 const &v);
     void SetUniform(ShaderUniform const &uni, float f);
     void SetUniform(ShaderUniform const &uni, vec2 const &v);
     void SetUniform(ShaderUniform const &uni, vec3 const &v);

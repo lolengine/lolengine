@@ -73,7 +73,7 @@ private:
     GLuint buffer[NUM_BUFFERS];
     Shader *shader[NUM_SHADERS];
     GLuint attr[NUM_ATTRS];
-    GLuint uni[NUM_UNIFORMS];
+    ShaderUniform uni[NUM_UNIFORMS];
     GLuint texture[NUM_TEXTURES];
     uint8_t image[1][TEX_SIZE * TEX_SIZE * 4];
 
@@ -246,7 +246,7 @@ void DebugQuad::TickDraw(float deltams)
     GLuint *buffer = data->buffer;
     Shader **shader = data->shader;
     GLuint *attr = data->attr;
-    GLuint *uni = data->uni;
+    ShaderUniform *uni = data->uni;
 
     /* These may be shared across calls */
     GLfloat const *sine;
