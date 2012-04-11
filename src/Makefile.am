@@ -22,6 +22,7 @@ liblol_a_SOURCES = \
     $(xbox_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
+    $(android_sources) \
     \
     thread/threadbase.h thread/thread.h \
     \
@@ -31,11 +32,8 @@ liblol_a_SOURCES = \
     gpu/vbo.cpp gpu/vbo.h \
     \
     image/image.cpp image/image.h image/image-private.h \
-    image/codec/android-image.cpp \
     image/codec/gdiplus-image.cpp \
     image/codec/ios-image.cpp \
-    image/codec/sdl-image.cpp \
-    image/codec/ps3-image.cpp \
     image/codec/dummy-image.cpp \
     \
     loldebug.h \
@@ -45,6 +43,7 @@ liblol_a_SOURCES = \
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
 sdl_sources = \
+    image/codec/sdl-image.cpp \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
 
@@ -59,6 +58,7 @@ endif
 
 if HAVE_PS3
 ps3_sources = \
+    image/codec/ps3-image.cpp \
     platform/ps3/threadbase.h \
     platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
     platform/ps3/ps3input.cpp platform/ps3/ps3input.h
@@ -68,4 +68,8 @@ if HAVE_XBOX
 xbox_sources = \
     platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h
 endif
+
+android_sources = \
+    image/codec/android-image.cpp \
+    platform/android/androidapp.cpp platform/android/androidapp.h
 
