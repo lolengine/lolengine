@@ -98,7 +98,7 @@ public:
             m_deltascale[i] = 1.0;
             m_dirty[i] = 2;
         }
-#if defined __CELLOS_LV2__
+#if defined __CELLOS_LV2__ || defined _XBOX
         //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
         //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
         m_center = f64cmplx(-0.65823419062254, 0.50221777363480);
@@ -132,7 +132,7 @@ public:
             uint8_t red = r * 255.99f;
             uint8_t green = g * 255.99f;
             uint8_t blue = b * 255.99f;
-#if defined __CELLOS_LV2__
+#if defined __CELLOS_LV2__ || defined _XBOX
             m_palette[i] = u8vec4(255, red, green, blue);
 #elif defined __native_client__
             m_palette[i] = u8vec4(red, green, blue, 255);
@@ -213,7 +213,7 @@ public:
         f64cmplx worldmouse = m_center + ScreenToWorldOffset(mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined _XBOX
         if (buttons[1])
         {
             if (!m_drag)
@@ -273,7 +273,7 @@ public:
                 zoom = 1e-14 / m_radius;
             }
             m_radius *= zoom;
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * zoom + worldmouse;
             worldmouse = m_center + ScreenToWorldOffset(mousepos);
@@ -418,7 +418,7 @@ public:
             }
             else
             {
-#if defined __CELLOS_LV2__
+#if defined __CELLOS_LV2__ || defined _XBOX
                 *m_pixelstart++ = u8vec4(255, 0, 0, 0);
 #else
                 *m_pixelstart++ = u8vec4(0, 0, 0, 255);
@@ -469,6 +469,11 @@ public:
 #   endif
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#elif defined _XBOX
+            /* By default the X360 will swizzle the texture. Ask for linear. */
+            g_d3ddevice->CreateTexture(m_size.x / 2, m_size.y * 2, 1,
+                                       D3DUSAGE_WRITEONLY, D3DFMT_LIN_A8R8G8B8,
+                                       D3DPOOL_DEFAULT, &m_tex, NULL);
 #else
             g_d3ddevice->CreateTexture(m_size.x / 2, m_size.y * 2, 1,
                                        D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
@@ -732,8 +737,12 @@ public:
 
 #if defined _XBOX || defined USE_D3D9
             D3DLOCKED_RECT rect;
+#   if defined _XBOX
+            m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
+#   else
             m_tex->LockRect(0, &rect, NULL,
                             D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
+#   endif
             for (int j = 0; j < m_size.y * 2; j++)
             {
                 u8vec4 *line = (u8vec4 *)rect.pBits + j * rect.Pitch / 4;
@@ -858,11 +867,11 @@ private:
 
 int main(int argc, char **argv)
 {
-    Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
+    Application app("Tutorial 3: Fractal", ivec2(640, 480, 60.0f);
 
-#if defined _MSC_VER
+#if defined _MSC_VER && !defined _XBOX
     _chdir("..");
-#elif defined _WIN32
+#elif defined _WIN32 && !defined _XBOX
     _chdir("../..");
 #endif
 
