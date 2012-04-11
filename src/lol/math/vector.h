@@ -1170,7 +1170,7 @@ DECLARE_ALL_VECTOR_OPS(uint64_t)
  * will be used.
  * Also we do this for the whole block of declarations, because GCC prior
  * to 4.6.3 does not appear to support _Pragma() inside a macro. */
-#if defined __GNUC__ && (__GNUC__ >= 4)
+#if defined __GNUC__ && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wsign-compare"
 #elif defined _MSC_VER
@@ -1285,7 +1285,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(double, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(long double, real)
 #endif
 
-#if defined __GNUC__ && (__GNUC__ >= 4)
+#if defined __GNUC__ && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #   pragma GCC diagnostic pop
 #elif defined _MSC_VER
 #   pragma warning(pop)
