@@ -21,6 +21,8 @@
 #   include "platform/xbox/xboxapp.h"
 #elif defined __native_client__
 #   include "platform/nacl/naclapp.h"
+#elif defined __ANDROID__
+#   include "platform/android/androidapp.h"
 #elif defined HAVE_GLES_2X
 #   include "eglapp.h"
 #else
@@ -47,6 +49,8 @@ class ApplicationData
     XboxApp app;
 #elif defined __native_client__
     NaClApp app;
+#elif defined __ANDROID__
+    AndroidApp app;
 #elif defined HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;

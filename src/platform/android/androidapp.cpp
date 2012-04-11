@@ -16,15 +16,41 @@
 #include <android/log.h>
 
 #include "core.h"
-#include "lolgl.h"
 #include "loldebug.h"
+#include "androidapp.h"
 
 using namespace lol;
+
+/* Monsterz-specific */
+#include "interface.h"
 
 namespace lol
 {
 JavaVM *g_vm;
 jobject g_activity;
+
+AndroidApp::AndroidApp(char const *title, ivec2 res, float fps) :
+    data(0)
+{
+}
+
+void AndroidApp::ShowPointer(bool show)
+{
+}
+
+void AndroidApp::Run()
+{
+    while (!Ticker::Finished())
+    {
+        /* Tick the renderer, show the frame and clamp to desired framerate. */
+        Ticker::TickDraw();
+    }
+}
+
+AndroidApp::~AndroidApp()
+{
+}
+
 };
 
 extern "C" jint
