@@ -20,12 +20,23 @@
 #if defined WIN32 && !defined _XBOX
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   if defined USE_D3D9
+#       define FAR
+#       define NEAR
+#       include <d3d9.h>
+#   endif
 #endif
 
 #include "core.h"
 #include "lolgl.h"
 
 using namespace std;
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#endif
 
 namespace lol
 {
@@ -46,14 +57,12 @@ private:
     float tx, ty;
 
     Image *img;
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet not implemented")
-#   undef STR
-#   undef STR0
+#if defined USE_D3D9
+    IDirect3DTexture9 *m_tex;
+#elif defined _XBOX
+    D3DTexture *m_tex;
 #else
-    GLuint texture;
+    GLuint m_tex;
 #endif
 };
 
@@ -69,15 +78,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     sprintf(data->name, "<tileset> %s", path);
 
     data->tiles = NULL;
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
-#   undef STR
-#   undef STR0
-#else
-    data->texture = 0;
-#endif
+    data->m_tex = 0;
     data->img = new Image(path);
     data->isize = data->img->GetSize();
 
@@ -118,38 +119,44 @@ void TileSet::TickDraw(float deltams)
     {
         if (data->img)
             delete data->img;
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
-#   undef STR
-#   undef STR0
-#else
         else
-            glDeleteTextures(1, &data->texture);
+#if defined USE_D3D9 || defined _XBOX
+            /* FIXME: is it really the correct call? */
+            data->m_tex->Release();
+#else
+            glDeleteTextures(1, &data->m_tex);
 #endif
     }
     else if (data->img)
     {
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TickDraw() not implemented")
-#   undef STR
-#   undef STR0
+        D3DFORMAT format;
 #else
         GLuint format;
+#endif
         int planes;
 
         switch (data->img->GetFormat())
         {
         case Image::FORMAT_RGB:
+#if defined USE_D3D9
+           format = D3DFMT_R8G8B8;
+#elif defined _XBOX
+           format = D3DFMT_LIN_R8G8B8; /* FIXME */
+#else
            format = GL_RGB;
+#endif
            planes = 3;
            break;
         case Image::FORMAT_RGBA:
         default:
+#if defined USE_D3D9
+           format = D3DFMT_A8R8G8B8;
+#elif defined _XBOX
+           format = D3DFMT_LIN_A8R8G8B8;
+#else
            format = GL_RGBA;
+#endif
            planes = 4;
            break;
         }
@@ -168,19 +175,35 @@ void TileSet::TickDraw(float deltams)
             pixels = tmp;
         }
 
-        glGenTextures(1, &data->texture);
+#if defined USE_D3D9 || defined _XBOX
+        D3DLOCKED_RECT rect;
+#   if defined USE_D3D9
+        g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_DYNAMIC, format,
+                                   D3DPOOL_SYSTEMMEM, &data->m_tex, NULL);
+        data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
+#   elif defined _XBOX
+        /* By default the X360 will swizzle the texture. Ask for linear. */
+        g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_WRITEONLY, format,
+                                   D3DPOOL_DEFAULT, &data->m_tex, NULL);
+        data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
+#   endif
+        for (int j = 0; j < h; j++)
+            memcpy((uint8_t *)rect.pBits + j * rect.Pitch, pixels + w * j * 4, w * 4);
+        data->m_tex->UnlockRect(0);
+#else
+        glGenTextures(1, &data->m_tex);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, data->texture);
+        glBindTexture(GL_TEXTURE_2D, data->m_tex);
 
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0,
                      format, GL_UNSIGNED_BYTE, pixels);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#endif
 
         if (pixels != data->img->GetData())
             free(pixels);
-#endif
         delete data->img;
         data->img = NULL;
     }
@@ -203,19 +226,15 @@ ivec2 TileSet::GetSize(int tileid) const
 
 void TileSet::Bind()
 {
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::Bind() not implemented")
-#   undef STR
-#   undef STR0
-#else
-    if (!data->img && data->texture)
+    if (!data->img && data->m_tex)
     {
+#if defined USE_D3D9 || defined _XBOX
+        g_d3ddevice->SetTexture(0, data->m_tex);
+#else
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, data->texture);
-    }
+        glBindTexture(GL_TEXTURE_2D, data->m_tex);
 #endif
+    }
 }
 
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
@@ -228,14 +247,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     int dy = o ? 0 : data->size.y * scale.y;
     int dz = o ? data->size.y * scale.y : 0;
 
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: TileSet::TileSet() not implemented")
-#   undef STR
-#   undef STR0
-#else
-    if (!data->img && data->texture)
+    if (!data->img && data->m_tex)
     {
         float tmp[10];
 
@@ -280,7 +292,6 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         memset(vertex, 0, 3 * sizeof(float));
         memset(texture, 0, 2 * sizeof(float));
     }
-#endif
 }
 
 } /* namespace lol */
