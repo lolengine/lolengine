@@ -18,10 +18,21 @@
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   if defined USE_D3D9
+#       define FAR
+#       define NEAR
+#       include <d3d9.h>
+#   endif
 #endif
 
 #include "core.h"
 #include "lolgl.h"
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#endif
 
 namespace lol
 {
@@ -60,23 +71,19 @@ private:
     int ntiles;
     float angle;
 
-#if defined USE_D3D9 || defined _XBOX
-#   if defined __GNUC__
-#       warning Scene not implemented
-#   else
-#      define STR0(x) #x
-#      define STR(x) STR0(x)
-#      pragma message(__FILE__ "(" STR(__LINE__) "): warning: Scene not implemented")
-#      undef STR
-#      undef STR0
-#   endif
+#if defined USE_D3D9
+    IDirect3DVertexDeclaration9 *m_vdecl;
+    IDirect3DVertexBuffer9 **bufs;
+#elif defined _XBOX
+    D3DVertexDeclaration *m_vdecl;
+    D3DVertexBuffer **bufs;
 #else
-#if defined HAVE_GL_2X && !defined __APPLE__
+#   if defined HAVE_GL_2X && !defined __APPLE__
     GLuint vao;
-#endif
+#   endif
     GLuint *bufs;
-    int nbufs;
 #endif
+    int nbufs;
 
     static Scene *scene;
 };
@@ -94,12 +101,18 @@ Scene::Scene(float angle)
     data->ntiles = 0;
     data->angle = angle;
 
-#if defined USE_D3D9 || defined _XBOX
-    /* TODO */
-#else
     data->bufs = 0;
     data->nbufs = 0;
 
+#if defined _XBOX || defined USE_D3D9
+    D3DVERTEXELEMENT9 const elements[] =
+    {
+        { 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+        { 1, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+        D3DDECL_END()
+    };
+    g_d3ddevice->CreateVertexDeclaration(elements, &data->m_vdecl);
+#else
 #   if defined HAVE_GL_2X && !defined __APPLE__
     glGenVertexArrays(1, &data->vao);
 #   endif
@@ -109,7 +122,7 @@ Scene::Scene(float angle)
 Scene::~Scene()
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* TODO */
+    /* FIXME: TODO */
 #else
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
@@ -140,7 +153,6 @@ void Scene::Reset()
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
-#if !defined USE_D3D9 && !defined _XBOX
     if ((data->ntiles % 1024) == 0)
         data->tiles = (Tile *)realloc(data->tiles,
                                       (data->ntiles + 1024) * sizeof(Tile));
@@ -152,15 +164,13 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
     data->tiles[data->ntiles].o = o;
     data->tiles[data->ntiles].scale = scale;
     data->ntiles++;
-#endif
 }
 
 void Scene::Render() // XXX: rename to Blit()
 {
-#if !defined USE_D3D9 && !defined _XBOX /* No WPOS on Xbox, what about Win32? */
     if (!stdshader)
     {
-#if !defined _XBOX && !defined __CELLOS_LV2__
+#if !defined _XBOX && !defined __CELLOS_LV2__ && !defined USE_D3D9
         stdshader = Shader::Create(
 #if !defined HAVE_GLES_2X
             "#version 130\n"
@@ -257,7 +267,9 @@ void Scene::Render() // XXX: rename to Blit()
             "}",
 
             "void main(float2 in_TexCoord : TEXCOORD0,"
+#if 0
             "          float4 in_FragCoord : WPOS,"
+#endif
             "          uniform sampler2D tex,"
             "          out float4 out_FragColor : COLOR)"
             "{"
@@ -297,7 +309,6 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
             "    out_FragColor = col;"
             "}");
-#endif
     }
 
 #if 0
@@ -325,10 +336,14 @@ void Scene::Render() // XXX: rename to Blit()
     // XXX: end of debug stuff
 
     ShaderUniform uni_mat, uni_tex;
+#if defined USE_D3D9 || defined _XBOX
+    /* Nothing? */
+#else
     int attr_pos, attr_tex;
 #if !defined __CELLOS_LV2__
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
+#endif
 #endif
 
     stdshader->Bind();
@@ -340,12 +355,14 @@ void Scene::Render() // XXX: rename to Blit()
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
+#if defined USE_D3D9 || defined _XBOX
+    //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+    g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    g_d3ddevice->SetVertexDeclaration(data->m_vdecl);
+#else
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     stdshader->SetUniform(uni_tex, 0);
 
-#if defined USE_D3D9 || defined _XBOX
-    /* TODO */
-#else
 #if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #endif
@@ -361,15 +378,24 @@ void Scene::Render() // XXX: rename to Blit()
 
     for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
     {
-#if defined USE_D3D9 || defined _XBOX
-    /* TODO */
-#else
         /* Generate new vertex / texture coord buffers if necessary */
         if (buf + 2 > data->nbufs)
         {
+#if defined USE_D3D9
+            data->bufs = (IDirect3DVertexBuffer9 **)realloc(data->bufs, (buf + 2) * sizeof(IDirect3DVertexBuffer9 *));
+#elif defined _XBOX
+            data->bufs = (D3DVertexBuffer **)realloc(data->bufs, (buf + 2) * sizeof(D3DVertexBuffer *));
+#else
             data->bufs = (uint32_t *)realloc(data->bufs, (buf + 2) * sizeof(uint32_t));
             glGenBuffers(buf + 2 - data->nbufs, data->bufs + data->nbufs);
+#endif
             data->nbufs = buf + 2;
+        }
+#if defined USE_D3D9 || defined _XBOX
+        else
+        {
+            data->bufs[buf]->Release();
+            data->bufs[buf + 1]->Release();
         }
 #endif
 
@@ -379,8 +405,20 @@ void Scene::Render() // XXX: rename to Blit()
                 break;
 
         /* Create a vertex array object */
-        float *vertex = (float *)malloc(6 * 3 * (n - i) * sizeof(float));
-        float *texture = (float *)malloc(6 * 2 * (n - i) * sizeof(float));
+        float *vertex, *texture;
+#if defined USE_D3D9 || defined _XBOX
+        if (FAILED(g_d3ddevice->CreateVertexBuffer(6 * 3 * (n - i) * sizeof(float), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &data->bufs[buf], NULL)))
+            exit(0);
+        if (FAILED(data->bufs[buf]->Lock(0, 0, (void **)&vertex, 0)))
+            exit(0);
+        if (FAILED(g_d3ddevice->CreateVertexBuffer(6 * 2 * (n - i) * sizeof(float), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &data->bufs[buf + 1], NULL)))
+            exit(0);
+        if (FAILED(data->bufs[buf + 1]->Lock(0, 0, (void **)&texture, 0)))
+            exit(0);
+#else
+        vertex = (float *)malloc(6 * 3 * (n - i) * sizeof(float));
+        texture = (float *)malloc(6 * 2 * (n - i) * sizeof(float));
+#endif
 
         for (int j = i; j < n; j++)
         {
@@ -390,19 +428,26 @@ void Scene::Render() // XXX: rename to Blit()
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
+#if defined USE_D3D9 || defined _XBOX
+        data->bufs[buf]->Unlock();
+        data->bufs[buf + 1]->Unlock();
+#endif
+
         stdshader->Bind();
 
         /* Bind texture */
         data->tiles[i].tileset->Bind();
 
         /* Bind vertex, color and texture coordinate buffers */
-#if defined HAVE_GL_2X && !defined __APPLE__
-        glBindVertexArray(data->vao);
-#endif
 #if defined USE_D3D9 || defined _XBOX
-    /* TODO */
+        g_d3ddevice->SetStreamSource(0, data->bufs[data->nbufs - 2], 0, 6 * 3 * (n - i) * sizeof(float));
+        g_d3ddevice->SetStreamSource(1, data->bufs[data->nbufs - 1], 0, 6 * 2 * (n - i) * sizeof(float));
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (n - i) * 6);
 #else
-#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
+#   if defined HAVE_GL_2X && !defined __APPLE__
+        glBindVertexArray(data->vao);
+#   endif
+#   if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glEnableVertexAttribArray(attr_pos);
         glEnableVertexAttribArray(attr_tex);
 
@@ -415,31 +460,31 @@ void Scene::Render() // XXX: rename to Blit()
         glBufferData(GL_ARRAY_BUFFER, 12 * (n - i) * sizeof(GLfloat),
                      texture, GL_STATIC_DRAW);
         glVertexAttribPointer(attr_tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#else
+#   else
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(3, GL_FLOAT, 0, vertex);
         glTexCoordPointer(2, GL_FLOAT, 0, texture);
-#endif
+#   endif
 
         /* Draw arrays */
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
-#if defined HAVE_GL_2X && !defined __APPLE__
+#   if defined HAVE_GL_2X && !defined __APPLE__
         glBindVertexArray(0);
-#endif
-#if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
+#   endif
+#   if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
         glDisableVertexAttribArray(attr_pos);
         glDisableVertexAttribArray(attr_tex);
-#else
+#   else
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
-#endif
+#   endif
 
         free(vertex);
         free(texture);
+#endif
     }
 
     free(data->tiles);

@@ -321,7 +321,10 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
-    SetUniform(uni, v);
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
     glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
 #else
@@ -373,7 +376,6 @@ void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
-    /* FIXME: use the array versions of these functions */
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
         g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
@@ -382,6 +384,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 #elif !defined __CELLOS_LV2__
     glUniform4f(uni.frag, v.x, v.y, v.z, v.w);
 #else
+    /* FIXME: use the array versions of these functions */
     if (uni.frag)
         cgGLSetParameter4f((CGparameter)uni.frag, v.x, v.y, v.z, v.w);
     if (uni.vert)
