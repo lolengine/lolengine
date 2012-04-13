@@ -30,6 +30,7 @@ liblol_a_SOURCES = \
     \
     gpu/shader.cpp gpu/shader.h \
     gpu/vbo.cpp gpu/vbo.h \
+    gpu/vertexbuffer.cpp gpu/vertexbuffer.h \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \

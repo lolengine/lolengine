@@ -61,6 +61,22 @@ public:
 
         if (!m_ready)
         {
+            VertexBuffer vb(VertexDeclaration<vec2, float, ivec3>(0, 0, 1));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             m_shader = Shader::Create(
 #if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
                 "#version 120\n"

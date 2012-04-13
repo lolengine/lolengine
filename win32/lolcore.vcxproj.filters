@@ -166,6 +166,9 @@
     <ClCompile Include="..\src\gpu\vbo.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\gpu\vertexbuffer.cpp">
+      <Filter>src\gpu</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\application\application.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
@@ -337,6 +340,9 @@
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gpu\vbo.h">
+      <Filter>src\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gpu\vertexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\thread\thread.h">
