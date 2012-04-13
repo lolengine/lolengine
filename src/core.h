@@ -99,6 +99,7 @@ static inline int isnan(float f)
 #include "layer.h"
 #include "gpu/shader.h"
 #include "gpu/vbo.h"
+#include "gpu/vertexbuffer.h"
 #include "image/image.h"
 #include "application/application.h"
 
