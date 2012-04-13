@@ -40,8 +40,11 @@ win32/ipch
 win32/*Debug
 win32/*Release
 win32/*.vcxproj.user
+win32/*.opensdf
 win32/*.sdf
 win32/*.suo
+win32/*.log
+win32/*.XGD
 # Do not exclude anything in contrib; this is currently one level
 # more than our current max
 !contrib/*
