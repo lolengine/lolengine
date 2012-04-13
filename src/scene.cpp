@@ -129,9 +129,9 @@ Scene::~Scene()
     /* XXX: The test is necessary because of a crash with PSGL. */
     if (data->nbufs > 0)
         glDeleteBuffers(data->nbufs, data->bufs);
-#if defined HAVE_GL_2X && !defined __APPLE__
+#   if defined HAVE_GL_2X && !defined __APPLE__
     glDeleteVertexArrays(1, &data->vao);
-#endif
+#   endif
     free(data->bufs);
 #endif
     delete data;
@@ -172,18 +172,18 @@ void Scene::Render() // XXX: rename to Blit()
     {
 #if !defined _XBOX && !defined __CELLOS_LV2__ && !defined USE_D3D9
         stdshader = Shader::Create(
-#if !defined HAVE_GLES_2X
+#   if !defined HAVE_GLES_2X
             "#version 130\n"
-#endif
+#   endif
             "\n"
-#if defined HAVE_GLES_2X
+#   if defined HAVE_GLES_2X
             "attribute vec3 in_Position;\n"
             "attribute vec2 in_TexCoord;\n"
             "varying vec2 pass_TexCoord;\n"
-#else
+#   else
             "in vec3 in_Position;\n"
             "in vec2 in_TexCoord;\n"
-#endif
+#   endif
             "uniform mat4 proj_matrix;\n"
             "uniform mat4 view_matrix;\n"
             "uniform mat4 model_matrix;\n"
@@ -192,36 +192,36 @@ void Scene::Render() // XXX: rename to Blit()
             "{\n"
             "    gl_Position = proj_matrix * view_matrix * model_matrix"
             "                * vec4(in_Position, 1.0);\n"
-#if defined HAVE_GLES_2X
+#   if defined HAVE_GLES_2X
             "    pass_TexCoord = in_TexCoord;\n"
-#else
+#   else
             "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
-#endif
+#   endif
             "}\n",
 
-#if !defined HAVE_GLES_2X
+#   if !defined HAVE_GLES_2X
             "#version 130\n"
-#else
+#   else
             "precision mediump float;\n"
-#endif
+#   endif
             "\n"
             "uniform sampler2D in_Texture;\n"
-#if defined HAVE_GLES_2X
+#   if defined HAVE_GLES_2X
             "varying vec2 pass_TexCoord;\n"
-#endif
+#   endif
             "\n"
             "void main()\n"
             "{\n"
-#if defined HAVE_GLES_2X
+#   if defined HAVE_GLES_2X
             "    vec4 col = texture2D(in_Texture, pass_TexCoord);\n"
             //"    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);\n"
             //"    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
-#else
+#   else
             "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
-#endif
-#if 0
+#   endif
+#   if 0
             "    float mul = 2.0;\n"
-#if 1
+#       if 1
             "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
             "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
             "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
@@ -233,13 +233,13 @@ void Scene::Render() // XXX: rename to Blit()
             "    t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
             "    t2 = t1;\n"
             "    t3 = t1;\n"
-#else
+#       else
             "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
             "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
             "    float t1 = mod(sin(rand) * 17.13043, 1.0);\n"
             "    float t2 = mod(sin(rand) * 27.13043, 1.0);\n"
             "    float t3 = mod(sin(rand) * 37.13043, 1.0);\n"
-#endif
+#       endif
             "    float fracx = fract(col.x * mul);\n"
             "    float fracy = fract(col.y * mul);\n"
             "    float fracz = fract(col.z * mul);\n"
@@ -249,7 +249,7 @@ void Scene::Render() // XXX: rename to Blit()
             "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
             "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
             "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
-#endif
+#   endif
             "    gl_FragColor = col;\n"
             "}\n");
 #else
@@ -267,17 +267,17 @@ void Scene::Render() // XXX: rename to Blit()
             "}",
 
             "void main(float2 in_TexCoord : TEXCOORD0,"
-#if 0
+#   if 0
             "          float4 in_FragCoord : WPOS,"
-#endif
+#   endif
             "          uniform sampler2D tex,"
             "          out float4 out_FragColor : COLOR)"
             "{"
             "    float4 col = tex2D(tex, in_TexCoord);"
-#if 0
+#   if 0
             "    float mul = 2.0;\n"
             "    float t1, t2, t3;\n"
-#if 1
+#       if 1
             "    float dx1 = frac(in_FragCoord.x * 0.5) * 2.0;\n"
             "    float dy1 = frac(in_FragCoord.y * 0.5) * 2.0;\n"
             "    t1 = frac((3.0 * dx1 + 2.0 * dy1) / 4.0) * 4.0;\n"
@@ -290,13 +290,13 @@ void Scene::Render() // XXX: rename to Blit()
             "    t1 = (1.0 + 4.0 * t1 + t2) / 17.0;\n"
             "    t2 = t1;\n"
             "    t3 = t1;\n"
-#else
+#       else
             "    float rand = sin(in_FragCoord.x * 1.23456) * 123.456\n"
             "               + cos(in_FragCoord.y * 2.34567) * 789.012;\n"
             "    t1 = frac(sin(rand) * 17.13043);\n"
             "    t2 = frac(sin(rand) * 27.13043);\n"
             "    t3 = frac(sin(rand) * 37.13043);\n"
-#endif
+#       endif
             "    float fracx = frac(col.x * mul);\n"
             "    float fracy = frac(col.y * mul);\n"
             "    float fracz = frac(col.z * mul);\n"
@@ -306,9 +306,10 @@ void Scene::Render() // XXX: rename to Blit()
             "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
             "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
             "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
-#endif
+#   endif
             "    out_FragColor = col;"
             "}");
+#endif
     }
 
 #if 0
@@ -338,12 +339,10 @@ void Scene::Render() // XXX: rename to Blit()
     ShaderUniform uni_mat, uni_tex;
 #if defined USE_D3D9 || defined _XBOX
     /* Nothing? */
-#else
+#elif !defined __CELLOS_LV2__
     int attr_pos, attr_tex;
-#if !defined __CELLOS_LV2__
     attr_pos = stdshader->GetAttribLocation("in_Position");
     attr_tex = stdshader->GetAttribLocation("in_TexCoord");
-#endif
 #endif
 
     stdshader->Bind();
@@ -503,7 +502,6 @@ void Scene::Render() // XXX: rename to Blit()
 #endif
     glDisable(GL_BLEND);
 #endif
-#endif /* _XBOX || USE_D3D9 */
 }
 
 } /* namespace lol */

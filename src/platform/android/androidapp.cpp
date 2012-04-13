@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#if defined __ANDROID__
+
 #include <jni.h>
 #include <android/log.h>
 
@@ -124,4 +126,6 @@ Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
 {
     Ticker::TickDraw();
 }
+
+#endif /* __ANDROID__ */
 
