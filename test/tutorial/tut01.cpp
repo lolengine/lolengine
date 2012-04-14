@@ -61,7 +61,6 @@ public:
 
         if (!m_ready)
         {
-            VertexBuffer vb(VertexDeclaration<vec2, float, ivec3>(0, 0, 1));
 
 
 
@@ -114,12 +113,9 @@ public:
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 2: upload vertex information at each frame */
 #elif defined _XBOX || defined USE_D3D9
-            D3DVERTEXELEMENT9 const elements[2] =
-            {
-                { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-                D3DDECL_END()
-            };
-            g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
+            m_vdecl =
+              new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+
             if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(m_vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
                 exit(0);
 
@@ -135,9 +131,9 @@ public:
         }
 
         m_shader->Bind();
+        m_vdecl->Bind();
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-        g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -174,11 +170,10 @@ public:
 private:
     vec2 m_vertices[3];
     Shader *m_shader;
+    VertexDeclaration *m_vdecl;
 #if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *m_vdecl;
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
-    D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo;
 #else
     int m_attrib;

@@ -145,6 +145,9 @@ public:
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
             m_ready = true;
 
+            m_vdecl =
+              new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
+                                    VertexStream<vec3>(VertexUsage::Color));
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
@@ -160,14 +163,6 @@ public:
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices,
                          GL_STATIC_DRAW);
 #elif defined _XBOX || defined USE_D3D9
-            D3DVERTEXELEMENT9 const elements[] =
-            {
-                { 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-                { 1, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-                D3DDECL_END()
-            };
-            g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
-
             if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(m_vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
                 exit(0);
 
@@ -202,9 +197,9 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_mvp, m_matrix);
+        m_vdecl->Bind();
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-        g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
         g_d3ddevice->SetStreamSource(1, m_cbo, 0, sizeof(*m_colors));
         g_d3ddevice->SetIndices(m_ibo);
@@ -242,12 +237,11 @@ private:
     vec3 m_colors[8];
     i16vec3 m_indices[12];
     Shader *m_shader;
+    VertexDeclaration *m_vdecl;
 #if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *m_vdecl;
     IDirect3DVertexBuffer9 *m_vbo, *m_cbo;
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
-    D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo, *m_cbo;
     D3DIndexBuffer *m_ibo;
 #else

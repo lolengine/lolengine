@@ -21,89 +21,143 @@
 namespace lol
 {
 
-#if 0
-VertexBuffer(0, LOL_TYPE_VEC2 | LOL_USAGE_TEXTURE(0),
-                LOL_TYPE_FLOAT | LOL_USAGE_POSITION(0),
-             1, LOL_TYPE_FLOAT | LOL_USAGE_TEXCOORD(0),
-             2, LOL_TYPE_FLOAT | LOL_USAGE_TEXCOORD(1));
-
-VertexBuffer(VertexStream<vec2, LOL_USAGE_TEXTURE(0)
-                          float, Texture(
-#endif
-
-class VertexBuffer
+struct VertexUsage
 {
-public:
-    VertexBuffer(VertexBuffer const& that)
+    enum Value
     {
-        memcpy(this, &that, sizeof(*this));
-
-        /* Now call the platform-specific initialisation code */
-        Initialize();
+        Position = 0,
+        BlendWeight,
+        BlendIndices,
+        Normal,
+        PSize,
+        TexCoord,
+        Tangent,
+        Binormal,
+        TessFactor,
+        PositionT,
+        Color,
+        Fog,
+        Depth,
+        Sample,
     }
+    m_value;
 
-    ~VertexBuffer() {}
+    inline VertexUsage(Value v) { m_value = v; }
+    inline operator Value() { return m_value; }
+};
+
+class VertexStreamBase
+{
+    friend class VertexDeclaration;
 
 protected:
-    VertexBuffer() {}
-
     enum
     {
-        VBO_TYPE_VOID = 0,
-        VBO_TYPE_FLOAT,
-        VBO_TYPE_VEC2,
-        VBO_TYPE_VEC3,
-        VBO_TYPE_VEC4,
-        VBO_TYPE_I16VEC4,
-        VBO_TYPE_U8VEC4,
+        Typevoid = 0,
+        Typehalf,     Typef16vec2, Typef16vec3, Typef16vec4,
+        Typefloat,    Typevec2,    Typevec3,    Typevec4,
+        Typedouble,   Typef64vec2, Typef64vec3, Typef64vec4,
+        Typeuint8_t,  Typeu8vec2,  Typeu8vec3,  Typeu8vec4,
+        Typeint8_t,   Typei8vec2,  Typei8vec3,  Typei8vec4,
+        Typeuint16_t, Typeu16vec2, Typeu16vec3, Typeu16vec4,
+        Typeint16_t,  Typei16vec2, Typei16vec3, Typei16vec4,
+        Typeuint32_t, Typeuvec2,   Typeuvec3,   Typeuvec4,
+        Typeint32_t,  Typeivec2,   Typeivec3,   Typeivec4,
     };
 
-    static uint8_t GetType(void *x) { (void)x; return VBO_TYPE_VOID; }
-    static uint8_t GetType(float *x) { (void)x; return VBO_TYPE_FLOAT; }
-    static uint8_t GetType(vec2 *x) { (void)x; return VBO_TYPE_VEC2; }
-    static uint8_t GetType(vec3 *x) { (void)x; return VBO_TYPE_VEC3; }
-    static uint8_t GetType(vec4 *x) { (void)x; return VBO_TYPE_VEC4; }
-    static uint8_t GetType(i16vec4 *x) { (void)x; return VBO_TYPE_I16VEC4; }
-    static uint8_t GetType(u8vec4 *x) { (void)x; return VBO_TYPE_U8VEC4; }
+#define LOL_TYPE(T) \
+    static uint8_t GetType(T *x) { (void)x; return Type##T; }
 
-    struct { uint8_t stream_type, index, size; } m_streams[12 + 1];
+    LOL_TYPE(void)
+    LOL_TYPE(half)     LOL_TYPE(f16vec2) LOL_TYPE(f16vec3) LOL_TYPE(f16vec4)
+    LOL_TYPE(float)    LOL_TYPE(vec2)    LOL_TYPE(vec3)    LOL_TYPE(vec4)
+    LOL_TYPE(double)   LOL_TYPE(f64vec2) LOL_TYPE(f64vec3) LOL_TYPE(f64vec4)
+    LOL_TYPE(uint8_t)  LOL_TYPE(u8vec2)  LOL_TYPE(u8vec3)  LOL_TYPE(u8vec4)
+    LOL_TYPE(int8_t)   LOL_TYPE(i8vec2)  LOL_TYPE(i8vec3)  LOL_TYPE(i8vec4)
+    LOL_TYPE(uint16_t) LOL_TYPE(u16vec2) LOL_TYPE(u16vec3) LOL_TYPE(u16vec4)
+    LOL_TYPE(int16_t)  LOL_TYPE(i16vec2) LOL_TYPE(i16vec3) LOL_TYPE(i16vec4)
+    LOL_TYPE(uint32_t) LOL_TYPE(uvec2)   LOL_TYPE(uvec3)   LOL_TYPE(uvec4)
+    LOL_TYPE(int32_t)  LOL_TYPE(ivec2)   LOL_TYPE(ivec3)   LOL_TYPE(ivec4)
+#undef LOL_TYPE
 
-    template<typename T> void AddStream(int n, int index)
+    template<typename T> inline void AddStream(int n, int usage)
     {
         m_streams[n].stream_type = GetType((T *)NULL);
-        m_streams[n].index = index;
+        m_streams[n].usage = usage;
         m_streams[n].size = sizeof(T);
     }
 
+    VertexStreamBase() {}
+
 private:
-    void Initialize();
+    struct { uint8_t stream_type, usage, size; } m_streams[12 + 1];
+
+    static VertexStreamBase const Empty;
 };
 
-template<> void VertexBuffer::AddStream<void>(int n, int index);
+template<>
+inline void VertexStreamBase::AddStream<void>(int n, int usage)
+{
+    (void)usage;
+    m_streams[n].size = 0;
+}
 
 template<typename T1 = void,  typename T2 = void,  typename T3 = void,
          typename T4 = void,  typename T5 = void,  typename T6 = void,
          typename T7 = void,  typename T8 = void,  typename T9 = void,
          typename T10 = void, typename T11 = void, typename T12 = void>
-class VertexDeclaration : public VertexBuffer
+class VertexStream : public VertexStreamBase
 {
 public:
-    /* Arguments are the stream index; default to zero */
-    VertexDeclaration(int s1 = 0,  int s2 = 0,  int s3 = 0,
-                      int s4 = 0,  int s5 = 0,  int s6 = 0,
-                      int s7 = 0,  int s8 = 0,  int s9 = 0,
-                      int s10 = 0, int s11 = 0, int s12 = 0)
+    inline VertexStream(VertexUsage u1,
+                        VertexUsage u2 = VertexUsage::Position,
+                        VertexUsage u3 = VertexUsage::Position,
+                        VertexUsage u4 = VertexUsage::Position,
+                        VertexUsage u5 = VertexUsage::Position,
+                        VertexUsage u6 = VertexUsage::Position,
+                        VertexUsage u7 = VertexUsage::Position,
+                        VertexUsage u8 = VertexUsage::Position,
+                        VertexUsage u9 = VertexUsage::Position,
+                        VertexUsage u10 = VertexUsage::Position,
+                        VertexUsage u11 = VertexUsage::Position,
+                        VertexUsage u12 = VertexUsage::Position)
     {
-        for (int i = 0; i < 12 + 1; i++)
-            m_streams[i].stream_type = VBO_TYPE_VOID;
-
-        AddStream<T1>(0, s1); AddStream<T2>(1, s2); AddStream<T3>(2, s3);
-        AddStream<T4>(3, s4); AddStream<T5>(4, s5); AddStream<T6>(5, s6);
-        AddStream<T7>(6, s7); AddStream<T8>(7, s8); AddStream<T9>(8, s9);
-        AddStream<T10>(9, s10); AddStream<T11>(10, s11); AddStream<T12>(11, s12);
+        AddStream<T1>(0, u1);    AddStream<T2>(1, u2);
+        AddStream<T3>(2, u3);    AddStream<T4>(3, u4);
+        AddStream<T5>(4, u5);    AddStream<T6>(5, u6);
+        AddStream<T7>(6, u7);    AddStream<T8>(7, u8);
+        AddStream<T9>(8, u9);    AddStream<T10>(9, u10);
+        AddStream<T11>(10, u11); AddStream<T12>(11, u12);
     }
+};
+
+class VertexDeclaration
+{
+public:
+    VertexDeclaration(VertexStreamBase const &s1,
+                      VertexStreamBase const &s2 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s3 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s4 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s5 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s6 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s7 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s8 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s9 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s10 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s11 = VertexStreamBase::Empty,
+                      VertexStreamBase const &s12 = VertexStreamBase::Empty);
+    ~VertexDeclaration();
+
+    void Bind();
 
 private:
+    void Initialize();
+    void AddStream(VertexStreamBase const &);
+
+    struct { uint8_t stream_type, index, usage, size; } m_streams[12 + 1];
+    int m_count;
+
+    void *m_data;
 };
 
 } /* namespace lol */
