@@ -235,13 +235,14 @@ ShaderAttrib Shader::GetAttribLocation(char const *attr,
                                        VertexUsage usage, int index) const
 {
     ShaderAttrib ret;
+    ret.m_flags = (uint64_t)(uint16_t)usage << 16;
+    ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
-    ret.m_flags = (uint32_t)index << 16;
-    ret.m_flags |= (uint32_t)usage;
 #elif !defined __CELLOS_LV2__
-    ret.m_flags = glGetAttribLocation(data->prog_id, attr);
+    ret.m_flags |= (uint64_t)
+                  (uint32_t)glGetAttribLocation(data->prog_id, attr) << 32;
 #else
-    /* FIXME: can we do this at all? */
+    /* FIXME: can we do this at all on the PS3? */
 #endif
     return ret;
 }

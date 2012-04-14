@@ -32,13 +32,8 @@ class GradientData
 
 private:
     Shader *shader;
-#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
-
-    GLuint bufs[2];
-#if defined HAVE_GL_2X && !defined __APPLE__
-    GLuint vaos[1];
-#endif
-#endif
+    VertexDeclaration *m_vdecl;
+    VertexBuffer *m_vbo, *m_cbo;
 };
 
 /*
@@ -65,10 +60,23 @@ void Gradient::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
+    float const vertex[] = {   0.0f,   0.0f, 0.0f,
+                             640.0f,   0.0f, 0.0f,
+                               0.0f, 480.0f, 0.0f,
+                               0.0f, 480.0f, 0.0f,
+                             640.0f, 480.0f, 0.0f,
+                             640.0f,   0.0f, 0.0f, };
+
+    float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
+                            0.73f, 0.85f, 0.85f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f, 1.0f,
+                            0.73f, 0.85f, 0.85f, 1.0f, };
+
     if (!data->shader)
     {
-#if !defined __CELLOS_LV2__
+#if !defined __CELLOS_LV2__ && !defined USE_D3D9 && !defined _XBOX
         data->shader = Shader::Create(
             "#version 130\n"
             "\n"
@@ -156,22 +164,19 @@ void Gradient::TickDraw(float deltams)
             "    out_FragColor = col;"
             "}");
 #endif
-#if !defined __CELLOS_LV2__
-        glGenBuffers(2, data->bufs);
-#   if defined HAVE_GL_2X && !defined __APPLE__
-        glGenVertexArrays(1, data->vaos);
-#   endif
-#endif
+        data->m_vbo = new VertexBuffer(sizeof(vertex));
+        data->m_cbo = new VertexBuffer(sizeof(color));
+
+        data->m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
+                                              VertexStream<vec4>(VertexUsage::Color));
     }
 
     mat4 model_matrix = mat4(1.0f);
 
     ShaderUniform uni_mat;
-    GLuint attr_pos, attr_col;
-#if !defined __CELLOS_LV2__
-    attr_pos = data->shader->GetAttribLocation("in_Vertex");
-    attr_col = data->shader->GetAttribLocation("in_Color");
-#endif
+    ShaderAttrib attr_pos, attr_col;
+    attr_pos = data->shader->GetAttribLocation("in_Vertex", VertexUsage::Position, 0);
+    attr_col = data->shader->GetAttribLocation("in_Color", VertexUsage::Color, 0);
 
     data->shader->Bind();
 
@@ -182,61 +187,23 @@ void Gradient::TickDraw(float deltams)
     uni_mat = data->shader->GetUniformLocation("model_matrix");
     data->shader->SetUniform(uni_mat, model_matrix);
 
-    float const vertex[] = {   0.0f,   0.0f, 0.0f,
-                             640.0f,   0.0f, 0.0f,
-                               0.0f, 480.0f, 0.0f,
-                               0.0f, 480.0f, 0.0f,
-                             640.0f, 480.0f, 0.0f,
-                             640.0f,   0.0f, 0.0f, };
-
-    float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
-                            0.73f, 0.85f, 0.85f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.73f, 0.85f, 0.85f, 1.0f, };
-
     data->shader->Bind();
+    data->m_vdecl->Bind();
 
-    /* Bind vertex, color and texture coordinate buffers */
-#if !defined __CELLOS_LV2__
-#   if defined HAVE_GL_2X && !defined __APPLE__
-    glBindVertexArray(data->vaos[0]);
-#   endif
-    glEnableVertexAttribArray(attr_pos);
-    glEnableVertexAttribArray(attr_col);
+    void *tmp = data->m_vbo->Lock(0, 0);
+    memcpy(tmp, vertex, sizeof(vertex));
+    data->m_vbo->Unlock();
 
-    glBindBuffer(GL_ARRAY_BUFFER, data->bufs[0]);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat),
-                 vertex, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    tmp = data->m_cbo->Lock(0, 0);
+    memcpy(tmp, color, sizeof(color));
+    data->m_cbo->Unlock();
 
-    glBindBuffer(GL_ARRAY_BUFFER, data->bufs[1]);
-    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat),
-                 color, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(attr_col, 4, GL_FLOAT, GL_FALSE, 0, 0);
-#else
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, vertex);
-    glColorPointer(4, GL_FLOAT, 0, color);
-#endif
+    /* Bind vertex and color buffers */
+    data->m_vdecl->SetStream(data->m_vbo, attr_pos);
+    data->m_vdecl->SetStream(data->m_cbo, attr_col);
 
     /* Draw arrays */
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
-#if !defined __CELLOS_LV2__
-#   if defined HAVE_GL_2X && !defined __APPLE__
-    glBindVertexArray(0);
-#   endif
-    glDisableVertexAttribArray(attr_pos);
-    glDisableVertexAttribArray(attr_col);
-#else
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-#endif
-#endif
 }
 
 Gradient::~Gradient()

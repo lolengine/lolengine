@@ -427,6 +427,7 @@ public:
 
     virtual void TickDraw(float deltams)
     {
+Log::Error("Tick Fractal\n");
         WorldEntity::TickDraw(deltams);
 
         static float const vertices[] =
@@ -666,50 +667,28 @@ public:
                 "}"
 #endif
             );
-#if !defined _XBOX && !defined USE_D3D9
-            m_vertexattrib = m_shader->GetAttribLocation("a_Vertex");
-            m_texattrib = m_shader->GetAttribLocation("a_TexCoord");
-#endif
+            m_vertexattrib = m_shader->GetAttribLocation("a_Vertex", VertexUsage::Position, 0);
+            m_texattrib = m_shader->GetAttribLocation("a_TexCoord", VertexUsage::TexCoord, 0);
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
             m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
-            m_ready = true;
 
             m_vdecl =
               new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position),
                                     VertexStream<vec2>(VertexUsage::TexCoord));
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
-            /* Method 1: store vertex buffer on the GPU memory */
-            glGenBuffers(1, &m_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
-                         GL_STATIC_DRAW);
-            glGenBuffers(1, &m_tbo);
-            glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords,
-                         GL_STATIC_DRAW);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
-            /* Method 2: upload vertex information at each frame */
-#elif defined _XBOX || defined USE_D3D9
-            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
-                exit(0);
-            vec2 *tmp1;
-            if (FAILED(m_vbo->Lock(0, 0, (void **)&tmp1, 0)))
-                exit(0);
-            memcpy(tmp1, vertices, sizeof(vertices));
+            m_vbo = new VertexBuffer(sizeof(vertices));
+            m_tbo = new VertexBuffer(sizeof(texcoords));
+
+            void *tmp = m_vbo->Lock(0, 0);
+            memcpy(tmp, vertices, sizeof(vertices));
             m_vbo->Unlock();
 
-            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(texcoords), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_tbo, NULL)))
-                exit(0);
-            vec2 *tmp2;
-            if (FAILED(m_tbo->Lock(0, 0, (void **)&tmp2, 0)))
-                exit(0);
-            memcpy(tmp2, texcoords, sizeof(texcoords));
+            tmp = m_tbo->Lock(0, 0);
+            memcpy(tmp, texcoords, sizeof(texcoords));
             m_tbo->Unlock();
-#else
-#endif
 
             /* FIXME: this object never cleans up */
+            m_ready = true;
         }
 
 #if defined _XBOX || defined USE_D3D9
@@ -762,29 +741,18 @@ public:
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_vertexattrib);
+        m_vdecl->SetStream(m_tbo, m_texattrib);
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetTexture(0, m_tex);
         //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-        g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*vertices));
-        g_d3ddevice->SetStreamSource(1, m_tbo, 0, sizeof(*texcoords));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glEnableVertexAttribArray(m_vertexattrib);
-        glVertexAttribPointer(m_vertexattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
-        glEnableVertexAttribArray(m_texattrib);
-        glVertexAttribPointer(m_texattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-        /* Never used for now */
-        //glEnableVertexAttribArray(m_vertexattrib);
-        //glVertexAttribPointer(m_vertexattrib, 2, GL_FLOAT, GL_FALSE, 0, vertices);
 #else
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_FLOAT, 0, vertices);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+        //glEnableClientState(GL_VERTEX_ARRAY);
+        //glVertexPointer(2, GL_FLOAT, 0, vertices);
+        //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 #endif
 
 #if defined _XBOX || defined USE_D3D9
@@ -796,18 +764,20 @@ public:
 
 #if defined _XBOX || defined USE_D3D9
 
+        m_vdecl->Unbind();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-        glDisableVertexAttribArray(m_vertexattrib);
-        glDisableVertexAttribArray(m_texattrib);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //glDisableVertexAttribArray(m_vertexattrib);
+        //glDisableVertexAttribArray(m_texattrib);
+        //glBindBuffer(GL_ARRAY_BUFFER, 0);
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
         /* Never used for now */
         //glDisableVertexAttribArray(m_vertexattrib);
         //glDisableVertexAttribArray(m_texattrib);
 #else
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glDisableClientState(GL_VERTEX_ARRAY);
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
+Log::Error("~Tick Fractal\n");
     }
 
 private:
@@ -820,23 +790,20 @@ private:
     double m_window2world;
     f64vec2 m_texel2world;
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
+
     Shader *m_shader;
+    ShaderAttrib m_vertexattrib, m_texattrib;
+    ShaderUniform m_texeluni, m_screenuni, m_zoomuni;
+
     VertexDeclaration *m_vdecl;
+    VertexBuffer *m_vbo, *m_tbo;
 #if defined USE_D3D9
     IDirect3DTexture9 *m_tex;
-    IDirect3DVertexBuffer9 *m_vbo, *m_tbo;
 #elif defined _XBOX
     D3DTexture *m_tex;
-    D3DVertexBuffer *m_vbo, *m_tbo;
 #else
     GLuint m_texid;
-#   if !defined __CELLOS_LV2__ && !defined __ANDROID__
-    GLuint m_vbo, m_tbo;
-    GLuint m_tco;
-#   endif
 #endif
-    int m_vertexattrib, m_texattrib;
-    ShaderUniform m_texeluni, m_screenuni, m_zoomuni;
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 

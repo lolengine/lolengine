@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if !defined USE_D3D9 && !defined _XBOX /* This file is meaningless on Xbox */
+#if 0
 
 #if defined WIN32 && !_XBOX
 #   define _USE_MATH_DEFINES /* for M_PI */
@@ -1119,4 +1119,4 @@ void DebugQuad::ResetState()
 
 } /* namespace lol */
 
-#endif /* !defined _XBOX */
+#endif /* 0 */

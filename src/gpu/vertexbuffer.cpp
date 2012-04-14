@@ -114,7 +114,19 @@ void VertexDeclaration::Bind()
 
     g_d3ddevice->SetVertexDeclaration(vdecl);
 #else
+    /* FIXME: Nothing to do? */
+#endif
+}
 
+void VertexDeclaration::Unbind()
+{
+#if defined _XBOX || defined USE_D3D9
+    /* FIXME: Nothing to do? */
+#else
+    /* FIXME: we need to record what happens */
+    //glDisableVertexAttribArray(m_attrib);
+    /* FIXME: only useful for VAOs */
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif
 }
 
@@ -135,33 +147,97 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     /* Only the first item is required to know which stream this
      * is about; the rest of the information is stored in the
      * vertex declaration already. */
-    uint32_t usage = attr1.m_flags >> 16;
+    uint32_t usage = (attr1.m_flags >> 16) & 0xffff;
     uint32_t index = attr1.m_flags & 0xffff;
-    int usage_index = 0, stream = -1, stride = 0;
+
+    /* Find the stream number */
+    int usage_index = 0, stream = -1;
     for (int i = 0; i < m_count; i++)
-    {
         if (m_streams[i].usage == usage)
             if (usage_index++ == index)
+            {
                 stream = m_streams[i].index;
+                break;
+            }
+
+    /* Compute this stream's stride */
+    int stride = 0;
+    for (int i = 0; i < m_count; i++)
         if (stream == m_streams[i].index)
             stride += m_streams[i].size;
-    }
 
     /* Now we know the stream index and the element stride */
     /* FIXME: precompute most of the crap above! */
     if (stream >= 0)
         g_d3ddevice->SetStreamSource(stream, vb->m_data->m_vbo, 0, stride);
 #else
-    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
     ShaderAttrib l[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
                            attr7, attr8, attr9, attr10, attr11, attr12 };
-    for (int i = 0; i < 12 && l[i].m_flags != 0xffffffff; i++)
+    for (int n = 0; n < 12 && l[n].m_flags != (uint64_t)0 - 1; n++)
     {
-        uint32_t usage = l[i].m_flags >> 16;
-        uint32_t index = l[i].m_flags & 0xffff;
-    glEnableVertexAttribArray((GLint)attr.flags);
-    /* FIXME: Hardcoded!! Where to get that from? */
-    glVertexAttribPointer((GLint)attr.flags, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        uint32_t reg = l[n].m_flags >> 32;
+        uint32_t usage = (l[n].m_flags >> 16) & 0xffff;
+        uint32_t index = l[n].m_flags & 0xffff;
+
+        glEnableVertexAttribArray((GLint)reg);
+
+        /* We need to parse the whole vertex declaration to retrieve
+         * the information. It sucks. */
+
+        int attr_index = 0, usage_index = 0, stream = -1;
+        /* First, find the stream index */
+        for (; attr_index < m_count; attr_index++)
+            if (m_streams[attr_index].usage == usage)
+                if (usage_index++ == index)
+                {
+                    stream = m_streams[attr_index].index;
+                    break;
+                }
+
+        /* Now compute the stride and offset up to this stream index */
+        int stride = 0, offset = 0;
+        for (int i = 0; i < m_count; i++)
+            if (m_streams[i].index == m_streams[attr_index].index)
+            {
+                stride += m_streams[i].size;
+                if (i < attr_index)
+                    offset += m_streams[i].size;
+            }
+
+        /* Finally, we need to retrieve the type of the data */
+        static struct { GLint size; GLenum type; } const tlut[] =
+        {
+            { 0, 0 },
+            { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, /* half */
+            { 1, GL_FLOAT }, { 2, GL_FLOAT }, { 3, GL_FLOAT },
+                { 4, GL_FLOAT }, /* float */
+            { 1, GL_DOUBLE }, { 2, GL_DOUBLE }, { 3, GL_DOUBLE },
+                { 4, GL_DOUBLE }, /* double */
+            { 1, GL_BYTE }, { 2, GL_BYTE }, { 3, GL_BYTE },
+                { 4, GL_BYTE }, /* int8_t */
+            { 1, GL_UNSIGNED_BYTE }, { 2, GL_UNSIGNED_BYTE },
+                { 3, GL_UNSIGNED_BYTE }, { 4, GL_UNSIGNED_BYTE }, /* uint8_t */
+            { 1, GL_SHORT }, { 2, GL_SHORT }, { 3, GL_SHORT },
+                { 4, GL_SHORT }, /* int16_t */
+            { 1, GL_UNSIGNED_SHORT }, { 2, GL_UNSIGNED_SHORT }, { 3,
+                GL_UNSIGNED_SHORT }, { 4, GL_UNSIGNED_SHORT }, /* uint16_t */
+            { 1, GL_INT }, { 2, GL_INT }, { 3, GL_INT },
+                { 4, GL_INT }, /* int32_t */
+            { 1, GL_UNSIGNED_INT }, { 2, GL_UNSIGNED_INT },
+                { 3, GL_UNSIGNED_INT }, { 4, GL_UNSIGNED_INT }, /* uint32_t */
+        };
+
+        int type_index = m_streams[attr_index].stream_type;
+        if (type_index < 0 || type_index >= sizeof(tlut) / sizeof(*tlut))
+            type_index = 0;
+Log::Error("Size %d Type %d Stride %d offset %d\n", tlut[type_index].size,
+                              tlut[type_index].type,stride,offset);
+
+        glVertexAttribPointer((GLint)reg, tlut[type_index].size,
+                              tlut[type_index].type, GL_FALSE,
+                              stride, (GLvoid const *)(uintptr_t)offset);
+    }
 #endif
 }
 
@@ -306,7 +382,7 @@ void VertexBuffer::Unlock()
 #if defined USE_D3D9 || defined _XBOX
     m_data->m_vbo->Unlock();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
 #endif

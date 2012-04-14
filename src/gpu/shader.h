@@ -26,7 +26,7 @@ struct ShaderUniform
     friend class Shader;
 
 public:
-    ShaderUniform() : flags(0) {}
+    inline ShaderUniform() : flags(0) {}
 
 private:
     uintptr_t frag, vert;
@@ -40,10 +40,10 @@ struct ShaderAttrib
     friend class VertexDeclaration;
 
 public:
-    ShaderAttrib(int flags = 0xffffffff) : m_flags(flags) {}
+    inline ShaderAttrib() : m_flags((uint64_t)0 - 1) {}
 
 private:
-    uint32_t m_flags;
+    uint64_t m_flags;
 };
 
 class ShaderData;

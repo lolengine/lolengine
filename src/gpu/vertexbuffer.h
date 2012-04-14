@@ -164,6 +164,7 @@ public:
     ~VertexDeclaration();
 
     void Bind();
+    void Unbind();
     void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                      ShaderAttrib attr2 = ShaderAttrib(),
                                      ShaderAttrib attr3 = ShaderAttrib(),
