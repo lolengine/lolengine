@@ -14,10 +14,28 @@
 
 #include <cmath>
 
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   if defined USE_D3D9
+#       include <algorithm>
+        using std::min;
+        using std::max;
+#       include <d3d9.h>
+#       include <d3dx9shader.h>
+#   endif
+#endif
+
 #include "core.h"
 #include "lolgl.h"
 
 using namespace std;
+
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#endif
 
 namespace lol
 {
@@ -203,7 +221,11 @@ void Gradient::TickDraw(float deltams)
     data->m_vdecl->SetStream(data->m_cbo, attr_col);
 
     /* Draw arrays */
+#if defined _XBOX || defined USE_D3D9
+    g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+#else
     glDrawArrays(GL_TRIANGLES, 0, 6);
+#endif
 }
 
 Gradient::~Gradient()

@@ -427,7 +427,6 @@ public:
 
     virtual void TickDraw(float deltams)
     {
-Log::Error("Tick Fractal\n");
         WorldEntity::TickDraw(deltams);
 
         static float const vertices[] =
@@ -607,7 +606,7 @@ Log::Error("Tick Fractal\n");
 #   endif
                 "}"
 #else
-                "void main(float4 a_Vertex : POSITION,"
+                "void main(float2 a_Vertex : POSITION,"
                 "          float2 a_TexCoord : TEXCOORD0,"
                 "          uniform float4x4 u_ZoomSettings,"
                 "          uniform float4 u_TexelSize,"
@@ -618,7 +617,7 @@ Log::Error("Tick Fractal\n");
                 "          out float4 v_IndexX : TEXCOORD2,"
                 "          out float4 v_IndexY : TEXCOORD3)"
                 "{"
-                "    out_Position = a_Vertex;"
+                "    out_Position = float4(a_Vertex, 0.0, 1.0);"
                 "    float4 offsets = float4(0.5, -0.5, 0.015625, -0.015625);"
                 "    float4 zoomscale = float4(u_ZoomSettings[2][0],"
                 "                              u_ZoomSettings[2][1],"
@@ -745,8 +744,7 @@ Log::Error("Tick Fractal\n");
         m_vdecl->SetStream(m_tbo, m_texattrib);
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetTexture(0, m_tex);
-        //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
 #else
         //glEnableClientState(GL_VERTEX_ARRAY);
@@ -756,8 +754,7 @@ Log::Error("Tick Fractal\n");
 #endif
 
 #if defined _XBOX || defined USE_D3D9
-        /* FIXME: what the fuck? Why does "2" not work here instead of 3? */
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 3);
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 #else
         glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif
@@ -777,7 +774,6 @@ Log::Error("Tick Fractal\n");
         //glDisableClientState(GL_VERTEX_ARRAY);
         //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
-Log::Error("~Tick Fractal\n");
     }
 
 private:
