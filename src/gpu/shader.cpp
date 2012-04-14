@@ -231,17 +231,19 @@ Shader::Shader(char const *vert, char const *frag)
 #endif
 }
 
-int Shader::GetAttribLocation(char const *attr) const
+ShaderAttrib Shader::GetAttribLocation(char const *attr,
+                                       VertexUsage usage, int index) const
 {
+    ShaderAttrib ret;
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: do we have attribs on these platforms? */
-    return 0;
+    ret.m_flags = (uint32_t)index << 16;
+    ret.m_flags |= (uint32_t)usage;
 #elif !defined __CELLOS_LV2__
-    return glGetAttribLocation(data->prog_id, attr);
+    ret.m_flags = glGetAttribLocation(data->prog_id, attr);
 #else
-    /* FIXME: need to differentiate between vertex and fragment program */
-    return 0;
+    /* FIXME: can we do this at all? */
 #endif
+    return ret;
 }
 
 ShaderUniform Shader::GetUniformLocation(char const *uni) const

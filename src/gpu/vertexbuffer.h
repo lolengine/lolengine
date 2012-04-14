@@ -9,8 +9,8 @@
 //
 
 //
-// The VertexBuffer class
-// ----------------------
+// The VertexBuffer and VertexDeclaration classes
+// ----------------------------------------------
 //
 
 #if !defined __LOL_VERTEXBUFFER_H__
@@ -20,6 +20,21 @@
 
 namespace lol
 {
+
+class VertexBuffer
+{
+    friend class VertexDeclaration;
+
+public:
+    VertexBuffer(size_t size);
+    ~VertexBuffer();
+
+    void *Lock(size_t offset, size_t size);
+    void Unlock();
+
+private:
+    class VertexBufferData *m_data;
+};
 
 struct VertexUsage
 {
@@ -80,7 +95,7 @@ protected:
     LOL_TYPE(int32_t)  LOL_TYPE(ivec2)   LOL_TYPE(ivec3)   LOL_TYPE(ivec4)
 #undef LOL_TYPE
 
-    template<typename T> inline void AddStream(int n, int usage)
+    template<typename T> inline void AddStream(int n, VertexUsage usage)
     {
         m_streams[n].stream_type = GetType((T *)NULL);
         m_streams[n].usage = usage;
@@ -96,7 +111,7 @@ private:
 };
 
 template<>
-inline void VertexStreamBase::AddStream<void>(int n, int usage)
+inline void VertexStreamBase::AddStream<void>(int n, VertexUsage usage)
 {
     (void)usage;
     m_streams[n].size = 0;
@@ -149,6 +164,18 @@ public:
     ~VertexDeclaration();
 
     void Bind();
+    void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
+                                     ShaderAttrib attr2 = ShaderAttrib(),
+                                     ShaderAttrib attr3 = ShaderAttrib(),
+                                     ShaderAttrib attr4 = ShaderAttrib(),
+                                     ShaderAttrib attr5 = ShaderAttrib(),
+                                     ShaderAttrib attr6 = ShaderAttrib(),
+                                     ShaderAttrib attr7 = ShaderAttrib(),
+                                     ShaderAttrib attr8 = ShaderAttrib(),
+                                     ShaderAttrib attr9 = ShaderAttrib(),
+                                     ShaderAttrib attr10 = ShaderAttrib(),
+                                     ShaderAttrib attr11 = ShaderAttrib(),
+                                     ShaderAttrib attr12 = ShaderAttrib());
 
 private:
     void Initialize();
