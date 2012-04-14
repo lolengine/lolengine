@@ -34,6 +34,18 @@ private:
     uint32_t flags;
 };
 
+struct ShaderAttrib
+{
+    friend class Shader;
+    friend class VertexDeclaration;
+
+public:
+    ShaderAttrib(int flags = 0xffffffff) : m_flags(flags) {}
+
+private:
+    uint32_t m_flags;
+};
+
 class ShaderData;
 
 class Shader
@@ -42,7 +54,8 @@ public:
     static Shader *Create(char const *vert, char const *frag);
     static void Destroy(Shader *shader);
 
-    int GetAttribLocation(char const *attr) const;
+    ShaderAttrib GetAttribLocation(char const *attr, struct VertexUsage usage,
+                                   int index) const;
 
     ShaderUniform GetUniformLocation(char const *uni) const;
     void SetUniform(ShaderUniform const &uni, int i);

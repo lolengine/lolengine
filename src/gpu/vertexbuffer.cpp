@@ -32,90 +32,60 @@ extern D3DDevice *g_d3ddevice;
 namespace lol
 {
 
+//
+// The VertexBufferData class
+// --------------------------
+//
+
+class VertexBufferData
+{
+    friend class VertexBuffer;
+    friend class VertexDeclaration;
+
+#if defined USE_D3D9
+    IDirect3DVertexBuffer9 *m_vbo;
+#elif defined _XBOX
+    D3DVertexBuffer *m_vbo;
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    GLuint m_vbo;
+    uint8_t *m_memory;
+    size_t m_size;
+#endif
+};
+
+//
+// The VertexDeclaration class
+// ---------------------------
+//
+
 VertexStreamBase const VertexStreamBase::Empty;
 
-void VertexDeclaration::Initialize()
+VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
+                                     VertexStreamBase const &s2,
+                                     VertexStreamBase const &s3,
+                                     VertexStreamBase const &s4,
+                                     VertexStreamBase const &s5,
+                                     VertexStreamBase const &s6,
+                                     VertexStreamBase const &s7,
+                                     VertexStreamBase const &s8,
+                                     VertexStreamBase const &s9,
+                                     VertexStreamBase const &s10,
+                                     VertexStreamBase const &s11,
+                                     VertexStreamBase const &s12) : m_count(0)
 {
-#if defined _XBOX || defined USE_D3D9
-    static D3DVERTEXELEMENT9 const end_element[] = { D3DDECL_END() };
-    static D3DECLTYPE const X = D3DDECLTYPE_UNUSED;
-    static D3DECLTYPE const tlut[] =
-    {
-        D3DDECLTYPE_UNUSED,
-        X, D3DDECLTYPE_FLOAT16_2, X, D3DDECLTYPE_FLOAT16_4, /* half */
-        D3DDECLTYPE_FLOAT1, D3DDECLTYPE_FLOAT2, D3DDECLTYPE_FLOAT3,
-            D3DDECLTYPE_FLOAT4, /* float */
-        X, X, X, X, /* double */
-        X, X, X, X, /* int8_t */
-        X, X, X, D3DDECLTYPE_UBYTE4, /* uint8_t */
-        X, D3DDECLTYPE_SHORT2N, X, D3DDECLTYPE_SHORT4N, /* int16_t */
-        X, D3DDECLTYPE_USHORT2N, X, D3DDECLTYPE_USHORT4N, /* uint16_t */
-        X, X, X, X, /* int32_t */
-        X, X, X, X, /* int64_t */
-    };
-    static D3DDECLUSAGE const ulut[] =
-    {
-        D3DDECLUSAGE_POSITION,
-        D3DDECLUSAGE_BLENDWEIGHT,
-        D3DDECLUSAGE_BLENDINDICES,
-        D3DDECLUSAGE_NORMAL,
-        D3DDECLUSAGE_PSIZE,
-        D3DDECLUSAGE_TEXCOORD,
-        D3DDECLUSAGE_TANGENT,
-        D3DDECLUSAGE_BINORMAL,
-        D3DDECLUSAGE_TESSFACTOR,
-        D3DDECLUSAGE_POSITIONT,
-        D3DDECLUSAGE_COLOR,
-        D3DDECLUSAGE_FOG,
-        D3DDECLUSAGE_DEPTH,
-        D3DDECLUSAGE_SAMPLE,
-    };
-
-    D3DVERTEXELEMENT9 elements[12 + 1];
-    int nstreams = 0;
-    while (m_streams[nstreams].size)
-    {
-        elements[nstreams].Stream = m_streams[nstreams].index;
-        elements[nstreams].Offset = 0;
-        for (int i = 0; i < nstreams; i++)
-            elements[nstreams].Offset += m_streams[nstreams].size;
-
-        if (m_streams[nstreams].type >= 0
-             && m_streams[nstreams].type < sizeof(tlut) / sizeof(*tlut))
-            elements[nstreams].Type = tlut[m_streams[nstreams].type];
-        else
-            elements[nstreams].Type = D3DDECLTYPE_UNUSED;
-
-        elements[nstreams].Method = D3DDECLMETHOD_DEFAULT;
-
-        if (m_streams[nstreams].usage >= 0
-             && m_streams[nstreams].usage < sizeof(ulut) / sizeof(*ulut))
-            elements[nstreams].Type = ulut[m_streams[nstreams].usage];
-        else
-            elements[nstreams].Type = D3DDECLUSAGE_POSITION;
-
-        elements[nstreams].UsageIndex = 0;
-        for (int i = 0; i < nstreams; i++)
-            if (elements[i].Stream == elements[nstreams].Stream
-                 && elements[i].Usage == elements[nstreams].Usage)
-                elements[nstreams].UsageIndex++;
-
-        nstreams++;
-    }
-    elements[nstreams] = end_element[0];
-
-#   if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *vdecl;
-#   elif defined _XBOX
-    D3DVertexDeclaration *vdecl;
-#   endif
-
-    g_d3ddevice->CreateVertexDeclaration(elements, &vdecl);
-
-    m_data = vdecl;
-#else
-
-#endif
+    if (&s1 != &VertexStreamBase::Empty) AddStream(s1);
+    if (&s2 != &VertexStreamBase::Empty) AddStream(s2);
+    if (&s3 != &VertexStreamBase::Empty) AddStream(s3);
+    if (&s4 != &VertexStreamBase::Empty) AddStream(s4);
+    if (&s5 != &VertexStreamBase::Empty) AddStream(s5);
+    if (&s6 != &VertexStreamBase::Empty) AddStream(s6);
+    if (&s7 != &VertexStreamBase::Empty) AddStream(s7);
+    if (&s8 != &VertexStreamBase::Empty) AddStream(s8);
+    if (&s9 != &VertexStreamBase::Empty) AddStream(s9);
+    if (&s10 != &VertexStreamBase::Empty) AddStream(s10);
+    if (&s11 != &VertexStreamBase::Empty) AddStream(s11);
+    if (&s12 != &VertexStreamBase::Empty) AddStream(s12);
+    Initialize();
 }
 
 VertexDeclaration::~VertexDeclaration()
@@ -148,32 +118,132 @@ void VertexDeclaration::Bind()
 #endif
 }
 
-VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
-                                     VertexStreamBase const &s2,
-                                     VertexStreamBase const &s3,
-                                     VertexStreamBase const &s4,
-                                     VertexStreamBase const &s5,
-                                     VertexStreamBase const &s6,
-                                     VertexStreamBase const &s7,
-                                     VertexStreamBase const &s8,
-                                     VertexStreamBase const &s9,
-                                     VertexStreamBase const &s10,
-                                     VertexStreamBase const &s11,
-                                     VertexStreamBase const &s12) : m_count(0)
+void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
+                                                    ShaderAttrib attr2,
+                                                    ShaderAttrib attr3,
+                                                    ShaderAttrib attr4,
+                                                    ShaderAttrib attr5,
+                                                    ShaderAttrib attr6,
+                                                    ShaderAttrib attr7,
+                                                    ShaderAttrib attr8,
+                                                    ShaderAttrib attr9,
+                                                    ShaderAttrib attr10,
+                                                    ShaderAttrib attr11,
+                                                    ShaderAttrib attr12)
 {
-    if (&s1 != &VertexStreamBase::Empty) AddStream(s1);
-    if (&s2 != &VertexStreamBase::Empty) AddStream(s2);
-    if (&s3 != &VertexStreamBase::Empty) AddStream(s3);
-    if (&s4 != &VertexStreamBase::Empty) AddStream(s4);
-    if (&s5 != &VertexStreamBase::Empty) AddStream(s5);
-    if (&s6 != &VertexStreamBase::Empty) AddStream(s6);
-    if (&s7 != &VertexStreamBase::Empty) AddStream(s7);
-    if (&s8 != &VertexStreamBase::Empty) AddStream(s8);
-    if (&s9 != &VertexStreamBase::Empty) AddStream(s9);
-    if (&s10 != &VertexStreamBase::Empty) AddStream(s10);
-    if (&s11 != &VertexStreamBase::Empty) AddStream(s11);
-    if (&s12 != &VertexStreamBase::Empty) AddStream(s12);
-    Initialize();
+#if defined _XBOX || defined USE_D3D9
+    /* Only the first item is required to know which stream this
+     * is about; the rest of the information is stored in the
+     * vertex declaration already. */
+    uint32_t usage = attr1.m_flags >> 16;
+    uint32_t index = attr1.m_flags & 0xffff;
+    int usage_index = 0, stream = -1, stride = 0;
+    for (int i = 0; i < m_count; i++)
+    {
+        if (m_streams[i].usage == usage)
+            if (usage_index++ == index)
+                stream = m_streams[i].index;
+        if (stream == m_streams[i].index)
+            stride += m_streams[i].size;
+    }
+
+    /* Now we know the stream index and the element stride */
+    /* FIXME: precompute most of the crap above! */
+    if (stream >= 0)
+        g_d3ddevice->SetStreamSource(stream, vb->m_data->m_vbo, 0, stride);
+#else
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    ShaderAttrib l[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
+                           attr7, attr8, attr9, attr10, attr11, attr12 };
+    for (int i = 0; i < 12 && l[i].m_flags != 0xffffffff; i++)
+    {
+        uint32_t usage = l[i].m_flags >> 16;
+        uint32_t index = l[i].m_flags & 0xffff;
+    glEnableVertexAttribArray((GLint)attr.flags);
+    /* FIXME: Hardcoded!! Where to get that from? */
+    glVertexAttribPointer((GLint)attr.flags, 3, GL_FLOAT, GL_FALSE, 0, 0);
+#endif
+}
+
+void VertexDeclaration::Initialize()
+{
+#if defined _XBOX || defined USE_D3D9
+    static D3DVERTEXELEMENT9 const end_element[] = { D3DDECL_END() };
+    static D3DDECLTYPE const X = D3DDECLTYPE_UNUSED;
+    static D3DDECLTYPE const tlut[] =
+    {
+        D3DDECLTYPE_UNUSED,
+        X, D3DDECLTYPE_FLOAT16_2, X, D3DDECLTYPE_FLOAT16_4, /* half */
+        D3DDECLTYPE_FLOAT1, D3DDECLTYPE_FLOAT2, D3DDECLTYPE_FLOAT3,
+            D3DDECLTYPE_FLOAT4, /* float */
+        X, X, X, X, /* double */
+        X, X, X, X, /* int8_t */
+        X, X, X, D3DDECLTYPE_UBYTE4, /* uint8_t */
+        X, D3DDECLTYPE_SHORT2N, X, D3DDECLTYPE_SHORT4N, /* int16_t */
+        X, D3DDECLTYPE_USHORT2N, X, D3DDECLTYPE_USHORT4N, /* uint16_t */
+        X, X, X, X, /* int32_t */
+        X, X, X, X, /* int64_t */
+    };
+    static D3DDECLUSAGE const ulut[] =
+    {
+        D3DDECLUSAGE_POSITION,
+        D3DDECLUSAGE_BLENDWEIGHT,
+        D3DDECLUSAGE_BLENDINDICES,
+        D3DDECLUSAGE_NORMAL,
+        D3DDECLUSAGE_PSIZE,
+        D3DDECLUSAGE_TEXCOORD,
+        D3DDECLUSAGE_TANGENT,
+        D3DDECLUSAGE_BINORMAL,
+        D3DDECLUSAGE_TESSFACTOR,
+        D3DDECLUSAGE_POSITIONT,
+        D3DDECLUSAGE_COLOR,
+        D3DDECLUSAGE_FOG,
+        D3DDECLUSAGE_DEPTH,
+        D3DDECLUSAGE_SAMPLE,
+    };
+
+    D3DVERTEXELEMENT9 elements[12 + 1];
+    for (int n = 0; n < m_count; n++)
+    {
+        elements[n].Stream = m_streams[n].index;
+        elements[n].Offset = 0;
+        for (int i = 0; i < n; i++)
+            elements[n].Offset += m_streams[n].size;
+
+        if (m_streams[n].stream_type >= 0
+             && m_streams[n].stream_type < sizeof(tlut) / sizeof(*tlut))
+            elements[n].Type = tlut[m_streams[n].stream_type];
+        else
+            elements[n].Type = D3DDECLTYPE_UNUSED;
+
+        elements[n].Method = D3DDECLMETHOD_DEFAULT;
+
+        if (m_streams[n].usage >= 0
+             && m_streams[n].usage < sizeof(ulut) / sizeof(*ulut))
+            elements[n].Usage = ulut[m_streams[n].usage];
+        else
+            elements[n].Usage = D3DDECLUSAGE_POSITION;
+
+        elements[n].UsageIndex = 0;
+        for (int i = 0; i < n; i++)
+            if (elements[i].Stream == elements[n].Stream
+                 && elements[i].Usage == elements[n].Usage)
+                elements[n].UsageIndex++;
+    }
+    elements[m_count] = end_element[0];
+
+#   if defined USE_D3D9
+    IDirect3DVertexDeclaration9 *vdecl;
+#   elif defined _XBOX
+    D3DVertexDeclaration *vdecl;
+#   endif
+
+    g_d3ddevice->CreateVertexDeclaration(elements, &vdecl);
+
+    m_data = vdecl;
+#else
+
+#endif
 }
 
 void VertexDeclaration::AddStream(VertexStreamBase const &s)
@@ -188,6 +258,58 @@ void VertexDeclaration::AddStream(VertexStreamBase const &s)
         m_streams[m_count].index = index;
         m_count++;
     }
+}
+
+//
+// The VertexBuffer class
+// ----------------------
+//
+
+VertexBuffer::VertexBuffer(size_t size)
+  : m_data(new VertexBufferData)
+{
+#if defined USE_D3D9 || defined _XBOX
+    g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
+                                    D3DPOOL_MANAGED, &m_data->m_vbo, NULL);
+    new uint8_t[size];
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    glGenBuffers(1, &m_data->m_vbo);
+    m_data->m_memory = new uint8_t[size];
+    m_data->m_size = size;
+#endif
+}
+
+VertexBuffer::~VertexBuffer()
+{
+#if defined USE_D3D9 || defined _XBOX
+    m_data->m_vbo->Release();
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    glDeleteBuffers(1, &m_data->m_vbo);
+    delete[] m_data->m_memory;
+#endif
+}
+
+void *VertexBuffer::Lock(size_t offset, size_t size)
+{
+#if defined USE_D3D9 || defined _XBOX
+    void *ret;
+    if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
+        exit(0);
+    return ret;
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    return m_data->m_memory + offset;
+#endif
+}
+
+void VertexBuffer::Unlock()
+{
+#if defined USE_D3D9 || defined _XBOX
+    m_data->m_vbo->Unlock();
+#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
+                 GL_STATIC_DRAW);
+#endif
 }
 
 } /* namespace lol */

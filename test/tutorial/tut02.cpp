@@ -138,49 +138,33 @@ public:
                 "}"
 #endif
             );
-#if !defined _XBOX && !defined USE_D3D9
-            m_coord = m_shader->GetAttribLocation("in_Vertex");
-            m_color = m_shader->GetAttribLocation("in_Color");
-#endif
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
-            m_ready = true;
+            m_coord = m_shader->GetAttribLocation("in_Vertex",
+                                                  VertexUsage::Position, 0);
+            m_color = m_shader->GetAttribLocation("in_Color",
+                                                  VertexUsage::Color, 0);
 
             m_vdecl =
               new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
                                     VertexStream<vec3>(VertexUsage::Color));
+
+            m_vbo = new VertexBuffer(sizeof(m_vertices));
+            void *vertices = m_vbo->Lock(0, 0);
+            memcpy(vertices, m_vertices, sizeof(m_vertices));
+            m_vbo->Unlock();
+
+            m_cbo = new VertexBuffer(sizeof(m_colors));
+            void *colors = m_cbo->Lock(0, 0);
+            memcpy(colors, m_colors, sizeof(m_colors));
+            m_cbo->Unlock();
+
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
-            glGenBuffers(1, &m_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices,
-                         GL_STATIC_DRAW);
-            glGenBuffers(1, &m_cbo);
-            glBindBuffer(GL_ARRAY_BUFFER, m_cbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(m_colors), m_colors,
-                         GL_STATIC_DRAW);
             glGenBuffers(1, &m_ibo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices,
                          GL_STATIC_DRAW);
 #elif defined _XBOX || defined USE_D3D9
-            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(m_vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
-                exit(0);
-
-            vec3 *vertices;
-            if (FAILED(m_vbo->Lock(0, 0, (void **)&vertices, 0)))
-                exit(0);
-            memcpy(vertices, m_vertices, sizeof(m_vertices));
-            m_vbo->Unlock();
-
-            if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(m_colors), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_cbo, NULL)))
-                exit(0);
-
-            vec3 *colors;
-            if (FAILED(m_cbo->Lock(0, 0, (void **)&colors, 0)))
-                exit(0);
-            memcpy(colors, m_colors, sizeof(m_colors));
-            m_cbo->Unlock();
-
             int16_t *indices;
             if (FAILED(g_d3ddevice->CreateIndexBuffer(sizeof(m_indices), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_ibo, NULL)))
                 exit(0);
@@ -193,15 +177,17 @@ public:
 #endif
 
             /* FIXME: this object never cleans up */
+            m_ready = true;
         }
 
         m_shader->Bind();
         m_shader->SetUniform(m_mvp, m_matrix);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_coord);
+        m_vdecl->SetStream(m_cbo, m_color);
+
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-        g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*m_vertices));
-        g_d3ddevice->SetStreamSource(1, m_cbo, 0, sizeof(*m_colors));
         g_d3ddevice->SetIndices(m_ibo);
         g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 0, 0, sizeof(m_indices) / sizeof(*m_indices));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
@@ -237,20 +223,19 @@ private:
     vec3 m_colors[8];
     i16vec3 m_indices[12];
     Shader *m_shader;
+    ShaderAttrib m_coord, m_color;
+    ShaderUniform m_mvp;
     VertexDeclaration *m_vdecl;
+    VertexBuffer *m_vbo, *m_cbo;
 #if defined USE_D3D9
-    IDirect3DVertexBuffer9 *m_vbo, *m_cbo;
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
-    D3DVertexBuffer *m_vbo, *m_cbo;
     D3DIndexBuffer *m_ibo;
 #else
-    int m_coord, m_color;
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-    GLuint m_vbo, m_cbo, m_ibo;
+    GLuint m_ibo;
 #endif
 #endif
-    ShaderUniform m_mvp;
     bool m_ready;
 };
 
