@@ -191,14 +191,6 @@ public:
         g_d3ddevice->SetIndices(m_ibo);
         g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 0, 0, sizeof(m_indices) / sizeof(*m_indices));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-        glEnableVertexAttribArray(m_coord);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glVertexAttribPointer(m_coord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-        glEnableVertexAttribArray(m_color);
-        glBindBuffer(GL_ARRAY_BUFFER, m_cbo);
-        glVertexAttribPointer(m_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
         int size;
         glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
@@ -206,8 +198,6 @@ public:
 
         glDrawElements(GL_TRIANGLES, size / sizeof(uint16_t), GL_UNSIGNED_SHORT, 0);
 
-        glDisableVertexAttribArray(m_coord);
-        glDisableVertexAttribArray(m_color);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
         glEnableClientState(GL_VERTEX_ARRAY);

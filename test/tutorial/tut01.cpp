@@ -126,11 +126,12 @@ public:
         glDrawArrays(GL_TRIANGLES, 0, 3);
 #endif
 
+        m_vdecl->Unbind();
 #if defined _XBOX || defined USE_D3D9
         /* FIXME: do we need to unset anything here? */
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-        glDisableVertexAttribArray(m_attrib);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //glDisableVertexAttribArray(m_attrib);
+        //glBindBuffer(GL_ARRAY_BUFFER, 0);
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         /* Never used for now */
         glDisableVertexAttribArray(m_attrib);

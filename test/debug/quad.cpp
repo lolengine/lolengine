@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
     /* Register some debug stuff */
     new DebugFps(5, 5);
-    new DebugQuad();
+    //new DebugQuad();
 
     app.Run();
 
