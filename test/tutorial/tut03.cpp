@@ -675,6 +675,9 @@ public:
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
             m_ready = true;
 
+            m_vdecl =
+              new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position),
+                                    VertexStream<vec2>(VertexUsage::TexCoord));
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_vbo);
@@ -688,14 +691,6 @@ public:
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined _XBOX && !defined USE_D3D9
             /* Method 2: upload vertex information at each frame */
 #elif defined _XBOX || defined USE_D3D9
-            D3DVERTEXELEMENT9 const elements[] =
-            {
-                { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-                { 1, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-                D3DDECL_END()
-            };
-            g_d3ddevice->CreateVertexDeclaration(elements, &m_vdecl);
-
             if (FAILED(g_d3ddevice->CreateVertexBuffer(sizeof(vertices), D3DUSAGE_WRITEONLY, NULL, D3DPOOL_MANAGED, &m_vbo, NULL)))
                 exit(0);
             vec2 *tmp1;
@@ -766,11 +761,11 @@ public:
         m_shader->SetUniform(m_texeluni, m_texel_settings);
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
+        m_vdecl->Bind();
 #if defined _XBOX || defined USE_D3D9
         g_d3ddevice->SetTexture(0, m_tex);
         //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-        g_d3ddevice->SetVertexDeclaration(m_vdecl);
         g_d3ddevice->SetStreamSource(0, m_vbo, 0, sizeof(*vertices));
         g_d3ddevice->SetStreamSource(1, m_tbo, 0, sizeof(*texcoords));
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
@@ -826,13 +821,12 @@ private:
     f64vec2 m_texel2world;
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
     Shader *m_shader;
+    VertexDeclaration *m_vdecl;
 #if defined USE_D3D9
     IDirect3DTexture9 *m_tex;
-    IDirect3DVertexDeclaration9 *m_vdecl;
     IDirect3DVertexBuffer9 *m_vbo, *m_tbo;
 #elif defined _XBOX
     D3DTexture *m_tex;
-    D3DVertexDeclaration *m_vdecl;
     D3DVertexBuffer *m_vbo, *m_tbo;
 #else
     GLuint m_texid;
