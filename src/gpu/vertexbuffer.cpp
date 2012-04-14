@@ -20,11 +20,19 @@ using namespace std;
 namespace lol
 {
 
+/* For some reason defining this in the .h leads to duplicate definitions
+ * between the executable and the static library. */
+template<> void VertexBuffer::AddStream<void>(int n, int index)
+{
+    (void)index;
+    m_streams[n].size = 0;
+}
+
 void VertexBuffer::Initialize()
 {
 #if defined _XBOX || defined USE_D3D9
     
-#endif    
+#endif
 }
 
 } /* namespace lol */

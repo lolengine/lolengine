@@ -9,15 +9,27 @@
 //
 
 //
-// The GpuVbo class
-// ----------------
+// The VertexBuffer class
+// ----------------------
 //
 
 #if !defined __LOL_VERTEXBUFFER_H__
 #define __LOL_VERTEXBUFFER_H__
 
+#include <cstring>
+
 namespace lol
 {
+
+#if 0
+VertexBuffer(0, LOL_TYPE_VEC2 | LOL_USAGE_TEXTURE(0),
+                LOL_TYPE_FLOAT | LOL_USAGE_POSITION(0),
+             1, LOL_TYPE_FLOAT | LOL_USAGE_TEXCOORD(0),
+             2, LOL_TYPE_FLOAT | LOL_USAGE_TEXCOORD(1));
+
+VertexBuffer(VertexStream<vec2, LOL_USAGE_TEXTURE(0)
+                          float, Texture(
+#endif
 
 class VertexBuffer
 {
@@ -35,9 +47,9 @@ public:
 protected:
     VertexBuffer() {}
 
-    enum StreamType
+    enum
     {
-        VBO_TYPE_VOID,
+        VBO_TYPE_VOID = 0,
         VBO_TYPE_FLOAT,
         VBO_TYPE_VEC2,
         VBO_TYPE_VEC3,
@@ -46,21 +58,28 @@ protected:
         VBO_TYPE_U8VEC4,
     };
 
-    template<typename T> static StreamType GetType();
+    static uint8_t GetType(void *x) { (void)x; return VBO_TYPE_VOID; }
+    static uint8_t GetType(float *x) { (void)x; return VBO_TYPE_FLOAT; }
+    static uint8_t GetType(vec2 *x) { (void)x; return VBO_TYPE_VEC2; }
+    static uint8_t GetType(vec3 *x) { (void)x; return VBO_TYPE_VEC3; }
+    static uint8_t GetType(vec4 *x) { (void)x; return VBO_TYPE_VEC4; }
+    static uint8_t GetType(i16vec4 *x) { (void)x; return VBO_TYPE_I16VEC4; }
+    static uint8_t GetType(u8vec4 *x) { (void)x; return VBO_TYPE_U8VEC4; }
 
-    struct { StreamType stream_type; int index; } m_streams[12 + 1];
+    struct { uint8_t stream_type, index, size; } m_streams[12 + 1];
+
+    template<typename T> void AddStream(int n, int index)
+    {
+        m_streams[n].stream_type = GetType((T *)NULL);
+        m_streams[n].index = index;
+        m_streams[n].size = sizeof(T);
+    }
 
 private:
     void Initialize();
 };
 
-template<> VertexBuffer::StreamType VertexBuffer::GetType<void>() { return VBO_TYPE_VOID; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<float>() { return VBO_TYPE_FLOAT; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<vec2>() { return VBO_TYPE_VEC2; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<vec3>() { return VBO_TYPE_VEC3; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<vec4>() { return VBO_TYPE_VEC4; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<i16vec4>() { return VBO_TYPE_I16VEC4; }
-template<> VertexBuffer::StreamType VertexBuffer::GetType<u8vec4>() { return VBO_TYPE_U8VEC4; }
+template<> void VertexBuffer::AddStream<void>(int n, int index);
 
 template<typename T1 = void,  typename T2 = void,  typename T3 = void,
          typename T4 = void,  typename T5 = void,  typename T6 = void,
@@ -85,11 +104,6 @@ public:
     }
 
 private:
-    template<typename T> void AddStream(int index, int stream)
-    {
-        m_streams[index].stream_type = GetType<T>();
-        m_streams[index].index = index;
-    }
 };
 
 } /* namespace lol */
