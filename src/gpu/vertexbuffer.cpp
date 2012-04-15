@@ -231,8 +231,6 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         int type_index = m_streams[attr_index].stream_type;
         if (type_index < 0 || type_index >= sizeof(tlut) / sizeof(*tlut))
             type_index = 0;
-Log::Error("Size %d Type %d Stride %d offset %d\n", tlut[type_index].size,
-                              tlut[type_index].type,stride,offset);
 
         glVertexAttribPointer((GLint)reg, tlut[type_index].size,
                               tlut[type_index].type, GL_FALSE,

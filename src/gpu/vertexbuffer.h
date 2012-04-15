@@ -44,7 +44,7 @@ struct VertexUsage
         BlendWeight,
         BlendIndices,
         Normal,
-        PSize,
+        PointSize,
         TexCoord,
         Tangent,
         Binormal,

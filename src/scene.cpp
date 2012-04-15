@@ -380,6 +380,9 @@ void Scene::Render() // XXX: rename to Blit()
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
+        data->bufs[buf]->Unlock();
+        data->bufs[buf + 1]->Unlock();
+
         stdshader->Bind();
 
         /* Bind texture */
@@ -391,17 +394,17 @@ void Scene::Render() // XXX: rename to Blit()
 
         /* Draw arrays */
 #if defined USE_D3D9 || defined _XBOX
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (n - i) * 6);
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (n - i) * 2);
 #else
         glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
 
 #   if defined HAVE_GL_2X && !defined __APPLE__
-        glBindVertexArray(0);
+        //glBindVertexArray(0);
 #   endif
 #   if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
 #   else
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glDisableClientState(GL_VERTEX_ARRAY);
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #   endif
 #endif
     }
