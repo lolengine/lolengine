@@ -118,15 +118,39 @@ void VertexDeclaration::Bind()
 #endif
 }
 
+void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
+{
+#if defined _XBOX || defined USE_D3D9
+    g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+    switch (type)
+    {
+    case MeshPrimitive::Triangles:
+        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, skip, count);
+        break;
+    }
+#else
+    switch (type)
+    {
+    case MeshPrimitive::Triangles:
+        glDrawArrays(GL_TRIANGLES, skip * 3, count * 3);
+        break;
+    }
+#endif
+}
+
 void VertexDeclaration::Unbind()
 {
 #if defined _XBOX || defined USE_D3D9
     /* FIXME: Nothing to do? */
 #else
-    /* FIXME: we need to record what happens */
+    /* FIXME: we need to unbind what we bound */
     //glDisableVertexAttribArray(m_attrib);
     /* FIXME: only useful for VAOs */
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    /* Or: */
+    //glDisableVertexAttribArray(m_attrib);
+    /* Or even: */
+    //glDisableClientState(GL_VERTEX_ARRAY);
 #endif
 }
 
@@ -185,15 +209,12 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         /* We need to parse the whole vertex declaration to retrieve
          * the information. It sucks. */
 
-        int attr_index = 0, usage_index = 0, stream = -1;
+        int attr_index = 0, usage_index = 0;
         /* First, find the stream index */
         for (; attr_index < m_count; attr_index++)
             if (m_streams[attr_index].usage == usage)
                 if (usage_index++ == index)
-                {
-                    stream = m_streams[attr_index].index;
                     break;
-                }
 
         /* Now compute the stride and offset up to this stream index */
         int stride = 0, offset = 0;

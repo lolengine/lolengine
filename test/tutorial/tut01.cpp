@@ -13,17 +13,10 @@
 #endif
 
 #include "core.h"
-#include "lolgl.h"
 #include "loldebug.h"
 
 using namespace std;
 using namespace lol;
-
-#if defined _WIN32 && defined USE_D3D9
-#   define FAR
-#   define NEAR
-#   include <d3d9.h>
-#endif
 
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
@@ -36,12 +29,6 @@ using namespace lol;
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #   include <direct.h>
-#endif
-
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
 #endif
 
 class Triangle : public WorldEntity
@@ -61,21 +48,6 @@ public:
 
         if (!m_ready)
         {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             m_shader = Shader::Create(
 #if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
                 "#version 120\n"
@@ -116,36 +88,16 @@ public:
         m_shader->Bind();
         m_vdecl->Bind();
         m_vdecl->SetStream(m_vbo, m_coord);
-#if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-#endif
-
-#if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
-#else
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-#endif
-
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 1);
         m_vdecl->Unbind();
-#if defined _XBOX || defined USE_D3D9
-        /* FIXME: do we need to unset anything here? */
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-        //glDisableVertexAttribArray(m_attrib);
-        //glBindBuffer(GL_ARRAY_BUFFER, 0);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-        /* Never used for now */
-        glDisableVertexAttribArray(m_attrib);
-#else
-        glDisableClientState(GL_VERTEX_ARRAY);
-#endif
     }
 
 private:
     vec2 m_vertices[3];
     Shader *m_shader;
+    ShaderAttrib m_coord;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-    ShaderAttrib m_coord;
     bool m_ready;
 };
 
