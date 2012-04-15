@@ -61,6 +61,18 @@ struct VertexUsage
     inline operator Value() { return m_value; }
 };
 
+struct MeshPrimitive
+{
+    enum Value
+    {
+        Triangles,
+    }
+    m_value;
+
+    inline MeshPrimitive(Value v) { m_value = v; }
+    inline operator Value() { return m_value; }
+};
+
 class VertexStreamBase
 {
     friend class VertexDeclaration;
@@ -164,6 +176,7 @@ public:
     ~VertexDeclaration();
 
     void Bind();
+    void DrawElements(MeshPrimitive type, int skip, int count);
     void Unbind();
     void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                      ShaderAttrib attr2 = ShaderAttrib(),
