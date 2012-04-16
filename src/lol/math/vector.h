@@ -56,6 +56,8 @@ DECLARE_VECTOR_TYPEDEFS(Cmplx, cmplx)
 DECLARE_VECTOR_TYPEDEFS(Vec3, vec3)
 DECLARE_VECTOR_TYPEDEFS(Vec4, vec4)
 DECLARE_VECTOR_TYPEDEFS(Quat, quat)
+DECLARE_VECTOR_TYPEDEFS(Mat2, mat2)
+DECLARE_VECTOR_TYPEDEFS(Mat3, mat3)
 DECLARE_VECTOR_TYPEDEFS(Mat4, mat4)
 
 /*
@@ -910,6 +912,7 @@ template <typename T> struct Quat
     inline Quat(T X) : x(0), y(0), z(0), w(X) {}
     inline Quat(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
 
+    Quat(Mat3<T> const &m);
     Quat(Mat4<T> const &m);
 
     DECLARE_MEMBER_OPS(Quat)
@@ -1333,6 +1336,171 @@ inline Vec4<T> XVec4<T, N>::operator =(Vec4<T> const &that)
         *this[i] = that[i];
     return *this;
 }
+
+/*
+ * 2×2-element matrices
+ */
+
+template <typename T> struct Mat2
+{
+    inline Mat2() {}
+    inline Mat2(Vec2<T> V0, Vec2<T> V1)
+      : v0(V0), v1(V1) {}
+
+    explicit inline Mat2(T val)
+      : v0(val, (T)0),
+        v1((T)0, val) {}
+
+    inline Vec2<T>& operator[](size_t n) { return (&v0)[n]; }
+    inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
+
+    T det() const;
+    Mat2<T> invert() const;
+
+    /* Helpers for transformation matrices */
+    static Mat2<T> rotate(T angle);
+
+    static inline Mat2<T> rotate(Mat2<T> mat, T angle)
+    {
+        return rotate(angle) * mat;
+    }
+
+    void printf() const;
+
+#if !defined __ANDROID__
+    template<class U>
+    friend std::ostream &operator<<(std::ostream &stream, Mat2<U> const &m);
+#endif
+
+    inline Mat2<T> operator +(Mat2<T> const m) const
+    {
+        return Mat2<T>(v0 + m[0], v1 + m[1]);
+    }
+
+    inline Mat2<T> operator +=(Mat2<T> const m)
+    {
+        return *this = *this + m;
+    }
+
+    inline Mat2<T> operator -(Mat2<T> const m) const
+    {
+        return Mat2<T>(v0 - m[0], v1 - m[1]);
+    }
+
+    inline Mat2<T> operator -=(Mat2<T> const m)
+    {
+        return *this = *this - m;
+    }
+
+    inline Mat2<T> operator *(Mat2<T> const m) const
+    {
+        return Mat2<T>(*this * m[0], *this * m[1]);
+    }
+
+    inline Mat2<T> operator *=(Mat2<T> const m)
+    {
+        return *this = *this * m;
+    }
+
+    inline Vec2<T> operator *(Vec2<T> const m) const
+    {
+        Vec2<T> ret;
+        for (int j = 0; j < 2; j++)
+        {
+            T tmp = 0;
+            for (int k = 0; k < 2; k++)
+                tmp += (*this)[k][j] * m[k];
+            ret[j] = tmp;
+        }
+        return ret;
+    }
+
+    Vec2<T> v0, v1;
+};
+
+/*
+ * 3×3-element matrices
+ */
+
+template <typename T> struct Mat3
+{
+    inline Mat3() {}
+    inline Mat3(Vec3<T> V0, Vec3<T> V1, Vec3<T> V2)
+      : v0(V0), v1(V1), v2(V2) {}
+
+    explicit inline Mat3(T val)
+      : v0(val, (T)0, (T)0),
+        v1((T)0, val, (T)0),
+        v2((T)0, (T)0, val) {}
+
+    inline Vec3<T>& operator[](size_t n) { return (&v0)[n]; }
+    inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
+
+    T det() const;
+    Mat3<T> invert() const;
+
+    /* Helpers for transformation matrices */
+    static Mat3<T> rotate(T angle, T x, T y, T z);
+    static Mat3<T> rotate(T angle, Vec3<T> v);
+    static Mat3<T> rotate(Quat<T> q);
+
+    static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
+    {
+        return rotate(angle, v) * mat;
+    }
+
+    void printf() const;
+
+#if !defined __ANDROID__
+    template<class U>
+    friend std::ostream &operator<<(std::ostream &stream, Mat3<U> const &m);
+#endif
+
+    inline Mat3<T> operator +(Mat3<T> const m) const
+    {
+        return Mat3<T>(v0 + m[0], v1 + m[1], v2 + m[2]);
+    }
+
+    inline Mat3<T> operator +=(Mat3<T> const m)
+    {
+        return *this = *this + m;
+    }
+
+    inline Mat3<T> operator -(Mat3<T> const m) const
+    {
+        return Mat3<T>(v0 - m[0], v1 - m[1], v2 - m[2]);
+    }
+
+    inline Mat3<T> operator -=(Mat3<T> const m)
+    {
+        return *this = *this - m;
+    }
+
+    inline Mat3<T> operator *(Mat3<T> const m) const
+    {
+        return Mat3<T>(*this * m[0], *this * m[1], *this * m[2]);
+    }
+
+    inline Mat3<T> operator *=(Mat3<T> const m)
+    {
+        return *this = *this * m;
+    }
+
+    inline Vec3<T> operator *(Vec3<T> const m) const
+    {
+        Vec3<T> ret;
+        for (int j = 0; j < 3; j++)
+        {
+            T tmp = 0;
+            for (int k = 0; k < 3; k++)
+                tmp += (*this)[k][j] * m[k];
+            ret[j] = tmp;
+        }
+        return ret;
+    }
+
+    Vec3<T> v0, v1, v2;
+};
 
 /*
  * 4×4-element matrices
