@@ -204,6 +204,7 @@ public:
         glVertexPointer(3, GL_FLOAT, 0, m_vertices);
         glDisableClientState(GL_VERTEX_ARRAY);
 #endif
+        m_vdecl->Unbind();
     }
 
 private:
