@@ -237,6 +237,16 @@ void TileSet::Bind()
     }
 }
 
+void TileSet::Unbind()
+{
+#if defined USE_D3D9 || defined _XBOX
+    g_d3ddevice->SetTexture(0, NULL);
+#else
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+#endif
+}
+
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                        float *vertex, float *texture)
 {

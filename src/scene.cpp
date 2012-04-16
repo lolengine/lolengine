@@ -110,6 +110,7 @@ Scene::~Scene()
         delete data->bufs[i];
     free(data->bufs);
 #endif
+    delete data->m_vdecl;
     delete data;
 }
 
@@ -326,10 +327,7 @@ void Scene::Render() // XXX: rename to Blit()
     uni_mat = stdshader->GetUniformLocation("model_matrix");
     stdshader->SetUniform(uni_mat, data->model_matrix);
 
-    data->m_vdecl->Bind();
 #if defined USE_D3D9 || defined _XBOX
-    //g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-    g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 #else
     uni_tex = stdshader->GetUniformLocation("in_Texture");
     stdshader->SetUniform(uni_tex, 0);
@@ -389,24 +387,16 @@ void Scene::Render() // XXX: rename to Blit()
         data->tiles[i].tileset->Bind();
 
         /* Bind vertex and texture coordinate buffers */
+        data->m_vdecl->Bind();
         data->m_vdecl->SetStream(data->bufs[buf], attr_pos);
         data->m_vdecl->SetStream(data->bufs[buf + 1], attr_tex);
 
         /* Draw arrays */
-#if defined USE_D3D9 || defined _XBOX
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (n - i) * 2);
-#else
-        glDrawArrays(GL_TRIANGLES, 0, (n - i) * 6);
-
-#   if defined HAVE_GL_2X && !defined __APPLE__
-        //glBindVertexArray(0);
-#   endif
-#   if !defined __CELLOS_LV2__ // Use cgGLEnableClientState etc.
-#   else
-        //glDisableClientState(GL_VERTEX_ARRAY);
-        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#   endif
+#if 0
+        data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 2);
 #endif
+        data->m_vdecl->Unbind();
+        data->tiles[i].tileset->Unbind();
     }
 
     free(data->tiles);
