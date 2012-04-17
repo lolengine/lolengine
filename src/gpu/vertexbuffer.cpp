@@ -303,7 +303,8 @@ void VertexDeclaration::Initialize()
         elements[n].Stream = m_streams[n].index;
         elements[n].Offset = 0;
         for (int i = 0; i < n; i++)
-            elements[n].Offset += m_streams[n].size;
+            if (m_streams[i].index == m_streams[n].index)
+                elements[n].Offset += m_streams[i].size;
 
         if (m_streams[n].stream_type >= 0
              && m_streams[n].stream_type < sizeof(tlut) / sizeof(*tlut))

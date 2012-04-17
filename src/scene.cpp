@@ -100,16 +100,12 @@ Scene::Scene(float angle)
 
 Scene::~Scene()
 {
-#if defined USE_D3D9 || defined _XBOX
-    /* FIXME: TODO */
-#else
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
     /* XXX: The test is necessary because of a crash with PSGL. */
     for (int i = 0; i < data->nbufs; i++)
         delete data->bufs[i];
     free(data->bufs);
-#endif
     delete data->m_vdecl;
     delete data;
 }
@@ -381,8 +377,6 @@ void Scene::Render() // XXX: rename to Blit()
         data->bufs[buf]->Unlock();
         data->bufs[buf + 1]->Unlock();
 
-        stdshader->Bind();
-
         /* Bind texture */
         data->tiles[i].tileset->Bind();
 
@@ -392,9 +386,7 @@ void Scene::Render() // XXX: rename to Blit()
         data->m_vdecl->SetStream(data->bufs[buf + 1], attr_tex);
 
         /* Draw arrays */
-#if 0
         data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 2);
-#endif
         data->m_vdecl->Unbind();
         data->tiles[i].tileset->Unbind();
     }
