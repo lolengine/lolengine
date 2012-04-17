@@ -154,9 +154,14 @@ void Gradient::TickDraw(float deltams)
 #if 1
             "    int x = (int)in_FragCoord.x;"
             "    int y = (int)in_FragCoord.y;"
+#if defined USE_D3D9 || defined _XBOX
+            "    float t = bayer[int(frac(x * 0.25) * 4.0)]"
+            "                   [int(frac(y * 0.25) * 4.0)];\n"
+#else
             // FIXME: we cannot address this matrix directly on the PS3
             "    float t = bayer[0][0];\n"
-            "    t = (t + 0.5) / 17.0 + z - x;\n"
+#endif
+            "    t = (t + 0.5) / 17.0;\n"
             "    col.x += frac(t - col.x) - t;\n"
             "    col.y += frac(t - col.y) - t;\n"
             "    col.z += frac(t - col.z) - t;\n"
