@@ -18,21 +18,10 @@
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#   if defined USE_D3D9
-#       define FAR
-#       define NEAR
-#       include <d3d9.h>
-#   endif
 #endif
 
 #include "core.h"
 #include "lolgl.h"
-
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
 
 namespace lol
 {
@@ -106,6 +95,7 @@ Scene::~Scene()
     for (int i = 0; i < data->nbufs; i++)
         delete data->bufs[i];
     free(data->bufs);
+
     delete data->m_vdecl;
     delete data;
 }

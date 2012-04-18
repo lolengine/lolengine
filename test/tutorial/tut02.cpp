@@ -167,9 +167,9 @@ public:
 #elif defined _XBOX || defined USE_D3D9
             int16_t *indices;
             if (FAILED(g_d3ddevice->CreateIndexBuffer(sizeof(m_indices), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_ibo, NULL)))
-                exit(0);
+                Abort();
             if (FAILED(m_ibo->Lock(0, 0, (void **)&indices, 0)))
-                exit(0);
+                Abort();
             memcpy(indices, m_indices, sizeof(m_indices));
             m_ibo->Unlock();
 #else
@@ -180,16 +180,21 @@ public:
             m_ready = true;
         }
 
+    Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
         m_shader->Bind();
         m_shader->SetUniform(m_mvp, m_matrix);
-        m_vdecl->Bind();
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->SetStream(m_cbo, m_color);
+        m_vdecl->Bind();
 
 #if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-        g_d3ddevice->SetIndices(m_ibo);
-        g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 0, 0, sizeof(m_indices) / sizeof(*m_indices));
+        if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
+            Abort();
+        if (FAILED(g_d3ddevice->SetIndices(m_ibo)))
+            Abort();
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 0, 0, sizeof(m_indices) / sizeof(*m_indices))))
+            Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
         int size;
