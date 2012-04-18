@@ -47,25 +47,16 @@ public:
     {
         m_angle = 0;
 
-        /* Front */
-        m_vertices[0] = vec3(-1.0, -1.0,  1.0);
-        m_vertices[1] = vec3( 1.0, -1.0,  1.0);
-        m_vertices[2] = vec3( 1.0,  1.0,  1.0);
-        m_vertices[3] = vec3(-1.0,  1.0,  1.0);
+        /* Front vertices/colors */
+        m_mesh[0] = vec3(-1.0, -1.0,  1.0); m_mesh[1] = vec3(1.0, 0.0, 1.0);
+        m_mesh[2] = vec3( 1.0, -1.0,  1.0); m_mesh[3] = vec3(0.0, 1.0, 0.0);
+        m_mesh[4] = vec3( 1.0,  1.0,  1.0); m_mesh[5] = vec3(1.0, 0.5, 0.0);
+        m_mesh[6] = vec3(-1.0,  1.0,  1.0); m_mesh[7] = vec3(1.0, 1.0, 0.0);
         /* Back */
-        m_vertices[4] = vec3(-1.0, -1.0, -1.0);
-        m_vertices[5] = vec3( 1.0, -1.0, -1.0);
-        m_vertices[6] = vec3( 1.0,  1.0, -1.0);
-        m_vertices[7] = vec3(-1.0,  1.0, -1.0);
-
-        m_colors[0] = vec3(1.0, 0.0, 0.0);
-        m_colors[1] = vec3(0.0, 1.0, 0.0);
-        m_colors[2] = vec3(0.0, 0.0, 1.0);
-        m_colors[3] = vec3(1.0, 1.0, 1.0);
-        m_colors[4] = vec3(1.0, 0.0, 0.0);
-        m_colors[5] = vec3(0.0, 1.0, 0.0);
-        m_colors[6] = vec3(0.0, 0.0, 1.0);
-        m_colors[7] = vec3(1.0, 1.0, 1.0);
+        m_mesh[8]  = vec3(-1.0, -1.0, -1.0); m_mesh[9]  = vec3(1.0, 0.0, 0.0);
+        m_mesh[10] = vec3( 1.0, -1.0, -1.0); m_mesh[11] = vec3(0.0, 0.5, 0.0);
+        m_mesh[12] = vec3( 1.0,  1.0, -1.0); m_mesh[13] = vec3(0.0, 0.5, 1.0);
+        m_mesh[14] = vec3(-1.0,  1.0, -1.0); m_mesh[15] = vec3(0.0, 0.0, 1.0);
 
         m_indices[0] = i16vec3(0, 1, 2);
         m_indices[1] = i16vec3(2, 3, 0);
@@ -145,18 +136,13 @@ public:
                                                   VertexUsage::Color, 0);
 
             m_vdecl =
-              new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
-                                    VertexStream<vec3>(VertexUsage::Color));
+              new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,
+                                                            VertexUsage::Color));
 
-            m_vbo = new VertexBuffer(sizeof(m_vertices));
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, m_vertices, sizeof(m_vertices));
+            m_vbo = new VertexBuffer(sizeof(m_mesh));
+            void *mesh = m_vbo->Lock(0, 0);
+            memcpy(mesh, m_mesh, sizeof(m_mesh));
             m_vbo->Unlock();
-
-            m_cbo = new VertexBuffer(sizeof(m_colors));
-            void *colors = m_cbo->Lock(0, 0);
-            memcpy(colors, m_colors, sizeof(m_colors));
-            m_cbo->Unlock();
 
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
@@ -180,12 +166,11 @@ public:
             m_ready = true;
         }
 
-    Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_shader->Bind();
         m_shader->SetUniform(m_mvp, m_matrix);
-        m_vdecl->SetStream(m_vbo, m_coord);
-        m_vdecl->SetStream(m_cbo, m_color);
+        m_vdecl->SetStream(m_vbo, m_coord, m_color);
         m_vdecl->Bind();
 
 #if defined _XBOX || defined USE_D3D9
@@ -205,6 +190,7 @@ public:
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
+        /* FIXME */
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, m_vertices);
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -215,14 +201,13 @@ public:
 private:
     float m_angle;
     mat4 m_matrix;
-    vec3 m_vertices[8];
-    vec3 m_colors[8];
+    vec3 m_mesh[16];
     i16vec3 m_indices[12];
     Shader *m_shader;
     ShaderAttrib m_coord, m_color;
     ShaderUniform m_mvp;
     VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo, *m_cbo;
+    VertexBuffer *m_vbo;
 #if defined USE_D3D9
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
