@@ -62,6 +62,7 @@ static inline int isnan(float f)
 #endif
 
 // Base types
+#include "lol/debug.h"
 #include "math/trig.h"
 #include "lol/math/half.h"
 #include "lol/math/real.h"
@@ -71,7 +72,6 @@ static inline int isnan(float f)
 #include "thread/thread.h"
 
 // Static classes
-#include "debug/debug.h"
 #include "log.h"
 #include "platform.h"
 #include "video.h"
