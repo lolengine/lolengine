@@ -133,7 +133,6 @@
     <ClInclude Include="..\src\debug\record.h" />
     <ClInclude Include="..\src\debug\sphere.h" />
     <ClInclude Include="..\src\debug\stats.h" />
-    <ClInclude Include="..\src\debug\debug.h" />
     <ClInclude Include="..\src\dict.h" />
     <ClInclude Include="..\src\eglapp.h" />
     <ClInclude Include="..\src\emitter.h" />
@@ -152,6 +151,7 @@
     <ClInclude Include="..\src\log.h" />
     <ClInclude Include="..\src\loldebug.h" />
     <ClInclude Include="..\src\lolgl.h" />
+    <ClInclude Include="..\src\lol\debug.h" />
     <ClInclude Include="..\src\lol\math\half.h" />
     <ClInclude Include="..\src\lol\math\real.h" />
     <ClInclude Include="..\src\lol\math\remez.h" />

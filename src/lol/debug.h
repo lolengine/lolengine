@@ -21,9 +21,9 @@
 namespace lol
 {
 
-static void Abort()
+static inline void Abort()
 {
-    *(int *)NULL = 0;
+    *(int *)0 = 0xdead;
 }
 
 } /* namespace lol */
