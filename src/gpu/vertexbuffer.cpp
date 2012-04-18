@@ -97,7 +97,8 @@ VertexDeclaration::~VertexDeclaration()
     D3DVertexDeclaration *vdecl = (D3DVertexDeclaration *)m_data;
 #   endif
 
-    vdecl->Release();
+    if (FAILED(vdecl->Release()))
+        Abort();
 #else
 
 #endif
@@ -112,7 +113,8 @@ void VertexDeclaration::Bind()
     D3DVertexDeclaration *vdecl = (D3DVertexDeclaration *)m_data;
 #   endif
 
-    g_d3ddevice->SetVertexDeclaration(vdecl);
+    if (FAILED(g_d3ddevice->SetVertexDeclaration(vdecl)))
+        Abort();
 #else
     /* FIXME: Nothing to do? */
 #endif
@@ -121,11 +123,13 @@ void VertexDeclaration::Bind()
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 {
 #if defined _XBOX || defined USE_D3D9
-    g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+    if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
+        Abort();
     switch (type)
     {
     case MeshPrimitive::Triangles:
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, skip, count);
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, skip, count)))
+            Abort();
         break;
     }
 #else
@@ -193,7 +197,10 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     /* Now we know the stream index and the element stride */
     /* FIXME: precompute most of the crap above! */
     if (stream >= 0)
-        g_d3ddevice->SetStreamSource(stream, vb->m_data->m_vbo, 0, stride);
+    {
+        if (FAILED(g_d3ddevice->SetStreamSource(stream, vb->m_data->m_vbo, 0, stride)))
+            Abort();
+    }
 #else
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
     ShaderAttrib l[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
@@ -334,7 +341,8 @@ void VertexDeclaration::Initialize()
     D3DVertexDeclaration *vdecl;
 #   endif
 
-    g_d3ddevice->CreateVertexDeclaration(elements, &vdecl);
+    if (FAILED(g_d3ddevice->CreateVertexDeclaration(elements, &vdecl)))
+        Abort();
 
     m_data = vdecl;
 #else
@@ -365,8 +373,9 @@ VertexBuffer::VertexBuffer(size_t size)
   : m_data(new VertexBufferData)
 {
 #if defined USE_D3D9 || defined _XBOX
-    g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
-                                    D3DPOOL_MANAGED, &m_data->m_vbo, NULL);
+    if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
+                                               D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
+        Abort();
     new uint8_t[size];
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     glGenBuffers(1, &m_data->m_vbo);
@@ -378,7 +387,8 @@ VertexBuffer::VertexBuffer(size_t size)
 VertexBuffer::~VertexBuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
-    m_data->m_vbo->Release();
+    if (FAILED(m_data->m_vbo->Release()))
+        Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     glDeleteBuffers(1, &m_data->m_vbo);
     delete[] m_data->m_memory;
@@ -390,7 +400,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
 #if defined USE_D3D9 || defined _XBOX
     void *ret;
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
-        exit(0);
+        Abort();
     return ret;
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     return m_data->m_memory + offset;
@@ -400,7 +410,8 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
 void VertexBuffer::Unlock()
 {
 #if defined USE_D3D9 || defined _XBOX
-    m_data->m_vbo->Unlock();
+    if (FAILED(m_data->m_vbo->Unlock()))
+        Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,

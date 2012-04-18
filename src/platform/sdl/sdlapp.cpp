@@ -102,14 +102,17 @@ void SdlApp::Run()
     while (!Ticker::Finished())
     {
 #if defined USE_SDL && defined USE_D3D9
-        g_d3ddevice->BeginScene();
+        if (FAILED(g_d3ddevice->BeginScene()))
+            Abort();
 #endif
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
 #if defined USE_SDL
 #   if defined USE_D3D9
-        g_d3ddevice->EndScene();
-        g_d3ddevice->Present(NULL, NULL, NULL, NULL);
+        if (FAILED(g_d3ddevice->EndScene()))
+            Abort();
+        if (FAILED(g_d3ddevice->Present(NULL, NULL, NULL, NULL)))
+            Abort();
 #   else
         SDL_GL_SwapBuffers();
 #   endif

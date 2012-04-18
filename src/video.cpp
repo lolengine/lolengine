@@ -228,9 +228,10 @@ void Video::Clear()
 {
     ivec2 size = GetSize();
 #if defined USE_D3D9 || defined _XBOX
-    VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
+    if (FAILED(VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
                                         | D3DCLEAR_STENCIL,
-                              VideoData::clear_color, 1.0f, 0);
+                              VideoData::clear_color, 1.0f, 0)))
+        Abort();
 #else
     glViewport(0, 0, size.x, size.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
