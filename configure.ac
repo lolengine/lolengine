@@ -372,6 +372,9 @@ AC_CONFIG_FILES(
 AC_CONFIG_FILES(
  [mrpigeon/Makefile
 ])
+AC_CONFIG_FILES(
+ [orbital/Makefile
+])
 
 AC_OUTPUT
 
