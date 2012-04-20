@@ -81,7 +81,7 @@ public:
         m_angle += deltams / 1000.0f * 45.0f;
 
         mat4 anim = mat4::rotate(m_angle, vec3(0, 1, 0));
-        mat4 model = mat4::translate(vec3(0, 0, -4));
+        mat4 model = mat4::translate(vec3(0, 0, -4.5));
         mat4 view = mat4::lookat(vec3(0, 2, 0), vec3(0, 0, -4), vec3(0, 1, 0));
         mat4 proj = mat4::perspective(45.0f, 640.0f, 480.0f, 0.1f, 10.0f);
 
