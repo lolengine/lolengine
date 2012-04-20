@@ -145,7 +145,16 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 void VertexDeclaration::Unbind()
 {
 #if defined _XBOX || defined USE_D3D9
-    /* FIXME: Nothing to do? */
+    int stream = -1;
+    for (int i = 0; i < m_count; i++)
+        if (m_streams[i].index != stream)
+        {
+            stream = m_streams[i].index;
+            if (FAILED(g_d3ddevice->SetStreamSource(stream, 0, 0, 0)))
+                Abort();
+        }
+    if (FAILED(g_d3ddevice->SetVertexDeclaration(NULL)))
+        Abort();
 #else
     /* FIXME: we need to unbind what we bound */
     //glDisableVertexAttribArray(m_attrib);
@@ -297,7 +306,11 @@ void VertexDeclaration::Initialize()
         D3DDECLUSAGE_TANGENT,
         D3DDECLUSAGE_BINORMAL,
         D3DDECLUSAGE_TESSFACTOR,
+#if defined _XBOX
+        D3DDECLUSAGE_TEXCOORD, /* FIXME: nonexistent */
+#else
         D3DDECLUSAGE_POSITIONT,
+#endif
         D3DDECLUSAGE_COLOR,
         D3DDECLUSAGE_FOG,
         D3DDECLUSAGE_DEPTH,

@@ -178,7 +178,7 @@ public:
             Abort();
         if (FAILED(g_d3ddevice->SetIndices(m_ibo)))
             Abort();
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 0, 0, sizeof(m_indices) / sizeof(*m_indices))))
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, sizeof(m_indices) / sizeof(*m_indices))))
             Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
