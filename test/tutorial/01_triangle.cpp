@@ -58,7 +58,7 @@ public:
 
                 "#version 120\n"
                 "void main(void) {"
-                "    gl_FragColor = vec4(0.7, 0.5, 0.2, 1.0);"
+                "    gl_FragColor = vec4(0.7, 0.2, 0.5, 1.0);"
                 "}"
 #else
                 "void main(float2 in_Position : POSITION,"
@@ -67,7 +67,7 @@ public:
                 "}",
 
                 "void main(out float4 out_FragColor : COLOR) {"
-                "    out_FragColor = float4(0.7, 0.5, 0.2, 1.0);"
+                "    out_FragColor = float4(0.7, 0.2, 0.5, 1.0);"
                 "}"
 #endif
             );

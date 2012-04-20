@@ -32,6 +32,8 @@ patch-*.diff
 core
 core.*
 vgcore.*
+callgrind.out.*
+perf.data*
 # Editor cruft
 .*.swp
 *~
@@ -56,9 +58,9 @@ win32/*.XGD
 !contrib/*/*/*/*/*/*/*
 # Our binaries
 test/testsuite
-test/tutorial/tut01
-test/tutorial/tut02
-test/tutorial/tut03
+test/tutorial/01_triangle
+test/tutorial/02_cube
+test/tutorial/03_fractal
 test/benchsuite
 test/quad
 test/sandbox/sample

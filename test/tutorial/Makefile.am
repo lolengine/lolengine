@@ -2,28 +2,28 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
 all-local: $(noinst_PROGRAMS)
-	test x$(MAKE_FSELF) = xno || make_fself tut01$(EXEEXT) tut01.self
-	test x$(MAKE_FSELF) = xno || make_fself tut02$(EXEEXT) tut02.self
-	test x$(MAKE_FSELF) = xno || make_fself tut03$(EXEEXT) tut03.self
+	for x in $(noinst_PROGRAMS); do \
+	  test x$(MAKE_FSELF) = xno || make_fself $${x}$(EXEEXT) $${x}.self; \
+	done
 
 CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
 
-noinst_PROGRAMS = tut01 tut02 tut03
+noinst_PROGRAMS = 01_triangle 02_cube 03_fractal
 
-tut01_SOURCES = tut01.cpp
-tut01_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-tut01_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-tut01_DEPENDENCIES = $(top_builddir)/src/liblol.a
+01_triangle_SOURCES = 01_triangle.cpp
+01_triangle_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+01_triangle_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+01_triangle_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-tut02_SOURCES = tut02.cpp
-tut02_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-tut02_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-tut02_DEPENDENCIES = $(top_builddir)/src/liblol.a
+02_cube_SOURCES = 02_cube.cpp
+02_cube_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+02_cube_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+02_cube_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-tut03_SOURCES = tut03.cpp
-tut03_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-tut03_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
-tut03_DEPENDENCIES = $(top_builddir)/src/liblol.a
+03_fractal_SOURCES = 03_fractal.cpp
+03_fractal_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
+03_fractal_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+03_fractal_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
