@@ -69,6 +69,7 @@ public:
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
 
     void Bind() const;
+    void Unbind() const;
 
 protected:
     Shader(char const *vert, char const *frag);

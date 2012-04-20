@@ -385,6 +385,8 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 
+    stdshader->Unbind();
+
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */
 #else

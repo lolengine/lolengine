@@ -142,7 +142,7 @@ void TileSet::TickDraw(float deltams)
 #if defined USE_D3D9
            format = D3DFMT_R8G8B8;
 #elif defined _XBOX
-           format = D3DFMT_LIN_R8G8B8; /* FIXME */
+           format = D3DFMT_LIN_A8R8G8B8; /* FIXME */
 #else
            format = GL_RGB;
 #endif
@@ -153,6 +153,7 @@ void TileSet::TickDraw(float deltams)
 #if defined USE_D3D9
            format = D3DFMT_A8R8G8B8;
 #elif defined _XBOX
+            /* By default the X360 will swizzle the texture. Ask for linear. */
            format = D3DFMT_LIN_A8R8G8B8;
 #else
            format = GL_RGBA;
@@ -177,19 +178,28 @@ void TileSet::TickDraw(float deltams)
 
 #if defined USE_D3D9 || defined _XBOX
         D3DLOCKED_RECT rect;
+        HRESULT hr;
 #   if defined USE_D3D9
-        g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_DYNAMIC, format,
-                                   D3DPOOL_SYSTEMMEM, &data->m_tex, NULL);
-        data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
+        hr = g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_DYNAMIC, format,
+                                        D3DPOOL_DEFAULT, &data->m_tex, NULL);
 #   elif defined _XBOX
-        /* By default the X360 will swizzle the texture. Ask for linear. */
-        g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_WRITEONLY, format,
-                                   D3DPOOL_DEFAULT, &data->m_tex, NULL);
-        data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
+        hr = g_d3ddevice->CreateTexture(w, h, 1, D3DUSAGE_WRITEONLY, format,
+                                        D3DPOOL_DEFAULT, &data->m_tex, NULL);
 #   endif
+        if (FAILED(hr))
+            Abort();
+#   if defined USE_D3D9
+        hr = data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
+#   else
+        hr = data->m_tex->LockRect(0, &rect, NULL, 0);
+#   endif
+        if (FAILED(hr))
+            Abort();
         for (int j = 0; j < h; j++)
             memcpy((uint8_t *)rect.pBits + j * rect.Pitch, pixels + w * j * 4, w * 4);
-        data->m_tex->UnlockRect(0);
+        hr = data->m_tex->UnlockRect(0);
+        if (FAILED(hr))
+            Abort();
 #else
         glGenTextures(1, &data->m_tex);
         glEnable(GL_TEXTURE_2D);
@@ -229,7 +239,9 @@ void TileSet::Bind()
     if (!data->img && data->m_tex)
     {
 #if defined USE_D3D9 || defined _XBOX
-        g_d3ddevice->SetTexture(0, data->m_tex);
+        HRESULT hr = g_d3ddevice->SetTexture(0, data->m_tex);
+        if (FAILED(hr))
+            Abort();
 #else
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->m_tex);
@@ -239,12 +251,17 @@ void TileSet::Bind()
 
 void TileSet::Unbind()
 {
+    if (!data->img && data->m_tex)
+    {
 #if defined USE_D3D9 || defined _XBOX
-    g_d3ddevice->SetTexture(0, NULL);
+        HRESULT hr = g_d3ddevice->SetTexture(0, NULL);
+        if (FAILED(hr))
+            Abort();
 #else
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 #endif
+    }
 }
 
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,

@@ -428,6 +428,22 @@ void Shader::Bind() const
 #endif
 }
 
+void Shader::Unbind() const
+{
+#if defined USE_D3D9 || defined _XBOX
+    HRESULT hr;
+    hr = g_d3ddevice->SetVertexShader(NULL);
+    hr = g_d3ddevice->SetPixelShader(NULL);
+#elif !defined __CELLOS_LV2__
+    /* FIXME: untested */
+    glUseProgram(0);
+#else
+    /* FIXME: untested */
+    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
+    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
+#endif
+}
+
 Shader::~Shader()
 {
 #if defined USE_D3D9 || defined _XBOX
