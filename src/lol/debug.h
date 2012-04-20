@@ -16,14 +16,14 @@
 #if !defined __LOL_DEBUG_H__
 #define __LOL_DEBUG_H__
 
-#include "entity.h"
+#include <cstdlib>
 
 namespace lol
 {
 
 static inline void Abort()
 {
-    *(int *)0 = 0xdead;
+    std::abort();
 }
 
 } /* namespace lol */
