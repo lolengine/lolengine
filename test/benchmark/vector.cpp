@@ -52,7 +52,7 @@ void bench_matrix(int mode)
         /* Determinant */
         timer.GetMs();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
-            pf[i] = pm[i].det();
+            pf[i] = determinant(pm[i]);
         result[1] += timer.GetMs();
 
         /* Multiply matrices */
@@ -70,7 +70,7 @@ void bench_matrix(int mode)
         /* Invert matrix */
         timer.GetMs();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
-            pm[i] = pm[i].invert();
+            pm[i] = inverse(pm[i]);
         result[4] += timer.GetMs();
     }
 

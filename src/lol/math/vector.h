@@ -1354,9 +1354,6 @@ template <typename T> struct Mat2
     inline Vec2<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
-    T det() const;
-    Mat2<T> invert() const;
-
     /* Helpers for transformation matrices */
     static Mat2<T> rotate(T angle);
 
@@ -1435,9 +1432,6 @@ template <typename T> struct Mat3
 
     inline Vec3<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
-
-    T det() const;
-    Mat3<T> invert() const;
 
     /* Helpers for transformation matrices */
     static Mat3<T> rotate(T angle, T x, T y, T z);
@@ -1521,9 +1515,6 @@ template <typename T> struct Mat4
     inline Vec4<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec4<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
-    T det() const;
-    Mat4<T> invert() const;
-
     /* Helpers for transformation matrices */
     static Mat4<T> translate(T x, T y, T z);
     static Mat4<T> translate(Vec3<T> v);
@@ -1531,15 +1522,17 @@ template <typename T> struct Mat4
     static Mat4<T> rotate(T angle, Vec3<T> v);
     static Mat4<T> rotate(Quat<T> q);
 
-    static inline Mat4<T> translate(Mat4<T> mat, Vec3<T> v)
+    static inline Mat4<T> translate(Mat4<T> const &mat, Vec3<T> v)
     {
         return translate(v) * mat;
     }
 
-    static inline Mat4<T> rotate(Mat4<T> mat, T angle, Vec3<T> v)
+    static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
     }
+
+    static Mat3<T> normal(Mat4<T> const &mat);
 
     /* Helpers for view matrices */
     static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
@@ -1556,37 +1549,37 @@ template <typename T> struct Mat4
     friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
 #endif
 
-    inline Mat4<T> operator +(Mat4<T> const m) const
+    inline Mat4<T> operator +(Mat4<T> const &m) const
     {
         return Mat4<T>(v0 + m[0], v1 + m[1], v2 + m[2], v3 + m[3]);
     }
 
-    inline Mat4<T> operator +=(Mat4<T> const m)
+    inline Mat4<T> operator +=(Mat4<T> const &m)
     {
         return *this = *this + m;
     }
 
-    inline Mat4<T> operator -(Mat4<T> const m) const
+    inline Mat4<T> operator -(Mat4<T> const &m) const
     {
         return Mat4<T>(v0 - m[0], v1 - m[1], v2 - m[2], v3 - m[3]);
     }
 
-    inline Mat4<T> operator -=(Mat4<T> const m)
+    inline Mat4<T> operator -=(Mat4<T> const &m)
     {
         return *this = *this - m;
     }
 
-    inline Mat4<T> operator *(Mat4<T> const m) const
+    inline Mat4<T> operator *(Mat4<T> const &m) const
     {
         return Mat4<T>(*this * m[0], *this * m[1], *this * m[2], *this * m[3]);
     }
 
-    inline Mat4<T> operator *=(Mat4<T> const m)
+    inline Mat4<T> operator *=(Mat4<T> const &m)
     {
         return *this = *this * m;
     }
 
-    inline Vec4<T> operator *(Vec4<T> const m) const
+    inline Vec4<T> operator *(Vec4<T> const &m) const
     {
         Vec4<T> ret;
         for (int j = 0; j < 4; j++)
@@ -1601,6 +1594,18 @@ template <typename T> struct Mat4
 
     Vec4<T> v0, v1, v2, v3;
 };
+
+template<typename T> T determinant(Mat2<T> const &);
+template<typename T> T determinant(Mat3<T> const &);
+template<typename T> T determinant(Mat4<T> const &);
+
+template<typename T> Mat2<T> transpose(Mat2<T> const &);
+template<typename T> Mat3<T> transpose(Mat3<T> const &);
+template<typename T> Mat4<T> transpose(Mat4<T> const &);
+
+template<typename T> Mat2<T> inverse(Mat2<T> const &);
+template<typename T> Mat3<T> inverse(Mat3<T> const &);
+template<typename T> Mat4<T> inverse(Mat4<T> const &);
 
 /*
  * Arbitrarily-sized square matrices; for now this only supports
