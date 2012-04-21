@@ -36,6 +36,12 @@ using namespace std;
 namespace lol
 {
 
+static inline float det2(float a, float b,
+                         float c, float d)
+{
+    return a * d - b * c;
+}
+
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
@@ -45,7 +51,20 @@ static inline float det3(float a, float b, float c,
          + c * (d * h - g * e);
 }
 
-static inline float cofact3(mat4 const &mat, int i, int j)
+static inline float cofact(mat2 const &mat, int i, int j)
+{
+    return mat[(i + 1) & 1][(j + 1) & 1] * (((i + j) & 1) ? -1.0f : 1.0f);
+}
+
+static inline float cofact(mat3 const &mat, int i, int j)
+{
+    return det2(mat[(i + 1) % 3][(j + 1) % 3],
+                mat[(i + 2) % 3][(j + 1) % 3],
+                mat[(i + 1) % 3][(j + 2) % 3],
+                mat[(i + 2) % 3][(j + 2) % 3]);
+}
+
+static inline float cofact(mat4 const &mat, int i, int j)
 {
     return det3(mat[(i + 1) & 3][(j + 1) & 3],
                 mat[(i + 2) & 3][(j + 1) & 3],
@@ -58,24 +77,91 @@ static inline float cofact3(mat4 const &mat, int i, int j)
                 mat[(i + 3) & 3][(j + 3) & 3]) * (((i + j) & 1) ? -1.0f : 1.0f);
 }
 
-template<> float mat4::det() const
+template<> float determinant(mat2 const &mat)
 {
-    float ret = 0;
-    for (int n = 0; n < 4; n++)
-        ret += (*this)[n][0] * cofact3(*this, n, 0);
+    return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+}
+
+template<> mat2 transpose(mat2 const &mat)
+{
+    mat2 ret;
+    for (int j = 0; j < 2; j++)
+        for (int i = 0; i < 2; i++)
+            ret[j][i] = mat[i][j];
     return ret;
 }
 
-template<> mat4 mat4::invert() const
+template<> mat2 inverse(mat2 const &mat)
+{
+    mat2 ret;
+    float d = determinant(mat);
+    if (d)
+    {
+        d = 1.0f / d;
+        for (int j = 0; j < 2; j++)
+            for (int i = 0; i < 2; i++)
+                ret[j][i] = cofact(mat, i, j) * d;
+    }
+    return ret;
+}
+
+template<> float determinant(mat3 const &mat)
+{
+    return det3(mat[0][0], mat[0][1], mat[0][2],
+                mat[1][0], mat[1][1], mat[1][2],
+                mat[2][0], mat[2][1], mat[2][2]);
+}
+
+template<> mat3 transpose(mat3 const &mat)
+{
+    mat3 ret;
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ret[j][i] = mat[i][j];
+    return ret;
+}
+
+template<> mat3 inverse(mat3 const &mat)
+{
+    mat3 ret;
+    float d = determinant(mat);
+    if (d)
+    {
+        d = 1.0f / d;
+        for (int j = 0; j < 3; j++)
+            for (int i = 0; i < 3; i++)
+                ret[j][i] = cofact(mat, i, j) * d;
+    }
+    return ret;
+}
+
+template<> float determinant(mat4 const &mat)
+{
+    float ret = 0;
+    for (int n = 0; n < 4; n++)
+        ret += mat[n][0] * cofact(mat, n, 0);
+    return ret;
+}
+
+template<> mat4 transpose(mat4 const &mat)
 {
     mat4 ret;
-    float d = det();
+    for (int j = 0; j < 4; j++)
+        for (int i = 0; i < 4; i++)
+            ret[j][i] = mat[i][j];
+    return ret;
+}
+
+template<> mat4 inverse(mat4 const &mat)
+{
+    mat4 ret;
+    float d = determinant(mat);
     if (d)
     {
         d = 1.0f / d;
         for (int j = 0; j < 4; j++)
             for (int i = 0; i < 4; i++)
-                ret[j][i] = cofact3(*this, i, j) * d;
+                ret[j][i] = cofact(mat, i, j) * d;
     }
     return ret;
 }
@@ -118,6 +204,23 @@ template<> void ivec4::printf() const
 template<> void quat::printf() const
 {
     Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
+}
+
+template<> void mat2::printf() const
+{
+    mat2 const &p = *this;
+
+    Log::Debug("[ %6.6f %6.6f\n", p[0][0], p[1][0]);
+    Log::Debug("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+}
+
+template<> void mat3::printf() const
+{
+    mat3 const &p = *this;
+
+    Log::Debug("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]);
+    Log::Debug("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]);
+    Log::Debug("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
 template<> void mat4::printf() const

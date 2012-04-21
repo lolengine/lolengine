@@ -20,18 +20,7 @@ namespace lol
 
 LOLUNIT_FIXTURE(VectorTest)
 {
-    void SetUp()
-    {
-        identity = mat4(1.0f);
-        triangular = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-                          vec4(7.0f, 2.0f, 0.0f, 0.0f),
-                          vec4(1.0f, 5.0f, 3.0f, 0.0f),
-                          vec4(8.0f, 9.0f, 2.0f, 4.0f));
-        invertible = mat4(vec4( 1.0f,  1.0f,  2.0f, -1.0f),
-                          vec4(-2.0f, -1.0f, -2.0f,  2.0f),
-                          vec4( 4.0f,  2.0f,  5.0f, -4.0f),
-                          vec4( 5.0f, -3.0f, -7.0f, -6.0f));
-    }
+    void SetUp() {}
 
     void TearDown() {}
 
@@ -135,71 +124,6 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_EQUAL(c.w, 0.0f);
         LOLUNIT_ASSERT_EQUAL(a3, a1);
     }
-
-    LOLUNIT_TEST(MatrixDeterminant)
-    {
-        float d1 = triangular.det();
-        LOLUNIT_ASSERT_EQUAL(d1, 24.0f);
-        float d2 = invertible.det();
-        LOLUNIT_ASSERT_EQUAL(d2, -1.0f);
-    }
-
-    LOLUNIT_TEST(MatrixMultiplication)
-    {
-        mat4 m0 = identity;
-        mat4 m1 = identity;
-        mat4 m2 = m0 * m1;
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
-    }
-
-    LOLUNIT_TEST(MatrixInverse)
-    {
-        mat4 m0 = invertible;
-        mat4 m1 = m0.invert();
-
-        mat4 m2 = m0 * m1;
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
-
-        LOLUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
-    }
-
-    mat4 triangular, identity, invertible;
 };
 
 } /* namespace lol */
