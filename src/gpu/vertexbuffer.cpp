@@ -314,7 +314,7 @@ void VertexDeclaration::Initialize()
             D3DDECLTYPE_FLOAT4, /* float */
         X, X, X, X, /* double */
         X, X, X, X, /* int8_t */
-        X, X, X, D3DDECLTYPE_UBYTE4, /* uint8_t */
+        X, X, X, D3DDECLTYPE_UBYTE4N, /* uint8_t */
         X, D3DDECLTYPE_SHORT2N, X, D3DDECLTYPE_SHORT4N, /* int16_t */
         X, D3DDECLTYPE_USHORT2N, X, D3DDECLTYPE_USHORT4N, /* uint16_t */
         X, X, X, X, /* int32_t */
