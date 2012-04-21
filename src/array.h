@@ -225,6 +225,11 @@ public:
         return *this;
     }
 
+    inline void Append(T1 const &x)
+    {
+        *this += x;
+    }
+
     void Remove(int pos)
     {
         memmove(m_data + pos, m_data + pos + 1, m_count - pos - 1);
