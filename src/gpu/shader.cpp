@@ -398,6 +398,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
+    /* FIXME: do we need padding here like for the mat3 version? */
     if (uni.flags & 1)
         g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
     if (uni.flags & 2)
@@ -405,7 +406,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 #elif !defined __CELLOS_LV2__
     glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    /* Not implemented */
+    /* FIXME: not implemented */
     Abort();
 #endif
 }
@@ -413,11 +414,13 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: does this work at all? */
+    /* Padding matrix columns is necessary on DirectX. We need to create
+     * a new data structure; a 4×4 matrix will do. */
+    mat4 tmp(m, 1.0f);
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 3);
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 3);
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
