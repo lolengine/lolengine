@@ -42,17 +42,35 @@ public:
 
     inline Array<T1, T2, T3> const& operator+=(Element const &x)
     {
-        Append(x.m1, x.m2, x.m3);
+        if (m_count >= m_reserved)
+        {
+            /* Protect ourselves against insertion of an element that is
+             * already in m_data. */
+            Element tmp = x;
+            Reserve(m_count * 13 / 8 + 8);
+            m_data[m_count++] = tmp;
+        }
+        else
+            m_data[m_count++] = x;
         return *this;
     }
 
     inline void Append(T1 const &m1, T2 const &m2, T3 const &m3)
     {
         if (m_count >= m_reserved)
+        {
+            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3;
             Reserve(m_count * 13 / 8 + 8);
-        m_data[m_count].m1 = m1;
-        m_data[m_count].m2 = m2;
-        m_data[m_count].m3 = m3;
+            m_data[m_count].m1 = tmp1;
+            m_data[m_count].m2 = tmp2;
+            m_data[m_count].m3 = tmp3;
+        }
+        else
+        {
+            m_data[m_count].m1 = m1;
+            m_data[m_count].m2 = m2;
+            m_data[m_count].m3 = m3;
+        }
         ++m_count;
     }
 
@@ -111,16 +129,33 @@ public:
 
     inline Array<T1, T2> const& operator+=(Element const &x)
     {
-        Append(x.m1, x.m2);
+        if (m_count >= m_reserved)
+        {
+            /* Protect ourselves against insertion of an element that is
+             * already in m_data. */
+            Element tmp = x;
+            Reserve(m_count * 13 / 8 + 8);
+            m_data[m_count++] = tmp;
+        }
+        else
+            m_data[m_count++] = x;
         return *this;
     }
 
     inline void Append(T1 const &m1, T2 const &m2)
     {
         if (m_count >= m_reserved)
+        {
+            T1 tmp1 = m1; T2 tmp2 = m2;
             Reserve(m_count * 13 / 8 + 8);
-        m_data[m_count].m1 = m1;
-        m_data[m_count].m2 = m2;
+            m_data[m_count].m1 = tmp1;
+            m_data[m_count].m2 = tmp2;
+        }
+        else
+        {
+            m_data[m_count].m1 = m1;
+            m_data[m_count].m2 = m2;
+        }
         ++m_count;
     }
 
@@ -178,8 +213,15 @@ public:
     inline Array<T1> const& operator+=(T1 const &x)
     {
         if (m_count >= m_reserved)
+        {
+            T1 tmp = x;
             Reserve(m_count * 13 / 8 + 8);
-        m_data[m_count++] = x;
+            m_data[m_count++] = tmp;
+        }
+        else
+        {
+            m_data[m_count++] = x;
+        }
         return *this;
     }
 

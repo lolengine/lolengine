@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\application\application.h" />
+    <ClInclude Include="..\src\array.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
     <ClInclude Include="..\src\core.h" />
