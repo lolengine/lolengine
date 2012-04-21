@@ -389,7 +389,6 @@ VertexBuffer::VertexBuffer(size_t size)
     if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
         Abort();
-    new uint8_t[size];
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     glGenBuffers(1, &m_data->m_vbo);
     m_data->m_memory = new uint8_t[size];
