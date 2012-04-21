@@ -160,10 +160,10 @@
     <ClCompile Include="..\src\worldentity.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\shader.cpp">
+    <ClCompile Include="..\src\gpu\indexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\vbo.cpp">
+    <ClCompile Include="..\src\gpu\shader.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
     <ClCompile Include="..\src\gpu\vertexbuffer.cpp">
@@ -336,10 +336,10 @@
     <ClInclude Include="..\src\lol\unit.h">
       <Filter>src\lol</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\shader.h">
+    <ClInclude Include="..\src\gpu\indexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\vbo.h">
+    <ClInclude Include="..\src\gpu\shader.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gpu\vertexbuffer.h">

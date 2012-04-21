@@ -86,7 +86,6 @@
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
     <ClCompile Include="..\src\gpu\shader.cpp" />
-    <ClCompile Include="..\src\gpu\vbo.cpp" />
     <ClCompile Include="..\src\gpu\vertexbuffer.cpp" />
     <ClCompile Include="..\src\gradient.cpp" />
     <ClCompile Include="..\src\hash.cpp" />
@@ -140,7 +139,6 @@
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
     <ClInclude Include="..\src\gpu\shader.h" />
-    <ClInclude Include="..\src\gpu\vbo.h" />
     <ClInclude Include="..\src\gpu\vertexbuffer.h" />
     <ClInclude Include="..\src\gradient.h" />
     <ClInclude Include="..\src\hash.h" />

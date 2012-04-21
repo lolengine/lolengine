@@ -142,6 +142,31 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 #endif
 }
 
+void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
+                                            int vskip, int vcount,
+                                            int skip, int count)
+{
+#if defined _XBOX || defined USE_D3D9
+    if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
+        Abort();
+    switch (type)
+    {
+    case MeshPrimitive::Triangles:
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vbase, vskip, vcount, skip, count)))
+            Abort();
+        break;
+    }
+#else
+    switch (type)
+    {
+    case MeshPrimitive::Triangles:
+        /* FIXME: ignores most of the arguments! */
+        glDrawElements(GL_TRIANGLES, count * 3, GL_UNSIGNED_SHORT, 0);
+        break;
+    }
+#endif
+}
+
 void VertexDeclaration::Unbind()
 {
 #if defined _XBOX || defined USE_D3D9

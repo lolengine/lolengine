@@ -100,8 +100,8 @@ static inline int isnan(float f)
 #include "map.h"
 #include "layer.h"
 #include "gpu/shader.h"
+#include "gpu/indexbuffer.h"
 #include "gpu/vertexbuffer.h"
-#include "gpu/vbo.h"
 #include "image/image.h"
 #include "application/application.h"
 

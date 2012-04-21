@@ -29,7 +29,7 @@ liblol_a_SOURCES = \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp math/trig.h \
     \
     gpu/shader.cpp gpu/shader.h \
-    gpu/vbo.cpp gpu/vbo.h \
+    gpu/indexbuffer.cpp gpu/indexbuffer.h \
     gpu/vertexbuffer.cpp gpu/vertexbuffer.h \
     \
     image/image.cpp image/image.h image/image-private.h \

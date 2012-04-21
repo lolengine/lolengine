@@ -177,6 +177,8 @@ public:
 
     void Bind();
     void DrawElements(MeshPrimitive type, int skip, int count);
+    void DrawIndexedElements(MeshPrimitive type, int vbase, int vskip,
+                             int vcount, int skip, int count);
     void Unbind();
     void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                      ShaderAttrib attr2 = ShaderAttrib(),
