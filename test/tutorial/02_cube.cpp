@@ -147,8 +147,8 @@ public:
         m_vdecl->SetStream(m_vbo, m_coord, m_color);
         m_vdecl->Bind();
         m_ibo->Bind();
-        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, 8, 0,
-                                     m_indices.Count());
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
+                                     m_mesh.Count(), 0, m_indices.Count());
         m_ibo->Unbind();
         m_vdecl->Unbind();
     }
@@ -158,12 +158,14 @@ private:
     mat4 m_matrix;
     Array<vec3> m_mesh;
     Array<i16vec3> m_indices;
+
     Shader *m_shader;
     ShaderAttrib m_coord, m_color;
     ShaderUniform m_mvp;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
     IndexBuffer *m_ibo;
+
     bool m_ready;
 };
 
