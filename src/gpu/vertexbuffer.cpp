@@ -318,7 +318,7 @@ void VertexDeclaration::Initialize()
         X, D3DDECLTYPE_SHORT2N, X, D3DDECLTYPE_SHORT4N, /* int16_t */
         X, D3DDECLTYPE_USHORT2N, X, D3DDECLTYPE_USHORT4N, /* uint16_t */
         X, X, X, X, /* int32_t */
-        X, X, X, X, /* int64_t */
+        X, X, X, X, /* uint32_t */
     };
     static D3DDECLUSAGE const ulut[] =
     {
