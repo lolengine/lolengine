@@ -13,17 +13,10 @@
 #endif
 
 #include "core.h"
-#include "lolgl.h"
 #include "loldebug.h"
 
 using namespace std;
 using namespace lol;
-
-#if defined _WIN32 && defined USE_D3D9
-#   define FAR
-#   define NEAR
-#   include <d3d9.h>
-#endif
 
 #if USE_SDL && defined __APPLE__
 #   include <SDL_main.h>
@@ -32,12 +25,6 @@ using namespace lol;
 #if defined _WIN32
 #   undef main /* FIXME: still needed? */
 #   include <direct.h>
-#endif
-
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
 #endif
 
 class Cube : public WorldEntity
@@ -144,23 +131,10 @@ public:
             memcpy(mesh, &m_mesh[0], m_mesh.Bytes());
             m_vbo->Unlock();
 
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
-            /* Method 1: store vertex buffer on the GPU memory */
-            glGenBuffers(1, &m_ibo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.Bytes(),
-                         &m_indices[0], GL_STATIC_DRAW);
-#elif defined _XBOX || defined USE_D3D9
-            int16_t *indices;
-            if (FAILED(g_d3ddevice->CreateIndexBuffer(m_indices.Bytes(), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_ibo, NULL)))
-                Abort();
-            if (FAILED(m_ibo->Lock(0, 0, (void **)&indices, 0)))
-                Abort();
+            m_ibo = new IndexBuffer(m_indices.Bytes());
+            void *indices = m_ibo->Lock(0, 0);
             memcpy(indices, &m_indices[0], m_indices.Bytes());
             m_ibo->Unlock();
-#else
-            /* TODO */
-#endif
 
             /* FIXME: this object never cleans up */
             m_ready = true;
@@ -172,29 +146,10 @@ public:
         m_shader->SetUniform(m_mvp, m_matrix);
         m_vdecl->SetStream(m_vbo, m_coord, m_color);
         m_vdecl->Bind();
-
-#if defined _XBOX || defined USE_D3D9
-        if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
-            Abort();
-        if (FAILED(g_d3ddevice->SetIndices(m_ibo)))
-            Abort();
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, m_indices.Count())))
-            Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-        int size;
-        glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-
-
-        glDrawElements(GL_TRIANGLES, size / sizeof(uint16_t), GL_UNSIGNED_SHORT, 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-#else
-        /* FIXME */
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, m_vertices);
-        glDisableClientState(GL_VERTEX_ARRAY);
-#endif
+        m_ibo->Bind();
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, 8, 0,
+                                     m_indices.Count());
+        m_ibo->Unbind();
         m_vdecl->Unbind();
     }
 
@@ -208,15 +163,7 @@ private:
     ShaderUniform m_mvp;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-#if defined USE_D3D9
-    IDirect3DIndexBuffer9 *m_ibo;
-#elif defined _XBOX
-    D3DIndexBuffer *m_ibo;
-#else
-#if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
-    GLuint m_ibo;
-#endif
-#endif
+    IndexBuffer *m_ibo;
     bool m_ready;
 };
 

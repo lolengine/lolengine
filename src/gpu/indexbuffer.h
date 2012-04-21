@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -9,37 +9,35 @@
 //
 
 //
-// The GpuVbo class
-// ----------------
+// The IndexBuffer class
+// ---------------------
 //
 
-#if !defined __LOL_VBO_H__
-#define __LOL_VBO_H__
+#if !defined __LOL_INDEXBUFFER_H__
+#define __LOL_INDEXBUFFER_H__
+
+#include <cstring>
 
 namespace lol
 {
 
-class GpuVboData;
-
-class GpuVbo
+class IndexBuffer
 {
 public:
-    GpuVbo();
-    ~GpuVbo();
+    IndexBuffer(size_t size);
+    ~IndexBuffer();
 
-    void SetSize(size_t elemsize, size_t elemcount);
-    size_t GetSize();
-    uint8_t *GetData();
-    uint8_t const *GetData() const;
+    void *Lock(size_t offset, size_t size);
+    void Unlock();
 
     void Bind();
     void Unbind();
 
 private:
-    GpuVboData *data;
+    class IndexBufferData *m_data;
 };
 
 } /* namespace lol */
 
-#endif // __LOL_VBO_H__
+#endif // __LOL_INDEXBUFFER_H__
 
