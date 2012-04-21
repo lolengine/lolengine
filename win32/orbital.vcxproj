@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\orbital.h" />
   </ItemGroup>
   <ItemGroup>
