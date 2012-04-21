@@ -36,9 +36,9 @@ class Triangle : public WorldEntity
 public:
     Triangle()
     {
-        m_vertices[0] = vec2( 0.0,  0.8);
-        m_vertices[1] = vec2(-0.8, -0.8);
-        m_vertices[2] = vec2( 0.8, -0.8);
+        m_vertices += vec2( 0.0,  0.8);
+        m_vertices += vec2(-0.8, -0.8);
+        m_vertices += vec2( 0.8, -0.8);
         m_ready = false;
     }
 
@@ -75,9 +75,9 @@ public:
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(sizeof(m_vertices));
+            m_vbo = new VertexBuffer(m_vertices.Bytes());
             void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, m_vertices, sizeof(m_vertices));
+            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
             m_vbo->Unlock();
 
             m_ready = true;
@@ -93,7 +93,7 @@ public:
     }
 
 private:
-    vec2 m_vertices[3];
+    Array<vec2> m_vertices;
     Shader *m_shader;
     ShaderAttrib m_coord;
     VertexDeclaration *m_vdecl;
