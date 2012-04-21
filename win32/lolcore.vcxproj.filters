@@ -361,5 +361,8 @@
     <ClInclude Include="..\src\gpu\indexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\array.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
