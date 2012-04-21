@@ -160,9 +160,6 @@
     <ClCompile Include="..\src\worldentity.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\indexbuffer.cpp">
-      <Filter>src\gpu</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\gpu\shader.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
@@ -192,6 +189,9 @@
     </ClCompile>
     <ClCompile Include="..\src\platform\xbox\xboxapp.cpp">
       <Filter>src\platform\xbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gpu\indexbuffer.cpp">
+      <Filter>src\gpu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -336,9 +336,6 @@
     <ClInclude Include="..\src\lol\unit.h">
       <Filter>src\lol</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\indexbuffer.h">
-      <Filter>src\gpu</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\gpu\shader.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
@@ -359,6 +356,10 @@
     </ClInclude>
     <ClInclude Include="..\src\platform\xbox\xboxapp.h">
       <Filter>src\platform\xbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lol\debug.h" />
+    <ClInclude Include="..\src\gpu\indexbuffer.h">
+      <Filter>src\gpu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
