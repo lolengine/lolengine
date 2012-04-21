@@ -48,28 +48,28 @@ public:
         m_angle = 0;
 
         /* Front vertices/colors */
-        m_mesh[0] = vec3(-1.0, -1.0,  1.0); m_mesh[1] = vec3(1.0, 0.0, 1.0);
-        m_mesh[2] = vec3( 1.0, -1.0,  1.0); m_mesh[3] = vec3(0.0, 1.0, 0.0);
-        m_mesh[4] = vec3( 1.0,  1.0,  1.0); m_mesh[5] = vec3(1.0, 0.5, 0.0);
-        m_mesh[6] = vec3(-1.0,  1.0,  1.0); m_mesh[7] = vec3(1.0, 1.0, 0.0);
+        m_mesh += vec3(-1.0, -1.0,  1.0); m_mesh += vec3(1.0, 0.0, 1.0);
+        m_mesh += vec3( 1.0, -1.0,  1.0); m_mesh += vec3(0.0, 1.0, 0.0);
+        m_mesh += vec3( 1.0,  1.0,  1.0); m_mesh += vec3(1.0, 0.5, 0.0);
+        m_mesh += vec3(-1.0,  1.0,  1.0); m_mesh += vec3(1.0, 1.0, 0.0);
         /* Back */
-        m_mesh[8]  = vec3(-1.0, -1.0, -1.0); m_mesh[9]  = vec3(1.0, 0.0, 0.0);
-        m_mesh[10] = vec3( 1.0, -1.0, -1.0); m_mesh[11] = vec3(0.0, 0.5, 0.0);
-        m_mesh[12] = vec3( 1.0,  1.0, -1.0); m_mesh[13] = vec3(0.0, 0.5, 1.0);
-        m_mesh[14] = vec3(-1.0,  1.0, -1.0); m_mesh[15] = vec3(0.0, 0.0, 1.0);
+        m_mesh += vec3(-1.0, -1.0, -1.0); m_mesh += vec3(1.0, 0.0, 0.0);
+        m_mesh += vec3( 1.0, -1.0, -1.0); m_mesh += vec3(0.0, 0.5, 0.0);
+        m_mesh += vec3( 1.0,  1.0, -1.0); m_mesh += vec3(0.0, 0.5, 1.0);
+        m_mesh += vec3(-1.0,  1.0, -1.0); m_mesh += vec3(0.0, 0.0, 1.0);
 
-        m_indices[0] = i16vec3(0, 1, 2);
-        m_indices[1] = i16vec3(2, 3, 0);
-        m_indices[2] = i16vec3(1, 5, 6);
-        m_indices[3] = i16vec3(6, 2, 1);
-        m_indices[4] = i16vec3(7, 6, 5);
-        m_indices[5] = i16vec3(5, 4, 7);
-        m_indices[6] = i16vec3(4, 0, 3);
-        m_indices[7] = i16vec3(3, 7, 4);
-        m_indices[8] = i16vec3(4, 5, 1);
-        m_indices[9] = i16vec3(1, 0, 4);
-        m_indices[10] = i16vec3(3, 2, 6);
-        m_indices[11] = i16vec3(6, 7, 3);
+        m_indices += i16vec3(0, 1, 2);
+        m_indices += i16vec3(2, 3, 0);
+        m_indices += i16vec3(1, 5, 6);
+        m_indices += i16vec3(6, 2, 1);
+        m_indices += i16vec3(7, 6, 5);
+        m_indices += i16vec3(5, 4, 7);
+        m_indices += i16vec3(4, 0, 3);
+        m_indices += i16vec3(3, 7, 4);
+        m_indices += i16vec3(4, 5, 1);
+        m_indices += i16vec3(1, 0, 4);
+        m_indices += i16vec3(3, 2, 6);
+        m_indices += i16vec3(6, 7, 3);
 
         m_ready = false;
     }
@@ -139,24 +139,24 @@ public:
               new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,
                                                             VertexUsage::Color));
 
-            m_vbo = new VertexBuffer(sizeof(m_mesh));
+            m_vbo = new VertexBuffer(m_mesh.Bytes());
             void *mesh = m_vbo->Lock(0, 0);
-            memcpy(mesh, m_mesh, sizeof(m_mesh));
+            memcpy(mesh, &m_mesh[0], m_mesh.Bytes());
             m_vbo->Unlock();
 
 #if !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__ && !defined _XBOX && !defined USE_D3D9
             /* Method 1: store vertex buffer on the GPU memory */
             glGenBuffers(1, &m_ibo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices,
-                         GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.Bytes(),
+                         &m_indices[0], GL_STATIC_DRAW);
 #elif defined _XBOX || defined USE_D3D9
             int16_t *indices;
-            if (FAILED(g_d3ddevice->CreateIndexBuffer(sizeof(m_indices), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_ibo, NULL)))
+            if (FAILED(g_d3ddevice->CreateIndexBuffer(m_indices.Bytes(), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_ibo, NULL)))
                 Abort();
             if (FAILED(m_ibo->Lock(0, 0, (void **)&indices, 0)))
                 Abort();
-            memcpy(indices, m_indices, sizeof(m_indices));
+            memcpy(indices, &m_indices[0], m_indices.Bytes());
             m_ibo->Unlock();
 #else
             /* TODO */
@@ -178,7 +178,7 @@ public:
             Abort();
         if (FAILED(g_d3ddevice->SetIndices(m_ibo)))
             Abort();
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, sizeof(m_indices) / sizeof(*m_indices))))
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, m_indices.Count())))
             Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__ && !defined __APPLE__
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
@@ -201,8 +201,8 @@ public:
 private:
     float m_angle;
     mat4 m_matrix;
-    vec3 m_mesh[16];
-    i16vec3 m_indices[12];
+    Array<vec3> m_mesh;
+    Array<i16vec3> m_indices;
     Shader *m_shader;
     ShaderAttrib m_coord, m_color;
     ShaderUniform m_mvp;
