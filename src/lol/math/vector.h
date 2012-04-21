@@ -1452,11 +1452,6 @@ template <typename T> struct Mat3
         return rotate(angle, v) * mat;
     }
 
-    static Mat3<T> normal(Mat3<T> const &mat)
-    {
-        return transpose(inverse(mat));
-    }
-
     void printf() const;
 
 #if !defined __ANDROID__
@@ -1544,11 +1539,6 @@ template <typename T> struct Mat4
     static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
-    }
-
-    static Mat3<T> normal(Mat4<T> const &mat)
-    {
-        return transpose(inverse(Mat3<T>(mat)));
     }
 
     /* Helpers for view matrices */

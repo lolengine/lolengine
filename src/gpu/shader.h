@@ -66,6 +66,8 @@ public:
     void SetUniform(ShaderUniform const &uni, vec2 const &v);
     void SetUniform(ShaderUniform const &uni, vec3 const &v);
     void SetUniform(ShaderUniform const &uni, vec4 const &v);
+    void SetUniform(ShaderUniform const &uni, mat2 const &m);
+    void SetUniform(ShaderUniform const &uni, mat3 const &m);
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
 
     void Bind() const;
