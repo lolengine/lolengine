@@ -1434,6 +1434,16 @@ template <typename T> struct Mat3
         v1((T)0, val, (T)0),
         v2((T)0, (T)0, val) {}
 
+    explicit inline Mat3(Mat2<T> mat)
+      : v0(mat[0], (T)0),
+        v1(mat[1], (T)0),
+        v2((T)0, (T)0, (T)0) {}
+
+    explicit inline Mat3(Mat2<T> mat, T val)
+      : v0(Vec3<T>(mat[0], (T)0)),
+        v1(Vec3<T>(mat[1], (T)0)),
+        v2((T)0, (T)0, val) {}
+
     explicit inline Mat3(Mat4<T> const &mat)
       : v0(mat[0].xyz),
         v1(mat[1].xyz),
@@ -1519,6 +1529,30 @@ template <typename T> struct Mat4
       : v0(val, (T)0, (T)0, (T)0),
         v1((T)0, val, (T)0, (T)0),
         v2((T)0, (T)0, val, (T)0),
+        v3((T)0, (T)0, (T)0, val) {}
+
+    explicit inline Mat4(Mat2<T> mat)
+      : v0(mat[0], (T)0, (T)0),
+        v1(mat[1], (T)0, (T)0),
+        v2((T)0, (T)0, (T)0, (T)0),
+        v3((T)0, (T)0, (T)0, (T)0) {}
+
+    explicit inline Mat4(Mat2<T> mat, T val1, T val2)
+      : v0(mat[0], (T)0, (T)0),
+        v1(mat[1], (T)0, (T)0),
+        v2((T)0, (T)0, val1, (T)0),
+        v3((T)0, (T)0, (T)0, val2) {}
+
+    explicit inline Mat4(Mat3<T> mat)
+      : v0(mat[0], (T)0),
+        v1(mat[1], (T)0),
+        v2(mat[2], (T)0),
+        v3((T)0, (T)0, (T)0, (T)0) {}
+
+    explicit inline Mat4(Mat3<T> mat, T val)
+      : v0(mat[0], (T)0),
+        v1(mat[1], (T)0),
+        v2(mat[2], (T)0),
         v3((T)0, (T)0, (T)0, val) {}
 
     inline Vec4<T>& operator[](size_t n) { return (&v0)[n]; }
