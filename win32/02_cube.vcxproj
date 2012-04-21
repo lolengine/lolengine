@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\tutorial\tut02.cpp" />
+    <ClCompile Include="..\test\tutorial\02_cube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="lolcore.vcxproj">
