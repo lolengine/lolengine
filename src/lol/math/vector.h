@@ -1351,6 +1351,10 @@ template <typename T> struct Mat2
       : v0(val, (T)0),
         v1((T)0, val) {}
 
+    explicit inline Mat2(Mat4<T> const &mat)
+      : v0(mat[0].xy),
+        v1(mat[1].xy) {}
+
     inline Vec2<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
@@ -1430,6 +1434,11 @@ template <typename T> struct Mat3
         v1((T)0, val, (T)0),
         v2((T)0, (T)0, val) {}
 
+    explicit inline Mat3(Mat4<T> const &mat)
+      : v0(mat[0].xyz),
+        v1(mat[1].xyz),
+        v2(mat[2].xyz) {}
+
     inline Vec3<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
@@ -1441,6 +1450,11 @@ template <typename T> struct Mat3
     static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
+    }
+
+    static Mat3<T> normal(Mat3<T> const &mat)
+    {
+        return transpose(inverse(mat));
     }
 
     void printf() const;
@@ -1532,7 +1546,10 @@ template <typename T> struct Mat4
         return rotate(angle, v) * mat;
     }
 
-    static Mat3<T> normal(Mat4<T> const &mat);
+    static Mat3<T> normal(Mat4<T> const &mat)
+    {
+        return transpose(inverse(Mat3<T>(mat)));
+    }
 
     /* Helpers for view matrices */
     static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
