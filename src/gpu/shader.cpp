@@ -395,6 +395,37 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 #endif
 }
 
+void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
+{
+#if defined USE_D3D9 || defined _XBOX
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
+#elif !defined __CELLOS_LV2__
+    glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
+#else
+    /* Not implemented */
+    Abort();
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* FIXME: does this work at all? */
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 3);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 3);
+#elif !defined __CELLOS_LV2__
+    glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
+#else
+    /* FIXME: not implemented */
+    Abort();
+#endif
+}
+
 void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
