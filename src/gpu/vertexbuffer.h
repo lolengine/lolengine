@@ -84,12 +84,12 @@ protected:
         Typehalf,     Typef16vec2, Typef16vec3, Typef16vec4,
         Typefloat,    Typevec2,    Typevec3,    Typevec4,
         Typedouble,   Typef64vec2, Typef64vec3, Typef64vec4,
-        Typeuint8_t,  Typeu8vec2,  Typeu8vec3,  Typeu8vec4,
         Typeint8_t,   Typei8vec2,  Typei8vec3,  Typei8vec4,
-        Typeuint16_t, Typeu16vec2, Typeu16vec3, Typeu16vec4,
+        Typeuint8_t,  Typeu8vec2,  Typeu8vec3,  Typeu8vec4,
         Typeint16_t,  Typei16vec2, Typei16vec3, Typei16vec4,
-        Typeuint32_t, Typeuvec2,   Typeuvec3,   Typeuvec4,
+        Typeuint16_t, Typeu16vec2, Typeu16vec3, Typeu16vec4,
         Typeint32_t,  Typeivec2,   Typeivec3,   Typeivec4,
+        Typeuint32_t, Typeuvec2,   Typeuvec3,   Typeuvec4,
     };
 
 #define LOL_TYPE(T) \
