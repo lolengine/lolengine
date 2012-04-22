@@ -306,6 +306,22 @@ template<> std::ostream &operator<<(std::ostream &stream, mat4 const &m)
 }
 #endif
 
+template<> mat3 mat3::scale(float x, float y, float z)
+{
+    mat3 ret(1.0f);
+
+    ret[0][0] = x;
+    ret[1][1] = y;
+    ret[2][2] = z;
+
+    return ret;
+}
+
+template<> mat3 mat3::scale(vec3 v)
+{
+    return scale(v.x, v.y, v.z);
+}
+
 template<> mat4 mat4::translate(float x, float y, float z)
 {
     mat4 ret(1.0f);
