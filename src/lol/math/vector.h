@@ -1453,6 +1453,8 @@ template <typename T> struct Mat3
     inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
+    static Mat3<T> scale(T x, T y, T z);
+    static Mat3<T> scale(Vec3<T> v);
     static Mat3<T> rotate(T angle, T x, T y, T z);
     static Mat3<T> rotate(T angle, Vec3<T> v);
     static Mat3<T> rotate(Quat<T> q);
@@ -1561,6 +1563,16 @@ template <typename T> struct Mat4
     /* Helpers for transformation matrices */
     static Mat4<T> translate(T x, T y, T z);
     static Mat4<T> translate(Vec3<T> v);
+
+    static inline Mat4<T> scale(T x, T y, T z)
+    {
+        return Mat4<T>(Mat3<T>::scale(x, y, z), (T)1);
+    }
+
+    static inline Mat4<T> scale(Vec3<T> v)
+    {
+        return Mat4<T>(Mat3<T>::scale(v), (T)1);
+    }
 
     static inline Mat4<T> translate(Mat4<T> const &mat, Vec3<T> v)
     {
