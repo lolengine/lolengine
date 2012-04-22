@@ -40,7 +40,7 @@ public:
         return m_data[n];
     }
 
-    inline Array<T1, T2, T3> const& operator+=(Element const &x)
+    inline Array<T1, T2, T3> const& operator<<(Element const &x)
     {
         if (m_count >= m_reserved)
         {
@@ -127,7 +127,7 @@ public:
         return m_data[n];
     }
 
-    inline Array<T1, T2> const& operator+=(Element const &x)
+    inline Array<T1, T2> const& operator<<(Element const &x)
     {
         if (m_count >= m_reserved)
         {
@@ -210,7 +210,7 @@ public:
         return m_data[n];
     }
 
-    inline Array<T1> const& operator+=(T1 const &x)
+    inline Array<T1> const& operator<<(T1 const &x)
     {
         if (m_count >= m_reserved)
         {
@@ -227,7 +227,7 @@ public:
 
     inline void Append(T1 const &x)
     {
-        *this += x;
+        *this << x;
     }
 
     void Remove(int pos)

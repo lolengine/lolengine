@@ -45,18 +45,18 @@ public:
         m_mesh.Append(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
         m_mesh.Append(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
 
-        m_indices += i16vec3(0, 1, 2);
-        m_indices += i16vec3(2, 3, 0);
-        m_indices += i16vec3(1, 5, 6);
-        m_indices += i16vec3(6, 2, 1);
-        m_indices += i16vec3(7, 6, 5);
-        m_indices += i16vec3(5, 4, 7);
-        m_indices += i16vec3(4, 0, 3);
-        m_indices += i16vec3(3, 7, 4);
-        m_indices += i16vec3(4, 5, 1);
-        m_indices += i16vec3(1, 0, 4);
-        m_indices += i16vec3(3, 2, 6);
-        m_indices += i16vec3(6, 7, 3);
+        m_indices << i16vec3(0, 1, 2);
+        m_indices << i16vec3(2, 3, 0);
+        m_indices << i16vec3(1, 5, 6);
+        m_indices << i16vec3(6, 2, 1);
+        m_indices << i16vec3(7, 6, 5);
+        m_indices << i16vec3(5, 4, 7);
+        m_indices << i16vec3(4, 0, 3);
+        m_indices << i16vec3(3, 7, 4);
+        m_indices << i16vec3(4, 5, 1);
+        m_indices << i16vec3(1, 0, 4);
+        m_indices << i16vec3(3, 2, 6);
+        m_indices << i16vec3(6, 7, 3);
 
         m_ready = false;
     }
