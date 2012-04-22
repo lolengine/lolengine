@@ -1561,13 +1561,25 @@ template <typename T> struct Mat4
     /* Helpers for transformation matrices */
     static Mat4<T> translate(T x, T y, T z);
     static Mat4<T> translate(Vec3<T> v);
-    static Mat4<T> rotate(T angle, T x, T y, T z);
-    static Mat4<T> rotate(T angle, Vec3<T> v);
-    static Mat4<T> rotate(Quat<T> q);
 
     static inline Mat4<T> translate(Mat4<T> const &mat, Vec3<T> v)
     {
         return translate(v) * mat;
+    }
+
+    static inline Mat4<T> rotate(T angle, T x, T y, T z)
+    {
+        return Mat4<T>(Mat3<T>::rotate(angle, x, y, z), (T)1);
+    }
+
+    static inline Mat4<T> rotate(T angle, Vec3<T> v)
+    {
+        return Mat4<T>(Mat3<T>::rotate(angle, v), (T)1);
+    }
+
+    static inline Mat4<T> rotate(Quat<T> q)
+    {
+        return Mat4<T>(Mat3<T>::rotate(q), (T)1);
     }
 
     static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)

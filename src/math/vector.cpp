@@ -320,7 +320,25 @@ template<> mat4 mat4::translate(vec3 v)
     return translate(v.x, v.y, v.z);
 }
 
-template<> mat4 mat4::rotate(float angle, float x, float y, float z)
+template<> mat2 mat2::rotate(float angle)
+{
+    angle *= (M_PI / 180.0f);
+
+    float st = sinf(angle);
+    float ct = cosf(angle);
+
+    mat2 ret;
+
+    ret[0][0] = ct;
+    ret[0][1] = st;
+
+    ret[1][0] = -st;
+    ret[1][1] = ct;
+
+    return ret;
+}
+
+template<> mat3 mat3::rotate(float angle, float x, float y, float z)
 {
     angle *= (M_PI / 180.0f);
 
@@ -337,7 +355,7 @@ template<> mat4 mat4::rotate(float angle, float x, float y, float z)
     float mty = (1.0f - ct) * y;
     float mtz = (1.0f - ct) * z;
 
-    mat4 ret(1.0f);
+    mat3 ret;
 
     ret[0][0] = x * mtx + ct;
     ret[0][1] = x * mty + st * z;
@@ -354,19 +372,19 @@ template<> mat4 mat4::rotate(float angle, float x, float y, float z)
     return ret;
 }
 
-template<> mat4 mat4::rotate(float angle, vec3 v)
+template<> mat3 mat3::rotate(float angle, vec3 v)
 {
     return rotate(angle, v.x, v.y, v.z);
 }
 
-template<> mat4 mat4::rotate(quat q)
+template<> mat3 mat3::rotate(quat q)
 {
-    mat4 ret(1.0f);
     float n = norm(q);
 
     if (!n)
-        return ret;
+        return mat3(1.0f);
 
+    mat3 ret;
     float s = 2.0f / n;
 
     ret[0][0] = 1.0f - s * (q.y * q.y + q.z * q.z);
