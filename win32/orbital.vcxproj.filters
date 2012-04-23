@@ -7,6 +7,9 @@
     <ClInclude Include="..\orbital\orbital.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\orbital\particlesystem.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\orbital\orbital.cpp" />
   </ItemGroup>
 </Project>
