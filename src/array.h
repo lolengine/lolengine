@@ -30,6 +30,24 @@ public:
     inline Array() : m_data(0), m_count(0), m_reserved(0) {}
     inline ~Array() { delete[] m_data; }
 
+    Array(Array const& that) : m_data(0), m_count(0), m_reserved(0)
+    {
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, m_count * sizeof(Element));
+        m_count = that.m_count;
+    }
+
+    Array& operator=(Array const& that)
+    {
+        m_data = 0;
+        m_count = 0;
+        m_reserved = 0;
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
+        m_count = that.m_count;
+        return *this;
+    }
+
     inline Element& operator[](int n)
     {
         return m_data[n];
@@ -117,6 +135,24 @@ public:
     inline Array() : m_data(0), m_count(0), m_reserved(0) {}
     inline ~Array() { delete[] m_data; }
 
+    Array(Array const& that) : m_data(0), m_count(0), m_reserved(0)
+    {
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, m_count * sizeof(Element));
+        m_count = that.m_count;
+    }
+
+    Array& operator=(Array const& that)
+    {
+        m_data = 0;
+        m_count = 0;
+        m_reserved = 0;
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
+        m_count = that.m_count;
+        return *this;
+    }
+
     inline Element& operator[](int n)
     {
         return m_data[n];
@@ -197,15 +233,35 @@ private:
 template<typename T1> class Array<T1, void, void>
 {
 public:
+    typedef T1 Element;
+
     inline Array() : m_data(0), m_count(0), m_reserved(0) {}
     inline ~Array() { delete[] m_data; }
 
-    inline T1& operator[](int n)
+    Array(Array const& that) : m_data(0), m_count(0), m_reserved(0)
+    {
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, m_count * sizeof(Element));
+        m_count = that.m_count;
+    }
+
+    Array& operator=(Array const& that)
+    {
+        m_data = 0;
+        m_count = 0;
+        m_reserved = 0;
+        Reserve(that.m_reserved);
+        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
+        m_count = that.m_count;
+        return *this;
+    }
+
+    inline Element& operator[](int n)
     {
         return m_data[n];
     }
 
-    inline T1 const& operator[](int n) const
+    inline Element const& operator[](int n) const
     {
         return m_data[n];
     }
@@ -247,10 +303,10 @@ public:
         if (count <= (int)m_reserved)
             return;
 
-        T1 *tmp = new T1[count];
+        Element *tmp = new Element[count];
         if (m_data)
         {
-            memcpy(tmp, m_data, m_count * sizeof(T1));
+            memcpy(tmp, m_data, m_count * sizeof(Element));
             delete[] m_data;
         }
         m_data = tmp;
@@ -258,10 +314,10 @@ public:
     }
 
     inline int Count() const { return m_count; }
-    inline int Bytes() const { return m_count * sizeof(T1); }
+    inline int Bytes() const { return m_count * sizeof(Element); }
 
 private:
-    T1 *m_data;
+    Element *m_data;
     int m_count, m_reserved;
 };
 
