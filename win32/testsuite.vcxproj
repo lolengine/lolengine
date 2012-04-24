@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\test\testsuite.cpp" />
+    <ClCompile Include="..\test\unit\array.cpp" />
     <ClCompile Include="..\test\unit\build.cpp" />
     <ClCompile Include="..\test\unit\cmplx.cpp" />
     <ClCompile Include="..\test\unit\half.cpp" />

@@ -23,7 +23,8 @@ TESTS = testsuite
 
 testsuite_SOURCES = testsuite.cpp \
     unit/vector.cpp unit/matrix.cpp unit/half.cpp unit/trig.cpp \
-    unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp
+    unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
+    unit/array.cpp
 testsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
