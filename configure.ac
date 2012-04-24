@@ -106,6 +106,8 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   LOL_LIBS="${LOL_LIBS} -lpngdec_stub"
   dnl  For the pad library
   LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
+  dnl  Disable this warning, it's too verbose with vector.h
+  CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"
   AC_PATH_PROG(MAKE_FSELF, make_fself, no)],
  [MAKE_FSELF=no])
 AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
