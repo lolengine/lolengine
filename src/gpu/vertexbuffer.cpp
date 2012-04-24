@@ -46,7 +46,7 @@ class VertexBufferData
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
     D3DVertexBuffer *m_vbo;
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __ANDROID__
     GLuint m_vbo;
     uint8_t *m_memory;
     size_t m_size;
@@ -245,7 +245,19 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         uint32_t usage = (l[n].m_flags >> 16) & 0xffff;
         uint32_t index = l[n].m_flags & 0xffff;
 
+#   if !defined __CELLOS_LV2__
         glEnableVertexAttribArray((GLint)reg);
+#   else
+        switch (usage)
+        {
+        case VertexUsage::Position:
+            glEnableClientState(GL_VERTEX_ARRAY);
+            break;
+        case VertexUsage::Color:
+            glEnableClientState(GL_COLOR_ARRAY);
+            break;
+        }
+#   endif
 
         /* We need to parse the whole vertex declaration to retrieve
          * the information. It sucks. */
@@ -268,6 +280,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
             }
 
         /* Finally, we need to retrieve the type of the data */
+#   if !defined GL_DOUBLE
+#       define GL_DOUBLE 0
+#   endif
         static struct { GLint size; GLenum type; } const tlut[] =
         {
             { 0, 0 },
@@ -299,9 +314,27 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         GLboolean normalize = (tlut[type_index].type == GL_UNSIGNED_BYTE)
                            || (tlut[type_index].type == GL_BYTE);
 
+#   if !defined __CELLOS_LV2__
         glVertexAttribPointer((GLint)reg, tlut[type_index].size,
                               tlut[type_index].type, normalize,
                               stride, (GLvoid const *)(uintptr_t)offset);
+#   else
+        switch (usage)
+        {
+        case VertexUsage::Position:
+            glVertexPointer(tlut[type_index].size, tlut[type_index].type,
+                            stride, (GLvoid const *)(uintptr_t)offset);
+            break;
+        case VertexUsage::Normal:
+            glNormalPointer(tlut[type_index].type,
+                            stride, (GLvoid const *)(uintptr_t)offset);
+            break;
+        case VertexUsage::Color:
+            glColorPointer(tlut[type_index].size, tlut[type_index].type,
+                           stride, (GLvoid const *)(uintptr_t)offset);
+            break;
+        }
+#   endif
     }
 #endif
 }
