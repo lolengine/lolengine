@@ -39,12 +39,13 @@ public:
     ArrayBase(ArrayBase const& that) : m_data(0), m_count(0), m_reserved(0)
     {
         Reserve(that.m_reserved);
-        memcpy(m_data, that.m_data, m_count * sizeof(Element));
+        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
         m_count = that.m_count;
     }
 
     ArrayBase& operator=(ArrayBase const& that)
     {
+        /* FIXME: delete old data!! */
         m_data = 0;
         m_count = 0;
         m_reserved = 0;
