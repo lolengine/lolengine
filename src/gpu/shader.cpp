@@ -294,8 +294,7 @@ void Shader::SetUniform(ShaderUniform const &uni, int i)
 #elif !defined __CELLOS_LV2__
     glUniform1i(uni.frag, i);
 #else
-    /* FIXME: does this exist at all? */
-    //cgGLSetParameter1i((CGparameter)uni.frag, i);
+    /* FIXME: does this exist at all? cgGLSetParameter1i doesn't. */
 #endif
 }
 
@@ -354,12 +353,12 @@ void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0, 0));
 #elif !defined __CELLOS_LV2__
-    glUniform2f(uni.frag, v.x, v.y);
+    glUniform2fv(uni.frag, 1, &v[0]);
 #else
     if (uni.frag)
-        cgGLSetParameter2f((CGparameter)uni.frag, v.x, v.y);
+        cgGLSetParameter2fv((CGparameter)uni.frag, &v[0]);
     if (uni.vert)
-        cgGLSetParameter2f((CGparameter)uni.vert, v.x, v.y);
+        cgGLSetParameter2fv((CGparameter)uni.vert, &v[0]);
 #endif
 }
 
@@ -368,12 +367,12 @@ void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0));
 #elif !defined __CELLOS_LV2__
-    glUniform3f(uni.frag, v.x, v.y, v.z);
+    glUniform3fv(uni.frag, 1, &v[0]);
 #else
     if (uni.frag)
-        cgGLSetParameter3f((CGparameter)uni.frag, v.x, v.y, v.z);
+        cgGLSetParameter3fv((CGparameter)uni.frag, &v[0]);
     if (uni.vert)
-        cgGLSetParameter3f((CGparameter)uni.vert, v.x, v.y, v.z);
+        cgGLSetParameter3fv((CGparameter)uni.vert, &v[0]);
 #endif
 }
 
@@ -385,13 +384,12 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
     if (uni.flags & 2)
         g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
-    glUniform4f(uni.frag, v.x, v.y, v.z, v.w);
+    glUniform4fv(uni.frag, 1, &v[0]);
 #else
-    /* FIXME: use the array versions of these functions */
     if (uni.frag)
-        cgGLSetParameter4f((CGparameter)uni.frag, v.x, v.y, v.z, v.w);
+        cgGLSetParameter4fv((CGparameter)uni.frag, &v[0]);
     if (uni.vert)
-        cgGLSetParameter4f((CGparameter)uni.vert, v.x, v.y, v.z, v.w);
+        cgGLSetParameter4fv((CGparameter)uni.vert, &v[0]);
 #endif
 }
 
@@ -406,8 +404,11 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 #elif !defined __CELLOS_LV2__
     glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    /* FIXME: not implemented */
-    Abort();
+    mat4 tmp(m, 1.0f, 1.0f);
+    if (uni.frag)
+        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
+    if (uni.vert)
+        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
 #endif
 }
 
@@ -424,8 +425,12 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 #elif !defined __CELLOS_LV2__
     glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    /* FIXME: not implemented */
-    Abort();
+    /* FIXME: check it's the proper way to do this */
+    mat4 tmp(m, 1.0f);
+    if (uni.frag)
+        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
+    if (uni.vert)
+        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
 #endif
 }
 
