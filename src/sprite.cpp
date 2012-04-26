@@ -50,7 +50,7 @@ void Sprite::TickDraw(float deltams)
 {
     Entity::TickDraw(deltams);
 
-    Scene::GetDefault()->AddTile(data->tileset, data->id, position,
+    Scene::GetDefault()->AddTile(data->tileset, data->id, m_position,
                                  0, vec2(1.0f));
 }
 

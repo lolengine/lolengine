@@ -44,9 +44,9 @@ Gradient::Gradient(vec3 aa, vec3 bb)
   : data(new GradientData())
 {
     /* FIXME: this should not be hardcoded */
-    position = aa;
-    bbox[0] = aa;
-    bbox[1] = bb;
+    m_position = aa;
+    m_bbox[0] = aa;
+    m_bbox[1] = bb;
 
     data->shader = NULL;
 }
