@@ -120,13 +120,13 @@ void Input::SetMousePos(ivec2 coord)
 
     for (int n = 0; n < data->nentities; n++)
     {
-        if (coord.x < data->entities[n]->bbox[0].x
-             || coord.x >= data->entities[n]->bbox[1].x
-             || coord.y < data->entities[n]->bbox[0].y
-             || coord.y >= data->entities[n]->bbox[1].y)
+        if (coord.x < data->entities[n]->m_bbox[0].x
+             || coord.x >= data->entities[n]->m_bbox[1].x
+             || coord.y < data->entities[n]->m_bbox[0].y
+             || coord.y >= data->entities[n]->m_bbox[1].y)
             continue;
 
-        if (!top || top->bbox[1].z < data->entities[n]->bbox[1].z)
+        if (!top || top->m_bbox[1].z < data->entities[n]->m_bbox[1].z)
             top = data->entities[n];
     }
 
@@ -134,19 +134,19 @@ void Input::SetMousePos(ivec2 coord)
     {
         if (data->entities[n] == top)
         {
-            data->entities[n]->mousepos = coord - (ivec2)top->bbox[0].xy;
+            data->entities[n]->m_mousepos = coord - (ivec2)top->m_bbox[0].xy;
             if (top != data->lastfocus)
-                data->entities[n]->pressed = data->buttons;
+                data->entities[n]->m_pressed = data->buttons;
             else
-                data->entities[n]->clicked = ivec3(0);
+                data->entities[n]->m_clicked = ivec3(0);
         }
         else
         {
-            data->entities[n]->mousepos = ivec2(-1);
+            data->entities[n]->m_mousepos = ivec2(-1);
             /* FIXME */
-            data->entities[n]->released = ivec3(0);
-            data->entities[n]->pressed = ivec3(0);
-            data->entities[n]->clicked = ivec3(0);
+            data->entities[n]->m_released = ivec3(0);
+            data->entities[n]->m_pressed = ivec3(0);
+            data->entities[n]->m_clicked = ivec3(0);
         }
     }
 
@@ -159,10 +159,10 @@ void Input::SetMouseButton(int index)
 
     if (data->lastfocus)
     {
-        if (!data->lastfocus->pressed[index])
-            data->lastfocus->clicked[index] = 1;
-        data->lastfocus->pressed[index] = 1;
-        data->lastfocus->released[index] = 0;
+        if (!data->lastfocus->m_pressed[index])
+            data->lastfocus->m_clicked[index] = 1;
+        data->lastfocus->m_pressed[index] = 1;
+        data->lastfocus->m_released[index] = 0;
     }
 }
 
@@ -172,10 +172,10 @@ void Input::UnsetMouseButton(int index)
 
     if (data->lastfocus)
     {
-        if (data->lastfocus->pressed[index])
-            data->lastfocus->released[index] = 1;
-        data->lastfocus->pressed[index] = 0;
-        data->lastfocus->clicked[index] = 0;
+        if (data->lastfocus->m_pressed[index])
+            data->lastfocus->m_released[index] = 1;
+        data->lastfocus->m_pressed[index] = 0;
+        data->lastfocus->m_clicked[index] = 0;
     }
 }
 

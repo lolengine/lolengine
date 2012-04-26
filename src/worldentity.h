@@ -24,14 +24,14 @@ namespace lol
 class WorldEntity : public Entity
 {
 public:
-    vec3 position;
-    vec3 rotation;
-    vec3 velocity;
-    vec3 bbox[2];
+    vec3 m_position;
+    vec3 m_rotation;
+    vec3 m_velocity;
+    vec3 m_bbox[2];
 
-    ivec2 mousepos;
-    ivec3 mousebuttons;
-    ivec3 pressed, clicked, released;
+    ivec2 m_mousepos;
+    ivec3 m_mousebuttons;
+    ivec3 m_pressed, m_clicked, m_released;
 
 protected:
     WorldEntity();

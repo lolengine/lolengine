@@ -153,9 +153,9 @@ public:
         Ticker::Ref(m_zoomtext);
 #endif
 
-        position = ivec3(0, 0, 0);
-        bbox[0] = position;
-        bbox[1] = ivec3(m_window_size, 0);
+        m_position = ivec3(0, 0, 0);
+        m_bbox[0] = m_position;
+        m_bbox[1] = ivec3(m_window_size, 0);
         Input::TrackMouse(this);
 
         /* Spawn worker threads and wait for their readiness. */
@@ -208,7 +208,7 @@ public:
         int prev_frame = m_frame;
         m_frame = (m_frame + 1) % 4;
 
-        f64cmplx worldmouse = m_center + ScreenToWorldOffset(mousepos);
+        f64cmplx worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
@@ -216,18 +216,18 @@ public:
         {
             if (!m_drag)
             {
-                m_oldmouse = mousepos;
+                m_oldmouse = m_mousepos;
                 m_drag = true;
             }
             m_translate = ScreenToWorldOffset(m_oldmouse)
-                        - ScreenToWorldOffset(mousepos);
+                        - ScreenToWorldOffset(m_mousepos);
             /* XXX: the purpose of this hack is to avoid translating by
              * an exact number of pixels. If this were to happen, the step()
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
              * would have tie rankings in the distance calculation. */
             m_translate *= 1023.0 / 1024.0;
-            m_oldmouse = mousepos;
+            m_oldmouse = m_mousepos;
         }
         else
         {
@@ -240,7 +240,7 @@ public:
             }
         }
 
-        if ((buttons[0] || buttons[2]) && mousepos.x != -1)
+        if ((buttons[0] || buttons[2]) && m_mousepos.x != -1)
         {
             double zoom = buttons[0] ? -0.0005 : 0.0005;
             m_zoom_speed += deltams * zoom;
@@ -274,7 +274,7 @@ public:
 #if !defined __CELLOS_LV2__ && !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * zoom + worldmouse;
-            worldmouse = m_center + ScreenToWorldOffset(mousepos);
+            worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
 #endif
 
             /* Store the transformation properties to go from m_frame - 1
