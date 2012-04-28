@@ -123,6 +123,9 @@ void VertexDeclaration::Bind()
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 {
 #if defined _XBOX || defined USE_D3D9
+    g_d3ddevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+    g_d3ddevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+    g_d3ddevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
     if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
         Abort();
     switch (type)
@@ -133,6 +136,13 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         break;
     }
 #else
+#   if defined HAVE_GL_2X && !defined __APPLE__
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+#   endif
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     switch (type)
     {
     case MeshPrimitive::Triangles:
@@ -147,8 +157,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
                                             int skip, int count)
 {
 #if defined _XBOX || defined USE_D3D9
-    if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
-        Abort();
+    g_d3ddevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+    g_d3ddevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+    g_d3ddevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+    g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
     switch (type)
     {
     case MeshPrimitive::Triangles:
@@ -157,6 +169,13 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         break;
     }
 #else
+#   if defined HAVE_GL_2X && !defined __APPLE__
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.01f);
+#   endif
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     switch (type)
     {
     case MeshPrimitive::Triangles:
