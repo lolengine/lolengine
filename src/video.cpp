@@ -131,10 +131,6 @@ void Video::Setup(ivec2 size)
     }
 
     g_d3ddevice = VideoData::d3d_dev;
-
-    g_d3ddevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
-    g_d3ddevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    g_d3ddevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 #else
 #   if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
@@ -154,7 +150,6 @@ void Video::Setup(ivec2 size)
     glClearDepth(1.0);
 
 #   if defined HAVE_GL_2X && !defined __APPLE__
-    glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #   endif
 #endif
