@@ -1,7 +1,7 @@
 //
 // Lol Engine - Cube tutorial
 //
-// Copyright: (c) 2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2011-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -61,11 +61,11 @@ public:
         m_ready = false;
     }
 
-    virtual void TickGame(float deltams)
+    virtual void TickGame(float seconds)
     {
-        WorldEntity::TickGame(deltams);
+        WorldEntity::TickGame(seconds);
 
-        m_angle += deltams / 1000.0f * 45.0f;
+        m_angle += seconds * 45.0f;
 
         mat4 anim = mat4::rotate(m_angle, vec3(0, 1, 0));
         mat4 model = mat4::translate(vec3(0, 0, -4.5));
@@ -75,9 +75,9 @@ public:
         m_matrix = proj * view * model * anim;
     }
 
-    virtual void TickDraw(float deltams)
+    virtual void TickDraw(float seconds)
     {
-        WorldEntity::TickDraw(deltams);
+        WorldEntity::TickDraw(seconds);
 
         if (!m_ready)
         {

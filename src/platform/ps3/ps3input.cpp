@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -81,9 +81,9 @@ Ps3Input::Ps3Input()
 #endif
 }
 
-void Ps3Input::TickGame(float deltams)
+void Ps3Input::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 
 #if defined __CELLOS_LV2__
     CellPadInfo2 pad_info2;
@@ -107,9 +107,9 @@ void Ps3Input::TickGame(float deltams)
         {
             int x = data->pad_data[i].button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X];
             int y = data->pad_data[i].button[CELL_PAD_BTN_OFFSET_ANALOG_RIGHT_X + 1];
-            vec2 delta(4e-3f * (abs(x - 127) < 16 ? 0 : x - 127),
-                       -4e-3f * (abs(y - 127) < 16 ? 0 : y - 127));
-            data->mousepos += delta * deltams;
+            vec2 delta(4.f * (abs(x - 127) < 16 ? 0 : x - 127),
+                       -4.f * (abs(y - 127) < 16 ? 0 : y - 127));
+            data->mousepos += delta * seconds;
             Input::SetMousePos((ivec2)data->mousepos);
         }
 

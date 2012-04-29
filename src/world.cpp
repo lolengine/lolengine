@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -56,14 +56,14 @@ char const *World::GetName()
     return "<world>";
 }
 
-void World::TickGame(float deltams)
+void World::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 }
 
-void World::TickDraw(float deltams)
+void World::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 }
 
 int World::GetWidth()

@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -31,7 +31,7 @@ class SdlInputData
     friend class SdlInput;
 
 private:
-    void Tick(float deltams);
+    void Tick(float seconds);
 
     static ivec2 GetMousePos();
 };
@@ -50,25 +50,25 @@ SdlInput::SdlInput()
     m_gamegroup = GAMEGROUP_BEFORE;
 }
 
-void SdlInput::TickGame(float deltams)
+void SdlInput::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 
 #if !defined _WIN32
-    data->Tick(deltams);
+    data->Tick(seconds);
 #endif
 }
 
-void SdlInput::TickDraw(float deltams)
+void SdlInput::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
 #if defined _WIN32
-    data->Tick(deltams);
+    data->Tick(seconds);
 #endif
 }
 
-void SdlInputData::Tick(float deltams)
+void SdlInputData::Tick(float seconds)
 {
 #if defined USE_SDL
     /* Handle mouse input */
@@ -86,7 +86,7 @@ void SdlInputData::Tick(float deltams)
             break;
 #if 0
         case SDL_KEYDOWN:
-            Input::KeyPressed(event.key.keysym.sym, deltams);
+            Input::KeyPressed(event.key.keysym.sym, seconds);
             break;
 #endif
         case SDL_MOUSEBUTTONDOWN:
@@ -109,7 +109,7 @@ void SdlInputData::Tick(float deltams)
     Uint8 *keystate = SDL_GetKeyState(NULL);
     for (int i = 0; i < 256; i++)
         if (keystate[i])
-            Input::KeyPressed(i, deltams);
+            Input::KeyPressed(i, seconds);
 #endif
 #endif
 }

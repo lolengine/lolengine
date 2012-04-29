@@ -111,9 +111,9 @@ TileSet::~TileSet()
     delete data;
 }
 
-void TileSet::TickDraw(float deltams)
+void TileSet::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     if (IsDestroying())
     {

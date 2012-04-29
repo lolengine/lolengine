@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -50,7 +50,7 @@ char const *Entity::GetName()
     return "<entity>";
 }
 
-void Entity::TickGame(float deltams)
+void Entity::TickGame(float seconds)
 {
 #if !LOL_RELEASE
     if (m_tickstate != STATE_PRETICK_GAME)
@@ -59,7 +59,7 @@ void Entity::TickGame(float deltams)
 #endif
 }
 
-void Entity::TickDraw(float deltams)
+void Entity::TickDraw(float seconds)
 {
 #if !LOL_RELEASE
     if (m_tickstate != STATE_PRETICK_DRAW)

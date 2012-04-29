@@ -41,14 +41,14 @@ Sprite::Sprite(TileSet *tileset, int id)
     data->id = id;
 }
 
-void Sprite::TickGame(float deltams)
+void Sprite::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 }
 
-void Sprite::TickDraw(float deltams)
+void Sprite::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     Scene::GetDefault()->AddTile(data->tileset, data->id, m_position,
                                  0, vec2(1.0f));

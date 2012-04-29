@@ -50,13 +50,13 @@ Emitter::Emitter(TileSet *tileset, vec3 gravity)
     data->nparticles = 0;
 }
 
-void Emitter::TickGame(float deltams)
+void Emitter::TickGame(float seconds)
 {
     for (int i = 0; i < data->nparticles; i++)
     {
         vec3 oldvelocity = data->velocities[i];
-        data->velocities[i] += deltams * data->gravity;
-        data->positions[i] += deltams * 0.5f
+        data->velocities[i] += seconds * data->gravity;
+        data->positions[i] += seconds * 0.5f
                                       * (oldvelocity + data->velocities[i]);
         if (data->positions[i].y < -100)
         {
@@ -67,12 +67,12 @@ void Emitter::TickGame(float deltams)
         }
     }
 
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 }
 
-void Emitter::TickDraw(float deltams)
+void Emitter::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     for (int i = 0; i < data->nparticles; i++)
         Scene::GetDefault()->AddTile(data->tileset, data->particles[i],

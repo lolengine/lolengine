@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -32,7 +32,7 @@ public:
     TickerData() :
         todolist(0), autolist(0),
         nentities(0),
-        frame(0), recording(0), deltams(0), bias(0), fps(0),
+        frame(0), recording(0), deltatime(0), bias(0), fps(0),
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -68,7 +68,7 @@ private:
     /* Fixed framerate management */
     int frame, recording;
     Timer timer;
-    float deltams, bias, fps;
+    float deltatime, bias, fps;
 
     /* Background threads */
     static void *GameThreadMain(void *p);
@@ -181,15 +181,15 @@ void *TickerData::GameThreadMain(void *p)
 
         data->frame++;
 
-        /* If recording with fixed framerate, set deltams to a fixed value */
+        /* If recording with fixed framerate, set deltatime to a fixed value */
         if (data->recording && data->fps)
         {
-            data->deltams = 1000.0f / data->fps;
+            data->deltatime = 1.f / data->fps;
         }
         else
         {
-            data->deltams = 1000.0f * data->timer.Get();
-            data->bias += data->deltams;
+            data->deltatime = data->timer.Get();
+            data->bias += data->deltatime;
         }
 
         /* If shutdown is stuck, kick the first entity we meet and see
@@ -278,7 +278,7 @@ void *TickerData::GameThreadMain(void *p)
                         Log::Error("entity not idle for game tick\n");
                     e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
-                    e->TickGame(data->deltams);
+                    e->TickGame(data->deltatime);
 #if !LOL_RELEASE
                     if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
                         Log::Error("entity missed super game tick\n");
@@ -368,7 +368,7 @@ void Ticker::TickDraw()
                     Log::Error("entity not idle for draw tick\n");
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                e->TickDraw(data->deltams);
+                e->TickDraw(data->deltatime);
 #if !LOL_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity missed super draw tick\n");
@@ -391,16 +391,16 @@ void Ticker::TickDraw()
 
     /* If framerate is fixed, force wait time to 1/FPS. Otherwise, set wait
      * time to 0. */
-    float framems = data->fps ? 1000.0f / data->fps : 0.0f;
+    float frametime = data->fps ? 1.f / data->fps : 0.f;
 
-    if (framems > data->bias + 200.0f)
-        framems = data->bias + 200.0f; // Don't go below 5 fps
-    if (framems > data->bias)
-        data->timer.Wait(1e-3f * (framems - data->bias));
+    if (frametime > data->bias + .2f)
+        frametime = data->bias + .2f; // Don't go below 5 fps
+    if (frametime > data->bias)
+        data->timer.Wait(frametime - data->bias);
 
     /* If recording, do not try to compensate for lag. */
     if (!data->recording)
-        data->bias -= framems;
+        data->bias -= frametime;
 }
 
 void Ticker::StartRecording()

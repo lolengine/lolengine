@@ -96,11 +96,11 @@ private:
         float x = 0.0f;
         for (npoints = 0; npoints < SINE_SIZE && x <= 1.0f; npoints++)
         {
-            float y = 0.5f + 0.5f * lol_sin(x * 2.0f * M_PI + time * 5e-3f);
+            float y = 0.5f + 0.5f * lol_sin(x * 2.0f * M_PI + time * 5.f);
             points[npoints * 2] = aa.x + (bb.x - aa.x) * x;
             points[npoints * 2 + 1] = aa.y + (bb.y - aa.y) * y;
 
-            float dy = M_PI * lol_cos(x * 2.0f * M_PI + time * 5e-3f);
+            float dy = M_PI * lol_cos(x * 2.0f * M_PI + time * 5.f);
             float dx = SINE_SPACE / sqrtf(1.0f + dy * dy);
             x += dx;
         }
@@ -119,7 +119,7 @@ DebugQuad::DebugQuad()
   : data(new DebugQuadData())
 {
     data->initialised = 0;
-    data->time = RandF(10000.0f);
+    data->time = RandF(10.0f);
 
     m_drawgroup = DRAWGROUP_HUD;
 }
@@ -142,16 +142,16 @@ void DebugQuad::Advance()
     }
 }
 
-void DebugQuad::TickGame(float deltams)
+void DebugQuad::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 
-    data->time += deltams;
+    data->time += seconds;
 }
 
-void DebugQuad::TickDraw(float deltams)
+void DebugQuad::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     if (!data->initialised && !IsDestroying())
     {
@@ -213,7 +213,7 @@ void DebugQuad::TickDraw(float deltams)
 
     GLfloat texcoords[12];
     mat4 t1 = mat4::translate(0.5f, 0.5f, 0.0f)
-            * mat4::rotate(0.0254f * data->time, 0.0f, 0.0f, 1.0f)
+            * mat4::rotate(25.4f * data->time, 0.0f, 0.0f, 1.0f)
             * mat4::translate(-0.5f, -0.5f, 0.0f);
     for (int i = 0; i < 6; i++)
     {
@@ -224,9 +224,9 @@ void DebugQuad::TickDraw(float deltams)
 
     GLfloat colors[18];
     mat4 t2 = mat4::translate(0.5f, 0.5f, 0.5f)
-            * mat4::rotate(0.0154f * data->time, 0.0f, 0.0f, 1.0f)
-            * mat4::rotate(0.0211f * data->time, 0.0f, 1.0f, 0.0f)
-            * mat4::rotate(0.0267f * data->time, 1.0f, 0.0f, 0.0f)
+            * mat4::rotate(15.4f * data->time, 0.0f, 0.0f, 1.0f)
+            * mat4::rotate(21.1f * data->time, 0.0f, 1.0f, 0.0f)
+            * mat4::rotate(26.7f * data->time, 1.0f, 0.0f, 0.0f)
             * mat4::translate(-0.5f, -0.5f, 0.0f);
     for (int i = 0; i < 6; i++)
     {

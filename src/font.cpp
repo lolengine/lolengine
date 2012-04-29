@@ -59,9 +59,9 @@ Font::~Font()
     delete data;
 }
 
-void Font::TickDraw(float deltams)
+void Font::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 }
 
 char const *Font::GetName()
