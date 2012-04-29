@@ -30,6 +30,8 @@ public:
     static vec2 GetAxis(int axis);
     static ivec2 GetMousePos();
     static ivec3 GetMouseButtons();
+	//BH : Added this, is a v0.1 Alpha version.
+    static int GetButtonState(int button);
 
     /* Entities can subscribe to events */
     static void TrackMouse(WorldEntity *e);

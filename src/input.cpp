@@ -91,6 +91,21 @@ ivec3 Input::GetMouseButtons()
     return data->buttons;
 }
 
+//BH : Added this, is a v0.1 Alpha version.
+int Input::GetButtonState(int button)
+{
+#if defined USE_SDL
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+#else
+    Uint8 *keystate = SDL_GetKeyState(NULL);
+#endif
+    return keystate[button];
+#else
+    return 0;
+#endif
+}
+
 void Input::TrackMouse(WorldEntity *e)
 {
     if (data->nentities >= InputData::MAX_ENTITIES)
