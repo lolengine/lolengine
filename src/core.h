@@ -85,6 +85,7 @@ static inline int isnan(float f)
 #include "entity.h"
 #include "worldentity.h"
 
+#include "camera.h"
 #include "emitter.h"
 #include "font.h"
 #include "gradient.h"

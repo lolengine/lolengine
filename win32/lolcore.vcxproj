@@ -74,6 +74,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\application\application.cpp" />
     <ClCompile Include="..\src\audio.cpp" />
+    <ClCompile Include="..\src\camera.cpp" />
     <ClCompile Include="..\src\debug\fps.cpp" />
     <ClCompile Include="..\src\debug\quad.cpp" />
     <ClCompile Include="..\src\debug\record.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="..\src\array.h" />
     <ClInclude Include="..\src\audio.h" />
     <ClInclude Include="..\src\bitfield.h" />
+    <ClInclude Include="..\src\camera.h" />
     <ClInclude Include="..\src\core.h" />
     <ClInclude Include="..\src\debug\fps.h" />
     <ClInclude Include="..\src\debug\quad.h" />
