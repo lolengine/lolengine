@@ -203,7 +203,7 @@ template<> void ivec4::printf() const
 
 template<> void quat::printf() const
 {
-    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
+    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", w, x, y, z);
 }
 
 template<> void mat2::printf() const
@@ -340,8 +340,8 @@ template<> mat2 mat2::rotate(float angle)
 {
     angle *= (M_PI / 180.0f);
 
-    float st = sinf(angle);
-    float ct = cosf(angle);
+    float st = std::sin(angle);
+    float ct = std::cos(angle);
 
     mat2 ret;
 
@@ -358,8 +358,8 @@ template<> mat3 mat3::rotate(float angle, float x, float y, float z)
 {
     angle *= (M_PI / 180.0f);
 
-    float st = sinf(angle);
-    float ct = cosf(angle);
+    float st = std::sin(angle);
+    float ct = std::cos(angle);
 
     float len = sqrtf(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
@@ -454,6 +454,20 @@ template<> quat::Quat(mat4 const &m)
         y = s * (m[2][1] + m[1][2]);
         w = s * (m[1][0] - m[0][1]);
     }
+}
+
+template<> quat quat::rotate(float angle, vec3 const &v)
+{
+    angle *= (M_PI / 360.0f);
+
+    vec3 tmp = normalize(v) * std::sin(angle);
+
+    return quat(tmp.x, tmp.y, tmp.z, std::cos(angle));
+}
+
+template<> quat quat::rotate(float angle, float x, float y, float z)
+{
+    return quat::rotate(angle, vec3(x, y, z));
 }
 
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)

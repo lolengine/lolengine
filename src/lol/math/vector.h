@@ -909,13 +909,16 @@ template <typename T> struct Vec4 : BVec4<T>
 template <typename T> struct Quat
 {
     inline Quat() {}
-    inline Quat(T X) : x(0), y(0), z(0), w(X) {}
-    inline Quat(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
+    inline Quat(T W) : x(0), y(0), z(0), w(W) {}
+    inline Quat(T W, T X, T Y, T Z) : x(X), y(Y), z(Z), w(W) {}
 
     Quat(Mat3<T> const &m);
     Quat(Mat4<T> const &m);
 
     DECLARE_MEMBER_OPS(Quat)
+
+    static Quat<T> rotate(T angle, T x, T y, T z);
+    static Quat<T> rotate(T angle, Vec3<T> const &v);
 
     inline Quat<T> operator *(Quat<T> const &val) const
     {
@@ -923,7 +926,7 @@ template <typename T> struct Quat
         Vec3<T> v1(x, y, z);
         Vec3<T> v2(val.x, val.y, val.z);
         Vec3<T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
-        return Quat<T>(v3.x, v3.y, v3.z, w * val.w - dot(v1, v2));
+        return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
     }
 
     inline Quat<T> operator *=(Quat<T> const &val)
@@ -933,7 +936,7 @@ template <typename T> struct Quat
 
     inline Quat<T> operator ~() const
     {
-        return Quat<T>(-x, -y, -z, w);
+        return Quat<T>(w, -x, -y, -z);
     }
 
 #if !defined __ANDROID__
@@ -941,6 +944,7 @@ template <typename T> struct Quat
     friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
 #endif
 
+    /* Storage order is still xyzw because operator[] uses &this->x */
     T x, y, z, w;
 };
 
