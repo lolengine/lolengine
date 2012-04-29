@@ -10,7 +10,7 @@ liblol_a_SOURCES = \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h \
-    platform.cpp platform.h sprite.cpp sprite.h \
+    platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
     lol/unit.h lol/debug.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
