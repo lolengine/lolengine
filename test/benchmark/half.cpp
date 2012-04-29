@@ -46,69 +46,69 @@ void bench_half(int mode)
         }
 
         /* Copy float */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = pf[i + 1];
-        result[0] += timer.GetMs();
+        result[0] += timer.Get();
 
         /* Convert half to float (array) */
-        timer.GetMs();
+        timer.Get();
         half::convert(pf, ph, HALF_TABLE_SIZE);
-        result[1] += timer.GetMs();
+        result[1] += timer.Get();
 
         /* Convert half to float (fast) */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = (float)ph[i];
-        result[2] += timer.GetMs();
+        result[2] += timer.Get();
 
         /* Add a half to every float */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] += ph[i];
-        result[3] += timer.GetMs();
+        result[3] += timer.Get();
 
         /* Copy half */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = ph[i + 1];
-        result[4] += timer.GetMs();
+        result[4] += timer.Get();
 
         /* Change sign of every half */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = -ph[i];
-        result[5] += timer.GetMs();
+        result[5] += timer.Get();
 
         /* Convert float to half (array) */
-        timer.GetMs();
+        timer.Get();
         half::convert(ph, pf, HALF_TABLE_SIZE);
-        result[6] += timer.GetMs();
+        result[6] += timer.Get();
 
         /* Convert float to half (fast) */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = (half)pf[i];
-        result[7] += timer.GetMs();
+        result[7] += timer.Get();
 
         /* Convert float to half (accurate) */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = half::makeaccurate(pf[i]);
-        result[8] += timer.GetMs();
+        result[8] += timer.Get();
 
         /* Add a float to every half */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] += pf[i];
-        result[9] += timer.GetMs();
+        result[9] += timer.Get();
     }
 
     delete[] pf;
     delete[] ph;
 
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
-        result[i] *= 1000000.0f / (HALF_TABLE_SIZE * HALF_RUNS);
+        result[i] *= 1e9f / (HALF_TABLE_SIZE * HALF_RUNS);
 
     Log::Info("                          ns/elem\n");
     Log::Info("float = float            %7.3f\n", result[0]);

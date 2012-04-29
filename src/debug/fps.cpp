@@ -63,36 +63,36 @@ void DebugFps::TickGame(float deltams)
 
 #if 0
     sprintf(buf, "%2.2f fps (%i)",
-            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            1.0f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Ticker::GetFrameNum());
     data->lines[0]->SetText(buf);
 
     sprintf(buf, "Game  % 7.2f % 7.2f",
-            Profiler::GetAvg(Profiler::STAT_TICK_GAME),
-            Profiler::GetMax(Profiler::STAT_TICK_GAME));
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_GAME),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_GAME));
     data->lines[1]->SetText(buf);
 
     sprintf(buf, "Draw  % 7.2f % 7.2f",
-            Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
-            Profiler::GetMax(Profiler::STAT_TICK_DRAW));
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_DRAW));
     data->lines[2]->SetText(buf);
 
     sprintf(buf, "Blit  % 7.2f % 7.2f",
-            Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
-            Profiler::GetMax(Profiler::STAT_TICK_BLIT));
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_BLIT));
     data->lines[3]->SetText(buf);
 
     sprintf(buf, "Frame % 7.2f % 7.2f",
-            Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
-            Profiler::GetMax(Profiler::STAT_TICK_FRAME));
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            1e3f * Profiler::GetMax(Profiler::STAT_TICK_FRAME));
     data->lines[4]->SetText(buf);
 #else
     sprintf(buf, "%2.2f/%2.2f/%2.2f/%2.2f %2.2f fps (%i)",
-            Profiler::GetAvg(Profiler::STAT_TICK_GAME),
-            Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
-            Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
-            Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
-            1e3f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_GAME),
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
+            1e3f * Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
+            1.0f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             Ticker::GetFrameNum());
     data->lines[0]->SetText(buf);
 #endif

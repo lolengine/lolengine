@@ -188,7 +188,7 @@ void *TickerData::GameThreadMain(void *p)
         }
         else
         {
-            data->deltams = data->timer.GetMs();
+            data->deltams = 1000.0f * data->timer.Get();
             data->bias += data->deltams;
         }
 
@@ -396,7 +396,7 @@ void Ticker::TickDraw()
     if (framems > data->bias + 200.0f)
         framems = data->bias + 200.0f; // Don't go below 5 fps
     if (framems > data->bias)
-        data->timer.WaitMs(framems - data->bias);
+        data->timer.Wait(1e-3f * (framems - data->bias));
 
     /* If recording, do not try to compensate for lag. */
     if (!data->recording)

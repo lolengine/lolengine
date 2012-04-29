@@ -44,41 +44,41 @@ void bench_matrix(int mode)
         }
 
         /* Copy matrices */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] = pm[i + 1];
-        result[0] += timer.GetMs();
+        result[0] += timer.Get();
 
         /* Determinant */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pf[i] = determinant(pm[i]);
-        result[1] += timer.GetMs();
+        result[1] += timer.Get();
 
         /* Multiply matrices */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] *= pm[i + 1];
-        result[2] += timer.GetMs();
+        result[2] += timer.Get();
 
         /* Add matrices */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] += pm[i + 1];
-        result[3] += timer.GetMs();
+        result[3] += timer.Get();
 
         /* Invert matrix */
-        timer.GetMs();
+        timer.Get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] = inverse(pm[i]);
-        result[4] += timer.GetMs();
+        result[4] += timer.Get();
     }
 
     delete[] pm;
     delete[] pf;
 
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
-        result[i] *= 1000000.0f / (MATRIX_TABLE_SIZE * MATRIX_RUNS);
+        result[i] *= 1e9f / (MATRIX_TABLE_SIZE * MATRIX_RUNS);
 
     Log::Info("                          ns/elem\n");
     Log::Info("mat4 = mat4              %7.3f\n", result[0]);
