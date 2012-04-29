@@ -57,7 +57,7 @@ LOLUNIT_FIXTURE(QuaternionTest)
     LOLUNIT_TEST(Conjugate)
     {
         quat a(1.0f, 3.0f, 2.0f, 4.0f);
-        quat b(-1.0f, -3.0f, -2.0f, 4.0f);
+        quat b(1.0f, -3.0f, -2.0f, -4.0f);
 
         LOLUNIT_ASSERT_EQUAL(a, ~b);
         LOLUNIT_ASSERT_EQUAL(~a, b);
@@ -70,7 +70,7 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_EQUAL(norm(a), 81.0f);
 
         quat b = a * ~a;
-        quat c(0.0f, 0.0f, 0.0f, norm(a));
+        quat c(norm(a), 0.0f, 0.0f, 0.0f);
 
         LOLUNIT_ASSERT_EQUAL(b, c);
 
@@ -81,10 +81,10 @@ LOLUNIT_FIXTURE(QuaternionTest)
 
     LOLUNIT_TEST(Base)
     {
-        quat i(1.0f, 0.0f, 0.0f, 0.0f);
-        quat j(0.0f, 1.0f, 0.0f, 0.0f);
-        quat k(0.0f, 0.0f, 1.0f, 0.0f);
-        quat one(0.0f, 0.0f, 0.0f, 1.0f);
+        quat i(0.0f, 1.0f, 0.0f, 0.0f);
+        quat j(0.0f, 0.0f, 1.0f, 0.0f);
+        quat k(0.0f, 0.0f, 0.0f, 1.0f);
+        quat one(1.0f, 0.0f, 0.0f, 0.0f);
 
         LOLUNIT_ASSERT_EQUAL(norm(i), 1.0f);
         LOLUNIT_ASSERT_EQUAL(norm(j), 1.0f);
@@ -128,6 +128,18 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.y, 0.0, 1e-8);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.z, 0.0, 1e-8);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m1.w, 1.0, 1e-8);
+    }
+
+    LOLUNIT_TEST(Rotation)
+    {
+        quat a = quat::rotate(10.0f, vec3(1, 0, 0));
+        quat b = quat::rotate(20.0f, vec3(1, 0, 0));
+        quat c = a * a;
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a.w, a.w, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a.x, a.x, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a.y, a.y, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(a.z, a.z, 1e-8);
     }
 };
 
