@@ -51,14 +51,14 @@ Gradient::Gradient(vec3 aa, vec3 bb)
     data->shader = NULL;
 }
 
-void Gradient::TickGame(float deltams)
+void Gradient::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 }
 
-void Gradient::TickDraw(float deltams)
+void Gradient::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     float const vertex[] = {   0.0f,   0.0f, 0.0f,
                              640.0f,   0.0f, 0.0f,

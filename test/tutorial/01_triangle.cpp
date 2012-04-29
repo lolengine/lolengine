@@ -42,9 +42,9 @@ public:
         m_ready = false;
     }
 
-    virtual void TickDraw(float deltams)
+    virtual void TickDraw(float seconds)
     {
-        WorldEntity::TickDraw(deltams);
+        WorldEntity::TickDraw(seconds);
 
         if (!m_ready)
         {

@@ -32,7 +32,7 @@ public:
 protected:
     /* Inherited from Entity */
     virtual char const *GetName();
-    virtual void TickDraw(float deltams);
+    virtual void TickDraw(float seconds);
 
 public:
     /* New methods */

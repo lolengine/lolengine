@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -62,14 +62,14 @@ DebugRecord::DebugRecord(char const *path, float fps)
     m_drawgroup = DRAWGROUP_CAPTURE;
 }
 
-void DebugRecord::TickGame(float deltams)
+void DebugRecord::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 }
 
-void DebugRecord::TickDraw(float deltams)
+void DebugRecord::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     ivec2 size = Video::GetSize();
 

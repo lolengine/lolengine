@@ -121,18 +121,18 @@ DebugSphere::DebugSphere()
     data->initialised = 0;
 }
 
-void DebugSphere::TickGame(float deltams)
+void DebugSphere::TickGame(float seconds)
 {
-    Entity::TickGame(deltams);
+    Entity::TickGame(seconds);
 
-    data->time += 0.003f * deltams;
+    data->time += 3.f * seconds;
     while (data->time > 6.0 * M_PI)
         data->time -= 6.0 * M_PI;
 }
 
-void DebugSphere::TickDraw(float deltams)
+void DebugSphere::TickDraw(float seconds)
 {
-    Entity::TickDraw(deltams);
+    Entity::TickDraw(seconds);
 
     if (IsDestroying())
     {

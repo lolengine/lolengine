@@ -52,18 +52,18 @@ mat4 const &Camera::GetProjMatrix()
     return m_proj_matrix;
 }
 
-void Camera::TickGame(float deltams)
+void Camera::TickGame(float seconds)
 {
-    WorldEntity::TickGame(deltams);
+    WorldEntity::TickGame(seconds);
 
     m_view_matrix = mat4::lookat(m_position, m_target, m_up);
     m_proj_matrix = mat4::perspective(45.0f, 640.0f, 480.0f, 1.f, 1000.0f);
     //m_proj_matrix = mat4::ortho(-160, 160, -120, 120, .1f, 2000.0f);
 }
 
-void Camera::TickDraw(float deltams)
+void Camera::TickDraw(float seconds)
 {
-    WorldEntity::TickDraw(deltams);
+    WorldEntity::TickDraw(seconds);
 }
 
 } /* namespace lol */

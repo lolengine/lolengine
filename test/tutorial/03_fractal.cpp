@@ -1,7 +1,7 @@
 //
 // Lol Engine - Fractal tutorial
 //
-// Copyright: (c) 2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2011-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -100,7 +100,7 @@ public:
         //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
         //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
         m_center = f64cmplx(-0.65823419062254, 0.50221777363480);
-        m_zoom_speed = -0.000025;
+        m_zoom_speed = -0.025;
 #else
         m_center = -0.75;
         m_zoom_speed = 0.0;
@@ -201,9 +201,9 @@ public:
         return m_radius * m_window2world * f64cmplx(dx, dy);
     }
 
-    virtual void TickGame(float deltams)
+    virtual void TickGame(float seconds)
     {
-        WorldEntity::TickGame(deltams);
+        WorldEntity::TickGame(seconds);
 
         int prev_frame = m_frame;
         m_frame = (m_frame + 1) % 4;
@@ -234,7 +234,7 @@ public:
             m_drag = false;
             if (m_translate != 0.0)
             {
-                m_translate *= pow(2.0, -deltams * 0.005);
+                m_translate *= pow(2.0, -seconds * 5.0);
                 if (m_translate.norm() / m_radius < 1e-4)
                     m_translate = 0.0;
             }
@@ -242,14 +242,14 @@ public:
 
         if ((buttons[0] || buttons[2]) && m_mousepos.x != -1)
         {
-            double zoom = buttons[0] ? -0.0005 : 0.0005;
-            m_zoom_speed += deltams * zoom;
-            if (m_zoom_speed / zoom > 5)
-                m_zoom_speed = 5 * zoom;
+            double zoom = buttons[0] ? -0.5 : 0.5;
+            m_zoom_speed += seconds * zoom;
+            if (m_zoom_speed / zoom > 5e-3f)
+                m_zoom_speed = 5e-3f * zoom;
         }
         else if (m_zoom_speed)
         {
-            m_zoom_speed *= pow(2.0, -deltams * 0.005);
+            m_zoom_speed *= pow(2.0, -seconds * 5.0);
             if (abs(m_zoom_speed) < 1e-5 || m_drag)
                 m_zoom_speed = 0.0;
         }
@@ -259,7 +259,7 @@ public:
         {
             f64cmplx oldcenter = m_center;
             double oldradius = m_radius;
-            double zoom = pow(2.0, deltams * m_zoom_speed);
+            double zoom = pow(2.0, seconds * 1e3f * m_zoom_speed);
             if (m_radius * zoom > 8.0)
             {
                 m_zoom_speed *= -1.0;
@@ -425,9 +425,9 @@ public:
         }
     }
 
-    virtual void TickDraw(float deltams)
+    virtual void TickDraw(float seconds)
     {
-        WorldEntity::TickDraw(deltams);
+        WorldEntity::TickDraw(seconds);
 
         static float const vertices[] =
         {

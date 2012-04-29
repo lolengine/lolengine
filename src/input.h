@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -30,7 +30,7 @@ public:
     static vec2 GetAxis(int axis);
     static ivec2 GetMousePos();
     static ivec3 GetMouseButtons();
-	//BH : Added this, is a v0.1 Alpha version.
+    //BH : Added this, is a v0.1 Alpha version.
     static int GetButtonState(int button);
 
     /* Entities can subscribe to events */
