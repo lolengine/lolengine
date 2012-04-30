@@ -114,6 +114,15 @@ public:
     uint16_t bits;
 };
 
+static inline half min(half a, half b) { return a < b ? a : b; }
+static inline half max(half a, half b) { return a > b ? a : b; }
+
+static inline half clamp(half x, half a, half b)
+{
+    return (x < a) ? a : (x > b) ? b : x;
+}
+
+
 #define DECLARE_COERCE_HALF_NUMERIC_OPS(op, type, ret, x2, h2) \
     inline ret operator op(type x, half h) { return x2 op h2; } \
     inline ret operator op(half h, type x) { return h2 op x2; } \

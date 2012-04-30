@@ -558,6 +558,21 @@ template<> real::operator bool() const
     return exponent && (~exponent || m_mantissa[0] == 0);
 }
 
+template<> real min(real const &a, real const &b)
+{
+    return (a < b) ? a : b;
+}
+
+template<> real max(real const &a, real const &b)
+{
+    return (a > b) ? a : b;
+}
+
+template<> real clamp(real const &x, real const &a, real const &b)
+{
+    return (x < a) ? a : (x > b) ? b : x;
+}
+
 template<> real re(real const &x)
 {
     if (!(x.m_signexp << 1))
