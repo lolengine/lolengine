@@ -22,6 +22,10 @@
 namespace lol
 {
 
+/* This is OUR namespace. Don't let Windows headers fuck with it. */
+#undef min
+#undef max
+
 class half
 {
 public:

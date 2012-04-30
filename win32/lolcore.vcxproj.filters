@@ -363,12 +363,14 @@
     <ClInclude Include="..\src\platform\xbox\xboxapp.h">
       <Filter>src\platform\xbox</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\debug.h" />
     <ClInclude Include="..\src\gpu\indexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\array.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lol\debug.h">
+      <Filter>src\lol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
