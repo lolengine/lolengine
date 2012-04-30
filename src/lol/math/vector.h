@@ -28,6 +28,10 @@
 namespace lol
 {
 
+/* This is OUR namespace. Don't let Windows headers fuck with it. */
+#undef min
+#undef max
+
 /* Some compilers do not support const members in anonymous unions. So
  * far, GCC (>= 4.6), CLang (3.0) and Visual Studio (>= 2010) appear to
  * work properly. */

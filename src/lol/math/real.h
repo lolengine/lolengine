@@ -18,11 +18,15 @@
 
 #include <stdint.h>
 
-/* Avoid issues with NaCl headers */
-#undef log2
-
 namespace lol
 {
+
+/* This is OUR namespace. Don't let Windows headers fuck with it. */
+#undef min
+#undef max
+
+/* Avoid issues with NaCl headers */
+#undef log2
 
 /*
  * The base class for reals. The only real reason for making this a template
