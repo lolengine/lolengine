@@ -34,6 +34,10 @@ LOLUNIT_FIXTURE(RotationTest)
 
         LOLUNIT_ASSERT_DOUBLES_EQUAL(b.x, -a.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(b.y,  a.x, 1e-5);
+
+        float d = determinant(m90);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d, 1.0, 1e-5);
     }
 
     LOLUNIT_TEST(Compose2D)
@@ -73,6 +77,14 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.x, -a.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.y,  a.x, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z,  a.z, 1e-5);
+
+        float dx = determinant(m90x);
+        float dy = determinant(m90y);
+        float dz = determinant(m90z);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dx, 1.0, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dy, 1.0, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dz, 1.0, 1e-5);
     }
 
     LOLUNIT_TEST(Compose3D)
@@ -108,6 +120,10 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(c.x, b.x, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(c.y, b.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(c.z, b.z, 1e-5);
+
+        float n = norm(q20);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(n, 1.0, 1e-5);
     }
 
     LOLUNIT_TEST(QuaternionFromMatrix)
@@ -121,6 +137,12 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.x, q1.x, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.y, q1.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.z, q1.z, 1e-5);
+
+        float n1 = norm(q1);
+        float n2 = norm(q2);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(n1, 1.0, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(n2, 1.0, 1e-5);
     }
 
     LOLUNIT_TEST(MatrixFromQuaternion)
@@ -141,6 +163,12 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[0][2], m1[0][2], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[1][2], m1[1][2], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[2][2], m1[2][2], 1e-5);
+
+        float d1 = determinant(m1);
+        float d2 = determinant(m2);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d1, 1.0, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d2, 1.0, 1e-5);
     }
 
     LOLUNIT_TEST(MatrixCompositionThroughQuaternions)
