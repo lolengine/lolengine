@@ -34,6 +34,8 @@ core.*
 vgcore.*
 callgrind.out.*
 perf.data*
+*.gcda
+*.gcno
 # Editor cruft
 .*.swp
 *~
