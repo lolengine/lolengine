@@ -36,6 +36,7 @@
     <ClCompile Include="..\test\unit\matrix.cpp" />
     <ClCompile Include="..\test\unit\quat.cpp" />
     <ClCompile Include="..\test\unit\real.cpp" />
+    <ClCompile Include="..\test\unit\rotation.cpp" />
     <ClCompile Include="..\test\unit\trig.cpp" />
     <ClCompile Include="..\test\unit\vector.cpp" />
   </ItemGroup>
