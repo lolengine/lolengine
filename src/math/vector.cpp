@@ -418,42 +418,52 @@ template<> mat3 mat3::rotate(quat q)
     return ret;
 }
 
-template<> quat::Quat(mat4 const &m)
+static void MatrixToQuat(quat &that, mat3 const &m)
 {
     /* See http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/christian.htm for a version with no branches */
     float t = m[0][0] + m[1][1] + m[2][2];
     if (t > 0)
     {
-        w = 0.5f * sqrtf(1.0f + t);
-        float s = 0.25f / w;
-        x = s * (m[2][1] - m[1][2]);
-        y = s * (m[0][2] - m[2][0]);
-        z = s * (m[1][0] - m[0][1]);
+        that.w = 0.5f * sqrtf(1.0f + t);
+        float s = 0.25f / that.w;
+        that.x = s * (m[1][2] - m[2][1]);
+        that.y = s * (m[2][0] - m[0][2]);
+        that.z = s * (m[0][1] - m[1][0]);
     }
     else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
     {
-        x = 0.5f * sqrtf(1.0f + m[0][0] - m[1][1] - m[2][2]);
-        float s = 0.25f / x;
-        y = s * (m[1][0] + m[0][1]);
-        z = s * (m[0][2] + m[2][0]);
-        w = s * (m[2][1] - m[1][2]);
+        that.x = 0.5f * sqrtf(1.0f + m[0][0] - m[1][1] - m[2][2]);
+        float s = 0.25f / that.x;
+        that.y = s * (m[0][1] + m[1][0]);
+        that.z = s * (m[2][0] + m[0][2]);
+        that.w = s * (m[1][2] - m[2][1]);
     }
     else if (m[1][1] > m[2][2])
     {
-        y = 0.5f * sqrtf(1.0f - m[0][0] + m[1][1] - m[2][2]);
-        float s = 0.25f / y;
-        x = s * (m[1][0] + m[0][1]);
-        z = s * (m[2][1] + m[1][2]);
-        w = s * (m[0][2] - m[2][0]);
+        that.y = 0.5f * sqrtf(1.0f - m[0][0] + m[1][1] - m[2][2]);
+        float s = 0.25f / that.y;
+        that.x = s * (m[0][1] + m[1][0]);
+        that.z = s * (m[1][2] + m[2][1]);
+        that.w = s * (m[2][0] - m[0][2]);
     }
     else
     {
-        z = 0.5f * sqrtf(1.0f - m[0][0] - m[1][1] + m[2][2]);
-        float s = 0.25f / z;
-        x = s * (m[0][2] + m[2][0]);
-        y = s * (m[2][1] + m[1][2]);
-        w = s * (m[1][0] - m[0][1]);
+        that.z = 0.5f * sqrtf(1.0f - m[0][0] - m[1][1] + m[2][2]);
+        float s = 0.25f / that.z;
+        that.x = s * (m[2][0] + m[0][2]);
+        that.y = s * (m[1][2] + m[2][1]);
+        that.w = s * (m[0][1] - m[1][0]);
     }
+}
+
+template<> quat::Quat(mat3 const &m)
+{
+    MatrixToQuat(*this, m);
+}
+
+template<> quat::Quat(mat4 const &m)
+{
+    MatrixToQuat(*this, mat3(m));
 }
 
 template<> quat quat::rotate(float angle, vec3 const &v)
