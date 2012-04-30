@@ -519,15 +519,15 @@ template<> mat3 mat3::fromeuler(vec3 const &v)
     float sz = sin(radians.z), cz = cos(radians.z);
 
     ret[0][0] =   cy * cz;
-    ret[1][0] =   cx * sz - sx * sy * sz;
-    ret[2][0] =   sx * sz - cx * sy * cz;
+    ret[1][0] = - cx * sz + sx * sy * cz;
+    ret[2][0] =   sx * sz + cx * sy * cz;
 
-    ret[0][1] = - cy * sz;
-    ret[1][1] =   cx * cz - sx * sy * sz;
-    ret[2][1] =   sx * cz + cx * sy * sz;
+    ret[0][1] =   cy * sz;
+    ret[1][1] =   cx * cz + sx * sy * sz;
+    ret[2][1] = - sx * cz + cx * sy * sz;
 
-    ret[0][2] =   sy;
-    ret[1][2] = - sx * cy;
+    ret[0][2] = - sy;
+    ret[1][2] =   sx * cy;
     ret[2][2] =   cx * cy;
 
     return ret;
