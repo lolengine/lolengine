@@ -1236,11 +1236,14 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_OPS(tname, static, type) \
 
 #define DECLARE_ALL_VECTOR_OPS(type) \
-    DECLARE_ALL_VECTOR_OPS_INNER(Vec2, type) \
-    DECLARE_ALL_VECTOR_OPS_INNER(Vec3, type) \
-    DECLARE_ALL_VECTOR_OPS_INNER(Vec4, type) \
-    \
-    DECLARE_VEC_3_COERCE_OPS(Vec3, static, type, type, type)
+    namespace x##type \
+    { \
+        DECLARE_ALL_VECTOR_OPS_INNER(Vec2, type) \
+        DECLARE_ALL_VECTOR_OPS_INNER(Vec3, type) \
+        DECLARE_ALL_VECTOR_OPS_INNER(Vec4, type) \
+        \
+        DECLARE_VEC_3_COERCE_OPS(Vec3, static, type, type, type) \
+    }
 
 #define DECLARE_VEC_ANY_COERCE_OPS(tname, tlow, thigh) \
     DECLARE_BINARY_COERCE_OPS(tname, static, tlow, thigh, thigh) \
@@ -1250,12 +1253,17 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
 
 #define DECLARE_ALL_VECTOR_COERCE_OPS(tlow, thigh) \
-    DECLARE_VEC_ANY_COERCE_OPS(Vec2, tlow, thigh) \
-    DECLARE_VEC_ANY_COERCE_OPS(Vec3, tlow, thigh) \
-    DECLARE_VEC_ANY_COERCE_OPS(Vec4, tlow, thigh) \
-    \
-    DECLARE_VEC_3_COERCE_OPS(Vec3, static, tlow, thigh, thigh) \
-    DECLARE_VEC_3_COERCE_OPS(Vec3, static, thigh, tlow, thigh)
+    namespace x##tlow##thigh \
+    { \
+        DECLARE_VEC_ANY_COERCE_OPS(Vec2, tlow, thigh) \
+        DECLARE_VEC_ANY_COERCE_OPS(Vec3, tlow, thigh) \
+        DECLARE_VEC_ANY_COERCE_OPS(Vec4, tlow, thigh) \
+    } \
+    namespace y##tlow##thigh \
+    { \
+        DECLARE_VEC_3_COERCE_OPS(Vec3, static, tlow, thigh, thigh) \
+        DECLARE_VEC_3_COERCE_OPS(Vec3, static, thigh, tlow, thigh) \
+    } \
 
 DECLARE_ALL_NONVECTOR_OPS(Cmplx)
 DECLARE_ALL_NONVECTOR_OPS(Quat)
@@ -1297,6 +1305,10 @@ DECLARE_ALL_VECTOR_OPS(uint64_t)
 #   pragma warning(disable: 4018)
 #endif
 
+/* Hack for compilation speedups: we can hide some of our global methods in
+ * namespaces. We therefore want "long_double" to be a one-symbol type */
+typedef long double long_double;
+
 /* Apply the same coercion rules as in the C++ standard. However, instead
  * of always promoting smaller types to int, we allow int8_t op int16_t to
  * return an int16_t. */
@@ -1309,7 +1321,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int16_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint16_t)
@@ -1319,7 +1331,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint16_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int32_t)
@@ -1328,7 +1340,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int32_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint32_t)
@@ -1336,34 +1348,34 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint32_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, long_double)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(float, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(float, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(float, long_double)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(double, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(double, long_double)
 
 /* FIXME: vectors of "half" are deactivated for now, because they
  * induce extremely long compilation times (about 17 seconds per TU). */
@@ -1382,7 +1394,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, half)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(half, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(half, long double)
+DECLARE_ALL_VECTOR_COERCE_OPS(half, long_double)
 #endif
 
 /* FIXME: vectors of "real" are deactivated for now, because we do
@@ -1401,8 +1413,47 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(float, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(double, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(long double, real)
+DECLARE_ALL_VECTOR_COERCE_OPS(long_double, real)
 #endif
+
+/* Activate all the namespaces that we created. Delaying this activation
+ * reduces compilation times significantly. */
+#define ACTIVATE_COERCE_NAMESPACES_INNER(tlow, thigh) \
+    namespace x##tlow##thigh {} \
+    namespace y##tlow##thigh {} \
+    using namespace x##tlow##thigh; \
+    using namespace y##tlow##thigh;
+
+#define ACTIVATE_COERCE_NAMESPACES(tlow) \
+    namespace x##tlow {} \
+    using namespace x##tlow; \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, int8_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, uint8_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, int16_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, uint16_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, int32_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, uint32_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, int64_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, uint64_t) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, half) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, float) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, double) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, long_double) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, real)
+
+ACTIVATE_COERCE_NAMESPACES(int8_t)
+ACTIVATE_COERCE_NAMESPACES(uint8_t)
+ACTIVATE_COERCE_NAMESPACES(int16_t)
+ACTIVATE_COERCE_NAMESPACES(uint16_t)
+ACTIVATE_COERCE_NAMESPACES(int32_t)
+ACTIVATE_COERCE_NAMESPACES(uint32_t)
+ACTIVATE_COERCE_NAMESPACES(int64_t)
+ACTIVATE_COERCE_NAMESPACES(uint64_t)
+ACTIVATE_COERCE_NAMESPACES(half)
+ACTIVATE_COERCE_NAMESPACES(float)
+ACTIVATE_COERCE_NAMESPACES(double)
+ACTIVATE_COERCE_NAMESPACES(long_double)
+ACTIVATE_COERCE_NAMESPACES(real)
 
 #if defined __GNUC__ && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #   pragma GCC diagnostic pop
