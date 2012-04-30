@@ -26,7 +26,7 @@ LOLUNIT_FIXTURE(RotationTest)
 
     LOLUNIT_TEST(Rotate2D)
     {
-        /* Check that rotation is CCW */
+        /* Rotations must be CCW */
         mat2 m90 = mat2::rotate(90.f);
 
         vec2 a(2.f, 3.f);
@@ -38,20 +38,21 @@ LOLUNIT_FIXTURE(RotationTest)
 
     LOLUNIT_TEST(Compose2D)
     {
-        /* Check that rotating 20 degrees twice means rotating 40 degrees */
+        /* Rotating 20 degrees twice must equal rotating 40 degrees */
         mat2 m20 = mat2::rotate(20.f);
         mat2 m40 = mat2::rotate(40.f);
         mat2 m20x20 = m20 * m20;
 
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[0][0], m40[0][0], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[1][0], m40[1][0], 1e-5);
+
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[0][1], m40[0][1], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[1][1], m40[1][1], 1e-5);
     }
 
     LOLUNIT_TEST(Rotate3D)
     {
-        /* Check that rotation is CCW around each axis */
+        /* Rotations must be CCW along each axis */
         mat3 m90x = mat3::rotate(90.f, 1.f, 0.f, 0.f);
         mat3 m90y = mat3::rotate(90.f, 0.f, 1.f, 0.f);
         mat3 m90z = mat3::rotate(90.f, 0.f, 0.f, 1.f);
@@ -76,7 +77,7 @@ LOLUNIT_FIXTURE(RotationTest)
 
     LOLUNIT_TEST(Compose3D)
     {
-        /* Check that rotating 20 degrees twice means rotating 40 degrees */
+        /* Rotating 20 degrees twice must equal rotating 40 degrees */
         mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
         mat3 m40 = mat3::rotate(40.f, 1.f, 2.f, 3.f);
         mat3 m20x20 = m20 * m20;
@@ -84,9 +85,11 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[0][0], m40[0][0], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[1][0], m40[1][0], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[2][0], m40[2][0], 1e-5);
+
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[0][1], m40[0][1], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[1][1], m40[1][1], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[2][1], m40[2][1], 1e-5);
+
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[0][2], m40[0][2], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[1][2], m40[1][2], 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(m20x20[2][2], m40[2][2], 1e-5);
@@ -94,8 +97,7 @@ LOLUNIT_FIXTURE(RotationTest)
 
     LOLUNIT_TEST(QuaternionTransform)
     {
-        /* Check that rotating using a quaternion is the same as rotating
-         * using a matrix */
+        /* Rotating using a quaternion must equal rotating using a matrix */
         mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
         quat q20 = quat::rotate(20.f, 1.f, 2.f, 3.f);
         vec3 a(-2.f, 4.f, 3.f);
@@ -110,6 +112,8 @@ LOLUNIT_FIXTURE(RotationTest)
 
     LOLUNIT_TEST(QuaternionFromMatrix)
     {
+        /* A rotation matrix converted to a quaternion should match the
+         * quaternion built with the same parameters */
         quat q1 = quat::rotate(20.f, 1.f, 2.f, 3.f);
         quat q2 = quat(mat3::rotate(20.f, 1.f, 2.f, 3.f));
 
@@ -117,6 +121,65 @@ LOLUNIT_FIXTURE(RotationTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.x, q1.x, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.y, q1.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(q2.z, q1.z, 1e-5);
+    }
+
+    LOLUNIT_TEST(MatrixFromQuaternion)
+    {
+        /* A quaternion converted to a rotation matrix should match the
+         * rotation matrix built with the same parameters */
+        mat3 m1 = mat3::rotate(60.f, 1.f, -2.f, 3.f);
+        mat3 m2 = mat3(quat::rotate(60.f, 1.f, -2.f, 3.f));
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[0][0], m1[0][0], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[1][0], m1[1][0], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[2][0], m1[2][0], 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[0][1], m1[0][1], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[1][1], m1[1][1], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[2][1], m1[2][1], 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[0][2], m1[0][2], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[1][2], m1[1][2], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m2[2][2], m1[2][2], 1e-5);
+    }
+
+    LOLUNIT_TEST(MatrixCompositionThroughQuaternions)
+    {
+        /* Combining two rotation matrices should match the matrix created
+         * from the combination of the two equivalent quaternions */
+        mat3 m1 = mat3::rotate(60.f, 1.f, -2.f, 3.f);
+        mat3 m2 = mat3::rotate(20.f, -3.f, 1.f, -3.f);
+
+        mat3 m3 = m2 * m1;
+        mat3 m4(quat(m2) * quat(m1));
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[0][0], m3[0][0], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[1][0], m3[1][0], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[2][0], m3[2][0], 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[0][1], m3[0][1], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[1][1], m3[1][1], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[2][1], m3[2][1], 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[0][2], m3[0][2], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[1][2], m3[1][2], 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(m4[2][2], m3[2][2], 1e-5);
+    }
+
+    LOLUNIT_TEST(QuaternionCompositionThroughMatrices)
+    {
+        /* Combining two quaternions should match the quaternion created
+         * from the combination of the two equivalent rotation matrices */
+        quat q1 = quat::rotate(60.f, 1.f, -2.f, 3.f);
+        quat q2 = quat::rotate(20.f, -3.f, 1.f, -2.f);
+
+        quat q3 = q2 * q1;
+        quat q4(mat3(q2) * mat3(q1));
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(q4.w, q3.w, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(q4.x, q3.x, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(q4.y, q3.y, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(q4.z, q3.z, 1e-5);
     }
 };
 

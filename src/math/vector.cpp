@@ -361,7 +361,7 @@ template<> mat3 mat3::rotate(float angle, float x, float y, float z)
     float st = std::sin(angle);
     float ct = std::cos(angle);
 
-    float len = sqrtf(x * x + y * y + z * z);
+    float len = std::sqrt(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
     x *= invlen;
     y *= invlen;
@@ -393,38 +393,45 @@ template<> mat3 mat3::rotate(float angle, vec3 v)
     return rotate(angle, v.x, v.y, v.z);
 }
 
-template<> mat3 mat3::rotate(quat q)
+template<> mat3::Mat3(quat const &q)
 {
     float n = norm(q);
 
     if (!n)
-        return mat3(1.0f);
+    {
+        for (int j = 0; j < 3; j++)
+            for (int i = 0; i < 3; i++)
+                (*this)[i][j] = (i == j) ? 1.f : 0.f;
+        return;
+    }
 
-    mat3 ret;
     float s = 2.0f / n;
 
-    ret[0][0] = 1.0f - s * (q.y * q.y + q.z * q.z);
-    ret[0][1] = s * (q.x * q.y - q.z * q.w);
-    ret[0][2] = s * (q.x * q.z + q.y * q.w);
+    v0[0] = 1.0f - s * (q.y * q.y + q.z * q.z);
+    v0[1] = s * (q.x * q.y + q.z * q.w);
+    v0[2] = s * (q.x * q.z - q.y * q.w);
 
-    ret[1][0] = s * (q.x * q.y + q.z * q.w);
-    ret[1][1] = 1.0f - s * (q.z * q.z + q.x * q.x);
-    ret[1][2] = s * (q.y * q.z - q.x * q.w);
+    v1[0] = s * (q.x * q.y - q.z * q.w);
+    v1[1] = 1.0f - s * (q.z * q.z + q.x * q.x);
+    v1[2] = s * (q.y * q.z + q.x * q.w);
 
-    ret[2][0] = s * (q.x * q.z - q.y * q.w);
-    ret[2][1] = s * (q.y * q.z + q.x * q.w);
-    ret[2][2] = 1.0f - s * (q.x * q.x + q.y * q.y);
-
-    return ret;
+    v2[0] = s * (q.x * q.z + q.y * q.w);
+    v2[1] = s * (q.y * q.z - q.x * q.w);
+    v2[2] = 1.0f - s * (q.x * q.x + q.y * q.y);
 }
 
-static void MatrixToQuat(quat &that, mat3 const &m)
+template<> mat4::Mat4(quat const &q)
+{
+    *this = mat4(mat3(q), 1.f);
+}
+
+static inline void MatrixToQuat(quat &that, mat3 const &m)
 {
     /* See http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/christian.htm for a version with no branches */
     float t = m[0][0] + m[1][1] + m[2][2];
     if (t > 0)
     {
-        that.w = 0.5f * sqrtf(1.0f + t);
+        that.w = 0.5f * std::sqrt(1.0f + t);
         float s = 0.25f / that.w;
         that.x = s * (m[1][2] - m[2][1]);
         that.y = s * (m[2][0] - m[0][2]);
@@ -432,7 +439,7 @@ static void MatrixToQuat(quat &that, mat3 const &m)
     }
     else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
     {
-        that.x = 0.5f * sqrtf(1.0f + m[0][0] - m[1][1] - m[2][2]);
+        that.x = 0.5f * std::sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]);
         float s = 0.25f / that.x;
         that.y = s * (m[0][1] + m[1][0]);
         that.z = s * (m[2][0] + m[0][2]);
@@ -440,7 +447,7 @@ static void MatrixToQuat(quat &that, mat3 const &m)
     }
     else if (m[1][1] > m[2][2])
     {
-        that.y = 0.5f * sqrtf(1.0f - m[0][0] + m[1][1] - m[2][2]);
+        that.y = 0.5f * std::sqrt(1.0f - m[0][0] + m[1][1] - m[2][2]);
         float s = 0.25f / that.y;
         that.x = s * (m[0][1] + m[1][0]);
         that.z = s * (m[1][2] + m[2][1]);
@@ -448,7 +455,7 @@ static void MatrixToQuat(quat &that, mat3 const &m)
     }
     else
     {
-        that.z = 0.5f * sqrtf(1.0f - m[0][0] - m[1][1] + m[2][2]);
+        that.z = 0.5f * std::sqrt(1.0f - m[0][0] - m[1][1] + m[2][2]);
         float s = 0.25f / that.z;
         that.x = s * (m[2][0] + m[0][2]);
         that.y = s * (m[1][2] + m[2][1]);
