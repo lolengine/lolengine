@@ -923,6 +923,8 @@ template <typename T> struct Quat
 
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
+    static Quat<T> fromeuler(T x, T y, T z);
+    static Quat<T> fromeuler(Vec3<T> const &v);
 
     inline Quat<T> operator *(Quat<T> const &val) const
     {
