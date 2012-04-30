@@ -71,6 +71,12 @@ public:
     bool operator !() const;
     operator bool() const;
 
+    /* Comparison functions */
+    template<int M> friend Real<M> min(Real<M> const &a, Real<M> const &b);
+    template<int M> friend Real<M> max(Real<M> const &a, Real<M> const &b);
+    template<int M> friend Real<M> clamp(Real<M> const &x,
+                                         Real<M> const &a, Real<M> const &b);
+
     /* Trigonometric functions */
     template<int M> friend Real<M> sin(Real<M> const &x);
     template<int M> friend Real<M> cos(Real<M> const &x);
@@ -226,6 +232,10 @@ template<> bool real::operator <=(real const &x) const;
 template<> bool real::operator >=(real const &x) const;
 template<> bool real::operator !() const;
 template<> real::operator bool() const;
+
+template<> real min(real const &a, real const &b);
+template<> real max(real const &a, real const &b);
+template<> real clamp(real const &x, real const &a, real const &b);
 
 template<> real sin(real const &x);
 template<> real cos(real const &x);

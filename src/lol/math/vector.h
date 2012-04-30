@@ -976,6 +976,12 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
  * Common operators for all vector types, including quaternions
  */
 
+/*
+ * vec +(vec, vec)   (also complex & quaternion)
+ * vec -(vec, vec)   (also complex & quaternion)
+ * vec *(vec, vec)
+ * vec /(vec, vec)
+ */
 #define DECLARE_VECTOR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(tname<t1> const &a, tname<t2> const &b) \
@@ -986,6 +992,12 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
+/*
+ * vec +=(vec, vec)   (also complex & quaternion)
+ * vec -=(vec, vec)   (also complex & quaternion)
+ * vec *=(vec, vec)
+ * vec /=(vec, vec)
+ */
 #define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
     tprefix \
     inline tname<type> operator op##=(tname<type> &a, tname<type> const &b) \
@@ -993,6 +1005,77 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return a = a op b; \
     }
 
+/*
+ * vec min(vec, vec)     (also max)
+ * vec min(vec, scalar)  (also max)
+ * vec min(scalar, vec)  (also max)
+ */
+#define DECLARE_VECTOR_MINMAX_OP(tname, op, tprefix, type) \
+    tprefix \
+    inline tname<type> op(tname<type> const &a, tname<type> const &b) \
+    { \
+        using std::op; \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = op(a[n], b[n]); \
+        return ret; \
+    } \
+    \
+    tprefix \
+    inline tname<type> op(tname<type> const &a, type const &b) \
+    { \
+        using std::op; \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = op(a[n], b); \
+        return ret; \
+    } \
+    \
+    tprefix \
+    inline tname<type> op(type const &a, tname<type> const &b) \
+    { \
+        using std::op; \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(b) / sizeof(type); n++) \
+            ret[n] = op(a, b[n]); \
+        return ret; \
+    }
+
+/*
+ * vec clamp(vec, vec, vec)
+ * vec clamp(vec, vec, scalar)
+ * vec clamp(vec, scalar, vec)
+ */
+#define DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type) \
+    tprefix \
+    inline tname<type> clamp(tname<type> const &x, \
+                             tname<type> const &a, tname<type> const &b) \
+    { \
+        return max(min(x, b), a); \
+    } \
+    \
+    tprefix \
+    inline tname<type> clamp(tname<type> const &x, \
+                             type const &a, tname<type> const &b) \
+    { \
+        return max(min(x, b), a); \
+    } \
+    \
+    tprefix \
+    inline tname<type> clamp(tname<type> const &x, \
+                             tname<type> const &a, type const &b) \
+    { \
+        return max(min(x, b), a); \
+    }
+
+/*
+ * bool ==(vec, vec)   (also complex & quaternion)
+ * bool !=(vec, vec)   (also complex & quaternion)
+ * bool >=(vec, vec)
+ * bool <=(vec, vec)
+ * bool >(vec, vec)
+ * bool <(vec, vec)
+ */
 #define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, t1, t2) \
     tprefix \
     inline bool operator op(tname<t1> const &a, tname<t2> const &b) \
@@ -1003,6 +1086,12 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
+/*
+ * vec *(vec, scalar)   (also complex & quaternion)
+ * vec *(scalar, vec)   (also complex & quaternion)
+ * vec /(vec, scalar)   (also complex & quaternion)
+ * vec /(scalar, vec)   (also complex & quaternion)
+ */
 #define DECLARE_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(tname<t1> const &a, t2 const &val) \
@@ -1022,6 +1111,10 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return ret; \
     }
 
+/*
+ * vec *=(vec, scalar)   (also complex & quaternion)
+ * vec /=(vec, scalar)   (also complex & quaternion)
+ */
 #define DECLARE_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
     tprefix \
     inline tname<type> operator op##=(tname<type> &a, type const &val) \
@@ -1097,7 +1190,11 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
     \
     DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type)
+    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
+    \
+    DECLARE_VECTOR_MINMAX_OP(tname, min, tprefix, type) \
+    DECLARE_VECTOR_MINMAX_OP(tname, max, tprefix, type) \
+    DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type)
 
 #define DECLARE_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
     DECLARE_VECTOR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
