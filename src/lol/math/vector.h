@@ -1565,6 +1565,8 @@ template <typename T> struct Mat3
         v1(mat[1].xyz),
         v2(mat[2].xyz) {}
 
+    explicit Mat3(Quat<T> const &q);
+
     inline Vec3<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
@@ -1573,7 +1575,6 @@ template <typename T> struct Mat3
     static Mat3<T> scale(Vec3<T> v);
     static Mat3<T> rotate(T angle, T x, T y, T z);
     static Mat3<T> rotate(T angle, Vec3<T> v);
-    static Mat3<T> rotate(Quat<T> q);
     static Mat3<T> fromeuler(T x, T y, T z);
     static Mat3<T> fromeuler(Vec3<T> const &v);
 
@@ -1675,6 +1676,8 @@ template <typename T> struct Mat4
         v2(mat[2], (T)0),
         v3((T)0, (T)0, (T)0, val) {}
 
+    explicit Mat4(Quat<T> const &q);
+
     inline Vec4<T>& operator[](size_t n) { return (&v0)[n]; }
     inline Vec4<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
@@ -1705,11 +1708,6 @@ template <typename T> struct Mat4
     static inline Mat4<T> rotate(T angle, Vec3<T> v)
     {
         return Mat4<T>(Mat3<T>::rotate(angle, v), (T)1);
-    }
-
-    static inline Mat4<T> rotate(Quat<T> q)
-    {
-        return Mat4<T>(Mat3<T>::rotate(q), (T)1);
     }
 
     static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
