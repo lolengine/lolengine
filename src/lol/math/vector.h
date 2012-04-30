@@ -489,6 +489,8 @@ template <typename T> struct Vec3 : BVec3<T>
     explicit inline Vec3(XVec3<U, N> const &v)
       : BVec3<T>(v[0], v[1], v[2]) {}
 
+    static Vec3<T> toeuler(Quat<T> const &q);
+
     DECLARE_MEMBER_OPS(Vec3)
 
 #if !defined __ANDROID__
@@ -1565,6 +1567,8 @@ template <typename T> struct Mat3
     static Mat3<T> rotate(T angle, T x, T y, T z);
     static Mat3<T> rotate(T angle, Vec3<T> v);
     static Mat3<T> rotate(Quat<T> q);
+    static Mat3<T> fromeuler(T x, T y, T z);
+    static Mat3<T> fromeuler(Vec3<T> const &v);
 
     static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
     {
@@ -1704,6 +1708,16 @@ template <typename T> struct Mat4
     static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
+    }
+
+    static inline Mat4<T> fromeuler(T x, T y, T z)
+    {
+        return Mat4<T>(Mat3<T>::fromeuler(x, y, z), (T)1);
+    }
+
+    static inline Mat4<T> fromeuler(Vec3<T> const &v)
+    {
+        return Mat4<T>(Mat3<T>::fromeuler(v), (T)1);
     }
 
     /* Helpers for view matrices */

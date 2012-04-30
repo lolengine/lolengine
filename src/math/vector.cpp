@@ -462,12 +462,63 @@ template<> quat quat::rotate(float angle, vec3 const &v)
 
     vec3 tmp = normalize(v) * std::sin(angle);
 
-    return quat(tmp.x, tmp.y, tmp.z, std::cos(angle));
+    return quat(std::cos(angle), tmp.x, tmp.y, tmp.z);
 }
 
 template<> quat quat::rotate(float angle, float x, float y, float z)
 {
     return quat::rotate(angle, vec3(x, y, z));
+}
+
+template<> vec3 vec3::toeuler(quat const &q)
+{
+    using std::atan2;
+    using std::asin;
+
+    float n = norm(q);
+
+    if (!n)
+        return vec3(0.f);
+
+    vec3 ret(atan2(2.f * (q.w * q.x + q.y * q.z),
+                   1.f - 2.f * (q.x * q.x + q.y * q.y)),
+             asin(2.f * (q.w * q.y - q.z * q.x)),
+             atan2(2.f * (q.w * q.z + q.y * q.x),
+                   1.f - 2.f * (q.z * q.z + q.y * q.y)));
+
+    return (180.0f / M_PI / n) * ret;
+}
+
+template<> mat3 mat3::fromeuler(vec3 const &v)
+{
+    using std::sin;
+    using std::cos;
+
+    mat3 ret;
+
+    vec3 radians = (M_PI / 180.0f) * v;
+    float sx = sin(radians.x), cx = cos(radians.x);
+    float sy = sin(radians.y), cy = cos(radians.y);
+    float sz = sin(radians.z), cz = cos(radians.z);
+
+    ret[0][0] =   cy * cz;
+    ret[1][0] =   cx * sz - sx * sy * sz;
+    ret[2][0] =   sx * sz - cx * sy * cz;
+
+    ret[0][1] = - cy * sz;
+    ret[1][1] =   cx * cz - sx * sy * sz;
+    ret[2][1] =   sx * cz + cx * sy * sz;
+
+    ret[0][2] =   sy;
+    ret[1][2] = - sx * cy;
+    ret[2][2] =   cx * cy;
+
+    return ret;
+}
+
+template<> mat3 mat3::fromeuler(float x, float y, float z)
+{
+    return mat3::fromeuler(vec3(x, y, z));
 }
 
 template<> quat quat::fromeuler(vec3 const &v)
