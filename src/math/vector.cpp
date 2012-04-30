@@ -470,6 +470,27 @@ template<> quat quat::rotate(float angle, float x, float y, float z)
     return quat::rotate(angle, vec3(x, y, z));
 }
 
+template<> quat quat::fromeuler(vec3 const &v)
+{
+    using std::sin;
+    using std::cos;
+
+    vec3 half_angles = (M_PI / 360.0f) * v;
+    float sx = sin(half_angles.x), cx = cos(half_angles.x);
+    float sy = sin(half_angles.y), cy = cos(half_angles.y);
+    float sz = sin(half_angles.z), cz = cos(half_angles.z);
+
+    return quat(cx * cy * cz + sx * sy * sz,
+                sx * cy * cz - cx * sy * sz,
+                cx * sy * cz + sx * cy * sz,
+                cx * cy * sz - sx * sy * cz);
+}
+
+template<> quat quat::fromeuler(float x, float y, float z)
+{
+    return quat::fromeuler(vec3(x, y, z));
+}
+
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
     vec3 v3 = normalize(eye - center);
