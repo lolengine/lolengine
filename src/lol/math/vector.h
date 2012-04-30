@@ -947,6 +947,13 @@ template <typename T> struct Quat
         return Quat<T>(w, -x, -y, -z);
     }
 
+    inline Vec3<T> transform(Vec3<T> const &v)
+    {
+        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
+        Quat<T> q = *this * p / *this;
+        return Vec3<T>(q.x, q.y, q.z);
+    }
+
 #if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
