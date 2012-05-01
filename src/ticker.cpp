@@ -342,17 +342,16 @@ void Ticker::TickDraw()
 
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
-    Video::Clear();
-
-    Scene::GetDefault();
-
     /* Tick objects for the draw loop */
     for (int i = Entity::DRAWGROUP_BEGIN; i < Entity::DRAWGROUP_END; i++)
     {
         switch (i)
         {
+        case Entity::DRAWGROUP_BEGIN:
+            Scene::GetDefault()->Reset();
+            Video::Clear();
+            break;
         case Entity::DRAWGROUP_HUD:
-            Scene::GetDefault()->Render();
             Video::SetDepth(false);
             break;
         default:
@@ -375,10 +374,10 @@ void Ticker::TickDraw()
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
-    }
 
-    Scene::GetDefault()->Render();
-    Scene::Reset();
+        /* Do this render step */
+        Scene::GetDefault()->Render();
+    }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
     Profiler::Start(Profiler::STAT_TICK_BLIT);
