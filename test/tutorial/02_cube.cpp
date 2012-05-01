@@ -35,15 +35,15 @@ public:
         m_angle = 0;
 
         /* Front vertices/colors */
-        m_mesh.Append(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
-        m_mesh.Append(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
-        m_mesh.Append(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
-        m_mesh.Append(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
+        m_mesh.Push(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
+        m_mesh.Push(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
+        m_mesh.Push(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
+        m_mesh.Push(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
         /* Back */
-        m_mesh.Append(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
-        m_mesh.Append(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
-        m_mesh.Append(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
-        m_mesh.Append(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
+        m_mesh.Push(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
+        m_mesh.Push(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
+        m_mesh.Push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
+        m_mesh.Push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
 
         m_indices << i16vec3(0, 1, 2);
         m_indices << i16vec3(2, 3, 0);
