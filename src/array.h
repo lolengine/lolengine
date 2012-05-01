@@ -97,6 +97,16 @@ public:
         return m_data[n];
     }
 
+    inline Element& Last()
+    {
+        return m_data[m_count - 1];
+    }
+
+    inline Element const& Last() const
+    {
+        return m_data[m_count - 1];
+    }
+
     inline ArrayBase<T> const& operator<<(T const &x)
     {
         if (m_count >= m_reserved)
@@ -115,6 +125,11 @@ public:
     inline void Push(T const &x)
     {
         *this << x;
+    }
+
+    inline void Pop()
+    {
+        Remove(m_count - 1, 1);
     }
 
     void Remove(int pos, int todelete = 1)
