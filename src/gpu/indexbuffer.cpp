@@ -81,6 +81,7 @@ IndexBuffer::~IndexBuffer()
     glDeleteBuffers(1, &m_data->m_ibo);
     delete[] m_data->m_memory;
 #endif
+    delete m_data;
 }
 
 void *IndexBuffer::Lock(size_t offset, size_t size)
