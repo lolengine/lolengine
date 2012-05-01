@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\orbital\CommandParser.h" />
     <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\orbital.h" />
     <ClInclude Include="..\orbital\particlesystem.h" />
