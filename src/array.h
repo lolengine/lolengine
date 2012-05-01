@@ -126,6 +126,11 @@ public:
         m_count -= todelete;
     }
 
+    inline void Empty()
+    {
+        Remove(0, m_count);
+    }
+
     void Reserve(int toreserve)
     {
         if (toreserve <= (int)m_reserved)

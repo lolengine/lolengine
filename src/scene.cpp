@@ -56,13 +56,11 @@ private:
     mat4 m_view_matrix;
     mat4 m_proj_matrix;
 
-    Tile *tiles;
-    int ntiles;
+    Array<Tile> tiles;
 
     Shader *m_shader;
     VertexDeclaration *m_vdecl;
-    VertexBuffer **bufs;
-    int nbufs;
+    Array<VertexBuffer *> bufs;
 
     static Scene *scene;
 };
@@ -81,13 +79,7 @@ Scene::Scene()
     data->m_proj_matrix = mat4::ortho(0, Video::GetSize().x,
                                       0, Video::GetSize().y, -1000.f, 1000.f);
 
-    data->tiles = 0;
-    data->ntiles = 0;
-
     data->m_shader = 0;
-    data->bufs = 0;
-    data->nbufs = 0;
-
     data->m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
                                           VertexStream<vec2>(VertexUsage::TexCoord));
 }
@@ -113,11 +105,9 @@ Scene *Scene::GetDefault()
 
 void Scene::Reset()
 {
-    for (int i = 0; i < data->nbufs; i++)
+    for (int i = 0; i < data->bufs.Count(); i++)
         delete data->bufs[i];
-    free(data->bufs);
-    data->bufs = 0;
-    data->nbufs = 0;
+    data->bufs.Empty();
 }
 
 void Scene::SetViewMatrix(mat4 const &m)
@@ -142,17 +132,16 @@ mat4 const &Scene::GetProjMatrix(void)
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
-    if ((data->ntiles % 1024) == 0)
-        data->tiles = (Tile *)realloc(data->tiles,
-                                      (data->ntiles + 1024) * sizeof(Tile));
+    Tile t;
     /* FIXME: this sorting only works for a 45-degree camera */
-    data->tiles[data->ntiles].prio = -pos.y - 2 * 32 * pos.z + (o ? 0 : 32);
-    data->tiles[data->ntiles].tileset = tileset;
-    data->tiles[data->ntiles].id = id;
-    data->tiles[data->ntiles].pos = pos;
-    data->tiles[data->ntiles].o = o;
-    data->tiles[data->ntiles].scale = scale;
-    data->ntiles++;
+    t.prio = -pos.y - 2 * 32 * pos.z + (o ? 0 : 32);
+    t.tileset = tileset;
+    t.id = id;
+    t.pos = pos;
+    t.o = o;
+    t.scale = scale;
+
+    data->tiles.Push(t);
 }
 
 void Scene::Render() // XXX: rename to Blit()
@@ -303,15 +292,16 @@ void Scene::Render() // XXX: rename to Blit()
 
 #if 0
     // Randomise, then sort.
-    for (int i = 0; i < data->ntiles; i++)
+    for (int i = 0; i < data->tiles.Count(); i++)
     {
         Tile tmp = data->tiles[i];
-        int j = rand() % data->ntiles;
+        int j = rand() % data->tiles.Count();
         data->tiles[i] = data->tiles[j];
         data->tiles[j] = tmp;
     }
 #endif
-    qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
+    qsort(&data->tiles[0], data->tiles.Count(),
+          sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
     data->m_model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
@@ -356,30 +346,21 @@ void Scene::Render() // XXX: rename to Blit()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-    for (int buf = 0, i = 0, n; i < data->ntiles; i = n, buf += 2)
+    for (int buf = 0, i = 0, n; i < data->tiles.Count(); i = n, buf += 2)
     {
-        /* Generate new vertex / texture coord buffers if necessary */
-        if (buf + 2 > data->nbufs)
-        {
-            data->bufs = (VertexBuffer **)realloc(data->bufs, (buf + 2) * sizeof(VertexBuffer *));
-            data->nbufs = buf + 2;
-        }
-        else
-        {
-            delete data->bufs[buf];
-            delete data->bufs[buf + 1];
-        }
-
         /* Count how many quads will be needed */
-        for (n = i + 1; n < data->ntiles; n++)
+        for (n = i + 1; n < data->tiles.Count(); n++)
             if (data->tiles[i].tileset != data->tiles[n].tileset)
                 break;
 
         /* Create a vertex array object */
-        data->bufs[buf] = new VertexBuffer(6 * 3 * (n - i) * sizeof(float));
-        float *vertex = (float *)data->bufs[buf]->Lock(0, 0);
-        data->bufs[buf + 1] = new VertexBuffer(6 * 2 * (n - i) * sizeof(float));
-        float *texture = (float *)data->bufs[buf + 1]->Lock(0, 0);
+        VertexBuffer *vb1 = new VertexBuffer(6 * 3 * (n - i) * sizeof(float));
+        float *vertex = (float *)vb1->Lock(0, 0);
+        VertexBuffer *vb2 = new VertexBuffer(6 * 2 * (n - i) * sizeof(float));
+        float *texture = (float *)vb2->Lock(0, 0);
+
+        data->bufs.Push(vb1);
+        data->bufs.Push(vb2);
 
         for (int j = i; j < n; j++)
         {
@@ -389,16 +370,16 @@ void Scene::Render() // XXX: rename to Blit()
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
-        data->bufs[buf]->Unlock();
-        data->bufs[buf + 1]->Unlock();
+        vb1->Unlock();
+        vb2->Unlock();
 
         /* Bind texture */
         data->tiles[i].tileset->Bind();
 
         /* Bind vertex and texture coordinate buffers */
         data->m_vdecl->Bind();
-        data->m_vdecl->SetStream(data->bufs[buf], attr_pos);
-        data->m_vdecl->SetStream(data->bufs[buf + 1], attr_tex);
+        data->m_vdecl->SetStream(vb1, attr_pos);
+        data->m_vdecl->SetStream(vb2, attr_tex);
 
         /* Draw arrays */
         data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 2);
@@ -406,9 +387,7 @@ void Scene::Render() // XXX: rename to Blit()
         data->tiles[i].tileset->Unbind();
     }
 
-    free(data->tiles);
-    data->tiles = 0;
-    data->ntiles = 0;
+    data->tiles.Empty();
 
     data->m_shader->Unbind();
 
