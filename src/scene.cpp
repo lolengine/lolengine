@@ -35,8 +35,6 @@ struct Tile
     int id, o;
 };
 
-static Shader *stdshader = NULL;
-
 /*
  * Scene implementation class
  */
@@ -54,12 +52,14 @@ private:
         return t2->prio - t1->prio;
     }
 
-    mat4 model_matrix;
+    mat4 m_model_matrix;
+    mat4 m_view_matrix;
+    mat4 m_proj_matrix;
 
     Tile *tiles;
     int ntiles;
-    float angle;
 
+    Shader *m_shader;
     VertexDeclaration *m_vdecl;
     VertexBuffer **bufs;
     int nbufs;
@@ -73,13 +73,18 @@ Scene *SceneData::scene = NULL;
  * Public Scene class
  */
 
-Scene::Scene(float angle)
+Scene::Scene()
   : data(new SceneData())
 {
+    data->m_model_matrix = mat4(1.f);
+    data->m_view_matrix = mat4(1.f);
+    data->m_proj_matrix = mat4::ortho(0, Video::GetSize().x,
+                                      0, Video::GetSize().y, -1000.f, 1000.f);
+
     data->tiles = 0;
     data->ntiles = 0;
-    data->angle = angle;
 
+    data->m_shader = 0;
     data->bufs = 0;
     data->nbufs = 0;
 
@@ -91,10 +96,9 @@ Scene::~Scene()
 {
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
-    /* XXX: The test is necessary because of a crash with PSGL. */
-    for (int i = 0; i < data->nbufs; i++)
-        delete data->bufs[i];
-    free(data->bufs);
+    /* FIXME: also, make sure we do not add code to Reset() that will
+     * reallocate stuff */
+    Reset();
 
     delete data->m_vdecl;
     delete data;
@@ -103,15 +107,37 @@ Scene::~Scene()
 Scene *Scene::GetDefault()
 {
     if (!SceneData::scene)
-        SceneData::scene = new Scene(0.0f);
+        SceneData::scene = new Scene();
     return SceneData::scene;
 }
 
 void Scene::Reset()
 {
-    if (SceneData::scene)
-        delete SceneData::scene;
-    SceneData::scene = NULL;
+    for (int i = 0; i < data->nbufs; i++)
+        delete data->bufs[i];
+    free(data->bufs);
+    data->bufs = 0;
+    data->nbufs = 0;
+}
+
+void Scene::SetViewMatrix(mat4 const &m)
+{
+    data->m_view_matrix = m;
+}
+
+void Scene::SetProjMatrix(mat4 const &m)
+{
+    data->m_proj_matrix = m;
+}
+
+mat4 const &Scene::GetViewMatrix(void)
+{
+    return data->m_view_matrix;
+}
+
+mat4 const &Scene::GetProjMatrix(void)
+{
+    return data->m_proj_matrix;
 }
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
@@ -131,10 +157,10 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 
 void Scene::Render() // XXX: rename to Blit()
 {
-    if (!stdshader)
+    if (!data->m_shader)
     {
 #if !defined _XBOX && !defined __CELLOS_LV2__ && !defined USE_D3D9
-        stdshader = Shader::Create(
+        data->m_shader = Shader::Create(
 #   if !defined HAVE_GLES_2X
             "#version 130\n"
 #   endif
@@ -216,7 +242,7 @@ void Scene::Render() // XXX: rename to Blit()
             "    gl_FragColor = col;\n"
             "}\n");
 #else
-        stdshader = Shader::Create(
+        data->m_shader = Shader::Create(
             "void main(float4 in_Position : POSITION,"
             "          float2 in_TexCoord : TEXCOORD0,"
             "          uniform float4x4 proj_matrix,"
@@ -288,35 +314,34 @@ void Scene::Render() // XXX: rename to Blit()
     qsort(data->tiles, data->ntiles, sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
-    data->model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
-    data->model_matrix *= mat4::rotate(-data->angle, 1.0f, 0.0f, 0.0f);
+    data->m_model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
 #if 0
     static float f = 0.0f;
     f += 0.01f;
-    data->model_matrix *= mat4::rotate(6.0f * sinf(f), 1.0f, 0.0f, 0.0f);
-    data->model_matrix *= mat4::rotate(17.0f * cosf(f), 0.0f, 0.0f, 1.0f);
+    data->m_model_matrix *= mat4::rotate(6.0f * sinf(f), 1.0f, 0.0f, 0.0f);
+    data->m_model_matrix *= mat4::rotate(17.0f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
-    data->model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
+    data->m_model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
     // XXX: end of debug stuff
 
     ShaderUniform uni_mat, uni_tex;
     ShaderAttrib attr_pos, attr_tex;
-    attr_pos = stdshader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
-    attr_tex = stdshader->GetAttribLocation("in_TexCoord", VertexUsage::TexCoord, 0);
+    attr_pos = data->m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+    attr_tex = data->m_shader->GetAttribLocation("in_TexCoord", VertexUsage::TexCoord, 0);
 
-    stdshader->Bind();
+    data->m_shader->Bind();
 
-    uni_mat = stdshader->GetUniformLocation("proj_matrix");
-    stdshader->SetUniform(uni_mat, Video::GetProjMatrix());
-    uni_mat = stdshader->GetUniformLocation("view_matrix");
-    stdshader->SetUniform(uni_mat, Video::GetViewMatrix());
-    uni_mat = stdshader->GetUniformLocation("model_matrix");
-    stdshader->SetUniform(uni_mat, data->model_matrix);
+    uni_mat = data->m_shader->GetUniformLocation("proj_matrix");
+    data->m_shader->SetUniform(uni_mat, data->m_proj_matrix);
+    uni_mat = data->m_shader->GetUniformLocation("view_matrix");
+    data->m_shader->SetUniform(uni_mat, data->m_view_matrix);
+    uni_mat = data->m_shader->GetUniformLocation("model_matrix");
+    data->m_shader->SetUniform(uni_mat, data->m_model_matrix);
 
 #if defined USE_D3D9 || defined _XBOX
 #else
-    uni_tex = stdshader->GetUniformLocation("in_Texture");
-    stdshader->SetUniform(uni_tex, 0);
+    uni_tex = data->m_shader->GetUniformLocation("in_Texture");
+    data->m_shader->SetUniform(uni_tex, 0);
 
 #if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
@@ -385,7 +410,7 @@ void Scene::Render() // XXX: rename to Blit()
     data->tiles = 0;
     data->ntiles = 0;
 
-    stdshader->Unbind();
+    data->m_shader->Unbind();
 
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */

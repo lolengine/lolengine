@@ -29,6 +29,7 @@ Camera::Camera(vec3 const &position, vec3 const &target, vec3 const &up)
     m_up(up)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
+    m_drawgroup = DRAWGROUP_CAMERA;
 
     SetPosition(position);
 }
@@ -64,6 +65,9 @@ void Camera::TickGame(float seconds)
 void Camera::TickDraw(float seconds)
 {
     WorldEntity::TickDraw(seconds);
+
+    Scene::GetDefault()->SetViewMatrix(m_view_matrix);
+    Scene::GetDefault()->SetProjMatrix(m_proj_matrix);
 }
 
 } /* namespace lol */

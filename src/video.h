@@ -33,8 +33,6 @@ public:
     static void Clear();
     static void Capture(uint32_t *buffer);
     static ivec2 GetSize();
-    static mat4 const & GetProjMatrix();
-    static mat4 const & GetViewMatrix();
 };
 
 } /* namespace lol */

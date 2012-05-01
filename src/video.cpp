@@ -51,7 +51,7 @@ class VideoData
     friend class Video;
 
 private:
-    static mat4 proj_matrix, view_matrix;
+    static mat4 proj_matrix;
     static ivec2 saved_viewport;
 #if defined USE_D3D9
     static IDirect3D9 *d3d_ctx;
@@ -65,7 +65,6 @@ private:
 };
 
 mat4 VideoData::proj_matrix;
-mat4 VideoData::view_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 
 #if defined USE_D3D9
@@ -194,8 +193,6 @@ void Video::SetFov(float theta)
         mat4 trans = mat4::translate(-0.5f * size.x, -0.5f * size.y, -dist);
         VideoData::proj_matrix = proj * trans;
     }
-
-    VideoData::view_matrix = mat4(1.0f);
 }
 
 void Video::SetDepth(bool set)
@@ -295,16 +292,6 @@ ivec2 Video::GetSize()
     glGetIntegerv(GL_VIEWPORT, v);
     return ivec2(v[2], v[3]);
 #endif
-}
-
-mat4 const & Video::GetProjMatrix()
-{
-    return VideoData::proj_matrix;
-}
-
-mat4 const & Video::GetViewMatrix()
-{
-    return VideoData::view_matrix;
 }
 
 } /* namespace lol */

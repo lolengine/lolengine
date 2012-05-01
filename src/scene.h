@@ -28,14 +28,22 @@ class SceneData;
 class Scene
 {
 public:
-    Scene(float angle);
+    Scene();
     ~Scene();
 
     static Scene *GetDefault();
-    static void Reset();
 
-    void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
+    void SetViewMatrix(mat4 const &m);
+    void SetProjMatrix(mat4 const &m);
+    mat4 const &GetViewMatrix(void);
+    mat4 const &GetProjMatrix(void);
+
+    void Reset();
     void Render();
+
+    /* FIXME: this should be deprecated -- it doesn't really match
+     * the architecture we want to build */
+    void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
 
 private:
     SceneData *data;
