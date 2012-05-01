@@ -80,7 +80,7 @@ public:
         return *this;
     }
 
-    inline void Append(T const &x)
+    inline void Push(T const &x)
     {
         *this << x;
     }
@@ -187,8 +187,8 @@ template<typename T1, typename T2 = void, typename T3 = void,
 class Array : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                       T5 const &m5, T6 const &m6, T7 const &m7, T8 const &m8)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
+                     T5 const &m5, T6 const &m6, T7 const &m7, T8 const &m8)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -225,8 +225,8 @@ class Array<T1, T2, T3, T4, T5, T6, T7, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                       T5 const &m5, T6 const &m6, T7 const &m7)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
+                     T5 const &m5, T6 const &m6, T7 const &m7)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -261,8 +261,8 @@ class Array<T1, T2, T3, T4, T5, T6, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                       T5 const &m5, T6 const &m6)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
+                     T5 const &m5, T6 const &m6)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -294,8 +294,8 @@ class Array<T1, T2, T3, T4, T5, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                       T5 const &m5)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
+                     T5 const &m5)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -325,7 +325,7 @@ class Array<T1, T2, T3, T4, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -352,7 +352,7 @@ class Array<T1, T2, T3, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2, T3 const &m3)
+    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -377,7 +377,7 @@ class Array<T1, T2, void, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void> >
 {
 public:
-    inline void Append(T1 const &m1, T2 const &m2)
+    inline void Push(T1 const &m1, T2 const &m2)
     {
         if (this->m_count >= this->m_reserved)
         {

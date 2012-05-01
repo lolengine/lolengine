@@ -27,10 +27,10 @@ LOLUNIT_FIXTURE(ArrayTest)
     LOLUNIT_TEST(ArrayFill)
     {
         Array<int> a;
-        a.Append(0);
-        a.Append(1);
-        a.Append(2);
-        a.Append(3);
+        a.Push(0);
+        a.Push(1);
+        a.Push(2);
+        a.Push(3);
 
         LOLUNIT_ASSERT_EQUAL(a[0], 0);
         LOLUNIT_ASSERT_EQUAL(a[1], 1);
@@ -41,10 +41,10 @@ LOLUNIT_FIXTURE(ArrayTest)
     LOLUNIT_TEST(ArrayCopy)
     {
         Array<int> a;
-        a.Append(0);
-        a.Append(1);
-        a.Append(2);
-        a.Append(3);
+        a.Push(0);
+        a.Push(1);
+        a.Push(2);
+        a.Push(3);
 
         Array<int> b = a;
 
@@ -57,7 +57,7 @@ LOLUNIT_FIXTURE(ArrayTest)
     LOLUNIT_TEST(EightElements)
     {
         Array<int, long, float, double, unsigned, char, bool, void *> a;
-        a.Append(1, 2, 3.f, 4.0, 5, 'a', true, 0);
+        a.Push(1, 2, 3.f, 4.0, 5, 'a', true, 0);
 
         LOLUNIT_ASSERT_EQUAL(a[0].m1, 1);
         LOLUNIT_ASSERT_EQUAL(a[0].m2, 2);
