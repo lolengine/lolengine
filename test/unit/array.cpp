@@ -54,6 +54,20 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(b[3], 3);
     }
 
+    LOLUNIT_TEST(ArrayRemove)
+    {
+        Array<int> a;
+        a.Push(0);
+        a.Push(1);
+        a.Push(2);
+        a.Push(3);
+        a.Remove(1);
+
+        LOLUNIT_ASSERT_EQUAL(a[0], 0);
+        LOLUNIT_ASSERT_EQUAL(a[1], 2);
+        LOLUNIT_ASSERT_EQUAL(a[2], 3);
+    }
+
     LOLUNIT_TEST(EightElements)
     {
         Array<int, long, float, double, unsigned, char, bool, void *> a;

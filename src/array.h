@@ -18,14 +18,17 @@
 #if !defined __LOL_ARRAY_H__
 #define __LOL_ARRAY_H__
 
+#include <new>
 #include <stdint.h>
 
 namespace lol
 {
 
 /*
- * The base array type
- * FIXME: only works properly with POD types for now
+ * The base array type.
+ *
+ * Contains an m_data memory array of Elements, of which only the first
+ * m_count are allocated. The rest is uninitialised memory.
  */
 
 template<typename T> class ArrayBase
@@ -33,25 +36,54 @@ template<typename T> class ArrayBase
 public:
     typedef T Element;
 
-    inline ArrayBase() : m_data(0), m_count(0), m_reserved(0) {}
-    inline ~ArrayBase() { delete[] m_data; }
+    inline ArrayBase() : m_data(0), m_count(0), m_reserved(0)
+    {
+    }
+
+    inline ~ArrayBase()
+    {
+        for (int i = 0; i < m_count; i++)
+            m_data[i].~Element();
+        delete[] reinterpret_cast<uint8_t *>(m_data);
+    }
 
     ArrayBase(ArrayBase const& that) : m_data(0), m_count(0), m_reserved(0)
     {
-        Reserve(that.m_reserved);
-        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
+        /* Reserve the exact number of values instead of what the other
+         * array had reserved. Just a method for not wasting too much. */
+        Reserve(that.m_count);
+        for (int i = 0; i < that.m_count; i++)
+            new(&m_data[i]) Element(that[i]);
         m_count = that.m_count;
     }
 
     ArrayBase& operator=(ArrayBase const& that)
     {
-        /* FIXME: delete old data!! */
-        m_data = 0;
-        m_count = 0;
-        m_reserved = 0;
-        Reserve(that.m_reserved);
-        memcpy(m_data, that.m_data, that.m_count * sizeof(Element));
-        m_count = that.m_count;
+        if ((uintptr_t)this != (uintptr_t)&that)
+        {
+            if (m_reserved < that.m_count)
+            {
+                /* If not enough space, reserve memory and use placement
+                 * new directly for all elements. */
+                Reserve(that.m_count);
+                for (int i = 0; i < that.m_count; i++)
+                    new(&m_data[i]) Element(that[i]);
+            }
+            else
+            {
+                /* If enough space, overwrite the common elements, then
+                 * use placement new for the elements in the other array
+                 * that we do not have, and finally destroy the remaining
+                 * elements. */
+                for (int i = 0; i < m_count && i < that.m_count; i++)
+                    m_data[i] = Element(that[i]);
+                for (int i = m_count; i < that.m_count; i++)
+                    new(&m_data[i]) Element(that[i]);
+                for (int i = that.m_count; i < m_count; i++)
+                    m_data[i].~Element();
+            }
+            m_count = that.m_count;
+        }
         return *this;
     }
 
@@ -71,11 +103,11 @@ public:
         {
             T tmp = x;
             Reserve(m_count * 13 / 8 + 8);
-            m_data[m_count++] = tmp;
+            new (&m_data[m_count++]) Element(tmp);
         }
         else
         {
-            m_data[m_count++] = x;
+            new (&m_data[m_count++]) Element(x);
         }
         return *this;
     }
@@ -85,31 +117,31 @@ public:
         *this << x;
     }
 
-    void Remove(int pos)
+    void Remove(int pos, int todelete = 1)
     {
-        memmove(m_data + pos, m_data + pos + 1, m_count - pos - 1);
-        m_count--;
+        for (int i = pos; i + todelete < m_count; i++)
+            m_data[i] = m_data[i + todelete];
+        for (int i = m_count - todelete; i < m_count; i++)
+            m_data[i].~Element();
+        m_count -= todelete;
     }
 
-    void Remove(int pos, int count)
+    void Reserve(int toreserve)
     {
-        memmove(m_data + pos, m_data + pos + count, m_count - pos - count);
-        m_count -= count;
-    }
-
-    void Reserve(int count)
-    {
-        if (count <= (int)m_reserved)
+        if (toreserve <= (int)m_reserved)
             return;
 
-        Element *tmp = new Element[count];
-        if (m_data)
+        Element *tmp = reinterpret_cast<Element *>
+                               (new uint8_t [sizeof(Element) * toreserve]);
+        for (int i = 0; i < m_count; i++)
         {
-            memcpy(tmp, m_data, m_count * sizeof(Element));
-            delete[] m_data;
+            new(&tmp[i]) Element(m_data[i]);
+            m_data[i].~Element();
         }
+        if (m_data)
+            delete[] reinterpret_cast<uint8_t *>(m_data);
         m_data = tmp;
-        m_reserved = count;
+        m_reserved = toreserve;
     }
 
     inline int Count() const { return m_count; }
