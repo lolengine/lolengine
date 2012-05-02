@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\CommandParser.h" />
+    <ClInclude Include="..\orbital\tank.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\orbital\orbital.h" />

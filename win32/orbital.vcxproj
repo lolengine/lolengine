@@ -31,6 +31,7 @@
     <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\orbital.h" />
     <ClInclude Include="..\orbital\particlesystem.h" />
+    <ClInclude Include="..\orbital\tank.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\orbital\orbital.cpp" />
