@@ -57,8 +57,18 @@ void Camera::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
+    int updown = Input::GetButtonState(273 /*SDLK_UP*/)
+               - Input::GetButtonState(274 /*SDLK_DOWN*/);
+    int rightleft = Input::GetButtonState(275 /*SDLK_RIGHT*/)
+                  - Input::GetButtonState(276 /*SDLK_LEFT*/);
+    int pgupdown = Input::GetButtonState(280 /*SDLK_PAGEUP*/)
+                 - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+
+    m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
+    m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;
+
     m_view_matrix = mat4::lookat(m_position, m_target, m_up);
-    m_proj_matrix = mat4::perspective(45.0f, 640.0f, 480.0f, 1.f, 1000.0f);
+    m_proj_matrix = mat4::perspective(45.0f, 640.0f, 480.0f, 1.f, 10000.0f);
     //m_proj_matrix = mat4::ortho(-160, 160, -120, 120, .1f, 2000.0f);
 }
 
