@@ -278,17 +278,17 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     {
         float tmp[10];
 
-        *vertex++ = tmp[0] = pos.x;
-        *vertex++ = tmp[1] = pos.y + dy;
-        *vertex++ = tmp[2] = pos.z + dz;
-        *texture++ = tmp[3] = tx;
-        *texture++ = tmp[4] = ty;
-
         *vertex++ = pos.x + dx;
         *vertex++ = pos.y + dy;
         *vertex++ = pos.z + dz;
         *texture++ = tx + data->tx;
         *texture++ = ty;
+
+        *vertex++ = tmp[0] = pos.x;
+        *vertex++ = tmp[1] = pos.y + dy;
+        *vertex++ = tmp[2] = pos.z + dz;
+        *texture++ = tmp[3] = tx;
+        *texture++ = tmp[4] = ty;
 
         *vertex++ = tmp[5] = pos.x + dx;
         *vertex++ = tmp[6] = pos.y;
@@ -296,17 +296,17 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         *texture++ = tmp[8] = tx + data->tx;
         *texture++ = tmp[9] = ty + data->ty;
 
-        *vertex++ = tmp[0];
-        *vertex++ = tmp[1];
-        *vertex++ = tmp[2];
-        *texture++ = tmp[3];
-        *texture++ = tmp[4];
-
         *vertex++ = tmp[5];
         *vertex++ = tmp[6];
         *vertex++ = tmp[7];
         *texture++ = tmp[8];
         *texture++ = tmp[9];
+
+        *vertex++ = tmp[0];
+        *vertex++ = tmp[1];
+        *vertex++ = tmp[2];
+        *texture++ = tmp[3];
+        *texture++ = tmp[4];
 
         *vertex++ = pos.x;
         *vertex++ = pos.y;
