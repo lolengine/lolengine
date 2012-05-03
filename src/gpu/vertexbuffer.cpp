@@ -136,6 +136,8 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         break;
     }
 #else
+    glFrontFace(GL_CCW);
+    glEnable(GL_CULL_FACE);
 #   if defined HAVE_GL_2X && !defined __APPLE__
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);

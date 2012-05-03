@@ -63,8 +63,8 @@ void Gradient::TickDraw(float seconds)
     float const vertex[] = {   0.0f,   0.0f, 0.0f,
                              640.0f,   0.0f, 0.0f,
                                0.0f, 480.0f, 0.0f,
-                               0.0f, 480.0f, 0.0f,
                              640.0f, 480.0f, 0.0f,
+                               0.0f, 480.0f, 0.0f,
                              640.0f,   0.0f, 0.0f, };
 
     float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
