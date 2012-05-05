@@ -116,6 +116,12 @@ LOLUNIT_FIXTURE(QuaternionTest)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
         quat b = re(a);
+        quat c = 1.f / a;
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.w, c.w, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.x, c.x, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.y, c.y, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.z, c.z, 1e-5);
 
         quat m1 = a * b;
         quat m2 = b * a;
