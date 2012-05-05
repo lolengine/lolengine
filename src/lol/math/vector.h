@@ -1103,9 +1103,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
 
 /*
  * vec *(vec, scalar)   (also complex & quaternion)
- * vec *(scalar, vec)   (also complex & quaternion)
  * vec /(vec, scalar)   (also complex & quaternion)
- * vec /(scalar, vec)   (also complex & quaternion)
  */
 #define DECLARE_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
@@ -1115,8 +1113,13 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             ret[n] = a[n] op val; \
         return ret; \
-    } \
-    \
+    }
+
+/*
+ * vec *(scalar, vec)   (also complex & quaternion)
+ * vec /(scalar, vec)   (NOT for complex & quaternion!)
+ */
+#define DECLARE_SCALAR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(t1 const &val, tname<t2> const &a) \
     { \
@@ -1170,15 +1173,19 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
         return norm ? val / norm : val * (type)0; \
     }
 
-#define DECLARE_BINARY_COERCE_OPS(tname, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
-    \
+#define DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
     DECLARE_VECTOR_VECTOR_COERCE_OP(tname, -, tprefix, t1, t2, tf) \
     DECLARE_VECTOR_VECTOR_COERCE_OP(tname, +, tprefix, t1, t2, tf) \
     \
+    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
+    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    \
     DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2)
+
+#define DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
     \
     tprefix \
     inline tf dot(tname<t1> const &a, tname<t2> const &b) \
@@ -1198,14 +1205,17 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
                          (tf)(a.x * b.y) - (tf)(a.y * b.x)); \
     }
 
-#define DECLARE_BINARY_OPS(tname, tprefix, type) \
-    DECLARE_BINARY_COERCE_OPS(tname, tprefix, type, type, type) \
-    \
-    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
-    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
+#define DECLARE_BINARY_NONVECTOR_OPS(tname, tprefix, type) \
+    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, type, type, type) \
     \
     DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
     DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
+    \
+    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
+    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type)
+
+#define DECLARE_BINARY_VECTOR_OPS(tname, tprefix, type) \
+    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, type, type, type) \
     \
     DECLARE_VECTOR_MINMAX_OP(tname, min, tprefix, type) \
     DECLARE_VECTOR_MINMAX_OP(tname, max, tprefix, type) \
@@ -1227,11 +1237,12 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type)
 
 #define DECLARE_ALL_NONVECTOR_OPS(tname) \
-    DECLARE_BINARY_OPS(tname, template<typename T> static, T) \
+    DECLARE_BINARY_NONVECTOR_OPS(tname, template<typename T> static, T) \
     DECLARE_UNARY_OPS(tname, template<typename T> static, T)
 
 #define DECLARE_ALL_VECTOR_OPS_INNER(tname, type) \
-    DECLARE_BINARY_OPS(tname, static, type) \
+    DECLARE_BINARY_VECTOR_OPS(tname, static, type) \
+    DECLARE_BINARY_NONVECTOR_OPS(tname, static, type) \
     DECLARE_UNARY_OPS(tname, static, type) \
     DECLARE_VECTOR_OPS(tname, static, type) \
 
@@ -1246,8 +1257,10 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     }
 
 #define DECLARE_VEC_ANY_COERCE_OPS(tname, tlow, thigh) \
-    DECLARE_BINARY_COERCE_OPS(tname, static, tlow, thigh, thigh) \
-    DECLARE_BINARY_COERCE_OPS(tname, static, thigh, tlow, thigh) \
+    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
+    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
     \
     DECLARE_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
     DECLARE_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
@@ -1466,7 +1479,8 @@ ACTIVATE_COERCE_NAMESPACES(real)
 #undef DECLARE_VECTOR_VECTOR_OP
 #undef DECLARE_VECTOR_VECTOR_BOOLOP
 #undef DECLARE_VECTOR_SCALAR_OP
-#undef DECLARE_BINARY_OPS
+#undef DECLARE_BINARY_VECTOR_OPS
+#undef DECLARE_BINARY_NONVECTOR_OPS
 #undef DECLARE_UNARY_OPS
 #undef DECLARE_ALL_NONVECTOR_OPS
 #undef DECLARE_ALL_VECTOR_OPS_INNER
