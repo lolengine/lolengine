@@ -55,6 +55,15 @@ SdlInput::SdlInput()
     for (int i = 0; i < SDL_NumJoysticks(); i++)
     {
         SDL_Joystick *sdlstick = SDL_JoystickOpen(i);
+
+        /* Blacklist HDAPS, it's not a real joystick */
+        char const *name = SDL_JoystickName(i);
+        if (strstr(name, "HDAPS"))
+        {
+            SDL_JoystickClose(sdlstick);
+            continue;
+        }
+
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(SDL_JoystickNumAxes(sdlstick));
         stick->SetButtonCount(SDL_JoystickNumButtons(sdlstick));
