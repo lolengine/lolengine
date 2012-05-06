@@ -98,7 +98,8 @@
     <ClCompile Include="..\src\image\codec\ps3-image.cpp" />
     <ClCompile Include="..\src\image\codec\sdl-image.cpp" />
     <ClCompile Include="..\src\image\image.cpp" />
-    <ClCompile Include="..\src\input.cpp" />
+    <ClCompile Include="..\src\input\input.cpp" />
+    <ClCompile Include="..\src\input\stick.cpp" />
     <ClCompile Include="..\src\layer.cpp" />
     <ClCompile Include="..\src\log.cpp" />
     <ClCompile Include="..\src\map.cpp" />
@@ -149,7 +150,8 @@
     <ClInclude Include="..\src\hash.h" />
     <ClInclude Include="..\src\image\image-private.h" />
     <ClInclude Include="..\src\image\image.h" />
-    <ClInclude Include="..\src\input.h" />
+    <ClInclude Include="..\src\input\input.h" />
+    <ClInclude Include="..\src\input\stick.h" />
     <ClInclude Include="..\src\layer.h" />
     <ClInclude Include="..\src\log.h" />
     <ClInclude Include="..\src\loldebug.h" />

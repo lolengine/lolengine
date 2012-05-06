@@ -57,12 +57,23 @@ void Camera::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    int updown = Input::GetButtonState(273 /*SDLK_UP*/)
-               - Input::GetButtonState(274 /*SDLK_DOWN*/);
-    int rightleft = Input::GetButtonState(275 /*SDLK_RIGHT*/)
-                  - Input::GetButtonState(276 /*SDLK_LEFT*/);
-    int pgupdown = Input::GetButtonState(280 /*SDLK_PAGEUP*/)
-                 - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+    /* Hackish keyboard support */
+    float updown = Input::GetButtonState(273 /*SDLK_UP*/)
+                 - Input::GetButtonState(274 /*SDLK_DOWN*/);
+    float rightleft = Input::GetButtonState(275 /*SDLK_RIGHT*/)
+                    - Input::GetButtonState(276 /*SDLK_LEFT*/);
+    float pgupdown = Input::GetButtonState(280 /*SDLK_PAGEUP*/)
+                   - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+
+    /* Hackish stick support */
+    static Stick *stick = NULL;
+    if (!stick)
+        stick = Input::TrackStick();
+    if (stick && stick->GetAxisCount() >= 2)
+    {
+        rightleft = 2.f * stick->GetAxis(0) * std::abs(stick->GetAxis(0));
+        updown = -2.f * stick->GetAxis(1) * std::abs(stick->GetAxis(1));
+    }
 
     m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
     m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;

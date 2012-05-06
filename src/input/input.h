@@ -13,10 +13,11 @@
 // ----------------------
 //
 
-#if !defined __LOL_INPUT_H__
-#define __LOL_INPUT_H__
+#if !defined __LOL_INPUT_INPUT_H__
+#define __LOL_INPUT_INPUT_H__
 
 #include "lol/math/vector.h"
+#include "input/stick.h"
 
 namespace lol
 {
@@ -27,7 +28,6 @@ class Input
 {
 public:
     /* These methods are general queries */
-    static vec2 GetAxis(int axis);
     static ivec2 GetMousePos();
     static ivec3 GetMouseButtons();
     //BH : Added this, is a v0.1 Alpha version.
@@ -41,9 +41,19 @@ public:
     static void SetMousePos(ivec2 coord);
     static void SetMouseButton(int index);
     static void UnsetMouseButton(int index);
+
+    /*
+     * Joystick handling
+     */
+
+    static Stick *CreateStick();
+    static void DestroyStick(Stick *stick);
+
+    static Stick *TrackStick();
+    static void UntrackStick(Stick *stick);
 };
 
 } /* namespace lol */
 
-#endif // __LOL_INPUT_H__
+#endif // __LOL_INPUT_INPUT_H__
 

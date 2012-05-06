@@ -6,7 +6,7 @@ liblol_a_SOURCES = \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
     map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h log.cpp log.h \
-    timer.cpp timer.h bitfield.h profiler.cpp profiler.h input.h input.cpp \
+    timer.cpp timer.h bitfield.h profiler.cpp profiler.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h \
@@ -27,6 +27,9 @@ liblol_a_SOURCES = \
     thread/threadbase.h thread/thread.h \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp math/trig.h \
+    \
+    input/input.cpp input/input.h \
+    input/stick.cpp input/stick.h \
     \
     gpu/shader.cpp gpu/shader.h \
     gpu/indexbuffer.cpp gpu/indexbuffer.h \

@@ -41,6 +41,9 @@
     <Filter Include="src\platform\xbox">
       <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\input">
+      <UniqueIdentifier>{94992c0e-ebc5-4185-b766-323b06547dcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -98,9 +101,6 @@
       <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="..\src\hash.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\input.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\layer.cpp">
@@ -196,6 +196,12 @@
     <ClCompile Include="..\src\gpu\indexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\input\input.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\input\stick.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\image\image.h">
@@ -256,9 +262,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\hash.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\input.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\layer.h">
@@ -371,6 +374,12 @@
     </ClInclude>
     <ClInclude Include="..\src\lol\debug.h">
       <Filter>src\lol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\input\input.h">
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\input\stick.h">
+      <Filter>src\input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

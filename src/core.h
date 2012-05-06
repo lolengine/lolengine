@@ -78,7 +78,8 @@ static inline int isnan(float f)
 #include "video.h"
 #include "audio.h"
 #include "scene.h"
-#include "input.h"
+#include "input/input.h"
+#include "input/stick.h"
 #include "profiler.h"
 
 // Entities
