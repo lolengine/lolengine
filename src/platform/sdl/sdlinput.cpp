@@ -34,6 +34,9 @@ private:
     void Tick(float seconds);
 
     static ivec2 GetMousePos();
+#if defined USE_SDL
+    Array<SDL_Joystick *, Stick *> m_joysticks;
+#endif
 };
 
 /*
@@ -41,13 +44,39 @@ private:
  */
 
 SdlInput::SdlInput()
-  : data(new SdlInputData())
+  : m_data(new SdlInputData())
 {
 #if defined USE_SDL
-    SDL_Init(SDL_INIT_TIMER);
+    SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
+
+    /* Register all the joysticks we can find, and let the input
+     * system decide what it wants to track. */
+    SDL_JoystickEventState(SDL_ENABLE);
+    for (int i = 0; i < SDL_NumJoysticks(); i++)
+    {
+        SDL_Joystick *sdlstick = SDL_JoystickOpen(i);
+        Stick *stick = Input::CreateStick();
+        stick->SetAxisCount(SDL_JoystickNumAxes(sdlstick));
+        stick->SetButtonCount(SDL_JoystickNumButtons(sdlstick));
+        m_data->m_joysticks.Push(sdlstick, stick);
+    }
 #endif
 
     m_gamegroup = GAMEGROUP_BEFORE;
+}
+
+SdlInput::~SdlInput()
+{
+#if defined USE_SDL
+    /* Unregister all the joysticks we added */
+    while (m_data->m_joysticks.Count())
+    {
+        SDL_JoystickClose(m_data->m_joysticks[0].m1);
+        Input::DestroyStick(m_data->m_joysticks[0].m2);
+        m_data->m_joysticks.Remove(0);
+    }
+#endif
+    delete m_data;
 }
 
 void SdlInput::TickGame(float seconds)
@@ -55,7 +84,7 @@ void SdlInput::TickGame(float seconds)
     Entity::TickGame(seconds);
 
 #if !defined _WIN32
-    data->Tick(seconds);
+    m_data->Tick(seconds);
 #endif
 }
 
@@ -64,7 +93,7 @@ void SdlInput::TickDraw(float seconds)
     Entity::TickDraw(seconds);
 
 #if defined _WIN32
-    data->Tick(seconds);
+    m_data->Tick(seconds);
 #endif
 }
 
@@ -101,6 +130,15 @@ void SdlInputData::Tick(float seconds)
                 Input::UnsetMouseButton(event.button.button - 1);
             break;
         }
+
+        case SDL_JOYAXISMOTION:
+            m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
+            break;
+
+        case SDL_JOYBUTTONUP:
+        case SDL_JOYBUTTONDOWN:
+            m_joysticks[event.jbutton.which].m2->SetButton(event.jbutton.button, event.jbutton.state);
+            break;
         }
     }
 
@@ -112,11 +150,6 @@ void SdlInputData::Tick(float seconds)
             Input::KeyPressed(i, seconds);
 #endif
 #endif
-}
-
-SdlInput::~SdlInput()
-{
-    delete data;
 }
 
 ivec2 SdlInputData::GetMousePos()

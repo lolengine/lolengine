@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -48,6 +48,8 @@ private:
     WorldEntity *entities[MAX_ENTITIES];
     int nentities;
     WorldEntity *lastfocus;
+
+    Array<Stick *> m_sticks;
 }
 inputdata;
 
@@ -57,6 +59,7 @@ static InputData * const data = &inputdata;
  * Public Input class
  */
 
+#if 0
 vec2 Input::GetAxis(int axis)
 {
     vec2 ret;
@@ -80,6 +83,7 @@ vec2 Input::GetAxis(int axis)
 
     return ret;
 }
+#endif
 
 ivec2 Input::GetMousePos()
 {
@@ -192,6 +196,36 @@ void Input::UnsetMouseButton(int index)
         data->lastfocus->m_pressed[index] = 0;
         data->lastfocus->m_clicked[index] = 0;
     }
+}
+
+Stick *Input::CreateStick()
+{
+    Stick *stick = new Stick();
+    Ticker::Ref(stick);
+    data->m_sticks.Push(stick);
+    return stick;
+}
+
+void Input::DestroyStick(Stick *stick)
+{
+    for (int i = 0; i < data->m_sticks.Count(); i++)
+        if (data->m_sticks[i] == stick)
+            data->m_sticks.Remove(i);
+    Ticker::Unref(stick);
+}
+
+Stick *Input::TrackStick()
+{
+    /* FIXME: add the possibility to choose amongst sticks */
+    if (!data->m_sticks.Count())
+        return NULL;
+    Ticker::Ref(data->m_sticks[0]);
+    return data->m_sticks[0];
+}
+
+void Input::UntrackStick(Stick *stick)
+{
+    Ticker::Unref(stick);
 }
 
 } /* namespace lol */

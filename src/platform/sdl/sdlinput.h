@@ -34,7 +34,7 @@ protected:
     virtual void TickDraw(float seconds);
 
 private:
-    SdlInputData *data;
+    SdlInputData *m_data;
 };
 
 } /* namespace lol */
