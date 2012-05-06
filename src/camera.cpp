@@ -58,12 +58,14 @@ void Camera::TickGame(float seconds)
     WorldEntity::TickGame(seconds);
 
     /* Hackish keyboard support */
-    float updown = Input::GetButtonState(273 /*SDLK_UP*/)
-                 - Input::GetButtonState(274 /*SDLK_DOWN*/);
-    float rightleft = Input::GetButtonState(275 /*SDLK_RIGHT*/)
-                    - Input::GetButtonState(276 /*SDLK_LEFT*/);
-    float pgupdown = Input::GetButtonState(280 /*SDLK_PAGEUP*/)
-                   - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+    float updown = 2.f * (Input::GetButtonState('w')
+                           + Input::GetButtonState('z')
+                           - Input::GetButtonState('s'));
+    float rightleft = 2.f * (Input::GetButtonState('d')
+                              - Input::GetButtonState('q')
+                              - Input::GetButtonState('a'));
+    float pgupdown = 2.f * (Input::GetButtonState('r')
+                             - Input::GetButtonState('f'));
 
     /* Hackish stick support */
     static Stick *stick = NULL;
