@@ -71,8 +71,8 @@ void Camera::TickGame(float seconds)
         stick = Input::TrackStick();
     if (stick && stick->GetAxisCount() >= 2)
     {
-        rightleft = 2.f * stick->GetAxis(0) * std::abs(stick->GetAxis(0));
-        updown = -2.f * stick->GetAxis(1) * std::abs(stick->GetAxis(1));
+        rightleft += 2.f * stick->GetAxis(0) * std::abs(stick->GetAxis(0));
+        updown += -2.f * stick->GetAxis(1) * std::abs(stick->GetAxis(1));
     }
 
     m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
