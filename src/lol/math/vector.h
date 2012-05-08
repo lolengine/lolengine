@@ -1676,8 +1676,32 @@ template <typename T> struct Mat3
     static Mat3<T> scale(Vec3<T> v);
     static Mat3<T> rotate(T angle, T x, T y, T z);
     static Mat3<T> rotate(T angle, Vec3<T> v);
-    static Mat3<T> fromeuler(T x, T y, T z);
-    static Mat3<T> fromeuler(Vec3<T> const &v);
+
+    static Mat3<T> fromeuler_xyz(Vec3<T> const &v);
+    static Mat3<T> fromeuler_xzy(Vec3<T> const &v);
+    static Mat3<T> fromeuler_yxz(Vec3<T> const &v);
+    static Mat3<T> fromeuler_yzx(Vec3<T> const &v);
+    static Mat3<T> fromeuler_zxy(Vec3<T> const &v);
+    static Mat3<T> fromeuler_zyx(Vec3<T> const &v);
+    static Mat3<T> fromeuler_xyz(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_xzy(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_yxz(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_yzx(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_zxy(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_zyx(T phi, T theta, T psi);
+
+    static Mat3<T> fromeuler_xyx(Vec3<T> const &v);
+    static Mat3<T> fromeuler_xzx(Vec3<T> const &v);
+    static Mat3<T> fromeuler_yxy(Vec3<T> const &v);
+    static Mat3<T> fromeuler_yzy(Vec3<T> const &v);
+    static Mat3<T> fromeuler_zxz(Vec3<T> const &v);
+    static Mat3<T> fromeuler_zyz(Vec3<T> const &v);
+    static Mat3<T> fromeuler_xyx(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_xzx(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_yxy(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_yzy(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_zxz(T phi, T theta, T psi);
+    static Mat3<T> fromeuler_zyz(T phi, T theta, T psi);
 
     static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
     {
@@ -1816,15 +1840,31 @@ template <typename T> struct Mat4
         return rotate(angle, v) * mat;
     }
 
-    static inline Mat4<T> fromeuler(T x, T y, T z)
-    {
-        return Mat4<T>(Mat3<T>::fromeuler(x, y, z), (T)1);
-    }
+    static Mat4<T> fromeuler_xyz(Vec3<T> const &v);
+    static Mat4<T> fromeuler_xzy(Vec3<T> const &v);
+    static Mat4<T> fromeuler_yxz(Vec3<T> const &v);
+    static Mat4<T> fromeuler_yzx(Vec3<T> const &v);
+    static Mat4<T> fromeuler_zxy(Vec3<T> const &v);
+    static Mat4<T> fromeuler_zyx(Vec3<T> const &v);
+    static Mat4<T> fromeuler_xyz(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_xzy(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_yxz(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_yzx(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_zxy(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_zyx(T phi, T theta, T psi);
 
-    static inline Mat4<T> fromeuler(Vec3<T> const &v)
-    {
-        return Mat4<T>(Mat3<T>::fromeuler(v), (T)1);
-    }
+    static Mat4<T> fromeuler_xyx(Vec3<T> const &v);
+    static Mat4<T> fromeuler_xzx(Vec3<T> const &v);
+    static Mat4<T> fromeuler_yxy(Vec3<T> const &v);
+    static Mat4<T> fromeuler_yzy(Vec3<T> const &v);
+    static Mat4<T> fromeuler_zxz(Vec3<T> const &v);
+    static Mat4<T> fromeuler_zyz(Vec3<T> const &v);
+    static Mat4<T> fromeuler_xyx(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_xzx(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_yxy(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_yzy(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_zxz(T phi, T theta, T psi);
+    static Mat4<T> fromeuler_zyz(T phi, T theta, T psi);
 
     /* Helpers for view matrices */
     static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
