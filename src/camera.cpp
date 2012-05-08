@@ -45,6 +45,11 @@ void Camera::SetPosition(vec3 const &pos)
     m_position = pos;
 }
 
+void Camera::SetRotation(quat const &rot)
+{
+    m_rotation = rot;
+}
+
 void Camera::SetOrtho(float width, float height, float near, float far)
 {
     m_proj_matrix = mat4::ortho(width, height, near, far);
@@ -93,7 +98,8 @@ void Camera::TickGame(float seconds)
     m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
     m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;
 
-    m_view_matrix = mat4::lookat(m_position, m_target, m_up);
+    m_view_matrix = mat4::lookat(m_position, m_target, m_up)
+                  * mat4(m_rotation);
 }
 
 void Camera::TickDraw(float seconds)
