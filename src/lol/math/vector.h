@@ -1814,6 +1814,7 @@ template <typename T> struct Mat4
 
     /* Helpers for projection matrices */
     static Mat4<T> ortho(T left, T right, T bottom, T top, T near, T far);
+    static Mat4<T> ortho(T width, T height, T near, T far);
     static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
     static Mat4<T> perspective(T fov_y, T width, T height, T near, T far);
 

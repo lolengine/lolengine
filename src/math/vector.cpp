@@ -658,6 +658,13 @@ template<> mat4 mat4::ortho(float left, float right, float bottom,
     return ret;
 }
 
+template<> mat4 mat4::ortho(float width, float height,
+                            float near, float far)
+{
+    return mat4::ortho(-0.5f * width, 0.5f * width,
+                       -0.5f * height, 0.5f * height, near, far);
+}
+
 template<> mat4 mat4::frustum(float left, float right, float bottom,
                               float top, float near, float far)
 {

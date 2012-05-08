@@ -30,6 +30,9 @@ public:
     char const *GetName() { return "<camera>"; }
 
     void SetPosition(vec3 const &pos);
+    void SetOrtho(float width, float height, float near, float far);
+    void SetPerspective(float fov, float width, float height,
+                        float near, float far);
 
     mat4 const &GetViewMatrix();
     mat4 const &GetProjMatrix();
