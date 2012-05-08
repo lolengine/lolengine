@@ -31,6 +31,8 @@ Camera::Camera(vec3 const &position, vec3 const &target, vec3 const &up)
     m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_CAMERA;
 
+    /* Create a default perspective */
+    SetPerspective(45.f, 800.f, 600.f, -1000.f, 1000.f);
     SetPosition(position);
 }
 
@@ -41,6 +43,17 @@ Camera::~Camera()
 void Camera::SetPosition(vec3 const &pos)
 {
     m_position = pos;
+}
+
+void Camera::SetOrtho(float width, float height, float near, float far)
+{
+    m_proj_matrix = mat4::ortho(width, height, near, far);
+}
+
+void Camera::SetPerspective(float fov, float width, float height,
+                            float near, float far)
+{
+    m_proj_matrix = mat4::perspective(fov, width, height, near, far);
 }
 
 mat4 const &Camera::GetViewMatrix()
@@ -81,8 +94,6 @@ void Camera::TickGame(float seconds)
     m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;
 
     m_view_matrix = mat4::lookat(m_position, m_target, m_up);
-    m_proj_matrix = mat4::perspective(45.0f, 640.0f, 480.0f, 1.f, 10000.0f);
-    //m_proj_matrix = mat4::ortho(-160, 160, -120, 120, .1f, 2000.0f);
 }
 
 void Camera::TickDraw(float seconds)
