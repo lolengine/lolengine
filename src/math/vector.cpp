@@ -538,7 +538,7 @@ template<> mat3 mat3::fromeuler(float x, float y, float z)
     return mat3::fromeuler(vec3(x, y, z));
 }
 
-static inline quat fromeuler_generic(vec3 const &v, int s, int i, int j, int k)
+static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     using std::sin;
     using std::cos;
@@ -548,76 +548,63 @@ static inline quat fromeuler_generic(vec3 const &v, int s, int i, int j, int k)
     float s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
     float s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
 
-    vec4 v1(c0 * c1 * c2,  c0 * c1 * s2, c0 * s1 * c2,  s0 * c1 * c2);
-    vec4 v2(s0 * s1 * s2, -s0 * s1 * c2, s0 * c1 * s2, -c0 * s1 * s2);
+    quat ret;
 
-    if (s > 0)
-        v1 += v2;
+    if (i == k)
+    {
+        ret[0] = c1 * (c0 * c2 - s0 * s2);
+        ret[1 + i] = c1 * (c0 * s2 + s0 * c2);
+        ret[1 + j] = s1 * (c0 * c2 + s0 * s2);
+        if ((2 + i - j) % 3)
+            ret[4 - i - j] = s1 * (s0 * c2 - c0 * s2);
+        else
+            ret[4 - i - j] = s1 * (c0 * s2 - s0 * c2);
+    }
     else
-        v1 -= v2;
+    {
+        vec4 v1(c0 * c1 * c2,  s0 * c1 * c2, c0 * s1 * c2,  c0 * c1 * s2);
+        vec4 v2(s0 * s1 * s2, -c0 * s1 * s2, s0 * c1 * s2, -s0 * s1 * c2);
 
-    return quat(v1[0], v1[i], v1[j], v1[k]);
+        if ((2 + i - j) % 3)
+            v1 -= v2;
+        else
+            v1 += v2;
+
+        ret[0] = v1[0];
+        ret[1 + i] = v1[1];
+        ret[1 + j] = v1[2];
+        ret[4 - i - j] = v1[3];
+    }
+
+    return ret;
 }
 
-template<> quat quat::fromeuler_xyz(vec3 const &v)
-{
-    return fromeuler_generic(v, -1, 3, 2, 1);
-}
+#define QUAT_FROMEULER_GENERIC(name, i, j, k) \
+    template<> quat quat::fromeuler_##name(vec3 const &v) \
+    { \
+        return quat_fromeuler_generic(v, i, j, k); \
+    } \
+    \
+    template<> quat quat::fromeuler_##name(float phi, float theta, float psi) \
+    { \
+        return quat::fromeuler_##name(vec3(phi, theta, psi)); \
+    }
 
-template<> quat quat::fromeuler_xzy(vec3 const &v)
-{
-    return fromeuler_generic(v, 1, 3, 1, 2);
-}
+QUAT_FROMEULER_GENERIC(xyx, 0, 1, 0)
+QUAT_FROMEULER_GENERIC(xzx, 0, 2, 0)
+QUAT_FROMEULER_GENERIC(yxy, 1, 0, 1)
+QUAT_FROMEULER_GENERIC(yzy, 1, 2, 1)
+QUAT_FROMEULER_GENERIC(zxz, 2, 0, 2)
+QUAT_FROMEULER_GENERIC(zyz, 2, 1, 2)
 
-template<> quat quat::fromeuler_yxz(vec3 const &v)
-{
-    return fromeuler_generic(v, 1, 2, 3, 1);
-}
+QUAT_FROMEULER_GENERIC(xyz, 0, 1, 2)
+QUAT_FROMEULER_GENERIC(xzy, 0, 2, 1)
+QUAT_FROMEULER_GENERIC(yxz, 1, 0, 2)
+QUAT_FROMEULER_GENERIC(yzx, 1, 2, 0)
+QUAT_FROMEULER_GENERIC(zxy, 2, 0, 1)
+QUAT_FROMEULER_GENERIC(zyx, 2, 1, 0)
 
-template<> quat quat::fromeuler_yzx(vec3 const &v)
-{
-    return fromeuler_generic(v, -1, 1, 3, 2);
-}
-
-template<> quat quat::fromeuler_zxy(vec3 const &v)
-{
-    return fromeuler_generic(v, -1, 2, 1, 3);
-}
-
-template<> quat quat::fromeuler_zyx(vec3 const &v)
-{
-    return fromeuler_generic(v, 1, 1, 2, 3);
-}
-
-template<> quat quat::fromeuler_xyz(float phi, float theta, float psi)
-{
-    return quat::fromeuler_zyx(vec3(phi, theta, psi));
-}
-
-template<> quat quat::fromeuler_xzy(float phi, float theta, float psi)
-{
-    return quat::fromeuler_yxz(vec3(phi, theta, psi));
-}
-
-template<> quat quat::fromeuler_yxz(float phi, float theta, float psi)
-{
-    return quat::fromeuler_yxz(vec3(phi, theta, psi));
-}
-
-template<> quat quat::fromeuler_yzx(float phi, float theta, float psi)
-{
-    return quat::fromeuler_yxz(vec3(phi, theta, psi));
-}
-
-template<> quat quat::fromeuler_zxy(float phi, float theta, float psi)
-{
-    return quat::fromeuler_yxz(vec3(phi, theta, psi));
-}
-
-template<> quat quat::fromeuler_zyx(float phi, float theta, float psi)
-{
-    return quat::fromeuler_yxz(vec3(phi, theta, psi));
-}
+#undef QUAT_FROMEULER_GENERIC
 
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
