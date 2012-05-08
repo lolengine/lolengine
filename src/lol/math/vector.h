@@ -125,9 +125,9 @@ template<typename T, int N> struct XVec4
  * Helper macro for vector type member functions
  */
 
-#define DECLARE_MEMBER_OPS(tname) \
-    inline T& operator[](size_t n) { return *(&this->x + n); } \
-    inline T const& operator[](size_t n) const { return *(&this->x + n); } \
+#define DECLARE_MEMBER_OPS(tname, first) \
+    inline T& operator[](size_t n) { return *(&this->first + n); } \
+    inline T const& operator[](size_t n) const { return *(&this->first + n); } \
     \
     /* Visual Studio insists on having an assignment operator. */ \
     inline tname<T> const & operator =(tname<T> const &that) \
@@ -233,7 +233,7 @@ template <typename T> struct Vec2 : BVec2<T>
     explicit inline Vec2(XVec2<U, N> const &v)
       : BVec2<T>(v[0], v[1]) {}
 
-    DECLARE_MEMBER_OPS(Vec2)
+    DECLARE_MEMBER_OPS(Vec2, x)
 
 #if !defined __ANDROID__
     template<typename U>
@@ -251,7 +251,7 @@ template <typename T> struct Cmplx
     inline Cmplx(T X) : x(X), y(0) {}
     inline Cmplx(T X, T Y) : x(X), y(Y) {}
 
-    DECLARE_MEMBER_OPS(Cmplx)
+    DECLARE_MEMBER_OPS(Cmplx, x)
 
     inline Cmplx<T> operator *(Cmplx<T> const &val) const
     {
@@ -491,7 +491,7 @@ template <typename T> struct Vec3 : BVec3<T>
 
     static Vec3<T> toeuler(Quat<T> const &q);
 
-    DECLARE_MEMBER_OPS(Vec3)
+    DECLARE_MEMBER_OPS(Vec3, x)
 
 #if !defined __ANDROID__
     template<typename U>
@@ -900,7 +900,7 @@ template <typename T> struct Vec4 : BVec4<T>
     explicit inline Vec4(XVec4<U, N> const &v)
       : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
-    DECLARE_MEMBER_OPS(Vec4)
+    DECLARE_MEMBER_OPS(Vec4, x)
 
 #if !defined __ANDROID__
     template<typename U>
@@ -915,16 +915,33 @@ template <typename T> struct Vec4 : BVec4<T>
 template <typename T> struct Quat
 {
     inline Quat() {}
-    inline Quat(T W) : x(0), y(0), z(0), w(W) {}
-    inline Quat(T W, T X, T Y, T Z) : x(X), y(Y), z(Z), w(W) {}
+    inline Quat(T W) : w(W),  x(0), y(0), z(0) {}
+    inline Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
 
     Quat(Mat3<T> const &m);
     Quat(Mat4<T> const &m);
 
-    DECLARE_MEMBER_OPS(Quat)
+    DECLARE_MEMBER_OPS(Quat, w)
 
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
+
+    /* Convert from Euler angles. The axes in fromeuler_xyx are
+     * x, then y', then x", ie. the axes are attached to the model.
+     * If you want to rotate around static axes, just reverse the order
+     * of the arguments. */
+    static Quat<T> fromeuler_xyx(Vec3<T> const &v);
+    static Quat<T> fromeuler_xzx(Vec3<T> const &v);
+    static Quat<T> fromeuler_yxy(Vec3<T> const &v);
+    static Quat<T> fromeuler_yzy(Vec3<T> const &v);
+    static Quat<T> fromeuler_zxz(Vec3<T> const &v);
+    static Quat<T> fromeuler_zyz(Vec3<T> const &v);
+    static Quat<T> fromeuler_xyx(T phi, T theta, T psi);
+    static Quat<T> fromeuler_xzx(T phi, T theta, T psi);
+    static Quat<T> fromeuler_yxy(T phi, T theta, T psi);
+    static Quat<T> fromeuler_yzy(T phi, T theta, T psi);
+    static Quat<T> fromeuler_zxz(T phi, T theta, T psi);
+    static Quat<T> fromeuler_zyz(T phi, T theta, T psi);
 
     /* Convert from Tait-Bryan angles (incorrectly called Euler angles,
      * but since everyone does it…). The axes in fromeuler_xyz are
@@ -978,8 +995,8 @@ template <typename T> struct Quat
     friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
 #endif
 
-    /* Storage order is still xyzw because operator[] uses &this->x */
-    T x, y, z, w;
+    /* XXX: storage order is wxyz, unlike vectors! */
+    T w, x, y, z;
 };
 
 template<typename T>
