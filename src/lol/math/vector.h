@@ -925,8 +925,27 @@ template <typename T> struct Quat
 
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
-    static Quat<T> fromeuler(T x, T y, T z);
-    static Quat<T> fromeuler(Vec3<T> const &v);
+
+    /* Convert from Tait-Bryan angles (incorrectly called Euler angles,
+     * but since everyone does it…). The axes in fromeuler_xyz are
+     * x, then y', then z", ie. the axes are attached to the model.
+     * If you want to apply yaw around x, pitch around y, and roll
+     * around z, use fromeuler_xyz.
+     * If you want to rotate around static axes, reverse the order in
+     * the function name (_zyx instead of _xyz) AND reverse the order
+     * of the arguments. */
+    static Quat<T> fromeuler_xyz(Vec3<T> const &v);
+    static Quat<T> fromeuler_xzy(Vec3<T> const &v);
+    static Quat<T> fromeuler_yxz(Vec3<T> const &v);
+    static Quat<T> fromeuler_yzx(Vec3<T> const &v);
+    static Quat<T> fromeuler_zxy(Vec3<T> const &v);
+    static Quat<T> fromeuler_zyx(Vec3<T> const &v);
+    static Quat<T> fromeuler_xyz(T phi, T theta, T psi);
+    static Quat<T> fromeuler_xzy(T phi, T theta, T psi);
+    static Quat<T> fromeuler_yxz(T phi, T theta, T psi);
+    static Quat<T> fromeuler_yzx(T phi, T theta, T psi);
+    static Quat<T> fromeuler_zxy(T phi, T theta, T psi);
+    static Quat<T> fromeuler_zyx(T phi, T theta, T psi);
 
     inline Quat<T> operator *(Quat<T> const &val) const
     {
