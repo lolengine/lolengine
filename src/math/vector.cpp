@@ -506,36 +506,74 @@ template<> vec3 vec3::toeuler(quat const &q)
     return (180.0f / M_PI / n) * ret;
 }
 
-template<> mat3 mat3::fromeuler(vec3 const &v)
+static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     using std::sin;
     using std::cos;
-
     mat3 ret;
 
     vec3 radians = (M_PI / 180.0f) * v;
-    float sx = sin(radians.x), cx = cos(radians.x);
-    float sy = sin(radians.y), cy = cos(radians.y);
-    float sz = sin(radians.z), cz = cos(radians.z);
+    float s0 = sin(radians[0]), c0 = cos(radians[0]);
+    float s1 = sin(radians[1]), c1 = cos(radians[1]);
+    float s2 = sin(radians[2]), c2 = cos(radians[2]);
 
-    ret[0][0] =   cy * cz;
-    ret[1][0] = - cx * sz + sx * sy * cz;
-    ret[2][0] =   sx * sz + cx * sy * cz;
+    if (k == i)
+    {
+        k = 3 - i - j;
 
-    ret[0][1] =   cy * sz;
-    ret[1][1] =   cx * cz + sx * sy * sz;
-    ret[2][1] = - sx * cz + cx * sy * sz;
+        ret[i][i] =   c1;
+        ret[j][i] =   s1 * s2;
+        ret[i][j] =   s0 * s1;
+        ret[j][j] =   c0 * c2 - s0 * c1 * s2;
+        ret[k][k] = - s0 * s2 + c0 * c1 * c2;
 
-    ret[0][2] = - sy;
-    ret[1][2] =   sx * cy;
-    ret[2][2] =   cx * cy;
+        if ((2 + i - j) % 3)
+        {
+            ret[k][i] =   s1 * c2;
+            ret[k][j] = - c0 * s2 - s0 * c1 * c2;
+            ret[i][k] = - c0 * s1;
+            ret[j][k] =   s0 * c2 + c0 * c1 * s2;
+        }
+        else
+        {
+            ret[k][i] = - s1 * c2;
+            ret[k][j] =   c0 * s2 + s0 * c1 * c2;
+            ret[i][k] =   c0 * s1;
+            ret[j][k] = - s0 * c2 - c0 * c1 * s2;
+        }
+    }
+    else
+    {
+        ret[i][i] =   c1 * c2;
+        ret[k][k] =   c0 * c1;
+
+        if ((2 + i - j) % 3)
+        {
+            ret[j][i] = - c1 * s2;
+            ret[k][i] =   s1;
+
+            ret[i][j] =   c0 * s2 + s0 * s1 * c2;
+            ret[j][j] =   c0 * c2 - s0 * s1 * s2;
+            ret[k][j] = - s0 * c1;
+
+            ret[i][k] =   s0 * s2 - c0 * s1 * c2;
+            ret[j][k] =   s0 * c2 + c0 * s1 * s2;
+        }
+        else
+        {
+            ret[j][i] =   c1 * s2;
+            ret[k][i] = - s1;
+
+            ret[i][j] = - c0 * s2 + s0 * s1 * c2;
+            ret[j][j] =   c0 * c2 + s0 * s1 * s2;
+            ret[k][j] =   s0 * c1;
+
+            ret[i][k] =   s0 * s2 + c0 * s1 * c2;
+            ret[j][k] = - s0 * c2 + c0 * s1 * s2;
+        }
+    }
 
     return ret;
-}
-
-template<> mat3 mat3::fromeuler(float x, float y, float z)
-{
-    return mat3::fromeuler(vec3(x, y, z));
 }
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
@@ -550,15 +588,15 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
     quat ret;
 
-    if (i == k)
+    if (k == i)
     {
+        k = 3 - i - j;
+
         ret[0] = c1 * (c0 * c2 - s0 * s2);
         ret[1 + i] = c1 * (c0 * s2 + s0 * c2);
         ret[1 + j] = s1 * (c0 * c2 + s0 * s2);
-        if ((2 + i - j) % 3)
-            ret[4 - i - j] = s1 * (s0 * c2 - c0 * s2);
-        else
-            ret[4 - i - j] = s1 * (c0 * s2 - s0 * c2);
+        ret[1 + k] = ((2 + i - j) % 3) ? s1 * (s0 * c2 - c0 * s2)
+                                       : s1 * (c0 * s2 - s0 * c2);
     }
     else
     {
@@ -573,13 +611,13 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         ret[0] = v1[0];
         ret[1 + i] = v1[1];
         ret[1 + j] = v1[2];
-        ret[4 - i - j] = v1[3];
+        ret[1 + k] = v1[3];
     }
 
     return ret;
 }
 
-#define QUAT_FROMEULER_GENERIC(name, i, j, k) \
+#define DEFINE_FROMEULER_GENERIC(name, i, j, k) \
     template<> quat quat::fromeuler_##name(vec3 const &v) \
     { \
         return quat_fromeuler_generic(v, i, j, k); \
@@ -588,23 +626,43 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     template<> quat quat::fromeuler_##name(float phi, float theta, float psi) \
     { \
         return quat::fromeuler_##name(vec3(phi, theta, psi)); \
+    } \
+    \
+    template<> mat3 mat3::fromeuler_##name(vec3 const &v) \
+    { \
+        return mat3_fromeuler_generic(v, i, j, k); \
+    } \
+    \
+    template<> mat3 mat3::fromeuler_##name(float phi, float theta, float psi) \
+    { \
+        return mat3::fromeuler_##name(vec3(phi, theta, psi)); \
+    } \
+    \
+    template<> mat4 mat4::fromeuler_##name(vec3 const &v) \
+    { \
+        return mat4(mat3_fromeuler_generic(v, i, j, k), 1.f); \
+    } \
+    \
+    template<> mat4 mat4::fromeuler_##name(float phi, float theta, float psi) \
+    { \
+        return mat4::fromeuler_##name(vec3(phi, theta, psi)); \
     }
 
-QUAT_FROMEULER_GENERIC(xyx, 0, 1, 0)
-QUAT_FROMEULER_GENERIC(xzx, 0, 2, 0)
-QUAT_FROMEULER_GENERIC(yxy, 1, 0, 1)
-QUAT_FROMEULER_GENERIC(yzy, 1, 2, 1)
-QUAT_FROMEULER_GENERIC(zxz, 2, 0, 2)
-QUAT_FROMEULER_GENERIC(zyz, 2, 1, 2)
+DEFINE_FROMEULER_GENERIC(xyx, 0, 1, 0)
+DEFINE_FROMEULER_GENERIC(xzx, 0, 2, 0)
+DEFINE_FROMEULER_GENERIC(yxy, 1, 0, 1)
+DEFINE_FROMEULER_GENERIC(yzy, 1, 2, 1)
+DEFINE_FROMEULER_GENERIC(zxz, 2, 0, 2)
+DEFINE_FROMEULER_GENERIC(zyz, 2, 1, 2)
 
-QUAT_FROMEULER_GENERIC(xyz, 0, 1, 2)
-QUAT_FROMEULER_GENERIC(xzy, 0, 2, 1)
-QUAT_FROMEULER_GENERIC(yxz, 1, 0, 2)
-QUAT_FROMEULER_GENERIC(yzx, 1, 2, 0)
-QUAT_FROMEULER_GENERIC(zxy, 2, 0, 1)
-QUAT_FROMEULER_GENERIC(zyx, 2, 1, 0)
+DEFINE_FROMEULER_GENERIC(xyz, 0, 1, 2)
+DEFINE_FROMEULER_GENERIC(xzy, 0, 2, 1)
+DEFINE_FROMEULER_GENERIC(yxz, 1, 0, 2)
+DEFINE_FROMEULER_GENERIC(yzx, 1, 2, 0)
+DEFINE_FROMEULER_GENERIC(zxy, 2, 0, 1)
+DEFINE_FROMEULER_GENERIC(zyx, 2, 1, 0)
 
-#undef QUAT_FROMEULER_GENERIC
+#undef DEFINE_FROMEULER_GENERIC
 
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
