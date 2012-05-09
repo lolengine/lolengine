@@ -32,6 +32,8 @@ public:
     void SetButtonCount(int n);
     void SetAxis(int n, float val);
     void SetButton(int n, int val);
+    void RemapAxis(int src, int dst);
+    void RemapButton(int src, int dst);
 
     int GetAxisCount();
     int GetButtonCount();

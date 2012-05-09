@@ -67,6 +67,14 @@ SdlInput::SdlInput()
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(SDL_JoystickNumAxes(sdlstick));
         stick->SetButtonCount(SDL_JoystickNumButtons(sdlstick));
+
+        /* It's possible to remap axes */
+        if (strstr(name, "XBOX 360 For Windows"))
+        {
+            //stick->RemapAxis(4, 2);
+            //stick->RemapAxis(2, 4);
+        }
+
         m_data->m_joysticks.Push(sdlstick, stick);
     }
 #endif
