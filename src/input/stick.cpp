@@ -32,8 +32,9 @@ public:
     StickData() { }
 
 private:
-    Array<float> m_axes;
-    Array<int> m_buttons;
+    /* First element is the remap target */
+    Array<int, float> m_axes;
+    Array<int, int> m_buttons;
 }
 stickdata;
 
@@ -55,24 +56,34 @@ void Stick::SetAxisCount(int n)
 {
     m_data->m_axes.Empty();
     for (int i = 0; i < n; i++)
-        m_data->m_axes.Push(0.f);
+        m_data->m_axes.Push(i, 0.f);
 }
 
 void Stick::SetButtonCount(int n)
 {
     m_data->m_buttons.Empty();
     for (int i = 0; i < n; i++)
-        m_data->m_buttons.Push(0);
+        m_data->m_buttons.Push(i, 0);
 }
 
 void Stick::SetAxis(int n, float val)
 {
-    m_data->m_axes[n] = val;
+    m_data->m_axes[m_data->m_axes[n].m1].m2 = val;
 }
 
 void Stick::SetButton(int n, int val)
 {
-    m_data->m_buttons[n] = val;
+    m_data->m_buttons[m_data->m_buttons[n].m1].m2 = val;
+}
+
+void Stick::RemapAxis(int src, int dst)
+{
+    m_data->m_axes[src].m1 = dst;
+}
+
+void Stick::RemapButton(int src, int dst)
+{
+    m_data->m_buttons[src].m1 = dst;
 }
 
 int Stick::GetAxisCount()
@@ -87,12 +98,12 @@ int Stick::GetButtonCount()
 
 float Stick::GetAxis(int n)
 {
-    return m_data->m_axes[n];
+    return m_data->m_axes[n].m2;
 }
 
 int Stick::GetButton(int n)
 {
-    return m_data->m_buttons[n];
+    return m_data->m_buttons[n].m2;
 }
 
 } /* namespace lol */
