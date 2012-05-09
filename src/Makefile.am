@@ -70,7 +70,8 @@ endif
 
 if HAVE_XBOX
 xbox_sources = \
-    platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h
+    platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h \
+    platform/xbox/xboxinput.cpp platform/xbox/xboxinput.h
 endif
 
 android_sources = \

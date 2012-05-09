@@ -17,8 +17,8 @@
 #endif
 
 #include "core.h"
-#include "lolgl.h"
 #include "xboxapp.h"
+#include "xboxinput.h"
 
 #if defined _XBOX
 extern D3DDevice *g_d3ddevice;
@@ -50,6 +50,9 @@ XboxApp::XboxApp(char const *title, ivec2 res, float fps) :
 #if defined _XBOX
     Ticker::Setup(fps);
     Video::Setup(res);
+
+    /* Autoreleased objects */
+    new XboxInput();
 #endif
 }
 

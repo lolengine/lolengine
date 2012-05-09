@@ -193,6 +193,9 @@
     <ClCompile Include="..\src\platform\xbox\xboxapp.cpp">
       <Filter>src\platform\xbox</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\platform\xbox\xboxinput.cpp">
+      <Filter>src\platform\xbox</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\gpu\indexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
@@ -364,6 +367,9 @@
       <Filter>src\image</Filter>
     </ClInclude>
     <ClInclude Include="..\src\platform\xbox\xboxapp.h">
+      <Filter>src\platform\xbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform\xbox\xboxinput.h">
       <Filter>src\platform\xbox</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gpu\indexbuffer.h">
