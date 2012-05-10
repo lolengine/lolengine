@@ -44,6 +44,9 @@
     <Filter Include="src\input">
       <UniqueIdentifier>{94992c0e-ebc5-4185-b766-323b06547dcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\d3d9">
+      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -204,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="..\src\input\stick.cpp">
       <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\platform\d3d9\d3d9input.cpp">
+      <Filter>src\platform\d3d9</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -386,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="..\src\input\stick.h">
       <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform\d3d9\d3d9input.h">
+      <Filter>src\platform\d3d9</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
