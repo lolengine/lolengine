@@ -5,6 +5,7 @@
     <ClInclude Include="..\orbital\CommandParser.h" />
     <ClInclude Include="..\orbital\player.h" />
     <ClInclude Include="..\orbital\tank.h" />
+    <ClInclude Include="..\orbital\starfield.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\orbital\orbital.h" />
