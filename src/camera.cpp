@@ -85,6 +85,7 @@ void Camera::TickGame(float seconds)
     float pgupdown = 2.f * (Input::GetButtonState('r')
                              - Input::GetButtonState('f'));
 
+#if 0
     /* Hackish stick support */
     static Stick *stick = NULL;
     if (!stick)
@@ -94,6 +95,7 @@ void Camera::TickGame(float seconds)
         rightleft += 2.f * stick->GetAxis(0) * std::abs(stick->GetAxis(0));
         updown += -2.f * stick->GetAxis(1) * std::abs(stick->GetAxis(1));
     }
+#endif
 
     m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
     m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;
