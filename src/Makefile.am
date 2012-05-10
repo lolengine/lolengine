@@ -22,6 +22,7 @@ liblol_a_SOURCES = \
     $(xbox_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
+    $(d3d9_sources) \
     $(android_sources) \
     \
     thread/threadbase.h thread/thread.h \
@@ -50,6 +51,9 @@ sdl_sources = \
     image/codec/sdl-image.cpp \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
+
+d3d9_sources = \
+    platform/xbox/xboxinput.cpp platform/xbox/xboxinput.h
 
 if USE_NACL
 nacl_sources = \

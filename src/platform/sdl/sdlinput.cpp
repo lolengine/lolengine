@@ -58,7 +58,11 @@ SdlInput::SdlInput()
 
         /* Blacklist HDAPS, it's not a real joystick */
         char const *name = SDL_JoystickName(i);
-        if (strstr(name, "HDAPS"))
+        if (strstr(name, "HDAPS")
+#   if !defined USE_D3D9
+             || strstr(name, "XBOX 360 For Windows")
+#   endif
+             || true)
         {
             SDL_JoystickClose(sdlstick);
             continue;
@@ -69,11 +73,8 @@ SdlInput::SdlInput()
         stick->SetButtonCount(SDL_JoystickNumButtons(sdlstick));
 
         /* It's possible to remap axes */
-        if (strstr(name, "XBOX 360 For Windows"))
-        {
-            //stick->RemapAxis(4, 2);
-            //stick->RemapAxis(2, 4);
-        }
+        //stick->RemapAxis(4, 2);
+        //stick->RemapAxis(2, 4);
 
         m_data->m_joysticks.Push(sdlstick, stick);
     }

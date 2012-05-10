@@ -108,6 +108,7 @@
     <ClCompile Include="..\src\math\trig.cpp" />
     <ClCompile Include="..\src\math\vector.cpp" />
     <ClCompile Include="..\src\platform.cpp" />
+    <ClCompile Include="..\src\platform\d3d9\d3d9input.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlapp.cpp" />
     <ClCompile Include="..\src\platform\sdl\sdlinput.cpp" />
     <ClCompile Include="..\src\platform\xbox\xboxapp.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="..\src\math\trig.h" />
     <ClInclude Include="..\src\numeric.h" />
     <ClInclude Include="..\src\platform.h" />
+    <ClInclude Include="..\src\platform\d3d9\d3d9input.h" />
     <ClInclude Include="..\src\platform\sdl\sdlapp.h" />
     <ClInclude Include="..\src\platform\sdl\sdlinput.h" />
     <ClInclude Include="..\src\platform\xbox\xboxapp.h" />
