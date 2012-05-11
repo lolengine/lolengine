@@ -32,6 +32,7 @@
     <ClInclude Include="..\orbital\orbital.h" />
     <ClInclude Include="..\orbital\particlesystem.h" />
     <ClInclude Include="..\orbital\player.h" />
+    <ClInclude Include="..\orbital\snake.h" />
     <ClInclude Include="..\orbital\starfield.h" />
     <ClInclude Include="..\orbital\tank.h" />
   </ItemGroup>
