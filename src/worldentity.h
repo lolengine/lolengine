@@ -27,6 +27,7 @@ public:
     vec3 m_position;
     vec3 m_velocity;
     quat m_rotation;
+    vec3 m_rotation_velocity;
     vec3 m_bbox[2];
 
     ivec2 m_mousepos;

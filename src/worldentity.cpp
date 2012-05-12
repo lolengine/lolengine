@@ -28,6 +28,7 @@ WorldEntity::WorldEntity()
     m_position = vec3(0);
     m_rotation = quat(1);
     m_velocity = vec3(0);
+	m_rotation_velocity = vec3(0);
     m_bbox[0] = m_bbox[1] = vec3(0);
 
     m_mousepos = ivec2(0);
