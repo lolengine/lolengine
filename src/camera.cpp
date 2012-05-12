@@ -61,6 +61,16 @@ void Camera::SetPerspective(float fov, float width, float height,
     m_proj_matrix = mat4::perspective(fov, width, height, near, far);
 }
 
+void Camera::SetTarget(vec3 const &pos)
+{
+    m_target = pos;
+}
+
+vec3 Camera::GetTarget()
+{
+    return m_target;
+}
+
 mat4 const &Camera::GetViewMatrix()
 {
     return m_view_matrix;

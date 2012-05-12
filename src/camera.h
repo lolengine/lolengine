@@ -34,6 +34,8 @@ public:
     void SetOrtho(float width, float height, float near, float far);
     void SetPerspective(float fov, float width, float height,
                         float near, float far);
+    void SetTarget(vec3 const &pos);
+    vec3 GetTarget();
 
     mat4 const &GetViewMatrix();
     mat4 const &GetProjMatrix();
