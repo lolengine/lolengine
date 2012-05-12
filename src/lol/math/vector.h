@@ -268,7 +268,7 @@ template <typename T> struct Cmplx
         return Cmplx<T>(x, -y);
     }
 
-    inline T norm() const { return len(*this); }
+    inline T norm() const { return length(*this); }
 #if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
@@ -280,7 +280,7 @@ template <typename T> struct Cmplx
 template<typename T>
 static inline Cmplx<T> re(Cmplx<T> const &val)
 {
-    return ~val / sqlen(val);
+    return ~val / sqlength(val);
 }
 
 template<typename T>
@@ -1002,7 +1002,7 @@ template <typename T> struct Quat
 template<typename T>
 inline T norm(Quat<T> const &val)
 {
-    return sqlen(val);
+    return sqlength(val);
 }
 
 template<typename T>
@@ -1187,7 +1187,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     } \
     \
     tprefix \
-    inline type sqlen(tname<type> const &a) \
+    inline type sqlength(tname<type> const &a) \
     { \
         type acc = 0; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
@@ -1196,16 +1196,16 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     } \
     \
     tprefix \
-    inline double len(tname<type> const &a) \
+    inline double length(tname<type> const &a) \
     { \
         using std::sqrt; \
-        return sqrt((double)sqlen(a)); \
+        return sqrt((double)sqlength(a)); \
     } \
     \
     tprefix \
     inline tname<type> normalize(tname<type> const &val) \
     { \
-        type norm = (type)len(val); \
+        type norm = (type)length(val); \
         return norm ? val / norm : val * (type)0; \
     }
 

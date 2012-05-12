@@ -383,7 +383,7 @@ public:
                 z2 = z1 * z1 + r0;
                 z3 = z2 * z2 + r0;
                 z0 = z3 * z3 + r0;
-                if (sqlen(z0) >= maxsqlen)
+                if (sqlength(z0) >= maxsqlen)
                     break;
                 iter -= 4;
                 if (iter < 4)
@@ -392,11 +392,11 @@ public:
 
             if (iter)
             {
-                double n = sqlen(z0);
+                double n = sqlength(z0);
 
-                if (sqlen(z1) >= maxsqlen) { iter += 3; n = sqlen(z1); }
-                else if (sqlen(z2) >= maxsqlen) { iter += 2; n = sqlen(z2); }
-                else if (sqlen(z3) >= maxsqlen) { iter += 1; n = sqlen(z3); }
+                if (sqlength(z1) >= maxsqlen) { iter += 3; n = sqlength(z1); }
+                else if (sqlength(z2) >= maxsqlen) { iter += 2; n = sqlength(z2); }
+                else if (sqlength(z3) >= maxsqlen) { iter += 1; n = sqlength(z3); }
 
                 if (n > maxsqlen * maxsqlen)
                     n = maxsqlen * maxsqlen;
