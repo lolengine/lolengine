@@ -276,6 +276,8 @@ template<> real fmod(real const &x, real const &y);
 template<> void real::hexprint() const;
 template<> void real::print(int ndigits) const;
 
+/* FIXME: why doesn't this work on Visual Studio? */
+#if !defined _MSC_VER
 template<> real const real::R_0;
 template<> real const real::R_1;
 template<> real const real::R_2;
@@ -297,6 +299,7 @@ template<> real const real::R_2_SQRTPI;
 template<> real const real::R_SQRT2;
 template<> real const real::R_SQRT3;
 template<> real const real::R_SQRT1_2;
+#endif
 
 } /* namespace lol */
 
