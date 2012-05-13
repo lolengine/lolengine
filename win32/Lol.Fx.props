@@ -24,7 +24,8 @@ for /F "tokens=1,* delims=`" %%L in ('type "%(Fullpath)"') do (
 )
 endlocal
 echo ; &gt;&gt; "%D%"</CommandLineTemplate>
-      <ExecutionDescription>Compiling with Lol Fx Build Rule...</ExecutionDescription>
+      <Outputs>$(IntDir)%(FileName)%(Extension).cpp</Outputs>
+      <ExecutionDescription>%(FileName)%(Extension)</ExecutionDescription>
     </LolFxCompile>
   </ItemDefinitionGroup>
 </Project>

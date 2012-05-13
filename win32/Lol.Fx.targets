@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
-    <AvailableItemName
-      Include="LolFxCompile">
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="LolFxCompile">
       <Targets>LolFxCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
+
+  <PropertyGroup>
+    <ComputeCompileInputsTargets>
+      $(ComputeCompileInputsTargets);
+      ComputeLolFxCompileOutput;
+    </ComputeCompileInputsTargets>
+  </PropertyGroup>
+
   <UsingTask
     TaskName="LolFxCompile"
     TaskFactory="XamlTaskFactory"
     AssemblyName="Microsoft.Build.Tasks.v4.0">
     <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
   </UsingTask>
+
   <Target
     Name="LolFxCompile"
     BeforeTargets="$(LolFxCompileBeforeTargets)"
@@ -49,31 +56,24 @@
     <LolFxCompile
       Condition="'@(LolFxCompile)' != '' and '%(LolFxCompile.ExcludedFromBuild)' != 'true'"
       CommandLineTemplate="%(LolFxCompile.CommandLineTemplate)"
+      Outputs="%(LolFxCompile.Outputs)"
       IntDir="$(IntDir)"
-      Outputs="$(Outputs)"
       FileName="%(FileName)"
       Inputs="@(LolFxCompile)" />
   </Target>
 
-  <PropertyGroup>
-    <ComputeLinkInputsTargets>
-      $(ComputeLinkInputsTargets);
-      ComputeLolFxCompileOutput;
-    </ComputeLinkInputsTargets>
-    <ComputeLibInputsTargets>
-      $(ComputeLibInputsTargets);
-      ComputeLolFxCompileOutput;
-    </ComputeLibInputsTargets>
-  </PropertyGroup>
 
   <Target Name="ComputeLolFxCompileOutput" Condition="'@(LolFxCompile)' != ''">
+    <ItemGroup>
+      <ClCompile Include="@(LolFxCompile->Metadata('CompileOut')->Distinct()->ClearMetadata())" Condition="'%(LolFxCompile.ExcludedFromBuild)' != 'true'">
+        <CompileAs>CompileAsC</CompileAs>
+      </ClCompile>
+      <ClCompile Include="%(LolFxCompile.Outputs)" />
+    </ItemGroup>
     <ItemGroup>
       <LolFxCompile>
         <CompileOut>$(IntDir)\%(FileName).lolfx.cpp</CompileOut>
       </LolFxCompile>
-    </ItemGroup>
-    <ItemGroup>
-      <ClCompile Include="%(LolFxCompile.Outputs)" />
     </ItemGroup>
   </Target>
 
