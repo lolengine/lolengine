@@ -50,16 +50,16 @@
       </StringListProperty.DataSource>
     </StringListProperty>
     <StringListProperty
-      Name="Outputs"
-      DisplayName="Outputs"
-      Visible="False"
-      IncludeInCommandLine="False" />
-    <StringListProperty
       Name="FileName"
       Category="Command Line"
       IsRequired="true"
       Switch=" ">
     </StringListProperty>
+    <StringProperty
+      Name="Outputs"
+      Category="Command Line"
+      IsRequired="true"
+      Switch=" " />
     <StringProperty
       Name="CommandLineTemplate"
       DisplayName="Command Line"
