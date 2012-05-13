@@ -276,6 +276,28 @@ template<> real fmod(real const &x, real const &y);
 template<> void real::hexprint() const;
 template<> void real::print(int ndigits) const;
 
+template<> real const real::R_0;
+template<> real const real::R_1;
+template<> real const real::R_2;
+template<> real const real::R_3;
+template<> real const real::R_10;
+
+template<> real const real::R_LN2;
+template<> real const real::R_LN10;
+template<> real const real::R_LOG2E;
+template<> real const real::R_LOG10E;
+template<> real const real::R_E;
+template<> real const real::R_PI;
+template<> real const real::R_PI_2;
+template<> real const real::R_PI_3;
+template<> real const real::R_PI_4;
+template<> real const real::R_1_PI;
+template<> real const real::R_2_PI;
+template<> real const real::R_2_SQRTPI;
+template<> real const real::R_SQRT2;
+template<> real const real::R_SQRT3;
+template<> real const real::R_SQRT1_2;
+
 } /* namespace lol */
 
 #endif // __LOL_MATH_REAL_H__

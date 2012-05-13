@@ -964,14 +964,7 @@ template <typename T> struct Quat
     static Quat<T> fromeuler_zxy(T phi, T theta, T psi);
     static Quat<T> fromeuler_zyx(T phi, T theta, T psi);
 
-    inline Quat<T> operator *(Quat<T> const &val) const
-    {
-        Quat<T> ret;
-        Vec3<T> v1(x, y, z);
-        Vec3<T> v2(val.x, val.y, val.z);
-        Vec3<T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
-        return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
-    }
+    inline Quat<T> operator *(Quat<T> const &val) const;
 
     inline Quat<T> operator *=(Quat<T> const &val)
     {
@@ -1521,6 +1514,20 @@ ACTIVATE_COERCE_NAMESPACES(real)
 #undef DECLARE_ALL_NONVECTOR_OPS
 #undef DECLARE_ALL_VECTOR_OPS_INNER
 #undef DECLARE_ALL_VECTOR_OPS
+
+/*
+ * Definition of additional functions requiring vector functions
+ */
+
+template<typename T>
+inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
+{
+    Quat<T> ret;
+    Vec3<T> v1(x, y, z);
+    Vec3<T> v2(val.x, val.y, val.z);
+    Vec3<T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
+    return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
+}
 
 /*
  * Magic vector swizzling (part 2/2)
