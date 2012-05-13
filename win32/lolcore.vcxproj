@@ -59,13 +59,14 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="Lol.Fx.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Lol.Vars.props" />
+    <Import Project="Lol.Core.Vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="Lol.Rules.props" />
+  <Import Project="Lol.Core.Rules.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -190,7 +191,12 @@
     <ClInclude Include="..\src\world.h" />
     <ClInclude Include="..\src\worldentity.h" />
   </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx" />
+    <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="Lol.Fx.targets" />
   </ImportGroup>
 </Project>
