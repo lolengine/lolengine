@@ -270,7 +270,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7; T8 tmp8 = m8;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -309,7 +309,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -346,7 +346,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -380,7 +380,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -410,7 +410,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -438,7 +438,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
             this->m_data[this->m_count].m3 = tmp3;
@@ -464,7 +464,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2;
-            Reserve(this->m_count * 13 / 8 + 8);
+            this->Reserve(this->m_count * 13 / 8 + 8);
             this->m_data[this->m_count].m1 = tmp1;
             this->m_data[this->m_count].m2 = tmp2;
         }
