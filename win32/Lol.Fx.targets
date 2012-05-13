@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName
+      Include="LolFxCompile">
+      <Targets>LolFxCompile</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <UsingTask
+    TaskName="LolFxCompile"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
+  </UsingTask>
+  <Target
+    Name="LolFxCompile"
+    BeforeTargets="$(LolFxCompileBeforeTargets)"
+    AfterTargets="$(LolFxCompileAfterTargets)"
+    Condition="'@(LolFxCompile)' != ''"
+    DependsOnTargets="$(LolFxCompileDependsOn);ComputeLolFxCompileOutput"
+    Outputs="@(LolFxCompile-&gt;Metadata('CompileOut')-&gt;Distinct())"
+    Inputs="@(LolFxCompile);%(LolFxCompile.AdditionalDependencies);$(MSBuildProjectFile)">
+    <ItemGroup
+      Condition="'@(SelectedFiles)' != ''">
+      <LolFxCompile
+        Remove="@(LolFxCompile)"
+        Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <LolFxCompile_tlog
+        Include="%(LolFxCompile.Outputs)"
+        Condition="'%(LolFxCompile.Outputs)' != '' and '%(LolFxCompile.ExcludedFromBuild)' != 'true'">
+        <Source>@(LolFxCompile, '|')</Source>
+      </LolFxCompile_tlog>
+    </ItemGroup>
+    <Message
+      Importance="High"
+      Text="%(LolFxCompile.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(LolFxCompile_tlog)' != '' and '%(LolFxCompile_tlog.ExcludedFromBuild)' != 'true'"
+      File="$(IntDir)$(ProjectName).write.1.tlog"
+      Lines="^%(LolFxCompile_tlog.Source);@(LolFxCompile_tlog-&gt;'%(Fullpath)')" />
+    <ItemGroup>
+      <LolFxCompile>
+      </LolFxCompile>
+    </ItemGroup>
+    <LolFxCompile
+      Condition="'@(LolFxCompile)' != '' and '%(LolFxCompile.ExcludedFromBuild)' != 'true'"
+      CommandLineTemplate="%(LolFxCompile.CommandLineTemplate)"
+      IntDir="$(IntDir)"
+      Outputs="$(Outputs)"
+      FileName="%(FileName)"
+      Inputs="@(LolFxCompile)" />
+  </Target>
+
+  <PropertyGroup>
+    <ComputeLinkInputsTargets>
+      $(ComputeLinkInputsTargets);
+      ComputeLolFxCompileOutput;
+    </ComputeLinkInputsTargets>
+    <ComputeLibInputsTargets>
+      $(ComputeLibInputsTargets);
+      ComputeLolFxCompileOutput;
+    </ComputeLibInputsTargets>
+  </PropertyGroup>
+
+  <Target Name="ComputeLolFxCompileOutput" Condition="'@(LolFxCompile)' != ''">
+    <ItemGroup>
+      <LolFxCompile>
+        <CompileOut>$(IntDir)\%(FileName).lolfx.cpp</CompileOut>
+      </LolFxCompile>
+    </ItemGroup>
+    <ItemGroup>
+      <ClCompile Include="%(LolFxCompile.Outputs)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -47,6 +47,9 @@
     <Filter Include="src\platform\d3d9">
       <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\...">
+      <UniqueIdentifier>{3592ed6a-59d7-4a6d-be5a-c05cb5dab730}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -73,98 +76,17 @@
     <ClCompile Include="..\src\platform\sdl\sdlinput.cpp">
       <Filter>src\platform\sdl</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\audio.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\dict.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\eglapp.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\emitter.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\entity.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\font.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\forge.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\gradient.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\math\half.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\hash.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\layer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\log.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\map.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\platform.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\profiler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\math\real.cpp">
       <Filter>src\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\sample.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\sampler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\scene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\sprite.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\text.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ticker.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tiler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tileset.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\timer.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\math\trig.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="..\src\math\vector.cpp">
       <Filter>src\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\video.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\world.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\worldentity.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\gpu\shader.cpp">
       <Filter>src\gpu</Filter>
@@ -211,6 +133,87 @@
     <ClCompile Include="..\src\platform\d3d9\d3d9input.cpp">
       <Filter>src\platform\d3d9</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\audio.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\camera.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dict.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\eglapp.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\emitter.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entity.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\font.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\forge.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gradient.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hash.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\layer.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ticker.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\log.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\map.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\platform.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\profiler.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sample.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sampler.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\scene.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sprite.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\text.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiler.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tileset.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\timer.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\video.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\worldentity.cpp">
+      <Filter>src\...</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\image\image.h">
@@ -237,107 +240,8 @@
     <ClInclude Include="..\src\platform\sdl\sdlapp.h">
       <Filter>src\platform\sdl</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\audio.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\bitfield.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\camera.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\core.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\dict.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\eglapp.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\emitter.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\entity.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\font.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\forge.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\gradient.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\hash.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\layer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\log.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\loldebug.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\lolgl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\map.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\numeric.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\platform.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\profiler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\sample.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\sampler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\scene.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\simd.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\sprite.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\text.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ticker.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tiler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tileset.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\timer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\math\trig.h">
       <Filter>src\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\video.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\world.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\worldentity.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\lol\math\half.h">
       <Filter>src\lol\math</Filter>
@@ -381,9 +285,6 @@
     <ClInclude Include="..\src\gpu\indexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\array.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\lol\debug.h">
       <Filter>src\lol</Filter>
     </ClInclude>
@@ -396,5 +297,115 @@
     <ClInclude Include="..\src\platform\d3d9\d3d9input.h">
       <Filter>src\platform\d3d9</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\array.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\hash.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bitfield.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\camera.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dict.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\eglapp.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\emitter.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\entity.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\font.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\forge.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gradient.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\layer.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\log.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\loldebug.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lolgl.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\map.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\numeric.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\profiler.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sample.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sampler.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\scene.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simd.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sprite.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\text.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ticker.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\worldentity.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiler.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tileset.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\timer.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\video.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx">
+      <Filter>src\gpu</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx">
+      <Filter>src\gpu</Filter>
+    </LolFxCompile>
   </ItemGroup>
 </Project>

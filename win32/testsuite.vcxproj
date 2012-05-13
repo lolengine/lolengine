@@ -50,17 +50,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="Lol.Config.props" />
+  <Import Project="Lol.Core.Config.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="Lol.Fx.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Lol.Vars.props" />
+    <Import Project="Lol.Core.Vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="Lol.Rules.props" />
+  <Import Project="Lol.Core.Rules.props" />
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="Lol.Fx.targets" />
   </ImportGroup>
 </Project>
