@@ -4,7 +4,7 @@ AC_INIT(lolengine, 0.0)
 AC_PREREQ(2.50)
 AC_CONFIG_AUX_DIR(.auto)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE([no-define tar-ustar])
+AM_INIT_AUTOMAKE([subdir-objects no-define tar-ustar silent-rules])
 dnl AM_MAINTAINER_MODE
 
 dnl Versioning of the separate software we ship
