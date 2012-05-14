@@ -82,6 +82,65 @@ int ShaderData::nshaders = 0;
  * Public Shader class
  */
 
+Shader *Shader::Create(char const *lolfx)
+{
+    char *src = new char[strlen(lolfx) + 2];
+    memcpy(src + 1, lolfx, strlen(lolfx) + 1);
+    src[0] = '\n';
+
+    /* Parse the crap */
+    Array<char const *, char const *> sections;
+    char *key = NULL;
+    for (char *parser = src; *parser; )
+    {
+        if (key == NULL && (parser[0] == '\n' || parser[0] == '\r')
+             && parser[1] == '-' && parser[2] == '-' && parser[3] == ' ')
+        {
+            *parser = '\0';
+            parser += 4;
+            key = parser;
+        }
+        else if (key && parser[0] == ' ')
+        {
+            *parser++ = '\0';
+        }
+        else if (key && (parser[0] == '\n' || parser[0] == '\r'))
+        {
+            sections.Push(key, parser);
+            parser++;
+            key = NULL;
+        }
+        else
+        {
+            parser++;
+        }
+    }
+
+    char const *vert = NULL, *frag = NULL;
+    for (int i = 0; i < sections.Count(); i++)
+    {
+#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
+        if (!strcmp(sections[i].m1, "GLSL.Vert"))
+            vert = sections[i].m2;
+        if (!strcmp(sections[i].m1, "GLSL.Frag"))
+            frag = sections[i].m2;
+#else
+        if (!strcmp(sections[i].m1, "HLSL.Vert"))
+            vert = sections[i].m2;
+        if (!strcmp(sections[i].m1, "HLSL.Frag"))
+            frag = sections[i].m2;
+#endif
+    }
+
+    Shader *ret = NULL;
+    if (vert && frag)
+        ret = Create(vert, frag);
+
+    delete[] src;
+
+    return ret;
+}
+
 Shader *Shader::Create(char const *vert, char const *frag)
 {
     uint32_t new_vert_crc = Hash::Crc32(vert);

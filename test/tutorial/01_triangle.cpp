@@ -31,6 +31,8 @@ using namespace lol;
 #   include <direct.h>
 #endif
 
+extern char const *lolfx_01_triangle;
+
 class Triangle : public WorldEntity
 {
 public:
@@ -48,29 +50,7 @@ public:
 
         if (!m_ready)
         {
-            m_shader = Shader::Create(
-#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
-                "#version 120\n"
-                "attribute vec2 in_Position;"
-                "void main(void) {"
-                "    gl_Position = vec4(in_Position, 0.0, 1.0);"
-                "}",
-
-                "#version 120\n"
-                "void main(void) {"
-                "    gl_FragColor = vec4(0.7, 0.2, 0.5, 1.0);"
-                "}"
-#else
-                "void main(float2 in_Position : POSITION,"
-                "          out float4 out_Position : POSITION) {"
-                "    out_Position = float4(in_Position, 0.0, 1.0);"
-                "}",
-
-                "void main(out float4 out_FragColor : COLOR) {"
-                "    out_FragColor = float4(0.7, 0.2, 0.5, 1.0);"
-                "}"
-#endif
-            );
+            m_shader = Shader::Create(lolfx_01_triangle);
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
