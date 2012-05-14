@@ -171,6 +171,13 @@ Shader::Shader(char const *vert, char const *frag)
 #if defined USE_D3D9 || defined _XBOX
     ID3DXBuffer *shader_code, *error_msg;
     HRESULT hr;
+    D3DXMACRO macros[] =
+    {
+#if defined _XBOX
+        { "_XBOX", "1" },
+#endif
+        { NULL, NULL }
+    };
 #elif !defined __CELLOS_LV2__
     char buf[4096], errbuf[4096];
     char const *shader = buf;
@@ -185,7 +192,7 @@ Shader::Shader(char const *vert, char const *frag)
     /* Compile vertex shader */
     data->vert_crc = Hash::Crc32(vert);
 #if defined USE_D3D9 || defined _XBOX
-    hr = D3DXCompileShader(vert, (UINT)strlen(vert), NULL, NULL, "main",
+    hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, NULL, "main",
                            "vs_2_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
     if (FAILED(hr))
@@ -224,7 +231,7 @@ Shader::Shader(char const *vert, char const *frag)
     /* Compile fragment shader */
     data->frag_crc = Hash::Crc32(frag);
 #if defined USE_D3D9 || defined _XBOX
-    hr = D3DXCompileShader(frag, (UINT)strlen(frag), NULL, NULL, "main",
+    hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, NULL, "main",
                            "ps_2_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
     if (FAILED(hr))
