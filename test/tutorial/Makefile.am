@@ -27,11 +27,13 @@ nodist_01_triangle_SOURCES = 01_triangle.lolfx.cpp
 01_triangle_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 02_cube_SOURCES = 02_cube.cpp
+nodist_02_cube_SOURCES = 02_cube.lolfx.cpp
 02_cube_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 02_cube_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 02_cube_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 03_fractal_SOURCES = 03_fractal.cpp
+nodist_03_fractal_SOURCES = 03_fractal.lolfx.cpp
 03_fractal_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 03_fractal_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 03_fractal_DEPENDENCIES = $(top_builddir)/src/liblol.a
