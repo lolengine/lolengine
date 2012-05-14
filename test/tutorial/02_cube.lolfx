@@ -1,0 +1,46 @@
+-- GLSL.Vert --
+
+#version 120\n
+
+attribute vec3 in_Vertex;
+attribute vec3 in_Color;
+uniform mat4 in_Matrix;
+varying vec3 pass_Color;
+
+void main(void)
+{
+    gl_Position = in_Matrix * vec4(in_Vertex, 1.0);
+    pass_Color = in_Color;
+}
+
+-- GLSL.Frag --
+
+#version 120
+
+varying vec3 pass_Color;
+
+void main(void)
+{
+    gl_FragColor = vec4(pass_Color, 1.0);
+}
+
+-- HLSL.Vert --
+
+void main(float3 in_Vertex : POSITION,
+          float3 in_Color : COLOR,
+          uniform float4x4 in_Matrix,
+          out float4 out_Position : POSITION,
+          out float3 pass_Color : COLOR)
+{
+    pass_Color = in_Color;
+    out_Position = mul(in_Matrix, float4(in_Vertex, 1.0));
+}
+
+-- HLSL.Frag --
+
+void main(float3 pass_Color : COLOR,
+          out float4 out_FragColor : COLOR)
+{
+    out_FragColor = float4(pass_Color, 1.0);
+}
+

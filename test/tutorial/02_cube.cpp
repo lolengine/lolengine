@@ -27,6 +27,8 @@ using namespace lol;
 #   include <direct.h>
 #endif
 
+extern char const *lolfx_02_cube;
+
 class Cube : public WorldEntity
 {
 public:
@@ -81,41 +83,8 @@ public:
 
         if (!m_ready)
         {
-            m_shader = Shader::Create(
-#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
-                "#version 120\n"
-                "attribute vec3 in_Vertex;"
-                "attribute vec3 in_Color;"
-                "uniform mat4 in_Matrix;"
-                "varying vec3 pass_Color;"
-                ""
-                "void main(void) {"
-                "    gl_Position = in_Matrix * vec4(in_Vertex, 1.0);"
-                "    pass_Color = in_Color;"
-                "}",
+            m_shader = Shader::Create(lolfx_02_cube);
 
-                "#version 120\n"
-                "varying vec3 pass_Color;"
-                ""
-                "void main(void) {"
-                "    gl_FragColor = vec4(pass_Color, 1.0);"
-                "}"
-#else
-                "void main(float3 in_Vertex : POSITION,"
-                "          float3 in_Color : COLOR,"
-                "          uniform float4x4 in_Matrix,"
-                "          out float4 out_Position : POSITION,"
-                "          out float3 pass_Color : COLOR) {"
-                "    pass_Color = in_Color;"
-                "    out_Position = mul(in_Matrix, float4(in_Vertex, 1.0));"
-                "}",
-
-                "void main(float3 pass_Color : COLOR,"
-                "          out float4 out_FragColor : COLOR) {"
-                "    out_FragColor = float4(pass_Color, 1.0);"
-                "}"
-#endif
-            );
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
             m_coord = m_shader->GetAttribLocation("in_Vertex",
                                                   VertexUsage::Position, 0);
