@@ -53,7 +53,7 @@ XboxInput::XboxInput()
 
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(4);
-        stick->SetButtonCount(0);
+        stick->SetButtonCount(16);
         m_data->m_joysticks.Push(i, stick);
     }
 #endif
@@ -94,6 +94,9 @@ void XboxInput::TickDraw(float seconds)
         m_data->m_joysticks[i].m2->SetAxis(1, -(float)state.Gamepad.sThumbLY / 32768.f);
         m_data->m_joysticks[i].m2->SetAxis(2, (float)state.Gamepad.sThumbRX / 32768.f);
         m_data->m_joysticks[i].m2->SetAxis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
+
+        for (int b = 0; b < 16; b++)
+            m_data->m_joysticks[i].m2->SetButton(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
     }
 #endif
 }
