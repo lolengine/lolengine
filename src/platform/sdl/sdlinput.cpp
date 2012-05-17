@@ -62,7 +62,7 @@ SdlInput::SdlInput()
 #   if !defined USE_D3D9
              || strstr(name, "XBOX 360 For Windows")
 #   endif
-             || true)
+             || false)
         {
             SDL_JoystickClose(sdlstick);
             continue;
