@@ -46,7 +46,7 @@ class VertexBufferData
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
     D3DVertexBuffer *m_vbo;
-#elif !defined __ANDROID__
+#else
     GLuint m_vbo;
     uint8_t *m_memory;
     size_t m_size;
@@ -473,7 +473,7 @@ VertexBuffer::VertexBuffer(size_t size)
     if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __CELLOS_LV2__
     glGenBuffers(1, &m_data->m_vbo);
     m_data->m_memory = new uint8_t[size];
     m_data->m_size = size;
@@ -485,7 +485,7 @@ VertexBuffer::~VertexBuffer()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_vbo->Release()))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __CELLOS_LV2__
     glDeleteBuffers(1, &m_data->m_vbo);
     delete[] m_data->m_memory;
 #endif
@@ -499,7 +499,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
         Abort();
     return ret;
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __CELLOS_LV2__
     return m_data->m_memory + offset;
 #endif
 }
@@ -509,7 +509,7 @@ void VertexBuffer::Unlock()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_vbo->Unlock()))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif !defined __CELLOS_LV2__
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);

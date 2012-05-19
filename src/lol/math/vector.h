@@ -18,9 +18,8 @@
 
 #include <stdint.h>
 #include <cmath>
-#if !defined __ANDROID__
-#   include <iostream>
-#endif
+#include <ostream>
+#include <algorithm>
 
 #include "lol/math/half.h"
 #include "lol/math/real.h"
@@ -235,10 +234,8 @@ template <typename T> struct Vec2 : BVec2<T>
 
     DECLARE_MEMBER_OPS(Vec2, x)
 
-#if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
-#endif
 };
 
 /*
@@ -269,10 +266,8 @@ template <typename T> struct Cmplx
     }
 
     inline T norm() const { return length(*this); }
-#if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
-#endif
 
     T x, y;
 };
@@ -493,10 +488,8 @@ template <typename T> struct Vec3 : BVec3<T>
 
     DECLARE_MEMBER_OPS(Vec3, x)
 
-#if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
-#endif
 };
 
 /*
@@ -902,10 +895,8 @@ template <typename T> struct Vec4 : BVec4<T>
 
     DECLARE_MEMBER_OPS(Vec4, x)
 
-#if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
-#endif
 };
 
 /*
@@ -983,10 +974,8 @@ template <typename T> struct Quat
         return Vec3<T>(q.x, q.y, q.z);
     }
 
-#if !defined __ANDROID__
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
-#endif
 
     /* XXX: storage order is wxyz, unlike vectors! */
     T w, x, y, z;
@@ -1592,10 +1581,8 @@ template <typename T> struct Mat2
 
     void printf() const;
 
-#if !defined __ANDROID__
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat2<U> const &m);
-#endif
 
     inline Mat2<T> operator +(Mat2<T> const m) const
     {
@@ -1717,10 +1704,8 @@ template <typename T> struct Mat3
 
     void printf() const;
 
-#if !defined __ANDROID__
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat3<U> const &m);
-#endif
 
     inline Mat3<T> operator +(Mat3<T> const m) const
     {
@@ -1884,10 +1869,8 @@ template <typename T> struct Mat4
 
     void printf() const;
 
-#if !defined __ANDROID__
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
-#endif
 
     inline Mat4<T> operator +(Mat4<T> const &m) const
     {
