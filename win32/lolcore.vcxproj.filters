@@ -407,5 +407,8 @@
     <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx">
       <Filter>src\gpu</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="..\src\gpu\testmaterial.lolfx">
+      <Filter>src\gpu</Filter>
+    </LolFxCompile>
   </ItemGroup>
 </Project>
