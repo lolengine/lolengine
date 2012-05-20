@@ -64,6 +64,24 @@ DECLARE_VECTOR_TYPEDEFS(Mat3, mat3)
 DECLARE_VECTOR_TYPEDEFS(Mat4, mat4)
 
 /*
+ * HLSL/Cg-compliant type names.
+ */
+
+typedef vec2 float2;
+typedef vec3 float3;
+typedef vec4 float4;
+typedef mat2 float2x2;
+typedef mat3 float3x3;
+typedef mat4 float4x4;
+
+typedef ivec2 int2;
+typedef ivec3 int3;
+typedef ivec4 int4;
+typedef imat2 int2x2;
+typedef imat3 int3x3;
+typedef imat4 int4x4;
+
+/*
  * Magic vector swizzling (part 1/2)
  * These vectors are empty, but thanks to static_cast we can take their
  * address and access the vector of T's that they are union'ed with. We
