@@ -194,6 +194,7 @@
   <ItemGroup>
     <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx" />
+    <LolFxCompile Include="..\src\gpu\testmaterial.lolfx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 -- GLSL.Vert --
 
-#version 120\n
+#version 120
 
 attribute vec3 in_Vertex;
 attribute vec3 in_Color;

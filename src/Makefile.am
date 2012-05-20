@@ -47,7 +47,8 @@ liblol_a_SOURCES = \
     debug/quad.cpp debug/quad.h
 nodist_liblol_a_SOURCES = \
     gpu/defaultmaterial.lolfx.cpp \
-    gpu/emptymaterial.lolfx.cpp
+    gpu/emptymaterial.lolfx.cpp \
+    gpu/testmaterial.lolfx.cpp
 liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
 CLEANFILES = $(filter %.lolfx.cpp, $(SOURCES))
