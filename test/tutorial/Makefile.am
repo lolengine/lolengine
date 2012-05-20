@@ -8,7 +8,8 @@ all-local: $(noinst_PROGRAMS)
 
 CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
+             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe) \
+             $(filter %.lolfx.cpp, $(SOURCES))
 
 SUFFIXES = .lolfx
 %.lolfx.cpp: %.lolfx
