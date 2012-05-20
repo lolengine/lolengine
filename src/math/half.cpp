@@ -46,12 +46,12 @@ static inline uint16_t float_to_half_nobranch(uint32_t x)
 {
     static uint16_t const basetable[512] =
     {
-#define S1(i) (((i) < 103) ? 0x0000 : \
-               ((i) < 113) ? 0x0400 >> (0x1f & (113 - (i))) : \
-               ((i) < 143) ? ((i) - 112) << 10 : 0x7c00)
+#define S1(i) (((i) < 103) ? 0x0000u : \
+               ((i) < 113) ? 0x0400u >> (0x1f & (113 - (i))) : \
+               ((i) < 143) ? ((i) - 112) << 10 : 0x7c00u)
         S256(0),
 #undef S1
-#define S1(i) (0x8000 | basetable[i])
+#define S1(i) (uint16_t)(0x8000u | basetable[i])
         S256(0),
 #undef S1
     };
@@ -116,9 +116,9 @@ static inline uint16_t float_to_half_branch(uint32_t x)
  * in 1, 3, 7, f, 1f, 3f, 7f, ff, 1fe, 1ff, 3fc, 3fd, 3fe, 3ff. See
  * http://lol.zoy.org/blog/2012/4/3/beyond-de-bruijn for an explanation
  * of how the value 0x5a1a1a2u was obtained. */
-static int const shifttable[16] =
+static uint32_t const shifttable[16] =
 {
-    23, 22, 21, 15, -1, 20, 18, 14, 14, 16, 19, -1, 17, -1, -1, -1,
+    23, 22, 21, 15, 0, 20, 18, 14, 14, 16, 19, 0, 17, 0, 0, 0,
 };
 static uint32_t const shiftmagic = 0x5a1a1a2u;
 
