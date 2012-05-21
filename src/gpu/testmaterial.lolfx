@@ -2,8 +2,12 @@
  * LolFx Test Material
  */
 
-technique Foo // can have lots of different techniques in a single lolfx file
+// Can have lots of different techniques in a single lolfx file,
+// especially if they share common shader code.
+technique Foo
 {
+    // Multiple passes, with alpha on/off, with various blending methods,
+    // with depth test disabled...
     pass p0
     {
         texture[0] = null;
@@ -33,12 +37,10 @@ technique Foo // can have lots of different techniques in a single lolfx file
         pixelshader = ...
 
         // Ogre crap
+
+        // The D3D11 way, but we must make it work with GLSL too
         SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
         SetDepthStencilState(DisableDepth, 0);
-
-        // D3D11 way
-        SetBlendState()
-        SetDepthStencilState()
         SetRasterizerState()
 
         SetVertexShader
@@ -62,7 +64,9 @@ technique Foo // can have lots of different techniques in a single lolfx file
     }
 }
 
--- GLSL.Vert --
+/* Defines GLSL shader "Prout" */
+
+#section GLSL.Prout
 
 #version 120
 
@@ -77,5 +81,23 @@ attribute vec4 in_Color;
 void main(void)
 {
     ...
+}
+
+/* Defines GLSL shader "Zob" */
+
+#section GLSL.Zob
+
+void main(void)
+{
+    shit fuck fuck shit;
+}
+
+/* Defines HLSL shader "Prout" */
+
+#section HLSL.Prout
+
+void main(void)
+{
+    /* Blah */
 }
 
