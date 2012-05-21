@@ -81,6 +81,16 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
+    if (bitmap->GetLastStatus() != Gdiplus::Ok)
+    {
+#if !LOL_RELEASE
+        Log::Error("error %d loading %s\n",
+                   (unsigned)bitmap->GetLastStatus(), path);
+#endif
+        delete bitmap;
+        return false;
+    }
+
     size = ivec2(bitmap->GetWidth(), bitmap->GetHeight());
     format = Image::FORMAT_RGBA;
 
