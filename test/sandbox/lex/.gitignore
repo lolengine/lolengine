@@ -1,0 +1,4 @@
+lex.yy.c
+lolfx.tab.c
+lolfx.tab.h
+parser
