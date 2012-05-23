@@ -44,7 +44,8 @@
   */
 
 "//"              { BEGIN(CPP_COMMENT); }
-<CPP_COMMENT>.*\n { BEGIN(INITIAL); }
+<CPP_COMMENT>\n   { BEGIN(INITIAL); }
+<CPP_COMMENT>.*   { }
 
 %%
 
