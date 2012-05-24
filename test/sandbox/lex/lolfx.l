@@ -66,12 +66,6 @@
 "field_selection"            { return GT_FIELD_SELECTION; }
 "left_op"                    { return GT_LEFT_OP; }
 "right_op"                   { return GT_RIGHT_OP; }
-"inc_op"                     { return GT_INC_OP; }
-"dec_op"                     { return GT_DEC_OP; }
-"le_op"                      { return GT_LE_OP; }
-"ge_op"                      { return GT_GE_OP; }
-"eq_op"                      { return GT_EQ_OP; }
-"ne_op"                      { return GT_NE_OP; }
 "and_op"                     { return GT_AND_OP; }
 "or_op"                      { return GT_OR_OP; }
 "xor_op"                     { return GT_XOR_OP; }
@@ -516,6 +510,29 @@
  /*
   * Various tokens
   */
+
+"++"                    { return T_INC; }
+"--"                    { return T_DEC; }
+"<="                    { return T_LE; }
+">="                    { return T_GE; }
+"=="                    { return T_EQ; }
+"!="                    { return T_NE; }
+"<<"                    { return T_LEFT; }
+">>"                    { return T_RIGHT; }
+"&&"                    { return T_AND; }
+"||"                    { return T_OR; }
+"^^"                    { return T_XOR; }
+
+"*="                    { return T_MULEQ; }
+"/="                    { return T_DIVEQ; }
+"%="                    { return T_MODEQ; }
+"+="                    { return T_ADDEQ; }
+"-="                    { return T_SUBEQ; }
+"<<="                   { return T_LEFTEQ; }
+">>="                   { return T_RIGHTEQ; }
+"&="                    { return T_ANDEQ; }
+"^="                    { return T_XOREQ; }
+"|="                    { return T_OREQ; }
 
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 [0-9]+         { yylval.ival = atoi(yytext); return INT; }
