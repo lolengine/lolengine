@@ -14,9 +14,24 @@ void yyerror(const char *s);
 %union
 {
     int ival;
+    unsigned uval;
     float fval;
     char *sval;
 }
+
+%type <sval> lolfx_shader_name
+
+ /*
+  * GLSL and HLSL generic tokens
+  */
+
+%token <ival> BOOLCONSTANT
+%token <ival> INTCONSTANT
+%token <uval> UINTCONSTANT
+%token <fval> FLOATCONSTANT
+%token /* TODO */ FIELDSELECTION
+%token <sval> IDENTIFIER
+%token <sval> TYPENAME
 
  /*
   * GLSL keywords
@@ -24,33 +39,47 @@ void yyerror(const char *s);
   */
 
 %token GT_SUBROUTINE GT_PATCH GT_SAMPLE GT_FLAT GT_SMOOTH GT_LAYOUT
-%token GT_SAMPLER1DSHADOW GT_SAMPLER2DSHADOW GT_SAMPLERCUBESHADOW
-%token GT_SAMPLER1DARRAY GT_SAMPLER2DARRAY GT_SAMPLER1DARRAYSHADOW
-%token GT_SAMPLER2DARRAYSHADOW GT_ISAMPLER1D GT_ISAMPLER2D GT_ISAMPLER3D
-%token GT_ISAMPLERCUBE GT_ISAMPLER1DARRAY GT_ISAMPLER2DARRAY GT_USAMPLER1D
-%token GT_USAMPLER2D GT_USAMPLER3D GT_USAMPLERCUBE GT_USAMPLER1DARRAY
-%token GT_USAMPLER2DARRAY GT_SAMPLER2DRECT GT_SAMPLER2DRECTSHADOW
-%token GT_ISAMPLER2DRECT GT_USAMPLER2DRECT GT_SAMPLERBUFFER GT_ISAMPLERBUFFER
-%token GT_USAMPLERBUFFER GT_SAMPLERCUBEARRAY GT_SAMPLERCUBEARRAYSHADOW
-%token GT_ISAMPLERCUBEARRAY GT_USAMPLERCUBEARRAY GT_SAMPLER2DMS GT_ISAMPLER2DMS
-%token GT_USAMPLER2DMS GT_SAMPLER2DMSARRAY GT_ISAMPLER2DMSARRAY
-%token GT_USAMPLER2DMSARRAY GT_IDENTIFIER GT_TYPE_NAME GT_FLOATCONSTANT
-%token GT_INTCONSTANT GT_UINTCONSTANT GT_BOOLCONSTANT GT_FIELD_SELECTION
-%token GT_LEFT_OP GT_RIGHT_OP GT_INC_OP GT_DEC_OP GT_LE_OP GT_GE_OP GT_EQ_OP
-%token GT_NE_OP GT_AND_OP GT_OR_OP GT_XOR_OP GT_MUL_ASSIGN GT_DIV_ASSIGN
-%token GT_ADD_ASSIGN GT_MOD_ASSIGN GT_LEFT_ASSIGN GT_RIGHT_ASSIGN GT_AND_ASSIGN
-%token GT_XOR_ASSIGN GT_OR_ASSIGN GT_SUB_ASSIGN GT_LEFT_PAREN GT_RIGHT_PAREN
-%token GT_LEFT_BRACKET GT_RIGHT_BRACKET GT_LEFT_BRACE GT_RIGHT_BRACE GT_DOT
-%token GT_COMMA GT_COLON GT_EQUAL GT_SEMICOLON GT_BANG GT_DASH GT_TILDE GT_PLUS
-%token GT_STAR GT_SLASH GT_PERCENT GT_LEFT_ANGLE GT_RIGHT_ANGLE GT_VERTICAL_BAR
-%token GT_CARET GT_AMPERSAND GT_QUESTION GT_INVARIANT GT_HIGH_PRECISION
-%token GT_MEDIUM_PRECISION GT_LOW_PRECISION GT_PRECISION GT_BVEC2 GT_BVEC3
-%token GT_BVEC4 GT_IVEC2 GT_IVEC3 GT_IVEC4 GT_UVEC2 GT_UVEC3 GT_UVEC4 GT_VEC2
-%token GT_VEC3 GT_VEC4 GT_MAT2 GT_MAT2X2 GT_MAT2X3 GT_MAT2X4 GT_MAT3 GT_MAT3X2
-%token GT_MAT3X3 GT_MAT3X4 GT_MAT4 GT_MAT4X2 GT_MAT4X3 GT_MAT4X4 GT_DVEC2
-%token GT_DVEC3 GT_DVEC4 GT_DMAT2 GT_DMAT2X2 GT_DMAT2X3 GT_DMAT2X4 GT_DMAT3
-%token GT_DMAT3X2 GT_DMAT3X3 GT_DMAT3X4 GT_DMAT4 GT_DMAT4X2 GT_DMAT4X3
-%token GT_DMAT4X4
+%token GT_INVARIANT GT_HIGHP GT_MEDIUMP GT_LOWP GT_PRECISION
+
+ /*
+  * GLSL types
+  */
+
+%token GT_VEC2 GT_VEC3 GT_VEC4
+%token GT_BVEC2 GT_BVEC3 GT_BVEC4
+%token GT_DVEC2 GT_DVEC3 GT_DVEC4
+%token GT_IVEC2 GT_IVEC3 GT_IVEC4
+%token GT_UVEC2 GT_UVEC3 GT_UVEC4
+
+%token GT_MAT2 GT_MAT2X2 GT_MAT2X3 GT_MAT2X4
+%token GT_MAT3 GT_MAT3X2 GT_MAT3X3 GT_MAT3X4
+%token GT_MAT4 GT_MAT4X2 GT_MAT4X3 GT_MAT4X4
+%token GT_DMAT2 GT_DMAT2X2 GT_DMAT2X3 GT_DMAT2X4
+%token GT_DMAT3 GT_DMAT3X2 GT_DMAT3X3 GT_DMAT3X4
+%token GT_DMAT4 GT_DMAT4X2 GT_DMAT4X3 GT_DMAT4X4
+
+%token GT_SAMPLER1DSHADOW GT_SAMPLER1DARRAY GT_SAMPLER1DARRAYSHADOW
+%token GT_SAMPLER2DSHADOW GT_SAMPLER2DARRAY GT_SAMPLER2DARRAYSHADOW
+%token GT_SAMPLER2DRECT GT_SAMPLER2DRECTSHADOW
+%token GT_SAMPLER2DMS GT_SAMPLER2DMSARRAY
+%token GT_SAMPLERCUBESHADOW GT_SAMPLERCUBEARRAY GT_SAMPLERCUBEARRAYSHADOW
+%token GT_SAMPLERBUFFER
+
+%token GT_ISAMPLER1D GT_ISAMPLER1DARRAY
+%token GT_ISAMPLER2D GT_ISAMPLER2DARRAY
+%token GT_ISAMPLER2DRECT
+%token GT_ISAMPLER2DMS GT_ISAMPLER2DMSARRAY
+%token GT_ISAMPLER3D
+%token GT_ISAMPLERCUBE GT_ISAMPLERCUBEARRAY
+%token GT_ISAMPLERBUFFER
+
+%token GT_USAMPLER1D GT_USAMPLER1DARRAY
+%token GT_USAMPLER2D GT_USAMPLER2DARRAY
+%token GT_USAMPLER2DRECT
+%token GT_USAMPLER2DMS GT_USAMPLER2DMSARRAY
+%token GT_USAMPLER3D
+%token GT_USAMPLERCUBE GT_USAMPLERCUBEARRAY
+%token GT_USAMPLERBUFFER
 
  /*
   * HLSL and GLSL keywords
@@ -139,6 +168,7 @@ void yyerror(const char *s);
 %token PREPROCESSOR_ENDIF PREPROCESSOR_ERROR PREPROCESSOR_IF
 %token PREPROCESSOR_IFDEF PREPROCESSOR_IFNDEF PREPROCESSOR_INCLUDE
 %token PREPROCESSOR_LINE PREPROCESSOR_PRAGMA PREPROCESSOR_UNDEF
+%token PREPROCESSOR_REGION
 
  /*
   * HLSL reserved keywords
@@ -169,25 +199,25 @@ void yyerror(const char *s);
 
 %%
 
-fx:
-    section_list
+lolfx_file:
+    lolfx_section_list
     ;
 
-section_list:
-    section
-    | section_list section
+lolfx_section_list:
+    lolfx_section
+    | lolfx_section_list lolfx_section
     ;
 
-section:
-    technique
-    | shader
+lolfx_section:
+    lolfx_technique
+    | lolfx_shader
     ;
 
  /*
   * Grammar for techniques
   */
 
-technique:
+lolfx_technique:
     HT_TECHNIQUE NAME '{' pass_list '}' { std::cout << "New tech" << std::endl; }
     ;
 
@@ -218,11 +248,29 @@ pass_stmt:
     ;
 
  /*
+  * Grammar for shaders
+  */
+
+lolfx_shader:
+    lolfx_shader_region glsl_translation_unit
+    | lolfx_shader_region
+    ;
+
+lolfx_shader_region:
+    PREPROCESSOR_REGION lolfx_shader_name { std::cout << "new shader " << $2 << std::endl; }
+    ;
+
+lolfx_shader_name:
+    IDENTIFIER                            { $$ = $1; }
+    | lolfx_shader_name '.' IDENTIFIER    { $$ = $3; } /* FIXME: concatenate */
+    ;
+
+ /*
   * Grammar for GLSL
   */
 
 glsl_variable_identifier:
-    GLSL_IDENTIFIER
+    IDENTIFIER
     ;
 
 glsl_primary_expression:
@@ -238,7 +286,7 @@ glsl_postfix_expression:
     glsl_primary_expression
     | glsl_postfix_expression '[' glsl_integer_expression ']'
     | glsl_function_call
-    | glsl_postfix_expression '.' FIELD_SELECTION
+    | glsl_postfix_expression '.' FIELDSELECTION
     | glsl_postfix_expression T_INC
     | glsl_postfix_expression T_DEC
     ;
@@ -278,7 +326,7 @@ glsl_function_call_header:
 glsl_function_identifier:
     glsl_type_specifier
     | IDENTIFIER
-    | FIELD_SELECTION
+    | FIELDSELECTION
     ;
 
 glsl_unary_expression:
@@ -394,7 +442,7 @@ glsl_constant_expression:
 glsl_declaration:
     glsl_function_prototype ';'
     | glsl_init_declarator_list ';'
-    | PRECISION glsl_precision_qualifier glsl_type_specifier_no_prec ';'
+    | GT_PRECISION glsl_precision_qualifier glsl_type_specifier_no_prec ';'
     | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' ';'
     | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' IDENTIFIER ';'
     | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' IDENTIFIER '[' ']' ';'
@@ -461,7 +509,7 @@ glsl_single_declaration:
     | glsl_fully_specified_type IDENTIFIER '[' ']' '=' glsl_initializer
     | glsl_fully_specified_type IDENTIFIER '[' glsl_constant_expression ']' '=' glsl_initializer
     | glsl_fully_specified_type IDENTIFIER '=' glsl_initializer
-    | INVARIANT IDENTIFIER
+    | GT_INVARIANT IDENTIFIER
     ;
 
 glsl_fully_specified_type:
@@ -470,7 +518,7 @@ glsl_fully_specified_type:
     ;
 
 glsl_invariant_qualifier:
-    INVARIANT
+    GT_INVARIANT
     ;
 
 glsl_interpolation_qualifier:
@@ -618,13 +666,13 @@ glsl_type_specifier_nonarray:
     | GT_ISAMPLER2DMSARRAY
     | GT_USAMPLER2DMSARRAY
     | glsl_struct_specifier
-    | TYPE_NAME
+    | TYPENAME
     ;
 
 glsl_precision_qualifier:
-    HIGH_PRECISION
-    | MEDIUM_PRECISION
-    | LOW_PRECISION
+    GT_HIGHP
+    | GT_MEDIUMP
+    | GT_LOWP
     ;
 
 glsl_struct_specifier:
@@ -760,7 +808,7 @@ glsl_jump_statement:
 
 glsl_translation_unit:
     glsl_external_declaration
-    glsl_translation_unit glsl_external_declaration
+    | glsl_translation_unit glsl_external_declaration
     ;
 
 glsl_external_declaration:
@@ -770,33 +818,6 @@ glsl_external_declaration:
 
 glsl_function_definition:
     glsl_function_prototype glsl_compound_statement_no_new_scope
-    ;
-
- /*
-  * Grammar for shaders
-  */
-
-shader:
-    shader_region shader_code
-    | shader_region
-    ;
-
-shader_region:
-    '#' NAME shader_name { std::cout << "new shader " << $2 << std::endl; }
-    ;
-
-shader_name:
-    NAME
-    | shader_name '.' NAME
-    ;
-
-shader_code:
-    INT shader_code      { std::cout << "int: " << $1 << std::endl; }
-    | FLOAT shader_code  { std::cout << "float: " << $1 << std::endl; }
-    | STRING shader_code { std::cout << "string: " << $1 << std::endl; }
-    | INT            { std::cout << "int: " << $1 << std::endl; }
-    | FLOAT          { std::cout << "float: " << $1 << std::endl; }
-    | STRING         { std::cout << "string: " << $1 << std::endl; }
     ;
 
 %%

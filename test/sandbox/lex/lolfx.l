@@ -56,58 +56,11 @@
 "isampler2dmsarray"          { return GT_ISAMPLER2DMSARRAY; }
 "usampler2dmsarray"          { return GT_USAMPLER2DMSARRAY; }
 
-"identifier"                 { return GT_IDENTIFIER; }
-"type_name"                  { return GT_TYPE_NAME; }
-"floatconstant"              { return GT_FLOATCONSTANT; }
-"intconstant"                { return GT_INTCONSTANT; }
-"uintconstant"               { return GT_UINTCONSTANT; }
-"boolconstant"               { return GT_BOOLCONSTANT; }
-
-"field_selection"            { return GT_FIELD_SELECTION; }
-"left_op"                    { return GT_LEFT_OP; }
-"right_op"                   { return GT_RIGHT_OP; }
-"and_op"                     { return GT_AND_OP; }
-"or_op"                      { return GT_OR_OP; }
-"xor_op"                     { return GT_XOR_OP; }
-"mul_assign"                 { return GT_MUL_ASSIGN; }
-"div_assign"                 { return GT_DIV_ASSIGN; }
-"add_assign"                 { return GT_ADD_ASSIGN; }
-"mod_assign"                 { return GT_MOD_ASSIGN; }
-"left_assign"                { return GT_LEFT_ASSIGN; }
-"right_assign"               { return GT_RIGHT_ASSIGN; }
-"and_assign"                 { return GT_AND_ASSIGN; }
-"xor_assign"                 { return GT_XOR_ASSIGN; }
-"or_assign"                  { return GT_OR_ASSIGN; }
-"sub_assign"                 { return GT_SUB_ASSIGN; }
-"left_paren"                 { return GT_LEFT_PAREN; }
-"right_paren"                { return GT_RIGHT_PAREN; }
-"left_bracket"               { return GT_LEFT_BRACKET; }
-"right_bracket"              { return GT_RIGHT_BRACKET; }
-"left_brace"                 { return GT_LEFT_BRACE; }
-"right_brace"                { return GT_RIGHT_BRACE; }
-"dot"                        { return GT_DOT; }
-"comma"                      { return GT_COMMA; }
-"colon"                      { return GT_COLON; }
-"equal"                      { return GT_EQUAL; }
-"semicolon"                  { return GT_SEMICOLON; }
-"bang"                       { return GT_BANG; }
-"dash"                       { return GT_DASH; }
-"tilde"                      { return GT_TILDE; }
-"plus"                       { return GT_PLUS; }
-"star"                       { return GT_STAR; }
-"slash"                      { return GT_SLASH; }
-"percent"                    { return GT_PERCENT; }
-"left_angle"                 { return GT_LEFT_ANGLE; }
-"right_angle"                { return GT_RIGHT_ANGLE; }
-"vertical_bar"               { return GT_VERTICAL_BAR; }
-"caret"                      { return GT_CARET; }
-"ampersand"                  { return GT_AMPERSAND; }
-"question"                   { return GT_QUESTION; }
-"invariant"                  { return GT_INVARIANT; }
-"high_precision"             { return GT_HIGH_PRECISION; }
-"medium_precision"           { return GT_MEDIUM_PRECISION; }
-"low_precision"              { return GT_LOW_PRECISION; }
+"highp"                      { return GT_HIGHP; }
+"mediump"                    { return GT_MEDIUMP; }
+"lowp"                       { return GT_LOWP; }
 "precision"                  { return GT_PRECISION; }
+"invariant"                  { return GT_INVARIANT; }
 
  /*
   * GLSL vector types
@@ -156,6 +109,17 @@
 "dmat4x2"                    { return GT_DMAT4X2; }
 "dmat4x3"                    { return GT_DMAT4X3; }
 "dmat4x4"                    { return GT_DMAT4X4; }
+
+ /*
+  * GLSL constant values
+  */
+
+"true"                       { yylval.ival = 1; return BOOLCONSTANT; }
+"false"                      { yylval.ival = 0; return BOOLCONSTANT; }
+
+[xyzw]{1,4}                  { return FIELDSELECTION; }
+[rgba]{1,4}                  { return FIELDSELECTION; }
+[stpq]{1,4}                  { return FIELDSELECTION; }
 
  /*
   * GLSL keywords that are also valid or reserved in HLSL
@@ -470,6 +434,12 @@
 "#"[ \t]*"undef"             { return PREPROCESSOR_UNDEF; }
 
  /*
+  * LolFx preprocessor directives
+  */
+
+"#"[ \t]*"region"            { return PREPROCESSOR_REGION; }
+
+ /*
   * HLSL reserved keywords
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb509569%28v=vs.85%29.aspx
   */
@@ -534,15 +504,16 @@
 "^="                    { return T_XOREQ; }
 "|="                    { return T_OREQ; }
 
-[0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
-[0-9]+         { yylval.ival = atoi(yytext); return INT; }
+(0|[1-9][0-9]*)\.[0-9]+ { yylval.fval = atof(yytext); return FLOATCONSTANT; }
+(0|[1-9][0-9]*)[uU]     { yylval.uval = atoi(yytext); return UINTCONSTANT; }
+(0|[1-9][0-9]*)         { yylval.ival = atoi(yytext); return INTCONSTANT; }
+
 [a-zA-Z][a-zA-Z0-9_]*   {
     /* Copy token for now */
     yylval.sval = strdup(yytext);
-    return NAME;
+    return IDENTIFIER;
 }
-[ \t\n]+       ;
-"{"|"}"|"("|")"|"["|"]" { return *yytext; }
+[ \t\n]+                { /* ignore whitespace */ }
 .                       { return *yytext; }
 
  /*
