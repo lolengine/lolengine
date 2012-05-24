@@ -8,3 +8,5 @@ lolfx.tab.c: lolfx.y
 lex.yy.c: lolfx.l
 	flex -d $^
 
+clean:
+	rm -f lex.yy.c lolfx.tab.c lolfx.tab.h parser
