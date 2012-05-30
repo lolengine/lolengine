@@ -57,8 +57,8 @@
     <None Include="..\orbital\generated\location.hh" />
     <None Include="..\orbital\generated\position.hh" />
     <None Include="..\orbital\generated\stack.hh" />
-    <None Include="..\orbital\mesh.l" />
-    <None Include="..\orbital\mesh.yy" />
+    <None Include="..\orbital\mesh-scanner.l" />
+    <None Include="..\orbital\mesh-parser.y" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ee203b88-44cf-4859-9d42-7a5f40fecb52}</ProjectGuid>
