@@ -43,7 +43,7 @@ namespace lol
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
     typedef tname<float> suffix; \
-    typedef tname<double> f64##suffix; \
+    typedef tname<double> d##suffix; \
     typedef tname<int8_t> i8##suffix; \
     typedef tname<uint8_t> u8##suffix; \
     typedef tname<int16_t> i16##suffix; \

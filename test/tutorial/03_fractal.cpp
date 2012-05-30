@@ -99,9 +99,9 @@ public:
             m_dirty[i] = 2;
         }
 #if defined __CELLOS_LV2__ || defined _XBOX
-        //m_center = f64cmplx(-.22815528839841, -1.11514249704382);
-        //m_center = f64cmplx(0.001643721971153, 0.822467633298876);
-        m_center = f64cmplx(-0.65823419062254, 0.50221777363480);
+        //m_center = dcmplx(-.22815528839841, -1.11514249704382);
+        //m_center = dcmplx(0.001643721971153, 0.822467633298876);
+        m_center = dcmplx(-0.65823419062254, 0.50221777363480);
         m_zoom_speed = -0.025;
 #else
         m_center = -0.75;
@@ -187,20 +187,20 @@ public:
         delete m_palette;
     }
 
-    inline f64cmplx TexelToWorldOffset(vec2 texel)
+    inline dcmplx TexelToWorldOffset(vec2 texel)
     {
         double dx = (0.5 + texel.x - m_size.x / 2) * m_texel2world.x;
         double dy = (0.5 + m_size.y / 2 - texel.y) * m_texel2world.y;
-        return m_radius * f64cmplx(dx, dy);
+        return m_radius * dcmplx(dx, dy);
     }
 
-    inline f64cmplx ScreenToWorldOffset(vec2 pixel)
+    inline dcmplx ScreenToWorldOffset(vec2 pixel)
     {
         /* No 0.5 offset here, because we want to be able to position the
          * mouse at (0,0) exactly. */
         double dx = pixel.x - m_window_size.x / 2;
         double dy = m_window_size.y / 2 - pixel.y;
-        return m_radius * m_window2world * f64cmplx(dx, dy);
+        return m_radius * m_window2world * dcmplx(dx, dy);
     }
 
     virtual void TickGame(float seconds)
@@ -210,7 +210,7 @@ public:
         int prev_frame = m_frame;
         m_frame = (m_frame + 1) % 4;
 
-        f64cmplx worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
+        dcmplx worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
 
         ivec3 buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
@@ -259,7 +259,7 @@ public:
 
         if (m_zoom_speed || m_translate != 0.0)
         {
-            f64cmplx oldcenter = m_center;
+            dcmplx oldcenter = m_center;
             double oldradius = m_radius;
             double zoom = pow(2.0, seconds * 1e3f * m_zoom_speed);
             if (m_radius * zoom > 8.0)
@@ -369,13 +369,13 @@ public:
         for (int j = jmin; j < jmax; j += 2)
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
-            f64cmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
-            f64cmplx z1, z2, z3, r0 = z0;
-            //f64cmplx r0(0.28693186889504513, 0.014286693904085048);
-            //f64cmplx r0(0.001643721971153, 0.822467633298876);
-            //f64cmplx r0(-1.207205434596, 0.315432814901);
-            //f64cmplx r0(-0.79192956889854, -0.14632423080102);
-            //f64cmplx r0(0.3245046418497685, 0.04855101129280834);
+            dcmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
+            dcmplx z1, z2, z3, r0 = z0;
+            //dcmplx r0(0.28693186889504513, 0.014286693904085048);
+            //dcmplx r0(0.001643721971153, 0.822467633298876);
+            //dcmplx r0(-1.207205434596, 0.315432814901);
+            //dcmplx r0(-0.79192956889854, -0.14632423080102);
+            //dcmplx r0(0.3245046418497685, 0.04855101129280834);
             int iter = MAX_ITERATIONS - 4;
             for (;;)
             {
@@ -600,7 +600,7 @@ private:
 
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
-    f64vec2 m_texel2world;
+    dvec2 m_texel2world;
     u8vec4 *m_pixels, *m_tmppixels, *m_palette;
 
     Shader *m_shader;
@@ -619,11 +619,11 @@ private:
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 
-    f64cmplx m_center, m_translate;
+    dcmplx m_center, m_translate;
     double m_zoom_speed, m_radius;
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
-    f64cmplx m_deltashift[4];
+    dcmplx m_deltashift[4];
     double m_deltascale[4];
 
     /* Worker threads */
