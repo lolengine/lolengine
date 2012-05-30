@@ -30,8 +30,7 @@
     <ClInclude Include="..\orbital\CommandParser.h" />
     <ClInclude Include="..\orbital\generated\mesh-parser.h" />
     <ClInclude Include="..\orbital\gun.h" />
-    <ClInclude Include="..\orbital\mesh-driver.h" />
-    <ClInclude Include="..\orbital\mesh-scanner.h" />
+    <ClInclude Include="..\orbital\mesh-compiler.h" />
     <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\orbital.h" />
     <ClInclude Include="..\orbital\particlesystem.h" />
@@ -43,7 +42,7 @@
   <ItemGroup>
     <ClCompile Include="..\orbital\generated\mesh-parser.cpp" />
     <ClCompile Include="..\orbital\generated\mesh-scanner.cpp" />
-    <ClCompile Include="..\orbital\mesh-driver.cpp" />
+    <ClCompile Include="..\orbital\mesh-compiler.cpp" />
     <ClCompile Include="..\orbital\orbital.cpp" />
   </ItemGroup>
   <ItemGroup>
