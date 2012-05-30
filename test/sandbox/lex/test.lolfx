@@ -66,7 +66,7 @@ technique Foo
 
 /* Defines GLSL shader "Prout" */
 
-#section GLSL.Prout
+#region GLSL.Prout
 
 #version 120
 
@@ -80,21 +80,21 @@ attribute vec4 in_Color;
 
 void main(void)
 {
-    ...
+    /* ... */
 }
 
 /* Defines GLSL shader "Zob" */
 
-#section GLSL.Zob
+#region GLSL.Zob
 
 void main(void)
 {
-    shit fuck fuck shit;
+    shit(); fuck(); fuck(); shit();
 }
 
 /* Defines HLSL shader "Prout" */
 
-#section HLSL.Prout
+#region HLSL.Prout
 
 void main(void)
 {

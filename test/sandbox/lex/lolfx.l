@@ -63,6 +63,12 @@
 "invariant"                  { return GT_INVARIANT; }
 
  /*
+  * Deprecated GLSL keywords
+  */
+
+"attribute"                  { return GT_ATTRIBUTE; }
+
+ /*
   * GLSL vector types
   */
 
@@ -434,10 +440,17 @@
 "#"[ \t]*"undef"             { return PREPROCESSOR_UNDEF; }
 
  /*
+  * GLSL preprocessor directives
+  */
+
+"#"[ \t]*"version".*         { /* ignore for now */ }
+
+ /*
   * LolFx preprocessor directives
   */
 
-"#"[ \t]*"region"            { return PREPROCESSOR_REGION; }
+"#"[ \t]*"region"                  { return PREPROCESSOR_REGION; }
+"#"[ \t]*"pragma"[ \t]*"lolfx".*   { /* ignore for now */ }
 
  /*
   * HLSL reserved keywords
