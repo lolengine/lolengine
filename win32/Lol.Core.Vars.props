@@ -4,6 +4,10 @@
   <PropertyGroup Label="UserMacros">
     <ContribDir>$(SolutionDir)\..\contrib</ContribDir>
 
+    <!-- Flex & Bison -->
+    <FlexDir>$(ContribDir)\flex-2.5.35</FlexDir>
+    <FlexIncludes>$(FlexDir)\include</FlexIncludes>
+
     <!-- SDL -->
     <SdlDir>$(ContribDir)\sdl-1.2.14</SdlDir>
     <SdlImageDir>$(ContribDir)\sdl-image-1.2.10</SdlImageDir>
@@ -45,6 +49,8 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <BuildMacro Include="ContribDir"><Value>$(ContribDir)</Value></BuildMacro>
+    <BuildMacro Include="FlexDir"><Value>$(FlexDir)</Value></BuildMacro>
+    <BuildMacro Include="FlexIncludes"><Value>$(FlexIncludes)</Value></BuildMacro>
     <BuildMacro Include="SdlDir"><Value>$(SdlDir)</Value></BuildMacro>
     <BuildMacro Include="SdlImageDir"><Value>$(SdlImageDir)</Value></BuildMacro>
     <BuildMacro Include="SdlMixerDir"><Value>$(SdlMixerDir)</Value></BuildMacro>

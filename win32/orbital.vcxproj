@@ -28,7 +28,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\orbital\CommandParser.h" />
+    <ClInclude Include="..\orbital\generated\mesh-parser.h" />
     <ClInclude Include="..\orbital\gun.h" />
+    <ClInclude Include="..\orbital\mesh-driver.h" />
+    <ClInclude Include="..\orbital\mesh-scanner.h" />
     <ClInclude Include="..\orbital\mesh.h" />
     <ClInclude Include="..\orbital\orbital.h" />
     <ClInclude Include="..\orbital\particlesystem.h" />
@@ -38,6 +41,9 @@
     <ClInclude Include="..\orbital\tank.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\orbital\generated\mesh-parser.cpp" />
+    <ClCompile Include="..\orbital\generated\mesh-scanner.cpp" />
+    <ClCompile Include="..\orbital\mesh-driver.cpp" />
     <ClCompile Include="..\orbital\orbital.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +53,13 @@
     <ProjectReference Include="lolcore.vcxproj">
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\orbital\generated\location.hh" />
+    <None Include="..\orbital\generated\position.hh" />
+    <None Include="..\orbital\generated\stack.hh" />
+    <None Include="..\orbital\mesh.l" />
+    <None Include="..\orbital\mesh.yy" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ee203b88-44cf-4859-9d42-7a5f40fecb52}</ProjectGuid>

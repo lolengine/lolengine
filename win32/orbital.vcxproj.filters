@@ -8,6 +8,11 @@
     <ClInclude Include="..\orbital\tank.h" />
     <ClInclude Include="..\orbital\starfield.h" />
     <ClInclude Include="..\orbital\snake.h" />
+    <ClInclude Include="..\orbital\mesh-driver.h" />
+    <ClInclude Include="..\orbital\mesh-scanner.h" />
+    <ClInclude Include="..\orbital\generated\mesh-parser.h">
+      <Filter>generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\orbital\orbital.h" />
@@ -17,5 +22,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\orbital\orbital.cpp" />
+    <ClCompile Include="..\orbital\mesh-driver.cpp" />
+    <ClCompile Include="..\orbital\generated\mesh-parser.cpp">
+      <Filter>generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\orbital\generated\mesh-scanner.cpp">
+      <Filter>generated</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="..\orbital\shiny.lolfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\orbital\mesh.l" />
+    <None Include="..\orbital\mesh.yy" />
+    <None Include="..\orbital\generated\location.hh">
+      <Filter>generated</Filter>
+    </None>
+    <None Include="..\orbital\generated\position.hh">
+      <Filter>generated</Filter>
+    </None>
+    <None Include="..\orbital\generated\stack.hh">
+      <Filter>generated</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="generated">
+      <UniqueIdentifier>{4fc7662b-b17a-49b9-acd1-0cf767183b06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
