@@ -33,8 +33,8 @@
     <LolFxCompile Include="..\orbital\shiny.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\orbital\mesh.l" />
-    <None Include="..\orbital\mesh.yy" />
+    <None Include="..\orbital\mesh-scanner.l" />
+    <None Include="..\orbital\mesh-parser.y" />
     <None Include="..\orbital\generated\location.hh">
       <Filter>generated</Filter>
     </None>
