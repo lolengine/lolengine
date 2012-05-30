@@ -50,13 +50,13 @@ LOLUNIT_FIXTURE(BuildTest)
     {
         LOLUNIT_ASSERT_EQUAL(sizeof(double), 8);
 
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64vec2), 16);
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64vec3), 24);
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64vec4), 32);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dvec2), 16);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dvec3), 24);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dvec4), 32);
 
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64mat2), 32);
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64mat3), 72);
-        LOLUNIT_ASSERT_EQUAL(sizeof(f64mat4), 128);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dmat2), 32);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dmat3), 72);
+        LOLUNIT_ASSERT_EQUAL(sizeof(dmat4), 128);
     }
 
     LOLUNIT_TEST(TypeSizeInt8)

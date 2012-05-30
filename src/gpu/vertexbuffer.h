@@ -83,7 +83,7 @@ protected:
         Typevoid = 0,
         Typehalf,     Typef16vec2, Typef16vec3, Typef16vec4,
         Typefloat,    Typevec2,    Typevec3,    Typevec4,
-        Typedouble,   Typef64vec2, Typef64vec3, Typef64vec4,
+        Typedouble,   Typedvec2,   Typedvec3,   Typedvec4,
         Typeint8_t,   Typei8vec2,  Typei8vec3,  Typei8vec4,
         Typeuint8_t,  Typeu8vec2,  Typeu8vec3,  Typeu8vec4,
         Typeint16_t,  Typei16vec2, Typei16vec3, Typei16vec4,
@@ -98,7 +98,7 @@ protected:
     LOL_TYPE(void)
     LOL_TYPE(half)     LOL_TYPE(f16vec2) LOL_TYPE(f16vec3) LOL_TYPE(f16vec4)
     LOL_TYPE(float)    LOL_TYPE(vec2)    LOL_TYPE(vec3)    LOL_TYPE(vec4)
-    LOL_TYPE(double)   LOL_TYPE(f64vec2) LOL_TYPE(f64vec3) LOL_TYPE(f64vec4)
+    LOL_TYPE(double)   LOL_TYPE(dvec2)   LOL_TYPE(dvec3)   LOL_TYPE(dvec4)
     LOL_TYPE(uint8_t)  LOL_TYPE(u8vec2)  LOL_TYPE(u8vec3)  LOL_TYPE(u8vec4)
     LOL_TYPE(int8_t)   LOL_TYPE(i8vec2)  LOL_TYPE(i8vec3)  LOL_TYPE(i8vec4)
     LOL_TYPE(uint16_t) LOL_TYPE(u16vec2) LOL_TYPE(u16vec3) LOL_TYPE(u16vec4)
