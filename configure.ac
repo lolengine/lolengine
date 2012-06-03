@@ -268,6 +268,16 @@ AM_CONDITIONAL(USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" = "yes")
 AM_CONDITIONAL(USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" = "yes")
 
 
+dnl  Use Flex's FlexLexer.h or ours?
+ac_cv_my_have_flexlexer_h="no"
+AC_LANG_PUSH(C++)
+AC_CHECK_HEADERS(FlexLexer.h, [ac_cv_my_have_flexlexer_h="yes"])
+AC_LANG_POP(C++)
+if test "x${ac_cv_my_have_flexlexer_h}" = "xno"; then
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/contrib/flex-2.5.35/include"
+fi
+
+
 dnl  Use NativeClient?
 ac_cv_my_have_nacl="no"
 AC_LANG_PUSH(C++)
