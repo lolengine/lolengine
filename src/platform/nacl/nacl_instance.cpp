@@ -25,6 +25,14 @@
 #include "platform/nacl/nacl_instance.h"
 #include "platform/nacl/opengl_context.h"
 
+/* One of these wrappers will be overridden by the user's version */
+void lol_nacl_main(void) __attribute__((weak));
+void lol_nacl_main(void) {}
+void lol_nacl_main(int argc, char **argv) __attribute__((weak));
+void lol_nacl_main(int argc, char **argv) {}
+void lol_nacl_main(int argc, char **argv, char **envp) __attribute__((weak));
+void lol_nacl_main(int argc, char **argv, char **envp) {}
+
 namespace lol
 {
 
@@ -53,25 +61,19 @@ void TickCallback(void* data, int32_t result)
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
 }
 
-}
-#define main OLDMAIN
-#include "../test/tutorial/tut03.cpp"
-#undef main
-namespace lol {
-
-bool NaClInstance::Init(uint32_t /* argc */,
+bool NaClInstance::Init(uint32_t argc,
                         const char* /* argn */[],
-                        const char* /* argv */[])
+                        const char* argv[])
 {
-    Ticker::Setup(60.0f);
-
-    //new Kub();
-    //new DebugQuad();
-    new Fractal(ivec2(640, 480));
-
     // My timer callback
     pp::Module::Get()->core()->CallOnMainThread(
             DELTA_MS, pp::CompletionCallback(&TickCallback, this), PP_OK);
+
+    /* Call the user's main() function. FIXME: run it in a thread */
+    char *env[] = { NULL };
+    lol_nacl_main();
+    lol_nacl_main(argc, const_cast<char **>(argv));
+    lol_nacl_main(argc, const_cast<char **>(argv), (char **)env);
 
     return true;
 }
