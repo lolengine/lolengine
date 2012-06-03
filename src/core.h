@@ -61,6 +61,11 @@ static inline int isnan(float f)
 }
 #endif
 
+/* If using NaCl, override main with our version */
+#if defined __native_client__
+#   define main lol_nacl_main
+#endif
+
 // Base types
 #include "lol/debug.h"
 #include "math/trig.h"

@@ -45,6 +45,10 @@ class NaClInstance : public pp::Instance {
     SharedOpenGLContext opengl_context_;
 
     ivec2 m_size;
+
+private:
+    static void CallIntMainWrappers(int argc, char const* argn[]);
+    static void CallVoidMainWrappers(int argc, char const* argn[]);
 };
 
 }  // namespace lol
