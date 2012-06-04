@@ -281,9 +281,13 @@ fi
 dnl  Use NativeClient?
 ac_cv_my_have_nacl="no"
 AC_LANG_PUSH(C++)
-AC_CHECK_HEADERS(ppapi/cpp/instance.h, [ac_cv_my_have_nacl="yes"])
+AC_CHECK_HEADERS(ppapi/cpp/instance.h,
+ [ac_cv_my_have_nacl="yes"
+  dnl  Disable this warning, it's too verbose with vector.h
+  CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
+
 
 dnl Use EGL?
 ac_cv_my_have_egl="no"
