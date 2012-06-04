@@ -5,14 +5,13 @@
 #ifndef EXAMPLES_TUMBLER_TUMBLER_H_
 #define EXAMPLES_TUMBLER_TUMBLER_H_
 
-#include <pthread.h>
-#include <map>
-#include <vector>
-
 #include <ppapi/cpp/instance.h>
+#include <ppapi/c/ppb_gamepad.h>
 
 #include "platform/nacl/opengl_context.h"
 #include "platform/nacl/opengl_context_ptrs.h"
+
+#include "input/input.h"
 
 namespace lol {
 
@@ -47,8 +46,16 @@ class NaClInstance : public pp::Instance {
     ivec2 m_size;
 
 private:
+    static void TickCallback(void* data, int32_t result);
+
     static void CallIntMainWrappers(int argc, char const* argn[]);
     static void CallVoidMainWrappers(int argc, char const* argn[]);
+
+    static void RunMain(uint32_t argc, const char* argn[], const char* argv[]);
+
+    /* Gamepad support */
+    PPB_Gamepad const *m_pad_interface;
+    Array<Stick *> m_sticks;
 };
 
 }  // namespace lol
