@@ -51,7 +51,7 @@ NaClInstance::~NaClInstance()
 
 static double const DELTA_MS = 1000.0 / 60.0;
 
-void TickCallback(void* data, int32_t result)
+void NaClInstance::TickCallback(void* data, int32_t result)
 {
     NaClInstance *instance = (NaClInstance *)data;
     instance->DrawSelf();
@@ -59,15 +59,36 @@ void TickCallback(void* data, int32_t result)
     /* FIXME: only set if if Ticker isn't finished */
     pp::Module::Get()->core()->CallOnMainThread(
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
+
+    /* Propagate gamepad information */
+    PP_GamepadsSampleData all_pads_data;
+    instance->m_pad_interface->Sample(instance->pp_instance(), &all_pads_data);
+
+    for (int i = 0; i < all_pads_data.length; i++)
+    {
+        PP_GamepadSampleData const& pad_data = all_pads_data.items[i];
+
+        if (i >= instance->m_sticks.Count())
+        {
+            Stick *stick = Input::CreateStick();
+            instance->m_sticks.Push(stick);
+        }
+
+        instance->m_sticks[i]->SetAxisCount(pad_data.axes_length);
+        for (int j = 0; j < pad_data.axes_length; j++)
+            instance->m_sticks[i]->SetAxis(j, pad_data.axes[j]);
+
+        instance->m_sticks[i]->SetButtonCount(pad_data.buttons_length);
+        for (int j = 0; j < pad_data.buttons_length; j++)
+            instance->m_sticks[i]->SetButton(j, pad_data.buttons[j] > 0.5f);
+    }
 }
 
 bool NaClInstance::Init(uint32_t argc,
                         const char* /* argn */[],
                         const char* argv[])
 {
-    // My timer callback
-    pp::Module::Get()->core()->CallOnMainThread(
-            DELTA_MS, pp::CompletionCallback(&TickCallback, this), PP_OK);
+    Ticker::Setup(60.0f);
 
     /* Call the user's main() function. FIXME: run it in a thread */
     char *env[] = { NULL };
@@ -75,7 +96,22 @@ bool NaClInstance::Init(uint32_t argc,
     lol_nacl_main(argc, const_cast<char **>(argv));
     lol_nacl_main(argc, const_cast<char **>(argv), (char **)env);
 
+    // My timer callback
+    pp::Module::Get()->core()->CallOnMainThread(
+            DELTA_MS, pp::CompletionCallback(&TickCallback, this), PP_OK);
+
+    /* The gamepad interface */
+    m_pad_interface = static_cast<PPB_Gamepad const *>(
+            pp::Module::Get()->GetBrowserInterface(PPB_GAMEPAD_INTERFACE));
+
     return true;
+}
+
+void NaClInstance::RunMain(uint32_t argc,
+                           const char* /* argn */[],
+                           const char* argv[])
+{
+
 }
 
 void NaClInstance::HandleMessage(const pp::Var& message)
