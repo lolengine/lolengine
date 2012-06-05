@@ -12,15 +12,10 @@
 #   include "config.h"
 #endif
 
-#if defined __native_client__
-#   include <ppapi/cpp/instance.h>
-#   include <ppapi/cpp/module.h>
-#   include <ppapi/cpp/var.h>
-#endif
-
 #include "core.h"
-#include "lolgl.h"
-#include "naclapp.h"
+
+#include "nacl-app.h"
+#include "nacl-instance.h"
 
 namespace lol
 {
@@ -45,6 +40,7 @@ private:
 NaClApp::NaClApp(char const *title, ivec2 res, float fps) :
     data(new NaClAppData())
 {
+    Ticker::Setup(fps);
 #if defined __native_client__
 #endif
 }
@@ -56,14 +52,13 @@ void NaClApp::ShowPointer(bool show)
 
 void NaClApp::Run()
 {
-    while (!Ticker::Finished())
-    {
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
-
 #if defined __native_client__
+    NaClInstance::MainSignal();
 #endif
-    }
+
+    /* Wait forever */
+    Queue<int, 1> q;
+    q.Pop();
 }
 
 NaClApp::~NaClApp()

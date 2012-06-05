@@ -69,7 +69,7 @@ class OpenGLContext : public pp::Graphics3DClient {
   }
 
   /// The PP_Resource needed to make GLES2 calls through the Pepper interface.
-  const PP_Resource gl_context() const {
+  PP_Resource gl_context() const {
     return context_.pp_resource();
   }
 

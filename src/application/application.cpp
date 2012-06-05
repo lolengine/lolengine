@@ -20,7 +20,7 @@
 #elif defined _XBOX
 #   include "platform/xbox/xboxapp.h"
 #elif defined __native_client__
-#   include "platform/nacl/naclapp.h"
+#   include "platform/nacl/nacl-app.h"
 #elif defined __ANDROID__
 #   include "platform/android/androidapp.h"
 #elif defined HAVE_GLES_2X

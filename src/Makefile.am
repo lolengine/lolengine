@@ -71,9 +71,9 @@ d3d9_sources = \
 
 if USE_NACL
 nacl_sources = \
-    platform/nacl/naclapp.cpp platform/nacl/naclapp.h \
-    platform/nacl/nacl_instance.cpp platform/nacl/nacl_instance.h \
-    platform/nacl/nacl_module.cpp \
+    platform/nacl/nacl-app.cpp platform/nacl/nacl-app.h \
+    platform/nacl/nacl-instance.cpp platform/nacl/nacl-instance.h \
+    platform/nacl/nacl-module.cpp \
     platform/nacl/opengl_context.cpp platform/nacl/opengl_context.h \
     platform/nacl/opengl_context_ptrs.h
 endif
