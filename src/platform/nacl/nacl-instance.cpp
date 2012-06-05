@@ -10,7 +10,6 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-#include <vector>
 
 #include <ppapi/cpp/rect.h>
 #include <ppapi/cpp/size.h>
@@ -20,9 +19,8 @@
 #include <ppapi/cpp/input_event.h>
 
 #include "core.h"
-#include "debug/quad.h"
 
-#include "platform/nacl/nacl_instance.h"
+#include "platform/nacl/nacl-instance.h"
 #include "platform/nacl/opengl_context.h"
 
 /* One of these wrappers will be overridden by the user's version */
@@ -46,7 +44,7 @@ NaClInstance::NaClInstance(PP_Instance instance)
 NaClInstance::~NaClInstance()
 {
     // Destroy the cube view while GL context is current.
-    opengl_context_->MakeContextCurrent(this);
+    m_opengl_ctx->MakeContextCurrent(this);
 }
 
 static double const DELTA_MS = 1000.0 / 60.0;
@@ -84,17 +82,23 @@ void NaClInstance::TickCallback(void* data, int32_t result)
     }
 }
 
+Mutex NaClInstance::main_mutex;
+Queue<NaClInstance::Args *, 1> NaClInstance::main_queue;
+
 bool NaClInstance::Init(uint32_t argc,
                         const char* /* argn */[],
                         const char* argv[])
 {
-    Ticker::Setup(60.0f);
-
-    /* Call the user's main() function. FIXME: run it in a thread */
+    /* Ensure only one NaClInstance does Init() at the same time. */
+    main_mutex.Lock();
     char *env[] = { NULL };
-    lol_nacl_main();
-    lol_nacl_main(argc, const_cast<char **>(argv));
-    lol_nacl_main(argc, const_cast<char **>(argv), (char **)env);
+    Args arglist(argc, const_cast<char **>(argv), const_cast<char **>(env));
+    main_queue.Push(&arglist);
+    m_main_thread = new Thread(MainRun, NULL);
+    /* Push so that only MainSignal() can unblock us */
+    main_queue.Push(NULL);
+    main_queue.Push(NULL);
+    main_mutex.Unlock();
 
     // My timer callback
     pp::Module::Get()->core()->CallOnMainThread(
@@ -107,11 +111,23 @@ bool NaClInstance::Init(uint32_t argc,
     return true;
 }
 
-void NaClInstance::RunMain(uint32_t argc,
-                           const char* /* argn */[],
-                           const char* argv[])
+void * NaClInstance::MainRun(void *data)
 {
+    Args *arglist = main_queue.Pop();
 
+    /* Call the user's main() function. One of these will work. */
+    lol_nacl_main();
+    lol_nacl_main(arglist->m_argc, arglist->m_argv);
+    lol_nacl_main(arglist->m_argc, arglist->m_argv, arglist->m_env);
+
+    return NULL;
+}
+
+void NaClInstance::MainSignal()
+{
+    /* FIXME: find something more elegant. */
+    main_queue.Pop();
+    main_queue.Pop();
 }
 
 void NaClInstance::HandleMessage(const pp::Var& message)
@@ -129,11 +145,11 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
     m_size = ivec2(position.size().width(), position.size().height());
 
-    if (opengl_context_ == NULL)
-        opengl_context_.reset(new OpenGLContext(this));
-    opengl_context_->InvalidateContext(this);
-    opengl_context_->ResizeContext(position.size());
-    if (!opengl_context_->MakeContextCurrent(this))
+    if (m_opengl_ctx == NULL)
+        m_opengl_ctx.reset(new OpenGLContext(this));
+    m_opengl_ctx->InvalidateContext(this);
+    m_opengl_ctx->ResizeContext(position.size());
+    if (!m_opengl_ctx->MakeContextCurrent(this))
         return;
 
     Video::Setup(m_size);
@@ -151,7 +167,7 @@ bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
         Input::UnsetMouseButton(pp::MouseInputEvent(event).GetButton());
         break;
     case PP_INPUTEVENT_TYPE_MOUSEMOVE:
-        Input::SetMousePos(ivec2(pp::MouseInputEvent(event).GetPosition().x(), opengl_context_->GetSize().height() - 1 - pp::MouseInputEvent(event).GetPosition().y()));
+        Input::SetMousePos(ivec2(pp::MouseInputEvent(event).GetPosition().x(), m_opengl_ctx->GetSize().height() - 1 - pp::MouseInputEvent(event).GetPosition().y()));
         break;
     default:
         break;
@@ -161,12 +177,12 @@ bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
 
 void NaClInstance::DrawSelf()
 {
-    if (opengl_context_ == NULL)
+    if (m_opengl_ctx == NULL)
         return;
 
-    opengl_context_->MakeContextCurrent(this);
+    m_opengl_ctx->MakeContextCurrent(this);
     Ticker::TickDraw();
-    opengl_context_->FlushContext();
+    m_opengl_ctx->FlushContext();
 }
 
 }  // namespace lol

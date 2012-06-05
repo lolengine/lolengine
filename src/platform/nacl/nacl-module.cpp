@@ -11,9 +11,9 @@
 #include <ppapi/gles2/gl2ext_ppapi.h>
 
 #include "core.h"
-#include "lolgl.h"
+#include "lolgl.h" /* needed for GL_TRUE */
 
-#include "platform/nacl/nacl_instance.h"
+#include "platform/nacl/nacl-instance.h"
 
 /// The Module class.  The browser calls the CreateInstance() method to create
 /// an instance of your NaCl module on the web page.  The browser creates a new
