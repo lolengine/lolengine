@@ -42,6 +42,8 @@ class VertexBufferData
     friend class VertexBuffer;
     friend class VertexDeclaration;
 
+    size_t m_size;
+
 #if defined USE_D3D9
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
@@ -49,7 +51,6 @@ class VertexBufferData
 #else
     GLuint m_vbo;
     uint8_t *m_memory;
-    size_t m_size;
 #endif
 };
 
@@ -122,6 +123,9 @@ void VertexDeclaration::Bind()
 
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 {
+    if (count <= 0)
+        return;
+
 #if defined _XBOX || defined USE_D3D9
     g_d3ddevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
     g_d3ddevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -158,6 +162,9 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
                                             int vskip, int vcount,
                                             int skip, int count)
 {
+    if (count <= 0)
+        return;
+
 #if defined _XBOX || defined USE_D3D9
     g_d3ddevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
     g_d3ddevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -226,6 +233,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                                     ShaderAttrib attr11,
                                                     ShaderAttrib attr12)
 {
+    if (!vb->m_data->m_size)
+        return;
+
 #if defined _XBOX || defined USE_D3D9
     /* Only the first item is required to know which stream this
      * is about; the rest of the information is stored in the
@@ -469,6 +479,9 @@ void VertexDeclaration::AddStream(VertexStreamBase const &s)
 VertexBuffer::VertexBuffer(size_t size)
   : m_data(new VertexBufferData)
 {
+    m_data->m_size = size;
+    if (!size)
+        return;
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
@@ -476,24 +489,28 @@ VertexBuffer::VertexBuffer(size_t size)
 #elif !defined __CELLOS_LV2__
     glGenBuffers(1, &m_data->m_vbo);
     m_data->m_memory = new uint8_t[size];
-    m_data->m_size = size;
 #endif
 }
 
 VertexBuffer::~VertexBuffer()
 {
+    if (m_data->m_size)
+    {
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(m_data->m_vbo->Release()))
-        Abort();
+        if (FAILED(m_data->m_vbo->Release()))
+            Abort();
 #elif !defined __CELLOS_LV2__
-    glDeleteBuffers(1, &m_data->m_vbo);
-    delete[] m_data->m_memory;
+        glDeleteBuffers(1, &m_data->m_vbo);
+        delete[] m_data->m_memory;
 #endif
+    }
     delete m_data;
 }
 
 void *VertexBuffer::Lock(size_t offset, size_t size)
 {
+    if (!m_data->m_size)
+        return NULL;
 #if defined USE_D3D9 || defined _XBOX
     void *ret;
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
@@ -506,6 +523,8 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
 
 void VertexBuffer::Unlock()
 {
+    if (!m_data->m_size)
+        return;
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_vbo->Unlock()))
         Abort();
