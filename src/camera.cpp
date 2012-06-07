@@ -19,6 +19,8 @@
 
 #if defined _WIN32 || defined _XBOX
 #   define strcasecmp _stricmp
+#   undef near
+#   undef far
 #endif
 
 namespace lol
