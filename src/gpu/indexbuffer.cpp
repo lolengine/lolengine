@@ -41,6 +41,8 @@ class IndexBufferData
 {
     friend class IndexBuffer;
 
+    size_t m_size;
+
 #if defined USE_D3D9
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
@@ -48,7 +50,6 @@ class IndexBufferData
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     GLuint m_ibo;
     uint8_t *m_memory;
-    size_t m_size;
 #endif
 };
 
@@ -60,6 +61,9 @@ class IndexBufferData
 IndexBuffer::IndexBuffer(size_t size)
   : m_data(new IndexBufferData)
 {
+    m_data->m_size = size;
+    if (!size)
+        return;
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,
                                               D3DFMT_INDEX16, D3DPOOL_MANAGED,
@@ -68,24 +72,29 @@ IndexBuffer::IndexBuffer(size_t size)
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
     glGenBuffers(1, &m_data->m_ibo);
     m_data->m_memory = new uint8_t[size];
-    m_data->m_size = size;
 #endif
 }
 
 IndexBuffer::~IndexBuffer()
 {
+    if (m_data->m_size)
+    {
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(m_data->m_ibo->Release()))
-        Abort();
+        if (FAILED(m_data->m_ibo->Release()))
+            Abort();
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-    glDeleteBuffers(1, &m_data->m_ibo);
-    delete[] m_data->m_memory;
+        glDeleteBuffers(1, &m_data->m_ibo);
+        delete[] m_data->m_memory;
 #endif
+    }
     delete m_data;
 }
 
 void *IndexBuffer::Lock(size_t offset, size_t size)
 {
+    if (!m_data->m_size)
+        return NULL;
+
 #if defined USE_D3D9 || defined _XBOX
     void *ret;
     if (FAILED(m_data->m_ibo->Lock(offset, size, (void **)&ret, 0)))
@@ -98,6 +107,9 @@ void *IndexBuffer::Lock(size_t offset, size_t size)
 
 void IndexBuffer::Unlock()
 {
+    if (!m_data->m_size)
+        return;
+
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_ibo->Unlock()))
         Abort();
@@ -110,6 +122,9 @@ void IndexBuffer::Unlock()
 
 void IndexBuffer::Bind()
 {
+    if (!m_data->m_size)
+        return;
+
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->SetIndices(m_data->m_ibo)))
         Abort();
@@ -123,6 +138,9 @@ void IndexBuffer::Bind()
 
 void IndexBuffer::Unbind()
 {
+    if (!m_data->m_size)
+        return;
+
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->SetIndices(NULL)))
         Abort();
