@@ -211,6 +211,9 @@ void VertexDeclaration::Unbind()
 #else
     /* FIXME: we need to unbind what we bound */
     //glDisableVertexAttribArray(m_attrib);
+    /* FIXME: temporary kludge */
+    for (int i = 0; i < 12; i++)
+        glDisableVertexAttribArray(i);
     /* FIXME: only useful for VAOs */
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     /* Or: */
