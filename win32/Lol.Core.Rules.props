@@ -35,10 +35,12 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <!-- FIXME: not for the static library! -->
-      <AdditionalDependencies Condition="'$(Platform)'=='Win32'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);$(GlDeps);$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32'">$(SdlLibs);$(GlLibs);$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);$(GlDeps);$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(SdlLibs);$(GlLibs);$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseOpenGL)'=='false' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(UseOpenGL)'=='false' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib;xboxkrnl.lib;xnetd.lib;xaudiod2.lib;xactd3.lib;x3daudiod.lib;xmcored.lib;xbdm.lib;vcompd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xapilib.lib;d3d9.lib;d3dx9.lib;xgraphics.lib;xboxkrnl.lib;xnet.lib;xaudio2.lib;xact3.lib;x3daudio.lib;xmcore.lib;vcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -48,17 +50,7 @@
     </Link>
 
     <!-- FIXME: not for the static library! -->
-    <PostBuildEvent Condition="'$(Platform)'=='Win32'">
-      <Command>
-        set A=$(SdlLibs)
-        :again
-        for /f "tokens=1* delims=;" %%I in ("%A%") do (
-          if not "%%I" == "" xcopy /y /c /d "%%I"\*.dll "$(TargetDir)" &amp;&amp; set A=%%J
-          if not "%%I" == "" goto again
-        )
-      </Command>
-    </PostBuildEvent>
-    <PostBuildEvent Condition="'$(Platform)'=='x64'">
+    <PostBuildEvent Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
       <Command>
         set A=$(SdlLibs)
         :again

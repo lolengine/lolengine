@@ -42,7 +42,8 @@
     <D3d9Deps Condition="'$(Configuration)'=='Release'">d3d9.lib;d3dx9.lib;xinput.lib</D3d9Deps>
     <D3d9Deps Condition="'$(Configuration)'=='Debug'">d3d9.lib;d3dx9d.lib;xinput.lib</D3d9Deps>
 
-    <Win32Defines>HAVE_SDL_H;USE_SDL;USE_GDIPLUS;USE_D3D9</Win32Defines>
+    <Win32Defines Condition="'$(UseOpenGL)'=='true'">HAVE_SDL_H;USE_SDL;USE_GDIPLUS;HAVE_GL_2X;USE_GLEW;GLEW_STATIC</Win32Defines>
+    <Win32Defines Condition="'$(UseOpenGL)'=='false'">HAVE_SDL_H;USE_SDL;USE_GDIPLUS;USE_D3D9</Win32Defines>
     <XboxDefines></XboxDefines>
   </PropertyGroup>
   <PropertyGroup />
