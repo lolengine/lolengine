@@ -4,6 +4,7 @@ SUBDIRS += deushax
 SUBDIRS += monsterz
 SUBDIRS += mrpigeon
 SUBDIRS += orbital
+SUBDIRS += neercs
 DIST_SUBDIRS = $(SUBDIRS)
 
 EXTRA_DIST = bootstrap build-linux build-mingw build-mingw64 build-ps3 \
