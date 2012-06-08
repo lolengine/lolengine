@@ -67,7 +67,7 @@ sdl_sources = \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
 
 d3d9_sources = \
-    platform/xbox/xboxinput.cpp platform/xbox/xboxinput.h
+    platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
 
 if USE_NACL
 nacl_sources = \
