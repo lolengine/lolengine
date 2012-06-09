@@ -33,7 +33,7 @@
     <LolFxCompile Include="..\test\tutorial\01_triangle.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="lolcore.vcxproj">
+    <ProjectReference Include="$(SolutionDir)\lolcore.vcxproj">
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -42,19 +42,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="Lol.Core.Config.props" />
+  <Import Project="$(SolutionDir)\Lol.Core.Config.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="Lol.Fx.props" />
+    <Import Project="$(SolutionDir)\Lol.Fx.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Lol.Core.Vars.props" />
+    <Import Project="$(SolutionDir)\Lol.Core.Vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="Lol.Core.Rules.props" />
+  <Import Project="$(SolutionDir)\Lol.Core.Rules.props" />
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="Lol.Fx.targets" />
+    <Import Project="$(SolutionDir)\Lol.Fx.targets" />
   </ImportGroup>
 </Project>

@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deushax", "deushax.vcxproj", "{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deushax", "..\deushax\deushax.vcxproj", "{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monsterz", "monsterz.vcxproj", "{17F0F184-4436-4D08-B8AA-16572EA238DB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monsterz", "..\monsterz\monsterz.vcxproj", "{17F0F184-4436-4D08-B8AA-16572EA238DB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "editor", "editor.vcxproj", "{9C66B179-0737-4BDA-AB42-2ADE478A9008}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "editor", "..\deushax\editor.vcxproj", "{9C66B179-0737-4BDA-AB42-2ADE478A9008}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
@@ -58,7 +58,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_fractal", "03_fractal.vc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MrPigeon", "MrPigeon", "{33704AA4-F2B5-4138-A40D-E3E77F89ED46}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mrpigeon", "mrpigeon.vcxproj", "{32F3F8CF-D22E-45E4-BEB8-AD909E8C5515}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mrpigeon", "..\mrpigeon\mrpigeon.vcxproj", "{32F3F8CF-D22E-45E4-BEB8-AD909E8C5515}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
@@ -67,7 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{1DFE1729
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orbital", "Orbital", "{8C77EAA8-1077-4EF7-AE53-97C6C60A3601}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orbital", "orbital.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F40FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orbital", "..\orbital\orbital.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F40FECB52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{1AFD580B-98B8-4689-B661-38C41132C60E}"
 	ProjectSection(SolutionItems) = preProject
@@ -78,7 +78,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3D341D8A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neercs", "Neercs", "{B357514A-7881-422D-8358-161B689E7620}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "neercs.vcxproj", "{587FCCE9-1D8D-4398-B8B6-E8F4E9A92233}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\neercs\neercs.vcxproj", "{587FCCE9-1D8D-4398-B8B6-E8F4E9A92233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,14 +119,10 @@ Global
 		{17F0F184-4436-4D08-B8AA-16572EA238DB}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{17F0F184-4436-4D08-B8AA-16572EA238DB}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Debug|Win32.Build.0 = Debug|Win32
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Debug|x64.ActiveCfg = Debug|x64
-		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Debug|x64.Build.0 = Debug|x64
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Release|Win32.ActiveCfg = Release|Win32
-		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Release|Win32.Build.0 = Release|Win32
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Release|x64.ActiveCfg = Release|x64
-		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Release|x64.Build.0 = Release|x64
 		{9C66B179-0737-4BDA-AB42-2ADE478A9008}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}.Debug|Win32.Build.0 = Debug|Win32
