@@ -109,6 +109,7 @@ static inline int isnan(float f)
 #include "gpu/shader.h"
 #include "gpu/indexbuffer.h"
 #include "gpu/vertexbuffer.h"
+#include "gpu/framebuffer.h"
 #include "image/image.h"
 #include "application/application.h"
 

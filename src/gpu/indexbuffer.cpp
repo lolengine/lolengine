@@ -34,7 +34,7 @@ namespace lol
 
 //
 // The IndexBufferData class
-// --------------------------
+// -------------------------
 //
 
 class IndexBufferData
