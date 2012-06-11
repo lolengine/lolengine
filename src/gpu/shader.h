@@ -71,6 +71,10 @@ public:
     void SetUniform(ShaderUniform const &uni, mat3 const &m);
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
 
+    /* FIXME: this should be called SetUniform, too, but we need a new
+     * type to represent textures. */
+    void SetTexture(ShaderUniform const &uni, int id, int index);
+
     void Bind() const;
     void Unbind() const;
 
