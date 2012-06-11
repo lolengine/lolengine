@@ -214,6 +214,9 @@
     <ClCompile Include="..\src\worldentity.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\gpu\framebuffer.cpp">
+      <Filter>src\gpu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\image\image.h">
@@ -398,6 +401,9 @@
     </ClInclude>
     <ClInclude Include="..\src\world.h">
       <Filter>src\...</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gpu\framebuffer.h">
+      <Filter>src\gpu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
