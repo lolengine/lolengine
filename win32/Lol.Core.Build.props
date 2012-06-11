@@ -7,7 +7,7 @@
     <!-- ======================================== -->
 
     <!-- Use OpenGL instead of Direct3D? -->
-    <UseOpenGL>false</UseOpenGL>
+    <UseOpenGL>true</UseOpenGL>
 
   </PropertyGroup>
 </Project>

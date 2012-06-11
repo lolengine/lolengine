@@ -86,6 +86,7 @@
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
+    <ClCompile Include="..\src\gpu\framebuffer.cpp" />
     <ClCompile Include="..\src\gpu\indexbuffer.cpp" />
     <ClCompile Include="..\src\gpu\shader.cpp" />
     <ClCompile Include="..\src\gpu\vertexbuffer.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
+    <ClInclude Include="..\src\gpu\framebuffer.h" />
     <ClInclude Include="..\src\gpu\indexbuffer.h" />
     <ClInclude Include="..\src\gpu\shader.h" />
     <ClInclude Include="..\src\gpu\vertexbuffer.h" />
