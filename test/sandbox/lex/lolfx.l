@@ -4,10 +4,16 @@
 #include "lolfx.tab.h"
 %}
 
+%x GLSL
+%x HLSL
 %x C_COMMENT
 %x CPP_COMMENT
 
 %%
+
+%{
+int comment_caller = INITIAL;
+%}
 
  /*
   * GLSL keywords
@@ -449,7 +455,8 @@
   * LolFx preprocessor directives
   */
 
-"#"[ \t]*"region"                  { return PREPROCESSOR_REGION; }
+"#"[ \t]*"region GLSL"       { BEGIN(GLSL); }
+"#"[ \t]*"region HLSL"       { BEGIN(HLSL); }
 "#"[ \t]*"pragma"[ \t]*"lolfx".*   { /* ignore for now */ }
 
  /*
@@ -533,8 +540,10 @@
   * Ignore C comments
   */
 
-"/*"              { BEGIN(C_COMMENT); }
-<C_COMMENT>"*/"   { BEGIN(INITIAL); }
+<GLSL>"/*"        { comment_caller = GLSL; BEGIN(C_COMMENT); }
+<HLSL>"/*"        { comment_caller = HLSL; BEGIN(C_COMMENT); }
+"/*"              { comment_caller = INITIAL; BEGIN(C_COMMENT); }
+<C_COMMENT>"*/"   { BEGIN(comment_caller); }
 <C_COMMENT>[^*]*  { }
 <C_COMMENT>.      { }
 
@@ -542,8 +551,10 @@
   * Ignore C++ comments
   */
 
-"//"              { BEGIN(CPP_COMMENT); }
-<CPP_COMMENT>\n   { BEGIN(INITIAL); }
+<GLSL>"//"        { comment_caller = GLSL; BEGIN(CPP_COMMENT); }
+<HLSL>"//"        { comment_caller = HLSL; BEGIN(CPP_COMMENT); }
+"//"              { comment_caller = INITIAL; BEGIN(CPP_COMMENT); }
+<CPP_COMMENT>\n   { BEGIN(comment_caller); }
 <CPP_COMMENT>.*   { }
 
 %%
