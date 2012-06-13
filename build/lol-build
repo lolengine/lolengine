@@ -82,6 +82,7 @@ configure()
                 BUILDFLAGS=
             fi
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/i686-w64-mingw32"
@@ -89,6 +90,7 @@ configure()
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/bin"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/i686-w64-mingw32"
             ;;
         windows-amd64)
             if test "x${MSYSTEM}" = xMINGW64; then
@@ -104,11 +106,13 @@ configure()
                 # If using mingw32, we're not really cross-compiling
                 BUILDFLAGS=
             fi
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/x86_64-w64-mingw32/pkgconfig"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
             ;;
     esac
     case "$platform" in
@@ -147,6 +151,9 @@ configure()
             GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"
             GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
             GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
+
+            CPPFLAGS="$CPPFLAGS -L$PWD/contrib/libcaca-0.99.beta18/include"
+
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         *)
