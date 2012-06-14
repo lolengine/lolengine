@@ -66,6 +66,7 @@ struct MeshPrimitive
     enum Value
     {
         Triangles,
+        Points,
     }
     m_value;
 
