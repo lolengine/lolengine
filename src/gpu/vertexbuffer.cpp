@@ -360,7 +360,10 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
 
 
 #   if !defined __CELLOS_LV2__
-        if (type_index <= 12)
+        if (tlut[type_index].type == GL_FLOAT
+             || tlut[type_index].type == GL_DOUBLE
+             || tlut[type_index].type == GL_BYTE
+             || tlut[type_index].type == GL_UNSIGNED_BYTE)
         {
             /* Normalize unsigned bytes by default, because it's usually
              * some color information. */
