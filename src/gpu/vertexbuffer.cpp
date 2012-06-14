@@ -358,15 +358,24 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         if (type_index < 0 || type_index >= sizeof(tlut) / sizeof(*tlut))
             type_index = 0;
 
-        /* Normalize unsigned bytes by default, because it's usually
-         * some color information. */
-        GLboolean normalize = (tlut[type_index].type == GL_UNSIGNED_BYTE)
-                           || (tlut[type_index].type == GL_BYTE);
 
 #   if !defined __CELLOS_LV2__
-        glVertexAttribPointer((GLint)reg, tlut[type_index].size,
-                              tlut[type_index].type, normalize,
-                              stride, (GLvoid const *)(uintptr_t)offset);
+        if (type_index <= 12)
+        {
+            /* Normalize unsigned bytes by default, because it's usually
+             * some color information. */
+            GLboolean normalize = (tlut[type_index].type == GL_UNSIGNED_BYTE)
+                               || (tlut[type_index].type == GL_BYTE);
+            glVertexAttribPointer((GLint)reg, tlut[type_index].size,
+                                  tlut[type_index].type, normalize,
+                                  stride, (GLvoid const *)(uintptr_t)offset);
+        }
+        else
+        {
+            glVertexAttribIPointer((GLint)reg, tlut[type_index].size,
+                                   tlut[type_index].type,
+                                   stride, (GLvoid const *)(uintptr_t)offset);
+        }
 #   else
         switch (usage)
         {
