@@ -138,6 +138,10 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, skip, count)))
             Abort();
         break;
+    case MeshPrimitive::Points:
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_POINTLIST, skip, count)))
+            Abort();
+        break;
     }
 #else
     glFrontFace(GL_CCW);
@@ -153,6 +157,9 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     {
     case MeshPrimitive::Triangles:
         glDrawArrays(GL_TRIANGLES, skip * 3, count * 3);
+        break;
+    case MeshPrimitive::Points:
+        glDrawArrays(GL_POINTS, skip, count);
         break;
     }
 #endif
@@ -176,6 +183,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vbase, vskip, vcount, skip, count)))
             Abort();
         break;
+    case MeshPrimitive::Points:
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_POINTLIST, vbase, vskip, vcount, skip, count)))
+            Abort();
+        break;
     }
 #else
 #   if defined HAVE_GL_2X && !defined __APPLE__
@@ -190,6 +201,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     case MeshPrimitive::Triangles:
         /* FIXME: ignores most of the arguments! */
         glDrawElements(GL_TRIANGLES, count * 3, GL_UNSIGNED_SHORT, 0);
+        break;
+    case MeshPrimitive::Points:
+        /* FIXME: ignores most of the arguments! */
+        glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
 #endif
@@ -535,6 +550,7 @@ void VertexBuffer::Unlock()
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif
 }
 
