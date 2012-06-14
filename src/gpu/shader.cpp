@@ -210,12 +210,17 @@ Shader::Shader(char const *vert, char const *frag)
     glShaderSource(data->vert_id, 1, &shader, NULL);
     glCompileShader(data->vert_id);
 
+    glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
     glGetShaderiv(data->vert_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
         Log::Error("failed to compile vertex shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
+    }
+    else if (len > 1)
+    {
+        Log::Debug("compile log for vertex shader: %s", errbuf);
+        Log::Debug("shader source:\n%s\n", buf);
     }
 #else
     data->vert_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, vert,
@@ -249,12 +254,17 @@ Shader::Shader(char const *vert, char const *frag)
     glShaderSource(data->frag_id, 1, &shader, NULL);
     glCompileShader(data->frag_id);
 
+    glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
     glGetShaderiv(data->frag_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
         Log::Error("failed to compile fragment shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
+    }
+    else if (len > 1)
+    {
+        Log::Debug("compile log for fragment shader: %s", errbuf);
+        Log::Debug("shader source:\n%s\n", buf);
     }
 #else
     data->frag_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, frag,
@@ -293,6 +303,16 @@ Shader::Shader(char const *vert, char const *frag)
     glAttachShader(data->prog_id, data->frag_id);
 
     glLinkProgram(data->prog_id);
+    glGetProgramInfoLog(data->prog_id, sizeof(errbuf), &len, errbuf);
+    glGetProgramiv(data->prog_id, GL_LINK_STATUS, &status);
+    if (status != GL_TRUE)
+    {
+        Log::Error("failed to link program: %s", errbuf);
+    }
+    else if (len > 1)
+    {
+        Log::Debug("link log for program: %s", errbuf);
+    }
     glValidateProgram(data->prog_id);
 #endif
 }
