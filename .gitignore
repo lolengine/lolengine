@@ -73,4 +73,3 @@ test/math/remez
 test/xolotl/xolotl
 tools/make-font
 # Our data
-*.lolfx.cpp
