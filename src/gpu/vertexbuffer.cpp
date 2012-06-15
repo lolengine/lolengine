@@ -147,6 +147,7 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
 #   if defined HAVE_GL_2X && !defined __APPLE__
+    /* FIXME: this has nothing to do here! */
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);
 #   endif
@@ -162,6 +163,10 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         glDrawArrays(GL_POINTS, skip, count);
         break;
     }
+#   if defined HAVE_GL_2X && !defined __APPLE__
+    /* FIXME: this has nothing to do here! */
+    glDisable(GL_ALPHA_TEST);
+#   endif
 #endif
 }
 
@@ -190,6 +195,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     }
 #else
 #   if defined HAVE_GL_2X && !defined __APPLE__
+    /* FIXME: this has nothing to do here! */
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);
 #   endif
@@ -207,6 +213,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
+#   if defined HAVE_GL_2X && !defined __APPLE__
+    /* FIXME: this has nothing to do here! */
+    glDisable(GL_ALPHA_TEST);
+#   endif
 #endif
 }
 
@@ -229,6 +239,7 @@ void VertexDeclaration::Unbind()
     /* FIXME: temporary kludge */
     for (int i = 0; i < 12; i++)
         glDisableVertexAttribArray(i);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     /* FIXME: only useful for VAOs */
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     /* Or: */
