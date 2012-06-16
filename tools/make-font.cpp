@@ -12,6 +12,32 @@
 
 #include <caca.h>
 
+/* FIXME: ugly MinGW hack */
+#if defined _WIN32 && defined __GNUC__
+extern "C"
+{
+int sprintf_s(char *s, size_t n, const char *fmt, ...)
+{
+    va_list args;
+    int ret;
+    va_start(args, fmt);
+    ret = vsnprintf(s, n, fmt, args);
+    va_end(args);
+    return ret;
+}
+
+int vsnprintf_s(char *s, size_t n, size_t c, const char *fmt, va_list args)
+{
+    return vsnprintf(s, n, fmt, args);
+}
+
+int _time32(__time32_t *timer)
+{
+    return 0;
+}
+}
+#endif
+
 int main(void)
 {
     caca_canvas_t *cv = caca_create_canvas(16, 16);
