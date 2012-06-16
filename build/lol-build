@@ -152,7 +152,7 @@ configure()
             GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
             GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
 
-            CPPFLAGS="$CPPFLAGS -L$PWD/contrib/libcaca-0.99.beta18/include -DCACA_STATIC"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/libcaca-0.99.beta18/include -DCACA_STATIC"
 
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
