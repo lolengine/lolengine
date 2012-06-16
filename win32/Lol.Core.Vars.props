@@ -31,7 +31,7 @@
     <CacaIncludes>$(CacaDir)\include</CacaIncludes>
     <CacaLibs Condition="'$(Platform)'=='Win32'">$(CacaDir)\lib\i686-w64-mingw32</CacaLibs>
     <CacaLibs Condition="'$(Platform)'=='x64'">$(CacaDir)\lib\x86_64-w64-mingw32</CacaLibs>
-    <CacaDeps>libcaca.lib</CacaDeps>
+    <CacaDeps>caca.lib</CacaDeps>
     <Win32Defines>CACA_STATIC;$(Win32Defines)</Win32Defines>
 
     <!-- GDI+ -->

@@ -114,13 +114,13 @@ AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
 
 
 dnl Are we on a Direct3D 9 platform?
-ac_cv_my_have_d3d9="no"
-AC_CHECK_HEADERS(d3d9.h, [ac_cv_my_have_d3d9="yes"])
-if test "${ac_cv_my_have_d3d9}" != "no"; then
-  D3D_LIBS="${D3D_LIBS} -ld3d9 -ld3dx9 -lxinput"
-  AC_DEFINE(USE_D3D9, 1, Define to 1 to use DirectX 9)
-fi
-AM_CONDITIONAL(USE_D3D9, test "${ac_cv_my_have_d3d9}" != "no")
+#ac_cv_my_have_d3d9="no"
+#AC_CHECK_HEADERS(d3d9.h, [ac_cv_my_have_d3d9="yes"])
+#if test "${ac_cv_my_have_d3d9}" != "no"; then
+#  D3D_LIBS="${D3D_LIBS} -ld3d9 -ld3dx9 -lxinput"
+#  AC_DEFINE(USE_D3D9, 1, Define to 1 to use DirectX 9)
+#fi
+#AM_CONDITIONAL(USE_D3D9, test "${ac_cv_my_have_d3d9}" != "no")
 
 
 LIBS_save="$LIBS"

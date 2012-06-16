@@ -32,8 +32,8 @@ platform="$2"
 
 __init__()
 {
-    top_srcdir=$(dirname "$0")/..
-    cd $top_srcdir
+    top_srcdir="$(dirname "$0")/.."
+    cd "$top_srcdir"
     top_srcdir="`pwd`"
 
     case "${MSYSTEM}" in
@@ -46,7 +46,7 @@ __init__()
 
 bootstrap()
 {
-    cd $top_srcdir
+    cd "$top_srcdir"
     case "$platform" in
         ios-arm)
             # No bootstrapping needed
@@ -62,7 +62,7 @@ bootstrap()
 
 configure()
 {
-    cd $top_srcdir
+    cd "$top_srcdir"
     case "$platform" in
         windows-i386)
             if test "x${MSYSTEM}" = xMINGW32; then
@@ -152,7 +152,7 @@ configure()
             GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
             GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
 
-            CPPFLAGS="$CPPFLAGS -L$PWD/contrib/libcaca-0.99.beta18/include"
+            CPPFLAGS="$CPPFLAGS -L$PWD/contrib/libcaca-0.99.beta18/include -DCACA_STATIC"
 
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
@@ -164,7 +164,7 @@ configure()
 
 build()
 {
-    cd $top_srcdir
+    cd "$top_srcdir"
     case "$platform" in
         ios-arm)
             cd monsterz/ios
@@ -183,7 +183,7 @@ build()
 
 check()
 {
-    cd $top_srcdir
+    cd "$top_srcdir"
     case "$platform" in
         ios-arm)
             ;;
@@ -214,7 +214,7 @@ check()
 
 clean()
 {
-    cd $top_srcdir
+    cd "$top_srcdir"
     case "$platform" in
         ios-arm)
             cd monsterz/ios
