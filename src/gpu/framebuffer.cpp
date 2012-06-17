@@ -116,25 +116,6 @@ int FrameBuffer::GetTexture() const
 #endif
 }
 
-void FrameBuffer::Clear(vec4 color)
-{
-#if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-    glClearColor(color.r, color.g, color.b, color.a);
-    glClear(GL_COLOR_BUFFER_BIT);
-#endif
-}
-
-void FrameBuffer::Clear(vec4 color, float depth)
-{
-#if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-    glClearColor(color.r, color.g, color.b, color.a);
-    //glClearDepthf(depth);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-#endif
-}
-
 void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
