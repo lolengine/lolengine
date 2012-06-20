@@ -156,10 +156,8 @@ static inline half clamp(half x, half a, half b)
 #define DECLARE_COERCE_FROM_HALF_OPS(type) \
     DECLARE_COERCE_HALF_OPS(type, type, x, (type)h)
 
-DECLARE_COERCE_TO_HALF_OPS(int8_t)
-DECLARE_COERCE_TO_HALF_OPS(uint8_t)
-DECLARE_COERCE_TO_HALF_OPS(int16_t)
-DECLARE_COERCE_TO_HALF_OPS(uint16_t)
+/* Only provide coercion rules above int32_t, since the standard says
+ * all smaller base types are coerced to int. */
 DECLARE_COERCE_TO_HALF_OPS(int32_t)
 DECLARE_COERCE_TO_HALF_OPS(uint32_t)
 DECLARE_COERCE_TO_HALF_OPS(int64_t)

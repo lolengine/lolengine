@@ -52,6 +52,7 @@ char const *Entity::GetName()
 
 void Entity::TickGame(float seconds)
 {
+    (void)seconds;
 #if !LOL_RELEASE
     if (m_tickstate != STATE_PRETICK_GAME)
         Log::Error("invalid entity game tick\n");
@@ -61,6 +62,7 @@ void Entity::TickGame(float seconds)
 
 void Entity::TickDraw(float seconds)
 {
+    (void)seconds;
 #if !LOL_RELEASE
     if (m_tickstate != STATE_PRETICK_DRAW)
         Log::Error("invalid entity draw tick\n");

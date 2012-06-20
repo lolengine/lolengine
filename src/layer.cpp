@@ -45,7 +45,7 @@ Layer::~Layer()
     free(data);
 }
 
-void Layer::Render(int x, int y, int z)
+void Layer::Render(int /* x */, int /* y */, int /* z */)
 {
     static int error = 1;
     if (error && !(error = 0))

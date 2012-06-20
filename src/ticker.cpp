@@ -151,7 +151,7 @@ int Ticker::Unref(Entity *entity)
     return --entity->m_ref;
 }
 
-void *TickerData::GameThreadMain(void *p)
+void *TickerData::GameThreadMain(void * /* p */)
 {
     for (;;)
     {
@@ -296,7 +296,7 @@ void *TickerData::GameThreadMain(void *p)
     return NULL;
 }
 
-void *TickerData::DrawThreadMain(void *p)
+void *TickerData::DrawThreadMain(void * /* p */)
 {
     for (;;)
     {
@@ -310,18 +310,18 @@ void *TickerData::DrawThreadMain(void *p)
     return NULL;
 }
 
-void *TickerData::DiskThreadMain(void *p)
+void *TickerData::DiskThreadMain(void * /* p */)
 {
     return NULL;
 }
 
-void Ticker::SetState(Entity *entity, uint32_t state)
+void Ticker::SetState(Entity * /* entity */, uint32_t /* state */)
 {
 
 }
 
-void Ticker::SetStateWhenMatch(Entity *entity, uint32_t state,
-                               Entity *other_entity, uint32_t other_state)
+void Ticker::SetStateWhenMatch(Entity * /* entity */, uint32_t /* state */,
+                               Entity * /* other_entity */, uint32_t /* other_state */)
 {
 
 }
