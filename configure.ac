@@ -57,7 +57,12 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 
-AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h fastmath.h pthread.h)
+AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
+AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h)
+AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
+AC_CHECK_HEADERS(sys/wait.h)
+AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
+AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
@@ -86,6 +91,7 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Ws
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
+AC_CHECK_LIB(util, forkpty, UTIL_LIBS="${UTIL_LIBS} -lutil")
 
 dnl Are we on the PS3?
 AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
@@ -354,14 +360,19 @@ fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 
+dnl Extra libraries we may need
+AC_SUBST(MATH_LIBS)
+AC_SUBST(PAM_LIBS)
+AC_SUBST(UTIL_LIBS)
+
 dnl How to use the Lol Engine inside this tree
 LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 
-AC_SUBST(MATH_LIBS)
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
+
 
 AC_CONFIG_FILES(
  [Makefile
