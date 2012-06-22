@@ -50,6 +50,12 @@
     <Filter Include="src\...">
       <UniqueIdentifier>{3592ed6a-59d7-4a6d-be5a-c05cb5dab730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\generated">
+      <UniqueIdentifier>{8d536fa6-9ef8-4bdb-b945-48fe4549e8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\easymesh">
+      <UniqueIdentifier>{07117029-d79d-4d59-beec-691b00a97c8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\image\image.cpp">
@@ -216,6 +222,18 @@
     </ClCompile>
     <ClCompile Include="..\src\gpu\framebuffer.cpp">
       <Filter>src\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\easymesh\easymesh.cpp">
+      <Filter>src\easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\easymesh\easymesh-compiler.cpp">
+      <Filter>src\easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\generated\easymesh-parser.cpp">
+      <Filter>src\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\generated\easymesh-scanner.cpp">
+      <Filter>src\generated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -405,6 +423,24 @@
     <ClInclude Include="..\src\gpu\framebuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\generated\position.hh">
+      <Filter>src\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\generated\location.hh">
+      <Filter>src\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\generated\stack.hh">
+      <Filter>src\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\easymesh\easymesh.h">
+      <Filter>src\easymesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\easymesh\easymesh-compiler.h">
+      <Filter>src\easymesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\generated\easymesh-parser.h">
+      <Filter>src\generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx">
@@ -416,5 +452,16 @@
     <LolFxCompile Include="..\src\gpu\testmaterial.lolfx">
       <Filter>src\gpu</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="..\src\easymesh\shiny.lolfx">
+      <Filter>src\easymesh</Filter>
+    </LolFxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\easymesh\easymesh-parser.y">
+      <Filter>src\easymesh</Filter>
+    </None>
+    <None Include="..\src\easymesh\easymesh-scanner.l">
+      <Filter>src\easymesh</Filter>
+    </None>
   </ItemGroup>
 </Project>
