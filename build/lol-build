@@ -114,6 +114,14 @@ configure()
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
             ;;
+        *-i386)
+            # Ensure we're _really_ on i386
+            CXXFLAGS="$CXXFLAGS -m32"
+            ;;
+        *-amd64)
+            # Ensure we're _really_ on amd64
+            CXXFLAGS="$CXXFLAGS -m64"
+            ;;
     esac
     case "$platform" in
         ios-arm)
@@ -157,7 +165,7 @@ configure()
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         *)
-            PATH="$PATH" ./configure
+            PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
             ;;
     esac
 }
