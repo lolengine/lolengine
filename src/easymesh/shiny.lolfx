@@ -1,0 +1,109 @@
+
+-- GLSL.Vert --
+#version 120
+
+attribute vec3 in_Vertex;
+attribute vec3 in_Normal;
+attribute vec4 in_Color;
+uniform mat4 in_ModelView;
+uniform mat4 in_Proj;
+uniform mat3 in_NormalMat;
+uniform float in_Damage;
+varying vec4 pass_Color;
+
+void main(void)
+{
+    /* Material properties */
+    vec3 specular_reflect = vec3(0.8, 0.75, 0.4);
+    float specular_power = 60.0;
+
+    /* World properties */
+    float ambient_mul = 0.5;
+    vec3 light_dir = normalize(vec3(0.3, 0.3, 0.7));
+    vec3 ambient_color = vec3(0.25, 0.2, 0.35);
+    vec3 diffuse_color = vec3(1.0, 1.0, 0.6);
+    vec3 specular_color = vec3(1.0, 1.0, 0.6);
+
+    vec3 tnorm = normalize(in_NormalMat * in_Normal);
+    vec4 eye = in_ModelView * vec4(in_Vertex, 1.0);
+
+    vec3 s = light_dir; /* normalize(eye - lightpos); */
+    vec3 v = normalize(-eye.xyz);
+    vec3 r = reflect(-s, tnorm);
+
+    vec3 ambient = ambient_color;
+    float sdotn = max(dot(s, tnorm), 0.0);
+    vec3 diffuse = diffuse_color * sdotn;
+    vec3 specular = vec3(0.0, 0.0, 0.0);
+    if (sdotn > 0.0)
+        specular = specular_color * specular_reflect
+                 * pow(max(dot(r, v), 0.0), specular_power);
+    vec3 light = ambient + diffuse + specular;
+
+    vec4 real_color = in_Damage * vec4(1.2, 1.2, 1.2, 1.0)
+                    + (1.0 - in_Damage) * in_Color;
+    pass_Color = real_color * vec4(light, 1.0);
+    gl_Position = in_Proj * eye;
+}
+
+-- GLSL.Frag --
+#version 120
+
+//precision highp float;
+varying vec4 pass_Color;
+
+void main(void) {
+    gl_FragColor = pass_Color;
+}
+
+-- HLSL.Vert --
+
+void main(float3 in_Vertex : POSITION,
+          float3 in_Normal : NORMAL,
+          float4 in_Color : COLOR,
+          uniform float4x4 in_ModelView,
+          uniform float4x4 in_Proj,
+          uniform float3x3 in_NormalMat,
+          uniform float in_Damage,
+          out float4 out_Position : POSITION,
+          out float4 pass_Color : COLOR)
+{
+    float3 specular_reflect = float3(0.8, 0.75, 0.4);
+    float specular_power = 60.0;
+    float ambient_mul = 0.5;
+    float3 light_dir = normalize(float3(0.3, 0.3, 0.7));
+    float3 ambient_color = float3(0.25, 0.2, 0.35);
+    float3 diffuse_color = float3(1.0, 1.0, 0.6);
+    float3 specular_color = float3(1.0, 1.0, 0.6);
+    float3 tnorm = normalize(mul(in_NormalMat, in_Normal));
+    float4 eye = mul(in_ModelView, float4(in_Vertex, 1.0));
+    float3 s = light_dir;
+    float3 v = normalize(-eye.xyz);
+    float3 r = reflect(-s, tnorm);
+    float3 ambient = ambient_color;
+    float sdotn = max(dot(s, tnorm), 0.0);
+    float3 diffuse = diffuse_color * sdotn;
+    float3 specular = float3(0.0, 0.0, 0.0);
+    if (sdotn > 0.0)
+        specular = specular_color * specular_reflect
+                 * pow(max(dot(r, v), 0.0), specular_power);
+    float3 light = ambient + diffuse + specular;
+#ifdef _XBOX
+    float4 real_color = in_Color.abgr;
+#else
+    float4 real_color = in_Color;
+#endif
+    real_color = in_Damage * float4(1.2, 1.2, 1.2, 1.0)
+               + (1.0 - in_Damage) * real_color;
+    pass_Color = real_color * float4(light, 1.0);
+    out_Position = mul(in_Proj, eye);
+}
+
+-- HLSL.Frag --
+
+void main(float4 pass_Color : COLOR,
+          out float4 out_FragColor : COLOR)
+{
+    out_FragColor = pass_Color;
+}
+

@@ -112,6 +112,7 @@ static inline int isnan(float f)
 #include "gpu/framebuffer.h"
 #include "image/image.h"
 #include "application/application.h"
+#include "easymesh/easymesh.h"
 
 // Managers
 #include "ticker.h"

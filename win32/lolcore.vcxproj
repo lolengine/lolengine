@@ -81,11 +81,15 @@
     <ClCompile Include="..\src\debug\sphere.cpp" />
     <ClCompile Include="..\src\debug\stats.cpp" />
     <ClCompile Include="..\src\dict.cpp" />
+    <ClCompile Include="..\src\easymesh\easymesh-compiler.cpp" />
+    <ClCompile Include="..\src\easymesh\easymesh.cpp" />
     <ClCompile Include="..\src\eglapp.cpp" />
     <ClCompile Include="..\src\emitter.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\font.cpp" />
     <ClCompile Include="..\src\forge.cpp" />
+    <ClCompile Include="..\src\generated\easymesh-parser.cpp" />
+    <ClCompile Include="..\src\generated\easymesh-scanner.cpp" />
     <ClCompile Include="..\src\gpu\framebuffer.cpp" />
     <ClCompile Include="..\src\gpu\indexbuffer.cpp" />
     <ClCompile Include="..\src\gpu\shader.cpp" />
@@ -141,11 +145,17 @@
     <ClInclude Include="..\src\debug\sphere.h" />
     <ClInclude Include="..\src\debug\stats.h" />
     <ClInclude Include="..\src\dict.h" />
+    <ClInclude Include="..\src\easymesh\easymesh-compiler.h" />
+    <ClInclude Include="..\src\easymesh\easymesh.h" />
     <ClInclude Include="..\src\eglapp.h" />
     <ClInclude Include="..\src\emitter.h" />
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\font.h" />
     <ClInclude Include="..\src\forge.h" />
+    <ClInclude Include="..\src\generated\easymesh-parser.h" />
+    <ClInclude Include="..\src\generated\location.hh" />
+    <ClInclude Include="..\src\generated\position.hh" />
+    <ClInclude Include="..\src\generated\stack.hh" />
     <ClInclude Include="..\src\gpu\framebuffer.h" />
     <ClInclude Include="..\src\gpu\indexbuffer.h" />
     <ClInclude Include="..\src\gpu\shader.h" />
@@ -193,9 +203,14 @@
     <ClInclude Include="..\src\worldentity.h" />
   </ItemGroup>
   <ItemGroup>
+    <LolFxCompile Include="..\src\easymesh\shiny.lolfx" />
     <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx" />
     <LolFxCompile Include="..\src\gpu\testmaterial.lolfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\easymesh\easymesh-parser.y" />
+    <None Include="..\src\easymesh\easymesh-scanner.l" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

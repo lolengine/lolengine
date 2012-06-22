@@ -15,8 +15,16 @@ liblol_a_SOURCES = \
     lol/unit.h lol/debug.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     \
+    generated/location.hh generated/position.hh generated/stack.hh \
+    \
     application/application.cpp application/application.h \
     eglapp.cpp eglapp.h \
+    \
+    easymesh/easymesh.cpp easymesh/easymesh.h \
+    easymesh/shiny.lolfx \
+    easymesh/easymesh-compiler.cpp easymesh/easymesh-compiler.h \
+    generated/easymesh-parser.cpp generated/easymesh-parser.h \
+    generated/easymesh-scanner.cpp \
     \
     $(ps3_sources) \
     $(xbox_sources) \
@@ -58,6 +66,18 @@ SUFFIXES = .lolfx
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | \
 	 $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") | $(CXXCOMPILE) -xc++ -c - -o $@
+
+if TRUE
+generated: .FORCE
+	$(MKDIR_P) generated
+	rm -f generated/[a-zA-Z]*
+	flex -o generated/easymesh-scanner.cpp easymesh/easymesh-scanner.l
+	bison -o generated/easymesh-parser.cpp --defines=generated/easymesh-parser.h \
+	      -d -b generated/easymesh easymesh/easymesh-parser.y
+.FORCE:
+endif
+
+EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
 
 sdl_sources = \
     image/codec/sdl-image.cpp \

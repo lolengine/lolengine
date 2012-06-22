@@ -43,7 +43,7 @@ lolremez-$(LOLREMEZ_VERSION).tar.gz:
 	   $(top_srcdir)/test/math/remez.vcxproj.filters \
 	  lolremez-$(LOLREMEZ_VERSION)/
 	cp $(top_srcdir)/src/lol/math/real.h \
-	   $(top_srcdir)/src/lol/math/matrix.h \
+	   $(top_srcdir)/src/lol/math/vector.h \
 	   $(top_srcdir)/src/lol/math/remez.h \
 	  lolremez-$(LOLREMEZ_VERSION)/lol/math/
 	printf 'remez: real.cpp remez.cpp\n' > lolremez-$(LOLREMEZ_VERSION)/Makefile
