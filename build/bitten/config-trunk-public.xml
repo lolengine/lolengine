@@ -1,0 +1,22 @@
+<build xmlns:sh="http://bitten.edgewall.org/tools/sh"
+       xmlns:svn="http://bitten.edgewall.org/tools/svn"
+       xmlns:c="http://bitten.edgewall.org/tools/c">
+  <step id="checkout" description="Checkout source from repository">
+    <svn:checkout url="svn://svn.zoy.org/lolengine/" path="${path}" revision="${revision}" username="anonymous" password="" no_auth_cache="true" />
+  </step>
+  <step id="bootstrap" description="Bootstrap build system">
+    <sh:exec file="./build/lol-build" args="bootstrap ${platform}"/>
+  </step>
+  <step id="configure" description="Configure tree">
+    <sh:exec file="./build/lol-build" args="configure ${platform}"/>
+  </step>
+  <step id="build" description="Build tree">
+    <sh:exec file="./build/lol-build" args="build ${platform}"/>
+  </step>
+  <step id="check" description="Run tests">
+    <sh:exec file="./build/lol-build" args="check ${platform}"/>
+  </step>
+  <step id="clean" description="Clean tree">
+    <sh:exec file="./build/lol-build" args="clean ${platform}"/>
+  </step>
+</build>
