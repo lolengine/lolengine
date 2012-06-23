@@ -14,8 +14,6 @@
 
 #if defined __CELLOS_LV2__
 
-#include <cmath>
-
 #include <cell/sysmodule.h>
 #include <cell/codec/pngdec.h>
 

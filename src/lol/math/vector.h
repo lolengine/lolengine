@@ -17,10 +17,10 @@
 #define __LOL_MATH_VECTOR_H__
 
 #include <stdint.h>
-#include <cmath>
 #include <ostream>
 #include <algorithm>
 
+#include "lol/math/math.h"
 #include "lol/math/half.h"
 #include "lol/math/real.h"
 
@@ -1198,7 +1198,6 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     tprefix \
     inline double length(tname<type> const &a) \
     { \
-        using std::sqrt; \
         return sqrt((double)sqlength(a)); \
     } \
     \

@@ -12,7 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cmath>
 #include <cstdio>
 
 #if defined __ANDROID__

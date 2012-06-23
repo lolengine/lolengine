@@ -20,7 +20,6 @@
 #   include <windows.h>
 #endif
 
-#include <cmath>
 #include <cstdio>
 #include <cstring>
 

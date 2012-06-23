@@ -13,7 +13,6 @@
 #endif
 
 #include <cstdlib>
-#include <cmath>
 
 #if defined USE_SDL
 #   include <SDL.h>

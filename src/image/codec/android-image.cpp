@@ -14,8 +14,6 @@
 
 #if defined __ANDROID__
 
-#include <cmath>
-
 #include <jni.h>
 #include <android/log.h>
 

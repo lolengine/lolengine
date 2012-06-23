@@ -12,8 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cmath>
-
 #if defined _XBOX
 #   include <xtl.h>
 #   undef near /* Fuck Microsoft */

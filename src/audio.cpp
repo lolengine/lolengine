@@ -12,8 +12,6 @@
 #   include "config.h"
 #endif
 
-#include <cmath>
-
 #if defined USE_SDL_MIXER
 #   include <SDL.h>
 #   include <SDL_mixer.h>

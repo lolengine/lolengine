@@ -20,8 +20,6 @@
 #   include <windows.h>
 #endif
 
-#include <cmath>
-
 #include "core.h"
 #include "lolgl.h"
 #include "loldebug.h"

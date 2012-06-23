@@ -14,7 +14,7 @@ liblol_a_SOURCES = \
     \
     lol/unit.h lol/debug.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
-    lol/math/trig.h \
+    lol/math/math.h \
     \
     generated/location.hh generated/position.hh generated/stack.hh \
     \
