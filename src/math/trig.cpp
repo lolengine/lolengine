@@ -16,8 +16,6 @@
 #   include <fastmath.h>
 #endif
 
-#include <cmath>
-
 #include "core.h"
 
 using namespace std;

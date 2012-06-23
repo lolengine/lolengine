@@ -29,7 +29,6 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
 
 #include "core.h"
 

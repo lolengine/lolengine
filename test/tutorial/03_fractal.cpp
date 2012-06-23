@@ -13,7 +13,6 @@
 #endif
 
 #include <cstring>
-#include <cmath>
 
 #include "core.h"
 #include "lolgl.h"
@@ -116,9 +115,9 @@ public:
         {
             double f = (double)i / PALETTE_STEP;
 
-            double r = 0.5 * sin(f * 0.27 + 2.0) + 0.5;
-            double g = 0.5 * sin(f * 0.17 - 1.8) + 0.5;
-            double b = 0.5 * sin(f * 0.21 - 2.6) + 0.5;
+            double r = 0.5 * lol::sin(f * 0.27 + 2.0) + 0.5;
+            double g = 0.5 * lol::sin(f * 0.17 - 1.8) + 0.5;
+            double b = 0.5 * lol::sin(f * 0.21 - 2.6) + 0.5;
 
             if (f < 7.0)
             {

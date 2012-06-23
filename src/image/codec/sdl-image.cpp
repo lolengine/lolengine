@@ -14,8 +14,6 @@
 
 #if defined USE_SDL_IMAGE
 
-#include <cmath>
-
 #include <SDL.h>
 #include <SDL_image.h>
 

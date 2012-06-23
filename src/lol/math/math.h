@@ -9,13 +9,14 @@
 //
 
 //
-// Trigonometry functions
-// ----------------------
+// Various maths functions
+// -----------------------
 //
 
-#if !defined __LOL_MATH_TRIG_H__
-#define __LOL_MATH_TRIG_H__
+#if !defined __LOL_MATH_MATH_H__
+#define __LOL_MATH_MATH_H__
 
+#include <cmath>
 #include <cstdio>
 #include <stdint.h>
 
@@ -23,16 +24,19 @@ namespace lol
 {
 
 /* Standard cmath functions */
+static inline double sqrt(double const &x) { return std::sqrt(x); }
+static inline float sqrt(float const &x) { return std::sqrt(x); }
+
 static inline double sin(double const &x) { return std::sin(x); }
 static inline double cos(double const &x) { return std::cos(x); }
 static inline double tan(double const &x) { return std::tan(x); }
-static inline double asin(double const &x) { return std::asin(x); }
-static inline double acos(double const &x) { return std::acos(x); }
-static inline double atan(double const &x) { return std::atan(x); }
-
 static inline float sin(float const &x) { return std::sin(x); }
 static inline float cos(float const &x) { return std::cos(x); }
 static inline float tan(float const &x) { return std::tan(x); }
+
+static inline double asin(double const &x) { return std::asin(x); }
+static inline double acos(double const &x) { return std::acos(x); }
+static inline double atan(double const &x) { return std::atan(x); }
 static inline float asin(float const &x) { return std::asin(x); }
 static inline float acos(float const &x) { return std::acos(x); }
 static inline float atan(float const &x) { return std::atan(x); }
@@ -73,5 +77,5 @@ double lol_atan2(double, double);
 
 } /* namespace lol */
 
-#endif // __LOL_MATH_TRIG_H__
+#endif // __LOL_MATH_MATH_H__
 

@@ -20,7 +20,6 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdio>
-#include <cmath>
 
 namespace lol
 {

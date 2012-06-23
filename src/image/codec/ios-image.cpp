@@ -14,7 +14,6 @@
 
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
 
-#include <cmath>
 #import <UIKit/UIKit.h>
 
 #include "core.h"

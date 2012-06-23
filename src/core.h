@@ -68,10 +68,10 @@ static inline int isnan(float f)
 
 // Base types
 #include "lol/debug.h"
+#include "lol/math/math.h"
 #include "lol/math/half.h"
 #include "lol/math/real.h"
 #include "lol/math/vector.h"
-#include "lol/math/trig.h"
 #include "numeric.h"
 #include "timer.h"
 #include "thread/thread.h"

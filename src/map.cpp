@@ -15,7 +15,6 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
-#include <cmath>
 #include <ctype.h>
 
 #include "core.h"

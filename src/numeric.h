@@ -16,7 +16,6 @@
 #if !defined __LOL_NUMERIC_H__
 #define __LOL_NUMERIC_H__
 
-#include <cmath>
 #include <cstdlib>
 #include <stdint.h>
 

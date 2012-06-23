@@ -25,7 +25,6 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-#include <cmath> /* for M_PI */
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
 

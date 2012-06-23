@@ -264,13 +264,13 @@
     <ClInclude Include="..\src\lol\math\half.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\lol\math\math.h">
+      <Filter>src\lol\math</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\lol\math\real.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
     <ClInclude Include="..\src\lol\math\remez.h">
-      <Filter>src\lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\lol\math\trig.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
     <ClInclude Include="..\src\lol\math\vector.h">

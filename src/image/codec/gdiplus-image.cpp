@@ -14,8 +14,6 @@
 
 #if defined USE_GDIPLUS
 
-#include <cmath>
-
 #include <algorithm>
 
 using namespace std;
