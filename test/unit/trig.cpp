@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -25,7 +25,6 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Sin)
     {
         using std::fabs;
-        using std::sin;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -33,7 +32,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_sin(f);
 #else
-            double a = sin(f);
+            double a = std::sin(f);
 #endif
             double b = lol_sin(f);
             LOLUNIT_SET_CONTEXT(f);
@@ -46,7 +45,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_sin(f);
 #else
-            double a = sin(f);
+            double a = std::sin(f);
 #endif
             double b = lol_sin(f);
             LOLUNIT_SET_CONTEXT(f);
@@ -57,7 +56,6 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Cos)
     {
         using std::fabs;
-        using std::cos;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -65,7 +63,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_cos(f);
 #else
-            double a = cos(f);
+            double a = std::cos(f);
 #endif
             double b = lol_cos(f);
             LOLUNIT_SET_CONTEXT(f);
@@ -78,7 +76,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_cos(f);
 #else
-            double a = cos(f);
+            double a = std::cos(f);
 #endif
             double b = lol_cos(f);
             LOLUNIT_SET_CONTEXT(f);
@@ -89,8 +87,6 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(SinCos)
     {
         using std::fabs;
-        using std::sin;
-        using std::cos;
 
         for (int i = -10000; i < 10000; i++)
         {
@@ -99,8 +95,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double a1 = __builtin_sin(f);
             double a2 = __builtin_cos(f);
 #else
-            double a1 = sin(f);
-            double a2 = cos(f);
+            double a1 = std::sin(f);
+            double a2 = std::cos(f);
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
@@ -116,8 +112,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double a1 = __builtin_sin(f);
             double a2 = __builtin_cos(f);
 #else
-            double a1 = sin(f);
-            double a2 = cos(f);
+            double a1 = std::sin(f);
+            double a2 = std::cos(f);
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
@@ -130,7 +126,6 @@ LOLUNIT_FIXTURE(TrigTest)
     LOLUNIT_TEST(Tan)
     {
         using std::fabs;
-        using std::tan;
 
         for (int i = -100000; i < 100000; i++)
         {
@@ -138,7 +133,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_tan(f);
 #else
-            double a = tan(f);
+            double a = std::tan(f);
 #endif
             double b = lol_tan(f);
             LOLUNIT_SET_CONTEXT(f);
@@ -156,7 +151,7 @@ LOLUNIT_FIXTURE(TrigTest)
 #if defined __GNUC__
             double a = __builtin_tan(f);
 #else
-            double a = tan(f);
+            double a = std::tan(f);
 #endif
             double b = lol_tan(f);
             LOLUNIT_SET_CONTEXT(f);

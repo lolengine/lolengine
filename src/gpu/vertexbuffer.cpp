@@ -233,7 +233,7 @@ void VertexDeclaration::Unbind()
         }
     if (FAILED(g_d3ddevice->SetVertexDeclaration(NULL)))
         Abort();
-#else
+#elif !defined __CELLOS_LV2__
     /* FIXME: we need to unbind what we bound */
     //glDisableVertexAttribArray(m_attrib);
     /* FIXME: temporary kludge */
@@ -244,6 +244,7 @@ void VertexDeclaration::Unbind()
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     /* Or: */
     //glDisableVertexAttribArray(m_attrib);
+#else
     /* Or even: */
     //glDisableClientState(GL_VERTEX_ARRAY);
 #endif

@@ -17,7 +17,6 @@
 #include "lolgl.h"
 #include "loldebug.h"
 
-using namespace std;
 using namespace lol;
 
 #if USE_SDL && defined __APPLE__
@@ -70,7 +69,7 @@ int main(int argc, char **argv)
     /* Register some debug stuff */
     new DebugFps(5, 5);
 
-Cell<3> c;
+    Cell<3> c;
     app.Run();
 
     return EXIT_SUCCESS;
