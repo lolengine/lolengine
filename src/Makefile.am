@@ -14,6 +14,7 @@ liblol_a_SOURCES = \
     \
     lol/unit.h lol/debug.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
+    lol/math/trig.h \
     \
     generated/location.hh generated/position.hh generated/stack.hh \
     \
@@ -35,7 +36,7 @@ liblol_a_SOURCES = \
     \
     thread/threadbase.h thread/thread.h \
     \
-    math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp math/trig.h \
+    math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     \
     input/input.cpp input/input.h \
     input/stick.cpp input/stick.h \

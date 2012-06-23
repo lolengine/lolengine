@@ -340,8 +340,8 @@ template<> mat2 mat2::rotate(float angle)
 {
     angle *= (M_PI / 180.0f);
 
-    float st = std::sin(angle);
-    float ct = std::cos(angle);
+    float st = sin(angle);
+    float ct = cos(angle);
 
     mat2 ret;
 
@@ -358,8 +358,8 @@ template<> mat3 mat3::rotate(float angle, float x, float y, float z)
 {
     angle *= (M_PI / 180.0f);
 
-    float st = std::sin(angle);
-    float ct = std::cos(angle);
+    float st = sin(angle);
+    float ct = cos(angle);
 
     float len = std::sqrt(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
@@ -477,9 +477,9 @@ template<> quat quat::rotate(float angle, vec3 const &v)
 {
     angle *= (M_PI / 360.0f);
 
-    vec3 tmp = normalize(v) * std::sin(angle);
+    vec3 tmp = normalize(v) * sin(angle);
 
-    return quat(std::cos(angle), tmp.x, tmp.y, tmp.z);
+    return quat(cos(angle), tmp.x, tmp.y, tmp.z);
 }
 
 template<> quat quat::rotate(float angle, float x, float y, float z)
@@ -489,9 +489,6 @@ template<> quat quat::rotate(float angle, float x, float y, float z)
 
 template<> vec3 vec3::toeuler(quat const &q)
 {
-    using std::atan2;
-    using std::asin;
-
     float n = norm(q);
 
     if (!n)
@@ -508,8 +505,6 @@ template<> vec3 vec3::toeuler(quat const &q)
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    using std::sin;
-    using std::cos;
     mat3 ret;
 
     vec3 radians = (M_PI / 180.0f) * v;
@@ -578,9 +573,6 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    using std::sin;
-    using std::cos;
-
     vec3 half_angles = (M_PI / 360.0f) * v;
     float s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);

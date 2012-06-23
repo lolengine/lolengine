@@ -474,6 +474,12 @@ static yyconst flex_int16_t yy_chk[124] =
 #   include "config.h"
 #endif
 
+#include <cstdlib>
+using std::exit;
+using std::malloc;
+using std::realloc;
+using std::free;
+
 #include "core.h"
 #include "easymesh/easymesh-compiler.h"
 
@@ -489,7 +495,7 @@ typedef lol::EasyMeshParser::token_type token_type;
 #define yyterminate() return token::T_END
 #define YY_NO_UNISTD_H
 #define YY_USER_ACTION yylloc->columns(yyleng);
-#line 493 "generated/easymesh-scanner.cpp"
+#line 499 "generated/easymesh-scanner.cpp"
 
 #define INITIAL 0
 
@@ -594,7 +600,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 38 "easymesh/easymesh-scanner.l"
+#line 44 "easymesh/easymesh-scanner.l"
 
 
 
@@ -602,7 +608,7 @@ YY_DECL
     yylloc->step();
 
 
-#line 606 "generated/easymesh-scanner.cpp"
+#line 612 "generated/easymesh-scanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -683,164 +689,164 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 45 "easymesh/easymesh-scanner.l"
+#line 51 "easymesh/easymesh-scanner.l"
 { return token::T_COLOR; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 46 "easymesh/easymesh-scanner.l"
+#line 52 "easymesh/easymesh-scanner.l"
 { return token::T_BGCOLOR; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 48 "easymesh/easymesh-scanner.l"
+#line 54 "easymesh/easymesh-scanner.l"
 { return token::T_CHAMFER; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 49 "easymesh/easymesh-scanner.l"
+#line 55 "easymesh/easymesh-scanner.l"
 { return token::T_TRANSLATEX; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 50 "easymesh/easymesh-scanner.l"
+#line 56 "easymesh/easymesh-scanner.l"
 { return token::T_TRANSLATEY; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 51 "easymesh/easymesh-scanner.l"
+#line 57 "easymesh/easymesh-scanner.l"
 { return token::T_TRANSLATEZ; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 52 "easymesh/easymesh-scanner.l"
+#line 58 "easymesh/easymesh-scanner.l"
 { return token::T_TRANSLATE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 53 "easymesh/easymesh-scanner.l"
+#line 59 "easymesh/easymesh-scanner.l"
 { return token::T_ROTATEX; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 54 "easymesh/easymesh-scanner.l"
+#line 60 "easymesh/easymesh-scanner.l"
 { return token::T_ROTATEY; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 55 "easymesh/easymesh-scanner.l"
+#line 61 "easymesh/easymesh-scanner.l"
 { return token::T_ROTATEZ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 56 "easymesh/easymesh-scanner.l"
+#line 62 "easymesh/easymesh-scanner.l"
 { return token::T_TAPERX; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 57 "easymesh/easymesh-scanner.l"
+#line 63 "easymesh/easymesh-scanner.l"
 { return token::T_TAPERY; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 58 "easymesh/easymesh-scanner.l"
+#line 64 "easymesh/easymesh-scanner.l"
 { return token::T_TAPERZ; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 59 "easymesh/easymesh-scanner.l"
+#line 65 "easymesh/easymesh-scanner.l"
 { return token::T_SCALEX; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 60 "easymesh/easymesh-scanner.l"
+#line 66 "easymesh/easymesh-scanner.l"
 { return token::T_SCALEY; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 61 "easymesh/easymesh-scanner.l"
+#line 67 "easymesh/easymesh-scanner.l"
 { return token::T_SCALEZ; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 62 "easymesh/easymesh-scanner.l"
+#line 68 "easymesh/easymesh-scanner.l"
 { return token::T_SCALE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 63 "easymesh/easymesh-scanner.l"
+#line 69 "easymesh/easymesh-scanner.l"
 { return token::T_MIRRORX; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 64 "easymesh/easymesh-scanner.l"
+#line 70 "easymesh/easymesh-scanner.l"
 { return token::T_MIRRORY; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 65 "easymesh/easymesh-scanner.l"
+#line 71 "easymesh/easymesh-scanner.l"
 { return token::T_MIRRORZ; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 67 "easymesh/easymesh-scanner.l"
+#line 73 "easymesh/easymesh-scanner.l"
 { return token::T_CYLINDER; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 68 "easymesh/easymesh-scanner.l"
+#line 74 "easymesh/easymesh-scanner.l"
 { return token::T_BOX; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 69 "easymesh/easymesh-scanner.l"
+#line 75 "easymesh/easymesh-scanner.l"
 { return token::T_SMOOTHCHAMFBOX; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 70 "easymesh/easymesh-scanner.l"
+#line 76 "easymesh/easymesh-scanner.l"
 { return token::T_FLATCHAMFBOX; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 71 "easymesh/easymesh-scanner.l"
+#line 77 "easymesh/easymesh-scanner.l"
 { return token::T_SPHERE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 72 "easymesh/easymesh-scanner.l"
+#line 78 "easymesh/easymesh-scanner.l"
 { return token::T_STAR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 73 "easymesh/easymesh-scanner.l"
+#line 79 "easymesh/easymesh-scanner.l"
 { return token::T_EXPANDEDSTAR; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 74 "easymesh/easymesh-scanner.l"
+#line 80 "easymesh/easymesh-scanner.l"
 { return token::T_DISC; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 75 "easymesh/easymesh-scanner.l"
+#line 81 "easymesh/easymesh-scanner.l"
 { return token::T_TRIANGLE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 76 "easymesh/easymesh-scanner.l"
+#line 82 "easymesh/easymesh-scanner.l"
 { return token::T_QUAD; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 77 "easymesh/easymesh-scanner.l"
+#line 83 "easymesh/easymesh-scanner.l"
 { return token::T_COG; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 79 "easymesh/easymesh-scanner.l"
+#line 85 "easymesh/easymesh-scanner.l"
 {
-        uint32_t tmp = strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
         yylval->u32val = 0x11000000u * (tmp >> 8)
                        | 0x00110000u * ((tmp >> 4) & 0xf)
                        | 0x00001100u * (tmp & 0xf)
@@ -849,9 +855,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 86 "easymesh/easymesh-scanner.l"
+#line 92 "easymesh/easymesh-scanner.l"
 {
-        uint32_t tmp = strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
         yylval->u32val = 0x11000000u * (tmp >> 12)
                        | 0x00110000u * ((tmp >> 8) & 0xf)
                        | 0x00001100u * ((tmp >> 4) & 0xf)
@@ -860,62 +866,62 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 93 "easymesh/easymesh-scanner.l"
+#line 99 "easymesh/easymesh-scanner.l"
 {
         yylval->u32val = 0xffu
-                       | 0x100u * (uint32_t)strtol(yytext + 1, NULL, 16);
+                       | 0x100u * (uint32_t)std::strtol(yytext + 1, NULL, 16);
         return token::COLOR; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 97 "easymesh/easymesh-scanner.l"
+#line 103 "easymesh/easymesh-scanner.l"
 {
-        yylval->u32val = (uint32_t)strtol(yytext + 1, NULL, 16);
+        yylval->u32val = (uint32_t)std::strtol(yytext + 1, NULL, 16);
         return token::COLOR; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 100 "easymesh/easymesh-scanner.l"
+#line 106 "easymesh/easymesh-scanner.l"
 {
-        yylval->fval = atof(yytext); return token::NUMBER; }
+        yylval->fval = std::atof(yytext); return token::NUMBER; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 102 "easymesh/easymesh-scanner.l"
+#line 108 "easymesh/easymesh-scanner.l"
 { return token_type('-'); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 103 "easymesh/easymesh-scanner.l"
+#line 109 "easymesh/easymesh-scanner.l"
 { return token_type('['); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 104 "easymesh/easymesh-scanner.l"
+#line 110 "easymesh/easymesh-scanner.l"
 { return token_type(']'); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 105 "easymesh/easymesh-scanner.l"
+#line 111 "easymesh/easymesh-scanner.l"
 { /* ignore this */ }
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 106 "easymesh/easymesh-scanner.l"
+#line 112 "easymesh/easymesh-scanner.l"
 { /* ignore this */ }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 107 "easymesh/easymesh-scanner.l"
+#line 113 "easymesh/easymesh-scanner.l"
 { return token::T_ERROR; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 109 "easymesh/easymesh-scanner.l"
+#line 115 "easymesh/easymesh-scanner.l"
 ECHO;
 	YY_BREAK
-#line 919 "generated/easymesh-scanner.cpp"
+#line 925 "generated/easymesh-scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1816,7 +1822,7 @@ void EasyMeshfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 109 "easymesh/easymesh-scanner.l"
+#line 115 "easymesh/easymesh-scanner.l"
 
 
 

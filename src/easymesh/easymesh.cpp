@@ -352,12 +352,12 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
     int vbase = m_vert.Count();
 
     vec3 d = size * 0.5f;
-    float const pi = std::acos(-1.0f);
+    float const pi = acos(-1.0f);
 
     Array<vec2> table;
     for (int i = 0; i <= ndivisions; i++)
-        table.Push(vec2(std::sin(pi * 2 / ndivisions * i) + 1e-5f,
-                        std::cos(pi * 2 / ndivisions * i) + 1e-5f));
+        table.Push(vec2(sin(pi * 2 / ndivisions * i) + 1e-5f,
+                        cos(pi * 2 / ndivisions * i) + 1e-5f));
 
     for (int j = 0; j <= ndivisions / 2; j++)
         for (int i = 0; i < ndivisions; i++)

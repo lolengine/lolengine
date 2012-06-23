@@ -174,10 +174,10 @@
     <ClInclude Include="..\src\lol\math\half.h" />
     <ClInclude Include="..\src\lol\math\real.h" />
     <ClInclude Include="..\src\lol\math\remez.h" />
+    <ClInclude Include="..\src\lol\math\trig.h" />
     <ClInclude Include="..\src\lol\math\vector.h" />
     <ClInclude Include="..\src\lol\unit.h" />
     <ClInclude Include="..\src\map.h" />
-    <ClInclude Include="..\src\math\trig.h" />
     <ClInclude Include="..\src\numeric.h" />
     <ClInclude Include="..\src\platform.h" />
     <ClInclude Include="..\src\platform\d3d9\d3d9input.h" />

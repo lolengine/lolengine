@@ -19,7 +19,6 @@
 #include "lolgl.h"
 #include "loldebug.h"
 
-using namespace std;
 using namespace lol;
 
 #if defined _WIN32 && defined USE_D3D9
@@ -236,7 +235,7 @@ public:
             m_drag = false;
             if (m_translate != 0.0)
             {
-                m_translate *= pow(2.0, -seconds * 5.0);
+                m_translate *= std::pow(2.0, -seconds * 5.0);
                 if (m_translate.norm() / m_radius < 1e-4)
                     m_translate = 0.0;
             }
@@ -251,7 +250,7 @@ public:
         }
         else if (m_zoom_speed)
         {
-            m_zoom_speed *= pow(2.0, -seconds * 5.0);
+            m_zoom_speed *= std::pow(2.0, -seconds * 5.0);
             if (abs(m_zoom_speed) < 1e-5 || m_drag)
                 m_zoom_speed = 0.0;
         }
@@ -261,7 +260,7 @@ public:
         {
             dcmplx oldcenter = m_center;
             double oldradius = m_radius;
-            double zoom = pow(2.0, seconds * 1e3f * m_zoom_speed);
+            double zoom = std::pow(2.0, seconds * 1e3f * m_zoom_speed);
             if (m_radius * zoom > 8.0)
             {
                 m_zoom_speed *= -1.0;
