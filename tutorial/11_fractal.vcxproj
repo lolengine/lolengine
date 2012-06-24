@@ -27,11 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\benchmark\half.cpp" />
-    <ClCompile Include="..\test\benchmark\real.cpp" />
-    <ClCompile Include="..\test\benchmark\trig.cpp" />
-    <ClCompile Include="..\test\benchmark\vector.cpp" />
-    <ClCompile Include="..\test\benchsuite.cpp" />
+    <ClCompile Include="11_fractal.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="11_fractal.lolfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\lolcore.vcxproj">
@@ -39,7 +38,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B1E10086-A1DA-401A-834D-969C9DBB5CC1}</ProjectGuid>
+    <ProjectGuid>{6bf81b39-edc2-4227-9992-c2d8abea95af}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Xbox 360">
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Xbox 360">
+      <Configuration>Release</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}</ProjectGuid>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\Lol.Core.Config.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'" Label="Configuration">
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'" Label="Configuration">
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(SolutionDir)\Lol.Fx.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)\Lol.Core.Vars.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <Import Project="$(SolutionDir)\Lol.Core.Rules.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="application\application.cpp" />
+    <ClCompile Include="audio.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="debug\fps.cpp" />
+    <ClCompile Include="debug\quad.cpp" />
+    <ClCompile Include="debug\record.cpp" />
+    <ClCompile Include="debug\sphere.cpp" />
+    <ClCompile Include="debug\stats.cpp" />
+    <ClCompile Include="dict.cpp" />
+    <ClCompile Include="easymesh\easymesh-compiler.cpp" />
+    <ClCompile Include="easymesh\easymesh.cpp" />
+    <ClCompile Include="eglapp.cpp" />
+    <ClCompile Include="emitter.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="font.cpp" />
+    <ClCompile Include="forge.cpp" />
+    <ClCompile Include="generated\easymesh-parser.cpp" />
+    <ClCompile Include="generated\easymesh-scanner.cpp" />
+    <ClCompile Include="gpu\framebuffer.cpp" />
+    <ClCompile Include="gpu\indexbuffer.cpp" />
+    <ClCompile Include="gpu\shader.cpp" />
+    <ClCompile Include="gpu\vertexbuffer.cpp" />
+    <ClCompile Include="gradient.cpp" />
+    <ClCompile Include="hash.cpp" />
+    <ClCompile Include="image\codec\android-image.cpp" />
+    <ClCompile Include="image\codec\dummy-image.cpp" />
+    <ClCompile Include="image\codec\gdiplus-image.cpp" />
+    <ClCompile Include="image\codec\ios-image.cpp" />
+    <ClCompile Include="image\codec\ps3-image.cpp" />
+    <ClCompile Include="image\codec\sdl-image.cpp" />
+    <ClCompile Include="image\image.cpp" />
+    <ClCompile Include="input\input.cpp" />
+    <ClCompile Include="input\stick.cpp" />
+    <ClCompile Include="layer.cpp" />
+    <ClCompile Include="log.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="math\half.cpp" />
+    <ClCompile Include="math\real.cpp" />
+    <ClCompile Include="math\trig.cpp" />
+    <ClCompile Include="math\vector.cpp" />
+    <ClCompile Include="platform.cpp" />
+    <ClCompile Include="platform\d3d9\d3d9input.cpp" />
+    <ClCompile Include="platform\sdl\sdlapp.cpp" />
+    <ClCompile Include="platform\sdl\sdlinput.cpp" />
+    <ClCompile Include="platform\xbox\xboxapp.cpp" />
+    <ClCompile Include="platform\xbox\xboxinput.cpp" />
+    <ClCompile Include="profiler.cpp" />
+    <ClCompile Include="sample.cpp" />
+    <ClCompile Include="sampler.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="sprite.cpp" />
+    <ClCompile Include="text.cpp" />
+    <ClCompile Include="ticker.cpp" />
+    <ClCompile Include="tiler.cpp" />
+    <ClCompile Include="tileset.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="video.cpp" />
+    <ClCompile Include="world.cpp" />
+    <ClCompile Include="worldentity.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="application\application.h" />
+    <ClInclude Include="array.h" />
+    <ClInclude Include="audio.h" />
+    <ClInclude Include="bitfield.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="core.h" />
+    <ClInclude Include="debug\fps.h" />
+    <ClInclude Include="debug\quad.h" />
+    <ClInclude Include="debug\record.h" />
+    <ClInclude Include="debug\sphere.h" />
+    <ClInclude Include="debug\stats.h" />
+    <ClInclude Include="dict.h" />
+    <ClInclude Include="easymesh\easymesh-compiler.h" />
+    <ClInclude Include="easymesh\easymesh.h" />
+    <ClInclude Include="eglapp.h" />
+    <ClInclude Include="emitter.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="forge.h" />
+    <ClInclude Include="generated\easymesh-parser.h" />
+    <ClInclude Include="generated\location.hh" />
+    <ClInclude Include="generated\position.hh" />
+    <ClInclude Include="generated\stack.hh" />
+    <ClInclude Include="gpu\framebuffer.h" />
+    <ClInclude Include="gpu\indexbuffer.h" />
+    <ClInclude Include="gpu\shader.h" />
+    <ClInclude Include="gpu\vertexbuffer.h" />
+    <ClInclude Include="gradient.h" />
+    <ClInclude Include="hash.h" />
+    <ClInclude Include="image\image-private.h" />
+    <ClInclude Include="image\image.h" />
+    <ClInclude Include="input\input.h" />
+    <ClInclude Include="input\stick.h" />
+    <ClInclude Include="layer.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="loldebug.h" />
+    <ClInclude Include="lolgl.h" />
+    <ClInclude Include="lol\debug.h" />
+    <ClInclude Include="lol\math\half.h" />
+    <ClInclude Include="lol\math\math.h" />
+    <ClInclude Include="lol\math\real.h" />
+    <ClInclude Include="lol\math\remez.h" />
+    <ClInclude Include="lol\math\vector.h" />
+    <ClInclude Include="lol\unit.h" />
+    <ClInclude Include="map.h" />
+    <ClInclude Include="numeric.h" />
+    <ClInclude Include="platform.h" />
+    <ClInclude Include="platform\d3d9\d3d9input.h" />
+    <ClInclude Include="platform\sdl\sdlapp.h" />
+    <ClInclude Include="platform\sdl\sdlinput.h" />
+    <ClInclude Include="platform\xbox\xboxapp.h" />
+    <ClInclude Include="platform\xbox\xboxinput.h" />
+    <ClInclude Include="profiler.h" />
+    <ClInclude Include="sample.h" />
+    <ClInclude Include="sampler.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="simd.h" />
+    <ClInclude Include="sprite.h" />
+    <ClInclude Include="text.h" />
+    <ClInclude Include="thread\thread.h" />
+    <ClInclude Include="thread\threadbase.h" />
+    <ClInclude Include="ticker.h" />
+    <ClInclude Include="tiler.h" />
+    <ClInclude Include="tileset.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="video.h" />
+    <ClInclude Include="world.h" />
+    <ClInclude Include="worldentity.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="easymesh\shiny.lolfx" />
+    <LolFxCompile Include="gpu\defaultmaterial.lolfx" />
+    <LolFxCompile Include="gpu\emptymaterial.lolfx" />
+    <LolFxCompile Include="gpu\testmaterial.lolfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="easymesh\easymesh-parser.y" />
+    <None Include="easymesh\easymesh-scanner.l" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(SolutionDir)\Lol.Fx.targets" />
+  </ImportGroup>
+</Project>

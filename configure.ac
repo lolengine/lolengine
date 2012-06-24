@@ -377,10 +377,10 @@ AC_SUBST(LOL_LIBS)
 AC_CONFIG_FILES(
  [Makefile
   src/Makefile
+  tutorial/Makefile
   test/Makefile
   test/math/Makefile
   test/sandbox/Makefile
-  test/tutorial/Makefile
   test/xolotl/Makefile
   gfx/Makefile
   gfx/font/Makefile

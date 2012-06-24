@@ -27,10 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\tutorial\03_fractal.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <LolFxCompile Include="..\test\tutorial\03_fractal.lolfx" />
+    <ClCompile Include="quad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\lolcore.vcxproj">
@@ -38,7 +35,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6bf81b39-edc2-4227-9992-c2d8abea95af}</ProjectGuid>
+    <ProjectGuid>{53D9D96F-55C0-4044-BDB1-4A5E8EDBDF0E}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

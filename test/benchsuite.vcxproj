@@ -27,10 +27,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\tutorial\01_triangle.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <LolFxCompile Include="..\test\tutorial\01_triangle.lolfx" />
+    <ClCompile Include="benchmark\half.cpp" />
+    <ClCompile Include="benchmark\real.cpp" />
+    <ClCompile Include="benchmark\trig.cpp" />
+    <ClCompile Include="benchmark\vector.cpp" />
+    <ClCompile Include="benchsuite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\lolcore.vcxproj">
@@ -38,7 +39,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{b92abadc-45be-4cc5-b724-9426053123a1}</ProjectGuid>
+    <ProjectGuid>{B1E10086-A1DA-401A-834D-969C9DBB5CC1}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deushax", "..\deushax\deushax.vcxproj", "{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deushax", "..\..\deushax\deushax.vcxproj", "{EF1A4E80-63FA-4EB0-B834-12B6C500F31C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monsterz", "..\monsterz\monsterz.vcxproj", "{17F0F184-4436-4D08-B8AA-16572EA238DB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monsterz", "..\..\monsterz\monsterz.vcxproj", "{17F0F184-4436-4D08-B8AA-16572EA238DB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "editor", "..\deushax\editor.vcxproj", "{9C66B179-0737-4BDA-AB42-2ADE478A9008}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "editor", "..\..\deushax\editor.vcxproj", "{9C66B179-0737-4BDA-AB42-2ADE478A9008}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
@@ -20,45 +20,45 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deus Hax", "Deus Hax", "{08
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Monsterz", "Monsterz", "{2F87CEAB-4818-443C-A5E3-6C34E7D967EC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolcore", "lolcore.vcxproj", "{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolcore", "..\..\src\lolcore.vcxproj", "{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E0491194-35E3-4513-9D31-608EA3165ECF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quad", "quad.vcxproj", "{53D9D96F-55C0-4044-BDB1-4A5E8EDBDF0E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quad", "..\..\test\debug\quad.vcxproj", "{53D9D96F-55C0-4044-BDB1-4A5E8EDBDF0E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchsuite", "benchsuite.vcxproj", "{B1E10086-A1DA-401A-834D-969C9DBB5CC1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchsuite", "..\..\test\benchsuite.vcxproj", "{B1E10086-A1DA-401A-834D-969C9DBB5CC1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testsuite", "testsuite.vcxproj", "{80F81C11-8DA2-4990-91CB-9807783BA46E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testsuite", "..\..\test\testsuite.vcxproj", "{80F81C11-8DA2-4990-91CB-9807783BA46E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{E74CF679-CA2A-47E9-B1F4-3779D6AC6B04}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_triangle", "01_triangle.vcxproj", "{B92ABADC-45BE-4CC5-B724-9426053123A1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_triangle", "..\..\tutorial\01_triangle.vcxproj", "{B92ABADC-45BE-4CC5-B724-9426053123A1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_cube", "02_cube.vcxproj", "{7B083DA2-FE08-4F6D-BFDD-195D5C2783EB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_cube", "..\..\tutorial\02_cube.vcxproj", "{7B083DA2-FE08-4F6D-BFDD-195D5C2783EB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_fractal", "03_fractal.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_fractal", "..\..\tutorial\11_fractal.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MrPigeon", "MrPigeon", "{33704AA4-F2B5-4138-A40D-E3E77F89ED46}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mrpigeon", "..\mrpigeon\mrpigeon.vcxproj", "{32F3F8CF-D22E-45E4-BEB8-AD909E8C5515}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mrpigeon", "..\..\mrpigeon\mrpigeon.vcxproj", "{32F3F8CF-D22E-45E4-BEB8-AD909E8C5515}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
@@ -67,7 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{1DFE1729
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orbital", "Orbital", "{8C77EAA8-1077-4EF7-AE53-97C6C60A3601}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orbital", "..\orbital\orbital.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F40FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orbital", "..\..\orbital\orbital.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F40FECB52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{1AFD580B-98B8-4689-B661-38C41132C60E}"
 	ProjectSection(SolutionItems) = preProject
@@ -78,7 +78,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3D341D8A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neercs", "Neercs", "{B357514A-7881-422D-8358-161B689E7620}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\neercs\neercs.vcxproj", "{587FCCE9-1D8D-4398-B8B6-E8F4E9A92233}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\..\neercs\neercs.vcxproj", "{587FCCE9-1D8D-4398-B8B6-E8F4E9A92233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
