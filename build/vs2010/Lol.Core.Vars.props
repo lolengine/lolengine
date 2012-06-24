@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <ContribDir>$(SolutionDir)\..\contrib</ContribDir>
+    <ContribDir>$(SolutionDir)\..\..\contrib</ContribDir>
 
     <!-- Flex & Bison -->
     <FlexDir>$(ContribDir)\flex-2.5.35</FlexDir>
@@ -89,7 +89,7 @@
     <BuildMacro Include="XboxDefines"><Value>$(XboxDefines)</Value></BuildMacro>
   </ItemGroup>
   <PropertyGroup>
-    <OutDir>$(SolutionDir)\$(Platform) $(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\$(Platform) $(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)..\..\binaries\$(Platform) $(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\binaries\$(Platform) $(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
 </Project>

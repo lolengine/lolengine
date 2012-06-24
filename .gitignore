@@ -42,16 +42,16 @@ perf.data*
 *~
 # Visual Studio cruft
 *.vcxproj.user
+binaries/*Debug
+binaries/*Release
 build/vs2010/ipch
-build/vs2010/*Debug
-build/vs2010/*Release
 build/vs2010/*.opensdf
 build/vs2010/*.sdf
 build/vs2010/*.suo
 build/vs2010/*.log
 build/vs2010/*.XGD
-# Do not exclude anything in contrib; this is currently one level
-# more than our current max
+# Do not exclude anything in contrib. There is no way to do this recursively
+# but the nesting below is currently one level more than our current max.
 !contrib/*
 !contrib/*/*
 !contrib/*/*/*
