@@ -82,8 +82,8 @@ FrameBuffer::FrameBuffer(ivec2 size)
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                            GL_TEXTURE_2D, m_data->m_texture, 0);
-    m_data->m_depth = GL_INVALID_INDEX;
-    if (depth != GL_INVALID_INDEX)
+    m_data->m_depth = GL_INVALID_ENUM;
+    if (depth != GL_INVALID_ENUM)
     {
         glGenRenderbuffers(1, &m_data->m_depth);
         glBindRenderbuffer(GL_RENDERBUFFER, m_data->m_depth);
@@ -106,7 +106,7 @@ FrameBuffer::~FrameBuffer()
 #elif GL_VERSION_1_1
     glDeleteFramebuffers(1, &m_data->m_fbo);
     glDeleteTextures(1, &m_data->m_texture);
-    if (m_data->m_depth != GL_INVALID_INDEX)
+    if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
 #else
 #endif
