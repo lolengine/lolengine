@@ -5,10 +5,9 @@ SUBDIRS += monsterz
 SUBDIRS += mrpigeon
 SUBDIRS += orbital
 SUBDIRS += neercs
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = $(SUBDIRS) build binaries
 
-EXTRA_DIST = bootstrap build-linux build-mingw build-mingw64 build-ps3 \
-             build-nacl32 build-nacl64 build/lol-build
+EXTRA_DIST = bootstrap TODO
 AUTOMAKE_OPTIONS = dist-bzip2
 
 bench:

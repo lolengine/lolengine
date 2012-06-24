@@ -385,6 +385,8 @@ AC_CONFIG_FILES(
   gfx/Makefile
   gfx/font/Makefile
   tools/Makefile
+  build/Makefile
+  binaries/Makefile
 ])
 AC_CONFIG_FILES(
  [monsterz/Makefile
