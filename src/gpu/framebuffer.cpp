@@ -60,7 +60,8 @@ FrameBuffer::FrameBuffer(ivec2 size)
 {
     m_data->m_size = size;
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    /* FIXME: not implemented on Direct3D */
+#elif GL_VERSION_1_1
     GLenum format = GL_RGBA8;
     GLenum depth = GL_DEPTH_COMPONENT;
     GLenum wrapmode = GL_REPEAT;
@@ -93,17 +94,21 @@ FrameBuffer::FrameBuffer(ivec2 size)
     glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     Unbind();
+#else
+    /* FIXME: not implemented on GL ES, see
+     * http://stackoverflow.com/q/4041682/111461 */
 #endif
 }
 
 FrameBuffer::~FrameBuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif GL_VERSION_1_1
     glDeleteFramebuffers(1, &m_data->m_fbo);
     glDeleteTextures(1, &m_data->m_texture);
     if (m_data->m_depth != GL_INVALID_INDEX)
         glDeleteRenderbuffers(1, &m_data->m_depth);
+#else
 #endif
     delete m_data;
 }
@@ -111,24 +116,29 @@ FrameBuffer::~FrameBuffer()
 int FrameBuffer::GetTexture() const
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+    return 0;
+#elif GL_VERSION_1_1
     return m_data->m_texture;
+#else
+    return 0;
 #endif
 }
 
 void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif GL_VERSION_1_1
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
+#else
 #endif
 }
 
 void FrameBuffer::Unbind()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#elif GL_VERSION_1_1
     glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+#else
 #endif
 }
 

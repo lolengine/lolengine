@@ -385,12 +385,14 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                   tlut[type_index].type, normalize,
                                   stride, (GLvoid const *)(uintptr_t)offset);
         }
+#       if defined GL_VERSION_3_0
         else
         {
             glVertexAttribIPointer((GLint)reg, tlut[type_index].size,
                                    tlut[type_index].type,
                                    stride, (GLvoid const *)(uintptr_t)offset);
         }
+#       endif
 #   else
         switch (usage)
         {
