@@ -58,409 +58,409 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\image\image.cpp">
+    <ClCompile Include="image\image.cpp">
       <Filter>src\image</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug\fps.cpp">
+    <ClCompile Include="debug\fps.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug\quad.cpp">
+    <ClCompile Include="debug\quad.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug\record.cpp">
+    <ClCompile Include="debug\record.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug\sphere.cpp">
+    <ClCompile Include="debug\sphere.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug\stats.cpp">
+    <ClCompile Include="debug\stats.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform\sdl\sdlapp.cpp">
+    <ClCompile Include="platform\sdl\sdlapp.cpp">
       <Filter>src\platform\sdl</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform\sdl\sdlinput.cpp">
+    <ClCompile Include="platform\sdl\sdlinput.cpp">
       <Filter>src\platform\sdl</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\math\half.cpp">
+    <ClCompile Include="math\half.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\math\real.cpp">
+    <ClCompile Include="math\real.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\math\trig.cpp">
+    <ClCompile Include="math\trig.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\math\vector.cpp">
+    <ClCompile Include="math\vector.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\shader.cpp">
+    <ClCompile Include="gpu\shader.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\vertexbuffer.cpp">
+    <ClCompile Include="gpu\vertexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\application\application.cpp">
+    <ClCompile Include="application\application.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\android-image.cpp">
+    <ClCompile Include="image\codec\android-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\dummy-image.cpp">
+    <ClCompile Include="image\codec\dummy-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\gdiplus-image.cpp">
+    <ClCompile Include="image\codec\gdiplus-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\ios-image.cpp">
+    <ClCompile Include="image\codec\ios-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\ps3-image.cpp">
+    <ClCompile Include="image\codec\ps3-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\image\codec\sdl-image.cpp">
+    <ClCompile Include="image\codec\sdl-image.cpp">
       <Filter>src\image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform\xbox\xboxapp.cpp">
+    <ClCompile Include="platform\xbox\xboxapp.cpp">
       <Filter>src\platform\xbox</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform\xbox\xboxinput.cpp">
+    <ClCompile Include="platform\xbox\xboxinput.cpp">
       <Filter>src\platform\xbox</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\indexbuffer.cpp">
+    <ClCompile Include="gpu\indexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\input\input.cpp">
+    <ClCompile Include="input\input.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\input\stick.cpp">
+    <ClCompile Include="input\stick.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform\d3d9\d3d9input.cpp">
+    <ClCompile Include="platform\d3d9\d3d9input.cpp">
       <Filter>src\platform\d3d9</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\audio.cpp">
+    <ClCompile Include="audio.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\camera.cpp">
+    <ClCompile Include="camera.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dict.cpp">
+    <ClCompile Include="dict.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\eglapp.cpp">
+    <ClCompile Include="eglapp.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\emitter.cpp">
+    <ClCompile Include="emitter.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\entity.cpp">
+    <ClCompile Include="entity.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\font.cpp">
+    <ClCompile Include="font.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\forge.cpp">
+    <ClCompile Include="forge.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gradient.cpp">
+    <ClCompile Include="gradient.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\hash.cpp">
+    <ClCompile Include="hash.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\layer.cpp">
+    <ClCompile Include="layer.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ticker.cpp">
+    <ClCompile Include="ticker.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\log.cpp">
+    <ClCompile Include="log.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\map.cpp">
+    <ClCompile Include="map.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\platform.cpp">
+    <ClCompile Include="platform.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\profiler.cpp">
+    <ClCompile Include="profiler.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sample.cpp">
+    <ClCompile Include="sample.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sampler.cpp">
+    <ClCompile Include="sampler.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\scene.cpp">
+    <ClCompile Include="scene.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sprite.cpp">
+    <ClCompile Include="sprite.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\text.cpp">
+    <ClCompile Include="text.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tiler.cpp">
+    <ClCompile Include="tiler.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tileset.cpp">
+    <ClCompile Include="tileset.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\timer.cpp">
+    <ClCompile Include="timer.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\video.cpp">
+    <ClCompile Include="video.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\world.cpp">
+    <ClCompile Include="world.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\worldentity.cpp">
+    <ClCompile Include="worldentity.cpp">
       <Filter>src\...</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gpu\framebuffer.cpp">
+    <ClCompile Include="gpu\framebuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\easymesh\easymesh.cpp">
+    <ClCompile Include="easymesh\easymesh.cpp">
       <Filter>src\easymesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\easymesh\easymesh-compiler.cpp">
+    <ClCompile Include="easymesh\easymesh-compiler.cpp">
       <Filter>src\easymesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\generated\easymesh-parser.cpp">
+    <ClCompile Include="generated\easymesh-parser.cpp">
       <Filter>src\generated</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\generated\easymesh-scanner.cpp">
+    <ClCompile Include="generated\easymesh-scanner.cpp">
       <Filter>src\generated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\image\image.h">
+    <ClInclude Include="image\image.h">
       <Filter>src\image</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\fps.h">
+    <ClInclude Include="debug\fps.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\quad.h">
+    <ClInclude Include="debug\quad.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\record.h">
+    <ClInclude Include="debug\record.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\sphere.h">
+    <ClInclude Include="debug\sphere.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\debug\stats.h">
+    <ClInclude Include="debug\stats.h">
       <Filter>src\debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform\sdl\sdlinput.h">
+    <ClInclude Include="platform\sdl\sdlinput.h">
       <Filter>src\platform\sdl</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform\sdl\sdlapp.h">
+    <ClInclude Include="platform\sdl\sdlapp.h">
       <Filter>src\platform\sdl</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\math\half.h">
+    <ClInclude Include="lol\math\half.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\math\math.h">
+    <ClInclude Include="lol\math\math.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\math\real.h">
+    <ClInclude Include="lol\math\real.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\math\remez.h">
+    <ClInclude Include="lol\math\remez.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\math\vector.h">
+    <ClInclude Include="lol\math\vector.h">
       <Filter>src\lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\unit.h">
+    <ClInclude Include="lol\unit.h">
       <Filter>src\lol</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\shader.h">
+    <ClInclude Include="gpu\shader.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\vertexbuffer.h">
+    <ClInclude Include="gpu\vertexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\thread\thread.h">
+    <ClInclude Include="thread\thread.h">
       <Filter>src\thread</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\thread\threadbase.h">
+    <ClInclude Include="thread\threadbase.h">
       <Filter>src\thread</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\application\application.h">
+    <ClInclude Include="application\application.h">
       <Filter>src\application</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\image\image-private.h">
+    <ClInclude Include="image\image-private.h">
       <Filter>src\image</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform\xbox\xboxapp.h">
+    <ClInclude Include="platform\xbox\xboxapp.h">
       <Filter>src\platform\xbox</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform\xbox\xboxinput.h">
+    <ClInclude Include="platform\xbox\xboxinput.h">
       <Filter>src\platform\xbox</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\indexbuffer.h">
+    <ClInclude Include="gpu\indexbuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lol\debug.h">
+    <ClInclude Include="lol\debug.h">
       <Filter>src\lol</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\input\input.h">
+    <ClInclude Include="input\input.h">
       <Filter>src\input</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\input\stick.h">
+    <ClInclude Include="input\stick.h">
       <Filter>src\input</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform\d3d9\d3d9input.h">
+    <ClInclude Include="platform\d3d9\d3d9input.h">
       <Filter>src\platform\d3d9</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\array.h">
+    <ClInclude Include="array.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\hash.h">
+    <ClInclude Include="hash.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\audio.h">
+    <ClInclude Include="audio.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\bitfield.h">
+    <ClInclude Include="bitfield.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\camera.h">
+    <ClInclude Include="camera.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\core.h">
+    <ClInclude Include="core.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dict.h">
+    <ClInclude Include="dict.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\eglapp.h">
+    <ClInclude Include="eglapp.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\emitter.h">
+    <ClInclude Include="emitter.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\entity.h">
+    <ClInclude Include="entity.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\font.h">
+    <ClInclude Include="font.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\forge.h">
+    <ClInclude Include="forge.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gradient.h">
+    <ClInclude Include="gradient.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\layer.h">
+    <ClInclude Include="layer.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\log.h">
+    <ClInclude Include="log.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\loldebug.h">
+    <ClInclude Include="loldebug.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\lolgl.h">
+    <ClInclude Include="lolgl.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\map.h">
+    <ClInclude Include="map.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\numeric.h">
+    <ClInclude Include="numeric.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\platform.h">
+    <ClInclude Include="platform.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\profiler.h">
+    <ClInclude Include="profiler.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sample.h">
+    <ClInclude Include="sample.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sampler.h">
+    <ClInclude Include="sampler.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\scene.h">
+    <ClInclude Include="scene.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\simd.h">
+    <ClInclude Include="simd.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sprite.h">
+    <ClInclude Include="sprite.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\text.h">
+    <ClInclude Include="text.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ticker.h">
+    <ClInclude Include="ticker.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\worldentity.h">
+    <ClInclude Include="worldentity.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tiler.h">
+    <ClInclude Include="tiler.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tileset.h">
+    <ClInclude Include="tileset.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\timer.h">
+    <ClInclude Include="timer.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\video.h">
+    <ClInclude Include="video.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\world.h">
+    <ClInclude Include="world.h">
       <Filter>src\...</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gpu\framebuffer.h">
+    <ClInclude Include="gpu\framebuffer.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\generated\position.hh">
+    <ClInclude Include="generated\position.hh">
       <Filter>src\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\generated\location.hh">
+    <ClInclude Include="generated\location.hh">
       <Filter>src\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\generated\stack.hh">
+    <ClInclude Include="generated\stack.hh">
       <Filter>src\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\easymesh\easymesh.h">
+    <ClInclude Include="easymesh\easymesh.h">
       <Filter>src\easymesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\easymesh\easymesh-compiler.h">
+    <ClInclude Include="easymesh\easymesh-compiler.h">
       <Filter>src\easymesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\generated\easymesh-parser.h">
+    <ClInclude Include="generated\easymesh-parser.h">
       <Filter>src\generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <LolFxCompile Include="..\src\gpu\emptymaterial.lolfx">
+    <LolFxCompile Include="gpu\emptymaterial.lolfx">
       <Filter>src\gpu</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="..\src\gpu\defaultmaterial.lolfx">
+    <LolFxCompile Include="gpu\defaultmaterial.lolfx">
       <Filter>src\gpu</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="..\src\gpu\testmaterial.lolfx">
+    <LolFxCompile Include="gpu\testmaterial.lolfx">
       <Filter>src\gpu</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="..\src\easymesh\shiny.lolfx">
+    <LolFxCompile Include="easymesh\shiny.lolfx">
       <Filter>src\easymesh</Filter>
     </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\easymesh\easymesh-parser.y">
+    <None Include="easymesh\easymesh-parser.y">
       <Filter>src\easymesh</Filter>
     </None>
-    <None Include="..\src\easymesh\easymesh-scanner.l">
+    <None Include="easymesh\easymesh-scanner.l">
       <Filter>src\easymesh</Filter>
     </None>
   </ItemGroup>

@@ -35,7 +35,7 @@ using namespace lol;
 #   include <direct.h>
 #endif
 
-extern char const *lolfx_03_fractal;
+extern char const *lolfx_11_fractal;
 
 #if defined USE_D3D9
 extern IDirect3DDevice9 *g_d3ddevice;
@@ -478,7 +478,7 @@ public:
                                        D3DPOOL_SYSTEMMEM, &m_tex, NULL);
 #endif
 
-            m_shader = Shader::Create(lolfx_03_fractal);
+            m_shader = Shader::Create(lolfx_11_fractal);
 
             m_vertexattrib = m_shader->GetAttribLocation("a_Vertex", VertexUsage::Position, 0);
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord", VertexUsage::TexCoord, 0);

@@ -1,5 +1,5 @@
 
-SUBDIRS = src test tools gfx
+SUBDIRS = src tutorial test tools gfx
 SUBDIRS += deushax
 SUBDIRS += monsterz
 SUBDIRS += mrpigeon

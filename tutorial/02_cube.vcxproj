@@ -27,7 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\debug\quad.cpp" />
+    <ClCompile Include="02_cube.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="02_cube.lolfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\lolcore.vcxproj">
@@ -35,7 +38,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{53D9D96F-55C0-4044-BDB1-4A5E8EDBDF0E}</ProjectGuid>
+    <ProjectGuid>{7b083da2-fe08-4f6d-bfdd-195d5c2783eb}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

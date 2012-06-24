@@ -1,5 +1,5 @@
 
-SUBDIRS = math tutorial sandbox xolotl
+SUBDIRS = math sandbox xolotl
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 

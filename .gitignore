@@ -42,14 +42,14 @@ perf.data*
 *~
 # Visual Studio cruft
 *.vcxproj.user
-win32/ipch
-win32/*Debug
-win32/*Release
-win32/*.opensdf
-win32/*.sdf
-win32/*.suo
-win32/*.log
-win32/*.XGD
+build/vs2010/ipch
+build/vs2010/*Debug
+build/vs2010/*Release
+build/vs2010/*.opensdf
+build/vs2010/*.sdf
+build/vs2010/*.suo
+build/vs2010/*.log
+build/vs2010/*.XGD
 # Do not exclude anything in contrib; this is currently one level
 # more than our current max
 !contrib/*
@@ -61,9 +61,6 @@ win32/*.XGD
 !contrib/*/*/*/*/*/*/*
 # Our binaries
 test/testsuite
-test/tutorial/01_triangle
-test/tutorial/02_cube
-test/tutorial/03_fractal
 test/benchsuite
 test/quad
 test/sandbox/sample
@@ -72,4 +69,7 @@ test/math/poly
 test/math/remez
 test/xolotl/xolotl
 tools/make-font
+tutorial/01_triangle
+tutorial/02_cube
+tutorial/11_fractal
 # Our data
