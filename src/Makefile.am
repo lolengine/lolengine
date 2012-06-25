@@ -1,4 +1,6 @@
 
+SUBDIRS = data
+
 noinst_LIBRARIES = liblol.a
 
 liblol_a_SOURCES = \

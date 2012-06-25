@@ -44,12 +44,12 @@ DebugFps::DebugFps(int x, int y)
 #if 0
     for (int i = 0; i < 5; i ++)
     {
-        data->lines[i] = new Text(NULL, "gfx/font/ascii.png");
+        data->lines[i] = new Text(NULL, "src/gfx/font/ascii.png");
         data->lines[i]->SetPos(ivec3(x, y + (i ? 8 : 0) + 16 * i, 0));
         Ticker::Ref(data->lines[i]);
     }
 #else
-    data->lines[0] = new Text(NULL, "gfx/font/ascii.png");
+    data->lines[0] = new Text(NULL, "src/gfx/font/ascii.png");
     data->lines[0]->SetPos(ivec3(x, y, 100));
     Ticker::Ref(data->lines[0]);
 #endif

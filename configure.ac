@@ -377,35 +377,36 @@ AC_SUBST(LOL_LIBS)
 AC_CONFIG_FILES(
  [Makefile
   src/Makefile
+  src/data/Makefile
+  src/data/font/Makefile
   tutorial/Makefile
   test/Makefile
   test/math/Makefile
   test/sandbox/Makefile
   test/xolotl/Makefile
-  gfx/Makefile
-  gfx/font/Makefile
-  tools/Makefile
   build/Makefile
   binaries/Makefile
+  games/Makefile
+  tools/Makefile
 ])
 AC_CONFIG_FILES(
- [monsterz/Makefile
+ [games/monsterz/Makefile
 ])
 AC_CONFIG_FILES(
- [deushax/Makefile
-  deushax/art/Makefile
-  deushax/art/test/Makefile
-  deushax/gfx/Makefile
-  deushax/maps/Makefile
+ [games/deushax/Makefile
+  games/deushax/art/Makefile
+  games/deushax/art/test/Makefile
+  games/deushax/gfx/Makefile
+  games/deushax/maps/Makefile
 ])
 AC_CONFIG_FILES(
- [mrpigeon/Makefile
+ [games/mrpigeon/Makefile
 ])
 AC_CONFIG_FILES(
- [orbital/Makefile
+ [games/orbital/Makefile
 ])
 AC_CONFIG_FILES(
- [neercs/Makefile
+ [tools/neercs/Makefile
 ])
 
 AC_OUTPUT

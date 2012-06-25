@@ -1,10 +1,5 @@
 
-SUBDIRS = src tutorial test tools gfx
-SUBDIRS += deushax
-SUBDIRS += monsterz
-SUBDIRS += mrpigeon
-SUBDIRS += orbital
-SUBDIRS += neercs
+SUBDIRS = src tutorial test tools games
 DIST_SUBDIRS = $(SUBDIRS) build binaries
 
 EXTRA_DIST = bootstrap TODO
