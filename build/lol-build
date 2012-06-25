@@ -21,8 +21,8 @@
 #  - osx-amd64
 #  - android-arm
 #  - ps3-ppu
-#  - windows-i386
-#  - windows-amd64
+#  - win*-i386
+#  - win*-amd64
 #
 
 set -e
@@ -64,7 +64,7 @@ configure()
 {
     cd "$top_srcdir"
     case "$platform" in
-        windows-i386)
+        win*-i386)
             if test "x${MSYSTEM}" = xMINGW32; then
                 :
             elif i586-mingw32msvc-g++ --version >/dev/null 2>&1; then
@@ -92,7 +92,7 @@ configure()
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/i686-w64-mingw32"
             ;;
-        windows-amd64)
+        win*-amd64)
             if test "x${MSYSTEM}" = xMINGW64; then
                 :
             elif x86_64-w64-mingw32-g++ --version >/dev/null 2>&1; then
@@ -140,7 +140,7 @@ configure()
         ps3-ppu)
             PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
             ;;
-        windows-i386|windows-amd64)
+        win*-i386|win*-amd64)
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.14/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-image-1.2.10/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-mixer-1.2.11/include"
@@ -201,7 +201,7 @@ check()
             ;;
         nacl-*)
             ;;
-        windows-i386)
+        win*-i386)
             # If neither $MSYSTEM or $DISPLAY are set, and xvfb-run
             # exists, use it to run the test suite.
             if test "x${MSYSTEM}${DISPLAY}" = x \
@@ -211,7 +211,7 @@ check()
                 make check
             fi
             ;;
-        windows-amd64)
+        win*-amd64)
             # No support for Wine64 yet
             ;;
         *)
