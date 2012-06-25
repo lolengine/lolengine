@@ -1,4 +1,8 @@
 
+SUBDIRS =
+SUBDIRS += neercs
+
+
 noinst_PROGRAMS = $(make_font)
 
 make_font_SOURCES = make-font.cpp
