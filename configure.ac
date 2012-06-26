@@ -406,6 +406,9 @@ AC_CONFIG_FILES(
  [games/orbital/Makefile
 ])
 AC_CONFIG_FILES(
+ [games/ToukyDemo/Makefile
+])
+AC_CONFIG_FILES(
  [tools/neercs/Makefile
 ])
 
