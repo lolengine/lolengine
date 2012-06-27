@@ -100,11 +100,11 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available) # FIXME: hack
   GL_LIBS="${GL_LIBS} -lPSGL -lgcm_cmd -lgcm_sys_stub"
   if test "x${enable_debug}" = xyes; then
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/debug"
+    GL_LIBS="${GL_LIBS} -L${CELLSDK}/target/ppu/lib/PSGL/RSX/debug"
   elif test "x${enable_release}" = xyes; then
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/ultra-opt"
+    GL_LIBS="${GL_LIBS} -L${CELLSDK}/target/ppu/lib/PSGL/RSX/ultra-opt"
   else
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/opt"
+    GL_LIBS="${GL_LIBS} -L${CELLSDK}/target/ppu/lib/PSGL/RSX/opt"
   fi
   dnl  For the runtime Cg compiler
   GL_LIBS="${GL_LIBS} -lcgc -lPSGLcgc"
