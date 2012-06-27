@@ -312,6 +312,10 @@ void *TickerData::DrawThreadMain(void * /* p */)
 
 void *TickerData::DiskThreadMain(void * /* p */)
 {
+#if defined __CELLOS_LV2__
+    /* FIXME: temporary hack to avoid crashes */
+    for (;;);
+#endif
     return NULL;
 }
 
