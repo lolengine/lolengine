@@ -56,6 +56,9 @@
     <Filter Include="src\easymesh">
       <UniqueIdentifier>{07117029-d79d-4d59-beec-691b00a97c8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform\ps3">
+      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\image.cpp">
@@ -234,6 +237,12 @@
     </ClCompile>
     <ClCompile Include="generated\easymesh-scanner.cpp">
       <Filter>src\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\ps3\ps3app.cpp">
+      <Filter>src\platform\ps3</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\ps3\ps3input.cpp">
+      <Filter>src\platform\ps3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -440,6 +449,15 @@
     </ClInclude>
     <ClInclude Include="generated\easymesh-parser.h">
       <Filter>src\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\ps3app.h">
+      <Filter>src\platform\ps3</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\ps3input.h">
+      <Filter>src\platform\ps3</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\threadbase.h">
+      <Filter>src\platform\ps3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

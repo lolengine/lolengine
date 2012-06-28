@@ -29,7 +29,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 1000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_sin(f);
 #else
             double a = std::sin(f);
@@ -42,7 +42,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 100000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_sin(f);
 #else
             double a = std::sin(f);
@@ -60,7 +60,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 1000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_cos(f);
 #else
             double a = std::cos(f);
@@ -73,7 +73,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 100000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_cos(f);
 #else
             double a = std::cos(f);
@@ -91,7 +91,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 1000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a1 = __builtin_sin(f);
             double a2 = __builtin_cos(f);
 #else
@@ -108,7 +108,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 100000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a1 = __builtin_sin(f);
             double a2 = __builtin_cos(f);
 #else
@@ -130,7 +130,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -100000; i < 100000; i++)
         {
             double f = (double)i * (1.0 / 10000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_tan(f);
 #else
             double a = std::tan(f);
@@ -148,7 +148,7 @@ LOLUNIT_FIXTURE(TrigTest)
         for (int i = -10000; i < 10000; i++)
         {
             double f = (double)i * (1.0 / 100000.0);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __SNC__
             double a = __builtin_tan(f);
 #else
             double a = std::tan(f);
