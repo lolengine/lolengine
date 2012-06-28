@@ -246,7 +246,10 @@ void VertexDeclaration::Unbind()
     //glDisableVertexAttribArray(m_attrib);
 #else
     /* Or even: */
-    //glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 #endif
 }
 
@@ -313,6 +316,12 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         {
         case VertexUsage::Position:
             glEnableClientState(GL_VERTEX_ARRAY);
+            break;
+        case VertexUsage::TexCoord:
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            break;
+        case VertexUsage::Normal:
+            glEnableClientState(GL_NORMAL_ARRAY);
             break;
         case VertexUsage::Color:
             glEnableClientState(GL_COLOR_ARRAY);
@@ -530,7 +539,7 @@ VertexBuffer::VertexBuffer(size_t size)
     if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
         Abort();
-#elif !defined __CELLOS_LV2__
+#else
     glGenBuffers(1, &m_data->m_vbo);
     m_data->m_memory = new uint8_t[size];
 #endif
@@ -543,7 +552,7 @@ VertexBuffer::~VertexBuffer()
 #if defined USE_D3D9 || defined _XBOX
         if (FAILED(m_data->m_vbo->Release()))
             Abort();
-#elif !defined __CELLOS_LV2__
+#else
         glDeleteBuffers(1, &m_data->m_vbo);
         delete[] m_data->m_memory;
 #endif
@@ -560,7 +569,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
         Abort();
     return ret;
-#elif !defined __CELLOS_LV2__
+#else
     return m_data->m_memory + offset;
 #endif
 }
@@ -572,7 +581,7 @@ void VertexBuffer::Unlock()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_vbo->Unlock()))
         Abort();
-#elif !defined __CELLOS_LV2__
+#else
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
