@@ -47,7 +47,7 @@ class IndexBufferData
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
     D3DIndexBuffer *m_ibo;
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     GLuint m_ibo;
     uint8_t *m_memory;
 #endif
@@ -69,7 +69,7 @@ IndexBuffer::IndexBuffer(size_t size)
                                               D3DFMT_INDEX16, D3DPOOL_MANAGED,
                                               &m_data->m_ibo, NULL)))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     glGenBuffers(1, &m_data->m_ibo);
     m_data->m_memory = new uint8_t[size];
 #endif
@@ -82,7 +82,7 @@ IndexBuffer::~IndexBuffer()
 #if defined USE_D3D9 || defined _XBOX
         if (FAILED(m_data->m_ibo->Release()))
             Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
         glDeleteBuffers(1, &m_data->m_ibo);
         delete[] m_data->m_memory;
 #endif
@@ -100,7 +100,7 @@ void *IndexBuffer::Lock(size_t offset, size_t size)
     if (FAILED(m_data->m_ibo->Lock(offset, size, (void **)&ret, 0)))
         Abort();
     return ret;
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     return m_data->m_memory + offset;
 #endif
 }
@@ -113,7 +113,7 @@ void IndexBuffer::Unlock()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(m_data->m_ibo->Unlock()))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_data->m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
@@ -128,7 +128,7 @@ void IndexBuffer::Bind()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->SetIndices(m_data->m_ibo)))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_data->m_ibo);
     /* XXX: not necessary because we kept track of the size */
     //int size;
@@ -144,7 +144,7 @@ void IndexBuffer::Unbind()
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->SetIndices(NULL)))
         Abort();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #endif
 }
