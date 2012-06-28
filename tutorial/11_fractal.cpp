@@ -561,33 +561,9 @@ public:
         g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
 #else
-        //glEnableClientState(GL_VERTEX_ARRAY);
-        //glVertexPointer(2, GL_FLOAT, 0, vertices);
-        //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        //glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 #endif
-
-#if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-#else
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-#endif
-
-#if defined _XBOX || defined USE_D3D9
-
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
         m_vdecl->Unbind();
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-        //glDisableVertexAttribArray(m_vertexattrib);
-        //glDisableVertexAttribArray(m_texattrib);
-        //glBindBuffer(GL_ARRAY_BUFFER, 0);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-        /* Never used for now */
-        //glDisableVertexAttribArray(m_vertexattrib);
-        //glDisableVertexAttribArray(m_texattrib);
-#else
-        //glDisableClientState(GL_VERTEX_ARRAY);
-        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
     }
 
 private:
