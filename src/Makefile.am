@@ -64,11 +64,7 @@ liblol_a_CPPFLAGS = @LOL_CFLAGS@
 
 SUFFIXES = .lolfx
 .lolfx.o:
-	(echo "char const *"; \
-	 echo "lolfx_$(notdir $(basename $(filter %.lolfx, $^))) ="; \
-	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | \
-	 $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
-	 echo ";") | $(CXXCOMPILE) -xc++ -c - -o $@
+	$(LOLFX_BUILD)
 
 if TRUE
 generated: .FORCE
