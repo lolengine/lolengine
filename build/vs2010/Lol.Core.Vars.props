@@ -19,6 +19,13 @@
     <SdlDeps Condition="'$(Platform)'=='x64'">libSDL.a;libSDLmain.a</SdlDeps>
     <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
 
+    <!-- BulletPhysics -->
+    <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
+    <BtPhysIncludes>$(BtPhysDir)\src</BtPhysIncludes>
+    <BtPhysLibs Condition="'$(Platform)'=='Win32'">$(BtPhysDir)\lib</BtPhysLibs>
+    <BtPhysDeps Condition="'$(Platform)'=='Win32'">BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;ConvexDecomposition.lib;HACD.lib;LinearMath.lib;OpenGLSupport.lib</BtPhysDeps>
+    <Win32Defines>$(Win32Defines)</Win32Defines>
+
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ContribDir)\gtkglarea-2.0.1</GtkGlDir>
@@ -78,6 +85,10 @@
     <BuildMacro Include="SdlIncludes"><Value>$(SdlIncludes)</Value></BuildMacro>
     <BuildMacro Include="SdlLibs"><Value>$(SdlLibs)</Value></BuildMacro>
     <BuildMacro Include="SdlDeps"><Value>$(SdlDeps)</Value></BuildMacro>
+    <BuildMacro Include="BtPhysDir"><Value>$(BtPhysDir)</Value></BuildMacro>
+    <BuildMacro Include="BtPhysIncludes"><Value>$(BtPhysIncludes)</Value></BuildMacro>
+    <BuildMacro Include="BtPhysLibs"><Value>$(BtPhysLibs)</Value></BuildMacro>
+    <BuildMacro Include="BtPhysDeps"><Value>$(BtPhysDeps)</Value></BuildMacro>
     <BuildMacro Include="GtkDir"><Value>$(GtkDir)</Value></BuildMacro>
     <BuildMacro Include="GtkGlDir"><Value>$(GtkGlDir)</Value></BuildMacro>
     <BuildMacro Include="GtkIncludes"><Value>$(GtkIncludes)</Value></BuildMacro>
