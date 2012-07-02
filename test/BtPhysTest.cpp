@@ -228,25 +228,22 @@ void BtPhysTest::TickDraw(float seconds)
 
 	for(int i=0;i<gNumObjects;i++)
 	{
-		btScalar	m[16];
-		btMatrix3x3	rot;rot.setIdentity();
-		btCollisionObject*	colObj=m_bt_world->getCollisionObjectArray()[i];
-		btRigidBody*		body=btRigidBody::upcast(colObj);
-		if(body&&body->getMotionState())
+		mat4 m(1.0f);
+		btMatrix3x3	rot; rot.setIdentity();
+		btCollisionObject*	colObj = m_bt_world->getCollisionObjectArray()[i];
+		btRigidBody*		body = btRigidBody::upcast(colObj);
+		if(body && body->getMotionState())
 		{
 			btDefaultMotionState* myMotionState = (btDefaultMotionState*)body->getMotionState();
-			myMotionState->m_graphicsWorldTrans.getOpenGLMatrix(m);
-			rot=myMotionState->m_graphicsWorldTrans.getBasis();
+			myMotionState->m_graphicsWorldTrans.getOpenGLMatrix(&m[0][0]);
+			rot = myMotionState->m_graphicsWorldTrans.getBasis();
 		}
 		else
 		{
-			colObj->getWorldTransform().getOpenGLMatrix(m);
-			rot=colObj->getWorldTransform().getBasis();
+			colObj->getWorldTransform().getOpenGLMatrix(&m[0][0]);
+			rot = colObj->getWorldTransform().getBasis();
 		}
-		mat4 NewMx = mat4(1.0f);
-		for (int i = 0; i < 16; ++i)
-			NewMx[i / 4][i % 4] = (float)m[i];
-		m_rigid_mesh.Render(NewMx);
+		m_rigid_mesh.Render(m);
 	}
 }
 
@@ -258,8 +255,7 @@ BtPhysTest::~BtPhysTest()
 	{
 		//cleanup in the reverse order of creation/initialization
 		//remove the rigidbodies from the dynamics world and delete them
-		int i;
-		for (i = m_bt_world->getNumCollisionObjects() - 1; i >= 0 ;i--)
+		for (int i = m_bt_world->getNumCollisionObjects() - 1; i >= 0 ;i--)
 		{
 			btCollisionObject* obj = m_bt_world->getCollisionObjectArray()[i];
 			btRigidBody* body = btRigidBody::upcast(obj);
@@ -279,13 +275,9 @@ BtPhysTest::~BtPhysTest()
 		m_bt_collision_shapes.Empty();
 
 		delete m_bt_world;
-	
 		delete m_bt_solver;
-	
 		delete m_bt_broadphase;
-	
 		delete m_bt_dispatcher;
-
 		delete m_bt_collision_config;
 	}
 }
