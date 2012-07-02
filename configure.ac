@@ -44,10 +44,6 @@ dnl PKG_PROG_PKG_CONFIG which needs to be called first.
 AC_EGREP_CPP(yes, foo)
 PKG_PROG_PKG_CONFIG()
 
-dnl  Available platforms: some of these are not public
-AM_CONDITIONAL(HAVE_PS3, test -f src/platform/ps3/ps3app.cpp)
-AM_CONDITIONAL(HAVE_XBOX, false)
-
 AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 dnl conditional builds
 AC_ARG_ENABLE(debug,
@@ -94,8 +90,10 @@ AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
 AC_CHECK_LIB(util, forkpty, UTIL_LIBS="${UTIL_LIBS} -lutil")
 
 dnl Are we on the PS3?
+ac_cv_my_have_ps3="no"
 AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
- [LOL_LIBS="${LOL_LIBS} -lsysmodule_stub -lsysutil_stub -lresc_stub"
+ [ac_cv_my_have_ps3="yes"
+  LOL_LIBS="${LOL_LIBS} -lsysmodule_stub -lsysutil_stub -lresc_stub"
   dnl  For PSGL
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available) # FIXME: hack
   GL_LIBS="${GL_LIBS} -lPSGL -lgcm_cmd -lgcm_sys_stub"
@@ -121,6 +119,12 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   AC_PATH_PROG(MAKE_FSELF, make_fself, no)],
  [MAKE_FSELF=no])
 AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
+AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
+
+
+dnl  Are we on the Xbox 360?
+dnl  Answer: NO! we don't know how to build for it anyway
+AM_CONDITIONAL(USE_X360, false)
 
 
 dnl Are we on a Direct3D 9 platform?
