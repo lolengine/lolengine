@@ -365,7 +365,7 @@ AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 
 dnl  LolFx compilation rule
-LOLFX_BUILD='(echo "char const *"; echo "lolfx_$(notdir $(basename $(filter %.lolfx, $^))) ="; $(SED) '"'"'s/"/\\"/g'"'"' $(filter %.lolfx, $^) | $(SED) '"'"'s/\([^\r]*\).*/"\1\\n"/'"'"'; echo ";") | $(CXXCOMPILE) -xc++ -c - -o $@'
+LOLFX_BUILD='(echo "char const *"; echo "lolfx_$(notdir $(basename $(filter %.lolfx, $^))) ="; $(SED) '"'"'s/"/\\"/g'"'"' $(filter %.lolfx, $^) | $(SED) '"'"'s/\([[^\r]]*\).*/"\1\\n"/'"'"'; echo ";") | $(CXXCOMPILE) -xc++ -c - -o $@'
 AC_SUBST(LOLFX_BUILD)
 
 
