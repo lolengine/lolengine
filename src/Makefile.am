@@ -95,7 +95,7 @@ nacl_sources = \
     platform/nacl/opengl_context_ptrs.h
 endif
 
-if HAVE_PS3
+if USE_PS3
 ps3_sources = \
     image/codec/ps3-image.cpp \
     platform/ps3/threadbase.h \
@@ -103,7 +103,7 @@ ps3_sources = \
     platform/ps3/ps3input.cpp platform/ps3/ps3input.h
 endif
 
-if HAVE_XBOX
+if USE_X360
 xbox_sources = \
     platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h \
     platform/xbox/xboxinput.cpp platform/xbox/xboxinput.h
