@@ -32,14 +32,14 @@
 #   include <SDL_main.h>
 #endif
 
+#include <bullet/btBulletDynamicsCommon.h>
+#include <bullet/btBulletCollisionCommon.h>
+
 #include "core.h"
 #include "loldebug.h"
-#include <cstdio>
 
 using namespace lol;
 
-#include "btBulletDynamicsCommon.h"
-#include "btBulletCollisionCommon.h"
 #include "BtPhysTest.h"
 
 #define CUBE_HALF_EXTENTS .5f
