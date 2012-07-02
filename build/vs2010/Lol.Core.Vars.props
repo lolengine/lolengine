@@ -21,9 +21,9 @@
 
     <!-- BulletPhysics -->
     <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
-    <BtPhysIncludes>$(BtPhysDir)\src</BtPhysIncludes>
+    <BtPhysIncludes>$(BtPhysDir)\include</BtPhysIncludes>
     <BtPhysLibs Condition="'$(Platform)'=='Win32'">$(BtPhysDir)\lib</BtPhysLibs>
-    <BtPhysDeps Condition="'$(Platform)'=='Win32'">BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;ConvexDecomposition.lib;HACD.lib;LinearMath.lib;OpenGLSupport.lib</BtPhysDeps>
+    <BtPhysDeps Condition="'$(Platform)'=='Win32'">BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib</BtPhysDeps>
     <Win32Defines>$(Win32Defines)</Win32Defines>
 
     <!-- GTK+ & GtkGl -->
