@@ -21,10 +21,14 @@
 
     <!-- BulletPhysics -->
     <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
-    <BtPhysIncludes>$(BtPhysDir)\include</BtPhysIncludes>
-    <BtPhysLibs Condition="'$(Platform)'=='Win32'">$(BtPhysDir)\lib\i686-w64-mingw32</BtPhysLibs>
-    <BtPhysDeps Condition="'$(Platform)'=='Win32'">BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib</BtPhysDeps>
-    <Win32Defines>$(Win32Defines)</Win32Defines>
+    <BtPhysIncludes>$(BtPhysDir)\include;$(BtPhysDir)\include\bullet</BtPhysIncludes>
+    <BtPhysLibs Condition="'$(Platform)'=='Win32'">$(BtPhysDir)\lib\i686-w64-msvc</BtPhysLibs>
+    <BtPhysLibs Condition="'$(Platform)'=='x64'">$(BtPhysDir)\lib\x86_64-w64-msvc</BtPhysLibs>
+    <BtPhysLibs Condition="'$(Platform)'=='Xbox 360'">$(BtPhysDir)\lib\xenon-x360-msvc</BtPhysLibs>
+    <BtPhysLibs Condition="'$(Platform)'=='PS3'">$(BtPhysDir)\lib\ps3-lv2-gcc</BtPhysLibs>
+    <BtPhysDeps Condition="'$(Configuration)'=='Release' And '$(Platform)'!='PS3'">BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib</BtPhysDeps>
+    <BtPhysDeps Condition="'$(Configuration)'=='Debug' And '$(Platform)'!='PS3'">BulletCollision_debug.lib;BulletDynamics_debug.lib;BulletSoftBody_debug.lib;LinearMath_debug.lib</BtPhysDeps>
+    <BtPhysDeps Condition="'$(Platform)'=='PS3'">libBulletCollision.a;libBulletDynamics.a;libBulletSoftBody.a;libLinearMath.a</BtPhysDeps>
 
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
