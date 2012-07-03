@@ -45,7 +45,7 @@ using namespace lol;
 #define CUBE_HALF_EXTENTS .5f
 #define EXTRA_HEIGHT 1.f
 
-int gNumObjects = 8;
+int gNumObjects = 16;
 
 BtPhysTest::BtPhysTest(bool editor)
 {
@@ -53,7 +53,7 @@ BtPhysTest::BtPhysTest(bool editor)
     m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                           vec3(0.f, 0.f, 0.f),
                           vec3(0, 0, -1));
-    m_camera->SetRotation(quat::fromeuler_yxz(0.f, -30.f, 0.f));
+    m_camera->SetRotation(quat::fromeuler_yxz(0.f, -40.f, 0.f));
     m_camera->SetPerspective(90.f, 1280.f, 960.f, .1f, 1000.f);
 	//m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
     Ticker::Ref(m_camera);
@@ -155,7 +155,7 @@ BtPhysTest::BtPhysTest(bool editor)
 					row2 |=1;
 				}
 
-				btVector3 pos(col*2*CUBE_HALF_EXTENTS + (row2%2)*CUBE_HALF_EXTENTS,
+				btVector3 pos(col*2*CUBE_HALF_EXTENTS + (row2%2)*CUBE_HALF_EXTENTS, 20.0f +
 					row*2*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,0);
 
 				trans.setOrigin(pos);
@@ -174,7 +174,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
 				//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 
-				btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+				btDefaultMotionState* myMotionState = new btDefaultMotionState(trans);
 
 				btRigidBody::btRigidBodyConstructionInfo cInfo(mass,myMotionState,shape,localInertia);
 
@@ -243,7 +243,7 @@ void BtPhysTest::TickDraw(float seconds)
 			colObj->getWorldTransform().getOpenGLMatrix(&m[0][0]);
 			rot = colObj->getWorldTransform().getBasis();
 		}
-		if (i == 2)
+		if (i > 0)
 		{
 			BarycenterLocation += m.v3.xyz;
 			BarycenterFactor += 1.0f;
@@ -258,7 +258,7 @@ void BtPhysTest::TickDraw(float seconds)
 		BarycenterLocation /= BarycenterFactor;
 
 		m_camera->SetTarget(BarycenterLocation);
-		m_camera->SetPosition(BarycenterLocation + vec3(-50.0f, 50.0f, .0f));
+		m_camera->SetPosition(BarycenterLocation + vec3(-10.0f, 10.0f, .0f));
 	}
 }
 
