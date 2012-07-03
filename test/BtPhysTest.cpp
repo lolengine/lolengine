@@ -54,8 +54,8 @@ BtPhysTest::BtPhysTest(bool editor)
                           vec3(0.f, 0.f, 0.f),
                           vec3(0, 0, -1));
     m_camera->SetRotation(quat::fromeuler_yxz(0.f, -30.f, 0.f));
-    //m_camera->SetPerspective(120.f, 1280.f, 960.f, -1000.f, 1000.f);
-	m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
+    m_camera->SetPerspective(90.f, 1280.f, 960.f, .1f, 1000.f);
+	//m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
     Ticker::Ref(m_camera);
 
     m_ready = false;
@@ -224,8 +224,8 @@ void BtPhysTest::TickDraw(float seconds)
 
     Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
 
-	m_ground_mesh.Render(mat4(1.0f));
-
+	vec3 BarycenterLocation = vec3(.0f);
+	float BarycenterFactor = 0.0f;
 	for(int i=0;i<gNumObjects;i++)
 	{
 		mat4 m(1.0f);
@@ -243,7 +243,22 @@ void BtPhysTest::TickDraw(float seconds)
 			colObj->getWorldTransform().getOpenGLMatrix(&m[0][0]);
 			rot = colObj->getWorldTransform().getBasis();
 		}
-		m_rigid_mesh.Render(m);
+		if (i == 2)
+		{
+			BarycenterLocation += m.v3.xyz;
+			BarycenterFactor += 1.0f;
+		}
+		if (i == 0)
+			m_ground_mesh.Render(m);
+		else 
+			m_rigid_mesh.Render(m);
+	}
+	if (BarycenterFactor > .0f)
+	{
+		BarycenterLocation /= BarycenterFactor;
+
+		m_camera->SetTarget(BarycenterLocation);
+		m_camera->SetPosition(BarycenterLocation + vec3(-50.0f, 50.0f, .0f));
 	}
 }
 
