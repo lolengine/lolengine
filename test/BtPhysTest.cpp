@@ -45,15 +45,15 @@ using namespace lol;
 #define CUBE_HALF_EXTENTS .5f
 #define EXTRA_HEIGHT 1.f
 
-int gNumObjects = 16;
+int gNumObjects = 64;
 
 BtPhysTest::BtPhysTest(bool editor)
 {
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                           vec3(0.f, 0.f, 0.f),
-                          vec3(0, 0, -1));
-    m_camera->SetRotation(quat::fromeuler_yxz(0.f, -40.f, 0.f));
+                          vec3(0, 1, 0));
+    m_camera->SetRotation(quat::fromeuler_xyz(0.f, 0.f, 0.f));
     m_camera->SetPerspective(90.f, 1280.f, 960.f, .1f, 1000.f);
 	//m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
     Ticker::Ref(m_camera);
@@ -89,7 +89,6 @@ BtPhysTest::BtPhysTest(bool editor)
 		btCollisionShape* groundShape = box;
 		m_bt_collision_shapes << groundShape;
         m_ground_mesh.Compile("[sc#ddd afcb110 1 110 -1]");
-		m_rigid_mesh.Compile("[sc#ada afcb1 1 1 -.1]");
 
 		//m_bt_collision_shapes << new btCylinderShape(btVector3(.5f,.5f,.5f));
 
@@ -121,6 +120,8 @@ BtPhysTest::BtPhysTest(bool editor)
 			//create a few dynamic rigidbodies
 			// Re-using the same collision is better for memory usage and performance
 			btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+			m_rigid_mesh.Compile("[sc#ada afcb2 2 2 -.1]");
+
 			m_bt_collision_shapes << colShape;
 			m_bt_dynamic_shapes << colShape;
 
@@ -258,7 +259,7 @@ void BtPhysTest::TickDraw(float seconds)
 		BarycenterLocation /= BarycenterFactor;
 
 		m_camera->SetTarget(BarycenterLocation);
-		m_camera->SetPosition(BarycenterLocation + vec3(-10.0f, 10.0f, .0f));
+		m_camera->SetPosition(BarycenterLocation + vec3(-20.0f, 5.0f, .0f));
 	}
 }
 
