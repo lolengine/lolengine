@@ -120,7 +120,9 @@ BtPhysTest::BtPhysTest(bool editor)
 			//create a few dynamic rigidbodies
 			// Re-using the same collision is better for memory usage and performance
 			btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			m_rigid_mesh.Compile("[sc#ada afcb2 2 2 -.1]");
+			m_rigid_mesh[0].Compile("[sc#daa afcb2 2 2 -.1]");
+			m_rigid_mesh[1].Compile("[sc#ada afcb2 2 2 -.1]");
+			m_rigid_mesh[2].Compile("[sc#aad afcb2 2 2 -.1]");
 
 			m_bt_collision_shapes << colShape;
 			m_bt_dynamic_shapes << colShape;
@@ -156,8 +158,9 @@ BtPhysTest::BtPhysTest(bool editor)
 					row2 |=1;
 				}
 
-				btVector3 pos(col*2*CUBE_HALF_EXTENTS + (row2%2)*CUBE_HALF_EXTENTS, 20.0f +
-					row*2*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,0);
+				btVector3 pos(((row+col+row2) % 4)*CUBE_HALF_EXTENTS,
+				              20.0f + row*4*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,
+				              col*3*CUBE_HALF_EXTENTS + (row2%2)*CUBE_HALF_EXTENTS);
 
 				trans.setOrigin(pos);
 	
@@ -218,7 +221,9 @@ void BtPhysTest::TickDraw(float seconds)
     if (!m_ready)
     {
 		m_ground_mesh.MeshConvert();
-		m_rigid_mesh.MeshConvert();
+		m_rigid_mesh[0].MeshConvert();
+		m_rigid_mesh[1].MeshConvert();
+		m_rigid_mesh[2].MeshConvert();
         /* FIXME: this object never cleans up */
         m_ready = true;
     }
@@ -252,14 +257,14 @@ void BtPhysTest::TickDraw(float seconds)
 		if (i == 0)
 			m_ground_mesh.Render(m);
 		else 
-			m_rigid_mesh.Render(m);
+			m_rigid_mesh[i % 3].Render(m);
 	}
 	if (BarycenterFactor > .0f)
 	{
 		BarycenterLocation /= BarycenterFactor;
 
 		m_camera->SetTarget(BarycenterLocation);
-		m_camera->SetPosition(BarycenterLocation + vec3(-20.0f, 5.0f, .0f));
+		m_camera->SetPosition(BarycenterLocation + vec3(-15.0f, 8.0f, .0f));
 	}
 }
 
