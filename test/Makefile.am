@@ -17,7 +17,7 @@ CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
 
 EXTRA_DIST = data/gradient.png
 
-noinst_PROGRAMS = quad benchsuite testsuite
+noinst_PROGRAMS = quad benchsuite testsuite btphystest
 
 TESTS = testsuite
 
@@ -40,4 +40,9 @@ quad_SOURCES = debug/quad.cpp
 quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 quad_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 quad_DEPENDENCIES = $(top_builddir)/src/liblol.a
+
+btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h
+btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet
+btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+btphystest_DEPENDENCIES = $(top_builddir)/src/liblol.a
 

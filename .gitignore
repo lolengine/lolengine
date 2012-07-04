@@ -60,9 +60,10 @@ build/vs2010/*.XGD
 !contrib/*/*/*/*/*/*
 !contrib/*/*/*/*/*/*/*
 # Our binaries
-test/testsuite
 test/benchsuite
+test/btphystest
 test/quad
+test/testsuite
 test/sandbox/sample
 test/math/pi
 test/math/poly
