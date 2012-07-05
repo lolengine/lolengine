@@ -9,7 +9,7 @@
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\src;$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\src;$(SolutionDir)\..\..\src\bullet;$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -39,11 +39,11 @@
       <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(UseOpenGL)'=='false' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>$(BtPhysDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(UseOpenGL)'=='false' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories>$(BtPhysLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib;xboxkrnl.lib;xnetd.lib;xaudiod2.lib;xactd3.lib;x3daudiod.lib;xmcored.lib;xbdm.lib;vcompd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xapilib.lib;d3d9.lib;d3dx9.lib;xgraphics.lib;xboxkrnl.lib;xnet.lib;xaudio2.lib;xact3.lib;x3daudio.lib;xmcore.lib;vcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='PS3'">$(Ps3Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
