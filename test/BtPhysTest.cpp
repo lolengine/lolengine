@@ -120,9 +120,12 @@ BtPhysTest::BtPhysTest(bool editor)
 			//create a few dynamic rigidbodies
 			// Re-using the same collision is better for memory usage and performance
 			btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			m_rigid_mesh[0].Compile("[sc#daa afcb2 2 2 -.1]");
-			m_rigid_mesh[1].Compile("[sc#ada afcb2 2 2 -.1]");
-			m_rigid_mesh[2].Compile("[sc#aad afcb2 2 2 -.1]");
+			m_rigid_mesh[0].Compile("[sc#add afcb2 2 2 -.1]");
+			m_rigid_mesh[1].Compile("[sc#dad afcb2 2 2 -.1]");
+			m_rigid_mesh[2].Compile("[sc#dda afcb2 2 2 -.1]");
+			m_rigid_mesh[3].Compile("[sc#daa afcb2 2 2 -.1]");
+			m_rigid_mesh[4].Compile("[sc#ada afcb2 2 2 -.1]");
+			m_rigid_mesh[5].Compile("[sc#aad afcb2 2 2 -.1]");
 
 			m_bt_collision_shapes << colShape;
 			m_bt_dynamic_shapes << colShape;
@@ -159,8 +162,8 @@ BtPhysTest::BtPhysTest(bool editor)
 				}
 
 				btVector3 pos(((row+col+row2) % 4)*CUBE_HALF_EXTENTS,
-				              20.0f + row*4*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,
-				              col*3*CUBE_HALF_EXTENTS + (row2%2)*CUBE_HALF_EXTENTS);
+				              20.0f + row*8*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,
+				              col*8*CUBE_HALF_EXTENTS + 2 * (row2%2)*CUBE_HALF_EXTENTS);
 
 				trans.setOrigin(pos);
 	
@@ -226,6 +229,9 @@ void BtPhysTest::TickDraw(float seconds)
 		m_rigid_mesh[0].MeshConvert();
 		m_rigid_mesh[1].MeshConvert();
 		m_rigid_mesh[2].MeshConvert();
+		m_rigid_mesh[3].MeshConvert();
+		m_rigid_mesh[4].MeshConvert();
+		m_rigid_mesh[5].MeshConvert();
         /* FIXME: this object never cleans up */
         m_ready = true;
     }
@@ -259,14 +265,14 @@ void BtPhysTest::TickDraw(float seconds)
 		if (i == 0)
 			m_ground_mesh.Render(m);
 		else 
-			m_rigid_mesh[i % 3].Render(m);
+			m_rigid_mesh[i % 6].Render(m);
 	}
 	if (BarycenterFactor > .0f)
 	{
 		BarycenterLocation /= BarycenterFactor;
 
 		m_camera->SetTarget(BarycenterLocation);
-		m_camera->SetPosition(BarycenterLocation + vec3(-15.0f, 8.0f, .0f));
+		m_camera->SetPosition(BarycenterLocation + vec3(-20.0f, 8.0f, .0f));
 	}
 }
 
@@ -307,7 +313,7 @@ BtPhysTest::~BtPhysTest()
 
 int main(int argc, char **argv)
 {
-    Application app("BtPhysTest", ivec2(800, 600), 60.0f);
+    Application app("BtPhysTest", ivec2(1280, 720), 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX
     _chdir("..");

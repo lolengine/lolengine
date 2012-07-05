@@ -24,7 +24,7 @@ private:
     Camera*								m_camera;
     bool								m_ready;
 	EasyMesh							m_ground_mesh;
-	EasyMesh							m_rigid_mesh[3];
+	EasyMesh							m_rigid_mesh[6];
 
 	//Bullet Physics Datas
 	enum
