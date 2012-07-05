@@ -16,7 +16,7 @@
     <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-mingw32;$(SdlMixerDir)\lib\i686-w64-mingw32</SdlLibs>
     <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-w64-mingw32</SdlLibs>
     <SdlDeps Condition="'$(Platform)'=='Win32'">SDL.lib;SDLmain.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
-    <SdlDeps Condition="'$(Platform)'=='x64'">libSDL.a;libSDLmain.a</SdlDeps>
+    <SdlDeps Condition="'$(Platform)'=='x64'">libSDL.a;libSDLmain.a;winmm.lib;dxguid.lib</SdlDeps>
     <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
 
     <!-- BulletPhysics -->
