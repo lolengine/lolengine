@@ -208,7 +208,9 @@ void BtPhysTest::TickGame(float seconds)
 	///step the simulation
 	if (m_bt_world)
 	{
-		m_bt_world->stepSimulation(seconds);
+		int steps = (int)(seconds / 0.005f);
+		for (int i = 0; i < steps; i++)
+			m_bt_world->stepSimulation(seconds / steps);
 		//optional but useful: debug drawing
 		//m_bt_world->debugDrawWorld();
 	}
