@@ -1,0 +1,36 @@
+-- GLSL.Vert --
+
+#version 120
+
+void main()
+{
+    gl_Position = gl_Vertex;
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+}
+
+-- GLSL.Frag --
+
+#version 120
+
+uniform sampler2D texture;
+
+void main(void)
+{
+    gl_FragColor = vec4(texture2D(texture, gl_TexCoord[0].xy).xyz, 1.0);
+}
+
+-- HLSL.Vert --
+
+void main(float2 in_Position : POSITION,
+          out float4 out_Position : POSITION)
+{
+    out_Position = float4(in_Position, 0.0, 1.0);
+}
+
+-- HLSL.Frag --
+
+void main(out float4 out_FragColor : COLOR)
+{
+    out_FragColor = float4(0.7, 0.2, 0.5, 1.0);
+}
+
