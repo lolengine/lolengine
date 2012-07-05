@@ -314,7 +314,12 @@ void *TickerData::DiskThreadMain(void * /* p */)
 {
 #if defined __CELLOS_LV2__
     /* FIXME: temporary hack to avoid crashes */
-    for (;;);
+    Timer t;
+    for (;;)
+    {
+        t.Get();
+        t.Wait(0.001f);
+    }
 #endif
     return NULL;
 }

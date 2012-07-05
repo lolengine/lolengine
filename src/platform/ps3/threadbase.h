@@ -126,9 +126,12 @@ class ThreadBase
 public:
     ThreadBase(void *(*fn)(void *), void *data)
     {
+        size_t stack_size = 128 * 1024;
+        char const *thread_name = "new thread";
+
         /* FIXME: choose priority more wisely */
         sys_ppu_thread_create(&m_thread, (void (*)(uint64_t))fn,
-                              (uint64_t)data, 1000, 0, 0, "new thread");
+                              (uint64_t)data, 1000, stack_size, 0, thread_name);
     }
 
     virtual ~ThreadBase()
