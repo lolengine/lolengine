@@ -26,7 +26,11 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Release'">
+      <!-- For Microsoft tools -->
       <Optimization>MaxSpeed</Optimization>
+      <!-- For PlayStation tools -->
+      <OptimizationLevel>Level2</OptimizationLevel>
+
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
