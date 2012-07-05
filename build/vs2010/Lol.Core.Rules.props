@@ -20,6 +20,7 @@
       <BufferSecurityCheck Condition="'$(Platform)'=='Xbox 360'">false</BufferSecurityCheck>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Debug'">
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -34,7 +35,6 @@
     </ClCompile>
 
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <!-- FIXME: not for the static library! -->
       <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(GdiDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
@@ -50,6 +50,9 @@
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='PS3'">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(Ps3Deps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link Condition="'$(Configuration)'=='Debug'">
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Link Condition="'$(Configuration)'=='Release'">
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
