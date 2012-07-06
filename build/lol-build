@@ -84,7 +84,7 @@ configure()
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.15/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
@@ -109,7 +109,7 @@ configure()
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.14/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.15/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
@@ -141,7 +141,7 @@ configure()
             PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
             ;;
         win*-i386|win*-amd64)
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.14/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.15/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-image-1.2.10/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-mixer-1.2.11/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/contrib/glew-1.7.0/include/GL -DGLEW_STATIC"
