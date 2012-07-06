@@ -33,7 +33,7 @@ protected:
     virtual void TickGame(float seconds);
 
 private:
-    Ps3InputData *data;
+    Ps3InputData *m_data;
 };
 
 } /* namespace lol */
