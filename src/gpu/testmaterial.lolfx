@@ -32,69 +32,68 @@ technique Foo
         alphaop[1] = disable;
 
         // Ye old way
-        vertexshader = ...
-        geometryshader = ...
-        pixelshader = ...
+        vertexshader = blah;
+        geometryshader = blah;
+        pixelshader = blah;
 
         // Ogre crap
 
         // The D3D11 way, but we must make it work with GLSL too
-        SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-        SetDepthStencilState(DisableDepth, 0);
-        SetRasterizerState()
+        //SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        //SetDepthStencilState(DisableDepth, 0);
+        //SetRasterizerState()
 
-        SetVertexShader
-        SetDomainShader
-        SetHullShader
-        SetGeometryShader
-        SetPixelShader
-        SetComputeShader /* WTF? */
+        //SetVertexShader
+        //SetDomainShader
+        //SetHullShader
+        //SetGeometryShader
+        //SetPixelShader
+        //SetComputeShader /* WTF? */
 
-        SetRenderTargets(RTV0, DSV);
-        SetRenderTargets(RTV0, RTV1, DSV);
-        ...
-        SetRenderTargets(RTV0, RTV1, RTV2, RTV3, RTV4, RTV5, RTV6, RTV7, DSV);
+        //SetRenderTargets(RTV0, DSV);
+        //SetRenderTargets(RTV0, RTV1, DSV);
+        //...
+        //SetRenderTargets(RTV0, RTV1, RTV2, RTV3, RTV4, RTV5, RTV6, RTV7, DSV);
     }
 
     pass p1
     {
         // Autres vertex/pixel shaders avec éventuellement des
         // dépendances sur le résultat des passes précédentes
-        vertexshader = ...
+        vertexshader = something_else;
     }
 }
 
 /* Defines GLSL shader "Prout" */
 
-#section GLSL.Prout
+#pragma lolfx vertexshader(lang=GLSL 1.20, name=prout)
 
 #version 120
 
 /* Valid with my GLSL compiler */
-#pragma lolfx semantic(in_Vertex, POSITION)
-#pragma lolfx semantic(in_Normal, NORMAL)
-#pragma lolfx semantic(in_Color, COLOR)
+//#pragma lolfx semantic(in_Vertex, POSITION)
+//#pragma lolfx semantic(in_Normal, NORMAL)
+//#pragma lolfx semantic(in_Color, COLOR)
 attribute vec3 in_Vertex;
 attribute vec3 in_Normal;
 attribute vec4 in_Color;
 
 void main(void)
 {
-    ...
+    /* ... */
 }
 
 /* Defines GLSL shader "Zob" */
-
-#section GLSL.Zob
+#pragma lolfx vertexshader(lang=GLSL 1.20, name=zob)
 
 void main(void)
 {
-    shit fuck fuck shit;
+    shit(); fuck(); fuck(); shit();
 }
 
-/* Defines HLSL shader "Prout" */
+/* Defines HLSL vertex shader "Prout" */
 
-#section HLSL.Prout
+#pragma lolfx vertexshader(lang=HLSL, name=prout)
 
 void main(void)
 {

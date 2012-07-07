@@ -1,14 +1,33 @@
 %{
-#include <cstdio>
-#include <iostream>
+//
+// Lol Engine
+//
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
+//
 
-extern "C" int yylex();
-extern "C" int yyparse();
-extern "C" FILE *yyin;
-extern "C" int yylineno;
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-void yyerror(const char *s);
+#include "core.h"
+
+#include <string>
+
 %}
+
+%require "2.3"
+%debug
+%defines
+%skeleton "lalr1.cc"
+%name-prefix="lol"
+%define parser_class_name "LolFxParser"
+%locations
+%parse-param { class LolFxCompiler& mc }
+%error-verbose
 
 /* The classic Bison union trick */
 %union
@@ -19,7 +38,7 @@ void yyerror(const char *s);
     char *sval;
 }
 
-%type <sval> lolfx_shader_name
+/* %type <sval> lolfx_shader_name */
 
  /*
   * GLSL and HLSL generic tokens
@@ -180,6 +199,8 @@ void yyerror(const char *s);
 %token PREPROCESSOR_LINE PREPROCESSOR_PRAGMA PREPROCESSOR_UNDEF
 %token PREPROCESSOR_REGION
 
+%token PRAGMA_LOLFX
+
  /*
   * HLSL reserved keywords
   */
@@ -207,10 +228,24 @@ void yyerror(const char *s);
 %token <sval> STRING NAME
 
  /*
+  * Special tokens
+  */
+
+%token T_END 0
+%token T_ERROR
+
+ /*
   * Our entry point
   */
 
 %start lolfx_file
+
+%{
+#include "gpu/lolfx-compiler.h"
+
+#undef yylex
+#define yylex mc.m_lexer->lex
+%}
 
 %%
 
@@ -691,7 +726,7 @@ lolfx_section:
   */
 
 lolfx_technique:
-    HT_TECHNIQUE IDENTIFIER '{' pass_list '}' { std::cout << "New tech" << std::endl; }
+    HT_TECHNIQUE IDENTIFIER '{' pass_list '}' { std::cout << "New tech " << $2 << std::endl; }
     ;
 
  /*
@@ -704,7 +739,7 @@ pass_list:
     ;
 
 pass:
-    HT_PASS IDENTIFIER '{' pass_stmt_list '}' { std::cout << "New pass" << std::endl; }
+    HT_PASS IDENTIFIER '{' pass_stmt_list '}' { std::cout << "New pass " << $2 << std::endl; }
     ;
 
 pass_stmt_list:
@@ -736,17 +771,26 @@ pass_stmt:
   */
 
 lolfx_shader:
-    lolfx_shader_region glsl_translation_unit
-  | lolfx_shader_region
+    lolfx_shader_declaration glsl_translation_unit
     ;
 
-lolfx_shader_region:
-    PREPROCESSOR_REGION lolfx_shader_name { std::cout << "new shader " << $2 << std::endl; }
+lolfx_shader_declaration:
+    PRAGMA_LOLFX lolfx_shader_type '(' lolfx_shader_description_list ')' { std::cout << "new shader" << std::endl; }
     ;
 
-lolfx_shader_name:
-    IDENTIFIER                            { $$ = $1; }
-  | lolfx_shader_name '.' IDENTIFIER      { $$ = $3; } /* FIXME: concatenate */
+lolfx_shader_type:
+    HT_VERTEXSHADER
+  | HT_PIXELSHADER
+    ;
+
+lolfx_shader_description_list:
+    lolfx_shader_description ',' lolfx_shader_description
+  | lolfx_shader_description
+    ;
+
+lolfx_shader_description:
+    IDENTIFIER '=' IDENTIFIER FLOATCONSTANT
+  | IDENTIFIER '=' IDENTIFIER
     ;
 
  /*
@@ -1308,21 +1352,9 @@ glsl_function_definition:
 
 %%
 
-main()
+void lol::LolFxParser::error(const LolFxParser::location_type& l,
+                             const std::string& m)
 {
-    yyin = stdin;//fopen("test.lolfx", "r");
-    do
-    {
-        yyparse();
-    }
-    while (!feof(yyin));
-
-    fclose(yyin);
-}
-
-void yyerror(const char *s)
-{
-    std::cout << "Parse error line " << yylineno << ": " << s << std::endl;
-    exit(-1);
+    mc.Error(l, m);
 }
 

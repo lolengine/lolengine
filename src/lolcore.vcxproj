@@ -249,8 +249,11 @@
     <ClCompile Include="forge.cpp" />
     <ClCompile Include="generated\easymesh-parser.cpp" />
     <ClCompile Include="generated\easymesh-scanner.cpp" />
+    <ClCompile Include="generated\lolfx-parser.cpp" />
+    <ClCompile Include="generated\lolfx-scanner.cpp" />
     <ClCompile Include="gpu\framebuffer.cpp" />
     <ClCompile Include="gpu\indexbuffer.cpp" />
+    <ClCompile Include="gpu\lolfx-compiler.cpp" />
     <ClCompile Include="gpu\shader.cpp" />
     <ClCompile Include="gpu\vertexbuffer.cpp" />
     <ClCompile Include="gradient.cpp" />
@@ -561,10 +564,12 @@
     <ClInclude Include="forge.h" />
     <ClInclude Include="generated\easymesh-parser.h" />
     <ClInclude Include="generated\location.hh" />
+    <ClInclude Include="generated\lolfx-parser.h" />
     <ClInclude Include="generated\position.hh" />
     <ClInclude Include="generated\stack.hh" />
     <ClInclude Include="gpu\framebuffer.h" />
     <ClInclude Include="gpu\indexbuffer.h" />
+    <ClInclude Include="gpu\lolfx-compiler.h" />
     <ClInclude Include="gpu\shader.h" />
     <ClInclude Include="gpu\vertexbuffer.h" />
     <ClInclude Include="gradient.h" />
@@ -621,6 +626,8 @@
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y" />
     <None Include="easymesh\easymesh-scanner.l" />
+    <None Include="gpu\lolfx-parser.y" />
+    <None Include="gpu\lolfx-scanner.l" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
