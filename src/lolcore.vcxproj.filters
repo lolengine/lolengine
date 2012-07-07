@@ -241,6 +241,12 @@
     <ClCompile Include="generated\easymesh-scanner.cpp">
       <Filter>src\generated</Filter>
     </ClCompile>
+    <ClCompile Include="generated\lolfx-parser.cpp">
+      <Filter>src\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="generated\lolfx-scanner.cpp">
+      <Filter>src\generated</Filter>
+    </ClCompile>
     <ClCompile Include="platform\ps3\ps3app.cpp">
       <Filter>src\platform\ps3</Filter>
     </ClCompile>

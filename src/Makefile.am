@@ -48,9 +48,14 @@ liblol_a_SOURCES = \
     gpu/indexbuffer.cpp gpu/indexbuffer.h \
     gpu/vertexbuffer.cpp gpu/vertexbuffer.h \
     gpu/framebuffer.cpp gpu/framebuffer.h \
+    \
     gpu/defaultmaterial.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
+    \
+    gpu/lolfx-compiler.cpp gpu/lolfx-compiler.h \
+    generated/lolfx-parser.cpp generated/lolfx-parser.h \
+    generated/lolfx-scanner.cpp \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \
@@ -74,10 +79,14 @@ generated: .FORCE
 	flex -o generated/easymesh-scanner.cpp easymesh/easymesh-scanner.l
 	bison -o generated/easymesh-parser.cpp --defines=generated/easymesh-parser.h \
 	      -d -b generated/easymesh easymesh/easymesh-parser.y
+	flex -o generated/lolfx-scanner.cpp gpu/lolfx-scanner.l
+	bison -o generated/lolfx-parser.cpp --defines=generated/lolfx-parser.h \
+	      -d -b generated/lolfx gpu/lolfx-parser.y
 .FORCE:
 endif
 
-EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
+EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
+             gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
 sdl_sources = \
     image/codec/sdl-image.cpp \
