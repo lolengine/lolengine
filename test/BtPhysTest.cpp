@@ -71,7 +71,8 @@ BtPhysTest::BtPhysTest(bool editor)
 
 	m_simulation = new Simulation();
 	m_simulation->InitContext();
-	m_simulation->SetGravity(vec3(.0f, -10.0f, .0f));
+	vec3 NewGravity = vec3(.0f, -10.0f, .0f);
+	m_simulation->SetGravity(NewGravity);
 
 	m_ground_object = new PhysicsObject(m_simulation);
 	Ticker::Ref(m_ground_object);
