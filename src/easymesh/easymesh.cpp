@@ -304,7 +304,10 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
     vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
 
     /* Construct normal */
-    n = p2;
+	if (r2 != .0f)
+		n = vec3(r2, h * .5f, 0.f);
+	else
+		n = vec3(r1, h * .5f, 0.f);
     n.y = r1 * (r1 - r2) / h;
     if (!smooth)
         n = mat3::rotate(180.0f / nsides, 0.f, 1.f, 0.f) * n;

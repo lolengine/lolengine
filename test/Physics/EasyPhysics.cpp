@@ -73,6 +73,12 @@ void EasyPhysics::SetShapeToSphere(float radius)
 	SetShapeTo(new btSphereShape(radius * LOL2BT_UNIT * LOL2BT_SIZE));
 }
 
+void EasyPhysics::SetShapeToCone(float radius, float height)
+{
+	SetShapeTo(new btConeShape(	radius * LOL2BT_UNIT,
+								height * LOL2BT_UNIT));
+}
+
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
