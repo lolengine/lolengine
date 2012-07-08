@@ -68,10 +68,10 @@ void EasyPhysics::SetShapeToBox(lol::vec3& box_size)
 	SetShapeTo(new btBoxShape(LOL2BT_VEC3(new_box_size)));
 }
 
-//void EasyPhysics::SetShapeToSphere(lol::vec3& box_size)
-//{
-//	SetShapeTo(new btBoxShape(LOL2BT_VEC3(box_size * LOL2BT_UNIT * LOL2BT_SIZE)));
-//}
+void EasyPhysics::SetShapeToSphere(float radius)
+{
+	SetShapeTo(new btSphereShape(radius * LOL2BT_UNIT * LOL2BT_SIZE));
+}
 
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup

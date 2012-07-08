@@ -36,6 +36,7 @@ public:
 	EasyPhysics();
 
 	void SetShapeToBox(lol::vec3& box_size);
+	void SetShapeToSphere(float radius);
 	void SetBaseTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
 	void SetMass(float mass);
 	void InitBodyToRigid();
