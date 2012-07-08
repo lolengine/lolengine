@@ -2,13 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="BtPhysTest.h" />
+    <ClInclude Include="Physics\EasyPhysics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\LolPhysics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\LolBtPhysicsIntegration.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BtPhysTest.cpp" />
+    <ClCompile Include="Physics\EasyPhysics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="generated">
       <UniqueIdentifier>{4fc7662b-b17a-49b9-acd1-0cf767183b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{ccecd634-9321-4c49-9471-e9da50dda6d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

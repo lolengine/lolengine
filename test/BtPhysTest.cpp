@@ -40,7 +40,16 @@
 
 using namespace lol;
 
+#ifndef HAVE_PHYS_USE_BULLET
+#define HAVE_PHYS_USE_BULLET
+#endif /* HAVE_PHYS_USE_BULLET */
+
+#include "Physics\LolPhysics.h"
+#include "Physics\EasyPhysics.h"
+#include "PhysicObject.h"
 #include "BtPhysTest.h"
+
+using namespace lol::phys;
 
 #define CUBE_HALF_EXTENTS .5f
 #define EXTRA_HEIGHT 1.f
@@ -60,6 +69,24 @@ BtPhysTest::BtPhysTest(bool editor)
 
     m_ready = false;
 
+	m_simulation = new Simulation();
+	m_simulation->InitContext();
+	m_simulation->SetGravity(vec3(.0f, -10.0f, .0f));
+
+	m_ground_object = new PhysicsObject(m_simulation);
+	Ticker::Ref(m_ground_object);
+
+	for (int x=0; x < 10; x++)
+	{
+		for (int y=0; y < 10; y++)
+		{
+			PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 10.f, vec3(0.f, 20.f, -20.0f) + vec3(.0f, 4.f * (float)y, 4.f * (float)x));
+			m_physobj_list << new_physobj;
+			Ticker::Ref(new_physobj);
+		}
+	}
+
+#if 0
 	//init Physics
 	{
 		m_bt_ccd_mode = USE_CCD;
@@ -69,7 +96,10 @@ BtPhysTest::BtPhysTest(bool editor)
 
 		//use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 		m_bt_dispatcher = new btCollisionDispatcher(m_bt_collision_config);
-		m_bt_dispatcher->registerCollisionCreateFunc(BOX_SHAPE_PROXYTYPE,BOX_SHAPE_PROXYTYPE,m_bt_collision_config->getCollisionAlgorithmCreateFunc(CONVEX_SHAPE_PROXYTYPE,CONVEX_SHAPE_PROXYTYPE));
+		m_bt_dispatcher->registerCollisionCreateFunc(BOX_SHAPE_PROXYTYPE,
+													BOX_SHAPE_PROXYTYPE,
+													m_bt_collision_config->getCollisionAlgorithmCreateFunc(CONVEX_SHAPE_PROXYTYPE,
+																											CONVEX_SHAPE_PROXYTYPE));
 
 		m_bt_broadphase = new btDbvtBroadphase();
 
@@ -88,7 +118,7 @@ BtPhysTest::BtPhysTest(bool editor)
 		btBoxShape* box = new btBoxShape(btVector3(btScalar(110.),btScalar(1.),btScalar(110.)));
 		btCollisionShape* groundShape = box;
 		m_bt_collision_shapes << groundShape;
-        m_ground_mesh.Compile("[sc#ddd afcb110 1 110 -1]");
+        m_ground_mesh.Compile("[sc#ddd afcb220 2 220 -1]");
 
 		//m_bt_collision_shapes << new btCylinderShape(btVector3(.5f,.5f,.5f));
 
@@ -151,7 +181,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
 				//stack them
 				int colsize = 10;
-				int row = (i*CUBE_HALF_EXTENTS*2)/(colsize*2*CUBE_HALF_EXTENTS);
+				int row = int(((float)i*CUBE_HALF_EXTENTS*2.0f)/((float)colsize*2.0f*CUBE_HALF_EXTENTS));
 				int row2 = row;
 				int col = (i)%(colsize)-colsize/2;
 
@@ -199,6 +229,7 @@ BtPhysTest::BtPhysTest(bool editor)
 			}
 		}
 	}
+#endif
 }
 
 void BtPhysTest::TickGame(float seconds)
@@ -208,15 +239,22 @@ void BtPhysTest::TickGame(float seconds)
     if (Input::GetButtonState(27 /*SDLK_ESCAPE*/))
         Ticker::Shutdown();
 
+	m_simulation->TickContext(seconds);
+
+	m_camera->SetTarget(vec3(.0f));
+	m_camera->SetPosition(vec3(-30.0f, 10.0f, .0f));
+
+#if 0
 	///step the simulation
 	if (m_bt_world)
 	{
-		int steps = (int)(seconds / 0.005f);
-		for (int i = 0; i < steps; i++)
-			m_bt_world->stepSimulation(seconds / steps);
+		//int steps = (int)(seconds / 0.005f);
+		//for (int i = 0; i < steps; i++)
+			m_bt_world->stepSimulation(seconds /*/ steps*/);
 		//optional but useful: debug drawing
 		//m_bt_world->debugDrawWorld();
 	}
+#endif
 }
 
 void BtPhysTest::TickDraw(float seconds)
@@ -225,6 +263,7 @@ void BtPhysTest::TickDraw(float seconds)
 
     if (!m_ready)
     {
+#if 0
 		m_ground_mesh.MeshConvert();
 		m_rigid_mesh[0].MeshConvert();
 		m_rigid_mesh[1].MeshConvert();
@@ -232,12 +271,14 @@ void BtPhysTest::TickDraw(float seconds)
 		m_rigid_mesh[3].MeshConvert();
 		m_rigid_mesh[4].MeshConvert();
 		m_rigid_mesh[5].MeshConvert();
+#endif
         /* FIXME: this object never cleans up */
         m_ready = true;
     }
 
     Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
 
+#if 0
 	vec3 BarycenterLocation = vec3(.0f);
 	float BarycenterFactor = 0.0f;
 	for(int i=0;i<gNumObjects;i++)
@@ -274,12 +315,14 @@ void BtPhysTest::TickDraw(float seconds)
 		m_camera->SetTarget(BarycenterLocation);
 		m_camera->SetPosition(BarycenterLocation + vec3(-20.0f, 8.0f, .0f));
 	}
+#endif
 }
 
 BtPhysTest::~BtPhysTest()
 {
 	Ticker::Unref(m_camera);
 
+#if 0
 	//Exit Physics
 	{
 		//cleanup in the reverse order of creation/initialization
@@ -309,6 +352,7 @@ BtPhysTest::~BtPhysTest()
 		delete m_bt_dispatcher;
 		delete m_bt_collision_config;
 	}
+#endif
 }
 
 int main(int argc, char **argv)

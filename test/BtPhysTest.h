@@ -23,6 +23,12 @@ protected:
 private:
     Camera*								m_camera;
     bool								m_ready;
+
+	lol::phys::Simulation*				m_simulation;
+	Array<PhysicsObject*>				m_physobj_list;
+	PhysicsObject*						m_ground_object;
+
+#if 0
 	EasyMesh							m_ground_mesh;
 	EasyMesh							m_rigid_mesh[6];
 
@@ -40,6 +46,7 @@ private:
 	btDiscreteDynamicsWorld*				m_bt_world;
 	Array<btCollisionShape*>				m_bt_collision_shapes;
 	Array<btCollisionShape*>				m_bt_dynamic_shapes;
+#endif
 };
 
 #endif // __BTPHYSTEST_H__
