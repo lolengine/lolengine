@@ -349,33 +349,71 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
 
 void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
 {
-    ndivisions *= 2;
-
     int ibase = m_indices.Count();
-    int vbase = m_vert.Count();
 
-    vec3 d = size * 0.5f;
-    float const pi = acos(-1.0f);
+    Array<vec3> vertices;
 
-    Array<vec2> table;
-    for (int i = 0; i <= ndivisions; i++)
-        table.Push(vec2(sin(pi * 2 / ndivisions * i) + 1e-5f,
-                        cos(pi * 2 / ndivisions * i) + 1e-5f));
+    float phi = 0.5f + 0.5f * sqrt(5.f);
+    for (int i = 0; i < 4; i++)
+    {
+        float x = (i & 1) ? 0.5f : -0.5f;
+        float y = (i & 2) ? phi * 0.5f : phi * -0.5f;
+        vertices << vec3(x, y, 0.f);
+        vertices << vec3(0.f, x, y);
+        vertices << vec3(y, 0.f, x);
+    }
 
-    for (int j = 0; j <= ndivisions / 2; j++)
-        for (int i = 0; i < ndivisions; i++)
+    static int const trilist[] =
+    {
+        0, 1, 2, 2, 4, 6, 3, 8, 1, 9, 4, 8,
+        7, 0, 5, 7, 11, 3, 10, 5, 6, 10, 9, 11,
+
+        0, 3, 1, 7, 3, 0, 1, 4, 2, 8, 4, 1,
+        2, 5, 0, 6, 5, 2, 6, 9, 10, 4, 9, 6,
+        7, 10, 11, 5, 10, 7, 8, 11, 9, 3, 11, 8
+    };
+
+    for (unsigned i = 0; i < sizeof(trilist) / sizeof(*trilist); i += 3)
+    {
+        vec3 const &p0 = vertices[trilist[i]];
+        vec3 const &p1 = vertices[trilist[i + 1]];
+        vec3 const &p2 = vertices[trilist[i + 2]];
+
+        vec3 const vx = 1.f / ndivisions * (p1 - p0);
+        vec3 const vy = 1.f / ndivisions * (p2 - p0);
+
+        int line = ndivisions + 1;
+
+        for (int v = 0, x = 0, y = 0; x < ndivisions + 1; v++)
         {
-            int j2 = j + 1;
-            int i2 = (i + 1) % ndivisions;
+            vec3 p = p0 + x * vx + y * vy;
 
-            AddVertex(d * vec3(table[i], 1.0f) * table[j].xxy);
-            AddVertex(d * vec3(table[i2], 1.0f) * table[j].xxy);
-            AddVertex(d * vec3(table[i2], 1.0f) * table[j2].xxy);
-            AddVertex(d * vec3(table[i], 1.0f) * table[j2].xxy);
+            /* Add zero, one or two triangles */
+            if (y < line - 1)
+            {
+                AddVertex(normalize(p) * size);
+                AddVertex(normalize(p + vx) * size);
+                AddVertex(normalize(p + vy) * size);
+                AppendTriangle(0, 2, 1, m_vert.Count() - 3);
+            }
+
+            if (y < line - 2)
+            {
+                AddVertex(normalize(p + vx) * size);
+                AddVertex(normalize(p + vx + vy) * size);
+                AddVertex(normalize(p + vy) * size);
+                AppendTriangle(0, 2, 1, m_vert.Count() - 3);
+            }
+
+            y++;
+            if (y == line)
+            {
+                x++;
+                y = 0;
+                line--;
+            }
         }
-
-    for (int i = vbase; i < m_vert.Count(); i += 4)
-        AppendQuad(0, 1, 2, 3, i);
+    }
 
     ComputeNormals(ibase, m_indices.Count() - ibase);
 }
