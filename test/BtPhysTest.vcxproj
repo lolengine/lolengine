@@ -36,9 +36,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtPhysTest.h" />
+    <ClInclude Include="PhysicObject.h" />
+    <ClInclude Include="Physics\EasyPhysics.h" />
+    <ClInclude Include="Physics\LolBtPhysicsIntegration.h" />
+    <ClInclude Include="Physics\LolPhysics.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BtPhysTest.cpp" />
+    <ClCompile Include="Physics\EasyPhysics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">
