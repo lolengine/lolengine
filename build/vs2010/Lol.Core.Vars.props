@@ -71,7 +71,7 @@
              libio_stub.a;libusbd_stub.a;libpadfilter.a</Ps3Deps>
 
     <!-- X360-specific -->
-    <XboxDefines></XboxDefines>
+    <XboxDefines>$(XboxDefines)</XboxDefines>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
