@@ -44,8 +44,8 @@ using namespace lol;
 #define HAVE_PHYS_USE_BULLET
 #endif /* HAVE_PHYS_USE_BULLET */
 
-#include "Physics\LolPhysics.h"
-#include "Physics\EasyPhysics.h"
+#include "Physics/LolPhysics.h"
+#include "Physics/EasyPhysics.h"
 #include "PhysicObject.h"
 #include "BtPhysTest.h"
 
