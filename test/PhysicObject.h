@@ -53,13 +53,23 @@ public:
 		MeshRand << "[sc#ada asph16 2 2 2]";
 		MeshRand << "[sc#aad asph16 2 2 2]";
 
+		int ConeLimit = MeshRand.Count();
+
+		MeshRand << "[sc#add scb#add ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#dad scb#dad ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#dda scb#dda ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#daa scb#daa ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#ada scb#ada ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#aad scb#aad ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
 
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
 		m_mesh.Compile(MeshRand[RandValue]);
 		vec3 BoxSize = vec3(2.0f);
-		if (RandValue >= SphereLimit)
+		if (RandValue >= SphereLimit && RandValue < ConeLimit)
 			m_physics.SetShapeToSphere(BoxSize.x);
+		else if (RandValue >= ConeLimit)
+			m_physics.SetShapeToCone(BoxSize.x, BoxSize.y);
 		else
 			m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(base_mass);
