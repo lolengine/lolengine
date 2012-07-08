@@ -44,11 +44,24 @@ public:
 		MeshRand << "[sc#ada afcb2 2 2 -.1]";
 		MeshRand << "[sc#aad afcb2 2 2 -.1]";
 
+		int SphereLimit = MeshRand.Count();
+
+		MeshRand << "[sc#add asph16 2 2 2]";
+		MeshRand << "[sc#dad asph16 2 2 2]";
+		MeshRand << "[sc#dda asph16 2 2 2]";
+		MeshRand << "[sc#daa asph16 2 2 2]";
+		MeshRand << "[sc#ada asph16 2 2 2]";
+		MeshRand << "[sc#aad asph16 2 2 2]";
+
+
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
 		m_mesh.Compile(MeshRand[RandValue]);
 		vec3 BoxSize = vec3(2.0f);
-		m_physics.SetShapeToBox(BoxSize);
+		if (RandValue >= SphereLimit)
+			m_physics.SetShapeToSphere(BoxSize.x);
+		else
+			m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(base_mass);
 		m_physics.SetBaseTransform(base_location);
 		m_physics.InitBodyToRigid();
