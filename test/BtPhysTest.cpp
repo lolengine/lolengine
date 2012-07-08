@@ -243,7 +243,7 @@ void BtPhysTest::TickGame(float seconds)
 	m_simulation->TickContext(seconds);
 
 	m_camera->SetTarget(vec3(.0f));
-	m_camera->SetPosition(vec3(-30.0f, 10.0f, .0f));
+	m_camera->SetPosition(vec3(-30.0f, 20.0f, .0f));
 
 #if 0
 	///step the simulation

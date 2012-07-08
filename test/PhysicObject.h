@@ -46,12 +46,12 @@ public:
 
 		int SphereLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add asph16 2 2 2]";
-		MeshRand << "[sc#dad asph16 2 2 2]";
-		MeshRand << "[sc#dda asph16 2 2 2]";
-		MeshRand << "[sc#daa asph16 2 2 2]";
-		MeshRand << "[sc#ada asph16 2 2 2]";
-		MeshRand << "[sc#aad asph16 2 2 2]";
+		MeshRand << "[sc#add asph6 2 2 2]";
+		MeshRand << "[sc#dad asph6 2 2 2]";
+		MeshRand << "[sc#dda asph6 2 2 2]";
+		MeshRand << "[sc#daa asph6 2 2 2]";
+		MeshRand << "[sc#ada asph6 2 2 2]";
+		MeshRand << "[sc#aad asph6 2 2 2]";
 
 		int ConeLimit = MeshRand.Count();
 
@@ -73,12 +73,12 @@ public:
 
 		int CapsLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#dad scb#dad asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#dda scb#dda asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#daa scb#daa asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#ada scb#ada asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#aad scb#aad asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#add scb#add asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#dad scb#dad asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#dda scb#dda asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#daa scb#daa asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#ada scb#ada asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#aad scb#aad asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
 
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
@@ -87,7 +87,7 @@ public:
 		if (RandValue < SphereLimit)
 			m_physics.SetShapeToBox(BoxSize);
 		else if (RandValue < ConeLimit)
-			m_physics.SetShapeToSphere(BoxSize.x);
+			m_physics.SetShapeToSphere(BoxSize.x * 2.f);
 		else if (RandValue < CylLimit)
 			m_physics.SetShapeToCone(BoxSize.x, BoxSize.y);
 		else if (RandValue < CapsLimit)
