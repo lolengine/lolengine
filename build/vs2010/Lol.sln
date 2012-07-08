@@ -51,6 +51,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_cube", "..\..\tutorial\0
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05_easymesh", "..\..\tutorial\05_easymesh.vcxproj", "{1C5B8702-290C-42DA-AA9E-671348F5B747}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_fractal", "..\..\tutorial\11_fractal.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}

@@ -72,6 +72,7 @@ test/xolotl/xolotl
 tools/make-font
 tutorial/01_triangle
 tutorial/02_cube
+tutorial/05_easymesh
 tutorial/08_fbo
 tutorial/11_fractal
 # Our data
