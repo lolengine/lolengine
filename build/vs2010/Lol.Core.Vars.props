@@ -23,6 +23,8 @@
     <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
     <BtPhysIncludes>$(BtPhysDir)\include;$(BtPhysDir)\include\bullet</BtPhysIncludes>
 	<Win32Defines>HAVE_PHYS_USE_BULLET;$(Win32Defines)</Win32Defines>
+	<Ps3Defines>HAVE_PHYS_USE_BULLET;$(Ps3Defines)</Ps3Defines>
+	<XboxDefines>HAVE_PHYS_USE_BULLET;$(XboxDefines)</XboxDefines>
 
 	  <!-- GTK+ & GtkGl -->
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
