@@ -71,6 +71,15 @@ public:
 		MeshRand << "[sc#ada scb#ada ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
 		MeshRand << "[sc#aad scb#aad ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
 
+		int CapsLimit = MeshRand.Count();
+
+		MeshRand << "[sc#add scb#add asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#dad scb#dad asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#dda scb#dda asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#daa scb#daa asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#ada scb#ada asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#aad scb#aad asph16 2 2 2 ty-1 my ac16 2 1 1 0 0]";
+
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
 		m_mesh.Compile(MeshRand[RandValue]);
@@ -81,8 +90,10 @@ public:
 			m_physics.SetShapeToSphere(BoxSize.x);
 		else if (RandValue < CylLimit)
 			m_physics.SetShapeToCone(BoxSize.x, BoxSize.y);
-		else
+		else if (RandValue < CapsLimit)
 			m_physics.SetShapeToCylinder(BoxSize);
+		else
+			m_physics.SetShapeToCapsule(BoxSize.x, BoxSize.y);
 
 		m_physics.SetMass(base_mass);
 		m_physics.SetBaseTransform(base_location);

@@ -93,6 +93,12 @@ void EasyPhysics::SetShapeToCylinder(lol::vec3& cyl_size)
 	SetShapeTo(new btCylinderShape(LOL2BT_VEC3(new_cyl_size)));
 }
 
+void EasyPhysics::SetShapeToCapsule(float radius, float height)
+{
+	SetShapeTo(new btCapsuleShape(	radius * LOL2BT_UNIT * LOL2BT_SIZE,
+									height * LOL2BT_UNIT * LOL2BT_SIZE));
+}
+
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
