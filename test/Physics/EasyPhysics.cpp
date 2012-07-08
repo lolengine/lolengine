@@ -40,6 +40,13 @@ EasyPhysics::EasyPhysics() :
 {
 }
 
+EasyPhysics::~EasyPhysics()
+{
+	delete m_collision_object;
+	delete m_collision_shape;
+	delete m_motion_state;
+}
+
 //-------------------------------------------------------------------------
 //Set Shape functions
 //--
@@ -77,6 +84,13 @@ void EasyPhysics::SetShapeToCone(float radius, float height)
 {
 	SetShapeTo(new btConeShape(	radius * LOL2BT_UNIT,
 								height * LOL2BT_UNIT));
+}
+
+void EasyPhysics::SetShapeToCylinder(lol::vec3& cyl_size)
+{
+	vec3 new_cyl_size = cyl_size * LOL2BT_UNIT;
+	new_cyl_size.y *= LOL2BT_SIZE;
+	SetShapeTo(new btCylinderShape(LOL2BT_VEC3(new_cyl_size)));
 }
 
 //-------------------------------------------------------------------------
