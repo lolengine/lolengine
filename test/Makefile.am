@@ -41,8 +41,11 @@ quad_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
 quad_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 quad_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h
-btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet
+btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
+    Physics/EasyPhysics.cpp Physics/EasyPhysics.h \
+    Physics/LolBtPhysicsIntegration.h Physics/LolPhysics.h
+btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet \
+    -DHAVE_PHYS_USE_BULLET
 btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 btphystest_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
