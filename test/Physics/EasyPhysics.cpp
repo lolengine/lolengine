@@ -64,8 +64,14 @@ void EasyPhysics::SetShapeTo(btCollisionShape* collision_shape)
 //Box Shape support
 void EasyPhysics::SetShapeToBox(lol::vec3& box_size)
 {
-	SetShapeTo(new btBoxShape(LOL2BT_VEC3(box_size * LOL2BT_UNIT * LOL2BT_SIZE)));
+	vec3 new_box_size = box_size * LOL2BT_UNIT * LOL2BT_SIZE;
+	SetShapeTo(new btBoxShape(LOL2BT_VEC3(new_box_size)));
 }
+
+//void EasyPhysics::SetShapeToSphere(lol::vec3& box_size)
+//{
+//	SetShapeTo(new btBoxShape(LOL2BT_VEC3(box_size * LOL2BT_UNIT * LOL2BT_SIZE)));
+//}
 
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup
