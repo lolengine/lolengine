@@ -12,8 +12,8 @@
 #define __PHYSICOBJECT_H__
 
 #include "core.h"
-#include "easymesh\easymesh.h"
-#include "Physics\EasyPhysics.h"
+#include "easymesh/easymesh.h"
+#include "Physics/EasyPhysics.h"
 
 using namespace lol;
 using namespace lol::phys;
