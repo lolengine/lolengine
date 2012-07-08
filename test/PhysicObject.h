@@ -21,19 +21,20 @@ using namespace lol::phys;
 class PhysicsObject : public WorldEntity
 {
 public:
-	PhysicsObject(Simulation* new_sim)
-		: m_ready(false)
+	PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation)
+		: m_ready(false), m_should_render(true)
 	{
-		m_mesh.Compile("[sc#add afcb110 1 110 -.1]");
-		vec3 BoxSize = vec3(110.f, 1.f, 110.f);
+		m_mesh.Compile("[sc#add afcb60 1 60 -.1]");
+		vec3 BoxSize = vec3(60.f, 1.f, 60.f);
 		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(.0f);
+		m_physics.SetTransform(base_location, base_rotation);
 		m_physics.InitBodyToRigid();
 		m_physics.AddToSimulation(new_sim);
 	}
 
 	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location)
-		: m_ready(false)
+		: m_ready(false), m_should_render(true)
 	{
 		Array<char *> MeshRand;
 
@@ -96,9 +97,24 @@ public:
 			m_physics.SetShapeToCapsule(BoxSize.x, BoxSize.y);
 
 		m_physics.SetMass(base_mass);
-		m_physics.SetBaseTransform(base_location);
+		m_physics.SetTransform(base_location);
 		m_physics.InitBodyToRigid();
 		m_physics.AddToSimulation(new_sim);
+	}
+
+	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)))
+	{
+		m_physics.SetTransform(base_location, base_rotation);
+	}
+
+	lol::mat4 GetTransform()
+	{
+		return m_physics.GetTransform();
+	}
+
+	void SetRender(bool should_render)
+	{
+		m_should_render = should_render;
 	}
 
 	~PhysicsObject()
@@ -123,7 +139,8 @@ protected:
 			m_ready = true;
 		}
 
-		m_mesh.Render(m_physics.GetTransform());
+		if (m_should_render)
+			m_mesh.Render(m_physics.GetTransform());
 	}
 
 private:
@@ -132,6 +149,7 @@ private:
 	EasyPhysics		m_physics;
 
 	bool			m_ready;
+	bool			m_should_render;
 };
 
 #endif /* __PHYSICOBJECT_H__ */

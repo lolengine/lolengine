@@ -102,10 +102,18 @@ void EasyPhysics::SetShapeToCapsule(float radius, float height)
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
-void EasyPhysics::SetBaseTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
+void EasyPhysics::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
 	if (m_motion_state)
-		m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
+	{
+		if (m_mass != .0f)
+			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
+		else
+		{
+			m_rigid_body->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
+			m_motion_state->setWorldTransform(m_rigid_body->getWorldTransform());
+		}
+	}
 	else
 		m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
 }
@@ -113,7 +121,6 @@ void EasyPhysics::SetBaseTransform(const lol::vec3& base_location, const lol::qu
 //-------------------------------------------------------------------------
 //Mass related functions
 //--
-
 //Set Shape functions
 void EasyPhysics::SetMass(float mass)
 {
@@ -138,7 +145,7 @@ void EasyPhysics::InitBodyToRigid()
 
 	SetLocalInertia(m_mass);
 	if (!m_motion_state)
-		SetBaseTransform(vec3(.0f));
+		SetTransform(vec3(.0f));
 	btRigidBody::btRigidBodyConstructionInfo NewInfos(m_mass, m_motion_state, m_collision_shape, m_local_inertia);
 	m_rigid_body = new btRigidBody(NewInfos);
 	m_collision_object = m_rigid_body;

@@ -42,7 +42,7 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size);
 	void SetShapeToCapsule(float radius, float height);
 
-	void SetBaseTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
+	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
 	void SetMass(float mass);
 	void InitBodyToRigid();
 	void AddToSimulation(class Simulation* current_simulation);
@@ -72,7 +72,7 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size) { }
 	void SetShapeToCapsule(float radius, float height) { }
 
-	void SetBaseTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
+	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
 	void SetMass(float mass) { }
 	void InitBodyToRigid() { }
 	void AddToSimulation(class Simulation* current_simulation) { }

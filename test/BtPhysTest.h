@@ -26,7 +26,7 @@ private:
 
 	lol::phys::Simulation*				m_simulation;
 	Array<PhysicsObject*>				m_physobj_list;
-	PhysicsObject*						m_ground_object;
+	Array<PhysicsObject*>				m_ground_list;
 
 #if 0
 	EasyMesh							m_ground_mesh;
