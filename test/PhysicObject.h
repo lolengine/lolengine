@@ -25,13 +25,14 @@ public:
 		: m_ready(false)
 	{
 		m_mesh.Compile("[sc#add afcb110 1 110 -.1]");
-		m_physics.SetShapeToBox(vec3(110.f, 1.f, 110.f));
+		vec3 BoxSize = vec3(110.f, 1.f, 110.f);
+		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(.0f);
 		m_physics.InitBodyToRigid();
 		m_physics.AddToSimulation(new_sim);
 	}
 
-	PhysicsObject(Simulation* new_sim, float base_mass, vec3 &base_location)
+	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location)
 		: m_ready(false)
 	{
 		Array<char *> MeshRand;
@@ -46,7 +47,8 @@ public:
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
 		m_mesh.Compile(MeshRand[RandValue]);
-		m_physics.SetShapeToBox(vec3(2.0f));
+		vec3 BoxSize = vec3(2.0f);
+		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(base_mass);
 		m_physics.SetBaseTransform(base_location);
 		m_physics.InitBodyToRigid();
