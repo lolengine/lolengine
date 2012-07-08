@@ -194,6 +194,8 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         break;
     }
 #else
+    glFrontFace(GL_CCW);
+    glEnable(GL_CULL_FACE);
 #   if defined HAVE_GL_2X && !defined __APPLE__
     /* FIXME: this has nothing to do here! */
     glEnable(GL_ALPHA_TEST);
