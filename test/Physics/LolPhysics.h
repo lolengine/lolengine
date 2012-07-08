@@ -25,11 +25,11 @@ class Simulation
 {
 public:
 	Simulation() :
-		m_broadphase(NULL),
-		m_collision_configuration(NULL),
-		m_dispatcher(NULL),
-		m_solver(NULL),
-		m_dynamics_world(NULL)
+		m_broadphase(0),
+		m_collision_configuration(0),
+		m_dispatcher(0),
+		m_solver(0),
+		m_dynamics_world(0)
 	{
 	}
 	~Simulation()
