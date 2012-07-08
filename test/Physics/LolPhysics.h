@@ -32,7 +32,10 @@ public:
 		m_dynamics_world(NULL)
 	{
 	}
-	~Simulation() { }
+	~Simulation()
+	{
+		ExitContext();
+	}
 
 	char const *GetName() { return "<Simulation>"; }
 
@@ -72,11 +75,11 @@ public:
 
 	void ExitContext()
 	{
-		delete m_broadphase;
-		delete m_collision_configuration;
-		delete m_dispatcher;
-		delete m_solver;
 		delete m_dynamics_world;
+		delete m_solver;
+		delete m_dispatcher;
+		delete m_collision_configuration;
+		delete m_broadphase;
 	}
 
 	btDiscreteDynamicsWorld* GetWorld()

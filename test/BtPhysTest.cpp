@@ -322,6 +322,13 @@ void BtPhysTest::TickDraw(float seconds)
 BtPhysTest::~BtPhysTest()
 {
 	Ticker::Unref(m_camera);
+	Ticker::Unref(m_ground_object);
+	while (m_physobj_list.Count())
+	{
+		PhysicsObject* CurPop = m_physobj_list.Last();
+		m_physobj_list.Pop();
+		Ticker::Unref(CurPop);
+	}
 
 #if 0
 	//Exit Physics
