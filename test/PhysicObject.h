@@ -24,7 +24,7 @@ public:
 	PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation)
 		: m_ready(false), m_should_render(true)
 	{
-		m_mesh.Compile("[sc#add afcb60 1 60 -.1]");
+		m_mesh.Compile("[sc#ddd afcb60 1 60 -.1]");
 		vec3 BoxSize = vec3(60.f, 1.f, 60.f);
 		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(.0f);

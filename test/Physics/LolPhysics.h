@@ -56,6 +56,12 @@ public:
 		m_dynamics_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collision_configuration);
 	}
 
+	void SetContinuousDetection(bool ShouldUseCCD)
+	{
+		if (m_dynamics_world)
+			m_dynamics_world->getDispatchInfo().m_useContinuous = ShouldUseCCD;
+	}
+
 	void SetGravity(vec3 &NewGravity)
 	{
 		if (m_dynamics_world)
