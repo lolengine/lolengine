@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|PS3">
@@ -276,9 +276,7 @@
     <ClCompile Include="math\vector.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="platform\d3d9\d3d9input.cpp" />
-    <ClCompile Condition="'$(Platform)'=='PS3'" Include="platform\ps3\ps3app.cpp" />
     <ClCompile Include="platform\ps3\ps3app.cpp" />
-    <ClCompile Condition="'$(Platform)'=='PS3'" Include="platform\ps3\ps3input.cpp" />
     <ClCompile Include="platform\ps3\ps3input.cpp" />
     <ClCompile Include="platform\sdl\sdlapp.cpp" />
     <ClCompile Include="platform\sdl\sdlinput.cpp" />
@@ -593,9 +591,9 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="platform\d3d9\d3d9input.h" />
-    <ClInclude Condition="'$(Platform)'=='PS3'" Include="platform\ps3\ps3app.h" />
-    <ClInclude Condition="'$(Platform)'=='PS3'" Include="platform\ps3\ps3input.h" />
-    <ClInclude Condition="'$(Platform)'=='PS3'" Include="platform\ps3\threadbase.h" />
+    <ClInclude Include="platform\ps3\ps3app.h" />
+    <ClInclude Include="platform\ps3\ps3input.h" />
+    <ClInclude Include="platform\ps3\threadbase.h" />
     <ClInclude Include="platform\sdl\sdlapp.h" />
     <ClInclude Include="platform\sdl\sdlinput.h" />
     <ClInclude Include="platform\xbox\xboxapp.h" />
