@@ -22,11 +22,11 @@
     <!-- BulletPhysics -->
     <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
     <BtPhysIncludes>$(BtPhysDir)\include;$(BtPhysDir)\include\bullet</BtPhysIncludes>
-	<Win32Defines>HAVE_PHYS_USE_BULLET;$(Win32Defines)</Win32Defines>
-	<Ps3Defines>HAVE_PHYS_USE_BULLET;$(Ps3Defines)</Ps3Defines>
-	<XboxDefines>HAVE_PHYS_USE_BULLET;$(XboxDefines)</XboxDefines>
+    <Win32Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Win32Defines)</Win32Defines>
+    <Ps3Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Ps3Defines)</Ps3Defines>
+    <XboxDefines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(XboxDefines)</XboxDefines>
 
-	  <!-- GTK+ & GtkGl -->
+    <!-- GTK+ & GtkGl -->
     <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ContribDir)\gtkglarea-2.0.1</GtkGlDir>
     <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>

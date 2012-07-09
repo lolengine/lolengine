@@ -628,6 +628,9 @@
     <ClCompile Include="bullet\BulletCollision\Gimpact\gim_tri_collision.cpp">
       <Filter>bullet</Filter>
     </ClCompile>
+    <ClCompile Include="gpu\lolfx-compiler.cpp">
+      <Filter>src\gpu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -1566,6 +1569,21 @@
     <ClInclude Include="bullet\BulletMultiThreaded\vectormath2bullet.h">
       <Filter>bullet</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\lolfx-compiler.h">
+      <Filter>src\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\lolfx-parser.h">
+      <Filter>src\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\ps3app.h">
+      <Filter>src\platform\ps3</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\ps3input.h">
+      <Filter>src\platform\ps3</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ps3\threadbase.h">
+      <Filter>src\platform\ps3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">
@@ -1587,6 +1605,12 @@
     </None>
     <None Include="easymesh\easymesh-scanner.l">
       <Filter>src\easymesh</Filter>
+    </None>
+    <None Include="gpu\lolfx-scanner.l">
+      <Filter>src\gpu</Filter>
+    </None>
+    <None Include="gpu\lolfx-parser.y">
+      <Filter>src\gpu</Filter>
     </None>
   </ItemGroup>
 </Project>
