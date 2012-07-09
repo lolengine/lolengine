@@ -60,7 +60,7 @@ BtPhysTest::BtPhysTest(bool editor)
                           vec3(0.f, 0.f, 0.f),
                           vec3(0, 1, 0));
     m_camera->SetRotation(quat::fromeuler_xyz(0.f, 0.f, 0.f));
-    m_camera->SetPerspective(90.f, 1280.f, 960.f, .1f, 1000.f);
+    m_camera->SetPerspective(45.f, 1280.f, 960.f, .1f, 1000.f);
 	//m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
     Ticker::Ref(m_camera);
 
@@ -104,9 +104,9 @@ BtPhysTest::BtPhysTest(bool editor)
 		{
 			for (int z=0; z < 5; z++)
 			{
-				PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 10.f,
-					vec3(-20.f, 20.f, -20.f) +
-					vec3(4.f * (float)x, 4.f * (float)y, 4.f * (float)z));
+				PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
+					vec3(-20.f, 15.f, -20.f) +
+					vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
 				m_physobj_list << new_physobj;
 				Ticker::Ref(new_physobj);
 			}
