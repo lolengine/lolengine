@@ -66,11 +66,12 @@ void main(float3 in_Vertex : POSITION,
           uniform float4x4 in_ModelView,
           uniform float4x4 in_Proj,
           uniform float3x3 in_NormalMat,
-          uniform vec3 in_LightDir = normalize(float3(0.3, 0.3, 0.7))
           uniform float in_Damage,
           out float4 out_Position : POSITION,
           out float4 pass_Color : COLOR)
 {
+    float3 in_LightDir = normalize(float3(0.3, 0.3, 0.7));
+
     float3 specular_reflect = float3(0.8, 0.75, 0.4);
     float specular_power = 60.0;
     float ambient_mul = 0.5;
