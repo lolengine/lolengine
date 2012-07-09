@@ -32,9 +32,6 @@
 #   include <SDL_main.h>
 #endif
 
-#include <bullet/btBulletDynamicsCommon.h>
-#include <bullet/btBulletCollisionCommon.h>
-
 #include "core.h"
 #include "loldebug.h"
 
@@ -293,10 +290,9 @@ void BtPhysTest::TickGame(float seconds)
 		mat4 GroundMat = PhysObj->GetTransform();
 		vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
 		vec3 CenterToCam = m_camera->m_position - GroundBarycenter;
-		vec3 CamDir = m_camera->m_position - m_camera->GetTarget();
 
-		if (dot(normalize(CenterToGround), normalize(CenterToCam)) > .0f &&
-			dot(normalize(CenterToGround), normalize(CamDir)) > .0f)
+		if (dot(normalize(CenterToCam - CenterToGround),
+                normalize(CenterToGround)) > 0.f)
 			PhysObj->SetRender(false);
 		else
 			PhysObj->SetRender(true);
