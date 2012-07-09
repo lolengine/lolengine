@@ -129,7 +129,7 @@ void EasyPhysics::SetMass(float mass)
 	if (m_rigid_body)
 	{
 		SetLocalInertia(m_mass);
-		m_rigid_body->setMassProps(mass, LOL2BT_VEC3(m_local_inertia));
+		m_rigid_body->setMassProps(mass, m_local_inertia);
 	}
 }
 

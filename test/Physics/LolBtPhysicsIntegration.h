@@ -26,7 +26,7 @@ namespace lol
 #define LOL2BT_SIZE				0.5f
 #define BT2LOL_SIZE				2.0f
 
-#define LOL2BT_VEC3(ELEMENT)	(*(btVector3*)(&(ELEMENT)))
+#define LOL2BT_VEC3(ELEMENT)	btVector3((ELEMENT).x, (ELEMENT).y, (ELEMENT).z)
 #define BT2LOL_VEC3(ELEMENT)	(*(lol::vec3*)(&(ELEMENT)))
 
 #define LOL2BT_QUAT(ELEMENT)	btQuaternion((ELEMENT).x, (ELEMENT).y, (ELEMENT).z, (ELEMENT).w)
