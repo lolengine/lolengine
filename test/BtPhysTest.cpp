@@ -73,23 +73,26 @@ BtPhysTest::BtPhysTest(bool editor)
 	m_simulation->InitContext();
 	vec3 NewGravity = vec3(.0f, -10.0f, .0f);
 	m_simulation->SetGravity(NewGravity);
+	m_simulation->SetContinuousDetection(true);
 
-	float offset = 30.f;
+	float offset = 29.5f;
 	vec3 pos_offset = vec3(.0f, 30.f, .0f);
 	for (int i=0; i < 6; i++)
 	{
+		vec3 NewPosition = vec3(.0f);
+		quat NewRotation = quat(1.f);
+
+		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation);
+
 		int idx = i/2;
-		vec3 NewPosition = pos_offset;
+		NewPosition = pos_offset;
 		NewPosition[idx] += offset;
 		offset *= -1.f;
-
-		quat NewRotation = quat(mat4(1.f));
-		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation);
 
 		if (idx != 1)
 		{
 			vec3 axis = vec3(.0f);
-			axis[idx] = 1;
+			axis[2 - idx] = 1;
 			NewRotation = quat::rotate(90.f, axis);
 		}
 
@@ -98,14 +101,14 @@ BtPhysTest::BtPhysTest(bool editor)
 		m_ground_list << NewPhyobj;
 	}
 
-	for (int x=0; x < 5; x++)
+	for (int x=0; x < 6; x++)
 	{
-		for (int y=0; y < 5; y++)
+		for (int y=0; y < 6; y++)
 		{
-			for (int z=0; z < 4; z++)
+			for (int z=0; z < 5; z++)
 			{
 				PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 10.f,
-					vec3(-20.f, 40.f, -20.f) +
+					vec3(-20.f, 20.f, -20.f) +
 					vec3(4.f * (float)x, 4.f * (float)y, 4.f * (float)z));
 				m_physobj_list << new_physobj;
 				Ticker::Ref(new_physobj);
@@ -268,40 +271,64 @@ void BtPhysTest::TickGame(float seconds)
 
 	m_simulation->TickContext(seconds);
 
-	vec3 barycenter = vec3(.0f);
+	vec3 GroundBarycenter = vec3(.0f);
+	vec3 PhysObjBarycenter = vec3(.0f);
 	float factor = .0f;
+	
 	for (int i = 0; i < m_ground_list.Count(); i++)
 	{
 		PhysicsObject* PhysObj = m_ground_list[i];
-
 		mat4 GroundMat = PhysObj->GetTransform();
-		vec3 CenterToGround = GroundMat.v3.xyz - vec3(.0f, 50.f, .0f);
-		vec3 CenterToCam = m_camera->m_position - vec3(.0f, 50.f, .0f);
-		if (dot(CenterToCam, CenterToGround) > .0f)
-			PhysObj->SetRender(false);
-		else
-			PhysObj->SetRender(true);
 
-		barycenter += GroundMat.v3.xyz;
+		GroundBarycenter += GroundMat.v3.xyz;
 		factor += 1.f;
 	}
 
-	barycenter /= factor;
+	GroundBarycenter /= factor;
 
 	for (int i = 0; i < m_ground_list.Count(); i++)
 	{
 		PhysicsObject* PhysObj = m_ground_list[i];
 
 		mat4 GroundMat = PhysObj->GetTransform();
-		mat4 CenterMx = mat4::translate(barycenter);
-		//GroundMat = inverse(CenterMx) * GroundMat;
-		//GroundMat = CenterMx * GroundMat;
-					//mat4(quat::rotate(seconds * 10.0f, vec3(0, 1, 0))) * CenterMx;
-		//PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+		vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
+		vec3 CenterToCam = m_camera->m_position - GroundBarycenter;
+		vec3 CamDir = m_camera->m_position - m_camera->GetTarget();
+
+		if (dot(normalize(CenterToGround), normalize(CenterToCam)) > .0f &&
+			dot(normalize(CenterToGround), normalize(CamDir)) > .0f)
+			PhysObj->SetRender(false);
+		else
+			PhysObj->SetRender(true);
 	}
 
-	m_camera->SetTarget(barycenter);
-	m_camera->SetPosition(vec3(-40.0f, 60.0f, -40.0f));
+	for (int i = 0; i < m_ground_list.Count(); i++)
+	{
+		PhysicsObject* PhysObj = m_ground_list[i];
+
+		mat4 GroundMat = PhysObj->GetTransform();
+		mat4 CenterMx = mat4::translate(GroundBarycenter);
+		GroundMat = inverse(CenterMx) * GroundMat;
+		GroundMat = CenterMx *
+					mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
+					* GroundMat;
+		PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+	}
+
+	PhysObjBarycenter = vec3(.0f);
+	for (int i = 0; i < m_physobj_list.Count(); i++)
+	{
+		PhysicsObject* PhysObj = m_physobj_list[i];
+		mat4 GroundMat = PhysObj->GetTransform();
+
+		PhysObjBarycenter += GroundMat.v3.xyz;
+		factor += 1.f;
+	}
+
+	PhysObjBarycenter /= factor;
+
+	m_camera->SetTarget(PhysObjBarycenter);
+	m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
 
 #if 0
 	///step the simulation

@@ -111,7 +111,7 @@ void EasyPhysics::SetTransform(const lol::vec3& base_location, const lol::quat& 
 		else
 		{
 			m_rigid_body->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
-			m_motion_state->setWorldTransform(m_rigid_body->getWorldTransform());
+			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
 		}
 	}
 	else
