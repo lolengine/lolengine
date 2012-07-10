@@ -74,12 +74,12 @@ public:
 
 		int CapsLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#dad scb#dad asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#dda scb#dda asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#daa scb#daa asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#ada scb#ada asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
-		MeshRand << "[sc#aad scb#aad asph6 1 1 1 ty-1 my ac16 2 1 1 0 0]";
+		MeshRand << "[sc#add scb#add acap3 2 1]";
+		MeshRand << "[sc#dad scb#dad acap3 2 1]";
+		MeshRand << "[sc#dda scb#dda acap3 2 1]";
+		MeshRand << "[sc#daa scb#daa acap3 2 1]";
+		MeshRand << "[sc#ada scb#ada acap3 2 1]";
+		MeshRand << "[sc#aad scb#aad acap3 2 1]";
 
 		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
 
