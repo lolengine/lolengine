@@ -124,15 +124,16 @@ namespace lol {
      T_SMOOTHCHAMFBOX = 280,
      T_FLATCHAMFBOX = 281,
      T_SPHERE = 282,
-     T_STAR = 283,
-     T_EXPANDEDSTAR = 284,
-     T_DISC = 285,
-     T_TRIANGLE = 286,
-     T_QUAD = 287,
-     T_COG = 288,
-     T_ERROR = 289,
-     NUMBER = 290,
-     COLOR = 291
+     T_CAPSULE = 283,
+     T_STAR = 284,
+     T_EXPANDEDSTAR = 285,
+     T_DISC = 286,
+     T_TRIANGLE = 287,
+     T_QUAD = 288,
+     T_COG = 289,
+     T_ERROR = 290,
+     NUMBER = 291,
+     COLOR = 292
    };
 
     };
@@ -312,7 +313,7 @@ namespace lol {
 } // lol
 
 /* Line 35 of lalr1.cc  */
-#line 316 "generated/easymesh-parser.h"
+#line 317 "generated/easymesh-parser.h"
 
 
 
