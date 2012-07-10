@@ -27,7 +27,8 @@ public:
     EasyMeshTutorial()
     {
         m_angle = 0;
-        m_mesh.Compile("sc#e94 scb#964 [acg10 5 8 8 2 2 0.1 0]");
+        m_mesh.Compile("sc#e94 scb#964 [acap11 6 6 tx8]");
+        m_mesh.Compile("sc#94e scb#649 [acap3 6 6 tx-8]");
 
         m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                               vec3(0.f, 0.f, 0.f),

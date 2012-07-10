@@ -74,6 +74,7 @@ ac    { return token::T_CYLINDER; }
 ab    { return token::T_BOX; }
 ascb  { return token::T_SMOOTHCHAMFBOX; }
 afcb  { return token::T_FLATCHAMFBOX; }
+acap  { return token::T_CAPSULE; }
 asph  { return token::T_SPHERE; }
 as    { return token::T_STAR; }
 aes   { return token::T_EXPANDEDSTAR; }

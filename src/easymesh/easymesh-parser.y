@@ -50,8 +50,8 @@
 %token T_TRANSLATE T_SCALE
 %token T_CHAMFER
 
-%token T_CYLINDER T_BOX T_SMOOTHCHAMFBOX T_FLATCHAMFBOX T_SPHERE T_STAR
-%token T_EXPANDEDSTAR T_DISC T_TRIANGLE T_QUAD T_COG
+%token T_CYLINDER T_BOX T_SMOOTHCHAMFBOX T_FLATCHAMFBOX T_SPHERE T_CAPSULE
+%token T_STAR T_EXPANDEDSTAR T_DISC T_TRIANGLE T_QUAD T_COG
 
 %token T_END 0
 %token T_ERROR
@@ -147,6 +147,7 @@ primitive_command:
                                                           $2.f2), $2.f3); }
   | T_SPHERE args4         { mc.m_mesh.AppendSphere($2.f0,
                                                vec3($2.f1, $2.f2, $2.f3)); }
+  | T_CAPSULE args3        { mc.m_mesh.AppendCapsule($2.f0, $2.f1, $2.f2); }
   | T_STAR args5           { mc.m_mesh.AppendStar((int)$2.f0, $2.f1, $2.f2,
                                              (int)$2.f3, (int)$2.f4); }
   | T_EXPANDEDSTAR args4   { mc.m_mesh.AppendExpandedStar((int)$2.f0, $2.f1,

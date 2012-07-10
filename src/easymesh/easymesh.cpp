@@ -19,6 +19,19 @@
 #   include "config.h"
 #endif
 
+#if defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#elif defined _WIN32
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
+
 #include "core.h"
 #include "easymesh/easymesh-compiler.h"
 
@@ -347,20 +360,24 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
     }
 }
 
-void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
+void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 {
     int ibase = m_indices.Count();
 
     Array<vec3> vertices;
 
+    /* Fill in the icosahedron vertices, rotating them so that there
+     * is a vertex at [0 0 1] and [0 0 -1] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
+    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / M_PI),
+                            vec3(1.f, 0.f, 0.f));
     for (int i = 0; i < 4; i++)
     {
         float x = (i & 1) ? 0.5f : -0.5f;
         float y = (i & 2) ? phi * 0.5f : phi * -0.5f;
-        vertices << vec3(x, y, 0.f);
-        vertices << vec3(0.f, x, y);
-        vertices << vec3(y, 0.f, x);
+        vertices << mat * vec3(x, y, 0.f);
+        vertices << mat * vec3(0.f, x, y);
+        vertices << mat * vec3(y, 0.f, x);
     }
 
     static int const trilist[] =
@@ -375,33 +392,49 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
 
     for (unsigned i = 0; i < sizeof(trilist) / sizeof(*trilist); i += 3)
     {
-        vec3 const &p0 = vertices[trilist[i]];
-        vec3 const &p1 = vertices[trilist[i + 1]];
-        vec3 const &p2 = vertices[trilist[i + 2]];
+        vec3 const &a = vertices[trilist[i]];
+        vec3 const &b = vertices[trilist[i + 1]];
+        vec3 const &c = vertices[trilist[i + 2]];
 
-        vec3 const vx = 1.f / ndivisions * (p1 - p0);
-        vec3 const vy = 1.f / ndivisions * (p2 - p0);
+        vec3 const vb = 1.f / ndivisions * (b - a);
+        vec3 const vc = 1.f / ndivisions * (c - a);
 
         int line = ndivisions + 1;
 
         for (int v = 0, x = 0, y = 0; x < ndivisions + 1; v++)
         {
-            vec3 p = p0 + x * vx + y * vy;
+            vec3 p[] = { a + x * vb + y * vc,
+                         p[0] + vb,
+                         p[0] + vc,
+                         p[0] + vb + vc };
+
+            /* FIXME: when we normalise here, we get a volume that is slightly
+             * smaller than the sphere of radius 1, since we are not using
+             * the midradius. */
+            for (int k = 0; k < 4; k++)
+                p[k] = normalize(p[k]) * r;
+
+            /* If this is a capsule, grow in the Z direction */
+            if (h > 0.f)
+            {
+                for (int k = 0; k < 4; k++)
+                    p[k].z += (p[k].z > 0.f) ? 0.5f * h : -0.5f * h;
+            }
 
             /* Add zero, one or two triangles */
             if (y < line - 1)
             {
-                AddVertex(normalize(p) * size);
-                AddVertex(normalize(p + vx) * size);
-                AddVertex(normalize(p + vy) * size);
+                AddVertex(p[0]);
+                AddVertex(p[1]);
+                AddVertex(p[2]);
                 AppendTriangle(0, 2, 1, m_vert.Count() - 3);
             }
 
             if (y < line - 2)
             {
-                AddVertex(normalize(p + vx) * size);
-                AddVertex(normalize(p + vx + vy) * size);
-                AddVertex(normalize(p + vy) * size);
+                AddVertex(p[1]);
+                AddVertex(p[3]);
+                AddVertex(p[2]);
                 AppendTriangle(0, 2, 1, m_vert.Count() - 3);
             }
 
@@ -416,6 +449,11 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
     }
 
     ComputeNormals(ibase, m_indices.Count() - ibase);
+}
+
+void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
+{
+    AppendCapsule(ndivisions, 0.f, size.x);
 }
 
 void EasyMesh::AppendBox(vec3 const &size, float chamf)

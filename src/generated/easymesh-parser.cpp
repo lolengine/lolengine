@@ -679,121 +679,128 @@ namespace lol {
 
 /* Line 690 of lalr1.cc  */
 #line 150 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2,
-                                             (int)(yysemantic_stack_[(2) - (2)].args).f3, (int)(yysemantic_stack_[(2) - (2)].args).f4); }
+    { mc.m_mesh.AppendCapsule((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 42:
 
 /* Line 690 of lalr1.cc  */
-#line 152 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendExpandedStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
-                                                     (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
+#line 151 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2,
+                                             (int)(yysemantic_stack_[(2) - (2)].args).f3, (int)(yysemantic_stack_[(2) - (2)].args).f4); }
     break;
 
   case 43:
 
 /* Line 690 of lalr1.cc  */
-#line 154 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendDisc((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (int)(yysemantic_stack_[(2) - (2)].args).f2); }
+#line 153 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendExpandedStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
+                                                     (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 44:
 
 /* Line 690 of lalr1.cc  */
 #line 155 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
+    { mc.m_mesh.AppendDisc((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (int)(yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 45:
 
 /* Line 690 of lalr1.cc  */
 #line 156 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
+    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 46:
 
 /* Line 690 of lalr1.cc  */
 #line 157 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCog((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3,
-                                            (yysemantic_stack_[(2) - (2)].args).f4, (yysemantic_stack_[(2) - (2)].args).f5, (yysemantic_stack_[(2) - (2)].args).f6, (int)(yysemantic_stack_[(2) - (2)].args).f7); }
+    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 47:
 
 /* Line 690 of lalr1.cc  */
-#line 161 "easymesh/easymesh-parser.y"
-    { (yyval.args).f0 = (yysemantic_stack_[(1) - (1)].fval); }
+#line 158 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCog((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3,
+                                            (yysemantic_stack_[(2) - (2)].args).f4, (yysemantic_stack_[(2) - (2)].args).f5, (yysemantic_stack_[(2) - (2)].args).f6, (int)(yysemantic_stack_[(2) - (2)].args).f7); }
     break;
 
   case 48:
 
 /* Line 690 of lalr1.cc  */
 #line 162 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f1 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args).f0 = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 49:
 
 /* Line 690 of lalr1.cc  */
 #line 163 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f2 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f1 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 50:
 
 /* Line 690 of lalr1.cc  */
 #line 164 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f3 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f2 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 51:
 
 /* Line 690 of lalr1.cc  */
 #line 165 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f4 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f3 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 52:
 
 /* Line 690 of lalr1.cc  */
 #line 166 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f5 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f4 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 53:
 
 /* Line 690 of lalr1.cc  */
 #line 167 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f6 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f5 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 54:
 
 /* Line 690 of lalr1.cc  */
 #line 168 "easymesh/easymesh-parser.y"
-    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f7 = (yysemantic_stack_[(2) - (2)].fval); }
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f6 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 55:
 
 /* Line 690 of lalr1.cc  */
-#line 171 "easymesh/easymesh-parser.y"
-    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
+#line 169 "easymesh/easymesh-parser.y"
+    { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f7 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 56:
 
 /* Line 690 of lalr1.cc  */
 #line 172 "easymesh/easymesh-parser.y"
+    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
+    break;
+
+  case 57:
+
+/* Line 690 of lalr1.cc  */
+#line 173 "easymesh/easymesh-parser.y"
     { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
 
 
 /* Line 690 of lalr1.cc  */
-#line 797 "generated/easymesh-parser.cpp"
+#line 804 "generated/easymesh-parser.cpp"
 	default:
           break;
       }
@@ -1067,20 +1074,20 @@ namespace lol {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char EasyMeshParser::yypact_ninf_ = -45;
+  const signed char EasyMeshParser::yypact_ninf_ = -46;
   const signed char
   EasyMeshParser::yypact_[] =
   {
-        34,   -29,    70,    -6,    -6,    -6,    -6,   -45,    -6,    -6,
-      -6,    -6,   -45,    -6,    -6,    -6,    -6,   -45,    -6,    -6,
-      -6,    -6,    -6,    -6,    -6,    -6,    -6,    -6,    -6,    -6,
-      -6,    -6,   -45,    12,    15,    34,    34,    69,   -45,   -45,
-     -45,   -45,   -45,   -45,    -6,    -6,    -6,    -6,   -45,   -45,
-     -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,
-     -45,   -45,   -45,   -45,   -45,   -45,   -45,    -6,    -6,   -45,
-     -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,    -6,
-      -6,   -45,   -45,   -45,   -45,   -21,   -45,   -45,   -45,   -45,
-     -45,   -45,   -45,   -45,   -45,   -45,   -45
+        35,   -30,    -7,    72,    72,    72,    72,   -46,    72,    72,
+      72,    72,   -46,    72,    72,    72,    72,   -46,    72,    72,
+      72,    72,    72,    72,    72,    72,    72,    72,    72,    72,
+      72,    72,    72,   -46,    12,    15,    35,    35,    71,   -46,
+     -46,   -46,   -46,   -46,   -46,    72,    72,    72,    72,   -46,
+     -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,
+     -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,    72,    72,
+     -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,
+     -46,    72,    72,   -46,   -46,   -46,   -46,   -22,   -46,   -46,
+     -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46,   -46
   };
 
   /* YYDEFACT[S] -- default reduction number in state S.  Performed when
@@ -1092,29 +1099,29 @@ namespace lol {
          0,     0,     0,     0,     0,     0,     0,    33,     0,     0,
        0,     0,    34,     0,     0,     0,     0,    35,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     7,     0,     0,     3,     0,     5,     9,    11,
-      12,    13,    55,    15,     0,     0,     0,     0,    14,    47,
-      17,    16,    19,    23,    26,    29,    20,    24,    27,    30,
-      21,    25,    28,    31,    22,    32,    18,     0,     0,    36,
-      37,    38,    39,    40,    41,    42,    43,    44,    45,     0,
-       0,    46,     1,     2,     4,     0,    10,    56,    48,    49,
-      50,    51,    52,    53,    54,     8,     6
+       0,     0,     0,     7,     0,     0,     3,     0,     5,     9,
+      11,    12,    13,    56,    15,     0,     0,     0,     0,    14,
+      48,    17,    16,    19,    23,    26,    29,    20,    24,    27,
+      30,    21,    25,    28,    31,    22,    32,    18,     0,     0,
+      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
+      46,     0,     0,    47,     1,     2,     4,     0,    10,    57,
+      49,    50,    51,    52,    53,    54,    55,     8,     6
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   EasyMeshParser::yypgoto_[] =
   {
-       -45,   -45,    -4,   -45,   -45,   -45,   -45,   -17,   -45,   -45,
-     -45,     5,    39,    98,     3,     8,    -9,   -45,   -45,   -44
+       -46,   -46,    -2,   -46,   -46,   -46,   -46,   -18,   -46,   -46,
+     -46,     5,    40,   101,     3,    -5,     0,   -46,   -46,   -45
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   EasyMeshParser::yydefgoto_[] =
   {
-        -1,    33,    34,    35,    36,    96,    37,    38,    39,    40,
-      41,    45,    46,    47,    67,    68,    69,    80,    81,    49
+        -1,    34,    35,    36,    37,    98,    38,    39,    40,    41,
+      42,    46,    47,    48,    68,    69,    70,    82,    83,    50
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -1124,38 +1131,40 @@ namespace lol {
   const unsigned char
   EasyMeshParser::yytable_[] =
   {
-        87,    88,    89,    90,    48,    51,    42,    43,    52,    53,
-      44,    55,    82,    56,    57,    83,    59,    95,    60,    61,
-      86,    63,    79,    91,    92,    66,    71,    72,    73,    42,
-      75,    84,    85,    44,    74,    93,    94,     1,     2,     3,
-       4,     5,     6,     7,     8,     9,    10,    11,    12,    13,
-      14,    15,    16,    17,    18,    19,    20,    21,    22,    23,
-      24,    25,    26,    27,    28,    29,    30,    31,    77,    78,
-       0,    32,     1,     2,     3,     4,     5,     6,     7,     8,
-       9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
-      19,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-      29,    30,    31,    54,     0,    42,    50,     0,    58,    44,
-       0,     0,     0,    62,     0,     0,    64,    65,     0,     0,
-      70,     0,     0,     0,     0,     0,    76
+        89,    90,    91,    92,    49,    52,    43,    44,    53,    54,
+      45,    56,    84,    57,    58,    85,    60,    97,    61,    62,
+      88,    64,    76,    93,    94,    67,    72,    73,    74,    43,
+      51,    77,    81,    45,    86,    87,    95,    96,     1,     2,
+       3,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
+      23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
+      79,    80,     0,    33,     1,     2,     3,     4,     5,     6,
+       7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
+      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
+      27,    28,    29,    30,    31,    32,    55,     0,    43,     0,
+       0,    59,    45,     0,     0,     0,    63,     0,     0,    65,
+      66,     0,     0,    71,     0,     0,     0,    75,     0,     0,
+      78
   };
 
   /* YYCHECK.  */
   const signed char
   EasyMeshParser::yycheck_[] =
   {
-        44,    45,    46,    47,     1,     2,    35,    36,     3,     4,
-      39,     6,     0,     8,     9,     0,    11,    38,    13,    14,
-      37,    16,    31,    67,    68,    20,    23,    24,    25,    35,
-      27,    35,    36,    39,    26,    79,    80,     3,     4,     5,
-       6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
-      16,    17,    18,    19,    20,    21,    22,    23,    24,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    29,    30,
-      -1,    37,     3,     4,     5,     6,     7,     8,     9,    10,
-      11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-      31,    32,    33,     5,    -1,    35,    36,    -1,    10,    39,
-      -1,    -1,    -1,    15,    -1,    -1,    18,    19,    -1,    -1,
-      22,    -1,    -1,    -1,    -1,    -1,    28
+        45,    46,    47,    48,     1,     2,    36,    37,     3,     4,
+      40,     6,     0,     8,     9,     0,    11,    39,    13,    14,
+      38,    16,    27,    68,    69,    20,    23,    24,    25,    36,
+      37,    28,    32,    40,    36,    37,    81,    82,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      30,    31,    -1,    38,     3,     4,     5,     6,     7,     8,
+       9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
+      19,    20,    21,    22,    23,    24,    25,    26,    27,    28,
+      29,    30,    31,    32,    33,    34,     5,    -1,    36,    -1,
+      -1,    10,    40,    -1,    -1,    -1,    15,    -1,    -1,    18,
+      19,    -1,    -1,    22,    -1,    -1,    -1,    26,    -1,    -1,
+      29
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -1166,13 +1175,13 @@ namespace lol {
          0,     3,     4,     5,     6,     7,     8,     9,    10,    11,
       12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
       22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-      32,    33,    37,    41,    42,    43,    44,    46,    47,    48,
-      49,    50,    35,    36,    39,    51,    52,    53,    54,    59,
-      36,    54,    51,    51,    53,    51,    51,    51,    53,    51,
-      51,    51,    53,    51,    53,    53,    51,    54,    55,    56,
-      53,    54,    54,    54,    55,    54,    53,    52,    52,    56,
-      57,    58,     0,     0,    42,    42,    47,    59,    59,    59,
-      59,    59,    59,    59,    59,    38,    45
+      32,    33,    34,    38,    42,    43,    44,    45,    47,    48,
+      49,    50,    51,    36,    37,    40,    52,    53,    54,    55,
+      60,    37,    55,    52,    52,    54,    52,    52,    52,    54,
+      52,    52,    52,    54,    52,    54,    54,    52,    55,    56,
+      57,    54,    55,    55,    55,    54,    56,    55,    54,    53,
+      53,    57,    58,    59,     0,     0,    43,    43,    48,    60,
+      60,    60,    60,    60,    60,    60,    60,    39,    46
   };
 
 #if YYDEBUG
@@ -1184,7 +1193,8 @@ namespace lol {
          0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288,   289,   290,   291,    91,    93,    45
+     285,   286,   287,   288,   289,   290,   291,   292,    91,    93,
+      45
   };
 #endif
 
@@ -1192,12 +1202,12 @@ namespace lol {
   const unsigned char
   EasyMeshParser::yyr1_[] =
   {
-         0,    40,    41,    42,    42,    43,    43,    44,    45,    46,
-      46,    47,    47,    47,    48,    48,    48,    48,    49,    49,
-      49,    49,    49,    49,    49,    49,    49,    49,    49,    49,
-      49,    49,    49,    49,    49,    49,    50,    50,    50,    50,
-      50,    50,    50,    50,    50,    50,    50,    51,    52,    53,
-      54,    55,    56,    57,    58,    59,    59
+         0,    41,    42,    43,    43,    44,    44,    45,    46,    47,
+      47,    48,    48,    48,    49,    49,    49,    49,    50,    50,
+      50,    50,    50,    50,    50,    50,    50,    50,    50,    50,
+      50,    50,    50,    50,    50,    50,    51,    51,    51,    51,
+      51,    51,    51,    51,    51,    51,    51,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    60
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -1208,8 +1218,8 @@ namespace lol {
        2,     1,     1,     1,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     1,     1,     1,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     1,     2,     2,
-       2,     2,     2,     2,     2,     1,     2
+       2,     2,     2,     2,     2,     2,     2,     2,     1,     2,
+       2,     2,     2,     2,     2,     2,     1,     2
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -1223,13 +1233,13 @@ namespace lol {
   "T_ROTATEY", "T_TAPERY", "T_SCALEY", "T_MIRRORY", "T_TRANSLATEZ",
   "T_ROTATEZ", "T_TAPERZ", "T_SCALEZ", "T_MIRRORZ", "T_TRANSLATE",
   "T_SCALE", "T_CHAMFER", "T_CYLINDER", "T_BOX", "T_SMOOTHCHAMFBOX",
-  "T_FLATCHAMFBOX", "T_SPHERE", "T_STAR", "T_EXPANDEDSTAR", "T_DISC",
-  "T_TRIANGLE", "T_QUAD", "T_COG", "T_ERROR", "NUMBER", "COLOR", "'['",
-  "']'", "'-'", "$accept", "mesh_description", "mesh_expression_list",
-  "mesh_expression", "mesh_open", "mesh_close", "mesh_command_list",
-  "mesh_command", "color_command", "transform_command",
-  "primitive_command", "args1", "args2", "args3", "args4", "args5",
-  "args6", "args7", "args8", "number", 0
+  "T_FLATCHAMFBOX", "T_SPHERE", "T_CAPSULE", "T_STAR", "T_EXPANDEDSTAR",
+  "T_DISC", "T_TRIANGLE", "T_QUAD", "T_COG", "T_ERROR", "NUMBER", "COLOR",
+  "'['", "']'", "'-'", "$accept", "mesh_description",
+  "mesh_expression_list", "mesh_expression", "mesh_open", "mesh_close",
+  "mesh_command_list", "mesh_command", "color_command",
+  "transform_command", "primitive_command", "args1", "args2", "args3",
+  "args4", "args5", "args6", "args7", "args8", "number", 0
   };
 #endif
 
@@ -1238,22 +1248,22 @@ namespace lol {
   const EasyMeshParser::rhs_number_type
   EasyMeshParser::yyrhs_[] =
   {
-        41,     0,    -1,    42,     0,    -1,    43,    -1,    43,    42,
-      -1,    46,    -1,    44,    42,    45,    -1,    37,    -1,    38,
-      -1,    47,    -1,    46,    47,    -1,    48,    -1,    49,    -1,
-      50,    -1,     3,    54,    -1,     3,    36,    -1,     4,    54,
-      -1,     4,    36,    -1,    22,    51,    -1,     5,    51,    -1,
-      10,    51,    -1,    15,    51,    -1,    20,    53,    -1,     6,
-      51,    -1,    11,    51,    -1,    16,    51,    -1,     7,    53,
-      -1,    12,    53,    -1,    17,    53,    -1,     8,    51,    -1,
-      13,    51,    -1,    18,    51,    -1,    21,    53,    -1,     9,
-      -1,    14,    -1,    19,    -1,    23,    56,    -1,    24,    53,
-      -1,    25,    54,    -1,    26,    54,    -1,    27,    54,    -1,
-      28,    55,    -1,    29,    54,    -1,    30,    53,    -1,    31,
-      52,    -1,    32,    52,    -1,    33,    58,    -1,    59,    -1,
-      51,    59,    -1,    52,    59,    -1,    53,    59,    -1,    54,
-      59,    -1,    55,    59,    -1,    56,    59,    -1,    57,    59,
-      -1,    35,    -1,    39,    59,    -1
+        42,     0,    -1,    43,     0,    -1,    44,    -1,    44,    43,
+      -1,    47,    -1,    45,    43,    46,    -1,    38,    -1,    39,
+      -1,    48,    -1,    47,    48,    -1,    49,    -1,    50,    -1,
+      51,    -1,     3,    55,    -1,     3,    37,    -1,     4,    55,
+      -1,     4,    37,    -1,    22,    52,    -1,     5,    52,    -1,
+      10,    52,    -1,    15,    52,    -1,    20,    54,    -1,     6,
+      52,    -1,    11,    52,    -1,    16,    52,    -1,     7,    54,
+      -1,    12,    54,    -1,    17,    54,    -1,     8,    52,    -1,
+      13,    52,    -1,    18,    52,    -1,    21,    54,    -1,     9,
+      -1,    14,    -1,    19,    -1,    23,    57,    -1,    24,    54,
+      -1,    25,    55,    -1,    26,    55,    -1,    27,    55,    -1,
+      28,    54,    -1,    29,    56,    -1,    30,    55,    -1,    31,
+      54,    -1,    32,    53,    -1,    33,    53,    -1,    34,    59,
+      -1,    60,    -1,    52,    60,    -1,    53,    60,    -1,    54,
+      60,    -1,    55,    60,    -1,    56,    60,    -1,    57,    60,
+      -1,    58,    60,    -1,    36,    -1,    40,    60,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1265,8 +1275,8 @@ namespace lol {
       23,    26,    28,    30,    32,    35,    38,    41,    44,    47,
       50,    53,    56,    59,    62,    65,    68,    71,    74,    77,
       80,    83,    86,    89,    91,    93,    95,    98,   101,   104,
-     107,   110,   113,   116,   119,   122,   125,   128,   130,   133,
-     136,   139,   142,   145,   148,   151,   153
+     107,   110,   113,   116,   119,   122,   125,   128,   131,   133,
+     136,   139,   142,   145,   148,   151,   154,   156
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
@@ -1277,8 +1287,8 @@ namespace lol {
       98,   102,   103,   104,   108,   109,   112,   113,   119,   120,
      121,   122,   123,   124,   125,   126,   127,   128,   129,   130,
      131,   132,   133,   134,   135,   136,   140,   143,   144,   146,
-     148,   150,   152,   154,   155,   156,   157,   161,   162,   163,
-     164,   165,   166,   167,   168,   171,   172
+     148,   150,   151,   153,   155,   156,   157,   158,   162,   163,
+     164,   165,   166,   167,   168,   169,   172,   173
   };
 
   // Print the state stack on the debug stream.
@@ -1322,12 +1332,12 @@ namespace lol {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,    39,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,    40,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    37,     2,    38,     2,     2,     2,     2,     2,     2,
+       2,    38,     2,    39,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1347,7 +1357,7 @@ namespace lol {
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36
+      35,    36,    37
     };
     if ((unsigned int) t <= yyuser_token_number_max_)
       return translate_table[t];
@@ -1356,26 +1366,26 @@ namespace lol {
   }
 
   const int EasyMeshParser::yyeof_ = 0;
-  const int EasyMeshParser::yylast_ = 126;
+  const int EasyMeshParser::yylast_ = 130;
   const int EasyMeshParser::yynnts_ = 20;
   const int EasyMeshParser::yyempty_ = -2;
-  const int EasyMeshParser::yyfinal_ = 82;
+  const int EasyMeshParser::yyfinal_ = 84;
   const int EasyMeshParser::yyterror_ = 1;
   const int EasyMeshParser::yyerrcode_ = 256;
-  const int EasyMeshParser::yyntokens_ = 40;
+  const int EasyMeshParser::yyntokens_ = 41;
 
-  const unsigned int EasyMeshParser::yyuser_token_number_max_ = 291;
+  const unsigned int EasyMeshParser::yyuser_token_number_max_ = 292;
   const EasyMeshParser::token_number_type EasyMeshParser::yyundef_token_ = 2;
 
 
 } // lol
 
 /* Line 1136 of lalr1.cc  */
-#line 1375 "generated/easymesh-parser.cpp"
+#line 1385 "generated/easymesh-parser.cpp"
 
 
 /* Line 1138 of lalr1.cc  */
-#line 175 "easymesh/easymesh-parser.y"
+#line 176 "easymesh/easymesh-parser.y"
 
 
 void lol::EasyMeshParser::error(const EasyMeshParser::location_type& l,

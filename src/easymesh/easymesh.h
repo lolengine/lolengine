@@ -66,6 +66,7 @@ private:
 
     void AppendCylinder(int nsides, float h, float r1, float r2,
                         int dualside, int smooth);
+    void AppendCapsule(int ndivisions, float h, float r);
     void AppendSphere(int ndivisions, vec3 const &size);
     void AppendBox(vec3 const &size, float chamf = 0.f);
     void AppendSmoothChamfBox(vec3 const &size, float chamf);
