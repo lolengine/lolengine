@@ -367,10 +367,10 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
     Array<vec3> vertices;
 
     /* Fill in the icosahedron vertices, rotating them so that there
-     * is a vertex at [0 0 1] and [0 0 -1] after normalisation. */
+     * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
     mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / M_PI),
-                            vec3(1.f, 0.f, 0.f));
+                            vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {
         float x = (i & 1) ? 0.5f : -0.5f;
@@ -418,7 +418,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
             if (h > 0.f)
             {
                 for (int k = 0; k < 4; k++)
-                    p[k].z += (p[k].z > 0.f) ? 0.5f * h : -0.5f * h;
+                    p[k].y += (p[k].y > 0.f) ? 0.5f * h : -0.5f * h;
             }
 
             /* Add zero, one or two triangles */
