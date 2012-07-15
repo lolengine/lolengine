@@ -42,6 +42,7 @@ EasyPhysics::EasyPhysics() :
 
 EasyPhysics::~EasyPhysics()
 {
+	m_rigid_body = NULL;
 	delete m_collision_object;
 	delete m_collision_shape;
 	delete m_motion_state;

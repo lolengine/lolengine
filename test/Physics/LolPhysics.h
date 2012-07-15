@@ -21,26 +21,30 @@ namespace lol
 namespace phys
 {
 
-class Simulation
+class Simulation : public Entity
 {
+	friend class EasyPhysics;
+
 public:
 	Simulation() :
 		m_broadphase(0),
 		m_collision_configuration(0),
 		m_dispatcher(0),
 		m_solver(0),
-		m_dynamics_world(0)
+		m_dynamics_world(0),
+		m_timestep(1.f/60.f)
 	{
 	}
 	~Simulation()
 	{
-		ExitContext();
+		Exit();
 	}
 
 	char const *GetName() { return "<Simulation>"; }
 
 #ifdef HAVE_PHYS_USE_BULLET
-	void InitContext()
+public:
+	void Init()
 	{
 		// Build the broadphase
 		m_broadphase = new btDbvtBroadphase();
@@ -56,30 +60,18 @@ public:
 		m_dynamics_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collision_configuration);
 	}
 
-	void SetContinuousDetection(bool ShouldUseCCD)
-	{
-		if (m_dynamics_world)
-			m_dynamics_world->getDispatchInfo().m_useContinuous = ShouldUseCCD;
-	}
-
-	void SetGravity(vec3 &NewGravity)
-	{
-		if (m_dynamics_world)
-			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity));
-	}
-
-	void TickContext(float seconds)
+	virtual void TickGame(float seconds)
 	{
 		//step the simulation
 		if (m_dynamics_world)
 		{
-			int steps = (int)(seconds / 0.005f);
-			for (int i = 0; i < steps; i++)
-				m_dynamics_world->stepSimulation(seconds / steps);
+			//the "+1" is to have at least one Timestep and to ensure float to int .5f conversion.
+			int steps = (int)(seconds / m_timestep) + 1;
+			m_dynamics_world->stepSimulation(seconds, steps, m_timestep);
 		}
 	}
 
-	void ExitContext()
+	void Exit()
 	{
 		delete m_dynamics_world;
 		delete m_solver;
@@ -92,16 +84,21 @@ public:
 	{
 		return m_dynamics_world;
 	}
-	void AddToDynamic(EasyPhysics* dynamic_EP)
-	{
-		m_dynamic_list << dynamic_EP;
-	}
-	void AddToStatic(EasyPhysics* static_EP)
-	{
-		m_static_list << static_EP;
-	}
 
 private:
+	void CustomSetContinuousDetection(bool ShouldUseCCD)
+	{
+		if (m_dynamics_world)
+			m_dynamics_world->getDispatchInfo().m_useContinuous = ShouldUseCCD;
+	}
+
+	void CustomSetGravity(vec3 &NewGravity)
+	{
+		if (m_dynamics_world)
+			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity));
+	}
+
+	void CustomSetTimestep(float NewTimestep) { }
 
 	//broadphase
 	btBroadphaseInterface*					m_broadphase;
@@ -112,15 +109,59 @@ private:
 	btSequentialImpulseConstraintSolver*	m_solver;
 	// The world.
 	btDiscreteDynamicsWorld*				m_dynamics_world;
+#else
+public:
+	void Init() { }
+	void TickGame(float seconds) { }
+	void Exit() { }
+private:
+	void CustomSetContinuousDetection(bool ShouldUseCCD) { }
+	void CustomSetGravity(vec3 &NewGravity) { }
+	void CustomSetTimestep(float NewTimestep) { }
+#endif //HAVE_PHYS_USE_BULLET
+
+public:
+	//Main logic :
+	//The Set*() functions do the all-lib-independent data storage.
+	//And then it calls the CustomSet*() which are the specialized versions.
+
+	//Sets the continuous collision detection flag.
+	void SetContinuousDetection(bool ShouldUseCCD)
+	{
+		m_using_CCD = ShouldUseCCD;
+		CustomSetContinuousDetection(ShouldUseCCD);
+	}
+
+	//Sets the simulation gravity.
+	void SetGravity(vec3 &NewGravity)
+	{
+		m_gravity = NewGravity;
+		CustomSetGravity(NewGravity);
+	}
+
+	//Sets the simulation fixed timestep.
+	void SetTimestep(float NewTimestep)
+	{
+		if (NewTimestep > .0f)
+		{
+			m_timestep = NewTimestep;
+			CustomSetTimestep(NewTimestep);
+		}
+	}
+
+private:
+	//Adds the given EasyPhysics to the correct list.
+	void AddToDynamic(EasyPhysics* dynamic_EP)	{ m_dynamic_list << dynamic_EP; }
+	void AddToStatic(EasyPhysics* static_EP)	{ m_static_list	<< static_EP; }
 
 	//Easy Physics body List
 	Array<EasyPhysics*>						m_dynamic_list;
 	Array<EasyPhysics*>						m_static_list;
-#else
-	void InitContext() { }
-	void TickContext(float seconds) { }
-	void ExitContext() { }
-#endif //HAVE_PHYS_USE_BULLET
+
+	//Easy Physics data storage
+	float									m_timestep;
+	bool									m_using_CCD;
+	vec3									m_gravity;
 };
 
 } /* namespace phys */
