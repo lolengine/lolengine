@@ -10,11 +10,6 @@
 //   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
 //
 
-//
-// The EasyMesh class
-// ------------------
-//
-
 #if defined HAVE_CONFIG_H
 #   include "config.h"
 #endif
@@ -29,6 +24,10 @@ namespace phys
 {
 
 #ifdef HAVE_PHYS_USE_BULLET
+
+//-------------------------------------------------------------------------
+//EASY_PHYSIC
+//--
 
 EasyPhysic::EasyPhysic() : 
 	m_collision_object(NULL),
@@ -108,9 +107,9 @@ void EasyPhysic::SetShapeToCapsule(float radius, float height)
 void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
 	if (m_motion_state)
-		m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
+		m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
 	else
-		m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
+		m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
 }
 
 //-------------------------------------------------------------------------
@@ -156,16 +155,31 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
 {
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (m_rigid_body)
+	if (dynamics_world)
 	{
-		dynamics_world->addRigidBody(m_rigid_body, m_collision_group, m_collision_mask);
-		if (m_mass != .0f)
-			current_simulation->AddToDynamic(this);
+		if (m_rigid_body)
+		{
+			dynamics_world->addRigidBody(m_rigid_body, m_collision_group, m_collision_mask);
+			if (m_mass != .0f)
+				current_simulation->AddToDynamic(this);
+			else
+				current_simulation->AddToStatic(this);
+		}
 		else
-			current_simulation->AddToStatic(this);
+			dynamics_world->addCollisionObject(m_collision_object, m_collision_group, m_collision_mask);
 	}
-	else
-		dynamics_world->addCollisionObject(m_collision_object, m_collision_group, m_collision_mask);
+}
+
+void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
+{
+	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
+	if (dynamics_world)
+	{
+		if (m_rigid_body)
+			dynamics_world->removeRigidBody(m_rigid_body);
+		else
+			dynamics_world->removeCollisionObject(m_collision_object);
+	}
 }
 
 //-------------------------------------------------------------------------
@@ -193,6 +207,27 @@ void EasyPhysic::SetLocalInertia(float mass)
 		m_collision_shape->calculateLocalInertia(mass, m_local_inertia);
 	else
 		m_local_inertia = btVector3(.0f, .0f, .0f);
+}
+
+//-------------------------------------------------------------------------
+//EASY_CONSTRAINT
+//--
+
+void EasyConstraint::AddToSimulation(class Simulation* current_simulation)
+{
+	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
+	if (dynamics_world && m_typed_constraint)
+	{
+		dynamics_world->addConstraint(m_typed_constraint, m_disable_a2b_collision);
+		current_simulation->AddToConstraint(this);
+	}
+}
+
+void EasyConstraint::RemoveFromSimulation(class Simulation* current_simulation)
+{
+	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
+	if (dynamics_world, m_typed_constraint)
+		dynamics_world->removeConstraint(m_typed_constraint);
 }
 
 #endif // HAVE_PHYS_USE_BULLET

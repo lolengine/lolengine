@@ -25,6 +25,7 @@ private:
     bool								m_ready;
 
 	lol::phys::Simulation*				m_simulation;
+	Array<EasyConstraint*>				m_constraint_list;
 	Array<PhysicsObject*>				m_physobj_list;
 	Array<PhysicsObject*>				m_ground_list;
 

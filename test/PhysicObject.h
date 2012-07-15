@@ -34,7 +34,7 @@ public:
 		m_physics.AddToSimulation(new_sim);
 	}
 
-	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location)
+	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
 		: m_ready(false), m_should_render(true)
 	{
 		Array<char *> MeshRand;
@@ -82,7 +82,38 @@ public:
 		MeshRand << "[sc#ada scb#ada acap3 2 1]";
 		MeshRand << "[sc#aad scb#aad acap3 2 1]";
 
-		int RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
+		switch (RandValue)
+		{
+			case 0:
+			{
+				RandValue = (int)(lol::RandF() * (SphereLimit - 1));
+				break;
+			}
+			case 1:
+			{
+				RandValue = SphereLimit + (int)(lol::RandF() * ((ConeLimit - SphereLimit) - 1));
+				break;
+			}
+			case 2:
+			{
+				RandValue = ConeLimit + (int)(lol::RandF() * ((CylLimit - ConeLimit) - 1));
+				break;
+			}
+			case 3:
+			{
+				RandValue = CylLimit + (int)(lol::RandF() * ((CapsLimit - CylLimit) - 1));
+				break;
+			}
+			case 4:
+			{
+				RandValue = CapsLimit + (int)(lol::RandF() * ((MeshRand.Count() - CapsLimit) - 1));
+				break;
+			}
+			default:
+			{
+				RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
+			}
+		}
 
 		m_mesh.Compile(MeshRand[RandValue]);
 		vec3 BoxSize = vec3(2.0f);
@@ -113,7 +144,8 @@ public:
 			ColGroup += 4;
 		}
 
-		m_physics.SetCollisionChannel(ColGroup, (1<<ColGroup)|(1));
+		m_physics.SetCollisionChannel(0, 0xFF);
+		//m_physics.SetCollisionChannel(ColGroup, (1<<ColGroup)|(1));
 		m_physics.SetMass(base_mass);
 		m_physics.SetTransform(base_location);
 		m_physics.InitBodyToRigid();
@@ -134,6 +166,9 @@ public:
 	{
 		m_should_render = should_render;
 	}
+
+	EasyMesh *GetMesh() { return &m_mesh; }
+	EasyPhysic *GetPhysic() { return &m_physics; }
 
 	~PhysicsObject()
 	{
