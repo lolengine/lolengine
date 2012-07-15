@@ -26,6 +26,7 @@ public:
 	{
 		m_mesh.Compile("[sc#ddd afcb60 1 60 -.1]");
 		vec3 BoxSize = vec3(60.f, 1.f, 60.f);
+		m_physics.SetCollisionChannel(0, 0xFF);
 		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(.0f);
 		m_physics.SetTransform(base_location, base_rotation);
@@ -85,17 +86,34 @@ public:
 
 		m_mesh.Compile(MeshRand[RandValue]);
 		vec3 BoxSize = vec3(2.0f);
+		int ColGroup = 1;
 		if (RandValue < SphereLimit)
+		{
 			m_physics.SetShapeToBox(BoxSize);
+			ColGroup += 0;
+		}
 		else if (RandValue < ConeLimit)
+		{
 			m_physics.SetShapeToSphere(BoxSize.x * 2.f);
+			ColGroup += 1;
+		}
 		else if (RandValue < CylLimit)
+		{
 			m_physics.SetShapeToCone(BoxSize.x, BoxSize.y);
+			ColGroup += 2;
+		}
 		else if (RandValue < CapsLimit)
+		{
 			m_physics.SetShapeToCylinder(BoxSize);
+			ColGroup += 3;
+		}
 		else
+		{
 			m_physics.SetShapeToCapsule(BoxSize.x, BoxSize.y);
+			ColGroup += 4;
+		}
 
+		m_physics.SetCollisionChannel(ColGroup, (1<<ColGroup)|(1));
 		m_physics.SetMass(base_mass);
 		m_physics.SetTransform(base_location);
 		m_physics.InitBodyToRigid();

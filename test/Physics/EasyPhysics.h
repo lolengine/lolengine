@@ -42,6 +42,7 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size);
 	void SetShapeToCapsule(float radius, float height);
 
+	void CustomSetCollisionChannel(int NewGroup, int NewMask);
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
 	void SetMass(float mass);
 	void InitBodyToRigid();
@@ -55,13 +56,10 @@ protected:
 	btCollisionObject*							m_collision_object;
 
 	btRigidBody*								m_rigid_body;
-	btScalar									m_mass;
 	btVector3									m_local_inertia;
 
 	btCollisionShape*							m_collision_shape;
 	btMotionState*								m_motion_state;
-
-	lol::mat4									m_local_to_world;
 #else
 public:
 	EasyPhysics() { }
@@ -72,12 +70,31 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size) { }
 	void SetShapeToCapsule(float radius, float height) { }
 
+	void CustomSetCollisionChannel(int NewGroup, int NewMask) { }
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
 	void SetMass(float mass) { }
 	void InitBodyToRigid() { }
 	void AddToSimulation(class Simulation* current_simulation) { }
 	mat4 GetTransform() { return mat4(1.0f); }
 #endif
+
+public:
+	//Sets the collision Group & Mask.
+	//Mask can change at runtime, not group !
+	void SetCollisionChannel(int NewGroup, int NewMask)
+	{
+		m_collision_group = (1<<NewGroup);
+		m_collision_mask = NewMask;
+		CustomSetCollisionChannel(NewGroup, NewMask);
+	}
+	int GetCollisionGroup() { return m_collision_group; }
+	int GetCollisionMask()	{ return m_collision_mask; }
+
+protected:
+	lol::mat4									m_local_to_world;
+	float										m_mass;
+	int											m_collision_group;
+	int											m_collision_mask;
 };
 
 } /* namespace phys */

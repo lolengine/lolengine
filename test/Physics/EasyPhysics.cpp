@@ -36,7 +36,9 @@ EasyPhysics::EasyPhysics() :
 	m_collision_shape(NULL),
 	m_motion_state(NULL),
 	m_mass(.0f),
-	m_local_inertia(btVector3(.0f, .0f, .0f))
+	m_local_inertia(btVector3(.0f, .0f, .0f)),
+	m_collision_group(1),
+	m_collision_mask(1)
 {
 }
 
@@ -101,6 +103,15 @@ void EasyPhysics::SetShapeToCapsule(float radius, float height)
 }
 
 //-------------------------------------------------------------------------
+//Bullet collision channel setup
+//--
+void EasyPhysics::CustomSetCollisionChannel(int NewGroup, int NewMask)
+{
+	if (m_rigid_body)
+		m_rigid_body->setCollisionFlags(m_collision_mask);
+}
+
+//-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
 void EasyPhysics::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
@@ -157,14 +168,14 @@ void EasyPhysics::AddToSimulation(class Simulation* current_simulation)
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
 	if (m_rigid_body)
 	{
-		dynamics_world->addRigidBody(m_rigid_body);
+		dynamics_world->addRigidBody(m_rigid_body, m_collision_group, m_collision_mask);
 		if (m_mass != .0f)
 			current_simulation->AddToDynamic(this);
 		else
 			current_simulation->AddToStatic(this);
 	}
 	else
-		dynamics_world->addCollisionObject(m_collision_object);
+		dynamics_world->addCollisionObject(m_collision_object, m_collision_group, m_collision_mask);
 }
 
 //-------------------------------------------------------------------------

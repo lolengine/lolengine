@@ -95,7 +95,7 @@ private:
 	void CustomSetGravity(vec3 &NewGravity)
 	{
 		if (m_dynamics_world)
-			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity));
+			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity * LOL2BT_UNIT));
 	}
 
 	void CustomSetTimestep(float NewTimestep) { }
