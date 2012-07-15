@@ -10,7 +10,7 @@
 //
 
 //
-// The EasyPhysics class
+// The EasyPhysic class
 // ------------------
 //
 
@@ -29,12 +29,14 @@ namespace lol
 namespace phys
 {
 
-class EasyPhysics
+class EasyPhysic
 {
+
 #ifdef HAVE_PHYS_USE_BULLET
+
 public:
-	EasyPhysics();
-	~EasyPhysics();
+	EasyPhysic();
+	~EasyPhysic();
 
 	void SetShapeToBox(lol::vec3& box_size);
 	void SetShapeToSphere(float radius);
@@ -42,10 +44,10 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size);
 	void SetShapeToCapsule(float radius, float height);
 
-	void CustomSetCollisionChannel(int NewGroup, int NewMask);
+	bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
 	void SetMass(float mass);
-	void InitBodyToRigid();
+	void InitBodyToRigid(bool ZeroMassIsKinematic=false);
 	void AddToSimulation(class Simulation* current_simulation);
 	mat4 GetTransform();
 
@@ -60,9 +62,11 @@ protected:
 
 	btCollisionShape*							m_collision_shape;
 	btMotionState*								m_motion_state;
-#else
+
+#else  // NO PHYSIC IMPLEMENTATION
+
 public:
-	EasyPhysics() { }
+	EasyPhysic() { }
 
 	void SetShapeToBox(lol::vec3& BoxSize) { }
 	void SetShapeToSphere(float radius) { }
@@ -70,22 +74,27 @@ public:
 	void SetShapeToCylinder(lol::vec3& cyl_size) { }
 	void SetShapeToCapsule(float radius, float height) { }
 
-	void CustomSetCollisionChannel(int NewGroup, int NewMask) { }
+	bool CanChangeCollisionChannel() { return true; }
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
 	void SetMass(float mass) { }
 	void InitBodyToRigid() { }
 	void AddToSimulation(class Simulation* current_simulation) { }
 	mat4 GetTransform() { return mat4(1.0f); }
-#endif
+
+#endif // PHYSIC IMPLEMENTATION
 
 public:
 	//Sets the collision Group & Mask.
 	//Mask can change at runtime, not group !
-	void SetCollisionChannel(int NewGroup, int NewMask)
+	bool SetCollisionChannel(int NewGroup, int NewMask)
 	{
-		m_collision_group = (1<<NewGroup);
-		m_collision_mask = NewMask;
-		CustomSetCollisionChannel(NewGroup, NewMask);
+		if (CanChangeCollisionChannel())
+		{
+			m_collision_group = (1<<NewGroup);
+			m_collision_mask = NewMask;
+			return true;
+		}
+		return false;
 	}
 	int GetCollisionGroup() { return m_collision_group; }
 	int GetCollisionMask()	{ return m_collision_mask; }
@@ -95,6 +104,27 @@ protected:
 	float										m_mass;
 	int											m_collision_group;
 	int											m_collision_mask;
+};
+
+class EasyConstraint
+{
+	EasyConstraint()
+	{
+		//btPoint2PointConstraint(bA, bB, PivotA, PivotB)
+		//btHingeConstraint(bA, bB, TransfA, TransfB, UseRefA)
+		//btSliderConstraint(bA, bB, TransfA, TransfB, UseRefA)
+		//btConeTwistConstraint(bA, bB, TransfA, TransfB)
+		//btGeneric6DofConstraint(bA, bB, TransfA, TransfB, UseRefA)
+	}
+
+#ifdef HAVE_PHYS_USE_BULLET
+
+	btTypedConstraint*			m_typed_constraint;
+
+#else  // NO PHYSIC IMPLEMENTATION
+
+#endif // PHYSIC IMPLEMENTATION
+
 };
 
 } /* namespace phys */

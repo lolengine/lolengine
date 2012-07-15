@@ -23,8 +23,6 @@ namespace phys
 
 class Simulation : public Entity
 {
-	friend class EasyPhysics;
-
 public:
 	Simulation() :
 		m_broadphase(0),
@@ -109,7 +107,9 @@ private:
 	btSequentialImpulseConstraintSolver*	m_solver;
 	// The world.
 	btDiscreteDynamicsWorld*				m_dynamics_world;
-#else
+
+#else  // NO PHYSIC IMPLEMENTATION
+
 public:
 	void Init() { }
 	void TickGame(float seconds) { }
@@ -118,7 +118,8 @@ private:
 	void CustomSetContinuousDetection(bool ShouldUseCCD) { }
 	void CustomSetGravity(vec3 &NewGravity) { }
 	void CustomSetTimestep(float NewTimestep) { }
-#endif //HAVE_PHYS_USE_BULLET
+
+#endif // PHYSIC IMPLEMENTATION
 
 public:
 	//Main logic :
@@ -150,13 +151,18 @@ public:
 	}
 
 private:
-	//Adds the given EasyPhysics to the correct list.
-	void AddToDynamic(EasyPhysics* dynamic_EP)	{ m_dynamic_list << dynamic_EP; }
-	void AddToStatic(EasyPhysics* static_EP)	{ m_static_list	<< static_EP; }
+	friend class EasyPhysic;
+	friend class EasyConstraint;
+
+	//Adds the given EasyPhysic to the correct list.
+	void AddToDynamic(EasyPhysic* NewEPDynamic)	{ m_dynamic_list << NewEPDynamic; }
+	void AddToStatic(EasyPhysic* NewEPStatic)	{ m_static_list	<< NewEPStatic; }
+	void AddToConstraint(EasyConstraint* NewEC)	{ m_constraint_list	<< NewEC; }
 
 	//Easy Physics body List
-	Array<EasyPhysics*>						m_dynamic_list;
-	Array<EasyPhysics*>						m_static_list;
+	Array<EasyPhysic*>						m_dynamic_list;
+	Array<EasyPhysic*>						m_static_list;
+	Array<EasyConstraint*>					m_constraint_list;
 
 	//Easy Physics data storage
 	float									m_timestep;
