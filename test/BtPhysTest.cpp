@@ -100,17 +100,47 @@ BtPhysTest::BtPhysTest(bool editor)
 		m_ground_list << NewPhyobj;
 	}
 
-	for (int x=0; x < 6; x++)
+	if (1)
 	{
-		for (int y=0; y < 6; y++)
+		for (int x=0; x < 6; x++)
 		{
-			for (int z=0; z < 5; z++)
+			for (int y=0; y < 6; y++)
 			{
-				PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
-					vec3(-20.f, 15.f, -20.f) +
-					vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
-				m_physobj_list << new_physobj;
-				Ticker::Ref(new_physobj);
+				for (int z=0; z < 5; z++)
+				{
+					PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
+						vec3(-20.f, 15.f, -20.f) +
+						vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
+					m_physobj_list << new_physobj;
+					Ticker::Ref(new_physobj);
+				}
+			}
+		}
+	}
+
+	if (1)
+	{
+		Array<PhysicsObject*> RopeElements;
+		for (int i = 0; i < 14; i++)
+		{
+			PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
+				vec3(0.f, 15.f, -20.f) +
+				vec3(0.f, 0.f, 2.f * (float)i), 1);
+			RopeElements << new_physobj;
+			m_physobj_list << new_physobj;
+			Ticker::Ref(new_physobj);
+			if (RopeElements.Count() > 1)
+			{
+				EasyConstraint* new_constraint = new EasyConstraint();
+
+				vec3 A2B = .5f * (RopeElements[i]->GetPhysic()->GetTransform().v3.xyz - 
+							RopeElements[i - 1]->GetPhysic()->GetTransform().v3.xyz);
+				new_constraint->SetPhysObjA(RopeElements[i - 1]->GetPhysic(), lol::mat4::translate(A2B));
+				new_constraint->SetPhysObjB(RopeElements[i]->GetPhysic(), lol::mat4::translate(-A2B));
+				new_constraint->InitConstraintToPoint2Point();
+				new_constraint->DisableCollisionBetweenObjs(true);
+				new_constraint->AddToSimulation(m_simulation);
+				m_constraint_list << new_constraint;
 			}
 		}
 	}
@@ -298,17 +328,20 @@ void BtPhysTest::TickGame(float seconds)
 			PhysObj->SetRender(true);
 	}
 
-	for (int i = 0; i < m_ground_list.Count(); i++)
+	if (1)
 	{
-		PhysicsObject* PhysObj = m_ground_list[i];
+		for (int i = 0; i < m_ground_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_ground_list[i];
 
-		mat4 GroundMat = PhysObj->GetTransform();
-		mat4 CenterMx = mat4::translate(GroundBarycenter);
-		GroundMat = inverse(CenterMx) * GroundMat;
-		GroundMat = CenterMx *
-					mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
-					* GroundMat;
-		PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+			mat4 GroundMat = PhysObj->GetTransform();
+			mat4 CenterMx = mat4::translate(GroundBarycenter);
+			GroundMat = inverse(CenterMx) * GroundMat;
+			GroundMat = CenterMx *
+						mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
+						* GroundMat;
+			PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+		}
 	}
 
 	PhysObjBarycenter = vec3(.0f);
@@ -403,16 +436,26 @@ void BtPhysTest::TickDraw(float seconds)
 BtPhysTest::~BtPhysTest()
 {
 	Ticker::Unref(m_camera);
+	
+	while (m_constraint_list.Count())
+	{
+		EasyConstraint* CurPop = m_constraint_list.Last();
+		m_constraint_list.Pop();
+		CurPop->RemoveFromSimulation(m_simulation);
+		delete CurPop;
+	}
 	while (m_ground_list.Count())
 	{
 		PhysicsObject* CurPop = m_ground_list.Last();
 		m_ground_list.Pop();
+		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
 		Ticker::Unref(CurPop);
 	}
 	while (m_physobj_list.Count())
 	{
 		PhysicsObject* CurPop = m_physobj_list.Last();
 		m_physobj_list.Pop();
+		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
 		Ticker::Unref(CurPop);
 	}
     Ticker::Unref(m_simulation);
