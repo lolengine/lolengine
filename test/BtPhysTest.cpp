@@ -67,10 +67,12 @@ BtPhysTest::BtPhysTest(bool editor)
     m_ready = false;
 
 	m_simulation = new Simulation();
-	m_simulation->InitContext();
+	m_simulation->Init();
 	vec3 NewGravity = vec3(.0f, -10.0f, .0f);
 	m_simulation->SetGravity(NewGravity);
 	m_simulation->SetContinuousDetection(true);
+	m_simulation->SetTimestep(1.f / 120.f);
+    Ticker::Ref(m_simulation);
 
 	float offset = 29.5f;
 	vec3 pos_offset = vec3(.0f, 30.f, .0f);
@@ -266,8 +268,6 @@ void BtPhysTest::TickGame(float seconds)
     if (Input::GetButtonState(27 /*SDLK_ESCAPE*/))
         Ticker::Shutdown();
 
-	m_simulation->TickContext(seconds);
-
 	vec3 GroundBarycenter = vec3(.0f);
 	vec3 PhysObjBarycenter = vec3(.0f);
 	float factor = .0f;
@@ -415,6 +415,7 @@ BtPhysTest::~BtPhysTest()
 		m_physobj_list.Pop();
 		Ticker::Unref(CurPop);
 	}
+    Ticker::Unref(m_simulation);
 
 #if 0
 	//Exit Physics
