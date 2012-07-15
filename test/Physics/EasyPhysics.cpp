@@ -30,7 +30,7 @@ namespace phys
 
 #ifdef HAVE_PHYS_USE_BULLET
 
-EasyPhysics::EasyPhysics() : 
+EasyPhysic::EasyPhysic() : 
 	m_collision_object(NULL),
 	m_rigid_body(NULL),
 	m_collision_shape(NULL),
@@ -42,7 +42,7 @@ EasyPhysics::EasyPhysics() :
 {
 }
 
-EasyPhysics::~EasyPhysics()
+EasyPhysic::~EasyPhysic()
 {
 	m_rigid_body = NULL;
 	delete m_collision_object;
@@ -54,7 +54,7 @@ EasyPhysics::~EasyPhysics()
 //Set Shape functions
 //--
 
-void EasyPhysics::SetShapeTo(btCollisionShape* collision_shape)
+void EasyPhysic::SetShapeTo(btCollisionShape* collision_shape)
 {
 	bool bReinitToRigidBody = false;
 	if (m_rigid_body)
@@ -72,60 +72,43 @@ void EasyPhysics::SetShapeTo(btCollisionShape* collision_shape)
 }
 
 //Box Shape support
-void EasyPhysics::SetShapeToBox(lol::vec3& box_size)
+void EasyPhysic::SetShapeToBox(lol::vec3& box_size)
 {
 	vec3 new_box_size = box_size * LOL2BT_UNIT * LOL2BT_SIZE;
 	SetShapeTo(new btBoxShape(LOL2BT_VEC3(new_box_size)));
 }
 
-void EasyPhysics::SetShapeToSphere(float radius)
+void EasyPhysic::SetShapeToSphere(float radius)
 {
 	SetShapeTo(new btSphereShape(radius * LOL2BT_UNIT * LOL2BT_SIZE));
 }
 
-void EasyPhysics::SetShapeToCone(float radius, float height)
+void EasyPhysic::SetShapeToCone(float radius, float height)
 {
 	SetShapeTo(new btConeShape(	radius * LOL2BT_UNIT,
 								height * LOL2BT_UNIT));
 }
 
-void EasyPhysics::SetShapeToCylinder(lol::vec3& cyl_size)
+void EasyPhysic::SetShapeToCylinder(lol::vec3& cyl_size)
 {
 	vec3 new_cyl_size = cyl_size * LOL2BT_UNIT;
 	new_cyl_size.y *= LOL2BT_SIZE;
 	SetShapeTo(new btCylinderShape(LOL2BT_VEC3(new_cyl_size)));
 }
 
-void EasyPhysics::SetShapeToCapsule(float radius, float height)
+void EasyPhysic::SetShapeToCapsule(float radius, float height)
 {
 	SetShapeTo(new btCapsuleShape(	radius * LOL2BT_UNIT * LOL2BT_SIZE,
 									height * LOL2BT_UNIT * LOL2BT_SIZE));
 }
 
 //-------------------------------------------------------------------------
-//Bullet collision channel setup
-//--
-void EasyPhysics::CustomSetCollisionChannel(int NewGroup, int NewMask)
-{
-	if (m_rigid_body)
-		m_rigid_body->setCollisionFlags(m_collision_mask);
-}
-
-//-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
-void EasyPhysics::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
+void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
 	if (m_motion_state)
-	{
-		if (m_mass != .0f)
-			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
-		else
-		{
-			m_rigid_body->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
-			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
-		}
-	}
+		m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
 	else
 		m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location)));
 }
@@ -134,7 +117,7 @@ void EasyPhysics::SetTransform(const lol::vec3& base_location, const lol::quat& 
 //Mass related functions
 //--
 //Set Shape functions
-void EasyPhysics::SetMass(float mass)
+void EasyPhysic::SetMass(float mass)
 {
 	m_mass = mass;
 
@@ -150,7 +133,7 @@ void EasyPhysics::SetMass(float mass)
 //--
 
 //Init to rigid body
-void EasyPhysics::InitBodyToRigid()
+void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 {
 	if (m_collision_object)
 		delete m_collision_object;
@@ -158,12 +141,19 @@ void EasyPhysics::InitBodyToRigid()
 	SetLocalInertia(m_mass);
 	if (!m_motion_state)
 		SetTransform(vec3(.0f));
+
 	btRigidBody::btRigidBodyConstructionInfo NewInfos(m_mass, m_motion_state, m_collision_shape, m_local_inertia);
 	m_rigid_body = new btRigidBody(NewInfos);
 	m_collision_object = m_rigid_body;
+
+	if (m_mass == .0f && SetToKinematic)
+	{
+		m_rigid_body->setActivationState(DISABLE_DEACTIVATION);
+		m_rigid_body->setCollisionFlags(m_rigid_body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
 }
 
-void EasyPhysics::AddToSimulation(class Simulation* current_simulation)
+void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
 {
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
 	if (m_rigid_body)
@@ -182,7 +172,7 @@ void EasyPhysics::AddToSimulation(class Simulation* current_simulation)
 //Getter functons
 //--
 
-mat4 EasyPhysics::GetTransform()
+mat4 EasyPhysic::GetTransform()
 {
 	m_local_to_world = lol::mat4(1.0f);
 	if (m_rigid_body && m_motion_state)
@@ -197,14 +187,15 @@ mat4 EasyPhysics::GetTransform()
 }
 
 //Set Local Inertia
-void EasyPhysics::SetLocalInertia(float mass)
+void EasyPhysic::SetLocalInertia(float mass)
 {
 	if (mass != .0f)
 		m_collision_shape->calculateLocalInertia(mass, m_local_inertia);
 	else
 		m_local_inertia = btVector3(.0f, .0f, .0f);
 }
-#endif
+
+#endif // HAVE_PHYS_USE_BULLET
 
 } /* namespace phys */
 

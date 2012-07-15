@@ -30,7 +30,7 @@ public:
 		m_physics.SetShapeToBox(BoxSize);
 		m_physics.SetMass(.0f);
 		m_physics.SetTransform(base_location, base_rotation);
-		m_physics.InitBodyToRigid();
+		m_physics.InitBodyToRigid(true);
 		m_physics.AddToSimulation(new_sim);
 	}
 
@@ -164,7 +164,7 @@ protected:
 private:
 	//Base datas
 	EasyMesh		m_mesh;
-	EasyPhysics		m_physics;
+	EasyPhysic		m_physics;
 
 	bool			m_ready;
 	bool			m_should_render;
