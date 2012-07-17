@@ -67,10 +67,12 @@ private:
 #endif//BT_ALLOW_ARRAY_COPY_OPERATOR
 
 protected:
-		SIMD_FORCE_INLINE	int	allocSize(int size)
+// LOL BEGIN
+		SIMD_FORCE_INLINE	int	allocSize(int _size)
 		{
-			return (size ? size*2 : 1);
+			return (_size ? _size*2 : 1);
 		}
+// LOL END
 		SIMD_FORCE_INLINE	void	copy(int start,int end, T* dest) const
 		{
 			int i;
@@ -99,12 +101,14 @@ protected:
 			}
 		}
 
-		SIMD_FORCE_INLINE	void* allocate(int size)
+// LOL BEGIN
+		SIMD_FORCE_INLINE	void* allocate(int _size)
 		{
-			if (size)
-				return m_allocator.allocate(size);
+			if (_size)
+				return m_allocator.allocate(_size);
 			return 0;
 		}
+// LOL END
 
 		SIMD_FORCE_INLINE	void	deallocate()
 		{
@@ -473,14 +477,16 @@ protected:
 	}
 
 	//PCK: whole function
-	void initializeFromBuffer(void *buffer, int size, int capacity)
+// LOL BEGIN
+	void initializeFromBuffer(void *buffer, int _size, int _capacity)
 	{
 		clear();
 		m_ownsMemory = false;
 		m_data = (T*)buffer;
-		m_size = size;
-		m_capacity = capacity;
+		m_size = _size;
+		m_capacity = _capacity;
 	}
+// LOL END
 
 	void copyFromArray(const btAlignedObjectArray& otherArray)
 	{

@@ -30,16 +30,20 @@ public:
 	//		template <typename btScalar>
 	//		explicit Quaternion(const btScalar *v) : Tuple4<btScalar>(v) {}
   /**@brief Constructor from scalars */
-	btQuaternion(const btScalar& x, const btScalar& y, const btScalar& z, const btScalar& w) 
-		: btQuadWord(x, y, z, w) 
+// LOL BEGIN
+	btQuaternion(const btScalar& _x, const btScalar& _y, const btScalar& _z, const btScalar& _w) 
+		: btQuadWord(_x, _y, _z, _w) 
 	{}
+// LOL END
   /**@brief Axis angle Constructor
    * @param axis The axis which the rotation is around
    * @param angle The magnitude of the rotation around the angle (Radians) */
-	btQuaternion(const btVector3& axis, const btScalar& angle) 
+// LOL BEGIN
+	btQuaternion(const btVector3& axis, const btScalar& _angle) 
 	{ 
-		setRotation(axis, angle); 
+		setRotation(axis, _angle); 
 	}
+// LOL END
   /**@brief Constructor from Euler angles
    * @param yaw Angle around Y unless BT_EULER_DEFAULT_ZYX defined then Z
    * @param pitch Angle around X unless BT_EULER_DEFAULT_ZYX defined then Y
@@ -55,14 +59,16 @@ public:
   /**@brief Set the rotation using axis angle notation 
    * @param axis The axis around which to rotate
    * @param angle The magnitude of the rotation in Radians */
-	void setRotation(const btVector3& axis, const btScalar& angle)
+// LOL BEGIN
+	void setRotation(const btVector3& axis, const btScalar& _angle)
 	{
 		btScalar d = axis.length();
 		btAssert(d != btScalar(0.0));
-		btScalar s = btSin(angle * btScalar(0.5)) / d;
+		btScalar s = btSin(_angle * btScalar(0.5)) / d;
 		setValue(axis.x() * s, axis.y() * s, axis.z() * s, 
-			btCos(angle * btScalar(0.5)));
+			btCos(_angle * btScalar(0.5)));
 	}
+// LOL END
   /**@brief Set the quaternion using Euler angles
    * @param yaw Angle around Y
    * @param pitch Angle around X
