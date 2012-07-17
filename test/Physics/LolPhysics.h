@@ -60,6 +60,8 @@ public:
 
 	virtual void TickGame(float seconds)
 	{
+		Entity::TickGame(seconds);
+
 		//step the simulation
 		if (m_dynamics_world)
 		{
