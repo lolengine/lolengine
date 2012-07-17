@@ -52,8 +52,10 @@ struct btHashString
 	{
 			int ret = 0 ;
 
-			while( ! (ret = *(unsigned char *)src - *(unsigned char *)dst) && *dst)
+// LOL BEGIN
+			while( ! (ret = *src - *dst) && *dst)
 					++src, ++dst;
+// LOL END
 
 			if ( ret < 0 )
 					ret = -1 ;

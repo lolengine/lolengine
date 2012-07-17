@@ -79,13 +79,15 @@ public:
    * @param y Y value 
    * @param z Z value 
    */
-	SIMD_FORCE_INLINE btVector3(const btScalar& x, const btScalar& y, const btScalar& z)
+// LOL BEGIN
+	SIMD_FORCE_INLINE btVector3(const btScalar& _x, const btScalar& _y, const btScalar& _z)
 	{
-		m_floats[0] = x;
-		m_floats[1] = y;
-		m_floats[2] = z;
+		m_floats[0] = _x;
+		m_floats[1] = _y;
+		m_floats[2] = _z;
 		m_floats[3] = btScalar(0.);
 	}
+// LOL END
 
 	
 /**@brief Add a vector to this one 
@@ -267,14 +269,16 @@ public:
 		SIMD_FORCE_INLINE const btScalar& getY() const { return m_floats[1]; }
   /**@brief Return the z value */
 		SIMD_FORCE_INLINE const btScalar& getZ() const { return m_floats[2]; }
+// LOL BEGIN
   /**@brief Set the x value */
-		SIMD_FORCE_INLINE void	setX(btScalar x) { m_floats[0] = x;};
+		SIMD_FORCE_INLINE void	setX(btScalar _x) { m_floats[0] = _x;};
   /**@brief Set the y value */
-		SIMD_FORCE_INLINE void	setY(btScalar y) { m_floats[1] = y;};
+		SIMD_FORCE_INLINE void	setY(btScalar _y) { m_floats[1] = _y;};
   /**@brief Set the z value */
-		SIMD_FORCE_INLINE void	setZ(btScalar z) {m_floats[2] = z;};
+		SIMD_FORCE_INLINE void	setZ(btScalar _z) {m_floats[2] = _z;};
   /**@brief Set the w value */
-		SIMD_FORCE_INLINE void	setW(btScalar w) { m_floats[3] = w;};
+		SIMD_FORCE_INLINE void	setW(btScalar _w) { m_floats[3] = _w;};
+// LOL END
   /**@brief Return the x value */
 		SIMD_FORCE_INLINE const btScalar& x() const { return m_floats[0]; }
   /**@brief Return the y value */
@@ -321,13 +325,15 @@ public:
 			btSetMin(m_floats[3], other.w());
 		}
 
-		SIMD_FORCE_INLINE void 	setValue(const btScalar& x, const btScalar& y, const btScalar& z)
+// LOL BEGIN
+		SIMD_FORCE_INLINE void 	setValue(const btScalar& _x, const btScalar& _y, const btScalar& _z)
 		{
-			m_floats[0]=x;
-			m_floats[1]=y;
-			m_floats[2]=z;
+			m_floats[0]=_x;
+			m_floats[1]=_y;
+			m_floats[2]=_z;
 			m_floats[3] = btScalar(0.);
 		}
+// LOL END
 
 		void	getSkewSymmetricMatrix(btVector3* v0,btVector3* v1,btVector3* v2) const
 		{
@@ -491,18 +497,20 @@ SIMD_FORCE_INLINE btVector3 btVector3::normalized() const
 	return *this / length();
 } 
 
-SIMD_FORCE_INLINE btVector3 btVector3::rotate( const btVector3& wAxis, const btScalar angle ) const
+// LOL BEGIN
+SIMD_FORCE_INLINE btVector3 btVector3::rotate( const btVector3& wAxis, const btScalar _angle ) const
 {
 	// wAxis must be a unit lenght vector
 
 	btVector3 o = wAxis * wAxis.dot( *this );
-	btVector3 x = *this - o;
-	btVector3 y;
+	btVector3 _x = *this - o;
+	btVector3 _y;
 
-	y = wAxis.cross( *this );
+	_y = wAxis.cross( *this );
 
-	return ( o + x * btCos( angle ) + y * btSin( angle ) );
+	return ( o + _x * btCos( _angle ) + _y * btSin( _angle ) );
 }
+// LOL END
 
 class btVector4 : public btVector3
 {
@@ -511,11 +519,13 @@ public:
 	SIMD_FORCE_INLINE btVector4() {}
 
 
-	SIMD_FORCE_INLINE btVector4(const btScalar& x, const btScalar& y, const btScalar& z,const btScalar& w) 
-		: btVector3(x,y,z)
+// LOL BEGIN
+	SIMD_FORCE_INLINE btVector4(const btScalar& _x, const btScalar& _y, const btScalar& _z,const btScalar& _w) 
+		: btVector3(_x,_y,_z)
 	{
-		m_floats[3] = w;
+		m_floats[3] = _w;
 	}
+// LOL END
 
 
 	SIMD_FORCE_INLINE btVector4 absolute4() const 
@@ -623,13 +633,15 @@ public:
    * @param z Value of z
    * @param w Value of w
    */
-		SIMD_FORCE_INLINE void	setValue(const btScalar& x, const btScalar& y, const btScalar& z,const btScalar& w)
+// LOL BEGIN
+		SIMD_FORCE_INLINE void	setValue(const btScalar& _x, const btScalar& _y, const btScalar& _z,const btScalar& _w)
 		{
-			m_floats[0]=x;
-			m_floats[1]=y;
-			m_floats[2]=z;
-			m_floats[3]=w;
+			m_floats[0]=_x;
+			m_floats[1]=_y;
+			m_floats[2]=_z;
+			m_floats[3]=_w;
 		}
+// LOL END
 
 
 };
@@ -640,7 +652,9 @@ SIMD_FORCE_INLINE void	btSwapScalarEndian(const btScalar& sourceVal, btScalar& d
 {
 	#ifdef BT_USE_DOUBLE_PRECISION
 	unsigned char* dest = (unsigned char*) &destVal;
-	unsigned char* src  = (unsigned char*) &sourceVal;
+// LOL BEGIN
+	unsigned char const* src  = (unsigned char const*) &sourceVal;
+// LOL END
 	dest[0] = src[7];
     dest[1] = src[6];
     dest[2] = src[5];
@@ -651,7 +665,9 @@ SIMD_FORCE_INLINE void	btSwapScalarEndian(const btScalar& sourceVal, btScalar& d
     dest[7] = src[0];
 #else
 	unsigned char* dest = (unsigned char*) &destVal;
-	unsigned char* src  = (unsigned char*) &sourceVal;
+// LOL BEGIN
+	unsigned char const* src  = (unsigned char const*) &sourceVal;
+// LOL END
 	dest[0] = src[3];
     dest[1] = src[2];
     dest[2] = src[1];
