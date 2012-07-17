@@ -54,7 +54,7 @@ AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
-AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h)
+AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h)
 AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
@@ -367,6 +367,10 @@ if test "${ac_cv_my_have_gtkgl}" != "no"; then
   AC_DEFINE(USE_GTKGL, 1, Define to 1 to use GtkGl)
 fi
 AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
+
+
+dnl  Can we build neercs?
+AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no" -a "${ac_cv_header_glob_h}" = "yes")
 
 
 dnl  LolFx compilation rule
