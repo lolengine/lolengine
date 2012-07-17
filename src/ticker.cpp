@@ -275,13 +275,15 @@ void *TickerData::GameThreadMain(void * /* p */)
                 {
 #if !LOL_RELEASE
                     if (e->m_tickstate != Entity::STATE_IDLE)
-                        Log::Error("entity not idle for game tick\n");
+                        Log::Error("entity %s [%p] not idle for game tick\n",
+                                   e->GetName(), e);
                     e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
                     e->TickGame(data->deltatime);
 #if !LOL_RELEASE
                     if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
-                        Log::Error("entity missed super game tick\n");
+                        Log::Error("entity %s [%p] missed super game tick\n",
+                                   e->GetName(), e);
                     e->m_tickstate = Entity::STATE_IDLE;
 #endif
                 }
@@ -373,13 +375,15 @@ void Ticker::TickDraw()
             {
 #if !LOL_RELEASE
                 if (e->m_tickstate != Entity::STATE_IDLE)
-                    Log::Error("entity not idle for draw tick\n");
+                    Log::Error("entity %s [%p] not idle for draw tick\n",
+                               e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
                 e->TickDraw(data->deltatime);
 #if !LOL_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
-                    Log::Error("entity missed super draw tick\n");
+                    Log::Error("entity %s [%p] missed super draw tick\n",
+                               e->GetName(), e);
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
