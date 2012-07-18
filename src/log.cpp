@@ -14,6 +14,11 @@
 
 #include <cstdio>
 
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#endif
+
 #if defined __ANDROID__
 #   include <android/log.h>
 #else
@@ -36,8 +41,7 @@ void Log::Debug(char const *fmt, ...)
 #if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_DEBUG, "LOL", fmt, ap);
 #else
-    fprintf(stderr, "DEBUG: ");
-    vfprintf(stderr, fmt, ap);
+    Helper("DEBUG: ", fmt, ap);
 #endif
     va_end(ap);
 }
@@ -49,8 +53,7 @@ void Log::Info(char const *fmt, ...)
 #if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_INFO, "LOL", fmt, ap);
 #else
-    fprintf(stderr, "INFO: ");
-    vfprintf(stderr, fmt, ap);
+    Helper("INFO: ", fmt, ap);
 #endif
     va_end(ap);
 }
@@ -62,8 +65,7 @@ void Log::Warn(char const *fmt, ...)
 #if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_WARN, "LOL", fmt, ap);
 #else
-    fprintf(stderr, "WARN: ");
-    vfprintf(stderr, fmt, ap);
+    Helper("WARN: ", fmt, ap);
 #endif
     va_end(ap);
 }
@@ -75,10 +77,27 @@ void Log::Error(char const *fmt, ...)
 #if defined __ANDROID__
     __android_log_vprint(ANDROID_LOG_ERROR, "LOL", fmt, ap);
 #else
-    fprintf(stderr, "ERROR: ");
-    vfprintf(stderr, fmt, ap);
+    Helper("ERROR: ", fmt, ap);
 #endif
     va_end(ap);
+}
+
+/*
+ * Private helper function
+ */
+
+void Log::Helper(char const *prefix, char const *fmt, va_list ap)
+{
+#if defined _WIN32
+    char buf[4096];
+    vsnprintf(buf, 4095, fmt, ap);
+    buf[4095] = '\0';
+    OutputDebugString(prefix);
+    OutputDebugString(buf);
+#else
+    fprintf(stderr, "%s", prefix);
+    vfprintf(stderr, fmt, ap);
+#endif
 }
 
 } /* namespace lol */
