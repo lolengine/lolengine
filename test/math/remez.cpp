@@ -12,8 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "lol/math/real.h"
-#include "lol/math/remez.h"
+#include "core.h"
 
 using lol::real;
 using lol::RemezSolver;
