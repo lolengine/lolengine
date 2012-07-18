@@ -67,7 +67,7 @@ static inline int isnan(float f)
 #endif
 
 /* If using SDL and Visual Studio, let it override main() */
-#if defined _MSVC && defined USE_SDL
+#if defined USE_SDL && (defined _MSC_VER || defined __APPLE__)
 #   include <SDL_main.h>
 #endif
 
