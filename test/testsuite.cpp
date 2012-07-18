@@ -15,6 +15,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "core.h"
+
 #include <lol/unit.h>
 
 int main(int argc, char **argv)
