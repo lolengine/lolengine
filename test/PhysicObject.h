@@ -37,7 +37,7 @@ public:
 	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
 		: m_ready(false), m_should_render(true)
 	{
-		Array<char *> MeshRand;
+		Array<char const *> MeshRand;
 
 		MeshRand << "[sc#add afcb2 2 2 -.1]";
 		MeshRand << "[sc#dad afcb2 2 2 -.1]";
