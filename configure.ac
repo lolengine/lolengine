@@ -123,6 +123,17 @@ AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
 AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
 
 
+dnl  Are we building using MinGW?
+LIBS_save="$LIBS"
+LIBS="$LIBS -mwindows"
+AC_MSG_CHECKING(for -mwindows)
+AC_TRY_LINK([], [],
+ [AC_MSG_RESULT(yes)
+  LOL_LIBS="${LOL_LIBS} -mwindows"],
+ [AC_MSG_RESULT(no)])
+LIBS="$LIBS_save"
+
+
 dnl  Are we on the Xbox 360?
 dnl  Answer: NO! we don't know how to build for it anyway
 AM_CONDITIONAL(USE_X360, false)
@@ -142,8 +153,7 @@ LIBS_save="$LIBS"
 LIBS="$LIBS -Wl,-framework -Wl,OpenGL"
 AC_MSG_CHECKING(for -framework OpenGL)
 AC_TRY_LINK([], [],
- [ac_cv_my_have_cocoa="yes"
-  AC_MSG_RESULT(yes)
+ [AC_MSG_RESULT(yes)
   GL_LIBS="${GL_LIBS} -framework OpenGL"
   CXXFLAGS="${CXXFLAGS} -ObjC++"],
  [AC_MSG_RESULT(no)])

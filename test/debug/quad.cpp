@@ -19,10 +19,6 @@
 using namespace std;
 using namespace lol;
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 int main(int argc, char **argv)
 {
     Application app("Quad", ivec2(640, 480), 60.0f);

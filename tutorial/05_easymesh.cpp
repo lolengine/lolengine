@@ -17,10 +17,6 @@
 using namespace std;
 using namespace lol;
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 class EasyMeshTutorial : public WorldEntity
 {
 public:

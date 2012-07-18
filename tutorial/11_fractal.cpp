@@ -20,18 +20,13 @@
 
 using namespace lol;
 
-#if defined _WIN32 && defined USE_D3D9
-#   define FAR
-#   define NEAR
-#   include <d3d9.h>
-#endif
-
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 #if defined _WIN32
 #   include <direct.h>
+#   if defined USE_D3D9
+#       define FAR
+#       define NEAR
+#       include <d3d9.h>
+#   endif
 #endif
 
 extern char const *lolfx_11_fractal;

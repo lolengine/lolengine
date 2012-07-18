@@ -19,10 +19,6 @@
 
 using namespace lol;
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 #include "xolotl.h"
 
 class Xolotl : public WorldEntity
