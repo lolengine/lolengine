@@ -18,10 +18,6 @@
 using namespace std;
 using namespace lol;
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 #if defined _WIN32
 #   include <direct.h>
 #endif

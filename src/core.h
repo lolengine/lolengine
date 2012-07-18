@@ -61,9 +61,14 @@ static inline int isnan(float f)
 }
 #endif
 
-/* If using NaCl, override main with our version */
+/* If using NaCl, override main() with our version */
 #if defined __native_client__
 #   define main lol_nacl_main
+#endif
+
+/* If using SDL and Visual Studio, let it override main() */
+#if defined _MSVC && defined USE_SDL
+#   include <SDL_main.h>
 #endif
 
 // Base types

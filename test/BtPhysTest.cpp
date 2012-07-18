@@ -28,10 +28,6 @@
 #   include <cmath>
 #endif
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 #include "core.h"
 #include "loldebug.h"
 

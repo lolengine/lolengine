@@ -12,10 +12,6 @@
 #   include "config.h"
 #endif
 
-#if USE_SDL
-#   include <SDL_main.h>
-#endif
-
 #include "lol/math/real.h"
 #include "lol/math/remez.h"
 
