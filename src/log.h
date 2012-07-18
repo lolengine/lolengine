@@ -18,6 +18,7 @@
 #define __LOL_LOG_H__
 
 #include <stdint.h>
+#include <cstdarg>
 
 namespace lol
 {
@@ -35,6 +36,9 @@ public:
     static void Warn(char const *format, ...) LOL_FMT_ATTR(1, 2);
     static void Error(char const *format, ...) LOL_FMT_ATTR(1, 2);
 #undef LOL_FMT_ATTR
+
+private:
+    static void Helper(char const *prefix, char const *format, va_list ap);
 };
 
 } /* namespace lol */
