@@ -22,7 +22,8 @@
     <ClCompile Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Xbox 360'">MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Release'">
@@ -32,7 +33,8 @@
       <!-- For PlayStation tools -->
       <OptimizationLevel>Level2</OptimizationLevel>
 
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Xbox 360'">MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -55,6 +57,9 @@
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='PS3'">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(Ps3Deps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+      <SubSystem>Windows</SubSystem>
     </Link>
     <Link Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>

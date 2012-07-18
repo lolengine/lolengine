@@ -19,12 +19,8 @@
 using namespace std;
 using namespace lol;
 
-#if USE_SDL && defined __APPLE__
+#if USE_SDL
 #   include <SDL_main.h>
-#endif
-
-#if defined _WIN32
-#   undef main /* FIXME: still needed? */
 #endif
 
 int main(int argc, char **argv)

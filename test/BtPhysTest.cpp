@@ -28,7 +28,7 @@
 #   include <cmath>
 #endif
 
-#if USE_SDL && defined __APPLE__
+#if USE_SDL
 #   include <SDL_main.h>
 #endif
 
