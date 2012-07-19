@@ -125,11 +125,12 @@ AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
 
 dnl  Are we building using MinGW?
 LIBS_save="$LIBS"
-LIBS="$LIBS -mwindows"
-AC_MSG_CHECKING(for -mwindows)
+LIBS="$LIBS -mwindows -mwin32"
+AC_MSG_CHECKING(for -mwindows -mwin32)
 AC_TRY_LINK([], [],
  [AC_MSG_RESULT(yes)
-  LOL_LIBS="${LOL_LIBS} -mwindows"],
+  CXXFLAGS="${CXXFLAGS} -mwindows -mwin32"
+  LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"],
  [AC_MSG_RESULT(no)])
 LIBS="$LIBS_save"
 
@@ -263,6 +264,8 @@ AC_CHECK_HEADERS(SDL_image.h, [ac_cv_my_have_sdl_image="yes"])
 AC_CHECK_LIB(SDL, main,
  [SDL_LIBS="${SDL_LIBS} -lSDL"],
  [ac_cv_my_have_sdl="no"])
+AC_CHECK_LIB(SDLmain, main,
+ [SDL_LIBS="${SDL_LIBS} -lSDLmain -lSDL"])
 AC_CHECK_LIB(SDL_mixer, main,
  [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"],
  [ac_cv_my_have_sdl_mixer="no"])
