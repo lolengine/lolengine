@@ -150,56 +150,90 @@ dnl Are we on a Direct3D 9 platform?
 #AM_CONDITIONAL(USE_D3D9, test "${ac_cv_my_have_d3d9}" != "no")
 
 
-LIBS_save="$LIBS"
-LIBS="$LIBS -Wl,-framework -Wl,OpenGL"
-AC_MSG_CHECKING(for -framework OpenGL)
-AC_TRY_LINK([], [],
- [AC_MSG_RESULT(yes)
-  GL_LIBS="${GL_LIBS} -framework OpenGL"
-  CXXFLAGS="${CXXFLAGS} -ObjC++"],
- [AC_MSG_RESULT(no)])
-LIBS="$LIBS_save"
-
-
-dnl Which version of OpenGL to use?
+dnl  Find which version of OpenGL to use
 ac_cv_my_have_gl="no"
-PKG_CHECK_MODULES(GLES2, glesv2,
- [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-  GL_CFLAGS="${GL_CFLAGS} ${GLES2_CFLAGS}"
-  GL_LIBS="${GL_LIBS} ${GLES2_LIBS}"],
- [:])
-AC_CHECK_HEADER(GLES2/gl2.h,
- [AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-  ac_cv_my_have_gl="yes"])
+ac_cv_my_stop_looking_for_gl="no"
 
-PKG_CHECK_MODULES(GL, gl,
- [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)],
- [:])
-
-AC_CHECK_LIB(GL, glLoadIdentity,
- [ac_cv_my_have_gl="yes"
-  AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hackish
-  GL_LIBS="-lGL"])
-AC_CHECK_HEADER(GL/gl.h,
- [LIBS_save="$LIBS"
-  LIBS="$LIBS -lopengl32"
-  AC_MSG_CHECKING(for glLoadIdentity in -lopengl32)
-  AC_TRY_LINK([#include <GL/gl.h>],
-   [glLoadIdentity();],
-   [ac_cv_my_have_gl="yes"
-    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hack
-    AC_MSG_RESULT(yes)
-    GL_LIBS="-lopengl32"],
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  LIBS_save="$LIBS"
+  LIBS="$LIBS -Wl,-framework -Wl,OpenGL"
+  AC_MSG_CHECKING(for -framework OpenGL)
+  AC_TRY_LINK([], [],
+   [AC_MSG_RESULT(yes)
+    ac_cv_my_stop_looking_for_gl="yes"
+    GL_LIBS="${GL_LIBS} -framework OpenGL"
+    CXXFLAGS="${CXXFLAGS} -ObjC++"],
    [AC_MSG_RESULT(no)])
-  LIBS="$LIBS_save"])
-AC_CHECK_HEADER(PSGL/psgl.h,
- [ac_cv_my_have_gl="yes"])
+  LIBS="$LIBS_save"
+fi
+
+dnl  Use the Raspberry Pi libraries?
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+AC_CHECK_HEADER(bcm_host.h,
+ [AC_MSG_RESULT(yes)
+  AC_CHECK_LIB(bcm_host, main,
+   [ac_cv_my_have_gl="yes"
+    ac_cv_my_stop_looking_for_gl="yes"
+    AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+    GL_LIBS="-lGLESv2_static -lkhrn_static -lvcos -lvchiq_arm -lbcm_host"])],
+ [AC_MSG_RESULT(no)])
+fi
+
+dnl  Use the PS3 PSGL?
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  AC_CHECK_HEADER(PSGL/psgl.h,
+   [ac_cv_my_have_gl="yes"
+    ac_cv_my_stop_looking_for_gl="yes"])
+fi
+
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  PKG_CHECK_MODULES(GLES2, glesv2,
+   [ac_cv_my_have_gl="yes"
+    AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+    GL_CFLAGS="${GL_CFLAGS} ${GLES2_CFLAGS}"
+    GL_LIBS="${GL_LIBS} ${GLES2_LIBS}"],
+   [:])
+fi
+
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  AC_CHECK_HEADER(GLES2/gl2.h,
+   [AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+    ac_cv_my_have_gl="yes"])
+fi
+
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  PKG_CHECK_MODULES(GL, gl,
+   [ac_cv_my_have_gl="yes"
+    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)],
+   [:])
+fi
+
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  AC_CHECK_LIB(GL, glLoadIdentity,
+   [ac_cv_my_have_gl="yes"
+    AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hackish
+    GL_LIBS="-lGL"])
+fi
+
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  AC_CHECK_HEADER(GL/gl.h,
+   [LIBS_save="$LIBS"
+    LIBS="$LIBS -lopengl32"
+    AC_MSG_CHECKING(for glLoadIdentity in -lopengl32)
+    AC_TRY_LINK([#include <GL/gl.h>],
+     [glLoadIdentity();],
+     [ac_cv_my_have_gl="yes"
+      AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hack
+      AC_MSG_RESULT(yes)
+      GL_LIBS="-lopengl32"],
+     [AC_MSG_RESULT(no)])
+    LIBS="$LIBS_save"])
+fi
 
 if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
 fi
+
 
 dnl Use Glew?
 ac_cv_my_have_glew="no"
@@ -324,6 +358,11 @@ if test "${ac_cv_my_have_egl}" != "no"; then
   AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
   EGL_LIBS="${EGL_LIBS} -lX11"
 fi
+dnl Use the Raspberry Pi libraries?
+AC_CHECK_LIB(EGL_static, main,
+ [ac_cv_my_have_egl="yes"
+  AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
+  EGL_LIBS="-lEGL_static"])
 AM_CONDITIONAL(USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 
 
