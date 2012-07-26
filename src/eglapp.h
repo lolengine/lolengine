@@ -29,6 +29,7 @@ public:
     EglApp(char const *title, ivec2 res, float fps);
     virtual ~EglApp();
 
+    void ShowPointer(bool show);
     void Run();
 
 private:

@@ -12,11 +12,17 @@
 #   include "config.h"
 #endif
 
+#define HAVE_BCM_HOST_H 1
 #if defined USE_EGL
-#   include <X11/Xlib.h>
-#   include <X11/Xatom.h>
-#   include <X11/Xutil.h>
+#   if defined HAVE_BCM_HOST_H
+#       include <bcm_host.h>
+#   else
+#       include <X11/Xlib.h>
+#       include <X11/Xatom.h>
+#       include <X11/Xutil.h>
+#   endif
 #   include <EGL/egl.h>
+#   include <EGL/eglext.h>
 #endif
 
 #include "core.h"
@@ -36,11 +42,16 @@ class EglAppData
 
 private:
 #if defined USE_EGL
-    Display *dpy;
-    Window win;
     EGLDisplay egl_dpy;
     EGLContext egl_ctx;
     EGLSurface egl_surf;
+    uvec2 screen_size;
+#   if defined HAVE_BCM_HOST_H
+    EGL_DISPMANX_WINDOW_T nativewindow;
+#   else
+    Display *dpy;
+    Window win;
+#   endif
 #endif
 };
 
@@ -52,6 +63,11 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data(new EglAppData())
 {
 #if defined USE_EGL
+#   if defined HAVE_BCM_HOST_H
+    bcm_host_init();
+
+    data->egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+#   else
     data->dpy = XOpenDisplay(NULL);
     if (data->dpy == NULL)
     {
@@ -82,6 +98,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     XStoreName(data->dpy, data->win, title);
 
     data->egl_dpy = eglGetDisplay((EGLNativeDisplayType)data->dpy);
+#   endif
     if (data->egl_dpy == EGL_NO_DISPLAY)
     {
         Log::Error("cannot get EGL display\n");
@@ -118,8 +135,50 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
+    if (!eglBindAPI(EGL_OPENGL_ES_API))
+    {
+        Log::Error("cannot bind OpenGL ES API (%i)\n", eglGetError());
+        exit(EXIT_FAILURE);
+    }
+
+#   if defined HAVE_BCM_HOST_H
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+    DISPMANX_UPDATE_HANDLE_T dispman_update;
+    VC_RECT_T dst_rect;
+    VC_RECT_T src_rect;
+
+    graphics_get_display_size(0 /* LCD */, &data->screen_size.x, &data->screen_size.y);
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = data->screen_size.x;
+    dst_rect.height = data->screen_size.y;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = data->screen_size.x << 16;
+    src_rect.height = data->screen_size.y << 16;
+
+    dispman_display = vc_dispmanx_display_open(0 /* LCD */);
+    dispman_update = vc_dispmanx_update_start(0);
+
+    dispman_element = vc_dispmanx_element_add(dispman_update, dispman_display,
+        0/*layer*/, &dst_rect, 0/*src*/, &src_rect, DISPMANX_PROTECTION_NONE,
+        0 /*alpha*/, 0/*clamp*/, (DISPMANX_TRANSFORM_T)0/*transform*/);
+
+    data->nativewindow.element = dispman_element;
+    data->nativewindow.width = data->screen_size.x;
+    data->nativewindow.height = data->screen_size.y;
+    vc_dispmanx_update_submit_sync(dispman_update);
+
     data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
-                                            data->win, NULL);
+                                            &data->nativewindow, NULL);
+#   else
+    data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
+                                            (EGLNativeWindowType)data->win,
+                                            NULL);
+#   endif
     if (data->egl_surf == EGL_NO_SURFACE)
     {
         Log::Error("cannot create EGL surface (%i)\n", eglGetError());
@@ -144,14 +203,22 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     eglMakeCurrent(data->egl_dpy, data->egl_surf,
                    data->egl_surf, data->egl_ctx);
 
+#   if !defined HAVE_BCM_HOST_H
     XWindowAttributes gwa;
     XGetWindowAttributes(data->dpy, data->win, &gwa);
+    data->screen_size = ivec2(gwa.width, gwa.height);
+#   endif
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(ivec2(gwa.width, gwa.height));
+    Video::Setup((ivec2)data->screen_size);
     Audio::Setup(2);
 #endif
+}
+
+void EglApp::ShowPointer(bool show)
+{
+    ;
 }
 
 void EglApp::Run()
@@ -172,8 +239,12 @@ EglApp::~EglApp()
     eglDestroyContext(data->egl_dpy, data->egl_ctx);
     eglDestroySurface(data->egl_dpy, data->egl_surf);
     eglTerminate(data->egl_dpy);
+#   if defined HAVE_BCM_HOST_H
+    /* FIXME */
+#   else
     XDestroyWindow(data->dpy, data->win);
     XCloseDisplay(data->dpy);
+#   endif
 #endif
 
     delete data;
