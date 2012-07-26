@@ -40,6 +40,7 @@ namespace lol
 template<> real::Real()
 {
     m_mantissa = new uint32_t[BIGITS];
+    memset(m_mantissa, 0, BIGITS * sizeof(uint32_t));
     m_signexp = 0;
 }
 
@@ -1297,25 +1298,35 @@ template<> real atan2(real const &y, real const &x)
 
 template<> void real::hexprint() const
 {
-    printf("%08x", m_signexp);
+    std::printf("%08x", m_signexp);
     for (int i = 0; i < BIGITS; i++)
-        printf(" %08x", m_mantissa[i]);
-    printf("\n");
+        std::printf(" %08x", m_mantissa[i]);
+    std::printf("\n");
 }
 
+template<> void real::sprintf(char *str, int ndigits) const;
+
 template<> void real::print(int ndigits) const
+{
+    char *buf = new char[ndigits + 32 + 10];
+    real::sprintf(buf, ndigits);
+    std::printf("%s\n", buf);
+    delete[] buf;
+}
+
+template<> void real::sprintf(char *str, int ndigits) const
 {
     real x = *this;
 
     if (x.m_signexp >> 31)
     {
-        printf("-");
+        *str++ = '-';
         x = -x;
     }
 
     if (!x)
     {
-        printf("0.0\n");
+        std::strcpy(str, "0.0\n");
         return;
     }
 
@@ -1334,20 +1345,18 @@ template<> void real::print(int ndigits) const
     for (int i = 0; i < ndigits; i++)
     {
         int digit = (int)floor(x);
-        printf("%i", digit);
+        *str++ = '0' + digit;
         if (i == 0)
-            printf(".");
+            *str++ = '.';
         x -= real(digit);
         x *= R_10;
     }
 
     /* Print exponent information */
-    if (exponent < 0)
-        printf("e-%i", -exponent);
-    else if (exponent > 0)
-        printf("e+%i", exponent);
+    if (exponent)
+        str += std::sprintf(str, "e%c%i", exponent > 0 ? '+' : '-', -exponent);
 
-    printf("\n");
+    *str++ = '\0';
 }
 
 static real fast_pi()
