@@ -103,6 +103,21 @@ LOLUNIT_FIXTURE(RealTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 1234567876543210.0, 0.0);
     }
 
+    LOLUNIT_TEST(Init)
+    {
+        real r;
+        float f1 = (float)r;
+
+        LOLUNIT_ASSERT_EQUAL(f1, 0.0f);
+
+        rcmplx q;
+        float f2 = (float)q.x;
+        float f3 = (float)q.y;
+
+        LOLUNIT_ASSERT_EQUAL(f2, 0.0f);
+        LOLUNIT_ASSERT_EQUAL(f3, 0.0f);
+    }
+
     LOLUNIT_TEST(StringToReal)
     {
         float a1 = real("0");
