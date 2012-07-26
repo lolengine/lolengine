@@ -86,20 +86,20 @@ public:
         m_slices = 4;
         for (int i = 0; i < 4; i++)
         {
-            m_deltashift[i] = 0.0;
-            m_deltascale[i] = 1.0;
+            m_deltashift[i] = real("0");
+            m_deltascale[i] = real("1");
             m_dirty[i] = 2;
         }
 #if defined __CELLOS_LV2__ || defined _XBOX
-        //m_center = dcmplx(-.22815528839841, -1.11514249704382);
-        //m_center = dcmplx(0.001643721971153, 0.822467633298876);
-        m_center = dcmplx(-0.65823419062254, 0.50221777363480);
+        //m_center = rcmplx(-.22815528839841, -1.11514249704382);
+        //m_center = rcmplx(0.001643721971153, 0.822467633298876);
+        m_center = rcmplx("-0.65823419062254", "0.50221777363480");
         m_zoom_speed = -0.025;
 #else
-        m_center = -0.75;
+        m_center = rcmplx(-0.75, 0.0);
         m_zoom_speed = 0.0;
 #endif
-        m_translate = 0;
+        m_translate = rcmplx(0.0, 0.0);
         m_radius = 5.0;
         m_ready = false;
         m_drag = false;
@@ -199,10 +199,10 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        int prev_frame = m_frame;
+        int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
 
-        dcmplx worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
+        rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
 
         ivec3 buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
@@ -220,26 +220,26 @@ public:
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
              * would have tie rankings in the distance calculation. */
-            m_translate *= 1023.0 / 1024.0;
+            m_translate *= real(1023.0 / 1024.0);
             m_oldmouse = m_mousepos;
         }
         else
         {
             m_drag = false;
-            if (m_translate != 0.0)
+            if (m_translate != rcmplx(0.0, 0.0))
             {
-                m_translate *= std::pow(2.0, -seconds * 5.0);
-                if (m_translate.norm() / m_radius < 1e-4)
-                    m_translate = 0.0;
+                m_translate *= real(std::pow(2.0, -seconds * 5.0));
+                if ((double)m_translate.norm() < m_radius * 1e-4)
+                    m_translate = rcmplx(0.0, 0.0);
             }
         }
 
         if ((buttons[0] || buttons[2]) && m_mousepos.x != -1)
         {
             double zoom = buttons[0] ? -0.5 : 0.5;
-            m_zoom_speed += seconds * zoom;
+            m_zoom_speed += zoom * seconds;
             if (m_zoom_speed / zoom > 5e-3f)
-                m_zoom_speed = 5e-3f * zoom;
+                m_zoom_speed = zoom * 5e-3f;
         }
         else if (m_zoom_speed)
         {
@@ -249,9 +249,9 @@ public:
         }
 #endif
 
-        if (m_zoom_speed || m_translate != 0.0)
+        if (m_zoom_speed || m_translate != rcmplx(0.0, 0.0))
         {
-            dcmplx oldcenter = m_center;
+            rcmplx oldcenter = m_center;
             double oldradius = m_radius;
             double zoom = std::pow(2.0, seconds * 1e3f * m_zoom_speed);
             if (m_radius * zoom > 8.0)
@@ -267,13 +267,13 @@ public:
             m_radius *= zoom;
 #if !defined __CELLOS_LV2__ && !defined _XBOX
             m_center += m_translate;
-            m_center = (m_center - worldmouse) * zoom + worldmouse;
-            worldmouse = m_center + ScreenToWorldOffset(m_mousepos);
+            m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
+            worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
 #endif
 
             /* Store the transformation properties to go from m_frame - 1
              * to m_frame. */
-            m_deltashift[prev_frame] = (m_center - oldcenter) / oldradius;
+            m_deltashift[prev_frame] = (m_center - oldcenter) / real(oldradius);
             m_deltashift[prev_frame].x /= m_size.x * m_texel2world.x;
             m_deltashift[prev_frame].y /= m_size.y * m_texel2world.y;
             m_deltascale[prev_frame] = m_radius / oldradius;
@@ -283,8 +283,8 @@ public:
         {
             /* If settings didn't change, set transformation from previous
              * frame to identity. */
-            m_deltashift[prev_frame] = 0.0;
-            m_deltascale[prev_frame] = 1.0;
+            m_deltashift[prev_frame] = real::R_0;
+            m_deltascale[prev_frame] = real::R_1;
         }
 
         /* Transformation from current frame to current frame is always
@@ -299,9 +299,9 @@ public:
             int prev_index = (m_frame + 4 - i) % 4;
             int cur_index = (m_frame + 3 - i) % 4;
 
-            m_zoom_settings[cur_index][0] = m_zoom_settings[prev_index][0] * m_deltascale[cur_index] + m_deltashift[cur_index].x;
-            m_zoom_settings[cur_index][1] = m_zoom_settings[prev_index][1] * m_deltascale[cur_index] + m_deltashift[cur_index].y;
-            m_zoom_settings[cur_index][2] = m_zoom_settings[prev_index][2] * m_deltascale[cur_index];
+            m_zoom_settings[cur_index][0] = (real)m_zoom_settings[prev_index][0] * m_deltascale[cur_index] + m_deltashift[cur_index].x;
+            m_zoom_settings[cur_index][1] = (real)m_zoom_settings[prev_index][1] * m_deltascale[cur_index] + m_deltashift[cur_index].y;
+            m_zoom_settings[cur_index][2] = (real)m_zoom_settings[prev_index][2] * m_deltascale[cur_index];
         }
 
         /* Precompute texture offset change instead of doing it in GLSL */
@@ -312,10 +312,16 @@ public:
         }
 
 #if !defined __native_client__
-        char buf[128];
-        sprintf(buf, "center: %+16.14f%+16.14fi", m_center.x, m_center.y);
+        char buf[256];
+        sprintf(buf, "center: ");
+        m_center.x.sprintf(buf + strlen(buf), 30);
+        sprintf(buf + strlen(buf), " ");
+        m_center.y.sprintf(buf + strlen(buf), 30);
         m_centertext->SetText(buf);
-        sprintf(buf, " mouse: %+16.14f%+16.14fi", worldmouse.x, worldmouse.y);
+        sprintf(buf, " mouse: ");
+        worldmouse.x.sprintf(buf + strlen(buf), 30);
+        sprintf(buf + strlen(buf), " ");
+        worldmouse.y.sprintf(buf + strlen(buf), 30);
         m_mousetext->SetText(buf);
         sprintf(buf, "  zoom: %g", 1.0 / m_radius);
         m_zoomtext->SetText(buf);
@@ -358,10 +364,12 @@ public:
         u8vec4 *m_pixelstart = m_pixels
                              + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
+        dcmplx c = (dcmplx)m_center;
+
         for (int j = jmin; j < jmax; j += 2)
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
-            dcmplx z0 = m_center + TexelToWorldOffset(ivec2(i, j));
+            dcmplx z0 = c + TexelToWorldOffset(ivec2(i, j));
             dcmplx z1, z2, z3, r0 = z0;
             //dcmplx r0(0.28693186889504513, 0.014286693904085048);
             //dcmplx r0(0.001643721971153, 0.822467633298876);
@@ -587,12 +595,12 @@ private:
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 
-    dcmplx m_center, m_translate;
+    rcmplx m_deltashift[4], m_center, m_translate;
+    real m_deltascale[4];
     double m_zoom_speed, m_radius;
+
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
-    dcmplx m_deltashift[4];
-    double m_deltascale[4];
 
     /* Worker threads */
     Thread *m_threads[MAX_THREADS];
