@@ -124,6 +124,7 @@ public:
 
     void hexprint() const;
     void print(int ndigits = 150) const;
+    void sprintf(char *str, int ndigits = 150) const;
 
     /* Additional operators using base C++ types */
 #define __LOL_REAL_OP_HELPER_GENERIC(op, type) \
