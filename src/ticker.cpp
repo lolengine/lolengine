@@ -55,6 +55,7 @@ public:
                 frame - quitframe);
 #endif
         gametick.Push(0);
+        disktick.Push(0);
         delete gamethread;
         delete diskthread;
     }
@@ -75,7 +76,7 @@ private:
     static void *DrawThreadMain(void *p); /* unused */
     static void *DiskThreadMain(void *p);
     Thread *gamethread, *drawthread, *diskthread;
-    Queue<int> gametick, drawtick;
+    Queue<int> gametick, drawtick, disktick;
 
     /* Shutdown management */
     int quit, quitframe, quitdelay, panic;
@@ -315,12 +316,7 @@ void *TickerData::DrawThreadMain(void * /* p */)
 void *TickerData::DiskThreadMain(void * /* p */)
 {
     /* FIXME: temporary hack to avoid crashes on the PS3 */
-    Timer t;
-    for (;;)
-    {
-        t.Get();
-        t.Wait(0.01f);
-    }
+    data->disktick.Pop();
 
     return NULL;
 }
