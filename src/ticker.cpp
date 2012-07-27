@@ -314,15 +314,14 @@ void *TickerData::DrawThreadMain(void * /* p */)
 
 void *TickerData::DiskThreadMain(void * /* p */)
 {
-#if defined __CELLOS_LV2__
-    /* FIXME: temporary hack to avoid crashes */
+    /* FIXME: temporary hack to avoid crashes on the PS3 */
     Timer t;
     for (;;)
     {
         t.Get();
-        t.Wait(0.001f);
+        t.Wait(0.01f);
     }
-#endif
+
     return NULL;
 }
 
