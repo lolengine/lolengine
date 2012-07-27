@@ -23,6 +23,7 @@
 #  - ps3-ppu
 #  - win*-i386
 #  - win*-amd64
+#  - raspi-arm
 #
 
 set -e
@@ -131,6 +132,9 @@ configure()
             cd monsterz/android
             android update project --path .
             ;;
+        raspi-arm)
+            ./configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib"
+            ;;
         nacl-i386)
             ./configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=i386 LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
             ;;
@@ -196,6 +200,8 @@ check()
         ios-arm)
             ;;
         android-arm)
+            ;;
+        raspi-arm)
             ;;
         ps3-ppu)
             ;;
