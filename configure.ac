@@ -169,19 +169,19 @@ fi
 
 dnl  Use the Raspberry Pi libraries?
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
-AC_CHECK_HEADER(bcm_host.h,
- [AC_MSG_RESULT(yes)
-  AC_CHECK_LIB(bcm_host, main,
-   [ac_cv_my_have_gl="yes"
-    ac_cv_my_stop_looking_for_gl="yes"
-    AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-    GL_LIBS="-lGLESv2_static -lkhrn_static -lvcos -lvchiq_arm -lbcm_host"])],
- [AC_MSG_RESULT(no)])
+  AC_CHECK_HEADERS(bcm_host.h,
+   [AC_CHECK_LIB(vcos, main,
+     [ac_cv_my_have_gl="yes"
+      ac_cv_my_stop_looking_for_gl="yes"
+      AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+      dnl  FIXME: -lEGL does not belong here but the configure test fails
+      dnl  when cross-compiling, so we add it manually here.
+      GL_LIBS="-lGLESv2 -lEGL -lvcos -lvchiq_arm -lbcm_host"])])
 fi
 
 dnl  Use the PS3 PSGL?
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
-  AC_CHECK_HEADER(PSGL/psgl.h,
+  AC_CHECK_HEADERS(PSGL/psgl.h,
    [ac_cv_my_have_gl="yes"
     ac_cv_my_stop_looking_for_gl="yes"])
 fi
@@ -351,18 +351,25 @@ AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
 
-dnl Use EGL?
+dnl  Use EGL?
 ac_cv_my_have_egl="no"
 PKG_CHECK_MODULES(EGL, egl, [ac_cv_my_have_egl="yes"], [:])
 if test "${ac_cv_my_have_egl}" != "no"; then
   AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
   EGL_LIBS="${EGL_LIBS} -lX11"
 fi
-dnl Use the Raspberry Pi libraries?
-AC_CHECK_LIB(EGL_static, main,
+AC_CHECK_LIB(EGL, main,
  [ac_cv_my_have_egl="yes"
   AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
-  EGL_LIBS="-lEGL_static"])
+  EGL_LIBS="-lEGL"])
+dnl  Raspberry Pi is different, check for it with extra libs; also we
+dnl  look for a different function to bypass autoconf caching
+AC_CHECK_LIB(EGL, eglGetDisplay,
+ [ac_cv_my_have_egl="yes"
+  AC_DEFINE(USE_EGL, 1, Define to 1 to use libegl)
+  EGL_LIBS="-lEGL -lvcos -lvchiq_arm -lbcm_host -lGLESv2"],
+ [:],
+ [-lvcos -lvchiq_arm -lbcm_host -lGLESv2])
 AM_CONDITIONAL(USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 
 

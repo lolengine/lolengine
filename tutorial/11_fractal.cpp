@@ -39,7 +39,7 @@ extern D3DDevice *g_d3ddevice;
 static GLint const INTERNAL_FORMAT = GL_ARGB_SCE;
 static GLenum const TEXTURE_FORMAT = GL_BGRA;
 static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
-#elif defined __native_client__
+#elif defined __native_client__ || defined HAVE_GLES_2X
 static GLint const INTERNAL_FORMAT = GL_RGBA;
 static GLenum const TEXTURE_FORMAT = GL_RGBA;
 static GLenum const TEXTURE_TYPE = GL_UNSIGNED_BYTE;
