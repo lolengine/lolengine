@@ -12,7 +12,6 @@
 #   include "config.h"
 #endif
 
-#define HAVE_BCM_HOST_H 1
 #if defined USE_EGL
 #   if defined HAVE_BCM_HOST_H
 #       include <bcm_host.h>
