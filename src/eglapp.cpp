@@ -113,9 +113,13 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     EGLint attr[] =
     {
         EGL_BUFFER_SIZE, 16,
-        EGL_RENDERABLE_TYPE,
+        EGL_DEPTH_SIZE, 16,
+        EGL_RED_SIZE, 4,
+        EGL_GREEN_SIZE, 4,
+        EGL_BLUE_SIZE, 4,
+        EGL_ALPHA_SIZE, 4,
 #if defined HAVE_GLES_2X
-        EGL_OPENGL_ES2_BIT,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 #endif
         EGL_NONE
     };
