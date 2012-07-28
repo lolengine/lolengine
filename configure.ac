@@ -160,7 +160,6 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   AC_MSG_CHECKING(for -framework OpenGL)
   AC_TRY_LINK([], [],
    [AC_MSG_RESULT(yes)
-    ac_cv_my_stop_looking_for_gl="yes"
     GL_LIBS="${GL_LIBS} -framework OpenGL"
     CXXFLAGS="${CXXFLAGS} -ObjC++"],
    [AC_MSG_RESULT(no)])
@@ -176,7 +175,7 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
       AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
       dnl  FIXME: -lEGL does not belong here but the configure test fails
       dnl  when cross-compiling, so we add it manually here.
-      GL_LIBS="-lGLESv2 -lEGL -lvcos -lvchiq_arm -lbcm_host"])])
+      GL_LIBS="${GL_LIBS} -lGLESv2 -lEGL -lvcos -lvchiq_arm -lbcm_host"])])
 fi
 
 dnl  Use the PS3 PSGL?
