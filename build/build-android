@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# This can't hurt
+make distclean
+
+set -e
+./build/lol-build bootstrap android-arm
+./build/lol-build configure android-arm
+./build/lol-build build android-arm
+

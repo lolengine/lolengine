@@ -32,6 +32,8 @@ public:
     void ShowPointer(bool show);
     void Run();
 
+    static void *MainRun(void *data);
+
 private:
     AndroidAppData *data;
 };

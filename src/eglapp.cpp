@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if defined USE_EGL
+#if defined USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
 #       include <bcm_host.h>
 #   else
@@ -40,7 +40,7 @@ class EglAppData
     friend class EglApp;
 
 private:
-#if defined USE_EGL
+#if defined USE_EGL && !defined __ANDROID__
     EGLDisplay egl_dpy;
     EGLContext egl_ctx;
     EGLSurface egl_surf;
@@ -61,7 +61,7 @@ private:
 EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data(new EglAppData())
 {
-#if defined USE_EGL
+#if defined USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
     bcm_host_init();
 
@@ -230,7 +230,7 @@ void EglApp::Run()
     {
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
-#if defined USE_EGL
+#if defined USE_EGL && !defined __ANDROID__
         eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif
     }
@@ -238,7 +238,7 @@ void EglApp::Run()
 
 EglApp::~EglApp()
 {
-#if defined USE_EGL
+#if defined USE_EGL && !defined __ANDROID__
     eglDestroyContext(data->egl_dpy, data->egl_ctx);
     eglDestroySurface(data->egl_dpy, data->egl_surf);
     eglTerminate(data->egl_dpy);

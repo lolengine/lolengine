@@ -79,9 +79,6 @@ bootstrap()
         ios-arm)
             # No bootstrapping needed
             ;;
-        android-arm)
-            # No bootstrapping needed
-            ;;
         *)
             PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
             ;;
@@ -156,8 +153,17 @@ configure()
             # No configuration needed
             ;;
         android-arm)
-            cd monsterz/android
-            android update project --path .
+            ./configure --host=arm-linux-androideabi ac_cv_exeext=.so \
+                CPPFLAGS="-Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -I$ANDROID_NDK_ROOT/sources/cxx-stl/gabi++/include -fpic -fno-exceptions -fno-rtti -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64" \
+                CFLAGS="-march=armv5te -mtune=xscale -msoft-float -mthumb" \
+                CXXFLAGS="-march=armv5te -mtune=xscale -msoft-float -mthumb" \
+                LOL_LIBS="-L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared"
+            # FIXME: is this needed?
+            # android update project --path .
+            # ndk-build
+            # ant compile
+            # ndk-build distclean
+            # ant clean
             ;;
         raspi-arm)
             ./configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib"
@@ -209,11 +215,6 @@ build()
             cd monsterz/ios
             xcodebuild -configuration Release -sdk iphonesimulator4.3
             ;;
-        android-arm)
-            cd monsterz/android
-            ndk-build
-            ant compile
-            ;;
         *)
             make -j$LOL_PARALLEL
             ;;
@@ -260,11 +261,6 @@ clean()
         ios-arm)
             cd monsterz/ios
             xcodebuild -configuration Release -sdk iphonesimulator4.3 clean
-            ;;
-        android-arm)
-            cd monsterz/android
-            ndk-build distclean
-            ant clean
             ;;
         *)
             make distclean
