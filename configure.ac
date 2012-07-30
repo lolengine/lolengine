@@ -196,8 +196,10 @@ fi
 
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   AC_CHECK_HEADER(GLES2/gl2.h,
-   [AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-    ac_cv_my_have_gl="yes"])
+   [ac_cv_my_have_gl="yes"
+    AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
+    AC_CHECK_LIB(GLESv2, glEnable,
+     [GL_LIBS="${GL_LIBS} -lGLESv2"])])
 fi
 
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
@@ -208,7 +210,7 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
 fi
 
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
-  AC_CHECK_LIB(GL, glLoadIdentity,
+  AC_CHECK_LIB(GL, glEnable,
    [ac_cv_my_have_gl="yes"
     AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hackish
     GL_LIBS="-lGL"])
@@ -348,6 +350,14 @@ AC_CHECK_HEADERS(ppapi/cpp/instance.h,
   CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
+
+
+dnl  Use Android? FIXME: super hacks!
+ac_cv_my_have_android="no"
+AC_CHECK_LIB(log, __android_log_vprint,
+ [ac_cv_my_have_android="yes"
+  LOL_LIBS="${LOL_LIBS} -llog -module"])
+AM_CONDITIONAL(USE_ANDROID, test "${ac_cv_my_have_android}" != "no")
 
 
 dnl  Use EGL?

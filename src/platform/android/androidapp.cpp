@@ -23,13 +23,19 @@
 
 using namespace lol;
 
-/* Monsterz-specific */
-#include "interface.h"
+/* One of these wrappers will be overridden by the user's version */
+void lol_android_main(void) __attribute__((weak));
+void lol_android_main(void) {}
+void lol_android_main(int argc, char **argv) __attribute__((weak));
+void lol_android_main(int argc, char **argv) {}
+void lol_android_main(int argc, char **argv, char **envp) __attribute__((weak));
+void lol_android_main(int argc, char **argv, char **envp) {}
 
 namespace lol
 {
 JavaVM *g_vm;
 jobject g_activity;
+Thread *g_main_thread;
 
 AndroidApp::AndroidApp(char const *title, ivec2 res, float fps) :
     data(0)
@@ -47,6 +53,20 @@ void AndroidApp::Run()
         /* Tick the renderer, show the frame and clamp to desired framerate. */
         Ticker::TickDraw();
     }
+}
+
+void *AndroidApp::MainRun(void *data)
+{
+    int argc = 1;
+    char *argv[] = { "", NULL };
+    char *env[] = { NULL };
+
+    /* Call the user's main() function. One of these will work. */
+    lol_android_main();
+    lol_android_main(argc, argv);
+    lol_android_main(argc, argv, env);
+
+    return NULL;
 }
 
 AndroidApp::~AndroidApp()
@@ -76,8 +96,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
     Ticker::Setup(30.0f);
     Video::Setup(ivec2(320, 200));
 
-    new Interface();
-    new DebugFps(20, 20);
+    g_main_thread = new Thread(lol::AndroidApp::MainRun, NULL);;
 }
 
 extern "C" void
@@ -92,6 +111,7 @@ extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeDone(JNIEnv* env)
 {
     /* FIXME: clean up */
+    delete g_main_thread;
 }
 
 extern "C" void

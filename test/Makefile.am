@@ -17,9 +17,14 @@ CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
 
 EXTRA_DIST = data/gradient.png
 
-noinst_PROGRAMS = quad benchsuite testsuite btphystest
+noinst_PROGRAMS = quad benchsuite $(testsuite) btphystest
 
-TESTS = testsuite
+TESTS = $(testsuite)
+
+# Conditionally built for now because of STLport issues
+if !USE_ANDROID
+testsuite = testsuite
+endif
 
 testsuite_SOURCES = testsuite.cpp \
     unit/vector.cpp unit/matrix.cpp unit/half.cpp unit/trig.cpp \
