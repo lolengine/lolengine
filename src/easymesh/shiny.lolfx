@@ -1,6 +1,10 @@
 
 -- GLSL.Vert --
+#if defined GL_ES
+#version 100
+#else
 #version 120
+#endif
 
 attribute vec3 in_Vertex;
 attribute vec3 in_Normal;
@@ -49,9 +53,15 @@ void main(void)
 }
 
 -- GLSL.Frag --
+#if defined GL_ES
+#version 100
+#else
 #version 120
+#endif
 
-//precision highp float;
+#if defined GL_ES
+precision highp float;
+#endif
 varying vec4 pass_Color;
 
 void main(void) {
