@@ -236,16 +236,20 @@ void VertexDeclaration::Unbind()
     if (FAILED(g_d3ddevice->SetVertexDeclaration(NULL)))
         Abort();
 #elif !defined __CELLOS_LV2__
-    /* FIXME: we need to unbind what we bound */
-    //glDisableVertexAttribArray(m_attrib);
-    /* FIXME: temporary kludge */
-    for (int i = 0; i < 12; i++)
-        glDisableVertexAttribArray(i);
+    for (int i = 0; i < m_count; i++)
+    {
+        if (m_streams[i].reg >= 0)
+        {
+            for (int j = i + 1; j < m_count; j++)
+                if (m_streams[j].reg == m_streams[i].reg)
+                    m_streams[j].reg = -1;
+
+            glDisableVertexAttribArray(m_streams[i].reg);
+        }
+    }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    /* FIXME: only useful for VAOs */
+    /* FIXME: only useful for VAOs? */
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
-    /* Or: */
-    //glDisableVertexAttribArray(m_attrib);
 #else
     /* Or even: */
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -346,6 +350,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         for (int i = 0; i < m_count; i++)
             if (m_streams[i].index == m_streams[attr_index].index)
             {
+                /* Remember the register used for this stream */
+                m_streams[i].reg = reg;
+
                 stride += m_streams[i].size;
                 if (i < attr_index)
                     offset += m_streams[i].size;
@@ -522,6 +529,7 @@ void VertexDeclaration::AddStream(VertexStreamBase const &s)
         m_streams[m_count].usage = s.m_streams[i].usage;
         m_streams[m_count].size = s.m_streams[i].size;
         m_streams[m_count].index = index;
+        m_streams[m_count].reg = -1;
         m_count++;
     }
 }

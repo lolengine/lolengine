@@ -123,6 +123,7 @@ private:
     static VertexStreamBase const Empty;
 };
 
+/* Specialise this template for "void" to act as a NOP */
 template<>
 inline void VertexStreamBase::AddStream<void>(int n, VertexUsage usage)
 {
@@ -198,7 +199,7 @@ private:
     void Initialize();
     void AddStream(VertexStreamBase const &);
 
-    struct { uint8_t stream_type, index, usage, size; } m_streams[12 + 1];
+    struct { uint8_t stream_type, index, usage, size; int reg; } m_streams[12 + 1];
     int m_count;
 
     void *m_data;
