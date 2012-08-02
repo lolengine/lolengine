@@ -216,7 +216,7 @@ Shader::Shader(char const *vert, char const *frag)
         Log::Error("failed to compile vertex shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
-    else if (len > 1)
+    else if (len > 16)
     {
         Log::Debug("compile log for vertex shader: %s", errbuf);
         Log::Debug("shader source:\n%s\n", buf);
@@ -260,7 +260,7 @@ Shader::Shader(char const *vert, char const *frag)
         Log::Error("failed to compile fragment shader: %s", errbuf);
         Log::Error("shader source:\n%s\n", buf);
     }
-    else if (len > 1)
+    else if (len > 16)
     {
         Log::Debug("compile log for fragment shader: %s", errbuf);
         Log::Debug("shader source:\n%s\n", buf);
@@ -308,7 +308,7 @@ Shader::Shader(char const *vert, char const *frag)
     {
         Log::Error("failed to link program: %s", errbuf);
     }
-    else if (len > 1)
+    else if (len > 16)
     {
         Log::Debug("link log for program: %s", errbuf);
     }
@@ -610,6 +610,10 @@ int ShaderData::GetVersion()
 #if !defined USE_D3D9 && !defined _XBOX && !defined __CELLOS_LV2__
     if (!version)
     {
+#if defined HAVE_GLES_2X
+        /* GLES 2.x supports #version 100, that's all. */
+        return 100;
+#else
         char buf[4096];
         GLsizei len;
 
@@ -643,6 +647,7 @@ int ShaderData::GetVersion()
             version = 110;
 
         glDeleteShader(id);
+#endif
     }
 #endif
 
@@ -650,9 +655,6 @@ int ShaderData::GetVersion()
 }
 
 /* Simple shader source patching for old GLSL versions.
- * If supported version is 1.30, do nothing.
- * If supported version is 1.20:
- *  - replace "#version 130" with "#version 120"
  */
 void ShaderData::Patch(char *dst, char const *vert, char const *frag)
 {
@@ -666,6 +668,22 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
     char *parser = strstr(dst, "#version");
     if (parser)
         ver_shader = atoi(parser + strlen("#version"));
+
+    /* This is GL ES, we only know version 100. */
+    if (ver_shader > 100 && ver_driver == 100)
+    {
+        /* FIXME: this isn't elegant but honestly, we don't care, this
+         * whole file is going to die soon. */
+        char *p = strstr(dst, "#version");
+        if (p)
+        {
+            p += 8;
+            while (*p == ' ')
+                p++;
+            if (p[0] == '1' && p[1] && p[2])
+                p[1] = p[2] = '0';
+        }
+    }
 
     if (ver_shader > 120 && ver_driver <= 120)
     {
