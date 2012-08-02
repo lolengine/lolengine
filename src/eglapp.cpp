@@ -184,7 +184,34 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   endif
     if (data->egl_surf == EGL_NO_SURFACE)
     {
-        Log::Error("cannot create EGL surface (%i)\n", eglGetError());
+        switch (eglGetError())
+        {
+        case EGL_BAD_DISPLAY:
+            Log::Error("missing EGL display connection\n");
+            break;
+        case EGL_NOT_INITIALIZED:
+            Log::Error("EGL display not initialized\n");
+            break;
+        case EGL_BAD_CONFIG:
+            Log::Error("invalid EGL configuration\n");
+            break;
+        case EGL_BAD_NATIVE_WINDOW:
+            Log::Error("invalid EGL native window\n");
+            break;
+        case EGL_BAD_ATTRIBUTE:
+            Log::Error("invalid EGL window attribute\n");
+            break;
+        case EGL_BAD_ALLOC:
+            Log::Error("cannot allocate EGL surface\n");
+            break;
+        case EGL_BAD_MATCH:
+            Log::Error("unsupported EGL window\n");
+            break;
+        default:
+            Log::Error("cannot create EGL surface (%i)\n", eglGetError());
+            break;
+        }
+
         exit(EXIT_FAILURE);
     }
 
