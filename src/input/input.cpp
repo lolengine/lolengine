@@ -14,10 +14,12 @@
 
 #include <cstdlib>
 
-#if defined HAVE_SDL_SDL_H
-#   include <SDL/SDL.h>
-#else
-#   include <SDL.h>
+#if defined USE_SDL
+#   if defined HAVE_SDL_SDL_H
+#      include <SDL/SDL.h>
+#   else
+#      include <SDL.h>
+#   endif
 #endif
 
 #include "core.h"
