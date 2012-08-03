@@ -14,8 +14,16 @@
 
 #if defined USE_SDL_IMAGE
 
-#include <SDL.h>
-#include <SDL_image.h>
+#if defined HAVE_SDL_SDL_H
+#   include <SDL/SDL.h>
+#else
+#   include <SDL.h>
+#endif
+#if defined HAVE_SDL_SDL_IMAGE_H
+#   include <SDL/SDL_image.h>
+#else
+#   include <SDL_image.h>
+#endif
 
 #include "core.h"
 #include "../../image/image-private.h"

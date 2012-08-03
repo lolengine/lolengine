@@ -30,6 +30,8 @@
 #   include <sys/sys_time.h>
 #   include <sys/timer.h>
 #   include <sys/time_util.h>
+#elif defined HAVE_SDL_SDL_H
+#   include <SDL/SDL.h>
 #else
 #   include <SDL.h>
 #endif

@@ -13,7 +13,11 @@
 #endif
 
 #if defined USE_SDL
-#   include <SDL.h>
+#   if defined HAVE_SDL_SDL_H
+#      include <SDL/SDL.h>
+#   else
+#      include <SDL.h>
+#   endif
 #   if defined USE_D3D9
 #       include <d3d9.h>
 #       include <SDL_syswm.h>

@@ -13,8 +13,16 @@
 #endif
 
 #if defined USE_SDL_MIXER
-#   include <SDL.h>
-#   include <SDL_mixer.h>
+#   if defined HAVE_SDL_SDL_H
+#      include <SDL/SDL.h>
+#   else
+#      include <SDL.h>
+#   endif
+#   if defined HAVE_SDL_SDL_MIXER_H
+#      include <SDL/SDL_mixer.h>
+#   else
+#      include <SDL_mixer.h>
+#   endif
 #endif
 
 #include "core.h"
