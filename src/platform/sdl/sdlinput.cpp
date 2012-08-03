@@ -12,7 +12,9 @@
 #   include "config.h"
 #endif
 
-#if defined USE_SDL
+#if defined HAVE_SDL_SDL_H
+#   include <SDL/SDL.h>
+#else
 #   include <SDL.h>
 #endif
 

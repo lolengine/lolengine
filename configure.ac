@@ -294,8 +294,8 @@ save_LIBS="${LIBS}"
 CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
 LIBS="${LIBS} ${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
 AC_CHECK_HEADERS(SDL.h SDL/SDL.h, [ac_cv_my_have_sdl="yes"])
-AC_CHECK_HEADERS(SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
-AC_CHECK_HEADERS(SDL_image.h, [ac_cv_my_have_sdl_image="yes"])
+AC_CHECK_HEADERS(SDL_mixer.h SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
+AC_CHECK_HEADERS(SDL_image.h SDL/SDL_image.h, [ac_cv_my_have_sdl_image="yes"])
 AC_CHECK_LIB(SDL, main,
  [SDL_LIBS="${SDL_LIBS} -lSDL"],
  [ac_cv_my_have_sdl="no"])
