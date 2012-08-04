@@ -23,15 +23,15 @@ public:
     EasyMeshTutorial()
     {
         m_angle = 0;
-        m_mesh.Compile("sc#e94 scb#964 [acap11 6 6 tx8]");
-        m_mesh.Compile("sc#94e scb#649 [acap3 6 6 tx-5 tz-6]");
-        m_mesh.Compile("sc#49e scb#469 [acap31 6 6 tx-5 tz6]");
+        m_mesh.Compile("sc#e94 scb#964 [asph11 7 7 7 tx10]");
+        m_mesh.Compile("sc#94e scb#649 [asph3 7 7 7 tx-6 tz-9]");
+        m_mesh.Compile("sc#49e scb#469 [asph31 7 7 7 tx-6 tz9]");
 
         m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                               vec3(0.f, 0.f, 0.f),
                               vec3(0, 1, 0));
         m_camera->SetPerspective(70.f, 640.f, 480.f, .1f, 1000.f);
-        m_camera->SetTarget(vec3(0.f));
+        m_camera->SetTarget(vec3(0.f, -5.f, 0.f));
         m_camera->SetPosition(vec3(-20.f, 20.f, 0.f));
         Ticker::Ref(m_camera);
 
