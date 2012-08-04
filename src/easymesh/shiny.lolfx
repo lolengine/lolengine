@@ -30,7 +30,7 @@ void main(void)
     vec3 tnorm = normalize(in_NormalMat * in_Normal);
     vec4 eye = in_ModelView * vec4(in_Vertex, 1.0);
 
-    vec3 s = in_LightDir; /* normalize(eye - lightpos); */
+    vec3 s = normalize(in_LightDir); /* normalize(eye - lightpos); */
     vec3 v = normalize(-eye.xyz);
     vec3 r = reflect(-s, tnorm);
 
