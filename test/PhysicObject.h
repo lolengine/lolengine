@@ -34,6 +34,19 @@ public:
 		m_physics.AddToSimulation(new_sim);
 	}
 
+	PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation, int dummy)
+		: m_ready(false), m_should_render(true)
+	{
+		m_mesh.Compile("[sc#ddd afcb20 1 20 -.1]");
+		vec3 BoxSize = vec3(20.f, 1.f, 20.f);
+		m_physics.SetCollisionChannel(0, 0xFF);
+		m_physics.SetShapeToBox(BoxSize);
+		m_physics.SetMass(.0f);
+		m_physics.SetTransform(base_location, base_rotation);
+		m_physics.InitBodyToRigid(true);
+		m_physics.AddToSimulation(new_sim);
+	}
+
 	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
 		: m_ready(false), m_should_render(true)
 	{

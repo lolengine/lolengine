@@ -32,6 +32,7 @@ namespace phys
 EasyPhysic::EasyPhysic() : 
 	m_collision_object(NULL),
 	m_rigid_body(NULL),
+	m_ghost_object(NULL),
 	m_collision_shape(NULL),
 	m_motion_state(NULL),
 	m_mass(.0f),
@@ -106,10 +107,15 @@ void EasyPhysic::SetShapeToCapsule(float radius, float height)
 //--
 void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
-	if (m_motion_state)
-		m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+	if (m_ghost_object)
+		m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
 	else
-		m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+	{
+		if (m_motion_state)
+			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+		else
+			m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+	}
 }
 
 //-------------------------------------------------------------------------
@@ -137,7 +143,6 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 	if (m_collision_object)
 		delete m_collision_object;
 
-	SetLocalInertia(m_mass);
 	if (!m_motion_state)
 		SetTransform(vec3(.0f));
 
@@ -152,12 +157,34 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 	}
 }
 
+//Init to Ghost object, for Overlap/Sweep Test/Touching logic
+void EasyPhysic::InitBodyToGhost()
+{
+	if (m_collision_object)
+		delete m_collision_object;
+
+	m_ghost_object = new btGhostObject();
+	m_ghost_object->setCollisionShape(m_collision_shape);
+	m_collision_object = m_ghost_object;
+
+	SetTransform(vec3(.0f));
+
+	m_ghost_object->setCollisionFlags(m_ghost_object->getCollisionFlags());
+	//btCollisionObject::CF_CHARACTER_OBJECT
+}
+
+//Add Physic object to the simulation
 void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
 {
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
 	if (dynamics_world)
 	{
-		if (m_rigid_body)
+		if (m_ghost_object)
+		{
+			dynamics_world->addCollisionObject(m_ghost_object, m_collision_group, m_collision_mask);
+			current_simulation->AddToGhost(this);
+		}
+		else if (m_rigid_body)
 		{
 			dynamics_world->addRigidBody(m_rigid_body, m_collision_group, m_collision_mask);
 			if (m_mass != .0f)
