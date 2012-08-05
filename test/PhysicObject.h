@@ -48,39 +48,39 @@ public:
 
 		int SphereLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add asph6 2 2 2]";
-		MeshRand << "[sc#dad asph6 2 2 2]";
-		MeshRand << "[sc#dda asph6 2 2 2]";
-		MeshRand << "[sc#daa asph6 2 2 2]";
-		MeshRand << "[sc#ada asph6 2 2 2]";
-		MeshRand << "[sc#aad asph6 2 2 2]";
+		MeshRand << "[sc#add asph15 2 2 2]";
+		MeshRand << "[sc#dad asph15 2 2 2]";
+		MeshRand << "[sc#dda asph15 2 2 2]";
+		MeshRand << "[sc#daa asph15 2 2 2]";
+		MeshRand << "[sc#ada asph15 2 2 2]";
+		MeshRand << "[sc#aad asph15 2 2 2]";
 
 		int ConeLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
-		MeshRand << "[sc#dad scb#dad ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
-		MeshRand << "[sc#dda scb#dda ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
-		MeshRand << "[sc#daa scb#daa ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
-		MeshRand << "[sc#ada scb#ada ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
-		MeshRand << "[sc#aad scb#aad ad16 2 0 rx180 ty-1 ac16 2 2 0 0 0]";
+		MeshRand << "[sc#add scb#add ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#dad scb#dad ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#dda scb#dda ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#daa scb#daa ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#ada scb#ada ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#aad scb#aad ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
 
 		int CylLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
-		MeshRand << "[sc#dad scb#dad ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
-		MeshRand << "[sc#dda scb#dda ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
-		MeshRand << "[sc#daa scb#daa ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
-		MeshRand << "[sc#ada scb#ada ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
-		MeshRand << "[sc#aad scb#aad ad16 2 0 rx180 ty-1 my ac16 2 2 2 0 0]";
+		MeshRand << "[sc#add scb#add ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#dad scb#dad ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#dda scb#dda ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#daa scb#daa ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#ada scb#ada ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#aad scb#aad ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
 
 		int CapsLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add acap3 2 1]";
-		MeshRand << "[sc#dad scb#dad acap3 2 1]";
-		MeshRand << "[sc#dda scb#dda acap3 2 1]";
-		MeshRand << "[sc#daa scb#daa acap3 2 1]";
-		MeshRand << "[sc#ada scb#ada acap3 2 1]";
-		MeshRand << "[sc#aad scb#aad acap3 2 1]";
+		MeshRand << "[sc#add scb#add acap21 2 1]";
+		MeshRand << "[sc#dad scb#dad acap21 2 1]";
+		MeshRand << "[sc#dda scb#dda acap21 2 1]";
+		MeshRand << "[sc#daa scb#daa acap21 2 1]";
+		MeshRand << "[sc#ada scb#ada acap21 2 1]";
+		MeshRand << "[sc#aad scb#aad acap21 2 1]";
 
 		switch (RandValue)
 		{
