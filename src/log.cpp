@@ -38,11 +38,7 @@ void Log::Debug(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined __ANDROID__
-    __android_log_vprint(ANDROID_LOG_DEBUG, "LOL", fmt, ap);
-#else
-    Helper("DEBUG: ", fmt, ap);
-#endif
+    Helper(DebugMessage, fmt, ap);
     va_end(ap);
 }
 
@@ -50,11 +46,7 @@ void Log::Info(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined __ANDROID__
-    __android_log_vprint(ANDROID_LOG_INFO, "LOL", fmt, ap);
-#else
-    Helper("INFO: ", fmt, ap);
-#endif
+    Helper(InfoMessage, fmt, ap);
     va_end(ap);
 }
 
@@ -62,11 +54,7 @@ void Log::Warn(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined __ANDROID__
-    __android_log_vprint(ANDROID_LOG_WARN, "LOL", fmt, ap);
-#else
-    Helper("WARN: ", fmt, ap);
-#endif
+    Helper(WarnMessage, fmt, ap);
     va_end(ap);
 }
 
@@ -74,11 +62,7 @@ void Log::Error(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-#if defined __ANDROID__
-    __android_log_vprint(ANDROID_LOG_ERROR, "LOL", fmt, ap);
-#else
-    Helper("ERROR: ", fmt, ap);
-#endif
+    Helper(ErrorMessage, fmt, ap);
     va_end(ap);
 }
 
@@ -86,17 +70,40 @@ void Log::Error(char const *fmt, ...)
  * Private helper function
  */
 
-void Log::Helper(char const *prefix, char const *fmt, va_list ap)
+void Log::Helper(MessageType type, char const *fmt, va_list ap)
 {
-#if defined _WIN32
+#if defined __ANDROID__
+    int prio[] =
+    {
+        ANDROID_LOG_DEBUG,
+        ANDROID_LOG_INFO,
+        ANDROID_LOG_WARN,
+        ANDROID_LOG_ERROR
+    };
+
+    //__android_log_print(prio[type], "LOL", "thread %ld", pthread_self());
+    __android_log_vprint(prio[type], "LOL", fmt, ap);
+
+#else
+    char const *prefix[] =
+    {
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+    };
+
+#   if defined _WIN32
     char buf[4096];
     vsnprintf(buf, 4095, fmt, ap);
     buf[4095] = '\0';
-    OutputDebugString(prefix);
+    OutputDebugString(prefix[type]);
+    OutputDebugString(": ");
     OutputDebugString(buf);
-#else
-    fprintf(stderr, "%s", prefix);
+#   else
+    fprintf(stderr, "%s: ", prefix[type]);
     vfprintf(stderr, fmt, ap);
+#   endif
 #endif
 }
 

@@ -38,7 +38,15 @@ public:
 #undef LOL_FMT_ATTR
 
 private:
-    static void Helper(char const *prefix, char const *format, va_list ap);
+    enum MessageType
+    {
+        DebugMessage,
+        InfoMessage,
+        WarnMessage,
+        ErrorMessage
+    };
+
+    static void Helper(MessageType type, char const *fmt, va_list ap);
 };
 
 } /* namespace lol */
