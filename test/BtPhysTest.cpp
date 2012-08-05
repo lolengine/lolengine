@@ -96,6 +96,23 @@ BtPhysTest::BtPhysTest(bool editor)
 		m_ground_list << NewPhyobj;
 	}
 
+	{
+		quat NewRotation = quat(1.f);
+		vec3 NewPosition = pos_offset + vec3(5.0f, -20.0f, -15.0f);
+
+		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 0);
+
+		m_platform_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+
+		NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
+
+		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 0);
+
+		m_platform_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+	}
+
 	if (1)
 	{
 		for (int x=0; x < 6; x++)
@@ -324,7 +341,7 @@ void BtPhysTest::TickGame(float seconds)
 			PhysObj->SetRender(true);
 	}
 
-	if (1)
+	if (0)
 	{
 		for (int i = 0; i < m_ground_list.Count(); i++)
 		{
@@ -337,6 +354,27 @@ void BtPhysTest::TickGame(float seconds)
 						mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
 						* GroundMat;
 			PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+		}
+	}
+
+	{
+		for (int i = 0; i < m_platform_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_platform_list[i];
+
+			mat4 GroundMat = PhysObj->GetTransform();
+			if (i == 0)
+			{
+				GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(20.f, .0f, .0f) * seconds));
+				PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+			}
+			else
+			{
+				GroundMat = GroundMat * mat4::translate(vec3(.0f, .0f, 10.0f) * seconds);
+				if (GroundMat.v3.z > 40.0f)
+					GroundMat = GroundMat * mat4::translate(vec3(.0f, .0f, -80.0f));
+				PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+			}
 		}
 	}
 
@@ -444,6 +482,13 @@ BtPhysTest::~BtPhysTest()
 	{
 		PhysicsObject* CurPop = m_ground_list.Last();
 		m_ground_list.Pop();
+		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+		Ticker::Unref(CurPop);
+	}
+	while (m_platform_list.Count())
+	{
+		PhysicsObject* CurPop = m_platform_list.Last();
+		m_platform_list.Pop();
 		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
 		Ticker::Unref(CurPop);
 	}

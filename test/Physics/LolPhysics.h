@@ -159,11 +159,13 @@ private:
 	//Adds the given EasyPhysic to the correct list.
 	void AddToDynamic(EasyPhysic* NewEPDynamic)	{ m_dynamic_list << NewEPDynamic; }
 	void AddToStatic(EasyPhysic* NewEPStatic)	{ m_static_list	<< NewEPStatic; }
+	void AddToGhost(EasyPhysic* NewEPGhost)		{ m_ghost_list << NewEPGhost; }
 	void AddToConstraint(EasyConstraint* NewEC)	{ m_constraint_list	<< NewEC; }
 
 	//Easy Physics body List
 	Array<EasyPhysic*>						m_dynamic_list;
 	Array<EasyPhysic*>						m_static_list;
+	Array<EasyPhysic*>						m_ghost_list;
 	Array<EasyConstraint*>					m_constraint_list;
 
 	//Easy Physics data storage

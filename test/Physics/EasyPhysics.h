@@ -21,6 +21,7 @@
 #include "core.h"
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
+#include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
 #endif
 
 namespace lol
@@ -50,6 +51,7 @@ public:
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
 	void SetMass(float mass);
 	void InitBodyToRigid(bool ZeroMassIsKinematic=false);
+	void InitBodyToGhost();
 	void AddToSimulation(class Simulation* current_simulation);
 	void RemoveFromSimulation(class Simulation* current_simulation);
 	mat4 GetTransform();
@@ -59,6 +61,8 @@ protected:
 	void SetShapeTo(btCollisionShape* collision_shape);
 
 	btCollisionObject*							m_collision_object;
+
+	btGhostObject*								m_ghost_object;
 
 	btRigidBody*								m_rigid_body;
 	btVector3									m_local_inertia;
@@ -81,6 +85,7 @@ public:
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
 	void SetMass(float mass) { }
 	void InitBodyToRigid() { }
+	void InitBodyToGhost() { }
 	void AddToSimulation(class Simulation* current_simulation) { }
 	void RemoveFromSimulation(class Simulation* current_simulation) { }
 	mat4 GetTransform() { return mat4(1.0f); }
