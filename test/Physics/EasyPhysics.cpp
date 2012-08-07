@@ -197,6 +197,7 @@ void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
 	}
 }
 
+//Remove Physic object to the simulation
 void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
 {
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
@@ -234,6 +235,39 @@ void EasyPhysic::SetLocalInertia(float mass)
 		m_collision_shape->calculateLocalInertia(mass, m_local_inertia);
 	else
 		m_local_inertia = btVector3(.0f, .0f, .0f);
+}
+
+//-------------------------------------------------------------------------
+//EASY_CHARACTER_CONTROLLER
+//--
+
+void EasyCharacterController::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
+{
+
+}
+void EasyCharacterController::SetMass(float mass)
+{
+
+}
+void EasyCharacterController::InitBodyToRigid(bool ZeroMassIsKinematic)
+{
+
+}
+void EasyCharacterController::InitBodyToGhost()
+{
+	//btCollisionObject::CF_CHARACTER_OBJECT
+}
+void EasyCharacterController::AddToSimulation(class Simulation* current_simulation)
+{
+
+}
+void EasyCharacterController::RemoveFromSimulation(class Simulation* current_simulation)
+{
+
+}
+mat4 EasyCharacterController::GetTransform()
+{
+	mat4(1.f);
 }
 
 //-------------------------------------------------------------------------
