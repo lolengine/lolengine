@@ -32,12 +32,13 @@ public:
     void MeshConvert();
     void Render(mat4 const &model, float damage = 0.f);
 
-private:
     void OpenBrace();
     void CloseBrace();
 
     void SetCurColor(vec4 const &color);
     void SetCurColor2(vec4 const &color);
+
+private:
     void AddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
     void AppendQuad(int i1, int i2, int i3, int i4, int base);
@@ -46,6 +47,8 @@ private:
     void AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base);
     void ComputeNormals(int start, int vcount);
     void SetVertColor(vec4 const &color);
+
+public:
     void SetCurVertNormal(vec3 const &normal);
     void SetCurVertColor(vec4 const &color);
 
