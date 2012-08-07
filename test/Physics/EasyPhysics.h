@@ -41,24 +41,24 @@ public:
 	EasyPhysic();
 	~EasyPhysic();
 
-	void SetShapeToBox(lol::vec3& box_size);
-	void SetShapeToSphere(float radius);
-	void SetShapeToCone(float radius, float height);
-	void SetShapeToCylinder(lol::vec3& cyl_size);
-	void SetShapeToCapsule(float radius, float height);
+	virtual void SetShapeToBox(lol::vec3& box_size);
+	virtual void SetShapeToSphere(float radius);
+	virtual void SetShapeToCone(float radius, float height);
+	virtual void SetShapeToCylinder(lol::vec3& cyl_size);
+	virtual void SetShapeToCapsule(float radius, float height);
 
-	bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
-	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
-	void SetMass(float mass);
-	void InitBodyToRigid(bool ZeroMassIsKinematic=false);
-	void InitBodyToGhost();
-	void AddToSimulation(class Simulation* current_simulation);
-	void RemoveFromSimulation(class Simulation* current_simulation);
-	mat4 GetTransform();
+	virtual bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
+	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
+	virtual void SetMass(float mass);
+	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
+	virtual void InitBodyToGhost();
+	virtual void AddToSimulation(class Simulation* current_simulation);
+	virtual void RemoveFromSimulation(class Simulation* current_simulation);
+	virtual mat4 GetTransform();
 
 protected:
-	void SetLocalInertia(float mass);
-	void SetShapeTo(btCollisionShape* collision_shape);
+	virtual void SetLocalInertia(float mass);
+	virtual void SetShapeTo(btCollisionShape* collision_shape);
 
 	btCollisionObject*							m_collision_object;
 
@@ -75,27 +75,27 @@ protected:
 public:
 	EasyPhysic() { }
 
-	void SetShapeToBox(lol::vec3& BoxSize) { }
-	void SetShapeToSphere(float radius) { }
-	void SetShapeToCone(float radius, float height) { }
-	void SetShapeToCylinder(lol::vec3& cyl_size) { }
-	void SetShapeToCapsule(float radius, float height) { }
+	virtual void SetShapeToBox(lol::vec3& BoxSize) { }
+	virtual void SetShapeToSphere(float radius) { }
+	virtual void SetShapeToCone(float radius, float height) { }
+	virtual void SetShapeToCylinder(lol::vec3& cyl_size) { }
+	virtual void SetShapeToCapsule(float radius, float height) { }
 
-	bool CanChangeCollisionChannel() { return true; }
-	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
-	void SetMass(float mass) { }
-	void InitBodyToRigid() { }
-	void InitBodyToGhost() { }
-	void AddToSimulation(class Simulation* current_simulation) { }
-	void RemoveFromSimulation(class Simulation* current_simulation) { }
-	mat4 GetTransform() { return mat4(1.0f); }
+	virtual bool CanChangeCollisionChannel() { return true; }
+	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
+	virtual void SetMass(float mass) { }
+	virtual void InitBodyToRigid() { }
+	virtual void InitBodyToGhost() { }
+	virtual void AddToSimulation(class Simulation* current_simulation) { }
+	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
+	virtual mat4 GetTransform() { return mat4(1.0f); }
 
 #endif // PHYSIC IMPLEMENTATION
 
 public:
 	//Sets the collision Group & Mask.
 	//Mask can change at runtime, not group !
-	bool SetCollisionChannel(int NewGroup, int NewMask)
+	virtual bool SetCollisionChannel(int NewGroup, int NewMask)
 	{
 		if (CanChangeCollisionChannel())
 		{
@@ -113,6 +113,33 @@ protected:
 	float										m_mass;
 	int											m_collision_group;
 	int											m_collision_mask;
+};
+
+class EasyCharacterController : public EasyPhysic
+{
+
+#ifdef HAVE_PHYS_USE_BULLET
+
+public:
+	EasyCharacterController();
+	~EasyCharacterController();
+
+	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
+	virtual void SetMass(float mass);
+	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
+	virtual void InitBodyToGhost();
+	virtual void AddToSimulation(class Simulation* current_simulation);
+	virtual void RemoveFromSimulation(class Simulation* current_simulation);
+	virtual mat4 GetTransform();
+
+protected:
+
+	btPairCachingGhostObject*		m_pair_caching_object;
+
+#else  // NO PHYSIC IMPLEMENTATION
+
+#endif // PHYSIC IMPLEMENTATION
+
 };
 
 class EasyConstraint
