@@ -49,7 +49,7 @@ public:
     static Stick *CreateStick();
     static void DestroyStick(Stick *stick);
 
-    static Stick *TrackStick();
+    static Stick *TrackStick(int desired);
     static void UntrackStick(Stick *stick);
 };
 
