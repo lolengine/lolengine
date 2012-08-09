@@ -267,7 +267,7 @@ void EasyCharacterController::RemoveFromSimulation(class Simulation* current_sim
 }
 mat4 EasyCharacterController::GetTransform()
 {
-	mat4(1.f);
+	return mat4(1.f);
 }
 
 //-------------------------------------------------------------------------
