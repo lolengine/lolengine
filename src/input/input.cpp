@@ -217,13 +217,13 @@ void Input::DestroyStick(Stick *stick)
     Ticker::Unref(stick);
 }
 
-Stick *Input::TrackStick()
+Stick *Input::TrackStick(int desired)
 {
     /* FIXME: add the possibility to choose amongst sticks */
-    if (!data->m_sticks.Count())
+    if (desired >= data->m_sticks.Count())
         return NULL;
-    Ticker::Ref(data->m_sticks[0]);
-    return data->m_sticks[0];
+    Ticker::Ref(data->m_sticks[desired]);
+    return data->m_sticks[desired];
 }
 
 void Input::UntrackStick(Stick *stick)
