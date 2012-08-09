@@ -23,6 +23,10 @@
 #include "core.h"
 #include "sdlinput.h"
 
+/* We force joystick polling because no events are received when
+ * there is no SDL display (eg. on the Raspberry Pi). */
+#define SDL_FORCE_POLL_JOYSTICK 1
+
 namespace lol
 {
 
@@ -53,9 +57,14 @@ SdlInput::SdlInput()
 #if defined USE_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
+#   if SDL_FORCE_POLL_JOYSTICK
+    SDL_JoystickEventState(SDL_QUERY);
+#   else
+    SDL_JoystickEventState(SDL_ENABLE);
+#   endif
+
     /* Register all the joysticks we can find, and let the input
      * system decide what it wants to track. */
-    SDL_JoystickEventState(SDL_ENABLE);
     for (int i = 0; i < SDL_NumJoysticks(); i++)
     {
         SDL_Joystick *sdlstick = SDL_JoystickOpen(i);
@@ -126,6 +135,18 @@ void SdlInputData::Tick(float seconds)
     ivec2 mouse = SdlInputData::GetMousePos();;
     Input::SetMousePos(mouse);
 
+#   if SDL_FORCE_POLL_JOYSTICK
+    /* Pump all joystick events because no event is coming to us. */
+    SDL_JoystickUpdate();
+    for (int j = 0; j < m_joysticks.Count(); j++)
+    {
+        for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
+            m_joysticks[j].m2->SetButton(i, SDL_JoystickGetButton(m_joysticks[j].m1, i));
+        for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
+            m_joysticks[j].m2->SetAxis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+    }
+#   endif
+
     /* Handle keyboard and WM events */
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -153,6 +174,7 @@ void SdlInputData::Tick(float seconds)
             break;
         }
 
+#   if !SDL_FORCE_POLL_JOYSTICK
         case SDL_JOYAXISMOTION:
             m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
@@ -161,6 +183,7 @@ void SdlInputData::Tick(float seconds)
         case SDL_JOYBUTTONDOWN:
             m_joysticks[event.jbutton.which].m2->SetButton(event.jbutton.button, event.jbutton.state);
             break;
+#   endif
         }
     }
 

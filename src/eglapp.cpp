@@ -24,9 +24,20 @@
 #   include <EGL/eglext.h>
 #endif
 
+#if defined USE_SDL
+#   if defined HAVE_SDL_SDL_H
+#      include <SDL/SDL.h>
+#   else
+#      include <SDL.h>
+#   endif
+#endif
+
 #include "core.h"
 #include "lolgl.h"
 #include "eglapp.h"
+#if defined USE_SDL
+#   include "platform/sdl/sdlinput.h"
+#endif
 
 namespace lol
 {
@@ -237,6 +248,10 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     XWindowAttributes gwa;
     XGetWindowAttributes(data->dpy, data->win, &gwa);
     data->screen_size = ivec2(gwa.width, gwa.height);
+#   endif
+
+#   if defined USE_SDL
+    new SdlInput();
 #   endif
 
     /* Initialise everything */
