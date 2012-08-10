@@ -492,6 +492,9 @@ AC_CONFIG_FILES(
  [games/orbital/Makefile
 ])
 AC_CONFIG_FILES(
+ [games/demo-jnat/Makefile
+])
+AC_CONFIG_FILES(
  [games/ToukyDemo/Makefile
 ])
 AC_CONFIG_FILES(
