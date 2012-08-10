@@ -58,9 +58,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\Lol.Core.Config.props" />
-  <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
-    <PlatformToolset>SNC</PlatformToolset>
-  </PropertyGroup>
   <ImportGroup Label="ExtensionSettings">
     <Import Project="$(SolutionDir)\Lol.Fx.props" />
   </ImportGroup>
