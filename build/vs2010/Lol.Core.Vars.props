@@ -61,9 +61,16 @@
     <D3d9Includes>$(DXSDK_DIR)\Include</D3d9Includes>
     <D3d9Libs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</D3d9Libs>
     <D3d9Libs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</D3d9Libs>
-    <D3d9Deps Condition="'$(Configuration)'=='Release'">d3d9.lib;d3dx9.lib;xinput.lib</D3d9Deps>
-    <D3d9Deps Condition="'$(Configuration)'=='Debug'">d3d9.lib;d3dx9d.lib;xinput.lib</D3d9Deps>
+    <D3d9Deps Condition="'$(Configuration)'=='Release'">d3d9.lib;d3dx9.lib</D3d9Deps>
+    <D3d9Deps Condition="'$(Configuration)'=='Debug'">d3d9.lib;d3dx9d.lib</D3d9Deps>
     <Win32Defines Condition="'$(UseOpenGL)'=='false'">USE_D3D9;$(Win32Defines)</Win32Defines>
+
+    <!-- Xinput -->
+    <XinputIncludes>$(DXSDK_DIR)\Include</XinputIncludes>
+    <XinputLibs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</XinputLibs>
+    <XinputLibs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</XinputLibs>
+    <XinputDeps>xinput.lib</XinputDeps>
+    <Win32Defines>USE_XINPUT;$(Win32Defines)</Win32Defines>
 
     <!-- PS3-specific -->
     <Ps3Deps>libsysmodule_stub.a;libsysutil_stub.a;libresc_stub.a;
@@ -104,6 +111,9 @@
     <BuildMacro Include="D3d9Includes"><Value>$(D3d9Includes)</Value></BuildMacro>
     <BuildMacro Include="D3d9Libs"><Value>$(D3d9Libs)</Value></BuildMacro>
     <BuildMacro Include="D3d9Deps"><Value>$(D3d9Deps)</Value></BuildMacro>
+    <BuildMacro Include="XinputIncludes"><Value>$(XinputIncludes)</Value></BuildMacro>
+    <BuildMacro Include="XinputLibs"><Value>$(XinputLibs)</Value></BuildMacro>
+    <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>
     <BuildMacro Include="Win32Defines"><Value>$(Win32Defines)</Value></BuildMacro>
     <BuildMacro Include="XboxDefines"><Value>$(XboxDefines)</Value></BuildMacro>
     <BuildMacro Include="Ps3Deps"><Value>$(Ps3Deps)</Value></BuildMacro>

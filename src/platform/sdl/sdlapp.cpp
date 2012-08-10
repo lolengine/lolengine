@@ -28,7 +28,7 @@
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"
-#if defined USE_D3D9
+#if defined USE_XINPUT
 #   include "platform/d3d9/d3d9input.h"
 #endif
 
@@ -93,7 +93,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     Audio::Setup(2);
 
     /* Autoreleased objects */
-#   if defined USE_D3D9
+#   if defined USE_XINPUT
     /* Prefer D3d9 for joysticks on Windows, because the X360 pads are not
      * advertised with the proper number of axes. */
     new D3d9Input();

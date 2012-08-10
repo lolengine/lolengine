@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#if defined USE_D3D9
+#if defined USE_XINPUT
 #   include <d3d9.h>
 #   include <xinput.h>
 #endif
@@ -32,7 +32,7 @@ class D3d9InputData
     friend class D3d9Input;
 
 private:
-#if defined USE_D3D9
+#if defined USE_XINPUT
     Array<int, Stick *> m_joysticks;
 #endif
 };
@@ -44,7 +44,7 @@ private:
 D3d9Input::D3d9Input()
   : m_data(new D3d9InputData())
 {
-#if defined USE_D3D9
+#if defined USE_XINPUT
     for (int i = 0; i < XUSER_MAX_COUNT; i++)
     {
         XINPUT_STATE state;
@@ -63,7 +63,7 @@ D3d9Input::D3d9Input()
 
 D3d9Input::~D3d9Input()
 {
-#if defined USE_D3D9
+#if defined USE_XINPUT
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.Count())
     {
@@ -83,7 +83,7 @@ void D3d9Input::TickDraw(float seconds)
 {
     Entity::TickDraw(seconds);
 
-#if defined USE_D3D9
+#if defined USE_XINPUT
     for (int i = 0; i < m_data->m_joysticks.Count(); i++)
     {
         XINPUT_STATE state;

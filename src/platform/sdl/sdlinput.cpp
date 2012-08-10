@@ -69,10 +69,13 @@ SdlInput::SdlInput()
     {
         SDL_Joystick *sdlstick = SDL_JoystickOpen(i);
 
-        /* Blacklist HDAPS, it's not a real joystick */
+        /* Blacklist some devices:
+         *  - HDAPS, it's not a real joystick.
+         *  - X360 controllers, Xinput handles them better since
+         *    it won't think there is only one trigger axis. */
         char const *name = SDL_JoystickName(i);
         if (strstr(name, "HDAPS")
-#   if !defined USE_D3D9
+#   if defined USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
 #   endif
              || false)
