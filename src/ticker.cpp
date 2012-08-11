@@ -193,6 +193,13 @@ void *TickerData::GameThreadMain(void * /* p */)
             data->bias += data->deltatime;
         }
 
+        /* Do not go below 15 fps */
+        if (data->deltatime > 1.f / 15.f)
+        {
+            data->deltatime = 1.f / 15.f;
+            data->bias = 0.f;
+        }
+
         /* If shutdown is stuck, kick the first entity we meet and see
          * whether it makes things better. Note that it is always a bug to
          * have referenced entities after 20 frames, but at least this
