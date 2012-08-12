@@ -45,7 +45,14 @@ public:
 	void Init()
 	{
 		// Build the broadphase
-		m_broadphase = new btDbvtBroadphase();
+		if (1)
+		{
+			m_Sweep_broadphase = new btAxisSweep3(LOL2BT_VEC3(m_world_min), LOL2BT_VEC3(m_world_max));
+			m_Sweep_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+			m_broadphase = m_Sweep_broadphase;
+		}
+		else
+			m_broadphase = new btDbvtBroadphase();
  
 		// Set up the collision configuration and dispatcher
 		m_collision_configuration = new btDefaultCollisionConfiguration();
@@ -98,10 +105,15 @@ private:
 			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity * LOL2BT_UNIT));
 	}
 
+	void CustomSetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax)
+	{
+	}
+
 	void CustomSetTimestep(float NewTimestep) { }
 
 	//broadphase
 	btBroadphaseInterface*					m_broadphase;
+	btAxisSweep3*							m_Sweep_broadphase;
 	// Set up the collision configuration and dispatc
 	btDefaultCollisionConfiguration*		m_collision_configuration;
 	btCollisionDispatcher*					m_dispatcher;
@@ -119,6 +131,7 @@ public:
 private:
 	void CustomSetContinuousDetection(bool ShouldUseCCD) { }
 	void CustomSetGravity(vec3 &NewGravity) { }
+	void CustomSetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax) { }
 	void CustomSetTimestep(float NewTimestep) { }
 
 #endif // PHYSIC IMPLEMENTATION
@@ -140,6 +153,14 @@ public:
 	{
 		m_gravity = NewGravity;
 		CustomSetGravity(NewGravity);
+	}
+
+	//Sets the simulation gravity.
+	void SetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax)
+	{
+		m_world_min = NewWorldMin;
+		m_world_max = NewWorldMax;
+		CustomSetWorldLimit(NewWorldMin, NewWorldMax);
 	}
 
 	//Sets the simulation fixed timestep.
@@ -172,6 +193,8 @@ private:
 	float									m_timestep;
 	bool									m_using_CCD;
 	vec3									m_gravity;
+	vec3									m_world_min;
+	vec3									m_world_max;
 };
 
 } /* namespace phys */
