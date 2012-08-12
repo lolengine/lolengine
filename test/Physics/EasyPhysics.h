@@ -156,6 +156,12 @@ protected:
 
 #else  // NO PHYSIC IMPLEMENTATION
 
+	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false) { }
+	virtual void InitBodyToGhost() { }
+	virtual void AddToSimulation(class Simulation* current_simulation) { }
+	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
+	virtual void SetMovementForFrame(vec3 &MoveQuantity) { }
+
 #endif // PHYSIC IMPLEMENTATION
 
 };
