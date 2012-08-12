@@ -366,6 +366,11 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 
     Array<vec3> vertices;
 
+    /* FIXME: we don't know how to handle even-divided capsules, so we
+     * force the count to be odd. */
+    if (h)
+        ndivisions |= 1;
+
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
@@ -453,7 +458,10 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 
 void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
 {
-    AppendCapsule(ndivisions, 0.f, size.x);
+    OpenBrace();
+    AppendCapsule(ndivisions, 0.f, 1.f);
+    Scale(size);
+    CloseBrace();
 }
 
 void EasyMesh::AppendBox(vec3 const &size, float chamf)
