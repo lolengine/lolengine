@@ -22,6 +22,7 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
 #endif
 
 namespace lol
@@ -60,6 +61,8 @@ protected:
 	virtual void SetLocalInertia(float mass);
 	virtual void SetShapeTo(btCollisionShape* collision_shape);
 
+	virtual btGhostObject* GetGhostObject();
+
 	btCollisionObject*							m_collision_object;
 
 	btGhostObject*								m_ghost_object;
@@ -68,6 +71,7 @@ protected:
 	btVector3									m_local_inertia;
 
 	btCollisionShape*							m_collision_shape;
+	btConvexShape*								m_convex_shape;
 	btMotionState*								m_motion_state;
 
 #else  // NO PHYSIC IMPLEMENTATION
@@ -89,6 +93,8 @@ public:
 	virtual void AddToSimulation(class Simulation* current_simulation) { }
 	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
 	virtual mat4 GetTransform() { return mat4(1.0f); }
+
+	virtual void InitBodyToGhost() { }
 
 #endif // PHYSIC IMPLEMENTATION
 
@@ -121,20 +127,31 @@ class EasyCharacterController : public EasyPhysic
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
-	EasyCharacterController();
-	~EasyCharacterController();
+	EasyCharacterController() :
+		EasyPhysic(),
+		m_character(NULL)
+	{
+		m_up_axis = 1;
+	}
+	~EasyCharacterController()
+	{
+		delete m_character;
+	}
 
-	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
-	virtual void SetMass(float mass);
 	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
 	virtual void InitBodyToGhost();
 	virtual void AddToSimulation(class Simulation* current_simulation);
 	virtual void RemoveFromSimulation(class Simulation* current_simulation);
-	virtual mat4 GetTransform();
 
 protected:
 
+	virtual btGhostObject* GetGhostObject();
+
 	btPairCachingGhostObject*		m_pair_caching_object;
+	btKinematicCharacterController*	m_character;
+
+	float							m_step_height;
+	int								m_up_axis;
 
 #else  // NO PHYSIC IMPLEMENTATION
 
