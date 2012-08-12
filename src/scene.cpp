@@ -145,6 +145,10 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 
 void Scene::Render() // XXX: rename to Blit()
 {
+    /* Early exit if nothing needs to be rendered */
+    if (!data->tiles.Count())
+        return;
+
     if (!data->m_shader)
     {
 #if !defined _XBOX && !defined __CELLOS_LV2__ && !defined USE_D3D9
