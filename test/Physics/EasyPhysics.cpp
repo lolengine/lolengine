@@ -75,31 +75,36 @@ void EasyPhysic::SetShapeTo(btCollisionShape* collision_shape)
 void EasyPhysic::SetShapeToBox(lol::vec3& box_size)
 {
 	vec3 new_box_size = box_size * LOL2BT_UNIT * LOL2BT_SIZE;
-	SetShapeTo(new btBoxShape(LOL2BT_VEC3(new_box_size)));
+	m_convex_shape = new btBoxShape(LOL2BT_VEC3(new_box_size));
+	SetShapeTo(m_convex_shape);
 }
 
 void EasyPhysic::SetShapeToSphere(float radius)
 {
-	SetShapeTo(new btSphereShape(radius * LOL2BT_UNIT * LOL2BT_SIZE));
+	m_convex_shape = new btSphereShape(radius * LOL2BT_UNIT * LOL2BT_SIZE);
+	SetShapeTo(m_convex_shape);
 }
 
 void EasyPhysic::SetShapeToCone(float radius, float height)
 {
-	SetShapeTo(new btConeShape(	radius * LOL2BT_UNIT,
-								height * LOL2BT_UNIT));
+	m_convex_shape = new btConeShape(	radius * LOL2BT_UNIT,
+										height * LOL2BT_UNIT);
+	SetShapeTo(m_convex_shape);
 }
 
 void EasyPhysic::SetShapeToCylinder(lol::vec3& cyl_size)
 {
 	vec3 new_cyl_size = cyl_size * LOL2BT_UNIT;
 	new_cyl_size.y *= LOL2BT_SIZE;
-	SetShapeTo(new btCylinderShape(LOL2BT_VEC3(new_cyl_size)));
+	m_convex_shape = new btCylinderShape(LOL2BT_VEC3(new_cyl_size));
+	SetShapeTo(m_convex_shape);
 }
 
 void EasyPhysic::SetShapeToCapsule(float radius, float height)
 {
-	SetShapeTo(new btCapsuleShape(	radius * LOL2BT_UNIT * LOL2BT_SIZE,
-									height * LOL2BT_UNIT * LOL2BT_SIZE));
+	m_convex_shape = new btCapsuleShape(radius * LOL2BT_UNIT * LOL2BT_SIZE, 
+										height * LOL2BT_UNIT * LOL2BT_SIZE);
+	SetShapeTo(m_convex_shape);
 }
 
 //-------------------------------------------------------------------------
@@ -107,6 +112,8 @@ void EasyPhysic::SetShapeToCapsule(float radius, float height)
 //--
 void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
+	m_local_to_world = lol::mat4::translate(base_location) * mat4(base_rotation);
+
 	if (m_ghost_object)
 		m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
 	else
@@ -150,11 +157,22 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 	m_rigid_body = new btRigidBody(NewInfos);
 	m_collision_object = m_rigid_body;
 
-	if (m_mass == .0f && SetToKinematic)
+	if (m_mass == .0f)
 	{
-		m_rigid_body->setActivationState(DISABLE_DEACTIVATION);
-		m_rigid_body->setCollisionFlags(m_rigid_body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+		if (SetToKinematic)
+		{
+			m_rigid_body->setActivationState(DISABLE_DEACTIVATION);
+			m_rigid_body->setCollisionFlags(m_rigid_body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+		}
 	}
+	else
+		SetMass(m_mass);
+}
+
+//Return correct Ghost Object
+btGhostObject* EasyPhysic::GetGhostObject()
+{
+	return new btGhostObject();
 }
 
 //Init to Ghost object, for Overlap/Sweep Test/Touching logic
@@ -163,14 +181,13 @@ void EasyPhysic::InitBodyToGhost()
 	if (m_collision_object)
 		delete m_collision_object;
 
-	m_ghost_object = new btGhostObject();
+	m_ghost_object = GetGhostObject();
 	m_ghost_object->setCollisionShape(m_collision_shape);
 	m_collision_object = m_ghost_object;
 
-	SetTransform(vec3(.0f));
+	SetTransform(m_local_to_world.v3.xyz, lol::quat(m_local_to_world));
 
 	m_ghost_object->setCollisionFlags(m_ghost_object->getCollisionFlags());
-	//btCollisionObject::CF_CHARACTER_OBJECT
 }
 
 //Add Physic object to the simulation
@@ -205,7 +222,7 @@ void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
 	{
 		if (m_rigid_body)
 			dynamics_world->removeRigidBody(m_rigid_body);
-		else
+		else if (m_collision_object)
 			dynamics_world->removeCollisionObject(m_collision_object);
 	}
 }
@@ -241,33 +258,53 @@ void EasyPhysic::SetLocalInertia(float mass)
 //EASY_CHARACTER_CONTROLLER
 //--
 
-void EasyCharacterController::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
-{
-
-}
-void EasyCharacterController::SetMass(float mass)
-{
-
-}
+//Deactivated for Character controller
 void EasyCharacterController::InitBodyToRigid(bool ZeroMassIsKinematic)
 {
-
 }
+
+//Return correct Ghost Object
+btGhostObject* EasyCharacterController::GetGhostObject()
+{
+	return new btPairCachingGhostObject();
+}
+
+//Init to Pair caching ghost object, since Character uses that one.
 void EasyCharacterController::InitBodyToGhost()
 {
-	//btCollisionObject::CF_CHARACTER_OBJECT
+	EasyPhysic::InitBodyToGhost();
+
+	m_pair_caching_object = (btPairCachingGhostObject*)m_ghost_object;
+	m_ghost_object->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | m_ghost_object->getCollisionFlags());
 }
+
+//Add Physic object to the simulation
 void EasyCharacterController::AddToSimulation(class Simulation* current_simulation)
 {
+	EasyPhysic::AddToSimulation(current_simulation);
 
+	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
+	if (dynamics_world)
+	{
+		if (m_character)
+			delete m_character;
+
+		m_character = new btKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
+		dynamics_world->addAction(m_character);
+	}
 }
+
+//Remove Physic object to the simulation
 void EasyCharacterController::RemoveFromSimulation(class Simulation* current_simulation)
 {
+	EasyPhysic::RemoveFromSimulation(current_simulation);
 
-}
-mat4 EasyCharacterController::GetTransform()
-{
-	return mat4(1.f);
+	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
+	if (dynamics_world)
+	{
+		if (m_character)
+			dynamics_world->removeAction(m_character);
+	}
 }
 
 //-------------------------------------------------------------------------

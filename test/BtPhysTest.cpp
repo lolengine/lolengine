@@ -49,6 +49,13 @@ using namespace lol::phys;
 
 int gNumObjects = 64;
 
+#define USE_WALL		1
+#define USE_PLATFORM	1
+#define USE_ROPE		0
+#define USE_BODIES		0
+#define USE_ROTATION	0
+#define USE_CHARACTER	1
+
 BtPhysTest::BtPhysTest(bool editor)
 {
     /* Create a camera that matches the settings of XNA BtPhysTest */
@@ -72,48 +79,63 @@ BtPhysTest::BtPhysTest(bool editor)
 
 	float offset = 29.5f;
 	vec3 pos_offset = vec3(.0f, 30.f, .0f);
-	for (int i=0; i < 6; i++)
+	if (USE_WALL)
 	{
-		vec3 NewPosition = vec3(.0f);
-		quat NewRotation = quat(1.f);
-
-		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation);
-
-		int idx = i/2;
-		NewPosition = pos_offset;
-		NewPosition[idx] += offset;
-		offset *= -1.f;
-
-		if (idx != 1)
+		for (int i=0; i < 6; i++)
 		{
-			vec3 axis = vec3(.0f);
-			axis[2 - idx] = 1;
-			NewRotation = quat::rotate(90.f, axis);
-		}
+			vec3 NewPosition = vec3(.0f);
+			quat NewRotation = quat(1.f);
 
-		NewPhyobj->SetTransform(NewPosition, NewRotation);
-		Ticker::Ref(NewPhyobj);
-		m_ground_list << NewPhyobj;
+			PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation);
+
+			int idx = i/2;
+			NewPosition = pos_offset;
+			NewPosition[idx] += offset;
+			offset *= -1.f;
+
+			if (idx != 1)
+			{
+				vec3 axis = vec3(.0f);
+				axis[2 - idx] = 1;
+				NewRotation = quat::rotate(90.f, axis);
+			}
+
+			NewPhyobj->SetTransform(NewPosition, NewRotation);
+			Ticker::Ref(NewPhyobj);
+			m_ground_list << NewPhyobj;
+		}
 	}
 
+	if (USE_PLATFORM)
 	{
-		quat NewRotation = quat(1.f);
+		quat NewRotation = quat::fromeuler_xyz(5.f, 0.f, 0.f);
 		vec3 NewPosition = pos_offset + vec3(5.0f, -20.0f, -15.0f);
 
-		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 0);
+		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 
 		NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
 
-		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 0);
+		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 	}
 
-	if (1)
+	if (USE_CHARACTER)
+	{
+		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
+		vec3 NewPosition = pos_offset + vec3(.0f, 40.0f, .0f);
+
+		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
+
+		m_character_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+	}
+
+	if (USE_BODIES)
 	{
 		for (int x=0; x < 6; x++)
 		{
@@ -131,7 +153,7 @@ BtPhysTest::BtPhysTest(bool editor)
 		}
 	}
 
-	if (1)
+	if (USE_ROPE)
 	{
 		Array<PhysicsObject*> RopeElements;
 		for (int i = 0; i < 14; i++)
@@ -314,34 +336,37 @@ void BtPhysTest::TickGame(float seconds)
 	vec3 GroundBarycenter = vec3(.0f);
 	vec3 PhysObjBarycenter = vec3(.0f);
 	float factor = .0f;
-	
-	for (int i = 0; i < m_ground_list.Count(); i++)
-	{
-		PhysicsObject* PhysObj = m_ground_list[i];
-		mat4 GroundMat = PhysObj->GetTransform();
 
-		GroundBarycenter += GroundMat.v3.xyz;
-		factor += 1.f;
+	if (USE_WALL)
+	{
+		for (int i = 0; i < m_ground_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_ground_list[i];
+			mat4 GroundMat = PhysObj->GetTransform();
+
+			GroundBarycenter += GroundMat.v3.xyz;
+			factor += 1.f;
+		}
+
+		GroundBarycenter /= factor;
+
+		for (int i = 0; i < m_ground_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_ground_list[i];
+
+			mat4 GroundMat = PhysObj->GetTransform();
+			vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
+			vec3 CenterToCam = m_camera->m_position - GroundBarycenter;
+
+			if (dot(normalize(CenterToCam - CenterToGround),
+					normalize(CenterToGround)) > 0.f)
+				PhysObj->SetRender(false);
+			else
+				PhysObj->SetRender(true);
+		}
 	}
 
-	GroundBarycenter /= factor;
-
-	for (int i = 0; i < m_ground_list.Count(); i++)
-	{
-		PhysicsObject* PhysObj = m_ground_list[i];
-
-		mat4 GroundMat = PhysObj->GetTransform();
-		vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
-		vec3 CenterToCam = m_camera->m_position - GroundBarycenter;
-
-		if (dot(normalize(CenterToCam - CenterToGround),
-                normalize(CenterToGround)) > 0.f)
-			PhysObj->SetRender(false);
-		else
-			PhysObj->SetRender(true);
-	}
-
-	if (0)
+	if (USE_ROTATION)
 	{
 		for (int i = 0; i < m_ground_list.Count(); i++)
 		{
@@ -357,6 +382,7 @@ void BtPhysTest::TickGame(float seconds)
 		}
 	}
 
+	if (USE_PLATFORM)
 	{
 		for (int i = 0; i < m_platform_list.Count(); i++)
 		{
@@ -378,20 +404,39 @@ void BtPhysTest::TickGame(float seconds)
 		}
 	}
 
-	PhysObjBarycenter = vec3(.0f);
-	for (int i = 0; i < m_physobj_list.Count(); i++)
+	if (USE_CHARACTER)
 	{
-		PhysicsObject* PhysObj = m_physobj_list[i];
-		mat4 GroundMat = PhysObj->GetTransform();
+		for (int i = 0; i < m_character_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_character_list[i];
+			mat4 GroundMat = PhysObj->GetTransform();
 
-		PhysObjBarycenter += GroundMat.v3.xyz;
-		factor += 1.f;
+			PhysObjBarycenter += GroundMat.v3.xyz;
+			factor += 1.f;
+		}
+
+		PhysObjBarycenter /= factor;
+
+		m_camera->SetTarget(PhysObjBarycenter);
+		m_camera->SetPosition(PhysObjBarycenter + vec3(-80.0f, 80.0f, .0f));
 	}
+	else
+	{
+		PhysObjBarycenter = vec3(.0f);
+		for (int i = 0; i < m_physobj_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_physobj_list[i];
+			mat4 GroundMat = PhysObj->GetTransform();
 
-	PhysObjBarycenter /= factor;
+			PhysObjBarycenter += GroundMat.v3.xyz;
+			factor += 1.f;
+		}
 
-	m_camera->SetTarget(PhysObjBarycenter);
-	m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
+		PhysObjBarycenter /= factor;
+
+		m_camera->SetTarget(PhysObjBarycenter);
+		m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
+	}
 
 #if 0
 	///step the simulation
@@ -425,7 +470,7 @@ void BtPhysTest::TickDraw(float seconds)
         m_ready = true;
     }
 
-    Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
+    //Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
 
 #if 0
 	vec3 BarycenterLocation = vec3(.0f);
@@ -483,6 +528,13 @@ BtPhysTest::~BtPhysTest()
 		PhysicsObject* CurPop = m_ground_list.Last();
 		m_ground_list.Pop();
 		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+		Ticker::Unref(CurPop);
+	}
+	while (m_character_list.Count())
+	{
+		PhysicsObject* CurPop = m_character_list.Last();
+		m_character_list.Pop();
+		CurPop->GetCharacter()->RemoveFromSimulation(m_simulation);
 		Ticker::Unref(CurPop);
 	}
 	while (m_platform_list.Count())

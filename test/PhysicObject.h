@@ -22,7 +22,7 @@ class PhysicsObject : public WorldEntity
 {
 public:
 	PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation)
-		: m_ready(false), m_should_render(true)
+		: m_ready(false), m_should_render(true), m_is_character(false)
 	{
 		m_mesh.Compile("[sc#ddd afcb60 1 60 -.1]");
 		vec3 BoxSize = vec3(60.f, 1.f, 60.f);
@@ -35,20 +35,38 @@ public:
 	}
 
 	PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation, int dummy)
-		: m_ready(false), m_should_render(true)
+		: m_ready(false), m_should_render(true), m_is_character(false)
 	{
-		m_mesh.Compile("[sc#ddd afcb20 1 20 -.1]");
-		vec3 BoxSize = vec3(20.f, 1.f, 20.f);
-		m_physics.SetCollisionChannel(0, 0xFF);
-		m_physics.SetShapeToBox(BoxSize);
-		m_physics.SetMass(.0f);
-		m_physics.SetTransform(base_location, base_rotation);
-		m_physics.InitBodyToRigid(true);
-		m_physics.AddToSimulation(new_sim);
+		if (dummy == 1) //for Rope purpose
+		{
+			m_mesh.Compile("[sc#ddd afcb20 1 20 -.1]");
+			//m_mesh.Compile("[sc#f00 afcb10 10 10 -.1]");
+
+			vec3 BoxSize = vec3(20.f, 1.f, 20.f);
+			m_physics.SetCollisionChannel(0, 0xFF);
+			m_physics.SetShapeToBox(BoxSize);
+			m_physics.SetMass(.0f);
+			m_physics.SetTransform(base_location, base_rotation);
+			m_physics.InitBodyToRigid(true);
+			m_physics.AddToSimulation(new_sim);
+		}
+		else if (dummy == 2) //for character purpose
+		{
+			m_is_character = true;
+			m_mesh.Compile("[sc#f00 afcb10 10 10 -.1]");
+			//m_mesh.Compile("[sc#fff scb#fff ac1 2 2 2 0 0]");
+			vec3 BoxSize = vec3(2.f, 2.f, 2.f);
+			m_character.SetCollisionChannel(0, 0xFF);
+			m_character.SetShapeToCapsule(BoxSize.x, BoxSize.y);
+			m_character.SetMass(.0f);
+			m_character.SetTransform(base_location, base_rotation);
+			m_character.InitBodyToGhost();
+			m_character.AddToSimulation(new_sim);
+		}
 	}
 
 	PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
-		: m_ready(false), m_should_render(true)
+		: m_ready(false), m_should_render(true), m_is_character(false)
 	{
 		Array<char const *> MeshRand;
 
@@ -61,39 +79,39 @@ public:
 
 		int SphereLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add asph15 2 2 2]";
-		MeshRand << "[sc#dad asph15 2 2 2]";
-		MeshRand << "[sc#dda asph15 2 2 2]";
-		MeshRand << "[sc#daa asph15 2 2 2]";
-		MeshRand << "[sc#ada asph15 2 2 2]";
-		MeshRand << "[sc#aad asph15 2 2 2]";
+		MeshRand << "[sc#add asph1 2 2 2]";
+		MeshRand << "[sc#dad asph1 2 2 2]";
+		MeshRand << "[sc#dda asph1 2 2 2]";
+		MeshRand << "[sc#daa asph1 2 2 2]";
+		MeshRand << "[sc#ada asph1 2 2 2]";
+		MeshRand << "[sc#aad asph1 2 2 2]";
 
 		int ConeLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
-		MeshRand << "[sc#dad scb#dad ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
-		MeshRand << "[sc#dda scb#dda ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
-		MeshRand << "[sc#daa scb#daa ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
-		MeshRand << "[sc#ada scb#ada ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
-		MeshRand << "[sc#aad scb#aad ad48 2 0 rx180 ty-1 ac48 2 2 0 0 0]";
+		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
 
 		int CylLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
-		MeshRand << "[sc#dad scb#dad ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
-		MeshRand << "[sc#dda scb#dda ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
-		MeshRand << "[sc#daa scb#daa ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
-		MeshRand << "[sc#ada scb#ada ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
-		MeshRand << "[sc#aad scb#aad ad96 2 0 rx180 ty-1 my ac96 2 2 2 0 0]";
+		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
 
 		int CapsLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add acap21 2 1]";
-		MeshRand << "[sc#dad scb#dad acap21 2 1]";
-		MeshRand << "[sc#dda scb#dda acap21 2 1]";
-		MeshRand << "[sc#daa scb#daa acap21 2 1]";
-		MeshRand << "[sc#ada scb#ada acap21 2 1]";
-		MeshRand << "[sc#aad scb#aad acap21 2 1]";
+		MeshRand << "[sc#add scb#add acap1 2 1]";
+		MeshRand << "[sc#dad scb#dad acap1 2 1]";
+		MeshRand << "[sc#dda scb#dda acap1 2 1]";
+		MeshRand << "[sc#daa scb#daa acap1 2 1]";
+		MeshRand << "[sc#ada scb#ada acap1 2 1]";
+		MeshRand << "[sc#aad scb#aad acap1 2 1]";
 
 		switch (RandValue)
 		{
@@ -167,12 +185,18 @@ public:
 
 	void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)))
 	{
-		m_physics.SetTransform(base_location, base_rotation);
+		if (m_is_character)
+			m_character.SetTransform(base_location, base_rotation);
+		else
+			m_physics.SetTransform(base_location, base_rotation);
 	}
 
 	lol::mat4 GetTransform()
 	{
-		return m_physics.GetTransform();
+		if (m_is_character)
+			return m_character.GetTransform();
+		else
+			return m_physics.GetTransform();
 	}
 
 	void SetRender(bool should_render)
@@ -182,6 +206,7 @@ public:
 
 	EasyMesh *GetMesh() { return &m_mesh; }
 	EasyPhysic *GetPhysic() { return &m_physics; }
+	EasyPhysic *GetCharacter() { return &m_character; }
 
 	~PhysicsObject()
 	{
@@ -206,16 +231,23 @@ protected:
 		}
 
 		if (m_should_render)
-			m_mesh.Render(m_physics.GetTransform());
+		{
+			if (m_is_character)
+				m_mesh.Render(m_character.GetTransform());
+			else
+				m_mesh.Render(m_physics.GetTransform());
+		}
 	}
 
 private:
 	//Base datas
-	EasyMesh		m_mesh;
-	EasyPhysic		m_physics;
+	EasyMesh				m_mesh;
+	EasyPhysic				m_physics;
+	EasyCharacterController	m_character;
 
 	bool			m_ready;
 	bool			m_should_render;
+	bool			m_is_character;
 };
 
 #endif /* __PHYSICOBJECT_H__ */
