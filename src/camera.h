@@ -36,6 +36,7 @@ public:
                         float near, float far);
     void SetTarget(vec3 const &pos);
     vec3 GetTarget();
+    vec3 GetPosition();
 
     mat4 const &GetViewMatrix();
     mat4 const &GetProjMatrix();

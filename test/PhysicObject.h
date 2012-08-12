@@ -40,8 +40,6 @@ public:
 		if (dummy == 1) //for Rope purpose
 		{
 			m_mesh.Compile("[sc#ddd afcb20 1 20 -.1]");
-			//m_mesh.Compile("[sc#f00 afcb10 10 10 -.1]");
-
 			vec3 BoxSize = vec3(20.f, 1.f, 20.f);
 			m_physics.SetCollisionChannel(0, 0xFF);
 			m_physics.SetShapeToBox(BoxSize);
@@ -53,9 +51,30 @@ public:
 		else if (dummy == 2) //for character purpose
 		{
 			m_is_character = true;
-			m_mesh.Compile("[sc#f00 afcb10 10 10 -.1]");
-			//m_mesh.Compile("[sc#fff scb#fff ac1 2 2 2 0 0]");
-			vec3 BoxSize = vec3(2.f, 2.f, 2.f);
+			//m_mesh.Compile("[sc#f00 afcb10 10 10 -.1]");
+			m_mesh.Compile(
+				"[sc#000 scb#000"
+				//"[sc#aaa scb#aaa"
+				"[ad8 2 0 rx180 ty-1]"
+				"[asph8 .5 .5 .5 ty1]"
+				"[ac32 2 .5 .5 0 0]"
+				"[asph6 .1 .1 .1 ty.9 tx.5 tz.15]"
+				"[asph6 .1 .1 .1 ty.9 tx.5 tz-.15]"
+				"[asph8 .05 .5 .05 ty.6 tz.5]"
+				"[asph8 .05 .5 .05 ty.6 tz-.5]"
+				"]"
+				"[sc#fd0 scb#fd0"
+				"[ac8 .4 .1 0 0 0 ty.25 rz-90 ty.7 tx.5]"
+				"]"
+				"["
+				"[sc#fff scb#fff"
+				"[ad8 2 0 rx180 ty-1]"
+				"[asph8 .5 .5 .5 ty1]"
+				"[ac32 1.9 .5 .5 0 0]"
+				"]"
+				" ty-.1 tx.05]"
+				);
+			vec3 BoxSize = vec3(.5f, 2.f, .5f);
 			m_character.SetCollisionChannel(0, 0xFF);
 			m_character.SetShapeToCapsule(BoxSize.x, BoxSize.y);
 			m_character.SetMass(.0f);
@@ -88,21 +107,21 @@ public:
 
 		int ConeLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
-		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
-		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
-		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
-		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
-		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 ac1 2 2 0 0 0]";
+		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
 
 		int CylLimit = MeshRand.Count();
 
-		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
-		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
-		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
-		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
-		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
-		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 my ac1 2 2 2 0 0]";
+		MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+		MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+		MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+		MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+		MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+		MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
 
 		int CapsLimit = MeshRand.Count();
 

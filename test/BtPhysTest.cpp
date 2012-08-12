@@ -51,8 +51,8 @@ int gNumObjects = 64;
 
 #define USE_WALL		1
 #define USE_PLATFORM	1
-#define USE_ROPE		0
-#define USE_BODIES		0
+#define USE_ROPE		1
+#define USE_BODIES		1
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
 
@@ -70,6 +70,7 @@ BtPhysTest::BtPhysTest(bool editor)
     m_ready = false;
 
 	m_simulation = new Simulation();
+	m_simulation->SetWorldLimit(vec3(-1000.0f, -1000.0f, -1000.0f), vec3(1000.0f, 1000.0f, 1000.0f));
 	m_simulation->Init();
 	vec3 NewGravity = vec3(.0f, -10.0f, .0f);
 	m_simulation->SetGravity(NewGravity);
@@ -109,7 +110,7 @@ BtPhysTest::BtPhysTest(bool editor)
 	if (USE_PLATFORM)
 	{
 		quat NewRotation = quat::fromeuler_xyz(5.f, 0.f, 0.f);
-		vec3 NewPosition = pos_offset + vec3(5.0f, -20.0f, -15.0f);
+		vec3 NewPosition = pos_offset + vec3(5.0f, -25.0f, -15.0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
@@ -127,7 +128,7 @@ BtPhysTest::BtPhysTest(bool editor)
 	if (USE_CHARACTER)
 	{
 		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
-		vec3 NewPosition = pos_offset + vec3(.0f, 40.0f, .0f);
+		vec3 NewPosition = pos_offset + vec3(.0f, 20.0f, .0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
 
@@ -409,6 +410,23 @@ void BtPhysTest::TickGame(float seconds)
 		for (int i = 0; i < m_character_list.Count(); i++)
 		{
 			PhysicsObject* PhysObj = m_character_list[i];
+			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
+
+			int HMovement = Input::GetButtonState(275 /*SDLK_RIGHT*/) - Input::GetButtonState(276 /*SDLK_LEFT*/);
+			int VMovement = Input::GetButtonState(273 /*SDLK_UP*/) - Input::GetButtonState(274 /*SDLK_DOWN*/);
+
+			Character->SetMovementForFrame(vec3((float)VMovement * seconds * 4.f, .0f, (float)HMovement * seconds * 4.f));
+		}
+	}
+
+	if (USE_CHARACTER)
+	{
+		PhysObjBarycenter = vec3(.0f);
+		factor = .0f;
+
+		for (int i = 0; i < m_character_list.Count(); i++)
+		{
+			PhysicsObject* PhysObj = m_character_list[i];
 			mat4 GroundMat = PhysObj->GetTransform();
 
 			PhysObjBarycenter += GroundMat.v3.xyz;
@@ -417,8 +435,9 @@ void BtPhysTest::TickGame(float seconds)
 
 		PhysObjBarycenter /= factor;
 
-		m_camera->SetTarget(PhysObjBarycenter);
-		m_camera->SetPosition(PhysObjBarycenter + vec3(-80.0f, 80.0f, .0f));
+		m_camera->SetTarget(m_camera->GetTarget() + (seconds / (seconds + 0.18f)) * (PhysObjBarycenter - m_camera->GetTarget()));
+		vec3 CamPosCenter = m_camera->GetTarget() + vec3(.0f, 20.0f, .0f);
+		m_camera->SetPosition(CamPosCenter + normalize(m_camera->GetPosition() - CamPosCenter) * 5.0f);
 	}
 	else
 	{

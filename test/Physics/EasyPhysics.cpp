@@ -307,6 +307,13 @@ void EasyCharacterController::RemoveFromSimulation(class Simulation* current_sim
 	}
 }
 
+//Set movement for this frame
+void EasyCharacterController::SetMovementForFrame(vec3 &MoveQuantity)
+{
+	m_character->setWalkDirection(LOL2BT_VEC3(MoveQuantity));
+}
+
+
 //-------------------------------------------------------------------------
 //EASY_CONSTRAINT
 //--

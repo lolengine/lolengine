@@ -72,6 +72,10 @@ vec3 Camera::GetTarget()
 {
     return m_target;
 }
+vec3 Camera::GetPosition()
+{
+    return m_position;
+}
 
 mat4 const &Camera::GetViewMatrix()
 {
