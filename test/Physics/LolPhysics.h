@@ -156,7 +156,7 @@ public:
 	}
 
 	//Sets the simulation gravity.
-	void SetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax)
+	void SetWorldLimit(vec3 const &NewWorldMin, vec3 const &NewWorldMax)
 	{
 		m_world_min = NewWorldMin;
 		m_world_max = NewWorldMax;
