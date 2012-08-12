@@ -142,7 +142,7 @@ public:
 	virtual void InitBodyToGhost();
 	virtual void AddToSimulation(class Simulation* current_simulation);
 	virtual void RemoveFromSimulation(class Simulation* current_simulation);
-	virtual void SetMovementForFrame(vec3 &MoveQuantity);
+	virtual void SetMovementForFrame(vec3 const &MoveQuantity);
 
 protected:
 
@@ -160,7 +160,7 @@ protected:
 	virtual void InitBodyToGhost() { }
 	virtual void AddToSimulation(class Simulation* current_simulation) { }
 	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
-	virtual void SetMovementForFrame(vec3 &MoveQuantity) { }
+	virtual void SetMovementForFrame(vec3 const &MoveQuantity) { }
 
 #endif // PHYSIC IMPLEMENTATION
 
