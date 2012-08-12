@@ -105,7 +105,7 @@ private:
 			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity * LOL2BT_UNIT));
 	}
 
-	void CustomSetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax)
+	void CustomSetWorldLimit(vec3 const &NewWorldMin, vec3 const &NewWorldMax)
 	{
 	}
 
