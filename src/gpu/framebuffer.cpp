@@ -45,7 +45,7 @@ class FrameBufferData
 
 #if defined USE_D3D9
 #elif defined _XBOX
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
+#else
     GLuint m_fbo, m_texture, m_depth;
 #endif
 };
@@ -110,12 +110,13 @@ FrameBuffer::FrameBuffer(ivec2 size)
 FrameBuffer::~FrameBuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif GL_VERSION_1_1
+#else
     glDeleteFramebuffers(1, &m_data->m_fbo);
     glDeleteTextures(1, &m_data->m_texture);
+#   if GL_VERSION_1_1
     if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
-#else
+#   endif
 #endif
     delete m_data;
 }
@@ -124,28 +125,24 @@ int FrameBuffer::GetTexture() const
 {
 #if defined USE_D3D9 || defined _XBOX
     return 0;
-#elif GL_VERSION_1_1
-    return m_data->m_texture;
 #else
-    return 0;
+    return m_data->m_texture;
 #endif
 }
 
 void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif GL_VERSION_1_1
-    glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
 #else
+    glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
 #endif
 }
 
 void FrameBuffer::Unbind()
 {
 #if defined USE_D3D9 || defined _XBOX
-#elif GL_VERSION_1_1
-    glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 #else
+    glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 #endif
 }
 
