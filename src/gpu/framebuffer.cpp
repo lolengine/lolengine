@@ -61,9 +61,15 @@ FrameBuffer::FrameBuffer(ivec2 size)
     m_data->m_size = size;
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: not implemented on Direct3D */
-#elif GL_VERSION_1_1
-    GLenum format = GL_RGBA8;
+#else
+#   if GL_VERSION_1_1
+    GLenum internal_format = GL_RGBA8;
+    GLenum format = GL_BGRA;
     GLenum depth = GL_DEPTH_COMPONENT;
+#   else
+    GLenum internal_format = GL_RGBA;
+    GLenum format = GL_RGBA;
+#   endif
     GLenum wrapmode = GL_REPEAT;
     GLenum filtering = GL_NEAREST;
 
@@ -77,12 +83,15 @@ FrameBuffer::FrameBuffer(ivec2 size)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLenum)wrapmode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLenum)filtering);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)filtering);
-    glTexImage2D(GL_TEXTURE_2D, 0, (GLenum)format, size.x, size.y, 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
+                 format, GL_UNSIGNED_BYTE, NULL);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                            GL_TEXTURE_2D, m_data->m_texture, 0);
     m_data->m_depth = GL_INVALID_ENUM;
+#   if GL_VERSION_1_1
+    /* FIXME: not implemented on GL ES, see
+     * http://stackoverflow.com/q/4041682/111461 */
     if (depth != GL_INVALID_ENUM)
     {
         glGenRenderbuffers(1, &m_data->m_depth);
@@ -91,12 +100,10 @@ FrameBuffer::FrameBuffer(ivec2 size)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                                   GL_RENDERBUFFER, m_data->m_depth);
     }
+#   endif
     glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     Unbind();
-#else
-    /* FIXME: not implemented on GL ES, see
-     * http://stackoverflow.com/q/4041682/111461 */
 #endif
 }
 
