@@ -2,21 +2,42 @@
 
 #version 120
 
+attribute vec2 in_Position;
+
+varying vec2 pass_Position;
+
 void main()
 {
-    gl_Position = gl_Vertex;
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    pass_Position = in_Position;
+    gl_Position = vec4(in_Position, 0.0, 1.0);
 }
 
 -- GLSL.Frag --
 
 #version 120
 
-uniform sampler2D texture;
+uniform sampler2D in_Texture;
+uniform float in_Flag;
+uniform vec3 in_Point;
+uniform vec3 in_Color;
+
+varying vec2 pass_Position;
 
 void main(void)
 {
-    gl_FragColor = vec4(texture2D(texture, gl_TexCoord[0].xy).xyz, 1.0);
+    if (in_Flag == 0.0)
+    {
+        float s = 4.0 + 4.0 * in_Point.z;
+        vec2 p = pass_Position - in_Point.xy * 0.8;
+        float f = clamp(1.0 - dot(s * p, s * p), 0.0, 1.0);
+        f = sqrt(f);
+        gl_FragColor = vec4(f * in_Color, f + 0.1);
+    }
+    else
+    {
+        vec2 texcoords = pass_Position * 0.5 + vec2(0.5, 0.5);
+        gl_FragColor = vec4(texture2D(in_Texture, texcoords).xyz, 1.0);
+    }
 }
 
 -- HLSL.Vert --
