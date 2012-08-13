@@ -31,11 +31,17 @@ void main(void)
 {
     if (in_Flag == 0.0)
     {
-        float s = 4.0 + 4.0 * in_Point.z;
-        vec2 p = pass_Position - in_Point.xy * 0.8;
-        float f = clamp(1.0 - dot(s * p, s * p), 0.0, 1.0);
-        f = sqrt(f);
-        gl_FragColor = vec4(f * in_Color, f + 0.1);
+        float tc = 0.0, ta = 0.0;
+        {
+            float s = 4.0 + 3.0 * in_Point.z;
+            vec2 p = pass_Position - in_Point.xy * 0.8;
+            float t = clamp(1.2 - dot(s * p, s * p), 0.0, 1.0);
+            float u = t * t;
+            tc += 3.0 * t * t - 2.0 * t * t * t;
+            ta += 3.0 * u * u - 2.0 * u * u * u;
+        }
+
+        gl_FragColor = vec4(tc * in_Color, ta + 0.1);
     }
     else
     {
