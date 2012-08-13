@@ -414,8 +414,9 @@ void BtPhysTest::TickGame(float seconds)
 
 			int HMovement = Input::GetButtonState(275 /*SDLK_RIGHT*/) - Input::GetButtonState(276 /*SDLK_LEFT*/);
 			int VMovement = Input::GetButtonState(273 /*SDLK_UP*/) - Input::GetButtonState(274 /*SDLK_DOWN*/);
+			int RMovement = Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
 
-			Character->SetMovementForFrame(vec3((float)VMovement * seconds * 4.f, .0f, (float)HMovement * seconds * 4.f));
+			Character->SetMovementForFrame(vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f));
 		}
 	}
 
