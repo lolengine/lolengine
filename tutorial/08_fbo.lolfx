@@ -16,6 +16,10 @@ void main()
 
 #version 120
 
+#if defined GL_ES
+precision highp float;
+#endif
+
 uniform sampler2D in_Texture;
 uniform float in_Flag;
 uniform vec3 in_Point;
