@@ -47,9 +47,12 @@ public:
         m_hotspot = 0.4f * vec3(lol::cos(m_time * 2.f) + lol::cos(m_time * 3.3f),
                                 lol::sin(m_time * 4.4f) + lol::sin(m_time * 3.2f),
                                 lol::sin(m_time * 5.f));
-        m_color = 0.25f * vec3(3.f + lol::sin(m_time * 4.5f + 1.f),
-                               3.f + lol::sin(m_time * 2.8f + 1.3f),
-                               3.f + lol::sin(m_time * 3.7f));
+        m_color = 0.25f * vec3(1.1f + lol::sin(m_time * 1.5f + 1.f),
+                               1.1f + lol::sin(m_time * 1.8f + 1.3f),
+                               1.1f + lol::sin(m_time * 1.7f));
+        /* Saturate dot color */
+        float x = std::max(m_color.x, std::max(m_color.y, m_color.z));
+        m_color /= x;
     }
 
     virtual void TickDraw(float seconds)
@@ -60,9 +63,9 @@ public:
         {
             m_shader = Shader::Create(lolfx_08_fbo);
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_uni_flag = m_shader->GetUniformLocation("in_Flag");
             m_uni_point = m_shader->GetUniformLocation("in_Point");
             m_uni_color = m_shader->GetUniformLocation("in_Color");
-            m_uni_flag = m_shader->GetUniformLocation("in_Flag");
             m_uni_texture = m_shader->GetUniformLocation("in_Texture");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
