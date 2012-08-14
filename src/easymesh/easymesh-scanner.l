@@ -83,25 +83,25 @@ at    { return token::T_TRIANGLE; }
 aq    { return token::T_QUAD; }
 acg   { return token::T_COG; }
 
-#[0-9a-f]{3} {
+#[0-9a-fA-F]{3} {
         uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
         yylval->u32val = 0x11000000u * (tmp >> 8)
                        | 0x00110000u * ((tmp >> 4) & 0xf)
                        | 0x00001100u * (tmp & 0xf)
                        | 0x000000ffu;
         return token::COLOR; }
-#[0-9a-f]{4} {
+#[0-9a-fA-F]{4} {
         uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
         yylval->u32val = 0x11000000u * (tmp >> 12)
                        | 0x00110000u * ((tmp >> 8) & 0xf)
                        | 0x00001100u * ((tmp >> 4) & 0xf)
                        | 0x00000011u * (tmp & 0xf);
         return token::COLOR; }
-#[0-9a-f]{6} {
+#[0-9a-fA-F]{6} {
         yylval->u32val = 0xffu
                        | 0x100u * (uint32_t)std::strtol(yytext + 1, NULL, 16);
         return token::COLOR; }
-#[0-9a-f]{8} {
+#[0-9a-fA-F]{8} {
         yylval->u32val = (uint32_t)std::strtol(yytext + 1, NULL, 16);
         return token::COLOR; }
 [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {
