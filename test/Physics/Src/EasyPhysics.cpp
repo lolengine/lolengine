@@ -156,6 +156,7 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 	btRigidBody::btRigidBodyConstructionInfo NewInfos(m_mass, m_motion_state, m_collision_shape, m_local_inertia);
 	m_rigid_body = new btRigidBody(NewInfos);
 	m_collision_object = m_rigid_body;
+	m_collision_object->setUserPointer(this);
 
 	if (m_mass == .0f)
 	{
@@ -184,11 +185,52 @@ void EasyPhysic::InitBodyToGhost()
 	m_ghost_object = GetGhostObject();
 	m_ghost_object->setCollisionShape(m_collision_shape);
 	m_collision_object = m_ghost_object;
+	m_collision_object->setUserPointer(this);
 
 	SetTransform(m_local_to_world.v3.xyz, lol::quat(m_local_to_world));
 
 	m_ghost_object->setCollisionFlags(m_ghost_object->getCollisionFlags());
 }
+
+//-------------
+//Touch logic
+//-------------
+  //    btManifoldArray   manifoldArray;
+  //    btBroadphasePairArray& pairArray = ghostObject->getOverlappingPairCache()->getOverlappingPairArray();
+  //    int numPairs = pairArray.size();
+
+  //    for (int i=0;i<numPairs;i++)
+  //    {
+  //       manifoldArray.clear();
+
+  //       const btBroadphasePair& pair = pairArray[i];
+  //       
+  //       //unless we manually perform collision detection on this pair, the contacts are in the dynamics world paircache:
+  //       btBroadphasePair* collisionPair = dynamicsWorld->getPairCache()->findPair(pair.m_pProxy0,pair.m_pProxy1);
+  //       if (!collisionPair)
+  //          continue;
+
+  //       if (collisionPair->m_algorithm)
+  //          collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
+
+  //       for (int j=0;j<manifoldArray.size();j++)
+  //       {
+  //          btPersistentManifold* manifold = manifoldArray[j];
+  //          btScalar directionSign = manifold->getBody0() == m_ghostObject ? btScalar(-1.0) : btScalar(1.0);
+  //          for (int p=0;p<manifold->getNumContacts();p++)
+  //          {
+  //           	const btManifoldPoint&pt = manifold->getContactPoint(p);
+  //              if (pt.getDistance()<0.f)
+		//{
+		//	const btVector3& ptA = pt.getPositionWorldOnA();
+		//	const btVector3& ptB = pt.getPositionWorldOnB();
+		//	const btVector3& normalOnB = pt.m_normalWorldOnB;
+		//	/// work here
+		//}
+  //          }
+  //       }
+  //    }
+
 
 //Add Physic object to the simulation
 void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
