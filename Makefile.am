@@ -1,5 +1,6 @@
 
-SUBDIRS = src tutorial test tools games
+# Put "people" at the end because they're more likely to break builds.
+SUBDIRS = src tutorial test tools games people
 DIST_SUBDIRS = $(SUBDIRS) build binaries
 
 EXTRA_DIST = bootstrap TODO

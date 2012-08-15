@@ -472,6 +472,7 @@ AC_CONFIG_FILES(
   test/xolotl/Makefile
   build/Makefile
   binaries/Makefile
+  people/Makefile
   games/Makefile
   tools/Makefile
 ])
@@ -492,13 +493,11 @@ AC_CONFIG_FILES(
  [games/orbital/Makefile
 ])
 AC_CONFIG_FILES(
- [games/demo-jnat/Makefile
-])
-AC_CONFIG_FILES(
- [games/ToukyDemo/Makefile
-])
-AC_CONFIG_FILES(
  [tools/neercs/Makefile
+])
+AC_CONFIG_FILES(
+ [people/jnat/Makefile
+  people/touky/Makefile
 ])
 
 AC_OUTPUT
