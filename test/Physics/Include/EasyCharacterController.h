@@ -18,9 +18,8 @@
 #define __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 
 #ifdef HAVE_PHYS_USE_BULLET
-#include "core.h"
-#include "EasyPhysics.h"
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
+#include "EasyPhysics.h"
 #endif
 
 namespace lol
