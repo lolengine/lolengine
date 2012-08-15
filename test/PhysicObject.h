@@ -13,7 +13,9 @@
 
 #include "core.h"
 #include "easymesh/easymesh.h"
-#include "Physics/EasyPhysics.h"
+#include "Physics/Include/EasyPhysics.h"
+#include "Physics/Include/EasyCharacterController.h"
+#include "Physics/Include/EasyConstraint.h"
 
 using namespace lol;
 using namespace lol::phys;

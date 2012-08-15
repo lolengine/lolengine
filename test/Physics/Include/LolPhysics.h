@@ -13,6 +13,7 @@
 #include <bullet/btBulletCollisionCommon.h>
 #include "LolBtPhysicsIntegration.h"
 #include "EasyPhysics.h"
+#include "EasyConstraint.h"
 #endif
 
 namespace lol

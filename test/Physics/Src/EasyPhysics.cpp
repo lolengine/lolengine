@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include "LolBtPhysicsIntegration.h"
-#include "LolPhysics.h"
+#include "../Include/LolBtPhysicsIntegration.h"
+#include "../Include/LolPhysics.h"
 
 namespace lol
 {
@@ -252,87 +252,6 @@ void EasyPhysic::SetLocalInertia(float mass)
 		m_collision_shape->calculateLocalInertia(mass, m_local_inertia);
 	else
 		m_local_inertia = btVector3(.0f, .0f, .0f);
-}
-
-//-------------------------------------------------------------------------
-//EASY_CHARACTER_CONTROLLER
-//--
-
-//Deactivated for Character controller
-void EasyCharacterController::InitBodyToRigid(bool ZeroMassIsKinematic)
-{
-}
-
-//Return correct Ghost Object
-btGhostObject* EasyCharacterController::GetGhostObject()
-{
-	return new btPairCachingGhostObject();
-}
-
-//Init to Pair caching ghost object, since Character uses that one.
-void EasyCharacterController::InitBodyToGhost()
-{
-	EasyPhysic::InitBodyToGhost();
-
-	m_pair_caching_object = (btPairCachingGhostObject*)m_ghost_object;
-	m_ghost_object->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | m_ghost_object->getCollisionFlags());
-}
-
-//Add Physic object to the simulation
-void EasyCharacterController::AddToSimulation(class Simulation* current_simulation)
-{
-	EasyPhysic::AddToSimulation(current_simulation);
-
-	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (dynamics_world)
-	{
-		if (m_character)
-			delete m_character;
-
-		m_character = new btKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
-		dynamics_world->addAction(m_character);
-	}
-}
-
-//Remove Physic object to the simulation
-void EasyCharacterController::RemoveFromSimulation(class Simulation* current_simulation)
-{
-	EasyPhysic::RemoveFromSimulation(current_simulation);
-
-	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (dynamics_world)
-	{
-		if (m_character)
-			dynamics_world->removeAction(m_character);
-	}
-}
-
-//Set movement for this frame
-void EasyCharacterController::SetMovementForFrame(vec3 const &MoveQuantity)
-{
-	m_character->setWalkDirection(LOL2BT_VEC3(MoveQuantity));
-}
-
-
-//-------------------------------------------------------------------------
-//EASY_CONSTRAINT
-//--
-
-void EasyConstraint::AddToSimulation(class Simulation* current_simulation)
-{
-	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (dynamics_world && m_typed_constraint)
-	{
-		dynamics_world->addConstraint(m_typed_constraint, m_disable_a2b_collision);
-		current_simulation->AddToConstraint(this);
-	}
-}
-
-void EasyConstraint::RemoveFromSimulation(class Simulation* current_simulation)
-{
-	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (dynamics_world, m_typed_constraint)
-		dynamics_world->removeConstraint(m_typed_constraint);
 }
 
 #endif // HAVE_PHYS_USE_BULLET
