@@ -106,12 +106,6 @@ private:
 			m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity * LOL2BT_UNIT));
 	}
 
-	void CustomSetWorldLimit(vec3 const &NewWorldMin, vec3 const &NewWorldMax)
-	{
-	}
-
-	void CustomSetTimestep(float NewTimestep) { }
-
 	//broadphase
 	btBroadphaseInterface*					m_broadphase;
 	btAxisSweep3*							m_Sweep_broadphase;
