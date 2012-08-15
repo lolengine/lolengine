@@ -31,6 +31,8 @@ namespace lol
  * Input implementation class
  */
 
+Array<ButtonSetting>	Input::InputAssocationList;
+
 static class InputData
 {
     friend class Input;
@@ -113,6 +115,102 @@ int Input::GetButtonState(int button)
 #endif
 }
 
+//--
+
+//---
+//Internal : Updates the action status & timers
+void Input::UpdateActionStatus(float seconds)
+{
+	for (int i = 0; i < InputAssocationList.Count(); i++)
+	{
+		ButtonSetting &CurIT = InputAssocationList[i];
+
+		CurIT.PrevStatus = CurIT.CurStatus;
+		CurIT.CurStatus = Input::GetButtonState(CurIT.RawButtonId);
+
+		for (int j = 0; j < CurIT.AssociatedActionList.Count(); j++)
+		{
+			ActionSetting &CurAS = CurIT.AssociatedActionList[j];
+
+			if (CurAS.BufferedSince <= CurAS.BufferingTime)
+				CurAS.BufferedSince += seconds;
+
+			if (CurIT.CurStatus && CurAS.BufferingTime >= .0f)
+				CurAS.BufferedSince = .0f;
+		}
+	}
+
+}
+
+//Helps link a software input Action-Id to an hardware input Button-Id.
+void Input::LinkActionIdToButtonId(int ActionId, int ButtonId)
+{
+	int ITIdx = GetButtonSettingIdx(ButtonId);
+	if (ITIdx == -1)
+	{
+		ITIdx = InputAssocationList.Count();
+		InputAssocationList << ButtonSetting(ButtonId);
+	}
+
+	ButtonSetting &CurIT = InputAssocationList[ITIdx];
+
+	int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+	if (ASIdx == -1)
+	{
+		ASIdx = CurIT.AssociatedActionList.Count();
+		CurIT.AssociatedActionList << ActionSetting(ActionId);
+	}
+}
+
+//Helps unlink a software input Action-Id to an hardware input Button-Id.
+void Input::UnlinkActionId(int ActionId)
+{
+	for (int i = 0; i < InputAssocationList.Count(); i++)
+	{
+		ButtonSetting &CurIT = InputAssocationList[i];
+		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		if (ASIdx != -1)
+			CurIT.AssociatedActionList.Remove(ASIdx);
+	}
+}
+
+//Returns the current status of a given action
+int Input::GetActionStatus(int ActionId)
+{
+	for (int i = 0; i < InputAssocationList.Count(); i++)
+	{
+		ButtonSetting &CurIT = InputAssocationList[i];
+		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		if (ASIdx != -1)
+		{
+			ActionSetting &CurAS = CurIT.AssociatedActionList[ASIdx];
+			
+			if (CurAS.BufferingTime >= .0f && CurAS.BufferedSince <= CurAS.BufferingTime)
+				return 1;
+			return 0;
+		}
+	}
+	return 0;
+}
+
+//Returns TRUE if action status when from Active to Inactive this frame
+bool Input::WasActionJustReleased(int ActionId)
+{
+	for (int i = 0; i < InputAssocationList.Count(); i++)
+	{
+		ButtonSetting &CurIT = InputAssocationList[i];
+		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		if (ASIdx != -1)
+		{
+			if (!CurIT.CurStatus && CurIT.PrevStatus)
+				return TRUE;
+			return FALSE;
+		}
+	}
+	return FALSE;
+}
+
+//--
 void Input::TrackMouse(WorldEntity *e)
 {
     if (data->nentities >= InputData::MAX_ENTITIES)
