@@ -87,7 +87,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\..\tools\neerc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Touky", "Touky", "{9EA99B18-D352-47F6-BC04-A0B49CAA2772}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToukyDemo", "..\..\games\ToukyDemo\ToukyDemo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToukyDemo", "..\..\people\touky\ToukyDemo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BtPhysTest", "..\..\test\BtPhysTest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
 EndProject
@@ -95,7 +95,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_fbo", "..\..\tutorial\08
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jnat", "Jnat", "{0A1651FC-322B-4B04-82CB-28E9046D9383}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo-jnat", "..\..\games\demo-jnat\demo-jnat.vcxproj", "{A69411B3-6DE8-404E-8E70-0D3375A7492A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo-jnat", "..\..\people\jnat\demo-jnat.vcxproj", "{A69411B3-6DE8-404E-8E70-0D3375A7492A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sam", "Sam", "{928A359C-9C41-400A-8D2D-A054B33A79F5}"
 EndProject
