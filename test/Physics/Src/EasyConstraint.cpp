@@ -27,7 +27,7 @@ void EasyConstraint::AddToSimulation(class Simulation* current_simulation)
 void EasyConstraint::RemoveFromSimulation(class Simulation* current_simulation)
 {
 	btDiscreteDynamicsWorld* dynamics_world = current_simulation->GetWorld();
-	if (dynamics_world, m_typed_constraint)
+	if (dynamics_world && m_typed_constraint)
 		dynamics_world->removeConstraint(m_typed_constraint);
 }
 
