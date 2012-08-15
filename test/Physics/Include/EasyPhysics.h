@@ -19,7 +19,9 @@
 
 #ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
-#include "LolPhysics.h"
+#include <bullet/btBulletDynamicsCommon.h>
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
 #endif
 
 namespace lol

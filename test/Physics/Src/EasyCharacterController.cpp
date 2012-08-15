@@ -14,9 +14,9 @@
 #   include "config.h"
 #endif
 
-#ifdef HAVE_PHYS_USE_BULLET
+#include "../Include/LolBtPhysicsIntegration.h"
+#include "../Include/LolPhysics.h"
 #include "../Include/EasyCharacterController.h"
-#endif //HAVE_PHYS_USE_BULLET
 
 namespace lol
 {
