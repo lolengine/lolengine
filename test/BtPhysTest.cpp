@@ -104,7 +104,7 @@ BtPhysTest::BtPhysTest(bool editor)
 			NewPhyobj->SetTransform(NewPosition, NewRotation);
 			Ticker::Ref(NewPhyobj);
 			m_ground_list << NewPhyobj;
-		}	
+		}
 	}
 
 	if (USE_PLATFORM)

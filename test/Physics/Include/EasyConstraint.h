@@ -18,6 +18,7 @@
 #define __EASYCONSTRAINT_EASYCONSTRAINT_H__
 
 #ifdef HAVE_PHYS_USE_BULLET
+#include "core.h"
 #include "EasyPhysics.h"
 #endif
 
