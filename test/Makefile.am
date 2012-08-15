@@ -47,8 +47,10 @@ quad_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
 quad_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
-    Physics/EasyPhysics.cpp Physics/EasyPhysics.h \
-    Physics/LolBtPhysicsIntegration.h Physics/LolPhysics.h
+    Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
+    Physics/Include/LolBtPhysicsIntegration.h Physics/Include/LolPhysics.h \
+    Physics/Src/EasyCharacterController.cpp Physics/Src/EasyConstraint.cpp \
+    Physics/Include/EasyCharacterController.h Physics/Include/EasyConstraint.h
 btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
