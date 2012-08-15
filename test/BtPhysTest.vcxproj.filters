@@ -2,21 +2,33 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="BtPhysTest.h" />
-    <ClInclude Include="Physics\EasyPhysics.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\LolPhysics.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\LolBtPhysicsIntegration.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicObject.h" />
+    <ClInclude Include="Physics\Include\EasyCharacterController.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Include\LolPhysics.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Include\EasyConstraint.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Include\EasyPhysics.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Include\LolBtPhysicsIntegration.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BtPhysTest.cpp" />
-    <ClCompile Include="Physics\EasyPhysics.cpp">
-      <Filter>Physics</Filter>
+    <ClCompile Include="Physics\Src\EasyCharacterController.cpp">
+      <Filter>Physics\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Src\EasyConstraint.cpp">
+      <Filter>Physics\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Src\EasyPhysics.cpp">
+      <Filter>Physics\Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -25,6 +37,12 @@
     </Filter>
     <Filter Include="Physics">
       <UniqueIdentifier>{ccecd634-9321-4c49-9471-e9da50dda6d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Include">
+      <UniqueIdentifier>{ef37a177-b550-435b-bfb1-a09ca8059137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Src">
+      <UniqueIdentifier>{7e5d19e0-b2be-46cc-8fa4-f582ecb4318d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

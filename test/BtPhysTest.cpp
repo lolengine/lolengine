@@ -37,8 +37,8 @@ using namespace lol;
 #define HAVE_PHYS_USE_BULLET
 #endif /* HAVE_PHYS_USE_BULLET */
 
-#include "Physics/LolPhysics.h"
-#include "Physics/EasyPhysics.h"
+#include "Physics/Include/LolPhysics.h"
+#include "Physics/Include/EasyPhysics.h"
 #include "PhysicObject.h"
 #include "BtPhysTest.h"
 
