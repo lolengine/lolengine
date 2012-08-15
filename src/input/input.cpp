@@ -203,11 +203,11 @@ bool Input::WasActionJustReleased(int ActionId)
 		if (ASIdx != -1)
 		{
 			if (!CurIT.CurStatus && CurIT.PrevStatus)
-				return TRUE;
-			return FALSE;
+				return true;
+			return false;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 //--
