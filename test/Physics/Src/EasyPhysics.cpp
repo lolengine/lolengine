@@ -31,12 +31,13 @@ namespace phys
 
 EasyPhysic::EasyPhysic() : 
 	m_collision_object(NULL),
-	m_rigid_body(NULL),
 	m_ghost_object(NULL),
+	m_rigid_body(NULL),
+	m_local_inertia(btVector3(.0f, .0f, .0f)),
 	m_collision_shape(NULL),
+	m_convex_shape(NULL),
 	m_motion_state(NULL),
 	m_mass(.0f),
-	m_local_inertia(btVector3(.0f, .0f, .0f)),
 	m_collision_group(1),
 	m_collision_mask(1)
 {
