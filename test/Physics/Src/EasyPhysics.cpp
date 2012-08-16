@@ -29,7 +29,7 @@ namespace phys
 //EASY_PHYSIC
 //--
 
-EasyPhysic::EasyPhysic() : 
+EasyPhysic::EasyPhysic(WorldEntity* NewOwnerEntity) : 
 	m_collision_object(NULL),
 	m_ghost_object(NULL),
 	m_rigid_body(NULL),
@@ -39,7 +39,8 @@ EasyPhysic::EasyPhysic() :
 	m_motion_state(NULL),
 	m_mass(.0f),
 	m_collision_group(1),
-	m_collision_mask(1)
+	m_collision_mask(1),
+	m_owner_entity(NewOwnerEntity)
 {
 }
 
@@ -113,7 +114,8 @@ void EasyPhysic::SetShapeToCapsule(float radius, float height)
 //--
 void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
-	m_local_to_world = lol::mat4::translate(base_location) * mat4(base_rotation);
+	lol::mat4 PreviousMatrix = m_local_to_world;
+	m_local_to_world = lol::mat4::translate(base_location) * lol::mat4(base_rotation);
 
 	if (m_ghost_object)
 		m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
@@ -123,6 +125,28 @@ void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& b
 			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
 		else
 			m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+	}
+
+	for (int i = 0; i < m_based_physic_list.Count(); i++)
+		if (m_based_physic_list[i])
+			m_based_physic_list[i]->BaseTransformChanged(PreviousMatrix, m_local_to_world);
+		else
+			m_based_physic_list.Remove(i--);
+}
+
+//Internal callback when Base transform has changed.
+void EasyPhysic::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix)
+{
+	mat4 PreviousMatrixLoc = ((m_base_lock_location)?(PreviousMatrix):(lol::mat4::translate(PreviousMatrix.v3.xyz)));
+	mat4 PreviousMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(PreviousMatrix))):(lol::mat4(1.f)));
+	mat4 NewMatrixLoc = ((m_base_lock_location)?(NewMatrix):(lol::mat4::translate(NewMatrix.v3.xyz)));
+	mat4 NewMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(NewMatrix))):(lol::mat4(1.f)));
+	
+	if (m_ghost_object || (m_rigid_body->getCollisionFlags() & btCollisionObject::CF_KINEMATIC_OBJECT))
+	{
+		mat4 ThisMatrixLoc = NewMatrixLoc * inverse(PreviousMatrixLoc) * lol::mat4::translate(m_local_to_world.v3.xyz);
+		mat4 ThisMatrixRot = NewMatrixRot * inverse(PreviousMatrixRot) * lol::mat4(lol::quat(m_local_to_world));
+		SetTransform(ThisMatrixLoc.v3.xyz, lol::mat4(lol::quat(ThisMatrixRot)));
 	}
 }
 

@@ -109,7 +109,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
 	if (USE_PLATFORM)
 	{
-		quat NewRotation = quat::fromeuler_xyz(5.f, 0.f, 0.f);
+		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
 		vec3 NewPosition = pos_offset + vec3(5.0f, -25.0f, -15.0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
@@ -120,7 +120,31 @@ BtPhysTest::BtPhysTest(bool editor)
 		NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
 
 		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+		PhysicsObject* BasePhyobj = NewPhyobj;
 
+		m_platform_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+
+		NewRotation = quat::fromeuler_xyz(0.f, 0.f, 90.f);
+		NewPosition = pos_offset + vec3(-25.0f, -25.0f, 5.0f);
+
+		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+
+		NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, true);
+		m_platform_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+
+		NewPosition += vec3(-0.0f, .0f, .0f);
+		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+
+		NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, false);
+		m_platform_list << NewPhyobj;
+		Ticker::Ref(NewPhyobj);
+
+		NewPosition += vec3(-2.0f, .0f, .0f);
+		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+
+		NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), false, false);
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 	}
@@ -128,7 +152,7 @@ BtPhysTest::BtPhysTest(bool editor)
 	if (USE_CHARACTER)
 	{
 		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
-		vec3 NewPosition = pos_offset + vec3(.0f, 20.0f, .0f);
+		vec3 NewPosition = pos_offset + vec3(-15.0f, 20.0f, .0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
 
@@ -180,151 +204,6 @@ BtPhysTest::BtPhysTest(bool editor)
 			}
 		}
 	}
-
-#if 0
-	//init Physics
-	{
-		m_bt_ccd_mode = USE_CCD;
-
-		//collision configuration contains default setup for memory, collision setup
-		m_bt_collision_config = new btDefaultCollisionConfiguration();
-
-		//use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-		m_bt_dispatcher = new btCollisionDispatcher(m_bt_collision_config);
-		m_bt_dispatcher->registerCollisionCreateFunc(BOX_SHAPE_PROXYTYPE,
-													BOX_SHAPE_PROXYTYPE,
-													m_bt_collision_config->getCollisionAlgorithmCreateFunc(CONVEX_SHAPE_PROXYTYPE,
-																											CONVEX_SHAPE_PROXYTYPE));
-
-		m_bt_broadphase = new btDbvtBroadphase();
-
-		///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-		m_bt_solver = new btSequentialImpulseConstraintSolver;
-
-		m_bt_world = new btDiscreteDynamicsWorld(m_bt_dispatcher, m_bt_broadphase, m_bt_solver, m_bt_collision_config);
-		//m_bt_world->setDebugDrawer(&sDebugDrawer);
-		m_bt_world->getSolverInfo().m_splitImpulse = true;
-		m_bt_world->getSolverInfo().m_numIterations = 20;
-
-		m_bt_world->getDispatchInfo().m_useContinuous = (m_bt_ccd_mode == USE_CCD);
-		m_bt_world->setGravity(btVector3(0,-10,0));
-
-		///create a few basic rigid bodies
-		btBoxShape* box = new btBoxShape(btVector3(btScalar(110.),btScalar(1.),btScalar(110.)));
-		btCollisionShape* groundShape = box;
-		m_bt_collision_shapes << groundShape;
-        m_ground_mesh.Compile("[sc#ddd afcb220 2 220 -1]");
-
-		//m_bt_collision_shapes << new btCylinderShape(btVector3(.5f,.5f,.5f));
-
-		btTransform groundTransform;
-		groundTransform.setIdentity();
-
-		//We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
-		{
-			btScalar mass(0.);
-
-			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
-
-			btVector3 localInertia(0,0,0);
-			if (isDynamic)
-				groundShape->calculateLocalInertia(mass,localInertia);
-
-			//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-			btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,myMotionState,groundShape,localInertia);
-			btRigidBody* body = new btRigidBody(rbInfo);
-
-			//add the body to the dynamics world
-			m_bt_world->addRigidBody(body);
-		}
-
-		//Adding Shapes
-		{
-			//create a few dynamic rigidbodies
-			// Re-using the same collision is better for memory usage and performance
-			btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			m_rigid_mesh[0].Compile("[sc#add afcb2 2 2 -.1]");
-			m_rigid_mesh[1].Compile("[sc#dad afcb2 2 2 -.1]");
-			m_rigid_mesh[2].Compile("[sc#dda afcb2 2 2 -.1]");
-			m_rigid_mesh[3].Compile("[sc#daa afcb2 2 2 -.1]");
-			m_rigid_mesh[4].Compile("[sc#ada afcb2 2 2 -.1]");
-			m_rigid_mesh[5].Compile("[sc#aad afcb2 2 2 -.1]");
-
-			m_bt_collision_shapes << colShape;
-			m_bt_dynamic_shapes << colShape;
-
-			/// Create Dynamic Objects
-			btTransform startTransform;
-			startTransform.setIdentity();
-			btScalar mass(1.f);
-
-			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
-
-			btVector3 localInertia(0,0,0);
-			if (isDynamic)
-				colShape->calculateLocalInertia(mass,localInertia);
-
-			int i;
-			for (i=0;i<gNumObjects;i++)
-			{
-				btCollisionShape* shape = colShape;
-				btTransform trans;
-				trans.setIdentity();
-
-				//stack them
-				int colsize = 10;
-				int row = int(((float)i*CUBE_HALF_EXTENTS*2.0f)/((float)colsize*2.0f*CUBE_HALF_EXTENTS));
-				int row2 = row;
-				int col = (i)%(colsize)-colsize/2;
-
-				if (col>3)
-				{
-					col=11;
-					row2 |=1;
-				}
-
-				btVector3 pos(((row+col+row2) % 4)*CUBE_HALF_EXTENTS,
-				              20.0f + row*8*CUBE_HALF_EXTENTS+CUBE_HALF_EXTENTS+EXTRA_HEIGHT,
-				              col*8*CUBE_HALF_EXTENTS + 2 * (row2%2)*CUBE_HALF_EXTENTS);
-
-				trans.setOrigin(pos);
-	
-				float mass = 1.f;
-
-
-				btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-
-				//rigidbody is dynamic if and only if mass is non zero, otherwise static
-				bool isDynamic = (mass != 0.f);
-
-				btVector3 localInertia(0,0,0);
-				if (isDynamic)
-					shape->calculateLocalInertia(mass,localInertia);
-
-				//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-
-				btDefaultMotionState* myMotionState = new btDefaultMotionState(trans);
-
-				btRigidBody::btRigidBodyConstructionInfo cInfo(mass,myMotionState,shape,localInertia);
-
-				btRigidBody* body = new btRigidBody(cInfo);
-				body->setContactProcessingThreshold(BT_LARGE_FLOAT);
-
-				m_bt_world->addRigidBody(body);
-
-				///when using m_ccdMode
-				if (m_bt_ccd_mode == USE_CCD)
-				{
-					body->setCcdMotionThreshold(CUBE_HALF_EXTENTS);
-					body->setCcdSweptSphereRadius(0.9*CUBE_HALF_EXTENTS);
-				}
-			}
-		}
-	}
-#endif
 }
 
 void BtPhysTest::TickGame(float seconds)
@@ -333,6 +212,10 @@ void BtPhysTest::TickGame(float seconds)
 
     if (Input::GetButtonState(27 /*SDLK_ESCAPE*/))
         Ticker::Shutdown();
+
+	m_loop_value += seconds;
+	if (m_loop_value > M_PI * 2.0f)
+		m_loop_value -= M_PI * 2.0f;
 
 	vec3 GroundBarycenter = vec3(.0f);
 	vec3 PhysObjBarycenter = vec3(.0f);
@@ -395,11 +278,10 @@ void BtPhysTest::TickGame(float seconds)
 				GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(20.f, .0f, .0f) * seconds));
 				PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
 			}
-			else
+			else if (i == 1)
 			{
-				GroundMat = GroundMat * mat4::translate(vec3(.0f, .0f, 10.0f) * seconds);
-				if (GroundMat.v3.z > 40.0f)
-					GroundMat = GroundMat * mat4::translate(vec3(.0f, .0f, -80.0f));
+				GroundMat = mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
+							mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
 				PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
 			}
 		}
@@ -458,17 +340,6 @@ void BtPhysTest::TickGame(float seconds)
 		m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
 	}
 
-#if 0
-	///step the simulation
-	if (m_bt_world)
-	{
-		//int steps = (int)(seconds / 0.005f);
-		//for (int i = 0; i < steps; i++)
-			m_bt_world->stepSimulation(seconds /*/ steps*/);
-		//optional but useful: debug drawing
-		//m_bt_world->debugDrawWorld();
-	}
-#endif
 }
 
 void BtPhysTest::TickDraw(float seconds)
@@ -477,59 +348,12 @@ void BtPhysTest::TickDraw(float seconds)
 
     if (!m_ready)
     {
-#if 0
-		m_ground_mesh.MeshConvert();
-		m_rigid_mesh[0].MeshConvert();
-		m_rigid_mesh[1].MeshConvert();
-		m_rigid_mesh[2].MeshConvert();
-		m_rigid_mesh[3].MeshConvert();
-		m_rigid_mesh[4].MeshConvert();
-		m_rigid_mesh[5].MeshConvert();
-#endif
         /* FIXME: this object never cleans up */
         m_ready = true;
     }
 
     //Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
 
-#if 0
-	vec3 BarycenterLocation = vec3(.0f);
-	float BarycenterFactor = 0.0f;
-	for(int i=0;i<gNumObjects;i++)
-	{
-		mat4 m(1.0f);
-		btMatrix3x3	rot; rot.setIdentity();
-		btCollisionObject*	colObj = m_bt_world->getCollisionObjectArray()[i];
-		btRigidBody*		body = btRigidBody::upcast(colObj);
-		if(body && body->getMotionState())
-		{
-			btDefaultMotionState* myMotionState = (btDefaultMotionState*)body->getMotionState();
-			myMotionState->m_graphicsWorldTrans.getOpenGLMatrix(&m[0][0]);
-			rot = myMotionState->m_graphicsWorldTrans.getBasis();
-		}
-		else
-		{
-			colObj->getWorldTransform().getOpenGLMatrix(&m[0][0]);
-			rot = colObj->getWorldTransform().getBasis();
-		}
-		if (i > 0)
-		{
-			BarycenterLocation += m.v3.xyz;
-			BarycenterFactor += 1.0f;
-		}
-		if (i == 0)
-			m_ground_mesh.Render(m);
-		else 
-			m_rigid_mesh[i % 6].Render(m);
-	}
-	if (BarycenterFactor > .0f)
-	{
-		BarycenterLocation /= BarycenterFactor;
-
-		m_camera->SetTarget(BarycenterLocation);
-		m_camera->SetPosition(BarycenterLocation + vec3(-20.0f, 8.0f, .0f));
-	}
-#endif
 }
 
 BtPhysTest::~BtPhysTest()
@@ -573,37 +397,6 @@ BtPhysTest::~BtPhysTest()
 	}
     Ticker::Unref(m_simulation);
 
-#if 0
-	//Exit Physics
-	{
-		//cleanup in the reverse order of creation/initialization
-		//remove the rigidbodies from the dynamics world and delete them
-		for (int i = m_bt_world->getNumCollisionObjects() - 1; i >= 0 ;i--)
-		{
-			btCollisionObject* obj = m_bt_world->getCollisionObjectArray()[i];
-			btRigidBody* body = btRigidBody::upcast(obj);
-			if (body && body->getMotionState())
-				delete body->getMotionState();
-
-			m_bt_world->removeCollisionObject(obj);
-			delete obj;
-		}
-
-		//delete collision shapes
-		for (int j = 0; j < m_bt_collision_shapes.Count(); j++)
-		{
-			btCollisionShape* shape = m_bt_collision_shapes[j];
-			delete shape;
-		}
-		m_bt_collision_shapes.Empty();
-
-		delete m_bt_world;
-		delete m_bt_solver;
-		delete m_bt_broadphase;
-		delete m_bt_dispatcher;
-		delete m_bt_collision_config;
-	}
-#endif
 }
 
 int main(int argc, char **argv)

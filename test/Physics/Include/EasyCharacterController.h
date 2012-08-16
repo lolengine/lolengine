@@ -35,8 +35,8 @@ class EasyCharacterController : public EasyPhysic
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
-	EasyCharacterController() :
-		EasyPhysic(),
+	EasyCharacterController(WorldEntity* NewOwnerEntity) :
+		EasyPhysic(NewOwnerEntity),
 		m_character(NULL)
 	{
 		m_up_axis = 1;
