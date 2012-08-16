@@ -38,7 +38,7 @@ class EasyPhysic
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
-	EasyPhysic();
+	EasyPhysic(WorldEntity* NewOwnerEntity);
 	~EasyPhysic();
 
 	virtual void SetShapeToBox(lol::vec3& box_size);
@@ -49,6 +49,9 @@ public:
 
 	virtual bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
+private:
+	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
+public:
 	virtual void SetMass(float mass);
 	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
 	virtual void InitBodyToGhost();
@@ -76,7 +79,7 @@ protected:
 #else  // NO PHYSIC IMPLEMENTATION
 
 public:
-	EasyPhysic() { }
+	EasyPhysic(WorldEntity* NewOwnerEntity) { m_owner_entity = NewOwnerEntity; }
 
 	virtual void SetShapeToBox(lol::vec3& BoxSize) { }
 	virtual void SetShapeToSphere(float radius) { }
@@ -86,6 +89,9 @@ public:
 
 	virtual bool CanChangeCollisionChannel() { return true; }
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
+private:
+	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix) { }
+public:
 	virtual void SetMass(float mass) { }
 	virtual void InitBodyToRigid() { }
 	virtual void InitBodyToGhost() { }
@@ -113,11 +119,48 @@ public:
 	int GetCollisionGroup() { return m_collision_group; }
 	int GetCollisionMask()	{ return m_collision_mask; }
 
+	//Base/Attachment logic
+	virtual void AttachTo(EasyPhysic* NewBase, bool NewBaseLockLocation = true, bool NewBaseLockRotation = true)
+	{
+		if (NewBase == this || NewBase->m_base_physic == this)
+			return;
+
+		if (NewBase)
+		{
+			bool bAlreadyExists = false;
+			for (int i = 0; i < NewBase->m_based_physic_list.Count(); ++i)
+				if (NewBase->m_based_physic_list[i] == this)
+					bAlreadyExists = true;
+			if (!bAlreadyExists)
+				NewBase->m_based_physic_list << this;
+			m_base_physic = NewBase;
+			m_base_lock_location = NewBaseLockLocation;
+			m_base_lock_rotation = NewBaseLockRotation;
+		}
+		else
+		{
+			for (int i = 0; i < NewBase->m_based_physic_list.Count(); ++i)
+				if (NewBase->m_based_physic_list[i] == this)
+					NewBase->m_based_physic_list.Remove(i--);
+			m_base_physic = NULL;
+		}
+	}
+
 protected:
 	lol::mat4									m_local_to_world;
 	float										m_mass;
 	int											m_collision_group;
 	int											m_collision_mask;
+	WorldEntity*								m_owner_entity;
+
+	//Base/Attachment logic
+	Array<EasyPhysic*>							m_based_physic_list;	//List of objects based on this : this object moves, its based object move with it.
+	EasyPhysic*									m_base_physic;			//Base for this object : The base moves, the object moves with it.
+	bool										m_base_lock_location;	//when this is TRUE, location moves with rotation change.
+	bool										m_base_lock_rotation;	//when this is TRUE, rotation moves with rotation change.
+
+	//Touch logic
+	Array<EasyPhysic*>							m_touching_physic;		//Maintained by ghost objects
 };
 
 } /* namespace phys */

@@ -31,25 +31,7 @@ private:
 	Array<PhysicsObject*>				m_platform_list;
 	Array<PhysicsObject*>				m_character_list;
 
-#if 0
-	EasyMesh							m_ground_mesh;
-	EasyMesh							m_rigid_mesh[6];
-
-	//Bullet Physics Datas
-	enum
-	{
-		USE_CCD=1,
-		USE_NO_CCD
-	};
-	int 									m_bt_ccd_mode;
-	btDefaultCollisionConfiguration*		m_bt_collision_config;
-	btCollisionDispatcher*					m_bt_dispatcher;
-	btDbvtBroadphase*						m_bt_broadphase;
-	btSequentialImpulseConstraintSolver*	m_bt_solver;
-	btDiscreteDynamicsWorld*				m_bt_world;
-	Array<btCollisionShape*>				m_bt_collision_shapes;
-	Array<btCollisionShape*>				m_bt_dynamic_shapes;
-#endif
+	float								m_loop_value;
 };
 
 #endif // __BTPHYSTEST_H__
