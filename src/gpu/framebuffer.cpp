@@ -73,8 +73,13 @@ FrameBuffer::FrameBuffer(ivec2 size)
     GLenum wrapmode = GL_REPEAT;
     GLenum filtering = GL_NEAREST;
 
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glGenFramebuffers(1, &m_data->m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
+#   else
+    glGenFramebuffersOES(1, &m_data->m_fbo);
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
+#   endif
 
     glGenTextures(1, &m_data->m_texture);
     glActiveTexture(GL_TEXTURE0);
@@ -86,8 +91,14 @@ FrameBuffer::FrameBuffer(ivec2 size)
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, NULL);
 
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                            GL_TEXTURE_2D, m_data->m_texture, 0);
+#   else
+    glFramebufferTexture2DOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_EXT,
+                              GL_TEXTURE_2D, m_data->m_texture, 0);
+#   endif
+
     m_data->m_depth = GL_INVALID_ENUM;
 #   if GL_VERSION_1_1
     /* FIXME: not implemented on GL ES, see
@@ -101,7 +112,10 @@ FrameBuffer::FrameBuffer(ivec2 size)
                                   GL_RENDERBUFFER, m_data->m_depth);
     }
 #   endif
+
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glCheckFramebufferStatus(GL_FRAMEBUFFER);
+#   endif
 
     Unbind();
 #endif
@@ -111,7 +125,11 @@ FrameBuffer::~FrameBuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
 #else
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glDeleteFramebuffers(1, &m_data->m_fbo);
+#   else
+    glDeleteFramebuffersOES(1, &m_data->m_fbo);
+#   endif
     glDeleteTextures(1, &m_data->m_texture);
 #   if GL_VERSION_1_1
     if (m_data->m_depth != GL_INVALID_ENUM)
@@ -134,7 +152,11 @@ void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
 #else
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
+#   else
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
+#   endif
 #endif
 }
 
@@ -142,7 +164,11 @@ void FrameBuffer::Unbind()
 {
 #if defined USE_D3D9 || defined _XBOX
 #else
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+#   else
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, NULL);
+#   endif
 #endif
 }
 
