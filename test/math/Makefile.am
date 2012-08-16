@@ -1,10 +1,10 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-all-local: $(noinst_PROGRAMS)
-	test x$(MAKE_FSELF) = xno || make_fself pi$(EXEEXT) pi.self
-	test x$(MAKE_FSELF) = xno || make_fself poly$(EXEEXT) poly.self
-	test x$(MAKE_FSELF) = xno || make_fself remez$(EXEEXT) remez.self
+all-local: $(PROGRAMS) $(noinst_PROGRAMS)
+	for x in $(^:%$(EXEEXT)=%); do \
+	  test x$(MAKE_FSELF) = xno || make_fself $${x}$(EXEEXT) $${x}.self; \
+	done
 
 EXTRA_DIST = NEWS.txt lolremez.sln remez.vcxproj remez.vcxproj.filters
 

@@ -1,3 +1,8 @@
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include "../Include/LolBtPhysicsIntegration.h"
 #include "../Include/LolPhysics.h"
 #include "../Include/EasyConstraint.h"

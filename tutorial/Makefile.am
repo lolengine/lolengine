@@ -1,8 +1,8 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-all-local: $(noinst_PROGRAMS)
-	for x in $(noinst_PROGRAMS:%$(EXEEXT)=%); do \
+all-local: $(PROGRAMS) $(noinst_PROGRAMS)
+	for x in $(^:%$(EXEEXT)=%); do \
 	  test x$(MAKE_FSELF) = xno || make_fself $${x}$(EXEEXT) $${x}.self; \
 	done
 
