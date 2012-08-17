@@ -45,8 +45,10 @@ protected:
     {
         GAMEGROUP_BEFORE = 0,
         GAMEGROUP_DEFAULT,
-        GAMEGROUP_AFTER,
-        // Must be the last element
+		GAMEGROUP_AFTER,
+		GAMEGROUP_AFTER_POST,
+
+		// Must be the last element
         GAMEGROUP_END
     }
     m_gamegroup;

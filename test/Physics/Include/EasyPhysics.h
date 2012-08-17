@@ -34,6 +34,7 @@ class EasyPhysic
 {
 
 	friend class EasyConstraint;
+	friend class Simulation;
 
 #ifdef HAVE_PHYS_USE_BULLET
 
@@ -48,8 +49,9 @@ public:
 	virtual void SetShapeToCapsule(float radius, float height);
 
 	virtual bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
+	virtual mat4 GetTransform();
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)));
-private:
+protected:
 	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
 public:
 	virtual void SetMass(float mass);
@@ -57,13 +59,12 @@ public:
 	virtual void InitBodyToGhost();
 	virtual void AddToSimulation(class Simulation* current_simulation);
 	virtual void RemoveFromSimulation(class Simulation* current_simulation);
-	virtual mat4 GetTransform();
 
 protected:
 	virtual void SetLocalInertia(float mass);
 	virtual void SetShapeTo(btCollisionShape* collision_shape);
 
-	virtual btGhostObject* GetGhostObject();
+	virtual btGhostObject* GetGhostObjectInstance();
 
 	btCollisionObject*							m_collision_object;
 
@@ -88,6 +89,7 @@ public:
 	virtual void SetShapeToCapsule(float radius, float height) { }
 
 	virtual bool CanChangeCollisionChannel() { return true; }
+	virtual mat4 GetTransform() { return mat4(1.0f); }
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
 private:
 	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix) { }
@@ -97,7 +99,6 @@ public:
 	virtual void InitBodyToGhost() { }
 	virtual void AddToSimulation(class Simulation* current_simulation) { }
 	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
-	virtual mat4 GetTransform() { return mat4(1.0f); }
 
 	virtual void InitBodyToGhost() { }
 
@@ -122,7 +123,7 @@ public:
 	//Base/Attachment logic
 	virtual void AttachTo(EasyPhysic* NewBase, bool NewBaseLockLocation = true, bool NewBaseLockRotation = true)
 	{
-		if (NewBase == this || NewBase->m_base_physic == this)
+		if (NewBase == this || (NewBase && NewBase->m_base_physic == this))
 			return;
 
 		if (NewBase)
@@ -137,11 +138,11 @@ public:
 			m_base_lock_location = NewBaseLockLocation;
 			m_base_lock_rotation = NewBaseLockRotation;
 		}
-		else
+		else if (m_base_physic)
 		{
-			for (int i = 0; i < NewBase->m_based_physic_list.Count(); ++i)
-				if (NewBase->m_based_physic_list[i] == this)
-					NewBase->m_based_physic_list.Remove(i--);
+			for (int i = 0; i < m_base_physic->m_based_physic_list.Count(); ++i)
+				if (m_base_physic->m_based_physic_list[i] == this)
+					m_base_physic->m_based_physic_list.Remove(i--);
 			m_base_physic = NULL;
 		}
 	}

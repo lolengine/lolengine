@@ -19,6 +19,13 @@
 
 namespace lol
 {
+	//Override Gamegroups names for Physic-useage
+	//"_ENT_" means that this is a group for Entities that use EasyPhysic primitives.
+	//"_EZP_" means that this is a group for EasyPhysic primitives.
+#define GAMEGROUP_ENT_PLATFORM		GAMEGROUP_BEFORE
+#define GAMEGROUP_ENT_MAIN			GAMEGROUP_DEFAULT
+#define GAMEGROUP_EZP_CHAR_CTRLR	GAMEGROUP_AFTER
+#define GAMEGROUP_SIMULATION		GAMEGROUP_AFTER_POST
 
 #ifdef HAVE_PHYS_USE_BULLET
 
@@ -30,6 +37,10 @@ namespace lol
 
 #define LOL2BT_VEC3(ELEMENT)	btVector3((ELEMENT).x, (ELEMENT).y, (ELEMENT).z)
 #define BT2LOL_VEC3(ELEMENT)	(*(lol::vec3*)(&(ELEMENT)))
+
+//Same as above with Unit taken into account
+#define LOL2BTU_VEC3(ELEMENT)	btVector3((ELEMENT).x * LOL2BT_UNIT, (ELEMENT).y * LOL2BT_UNIT, (ELEMENT).z * LOL2BT_UNIT)
+#define BT2LOLU_VEC3(ELEMENT)	(*(lol::vec3*)(&(ELEMENT))) * BT2LOL_UNIT
 
 #define LOL2BT_QUAT(ELEMENT)	btQuaternion((ELEMENT).x, (ELEMENT).y, (ELEMENT).z, (ELEMENT).w)
 #define BT2LOL_QUAT(ELEMENT)	lol::quat((ELEMENT).getW(), BT2LOL_VEC3((ELEMENT).getAxis())
