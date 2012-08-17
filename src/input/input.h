@@ -16,6 +16,7 @@
 #if !defined __LOL_INPUT_INPUT_H__
 #define __LOL_INPUT_INPUT_H__
 
+#include <cstring>
 #include "lol/math/vector.h"
 #include "input/stick.h"
 
@@ -108,7 +109,7 @@ struct ActionSetting
 
 	ActionSetting(int NewActionId)
 	{
-		//memset(this, 0, sizeof(ActionSetting));
+		memset(this, 0, sizeof(ActionSetting));
 		ActionId = NewActionId;
 	}
 };
@@ -122,7 +123,7 @@ struct ButtonSetting
 
 	ButtonSetting(int NewRawButtonId)
 	{
-		//memset(this, 0, sizeof(ButtonSetting));
+		memset(this, 0, sizeof(ButtonSetting));
 		RawButtonId = NewRawButtonId;
 	}
 	int GetActionSettingIdx(int ActionId)

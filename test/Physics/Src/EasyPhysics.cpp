@@ -40,7 +40,8 @@ EasyPhysic::EasyPhysic(WorldEntity* NewOwnerEntity) :
 	m_mass(.0f),
 	m_collision_group(1),
 	m_collision_mask(1),
-	m_owner_entity(NewOwnerEntity)
+	m_owner_entity(NewOwnerEntity),
+	m_base_physic(NULL)
 {
 }
 
@@ -112,26 +113,45 @@ void EasyPhysic::SetShapeToCapsule(float radius, float height)
 //-------------------------------------------------------------------------
 //Base Location/Rotation setup
 //--
+
+//Getter
+mat4 EasyPhysic::GetTransform()
+{
+	m_local_to_world = lol::mat4(1.0f);
+	if (m_rigid_body && m_motion_state)
+	{
+		btTransform CurTransform;
+		m_motion_state->getWorldTransform(CurTransform);
+		CurTransform.getOpenGLMatrix(&m_local_to_world[0][0]);
+	}
+	else if (m_collision_object)
+		m_collision_object->getWorldTransform().getOpenGLMatrix(&m_local_to_world[0][0]);
+	return m_local_to_world;
+}
+
+//Setter
 void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
 {
 	lol::mat4 PreviousMatrix = m_local_to_world;
 	m_local_to_world = lol::mat4::translate(base_location) * lol::mat4(base_rotation);
 
 	if (m_ghost_object)
-		m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+		m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * base_location)));
 	else
 	{
 		if (m_motion_state)
-			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+			m_motion_state->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * base_location)));
 		else
-			m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(base_location * LOL2BT_UNIT)));
+			m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * base_location)));
 	}
 
 	for (int i = 0; i < m_based_physic_list.Count(); i++)
+	{
 		if (m_based_physic_list[i])
 			m_based_physic_list[i]->BaseTransformChanged(PreviousMatrix, m_local_to_world);
 		else
 			m_based_physic_list.Remove(i--);
+	}
 }
 
 //Internal callback when Base transform has changed.
@@ -196,7 +216,7 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
 }
 
 //Return correct Ghost Object
-btGhostObject* EasyPhysic::GetGhostObject()
+btGhostObject* EasyPhysic::GetGhostObjectInstance()
 {
 	return new btGhostObject();
 }
@@ -207,7 +227,7 @@ void EasyPhysic::InitBodyToGhost()
 	if (m_collision_object)
 		delete m_collision_object;
 
-	m_ghost_object = GetGhostObject();
+	m_ghost_object = GetGhostObjectInstance();
 	m_ghost_object->setCollisionShape(m_collision_shape);
 	m_collision_object = m_ghost_object;
 	m_collision_object->setUserPointer(this);
@@ -292,24 +312,6 @@ void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
 		else if (m_collision_object)
 			dynamics_world->removeCollisionObject(m_collision_object);
 	}
-}
-
-//-------------------------------------------------------------------------
-//Getter functons
-//--
-
-mat4 EasyPhysic::GetTransform()
-{
-	m_local_to_world = lol::mat4(1.0f);
-	if (m_rigid_body && m_motion_state)
-	{
-		btTransform CurTransform;
-		m_motion_state->getWorldTransform(CurTransform);
-		CurTransform.getOpenGLMatrix(&m_local_to_world[0][0]);
-	}
-	else if (m_collision_object)
-		m_collision_object->getWorldTransform().getOpenGLMatrix(&m_local_to_world[0][0]);
-	return m_local_to_world;
 }
 
 //Set Local Inertia

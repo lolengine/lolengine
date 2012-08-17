@@ -36,7 +36,7 @@ void EasyCharacterController::InitBodyToRigid(bool ZeroMassIsKinematic)
 }
 
 //Return correct Ghost Object
-btGhostObject* EasyCharacterController::GetGhostObject()
+btGhostObject* EasyCharacterController::GetGhostObjectInstance()
 {
 	return new btPairCachingGhostObject();
 }
@@ -63,6 +63,7 @@ void EasyCharacterController::AddToSimulation(class Simulation* current_simulati
 
 		m_character = new btKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
 		dynamics_world->addAction(m_character);
+		Ticker::Ref(this);
 	}
 }
 
@@ -75,14 +76,50 @@ void EasyCharacterController::RemoveFromSimulation(class Simulation* current_sim
 	if (dynamics_world)
 	{
 		if (m_character)
+		{
 			dynamics_world->removeAction(m_character);
+			Ticker::Unref(this);
+		}
 	}
 }
 
 //Set movement for this frame
 void EasyCharacterController::SetMovementForFrame(vec3 const &MoveQuantity)
 {
-	m_character->setWalkDirection(LOL2BT_VEC3(MoveQuantity));
+	m_frame_cached_movement = MoveQuantity;
+}
+
+//-------------------------------------------------------------------------
+//Base Location/Rotation setup
+//--
+void EasyCharacterController::SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation)
+{
+	if (m_base_is_updating)
+	{
+		m_base_cached_movement = base_location - m_local_to_world.v3.xyz;
+		m_local_to_world = lol::mat4::translate(m_local_to_world.v3.xyz) * lol::mat4(base_rotation);
+		if (m_ghost_object)
+			m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * m_local_to_world.v3.xyz)));
+	}
+	else
+		EasyPhysic::SetTransform(base_location, base_rotation);
+}
+
+//Internal callback when Base transform has changed.
+void EasyCharacterController::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix)
+{
+	m_base_is_updating = true;
+	EasyPhysic::BaseTransformChanged(PreviousMatrix, NewMatrix);
+	m_base_is_updating = false;
+}
+
+//Physic Tick
+void EasyCharacterController::TickGame(float seconds)
+{
+	Entity::TickGame(seconds);
+
+	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * /*0.1f **/ (m_base_cached_movement + m_frame_cached_movement)) / seconds, seconds);
+	//m_character->setWalkDirection();
 }
 
 #endif // HAVE_PHYS_USE_BULLET

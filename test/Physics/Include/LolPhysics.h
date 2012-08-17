@@ -9,8 +9,10 @@
 #define __LOLPHYSICS_H__
 
 #ifdef HAVE_PHYS_USE_BULLET
+#include <cstring>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include "LolBtPhysicsIntegration.h"
 #include "EasyPhysics.h"
 #include "EasyConstraint.h"
@@ -21,6 +23,42 @@ namespace lol
 
 namespace phys
 {
+
+enum eRaycastType
+{
+	ERT_Closest,
+	ERT_AllHit,
+	ERT_AnyHit, //Will stop at the first hit. Hit data are supposed to be irrelevant
+
+	ERT_MAX
+};
+
+struct RayCastResult
+{
+	RayCastResult(int CollisionFilterGroup=1, int CollisionFilterMask=(0xFF))
+	{
+		memset(this, 0, sizeof(RayCastResult));
+
+		m_collision_filter_group = CollisionFilterGroup;
+		m_collision_filter_mask = CollisionFilterMask;
+	}
+	void Reset()
+	{
+		m_collider_list.Empty();
+		m_hit_normal_list.Empty();
+		m_hit_point_list.Empty();
+		m_hit_fraction_list.Empty();
+	}
+
+	Array<EasyPhysic*>		m_collider_list;
+	Array<vec3>				m_hit_normal_list;
+	Array<vec3>				m_hit_point_list;
+	Array<float>			m_hit_fraction_list;
+
+	short int				m_collision_filter_group;
+	short int 				m_collision_filter_mask;
+	unsigned int 			m_flags; //???
+};
 
 class Simulation : public Entity
 {
@@ -33,6 +71,7 @@ public:
 		m_dynamics_world(0),
 		m_timestep(1.f/60.f)
 	{
+		m_gamegroup = GAMEGROUP_SIMULATION;
 	}
 	~Simulation()
 	{
@@ -78,6 +117,111 @@ public:
 			m_dynamics_world->stepSimulation(seconds, steps, m_timestep);
 		}
 	}
+
+	//Reap-Off of the btKinematicClosestNotMeRayResultCallback
+	class LolClosestNotMeRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+	{
+	public:
+		LolClosestNotMeRayResultCallback(btCollisionObject* Me, const btVector3& rayFromWorld, const btVector3& rayToWorld) :
+		  btCollisionWorld::ClosestRayResultCallback(rayFromWorld, rayToWorld)
+		{
+			m_me = Me;
+		}
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+		{
+			if (rayResult.m_collisionObject == m_me)
+				return 1.0;
+
+			return ClosestRayResultCallback::addSingleResult(rayResult, normalInWorldSpace);
+		}
+	protected:
+		btCollisionObject* m_me;
+	};
+
+	//Will stop at the first hit. Hit data are supposed to be irrelevant
+	class AnyHitRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+	{
+	public:
+		AnyHitRayResultCallback(const btVector3& rayFromWorld, const btVector3& rayToWorld) :
+		  btCollisionWorld::ClosestRayResultCallback(rayFromWorld, rayToWorld)
+		{
+		}
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+		{
+			return .0f;
+		}
+	};
+
+	//Returns true when hitting something. If SourceCaster is set, it will be ignored by Raycast.
+	bool RayHits(RayCastResult& HitResult, eRaycastType RaycastType, const vec3& RayFrom, const vec3& RayTo, EasyPhysic* SourceCaster=NULL)
+	{
+		bool bResult = false;
+
+		btCollisionWorld::RayResultCallback* BtRayResult = NULL;
+		btCollisionWorld::ClosestRayResultCallback* BtRayResult_Closest;
+		btCollisionWorld::AllHitsRayResultCallback* BtRayResult_AllHits;
+
+		switch (RaycastType)
+		{
+			case ERT_Closest:
+			{
+				if (SourceCaster)
+					BtRayResult_Closest = new LolClosestNotMeRayResultCallback(SourceCaster->m_collision_object, LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
+				else
+					BtRayResult_Closest = new btCollisionWorld::ClosestRayResultCallback(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
+				BtRayResult = BtRayResult_Closest;
+				break;
+			}
+			case ERT_AllHit:
+			{
+				BtRayResult_AllHits = new btCollisionWorld::AllHitsRayResultCallback(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
+				BtRayResult = BtRayResult_AllHits;
+				break;
+			}
+			case ERT_AnyHit:
+			{
+				BtRayResult_Closest = new AnyHitRayResultCallback(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
+				BtRayResult = BtRayResult_Closest;
+				break;
+			}
+		}
+
+		m_dynamics_world->rayTest(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo), *BtRayResult);
+		if (BtRayResult->hasHit())
+		{
+			bResult = true;
+
+			switch (RaycastType)
+			{
+				case ERT_Closest:
+				{
+					HitResult.m_collider_list		<< (EasyPhysic*)BtRayResult_Closest->m_collisionObject->getUserPointer();
+					HitResult.m_hit_normal_list		<< BT2LOLU_VEC3(BtRayResult_Closest->m_hitNormalWorld);
+					HitResult.m_hit_point_list		<< BT2LOLU_VEC3(BtRayResult_Closest->m_hitPointWorld);
+					HitResult.m_hit_fraction_list	<< BtRayResult_Closest->m_closestHitFraction;
+					break;
+				}
+				case ERT_AllHit:
+				{
+					for (int i = 0; i < BtRayResult_AllHits->m_collisionObjects.size(); i++)
+					{
+						HitResult.m_collider_list		<< (EasyPhysic*)BtRayResult_AllHits->m_collisionObjects[i]->getUserPointer();
+						HitResult.m_hit_normal_list		<< BT2LOLU_VEC3(BtRayResult_AllHits->m_hitNormalWorld[i]);
+						HitResult.m_hit_point_list		<< BT2LOLU_VEC3(BtRayResult_AllHits->m_hitPointWorld[i]);
+						HitResult.m_hit_fraction_list	<< BtRayResult_AllHits->m_hitFractions[i];
+					}
+					break;
+				}
+			}
+		}
+
+		delete BtRayResult;
+
+		return bResult;
+	}
+
 
 	void Exit()
 	{
@@ -128,6 +272,7 @@ private:
 public:
 	void Init() { }
 	void TickGame(float seconds) { }
+	bool RayHits(RayCastResult& HitResult, eRaycastType RaycastType, const vec3& RayFrom, const vec3& RayTo, EasyPhysic* SourceCaster=NULL) { return false; }
 	void Exit() { }
 private:
 	void CustomSetContinuousDetection(bool ShouldUseCCD) { }

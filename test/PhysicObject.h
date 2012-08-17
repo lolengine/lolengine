@@ -219,14 +219,6 @@ public:
 			m_physics->SetTransform(base_location, base_rotation);
 	}
 
-	void SetLinearVelocity(const lol::vec3& NewVelocity, bool bIsLocal=false)
-	{
-		//if (m_is_character)
-		//	m_character->SetLinearVelocity(NewVelocity);
-		//else
-		//	m_physics->SetLinearVelocity(NewVelocity);
-	}
-
 	lol::mat4 GetTransform()
 	{
 		if (m_is_character)

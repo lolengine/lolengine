@@ -51,13 +51,15 @@ int gNumObjects = 64;
 
 #define USE_WALL		1
 #define USE_PLATFORM	1
-#define USE_ROPE		1
-#define USE_BODIES		1
+#define USE_ROPE		0
+#define USE_BODIES		0
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
 
 BtPhysTest::BtPhysTest(bool editor)
 {
+	m_loop_value = .0f;
+
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                           vec3(0.f, 0.f, 0.f),
@@ -107,6 +109,7 @@ BtPhysTest::BtPhysTest(bool editor)
 		}
 	}
 
+	PhysicsObject* BasePhyobj = NULL;
 	if (USE_PLATFORM)
 	{
 		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
@@ -117,16 +120,16 @@ BtPhysTest::BtPhysTest(bool editor)
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 
-		NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
+		NewPosition = pos_offset + vec3(-15.0f, -25.0f, 5.0f);
 
 		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
-		PhysicsObject* BasePhyobj = NewPhyobj;
+		BasePhyobj = NewPhyobj;
 
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 
 		NewRotation = quat::fromeuler_xyz(0.f, 0.f, 90.f);
-		NewPosition = pos_offset + vec3(-25.0f, -25.0f, 5.0f);
+		NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
 
 		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
@@ -134,30 +137,32 @@ BtPhysTest::BtPhysTest(bool editor)
 		m_platform_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
 
-		NewPosition += vec3(-0.0f, .0f, .0f);
-		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+		//NewPosition += vec3(-0.0f, .0f, .0f);
+		//NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
-		NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, false);
-		m_platform_list << NewPhyobj;
-		Ticker::Ref(NewPhyobj);
+		//NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, false);
+		//m_platform_list << NewPhyobj;
+		//Ticker::Ref(NewPhyobj);
 
-		NewPosition += vec3(-2.0f, .0f, .0f);
-		NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
+		//NewPosition += vec3(-2.0f, .0f, .0f);
+		//NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
-		NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), false, false);
-		m_platform_list << NewPhyobj;
-		Ticker::Ref(NewPhyobj);
+		//NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), false, false);
+		//m_platform_list << NewPhyobj;
+		//Ticker::Ref(NewPhyobj);
 	}
 
 	if (USE_CHARACTER)
 	{
 		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
-		vec3 NewPosition = pos_offset + vec3(-15.0f, 20.0f, .0f);
+		vec3 NewPosition = pos_offset + vec3(-15.0f, -10.0f, .0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
 
 		m_character_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
+
+		//NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
 	}
 
 	if (USE_BODIES)
@@ -280,8 +285,9 @@ void BtPhysTest::TickGame(float seconds)
 			}
 			else if (i == 1)
 			{
-				GroundMat = mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
-							mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
+				GroundMat =
+					mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
+					mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
 				PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
 			}
 		}
@@ -293,12 +299,20 @@ void BtPhysTest::TickGame(float seconds)
 		{
 			PhysicsObject* PhysObj = m_character_list[i];
 			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
+			mat4 CtlrMx = Character->GetTransform();
 
 			int HMovement = Input::GetButtonState(275 /*SDLK_RIGHT*/) - Input::GetButtonState(276 /*SDLK_LEFT*/);
 			int VMovement = Input::GetButtonState(273 /*SDLK_UP*/) - Input::GetButtonState(274 /*SDLK_DOWN*/);
 			int RMovement = Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+			vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
 
-			Character->SetMovementForFrame(vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f));
+			Character->SetMovementForFrame(CharMove);
+
+			RayCastResult HitResult;
+			if (m_simulation->RayHits(HitResult, ERT_Closest, Character->GetTransform().v3.xyz, (Character->GetTransform().v3.xyz + vec3(.0f, -1.f, .0f)), Character))
+				Character->AttachTo(HitResult.m_collider_list[0], true, true);
+			else
+				Character->AttachTo(NULL);
 		}
 	}
 
@@ -319,8 +333,8 @@ void BtPhysTest::TickGame(float seconds)
 		PhysObjBarycenter /= factor;
 
 		m_camera->SetTarget(m_camera->GetTarget() + (seconds / (seconds + 0.18f)) * (PhysObjBarycenter - m_camera->GetTarget()));
-		vec3 CamPosCenter = m_camera->GetTarget() + vec3(.0f, 20.0f, .0f);
-		m_camera->SetPosition(CamPosCenter + normalize(m_camera->GetPosition() - CamPosCenter) * 5.0f);
+		vec3 CamPosCenter = m_camera->GetTarget() + vec3(.0f, 5.0f, .0f);
+		m_camera->SetPosition(CamPosCenter + normalize(m_camera->GetPosition() - CamPosCenter) * 20.0f);
 	}
 	else
 	{
