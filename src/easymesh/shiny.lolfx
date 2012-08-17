@@ -9,14 +9,40 @@ attribute vec4 in_Color;
 uniform mat4 in_ModelView;
 uniform mat4 in_Proj;
 uniform mat3 in_NormalMat;
-// FIXME: the light direction should be passed in the code
-vec3 in_LightDir = vec3(0.3, 0.3, 0.7);
-uniform float in_Damage;
 
+varying vec4 pass_Eye;
+varying vec3 pass_TNormal;
 varying vec4 pass_Color;
 
 void main(void)
 {
+    vec4 eye = in_ModelView * vec4(in_Vertex, 1.0);
+    vec3 tnorm = normalize(in_NormalMat * in_Normal);
+
+    pass_Eye = eye;
+    pass_TNormal = tnorm;
+    pass_Color = in_Color;
+
+    gl_Position = in_Proj * eye;
+}
+
+-- GLSL.Frag --
+#version 120
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+uniform float in_Damage;
+
+varying vec4 pass_Eye;
+varying vec3 pass_TNormal;
+varying vec4 pass_Color;
+
+// FIXME: the light direction should be passed in the code
+vec3 in_LightDir = vec3(0.3, 0.3, 0.7);
+
+void main(void) {
     /* Material properties */
     vec3 specular_reflect = vec3(0.8, 0.75, 0.4);
     float specular_power = 60.0;
@@ -27,15 +53,12 @@ void main(void)
     vec3 diffuse_color = vec3(1.0, 1.0, 0.6);
     vec3 specular_color = vec3(1.0, 1.0, 0.6);
 
-    vec3 tnorm = normalize(in_NormalMat * in_Normal);
-    vec4 eye = in_ModelView * vec4(in_Vertex, 1.0);
-
-    vec3 s = normalize(in_LightDir); /* normalize(eye - lightpos); */
-    vec3 v = normalize(-eye.xyz);
-    vec3 r = reflect(-s, tnorm);
+    vec3 s = normalize(in_LightDir); /* normalize(pass_Eye - lightpos); */
+    vec3 v = normalize(-pass_Eye.xyz);
+    vec3 r = reflect(-s, pass_TNormal);
 
     vec3 ambient = ambient_color;
-    float sdotn = max(dot(s, tnorm), 0.0);
+    float sdotn = max(dot(s, pass_TNormal), 0.0);
     vec3 diffuse = diffuse_color * sdotn;
     vec3 specular = vec3(0.0, 0.0, 0.0);
     if (sdotn > 0.0)
@@ -44,21 +67,8 @@ void main(void)
     vec3 light = ambient + diffuse + specular;
 
     vec4 real_color = in_Damage * vec4(1.2, 1.2, 1.2, 1.0)
-                    + (1.0 - in_Damage) * in_Color;
-    pass_Color = real_color * vec4(light, 1.0);
-    gl_Position = in_Proj * eye;
-}
-
--- GLSL.Frag --
-#version 120
-
-#if defined GL_ES
-precision highp float;
-#endif
-varying vec4 pass_Color;
-
-void main(void) {
-    gl_FragColor = pass_Color;
+                    + (1.0 - in_Damage) * pass_Color;
+    gl_FragColor = real_color * vec4(light, 1.0);
 }
 
 -- HLSL.Vert --
