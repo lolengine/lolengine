@@ -53,15 +53,40 @@ void main(void)
 -- HLSL.Vert --
 
 void main(float2 in_Position : POSITION,
+          out float2 pass_Position : TEXCOORD0,
           out float4 out_Position : POSITION)
 {
+    pass_Position = in_Position;
     out_Position = float4(in_Position, 0.0, 1.0);
 }
 
 -- HLSL.Frag --
 
-void main(out float4 out_FragColor : COLOR)
+void main(in float2 pass_Position : TEXCOORD0,
+          uniform sampler2D in_Texture,
+          uniform float in_Flag,
+          uniform float3 in_Point,
+          uniform float3 in_Color,
+          out float4 out_FragColor : COLOR)
 {
-    out_FragColor = float4(0.7, 0.2, 0.5, 1.0);
+    if (in_Flag == 0.0)
+    {
+        float tc = 0.0, ta = 0.0;
+        {
+            float s = 6.0 + 3.0 * in_Point.z;
+            float2 p = pass_Position - in_Point.xy * 0.8;
+            float t = clamp(1.2 - dot(s * p, s * p), 0.0, 1.0);
+            float u = t * t * t * t;
+            tc += 3.0 * t * t - 2.0 * t * t * t;
+            ta += 3.0 * u * u - 2.0 * u * u * u;
+        }
+
+        out_FragColor = float4(tc * in_Color, ta + 0.1);
+    }
+    else
+    {
+        float2 texcoords = pass_Position * 0.5 + float2(0.5, 0.5);
+        out_FragColor = float4(tex2D(in_Texture, texcoords).xyz, 1.0);
+    }
 }
 
