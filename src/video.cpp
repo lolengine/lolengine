@@ -51,28 +51,32 @@ class VideoData
 private:
     static mat4 proj_matrix;
     static ivec2 saved_viewport;
-#if defined USE_D3D9
+#if defined USE_D3D9 || defined _XBOX
+#   if defined USE_D3D9
     static IDirect3D9 *d3d_ctx;
     static IDirect3DDevice9 *d3d_dev;
-    static D3DCOLOR clear_color;
-#elif defined _XBOX
+#   elif defined _XBOX
     static Direct3D *d3d_ctx;
     static D3DDevice *d3d_dev;
+#   endif
     static D3DCOLOR clear_color;
+    static float clear_depth;
 #endif
 };
 
 mat4 VideoData::proj_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 
-#if defined USE_D3D9
+#if defined USE_D3D9 || defined _XBOX
+#   if defined USE_D3D9
 IDirect3D9 *VideoData::d3d_ctx;
 IDirect3DDevice9 *VideoData::d3d_dev;
-D3DCOLOR VideoData::clear_color;
-#elif defined _XBOX
+#   elif defined _XBOX
 Direct3D *VideoData::d3d_ctx;
 D3DDevice *VideoData::d3d_dev;
+#   endif
 D3DCOLOR VideoData::clear_color;
+float VideoData::clear_depth;
 #endif
 
 /*
@@ -106,8 +110,6 @@ void Video::Setup(ivec2 size)
         size.y = VideoMode.dwDisplayHeight;
 #   endif
     VideoData::saved_viewport = size;
-
-    VideoData::clear_color = D3DCOLOR_XRGB(26, 51, 77);
 
     d3dpp.BackBufferWidth = size.x;
     d3dpp.BackBufferHeight = size.y;
@@ -143,13 +145,14 @@ void Video::Setup(ivec2 size)
     glViewport(0, 0, size.x, size.y);
     VideoData::saved_viewport = size;
 
-    glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-    glClearDepth(1.0);
-
 #   if defined HAVE_GL_2X && !defined __APPLE__
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #   endif
 #endif
+
+    /* Initialise reasonable scene default properties */
+    SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
+    SetClearDepth(1.f);
 }
 
 void Video::SetFov(float theta)
@@ -218,17 +221,45 @@ void Video::SetClearColor(vec4 color)
 #endif
 }
 
-void Video::Clear()
+void Video::SetClearDepth(float f)
 {
-    ivec2 size = GetSize();
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(VideoData::d3d_dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER
-                                        | D3DCLEAR_STENCIL,
-                              VideoData::clear_color, 1.0f, 0)))
+    VideoData::clear_depth = f;
+#else
+    glClearDepth(f);
+#endif
+}
+
+void Video::Clear(ClearMask m)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* Note: D3D9 doesn't appear to support the accumulation buffer. */
+    int mask = 0;
+    if (m & ClearMask::Color)
+        mask |= D3DCLEAR_TARGET;
+    if (m & ClearMask::Depth)
+        mask |= D3DCLEAR_ZBUFFER;
+    if (m & ClearMask::Stencil)
+        mask |= D3DCLEAR_STENCIL;
+    if (FAILED(VideoData::d3d_dev->Clear(0, NULL, mask,
+                                         VideoData::clear_color,
+                                         VideoData::clear_depth, 0)))
         Abort();
 #else
+    /* FIXME: is this necessary here? */
+    ivec2 size = GetSize();
     glViewport(0, 0, size.x, size.y);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    GLbitfield mask = 0;
+    if (m & ClearMask::Color)
+        mask |= GL_COLOR_BUFFER_BIT;
+    if (m & ClearMask::Depth)
+        mask |= GL_DEPTH_BUFFER_BIT;
+    if (m & ClearMask::Accum)
+        mask |= GL_ACCUM_BUFFER_BIT;
+    if (m & ClearMask::Stencil)
+        mask |= GL_STENCIL_BUFFER_BIT;
+    glClear(mask);
 #endif
 
     SetFov(0.0f);

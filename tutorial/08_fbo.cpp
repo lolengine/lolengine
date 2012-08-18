@@ -14,7 +14,6 @@
 
 #include "core.h"
 #include "loldebug.h"
-#include "lolgl.h"
 
 using namespace std;
 using namespace lol;
@@ -77,9 +76,9 @@ public:
 
             m_fbo = new FrameBuffer(Video::GetSize());
             m_fbo->Bind();
-            glClearColor(0.0, 0.0, 0.0, 1.0f);
-            glClearDepth(1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+            Video::SetClearDepth(1.f);
+            Video::Clear(ClearMask::Color | ClearMask::Depth);
             m_fbo->Unbind();
 
             m_ready = true;
@@ -89,7 +88,7 @@ public:
 
         m_fbo->Bind();
         /* FIXME: we should just disable depth test in the shader */
-        glClear(GL_DEPTH_BUFFER_BIT);
+        Video::Clear(ClearMask::Depth);
         m_shader->Bind();
         m_shader->SetUniform(m_uni_flag, 0.f);
         m_shader->SetUniform(m_uni_point, m_hotspot);
