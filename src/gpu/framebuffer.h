@@ -27,9 +27,7 @@ public:
     FrameBuffer(ivec2 size);
     ~FrameBuffer();
 
-    int GetTexture() const;
-    void Clear(vec4 color);
-    void Clear(vec4 color, float depth);
+    ShaderTexture GetTexture() const;
 
     void Bind();
     void Unbind();

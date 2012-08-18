@@ -44,6 +44,8 @@ class FrameBufferData
     ivec2 m_size;
 
 #if defined USE_D3D9
+    LPDIRECT3DTEXTURE9 m_texture;
+    LPDIRECT3DSURFACE9 m_surface, m_back_surface;
 #elif defined _XBOX
 #else
     GLuint m_fbo, m_texture, m_depth;
@@ -60,7 +62,13 @@ FrameBuffer::FrameBuffer(ivec2 size)
 {
     m_data->m_size = size;
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: not implemented on Direct3D */
+    if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
+                                          D3DUSAGE_RENDERTARGET,
+                                          D3DFMT_R8G8B8, D3DPOOL_DEFAULT,
+                                          &m_data->m_texture, NULL)))
+        Abort();
+    if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
+        Abort();
 #else
 #   if GL_VERSION_1_1
     GLenum internal_format = GL_RGBA8;
@@ -124,6 +132,8 @@ FrameBuffer::FrameBuffer(ivec2 size)
 FrameBuffer::~FrameBuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
+    m_data->m_surface->Release();
+    m_data->m_texture->Release();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glDeleteFramebuffers(1, &m_data->m_fbo);
@@ -139,18 +149,24 @@ FrameBuffer::~FrameBuffer()
     delete m_data;
 }
 
-int FrameBuffer::GetTexture() const
+ShaderTexture FrameBuffer::GetTexture() const
 {
+    ShaderTexture ret;
 #if defined USE_D3D9 || defined _XBOX
-    return 0;
+    ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
 #else
-    return m_data->m_texture;
+    ret.m_flags = m_data->m_texture;
 #endif
+    return ret;
 }
 
 void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
+    if (FAILED(g_d3ddevice->GetRenderTarget(0, &m_data->m_back_surface)))
+        Abort();
+    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_surface)))
+        Abort();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
@@ -163,6 +179,8 @@ void FrameBuffer::Bind()
 void FrameBuffer::Unbind()
 {
 #if defined USE_D3D9 || defined _XBOX
+    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
+        Abort();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, NULL);
