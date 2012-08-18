@@ -233,7 +233,6 @@ void Video::SetClearDepth(float f)
 void Video::Clear(ClearMask m)
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* Note: D3D9 doesn't appear to support the accumulation buffer. */
     int mask = 0;
     if (m & ClearMask::Color)
         mask |= D3DCLEAR_TARGET;
@@ -255,8 +254,6 @@ void Video::Clear(ClearMask m)
         mask |= GL_COLOR_BUFFER_BIT;
     if (m & ClearMask::Depth)
         mask |= GL_DEPTH_BUFFER_BIT;
-    if (m & ClearMask::Accum)
-        mask |= GL_ACCUM_BUFFER_BIT;
     if (m & ClearMask::Stencil)
         mask |= GL_STENCIL_BUFFER_BIT;
     glClear(mask);

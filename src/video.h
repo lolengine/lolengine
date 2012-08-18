@@ -26,10 +26,11 @@ struct ClearMask
 {
     enum Value
     {
+        /* Note: D3D9 doesn't appear to support the accumulation buffer,
+         * and it is a deprecated OpenGL feature. No reasone to support it. */
         Color   = 1 << 0,
         Depth   = 1 << 1,
-        Accum   = 1 << 2,
-        Stencil = 1 << 3,
+        Stencil = 1 << 2,
 
         All     = 0xffffffff
     }
