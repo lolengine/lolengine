@@ -64,7 +64,7 @@ FrameBuffer::FrameBuffer(ivec2 size)
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
-                                          D3DFMT_R8G8B8, D3DPOOL_DEFAULT,
+                                          D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                           &m_data->m_texture, NULL)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
