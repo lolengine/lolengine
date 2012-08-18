@@ -102,7 +102,7 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_uni_flag, 1.f);
-        m_shader->SetTexture(m_uni_texture, m_fbo->GetTexture(), 0);
+        m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);

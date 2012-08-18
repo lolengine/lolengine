@@ -536,14 +536,14 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 #endif
 }
 
-void Shader::SetTexture(ShaderUniform const &uni, int id, int index)
+void Shader::SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index)
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: unimplemented */
+    g_d3ddevice->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
 #elif !defined __CELLOS_LV2__
     glActiveTexture(GL_TEXTURE0 + index);
     //glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, id);
+    glBindTexture(GL_TEXTURE_2D, (int)tex.m_flags);
     SetUniform(uni, index);
 #else
     /* FIXME: unimplemented */
