@@ -44,9 +44,11 @@ class FrameBufferData
     ivec2 m_size;
 
 #if defined USE_D3D9
-    LPDIRECT3DTEXTURE9 m_texture;
-    LPDIRECT3DSURFACE9 m_surface, m_back_surface;
+    IDirect3DTexture9 *m_texture;
+    IDirect3DSurface9 *m_surface, *m_back_surface;
 #elif defined _XBOX
+    D3DTexture *m_texture;
+    D3DSurface *m_surface, *m_back_surface;
 #else
     GLuint m_fbo, m_texture, m_depth;
 #endif
