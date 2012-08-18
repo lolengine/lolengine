@@ -22,6 +22,24 @@
 namespace lol
 {
 
+struct ClearMask
+{
+    enum Value
+    {
+        Color   = 1 << 0,
+        Depth   = 1 << 1,
+        Accum   = 1 << 2,
+        Stencil = 1 << 3,
+
+        All     = 0xffffffff
+    }
+    m_value;
+
+    inline ClearMask(Value v) { m_value = v; }
+    inline ClearMask(uint64_t i) { m_value = (Value)i; }
+    inline operator Value() { return m_value; }
+};
+
 class Video
 {
 public:
@@ -30,7 +48,8 @@ public:
     static void SetFov(float theta);
     static void SetDepth(bool set);
     static void SetClearColor(vec4 color);
-    static void Clear();
+    static void SetClearDepth(float f);
+    static void Clear(ClearMask m);
     static void Capture(uint32_t *buffer);
     static ivec2 GetSize();
 };

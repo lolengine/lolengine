@@ -362,7 +362,7 @@ void Ticker::TickDraw()
         {
         case Entity::DRAWGROUP_BEGIN:
             Scene::GetDefault()->Reset();
-            Video::Clear();
+            Video::Clear(ClearMask::All);
             break;
         case Entity::DRAWGROUP_HUD:
             Video::SetDepth(false);
