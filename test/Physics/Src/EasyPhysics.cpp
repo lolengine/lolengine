@@ -41,6 +41,7 @@ EasyPhysic::EasyPhysic(WorldEntity* NewOwnerEntity) :
 	m_collision_group(1),
 	m_collision_mask(1),
 	m_owner_entity(NewOwnerEntity),
+	m_owner_simulation(NULL),
 	m_base_physic(NULL)
 {
 }
@@ -286,18 +287,21 @@ void EasyPhysic::AddToSimulation(class Simulation* current_simulation)
 		if (m_ghost_object)
 		{
 			dynamics_world->addCollisionObject(m_ghost_object, m_collision_group, m_collision_mask);
-			current_simulation->AddToGhost(this);
+			current_simulation->ObjectRegistration(true, this, Simulation::EEPT_Ghost);
 		}
 		else if (m_rigid_body)
 		{
 			dynamics_world->addRigidBody(m_rigid_body, m_collision_group, m_collision_mask);
 			if (m_mass != .0f)
-				current_simulation->AddToDynamic(this);
+				current_simulation->ObjectRegistration(true, this, Simulation::EEPT_Dynamic);
 			else
-				current_simulation->AddToStatic(this);
+				current_simulation->ObjectRegistration(true, this, Simulation::EEPT_Static);
 		}
 		else
+		{
 			dynamics_world->addCollisionObject(m_collision_object, m_collision_group, m_collision_mask);
+			current_simulation->ObjectRegistration(true, this, Simulation::EEPT_CollisionObject);
+		}
 	}
 }
 
@@ -308,9 +312,20 @@ void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
 	if (dynamics_world)
 	{
 		if (m_rigid_body)
+		{
 			dynamics_world->removeRigidBody(m_rigid_body);
-		else if (m_collision_object)
+			if (m_mass != .0f)
+				current_simulation->ObjectRegistration(false, this, Simulation::EEPT_Dynamic);
+			else
+				current_simulation->ObjectRegistration(false, this, Simulation::EEPT_Static);
+		}
+		else
+		{
 			dynamics_world->removeCollisionObject(m_collision_object);
+			if (m_ghost_object)
+				current_simulation->ObjectRegistration(false, this, Simulation::EEPT_Ghost);
+			current_simulation->ObjectRegistration(false, this, Simulation::EEPT_CollisionObject);
+		}
 	}
 }
 

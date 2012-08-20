@@ -62,7 +62,13 @@ void EasyCharacterController::AddToSimulation(class Simulation* current_simulati
 			delete m_character;
 
 		m_character = new btKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
+
+		//Deactivate Character controller basic behaviour.
+		//m_character->setGravity(.0f);
+		//m_character->setFallSpeed(.0f);
+
 		dynamics_world->addAction(m_character);
+		current_simulation->ObjectRegistration(true, this, Simulation::EEPT_CharacterController);
 		Ticker::Ref(this);
 	}
 }
@@ -78,6 +84,7 @@ void EasyCharacterController::RemoveFromSimulation(class Simulation* current_sim
 		if (m_character)
 		{
 			dynamics_world->removeAction(m_character);
+			current_simulation->ObjectRegistration(false, this, Simulation::EEPT_CharacterController);
 			Ticker::Unref(this);
 		}
 	}
@@ -118,7 +125,9 @@ void EasyCharacterController::TickGame(float seconds)
 {
 	Entity::TickGame(seconds);
 
-	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * (m_base_cached_movement + m_frame_cached_movement)) / seconds, seconds);
+	int IterationsNb = (int)(seconds / m_owner_simulation->m_timestep);
+	float NewSeconds = IterationsNb * m_owner_simulation->m_timestep;
+	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * (m_base_cached_movement + m_frame_cached_movement)) / NewSeconds, NewSeconds);
 	m_base_cached_movement = vec3(.0f);
 }
 

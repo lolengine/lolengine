@@ -10,8 +10,11 @@
 //
 
 //
-// The EasyPhysic class
+// The EasyCharacterController class
 // ------------------
+//
+
+//Should try to to make a btKinematicCharacterController for real.
 //
 
 #if !defined __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
@@ -33,6 +36,9 @@ class EasyCharacterController : public EasyPhysic,
 								public Entity
 {
 
+	friend class Simulation;
+	friend class EasyPhysic;
+
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
@@ -47,6 +53,7 @@ public:
 	{
 		m_gamegroup = GAMEGROUP_EZP_CHAR_CTRLR;
 		m_up_axis = 1;
+		m_gravity = vec3(.0f, -9.81f, .0f);
 	}
 	~EasyCharacterController()
 	{
@@ -77,6 +84,8 @@ protected:
 	bool							m_base_is_updating;
 	vec3							m_base_cached_movement;
 	vec3							m_frame_cached_movement;
+	vec3							m_gravity;
+	vec3							m_velocity;
 
 #else  // NO PHYSIC IMPLEMENTATION
 

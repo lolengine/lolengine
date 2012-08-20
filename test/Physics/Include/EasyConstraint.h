@@ -30,6 +30,10 @@ namespace phys
 
 class EasyConstraint
 {
+
+	friend class Simulation;
+	friend class EasyPhysic;
+
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
@@ -40,6 +44,7 @@ public:
 		m_slider_constraint(NULL),
 		m_cone_twist_constraint(NULL),
 		m_6dof_constraint(NULL),
+		m_owner_simulation(NULL),
 		m_a_physobj(NULL),
 		m_b_physobj(NULL),
 		m_a_transform(lol::mat4(1.f)),
@@ -193,6 +198,7 @@ public:
 	}
 
 private:
+	Simulation*					m_owner_simulation;
 	EasyPhysic*					m_a_physobj;
 	EasyPhysic*					m_b_physobj;
 	lol::mat4					m_a_transform;
