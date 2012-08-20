@@ -118,8 +118,8 @@ void EasyCharacterController::TickGame(float seconds)
 {
 	Entity::TickGame(seconds);
 
-	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * /*0.1f **/ (m_base_cached_movement + m_frame_cached_movement)) / seconds, seconds);
-	//m_character->setWalkDirection();
+	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * (m_base_cached_movement + m_frame_cached_movement)) / seconds, seconds);
+	m_base_cached_movement = vec3(.0f);
 }
 
 #endif // HAVE_PHYS_USE_BULLET
