@@ -33,8 +33,8 @@ namespace phys
 class EasyPhysic
 {
 
-	friend class EasyConstraint;
 	friend class Simulation;
+	friend class EasyConstraint;
 
 #ifdef HAVE_PHYS_USE_BULLET
 
@@ -153,6 +153,7 @@ protected:
 	int											m_collision_group;
 	int											m_collision_mask;
 	WorldEntity*								m_owner_entity;
+	Simulation*									m_owner_simulation;
 
 	//Base/Attachment logic
 	Array<EasyPhysic*>							m_based_physic_list;	//List of objects based on this : this object moves, its based object move with it.

@@ -320,19 +320,104 @@ public:
 	}
 
 private:
+
 	friend class EasyPhysic;
+	friend class EasyCharacterController;
 	friend class EasyConstraint;
 
+	enum eEasyPhysicType
+	{
+		EEPT_Dynamic,
+		EEPT_Static,
+		EEPT_Ghost,
+		EEPT_CollisionObject,
+		EEPT_CharacterController,
+
+		EEPT_MAX
+	};
+
+	//m_owner_simulation
 	//Adds the given EasyPhysic to the correct list.
-	void AddToDynamic(EasyPhysic* NewEPDynamic)	{ m_dynamic_list << NewEPDynamic; }
-	void AddToStatic(EasyPhysic* NewEPStatic)	{ m_static_list	<< NewEPStatic; }
-	void AddToGhost(EasyPhysic* NewEPGhost)		{ m_ghost_list << NewEPGhost; }
-	void AddToConstraint(EasyConstraint* NewEC)	{ m_constraint_list	<< NewEC; }
+	void ObjectRegistration(bool AddObject, EasyPhysic* NewEP, eEasyPhysicType CurType)
+	{
+		Array<EasyPhysic*>* SearchList = NULL;
+		switch(CurType)
+		{
+			case EEPT_Dynamic:
+			{
+				SearchList = &m_dynamic_list;
+				break;
+			}
+			case EEPT_Static:
+			{
+				SearchList = &m_static_list;
+				break;
+			}
+			case EEPT_Ghost:
+			{
+				SearchList = &m_ghost_list;
+				break;
+			}
+			case EEPT_CollisionObject:
+			{
+				SearchList = &m_collision_object_list;
+				break;
+			}
+			case EEPT_CharacterController:
+			{
+				SearchList = &m_character_controller_list;
+				break;
+			}
+		}
+
+		if (AddObject)
+		{
+			NewEP->m_owner_simulation = this;
+			(*SearchList) << NewEP;
+		}
+		else
+		{
+			NewEP->m_owner_simulation = NULL;
+			for (int i = 0; i < SearchList->Count(); ++i)
+			{
+				if ((*SearchList)[i] == NewEP)
+				{
+					SearchList->Remove(i--);
+					break;
+				}
+			}
+		}
+	}
+	void ObjectRegistration(bool AddObject, EasyConstraint* NewEC)
+	{
+		Array<EasyConstraint*>* SearchList = NULL;
+		SearchList = &m_constraint_list;
+
+		if (AddObject)
+		{
+			NewEC->m_owner_simulation = this;
+			(*SearchList) << NewEC;
+		}
+		else
+		{
+			NewEC->m_owner_simulation = NULL;
+			for (int i = 0; i < SearchList->Count(); ++i)
+			{
+				if ((*SearchList)[i] == NewEC)
+				{
+					SearchList->Remove(i--);
+					break;
+				}
+			}
+		}
+	}
 
 	//Easy Physics body List
 	Array<EasyPhysic*>						m_dynamic_list;
 	Array<EasyPhysic*>						m_static_list;
 	Array<EasyPhysic*>						m_ghost_list;
+	Array<EasyPhysic*>						m_collision_object_list;
+	Array<EasyPhysic*>						m_character_controller_list;
 	Array<EasyConstraint*>					m_constraint_list;
 
 	//Easy Physics data storage
