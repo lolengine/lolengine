@@ -63,13 +63,23 @@ FrameBuffer::FrameBuffer(ivec2 size)
   : m_data(new FrameBufferData)
 {
     m_data->m_size = size;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
                                           D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                           &m_data->m_texture, NULL)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
+        Abort();
+#elif defined _XBOX
+    if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1, 0,
+                                          D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
+                                          &m_data->m_texture, NULL)))
+        Abort();
+    if (FAILED(g_d3ddevice->CreateRenderTarget(size.x, size.y,
+                                               D3DFMT_A8R8G8B8,
+                                               D3DMULTISAMPLE_NONE, 0, 0,
+                                               &m_data->m_surface, NULL)))
         Abort();
 #else
 #   if GL_VERSION_1_1
@@ -180,9 +190,18 @@ void FrameBuffer::Bind()
 
 void FrameBuffer::Unbind()
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
         Abort();
+    m_data->m_back_surface->Release();
+#elif defined _XBOX
+    if (FAILED(g_d3ddevice->Resolve(D3DRESOLVE_RENDERTARGET0, NULL,
+                                    m_data->m_texture, NULL, 0, 0, NULL,
+                                    0, 0, NULL)))
+        Abort();
+    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
+        Abort();
+    m_data->m_back_surface->Release();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, NULL);
