@@ -22,10 +22,11 @@ namespace lol
 	//Override Gamegroups names for Physic-useage
 	//"_ENT_" means that this is a group for Entities that use EasyPhysic primitives.
 	//"_EZP_" means that this is a group for EasyPhysic primitives.
-#define GAMEGROUP_ENT_PLATFORM		GAMEGROUP_BEFORE
-#define GAMEGROUP_ENT_MAIN			GAMEGROUP_DEFAULT
-#define GAMEGROUP_EZP_CHAR_CTRLR	GAMEGROUP_AFTER
-#define GAMEGROUP_SIMULATION		GAMEGROUP_AFTER_POST
+#define GAMEGROUP_ENT_INPUT			GAMEGROUP_BEFORE
+#define GAMEGROUP_ENT_PLATFORM		GAMEGROUP_DEFAULT
+#define GAMEGROUP_ENT_MAIN			GAMEGROUP_AFTER
+#define GAMEGROUP_EZP_CHAR_CTRLR	GAMEGROUP_AFTER_0
+#define GAMEGROUP_SIMULATION		GAMEGROUP_AFTER_1
 
 #ifdef HAVE_PHYS_USE_BULLET
 

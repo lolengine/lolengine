@@ -49,11 +49,14 @@ public:
 		m_step_height(.0f),
 		m_base_is_updating(false),
 		m_base_cached_movement(vec3(0.f)),
-		m_frame_cached_movement(vec3(0.f))
+		m_frame_cached_movement(vec3(0.f)),
+		m_walk_velocity(vec3(0.f)),
+		m_current_velocity(vec3(0.f))
 	{
 		m_gamegroup = GAMEGROUP_EZP_CHAR_CTRLR;
 		m_up_axis = 1;
 		m_gravity = vec3(.0f, -9.81f, .0f);
+		m_walk_velocity_damping = 0.2f;
 	}
 	~EasyCharacterController()
 	{
@@ -65,6 +68,7 @@ public:
 	virtual void AddToSimulation(class Simulation* current_simulation);
 	virtual void RemoveFromSimulation(class Simulation* current_simulation);
 	virtual void SetMovementForFrame(vec3 const &MoveQuantity);
+	virtual void Jump();
 
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation);
 protected:
@@ -84,8 +88,16 @@ protected:
 	bool							m_base_is_updating;
 	vec3							m_base_cached_movement;
 	vec3							m_frame_cached_movement;
+
+	//----
+	float							m_walk_velocity_damping;
+
+	//----
 	vec3							m_gravity;
-	vec3							m_velocity;
+
+	//----
+	vec3							m_walk_velocity;
+	vec3							m_current_velocity;
 
 #else  // NO PHYSIC IMPLEMENTATION
 

@@ -56,6 +56,15 @@ int gNumObjects = 64;
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
 
+enum eInputAction
+{
+	IPT_MOVE_FORWARD,
+	IPT_MOVE_BACKWARD,
+	IPT_MOVE_STRAFE_LEFT,
+	IPT_MOVE_STRAFE_RIGHT,
+	IPT_MOVE_JUMP,
+};
+
 BtPhysTest::BtPhysTest(bool editor)
 {
 	m_loop_value = .0f;
@@ -161,6 +170,13 @@ BtPhysTest::BtPhysTest(bool editor)
 
 		m_character_list << NewPhyobj;
 		Ticker::Ref(NewPhyobj);
+
+
+		Input::LinkActionIdToButtonId(IPT_MOVE_FORWARD,			LOLK_UP);
+		Input::LinkActionIdToButtonId(IPT_MOVE_BACKWARD,		LOLK_DOWN);
+		Input::LinkActionIdToButtonId(IPT_MOVE_STRAFE_LEFT,		LOLK_LEFT);
+		Input::LinkActionIdToButtonId(IPT_MOVE_STRAFE_RIGHT,	LOLK_RIGHT);
+		Input::LinkActionIdToButtonId(IPT_MOVE_JUMP,			LOLK_SPACE);
 
 		//NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
 	}
@@ -300,12 +316,14 @@ void BtPhysTest::TickGame(float seconds)
 			PhysicsObject* PhysObj = m_character_list[i];
 			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
 			mat4 CtlrMx = Character->GetTransform();
-
-			int HMovement = Input::GetButtonState(275 /*SDLK_RIGHT*/) - Input::GetButtonState(276 /*SDLK_LEFT*/);
-			int VMovement = Input::GetButtonState(273 /*SDLK_UP*/) - Input::GetButtonState(274 /*SDLK_DOWN*/);
-			int RMovement = Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+			
+			int HMovement = Input::GetActionStatus(IPT_MOVE_STRAFE_LEFT) - Input::GetActionStatus(IPT_MOVE_STRAFE_RIGHT);
+			int VMovement = Input::GetActionStatus(IPT_MOVE_FORWARD) - Input::GetActionStatus(IPT_MOVE_BACKWARD);
+			int RMovement = 0;//Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
 			vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
 
+			if (Input::WasActionJustReleased(IPT_MOVE_JUMP))
+				Character->Jump();
 			Character->SetMovementForFrame(CharMove);
 
 			RayCastResult HitResult;
