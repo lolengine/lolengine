@@ -237,6 +237,37 @@ void EasyMesh::Rotate(float t, vec3 const &axis)
     }
 }
 
+void EasyMesh::RadialJitter(float r)
+{
+    Array<int> Welded;
+	Welded.Push(-1);
+    for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
+	{
+		int j;
+		for (j = m_cursors.Last().m1; j < i; j++)
+		{
+			if(sqlength(m_vert[i].m1 - m_vert[j].m1) < 0.1f)
+				break;
+		}
+
+		if(j == i)
+			Welded.Push(-1);
+		else
+			Welded.Push(j);
+	}
+
+	int i, j;
+    for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
+	{
+		if(Welded[j] == -1)
+			m_vert[i].m1 *= 1.0f + RandF(r);
+		else
+			m_vert[i].m1 = m_vert[Welded[j]].m1;
+	}
+
+	ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
+}
+
 void EasyMesh::TaperX(float y, float z, float xoff)
 {
     /* FIXME: this code breaks normals! */
