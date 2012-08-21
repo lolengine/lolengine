@@ -234,7 +234,7 @@ public:
 
 	EasyMesh *GetMesh() { return &m_mesh; }
 	EasyPhysic *GetPhysic() { return m_physics; }
-	EasyPhysic *GetCharacter() { return m_character; }
+	EasyCharacterController *GetCharacter() { return m_character; }
 
 	~PhysicsObject()
 	{

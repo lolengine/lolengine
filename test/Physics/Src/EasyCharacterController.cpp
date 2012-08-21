@@ -90,6 +90,11 @@ void EasyCharacterController::RemoveFromSimulation(class Simulation* current_sim
 	}
 }
 
+void EasyCharacterController::Jump()
+{
+	m_character->jump();
+}
+
 //Set movement for this frame
 void EasyCharacterController::SetMovementForFrame(vec3 const &MoveQuantity)
 {
@@ -125,10 +130,13 @@ void EasyCharacterController::TickGame(float seconds)
 {
 	Entity::TickGame(seconds);
 
-	int IterationsNb = (int)(seconds / m_owner_simulation->m_timestep);
-	float NewSeconds = IterationsNb * m_owner_simulation->m_timestep;
-	m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * (m_base_cached_movement + m_frame_cached_movement)) / NewSeconds, NewSeconds);
-	m_base_cached_movement = vec3(.0f);
+	//Send final velocity in Bullet
+	{
+		int IterationsNb = (int)(seconds / m_owner_simulation->m_timestep);
+		float NewSeconds = IterationsNb * m_owner_simulation->m_timestep;
+		m_character->setVelocityForTimeInterval(LOL2BT_VEC3(LOL2BT_UNIT * (m_base_cached_movement + m_frame_cached_movement)) / NewSeconds, NewSeconds);
+		m_base_cached_movement = vec3(.0f);
+	}
 }
 
 #endif // HAVE_PHYS_USE_BULLET
