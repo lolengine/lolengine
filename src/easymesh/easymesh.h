@@ -52,6 +52,8 @@ public:
     void SetCurVertNormal(vec3 const &normal);
     void SetCurVertColor(vec4 const &color);
 
+    void RadialJitter(float r);
+
     void Translate(vec3 const &v);
     void RotateX(float t);
     void RotateY(float t);

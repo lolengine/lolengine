@@ -29,20 +29,23 @@ public:
                 m_mesh.OpenBrace();
                 m_mesh.Compile("ad12,2.2,0 ty.1 ac12,.2,2.4,2.2,0,1 ty.8 ac12,1.7,2.4,2.4,0,1 ty2.5");
                 m_mesh.Translate(vec3(i * 8.f, (h - 1) * 3.2f, j * 8.f));
-                m_mesh.CloseBrace();
+
+				m_mesh.CloseBrace();
             }
         m_mesh.OpenBrace();
         m_mesh.AppendFlatChamfBox(vec3(x * 8.f, h * 3.2f, y * 8.f), -.1f);
         m_mesh.Translate(vec3((x - 1) * 4.f, (h - 1) * 1.6f, (y - 1) * 4.f));
         m_mesh.CloseBrace();
         m_mesh.Translate(vec3(dx * 8.f, dh * 3.2f, dy * 8.f));
+
         m_mesh.CloseBrace();
     }
 
     EasyMeshTutorial()
     {
         m_angle = 0;
-        //m_mesh.Compile("sc#e94 scb#964 [asph11 7 7 7 tx10]");
+        m_mesh.Compile("sc#800 [asph10 20 20 20]");
+		m_mesh.RadialJitter(0.2f);		
         //m_mesh.Compile("sc#94e scb#649 [asph3 7 7 7 tx-6 tz-9]");
         //m_mesh.Compile("sc#49e scb#469 [asph31 7 7 7 tx-6 tz9]");
         m_mesh.Compile("sc#1c1 scb#1c1");
