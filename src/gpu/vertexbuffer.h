@@ -36,6 +36,10 @@ private:
     class VertexBufferData *m_data;
 };
 
+/* A safe enum to indicate how a vertex stream is going to be used. For
+ * now there is only TexCoord and not TexCoord0 TexCoord1 etc. because
+ * we can always reorganise the vertex declaration for the indices to
+ * match. If the need arises these enums will be added. */
 struct VertexUsage
 {
     enum Value
@@ -57,10 +61,12 @@ struct VertexUsage
     }
     m_value;
 
-    inline VertexUsage(Value v) { m_value = v; }
+    inline VertexUsage(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate what kind of primitive to draw. Used in
+ * VertexDeclaration::DrawElements() for instance. */
 struct MeshPrimitive
 {
     enum Value
@@ -70,7 +76,7 @@ struct MeshPrimitive
     }
     m_value;
 
-    inline MeshPrimitive(Value v) { m_value = v; }
+    inline MeshPrimitive(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
 };
 

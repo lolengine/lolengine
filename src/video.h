@@ -27,7 +27,7 @@ struct ClearMask
     enum Value
     {
         /* Note: D3D9 doesn't appear to support the accumulation buffer,
-         * and it is a deprecated OpenGL feature. No reasone to support it. */
+         * and it is a deprecated OpenGL feature. No reason to support it. */
         Color   = 1 << 0,
         Depth   = 1 << 1,
         Stencil = 1 << 2,
@@ -36,8 +36,8 @@ struct ClearMask
     }
     m_value;
 
-    inline ClearMask(Value v) { m_value = v; }
-    inline ClearMask(uint64_t i) { m_value = (Value)i; }
+    inline ClearMask(Value v) : m_value(v) {}
+    inline ClearMask(uint64_t i) : m_value((Value)i) {}
     inline operator Value() { return m_value; }
 };
 
