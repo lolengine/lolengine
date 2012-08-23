@@ -30,7 +30,7 @@ namespace lol
 	namespace phys
 	{
 
-#define 0
+#if 0
 #ifdef HAVE_PHYS_USE_BULLET
 
 		///BulletKinematicCharacterController is an object that supports a sliding motion in a world.
