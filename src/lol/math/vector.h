@@ -1217,10 +1217,7 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
     DECLARE_SCALAR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
     \
     DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2)
-
-#define DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
-    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
+    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2) \
     \
     tprefix \
     inline tf dot(tname<t1> const &a, tname<t2> const &b) \
@@ -1230,6 +1227,9 @@ static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
             ret += a[n] * b[n]; \
         return ret; \
     }
+
+#define DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf)
 
 #define DECLARE_VEC_3_COERCE_OPS(tname, tprefix, t1, t2, tf) \
     tprefix \
@@ -1354,7 +1354,7 @@ DECLARE_ALL_VECTOR_OPS(uint64_t)
 #endif
 
 /* Hack for compilation speedups: we can hide some of our global methods in
- * namespaces. We therefore want "long_double" to be a one-symbol type */
+ * namespaces. We therefore want "long_double" to be a single-word name */
 typedef long double long_double;
 
 /* Apply the same coercion rules as in the C++ standard. However, instead
