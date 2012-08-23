@@ -79,6 +79,14 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_EQUAL(norm(a * d), norm(a) * norm(d));
     }
 
+    LOLUNIT_TEST(Dot)
+    {
+        quat a(-1.f, 2.f, -3.f, 4.f);
+        quat b(8.f, 7.f, 6.f, 5.f);
+
+        LOLUNIT_ASSERT_EQUAL(dot(a, b), 8.f);
+    }
+
     LOLUNIT_TEST(Base)
     {
         quat one(1.f, 0.f, 0.f, 0.f);
