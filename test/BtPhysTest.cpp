@@ -56,14 +56,11 @@ int gNumObjects = 64;
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
 
-enum eInputAction
-{
-	IPT_MOVE_FORWARD,
-	IPT_MOVE_BACKWARD,
-	IPT_MOVE_STRAFE_LEFT,
-	IPT_MOVE_STRAFE_RIGHT,
-	IPT_MOVE_JUMP,
-};
+#define	IPT_MOVE_FORWARD		"Move_Forward"
+#define	IPT_MOVE_BACKWARD		"Move_Backward"
+#define	IPT_MOVE_STRAFE_LEFT	"Strafe_Left"
+#define	IPT_MOVE_STRAFE_RIGHT	"Strafe_right"
+#define	IPT_MOVE_JUMP			"Move_Jump"
 
 BtPhysTest::BtPhysTest(bool editor)
 {
@@ -172,11 +169,11 @@ BtPhysTest::BtPhysTest(bool editor)
 		Ticker::Ref(NewPhyobj);
 
 
-		Input::LinkActionIdToButtonId(IPT_MOVE_FORWARD,			LOLK_UP);
-		Input::LinkActionIdToButtonId(IPT_MOVE_BACKWARD,		LOLK_DOWN);
-		Input::LinkActionIdToButtonId(IPT_MOVE_STRAFE_LEFT,		LOLK_LEFT);
-		Input::LinkActionIdToButtonId(IPT_MOVE_STRAFE_RIGHT,	LOLK_RIGHT);
-		Input::LinkActionIdToButtonId(IPT_MOVE_JUMP,			LOLK_SPACE);
+		Input::LinkActionToKey(IPT_MOVE_FORWARD,		Key::K_UP);
+		Input::LinkActionToKey(IPT_MOVE_BACKWARD,		Key::K_DOWN);
+		Input::LinkActionToKey(IPT_MOVE_STRAFE_LEFT,	Key::K_LEFT);
+		Input::LinkActionToKey(IPT_MOVE_STRAFE_RIGHT,	Key::K_RIGHT);
+		Input::LinkActionToKey(IPT_MOVE_JUMP,			Key::K_SPACE);
 
 		//NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
 	}
@@ -317,12 +314,12 @@ void BtPhysTest::TickGame(float seconds)
 			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
 			mat4 CtlrMx = Character->GetTransform();
 			
-			int HMovement = Input::GetActionStatus(IPT_MOVE_STRAFE_LEFT) - Input::GetActionStatus(IPT_MOVE_STRAFE_RIGHT);
+			int HMovement = Input::GetActionStatus(IPT_MOVE_STRAFE_RIGHT) - Input::GetActionStatus(IPT_MOVE_STRAFE_LEFT);
 			int VMovement = Input::GetActionStatus(IPT_MOVE_FORWARD) - Input::GetActionStatus(IPT_MOVE_BACKWARD);
 			int RMovement = 0;//Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
 			vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
 
-			if (Input::WasActionJustReleased(IPT_MOVE_JUMP))
+			if (Input::WasReleased(IPT_MOVE_JUMP))
 				Character->Jump();
 			Character->SetMovementForFrame(CharMove);
 

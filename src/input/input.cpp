@@ -61,6 +61,18 @@ inputdata;
 static InputData * const data = &inputdata;
 
 /*
+ * ButtonSetting class
+ */
+
+int ButtonSetting::GetActionSettingIdx(ACTION_TYPE SearchAction)
+{
+	for (int i = 0; i < m_associated_action_list.Count(); i++)
+		if (ACTION_CMP(m_associated_action_list[i].m_action, SearchAction))
+			return i;
+	return -1;
+}
+
+/*
  * InputTracker class
  */
 
@@ -68,77 +80,116 @@ InputTracker::InputTracker()
 {
 	m_gamegroup = GAMEGROUP_BEFORE;
 
+	for (int i = 0; i < Key::K_LAST * 2; ++i)
+		m_input_status << 0;
+
 	Ticker::Ref(this);
+}
+
+//Internal
+int InputTracker::GetButtonSettingIdx(Key Button)
+{
+	for (int i = 0; i < m_input_assocation_list.Count(); i++)
+		if (m_input_assocation_list[i].m_raw_button == Button)
+			return i;
+	return -1;
+}
+
+//-----
+int InputTracker::GetCurrentButtonStatus(Key Button)
+{
+	if (Button < m_input_status.Count())
+		return m_input_status[Button];
+	return 0;
+}
+
+//-----
+int InputTracker::GetPreviousButtonStatus(Key Button)
+{
+	if (Button < m_input_status.Count())
+		return m_input_status[Button + Key::K_LAST];
+	return 0;
 }
 
 //Internal : Updates the action status & timers
 void InputTracker::UpdateActionStatus(float seconds)
 {
+#if defined USE_SDL
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+	Uint8 *keystate = SDL_GetKeyboardState(NULL);
+#else
+	Uint8 *keystate = SDL_GetKeyState(NULL);
+#endif
+	//SOOOoooo ugly.
+	for (int i = 0; i < Key::K_LAST; ++i)
+	{
+		m_input_status[i + Key::K_LAST] = m_input_status[i];
+		m_input_status[i] = keystate[i];
+	}
+#endif
+
 	for (int i = 0; i < m_input_assocation_list.Count(); i++)
 	{
 		ButtonSetting &CurIT = m_input_assocation_list[i];
-
-		CurIT.m_previous_status = CurIT.m_current_status;
-		CurIT.m_current_status = Input::GetButtonState(CurIT.m_raw_button_id);
 
 		for (int j = 0; j < CurIT.m_associated_action_list.Count(); j++)
 		{
 			ActionSetting &CurAS = CurIT.m_associated_action_list[j];
 
-			if (CurAS.BufferedSince <= CurAS.BufferingTime)
-				CurAS.BufferedSince += seconds;
+			if (CurAS.m_buffered_since <= CurAS.m_buffering_time)
+				CurAS.m_buffered_since += seconds;
 
-			if (CurIT.m_current_status && CurAS.BufferingTime >= .0f)
-				CurAS.BufferedSince = .0f;
+			if (GetCurrentButtonStatus(CurIT.m_raw_button) &&
+				CurAS.m_buffering_time >= .0f)
+				CurAS.m_buffered_since = .0f;
 		}
 	}
-
 }
 
 //Helps link a software input Action-Id to an hardware input Button-Id.
-void InputTracker::LinkActionIdToButtonId(int ActionId, int ButtonId)
+void InputTracker::LinkActionToKey(ACTION_TYPE Action, Key Button)
 {
-	int ITIdx = GetButtonSettingIdx(ButtonId);
+	int ITIdx = GetButtonSettingIdx(Button);
 	if (ITIdx == -1)
 	{
 		ITIdx = m_input_assocation_list.Count();
-		m_input_assocation_list << ButtonSetting(ButtonId);
+		m_input_assocation_list << ButtonSetting(Button);
 	}
 
 	ButtonSetting &CurIT = m_input_assocation_list[ITIdx];
 
-	int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+	int ASIdx = CurIT.GetActionSettingIdx(Action);
 	if (ASIdx == -1)
 	{
 		ASIdx = CurIT.m_associated_action_list.Count();
-		CurIT.m_associated_action_list << ActionSetting(ActionId);
+		CurIT.m_associated_action_list << ActionSetting(Action);
 	}
 }
 
 //Helps unlink a software input Action-Id to an hardware input Button-Id.
-void InputTracker::UnlinkActionId(int ActionId)
+void InputTracker::UnlinkAction(ACTION_TYPE Action)
 {
 	for (int i = 0; i < m_input_assocation_list.Count(); i++)
 	{
 		ButtonSetting &CurIT = m_input_assocation_list[i];
-		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		int ASIdx = CurIT.GetActionSettingIdx(Action);
 		if (ASIdx != -1)
 			CurIT.m_associated_action_list.Remove(ASIdx);
 	}
 }
 
 //Returns the current status of a given action
-int InputTracker::GetActionStatus(int ActionId)
+int InputTracker::GetStatus(ACTION_TYPE Action)
 {
 	for (int i = 0; i < m_input_assocation_list.Count(); i++)
 	{
 		ButtonSetting &CurIT = m_input_assocation_list[i];
-		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		int ASIdx = CurIT.GetActionSettingIdx(Action);
 		if (ASIdx != -1)
 		{
 			ActionSetting &CurAS = CurIT.m_associated_action_list[ASIdx];
 
-			if (CurAS.BufferingTime >= .0f && CurAS.BufferedSince <= CurAS.BufferingTime)
+			if (CurAS.m_buffering_time >= .0f && CurAS.m_buffered_since <= CurAS.m_buffering_time)
 				return 1;
 			return 0;
 		}
@@ -146,16 +197,85 @@ int InputTracker::GetActionStatus(int ActionId)
 	return 0;
 }
 
-//Returns TRUE if action status when from Active to Inactive this frame
-bool InputTracker::WasActionJustReleased(int ActionId)
+//Returns TRUE if action status went from Active to Inactive this frame
+bool InputTracker::WasReleased(ACTION_TYPE Action)
 {
 	for (int i = 0; i < m_input_assocation_list.Count(); i++)
 	{
 		ButtonSetting &CurIT = m_input_assocation_list[i];
-		int ASIdx = CurIT.GetActionSettingIdx(ActionId);
+		int ASIdx = CurIT.GetActionSettingIdx(Action);
 		if (ASIdx != -1)
 		{
-			if (!CurIT.m_current_status && CurIT.m_previous_status)
+			
+			if (GetPreviousButtonStatus(CurIT.m_raw_button) &&
+				!GetCurrentButtonStatus(CurIT.m_raw_button))
+				return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+//Returns TRUE if action status went from Inactive to Active this frame
+bool InputTracker::WasPressed(ACTION_TYPE Action)
+{
+	for (int i = 0; i < m_input_assocation_list.Count(); i++)
+	{
+		ButtonSetting &CurIT = m_input_assocation_list[i];
+		int ASIdx = CurIT.GetActionSettingIdx(Action);
+		if (ASIdx != -1)
+		{
+			if (!GetPreviousButtonStatus(CurIT.m_raw_button) &&
+				GetCurrentButtonStatus(CurIT.m_raw_button))
+				return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+//Returns the current status of a given action
+int InputTracker::GetStatus(Key Button)
+{
+	for (int i = 0; i < m_input_assocation_list.Count(); i++)
+	{
+		ButtonSetting &CurIT = m_input_assocation_list[i];
+
+		if (Button == CurIT.m_raw_button)
+			return GetCurrentButtonStatus(CurIT.m_raw_button);
+	}
+	return 0;
+}
+
+//Returns TRUE if action status went from Active to Inactive this frame
+bool InputTracker::WasReleased(Key Button)
+{
+	for (int i = 0; i < m_input_assocation_list.Count(); i++)
+	{
+		ButtonSetting &CurIT = m_input_assocation_list[i];
+		
+		if (Button == CurIT.m_raw_button)
+		{
+			if (GetPreviousButtonStatus(CurIT.m_raw_button) &&
+				!GetCurrentButtonStatus(CurIT.m_raw_button))
+				return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+//Returns TRUE if action status went from Inactive to Active this frame
+bool InputTracker::WasPressed(Key Button)
+{
+	for (int i = 0; i < m_input_assocation_list.Count(); i++)
+	{
+		ButtonSetting &CurIT = m_input_assocation_list[i];
+
+		if (Button == CurIT.m_raw_button)
+		{
+			if (!GetPreviousButtonStatus(CurIT.m_raw_button) &&
+				GetCurrentButtonStatus(CurIT.m_raw_button))
 				return true;
 			return false;
 		}
@@ -219,32 +339,64 @@ int Input::GetButtonState(int button)
 }
 
 //Helps link a software input Action-Id to an hardware input Button-Id.
-void Input::LinkActionIdToButtonId(int ActionId, int ButtonId)
+void Input::LinkActionToKey(ACTION_TYPE Action, struct Key Button)
 {
 	if (CheckInputTrackerInit())
-		Input::m_input_tracker->LinkActionIdToButtonId(ActionId, ButtonId);
+		Input::m_input_tracker->LinkActionToKey(Action, Button);
 }
 
 //Helps unlink a software input Action-Id to an hardware input Button-Id.
-void Input::UnlinkActionId(int ActionId)
+void Input::UnlinkAction(ACTION_TYPE Action)
 {
 	if (CheckInputTrackerInit())
-		Input::m_input_tracker->UnlinkActionId(ActionId);
+		Input::m_input_tracker->UnlinkAction(Action);
 }
 
 //Returns the current status of a given action
-int Input::GetActionStatus(int ActionId)
+int Input::GetStatus(ACTION_TYPE Action)
 {
 	if (CheckInputTrackerInit())
-		return Input::m_input_tracker->GetActionStatus(ActionId);
+		return Input::m_input_tracker->GetStatus(Action);
 	return 0;
 }
 
 //Returns TRUE if action status when from Active to Inactive this frame
-bool Input::WasActionJustReleased(int ActionId)
+bool Input::WasPressed(ACTION_TYPE Action)
 {
 	if (CheckInputTrackerInit())
-		return Input::m_input_tracker->WasActionJustReleased(ActionId);
+		return Input::m_input_tracker->WasPressed(Action);
+	return false;
+}
+
+//Returns TRUE if action status when from Active to Inactive this frame
+bool Input::WasReleased(ACTION_TYPE Action)
+{
+	if (CheckInputTrackerInit())
+		return Input::m_input_tracker->WasReleased(Action);
+	return false;
+}
+
+//Returns the current status of a given action
+int Input::GetStatus(Key Button)
+{
+	if (CheckInputTrackerInit())
+		return Input::m_input_tracker->GetStatus(Button);
+	return 0;
+}
+
+//Returns TRUE if action status when from Active to Inactive this frame
+bool Input::WasPressed(Key Button)
+{
+	if (CheckInputTrackerInit())
+		return Input::m_input_tracker->WasPressed(Button);
+	return false;
+}
+
+//Returns TRUE if action status when from Active to Inactive this frame
+bool Input::WasReleased(Key Button)
+{
+	if (CheckInputTrackerInit())
+		return Input::m_input_tracker->WasReleased(Button);
 	return false;
 }
 
