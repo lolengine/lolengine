@@ -228,7 +228,7 @@ void BtPhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    if (Input::GetButtonState(27 /*SDLK_ESCAPE*/))
+    if (Input::WasReleased(Key::K_ESCAPE))
         Ticker::Shutdown();
 
 	m_loop_value += seconds;
