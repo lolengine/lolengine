@@ -18,6 +18,9 @@
     <ClInclude Include="Physics\Include\LolBtPhysicsIntegration.h">
       <Filter>Physics\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Physics\Include\BulletCharacterController.h">
+      <Filter>Physics\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BtPhysTest.cpp" />
@@ -28,6 +31,9 @@
       <Filter>Physics\Src</Filter>
     </ClCompile>
     <ClCompile Include="Physics\Src\EasyPhysics.cpp">
+      <Filter>Physics\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Src\BulletCharacterController.cpp">
       <Filter>Physics\Src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,5 +50,8 @@
     <Filter Include="Physics\Src">
       <UniqueIdentifier>{7e5d19e0-b2be-46cc-8fa4-f582ecb4318d}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile.am" />
   </ItemGroup>
 </Project>

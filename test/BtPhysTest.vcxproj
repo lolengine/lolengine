@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClInclude Include="BtPhysTest.h" />
     <ClInclude Include="PhysicObject.h" />
+    <ClInclude Include="Physics\Include\BulletCharacterController.h" />
     <ClInclude Include="Physics\Include\EasyCharacterController.h" />
     <ClInclude Include="Physics\Include\EasyConstraint.h" />
     <ClInclude Include="Physics\Include\EasyPhysics.h" />
@@ -45,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BtPhysTest.cpp" />
+    <ClCompile Include="Physics\Src\BulletCharacterController.cpp" />
     <ClCompile Include="Physics\Src\EasyCharacterController.cpp" />
     <ClCompile Include="Physics\Src\EasyConstraint.cpp" />
     <ClCompile Include="Physics\Src\EasyPhysics.cpp" />
@@ -53,6 +55,11 @@
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile.am">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ee203b88-44cf-4859-9d42-7a1f43fecb52}</ProjectGuid>

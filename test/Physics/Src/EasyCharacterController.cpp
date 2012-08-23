@@ -125,6 +125,12 @@ void EasyCharacterController::BaseTransformChanged(const lol::mat4& PreviousMatr
 	m_base_is_updating = false;
 }
 
+//---
+char const *EasyCharacterController::GetName()
+{
+	return "<EasyCharacterController>";
+}
+
 //Physic Tick
 void EasyCharacterController::TickGame(float seconds)
 {

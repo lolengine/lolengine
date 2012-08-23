@@ -380,8 +380,14 @@ private:
 	void					UpdateActionStatus(float seconds);
 
 protected:
+	virtual char const *	GetName()
+	{
+		return "<InputTracker>";
+	}
 	virtual void			TickGame(float seconds)
 	{
+		Entity::TickGame(seconds);
+
 		UpdateActionStatus(seconds);
 	}
 
