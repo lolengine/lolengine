@@ -492,7 +492,7 @@ template<> quat quat::slerp(quat QuatA, quat QuatB, float const &Scalar)
 	//btAssert(magnitude > btScalar(0));
 
 	float product = lol::dot(QuatA,QuatB) / magnitude;
-	if (product != 1.0f)
+	if (product > -1.0f && product < 1.0f)
 	{
 		// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 		const float sign = (product < 0.0f) ? -1.0f : 1.0f;
