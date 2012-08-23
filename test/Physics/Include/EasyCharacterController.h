@@ -73,6 +73,7 @@ public:
 	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation);
 protected:
 	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
+	virtual char const *GetName();
 public:
 	virtual void TickGame(float seconds);
 

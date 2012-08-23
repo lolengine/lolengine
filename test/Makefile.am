@@ -50,7 +50,9 @@ btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
     Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
     Physics/Include/LolBtPhysicsIntegration.h Physics/Include/LolPhysics.h \
     Physics/Src/EasyCharacterController.cpp Physics/Src/EasyConstraint.cpp \
+	Physics/Src/BulletCharacterController.cpp \
     Physics/Include/EasyCharacterController.h Physics/Include/EasyConstraint.h
+	Physics/Src/BulletCharacterController.h \
 btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
