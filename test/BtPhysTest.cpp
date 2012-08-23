@@ -314,8 +314,8 @@ void BtPhysTest::TickGame(float seconds)
 			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
 			mat4 CtlrMx = Character->GetTransform();
 			
-			int HMovement = Input::GetActionStatus(IPT_MOVE_STRAFE_RIGHT) - Input::GetActionStatus(IPT_MOVE_STRAFE_LEFT);
-			int VMovement = Input::GetActionStatus(IPT_MOVE_FORWARD) - Input::GetActionStatus(IPT_MOVE_BACKWARD);
+			int HMovement = Input::GetStatus(IPT_MOVE_STRAFE_RIGHT) - Input::GetStatus(IPT_MOVE_STRAFE_LEFT);
+			int VMovement = Input::GetStatus(IPT_MOVE_FORWARD) - Input::GetStatus(IPT_MOVE_BACKWARD);
 			int RMovement = 0;//Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
 			vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
 
