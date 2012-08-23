@@ -371,7 +371,7 @@ public:
 	InputTracker();
 
 private:
-	Array<uint8>			m_input_status;
+	Array<uint8_t>			m_input_status;
 	Array<ButtonSetting>	m_input_assocation_list;
 
 	int						GetButtonSettingIdx(struct Key Button);
