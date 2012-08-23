@@ -33,7 +33,7 @@ namespace lol
 	namespace phys
 	{
 
-#define 0
+#if 0
 #ifdef HAVE_PHYS_USE_BULLET
 
 // static helper method
