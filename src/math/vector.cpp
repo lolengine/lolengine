@@ -486,6 +486,34 @@ template<> quat quat::rotate(float angle, float x, float y, float z)
     return quat::rotate(angle, vec3(x, y, z));
 }
 
+template<> quat quat::slerp(quat QuatA, quat QuatB, float const &Scalar)
+{
+	float magnitude = lol::sqrt(sqlength(QuatA) * sqlength(QuatB));
+	//btAssert(magnitude > btScalar(0));
+
+	float product = lol::dot(QuatA,QuatB) / magnitude;
+	if (product != 1.0f)
+	{
+		// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
+		const float sign = (product < 0.0f) ? -1.0f : 1.0f;
+
+		const float theta = lol::acos(sign * product);
+		const float s1 = lol::sin(sign * Scalar * theta);   
+		const float d = 1.0f / lol::sin(theta);
+		const float s0 = lol::sin((1.0f - Scalar) * theta);
+
+		return quat(
+			(QuatA.w * s0 + QuatB.w * s1) * d,
+			(QuatA.x * s0 + QuatB.x * s1) * d,
+			(QuatA.y * s0 + QuatB.y * s1) * d,
+			(QuatA.z * s0 + QuatB.z * s1) * d);
+	}
+	else
+	{
+		return QuatA;
+	}
+}
+
 template<> vec3 vec3::toeuler(quat const &q)
 {
     float n = norm(q);
