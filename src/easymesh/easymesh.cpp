@@ -243,11 +243,24 @@ void EasyMesh::RadialJitter(float r)
 	Welded.Push(-1);
     for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
 	{
-		int j;
-		for (j = m_cursors.Last().m1; j < i; j++)
+		int j, k;
+		for (j = m_cursors.Last().m1, k = 0; j < i; j++, k++)
 		{
-			if(sqlength(m_vert[i].m1 - m_vert[j].m1) < 0.1f)
+			if(Welded[k] < 0)
+			{
+				vec3 diff = m_vert[i].m1 - m_vert[j].m1;
+				
+				if(diff.x > 0.1f || diff.x < -0.1f)
+					continue;
+
+				if(diff.y > 0.1f || diff.y < -0.1f)
+					continue;
+
+				if(diff.z > 0.1f || diff.z < -0.1f)
+					continue;
+
 				break;
+			}
 		}
 
 		if(j == i)
