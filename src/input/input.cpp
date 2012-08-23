@@ -80,7 +80,7 @@ InputTracker::InputTracker()
 {
 	m_gamegroup = GAMEGROUP_BEFORE;
 
-	for (int i = 0; i < Key::K_LAST * 2; ++i)
+	for (int i = 0; i < Key::Last * 2; ++i)
 		m_input_status << 0;
 
 	Ticker::Ref(this);
@@ -107,7 +107,7 @@ int InputTracker::GetCurrentButtonStatus(Key Button)
 int InputTracker::GetPreviousButtonStatus(Key Button)
 {
 	if (Button < m_input_status.Count())
-		return m_input_status[Button + Key::K_LAST];
+		return m_input_status[Button + Key::Last];
 	return 0;
 }
 
@@ -121,9 +121,9 @@ void InputTracker::UpdateActionStatus(float seconds)
 	Uint8 *keystate = SDL_GetKeyState(NULL);
 #endif
 	//SOOOoooo ugly.
-	for (int i = 0; i < Key::K_LAST; ++i)
+	for (int i = 0; i < Key::Last; ++i)
 	{
-		m_input_status[i + Key::K_LAST] = m_input_status[i];
+		m_input_status[i + Key::Last] = m_input_status[i];
 		m_input_status[i] = keystate[i];
 	}
 #endif

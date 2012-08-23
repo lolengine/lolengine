@@ -169,11 +169,11 @@ BtPhysTest::BtPhysTest(bool editor)
 		Ticker::Ref(NewPhyobj);
 
 
-		Input::LinkActionToKey(IPT_MOVE_FORWARD,		Key::K_UP);
-		Input::LinkActionToKey(IPT_MOVE_BACKWARD,		Key::K_DOWN);
-		Input::LinkActionToKey(IPT_MOVE_STRAFE_LEFT,	Key::K_LEFT);
-		Input::LinkActionToKey(IPT_MOVE_STRAFE_RIGHT,	Key::K_RIGHT);
-		Input::LinkActionToKey(IPT_MOVE_JUMP,			Key::K_SPACE);
+		Input::LinkActionToKey(IPT_MOVE_FORWARD,		Key::Up);
+		Input::LinkActionToKey(IPT_MOVE_BACKWARD,		Key::Down);
+		Input::LinkActionToKey(IPT_MOVE_STRAFE_LEFT,	Key::Left);
+		Input::LinkActionToKey(IPT_MOVE_STRAFE_RIGHT,	Key::Right);
+		Input::LinkActionToKey(IPT_MOVE_JUMP,			Key::Space);
 
 		//NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
 	}
@@ -228,7 +228,7 @@ void BtPhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    if (Input::WasReleased(Key::K_ESCAPE))
+    if (Input::WasReleased(Key::Escape))
         Ticker::Shutdown();
 
 	m_loop_value += seconds;
