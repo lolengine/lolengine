@@ -237,49 +237,24 @@ bool InputTracker::WasPressed(ACTION_TYPE Action)
 //Returns the current status of a given action
 int InputTracker::GetStatus(Key Button)
 {
-	for (int i = 0; i < m_input_assocation_list.Count(); i++)
-	{
-		ButtonSetting &CurIT = m_input_assocation_list[i];
-
-		if (Button == CurIT.m_raw_button)
-			return GetCurrentButtonStatus(CurIT.m_raw_button);
-	}
-	return 0;
+	return GetCurrentButtonStatus(Button);
 }
 
 //Returns TRUE if action status went from Active to Inactive this frame
 bool InputTracker::WasReleased(Key Button)
 {
-	for (int i = 0; i < m_input_assocation_list.Count(); i++)
-	{
-		ButtonSetting &CurIT = m_input_assocation_list[i];
-		
-		if (Button == CurIT.m_raw_button)
-		{
-			if (GetPreviousButtonStatus(CurIT.m_raw_button) &&
-				!GetCurrentButtonStatus(CurIT.m_raw_button))
-				return true;
-			return false;
-		}
-	}
+	if (GetPreviousButtonStatus(Button) &&
+		!GetCurrentButtonStatus(Button))
+		return true;
 	return false;
 }
 
 //Returns TRUE if action status went from Inactive to Active this frame
 bool InputTracker::WasPressed(Key Button)
 {
-	for (int i = 0; i < m_input_assocation_list.Count(); i++)
-	{
-		ButtonSetting &CurIT = m_input_assocation_list[i];
-
-		if (Button == CurIT.m_raw_button)
-		{
-			if (!GetPreviousButtonStatus(CurIT.m_raw_button) &&
-				GetCurrentButtonStatus(CurIT.m_raw_button))
-				return true;
-			return false;
-		}
-	}
+	if (!GetPreviousButtonStatus(Button) &&
+		GetCurrentButtonStatus(Button))
+		return true;
 	return false;
 }
 
