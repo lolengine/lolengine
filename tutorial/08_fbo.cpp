@@ -46,9 +46,9 @@ public:
         m_hotspot = 0.4f * vec3(lol::sin(m_time * 4.f) + lol::cos(m_time * 5.3f),
                                 lol::sin(m_time * 5.7f) + lol::cos(m_time * 4.4f),
                                 lol::sin(m_time * 5.f));
-        m_color = 0.25f * vec3(1.1f + lol::sin(m_time * 1.5f + 1.f),
-                               1.1f + lol::sin(m_time * 1.8f + 1.3f),
-                               1.1f + lol::sin(m_time * 1.7f));
+        m_color = 0.25f * vec3(1.1f + lol::sin(m_time * 2.5f + 1.f),
+                               1.1f + lol::sin(m_time * 2.8f + 1.3f),
+                               1.1f + lol::sin(m_time * 2.7f));
         /* Saturate dot color */
         float x = std::max(m_color.x, std::max(m_color.y, m_color.z));
         m_color /= x;
