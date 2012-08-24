@@ -34,7 +34,7 @@ void main(void)
         float tc = 0.0, ta = 0.0;
         {
             float s = 6.0 + 3.0 * in_Point.z;
-            vec2 p = pass_Position - in_Point.xy * 0.8;
+            vec2 p = pass_Position - in_Point.xy * 0.9;
             float t = clamp(1.2 - dot(s * p, s * p), 0.0, 1.0);
             float u = t * t * t * t;
             tc += 3.0 * t * t - 2.0 * t * t * t;
@@ -74,7 +74,7 @@ void main(in float2 pass_Position : TEXCOORD0,
         float tc = 0.0, ta = 0.0;
         {
             float s = 6.0 + 3.0 * in_Point.z;
-            float2 p = pass_Position - in_Point.xy * 0.8;
+            float2 p = pass_Position - in_Point.xy * 0.9;
             float t = clamp(1.2 - dot(s * p, s * p), 0.0, 1.0);
             float u = t * t * t * t;
             tc += 3.0 * t * t - 2.0 * t * t * t;
@@ -85,7 +85,9 @@ void main(in float2 pass_Position : TEXCOORD0,
     }
     else
     {
-        float2 texcoords = pass_Position * 0.5 + float2(0.5, 0.5);
+        float2 texcoords = pass_Position * float2(0.5, -0.5) + float2(0.5, 0.5);
+        /* FIXME: this should be passed as a uniform or something */
+        texcoords += float2(0.5 / 800.0, 0.5 / 600.0);
         out_FragColor = float4(tex2D(in_Texture, texcoords).xyz, 1.0);
     }
 }
