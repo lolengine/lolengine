@@ -165,7 +165,7 @@ void *TickerData::GameThreadMain(void * /* p */)
 
         Profiler::Start(Profiler::STAT_TICK_GAME);
 
-#if 1
+#if 0
         Log::Debug("-------------------------------------\n");
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
         {
