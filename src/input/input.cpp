@@ -107,7 +107,7 @@ int InputTracker::GetCurrentButtonStatus(Key Button)
 int InputTracker::GetPreviousButtonStatus(Key Button)
 {
 	if (Button < m_input_status.Count())
-		return m_input_status[Button + Key::Last];
+		return m_input_status[(int)Button + (int)Key::Last];
 	return 0;
 }
 
