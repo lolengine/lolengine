@@ -196,6 +196,8 @@ void SdlInputData::Tick(float seconds)
     for (int i = 0; i < 256; i++)
         if (keystate[i])
             Input::KeyPressed(i, seconds);
+#else
+    (void)seconds;
 #endif
 #endif
 }

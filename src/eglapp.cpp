@@ -263,7 +263,8 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 
 void EglApp::ShowPointer(bool show)
 {
-    ;
+    /* FIXME: unimplemented (do we have a mouse pointer anyway? */
+    (void)show;
 }
 
 void EglApp::Run()

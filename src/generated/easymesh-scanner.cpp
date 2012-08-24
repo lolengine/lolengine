@@ -1844,6 +1844,8 @@ lol::EasyMeshScanner::~EasyMeshScanner()
 
 int lol::EasyMeshScanner::LexerInput(char* buf, int max_size)
 {
+    (void)max_size; /* unused for now */
+
     buf[0] = m_input[0];
     if (buf[0])
         ++m_input;

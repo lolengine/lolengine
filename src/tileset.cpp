@@ -230,6 +230,8 @@ ivec2 TileSet::GetCount() const
 
 ivec2 TileSet::GetSize(int tileid) const
 {
+    (void)tileid;
+
     return data->size;
 }
 
