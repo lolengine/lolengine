@@ -209,11 +209,13 @@ private:
 
 	btHullTriangle* extrudable(btScalar epsilon);
 
-	int calchull(btVector3 *verts,int verts_count, TUIntArray& tris_out, int &tris_count,int vlimit);
+// LOL BEGIN
+	int calchull(btVector3 const *verts,int verts_count, TUIntArray& tris_out, int &tris_count,int vlimit);
 
-	int calchullgen(btVector3 *verts,int verts_count, int vlimit);
+	int calchullgen(btVector3 const *verts,int verts_count, int vlimit);
 
-	int4 FindSimplex(btVector3 *verts,int verts_count,btAlignedObjectArray<int> &allow);
+	int4 FindSimplex(btVector3 const *verts,int verts_count,btAlignedObjectArray<int> &allow);
+// LOL END
 
 	class ConvexH* ConvexHCrop(ConvexH& convex,const btPlane& slice);
 
