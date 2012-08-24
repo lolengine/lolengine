@@ -44,7 +44,14 @@ public:
     {
         for (int i = 0; i < m_count; i++)
             m_data[i].~Element();
-        delete[] reinterpret_cast<uint8_t *>(m_data);
+        if (sizeof(Element) & 1)
+            delete[] (uint8_t *)(m_data);
+        else if (sizeof(Element) & 2)
+            delete[] (uint16_t *)(m_data);
+        else if (sizeof(Element) & 4)
+            delete[] (uint32_t *)(m_data);
+        else
+            delete[] (uint64_t *)(m_data);
     }
 
     ArrayBase(ArrayBase const& that) : m_data(0), m_count(0), m_reserved(0)
@@ -174,15 +181,35 @@ public:
         if (toreserve <= (int)m_reserved)
             return;
 
-        Element *tmp = reinterpret_cast<Element *>
-                               (new uint8_t [sizeof(Element) * toreserve]);
+        Element *tmp;
+        if (sizeof(Element) & 1)
+            tmp = (Element *)
+                              (new uint8_t [sizeof(Element) * toreserve]);
+        else if (sizeof(Element) & 2)
+            tmp = (Element *)
+                              (new uint16_t [sizeof(Element) / 2 * toreserve]);
+        else if (sizeof(Element) & 4)
+            tmp = (Element *)
+                              (new uint32_t [sizeof(Element) / 4 * toreserve]);
+        else
+            tmp = (Element *)
+                              (new uint64_t [sizeof(Element) / 8 * toreserve]);
         for (int i = 0; i < m_count; i++)
         {
             new(&tmp[i]) Element(m_data[i]);
             m_data[i].~Element();
         }
         if (m_data)
-            delete[] reinterpret_cast<uint8_t *>(m_data);
+        {
+            if (sizeof(Element) & 1)
+                delete[] (uint8_t *)(m_data);
+            else if (sizeof(Element) & 2)
+                delete[] (uint16_t *)(m_data);
+            else if (sizeof(Element) & 4)
+                delete[] (uint32_t *)(m_data);
+            else
+                delete[] (uint64_t *)(m_data);
+        }
         m_data = tmp;
         m_reserved = toreserve;
     }
