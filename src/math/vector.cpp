@@ -486,32 +486,25 @@ template<> quat quat::rotate(float angle, float x, float y, float z)
     return quat::rotate(angle, vec3(x, y, z));
 }
 
-template<> quat quat::slerp(quat QuatA, quat QuatB, float const &Scalar)
+template<> quat slerp(quat const &qa, quat const &qb, float f)
 {
-	float magnitude = lol::sqrt(sqlength(QuatA) * sqlength(QuatB));
-	//btAssert(magnitude > btScalar(0));
+    float const magnitude = lol::sqrt(sqlength(qa) * sqlength(qb));
+    float const product = lol::dot(qa, qb) / magnitude;
 
-	float product = lol::dot(QuatA,QuatB) / magnitude;
-	if (product > -1.0f && product < 1.0f)
-	{
-		// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
-		const float sign = (product < 0.0f) ? -1.0f : 1.0f;
+    /* If quaternions are equal or opposite, there is no need
+     * to slerp anything, just return qa. */
+    if (std::abs(product) >= 1.0f)
+        return qa;
 
-		const float theta = lol::acos(sign * product);
-		const float s1 = lol::sin(sign * Scalar * theta);   
-		const float d = 1.0f / lol::sin(theta);
-		const float s0 = lol::sin((1.0f - Scalar) * theta);
+    float const sign = (product < 0.0f) ? -1.0f : 1.0f;
+    float const theta = lol::acos(sign * product);
+    float const s1 = lol::sin(sign * f * theta);
+    float const s0 = lol::sin((1.0f - f) * theta);
 
-		return quat(
-			(QuatA.w * s0 + QuatB.w * s1) * d,
-			(QuatA.x * s0 + QuatB.x * s1) * d,
-			(QuatA.y * s0 + QuatB.y * s1) * d,
-			(QuatA.z * s0 + QuatB.z * s1) * d);
-	}
-	else
-	{
-		return QuatA;
-	}
+    /* This is the same as 1/sin(theta) */
+    float const d = 1.0f / lol::sqrt(1.f - product * product);
+
+    return qa * (s0 * d) + qb * (s1 * d);
 }
 
 template<> vec3 vec3::toeuler(quat const &q)

@@ -934,7 +934,6 @@ template <typename T> struct Quat
 
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
-	static Quat<T> slerp(Quat<T> QuatA,Quat<T> QuatB, float const &Scalar);
 
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
@@ -1019,10 +1018,13 @@ static inline Quat<T> operator /(T x, Quat<T> const &y)
 }
 
 template<typename T>
-static inline Quat<T> operator /(Quat<T> x, Quat<T> const &y)
+static inline Quat<T> operator /(Quat<T> const &x, Quat<T> const &y)
 {
     return x * re(y);
 }
+
+template<typename T>
+extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
 
 /*
  * Common operators for all vector types, including quaternions
