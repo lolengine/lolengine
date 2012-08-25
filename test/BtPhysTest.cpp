@@ -104,9 +104,9 @@ BtPhysTest::BtPhysTest(bool editor)
 
 			if (idx != 1)
 			{
-				vec3 axis = vec3(.0f);
-				axis[2 - idx] = 1;
-				NewRotation = quat::rotate(90.f, axis);
+				vec3 NewAxis = vec3(.0f);
+				NewAxis[2 - idx] = 1;
+				NewRotation = quat::rotate(90.f, NewAxis);
 			}
 
 			NewPhyobj->SetTransform(NewPosition, NewRotation);

@@ -23,6 +23,7 @@
 #ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include "EasyPhysics.h"
+#include "BulletCharacterController.h"
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #endif
 
@@ -82,7 +83,8 @@ protected:
 	virtual btGhostObject* GetGhostObjectInstance();
 
 	btPairCachingGhostObject*		m_pair_caching_object;
-	btKinematicCharacterController*	m_character;
+	//btKinematicCharacterController*	m_character;
+	BulletKinematicCharacterController* m_character;
 
 	float							m_step_height;
 	int								m_up_axis;
