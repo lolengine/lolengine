@@ -118,11 +118,11 @@ public:
 		}
 	}
 
-	//Reap-Off of the btKinematicClosestNotMeRayResultCallback
-	class LolClosestNotMeRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+	//Rip-Off of the btKinematicClosestNotMeRayResultCallback
+	class ClosestNotMeRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
 	{
 	public:
-		LolClosestNotMeRayResultCallback(btCollisionObject* Me, const btVector3& rayFromWorld, const btVector3& rayToWorld) :
+		ClosestNotMeRayResultCallback(btCollisionObject* Me, const btVector3& rayFromWorld, const btVector3& rayToWorld) :
 		  btCollisionWorld::ClosestRayResultCallback(rayFromWorld, rayToWorld)
 		{
 			m_me = Me;
@@ -168,7 +168,7 @@ public:
 			case ERT_Closest:
 			{
 				if (SourceCaster)
-					BtRayResult_Closest = new LolClosestNotMeRayResultCallback(SourceCaster->m_collision_object, LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
+					BtRayResult_Closest = new ClosestNotMeRayResultCallback(SourceCaster->m_collision_object, LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
 				else
 					BtRayResult_Closest = new btCollisionWorld::ClosestRayResultCallback(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo));
 				BtRayResult = BtRayResult_Closest;

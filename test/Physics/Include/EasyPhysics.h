@@ -22,7 +22,7 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
-#endif
+#endif //HAVE_PHYS_USE_BULLET
 
 namespace lol
 {
@@ -156,7 +156,7 @@ protected:
 	Simulation*									m_owner_simulation;
 
 	//Base/Attachment logic
-	Array<EasyPhysic*>							m_based_physic_list;	//List of objects based on this : this object moves, its based object move with it.
+	Array<EasyPhysic*>							m_based_physic_list;	//List of objects based on this : this object moves, its based object MoveStep with it.
 	EasyPhysic*									m_base_physic;			//Base for this object : The base moves, the object moves with it.
 	bool										m_base_lock_location;	//when this is TRUE, location moves with rotation change.
 	bool										m_base_lock_rotation;	//when this is TRUE, rotation moves with rotation change.
