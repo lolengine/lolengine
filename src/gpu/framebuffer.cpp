@@ -86,6 +86,11 @@ FrameBuffer::FrameBuffer(ivec2 size)
     GLenum internal_format = GL_RGBA8;
     GLenum format = GL_BGRA;
     GLenum depth = GL_DEPTH_COMPONENT;
+#   elif defined __CELLOS_LV2__
+    /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
+     * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
+    GLenum internal_format = GL_ARGB_SCE;
+    GLenum format = GL_RGBA;
 #   else
     GLenum internal_format = GL_RGBA;
     GLenum format = GL_RGBA;
