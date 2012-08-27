@@ -192,7 +192,7 @@ Shader::Shader(char const *vert, char const *frag)
     data->vert_crc = Hash::Crc32(vert);
 #if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, NULL, "main",
-                           "vs_2_0", 0, &shader_code, &error_msg,
+                           "vs_3_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
     if (FAILED(hr))
     {
@@ -236,7 +236,7 @@ Shader::Shader(char const *vert, char const *frag)
     data->frag_crc = Hash::Crc32(frag);
 #if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, NULL, "main",
-                           "ps_2_0", 0, &shader_code, &error_msg,
+                           "ps_3_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
     if (FAILED(hr))
     {
