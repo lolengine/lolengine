@@ -24,7 +24,7 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Platform)'=='Xbox 360'">MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;LOL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Release'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -38,7 +38,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;LOL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
     <Link>

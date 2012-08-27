@@ -33,6 +33,9 @@ public:
         todolist(0), autolist(0),
         nentities(0),
         frame(0), recording(0), deltatime(0), bias(0), fps(0),
+#if LOL_DEBUG
+        keepalive(0),
+#endif
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
@@ -70,6 +73,9 @@ private:
     int frame, recording;
     Timer timer;
     float deltatime, bias, fps;
+#if LOL_DEBUG
+    float keepalive;
+#endif
 
     /* Background threads */
     static void *GameThreadMain(void *p);
@@ -154,6 +160,10 @@ int Ticker::Unref(Entity *entity)
 
 void *TickerData::GameThreadMain(void * /* p */)
 {
+#if LOL_DEBUG
+    Log::Info("ticker game thread initialised\n");
+#endif
+
     for (;;)
     {
         int tick = data->gametick.Pop();
@@ -199,6 +209,15 @@ void *TickerData::GameThreadMain(void * /* p */)
             data->deltatime = 1.f / 15.f;
             data->bias = 0.f;
         }
+
+#if LOL_DEBUG
+        data->keepalive += data->deltatime;
+        if (data->keepalive > 10.f)
+        {
+            Log::Info("ticker keepalive: tick!\n");
+            data->keepalive = 0.f;
+        }
+#endif
 
         /* If shutdown is stuck, kick the first entity we meet and see
          * whether it makes things better. Note that it is always a bug to
@@ -302,6 +321,10 @@ void *TickerData::GameThreadMain(void * /* p */)
     }
 
     data->drawtick.Push(0);
+
+#if LOL_DEBUG
+    Log::Info("ticker game thread terminated\n");
+#endif
 
     return NULL;
 }
