@@ -50,7 +50,8 @@
     <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
     <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
-    <GlLibs Condition="'$(Platform)'=='PS3'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\opt</GlLibs>
+    <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Debug'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\debug</GlLibs>
+    <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Release'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\opt</GlLibs>
     <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='PS3'">libPSGL.a;libgcm_cmd.a;libgcm_sys_stub.a;libcgc.a;libPSGLcgc.a</GlDeps>
