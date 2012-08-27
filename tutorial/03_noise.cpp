@@ -50,7 +50,7 @@ public:
         {
             m_shader = Shader::Create(lolfx_03_noise);
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
-            m_time_uni = m_shader->GetUniformLocation("in_Time");
+            m_time_uni = m_shader->GetUniformLocation("u_Time");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
@@ -93,7 +93,6 @@ int main(int argc, char **argv)
     _chdir("../..");
 #endif
 
-    new DebugFps(5, 5);
     new NoiseDemo();
 
     app.Run();
