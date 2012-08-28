@@ -15,40 +15,14 @@ void main(void)
 
 uniform float u_Time;
 
-vec3 noise2d(vec2 p)
+vec4 noise3d(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
 {
-    return vec3(fract(sin(dot(p, vec2(12.3453, -54.3353432))) * 8433.235443),
-                fract(sin(dot(p, vec2(34.23232, 98.03537))) * 8294.5345433),
-                fract(sin(dot(p, vec2(82.91234, -19.243533))) * 2912.454369));
+    vec3 q = vec3(12.3453, -54.3353432, 34.3490432);
+    vec4 s = vec4(dot(p1, q), dot(p2, q), dot(p3, q), dot(p4, q));
+    return fract(sin(54.343909 + s) * 8433.235443);
 }
 
-vec3 noise3d(vec3 p)
-{
-    return vec3(fract(sin(54.343909 + dot(p, vec3(12.3453, -54.3353432, 34.3490432))) * 8433.235443),
-                fract(sin(93.329945 - dot(p, vec3(34.23232, 98.0353743, 90.2390984))) * 8294.5345433),
-                fract(sin(32.039284 + dot(p, vec3(82.91234, -19.243533, 22.3294090))) * 2912.454369));
-}
-
-vec3 perlin2d(vec2 p)
-{
-    vec2 a = floor(p);
-    vec2 d = p - a;
-    d = d * d * (3.0 - 2.0 * d);
-
-    vec3 n1 = noise2d(a);
-    vec3 n2 = noise2d(a + vec2(1.0, 0.0));
-    vec3 n3 = noise2d(a + vec2(0.0, 1.0));
-    vec3 n4 = noise2d(a + vec2(1.0, 1.0));
-
-    vec3 q1 = n2 * d.x + n1 * (1.0 - d.x);
-    vec3 q2 = n4 * d.x + n3 * (1.0 - d.x);
-
-    vec3 q3 = q2 * d.y + q1 * (1.0 - d.y);
-
-    return q3;
-}
-
-vec3 perlin3d(vec3 p)
+float perlin3d(vec3 p)
 {
     mat3 r = mat3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
     p = r * p;
@@ -57,26 +31,19 @@ vec3 perlin3d(vec3 p)
     vec3 d = p - a;
     d = d * d * (3.0 - 2.0 * d);
 
-    vec3 o1 = noise3d(a);
-    vec3 o2 = noise3d(a + vec3(1.0, 0.0, 0.0));
-    vec3 o3 = noise3d(a + vec3(0.0, 1.0, 0.0));
-    vec3 o4 = noise3d(a + vec3(1.0, 1.0, 0.0));
-    vec3 o5 = noise3d(a + vec3(0.0, 0.0, 1.0));
-    vec3 o6 = noise3d(a + vec3(1.0, 0.0, 1.0));
-    vec3 o7 = noise3d(a + vec3(0.0, 1.0, 1.0));
-    vec3 o8 = noise3d(a + vec3(1.0, 1.0, 1.0));
+    vec4 o1 = noise3d(a,
+                      a + vec3(0.0, 1.0, 0.0),
+                      a + vec3(0.0, 0.0, 1.0),
+                      a + vec3(0.0, 1.0, 1.0));
+    vec4 o2 = noise3d(a + vec3(1.0, 0.0, 0.0),
+                      a + vec3(1.0, 1.0, 0.0),
+                      a + vec3(1.0, 0.0, 1.0),
+                      a + vec3(1.0, 1.0, 1.0));
 
-    vec3 n1 = o2 * d.x + o1 * (1.0 - d.x);
-    vec3 n2 = o4 * d.x + o3 * (1.0 - d.x);
-    vec3 n3 = o6 * d.x + o5 * (1.0 - d.x);
-    vec3 n4 = o8 * d.x + o7 * (1.0 - d.x);
+    vec4 o3 = o2 * d.x + o1 * (1.0 - d.x);
+    vec2 o4 = o3.yw * d.y + o3.xz * (1.0 - d.y);
 
-    vec3 q1 = n2 * d.y + n1 * (1.0 - d.y);
-    vec3 q2 = n4 * d.y + n3 * (1.0 - d.y);
-
-    vec3 q3 = q2 * d.z + q1 * (1.0 - d.z);
-
-    return q3;
+    return o4.y * d.z + o4.x * (1.0 - d.z);
 }
 
 void main(void)
@@ -85,22 +52,22 @@ void main(void)
     xy.y -= u_Time * 400.0;
     float z = u_Time * 2.0;
 
-    vec3 p = perlin3d(vec3(xy / 160.0, z)) / 2.0
-           + perlin3d(vec3(xy / 80.0, z + 1.5)) / 4.0
-           + perlin3d(vec3(xy / 40.0, z + 0.3)) / 8.0
-           + perlin3d(vec3(xy / 20.0, z + 3.3)) / 16.0
-           + perlin3d(vec3(xy / 10.0, z + 2.0)) / 32.0
-           + perlin3d(vec3(xy / 5.0, z + 1.7)) / 64.0
-           + perlin3d(vec3(xy / 2.5, z + 4.2)) / 128.0;
+    float p = perlin3d(vec3(xy / 80.0, z + 1.5)) / 2.0
+            + perlin3d(vec3(xy / 40.0, z + 0.3)) / 4.0
+            + perlin3d(vec3(xy / 20.0, z + 3.3)) / 8.0
+            + perlin3d(vec3(xy / 10.0, z + 2.0)) / 16.0;
 
     /* Scroll by adding [-.5,.5] */
     p -= gl_FragCoord.y / 720.0 - 0.5;
     p = max(p, 0.0);
     p = min(p, 1.0);
 
-    p = p * p * (3.0 - 2.0 * p);
-    p = p * p * (3.0 - 2.0 * p);
-    gl_FragColor = vec4(min(p.x * 2.0, 1.0), max(p.x * 1.5 - 0.5, 0.0), 0.0, 1.0);
+    float q = p * p * (3.0 - 2.0 * p);
+    float r = q * q * (3.0 - 2.0 * q);
+    gl_FragColor = vec4(min(q * 2.0, 1.0),
+                        max(r * 1.5 - 0.5, 0.0),
+                        max(q * 8.0 - 7.3, 0.0),
+                        1.0);
 }
 
 -- HLSL.Vert --
@@ -117,40 +84,14 @@ void main(float2 in_Position : POSITION,
 
 -- HLSL.Frag --
 
-float3 noise2d(float2 p)
+float4 noise3d(float3 p1, float3 p2, float3 p3, float3 p4)
 {
-    return float3(frac(sin(dot(p, float2(12.3453, -54.3353432))) * 8433.235443),
-                  frac(sin(dot(p, float2(34.23232, 98.03537))) * 8294.5345433),
-                  frac(sin(dot(p, float2(82.91234, -19.243533))) * 2912.454369));
+    float3 q = float3(12.3453, -54.3353432, 34.3490432);
+    float4 s = float4(dot(p1, q), dot(p2, q), dot(p3, q), dot(p4, q));
+    return frac(sin(54.343909 + s) * 8433.235443);
 }
 
-float3 noise3d(float3 p)
-{
-    return float3(frac(sin(54.343909 + dot(p, float3(12.3453, -54.3353432, 34.3490432))) * 8433.235443),
-                  frac(sin(93.329945 - dot(p, float3(34.23232, 98.0353743, 90.2390984))) * 8294.5345433),
-                  frac(sin(32.039284 + dot(p, float3(82.91234, -19.243533, 22.3294090))) * 2912.454369));
-}
-
-float3 perlin2d(float2 p)
-{
-    float2 a = floor(p);
-    float2 d = p - a;
-    d = d * d * (3.0 - 2.0 * d);
-
-    float3 n1 = noise2d(a);
-    float3 n2 = noise2d(a + float2(1.0, 0.0));
-    float3 n3 = noise2d(a + float2(0.0, 1.0));
-    float3 n4 = noise2d(a + float2(1.0, 1.0));
-
-    float3 q1 = n2 * d.x + n1 * (1.0 - d.x);
-    float3 q2 = n4 * d.x + n3 * (1.0 - d.x);
-
-    float3 q3 = q2 * d.y + q1 * (1.0 - d.y);
-
-    return q3;
-}
-
-float3 perlin3d(float3 p)
+float perlin3d(float3 p)
 {
     float3x3 r = float3x3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
     p = mul(r, p);
@@ -159,26 +100,19 @@ float3 perlin3d(float3 p)
     float3 d = p - a;
     d = d * d * (3.0 - 2.0 * d);
 
-    float3 o1 = noise3d(a);
-    float3 o2 = noise3d(a + float3(1.0, 0.0, 0.0));
-    float3 o3 = noise3d(a + float3(0.0, 1.0, 0.0));
-    float3 o4 = noise3d(a + float3(1.0, 1.0, 0.0));
-    float3 o5 = noise3d(a + float3(0.0, 0.0, 1.0));
-    float3 o6 = noise3d(a + float3(1.0, 0.0, 1.0));
-    float3 o7 = noise3d(a + float3(0.0, 1.0, 1.0));
-    float3 o8 = noise3d(a + float3(1.0, 1.0, 1.0));
+    float4 o1 = noise3d(a,
+                        a + float3(0.0, 1.0, 0.0),
+                        a + float3(0.0, 0.0, 1.0),
+                        a + float3(0.0, 1.0, 1.0));
+    float4 o2 = noise3d(a + float3(1.0, 0.0, 0.0),
+                        a + float3(1.0, 1.0, 0.0),
+                        a + float3(1.0, 0.0, 1.0),
+                        a + float3(1.0, 1.0, 1.0));
 
-    float3 n1 = o2 * d.x + o1 * (1.0 - d.x);
-    float3 n2 = o4 * d.x + o3 * (1.0 - d.x);
-    float3 n3 = o6 * d.x + o5 * (1.0 - d.x);
-    float3 n4 = o8 * d.x + o7 * (1.0 - d.x);
+    float4 o3 = o2 * d.x + o1 * (1.0 - d.x);
+    float2 o4 = o3.yw * d.y + o3.xz * (1.0 - d.y);
 
-    float3 q1 = n2 * d.y + n1 * (1.0 - d.y);
-    float3 q2 = n4 * d.y + n3 * (1.0 - d.y);
-
-    float3 q3 = q2 * d.z + q1 * (1.0 - d.z);
-
-    return q3;
+    return o4.y * d.z + o4.x * (1.0 - d.z);
 }
 
 void main(in float2 pass_Position : TEXCOORD0,
@@ -189,20 +123,20 @@ void main(in float2 pass_Position : TEXCOORD0,
     xy.y -= u_Time * 400.0;
     float z = u_Time * 2.0;
 
-    float3 p = perlin3d(float3(xy / 160.0, z)) / 2.0
-             + perlin3d(float3(xy / 80.0, z + 1.5)) / 4.0
-             + perlin3d(float3(xy / 40.0, z + 0.3)) / 8.0
-             + perlin3d(float3(xy / 20.0, z + 3.3)) / 16.0
-             + perlin3d(float3(xy / 10.0, z + 2.0)) / 32.0
-             + perlin3d(float3(xy / 5.0, z + 1.7)) / 64.0
-             + perlin3d(float3(xy / 2.5, z + 4.2)) / 128.0;
+    float p = perlin3d(float3(xy / 80.0, z + 1.5)) / 2.0
+            + perlin3d(float3(xy / 40.0, z + 0.3)) / 4.0
+            + perlin3d(float3(xy / 20.0, z + 3.3)) / 8.0
+            + perlin3d(float3(xy / 10.0, z + 2.0)) / 16.0;
 
     /* Scroll by adding [-.5,.5] */
     p -= pass_Position.y / 1440.0;
     p = max(p, 0.0);
     p = min(p, 1.0);
 
-    p = p * p * (3.0 - 2.0 * p);
-    p = p * p * (3.0 - 2.0 * p);
-    out_FragColor = float4(min(p.x * 2.0, 1.0), max(p.x * 1.5 - 0.5, 0.0), 0.0, 1.0);
+    float q = p * p * (3.0 - 2.0 * p);
+    float r = q * q * (3.0 - 2.0 * q);
+    out_FragColor = float4(min(q * 2.0, 1.0),
+                           max(r * 1.5 - 0.5, 0.0),
+                           max(q * 8.0 - 7.3, 0.0),
+                           1.0);
 }
