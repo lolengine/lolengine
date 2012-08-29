@@ -127,9 +127,9 @@ transform_command:
   | T_TAPERX args3      { mc.m_mesh.TaperX($2.f0, $2.f1, $2.f2); }
   | T_TAPERY args3      { mc.m_mesh.TaperY($2.f0, $2.f1, $2.f2); }
   | T_TAPERZ args3      { mc.m_mesh.TaperZ($2.f0, $2.f1, $2.f2); }
-  | T_SCALEX args1      { mc.m_mesh.Scale(vec3($2.f0, 0, 0)); }
-  | T_SCALEY args1      { mc.m_mesh.Scale(vec3(0, $2.f0, 0)); }
-  | T_SCALEZ args1      { mc.m_mesh.Scale(vec3(0, 0, $2.f0)); }
+  | T_SCALEX args1      { mc.m_mesh.Scale(vec3($2.f0, 1.0, 1.0)); }
+  | T_SCALEY args1      { mc.m_mesh.Scale(vec3(1.0, $2.f0, 1.0)); }
+  | T_SCALEZ args1      { mc.m_mesh.Scale(vec3(1.0, 1.0, $2.f0)); }
   | T_SCALE args3       { mc.m_mesh.Scale(vec3($2.f0, $2.f1, $2.f2)); }
   | T_MIRRORX           { mc.m_mesh.MirrorX(); }
   | T_MIRRORY           { mc.m_mesh.MirrorY(); }

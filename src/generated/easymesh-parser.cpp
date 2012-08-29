@@ -590,21 +590,21 @@ namespace lol {
 
 /* Line 690 of lalr1.cc  */
 #line 130 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].args).f0, 0, 0)); }
+    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].args).f0, 1.0, 1.0)); }
     break;
 
   case 30:
 
 /* Line 690 of lalr1.cc  */
 #line 131 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3(0, (yysemantic_stack_[(2) - (2)].args).f0, 0)); }
+    { mc.m_mesh.Scale(vec3(1.0, (yysemantic_stack_[(2) - (2)].args).f0, 1.0)); }
     break;
 
   case 31:
 
 /* Line 690 of lalr1.cc  */
 #line 132 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3(0, 0, (yysemantic_stack_[(2) - (2)].args).f0)); }
+    { mc.m_mesh.Scale(vec3(1.0, 1.0, (yysemantic_stack_[(2) - (2)].args).f0)); }
     break;
 
   case 32:
