@@ -1229,6 +1229,14 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
             ret += a[n] * b[n]; \
         return ret; \
+    } \
+    tprefix \
+    inline tname<tf> lerp(tname<t1> const &a, tname<t2> const &b, tf x) \
+    { \
+        tname<tf> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
+            ret[n] = a[n] + (a[n] - b[n]) * x; \
+        return ret; \
     }
 
 #define DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \

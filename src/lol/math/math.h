@@ -64,6 +64,16 @@ static inline void sincos(float const &x, float *s, float *c)
     *c = std::cos(x);
 }
 
+static inline double lerp(double const &a, double const &b, double const &x)
+{
+	return a + (b - a) * x;
+}
+static inline float lerp(float const &a, float const &b, float const &x)
+{
+	return a + (b - a) * x;
+}
+
+
 /* These accelerated functions will be merged into the above, one day */
 double lol_sin(double);
 double lol_cos(double);
