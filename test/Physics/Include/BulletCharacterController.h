@@ -35,6 +35,45 @@ namespace lol
 #ifdef USE_LOL_CTRLR_CHARAC
 #ifdef HAVE_PHYS_USE_BULLET
 
+	//SweepCallback used for Swweep Tests.
+	class ClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
+	{
+	public:
+		ClosestNotMeConvexResultCallback(btCollisionObject* NewMe, const vec3& NewUp, float MinSlopeDot) :
+						btCollisionWorld::ClosestConvexResultCallback(LOL2BTU_VEC3(vec3(.0f)), LOL2BTU_VEC3(vec3(.0f))),
+						m_me(NewMe),
+						m_up(NewUp),
+						m_min_slope_dot(MinSlopeDot) { }
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& ConvexResult, bool NormalInWorld)
+		{
+			//We hit ourselves, FAIL
+			if (ConvexResult.m_hitCollisionObject == m_me)
+				return btScalar(1.f);
+
+			vec3 WorldHitNomal(.0f);
+			if (NormalInWorld)
+				WorldHitNomal = BT2LOL_VEC3(ConvexResult.m_hitNormalLocal);
+			else //need to transform Normal into worldspace
+			{
+				btVector3 TmpWorldHitNormal = ConvexResult.m_hitCollisionObject->getWorldTransform().getBasis() * ConvexResult.m_hitNormalLocal;
+				WorldHitNomal = BT2LOL_VEC3(TmpWorldHitNormal);
+			}
+
+			float DotUp = dot(m_up, WorldHitNomal);
+			//We hit below the accepted slope_dot, FAIL
+			if (DotUp < m_min_slope_dot)
+				return btScalar(1.f);
+
+			//Continue to next.
+			return ClosestConvexResultCallback::addSingleResult(ConvexResult, NormalInWorld);
+		}
+	protected:
+		btCollisionObject*	m_me;
+		const vec3			m_up;
+		float				m_min_slope_dot;
+	};
+
 		///BulletKinematicCharacterController is an object that supports a sliding motion in a world.
 		///It uses a ghost object and convex sweep test to test for upcoming collisions. This is combined with discrete collision detection to recover from penetrations.
 		///Interaction between btKinematicCharacterController and dynamic rigid bodies needs to be explicity implemented by the user.
@@ -44,7 +83,7 @@ namespace lol
 			BulletKinematicCharacterController(btPairCachingGhostObject* NewGhostObject, btConvexShape* NewConvexShape, float NewStepHeight, int NewUpAxis=1)
 			{
 				m_convex_shape = NewConvexShape;	
-				m_up_axis = NewUpAxis;
+				m_i_up_axis = NewUpAxis;
 				m_ghost_object = NewGhostObject;
 				m_step_height = NewStepHeight;
 
@@ -56,7 +95,7 @@ namespace lol
 				m_velocity_time_interval = .0f;
 				m_vertical_velocity = .0f;
 				m_vertical_offset = .0f;
-				m_gravity = 9.8f * 3.f; // 3G acceleration.
+				m_f_gravity = 9.8f * 3.f; // 3G acceleration.
 				m_fall_speed = 55.f; // Terminal velocity of a sky diver in m/s.
 				m_jump_speed = 10.f; // ?
 				m_was_on_ground = false;
@@ -102,9 +141,7 @@ namespace lol
 			//"Real" war functions
 			bool RecoverFromPenetration(btCollisionWorld* CollisionWorld);
 			void UpdateTargetOnHit(const vec3& hit_normal, float TangentMag = .0f, float NormalMag = 1.f);
-			void StepUp(btCollisionWorld* CollisionWorld);
-			void StepForwardAndStrafe(btCollisionWorld* CollisionWorld, const vec3& MoveStep);
-			void StepDown(btCollisionWorld* CollisionWorld, float DeltaTime);
+			void DoMove(btCollisionWorld* CollisionWorld, const vec3& MoveStep, float DeltaTime);
 
 		public:
 			///btActionInterface interface : KEEP IN camelCase
@@ -127,7 +164,7 @@ namespace lol
 					NewAxis = 0;
 				if (NewAxis > 2)
 					NewAxis = 2;
-				m_up_axis = NewAxis;
+				m_i_up_axis = NewAxis;
 			}
 
 			//!!!!!! SHOULD DITCH THAT !!!!!!
@@ -178,8 +215,8 @@ namespace lol
 			void Jump();
 
 			//NewGravity functions
-			void SetGravity(float NewGravity)				{ m_gravity = NewGravity; }
-			float GetGravity() const						{ return m_gravity; }
+			void SetGravity(float NewGravity)				{ m_f_gravity = NewGravity; }
+			float GetGravity() const						{ return m_f_gravity; }
 
 			//The max slope determines the maximum angle that the controller can walk up.
 			//The slope angle is measured in radians.
@@ -207,7 +244,7 @@ namespace lol
 			float						m_max_jump_height;
 			float						m_max_slope_radians; // Slope angle that is set (used for returning the exact value)
 			float						m_max_slope_cosine;  // Cosine equivalent of m_max_slope_radians (calculated once when set, for optimization)
-			float						m_gravity;
+			float						m_f_gravity;
 			float						m_turn_angle;
 			float						m_step_height;
 			float						m_added_margin;//@todo: remove this and fix the code
@@ -228,7 +265,17 @@ namespace lol
 			bool 						m_was_jumping;
 			bool						m_do_gobject_sweep_test;
 			bool						m_use_walk_direction;
-			int							m_up_axis;
+			int							m_i_up_axis;
+
+			//---------------------------------------------------------------------
+			//NEW INTERNAL VARS
+			//---------------------------------------------------------------------
+
+			//Gravity in vec3
+			vec3						m_gravity;
+
+			//Current Velocity
+			vec3						m_velocity;
 		};
 
 #endif // HAVE_PHYS_USE_BULLET

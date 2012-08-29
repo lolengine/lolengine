@@ -96,12 +96,18 @@ public:
 	{
 		Array<char const *> MeshRand;
 
-		MeshRand << "[sc#add afcb2 2 2 -.1]";
-		MeshRand << "[sc#dad afcb2 2 2 -.1]";
-		MeshRand << "[sc#dda afcb2 2 2 -.1]";
-		MeshRand << "[sc#daa afcb2 2 2 -.1]";
-		MeshRand << "[sc#ada afcb2 2 2 -.1]";
-		MeshRand << "[sc#aad afcb2 2 2 -.1]";
+		//MeshRand << "[sc#add afcb2 2 2 -.1]";
+		//MeshRand << "[sc#dad afcb2 2 2 -.1]";
+		//MeshRand << "[sc#dda afcb2 2 2 -.1]";
+		//MeshRand << "[sc#daa afcb2 2 2 -.1]";
+		//MeshRand << "[sc#ada afcb2 2 2 -.1]";
+		//MeshRand << "[sc#aad afcb2 2 2 -.1]";
+		MeshRand << "[sc#add afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
+		MeshRand << "[sc#dad afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
+		MeshRand << "[sc#dda afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
+		MeshRand << "[sc#daa afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
+		MeshRand << "[sc#ada afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
+		MeshRand << "[sc#aad afcb1.7 1.7 1.7 0][sc#000 afcb1.9 1.9 1.9 0 sx-1 sy-1 sz-1]";
 
 		int SphereLimit = MeshRand.Count();
 

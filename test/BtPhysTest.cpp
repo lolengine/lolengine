@@ -52,14 +52,16 @@ int gNumObjects = 64;
 #define USE_WALL		1
 #define USE_PLATFORM	1
 #define USE_ROPE		0
-#define USE_BODIES		0
+#define USE_BODIES		1
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
 
 #define	IPT_MOVE_FORWARD		"Move_Forward"
 #define	IPT_MOVE_BACKWARD		"Move_Backward"
-#define	IPT_MOVE_STRAFE_LEFT	"Strafe_Left"
-#define	IPT_MOVE_STRAFE_RIGHT	"Strafe_right"
+#define	IPT_MOVE_LEFT			"Move_Left"
+#define	IPT_MOVE_RIGHT			"Move_Right"
+#define	IPT_MOVE_UP				"Move_Up"
+#define	IPT_MOVE_DOWN			"Move_Down"
 #define	IPT_MOVE_JUMP			"Move_Jump"
 
 BtPhysTest::BtPhysTest(bool editor)
@@ -171,9 +173,11 @@ BtPhysTest::BtPhysTest(bool editor)
 
 		Input::LinkActionToKey(IPT_MOVE_FORWARD,		Key::Up);
 		Input::LinkActionToKey(IPT_MOVE_BACKWARD,		Key::Down);
-		Input::LinkActionToKey(IPT_MOVE_STRAFE_LEFT,	Key::Left);
-		Input::LinkActionToKey(IPT_MOVE_STRAFE_RIGHT,	Key::Right);
+		Input::LinkActionToKey(IPT_MOVE_LEFT,			Key::Left);
+		Input::LinkActionToKey(IPT_MOVE_RIGHT,			Key::Right);
 		Input::LinkActionToKey(IPT_MOVE_JUMP,			Key::Space);
+		Input::LinkActionToKey(IPT_MOVE_UP,				Key::PageUp);
+		Input::LinkActionToKey(IPT_MOVE_DOWN,			Key::PageDown);
 
 		//NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
 	}
@@ -314,9 +318,9 @@ void BtPhysTest::TickGame(float seconds)
 			EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
 			mat4 CtlrMx = Character->GetTransform();
 			
-			int HMovement = Input::GetStatus(IPT_MOVE_STRAFE_RIGHT) - Input::GetStatus(IPT_MOVE_STRAFE_LEFT);
+			int HMovement = Input::GetStatus(IPT_MOVE_RIGHT) - Input::GetStatus(IPT_MOVE_LEFT);
 			int VMovement = Input::GetStatus(IPT_MOVE_FORWARD) - Input::GetStatus(IPT_MOVE_BACKWARD);
-			int RMovement = 0;//Input::GetButtonState(280 /*SDLK_PAGEUP*/) - Input::GetButtonState(281 /*SDLK_PAGEDOWN*/);
+			int RMovement = Input::GetStatus(IPT_MOVE_UP) - Input::GetStatus(IPT_MOVE_DOWN);
 			vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
 
 			if (Input::WasReleased(IPT_MOVE_JUMP))
