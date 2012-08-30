@@ -4,6 +4,7 @@
 *.a
 *.la
 *.exe
+*.so
 *.elf
 *.self
 *.nexe
