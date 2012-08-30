@@ -15,11 +15,23 @@ void main(void)
 
 uniform float u_Time;
 
+vec3 mod289(vec3 x)
+{
+    return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec3 perm(vec3 x)
+{
+    return mod289(((x * 34.0) + 1.0) * x);
+}
+
 vec4 noise3d(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
 {
-    vec3 q = vec3(12.3453, -54.3353432, 34.3490432);
-    vec4 s = vec4(dot(p1, q), dot(p2, q), dot(p3, q), dot(p4, q));
-    return fract(sin(54.343909 + s) * 8433.235443);
+    p1 = perm(perm(perm(p1) + p1.zxy) + p1.yzx);
+    p2 = perm(perm(perm(p2) + p2.zxy) + p2.yzx);
+    p3 = perm(perm(perm(p3) + p3.zxy) + p3.yzx);
+    p4 = perm(perm(perm(p4) + p4.zxy) + p4.yzx);
+    return fract(vec4(p1.x, p2.x, p3.x, p4.x) / 41.0);
 }
 
 float perlin3d(vec3 p)
@@ -84,11 +96,23 @@ void main(float2 in_Position : POSITION,
 
 -- HLSL.Frag --
 
+float3 mod289(float3 x)
+{
+    return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+float3 perm(float3 x)
+{
+    return mod289(((x * 34.0) + 1.0) * x);
+}
+
 float4 noise3d(float3 p1, float3 p2, float3 p3, float3 p4)
 {
-    float3 q = float3(12.3453, -54.3353432, 34.3490432);
-    float4 s = float4(dot(p1, q), dot(p2, q), dot(p3, q), dot(p4, q));
-    return frac(sin(54.343909 + s) * 8433.235443);
+    p1 = perm(perm(perm(p1) + p1.zxy) + p1.yzx);
+    p2 = perm(perm(perm(p2) + p2.zxy) + p2.yzx);
+    p3 = perm(perm(perm(p3) + p3.zxy) + p3.yzx);
+    p4 = perm(perm(perm(p4) + p4.zxy) + p4.yzx);
+    return frac(float4(p1.x, p2.x, p3.x, p4.x) / 41.0);
 }
 
 float perlin3d(float3 p)
