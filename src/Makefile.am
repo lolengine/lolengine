@@ -50,6 +50,7 @@ liblol_a_SOURCES = \
     gpu/framebuffer.cpp gpu/framebuffer.h \
     \
     gpu/defaultmaterial.lolfx \
+    gpu/tile.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
     \
