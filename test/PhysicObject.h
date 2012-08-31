@@ -81,13 +81,27 @@ public:
 				"]"
 				" ty-.1 tx.05]"
 				);
-			vec3 BoxSize = vec3(.5f, 2.f, .5f);
+			vec3 BoxSize = vec3(1.f, 2.f, 1.f);
 			m_character->SetCollisionChannel(0, 0xFF);
 			m_character->SetShapeToCapsule(BoxSize.x, BoxSize.y);
 			m_character->SetMass(.0f);
+			m_character->SetStepHeight(1.f);
 			m_character->SetTransform(base_location, base_rotation);
 			m_character->InitBodyToGhost();
 			m_character->AddToSimulation(new_sim);
+		}
+		else if (dummy == 3) //for Stairs purpose
+		{
+			m_physics = new EasyPhysic(this);
+
+			m_mesh.Compile("[sc#aae afcb4 .25 4 -.01]");
+			vec3 BoxSize = vec3(4.f, .25f, 4.f);
+			m_physics->SetCollisionChannel(0, 0xFF);
+			m_physics->SetShapeToBox(BoxSize);
+			m_physics->SetMass(.0f);
+			m_physics->SetTransform(base_location, base_rotation);
+			m_physics->InitBodyToRigid(true);
+			m_physics->AddToSimulation(new_sim);
 		}
 	}
 

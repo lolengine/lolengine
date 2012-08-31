@@ -30,6 +30,7 @@ private:
 	Array<PhysicsObject*>				m_ground_list;
 	Array<PhysicsObject*>				m_platform_list;
 	Array<PhysicsObject*>				m_character_list;
+	Array<PhysicsObject*>				m_stairs_list;
 
 	float								m_loop_value;
 };
