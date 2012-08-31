@@ -1,0 +1,100 @@
+-- GLSL.Vert --
+
+#version 130
+
+attribute vec3 in_Vertex;
+attribute vec4 in_Color;
+varying vec4 pass_Color;
+
+uniform mat4 proj_matrix;
+uniform mat4 view_matrix;
+uniform mat4 model_matrix;
+
+void main()
+{
+    gl_Position = proj_matrix * view_matrix * model_matrix
+                * vec4(in_Vertex, 1.0);
+    pass_Color = in_Color;
+}
+
+-- GLSL.Frag --
+
+#version 130
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+varying vec4 pass_Color;
+
+mat4 bayer = mat4( 0.0, 12.0,  3.0, 15.0,
+                   8.0,  4.0, 11.0,  7.0,
+                   2.0, 14.0,  1.0, 13.0,
+                  10.0,  6.0,  9.0,  5.0);
+
+mat4 cluster = mat4(12.0,  5.0,  6.0, 13.0,
+                     4.0,  0.0,  1.0,  7.0,
+                    11.0,  3.0,  2.0,  8.0,
+                    15.0, 10.0,  9.0, 14.0);
+
+void main()
+{
+    vec4 col = pass_Color;
+    float t = cluster[int(mod(gl_FragCoord.x, 4.0))]
+                     [int(mod(gl_FragCoord.y, 4.0))];
+    t = (t + 0.5) / 17.0;
+    col.x += fract(t - col.x) - t;
+    col.y += fract(t - col.y) - t;
+    col.z += fract(t - col.z) - t;
+    gl_FragColor = col;
+}
+
+-- HLSL.Vert --
+
+void main(float4 in_Vertex : POSITION,
+          float4 in_Color : COLOR,
+          uniform float4x4 proj_matrix,
+          uniform float4x4 view_matrix,
+          uniform float4x4 model_matrix,
+          out float4 out_Color : COLOR,
+          out float4 out_Position : POSITION)
+{
+    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Vertex)));
+    out_Color = in_Color;
+}
+
+-- HLSL.Frag --
+
+float4x4 bayer = float4x4( 0.0, 12.0,  3.0, 15.0,
+                           8.0,  4.0, 11.0,  7.0,
+                           2.0, 14.0,  1.0, 13.0,
+                          10.0,  6.0,  9.0,  5.0);
+
+#if 1
+float4x4 cluster = float4x4(12.0,  5.0,  6.0, 13.0,
+                             4.0,  0.0,  1.0,  7.0,
+                            11.0,  3.0,  2.0,  8.0,
+                            15.0, 10.0,  9.0, 14.0);
+#endif
+
+void main(float4 in_Color : COLOR,
+          float4 in_FragCoord : WPOS,
+          out float4 out_FragColor : COLOR)
+{
+    float4 col = in_Color;
+#if 1
+    int x = (int)in_FragCoord.x;
+    int y = (int)in_FragCoord.y;
+
+    // FIXME: we cannot address this matrix directly on the PS3
+    float t = bayer[int(frac(x * 0.25) * 4.0)]
+                   [int(frac(y * 0.25) * 4.0)];
+
+    t = (t + 0.5) / 17.0;
+    col.x += frac(t - col.x) - t;
+    col.y += frac(t - col.y) - t;
+    col.z += frac(t - col.z) - t;
+#endif
+    out_FragColor = col;
+}
+
