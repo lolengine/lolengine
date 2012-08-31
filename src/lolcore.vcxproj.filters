@@ -70,9 +70,6 @@
     <ClCompile Include="debug\fps.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="debug\quad.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
     <ClCompile Include="debug\record.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
@@ -637,9 +634,6 @@
       <Filter>src\image</Filter>
     </ClInclude>
     <ClInclude Include="debug\fps.h">
-      <Filter>src\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="debug\quad.h">
       <Filter>src\debug</Filter>
     </ClInclude>
     <ClInclude Include="debug\record.h">
