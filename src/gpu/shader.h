@@ -64,7 +64,6 @@ class Shader
 {
 public:
     static Shader *Create(char const *lolfx);
-    static Shader *Create(char const *vert, char const *frag);
     static void Destroy(Shader *shader);
 
     ShaderAttrib GetAttribLocation(char const *attr, struct VertexUsage usage,

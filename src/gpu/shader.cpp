@@ -131,17 +131,6 @@ Shader *Shader::Create(char const *lolfx)
 #endif
     }
 
-    Shader *ret = NULL;
-    if (vert && frag)
-        ret = Create(vert, frag);
-
-    delete[] src;
-
-    return ret;
-}
-
-Shader *Shader::Create(char const *vert, char const *frag)
-{
     uint32_t new_vert_crc = Hash::Crc32(vert);
     uint32_t new_frag_crc = Hash::Crc32(frag);
 
@@ -149,12 +138,17 @@ Shader *Shader::Create(char const *vert, char const *frag)
     {
         if (ShaderData::shaders[n]->data->vert_crc == new_vert_crc
              && ShaderData::shaders[n]->data->frag_crc == new_frag_crc)
+        {
+            delete[] src;
             return ShaderData::shaders[n];
+        }
     }
 
     Shader *ret = new Shader(vert, frag);
     ShaderData::shaders[ShaderData::nshaders] = ret;
     ShaderData::nshaders++;
+
+    delete[] src;
     return ret;
 }
 
