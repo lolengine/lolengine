@@ -17,6 +17,8 @@
 
 using namespace std;
 
+extern char const *lolfx_gradient;
+
 namespace lol
 {
 
@@ -74,99 +76,8 @@ void Gradient::TickDraw(float seconds)
 
     if (!data->shader)
     {
-#if !defined __CELLOS_LV2__ && !defined USE_D3D9 && !defined _XBOX
-        data->shader = Shader::Create(
-            "#version 130\n"
-            "\n"
-            "in vec3 in_Vertex;\n"
-            "in vec4 in_Color;\n"
-            "out vec4 pass_Color;\n"
-            "\n"
-            "uniform mat4 proj_matrix;\n"
-            "uniform mat4 view_matrix;\n"
-            "uniform mat4 model_matrix;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = proj_matrix * view_matrix * model_matrix"
-            "                * vec4(in_Vertex, 1.0);\n"
-            "    pass_Color = in_Color;\n"
-            "}\n",
+        data->shader = Shader::Create(lolfx_gradient);
 
-            "#version 130\n"
-            "\n"
-            "in vec4 pass_Color;\n"
-            "\n"
-            "mat4 bayer = mat4( 0.0, 12.0,  3.0, 15.0,"
-            "                   8.0,  4.0, 11.0,  7.0,"
-            "                   2.0, 14.0,  1.0, 13.0,"
-            "                  10.0,  6.0,  9.0,  5.0);\n"
-            ""
-            "mat4 cluster = mat4(12.0,  5.0,  6.0, 13.0,"
-            "                     4.0,  0.0,  1.0,  7.0,"
-            "                    11.0,  3.0,  2.0,  8.0,"
-            "                    15.0, 10.0,  9.0, 14.0);\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    vec4 col = pass_Color;\n"
-            "    float t = cluster[int(mod(gl_FragCoord.x, 4.0))]"
-            "                     [int(mod(gl_FragCoord.y, 4.0))];\n"
-            "    t = (t + 0.5) / 17.0;\n"
-            "    col.x += fract(t - col.x) - t;\n"
-            "    col.y += fract(t - col.y) - t;\n"
-            "    col.z += fract(t - col.z) - t;\n"
-            "    gl_FragColor = col;\n"
-            "}\n");
-#else
-        data->shader = Shader::Create(
-            "void main(float4 in_Vertex : POSITION,"
-            "          float4 in_Color : COLOR,"
-            "          uniform float4x4 proj_matrix,"
-            "          uniform float4x4 view_matrix,"
-            "          uniform float4x4 model_matrix,"
-            "          out float4 out_Color : COLOR,"
-            "          out float4 out_Position : POSITION)"
-            "{"
-            "    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Vertex)));"
-            "    out_Color = in_Color;"
-            "}",
-
-            "float4x4 bayer = float4x4( 0.0, 12.0,  3.0, 15.0,"
-            "                           8.0,  4.0, 11.0,  7.0,"
-            "                           2.0, 14.0,  1.0, 13.0,"
-            "                          10.0,  6.0,  9.0,  5.0);\n"
-            ""
-#if 1
-            "float4x4 cluster = float4x4(12.0,  5.0,  6.0, 13.0,"
-            "                             4.0,  0.0,  1.0,  7.0,"
-            "                            11.0,  3.0,  2.0,  8.0,"
-            "                            15.0, 10.0,  9.0, 14.0);\n"
-#endif
-            "\n"
-            "void main(float4 in_Color : COLOR,"
-            "          float4 in_FragCoord : WPOS,"
-            "          out float4 out_FragColor : COLOR)"
-            "{"
-            "    float4 col = in_Color;"
-#if 1
-            "    int x = (int)in_FragCoord.x;"
-            "    int y = (int)in_FragCoord.y;"
-#if defined USE_D3D9 || defined _XBOX
-            "    float t = bayer[int(frac(x * 0.25) * 4.0)]"
-            "                   [int(frac(y * 0.25) * 4.0)];\n"
-#else
-            // FIXME: we cannot address this matrix directly on the PS3
-            "    float t = bayer[0][0];\n"
-#endif
-            "    t = (t + 0.5) / 17.0;\n"
-            "    col.x += frac(t - col.x) - t;\n"
-            "    col.y += frac(t - col.y) - t;\n"
-            "    col.z += frac(t - col.z) - t;\n"
-#endif
-            "    out_FragColor = col;"
-            "}");
-#endif
         data->m_vbo = new VertexBuffer(sizeof(vertex));
         data->m_cbo = new VertexBuffer(sizeof(color));
 

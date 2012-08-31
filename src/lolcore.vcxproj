@@ -619,6 +619,7 @@
     <LolFxCompile Include="gpu\emptymaterial.lolfx" />
     <LolFxCompile Include="gpu\testmaterial.lolfx" />
     <LolFxCompile Include="gpu\tile.lolfx" />
+    <LolFxCompile Include="gradient.lolfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y" />
