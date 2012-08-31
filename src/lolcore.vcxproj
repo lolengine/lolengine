@@ -235,7 +235,6 @@
     <ClCompile Include="bullet\LinearMath\btSerializer.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debug\fps.cpp" />
-    <ClCompile Include="debug\quad.cpp" />
     <ClCompile Include="debug\record.cpp" />
     <ClCompile Include="debug\sphere.cpp" />
     <ClCompile Include="debug\stats.cpp" />
@@ -548,7 +547,6 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="debug\fps.h" />
-    <ClInclude Include="debug\quad.h" />
     <ClInclude Include="debug\record.h" />
     <ClInclude Include="debug\sphere.h" />
     <ClInclude Include="debug\stats.h" />
