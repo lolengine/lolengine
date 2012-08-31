@@ -55,6 +55,7 @@ int gNumObjects = 64;
 #define USE_BODIES		1
 #define USE_ROTATION	0
 #define USE_CHARACTER	1
+#define USE_STAIRS		1
 
 #define	IPT_MOVE_FORWARD		"Move_Forward"
 #define	IPT_MOVE_BACKWARD		"Move_Backward"
@@ -90,6 +91,39 @@ BtPhysTest::BtPhysTest(bool editor)
 
 	float offset = 29.5f;
 	vec3 pos_offset = vec3(.0f, 30.f, .0f);
+	if (USE_STAIRS)
+	{
+		vec3 new_offset = vec3(1.0f, .125f, .0f);
+		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
+		vec3 NewPosition = pos_offset + vec3(5.0f, -29.f, 15.0f);
+		{
+			NewRotation = quat::fromeuler_xyz(0.f, 0.f, 30.f);
+			NewPosition += vec3(4.0f, .0f, -4.0f);
+
+			PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
+			Ticker::Ref(NewPhyobj);
+			m_stairs_list << NewPhyobj;
+		}
+		{
+			NewRotation = quat::fromeuler_xyz(0.f, 0.f, 40.f);
+			NewPosition += vec3(4.0f, .0f, -4.0f);
+
+			PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
+			Ticker::Ref(NewPhyobj);
+			m_stairs_list << NewPhyobj;
+		}
+		NewPosition = pos_offset + vec3(5.0f, -29.5f, 15.0f);
+		NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
+		for (int i=0; i < 15; i++)
+		{
+			NewPosition += new_offset;
+
+			PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
+			Ticker::Ref(NewPhyobj);
+			m_stairs_list << NewPhyobj;
+		}
+	}
+
 	if (USE_WALL)
 	{
 		for (int i=0; i < 6; i++)
@@ -163,7 +197,7 @@ BtPhysTest::BtPhysTest(bool editor)
 	if (USE_CHARACTER)
 	{
 		quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
-		vec3 NewPosition = pos_offset + vec3(-15.0f, -10.0f, .0f);
+		vec3 NewPosition = pos_offset + vec3(-5.0f, -10.0f, 15.0f);
 
 		PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
 
@@ -404,6 +438,13 @@ BtPhysTest::~BtPhysTest()
 	{
 		PhysicsObject* CurPop = m_ground_list.Last();
 		m_ground_list.Pop();
+		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+		Ticker::Unref(CurPop);
+	}
+	while (m_stairs_list.Count())
+	{
+		PhysicsObject* CurPop = m_stairs_list.Last();
+		m_stairs_list.Pop();
 		CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
 		Ticker::Unref(CurPop);
 	}
