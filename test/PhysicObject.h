@@ -85,7 +85,7 @@ public:
 			m_character->SetCollisionChannel(0, 0xFF);
 			m_character->SetShapeToCapsule(BoxSize.x, BoxSize.y);
 			m_character->SetMass(.0f);
-			m_character->SetStepHeight(1.f);
+			//m_character->SetStepHeight(1.f);
 			m_character->SetTransform(base_location, base_rotation);
 			m_character->InitBodyToGhost();
 			m_character->AddToSimulation(new_sim);
