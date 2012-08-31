@@ -22,6 +22,8 @@
 #include "core.h"
 #include "lolgl.h"
 
+extern char const *lolfx_tile;
+
 namespace lol
 {
 
@@ -150,148 +152,7 @@ void Scene::Render() // XXX: rename to Blit()
         return;
 
     if (!data->m_shader)
-    {
-#if !defined _XBOX && !defined __CELLOS_LV2__ && !defined USE_D3D9
-        data->m_shader = Shader::Create(
-#   if !defined HAVE_GLES_2X
-            "#version 130\n"
-#   endif
-            "\n"
-#   if defined HAVE_GLES_2X
-            "attribute vec3 in_Position;\n"
-            "attribute vec2 in_TexCoord;\n"
-            "varying vec2 pass_TexCoord;\n"
-#   else
-            "in vec3 in_Position;\n"
-            "in vec2 in_TexCoord;\n"
-#   endif
-            "uniform mat4 proj_matrix;\n"
-            "uniform mat4 view_matrix;\n"
-            "uniform mat4 model_matrix;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = proj_matrix * view_matrix * model_matrix"
-            "                * vec4(in_Position, 1.0);\n"
-#   if defined HAVE_GLES_2X
-            "    pass_TexCoord = in_TexCoord;\n"
-#   else
-            "    gl_TexCoord[0] = vec4(in_TexCoord, 0.0, 0.0);\n"
-#   endif
-            "}\n",
-
-#   if !defined HAVE_GLES_2X
-            "#version 130\n"
-#   else
-            "precision mediump float;\n"
-#   endif
-            "\n"
-            "uniform sampler2D in_Texture;\n"
-#   if defined HAVE_GLES_2X
-            "varying vec2 pass_TexCoord;\n"
-#   endif
-            "\n"
-            "void main()\n"
-            "{\n"
-#   if defined HAVE_GLES_2X
-            "    vec4 col = texture2D(in_Texture, pass_TexCoord);\n"
-            //"    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);\n"
-            //"    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);\n"
-#   else
-            "    vec4 col = texture2D(in_Texture, vec2(gl_TexCoord[0]));\n"
-#   endif
-#   if 0
-            "    float mul = 2.0;\n"
-#       if 1
-            "    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));\n"
-            "    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);\n"
-            "    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);\n"
-            "    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);\n"
-            "    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);\n"
-            "    float dx3 = mod(floor(gl_FragCoord.x * 0.25), 2.0);\n"
-            "    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);\n"
-            "    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);\n"
-            "    t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;\n"
-            "    t2 = t1;\n"
-            "    t3 = t1;\n"
-#       else
-            "    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456\n"
-            "               + cos(gl_FragCoord.y * 2.34567) * 789.012;\n"
-            "    float t1 = mod(sin(rand) * 17.13043, 1.0);\n"
-            "    float t2 = mod(sin(rand) * 27.13043, 1.0);\n"
-            "    float t3 = mod(sin(rand) * 37.13043, 1.0);\n"
-#       endif
-            "    float fracx = fract(col.x * mul);\n"
-            "    float fracy = fract(col.y * mul);\n"
-            "    float fracz = fract(col.z * mul);\n"
-            "    fracx = fracx > t1 ? 1.0 : 0.0;\n"
-            "    fracy = fracy > t2 ? 1.0 : 0.0;\n"
-            "    fracz = fracz > t3 ? 1.0 : 0.0;\n"
-            "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
-            "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
-            "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
-#   endif
-            "    gl_FragColor = col;\n"
-            "}\n");
-#else
-        data->m_shader = Shader::Create(
-            "void main(float4 in_Position : POSITION,"
-            "          float2 in_TexCoord : TEXCOORD0,"
-            "          uniform float4x4 proj_matrix,"
-            "          uniform float4x4 view_matrix,"
-            "          uniform float4x4 model_matrix,"
-            "          out float2 out_TexCoord : TEXCOORD0,"
-            "          out float4 out_Position : POSITION)"
-            "{"
-            "    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Position)));"
-            "    out_TexCoord = in_TexCoord;"
-            "}",
-
-            "void main(float2 in_TexCoord : TEXCOORD0,"
-#   if 0
-            "          float4 in_FragCoord : WPOS,"
-#   endif
-            "          uniform sampler2D tex,"
-            "          out float4 out_FragColor : COLOR)"
-            "{"
-            "    float4 col = tex2D(tex, in_TexCoord);"
-#   if 0
-            "    float mul = 2.0;\n"
-            "    float t1, t2, t3;\n"
-#       if 1
-            "    float dx1 = frac(in_FragCoord.x * 0.5) * 2.0;\n"
-            "    float dy1 = frac(in_FragCoord.y * 0.5) * 2.0;\n"
-            "    t1 = frac((3.0 * dx1 + 2.0 * dy1) / 4.0) * 4.0;\n"
-            "    float dx2 = frac(floor(in_FragCoord.x * 0.5) * 0.5) * 2.0;\n"
-            "    float dy2 = frac(floor(in_FragCoord.y * 0.5) * 0.5) * 2.0;\n"
-            "    t2 = frac((3.0 * dx2 + 2.0 * dy2) / 4.0) * 4.0;\n"
-            "    float dx3 = frac(floor(in_FragCoord.x * 0.25) * 0.5) * 2.0;\n"
-            "    float dy3 = frac(floor(in_FragCoord.y * 0.25) * 0.5) * 2.0;\n"
-            "    t3 = frac((3.0 * dx3 + 2.0 * dy3) / 4.0) * 4.0;\n"
-            "    t1 = (1.0 + 4.0 * t1 + t2) / 17.0;\n"
-            "    t2 = t1;\n"
-            "    t3 = t1;\n"
-#       else
-            "    float rand = sin(in_FragCoord.x * 1.23456) * 123.456\n"
-            "               + cos(in_FragCoord.y * 2.34567) * 789.012;\n"
-            "    t1 = frac(sin(rand) * 17.13043);\n"
-            "    t2 = frac(sin(rand) * 27.13043);\n"
-            "    t3 = frac(sin(rand) * 37.13043);\n"
-#       endif
-            "    float fracx = frac(col.x * mul);\n"
-            "    float fracy = frac(col.y * mul);\n"
-            "    float fracz = frac(col.z * mul);\n"
-            "    fracx = fracx > t1 ? 1.0 : 0.0;\n"
-            "    fracy = fracy > t2 ? 1.0 : 0.0;\n"
-            "    fracz = fracz > t3 ? 1.0 : 0.0;\n"
-            "    col.x = (floor(col.x * mul) + fracx) / mul;\n"
-            "    col.y = (floor(col.y * mul) + fracy) / mul;\n"
-            "    col.z = (floor(col.z * mul) + fracz) / mul;\n"
-#   endif
-            "    out_FragColor = col;"
-            "}");
-#endif
-    }
+        data->m_shader = Shader::Create(lolfx_tile);
 
 #if 0
     // Randomise, then sort.
