@@ -6,8 +6,7 @@ uniform float u_Time;
 
 attribute vec2 in_Position;
 
-varying vec2 pass_Position;
-varying mat2 pass_Rotation;
+varying vec4 pass_Position;
 varying vec3 water[4];
 varying vec3 fire[4];
 
@@ -30,13 +29,15 @@ void main(void)
 
     /* Noise sampling points for fire */
     p_pos = 16.0 * p_pos - r * vec3(0.0, mod289(u_Time) * 128.0, 0.0);
-    fire[0] = p_pos / 2.0 + p_time;
-    fire[1] = p_pos / 4.0 + p_time;
+    fire[0] = p_pos / 2.0 + p_time * 2.0;
+    fire[1] = p_pos / 4.0 + p_time * 1.5;
     fire[2] = p_pos / 8.0 + p_time;
     fire[3] = p_pos / 16.0 + p_time;
 
-    pass_Position = in_Position;
-    pass_Rotation = mat2(cos(u_Time), sin(u_Time), -sin(u_Time), cos(u_Time));
+    /* Pass rotated screen coordinates */
+    pass_Position.xy = in_Position;
+    mat2 rot = mat2(cos(u_Time), sin(u_Time), -sin(u_Time), cos(u_Time));
+    pass_Position.zw = rot * in_Position;
 
     gl_Position = vec4(in_Position, 0.0, 1.0);
 }
@@ -47,8 +48,7 @@ void main(void)
 
 uniform float u_Time;
 
-varying vec2 pass_Position;
-varying mat2 pass_Rotation;
+varying vec4 pass_Position;
 varying vec3 water[4];
 varying vec3 fire[4];
 
@@ -87,15 +87,13 @@ float noise3d(vec3 p)
 
 void main(void)
 {
-    vec2 tmp = pass_Rotation * pass_Position;
-    float test = tmp.x * tmp.y + sin(3.0 * u_Time);
-
-    /* Add some garbage noise */
-    vec2 d = vec2(16.0, 9.0) * pass_Position;
+    /* Dither the transition between water and fire */
+    float test = pass_Position.z * pass_Position.w + sin(2.0 * u_Time);
+    vec2 d = vec2(16.0, 9.0) * pass_Position.xy;
     test += 0.5 * (length(fract(d) - 0.5) - length(fract(d + 0.5) - 0.5));
 
+    /* Compute 4 octaves of noise */
     vec3 points[4] = (test > 0.0) ? fire : water;
-
     vec4 n = vec4(noise3d(points[0]),
                   noise3d(points[1]),
                   noise3d(points[2]),
@@ -105,9 +103,10 @@ void main(void)
 
     if (test > 0.0)
     {
+        /* Use noise results for fire */
         float p = dot(n, vec4(0.125, 0.125, 0.25, 0.5));
 
-        /* Fade out by adding [-.5,.5] */
+        /* Fade to black on top of screen */
         p -= pass_Position.y * 0.8 + 0.25;
         p = max(p, 0.0);
         p = min(p, 1.0);
@@ -121,6 +120,7 @@ void main(void)
     }
     else
     {
+        /* Use noise results for water */
         float p = dot(abs(2.0 * n - 1.0),
                       vec4(0.5, 0.25, 0.125, 0.125));
         float q = sqrt(p);
