@@ -2,10 +2,42 @@
 
 #version 120
 
+uniform float u_Time;
+
 attribute vec2 in_Position;
+
+varying vec2 pass_Position;
+varying mat2 pass_Rotation;
+varying vec3 water[4];
+varying vec3 fire[4];
+
+float mod289(float x)
+{
+    return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
 
 void main(void)
 {
+    mat3 r = mat3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
+    vec3 p_pos = r * vec3(in_Position * vec2(16.0, 9.0), 0.0);
+    vec3 p_time = r * vec3(0.0, 0.0, u_Time * 2.0);
+
+    /* Noise sampling points for water */
+    water[0] = p_pos / 2.0 + p_time;
+    water[1] = p_pos / 4.0 + p_time;
+    water[2] = p_pos / 8.0 + p_time;
+    water[3] = p_pos / 16.0 + p_time;
+
+    /* Noise sampling points for fire */
+    p_pos = 16.0 * p_pos - r * vec3(0.0, mod289(u_Time) * 128.0, 0.0);
+    fire[0] = p_pos / 2.0 + p_time;
+    fire[1] = p_pos / 4.0 + p_time;
+    fire[2] = p_pos / 8.0 + p_time;
+    fire[3] = p_pos / 16.0 + p_time;
+
+    pass_Position = in_Position;
+    pass_Rotation = mat2(cos(u_Time), sin(u_Time), -sin(u_Time), cos(u_Time));
+
     gl_Position = vec4(in_Position, 0.0, 1.0);
 }
 
@@ -14,6 +46,11 @@ void main(void)
 #version 120
 
 uniform float u_Time;
+
+varying vec2 pass_Position;
+varying mat2 pass_Rotation;
+varying vec3 water[4];
+varying vec3 fire[4];
 
 vec4 mod289(vec4 x)
 {
@@ -27,9 +64,6 @@ vec4 perm(vec4 x)
 
 float noise3d(vec3 p)
 {
-    mat3 r = mat3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
-    p = r * p;
-
     vec3 a = floor(p);
     vec3 d = p - a;
     d = d * d * (3.0 - 2.0 * d);
@@ -53,26 +87,47 @@ float noise3d(vec3 p)
 
 void main(void)
 {
-    vec2 xy = gl_FragCoord.xy * 2.0;
-    xy.y -= u_Time * 400.0;
-    float z = u_Time * 2.0;
+    vec2 tmp = pass_Rotation * pass_Position;
+    float test = tmp.x * tmp.y + 0.75 * sin(3.0 * u_Time);
 
-    float p = noise3d(vec3(xy / 80.0, z)) / 2.0
-            + noise3d(vec3(xy / 40.0, z)) / 4.0
-            + noise3d(vec3(xy / 20.0, z)) / 8.0
-            + noise3d(vec3(xy / 10.0, z)) / 16.0;
+    vec3 points[4] = (test > 0.0) ? fire : water;
 
-    /* Scroll by adding [-.5,.5] */
-    p -= gl_FragCoord.y / 720.0 - 0.5;
-    p = max(p, 0.0);
-    p = min(p, 1.0);
+    vec4 n = vec4(noise3d(points[0]),
+                  noise3d(points[1]),
+                  noise3d(points[2]),
+                  noise3d(points[3]));
 
-    float q = p * p * (3.0 - 2.0 * p);
-    float r = q * q * (3.0 - 2.0 * q);
-    gl_FragColor = vec4(min(q * 2.0, 1.0),
-                        max(r * 1.5 - 0.5, 0.0),
-                        max(q * 8.0 - 7.3, 0.0),
-                        1.0);
+    vec4 color;
+
+    if (test > 0.0)
+    {
+        float p = dot(n, vec4(0.125, 0.125, 0.25, 0.5));
+
+        /* Fade out by adding [-.5,.5] */
+        p -= pass_Position.y * 0.8 + 0.25;
+        p = max(p, 0.0);
+        p = min(p, 1.0);
+
+        float q = p * p * (3.0 - 2.0 * p);
+        float r = q * q * (3.0 - 2.0 * q);
+        color = vec4(min(q * 2.0, 1.0),
+                     max(r * 1.5 - 0.5, 0.0),
+                     max(q * 8.0 - 7.3, 0.0),
+                     1.0);
+    }
+    else
+    {
+        float p = dot(abs(2.0 * n - 1.0),
+                      vec4(0.5, 0.25, 0.125, 0.125));
+        float q = sqrt(p);
+
+        color = vec4(1.0 - q,
+                     1.0 - 0.5 * q,
+                     1.0,
+                     1.0);
+    }
+
+    gl_FragColor = color;
 }
 
 -- HLSL.Vert --
@@ -130,23 +185,48 @@ void main(in float2 pass_Position : TEXCOORD0,
           out float4 out_FragColor : COLOR)
 {
     float2 xy = pass_Position;
-    xy.y -= u_Time * 400.0;
     float z = u_Time * 2.0;
 
-    float p = noise3d(float3(xy / 80.0, z)) / 2.0
-            + noise3d(float3(xy / 40.0, z)) / 4.0
-            + noise3d(float3(xy / 20.0, z)) / 8.0
-            + noise3d(float3(xy / 10.0, z)) / 16.0;
+    float tx = pass_Position.x * cos(u_Time) - pass_Position.y * sin(u_Time);
+    float ty = pass_Position.x * sin(u_Time) + pass_Position.y * cos(u_Time);
 
-    /* Scroll by adding [-.5,.5] */
-    p -= pass_Position.y / 1440.0;
-    p = max(p, 0.0);
-    p = min(p, 1.0);
+    if (tx * ty > 0.0)
+        xy.y -= z * 200.0;
 
-    float q = p * p * (3.0 - 2.0 * p);
-    float r = q * q * (3.0 - 2.0 * q);
-    out_FragColor = float4(min(q * 2.0, 1.0),
-                           max(r * 1.5 - 0.5, 0.0),
-                           max(q * 8.0 - 7.3, 0.0),
-                           1.0);
+    float p1 = noise3d(float3(xy / 80.0, z));
+    float p2 = noise3d(float3(xy / 40.0, z));
+    float p3 = noise3d(float3(xy / 20.0, z));
+    float p4 = noise3d(float3(xy / 10.0, z));
+
+    float4 color;
+
+    if (tx * ty > 0.0)
+    {
+        float p = 0.5 * p1 + 0.25 * p2 + 0.125 * (p3 + p4);
+
+        /* Scroll by adding [-.5,.5] */
+        p -= pass_Position.y / 1440.0;
+        p = max(p, 0.0);
+        p = min(p, 1.0);
+
+        float q = p * p * (3.0 - 2.0 * p);
+        float r = q * q * (3.0 - 2.0 * q);
+        color = float4(min(q * 2.0, 1.0),
+                       max(r * 1.5 - 0.5, 0.0),
+                       max(q * 8.0 - 7.3, 0.0),
+                       1.0);
+    }
+    else
+    {
+        float p = 0.5 * p1 + 0.25 * p2 + 0.125 * (p3 + p4);
+
+        float q = p * p * (3.0 - 2.0 * p);
+        float r = q * q * (3.0 - 2.0 * q);
+        color = float4(1.0 - q,
+                       1.0 - 0.5 * r,
+                       1.0,
+                       1.0);
+    }
+
+    out_FragColor = color;
 }
