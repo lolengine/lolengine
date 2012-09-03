@@ -138,6 +138,8 @@ void BulletKinematicCharacterController::DoMove(btCollisionWorld* CollisionWorld
 		vec3 SweepDirNeg(m_current_position - m_target_position);
 
 		ClosestNotMeConvexResultCallback SweepCallback(m_ghost_object, SweepDirNeg, .0f);
+		SweepCallback.m_collisionFilterGroup = GetGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup;
+		SweepCallback.m_collisionFilterMask = GetGhostObject()->getBroadphaseHandle()->m_collisionFilterMask;
 
 		//The sweep test is done with an added margin, so we use it and then discard it
 		float SavedMargin = m_convex_shape->getMargin();

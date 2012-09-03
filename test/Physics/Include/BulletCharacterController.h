@@ -35,48 +35,44 @@ namespace lol
 #ifdef USE_LOL_CTRLR_CHARAC
 #ifdef HAVE_PHYS_USE_BULLET
 
-		//SweepCallback used for Swweep Tests.
-		class ClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
+	//SweepCallback used for Swweep Tests.
+	class ClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
+	{
+	public:
+		ClosestNotMeConvexResultCallback(btCollisionObject* NewMe, const vec3& NewUp, float MinSlopeDot) :
+						btCollisionWorld::ClosestConvexResultCallback(LOL2BTU_VEC3(vec3(.0f)), LOL2BTU_VEC3(vec3(.0f))),
+						m_me(NewMe),
+						m_up(NewUp),
+						m_min_slope_dot(MinSlopeDot) { }
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& ConvexResult, bool NormalInWorld)
 		{
-		public:
-			ClosestNotMeConvexResultCallback(btCollisionObject* NewMe, const vec3& NewUp, float MinSlopeDot) :
-							btCollisionWorld::ClosestConvexResultCallback(LOL2BTU_VEC3(vec3(.0f)), LOL2BTU_VEC3(vec3(.0f))),
-							m_me(NewMe),
-							m_up(NewUp),
-							m_min_slope_dot(MinSlopeDot)
+			//We hit ourselves, FAIL
+			if (ConvexResult.m_hitCollisionObject == m_me)
+				return btScalar(1.f);
+
+			vec3 WorldHitNomal(.0f);
+			if (NormalInWorld)
+				WorldHitNomal = BT2LOL_VEC3(ConvexResult.m_hitNormalLocal);
+			else //need to transform Normal into worldspace
 			{
-				m_collisionFilterGroup = NewMe->getBroadphaseHandle()->m_collisionFilterGroup;
-				m_collisionFilterMask = NewMe->getBroadphaseHandle()->m_collisionFilterMask;
+				btVector3 TmpWorldHitNormal = ConvexResult.m_hitCollisionObject->getWorldTransform().getBasis() * ConvexResult.m_hitNormalLocal;
+				WorldHitNomal = BT2LOL_VEC3(TmpWorldHitNormal);
 			}
 
-			virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& ConvexResult, bool NormalInWorld)
-			{
-				//We hit ourselves, FAIL
-				if (ConvexResult.m_hitCollisionObject == m_me)
-					return btScalar(1.f);
+			float DotUp = dot(m_up, WorldHitNomal);
+			//We hit below the accepted slope_dot, FAIL
+			if (DotUp < m_min_slope_dot)
+				return btScalar(1.f);
 
-				vec3 WorldHitNomal(.0f);
-				if (NormalInWorld)
-					WorldHitNomal = BT2LOL_VEC3(ConvexResult.m_hitNormalLocal);
-				else //need to transform Normal into worldspace
-				{
-					btVector3 TmpWorldHitNormal = ConvexResult.m_hitCollisionObject->getWorldTransform().getBasis() * ConvexResult.m_hitNormalLocal;
-					WorldHitNomal = BT2LOL_VEC3(TmpWorldHitNormal);
-				}
-
-				float DotUp = dot(m_up, WorldHitNomal);
-				//We hit below the accepted slope_dot, FAIL
-				if (DotUp < m_min_slope_dot)
-					return btScalar(1.f);
-
-				//Continue to next.
-				return ClosestConvexResultCallback::addSingleResult(ConvexResult, NormalInWorld);
-			}
-		protected:
-			btCollisionObject*	m_me;
-			const vec3			m_up;
-			float				m_min_slope_dot;
-		};
+			//Continue to next.
+			return ClosestConvexResultCallback::addSingleResult(ConvexResult, NormalInWorld);
+		}
+	protected:
+		btCollisionObject*	m_me;
+		const vec3			m_up;
+		float				m_min_slope_dot;
+	};
 
 		///BulletKinematicCharacterController is an object that supports a sliding motion in a world.
 		///It uses a ghost object and convex sweep test to test for upcoming collisions. This is combined with discrete collision detection to recover from penetrations.
@@ -84,9 +80,8 @@ namespace lol
 		class BulletKinematicCharacterController : public btActionInterface
 		{
 		public:
-			BulletKinematicCharacterController(EasyCharacterController* NewCharacter, btPairCachingGhostObject* NewGhostObject, btConvexShape* NewConvexShape, float NewStepHeight, int NewUpAxis=1)
+			BulletKinematicCharacterController(btPairCachingGhostObject* NewGhostObject, btConvexShape* NewConvexShape, float NewStepHeight, int NewUpAxis=1)
 			{
-				m_character = NewCharacter;
 				m_convex_shape = NewConvexShape;	
 				m_i_up_axis = NewUpAxis;
 				m_ghost_object = NewGhostObject;
@@ -123,13 +118,25 @@ namespace lol
 			//--
 
 			//Returns the reflection Direction of a ray going 'Direction' hitting a surface with Normal 'Normal' from: http://www-cs-students.stanford.edu/~adityagp/final/node3.html
-			vec3 GetReflectedDir(const vec3& Direction, const vec3& Normal) { return Direction - (2.f * dot(Direction, Normal) * Normal); }
+			vec3 GetReflectedDir(const vec3& Direction, const vec3& Normal)
+			{
+				return Direction - (2.f * dot(Direction, Normal) * Normal);
+			}
 			//Returns the portion of 'direction' that is parallel to 'normal'
-			vec3 ProjectDirOnNorm(const vec3& Direction, const vec3& Normal) { return Normal * dot(Direction, Normal); }
+			vec3 ProjectDirOnNorm(const vec3& Direction, const vec3& Normal)
+			{
+				return Normal * dot(Direction, Normal);
+			}
 			//Returns the portion of 'Direction' that is perpindicular to 'Normal'
-			vec3 ProjectDirOnNormPerpindicular(const vec3& Direction, const vec3& Normal) { return Direction - ProjectDirOnNorm(Direction, Normal); }
+			vec3 ProjectDirOnNormPerpindicular(const vec3& Direction, const vec3& Normal)
+			{
+				return Direction - ProjectDirOnNorm(Direction, Normal);
+			}
 			//Returns Ghost Object. -duh-
-			btPairCachingGhostObject* GetGhostObject() { return m_ghost_object; }
+			btPairCachingGhostObject* GetGhostObject()
+			{
+				return m_ghost_object;
+			}
 
 			//"Real" war functions
 			bool RecoverFromPenetration(btCollisionWorld* CollisionWorld);
@@ -151,7 +158,14 @@ namespace lol
 			///btActionInterface interface : KEEP IN camelCase
 			void debugDraw(btIDebugDraw* debugDrawer) { }
 			
-			void SetUpAxis(int NewAxis) { m_i_up_axis = abs(NewAxis) % 3; }
+			void SetUpAxis(int NewAxis)
+			{
+				if (NewAxis < 0)
+					NewAxis = 0;
+				if (NewAxis > 2)
+					NewAxis = 2;
+				m_i_up_axis = NewAxis;
+			}
 
 			//!!!!!! SHOULD DITCH THAT !!!!!!
 			//This should probably be called setPositionIncrementPerSimulatorStep.
@@ -215,7 +229,6 @@ namespace lol
 
 		private:
 
-			EasyCharacterController*	m_character;
 			btPairCachingGhostObject*	m_ghost_object;
 			btConvexShape*				m_convex_shape; //is also in m_ghost_object, but it needs to be convex, so we store it here to avoid upcast
 
