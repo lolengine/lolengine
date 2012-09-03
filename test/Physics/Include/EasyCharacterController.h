@@ -42,6 +42,8 @@ class EasyCharacterController : public EasyPhysic,
 
 #ifdef HAVE_PHYS_USE_BULLET
 
+	friend class BulletKinematicCharacterController;
+
 public:
 	EasyCharacterController(WorldEntity* NewOwnerEntity) :
 		EasyPhysic(NewOwnerEntity),
@@ -101,6 +103,10 @@ protected:
 	//----
 	vec3							m_walk_velocity;
 	vec3							m_current_velocity;
+
+	//Feedback from Bullet collision :
+	//The idea is : we tell what to do to the BCC at each Hit
+	int								MoveDidImpact(int HitType, const ClosestNotMeConvexResultCallback& SweepCallback);
 
 #else  // NO PHYSIC IMPLEMENTATION
 
