@@ -62,7 +62,7 @@ void EasyCharacterController::AddToSimulation(class Simulation* current_simulati
 			delete m_character;
 
 		//m_character = new btKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
-		m_character = new BulletKinematicCharacterController(this, m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
+		m_character = new BulletKinematicCharacterController(m_pair_caching_object, m_convex_shape, m_step_height, m_up_axis);
 
 		//Deactivate Character controller basic behaviour.
 		//m_character->setGravity(.0f);
@@ -144,11 +144,6 @@ void EasyCharacterController::TickGame(float seconds)
 		m_character->SetVelocityForTimeInterval((m_base_cached_movement + m_frame_cached_movement) / NewSeconds, NewSeconds);
 		m_base_cached_movement = vec3(.0f);
 	}
-}
-
-int EasyCharacterController::MoveDidImpact(int HitType, const ClosestNotMeConvexResultCallback& SweepCallback)
-{
-	return 0;
 }
 
 #endif // HAVE_PHYS_USE_BULLET
