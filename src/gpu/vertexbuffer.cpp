@@ -393,7 +393,12 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         if (tlut[type_index].type == GL_FLOAT
              || tlut[type_index].type == GL_DOUBLE
              || tlut[type_index].type == GL_BYTE
-             || tlut[type_index].type == GL_UNSIGNED_BYTE)
+             || tlut[type_index].type == GL_UNSIGNED_BYTE
+#       if defined USE_GLEW
+             /* If this is not available, don't use it */
+             || !glVertexAttribIPointer
+#       endif
+             || false)
         {
             /* Normalize unsigned bytes by default, because it's usually
              * some color information. */
@@ -425,6 +430,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         case VertexUsage::Color:
             glColorPointer(tlut[type_index].size, tlut[type_index].type,
                            stride, (GLvoid const *)(uintptr_t)offset);
+            break;
+        default:
+            Log::Error("vertex usage %d is not supported yet\n");
             break;
         }
 #   endif
