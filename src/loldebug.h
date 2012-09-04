@@ -18,7 +18,6 @@
 
 #include "debug/fps.h"
 #include "debug/record.h"
-#include "debug/sphere.h"
 #include "debug/stats.h"
 
 #endif // __LOL_LOLDEBUG_H__

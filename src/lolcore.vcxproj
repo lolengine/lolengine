@@ -236,7 +236,6 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debug\fps.cpp" />
     <ClCompile Include="debug\record.cpp" />
-    <ClCompile Include="debug\sphere.cpp" />
     <ClCompile Include="debug\stats.cpp" />
     <ClCompile Include="dict.cpp" />
     <ClCompile Include="easymesh\easymesh-compiler.cpp" />
@@ -548,7 +547,6 @@
     <ClInclude Include="core.h" />
     <ClInclude Include="debug\fps.h" />
     <ClInclude Include="debug\record.h" />
-    <ClInclude Include="debug\sphere.h" />
     <ClInclude Include="debug\stats.h" />
     <ClInclude Include="dict.h" />
     <ClInclude Include="easymesh\easymesh-compiler.h" />

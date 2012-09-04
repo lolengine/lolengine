@@ -73,9 +73,6 @@
     <ClCompile Include="debug\record.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
-    <ClCompile Include="debug\sphere.cpp">
-      <Filter>src\debug</Filter>
-    </ClCompile>
     <ClCompile Include="debug\stats.cpp">
       <Filter>src\debug</Filter>
     </ClCompile>
@@ -637,9 +634,6 @@
       <Filter>src\debug</Filter>
     </ClInclude>
     <ClInclude Include="debug\record.h">
-      <Filter>src\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="debug\sphere.h">
       <Filter>src\debug</Filter>
     </ClInclude>
     <ClInclude Include="debug\stats.h">

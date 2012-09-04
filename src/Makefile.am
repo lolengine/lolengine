@@ -64,7 +64,7 @@ liblol_a_SOURCES = \
     image/codec/dummy-image.cpp \
     \
     loldebug.h \
-    debug/fps.cpp debug/fps.h debug/sphere.cpp debug/sphere.h \
+    debug/fps.cpp debug/fps.h \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@ -Ibullet
 
