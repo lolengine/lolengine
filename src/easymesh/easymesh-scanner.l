@@ -76,6 +76,7 @@ ascb  { return token::T_SMOOTHCHAMFBOX; }
 afcb  { return token::T_FLATCHAMFBOX; }
 acap  { return token::T_CAPSULE; }
 asph  { return token::T_SPHERE; }
+at    { return token::T_TORUS; }
 as    { return token::T_STAR; }
 aes   { return token::T_EXPANDEDSTAR; }
 ad    { return token::T_DISC; }

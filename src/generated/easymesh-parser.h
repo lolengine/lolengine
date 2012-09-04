@@ -131,9 +131,10 @@ namespace lol {
      T_TRIANGLE = 287,
      T_QUAD = 288,
      T_COG = 289,
-     T_ERROR = 290,
-     NUMBER = 291,
-     COLOR = 292
+     T_TORUS = 290,
+     T_ERROR = 291,
+     NUMBER = 292,
+     COLOR = 293
    };
 
     };
@@ -313,7 +314,7 @@ namespace lol {
 } // lol
 
 /* Line 35 of lalr1.cc  */
-#line 317 "generated/easymesh-parser.h"
+#line 318 "generated/easymesh-parser.h"
 
 
 
