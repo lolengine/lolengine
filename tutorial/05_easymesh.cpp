@@ -29,8 +29,7 @@ public:
                 m_mesh.OpenBrace();
                 m_mesh.Compile("ad12,2.2,0 ty.1 ac12,.2,2.4,2.2,0,1 ty.8 ac12,1.7,2.4,2.4,0,1 ty2.5");
                 m_mesh.Translate(vec3(i * 8.f, (h - 1) * 3.2f, j * 8.f));
-
-				m_mesh.CloseBrace();
+                m_mesh.CloseBrace();
             }
         m_mesh.OpenBrace();
         m_mesh.AppendFlatChamfBox(vec3(x * 8.f, h * 3.2f, y * 8.f), -.1f);
@@ -44,8 +43,16 @@ public:
     EasyMeshTutorial()
     {
         m_angle = 0;
-        m_mesh.Compile("sc#800 [asph10 20 20 20]");
-		m_mesh.RadialJitter(0.2f);		
+        m_mesh.Compile("sc#8d3 [at40 10 40 rx20 ry130 tx30]");
+
+        m_mesh.OpenBrace();
+        m_mesh.Compile("sc#800 [asph10 25 25 25]");
+        m_mesh.Compile("ty50");
+        m_mesh.RadialJitter(0.2f);
+        m_mesh.Compile("ty-50 tx-40");
+        m_mesh.CloseBrace();
+
+#if 0
         //m_mesh.Compile("sc#94e scb#649 [asph3 7 7 7 tx-6 tz-9]");
         //m_mesh.Compile("sc#49e scb#469 [asph31 7 7 7 tx-6 tz9]");
         m_mesh.Compile("sc#1c1 scb#1c1");
@@ -102,9 +109,10 @@ public:
         AddPiece(6, 2, 1, -2, 0, -3);
         m_mesh.Compile("sc#e49 scb#e49");
         AddPiece(6, 2, 1, -2, -2, -3);
+#endif
 
         /* Center everything -- is it needed? */
-        m_mesh.Compile("tx4 tz4");
+//        m_mesh.Compile("tx4 tz4");
 
         m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                               vec3(0.f, 0.f, 0.f),

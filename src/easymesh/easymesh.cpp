@@ -508,6 +508,37 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
     CloseBrace();
 }
 
+void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
+{
+    int ibase = m_indices.Count();
+
+    for (int j = 0; j < ndivisions; j++)
+    for (int i = 0; i < ndivisions; i++)
+    {
+        for (int di = 0; di < 2; di++)
+        for (int dj = 0; dj < 2; dj++)
+        {
+            int i2 = (i + di) % ndivisions;
+            int j2 = (j + dj) % ndivisions;
+            float x = 0.5f * (r1 + r2) + 0.5 * (r2 - r1) * lol::cos(2.0 * M_PI * i2 / ndivisions);
+            float y = 0.5f * (r2 - r1) * lol::sin(2.0 * M_PI * i2 / ndivisions);
+            float z = 0.0f;
+
+            float ca = lol::cos(2.0 * M_PI * j2 / ndivisions);
+            float sa = lol::sin(2.0 * M_PI * j2 / ndivisions);
+            float x2 = x * ca - z * sa;
+            float z2 = z * ca + x * sa;
+
+            AddVertex(vec3(x2, y, z2));
+        }
+
+        AppendTriangle(0, 2, 3, m_vert.Count() - 4);
+        AppendTriangle(0, 3, 1, m_vert.Count() - 4);
+    }
+
+    ComputeNormals(ibase, m_indices.Count() - ibase);
+}
+
 void EasyMesh::AppendBox(vec3 const &size, float chamf)
 {
     AppendBox(size, chamf, false);

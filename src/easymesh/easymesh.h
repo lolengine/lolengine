@@ -73,6 +73,7 @@ public:
                         int dualside, int smooth);
     void AppendCapsule(int ndivisions, float h, float r);
     void AppendSphere(int ndivisions, vec3 const &size);
+    void AppendTorus(int ndivisions, float r1, float r2);
     void AppendBox(vec3 const &size, float chamf = 0.f);
     void AppendSmoothChamfBox(vec3 const &size, float chamf);
     void AppendFlatChamfBox(vec3 const &size, float chamf);
