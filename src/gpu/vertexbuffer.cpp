@@ -208,10 +208,12 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     {
     case MeshPrimitive::Triangles:
         /* FIXME: ignores most of the arguments! */
+        (void)vbase; (void)vskip; (void)vcount; (void)skip;
         glDrawElements(GL_TRIANGLES, count * 3, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::Points:
         /* FIXME: ignores most of the arguments! */
+        (void)vbase; (void)vskip; (void)vcount; (void)skip;
         glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
@@ -283,7 +285,8 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     uint32_t index = attr1.m_flags & 0xffff;
 
     /* Find the stream number */
-    int usage_index = 0, stream = -1;
+    uint32_t usage_index = 0;
+    int stream = -1;
     for (int i = 0; i < m_count; i++)
         if (m_streams[i].usage == usage)
             if (usage_index++ == index)
@@ -338,9 +341,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         /* We need to parse the whole vertex declaration to retrieve
          * the information. It sucks. */
 
-        int attr_index = 0, usage_index = 0;
+        int attr_index = 0;
         /* First, find the stream index */
-        for (; attr_index < m_count; attr_index++)
+        for (uint32_t usage_index = 0; attr_index < m_count; attr_index++)
             if (m_streams[attr_index].usage == usage)
                 if (usage_index++ == index)
                     break;
@@ -385,7 +388,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         };
 
         int type_index = m_streams[attr_index].stream_type;
-        if (type_index < 0 || type_index >= sizeof(tlut) / sizeof(*tlut))
+        if (type_index < 0 || type_index >= (int)(sizeof(tlut) / sizeof(*tlut)))
             type_index = 0;
 
 
@@ -588,6 +591,8 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
         Abort();
     return ret;
 #else
+    /* FIXME: is there a way to use "size"? */
+    (void)size;
     return m_data->m_memory + offset;
 #endif
 }
