@@ -511,21 +511,23 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
 void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
 {
     int ibase = m_indices.Count();
+    int nidiv = ndivisions; /* Cross-section */
+    int njdiv = ndivisions; /* Full circumference */
 
-    for (int j = 0; j < ndivisions; j++)
-    for (int i = 0; i < ndivisions; i++)
+    for (int j = 0; j < njdiv; j++)
+    for (int i = 0; i < 2 * nidiv; i++)
     {
         for (int di = 0; di < 2; di++)
         for (int dj = 0; dj < 2; dj++)
         {
-            int i2 = (i + di) % ndivisions;
-            int j2 = (j + dj) % ndivisions;
-            float x = 0.5f * (r1 + r2) + 0.5 * (r2 - r1) * lol::cos(2.0 * M_PI * i2 / ndivisions);
-            float y = 0.5f * (r2 - r1) * lol::sin(2.0 * M_PI * i2 / ndivisions);
+            int i2 = (i + di) % nidiv;
+            int j2 = (j + dj) % njdiv;
+            float x = 0.5f * (r1 + r2) + 0.5 * (r2 - r1) * lol::cos(2.0 * M_PI * i2 / nidiv);
+            float y = 0.5f * (r2 - r1) * lol::sin(2.0 * M_PI * i2 / nidiv);
             float z = 0.0f;
 
-            float ca = lol::cos(2.0 * M_PI * j2 / ndivisions);
-            float sa = lol::sin(2.0 * M_PI * j2 / ndivisions);
+            float ca = lol::cos(2.0 * M_PI * j2 / njdiv);
+            float sa = lol::sin(2.0 * M_PI * j2 / njdiv);
             float x2 = x * ca - z * sa;
             float z2 = z * ca + x * sa;
 
