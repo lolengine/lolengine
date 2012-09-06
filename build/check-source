@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+# Find out where the top directory is and go there
+top_srcdir="$(cd "$(dirname $0)"; cd ..; pwd)"
+cd "$top_srcdir"
+
+# Find out what kind of Vcs directory this is
+if [ -f "$top_srcdir/.git/index" ]; then
+    echo "I: detected Git repository"
+    repo=git
+elif [ -f "$top_srcdir/.svn/format" ]; then
+    echo "I: detected SVN repository"
+    repo=svn
+else
+    echo "I: not in a Vcs directory, nothing to do"
+    exit 0
+fi
+
+if [ "$repo" = git ]; then
+    git ls-files
+else
+    :
+fi | while read file; do
+    case "$file" in
+      src/bullet/*|contrib/*|people/*|*/generated/*)
+          : # These files aren't ours, don't fix
+          ;;
+      *.c|*.cpp|*.h)
+          ntabs="$(grep -c -P '\t' "$file" || true)"
+          nspaces="$(grep -c ' $' "$file" || true)"
+          total="$(($ntabs + $nspaces))"
+          if [ "$total" != 0 ]; then
+              echo "E: $total lines with tabs in $file"
+          fi
+          ;;
+    esac
+done
