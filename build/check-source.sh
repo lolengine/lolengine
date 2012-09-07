@@ -74,8 +74,11 @@ fi
 
 for file in $FILES; do
     case "$file" in
-      src/bullet/*|contrib/*|people/*|*/generated/*)
+      src/bullet/*|contrib/*|*/generated/*)
           : # These files aren't ours, don't fix
+          ;;
+      people/peeweek/*|people/touky/*)
+          : # Don't harass these people
           ;;
       *.c|*.cpp|*.h|*.l|*.y)
           clean=true
