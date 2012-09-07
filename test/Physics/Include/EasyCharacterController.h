@@ -34,81 +34,81 @@ namespace phys
 {
 
 class EasyCharacterController : public EasyPhysic,
-								public Entity
+                                public Entity
 {
 
-	friend class Simulation;
-	friend class EasyPhysic;
+    friend class Simulation;
+    friend class EasyPhysic;
 
 #ifdef HAVE_PHYS_USE_BULLET
 
 public:
-	EasyCharacterController(WorldEntity* NewOwnerEntity) :
-		EasyPhysic(NewOwnerEntity),
-		m_pair_caching_object(NULL),
-		m_character(NULL),
-		m_step_height(.0f),
-		m_base_is_updating(false),
-		m_base_cached_movement(vec3(0.f)),
-		m_frame_cached_movement(vec3(0.f)),
-		m_walk_velocity(vec3(0.f)),
-		m_current_velocity(vec3(0.f))
-	{
-		m_gamegroup = GAMEGROUP_EZP_CHAR_CTRLR;
-		m_up_axis = 1;
-		m_gravity = vec3(.0f, -9.81f, .0f);
-		m_walk_velocity_damping = 0.2f;
-	}
-	~EasyCharacterController()
-	{
-		delete m_character;
-	}
+    EasyCharacterController(WorldEntity* NewOwnerEntity) :
+        EasyPhysic(NewOwnerEntity),
+        m_pair_caching_object(NULL),
+        m_character(NULL),
+        m_step_height(.0f),
+        m_base_is_updating(false),
+        m_base_cached_movement(vec3(0.f)),
+        m_frame_cached_movement(vec3(0.f)),
+        m_walk_velocity(vec3(0.f)),
+        m_current_velocity(vec3(0.f))
+    {
+        m_gamegroup = GAMEGROUP_EZP_CHAR_CTRLR;
+        m_up_axis = 1;
+        m_gravity = vec3(.0f, -9.81f, .0f);
+        m_walk_velocity_damping = 0.2f;
+    }
+    ~EasyCharacterController()
+    {
+        delete m_character;
+    }
 
-	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
-	virtual void InitBodyToGhost();
-	virtual void AddToSimulation(class Simulation* current_simulation);
-	virtual void RemoveFromSimulation(class Simulation* current_simulation);
-	virtual void SetMovementForFrame(vec3 const &MoveQuantity);
-	virtual void Jump();
+    virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
+    virtual void InitBodyToGhost();
+    virtual void AddToSimulation(class Simulation* current_simulation);
+    virtual void RemoveFromSimulation(class Simulation* current_simulation);
+    virtual void SetMovementForFrame(vec3 const &MoveQuantity);
+    virtual void Jump();
 
-	virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation);
+    virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation);
 protected:
-	virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
-	virtual char const *GetName();
+    virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
+    virtual char const *GetName();
 public:
-	virtual void TickGame(float seconds);
+    virtual void TickGame(float seconds);
 
 protected:
 
-	virtual btGhostObject* GetGhostObjectInstance();
+    virtual btGhostObject* GetGhostObjectInstance();
 
-	btPairCachingGhostObject*		m_pair_caching_object;
-	//btKinematicCharacterController*	m_character;
-	BulletKinematicCharacterController* m_character;
+    btPairCachingGhostObject*        m_pair_caching_object;
+    //btKinematicCharacterController*    m_character;
+    BulletKinematicCharacterController* m_character;
 
-	float							m_step_height;
-	int								m_up_axis;
-	bool							m_base_is_updating;
-	vec3							m_base_cached_movement;
-	vec3							m_frame_cached_movement;
+    float                            m_step_height;
+    int                                m_up_axis;
+    bool                            m_base_is_updating;
+    vec3                            m_base_cached_movement;
+    vec3                            m_frame_cached_movement;
 
-	//----
-	float							m_walk_velocity_damping;
+    //----
+    float                            m_walk_velocity_damping;
 
-	//----
-	vec3							m_gravity;
+    //----
+    vec3                            m_gravity;
 
-	//----
-	vec3							m_walk_velocity;
-	vec3							m_current_velocity;
+    //----
+    vec3                            m_walk_velocity;
+    vec3                            m_current_velocity;
 
 #else  // NO PHYSIC IMPLEMENTATION
 
-	virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false) { }
-	virtual void InitBodyToGhost() { }
-	virtual void AddToSimulation(class Simulation* current_simulation) { }
-	virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
-	virtual void SetMovementForFrame(vec3 const &MoveQuantity) { }
+    virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false) { }
+    virtual void InitBodyToGhost() { }
+    virtual void AddToSimulation(class Simulation* current_simulation) { }
+    virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
+    virtual void SetMovementForFrame(vec3 const &MoveQuantity) { }
 
 #endif // PHYSIC IMPLEMENTATION
 
