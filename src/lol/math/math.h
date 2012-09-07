@@ -66,11 +66,11 @@ static inline void sincos(float const &x, float *s, float *c)
 
 static inline double lerp(double const &a, double const &b, double const &x)
 {
-	return a + (b - a) * x;
+    return a + (b - a) * x;
 }
 static inline float lerp(float const &a, float const &b, float const &x)
 {
-	return a + (b - a) * x;
+    return a + (b - a) * x;
 }
 
 

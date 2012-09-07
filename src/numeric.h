@@ -55,8 +55,8 @@ template <typename T> static inline T PotUp(T val)
 //Lerp for float
 template <typename T1, typename T2, typename Tf> static inline T1 damp(const T1 &a, const T2 &b, const Tf &x, const Tf &dt)
 {
-	if (dt <= .0f)
-		return a;
+    if (dt <= .0f)
+        return a;
     return lol::lerp(a, b, dt / (dt + x));
 }
 

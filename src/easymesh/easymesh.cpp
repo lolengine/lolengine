@@ -240,45 +240,45 @@ void EasyMesh::Rotate(float t, vec3 const &axis)
 void EasyMesh::RadialJitter(float r)
 {
     Array<int> Welded;
-	Welded.Push(-1);
+    Welded.Push(-1);
     for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
-	{
-		int j, k;
-		for (j = m_cursors.Last().m1, k = 0; j < i; j++, k++)
-		{
-			if(Welded[k] < 0)
-			{
-				vec3 diff = m_vert[i].m1 - m_vert[j].m1;
-				
-				if(diff.x > 0.1f || diff.x < -0.1f)
-					continue;
+    {
+        int j, k;
+        for (j = m_cursors.Last().m1, k = 0; j < i; j++, k++)
+        {
+            if(Welded[k] < 0)
+            {
+                vec3 diff = m_vert[i].m1 - m_vert[j].m1;
 
-				if(diff.y > 0.1f || diff.y < -0.1f)
-					continue;
+                if(diff.x > 0.1f || diff.x < -0.1f)
+                    continue;
 
-				if(diff.z > 0.1f || diff.z < -0.1f)
-					continue;
+                if(diff.y > 0.1f || diff.y < -0.1f)
+                    continue;
 
-				break;
-			}
-		}
+                if(diff.z > 0.1f || diff.z < -0.1f)
+                    continue;
 
-		if(j == i)
-			Welded.Push(-1);
-		else
-			Welded.Push(j);
-	}
+                break;
+            }
+        }
 
-	int i, j;
+        if(j == i)
+            Welded.Push(-1);
+        else
+            Welded.Push(j);
+    }
+
+    int i, j;
     for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
-	{
-		if(Welded[j] == -1)
-			m_vert[i].m1 *= 1.0f + RandF(r);
-		else
-			m_vert[i].m1 = m_vert[Welded[j]].m1;
-	}
+    {
+        if(Welded[j] == -1)
+            m_vert[i].m1 *= 1.0f + RandF(r);
+        else
+            m_vert[i].m1 = m_vert[Welded[j]].m1;
+    }
 
-	ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
+    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
 }
 
 void EasyMesh::TaperX(float y, float z, float xoff)
@@ -361,10 +361,10 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
     vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
 
     /* Construct normal */
-	if (r2 != .0f)
-		n = vec3(r2, h * .5f, 0.f);
-	else
-		n = vec3(r1, h * .5f, 0.f);
+    if (r2 != .0f)
+        n = vec3(r2, h * .5f, 0.f);
+    else
+        n = vec3(r1, h * .5f, 0.f);
     n.y = r1 * (r1 - r2) / h;
     if (!smooth)
         n = mat3::rotate(180.0f / nsides, 0.f, 1.f, 0.f) * n;
@@ -850,7 +850,7 @@ void EasyMesh::Chamfer(float f)
 
     for (int i = 0; i < ilen / 3; i++)
     {
-         
+
     }
 
     /* Fun shit: reduce all triangles */

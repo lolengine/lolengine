@@ -409,7 +409,7 @@ public:
     static ivec2 GetMousePos();
     static ivec3 GetMouseButtons();
 
-    //BH : Shouldn't use this 
+    //BH : Shouldn't use this
     static int GetButtonState(int button);
 
     /* Action management */
