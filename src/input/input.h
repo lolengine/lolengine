@@ -18,15 +18,17 @@
 
 #include <cstring>
 #include <string.h>
+
 #include "core.h"
+
 #include "lol/math/vector.h"
 #include "input/stick.h"
 
 namespace lol
 {
 
-typedef std::string ACTION_TYPE;
-static inline int ACTION_CMP(ACTION_TYPE a, ACTION_TYPE b) { return a.compare(b) == 0; }
+typedef std::string Action;
+static inline int ACTION_CMP(Action a, Action b) { return a.compare(b) == 0; }
 
 class WorldEntity;
 
@@ -327,12 +329,12 @@ struct Key
 
 struct ActionSetting
 {
-    ACTION_TYPE                m_action;
-    float                    m_buffering_time;
-    float                    m_buffered_since;
+    Action m_action;
+    float m_buffering_time;
+    float m_buffered_since;
 
-    ActionSetting(ACTION_TYPE NewAction) :
-        m_action(NewAction),
+    ActionSetting(Action NewAction)
+      : m_action(NewAction),
         m_buffering_time(.0f),
         m_buffered_since(.0f)
     { }
@@ -340,61 +342,62 @@ struct ActionSetting
 
 struct ButtonSetting
 {
-    Key                        m_raw_button;
-    Array<ActionSetting>    m_associated_action_list;
+    Key m_raw_button;
+    Array<ActionSetting> m_associated_action_list;
 
     ButtonSetting(Key NewRawButton)
-        : m_raw_button(NewRawButton) { }
-    int GetActionSettingIdx(ACTION_TYPE SearchAction);
+      : m_raw_button(NewRawButton)
+    { }
+
+    int GetActionSettingIdx(Action SearchAction);
 };
 
 class InputTracker : public Entity
 {
-
     friend class Input;
 
 public:
     InputTracker();
 
 private:
-    Array<uint8_t>            m_input_status;
-    Array<ButtonSetting>    m_input_assocation_list;
+    Array<uint8_t> m_input_status;
+    Array<ButtonSetting> m_input_assocation_list;
 
-    int                        GetButtonSettingIdx(struct Key Button);
-    int                        GetCurrentButtonStatus(struct Key Button);
-    int                        GetPreviousButtonStatus(struct Key Button);
-    void                    UpdateActionStatus(float seconds);
+    int GetButtonSettingIdx(struct Key k);
+    int GetCurrentButtonStatus(struct Key k);
+    int GetPreviousButtonStatus(struct Key k);
+    void UpdateActionStatus(float seconds);
 
 protected:
-    virtual char const *    GetName()
+    virtual char const * GetName()
     {
         return "<InputTracker>";
     }
-    virtual void            TickGame(float seconds)
+    virtual void TickGame(float seconds)
     {
         Entity::TickGame(seconds);
 
         UpdateActionStatus(seconds);
     }
 
-    void                    LinkActionToKey(ACTION_TYPE Action, struct Key Button);
-    void                    UnlinkAction(ACTION_TYPE Action);
-    int                        GetStatus(ACTION_TYPE Action);
-    bool                    WasPressed(ACTION_TYPE Action);
-    bool                    WasReleased(ACTION_TYPE Action);
+    void LinkActionToKey(Action a, struct Key k);
+    void UnlinkAction(Action a);
+    int GetStatus(Action a);
+    bool WasPressed(Action a);
+    bool WasReleased(Action a);
 
     //You should probably use the Action System
-    int                        GetStatus(Key Button);
-    bool                    WasPressed(Key Button);
-    bool                    WasReleased(Key Button);
+    int GetStatus(Key k);
+    bool WasPressed(Key k);
+    bool WasReleased(Key k);
 };
 
 class Input
 {
 private:
-    static InputTracker*        m_input_tracker;
+    static InputTracker* m_input_tracker;
 
-    static bool                    CheckInputTrackerInit()
+    static bool CheckInputTrackerInit()
     {
         if (Input::m_input_tracker)
             return true;
@@ -413,16 +416,16 @@ public:
     static int GetButtonState(int button);
 
     /* Action management */
-    static void LinkActionToKey(ACTION_TYPE Action, struct Key Button);
-    static void UnlinkAction(ACTION_TYPE Action);
-    static int GetStatus(ACTION_TYPE Action);
-    static bool    WasPressed(ACTION_TYPE Action);
-    static bool WasReleased(ACTION_TYPE Action);
+    static void LinkActionToKey(Action a, struct Key k);
+    static void UnlinkAction(Action a);
+    static int GetStatus(Action a);
+    static bool WasPressed(Action a);
+    static bool WasReleased(Action a);
 
     /* Raw Button management. You should use actions. */
-    static int GetStatus(Key Button);
-    static bool    WasPressed(Key Button);
-    static bool WasReleased(Key Button);
+    static int GetStatus(Key k);
+    static bool WasPressed(Key k);
+    static bool WasReleased(Key k);
 
     /* Entities can subscribe to events */
     static void TrackMouse(WorldEntity *e);
