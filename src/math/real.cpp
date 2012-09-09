@@ -37,6 +37,56 @@ using namespace std;
 namespace lol
 {
 
+/*
+ * First handle explicit specialisation of our templates.
+ *
+ * Initialisation order is not important because everything is
+ * done on demand, but here is the dependency list anyway:
+ *  - fast_log() requires R_1
+ *  - log() requires R_LN2
+ *  - re() require R_2
+ *  - exp() requires R_0, R_1, R_LN2
+ *  - sqrt() requires R_3
+ */
+
+static real fast_log(real const &x);
+static real fast_pi();
+
+#define LOL_CONSTANT_GETTER(name, value) \
+    template<> real const& real::name() \
+    { \
+        static real const ret = value; \
+        return ret; \
+    }
+
+LOL_CONSTANT_GETTER(R_0,        (real)0.0);
+LOL_CONSTANT_GETTER(R_1,        (real)1.0);
+LOL_CONSTANT_GETTER(R_2,        (real)2.0);
+LOL_CONSTANT_GETTER(R_3,        (real)3.0);
+LOL_CONSTANT_GETTER(R_10,       (real)10.0);
+
+LOL_CONSTANT_GETTER(R_LN2,      fast_log(R_2()));
+LOL_CONSTANT_GETTER(R_LN10,     log(R_10()));
+LOL_CONSTANT_GETTER(R_LOG2E,    re(R_LN2()));
+LOL_CONSTANT_GETTER(R_LOG10E,   re(R_LN10()));
+LOL_CONSTANT_GETTER(R_E,        exp(R_1()));
+LOL_CONSTANT_GETTER(R_PI,       fast_pi());
+LOL_CONSTANT_GETTER(R_PI_2,     R_PI() / 2);
+LOL_CONSTANT_GETTER(R_PI_3,     R_PI() / R_3());
+LOL_CONSTANT_GETTER(R_PI_4,     R_PI() / 4);
+LOL_CONSTANT_GETTER(R_1_PI,     re(R_PI()));
+LOL_CONSTANT_GETTER(R_2_PI,     R_1_PI() * 2);
+LOL_CONSTANT_GETTER(R_2_SQRTPI, re(sqrt(R_PI())) * 2);
+LOL_CONSTANT_GETTER(R_SQRT2,    sqrt(R_2()));
+LOL_CONSTANT_GETTER(R_SQRT3,    sqrt(R_3()));
+LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
+
+#undef LOL_CONSTANT_GETTER
+
+/*
+ * Now carry on with the rest of the Real class.
+ */
+
 template<> real::Real()
 {
     m_mantissa = new uint32_t[BIGITS];
@@ -189,7 +239,7 @@ template<> real::Real(char const *str)
     }
 
     if (exponent)
-        ret *= pow(R_10, (real)exponent);
+        ret *= pow(R_10(), (real)exponent);
 
     if (negative)
         ret = -ret;
@@ -601,7 +651,7 @@ template<> real re(real const &x)
     /* FIXME: 1+log2(BIGITS) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
     for (int i = 1; i <= real::BIGITS; i *= 2)
-        ret = ret * (real::R_2 - ret * x);
+        ret = ret * (real::R_2() - ret * x);
 
     return ret;
 }
@@ -646,7 +696,7 @@ template<> real sqrt(real const &x)
      * convergence, but this hasn't been checked seriously. */
     for (int i = 1; i <= real::BIGITS; i *= 2)
     {
-        ret = ret * (real::R_3 - ret * ret * x);
+        ret = ret * (real::R_3() - ret * ret * x);
         ret.m_signexp--;
     }
 
@@ -683,7 +733,7 @@ template<> real cbrt(real const &x)
      * convergence, but this hasn't been checked seriously. */
     for (int i = 1; i <= real::BIGITS; i *= 2)
     {
-        static real third = re(real::R_3);
+        static real third = re(real::R_3());
         ret = third * (x / (ret * ret) + (ret / 2));
     }
 
@@ -693,10 +743,10 @@ template<> real cbrt(real const &x)
 template<> real pow(real const &x, real const &y)
 {
     if (!y)
-        return real::R_1;
+        return real::R_1();
     if (!x)
-        return real::R_0;
-    if (x > real::R_0)
+        return real::R_0();
+    if (x > real::R_0())
         return exp(y * log(x));
     else /* x < 0 */
     {
@@ -709,13 +759,13 @@ template<> real pow(real const &x, real const &y)
             return -exp(y * log(-x));
 
         /* FIXME: negative nth root */
-        return real::R_0;
+        return real::R_0();
     }
 }
 
 static real fast_fact(int x)
 {
-    real ret = real::R_1;
+    real ret = real::R_1();
     int i = 1, multiplier = 1, exponent = 0;
 
     for (;;)
@@ -748,8 +798,8 @@ template<> real gamma(real const &x)
      * and do the addition in this order. */
     int a = ceilf(logf(2) / logf(2 * M_PI) * real::BIGITS * real::BIGIT_BITS);
 
-    real ret = sqrt(real::R_PI * 2);
-    real fact_k_1 = real::R_1;
+    real ret = sqrt(real::R_PI() * 2);
+    real fact_k_1 = real::R_1();
 
     for (int k = 1; k < a; k++)
     {
@@ -760,7 +810,7 @@ template<> real gamma(real const &x)
         fact_k_1 *= (real)-k;
     }
 
-    ret *= pow(x + (real)(a - 1), x - (real::R_1 / 2));
+    ret *= pow(x + (real)(a - 1), x - (real::R_1() / 2));
     ret *= exp(-x - (real)(a - 1));
 
     return ret;
@@ -791,8 +841,8 @@ static real fast_log(real const &x)
      * would also impact the final precision. For now we stick with one
      * sqrt() call. */
     real y = sqrt(x);
-    real z = (y - real::R_1) / (y + real::R_1), z2 = z * z, zn = z2;
-    real sum = real::R_1;
+    real z = (y - real::R_1()) / (y + real::R_1()), z2 = z * z, zn = z2;
+    real sum = real::R_1();
 
     for (int i = 3; ; i += 2)
     {
@@ -818,7 +868,7 @@ template<> real log(real const &x)
         return tmp;
     }
     tmp.m_signexp = (1 << 30) - 1;
-    return (real)(int)(x.m_signexp - (1 << 30) + 1) * real::R_LN2
+    return (real)(int)(x.m_signexp - (1 << 30) + 1) * real::R_LN2()
            + fast_log(tmp);
 }
 
@@ -834,12 +884,12 @@ template<> real log2(real const &x)
     }
     tmp.m_signexp = (1 << 30) - 1;
     return (real)(int)(x.m_signexp - (1 << 30) + 1)
-           + fast_log(tmp) * real::R_LOG2E;
+           + fast_log(tmp) * real::R_LOG2E();
 }
 
 template<> real log10(real const &x)
 {
-    return log(x) * real::R_LOG10E;
+    return log(x) * real::R_LOG10E();
 }
 
 static real fast_exp_sub(real const &x, real const &y)
@@ -848,7 +898,7 @@ static real fast_exp_sub(real const &x, real const &y)
      * no effort whatsoever was made to improve convergence outside this
      * domain of validity. The argument y is used for cases where we
      * don't want the leading 1 in the Taylor series. */
-    real ret = real::R_1 - y, xn = x;
+    real ret = real::R_1() - y, xn = x;
     int i = 1;
 
     for (;;)
@@ -881,9 +931,9 @@ template<> real exp(real const &x)
      *  real x1 = exp(x0)
      *  return x1 * 2^E0
      */
-    int e0 = x / real::R_LN2;
-    real x0 = x - (real)e0 * real::R_LN2;
-    real x1 = fast_exp_sub(x0, real::R_0);
+    int e0 = x / real::R_LN2();
+    real x0 = x - (real)e0 * real::R_LN2();
+    real x1 = fast_exp_sub(x0, real::R_0());
     x1.m_signexp += e0;
     return x1;
 }
@@ -893,7 +943,7 @@ template<> real exp2(real const &x)
     /* Strategy for exp2(x): see strategy in exp(). */
     int e0 = x;
     real x0 = x - (real)e0;
-    real x1 = fast_exp_sub(x0 * real::R_LN2, real::R_0);
+    real x1 = fast_exp_sub(x0 * real::R_LN2(), real::R_0());
     x1.m_signexp += e0;
     return x1;
 }
@@ -903,19 +953,19 @@ template<> real sinh(real const &x)
     /* We cannot always use (exp(x)-exp(-x))/2 because we'll lose
      * accuracy near zero. We only use this identity for |x|>0.5. If
      * |x|<=0.5, we compute exp(x)-1 and exp(-x)-1 instead. */
-    bool near_zero = (fabs(x) < real::R_1 / 2);
-    real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
-    real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
+    bool near_zero = (fabs(x) < real::R_1() / 2);
+    real x1 = near_zero ? fast_exp_sub(x, real::R_1()) : exp(x);
+    real x2 = near_zero ? fast_exp_sub(-x, real::R_1()) : exp(-x);
     return (x1 - x2) / 2;
 }
 
 template<> real tanh(real const &x)
 {
     /* See sinh() for the strategy here */
-    bool near_zero = (fabs(x) < real::R_1 / 2);
-    real x1 = near_zero ? fast_exp_sub(x, real::R_1) : exp(x);
-    real x2 = near_zero ? fast_exp_sub(-x, real::R_1) : exp(-x);
-    real x3 = near_zero ? x1 + x2 + real::R_2 : x1 + x2;
+    bool near_zero = (fabs(x) < real::R_1() / 2);
+    real x1 = near_zero ? fast_exp_sub(x, real::R_1()) : exp(x);
+    real x2 = near_zero ? fast_exp_sub(-x, real::R_1()) : exp(-x);
+    real x3 = near_zero ? x1 + x2 + real::R_2() : x1 + x2;
     return (x1 - x2) / x3;
 }
 
@@ -960,7 +1010,7 @@ template<> real modf(real const &x, real *iptr)
 
 template<> real ulp(real const &x)
 {
-    real ret = real::R_1;
+    real ret = real::R_1();
     if (x)
         ret.m_signexp = x.m_signexp + 1 - real::BIGITS * real::BIGIT_BITS;
     else
@@ -994,12 +1044,12 @@ template<> real floor(real const &x)
      *  - if less than one, return zero
      *  - otherwise, if e is the exponent, clear all bits except the
      *    first e. */
-    if (x < -real::R_0)
+    if (x < -real::R_0())
         return -ceil(-x);
     if (!x)
         return x;
-    if (x < real::R_1)
-        return real::R_0;
+    if (x < real::R_1())
+        return real::R_0();
 
     real ret = x;
     int exponent = x.m_signexp - (1 << 30) + 1;
@@ -1023,27 +1073,27 @@ template<> real ceil(real const &x)
      *  - if negative, return -floor(-x)
      *  - if x == floor(x), return x
      *  - otherwise, return floor(x) + 1 */
-    if (x < -real::R_0)
+    if (x < -real::R_0())
         return -floor(-x);
     real ret = floor(x);
     if (x == ret)
         return ret;
     else
-        return ret + real::R_1;
+        return ret + real::R_1();
 }
 
 template<> real round(real const &x)
 {
-    if (x < real::R_0)
+    if (x < real::R_0())
         return -round(-x);
 
-    return floor(x + (real::R_1 / 2));
+    return floor(x + (real::R_1() / 2));
 }
 
 template<> real fmod(real const &x, real const &y)
 {
     if (!y)
-        return real::R_0; /* FIXME: return NaN */
+        return real::R_0(); /* FIXME: return NaN */
 
     if (!x)
         return x;
@@ -1056,17 +1106,17 @@ template<> real sin(real const &x)
 {
     int switch_sign = x.m_signexp & 0x80000000u;
 
-    real absx = fmod(fabs(x), real::R_PI * 2);
-    if (absx > real::R_PI)
+    real absx = fmod(fabs(x), real::R_PI() * 2);
+    if (absx > real::R_PI())
     {
-        absx -= real::R_PI;
+        absx -= real::R_PI();
         switch_sign = !switch_sign;
     }
 
-    if (absx > real::R_PI_2)
-        absx = real::R_PI - absx;
+    if (absx > real::R_PI_2())
+        absx = real::R_PI() - absx;
 
-    real ret = real::R_0, fact = real::R_1, xn = absx, mx2 = -absx * absx;
+    real ret = real::R_0(), fact = real::R_1(), xn = absx, mx2 = -absx * absx;
     int i = 1;
     for (;;)
     {
@@ -1087,29 +1137,29 @@ template<> real sin(real const &x)
 
 template<> real cos(real const &x)
 {
-    return sin(real::R_PI_2 - x);
+    return sin(real::R_PI_2() - x);
 }
 
 template<> real tan(real const &x)
 {
     /* Constrain input to [-π,π] */
-    real y = fmod(x, real::R_PI);
+    real y = fmod(x, real::R_PI());
 
     /* Constrain input to [-π/2,π/2] */
-    if (y < -real::R_PI_2)
-        y += real::R_PI;
-    else if (y > real::R_PI_2)
-        y -= real::R_PI;
+    if (y < -real::R_PI_2())
+        y += real::R_PI();
+    else if (y > real::R_PI_2())
+        y -= real::R_PI();
 
     /* In [-π/4,π/4] return sin/cos */
-    if (fabs(y) <= real::R_PI_4)
+    if (fabs(y) <= real::R_PI_4())
         return sin(y) / cos(y);
 
     /* Otherwise, return cos/sin */
-    if (y > real::R_0)
-        y = real::R_PI_2 - y;
+    if (y > real::R_0())
+        y = real::R_PI_2() - y;
     else
-        y = -real::R_PI_2 - y;
+        y = -real::R_PI_2() - y;
 
     return cos(y) / sin(y);
 }
@@ -1122,10 +1172,10 @@ static inline real asinacos(real const &x, int is_asin, int is_negative)
      * Strategy for acos(): use acos(x) = π/2 - asin(x) and try not to
      * lose the precision around x=1. */
     real absx = fabs(x);
-    int around_zero = (absx < (real::R_1 / 2));
+    int around_zero = (absx < (real::R_1() / 2));
 
     if (!around_zero)
-        absx = sqrt((real::R_1 - absx) / 2);
+        absx = sqrt((real::R_1() - absx) / 2);
 
     real ret = absx, xn = absx, x2 = absx * absx, fact1 = 2, fact2 = 1;
     for (int i = 1; ; i++)
@@ -1144,12 +1194,12 @@ static inline real asinacos(real const &x, int is_asin, int is_negative)
         ret = -ret;
 
     if (around_zero)
-        ret = is_asin ? ret : real::R_PI_2 - ret;
+        ret = is_asin ? ret : real::R_PI_2() - ret;
     else
     {
-        real adjust = is_negative ? real::R_PI : real::R_0;
+        real adjust = is_negative ? real::R_PI() : real::R_0();
         if (is_asin)
-            ret = real::R_PI_2 - adjust - ret * 2;
+            ret = real::R_PI_2() - adjust - ret * 2;
         else
             ret = adjust + ret * 2;
     }
@@ -1193,7 +1243,7 @@ template<> real atan(real const &x)
      */
     real absx = fabs(x);
 
-    if (absx < (real::R_1 / 2))
+    if (absx < (real::R_1() / 2))
     {
         real ret = x, xn = x, mx2 = -x * x;
         for (int i = 3; ; i += 2)
@@ -1209,9 +1259,9 @@ template<> real atan(real const &x)
 
     real ret = 0;
 
-    if (absx < (real::R_3 / 2))
+    if (absx < (real::R_3() / 2))
     {
-        real y = real::R_1 - absx;
+        real y = real::R_1() - absx;
         real yn = y, my2 = -y * y;
         for (int i = 0; ; i += 2)
         {
@@ -1225,21 +1275,21 @@ template<> real atan(real const &x)
             ret = newret;
             yn *= my2;
         }
-        ret = real::R_PI_4 - ret;
+        ret = real::R_PI_4() - ret;
     }
-    else if (absx < real::R_2)
+    else if (absx < real::R_2())
     {
-        real y = (absx - real::R_SQRT3) / 2;
+        real y = (absx - real::R_SQRT3()) / 2;
         real yn = y, my2 = -y * y;
         for (int i = 1; ; i += 6)
         {
             real newret = ret + ((yn / (real)i) / 2);
             yn *= y;
-            newret -= (real::R_SQRT3 / 2) * yn / (real)(i + 1);
+            newret -= (real::R_SQRT3() / 2) * yn / (real)(i + 1);
             yn *= y;
             newret += yn / (real)(i + 2);
             yn *= y;
-            newret -= (real::R_SQRT3 / 2) * yn / (real)(i + 3);
+            newret -= (real::R_SQRT3() / 2) * yn / (real)(i + 3);
             yn *= y;
             newret += (yn / (real)(i + 4)) / 2;
             if (newret == ret)
@@ -1247,7 +1297,7 @@ template<> real atan(real const &x)
             ret = newret;
             yn *= my2;
         }
-        ret = real::R_PI_3 + ret;
+        ret = real::R_PI_3() + ret;
     }
     else
     {
@@ -1262,7 +1312,7 @@ template<> real atan(real const &x)
                 break;
             ret = newret;
         }
-        ret = real::R_PI_2 - ret;
+        ret = real::R_PI_2() - ret;
     }
 
     /* Propagate sign */
@@ -1277,22 +1327,22 @@ template<> real atan2(real const &y, real const &x)
         if ((x.m_signexp >> 31) == 0)
             return y;
         if (y.m_signexp >> 31)
-            return -real::R_PI;
-        return real::R_PI;
+            return -real::R_PI();
+        return real::R_PI();
     }
 
     if (!x)
     {
         if (y.m_signexp >> 31)
-            return -real::R_PI;
-        return real::R_PI;
+            return -real::R_PI();
+        return real::R_PI();
     }
 
     /* FIXME: handle the Inf and NaN cases */
     real z = y / x;
     real ret = atan(z);
-    if (x < real::R_0)
-        ret += (y > real::R_0) ? real::R_PI : -real::R_PI;
+    if (x < real::R_0())
+        ret += (y > real::R_0()) ? real::R_PI() : -real::R_PI();
     return ret;
 }
 
@@ -1333,11 +1383,11 @@ template<> void real::sprintf(char *str, int ndigits) const
     /* Normalise x so that mantissa is in [1..9.999] */
     /* FIXME: better use int64_t when the cast is implemented */
     int exponent = ceil(log10(x));
-    x /= pow(R_10, (real)exponent);
+    x /= pow(R_10(), (real)exponent);
 
-    if (x < R_1)
+    if (x < R_1())
     {
-        x *= R_10;
+        x *= R_10();
         exponent--;
     }
 
@@ -1349,7 +1399,7 @@ template<> void real::sprintf(char *str, int ndigits) const
         if (i == 0)
             *str++ = '.';
         x -= real(digit);
-        x *= R_10;
+        x *= R_10();
     }
 
     /* Print exponent information */
@@ -1377,36 +1427,6 @@ static real fast_pi()
 
     return ret;
 }
-
-template<> real const real::R_0        = (real)0.0;
-template<> real const real::R_1        = (real)1.0;
-template<> real const real::R_2        = (real)2.0;
-template<> real const real::R_3        = (real)3.0;
-template<> real const real::R_10       = (real)10.0;
-
-/*
- * Initialisation order is important here:
- *  - fast_log() requires R_1
- *  - log() requires R_LN2
- *  - re() require R_2
- *  - exp() requires R_0, R_1, R_LN2
- *  - sqrt() requires R_3
- */
-template<> real const real::R_LN2      = fast_log(R_2);
-template<> real const real::R_LN10     = log(R_10);
-template<> real const real::R_LOG2E    = re(R_LN2);
-template<> real const real::R_LOG10E   = re(R_LN10);
-template<> real const real::R_E        = exp(R_1);
-template<> real const real::R_PI       = fast_pi();
-template<> real const real::R_PI_2     = R_PI / 2;
-template<> real const real::R_PI_3     = R_PI / R_3;
-template<> real const real::R_PI_4     = R_PI / 4;
-template<> real const real::R_1_PI     = re(R_PI);
-template<> real const real::R_2_PI     = R_1_PI * 2;
-template<> real const real::R_2_SQRTPI = re(sqrt(R_PI)) * 2;
-template<> real const real::R_SQRT2    = sqrt(R_2);
-template<> real const real::R_SQRT3    = sqrt(R_3);
-template<> real const real::R_SQRT1_2  = R_SQRT2 / 2;
 
 } /* namespace lol */
 

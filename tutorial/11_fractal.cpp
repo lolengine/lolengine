@@ -283,8 +283,8 @@ public:
         {
             /* If settings didn't change, set transformation from previous
              * frame to identity. */
-            m_deltashift[prev_frame] = real::R_0;
-            m_deltascale[prev_frame] = real::R_1;
+            m_deltashift[prev_frame] = real::R_0();
+            m_deltascale[prev_frame] = real::R_1();
         }
 
         /* Transformation from current frame to current frame is always

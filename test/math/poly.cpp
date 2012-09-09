@@ -84,7 +84,7 @@ static float const a6 = 0.0;
 static float floatsin(float f)
 {
     return lol_sin(f);
-    //static float const k = (float)real::R_2_PI;
+    //static float const k = (float)real::R_2_PI();
 
     //f *= k;
     float f2 = f * f;
@@ -119,7 +119,7 @@ flint z = { lol_sin(adjustf(v.f, 0)) };
 inspect(z.f);
 
 printf("-- START --\n");
-    for (flint u = { (float)real::R_PI_2 }; u.f > 1e-30; u.x -= 1)
+    for (flint u = { (float)real::R_PI_2() }; u.f > 1e-30; u.x -= 1)
     {
         union { float f; uint32_t x; } s1 = { sinf(adjustf(u.f, 0)) };
         union { float f; uint32_t x; } s2 = { floatsin(adjustf(u.f, 0)) };

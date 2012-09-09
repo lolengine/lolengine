@@ -164,27 +164,28 @@ public:
     __LOL_REAL_OP_HELPER_FLOAT(double)
 
     /* Constants */
-    static Real<N> const R_0;
-    static Real<N> const R_1;
-    static Real<N> const R_2;
-    static Real<N> const R_3;
-    static Real<N> const R_10;
+    static Real<N> const& R_0();
+    static Real<N> const& R_1();
+    static Real<N> const& R_2();
+    static Real<N> const& R_3();
+    static Real<N> const& R_4();
+    static Real<N> const& R_10();
 
-    static Real<N> const R_E;
-    static Real<N> const R_LOG2E;
-    static Real<N> const R_LOG10E;
-    static Real<N> const R_LN2;
-    static Real<N> const R_LN10;
-    static Real<N> const R_PI;
-    static Real<N> const R_PI_2;
-    static Real<N> const R_PI_3;
-    static Real<N> const R_PI_4;
-    static Real<N> const R_1_PI;
-    static Real<N> const R_2_PI;
-    static Real<N> const R_2_SQRTPI;
-    static Real<N> const R_SQRT2;
-    static Real<N> const R_SQRT3;
-    static Real<N> const R_SQRT1_2;
+    static Real<N> const& R_E();
+    static Real<N> const& R_LOG2E();
+    static Real<N> const& R_LOG10E();
+    static Real<N> const& R_LN2();
+    static Real<N> const& R_LN10();
+    static Real<N> const& R_PI();
+    static Real<N> const& R_PI_2();
+    static Real<N> const& R_PI_3();
+    static Real<N> const& R_PI_4();
+    static Real<N> const& R_1_PI();
+    static Real<N> const& R_2_PI();
+    static Real<N> const& R_2_SQRTPI();
+    static Real<N> const& R_SQRT2();
+    static Real<N> const& R_SQRT3();
+    static Real<N> const& R_SQRT1_2();
 
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
@@ -276,31 +277,6 @@ template<> real fmod(real const &x, real const &y);
 
 template<> void real::hexprint() const;
 template<> void real::print(int ndigits) const;
-
-/* FIXME: why doesn't this work on Visual Studio? */
-#if !defined _MSC_VER
-template<> real const real::R_0;
-template<> real const real::R_1;
-template<> real const real::R_2;
-template<> real const real::R_3;
-template<> real const real::R_10;
-
-template<> real const real::R_LN2;
-template<> real const real::R_LN10;
-template<> real const real::R_LOG2E;
-template<> real const real::R_LOG10E;
-template<> real const real::R_E;
-template<> real const real::R_PI;
-template<> real const real::R_PI_2;
-template<> real const real::R_PI_3;
-template<> real const real::R_PI_4;
-template<> real const real::R_1_PI;
-template<> real const real::R_2_PI;
-template<> real const real::R_2_SQRTPI;
-template<> real const real::R_SQRT2;
-template<> real const real::R_SQRT3;
-template<> real const real::R_SQRT1_2;
-#endif
 
 } /* namespace lol */
 
