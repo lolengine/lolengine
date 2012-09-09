@@ -1,7 +1,7 @@
 
 # Put "people" at the end because they're more likely to break builds.
-SUBDIRS = src tutorial test tools games people
-DIST_SUBDIRS = $(SUBDIRS) build binaries
+SUBDIRS = build src tutorial test tools games people
+DIST_SUBDIRS = $(SUBDIRS) binaries
 
 EXTRA_DIST = bootstrap TODO
 AUTOMAKE_OPTIONS = dist-bzip2
