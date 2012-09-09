@@ -23,11 +23,11 @@ using lol::real;
 
 int main(int argc, char **argv)
 {
-    printf("Pi: "); real::R_PI.print();
-    printf("e: "); real::R_E.print();
-    printf("ln(2): "); real::R_LN2.print();
-    printf("sqrt(2): "); real::R_SQRT2.print();
-    printf("sqrt(1/2): "); real::R_SQRT1_2.print();
+    printf("Pi: "); real::R_PI().print();
+    printf("e: "); real::R_E().print();
+    printf("ln(2): "); real::R_LN2().print();
+    printf("sqrt(2): "); real::R_SQRT2().print();
+    printf("sqrt(1/2): "); real::R_SQRT1_2().print();
 
     /* Gauss-Legendre computation of Pi -- doesn't work well at all,
      * probably because we use finite precision. */

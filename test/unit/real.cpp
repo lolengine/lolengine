@@ -24,47 +24,47 @@ LOLUNIT_FIXTURE(RealTest)
 {
     LOLUNIT_TEST(Constants)
     {
-        double a0 = real::R_0;
-        double a1 = real::R_1;
-        double a2 = real::R_2;
-        double a10 = real::R_10;
+        double a0 = real::R_0();
+        double a1 = real::R_1();
+        double a2 = real::R_2();
+        double a10 = real::R_10();
 
         LOLUNIT_ASSERT_EQUAL(a0, 0.0);
         LOLUNIT_ASSERT_EQUAL(a1, 1.0);
         LOLUNIT_ASSERT_EQUAL(a2, 2.0);
         LOLUNIT_ASSERT_EQUAL(a10, 10.0);
 
-        double b1 = log(real::R_E);
-        double b2 = log2(real::R_2);
+        double b1 = log(real::R_E());
+        double b2 = log2(real::R_2());
         LOLUNIT_ASSERT_EQUAL(b1, 1.0);
         LOLUNIT_ASSERT_EQUAL(b2, 1.0);
 
-        double c1 = exp(re(real::R_LOG2E));
-        double c2 = log(exp2(real::R_LOG2E));
+        double c1 = exp(re(real::R_LOG2E()));
+        double c2 = log(exp2(real::R_LOG2E()));
         LOLUNIT_ASSERT_EQUAL(c1, 2.0);
         LOLUNIT_ASSERT_EQUAL(c2, 1.0);
 
-        double d1 = exp(re(real::R_LOG10E));
+        double d1 = exp(re(real::R_LOG10E()));
         LOLUNIT_ASSERT_EQUAL(d1, 10.0);
 
-        double e1 = exp(real::R_LN2);
+        double e1 = exp(real::R_LN2());
         LOLUNIT_ASSERT_EQUAL(e1, 2.0);
 
-        double f1 = exp(real::R_LN10);
+        double f1 = exp(real::R_LN10());
         LOLUNIT_ASSERT_EQUAL(f1, 10.0);
 
-        double g1 = sin(real::R_PI);
-        double g2 = cos(real::R_PI);
+        double g1 = sin(real::R_PI());
+        double g2 = cos(real::R_PI());
         LOLUNIT_ASSERT_DOUBLES_EQUAL(g1, 0.0, 1e-100);
         LOLUNIT_ASSERT_EQUAL(g2, -1.0);
 
-        double h1 = sin(real::R_PI_2);
-        double h2 = cos(real::R_PI_2);
+        double h1 = sin(real::R_PI_2());
+        double h2 = cos(real::R_PI_2());
         LOLUNIT_ASSERT_EQUAL(h1, 1.0);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(h2, 0.0, 1e-100);
 
-        double i1 = sin(real::R_PI_4) * sin(real::R_PI_4);
-        double i2 = cos(real::R_PI_4) * cos(real::R_PI_4);
+        double i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
+        double i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
         LOLUNIT_ASSERT_EQUAL(i1, 0.5);
         LOLUNIT_ASSERT_EQUAL(i2, 0.5);
     }
@@ -218,11 +218,11 @@ LOLUNIT_FIXTURE(RealTest)
 
     LOLUNIT_TEST(ExactDivision)
     {
-        float m1 = real::R_1 / real::R_1;
-        float m2 = real::R_2 / real::R_1;
-        float m3 = real::R_1 / real::R_2;
-        float m4 = real::R_2 / real::R_2;
-        float m5 = real::R_1 / -real::R_2;
+        float m1 = real::R_1() / real::R_1();
+        float m2 = real::R_2() / real::R_1();
+        float m3 = real::R_1() / real::R_2();
+        float m4 = real::R_2() / real::R_2();
+        float m5 = real::R_1() / -real::R_2();
 
         LOLUNIT_ASSERT_EQUAL(m1, 1.0f);
         LOLUNIT_ASSERT_EQUAL(m2, 2.0f);
@@ -235,8 +235,8 @@ LOLUNIT_FIXTURE(RealTest)
     {
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
-        real a = real::R_1 / real::R_3 * real::R_3;
-        real b = ldexp(real::R_1 - a, real::BIGITS * real::BIGIT_BITS);
+        real a = real::R_1() / real::R_3() * real::R_3();
+        real b = ldexp(real::R_1() - a, real::BIGITS * real::BIGIT_BITS);
 
         LOLUNIT_ASSERT_LEQUAL((double)fabs(b), 1.0);
     }
@@ -259,7 +259,7 @@ LOLUNIT_FIXTURE(RealTest)
 
     LOLUNIT_TEST(Ulp)
     {
-        real a1 = real::R_PI;
+        real a1 = real::R_PI();
 
         LOLUNIT_ASSERT_NOT_EQUAL((double)(a1 + ulp(a1) - a1), 0.0);
         LOLUNIT_ASSERT_EQUAL((double)(a1 + ulp(a1) / 2 - a1), 0.0);
@@ -346,11 +346,11 @@ LOLUNIT_FIXTURE(RealTest)
 
     LOLUNIT_TEST(Pow)
     {
-        double a1 = pow(-real::R_2, real::R_2);
+        double a1 = pow(-real::R_2(), real::R_2());
         double b1 = 4.0;
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, 1.0e-13);
 
-        double a2 = pow(-real::R_2, real::R_3);
+        double a2 = pow(-real::R_2(), real::R_3());
         double b2 = -8.0;
         LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, 1.0e-13);
     }
