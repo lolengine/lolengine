@@ -46,6 +46,16 @@ else
     exit 0
 fi
 
+# Find out whether we need to care about CRLF
+case "$(uname 2>/dev/null)" in
+  MINGW*)
+    check_crlf=false
+    ;;
+  *)
+    check_crlf=true
+    ;;
+esac
+
 # Find out what kind of Vcs directory this is
 if [ -f "$top_srcdir/.git/index" ]; then
     info "detected Git repository"
@@ -58,9 +68,7 @@ else
     exit 0
 fi
 
-total_errors=0
-total_files=0
-total_crs=0
+total_crlfs=0
 total_spaces=0
 total_tabs=0
 
@@ -72,27 +80,40 @@ else
     FILES="`svn ls -R`"
 fi
 
+total_files=0
+for file in $FILES; do
+    if [ -f "$file" ]; then
+        total_files="$(($total_files + 1))"
+    fi
+done
+
+total_errors=0
 for file in $FILES; do
     case "$file" in
-      src/bullet/*|contrib/*|*/generated/*)
-          : # These files aren't ours, don't fix
+      # These files aren't ours, don't fix
+      src/bullet/*|contrib/*|*/generated/*|web/plugins/*)
+          :
           ;;
+      # Don't harass these people
       people/peeweek/*|people/touky/*)
-          : # Don't harass these people
+          :
           ;;
-      *.c|*.cpp|*.h|*.l|*.y)
+      # These files we know how to handle
+      *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.l|*.y|*.sh|*.py)
           clean=true
 
           # Check for CR LF
-          ncrs="$(od -tx1 "$file" | cut -b8- | tr ' ' '\n' | grep -c 0d || true)"
-          total_crs="$(($total_crs + $ncrs))"
-          if [ "$ncrs" -gt 0 ]; then
-              clean=false
-              if [ "$fix" = true ]; then
-                  $d2u -q "$file"
-                  info "$file has $ncrs CR characters"
-              else
-                  error "$file has $ncrs CR characters"
+          if [ "$check_crlf" = true ]; then
+              ncrlfs="$(od -tx1 "$file" | cut -b8- | tr ' ' '\n' | grep -c 0d || true)"
+              total_crlfs="$(($total_crlfs + $ncrlfs))"
+              if [ "$ncrlfs" -gt 0 ]; then
+                  clean=false
+                  if [ "$fix" = true ]; then
+                      $d2u -q "$file"
+                      info "$file has $ncrlfs CR characters"
+                  else
+                      error "$file has $ncrlfs CR characters"
+                  fi
               fi
           fi
 
@@ -122,7 +143,6 @@ for file in $FILES; do
               fi
           fi
 
-          total_files="$(($total_files + 1))"
           if [ "$clean" != true ]; then
               total_errors="$(($total_errors + 1))"
           fi
@@ -136,15 +156,15 @@ if [ "$total_errors" -gt 0 ]; then
         # EITHER: commit all modified files
         svn commit --username lolbot --non-interactive -F - << EOF
 fixed $total_errors files out of $total_files:
- - fixed $total_crs CR characters
- - fixed $total_spaces trailing spaces
- - fixed $total_tabs tabs
+ - removed $total_crlfs CR characters
+ - removed $total_spaces trailing whitespaces
+ - replaced $total_tabs tabs with spaces
 EOF
     elif [ "$fix" = "true" ]; then
         # OR: report in stdout
         info "fixed $total_errors files out of $total_files:"
-        if [ "$total_crs" -gt 0 ]; then
-            info " - fixed $total_crs CR characters"
+        if [ "$total_crlfs" -gt 0 ]; then
+            info " - fixed $total_crlfs CR characters"
         fi
         if [ "$total_spaces" -gt 0 ]; then
             info " - fixed $total_spaces trailing spaces"
@@ -156,5 +176,7 @@ EOF
         # OR: warn about how to fix errors
         info "re-run with -w to fix errors"
     fi
+else
+    info "all $total_files source files appear to be OK, congratulations"
 fi
 
