@@ -70,19 +70,19 @@ mx    { return token::T_MIRRORX; }
 my    { return token::T_MIRRORY; }
 mz    { return token::T_MIRRORZ; }
 
-ac    { return token::T_CYLINDER; }
 ab    { return token::T_BOX; }
-ascb  { return token::T_SMOOTHCHAMFBOX; }
-afcb  { return token::T_FLATCHAMFBOX; }
+ac    { return token::T_CYLINDER; }
 acap  { return token::T_CAPSULE; }
-asph  { return token::T_SPHERE; }
-at    { return token::T_TORUS; }
-as    { return token::T_STAR; }
-aes   { return token::T_EXPANDEDSTAR; }
-ad    { return token::T_DISC; }
-at    { return token::T_TRIANGLE; }
-aq    { return token::T_QUAD; }
 acg   { return token::T_COG; }
+ad    { return token::T_DISC; }
+aes   { return token::T_EXPANDEDSTAR; }
+afcb  { return token::T_FLATCHAMFBOX; }
+aq    { return token::T_QUAD; }
+as    { return token::T_STAR; }
+ascb  { return token::T_SMOOTHCHAMFBOX; }
+asph  { return token::T_SPHERE; }
+at    { return token::T_TRIANGLE; }
+ato   { return token::T_TORUS; }
 
 #[0-9a-fA-F]{3} {
         uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
