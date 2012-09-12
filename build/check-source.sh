@@ -118,12 +118,12 @@ for file in $FILES; do
           fi
 
           # Check for trailing spaces
-          nspaces="$(sed 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
+          nspaces="$(LANG=C sed 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
           total_spaces="$(($total_spaces + $nspaces))"
           if [ "$nspaces" -gt 0 ]; then
               clean=false
               if [ "$fix" = true ]; then
-                  sed -i 's/[[:space:]][[:space:]]*$//g' "$file"
+                  LANG=C sed -i 's/[[:space:]][[:space:]]*$//g' "$file"
                   info "$file has $nspaces trailing spaces"
               else
                   error "$file has $nspaces trailing spaces"
@@ -136,7 +136,7 @@ for file in $FILES; do
           if [ "$ntabs" -gt 0 ]; then
               clean=false
               if [ "$fix" = true ]; then
-                  sed -i 's/\t/    /g' "$file"
+                  LANG=C sed -i 's/\t/    /g' "$file"
                   info "$file has $ntabs tabs"
               else
                   error "$file has $ntabs tabs"
@@ -172,6 +172,7 @@ EOF
         if [ "$total_tabs" -gt 0 ]; then
             info " - fixed $total_tabs tabs"
         fi
+        info "re-run with -c to commit fixes"
     else
         # OR: warn about how to fix errors
         info "re-run with -w to fix errors"
