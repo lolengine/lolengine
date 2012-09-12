@@ -43,7 +43,7 @@ public:
     EasyMeshTutorial()
     {
         m_angle = 0;
-        m_mesh.Compile("sc#8d3 [at40 10 40 rx20 ry130 tx30]");
+        m_mesh.Compile("sc#8d3 [ato40 10 40 rx20 ry130 tx30]");
 
         m_mesh.OpenBrace();
         m_mesh.Compile("sc#800 [asph10 25 25 25]");
