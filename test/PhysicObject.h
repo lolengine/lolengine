@@ -134,21 +134,21 @@ public:
 
         int ConeLimit = MeshRand.Count();
 
-        MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
-        MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
-        MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
-        MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
-        MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
-        MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 ac4 2 2 0 0 0]";
+        MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+        MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+        MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+        MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+        MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+        MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
 
         int CylLimit = MeshRand.Count();
 
-        MeshRand << "[sc#add scb#add ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
-        MeshRand << "[sc#dad scb#dad ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
-        MeshRand << "[sc#dda scb#dda ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
-        MeshRand << "[sc#daa scb#daa ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
-        MeshRand << "[sc#ada scb#ada ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
-        MeshRand << "[sc#aad scb#aad ad1 2 0 rx180 ty-1 my ac4 2 2 2 0 0]";
+        MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+        MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+        MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+        MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+        MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+        MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
 
         int CapsLimit = MeshRand.Count();
 
