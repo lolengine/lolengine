@@ -80,8 +80,7 @@ public:
 
         m_oldmouse = ivec2(0, 0);
 
-        m_pixels = new u8vec4[m_size.x * m_size.y];
-        m_tmppixels = new u8vec4[m_size.x / 2 * m_size.y / 2];
+        m_pixels.Resize(m_size.x * m_size.y);
         m_frame = -1;
         m_slices = 4;
         for (int i = 0; i < 4; i++)
@@ -104,7 +103,6 @@ public:
         m_ready = false;
         m_drag = false;
 
-        m_palette = new u8vec4[(MAX_ITERATIONS + 1) * PALETTE_STEP];
         for (int i = 0; i < (MAX_ITERATIONS + 1) * PALETTE_STEP; i++)
         {
             double f = (double)i / PALETTE_STEP;
@@ -125,11 +123,11 @@ public:
             uint8_t green = g * 255.99f;
             uint8_t blue = b * 255.99f;
 #if defined __CELLOS_LV2__ || defined _XBOX
-            m_palette[i] = u8vec4(255, red, green, blue);
+            m_palette.Push(u8vec4(255, red, green, blue));
 #elif defined __native_client__
-            m_palette[i] = u8vec4(red, green, blue, 255);
+            m_palette.Push(u8vec4(red, green, blue, 255));
 #else
-            m_palette[i] = u8vec4(blue, green, red, 255);
+            m_palette.Push(u8vec4(blue, green, red, 255));
 #endif
         }
 
@@ -174,9 +172,6 @@ public:
         Ticker::Unref(m_mousetext);
         Ticker::Unref(m_zoomtext);
 #endif
-        delete m_pixels;
-        delete m_tmppixels;
-        delete m_palette;
     }
 
     inline dcmplx TexelToWorldOffset(vec2 texel)
@@ -361,7 +356,7 @@ public:
         int jmax = jmin + MAX_LINES * 2;
         if (jmax > m_size.y)
             jmax = m_size.y;
-        u8vec4 *m_pixelstart = m_pixels
+        u8vec4 *m_pixelstart = &m_pixels[0]
                              + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
         dcmplx c = (dcmplx)m_center;
@@ -369,23 +364,33 @@ public:
         for (int j = jmin; j < jmax; j += 2)
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
+            double xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
             dcmplx z0 = c + TexelToWorldOffset(ivec2(i, j));
-            dcmplx z1, z2, z3, r0 = z0;
             //dcmplx r0(0.28693186889504513, 0.014286693904085048);
             //dcmplx r0(0.001643721971153, 0.822467633298876);
             //dcmplx r0(-1.207205434596, 0.315432814901);
             //dcmplx r0(-0.79192956889854, -0.14632423080102);
             //dcmplx r0(0.3245046418497685, 0.04855101129280834);
+            dcmplx r0 = z0;
+
+            x0 = z0.x; y0 = z0.y;
+            xr = r0.x; yr = r0.y;
+
             int iter = MAX_ITERATIONS - 4;
             for (;;)
             {
                 /* Unroll the loop: tests are more expensive to do at each
                  * iteration than the few extra multiplications. */
-                z1 = z0 * z0 + r0;
-                z2 = z1 * z1 + r0;
-                z3 = z2 * z2 + r0;
-                z0 = z3 * z3 + r0;
-                if (sqlength(z0) >= maxsqlen)
+                x1 = x0 * x0 - y0 * y0 + xr;
+                y1 = x0 * y0 + x0 * y0 + yr;
+                x2 = x1 * x1 - y1 * y1 + xr;
+                y2 = x1 * y1 + x1 * y1 + yr;
+                x3 = x2 * x2 - y2 * y2 + xr;
+                y3 = x2 * y2 + x2 * y2 + yr;
+                x0 = x3 * x3 - y3 * y3 + xr;
+                y0 = x3 * y3 + x3 * y3 + yr;
+
+                if (x0 * x0 + y0 * y0 >= maxsqlen)
                     break;
                 iter -= 4;
                 if (iter < 4)
@@ -394,11 +399,20 @@ public:
 
             if (iter)
             {
-                double n = sqlength(z0);
+                double n = x0 * x0 + y0 * y0;
 
-                if (sqlength(z1) >= maxsqlen) { iter += 3; n = sqlength(z1); }
-                else if (sqlength(z2) >= maxsqlen) { iter += 2; n = sqlength(z2); }
-                else if (sqlength(z3) >= maxsqlen) { iter += 1; n = sqlength(z3); }
+                if (x1 * x1 + y1 * y1 >= maxsqlen)
+                {
+                    iter += 3; n = x1 * x1 + y1 * y1;
+                }
+                else if (x2 * x2 + y2 * y2 >= maxsqlen)
+                {
+                    iter += 2; n = x2 * x2 + y2 * y2;
+                }
+                else if (x3 * x3 + y3 * y3 >= maxsqlen)
+                {
+                    iter += 1; n = x3 * x3 + y3 * y3;
+                }
 
                 if (n > maxsqlen * maxsqlen)
                     n = maxsqlen * maxsqlen;
@@ -460,7 +474,7 @@ public:
             glBindTexture(GL_TEXTURE_2D, m_texid);
             glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
                          m_size.x / 2, m_size.y * 2, 0,
-                         TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
+                         TEXTURE_FORMAT, TEXTURE_TYPE, &m_pixels[0]);
 #   if defined __CELLOS_LV2__
             /* We need this hint because by default the storage type is
              * GL_TEXTURE_SWIZZLED_GPU_SCE. */
@@ -542,12 +556,12 @@ public:
              * that uploading the whole texture is 40 times faster. */
             glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
                          m_size.x / 2, m_size.y * 2, 0,
-                         TEXTURE_FORMAT, TEXTURE_TYPE, m_pixels);
+                         TEXTURE_FORMAT, TEXTURE_TYPE, &m_pixels[0]);
 #else
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
                             m_size.x / 2, m_size.y / 2,
                             TEXTURE_FORMAT, TEXTURE_TYPE,
-                            m_pixels + m_size.x * m_size.y / 4 * m_frame);
+                            &m_pixels[m_size.x * m_size.y / 4 * m_frame]);
 #endif
         }
 
@@ -577,7 +591,7 @@ private:
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
     dvec2 m_texel2world;
-    u8vec4 *m_pixels, *m_tmppixels, *m_palette;
+    Array<u8vec4> m_pixels, m_palette;
 
     Shader *m_shader;
     ShaderAttrib m_vertexattrib, m_texattrib;
@@ -614,7 +628,9 @@ private:
 
 int main(int argc, char **argv)
 {
-    Application app("Tutorial 3: Fractal", ivec2(640, 480), 60.0f);
+    ivec2 window_size(640, 480);
+
+    Application app("Tutorial 3: Fractal", window_size, 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX
     _chdir("..");
@@ -623,7 +639,7 @@ int main(int argc, char **argv)
 #endif
 
     new DebugFps(5, 5);
-    new Fractal(ivec2(640, 480));
+    new Fractal(window_size);
     //new DebugRecord("fractalol.ogm", 60.0f);
 
     app.Run();
