@@ -39,11 +39,16 @@ namespace lol
 #   define LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS 1
 #endif
 
+/* Hack for compilation speedups: we can hide some of our global methods in
+ * namespaces. We therefore want "long_double" to be a single-word name */
+typedef long double long_double;
+
 #define DECLARE_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
     typedef tname<float> suffix; \
     typedef tname<double> d##suffix; \
+    typedef tname<long_double> f128##suffix; \
     typedef tname<int8_t> i8##suffix; \
     typedef tname<uint8_t> u8##suffix; \
     typedef tname<int16_t> i16##suffix; \
@@ -1336,6 +1341,7 @@ DECLARE_ALL_NONVECTOR_OPS(Quat)
 DECLARE_ALL_VECTOR_OPS(half)
 DECLARE_ALL_VECTOR_OPS(float)
 DECLARE_ALL_VECTOR_OPS(double)
+DECLARE_ALL_VECTOR_OPS(long_double)
 DECLARE_ALL_VECTOR_OPS(int8_t)
 DECLARE_ALL_VECTOR_OPS(uint8_t)
 DECLARE_ALL_VECTOR_OPS(int16_t)
@@ -1363,10 +1369,6 @@ DECLARE_ALL_VECTOR_OPS(uint64_t)
 #   pragma warning(push)
 #   pragma warning(disable: 4018)
 #endif
-
-/* Hack for compilation speedups: we can hide some of our global methods in
- * namespaces. We therefore want "long_double" to be a single-word name */
-typedef long double long_double;
 
 /* Apply the same coercion rules as in the C++ standard. However, instead
  * of always promoting smaller types to int, we allow int8_t op int16_t to
