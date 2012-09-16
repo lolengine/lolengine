@@ -157,11 +157,28 @@ public:
 
     void Remove(int pos, int todelete = 1)
     {
+        /* FIXME: we need to call dtors for the first
+         * todelete elements here */
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
         for (int i = m_count - todelete; i < m_count; i++)
             m_data[i].~Element();
         m_count -= todelete;
+    }
+
+    void Resize(int count, Element e = Element())
+    {
+        Reserve(count);
+
+        /* Too many elements? Remove them. */
+        for (int i = count; i < m_count; ++i)
+            m_data[i].~Element();
+
+        /* Not enough elements? Add some. */
+        for (int i = m_count; i < count; ++i)
+            m_data[i] = e;
+
+        m_count = count;
     }
 
     inline void Empty()
