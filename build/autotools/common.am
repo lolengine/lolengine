@@ -1,19 +1,46 @@
 
-bench: bench-recursive
-bench-recursive:
+lol_recursive_rule = \
 	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
-	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) bench) || exit 1; \
+	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $(patsubst %-recursive, %, $@)) || exit 1; \
 	  done; \
 	fi
+
+bench: bench-recursive
+bench-recursive:
+	$(lol_recursive_rule)
 
 lolcheck: lolcheck-recursive
 lolcheck-recursive:
-	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
-	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) lolcheck) || exit 1; \
+	$(lol_recursive_rule)
+
+
+#
+# Flex and Bison files build rule
+#
+
+generated: generated-recursive
+generated-recursive:
+	$(lol_recursive_rule)
+	@if test -n "$(filter %-scanner.l, $(EXTRA_DIST))"; then \
+	  echo $(MKDIR_P) generated; \
+	  $(MKDIR_P) generated; \
+	  rm -f generated/[a-zA-Z]*; \
+	  for scanner in $(patsubst %-scanner.l, %, $(filter %-scanner.l, $(EXTRA_DIST))); do \
+	    b="`basename $$scanner`"; \
+	    echo flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
+	    flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
+	  done; \
+	  for parser in $(patsubst %-parser.y, %, $(filter %-parser.y, $(EXTRA_DIST))); do \
+	    b="`basename $$parser`"; \
+	    echo bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y"; \
+	    bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y"; \
 	  done; \
 	fi
 
-.PHONY: lolcheck bench
+
+#
+# .lolfx build rule
+#
 
 SUFFIXES = .lolfx
 .lolfx.o:
@@ -22,4 +49,11 @@ SUFFIXES = .lolfx
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") \
 	| $(CXXCOMPILE) -xc++ -c - -o $@
+
+
+#
+# Additional rules
+#
+
+.PHONY: bench lolcheck generated
 

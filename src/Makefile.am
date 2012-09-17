@@ -70,19 +70,6 @@ liblol_a_SOURCES = \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@ -Ibullet
 
-if TRUE
-generated: .FORCE
-	$(MKDIR_P) generated
-	rm -f generated/[a-zA-Z]*
-	flex -o generated/easymesh-scanner.cpp easymesh/easymesh-scanner.l
-	bison -o generated/easymesh-parser.cpp --defines=generated/easymesh-parser.h \
-	      -d -b generated/easymesh easymesh/easymesh-parser.y
-	flex -o generated/lolfx-scanner.cpp gpu/lolfx-scanner.l
-	bison -o generated/lolfx-parser.cpp --defines=generated/lolfx-parser.h \
-	      -d -b generated/lolfx gpu/lolfx-parser.y
-.FORCE:
-endif
-
 EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
              gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
