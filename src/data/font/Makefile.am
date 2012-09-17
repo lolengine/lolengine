@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 if USE_CACA
 all: ascii.png
 

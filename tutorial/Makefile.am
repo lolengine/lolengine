@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
 all-local: $(PROGRAMS) $(noinst_PROGRAMS)
