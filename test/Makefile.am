@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 SUBDIRS = math sandbox xolotl
 
 AM_CPPFLAGS = -I$(top_srcdir)/src

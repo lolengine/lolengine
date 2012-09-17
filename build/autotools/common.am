@@ -1,0 +1,17 @@
+
+bench: bench-recursive
+bench-recursive:
+	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
+	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) bench) || exit 1; \
+	  done; \
+	fi
+
+lolcheck: lolcheck-recursive
+lolcheck-recursive:
+	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
+	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) lolcheck) || exit 1; \
+	  done; \
+	fi
+
+.PHONY: lolcheck bench
+

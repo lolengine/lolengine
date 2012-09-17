@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 # Put "people" at the end because they're more likely to break builds.
 SUBDIRS = build src tutorial test tools games people
 DIST_SUBDIRS = $(SUBDIRS) binaries
@@ -6,9 +8,7 @@ DIST_SUBDIRS = $(SUBDIRS) binaries
 EXTRA_DIST = bootstrap TODO
 AUTOMAKE_OPTIONS = dist-bzip2
 
-bench:
-	cd test && $(MAKE) $(AM_MAKEFLAGS) $@
-.PHONY: bench
+check: lolcheck
 
 dist: lolunit-$(LOLUNIT_VERSION).tar.gz
 dist: lolremez-$(LOLREMEZ_VERSION).tar.gz
