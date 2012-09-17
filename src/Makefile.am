@@ -70,10 +70,6 @@ liblol_a_SOURCES = \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 liblol_a_CPPFLAGS = @LOL_CFLAGS@ -Ibullet
 
-SUFFIXES = .lolfx
-.lolfx.o:
-	$(LOLFX_BUILD)
-
 if TRUE
 generated: .FORCE
 	$(MKDIR_P) generated

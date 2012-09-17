@@ -441,11 +441,6 @@ dnl  Can we build neercs?
 AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no" -a "${ac_cv_header_glob_h}" = "yes")
 
 
-dnl  LolFx compilation rule
-LOLFX_BUILD='(echo "char const *"; echo "lolfx_$(notdir $(basename $(filter %.lolfx, $^))) ="; $(SED) '"'"'s/"/\\"/g'"'"' $(filter %.lolfx, $^) | $(SED) '"'"'s/\([[^\r]]*\).*/"\1\\n"/'"'"'; echo ";") | $(CXXCOMPILE) -xc++ -c - -o $@'
-AC_SUBST(LOLFX_BUILD)
-
-
 dnl Extra libraries we may need
 AC_SUBST(MATH_LIBS)
 AC_SUBST(PAM_LIBS)
