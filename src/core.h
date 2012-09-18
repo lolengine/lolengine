@@ -113,6 +113,7 @@ static inline int isnan(float f)
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
+#include "gpu/lolfx.h"
 #include "gpu/shader.h"
 #include "gpu/indexbuffer.h"
 #include "gpu/vertexbuffer.h"
