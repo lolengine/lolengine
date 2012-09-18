@@ -397,7 +397,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
              || tlut[type_index].type == GL_DOUBLE
              || tlut[type_index].type == GL_BYTE
              || tlut[type_index].type == GL_UNSIGNED_BYTE
-#       if defined USE_GLEW
+#       if defined USE_GLEW && !defined __APPLE__
              /* If this is not available, don't use it */
              || !glVertexAttribIPointer
 #       endif
