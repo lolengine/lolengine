@@ -56,6 +56,7 @@ liblol_a_SOURCES = \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
     \
+    gpu/lolfx.cpp gpu/lolfx.h \
     gpu/lolfx-compiler.cpp gpu/lolfx-compiler.h \
     generated/lolfx-parser.cpp generated/lolfx-parser.h \
     generated/lolfx-scanner.cpp \

@@ -625,6 +625,9 @@
     <ClCompile Include="gpu\lolfx-compiler.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
+    <ClCompile Include="gpu\lolfx.cpp">
+      <Filter>src\gpu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -1558,6 +1561,9 @@
       <Filter>bullet</Filter>
     </ClInclude>
     <ClInclude Include="gpu\lolfx-compiler.h">
+      <Filter>src\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\lolfx.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="generated\lolfx-parser.h">
