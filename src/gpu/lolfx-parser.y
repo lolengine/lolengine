@@ -48,7 +48,7 @@
 %token <ival> INTCONSTANT
 %token <uval> UINTCONSTANT
 %token <fval> FLOATCONSTANT
-%token /* TODO */ FIELDSELECTION
+%token <sval> FIELDSELECTION
 %token <sval> IDENTIFIER
 %token <sval> TYPENAME
 
@@ -64,7 +64,7 @@
   * Deprecated GLSL keywords
   */
 
-%token GT_ATTRIBUTE
+%token GT_ATTRIBUTE GT_VARYING
 
  /*
   * GLSL types
@@ -199,8 +199,6 @@
 %token PREPROCESSOR_LINE PREPROCESSOR_PRAGMA PREPROCESSOR_UNDEF
 %token PREPROCESSOR_REGION
 
-%token PRAGMA_LOLFX
-
  /*
   * HLSL reserved keywords
   */
@@ -265,7 +263,8 @@ group_glsl_keyword:
   | GT_MEDIUMP
   | GT_LOWP
   | GT_PRECISION
-  | GT_ATTRIBUTE
+  | GT_ATTRIBUTE /* deprecated */
+  | GT_VARYING /* deprecated */
     ;
 
 group_glsl_type:
@@ -726,7 +725,16 @@ lolfx_section:
   */
 
 lolfx_technique:
-    HT_TECHNIQUE IDENTIFIER '{' pass_list '}' { std::cout << "New tech " << $2 << std::endl; }
+    HT_TECHNIQUE lolfx_identifier '{' pass_list '}' { std::cout << "New tech " << std::endl; }
+    ;
+
+ /*
+  * The valid LolFx identifiers
+  */
+
+lolfx_identifier:
+    IDENTIFIER     { std::cout << "New name " << $1 << std::endl; }
+  | FIELDSELECTION { std::cout << "New name " << $1 << std::endl; }
     ;
 
  /*
@@ -739,7 +747,7 @@ pass_list:
     ;
 
 pass:
-    HT_PASS IDENTIFIER '{' pass_stmt_list '}' { std::cout << "New pass " << $2 << std::endl; }
+    HT_PASS lolfx_identifier '{' pass_stmt_list '}' { std::cout << "New pass " << std::endl; }
     ;
 
 pass_stmt_list:
@@ -775,22 +783,16 @@ lolfx_shader:
     ;
 
 lolfx_shader_declaration:
-    PRAGMA_LOLFX lolfx_shader_type '(' lolfx_shader_description_list ')' { std::cout << "new shader" << std::endl; }
+    '[' lolfx_shader_name_list ']' { std::cout << "new shader" << std::endl; }
     ;
 
-lolfx_shader_type:
-    HT_VERTEXSHADER
-  | HT_PIXELSHADER
+lolfx_shader_name_list:
+    lolfx_shader_name '.' lolfx_shader_name_list
+  | lolfx_shader_name
     ;
 
-lolfx_shader_description_list:
-    lolfx_shader_description ',' lolfx_shader_description
-  | lolfx_shader_description
-    ;
-
-lolfx_shader_description:
-    IDENTIFIER '=' IDENTIFIER FLOATCONSTANT
-  | IDENTIFIER '=' IDENTIFIER
+lolfx_shader_name:
+    lolfx_identifier
     ;
 
  /*
@@ -971,10 +973,10 @@ glsl_declaration:
     glsl_function_prototype ';'
   | glsl_init_declarator_list ';'
   | GT_PRECISION glsl_precision_qualifier glsl_type_specifier_no_prec ';'
-  | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' ';'
-  | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' IDENTIFIER ';'
-  | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' IDENTIFIER '[' ']' ';'
-  | glsl_type_qualifier IDENTIFIER '{' glsl_struct_declaration_list '}' IDENTIFIER '[' glsl_constant_expression ']' ';'
+  | glsl_type_qualifier lolfx_identifier '{' glsl_struct_declaration_list '}' ';'
+  | glsl_type_qualifier lolfx_identifier '{' glsl_struct_declaration_list '}' lolfx_identifier ';'
+  | glsl_type_qualifier lolfx_identifier '{' glsl_struct_declaration_list '}' lolfx_identifier '[' ']' ';'
+  | glsl_type_qualifier lolfx_identifier '{' glsl_struct_declaration_list '}' lolfx_identifier '[' glsl_constant_expression ']' ';'
   | glsl_type_qualifier ';'
     ;
 
@@ -988,24 +990,34 @@ glsl_function_declarator:
     ;
 
 glsl_function_header_with_parameters:
-    glsl_function_header glsl_parameter_declaration
-  | glsl_function_header_with_parameters ',' glsl_parameter_declaration
+    glsl_function_header lolfx_parameter_declaration
+  | glsl_function_header_with_parameters ',' lolfx_parameter_declaration
     ;
 
 glsl_function_header:
-    glsl_fully_specified_type IDENTIFIER '('
+    glsl_fully_specified_type lolfx_identifier '('
     ;
 
 glsl_parameter_declarator:
-    glsl_type_specifier IDENTIFIER
-  | glsl_type_specifier IDENTIFIER '[' glsl_constant_expression ']'
+    glsl_type_specifier lolfx_identifier
+  | glsl_type_specifier lolfx_identifier '[' glsl_constant_expression ']'
+    ;
+
+lolfx_parameter_declaration:
+    glsl_parameter_declaration ':' lolfx_identifier /* HLSL only */
+  | glsl_parameter_declaration
     ;
 
 glsl_parameter_declaration:
-    glsl_parameter_type_qualifier glsl_parameter_qualifier glsl_parameter_declarator
-  | glsl_parameter_qualifier glsl_parameter_declarator
-  | glsl_parameter_type_qualifier glsl_parameter_qualifier glsl_parameter_type_specifier
-  | glsl_parameter_qualifier glsl_parameter_type_specifier
+    glsl_parameter_type_qualifier lolfx_parameter_qualifier glsl_parameter_declarator
+  | lolfx_parameter_qualifier glsl_parameter_declarator
+  | glsl_parameter_type_qualifier lolfx_parameter_qualifier glsl_parameter_type_specifier
+  | lolfx_parameter_qualifier glsl_parameter_type_specifier
+    ;
+
+lolfx_parameter_qualifier:
+    glsl_parameter_qualifier
+  | GHT_UNIFORM /* HLSL only */
     ;
 
 glsl_parameter_qualifier:
@@ -1014,6 +1026,7 @@ glsl_parameter_qualifier:
   | GHT_OUT
   | GHT_INOUT
   | GT_ATTRIBUTE /* deprecated */
+  | GT_VARYING /* deprecated */
     ;
 
 glsl_parameter_type_specifier:
@@ -1022,23 +1035,23 @@ glsl_parameter_type_specifier:
 
 glsl_init_declarator_list:
     glsl_single_declaration
-  | glsl_init_declarator_list ',' IDENTIFIER
-  | glsl_init_declarator_list ',' IDENTIFIER '[' ']'
-  | glsl_init_declarator_list ',' IDENTIFIER '[' glsl_constant_expression ']'
-  | glsl_init_declarator_list ',' IDENTIFIER '[' ']' '=' glsl_initializer
-  | glsl_init_declarator_list ',' IDENTIFIER '[' glsl_constant_expression ']' '=' glsl_initializer
-  | glsl_init_declarator_list ',' IDENTIFIER '=' glsl_initializer
+  | glsl_init_declarator_list ',' lolfx_identifier
+  | glsl_init_declarator_list ',' lolfx_identifier '[' ']'
+  | glsl_init_declarator_list ',' lolfx_identifier '[' glsl_constant_expression ']'
+  | glsl_init_declarator_list ',' lolfx_identifier '[' ']' '=' glsl_initializer
+  | glsl_init_declarator_list ',' lolfx_identifier '[' glsl_constant_expression ']' '=' glsl_initializer
+  | glsl_init_declarator_list ',' lolfx_identifier '=' glsl_initializer
     ;
 
 glsl_single_declaration:
     glsl_fully_specified_type
-  | glsl_fully_specified_type IDENTIFIER
-  | glsl_fully_specified_type IDENTIFIER '[' ']'
-  | glsl_fully_specified_type IDENTIFIER '[' glsl_constant_expression ']'
-  | glsl_fully_specified_type IDENTIFIER '[' ']' '=' glsl_initializer
-  | glsl_fully_specified_type IDENTIFIER '[' glsl_constant_expression ']' '=' glsl_initializer
-  | glsl_fully_specified_type IDENTIFIER '=' glsl_initializer
-  | GT_INVARIANT IDENTIFIER
+  | glsl_fully_specified_type lolfx_identifier
+  | glsl_fully_specified_type lolfx_identifier '[' ']'
+  | glsl_fully_specified_type lolfx_identifier '[' glsl_constant_expression ']'
+  | glsl_fully_specified_type lolfx_identifier '[' ']' '=' glsl_initializer
+  | glsl_fully_specified_type lolfx_identifier '[' glsl_constant_expression ']' '=' glsl_initializer
+  | glsl_fully_specified_type lolfx_identifier '=' glsl_initializer
+  | GT_INVARIANT lolfx_identifier
     ;
 
 glsl_fully_specified_type:
@@ -1066,8 +1079,8 @@ glsl_layout_qualifier_id_list:
     ;
 
 glsl_layout_qualifier_id:
-    IDENTIFIER
-  | IDENTIFIER '=' INTCONSTANT
+    lolfx_identifier
+  | lolfx_identifier '=' INTCONSTANT
     ;
 
 glsl_parameter_type_qualifier:
@@ -1097,6 +1110,7 @@ glsl_storage_qualifier:
   | GT_SAMPLE GHT_OUT
   | GHT_UNIFORM
   | GT_ATTRIBUTE /* deprecated */
+  | GT_VARYING /* deprecated */
     ;
 
 glsl_type_specifier:
@@ -1105,9 +1119,14 @@ glsl_type_specifier:
     ;
 
 glsl_type_specifier_no_prec:
+    lolfx_type_specifier_nonarray
+  | lolfx_type_specifier_nonarray '[' ']'
+  | lolfx_type_specifier_nonarray '[' glsl_constant_expression ']'
+
+lolfx_type_specifier_nonarray:
     glsl_type_specifier_nonarray
-  | glsl_type_specifier_nonarray '[' ']'
-  | glsl_type_specifier_nonarray '[' glsl_constant_expression ']'
+  | group_hlsl_type /* HLSL only */
+    ;
 
 glsl_type_specifier_nonarray:
     GHT_VOID
@@ -1116,85 +1135,11 @@ glsl_type_specifier_nonarray:
   | GHT_INT
   | GHT_UINT
   | GHT_BOOL
-  | GT_VEC2
-  | GT_VEC3
-  | GT_VEC4
-  | GT_DVEC2
-  | GT_DVEC3
-  | GT_DVEC4
-  | GT_BVEC2
-  | GT_BVEC3
-  | GT_BVEC4
-  | GT_IVEC2
-  | GT_IVEC3
-  | GT_IVEC4
-  | GT_UVEC2
-  | GT_UVEC3
-  | GT_UVEC4
-  | GT_MAT2
-  | GT_MAT3
-  | GT_MAT4
-  | GT_MAT2X2
-  | GT_MAT2X3
-  | GT_MAT2X4
-  | GT_MAT3X2
-  | GT_MAT3X3
-  | GT_MAT3X4
-  | GT_MAT4X2
-  | GT_MAT4X3
-  | GT_MAT4X4
-  | GT_DMAT2
-  | GT_DMAT3
-  | GT_DMAT4
-  | GT_DMAT2X2
-  | GT_DMAT2X3
-  | GT_DMAT2X4
-  | GT_DMAT3X2
-  | GT_DMAT3X3
-  | GT_DMAT3X4
-  | GT_DMAT4X2
-  | GT_DMAT4X3
-  | GT_DMAT4X4
+  | group_glsl_type
   | GHT_SAMPLER1D
   | GHT_SAMPLER2D
   | GHT_SAMPLER3D
   | GHT_SAMPLERCUBE
-  | GT_SAMPLER1DSHADOW
-  | GT_SAMPLER2DSHADOW
-  | GT_SAMPLERCUBESHADOW
-  | GT_SAMPLER1DARRAY
-  | GT_SAMPLER2DARRAY
-  | GT_SAMPLER1DARRAYSHADOW
-  | GT_SAMPLER2DARRAYSHADOW
-  | GT_SAMPLERCUBEARRAY
-  | GT_SAMPLERCUBEARRAYSHADOW
-  | GT_ISAMPLER1D
-  | GT_ISAMPLER2D
-  | GT_ISAMPLER3D
-  | GT_ISAMPLERCUBE
-  | GT_ISAMPLER1DARRAY
-  | GT_ISAMPLER2DARRAY
-  | GT_ISAMPLERCUBEARRAY
-  | GT_USAMPLER1D
-  | GT_USAMPLER2D
-  | GT_USAMPLER3D
-  | GT_USAMPLERCUBE
-  | GT_USAMPLER1DARRAY
-  | GT_USAMPLER2DARRAY
-  | GT_USAMPLERCUBEARRAY
-  | GT_SAMPLER2DRECT
-  | GT_SAMPLER2DRECTSHADOW
-  | GT_ISAMPLER2DRECT
-  | GT_USAMPLER2DRECT
-  | GT_SAMPLERBUFFER
-  | GT_ISAMPLERBUFFER
-  | GT_USAMPLERBUFFER
-  | GT_SAMPLER2DMS
-  | GT_ISAMPLER2DMS
-  | GT_USAMPLER2DMS
-  | GT_SAMPLER2DMSARRAY
-  | GT_ISAMPLER2DMSARRAY
-  | GT_USAMPLER2DMSARRAY
   | glsl_struct_specifier
   | TYPENAME
     ;
@@ -1206,7 +1151,7 @@ glsl_precision_qualifier:
     ;
 
 glsl_struct_specifier:
-    GHT_STRUCT IDENTIFIER '{' glsl_struct_declaration_list '}'
+    GHT_STRUCT lolfx_identifier '{' glsl_struct_declaration_list '}'
   | GHT_STRUCT '{' glsl_struct_declaration_list '}'
     ;
 
@@ -1226,9 +1171,9 @@ glsl_struct_declarator_list:
     ;
 
 glsl_struct_declarator:
-    IDENTIFIER
-  | IDENTIFIER '[' ']'
-  | IDENTIFIER '[' glsl_constant_expression ']'
+    lolfx_identifier
+  | lolfx_identifier '[' ']'
+  | lolfx_identifier '[' glsl_constant_expression ']'
     ;
 
 glsl_initializer:
@@ -1290,7 +1235,7 @@ glsl_selection_rest_statement:
 
 glsl_condition:
     glsl_expression
-  | glsl_fully_specified_type IDENTIFIER '=' glsl_initializer
+  | glsl_fully_specified_type lolfx_identifier '=' glsl_initializer
     ;
 
 glsl_switch_statement:
