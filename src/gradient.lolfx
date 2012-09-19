@@ -1,4 +1,4 @@
--- GLSL.Vert --
+[vert.glsl]
 
 #version 130
 
@@ -17,7 +17,7 @@ void main()
     pass_Color = in_Color;
 }
 
--- GLSL.Frag --
+[frag.glsl]
 
 #version 130
 
@@ -49,7 +49,7 @@ void main()
     gl_FragColor = col;
 }
 
--- HLSL.Vert --
+[vert.hlsl]
 
 void main(float4 in_Vertex : POSITION,
           float4 in_Color : COLOR,
@@ -63,7 +63,7 @@ void main(float4 in_Vertex : POSITION,
     out_Color = in_Color;
 }
 
--- HLSL.Frag --
+[frag.hlsl]
 
 float4x4 bayer = float4x4( 0.0, 12.0,  3.0, 15.0,
                            8.0,  4.0, 11.0,  7.0,

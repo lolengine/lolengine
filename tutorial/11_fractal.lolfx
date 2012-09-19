@@ -1,4 +1,4 @@
--- GLSL.Vert --
+[vert.glsl]
 
 #version 120
 
@@ -49,7 +49,7 @@ void main(void)
     v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;
 }
 
--- GLSL.Frag --
+[frag.glsl]
 
 #version 120
 
@@ -131,7 +131,7 @@ void main(void)
 #endif
 }
 
--- HLSL.Vert --
+[vert.hlsl]
 
 void main(float2 a_Vertex : POSITION,
           float2 a_TexCoord : TEXCOORD0,
@@ -166,7 +166,7 @@ void main(float2 a_Vertex : POSITION,
     v_IndexY = v_CenterY * u_ScreenSize.w - offsets.zwwz;
 }
 
--- HLSL.Frag --
+[frag.hlsl]
 
 void main(in float4 v_CenterX : TEXCOORD0,
           in float4 v_CenterY : TEXCOORD1,

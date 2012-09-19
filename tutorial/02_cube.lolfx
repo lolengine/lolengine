@@ -1,4 +1,4 @@
--- GLSL.Vert --
+[vert.glsl]
 
 #version 120
 
@@ -13,7 +13,7 @@ void main(void)
     pass_Color = in_Color;
 }
 
--- GLSL.Frag --
+[frag.glsl]
 
 #version 120
 
@@ -24,7 +24,7 @@ void main(void)
     gl_FragColor = vec4(pass_Color, 1.0);
 }
 
--- HLSL.Vert --
+[vert.hlsl]
 
 void main(float3 in_Vertex : POSITION,
           float3 in_Color : COLOR,
@@ -36,7 +36,7 @@ void main(float3 in_Vertex : POSITION,
     out_Position = mul(in_Matrix, float4(in_Vertex, 1.0));
 }
 
--- HLSL.Frag --
+[frag.hlsl]
 
 void main(float3 pass_Color : COLOR,
           out float4 out_FragColor : COLOR)

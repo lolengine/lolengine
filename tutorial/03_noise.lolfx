@@ -1,4 +1,4 @@
--- GLSL.Vert --
+[vert.glsl]
 
 #version 120
 
@@ -42,7 +42,7 @@ void main(void)
     gl_Position = vec4(in_Position, 0.0, 1.0);
 }
 
--- GLSL.Frag --
+[frag.glsl]
 
 #version 120
 
@@ -134,7 +134,7 @@ void main(void)
     gl_FragColor = color;
 }
 
--- HLSL.Vert --
+[vert.hlsl]
 
 float mod289(float x)
 {
@@ -173,7 +173,7 @@ void main(float2 in_Position : POSITION,
     out_Position = float4(in_Position, 0.0, 1.0);
 }
 
--- HLSL.Frag --
+[frag.hlsl]
 
 float4 mod289(float4 x)
 {

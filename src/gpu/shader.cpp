@@ -93,13 +93,13 @@ Shader *Shader::Create(char const *lolfx)
     for (char *parser = src; *parser; )
     {
         if (key == NULL && (parser[0] == '\n' || parser[0] == '\r')
-             && parser[1] == '-' && parser[2] == '-' && parser[3] == ' ')
+             && parser[1] == '[')
         {
             *parser = '\0';
-            parser += 4;
+            parser += 2;
             key = parser;
         }
-        else if (key && parser[0] == ' ')
+        else if (key && parser[0] == ']')
         {
             *parser++ = '\0';
         }
@@ -119,17 +119,23 @@ Shader *Shader::Create(char const *lolfx)
     for (int i = 0; i < sections.Count(); i++)
     {
 #if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
-        if (!strcmp(sections[i].m1, "GLSL.Vert"))
+        if (!strcmp(sections[i].m1, "vert.glsl"))
             vert = sections[i].m2;
-        if (!strcmp(sections[i].m1, "GLSL.Frag"))
+        if (!strcmp(sections[i].m1, "frag.glsl"))
             frag = sections[i].m2;
 #else
-        if (!strcmp(sections[i].m1, "HLSL.Vert"))
+        if (!strcmp(sections[i].m1, "vert.hlsl"))
             vert = sections[i].m2;
-        if (!strcmp(sections[i].m1, "HLSL.Frag"))
+        if (!strcmp(sections[i].m1, "frag.hlsl"))
             frag = sections[i].m2;
 #endif
     }
+
+    /* FIXME: we don’t know how to handle these yet. */
+    if (!vert)
+        Log::Error("no vertex shader found… sorry, I’m gonna crash now.\n");
+    if (!frag)
+        Log::Error("no fragment shader found… sorry, I’m gonna crash now.\n");
 
     uint32_t new_vert_crc = Hash::Crc32(vert);
     uint32_t new_frag_crc = Hash::Crc32(frag);
@@ -495,7 +501,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
     /* Padding matrix columns is necessary on DirectX. We need to create
-     * a new data structure; a 4�4 matrix will do. */
+     * a new data structure; a 4×4 matrix will do. */
     mat4 tmp(m, 1.0f);
     if (uni.flags & 1)
         g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);

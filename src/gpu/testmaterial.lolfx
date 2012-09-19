@@ -66,8 +66,7 @@ technique Foo
 
 /* Defines GLSL shader "Prout" */
 
-#pragma lolfx vertexshader(lang=GLSL 1.20, name=prout)
-
+[prout.glsl]
 #version 120
 
 /* Valid with my GLSL compiler */
@@ -84,7 +83,7 @@ void main(void)
 }
 
 /* Defines GLSL shader "Zob" */
-#pragma lolfx vertexshader(lang=GLSL 1.20, name=zob)
+[zob.glsl]
 
 void main(void)
 {
@@ -93,7 +92,7 @@ void main(void)
 
 /* Defines HLSL vertex shader "Prout" */
 
-#pragma lolfx vertexshader(lang=HLSL, name=prout)
+[prout.hlsl]
 
 void main(void)
 {

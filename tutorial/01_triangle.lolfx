@@ -1,5 +1,17 @@
--- GLSL.Vert --
+/*
+ * Awesome triangle shader
+ */
 
+technique Triangle
+{
+    pass FirstPass
+    {
+        vertexshader = vert;
+        pixelshader = frag;
+    }
+}
+
+[vert.glsl]
 #version 120
 
 attribute vec2 in_Position;
@@ -9,8 +21,7 @@ void main(void)
     gl_Position = vec4(in_Position, 0.0, 1.0);
 }
 
--- GLSL.Frag --
-
+[frag.glsl]
 #version 120
 
 void main(void)
@@ -18,16 +29,14 @@ void main(void)
     gl_FragColor = vec4(0.7, 0.2, 0.5, 1.0);
 }
 
--- HLSL.Vert --
-
+[vert.hlsl]
 void main(float2 in_Position : POSITION,
           out float4 out_Position : POSITION)
 {
     out_Position = float4(in_Position, 0.0, 1.0);
 }
 
--- HLSL.Frag --
-
+[frag.hlsl]
 void main(out float4 out_FragColor : COLOR)
 {
     out_FragColor = float4(0.7, 0.2, 0.5, 1.0);
