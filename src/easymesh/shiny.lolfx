@@ -1,5 +1,5 @@
 
--- GLSL.Vert --
+[vert.glsl]
 #version 120
 
 attribute vec3 in_Vertex;
@@ -26,7 +26,7 @@ void main(void)
     gl_Position = in_Proj * eye;
 }
 
--- GLSL.Frag --
+[frag.glsl]
 #version 120
 
 #if defined GL_ES
@@ -72,7 +72,7 @@ void main(void)
     gl_FragColor = real_color * vec4(light, 1.0);
 }
 
--- HLSL.Vert --
+[vert.hlsl]
 
 void main(float3 in_Vertex : POSITION,
           float3 in_Normal : NORMAL,
@@ -99,7 +99,7 @@ void main(float3 in_Vertex : POSITION,
     out_Position = mul(in_Proj, eye);
 }
 
--- HLSL.Frag --
+[frag.hlsl]
 
 void main(float4 pass_Eye : TEXCOORD0,
           float3 pass_TNormal : TEXCOORD1,
