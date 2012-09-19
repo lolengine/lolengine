@@ -28,12 +28,12 @@ generated-recursive:
 	  for scanner in $(patsubst %-scanner.l, %, $(filter %-scanner.l, $(EXTRA_DIST))); do \
 	    b="`basename $$scanner`"; \
 	    echo flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
-	    flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
+	    flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l" || exit 1; \
 	  done; \
 	  for parser in $(patsubst %-parser.y, %, $(filter %-parser.y, $(EXTRA_DIST))); do \
 	    b="`basename $$parser`"; \
 	    echo bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y"; \
-	    bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y"; \
+	    bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y" || exit 1; \
 	  done; \
 	fi
 
