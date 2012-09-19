@@ -110,6 +110,7 @@ typedef lol::LolFxParser::token_type token_type;
   */
 
 "attribute"                  { return token::GT_ATTRIBUTE; }
+"varying"                    { return token::GT_VARYING; }
 
  /*
   * GLSL vector types
@@ -489,12 +490,6 @@ typedef lol::LolFxParser::token_type token_type;
 "#"[ \t]*"version".*         { /* ignore for now */ }
 
  /*
-  * LolFx preprocessor directives
-  */
-
-"#"[ \t]*(?i:pragma)[ \t]*(?i:lolfx) { return token::PRAGMA_LOLFX; }
-
- /*
   * HLSL reserved keywords
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb509569%28v=vs.85%29.aspx
   */
@@ -572,15 +567,15 @@ typedef lol::LolFxParser::token_type token_type;
     return token::INTCONSTANT;
 }
 
-[a-zA-Z][a-zA-Z0-9_]*   {
+[a-zA-Z_][a-zA-Z0-9_]*   {
     /* Copy token for now */
     yylval->sval = strdup(yytext);
     return token::IDENTIFIER;
 }
 
-[ \t]+              { /* ignore whitespace */ }
-[\n]                { ++yylineno; }
-.                   { return token::T_ERROR; }
+[ \t\r]+            { /* ignore whitespace */ }
+[\n]                { yylloc->lines(1); }
+.                   { return (token_type)*yytext; /* accept all characters */ }
 
  /*
   * Ignore C comments
@@ -589,7 +584,7 @@ typedef lol::LolFxParser::token_type token_type;
 "/*"                { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/"     { BEGIN(INITIAL); }
 <C_COMMENT>[^*\n]*  { }
-<C_COMMENT>\n       { ++yylineno; }
+<C_COMMENT>\n       { yylloc->lines(1); }
 <C_COMMENT>.        { }
 
  /*
@@ -597,7 +592,7 @@ typedef lol::LolFxParser::token_type token_type;
   */
 
 "//"              { BEGIN(CPP_COMMENT); }
-<CPP_COMMENT>\n   { ++yylineno; BEGIN(INITIAL); }
+<CPP_COMMENT>\n   { yylloc->lines(1); BEGIN(INITIAL); }
 <CPP_COMMENT>.*   { }
 
 %%

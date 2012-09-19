@@ -39,13 +39,13 @@ bool EasyMeshCompiler::ParseString(char const *command)
 
 void EasyMeshCompiler::Error(const class location& l, const std::string& m)
 {
-    Log::Error("Syntax error line %d column %d: %s",
+    Log::Error("EasyMesh syntax error line %d column %d: %s\n",
                l.begin.line, l.begin.column, m.c_str());
 }
 
 void EasyMeshCompiler::Error(const std::string& m)
 {
-    Log::Error("Syntax error: %s", m.c_str());
+    Log::Error("EasyMesh syntax error: %s\n", m.c_str());
 }
 
 } /* namespace lol */

@@ -37,13 +37,13 @@ bool LolFxCompiler::ParseString(char const *command)
 
 void LolFxCompiler::Error(const class location& l, const std::string& m)
 {
-    Log::Error("Syntax error line %d column %d: %s",
+    Log::Error("LolFx syntax error line %d column %d: %s\n",
                l.begin.line, l.begin.column, m.c_str());
 }
 
 void LolFxCompiler::Error(const std::string& m)
 {
-    Log::Error("Syntax error: %s", m.c_str());
+    Log::Error("LolFx syntax error: %s\n", m.c_str());
 }
 
 } /* namespace lol */

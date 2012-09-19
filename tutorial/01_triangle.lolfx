@@ -2,9 +2,9 @@
  * Awesome triangle shader
  */
 
-technique Triangle
+technique FlatColor
 {
-    pass FirstPass
+    pass DefaultPass
     {
         vertexshader = vert;
         pixelshader = frag;
