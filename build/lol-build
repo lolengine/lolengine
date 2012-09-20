@@ -44,20 +44,29 @@ __init__()
     cd "$top_srcdir"
     top_srcdir="`pwd`"
 
+    # Try to count CPU cores. First obvious try: /proc/cpuinfo on Linux
     case "$cpu_count" in
       [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
       *) if [ -r "/proc/cpuinfo" ]; then
-           cpu_count="$(grep -c '^processor\>' /proc/cpuinfo)"
+           cpu_count="$(grep -c '^processor\>' /proc/cpuinfo 2>/dev/null || true)"
          fi ;;
     esac
+    # If that didn't work, try sysctl (for OS X machines)
     case "$cpu_count" in
       [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
-      *) cpu_count="$(sysctl -n hw.ncpu 2>/dev/null)" ;;
+      *) cpu_count="$(sysctl -n hw.ncpu 2>/dev/null || true)" ;;
     esac
+    # Otherwise, CPUInfo.exe (from Xoreax's XGE) may help on Windows
+    case "$cpu_count" in
+      [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
+      *) cpu_count="$(CPUInfo.exe | sed -ne 's/CPU Cores.* \([0-9][0-9]*\)/\1/p')" ;;
+    esac
+    # Otherwise, be conservative and assume 1 CPU core
     case "$cpu_count" in
       [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
       *) cpu_count=1 ;;
     esac
+    # Now decide how many parallel threads to launch
     case "$cpu_count" in
       1) LOL_PARALLEL=1 ;;
       2) LOL_PARALLEL=3 ;;
