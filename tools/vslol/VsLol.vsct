@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h"/>
+  <Extern href="msobtnid.h"/>
+
+  <Commands package="guidVsLolPkg">
+    <Menus>
+      <Menu guid="guidVsLolCmdSet" id="VsLolToolbar" priority="0x100" type="Toolbar">
+        <Parent guid="guidVsLolCmdSet" id="VsLolToolbar" />
+        <Strings>
+          <ButtonText>C# Sample Toolbar</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Groups>
+      <Group guid="guidVsLolCmdSet" id="VsLolMenuGroup" priority="0x600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+
+      <Group guid="guidVsLolCmdSet" id="VsLolMainToolbarGroup" priority="0x100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_TOOL_STANDARD"/>
+      </Group>
+
+      <Group guid="guidVsLolCmdSet" id="VsLolToolbarGroup" priority="0x100">
+        <Parent guid="guidVsLolCmdSet" id="VsLolToolbar"/>
+      </Group>
+
+      <Group guid="guidVsLolCmdSet" id="VsLolEditorCtxGroup" priority="0x100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
+      </Group>
+      <Group guid="guidVsLolCmdSet" id="VsLolEditorCtxGroup" priority="0x600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidVsLolCmdSet" id="cmdidGenerateCompilers" priority="0x100" type="Button">
+        <Parent guid="guidVsLolCmdSet" id="VsLolMenuGroup"/>
+        <Icon guid="guidGearBmp" id="bmpGear"/>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <!-- This will override what's in .resx -->
+          <ButtonText>Lol: Generate Compilers</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+    <Bitmaps>
+      <Bitmap guid="guidGearBmp" href="gear.bmp" usedList="bmpGear"/>
+    </Bitmaps>
+  </Commands>
+
+  
+  <CommandPlacements>
+    <!--Here we place two commands inside the empty menu group we created in the Groups section.-->
+    <CommandPlacement guid="guidVsLolCmdSet" id="cmdidGenerateCompilers" priority="0x100">
+      <Parent guid="guidVsLolCmdSet" id="VsLolEditorCtxGroup"/>
+    </CommandPlacement>
+  </CommandPlacements>
+
+  
+  <KeyBindings>
+  </KeyBindings>
+
+
+  <Symbols>
+    
+    <!--The first GUID defined here is the one for the package. It does not contains numeric IDs.-->
+    <GuidSymbol name="guidVsLolPkg" value="{f96f7ac5-16ac-4061-8b92-0a02bb455ae9}" />
+    
+    <GuidSymbol name="guidVsLolCmdSet" value="{ce508d12-530e-45d0-8b52-1e9ee3f8eaaf}">
+
+      <IDSymbol name="VsLolToolbar" value="0x101" />
+
+      <IDSymbol name="VsLolMenuGroup" value="0x1010" />
+      <IDSymbol name="VsLolToolbarGroup" value="0x1011" />
+      <IDSymbol name="VsLolMainToolbarGroup" value="0x1012" />
+      <IDSymbol name="VsLolEditorCtxGroup" value="0x1013" />
+
+      <IDSymbol name="cmdidGenerateCompilers" value="0x2001" />
+      <IDSymbol name="cmdidUnused1" value="0x2002" />
+      <IDSymbol name="cmdidUnused2" value="0x2003" />
+    </GuidSymbol>
+    
+    <GuidSymbol name="guidGearBmp" value="{560dba06-c26b-4731-8229-b816818e5992}">
+      <IDSymbol name="bmpGear" value="1" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
