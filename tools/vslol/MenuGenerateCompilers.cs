@@ -184,12 +184,21 @@ namespace Lol.VisualStudio.Plugin
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.UseShellExecute = false;
-            Trace.WriteLine("Executing " + executable + " in " + directory + " with args: " + arguments);
-            p.Start();
-            string output = p.StandardError.ReadToEnd()
-                          + p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-            WriteToOutputPane(output);
+
+            try
+            {
+                p.Start();
+                string output = p.StandardError.ReadToEnd()
+                              + p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                WriteToOutputPane(output);
+                if (p.ExitCode != 0)
+                    WriteToOutputPane("Error: " + executable + " exited with code " + p.ExitCode + "\n");
+            }
+            catch (Exception e)
+            {
+                WriteToOutputPane("Error: failed to launch " + executable + "\n");
+            }
         }
 
         private void ClearOutputPane()
