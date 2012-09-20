@@ -94,11 +94,11 @@ namespace Lol.VisualStudio.Plugin
             cmd.ClearOutputPane();
             cmd.WriteToOutputPane("------ Build started: Generating Compilers ------\n");
 
-            int scanner_count = 0, parser_count = 0;
+            int scanner_count = 0, parser_count = 0, error_count = 0;
 
             foreach (Project project in cmd.projects)
             {
-                cmd.WriteToOutputPane("Project " + project.FullName + "\n");
+                cmd.WriteToOutputPane("Project " + project.Name + "\n");
 
                 string project_path = Path.GetDirectoryName(project.FullName);
 
@@ -128,45 +128,47 @@ namespace Lol.VisualStudio.Plugin
 
                     if (item.Name.EndsWith("-scanner.l"))
                     {
-                        cmd.WriteToOutputPane("   flex.exe " + filename + "\n");
+                        cmd.WriteToOutputPane("flex.exe " + filename + "\n");
 
                         string basename = Path.GetFileName(filename.Substring(0, filename.LastIndexOf("-scanner.l")));
-                        cmd.Run(project_path,
-                                flex_path + "\\bin\\flex.exe",
-                                "-v -o "
-                                 + "generated/" + basename + "-scanner.cpp "
-                                 + filename,
-                                "");
+                        if (!cmd.Run(project_path,
+                                     flex_path + "\\bin\\flex.exe",
+                                     "-v -o "
+                                      + "generated/" + basename + "-scanner.cpp "
+                                      + filename,
+                                     ""))
+                            ++error_count;
 
                         ++scanner_count;
                     }
 
                     if (item.Name.EndsWith("-parser.y"))
                     {
-                        cmd.WriteToOutputPane("   bison.exe " + filename + "\n");
+                        cmd.WriteToOutputPane("bison.exe " + filename + "\n");
 
                         string basename = Path.GetFileName(filename.Substring(0, filename.LastIndexOf("-parser.y")));
-                        cmd.Run(project_path,
-                                bison_path + "\\bin\\bison.exe",
-                                "-v -o "
-                                 + "generated/" + basename + "-parser.cpp "
-                                 + "--defines=generated/" + basename + "-parser.h "
-                                 + "-d "
-                                 + "-b "
-                                 + "generated/" + basename + " "
-                                 + filename,
-                                "BISON_PKGDATADIR=" + bison_path + "\\share\\bison");
+                        if (!cmd.Run(project_path,
+                                     bison_path + "\\bin\\bison.exe",
+                                     "-v -o "
+                                      + "generated/" + basename + "-parser.cpp "
+                                      + "--defines=generated/" + basename + "-parser.h "
+                                      + "-d "
+                                      + "-b "
+                                      + "generated/" + basename + " "
+                                      + filename,
+                                     "BISON_PKGDATADIR=" + bison_path + "\\share\\bison"))
+                            ++error_count;
 
                         ++parser_count;
                     }
                 }
             }
 
-            cmd.WriteToOutputPane(string.Format("========== Done. {0} scanner(s), {1} parser(s) ==========\n",
-                                  scanner_count, parser_count));
+            cmd.WriteToOutputPane(string.Format("========== Done: {0} scanner(s), {1} parser(s), {2} error(s) ==========\n",
+                                  scanner_count, parser_count, error_count));
         }
 
-        void Run(string directory, string executable, string arguments, string env)
+        bool Run(string directory, string executable, string arguments, string env)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             p.StartInfo.FileName = executable;
@@ -193,12 +195,18 @@ namespace Lol.VisualStudio.Plugin
                 p.WaitForExit();
                 WriteToOutputPane(output);
                 if (p.ExitCode != 0)
+                {
                     WriteToOutputPane("Error: " + executable + " exited with code " + p.ExitCode + "\n");
+                    return false;
+                }
             }
             catch (Exception e)
             {
                 WriteToOutputPane("Error: failed to launch " + executable + "\n");
+                return false;
             }
+
+            return true;
         }
 
         private void ClearOutputPane()
