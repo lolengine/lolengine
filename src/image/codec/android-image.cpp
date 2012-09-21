@@ -53,7 +53,14 @@ bool AndroidImageData::Open(char const *path)
     if (res < 0)
     {
 #if !LOL_RELEASE
-        Log::Error("could not get JVM environment\n");
+        Log::Error("JVM environment not found, trying to attach thread\n");
+#endif
+        res = g_vm->AttachCurrentThread(&env, NULL);
+    }
+    if (res < 0)
+    {
+#if !LOL_RELEASE
+        Log::Error("JVM environment not found, cannot open image %s\n", path);
 #endif
         return false;
     }
@@ -105,7 +112,7 @@ bool AndroidImageData::Close()
     if (res < 0)
     {
 #if !LOL_RELEASE
-        Log::Error("could not get JVM environment\n");
+        Log::Error("JVM environment not found, cannot close image\n");
 #endif
         return false;
     }
