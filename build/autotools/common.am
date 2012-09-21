@@ -27,8 +27,8 @@ generated-recursive:
 	  rm -f generated/[a-zA-Z]*; \
 	  for scanner in $(patsubst %-scanner.l, %, $(filter %-scanner.l, $(EXTRA_DIST))); do \
 	    b="`basename $$scanner`"; \
-	    echo flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
-	    flex -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l" || exit 1; \
+	    echo flex -v -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
+	    flex -v -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l" || exit 1; \
 	  done; \
 	  for parser in $(patsubst %-parser.y, %, $(filter %-parser.y, $(EXTRA_DIST))); do \
 	    b="`basename $$parser`"; \

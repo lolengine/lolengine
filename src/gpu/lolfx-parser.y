@@ -800,7 +800,7 @@ lolfx_shader_name:
   */
 
 glsl_variable_identifier:
-    IDENTIFIER
+    lolfx_identifier
     ;
 
 glsl_primary_expression:
