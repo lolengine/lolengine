@@ -42,9 +42,14 @@ generated-recursive:
 # .lolfx build rule
 #
 
+lolfx_gen = $(lolfx_gen_$(V))
+lolfx_gen_ = $(lolfx_gen_$(AM_DEFAULT_VERBOSITY))
+lolfx_gen_0 = @echo "  LOLFX " $@;
+
 SUFFIXES = .lolfx
 .lolfx.o:
-	(echo "char const *"; \
+	$(lolfx_gen)
+	$(AM_V_at)(echo "char const *"; \
          echo "lolfx_$(notdir $(basename $(filter %.lolfx, $^))) ="; \
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") \
