@@ -470,6 +470,7 @@ AC_CONFIG_FILES(
   people/Makefile
   games/Makefile
   tools/Makefile
+  tools/vslol/Makefile
 ])
 AC_CONFIG_FILES(
  [games/monsterz/Makefile

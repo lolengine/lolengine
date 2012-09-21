@@ -447,7 +447,6 @@ bullet_sources += \
 		bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h \
 		bullet/BulletDynamics/ConstraintSolver/btHinge2Constraint.h \
 		bullet/BulletDynamics/ConstraintSolver/btUniversalConstraint.h \
-		bullet/BulletDynamics/ConstraintSolver/btSolve2bullet/LinearConstraint.h \
 		bullet/BulletDynamics/Vehicle/btVehicleRaycaster.h \
 		bullet/BulletDynamics/Vehicle/btRaycastVehicle.h \
 		bullet/BulletDynamics/Vehicle/btWheelInfo.h
@@ -500,7 +499,6 @@ bullet_sources += \
 	bullet/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h \
 	bullet/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h \
 	bullet/BulletDynamics/ConstraintSolver/btJacobianEntry.h \
-	bullet/BulletDynamics/ConstraintSolver/btSolve2bullet/LinearConstraint.h \
 	bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h \
 	bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h \
 	bullet/BulletDynamics/ConstraintSolver/btHinge2Constraint.h \
