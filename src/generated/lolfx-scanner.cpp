@@ -330,8 +330,8 @@ typedef unsigned char YY_CHAR;
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 445
-#define YY_END_OF_BUFFER 446
+#define YY_NUM_RULES 443
+#define YY_END_OF_BUFFER 444
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -341,185 +341,185 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[1627] =
     {   0,
-        0,    0,  439,  439,  444,  444,  446,  436,  434,  435,
-      436,  436,  436,  436,  436,  436,  436,  436,  432,  432,
-      436,  436,  436,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  436,   92,   92,  433,  433,  433,
-      433,   92,  433,  433,  433,  433,  433,  433,   93,   93,
-       92,   93,   93,  433,  433,   91,   91,  436,  439,  440,
-      441,  444,  443,  434,  414,    0,    0,    0,    0,    0,
-        0,    0,    0,  422,  417,  427,  420,  409,  423,  410,
-      424,  437,  442,  421,    0,  431,  432,  415,  411,  413,
+        0,    0,  437,  437,  442,  442,  444,  434,  432,  433,
+      434,  434,  434,  434,  434,  434,  434,  434,  429,  429,
+      434,  434,  434,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  434,  430,  430,  431,  431,  431,
+      431,  430,  431,  431,  431,  431,  431,  431,  430,  430,
+      430,  430,  430,  431,  431,  430,  430,  434,  437,  438,
+      439,  442,  441,  432,  411,    0,    0,    0,    0,    0,
+        0,    0,    0,  419,  414,  424,  417,  406,  420,  407,
+      421,  435,  440,  418,    0,  428,  429,  412,  408,  410,
 
-      412,  416,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  132,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  137,  138,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  428,  419,   92,  433,  433,   92,
-      433,  433,  433,  433,  433,  433,  433,  102,  433,  433,
-      433,  433,  433,   92,  433,  107,  108,  433,  433,  433,
+      409,  413,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  129,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  134,  135,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  425,  416,  430,  431,  431,  430,
+      431,  431,  431,  431,  431,  431,  431,   99,  431,  431,
+      431,  431,  431,  430,  431,  104,  105,  431,  431,  431,
 
-      433,  433,  433,  433,  433,  433,   93,  433,   92,  433,
-      433,  433,   93,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,   91,  429,  418,  439,  438,
-      444,    0,    0,    0,    0,  369,    0,    0,    0,    0,
-        0,  430,  425,  426,  433,  155,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  136,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  140,  433,  433,  433,
-      433,  433,  390,  433,  433,  433,  433,  142,  433,  433,
+      431,  431,  431,  431,  431,  431,  430,  431,  430,  431,
+      431,  431,  430,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  430,  426,  415,  437,  436,
+      442,    0,    0,    0,    0,  366,    0,    0,    0,    0,
+        0,  427,  422,  423,  431,  152,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  133,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  137,  431,  431,  431,
+      431,  431,  387,  431,  431,  431,  431,  139,  431,  431,
 
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  403,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,   92,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  106,  433,  433,  110,  433,  433,  433,  433,
-      433,  433,  433,  433,  112,  433,   93,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,   91,    0,    0,    0,    0,    0,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  400,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  430,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  103,  431,  431,  107,  431,  431,  431,  431,
+      431,  431,  431,  431,  109,  431,  430,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  430,    0,    0,    0,    0,    0,
 
-        0,    0,    0,    0,    0,    0,    0,  433,  433,  377,
-      433,  124,  433,  433,  433,  126,  433,  433,  433,  379,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  134,  384,  433,  433,  433,  433,  433,
-      433,  433,  387,  433,  176,  433,  433,  433,  433,  324,
-      329,  334,  339,  433,  181,  388,  433,  433,  433,  433,
-      433,  188,  433,  433,  433,  191,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  401,  433,  433,  234,
+        0,    0,    0,    0,    0,    0,    0,  431,  431,  374,
+      431,  121,  431,  431,  431,  123,  431,  431,  431,  376,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  131,  381,  431,  431,  431,  431,  431,
+      431,  431,  384,  431,  173,  431,  431,  431,  431,  321,
+      326,  331,  336,  431,  178,  385,  431,  431,  431,  431,
+      431,  185,  431,  431,  431,  188,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  398,  431,  431,  231,
 
-      433,  150,  433,  433,  433,  433,  433,  433,  433,  433,
-      152,  433,  433,   92,  433,   94,  433,  433,   96,  433,
-      433,  433,  433,  433,  433,  433,  433,  104,  433,    4,
-      433,  433,  433,  433,  433,  433,  433,   45,   62,   66,
-       70,  433,  433,  433,   93,  433,  433,  433,  433,  433,
-      433,  433,  433,   89,  120,  433,  433,  433,  433,   59,
-       60,   61,  122,  433,   91,    0,  365,  366,    0,    0,
-        0,    0,    0,  373,    0,    0,    0,  433,  433,  433,
-      244,  249,  254,  259,  125,  433,  433,  378,  433,  433,
-      380,  433,  433,  433,  128,  433,  433,  433,  433,  433,
+      431,  147,  431,  431,  431,  431,  431,  431,  431,  431,
+      149,  431,  431,  430,  431,   91,  431,  431,   93,  431,
+      431,  431,  431,  431,  431,  431,  431,  101,  431,    4,
+      431,  431,  431,  431,  431,  431,  431,   45,   62,   66,
+       70,  431,  431,  431,  430,  431,  431,  431,  431,  431,
+      431,  431,  431,   89,  117,  431,  431,  431,  431,   59,
+       60,   61,  119,  431,  430,    0,  362,  363,    0,    0,
+        0,    0,    0,  370,    0,    0,    0,  431,  431,  431,
+      241,  246,  251,  256,  122,  431,  431,  375,  431,  431,
+      377,  431,  431,  431,  125,  431,  431,  431,  431,  431,
 
-      433,  433,  433,  170,  433,  433,  433,  172,  135,  433,
-      433,  433,  433,  433,  433,  139,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  194,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      396,  433,  433,  214,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  402,  433,  433,  433,  344,  349,  354,
-      359,  433,  405,  239,  433,  407,  433,  433,  433,  433,
-      153,  433,   95,   50,   51,   52,  433,   98,  433,  433,
-      433,   77,   81,   85,  433,   74,   75,   76,   90,  105,
+      431,  431,  431,  167,  431,  431,  431,  169,  132,  431,
+      431,  431,  431,  431,  431,  136,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  191,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      393,  431,  431,  211,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  399,  431,  431,  431,  341,  346,  351,
+      356,  431,  402,  236,  431,  404,  431,  431,  431,  431,
+      150,  431,   92,   50,   51,   52,  431,   95,  431,  431,
+      431,   77,   81,   85,  431,   74,   75,   76,   90,  102,
 
-       43,  109,  433,  433,   53,   54,   55,  433,  433,  433,
-      433,  433,  433,    2,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,   56,   57,   58,  433,  123,    0,
-      367,  368,  370,    0,    0,    0,  375,    0,  433,  433,
-      433,  433,  433,  433,  433,  158,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  382,  433,  433,  433,
-      133,  304,  309,  314,  319,  433,  433,  171,  264,  269,
-      274,  279,  386,  433,  433,  433,  433,  178,  433,  325,
-      330,  335,  340,  326,  331,  336,  341,  327,  332,  337,
-      342,  328,  333,  338,  343,  433,  433,  183,  433,  185,
+       43,  106,  431,  431,   53,   54,   55,  431,  431,  431,
+      431,  431,  431,    2,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,   56,   57,   58,  431,  120,    0,
+      364,  365,  367,    0,    0,    0,  372,    0,  431,  431,
+      431,  431,  431,  431,  431,  155,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  379,  431,  431,  431,
+      130,  301,  306,  311,  316,  431,  431,  168,  261,  266,
+      271,  276,  383,  431,  431,  431,  431,  175,  431,  322,
+      327,  332,  337,  323,  328,  333,  338,  324,  329,  334,
+      339,  325,  330,  335,  340,  431,  431,  180,  431,  182,
 
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  394,  433,  433,  433,  433,  143,  433,
-      433,  433,  433,  433,  433,  213,  397,  398,  433,  217,
-      218,  148,  149,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  240,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  103,  433,
-      433,    6,   63,   64,   65,   67,   68,   69,   71,   72,
-       73,  433,  433,  433,  113,    3,    5,  118,  433,  119,
-      433,  433,  433,  433,  364,  371,    0,  374,    0,  433,
-      433,  433,  245,  250,  255,  260,  246,  251,  256,  261,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  391,  431,  431,  431,  431,  140,  431,
+      431,  431,  431,  431,  431,  210,  394,  395,  431,  214,
+      215,  145,  146,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  237,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  100,  431,
+      431,    6,   63,   64,   65,   67,   68,   69,   71,   72,
+       73,  431,  431,  431,  110,    3,    5,  115,  431,  116,
+      431,  431,  431,  431,  361,  368,    0,  371,    0,  431,
+      431,  431,  242,  247,  252,  257,  243,  248,  253,  258,
 
-      247,  252,  257,  262,  248,  253,  258,  263,  433,  160,
-      433,  433,  162,  433,  433,  433,  433,  130,  433,  131,
-      433,  284,  289,  294,  299,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  173,  433,  433,  433,  433,
-      433,  182,  433,  389,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  196,  392,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  209,  433,  433,  433,  220,
-      433,  433,  433,  433,  235,  433,  345,  350,  355,  360,
-      346,  351,  356,  361,  347,  352,  357,  362,  348,  353,
-      358,  363,  151,  433,  433,  433,  408,  433,  433,  433,
+      244,  249,  254,  259,  245,  250,  255,  260,  431,  157,
+      431,  431,  159,  431,  431,  431,  431,  127,  431,  128,
+      431,  281,  286,  291,  296,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  170,  431,  431,  431,  431,
+      431,  179,  431,  386,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  193,  389,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  206,  431,  431,  431,  217,
+      431,  431,  431,  431,  232,  431,  342,  347,  352,  357,
+      343,  348,  353,  358,  344,  349,  354,  359,  345,  350,
+      355,  360,  148,  431,  431,  431,  405,  431,  431,  431,
 
-      433,  100,  101,   78,   79,   80,   82,   83,   84,   86,
-       87,   88,  433,  433,   44,  433,  433,  209,  433,  224,
-      121,  433,   49,  372,  376,  433,  433,  433,  433,  127,
-      433,  433,  433,  433,  433,  433,  129,  433,  433,  433,
-      433,  433,  433,  305,  310,  315,  320,  306,  311,  316,
-      321,  307,  312,  317,  322,  308,  313,  318,  323,  433,
-      385,  265,  270,  275,  280,  266,  271,  276,  281,  267,
-      272,  277,  282,  268,  273,  278,  283,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  391,  433,  433,  433,
-      433,  433,  433,  433,  199,  433,  433,  433,  201,  433,
+      431,   97,   98,   78,   79,   80,   82,   83,   84,   86,
+       87,   88,  431,  431,   44,  431,  431,  206,  431,  221,
+      118,  431,   49,  369,  373,  431,  431,  431,  431,  124,
+      431,  431,  431,  431,  431,  431,  126,  431,  431,  431,
+      431,  431,  431,  302,  307,  312,  317,  303,  308,  313,
+      318,  304,  309,  314,  319,  305,  310,  315,  320,  431,
+      382,  262,  267,  272,  277,  263,  268,  273,  278,  264,
+      269,  274,  279,  265,  270,  275,  280,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  388,  431,  431,  431,
+      431,  431,  431,  431,  196,  431,  431,  431,  198,  431,
 
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  400,  433,  433,  433,  433,  236,  404,  406,
-      433,  433,  243,  433,   97,   99,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  376,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      285,  290,  295,  300,  286,  291,  296,  301,  287,  292,
-      297,  302,  288,  293,  298,  303,  433,  433,  433,  433,
-      433,  180,  433,  186,  433,  433,  433,  433,  433,  433,
-      433,  393,  433,  433,  433,  200,  433,  433,  433,  144,
-      145,  146,  433,  433,  433,  433,  433,  433,  433,  221,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  397,  431,  431,  431,  431,  233,  401,  403,
+      431,  431,  240,  431,   94,   96,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  373,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      282,  287,  292,  297,  283,  288,  293,  298,  284,  289,
+      294,  299,  285,  290,  295,  300,  431,  431,  431,  431,
+      431,  177,  431,  183,  431,  431,  431,  431,  431,  431,
+      431,  390,  431,  431,  431,  197,  431,  431,  431,  141,
+      142,  143,  431,  431,  431,  431,  431,  431,  431,  218,
 
-      225,  227,  231,  433,  433,  433,  433,  433,   48,   47,
-      433,  433,  433,  433,  433,  433,   46,  114,  115,  116,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      157,  433,  433,  433,  433,  433,  381,  433,  433,  433,
-      433,  433,  433,  177,  179,  184,  433,  433,  433,  190,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  215,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,   14,   15,   16,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,    1,   20,   21,   22,  433,  433,  433,  433,  433,
+      222,  224,  228,  431,  431,  431,  431,  431,   48,   47,
+      431,  431,  431,  431,  431,  431,   46,  111,  112,  113,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      154,  431,  431,  431,  431,  431,  378,  431,  431,  431,
+      431,  431,  431,  174,  176,  181,  431,  431,  431,  187,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  212,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,   14,   15,   16,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,    1,   20,   21,   22,  431,  431,  431,  431,  431,
 
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  175,
-      433,  433,  189,  433,  193,  195,  433,  433,  433,  433,
-      433,  204,  206,  208,  433,  147,  433,  433,  433,  399,
-      433,  222,  433,  433,  433,  229,  232,  237,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  433,
-      433,   37,  433,  433,  433,  117,  433,  433,  433,  433,
-      433,  433,  433,  156,  433,  161,  433,  433,  433,  433,
-      433,  169,  383,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  211,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  242,  433,  433,   38,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  172,
+      431,  431,  186,  431,  190,  192,  431,  431,  431,  431,
+      431,  201,  203,  205,  431,  144,  431,  431,  431,  396,
+      431,  219,  431,  431,  431,  226,  229,  234,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  431,
+      431,   37,  431,  431,  431,  114,  431,  431,  431,  431,
+      431,  431,  431,  153,  431,  158,  431,  431,  431,  431,
+      431,  166,  380,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  208,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  239,  431,  431,   38,
 
-      433,  433,   17,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,   39,  433,  433,   23,  433,
-      433,  164,  433,  165,  433,  433,  433,  433,  433,  141,
-      192,  433,  433,  433,  433,  433,  433,  433,  433,  210,
-      433,  433,  223,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  111,  433,  433,  433,  433,
-       26,  433,   30,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  174,  433,  433,
-      433,  433,  433,  433,  433,  433,  433,  433,  433,  226,
-      228,  433,  433,  238,  241,  433,  433,  433,   28,   31,
+      431,  431,   17,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,   39,  431,  431,   23,  431,
+      431,  161,  431,  162,  431,  431,  431,  431,  431,  138,
+      189,  431,  431,  431,  431,  431,  431,  431,  431,  207,
+      431,  431,  220,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  108,  431,  431,  431,  431,
+       26,  431,   30,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  171,  431,  431,
+      431,  431,  431,  431,  431,  431,  431,  431,  431,  223,
+      225,  431,  431,  235,  238,  431,  431,  431,   28,   31,
 
-      433,   10,  433,   11,  433,  433,  433,  433,  433,  433,
-      433,  433,   29,   32,  433,  433,  433,  433,  433,  433,
-      433,  187,  197,  433,  433,  433,  433,  433,  433,  433,
-      433,  433,  433,  433,   18,   19,  433,  433,  433,    7,
-      433,  433,  433,    8,  433,  433,   24,   25,  433,  433,
-      433,  433,  163,  433,  433,  168,  395,  198,  433,  433,
-      205,  207,  433,  216,  219,  230,  233,  433,  433,  433,
-      433,   40,  433,   33,  433,  433,  433,  433,  159,  433,
-      167,  433,  433,  433,   41,   35,  433,  433,  433,  433,
-        9,   42,   36,  433,  433,  433,  203,  433,  433,  433,
+      431,   10,  431,   11,  431,  431,  431,  431,  431,  431,
+      431,  431,   29,   32,  431,  431,  431,  431,  431,  431,
+      431,  184,  194,  431,  431,  431,  431,  431,  431,  431,
+      431,  431,  431,  431,   18,   19,  431,  431,  431,    7,
+      431,  431,  431,    8,  431,  431,   24,   25,  431,  431,
+      431,  431,  160,  431,  431,  165,  392,  195,  431,  431,
+      202,  204,  431,  213,  216,  227,  230,  431,  431,  431,
+      431,   40,  431,   33,  431,  431,  431,  431,  156,  431,
+      164,  431,  431,  431,   41,   35,  431,  431,  431,  431,
+        9,   42,   36,  431,  431,  431,  200,  431,  431,  431,
 
-      433,  433,  433,  433,  202,  433,  433,  433,   27,  433,
-      433,  433,  433,   12,   13,  433,  433,  433,  433,  433,
-      154,  433,  212,   34,  166,    0
+      431,  431,  431,  431,  199,  431,  431,  431,   27,  431,
+      431,  431,  431,   12,   13,  431,  431,  431,  431,  431,
+      151,  431,  209,   34,  163,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -2312,1830 +2312,1824 @@ YY_RULE_SETUP
 #line 168 "gpu/lolfx-scanner.l"
 { yylval->ival = 0; return token::BOOLCONSTANT; }
 	YY_BREAK
-case 91:
-YY_RULE_SETUP
-#line 170 "gpu/lolfx-scanner.l"
-{ return token::FIELDSELECTION; }
-	YY_BREAK
-case 92:
-YY_RULE_SETUP
-#line 171 "gpu/lolfx-scanner.l"
-{ return token::FIELDSELECTION; }
-	YY_BREAK
-case 93:
-YY_RULE_SETUP
-#line 172 "gpu/lolfx-scanner.l"
-{ return token::FIELDSELECTION; }
-	YY_BREAK
 /*
   * GLSL keywords that are also valid or reserved in HLSL
   * and HLSL keywords that are also valid or reserved in GLSL.
   */
+case 91:
+YY_RULE_SETUP
+#line 175 "gpu/lolfx-scanner.l"
+{ return token::GHT_BOOL; }
+	YY_BREAK
+case 92:
+YY_RULE_SETUP
+#line 176 "gpu/lolfx-scanner.l"
+{ return token::GHT_BREAK; }
+	YY_BREAK
+case 93:
+YY_RULE_SETUP
+#line 177 "gpu/lolfx-scanner.l"
+{ return token::GHT_CASE; }
+	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 179 "gpu/lolfx-scanner.l"
-{ return token::GHT_BOOL; }
+#line 178 "gpu/lolfx-scanner.l"
+{ return token::GHT_CENTROID; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 180 "gpu/lolfx-scanner.l"
-{ return token::GHT_BREAK; }
+#line 179 "gpu/lolfx-scanner.l"
+{ return token::GHT_CONST; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 181 "gpu/lolfx-scanner.l"
-{ return token::GHT_CASE; }
+#line 180 "gpu/lolfx-scanner.l"
+{ return token::GHT_CONTINUE; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 182 "gpu/lolfx-scanner.l"
-{ return token::GHT_CENTROID; }
+#line 181 "gpu/lolfx-scanner.l"
+{ return token::GHT_DEFAULT; }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 183 "gpu/lolfx-scanner.l"
-{ return token::GHT_CONST; }
+#line 182 "gpu/lolfx-scanner.l"
+{ return token::GHT_DISCARD; }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 184 "gpu/lolfx-scanner.l"
-{ return token::GHT_CONTINUE; }
+#line 183 "gpu/lolfx-scanner.l"
+{ return token::GHT_DO; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 185 "gpu/lolfx-scanner.l"
-{ return token::GHT_DEFAULT; }
+#line 184 "gpu/lolfx-scanner.l"
+{ return token::GHT_DOUBLE; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 186 "gpu/lolfx-scanner.l"
-{ return token::GHT_DISCARD; }
+#line 185 "gpu/lolfx-scanner.l"
+{ return token::GHT_ELSE; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 187 "gpu/lolfx-scanner.l"
-{ return token::GHT_DO; }
+#line 186 "gpu/lolfx-scanner.l"
+{ return token::GHT_FLOAT; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 188 "gpu/lolfx-scanner.l"
-{ return token::GHT_DOUBLE; }
+#line 187 "gpu/lolfx-scanner.l"
+{ return token::GHT_FOR; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 189 "gpu/lolfx-scanner.l"
-{ return token::GHT_ELSE; }
+#line 188 "gpu/lolfx-scanner.l"
+{ return token::GHT_IF; }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 190 "gpu/lolfx-scanner.l"
-{ return token::GHT_FLOAT; }
+#line 189 "gpu/lolfx-scanner.l"
+{ return token::GHT_IN; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 191 "gpu/lolfx-scanner.l"
-{ return token::GHT_FOR; }
+#line 190 "gpu/lolfx-scanner.l"
+{ return token::GHT_INOUT; }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 192 "gpu/lolfx-scanner.l"
-{ return token::GHT_IF; }
+#line 191 "gpu/lolfx-scanner.l"
+{ return token::GHT_INT; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 193 "gpu/lolfx-scanner.l"
-{ return token::GHT_IN; }
+#line 192 "gpu/lolfx-scanner.l"
+{ return token::GHT_NOPERSPECTIVE; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 194 "gpu/lolfx-scanner.l"
-{ return token::GHT_INOUT; }
+#line 193 "gpu/lolfx-scanner.l"
+{ return token::GHT_OUT; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 195 "gpu/lolfx-scanner.l"
-{ return token::GHT_INT; }
+#line 194 "gpu/lolfx-scanner.l"
+{ return token::GHT_RETURN; }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 196 "gpu/lolfx-scanner.l"
-{ return token::GHT_NOPERSPECTIVE; }
+#line 195 "gpu/lolfx-scanner.l"
+{ return token::GHT_SAMPLER1D; }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 197 "gpu/lolfx-scanner.l"
-{ return token::GHT_OUT; }
+#line 196 "gpu/lolfx-scanner.l"
+{ return token::GHT_SAMPLER2D; }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 198 "gpu/lolfx-scanner.l"
-{ return token::GHT_RETURN; }
+#line 197 "gpu/lolfx-scanner.l"
+{ return token::GHT_SAMPLER3D; }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 199 "gpu/lolfx-scanner.l"
-{ return token::GHT_SAMPLER1D; }
+#line 198 "gpu/lolfx-scanner.l"
+{ return token::GHT_SAMPLERCUBE; }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 200 "gpu/lolfx-scanner.l"
-{ return token::GHT_SAMPLER2D; }
+#line 199 "gpu/lolfx-scanner.l"
+{ return token::GHT_STRUCT; }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 201 "gpu/lolfx-scanner.l"
-{ return token::GHT_SAMPLER3D; }
+#line 200 "gpu/lolfx-scanner.l"
+{ return token::GHT_SWITCH; }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 202 "gpu/lolfx-scanner.l"
-{ return token::GHT_SAMPLERCUBE; }
+#line 201 "gpu/lolfx-scanner.l"
+{ return token::GHT_UINT; }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 203 "gpu/lolfx-scanner.l"
-{ return token::GHT_STRUCT; }
+#line 202 "gpu/lolfx-scanner.l"
+{ return token::GHT_UNIFORM; }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 204 "gpu/lolfx-scanner.l"
-{ return token::GHT_SWITCH; }
+#line 203 "gpu/lolfx-scanner.l"
+{ return token::GHT_VOID; }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 205 "gpu/lolfx-scanner.l"
-{ return token::GHT_UINT; }
+#line 204 "gpu/lolfx-scanner.l"
+{ return token::GHT_WHILE; }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
 #line 206 "gpu/lolfx-scanner.l"
-{ return token::GHT_UNIFORM; }
+{ return token::HGT_BOOL; }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
 #line 207 "gpu/lolfx-scanner.l"
-{ return token::GHT_VOID; }
+{ return token::HGT_BREAK; }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
 #line 208 "gpu/lolfx-scanner.l"
-{ return token::GHT_WHILE; }
+{ return token::HGT_CASE; }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 210 "gpu/lolfx-scanner.l"
-{ return token::HGT_BOOL; }
+#line 209 "gpu/lolfx-scanner.l"
+{ return token::HGT_CENTROID; }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 211 "gpu/lolfx-scanner.l"
-{ return token::HGT_BREAK; }
+#line 210 "gpu/lolfx-scanner.l"
+{ return token::HGT_CONST; }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 212 "gpu/lolfx-scanner.l"
-{ return token::HGT_CASE; }
+#line 211 "gpu/lolfx-scanner.l"
+{ return token::HGT_CONTINUE; }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 213 "gpu/lolfx-scanner.l"
-{ return token::HGT_CENTROID; }
+#line 212 "gpu/lolfx-scanner.l"
+{ return token::HGT_DEFAULT; }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 214 "gpu/lolfx-scanner.l"
-{ return token::HGT_CONST; }
+#line 213 "gpu/lolfx-scanner.l"
+{ return token::HGT_DISCARD; }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 215 "gpu/lolfx-scanner.l"
-{ return token::HGT_CONTINUE; }
+#line 214 "gpu/lolfx-scanner.l"
+{ return token::HGT_DO; }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 216 "gpu/lolfx-scanner.l"
-{ return token::HGT_DEFAULT; }
+#line 215 "gpu/lolfx-scanner.l"
+{ return token::HGT_DOUBLE; }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 217 "gpu/lolfx-scanner.l"
-{ return token::HGT_DISCARD; }
+#line 216 "gpu/lolfx-scanner.l"
+{ return token::HGT_ELSE; }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 218 "gpu/lolfx-scanner.l"
-{ return token::HGT_DO; }
+#line 217 "gpu/lolfx-scanner.l"
+{ return token::HGT_FLOAT; }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 219 "gpu/lolfx-scanner.l"
-{ return token::HGT_DOUBLE; }
+#line 218 "gpu/lolfx-scanner.l"
+{ return token::HGT_FOR; }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 220 "gpu/lolfx-scanner.l"
-{ return token::HGT_ELSE; }
+#line 219 "gpu/lolfx-scanner.l"
+{ return token::HGT_IF; }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 221 "gpu/lolfx-scanner.l"
-{ return token::HGT_FLOAT; }
+#line 220 "gpu/lolfx-scanner.l"
+{ return token::HGT_IN; }
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 222 "gpu/lolfx-scanner.l"
-{ return token::HGT_FOR; }
+#line 221 "gpu/lolfx-scanner.l"
+{ return token::HGT_INOUT; }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 223 "gpu/lolfx-scanner.l"
-{ return token::HGT_IF; }
+#line 222 "gpu/lolfx-scanner.l"
+{ return token::HGT_INT; }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 224 "gpu/lolfx-scanner.l"
-{ return token::HGT_IN; }
+#line 223 "gpu/lolfx-scanner.l"
+{ return token::HGT_NOPERSPECTIVE; }
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 225 "gpu/lolfx-scanner.l"
-{ return token::HGT_INOUT; }
+#line 224 "gpu/lolfx-scanner.l"
+{ return token::HGT_OUT; }
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 226 "gpu/lolfx-scanner.l"
-{ return token::HGT_INT; }
+#line 225 "gpu/lolfx-scanner.l"
+{ return token::HGT_RETURN; }
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 227 "gpu/lolfx-scanner.l"
-{ return token::HGT_NOPERSPECTIVE; }
+#line 226 "gpu/lolfx-scanner.l"
+{ return token::HGT_SAMPLER1D; }
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 228 "gpu/lolfx-scanner.l"
-{ return token::HGT_OUT; }
+#line 227 "gpu/lolfx-scanner.l"
+{ return token::HGT_SAMPLER2D; }
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 229 "gpu/lolfx-scanner.l"
-{ return token::HGT_RETURN; }
+#line 228 "gpu/lolfx-scanner.l"
+{ return token::HGT_SAMPLER3D; }
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 230 "gpu/lolfx-scanner.l"
-{ return token::HGT_SAMPLER1D; }
+#line 229 "gpu/lolfx-scanner.l"
+{ return token::HGT_SAMPLERCUBE; }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 231 "gpu/lolfx-scanner.l"
-{ return token::HGT_SAMPLER2D; }
+#line 230 "gpu/lolfx-scanner.l"
+{ return token::HGT_STRUCT; }
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 232 "gpu/lolfx-scanner.l"
-{ return token::HGT_SAMPLER3D; }
+#line 231 "gpu/lolfx-scanner.l"
+{ return token::HGT_SWITCH; }
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 233 "gpu/lolfx-scanner.l"
-{ return token::HGT_SAMPLERCUBE; }
+#line 232 "gpu/lolfx-scanner.l"
+{ return token::HGT_UINT; }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 234 "gpu/lolfx-scanner.l"
-{ return token::HGT_STRUCT; }
+#line 233 "gpu/lolfx-scanner.l"
+{ return token::HGT_UNIFORM; }
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 235 "gpu/lolfx-scanner.l"
-{ return token::HGT_SWITCH; }
+#line 234 "gpu/lolfx-scanner.l"
+{ return token::HGT_VOID; }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 236 "gpu/lolfx-scanner.l"
-{ return token::HGT_UINT; }
-	YY_BREAK
-case 151:
-YY_RULE_SETUP
-#line 237 "gpu/lolfx-scanner.l"
-{ return token::HGT_UNIFORM; }
-	YY_BREAK
-case 152:
-YY_RULE_SETUP
-#line 238 "gpu/lolfx-scanner.l"
-{ return token::HGT_VOID; }
-	YY_BREAK
-case 153:
-YY_RULE_SETUP
-#line 239 "gpu/lolfx-scanner.l"
+#line 235 "gpu/lolfx-scanner.l"
 { return token::HGT_WHILE; }
 	YY_BREAK
 /*
   * HLSL keywords
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb509568%28v=vs.85%29.aspx
   */
+case 151:
+YY_RULE_SETUP
+#line 242 "gpu/lolfx-scanner.l"
+{ return token::HT_APPENDSTRUCTUREDBUFFER; }
+	YY_BREAK
+case 152:
+YY_RULE_SETUP
+#line 243 "gpu/lolfx-scanner.l"
+{ return token::HT_ASM; }
+	YY_BREAK
+case 153:
+YY_RULE_SETUP
+#line 244 "gpu/lolfx-scanner.l"
+{ return token::HT_ASM_FRAGMENT; }
+	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 246 "gpu/lolfx-scanner.l"
-{ return token::HT_APPENDSTRUCTUREDBUFFER; }
+#line 245 "gpu/lolfx-scanner.l"
+{ return token::HT_BLENDSTATE; }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 247 "gpu/lolfx-scanner.l"
-{ return token::HT_ASM; }
+#line 246 "gpu/lolfx-scanner.l"
+{ return token::HT_BUFFER; }
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 248 "gpu/lolfx-scanner.l"
-{ return token::HT_ASM_FRAGMENT; }
+#line 247 "gpu/lolfx-scanner.l"
+{ return token::HT_BYTEADDRESSBUFFER; }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 249 "gpu/lolfx-scanner.l"
-{ return token::HT_BLENDSTATE; }
+#line 248 "gpu/lolfx-scanner.l"
+{ return token::HT_CBUFFER; }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 250 "gpu/lolfx-scanner.l"
-{ return token::HT_BUFFER; }
+#line 249 "gpu/lolfx-scanner.l"
+{ return token::HT_COLUMN_MAJOR; }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 251 "gpu/lolfx-scanner.l"
-{ return token::HT_BYTEADDRESSBUFFER; }
+#line 250 "gpu/lolfx-scanner.l"
+{ return token::HT_COMPILE; }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 252 "gpu/lolfx-scanner.l"
-{ return token::HT_CBUFFER; }
+#line 251 "gpu/lolfx-scanner.l"
+{ return token::HT_COMPILE_FRAGMENT; }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 253 "gpu/lolfx-scanner.l"
-{ return token::HT_COLUMN_MAJOR; }
+#line 252 "gpu/lolfx-scanner.l"
+{ return token::HT_COMPILESHADER; }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 254 "gpu/lolfx-scanner.l"
-{ return token::HT_COMPILE; }
+#line 253 "gpu/lolfx-scanner.l"
+{ return token::HT_COMPUTESHADER; }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 255 "gpu/lolfx-scanner.l"
-{ return token::HT_COMPILE_FRAGMENT; }
+#line 254 "gpu/lolfx-scanner.l"
+{ return token::HT_CONSUMESTRUCTUREDBUFFER; }
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 256 "gpu/lolfx-scanner.l"
-{ return token::HT_COMPILESHADER; }
+#line 255 "gpu/lolfx-scanner.l"
+{ return token::HT_DEPTHSTENCILSTATE; }
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 257 "gpu/lolfx-scanner.l"
-{ return token::HT_COMPUTESHADER; }
+#line 256 "gpu/lolfx-scanner.l"
+{ return token::HT_DEPTHSTENCILVIEW; }
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 258 "gpu/lolfx-scanner.l"
-{ return token::HT_CONSUMESTRUCTUREDBUFFER; }
+#line 257 "gpu/lolfx-scanner.l"
+{ return token::HT_DOMAINSHADER; }
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 259 "gpu/lolfx-scanner.l"
-{ return token::HT_DEPTHSTENCILSTATE; }
+#line 258 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD; }
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 260 "gpu/lolfx-scanner.l"
-{ return token::HT_DEPTHSTENCILVIEW; }
+#line 259 "gpu/lolfx-scanner.l"
+{ return token::HT_EXTERN; }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 261 "gpu/lolfx-scanner.l"
-{ return token::HT_DOMAINSHADER; }
+#line 260 "gpu/lolfx-scanner.l"
+{ return token::HT_FALSE; }
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 262 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD; }
+#line 261 "gpu/lolfx-scanner.l"
+{ return token::HT_FXGROUP; }
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 263 "gpu/lolfx-scanner.l"
-{ return token::HT_EXTERN; }
+#line 262 "gpu/lolfx-scanner.l"
+{ return token::HT_GEOMETRYSHADER; }
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 264 "gpu/lolfx-scanner.l"
-{ return token::HT_FALSE; }
+#line 263 "gpu/lolfx-scanner.l"
+{ return token::HT_GROUPSHARED; }
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 265 "gpu/lolfx-scanner.l"
-{ return token::HT_FXGROUP; }
+#line 264 "gpu/lolfx-scanner.l"
+{ return token::HT_HALF; }
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 266 "gpu/lolfx-scanner.l"
-{ return token::HT_GEOMETRYSHADER; }
+#line 265 "gpu/lolfx-scanner.l"
+{ return token::HT_HULLSHADER; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 267 "gpu/lolfx-scanner.l"
-{ return token::HT_GROUPSHARED; }
+#line 266 "gpu/lolfx-scanner.l"
+{ return token::HT_INLINE; }
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 268 "gpu/lolfx-scanner.l"
-{ return token::HT_HALF; }
+#line 267 "gpu/lolfx-scanner.l"
+{ return token::HT_INPUTPATCH; }
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 269 "gpu/lolfx-scanner.l"
-{ return token::HT_HULLSHADER; }
+#line 268 "gpu/lolfx-scanner.l"
+{ return token::HT_INTERFACE; }
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
-#line 270 "gpu/lolfx-scanner.l"
-{ return token::HT_INLINE; }
+#line 269 "gpu/lolfx-scanner.l"
+{ return token::HT_LINE; }
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 271 "gpu/lolfx-scanner.l"
-{ return token::HT_INPUTPATCH; }
+#line 270 "gpu/lolfx-scanner.l"
+{ return token::HT_LINEADJ; }
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
-#line 272 "gpu/lolfx-scanner.l"
-{ return token::HT_INTERFACE; }
+#line 271 "gpu/lolfx-scanner.l"
+{ return token::HT_LINEAR; }
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 273 "gpu/lolfx-scanner.l"
-{ return token::HT_LINE; }
+#line 272 "gpu/lolfx-scanner.l"
+{ return token::HT_LINESTREAM; }
 	YY_BREAK
 case 182:
 YY_RULE_SETUP
-#line 274 "gpu/lolfx-scanner.l"
-{ return token::HT_LINEADJ; }
+#line 273 "gpu/lolfx-scanner.l"
+{ return token::HT_MATRIX; }
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
-#line 275 "gpu/lolfx-scanner.l"
-{ return token::HT_LINEAR; }
+#line 274 "gpu/lolfx-scanner.l"
+{ return token::HT_NAMESPACE; }
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
-#line 276 "gpu/lolfx-scanner.l"
-{ return token::HT_LINESTREAM; }
+#line 275 "gpu/lolfx-scanner.l"
+{ return token::HT_NOINTERPOLATION; }
 	YY_BREAK
 case 185:
 YY_RULE_SETUP
-#line 277 "gpu/lolfx-scanner.l"
-{ return token::HT_MATRIX; }
+#line 276 "gpu/lolfx-scanner.l"
+{ return token::HT_NULL; }
 	YY_BREAK
 case 186:
 YY_RULE_SETUP
-#line 278 "gpu/lolfx-scanner.l"
-{ return token::HT_NAMESPACE; }
+#line 277 "gpu/lolfx-scanner.l"
+{ return token::HT_OUTPUTPATCH; }
 	YY_BREAK
 case 187:
 YY_RULE_SETUP
-#line 279 "gpu/lolfx-scanner.l"
-{ return token::HT_NOINTERPOLATION; }
+#line 278 "gpu/lolfx-scanner.l"
+{ return token::HT_PACKOFFSET; }
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
-#line 280 "gpu/lolfx-scanner.l"
-{ return token::HT_NULL; }
+#line 279 "gpu/lolfx-scanner.l"
+{ return token::HT_PASS; }
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
-#line 281 "gpu/lolfx-scanner.l"
-{ return token::HT_OUTPUTPATCH; }
+#line 280 "gpu/lolfx-scanner.l"
+{ return token::HT_PIXELFRAGMENT; }
 	YY_BREAK
 case 190:
 YY_RULE_SETUP
-#line 282 "gpu/lolfx-scanner.l"
-{ return token::HT_PACKOFFSET; }
+#line 281 "gpu/lolfx-scanner.l"
+{ return token::HT_PIXELSHADER; }
 	YY_BREAK
 case 191:
 YY_RULE_SETUP
-#line 283 "gpu/lolfx-scanner.l"
-{ return token::HT_PASS; }
+#line 282 "gpu/lolfx-scanner.l"
+{ return token::HT_POINT; }
 	YY_BREAK
 case 192:
 YY_RULE_SETUP
-#line 284 "gpu/lolfx-scanner.l"
-{ return token::HT_PIXELFRAGMENT; }
+#line 283 "gpu/lolfx-scanner.l"
+{ return token::HT_POINTSTREAM; }
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
-#line 285 "gpu/lolfx-scanner.l"
-{ return token::HT_PIXELSHADER; }
+#line 284 "gpu/lolfx-scanner.l"
+{ return token::HT_PRECISE; }
 	YY_BREAK
 case 194:
 YY_RULE_SETUP
-#line 286 "gpu/lolfx-scanner.l"
-{ return token::HT_POINT; }
+#line 285 "gpu/lolfx-scanner.l"
+{ return token::HT_RASTERIZERSTATE; }
 	YY_BREAK
 case 195:
 YY_RULE_SETUP
-#line 287 "gpu/lolfx-scanner.l"
-{ return token::HT_POINTSTREAM; }
+#line 286 "gpu/lolfx-scanner.l"
+{ return token::HT_RENDERTARGETVIEW; }
 	YY_BREAK
 case 196:
 YY_RULE_SETUP
-#line 288 "gpu/lolfx-scanner.l"
-{ return token::HT_PRECISE; }
+#line 287 "gpu/lolfx-scanner.l"
+{ return token::HT_REGISTER; }
 	YY_BREAK
 case 197:
 YY_RULE_SETUP
-#line 289 "gpu/lolfx-scanner.l"
-{ return token::HT_RASTERIZERSTATE; }
+#line 288 "gpu/lolfx-scanner.l"
+{ return token::HT_ROW_MAJOR; }
 	YY_BREAK
 case 198:
 YY_RULE_SETUP
-#line 290 "gpu/lolfx-scanner.l"
-{ return token::HT_RENDERTARGETVIEW; }
+#line 289 "gpu/lolfx-scanner.l"
+{ return token::HT_RWBUFFER; }
 	YY_BREAK
 case 199:
 YY_RULE_SETUP
-#line 291 "gpu/lolfx-scanner.l"
-{ return token::HT_REGISTER; }
+#line 290 "gpu/lolfx-scanner.l"
+{ return token::HT_RWBYTEADDRESSBUFFER; }
 	YY_BREAK
 case 200:
 YY_RULE_SETUP
-#line 292 "gpu/lolfx-scanner.l"
-{ return token::HT_ROW_MAJOR; }
+#line 291 "gpu/lolfx-scanner.l"
+{ return token::HT_RWSTRUCTUREDBUFFER; }
 	YY_BREAK
 case 201:
 YY_RULE_SETUP
-#line 293 "gpu/lolfx-scanner.l"
-{ return token::HT_RWBUFFER; }
+#line 292 "gpu/lolfx-scanner.l"
+{ return token::HT_RWTEXTURE1D; }
 	YY_BREAK
 case 202:
 YY_RULE_SETUP
-#line 294 "gpu/lolfx-scanner.l"
-{ return token::HT_RWBYTEADDRESSBUFFER; }
+#line 293 "gpu/lolfx-scanner.l"
+{ return token::HT_RWTEXTURE1DARRAY; }
 	YY_BREAK
 case 203:
 YY_RULE_SETUP
-#line 295 "gpu/lolfx-scanner.l"
-{ return token::HT_RWSTRUCTUREDBUFFER; }
+#line 294 "gpu/lolfx-scanner.l"
+{ return token::HT_RWTEXTURE2D; }
 	YY_BREAK
 case 204:
 YY_RULE_SETUP
-#line 296 "gpu/lolfx-scanner.l"
-{ return token::HT_RWTEXTURE1D; }
+#line 295 "gpu/lolfx-scanner.l"
+{ return token::HT_RWTEXTURE2DARRAY; }
 	YY_BREAK
 case 205:
 YY_RULE_SETUP
-#line 297 "gpu/lolfx-scanner.l"
-{ return token::HT_RWTEXTURE1DARRAY; }
+#line 296 "gpu/lolfx-scanner.l"
+{ return token::HT_RWTEXTURE3D; }
 	YY_BREAK
 case 206:
 YY_RULE_SETUP
-#line 298 "gpu/lolfx-scanner.l"
-{ return token::HT_RWTEXTURE2D; }
+#line 297 "gpu/lolfx-scanner.l"
+{ return token::HT_SAMPLER; }
 	YY_BREAK
 case 207:
 YY_RULE_SETUP
-#line 299 "gpu/lolfx-scanner.l"
-{ return token::HT_RWTEXTURE2DARRAY; }
+#line 298 "gpu/lolfx-scanner.l"
+{ return token::HT_SAMPLER_STATE; }
 	YY_BREAK
 case 208:
 YY_RULE_SETUP
-#line 300 "gpu/lolfx-scanner.l"
-{ return token::HT_RWTEXTURE3D; }
+#line 299 "gpu/lolfx-scanner.l"
+{ return token::HT_SAMPLERSTATE; }
 	YY_BREAK
 case 209:
 YY_RULE_SETUP
-#line 301 "gpu/lolfx-scanner.l"
-{ return token::HT_SAMPLER; }
+#line 300 "gpu/lolfx-scanner.l"
+{ return token::HT_SAMPLERCOMPARISONSTATE; }
 	YY_BREAK
 case 210:
 YY_RULE_SETUP
-#line 302 "gpu/lolfx-scanner.l"
-{ return token::HT_SAMPLER_STATE; }
+#line 301 "gpu/lolfx-scanner.l"
+{ return token::HT_SHARED; }
 	YY_BREAK
 case 211:
 YY_RULE_SETUP
-#line 303 "gpu/lolfx-scanner.l"
-{ return token::HT_SAMPLERSTATE; }
+#line 302 "gpu/lolfx-scanner.l"
+{ return token::HT_SNORM; }
 	YY_BREAK
 case 212:
 YY_RULE_SETUP
-#line 304 "gpu/lolfx-scanner.l"
-{ return token::HT_SAMPLERCOMPARISONSTATE; }
+#line 303 "gpu/lolfx-scanner.l"
+{ return token::HT_STATEBLOCK; }
 	YY_BREAK
 case 213:
 YY_RULE_SETUP
-#line 305 "gpu/lolfx-scanner.l"
-{ return token::HT_SHARED; }
+#line 304 "gpu/lolfx-scanner.l"
+{ return token::HT_STATEBLOCK_STATE; }
 	YY_BREAK
 case 214:
 YY_RULE_SETUP
-#line 306 "gpu/lolfx-scanner.l"
-{ return token::HT_SNORM; }
+#line 305 "gpu/lolfx-scanner.l"
+{ return token::HT_STATIC; }
 	YY_BREAK
 case 215:
 YY_RULE_SETUP
-#line 307 "gpu/lolfx-scanner.l"
-{ return token::HT_STATEBLOCK; }
+#line 306 "gpu/lolfx-scanner.l"
+{ return token::HT_STRING; }
 	YY_BREAK
 case 216:
 YY_RULE_SETUP
-#line 308 "gpu/lolfx-scanner.l"
-{ return token::HT_STATEBLOCK_STATE; }
+#line 307 "gpu/lolfx-scanner.l"
+{ return token::HT_STRUCTUREDBUFFER; }
 	YY_BREAK
 case 217:
 YY_RULE_SETUP
-#line 309 "gpu/lolfx-scanner.l"
-{ return token::HT_STATIC; }
+#line 308 "gpu/lolfx-scanner.l"
+{ return token::HT_TBUFFER; }
 	YY_BREAK
 case 218:
 YY_RULE_SETUP
-#line 310 "gpu/lolfx-scanner.l"
-{ return token::HT_STRING; }
+#line 309 "gpu/lolfx-scanner.l"
+{ return token::HT_TECHNIQUE; }
 	YY_BREAK
 case 219:
 YY_RULE_SETUP
-#line 311 "gpu/lolfx-scanner.l"
-{ return token::HT_STRUCTUREDBUFFER; }
+#line 310 "gpu/lolfx-scanner.l"
+{ return token::HT_TECHNIQUE10; }
 	YY_BREAK
 case 220:
 YY_RULE_SETUP
-#line 312 "gpu/lolfx-scanner.l"
-{ return token::HT_TBUFFER; }
+#line 311 "gpu/lolfx-scanner.l"
+{ return token::HT_TECHNIQUE11XZ; }
 	YY_BREAK
 case 221:
 YY_RULE_SETUP
-#line 313 "gpu/lolfx-scanner.l"
-{ return token::HT_TECHNIQUE; }
+#line 312 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE; }
 	YY_BREAK
 case 222:
 YY_RULE_SETUP
-#line 314 "gpu/lolfx-scanner.l"
-{ return token::HT_TECHNIQUE10; }
+#line 313 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE1D; }
 	YY_BREAK
 case 223:
 YY_RULE_SETUP
-#line 315 "gpu/lolfx-scanner.l"
-{ return token::HT_TECHNIQUE11XZ; }
+#line 314 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE1DARRAY; }
 	YY_BREAK
 case 224:
 YY_RULE_SETUP
-#line 316 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE; }
+#line 315 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE2D; }
 	YY_BREAK
 case 225:
 YY_RULE_SETUP
-#line 317 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE1D; }
+#line 316 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE2DARRAY; }
 	YY_BREAK
 case 226:
 YY_RULE_SETUP
-#line 318 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE1DARRAY; }
+#line 317 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE2DMS; }
 	YY_BREAK
 case 227:
 YY_RULE_SETUP
-#line 319 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE2D; }
+#line 318 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE2DMSARRAY; }
 	YY_BREAK
 case 228:
 YY_RULE_SETUP
-#line 320 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE2DARRAY; }
+#line 319 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURE3D; }
 	YY_BREAK
 case 229:
 YY_RULE_SETUP
-#line 321 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE2DMS; }
+#line 320 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURECUBE; }
 	YY_BREAK
 case 230:
 YY_RULE_SETUP
-#line 322 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE2DMSARRAY; }
+#line 321 "gpu/lolfx-scanner.l"
+{ return token::HT_TEXTURECUBEARRAY; }
 	YY_BREAK
 case 231:
 YY_RULE_SETUP
-#line 323 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURE3D; }
+#line 322 "gpu/lolfx-scanner.l"
+{ return token::HT_TRUE; }
 	YY_BREAK
 case 232:
 YY_RULE_SETUP
-#line 324 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURECUBE; }
+#line 323 "gpu/lolfx-scanner.l"
+{ return token::HT_TYPEDEF; }
 	YY_BREAK
 case 233:
 YY_RULE_SETUP
-#line 325 "gpu/lolfx-scanner.l"
-{ return token::HT_TEXTURECUBEARRAY; }
+#line 324 "gpu/lolfx-scanner.l"
+{ return token::HT_TRIANGLE; }
 	YY_BREAK
 case 234:
 YY_RULE_SETUP
-#line 326 "gpu/lolfx-scanner.l"
-{ return token::HT_TRUE; }
+#line 325 "gpu/lolfx-scanner.l"
+{ return token::HT_TRIANGLEADJ; }
 	YY_BREAK
 case 235:
 YY_RULE_SETUP
-#line 327 "gpu/lolfx-scanner.l"
-{ return token::HT_TYPEDEF; }
+#line 326 "gpu/lolfx-scanner.l"
+{ return token::HT_TRIANGLESTREAM; }
 	YY_BREAK
 case 236:
 YY_RULE_SETUP
-#line 328 "gpu/lolfx-scanner.l"
-{ return token::HT_TRIANGLE; }
+#line 327 "gpu/lolfx-scanner.l"
+{ return token::HT_UNORM; }
 	YY_BREAK
 case 237:
 YY_RULE_SETUP
-#line 329 "gpu/lolfx-scanner.l"
-{ return token::HT_TRIANGLEADJ; }
+#line 328 "gpu/lolfx-scanner.l"
+{ return token::HT_VECTOR; }
 	YY_BREAK
 case 238:
 YY_RULE_SETUP
-#line 330 "gpu/lolfx-scanner.l"
-{ return token::HT_TRIANGLESTREAM; }
+#line 329 "gpu/lolfx-scanner.l"
+{ return token::HT_VERTEXFRAGMENT; }
 	YY_BREAK
 case 239:
 YY_RULE_SETUP
-#line 331 "gpu/lolfx-scanner.l"
-{ return token::HT_UNORM; }
+#line 330 "gpu/lolfx-scanner.l"
+{ return token::HT_VERTEXSHADER; }
 	YY_BREAK
 case 240:
 YY_RULE_SETUP
-#line 332 "gpu/lolfx-scanner.l"
-{ return token::HT_VECTOR; }
-	YY_BREAK
-case 241:
-YY_RULE_SETUP
-#line 333 "gpu/lolfx-scanner.l"
-{ return token::HT_VERTEXFRAGMENT; }
-	YY_BREAK
-case 242:
-YY_RULE_SETUP
-#line 334 "gpu/lolfx-scanner.l"
-{ return token::HT_VERTEXSHADER; }
-	YY_BREAK
-case 243:
-YY_RULE_SETUP
-#line 335 "gpu/lolfx-scanner.l"
+#line 331 "gpu/lolfx-scanner.l"
 { return token::HT_VOLATILE; }
 	YY_BREAK
 /*
   * HLSL vector types
   * TODO: this can probably be factored somehow
   */
+case 241:
+YY_RULE_SETUP
+#line 338 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL1; }
+	YY_BREAK
+case 242:
+YY_RULE_SETUP
+#line 339 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL1x1; }
+	YY_BREAK
+case 243:
+YY_RULE_SETUP
+#line 340 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL2x1; }
+	YY_BREAK
 case 244:
 YY_RULE_SETUP
-#line 342 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL1; }
+#line 341 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL3x1; }
 	YY_BREAK
 case 245:
 YY_RULE_SETUP
-#line 343 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL1x1; }
+#line 342 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL4x1; }
 	YY_BREAK
 case 246:
 YY_RULE_SETUP
-#line 344 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL2x1; }
+#line 343 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL2; }
 	YY_BREAK
 case 247:
 YY_RULE_SETUP
-#line 345 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL3x1; }
+#line 344 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL1x2; }
 	YY_BREAK
 case 248:
 YY_RULE_SETUP
-#line 346 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL4x1; }
+#line 345 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL2x2; }
 	YY_BREAK
 case 249:
 YY_RULE_SETUP
-#line 347 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL2; }
+#line 346 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL3x2; }
 	YY_BREAK
 case 250:
 YY_RULE_SETUP
-#line 348 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL1x2; }
+#line 347 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL4x2; }
 	YY_BREAK
 case 251:
 YY_RULE_SETUP
-#line 349 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL2x2; }
+#line 348 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL3; }
 	YY_BREAK
 case 252:
 YY_RULE_SETUP
-#line 350 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL3x2; }
+#line 349 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL1x3; }
 	YY_BREAK
 case 253:
 YY_RULE_SETUP
-#line 351 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL4x2; }
+#line 350 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL2x3; }
 	YY_BREAK
 case 254:
 YY_RULE_SETUP
-#line 352 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL3; }
+#line 351 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL3x3; }
 	YY_BREAK
 case 255:
 YY_RULE_SETUP
-#line 353 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL1x3; }
+#line 352 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL4x3; }
 	YY_BREAK
 case 256:
 YY_RULE_SETUP
-#line 354 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL2x3; }
+#line 353 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL4; }
 	YY_BREAK
 case 257:
 YY_RULE_SETUP
-#line 355 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL3x3; }
+#line 354 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL1x4; }
 	YY_BREAK
 case 258:
 YY_RULE_SETUP
-#line 356 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL4x3; }
+#line 355 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL2x4; }
 	YY_BREAK
 case 259:
 YY_RULE_SETUP
-#line 357 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL4; }
+#line 356 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL3x4; }
 	YY_BREAK
 case 260:
 YY_RULE_SETUP
-#line 358 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL1x4; }
+#line 357 "gpu/lolfx-scanner.l"
+{ return token::HT_BOOL4x4; }
 	YY_BREAK
 case 261:
 YY_RULE_SETUP
 #line 359 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL2x4; }
+{ return token::HT_FLOAT1; }
 	YY_BREAK
 case 262:
 YY_RULE_SETUP
 #line 360 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL3x4; }
+{ return token::HT_FLOAT1x1; }
 	YY_BREAK
 case 263:
 YY_RULE_SETUP
 #line 361 "gpu/lolfx-scanner.l"
-{ return token::HT_BOOL4x4; }
+{ return token::HT_FLOAT2x1; }
 	YY_BREAK
 case 264:
 YY_RULE_SETUP
-#line 363 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT1; }
+#line 362 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT3x1; }
 	YY_BREAK
 case 265:
 YY_RULE_SETUP
-#line 364 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT1x1; }
+#line 363 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT4x1; }
 	YY_BREAK
 case 266:
 YY_RULE_SETUP
-#line 365 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT2x1; }
+#line 364 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT2; }
 	YY_BREAK
 case 267:
 YY_RULE_SETUP
-#line 366 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT3x1; }
+#line 365 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT1x2; }
 	YY_BREAK
 case 268:
 YY_RULE_SETUP
-#line 367 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT4x1; }
+#line 366 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT2x2; }
 	YY_BREAK
 case 269:
 YY_RULE_SETUP
-#line 368 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT2; }
+#line 367 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT3x2; }
 	YY_BREAK
 case 270:
 YY_RULE_SETUP
-#line 369 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT1x2; }
+#line 368 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT4x2; }
 	YY_BREAK
 case 271:
 YY_RULE_SETUP
-#line 370 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT2x2; }
+#line 369 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT3; }
 	YY_BREAK
 case 272:
 YY_RULE_SETUP
-#line 371 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT3x2; }
+#line 370 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT1x3; }
 	YY_BREAK
 case 273:
 YY_RULE_SETUP
-#line 372 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT4x2; }
+#line 371 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT2x3; }
 	YY_BREAK
 case 274:
 YY_RULE_SETUP
-#line 373 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT3; }
+#line 372 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT3x3; }
 	YY_BREAK
 case 275:
 YY_RULE_SETUP
-#line 374 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT1x3; }
+#line 373 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT4x3; }
 	YY_BREAK
 case 276:
 YY_RULE_SETUP
-#line 375 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT2x3; }
+#line 374 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT4; }
 	YY_BREAK
 case 277:
 YY_RULE_SETUP
-#line 376 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT3x3; }
+#line 375 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT1x4; }
 	YY_BREAK
 case 278:
 YY_RULE_SETUP
-#line 377 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT4x3; }
+#line 376 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT2x4; }
 	YY_BREAK
 case 279:
 YY_RULE_SETUP
-#line 378 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT4; }
+#line 377 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT3x4; }
 	YY_BREAK
 case 280:
 YY_RULE_SETUP
-#line 379 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT1x4; }
+#line 378 "gpu/lolfx-scanner.l"
+{ return token::HT_FLOAT4x4; }
 	YY_BREAK
 case 281:
 YY_RULE_SETUP
 #line 380 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT2x4; }
+{ return token::HT_DOUBLE1; }
 	YY_BREAK
 case 282:
 YY_RULE_SETUP
 #line 381 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT3x4; }
+{ return token::HT_DOUBLE1x1; }
 	YY_BREAK
 case 283:
 YY_RULE_SETUP
 #line 382 "gpu/lolfx-scanner.l"
-{ return token::HT_FLOAT4x4; }
+{ return token::HT_DOUBLE2x1; }
 	YY_BREAK
 case 284:
 YY_RULE_SETUP
-#line 384 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE1; }
+#line 383 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE3x1; }
 	YY_BREAK
 case 285:
 YY_RULE_SETUP
-#line 385 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE1x1; }
+#line 384 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE4x1; }
 	YY_BREAK
 case 286:
 YY_RULE_SETUP
-#line 386 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE2x1; }
+#line 385 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE2; }
 	YY_BREAK
 case 287:
 YY_RULE_SETUP
-#line 387 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE3x1; }
+#line 386 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE1x2; }
 	YY_BREAK
 case 288:
 YY_RULE_SETUP
-#line 388 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE4x1; }
+#line 387 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE2x2; }
 	YY_BREAK
 case 289:
 YY_RULE_SETUP
-#line 389 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE2; }
+#line 388 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE3x2; }
 	YY_BREAK
 case 290:
 YY_RULE_SETUP
-#line 390 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE1x2; }
+#line 389 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE4x2; }
 	YY_BREAK
 case 291:
 YY_RULE_SETUP
-#line 391 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE2x2; }
+#line 390 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE3; }
 	YY_BREAK
 case 292:
 YY_RULE_SETUP
-#line 392 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE3x2; }
+#line 391 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE1x3; }
 	YY_BREAK
 case 293:
 YY_RULE_SETUP
-#line 393 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE4x2; }
+#line 392 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE2x3; }
 	YY_BREAK
 case 294:
 YY_RULE_SETUP
-#line 394 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE3; }
+#line 393 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE3x3; }
 	YY_BREAK
 case 295:
 YY_RULE_SETUP
-#line 395 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE1x3; }
+#line 394 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE4x3; }
 	YY_BREAK
 case 296:
 YY_RULE_SETUP
-#line 396 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE2x3; }
+#line 395 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE4; }
 	YY_BREAK
 case 297:
 YY_RULE_SETUP
-#line 397 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE3x3; }
+#line 396 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE1x4; }
 	YY_BREAK
 case 298:
 YY_RULE_SETUP
-#line 398 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE4x3; }
+#line 397 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE2x4; }
 	YY_BREAK
 case 299:
 YY_RULE_SETUP
-#line 399 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE4; }
+#line 398 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE3x4; }
 	YY_BREAK
 case 300:
 YY_RULE_SETUP
-#line 400 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE1x4; }
+#line 399 "gpu/lolfx-scanner.l"
+{ return token::HT_DOUBLE4x4; }
 	YY_BREAK
 case 301:
 YY_RULE_SETUP
 #line 401 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE2x4; }
+{ return token::HT_DWORD1; }
 	YY_BREAK
 case 302:
 YY_RULE_SETUP
 #line 402 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE3x4; }
+{ return token::HT_DWORD1x1; }
 	YY_BREAK
 case 303:
 YY_RULE_SETUP
 #line 403 "gpu/lolfx-scanner.l"
-{ return token::HT_DOUBLE4x4; }
+{ return token::HT_DWORD2x1; }
 	YY_BREAK
 case 304:
 YY_RULE_SETUP
-#line 405 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD1; }
+#line 404 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD3x1; }
 	YY_BREAK
 case 305:
 YY_RULE_SETUP
-#line 406 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD1x1; }
+#line 405 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD4x1; }
 	YY_BREAK
 case 306:
 YY_RULE_SETUP
-#line 407 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD2x1; }
+#line 406 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD2; }
 	YY_BREAK
 case 307:
 YY_RULE_SETUP
-#line 408 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD3x1; }
+#line 407 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD1x2; }
 	YY_BREAK
 case 308:
 YY_RULE_SETUP
-#line 409 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD4x1; }
+#line 408 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD2x2; }
 	YY_BREAK
 case 309:
 YY_RULE_SETUP
-#line 410 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD2; }
+#line 409 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD3x2; }
 	YY_BREAK
 case 310:
 YY_RULE_SETUP
-#line 411 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD1x2; }
+#line 410 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD4x2; }
 	YY_BREAK
 case 311:
 YY_RULE_SETUP
-#line 412 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD2x2; }
+#line 411 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD3; }
 	YY_BREAK
 case 312:
 YY_RULE_SETUP
-#line 413 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD3x2; }
+#line 412 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD1x3; }
 	YY_BREAK
 case 313:
 YY_RULE_SETUP
-#line 414 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD4x2; }
+#line 413 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD2x3; }
 	YY_BREAK
 case 314:
 YY_RULE_SETUP
-#line 415 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD3; }
+#line 414 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD3x3; }
 	YY_BREAK
 case 315:
 YY_RULE_SETUP
-#line 416 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD1x3; }
+#line 415 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD4x3; }
 	YY_BREAK
 case 316:
 YY_RULE_SETUP
-#line 417 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD2x3; }
+#line 416 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD4; }
 	YY_BREAK
 case 317:
 YY_RULE_SETUP
-#line 418 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD3x3; }
+#line 417 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD1x4; }
 	YY_BREAK
 case 318:
 YY_RULE_SETUP
-#line 419 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD4x3; }
+#line 418 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD2x4; }
 	YY_BREAK
 case 319:
 YY_RULE_SETUP
-#line 420 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD4; }
+#line 419 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD3x4; }
 	YY_BREAK
 case 320:
 YY_RULE_SETUP
-#line 421 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD1x4; }
+#line 420 "gpu/lolfx-scanner.l"
+{ return token::HT_DWORD4x4; }
 	YY_BREAK
 case 321:
 YY_RULE_SETUP
 #line 422 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD2x4; }
+{ return token::HT_INT1; }
 	YY_BREAK
 case 322:
 YY_RULE_SETUP
 #line 423 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD3x4; }
+{ return token::HT_INT1x1; }
 	YY_BREAK
 case 323:
 YY_RULE_SETUP
 #line 424 "gpu/lolfx-scanner.l"
-{ return token::HT_DWORD4x4; }
+{ return token::HT_INT2x1; }
 	YY_BREAK
 case 324:
 YY_RULE_SETUP
-#line 426 "gpu/lolfx-scanner.l"
-{ return token::HT_INT1; }
+#line 425 "gpu/lolfx-scanner.l"
+{ return token::HT_INT3x1; }
 	YY_BREAK
 case 325:
 YY_RULE_SETUP
-#line 427 "gpu/lolfx-scanner.l"
-{ return token::HT_INT1x1; }
+#line 426 "gpu/lolfx-scanner.l"
+{ return token::HT_INT4x1; }
 	YY_BREAK
 case 326:
 YY_RULE_SETUP
-#line 428 "gpu/lolfx-scanner.l"
-{ return token::HT_INT2x1; }
+#line 427 "gpu/lolfx-scanner.l"
+{ return token::HT_INT2; }
 	YY_BREAK
 case 327:
 YY_RULE_SETUP
-#line 429 "gpu/lolfx-scanner.l"
-{ return token::HT_INT3x1; }
+#line 428 "gpu/lolfx-scanner.l"
+{ return token::HT_INT1x2; }
 	YY_BREAK
 case 328:
 YY_RULE_SETUP
-#line 430 "gpu/lolfx-scanner.l"
-{ return token::HT_INT4x1; }
+#line 429 "gpu/lolfx-scanner.l"
+{ return token::HT_INT2x2; }
 	YY_BREAK
 case 329:
 YY_RULE_SETUP
-#line 431 "gpu/lolfx-scanner.l"
-{ return token::HT_INT2; }
+#line 430 "gpu/lolfx-scanner.l"
+{ return token::HT_INT3x2; }
 	YY_BREAK
 case 330:
 YY_RULE_SETUP
-#line 432 "gpu/lolfx-scanner.l"
-{ return token::HT_INT1x2; }
+#line 431 "gpu/lolfx-scanner.l"
+{ return token::HT_INT4x2; }
 	YY_BREAK
 case 331:
 YY_RULE_SETUP
-#line 433 "gpu/lolfx-scanner.l"
-{ return token::HT_INT2x2; }
+#line 432 "gpu/lolfx-scanner.l"
+{ return token::HT_INT3; }
 	YY_BREAK
 case 332:
 YY_RULE_SETUP
-#line 434 "gpu/lolfx-scanner.l"
-{ return token::HT_INT3x2; }
+#line 433 "gpu/lolfx-scanner.l"
+{ return token::HT_INT1x3; }
 	YY_BREAK
 case 333:
 YY_RULE_SETUP
-#line 435 "gpu/lolfx-scanner.l"
-{ return token::HT_INT4x2; }
+#line 434 "gpu/lolfx-scanner.l"
+{ return token::HT_INT2x3; }
 	YY_BREAK
 case 334:
 YY_RULE_SETUP
-#line 436 "gpu/lolfx-scanner.l"
-{ return token::HT_INT3; }
+#line 435 "gpu/lolfx-scanner.l"
+{ return token::HT_INT3x3; }
 	YY_BREAK
 case 335:
 YY_RULE_SETUP
-#line 437 "gpu/lolfx-scanner.l"
-{ return token::HT_INT1x3; }
+#line 436 "gpu/lolfx-scanner.l"
+{ return token::HT_INT4x3; }
 	YY_BREAK
 case 336:
 YY_RULE_SETUP
-#line 438 "gpu/lolfx-scanner.l"
-{ return token::HT_INT2x3; }
+#line 437 "gpu/lolfx-scanner.l"
+{ return token::HT_INT4; }
 	YY_BREAK
 case 337:
 YY_RULE_SETUP
-#line 439 "gpu/lolfx-scanner.l"
-{ return token::HT_INT3x3; }
+#line 438 "gpu/lolfx-scanner.l"
+{ return token::HT_INT1x4; }
 	YY_BREAK
 case 338:
 YY_RULE_SETUP
-#line 440 "gpu/lolfx-scanner.l"
-{ return token::HT_INT4x3; }
+#line 439 "gpu/lolfx-scanner.l"
+{ return token::HT_INT2x4; }
 	YY_BREAK
 case 339:
 YY_RULE_SETUP
-#line 441 "gpu/lolfx-scanner.l"
-{ return token::HT_INT4; }
+#line 440 "gpu/lolfx-scanner.l"
+{ return token::HT_INT3x4; }
 	YY_BREAK
 case 340:
 YY_RULE_SETUP
-#line 442 "gpu/lolfx-scanner.l"
-{ return token::HT_INT1x4; }
+#line 441 "gpu/lolfx-scanner.l"
+{ return token::HT_INT4x4; }
 	YY_BREAK
 case 341:
 YY_RULE_SETUP
 #line 443 "gpu/lolfx-scanner.l"
-{ return token::HT_INT2x4; }
+{ return token::HT_UINT1; }
 	YY_BREAK
 case 342:
 YY_RULE_SETUP
 #line 444 "gpu/lolfx-scanner.l"
-{ return token::HT_INT3x4; }
+{ return token::HT_UINT1x1; }
 	YY_BREAK
 case 343:
 YY_RULE_SETUP
 #line 445 "gpu/lolfx-scanner.l"
-{ return token::HT_INT4x4; }
+{ return token::HT_UINT2x1; }
 	YY_BREAK
 case 344:
 YY_RULE_SETUP
-#line 447 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT1; }
+#line 446 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT3x1; }
 	YY_BREAK
 case 345:
 YY_RULE_SETUP
-#line 448 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT1x1; }
+#line 447 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT4x1; }
 	YY_BREAK
 case 346:
 YY_RULE_SETUP
-#line 449 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT2x1; }
+#line 448 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT2; }
 	YY_BREAK
 case 347:
 YY_RULE_SETUP
-#line 450 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT3x1; }
+#line 449 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT1x2; }
 	YY_BREAK
 case 348:
 YY_RULE_SETUP
-#line 451 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT4x1; }
+#line 450 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT2x2; }
 	YY_BREAK
 case 349:
 YY_RULE_SETUP
-#line 452 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT2; }
+#line 451 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT3x2; }
 	YY_BREAK
 case 350:
 YY_RULE_SETUP
-#line 453 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT1x2; }
+#line 452 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT4x2; }
 	YY_BREAK
 case 351:
 YY_RULE_SETUP
-#line 454 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT2x2; }
+#line 453 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT3; }
 	YY_BREAK
 case 352:
 YY_RULE_SETUP
-#line 455 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT3x2; }
+#line 454 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT1x3; }
 	YY_BREAK
 case 353:
 YY_RULE_SETUP
-#line 456 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT4x2; }
+#line 455 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT2x3; }
 	YY_BREAK
 case 354:
 YY_RULE_SETUP
-#line 457 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT3; }
+#line 456 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT3x3; }
 	YY_BREAK
 case 355:
 YY_RULE_SETUP
-#line 458 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT1x3; }
+#line 457 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT4x3; }
 	YY_BREAK
 case 356:
 YY_RULE_SETUP
-#line 459 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT2x3; }
+#line 458 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT4; }
 	YY_BREAK
 case 357:
 YY_RULE_SETUP
-#line 460 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT3x3; }
+#line 459 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT1x4; }
 	YY_BREAK
 case 358:
 YY_RULE_SETUP
-#line 461 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT4x3; }
+#line 460 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT2x4; }
 	YY_BREAK
 case 359:
 YY_RULE_SETUP
-#line 462 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT4; }
+#line 461 "gpu/lolfx-scanner.l"
+{ return token::HT_UINT3x4; }
 	YY_BREAK
 case 360:
 YY_RULE_SETUP
-#line 463 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT1x4; }
-	YY_BREAK
-case 361:
-YY_RULE_SETUP
-#line 464 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT2x4; }
-	YY_BREAK
-case 362:
-YY_RULE_SETUP
-#line 465 "gpu/lolfx-scanner.l"
-{ return token::HT_UINT3x4; }
-	YY_BREAK
-case 363:
-YY_RULE_SETUP
-#line 466 "gpu/lolfx-scanner.l"
+#line 462 "gpu/lolfx-scanner.l"
 { return token::HT_UINT4x4; }
 	YY_BREAK
 /*
   * HLSL preprocessor directives
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb943993%28v=vs.85%29.aspx
   */
+case 361:
+YY_RULE_SETUP
+#line 469 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_DEFINE; }
+	YY_BREAK
+case 362:
+YY_RULE_SETUP
+#line 470 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_ELIF; }
+	YY_BREAK
+case 363:
+YY_RULE_SETUP
+#line 471 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_ELSE; }
+	YY_BREAK
 case 364:
 YY_RULE_SETUP
-#line 473 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_DEFINE; }
+#line 472 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_ENDIF; }
 	YY_BREAK
 case 365:
 YY_RULE_SETUP
-#line 474 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_ELIF; }
+#line 473 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_ERROR; }
 	YY_BREAK
 case 366:
 YY_RULE_SETUP
-#line 475 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_ELSE; }
+#line 474 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_IF; }
 	YY_BREAK
 case 367:
 YY_RULE_SETUP
-#line 476 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_ENDIF; }
+#line 475 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_IFDEF; }
 	YY_BREAK
 case 368:
 YY_RULE_SETUP
-#line 477 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_ERROR; }
+#line 476 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_IFNDEF; }
 	YY_BREAK
 case 369:
 YY_RULE_SETUP
-#line 478 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_IF; }
+#line 477 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_INCLUDE; }
 	YY_BREAK
 case 370:
 YY_RULE_SETUP
-#line 479 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_IFDEF; }
+#line 478 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_LINE; }
 	YY_BREAK
 case 371:
 YY_RULE_SETUP
-#line 480 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_IFNDEF; }
+#line 479 "gpu/lolfx-scanner.l"
+{ return token::PREPROCESSOR_PRAGMA; }
 	YY_BREAK
 case 372:
 YY_RULE_SETUP
-#line 481 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_INCLUDE; }
-	YY_BREAK
-case 373:
-YY_RULE_SETUP
-#line 482 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_LINE; }
-	YY_BREAK
-case 374:
-YY_RULE_SETUP
-#line 483 "gpu/lolfx-scanner.l"
-{ return token::PREPROCESSOR_PRAGMA; }
-	YY_BREAK
-case 375:
-YY_RULE_SETUP
-#line 484 "gpu/lolfx-scanner.l"
+#line 480 "gpu/lolfx-scanner.l"
 { return token::PREPROCESSOR_UNDEF; }
 	YY_BREAK
 /*
   * GLSL preprocessor directives
   */
-case 376:
+case 373:
 YY_RULE_SETUP
-#line 490 "gpu/lolfx-scanner.l"
+#line 486 "gpu/lolfx-scanner.l"
 { /* ignore for now */ }
 	YY_BREAK
 /*
   * HLSL reserved keywords
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb509569%28v=vs.85%29.aspx
   */
+case 374:
+YY_RULE_SETUP
+#line 493 "gpu/lolfx-scanner.l"
+{ return token::HT_AUTO; }
+	YY_BREAK
+case 375:
+YY_RULE_SETUP
+#line 494 "gpu/lolfx-scanner.l"
+{ return token::HT_CATCH; }
+	YY_BREAK
+case 376:
+YY_RULE_SETUP
+#line 495 "gpu/lolfx-scanner.l"
+{ return token::HT_CHAR; }
+	YY_BREAK
 case 377:
 YY_RULE_SETUP
-#line 497 "gpu/lolfx-scanner.l"
-{ return token::HT_AUTO; }
+#line 496 "gpu/lolfx-scanner.l"
+{ return token::HT_CLASS; }
 	YY_BREAK
 case 378:
 YY_RULE_SETUP
-#line 498 "gpu/lolfx-scanner.l"
-{ return token::HT_CATCH; }
+#line 497 "gpu/lolfx-scanner.l"
+{ return token::HT_CONST_CAST; }
 	YY_BREAK
 case 379:
 YY_RULE_SETUP
-#line 499 "gpu/lolfx-scanner.l"
-{ return token::HT_CHAR; }
+#line 498 "gpu/lolfx-scanner.l"
+{ return token::HT_DELETE; }
 	YY_BREAK
 case 380:
 YY_RULE_SETUP
-#line 500 "gpu/lolfx-scanner.l"
-{ return token::HT_CLASS; }
+#line 499 "gpu/lolfx-scanner.l"
+{ return token::HT_DYNAMIC_CAST; }
 	YY_BREAK
 case 381:
 YY_RULE_SETUP
-#line 501 "gpu/lolfx-scanner.l"
-{ return token::HT_CONST_CAST; }
+#line 500 "gpu/lolfx-scanner.l"
+{ return token::HT_ENUM; }
 	YY_BREAK
 case 382:
 YY_RULE_SETUP
-#line 502 "gpu/lolfx-scanner.l"
-{ return token::HT_DELETE; }
+#line 501 "gpu/lolfx-scanner.l"
+{ return token::HT_EXPLICIT; }
 	YY_BREAK
 case 383:
 YY_RULE_SETUP
-#line 503 "gpu/lolfx-scanner.l"
-{ return token::HT_DYNAMIC_CAST; }
+#line 502 "gpu/lolfx-scanner.l"
+{ return token::HT_FRIEND; }
 	YY_BREAK
 case 384:
 YY_RULE_SETUP
-#line 504 "gpu/lolfx-scanner.l"
-{ return token::HT_ENUM; }
+#line 503 "gpu/lolfx-scanner.l"
+{ return token::HT_GOTO; }
 	YY_BREAK
 case 385:
 YY_RULE_SETUP
-#line 505 "gpu/lolfx-scanner.l"
-{ return token::HT_EXPLICIT; }
+#line 504 "gpu/lolfx-scanner.l"
+{ return token::HT_LONG; }
 	YY_BREAK
 case 386:
 YY_RULE_SETUP
-#line 506 "gpu/lolfx-scanner.l"
-{ return token::HT_FRIEND; }
+#line 505 "gpu/lolfx-scanner.l"
+{ return token::HT_MUTABLE; }
 	YY_BREAK
 case 387:
 YY_RULE_SETUP
-#line 507 "gpu/lolfx-scanner.l"
-{ return token::HT_GOTO; }
+#line 506 "gpu/lolfx-scanner.l"
+{ return token::HT_NEW; }
 	YY_BREAK
 case 388:
 YY_RULE_SETUP
-#line 508 "gpu/lolfx-scanner.l"
-{ return token::HT_LONG; }
+#line 507 "gpu/lolfx-scanner.l"
+{ return token::HT_OPERATOR; }
 	YY_BREAK
 case 389:
 YY_RULE_SETUP
-#line 509 "gpu/lolfx-scanner.l"
-{ return token::HT_MUTABLE; }
+#line 508 "gpu/lolfx-scanner.l"
+{ return token::HT_PRIVATE; }
 	YY_BREAK
 case 390:
 YY_RULE_SETUP
-#line 510 "gpu/lolfx-scanner.l"
-{ return token::HT_NEW; }
+#line 509 "gpu/lolfx-scanner.l"
+{ return token::HT_PROTECTED; }
 	YY_BREAK
 case 391:
 YY_RULE_SETUP
-#line 511 "gpu/lolfx-scanner.l"
-{ return token::HT_OPERATOR; }
+#line 510 "gpu/lolfx-scanner.l"
+{ return token::HT_PUBLIC; }
 	YY_BREAK
 case 392:
 YY_RULE_SETUP
-#line 512 "gpu/lolfx-scanner.l"
-{ return token::HT_PRIVATE; }
+#line 511 "gpu/lolfx-scanner.l"
+{ return token::HT_REINTERPRET_CAST; }
 	YY_BREAK
 case 393:
 YY_RULE_SETUP
-#line 513 "gpu/lolfx-scanner.l"
-{ return token::HT_PROTECTED; }
+#line 512 "gpu/lolfx-scanner.l"
+{ return token::HT_SHORT; }
 	YY_BREAK
 case 394:
 YY_RULE_SETUP
-#line 514 "gpu/lolfx-scanner.l"
-{ return token::HT_PUBLIC; }
+#line 513 "gpu/lolfx-scanner.l"
+{ return token::HT_SIGNED; }
 	YY_BREAK
 case 395:
 YY_RULE_SETUP
-#line 515 "gpu/lolfx-scanner.l"
-{ return token::HT_REINTERPRET_CAST; }
+#line 514 "gpu/lolfx-scanner.l"
+{ return token::HT_SIZEOF; }
 	YY_BREAK
 case 396:
 YY_RULE_SETUP
-#line 516 "gpu/lolfx-scanner.l"
-{ return token::HT_SHORT; }
+#line 515 "gpu/lolfx-scanner.l"
+{ return token::HT_STATIC_CAST; }
 	YY_BREAK
 case 397:
 YY_RULE_SETUP
-#line 517 "gpu/lolfx-scanner.l"
-{ return token::HT_SIGNED; }
+#line 516 "gpu/lolfx-scanner.l"
+{ return token::HT_TEMPLATE; }
 	YY_BREAK
 case 398:
 YY_RULE_SETUP
-#line 518 "gpu/lolfx-scanner.l"
-{ return token::HT_SIZEOF; }
+#line 517 "gpu/lolfx-scanner.l"
+{ return token::HT_THIS; }
 	YY_BREAK
 case 399:
 YY_RULE_SETUP
-#line 519 "gpu/lolfx-scanner.l"
-{ return token::HT_STATIC_CAST; }
+#line 518 "gpu/lolfx-scanner.l"
+{ return token::HT_THROW; }
 	YY_BREAK
 case 400:
 YY_RULE_SETUP
-#line 520 "gpu/lolfx-scanner.l"
-{ return token::HT_TEMPLATE; }
+#line 519 "gpu/lolfx-scanner.l"
+{ return token::HT_TRY; }
 	YY_BREAK
 case 401:
 YY_RULE_SETUP
-#line 521 "gpu/lolfx-scanner.l"
-{ return token::HT_THIS; }
+#line 520 "gpu/lolfx-scanner.l"
+{ return token::HT_TYPENAME; }
 	YY_BREAK
 case 402:
 YY_RULE_SETUP
-#line 522 "gpu/lolfx-scanner.l"
-{ return token::HT_THROW; }
+#line 521 "gpu/lolfx-scanner.l"
+{ return token::HT_UNION; }
 	YY_BREAK
 case 403:
 YY_RULE_SETUP
-#line 523 "gpu/lolfx-scanner.l"
-{ return token::HT_TRY; }
+#line 522 "gpu/lolfx-scanner.l"
+{ return token::HT_UNSIGNED; }
 	YY_BREAK
 case 404:
 YY_RULE_SETUP
-#line 524 "gpu/lolfx-scanner.l"
-{ return token::HT_TYPENAME; }
+#line 523 "gpu/lolfx-scanner.l"
+{ return token::HT_USING; }
 	YY_BREAK
 case 405:
 YY_RULE_SETUP
-#line 525 "gpu/lolfx-scanner.l"
-{ return token::HT_UNION; }
-	YY_BREAK
-case 406:
-YY_RULE_SETUP
-#line 526 "gpu/lolfx-scanner.l"
-{ return token::HT_UNSIGNED; }
-	YY_BREAK
-case 407:
-YY_RULE_SETUP
-#line 527 "gpu/lolfx-scanner.l"
-{ return token::HT_USING; }
-	YY_BREAK
-case 408:
-YY_RULE_SETUP
-#line 528 "gpu/lolfx-scanner.l"
+#line 524 "gpu/lolfx-scanner.l"
 { return token::HT_VIRTUAL; }
 	YY_BREAK
 /*
   * Various tokens
   */
+case 406:
+YY_RULE_SETUP
+#line 530 "gpu/lolfx-scanner.l"
+{ return token::T_INC; }
+	YY_BREAK
+case 407:
+YY_RULE_SETUP
+#line 531 "gpu/lolfx-scanner.l"
+{ return token::T_DEC; }
+	YY_BREAK
+case 408:
+YY_RULE_SETUP
+#line 532 "gpu/lolfx-scanner.l"
+{ return token::T_LE; }
+	YY_BREAK
 case 409:
 YY_RULE_SETUP
-#line 534 "gpu/lolfx-scanner.l"
-{ return token::T_INC; }
+#line 533 "gpu/lolfx-scanner.l"
+{ return token::T_GE; }
 	YY_BREAK
 case 410:
 YY_RULE_SETUP
-#line 535 "gpu/lolfx-scanner.l"
-{ return token::T_DEC; }
+#line 534 "gpu/lolfx-scanner.l"
+{ return token::T_EQ; }
 	YY_BREAK
 case 411:
 YY_RULE_SETUP
-#line 536 "gpu/lolfx-scanner.l"
-{ return token::T_LE; }
+#line 535 "gpu/lolfx-scanner.l"
+{ return token::T_NE; }
 	YY_BREAK
 case 412:
 YY_RULE_SETUP
-#line 537 "gpu/lolfx-scanner.l"
-{ return token::T_GE; }
+#line 536 "gpu/lolfx-scanner.l"
+{ return token::T_LEFT; }
 	YY_BREAK
 case 413:
 YY_RULE_SETUP
-#line 538 "gpu/lolfx-scanner.l"
-{ return token::T_EQ; }
+#line 537 "gpu/lolfx-scanner.l"
+{ return token::T_RIGHT; }
 	YY_BREAK
 case 414:
 YY_RULE_SETUP
-#line 539 "gpu/lolfx-scanner.l"
-{ return token::T_NE; }
+#line 538 "gpu/lolfx-scanner.l"
+{ return token::T_AND; }
 	YY_BREAK
 case 415:
 YY_RULE_SETUP
-#line 540 "gpu/lolfx-scanner.l"
-{ return token::T_LEFT; }
+#line 539 "gpu/lolfx-scanner.l"
+{ return token::T_OR; }
 	YY_BREAK
 case 416:
 YY_RULE_SETUP
-#line 541 "gpu/lolfx-scanner.l"
-{ return token::T_RIGHT; }
+#line 540 "gpu/lolfx-scanner.l"
+{ return token::T_XOR; }
 	YY_BREAK
 case 417:
 YY_RULE_SETUP
 #line 542 "gpu/lolfx-scanner.l"
-{ return token::T_AND; }
+{ return token::T_MULEQ; }
 	YY_BREAK
 case 418:
 YY_RULE_SETUP
 #line 543 "gpu/lolfx-scanner.l"
-{ return token::T_OR; }
+{ return token::T_DIVEQ; }
 	YY_BREAK
 case 419:
 YY_RULE_SETUP
 #line 544 "gpu/lolfx-scanner.l"
-{ return token::T_XOR; }
+{ return token::T_MODEQ; }
 	YY_BREAK
 case 420:
 YY_RULE_SETUP
-#line 546 "gpu/lolfx-scanner.l"
-{ return token::T_MULEQ; }
+#line 545 "gpu/lolfx-scanner.l"
+{ return token::T_ADDEQ; }
 	YY_BREAK
 case 421:
 YY_RULE_SETUP
-#line 547 "gpu/lolfx-scanner.l"
-{ return token::T_DIVEQ; }
+#line 546 "gpu/lolfx-scanner.l"
+{ return token::T_SUBEQ; }
 	YY_BREAK
 case 422:
 YY_RULE_SETUP
-#line 548 "gpu/lolfx-scanner.l"
-{ return token::T_MODEQ; }
+#line 547 "gpu/lolfx-scanner.l"
+{ return token::T_LEFTEQ; }
 	YY_BREAK
 case 423:
 YY_RULE_SETUP
-#line 549 "gpu/lolfx-scanner.l"
-{ return token::T_ADDEQ; }
+#line 548 "gpu/lolfx-scanner.l"
+{ return token::T_RIGHTEQ; }
 	YY_BREAK
 case 424:
 YY_RULE_SETUP
-#line 550 "gpu/lolfx-scanner.l"
-{ return token::T_SUBEQ; }
+#line 549 "gpu/lolfx-scanner.l"
+{ return token::T_ANDEQ; }
 	YY_BREAK
 case 425:
 YY_RULE_SETUP
-#line 551 "gpu/lolfx-scanner.l"
-{ return token::T_LEFTEQ; }
+#line 550 "gpu/lolfx-scanner.l"
+{ return token::T_XOREQ; }
 	YY_BREAK
 case 426:
 YY_RULE_SETUP
-#line 552 "gpu/lolfx-scanner.l"
-{ return token::T_RIGHTEQ; }
+#line 551 "gpu/lolfx-scanner.l"
+{ return token::T_OREQ; }
 	YY_BREAK
 case 427:
 YY_RULE_SETUP
 #line 553 "gpu/lolfx-scanner.l"
-{ return token::T_ANDEQ; }
-	YY_BREAK
-case 428:
-YY_RULE_SETUP
-#line 554 "gpu/lolfx-scanner.l"
-{ return token::T_XOREQ; }
-	YY_BREAK
-case 429:
-YY_RULE_SETUP
-#line 555 "gpu/lolfx-scanner.l"
-{ return token::T_OREQ; }
-	YY_BREAK
-case 430:
-YY_RULE_SETUP
-#line 557 "gpu/lolfx-scanner.l"
 {
     yylval->fval = std::atof(yytext);
     return token::FLOATCONSTANT;
 }
 	YY_BREAK
-case 431:
+case 428:
 YY_RULE_SETUP
-#line 561 "gpu/lolfx-scanner.l"
+#line 557 "gpu/lolfx-scanner.l"
 {
     yylval->uval = std::atoi(yytext);
     return token::UINTCONSTANT;
 }
 	YY_BREAK
-case 432:
+case 429:
 YY_RULE_SETUP
-#line 565 "gpu/lolfx-scanner.l"
+#line 561 "gpu/lolfx-scanner.l"
 {
     yylval->ival = std::atoi(yytext);
     return token::INTCONSTANT;
 }
 	YY_BREAK
-case 433:
+case 430:
 YY_RULE_SETUP
-#line 570 "gpu/lolfx-scanner.l"
+#line 566 "gpu/lolfx-scanner.l"
+{
+    /* Copy token for now */
+    yylval->sval = strdup(yytext);
+    return token::FIELDSELECTION;
+}
+	YY_BREAK
+case 431:
+YY_RULE_SETUP
+#line 572 "gpu/lolfx-scanner.l"
 {
     /* Copy token for now */
     yylval->sval = strdup(yytext);
     return token::IDENTIFIER;
 }
 	YY_BREAK
-case 434:
-YY_RULE_SETUP
-#line 576 "gpu/lolfx-scanner.l"
-{ /* ignore whitespace */ }
-	YY_BREAK
-case 435:
-/* rule 435 can match eol */
-YY_RULE_SETUP
-#line 577 "gpu/lolfx-scanner.l"
-{ yylloc->lines(1); }
-	YY_BREAK
-case 436:
+case 432:
 YY_RULE_SETUP
 #line 578 "gpu/lolfx-scanner.l"
+{ /* ignore whitespace */ }
+	YY_BREAK
+case 433:
+/* rule 433 can match eol */
+YY_RULE_SETUP
+#line 579 "gpu/lolfx-scanner.l"
+{ yylloc->lines(1); }
+	YY_BREAK
+case 434:
+YY_RULE_SETUP
+#line 580 "gpu/lolfx-scanner.l"
 { return (token_type)*yytext; /* accept all characters */ }
 	YY_BREAK
 /*
   * Ignore C comments
   */
-case 437:
+case 435:
 YY_RULE_SETUP
-#line 584 "gpu/lolfx-scanner.l"
+#line 586 "gpu/lolfx-scanner.l"
 { BEGIN(C_COMMENT); }
 	YY_BREAK
-case 438:
+case 436:
 YY_RULE_SETUP
-#line 585 "gpu/lolfx-scanner.l"
+#line 587 "gpu/lolfx-scanner.l"
 { BEGIN(INITIAL); }
+	YY_BREAK
+case 437:
+YY_RULE_SETUP
+#line 588 "gpu/lolfx-scanner.l"
+{ }
+	YY_BREAK
+case 438:
+/* rule 438 can match eol */
+YY_RULE_SETUP
+#line 589 "gpu/lolfx-scanner.l"
+{ yylloc->lines(1); }
 	YY_BREAK
 case 439:
 YY_RULE_SETUP
-#line 586 "gpu/lolfx-scanner.l"
-{ }
-	YY_BREAK
-case 440:
-/* rule 440 can match eol */
-YY_RULE_SETUP
-#line 587 "gpu/lolfx-scanner.l"
-{ yylloc->lines(1); }
-	YY_BREAK
-case 441:
-YY_RULE_SETUP
-#line 588 "gpu/lolfx-scanner.l"
+#line 590 "gpu/lolfx-scanner.l"
 { }
 	YY_BREAK
 /*
   * Ignore C++ comments
   */
-case 442:
-YY_RULE_SETUP
-#line 594 "gpu/lolfx-scanner.l"
-{ BEGIN(CPP_COMMENT); }
-	YY_BREAK
-case 443:
-/* rule 443 can match eol */
-YY_RULE_SETUP
-#line 595 "gpu/lolfx-scanner.l"
-{ yylloc->lines(1); BEGIN(INITIAL); }
-	YY_BREAK
-case 444:
+case 440:
 YY_RULE_SETUP
 #line 596 "gpu/lolfx-scanner.l"
-{ }
+{ BEGIN(CPP_COMMENT); }
 	YY_BREAK
-case 445:
+case 441:
+/* rule 441 can match eol */
+YY_RULE_SETUP
+#line 597 "gpu/lolfx-scanner.l"
+{ yylloc->lines(1); BEGIN(INITIAL); }
+	YY_BREAK
+case 442:
 YY_RULE_SETUP
 #line 598 "gpu/lolfx-scanner.l"
+{ }
+	YY_BREAK
+case 443:
+YY_RULE_SETUP
+#line 600 "gpu/lolfx-scanner.l"
 ECHO;
 	YY_BREAK
-#line 4139 "generated/lolfx-scanner.cpp"
+#line 4133 "generated/lolfx-scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 case YY_STATE_EOF(CPP_COMMENT):
@@ -5038,7 +5032,7 @@ void LolFxfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 598 "gpu/lolfx-scanner.l"
+#line 600 "gpu/lolfx-scanner.l"
 
 
 

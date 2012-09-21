@@ -37,6 +37,12 @@ namespace lol
 {
 
 LolFx::LolFx()
+  : m_blend(false),
+    m_alphatest(false),
+    m_cullface(false),
+    m_depthtest(false),
+    m_depthmask(false),
+    m_shader(0)
 {
     ;
 }

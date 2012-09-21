@@ -16,6 +16,8 @@
 #if !defined __GPU_LOLFX_H__
 #define __GPU_LOLFX_H__
 
+#include "gpu/shader.h"
+
 namespace lol
 {
 
@@ -27,6 +29,17 @@ public:
     LolFx();
 
     bool Compile(char const *command);
+
+private:
+    /* Simple GL / DX render states */
+    bool m_blend;
+    bool m_alphatest;
+    bool m_cullface;
+    bool m_depthtest;
+    bool m_depthmask;
+
+    /* Our shaders -- FIXME: should be split if possible */
+    Shader *m_shader;
 };
 
 } /* namespace lol */

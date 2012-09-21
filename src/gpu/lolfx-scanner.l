@@ -167,10 +167,6 @@ typedef lol::LolFxParser::token_type token_type;
 "true"                       { yylval->ival = 1; return token::BOOLCONSTANT; }
 "false"                      { yylval->ival = 0; return token::BOOLCONSTANT; }
 
-[xyzw]{1,4}                  { return token::FIELDSELECTION; }
-[rgba]{1,4}                  { return token::FIELDSELECTION; }
-[stpq]{1,4}                  { return token::FIELDSELECTION; }
-
  /*
   * GLSL keywords that are also valid or reserved in HLSL
   * and HLSL keywords that are also valid or reserved in GLSL.
@@ -565,6 +561,12 @@ typedef lol::LolFxParser::token_type token_type;
 (0|[1-9][0-9]*)         {
     yylval->ival = std::atoi(yytext);
     return token::INTCONSTANT;
+}
+
+([xyzw]{1,4}|[rgba]{1,4}|[stpq]{1,4}) {
+    /* Copy token for now */
+    yylval->sval = strdup(yytext);
+    return token::FIELDSELECTION;
 }
 
 [a-zA-Z_][a-zA-Z0-9_]*   {
