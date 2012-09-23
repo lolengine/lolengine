@@ -21,6 +21,7 @@
 
 #if defined __ANDROID__
 #   include <android/log.h>
+#   include <unistd.h> /* for gettid() */
 #else
 #   include <cstdarg>
 #endif
@@ -73,7 +74,7 @@ void Log::Error(char const *fmt, ...)
 void Log::Helper(MessageType type, char const *fmt, va_list ap)
 {
 #if defined __ANDROID__
-    int prio[] =
+    int const prio[] =
     {
         ANDROID_LOG_DEBUG,
         ANDROID_LOG_INFO,
@@ -81,8 +82,11 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
         ANDROID_LOG_ERROR
     };
 
-    //__android_log_print(prio[type], "LOL", "thread %ld", pthread_self());
-    __android_log_vprint(prio[type], "LOL", fmt, ap);
+    char buf[4096];
+    vsnprintf(buf, 4095, fmt, ap);
+    buf[4095] = '\0';
+
+    __android_log_print(prio[type], "LOL", "[%d] %s", (int)gettid(), buf);
 
 #else
     char const *prefix[] =
