@@ -35,10 +35,11 @@ namespace lol
 {
 JavaVM *g_vm;
 jobject g_activity;
+Queue<int> g_main_queue;
 Thread *g_main_thread;
 
-AndroidApp::AndroidApp(char const *title, ivec2 res, float fps) :
-    data(0)
+AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
+  : data(0)
 {
 }
 
@@ -46,12 +47,20 @@ void AndroidApp::ShowPointer(bool show)
 {
 }
 
+/* This is a fake Run() method. We just wait until we're called and
+ * signal nativeInit() that all the user's initialisation code was
+ * called. Then we sit here forever, the Java layer is in charge of
+ * calling TickDraw(). */
 void AndroidApp::Run()
 {
+    g_main_queue.Push(1);
+
     while (!Ticker::Finished())
     {
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
+        /* Do nothing while the real render thread does the job. The
+         * real stuff happens in nativeRender() */
+        Timer t;
+        t.Wait(0.5f);
     }
 }
 
@@ -85,6 +94,7 @@ JNI_OnLoad(JavaVM* vm, void* reserved)
 extern "C" void
 Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 {
+    Log::Info("Java layer initialising activity");
     env->NewGlobalRef(thiz); /* FIXME: never released! */
     g_activity = thiz;
 }
@@ -92,18 +102,19 @@ Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 {
-    Log::Info("initialising renderer");
+    Log::Info("Java layer initialising renderer");
     Ticker::Setup(30.0f);
     Video::Setup(ivec2(320, 200));
 
     g_main_thread = new Thread(lol::AndroidApp::MainRun, NULL);;
+    g_main_queue.Pop();
 }
 
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
-    Log::Info("resizing to %i x %i", w, h);
+    Log::Info("Java layer resizing to %i x %i", w, h);
     Video::Setup(ivec2(w, h));
 }
 
