@@ -144,7 +144,8 @@ void Dict::RemoveSlot(Entity *entity)
         }
 
 #if !LOL_RELEASE
-    Log::Error("removing unregistered entity %p\n", entity);
+    Log::Error("removing unregistered entity %p (%s)\n",
+               entity, entity->GetName());
 #endif
 }
 

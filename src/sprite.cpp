@@ -56,7 +56,6 @@ void Sprite::TickDraw(float seconds)
 
 Sprite::~Sprite()
 {
-    Tiler::Deregister(data->tileset);
     delete data;
 }
 
