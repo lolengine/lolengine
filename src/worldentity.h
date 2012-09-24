@@ -24,6 +24,9 @@ namespace lol
 class WorldEntity : public Entity
 {
 public:
+    virtual char const *GetName();
+
+public:
     vec3 m_position;
     vec3 m_velocity;
     quat m_rotation;
@@ -37,8 +40,6 @@ public:
 protected:
     WorldEntity();
     virtual ~WorldEntity();
-
-    virtual char const *GetName();
 
     virtual void TickGame(float seconds);
     virtual void TickDraw(float seconds);

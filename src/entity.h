@@ -31,11 +31,13 @@ class Entity
     friend class Dict;
     friend class Emcee;
 
+public:
+    virtual char const *GetName();
+
 protected:
     Entity();
     virtual ~Entity();
 
-    virtual char const *GetName();
     inline int IsDestroying() { return m_destroy; }
 
     virtual void TickGame(float seconds);
