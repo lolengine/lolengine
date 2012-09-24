@@ -50,7 +50,11 @@ private:
         Tile const *t1 = (Tile const *)p1;
         Tile const *t2 = (Tile const *)p2;
 
-        return t2->prio - t1->prio;
+        if (t1->pos.z > t2->pos.z)
+            return 1;
+        if (t1->pos.z < t2->pos.z)
+            return -1;
+        return 0;
     }
 
     mat4 m_model_matrix;
@@ -176,6 +180,11 @@ void Scene::Render() // XXX: rename to Blit()
     data->m_model_matrix *= mat4::rotate(17.0f * cosf(f), 0.0f, 0.0f, 1.0f);
 #endif
     data->m_model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
+#if __ANDROID__
+    data->m_model_matrix = mat4::scale(1280.0f / 640,
+                                       736.0f / 480,
+                                       1.0f) * data->m_model_matrix;
+#endif
     // XXX: end of debug stuff
 
     ShaderUniform uni_mat, uni_tex;
