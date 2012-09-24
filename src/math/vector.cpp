@@ -305,6 +305,17 @@ template<> std::ostream &operator<<(std::ostream &stream, mat4 const &m)
     return stream;
 }
 
+template<> mat3 mat3::scale(float x)
+{
+    mat3 ret(1.0f);
+
+    ret[0][0] = x;
+    ret[1][1] = x;
+    ret[2][2] = x;
+
+    return ret;
+}
+
 template<> mat3 mat3::scale(float x, float y, float z)
 {
     mat3 ret(1.0f);
