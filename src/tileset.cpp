@@ -268,12 +268,24 @@ void TileSet::Unbind()
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                        float *vertex, float *texture)
 {
-    float tx = data->tx * ((id & 0xffff) % data->count.x);
-    float ty = data->ty * ((id & 0xffff) / data->count.x);
+    float dtx = data->tx;
+    float dty = data->ty;
+    float tx = dtx * ((id & 0xffff) % data->count.x);
+    float ty = dty * ((id & 0xffff) / data->count.x);
 
     int dx = data->size.x * scale.x;
     int dy = o ? 0 : data->size.y * scale.y;
     int dz = o ? data->size.y * scale.y : 0;
+
+    /* If scaling is negative, switch triangle winding */
+    if (scale.x * scale.y < 0.0f)
+    {
+        pos.x += dx;
+        dx = -dx;
+
+        tx += dtx;
+        dtx = -dtx;
+    }
 
     if (!data->img && data->m_tex)
     {
@@ -282,7 +294,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         *vertex++ = pos.x + dx;
         *vertex++ = pos.y + dy;
         *vertex++ = pos.z + dz;
-        *texture++ = tx + data->tx;
+        *texture++ = tx + dtx;
         *texture++ = ty;
 
         *vertex++ = tmp[0] = pos.x;
@@ -294,8 +306,8 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         *vertex++ = tmp[5] = pos.x + dx;
         *vertex++ = tmp[6] = pos.y;
         *vertex++ = tmp[7] = pos.z;
-        *texture++ = tmp[8] = tx + data->tx;
-        *texture++ = tmp[9] = ty + data->ty;
+        *texture++ = tmp[8] = tx + dtx;
+        *texture++ = tmp[9] = ty + dty;
 
         *vertex++ = tmp[5];
         *vertex++ = tmp[6];
@@ -313,7 +325,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         *vertex++ = pos.y;
         *vertex++ = pos.z;
         *texture++ = tx;
-        *texture++ = ty + data->ty;
+        *texture++ = ty + dty;
     }
     else
     {
