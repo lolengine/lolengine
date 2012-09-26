@@ -403,6 +403,8 @@ void Input::SetMousePos(ivec2 coord)
 
     WorldEntity *top = NULL;
 
+    /* Find the top “widget” amongst all entities that match the
+     * mouse coordinates */
     for (int n = 0; n < data->nentities; n++)
     {
         if (coord.x < data->entities[n]->m_bbox[0].x

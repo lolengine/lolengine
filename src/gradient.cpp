@@ -60,12 +60,12 @@ void Gradient::TickDraw(float seconds)
 {
     Entity::TickDraw(seconds);
 
-    float const vertex[] = {   0.0f,   0.0f, 0.0f,
-                             640.0f,   0.0f, 0.0f,
-                               0.0f, 480.0f, 0.0f,
-                             640.0f, 480.0f, 0.0f,
-                               0.0f, 480.0f, 0.0f,
-                             640.0f,   0.0f, 0.0f, };
+    float const vertex[] = { m_bbox[0].x, m_bbox[0].y, 0.0f,
+                             m_bbox[1].x, m_bbox[0].y, 0.0f,
+                             m_bbox[0].x, m_bbox[1].y, 0.0f,
+                             m_bbox[1].x, m_bbox[1].y, 0.0f,
+                             m_bbox[0].x, m_bbox[1].y, 0.0f,
+                             m_bbox[1].x, m_bbox[0].y, 0.0f, };
 
     float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
                             0.73f, 0.85f, 0.85f, 1.0f,

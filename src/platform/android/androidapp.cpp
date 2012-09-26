@@ -25,11 +25,8 @@ using namespace lol;
 
 /* One of these wrappers will be overridden by the user's version */
 void lol_android_main(void) __attribute__((weak));
-void lol_android_main(void) {}
 void lol_android_main(int argc, char **argv) __attribute__((weak));
-void lol_android_main(int argc, char **argv) {}
 void lol_android_main(int argc, char **argv, char **envp) __attribute__((weak));
-void lol_android_main(int argc, char **argv, char **envp) {}
 
 namespace lol
 {
@@ -87,6 +84,7 @@ AndroidApp::~AndroidApp()
 extern "C" jint
 JNI_OnLoad(JavaVM* vm, void* reserved)
 {
+    Log::Info("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
     g_vm = vm;
     return JNI_VERSION_1_4;
 }
@@ -94,7 +92,7 @@ JNI_OnLoad(JavaVM* vm, void* reserved)
 extern "C" void
 Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 {
-    Log::Info("Java layer initialising activity");
+    Log::Info("Java layer initialising activity 0x%08lx", (long)thiz);
     env->NewGlobalRef(thiz); /* FIXME: never released! */
     g_activity = thiz;
 }
@@ -156,6 +154,23 @@ extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
 {
     Ticker::TickDraw();
+}
+
+/*
+ * Fake main() wrappers that let us call the user’s main() from within
+ * a separate thread.
+ */
+void lol_android_main(void) {}
+void lol_android_main(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+}
+void lol_android_main(int argc, char **argv, char **envp)
+{
+    (void)argc;
+    (void)argv;
+    (void)envp;
 }
 
 #endif /* __ANDROID__ */
