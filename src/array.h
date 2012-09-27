@@ -191,8 +191,12 @@ public:
         if (toreserve <= (int)m_reserved)
             return;
 
-        Element *tmp = reinterpret_cast<Element *>
-                               (new uint8_t [sizeof(Element) * toreserve]);
+        /* This cast is not very nice, because we kill any alignment
+         * information we could have. But until C++ gives us the proper
+         * tools to deal with it, we assume new uint8_t[] returns properly
+         * aligned data. */
+        Element *tmp = reinterpret_cast<Element *>(reinterpret_cast<uintptr_t>
+                               (new uint8_t[sizeof(Element) * toreserve]));
         for (int i = 0; i < m_count; i++)
         {
             new(&tmp[i]) Element(m_data[i]);
