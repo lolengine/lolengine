@@ -435,7 +435,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                            stride, (GLvoid const *)(uintptr_t)offset);
             break;
         default:
-            Log::Error("vertex usage %d is not supported yet\n");
+            Log::Error("vertex usage %d is not supported yet\n", usage);
             break;
         }
 #   endif
