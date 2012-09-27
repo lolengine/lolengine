@@ -99,8 +99,8 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   dnl  For PSGL
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available) # FIXME: hack
   GL_LIBS="${GL_LIBS} -lPSGL -lgcm_cmd -lgcm_sys_stub"
-  dnl  This is the old way
-  if test "x${CELLSDK}" != x -a "x${CELLSDK}" = x; then
+  dnl  This is the old way; we now use CELL_SDK instead of CELLSDK
+  if test "x${CELLSDK}" != x -a "x${CELL_SDK}" = x; then
     CELL_SDK="${CELLSDK}"
   fi
   if test "x${enable_debug}" = xyes; then
