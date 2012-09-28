@@ -426,6 +426,10 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
             glVertexPointer(tlut[type_index].size, tlut[type_index].type,
                             stride, (GLvoid const *)(uintptr_t)offset);
             break;
+        case VertexUsage::TexCoord:
+            glTexCoordPointer(tlut[type_index].size, tlut[type_index].type,
+                              stride, (GLvoid const *)(uintptr_t)offset);
+            break;
         case VertexUsage::Normal:
             glNormalPointer(tlut[type_index].type,
                             stride, (GLvoid const *)(uintptr_t)offset);
