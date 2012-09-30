@@ -255,7 +255,7 @@ void Scene::Render() // XXX: rename to Blit()
         data->m_vdecl->SetStream(vb2, attr_tex);
 
         /* Draw arrays */
-        data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 2);
+        data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
         data->m_vdecl->Unbind();
         data->tiles[i].tileset->Unbind();
     }

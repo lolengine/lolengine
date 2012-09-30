@@ -578,7 +578,7 @@ public:
 #elif !defined __CELLOS_LV2__ && !defined __ANDROID__
 #else
 #endif
-        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
     }
 

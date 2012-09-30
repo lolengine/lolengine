@@ -125,7 +125,7 @@ void EasyMesh::Render(mat4 const &model, float damage)
     m_gpu.ibo->Bind();
     m_gpu.vdecl->DrawIndexedElements(MeshPrimitive::Triangles,
                                      0, 0, m_gpu.vertexcount,
-                                     0, m_gpu.indexcount / 3);
+                                     0, m_gpu.indexcount);
     m_gpu.ibo->Unbind();
     m_gpu.vdecl->Unbind();
 }
