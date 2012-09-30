@@ -59,7 +59,7 @@ public:
         m_shader->Bind();
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
-        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 1);
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 3);
         m_vdecl->Unbind();
     }
 

@@ -117,7 +117,7 @@ void Gradient::TickDraw(float seconds)
     data->m_vdecl->SetStream(data->m_cbo, attr_col);
 
     /* Draw arrays */
-    data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
+    data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
 }
 
 Gradient::~Gradient()

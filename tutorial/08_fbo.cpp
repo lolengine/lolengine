@@ -99,7 +99,7 @@ public:
         m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
-        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
 #endif
 
@@ -108,7 +108,7 @@ public:
         m_shader->SetUniform(m_uni_color, m_color);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
-        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_shader->Unbind();
         m_fbo->Unbind();
@@ -118,7 +118,7 @@ public:
         m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
-        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 2);
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_shader->Unbind();
     }

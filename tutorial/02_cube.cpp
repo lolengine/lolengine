@@ -112,7 +112,7 @@ public:
         m_vdecl->Bind();
         m_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
-                                     m_mesh.Count(), 0, m_indices.Count());
+                                     m_mesh.Count(), 0, m_indices.Count() * 3);
         m_ibo->Unbind();
         m_vdecl->Unbind();
     }

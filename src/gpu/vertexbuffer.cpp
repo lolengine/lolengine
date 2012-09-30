@@ -135,11 +135,23 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     switch (type)
     {
     case MeshPrimitive::Triangles:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST, skip, count)))
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST,
+                                              skip, count)))
+            Abort();
+        break;
+    case MeshPrimitive::TriangleStrips:
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
+                                              skip, count)))
+            Abort();
+        break;
+    case MeshPrimitive::TriangleFans:
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLEFAN,
+                                              skip, count)))
             Abort();
         break;
     case MeshPrimitive::Points:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_POINTLIST, skip, count)))
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_POINTLIST,
+                                              skip, count)))
             Abort();
         break;
     }
@@ -157,7 +169,13 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     switch (type)
     {
     case MeshPrimitive::Triangles:
-        glDrawArrays(GL_TRIANGLES, skip * 3, count * 3);
+        glDrawArrays(GL_TRIANGLES, skip, count);
+        break;
+    case MeshPrimitive::TriangleStrips:
+        glDrawArrays(GL_TRIANGLE_STRIP, skip, count);
+        break;
+    case MeshPrimitive::TriangleFans:
+        glDrawArrays(GL_TRIANGLE_FAN, skip, count);
         break;
     case MeshPrimitive::Points:
         glDrawArrays(GL_POINTS, skip, count);
@@ -185,11 +203,23 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     switch (type)
     {
     case MeshPrimitive::Triangles:
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vbase, vskip, vcount, skip, count)))
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
+                                           vbase, vskip, vcount, skip, count)))
+            Abort();
+        break;
+    case MeshPrimitive::TriangleStrips:
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
+                                           vbase, vskip, vcount, skip, count)))
+            Abort();
+        break;
+    case MeshPrimitive::TriangleFans:
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN,
+                                           vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     case MeshPrimitive::Points:
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_POINTLIST, vbase, vskip, vcount, skip, count)))
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_POINTLIST,
+                                           vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     }
@@ -209,7 +239,17 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     case MeshPrimitive::Triangles:
         /* FIXME: ignores most of the arguments! */
         (void)vbase; (void)vskip; (void)vcount; (void)skip;
-        glDrawElements(GL_TRIANGLES, count * 3, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);
+        break;
+    case MeshPrimitive::TriangleStrips:
+        /* FIXME: ignores most of the arguments! */
+        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_SHORT, 0);
+        break;
+    case MeshPrimitive::TriangleFans:
+        /* FIXME: ignores most of the arguments! */
+        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        glDrawElements(GL_TRIANGLE_FAN, count, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::Points:
         /* FIXME: ignores most of the arguments! */

@@ -72,6 +72,8 @@ struct MeshPrimitive
     enum Value
     {
         Triangles,
+        TriangleStrips,
+        TriangleFans,
         Points,
     }
     m_value;
@@ -184,9 +186,16 @@ public:
     ~VertexDeclaration();
 
     void Bind();
+
+    /* Draw elements. See MeshPrimitive for a list of all available
+     * types. Both skip and count are numbers of vertices, not primitives. */
     void DrawElements(MeshPrimitive type, int skip, int count);
+
+    /* Draw elements. See MeshPrimitive for a list of all available
+     * types. Both skip and count are numbers of indices, not primitives. */
     void DrawIndexedElements(MeshPrimitive type, int vbase, int vskip,
                              int vcount, int skip, int count);
+
     void Unbind();
     void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                      ShaderAttrib attr2 = ShaderAttrib(),
