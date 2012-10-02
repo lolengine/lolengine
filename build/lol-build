@@ -61,6 +61,11 @@ __init__()
       [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
       *) cpu_count="$(CPUInfo.exe | sed -ne 's/CPU Cores.* \([0-9][0-9]*\)/\1/p')" ;;
     esac
+    # Otherwise, Windows may define NUMBER_OF_PROCESSORS
+    case "$cpu_count" in
+      [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
+      *) cpu_count="$NUMBER_OF_PROCESSORS" ;;
+    esac
     # Otherwise, be conservative and assume 1 CPU core
     case "$cpu_count" in
       [1-9]|[1-9][0-9]|[1-9][0-9][0-9]) ;;
