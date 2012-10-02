@@ -34,10 +34,12 @@ JavaVM *g_vm;
 jobject g_activity;
 Queue<int> g_main_queue;
 Thread *g_main_thread;
+float g_fps;
 
 AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
-  : data(0)
+  : m_data(0)
 {
+    g_fps = fps;
 }
 
 void AndroidApp::ShowPointer(bool show)
@@ -50,6 +52,7 @@ void AndroidApp::ShowPointer(bool show)
  * calling TickDraw(). */
 void AndroidApp::Run()
 {
+    g_main_queue.Push(1);
     g_main_queue.Push(1);
 
     while (!Ticker::Finished())
@@ -100,11 +103,17 @@ Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 extern "C" void
 Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 {
-    Log::Info("Java layer initialising renderer");
-    Ticker::Setup(30.0f);
+    /* Initialise app thread and wait for it to be ready, ie. set
+     * the FPS value at least. */
+    g_main_thread = new Thread(lol::AndroidApp::MainRun, NULL);;
+    g_main_queue.Pop();
+
+    /* Launch our ticker */
+    Log::Info("Java layer initialising renderer at %g fps", g_fps);
+    Ticker::Setup(g_fps);
     Video::Setup(ivec2(320, 200));
 
-    g_main_thread = new Thread(lol::AndroidApp::MainRun, NULL);;
+    /* Wake up app thread */
     g_main_queue.Pop();
 }
 
@@ -145,8 +154,7 @@ extern "C" void
 Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
                                           jint x, jint y)
 {
-    ivec2 pos = ivec2(0, 479) + ivec2(x * 640, -y * 480) / Video::GetSize();
-    Input::SetMousePos(pos);
+    Input::SetMousePos(ivec2(x, y));
 }
 
 /* Call to render the next GL frame */

@@ -35,7 +35,7 @@ public:
     static void *MainRun(void *data);
 
 private:
-    AndroidAppData *data;
+    AndroidAppData *m_data;
 };
 
 } /* namespace lol */
