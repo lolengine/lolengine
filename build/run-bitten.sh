@@ -128,6 +128,45 @@ fi
 append ""
 
 #
+# Android NDK
+#
+
+append "[ndk]"
+if [ -f "$ANDROID_NDK_ROOT/RELEASE.TXT" ]; then
+  append "version = $(cat "$ANDROID_NDK_ROOT/RELEASE.TXT")"
+fi
+append ""
+
+#
+# Google NaCl SDK
+#
+
+append "[pepper]"
+if [ -d "$NACL_SDK_ROOT" ]; then
+  pepper_version=0
+  for dir in "$NACL_SDK_ROOT/pepper_"*; do
+    new_version="$(echo "$dir" | sed 's/.*_//')"
+    if [ "$new_version" -gt "$pepper_version" ]; then
+      pepper_version="$new_version"
+    fi
+  done
+  if [ "$pepper_version" != 0 ]; then
+    append "version = $pepper_version"
+  fi
+fi
+append ""
+
+#
+# Raspberry Pi cross-compiler
+#
+
+append "[raspi]"
+if [ -d "$RASPI_SDK_ROOT/tools" ]; then
+  append "version = 0"
+fi
+append ""
+
+#
 # Show what we just did here
 #
 
