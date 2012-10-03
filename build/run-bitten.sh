@@ -29,7 +29,9 @@ case "$family" in
   darwin*) family="osx" ;;
 esac
 append "family = $family"
-append "token = $RANDOM"
+# This random token prevents HTTP conflicts when several instances
+# are run from the same machine.
+append "token = $$$RANDOM"
 append ""
 
 #
@@ -47,7 +49,7 @@ case "$processor" in
   x86_64) processor="amd64" ;;
   i*86) processor="i386" ;;
 esac
-# Windows defines a lot of crazy shit, 
+# Windows defines a lot of crazy shit, try to make sense of it
 case "$PROCESSOR_ARCHITECTURE" in
   amd64|AMD64) processor="amd64" ;;
   x86|X86) processor="i386" ;;
@@ -99,10 +101,37 @@ append ""
 #
 
 append "[ps3sdk]"
+# Try to "detect" the SNC compiler on Windows
 if [ -n "$SN_PS3_PATH" ]; then
   append "version = 410"
 fi
+# The setup is easier to detect on Linux
+if [ -f "$CELLSDK/version-SDK" ]; then
+  append "version = $(cat "$CELLSDK/version-SDK")"
+fi
 append ""
+
+#
+# mingw32 / mingw-w64
+#
+
+append "[mingw64]"
+if x86_64-w64-mingw32-g++ --version >/dev/null 2>&1; then
+  append "version = $(x86_64-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
+fi
+append ""
+
+append "[mingw32]"
+if i686-w64-mingw32-g++ --version >/dev/null 2>&1; then
+  append "version = $(i686-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
+fi
+append ""
+
+#
+# Show what we just did here
+#
+
+cat "$conffile"
 
 #
 # Launch everything
