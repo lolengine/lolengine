@@ -1,6 +1,9 @@
 #!/bin/sh
 
-conffile="`mktemp`"
+conffile="`mktemp 2>/dev/null`"
+if [ "$conffile" = "" ]; then
+  conffile="`mktemp -q /tmp/lol-bitten-XXXXXX`"
+fi
 url="http://lol.zoy.org/builds"
 
 append() {
@@ -21,7 +24,7 @@ fi
 #
 
 append "[os]"
-append "name = `uname -srvmo`"
+append "name = `uname -srvmo 2>/dev/null || uname -srvm`"
 append "version = 0"
 family="`uname -s | tr A-Z a-z`"
 case "$family" in
@@ -39,7 +42,7 @@ append ""
 #
 
 append "[machine]"
-name="`uname -n | tr A-Z a-z`"
+name="`uname -n | tr A-Z a-z | sed 's/[.].*//'`"
 case "$name" in
   d*e*s*o*v*) name="putois" ;;
 esac
