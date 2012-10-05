@@ -3,16 +3,7 @@ include $(top_srcdir)/build/autotools/common.am
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-all-local: $(PROGRAMS) $(noinst_PROGRAMS)
-	for x in $(^:%$(EXEEXT)=%); do \
-	  test x$(MAKE_FSELF) = xno || make_fself $${x}$(EXEEXT) $${x}.self; \
-	done
-
 EXTRA_DIST = NEWS.txt lolremez.sln remez.vcxproj remez.vcxproj.filters
-
-CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
 
 noinst_PROGRAMS = pi poly remez
 

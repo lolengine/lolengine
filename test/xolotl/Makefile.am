@@ -3,13 +3,6 @@ include $(top_srcdir)/build/autotools/common.am
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-all-local: $(noinst_PROGRAMS)
-	test x$(MAKE_FSELF) = xno || make_fself xolotl$(EXEEXT) xolotl.self
-
-CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
-
 noinst_PROGRAMS = xolotl
 
 xolotl_SOURCES = xolotl.cpp xolotl.h
