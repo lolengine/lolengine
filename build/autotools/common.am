@@ -1,9 +1,20 @@
 
+#
+# Define these variables from the beginning
+#
+
+CLEANFILES =
+SUFFIXES =
+
+
+#
+# Miscellaneous rules
+#
+
 lol_recursive_rule = \
 	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
-	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $(patsubst %-recursive, %, $@)) || exit 1; \
-	  done; \
-	fi
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $(patsubst %-recursive, %, $@)) || exit 1; \
+	done; fi
 
 bench: bench-recursive
 bench-recursive:
@@ -46,7 +57,7 @@ lolfx_gen = $(lolfx_gen_$(V))
 lolfx_gen_ = $(lolfx_gen_$(AM_DEFAULT_VERBOSITY))
 lolfx_gen_0 = @echo "  LOLFX " $@;
 
-SUFFIXES = .lolfx
+SUFFIXES += .lolfx
 .lolfx.o:
 	$(lolfx_gen)
 	$(AM_V_at)(echo "char const *"; \
@@ -54,6 +65,39 @@ SUFFIXES = .lolfx
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") \
 	| $(CXXCOMPILE) -xc++ -c - -o $@
+
+
+#
+# PS3 fself support rules
+#
+
+fself_gen = $(fself_gen_$(V))
+fself_gen_ = $(fself_gen_$(AM_DEFAULT_VERBOSITY))
+fself_gen_0 = echo "  FSELF " $${x}.self;
+fself_gen_1 = echo make_fself $${x}$(EXEEXT) $${x}.self;
+
+all-local: all-local-ps3
+all-local-ps3: $(PROGRAMS) $(noinst_PROGRAMS)
+	@if test -n "$^"; then for x in $(^:%$(EXEEXT)=%); do \
+	  if test x$(MAKE_FSELF) != xno; then \
+	    $(fself_gen) \
+	    make_fself $${x}$(EXEEXT) $${x}.self; \
+	  fi; \
+	done; fi
+
+CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.self) \
+              $(PROGRAMS:%$(EXEEXT)=%.elf) \
+              $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
+              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf)
+
+
+#
+# Win32 rules
+#
+
+# This is here in case we forget to make clean after a Windows build
+CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.exe) \
+              $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
 
 
 #

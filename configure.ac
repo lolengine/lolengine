@@ -118,9 +118,11 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
   dnl  Disable this warning, it's too verbose with vector.h
   CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"
-  AC_PATH_PROG(MAKE_FSELF, make_fself, no)],
+  AC_PATH_PROG(MAKE_FSELF, make_fself, no)
+  if test "${MAKE_FSELF}" = "no"; then
+    AC_MSG_ERROR([[Building for PS3 but make_fself not found]])
+  fi],
  [MAKE_FSELF=no])
-AM_CONDITIONAL(USE_MAKE_FSELF, test "${MAKE_FSELF}" != "no")
 AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
 
 

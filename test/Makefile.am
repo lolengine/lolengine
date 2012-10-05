@@ -8,15 +8,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/src
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-all-local: $(PROGRAMS) $(noinst_PROGRAMS)
-	for x in $(^:%$(EXEEXT)=%); do \
-	  test x$(MAKE_FSELF) = xno || make_fself $${x}$(EXEEXT) $${x}.self; \
-	done
-
-CLEANFILES = $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.elf) \
-             $(noinst_PROGRAMS:%$(EXEEXT)=%.exe)
-
 EXTRA_DIST = data/gradient.png
 
 noinst_PROGRAMS = benchsuite $(testsuite) btphystest
