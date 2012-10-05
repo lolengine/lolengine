@@ -494,6 +494,7 @@ AC_CONFIG_FILES(
 ])
 AC_CONFIG_FILES(
  [people/jnat/Makefile
+  people/jnat/TestProject/Makefile
   people/peeweek/Makefile
   people/touky/Makefile
 ])
