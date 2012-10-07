@@ -34,6 +34,10 @@ m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
 m4_pattern_forbid([^PKG_CHECK_MODULES$])
 m4_pattern_forbid([^PKG_PROG_PKG_CONFIG$])
 
+dnl  Same for Lol Engine M4 files.
+m4_pattern_forbid([^LOL_])
+
+
 dnl Do not use PKG_CONFIG_LIBDIR when cross-compiling.
 if test "${build}" != "${host}" -a "${PKG_CONFIG_LIBDIR}" = ""; then
   export PKG_CONFIG_LIBDIR=/dev/null
@@ -152,7 +156,7 @@ dnl Are we on a Direct3D 9 platform?
 #fi
 #AM_CONDITIONAL(USE_D3D9, test "${ac_cv_my_have_d3d9}" != "no")
 
-LOL_CHECK_OPENGL()
+LOL_CHECK_OPENGL
 
 
 dnl Use SDL? (always required on Linux or Win32)
