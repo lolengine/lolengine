@@ -50,6 +50,7 @@ liblol_a_SOURCES = \
     gpu/indexbuffer.cpp gpu/indexbuffer.h \
     gpu/vertexbuffer.cpp gpu/vertexbuffer.h \
     gpu/framebuffer.cpp gpu/framebuffer.h \
+    gpu/texture.cpp gpu/texture.h \
     \
     gpu/defaultmaterial.lolfx \
     gpu/tile.lolfx \

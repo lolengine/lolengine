@@ -254,6 +254,7 @@
     <ClCompile Include="gpu\lolfx-compiler.cpp" />
     <ClCompile Include="gpu\lolfx.cpp" />
     <ClCompile Include="gpu\shader.cpp" />
+    <ClCompile Include="gpu\texture.cpp" />
     <ClCompile Include="gpu\vertexbuffer.cpp" />
     <ClCompile Include="gradient.cpp" />
     <ClCompile Include="hash.cpp" />
@@ -567,6 +568,7 @@
     <ClInclude Include="gpu\lolfx-compiler.h" />
     <ClInclude Include="gpu\lolfx.h" />
     <ClInclude Include="gpu\shader.h" />
+    <ClInclude Include="gpu\texture.h" />
     <ClInclude Include="gpu\vertexbuffer.h" />
     <ClInclude Include="gradient.h" />
     <ClInclude Include="hash.h" />

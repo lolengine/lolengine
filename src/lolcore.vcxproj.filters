@@ -97,6 +97,9 @@
     <ClCompile Include="gpu\shader.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
+    <ClCompile Include="gpu\texture.cpp">
+      <Filter>src\gpu</Filter>
+    </ClCompile>
     <ClCompile Include="gpu\vertexbuffer.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
@@ -667,6 +670,9 @@
       <Filter>src\lol</Filter>
     </ClInclude>
     <ClInclude Include="gpu\shader.h">
+      <Filter>src\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\texture.h">
       <Filter>src\gpu</Filter>
     </ClInclude>
     <ClInclude Include="gpu\vertexbuffer.h">
