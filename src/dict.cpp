@@ -36,8 +36,6 @@ class DictData
 
 public:
     DictData() :
-        entities(0),
-        maxid(0),
         nentities(0)
     {
         /* Nothing to do */
@@ -49,12 +47,11 @@ public:
         if (nentities)
             Log::Error("still %i entities in dict\n", nentities);
 #endif
-        free(entities);
     }
 
 private:
-    Entity **entities;
-    int maxid, nentities;
+    Array<Entity *> m_entities;
+    int nentities;
 };
 
 /*
@@ -77,9 +74,9 @@ int Dict::MakeSlot(char const *name)
 
     /* If the entry is already registered, remember its ID. Look for an
      * empty slot at the same time. */
-    for (slotid = 0; slotid < data->maxid; slotid++)
+    for (slotid = 0; slotid < data->m_entities.Count(); slotid++)
     {
-        Entity *e = data->entities[slotid];
+        Entity *e = data->m_entities[slotid];
         if (!e)
         {
             empty = slotid;
@@ -104,22 +101,21 @@ int Dict::MakeSlot(char const *name)
     }
 
     /* If this is a new entry, create a new slot for it. */
-    if (slotid == data->maxid || !data->entities[slotid])
+    if (slotid == data->m_entities.Count() || !data->m_entities[slotid])
     {
-        if (slotid == data->maxid)
+        if (slotid == data->m_entities.Count())
         {
-            empty = data->maxid++;
-            data->entities = (Entity **)realloc(data->entities,
-                                                data->maxid * sizeof(Entity *));
+            empty = data->m_entities.Count();
+            data->m_entities.Push(NULL);
         }
 
-        data->entities[empty] = NULL;
+        data->m_entities[empty] = NULL;
         slotid = empty;
         data->nentities++;
     }
     else
     {
-        Ticker::Ref(data->entities[slotid]);
+        Ticker::Ref(data->m_entities[slotid]);
     }
 
     return slotid;
@@ -127,17 +123,17 @@ int Dict::MakeSlot(char const *name)
 
 void Dict::RemoveSlot(int slotid)
 {
-    if (Ticker::Unref(data->entities[slotid]) == 0)
+    if (Ticker::Unref(data->m_entities[slotid]) == 0)
     {
-        data->entities[slotid] = NULL;
+        data->m_entities[slotid] = NULL;
         data->nentities--;
     }
 }
 
 void Dict::RemoveSlot(Entity *entity)
 {
-    for (int slotid = 0; slotid < data->maxid; slotid++)
-        if (data->entities[slotid] == entity)
+    for (int slotid = 0; slotid < data->m_entities.Count(); slotid++)
+        if (data->m_entities[slotid] == entity)
         {
             RemoveSlot(slotid);
             return;
@@ -152,12 +148,12 @@ void Dict::RemoveSlot(Entity *entity)
 void Dict::SetEntity(int slotid, Entity *entity)
 {
     Ticker::Ref(entity);
-    data->entities[slotid] = entity;
+    data->m_entities[slotid] = entity;
 }
 
 Entity *Dict::GetEntity(int slotid)
 {
-    return data->entities[slotid];
+    return data->m_entities[slotid];
 }
 
 } /* namespace lol */
