@@ -15,40 +15,11 @@
 #include <cstring>
 
 #include "core.h"
-#include "lolgl.h"
 #include "loldebug.h"
 
 using namespace lol;
 
-#if defined _WIN32
-#   include <direct.h>
-#   if defined USE_D3D9
-#       define FAR
-#       define NEAR
-#       include <d3d9.h>
-#   endif
-#endif
-
 extern char const *lolfx_11_fractal;
-
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#elif __CELLOS_LV2__
-static GLint const INTERNAL_FORMAT = GL_ARGB_SCE;
-static GLenum const TEXTURE_FORMAT = GL_BGRA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
-#elif defined __native_client__ || defined HAVE_GLES_2X
-static GLint const INTERNAL_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_BYTE;
-#else
-/* Seems efficient for little endian textures */
-static GLint const INTERNAL_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_FORMAT = GL_BGRA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
 
 class Fractal : public WorldEntity
 {
@@ -467,32 +438,13 @@ public:
 
         if (!m_ready)
         {
-#if !defined _XBOX && !defined USE_D3D9
             /* Create a texture of half the width and twice the height
              * so that we can upload four different subimages each frame. */
-            glGenTextures(1, &m_texid);
-            glBindTexture(GL_TEXTURE_2D, m_texid);
-            glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
-                         m_size.x / 2, m_size.y * 2, 0,
-                         TEXTURE_FORMAT, TEXTURE_TYPE, &m_pixels[0]);
-#   if defined __CELLOS_LV2__
-            /* We need this hint because by default the storage type is
-             * GL_TEXTURE_SWIZZLED_GPU_SCE. */
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
-                            GL_TEXTURE_TILED_GPU_SCE);
-#   endif
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-#elif defined _XBOX
-            /* By default the X360 will swizzle the texture. Ask for linear. */
-            g_d3ddevice->CreateTexture(m_size.x / 2, m_size.y * 2, 1,
-                                       D3DUSAGE_WRITEONLY, D3DFMT_LIN_A8R8G8B8,
-                                       D3DPOOL_DEFAULT, &m_tex, NULL);
-#else
-            g_d3ddevice->CreateTexture(m_size.x / 2, m_size.y * 2, 1,
-                                       D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
-                                       D3DPOOL_SYSTEMMEM, &m_tex, NULL);
-#endif
+            m_texture = new Texture(ivec2(m_size.x / 2, m_size.y * 2));
+
+            /* Ensure the texture data is complete at least once, otherwise
+             * uploading subimages will not work. */
+            m_texture->SetData(&m_pixels[0]);
 
             m_shader = Shader::Create(lolfx_11_fractal);
 
@@ -520,14 +472,7 @@ public:
             m_ready = true;
         }
 
-#if defined _XBOX || defined USE_D3D9
-
-#else
-#   if !defined HAVE_GLES_2X
-        glEnable(GL_TEXTURE_2D);
-#   endif
-        glBindTexture(GL_TEXTURE_2D, m_texid);
-#endif
+        m_texture->Bind();
 
         if (m_dirty[m_frame])
         {
@@ -536,32 +481,14 @@ public:
 
             m_dirty[m_frame]--;
 
-#if defined _XBOX || defined USE_D3D9
-            D3DLOCKED_RECT rect;
-#   if defined _XBOX
-            m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
-#   else
-            m_tex->LockRect(0, &rect, NULL,
-                            D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
-#   endif
-            for (int j = 0; j < m_size.y * 2; j++)
-            {
-                u8vec4 *line = (u8vec4 *)rect.pBits + j * rect.Pitch / 4;
-                for (int i = 0; i < m_size.x / 2; i++)
-                    line[i] = m_pixels[m_size.x / 2 * j + i];
-            }
-            m_tex->UnlockRect(0);
-#elif defined __CELLOS_LV2__
+#if defined __CELLOS_LV2__
             /* glTexSubImage2D is extremely slow on the PS3, to the point
              * that uploading the whole texture is 40 times faster. */
-            glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
-                         m_size.x / 2, m_size.y * 2, 0,
-                         TEXTURE_FORMAT, TEXTURE_TYPE, &m_pixels[0]);
+            m_texture->SetData(&m_pixels[0]);
 #else
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_frame * m_size.y / 2,
-                            m_size.x / 2, m_size.y / 2,
-                            TEXTURE_FORMAT, TEXTURE_TYPE,
-                            &m_pixels[m_size.x * m_size.y / 4 * m_frame]);
+            m_texture->SetSubData(ivec2(0, m_frame * m_size.y / 2),
+                                  m_size / 2,
+                                  &m_pixels[m_size.x * m_size.y / 4 * m_frame]);
 #endif
         }
 
@@ -572,12 +499,7 @@ public:
         m_vdecl->Bind();
         m_vdecl->SetStream(m_vbo, m_vertexattrib);
         m_vdecl->SetStream(m_tbo, m_texattrib);
-#if defined _XBOX || defined USE_D3D9
-        g_d3ddevice->SetTexture(0, m_tex);
-        g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-#elif !defined __CELLOS_LV2__ && !defined __ANDROID__
-#else
-#endif
+        m_texture->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
     }
@@ -599,13 +521,8 @@ private:
 
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo, *m_tbo;
-#if defined USE_D3D9
-    IDirect3DTexture9 *m_tex;
-#elif defined _XBOX
-    D3DTexture *m_tex;
-#else
-    GLuint m_texid;
-#endif
+    Texture *m_texture;
+
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 
