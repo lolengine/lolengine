@@ -7,6 +7,7 @@ DIST_SUBDIRS = $(SUBDIRS) binaries
 
 EXTRA_DIST = bootstrap TODO
 AUTOMAKE_OPTIONS = dist-bzip2
+ACLOCAL_AMFLAGS = -I build/autotools/m4
 
 check: lolcheck
 
