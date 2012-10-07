@@ -119,7 +119,7 @@ if test -n "$auxdir"; then
   if test ! -d "$auxdir"; then
     mkdir "$auxdir"
   fi
-  aclocalflags="${aclocalflags} -I $auxdir -I ."
+  aclocalflags="-I $auxdir -I . ${aclocalflags}"
 fi
 
 # Honour M4PATH because sometimes M4 doesn't
@@ -128,7 +128,7 @@ IFS=:
 tmp="$M4PATH"
 for x in $tmp; do
   if test -n "$x"; then
-    aclocalflags="${aclocalflags} -I $x"
+    aclocalflags="-I $x ${aclocalflags}"
   fi
 done
 IFS=$save_IFS
