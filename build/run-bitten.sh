@@ -2,12 +2,12 @@
 
 conffile="`mktemp 2>/dev/null`"
 if [ "$conffile" = "" ]; then
-  conffile="`mktemp -q /tmp/lol-bitten-XXXXXX`"
+    conffile="`mktemp -q /tmp/lol-bitten-XXXXXX`"
 fi
 url="http://lol.zoy.org/builds"
 
 append() {
-  echo "$*" >> "$conffile"
+    echo "$*" >> "$conffile"
 }
 
 #
@@ -80,11 +80,11 @@ append ""
 # FIXME: we also need to check for the Visual Studio SDK
 append "[msvc]"
 if [ -n "$VS100COMNTOOLS" ]; then
-  append "version = 10"
+    append "version = 10"
 elif [ -n "$VS110COMNTOOLS" ]; then
-  append "version = 11"
+    append "version = 11"
 elif [ -n "$VS90COMNTOOLS" ]; then
-  append "version = 9"
+    append "version = 9"
 fi
 append ""
 
@@ -94,8 +94,8 @@ append ""
 
 append "[xdk]"
 if [ -n "$XEDK" ]; then
-  # FIXME: we don't know how to check the version
-  append "version = 2.0.20675.0"
+    # FIXME: we don't know how to check the version
+    append "version = 2.0.20675.0"
 fi
 append ""
 
@@ -106,11 +106,11 @@ append ""
 append "[ps3sdk]"
 # Try to "detect" the SNC compiler on Windows
 if [ -n "$SN_PS3_PATH" ]; then
-  append "version = 410"
+    append "version = 410"
 fi
 # The setup is easier to detect on Linux
 if [ -f "$CELLSDK/version-SDK" ]; then
-  append "version = $(cat "$CELLSDK/version-SDK")"
+    append "version = $(cat "$CELLSDK/version-SDK")"
 fi
 append ""
 
@@ -120,13 +120,13 @@ append ""
 
 append "[mingw64]"
 if x86_64-w64-mingw32-g++ --version >/dev/null 2>&1; then
-  append "version = $(x86_64-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
+    append "version = $(x86_64-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
 fi
 append ""
 
 append "[mingw32]"
 if i686-w64-mingw32-g++ --version >/dev/null 2>&1; then
-  append "version = $(i686-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
+    append "version = $(i686-w64-mingw32-g++ --version | sed -ne 's/.*g++ *([^)]*) *//p')"
 fi
 append ""
 
@@ -135,8 +135,10 @@ append ""
 #
 
 append "[ndk]"
-if [ -f "$ANDROID_NDK_ROOT/RELEASE.TXT" ]; then
-  append "version = $(cat "$ANDROID_NDK_ROOT/RELEASE.TXT")"
+if [ "$family" != "windows" ]; then
+    if [ -f "$ANDROID_NDK_ROOT/RELEASE.TXT" ]; then
+        append "version = $(cat "$ANDROID_NDK_ROOT/RELEASE.TXT")"
+    fi
 fi
 append ""
 
@@ -145,17 +147,19 @@ append ""
 #
 
 append "[pepper]"
-if [ -d "$NACL_SDK_ROOT" ]; then
-  pepper_version=0
-  for dir in "$NACL_SDK_ROOT/pepper_"*; do
-    new_version="$(echo "$dir" | sed 's/.*_//')"
-    if [ "$new_version" -gt "$pepper_version" ]; then
-      pepper_version="$new_version"
+if [ "$family" != "windows" ]; then
+    if [ -d "$NACL_SDK_ROOT" ]; then
+        pepper_version=0
+        for dir in "$NACL_SDK_ROOT/pepper_"*; do
+            new_version="$(echo "$dir" | sed 's/.*_//')"
+            if [ "$new_version" -gt "$pepper_version" ]; then
+                pepper_version="$new_version"
+            fi
+        done
+        if [ "$pepper_version" != 0 ]; then
+            append "version = $pepper_version"
+        fi
     fi
-  done
-  if [ "$pepper_version" != 0 ]; then
-    append "version = $pepper_version"
-  fi
 fi
 append ""
 
@@ -164,8 +168,10 @@ append ""
 #
 
 append "[raspi]"
-if [ -d "$RASPI_SDK_ROOT/tools" ]; then
-  append "version = 0"
+if [ "$family" != "windows" ]; then
+    if [ -d "$RASPI_SDK_ROOT/tools" ]; then
+        append "version = 0"
+    fi
 fi
 append ""
 
