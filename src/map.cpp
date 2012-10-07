@@ -38,8 +38,7 @@ private:
     TileSet *tilesets[MAX_TILESETS];
     int ntilers;
 
-    Layer **layers;
-    int nlayers;
+    Array<Layer *> m_layers;
 
     int width, height;
 };
@@ -52,8 +51,6 @@ Map::Map(char const *path)
   : data(new MapData())
 {
     data->ntilers = 0;
-    data->layers = NULL;
-    data->nlayers = 0;
     data->width = 0;
     data->height = 0;
 
@@ -120,8 +117,7 @@ Map::Map(char const *path)
             {
                 Layer *l = new Layer(data->width, data->height,
                                      level, orientation, tiles);
-                data->layers[data->nlayers] = l;
-                data->nlayers++;
+                data->m_layers.Push(l);
                 tiles = NULL;
                 //Log::Debug("new layer %ix%i\n", data->width, data->height);
             }
@@ -143,8 +139,6 @@ Map::Map(char const *path)
                         "width=\"%i\" height=\"%i\"", &a, &i, &b, &j, &k) == 5)
         {
             /* This is a layer description. Prepare to read the data. */
-            data->layers = (Layer **)realloc(data->layers,
-                                       sizeof(Layer **) * (data->nlayers + 1));
             orientation = toupper(a) == 'V' ? 1 : 0;
             level = i * 32;
             data->width = j;
@@ -161,16 +155,15 @@ Map::~Map()
 {
     for (int i = 0; i < data->ntilers; i++)
         Tiler::Deregister(data->tilesets[i]);
-    for (int i = 0; i < data->nlayers; i++)
-        delete data->layers[i];
-    free(data->layers);
+    for (int i = 0; i < data->m_layers.Count(); i++)
+        delete data->m_layers[i];
     delete data;
 }
 
 void Map::Render(int x, int y, int z)
 {
-    for (int i = 0; i < data->nlayers; i++)
-        data->layers[i]->Render(x, y, z);
+    for (int i = 0; i < data->m_layers.Count(); i++)
+        data->m_layers[i]->Render(x, y, z);
 }
 
 int Map::GetWidth()
