@@ -275,8 +275,8 @@ void VertexDeclaration::Unbind()
             if (FAILED(g_d3ddevice->SetStreamSource(stream, 0, 0, 0)))
                 Abort();
         }
-    if (FAILED(g_d3ddevice->SetVertexDeclaration(NULL)))
-        Abort();
+    /* "NULL is an invalid input to SetVertexDeclaration" (DX9 guide), so
+     * we just don't touch the current vertex declaration. */
 #elif !defined __CELLOS_LV2__
     for (int i = 0; i < m_count; i++)
     {
