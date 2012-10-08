@@ -81,12 +81,12 @@ Texture::Texture(ivec2 size)
 #if defined USE_D3D9
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
-                               D3DPOOL_SYSTEMMEM, &m_tex, NULL);
+                               D3DPOOL_DEFAULT, &m_data->m_tex, NULL);
 #elif defined _XBOX
     /* By default the X360 will swizzle the texture. Ask for linear. */
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                D3DUSAGE_WRITEONLY, D3DFMT_LIN_A8R8G8B8,
-                               D3DPOOL_DEFAULT, &m_tex, NULL);
+                               D3DPOOL_DEFAULT, &m_data->m_tex, NULL);
 #else
     glGenTextures(1, &m_data->m_texid);
     glBindTexture(GL_TEXTURE_2D, m_data->m_texid);
@@ -118,13 +118,9 @@ void Texture::SetData(void *data)
 {
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
-#   if defined _XBOX
-    m_data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
-#   else
-    m_data->m_tex->LockRect(0, &rect, NULL,
-                            D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
-#   endif
-    memcpy(rect.pBits, data, rect.Pitch * rect.Height);
+    m_data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
+
+    memcpy(rect.pBits, data, rect.Pitch * m_data->m_size.y);
 
     m_data->m_tex->UnlockRect(0);
 
@@ -139,18 +135,14 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 {
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
-#   if defined _XBOX
-    m_data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_NOOVERWRITE);
-#   else
-    m_data->m_tex->LockRect(0, &rect, NULL,
-                            D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE);
-#   endif
+    m_data->m_tex->LockRect(0, &rect, NULL, 0);
+
     for (int j = 0; j < size.y; j++)
     {
         uint8_t *dst = (uint8_t *)rect.pBits + (origin.y + j) * rect.Pitch;
         /* FIXME: the source or destination pitch isn't necessarily 4! */
-        uint8_t *src = (uint8_t *)data + j * size.y * 4;
-        memcpy(dst, src, size.y * 4);
+        uint8_t *src = (uint8_t *)data + j * size.x * 4;
+        memcpy(dst, src, size.x * 4);
     }
 
     m_data->m_tex->UnlockRect(0);
