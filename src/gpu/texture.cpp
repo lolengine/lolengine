@@ -42,6 +42,7 @@ class TextureData
     friend class Texture;
 
     ivec2 m_size;
+    PixelFormat m_format;
 
 #if defined USE_D3D9
     IDirect3DTexture9 *m_tex;
@@ -49,6 +50,8 @@ class TextureData
     D3DTexture *m_tex;
 #else
     GLuint m_texid;
+    GLint m_internal_format;
+    GLenum m_gl_format, m_gl_type;
 #endif
 };
 
@@ -57,37 +60,85 @@ class TextureData
 // -----------------
 //
 
-/* FIXME: this is all hardcoded over the place */
-#if __CELLOS_LV2__
-static GLint const INTERNAL_FORMAT = GL_ARGB_SCE;
-static GLenum const TEXTURE_FORMAT = GL_BGRA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
-#elif defined __native_client__ || defined HAVE_GLES_2X
-static GLint const INTERNAL_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_BYTE;
-#elif !defined USE_D3D9 && !defined _XBOX
-/* Seems efficient for little endian textures */
-static GLint const INTERNAL_FORMAT = GL_RGBA;
-static GLenum const TEXTURE_FORMAT = GL_BGRA;
-static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
+#define GET_CLAMPED(array, index) \
+    array[std::max(0, std::min((int)(index), \
+                   (int)sizeof(array) / (int)sizeof(*array)))]
 
-Texture::Texture(ivec2 size)
+Texture::Texture(ivec2 size, PixelFormat format)
   : m_data(new TextureData)
 {
     m_data->m_size = size;
+    m_data->m_format = format;
 
-#if defined USE_D3D9
+#if defined USE_D3D9 || defined _XBOX
+    static int const d3d_formats[] =
+    {
+        /* Unknown */
+        D3DFMT_UNKNOWN,
+
+        /* R8G8B8 */
+        D3DFMT_R8G8B8,
+
+        /* A8R8G8B8 */
+#   if defined USE_D3D9
+        D3DFMT_A8R8G8B8,
+#   else
+        /* By default the X360 will swizzle the texture. Ask for linear. */
+        D3DFMT_LIN_A8R8G8B8,
+#   endif
+    };
+
+    int d3d_format = GET_CLAMPED(d3d_formats, format);
+#   if defined USE_D3D9
+    int d3d_usage = D3DUSAGE_DYNAMIC;
+#   else
+    int d3d_usage = D3DUSAGE_WRITEONLY;
+#   endif
+
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
-                               D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
-                               D3DPOOL_DEFAULT, &m_data->m_tex, NULL);
-#elif defined _XBOX
-    /* By default the X360 will swizzle the texture. Ask for linear. */
-    g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
-                               D3DUSAGE_WRITEONLY, D3DFMT_LIN_A8R8G8B8,
+                               d3d_usage, d3d_format,
                                D3DPOOL_DEFAULT, &m_data->m_tex, NULL);
 #else
+    static struct
+    {
+        GLint internal_format;
+        GLenum format, type;
+    }
+    const gl_formats[] =
+    {
+        /* Unknown */
+        { 0, 0, 0 },
+
+        /* R8G8B8 */
+        { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE },
+
+        /* A8R8G8B8 */
+#if __CELLOS_LV2__
+        { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV },
+#elif defined __native_client__ || defined HAVE_GLES_2X
+        { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE },
+#else
+        /* Seems efficient for little endian textures */
+        { GL_RGBA, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV },
+#endif
+
+        /* A8B8G8R8 */
+#if __CELLOS_LV2__
+        { GL_ARGB_SCE, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV },
+#elif defined __native_client__ || defined HAVE_GLES_2X
+        /* FIXME: if GL_RGBA is not available, we should advertise
+         * this format as "not available" on this platform. */
+        { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE },
+#else
+        /* Seems efficient for little endian textures */
+        { GL_RGBA, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV },
+#endif
+    };
+
+    m_data->m_internal_format = GET_CLAMPED(gl_formats, format).internal_format;
+    m_data->m_gl_format = GET_CLAMPED(gl_formats, format).format;
+    m_data->m_gl_type = GET_CLAMPED(gl_formats, format).type;
+
     glGenTextures(1, &m_data->m_texid);
     glBindTexture(GL_TEXTURE_2D, m_data->m_texid);
 
@@ -129,9 +180,9 @@ void Texture::SetData(void *data)
     m_data->m_tex->UnlockRect(0);
 
 #else
-    glTexImage2D(GL_TEXTURE_2D, 0, INTERNAL_FORMAT,
+    glTexImage2D(GL_TEXTURE_2D, 0, m_data->m_internal_format,
                  m_data->m_size.x, m_data->m_size.y, 0,
-                 TEXTURE_FORMAT, TEXTURE_TYPE, data);
+                 m_data->m_gl_format, m_data->m_gl_type, data);
 #endif
 }
 
@@ -153,7 +204,7 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 
 #else
     glTexSubImage2D(GL_TEXTURE_2D, 0, origin.x, origin.y, size.x, size.y,
-                    TEXTURE_FORMAT, TEXTURE_TYPE, data);
+                    m_data->m_gl_format, m_data->m_gl_type, data);
 #endif
 }
 

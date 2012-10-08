@@ -19,10 +19,27 @@
 namespace lol
 {
 
+struct PixelFormat
+{
+    /* XXX: make sure to update texture.cpp when this changes */
+    enum Value
+    {
+        Unknown = 0,
+        R8G8B8,
+        A8R8G8B8,
+        A8B8G8R8,
+    }
+    m_value;
+
+    inline PixelFormat() : m_value(Unknown) {}
+    inline PixelFormat(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Texture
 {
 public:
-    Texture(ivec2 size);
+    Texture(ivec2 size, PixelFormat format);
     ~Texture();
 
     void Bind();
