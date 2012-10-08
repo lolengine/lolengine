@@ -66,7 +66,7 @@ static GLenum const TEXTURE_TYPE = GL_UNSIGNED_INT_8_8_8_8_REV;
 static GLint const INTERNAL_FORMAT = GL_RGBA;
 static GLenum const TEXTURE_FORMAT = GL_RGBA;
 static GLenum const TEXTURE_TYPE = GL_UNSIGNED_BYTE;
-#else
+#elif !defined USE_D3D9 && !defined _XBOX
 /* Seems efficient for little endian textures */
 static GLint const INTERNAL_FORMAT = GL_RGBA;
 static GLenum const TEXTURE_FORMAT = GL_BGRA;

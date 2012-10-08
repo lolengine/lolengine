@@ -13,9 +13,14 @@
 #endif
 
 #include <cstring>
+#include <cstdio>
 
 #include "core.h"
 #include "loldebug.h"
+
+#if defined _WIN32
+#   include <direct.h>
+#endif
 
 using namespace lol;
 
@@ -279,17 +284,17 @@ public:
 
 #if !defined __native_client__
         char buf[256];
-        sprintf(buf, "center: ");
+        std::sprintf(buf, "center: ");
         m_center.x.sprintf(buf + strlen(buf), 30);
-        sprintf(buf + strlen(buf), " ");
+        std::sprintf(buf + strlen(buf), " ");
         m_center.y.sprintf(buf + strlen(buf), 30);
         m_centertext->SetText(buf);
-        sprintf(buf, " mouse: ");
+        std::sprintf(buf, " mouse: ");
         worldmouse.x.sprintf(buf + strlen(buf), 30);
-        sprintf(buf + strlen(buf), " ");
+        std::sprintf(buf + strlen(buf), " ");
         worldmouse.y.sprintf(buf + strlen(buf), 30);
         m_mousetext->SetText(buf);
-        sprintf(buf, "  zoom: %g", 1.0 / m_radius);
+        std::sprintf(buf, "  zoom: %g", 1.0 / m_radius);
         m_zoomtext->SetText(buf);
 #endif
 
