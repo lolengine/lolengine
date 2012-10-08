@@ -118,7 +118,11 @@ void Texture::SetData(void *data)
 {
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
+#   if defined USE_D3D9
     m_data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
+#   else
+    m_data->m_tex->LockRect(0, &rect, NULL, 0);
+#   endif
 
     memcpy(rect.pBits, data, rect.Pitch * m_data->m_size.y);
 
