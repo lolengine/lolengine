@@ -45,11 +45,11 @@ class TextureData
     PixelFormat m_format;
 
 #if defined USE_D3D9
-    IDirect3DTexture9 *m_tex;
+    IDirect3DTexture9 *m_texture;
 #elif defined _XBOX
-    D3DTexture *m_tex;
+    D3DTexture *m_texture;
 #else
-    GLuint m_texid;
+    GLuint m_texture;
     GLint m_internal_format;
     GLenum m_gl_format, m_gl_type;
 #endif
@@ -101,7 +101,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                d3d_usage, d3d_format,
-                               D3DPOOL_DEFAULT, &m_data->m_tex, NULL);
+                               D3DPOOL_DEFAULT, &m_data->m_texture, NULL);
 #else
     static struct
     {
@@ -143,8 +143,8 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_gl_format = GET_CLAMPED(gl_formats, format).format;
     m_data->m_gl_type = GET_CLAMPED(gl_formats, format).type;
 
-    glGenTextures(1, &m_data->m_texid);
-    glBindTexture(GL_TEXTURE_2D, m_data->m_texid);
+    glGenTextures(1, &m_data->m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
 
 #   if defined __CELLOS_LV2__
     /* We need this hint because by default the storage type is
@@ -157,15 +157,26 @@ Texture::Texture(ivec2 size, PixelFormat format)
 #endif
 }
 
+ShaderTexture Texture::GetTexture() const
+{
+    ShaderTexture ret;
+#if defined USE_D3D9 || defined _XBOX
+    ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
+#else
+    ret.m_flags = m_data->m_texture;
+#endif
+    return ret;
+}
+
 void Texture::Bind()
 {
 #if defined _XBOX || defined USE_D3D9
-    g_d3ddevice->SetTexture(0, m_data->m_tex);
+    g_d3ddevice->SetTexture(0, m_data->m_texture);
 #else
 #   if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #   endif
-    glBindTexture(GL_TEXTURE_2D, m_data->m_texid);
+    glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
 #endif
 }
 
@@ -174,14 +185,14 @@ void Texture::SetData(void *data)
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
 #   if defined USE_D3D9
-    m_data->m_tex->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
+    m_data->m_texture->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
 #   else
-    m_data->m_tex->LockRect(0, &rect, NULL, 0);
+    m_data->m_texture->LockRect(0, &rect, NULL, 0);
 #   endif
 
     memcpy(rect.pBits, data, rect.Pitch * m_data->m_size.y);
 
-    m_data->m_tex->UnlockRect(0);
+    m_data->m_texture->UnlockRect(0);
 
 #else
     glTexImage2D(GL_TEXTURE_2D, 0, m_data->m_internal_format,
@@ -194,7 +205,7 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 {
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
-    m_data->m_tex->LockRect(0, &rect, NULL, 0);
+    m_data->m_texture->LockRect(0, &rect, NULL, 0);
 
     for (int j = 0; j < size.y; j++)
     {
@@ -204,7 +215,7 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
         memcpy(dst, src, size.x * 4);
     }
 
-    m_data->m_tex->UnlockRect(0);
+    m_data->m_texture->UnlockRect(0);
 
 #else
     glTexSubImage2D(GL_TEXTURE_2D, 0, origin.x, origin.y, size.x, size.y,
@@ -215,9 +226,9 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 Texture::~Texture()
 {
 #if defined USE_D3D9 || defined _XBOX
-    m_data->m_tex->Release();
+    m_data->m_texture->Release();
 #else
-    glDeleteTextures(1, &m_data->m_texid);
+    glDeleteTextures(1, &m_data->m_texture);
 #endif
 
     delete m_data;

@@ -50,6 +50,7 @@ struct ShaderTexture
 {
     friend class Shader;
     friend class FrameBuffer;
+    friend class Texture;
 
 public:
     inline ShaderTexture() : m_flags(0) {}

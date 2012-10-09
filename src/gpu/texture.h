@@ -46,6 +46,8 @@ public:
     void SetData(void *data);
     void SetSubData(ivec2 origin, ivec2 size, void *data);
 
+    ShaderTexture GetTexture() const;
+
 private:
     class TextureData *m_data;
 };
