@@ -1,0 +1,64 @@
+[vert.glsl]
+
+#version 120
+
+attribute vec2 in_Position;
+
+varying vec4 pass_Position;
+
+void main(void)
+{
+    pass_Position = vec4(0.5 * in_Position + 0.5, 0.0, 1.0);
+    gl_Position = vec4(in_Position, 0.0, 1.0);
+}
+
+[frag.glsl]
+
+#version 120
+
+uniform sampler2D u_Texture;
+
+varying vec4 pass_Position;
+
+float rand(in vec2 p, in float v)
+{
+    return fract(v * sin(dot(p, vec2(1298.9837, 7823.33145))));
+}
+
+void main(void)
+{
+    vec2 t = pass_Position.xy;
+    vec4 c0 = texture2D(u_Texture, t);
+    float f = rand(pass_Position.xy, 12345.67);
+
+    if (t.y > c0.x)
+    {
+        /* Sky */
+        float val = min(t.y * 2.0, 1.0);
+        if (f > 0.999)
+            gl_FragColor = vec4(1.0);
+        else
+            gl_FragColor = vec4(0.4, t.y, val, 1.0);
+    }
+    else if (t.y > c0.x - 0.02)
+    {
+        /* Grass */
+        if (f > 0.99)
+            gl_FragColor = vec4(0.4, 0.7, 0.3, 1.0);
+        else if (f > 0.9)
+            gl_FragColor = vec4(0.3, 0.6, 0.2, 1.0);
+        else
+            gl_FragColor = vec4(0.2, 0.5, 0.1, 1.0);
+    }
+    else
+    {
+        /* Earth */
+        if (f > 0.99)
+            gl_FragColor = vec4(0.7, 0.4, 0.3, 1.0);
+        else if (f > 0.9)
+            gl_FragColor = vec4(0.6, 0.3, 0.2, 1.0);
+        else
+            gl_FragColor = vec4(0.5, 0.2, 0.1, 1.0);
+    }
+}
+
