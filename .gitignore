@@ -56,15 +56,15 @@ build/vs2010/*.sdf
 build/vs2010/*.suo
 build/vs2010/*.log
 build/vs2010/*.XGD
-# Do not exclude anything in contrib. There is no way to do this recursively
+# Do not exclude anything in external. There is no way to do this recursively
 # but the nesting below is currently one level more than our current max.
-!contrib/*
-!contrib/*/*
-!contrib/*/*/*
-!contrib/*/*/*/*
-!contrib/*/*/*/*/*
-!contrib/*/*/*/*/*/*
-!contrib/*/*/*/*/*/*/*
+!external/*
+!external/*/*
+!external/*/*/*
+!external/*/*/*/*
+!external/*/*/*/*/*
+!external/*/*/*/*/*/*
+!external/*/*/*/*/*/*/*
 # Our binaries
 test/benchsuite
 test/btphystest

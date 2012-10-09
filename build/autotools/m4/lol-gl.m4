@@ -100,13 +100,13 @@ PKG_CHECK_MODULES(GLEW, glew,
  [:])
 AC_CHECK_HEADER(glew.h,
  [LIBS_save="${LIBS}"
-  LIBS="${LIBS} -lglew32 ${GL_LIBS}"
-  AC_MSG_CHECKING(for glewInit in -lglew32)
+  LIBS="${LIBS} -lglew32s ${GL_LIBS}"
+  AC_MSG_CHECKING(for glewInit in -lglew32s)
   AC_TRY_LINK(
    [#include <glew.h>],
    [glewInit();],
    [ac_cv_my_have_glew="yes"
-    GL_LIBS="-lglew32 ${GL_LIBS}"
+    GL_LIBS="-lglew32s ${GL_LIBS}"
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
   LIBS="${LIBS_save}"])

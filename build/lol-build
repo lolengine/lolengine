@@ -80,8 +80,8 @@ __init__()
 
     case "${MSYSTEM}" in
         MINGW32|MINGW64)
-            PATH="$PATH:./contrib/gtk-2.22.1/bin"
-            M4PATH="$M4PATH:./contrib/gtk-2.22.1/share/aclocal"
+            PATH="$PATH:./external/gtk-2.22.1/bin"
+            M4PATH="$M4PATH:./external/gtk-2.22.1/share/aclocal"
             ;;
     esac
 }
@@ -120,16 +120,16 @@ configure()
                 # If using mingw64, we're not really cross-compiling
                 BUILDFLAGS=
             fi
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.15/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/lib"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtk-2.22.1/bin"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/gtkglarea-2.0.1/lib"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/i686-w64-mingw32"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/gtkglarea-2.0.1/lib/pkgconfig"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
+            LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-1.2.15/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.10/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.11/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/gtk-2.22.1/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/external/gtk-2.22.1/bin"
+            LDFLAGS="$LDFLAGS -L$PWD/external/gtkglarea-2.0.1/lib"
+            LDFLAGS="$LDFLAGS -L$PWD/external/libcaca-0.99.beta18/lib/i686-w64-mingw32"
             ;;
         win*-amd64)
             if test "x${MSYSTEM}" = xMINGW64; then
@@ -145,13 +145,13 @@ configure()
                 # If using mingw32, we're not really cross-compiling
                 BUILDFLAGS=
             fi
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/gtkglarea-2.0.1/lib/pkgconfig"
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/contrib/libcaca-0.99.beta18/lib/pkgconfig"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/glew-1.7.0/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-1.2.15/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/contrib/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/gtkglarea-2.0.1/lib/pkgconfig"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
+            LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-1.2.15/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
             ;;
         *-i386)
             # Ensure we're _really_ on i386
@@ -190,26 +190,26 @@ configure()
             PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
             ;;
         win*-i386|win*-amd64)
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-1.2.15/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-image-1.2.10/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/sdl-mixer-1.2.11/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/glew-1.7.0/include/GL -DGLEW_STATIC"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/lib/glib-2.0/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/lib/gtk-2.0/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/glib-2.0"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gtk-2.0"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/cairo"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/pango-1.0"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/gdk-pixbuf-2.0"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtk-2.22.1/include/atk-1.0"
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/gtkglarea-2.0.1/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-1.2.15/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-1.2.10/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-mixer-1.2.11/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/glew-1.9.0/include/GL -DGLEW_STATIC"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/glib-2.0/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/gtk-2.0/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/glib-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/gtk-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/cairo"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/pango-1.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/gdk-pixbuf-2.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/atk-1.0"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/gtkglarea-2.0.1/include"
             CPPFLAGS="$CPPFLAGS -mms-bitfields"
             LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
             GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"
             GTK_LIBS="$GTK_LIBS -lgtk-win32-2.0 -lgdk-win32-2.0"
             GTK_LIBS="$GTK_LIBS -lglib-2.0 -lgthread-2.0 -lgobject-2.0"
 
-            CPPFLAGS="$CPPFLAGS -I$PWD/contrib/libcaca-0.99.beta18/include -DCACA_STATIC"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/libcaca-0.99.beta18/include -DCACA_STATIC"
 
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
