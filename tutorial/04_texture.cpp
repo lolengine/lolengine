@@ -142,12 +142,6 @@ int main(int argc, char **argv)
 {
     Application app("Tutorial 4: Texture", ivec2(640, 480), 60.0f);
 
-#if defined _MSC_VER && !defined _XBOX
-    _chdir("../..");
-#elif defined _WIN32 && !defined _XBOX
-    _chdir("../..");
-#endif
-
     new TextureDemo();
 
     app.Run();
