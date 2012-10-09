@@ -71,13 +71,17 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_format = format;
 
 #if defined USE_D3D9 || defined _XBOX
-    static int const d3d_formats[] =
+    static D3DFORMAT const d3d_formats[] =
     {
         /* Unknown */
         D3DFMT_UNKNOWN,
 
         /* R8G8B8 */
+#   if defined USE_D3D9
         D3DFMT_R8G8B8,
+#   else
+        D3DFMT_UNKNOWN,
+#   endif
 
         /* A8R8G8B8 */
 #   if defined USE_D3D9
@@ -88,7 +92,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
 #   endif
     };
 
-    int d3d_format = GET_CLAMPED(d3d_formats, format);
+    D3DFORMAT d3d_format = GET_CLAMPED(d3d_formats, format);
 #   if defined USE_D3D9
     int d3d_usage = D3DUSAGE_DYNAMIC;
 #   else
