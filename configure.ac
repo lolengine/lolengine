@@ -228,7 +228,7 @@ AC_LANG_PUSH(C++)
 AC_CHECK_HEADERS(FlexLexer.h, [ac_cv_my_have_flexlexer_h="yes"])
 AC_LANG_POP(C++)
 if test "x${ac_cv_my_have_flexlexer_h}" = "xno"; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/contrib/flex-2.5.35/include"
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/flex-2.5.35/include"
 fi
 
 

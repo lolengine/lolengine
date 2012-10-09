@@ -103,17 +103,17 @@ namespace Lol.VisualStudio.Plugin
                 string project_path = Path.GetDirectoryName(project.FullName);
 
                 /* FIXME: find this using the solution globals! */
-                string contrib_path = project_path;
+                string external_path = project_path;
                 for (int i = 0; i < 10; ++i)
                 {
-                    contrib_path += "\\..";
-                    if (Directory.Exists(contrib_path + "\\contrib"))
+                    external_path += "\\..";
+                    if (Directory.Exists(external_path + "\\external"))
                         break;
                 }
 
                 /* FIXME: do not hardcode shit! */
-                string flex_path = contrib_path + "\\contrib\\flex-2.5.35";
-                string bison_path = contrib_path + "\\contrib\\bison-2.4.2";
+                string flex_path = external_path + "\\external\\flex-2.5.35";
+                string bison_path = external_path + "\\external\\bison-2.4.2";
 
                 // Run flex on all the .l files
                 foreach (ProjectItem item in ParseProjectItems(project))

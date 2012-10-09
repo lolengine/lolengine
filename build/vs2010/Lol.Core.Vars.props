@@ -2,16 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <ContribDir>$(SolutionDir)\..\..\contrib</ContribDir>
+    <ExternalDir>$(SolutionDir)\..\..\external</ExternalDir>
 
     <!-- Flex & Bison -->
-    <FlexDir>$(ContribDir)\flex-2.5.35</FlexDir>
+    <FlexDir>$(ExternalDir)\flex-2.5.35</FlexDir>
     <FlexIncludes>$(FlexDir)\include</FlexIncludes>
 
     <!-- SDL -->
-    <SdlDir>$(ContribDir)\sdl-1.2.15</SdlDir>
-    <SdlImageDir>$(ContribDir)\sdl-image-1.2.10</SdlImageDir>
-    <SdlMixerDir>$(ContribDir)\sdl-mixer-1.2.11</SdlMixerDir>
+    <SdlDir>$(ExternalDir)\sdl-1.2.15</SdlDir>
+    <SdlImageDir>$(ExternalDir)\sdl-image-1.2.10</SdlImageDir>
+    <SdlMixerDir>$(ExternalDir)\sdl-mixer-1.2.11</SdlMixerDir>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
     <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-mingw32;$(SdlMixerDir)\lib\i686-w64-mingw32</SdlLibs>
     <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc</SdlLibs>
@@ -20,21 +20,21 @@
     <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
 
     <!-- BulletPhysics -->
-    <BtPhysDir>$(ContribDir)\bullet-2.80-rev2531</BtPhysDir>
+    <BtPhysDir>$(ExternalDir)\bullet-2.80-rev2531</BtPhysDir>
     <BtPhysIncludes>$(BtPhysDir)\include;$(BtPhysDir)\include\bullet</BtPhysIncludes>
     <Win32Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Win32Defines)</Win32Defines>
     <Ps3Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Ps3Defines)</Ps3Defines>
     <XboxDefines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(XboxDefines)</XboxDefines>
 
     <!-- GTK+ & GtkGl -->
-    <GtkDir>$(ContribDir)\gtk-2.22.1</GtkDir>
-    <GtkGlDir>$(ContribDir)\gtkglarea-2.0.1</GtkGlDir>
+    <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
+    <GtkGlDir>$(ExternalDir)\gtkglarea-2.0.1</GtkGlDir>
     <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>
     <GtkLibs>$(GtkDir)\lib;$(GtkDir)\bin;$(GtkGlDir)\lib</GtkLibs>
     <GtkDeps>gobject-2.0.lib;gthread-2.0.lib;glib-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkgl-2.0.lib</GtkDeps>
 
     <!-- libcaca -->
-    <CacaDir>$(ContribDir)\libcaca-0.99.beta18</CacaDir>
+    <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
     <CacaIncludes>$(CacaDir)\include</CacaIncludes>
     <CacaLibs Condition="'$(Platform)'=='Win32'">$(CacaDir)\lib\i686-w64-mingw32</CacaLibs>
     <CacaLibs Condition="'$(Platform)'=='x64'">$(CacaDir)\lib\x86_64-w64-mingw32</CacaLibs>
@@ -46,14 +46,14 @@
     <Win32Defines>USE_GDIPLUS;$(Win32Defines)</Win32Defines>
 
     <!-- OpenGL & GLEW -->
-    <GlewDir>$(ContribDir)\glew-1.7.0</GlewDir>
+    <GlewDir>$(ExternalDir)\glew-1.9.0</GlewDir>
     <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
     <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
     <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Debug'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\debug</GlLibs>
     <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Release'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\opt</GlLibs>
-    <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32.lib</GlDeps>
-    <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32.lib</GlDeps>
+    <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
+    <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='PS3'">libPSGL.a;libgcm_cmd.a;libgcm_sys_stub.a;libcgc.a;libPSGLcgc.a</GlDeps>
     <Win32Defines Condition="'$(UseOpenGL)'=='true'">HAVE_GL_2X;USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
     <Ps3Defines>HAVE_GLES_2X;$(Ps3Defines)</Ps3Defines>
@@ -84,7 +84,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
-    <BuildMacro Include="ContribDir"><Value>$(ContribDir)</Value></BuildMacro>
+    <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
     <BuildMacro Include="FlexDir"><Value>$(FlexDir)</Value></BuildMacro>
     <BuildMacro Include="FlexIncludes"><Value>$(FlexIncludes)</Value></BuildMacro>
     <BuildMacro Include="SdlDir"><Value>$(SdlDir)</Value></BuildMacro>
