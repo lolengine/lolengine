@@ -136,6 +136,9 @@
     <ClCompile Include="input\input.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
+    <ClCompile Include="input\keyboard.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
     <ClCompile Include="input\stick.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
@@ -703,6 +706,9 @@
       <Filter>src\lol</Filter>
     </ClInclude>
     <ClInclude Include="input\input.h">
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\keyboard.h">
       <Filter>src\input</Filter>
     </ClInclude>
     <ClInclude Include="input\stick.h">

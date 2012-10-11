@@ -55,6 +55,9 @@ SdlInput::SdlInput()
   : m_data(new SdlInputData())
 {
 #if defined USE_SDL
+    /* Enable Unicode translation of keyboard events */
+    SDL_EnableUNICODE(1);
+
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
 #   if SDL_FORCE_POLL_JOYSTICK
@@ -161,7 +164,8 @@ void SdlInputData::Tick(float seconds)
             break;
 #if 0
         case SDL_KEYDOWN:
-            Input::KeyPressed(event.key.keysym.sym, seconds);
+            if (event.key.keysym.unicode)
+                fprintf(stderr, "%c (0x%04X)\n", event.key.keysym.unicode, event.key.keysym.unicode);
             break;
 #endif
         case SDL_MOUSEBUTTONDOWN:

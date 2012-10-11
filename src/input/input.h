@@ -22,6 +22,7 @@
 #include "core.h"
 
 #include "lol/math/vector.h"
+#include "input/keyboard.h"
 #include "input/stick.h"
 
 namespace lol
@@ -432,9 +433,18 @@ public:
     static void UntrackMouse(WorldEntity *e);
 
     /* These methods are called by the underlying input listeners */
+    /* FIXME: this should disappear and be replaced by an input
+     * system that abstracts mice */
     static void SetMousePos(ivec2 coord);
     static void SetMouseButton(int index);
     static void UnsetMouseButton(int index);
+
+    /* Keyboard handling */
+    static Keyboard *CreateKeyboard();
+    static void DestroyKeyboard(Keyboard *keyboard);
+
+    static Keyboard *TrackKeyboard(int desired);
+    static void UntrackKeyboard(Keyboard *keyboard);
 
     /* Joystick handling */
     static Stick *CreateStick();
