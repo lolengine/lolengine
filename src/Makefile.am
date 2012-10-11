@@ -44,6 +44,7 @@ liblol_a_SOURCES = \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     \
     input/input.cpp input/input.h \
+    input/keyboard.cpp input/keyboard.h \
     input/stick.cpp input/stick.h \
     \
     gpu/shader.cpp gpu/shader.h \

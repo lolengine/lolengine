@@ -91,6 +91,7 @@ static inline int isnan(float f)
 #include "audio.h"
 #include "scene.h"
 #include "input/input.h"
+#include "input/keyboard.h"
 #include "input/stick.h"
 #include "profiler.h"
 

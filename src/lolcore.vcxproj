@@ -266,6 +266,7 @@
     <ClCompile Include="image\codec\sdl-image.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="input\input.cpp" />
+    <ClCompile Include="input\keyboard.cpp" />
     <ClCompile Include="input\stick.cpp" />
     <ClCompile Include="layer.cpp" />
     <ClCompile Include="log.cpp" />
@@ -575,6 +576,7 @@
     <ClInclude Include="image\image-private.h" />
     <ClInclude Include="image\image.h" />
     <ClInclude Include="input\input.h" />
+    <ClInclude Include="input\keyboard.h" />
     <ClInclude Include="input\stick.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="log.h" />
