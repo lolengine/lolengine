@@ -50,6 +50,18 @@ private:
 
 bool GdiPlusImageData::Open(char const *path)
 {
+    Gdiplus::Status status;
+    ULONG_PTR token;
+    Gdiplus::GdiplusStartupInput input;
+    status = Gdiplus::GdiplusStartup(&token, &input, NULL);
+    if (status != Gdiplus::Ok)
+    {
+#if !LOL_RELEASE
+        Log::Error("error %d while initialising GDI+\n", status);
+#endif
+        return false;
+    }
+
     size_t len;
     len = mbstowcs(NULL, path, 0);
     wchar_t *wpath = new wchar_t[len + 1];
@@ -62,13 +74,23 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
-    ULONG_PTR token;
-    Gdiplus::GdiplusStartupInput input;
-    Gdiplus::GdiplusStartup(&token, &input, NULL);
-
+    bitmap = NULL;
+    status = Gdiplus::Ok;
     for (wchar_t const *wname = wpath; *wname; wname++)
-        if ((bitmap = Gdiplus::Bitmap::FromFile(wname, 0)))
-            break;
+    {
+        bitmap = Gdiplus::Bitmap::FromFile(wname, 0);
+        if (bitmap)
+        {
+            status = bitmap->GetLastStatus();
+            if (status == Gdiplus::Ok)
+                break;
+#if !LOL_RELEASE
+            if (status != Gdiplus::InvalidParameter)
+                Log::Error("error %d loading %s\n", status, path);
+#endif
+            delete bitmap;
+        }
+    }
 
     delete[] wpath;
     if (!bitmap)
@@ -76,16 +98,6 @@ bool GdiPlusImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
-        return false;
-    }
-
-    if (bitmap->GetLastStatus() != Gdiplus::Ok)
-    {
-#if !LOL_RELEASE
-        Log::Error("error %d loading %s\n",
-                   (unsigned)bitmap->GetLastStatus(), path);
-#endif
-        delete bitmap;
         return false;
     }
 
