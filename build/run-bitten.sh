@@ -24,7 +24,7 @@ fi
 #
 
 append "[os]"
-append "name = `uname -srvmo 2>/dev/null || uname -srvm`"
+append "name = `uname -srmo 2>/dev/null || uname -srm`"
 append "version = 0"
 family="`uname -s | tr A-Z a-z`"
 case "$family" in
