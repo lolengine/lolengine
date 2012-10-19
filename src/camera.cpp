@@ -91,6 +91,7 @@ void Camera::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
+#if 0
     /* Hackish keyboard support */
     float updown = 2.f * (Input::GetButtonState('w')
                            + Input::GetButtonState('z')
@@ -101,7 +102,6 @@ void Camera::TickGame(float seconds)
     float pgupdown = 2.f * (Input::GetButtonState('r')
                              - Input::GetButtonState('f'));
 
-#if 0
     /* Hackish stick support */
     static Stick *stick = NULL;
     if (!stick)
