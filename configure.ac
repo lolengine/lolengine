@@ -49,6 +49,18 @@ dnl PKG_PROG_PKG_CONFIG which needs to be called first.
 AC_EGREP_CPP(yes, foo)
 PKG_PROG_PKG_CONFIG()
 
+
+dnl  Check for a working implementation of sed
+AC_PROG_SED
+AC_MSG_CHECKING(for a sed that understands \t)
+if test "$(echo 'x\x' | "${SED}" 's/.*@<:@^x\t@:>@//')" != x; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([[consider installing GNU sed]])
+else
+  AC_MSG_RESULT(yes)
+fi
+
+
 AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 dnl conditional builds
 AC_ARG_ENABLE(debug,
@@ -225,7 +237,20 @@ AM_CONDITIONAL(USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" = "yes")
 dnl  Use Flex's FlexLexer.h or ours?
 ac_cv_my_have_flexlexer_h="no"
 AC_LANG_PUSH(C++)
-AC_CHECK_HEADERS(FlexLexer.h, [ac_cv_my_have_flexlexer_h="yes"])
+AC_CHECK_HEADERS(FlexLexer.h,
+ dnl  Ensure that FlexLexer::yleng is of type int, and not size_t like
+ dnl  on recent Apple systems. It would break all our existing code.
+ [AC_MSG_CHECKING(for FlexLexer.h validity)
+  AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM([#include <FlexLexer.h>
+      class Foo : public FlexLexer
+      {
+          Foo() { int &test = yyleng; }
+      }],
+     [])],
+   [AC_MSG_RESULT(yes)
+    ac_cv_my_have_flexlexer_h="yes"],
+   [AC_MSG_RESULT(no)])])
 AC_LANG_POP(C++)
 if test "x${ac_cv_my_have_flexlexer_h}" = "xno"; then
   LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/flex-2.5.35/include"
