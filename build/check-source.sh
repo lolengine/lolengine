@@ -28,15 +28,28 @@ done
 error() { if [ "$quiet" != true ]; then echo "E: $1"; fi }
 info() { if [ "$quiet" != true ]; then echo "I: $1"; fi }
 
+# Ensure the system tools do not attempt to perform multibyte conversions
+export LANG=C
+
 # Find out where the top directory is and go there
 top_srcdir="$(cd "$(dirname $0)"; cd ..; pwd)"
 cd "$top_srcdir"
 
 # Check for working tools
-#if [ "$(echo foo | grep -c foo)" != 1 ]; then
-#    error "grep -c does not appear to work, cancelling"
-#    exit 0
-#fi
+if [ "$(echo foo | grep -c foo)" != 1 ]; then
+    error "grep -c does not appear to work, cancelling"
+    exit 0
+fi
+
+SED=sed
+if gsed --version >/dev/null 2>&1; then
+    SED=gsed
+fi
+if [ "$(echo 'x\x' | $SED 's/.*[^x\t]//')" != x ]; then
+    error "sed does not appear to work, cancelling"
+    exit 0
+fi
+
 if d2u -h >/dev/null 2>&1; then
     d2u=d2u
 elif dos2unix -h >/dev/null 2>&1; then
@@ -73,7 +86,8 @@ total_spaces=0
 total_tabs=0
 
 OIFS="$IFS"
-IFS=$'\n'
+IFS='
+'
 if [ "$repo" = git ]; then
     FILES="`git ls-files`"
 else
@@ -118,12 +132,12 @@ for file in $FILES; do
           fi
 
           # Check for trailing spaces
-          nspaces="$(LANG=C sed 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
+          nspaces="$($SED 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
           total_spaces="$(($total_spaces + $nspaces))"
           if [ "$nspaces" -gt 0 ]; then
               clean=false
               if [ "$fix" = true ]; then
-                  LANG=C sed -i 's/[[:space:]][[:space:]]*$//g' "$file"
+                  $SED -i 's/[[:space:]][[:space:]]*$//g' "$file"
                   info "$file has $nspaces trailing spaces"
               else
                   error "$file has $nspaces trailing spaces"
@@ -136,7 +150,7 @@ for file in $FILES; do
           if [ "$ntabs" -gt 0 ]; then
               clean=false
               if [ "$fix" = true ]; then
-                  LANG=C sed -i 's/\t/    /g' "$file"
+                  $SED -i 's/\t/    /g' "$file"
                   info "$file has $ntabs tabs"
               else
                   error "$file has $ntabs tabs"
