@@ -182,6 +182,17 @@ append ""
 cat "$conffile"
 
 #
+# Fix system
+#
+
+if [ "$family" = "osx" ]; then
+    # The version of Subversion shipped by Apple is antique; try to
+    # use the one in /usr/local/bin instead.
+    PATH="/usr/local/bin:$PATH"
+    export PATH
+fi
+
+#
 # Launch everything
 #
 
