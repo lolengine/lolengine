@@ -9,7 +9,7 @@ varying vec4 pass_Position;
 void main(void)
 {
     pass_Position = vec4(0.5 * in_Position + 0.5, 0.0, 1.0);
-    gl_Position = vec4(in_Position, 0.0, 1.0);
+    gl_Position = vec4(in_Position, 0.5, 1.0);
 }
 
 [frag.glsl]
@@ -40,7 +40,7 @@ void main(void)
         else
             gl_FragColor = vec4(0.4, t.y, val, 1.0);
     }
-    else if (t.y > c0.x - 0.02)
+    else if (t.y > c0.x - 0.03)
     {
         /* Grass */
         if (f > 0.99)
