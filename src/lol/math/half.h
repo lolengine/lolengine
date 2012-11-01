@@ -120,6 +120,8 @@ public:
 
 static inline half min(half a, half b) { return a < b ? a : b; }
 static inline half max(half a, half b) { return a > b ? a : b; }
+static inline half fmod(half a, half b) { return (half)fmod((float)a, (float)b); }
+static inline half abs(half a) { return half::makebits(a.bits & 0x7fffu); }
 
 static inline half clamp(half x, half a, half b)
 {

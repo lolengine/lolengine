@@ -1065,9 +1065,9 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     }
 
 /*
- * vec min(vec, vec)     (also max)
- * vec min(vec, scalar)  (also max)
- * vec min(scalar, vec)  (also max)
+ * vec min(vec, vec)     (also max, fmod)
+ * vec min(vec, scalar)  (also max, fmod)
+ * vec min(scalar, vec)  (also max, fmod)
  */
 #define DECLARE_VECTOR_MINMAX_OP(tname, op, tprefix, type) \
     tprefix \
@@ -1104,6 +1104,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec clamp(vec, vec, vec)
  * vec clamp(vec, vec, scalar)
  * vec clamp(vec, scalar, vec)
+ * vec clamp(vec, scalar, scalar)
  */
 #define DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type) \
     tprefix \
@@ -1123,6 +1124,13 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     tprefix \
     inline tname<type> clamp(tname<type> const &x, \
                              tname<type> const &a, type const &b) \
+    { \
+        return max(min(x, b), a); \
+    } \
+    \
+    tprefix \
+    inline tname<type> clamp(tname<type> const &x, \
+                             type const &a, type const &b) \
     { \
         return max(min(x, b), a); \
     }
@@ -1210,10 +1218,20 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     } \
     \
     tprefix \
-    inline tname<type> normalize(tname<type> const &val) \
+    inline tname<type> normalize(tname<type> const &a) \
     { \
-        type norm = (type)length(val); \
-        return norm ? val / norm : val * (type)0; \
+        type norm = (type)length(a); \
+        return norm ? a / norm : a * (type)0; \
+    } \
+    \
+    tprefix \
+    inline tname<type> abs(tname<type> const &a) \
+    { \
+        using std::abs; \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = abs(a[n]); \
+        return ret; \
     }
 
 #define DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
@@ -1270,6 +1288,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     \
     DECLARE_VECTOR_MINMAX_OP(tname, min, tprefix, type) \
     DECLARE_VECTOR_MINMAX_OP(tname, max, tprefix, type) \
+    DECLARE_VECTOR_MINMAX_OP(tname, fmod, tprefix, type) \
     DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type)
 
 #define DECLARE_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
