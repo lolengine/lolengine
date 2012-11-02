@@ -215,7 +215,7 @@ public:
         else if (m_zoom_speed)
         {
             m_zoom_speed *= std::pow(2.0, -seconds * 5.0);
-            if (abs(m_zoom_speed) < 1e-5 || m_drag)
+            if (lol::abs(m_zoom_speed) < 1e-5 || m_drag)
                 m_zoom_speed = 0.0;
         }
 #endif
