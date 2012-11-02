@@ -1203,9 +1203,9 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     } \
     \
     tprefix \
-    inline double length(tname<type> const &a) \
+    inline type length(tname<type> const &a) \
     { \
-        return sqrt((double)sqlength(a)); \
+        return (type)sqrt((double)sqlength(a)); \
     } \
     \
     tprefix \
