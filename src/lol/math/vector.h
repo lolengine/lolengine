@@ -18,7 +18,6 @@
 
 #include <stdint.h>
 #include <ostream>
-#include <algorithm>
 
 #include "lol/math/math.h"
 #include "lol/math/half.h"
@@ -26,10 +25,6 @@
 
 namespace lol
 {
-
-/* This is OUR namespace. Don't let Windows headers fuck with it. */
-#undef min
-#undef max
 
 /* Some compilers do not support const members in anonymous unions. So
  * far, GCC (>= 4.6), CLang (3.0) and Visual Studio (>= 2010) appear to
@@ -39,16 +34,12 @@ namespace lol
 #   define LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS 1
 #endif
 
-/* Hack for compilation speedups: we can hide some of our global methods in
- * namespaces. We therefore want "long_double" to be a single-word name */
-typedef long double long_double;
-
 #define DECLARE_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
     typedef tname<float> suffix; \
     typedef tname<double> d##suffix; \
-    typedef tname<long_double> f128##suffix; \
+    typedef tname<ldouble> f128##suffix; \
     typedef tname<int8_t> i8##suffix; \
     typedef tname<uint8_t> u8##suffix; \
     typedef tname<int16_t> i16##suffix; \
@@ -1073,7 +1064,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     tprefix \
     inline tname<type> op(tname<type> const &a, tname<type> const &b) \
     { \
-        using std::op; \
+        using lol::op; \
         tname<type> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = op(a[n], b[n]); \
@@ -1083,7 +1074,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     tprefix \
     inline tname<type> op(tname<type> const &a, type const &b) \
     { \
-        using std::op; \
+        using lol::op; \
         tname<type> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = op(a[n], b); \
@@ -1093,7 +1084,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     tprefix \
     inline tname<type> op(type const &a, tname<type> const &b) \
     { \
-        using std::op; \
+        using lol::op; \
         tname<type> ret; \
         for (size_t n = 0; n < sizeof(b) / sizeof(type); n++) \
             ret[n] = op(a, b[n]); \
@@ -1227,10 +1218,9 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     tprefix \
     inline tname<type> abs(tname<type> const &a) \
     { \
-        using std::abs; \
         tname<type> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = abs(a[n]); \
+            ret[n] = lol::abs(a[n]); \
         return ret; \
     }
 
@@ -1360,7 +1350,7 @@ DECLARE_ALL_NONVECTOR_OPS(Quat)
 DECLARE_ALL_VECTOR_OPS(half)
 DECLARE_ALL_VECTOR_OPS(float)
 DECLARE_ALL_VECTOR_OPS(double)
-DECLARE_ALL_VECTOR_OPS(long_double)
+DECLARE_ALL_VECTOR_OPS(ldouble)
 DECLARE_ALL_VECTOR_OPS(int8_t)
 DECLARE_ALL_VECTOR_OPS(uint8_t)
 DECLARE_ALL_VECTOR_OPS(int16_t)
@@ -1401,7 +1391,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int16_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint16_t)
@@ -1411,7 +1401,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint16_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int32_t)
@@ -1420,7 +1410,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int32_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint32_t)
@@ -1428,34 +1418,34 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint32_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, int64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, uint64_t)
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, ldouble)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(float, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(float, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(float, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(double, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(double, ldouble)
 
 /* FIXME: vectors of "half" are deactivated for now, because they
  * induce extremely long compilation times (about 17 seconds per TU). */
@@ -1474,7 +1464,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, half)
 
 DECLARE_ALL_VECTOR_COERCE_OPS(half, float)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(half, long_double)
+DECLARE_ALL_VECTOR_COERCE_OPS(half, ldouble)
 #endif
 
 /* FIXME: vectors of "real" are deactivated for now, because we do
@@ -1493,7 +1483,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(half, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(float, real)
 DECLARE_ALL_VECTOR_COERCE_OPS(double, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(long_double, real)
+DECLARE_ALL_VECTOR_COERCE_OPS(ldouble, real)
 #endif
 
 /* Activate all the namespaces that we created. Delaying this activation
@@ -1518,7 +1508,7 @@ DECLARE_ALL_VECTOR_COERCE_OPS(long_double, real)
     ACTIVATE_COERCE_NAMESPACES_INNER(tlow, half) \
     ACTIVATE_COERCE_NAMESPACES_INNER(tlow, float) \
     ACTIVATE_COERCE_NAMESPACES_INNER(tlow, double) \
-    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, long_double) \
+    ACTIVATE_COERCE_NAMESPACES_INNER(tlow, ldouble) \
     ACTIVATE_COERCE_NAMESPACES_INNER(tlow, real)
 
 ACTIVATE_COERCE_NAMESPACES(int8_t)
@@ -1532,7 +1522,7 @@ ACTIVATE_COERCE_NAMESPACES(uint64_t)
 ACTIVATE_COERCE_NAMESPACES(half)
 ACTIVATE_COERCE_NAMESPACES(float)
 ACTIVATE_COERCE_NAMESPACES(double)
-ACTIVATE_COERCE_NAMESPACES(long_double)
+ACTIVATE_COERCE_NAMESPACES(ldouble)
 ACTIVATE_COERCE_NAMESPACES(real)
 
 #if defined __GNUC__ && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))

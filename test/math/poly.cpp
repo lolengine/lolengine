@@ -123,7 +123,7 @@ printf("-- START --\n");
     {
         union { float f; uint32_t x; } s1 = { sinf(adjustf(u.f, 0)) };
         union { float f; uint32_t x; } s2 = { floatsin(adjustf(u.f, 0)) };
-        int e = abs((int)(s1.x - s2.x));
+        int e = lol::abs((int)(s1.x - s2.x));
         switch (e)
         {
         case 3:
@@ -132,7 +132,7 @@ printf("-- START --\n");
 inspect(u.f);
 printf("sinf: ");
 inspect(sinf(u.f));
-            if (fabs((double)s1.f - (double)s2.f) > 1e-10 * fabs(s1.f))
+            if (lol::abs((double)s1.f - (double)s2.f) > 1e-10 * lol::abs(s1.f))
                 printf("%15.13g %08x: %15.13g %15.13g %08x %08x\n", u.f, u.x, s1.f, s2.f, s1.x, s2.x);
         case 0:
             error[e]++;
