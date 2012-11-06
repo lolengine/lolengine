@@ -33,3 +33,8 @@ au Syntax cpp syn keyword cType rvec2 rcmplx rvec3 rvec4 rquat rmat2 rmat3 rmat4
 au Syntax cpp syn keyword cType int2 int3 int4 int2x2 int3x3 int4x4
 au Syntax cpp syn keyword cType float2 float3 float4 float2x2 float3x3 float4x4
 
+""
+"" For now, pretend .lolfx is C++
+""
+au BufRead,BufNewFile *.lolfx let b:current_syntax = "cpp"
+
