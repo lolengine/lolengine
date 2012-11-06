@@ -386,6 +386,7 @@ AC_CONFIG_FILES(
   people/Makefile
   games/Makefile
   tools/Makefile
+  tools/vimlol/Makefile
   tools/vslol/Makefile
 ])
 AC_CONFIG_FILES(

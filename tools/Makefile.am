@@ -3,8 +3,8 @@ include $(top_srcdir)/build/autotools/common.am
 
 SUBDIRS =
 SUBDIRS += neercs
+SUBDIRS += vimlol
 SUBDIRS += vslol
-
 
 noinst_PROGRAMS = $(make_font)
 
