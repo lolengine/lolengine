@@ -63,6 +63,8 @@ liblol_a_SOURCES = \
     generated/lolfx-parser.cpp generated/lolfx-parser.h \
     generated/lolfx-scanner.cpp \
     \
+    mesh/mesh.cpp mesh/mesh.h \
+    \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \
     image/codec/ios-image.cpp \
