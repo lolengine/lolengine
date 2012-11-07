@@ -26,6 +26,9 @@
     <Filter Include="src\math">
       <UniqueIdentifier>{2caadbda-b9f1-446d-bbd2-55c959db342c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\mesh">
+      <UniqueIdentifier>{1eaa8df5-7a31-4358-a1e9-0e265de6ed49}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\gpu">
       <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
     </Filter>
@@ -93,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="math\vector.cpp">
       <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh\mesh.cpp">
+      <Filter>src\mesh</Filter>
     </ClCompile>
     <ClCompile Include="gpu\shader.cpp">
       <Filter>src\gpu</Filter>
@@ -671,6 +677,9 @@
     </ClInclude>
     <ClInclude Include="lol\unit.h">
       <Filter>src\lol</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh\mesh.h">
+      <Filter>src\mesh</Filter>
     </ClInclude>
     <ClInclude Include="gpu\shader.h">
       <Filter>src\gpu</Filter>

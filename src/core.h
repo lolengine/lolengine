@@ -120,6 +120,7 @@ static inline int isnan(float f)
 #include "gpu/indexbuffer.h"
 #include "gpu/vertexbuffer.h"
 #include "gpu/framebuffer.h"
+#include "mesh/mesh.h"
 #include "image/image.h"
 #include "application/application.h"
 #include "easymesh/easymesh.h"

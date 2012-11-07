@@ -275,6 +275,7 @@
     <ClCompile Include="math\real.cpp" />
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
+    <ClCompile Include="mesh\mesh.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="platform\d3d9\d3d9input.cpp" />
     <ClCompile Include="platform\ps3\ps3app.cpp" />
@@ -589,6 +590,7 @@
     <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\unit.h" />
+    <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />

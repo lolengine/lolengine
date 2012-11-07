@@ -120,8 +120,8 @@ void EasyMesh::Render(mat4 const &model, float damage)
     m_gpu.shader->SetUniform(m_gpu.proj, Scene::GetDefault()->GetProjMatrix());
     m_gpu.shader->SetUniform(m_gpu.normalmat, normalmat);
     m_gpu.shader->SetUniform(m_gpu.damage, damage);
-    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord, m_gpu.norm, m_gpu.color);
     m_gpu.vdecl->Bind();
+    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord, m_gpu.norm, m_gpu.color);
     m_gpu.ibo->Bind();
     m_gpu.vdecl->DrawIndexedElements(MeshPrimitive::Triangles,
                                      0, 0, m_gpu.vertexcount,
