@@ -34,7 +34,7 @@ namespace lol
 #   define LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS 1
 #endif
 
-#define DECLARE_VECTOR_TYPEDEFS(tname, suffix) \
+#define LOL_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
     typedef tname<float> suffix; \
@@ -50,14 +50,16 @@ namespace lol
     typedef tname<uint64_t> u64##suffix; \
     typedef tname<real> r##suffix; \
 
-DECLARE_VECTOR_TYPEDEFS(Vec2, vec2)
-DECLARE_VECTOR_TYPEDEFS(Cmplx, cmplx)
-DECLARE_VECTOR_TYPEDEFS(Vec3, vec3)
-DECLARE_VECTOR_TYPEDEFS(Vec4, vec4)
-DECLARE_VECTOR_TYPEDEFS(Quat, quat)
-DECLARE_VECTOR_TYPEDEFS(Mat2, mat2)
-DECLARE_VECTOR_TYPEDEFS(Mat3, mat3)
-DECLARE_VECTOR_TYPEDEFS(Mat4, mat4)
+LOL_VECTOR_TYPEDEFS(Vec2, vec2)
+LOL_VECTOR_TYPEDEFS(Cmplx, cmplx)
+LOL_VECTOR_TYPEDEFS(Vec3, vec3)
+LOL_VECTOR_TYPEDEFS(Vec4, vec4)
+LOL_VECTOR_TYPEDEFS(Quat, quat)
+LOL_VECTOR_TYPEDEFS(Mat2, mat2)
+LOL_VECTOR_TYPEDEFS(Mat3, mat3)
+LOL_VECTOR_TYPEDEFS(Mat4, mat4)
+
+#undef LOL_VECTOR_TYPEDEFS
 
 /*
  * HLSL/Cg-compliant type names.
@@ -138,7 +140,7 @@ template<typename T, int N> struct XVec4
  * Helper macro for vector type member functions
  */
 
-#define DECLARE_MEMBER_OPS(tname, first) \
+#define LOL_MEMBER_OPS(tname, first) \
     inline T& operator[](size_t n) { return *(&this->first + n); } \
     inline T const& operator[](size_t n) const { return *(&this->first + n); } \
     \
@@ -246,7 +248,7 @@ template <typename T> struct Vec2 : BVec2<T>
     explicit inline Vec2(XVec2<U, N> const &v)
       : BVec2<T>(v[0], v[1]) {}
 
-    DECLARE_MEMBER_OPS(Vec2, x)
+    LOL_MEMBER_OPS(Vec2, x)
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
@@ -262,7 +264,7 @@ template <typename T> struct Cmplx
     inline Cmplx(T X) : x(X), y(0) {}
     inline Cmplx(T X, T Y) : x(X), y(Y) {}
 
-    DECLARE_MEMBER_OPS(Cmplx, x)
+    LOL_MEMBER_OPS(Cmplx, x)
 
     inline Cmplx<T> operator *(Cmplx<T> const &val) const
     {
@@ -500,7 +502,7 @@ template <typename T> struct Vec3 : BVec3<T>
 
     static Vec3<T> toeuler(Quat<T> const &q);
 
-    DECLARE_MEMBER_OPS(Vec3, x)
+    LOL_MEMBER_OPS(Vec3, x)
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
@@ -907,7 +909,7 @@ template <typename T> struct Vec4 : BVec4<T>
     explicit inline Vec4(XVec4<U, N> const &v)
       : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
-    DECLARE_MEMBER_OPS(Vec4, x)
+    LOL_MEMBER_OPS(Vec4, x)
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
@@ -926,7 +928,7 @@ template <typename T> struct Quat
     Quat(Mat3<T> const &m);
     Quat(Mat4<T> const &m);
 
-    DECLARE_MEMBER_OPS(Quat, w)
+    LOL_MEMBER_OPS(Quat, w)
 
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
@@ -1032,7 +1034,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec *(vec, vec)
  * vec /(vec, vec)
  */
-#define DECLARE_VECTOR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
+#define LOL_VECTOR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(tname<t1> const &a, tname<t2> const &b) \
     { \
@@ -1048,7 +1050,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec *=(vec, vec)
  * vec /=(vec, vec)
  */
-#define DECLARE_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
+#define LOL_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
     tprefix \
     inline tname<type> operator op##=(tname<type> &a, tname<type> const &b) \
     { \
@@ -1060,7 +1062,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec min(vec, scalar)  (also max, fmod)
  * vec min(scalar, vec)  (also max, fmod)
  */
-#define DECLARE_VECTOR_MINMAX_OP(tname, op, tprefix, type) \
+#define LOL_VECTOR_MINMAX_FUN(tname, op, tprefix, type) \
     tprefix \
     inline tname<type> op(tname<type> const &a, tname<type> const &b) \
     { \
@@ -1097,7 +1099,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec clamp(vec, scalar, vec)
  * vec clamp(vec, scalar, scalar)
  */
-#define DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type) \
+#define LOL_VECTOR_CLAMP_FUN(tname, tprefix, type) \
     tprefix \
     inline tname<type> clamp(tname<type> const &x, \
                              tname<type> const &a, tname<type> const &b) \
@@ -1134,7 +1136,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * bool >(vec, vec)
  * bool <(vec, vec)
  */
-#define DECLARE_VECTOR_VECTOR_BOOLOP(tname, op, op2, ret, tprefix, t1, t2) \
+#define LOL_VECTOR_VECTOR_BOOL_OP(tname, op, op2, ret, tprefix, t1, t2) \
     tprefix \
     inline bool operator op(tname<t1> const &a, tname<t2> const &b) \
     { \
@@ -1148,7 +1150,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec *(vec, scalar)   (also complex & quaternion)
  * vec /(vec, scalar)   (also complex & quaternion)
  */
-#define DECLARE_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
+#define LOL_VECTOR_SCALAR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(tname<t1> const &a, t2 const &val) \
     { \
@@ -1162,7 +1164,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec *(scalar, vec)   (also complex & quaternion)
  * vec /(scalar, vec)   (NOT for complex & quaternion!)
  */
-#define DECLARE_SCALAR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
+#define LOL_SCALAR_VECTOR_COERCE_OP(tname, op, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> operator op(t1 const &val, tname<t2> const &a) \
     { \
@@ -1176,14 +1178,14 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
  * vec *=(vec, scalar)   (also complex & quaternion)
  * vec /=(vec, scalar)   (also complex & quaternion)
  */
-#define DECLARE_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
+#define LOL_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
     tprefix \
     inline tname<type> operator op##=(tname<type> &a, type const &val) \
     { \
         return a = a op val; \
     }
 
-#define DECLARE_UNARY_OPS(tname, tprefix, type) \
+#define LOL_UNARY_OPS(tname, tprefix, type) \
     tprefix \
     inline tname<type> operator -(tname<type> const &a) \
     { \
@@ -1191,8 +1193,9 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = -a[n]; \
         return ret; \
-    } \
-    \
+    }
+
+#define LOL_UNARY_FUNS(tname, tprefix, type) \
     tprefix \
     inline type sqlength(tname<type> const &a) \
     { \
@@ -1224,17 +1227,18 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         return ret; \
     }
 
-#define DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, -, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, +, tprefix, t1, t2, tf) \
+#define LOL_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    LOL_VECTOR_VECTOR_COERCE_OP(tname, -, tprefix, t1, t2, tf) \
+    LOL_VECTOR_VECTOR_COERCE_OP(tname, +, tprefix, t1, t2, tf) \
     \
-    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_SCALAR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
-    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    LOL_VECTOR_SCALAR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    LOL_VECTOR_SCALAR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
+    LOL_SCALAR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
     \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, ==, ==, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, !=, ==, false, tprefix, t1, t2) \
-    \
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, ==, ==, true, tprefix, t1, t2) \
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, !=, ==, false, tprefix, t1, t2)
+
+#define LOL_BINARY_NONVECTOR_COERCE_FUNS(tname, tprefix, t1, t2, tf) \
     tprefix \
     inline tf dot(tname<t1> const &a, tname<t2> const &b) \
     { \
@@ -1252,10 +1256,10 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         return ret; \
     }
 
-#define DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
-    DECLARE_SCALAR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf)
+#define LOL_BINARY_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    LOL_SCALAR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf)
 
-#define DECLARE_VEC_3_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+#define LOL_VEC_3_COERCE_FUNS(tname, tprefix, t1, t2, tf) \
     tprefix \
     inline tname<tf> cross(tname<t1> const &a, tname<t2> const &b) \
     { \
@@ -1264,82 +1268,100 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
                          (tf)(a.x * b.y) - (tf)(a.y * b.x)); \
     }
 
-#define DECLARE_BINARY_NONVECTOR_OPS(tname, tprefix, type) \
-    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, type, type, type) \
+#define LOL_BINARY_NONVECTOR_OPS(tname, tprefix, type) \
+    LOL_BINARY_NONVECTOR_COERCE_OPS(tname, tprefix, type, type, type) \
     \
-    DECLARE_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
+    LOL_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
+    LOL_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
     \
-    DECLARE_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
-    DECLARE_VECTOR_SCALAR_OP(tname, /, tprefix, type)
+    LOL_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
+    LOL_VECTOR_SCALAR_OP(tname, /, tprefix, type)
 
-#define DECLARE_BINARY_VECTOR_OPS(tname, tprefix, type) \
-    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, tprefix, type, type, type) \
+#define LOL_BINARY_NONVECTOR_FUNS(tname, tprefix, type) \
+    LOL_BINARY_NONVECTOR_COERCE_FUNS(tname, tprefix, type, type, type) \
+
+#define LOL_BINARY_VECTOR_OPS(tname, tprefix, type) \
+    LOL_BINARY_VECTOR_COERCE_OPS(tname, tprefix, type, type, type)
+
+#define LOL_BINARY_VECTOR_FUNS(tname, tprefix, type) \
+    LOL_VECTOR_MINMAX_FUN(tname, min, tprefix, type) \
+    LOL_VECTOR_MINMAX_FUN(tname, max, tprefix, type) \
+    LOL_VECTOR_MINMAX_FUN(tname, fmod, tprefix, type) \
+    LOL_VECTOR_CLAMP_FUN(tname, tprefix, type)
+
+#define LOL_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
+    LOL_VECTOR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
+    LOL_VECTOR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
     \
-    DECLARE_VECTOR_MINMAX_OP(tname, min, tprefix, type) \
-    DECLARE_VECTOR_MINMAX_OP(tname, max, tprefix, type) \
-    DECLARE_VECTOR_MINMAX_OP(tname, fmod, tprefix, type) \
-    DECLARE_VECTOR_CLAMP_OP(tname, tprefix, type)
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, <=, <=, true, tprefix, t1, t2) \
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, >=, >=, true, tprefix, t1, t2) \
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, <, <, true, tprefix, t1, t2) \
+    LOL_VECTOR_VECTOR_BOOL_OP(tname, >, >, true, tprefix, t1, t2)
 
-#define DECLARE_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
-    DECLARE_VECTOR_VECTOR_COERCE_OP(tname, /, tprefix, t1, t2, tf) \
+#define LOL_VECTOR_OPS(tname, tprefix, type) \
+    LOL_VECTOR_COERCE_OPS(tname, static, type, type, type) \
     \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <=, <=, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >=, >=, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, <, <, true, tprefix, t1, t2) \
-    DECLARE_VECTOR_VECTOR_BOOLOP(tname, >, >, true, tprefix, t1, t2)
+    LOL_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
+    LOL_VECTOR_VECTOR_OP(tname, /, tprefix, type)
 
-#define DECLARE_VECTOR_OPS(tname, tprefix, type) \
-    DECLARE_VECTOR_COERCE_OPS(tname, static, type, type, type) \
-    \
-    DECLARE_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
-    DECLARE_VECTOR_VECTOR_OP(tname, /, tprefix, type)
+#define LOL_ALL_NONVECTOR_OPS_AND_FUNS(tname) \
+    LOL_BINARY_NONVECTOR_OPS(tname, template<typename T> static, T) \
+    LOL_BINARY_NONVECTOR_FUNS(tname, template<typename T> static, T) \
+    LOL_UNARY_OPS(tname, template<typename T> static, T) \
+    LOL_UNARY_FUNS(tname, template<typename T> static, T)
 
-#define DECLARE_ALL_NONVECTOR_OPS(tname) \
-    DECLARE_BINARY_NONVECTOR_OPS(tname, template<typename T> static, T) \
-    DECLARE_UNARY_OPS(tname, template<typename T> static, T)
+#define LOL_ALL_VECTOR_OPS_INNER(tname, type) \
+    LOL_BINARY_VECTOR_OPS(tname, static, type) \
+    LOL_BINARY_NONVECTOR_OPS(tname, static, type) \
+    LOL_UNARY_OPS(tname, static, type) \
+    LOL_VECTOR_OPS(tname, static, type)
 
-#define DECLARE_ALL_VECTOR_OPS_INNER(tname, type) \
-    DECLARE_BINARY_VECTOR_OPS(tname, static, type) \
-    DECLARE_BINARY_NONVECTOR_OPS(tname, static, type) \
-    DECLARE_UNARY_OPS(tname, static, type) \
-    DECLARE_VECTOR_OPS(tname, static, type) \
+#define LOL_ALL_VECTOR_FUNS_INNER(tname, type) \
+    LOL_BINARY_VECTOR_FUNS(tname, static, type) \
+    LOL_BINARY_NONVECTOR_FUNS(tname, static, type) \
+    LOL_UNARY_FUNS(tname, static, type)
 
-#define DECLARE_ALL_VECTOR_OPS(type) \
+#define LOL_ALL_VECTOR_OPS_AND_FUNS(type) \
     namespace x##type \
     { \
-        DECLARE_ALL_VECTOR_OPS_INNER(Vec2, type) \
-        DECLARE_ALL_VECTOR_OPS_INNER(Vec3, type) \
-        DECLARE_ALL_VECTOR_OPS_INNER(Vec4, type) \
-        \
-        DECLARE_VEC_3_COERCE_OPS(Vec3, static, type, type, type) \
-    }
+        LOL_ALL_VECTOR_OPS_INNER(Vec2, type) \
+        LOL_ALL_VECTOR_OPS_INNER(Vec3, type) \
+        LOL_ALL_VECTOR_OPS_INNER(Vec4, type) \
+    } \
+    using namespace x##type; \
+    LOL_ALL_VECTOR_FUNS_INNER(Vec2, type) \
+    LOL_ALL_VECTOR_FUNS_INNER(Vec3, type) \
+    LOL_ALL_VECTOR_FUNS_INNER(Vec4, type) \
+    LOL_VEC_3_COERCE_FUNS(Vec3, static, type, type, type)
 
-#define DECLARE_VEC_ANY_COERCE_OPS(tname, tlow, thigh) \
-    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
-    DECLARE_BINARY_NONVECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
-    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
-    DECLARE_BINARY_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
+#define LOL_VEC_ANY_COERCE_OPS(tname, tlow, thigh) \
+    LOL_BINARY_NONVECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    LOL_BINARY_NONVECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
+    LOL_BINARY_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    LOL_BINARY_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh) \
     \
-    DECLARE_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
-    DECLARE_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
+    LOL_VECTOR_COERCE_OPS(tname, static, tlow, thigh, thigh) \
+    LOL_VECTOR_COERCE_OPS(tname, static, thigh, tlow, thigh)
 
-#define DECLARE_ALL_VECTOR_COERCE_OPS(tlow, thigh) \
+#define LOL_VEC_ANY_COERCE_FUNS(tname, tlow, thigh) \
+    LOL_BINARY_NONVECTOR_COERCE_FUNS(tname, static, tlow, thigh, thigh) \
+    LOL_BINARY_NONVECTOR_COERCE_FUNS(tname, static, thigh, tlow, thigh)
+
+#define LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(tlow, thigh) \
     namespace x##tlow##thigh \
     { \
-        DECLARE_VEC_ANY_COERCE_OPS(Vec2, tlow, thigh) \
-        DECLARE_VEC_ANY_COERCE_OPS(Vec3, tlow, thigh) \
-        DECLARE_VEC_ANY_COERCE_OPS(Vec4, tlow, thigh) \
+        LOL_VEC_ANY_COERCE_OPS(Vec2, tlow, thigh) \
+        LOL_VEC_ANY_COERCE_OPS(Vec3, tlow, thigh) \
+        LOL_VEC_ANY_COERCE_OPS(Vec4, tlow, thigh) \
     } \
-    namespace y##tlow##thigh \
-    { \
-        DECLARE_VEC_3_COERCE_OPS(Vec3, static, tlow, thigh, thigh) \
-        DECLARE_VEC_3_COERCE_OPS(Vec3, static, thigh, tlow, thigh) \
-    } \
+    LOL_VEC_ANY_COERCE_FUNS(Vec2, tlow, thigh) \
+    LOL_VEC_ANY_COERCE_FUNS(Vec3, tlow, thigh) \
+    LOL_VEC_ANY_COERCE_FUNS(Vec4, tlow, thigh) \
+    LOL_VEC_3_COERCE_FUNS(Vec3, static, tlow, thigh, thigh) \
+    LOL_VEC_3_COERCE_FUNS(Vec3, static, thigh, tlow, thigh)
 
-DECLARE_ALL_NONVECTOR_OPS(Cmplx)
-DECLARE_ALL_NONVECTOR_OPS(Quat)
+LOL_ALL_NONVECTOR_OPS_AND_FUNS(Cmplx)
+LOL_ALL_NONVECTOR_OPS_AND_FUNS(Quat)
 
 /* Disable warning about unary operator applied to unsigned type */
 #if defined _MSC_VER
@@ -1347,18 +1369,18 @@ DECLARE_ALL_NONVECTOR_OPS(Quat)
 #   pragma warning(disable: 4146)
 #endif
 
-DECLARE_ALL_VECTOR_OPS(half)
-DECLARE_ALL_VECTOR_OPS(float)
-DECLARE_ALL_VECTOR_OPS(double)
-DECLARE_ALL_VECTOR_OPS(ldouble)
-DECLARE_ALL_VECTOR_OPS(int8_t)
-DECLARE_ALL_VECTOR_OPS(uint8_t)
-DECLARE_ALL_VECTOR_OPS(int16_t)
-DECLARE_ALL_VECTOR_OPS(uint16_t)
-DECLARE_ALL_VECTOR_OPS(int32_t)
-DECLARE_ALL_VECTOR_OPS(uint32_t)
-DECLARE_ALL_VECTOR_OPS(int64_t)
-DECLARE_ALL_VECTOR_OPS(uint64_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(half)
+LOL_ALL_VECTOR_OPS_AND_FUNS(float)
+LOL_ALL_VECTOR_OPS_AND_FUNS(double)
+LOL_ALL_VECTOR_OPS_AND_FUNS(ldouble)
+LOL_ALL_VECTOR_OPS_AND_FUNS(int8_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(uint8_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(int16_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(uint16_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(int32_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(uint32_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(int64_t)
+LOL_ALL_VECTOR_OPS_AND_FUNS(uint64_t)
 
 #if defined _MSC_VER
 #   pragma warning(pop)
@@ -1382,70 +1404,70 @@ DECLARE_ALL_VECTOR_OPS(uint64_t)
 /* Apply the same coercion rules as in the C++ standard. However, instead
  * of always promoting smaller types to int, we allow int8_t op int16_t to
  * return an int16_t. */
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint8_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int16_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint16_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, uint8_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, int16_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, uint16_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, int32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, uint32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int16_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint16_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, int16_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, uint16_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, int32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, uint32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint16_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, uint16_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, int32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, uint32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, int32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, uint32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint32_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, uint32_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, int64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, int64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, uint64_t)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, uint64_t)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint64_t, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint64_t, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint64_t, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(float, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(float, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(float, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(float, ldouble)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(double, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(double, ldouble)
 
 /* FIXME: vectors of "half" are deactivated for now, because they
  * induce extremely long compilation times (about 17 seconds per TU). */
@@ -1453,18 +1475,18 @@ DECLARE_ALL_VECTOR_COERCE_OPS(double, ldouble)
 #if 0
 /* All integer types are promoted to half; all floating point types
  * cause half to be promoted. */
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, half)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, half)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint64_t, half)
 
-DECLARE_ALL_VECTOR_COERCE_OPS(half, float)
-DECLARE_ALL_VECTOR_COERCE_OPS(half, double)
-DECLARE_ALL_VECTOR_COERCE_OPS(half, ldouble)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(half, float)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(half, double)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(half, ldouble)
 #endif
 
 /* FIXME: vectors of "real" are deactivated for now, because we do
@@ -1472,27 +1494,25 @@ DECLARE_ALL_VECTOR_COERCE_OPS(half, ldouble)
 
 #if 0
 /* All types are promoted to real */
-DECLARE_ALL_VECTOR_COERCE_OPS(int8_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint8_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(int16_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint16_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(int32_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint32_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(int64_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(uint64_t, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(half, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(float, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(double, real)
-DECLARE_ALL_VECTOR_COERCE_OPS(ldouble, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int8_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint8_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int16_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint16_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int32_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint32_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(int64_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(uint64_t, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(half, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(float, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(double, real)
+LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS(ldouble, real)
 #endif
 
 /* Activate all the namespaces that we created. Delaying this activation
  * reduces compilation times significantly. */
 #define ACTIVATE_COERCE_NAMESPACES_INNER(tlow, thigh) \
     namespace x##tlow##thigh {} \
-    namespace y##tlow##thigh {} \
-    using namespace x##tlow##thigh; \
-    using namespace y##tlow##thigh;
+    using namespace x##tlow##thigh;
 
 #define ACTIVATE_COERCE_NAMESPACES(tlow) \
     namespace x##tlow {} \
@@ -1531,17 +1551,37 @@ ACTIVATE_COERCE_NAMESPACES(real)
 #   pragma warning(pop)
 #endif
 
-#undef DECLARE_VECTOR_TYPEDEFS
-#undef DECLARE_MEMBER_OPS
-#undef DECLARE_VECTOR_VECTOR_OP
-#undef DECLARE_VECTOR_VECTOR_BOOLOP
-#undef DECLARE_VECTOR_SCALAR_OP
-#undef DECLARE_BINARY_VECTOR_OPS
-#undef DECLARE_BINARY_NONVECTOR_OPS
-#undef DECLARE_UNARY_OPS
-#undef DECLARE_ALL_NONVECTOR_OPS
-#undef DECLARE_ALL_VECTOR_OPS_INNER
-#undef DECLARE_ALL_VECTOR_OPS
+#undef LOL_MEMBER_OPS
+
+#undef LOL_VECTOR_VECTOR_COERCE_OP
+#undef LOL_VECTOR_VECTOR_OP
+#undef LOL_VECTOR_MINMAX_FUN
+#undef LOL_VECTOR_CLAMP_FUN
+#undef LOL_VECTOR_VECTOR_BOOL_OP
+#undef LOL_VECTOR_SCALAR_COERCE_OP
+#undef LOL_SCALAR_VECTOR_COERCE_OP
+#undef LOL_VECTOR_SCALAR_OP
+
+#undef LOL_BINARY_VECTOR_OPS
+#undef LOL_BINARY_VECTOR_FUNS
+#undef LOL_BINARY_NONVECTOR_OPS
+#undef LOL_BINARY_NONVECTOR_FUNS
+#undef LOL_UNARY_OPS
+#undef LOL_UNARY_FUNS
+#undef LOL_BINARY_NONVECTOR_COERCE_OPS
+#undef LOL_BINARY_NONVECTOR_COERCE_FUNS
+#undef LOL_BINARY_VECTOR_COERCE_OPS
+#undef LOL_VECTOR_COERCE_OPS
+#undef LOL_VEC_3_COERCE_FUNS
+#undef LOL_VEC_ANY_COERCE_OPS
+#undef LOL_VEC_ANY_COERCE_FUNS
+#undef LOL_VECTOR_OPS
+
+#undef LOL_ALL_NONVECTOR_OPS_AND_FUNS
+#undef LOL_ALL_VECTOR_OPS_INNER
+#undef LOL_ALL_VECTOR_FUNS_INNER
+#undef LOL_ALL_VECTOR_OPS_AND_FUNS
+#undef LOL_ALL_VECTOR_COERCE_OPS_AND_FUNS
 
 /*
  * Definition of additional functions requiring vector functions
