@@ -1,14 +1,28 @@
 #!/bin/sh
 
-conffile="`mktemp 2>/dev/null`"
-if [ "$conffile" = "" ]; then
-    conffile="`mktemp -q /tmp/lol-bitten-XXXXXX`"
+conffile="`mktemp -q /tmp/lol-bitten-XXXXXXXX 2>/dev/null`"
+if [ "${conffile}" = "" ]; then
+    conffile="`mktemp 2>/dev/null`"
 fi
+builddir="/tmp/lol-bitten-`whoami`"
 url="http://lol.zoy.org/builds"
 
 append() {
-    echo "$*" >> "$conffile"
+    echo "$*" >> "${conffile}"
 }
+
+cleanup() {
+    rm -f "${conffile}"
+    rm -rf "${builddir}"
+}
+
+bailout() {
+    cleanup
+    # Exit gracefully
+    exit 0
+}
+
+trap bailout HUP INT QUIT ABRT KILL ALRM TERM
 
 #
 # Check for command line
@@ -16,6 +30,15 @@ append() {
 
 if [ "$#" != 2 ]; then
     echo "Usage: $0 <username> <password>"
+    exit 1
+fi
+
+#
+# Clean up working directory
+#
+cleanup
+if [ -e "${builddir}" ]; then
+    echo "Error: cannot get rid of ${builddir}"
     exit 1
 fi
 
@@ -179,7 +202,7 @@ append ""
 # Show what we just did here
 #
 
-cat "$conffile"
+cat "${conffile}"
 
 #
 # Fix system
@@ -197,9 +220,13 @@ fi
 #
 
 while : ; do
-    bitten-slave "$url" -f "$conffile" --name "$name"
+    bitten-slave "$url" \
+        -f "${conffile}" \
+        --name "$name" \
+        --work-dir="${builddir}"
+    rm -rf "${builddir}"
     sleep 10
 done
 
-rm -f "$conffile"
+bailout
 
