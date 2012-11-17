@@ -171,7 +171,7 @@ public:
 class VertexDeclaration
 {
 public:
-    VertexDeclaration(VertexStreamBase const &s1,
+    VertexDeclaration(VertexStreamBase const &s1 = VertexStreamBase::Empty,
                       VertexStreamBase const &s2 = VertexStreamBase::Empty,
                       VertexStreamBase const &s3 = VertexStreamBase::Empty,
                       VertexStreamBase const &s4 = VertexStreamBase::Empty,
