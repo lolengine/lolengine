@@ -339,8 +339,8 @@ ac_cv_my_have_pipi="no"
 PKG_CHECK_MODULES(PIPI, pipi, [ac_cv_my_have_pipi="yes"], [:])
 if test "${ac_cv_my_have_pipi}" != "no"; then
   AC_DEFINE(USE_PIPI, 1, Define to 1 to use libpipi)
-  LOL_CFLAGS="${LOL_CFLAGS} ${PIPI_CFLAGS}"],
-  LOL_LIBS="${LOL_LIBS} ${PIPI_LIBS}"],
+  LOL_CFLAGS="${LOL_CFLAGS} ${PIPI_CFLAGS}"
+  LOL_LIBS="${LOL_LIBS} ${PIPI_LIBS}"
 fi
 AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
 

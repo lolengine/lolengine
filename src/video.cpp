@@ -225,6 +225,8 @@ void Video::SetClearDepth(float f)
 {
 #if defined USE_D3D9 || defined _XBOX
     VideoData::clear_depth = f;
+#elif defined HAVE_GLES_2X
+    glClearDepthf(f);
 #else
     glClearDepth(f);
 #endif
