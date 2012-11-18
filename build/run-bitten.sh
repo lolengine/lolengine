@@ -1,11 +1,21 @@
 #!/bin/sh
 
-conffile="`mktemp -q /tmp/lol-bitten-XXXXXXXX 2>/dev/null`"
+tmpdir="$TMPDIR"
+if [ -z "${tmpdir}" ]; then tmpdir="$TEMP"; fi
+if [ -z "${tmpdir}" ]; then tmpdir="$TEMPDIR"; fi
+if [ -z "${tmpdir}" ]; then tmpdir="$TMP"; fi
+if [ -z "${tmpdir}" ]; then tmpdir="/tmp"; fi
+
+conffile="`mktemp -q "${tmpdir}/lol-bitten-XXXXXXXX" 2>/dev/null`"
 if [ "${conffile}" = "" ]; then
     conffile="`mktemp 2>/dev/null`"
 fi
-builddir="/tmp/lol-bitten-`whoami`"
+builddir="${tmpdir}/lol-bitten-`whoami`"
 url="http://lol.zoy.org/builds"
+
+#
+# Utility functions
+#
 
 append() {
     echo "$*" >> "${conffile}"
