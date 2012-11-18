@@ -300,7 +300,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
-    <ClInclude Include="array.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="bitfield.h" />
     <ClInclude Include="bullet\btBulletCollisionCommon.h" />
@@ -583,6 +582,7 @@
     <ClInclude Include="log.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
+    <ClInclude Include="lol\core\array.h" />
     <ClInclude Include="lol\debug.h" />
     <ClInclude Include="lol\math\half.h" />
     <ClInclude Include="lol\math\math.h" />
