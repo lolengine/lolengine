@@ -37,6 +37,7 @@ lolengine-*.tar.*
 patch-*.diff
 # Debugging cruft
 core
+!core/
 core.*
 vgcore.*
 callgrind.out.*
