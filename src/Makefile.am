@@ -73,7 +73,7 @@ liblol_a_SOURCES = \
     loldebug.h \
     debug/fps.cpp debug/fps.h \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
-liblol_a_CPPFLAGS = @LOL_CFLAGS@ -Ibullet
+liblol_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)/bullet
 
 EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
              gpu/lolfx-scanner.l gpu/lolfx-parser.y
