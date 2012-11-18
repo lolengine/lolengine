@@ -23,15 +23,15 @@ testsuite_SOURCES = testsuite.cpp \
     unit/vector.cpp unit/matrix.cpp unit/half.cpp unit/trig.cpp \
     unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
     unit/array.cpp unit/rotation.cpp
-testsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+testsuite_CPPFLAGS = @LOL_CFLAGS@
+testsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
 testsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
     benchmark/real.cpp
-benchsuite_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@
-benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+benchsuite_CPPFLAGS = @LOL_CFLAGS@
+benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
 benchsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
@@ -43,8 +43,8 @@ btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
     Physics/Include/EasyConstraint.h \
     Physics/Src/BulletCharacterController.cpp \
     Physics/Include/BulletCharacterController.h
-btphystest_CPPFLAGS = @LOL_CFLAGS@ @PIPI_CFLAGS@ -I$(top_builddir)/src/bullet \
+btphystest_CPPFLAGS = @LOL_CFLAGS@ -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
-btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@ @PIPI_LIBS@
+btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
 btphystest_DEPENDENCIES = $(top_builddir)/src/liblol.a
 

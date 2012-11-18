@@ -54,14 +54,5 @@
 #   endif
 #endif
 
-/* Redefine some function names */
-#if defined HAVE_GL_2X
-#elif defined HAVE_GLES_2X
-#   define glClearDepth glClearDepthf
-#   define glGenVertexArrays glGenVertexArraysOES
-#   define glDeleteVertexArrays glDeleteVertexArraysOES
-#   define glBindVertexArray glBindVertexArrayOES
-#endif
-
 #endif // __LOL_LOLGL_H__
 
