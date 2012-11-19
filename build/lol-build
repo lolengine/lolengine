@@ -103,6 +103,11 @@ configure()
 {
     cd "$top_srcdir"
     case "$platform" in
+        android-arm)
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
+            LDFLAGS="$LDFLAGS -L$PWD/external/libcaca-0.99.beta18/lib/arm-linux-androideabi -lz"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/libcaca-0.99.beta18/include -DCACA_STATIC"
+            ;;
         win*-i386)
             if test "x${MSYSTEM}" = xMINGW32; then
                 :
@@ -167,11 +172,11 @@ configure()
             # No configuration needed
             ;;
         android-arm)
-            CPPFLAGS="-Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
-            CFLAGS="-march=armv5te -mtune=xscale -msoft-float -mthumb"
-            CXXFLAGS="-march=armv5te -mtune=xscale -msoft-float -mthumb -fno-rtti -fno-exceptions"
-            LOL_LIBS="-L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared"
-            ./configure --host=arm-linux-androideabi ac_cv_exeext=.so CPPFLAGS="$CPPFLAGS" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LOL_LIBS="$LOL_LIBS"
+            CPPFLAGS="$CPPFLAGS -Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
+            CFLAGS="$CFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb"
+            CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb -fno-rtti -fno-exceptions"
+            LOL_LIBS="$LOL_LIBS -L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure --host=arm-linux-androideabi ac_cv_exeext=.so CPPFLAGS="$CPPFLAGS" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" LOL_LIBS="$LOL_LIBS"
             # FIXME: is this needed?
             # ant debug
             # ant debug install
