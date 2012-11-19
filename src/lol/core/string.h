@@ -25,17 +25,17 @@ namespace lol
 class String : protected Array<char>
 {
 private:
-    typedef Array<char> super;
+    typedef Array<char> Super;
 
 public:
     inline String()
-      : Array()
+      : Super()
     {
         Push('\0');
     }
 
     inline String(char const *str)
-      : Array()
+      : Super()
     {
         do
         {
@@ -46,12 +46,12 @@ public:
 
     inline char &operator [](int n)
     {
-        return ((super &)*this)[n];
+        return ((Super &)*this)[n];
     }
 
     inline char const &operator [](int n) const
     {
-        return ((super const &)*this)[n];
+        return ((Super const &)*this)[n];
     }
 
     inline String operator +(String const &s)
@@ -64,7 +64,7 @@ public:
     {
         /* Be careful, we have a trailing zero we don't want! */
         --m_count;
-        (super &)*this += (super const &)s;
+        (Super &)*this += (Super const &)s;
         return *this;
     }
 };
