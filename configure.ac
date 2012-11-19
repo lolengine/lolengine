@@ -105,7 +105,12 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Ws
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
-AC_CHECK_LIB(util, forkpty, UTIL_LIBS="${UTIL_LIBS} -lutil")
+
+AC_CHECK_LIB(util, forkpty,
+ [UTIL_LIBS="${UTIL_LIBS} -lutil"
+  dnl  Override future forkpty detection
+  ac_cv_func_forkpty="yes"])
+AC_CHECK_FUNCS(forkpty)
 
 dnl Are we on the PS3?
 ac_cv_my_have_ps3="no"
@@ -356,7 +361,7 @@ AM_CONDITIONAL(USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 
 dnl  Can we build neercs?
-AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no" -a "${ac_cv_header_glob_h}" = "yes")
+AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no")
 
 
 dnl Extra libraries we may need
