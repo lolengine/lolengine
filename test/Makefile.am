@@ -34,7 +34,7 @@ benchsuite_CPPFLAGS = @LOL_CFLAGS@
 benchsuite_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
 benchsuite_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
-btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h \
+btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
     Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
     Physics/Include/LolBtPhysicsIntegration.h Physics/Include/LolPhysics.h \
     Physics/Src/EasyCharacterController.cpp \
