@@ -44,6 +44,11 @@ public:
         while (*str++);
     }
 
+    inline String(String const &s)
+      : Super((Super const &)s)
+    {
+    }
+
     inline char &operator [](int n)
     {
         return ((Super &)*this)[n];
@@ -54,7 +59,12 @@ public:
         return ((Super const &)*this)[n];
     }
 
-    inline String operator +(String const &s)
+    inline int Count() const
+    {
+        return ((Super const &)*this).Count() - 1;
+    }
+
+    inline String operator +(String const &s) const
     {
         String ret(*this);
         return ret += s;
@@ -66,6 +76,36 @@ public:
         --m_count;
         (Super &)*this += (Super const &)s;
         return *this;
+    }
+
+    inline String operator +(char c) const
+    {
+        String ret(*this);
+        return ret += c;
+    }
+
+    inline String operator +=(char c)
+    {
+        ((Super &)*this).Last() = c;
+        ((Super &)*this).Push('\0');
+        return *this;
+    }
+
+    inline bool operator ==(String const &s) const
+    {
+        if (this->m_count != s.m_count)
+            return false;
+
+        for (int i = 0; i < this->m_count; ++i)
+            if ((*this)[i] != s[i])
+                return false;
+
+        return true;
+    }
+
+    inline bool operator !=(String const &s) const
+    {
+        return !(*this == s);
     }
 };
 

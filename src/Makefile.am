@@ -17,6 +17,7 @@ liblol_a_SOURCES = \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
     lol/unit.h lol/debug.h \
+    lol/core/array.h lol/core/string.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     \
