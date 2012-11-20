@@ -71,10 +71,12 @@ private:
 
     /* Global shader cache */
     static Shader *shaders[];
+    static Hash<char const *> hash;
     static int nshaders;
 };
 
 Shader *ShaderData::shaders[256];
+Hash<char const *> ShaderData::hash;
 int ShaderData::nshaders = 0;
 
 /*
@@ -137,8 +139,8 @@ Shader *Shader::Create(char const *lolfx)
     if (!frag)
         Log::Error("no fragment shader found… sorry, I’m gonna crash now.\n");
 
-    uint32_t new_vert_crc = Hash::Crc32(vert);
-    uint32_t new_frag_crc = Hash::Crc32(frag);
+    uint32_t new_vert_crc = ShaderData::hash(vert);
+    uint32_t new_frag_crc = ShaderData::hash(frag);
 
     for (int n = 0; n < ShaderData::nshaders; n++)
     {
@@ -189,7 +191,7 @@ Shader::Shader(char const *vert, char const *frag)
 #endif
 
     /* Compile vertex shader */
-    data->vert_crc = Hash::Crc32(vert);
+    data->vert_crc = ShaderData::hash(vert);
 #if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, NULL, "main",
                            "vs_3_0", 0, &shader_code, &error_msg,
@@ -233,7 +235,7 @@ Shader::Shader(char const *vert, char const *frag)
 #endif
 
     /* Compile fragment shader */
-    data->frag_crc = Hash::Crc32(frag);
+    data->frag_crc = ShaderData::hash(frag);
 #if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, NULL, "main",
                            "ps_3_0", 0, &shader_code, &error_msg,

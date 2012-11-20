@@ -6,18 +6,18 @@ SUBDIRS = data
 noinst_LIBRARIES = liblol.a
 
 liblol_a_SOURCES = \
-    core.h tiler.cpp tiler.h dict.cpp dict.h array.h \
+    core.h tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
     map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h log.cpp log.h \
     timer.cpp timer.h bitfield.h profiler.cpp profiler.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
-    text.cpp text.h emitter.cpp emitter.h numeric.h hash.cpp hash.h \
+    text.cpp text.h emitter.cpp emitter.h numeric.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
     lol/unit.h lol/debug.h \
-    lol/core/array.h lol/core/string.h \
+    lol/core/array.h lol/core/string.h lol/core/hash.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     \
@@ -39,6 +39,8 @@ liblol_a_SOURCES = \
     $(d3d9_sources) \
     $(android_sources) \
     $(bullet_sources) \
+    \
+    core/hash.cpp \
     \
     thread/threadbase.h thread/thread.h \
     \

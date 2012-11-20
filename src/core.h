@@ -77,6 +77,7 @@ static inline int isnan(float f)
 #include <lol/debug.h>
 #include <lol/core/array.h>
 #include <lol/core/string.h>
+#include <lol/core/hash.h>
 #include <lol/math/math.h>
 #include <lol/math/half.h>
 #include <lol/math/real.h>
@@ -111,7 +112,6 @@ static inline int isnan(float f)
 #include "world.h"
 
 // Other objects
-#include "hash.h"
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
