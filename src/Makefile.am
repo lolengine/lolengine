@@ -204,6 +204,8 @@ bullet_sources += \
 		bullet/LinearMath/btSerializer.cpp \
 		bullet/LinearMath/btConvexHull.cpp \
 		bullet/LinearMath/btConvexHullComputer.cpp \
+		bullet/LinearMath/btConvexHullComputer.h \
+		bullet/LinearMath/btGrahamScan2dConvexHull.h \
 		bullet/LinearMath/btHashMap.h \
 		bullet/LinearMath/btConvexHull.h \
 		bullet/LinearMath/btAabbUtil2.h \
@@ -237,6 +239,7 @@ bullet_sources += \
 		bullet/BulletCollision/NarrowPhaseCollision/btPersistentManifold.cpp \
 		bullet/BulletCollision/NarrowPhaseCollision/btConvexCast.cpp \
 		bullet/BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.cpp \
+		bullet/BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.h \
 		bullet/BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.cpp \
 		bullet/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.cpp \
 		bullet/BulletCollision/NarrowPhaseCollision/btGjkEpa2.cpp \
@@ -270,6 +273,7 @@ bullet_sources += \
 		bullet/BulletCollision/CollisionShapes/btCompoundShape.cpp \
 		bullet/BulletCollision/CollisionShapes/btConeShape.cpp \
 		bullet/BulletCollision/CollisionShapes/btConvexPolyhedron.cpp \
+		bullet/BulletCollision/CollisionShapes/btConvexPolyhedron.h \
 		bullet/BulletCollision/CollisionShapes/btMultiSphereShape.cpp \
 		bullet/BulletCollision/CollisionShapes/btUniformScalingShape.cpp \
 		bullet/BulletCollision/CollisionShapes/btSphereShape.cpp \
@@ -419,6 +423,7 @@ bullet_sources += \
 		bullet/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.cpp \
 		bullet/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.cpp \
 		bullet/BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.cpp \
+		bullet/BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.h \
 		bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.cpp \
 		bullet/BulletDynamics/ConstraintSolver/btTypedConstraint.cpp \
 		bullet/BulletDynamics/ConstraintSolver/btContactConstraint.cpp \
@@ -460,8 +465,11 @@ bullet_sources += \
 
 bullet_sources += \
 		bullet/BulletSoftBody/btDefaultSoftBodySolver.cpp \
+		bullet/BulletSoftBody/btDefaultSoftBodySolver.h \
 		bullet/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.cpp \
 		bullet/BulletSoftBody/btSoftBody.cpp \
+		bullet/BulletSoftBody/btSoftBodySolvers.h \
+		bullet/BulletSoftBody/btSoftBodyData.h \
 		bullet/BulletSoftBody/btSoftRigidCollisionAlgorithm.cpp \
 		bullet/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.cpp \
 		bullet/BulletSoftBody/btSoftRigidDynamicsWorld.cpp \
@@ -654,5 +662,8 @@ bullet_sources += \
 	bullet/LinearMath/btAlignedObjectArray.h \
 	bullet/LinearMath/btHashMap.h \
 	bullet/LinearMath/btQuickprof.h\
-	bullet/LinearMath/btSerializer.h
+	bullet/LinearMath/btSerializer.h \
+	bullet/Bullet-C-Api.h \
+	bullet/btBulletDynamicsCommon.h \
+	bullet/btBulletCollisionCommon.h
 
