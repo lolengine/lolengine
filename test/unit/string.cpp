@@ -127,6 +127,11 @@ LOLUNIT_FIXTURE(StringTest)
         String s2 = String::Printf("%d%x", 3, 10);
 
         LOLUNIT_ASSERT(s1 == s2);
+
+        String s3 = "abc 3";
+        String s4 = String::Printf("abc %d", 3);
+
+        LOLUNIT_ASSERT(s3 == s4);
     }
 };
 
