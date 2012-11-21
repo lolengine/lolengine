@@ -9,32 +9,32 @@
 //
 
 //
-// The Map class
-// -------------
-// A Map object is a collection of Layers and other information (to be
+// The LevelMap class
+// ------------------
+// A LevelMap object is a collection of Layers and other information (to be
 // determined later).
 //
 
-#if !defined __LOL_MAP_H__
-#define __LOL_MAP_H__
+#if !defined __LOL_LEVELMAP_H__
+#define __LOL_LEVELMAP_H__
 
 namespace lol
 {
 
-class MapData;
+class LevelMapData;
 
-class Map
+class LevelMap
 {
 public:
-    Map(char const *path);
-    ~Map();
+    LevelMap(char const *path);
+    ~LevelMap();
 
     void Render(int x, int y, int z);
     int GetWidth();
     int GetHeight();
 
 private:
-    MapData *data;
+    LevelMapData *data;
 };
 
 } /* namespace lol */

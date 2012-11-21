@@ -741,6 +741,9 @@
     <ClInclude Include="hash.h">
       <Filter>src\core</Filter>
     </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
     <ClInclude Include="audio.h">
       <Filter>src\...</Filter>
     </ClInclude>

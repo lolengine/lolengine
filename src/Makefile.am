@@ -18,6 +18,7 @@ liblol_a_SOURCES = \
     \
     lol/unit.h lol/debug.h \
     lol/core/types.h lol/core/array.h lol/core/string.h lol/core/hash.h \
+    lol/core/map.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     \
