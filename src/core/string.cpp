@@ -28,7 +28,9 @@ namespace lol
 
 String String::Printf(char const *format, ...)
 {
+#if defined __CELLOS_LV2__
     using std::vsnprintf;
+#endif
 
     String ret;
     va_list ap;
