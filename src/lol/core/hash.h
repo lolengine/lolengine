@@ -37,6 +37,12 @@ public:
     uint32_t operator()(char const *x);
 };
 
+template<> class Hash<String>
+{
+public:
+    uint32_t operator()(String const &s);
+};
+
 } /* namespace lol */
 
 #endif // __LOL_HASH_H__
