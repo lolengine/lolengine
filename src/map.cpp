@@ -25,12 +25,12 @@ namespace lol
 {
 
 /*
- * Map implementation class
+ * LevelMap implementation class
  */
 
-class MapData
+class LevelMapData
 {
-    friend class Map;
+    friend class LevelMap;
 
     static int const MAX_TILESETS = 128;
 
@@ -44,18 +44,18 @@ private:
 };
 
 /*
- * Public Map class
+ * Public LevelMap class
  */
 
-Map::Map(char const *path)
-  : data(new MapData())
+LevelMap::LevelMap(char const *path)
+  : data(new LevelMapData())
 {
     data->ntilers = 0;
     data->width = 0;
     data->height = 0;
 
     char tmp[BUFSIZ];
-    int gids[MapData::MAX_TILESETS];
+    int gids[LevelMapData::MAX_TILESETS];
     uint32_t *tiles = NULL;
     int level = 0, orientation = 0, ntiles = 0;
 
@@ -151,7 +151,7 @@ Map::Map(char const *path)
     fclose(fp);
 }
 
-Map::~Map()
+LevelMap::~LevelMap()
 {
     for (int i = 0; i < data->ntilers; i++)
         Tiler::Deregister(data->tilesets[i]);
@@ -160,18 +160,18 @@ Map::~Map()
     delete data;
 }
 
-void Map::Render(int x, int y, int z)
+void LevelMap::Render(int x, int y, int z)
 {
     for (int i = 0; i < data->m_layers.Count(); i++)
         data->m_layers[i]->Render(x, y, z);
 }
 
-int Map::GetWidth()
+int LevelMap::GetWidth()
 {
     return data->width * 32;
 }
 
-int Map::GetHeight()
+int LevelMap::GetHeight()
 {
     return data->height * 32;
 }
