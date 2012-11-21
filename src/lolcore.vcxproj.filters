@@ -733,10 +733,13 @@
       <Filter>src\platform\d3d9</Filter>
     </ClInclude>
     <ClInclude Include="array.h">
-      <Filter>src\...</Filter>
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="hash.h">
-      <Filter>src\...</Filter>
+      <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="audio.h">
       <Filter>src\...</Filter>

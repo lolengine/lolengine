@@ -17,7 +17,7 @@ liblol_a_SOURCES = \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
     lol/unit.h lol/debug.h \
-    lol/core/array.h lol/core/string.h lol/core/hash.h \
+    lol/core/types.h lol/core/array.h lol/core/string.h lol/core/hash.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     \
@@ -38,7 +38,6 @@ liblol_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources) \
-    $(bullet_sources) \
     \
     core/hash.cpp core/string.cpp \
     \
@@ -75,7 +74,9 @@ liblol_a_SOURCES = \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h \
-    debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
+    debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h \
+    \
+    $(bullet_sources)
 liblol_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)/bullet
 
 EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \

@@ -585,6 +585,7 @@
     <ClInclude Include="lol\core\array.h" />
     <ClInclude Include="lol\core\hash.h" />
     <ClInclude Include="lol\core\string.h" />
+    <ClInclude Include="lol\core\types.h" />
     <ClInclude Include="lol\debug.h" />
     <ClInclude Include="lol\math\half.h" />
     <ClInclude Include="lol\math\math.h" />

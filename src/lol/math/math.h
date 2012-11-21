@@ -29,12 +29,6 @@ namespace lol
 #undef min
 #undef max
 
-/* There are many reasons for wanting single-word type names, the most
- * important one being compilation speedups in our vector.h: we can hide
- * some global methods in namespaces that contain the name of the type,
- * but namespaces cannot have spaces in their names. */
-typedef long double ldouble;
-
 /* Standard cmath functions */
 static inline double sqrt(double const &x) { return std::sqrt(x); }
 static inline float sqrt(float const &x) { return std::sqrt(x); }

@@ -14,8 +14,8 @@
 // A very simple Hash class.
 //
 
-#if !defined __LOL_HASH_H__
-#define __LOL_HASH_H__
+#if !defined __LOL_CORE_HASH_H__
+#define __LOL_CORE_HASH_H__
 
 namespace lol
 {
@@ -31,6 +31,11 @@ template<> class Hash<uint32_t> { public: uint32_t operator()(uint32_t); };
 template<> class Hash<int64_t>  { public: uint32_t operator()(int64_t); };
 template<> class Hash<uint64_t> { public: uint32_t operator()(uint64_t); };
 
+template<> class Hash<half>     { public: uint32_t operator()(half); };
+template<> class Hash<float>    { public: uint32_t operator()(float); };
+template<> class Hash<double>   { public: uint32_t operator()(double); };
+template<> class Hash<ldouble>  { public: uint32_t operator()(ldouble); };
+
 template<> class Hash<char const *>
 {
 public:
@@ -45,5 +50,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __LOL_HASH_H__
+#endif // __LOL_CORE_HASH_H__
 
