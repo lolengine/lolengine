@@ -29,19 +29,20 @@ namespace lol
 String String::Printf(char const *format, ...)
 {
     String ret;
-
-    va_list ap, aq;
-    va_start(ap, format);
-    va_copy(aq, ap);
+    va_list ap;
 
     /* vsnprintf() tells us how many character we need, and we need to
      * add one for the terminating null byte. */
-    size_t needed = vsnprintf(NULL, 0, format, aq) + 1;
+    va_start(ap, format);
+    size_t needed = vsnprintf(NULL, 0, format, ap) + 1;
+    va_end(ap);
+
     ((Super &)ret).Reserve(needed);
     ret.m_count = needed;
-    vsnprintf(&ret[0], needed, format, ap);
 
-    va_end(aq);
+    /* We don’t use va_copy because Visual Studio 2010 does not support it. */
+    va_start(ap, format);
+    std::vsnprintf(&ret[0], needed, format, ap);
     va_end(ap);
 
     return ret;
