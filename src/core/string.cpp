@@ -28,6 +28,8 @@ namespace lol
 
 String String::Printf(char const *format, ...)
 {
+    using std::vsnprintf;
+
     String ret;
     va_list ap;
 
@@ -42,7 +44,7 @@ String String::Printf(char const *format, ...)
 
     /* We don’t use va_copy because Visual Studio 2010 does not support it. */
     va_start(ap, format);
-    std::vsnprintf(&ret[0], needed, format, ap);
+    vsnprintf(&ret[0], needed, format, ap);
     va_end(ap);
 
     return ret;
