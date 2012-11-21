@@ -1,0 +1,51 @@
+//
+// Lol Engine
+//
+// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include <cstdio>
+
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#endif
+
+#include <cstdarg>
+
+#include "core.h"
+
+namespace lol
+{
+
+String String::Printf(char const *format, ...)
+{
+    String ret;
+
+    va_list ap, aq;
+    va_start(ap, format);
+    va_copy(aq, ap);
+
+    /* vsnprintf() tells us how many character we need, and we need to
+     * add one for the terminating null byte. */
+    size_t needed = vsnprintf(NULL, 0, format, aq) + 1;
+    ((Super &)ret).Reserve(needed);
+    ret.m_count = needed;
+    vsnprintf(&ret[0], needed, format, ap);
+
+    va_end(aq);
+    va_end(ap);
+
+    return ret;
+}
+
+} /* namespace lol */
+

@@ -120,6 +120,14 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT(s1 != s2);
         LOLUNIT_ASSERT(!(s1 != s3));
     }
+
+    LOLUNIT_TEST(StringPrintf)
+    {
+        String s1 = "3a";
+        String s2 = String::Printf("%d%x", 3, 10);
+
+        LOLUNIT_ASSERT(s1 == s2);
+    }
 };
 
 } /* namespace lol */

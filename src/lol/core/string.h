@@ -70,7 +70,7 @@ public:
         return ret += s;
     }
 
-    inline String operator +=(String const &s)
+    inline String& operator +=(String const &s)
     {
         /* Be careful, we have a trailing zero we don't want! */
         --m_count;
@@ -84,7 +84,7 @@ public:
         return ret += c;
     }
 
-    inline String operator +=(char c)
+    inline String& operator +=(char c)
     {
         ((Super &)*this).Last() = c;
         ((Super &)*this).Push('\0');
@@ -107,6 +107,14 @@ public:
     {
         return !(*this == s);
     }
+
+#ifdef __GNUC__
+#   define LOL_FMT_ATTR(n, p) __attribute__((format(printf, n, p)))
+#else
+#   define LOL_FMT_ATTR(n, p)
+#endif
+    static String Printf(char const *format, ...) LOL_FMT_ATTR(1, 2);
+#undef LOL_FMT_ATTR
 };
 
 } /* namespace lol */
