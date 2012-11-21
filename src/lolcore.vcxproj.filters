@@ -11,6 +11,9 @@
     <Filter Include="src\debug">
       <UniqueIdentifier>{e056731c-5484-434a-965e-801c199c0366}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{a63b1fd6-3747-4a9f-9bd7-3f942133ad6b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\platform">
       <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
     </Filter>
@@ -179,7 +182,10 @@
       <Filter>src\...</Filter>
     </ClCompile>
     <ClCompile Include="hash.cpp">
-      <Filter>src\...</Filter>
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="string.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="layer.cpp">
       <Filter>src\...</Filter>

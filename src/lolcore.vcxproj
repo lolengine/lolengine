@@ -235,6 +235,7 @@
     <ClCompile Include="bullet\LinearMath\btSerializer.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="core\hash.cpp" />
+    <ClCompile Include="core\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />
     <ClCompile Include="debug\record.cpp" />
     <ClCompile Include="debug\stats.cpp" />

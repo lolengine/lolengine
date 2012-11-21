@@ -40,7 +40,7 @@ liblol_a_SOURCES = \
     $(android_sources) \
     $(bullet_sources) \
     \
-    core/hash.cpp \
+    core/hash.cpp core/string.cpp \
     \
     thread/threadbase.h thread/thread.h \
     \
