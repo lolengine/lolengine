@@ -122,7 +122,7 @@ uint32_t Hash<uint64_t>::operator ()(uint64_t x)
     return ret ^ 0xffffffffu;
 }
 
-uint32_t Hash<char const *>::operator ()(char const *s)
+static uint32_t HashCharString(char const *s)
 {
     uint32_t ret = 0xffffffffu, ch;
 
@@ -130,6 +130,16 @@ uint32_t Hash<char const *>::operator ()(char const *s)
         ret = data.crc32_table[(uint8_t)(ret ^ ch)] ^ (ret >> 8);
 
     return ret ^ 0xffffffffu;
+}
+
+uint32_t Hash<char const *>::operator ()(char const *s)
+{
+    return HashCharString(s);
+}
+
+uint32_t Hash<String>::operator ()(String const &s)
+{
+    return HashCharString(&s[0]);
 }
 
 } /* namespace lol */
