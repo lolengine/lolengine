@@ -199,11 +199,6 @@ private:
 };
 
 /*
- * The real type used for real numbers
- */
-typedef Real<16> real;
-
-/*
  * Mandatory forward declarations of template specialisations
  */
 template<> real::Real();

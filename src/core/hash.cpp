@@ -41,86 +41,116 @@ public:
 const data;
 
 /*
- * Public Hash classes
+ * Helper hash functions
+ */
+
+static inline uint32_t Hash8(uint8_t x)
+{
+    uint32_t ret = 0xffffffffu;
+    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
+    return ret ^ 0xffffffffu;
+}
+
+static inline uint32_t Hash16(uint16_t x)
+{
+    uint32_t ret = 0xffffffffu;
+    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
+    return ret ^ 0xffffffffu;
+}
+
+static inline uint32_t Hash32(uint32_t x)
+{
+    uint32_t ret = 0xffffffffu;
+    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
+    return ret ^ 0xffffffffu;
+}
+
+static inline uint32_t Hash64(uint64_t x)
+{
+    uint32_t ret = 0xffffffffu;
+    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 32))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 40))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 48))] ^ (ret >> 8);
+    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 56))] ^ (ret >> 8);
+    return ret ^ 0xffffffffu;
+}
+
+/*
+ * Integer hash functions
  */
 
 uint32_t Hash<int8_t>::operator ()(int8_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash8((uint8_t)x);
 }
 
 uint32_t Hash<uint8_t>::operator ()(uint8_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash8(x);
 }
 
 uint32_t Hash<int16_t>::operator ()(int16_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash16((uint16_t)x);
 }
 
 uint32_t Hash<uint16_t>::operator ()(uint16_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash16(x);
 }
 
 uint32_t Hash<int32_t>::operator ()(int32_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash32((uint32_t)x);
 }
 
 uint32_t Hash<uint32_t>::operator ()(uint32_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash32(x);
 }
 
 uint32_t Hash<int64_t>::operator ()(int64_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 32))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 40))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 48))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 56))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash64((uint64_t)x);
 }
 
 uint32_t Hash<uint64_t>::operator ()(uint64_t x)
 {
-    uint32_t ret = 0xffffffffu;
-    ret = data.crc32_table[(uint8_t)(ret ^ x)] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 8))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 16))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 24))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 32))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 40))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 48))] ^ (ret >> 8);
-    ret = data.crc32_table[(uint8_t)(ret ^ (x >> 56))] ^ (ret >> 8);
-    return ret ^ 0xffffffffu;
+    return Hash64(x);
 }
+
+/*
+ * Floating-point hash functions
+ */
+
+uint32_t Hash<half>::operator ()(half f)
+{
+    return Hash16(f.bits);
+}
+
+uint32_t Hash<float>::operator ()(float f)
+{
+    union { float tmp; uint32_t x; } u = { f };
+    return Hash32(u.x);
+}
+
+uint32_t Hash<double>::operator ()(double f)
+{
+    union { double tmp; uint64_t x; } u = { f };
+    return Hash64(u.x);
+}
+
+/*
+ * String and array hash functions
+ */
 
 static uint32_t HashCharString(char const *s)
 {

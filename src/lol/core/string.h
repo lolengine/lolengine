@@ -14,8 +14,8 @@
 // A very simple String class, based on Array.
 //
 
-#if !defined __LOL_STRING_H__
-#define __LOL_STRING_H__
+#if !defined __LOL_CORE_STRING_H__
+#define __LOL_CORE_STRING_H__
 
 #include <lol/core/array.h>
 
@@ -119,5 +119,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __LOL_STRING_H__
+#endif // __LOL_CORE_STRING_H__
 
