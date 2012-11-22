@@ -20,7 +20,55 @@
 namespace lol
 {
 
-template<typename K, typename V> class Map;
+/* A stupidly linear map for now */
+template<typename K, typename V> class Map : protected Hash<K>
+{
+public:
+    inline V const& operator[] (K const &key) const
+    {
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        for (int i = 0; i < m_array.Count(); ++i)
+            if (m_array[i].m1 == hash)
+                if (m_array[i].m2 == key)
+                    return m_array[i].m3;
+        return V();
+    }
+
+    inline V & operator[] (K const &key)
+    {
+        return const_cast<V &>((const_cast<Map<K,V> const &>(*this))[key]);
+    }
+
+    inline V & Set(K const &key, V const &val)
+    {
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        for (int i = 0; i < m_array.Count(); ++i)
+            if (m_array[i].m1 == hash)
+                if (m_array[i].m2 == key)
+                {
+                    m_array[i].m3.~V();
+                    return m_array[i].m3 = val;
+                }
+
+        m_array.Push(hash, key, val);
+        return m_array.Last().m3;
+    }
+
+    inline void Remove(K const &key)
+    {
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        for (int i = 0; i < m_array.Count(); ++i)
+            if (m_array[i].m1 == hash)
+                if (m_array[i].m2 == key)
+                {
+                    m_array.Remove(i);
+                    return;
+                }
+    }
+
+private:
+    Array<uint32_t, K, V> m_array;
+};
 
 } /* namespace lol */
 
