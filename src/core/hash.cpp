@@ -87,42 +87,42 @@ static inline uint32_t Hash64(uint64_t x)
  * Integer hash functions
  */
 
-uint32_t Hash<int8_t>::operator ()(int8_t x)
+uint32_t Hash<int8_t>::operator ()(int8_t x) const
 {
     return Hash8((uint8_t)x);
 }
 
-uint32_t Hash<uint8_t>::operator ()(uint8_t x)
+uint32_t Hash<uint8_t>::operator ()(uint8_t x) const
 {
     return Hash8(x);
 }
 
-uint32_t Hash<int16_t>::operator ()(int16_t x)
+uint32_t Hash<int16_t>::operator ()(int16_t x) const
 {
     return Hash16((uint16_t)x);
 }
 
-uint32_t Hash<uint16_t>::operator ()(uint16_t x)
+uint32_t Hash<uint16_t>::operator ()(uint16_t x) const
 {
     return Hash16(x);
 }
 
-uint32_t Hash<int32_t>::operator ()(int32_t x)
+uint32_t Hash<int32_t>::operator ()(int32_t x) const
 {
     return Hash32((uint32_t)x);
 }
 
-uint32_t Hash<uint32_t>::operator ()(uint32_t x)
+uint32_t Hash<uint32_t>::operator ()(uint32_t x) const
 {
     return Hash32(x);
 }
 
-uint32_t Hash<int64_t>::operator ()(int64_t x)
+uint32_t Hash<int64_t>::operator ()(int64_t x) const
 {
     return Hash64((uint64_t)x);
 }
 
-uint32_t Hash<uint64_t>::operator ()(uint64_t x)
+uint32_t Hash<uint64_t>::operator ()(uint64_t x) const
 {
     return Hash64(x);
 }
@@ -131,18 +131,18 @@ uint32_t Hash<uint64_t>::operator ()(uint64_t x)
  * Floating-point hash functions
  */
 
-uint32_t Hash<half>::operator ()(half f)
+uint32_t Hash<half>::operator ()(half f) const
 {
     return Hash16(f.bits);
 }
 
-uint32_t Hash<float>::operator ()(float f)
+uint32_t Hash<float>::operator ()(float f) const
 {
     union { float tmp; uint32_t x; } u = { f };
     return Hash32(u.x);
 }
 
-uint32_t Hash<double>::operator ()(double f)
+uint32_t Hash<double>::operator ()(double f) const
 {
     union { double tmp; uint64_t x; } u = { f };
     return Hash64(u.x);
@@ -162,12 +162,12 @@ static uint32_t HashCharString(char const *s)
     return ret ^ 0xffffffffu;
 }
 
-uint32_t Hash<char const *>::operator ()(char const *s)
+uint32_t Hash<char const *>::operator ()(char const *s) const
 {
     return HashCharString(s);
 }
 
-uint32_t Hash<String>::operator ()(String const &s)
+uint32_t Hash<String>::operator ()(String const &s) const
 {
     return HashCharString(&s[0]);
 }
