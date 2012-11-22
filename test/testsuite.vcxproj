@@ -41,10 +41,12 @@
     <ClCompile Include="unit\cmplx.cpp" />
     <ClCompile Include="unit\half.cpp" />
     <ClCompile Include="unit\image.cpp" />
+    <ClCompile Include="unit\map.cpp" />
     <ClCompile Include="unit\matrix.cpp" />
     <ClCompile Include="unit\quat.cpp" />
     <ClCompile Include="unit\real.cpp" />
     <ClCompile Include="unit\rotation.cpp" />
+    <ClCompile Include="unit\string.cpp" />
     <ClCompile Include="unit\trig.cpp" />
     <ClCompile Include="unit\vector.cpp" />
   </ItemGroup>
