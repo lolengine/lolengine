@@ -68,6 +68,9 @@
     <Filter Include="bullet">
       <UniqueIdentifier>{b946cc33-6677-4e16-b7ef-fa3ee393ec19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\lol\core">
+      <UniqueIdentifier>{e17b998c-d494-480b-ae29-5d1564f73327}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\image.cpp">
@@ -180,12 +183,6 @@
     </ClCompile>
     <ClCompile Include="gradient.cpp">
       <Filter>src\...</Filter>
-    </ClCompile>
-    <ClCompile Include="hash.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
-    <ClCompile Include="string.cpp">
-      <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="layer.cpp">
       <Filter>src\...</Filter>
@@ -646,6 +643,12 @@
     <ClCompile Include="gpu\lolfx.cpp">
       <Filter>src\gpu</Filter>
     </ClCompile>
+    <ClCompile Include="core\hash.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\string.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -731,18 +734,6 @@
     </ClInclude>
     <ClInclude Include="platform\d3d9\d3d9input.h">
       <Filter>src\platform\d3d9</Filter>
-    </ClInclude>
-    <ClInclude Include="array.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="hash.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="audio.h">
       <Filter>src\...</Filter>
@@ -1611,6 +1602,24 @@
     <ClInclude Include="platform\ps3\threadbase.h">
       <Filter>src\platform\ps3</Filter>
     </ClInclude>
+    <ClInclude Include="lol\core\array.h">
+      <Filter>src\lol\core</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\core\hash.h">
+      <Filter>src\lol\core</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\core\string.h">
+      <Filter>src\lol\core</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\core\types.h">
+      <Filter>src\lol\core</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\core\map.h">
+      <Filter>src\lol\core</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>src\...</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">
@@ -1625,6 +1634,8 @@
     <LolFxCompile Include="easymesh\shiny.lolfx">
       <Filter>src\easymesh</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="gpu\tile.lolfx" />
+    <LolFxCompile Include="gradient.lolfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y">
