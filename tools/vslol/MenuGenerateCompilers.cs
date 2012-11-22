@@ -197,6 +197,10 @@ namespace Lol.VisualStudio.Plugin
                 if (p.ExitCode != 0)
                 {
                     WriteToOutputPane("Error: " + executable + " exited with code " + p.ExitCode + "\n");
+                    if (arguments != "")
+                        WriteToOutputPane("Error: args: " + arguments + "\n");
+                    if (env != "")
+                        WriteToOutputPane("Error: env: " + env + "\n");
                     return false;
                 }
             }
