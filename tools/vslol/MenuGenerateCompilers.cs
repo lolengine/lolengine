@@ -115,6 +115,15 @@ namespace Lol.VisualStudio.Plugin
                 string flex_path = external_path + "\\external\\flex-2.5.35";
                 string bison_path = external_path + "\\external\\bison-2.4.2";
 
+                /* Workaround for an MSYS bug. If these directories don't
+                 * exist, fork() will fail. Yeah, wtf. */
+                try
+                {
+                    Directory.CreateDirectory(flex_path + "\\etc");
+                    Directory.CreateDirectory(bison_path + "\\etc");
+                }
+                catch (Exception e) { }
+
                 // Run flex on all the .l files
                 foreach (ProjectItem item in ParseProjectItems(project))
                 {
