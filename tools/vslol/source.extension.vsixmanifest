@@ -3,7 +3,7 @@
   <Identifier Id="VsLol.Sample">
     <Name>VsLol</Name>
     <Author>Lol</Author>
-    <Version>1.0.0.2</Version>
+    <Version>1.0.0.3</Version>
     <Description xml:space="preserve">Lol Engine Productivity Tools.</Description>
     <Locale>1033</Locale>
     <InstalledByMsi>false</InstalledByMsi>
