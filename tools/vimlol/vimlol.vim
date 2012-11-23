@@ -1,21 +1,25 @@
-
-""
-"" Experimental Lol Engine Vim plugin
-""
-"" More info here:
-"" http://lol.zoy.org/wiki/dev/setup/vim
-""
-
-
-""
-"" Add syntax highlighting for new C++ types
-""
-
+"""
+""" Experimental Lol Engine Vim plugin
+"""
+""" More info here:
+""" http://lol.zoy.org/wiki/dev/setup/vim
+"""
+"
+"
+""" XXX: intentionally no empty lines because some versions of Vim
+""" for Windows will be unable to parse them if a version control
+""" system has added CRLF line endings.
+"
+"
+"""
+""" Add syntax highlighting for new C++ types
+"""
+"
 " some custom base types
 au Syntax cpp
    \ syn keyword cType
    \ half ldouble lldouble real uint
-
+"
 " GLSL types and the Lol Engine extensions
 au Syntax cpp
    \ syn keyword cType
@@ -33,16 +37,16 @@ au Syntax cpp
    \ uvec2 ucmplx uvec3 uvec4 uquat umat2 umat3 umat4
    \ i64vec2 i64cmplx i64vec3 i64vec4 i64quat i64mat2 i64mat3 i64mat4
    \ u64vec2 u64cmplx u64vec3 u64vec4 u64quat u64mat2 u64mat3 u64mat4
-
+"
 " HLSL types
 au Syntax cpp
    \ syn keyword cType
    \ int2 int3 int4 int2x2 int3x3 int4x4
    \ float2 float3 float4 float2x2 float3x3 float4x4
-
-
-""
-"" For now, pretend .lolfx is C++
-""
+"
+"
+"""
+""" For now, pretend .lolfx is C++
+"""
 au BufRead,BufNewFile *.lolfx let b:current_syntax = "cpp"
-
+"
