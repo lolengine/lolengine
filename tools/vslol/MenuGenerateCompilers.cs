@@ -91,14 +91,14 @@ namespace Lol.VisualStudio.Plugin
             if (cmd == null)
                 return;
 
-            cmd.ClearOutputPane();
-            cmd.WriteToOutputPane("------ Build started: Generating Compilers ------\n");
+            Logger.Clear();
+            Logger.Info("------ Build started: Generating Compilers ------\n");
 
             int scanner_count = 0, parser_count = 0, error_count = 0;
 
             foreach (Project project in cmd.projects)
             {
-                cmd.WriteToOutputPane("Project " + project.Name + "\n");
+                Logger.Info("Project " + project.Name + "\n");
 
                 string project_path = Path.GetDirectoryName(project.FullName);
 
@@ -137,7 +137,7 @@ namespace Lol.VisualStudio.Plugin
 
                     if (item.Name.EndsWith("-scanner.l"))
                     {
-                        cmd.WriteToOutputPane("flex.exe " + filename + "\n");
+                        Logger.Info("flex.exe " + filename + "\n");
 
                         string basename = Path.GetFileName(filename.Substring(0, filename.LastIndexOf("-scanner.l")));
                         if (!cmd.Run(project_path,
@@ -153,7 +153,7 @@ namespace Lol.VisualStudio.Plugin
 
                     if (item.Name.EndsWith("-parser.y"))
                     {
-                        cmd.WriteToOutputPane("bison.exe " + filename + "\n");
+                        Logger.Info("bison.exe " + filename + "\n");
 
                         string basename = Path.GetFileName(filename.Substring(0, filename.LastIndexOf("-parser.y")));
                         if (!cmd.Run(project_path,
@@ -173,7 +173,7 @@ namespace Lol.VisualStudio.Plugin
                 }
             }
 
-            cmd.WriteToOutputPane(string.Format("========== Done: {0} scanner(s), {1} parser(s), {2} error(s) ==========\n",
+            Logger.Info(string.Format("========== Done: {0} scanner(s), {1} parser(s), {2} error(s) ==========\n",
                                   scanner_count, parser_count, error_count));
         }
 
@@ -202,50 +202,24 @@ namespace Lol.VisualStudio.Plugin
                 string output = p.StandardError.ReadToEnd()
                               + p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
-                WriteToOutputPane(output);
+                Logger.Info(output);
                 if (p.ExitCode != 0)
                 {
-                    WriteToOutputPane("Error: " + executable + " exited with code " + p.ExitCode + "\n");
+                    Logger.Info("Error: " + executable + " exited with code " + p.ExitCode + "\n");
                     if (arguments != "")
-                        WriteToOutputPane("Error: args: " + arguments + "\n");
+                        Logger.Info("Error: args: " + arguments + "\n");
                     if (env != "")
-                        WriteToOutputPane("Error: env: " + env + "\n");
+                        Logger.Info("Error: env: " + env + "\n");
                     return false;
                 }
             }
             catch (Exception e)
             {
-                WriteToOutputPane("Error: failed to launch " + executable + "\n");
+                Logger.Info("Error: failed to launch " + executable + "\n");
                 return false;
             }
 
             return true;
-        }
-
-        private void ClearOutputPane()
-        {
-            IVsOutputWindow win = sp.GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-            if (null == win)
-            {
-                Trace.WriteLine("Failed to get a reference to IVsOutputWindow");
-                pane = null;
-            }
-
-            Guid guid = Microsoft.VisualStudio.VSConstants.OutputWindowPaneGuid.BuildOutputPane_guid;
-            if (Microsoft.VisualStudio.ErrorHandler.Failed(win.GetPane(ref guid, out pane)))
-            {
-                Trace.WriteLine("Failed to get a reference to the Output window Build pane");
-                pane = null;
-            }
-
-            pane.Activate();
-            pane.Clear();
-        }
-
-        private void WriteToOutputPane(string s)
-        {
-            if (pane != null)
-                pane.OutputString(s);
         }
 
         private static IEnumerable<ProjectItem> ParseProjectItems(object o)
@@ -267,7 +241,6 @@ namespace Lol.VisualStudio.Plugin
         }
 
         private ServiceProvider sp;
-        private IVsOutputWindowPane pane;
 
         private List<Project> projects;
     }
