@@ -5,7 +5,7 @@ include $(top_srcdir)/build/autotools/common.am
 SUBDIRS = build src tutorial test tools games people
 DIST_SUBDIRS = $(SUBDIRS) binaries
 
-EXTRA_DIST = bootstrap TODO
+EXTRA_DIST = bootstrap COPYING TODO
 AUTOMAKE_OPTIONS = dist-bzip2
 ACLOCAL_AMFLAGS = -I build/autotools/m4
 
