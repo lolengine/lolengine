@@ -47,7 +47,7 @@
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_SCALEZ T_MIRRORZ
-%token T_TRANSLATE T_SCALE
+%token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING
 %token T_CHAMFER
 
 %token T_CYLINDER T_BOX T_SMOOTHCHAMFBOX T_FLATCHAMFBOX T_SPHERE T_CAPSULE
@@ -134,6 +134,7 @@ transform_command:
   | T_MIRRORX           { mc.m_mesh.MirrorX(); }
   | T_MIRRORY           { mc.m_mesh.MirrorY(); }
   | T_MIRRORZ           { mc.m_mesh.MirrorZ(); }
+  | T_TOGGLESCALEWINDING { mc.m_mesh.ToggleScaleWinding(); }
     ;
 
 primitive_command:

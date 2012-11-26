@@ -41,7 +41,7 @@ namespace lol
 {
 
 EasyMesh::EasyMesh()
-  : m_color(0), m_color2(0)
+  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0)
 {
     m_cursors.Push(0, 0);
 }
@@ -128,6 +128,11 @@ void EasyMesh::Render(mat4 const &model, float damage)
                                      0, m_gpu.indexcount);
     m_gpu.ibo->Unbind();
     m_gpu.vdecl->Unbind();
+}
+
+void EasyMesh::ToggleScaleWinding()
+{
+    m_ignore_winding_on_scale = !m_ignore_winding_on_scale;
 }
 
 void EasyMesh::SetCurColor(vec4 const &color)
@@ -320,7 +325,7 @@ void EasyMesh::Scale(vec3 const &s)
     }
 
     /* Flip winding if the scaling involves mirroring */
-    if (s.x * s.y * s.z < 0)
+    if (!m_ignore_winding_on_scale && s.x * s.y * s.z < 0)
     {
         for (int i = m_cursors.Last().m2; i < m_indices.Count(); i += 3)
         {

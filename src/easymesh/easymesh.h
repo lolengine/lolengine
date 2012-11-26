@@ -35,6 +35,7 @@ public:
     void OpenBrace();
     void CloseBrace();
 
+	void ToggleScaleWinding();
     void SetCurColor(vec4 const &color);
     void SetCurColor2(vec4 const &color);
 
@@ -93,6 +94,7 @@ private:
     Array<uint16_t> m_indices;
     Array<vec3, vec3, vec4> m_vert;
     Array<int, int> m_cursors;
+	bool m_ignore_winding_on_scale;
 
     /* FIXME: put this in a separate class so that we can copy meshes. */
     struct
