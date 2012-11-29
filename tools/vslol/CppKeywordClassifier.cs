@@ -55,16 +55,19 @@ namespace Lol.VisualStudio.Plugin
             m_customclass_type = registry.GetClassificationType("LolCustomClass");
 
             string tmp = @"\b(";
-            tmp += "void|int|unsigned|char|short|long|float|double|";
-            tmp += "class|struct|template|const|static|volatile|inline|namespace|";
+            tmp += "void|bool|int|unsigned|char|short|long|float|double|ldouble|";
+            tmp += "class|struct|union|template|const|static|extern|volatile|inline|namespace|";
             if (type.IsOfType("lolfx"))
                 tmp += "attribute|varying|uniform|in|out|";
             if (type.IsOfType("csharp"))
                 tmp += "var|string|internal|sealed|public|private|";
             if (!type.IsOfType("csharp"))
-                tmp += "vec2|vec3|vec4|quat|mat2|mat3|mat4|";
+                tmp += "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)|";
             if (type.IsOfType("c/c++"))
-                tmp += "real|half|";
+            {
+                tmp += "u?int(8|16|32|64|ptr)_t|";
+                tmp += "real|half|explicit|typename|typedef|";
+            }
             tmp += @")\b";
             m_regex = new Regex(tmp);
         }
