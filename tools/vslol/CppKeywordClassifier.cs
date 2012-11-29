@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Utilities;
 
@@ -18,29 +19,16 @@ namespace Lol.VisualStudio.Plugin
     internal class LolClassifierProvider : IClassifierProvider
     {
         [Import]
-        internal IClassificationTypeRegistryService m_class_registry = null; /* Set via MEF */
+        internal IClassificationTypeRegistryService m_type_registry = null; /* Set via MEF */
 
-        //[Import]
-        //internal IClassificationFormatMapService m_lol = null;
+        [Import]
+        internal IClassificationFormatMapService m_format_map = null;
 
         public IClassifier GetClassifier(ITextBuffer buffer)
         {
-            //var test = m_lol.GetClassificationFormatMap("Text Editor");
-            //string[] foo = { "Comment", "Keyword", "C/C++ User Keywords", "Call Return", "HTML Comment" };
-            //foreach (var s in foo)
-            //{
-            //    var type = m_class_registry.GetClassificationType(s);
-            //    if (type == null)
-            //        continue;
-            //    var prop = test.GetExplicitTextProperties(type);
-            //    if (prop == null)
-            //        continue;
-            //    var c1 = prop.ForegroundBrush as SolidColorBrush;
-            //    var c2 = prop.BackgroundBrush as SolidColorBrush;
-            //    Logger.Info("[" + s + "]: " + c1.ToString() + " " + c2.ToString() + "\n");
-            //}
+            LolGenericFormat.SetRegistry(m_type_registry, m_format_map);
 
-            return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_class_registry, buffer.ContentType); });
+            return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_type_registry, buffer.ContentType); });
         }
     }
 
@@ -60,7 +48,7 @@ namespace Lol.VisualStudio.Plugin
             if (type.IsOfType("lolfx"))
                 tmp += "attribute|varying|uniform|in|out|";
             if (type.IsOfType("csharp"))
-                tmp += "var|string|internal|sealed|public|private|";
+                tmp += "var|string|internal|sealed|public|private|protected|";
             if (!type.IsOfType("csharp"))
                 tmp += "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)|";
             if (type.IsOfType("c/c++"))
@@ -91,6 +79,46 @@ namespace Lol.VisualStudio.Plugin
         public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
     }
 
+    internal class LolGenericFormat : ClassificationFormatDefinition
+    {
+        static IClassificationTypeRegistryService m_type_registry;
+        static IClassificationFormatMapService m_format_map;
+
+        public static void SetRegistry(IClassificationTypeRegistryService type_registry,
+                                       IClassificationFormatMapService format_map)
+        {
+            m_type_registry = type_registry;
+            m_format_map = format_map;
+        }
+
+        protected void CopyStyleColor(string category)
+        {
+            if (m_type_registry == null || m_format_map == null)
+                return;
+
+            var map = m_format_map.GetClassificationFormatMap("Text Editor");
+            if (map == null)
+                return;
+
+            //string[] foo = { "Comment", "Keyword", "C/C++ User Keywords", "Call Return", "HTML Comment" , "User Types", "User Types (Type parameters)", "User Types (Value types)"};
+
+            var type = m_type_registry.GetClassificationType(category);
+            if (type == null)
+                return;
+
+            var prop = map.GetExplicitTextProperties(type);
+            if (prop == null)
+                return;
+
+            var c1 = prop.ForegroundBrush as SolidColorBrush;
+            if (c1 != null && c1.Color != Colors.Transparent)
+                this.ForegroundColor = c1.Color;
+            var c2 = prop.BackgroundBrush as SolidColorBrush;
+            if (c2 != null && c2.Color != Colors.Transparent)
+                this.BackgroundColor = c1.Color;
+        }
+    }
+
     internal static class LolClassifierClassificationDefinition
     {
         [Export(typeof(ClassificationTypeDefinition))]
@@ -103,16 +131,15 @@ namespace Lol.VisualStudio.Plugin
     [Name(LolCppTypeFormat.m_name)]
     [UserVisible(true)]
     [Order(After = Priority.Default)] /* Override the Visual Studio classifiers */
-    internal sealed class LolCppTypeFormat : ClassificationFormatDefinition
+    internal sealed class LolCppTypeFormat : LolGenericFormat
     {
         public const string m_name = "LolCustomClass";
         public LolCppTypeFormat()
         {
             this.DisplayName = "C/C++ Types and Qualifiers";
-            //this.BackgroundColor = Colors.BlueViolet;
             this.ForegroundColor = Colors.Lime;
             this.IsBold = true;
-            //this.TextDecorations = System.Windows.TextDecorations.Underline;
+            //CopyStyleColor("User Types");
         }
     }
 }
