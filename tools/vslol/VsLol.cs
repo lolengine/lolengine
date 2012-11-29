@@ -92,29 +92,42 @@ namespace Lol.VisualStudio.Plugin
                 if (Microsoft.VisualStudio.ErrorHandler.Failed(m_window.GetPane(ref guidBuild, out m_pane)))
                     m_pane = null;
             }
+
+            if (m_pane != null)
+                m_pane.Activate();
         }
 
         public static void Clear()
         {
             OpenBuildPane();
 
-            if (m_pane != null)
+            if (m_pane == null)
             {
-                m_pane.Activate();
-                m_pane.Clear();
+                m_backlog = "";
+                return;
             }
+
+            m_pane.Clear();
         }
 
         public static void Info(string s)
         {
             OpenBuildPane();
 
-            if (m_pane != null)
-                m_pane.OutputString(s);
+            if (m_pane == null)
+            {
+                m_backlog += s;
+                return;
+            }
+
+            m_pane.OutputString(m_backlog);
+            m_backlog = "";
+            m_pane.OutputString(s);
         }
 
         private static IVsOutputWindow m_window = null;
         private static IVsOutputWindowPane m_pane = null;
+        private static string m_backlog = "";
     }
 
     internal static class GuidsList
