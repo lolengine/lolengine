@@ -20,26 +20,43 @@ namespace Lol.VisualStudio.Plugin
     {
         [Import]
         internal IClassificationTypeRegistryService m_type_registry = null; /* Set via MEF */
-
+        [Import]
+        internal IClassifierAggregatorService m_aggregator = null;
         [Import]
         internal IClassificationFormatMapService m_format_map = null;
 
+        internal static bool m_inprogress = false;
+
         public IClassifier GetClassifier(ITextBuffer buffer)
         {
+            /* Avoid infinite recursion */
+            if (m_inprogress)
+                return null;
+
             LolGenericFormat.SetRegistry(m_type_registry, m_format_map);
 
-            return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_type_registry, buffer.ContentType); });
+            try
+            {
+                m_inprogress = true;
+                return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_type_registry, m_aggregator.GetClassifier(buffer), buffer.ContentType); });
+            }
+            finally { m_inprogress = false; }
         }
     }
 
     class CppKeywordClassifier : IClassifier
     {
+        private IClassifier m_classifier;
+
         private IClassificationType m_customclass_type;
-        private Regex m_regex;
+        private Regex m_customclass_regex;
 
         internal CppKeywordClassifier(IClassificationTypeRegistryService registry,
+                                      IClassifier classifier,
                                       IContentType type)
         {
+            m_classifier = classifier;
+
             m_customclass_type = registry.GetClassificationType("LolCustomClass");
 
             string tmp = @"\b(";
@@ -56,21 +73,30 @@ namespace Lol.VisualStudio.Plugin
                 tmp += "u?int(8|16|32|64|ptr)_t|";
                 tmp += "real|half|explicit|typename|typedef|";
             }
+            tmp = tmp.Remove(tmp.Length - 1);
             tmp += @")\b";
-            m_regex = new Regex(tmp);
+            m_customclass_regex = new Regex(tmp);
         }
 
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
         {
             List<ClassificationSpan> ret = new List<ClassificationSpan>();
 
-            string tmp = span.GetText();
-            var matches = m_regex.Matches(tmp);
-            foreach (Match m in matches)
+            foreach (ClassificationSpan cs in m_classifier.GetClassificationSpans(span))
             {
-                Span newspan = new Span(span.Start.Position + m.Index, m.Length);
-                SnapshotSpan newsnapshot = new SnapshotSpan(span.Snapshot, newspan);
-                ret.Add(new ClassificationSpan(newsnapshot, m_customclass_type));
+                string cs_class = cs.ClassificationType.Classification.ToLower();
+
+                /* Only apply our rules if we found a keyword or an identifier */
+                if (cs_class == "keyword" || cs_class == "identifier")
+                {
+                    if (m_customclass_regex.IsMatch(cs.Span.GetText()))
+                    {
+                        ret.Add(new ClassificationSpan(cs.Span, m_customclass_type));
+                        continue;
+                    }
+                }
+
+                ret.Add(cs);
             }
 
             return ret;
