@@ -64,7 +64,7 @@ class CppKeywordClassifier : IClassifier
 
     private static const string[] m_all_types =
     {
-        "void|bool|int|signed|unsigned|char|short|long|float|double";
+        "void|bool|int|signed|unsigned|char|short|long|float|double",
         "class|struct|union|template|namespace|typename|typedef",
         "inline|restrict|export|explicit|mutable",
         "static|register|auto|volatile|extern|const"
