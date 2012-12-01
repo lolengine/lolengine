@@ -64,16 +64,19 @@ class CppKeywordClassifier : IClassifier
 
     private static const string[] m_all_types =
     {
-        "auto|void|bool|int|unsigned|char|short|long|float|double";
+        "void|bool|int|signed|unsigned|char|short|long|float|double";
         "class|struct|union|template|namespace|typename|typedef",
-        "const|static|extern|volatile|inline|explicit"
+        "inline|restrict|export|explicit|mutable",
+        "static|register|auto|volatile|extern|const"
     };
 
     private static const string[] m_cpp_types =
     {
-        "u?int(8|16|32|64|ptr)_t",
-        "(wchar|size|ssize)_t",
-        "va_list",
+        "u?int(8|16|32|64|ptr|max)_t",
+        "u?int_(least|fast)(8|16|32|64)_t",
+        "(wchar|char16|char32|size|ssize|off|ptrdiff)_t",
+        "(sig_atomic|fpos|clock|time|div|ldiv)_t",
+        "va_list|jmp_buf|FILE|DIR",
     };
 
     /* ldouble real half
