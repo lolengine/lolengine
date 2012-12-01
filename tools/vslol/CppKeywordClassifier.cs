@@ -60,8 +60,8 @@ class CppKeywordClassifier : IClassifier
 {
     private IClassifier m_classifier;
 
-    private IClassificationType m_types_type, m_constant_type;
-    private Regex m_types_regex, m_constant_regex;
+    private IClassificationType m_types_type, m_constant_type, m_normal_type;
+    private Regex m_types_regex, m_constant_regex, m_normal_regex;
 
     private static string[] m_all_types =
     {
@@ -121,37 +121,55 @@ class CppKeywordClassifier : IClassifier
         "gl_Position|gl_FragColor",
     };
 
+    private static string[] m_all_normal =
+    {
+    };
+
+    private static string[] m_cpp_normal =
+    {
+        "interface|delegate|event|finally",
+        "gcnew|generic|initonly|property|sealed",
+    };
+
     internal CppKeywordClassifier(IClassificationTypeRegistryService registry,
                                   IClassifier classifier,
                                   IContentType type)
     {
         m_classifier = classifier;
 
-        /* Regex for types and specifiers */
         m_types_type = registry.GetClassificationType("LolAnyType");
-
-        List<string> types_list = m_all_types.ToList();
-        if (type.IsOfType("c/c++"))
-            types_list = types_list.Concat(m_cpp_types).ToList();
-        if (type.IsOfType("csharp"))
-            types_list = types_list.Concat(m_csharp_types).ToList();
-        if (type.IsOfType("lolfx"))
-            types_list = types_list.Concat(m_lolfx_types).ToList();
-        m_types_regex =
-            new Regex(@"\b(" + String.Join("|", types_list.ToArray()) + @")\b");
-
-        /* Regex for constant words */
+        m_normal_type = registry.GetClassificationType("LolAnyIdentifier");
         m_constant_type = registry.GetClassificationType("LolAnyConstant");
 
+        List<string> types_list = m_all_types.ToList();
         List<string> constants_list = m_all_constants.ToList();
+        List<string> normals_list = m_all_normal.ToList();
+
         if (type.IsOfType("c/c++"))
+        {
+            types_list = types_list.Concat(m_cpp_types).ToList();
             constants_list = constants_list.Concat(m_cpp_constants).ToList();
+            normals_list = normals_list.Concat(m_cpp_normal).ToList();
+        }
+
         if (type.IsOfType("csharp"))
+        {
+            types_list = types_list.Concat(m_csharp_types).ToList();
             constants_list = constants_list.Concat(m_csharp_constants).ToList();
+        }
+
         if (type.IsOfType("lolfx"))
+        {
+            types_list = types_list.Concat(m_lolfx_types).ToList();
             constants_list = constants_list.Concat(m_lolfx_constants).ToList();
+        }
+
+        m_types_regex =
+            new Regex("^(" + String.Join("|", types_list.ToArray()) + ")$");
         m_constant_regex =
-            new Regex(@"\b(" + String.Join("|", constants_list.ToArray()) + @")\b");
+            new Regex("^(" + String.Join("|", constants_list.ToArray()) + ")$");
+        m_normal_regex =
+            new Regex("^(" + String.Join("|", normals_list.ToArray()) + ")$");
     }
 
     public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
@@ -174,6 +192,12 @@ class CppKeywordClassifier : IClassifier
                 if (m_constant_regex.IsMatch(cs.Span.GetText()))
                 {
                     ret.Add(new ClassificationSpan(cs.Span, m_constant_type));
+                    continue;
+                }
+
+                if (m_normal_regex.IsMatch(cs.Span.GetText()))
+                {
+                    ret.Add(new ClassificationSpan(cs.Span, m_normal_type));
                     continue;
                 }
             }
@@ -242,6 +266,10 @@ internal static class LolClassifierClassificationDefinition
     [Export(typeof(ClassificationTypeDefinition))]
     [Name(LolCppConstantFormat.m_name)]
     internal static ClassificationTypeDefinition LolCustomConstantType = null;
+
+    [Export(typeof(ClassificationTypeDefinition))]
+    [Name(LolCppIdentifierFormat.m_name)]
+    internal static ClassificationTypeDefinition LolCustomIdentifierType = null;
 }
 
 [Export(typeof(EditorFormatDefinition))]
@@ -254,7 +282,7 @@ internal sealed class LolCppTypeFormat : LolGenericFormat
     public const string m_name = "LolAnyType";
     public LolCppTypeFormat()
     {
-        this.DisplayName = "C/C++ Types and Qualifiers";
+        this.DisplayName = "C/C++ Types and Qualifiers (VsLol)";
         this.ForegroundColor = Colors.Lime;
         this.ForegroundOpacity = 1.0;
         this.IsBold = true;
@@ -272,11 +300,29 @@ internal sealed class LolCppConstantFormat : LolGenericFormat
     public const string m_name = "LolAnyConstant";
     public LolCppConstantFormat()
     {
-        this.DisplayName = "C/C++ Constants";
+        this.DisplayName = "C/C++ Constants (VsLol)";
         this.ForegroundColor = Colors.Magenta;
         this.ForegroundOpacity = 1.0;
         this.IsBold = true;
         //CopyStyleColor("User Types");
+    }
+}
+
+[Export(typeof(EditorFormatDefinition))]
+[ClassificationType(ClassificationTypeNames = LolCppIdentifierFormat.m_name)]
+[Name(LolCppIdentifierFormat.m_name)]
+[UserVisible(true)]
+[Order(After = Priority.Default)] /* Override the Visual Studio classifiers */
+internal sealed class LolCppIdentifierFormat : LolGenericFormat
+{
+    public const string m_name = "LolAnyIdentifier";
+    public LolCppIdentifierFormat()
+    {
+        this.DisplayName = "C/C++ Identifiers (VsLol)";
+        this.ForegroundColor = Colors.Silver;
+        this.ForegroundOpacity = 1.0;
+        this.IsBold = false;
+        CopyStyleColor(PredefinedClassificationTypeNames.Identifier);
     }
 }
 
