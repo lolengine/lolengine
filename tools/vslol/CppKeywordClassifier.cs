@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
@@ -62,7 +63,7 @@ class CppKeywordClassifier : IClassifier
     private IClassificationType m_types_type, m_constant_type;
     private Regex m_types_regex, m_constant_regex;
 
-    private static const string[] m_all_types =
+    private static string[] m_all_types =
     {
         "void|bool|int|signed|unsigned|char|short|long|float|double",
         "class|struct|union|template|namespace|typename|typedef",
@@ -70,7 +71,7 @@ class CppKeywordClassifier : IClassifier
         "static|register|auto|volatile|extern|const"
     };
 
-    private static const string[] m_cpp_types =
+    private static string[] m_cpp_types =
     {
         "u?int(8|16|32|64|ptr|max)_t",
         "u?int_(least|fast)(8|16|32|64)_t",
@@ -83,25 +84,25 @@ class CppKeywordClassifier : IClassifier
        "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)";
      */
 
-    private static const string[] m_csharp_types =
+    private static string[] m_csharp_types =
     {
         "var|string",
         "out|ref|internal|sealed|public|private|protected|override"
     };
 
-    private static const string[] m_lolfx_types =
+    private static string[] m_lolfx_types =
     {
         "attribute|varying|uniform|in|out",
         "int|uint",
         "(|[dui])(vec|mat)[234]"
     };
 
-    private static const string[] m_all_constants =
+    private static string[] m_all_constants =
     {
         "true|false"
     };
 
-    private static const string[] m_cpp_constants =
+    private static string[] m_cpp_constants =
     {
         "NULL|nullptr",
         "EXIT_SUCCESS|EXIT_FAILURE",
@@ -110,12 +111,12 @@ class CppKeywordClassifier : IClassifier
         "SIG(TERM|CHLD|CONT|STOP|TSTP|TTIN|TTOU)"
     };
 
-    private static const string[] m_csharp_constants =
+    private static string[] m_csharp_constants =
     {
         "null",
     };
 
-    private static const string[] m_lolfx_constants =
+    private static string[] m_lolfx_constants =
     {
         "gl_Position|gl_FragColor",
     };
