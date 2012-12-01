@@ -30,7 +30,7 @@ namespace lol
 internal class LolClassifierProvider : IClassifierProvider
 {
     [Import]
-    internal IClassificationTypeRegistryService m_type_registry = null; /* Set via MEF */
+    internal IClassificationTypeRegistryService m_type_registry = null;
     [Import]
     internal IClassifierAggregatorService m_aggregator = null;
     [Import]
@@ -59,8 +59,63 @@ class CppKeywordClassifier : IClassifier
 {
     private IClassifier m_classifier;
 
-    private IClassificationType m_customclass_type, m_constant_type;
-    private Regex m_customclass_regex, m_constant_regex;
+    private IClassificationType m_types_type, m_constant_type;
+    private Regex m_types_regex, m_constant_regex;
+
+    private static const string[] m_all_types =
+    {
+        "auto|void|bool|int|unsigned|char|short|long|float|double";
+        "class|struct|union|template|namespace|typename|typedef",
+        "const|static|extern|volatile|inline|explicit"
+    };
+
+    private static const string[] m_cpp_types =
+    {
+        "u?int(8|16|32|64|ptr)_t",
+        "(wchar|size|ssize)_t",
+        "va_list",
+    };
+
+    /* ldouble real half
+       "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)";
+     */
+
+    private static const string[] m_csharp_types =
+    {
+        "var|string",
+        "out|ref|internal|sealed|public|private|protected|override"
+    };
+
+    private static const string[] m_lolfx_types =
+    {
+        "attribute|varying|uniform|in|out",
+        "int|uint",
+        "(|[dui])(vec|mat)[234]"
+    };
+
+    private static const string[] m_all_constants =
+    {
+        "true|false"
+    };
+
+    private static const string[] m_cpp_constants =
+    {
+        "NULL|nullptr",
+        "EXIT_SUCCESS|EXIT_FAILURE",
+        "M_(E|LOG(2|10)E|LN2|LN10|PI|PI_2|PI_4|1_PI|2_PI|2_SQRTPI|SQRT(2|1_2))",
+        "SIG(HUP|INT|QUIT|ILL|TRAP|ABRT|FPE|KILL|USR1|SEGV|USR2|PIPE|ALRM)",
+        "SIG(TERM|CHLD|CONT|STOP|TSTP|TTIN|TTOU)"
+    };
+
+    private static const string[] m_csharp_constants =
+    {
+        "null",
+    };
+
+    private static const string[] m_lolfx_constants =
+    {
+        "gl_Position|gl_FragColor",
+    };
 
     internal CppKeywordClassifier(IClassificationTypeRegistryService registry,
                                   IClassifier classifier,
@@ -69,39 +124,30 @@ class CppKeywordClassifier : IClassifier
         m_classifier = classifier;
 
         /* Regex for types and specifiers */
-        m_customclass_type = registry.GetClassificationType("LolCustomClass");
+        m_types_type = registry.GetClassificationType("LolAnyType");
 
-        string tmp = @"\b(";
-        tmp += "void|bool|int|unsigned|char|short|long|float|double|ldouble|";
-        tmp += "class|struct|union|template|const|static|extern|volatile|inline|namespace|";
-        if (type.IsOfType("lolfx"))
-            tmp += "attribute|varying|uniform|in|out|";
-        if (type.IsOfType("csharp"))
-            tmp += "var|out|ref|string|internal|sealed|public|private|protected|override|";
-        if (!type.IsOfType("csharp"))
-            tmp += "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)|";
+        List<string> types_list = m_all_types.ToList();
         if (type.IsOfType("c/c++"))
-        {
-            tmp += "u?int(8|16|32|64|ptr)_t|";
-            tmp += "(wchar|size|ssize)_t|";
-            tmp += "real|half|explicit|typename|typedef|auto|";
-        }
-        tmp = tmp.Remove(tmp.Length - 1);
-        tmp += @")\b";
-        m_customclass_regex = new Regex(tmp);
+            types_list = types_list.Concat(m_cpp_types).ToList();
+        if (type.IsOfType("csharp"))
+            types_list = types_list.Concat(m_csharp_types).ToList();
+        if (type.IsOfType("lolfx"))
+            types_list = types_list.Concat(m_lolfx_types).ToList();
+        m_types_regex =
+            new Regex(@"\b(" + String.Join("|", types_list.ToArray()) + @")\b");
 
         /* Regex for constant words */
-        m_constant_type = registry.GetClassificationType("LolCppConstant");
+        m_constant_type = registry.GetClassificationType("LolAnyConstant");
 
+        List<string> constants_list = m_all_constants.ToList();
+        if (type.IsOfType("c/c++"))
+            constants_list = constants_list.Concat(m_cpp_constants).ToList();
         if (type.IsOfType("csharp"))
-            m_constant_regex = new Regex(@"\b(null|true|false)\b");
-        else if (type.IsOfType("c/c++"))
-            m_constant_regex = new Regex(@"\b(NULL|nullptr|true|false|M_PI)\b");
-        else if (type.IsOfType("lolfx"))
-            m_constant_regex = new Regex(@"\b(gl_Position|gl_FragColor)\b");
-        else
-            m_constant_regex = new Regex(@"\b(NULL)\b");
-
+            constants_list = constants_list.Concat(m_csharp_constants).ToList();
+        if (type.IsOfType("lolfx"))
+            constants_list = constants_list.Concat(m_lolfx_constants).ToList();
+        m_constant_regex =
+            new Regex(@"\b(" + String.Join("|", constants_list.ToArray()) + @")\b");
     }
 
     public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
@@ -115,9 +161,9 @@ class CppKeywordClassifier : IClassifier
             /* Only apply our rules if we found a keyword or an identifier */
             if (cs_class == "keyword" || cs_class == "identifier")
             {
-                if (m_customclass_regex.IsMatch(cs.Span.GetText()))
+                if (m_types_regex.IsMatch(cs.Span.GetText()))
                 {
-                    ret.Add(new ClassificationSpan(cs.Span, m_customclass_type));
+                    ret.Add(new ClassificationSpan(cs.Span, m_types_type));
                     continue;
                 }
 
@@ -201,7 +247,7 @@ internal static class LolClassifierClassificationDefinition
 [Order(After = Priority.Default)] /* Override the Visual Studio classifiers */
 internal sealed class LolCppTypeFormat : LolGenericFormat
 {
-    public const string m_name = "LolCustomClass";
+    public const string m_name = "LolAnyType";
     public LolCppTypeFormat()
     {
         this.DisplayName = "C/C++ Types and Qualifiers";
@@ -219,7 +265,7 @@ internal sealed class LolCppTypeFormat : LolGenericFormat
 [Order(After = Priority.Default)] /* Override the Visual Studio classifiers */
 internal sealed class LolCppConstantFormat : LolGenericFormat
 {
-    public const string m_name = "LolCppConstant";
+    public const string m_name = "LolAnyConstant";
     public LolCppConstantFormat()
     {
         this.DisplayName = "C/C++ Constants";
