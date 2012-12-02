@@ -3,7 +3,7 @@
   <Identifier Id="VsLol">
     <Name>VsLol</Name>
     <Author>Lol</Author>
-    <Version>1.0.0.6</Version>
+    <Version>1.0.0.7</Version>
     <Description xml:space="preserve">Lol Engine Productivity Tools.</Description>
     <Locale>1033</Locale>
     <MoreInfoUrl>http://lol.zoy.org/</MoreInfoUrl>
@@ -11,6 +11,11 @@
     <InstalledByMsi>false</InstalledByMsi>
     <SupportedProducts>
       <VisualStudio Version="10.0">
+        <Edition>Ultimate</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="11.0">
         <Edition>Ultimate</Edition>
         <Edition>Premium</Edition>
         <Edition>Pro</Edition>
