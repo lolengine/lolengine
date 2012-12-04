@@ -78,6 +78,7 @@ class CppKeywordClassifier : IClassifier
         "(wchar|char16|char32|size|ssize|off|ptrdiff)_t",
         "(sig_atomic|fpos|clock|time|div|ldiv)_t",
         "va_list|jmp_buf|FILE|DIR",
+        "__(int(8|16|32|64)|ptr(32|64)|m(64|128|128d|128i))",
     };
 
     /* ldouble real half
