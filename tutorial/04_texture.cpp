@@ -1,5 +1,5 @@
 //
-// Lol Engine - Noise tutorial
+// Lol Engine - Graphing tutorial
 //
 // Copyright: (c) 2012 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
@@ -18,6 +18,8 @@
 using namespace std;
 using namespace lol;
 
+static int const TEXTURE_WIDTH = 128;
+
 extern char const *lolfx_04_texture;
 
 class TextureDemo : public WorldEntity
@@ -34,7 +36,7 @@ public:
         m_vertices << vec2( 1.0, -1.0);
         m_vertices << vec2( 1.0,  1.0);
 
-        m_heightmap = new uint8_t[4 * 512 * 1];
+        m_heightmap = new uint8_t[4 * TEXTURE_WIDTH * 1];
     }
 
     virtual ~TextureDemo()
@@ -46,45 +48,18 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        /* Generate a new heightmap every 400 frames */
-        if (m_frames % 400 == 0)
-        {
-            for (int i = 0, height = 64; i < 512; i++)
-            {
-                m_heightmap[4 * i] = height;
-                m_heightmap[4 * i + 1] = 255; /* unused */
-                m_heightmap[4 * i + 2] = 255; /* unused */
-                m_heightmap[4 * i + 3] = 255; /* unused */
-    
-                height += rand() % 17 - 8;
-                height += rand() % 17 - 8;
-                height = std::max(15, std::min(height, 240));
-            }
-        }
+        /* Generate a new heightmap at the beginning */
+        if (m_frames == 0)
+            memset(m_heightmap, 255, 4 * TEXTURE_WIDTH);
 
-        /* Slightly disturb the terrain */
-        for (int i = 1; i < 511; i++)
-        {
-            int delta = (rand() & 1) ? 1 : -1;
+        /* Scroll left */
+        for (int i = 0; i < TEXTURE_WIDTH - 1; i++)
+            m_heightmap[4 * i] = m_heightmap[4 * i + 4];
 
-            if (rand() & 3)
-                continue;
-
-            uint8_t &center = m_heightmap[4 * i];
-            uint8_t &side1 = m_heightmap[4 * (i - delta)];
-            uint8_t &side2 = m_heightmap[4 * (i + delta)];
-
-            if (center > side1)
-            {
-                center--;
-                side1++;
-            }
-            else if (center > side2)
-            {
-                center--;
-                side2++;
-            }
-        }
+        int height = m_heightmap[4 * (TEXTURE_WIDTH - 1)];
+        height = height / 2 + 255 / 4 + rand() % 97 - 48;
+        height = std::max(15, std::min(height, 240));
+        m_heightmap[4 * (TEXTURE_WIDTH - 1)] = height;
 
         /* Update frame counter */
         ++m_frames;
@@ -97,7 +72,7 @@ public:
         /* Initialise GPU data */
         if (!m_ready)
         {
-            m_texture = new Texture(ivec2(512, 1), PixelFormat::A8R8G8B8);
+            m_texture = new Texture(ivec2(TEXTURE_WIDTH, 1), PixelFormat::A8R8G8B8);
 
             m_shader = Shader::Create(lolfx_04_texture);
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
