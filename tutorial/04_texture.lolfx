@@ -25,40 +25,56 @@ float rand(in vec2 p, in float v)
     return fract(v * sin(dot(p, vec2(1298.9837, 7823.33145))));
 }
 
+float point2segment(vec2 p1, vec2 p2, vec2 a)
+{
+    float l2 = dot(p2 - p1, p2 - p1);
+    if (l2 == 0.0)
+        return distance(a, p1);
+    float t = dot(a - p1, p2 - p1) / l2;
+    if (t < 0.0)
+        return distance(a, p1);
+    else if (t > 1.0)
+        return distance(a, p2);
+    vec2 proj = p1 + t * (p2 - p1);
+    return distance(a, proj);
+}
+
+
 void main(void)
 {
-    vec2 t = pass_Position.xy;
-    vec4 c0 = texture2D(u_Texture, t);
-    float f = rand(pass_Position.xy, 12345.67);
+    float width = 800.0;
+    float height = 600.0;
+    float line_width = 2.0;
 
-    if (t.y > c0.x)
-    {
-        /* Sky */
-        float val = min(t.y * 2.0, 1.0);
-        if (f > 0.999)
-            gl_FragColor = vec4(1.0);
-        else
-            gl_FragColor = vec4(0.4, t.y, val, 1.0);
-    }
-    else if (t.y > c0.x - 0.03)
-    {
-        /* Grass */
-        if (f > 0.99)
-            gl_FragColor = vec4(0.4, 0.7, 0.3, 1.0);
-        else if (f > 0.9)
-            gl_FragColor = vec4(0.3, 0.6, 0.2, 1.0);
-        else
-            gl_FragColor = vec4(0.2, 0.5, 0.1, 1.0);
-    }
-    else
-    {
-        /* Earth */
-        if (f > 0.99)
-            gl_FragColor = vec4(0.7, 0.4, 0.3, 1.0);
-        else if (f > 0.9)
-            gl_FragColor = vec4(0.6, 0.3, 0.2, 1.0);
-        else
-            gl_FragColor = vec4(0.5, 0.2, 0.1, 1.0);
-    }
+    vec2 t = pass_Position.xy;
+    vec2 tc1 = floor(t * 128.0) / 128.0;
+    vec2 tc2 = tc1 + vec2(1.0, 1.0) / 128.0;
+    vec2 tc0 = tc1 - vec2(1.0, 1.0) / 128.0;
+    vec2 tc3 = tc2 + vec2(1.0, 1.0) / 128.0;
+
+    float c0 = texture2D(u_Texture, tc0).x;
+    float c1 = texture2D(u_Texture, tc1).x;
+    float c2 = texture2D(u_Texture, tc2).x;
+    float c3 = texture2D(u_Texture, tc3).x;
+
+    /* Artificially compress in Y */
+    c0 *= 0.3;
+    c1 *= 0.3;
+    c2 *= 0.3;
+    c3 *= 0.3;
+
+    vec2 p0 = vec2(tc0.x * width, c0 * height);
+    vec2 p1 = vec2(tc1.x * width, c1 * height);
+    vec2 p2 = vec2(tc2.x * width, c2 * height);
+    vec2 p3 = vec2(tc3.x * width, c3 * height);
+    vec2 a = vec2(t.x * width, t.y * height);
+
+    float d0 = point2segment(p0, p1, a);
+    float d1 = point2segment(p1, p2, a);
+    float d2 = point2segment(p2, p3, a);
+
+    float d = clamp(line_width - min(min(d0, d1), d2), 0.0, 1.0);
+
+    gl_FragColor = vec4(t.y, d, d * 0.3, 1.0);
 }
 
