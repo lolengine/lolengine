@@ -20,59 +20,46 @@ uniform sampler2D u_Texture;
 
 varying vec4 pass_Position;
 
-float rand(in vec2 p, in float v)
+float segdist(vec2 p1, vec2 p2, vec2 a)
 {
-    return fract(v * sin(dot(p, vec2(1298.9837, 7823.33145))));
+    float d = max(1e-10, dot(p2 - p1, p2 - p1));
+    float t = clamp(dot(a - p1, p2 - p1) / d, 0.0, 1.0);
+    return distance(a, mix(p1, p2, t));
 }
-
-float point2segment(vec2 p1, vec2 p2, vec2 a)
-{
-    float l2 = dot(p2 - p1, p2 - p1);
-    if (l2 == 0.0)
-        return distance(a, p1);
-    float t = dot(a - p1, p2 - p1) / l2;
-    if (t < 0.0)
-        return distance(a, p1);
-    else if (t > 1.0)
-        return distance(a, p2);
-    vec2 proj = p1 + t * (p2 - p1);
-    return distance(a, proj);
-}
-
 
 void main(void)
 {
     float width = 800.0;
     float height = 600.0;
-    float line_width = 2.0;
+    float line_width = 1.8;
+    vec4 delta = vec4(1.0 / 128, 0.0,
+                      2.0 / 128, 0.0);
 
-    vec2 t = pass_Position.xy;
-    vec2 tc1 = floor(t * 128.0) / 128.0;
-    vec2 tc2 = tc1 + vec2(1.0, 1.0) / 128.0;
-    vec2 tc0 = tc1 - vec2(1.0, 1.0) / 128.0;
-    vec2 tc3 = tc2 + vec2(1.0, 1.0) / 128.0;
-
+    vec2 p = pass_Position.xy;
+    vec2 tc = vec2(floor(p.x * 128.0) / 128.0, p.y);
+    float t = p.x * 128.0 - floor(p.x * 128.0);
     vec4 c;
-    c[0] = texture2D(u_Texture, tc0).x;
-    c[1] = texture2D(u_Texture, tc1).x;
-    c[2] = texture2D(u_Texture, tc2).x;
-    c[3] = texture2D(u_Texture, tc3).x;
+    c[0] = texture2D(u_Texture, tc - delta.xy).x;
+    c[1] = texture2D(u_Texture, tc).x;
+    c[2] = texture2D(u_Texture, tc + delta.xy).x;
+    c[3] = texture2D(u_Texture, tc + delta.zw).x;
 
-    /* Artificially compress in Y */
+    /* Quick hack: artificially compress display in Y */
     c *= 0.3;
 
-    vec2 p0 = vec2(tc0.x * width, c[0] * height);
-    vec2 p1 = vec2(tc1.x * width, c[1] * height);
-    vec2 p2 = vec2(tc2.x * width, c[2] * height);
-    vec2 p3 = vec2(tc3.x * width, c[3] * height);
-    vec2 a = vec2(t.x * width, t.y * height);
+    vec2 p0 = vec2((tc.x - delta.x) * width, c[0] * height);
+    vec2 p1 = vec2((tc.x) * width,           c[1] * height);
+    vec2 p2 = vec2((tc.x + delta.x) * width, c[2] * height);
+    vec2 p3 = vec2((tc.x + delta.z) * width, c[3] * height);
+    vec2 a = vec2(p.x * width, p.y * height);
 
-    float d0 = point2segment(p0, p1, a);
-    float d1 = point2segment(p1, p2, a);
-    float d2 = point2segment(p2, p3, a);
+    float d0 = segdist(p0, p1, a);
+    float d1 = segdist(p1, p2, a);
+    float d2 = segdist(p2, p3, a);
 
     float d = clamp(line_width - min(min(d0, d1), d2), 0.0, 1.0);
 
-    gl_FragColor = vec4(t.y, d, d * 0.3, 1.0);
+    /* Choose some funny colours */
+    gl_FragColor = vec4(p.y, d, mix(p.x, 0.3, d), 1.0);
 }
 
