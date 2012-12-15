@@ -41,7 +41,29 @@ au Syntax cpp
 
 
 """
-""" For now, pretend .lolfx is C++
+""" LolFx language handler
 """
-au BufRead,BufNewFile *.lolfx let b:current_syntax = "cpp"
+
+" For now, pretend .lolfx is C++
+au BufRead,BufNewFile *.lolfx set syntax=cpp
+
+" New sampler types (GLSL)
+au BufRead,BufNewFile *.lolfx syn match cType
+   \ "\<sampler\(\([12]D\|Cube\)\(Array\|\)\(Shadow\|\)\)\>"
+   \ "\<sampler\(3D\|2DRect\|Buffer\|2DMS\|2DMSArray\|2DRectShadow\)\>"
+
+" Type constructs (LolFx)
+au BufRead,BufNewFile *.lolfx syn keyword cppStructure
+   \ technique pass precision
+
+" Variable attributes (GLSL and some HLSL)
+au BufRead,BufNewFile *.lolfx syn keyword cType
+   \ in out uniform attribute varying
+
+" Texture operators (GLSL and HLSL)
+au BufRead,BufNewFile *.lolfx syn keyword cppOperator
+   \ texture1D texture2D texture3D tex2D tex3D
+
+" Handle #version constructs
+au BufRead,BufNewFile *.lolfx syn region cPreProc start="^\s*\(%:\|#\)\s*version\>" skip="\\$" end="$" keepend contains=ALLBUT,@cPreProcGroup,@Spell
 
