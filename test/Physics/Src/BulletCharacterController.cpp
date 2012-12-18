@@ -175,7 +175,7 @@ void BulletKinematicCharacterController::DoMove(btCollisionWorld* CollisionWorld
     }
 }
 
-//The PreStepis done in order to recover from any HasPenetration.
+//The PreStep is done in order to recover from any HasPenetration.
 void BulletKinematicCharacterController::PreStep(btCollisionWorld* CollisionWorld)
 {
     int MaxPenetrationLoop = 0;
