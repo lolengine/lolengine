@@ -101,7 +101,7 @@ private:
     {
         Shader *shader;
         ShaderAttrib coord, norm, color;
-        ShaderUniform modelview, view, proj, normalmat, damage;
+        ShaderUniform modelview, view, invview, proj, normalmat, damage;
         VertexDeclaration *vdecl;
         VertexBuffer *vbo;
         IndexBuffer *ibo;

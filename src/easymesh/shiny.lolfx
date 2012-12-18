@@ -36,16 +36,26 @@ precision highp float;
 
 uniform float in_Damage;
 uniform mat4 in_View;
+uniform mat4 in_Inv_View;
 
 varying vec4 pass_Vertex; /* View space */
 varying vec3 pass_TNormal;
 varying vec4 pass_Color;
 
-// FIXME: the light direction should be passed in the code
+// FIXME: all the light parameters should be passed in the code
+//Dir Light
 vec3 in_LightDir = vec3(-0.3, -0.3, -0.7);
-vec4 in_Light2_Pos = vec4(0.0, 10.0, 0.0, 1.0);
+
+//Point Light
+vec4 in_Light2_Pos = vec4(20.0, 10.0, 0.0, 1.0);
 float in_Light2_Radius = 20.0;
 vec3 in_Light2_diffuse = vec3(0.4, 0.4, 1.0);
+
+//Cube Light
+vec4 in_Light3_Pos = vec4(-10.0, 10.0, 5.0, 1.0);
+vec3 in_Light3_Size_Inner = vec3(1.0, 1.0, 1.0);
+vec3 in_Light3_Size_Outer = vec3(10.0, 10.0, 10.0);
+vec3 in_Light3_diffuse = vec3(0.4, 1.0, 0.4);
 
 void main(void)
 {
@@ -66,6 +76,7 @@ void main(void)
     vec3 v = vec3(0.0, 0.0, 0.0);
     vec3 r = vec3(0.0, 0.0, 0.0);
     float sdotn = 0.0;
+	float light_radius_mod = 0.0;
 
     //Light calculation for directional light
     s = normalize(-in_LightDir);
@@ -77,11 +88,11 @@ void main(void)
     if (sdotn > 0.0)
         specular += specular_color * specular_reflect
                  * pow(max(dot(r, v), 0.0), specular_power);
-
+	//----------
     
     //Light calculation for point light
 	vec3 tmpLightDir = (in_View * in_Light2_Pos).xyz - pass_Vertex.xyz;
-	float light_radius_mod = max(0.0, 1.0 - (length(tmpLightDir) / in_Light2_Radius));
+	light_radius_mod = max(0.0, 1.0 - (length(tmpLightDir) / in_Light2_Radius));
     s = normalize(tmpLightDir);
     v = normalize(-pass_Vertex.xyz);
     r = reflect(-s, pass_TNormal);
@@ -91,7 +102,25 @@ void main(void)
     if (sdotn > 0.0 && light_radius_mod > 0.0)
         specular += specular_color * min(specular_reflect, light_radius_mod)
                  * pow(max(dot(r, v), 0.0), specular_power);
+	//----------
     
+    //Light calculation for cube light
+	vec3 Local_Vertex = (in_Inv_View * pass_Vertex).xyz - (in_Light3_Pos).xyz;
+	vec3 Proj_Vertex = clamp(Local_Vertex.xyz, -in_Light3_Size_Inner, in_Light3_Size_Inner);
+	vec3 new_LightDir = Local_Vertex - Proj_Vertex;
+
+	vec3 light_radius = max(vec3(0.0,0.0,0.0), vec3(1.0,1.0,1.0) - abs(new_LightDir / in_Light3_Size_Outer));
+	light_radius_mod = min(light_radius.x, min(light_radius.y, light_radius.z));
+
+	if (length(new_LightDir) == 0.0)
+		sdotn = 1.0;
+	else
+	{
+		new_LightDir = (in_View * vec4(Proj_Vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz;
+		sdotn = max(dot(normalize(new_LightDir), pass_TNormal), 0.0);
+	}
+    diffuse += in_Light3_diffuse * min(sdotn, light_radius_mod);
+	//----------
 
     vec3 light = ambient + diffuse + specular;
 
