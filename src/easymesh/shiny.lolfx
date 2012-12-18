@@ -53,8 +53,8 @@ vec3 in_Light2_diffuse = vec3(0.4, 0.4, 1.0);
 
 //Cube Light
 vec4 in_Light3_Pos = vec4(-10.0, 10.0, 5.0, 1.0);
-vec3 in_Light3_Size_Inner = vec3(1.0, 1.0, 1.0);
-vec3 in_Light3_Size_Outer = vec3(10.0, 10.0, 10.0);
+vec3 in_Light3_Size_Inner = vec3(3.0, 1.0, 3.0);
+vec3 in_Light3_Size_Outer = vec3(15.0, 15.0, 15.0);
 vec3 in_Light3_diffuse = vec3(0.4, 1.0, 0.4);
 
 void main(void)
@@ -116,8 +116,12 @@ void main(void)
 		sdotn = 1.0;
 	else
 	{
-		new_LightDir = (in_View * vec4(Proj_Vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz;
-		sdotn = max(dot(normalize(new_LightDir), pass_TNormal), 0.0);
+		new_LightDir = normalize((in_View * vec4(Proj_Vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz);
+		sdotn = max(dot(new_LightDir, pass_TNormal), 0.0);
+	    r = reflect(-new_LightDir, pass_TNormal);
+		if (sdotn > 0.0 && light_radius_mod > 0.0)
+			specular += specular_color * min(specular_reflect, light_radius_mod)
+					 * pow(max(dot(r, v), 0.0), specular_power);
 	}
     diffuse += in_Light3_diffuse * min(sdotn, light_radius_mod);
 	//----------
