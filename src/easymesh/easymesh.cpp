@@ -67,6 +67,7 @@ void EasyMesh::MeshConvert()
     m_gpu.shader = Shader::Create(lolfx_shiny);
 
     m_gpu.modelview = m_gpu.shader->GetUniformLocation("in_ModelView");
+    m_gpu.model = m_gpu.shader->GetUniformLocation("in_Model");
     m_gpu.proj = m_gpu.shader->GetUniformLocation("in_Proj");
     m_gpu.normalmat = m_gpu.shader->GetUniformLocation("in_NormalMat");
     m_gpu.damage = m_gpu.shader->GetUniformLocation("in_Damage");
@@ -117,6 +118,7 @@ void EasyMesh::Render(mat4 const &model, float damage)
 
     m_gpu.shader->Bind();
     m_gpu.shader->SetUniform(m_gpu.modelview, modelview);
+    m_gpu.shader->SetUniform(m_gpu.model, model);
     m_gpu.shader->SetUniform(m_gpu.proj, Scene::GetDefault()->GetProjMatrix());
     m_gpu.shader->SetUniform(m_gpu.normalmat, normalmat);
     m_gpu.shader->SetUniform(m_gpu.damage, damage);
