@@ -43,6 +43,10 @@ public:
     EasyMeshTutorial()
     {
         m_angle = 0;
+
+        m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 5 5 0.1 0");
+
+#if 0
         m_mesh.Compile("sc#8d3 [ato40 10 40 rx20 ry130 tx30]");
 
         m_mesh.OpenBrace();
@@ -51,6 +55,7 @@ public:
         m_mesh.RadialJitter(0.2f);
         m_mesh.Compile("ty-50 tx-40");
         m_mesh.CloseBrace();
+#endif
 
 #if 0
         //m_mesh.Compile("sc#94e scb#649 [asph3 7 7 7 tx-6 tz-9]");
@@ -129,7 +134,7 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        m_angle += seconds * 45.0f;
+        m_angle += seconds * 80.0f;
 
         mat4 anim = mat4::rotate(m_angle, vec3(0, 1, 0));
         mat4 model = mat4::translate(vec3(0, 0, 0));
@@ -150,6 +155,9 @@ public:
         Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_mesh.Render(m_matrix);
+        m_mesh.Render(mat4::translate(vec3(-65, 0, -65) * lol::sqrt(0.5)) * mat4::rotate(-m_angle, vec3(0, 1, 0)));
+        m_mesh.Render(mat4::translate(vec3(0, 0, 65)) * mat4::rotate(-m_angle, vec3(0, 1, 0)));
+        m_mesh.Render(mat4::translate(vec3(-65, 0, 65)) * mat4::rotate(m_angle, vec3(0, 1, 0)));
     }
 
 private:
