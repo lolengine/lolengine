@@ -20,127 +20,62 @@ using namespace lol;
 class EasyMeshTutorial : public WorldEntity
 {
 public:
-    void AddPiece(int x, int y, int h, int dx, int dy, int dh)
-    {
-        m_mesh.OpenBrace();
-        for (int j = 0; j < y; ++j)
-            for (int i = 0; i < x; ++i)
-            {
-                m_mesh.OpenBrace();
-                m_mesh.Compile("ad12,2.2,0 ty.1 ac12,.2,2.4,2.2,0,1 ty.8 ac12,1.7,2.4,2.4,0,1 ty2.5");
-                m_mesh.Translate(vec3(i * 8.f, (h - 1) * 3.2f, j * 8.f));
-                m_mesh.CloseBrace();
-            }
-        m_mesh.OpenBrace();
-        m_mesh.AppendFlatChamfBox(vec3(x * 8.f, h * 3.2f, y * 8.f), -.1f);
-        m_mesh.Translate(vec3((x - 1) * 4.f, (h - 1) * 1.6f, (y - 1) * 4.f));
-        m_mesh.CloseBrace();
-        m_mesh.Translate(vec3(dx * 8.f, dh * 3.2f, dy * 8.f));
-
-        m_mesh.CloseBrace();
-    }
-
     EasyMeshTutorial()
     {
+        m_gears.Push(EasyMesh(), mat4(1.0f), 0.0f);
+        m_gears.Push(EasyMesh(), mat4(1.0f), 0.0f);
+        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
+
+        m_gears[0].m1.Compile("sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0");
+        m_gears[1].m1.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0");
+        m_gears[2].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
+        m_gears[3].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
+        m_gears[4].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
+
         m_angle = 0;
-
-        //m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 5 5 0.1 0");
-        m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 -5 -5 0.1 0");
-
-#if 0
-        m_mesh.Compile("sc#8d3 [ato40 10 40 rx20 ry130 tx30]");
-
-        m_mesh.OpenBrace();
-        m_mesh.Compile("sc#800 [asph10 25 25 25]");
-        m_mesh.Compile("ty50");
-        m_mesh.RadialJitter(0.2f);
-        m_mesh.Compile("ty-50 tx-40");
-        m_mesh.CloseBrace();
-#endif
-
-#if 0
-        //m_mesh.Compile("sc#94e scb#649 [asph3 7 7 7 tx-6 tz-9]");
-        //m_mesh.Compile("sc#49e scb#469 [asph31 7 7 7 tx-6 tz9]");
-        m_mesh.Compile("sc#1c1 scb#1c1");
-        AddPiece(16, 16, 1, -8, -8, -4);
-
-        /* Flat white LOL */
-        m_mesh.Compile("sc#ccc scb#ccc");
-
-        AddPiece(1, 4, 1, -7, -7, -3);
-        AddPiece(2, 1, 1, -6, -4, -3);
-
-        AddPiece(1, 4, 1, -3, -7, -3);
-        AddPiece(2, 1, 1, -2, -7, -3);
-        AddPiece(2, 1, 1, -2, -4, -3);
-        AddPiece(1, 2, 1, -1, -6, -3);
-
-        AddPiece(1, 4, 1, 1, -7, -3);
-        AddPiece(2, 1, 1, 2, -4, -3);
-
-        /* High red LOL */
-        m_mesh.Compile("sc#e33 scb#e33");
-
-        AddPiece(3, 1, 3, 3, 4, -3);
-        AddPiece(1, 1, 3, 5, 4, 0);
-        AddPiece(1, 1, 3, 5, 4, 3);
-        AddPiece(1, 1, 3, 5, 4, 6);
-
-        AddPiece(3, 1, 3, -1, 4, -3);
-        AddPiece(1, 1, 3, 1, 4, 0);
-        AddPiece(1, 1, 3, 1, 4, 3);
-        AddPiece(1, 1, 3, -1, 4, 0);
-        AddPiece(1, 1, 3, -1, 4, 3);
-        AddPiece(3, 1, 3, -1, 4, 6);
-
-        AddPiece(3, 1, 3, -5, 4, -3);
-        AddPiece(1, 1, 3, -3, 4, 0);
-        AddPiece(1, 1, 3, -3, 4, 3);
-        AddPiece(1, 1, 3, -3, 4, 6);
-
-        /* Some random crap */
-        m_mesh.Compile("sc#e0e scb#e0e");
-        AddPiece(1, 1, 1, -1, 0, 2);
-        m_mesh.Compile("sc#0ee scb#0ee");
-        AddPiece(2, 1, 1, -1, 0, 1);
-        m_mesh.Compile("sc#e94 scb#e94");
-        AddPiece(1, 1, 1, 0, 0, 0);
-        m_mesh.Compile("sc#94e scb#94e");
-        AddPiece(2, 1, 1, 0, 0, -1);
-        m_mesh.Compile("sc#9e4 scb#9e4");
-        AddPiece(1, 2, 3, -1, -1, -2);
-        m_mesh.Compile("sc#49e scb#49e");
-        AddPiece(2, 3, 1, 0, -1, -2);
-        m_mesh.Compile("sc#4e9 scb#4e9");
-        AddPiece(6, 2, 1, -2, 0, -3);
-        m_mesh.Compile("sc#e49 scb#e49");
-        AddPiece(6, 2, 1, -2, -2, -3);
-#endif
-
-        /* Center everything -- is it needed? */
-//        m_mesh.Compile("tx4 tz4");
 
         m_camera = new Camera(vec3(0.f, 600.f, 0.f),
                               vec3(0.f, 0.f, 0.f),
                               vec3(0, 1, 0));
         m_camera->SetPerspective(70.f, 960.f, 600.f, .1f, 1000.f);
         m_camera->SetTarget(vec3(0.f, -10.f, 0.f));
-        m_camera->SetPosition(vec3(-100.f, 60.f, 0.f));
+        m_camera->SetPosition(vec3(-150.f, 100.f, 0.f));
         Ticker::Ref(m_camera);
 
         m_ready = false;
+    }
+
+    ~EasyMeshTutorial()
+    {
+        Ticker::Unref(m_camera);
     }
 
     virtual void TickGame(float seconds)
     {
         WorldEntity::TickGame(seconds);
 
-        m_angle += seconds * 80.0f;
+        m_angle += seconds * 70.0f;
+        m_mat = mat4::rotate(10.0f, vec3(0, 0, 1))
+              * mat4::rotate(m_angle, vec3(0, 1, 0));
 
-        mat4 anim = mat4::rotate(m_angle, vec3(0, 1, 0));
-        mat4 model = mat4::translate(vec3(0, 0, 0));
+        m_gears[0].m3 += seconds * 150.0f;
+        m_gears[1].m3 += seconds * 150.0f * -2 / 9;
+        m_gears[2].m3 += seconds * 150.0f * -2 / 3;
+        m_gears[3].m3 += seconds * 150.0f * -2 / 3;
+        m_gears[4].m3 += seconds * 150.0f * -2 / 3;
 
-        m_matrix = model * anim;
+        m_gears[0].m2 = mat4::translate(vec3(0, 0, 0))
+                      * mat4::rotate(m_gears[0].m3, vec3(0, 1, 0));
+        m_gears[1].m2 = mat4::translate(vec3(0, 0, 0))
+                      * mat4::rotate(m_gears[1].m3, vec3(0, 1, 0));
+        m_gears[2].m2 = mat4::translate(vec3(0, 0, 55))
+                      * mat4::rotate(m_gears[2].m3, vec3(0, 1, 0));
+        m_gears[3].m2 = mat4::translate(vec3(55 * lol::sqrt(3.f) * 0.5f, 0, -55 * 0.5f))
+                      * mat4::rotate(m_gears[3].m3, vec3(0, 1, 0));
+        m_gears[4].m2 = mat4::translate(vec3(-55 * lol::sqrt(3.f) * 0.5f, 0, -55 * 0.5f))
+                      * mat4::rotate(m_gears[4].m3, vec3(0, 1, 0));
     }
 
     virtual void TickDraw(float seconds)
@@ -149,22 +84,21 @@ public:
 
         if (!m_ready)
         {
-            m_mesh.MeshConvert();
+            for (int i = 0; i < m_gears.Count(); i++)
+                m_gears[i].m1.MeshConvert();
             m_ready = true;
         }
 
         Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        m_mesh.Render(m_matrix);
-        m_mesh.Render(mat4::translate(vec3(-65, 0, -65) * lol::sqrt(0.5)) * mat4::rotate(-m_angle, vec3(0, 1, 0)));
-        m_mesh.Render(mat4::translate(vec3(0, 0, 65)) * mat4::rotate(-m_angle, vec3(0, 1, 0)));
-        m_mesh.Render(mat4::translate(vec3(-65, 0, 65)) * mat4::rotate(m_angle, vec3(0, 1, 0)));
+        for (int i = 0; i < m_gears.Count(); i++)
+            m_gears[i].m1.Render(m_mat * m_gears[i].m2);
     }
 
 private:
+    Array<EasyMesh, mat4, float> m_gears;
     float m_angle;
-    mat4 m_matrix;
-    EasyMesh m_mesh;
+    mat4 m_mat;
     Camera *m_camera;
 
     bool m_ready;
