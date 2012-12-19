@@ -86,8 +86,8 @@ public:
     void AppendSimpleTriangle(float size, int fade = 0);
     void AppendSimpleQuad(float size, int fade = 0);
     void AppendSimpleQuad(vec2 p1, vec2 p2, float z = 0.f, int fade = 0);
-    void AppendCog(int nbsides, float h, float r1, float r2,
-                   float r12, float r22, float sidemul, int offset);
+    void AppendCog(int nbsides, float h, float r10, float r20, float r1,
+                   float r2, float r12, float r22, float sidemul, int offset);
 
 private:
     vec4 m_color, m_color2;

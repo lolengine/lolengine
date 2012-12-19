@@ -782,34 +782,43 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
     ComputeNormals(m_indices.Count() - 6, 6);
 }
 
-void EasyMesh::AppendCog(int nbsides, float h, float r1, float r2, float r12,
-                         float r22, float sidemul, int offset)
+void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
+                         float r1, float r2, float r12, float r22,
+                         float sidemul, int offset)
 {
     int ibase = m_indices.Count();
     int vbase = m_vert.Count();
 
-    AddVertex(vec3(0.f, h * .5f, 0.f));
-    AddVertex(vec3(0.f, h * -.5f, 0.f));
-    SetCurVertColor(m_color2);
+    /* FIXME: enforce this some other way */
+    if (r12 < 0)
+    {
+        r10 *= 2.5;
+        r20 *= 2.5;
+        h = -h;
+    }
 
     mat3 rotmat = mat3::rotate(180.0f / nbsides, 0.f, 1.f, 0.f);
     mat3 smat1 = mat3::rotate(sidemul * 180.0f / nbsides, 0.f, 1.f, 0.f);
     mat3 smat2 = mat3::rotate(sidemul * -360.0f / nbsides, 0.f, 1.f, 0.f);
 
-    vec3 p[8];
+    vec3 p[12];
 
-    p[0] = vec3(r1, h * .5f, 0.f);
+    p[0] = vec3(r10, h * .5f, 0.f);
     p[1] = rotmat * p[0];
-    p[2] = smat1 * (rotmat * vec3(r1 + r12, h * .5f, 0.f));
-    p[3] = smat2 * (rotmat * p[2]);
+    p[2] = vec3(r1, h * .5f, 0.f);
+    p[3] = rotmat * p[2];
+    p[4] = smat1 * (rotmat * vec3(r1 + r12, h * .5f, 0.f));
+    p[5] = smat2 * (rotmat * p[4]);
 
-    p[4] = vec3(r2, h * -.5f, 0.f);
-    p[5] = rotmat * p[4];
-    p[6] = smat1 * (rotmat * vec3(r2 + r22, h * -.5f, 0.f));
-    p[7] = smat2 * (rotmat * p[6]);
+    p[6] = vec3(r20, h * -.5f, 0.f);
+    p[7] = rotmat * p[6];
+    p[8] = vec3(r2, h * -.5f, 0.f);
+    p[9] = rotmat * p[8];
+    p[10] = smat1 * (rotmat * vec3(r2 + r22, h * -.5f, 0.f));
+    p[11] = smat2 * (rotmat * p[10]);
 
     if (offset & 1)
-        for (int n = 0; n < 8; n++)
+        for (int n = 0; n < 12; n++)
             p[n] = rotmat * p[n];
 
     rotmat = rotmat * rotmat;
@@ -818,28 +827,34 @@ void EasyMesh::AppendCog(int nbsides, float h, float r1, float r2, float r12,
     {
         /* Each vertex will share three faces, so three different
          * normals, therefore we add each vertex three times. */
-        for (int n = 0; n < 24; n++)
+        for (int n = 0; n < 3 * 12; n++)
         {
             AddVertex(p[n / 3]);
-            if (n / 3 >= 4)
+            if (n / 3 >= 6)
                 SetCurVertColor(m_color2);
         }
 
-        int j = 24 * i, k = 24 * ((i + 1) % nbsides);
+        int j = 3 * 12 * i, k = 3 * 12 * ((i + 1) % nbsides);
 
         /* The top and bottom faces */
-        AppendQuad(0, j + 2, j + 5, k + 2, vbase);
-        AppendQuad(1, k + 14, j + 17, j + 14, vbase);
-        AppendQuad(j + 5, j + 8, j + 11, k + 2, vbase);
-        AppendQuad(k + 14, j + 23, j + 20, j + 17, vbase);
+        AppendQuad(j, j + 6, j + 9, j + 3, vbase);
+        AppendQuad(j + 21, j + 27, j + 24, j + 18, vbase);
+        AppendQuad(j + 3, j + 9, k + 6, k, vbase);
+        AppendQuad(k + 18, k + 24, j + 27, j + 21, vbase);
+        AppendQuad(j + 9, j + 12, j + 15, k + 6, vbase);
+        AppendQuad(k + 24, j + 33, j + 30, j + 27, vbase);
 
-        /* The side quads */
-        AppendQuad(j + 6, j + 3, j + 15, j + 18, vbase);
-        AppendQuad(j + 9, j + 7, j + 19, j + 21, vbase);
-        AppendQuad(j + 12, j + 10, j + 22, j + 24, vbase);
-        AppendQuad(k + 4, j + 13, j + 25, k + 16, vbase);
+        /* The inner side quads */
+        AppendQuad(j + 1, j + 4, j + 22, j + 19, vbase);
+        AppendQuad(j + 5, k + 2, k + 20, j + 23, vbase);
 
-        for (int n = 0; n < 8; n++)
+        /* The outer side quads */
+        AppendQuad(j + 10, j + 7, j + 25, j + 28, vbase);
+        AppendQuad(j + 13, j + 11, j + 29, j + 31, vbase);
+        AppendQuad(j + 16, j + 14, j + 32, j + 34, vbase);
+        AppendQuad(k + 8, j + 17, j + 35, k + 26, vbase);
+
+        for (int n = 0; n < 12; n++)
             p[n] = rotmat * p[n];
     }
 
