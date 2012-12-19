@@ -28,11 +28,11 @@ public:
         m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
         m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
 
-        m_gears[0].m1.Compile("sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0");
-        m_gears[1].m1.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0");
-        m_gears[2].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
-        m_gears[3].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
-        m_gears[4].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0");
+        m_gears[0].m1.Compile("sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0 s .1 .1 .1");
+        m_gears[1].m1.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0 s .1 .1 .1");
+        m_gears[2].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1");
+        m_gears[3].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1");
+        m_gears[4].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1");
 
         m_angle = 0;
 
@@ -40,8 +40,8 @@ public:
                               vec3(0.f, 0.f, 0.f),
                               vec3(0, 1, 0));
         m_camera->SetPerspective(70.f, 960.f, 600.f, .1f, 1000.f);
-        m_camera->SetTarget(vec3(0.f, -10.f, 0.f));
-        m_camera->SetPosition(vec3(-150.f, 100.f, 0.f));
+        m_camera->SetTarget(vec3(0.f, -1.f, 0.f));
+        m_camera->SetPosition(vec3(-15.f, 10.f, 0.f));
         Ticker::Ref(m_camera);
 
         m_ready = false;
@@ -70,11 +70,11 @@ public:
                       * mat4::rotate(m_gears[0].m3, vec3(0, 1, 0));
         m_gears[1].m2 = mat4::translate(vec3(0, 0, 0))
                       * mat4::rotate(m_gears[1].m3, vec3(0, 1, 0));
-        m_gears[2].m2 = mat4::translate(vec3(0, 0, 55))
+        m_gears[2].m2 = mat4::translate(vec3(0, 0, 5.5f))
                       * mat4::rotate(m_gears[2].m3, vec3(0, 1, 0));
-        m_gears[3].m2 = mat4::translate(vec3(55 * lol::sqrt(3.f) * 0.5f, 0, -55 * 0.5f))
+        m_gears[3].m2 = mat4::translate(vec3(5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
                       * mat4::rotate(m_gears[3].m3, vec3(0, 1, 0));
-        m_gears[4].m2 = mat4::translate(vec3(-55 * lol::sqrt(3.f) * 0.5f, 0, -55 * 0.5f))
+        m_gears[4].m2 = mat4::translate(vec3(-5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
                       * mat4::rotate(m_gears[4].m3, vec3(0, 1, 0));
     }
 
