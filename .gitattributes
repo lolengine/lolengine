@@ -1,1 +1,8 @@
+# Visual Studio wants crlf
+*.sln eol=crlf
+*.csproj eol=crlf
+*.vcxproj eol=crlf
+# Vim doesn't like CRLF
 *.vim -text
+# Bison doesn't like CRLF
+external/*/share/bison/* -text
