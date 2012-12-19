@@ -157,8 +157,9 @@ primitive_command:
   | T_DISC args3           { mc.m_mesh.AppendDisc((int)$2.f0, $2.f1, (int)$2.f2); }
   | T_TRIANGLE args2       { mc.m_mesh.AppendSimpleTriangle($2.f0, (int)$2.f1); }
   | T_QUAD args2           { mc.m_mesh.AppendSimpleQuad($2.f0, (int)$2.f1); }
-  | T_COG args8            { mc.m_mesh.AppendCog((int)$2.f0, $2.f1, $2.f2, $2.f3,
-                                            $2.f4, $2.f5, $2.f6, (int)$2.f7); }
+  | T_COG args8            { mc.m_mesh.AppendCog((int)$2.f0, $2.f1,
+                                 $2.f2 / 2, $2.f3 / 2, $2.f2, $2.f3, $2.f4,
+                                 $2.f5, $2.f6, (int)$2.f7); }
     ;
 
 args1: number { $$.f0 = $1; } ;

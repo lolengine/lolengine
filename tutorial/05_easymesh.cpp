@@ -44,7 +44,8 @@ public:
     {
         m_angle = 0;
 
-        m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 5 5 0.1 0");
+        //m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 5 5 0.1 0");
+        m_mesh.Compile("sc#ffb scb#ffb acg 12 10 30 30 -5 -5 0.1 0");
 
 #if 0
         m_mesh.Compile("sc#8d3 [ato40 10 40 rx20 ry130 tx30]");
