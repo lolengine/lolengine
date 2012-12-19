@@ -37,7 +37,7 @@
     float fval;
     /* Can't use uin32_t here for some reason */
     unsigned u32val;
-    struct { float f0, f1, f2, f3, f4, f5, f6, f7; } args;
+    struct { float f0, f1, f2, f3, f4, f5, f6, f7, f8, f9; } args;
 }
 
 %start mesh_description
@@ -60,7 +60,7 @@
 %token <u32val> COLOR
 
 %type <fval> number
-%type <args> args1 args2 args3 args4 args5 args6 args7 args8
+%type <args> args1 args2 args3 args4 args5 args6 args7 args8 args9 args10
 
 %{
 #include "easymesh/easymesh-compiler.h"
@@ -157,9 +157,9 @@ primitive_command:
   | T_DISC args3           { mc.m_mesh.AppendDisc((int)$2.f0, $2.f1, (int)$2.f2); }
   | T_TRIANGLE args2       { mc.m_mesh.AppendSimpleTriangle($2.f0, (int)$2.f1); }
   | T_QUAD args2           { mc.m_mesh.AppendSimpleQuad($2.f0, (int)$2.f1); }
-  | T_COG args8            { mc.m_mesh.AppendCog((int)$2.f0, $2.f1,
-                                 $2.f2 / 2, $2.f3 / 2, $2.f2, $2.f3, $2.f4,
-                                 $2.f5, $2.f6, (int)$2.f7); }
+  | T_COG args10           { mc.m_mesh.AppendCog((int)$2.f0, $2.f1,
+                                 $2.f2, $2.f3, $2.f4, $2.f5, $2.f6,
+                                 $2.f7, $2.f8, (int)$2.f9); }
     ;
 
 args1: number { $$.f0 = $1; } ;
@@ -170,6 +170,8 @@ args5: args4 number { $$ = $1; $$.f4 = $2; } ;
 args6: args5 number { $$ = $1; $$.f5 = $2; } ;
 args7: args6 number { $$ = $1; $$.f6 = $2; } ;
 args8: args7 number { $$ = $1; $$.f7 = $2; } ;
+args9: args8 number { $$ = $1; $$.f8 = $2; } ;
+args10: args9 number { $$ = $1; $$.f9 = $2; } ;
 
 number:
     NUMBER       { $$ = $1; }

@@ -791,11 +791,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
 
     /* FIXME: enforce this some other way */
     if (r12 < 0)
-    {
-        r10 *= 2.5;
-        r20 *= 2.5;
         h = -h;
-    }
 
     mat3 rotmat = mat3::rotate(180.0f / nbsides, 0.f, 1.f, 0.f);
     mat3 smat1 = mat3::rotate(sidemul * 180.0f / nbsides, 0.f, 1.f, 0.f);
