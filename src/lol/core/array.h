@@ -61,12 +61,18 @@ public:
     {
         if ((uintptr_t)this != (uintptr_t)&that)
         {
+            /* FIXME: there is an opportunity for optimisation here if we
+             * find a way to ask Reserve not to create new elements, since
+             * we're going to overwrite them anyway. */
             if (m_reserved < that.m_count)
             {
-                /* If not enough space, reserve memory and use placement
-                 * new directly for all elements. */
+                /* If not enough space, reserve memory, overwrite the first
+                 * elements, then use placement new directly for the
+                 * remaining elements. */
                 Reserve(that.m_count);
-                for (int i = 0; i < that.m_count; i++)
+                for (int i = 0; i < m_count && i < that.m_count; i++)
+                    m_data[i] = Element(that[i]);
+                for (int i = m_count; i < that.m_count; i++)
                     new(&m_data[i]) Element(that[i]);
             }
             else
@@ -292,14 +298,14 @@ public:
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7; T8 tmp8 = m8;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
-            this->m_data[this->m_count].m4 = tmp4;
-            this->m_data[this->m_count].m5 = tmp5;
-            this->m_data[this->m_count].m6 = tmp6;
-            this->m_data[this->m_count].m7 = tmp7;
-            this->m_data[this->m_count].m8 = tmp8;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
+            new (&this->m_data[this->m_count].m4) T4(tmp4);
+            new (&this->m_data[this->m_count].m5) T5(tmp5);
+            new (&this->m_data[this->m_count].m6) T6(tmp6);
+            new (&this->m_data[this->m_count].m7) T7(tmp7);
+            new (&this->m_data[this->m_count].m8) T8(tmp8);
         }
         else
         {
@@ -331,13 +337,13 @@ public:
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
-            this->m_data[this->m_count].m4 = tmp4;
-            this->m_data[this->m_count].m5 = tmp5;
-            this->m_data[this->m_count].m6 = tmp6;
-            this->m_data[this->m_count].m7 = tmp7;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
+            new (&this->m_data[this->m_count].m4) T4(tmp4);
+            new (&this->m_data[this->m_count].m5) T5(tmp5);
+            new (&this->m_data[this->m_count].m6) T6(tmp6);
+            new (&this->m_data[this->m_count].m7) T7(tmp7);
         }
         else
         {
@@ -368,12 +374,12 @@ public:
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
-            this->m_data[this->m_count].m4 = tmp4;
-            this->m_data[this->m_count].m5 = tmp5;
-            this->m_data[this->m_count].m6 = tmp6;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
+            new (&this->m_data[this->m_count].m4) T4(tmp4);
+            new (&this->m_data[this->m_count].m5) T5(tmp5);
+            new (&this->m_data[this->m_count].m6) T6(tmp6);
         }
         else
         {
@@ -402,11 +408,11 @@ public:
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
-            this->m_data[this->m_count].m4 = tmp4;
-            this->m_data[this->m_count].m5 = tmp5;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
+            new (&this->m_data[this->m_count].m4) T4(tmp4);
+            new (&this->m_data[this->m_count].m5) T5(tmp5);
         }
         else
         {
@@ -432,10 +438,10 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
-            this->m_data[this->m_count].m4 = tmp4;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
+            new (&this->m_data[this->m_count].m4) T4(tmp4);
         }
         else
         {
@@ -460,9 +466,9 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
-            this->m_data[this->m_count].m3 = tmp3;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
+            new (&this->m_data[this->m_count].m3) T3(tmp3);
         }
         else
         {
@@ -486,8 +492,8 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2;
             this->Reserve(this->m_count * 13 / 8 + 8);
-            this->m_data[this->m_count].m1 = tmp1;
-            this->m_data[this->m_count].m2 = tmp2;
+            new (&this->m_data[this->m_count].m1) T1(tmp1);
+            new (&this->m_data[this->m_count].m2) T2(tmp2);
         }
         else
         {
