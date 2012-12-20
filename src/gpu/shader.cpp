@@ -326,8 +326,13 @@ ShaderAttrib Shader::GetAttribLocation(char const *attr,
     ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
 #elif !defined __CELLOS_LV2__
-    ret.m_flags |= (uint64_t)
-                  (uint32_t)glGetAttribLocation(data->prog_id, attr) << 32;
+    GLint l = glGetAttribLocation(data->prog_id, attr);
+    if (l < 0)
+    {
+        Log::Warn("tried to query invalid attribute: %s\n", attr);
+        l = 0;
+    }
+    ret.m_flags |= (uint64_t)(uint32_t)l << 32;
 #else
     /* FIXME: can we do this at all on the PS3? */
 #endif
