@@ -374,6 +374,13 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                 if (usage_index++ == index)
                     break;
 
+        if (attr_index == m_count)
+        {
+            Log::Error("stream #%d with usage %x not found in declaration\n",
+                       index, usage);
+            attr_index = 0;
+        }
+
         /* Now compute the stride and offset up to this stream index */
         int stride = 0, offset = 0;
         for (int i = 0; i < m_count; i++)
