@@ -420,6 +420,8 @@ AC_CONFIG_FILES(
   people/jnat/TestProject/Makefile
   people/peeweek/Makefile
   people/touky/Makefile
+  people/jylam/Makefile
+  people/jylam/chat/Makefile
 ])
 
 AC_OUTPUT
