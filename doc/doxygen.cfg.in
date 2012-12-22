@@ -567,21 +567,19 @@ WARN_LOGFILE           =
 INPUT                  = @top_srcdir@ \
                          @top_srcdir@/doc \
                          @top_srcdir@/src \
-
-                         @top_srcdir@/application
-                         @top_srcdir@/src \
-                         @top_srcdir@/core
-                         @top_srcdir@/data
-                         @top_srcdir@/debug
-                         @top_srcdir@/easymesh
-                         @top_srcdir@/gpu
-                         @top_srcdir@/image
-                         @top_srcdir@/input
-                         @top_srcdir@/lol
-                         @top_srcdir@/math
-                         @top_srcdir@/mesh
-                         @top_srcdir@/platform
-                         @top_srcdir@/thread
+                         @top_srcdir@/src/application \
+                         @top_srcdir@/src/core \
+                         @top_srcdir@/src/data \
+                         @top_srcdir@/src/debug \
+                         @top_srcdir@/src/easymesh \
+                         @top_srcdir@/src/gpu \
+                         @top_srcdir@/src/image \
+                         @top_srcdir@/src/input \
+                         @top_srcdir@/src/lol \
+                         @top_srcdir@/src/ath \
+                         @top_srcdir@/src/mesh \
+                         @top_srcdir@/src/platform \
+                         @top_srcdir@/src/thread
 
 
 # This tag can be used to specify the character encoding of the source files
@@ -631,8 +629,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = *_internal.h \
-                         driver_*.c
+EXCLUDE_PATTERNS       =
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
