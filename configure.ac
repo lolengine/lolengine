@@ -69,6 +69,8 @@ AC_ARG_ENABLE(release,
   [  --enable-release        build final release of the game (default no)])
 AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
+AC_ARG_ENABLE(doc,
+  [  --enable-doc            build documentation (needs doxygen and LaTeX)])
 
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h)
@@ -95,6 +97,38 @@ fi
 if test "${enable_experimental}" = "yes"; then
   AC_DEFINE(LOL_EXPERIMENTAL, 1, Define to 1 to activate experimental build)
 fi
+
+# Build documentation?
+DOXYGEN="no"
+LATEX="no"
+if test "${enable_doc}" != "no"; then
+  AC_PATH_PROG(DOXYGEN, doxygen, no)
+  if test "${DOXYGEN}" != "no"; then
+    # Build LaTeX documentation?
+    AC_PATH_PROG(LATEX, pdflatex, no)
+    AC_PATH_PROG(KPSEWHICH, kpsewhich, no)
+    AC_PATH_PROG(DVIPS, dvips, no)
+    if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no"; then
+      LATEX="no"
+    fi
+    if test "${LATEX}" != "no"; then
+      AC_MSG_CHECKING(for a4.sty and a4wide.sty)
+      if "${KPSEWHICH}" a4.sty >/dev/null 2>&1; then
+        if "${KPSEWHICH}" a4wide.sty >/dev/null 2>&1; then
+          AC_MSG_RESULT(yes)
+        else
+          LATEX="no"
+          AC_MSG_RESULT(no)
+        fi
+      else
+        LATEX="no"
+        AC_MSG_RESULT(no)
+      fi
+    fi
+  fi
+fi
+AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
+AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 
 dnl No exceptions
 CXXFLAGS="${CXXFLAGS} -fno-exceptions -fno-rtti"
@@ -395,6 +429,8 @@ AC_CONFIG_FILES(
   tools/Makefile
   tools/vimlol/Makefile
   tools/vslol/Makefile
+  doc/Makefile
+  doc/doxygen.cfg
 ])
 AC_CONFIG_FILES(
  [games/monsterz/Makefile
