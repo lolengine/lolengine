@@ -125,10 +125,18 @@ if test "${enable_doc}" != "no"; then
         AC_MSG_RESULT(no)
       fi
     fi
+    AC_PATH_PROG(DOT, dot, no)
+    if test "${DOT}" != "no"; then
+      AC_MSG_RESULT(yes)
+      USE_DOT="YES"
+    else
+      USE_DOT="NO"
+    fi
   fi
 fi
 AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
+AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
 dnl No exceptions
 CXXFLAGS="${CXXFLAGS} -fno-exceptions -fno-rtti"
@@ -411,6 +419,7 @@ LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 
+AC_SUBST(USE_DOT)
 
 AC_CONFIG_FILES(
  [Makefile
