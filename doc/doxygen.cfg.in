@@ -564,22 +564,30 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @top_srcdir@ \
-                         @top_srcdir@/doc \
-                         @top_srcdir@/src \
-                         @top_srcdir@/src/application \
-                         @top_srcdir@/src/core \
-                         @top_srcdir@/src/data \
-                         @top_srcdir@/src/debug \
-                         @top_srcdir@/src/easymesh \
-                         @top_srcdir@/src/gpu \
-                         @top_srcdir@/src/image \
-                         @top_srcdir@/src/input \
-                         @top_srcdir@/src/lol \
-                         @top_srcdir@/src/ath \
-                         @top_srcdir@/src/mesh \
-                         @top_srcdir@/src/platform \
-                         @top_srcdir@/src/thread
+INPUT                  = .. \
+                         ../doc \
+                         ../src \
+                         ../src/application \
+                         ../src/core \
+                         ../src/data \
+                         ../src/debug \
+                         ../src/easymesh \
+                         ../src/gpu \
+                         ../src/image \
+                         ../src/input \
+                         ../src/lol \
+                         ../src/lol/math \
+                         ../src/lol/core \
+                         ../src/ath \
+                         ../src/mesh \
+                         ../src/platform \
+                         ../src/platform/android \
+                         ../src/platform/d3d9 \
+                         ../src/platform/nacl \
+                         ../src/platform/ps3 \
+                         ../src/platform/sdl \
+                         ../src/platform/xbox \
+                         ../src/thread
 
 
 # This tag can be used to specify the character encoding of the source files
