@@ -127,7 +127,6 @@ if test "${enable_doc}" != "no"; then
     fi
     AC_PATH_PROG(DOT, dot, no)
     if test "${DOT}" != "no"; then
-      AC_MSG_RESULT(yes)
       USE_DOT="YES"
     else
       USE_DOT="NO"
