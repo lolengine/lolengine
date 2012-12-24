@@ -181,6 +181,7 @@ template <typename T> struct BVec2
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   define const /* disabled */
 #endif
+#if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> const xy, rg, st; /* lvalue */
         XVec2<T,0x10> const yx, gr, ts; /* lvalue */
@@ -211,6 +212,7 @@ template <typename T> struct BVec2
         XVec4<T,0x1101> const yyxy, ggrg, ttst;
         XVec4<T,0x1110> const yyyx, gggr, ttts;
         XVec4<T,0x1111> const yyyy, gggg, tttt;
+#endif
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   undef const
 #endif
@@ -342,6 +344,7 @@ template <typename T> struct BVec3
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   define const /* disabled */
 #endif
+#if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> const xy, rg, st; /* lvalue */
         XVec2<T,0x02> const xz, rb, sp; /* lvalue */
@@ -461,6 +464,7 @@ template <typename T> struct BVec3
         XVec4<T,0x2220> const zzzx, bbbr, ppps;
         XVec4<T,0x2221> const zzzy, bbbg, pppt;
         XVec4<T,0x2222> const zzzz, bbbb, pppp;
+#endif
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   undef const
 #endif
@@ -526,6 +530,7 @@ template <typename T> struct BVec4
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   define const /* disabled */
 #endif
+#if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> const xy, rg, st; /* lvalue */
         XVec2<T,0x02> const xz, rb, sp; /* lvalue */
@@ -864,6 +869,7 @@ template <typename T> struct BVec4
         XVec4<T,0x3331> const wwwy, aaag, qqqt;
         XVec4<T,0x3332> const wwwz, aaab, qqqp;
         XVec4<T,0x3333> const wwww, aaaa, qqqq;
+#endif
 #if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
 #   undef const
 #endif
