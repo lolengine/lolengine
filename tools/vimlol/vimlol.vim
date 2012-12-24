@@ -70,5 +70,5 @@ au BufRead,BufNewFile *.lolfx syn region cPreProc
 
 " LolFx shader region
 au BufRead,BufNewFile *.lolfx syn region cSpecial
-   \ start="^\s*\[[^]]*\(glsl\|hlsl\)]" end="$" removeend
+   \ start="^\s*\[[^\]]*\(glsl\|hlsl\)\]" end="$" contains=ALLBUT,@cPreProcGroup,@Spell
 
