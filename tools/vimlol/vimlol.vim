@@ -65,5 +65,10 @@ au BufRead,BufNewFile *.lolfx syn keyword cppOperator
    \ texture1D texture2D texture3D tex2D tex3D
 
 " Handle #version constructs
-au BufRead,BufNewFile *.lolfx syn region cPreProc start="^\s*\(%:\|#\)\s*version\>" skip="\\$" end="$" keepend contains=ALLBUT,@cPreProcGroup,@Spell
+au BufRead,BufNewFile *.lolfx syn region cPreProc
+   \ start="^\s*\(%:\|#\)\s*version\>" skip="\\$" end="$" keepend contains=ALLBUT,@cPreProcGroup,@Spell
+
+" LolFx shader region
+au BufRead,BufNewFile *.lolfx syn region cSpecial
+   \ start="^\s*\[[^]]*\(glsl\|hlsl\)]" end="$" removeend
 
