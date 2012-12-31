@@ -57,6 +57,16 @@ static inline float atan2(float const &y, float const &x)
     return std::atan2(y, x);
 }
 
+static inline double pow(double const &x, double const &y)
+{
+    return std::pow(x, y);
+}
+
+static inline float pow(float const &x, float const &y)
+{
+    return std::pow(x, y);
+}
+
 /* Our extensions */
 static inline void sincos(double const &x, double *s, double *c)
 {
