@@ -84,3 +84,4 @@ tutorial/05_easymesh
 tutorial/08_fbo
 tutorial/11_fractal
 # Our data
+doc/doxygen.cfg
