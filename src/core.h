@@ -87,6 +87,8 @@ static inline int isnan(float f)
 #include <lol/math/real.h>
 #include <lol/math/vector.h>
 
+#include <lol/image/color.h>
+
 #include "numeric.h"
 #include "timer.h"
 #include "thread/thread.h"
