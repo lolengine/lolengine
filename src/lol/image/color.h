@@ -30,14 +30,13 @@ public:
      */
     static vec3 LinearRGBTosRGB(vec3 c)
     {
-        using std::pow;
-        vec3 ret = 12.92 * c;
-        if (c.r > 0.0031308)
-            ret.r = 1.055 * pow(c.r, 1.0 / 2.4) - 0.055;
-        if (c.g > 0.0031308)
-            ret.g = 1.055 * pow(c.g, 1.0 / 2.4) - 0.055;
-        if (c.b > 0.0031308)
-            ret.b = 1.055 * pow(c.b, 1.0 / 2.4) - 0.055;
+        vec3 ret = 12.92f * c;
+        if (c.r > 0.0031308f)
+            ret.r = 1.055f * pow(c.r, 1.0f / 2.4f) - 0.055f;
+        if (c.g > 0.0031308f)
+            ret.g = 1.055f * pow(c.g, 1.0f / 2.4f) - 0.055f;
+        if (c.b > 0.0031308f)
+            ret.b = 1.055f * pow(c.b, 1.0f / 2.4f) - 0.055f;
         return ret;
     }
 
@@ -51,14 +50,13 @@ public:
      */
     static vec3 sRGBToLinearRGB(vec3 c)
     {
-        using std::pow;
-        vec3 ret = 1.0 / 12.92 * c;
-        if (c.r > 0.04045)
-            ret.r = pow(c.r + 0.055, 2.4) / pow(1.055, 2.4);
-        if (c.g > 0.04045)
-            ret.g = pow(c.g + 0.055, 2.4) / pow(1.055, 2.4);
-        if (c.b > 0.04045)
-            ret.b = pow(c.b + 0.055, 2.4) / pow(1.055, 2.4);
+        vec3 ret = 1.0f / 12.92f * c;
+        if (c.r > 0.04045f)
+            ret.r = pow(c.r + 0.055f, 2.4f) / pow(1.055f, 2.4f);
+        if (c.g > 0.04045f)
+            ret.g = pow(c.g + 0.055f, 2.4f) / pow(1.055f, 2.4f);
+        if (c.b > 0.04045f)
+            ret.b = pow(c.b + 0.055f, 2.4f) / pow(1.055f, 2.4f);
         return ret;
     }
 
@@ -72,9 +70,9 @@ public:
      */
     static vec3 LinearRGBToCIEXYZ(vec3 c)
     {
-        mat3 m(vec3(3.2406, -0.9689, 0.0557),
-               vec3(-1.5372, 1.8758, -0.2040),
-               vec3(-0.4986, 0.0415, 1.0570));
+        mat3 m(vec3(3.2406f, -0.9689f, 0.0557f),
+               vec3(-1.5372f, 1.8758f, -0.2040f),
+               vec3(-0.4986f, 0.0415f, 1.0570f));
         return m * c;
     }
 
@@ -88,9 +86,9 @@ public:
      */
     static vec3 CIEXYZToLinearRGB(vec3 c)
     {
-        mat3 m(vec3(0.4124, 0.2126, 0.0193),
-               vec3(0.3576, 0.7152, 0.1192),
-               vec3(0.1805, 0.0722, 0.9505));
+        mat3 m(vec3(0.4124f, 0.2126f, 0.0193f),
+               vec3(0.3576f, 0.7152f, 0.1192f),
+               vec3(0.1805f, 0.0722f, 0.9505f));
         return m * c;
     }
 
