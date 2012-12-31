@@ -17,7 +17,7 @@
 #if !defined __LOL_CORE_STRING_H__
 #define __LOL_CORE_STRING_H__
 
-#include <lol/core/array.h>
+#include <lol/base/array.h>
 
 namespace lol
 {

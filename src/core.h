@@ -76,11 +76,11 @@ static inline int isnan(float f)
 // Base types
 #include <lol/debug.h>
 
-#include <lol/core/types.h>
-#include <lol/core/array.h>
-#include <lol/core/string.h>
-#include <lol/core/hash.h>
-#include <lol/core/map.h>
+#include <lol/base/types.h>
+#include <lol/base/array.h>
+#include <lol/base/string.h>
+#include <lol/base/hash.h>
+#include <lol/base/map.h>
 
 #include <lol/math/math.h>
 #include <lol/math/half.h>
