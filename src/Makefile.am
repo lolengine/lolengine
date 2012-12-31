@@ -17,8 +17,8 @@ liblol_a_SOURCES = \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
     lol/unit.h lol/debug.h \
-    lol/core/types.h lol/core/array.h lol/core/string.h lol/core/hash.h \
-    lol/core/map.h \
+    lol/base/types.h lol/base/array.h lol/base/string.h lol/base/hash.h \
+    lol/base/map.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     \
@@ -40,7 +40,7 @@ liblol_a_SOURCES = \
     $(d3d9_sources) \
     $(android_sources) \
     \
-    core/hash.cpp core/string.cpp \
+    base/hash.cpp base/string.cpp \
     \
     thread/threadbase.h thread/thread.h \
     \
