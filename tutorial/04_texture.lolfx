@@ -32,6 +32,7 @@ void main(void)
     float width = 800.0;
     float height = 600.0;
     float line_width = 1.8;
+    float dot_size = 2.0;
     vec4 delta = vec4(1.0 / 128, 0.0,
                       2.0 / 128, 0.0);
 
@@ -44,22 +45,30 @@ void main(void)
     c[2] = texture2D(u_Texture, tc + delta.xy).x;
     c[3] = texture2D(u_Texture, tc + delta.zw).x;
 
-    /* Quick hack: artificially compress display in Y */
-    c *= 0.3;
-
     vec2 p0 = vec2((tc.x - delta.x) * width, c[0] * height);
-    vec2 p1 = vec2((tc.x) * width,           c[1] * height);
+    vec2 p1 = vec2((tc.x          ) * width, c[1] * height);
     vec2 p2 = vec2((tc.x + delta.x) * width, c[2] * height);
     vec2 p3 = vec2((tc.x + delta.z) * width, c[3] * height);
     vec2 a = vec2(p.x * width, p.y * height);
 
-    float d0 = segdist(p0, p1, a);
-    float d1 = segdist(p1, p2, a);
-    float d2 = segdist(p2, p3, a);
+    /* Compute distance to segments */
+    float d =        segdist(p0, p1, a);
+          d = min(d, segdist(p1, p2, a));
+          d = min(d, segdist(p2, p3, a));
 
-    float d = clamp(line_width - min(min(d0, d1), d2), 0.0, 1.0);
+    /* Compute distance to dots */
+    d = min(d, length(a - p0) - dot_size);
+    d = min(d, length(a - p1) - dot_size);
+    d = min(d, length(a - p2) - dot_size);
+    d = min(d, length(a - p3) - dot_size);
+
+    /* Add line width */
+    float lum = clamp(line_width - d, 0.0, 1.0);
+
+    /* Compensate for sRGB */
+    lum = pow(1.0 - lum, 1.0 / 2.4);
 
     /* Choose some funny colours */
-    gl_FragColor = vec4(p.y, d, mix(p.x, 0.3, d), 1.0);
+    gl_FragColor = vec4(mix(p.x, 1.0, lum), lum, lum, 1.0);
 }
 
