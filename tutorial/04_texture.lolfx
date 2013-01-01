@@ -31,20 +31,22 @@ void main(void)
 {
     float width = 800.0;
     float height = 600.0;
-    float line_width = 1.8;
-    float dot_size = 2.0;
-    vec4 delta = vec4(1.0 / 128, 0.0,
-                      2.0 / 128, 0.0);
+    float texture_width = 512.0;
+    float line_width = 1.2;
+    float dot_size = 1.0;
+    vec4 delta = vec4(1.0 / 512, 0.0,
+                      2.0 / 512, 0.0);
 
     vec2 p = pass_Position.xy;
-    vec2 tc = vec2(floor(p.x * 128.0) / 128.0, p.y);
-    float t = p.x * 128.0 - floor(p.x * 128.0);
+    vec2 tc = vec2(floor(p.x * 512.0) / 512.0, p.y);
+    float t = p.x * 512.0 - floor(p.x * 512.0);
     vec4 c;
     c[0] = texture2D(u_Texture, tc - delta.xy).x;
     c[1] = texture2D(u_Texture, tc).x;
     c[2] = texture2D(u_Texture, tc + delta.xy).x;
     c[3] = texture2D(u_Texture, tc + delta.zw).x;
 
+    /* Find the 4 closest points in screen space */
     vec2 p0 = vec2((tc.x - delta.x) * width, c[0] * height);
     vec2 p1 = vec2((tc.x          ) * width, c[1] * height);
     vec2 p2 = vec2((tc.x + delta.x) * width, c[2] * height);
