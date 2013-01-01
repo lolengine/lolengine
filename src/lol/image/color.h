@@ -96,6 +96,35 @@ public:
     {
         return vec4(CIEXYZToLinearRGB(c.rgb), c.a);
     }
+
+    /*
+     * Convert CIE XYZ to CIE L*a*b*
+     */
+    static vec3 CIEXYZToCIELab(vec3 col)
+    {
+        using std::pow;
+
+        float const a = 8.85645167903563081e-3; /* (6/29)^3 */
+        float const b = 7.78703703703703703;    /* 1/3 (29/6)^2 */
+        float const c = 1.37931034482758620e-1; /* 4/29 */
+
+        vec3 f = b * col + vec3(c);
+        if (col.x > a)
+            f.x = pow(col.x, 1.0 / 3.0);
+        if (col.y > a)
+            f.y = pow(col.y, 1.0 / 3.0);
+        if (col.z > a)
+            f.z = pow(col.z, 1.0 / 3.0);
+
+        return vec3(116.0 * f.y - 16.0,
+                    500.0 * (f.x - f.y),
+                    200.0 * (f.y - f.z));
+    }
+
+    static vec4 CIEXYZToCIELab(vec4 c)
+    {
+        return vec4(CIEXYZToLinearRGB(c.rgb), c.a);
+    }
 };
 
 } /* namespace lol */
