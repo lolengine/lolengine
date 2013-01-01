@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lol;
 
-static int const TEXTURE_WIDTH = 128;
+static int const TEXTURE_WIDTH = 512;
 
 extern char const *lolfx_04_texture;
 
@@ -57,7 +57,7 @@ public:
             m_heightmap[4 * i] = m_heightmap[4 * i + 4];
 
         int height = m_heightmap[4 * (TEXTURE_WIDTH - 1)];
-        height = height / 2 + 255 / 4 + rand() % 97 - 48;
+        height = (height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
         m_heightmap[4 * (TEXTURE_WIDTH - 1)] = height;
 
