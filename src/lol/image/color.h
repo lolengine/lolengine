@@ -80,13 +80,41 @@ public:
     }
 
     /*
+     * Convert linear HSV to linear HSL
+     */
+    static vec3 HSVToHSL(vec3 src)
+    {
+        float tmp = (2 - src.y) * src.z;
+        return vec3(src.x, src.y * src.z / (1.f - abs(1.f - tmp)), 0.5f * tmp);
+    }
+
+    static vec4 HSVToHSL(vec4 src)
+    {
+        return vec4(HSVToHSL(src.rgb), src.a);
+    }
+
+    /*
+     * Convert linear HSL to linear HSV
+     */
+    static vec3 HSLToHSV(vec3 src)
+    {
+        float tmp = src.y * (0.5f - abs(0.5f - src.z));
+        return vec3(src.x, 2.f * tmp / (src.z + tmp), src.z + tmp);
+    }
+
+    static vec4 HSLToHSV(vec4 src)
+    {
+        return vec4(HSLToHSV(src.rgb), src.a);
+    }
+
+    /*
      * Convert linear RGB to CIE XYZ
      */
     static vec3 LinearRGBToCIEXYZ(vec3 src)
     {
-        mat3 m(vec3(3.2406f, -0.9689f, 0.0557f),
-               vec3(-1.5372f, 1.8758f, -0.2040f),
-               vec3(-0.4986f, 0.0415f, 1.0570f));
+        mat3 m(vec3(0.4124f, 0.2126f, 0.0193f),
+               vec3(0.3576f, 0.7152f, 0.1192f),
+               vec3(0.1805f, 0.0722f, 0.9505f));
         return m * src;
     }
 
@@ -100,9 +128,9 @@ public:
      */
     static vec3 CIEXYZToLinearRGB(vec3 src)
     {
-        mat3 m(vec3(0.4124f, 0.2126f, 0.0193f),
-               vec3(0.3576f, 0.7152f, 0.1192f),
-               vec3(0.1805f, 0.0722f, 0.9505f));
+        mat3 m(vec3(3.2406f, -0.9689f, 0.0557f),
+               vec3(-1.5372f, 1.8758f, -0.2040f),
+               vec3(-0.4986f, 0.0415f, 1.0570f));
         return m * src;
     }
 
@@ -112,9 +140,22 @@ public:
     }
 
     /*
+     * Convert CIE XYZ to CIE xyY
+     */
+    static vec3 CIEXYZToCIExyY(vec3 src)
+    {
+        float tmp = 1.0f / (src.x + src.y + src.z);
+        return vec3(src.x * tmp, src.y * tmp, src.y);
+    }
+
+    static vec4 CIEXYZToCIExyY(vec4 src)
+    {
+        return vec4(CIEXYZToCIExyY(src.rgb), src.a);
+    }
+
+    /*
      * Convert CIE XYZ to CIE L*a*b*
-     * Note: XYZ values should be normalised, ie. divided by the
-     * corresponding components for white.
+     * Note: XYZ values are normalised using a D65 illuminant.
      */
     static vec3 CIEXYZToCIELab(vec3 src)
     {
@@ -122,6 +163,9 @@ public:
         float const b = (29.0 * 29.0) / (3 * 6 * 6);
         float const c = 4.0 / 29;
         float const d = 1.0 / 3;
+
+        /* Normalise XYZ using D65 illuminant */
+        src *= vec3(1.f / 95.047f, 1.f / 100.f, 1.f / 108.883f);
 
         vec3 f = b * src + vec3(c);
         if (src.x > a)
