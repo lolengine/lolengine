@@ -1135,6 +1135,25 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     }
 
 /*
+ * vec mix(vec, vec, vec)
+ * vec mix(vec, vec, scalar)
+ */
+#define LOL_VECTOR_MIX_FUN(tname, tprefix, type) \
+    tprefix \
+    inline tname<type> mix(tname<type> const &x, \
+                           tname<type> const &y, tname<type> const &a) \
+    { \
+        return x + a * (y - x); \
+    } \
+    \
+    tprefix \
+    inline tname<type> mix(tname<type> const &x, \
+                           tname<type> const &y, type const &a) \
+    { \
+        return x + a * (y - x); \
+    }
+
+/*
  * bool ==(vec, vec)   (also complex & quaternion)
  * bool !=(vec, vec)   (also complex & quaternion)
  * bool >=(vec, vec)
@@ -1218,6 +1237,15 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     } \
     \
     tprefix \
+    inline tname<type> fract(tname<type> const &a) \
+    { \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = fract(a[n]); \
+        return ret; \
+    } \
+    \
+    tprefix \
     inline tname<type> normalize(tname<type> const &a) \
     { \
         type norm = (type)length(a); \
@@ -1293,7 +1321,8 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     LOL_VECTOR_MINMAX_FUN(tname, min, tprefix, type) \
     LOL_VECTOR_MINMAX_FUN(tname, max, tprefix, type) \
     LOL_VECTOR_MINMAX_FUN(tname, fmod, tprefix, type) \
-    LOL_VECTOR_CLAMP_FUN(tname, tprefix, type)
+    LOL_VECTOR_CLAMP_FUN(tname, tprefix, type) \
+    LOL_VECTOR_MIX_FUN(tname, tprefix, type)
 
 #define LOL_VECTOR_COERCE_OPS(tname, tprefix, t1, t2, tf) \
     LOL_VECTOR_VECTOR_COERCE_OP(tname, *, tprefix, t1, t2, tf) \
@@ -1563,6 +1592,7 @@ ACTIVATE_COERCE_NAMESPACES(real)
 #undef LOL_VECTOR_VECTOR_OP
 #undef LOL_VECTOR_MINMAX_FUN
 #undef LOL_VECTOR_CLAMP_FUN
+#undef LOL_VECTOR_MIX_FUN
 #undef LOL_VECTOR_VECTOR_BOOL_OP
 #undef LOL_VECTOR_SCALAR_COERCE_OP
 #undef LOL_SCALAR_VECTOR_COERCE_OP

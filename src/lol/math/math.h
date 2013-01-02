@@ -33,6 +33,9 @@ namespace lol
 static inline double sqrt(double const &x) { return std::sqrt(x); }
 static inline float sqrt(float const &x) { return std::sqrt(x); }
 
+static inline double exp(double const &x) { return std::exp(x); }
+static inline float exp(float const &x) { return std::exp(x); }
+
 static inline double sin(double const &x) { return std::sin(x); }
 static inline double cos(double const &x) { return std::cos(x); }
 static inline double tan(double const &x) { return std::tan(x); }
@@ -137,6 +140,18 @@ static inline int64_t fmod(int64_t x, int64_t y) { return x % y; }
 static inline float fmod(float x, float y) { return std::fmod(x, y); }
 static inline double fmod(double x, double y) { return std::fmod(x, y); }
 static inline ldouble fmod(ldouble x, ldouble y) { return std::fmod(x, y); }
+
+static inline uint8_t fract(uint8_t x) { return 0; }
+static inline int8_t fract(int8_t x) { return 0; }
+static inline uint16_t fract(uint16_t x) { return 0; }
+static inline int16_t fract(int16_t x) { return 0; }
+static inline uint32_t fract(uint32_t x) { return 0; }
+static inline int32_t fract(int32_t x) { return 0; }
+static inline uint64_t fract(uint64_t x) { return 0; }
+static inline int64_t fract(int64_t x) { return 0; }
+static inline float fract(float x) { return x - std::floor(x); }
+static inline double fract(double x) { return x - std::floor(x); }
+static inline ldouble fract(ldouble x) { return x - std::floor(x); }
 
 static inline uint8_t min(uint8_t x, uint8_t y) { return std::min(x, y); }
 static inline int8_t min(int8_t x, int8_t y) { return std::min(x, y); }
