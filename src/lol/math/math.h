@@ -141,14 +141,14 @@ static inline float fmod(float x, float y) { return std::fmod(x, y); }
 static inline double fmod(double x, double y) { return std::fmod(x, y); }
 static inline ldouble fmod(ldouble x, ldouble y) { return std::fmod(x, y); }
 
-static inline uint8_t fract(uint8_t x) { return 0; }
-static inline int8_t fract(int8_t x) { return 0; }
-static inline uint16_t fract(uint16_t x) { return 0; }
-static inline int16_t fract(int16_t x) { return 0; }
-static inline uint32_t fract(uint32_t x) { return 0; }
-static inline int32_t fract(int32_t x) { return 0; }
-static inline uint64_t fract(uint64_t x) { return 0; }
-static inline int64_t fract(int64_t x) { return 0; }
+static inline uint8_t fract(uint8_t x) { (void)x; return 0; }
+static inline int8_t fract(int8_t x) { (void)x; return 0; }
+static inline uint16_t fract(uint16_t x) { (void)x; return 0; }
+static inline int16_t fract(int16_t x) { (void)x; return 0; }
+static inline uint32_t fract(uint32_t x) { (void)x; return 0; }
+static inline int32_t fract(int32_t x) { (void)x; return 0; }
+static inline uint64_t fract(uint64_t x) { (void)x; return 0; }
+static inline int64_t fract(int64_t x) { (void)x; return 0; }
 static inline float fract(float x) { return x - std::floor(x); }
 static inline double fract(double x) { return x - std::floor(x); }
 static inline ldouble fract(ldouble x) { return x - std::floor(x); }
