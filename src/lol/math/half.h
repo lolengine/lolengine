@@ -125,6 +125,7 @@ static inline half fmod(half a, half b)
     using std::fmod;
     return (half)fmod((float)a, (float)b);
 }
+static inline half fract(half a) { return (half)fract((float)a); }
 static inline half abs(half a) { return half::makebits(a.bits & 0x7fffu); }
 
 static inline half clamp(half x, half a, half b)
