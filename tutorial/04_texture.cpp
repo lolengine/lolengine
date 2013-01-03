@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lol;
 
-static int const TEXTURE_WIDTH = 512;
+static int const TEXTURE_WIDTH = 256;
 
 extern char const *lolfx_04_texture;
 

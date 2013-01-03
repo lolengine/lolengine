@@ -31,15 +31,15 @@ void main(void)
 {
     float width = 800.0;
     float height = 600.0;
-    float texture_width = 512.0;
+    float texture_width = 256.0;
     float line_width = 1.2;
     float dot_size = 1.0;
-    vec4 delta = vec4(1.0 / 512, 0.0,
-                      2.0 / 512, 0.0);
+    vec4 delta = vec4(1.0 / texture_width, 0.0,
+                      2.0 / texture_width, 0.0);
 
     vec2 p = pass_Position.xy;
-    vec2 tc = vec2(floor(p.x * 512.0) / 512.0, p.y);
-    float t = p.x * 512.0 - floor(p.x * 512.0);
+    vec2 tc = vec2(floor(p.x * texture_width) / texture_width, p.y);
+    float t = p.x * texture_width - floor(p.x * texture_width);
     vec4 c;
     c[0] = texture2D(u_Texture, tc - delta.xy).x;
     c[1] = texture2D(u_Texture, tc).x;
