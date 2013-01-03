@@ -68,15 +68,15 @@ public:
     /*
      * Convert linear HSV to linear RGB
      */
-    static vec3 HSVToLinearRGB(vec3 src)
+    static vec3 HSVToRGB(vec3 src)
     {
         vec3 tmp = abs(fract(vec3(src.x) + vec3(3.f, 2.f, 1.f) / 3.f) * 6.f - vec3(3.f));
         return mix(vec3(1.f), clamp(tmp - vec3(1.f), 0.f, 1.f), src.y) * src.z;
     }
 
-    static vec4 HSVToLinearRGB(vec4 src)
+    static vec4 HSVToRGB(vec4 src)
     {
-        return vec4(HSVToLinearRGB(src.rgb), src.a);
+        return vec4(HSVToRGB(src.rgb), src.a);
     }
 
     /*
@@ -108,13 +108,13 @@ public:
     }
 
     /*
-     * Convert linear RGB to CIE XYZ
+     * Convert linear RGB [0 1] to CIE XYZ [0 100]
      */
     static vec3 LinearRGBToCIEXYZ(vec3 src)
     {
-        mat3 m(vec3(0.4124f, 0.2126f, 0.0193f),
-               vec3(0.3576f, 0.7152f, 0.1192f),
-               vec3(0.1805f, 0.0722f, 0.9505f));
+        mat3 m(vec3(41.24f, 21.26f,  1.93f),
+               vec3(35.76f, 71.52f, 11.92f),
+               vec3(18.05f,  7.22f, 95.05f));
         return m * src;
     }
 
@@ -124,13 +124,13 @@ public:
     }
 
     /*
-     * Convert CIE XYZ to linear RGB
+     * Convert CIE XYZ [0 100] to linear RGB [0 1]
      */
     static vec3 CIEXYZToLinearRGB(vec3 src)
     {
-        mat3 m(vec3(3.2406f, -0.9689f, 0.0557f),
-               vec3(-1.5372f, 1.8758f, -0.2040f),
-               vec3(-0.4986f, 0.0415f, 1.0570f));
+        mat3 m(vec3( 0.032406f, -0.009689f,  0.000557f),
+               vec3(-0.015372f,  0.018758f, -0.002040f),
+               vec3(-0.004986f,  0.000415f,  0.010570f));
         return m * src;
     }
 
@@ -155,17 +155,17 @@ public:
 
     /*
      * Convert CIE XYZ to CIE L*a*b*
-     * Note: XYZ values are normalised using a D65 illuminant.
+     * Note: XYZ values are normalised using a D65 illuminant if
+     * no white value is provided.
      */
-    static vec3 CIEXYZToCIELab(vec3 src)
+    static vec3 CIEXYZToCIELab(vec3 src, vec3 white)
     {
         float const a = (6.0 * 6.0 * 6.0) / (29 * 29 * 29);
         float const b = (29.0 * 29.0) / (3 * 6 * 6);
         float const c = 4.0 / 29;
         float const d = 1.0 / 3;
 
-        /* Normalise XYZ using D65 illuminant */
-        src *= vec3(1.f / 95.047f, 1.f / 100.f, 1.f / 108.883f);
+        src /= white;
 
         vec3 f = b * src + vec3(c);
         if (src.x > a)
@@ -180,9 +180,19 @@ public:
                     200.f * (f.y - f.z));
     }
 
+    static vec3 CIEXYZToCIELab(vec3 src)
+    {
+        return CIEXYZToCIELab(src, vec3(95.047f, 100.f, 108.883f));
+    }
+
+    static vec4 CIEXYZToCIELab(vec4 src, vec4 white)
+    {
+        return vec4(CIEXYZToCIELab(src.rgb, white.rgb), src.a);
+    }
+
     static vec4 CIEXYZToCIELab(vec4 src)
     {
-        return vec4(CIEXYZToLinearRGB(src.rgb), src.a);
+        return vec4(CIEXYZToCIELab(src.rgb), src.a);
     }
 
     /*
