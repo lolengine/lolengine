@@ -309,14 +309,14 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
-            this->m_data[this->m_count].m4 = m4;
-            this->m_data[this->m_count].m5 = m5;
-            this->m_data[this->m_count].m6 = m6;
-            this->m_data[this->m_count].m7 = m7;
-            this->m_data[this->m_count].m8 = m8;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
+            new (&this->m_data[this->m_count].m4) T4(m4);
+            new (&this->m_data[this->m_count].m5) T5(m5);
+            new (&this->m_data[this->m_count].m6) T6(m6);
+            new (&this->m_data[this->m_count].m7) T7(m7);
+            new (&this->m_data[this->m_count].m8) T8(m8);
         }
         ++this->m_count;
     }
@@ -347,13 +347,13 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
-            this->m_data[this->m_count].m4 = m4;
-            this->m_data[this->m_count].m5 = m5;
-            this->m_data[this->m_count].m6 = m6;
-            this->m_data[this->m_count].m7 = m7;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
+            new (&this->m_data[this->m_count].m4) T4(m4);
+            new (&this->m_data[this->m_count].m5) T5(m5);
+            new (&this->m_data[this->m_count].m6) T6(m6);
+            new (&this->m_data[this->m_count].m7) T7(m7);
         }
         ++this->m_count;
     }
@@ -383,12 +383,12 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
-            this->m_data[this->m_count].m4 = m4;
-            this->m_data[this->m_count].m5 = m5;
-            this->m_data[this->m_count].m6 = m6;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
+            new (&this->m_data[this->m_count].m4) T4(m4);
+            new (&this->m_data[this->m_count].m5) T5(m5);
+            new (&this->m_data[this->m_count].m6) T6(m6);
         }
         ++this->m_count;
     }
@@ -416,11 +416,11 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
-            this->m_data[this->m_count].m4 = m4;
-            this->m_data[this->m_count].m5 = m5;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
+            new (&this->m_data[this->m_count].m4) T4(m4);
+            new (&this->m_data[this->m_count].m5) T5(m5);
         }
         ++this->m_count;
     }
@@ -445,10 +445,10 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
-            this->m_data[this->m_count].m4 = m4;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
+            new (&this->m_data[this->m_count].m4) T4(m4);
         }
         ++this->m_count;
     }
@@ -472,9 +472,9 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
-            this->m_data[this->m_count].m3 = m3;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count].m3) T3(m3);
         }
         ++this->m_count;
     }
@@ -497,8 +497,8 @@ public:
         }
         else
         {
-            this->m_data[this->m_count].m1 = m1;
-            this->m_data[this->m_count].m2 = m2;
+            new (&this->m_data[this->m_count].m1) T1(m1);
+            new (&this->m_data[this->m_count].m2) T2(m2);
         }
         ++this->m_count;
     }
