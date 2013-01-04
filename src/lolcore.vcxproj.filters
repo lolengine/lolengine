@@ -1,269 +1,268 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="src\image">
-      <UniqueIdentifier>{940329fb-d054-433a-ae30-b7f409790554}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\debug">
-      <UniqueIdentifier>{e056731c-5484-434a-965e-801c199c0366}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core">
-      <UniqueIdentifier>{a63b1fd6-3747-4a9f-9bd7-3f942133ad6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\platform">
-      <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\platform\sdl">
-      <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lol">
-      <UniqueIdentifier>{0edcf1a5-3c9c-4425-918c-aa2cbebc51c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lol\image">
-      <UniqueIdentifier>{f25b3187-b24c-469a-b038-5a968eaa83f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lol\math">
-      <UniqueIdentifier>{1e0b7a4c-425f-4d4f-945e-ba2ac9386ce0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\math">
-      <UniqueIdentifier>{2caadbda-b9f1-446d-bbd2-55c959db342c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\mesh">
-      <UniqueIdentifier>{1eaa8df5-7a31-4358-a1e9-0e265de6ed49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\gpu">
-      <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\thread">
-      <UniqueIdentifier>{d31f75ec-73c8-4bda-9b8c-6d62a55bc30d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\application">
-      <UniqueIdentifier>{459e2b92-4e46-4f07-89f7-62b55c7a2797}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\image\codec">
-      <UniqueIdentifier>{123803f1-1722-4421-8245-098667654cda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\platform\xbox">
-      <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\input">
-      <UniqueIdentifier>{94992c0e-ebc5-4185-b766-323b06547dcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\platform\d3d9">
-      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\...">
-      <UniqueIdentifier>{3592ed6a-59d7-4a6d-be5a-c05cb5dab730}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\generated">
-      <UniqueIdentifier>{8d536fa6-9ef8-4bdb-b945-48fe4549e8ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\easymesh">
-      <UniqueIdentifier>{07117029-d79d-4d59-beec-691b00a97c8f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\platform\ps3">
-      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bullet">
       <UniqueIdentifier>{b946cc33-6677-4e16-b7ef-fa3ee393ec19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\lol\core">
+    <Filter Include="...">
+      <UniqueIdentifier>{3592ed6a-59d7-4a6d-be5a-c05cb5dab730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application">
+      <UniqueIdentifier>{459e2b92-4e46-4f07-89f7-62b55c7a2797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug">
+      <UniqueIdentifier>{e056731c-5484-434a-965e-801c199c0366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="easymesh">
+      <UniqueIdentifier>{07117029-d79d-4d59-beec-691b00a97c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="generated">
+      <UniqueIdentifier>{8d536fa6-9ef8-4bdb-b945-48fe4549e8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpu">
+      <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image">
+      <UniqueIdentifier>{940329fb-d054-433a-ae30-b7f409790554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image\codec">
+      <UniqueIdentifier>{123803f1-1722-4421-8245-098667654cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{94992c0e-ebc5-4185-b766-323b06547dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol">
+      <UniqueIdentifier>{0edcf1a5-3c9c-4425-918c-aa2cbebc51c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\image">
+      <UniqueIdentifier>{f25b3187-b24c-469a-b038-5a968eaa83f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\math">
+      <UniqueIdentifier>{1e0b7a4c-425f-4d4f-945e-ba2ac9386ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{2caadbda-b9f1-446d-bbd2-55c959db342c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh">
+      <UniqueIdentifier>{1eaa8df5-7a31-4358-a1e9-0e265de6ed49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\sdl">
+      <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\xbox">
+      <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\d3d9">
+      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\ps3">
+      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thread">
+      <UniqueIdentifier>{d31f75ec-73c8-4bda-9b8c-6d62a55bc30d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\base">
       <UniqueIdentifier>{e17b998c-d494-480b-ae29-5d1564f73327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{606ea817-db84-40fe-be2e-8e5c864e39b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image\color">
+      <UniqueIdentifier>{73e4bc38-19e4-41d2-82e9-ebf22fa65f77}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\image.cpp">
-      <Filter>src\image</Filter>
+      <Filter>image</Filter>
     </ClCompile>
     <ClCompile Include="debug\fps.cpp">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClCompile>
     <ClCompile Include="debug\record.cpp">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClCompile>
     <ClCompile Include="debug\stats.cpp">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClCompile>
     <ClCompile Include="platform\sdl\sdlapp.cpp">
-      <Filter>src\platform\sdl</Filter>
+      <Filter>platform\sdl</Filter>
     </ClCompile>
     <ClCompile Include="platform\sdl\sdlinput.cpp">
-      <Filter>src\platform\sdl</Filter>
+      <Filter>platform\sdl</Filter>
     </ClCompile>
     <ClCompile Include="math\half.cpp">
-      <Filter>src\math</Filter>
+      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="math\real.cpp">
-      <Filter>src\math</Filter>
+      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="math\trig.cpp">
-      <Filter>src\math</Filter>
+      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="math\vector.cpp">
-      <Filter>src\math</Filter>
+      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="mesh\mesh.cpp">
-      <Filter>src\mesh</Filter>
+      <Filter>mesh</Filter>
     </ClCompile>
     <ClCompile Include="gpu\shader.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="gpu\texture.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="gpu\vertexbuffer.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="application\application.cpp">
-      <Filter>src\application</Filter>
+      <Filter>application</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\android-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\dummy-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\gdiplus-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\ios-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\ps3-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\sdl-image.cpp">
-      <Filter>src\image\codec</Filter>
+      <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="platform\xbox\xboxapp.cpp">
-      <Filter>src\platform\xbox</Filter>
+      <Filter>platform\xbox</Filter>
     </ClCompile>
     <ClCompile Include="platform\xbox\xboxinput.cpp">
-      <Filter>src\platform\xbox</Filter>
+      <Filter>platform\xbox</Filter>
     </ClCompile>
     <ClCompile Include="gpu\indexbuffer.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="input\input.cpp">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClCompile>
     <ClCompile Include="input\keyboard.cpp">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClCompile>
     <ClCompile Include="input\stick.cpp">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClCompile>
     <ClCompile Include="platform\d3d9\d3d9input.cpp">
-      <Filter>src\platform\d3d9</Filter>
+      <Filter>platform\d3d9</Filter>
     </ClCompile>
     <ClCompile Include="audio.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="dict.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="eglapp.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="emitter.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="entity.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="font.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="forge.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="gradient.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="layer.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="ticker.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="log.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="map.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="platform.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="profiler.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="sample.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="sampler.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="scene.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="sprite.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="text.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="tiler.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="tileset.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="video.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="worldentity.cpp">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="gpu\framebuffer.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="easymesh\easymesh.cpp">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </ClCompile>
     <ClCompile Include="easymesh\easymesh-compiler.cpp">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </ClCompile>
     <ClCompile Include="generated\easymesh-parser.cpp">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="generated\easymesh-scanner.cpp">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="generated\lolfx-parser.cpp">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="generated\lolfx-scanner.cpp">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="platform\ps3\ps3app.cpp">
-      <Filter>src\platform\ps3</Filter>
+      <Filter>platform\ps3</Filter>
     </ClCompile>
     <ClCompile Include="platform\ps3\ps3input.cpp">
-      <Filter>src\platform\ps3</Filter>
+      <Filter>platform\ps3</Filter>
     </ClCompile>
     <ClCompile Include="bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp">
       <Filter>bullet</Filter>
@@ -641,222 +640,225 @@
       <Filter>bullet</Filter>
     </ClCompile>
     <ClCompile Include="gpu\lolfx-compiler.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="gpu\lolfx.cpp">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClCompile>
-    <ClCompile Include="core\hash.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="base\hash.cpp">
+      <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="core\string.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="base\string.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="image\color\cie1931.cpp">
+      <Filter>image\color</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
-      <Filter>src\image</Filter>
+      <Filter>image</Filter>
     </ClInclude>
     <ClInclude Include="debug\fps.h">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClInclude>
     <ClInclude Include="debug\record.h">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClInclude>
     <ClInclude Include="debug\stats.h">
-      <Filter>src\debug</Filter>
+      <Filter>debug</Filter>
     </ClInclude>
     <ClInclude Include="platform\sdl\sdlinput.h">
-      <Filter>src\platform\sdl</Filter>
+      <Filter>platform\sdl</Filter>
     </ClInclude>
     <ClInclude Include="platform\sdl\sdlapp.h">
-      <Filter>src\platform\sdl</Filter>
+      <Filter>platform\sdl</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\color.h">
-      <Filter>src\lol\image</Filter>
+      <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\half.h">
-      <Filter>src\lol\math</Filter>
+      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\math.h">
-      <Filter>src\lol\math</Filter>
+      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\real.h">
-      <Filter>src\lol\math</Filter>
+      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\remez.h">
-      <Filter>src\lol\math</Filter>
+      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\vector.h">
-      <Filter>src\lol\math</Filter>
+      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\unit.h">
-      <Filter>src\lol</Filter>
+      <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="mesh\mesh.h">
-      <Filter>src\mesh</Filter>
+      <Filter>mesh</Filter>
     </ClInclude>
     <ClInclude Include="gpu\shader.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="gpu\texture.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="gpu\vertexbuffer.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="thread\thread.h">
-      <Filter>src\thread</Filter>
+      <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="thread\threadbase.h">
-      <Filter>src\thread</Filter>
+      <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="application\application.h">
-      <Filter>src\application</Filter>
+      <Filter>application</Filter>
     </ClInclude>
     <ClInclude Include="image\image-private.h">
-      <Filter>src\image</Filter>
+      <Filter>image</Filter>
     </ClInclude>
     <ClInclude Include="platform\xbox\xboxapp.h">
-      <Filter>src\platform\xbox</Filter>
+      <Filter>platform\xbox</Filter>
     </ClInclude>
     <ClInclude Include="platform\xbox\xboxinput.h">
-      <Filter>src\platform\xbox</Filter>
+      <Filter>platform\xbox</Filter>
     </ClInclude>
     <ClInclude Include="gpu\indexbuffer.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="lol\debug.h">
-      <Filter>src\lol</Filter>
+      <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="input\input.h">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClInclude>
     <ClInclude Include="input\keyboard.h">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClInclude>
     <ClInclude Include="input\stick.h">
-      <Filter>src\input</Filter>
+      <Filter>input</Filter>
     </ClInclude>
     <ClInclude Include="platform\d3d9\d3d9input.h">
-      <Filter>src\platform\d3d9</Filter>
+      <Filter>platform\d3d9</Filter>
     </ClInclude>
     <ClInclude Include="audio.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="bitfield.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="core.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="dict.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="eglapp.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="emitter.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="entity.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="forge.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="gradient.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="layer.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="log.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="loldebug.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="lolgl.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="numeric.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="platform.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="profiler.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="sample.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="sampler.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="simd.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="sprite.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="text.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="ticker.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="worldentity.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="tiler.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="tileset.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="timer.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="video.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="world.h">
-      <Filter>src\...</Filter>
+      <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="gpu\framebuffer.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="generated\position.hh">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClInclude>
     <ClInclude Include="generated\location.hh">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClInclude>
     <ClInclude Include="generated\stack.hh">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClInclude>
     <ClInclude Include="easymesh\easymesh.h">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </ClInclude>
     <ClInclude Include="easymesh\easymesh-compiler.h">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </ClInclude>
     <ClInclude Include="generated\easymesh-parser.h">
-      <Filter>src\generated</Filter>
+      <Filter>generated</Filter>
     </ClInclude>
     <ClInclude Include="bullet\btBulletCollisionCommon.h">
       <Filter>bullet</Filter>
@@ -1591,70 +1593,74 @@
       <Filter>bullet</Filter>
     </ClInclude>
     <ClInclude Include="gpu\lolfx-compiler.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="gpu\lolfx.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="generated\lolfx-parser.h">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\ps3app.h">
-      <Filter>src\platform\ps3</Filter>
+      <Filter>platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\ps3input.h">
-      <Filter>src\platform\ps3</Filter>
+      <Filter>platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\threadbase.h">
-      <Filter>src\platform\ps3</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\core\array.h">
-      <Filter>src\lol\core</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\core\hash.h">
-      <Filter>src\lol\core</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\core\string.h">
-      <Filter>src\lol\core</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\core\types.h">
-      <Filter>src\lol\core</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\core\map.h">
-      <Filter>src\lol\core</Filter>
+      <Filter>platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
       <Filter>src\...</Filter>
     </ClInclude>
+    <ClInclude Include="lol\base\array.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\hash.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\map.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\string.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\types.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </LolFxCompile>
     <LolFxCompile Include="gpu\defaultmaterial.lolfx">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </LolFxCompile>
     <LolFxCompile Include="gpu\testmaterial.lolfx">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </LolFxCompile>
     <LolFxCompile Include="easymesh\shiny.lolfx">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="gpu\tile.lolfx" />
-    <LolFxCompile Include="gradient.lolfx" />
+    <LolFxCompile Include="gradient.lolfx">
+      <Filter>...</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="gpu\tile.lolfx">
+      <Filter>...</Filter>
+    </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </None>
     <None Include="easymesh\easymesh-scanner.l">
-      <Filter>src\easymesh</Filter>
+      <Filter>easymesh</Filter>
     </None>
     <None Include="gpu\lolfx-scanner.l">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </None>
     <None Include="gpu\lolfx-parser.y">
-      <Filter>src\gpu</Filter>
+      <Filter>gpu</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -73,6 +73,7 @@ liblol_a_SOURCES = \
     image/codec/gdiplus-image.cpp \
     image/codec/ios-image.cpp \
     image/codec/dummy-image.cpp \
+    image/color/cie1931.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h \
