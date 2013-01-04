@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|PS3">
@@ -265,6 +265,7 @@
     <ClCompile Include="image\codec\ios-image.cpp" />
     <ClCompile Include="image\codec\ps3-image.cpp" />
     <ClCompile Include="image\codec\sdl-image.cpp" />
+    <ClCompile Include="image\color\cie1931.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="input\input.cpp" />
     <ClCompile Include="input\keyboard.cpp" />

@@ -154,6 +154,21 @@ public:
     }
 
     /*
+     * Convert CIE xyY to CIE XYZ
+     */
+    static vec3 CIExyYToCIEXYZ(vec3 src)
+    {
+        return src.z * vec3(src.x / src.y,
+                            1.0f,
+                            (1.0f - src.x - src.y) / src.y);
+    }
+
+    static vec4 CIExyYToCIEXYZ(vec4 src)
+    {
+        return vec4(CIEXYZToCIExyY(src.rgb), src.a);
+    }
+
+    /*
      * Convert CIE XYZ to CIE L*a*b*
      * Note: XYZ values are normalised using a D65 illuminant if
      * no white value is provided.
@@ -259,6 +274,9 @@ public:
 
         return sqrt(dLp * dLp + dCp * dCp + dHp * dHp + RT * dCp * dHp);
     }
+
+    /* Convert a wavelength to an xyY fully saturated colour */
+    vec3 WavelengthToCIExyY(float nm);
 };
 
 } /* namespace lol */
