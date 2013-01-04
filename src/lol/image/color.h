@@ -276,7 +276,7 @@ public:
     }
 
     /* Convert a wavelength to an xyY fully saturated colour */
-    vec3 WavelengthToCIExyY(float nm);
+    static vec3 WavelengthToCIExyY(float nm);
 };
 
 } /* namespace lol */

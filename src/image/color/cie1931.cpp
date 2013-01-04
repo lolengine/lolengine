@@ -695,7 +695,7 @@ static float cie_1964_xyz[] =
     0.59829f, 0.99809f, 0.001533f,
     0.616053f, 0.99911f, 0.001091f,
     0.633948f, 0.99977f, 0.000711f,
-    0.651901f, 1f, 0.000407f,
+    0.651901f, 1.f, 0.000407f,
     0.669824f, 0.99971f, 0.000184f,
     0.687632f, 0.99885f, 0.000047f,
     0.705224f, 0.99734f, 0.0f, /* 560 nm */
@@ -973,15 +973,19 @@ static float cie_1964_xyz[] =
 
 vec3 Color::WavelengthToCIExyY(float nm)
 {
-    if (nm < 360.0f || nm > 830.0f)
-        return vec3(0.0f, 0.0f);
+    nm -= 360.f;
 
-    int index = (int)nm * 3;
-    float x = cie_1931_xyz[index];
-    float y = cie_1931_xyz[index + 1];
-    float z = cie_1931_xyz[index + 2];
+    int i = (int)nm;
+    if (i < 0 || i > 830 - 360)
+        return vec3(0.0f);
 
-    return vec3(x, y, 100.0f);
+    float t = nm - i, s = 1.0 - t;
+    float x = s * cie_1931_xyz[i * 3 + 0] + t * cie_1931_xyz[i * 3 + 3];
+    float y = s * cie_1931_xyz[i * 3 + 1] + t * cie_1931_xyz[i * 3 + 4];
+    float z = s * cie_1931_xyz[i * 3 + 2] + t * cie_1931_xyz[i * 3 + 5];
+    float normalize = 1.f / (x + y + z);
+
+    return vec3(x * normalize, y * normalize, 100.0f);
 }
 
 } /* namespace lol */
