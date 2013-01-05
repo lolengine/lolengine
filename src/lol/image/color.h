@@ -214,68 +214,11 @@ public:
      * Return distance using the CIEDE2000 metric,
      * input should be in CIE L*a*b*.
      */
-    static float DistanceCIEDE2000(vec3 lab1, vec3 lab2)
-    {
-        float const deg2rad = 6.28318530718f / 360.f;
-        float const rad2deg = 360.f / 6.28318530718f;
+    static float DistanceCIEDE2000(vec3 lab1, vec3 lab2);
 
-        float C1 = length(lab1.yz);
-        float C2 = length(lab2.yz);
-        float C_ = 0.5f * (C1 + C2);
-
-        float L1 = lab1.x;
-        float L2 = lab2.x;
-        float dLp = L2 - L1;
-        float L_ = 0.5f * (L1 + L2);
-
-        float tmp1 = pow(C_, 7.f);
-        float tmp2 = 1.5f - 0.5f * sqrt(tmp1 / (tmp1 + pow(25.f, 7.f)));
-        float ap1 = lab1.y * tmp2;
-        float ap2 = lab2.y * tmp2;
-        float Cp1 = sqrt(ap1 * ap1 + lab1.z * lab1.z);
-        float Cp2 = sqrt(ap2 * ap2 + lab2.z * lab2.z);
-        float dCp = Cp2 - Cp1;
-        float Cp_ = 0.5f * (Cp1 + Cp2);
-
-        float hp1 = fmod(atan2(lab1.z, ap1) * rad2deg, 360.f);
-        if (hp1 < 0.f)
-            hp1 += 360.f;
-        float hp2 = fmod(atan2(lab2.z, ap2) * rad2deg, 360.f);
-        if (hp2 < 0.f)
-            hp2 += 360.f;
-        float dhp;
-        if (abs(hp1 - hp2) <= 180.f)
-            dhp = hp2 - hp1;
-        else if (hp2 <= hp1)
-            dhp = hp2 - hp1 + 360.f;
-        else
-            dhp = hp2 - hp1 - 360.f;
-        float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(dhp / 2.f * deg2rad);
-        float Hp_;
-        if (abs(hp1 - hp2) > 180.f)
-            Hp_ = 0.5f * (hp1 + hp2 + 360.f);
-        else
-            Hp_ = 0.5f * (hp1 + hp2);
-
-        float T = 1.f - 0.17f * cos((Hp_ - 30.f) * deg2rad)
-                      + 0.24f * cos(2 * Hp_ * deg2rad)
-                      + 0.32f * cos((3.f * Hp_ + 6.f) * deg2rad)
-                      - 0.20f * cos((4.f * Hp_ - 63.f) * deg2rad);
-        float SL = 1.f + 0.015f * (L_ - 50) * (L_ - 50)
-                                / sqrt(20.f + (L_ - 50) * (L_ - 50));
-        float SC = 1.f + 0.045f * Cp_;
-        float SH = 1.f + 0.015f * Cp_ * T;
-        float RT = -2.f * sqrt(pow(Cp_, 7.f) / (pow(Cp_, 7.f) + pow(25.f, 7.f)))
-                        * sin(60.f * deg2rad * exp(-pow((Hp_ - 275.f) / 25.f, 2.f)));
-
-        dLp /= SL;
-        dCp /= SC;
-        dHp /= SH;
-
-        return sqrt(dLp * dLp + dCp * dCp + dHp * dHp + RT * dCp * dHp);
-    }
-
-    /* Convert a wavelength to an xyY fully saturated colour */
+    /*
+     * Convert a wavelength into an xyY fully saturated colour.
+     */
     static vec3 WavelengthToCIExyY(float nm);
 };
 
