@@ -26,6 +26,8 @@ namespace lol
 
 float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
 {
+    float const pi = 3.141592653589793f;
+
     float const deg2rad = 6.28318530718f / 360.f;
     float const rad2deg = 360.f / 6.28318530718f;
 
@@ -47,36 +49,36 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
     float dCp = Cp2 - Cp1;
     float Cp_ = 0.5f * (Cp1 + Cp2);
 
-    float hp1 = fmod(atan2(lab1.z, ap1) * rad2deg, 360.f);
-    if (hp1 < 0.f)
-        hp1 += 360.f;
-    float hp2 = fmod(atan2(lab2.z, ap2) * rad2deg, 360.f);
-    if (hp2 < 0.f)
-        hp2 += 360.f;
-    float dhp;
-    if (abs(hp1 - hp2) <= 180.f)
+    float hp1 = fmod(atan2(lab1.z, ap1) + 2.f * pi, 2.f * pi);
+    float hp2 = fmod(atan2(lab2.z, ap2) + 2.f * pi, 2.f * pi);
+    float dhp; /* -pi .. pi */
+    if (abs(hp1 - hp2) <= pi)
         dhp = hp2 - hp1;
     else if (hp2 <= hp1)
-        dhp = hp2 - hp1 + 360.f;
+        dhp = hp2 - hp1 + 2.f * pi;
     else
-        dhp = hp2 - hp1 - 360.f;
-    float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(dhp / 2.f * deg2rad);
-    float Hp_;
-    if (abs(hp1 - hp2) > 180.f)
-        Hp_ = 0.5f * (hp1 + hp2 + 360.f);
+        dhp = hp2 - hp1 - 2.f * pi;
+    float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(dhp / 2.f);
+    float Hp_; /* half-angle 0 .. 360 */
+    if (!(Cp1 * Cp2))
+        Hp_ = hp1 + hp2;
+    else if (abs(hp1 - hp2) > pi && hp1 + hp2 < 2.f * pi)
+        Hp_ = 0.5f * (hp1 + hp2) + pi;
+    else if (abs(hp1 - hp2) > 180.f)
+        Hp_ = 0.5f * (hp1 + hp2) - pi;
     else
         Hp_ = 0.5f * (hp1 + hp2);
 
-    float T = 1.f - 0.17f * cos((Hp_ - 30.f) * deg2rad)
-                  + 0.24f * cos(2 * Hp_ * deg2rad)
-                  + 0.32f * cos((3.f * Hp_ + 6.f) * deg2rad)
-                  - 0.20f * cos((4.f * Hp_ - 63.f) * deg2rad);
+    float T = 1.f - 0.17f * cos(Hp_ - pi / 6.f)
+                  + 0.24f * cos(2.f * Hp_)
+                  + 0.32f * cos(3.f * Hp_ + pi / 30.f)
+                  - 0.20f * cos(4.f * Hp_ - 0.35f * pi);
     float SL = 1.f + 0.015f * (L_ - 50) * (L_ - 50)
                             / sqrt(20.f + (L_ - 50) * (L_ - 50));
     float SC = 1.f + 0.045f * Cp_;
     float SH = 1.f + 0.015f * Cp_ * T;
     float RT = -2.f * sqrt(pow(Cp_, 7.f) / (pow(Cp_, 7.f) + pow(25.f, 7.f)))
-                    * sin(60.f * deg2rad * exp(-pow((Hp_ - 275.f) / 25.f, 2.f)));
+                    * sin(60.f * deg2rad * exp(-pow((Hp_ * rad2deg - 275.f) / 25.f, 2.f)));
 
     dLp /= SL;
     dCp /= SC;

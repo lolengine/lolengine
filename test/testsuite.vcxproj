@@ -39,6 +39,7 @@
     <ClCompile Include="unit\array.cpp" />
     <ClCompile Include="unit\build.cpp" />
     <ClCompile Include="unit\cmplx.cpp" />
+    <ClCompile Include="unit\color.cpp" />
     <ClCompile Include="unit\half.cpp" />
     <ClCompile Include="unit\image.cpp" />
     <ClCompile Include="unit\map.cpp" />
