@@ -28,9 +28,6 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
 {
     float const pi = 3.141592653589793f;
 
-    float const deg2rad = 6.28318530718f / 360.f;
-    float const rad2deg = 360.f / 6.28318530718f;
-
     float C1 = length(lab1.yz);
     float C2 = length(lab2.yz);
     float C_ = 0.5f * (C1 + C2);
@@ -64,7 +61,7 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
         Hp_ = hp1 + hp2;
     else if (abs(hp1 - hp2) > pi && hp1 + hp2 < 2.f * pi)
         Hp_ = 0.5f * (hp1 + hp2) + pi;
-    else if (abs(hp1 - hp2) > 180.f)
+    else if (abs(hp1 - hp2) > pi)
         Hp_ = 0.5f * (hp1 + hp2) - pi;
     else
         Hp_ = 0.5f * (hp1 + hp2);
@@ -78,7 +75,7 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
     float SC = 1.f + 0.045f * Cp_;
     float SH = 1.f + 0.015f * Cp_ * T;
     float RT = -2.f * sqrt(pow(Cp_, 7.f) / (pow(Cp_, 7.f) + pow(25.f, 7.f)))
-                    * sin(60.f * deg2rad * exp(-pow((Hp_ * rad2deg - 275.f) / 25.f, 2.f)));
+                    * sin(pi / 3.f * exp(-pow((Hp_ * 180.f / pi - 275.f) / 25.f, 2.f)));
 
     dLp /= SL;
     dCp /= SC;
