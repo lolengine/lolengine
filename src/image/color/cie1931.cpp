@@ -46,25 +46,11 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
     float dCp = Cp2 - Cp1;
     float Cp_ = 0.5f * (Cp1 + Cp2);
 
-    float hp1 = fmod(atan2(lab1.z, ap1) + 2.f * pi, 2.f * pi);
-    float hp2 = fmod(atan2(lab2.z, ap2) + 2.f * pi, 2.f * pi);
-    float dhp; /* -pi .. pi */
-    if (abs(hp1 - hp2) <= pi)
-        dhp = hp2 - hp1;
-    else if (hp2 <= hp1)
-        dhp = hp2 - hp1 + 2.f * pi;
-    else
-        dhp = hp2 - hp1 - 2.f * pi;
-    float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(dhp / 2.f);
-    float Hp_; /* half-angle 0 .. 360 */
-    if (!(Cp1 * Cp2))
-        Hp_ = hp1 + hp2;
-    else if (abs(hp1 - hp2) > pi && hp1 + hp2 < 2.f * pi)
-        Hp_ = 0.5f * (hp1 + hp2) + pi;
-    else if (abs(hp1 - hp2) > pi)
-        Hp_ = 0.5f * (hp1 + hp2) - pi;
-    else
-        Hp_ = 0.5f * (hp1 + hp2);
+    float hp1 = atan2(lab1.z, ap1);
+    float hp2 = atan2(lab2.z, ap2);
+    float dhp = fmod(hp2 - hp1 + 3.f * pi, 2.f * pi) - pi; /* -pi .. pi */
+    float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(0.5f * dhp);
+    float Hp_ = Cp1 * Cp2 ? fmod(hp1 + 0.5f * dhp + 2.f * pi, 2.f * pi) : hp1 + hp2; /* 0 .. 2pi */
 
     float T = 1.f - 0.17f * cos(Hp_ - pi / 6.f)
                   + 0.24f * cos(2.f * Hp_)
