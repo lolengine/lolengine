@@ -29,7 +29,7 @@ public:
     EasyMesh();
 
     bool Compile(char const *command);
-    void MeshConvert();
+    void MeshConvert(Shader* ProvidedShader = NULL);
     void Render(mat4 const &model, float damage = 0.f);
 
     void OpenBrace();
