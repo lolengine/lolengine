@@ -62,13 +62,15 @@ void EasyMesh::CloseBrace()
     m_cursors.Pop();
 }
 
-void EasyMesh::MeshConvert(Shader* ProvidedShader)
+void EasyMesh::MeshConvert(Shader* provided_shader)
 {
-    if(ProvidedShader == NULL)
+    if(provided_shader == NULL)
     {
         m_gpu.shader = Shader::Create(lolfx_shiny);
-    }else{
-        m_gpu.shader = ProvidedShader;
+    }
+    else
+    {
+        m_gpu.shader = provided_shader;
     }
 
     m_gpu.modelview = m_gpu.shader->GetUniformLocation("in_ModelView");
