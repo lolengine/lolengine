@@ -25,7 +25,7 @@ class LolFxLanguageService : LanguageService
 {
     public override string GetFormatFilterList()
     {
-        throw new NotImplementedException();
+        return "LolFx files (*.lolfx)\n*.lolfx\n";
     }
 
     public override LanguagePreferences GetLanguagePreferences()
