@@ -1,7 +1,7 @@
 //
 // BtPhysTest
 //
-// Copyright: (c) 2009-2012 Benjamin Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //            (c) 2012 Sam Hocevar <sam@hocevar.net>
 //
 
