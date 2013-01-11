@@ -1,7 +1,7 @@
 ﻿//
 // Lol Engine - VsLol add-in for Visual Studio
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Lol")]
 [assembly: AssemblyProduct("VsLol")]
-[assembly: AssemblyCopyright("Copyright © Sam Hocevar 2012")]
+[assembly: AssemblyCopyright("Copyright © 2012-2013 Sam Hocevar")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("58968f91-edb8-4a4c-9f4f-ba39fdb4a21a")]
 
-[assembly: AssemblyVersion("1.0.0.7")]
-[assembly: AssemblyFileVersion("1.0.0.7")]
+[assembly: AssemblyVersion("1.0.0.8")]
+[assembly: AssemblyFileVersion("1.0.0.8")]

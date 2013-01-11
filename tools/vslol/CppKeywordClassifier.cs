@@ -1,7 +1,7 @@
 //
 // Lol Engine - VsLol add-in for Visual Studio
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
+using System.Diagnostics; /* For debugging purposes */
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -59,6 +60,7 @@ internal class LolClassifierProvider : IClassifierProvider
 class CppKeywordClassifier : IClassifier
 {
     private IClassifier m_classifier;
+    private bool m_inprogress;
 
     private IClassificationType m_types_type, m_constant_type, m_normal_type;
     private Regex m_types_regex, m_constant_regex, m_normal_regex;
@@ -137,6 +139,7 @@ class CppKeywordClassifier : IClassifier
                                   IContentType type)
     {
         m_classifier = classifier;
+        m_inprogress = false;
 
         m_types_type = registry.GetClassificationType("LolAnyType");
         m_normal_type = registry.GetClassificationType("LolAnyIdentifier");
@@ -177,6 +180,20 @@ class CppKeywordClassifier : IClassifier
     {
         List<ClassificationSpan> ret = new List<ClassificationSpan>();
 
+        if (m_inprogress)
+        {
+            /* For some reason we can get called recursively when parsing a
+             * string for the IntelliSense drop-down menu. There is information
+             * on how to deal with it properly on the following SO page:
+             * http://stackoverflow.com/q/3155598/111461
+             * The crash can be reproduced by simply typing "vec2(" and waiting
+             * for IntelliSense to spawn the menu. */
+            ret.Add(new ClassificationSpan(span, m_constant_type));
+            return ret;
+        }
+
+        m_inprogress = true;
+
         foreach (ClassificationSpan cs in m_classifier.GetClassificationSpans(span))
         {
             string cs_class = cs.ClassificationType.Classification.ToLower();
@@ -205,6 +222,8 @@ class CppKeywordClassifier : IClassifier
 
             ret.Add(cs);
         }
+
+        m_inprogress = false;
 
         return ret;
     }
