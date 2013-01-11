@@ -80,6 +80,33 @@ public:
     }
 
     /*
+     * Convert RGB to HSV
+     */
+    static vec3 RGBToHSV(vec3 src)
+    {
+        float offset = 0.f;
+
+        if (src.r < src.g)
+            src = src.grb, offset = -2.f / 6.f;
+
+        if (src.g < src.b)
+            src = src.rbg, offset = -1.f - 4.f * offset;
+
+        if (src.r < src.g)
+            src = src.grb, offset = -2.f / 6.f - offset;
+
+        float chroma = src.r - src.b;
+        return vec3(abs((src.g - src.b) / (6.f * chroma + 1e-40f) + offset),
+                    chroma / (src.r + 1e-40f),
+                    src.r);
+    }
+
+    static vec4 RGBToHSV(vec4 src)
+    {
+        return vec4(RGBToHSV(src.rgb), src.a);
+    }
+
+    /*
      * Convert linear HSV to linear HSL
      */
     static vec3 HSVToHSL(vec3 src)
