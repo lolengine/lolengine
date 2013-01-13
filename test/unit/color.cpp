@@ -86,6 +86,21 @@ LOLUNIT_FIXTURE(ColorTest)
             LOLUNIT_ASSERT_DOUBLES_EQUAL(d2, d3, 0.0001);
         }
     }
+
+    LOLUNIT_TEST(RGBToHSV)
+    {
+        for (int r = 0; r < 20; r++)
+        for (int g = 0; g < 20; g++)
+        for (int b = 0; b < 20; b++)
+        {
+            vec3 v1 = vec3(r / 20.f, g / 20.f, b / 20.f);
+            vec3 v2 = Color::HSVToRGB(Color::RGBToHSV(v1));
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.r, v2.r, 0.0001);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.g, v2.g, 0.0001);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.b, v2.b, 0.0001);
+        }
+    }
 };
 
 } /* namespace lol */
