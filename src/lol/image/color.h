@@ -84,20 +84,17 @@ public:
      */
     static vec3 RGBToHSV(vec3 src)
     {
-        float offset = 0.f;
-
-        if (src.r < src.g)
-            src = src.grb, offset = -2.f / 6.f;
+        float K = 0.f;
 
         if (src.g < src.b)
-            src = src.rbg, offset = -1.f - 4.f * offset;
+            src = src.rbg, K = -1.f;
 
         if (src.r < src.g)
-            src = src.grb, offset = -2.f / 6.f - offset;
+            src = src.grb, K = -2.f / 6.f - K;
 
-        float chroma = src.r - src.b;
-        return vec3(abs((src.g - src.b) / (6.f * chroma + 1e-40f) + offset),
-                    chroma / (src.r + 1e-40f),
+        float chroma = src.r - min(src.g, src.b);
+        return vec3(abs(K + (src.g - src.b) / (6.f * chroma + 1e-20f)),
+                    chroma / (src.r + 1e-20f),
                     src.r);
     }
 
