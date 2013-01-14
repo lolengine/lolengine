@@ -104,6 +104,31 @@ public:
     }
 
     /*
+     * Convert RGB to HSL
+     */
+    static vec3 RGBToHSL(vec3 src)
+    {
+        float K = 0.f;
+
+        if (src.g < src.b)
+            src = src.rbg, K = -1.f;
+
+        if (src.r < src.g)
+            src = src.grb, K = -2.f / 6.f - K;
+
+        float chroma = src.r - min(src.g, src.b);
+        float luma = src.r + min(src.g, src.b);
+        return vec3(abs(K + (src.g - src.b) / (6.f * chroma + 1e-20f)),
+                    chroma / (min(luma, 2.f - luma) + 1e-20f),
+                    0.5f * luma);
+    }
+
+    static vec4 RGBToHSL(vec4 src)
+    {
+        return vec4(RGBToHSL(src.rgb), src.a);
+    }
+
+    /*
      * Convert linear HSV to linear HSL
      */
     static vec3 HSVToHSL(vec3 src)
