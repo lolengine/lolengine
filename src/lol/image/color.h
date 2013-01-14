@@ -70,8 +70,10 @@ public:
      */
     static vec3 HSVToRGB(vec3 src)
     {
-        vec3 tmp = abs(fract(vec3(src.x) + vec3(3.f, 2.f, 1.f) / 3.f) * 6.f - vec3(3.f));
-        return mix(vec3(1.f), clamp(tmp - vec3(1.f), 0.f, 1.f), src.y) * src.z;
+        vec3 tmp = vec3(-1.f + abs(6.f * src.x - 3.f),
+                         2.f - abs(6.f * src.x - 2.f),
+                         2.f - abs(6.f * src.x - 4.f));
+        return src.z * mix(vec3(1.f), clamp(tmp, 0.f, 1.f), src.y);
     }
 
     static vec4 HSVToRGB(vec4 src)
