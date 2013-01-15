@@ -114,20 +114,17 @@ void Ps3App::ShowPointer(bool show)
     ;
 }
 
-void Ps3App::Run()
+void Ps3App::Tick()
 {
-    while (!Ticker::Finished())
-    {
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
+    /* Tick the renderer, show the frame and clamp to desired framerate. */
+    Ticker::TickDraw();
 
 #if defined __CELLOS_LV2__
-        psglSwap();
+    psglSwap();
 
-        /* Check if exit callback was called */
-        cellSysutilCheckCallback();
+    /* Check if exit callback was called */
+    cellSysutilCheckCallback();
 #endif
-    }
 }
 
 Ps3App::~Ps3App()

@@ -27,8 +27,12 @@ public:
     Application(char const *name, ivec2 resolution, float framerate);
     ~Application();
 
+    bool MustTick();
+    void Tick();
+
+    void Run() { while(MustTick()) Tick(); }
+
     void ShowPointer(bool show);
-    void Run();
 
 private:
     ApplicationData *data;

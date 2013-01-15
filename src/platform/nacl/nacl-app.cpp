@@ -50,15 +50,17 @@ void NaClApp::ShowPointer(bool show)
     ;
 }
 
-void NaClApp::Run()
+void NaClApp::Tick()
 {
+    /* The caller should run forever */
 #if defined __native_client__
-    NaClInstance::MainSignal();
+    static int init = 0;
+    if (!init)
+    {
+        NaClInstance::MainSignal();
+        init = 1;
+    }
 #endif
-
-    /* Wait forever */
-    Queue<int, 1> q;
-    q.Pop();
 }
 
 NaClApp::~NaClApp()

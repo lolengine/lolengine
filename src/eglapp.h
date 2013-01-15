@@ -30,7 +30,7 @@ public:
     virtual ~EglApp();
 
     void ShowPointer(bool show);
-    void Run();
+    void Tick();
 
 private:
     EglAppData *data;

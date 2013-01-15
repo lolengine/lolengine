@@ -109,31 +109,28 @@ void SdlApp::ShowPointer(bool show)
 #endif
 }
 
-void SdlApp::Run()
+void SdlApp::Tick()
 {
-    while (!Ticker::Finished())
-    {
 #if defined USE_SDL && defined USE_D3D9
-        HRESULT hr;
-        hr = g_d3ddevice->BeginScene();
-        if (FAILED(hr))
-            Abort();
+    HRESULT hr;
+    hr = g_d3ddevice->BeginScene();
+    if (FAILED(hr))
+        Abort();
 #endif
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
+    /* Tick the renderer, show the frame and clamp to desired framerate. */
+    Ticker::TickDraw();
 #if defined USE_SDL
 #   if defined USE_D3D9
-        hr = g_d3ddevice->EndScene();
-        if (FAILED(hr))
-            Abort();
-        hr = g_d3ddevice->Present(NULL, NULL, NULL, NULL);
-        if (FAILED(hr))
-            Abort();
+    hr = g_d3ddevice->EndScene();
+    if (FAILED(hr))
+        Abort();
+    hr = g_d3ddevice->Present(NULL, NULL, NULL, NULL);
+    if (FAILED(hr))
+        Abort();
 #   else
-        SDL_GL_SwapBuffers();
+    SDL_GL_SwapBuffers();
 #   endif
 #endif
-    }
 }
 
 SdlApp::~SdlApp()

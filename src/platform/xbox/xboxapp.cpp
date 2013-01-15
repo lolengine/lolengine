@@ -61,17 +61,14 @@ void XboxApp::ShowPointer(bool show)
     ;
 }
 
-void XboxApp::Run()
+void XboxApp::Tick()
 {
-    while (!Ticker::Finished())
-    {
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
+    /* Tick the renderer, show the frame and clamp to desired framerate. */
+    Ticker::TickDraw();
 
 #if defined _XBOX
-        g_d3ddevice->Present(NULL, NULL, NULL, NULL);
+    g_d3ddevice->Present(NULL, NULL, NULL, NULL);
 #endif
-    }
 }
 
 XboxApp::~XboxApp()
