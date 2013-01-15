@@ -30,7 +30,7 @@ public:
     virtual ~AndroidApp();
 
     void ShowPointer(bool show);
-    void Run();
+    void Tick();
 
     static void *MainRun(void *data);
 

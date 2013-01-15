@@ -30,7 +30,7 @@ public:
     virtual ~XboxApp();
 
     void ShowPointer(bool show);
-    void Run();
+    void Tick();
 
 private:
     XboxAppData *data;

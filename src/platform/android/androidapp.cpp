@@ -46,22 +46,24 @@ void AndroidApp::ShowPointer(bool show)
 {
 }
 
-/* This is a fake Run() method. We just wait until we're called and
+/* This is a fake Tick() method. We just wait until we're called and
  * signal nativeInit() that all the user's initialisation code was
  * called. Then we sit here forever, the Java layer is in charge of
  * calling TickDraw(). */
-void AndroidApp::Run()
+void AndroidApp::Tick()
 {
-    g_main_queue.Push(1);
-    g_main_queue.Push(1);
-
-    while (!Ticker::Finished())
+    static int init = 0;
+    if (!init)
     {
-        /* Do nothing while the real render thread does the job. The
-         * real stuff happens in nativeRender() */
-        Timer t;
-        t.Wait(0.5f);
+        init = 1;
+        g_main_queue.Push(1);
+        g_main_queue.Push(1);
     }
+
+    /* Do nothing while the real render thread does the job. The
+     * real stuff happens in nativeRender() */
+    Timer t;
+    t.Wait(0.5f);
 }
 
 void *AndroidApp::MainRun(void *data)

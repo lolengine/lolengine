@@ -267,16 +267,13 @@ void EglApp::ShowPointer(bool show)
     (void)show;
 }
 
-void EglApp::Run()
+void EglApp::Tick()
 {
-    while (!Ticker::Finished())
-    {
-        /* Tick the renderer, show the frame and clamp to desired framerate. */
-        Ticker::TickDraw();
+    /* Tick the renderer, show the frame and clamp to desired framerate. */
+    Ticker::TickDraw();
 #if defined USE_EGL && !defined __ANDROID__
-        eglSwapBuffers(data->egl_dpy, data->egl_surf);
+    eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif
-    }
 }
 
 EglApp::~EglApp()

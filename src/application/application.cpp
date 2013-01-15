@@ -70,14 +70,19 @@ Application::Application(char const *name, ivec2 resolution, float framerate)
     data = new ApplicationData(name, resolution, framerate);
 }
 
+bool Application::MustTick()
+{
+    return !Ticker::Finished();
+}
+
+void Application::Tick()
+{
+    data->app.Tick();
+}
+
 void Application::ShowPointer(bool show)
 {
     data->app.ShowPointer(show);
-}
-
-void Application::Run()
-{
-    data->app.Run();
 }
 
 Application::~Application()

@@ -30,7 +30,7 @@ public:
     virtual ~NaClApp();
 
     void ShowPointer(bool show);
-    void Run();
+    void Tick();
 
 private:
     NaClAppData *data;

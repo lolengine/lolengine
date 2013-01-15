@@ -30,7 +30,7 @@ public:
     virtual ~Ps3App();
 
     void ShowPointer(bool show);
-    void Run();
+    void Tick();
 
 private:
     Ps3AppData *data;
