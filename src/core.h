@@ -132,6 +132,7 @@ static inline int isnan(float f)
 #include "mesh/mesh.h"
 #include "image/image.h"
 #include "application/application.h"
+#include "easymesh/csgbsp.h"
 #include "easymesh/easymesh.h"
 
 // Managers

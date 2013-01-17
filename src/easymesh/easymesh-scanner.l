@@ -2,9 +2,9 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2012 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2012 Benjamin Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -70,6 +70,11 @@ tsw	  { return token::T_TOGGLESCALEWINDING; }
 mx    { return token::T_MIRRORX; }
 my    { return token::T_MIRRORY; }
 mz    { return token::T_MIRRORZ; }
+
+csgu  { return token::T_CSGUNION; }
+csgs  { return token::T_CSGSUBSTRACT; }
+csga  { return token::T_CSGAND; }
+csgx  { return token::T_CSGXOR; }
 
 ab    { return token::T_BOX; }
 ac    { return token::T_CYLINDER; }

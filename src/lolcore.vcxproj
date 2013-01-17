@@ -240,6 +240,7 @@
     <ClCompile Include="debug\record.cpp" />
     <ClCompile Include="debug\stats.cpp" />
     <ClCompile Include="dict.cpp" />
+    <ClCompile Include="easymesh\csgbsp.cpp" />
     <ClCompile Include="easymesh\easymesh-compiler.cpp" />
     <ClCompile Include="easymesh\easymesh.cpp" />
     <ClCompile Include="eglapp.cpp" />
@@ -555,6 +556,7 @@
     <ClInclude Include="debug\record.h" />
     <ClInclude Include="debug\stats.h" />
     <ClInclude Include="dict.h" />
+    <ClInclude Include="easymesh\csgbsp.h" />
     <ClInclude Include="easymesh\easymesh-compiler.h" />
     <ClInclude Include="easymesh\easymesh.h" />
     <ClInclude Include="eglapp.h" />

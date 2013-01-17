@@ -2,9 +2,9 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2012 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2012 Benjamin Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -48,6 +48,7 @@
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_SCALEZ T_MIRRORZ
 %token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING
+%token T_CSGUNION T_CSGSUBSTRACT T_CSGAND T_CSGXOR
 %token T_CHAMFER
 
 %token T_CYLINDER T_BOX T_SMOOTHCHAMFBOX T_FLATCHAMFBOX T_SPHERE T_CAPSULE
@@ -116,25 +117,29 @@ color_command:
     ;
 
 transform_command:
-    T_CHAMFER args1     { mc.m_mesh.Chamfer($2.f0); }
-  | T_TRANSLATEX args1  { mc.m_mesh.Translate(vec3($2.f0, 0, 0)); }
-  | T_TRANSLATEY args1  { mc.m_mesh.Translate(vec3(0, $2.f0, 0)); }
-  | T_TRANSLATEZ args1  { mc.m_mesh.Translate(vec3(0, 0, $2.f0)); }
-  | T_TRANSLATE args3   { mc.m_mesh.Translate(vec3($2.f0, $2.f1, $2.f2)); }
-  | T_ROTATEX args1     { mc.m_mesh.RotateX($2.f0); }
-  | T_ROTATEY args1     { mc.m_mesh.RotateY($2.f0); }
-  | T_ROTATEZ args1     { mc.m_mesh.RotateZ($2.f0); }
-  | T_TAPERX args3      { mc.m_mesh.TaperX($2.f0, $2.f1, $2.f2); }
-  | T_TAPERY args3      { mc.m_mesh.TaperY($2.f0, $2.f1, $2.f2); }
-  | T_TAPERZ args3      { mc.m_mesh.TaperZ($2.f0, $2.f1, $2.f2); }
-  | T_SCALEX args1      { mc.m_mesh.Scale(vec3($2.f0, 1.0, 1.0)); }
-  | T_SCALEY args1      { mc.m_mesh.Scale(vec3(1.0, $2.f0, 1.0)); }
-  | T_SCALEZ args1      { mc.m_mesh.Scale(vec3(1.0, 1.0, $2.f0)); }
-  | T_SCALE args3       { mc.m_mesh.Scale(vec3($2.f0, $2.f1, $2.f2)); }
-  | T_MIRRORX           { mc.m_mesh.MirrorX(); }
-  | T_MIRRORY           { mc.m_mesh.MirrorY(); }
-  | T_MIRRORZ           { mc.m_mesh.MirrorZ(); }
-  | T_TOGGLESCALEWINDING { mc.m_mesh.ToggleScaleWinding(); }
+    T_CHAMFER args1        { mc.m_mesh.Chamfer($2.f0); }
+  | T_TRANSLATEX args1     { mc.m_mesh.Translate(vec3($2.f0, 0, 0)); }
+  | T_TRANSLATEY args1     { mc.m_mesh.Translate(vec3(0, $2.f0, 0)); }
+  | T_TRANSLATEZ args1     { mc.m_mesh.Translate(vec3(0, 0, $2.f0)); }
+  | T_TRANSLATE args3      { mc.m_mesh.Translate(vec3($2.f0, $2.f1, $2.f2)); }
+  | T_ROTATEX args1        { mc.m_mesh.RotateX($2.f0); }
+  | T_ROTATEY args1        { mc.m_mesh.RotateY($2.f0); }
+  | T_ROTATEZ args1        { mc.m_mesh.RotateZ($2.f0); }
+  | T_TAPERX args3         { mc.m_mesh.TaperX($2.f0, $2.f1, $2.f2); }
+  | T_TAPERY args3         { mc.m_mesh.TaperY($2.f0, $2.f1, $2.f2); }
+  | T_TAPERZ args3         { mc.m_mesh.TaperZ($2.f0, $2.f1, $2.f2); }
+  | T_SCALEX args1         { mc.m_mesh.Scale(vec3($2.f0, 1.0, 1.0)); }
+  | T_SCALEY args1         { mc.m_mesh.Scale(vec3(1.0, $2.f0, 1.0)); }
+  | T_SCALEZ args1         { mc.m_mesh.Scale(vec3(1.0, 1.0, $2.f0)); }
+  | T_SCALE args3          { mc.m_mesh.Scale(vec3($2.f0, $2.f1, $2.f2)); }
+  | T_MIRRORX              { mc.m_mesh.MirrorX(); }
+  | T_MIRRORY              { mc.m_mesh.MirrorY(); }
+  | T_MIRRORZ              { mc.m_mesh.MirrorZ(); }
+  | T_TOGGLESCALEWINDING   { mc.m_mesh.ToggleScaleWinding(); }
+  | T_CSGUNION             { mc.m_mesh.CsgUnion(); }
+  | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }
+  | T_CSGAND               { mc.m_mesh.CsgAnd(); }
+  | T_CSGXOR               { mc.m_mesh.CsgXor(); }
     ;
 
 primitive_command:

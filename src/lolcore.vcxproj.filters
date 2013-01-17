@@ -657,6 +657,9 @@
     <ClCompile Include="math\geometry.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="easymesh\csgbsp.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -1633,6 +1636,9 @@
     </ClInclude>
     <ClInclude Include="lol\math\geometry.h">
       <Filter>lol\math</Filter>
+    </ClInclude>
+    <ClInclude Include="easymesh\csgbsp.h">
+      <Filter>easymesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
