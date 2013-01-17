@@ -33,7 +33,7 @@ namespace lol
     bool RayIsectTriangleSide(vec3 const &v0, vec3 const &v1, vec3 const &v2,
                               vec3 const &iP0, vec3 const &iP1,
                               vec3 &iV0, int &iIdx0, vec3 &iV1, int &iIdx1);
-    bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD, 
+    bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD,
                           vec3 const &triV0, vec3 const &triV1, vec3 const &triV2,
                           vec3 &vi);
 #define RAY_ISECT_NOTHING   0
@@ -41,7 +41,7 @@ namespace lol
 #define RAY_ISECT_NONE      2
 #define RAY_ISECT_P0        3
 #define RAY_ISECT_P1        4
-    int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01, 
+    int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01,
                     vec3 const &rayP10, vec3 const &rayP11,
                     vec3 &vIsec);
     vec3 ProjPointOnPlane(vec3 const &point, vec3 const &planeP, vec3 const &planeN);
