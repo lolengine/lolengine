@@ -212,6 +212,9 @@ void EasyMesh::MeshCsg(int csg_operation)
     CsgBsp mesh_bsp_0;
     CsgBsp mesh_bsp_1;
 
+    if (m_cursors.Count() == 0)
+        return;
+
     //BSP BUILD : We use the brace logic, csg should be used as : "[ exp .... [exp .... csg]]"
     int cursor_start = (m_cursors.Count() < 2)?(0):(m_cursors[(m_cursors.Count() - 2)].m2);
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
