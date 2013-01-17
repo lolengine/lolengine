@@ -654,6 +654,9 @@
     <ClCompile Include="image\color\cie1931.cpp">
       <Filter>image\color</Filter>
     </ClCompile>
+    <ClCompile Include="math\geometry.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -1627,6 +1630,9 @@
     </ClInclude>
     <ClInclude Include="lol\base\types.h">
       <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\math\geometry.h">
+      <Filter>lol\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
