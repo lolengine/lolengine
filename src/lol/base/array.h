@@ -163,8 +163,6 @@ public:
 
     void Remove(int pos, int todelete = 1)
     {
-        /* FIXME: we need to call dtors for the first
-         * todelete elements here */
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
         for (int i = m_count - todelete; i < m_count; i++)
@@ -182,7 +180,7 @@ public:
 
         /* Not enough elements? Add some. */
         for (int i = m_count; i < count; ++i)
-            m_data[i] = e;
+            new(&m_data[i]) Element(e);
 
         m_count = count;
     }
