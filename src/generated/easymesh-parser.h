@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.4.2.  */
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2010 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,20 @@
 #include <string>
 #include <iostream>
 #include "stack.hh"
+
+
+namespace lol {
+
+/* Line 34 of lalr1.cc  */
+#line 49 "generated/easymesh-parser.h"
+  class position;
+  class location;
+
+} // lol
+
+/* Line 34 of lalr1.cc  */
+#line 56 "generated/easymesh-parser.h"
+
 #include "location.hh"
 
 /* Enabling traces.  */
@@ -60,11 +74,30 @@
 # define YYTOKEN_TABLE 0
 #endif
 
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)		\
+do {							\
+  if (N)						\
+    {							\
+      (Current).begin = (Rhs)[1].begin;			\
+      (Current).end   = (Rhs)[N].end;			\
+    }							\
+  else							\
+    {							\
+      (Current).begin = (Current).end = (Rhs)[0].end;	\
+    }							\
+} while (false)
+#endif
+
 
 namespace lol {
 
-/* Line 35 of lalr1.cc  */
-#line 68 "generated/easymesh-parser.h"
+/* Line 34 of lalr1.cc  */
+#line 101 "generated/easymesh-parser.h"
 
   /// A Bison parser.
   class EasyMeshParser
@@ -75,7 +108,7 @@ namespace lol {
     union semantic_type
     {
 
-/* Line 35 of lalr1.cc  */
+/* Line 34 of lalr1.cc  */
 #line 36 "easymesh/easymesh-parser.y"
 
     float fval;
@@ -85,8 +118,8 @@ namespace lol {
 
 
 
-/* Line 35 of lalr1.cc  */
-#line 90 "generated/easymesh-parser.h"
+/* Line 34 of lalr1.cc  */
+#line 123 "generated/easymesh-parser.h"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -119,23 +152,27 @@ namespace lol {
      T_TRANSLATE = 275,
      T_SCALE = 276,
      T_TOGGLESCALEWINDING = 277,
-     T_CHAMFER = 278,
-     T_CYLINDER = 279,
-     T_BOX = 280,
-     T_SMOOTHCHAMFBOX = 281,
-     T_FLATCHAMFBOX = 282,
-     T_SPHERE = 283,
-     T_CAPSULE = 284,
-     T_STAR = 285,
-     T_EXPANDEDSTAR = 286,
-     T_DISC = 287,
-     T_TRIANGLE = 288,
-     T_QUAD = 289,
-     T_COG = 290,
-     T_TORUS = 291,
-     T_ERROR = 292,
-     NUMBER = 293,
-     COLOR = 294
+     T_CSGUNION = 278,
+     T_CSGSUBSTRACT = 279,
+     T_CSGAND = 280,
+     T_CSGXOR = 281,
+     T_CHAMFER = 282,
+     T_CYLINDER = 283,
+     T_BOX = 284,
+     T_SMOOTHCHAMFBOX = 285,
+     T_FLATCHAMFBOX = 286,
+     T_SPHERE = 287,
+     T_CAPSULE = 288,
+     T_STAR = 289,
+     T_EXPANDEDSTAR = 290,
+     T_DISC = 291,
+     T_TRIANGLE = 292,
+     T_QUAD = 293,
+     T_COG = 294,
+     T_TORUS = 295,
+     T_ERROR = 296,
+     NUMBER = 297,
+     COLOR = 298
    };
 
     };
@@ -209,14 +246,6 @@ namespace lol {
     /// The location stack.
     location_stack_type yylocation_stack_;
 
-    /// Whether the given \c yypact_ value indicates a defaulted state.
-    /// \param yyvalue   the value to check
-    static bool yy_pact_value_is_default_ (int yyvalue);
-
-    /// Whether the given \c yytable_ value indicates a syntax error.
-    /// \param yyvalue   the value to check
-    static bool yy_table_value_is_error_ (int yyvalue);
-
     /// Internal symbol numbers.
     typedef unsigned char token_number_type;
     /* Tables.  */
@@ -224,7 +253,7 @@ namespace lol {
     static const signed char yypact_[];
     static const signed char yypact_ninf_;
 
-    /// For a state, default reduction number.
+    /// For a state, default rule to reduce.
     /// Unless\a  yytable_ specifies something else to do.
     /// Zero means the default is an error.
     static const unsigned char yydefact_[];
@@ -255,8 +284,10 @@ namespace lol {
     static const char* const yytname_[];
 #endif
 
+#if YYERROR_VERBOSE
     /// Convert the symbol name \a n to a form suitable for a diagnostic.
-    static std::string yytnamerr_ (const char *n);
+    virtual std::string yytnamerr_ (const char *n);
+#endif
 
 #if YYDEBUG
     /// A type to store symbol numbers and -1.
@@ -314,8 +345,8 @@ namespace lol {
 
 } // lol
 
-/* Line 35 of lalr1.cc  */
-#line 319 "generated/easymesh-parser.h"
+/* Line 34 of lalr1.cc  */
+#line 350 "generated/easymesh-parser.h"
 
 
 

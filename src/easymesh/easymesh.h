@@ -1,9 +1,9 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2012 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2012 Benjamin Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -32,10 +32,26 @@ public:
     void MeshConvert(Shader* ProvidedShader = NULL);
     void Render(mat4 const &model, float damage = 0.f);
 
+private:
+    void UpdateVertexDict(Array< int, int > &vertex_dict);
+//DEBUG
+public:
+#define CSG_UNION       0
+#define CSG_SUBSTRACT   1
+#define CSG_AND         2
+#define CSG_XOR         3
+
+    void MeshCsg(int csg_operation);
+    void CsgUnion()     { MeshCsg(CSG_UNION); }
+    void CsgSubstract() { MeshCsg(CSG_SUBSTRACT); }
+    void CsgAnd()       { MeshCsg(CSG_AND); }
+    void CsgXor()       { MeshCsg(CSG_XOR); }
+
+public:
     void OpenBrace();
     void CloseBrace();
 
-	void ToggleScaleWinding();
+    void ToggleScaleWinding();
     void SetCurColor(vec4 const &color);
     void SetCurColor2(vec4 const &color);
 
@@ -92,9 +108,11 @@ public:
 private:
     vec4 m_color, m_color2;
     Array<uint16_t> m_indices;
+    //<coord, norm, color>
     Array<vec3, vec3, vec4> m_vert;
+    //<vert count, indices count>
     Array<int, int> m_cursors;
-	bool m_ignore_winding_on_scale;
+    bool m_ignore_winding_on_scale;
 
     /* FIXME: put this in a separate class so that we can copy meshes. */
     struct

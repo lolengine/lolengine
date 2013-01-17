@@ -1,9 +1,9 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2012 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2012 Benjamin Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -75,7 +75,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 
     m_gpu.modelview = m_gpu.shader->GetUniformLocation("in_ModelView");
     m_gpu.view = m_gpu.shader->GetUniformLocation("in_View");
-	m_gpu.invview = m_gpu.shader->GetUniformLocation("in_Inv_View");
+    m_gpu.invview = m_gpu.shader->GetUniformLocation("in_Inv_View");
     m_gpu.proj = m_gpu.shader->GetUniformLocation("in_Proj");
     m_gpu.normalmat = m_gpu.shader->GetUniformLocation("in_NormalMat");
     m_gpu.damage = m_gpu.shader->GetUniformLocation("in_Damage");
@@ -140,6 +140,403 @@ void EasyMesh::Render(mat4 const &model, float damage)
     m_gpu.ibo->Unbind();
     m_gpu.vdecl->Unbind();
 }
+
+
+//-------------------
+// "Collisions" functions
+//-------------------
+#define VX_ALONE -2
+#define VX_MASTER -1
+
+//helpers func to retrieve a vertex.
+int FindVertexInDict(int search_idx, Array< int, int > const &vertex_dict)
+{
+    //Resolve current vertex idx in the dictionnary (if exist)
+    for (int j = 0; j < vertex_dict.Count(); j++)
+        if (vertex_dict[j].m1 == search_idx)
+            return j;
+    return -1;
+}
+
+//helpers func to retrieve a triangle.
+int FindTriangleInDict(int search_idx, Array< int, Array< vec3, vec3, vec3 > > const &triangle_isec)
+{
+    //Resolve current vertex idx in the dictionnary (if exist)
+    for (int j = 0; j < triangle_isec.Count(); j++)
+        if (triangle_isec[j].m1 == search_idx)
+            return j;
+    return -1;
+}
+
+//Will update the given list with all the vertices on the same spot.
+void EasyMesh::UpdateVertexDict(Array< int, int > &vertex_dict)
+{
+    //First, build the vertex Dictionnary
+    for (int i = 0; i < m_vert.Count(); i++)
+    {
+        int CurIdx = FindVertexInDict(i, vertex_dict);
+        
+        //go through all vertices and do the match-up.
+        if (CurIdx == -1)
+        {
+            for (int j = i + 1; j < m_vert.Count(); j++)
+            {
+                if (sqlength(m_vert[i].m1 - m_vert[j].m1) < CSG_EPSILON)
+                {
+                    if (CurIdx == -1)
+                    {
+                        CurIdx = vertex_dict.Count();
+                        vertex_dict.Push(i, VX_MASTER);
+                    }
+                    vertex_dict.Push(j, CurIdx);
+                }
+            }
+        }
+    }
+}
+
+void EasyMesh::MeshCsg(int csg_operation)
+{
+    //A vertex dictionnary for vertices on the same spot.
+    Array< int, int > vertex_dict;
+    //This list keeps track of the triangle that will need deletion at the end.
+    Array< int > triangle_to_kill;
+    //Listing for each triangle of the vectors intersecting it. <tri_Id, <Point0, Point1, tri_isec_Normal>>
+    Array< int, Array< vec3, vec3, vec3 > > triangle_isec;
+    //keep a track of the intersection point on the triangle. <pos, side_id>
+    Array< vec3, int > triangle_vertex;
+    for (int k = 0; k < 10; k++)
+        triangle_vertex.Push(vec3(.0f), 0);
+
+    //bsp infos
+    CsgBsp mesh_bsp_0;
+    CsgBsp mesh_bsp_1;
+
+    //BSP BUILD : We use the brace logic, csg should be used as : "[ exp .... [exp .... csg]]"
+    int cursor_start = (m_cursors.Count() < 2)?(0):(m_cursors[(m_cursors.Count() - 2)].m2);
+    for (int mesh_id = 0; mesh_id < 2; mesh_id++)
+    {
+        int start_point     = (mesh_id == 0)?(cursor_start):(m_cursors.Last().m2);
+        int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(m_indices.Count());
+        CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_0):(mesh_bsp_1);
+        for (int i = start_point; i < end_point; i += 3)
+            mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m1, m_vert[m_indices[i + 1]].m1, m_vert[m_indices[i + 2]].m1);
+    }
+
+    //BSP Useage : let's crunch all triangles on the correct BSP
+    int indices_count = m_indices.Count();
+    for (int mesh_id = 0; mesh_id < 2; mesh_id++)
+    {
+        int start_point     = (mesh_id == 0)?(cursor_start):(m_cursors.Last().m2);
+        int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(indices_count);
+        CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_1):(mesh_bsp_0);
+        Array< vec3, int, int, float > vert_list;
+        Array< int, int, int, int > tri_list;
+        vec3 n0(.0f); vec3 n1(.0f);
+        vec4 c0(.0f); vec4 c1(.0f);
+
+        //Reserve some memory
+        vert_list.Reserve(3);
+        tri_list.Reserve(3);
+
+        for (int i = start_point; i < end_point; i += 3)
+        {
+            int Result = mesh_bsp.TestTriangleToTree(m_vert[m_indices[i]].m1, m_vert[m_indices[i + 1]].m1, m_vert[m_indices[i + 2]].m1, vert_list, tri_list);
+            int tri_base_idx = m_indices.Count();
+
+            //one split has been done, we need to had the new vertices & the new triangles.
+            if (Result == 1)
+            {
+                triangle_to_kill.Push(i);
+#if 1
+                int base_idx = m_vert.Count();
+                for (int k = 3; k < vert_list.Count(); k++)
+                {
+                    int P0 = (vert_list[k].m2 < 3)?(m_indices[i + vert_list[k].m2]):(base_idx + vert_list[k].m2 - 3);
+                    int P1 = (vert_list[k].m3 < 3)?(m_indices[i + vert_list[k].m3]):(base_idx + vert_list[k].m3 - 3);
+
+                    AddVertex(vert_list[k].m1);
+
+                    //Normal : bad calculations there.
+                    n0 = m_vert[P0].m2;
+                    n1 = m_vert[P1].m2;
+                    SetCurVertNormal(normalize(n0 + (n1 - n0) * vert_list[k].m4));
+
+#if 1
+                    //Color
+                    c0 = m_vert[P0].m3;
+                    c1 = m_vert[P1].m3;
+                    vec4 res = c0 + ((c1 - c0) * vert_list[k].m4);
+                    SetCurVertColor(res);
+#else
+                    if (mesh_id == 0)
+                        SetCurVertColor(vec4(1.0f, .0f, .0f, 1.0f));
+                    else
+                        SetCurVertColor(vec4(.0f, 1.0f, 1.0f, 1.0f));
+#endif
+                }
+                for (int k = 0; k < tri_list.Count(); k++)
+                {
+                    int P0 = (tri_list[k].m2 < 3)?(m_indices[i + tri_list[k].m2]):(base_idx + (tri_list[k].m2 - 3));
+                    int P1 = (tri_list[k].m3 < 3)?(m_indices[i + tri_list[k].m3]):(base_idx + (tri_list[k].m3 - 3));
+                    int P2 = (tri_list[k].m4 < 3)?(m_indices[i + tri_list[k].m4]):(base_idx + (tri_list[k].m4 - 3));
+                    AppendTriangle(P0, P1, P2, 0);
+                }
+#endif
+            }
+#if 1
+            //Main case
+            if (Result >= 0)
+            {
+                for (int k = 0; k < tri_list.Count(); k++)
+                {
+                    int tri_idx = ((tri_list.Count() == 1)?(i):(tri_base_idx + k * 3));
+
+                    //Triangle Kill Test
+                    if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
+                        (csg_operation == CSG_UNION && tri_list[k].m1 == LEAF_BACK) ||
+                        //csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
+                        (csg_operation == CSG_SUBSTRACT &&
+                            ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) ||
+                            (mesh_id == 1 && tri_list[k].m1 == LEAF_FRONT))) ||
+                        //csga : CSGAnd() -> Inside + Inside
+                        (csg_operation == CSG_AND && tri_list[k].m1 == LEAF_FRONT))
+                    {
+                        triangle_to_kill.Push(tri_idx);
+                    }
+
+                    //Triangle Invert Test
+                    if (//csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
+                        (csg_operation == CSG_SUBSTRACT && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
+                        //csgx : CSGXor() -> Outside/Inside-inverted + Outside/Inside-inverted
+                        (csg_operation == CSG_XOR && tri_list[k].m1 == LEAF_BACK))
+                    {
+                        //a Xor means we will share vertices with the outside, so duplicate the vertices.
+                        //TODO : This operation disconnect all triangle, in some cases, not a good thing.
+                        if (csg_operation == CSG_XOR)
+                        {
+                            for (int l = 0; l < 3; l++)
+                            {
+                                AddDuplicateVertex(m_indices[tri_idx + l]);
+                                m_indices[tri_idx + l] = m_vert.Count() - 1;
+                            }
+                        }
+                        m_indices[tri_idx + 1] += m_indices[tri_idx + 2];
+                        m_indices[tri_idx + 2]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
+                        m_indices[tri_idx + 1]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
+                        ComputeNormals(tri_idx, 3);
+                    }
+                }
+            }
+#endif
+            vert_list.Empty();
+            tri_list.Empty();
+        }
+    }
+
+    for (int i = 0; i < m_vert.Count(); i++)
+        if (length(m_vert[i].m2) < 1.0f)
+            i = i;
+
+    int dir = 1;
+    for (int i = 0; i >= 0 && i < triangle_to_kill.Count() - 1; i += dir)
+    {
+        if (triangle_to_kill[i] < triangle_to_kill[i + 1] && dir < 0)
+            dir = 1;
+        if (triangle_to_kill[i] == triangle_to_kill[i + 1])
+        {
+            triangle_to_kill.Remove(i);
+            dir = -1;
+        }
+        if (triangle_to_kill[i] > triangle_to_kill[i + 1])
+        {
+            triangle_to_kill[i]     += triangle_to_kill[i + 1];
+            triangle_to_kill[i + 1]  = triangle_to_kill[i] - triangle_to_kill[i + 1];
+            triangle_to_kill[i]      = triangle_to_kill[i] - triangle_to_kill[i + 1];
+            dir = -1;
+        }
+        if (i == 0 && dir == -1)
+            dir = 1;
+    }
+    for (int i = triangle_to_kill.Count() - 1; i >= 0; i--)
+        m_indices.Remove(triangle_to_kill[i], 3);
+
+    m_cursors.Last().m1 = m_vert.Count();
+    m_cursors.Last().m2 = m_indices.Count();
+
+#if 0
+    UpdateVertexDict(vertex_dict);
+
+    for (int t0 = 0; t0 < m_indices.Count(); t0 += 3)
+    {
+        for (int t1 = t0 + 3; t1 < m_indices.Count(); t1 += 3)
+        {
+            int CommonVertices = 0;
+            //Search for common vertices, if > 1 the two triangle share a side, so no split is required.
+            for (int k = 0; k < 3; k++)
+            {
+                int ref_master = FindVertexInDict(m_indices[t0 + k], vertex_dict);
+                if (ref_master != -1)
+                {
+                    if (vertex_dict[ref_master].m2 != VX_MASTER)
+                        ref_master = vertex_dict[ref_master].m2;
+                    for (int l = 0; l < 3; l++)
+                    {
+                        int test_master = FindVertexInDict(m_indices[t1 + l], vertex_dict);
+                        if (test_master != -1)
+                        {
+                            if (vertex_dict[test_master].m2 != VX_MASTER)
+                                test_master = vertex_dict[test_master].m2;
+                            if (test_master == ref_master)
+                            {
+                                CommonVertices++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (CommonVertices < 2)
+            {
+                vec3 iP0, iP1;
+                //Build the triangle intersection list
+                if (TriangleIsectTriangle(m_vert[m_indices[t0]].m1, m_vert[m_indices[t0 + 1]].m1, m_vert[m_indices[t0 + 2]].m1,
+                                          m_vert[m_indices[t1]].m1, m_vert[m_indices[t1 + 1]].m1, m_vert[m_indices[t1 + 2]].m1,
+                                          iP0, iP1))
+                {
+                    int CurIdx = FindTriangleInDict(t0, triangle_isec);
+                    if (CurIdx == -1)
+                    {
+                        CurIdx = triangle_isec.Count();
+                        triangle_isec.Push(t0, Array<vec3, vec3, vec3>());
+                    }
+                    triangle_isec[CurIdx].m2.Push(iP0, iP1, vec3(.0f));
+                    CurIdx = FindTriangleInDict(t1, triangle_isec);
+                    if (CurIdx == -1)
+                    {
+                        CurIdx = triangle_isec.Count();
+                        triangle_isec.Push(t1, Array<vec3, vec3, vec3>());
+                    }
+                    triangle_isec[CurIdx].m2.Push(iP0, iP1, vec3(.0f));
+                }
+            }
+        }
+    }
+
+    /* seems to be counter-productive in some rare cases. */
+    /*
+    //Every intersection has been found, let's remove those that exist twice.
+    for(int i = 0; i < triangle_isec.Count(); i++)
+    {
+        for(int j = 0; j < triangle_isec[i].m2.Count(); j++)
+        {
+            for(int k = j + 1; k < triangle_isec[i].m2.Count(); k++)
+            {
+                //if the two Dir-vector are parallel & the fist Dir-vector is parallel to the (P0, P1)-vector, this is the same intersection, so kill it.
+                if (abs(dot(normalize(triangle_isec[i].m2[j].m2 - triangle_isec[i].m2[j].m1),
+                            normalize(triangle_isec[i].m2[k].m2 - triangle_isec[i].m2[k].m1)))
+                        >= 1.0 &&
+                    abs(dot(normalize(triangle_isec[i].m2[j].m2 - triangle_isec[i].m2[j].m1),
+                            normalize(triangle_isec[i].m2[k].m1 - triangle_isec[i].m2[j].m1)))
+                        >= 1.0 )
+                    triangle_isec[i].m2.Remove(k--);
+            }
+        }
+    }
+    */
+
+    //Now, the triangle intersection tab should be nice and cosy, so we can start actually cutting some triangles.
+    vec3 isecV[2] = { vec3(.0f), vec3(.0f) };
+    int isecI[2] = { -1, -1 };
+    int v_idx0 = 0; int v_idx1 = 0;
+    int new_v_idx[2] = { 0, 0 };
+    vec3 n0(.0f); vec3 n1(.0f);
+    vec4 c0(.0f); vec4 c1(.0f);
+    for(int i = 0; i < triangle_isec.Count(); i++)
+    {
+        int tri_idx = triangle_isec[i].m1;
+        for(int j = 0; j < triangle_isec[i].m2.Count(); j++)
+        {
+            //Get intersection on actual triangle sides.
+            if (RayIsectTriangleSide(m_vert[m_indices[tri_idx]].m1, m_vert[m_indices[tri_idx + 1]].m1, m_vert[m_indices[tri_idx + 2]].m1,
+                                     triangle_isec[i].m2[j].m1, triangle_isec[i].m2[j].m2,
+                                     isecV[0], isecI[0], isecV[1], isecI[1]))
+            {
+                //Check if the found intersections point are in the triangle. If not, ignore.
+                //Cases are :
+                //  1) at least one dot is negative (one point in the triangle).
+                //  2) the two dot are positive but the intersection point are on all parts of the triangle, and therefore negative.
+                //If one of the point is on one side, some calculations tweak are needed.
+                //If the two points are on the triangle sides, just go with it.
+                bool should_proceed_with_cutting = true;
+                //find out if points are on one of the side
+                int p0_tri_idx = ((sqlength(triangle_isec[i].m2[j].m1 - isecV[0]) < CSG_EPSILON)?(0):(
+                                    (sqlength(triangle_isec[i].m2[j].m1 - isecV[1]) < CSG_EPSILON)?(1):(-1)));
+                int p1_tri_idx = ((sqlength(triangle_isec[i].m2[j].m2 - isecV[0]) < CSG_EPSILON)?(0):(
+                                    (sqlength(triangle_isec[i].m2[j].m2 - isecV[1]) < CSG_EPSILON)?(1):(-1)));
+                if (p0_tri_idx < 0 || p1_tri_idx < 0)
+                {
+                    float dot0 = (p0_tri_idx >= 0)?(1.0f):(dot(triangle_isec[i].m2[j].m1 - isecV[0],
+                                                               triangle_isec[i].m2[j].m1 - isecV[1]));
+                    float dot1 = (p1_tri_idx >= 0)?(1.0f):(dot(triangle_isec[i].m2[j].m2 - isecV[0],
+                                                               triangle_isec[i].m2[j].m2 - isecV[1]));
+                    float dot2 = dot(triangle_isec[i].m2[j].m1 - isecV[(p0_tri_idx == -1)?(0):(1 - p0_tri_idx)],
+                                     triangle_isec[i].m2[j].m2 - isecV[(p1_tri_idx == -1)?(0):(1 - p1_tri_idx)]);
+                    should_proceed_with_cutting = (((dot0 < .0f) || dot1 < .0f) || (dot0 > .0f && dot1 > .0f && dot2 < .0f));
+                }
+                if (should_proceed_with_cutting)
+                {
+                    //Add the new vertices
+                    int b_idx = 0;
+                    for(int k = 0; k < 2; k++)
+                    {
+                        if (b_idx == isecI[k])
+                            b_idx++;
+
+                        new_v_idx[k] = m_vert.Count();
+                        AddVertex(isecV[k]);
+                        //bad calculations of normal there.
+                        n0 = m_vert[m_indices[tri_idx + isecI[k]]].m2;
+                        n1 = m_vert[m_indices[tri_idx + (isecI[k] + 1) % 3]].m2;
+                        SetCurVertNormal(normalize((n0 + n1) * .5f));
+                        //color
+#if 0
+                        c0 = m_vert[m_indices[tri_idx + isecI[k]]].m3;
+                        c1 = m_vert[m_indices[tri_idx + (isecI[k] + 1) % 3]].m3;
+                        SetCurVertColor((c0 + c1) * .5f);
+#else
+                        SetCurVertColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+#endif
+                    }
+
+                    //small trick, b_idx is the side index that has no intersection.
+                    v_idx0 = (b_idx == 1)?(1):(0);
+                    v_idx1 = (b_idx == 1)?(0):(1);
+
+                    //Add the new triangles
+                    AppendTriangle(m_indices[tri_idx + b_idx],              new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
+                    AppendTriangle(m_indices[tri_idx + ((b_idx + 2) % 3)],  new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
+                    //Replace the current triangle by on of the new one, instead of erasing it.
+                    m_indices[tri_idx + ((b_idx + 2) % 3)] = new_v_idx[v_idx0];
+
+                    if (j + 1 < triangle_isec[i].m2.Count())
+                    {
+                        triangle_isec[i].m2.Remove(j--);
+                        //add the two new triangle to the checklist.
+                        triangle_isec.Push(m_indices.Count() - 6, triangle_isec[i].m2);
+                        triangle_isec.Push(m_indices.Count() - 3, triangle_isec[i].m2);
+                    }
+                }
+            }
+        }
+    }
+#endif
+    //DONE for the splitting !
+}
+
+
+//-------------------
 
 void EasyMesh::ToggleScaleWinding()
 {
@@ -434,7 +831,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / M_PI),
+    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / (float)M_PI),
                             vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {
@@ -538,12 +935,12 @@ void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
         {
             int i2 = (i + di) % nidiv;
             int j2 = (j + dj) % njdiv;
-            float x = 0.5f * (r1 + r2) + 0.5 * (r2 - r1) * lol::cos(2.0 * M_PI * i2 / nidiv);
-            float y = 0.5f * (r2 - r1) * lol::sin(2.0 * M_PI * i2 / nidiv);
+            float x = 0.5f * (r1 + r2) + 0.5f * (r2 - r1) * (float)lol::cos(2.0 * M_PI * i2 / nidiv);
+            float y = 0.5f * (r2 - r1) * (float)lol::sin(2.0 * M_PI * i2 / nidiv);
             float z = 0.0f;
 
-            float ca = lol::cos(2.0 * M_PI * j2 / njdiv);
-            float sa = lol::sin(2.0 * M_PI * j2 / njdiv);
+            float ca = (float)lol::cos(2.0 * M_PI * j2 / njdiv);
+            float sa = (float)lol::sin(2.0 * M_PI * j2 / njdiv);
             float x2 = x * ca - z * sa;
             float z2 = z * ca + x * sa;
 

@@ -30,6 +30,7 @@ liblol_a_SOURCES = \
     eglapp.cpp eglapp.h \
     \
     easymesh/easymesh.cpp easymesh/easymesh.h \
+    easymesh/csgbsp.cpp easymesh/csgbsp.h \
     easymesh/shiny.lolfx \
     easymesh/easymesh-compiler.cpp easymesh/easymesh-compiler.h \
     generated/easymesh-parser.cpp generated/easymesh-parser.h \
