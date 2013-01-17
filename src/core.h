@@ -86,6 +86,7 @@ static inline int isnan(float f)
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 #include <lol/math/vector.h>
+#include <lol/math/geometry.h>
 
 #include <lol/image/color.h>
 
