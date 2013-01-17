@@ -309,15 +309,26 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_v0, vec3 const &tri_v1, vec3 cons
                 //There was no triangle intersection, the complex case.
                 if (i == m_tree[leaf_idx].m_tri_list.Count())
                 {
-                    tri_to_process.Last().m1.Pop();
+                    if (m_tree[leaf_idx].m_leaves[LEAF_FRONT] == LEAF_CURRENT &&
+                        m_tree[leaf_idx].m_leaves[LEAF_BACK] == LEAF_CURRENT &&
+                        tri_to_process.Last().m1.Count() == 1)
+                    {
+                        tri_list.Push(LEAF_CURRENT, tri_to_process.Last().m2, tri_to_process.Last().m3, tri_to_process.Last().m4);
+                        tri_to_process.Pop();
+                    }
+                    else
+                    {
+                        tri_to_process.Last().m1.Pop();
 
-                    //Register the triangle as needing to intersect with Front & back leaves.
-                    if (m_tree[leaf_idx].m_leaves[LEAF_FRONT] != LEAF_CURRENT)
-                        tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_FRONT]);
-                    if (m_tree[leaf_idx].m_leaves[LEAF_BACK] != LEAF_CURRENT)
-                        tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_BACK]);
-                    //Mark the triangle as needing point by point test
-                    tri_to_process.Last().m5 = 1;
+                        //Register the triangle as needing to intersect with Front & back leaves.
+                        if (m_tree[leaf_idx].m_leaves[LEAF_FRONT] != LEAF_CURRENT)
+                            tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_FRONT]);
+                        if (m_tree[leaf_idx].m_leaves[LEAF_BACK] != LEAF_CURRENT)
+                            tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_BACK]);
+                        //Mark the triangle as needing point by point test
+
+                        tri_to_process.Last().m5 = 1;
+                    }
                 }
                 //there was an intersection, so let's split the triangle.
                 else
