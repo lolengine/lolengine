@@ -53,13 +53,13 @@ namespace lol
     }
 
     // Line/triangle : sets vIsec as the intersection point & return true if ok.
-    bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD, 
+    bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD,
                                  vec3 const &triV0, vec3 const &triV1, vec3 const &triV2,
                                  vec3 &vIsec)
     {
         vec3 v01, v02, h, v0P, q;
         float a, f, triU, triV;
-    
+
         //
         v01 = triV1 - triV0;
         v02 = triV2 - triV0;
@@ -181,7 +181,7 @@ namespace lol
     }
 
     //Ray/Line : returns one of the RAY_ISECT_* defines.
-    int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01, 
+    int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01,
                            vec3 const &rayP10, vec3 const &rayP11,
                            vec3 &vIsec)
     {

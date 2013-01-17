@@ -175,7 +175,7 @@ void EasyMesh::UpdateVertexDict(Array< int, int > &vertex_dict)
     for (int i = 0; i < m_vert.Count(); i++)
     {
         int CurIdx = FindVertexInDict(i, vertex_dict);
-        
+
         //go through all vertices and do the match-up.
         if (CurIdx == -1)
         {

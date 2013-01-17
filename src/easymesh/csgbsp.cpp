@@ -139,7 +139,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 cons
             int leaf_type = res_side[(isec_base + 2) % 3];
 
             tri_to_process.Pop();
-                
+
 #if 1
             if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT)
                 Leaf_to_add.Push(leaf_type, leaf_idx, v[((isec_base + 2) % 3)], isec_v[v_idx1], isec_v[v_idx0], -1);
@@ -498,7 +498,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_v0, vec3 const &tri_v1, vec3 cons
 
             int res_total = 0;
             int res_nb[3] = { 0, 0, 0 };
-            
+
             int res_Leaf[4] = { 0, 0, 0, 0 };
             int res_side[4] = { -1, -1, -1, -1 };
             while (res_total < TEST_MAX)

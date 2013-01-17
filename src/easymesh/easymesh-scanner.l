@@ -66,7 +66,7 @@ sx    { return token::T_SCALEX; }
 sy    { return token::T_SCALEY; }
 sz    { return token::T_SCALEZ; }
 s     { return token::T_SCALE; }
-tsw	  { return token::T_TOGGLESCALEWINDING; }
+tsw      { return token::T_TOGGLESCALEWINDING; }
 mx    { return token::T_MIRRORX; }
 my    { return token::T_MIRRORY; }
 mz    { return token::T_MIRRORZ; }
