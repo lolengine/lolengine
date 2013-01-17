@@ -18,6 +18,18 @@
 namespace lol
 {
 
+struct TrackedObj
+{
+    static int m_ctor, m_dtor;
+
+    TrackedObj() { m_ctor++; }
+    TrackedObj(TrackedObj const &) { m_ctor++; }
+    ~TrackedObj() { m_dtor++; }
+};
+
+int TrackedObj::m_ctor = 0;
+int TrackedObj::m_dtor = 0;
+
 LOLUNIT_FIXTURE(ArrayTest)
 {
     void SetUp() {}
@@ -118,6 +130,31 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(b[1], 3);
         LOLUNIT_ASSERT_EQUAL(b[2], 2);
         LOLUNIT_ASSERT_EQUAL(b[3], 3);
+    }
+
+    LOLUNIT_TEST(ElementCtorDtor)
+    {
+        /* Ensure array elements get created and destroyed the proper
+         * number of times. */
+        TrackedObj::m_ctor = 0;
+        TrackedObj::m_dtor = 0;
+        {
+            Array<TrackedObj> a;
+
+            a.Push(TrackedObj());
+        }
+        LOLUNIT_ASSERT_EQUAL(TrackedObj::m_ctor, TrackedObj::m_dtor);
+
+        TrackedObj::m_ctor = 0;
+        TrackedObj::m_dtor = 0;
+        {
+            Array<TrackedObj> a;
+
+            a.Resize(2);
+            a.Resize(4);
+            a.Resize(1);
+        }
+        LOLUNIT_ASSERT_EQUAL(TrackedObj::m_ctor, TrackedObj::m_dtor);
     }
 };
 
