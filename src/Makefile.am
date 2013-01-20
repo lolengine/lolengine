@@ -46,8 +46,6 @@ liblol_a_SOURCES = \
     \
     base/hash.cpp base/string.cpp \
     \
-    thread/threadbase.h thread/thread.h \
-    \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     math/geometry.cpp \
     \
@@ -74,6 +72,7 @@ liblol_a_SOURCES = \
     mesh/mesh.cpp mesh/mesh.h \
     \
     sys/init.cpp \
+    sys/threadbase.h sys/thread.h \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \

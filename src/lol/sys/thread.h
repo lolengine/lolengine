@@ -19,7 +19,7 @@
 #if defined __CELLOS_LV2__
 #   include "platform/ps3/threadbase.h"
 #else
-#   include "threadbase.h"
+#   include "sys/threadbase.h"
 #endif
 
 namespace lol
