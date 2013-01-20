@@ -553,6 +553,7 @@ int main(int argc, char **argv)
 {
     ivec2 window_size(640, 480);
 
+    System::Init(argc, argv);
     Application app("Tutorial 3: Fractal", window_size, 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX

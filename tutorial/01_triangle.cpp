@@ -1,7 +1,7 @@
 //
 // Lol Engine - Triangle tutorial
 //
-// Copyright: (c) 2012 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -74,6 +74,8 @@ private:
 
 int main(int argc, char **argv)
 {
+    System::Init(argc, argv);
+
     Application app("Tutorial 1: Triangle", ivec2(640, 480), 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX

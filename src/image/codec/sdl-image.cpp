@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -48,7 +48,7 @@ public:
     static SDL_Surface *Create32BppSurface(ivec2 size);
 
 private:
-    SDL_Surface *img;
+    SDL_Surface *m_img;
 };
 
 /*
@@ -57,43 +57,41 @@ private:
 
 bool SdlImageData::Open(char const *path)
 {
-    for (char const *name = path; *name; name++)
-        if ((img = IMG_Load(name)))
-            break;
-
-    if (!img)
+    String fullpath = String(System::GetDataDir()) + String(path);
+    m_img = IMG_Load(&fullpath[0]);
+    if (!m_img)
     {
 #if !LOL_RELEASE
-        Log::Error("could not load %s\n", path);
+        Log::Error("could not load %s\n", &fullpath[0]);
 #endif
         return false;
     }
 
-    size = ivec2(img->w, img->h);
+    size = ivec2(m_img->w, m_img->h);
 
-    if (img->format->BytesPerPixel != 4)
+    if (m_img->format->BytesPerPixel != 4)
     {
         SDL_Surface *tmp = Create32BppSurface(size);
-        SDL_BlitSurface(img, NULL, tmp, NULL);
-        SDL_FreeSurface(img);
-        img = tmp;
+        SDL_BlitSurface(m_img, NULL, tmp, NULL);
+        SDL_FreeSurface(m_img);
+        m_img = tmp;
     }
 
-    format = img->format->Amask ? Image::FORMAT_RGBA : Image::FORMAT_RGB;
+    format = m_img->format->Amask ? Image::FORMAT_RGBA : Image::FORMAT_RGB;
 
     return true;
 }
 
 bool SdlImageData::Close()
 {
-    SDL_FreeSurface(img);
+    SDL_FreeSurface(m_img);
 
     return true;
 }
 
 void * SdlImageData::GetData() const
 {
-    return img->pixels;
+    return m_img->pixels;
 }
 
 SDL_Surface *SdlImageData::Create32BppSurface(ivec2 size)
