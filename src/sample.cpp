@@ -63,11 +63,12 @@ Sample::Sample(char const *path)
     sprintf(data->name, "<sample> %s", path);
 
 #if defined USE_SDL_MIXER
-    data->chunk = Mix_LoadWAV(path);
+    String fullpath = String(System::GetDataDir()) + String(path);
+    data->chunk = Mix_LoadWAV(&fullpath[0]);
     if (!data->chunk)
     {
 #if !LOL_RELEASE
-        Log::Error("could not load %s\n", path);
+        Log::Error("could not load %s\n", &fullpath[0]);
 #endif
         SDL_Quit();
         exit(1);

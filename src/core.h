@@ -88,6 +88,8 @@ static inline int isnan(float f)
 #include <lol/math/vector.h>
 #include <lol/math/geometry.h>
 
+#include <lol/sys/init.h>
+
 #include <lol/image/color.h>
 
 #include "numeric.h"

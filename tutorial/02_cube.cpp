@@ -135,6 +135,8 @@ private:
 
 int main(int argc, char **argv)
 {
+    System::Init(argc, argv);
+
     Application app("Tutorial 2: Cube", ivec2(640, 480), 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX

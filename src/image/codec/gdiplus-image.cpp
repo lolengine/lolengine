@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -62,13 +62,14 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
+    String fullpath = String(System::GetDataDir()) + String(path);
     size_t len;
-    len = mbstowcs(NULL, path, 0);
+    len = mbstowcs(NULL, &fullpath[0], 0);
     wchar_t *wpath = new wchar_t[len + 1];
-    if (mbstowcs(wpath, path, len + 1) == (size_t)-1)
+    if (mbstowcs(wpath, &fullpath[0], len + 1) == (size_t)-1)
     {
 #if !LOL_RELEASE
-        Log::Error("invalid image name %s\n", path);
+        Log::Error("invalid image name %s\n", &fullpath[0]);
 #endif
         delete[] wpath;
         return false;
@@ -76,19 +77,18 @@ bool GdiPlusImageData::Open(char const *path)
 
     bitmap = NULL;
     status = Gdiplus::Ok;
-    for (wchar_t const *wname = wpath; *wname; wname++)
+    bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
+    if (bitmap)
     {
-        bitmap = Gdiplus::Bitmap::FromFile(wname, 0);
-        if (bitmap)
+        status = bitmap->GetLastStatus();
+        if (status != Gdiplus::Ok)
         {
-            status = bitmap->GetLastStatus();
-            if (status == Gdiplus::Ok)
-                break;
 #if !LOL_RELEASE
             if (status != Gdiplus::InvalidParameter)
                 Log::Error("error %d loading %s\n", status, path);
 #endif
             delete bitmap;
+            bitmap = NULL;
         }
     }
 

@@ -405,16 +405,18 @@ dnl  Can we build neercs?
 AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no")
 
 
-dnl Extra libraries we may need
+dnl  Extra libraries we may need
 AC_SUBST(MATH_LIBS)
 AC_SUBST(PAM_LIBS)
 AC_SUBST(UTIL_LIBS)
 
-dnl How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I \$(top_srcdir)/src"
+dnl  How to use the Lol Engine inside this tree
+LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/src"
+LOL_CFLAGS="$LOL_CFLAGS -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 
+dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 

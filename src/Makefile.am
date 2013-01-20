@@ -22,6 +22,7 @@ liblol_a_SOURCES = \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h \
     lol/math/geometry.h \
+    lol/sys/init.h \
     lol/image/color.h \
     \
     generated/location.hh generated/position.hh generated/stack.hh \
@@ -71,6 +72,8 @@ liblol_a_SOURCES = \
     generated/lolfx-scanner.cpp \
     \
     mesh/mesh.cpp mesh/mesh.h \
+    \
+    sys/init.cpp \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \

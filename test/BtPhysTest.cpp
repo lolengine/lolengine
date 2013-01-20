@@ -2,7 +2,7 @@
 // BtPhysTest
 //
 // Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012 Sam Hocevar <sam@hocevar.net>
+//            (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
 //
 
 #if defined HAVE_CONFIG_H
@@ -475,6 +475,8 @@ BtPhysTest::~BtPhysTest()
 
 int main(int argc, char **argv)
 {
+    System::Init(argc, argv);
+
     Application app("BtPhysTest", ivec2(1280, 720), 60.0f);
 
 #if defined _MSC_VER && !defined _XBOX
