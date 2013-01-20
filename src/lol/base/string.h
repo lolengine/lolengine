@@ -64,6 +64,12 @@ public:
         return ((Super const &)*this).Count() - 1;
     }
 
+    void Resize(int count)
+    {
+        ((Super &)*this).Resize(count + 1);
+        ((Super &)*this).Last() = '\0';
+    }
+
     inline String operator +(String const &s) const
     {
         String ret(*this);
@@ -72,7 +78,7 @@ public:
 
     inline String& operator +=(String const &s)
     {
-        /* Be careful, we have a trailing zero we don't want! */
+        /* Ignore the trailing zero we don't want */
         --m_count;
         (Super &)*this += (Super const &)s;
         return *this;
