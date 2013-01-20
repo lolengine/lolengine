@@ -599,6 +599,8 @@
     <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\vector.h" />
+    <ClInclude Include="lol\sys\init.h" />
+    <ClInclude Include="lol\sys\thread.h" />
     <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="map.h" />
@@ -618,9 +620,9 @@
     <ClInclude Include="scene.h" />
     <ClInclude Include="simd.h" />
     <ClInclude Include="sprite.h" />
+    <ClInclude Include="sys\threadbase.h" />
+    <ClInclude Include="sys\init.cpp" />
     <ClInclude Include="text.h" />
-    <ClInclude Include="thread\thread.h" />
-    <ClInclude Include="thread\threadbase.h" />
     <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
