@@ -20,8 +20,8 @@
 
       <!-- The "\\" replacement is a hack for the SNC VSI; the proper way to
            do that is using $([System.Text.RegularExpressions.Regex]...) -->
-      <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\\','\').Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions>LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\\','\').Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR=\"$(ProjectDir.Replace('\\','\').Replace('\','\\'))\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LOL_CONFIG_SOLUTIONDIR=\"$(SolutionDir.Replace('\\','\').Replace('\','\\'))\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
