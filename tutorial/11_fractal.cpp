@@ -18,10 +18,6 @@
 #include "core.h"
 #include "loldebug.h"
 
-#if defined _WIN32
-#   include <direct.h>
-#endif
-
 using namespace lol;
 
 extern char const *lolfx_11_fractal;
@@ -555,12 +551,6 @@ int main(int argc, char **argv)
 
     System::Init(argc, argv);
     Application app("Tutorial 3: Fractal", window_size, 60.0f);
-
-#if defined _MSC_VER && !defined _XBOX
-    _chdir("..");
-#elif defined _WIN32 && !defined _XBOX
-    _chdir("../..");
-#endif
 
     new DebugFps(5, 5);
     new Fractal(window_size);

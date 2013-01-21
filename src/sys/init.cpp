@@ -20,25 +20,47 @@ namespace lol
 namespace System
 {
 
-void Init(Array<char const *> &args)
-{
-    /* Try to guess the data directory from the executable location. */
-    if (args.Count() > 0)
-    {
 #if defined _WIN32
 #   define SEPARATOR '\\'
 #else
 #   define SEPARATOR '/'
 #endif
-        char const *last_slash = strrchr(args[0], SEPARATOR);
+
+void Init(int argc, char *argv[],
+          char const *projectdir, char const *solutiondir)
+{
+    bool got_rootdir = false;
+
+    /* Find the common prefix between project dir and solution dir. */
+    for (int i = 0; ; i++)
+    {
+        if (projectdir[i] != solutiondir[i] || projectdir[i] == '\0')
+        {
+            /* FIXME: at this point we should check whether the binary
+             * was launched from this subdirectory; from now we just
+             * assume it was. */
+            if (i)
+            {
+                String rootdir = projectdir;
+                if (rootdir.Last() != SEPARATOR)
+                    rootdir += SEPARATOR;
+                SetDataDir(&rootdir[0]);
+                got_rootdir = true;
+            }
+            break;
+        }
+    }
+
+    /* Try to guess the data directory from the executable location. */
+    if (!got_rootdir && argc > 0)
+    {
+        char const *last_slash = strrchr(argv[0], SEPARATOR);
 
         if (last_slash)
         {
-            String dir;
-            dir.Resize(last_slash - args[0] + 1);
-            memcpy(&dir[0], args[0], last_slash - args[0] + 1);
-
+            String dir(argv[0], last_slash - argv[0] + 1);
             SetDataDir(&dir[0]);
+            got_rootdir = true;
         }
     }
 }
