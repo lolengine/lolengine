@@ -7,7 +7,11 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+
+      <!-- Always multiprocessor, never minimal rebuild -->
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\src;$(SolutionDir)\..\..\src\bullet;$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
