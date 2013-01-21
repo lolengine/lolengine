@@ -293,6 +293,7 @@
     <ClCompile Include="sampler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
+    <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="ticker.cpp" />
     <ClCompile Include="tiler.cpp" />
@@ -621,7 +622,6 @@
     <ClInclude Include="simd.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="sys\threadbase.h" />
-    <ClInclude Include="sys\init.cpp" />
     <ClInclude Include="text.h" />
     <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
