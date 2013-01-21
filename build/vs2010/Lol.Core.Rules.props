@@ -18,10 +18,12 @@
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
-      <!-- The "\\" replacement is a hack for the SNC VSI; the proper way to
-           do that is using $([System.Text.RegularExpressions.Regex]...) -->
-      <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR=\"$(ProjectDir.Replace('\\','\').Replace('\','\\'))\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions>LOL_CONFIG_SOLUTIONDIR=\"$(SolutionDir.Replace('\\','\').Replace('\','\\'))\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- Escape backslashes for C++, but replace \ with / on the PS3
+           because the SNC VSI seems to have trouble with backslashes -->
+      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='PS3'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='PS3'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
