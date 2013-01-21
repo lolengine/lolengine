@@ -109,7 +109,7 @@ for file in $FILES; do
           :
           ;;
       # Don't harass these people
-      people/peeweek/*|people/touky/*)
+      people/peeweek/*|people/touky/*|people/benlitz/*)
           :
           ;;
       # These files we know how to handle
