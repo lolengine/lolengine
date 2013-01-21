@@ -39,7 +39,7 @@ public:
     inline String(char const *str)
       : Super()
     {
-        using std::memcpy;
+        using namespace std;
         Resize((int)strlen(str));
         memcpy(&(*this)[0], str, Count() + 1);
     }
@@ -47,7 +47,7 @@ public:
     inline String(char const *str, int count)
       : Super()
     {
-        using std::memcpy;
+        using namespace std;
         Resize(count + 1);
         memcpy(&(*this)[0], str, Count());
         ((Super &)*this).Last() = '\0';
