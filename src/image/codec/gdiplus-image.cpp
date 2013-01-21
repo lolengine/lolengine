@@ -85,7 +85,8 @@ bool GdiPlusImageData::Open(char const *path)
         {
 #if !LOL_RELEASE
             if (status != Gdiplus::InvalidParameter)
-                Log::Error("error %d loading %s\n", status, path);
+                Log::Error("error %d loading %s\n",
+                           status, &fullpath[0]);
 #endif
             delete bitmap;
             bitmap = NULL;

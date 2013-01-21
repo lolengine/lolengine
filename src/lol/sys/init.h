@@ -21,22 +21,28 @@
 namespace lol
 {
 
+/*
+ * Module-specific macros. These can be overridden by the build process,
+ * typically with compiler command-line flags.
+ */
+
+#if !defined LOL_CONFIG_PROJECTDIR
+#   define LOL_CONFIG_PROJECTDIR ""
+#endif
+
+#if !defined LOL_CONFIG_SOLUTIONDIR
+#   define LOL_CONFIG_SOLUTIONDIR ""
+#endif
+
 namespace System
 {
 
-extern void Init(Array<char const *> &args);
+extern void Init(int argc, char *argv[],
+                 char const *projectdir = LOL_CONFIG_PROJECTDIR,
+                 char const *solutiondir = LOL_CONFIG_SOLUTIONDIR);
+
 extern void SetDataDir(char const *dir);
 extern char const *GetDataDir();
-
-static inline void Init(int argc, char *argv[])
-{
-    Array<char const *> args;
-
-    for (int i = 0; i < argc; i++)
-        args << argv[i];
-
-    Init(args);
-}
 
 } /* namespace System */
 

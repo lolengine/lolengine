@@ -18,10 +18,6 @@
 using namespace std;
 using namespace lol;
 
-#if defined _WIN32
-#   include <direct.h>
-#endif
-
 extern char const *lolfx_08_fbo;
 
 class FBO : public WorldEntity
@@ -141,12 +137,6 @@ int main(int argc, char **argv)
     System::Init(argc, argv);
 
     Application app("Tutorial 08: Framebuffer Object", ivec2(640, 480), 60.0f);
-
-#if defined _MSC_VER && !defined _XBOX
-    _chdir("..");
-#elif defined _WIN32 && !defined _XBOX
-    _chdir("../..");
-#endif
 
     new FBO();
 
