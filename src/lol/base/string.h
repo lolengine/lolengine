@@ -19,6 +19,8 @@
 
 #include <lol/base/array.h>
 
+#include <cstring>
+
 namespace lol
 {
 
@@ -37,6 +39,7 @@ public:
     inline String(char const *str)
       : Super()
     {
+        using std::memcpy;
         Resize((int)strlen(str));
         memcpy(&(*this)[0], str, Count() + 1);
     }
@@ -44,6 +47,7 @@ public:
     inline String(char const *str, int count)
       : Super()
     {
+        using std::memcpy;
         Resize(count + 1);
         memcpy(&(*this)[0], str, Count());
         ((Super &)*this).Last() = '\0';
