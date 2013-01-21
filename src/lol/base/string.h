@@ -37,11 +37,16 @@ public:
     inline String(char const *str)
       : Super()
     {
-        do
-        {
-            Push(*str);
-        }
-        while (*str++);
+        Resize((int)strlen(str));
+        memcpy(&(*this)[0], str, Count() + 1);
+    }
+
+    inline String(char const *str, int count)
+      : Super()
+    {
+        Resize(count + 1);
+        memcpy(&(*this)[0], str, Count());
+        ((Super &)*this).Last() = '\0';
     }
 
     inline String(String const &s)
@@ -57,6 +62,16 @@ public:
     inline char const &operator [](int n) const
     {
         return ((Super const &)*this)[n];
+    }
+
+    inline char &Last()
+    {
+        return (*this)[Count() - 1];
+    }
+
+    inline char const &Last() const
+    {
+        return (*this)[Count() - 1];
     }
 
     inline int Count() const
