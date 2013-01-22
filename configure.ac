@@ -73,7 +73,7 @@ AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
 
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
-AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h)
+AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h)
 AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)

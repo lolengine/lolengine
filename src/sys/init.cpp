@@ -12,6 +12,10 @@
 #   include "config.h"
 #endif
 
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
+
 #ifdef _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <direct.h>
@@ -39,15 +43,15 @@ void Init(int argc, char *argv[],
      */
 
 #if defined _WIN32
-    char const *cwd = _getcwd(NULL, 0);
-    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
-    free((void *)cwd);
+    char *cwd = _getcwd(NULL, 0);
 #else
-    String binarydir = String(getcwd()) + SEPARATOR;
+    char *cwd = getcwd(NULL, 0);
 #endif
+    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
+    free(cwd);
     if (argc > 0)
     {
-        char const *last_sep = strchr(argv[0], SEPARATOR);
+        char const *last_sep = strrchr(argv[0], SEPARATOR);
         if (last_sep)
             binarydir = String(argv[0], last_sep - argv[0] + 1);
     }
@@ -82,6 +86,9 @@ void Init(int argc, char *argv[],
         SetDataDir(&binarydir[0]);
         got_rootdir = true;
     }
+
+    Log::Debug("binary dir: %s\n", &binarydir[0]);
+    Log::Debug("root dir: %s\n", GetDataDir());
 }
 
 /*
