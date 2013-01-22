@@ -38,14 +38,18 @@ namespace System
 void Init(int argc, char *argv[],
           String const projectdir, String const solutiondir)
 {
+    using namespace std;
+
     /*
      * Retrieve binary directory, defaulting to current dir.
      */
 
-#if defined _WIN32
+#if defined HAVE_GETCWD
+    char *cwd = getcwd(NULL, 0);
+#elif defined HAVE__GETCWD || (defined _WIN32 && !defined _XBOX)
     char *cwd = _getcwd(NULL, 0);
 #else
-    char *cwd = getcwd(NULL, 0);
+    char *cwd = NULL;
 #endif
     String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
     free(cwd);
