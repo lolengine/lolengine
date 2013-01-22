@@ -89,15 +89,15 @@ static inline int isnan(float f)
 #include <lol/math/geometry.h>
 
 #include <lol/sys/init.h>
+#include <lol/sys/log.h>
 #include <lol/sys/thread.h>
+#include <lol/sys/timer.h>
 
 #include <lol/image/color.h>
 
 #include "numeric.h"
-#include "timer.h"
 
 // Static classes
-#include "log.h"
 #include "platform.h"
 #include "video.h"
 #include "audio.h"

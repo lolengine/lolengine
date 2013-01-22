@@ -192,9 +192,6 @@
     <ClCompile Include="ticker.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="log.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="map.cpp">
       <Filter>...</Filter>
     </ClCompile>
@@ -752,9 +749,6 @@
     <ClInclude Include="audio.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="bitfield.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -783,9 +777,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="layer.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="log.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="loldebug.h">
