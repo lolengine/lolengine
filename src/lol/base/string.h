@@ -20,6 +20,7 @@
 #include <lol/base/array.h>
 
 #include <cstring>
+#include <cstdarg>
 
 namespace lol
 {
@@ -140,6 +141,7 @@ public:
 #endif
     static String Printf(char const *format, ...) LOL_FMT_ATTR(1, 2);
 #undef LOL_FMT_ATTR
+    static String Printf(char const *format, va_list ap);
 };
 
 } /* namespace lol */
