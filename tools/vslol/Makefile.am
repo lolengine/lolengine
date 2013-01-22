@@ -8,7 +8,7 @@ EXTRA_DIST = \
     VsLol.vsct \
     VsLol.resx \
     VsLol.Designer.cs \
-    AssemblyInfo.cs \
+    Properties/AssemblyInfo.cs \
     GlobalSuppressions.cs \
     MenuGenerateCompilers.cs \
     \
