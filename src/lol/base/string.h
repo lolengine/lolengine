@@ -14,8 +14,8 @@
 // A very simple String class, based on Array.
 //
 
-#if !defined __LOL_CORE_STRING_H__
-#define __LOL_CORE_STRING_H__
+#if !defined __LOL_BASE_STRING_H__
+#define __LOL_BASE_STRING_H__
 
 #include <lol/base/array.h>
 
@@ -49,9 +49,9 @@ public:
       : Super()
     {
         using namespace std;
-        Resize(count + 1);
-        memcpy(&(*this)[0], str, Count());
-        ((Super &)*this).Last() = '\0';
+        Resize(count);
+        memcpy(&(*this)[0], str, count);
+        (*this)[count] = '\0';
     }
 
     inline String(String const &s)
@@ -146,5 +146,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __LOL_CORE_STRING_H__
+#endif // __LOL_BASE_STRING_H__
 
