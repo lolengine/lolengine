@@ -28,26 +28,43 @@ namespace lol
 
 String String::Printf(char const *format, ...)
 {
+    String ret;
+
+    va_list ap;
+    va_start(ap, format);
+    ret = String::Printf(format, ap);
+    va_end(ap);
+
+    return ret;
+}
+
+String String::Printf(char const *format, va_list ap)
+{
 #if defined __CELLOS_LV2__
     using std::vsnprintf;
 #endif
 
     String ret;
-    va_list ap;
+
+    /* Visual Studio 2010 does not support it va_copy. */
+#if defined _MSC_VER
+#   undef va_copy
+#   define va_copy(dst, src) (dst = src)
+#endif
+    va_list ap2;
+    va_copy(ap2, ap);
+#if defined _MSC_VER
+#   undef va_copy
+#endif
 
     /* vsnprintf() tells us how many character we need, and we need to
      * add one for the terminating null byte. */
-    va_start(ap, format);
-    size_t needed = vsnprintf(NULL, 0, format, ap) + 1;
-    va_end(ap);
+    size_t needed = vsnprintf(NULL, 0, format, ap2) + 1;
 
     ((Super &)ret).Reserve(needed);
     ret.m_count = needed;
 
-    /* We don’t use va_copy because Visual Studio 2010 does not support it. */
-    va_start(ap, format);
     vsnprintf(&ret[0], needed, format, ap);
-    va_end(ap);
 
     return ret;
 }
