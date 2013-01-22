@@ -80,6 +80,8 @@ AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
 AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
 AC_CHECK_HEADERS(pam/pam_appl.h pam/pam_misc.h)
 
+AC_CHECK_FUNCS(getcwd _getcwd)
+
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
   OPT="-O"
