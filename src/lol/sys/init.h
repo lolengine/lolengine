@@ -34,12 +34,17 @@ namespace lol
 #   define LOL_CONFIG_SOLUTIONDIR ""
 #endif
 
+/*
+ * System namespace. The platform-specific stuff in there makes the API
+ * not as clean as the rest of the framework.
+ */
+
 namespace System
 {
 
 extern void Init(int argc, char *argv[],
-                 char const *projectdir = LOL_CONFIG_PROJECTDIR,
-                 char const *solutiondir = LOL_CONFIG_SOLUTIONDIR);
+                 String const projectdir = LOL_CONFIG_PROJECTDIR,
+                 String const solutiondir = LOL_CONFIG_SOLUTIONDIR);
 
 extern void SetDataDir(char const *dir);
 extern char const *GetDataDir();

@@ -12,6 +12,11 @@
 #   include "config.h"
 #endif
 
+#ifdef _WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <direct.h>
+#endif
+
 #include "core.h"
 
 namespace lol
@@ -27,11 +32,31 @@ namespace System
 #endif
 
 void Init(int argc, char *argv[],
-          char const *projectdir, char const *solutiondir)
+          String const projectdir, String const solutiondir)
 {
-    bool got_rootdir = false;
+    /*
+     * Retrieve binary directory, defaulting to current dir.
+     */
 
-    /* Find the common prefix between project dir and solution dir. */
+#if defined _WIN32
+    char const *cwd = _getcwd(NULL, 0);
+    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
+    free((void *)cwd);
+#else
+    String binarydir = String(getcwd()) + SEPARATOR;
+#endif
+    if (argc > 0)
+    {
+        char const *last_sep = strchr(argv[0], SEPARATOR);
+        if (last_sep)
+            binarydir = String(argv[0], last_sep - argv[0] + 1);
+    }
+
+    /*
+     * Find the common prefix between project dir and solution dir.
+     */
+
+    bool got_rootdir = false;
     for (int i = 0; ; i++)
     {
         if (projectdir[i] != solutiondir[i] || projectdir[i] == '\0')
@@ -51,17 +76,11 @@ void Init(int argc, char *argv[],
         }
     }
 
-    /* Try to guess the data directory from the executable location. */
-    if (!got_rootdir && argc > 0)
+    /* If no rootdir found, use the executable location */
+    if (!got_rootdir)
     {
-        char const *last_slash = strrchr(argv[0], SEPARATOR);
-
-        if (last_slash)
-        {
-            String dir(argv[0], last_slash - argv[0] + 1);
-            SetDataDir(&dir[0]);
-            got_rootdir = true;
-        }
+        SetDataDir(&binarydir[0]);
+        got_rootdir = true;
     }
 }
 
