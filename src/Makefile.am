@@ -9,21 +9,19 @@ liblol_a_SOURCES = \
     core.h tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
     map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
-    tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h log.cpp log.h \
-    timer.cpp timer.h bitfield.h profiler.cpp profiler.h \
+    tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
-    text.cpp text.h emitter.cpp emitter.h numeric.h \
+    profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h numeric.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
-    lol/unit.h lol/debug.h \
     lol/base/types.h lol/base/array.h lol/base/string.h lol/base/hash.h \
     lol/base/map.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
-    lol/math/math.h \
-    lol/math/geometry.h \
-    lol/sys/init.h \
+    lol/math/math.h lol/math/geometry.h \
+    lol/sys/init.h lol/sys/log.h lol/sys/thread.h lol/sys/timer.h \
     lol/image/color.h \
+    lol/unit.h lol/debug.h \
     \
     generated/location.hh generated/position.hh generated/stack.hh \
     \
@@ -71,8 +69,8 @@ liblol_a_SOURCES = \
     \
     mesh/mesh.cpp mesh/mesh.h \
     \
-    sys/init.cpp \
-    sys/threadbase.h sys/thread.h \
+    sys/init.cpp sys/log.cpp sys/timer.cpp \
+    sys/threadbase.h \
     \
     image/image.cpp image/image.h image/image-private.h \
     image/codec/gdiplus-image.cpp \

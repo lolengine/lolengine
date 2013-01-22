@@ -272,7 +272,6 @@
     <ClCompile Include="input\keyboard.cpp" />
     <ClCompile Include="input\stick.cpp" />
     <ClCompile Include="layer.cpp" />
-    <ClCompile Include="log.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
@@ -294,6 +293,8 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\init.cpp" />
+    <ClCompile Include="sys\log.cpp" />
+    <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="ticker.cpp" />
     <ClCompile Include="tiler.cpp" />
@@ -306,7 +307,6 @@
   <ItemGroup>
     <ClInclude Include="application\application.h" />
     <ClInclude Include="audio.h" />
-    <ClInclude Include="bitfield.h" />
     <ClInclude Include="bullet\btBulletCollisionCommon.h" />
     <ClInclude Include="bullet\btBulletDynamicsCommon.h" />
     <ClInclude Include="bullet\Bullet-C-Api.h" />
@@ -584,7 +584,6 @@
     <ClInclude Include="input\keyboard.h" />
     <ClInclude Include="input\stick.h" />
     <ClInclude Include="layer.h" />
-    <ClInclude Include="log.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lol\base\array.h" />
@@ -601,7 +600,9 @@
     <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\sys\init.h" />
+    <ClInclude Include="lol\sys\log.h" />
     <ClInclude Include="lol\sys\thread.h" />
+    <ClInclude Include="lol\sys\timer.h" />
     <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="map.h" />

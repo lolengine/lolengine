@@ -82,11 +82,8 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
         ANDROID_LOG_ERROR
     };
 
-    char buf[4096];
-    vsnprintf(buf, 4095, fmt, ap);
-    buf[4095] = '\0';
-
-    __android_log_print(prio[type], "LOL", "[%d] %s", (int)gettid(), buf);
+    String buf = String::Printf(fmt, ap);
+    __android_log_print(prio[type], "LOL", "[%d] %s", (int)gettid(), &buf[0]);
 
 #else
     char const *prefix[] =
@@ -98,12 +95,8 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
     };
 
 #   if defined _WIN32
-    char buf[4096];
-    vsnprintf(buf, 4095, fmt, ap);
-    buf[4095] = '\0';
-    OutputDebugString(prefix[type]);
-    OutputDebugString(": ");
-    OutputDebugString(buf);
+    String buf = String(prefix[type]) + ": " + String::Printf(fmt, ap);
+    OutputDebugString(&buf[0]);
 #   else
     fprintf(stderr, "%s: ", prefix[type]);
     vfprintf(stderr, fmt, ap);
