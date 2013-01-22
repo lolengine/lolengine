@@ -299,7 +299,6 @@
     <ClCompile Include="ticker.cpp" />
     <ClCompile Include="tiler.cpp" />
     <ClCompile Include="tileset.cpp" />
-    <ClCompile Include="timer.cpp" />
     <ClCompile Include="video.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="worldentity.cpp" />
@@ -627,7 +626,6 @@
     <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
-    <ClInclude Include="timer.h" />
     <ClInclude Include="video.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="worldentity.h" />
