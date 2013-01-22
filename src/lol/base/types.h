@@ -8,8 +8,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_CORE_TYPES_H__
-#define __LOL_CORE_TYPES_H__
+#if !defined __LOL_BASE_TYPES_H__
+#define __LOL_BASE_TYPES_H__
 
 namespace lol
 {
@@ -30,5 +30,5 @@ class half;
 
 } /* namespace lol */
 
-#endif // __LOL_CORE_TYPES_H__
+#endif // __LOL_BASE_TYPES_H__
 

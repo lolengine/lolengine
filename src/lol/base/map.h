@@ -14,8 +14,8 @@
 // A very simple Map class.
 //
 
-#if !defined __LOL_CORE_MAP_H__
-#define __LOL_CORE_MAP_H__
+#if !defined __LOL_BASE_MAP_H__
+#define __LOL_BASE_MAP_H__
 
 namespace lol
 {
@@ -79,5 +79,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_CORE_MAP_H__
+#endif // __LOL_BASE_MAP_H__
 

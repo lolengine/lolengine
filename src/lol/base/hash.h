@@ -14,8 +14,8 @@
 // A very simple Hash class.
 //
 
-#if !defined __LOL_CORE_HASH_H__
-#define __LOL_CORE_HASH_H__
+#if !defined __LOL_BASE_HASH_H__
+#define __LOL_BASE_HASH_H__
 
 namespace lol
 {
@@ -50,5 +50,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __LOL_CORE_HASH_H__
+#endif // __LOL_BASE_HASH_H__
 

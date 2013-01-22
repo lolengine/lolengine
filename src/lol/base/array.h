@@ -15,8 +15,8 @@
 // additional features, eg. Array<int,float> for automatic arrays of structs.
 //
 
-#if !defined __LOL_CORE_ARRAY_H__
-#define __LOL_CORE_ARRAY_H__
+#if !defined __LOL_BASE_ARRAY_H__
+#define __LOL_BASE_ARRAY_H__
 
 #include <new>
 #include <stdint.h>
@@ -511,5 +511,5 @@ class Array<T, void, void, void, void, void, void, void>
 
 } /* namespace lol */
 
-#endif // __LOL_CORE_ARRAY_H__
+#endif // __LOL_BASE_ARRAY_H__
 
