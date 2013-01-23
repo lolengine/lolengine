@@ -64,15 +64,17 @@ public:
 
     inline char &operator [](int n)
     {
+        /* Allow n == Count() because we might have reasonable reasons
+         * to access that hidden null character. */
         ASSERT(n >= 0);
-        ASSERT(n < Count() || (!n && !Count()));
+        ASSERT(n <= Count());
         return ((Super &)*this)[n];
     }
 
     inline char const &operator [](int n) const
     {
         ASSERT(n >= 0);
-        ASSERT(n < Count() || (!n && !Count()));
+        ASSERT(n <= Count());
         return ((Super const &)*this)[n];
     }
 
@@ -95,9 +97,17 @@ public:
 
     void Resize(int count)
     {
-        ASSERT(count >= 0, "count = %d", count);
+        ASSERT(count >= 0);
         ((Super &)*this).Resize(count + 1);
         ((Super &)*this).Last() = '\0';
+    }
+
+    String Sub(int start, int count) const
+    {
+        ASSERT(start >= 0);
+        ASSERT(count >= 0);
+        ASSERT(start + count <= Count());
+        return String(&(*this)[start], count);
     }
 
     inline String operator +(String const &s) const
