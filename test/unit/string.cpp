@@ -87,6 +87,7 @@ LOLUNIT_FIXTURE(StringTest)
         String s1("ab"), s2("cd");
 
         s1 += s2;
+        LOLUNIT_ASSERT_EQUAL(s1.Count(), 4);
         LOLUNIT_ASSERT_EQUAL(s1[0], 'a');
         LOLUNIT_ASSERT_EQUAL(s1[1], 'b');
         LOLUNIT_ASSERT_EQUAL(s1[2], 'c');
@@ -94,6 +95,7 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT_EQUAL(s1[4], '\0');
 
         s2 += s2;
+        LOLUNIT_ASSERT_EQUAL(s2.Count(), 4);
         LOLUNIT_ASSERT_EQUAL(s2[0], 'c');
         LOLUNIT_ASSERT_EQUAL(s2[1], 'd');
         LOLUNIT_ASSERT_EQUAL(s2[2], 'c');
