@@ -140,13 +140,13 @@ LOLUNIT_FIXTURE(StringTest)
     {
         String s1 = "Hello World";
 
-        String s2 = "Hello";
-        String s3 = s1.Sub(0, 5);
-        LOLUNIT_ASSERT(s3 == s2);
+        String s2 = s1.Sub(0, 5);
+        String s3 = "Hello";
+        LOLUNIT_ASSERT(s2 == s3);
 
-        String s4 = "World";
-        String s5 = s4.Sub(6, 5);
-        LOLUNIT_ASSERT(s5 == s4);
+        String s4 = s1.Sub(6, 5);
+        String s5 = "World";
+        LOLUNIT_ASSERT(s4 == s5);
     }
 };
 

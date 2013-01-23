@@ -118,9 +118,9 @@ public:
 
     inline String& operator +=(String const &s)
     {
-        /* Ignore the trailing zero we don't want */
-        --m_count;
-        (Super &)*this += (Super const &)s;
+        int old_count = Count();
+        Resize(Count() + s.Count());
+        memcpy(&(*this)[old_count], &s[0], Count() - old_count);
         return *this;
     }
 
