@@ -15,13 +15,13 @@ liblol_a_SOURCES = \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     \
-    lol/base/types.h lol/base/array.h lol/base/string.h lol/base/hash.h \
-    lol/base/map.h \
+    lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
+    lol/base/string.h lol/base/hash.h lol/base/map.h \
     lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
     lol/math/math.h lol/math/geometry.h \
-    lol/sys/init.h lol/sys/log.h lol/sys/thread.h lol/sys/timer.h \
+    lol/sys/init.h lol/sys/thread.h lol/sys/timer.h \
     lol/image/color.h \
-    lol/unit.h lol/debug.h \
+    lol/unit.h \
     \
     generated/location.hh generated/position.hh generated/stack.hh \
     \
@@ -42,7 +42,7 @@ liblol_a_SOURCES = \
     $(d3d9_sources) \
     $(android_sources) \
     \
-    base/hash.cpp base/string.cpp \
+    base/hash.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     math/geometry.cpp \
@@ -69,7 +69,7 @@ liblol_a_SOURCES = \
     \
     mesh/mesh.cpp mesh/mesh.h \
     \
-    sys/init.cpp sys/log.cpp sys/timer.cpp \
+    sys/init.cpp sys/timer.cpp \
     sys/threadbase.h \
     \
     image/image.cpp image/image.h image/image-private.h \

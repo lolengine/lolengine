@@ -731,9 +731,6 @@
     <ClInclude Include="gpu\indexbuffer.h">
       <Filter>gpu</Filter>
     </ClInclude>
-    <ClInclude Include="lol\debug.h">
-      <Filter>lol</Filter>
-    </ClInclude>
     <ClInclude Include="input\input.h">
       <Filter>input</Filter>
     </ClInclude>
@@ -1611,6 +1608,9 @@
       <Filter>src\...</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\assert.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\hash.h">
