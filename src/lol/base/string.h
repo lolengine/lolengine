@@ -118,6 +118,7 @@ public:
 
     inline String& operator +=(String const &s)
     {
+        using namespace std;
         int old_count = Count();
         Resize(Count() + s.Count());
         memcpy(&(*this)[old_count], &s[0], Count() - old_count);
