@@ -235,6 +235,7 @@
     <ClCompile Include="bullet\LinearMath\btSerializer.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\hash.cpp" />
+    <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />
     <ClCompile Include="debug\record.cpp" />
@@ -293,7 +294,6 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\init.cpp" />
-    <ClCompile Include="sys\log.cpp" />
     <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="ticker.cpp" />
@@ -586,11 +586,12 @@
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lol\base\array.h" />
+    <ClInclude Include="lol\base\assert.h" />
     <ClInclude Include="lol\base\hash.h" />
+    <ClInclude Include="lol\base\log.h" />
     <ClInclude Include="lol\base\map.h" />
     <ClInclude Include="lol\base\string.h" />
     <ClInclude Include="lol\base\types.h" />
-    <ClInclude Include="lol\debug.h" />
     <ClInclude Include="lol\image\color.h" />
     <ClInclude Include="lol\math\geometry.h" />
     <ClInclude Include="lol\math\half.h" />
@@ -599,7 +600,6 @@
     <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\sys\init.h" />
-    <ClInclude Include="lol\sys\log.h" />
     <ClInclude Include="lol\sys\thread.h" />
     <ClInclude Include="lol\sys\timer.h" />
     <ClInclude Include="lol\unit.h" />
