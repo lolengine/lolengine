@@ -175,6 +175,7 @@ public:
     void Remove(int pos, int todelete = 1)
     {
         ASSERT(pos >= 0);
+        ASSERT(todelete >= 0);
         ASSERT(pos + todelete <= m_count);
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];

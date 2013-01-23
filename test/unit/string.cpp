@@ -133,6 +133,19 @@ LOLUNIT_FIXTURE(StringTest)
 
         LOLUNIT_ASSERT(s3 == s4);
     }
+
+    LOLUNIT_TEST(SubString)
+    {
+        String s1 = "Hello World";
+
+        String s2 = "Hello";
+        String s3 = s1.Sub(0, 5);
+        LOLUNIT_ASSERT(s3 == s2);
+
+        String s4 = "World";
+        String s5 = s4.Sub(6, 5);
+        LOLUNIT_ASSERT(s5 == s4);
+    }
 };
 
 } /* namespace lol */
