@@ -88,10 +88,10 @@ public:
     {
         float K = 0.f;
 
-        if (src.g < src.b)
+        if (src.b - src.g > 1e-20f)
             src = src.rbg, K = -1.f;
 
-        if (src.r < src.g)
+        if (src.g - src.r > 1e-20f)
             src = src.grb, K = -2.f / 6.f - K;
 
         float chroma = src.r - min(src.g, src.b);
@@ -112,10 +112,13 @@ public:
     {
         float K = 0.f;
 
-        if (src.g < src.b)
+        /* FIXME: this appears to be needed for numerical stability on
+         * i386 hardware using -ffast-math. Otherwise if (src.g < src.b)
+         * would suffice. */
+        if (src.b - src.g > 1e-20f)
             src = src.rbg, K = -1.f;
 
-        if (src.r < src.g)
+        if (src.g - src.r > 1e-20f)
             src = src.grb, K = -2.f / 6.f - K;
 
         float chroma = src.r - min(src.g, src.b);
@@ -136,7 +139,9 @@ public:
     static vec3 HSVToHSL(vec3 src)
     {
         float tmp = (2 - src.y) * src.z;
-        return vec3(src.x, src.y * src.z / (1.f - abs(1.f - tmp)), 0.5f * tmp);
+        return vec3(src.x,
+                    src.y * src.z / (min(tmp, 2.f - tmp) + 1e-20f),
+                    0.5f * tmp);
     }
 
     static vec4 HSVToHSL(vec4 src)
@@ -150,7 +155,7 @@ public:
     static vec3 HSLToHSV(vec3 src)
     {
         float tmp = src.y * (0.5f - abs(0.5f - src.z));
-        return vec3(src.x, 2.f * tmp / (src.z + tmp), src.z + tmp);
+        return vec3(src.x, 2.f * tmp / (src.z + tmp + 1e-20f), src.z + tmp);
     }
 
     static vec4 HSLToHSV(vec4 src)
