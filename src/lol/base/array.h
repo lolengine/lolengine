@@ -95,26 +95,22 @@ public:
         return *this;
     }
 
-    ArrayBase& operator+=(ARRAY const &that)
+    ArrayBase& operator+=(ArrayBase const &that)
     {
         int todo = that.m_count;
         Reserve(m_count + that.m_count);
         for (int i = 0; i < todo; i++)
-            *this << that[i];
+            new(&m_data[m_count + i]) Element(that[i]);
+        m_count += todo;
         return *this;
     }
 
     ARRAY operator+(ARRAY const &that) const
     {
-        /* FIXME: upon return, this makes a copy of the temporary object;
-         * use either C++11 move semantics, or add a special flag to the
-         * object indicating we're a temporary about to be destroyed */
         ARRAY ret;
         ret.Reserve(m_count + that.m_count);
-        for (int i = 0; i < m_count; i++)
-            ret << (*this)[i];
-        for (int i = 0; i < that.m_count; i++)
-            ret << that[i];
+        ret += *this;
+        ret += that;
         return ret;
     }
 
