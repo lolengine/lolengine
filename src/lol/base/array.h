@@ -18,6 +18,8 @@
 #if !defined __LOL_BASE_ARRAY_H__
 #define __LOL_BASE_ARRAY_H__
 
+#include <lol/base/assert.h>
+
 #include <new>
 #include <stdint.h>
 
@@ -118,21 +120,29 @@ public:
 
     inline Element& operator[](int n)
     {
+        /* Allow array[0] even if size is zero so that people can
+         * always use &array[0] to get a pointer to the data. */
+        ASSERT(n >= 0);
+        ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
     inline Element const& operator[](int n) const
     {
+        ASSERT(n >= 0);
+        ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
     inline Element& Last()
     {
+        ASSERT(m_count > 0);
         return m_data[m_count - 1];
     }
 
     inline Element const& Last() const
     {
+        ASSERT(m_count > 0);
         return m_data[m_count - 1];
     }
 
@@ -158,11 +168,14 @@ public:
 
     inline void Pop()
     {
+        ASSERT(m_count > 0);
         Remove(m_count - 1, 1);
     }
 
     void Remove(int pos, int todelete = 1)
     {
+        ASSERT(pos >= 0);
+        ASSERT(pos + todelete <= m_count);
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
         for (int i = m_count - todelete; i < m_count; i++)
@@ -172,6 +185,7 @@ public:
 
     void Resize(int count, Element e = Element())
     {
+        ASSERT(count > 0);
         Reserve(count);
 
         /* Too many elements? Remove them. */

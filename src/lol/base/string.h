@@ -17,6 +17,7 @@
 #if !defined __LOL_BASE_STRING_H__
 #define __LOL_BASE_STRING_H__
 
+#include <lol/base/assert.h>
 #include <lol/base/array.h>
 
 #include <cstring>
@@ -41,6 +42,7 @@ public:
       : Super()
     {
         using namespace std;
+        ASSERT(str);
         Resize((int)strlen(str));
         memcpy(&(*this)[0], str, Count() + 1);
     }
@@ -49,9 +51,10 @@ public:
       : Super()
     {
         using namespace std;
+        ASSERT(str);
         Resize(count);
         memcpy(&(*this)[0], str, count);
-        (*this)[count] = '\0';
+        ((Super &)*this)[count] = '\0';
     }
 
     inline String(String const &s)
@@ -61,21 +64,27 @@ public:
 
     inline char &operator [](int n)
     {
+        ASSERT(n >= 0);
+        ASSERT(n < Count() || (!n && !Count()));
         return ((Super &)*this)[n];
     }
 
     inline char const &operator [](int n) const
     {
+        ASSERT(n >= 0);
+        ASSERT(n < Count() || (!n && !Count()));
         return ((Super const &)*this)[n];
     }
 
     inline char &Last()
     {
+        ASSERT(Count() > 0);
         return (*this)[Count() - 1];
     }
 
     inline char const &Last() const
     {
+        ASSERT(Count() > 0);
         return (*this)[Count() - 1];
     }
 
@@ -86,6 +95,7 @@ public:
 
     void Resize(int count)
     {
+        ASSERT(count >= 0, "count = %d", count);
         ((Super &)*this).Resize(count + 1);
         ((Super &)*this).Last() = '\0';
     }
