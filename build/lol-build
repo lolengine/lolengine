@@ -84,6 +84,14 @@ __init__()
             M4PATH="$M4PATH:./external/gtk-2.22.1/share/aclocal"
             ;;
     esac
+
+    # Ensure we don’t launch weird Windows binaries when cross-compiling
+    case "${platform}" in
+        win*)
+            WINEDLLOVERRIDES="winemenubuilder.exe=d;wineboot.exe=d"
+            export WINEDLLOVERRIDES
+            ;;
+    esac
 }
 
 bootstrap()
