@@ -68,29 +68,9 @@ static inline int isnan(float f)
 #   define main lol_android_main
 #endif
 
-/* If using SDL, let it override main() but immediately replace
- * the override with ours, then declare weak symbols to ensure one
- * of our dummy functions gets replaced by the user's main(). */
-#if defined USE_SDL
+/* If using SDL on Windows or OS X, let it override main() */
+#if defined USE_SDL && (defined _WIN32 || defined __APPLE__)
 #   include <SDL_main.h>
-#   if defined main && !LOL_DONT_DIVERT_MAIN
-#       undef main
-#       define main lol_sdl_main
-#       if defined _MSC_VER
-int lol_sdl_main();
-int lol_sdl_main_msvc();
-#pragma comment(linker, "/alternatename:?lol_sdl_main@@YAHXZ" \
-                                      "=?lol_sdl_main_msvc@@YAHXZ")
-int lol_sdl_main(int argc, char **argv);
-int lol_sdl_main_msvc(int argc, char **argv);
-#pragma comment(linker, "/alternatename:?lol_sdl_main@@YAHHPEAPEAD@Z" \
-                                      "=?lol_sdl_main_msvc@@YAHHPEAPEAD@Z")
-int lol_sdl_main(int argc, char **argv, char **envp);
-int lol_sdl_main_msvc(int argc, char **argv, char **envp);
-#pragma comment(linker, "/alternatename:?lol_sdl_main@@YAHHPEAPEAD0@Z" \
-                                      "=?lol_sdl_main_msvc@@YAHHPEAPEAD0@Z")
-#       endif
-#   endif
 #endif
 
 // Base types
