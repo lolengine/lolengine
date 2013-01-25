@@ -12,10 +12,6 @@
 #   include "config.h"
 #endif
 
-/* This instructs our headers to let SDL override the "main"
- * symbol using its macros. */
-#define LOL_DONT_DIVERT_MAIN 1
-
 #if defined USE_SDL
 #   if defined HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
@@ -39,35 +35,6 @@
 #if defined USE_SDL && defined USE_D3D9
 HWND g_hwnd = NULL;
 extern IDirect3DDevice9 *g_d3ddevice;
-#endif
-
-#if defined main
-#   if defined _MSC_VER
-int lol_sdl_main();
-int lol_sdl_main(int argc, char **argv);
-int lol_sdl_main(int argc, char **argv, char **envp);
-#       define WRAPPER lol_sdl_main_msvc
-#   else
-int lol_sdl_main() __attribute__((weak));
-int lol_sdl_main(int argc, char **argv) __attribute__((weak));
-int lol_sdl_main(int argc, char **argv, char **envp) __attribute__((weak));
-#       define WRAPPER lol_sdl_main
-#   endif
-
-/* One of these wrappers will be overridden by the user's version */
-
-int WRAPPER() { return 0; }
-int WRAPPER(int argc, char **argv) { return 0; }
-int WRAPPER(int argc, char **argv, char **envp) { return 0; }
-
-int main(int argc, char *argv[])
-{
-    int ret = 0;
-    ret += lol_sdl_main();
-    ret += lol_sdl_main(argc, argv);
-    ret += lol_sdl_main(argc, argv, NULL);
-    return ret;
-}
 #endif
 
 namespace lol
