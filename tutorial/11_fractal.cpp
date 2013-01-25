@@ -20,7 +20,7 @@
 
 using namespace lol;
 
-extern char const *lolfx_11_fractal;
+LOLFX_RESOURCE_DECLARE(11_fractal);
 
 class Fractal : public WorldEntity
 {
@@ -448,7 +448,7 @@ public:
              * uploading subimages will not work. */
             m_texture->SetData(&m_pixels[0]);
 
-            m_shader = Shader::Create(lolfx_11_fractal);
+            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(11_fractal));
 
             m_vertexattrib = m_shader->GetAttribLocation("a_Vertex", VertexUsage::Position, 0);
             m_texattrib = m_shader->GetAttribLocation("a_TexCoord", VertexUsage::TexCoord, 0);

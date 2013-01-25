@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lol;
 
-extern char const *lolfx_03_noise;
+LOLFX_RESOURCE_DECLARE(03_noise);
 
 class NoiseDemo : public WorldEntity
 {
@@ -44,7 +44,7 @@ public:
 
         if (!m_ready)
         {
-            m_shader = Shader::Create(lolfx_03_noise);
+            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(03_noise));
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
             m_time_uni = m_shader->GetUniformLocation("u_Time");
 
