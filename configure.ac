@@ -197,7 +197,8 @@ AC_MSG_CHECKING(for -mwindows -mwin32)
 AC_TRY_LINK([], [],
  [AC_MSG_RESULT(yes)
   CXXFLAGS="${CXXFLAGS} -mwindows -mwin32"
-  LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"],
+  dnl  If we come across these symbols, try to link them
+  LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16 -u_SDL_main"],
  [AC_MSG_RESULT(no)])
 LIBS="$LIBS_save"
 

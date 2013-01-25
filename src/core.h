@@ -68,9 +68,14 @@ static inline int isnan(float f)
 #   define main lol_android_main
 #endif
 
-/* If using SDL on Windows or OS X, let it override main() */
-#if defined USE_SDL && (defined _WIN32 || defined __APPLE__)
+/* If using SDL, let it override main() but immediately replace
+ * the override with ours. */
+#if defined USE_SDL
 #   include <SDL_main.h>
+#   if defined main && !LOL_DONT_DIVERT_MAIN
+#       undef main
+#       define main lol_sdl_main
+#   endif
 #endif
 
 // Base types
