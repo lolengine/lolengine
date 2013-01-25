@@ -19,7 +19,7 @@
 
 #include <lol/unit.h>
 
-int main(int argc, char **argv)
+int main()
 {
     lol::TextTestRunner runner;
     bool success = runner.Run();

@@ -43,7 +43,9 @@ extern IDirect3DDevice9 *g_d3ddevice;
 
 #if defined main
 #   if defined _MSC_VER
-#       pragma comment(linker, "/alternatename:_lol_sdl_main=_lol_sdl_main_msvc")
+int lol_sdl_main();
+int lol_sdl_main(int argc, char **argv);
+int lol_sdl_main(int argc, char **argv, char **envp);
 #       define WRAPPER lol_sdl_main_msvc
 #   else
 int lol_sdl_main() __attribute__((weak));
@@ -53,13 +55,13 @@ int lol_sdl_main(int argc, char **argv, char **envp) __attribute__((weak));
 #   endif
 
 /* One of these wrappers will be overridden by the user's version */
+
 int WRAPPER() { return 0; }
 int WRAPPER(int argc, char **argv) { return 0; }
 int WRAPPER(int argc, char **argv, char **envp) { return 0; }
 
 int main(int argc, char *argv[])
 {
-printf("LOL OK\n");
     int ret = 0;
     ret += lol_sdl_main();
     ret += lol_sdl_main(argc, argv);
