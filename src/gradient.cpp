@@ -17,7 +17,7 @@
 
 using namespace std;
 
-extern char const *lolfx_gradient;
+LOLFX_RESOURCE_DECLARE(gradient);
 
 namespace lol
 {
@@ -76,7 +76,7 @@ void Gradient::TickDraw(float seconds)
 
     if (!data->shader)
     {
-        data->shader = Shader::Create(lolfx_gradient);
+        data->shader = Shader::Create(LOLFX_RESOURCE_NAME(gradient));
 
         data->m_vbo = new VertexBuffer(sizeof(vertex));
         data->m_cbo = new VertexBuffer(sizeof(color));

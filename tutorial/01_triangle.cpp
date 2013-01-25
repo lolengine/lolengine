@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lol;
 
-extern char const *lolfx_01_triangle;
+LOLFX_RESOURCE_DECLARE(01_triangle);
 
 class Triangle : public WorldEntity
 {
@@ -37,7 +37,7 @@ public:
 
         if (!m_ready)
         {
-            m_shader = Shader::Create(lolfx_01_triangle);
+            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(01_triangle));
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));

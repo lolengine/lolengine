@@ -35,7 +35,7 @@
 #include "core.h"
 #include "easymesh/easymesh-compiler.h"
 
-extern char const *lolfx_shiny;
+LOLFX_RESOURCE_DECLARE(shiny);
 
 namespace lol
 {
@@ -66,7 +66,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 {
     if(provided_shader == NULL)
     {
-        m_gpu.shader = Shader::Create(lolfx_shiny);
+        m_gpu.shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
     }
     else
     {

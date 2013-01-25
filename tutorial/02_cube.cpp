@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lol;
 
-extern char const *lolfx_02_cube;
+LOLFX_RESOURCE_DECLARE(02_cube);
 
 class Cube : public WorldEntity
 {
@@ -74,7 +74,7 @@ public:
 
         if (!m_ready)
         {
-            m_shader = Shader::Create(lolfx_02_cube);
+            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(02_cube));
 
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
             m_coord = m_shader->GetAttribLocation("in_Vertex",

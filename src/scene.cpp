@@ -22,7 +22,7 @@
 #include "core.h"
 #include "lolgl.h"
 
-extern char const *lolfx_tile;
+LOLFX_RESOURCE_DECLARE(tile);
 
 namespace lol
 {
@@ -156,7 +156,7 @@ void Scene::Render() // XXX: rename to Blit()
         return;
 
     if (!data->m_shader)
-        data->m_shader = Shader::Create(lolfx_tile);
+        data->m_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
 
 #if 0
     // Randomise, then sort.
