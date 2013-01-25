@@ -1286,7 +1286,7 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     { \
         tname<tf> ret; \
         for (size_t n = 0; n < sizeof(a) / sizeof(t1); n++) \
-            ret[n] = a[n] + (a[n] - b[n]) * x; \
+            ret[n] = a[n] + (b[n] - a[n]) * x; \
         return ret; \
     }
 

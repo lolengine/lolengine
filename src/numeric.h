@@ -52,7 +52,7 @@ template <typename T> static inline T PotUp(T val)
     return val + 1;
 }
 
-//Lerp for float
+//Damp for float
 template <typename T1, typename T2, typename Tf> static inline T1 damp(const T1 &a, const T2 &b, const Tf &x, const Tf &dt)
 {
     if (dt <= .0f)
