@@ -9,7 +9,7 @@ noinst_PROGRAMS = pi poly remez
 
 pi_SOURCES = pi.cpp
 pi_CPPFLAGS = @LOL_CFLAGS@
-pi_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
+pi_LDFLAGS = -u_SDL_main -uSDL_main $(top_builddir)/src/liblol.a @LOL_LIBS@
 pi_DEPENDENCIES = $(top_builddir)/src/liblol.a
 
 poly_SOURCES = poly.cpp
