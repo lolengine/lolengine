@@ -189,6 +189,9 @@
     <ClCompile Include="layer.cpp">
       <Filter>...</Filter>
     </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>...</Filter>
+    </ClCompile>
     <ClCompile Include="ticker.cpp">
       <Filter>...</Filter>
     </ClCompile>
@@ -774,6 +777,9 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="layer.h">
+      <Filter>...</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="loldebug.h">

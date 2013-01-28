@@ -61,7 +61,8 @@ private:
     mat4 m_view_matrix;
     mat4 m_proj_matrix;
 
-    Array<Tile> tiles;
+    Array<Tile> m_tiles;
+    Array<Light *> m_lights;
 
     Shader *m_shader;
     VertexDeclaration *m_vdecl;
@@ -113,6 +114,7 @@ void Scene::Reset()
     for (int i = 0; i < data->bufs.Count(); i++)
         delete data->bufs[i];
     data->bufs.Empty();
+    data->m_lights.Empty();
 }
 
 void Scene::SetViewMatrix(mat4 const &m)
@@ -146,13 +148,23 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
     t.o = o;
     t.scale = scale;
 
-    data->tiles.Push(t);
+    data->m_tiles.Push(t);
+}
+
+void Scene::AddLight(Light *l)
+{
+    data->m_lights.Push(l);
+}
+
+Array<Light *> const &Scene::GetLights() const
+{
+    return data->m_lights;
 }
 
 void Scene::Render() // XXX: rename to Blit()
 {
     /* Early exit if nothing needs to be rendered */
-    if (!data->tiles.Count())
+    if (!data->m_tiles.Count())
         return;
 
     if (!data->m_shader)
@@ -160,15 +172,15 @@ void Scene::Render() // XXX: rename to Blit()
 
 #if 0
     // Randomise, then sort.
-    for (int i = 0; i < data->tiles.Count(); i++)
+    for (int i = 0; i < data->m_tiles.Count(); i++)
     {
-        Tile tmp = data->tiles[i];
-        int j = rand() % data->tiles.Count();
-        data->tiles[i] = data->tiles[j];
-        data->tiles[j] = tmp;
+        Tile tmp = data->m_tiles[i];
+        int j = rand() % data->m_tiles.Count();
+        data->m_tiles[i] = data->m_tiles[j];
+        data->m_tiles[j] = tmp;
     }
 #endif
-    qsort(&data->tiles[0], data->tiles.Count(),
+    qsort(&data->m_tiles[0], data->m_tiles.Count(),
           sizeof(Tile), SceneData::Compare);
 
     // XXX: debug stuff
@@ -219,11 +231,11 @@ void Scene::Render() // XXX: rename to Blit()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-    for (int buf = 0, i = 0, n; i < data->tiles.Count(); i = n, buf += 2)
+    for (int buf = 0, i = 0, n; i < data->m_tiles.Count(); i = n, buf += 2)
     {
         /* Count how many quads will be needed */
-        for (n = i + 1; n < data->tiles.Count(); n++)
-            if (data->tiles[i].tileset != data->tiles[n].tileset)
+        for (n = i + 1; n < data->m_tiles.Count(); n++)
+            if (data->m_tiles[i].tileset != data->m_tiles[n].tileset)
                 break;
 
         /* Create a vertex array object */
@@ -237,9 +249,9 @@ void Scene::Render() // XXX: rename to Blit()
 
         for (int j = i; j < n; j++)
         {
-            data->tiles[i].tileset->BlitTile(data->tiles[j].id,
-                            data->tiles[j].pos, data->tiles[j].o,
-                            data->tiles[j].scale,
+            data->m_tiles[i].tileset->BlitTile(data->m_tiles[j].id,
+                            data->m_tiles[j].pos, data->m_tiles[j].o,
+                            data->m_tiles[j].scale,
                             vertex + 18 * (j - i), texture + 12 * (j - i));
         }
 
@@ -247,7 +259,7 @@ void Scene::Render() // XXX: rename to Blit()
         vb2->Unlock();
 
         /* Bind texture */
-        data->tiles[i].tileset->Bind();
+        data->m_tiles[i].tileset->Bind();
 
         /* Bind vertex and texture coordinate buffers */
         data->m_vdecl->Bind();
@@ -257,10 +269,10 @@ void Scene::Render() // XXX: rename to Blit()
         /* Draw arrays */
         data->m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
         data->m_vdecl->Unbind();
-        data->tiles[i].tileset->Unbind();
+        data->m_tiles[i].tileset->Unbind();
     }
 
-    data->tiles.Empty();
+    data->m_tiles.Empty();
 
     data->m_shader->Unbind();
 

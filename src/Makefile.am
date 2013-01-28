@@ -14,6 +14,7 @@ liblol_a_SOURCES = \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h numeric.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
+    light.cpp light.h \
     \
     lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
     lol/base/string.h lol/base/hash.h lol/base/map.h \

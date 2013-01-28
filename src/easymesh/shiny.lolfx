@@ -38,24 +38,19 @@ uniform float in_Damage;
 uniform mat4 in_View;
 uniform mat4 in_Inv_View;
 
+uniform vec4 u_Lights[8 * 2];
+
 varying vec4 pass_Vertex; /* View space */
 varying vec3 pass_TNormal;
 varying vec4 pass_Color;
 
-// FIXME: all the light parameters should be passed in the code
-//Dir Light
-vec3 in_LightDir = vec3(-0.3, -0.3, -0.7);
-
-//Point Light
-vec4 in_Light2_Pos = vec4(20.0, 10.0, 0.0, 1.0);
-float in_Light2_Radius = 20.0;
-vec3 in_Light2_diffuse = vec3(0.4, 0.4, 1.0);
-
+#if 0
 //Cube Light
 vec4 in_Light3_Pos = vec4(-10.0, 10.0, 5.0, 1.0);
 vec3 in_Light3_Size_Inner = vec3(3.0, 1.0, 3.0);
 vec3 in_Light3_Size_Outer = vec3(15.0, 15.0, 15.0);
 vec3 in_Light3_diffuse = vec3(0.4, 1.0, 0.4);
+#endif
 
 void main(void)
 {
@@ -64,53 +59,49 @@ void main(void)
     float specular_power = 60.0;
 
     /* World properties */
-    float ambient_mul = 0.5;
-    vec3 ambient_color = vec3(0.0, 0.0, 0.0);
-    vec3 diffuse_color = vec3(0.4, 0.4, 0.4);
-    vec3 specular_color = vec3(1.0, 1.0, 0.6);
-
-    vec3 ambient = ambient_color;
+    vec3 ambient = vec3(0.1, 0.1, 0.1);
     vec3 specular = vec3(0.0, 0.0, 0.0);
     vec3 diffuse = vec3(0.0, 0.0, 0.0);
-    vec3 s = vec3(0.0, 0.0, 0.0);
-    vec3 v = vec3(0.0, 0.0, 0.0);
-    vec3 r = vec3(0.0, 0.0, 0.0);
-    float sdotn = 0.0;
-    float light_radius_mod = 0.0;
 
-    //Light calculation for directional light
-    s = normalize(-in_LightDir);
-    v = normalize(-pass_Vertex.xyz);
-    r = reflect(s, pass_TNormal);
+    /* Light precalculations */
+    vec3 v = normalize(-pass_Vertex.xyz);
 
-    sdotn = max(dot(s, pass_TNormal), 0.0);
-    diffuse += diffuse_color * sdotn;
-    if (sdotn > 0.0)
-        specular += specular_color * specular_reflect
-                 * pow(max(dot(r, v), 0.0), specular_power);
-    //----------
+    /* Apply lighting */
+    for (int i = 0; i < 8; i++)
+    {
+        vec4 pos = u_Lights[i * 2];
+        vec4 color = u_Lights[i * 2 + 1];
+        vec3 s, r;
 
-    //Light calculation for point light
-    vec3 tmpLightDir = (in_View * in_Light2_Pos).xyz - pass_Vertex.xyz;
-    light_radius_mod = max(0.0, 1.0 - (length(tmpLightDir) / in_Light2_Radius));
-    s = normalize(tmpLightDir);
-    v = normalize(-pass_Vertex.xyz);
-    r = reflect(-s, pass_TNormal);
+        if (pos.w > 0.0)
+        {
+            /* Point light -- no attenuation yet */
+            s = normalize((in_View * pos).xyz - pass_Vertex.xyz);
+            r = reflect(-s, pass_TNormal);
+        }
+        else
+        {
+            /* Directional light */
+            s = normalize(-pos.xyz);
+            r = reflect(s, pass_TNormal);
+        }
 
-    sdotn = max(dot(s, pass_TNormal), 0.0);
-    diffuse += in_Light2_diffuse * min(sdotn, light_radius_mod);
-    if (sdotn > 0.0 && light_radius_mod > 0.0)
-        specular += specular_color * min(specular_reflect, light_radius_mod)
-                 * pow(max(dot(r, v), 0.0), specular_power);
-    //----------
+        float sdotn = max(dot(s, pass_TNormal), 0.0);
+        diffuse += color.xyz * sdotn;
+        if (sdotn > 0.0)
+            specular += color.xyz * specular_reflect
+                         * pow(max(dot(r, v), 0.0), specular_power);
+    }
 
+#if 0
     //Light calculation for cube light
+    vec3 specular_color = vec3(1.0, 1.0, 0.6);
     vec3 Local_Vertex = (in_Inv_View * pass_Vertex).xyz - (in_Light3_Pos).xyz;
     vec3 Proj_Vertex = clamp(Local_Vertex.xyz, -in_Light3_Size_Inner, in_Light3_Size_Inner);
     vec3 new_LightDir = Local_Vertex - Proj_Vertex;
 
     vec3 light_radius = max(vec3(0.0,0.0,0.0), vec3(1.0,1.0,1.0) - abs(new_LightDir / in_Light3_Size_Outer));
-    light_radius_mod = min(light_radius.x, min(light_radius.y, light_radius.z));
+    float light_radius_mod = min(light_radius.x, min(light_radius.y, light_radius.z));
 
     if (length(new_LightDir) == 0.0)
         sdotn = 1.0;
@@ -125,11 +116,11 @@ void main(void)
     }
     diffuse += in_Light3_diffuse * min(sdotn, light_radius_mod);
     //----------
+#endif
 
     vec3 light = ambient + diffuse + specular;
 
-    vec4 real_color = in_Damage * vec4(1.2, 1.2, 1.2, 1.0)
-                    + (1.0 - in_Damage) * pass_Color;
+    vec4 real_color = mix(pass_Color, vec4(1.2, 1.2, 1.2, 1.0), in_Damage);
     gl_FragColor = real_color * vec4(light, 1.0);
 }
 

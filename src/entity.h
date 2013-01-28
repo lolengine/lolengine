@@ -59,6 +59,7 @@ protected:
     enum
     {
         DRAWGROUP_BEFORE = GAMEGROUP_END,
+        DRAWGROUP_LIGHT,
         DRAWGROUP_CAMERA,
         DRAWGROUP_DEFAULT,
         DRAWGROUP_HUD,
