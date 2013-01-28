@@ -86,12 +86,12 @@ __init__()
     esac
 
     # Ensure we don’t launch weird Windows binaries when cross-compiling
-    case "${platform}" in
-        win*)
-            WINEDLLOVERRIDES="winemenubuilder.exe=d;wineboot.exe=d"
-            export WINEDLLOVERRIDES
-            ;;
-    esac
+    WINEDLLOVERRIDES="winemenubuilder.exe,wineboot.exe,explorer.exe,winedbg.exe=d"
+    export WINEDLLOVERRIDES
+
+    # Ensure SDL does not redirect stdout/stderr to local files
+    SDL_STDIO_REDIRECT=0
+    export SDL_STDIO_REDIRECT
 }
 
 bootstrap()
