@@ -54,12 +54,26 @@ public:
         m_camera->SetPosition(vec3(-15.f, 5.f, 0.f));
         Ticker::Ref(m_camera);
 
+        /* Add a white directional light */
+        m_light1 = new Light();
+        m_light1->SetPosition(vec4(0.2f, 0.2f, 0.f, 0.f));
+        m_light1->SetColor(vec4(0.5f, 0.5f, 0.5f, 1.f));
+        Ticker::Ref(m_light1);
+
+        /* Add an orangeish point light */
+        m_light2 = new Light();
+        m_light2->SetPosition(vec4(-15.f, 15.f, 15.f, 1.f));
+        m_light2->SetColor(vec4(0.4f, 0.3f, 0.2f, 1.f));
+        Ticker::Ref(m_light2);
+
         m_ready = false;
     }
 
     ~EasyMeshTutorial()
     {
         Ticker::Unref(m_camera);
+        Ticker::Unref(m_light1);
+        Ticker::Unref(m_light2);
     }
 
     virtual void TickGame(float seconds)
@@ -114,6 +128,7 @@ private:
     float m_angle;
     mat4 m_mat;
     Camera *m_camera;
+    Light *m_light1, *m_light2;
 
     bool m_ready;
 };

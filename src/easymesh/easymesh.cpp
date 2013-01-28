@@ -79,6 +79,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
     m_gpu.proj = m_gpu.shader->GetUniformLocation("in_Proj");
     m_gpu.normalmat = m_gpu.shader->GetUniformLocation("in_NormalMat");
     m_gpu.damage = m_gpu.shader->GetUniformLocation("in_Damage");
+    m_gpu.lights = m_gpu.shader->GetUniformLocation("u_Lights");
     m_gpu.coord = m_gpu.shader->GetAttribLocation("in_Vertex",
                                           VertexUsage::Position, 0);
     m_gpu.norm = m_gpu.shader->GetAttribLocation("in_Normal",
@@ -125,6 +126,17 @@ void EasyMesh::Render(mat4 const &model, float damage)
     mat3 normalmat = transpose(inverse(mat3(modelview)));
 
     m_gpu.shader->Bind();
+
+    /* FIXME: this should be hidden in the shader */
+    /* FIXME: the 4th component of the position can be used for other things */
+    Array<Light *> const lights = Scene::GetDefault()->GetLights();
+    Array<vec4> light_data;
+    for (int i = 0; i < lights.Count(); ++i)
+        light_data << lights[i]->GetPosition() << lights[i]->GetColor();
+    while (light_data.Count() < 8)
+        light_data << vec4(0.f) << vec4(0.f);
+    m_gpu.shader->SetUniform(m_gpu.lights, light_data);
+
     m_gpu.shader->SetUniform(m_gpu.modelview, modelview);
     m_gpu.shader->SetUniform(m_gpu.view, Scene::GetDefault()->GetViewMatrix());
     m_gpu.shader->SetUniform(m_gpu.invview, inverse(Scene::GetDefault()->GetViewMatrix()));

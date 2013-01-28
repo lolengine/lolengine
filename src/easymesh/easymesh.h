@@ -119,7 +119,7 @@ private:
     {
         Shader *shader;
         ShaderAttrib coord, norm, color;
-        ShaderUniform modelview, view, invview, proj, normalmat, damage;
+        ShaderUniform modelview, view, invview, proj, normalmat, damage, lights;
         VertexDeclaration *vdecl;
         VertexBuffer *vbo;
         IndexBuffer *ibo;

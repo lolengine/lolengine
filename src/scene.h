@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "tileset.h"
+#include "light.h"
 
 namespace lol
 {
@@ -44,6 +45,9 @@ public:
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
+
+    void AddLight(Light *light);
+    Array<Light *> const &GetLights() const;
 
 private:
     SceneData *data;

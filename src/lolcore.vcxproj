@@ -273,6 +273,7 @@
     <ClCompile Include="input\keyboard.cpp" />
     <ClCompile Include="input\stick.cpp" />
     <ClCompile Include="layer.cpp" />
+    <ClCompile Include="light.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
@@ -583,6 +584,7 @@
     <ClInclude Include="input\keyboard.h" />
     <ClInclude Include="input\stick.h" />
     <ClInclude Include="layer.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lol\base\array.h" />
