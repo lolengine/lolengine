@@ -580,11 +580,11 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<float> const &v)
     glUniform1fv(uni.frag, v.Count(), &v[0]);
 #else
     if (uni.frag)
-        cgGLSetParameterArray1fv((CGparameter)uni.frag,
-                                 0, v.Count(), &v[0]);
+        cgGLSetParameterArray1f((CGparameter)uni.frag,
+                                0, v.Count(), &v[0]);
     if (uni.vert)
-        cgGLSetParameterArray1fv((CGparameter)uni.vert,
-                                 0, v.Count(), &v[0]);
+        cgGLSetParameterArray1f((CGparameter)uni.vert,
+                                0, v.Count(), &v[0]);
 #endif
 }
 
@@ -603,11 +603,11 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec2> const &v)
     glUniform2fv(uni.frag, v.Count(), &v[0][0]);
 #else
     if (uni.frag)
-        cgGLSetParameterArray2fv((CGparameter)uni.frag,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray2f((CGparameter)uni.frag,
+                                0, v.Count(), &v[0][0]);
     if (uni.vert)
-        cgGLSetParameterArray2fv((CGparameter)uni.vert,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray2f((CGparameter)uni.vert,
+                                0, v.Count(), &v[0][0]);
 #endif
 }
 
@@ -626,11 +626,11 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec3> const &v)
     glUniform3fv(uni.frag, v.Count(), &v[0][0]);
 #else
     if (uni.frag)
-        cgGLSetParameterArray3fv((CGparameter)uni.frag,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray3f((CGparameter)uni.frag,
+                                0, v.Count(), &v[0][0]);
     if (uni.vert)
-        cgGLSetParameterArray3fv((CGparameter)uni.vert,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray3f((CGparameter)uni.vert,
+                                0, v.Count(), &v[0][0]);
 #endif
 }
 
@@ -647,11 +647,11 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec4> const &v)
     glUniform4fv(uni.frag, v.Count(), &v[0][0]);
 #else
     if (uni.frag)
-        cgGLSetParameterArray4fv((CGparameter)uni.frag,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray4f((CGparameter)uni.frag,
+                                0, v.Count(), &v[0][0]);
     if (uni.vert)
-        cgGLSetParameterArray4fv((CGparameter)uni.vert,
-                                 0, v.Count(), &v[0][0]);
+        cgGLSetParameterArray4f((CGparameter)uni.vert,
+                                0, v.Count(), &v[0][0]);
 #endif
 }
 
