@@ -379,6 +379,10 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     return ret;
 }
 
+/*
+ * Uniform setters for scalars
+ */
+
 void Shader::SetUniform(ShaderUniform const &uni, int i)
 {
 #if defined USE_D3D9 || defined _XBOX
@@ -554,6 +558,100 @@ void Shader::SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index)
     SetUniform(uni, index);
 #else
     /* FIXME: unimplemented */
+#endif
+}
+
+/*
+ * Uniform setters for arrays
+ */
+
+void Shader::SetUniform(ShaderUniform const &uni, Array<float> const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* FIXME: this will not work properly because we don't know how tell DX9
+     * it's a bunch of floats instead of vec4. */
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+                                             &v[0], v.Count() / 4);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+                                              &v[0], v.Count() / 4);
+#elif !defined __CELLOS_LV2__
+    glUniform1fv(uni.frag, v.Count(), &v[0]);
+#else
+    if (uni.frag)
+        cgGLSetParameterArray1fv((CGparameter)uni.frag,
+                                 0, v.Count(), &v[0]);
+    if (uni.vert)
+        cgGLSetParameterArray1fv((CGparameter)uni.vert,
+                                 0, v.Count(), &v[0]);
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, Array<vec2> const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* FIXME: this will not work properly because we don't know how tell DX9
+     * it's a bunch of vec2 instead of vec4. */
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+                                             &v[0][0], v.Count() / 2);
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+                                              &v[0][0], v.Count() / 2);
+#elif !defined __CELLOS_LV2__
+    glUniform2fv(uni.frag, v.Count(), &v[0][0]);
+#else
+    if (uni.frag)
+        cgGLSetParameterArray2fv((CGparameter)uni.frag,
+                                 0, v.Count(), &v[0][0]);
+    if (uni.vert)
+        cgGLSetParameterArray2fv((CGparameter)uni.vert,
+                                 0, v.Count(), &v[0][0]);
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, Array<vec3> const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* FIXME: this will not work properly because we don't know how tell DX9
+     * it's a bunch of vec3 instead of vec4. */
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+                                             &v[0][0], v.Count());
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+                                              &v[0][0], v.Count());
+#elif !defined __CELLOS_LV2__
+    glUniform3fv(uni.frag, v.Count(), &v[0][0]);
+#else
+    if (uni.frag)
+        cgGLSetParameterArray3fv((CGparameter)uni.frag,
+                                 0, v.Count(), &v[0][0]);
+    if (uni.vert)
+        cgGLSetParameterArray3fv((CGparameter)uni.vert,
+                                 0, v.Count(), &v[0][0]);
+#endif
+}
+
+void Shader::SetUniform(ShaderUniform const &uni, Array<vec4> const &v)
+{
+#if defined USE_D3D9 || defined _XBOX
+    if (uni.flags & 1)
+        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+                                             &v[0][0], v.Count());
+    if (uni.flags & 2)
+        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+                                              &v[0][0], v.Count());
+#elif !defined __CELLOS_LV2__
+    glUniform4fv(uni.frag, v.Count(), &v[0][0]);
+#else
+    if (uni.frag)
+        cgGLSetParameterArray4fv((CGparameter)uni.frag,
+                                 0, v.Count(), &v[0][0]);
+    if (uni.vert)
+        cgGLSetParameterArray4fv((CGparameter)uni.vert,
+                                 0, v.Count(), &v[0][0]);
 #endif
 }
 
