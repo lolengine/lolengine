@@ -14,18 +14,13 @@
 
 #include "core.h"
 
-class Moo
-{
-    Moo() {}
-
-    virtual int SetState(int state) { return state; }
-};
-
 using namespace std;
 using namespace lol;
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     /* Insert any test code here */
     return EXIT_SUCCESS;
 }

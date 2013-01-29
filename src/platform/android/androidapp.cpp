@@ -173,14 +173,11 @@ Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
 void lol_android_main(void) {}
 void lol_android_main(int argc, char **argv)
 {
-    (void)argc;
-    (void)argv;
+    UNUSED(argc, argv);
 }
 void lol_android_main(int argc, char **argv, char **envp)
 {
-    (void)argc;
-    (void)argv;
-    (void)envp;
+    UNUSED(argc, argv, envp);
 }
 
 #endif /* __ANDROID__ */

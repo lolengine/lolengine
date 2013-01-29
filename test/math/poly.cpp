@@ -97,6 +97,8 @@ static float floatsin(float f)
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     typedef union { float f; uint32_t x; } flint;
 
     int error[5] = { 0 };
@@ -108,17 +110,6 @@ int main(int argc, char **argv)
     inspect(a4);
     inspect(a5);
 
-//flint v = { 1.433971524239 };
-flint v = { 1.555388212204 };
-inspect(v.f);
-printf("sinf: ");
-flint w = { sinf(adjustf(v.f, 0)) };
-inspect(w.f);
-printf("lols: ");
-flint z = { lol_sin(adjustf(v.f, 0)) };
-inspect(z.f);
-
-printf("-- START --\n");
     for (flint u = { (float)real::R_PI_2() }; u.f > 1e-30; u.x -= 1)
     {
         union { float f; uint32_t x; } s1 = { sinf(adjustf(u.f, 0)) };
@@ -129,9 +120,6 @@ printf("-- START --\n");
         case 3:
         case 2:
         case 1:
-inspect(u.f);
-printf("sinf: ");
-inspect(sinf(u.f));
             if (lol::abs((double)s1.f - (double)s2.f) > 1e-10 * lol::abs(s1.f))
                 printf("%15.13g %08x: %15.13g %15.13g %08x %08x\n", u.f, u.x, s1.f, s2.f, s1.x, s2.x);
         case 0:

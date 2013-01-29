@@ -21,6 +21,8 @@
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     lol::TextTestRunner runner;
     bool success = runner.Run();
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
