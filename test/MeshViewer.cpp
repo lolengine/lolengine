@@ -13,6 +13,8 @@
 #   include "config.h"
 #endif
 
+#include <cfloat> /* for FLT_MAX */
+
 #include "core.h"
 
 using namespace std;
