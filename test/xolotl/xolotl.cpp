@@ -56,6 +56,8 @@ private:
 
 int main(int argc, char **argv)
 {
+    System::Init(argc, argv);
+
     Application app("Xolotl", ivec2(640, 480), 60.0f);
 
     /* Register some debug stuff */

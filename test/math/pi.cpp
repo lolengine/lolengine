@@ -23,6 +23,8 @@ using lol::real;
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     printf("Pi: "); real::R_PI().print();
     printf("e: "); real::R_E().print();
     printf("ln(2): "); real::R_LN2().print();

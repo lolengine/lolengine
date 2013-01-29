@@ -26,6 +26,8 @@ real g(real const &x) { return exp(x); }
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     RemezSolver<4, real> solver;
     solver.Run(-1, 1, f, g, 40);
     return 0;

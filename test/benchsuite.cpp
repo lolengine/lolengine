@@ -26,6 +26,8 @@ void bench_half(int mode);
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc, argv);
+
     Log::Info("-----------------------\n");
     Log::Info(" High precision floats\n");
     Log::Info("-----------------------\n");
