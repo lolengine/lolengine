@@ -47,7 +47,7 @@
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_SCALEZ T_MIRRORZ
-%token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING
+%token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER
 %token T_CSGUNION T_CSGSUBSTRACT T_CSGAND T_CSGXOR
 %token T_CHAMFER
 
@@ -135,6 +135,7 @@ transform_command:
   | T_MIRRORX              { mc.m_mesh.MirrorX(); }
   | T_MIRRORY              { mc.m_mesh.MirrorY(); }
   | T_MIRRORZ              { mc.m_mesh.MirrorZ(); }
+  | T_RADIALJITTER args1   { mc.m_mesh.RadialJitter($2.f0); }
   | T_TOGGLESCALEWINDING   { mc.m_mesh.ToggleScaleWinding(); }
   | T_CSGUNION             { mc.m_mesh.CsgUnion(); }
   | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }

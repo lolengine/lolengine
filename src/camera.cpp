@@ -87,6 +87,12 @@ mat4 const &Camera::GetProjMatrix()
     return m_proj_matrix;
 }
 
+void Camera::ForceSceneUpdate()
+{
+    Scene::GetDefault()->SetViewMatrix(m_view_matrix);
+    Scene::GetDefault()->SetProjMatrix(m_proj_matrix);
+}
+
 void Camera::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
@@ -124,8 +130,7 @@ void Camera::TickDraw(float seconds)
 {
     WorldEntity::TickDraw(seconds);
 
-    Scene::GetDefault()->SetViewMatrix(m_view_matrix);
-    Scene::GetDefault()->SetProjMatrix(m_proj_matrix);
+    ForceSceneUpdate();
 }
 
 } /* namespace lol */

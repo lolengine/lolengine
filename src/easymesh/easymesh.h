@@ -105,6 +105,11 @@ public:
     void AppendCog(int nbsides, float h, float r10, float r20, float r1,
                    float r2, float r12, float r22, float sidemul, int offset);
 
+    //Convenience functions
+public:
+    int GetVertexCount() { return m_vert.Count(); }
+    vec3 const &GetVertexLocation(int i) { return m_vert[i].m1; }
+
 private:
     vec4 m_color, m_color2;
     Array<uint16_t> m_indices;

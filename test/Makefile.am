@@ -10,7 +10,7 @@ bench: benchsuite$(EXEEXT)
 
 EXTRA_DIST = data/gradient.png
 
-noinst_PROGRAMS = benchsuite $(testsuite) btphystest
+noinst_PROGRAMS = benchsuite $(testsuite) btphystest MeshViewer
 
 TESTS = $(testsuite)
 
@@ -48,4 +48,9 @@ btphystest_CPPFLAGS = @LOL_CFLAGS@ -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
 btphystest_DEPENDENCIES = $(top_builddir)/src/liblol.a
+
+MeshViewer_SOURCES = MeshViewer.cpp
+MeshViewer_CPPFLAGS = @LOL_CFLAGS@
+MeshViewer_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
+MeshViewer_DEPENDENCIES = $(top_builddir)/src/liblol.a
 

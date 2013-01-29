@@ -40,6 +40,7 @@ public:
 
     mat4 const &GetViewMatrix();
     mat4 const &GetProjMatrix();
+    void ForceSceneUpdate();
 
 protected:
     virtual void TickGame(float seconds);
