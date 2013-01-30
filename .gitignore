@@ -70,6 +70,7 @@ build/vs2010/*.XGD
 # Our binaries
 test/benchsuite
 test/btphystest
+test/meshviewer
 test/testsuite
 test/sandbox/sample
 test/math/pi
