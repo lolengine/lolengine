@@ -30,7 +30,7 @@ public:
         while (i--)
         {
             m_meshes.Push(EasyMesh());
-            m_meshes.Last().Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgu]]");
+            m_meshes.Last().Compile("[sc#2f2 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#22f ab 2 2 2 tx 0 csgu]]");
         }
 
         m_angle = 0;
@@ -43,6 +43,17 @@ public:
         m_camera->SetPosition(vec3(0.f, 0.f, 5.f));
         m_camera->ForceSceneUpdate();
         Ticker::Ref(m_camera);
+
+        m_lights << new Light();
+        m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
+        m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
+        Ticker::Ref(m_lights.Last());
+
+        m_lights << new Light();
+        m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 1.f));
+        m_lights.Last()->SetColor(vec4(.5f, .3f, .0f, 1.f));
+        Ticker::Ref(m_lights.Last());
+
         min_pos = vec3(FLT_MAX);
         max_pos = vec3(-FLT_MAX);
 
@@ -52,6 +63,8 @@ public:
     ~MeshViewer()
     {
         Ticker::Unref(m_camera);
+        for (int i = 0; i < m_lights.Count(); ++i)
+            Ticker::Unref(m_lights[i]);
     }
 
     virtual void TickGame(float seconds)
@@ -73,7 +86,7 @@ public:
         vec4 b(0,-2, 0, 1.0f);
         vec4 c(0, 0, -2, 1.0f);
         vec4 d(-1, -1, 1, 1.0f);
-        
+
         //vec2 toto;
         //near plane : vec4(toto, 1.f, 1.f);
         //far plane : vec4(toto, -1.f, 1.f);
@@ -152,6 +165,7 @@ private:
     vec3 max_pos;
 
     Array<EasyMesh> m_meshes;
+    Array<Light *> m_lights;
     Camera *m_camera;
 
     bool m_ready;
