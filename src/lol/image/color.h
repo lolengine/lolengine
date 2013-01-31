@@ -88,14 +88,16 @@ public:
     {
         float K = 0.f;
 
-        if (src.b - src.g > 1e-20f)
+        if (src.g < src.b)
             src = src.rbg, K = -1.f;
 
-        if (src.g - src.r > 1e-20f)
+        if (src.r < src.g)
             src = src.grb, K = -2.f / 6.f - K;
 
         float chroma = src.r - min(src.g, src.b);
-        return vec3(abs(K + (src.g - src.b) / (6.f * chroma + 1e-20f)),
+        /* XXX: we use min() here because numerical stability is not
+         * guaranteed with -ffast-math, I’ve seen it fail on i386. */
+        return vec3(min(abs(K + (src.g - src.b) / (6.f * chroma)), 1.f),
                     chroma / (src.r + 1e-20f),
                     src.r);
     }
@@ -112,20 +114,17 @@ public:
     {
         float K = 0.f;
 
-        /* FIXME: this appears to be needed for numerical stability on
-         * i386 hardware using -ffast-math. Otherwise if (src.g < src.b)
-         * would suffice. */
-        if (src.b - src.g > 1e-20f)
+        if (src.g < src.b)
             src = src.rbg, K = -1.f;
 
-        if (src.g - src.r > 1e-20f)
+        if (src.r < src.g)
             src = src.grb, K = -2.f / 6.f - K;
 
         float chroma = src.r - min(src.g, src.b);
         float luma = src.r + min(src.g, src.b);
-        return vec3(abs(K + (src.g - src.b) / (6.f * chroma + 1e-20f)),
-                    chroma / (min(luma, 2.f - luma) + 1e-20f),
-                    0.5f * luma);
+        float h = min(abs(K + (src.g - src.b) / (6.f * chroma)), 1.f);
+        float s = clamp(chroma / (min(luma, 2.f - luma)), 0.f, 1.f);
+        return vec3(h, s, 0.5f * luma);
     }
 
     static vec4 RGBToHSL(vec4 src)
