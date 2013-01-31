@@ -115,11 +115,11 @@ int InputTracker::GetPreviousButtonStatus(Key k)
 void InputTracker::UpdateActionStatus(float seconds)
 {
 #if defined USE_SDL
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+#   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *keystate = SDL_GetKeyboardState(NULL);
-#else
+#   else
     Uint8 *keystate = SDL_GetKeyState(NULL);
-#endif
+#   endif
     //SOOOoooo ugly.
     for (int i = 0; i < Key::Last; ++i)
     {
@@ -269,11 +269,11 @@ vec2 Input::GetAxis(int axis)
 
 #if defined USE_SDL
     /* Simulate a joystick using the keyboard. This SDL call is free. */
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+#   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *keystate = SDL_GetKeyboardState(NULL);
-#else
+#   else
     Uint8 *keystate = SDL_GetKeyState(NULL);
-#endif
+#   endif
     int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
     int up = (keystate[SDLK_w] | keystate[SDLK_z]) - keystate[SDLK_s] ;
     ret.x += left;
@@ -302,7 +302,7 @@ ivec3 Input::GetMouseButtons()
 int Input::GetButtonState(int button)
 {
 #if defined USE_SDL
-#   if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION >= 3
+#   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *keystate = SDL_GetKeyboardState(NULL);
 #   else
     Uint8 *keystate = SDL_GetKeyState(NULL);
