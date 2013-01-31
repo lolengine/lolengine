@@ -43,8 +43,8 @@ namespace System
 {
 
 extern void Init(int argc, char *argv[],
-                 String const projectdir = LOL_CONFIG_PROJECTDIR,
-                 String const solutiondir = LOL_CONFIG_SOLUTIONDIR);
+                 String const &projectdir = LOL_CONFIG_PROJECTDIR,
+                 String const &solutiondir = LOL_CONFIG_SOLUTIONDIR);
 
 extern void SetDataDir(char const *dir);
 extern char const *GetDataDir();
