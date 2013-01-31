@@ -84,6 +84,7 @@ LOLUNIT_FIXTURE(ColorTest)
             LOLUNIT_SET_CONTEXT(n / 7);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(d1, d2, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(d2, d3, 0.0001);
+            LOLUNIT_UNSET_CONTEXT();
         }
     }
 
@@ -94,11 +95,18 @@ LOLUNIT_FIXTURE(ColorTest)
         for (int b = 0; b < 20; b++)
         {
             vec3 v1 = vec3(r / 20.f, g / 20.f, b / 20.f);
-            vec3 v2 = Color::HSVToRGB(Color::RGBToHSV(v1));
+            vec3 v2 = Color::RGBToHSV(v1);
+            vec3 v3 = Color::HSVToRGB(v2);
 
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.r, v2.r, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.g, v2.g, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.b, v2.b, 0.0001);
+            String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
+            LOLUNIT_SET_CONTEXT(&rgb[0]);
+
+            if (r != g || g != b)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.r, v3.r, 0.0001);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.g, v3.g, 0.0001);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.b, v3.b, 0.0001);
+
+            LOLUNIT_UNSET_CONTEXT();
         }
     }
 
@@ -112,9 +120,15 @@ LOLUNIT_FIXTURE(ColorTest)
             vec3 v2 = Color::RGBToHSL(v1);
             vec3 v3 = Color::HSVToHSL(Color::RGBToHSV(v1));
 
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.x, v3.x, 0.0001);
+            String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
+            LOLUNIT_SET_CONTEXT(&rgb[0]);
+
+            if (r != g || g != b)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.x, v3.x, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.y, v3.y, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.z, v3.z, 0.0001);
+
+            LOLUNIT_UNSET_CONTEXT();
         }
     }
 };
