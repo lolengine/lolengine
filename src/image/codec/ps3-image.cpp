@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -93,12 +93,11 @@ bool Ps3ImageData::Open(char const *path)
     /* Create decoder */
     CellPngDecSubHandle hsub;
 
-    char file[1024];
-    sprintf(file, "/app_home/c:/Users/s.hocevar/le/%s", path);
+    String fullpath = String("/app_home/") + String(System::GetDataDir()) + String(path);
 
     CellPngDecSrc dec_src;
     dec_src.srcSelect = CELL_PNGDEC_FILE;
-    dec_src.fileName = file;
+    dec_src.fileName = &fullpath[0];
     dec_src.fileOffset = 0;
     dec_src.fileSize = 0;
     dec_src.streamPtr = NULL;
@@ -109,7 +108,7 @@ bool Ps3ImageData::Open(char const *path)
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not open %s for decoding\n", file);
+        Log::Error("could not open %s for decoding\n", &fullpath[0]);
 #endif
         return false;
     }
@@ -119,7 +118,7 @@ bool Ps3ImageData::Open(char const *path)
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not read image header\n");
+        Log::Error("could not read image header in %s\n", &fullpath[0]);
 #endif
         return false;
     }
@@ -154,7 +153,7 @@ bool Ps3ImageData::Open(char const *path)
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not run PngDec decoder\n");
+        Log::Error("could not run PngDec decoder on %s\n", &fullpath[0]);
 #endif
         return false;
     }

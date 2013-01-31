@@ -36,7 +36,7 @@ namespace System
 #endif
 
 void Init(int argc, char *argv[],
-          String const projectdir, String const solutiondir)
+          String const &projectdir, String const &solutiondir)
 {
     using namespace std;
 
