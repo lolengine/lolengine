@@ -54,7 +54,7 @@ class ApplicationData
 #elif defined HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;
-#elif defined HAVE_SDL_H || defined HAVE_SDL_SDL_H
+#elif defined USE_SDL
     SdlApp app;
 #else
 #   error No application class available on this platform
