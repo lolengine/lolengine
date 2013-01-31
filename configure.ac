@@ -218,69 +218,7 @@ dnl Are we on a Direct3D 9 platform?
 
 LOL_CHECK_OPENGL
 
-
-dnl Use SDL? (always required on Linux or Win32)
-ac_cv_my_have_sdl="no"
-ac_cv_my_have_sdl_image="no"
-ac_cv_my_have_sdl_mixer="no"
-dnl
-dnl  First, try the proper pkg-config check
-PKG_CHECK_MODULES(SDL, sdl, [ac_cv_my_have_sdl="yes"], [:])
-PKG_CHECK_MODULES(SDLMIXER, SDL_mixer, [ac_cv_my_have_sdl_mixer="yes"], [:])
-PKG_CHECK_MODULES(SDLIMAGE, SDL_image, [ac_cv_my_have_sdl_image="yes"], [:])
-dnl
-dnl  Then the old sdl-config method
-if test "x${cross_compiling}" != xyes -a "${ac_cv_my_have_sdl}" != yes; then
-  AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-  if test "${SDL_CONFIG}" != "no"; then
-    SDL_CFLAGS="${SDL_CFLAGS} `${SDL_CONFIG} --cflags`"
-    SDL_LIBS="${SDL_LIBS} `${SDL_CONFIG} --libs`"
-    ac_cv_my_have_sdl="yes"
-  fi
-fi
-dnl
-dnl  Maybe all this has failed, try direct inclusion
-save_CPPFLAGS="${CPPFLAGS}"
-save_LIBS="${LIBS}"
-CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
-LIBS="${LIBS} ${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
-AC_CHECK_HEADERS(SDL.h SDL/SDL.h, [ac_cv_my_have_sdl="yes"])
-AC_CHECK_HEADERS(SDL_mixer.h SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
-AC_CHECK_HEADERS(SDL_image.h SDL/SDL_image.h, [ac_cv_my_have_sdl_image="yes"])
-AC_CHECK_LIB(SDL, main,
- [SDL_LIBS="${SDL_LIBS} -lSDL"],
- [ac_cv_my_have_sdl="no"])
-AC_CHECK_LIB(SDLmain, main,
- [SDL_LIBS="${SDL_LIBS} -lSDLmain -lSDL"])
-AC_CHECK_LIB(SDL_mixer, main,
- [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"],
- [ac_cv_my_have_sdl_mixer="no"])
-AC_CHECK_LIB(SDL_image, main,
- [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"],
- [ac_cv_my_have_sdl_image="no"])
-SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
-SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
-CPPFLAGS="${save_CPPFLAGS}"
-LIBS="${save_LIBS}"
-if test "${ac_cv_my_have_sdl}" = "no"; then
-  AC_MSG_WARN([SDL not found])
-else
-  AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
-fi
-if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
-  AC_MSG_WARN([SDL_mixer not found])
-else
-  AC_DEFINE(USE_SDL_MIXER, 1, Define to 1 to use SDL_mixer)
-fi
-if test "${ac_cv_my_have_sdl_image}" = "no"; then
-  AC_MSG_WARN([SDL_image not found])
-else
-  AC_DEFINE(USE_SDL_IMAGE, 1, Define to 1 to use SDL_image)
-fi
-AM_CONDITIONAL(USE_SDL, test "${ac_cv_my_have_sdl}" = "yes")
-AM_CONDITIONAL(USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" = "yes")
-AM_CONDITIONAL(USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" = "yes")
-
+LOL_CHECK_SDL
 
 dnl  Use Flex's FlexLexer.h or ours?
 ac_cv_my_have_flexlexer_h="no"

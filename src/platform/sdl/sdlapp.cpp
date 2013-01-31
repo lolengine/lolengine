@@ -13,7 +13,9 @@
 #endif
 
 #if defined USE_SDL
-#   if defined HAVE_SDL_SDL_H
+#   if defined HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif defined HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
@@ -73,6 +75,8 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     SDL_VERSION(&wminfo.version);
     SDL_GetWMInfo(&wminfo);
     g_hwnd = wminfo.window;
+#   elif SDL_VERSION_ATLEAST(2,0,0)
+    TODO
 #   else
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
