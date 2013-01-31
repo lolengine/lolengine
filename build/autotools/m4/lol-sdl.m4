@@ -9,13 +9,12 @@ dnl  Defined C/C++ macros:
 dnl    USE_SDL         -- whether SDL or SDL2 were found at all
 dnl    USE_SDL_IMAGE   -- whether SDL_image was found
 dnl    USE_SDL_MIXER   -- whether SDL_mixer was found
-dnl    HAVE_SDL2_SDL_H -- whether to include <SDL2/SDL.h>
 dnl    HAVE_SDL_SDL_H  -- whether to include <SDL/SDL.h>
 dnl    HAVE_SDL_H      -- whether to include <SDL.h>
 dnl  Generated automake conditionals:
-dnl    USE_SDL         -- whether SDL or SDL2 were found at all (conditional)
-dnl    USE_SDL_IMAGE   -- whether SDL_image was found (conditional)
-dnl    USE_SDL_MIXER   -- whether SDL_mixer was found (conditional)
+dnl    USE_SDL         -- whether SDL or SDL2 were found at all
+dnl    USE_SDL_IMAGE   -- whether SDL_image was found
+dnl    USE_SDL_MIXER   -- whether SDL_mixer was found
 dnl  Generated shell variables:
 dnl    SDL_CFLAGS      -- flags for SDL compilation
 dnl    SDL_LIBS        -- flags for SDL linking
