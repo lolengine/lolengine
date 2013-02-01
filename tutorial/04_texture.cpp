@@ -36,7 +36,7 @@ public:
         m_vertices << vec2( 1.0, -1.0);
         m_vertices << vec2( 1.0,  1.0);
 
-        m_heightmap = new uint8_t[4 * TEXTURE_WIDTH * 1];
+        m_heightmap = new uint8_t[TEXTURE_WIDTH * 1];
     }
 
     virtual ~TextureDemo()
@@ -50,16 +50,16 @@ public:
 
         /* Generate a new heightmap at the beginning */
         if (m_frames == 0)
-            memset(m_heightmap, 255, 4 * TEXTURE_WIDTH);
+            memset(m_heightmap, 255, TEXTURE_WIDTH);
 
         /* Scroll left */
         for (int i = 0; i < TEXTURE_WIDTH - 1; i++)
-            m_heightmap[4 * i] = m_heightmap[4 * i + 4];
+            m_heightmap[i] = m_heightmap[i + 1];
 
-        int height = m_heightmap[4 * (TEXTURE_WIDTH - 1)];
+        int height = m_heightmap[TEXTURE_WIDTH - 1];
         height = (height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
-        m_heightmap[4 * (TEXTURE_WIDTH - 1)] = height;
+        m_heightmap[TEXTURE_WIDTH - 1] = height;
 
         /* Update frame counter */
         ++m_frames;
@@ -72,7 +72,7 @@ public:
         /* Initialise GPU data */
         if (!m_ready)
         {
-            m_texture = new Texture(ivec2(TEXTURE_WIDTH, 1), PixelFormat::A8R8G8B8);
+            m_texture = new Texture(ivec2(TEXTURE_WIDTH, 1), PixelFormat::Y_8);
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("Tutorial 4: Texture", ivec2(640, 480), 60.0f);
+    Application app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
 
     new TextureDemo();
 
