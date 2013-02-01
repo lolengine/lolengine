@@ -122,8 +122,10 @@ public:
 
         float chroma = src.r - min(src.g, src.b);
         float luma = src.r + min(src.g, src.b);
+        /* XXX: we use min() here because numerical stability is not
+         * guaranteed with -ffast-math, I’ve seen it fail on i386. */
         float h = min(abs(K + (src.g - src.b) / (6.f * chroma)), 1.f);
-        float s = min(abs(chroma / (min(luma, 2.f - luma))), 1.f);
+        float s = clamp(chroma / (min(luma, 2.f - luma)), 0.f, 1.f);
         return vec3(h, s, 0.5f * luma);
     }
 
