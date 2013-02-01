@@ -25,9 +25,10 @@ struct PixelFormat
     enum Value
     {
         Unknown = 0,
-        R8G8B8,
-        A8R8G8B8,
-        A8B8G8R8,
+        RGB_8,
+        ARGB_8,
+        ABGR_8,
+        Y_8,
     }
     m_value;
 

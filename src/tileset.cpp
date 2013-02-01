@@ -123,12 +123,12 @@ void TileSet::TickDraw(float seconds)
         switch (data->img->GetFormat())
         {
         case Image::FORMAT_RGB:
-            format = PixelFormat::R8G8B8;
+            format = PixelFormat::RGB_8;
             planes = 3;
             break;
         case Image::FORMAT_RGBA:
         default:
-            format = PixelFormat::A8R8G8B8;
+            format = PixelFormat::ARGB_8;
             planes = 4;
             break;
         }

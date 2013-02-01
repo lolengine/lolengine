@@ -53,6 +53,7 @@ class TextureData
     GLint m_internal_format;
     GLenum m_gl_format, m_gl_type;
 #endif
+    int m_bytes_per_elem;
 };
 
 //
@@ -71,28 +72,41 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_format = format;
 
 #if defined USE_D3D9 || defined _XBOX
-    static D3DFORMAT const d3d_formats[] =
+    static struct
+    {
+        D3DFORMAT format;
+        int bytes;
+    }
+    const d3d_formats[] =
     {
         /* Unknown */
-        D3DFMT_UNKNOWN,
+        { D3DFMT_UNKNOWN, 0 },
 
         /* R8G8B8 */
 #   if defined USE_D3D9
-        D3DFMT_R8G8B8,
+        { D3DFMT_R8G8B8, 3 },
 #   else
-        D3DFMT_UNKNOWN,
+        { D3DFMT_UNKNOWN, 0 },
 #   endif
 
         /* A8R8G8B8 */
 #   if defined USE_D3D9
-        D3DFMT_A8R8G8B8,
+        { D3DFMT_A8R8G8B8, 4 },
 #   else
         /* By default the X360 will swizzle the texture. Ask for linear. */
-        D3DFMT_LIN_A8R8G8B8,
+        { D3DFMT_LIN_A8R8G8B8, 4 },
+#   endif
+
+        /* Y8 */
+#   if defined USE_D3D9
+        { D3DFMT_L8, 1 },
+#   else
+        /* By default the X360 will swizzle the texture. Ask for linear. */
+        { D3DFMT_LIN_L8, 1 },
 #   endif
     };
 
-    D3DFORMAT d3d_format = GET_CLAMPED(d3d_formats, format);
+    D3DFORMAT d3d_format = GET_CLAMPED(d3d_formats, format).format;
 #   if defined USE_D3D9
     int d3d_usage = D3DUSAGE_DYNAMIC;
 #   else
@@ -102,46 +116,41 @@ Texture::Texture(ivec2 size, PixelFormat format)
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                d3d_usage, d3d_format,
                                D3DPOOL_DEFAULT, &m_data->m_texture, NULL);
+    m_data->m_bytes_per_elem = GET_CLAMPED(d3d_formats, format).bytes;
 #else
     static struct
     {
         GLint internal_format;
         GLenum format, type;
+        int bytes;
     }
     const gl_formats[] =
     {
-        /* Unknown */
-        { 0, 0, 0 },
+        { 0, 0, 0, 0 }, /* Unknown */
+        { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 }, /* RGB_8 */
 
-        /* R8G8B8 */
-        { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE },
-
-        /* A8R8G8B8 */
 #if __CELLOS_LV2__
-        { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV },
+        { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, 4 },
+        { GL_ARGB_SCE, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, 4 },
+        { GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
 #elif defined __native_client__ || defined HAVE_GLES_2X
-        { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE },
-#else
-        /* Seems efficient for little endian textures */
-        { GL_RGBA, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV },
-#endif
-
-        /* A8B8G8R8 */
-#if __CELLOS_LV2__
-        { GL_ARGB_SCE, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV },
-#elif defined __native_client__ || defined HAVE_GLES_2X
+        { GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
         /* FIXME: if GL_RGBA is not available, we should advertise
          * this format as "not available" on this platform. */
-        { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE },
+        { GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
+        { GL_R8, GL_R8, GL_UNSIGNED_BYTE, 1 },
 #else
         /* Seems efficient for little endian textures */
-        { GL_RGBA, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV },
+        { GL_RGBA8, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ARGB_8 */
+        { GL_RGBA8, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ABGR_8 */
+        { GL_R8, GL_RED, GL_UNSIGNED_BYTE, 1 }, /* A8 */
 #endif
     };
 
     m_data->m_internal_format = GET_CLAMPED(gl_formats, format).internal_format;
     m_data->m_gl_format = GET_CLAMPED(gl_formats, format).format;
     m_data->m_gl_type = GET_CLAMPED(gl_formats, format).type;
+    m_data->m_bytes_per_elem = GET_CLAMPED(gl_formats, format).bytes;
 
     glGenTextures(1, &m_data->m_texture);
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
@@ -207,12 +216,12 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
     D3DLOCKED_RECT rect;
     m_data->m_texture->LockRect(0, &rect, NULL, 0);
 
+    int stride = size.x * m_data->m_bytes_per_elem;
     for (int j = 0; j < size.y; j++)
     {
         uint8_t *dst = (uint8_t *)rect.pBits + (origin.y + j) * rect.Pitch;
-        /* FIXME: the source or destination pitch isn't necessarily 4! */
-        uint8_t *src = (uint8_t *)data + j * size.x * 4;
-        memcpy(dst, src, size.x * 4);
+        uint8_t *src = (uint8_t *)data + j * stride;
+        memcpy(dst, src, stride);
     }
 
     m_data->m_texture->UnlockRect(0);
