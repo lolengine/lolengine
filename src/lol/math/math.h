@@ -154,29 +154,22 @@ static inline float fract(float x) { return x - std::floor(x); }
 static inline double fract(double x) { return x - std::floor(x); }
 static inline ldouble fract(ldouble x) { return x - std::floor(x); }
 
-static inline uint8_t min(uint8_t x, uint8_t y) { return std::min(x, y); }
-static inline int8_t min(int8_t x, int8_t y) { return std::min(x, y); }
-static inline uint16_t min(uint16_t x, uint16_t y) { return std::min(x, y); }
-static inline int16_t min(int16_t x, int16_t y) { return std::min(x, y); }
-static inline uint32_t min(uint32_t x, uint32_t y) { return std::min(x, y); }
-static inline int32_t min(int32_t x, int32_t y) { return std::min(x, y); }
-static inline uint64_t min(uint64_t x, uint64_t y) { return std::min(x, y); }
-static inline int64_t min(int64_t x, int64_t y) { return std::min(x, y); }
-static inline float min(float x, float y) { return std::min(x, y); }
-static inline double min(double x, double y) { return std::min(x, y); }
-static inline ldouble min(ldouble x, ldouble y) { return std::min(x, y); }
-
-static inline uint8_t max(uint8_t x, uint8_t y) { return std::max(x, y); }
-static inline int8_t max(int8_t x, int8_t y) { return std::max(x, y); }
-static inline uint16_t max(uint16_t x, uint16_t y) { return std::max(x, y); }
-static inline int16_t max(int16_t x, int16_t y) { return std::max(x, y); }
-static inline uint32_t max(uint32_t x, uint32_t y) { return std::max(x, y); }
-static inline int32_t max(int32_t x, int32_t y) { return std::max(x, y); }
-static inline uint64_t max(uint64_t x, uint64_t y) { return std::max(x, y); }
-static inline int64_t max(int64_t x, int64_t y) { return std::max(x, y); }
-static inline float max(float x, float y) { return std::max(x, y); }
-static inline double max(double x, double y) { return std::max(x, y); }
-static inline ldouble max(ldouble x, ldouble y) { return std::max(x, y); }
+#define LOL_MIN_MAX_CLAMP(T) \
+    static inline T min(T x, T y) { return std::min(x, y); } \
+    static inline T max(T x, T y) { return std::max(x, y); } \
+    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); }
+LOL_MIN_MAX_CLAMP(uint8_t)
+LOL_MIN_MAX_CLAMP(int8_t)
+LOL_MIN_MAX_CLAMP(uint16_t)
+LOL_MIN_MAX_CLAMP(int16_t)
+LOL_MIN_MAX_CLAMP(uint32_t)
+LOL_MIN_MAX_CLAMP(int32_t)
+LOL_MIN_MAX_CLAMP(uint64_t)
+LOL_MIN_MAX_CLAMP(int64_t)
+LOL_MIN_MAX_CLAMP(float)
+LOL_MIN_MAX_CLAMP(double)
+LOL_MIN_MAX_CLAMP(ldouble)
+#undef LOL_CLAMP
 
 } /* namespace lol */
 
