@@ -109,11 +109,11 @@ color_command:
     T_COLOR args4   { mc.m_mesh.SetCurColor(vec4($2.f0, $2.f1, $2.f2, $2.f3)); }
   | T_COLOR COLOR   { uint32_t x = $2;
                       vec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                      mc.m_mesh.SetCurColor(vec4(v) * (1. / 255)); }
+                      mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255)); }
   | T_BGCOLOR args4 { mc.m_mesh.SetCurColor2(vec4($2.f0, $2.f1, $2.f2, $2.f3)); }
   | T_BGCOLOR COLOR { uint32_t x = $2;
                       vec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                      mc.m_mesh.SetCurColor2(vec4(v) * (1. / 255)); }
+                      mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255)); }
     ;
 
 transform_command:

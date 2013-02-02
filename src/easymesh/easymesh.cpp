@@ -880,7 +880,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 
         for (int v = 0, x = 0, y = 0; x < ndivisions + 1; v++)
         {
-            vec3 p[] = { a + x * vb + y * vc,
+            vec3 p[] = { a + (float)x * vb + (float)y * vc,
                          p[0] + vb,
                          p[0] + vc,
                          p[0] + vb + vc };
