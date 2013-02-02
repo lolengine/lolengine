@@ -19,9 +19,9 @@
 #include <stdint.h>
 #include <ostream>
 
-#include "lol/math/math.h"
-#include "lol/math/half.h"
-#include "lol/math/real.h"
+#include <lol/math/math.h>
+#include <lol/math/half.h>
+#include <lol/math/real.h>
 
 namespace lol
 {
@@ -1370,6 +1370,8 @@ LOL_ALL_VECTOR_OPS_AND_FUNS(half)
 LOL_ALL_VECTOR_OPS_AND_FUNS(float)
 LOL_ALL_VECTOR_OPS_AND_FUNS(double)
 LOL_ALL_VECTOR_OPS_AND_FUNS(ldouble)
+LOL_ALL_VECTOR_OPS_AND_FUNS(real)
+
 LOL_ALL_VECTOR_OPS_AND_FUNS(int8_t)
 LOL_ALL_VECTOR_OPS_AND_FUNS(uint8_t)
 LOL_ALL_VECTOR_OPS_AND_FUNS(int16_t)
@@ -1378,10 +1380,6 @@ LOL_ALL_VECTOR_OPS_AND_FUNS(int32_t)
 LOL_ALL_VECTOR_OPS_AND_FUNS(uint32_t)
 LOL_ALL_VECTOR_OPS_AND_FUNS(int64_t)
 LOL_ALL_VECTOR_OPS_AND_FUNS(uint64_t)
-
-/* FIXME: vectors of "real" are deactivated for now, because we do
- * not implement all combinations of operators for these types yet. */
-LOL_ALL_VECTOR_OPS_AND_FUNS(real)
 
 #if defined _MSC_VER
 #   pragma warning(pop)
