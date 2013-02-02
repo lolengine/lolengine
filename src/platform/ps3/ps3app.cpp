@@ -82,7 +82,7 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
            (uint8_t *)stack.pst_addr + stack.pst_size);
 #endif
 
-    PSGLdeviceParameters psgldp =
+    PSGLdeviceParameters psgldp;
     psgldp.enable = PSGL_DEVICE_PARAMETERS_COLOR_FORMAT
                   | PSGL_DEVICE_PARAMETERS_DEPTH_FORMAT
                   | PSGL_DEVICE_PARAMETERS_MULTISAMPLING_MODE
