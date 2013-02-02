@@ -127,19 +127,21 @@ Texture::Texture(ivec2 size, PixelFormat format)
     const gl_formats[] =
     {
         { 0, 0, 0, 0 }, /* Unknown */
-        { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 }, /* RGB_8 */
 
 #if __CELLOS_LV2__
+        { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, 4 },
         { GL_ARGB_SCE, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, 4 },
         { GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
 #elif defined __native_client__ || defined HAVE_GLES_2X
+        { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
         /* FIXME: if GL_RGBA is not available, we should advertise
          * this format as "not available" on this platform. */
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
         { GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
 #else
+        { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 }, /* RGB_8 */
         /* Seems efficient for little endian textures */
         { GL_RGBA8, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ARGB_8 */
         { GL_RGBA8, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ABGR_8 */
