@@ -122,6 +122,10 @@ public:
     template<int M> friend Real<M> round(Real<M> const &x);
     template<int M> friend Real<M> fmod(Real<M> const &x, Real<N> const &y);
 
+    /* Functions inherited from GLSL */
+    template<int M> friend Real<M> abs(Real<M> const &x);
+    template<int M> friend Real<M> fract(Real<M> const &x);
+
     void hexprint() const;
     void print(int ndigits = 150) const;
     void sprintf(char *str, int ndigits = 150) const;
@@ -269,6 +273,8 @@ template<> real floor(real const &x);
 template<> real fabs(real const &x);
 template<> real round(real const &x);
 template<> real fmod(real const &x, real const &y);
+template<> real abs(real const &x);
+template<> real fract(real const &x);
 
 template<> void real::hexprint() const;
 template<> void real::print(int ndigits) const;

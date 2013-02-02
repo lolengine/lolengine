@@ -48,7 +48,7 @@ public:
             m_window2world = 0.5 / m_window_size.y;
         else
             m_window2world = 0.5 / m_window_size.x;
-        m_texel2world = (vec2)m_window_size / m_size * m_window2world;
+        m_texel2world = (dvec2)m_window_size / (dvec2)m_size * m_window2world;
 
         m_oldmouse = ivec2(0, 0);
 

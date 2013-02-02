@@ -823,6 +823,16 @@ template<> real fabs(real const &x)
     return ret;
 }
 
+template<> real abs(real const &x)
+{
+    return fabs(x);
+}
+
+template<> real fract(real const &x)
+{
+    return x - floor(x);
+}
+
 static real fast_log(real const &x)
 {
     /* This fast log method is tuned to work on the [1..2] range and
