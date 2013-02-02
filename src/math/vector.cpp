@@ -531,14 +531,14 @@ template<> vec3 vec3::toeuler(quat const &q)
              atan2(2.f * (q.w * q.z + q.y * q.x),
                    1.f - 2.f * (q.z * q.z + q.y * q.y)));
 
-    return (180.0f / M_PI / n) * ret;
+    return (float)(180.0f / M_PI / n) * ret;
 }
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     mat3 ret;
 
-    vec3 radians = (M_PI / 180.0f) * v;
+    vec3 radians = (float)(M_PI / 180.0f) * v;
     float s0 = sin(radians[0]), c0 = cos(radians[0]);
     float s1 = sin(radians[1]), c1 = cos(radians[1]);
     float s2 = sin(radians[2]), c2 = cos(radians[2]);
@@ -604,7 +604,7 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    vec3 half_angles = (M_PI / 360.0f) * v;
+    vec3 half_angles = (float)(M_PI / 360.0f) * v;
     float s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
     float s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
