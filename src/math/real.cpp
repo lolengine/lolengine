@@ -763,10 +763,10 @@ template<> real pow(real const &x, real const &y)
     }
 }
 
-static real fast_fact(int x)
+static real fast_fact(unsigned int x)
 {
     real ret = real::R_1();
-    int i = 1, multiplier = 1, exponent = 0;
+    unsigned int i = 1, multiplier = 1, exponent = 0;
 
     for (;;)
     {
@@ -774,7 +774,7 @@ static real fast_fact(int x)
             /* Multiplication is a no-op if multiplier == 1 */
             return ldexp(ret * multiplier, exponent);
 
-        int tmp = i;
+        unsigned int tmp = i;
         while ((tmp & 1) == 0)
         {
             tmp >>= 1;
