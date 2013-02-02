@@ -65,18 +65,13 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
 
     cellSysutilRegisterCallback(0, Ps3AppData::SysCallBack, NULL);
 
-    PSGLinitOptions psglio =
-    {
-        enable: PSGL_INIT_MAX_SPUS | PSGL_INIT_INITIALIZE_SPUS
-                 | PSGL_INIT_HOST_MEMORY_SIZE,
-        maxSPUs: 1,
-        initializeSPUs: false,
-        persistentMemorySize: 0,
-        transientMemorySize: 0,
-        errorConsole: 0,
-        fifoSize: 0,
-        hostMemorySize: 128 * 1024 * 1024,
-    };
+    PSGLinitOptions psglio;
+    psglio.enable = PSGL_INIT_MAX_SPUS
+                  | PSGL_INIT_INITIALIZE_SPUS
+                  | PSGL_INIT_HOST_MEMORY_SIZE;
+    psglio.maxSPUs = 1;
+    psglio.initializeSPUs = false;
+    psglio.hostMemorySize = 128 * 1024 * 1024;
 
     psglInit(&psglio);
 
@@ -88,17 +83,15 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
 #endif
 
     PSGLdeviceParameters psgldp =
-    {
-        enable: PSGL_DEVICE_PARAMETERS_COLOR_FORMAT
-              | PSGL_DEVICE_PARAMETERS_DEPTH_FORMAT
-              | PSGL_DEVICE_PARAMETERS_MULTISAMPLING_MODE
-              | PSGL_DEVICE_PARAMETERS_WIDTH_HEIGHT,
-        colorFormat: GL_ARGB_SCE, /* can also be GL_RGBA16F_ARB */
-        depthFormat: GL_DEPTH_COMPONENT16, /* can also be 24-bit */
-        multisamplingMode: GL_MULTISAMPLING_4X_SQUARE_ROTATED_SCE,
-        width: 720,
-        height: 480,
-    };
+    psgldp.enable = PSGL_DEVICE_PARAMETERS_COLOR_FORMAT
+                  | PSGL_DEVICE_PARAMETERS_DEPTH_FORMAT
+                  | PSGL_DEVICE_PARAMETERS_MULTISAMPLING_MODE
+                  | PSGL_DEVICE_PARAMETERS_WIDTH_HEIGHT;
+    psgldp.colorFormat = GL_ARGB_SCE; /* can also be GL_RGBA16F_ARB */
+    psgldp.depthFormat = GL_DEPTH_COMPONENT16; /* can also be 24-bit */
+    psgldp.multisamplingMode = GL_MULTISAMPLING_4X_SQUARE_ROTATED_SCE;
+    psgldp.width = 720;
+    psgldp.height = 480;
 
     /* Find closest valid resolution */
     ivec2 const valid_resolutions[8] =
