@@ -42,6 +42,11 @@
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="MeshViewerBuffer.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
