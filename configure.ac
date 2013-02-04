@@ -405,9 +405,12 @@ AC_CONFIG_FILES(
  [people/jnat/Makefile
   people/jnat/TestProject/Makefile
   people/peeweek/Makefile
+  people/peeweek/private/Makefile
   people/touky/Makefile
+  people/touky/private/Makefile
   people/jylam/Makefile
-  people/jylam/chat/Makefile
+  people/jylam/private/Makefile
+  people/jylam/private/chat/Makefile
 ])
 
 AC_OUTPUT
