@@ -21,6 +21,24 @@
 namespace lol
 {
 
+/* A safe enum for MeshCSG operations. */
+struct CSGUsage
+{
+    enum Value
+    {
+        Union,
+        Substract,
+        SubstractLoss, //will remove B from A, but not add inverted B
+        And,
+        Xor,
+    }
+    m_value;
+
+    inline CSGUsage(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+
 class EasyMesh
 {
     friend class EasyMeshParser;
@@ -34,18 +52,18 @@ public:
 
 private:
     void UpdateVertexDict(Array< int, int > &vertex_dict);
-//DEBUG
-public:
-#define CSG_UNION       0
-#define CSG_SUBSTRACT   1
-#define CSG_AND         2
-#define CSG_XOR         3
 
-    void MeshCsg(int csg_operation);
-    void CsgUnion()     { MeshCsg(CSG_UNION); }
-    void CsgSubstract() { MeshCsg(CSG_SUBSTRACT); }
-    void CsgAnd()       { MeshCsg(CSG_AND); }
-    void CsgXor()       { MeshCsg(CSG_XOR); }
+    //-------------------------------------------------------------------------
+    //Mesh CSG operations
+    //-------------------------------------------------------------------------
+private:
+    void MeshCsg(CSGUsage csg_operation);
+public:
+    void CsgUnion()         { MeshCsg(CSGUsage::Union); }
+    void CsgSubstract()     { MeshCsg(CSGUsage::Substract); }
+    void CsgSubstractLoss() { MeshCsg(CSGUsage::SubstractLoss); }
+    void CsgAnd()           { MeshCsg(CSGUsage::And); }
+    void CsgXor()           { MeshCsg(CSGUsage::Xor); }
 
 public:
     void OpenBrace();
@@ -65,17 +83,19 @@ private:
     void ComputeNormals(int start, int vcount);
     void SetVertColor(vec4 const &color);
 
-public:
     void SetCurVertNormal(vec3 const &normal);
     void SetCurVertColor(vec4 const &color);
 
-    void RadialJitter(float r);
-
+public:
+    //-------------------------------------------------------------------------
+    //Mesh transform operations
+    //-------------------------------------------------------------------------
     void Translate(vec3 const &v);
     void RotateX(float t);
     void RotateY(float t);
     void RotateZ(float t);
     void Rotate(float t, vec3 const &axis);
+    void RadialJitter(float r);
     void TaperX(float y, float z, float xoff);
     void TaperY(float x, float z, float yoff);
     void TaperZ(float x, float y, float zoff);
@@ -86,6 +106,9 @@ public:
     void DupAndScale(vec3 const &s);
     void Chamfer(float f);
 
+    //-------------------------------------------------------------------------
+    //Mesh shape operations
+    //-------------------------------------------------------------------------
     void AppendCylinder(int nsides, float h, float r1, float r2,
                         int dualside, int smooth);
     void AppendCapsule(int ndivisions, float h, float r);
@@ -105,6 +128,11 @@ public:
     void AppendCog(int nbsides, float h, float r10, float r20, float r1,
                    float r2, float r12, float r22, float sidemul, int offset);
 
+    //-------------------------------------------------------------------------
+    //TODO : Mesh Bone operations
+    //-------------------------------------------------------------------------
+    //void AddBone(int parent_id) {}
+
     //Convenience functions
 public:
     int GetVertexCount() { return m_vert.Count(); }
@@ -113,10 +141,14 @@ public:
 private:
     vec4 m_color, m_color2;
     Array<uint16_t> m_indices;
+    //TODO : <coord, norm, color, bone_id, bone_weight>
+    //TODO : Array<vec3, vec3, vec4, ivec2, vec2> m_vert;
+    //TODO : More bone blend support than 2 ?
     //<coord, norm, color>
     Array<vec3, vec3, vec4> m_vert;
     //<vert count, indices count>
     Array<int, int> m_cursors;
+    //When this flag is up, negative scaling will not invert faces.
     bool m_ignore_winding_on_scale;
 
     /* FIXME: put this in a separate class so that we can copy meshes. */

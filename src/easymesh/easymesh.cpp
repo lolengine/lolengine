@@ -207,7 +207,7 @@ void EasyMesh::UpdateVertexDict(Array< int, int > &vertex_dict)
     }
 }
 
-void EasyMesh::MeshCsg(int csg_operation)
+void EasyMesh::MeshCsg(CSGUsage csg_operation)
 {
     //A vertex dictionnary for vertices on the same spot.
     Array< int, int > vertex_dict;
@@ -309,26 +309,29 @@ void EasyMesh::MeshCsg(int csg_operation)
 
                     //Triangle Kill Test
                     if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
-                        (csg_operation == CSG_UNION && tri_list[k].m1 == LEAF_BACK) ||
+                        (csg_operation == CSGUsage::Union && tri_list[k].m1 == LEAF_BACK) ||
                         //csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
-                        (csg_operation == CSG_SUBSTRACT &&
+                        (csg_operation == CSGUsage::Substract &&
                             ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) ||
                             (mesh_id == 1 && tri_list[k].m1 == LEAF_FRONT))) ||
+                        //csgs : CSGSubstractLoss() -> m0_Outside
+                        (csg_operation == CSGUsage::SubstractLoss &&
+                            ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) || mesh_id == 1)) ||
                         //csga : CSGAnd() -> Inside + Inside
-                        (csg_operation == CSG_AND && tri_list[k].m1 == LEAF_FRONT))
+                        (csg_operation == CSGUsage::And && tri_list[k].m1 == LEAF_FRONT))
                     {
                         triangle_to_kill.Push(tri_idx);
                     }
 
                     //Triangle Invert Test
                     if (//csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
-                        (csg_operation == CSG_SUBSTRACT && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
+                        (csg_operation == CSGUsage::Substract && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
                         //csgx : CSGXor() -> Outside/Inside-inverted + Outside/Inside-inverted
-                        (csg_operation == CSG_XOR && tri_list[k].m1 == LEAF_BACK))
+                        (csg_operation == CSGUsage::Xor && tri_list[k].m1 == LEAF_BACK))
                     {
                         //a Xor means we will share vertices with the outside, so duplicate the vertices.
                         //TODO : This operation disconnect all triangle, in some cases, not a good thing.
-                        if (csg_operation == CSG_XOR)
+                        if (csg_operation == CSGUsage::Xor)
                         {
                             for (int l = 0; l < 3; l++)
                             {
@@ -570,12 +573,13 @@ void EasyMesh::SetCurColor2(vec4 const &color)
 
 void EasyMesh::AddVertex(vec3 const &coord)
 {
+    //TODO : m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, ivec2(0), vec2(0));
     m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color);
 }
 
 void EasyMesh::AddDuplicateVertex(int i)
 {
-    m_vert.Push(m_vert[i].m1, vec3(0.f, 1.f, 0.f), m_vert[i].m3);
+    m_vert << m_vert[i];
 }
 
 void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
@@ -769,7 +773,7 @@ void EasyMesh::DupAndScale(vec3 const &s)
     int tlen = m_indices.Count() - m_cursors.Last().m2;
 
     for (int i = 0; i < vlen; i++)
-        m_vert << m_vert[m_cursors.Last().m1++];
+        AddDuplicateVertex(m_cursors.Last().m1++);
 
     for (int i = 0; i < tlen; i++)
         m_indices << m_indices[m_cursors.Last().m2++] + vlen;

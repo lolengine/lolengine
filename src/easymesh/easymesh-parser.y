@@ -48,7 +48,7 @@
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_SCALEZ T_MIRRORZ
 %token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER
-%token T_CSGUNION T_CSGSUBSTRACT T_CSGAND T_CSGXOR
+%token T_CSGUNION T_CSGSUBSTRACT T_CSGSUBSTRACTLOSS T_CSGAND T_CSGXOR
 %token T_CHAMFER
 
 %token T_CYLINDER T_BOX T_SMOOTHCHAMFBOX T_FLATCHAMFBOX T_SPHERE T_CAPSULE
@@ -139,6 +139,7 @@ transform_command:
   | T_TOGGLESCALEWINDING   { mc.m_mesh.ToggleScaleWinding(); }
   | T_CSGUNION             { mc.m_mesh.CsgUnion(); }
   | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }
+  | T_CSGSUBSTRACTLOSS     { mc.m_mesh.CsgSubstractLoss(); }
   | T_CSGAND               { mc.m_mesh.CsgAnd(); }
   | T_CSGXOR               { mc.m_mesh.CsgXor(); }
     ;
