@@ -346,12 +346,12 @@ template<> mat4 mat4::translate(vec3 v)
     return translate(v.x, v.y, v.z);
 }
 
-template<> mat2 mat2::rotate(float angle)
+template<> mat2 mat2::rotate(float degrees)
 {
-    angle *= (M_PI / 180.0f);
+    degrees *= (M_PI / 180.0f);
 
-    float st = sin(angle);
-    float ct = cos(angle);
+    float st = sin(degrees);
+    float ct = cos(degrees);
 
     mat2 ret;
 
@@ -364,12 +364,12 @@ template<> mat2 mat2::rotate(float angle)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float angle, float x, float y, float z)
+template<> mat3 mat3::rotate(float degrees, float x, float y, float z)
 {
-    angle *= (M_PI / 180.0f);
+    degrees *= (M_PI / 180.0f);
 
-    float st = sin(angle);
-    float ct = cos(angle);
+    float st = sin(degrees);
+    float ct = cos(degrees);
 
     float len = std::sqrt(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
@@ -398,9 +398,9 @@ template<> mat3 mat3::rotate(float angle, float x, float y, float z)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float angle, vec3 v)
+template<> mat3 mat3::rotate(float degrees, vec3 v)
 {
-    return rotate(angle, v.x, v.y, v.z);
+    return rotate(degrees, v.x, v.y, v.z);
 }
 
 template<> mat3::Mat3(quat const &q)
@@ -483,18 +483,18 @@ template<> quat::Quat(mat4 const &m)
     MatrixToQuat(*this, mat3(m));
 }
 
-template<> quat quat::rotate(float angle, vec3 const &v)
+template<> quat quat::rotate(float degrees, vec3 const &v)
 {
-    angle *= (M_PI / 360.0f);
+    degrees *= (M_PI / 360.0f);
 
-    vec3 tmp = normalize(v) * sin(angle);
+    vec3 tmp = normalize(v) * sin(degrees);
 
-    return quat(cos(angle), tmp.x, tmp.y, tmp.z);
+    return quat(cos(degrees), tmp.x, tmp.y, tmp.z);
 }
 
-template<> quat quat::rotate(float angle, float x, float y, float z)
+template<> quat quat::rotate(float degrees, float x, float y, float z)
 {
-    return quat::rotate(angle, vec3(x, y, z));
+    return quat::rotate(degrees, vec3(x, y, z));
 }
 
 template<> quat slerp(quat const &qa, quat const &qb, float f)

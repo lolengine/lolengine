@@ -936,14 +936,14 @@ template <typename T> struct Quat
 
     LOL_MEMBER_OPS(Quat, w)
 
-    //Angle in degree
-    static Quat<T> rotate(T angle, T x, T y, T z);
-    static Quat<T> rotate(T angle, Vec3<T> const &v);
+    /* Create a unit quaternion representing a rotation around an axis. */
+    static Quat<T> rotate(T degrees, T x, T y, T z);
+    static Quat<T> rotate(T degrees, Vec3<T> const &v);
 
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
      * If you want to rotate around static axes, just reverse the order
-     * of the arguments. */
+     * of the arguments. Angle values are in degrees. */
     static Quat<T> fromeuler_xyx(Vec3<T> const &v);
     static Quat<T> fromeuler_xzx(Vec3<T> const &v);
     static Quat<T> fromeuler_yxy(Vec3<T> const &v);
@@ -961,7 +961,7 @@ template <typename T> struct Quat
      * but since everyone does it…). The axes in fromeuler_xyz are
      * x, then y', then z", ie. the axes are attached to the model.
      * If you want to apply yaw around x, pitch around y, and roll
-     * around z, use fromeuler_xyz.
+     * around z, use fromeuler_xyz. Angle values are in degrees.
      * If you want to rotate around static axes, reverse the order in
      * the function name (_zyx instead of _xyz) AND reverse the order
      * of the arguments. */
@@ -1480,11 +1480,10 @@ template <typename T> struct Mat2
     inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
-    //Angle in degree
-    static Mat2<T> rotate(T angle);
-    static inline Mat2<T> rotate(Mat2<T> mat, T angle)
+    static Mat2<T> rotate(T degrees);
+    static inline Mat2<T> rotate(Mat2<T> mat, T degrees)
     {
-        return rotate(angle) * mat;
+        return rotate(degrees) * mat;
     }
 
     void printf() const;
@@ -1577,9 +1576,8 @@ template <typename T> struct Mat3
     static Mat3<T> scale(T x);
     static Mat3<T> scale(T x, T y, T z);
     static Mat3<T> scale(Vec3<T> v);
-    //Angle in degree
-    static Mat3<T> rotate(T angle, T x, T y, T z);
-    static Mat3<T> rotate(T angle, Vec3<T> v);
+    static Mat3<T> rotate(T degrees, T x, T y, T z);
+    static Mat3<T> rotate(T degrees, Vec3<T> v);
 
     static Mat3<T> fromeuler_xyz(Vec3<T> const &v);
     static Mat3<T> fromeuler_xzy(Vec3<T> const &v);
@@ -1607,10 +1605,9 @@ template <typename T> struct Mat3
     static Mat3<T> fromeuler_zxz(T phi, T theta, T psi);
     static Mat3<T> fromeuler_zyz(T phi, T theta, T psi);
 
-    //Angle in degree
-    static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
+    static inline Mat3<T> rotate(Mat3<T> mat, T degrees, Vec3<T> v)
     {
-        return rotate(angle, v) * mat;
+        return rotate(degrees, v) * mat;
     }
 
     void printf() const;
@@ -1733,22 +1730,19 @@ template <typename T> struct Mat4
         return translate(v) * mat;
     }
 
-    //Angle in degree
-    static inline Mat4<T> rotate(T angle, T x, T y, T z)
+    static inline Mat4<T> rotate(T degrees, T x, T y, T z)
     {
-        return Mat4<T>(Mat3<T>::rotate(angle, x, y, z), (T)1);
+        return Mat4<T>(Mat3<T>::rotate(degrees, x, y, z), (T)1);
     }
 
-    //Angle in degree
-    static inline Mat4<T> rotate(T angle, Vec3<T> v)
+    static inline Mat4<T> rotate(T degrees, Vec3<T> v)
     {
-        return Mat4<T>(Mat3<T>::rotate(angle, v), (T)1);
+        return Mat4<T>(Mat3<T>::rotate(degrees, v), (T)1);
     }
 
-    //Angle in degree
-    static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
+    static inline Mat4<T> rotate(Mat4<T> &mat, T degrees, Vec3<T> v)
     {
-        return rotate(angle, v) * mat;
+        return rotate(degrees, v) * mat;
     }
 
     static Mat4<T> fromeuler_xyz(Vec3<T> const &v);
