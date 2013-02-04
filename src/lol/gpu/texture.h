@@ -13,8 +13,8 @@
 // -----------------
 //
 
-#if !defined __LOL_TEXTURE_H__
-#define __LOL_TEXTURE_H__
+#if !defined __LOL_GPU_TEXTURE_H__
+#define __LOL_GPU_TEXTURE_H__
 
 namespace lol
 {
@@ -55,5 +55,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_TEXTURE_H__
+#endif // __LOL_GPU_TEXTURE_H__
 

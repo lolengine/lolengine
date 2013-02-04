@@ -13,8 +13,8 @@
 // ----------------
 //
 
-#if !defined __LOL_SHADER_H__
-#define __LOL_SHADER_H__
+#if !defined __LOL_GPU_SHADER_H__
+#define __LOL_GPU_SHADER_H__
 
 #include <stdint.h>
 
@@ -102,5 +102,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_SHADER_H__
+#endif // __LOL_GPU_SHADER_H__
 

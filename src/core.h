@@ -79,25 +79,11 @@ static inline int isnan(float f)
 #endif
 
 // Base types
-#include <lol/base/types.h>
-#include <lol/base/log.h>
-#include <lol/base/assert.h>
-#include <lol/base/array.h>
-#include <lol/base/string.h>
-#include <lol/base/hash.h>
-#include <lol/base/map.h>
-
+#include <lol/base/base.h>
 #include <lol/math/math.h>
-#include <lol/math/half.h>
-#include <lol/math/real.h>
-#include <lol/math/vector.h>
-#include <lol/math/geometry.h>
-
-#include <lol/sys/init.h>
-#include <lol/sys/thread.h>
-#include <lol/sys/timer.h>
-
-#include <lol/image/color.h>
+#include <lol/sys/sys.h>
+#include <lol/image/image.h>
+#include <lol/gpu/gpu.h>
 
 #include "numeric.h"
 
@@ -130,12 +116,6 @@ static inline int isnan(float f)
 #include "dict.h"
 #include "map.h"
 #include "layer.h"
-#include "gpu/lolfx.h"
-#include "gpu/shader.h"
-#include "gpu/texture.h"
-#include "gpu/indexbuffer.h"
-#include "gpu/vertexbuffer.h"
-#include "gpu/framebuffer.h"
 #include "mesh/mesh.h"
 #include "image/image.h"
 #include "application/application.h"

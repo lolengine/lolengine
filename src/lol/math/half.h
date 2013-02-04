@@ -13,8 +13,8 @@
 // --------------
 //
 
-#if !defined __LOL_HALF_H__
-#define __LOL_HALF_H__
+#if !defined __LOL_MATH_HALF_H__
+#define __LOL_MATH_HALF_H__
 
 #include <cstdio>
 #include <stdint.h>
@@ -181,5 +181,5 @@ DECLARE_COERCE_FROM_HALF_OPS(long double)
 
 } /* namespace lol */
 
-#endif // __LOL_HALF_H__
+#endif // __LOL_MATH_HALF_H__
 
