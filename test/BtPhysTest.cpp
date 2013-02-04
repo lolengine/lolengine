@@ -85,6 +85,18 @@ BtPhysTest::BtPhysTest(bool editor)
     m_simulation->SetTimestep(1.f / 120.f);
     Ticker::Ref(m_simulation);
 
+    /* Add a white directional light */
+    m_light1 = new Light();
+    m_light1->SetPosition(vec4(0.2f, 0.2f, 0.f, 0.f));
+    m_light1->SetColor(vec4(0.5f, 0.5f, 0.5f, 1.f));
+    Ticker::Ref(m_light1);
+
+    /* Add an orangeish point light */
+    m_light2 = new Light();
+    m_light2->SetPosition(vec4(-15.f, 15.f, 15.f, 1.f));
+    m_light2->SetColor(vec4(0.4f, 0.3f, 0.2f, 1.f));
+    Ticker::Ref(m_light2);
+
     float offset = 29.5f;
     vec3 pos_offset = vec3(.0f, 30.f, .0f);
     if (USE_STAIRS)
@@ -422,6 +434,8 @@ void BtPhysTest::TickDraw(float seconds)
 BtPhysTest::~BtPhysTest()
 {
     Ticker::Unref(m_camera);
+    Ticker::Unref(m_light1);
+    Ticker::Unref(m_light2);
 
     while (m_constraint_list.Count())
     {
