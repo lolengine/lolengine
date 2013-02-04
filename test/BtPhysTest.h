@@ -21,18 +21,20 @@ protected:
     virtual void TickDraw(float seconds);
 
 private:
-    Camera*                                m_camera;
-    bool                                m_ready;
+    Camera*                     m_camera;
+    Light *                     m_light1;
+    Light *                     m_light2;
+    bool                        m_ready;
 
-    lol::phys::Simulation*                m_simulation;
-    Array<EasyConstraint*>                m_constraint_list;
-    Array<PhysicsObject*>                m_physobj_list;
-    Array<PhysicsObject*>                m_ground_list;
-    Array<PhysicsObject*>                m_platform_list;
-    Array<PhysicsObject*>                m_character_list;
-    Array<PhysicsObject*>                m_stairs_list;
+    lol::phys::Simulation*      m_simulation;
+    Array<EasyConstraint*>      m_constraint_list;
+    Array<PhysicsObject*>       m_physobj_list;
+    Array<PhysicsObject*>       m_ground_list;
+    Array<PhysicsObject*>       m_platform_list;
+    Array<PhysicsObject*>       m_character_list;
+    Array<PhysicsObject*>       m_stairs_list;
 
-    float                                m_loop_value;
+    float                       m_loop_value;
 };
 
 #endif // __BTPHYSTEST_H__
