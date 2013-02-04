@@ -936,6 +936,7 @@ template <typename T> struct Quat
 
     LOL_MEMBER_OPS(Quat, w)
 
+    //Angle in degree
     static Quat<T> rotate(T angle, T x, T y, T z);
     static Quat<T> rotate(T angle, Vec3<T> const &v);
 
@@ -1479,8 +1480,8 @@ template <typename T> struct Mat2
     inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
+    //Angle in degree
     static Mat2<T> rotate(T angle);
-
     static inline Mat2<T> rotate(Mat2<T> mat, T angle)
     {
         return rotate(angle) * mat;
@@ -1576,6 +1577,7 @@ template <typename T> struct Mat3
     static Mat3<T> scale(T x);
     static Mat3<T> scale(T x, T y, T z);
     static Mat3<T> scale(Vec3<T> v);
+    //Angle in degree
     static Mat3<T> rotate(T angle, T x, T y, T z);
     static Mat3<T> rotate(T angle, Vec3<T> v);
 
@@ -1605,6 +1607,7 @@ template <typename T> struct Mat3
     static Mat3<T> fromeuler_zxz(T phi, T theta, T psi);
     static Mat3<T> fromeuler_zyz(T phi, T theta, T psi);
 
+    //Angle in degree
     static inline Mat3<T> rotate(Mat3<T> mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
@@ -1730,16 +1733,19 @@ template <typename T> struct Mat4
         return translate(v) * mat;
     }
 
+    //Angle in degree
     static inline Mat4<T> rotate(T angle, T x, T y, T z)
     {
         return Mat4<T>(Mat3<T>::rotate(angle, x, y, z), (T)1);
     }
 
+    //Angle in degree
     static inline Mat4<T> rotate(T angle, Vec3<T> v)
     {
         return Mat4<T>(Mat3<T>::rotate(angle, v), (T)1);
     }
 
+    //Angle in degree
     static inline Mat4<T> rotate(Mat4<T> &mat, T angle, Vec3<T> v)
     {
         return rotate(angle, v) * mat;
