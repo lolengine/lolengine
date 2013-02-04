@@ -74,6 +74,7 @@ rj    { return token::T_RADIALJITTER; }
 
 csgu  { return token::T_CSGUNION; }
 csgs  { return token::T_CSGSUBSTRACT; }
+csgsl { return token::T_CSGSUBSTRACTLOSS; }
 csga  { return token::T_CSGAND; }
 csgx  { return token::T_CSGXOR; }
 
