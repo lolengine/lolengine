@@ -8,14 +8,16 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_MATH_MATH_H__
-#define __LOL_MATH_MATH_H__
+#if !defined __LOL_BASE_BASE_H__
+#define __LOL_BASE_BASE_H__
 
-#include <lol/math/functions.h>
-#include <lol/math/half.h>
-#include <lol/math/real.h>
-#include <lol/math/vector.h>
-#include <lol/math/geometry.h>
+#include <lol/base/types.h>
+#include <lol/base/log.h>
+#include <lol/base/assert.h>
+#include <lol/base/array.h>
+#include <lol/base/string.h>
+#include <lol/base/hash.h>
+#include <lol/base/map.h>
 
-#endif // __LOL_MATH_MATH_H__
+#endif // __LOL_BASE_BASE_H__
 

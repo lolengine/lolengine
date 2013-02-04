@@ -13,8 +13,8 @@
 // ---------------------
 //
 
-#if !defined __LOL_INDEXBUFFER_H__
-#define __LOL_INDEXBUFFER_H__
+#if !defined __LOL_GPU_INDEXBUFFER_H__
+#define __LOL_GPU_INDEXBUFFER_H__
 
 #include <cstring>
 
@@ -39,5 +39,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_INDEXBUFFER_H__
+#endif // __LOL_GPU_INDEXBUFFER_H__
 

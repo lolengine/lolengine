@@ -13,8 +13,8 @@
 // ---------------------
 //
 
-#if !defined __LOL_THREAD_H__
-#define __LOL_THREAD_H__
+#if !defined __LOL_SYS_THREAD_H__
+#define __LOL_SYS_THREAD_H__
 
 #if defined __CELLOS_LV2__
 #   include "platform/ps3/threadbase.h"
@@ -46,5 +46,5 @@ public:
 
 } /* namespace lol */
 
-#endif // __LOL_THREAD_H__
+#endif // __LOL_SYS_THREAD_H__
 

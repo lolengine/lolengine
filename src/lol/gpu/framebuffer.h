@@ -13,8 +13,8 @@
 // ---------------------
 //
 
-#if !defined __LOL_FRAMEBUFFER_H__
-#define __LOL_FRAMEBUFFER_H__
+#if !defined __LOL_GPU_FRAMEBUFFER_H__
+#define __LOL_GPU_FRAMEBUFFER_H__
 
 #include <cstring>
 
@@ -38,5 +38,5 @@ private:
 
 } /* namespace lol */
 
-#endif // __LOL_FRAMEBUFFER_H__
+#endif // __LOL_GPU_FRAMEBUFFER_H__
 

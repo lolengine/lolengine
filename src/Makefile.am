@@ -16,14 +16,44 @@ liblol_a_SOURCES = \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h \
     \
+    $(liblol_headers) \
+    $(liblol_sources) \
+    \
+    $(ps3_sources) \
+    $(xbox_sources) \
+    $(nacl_sources) \
+    $(sdl_sources) \
+    $(d3d9_sources) \
+    $(android_sources) \
+    \
+    $(bullet_sources)
+liblol_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)/bullet
+
+EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
+             gpu/lolfx-scanner.l gpu/lolfx-parser.y
+
+liblol_headers = \
+    lol/base/base.h \
     lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
     lol/base/string.h lol/base/hash.h lol/base/map.h \
-    lol/math/vector.h lol/math/half.h lol/math/real.h lol/math/remez.h \
-    lol/math/math.h lol/math/geometry.h \
-    lol/sys/init.h lol/sys/thread.h lol/sys/timer.h \
-    lol/image/color.h \
-    lol/unit.h \
     \
+    lol/math/math.h \
+    lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
+    lol/math/remez.h lol/math/math.h lol/math/geometry.h \
+    \
+    lol/sys/sys.h \
+    lol/sys/init.h lol/sys/thread.h lol/sys/timer.h \
+    \
+    lol/image/image.h \
+    lol/image/color.h \
+    \
+    lol/gpu/gpu.h \
+    lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
+    lol/gpu/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
+    \
+    lol/unit.h
+
+liblol_sources = \
     generated/location.hh generated/position.hh generated/stack.hh \
     \
     application/application.cpp application/application.h \
@@ -36,34 +66,24 @@ liblol_a_SOURCES = \
     generated/easymesh-parser.cpp generated/easymesh-parser.h \
     generated/easymesh-scanner.cpp \
     \
-    $(ps3_sources) \
-    $(xbox_sources) \
-    $(nacl_sources) \
-    $(sdl_sources) \
-    $(d3d9_sources) \
-    $(android_sources) \
-    \
     base/hash.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     math/geometry.cpp \
     \
+    gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \
+    gpu/framebuffer.cpp gpu/texture.cpp \
+    \
     input/input.cpp input/input.h \
     input/keyboard.cpp input/keyboard.h \
     input/stick.cpp input/stick.h \
-    \
-    gpu/shader.cpp gpu/shader.h \
-    gpu/indexbuffer.cpp gpu/indexbuffer.h \
-    gpu/vertexbuffer.cpp gpu/vertexbuffer.h \
-    gpu/framebuffer.cpp gpu/framebuffer.h \
-    gpu/texture.cpp gpu/texture.h \
     \
     gpu/defaultmaterial.lolfx \
     gpu/tile.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
     \
-    gpu/lolfx.cpp gpu/lolfx.h \
+    gpu/lolfx.cpp \
     gpu/lolfx-compiler.cpp gpu/lolfx-compiler.h \
     generated/lolfx-parser.cpp generated/lolfx-parser.h \
     generated/lolfx-scanner.cpp \
@@ -81,13 +101,7 @@ liblol_a_SOURCES = \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h \
-    debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h \
-    \
-    $(bullet_sources)
-liblol_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)/bullet
-
-EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
-             gpu/lolfx-scanner.l gpu/lolfx-parser.y
+    debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 
 sdl_sources = \
     image/codec/sdl-image.cpp \

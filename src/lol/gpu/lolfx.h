@@ -13,10 +13,10 @@
 // ---------------
 //
 
-#if !defined __GPU_LOLFX_H__
-#define __GPU_LOLFX_H__
+#if !defined __LOL_GPU_LOLFX_H__
+#define __LOL_GPU_LOLFX_H__
 
-#include "gpu/shader.h"
+#include <lol/gpu/shader.h>
 
 namespace lol
 {
@@ -44,5 +44,5 @@ private:
 
 } /* namespace lol */
 
-#endif /* __GPU_LOLFX_H__ */
+#endif /* __LOL_GPU_LOLFX_H__ */
 

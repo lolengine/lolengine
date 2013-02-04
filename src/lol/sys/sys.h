@@ -8,14 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_MATH_MATH_H__
-#define __LOL_MATH_MATH_H__
+#if !defined __LOL_SYS_SYS_H__
+#define __LOL_SYS_SYS_H__
 
-#include <lol/math/functions.h>
-#include <lol/math/half.h>
-#include <lol/math/real.h>
-#include <lol/math/vector.h>
-#include <lol/math/geometry.h>
+#include <lol/sys/init.h>
+#include <lol/sys/thread.h>
+#include <lol/sys/timer.h>
 
-#endif // __LOL_MATH_MATH_H__
+#endif // __LOL_SYS_SYS_H__
 

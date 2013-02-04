@@ -11,11 +11,11 @@
 
 //
 // Various geometry functions
-// -----------------------
+// --------------------------
 //
 
-#if !defined __LOL_GEOMETRY_GEOMETRY_H__
-#define __LOL_GEOMETRY_GEOMETRY_H__
+#if !defined __LOL_MATH_GEOMETRY_H__
+#define __LOL_MATH_GEOMETRY_H__
 
 #include <cmath>
 #include <cstdio>
@@ -51,5 +51,5 @@ namespace lol
 
 } /* namespace lol */
 
-#endif // __LOL_GEOMETRY_GEOMETRY_H__
+#endif // __LOL_MATH_GEOMETRY_H__
 
