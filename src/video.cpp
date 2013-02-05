@@ -52,6 +52,7 @@ private:
     static mat4 proj_matrix;
     static ivec2 saved_viewport;
     static DebugRenderMode render_mode;
+    static bool face_culling;
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
     static IDirect3D9 *d3d_ctx;
@@ -68,6 +69,7 @@ private:
 mat4 VideoData::proj_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
+bool VideoData::face_culling;
 
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
@@ -263,10 +265,11 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
             {
 #if defined USE_D3D9 || defined _XBOX
 #else
-                if (glIsEnabled(GL_CULL_FACE) == GL_TRUE)
-                    glDisable(GL_CULL_FACE);
-                else
+                VideoData::face_culling = !VideoData::face_culling;
+                if (VideoData::face_culling)
                     glEnable(GL_CULL_FACE);
+                else
+                    glDisable(GL_CULL_FACE);
 #endif
             }
             else
