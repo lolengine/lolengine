@@ -37,11 +37,13 @@ struct FileAccess
 class File
 {
 public:
-    inline File() : m_data(0) {}
-    inline ~File() {}
+    File();
+    File(File const &that);
+    File &operator =(File const &that);
+    ~File();
 
     void Open(String const &file, FileAccess mode);
-    String const &ReadString();
+    String ReadString();
     void Close();
 
 private:

@@ -20,6 +20,7 @@ namespace lol
 template<typename T> class Atomic
 {
 public:
+    inline Atomic() : m_value(0) {}
     inline Atomic(T const &value) : m_value(value) {}
 
     operator T() const
@@ -42,7 +43,7 @@ public:
         return ret;
     }
 
-    inline T& operator++()
+    inline T operator++()
     {
         m_mutex.Lock();
         T ret = ++m_value;
@@ -58,7 +59,7 @@ public:
         return ret;
     }
 
-    inline T& operator--()
+    inline T operator--()
     {
         m_mutex.Lock();
         T ret = --m_value;
