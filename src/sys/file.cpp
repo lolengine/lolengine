@@ -35,7 +35,7 @@ class FileData
         String ret;
 #if __CELLOS_LV2__
 #elif HAVE_STDIO_H
-        while (!feof(m_fd))
+        while (m_fd && !feof(m_fd))
         {
             char buf[BUFSIZ];
             size_t count = fread(buf, 1, BUFSIZ, m_fd);
@@ -54,7 +54,9 @@ class FileData
     {
 #if __CELLOS_LV2__
 #elif HAVE_STDIO_H
-        fclose(m_fd);
+        if (m_fd)
+            fclose(m_fd);
+        m_fd = NULL;
 #endif
     }
 
