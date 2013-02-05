@@ -62,7 +62,8 @@ public:
             m_camera->SetOrtho((float)video_size.x, (float)video_size.y, .1f, 1000.f);
     }
 
-    MeshViewer(char *file_buffer = "MeshViewerBuffer.txt")
+    MeshViewer(char const *file_name = "MeshViewerBuffer.txt")
+      : m_file_name(file_name)
     {
         //Input setup
         Input::LinkActionToKey(IPT_CAM_RESET,           Key::Return);
@@ -133,20 +134,7 @@ public:
                 mat4::rotate(m_angle, vec3(0, 1, 0)) *
                 mat4::rotate(m_mesh_rotation.y, vec3(0, 1, 0));
 
-        //File management
-#ifdef HAVE_STDIO_H
-        m_file_buffer = fopen("MeshViewerBuffer.txt", "r");
-
-        if (!m_file_buffer)
-            Ticker::Shutdown();
-#else //Full FAIL, kill the viewer
-        Ticker::Shutdown();
-#endif
-
-        m_last_stream_size = 0;
-        m_last_stream_cmd << 0;
-
-        m_stream_update_time = 0.0f;
+        m_stream_update_time = 2.0f;
         m_stream_update_timer = 1.0f;
     }
 
@@ -155,9 +143,6 @@ public:
         Ticker::Unref(m_camera);
         for (int i = 0; i < m_lights.Count(); ++i)
             Ticker::Unref(m_lights[i]);
-#ifdef HAVE_STDIO_H
-        fclose(m_file_buffer);
-#endif
     }
 
     void SetDefaultMeshTransform()
@@ -273,38 +258,23 @@ public:
             m_stream_update_time = m_stream_update_timer + 1.0f;
         m_stream_update_time += seconds;
 
-#ifdef HAVE_STDIO_H
-        // obtain file size:
-        fseek(m_file_buffer, 0 , SEEK_END);
-        long new_stream_size = ftell(m_file_buffer);
-        rewind(m_file_buffer);
-#else
-        long new_stream_size = 0;
-#endif
-
-        if (new_stream_size && (new_stream_size != m_last_stream_size || m_stream_update_time > m_stream_update_timer))
+        if (m_stream_update_time > m_stream_update_timer)
         {
-            Array<char> new_stream_cmd;
-            m_stream_update_time = .0f;
+            m_stream_update_time = 0.f;
 
-            //Reserve the needed datas & read the file
-            new_stream_cmd.Resize((int)new_stream_size);
-#ifdef HAVE_STDIO_H
-            size_t result = fread(&new_stream_cmd[0], 1, new_stream_size, m_file_buffer);
-#else
-#endif
+            File f;
+            f.Open(m_file_name.C(), FileAccess::Read);
+            String cmd = f.ReadString();
+            f.Close();
 
-            //if the new cmd is different from the previous one
-            if (new_stream_cmd.Count() != m_last_stream_cmd.Count() ||
-                strcmp(&new_stream_cmd[0], &m_last_stream_cmd[0]))
+            if (cmd.Count()
+                 && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
-                //store the current datas
-                m_last_stream_cmd  = new_stream_cmd;
-                m_last_stream_size = new_stream_size;
+                m_cmdlist << cmd;
 
                 //Create a new mesh
                 m_meshes.Push(EasyMesh(), false, .0f, vec3(.0f));
-                m_meshes.Last().m1.Compile(&new_stream_cmd[0]);
+                m_meshes.Last().m1.Compile(cmd.C());
             }
         }
     }
@@ -370,11 +340,8 @@ private:
     vec2            m_mesh_offset;       //Mesh Offset after first mesh (x: offset, y: scale)
 
     //File data
-#ifdef HAVE_STDIO_H
-    FILE *          m_file_buffer;
-#endif
-    long            m_last_stream_size;
-    Array<char>     m_last_stream_cmd;
+    String          m_file_name;
+    Array<String>   m_cmdlist;
     float           m_stream_update_time;
     float           m_stream_update_timer;
 
