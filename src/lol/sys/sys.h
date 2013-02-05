@@ -11,9 +11,10 @@
 #if !defined __LOL_SYS_SYS_H__
 #define __LOL_SYS_SYS_H__
 
+#include <lol/sys/thread.h>
+#include <lol/sys/atomic.h>
 #include <lol/sys/init.h>
 #include <lol/sys/file.h>
-#include <lol/sys/thread.h>
 #include <lol/sys/timer.h>
 
 #endif // __LOL_SYS_SYS_H__

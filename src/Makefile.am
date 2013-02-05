@@ -42,7 +42,8 @@ liblol_headers = \
     lol/math/remez.h lol/math/math.h lol/math/geometry.h \
     \
     lol/sys/sys.h \
-    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \
+    lol/sys/timer.h \
     \
     lol/image/image.h \
     lol/image/color.h \
