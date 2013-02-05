@@ -61,9 +61,6 @@
     <Filter Include="platform\ps3">
       <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
     </Filter>
-    <Filter Include="thread">
-      <UniqueIdentifier>{d31f75ec-73c8-4bda-9b8c-6d62a55bc30d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lol\base">
       <UniqueIdentifier>{e17b998c-d494-480b-ae29-5d1564f73327}</UniqueIdentifier>
     </Filter>
@@ -72,6 +69,15 @@
     </Filter>
     <Filter Include="image\color">
       <UniqueIdentifier>{73e4bc38-19e4-41d2-82e9-ebf22fa65f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\sys">
+      <UniqueIdentifier>{647eb922-e722-418a-91e9-9e2d53ff5a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\gpu">
+      <UniqueIdentifier>{514846bc-650a-4423-b35a-6ccb9a1f0edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sys">
+      <UniqueIdentifier>{1d945673-ee9a-48a7-9ee8-34338c5fefc1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -223,9 +229,6 @@
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="tileset.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="timer.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="video.cpp">
@@ -660,6 +663,18 @@
     <ClCompile Include="easymesh\csgbsp.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="sys\init.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\file.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\timer.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
+    <ClCompile Include="base\log.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image\image.h">
@@ -704,21 +719,6 @@
     <ClInclude Include="mesh\mesh.h">
       <Filter>mesh</Filter>
     </ClInclude>
-    <ClInclude Include="gpu\shader.h">
-      <Filter>gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="gpu\texture.h">
-      <Filter>gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="gpu\vertexbuffer.h">
-      <Filter>gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="thread\thread.h">
-      <Filter>thread</Filter>
-    </ClInclude>
-    <ClInclude Include="thread\threadbase.h">
-      <Filter>thread</Filter>
-    </ClInclude>
     <ClInclude Include="application\application.h">
       <Filter>application</Filter>
     </ClInclude>
@@ -730,9 +730,6 @@
     </ClInclude>
     <ClInclude Include="platform\xbox\xboxinput.h">
       <Filter>platform\xbox</Filter>
-    </ClInclude>
-    <ClInclude Include="gpu\indexbuffer.h">
-      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="input\input.h">
       <Filter>input</Filter>
@@ -830,17 +827,11 @@
     <ClInclude Include="tileset.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="video.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="world.h">
       <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="gpu\framebuffer.h">
-      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="generated\position.hh">
       <Filter>generated</Filter>
@@ -1595,9 +1586,6 @@
     <ClInclude Include="gpu\lolfx-compiler.h">
       <Filter>gpu</Filter>
     </ClInclude>
-    <ClInclude Include="gpu\lolfx.h">
-      <Filter>gpu</Filter>
-    </ClInclude>
     <ClInclude Include="generated\lolfx-parser.h">
       <Filter>gpu</Filter>
     </ClInclude>
@@ -1636,6 +1624,60 @@
     </ClInclude>
     <ClInclude Include="easymesh\csgbsp.h">
       <Filter>easymesh</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\base.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\atomic.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\math\functions.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\file.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\framebuffer.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\indexbuffer.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\image\image.h">
+      <Filter>lol\image</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\gpu.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\init.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\log.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\shader.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\thread.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\texture.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\timer.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\vertexbuffer.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\sys.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\lolfx.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\threadbase.h">
+      <Filter>sys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
