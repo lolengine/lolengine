@@ -46,8 +46,8 @@ extern void Init(int argc, char *argv[],
                  String const &projectdir = LOL_CONFIG_PROJECTDIR,
                  String const &solutiondir = LOL_CONFIG_SOLUTIONDIR);
 
-extern void SetDataDir(char const *dir);
-extern char const *GetDataDir();
+extern void SetDataDir(String const &dir);
+extern String const &GetDataDir();
 
 } /* namespace System */
 

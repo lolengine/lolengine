@@ -42,7 +42,7 @@ liblol_headers = \
     lol/math/remez.h lol/math/math.h lol/math/geometry.h \
     \
     lol/sys/sys.h \
-    lol/sys/init.h lol/sys/thread.h lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
     \
     lol/image/image.h \
     lol/image/color.h \
@@ -90,7 +90,7 @@ liblol_sources = \
     \
     mesh/mesh.cpp mesh/mesh.h \
     \
-    sys/init.cpp sys/timer.cpp \
+    sys/init.cpp sys/timer.cpp sys/file.cpp \
     sys/threadbase.h \
     \
     image/image.cpp image/image.h image/image-private.h \

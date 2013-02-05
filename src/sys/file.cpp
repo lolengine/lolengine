@@ -8,13 +8,20 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_SYS_SYS_H__
-#define __LOL_SYS_SYS_H__
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-#include <lol/sys/init.h>
-#include <lol/sys/file.h>
-#include <lol/sys/thread.h>
-#include <lol/sys/timer.h>
+#include "core.h"
 
-#endif // __LOL_SYS_SYS_H__
+namespace lol
+{
+
+class FileData
+{
+    friend class File;
+
+};
+
+} /* namespace lol */
 
