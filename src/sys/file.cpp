@@ -23,7 +23,8 @@ class FileData
 
     void Open(String const &file, FileAccess mode)
     {
-#if HAVE_STDIO_H
+#if __CELLOS_LV2__
+#elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
         m_fd = fopen(file.C(), "r");
 #endif
@@ -32,7 +33,8 @@ class FileData
     String ReadString()
     {
         String ret;
-#if HAVE_STDIO_H
+#if __CELLOS_LV2__
+#elif HAVE_STDIO_H
         while (!feof(m_fd))
         {
             char buf[BUFSIZ];
@@ -50,12 +52,14 @@ class FileData
 
     void Close()
     {
-#if HAVE_STDIO_H
+#if __CELLOS_LV2__
+#elif HAVE_STDIO_H
         fclose(m_fd);
 #endif
     }
 
-#if HAVE_STDIO_H
+#if __CELLOS_LV2__
+#elif HAVE_STDIO_H
     FILE *m_fd;
 #endif
     Atomic<int> m_refcount;
