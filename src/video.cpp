@@ -249,6 +249,8 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         case DebugRenderMode::UV:
         {
 #if defined USE_D3D9 || defined _XBOX
+#elif defined HAVE_GLES_2X
+            glEnable(GL_CULL_FACE);
 #else
             glEnable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -275,6 +277,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 #endif
             }
 #if defined USE_D3D9 || defined _XBOX
+#elif defined HAVE_GLES_2X
 #else
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
