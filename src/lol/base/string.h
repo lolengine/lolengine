@@ -95,6 +95,13 @@ public:
         return ((Super const &)*this).Count() - 1;
     }
 
+    /* Return a C string */
+    inline char const *C() const
+    {
+        return &(*this)[0];
+    }
+
+    /* Does not initialise the newly allocated characters */
     void Resize(int count)
     {
         ASSERT(count >= 0);
