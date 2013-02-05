@@ -44,19 +44,20 @@ public:
 
     ~TickerData()
     {
+        ASSERT(nentities == 0,
+               "still %i entities in ticker\n", nentities);
 #if !LOL_RELEASE
-        if (nentities)
-            Log::Error("still %i entities in ticker\n", nentities);
         if (autolist)
         {
             int count = 0;
             for (Entity *e = autolist; e; e = e->m_autonext, count++)
                 ;
-            Log::Error("still %i autoreleased entities\n", count);
+            ASSERT(count == 0, "still %i autoreleased entities\n", count);
         }
+#endif
         Log::Debug("%i frames required to quit\n",
                 frame - quitframe);
-#endif
+
         gametick.Push(0);
         disktick.Push(0);
         delete gamethread;
@@ -113,15 +114,11 @@ void Ticker::Register(Entity *entity)
 
 void Ticker::Ref(Entity *entity)
 {
-#if !LOL_RELEASE
-    if (!entity)
-    {
-        Log::Error("referencing NULL entity\n");
-        return;
-    }
-    if (entity->m_destroy)
-        Log::Error("referencing entity scheduled for destruction\n");
-#endif
+    ASSERT(entity, "dereferencing NULL entity\n");
+    ASSERT(!entity->m_destroy,
+           "referencing entity scheduled for destruction %s\n",
+           entity->GetName());
+
     if (entity->m_autorelease)
     {
         /* Get the entity out of the m_autorelease list. This is usually
@@ -144,17 +141,12 @@ void Ticker::Ref(Entity *entity)
 
 int Ticker::Unref(Entity *entity)
 {
-#if !LOL_RELEASE
-    if (!entity)
-    {
-        Log::Error("dereferencing NULL entity\n");
-        return 0;
-    }
-    if (entity->m_ref <= 0)
-        Log::Error("dereferencing unreferenced entity\n");
-    if (entity->m_autorelease)
-        Log::Error("dereferencing autoreleased entity\n");
-#endif
+    ASSERT(entity, "dereferencing NULL entity\n");
+    ASSERT(entity->m_ref > 0, "dereferencing unreferenced entity %s\n",
+           entity->GetName())
+    ASSERT(!entity->m_autorelease, "dereferencing autoreleased entity %s\n",
+           entity->GetName())
+
     return --entity->m_ref;
 }
 
