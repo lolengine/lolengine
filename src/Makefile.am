@@ -62,7 +62,9 @@ liblol_sources = \
     \
     easymesh/easymesh.cpp easymesh/easymesh.h \
     easymesh/csgbsp.cpp easymesh/csgbsp.h \
-    easymesh/shiny.lolfx \
+    easymesh/shiny.lolfx easymesh/shinydebugwireframe.lolfx \
+    easymesh/shinydebuglighting.lolfx easymesh/shinydebugnormal.lolfx \
+    easymesh/shinydebugUV.lolfx easymesh/shiny_SK.lolfx \
     easymesh/easymesh-compiler.cpp easymesh/easymesh-compiler.h \
     generated/easymesh-parser.cpp generated/easymesh-parser.h \
     generated/easymesh-scanner.cpp \
