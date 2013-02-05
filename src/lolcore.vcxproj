@@ -294,6 +294,7 @@
     <ClCompile Include="sampler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
+    <ClCompile Include="sys\file.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
@@ -605,6 +606,7 @@
     <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\vector.h" />
+    <ClInclude Include="lol\sys\file.h" />
     <ClInclude Include="lol\sys\init.h" />
     <ClInclude Include="lol\sys\sys.h" />
     <ClInclude Include="lol\sys\thread.h" />

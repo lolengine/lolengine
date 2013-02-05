@@ -92,7 +92,7 @@ void Init(int argc, char *argv[],
     }
 
     Log::Debug("binary dir: %s\n", &binarydir[0]);
-    Log::Debug("root dir: %s\n", GetDataDir());
+    Log::Debug("root dir: %s\n", &GetDataDir()[0]);
 }
 
 /*
@@ -101,16 +101,15 @@ void Init(int argc, char *argv[],
 
 String data_dir = "";
 
-void SetDataDir(char const *dir)
+void SetDataDir(String const &dir)
 {
     data_dir = dir;
 }
 
-char const *GetDataDir()
+String const &GetDataDir()
 {
-    return &data_dir[0];
+    return data_dir;
 }
-
 
 } /* namespace System */
 
