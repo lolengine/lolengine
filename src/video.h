@@ -41,6 +41,25 @@ struct ClearMask
     inline operator Value() { return m_value; }
 };
 
+struct DebugRenderMode
+{
+    enum Value
+    {
+        //Add your new rendermode at your convenience
+        Default,
+        Wireframe,
+        Lighting,
+        Normal,
+        UV,
+
+        Max
+    }
+    m_value;
+
+    inline DebugRenderMode(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Video
 {
 public:
@@ -50,6 +69,8 @@ public:
     static void SetDepth(bool set);
     static void SetClearColor(vec4 color);
     static void SetClearDepth(float f);
+    static void SetDebugRenderMode(DebugRenderMode d);
+    static DebugRenderMode GetDebugRenderMode();
     static void Clear(ClearMask m);
     static void Capture(uint32_t *buffer);
     static ivec2 GetSize();

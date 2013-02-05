@@ -154,9 +154,11 @@ private:
     /* FIXME: put this in a separate class so that we can copy meshes. */
     struct
     {
-        Shader *shader;
-        ShaderAttrib coord, norm, color;
-        ShaderUniform modelview, view, invview, proj, normalmat, damage, lights;
+        /* FIXME: very naughty way of handling debug render modes */
+        Array<Shader *>shader;
+        Array<ShaderAttrib> coord, norm, color;
+        Array<ShaderUniform> modelview, view, invview, proj, normalmat, damage, lights;
+
         VertexDeclaration *vdecl;
         VertexBuffer *vbo;
         IndexBuffer *ibo;

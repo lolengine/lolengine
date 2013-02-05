@@ -642,6 +642,11 @@
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="easymesh\shiny.lolfx" />
+    <LolFxCompile Include="easymesh\shinydebuglighting.lolfx" />
+    <LolFxCompile Include="easymesh\shinydebugnormal.lolfx" />
+    <LolFxCompile Include="easymesh\shinydebugUV.lolfx" />
+    <LolFxCompile Include="easymesh\shinydebugwireframe.lolfx" />
+    <LolFxCompile Include="easymesh\shiny_SK.lolfx" />
     <LolFxCompile Include="gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="gpu\emptymaterial.lolfx" />
     <LolFxCompile Include="gpu\testmaterial.lolfx" />

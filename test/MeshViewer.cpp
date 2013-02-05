@@ -50,10 +50,10 @@ public:
     {
         //FOV compensation doesn't work
         ivec2 video_size = Video::GetSize();
-        float near = -video_size.x - video_size.y;
-        float far = video_size.x + video_size.y;
+        float near = (float)-video_size.x - video_size.y;
+        float far = (float)video_size.x + video_size.y;
         float t1 = tanf(new_fov / 2);
-        float dist = video_size.x / (2.0f * t1);
+        float dist = (float)video_size.x / (2.0f * t1);
         //m_fov_compensation = mat4::translate(-0.5f * video_size.x, -0.5f * video_size.y, -dist);
         m_fov_compensation = mat4::translate(vec3(.0f));
         if (new_fov > 0.1f)
@@ -156,9 +156,12 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        //Shutdown logic
-        if (Input::WasReleased(Key::Escape))
-            Ticker::Shutdown();
+        //TODO : This should probably be "standard LoL behaviour"
+        {
+            //Shutdown logic
+            if (Input::WasReleased(Key::Escape))
+                Ticker::Shutdown();
+        }
 
         //Update Mesh BBox - Get the Min/Max needed
         vec3 min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
@@ -282,6 +285,20 @@ public:
     virtual void TickDraw(float seconds)
     {
         WorldEntity::TickDraw(seconds);
+
+        //TODO : This should probably be "standard LoL behaviour"
+        {
+            if (Input::WasReleased(Key::F1))
+                Video::SetDebugRenderMode(DebugRenderMode::Default);
+            if (Input::WasReleased(Key::F2))
+                Video::SetDebugRenderMode(DebugRenderMode::Wireframe);
+            if (Input::WasReleased(Key::F3))
+                Video::SetDebugRenderMode(DebugRenderMode::Lighting);
+            if (Input::WasReleased(Key::F4))
+                Video::SetDebugRenderMode(DebugRenderMode::Normal);
+            if (Input::WasReleased(Key::F5))
+                Video::SetDebugRenderMode(DebugRenderMode::UV);
+        }
 
         for (int i = 0; i < m_meshes.Count(); i++)
         {

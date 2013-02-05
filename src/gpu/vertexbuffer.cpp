@@ -158,7 +158,6 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
 #else
     /* FIXME: this has nothing to do here! */
     glFrontFace(GL_CCW);
-    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -222,7 +221,6 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
 #else
     /* FIXME: this has nothing to do here! */
     glFrontFace(GL_CCW);
-    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
