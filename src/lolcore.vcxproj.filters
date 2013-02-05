@@ -1699,6 +1699,21 @@
     <LolFxCompile Include="gpu\tile.lolfx">
       <Filter>...</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="easymesh\shiny_SK.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="easymesh\shinydebuglighting.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="easymesh\shinydebugnormal.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="easymesh\shinydebugUV.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="easymesh\shinydebugwireframe.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y">

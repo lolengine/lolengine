@@ -36,6 +36,11 @@
 #include "easymesh/easymesh-compiler.h"
 
 LOLFX_RESOURCE_DECLARE(shiny);
+LOLFX_RESOURCE_DECLARE(shinydebugwireframe);
+LOLFX_RESOURCE_DECLARE(shinydebuglighting);
+LOLFX_RESOURCE_DECLARE(shinydebugnormal);
+LOLFX_RESOURCE_DECLARE(shinydebugUV);
+LOLFX_RESOURCE_DECLARE(shiny_SK);
 
 namespace lol
 {
@@ -64,28 +69,38 @@ void EasyMesh::CloseBrace()
 
 void EasyMesh::MeshConvert(Shader* provided_shader)
 {
-    if(provided_shader == NULL)
+    for (int i = 0; i < DebugRenderMode::Max; i++)
     {
-        m_gpu.shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
-    }
-    else
-    {
-        m_gpu.shader = provided_shader;
-    }
+        if (i == DebugRenderMode::Default)
+        {
+            if(provided_shader == NULL)
+                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+            else
+                m_gpu.shader << provided_shader;
+        }
+        else if (i == DebugRenderMode::Wireframe)
+                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugwireframe));
+        else if (i == DebugRenderMode::Lighting)
+                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebuglighting));
+        else if (i == DebugRenderMode::Normal)
+                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugnormal));
+        else if (i == DebugRenderMode::UV)
+                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
 
-    m_gpu.modelview = m_gpu.shader->GetUniformLocation("in_ModelView");
-    m_gpu.view = m_gpu.shader->GetUniformLocation("in_View");
-    m_gpu.invview = m_gpu.shader->GetUniformLocation("in_Inv_View");
-    m_gpu.proj = m_gpu.shader->GetUniformLocation("in_Proj");
-    m_gpu.normalmat = m_gpu.shader->GetUniformLocation("in_NormalMat");
-    m_gpu.damage = m_gpu.shader->GetUniformLocation("in_Damage");
-    m_gpu.lights = m_gpu.shader->GetUniformLocation("u_Lights");
-    m_gpu.coord = m_gpu.shader->GetAttribLocation("in_Vertex",
-                                          VertexUsage::Position, 0);
-    m_gpu.norm = m_gpu.shader->GetAttribLocation("in_Normal",
-                                         VertexUsage::Normal, 0);
-    m_gpu.color = m_gpu.shader->GetAttribLocation("in_Color",
-                                          VertexUsage::Color, 0);
+        m_gpu.modelview << m_gpu.shader.Last()->GetUniformLocation("in_ModelView");
+        m_gpu.view << m_gpu.shader.Last()->GetUniformLocation("in_View");
+        m_gpu.invview << m_gpu.shader.Last()->GetUniformLocation("in_Inv_View");
+        m_gpu.proj << m_gpu.shader.Last()->GetUniformLocation("in_Proj");
+        m_gpu.normalmat << m_gpu.shader.Last()->GetUniformLocation("in_NormalMat");
+        m_gpu.damage << m_gpu.shader.Last()->GetUniformLocation("in_Damage");
+        m_gpu.lights << m_gpu.shader.Last()->GetUniformLocation("u_Lights");
+        m_gpu.coord << m_gpu.shader.Last()->GetAttribLocation("in_Vertex",
+                                              VertexUsage::Position, 0);
+        m_gpu.norm << m_gpu.shader.Last()->GetAttribLocation("in_Normal",
+                                             VertexUsage::Normal, 0);
+        m_gpu.color << m_gpu.shader.Last()->GetAttribLocation("in_Color",
+                                              VertexUsage::Color, 0);
+    }
 
     m_gpu.vdecl = new VertexDeclaration(
         VertexStream<vec3,vec3,u8vec4>(VertexUsage::Position,
@@ -122,10 +137,12 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 
 void EasyMesh::Render(mat4 const &model, float damage)
 {
+    DebugRenderMode d = Video::GetDebugRenderMode();
+
     mat4 modelview = Scene::GetDefault()->GetViewMatrix() * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
 
-    m_gpu.shader->Bind();
+    m_gpu.shader[d]->Bind();
 
     /* FIXME: this should be hidden in the shader */
     /* FIXME: the 4th component of the position can be used for other things */
@@ -135,16 +152,16 @@ void EasyMesh::Render(mat4 const &model, float damage)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();
     while (light_data.Count() < 8)
         light_data << vec4(0.f) << vec4(0.f);
-    m_gpu.shader->SetUniform(m_gpu.lights, light_data);
+    m_gpu.shader[d]->SetUniform(m_gpu.lights[d], light_data);
 
-    m_gpu.shader->SetUniform(m_gpu.modelview, modelview);
-    m_gpu.shader->SetUniform(m_gpu.view, Scene::GetDefault()->GetViewMatrix());
-    m_gpu.shader->SetUniform(m_gpu.invview, inverse(Scene::GetDefault()->GetViewMatrix()));
-    m_gpu.shader->SetUniform(m_gpu.proj, Scene::GetDefault()->GetProjMatrix());
-    m_gpu.shader->SetUniform(m_gpu.normalmat, normalmat);
-    m_gpu.shader->SetUniform(m_gpu.damage, damage);
+    m_gpu.shader[d]->SetUniform(m_gpu.modelview[d], modelview);
+    m_gpu.shader[d]->SetUniform(m_gpu.view[d], Scene::GetDefault()->GetViewMatrix());
+    m_gpu.shader[d]->SetUniform(m_gpu.invview[d], inverse(Scene::GetDefault()->GetViewMatrix()));
+    m_gpu.shader[d]->SetUniform(m_gpu.proj[d], Scene::GetDefault()->GetProjMatrix());
+    m_gpu.shader[d]->SetUniform(m_gpu.normalmat[d], normalmat);
+    m_gpu.shader[d]->SetUniform(m_gpu.damage[d], damage);
     m_gpu.vdecl->Bind();
-    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord, m_gpu.norm, m_gpu.color);
+    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord[d], m_gpu.norm[d], m_gpu.color[d]);
     m_gpu.ibo->Bind();
     m_gpu.vdecl->DrawIndexedElements(MeshPrimitive::Triangles,
                                      0, 0, m_gpu.vertexcount,

@@ -51,6 +51,7 @@ class VideoData
 private:
     static mat4 proj_matrix;
     static ivec2 saved_viewport;
+    static DebugRenderMode render_mode;
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
     static IDirect3D9 *d3d_ctx;
@@ -66,6 +67,7 @@ private:
 
 mat4 VideoData::proj_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
+DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
@@ -153,6 +155,7 @@ void Video::Setup(ivec2 size)
     /* Initialise reasonable scene default properties */
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
     SetClearDepth(1.f);
+    SetDebugRenderMode(DebugRenderMode::Default);
 }
 
 void Video::SetFov(float theta)
@@ -230,6 +233,60 @@ void Video::SetClearDepth(float f)
 #else
     glClearDepth(f);
 #endif
+}
+
+void Video::SetDebugRenderMode(DebugRenderMode d)
+{
+    if (d == DebugRenderMode::Max)
+        return;
+
+    switch(d)
+    {
+        //All these modes are handled in the shaders.
+        case DebugRenderMode::Default:
+        case DebugRenderMode::Lighting:
+        case DebugRenderMode::Normal:
+        case DebugRenderMode::UV:
+        {
+#if defined USE_D3D9 || defined _XBOX
+#else
+            glEnable(GL_CULL_FACE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
+            break;
+        }
+        case DebugRenderMode::Wireframe:
+        {
+            if (VideoData::render_mode == DebugRenderMode::Wireframe)
+            {
+#if defined USE_D3D9 || defined _XBOX
+#else
+                if (glIsEnabled(GL_CULL_FACE) == GL_TRUE)
+                    glDisable(GL_CULL_FACE);
+                else
+                    glEnable(GL_CULL_FACE);
+#endif
+            }
+            else
+            {
+#if defined USE_D3D9 || defined _XBOX
+#else
+                glDisable(GL_CULL_FACE);
+#endif
+            }
+#if defined USE_D3D9 || defined _XBOX
+#else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
+            break;
+        }
+    }
+    VideoData::render_mode = d;
+}
+
+DebugRenderMode Video::GetDebugRenderMode()
+{
+    return VideoData::render_mode;
 }
 
 void Video::Clear(ClearMask m)
