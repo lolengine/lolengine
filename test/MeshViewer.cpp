@@ -88,7 +88,7 @@ public:
         Input::LinkActionToKey(IPT_MESH_ROT_RIGHT,      Key::KP6);
         Input::LinkActionToKey(IPT_MESH_ROT_UP,         Key::KP8);
         Input::LinkActionToKey(IPT_MESH_ROT_DOWN,       Key::KP5);
-        
+
         m_angle = 0;
 
         //Camera Setup
@@ -166,7 +166,7 @@ public:
         m_mesh_screen_offset = vec2(.54f, .0f);
         m_mesh_offset = vec2(-.64f, .07f);
     }
-    
+
     virtual void TickGame(float seconds)
     {
         WorldEntity::TickGame(seconds);
@@ -363,7 +363,7 @@ private:
     //Move transform damping
     vec2            m_mesh_rotation_damp;
     vec2            m_mesh_screen_offset_damp;
-    vec2            m_mesh_offset_damp;  
+    vec2            m_mesh_offset_damp;
 
     vec2            m_mesh_rotation;     //Meshes rotation
     vec2            m_mesh_screen_offset;//Meshes screen offset
@@ -388,7 +388,7 @@ private:
     mat4            m_fov_compensation;
 };
 
-//The basic main : 
+//The basic main :
 int main(int argc, char **argv)
 {
     System::Init(argc, argv);
