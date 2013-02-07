@@ -32,6 +32,7 @@ public:
     void SetText(char const *text);
     void SetInt(int val);
     void SetPos(vec3 pos);
+    vec3 GetPos();
     void SetAlign(int align);
 
     enum
