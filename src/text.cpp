@@ -75,6 +75,12 @@ void Text::SetPos(vec3 pos)
     data->pos = pos;
 }
 
+
+vec3 Text::GetPos()
+{
+    return (vec3)data->pos;
+}
+
 void Text::SetAlign(int align)
 {
     data->align = align;
