@@ -1,1 +1,11 @@
-[sc#2f2 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#22f ab 2 2 2 tx 0 csgu]]
+[sc#88f ab 4 4 4]
+//[sc#ff2 asph 2 4 4 4]
+//[sc#ff2 acap 2 4 4]
+//[sc#ff2 ac 12 4 4 4 0 0]
+
+//[sc#ff2 asph 2 10 10 10]
+//[sc#400 asph 2 10 10 10 t 2 2 2 csgs]
+//[sc#88f afcb 10 10 10 .25 tx 0 sc 0.1]
+//[sc#22f afcb 10 10 10 .25 t 2 2 2 csgs]
+//[sc#fff afcb 7 7 7 .25]
+//[sc#ff2 afcb 7 7 7 .25 t 1 1 1]

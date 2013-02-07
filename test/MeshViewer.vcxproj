@@ -47,6 +47,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="shinyfur.lolfx" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>

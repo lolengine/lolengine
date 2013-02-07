@@ -21,6 +21,8 @@
 using namespace std;
 using namespace lol;
 
+LOLFX_RESOURCE_DECLARE(shinyfur);
+
 #define    IPT_CAM_RESET          "Cam_Center"
 #define    IPT_CAM_FORWARD        "Cam_Forward"
 #define    IPT_CAM_BACKWARD       "Cam_Backward"
@@ -42,6 +44,8 @@ using namespace lol;
 #define    IPT_MESH_ROT_RIGHT     "Mesh_Rot_Right"
 #define    IPT_MESH_ROT_UP        "Mesh_Rot_Up"
 #define    IPT_MESH_ROT_DOWN      "Mesh_Rot_Down"
+
+#define    WITH_FUR               0
 
 class MeshViewer : public WorldEntity
 {
@@ -270,6 +274,24 @@ public:
             String cmd = f.ReadString();
             f.Close();
 
+            for (int i = 0; i < cmd.Count() - 1; i++)
+            {
+                if (cmd[i] == '/' && cmd[i + 1] == '/')
+                {
+                    int j = i;
+                    for (; j < cmd.Count(); j++)
+                    {
+                        if (cmd[j] == '\r' || cmd[j] == '\n')
+                            break;
+                    }
+                    String new_cmd = cmd.Sub(0, i);
+                    if (j < cmd.Count())
+                        new_cmd += cmd.Sub(j, cmd.Count() - j);
+                    cmd = new_cmd;
+                    i--;
+                }
+            }
+
             if (cmd.Count()
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
@@ -277,7 +299,10 @@ public:
 
                 //Create a new mesh
                 m_meshes.Push(EasyMesh(), false, .0f, vec3(.0f));
-                m_meshes.Last().m1.Compile(cmd.C());
+                if (!m_meshes.Last().m1.Compile(cmd.C()))
+                    m_meshes.Pop();
+                else
+                    m_meshes.Last().m1.ComputeTexCoord(0.2f, 2);
             }
         }
     }
@@ -304,7 +329,12 @@ public:
         {
             if (!m_meshes[i].m2)
             {
+                //Fur support
+#if WITH_FUR
+                m_meshes[i].m1.MeshConvert(Shader::Create(LOLFX_RESOURCE_NAME(shinyfur)));
+#else
                 m_meshes[i].m1.MeshConvert();
+#endif
                 m_meshes[i].m2 = true;
             }
         }
@@ -330,7 +360,12 @@ public:
                                                    mat4::scale(vec3(vec2(m_meshes[i].m3), 1.0f)) *
                                                    default_proj *
                                                    m_fov_compensation);
+#if WITH_FUR
+                for (int j=0; j < 40; j++)
+                    m_meshes[i].m1.Render(m_mat, 0.1 * j);
+#else
                 m_meshes[i].m1.Render(m_mat);
+#endif
                 Video::Clear(ClearMask::Depth);
             }
         }

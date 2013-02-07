@@ -10,6 +10,7 @@ uniform mat4 in_ModelView;
 uniform mat4 in_View;
 uniform mat4 in_Proj;
 uniform mat3 in_NormalMat;
+uniform float in_Damage;
 
 varying vec4 pass_Vertex; /* View space */
 varying vec3 pass_TNormal;
@@ -17,7 +18,11 @@ varying vec4 pass_Color;
 
 void main(void)
 {
-    vec4 vertex = in_ModelView * vec4(in_Vertex, 1.0);
+    vec4 vertex = vec4(in_Vertex + (in_Normal * in_Damage), 1.0);
+    float dam_perc = in_Damage / (0.1 * 40);
+    vec3 vGravity = vec3(0.0, -0.981, 0.0) * 2.0;
+    float k = pow(dam_perc, 3);
+    vertex = in_ModelView * vertex + in_View * vec4(vGravity * k, 1.0);
     vec3 tnorm = normalize(in_NormalMat * in_Normal);
 
     pass_Vertex = vertex;
@@ -34,29 +39,17 @@ void main(void)
 precision highp float;
 #endif
 
-uniform float in_Damage;
 uniform mat4 in_View;
 uniform mat4 in_Inv_View;
+uniform mat4 in_Inv_ModelView;
+uniform float in_Damage;
 
+//Light list
 uniform vec4 u_Lights[8 * 2];
 
 varying vec4 pass_Vertex; /* View space */
 varying vec3 pass_TNormal;
 varying vec4 pass_Color;
-
-#if 0
-//Cos(45) = 0.70710678118
-//1.0 - Cos(45) = 0.29289321881
-
-const float cos_45      = 0.70710678118;
-const float inv_cos_45  = 0.29289321881;
-
-//Cube Light
-vec4 in_Light3_Pos = vec4(-10.0, 10.0, 5.0, 1.0);
-vec3 in_Light3_Size_Inner = vec3(3.0, 1.0, 3.0);
-vec3 in_Light3_Size_Outer = vec3(15.0, 15.0, 15.0);
-vec3 in_Light3_diffuse = vec3(0.4, 1.0, 0.4);
-#endif
 
 void main(void)
 {
@@ -65,7 +58,7 @@ void main(void)
     float specular_power = 60.0;
 
     /* World properties */
-    vec3 ambient = vec3(0.1, 0.1, 0.1);
+    vec3 ambient = vec3(0.7, 0.7, 0.7);
     vec3 specular = vec3(0.0, 0.0, 0.0);
     vec3 diffuse = vec3(0.0, 0.0, 0.0);
 
@@ -99,35 +92,27 @@ void main(void)
                          * pow(max(dot(r, v), 0.0), specular_power);
     }
 
-#if 0
-    //Light calculation for cube light
-    vec3 specular_color = vec3(1.0, 1.0, 0.6);
-    vec3 Local_Vertex = (in_Inv_View * pass_Vertex).xyz - (in_Light3_Pos).xyz;
-    vec3 Proj_Vertex = clamp(Local_Vertex.xyz, -in_Light3_Size_Inner, in_Light3_Size_Inner);
-    vec3 new_LightDir = Local_Vertex - Proj_Vertex;
-
-    vec3 light_radius = max(vec3(0.0,0.0,0.0), vec3(1.0,1.0,1.0) - abs(new_LightDir / in_Light3_Size_Outer));
-    float light_radius_mod = min(light_radius.x, min(light_radius.y, light_radius.z));
-
-    if (length(new_LightDir) == 0.0)
-        sdotn = 1.0;
-    else
-    {
-        new_LightDir = normalize((in_View * vec4(Proj_Vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz);
-        sdotn = max(dot(new_LightDir, pass_TNormal), 0.0);
-        r = reflect(-new_LightDir, pass_TNormal);
-        if (sdotn > 0.0 && light_radius_mod > 0.0)
-            specular += specular_color * min(specular_reflect, light_radius_mod)
-                     * pow(max(dot(r, v), 0.0), specular_power);
-    }
-    diffuse += in_Light3_diffuse * min(sdotn, light_radius_mod);
-    //----------
-#endif
-
     vec3 light = ambient + diffuse + specular;
 
-    vec4 real_color = mix(pass_Color, vec4(1.2, 1.2, 1.2, 1.0), in_Damage);
-    gl_FragColor = real_color * vec4(light, 1.0);
+    vec4 world_vertex = in_Inv_ModelView * pass_Vertex;
+    vec4 world_normal = in_Inv_ModelView * vec4(pass_TNormal, 1.0);
+
+    float dam_perc = in_Damage / (0.1 * 40);
+    float PI = 3.14159265358979323846264;
+    dam_perc = (sin(PI * (dam_perc - 0.5)) * 0.5 + 0.5);
+    dam_perc *= dam_perc;
+    dam_perc = 1.0 - dam_perc;
+    float mod = 2.0;
+    float transp = dam_perc;
+                   /*
+                   abs(sin(world_vertex.x * mod) * dam_perc * 0.5 + 0.5) * 
+                   abs(sin(world_vertex.y * mod) * dam_perc * 0.5 + 0.5) *
+                   abs(sin(world_vertex.z * mod) * dam_perc * 0.5 + 0.5)
+                   */
+
+    //vec4 real_color = mix(pass_Color, vec4(1.2, 1.2, 1.2, 1.0), in_Damage);
+    // - in_Damage
+    gl_FragColor = pass_Color * vec4(light, (in_Damage == 0)?(1.0):(transp));
 }
 
 [vert.hlsl]
