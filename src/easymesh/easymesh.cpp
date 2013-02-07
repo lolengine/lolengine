@@ -45,28 +45,33 @@ LOLFX_RESOURCE_DECLARE(shiny_SK);
 namespace lol
 {
 
+//-----------------------------------------------------------------------------
 EasyMesh::EasyMesh()
   : m_color(0), m_color2(0), m_ignore_winding_on_scale(0)
 {
     m_cursors.Push(0, 0);
 }
 
+//-----------------------------------------------------------------------------
 bool EasyMesh::Compile(char const *command)
 {
     EasyMeshCompiler mc(*this);
     return mc.ParseString(command);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::OpenBrace()
 {
     m_cursors.Push(m_vert.Count(), m_indices.Count());
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::CloseBrace()
 {
     m_cursors.Pop();
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::MeshConvert(Shader* provided_shader)
 {
     for (int i = 0; i < DebugRenderMode::Max; i++)
@@ -88,6 +93,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
                 m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
 
         m_gpu.modelview << m_gpu.shader.Last()->GetUniformLocation("in_ModelView");
+        m_gpu.invmodelview << m_gpu.shader.Last()->GetUniformLocation("in_Inv_ModelView");
         m_gpu.view << m_gpu.shader.Last()->GetUniformLocation("in_View");
         m_gpu.invview << m_gpu.shader.Last()->GetUniformLocation("in_Inv_View");
         m_gpu.proj << m_gpu.shader.Last()->GetUniformLocation("in_Proj");
@@ -95,23 +101,49 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
         m_gpu.damage << m_gpu.shader.Last()->GetUniformLocation("in_Damage");
         m_gpu.lights << m_gpu.shader.Last()->GetUniformLocation("u_Lights");
         m_gpu.coord << m_gpu.shader.Last()->GetAttribLocation("in_Vertex",
-                                              VertexUsage::Position, 0);
+                                             VertexUsage::Position, 0);
         m_gpu.norm << m_gpu.shader.Last()->GetAttribLocation("in_Normal",
                                              VertexUsage::Normal, 0);
         m_gpu.color << m_gpu.shader.Last()->GetAttribLocation("in_Color",
-                                              VertexUsage::Color, 0);
+                                             VertexUsage::Color, 0);
+#if VERTEX_USEAGE == VU_BONES
+        //TODO : -- BONE SUPPORT --
+#elif VERTEX_USEAGE == VU_TEX_UV
+        //UV SUPPORT --
+        m_gpu.tex_coord << m_gpu.shader.Last()->GetAttribLocation("in_TexCoord",
+                                              VertexUsage::TexCoord, 0);
+#endif
     }
 
+#if VERTEX_USEAGE == VU_BONES
+        //TODO : -- BONE SUPPORT --
+#elif VERTEX_USEAGE == VU_TEX_UV
+    //UV SUPPORT --
+    m_gpu.vdecl = new VertexDeclaration(
+        VertexStream<vec3,vec3,u8vec4,vec2>(VertexUsage::Position,
+                                            VertexUsage::Normal,
+                                            VertexUsage::Color,
+                                            VertexUsage::TexCoord));
+
+    Array<vec3,vec3,u8vec4,vec2> vertexlist;
+    for (int i = 0; i < m_vert.Count(); i++)
+        vertexlist.Push(m_vert[i].m1,
+                        m_vert[i].m2,
+                        (u8vec4)(m_vert[i].m3 * 255.f),
+                        m_vert[i].m4);
+#else
+    //-- VANILLA --
     m_gpu.vdecl = new VertexDeclaration(
         VertexStream<vec3,vec3,u8vec4>(VertexUsage::Position,
-                                       VertexUsage::Normal,
-                                       VertexUsage::Color));
+                                        VertexUsage::Normal,
+                                        VertexUsage::Color));
 
     Array<vec3,vec3,u8vec4> vertexlist;
     for (int i = 0; i < m_vert.Count(); i++)
         vertexlist.Push(m_vert[i].m1,
                         m_vert[i].m2,
                         (u8vec4)(m_vert[i].m3 * 255.f));
+#endif
 
     Array<uint16_t> indexlist;
     for (int i = 0; i < m_indices.Count(); i += 3)
@@ -135,6 +167,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
     m_gpu.indexcount = indexlist.Count();
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::Render(mat4 const &model, float damage)
 {
     DebugRenderMode d = Video::GetDebugRenderMode();
@@ -155,13 +188,22 @@ void EasyMesh::Render(mat4 const &model, float damage)
     m_gpu.shader[d]->SetUniform(m_gpu.lights[d], light_data);
 
     m_gpu.shader[d]->SetUniform(m_gpu.modelview[d], modelview);
+    m_gpu.shader[d]->SetUniform(m_gpu.invmodelview[d], inverse(modelview));
     m_gpu.shader[d]->SetUniform(m_gpu.view[d], Scene::GetDefault()->GetViewMatrix());
     m_gpu.shader[d]->SetUniform(m_gpu.invview[d], inverse(Scene::GetDefault()->GetViewMatrix()));
     m_gpu.shader[d]->SetUniform(m_gpu.proj[d], Scene::GetDefault()->GetProjMatrix());
     m_gpu.shader[d]->SetUniform(m_gpu.normalmat[d], normalmat);
     m_gpu.shader[d]->SetUniform(m_gpu.damage[d], damage);
     m_gpu.vdecl->Bind();
+#if VERTEX_USEAGE == VU_BONES
+    //TODO : -- BONE SUPPORT --
+#elif VERTEX_USEAGE == VU_TEX_UV
+    //UV SUPPORT --
+    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord[d], m_gpu.norm[d], m_gpu.color[d], m_gpu.tex_coord[d]);
+#else
+    //-- VANILLA --
     m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord[d], m_gpu.norm[d], m_gpu.color[d]);
+#endif
     m_gpu.ibo->Bind();
     m_gpu.vdecl->DrawIndexedElements(MeshPrimitive::Triangles,
                                      0, 0, m_gpu.vertexcount,
@@ -170,60 +212,162 @@ void EasyMesh::Render(mat4 const &model, float damage)
     m_gpu.vdecl->Unbind();
 }
 
-
 //-------------------
 // "Collisions" functions
 //-------------------
 #define VX_ALONE -2
 #define VX_MASTER -1
 
+//-----------------------------------------------------------------------------
 //helpers func to retrieve a vertex.
-int FindVertexInDict(int search_idx, Array< int, int > const &vertex_dict)
+int VertexDictionnary::FindVertexMaster(const int search_idx)
 {
     //Resolve current vertex idx in the dictionnary (if exist)
-    for (int j = 0; j < vertex_dict.Count(); j++)
-        if (vertex_dict[j].m1 == search_idx)
-            return j;
-    return -1;
+    for (int j = 0; j < vertex_list.Count(); j++)
+        if (vertex_list[j].m1 == search_idx)
+            return vertex_list[j].m3;
+    return VDictType::DoesNotExist;
 }
 
-//helpers func to retrieve a triangle.
-int FindTriangleInDict(int search_idx, Array< int, Array< vec3, vec3, vec3 > > const &triangle_isec)
+//-----------------------------------------------------------------------------
+//retrieve a list of matching vertices, doesn't include search_idx.
+bool VertexDictionnary::FindMatchingVertices(const int search_idx, Array<int> &matching_ids)
 {
-    //Resolve current vertex idx in the dictionnary (if exist)
-    for (int j = 0; j < triangle_isec.Count(); j++)
-        if (triangle_isec[j].m1 == search_idx)
-            return j;
-    return -1;
+    int cur_mast = FindVertexMaster(search_idx);
+
+    if (cur_mast == VDictType::DoesNotExist || cur_mast == VDictType::Alone)
+        return false;
+
+    if (cur_mast == VDictType::Master)
+        cur_mast = search_idx;
+    else
+        matching_ids << vertex_list[cur_mast].m1;
+
+    for (int j = 0; j < vertex_list.Count(); j++)
+        if (vertex_list[j].m3 == cur_mast && vertex_list[j].m1 != search_idx)
+            matching_ids << vertex_list[cur_mast].m1;
+
+    return (matching_ids.Count() > 0);
 }
 
-//Will update the given list with all the vertices on the same spot.
-void EasyMesh::UpdateVertexDict(Array< int, int > &vertex_dict)
+//-----------------------------------------------------------------------------
+//Will return connected vertices (through triangles), if returned vertex has matching ones, it only returns the master.
+bool VertexDictionnary::FindConnectedVertices(const int search_idx, const Array<int> &tri_list, Array<int> &connected_vert, Array<int> const *ignored_tri)
 {
-    //First, build the vertex Dictionnary
-    for (int i = 0; i < m_vert.Count(); i++)
+    Array<int> connected_tri;
+    FindConnectedTriangles(search_idx, tri_list, connected_tri, ignored_tri);
+
+    for (int i = 0; i < connected_tri.Count(); i++)
     {
-        int CurIdx = FindVertexInDict(i, vertex_dict);
-
-        //go through all vertices and do the match-up.
-        if (CurIdx == -1)
+        for (int j = 0; j < 3; j++)
         {
-            for (int j = i + 1; j < m_vert.Count(); j++)
+            int v_indice = tri_list[connected_tri[j] + j];
+            if (v_indice != search_idx)
             {
-                if (sqlength(m_vert[i].m1 - m_vert[j].m1) < CSG_EPSILON)
-                {
-                    if (CurIdx == -1)
-                    {
-                        CurIdx = vertex_dict.Count();
-                        vertex_dict.Push(i, VX_MASTER);
-                    }
-                    vertex_dict.Push(j, CurIdx);
-                }
+                int found_master = FindVertexMaster(tri_list[connected_tri[j] + j]);
+                if (found_master == VDictType::Alone || found_master == VDictType::Master)
+                    connected_vert << v_indice;
+                else
+                    connected_vert << found_master;
             }
         }
     }
+    return (connected_vert.Count() > 0);
+}
+//-----------------------------------------------------------------------------
+bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+{
+    return FindConnectedTriangles(ivec3(search_idx, search_idx, search_idx), tri_list, connected_tri, ignored_tri);
+}
+//-----------------------------------------------------------------------------
+bool VertexDictionnary::FindConnectedTriangles(const ivec2 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+{
+    return FindConnectedTriangles(ivec3(search_idx, search_idx.x), tri_list, connected_tri, ignored_tri);
+}
+//-----------------------------------------------------------------------------
+bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+{
+    int needed_validation = 0;
+    Array<int> vert_list[3];
+    for (int i = 0; i < 3; i++)
+    {
+        //Small optim since above func will use this one
+        if ((i == 1 && search_idx[0] == search_idx[1]) ||
+            (i == 2 && (search_idx[0] == search_idx[2] || search_idx[1] == search_idx[2])))
+            continue;
+        else
+        {
+            //increment the validation info, hence empty list aren't taken into account.
+            needed_validation++;
+            vert_list[i] << search_idx[i];
+            FindMatchingVertices(search_idx[i], vert_list[i]);
+        }
+    }
+
+    for (int i = 0; i < tri_list.Count(); i += 3)
+    {
+        if (ignored_tri)
+        {
+            bool should_pass = false;
+            for (int j = 0; !should_pass && j < ignored_tri->Count(); j++)
+                if ((*ignored_tri)[j] == i)
+                    should_pass = true;
+            if (should_pass)
+                continue;
+        }
+        int found_validation = 0;
+        for (int j = 0; j < 3; j++)
+        {
+            bool validated = false;
+            for (int k = 0; !validated && k < vert_list[j].Count(); k++)
+                for (int l = 0; !validated && l < 3; l++)
+                    if (vert_list[j][k] == tri_list[i + l])
+                        validated = true;
+            found_validation += (validated)?(1):(0);
+        }
+        //triangle is validated store it
+        if (found_validation == needed_validation)
+            connected_tri << i;
+    }
+
+    return (connected_tri.Count() > 0);
 }
 
+//-----------------------------------------------------------------------------
+//Will update the given list with all the vertices on the same spot.
+void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
+{
+    for (int j = 0; j < vertex_list.Count(); j++)
+        if (vertex_list[j].m1 == vert_id)
+            return;
+
+    //First, build the vertex Dictionnary
+    int i = 0;
+    for (; i < master_list.Count(); i++)
+    {
+        int cur_mast  = master_list[i];
+        int cur_id    = vertex_list[cur_mast].m1;
+        vec3 cur_loc  = vertex_list[cur_mast].m2;
+        int &cur_type = vertex_list[cur_mast].m3;
+
+        if (cur_id == vert_id)
+            return;
+
+        if (sqlength(cur_loc - vert_coord) < CSG_EPSILON)
+        {
+            if (cur_type == VDictType::Alone)
+                cur_type = VDictType::Master;
+            vertex_list.Push(vert_id, vert_coord, cur_mast);
+            return;
+        }
+    }
+
+    //We're here because we couldn't find any matching vertex
+    master_list.Push(vertex_list.Count());
+    vertex_list.Push(vert_id, vert_coord, VDictType::Alone);
+}
+
+//-----------------------------------------------------------------------------
 void EasyMesh::MeshCsg(CSGUsage csg_operation)
 {
     //A vertex dictionnary for vertices on the same spot.
@@ -399,206 +543,50 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     m_cursors.Last().m1 = m_vert.Count();
     m_cursors.Last().m2 = m_indices.Count();
 
-#if 0
-    UpdateVertexDict(vertex_dict);
-
-    for (int t0 = 0; t0 < m_indices.Count(); t0 += 3)
-    {
-        for (int t1 = t0 + 3; t1 < m_indices.Count(); t1 += 3)
-        {
-            int CommonVertices = 0;
-            //Search for common vertices, if > 1 the two triangle share a side, so no split is required.
-            for (int k = 0; k < 3; k++)
-            {
-                int ref_master = FindVertexInDict(m_indices[t0 + k], vertex_dict);
-                if (ref_master != -1)
-                {
-                    if (vertex_dict[ref_master].m2 != VX_MASTER)
-                        ref_master = vertex_dict[ref_master].m2;
-                    for (int l = 0; l < 3; l++)
-                    {
-                        int test_master = FindVertexInDict(m_indices[t1 + l], vertex_dict);
-                        if (test_master != -1)
-                        {
-                            if (vertex_dict[test_master].m2 != VX_MASTER)
-                                test_master = vertex_dict[test_master].m2;
-                            if (test_master == ref_master)
-                            {
-                                CommonVertices++;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (CommonVertices < 2)
-            {
-                vec3 iP0, iP1;
-                //Build the triangle intersection list
-                if (TriangleIsectTriangle(m_vert[m_indices[t0]].m1, m_vert[m_indices[t0 + 1]].m1, m_vert[m_indices[t0 + 2]].m1,
-                                          m_vert[m_indices[t1]].m1, m_vert[m_indices[t1 + 1]].m1, m_vert[m_indices[t1 + 2]].m1,
-                                          iP0, iP1))
-                {
-                    int CurIdx = FindTriangleInDict(t0, triangle_isec);
-                    if (CurIdx == -1)
-                    {
-                        CurIdx = triangle_isec.Count();
-                        triangle_isec.Push(t0, Array<vec3, vec3, vec3>());
-                    }
-                    triangle_isec[CurIdx].m2.Push(iP0, iP1, vec3(.0f));
-                    CurIdx = FindTriangleInDict(t1, triangle_isec);
-                    if (CurIdx == -1)
-                    {
-                        CurIdx = triangle_isec.Count();
-                        triangle_isec.Push(t1, Array<vec3, vec3, vec3>());
-                    }
-                    triangle_isec[CurIdx].m2.Push(iP0, iP1, vec3(.0f));
-                }
-            }
-        }
-    }
-
-    /* seems to be counter-productive in some rare cases. */
-    /*
-    //Every intersection has been found, let's remove those that exist twice.
-    for(int i = 0; i < triangle_isec.Count(); i++)
-    {
-        for(int j = 0; j < triangle_isec[i].m2.Count(); j++)
-        {
-            for(int k = j + 1; k < triangle_isec[i].m2.Count(); k++)
-            {
-                //if the two Dir-vector are parallel & the fist Dir-vector is parallel to the (P0, P1)-vector, this is the same intersection, so kill it.
-                if (abs(dot(normalize(triangle_isec[i].m2[j].m2 - triangle_isec[i].m2[j].m1),
-                            normalize(triangle_isec[i].m2[k].m2 - triangle_isec[i].m2[k].m1)))
-                        >= 1.0 &&
-                    abs(dot(normalize(triangle_isec[i].m2[j].m2 - triangle_isec[i].m2[j].m1),
-                            normalize(triangle_isec[i].m2[k].m1 - triangle_isec[i].m2[j].m1)))
-                        >= 1.0 )
-                    triangle_isec[i].m2.Remove(k--);
-            }
-        }
-    }
-    */
-
-    //Now, the triangle intersection tab should be nice and cosy, so we can start actually cutting some triangles.
-    vec3 isecV[2] = { vec3(.0f), vec3(.0f) };
-    int isecI[2] = { -1, -1 };
-    int v_idx0 = 0; int v_idx1 = 0;
-    int new_v_idx[2] = { 0, 0 };
-    vec3 n0(.0f); vec3 n1(.0f);
-    vec4 c0(.0f); vec4 c1(.0f);
-    for(int i = 0; i < triangle_isec.Count(); i++)
-    {
-        int tri_idx = triangle_isec[i].m1;
-        for(int j = 0; j < triangle_isec[i].m2.Count(); j++)
-        {
-            //Get intersection on actual triangle sides.
-            if (RayIsectTriangleSide(m_vert[m_indices[tri_idx]].m1, m_vert[m_indices[tri_idx + 1]].m1, m_vert[m_indices[tri_idx + 2]].m1,
-                                     triangle_isec[i].m2[j].m1, triangle_isec[i].m2[j].m2,
-                                     isecV[0], isecI[0], isecV[1], isecI[1]))
-            {
-                //Check if the found intersections point are in the triangle. If not, ignore.
-                //Cases are :
-                //  1) at least one dot is negative (one point in the triangle).
-                //  2) the two dot are positive but the intersection point are on all parts of the triangle, and therefore negative.
-                //If one of the point is on one side, some calculations tweak are needed.
-                //If the two points are on the triangle sides, just go with it.
-                bool should_proceed_with_cutting = true;
-                //find out if points are on one of the side
-                int p0_tri_idx = ((sqlength(triangle_isec[i].m2[j].m1 - isecV[0]) < CSG_EPSILON)?(0):(
-                                    (sqlength(triangle_isec[i].m2[j].m1 - isecV[1]) < CSG_EPSILON)?(1):(-1)));
-                int p1_tri_idx = ((sqlength(triangle_isec[i].m2[j].m2 - isecV[0]) < CSG_EPSILON)?(0):(
-                                    (sqlength(triangle_isec[i].m2[j].m2 - isecV[1]) < CSG_EPSILON)?(1):(-1)));
-                if (p0_tri_idx < 0 || p1_tri_idx < 0)
-                {
-                    float dot0 = (p0_tri_idx >= 0)?(1.0f):(dot(triangle_isec[i].m2[j].m1 - isecV[0],
-                                                               triangle_isec[i].m2[j].m1 - isecV[1]));
-                    float dot1 = (p1_tri_idx >= 0)?(1.0f):(dot(triangle_isec[i].m2[j].m2 - isecV[0],
-                                                               triangle_isec[i].m2[j].m2 - isecV[1]));
-                    float dot2 = dot(triangle_isec[i].m2[j].m1 - isecV[(p0_tri_idx == -1)?(0):(1 - p0_tri_idx)],
-                                     triangle_isec[i].m2[j].m2 - isecV[(p1_tri_idx == -1)?(0):(1 - p1_tri_idx)]);
-                    should_proceed_with_cutting = (((dot0 < .0f) || dot1 < .0f) || (dot0 > .0f && dot1 > .0f && dot2 < .0f));
-                }
-                if (should_proceed_with_cutting)
-                {
-                    //Add the new vertices
-                    int b_idx = 0;
-                    for(int k = 0; k < 2; k++)
-                    {
-                        if (b_idx == isecI[k])
-                            b_idx++;
-
-                        new_v_idx[k] = m_vert.Count();
-                        AddVertex(isecV[k]);
-                        //bad calculations of normal there.
-                        n0 = m_vert[m_indices[tri_idx + isecI[k]]].m2;
-                        n1 = m_vert[m_indices[tri_idx + (isecI[k] + 1) % 3]].m2;
-                        SetCurVertNormal(normalize((n0 + n1) * .5f));
-                        //color
-#if 0
-                        c0 = m_vert[m_indices[tri_idx + isecI[k]]].m3;
-                        c1 = m_vert[m_indices[tri_idx + (isecI[k] + 1) % 3]].m3;
-                        SetCurVertColor((c0 + c1) * .5f);
-#else
-                        SetCurVertColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
-#endif
-                    }
-
-                    //small trick, b_idx is the side index that has no intersection.
-                    v_idx0 = (b_idx == 1)?(1):(0);
-                    v_idx1 = (b_idx == 1)?(0):(1);
-
-                    //Add the new triangles
-                    AppendTriangle(m_indices[tri_idx + b_idx],              new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
-                    AppendTriangle(m_indices[tri_idx + ((b_idx + 2) % 3)],  new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
-                    //Replace the current triangle by on of the new one, instead of erasing it.
-                    m_indices[tri_idx + ((b_idx + 2) % 3)] = new_v_idx[v_idx0];
-
-                    if (j + 1 < triangle_isec[i].m2.Count())
-                    {
-                        triangle_isec[i].m2.Remove(j--);
-                        //add the two new triangle to the checklist.
-                        triangle_isec.Push(m_indices.Count() - 6, triangle_isec[i].m2);
-                        triangle_isec.Push(m_indices.Count() - 3, triangle_isec[i].m2);
-                    }
-                }
-            }
-        }
-    }
-#endif
     //DONE for the splitting !
 }
 
 
-//-------------------
-
+//-----------------------------------------------------------------------------
 void EasyMesh::ToggleScaleWinding()
 {
     m_ignore_winding_on_scale = !m_ignore_winding_on_scale;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor(vec4 const &color)
 {
     m_color = color;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor2(vec4 const &color)
 {
     m_color2 = color;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-    //TODO : m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, ivec2(0), vec2(0));
+#if VERTEX_USEAGE == VU_BONES
+    //TODO : -- BONE SUPPORT --
+    m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, ivec2(0), vec2(0));
+#elif VERTEX_USEAGE == VU_TEX_UV
+    //-- UV SUPPORT --
+    m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, vec2(-1));
+#else
+    //-- VANILLA --
     m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color);
+#endif
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AddDuplicateVertex(int i)
 {
     m_vert << m_vert[i];
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
 {
     m_indices << base + i1;
@@ -610,6 +598,7 @@ void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
     m_indices << base + i3;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base)
 {
     m_indices << m_vert.Count(); AddDuplicateVertex(base + i1);
@@ -621,6 +610,7 @@ void EasyMesh::AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base
     m_indices << m_vert.Count(); AddDuplicateVertex(base + i3);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendTriangle(int i1, int i2, int i3, int base)
 {
     m_indices << base + i1;
@@ -628,6 +618,7 @@ void EasyMesh::AppendTriangle(int i1, int i2, int i3, int base)
     m_indices << base + i3;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base)
 {
     m_indices << m_vert.Count(); AddDuplicateVertex(base + i1);
@@ -635,6 +626,7 @@ void EasyMesh::AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base)
     m_indices << m_vert.Count(); AddDuplicateVertex(base + i3);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::ComputeNormals(int start, int vcount)
 {
     for (int i = 0; i < vcount; i += 3)
@@ -650,32 +642,209 @@ void EasyMesh::ComputeNormals(int start, int vcount)
     }
 }
 
+//-----------------------------------------------------------------------------
+void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
+{
+#if VERTEX_USEAGE == VU_TEX_UV
+    VertexDictionnary vert_dict;
+    Array<int> tri_list;
+    
+    tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
+    for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
+    {
+        vert_dict.AddVertex(m_indices[i], m_vert[m_indices[i]].m1);
+        tri_list << m_indices[i];
+    }
+
+    //full triangle count
+    Array<int> tri_done;
+    Array<int> tri_check;
+    int tri_count = (m_indices.Count() - m_cursors.Last().m2) / 3;
+
+    tri_check << tri_list[0];
+
+    while (tri_check.Count())
+    {
+        int cur_tri = tri_check[0];
+        int v[3]   = { tri_list[cur_tri + uv_offset % 3], tri_list[cur_tri + (1 + uv_offset) % 3], tri_list[cur_tri + (2 + uv_offset) % 3] };
+        vec2 uv[3] = { m_vert[tri_list[cur_tri]].m4, m_vert[tri_list[cur_tri + 1]].m4, m_vert[tri_list[cur_tri + 2]].m4 };
+        for (int j = 0; j < 3; j++)
+        {
+            if (uv[j] != vec2(-1.0f) && uv[j] == uv[(j + 1) % 3])
+            {
+                uv[0] = vec2(-1.0f);
+                uv[1] = vec2(-1.0f);
+                uv[2] = vec2(-1.0f);
+                break;
+            }
+        }
+        int uv_set = 0;
+        for (int j = 0; j < 3; j++)
+            uv_set += (uv[j].x < 0.f)?(0):(1);
+
+        //this case shouldn't happen.
+        if (uv_set == 1)
+        {
+            /*
+            for (int j = 0; j < 3; j++)
+            {
+                if (uv[j] != vec2(-1.0f))
+                {
+                    uv[(j + 1) % 2] = uv[j] + vec2(.0f, uv_scale * length(m_vert[v[j]].m1 - m_vert[v[(j + 1) % 3]].m1));
+                    uv_set = 2;
+                    break;
+                }
+            }
+            */
+        }
+        //No UV is set, let's do the arbitrary set and use the basic method.
+        if (uv_set == 0)
+        {
+            float new_dot = FLT_MAX;
+            int base_i = 0;
+            for (int j = 0; j < 3; j++)
+            {
+                float tmp_dot = abs(dot(normalize(m_vert[v[(j + 1) % 3]].m1 - m_vert[v[j]].m1),
+                                        normalize(m_vert[v[(j + 2) % 3]].m1 - m_vert[v[j]].m1)));
+                if (tmp_dot < new_dot)
+                {
+                    base_i = j;
+                    new_dot = tmp_dot;
+                }
+            }
+            uv[base_i] = vec2(.0f);
+            uv[(base_i + 1) % 3] = vec2(.0f, uv_scale * length(m_vert[v[base_i]].m1 - m_vert[v[(base_i + 1) % 3]].m1));
+            uv_set = 2;
+        }
+        //2 points have been set, let's figure the third
+        if (uv_set == 2)
+        {
+            {
+                //invert values so the two set uv are in [0, 1] slots.
+                int new_v[3];
+                vec2 new_uv[3];
+                bool ignore_set = false;
+                if (uv[0].x >= 0.f && uv[1].x < 0.f)
+                {
+                    new_v[0] = v[2]; new_v[1] = v[0]; new_v[2] = v[1];
+                    new_uv[0] = uv[2]; new_uv[1] = uv[0]; new_uv[2] = uv[1];
+                }
+                else if (uv[0].x < 0.f && uv[1].x >= 0.f)
+                {
+                    new_v[0] = v[1]; new_v[1] = v[2]; new_v[2] = v[0];
+                    new_uv[0] = uv[1]; new_uv[1] = uv[2]; new_uv[2] = uv[0];
+                }
+                else
+                    ignore_set = true;
+                if (!ignore_set)
+                {
+                    v[0]  = new_v[0];  v[1]  = new_v[1];  v[2]  = new_v[2];
+                    uv[0] = new_uv[0]; uv[1] = new_uv[1]; uv[2] = new_uv[2];
+                }
+            }
+
+            //Do this to be sure the normal is OK.
+            ComputeNormals(cur_tri, 3);
+            vec3 v01 = normalize(m_vert[v[1]].m1 - m_vert[v[0]].m1);
+            vec3 v02 = m_vert[v[2]].m1 - m_vert[v[0]].m1;
+            vec3 v_dir = normalize(cross(m_vert[m_indices[cur_tri]].m2, v01));
+            vec2 texu_dir = uv[1] - uv[0];
+            vec2 texv_dir = vec2(texu_dir.y, -texu_dir.x);
+            //Final calculations
+            uv[2] = texu_dir * dot(v01, v02) + texv_dir * dot(v_dir, v02);
+
+            //Set UV on ALL matching vertices!
+            Array<int> matching_vert;
+            for (int i = 0; i < 3; i++)
+            {
+#if 1
+                //This marks all same position UV to the same values
+                //Deactivation is a test.
+                matching_vert << v[i];
+                vert_dict.FindMatchingVertices(v[i], matching_vert);
+                for (int j = 0; j < matching_vert.Count(); j++)
+                    if (m_vert[matching_vert[j]].m4 == vec2(-1.0f))
+                        m_vert[matching_vert[j]].m4 = abs(uv[i]);
+#else
+                m_vert[v[i]].m4 = abs(uv[i]);
+#endif
+            }
+
+            tri_done << cur_tri;
+            tri_check.Remove(0);
+
+            //Get connected triangles and go from there.
+            for (int j = 0; j < 3; j++)
+            {
+#if 0
+                //This finds triangle that are connected to this triangle
+                vert_dict.FindConnectedTriangles(ivec2(v[j], v[(j + 1) % 3]), tri_list, tri_check, &tri_done);
+#else
+                //This finds triangle that are connected to the vertices of this triangle
+                vert_dict.FindConnectedTriangles(v[j], tri_list, tri_check, &tri_done);
+#endif
+            }
+        }
+        else if (uv_set == 3)
+        {
+            bool tri_present = false;
+            for (int j = 0; j < tri_done.Count(); j++)
+                if (cur_tri == tri_done[j])
+                    tri_present = true;
+            if (!tri_present)
+                tri_done << cur_tri;
+            tri_check.Remove(0);
+        }
+
+        if (tri_check.Count() == 0 && tri_done.Count() != tri_count)
+        {
+            //look for unset triangle
+            for (int i = 0; !tri_check.Count() && i < tri_list.Count(); i += 3)
+            {
+                bool tri_present = false;
+                for (int j = 0; j < tri_done.Count(); j++)
+                    if (i == tri_done[j])
+                        tri_present = true;
+                if (!tri_present)
+                    tri_check << i;
+            }
+        }
+    }
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void EasyMesh::SetVertColor(vec4 const &color)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
         m_vert[i].m3 = color;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertNormal(vec3 const &normal)
 {
     m_vert[m_vert.Count() - 1].m2 = normal;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertColor(vec4 const &color)
 {
     m_vert[m_vert.Count() - 1].m3 = color;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::Translate(vec3 const &v)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
         m_vert[i].m1 += v;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::RotateX(float t) { Rotate(t, vec3(1, 0, 0)); }
 void EasyMesh::RotateY(float t) { Rotate(t, vec3(0, 1, 0)); }
 void EasyMesh::RotateZ(float t) { Rotate(t, vec3(0, 0, 1)); }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::Rotate(float t, vec3 const &axis)
 {
     mat3 m = mat3::rotate(t, axis);
@@ -686,6 +855,7 @@ void EasyMesh::Rotate(float t, vec3 const &axis)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::RadialJitter(float r)
 {
     Array<int> Welded;
@@ -730,6 +900,7 @@ void EasyMesh::RadialJitter(float r)
     ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::TaperX(float y, float z, float xoff)
 {
     /* FIXME: this code breaks normals! */
@@ -740,6 +911,7 @@ void EasyMesh::TaperX(float y, float z, float xoff)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::TaperY(float x, float z, float yoff)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
@@ -749,6 +921,7 @@ void EasyMesh::TaperY(float x, float z, float yoff)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::TaperZ(float x, float y, float zoff)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
@@ -758,6 +931,7 @@ void EasyMesh::TaperZ(float x, float y, float zoff)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::Scale(vec3 const &s)
 {
     vec3 const invs = vec3(1) / s;
@@ -780,10 +954,12 @@ void EasyMesh::Scale(vec3 const &s)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::MirrorX() { DupAndScale(vec3(-1, 1, 1)); }
 void EasyMesh::MirrorY() { DupAndScale(vec3(1, -1, 1)); }
 void EasyMesh::MirrorZ() { DupAndScale(vec3(1, 1, -1)); }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::DupAndScale(vec3 const &s)
 {
     int vlen = m_vert.Count() - m_cursors.Last().m1;
@@ -801,6 +977,7 @@ void EasyMesh::DupAndScale(vec3 const &s)
     m_cursors.Last().m2 -= tlen;
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
                     int dualside, int smooth)
 {
@@ -853,6 +1030,7 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 {
     int ibase = m_indices.Count();
@@ -949,6 +1127,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
     ComputeNormals(ibase, m_indices.Count() - ibase);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
 {
     OpenBrace();
@@ -957,6 +1136,7 @@ void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
     CloseBrace();
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
 {
     int ibase = m_indices.Count();
@@ -990,21 +1170,25 @@ void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
     ComputeNormals(ibase, m_indices.Count() - ibase);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendBox(vec3 const &size, float chamf)
 {
     AppendBox(size, chamf, false);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendSmoothChamfBox(vec3 const &size, float chamf)
 {
     AppendBox(size, chamf, true);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendFlatChamfBox(vec3 const &size, float chamf)
 {
     AppendBox(size, chamf, false);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 {
     if (chamf < 0.0f)
@@ -1100,6 +1284,7 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
         ComputeNormals(ibase, m_indices.Count() - ibase);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendStar(int nbranches, float r1, float r2,
                           int fade, int fade2)
 {
@@ -1131,6 +1316,7 @@ void EasyMesh::AppendStar(int nbranches, float r1, float r2,
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendExpandedStar(int nbranches, float r1,
                                   float r2, float extrar)
 {
@@ -1165,6 +1351,7 @@ void EasyMesh::AppendExpandedStar(int nbranches, float r1,
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendDisc(int nsides, float r, int fade)
 {
     int vbase = m_vert.Count();
@@ -1184,6 +1371,7 @@ void EasyMesh::AppendDisc(int nsides, float r, int fade)
     }
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleTriangle(float size, int fade)
 {
     mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
@@ -1202,11 +1390,13 @@ void EasyMesh::AppendSimpleTriangle(float size, int fade)
     AppendTriangle(0, 1, 2, m_vert.Count() - 3);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(float size, int fade)
 {
     AppendSimpleQuad(vec2(size * .5f), vec2(size * -.5f), 0.f, fade);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 {
     AddVertex(vec3(p2.x, z, -p1.y));
@@ -1222,6 +1412,7 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
     ComputeNormals(m_indices.Count() - 6, 6);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
                          float r1, float r2, float r12, float r22,
                          float sidemul, int offset)
@@ -1297,6 +1488,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
     ComputeNormals(ibase, m_indices.Count() - ibase);
 }
 
+//-----------------------------------------------------------------------------
 void EasyMesh::Chamfer(float f)
 {
     int vlen = m_vert.Count() - m_cursors.Last().m1;
@@ -1320,6 +1512,7 @@ void EasyMesh::Chamfer(float f)
         vertices[m_indices[i]]++;
 
     for (int i = 0; i < ilen / 3; i++)
+
     {
     #if 0
         if (vertices[m_indices[i * 3]] > 1)

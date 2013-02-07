@@ -15,6 +15,12 @@
 // ------------------
 //
 
+#define VU_BONES   2
+#define VU_TEX_UV  1
+#define VU_VANILLA 0
+
+#define VERTEX_USEAGE VU_VANILLA
+
 #if !defined __EASYMESH_EASYMESH_H__
 #define __EASYMESH_EASYMESH_H__
 
@@ -38,6 +44,39 @@ struct CSGUsage
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum for VertexDictionnary operations. */
+struct VDictType
+{
+    enum Value
+    {
+        DoesNotExist=-3,
+        Alone=-2,
+        Master=-1
+    }
+    m_value;
+
+    inline VDictType(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+//a class whose goal is to keep a list of the adjacent vertices for mesh operations purposes
+class VertexDictionnary
+{
+public:
+    int FindVertexMaster(const int search_idx);
+    bool FindMatchingVertices(const int search_idx, Array<int> &matching_ids);
+    bool FindConnectedVertices(const int search_idx, const Array<int> &tri_list, Array<int> &connected_vert, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const int search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    void AddVertex(int vert_id, vec3 vert_coord);
+    void Clear() { vertex_list.Empty(); }
+private:
+    //<VertexId, VertexLocation, VertexMasterId>
+    Array<int, vec3, int>   vertex_list;
+    //List of the master_ vertices
+    Array<int>              master_list;
+};
 
 class EasyMesh
 {
@@ -81,6 +120,8 @@ private:
     void AppendTriangle(int i1, int i2, int i3, int base);
     void AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base);
     void ComputeNormals(int start, int vcount);
+public:
+    void ComputeTexCoord(float uv_scale, int uv_offset);
     void SetVertColor(vec4 const &color);
 
     void SetCurVertNormal(vec3 const &normal);
@@ -141,11 +182,21 @@ public:
 private:
     vec4 m_color, m_color2;
     Array<uint16_t> m_indices;
-    //TODO : <coord, norm, color, bone_id, bone_weight>
-    //TODO : Array<vec3, vec3, vec4, ivec2, vec2> m_vert;
+#if VERTEX_USEAGE == VU_BONES
+    //TODO : -- BONE SUPPORT --
+    //TODO : <COORD, NORM, COLOR, BONE_ID, BONE_WEIGHT>
+    Array<vec3, vec3, vec4, ivec2, vec2> m_vert;
     //TODO : More bone blend support than 2 ?
-    //<coord, norm, color>
+#elif VERTEX_USEAGE == VU_TEX_UV
+    //TODO : -- UV SUPPORT --
+    //TODO : <COORD, NORM, COLOR, UV>
+    Array<vec3, vec3, vec4, vec2> m_vert;
+#else
+    //-- VANILLA --
+    //<COORD, NORM, COLOR>
     Array<vec3, vec3, vec4> m_vert;
+#endif
+
     //<vert count, indices count>
     Array<int, int> m_cursors;
     //When this flag is up, negative scaling will not invert faces.
@@ -156,8 +207,17 @@ private:
     {
         /* FIXME: very naughty way of handling debug render modes */
         Array<Shader *>shader;
+#if VERTEX_USEAGE == VU_BONES
+        //TODO : -- BONE SUPPORT --
+        Array<ShaderAttrib> coord, norm, color, bone_id, bone_weight;
+#elif VERTEX_USEAGE == VU_TEX_UV
+        //-- UV SUPPORT --
+        Array<ShaderAttrib> coord, norm, color, tex_coord;
+#else
+        //-- VANILLA --
         Array<ShaderAttrib> coord, norm, color;
-        Array<ShaderUniform> modelview, view, invview, proj, normalmat, damage, lights;
+#endif
+        Array<ShaderUniform> modelview, invmodelview, view, invview, proj, normalmat, damage, lights;
 
         VertexDeclaration *vdecl;
         VertexBuffer *vbo;

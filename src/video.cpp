@@ -254,14 +254,17 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 #elif defined HAVE_GLES_2X
             glEnable(GL_CULL_FACE);
 #else
-            glEnable(GL_CULL_FACE);
+            if (VideoData::render_mode == d && glIsEnabled(GL_CULL_FACE) == GL_TRUE)
+                glDisable(GL_CULL_FACE);
+            else
+                glEnable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
             break;
         }
         case DebugRenderMode::Wireframe:
         {
-            if (VideoData::render_mode == DebugRenderMode::Wireframe)
+            if (VideoData::render_mode == d)
             {
 #if defined USE_D3D9 || defined _XBOX
 #else
