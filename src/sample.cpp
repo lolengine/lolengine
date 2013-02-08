@@ -63,12 +63,17 @@ Sample::Sample(char const *path)
     sprintf(data->name, "<sample> %s", path);
 
 #if defined USE_SDL_MIXER
-    String fullpath = String(System::GetDataDir()) + String(path);
-    data->chunk = Mix_LoadWAV(&fullpath[0]);
+    Array<String> pathlist = System::GetPathList(path);
+    for (int i = 0; i < pathlist.Count(); ++i)
+    {
+        data->chunk = Mix_LoadWAV(pathlist[0].C());
+        if (data->chunk)
+            break;
+    }
     if (!data->chunk)
     {
 #if !LOL_RELEASE
-        Log::Error("could not load %s\n", &fullpath[0]);
+        Log::Error("could not load sample %s\n", path);
 #endif
         SDL_Quit();
         exit(1);
