@@ -35,6 +35,8 @@ namespace System
 #   define SEPARATOR '/'
 #endif
 
+static Array<String> data_dir;
+
 void Init(int argc, char *argv[],
           String const &projectdir, String const &solutiondir)
 {
@@ -77,7 +79,7 @@ void Init(int argc, char *argv[],
                 String rootdir = projectdir;
                 if (rootdir.Last() != SEPARATOR)
                     rootdir += SEPARATOR;
-                SetDataDir(&rootdir[0]);
+                AddDataDir(rootdir);
                 got_rootdir = true;
             }
             break;
@@ -87,28 +89,36 @@ void Init(int argc, char *argv[],
     /* If no rootdir found, use the executable location */
     if (!got_rootdir)
     {
-        SetDataDir(&binarydir[0]);
+        AddDataDir(binarydir);
         got_rootdir = true;
     }
 
-    Log::Debug("binary dir: %s\n", &binarydir[0]);
-    Log::Debug("root dir: %s\n", &GetDataDir()[0]);
+    Log::Debug("binary dir: %s\n", binarydir.C());
+    for (int i = 0; i < data_dir.Count(); ++i)
+        Log::Debug("data dir %d/%d: %s\n", i + 1, data_dir.Count(),
+                   data_dir[i].C());
 }
 
 /*
  * Data directory handling
  */
 
-String data_dir = "";
-
-void SetDataDir(String const &dir)
+void AddDataDir(String const &dir)
 {
-    data_dir = dir;
+    data_dir << dir;
 }
 
-String const &GetDataDir()
+Array<String> GetPathList(String const &file)
 {
-    return data_dir;
+    Array<String> ret;
+
+    for (int i = 0; i < data_dir.Count(); ++i)
+        ret << data_dir[0] + file;
+
+    if (ret.Count() == 0)
+        ret << file;
+
+    return ret;
 }
 
 } /* namespace System */

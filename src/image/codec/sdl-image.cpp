@@ -57,12 +57,18 @@ private:
 
 bool SdlImageData::Open(char const *path)
 {
-    String fullpath = String(System::GetDataDir()) + String(path);
-    m_img = IMG_Load(&fullpath[0]);
+    Array<String> pathlist = System::GetPathList(path);
+    for (int i = 0; i < pathlist.Count(); i++)
+    {
+        m_img = IMG_Load(pathlist[i].C());
+        if (m_img)
+            break;
+    }
+
     if (!m_img)
     {
 #if !LOL_RELEASE
-        Log::Error("could not load %s\n", &fullpath[0]);
+        Log::Error("could not load image %s\n", path);
 #endif
         return false;
     }

@@ -40,8 +40,8 @@ public:
     virtual void *GetData() const;
 
 private:
-    Gdiplus::Bitmap *bitmap;
-    Gdiplus::BitmapData bdata;
+    Gdiplus::Bitmap *m_bitmap;
+    Gdiplus::BitmapData m_bdata;
 };
 
 /*
@@ -62,39 +62,46 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
-    String fullpath = String(System::GetDataDir()) + String(path);
-    size_t len;
-    len = mbstowcs(NULL, &fullpath[0], 0);
-    wchar_t *wpath = new wchar_t[len + 1];
-    if (mbstowcs(wpath, &fullpath[0], len + 1) == (size_t)-1)
+    Array<String> pathlist = System::GetPathList(path);
+    m_bitmap = NULL;
+    for (int i = 0; i < pathlist.Count(); ++i)
     {
-#if !LOL_RELEASE
-        Log::Error("invalid image name %s\n", &fullpath[0]);
-#endif
-        delete[] wpath;
-        return false;
-    }
-
-    bitmap = NULL;
-    status = Gdiplus::Ok;
-    bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
-    if (bitmap)
-    {
-        status = bitmap->GetLastStatus();
-        if (status != Gdiplus::Ok)
+        size_t len;
+        len = mbstowcs(NULL, pathlist[i].C(), 0);
+        wchar_t *wpath = new wchar_t[len + 1];
+        if (mbstowcs(wpath, pathlist[i].C(), len + 1) == (size_t)-1)
         {
 #if !LOL_RELEASE
-            if (status != Gdiplus::InvalidParameter)
-                Log::Error("error %d loading %s\n",
-                           status, &fullpath[0]);
+            Log::Error("invalid image name %s\n", pathlist[i].C());
 #endif
-            delete bitmap;
-            bitmap = NULL;
+            delete[] wpath;
+            continue;
         }
+
+        status = Gdiplus::Ok;
+        m_bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
+
+        if (m_bitmap)
+        {
+            status = m_bitmap->GetLastStatus();
+            if (status != Gdiplus::Ok)
+            {
+#if !LOL_RELEASE
+                if (status != Gdiplus::InvalidParameter)
+                    Log::Error("error %d loading %s\n",
+                               status, pathlist[i].C());
+#endif
+                delete m_bitmap;
+                m_bitmap = NULL;
+            }
+        }
+
+        delete[] wpath;
+        if (m_bitmap)
+            break;
     }
 
-    delete[] wpath;
-    if (!bitmap)
+    if (!m_bitmap)
     {
 #if !LOL_RELEASE
         Log::Error("could not load %s\n", path);
@@ -102,24 +109,24 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
-    size = ivec2(bitmap->GetWidth(), bitmap->GetHeight());
+    size = ivec2(m_bitmap->GetWidth(), m_bitmap->GetHeight());
     format = Image::FORMAT_RGBA;
 
     Gdiplus::Rect rect(0, 0, size.x, size.y);
-    if(bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-                        PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
+    if(m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                          PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
     {
 #if !LOL_RELEASE
         Log::Error("could not lock bits in %s\n", path);
 #endif
-        delete bitmap;
+        delete m_bitmap;
         return false;
     }
 
     /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
-    uint8_t *p = static_cast<uint8_t *>(bdata.Scan0);
+    uint8_t *p = static_cast<uint8_t *>(m_bdata.Scan0);
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
         {
@@ -134,15 +141,15 @@ bool GdiPlusImageData::Open(char const *path)
 
 bool GdiPlusImageData::Close()
 {
-    bitmap->UnlockBits(&bdata);
-    delete bitmap;
+    m_bitmap->UnlockBits(&m_bdata);
+    delete m_bitmap;
 
     return true;
 }
 
 void * GdiPlusImageData::GetData() const
 {
-    return bdata.Scan0;
+    return m_bdata.Scan0;
 }
 
 } /* namespace lol */
