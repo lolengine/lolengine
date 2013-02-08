@@ -648,7 +648,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 #if VERTEX_USEAGE == VU_TEX_UV
     VertexDictionnary vert_dict;
     Array<int> tri_list;
-    
+
     tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
     for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
     {
