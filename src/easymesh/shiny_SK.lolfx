@@ -107,23 +107,23 @@ void main(void)
     //Light calculation for cube light
     //const float cos_45      = 0.70710678118;
     //const float inv_cos_45  = 0.29289321881;
-	vec3 local_vertex = (in_Inv_View * pass_Vertex).xyz - (in_Light3_Pos).xyz;
-	vec3 proj_vertex = clamp(local_vertex.xyz, -in_Light3_Size_Inner, in_Light3_Size_Inner);
-	vec3 proj_local_dir = local_vertex - proj_vertex;
+    vec3 local_vertex = (in_Inv_View * pass_Vertex).xyz - (in_Light3_Pos).xyz;
+    vec3 proj_vertex = clamp(local_vertex.xyz, -in_Light3_Size_Inner, in_Light3_Size_Inner);
+    vec3 proj_local_dir = local_vertex - proj_vertex;
     vec3 inner_dir = proj_vertex / in_Light3_Size_Inner;
     inner_dir.x = (inner_dir.x == 1.0)?(1.0):(0.0);
     inner_dir.y = (inner_dir.y == 1.0)?(1.0):(0.0);
     inner_dir.z = (inner_dir.z == 1.0)?(1.0):(0.0);
 
     //inside the cube
-	if (length(proj_local_dir) == 0.0)
+    if (length(proj_local_dir) == 0.0)
     {
-		sdotn = 1.0;
+        sdotn = 1.0;
         light_radius_mod = 1.0;
     }
     //spec calculation
-	else
-	{
+    else
+    {
         //Distance calculation
         vec3 proj_local_light = proj_local_dir / in_Light3_Size_Outer;
         light_radius_mod = max(0.0, 1.0 - length(proj_local_light));
@@ -138,14 +138,14 @@ void main(void)
         //    //vec3 proj_local_light = max(vec3(0.0,0.0,0.0), vec3(1.0,1.0,1.0) - abs(proj_local_dir / in_Light3_Size_Outer));
         //}
         /*
-		proj_local_dir = normalize((in_View * vec4(proj_vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz);
-		sdotn = max(dot(proj_local_dir, pass_TNormal), 0.0);
-	    r = reflect(-proj_local_dir, pass_TNormal);
-		if (sdotn > 0.0 && light_radius_mod > 0.0)
-			specular += specular_color * min(specular_reflect, light_radius_mod)
-					 * pow(max(dot(r, v), 0.0), specular_power);
+        proj_local_dir = normalize((in_View * vec4(proj_vertex + in_Light3_Pos.xyz,1.0)).xyz - pass_Vertex.xyz);
+        sdotn = max(dot(proj_local_dir, pass_TNormal), 0.0);
+        r = reflect(-proj_local_dir, pass_TNormal);
+        if (sdotn > 0.0 && light_radius_mod > 0.0)
+            specular += specular_color * min(specular_reflect, light_radius_mod)
+                     * pow(max(dot(r, v), 0.0), specular_power);
         */
-	}
+    }
     //diffuse calculation
     diffuse += in_Light3_diffuse * sdotn; //min(sdotn, light_radius_mod);
     //----------
