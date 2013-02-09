@@ -35,7 +35,7 @@ public:
     inline half(int f) { *this = makefast((float)f); }
     inline half(float f) { *this = makefast(f); }
     inline half(double f) { *this = makefast((float)f); }
-    inline half(long double f) { *this = makefast((float)f); }
+    inline half(ldouble f) { *this = makefast((float)f); }
 
     inline int is_nan() const
     {
@@ -61,7 +61,7 @@ public:
     inline half &operator =(int f) { return *this = makefast((float)f); }
     inline half &operator =(float f) { return *this = makefast(f); }
     inline half &operator =(double f) { return *this = makefast((float)f); }
-    inline half &operator =(long double f) { return *this = makefast((float)f); }
+    inline half &operator =(ldouble f) { return *this = makefast((float)f); }
     inline operator int8_t() const { return (int8_t)(float)*this; }
     inline operator uint8_t() const { return (uint8_t)(float)*this; }
     inline operator int16_t() const { return (int16_t)(float)*this; }
@@ -71,11 +71,9 @@ public:
     inline operator int64_t() const { return (int64_t)(float)*this; }
     inline operator uint64_t() const { return (uint64_t)(float)*this; }
 
-    inline operator float() const { return tofloat(*this); }
-    inline operator double() const { return tofloat(*this); }
-    inline operator long double() const { return tofloat(*this); }
-
-    static float tofloat(half h);
+    operator float() const;
+    inline operator double() const { return (float)(*this); }
+    inline operator ldouble() const { return (float)(*this); }
 
     /* Array conversions */
     static size_t convert(half *dst, float const *src, size_t nelem);
@@ -120,12 +118,12 @@ public:
 
 static inline half min(half a, half b) { return a < b ? a : b; }
 static inline half max(half a, half b) { return a > b ? a : b; }
-static inline half fmod(half a, half b)
+static inline float fmod(half a, half b)
 {
     using std::fmod;
-    return (half)fmod((float)a, (float)b);
+    return fmod((float)a, (float)b);
 }
-static inline half fract(half a) { return (half)fract((float)a); }
+static inline float fract(half a) { return fract((float)a); }
 static inline half abs(half a) { return half::makebits(a.bits & 0x7fffu); }
 
 static inline half clamp(half x, half a, half b)
@@ -172,7 +170,7 @@ DECLARE_COERCE_TO_HALF_OPS(uint64_t)
 
 DECLARE_COERCE_FROM_HALF_OPS(float)
 DECLARE_COERCE_FROM_HALF_OPS(double)
-DECLARE_COERCE_FROM_HALF_OPS(long double)
+DECLARE_COERCE_FROM_HALF_OPS(ldouble)
 
 #undef DECLARE_COERCE_HALF_NUMERIC_OPS
 #undef DECLARE_COERCE_HALF_OPS

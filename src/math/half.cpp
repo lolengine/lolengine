@@ -226,10 +226,10 @@ half half::makeaccurate(float f)
 
 /* Cast to float. Uses the branching version because loading the tables
  * for only one value is going to be cache-expensive. */
-float half::tofloat(half h)
+half::operator float() const
 {
     union { float f; uint32_t x; } u;
-    u.x = half_to_float_branch(h.bits);
+    u.x = half_to_float_branch(bits);
     return u.f;
 }
 
