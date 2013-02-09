@@ -91,24 +91,29 @@ bool Ps3ImageData::Open(char const *path)
     }
 
     /* Create decoder */
-    CellPngDecSubHandle hsub;
-
-    String fullpath = String("/app_home/") + String(System::GetDataDir()) + String(path);
-
     CellPngDecSrc dec_src;
     dec_src.srcSelect = CELL_PNGDEC_FILE;
-    dec_src.fileName = &fullpath[0];
     dec_src.fileOffset = 0;
     dec_src.fileSize = 0;
     dec_src.streamPtr = NULL;
     dec_src.streamSize = 0;
     dec_src.spuThreadEnable  = CELL_PNGDEC_SPU_THREAD_ENABLE;
+    CellPngDecSubHandle hsub;
     CellPngDecOpnInfo open_info;
-    err = cellPngDecOpen(hmain, &hsub, &dec_src, &open_info);
+
+    Array<String> pathlist = System::GetPathList(path);
+    for (int i = 0; i < pathlist.Count(); ++i)
+    {
+        dec_src.fileName = (String("/app_home") + pathlist[i]).C();
+        err = cellPngDecOpen(hmain, &hsub, &dec_src, &open_info);
+        if (err == CELL_OK)
+            break;
+    }
+
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not open %s for decoding\n", &fullpath[0]);
+        Log::Error("could not open %s for decoding\n", path);
 #endif
         return false;
     }
@@ -118,7 +123,7 @@ bool Ps3ImageData::Open(char const *path)
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not read image header in %s\n", &fullpath[0]);
+        Log::Error("could not read image header in %s\n", path);
 #endif
         return false;
     }
@@ -153,7 +158,7 @@ bool Ps3ImageData::Open(char const *path)
     if (err != CELL_OK)
     {
 #if !LOL_RELEASE
-        Log::Error("could not run PngDec decoder on %s\n", &fullpath[0]);
+        Log::Error("could not run PngDec decoder on %s\n", path);
 #endif
         return false;
     }
