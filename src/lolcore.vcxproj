@@ -271,6 +271,11 @@
     <None Include="gpu\lolfx-parser.y" />
     <None Include="gpu\lolfx-scanner.l" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="bullet\lolbullet.vcxproj">
+      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(SolutionDir)\Lol.Fx.targets" />
