@@ -1,43 +1,27 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
-
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
                   08_fbo 11_fractal
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
-01_triangle_CPPFLAGS = @LOL_CFLAGS@
-01_triangle_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-01_triangle_DEPENDENCIES = @LOL_STATIC_LIBS@
+01_triangle_CPPFLAGS = $(AM_CPPFLAGS)
 
 02_cube_SOURCES = 02_cube.cpp 02_cube.lolfx
-02_cube_CPPFLAGS = @LOL_CFLAGS@
-02_cube_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-02_cube_DEPENDENCIES = @LOL_STATIC_LIBS@
+02_cube_CPPFLAGS = $(AM_CPPFLAGS)
 
 03_noise_SOURCES = 03_noise.cpp 03_noise.lolfx
-03_noise_CPPFLAGS = @LOL_CFLAGS@
-03_noise_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-03_noise_DEPENDENCIES = @LOL_STATIC_LIBS@
+03_noise_CPPFLAGS = $(AM_CPPFLAGS)
 
 04_texture_SOURCES = 04_texture.cpp 04_texture.lolfx
-04_texture_CPPFLAGS = @LOL_CFLAGS@
-04_texture_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-04_texture_DEPENDENCIES = @LOL_STATIC_LIBS@
+04_texture_CPPFLAGS = $(AM_CPPFLAGS)
 
 05_easymesh_SOURCES = 05_easymesh.cpp
-05_easymesh_CPPFLAGS = @LOL_CFLAGS@
-05_easymesh_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-05_easymesh_DEPENDENCIES = @LOL_STATIC_LIBS@
+05_easymesh_CPPFLAGS = $(AM_CPPFLAGS)
 
 08_fbo_SOURCES = 08_fbo.cpp 08_fbo.lolfx
-08_fbo_CPPFLAGS = @LOL_CFLAGS@
-08_fbo_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-08_fbo_DEPENDENCIES = @LOL_STATIC_LIBS@
+08_fbo_CPPFLAGS = $(AM_CPPFLAGS)
 
 11_fractal_SOURCES = 11_fractal.cpp 11_fractal.lolfx
-11_fractal_CPPFLAGS = @LOL_CFLAGS@
-11_fractal_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-11_fractal_DEPENDENCIES = @LOL_STATIC_LIBS@
+11_fractal_CPPFLAGS = $(AM_CPPFLAGS)
 

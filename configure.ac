@@ -140,11 +140,11 @@ AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
 dnl No exceptions
-CXXFLAGS="${CXXFLAGS} -fno-exceptions -fno-rtti"
+AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions -fno-rtti"
 dnl Optimizations
-CXXFLAGS="${CXXFLAGS} ${REL} ${OPT}"
+AM_CXXFLAGS="${AM_CXXFLAGS} ${REL} ${OPT}"
 dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
-CXXFLAGS="${CXXFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
+AM_CPPFLAGS="${AM_CPPFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
@@ -181,7 +181,7 @@ AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
   dnl  For the pad library
   LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
   dnl  Disable this warning, it's too verbose with vector.h
-  CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"
+  AM_CXXFLAGS="${AM_CXXFLAGS} -Wno-sign-compare"
   AC_PATH_PROG(MAKE_FSELF, make_fself, no)
   if test "${MAKE_FSELF}" = "no"; then
     AC_MSG_ERROR([[Building for PS3 but make_fself not found]])
@@ -196,7 +196,7 @@ LIBS="$LIBS -mwindows -mwin32"
 AC_MSG_CHECKING(for -mwindows -mwin32)
 AC_TRY_LINK([], [],
  [AC_MSG_RESULT(yes)
-  CXXFLAGS="${CXXFLAGS} -mwindows -mwin32"
+  AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"
   LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"],
  [AC_MSG_RESULT(no)])
 LIBS="$LIBS_save"
@@ -249,7 +249,7 @@ AC_LANG_PUSH(C++)
 AC_CHECK_HEADERS(ppapi/cpp/instance.h,
  [ac_cv_my_have_nacl="yes"
   dnl  Disable this warning, it's too verbose with vector.h
-  CXXFLAGS="${CXXFLAGS} -Wno-sign-compare"])
+  AM_CXXFLAGS="${AM_CXXFLAGS} -Wno-sign-compare"])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
@@ -350,18 +350,26 @@ AC_SUBST(MATH_LIBS)
 AC_SUBST(PAM_LIBS)
 AC_SUBST(UTIL_LIBS)
 
-dnl  How to use the Lol Engine inside this tree
-LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/src"
-LOL_CFLAGS="$LOL_CFLAGS -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
+dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
-LOL_STATIC_LIBS="\$(top_builddir)/src/liblolcore.a $LOL_STATIC_LIBS"
-LOL_STATIC_LIBS="\$(top_builddir)/src/bullet/liblolbullet.a $LOL_STATIC_LIBS"
+
+dnl  How to use the Lol Engine inside this tree
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(top_srcdir)/src"
+AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
+AM_CPPFLAGS="${AM_CPPFLAGS} $LOL_CFLAGS"
+AM_LDFLAGS="${AM_LDFLAGS} \$(top_builddir)/src/liblolcore.a"
+AM_LDFLAGS="${AM_LDFLAGS} \$(top_builddir)/src/bullet/liblolbullet.a"
+AM_LDFLAGS="${AM_LDFLAGS} $LOL_LIBS"
 
 dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
-AC_SUBST(LOL_STATIC_LIBS)
+
+AC_SUBST(AM_CFLAGS)
+AC_SUBST(AM_CPPFLAGS)
+AC_SUBST(AM_CXXFLAGS)
+AC_SUBST(AM_LDFLAGS)
 
 AC_SUBST(USE_DOT)
 
