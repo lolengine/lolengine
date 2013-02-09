@@ -5,9 +5,8 @@ noinst_LIBRARIES = liblolbullet.a
 
 liblolbullet_a_SOURCES = $(bullet_sources)
 liblolbullet_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) \
-    -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
-    -Wno-maybe-uninitialized -Wno-narrowing -Wno-parentheses \
-    -Wno-reorder
+    -Wno-extra -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
+    -Wno-parentheses -Wno-reorder
 
 bullet_sources =
 
