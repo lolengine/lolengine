@@ -355,16 +355,20 @@ LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/src"
 LOL_CFLAGS="$LOL_CFLAGS -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
+LOL_STATIC_LIBS="\$(top_builddir)/src/liblolcore.a $LOL_STATIC_LIBS"
+LOL_STATIC_LIBS="\$(top_builddir)/src/bullet/liblolbullet.a $LOL_STATIC_LIBS"
 
 dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
+AC_SUBST(LOL_STATIC_LIBS)
 
 AC_SUBST(USE_DOT)
 
 AC_CONFIG_FILES(
  [Makefile
   src/Makefile
+  src/bullet/Makefile
   src/data/Makefile
   src/data/font/Makefile
   tutorial/Makefile

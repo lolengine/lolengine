@@ -7,6 +7,6 @@ noinst_PROGRAMS = xolotl
 
 xolotl_SOURCES = xolotl.cpp xolotl.h
 xolotl_CPPFLAGS = @LOL_CFLAGS@
-xolotl_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
-xolotl_DEPENDENCIES = $(top_builddir)/src/liblol.a
+xolotl_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
+xolotl_DEPENDENCIES = @LOL_STATIC_LIBS@
 

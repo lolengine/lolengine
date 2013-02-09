@@ -7,6 +7,6 @@ noinst_PROGRAMS = sample
 
 sample_SOURCES = sample.cpp
 sample_CPPFLAGS = @LOL_CFLAGS@
-sample_LDFLAGS = $(top_builddir)/src/liblol.a @LOL_LIBS@
-sample_DEPENDENCIES = $(top_builddir)/src/liblol.a
+sample_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
+sample_DEPENDENCIES = @LOL_STATIC_LIBS@
 
