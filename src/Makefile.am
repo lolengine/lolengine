@@ -25,7 +25,7 @@ liblolcore_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
-liblolcore_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)/bullet
+liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet
 
 EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
              gpu/lolfx-scanner.l gpu/lolfx-parser.y

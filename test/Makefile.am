@@ -3,8 +3,6 @@ include $(top_srcdir)/build/autotools/common.am
 
 SUBDIRS = math sandbox xolotl
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
-
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
@@ -24,16 +22,12 @@ testsuite_SOURCES = testsuite.cpp \
     unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
     unit/array.cpp unit/rotation.cpp unit/string.cpp unit/map.cpp \
     unit/color.cpp unit/atomic.cpp
-testsuite_CPPFLAGS = @LOL_CFLAGS@
-testsuite_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-testsuite_DEPENDENCIES = @LOL_STATIC_LIBS@
+testsuite_CPPFLAGS = $(AM_CPPFLAGS)
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
     benchmark/real.cpp
-benchsuite_CPPFLAGS = @LOL_CFLAGS@
-benchsuite_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-benchsuite_DEPENDENCIES = @LOL_STATIC_LIBS@
+benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
 
 btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
     Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
@@ -44,13 +38,9 @@ btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
     Physics/Include/EasyConstraint.h \
     Physics/Src/BulletCharacterController.cpp \
     Physics/Include/BulletCharacterController.h
-btphystest_CPPFLAGS = @LOL_CFLAGS@ -I$(top_srcdir)/src/bullet \
+btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
-btphystest_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-btphystest_DEPENDENCIES = @LOL_STATIC_LIBS@
 
 meshviewer_SOURCES = MeshViewer.cpp
-meshviewer_CPPFLAGS = @LOL_CFLAGS@
-meshviewer_LDFLAGS = @LOL_STATIC_LIBS@ @LOL_LIBS@
-meshviewer_DEPENDENCIES = @LOL_STATIC_LIBS@
+meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 

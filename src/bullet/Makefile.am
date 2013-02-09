@@ -4,7 +4,10 @@ include $(top_srcdir)/build/autotools/common.am
 noinst_LIBRARIES = liblolbullet.a
 
 liblolbullet_a_SOURCES = $(bullet_sources)
-liblolbullet_a_CPPFLAGS = @LOL_CFLAGS@ -I$(srcdir)
+liblolbullet_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) \
+    -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
+    -Wno-maybe-uninitialized -Wno-narrowing -Wno-parentheses \
+    -Wno-reorder
 
 bullet_sources =
 
@@ -41,7 +44,7 @@ bullet_sources += \
     BulletMultiThreaded/Win32ThreadSupport.h \
     BulletMultiThreaded/SequentialThreadSupport.h
 
-libBulletMultiThreaded_la_CXXFLAGS = ${CXXFLAGS} -I./BulletMultiThreaded/vectormath/scalar/cpp
+libBulletMultiThreaded_la_CXXFLAGS = -I./BulletMultiThreaded/vectormath/scalar/cpp
 bullet_sources += \
     BulletMultiThreaded/SpuCollisionObjectWrapper.cpp \
     BulletMultiThreaded/SpuSampleTask/SpuSampleTask.cpp \
