@@ -35,6 +35,7 @@ public:
                 if (m_array[i].m2 == key)
                     return m_array[i].m3;
         /* XXX: this in an error! */
+        ASSERT(0, "trying to read a non-existent key in map");
         return V();
     }
 
