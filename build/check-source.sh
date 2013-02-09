@@ -105,11 +105,17 @@ total_errors=0
 for file in $FILES; do
     case "$file" in
       # These files aren't ours, don't fix
-      src/bullet/*|external/*|*/generated/*|web/plugins/*)
+      src/bullet/*|\
+      external/*|\
+      */generated/*|\
+      web/plugins/*)
           :
           ;;
       # Don't harass these people
-      people/peeweek/*|people/touky/*|people/benlitz/*)
+      people/peeweek/*|\
+      people/touky/*|\
+      people/benlitz/*|\
+      people/sam/lua-*)
           :
           ;;
       # These files we know how to handle
