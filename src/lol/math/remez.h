@@ -56,6 +56,7 @@ public:
             T newerror = FindExtrema();
             printf("Step %i error: ", n);
             newerror.print(m_decimals);
+            printf("\n");
 
             Step();
 
@@ -76,7 +77,7 @@ public:
         Run(a, b, func, NULL, decimals);
     }
 
-    T ChebyEval(T const &x)
+    T EvalCheby(T const &x)
     {
         T ret = 0.0, xn = 1.0;
 
@@ -99,7 +100,7 @@ public:
         for (int i = 0; i < ORDER + 1; i++)
         {
             zeroes[i] = (T)(2 * i - ORDER) / (T)(ORDER + 1);
-            fxn[i] = Value(zeroes[i]);
+            fxn[i] = EvalFunc(zeroes[i]);
         }
 
         /* We build a matrix of Chebishev evaluations: row i contains the
@@ -145,19 +146,19 @@ public:
             struct { T value, error; } left, right, mid;
 
             left.value = control[i];
-            left.error = ChebyEval(left.value) - Value(left.value);
+            left.error = EvalCheby(left.value) - EvalFunc(left.value);
             right.value = control[i + 1];
-            right.error = ChebyEval(right.value) - Value(right.value);
+            right.error = EvalCheby(right.value) - EvalFunc(right.value);
 
             static T limit = ldexp((T)1, -500);
             static T zero = (T)0;
             while (fabs(left.value - right.value) > limit)
             {
                 mid.value = (left.value + right.value) / 2;
-                mid.error = ChebyEval(mid.value) - Value(mid.value);
+                mid.error = EvalCheby(mid.value) - EvalFunc(mid.value);
 
-                if ((left.error < zero && mid.error < zero)
-                     || (left.error > zero && mid.error > zero))
+                if ((left.error <= zero && mid.error <= zero)
+                     || (left.error >= zero && mid.error >= zero))
                     left = mid;
                 else
                     right = mid;
@@ -184,19 +185,20 @@ public:
             if (i < ORDER + 1)
                 b = zeroes[i];
 
-            T maxerror = 0, maxweight = 0;
-            int best = -1;
-
             for (int round = 0; ; round++)
             {
+                T maxerror = 0, maxweight = 0;
+                int best = -1;
+
                 T c = a, delta = (b - a) / 4;
                 for (int k = 0; k <= 4; k++)
                 {
                     if (round == 0 || (k & 1))
                     {
-                        T error = ChebyEval(c) - Value(c);
-                        T weight = Weight(c);
-                        if (fabs(error * maxweight) >= fabs(maxerror * weight))
+                        T error = fabs(EvalCheby(c) - EvalFunc(c));
+                        T weight = fabs(Weight(c));
+                        /* if error/weight >= maxerror/maxweight */
+                        if (error * maxweight >= maxerror * weight)
                         {
                             maxerror = error;
                             maxweight = weight;
@@ -217,13 +219,12 @@ public:
                 default:
                     b = a + delta * (best + 1);
                     a = a + delta * (best - 1);
-                    best = 2;
                     break;
                 }
 
                 if (delta < m_epsilon)
                 {
-                    T e = maxerror / maxweight;
+                    T e = fabs(maxerror / maxweight);
                     if (e > final)
                         final = e;
                     control[i] = (a + b) / 2;
@@ -240,7 +241,7 @@ public:
         /* Pick up x_i where error will be 0 and compute f(x_i) */
         T fxn[ORDER + 2];
         for (int i = 0; i < ORDER + 2; i++)
-            fxn[i] = Value(control[i]);
+            fxn[i] = EvalFunc(control[i]);
 
         /* We build a matrix of Chebishev evaluations: row i contains the
          * evaluations of x_i for polynomial order n = 0, 1, ... */
@@ -334,18 +335,17 @@ public:
             an[i] *= k2p[i];
         }
 
-        printf("Polynomial estimate:\n");
+        printf("Polynomial estimate: ");
         for (int j = 0; j < ORDER + 1; j++)
         {
             if (j)
-                printf("+");
-            printf("x**%i*", j);
+                printf(" + x**%i * ", j);
             an[j].print(m_decimals);
         }
-        printf("\n");
+        printf("\n\n");
     }
 
-    T Value(T const &x)
+    T EvalFunc(T const &x)
     {
         return m_func(x * m_k2 + m_k1);
     }

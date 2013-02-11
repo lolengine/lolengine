@@ -1361,7 +1361,6 @@ template<> void real::hexprint() const
     std::printf("%08x", m_signexp);
     for (int i = 0; i < BIGITS; i++)
         std::printf(" %08x", m_mantissa[i]);
-    std::printf("\n");
 }
 
 template<> void real::sprintf(char *str, int ndigits) const;
@@ -1370,7 +1369,7 @@ template<> void real::print(int ndigits) const
 {
     char *buf = new char[ndigits + 32 + 10];
     real::sprintf(buf, ndigits);
-    std::printf("%s\n", buf);
+    std::printf("%s", buf);
     delete[] buf;
 }
 
@@ -1386,7 +1385,7 @@ template<> void real::sprintf(char *str, int ndigits) const
 
     if (!x)
     {
-        std::strcpy(str, "0.0\n");
+        std::strcpy(str, "0.0");
         return;
     }
 
@@ -1414,7 +1413,8 @@ template<> void real::sprintf(char *str, int ndigits) const
 
     /* Print exponent information */
     if (exponent)
-        str += std::sprintf(str, "e%c%i", exponent > 0 ? '+' : '-', -exponent);
+        str += std::sprintf(str, "e%c%i",
+                            exponent >= 0 ? '+' : '-', lol::abs(exponent));
 
     *str++ = '\0';
 }
