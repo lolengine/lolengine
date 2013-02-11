@@ -139,12 +139,28 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
-dnl No exceptions
-AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions -fno-rtti"
-dnl Optimizations
+
+dnl  No exceptions
+LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
+LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
+
+dnl  Optimizations
 AM_CXXFLAGS="${AM_CXXFLAGS} ${REL} ${OPT}"
-dnl Code qui fait des warnings == code de porc == deux baffes dans ta gueule
-AM_CPPFLAGS="${AM_CPPFLAGS} -Wall -Wextra -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
+
+dnl  Code qui fait des warnings == code de porc == deux baffes dans ta gueule
+LOL_TRY_CXXFLAGS(-Wall, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wall"])
+LOL_TRY_CXXFLAGS(-Wextra, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wextra"])
+LOL_TRY_CXXFLAGS(-Wpointer-arith, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wpointer-arith"])
+LOL_TRY_CXXFLAGS(-Wcast-align, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-align"])
+LOL_TRY_CXXFLAGS(-Wcast-qual, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-qual"])
+LOL_TRY_CXXFLAGS(-Wshadow, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wshadow"])
+LOL_TRY_CXXFLAGS(-Wsign-compare, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wsign-compare"])
+
+dnl  Add these even though they're implicitly set, so that we can safely
+dnl  remove them from within a Makefile.
+LOL_TRY_CXXFLAGS(-Wno-maybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wno-maybe-uninitialized"])
+LOL_TRY_CXXFLAGS(-Wno-narrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wno-narrowing"])
+
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
