@@ -3,10 +3,15 @@ include $(top_srcdir)/build/autotools/common.am
 
 noinst_LIBRARIES = liblolbullet.a
 
+# Only remove flags that were actually set, because we don't know
+# what the compiler actually accepts.
+disable_cflags = $(filter $(AM_CPPFLAGS:-W%=-Wno-%), \
+    -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
+    -Wno-reorder -Wno-maybe-uninitialized, -Wno-narrowing \
+    -Wno-parentheses)
+
 liblolbullet_a_SOURCES = $(bullet_sources)
-liblolbullet_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) \
-    -Wno-extra -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
-    -Wno-parentheses -Wno-reorder
+liblolbullet_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) $(disable_cflags)
 
 bullet_sources =
 
