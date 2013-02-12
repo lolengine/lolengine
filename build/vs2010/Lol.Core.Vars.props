@@ -18,6 +18,7 @@
     <SdlDeps Condition="'$(Platform)'=='Win32'">SDL.lib;SDLmain.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
     <SdlDeps Condition="'$(Platform)'=='x64'">SDL.lib;SDLmain.lib</SdlDeps>
     <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
+    <Win32Defines Condition="'$(Platform)'=='Win32'">USE_SDL_MIXER;USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
 
     <!-- BulletPhysics -->
     <BtPhysDir>$(ExternalDir)\bullet-2.80-rev2531</BtPhysDir>
