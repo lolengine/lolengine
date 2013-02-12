@@ -23,11 +23,13 @@ testsuite_SOURCES = testsuite.cpp \
     unit/array.cpp unit/rotation.cpp unit/string.cpp unit/map.cpp \
     unit/color.cpp unit/atomic.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
+testsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
     benchmark/real.cpp
 benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
+benchsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
 
 btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
     Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
@@ -40,7 +42,9 @@ btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
     Physics/Include/BulletCharacterController.h
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
+btphystest_DEPENDENCIES = @LOL_DEPENDENCIES@
 
 meshviewer_SOURCES = MeshViewer.cpp
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
+meshviewer_DEPENDENCIES = @LOL_DEPENDENCIES@
 
