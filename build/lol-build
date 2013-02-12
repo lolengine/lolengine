@@ -137,8 +137,8 @@ configure()
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-1.2.15/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.10/lib/i686-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.11/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.12/lib/i686-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.12/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/gtk-2.22.1/lib"
             LDFLAGS="$LDFLAGS -L$PWD/external/gtk-2.22.1/bin"
             LDFLAGS="$LDFLAGS -L$PWD/external/gtkglarea-2.0.1/lib"
@@ -162,8 +162,8 @@ configure()
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
             LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-1.2.15/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.10/lib/x86_64-w64-mingw32"
-            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.11/lib/x86_64-w64-mingw32"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-1.2.12/lib/x86_64-msvc"
+            LDFLAGS="$LDFLAGS -L$PWD/external/sdl-mixer-1.2.12/lib/x86_64-msvc"
             LDFLAGS="$LDFLAGS -L$PWD/external/libcaca-0.99.beta18/lib/x86_64-w64-mingw32"
             ;;
         *-i386)
@@ -204,8 +204,8 @@ configure()
             ;;
         win*-i386|win*-amd64)
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-1.2.15/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-1.2.10/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-mixer-1.2.11/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-1.2.12/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-mixer-1.2.12/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/glew-1.9.0/include/GL -DGLEW_STATIC"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/glib-2.0/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/gtk-2.0/include"
