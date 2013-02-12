@@ -369,18 +369,20 @@ AC_SUBST(UTIL_LIBS)
 dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
+LOL_DEPENDENCIES="${LOL_DEPENDENCIES} \$(top_builddir)/src/liblolcore.a"
+LOL_DEPENDENCIES="${LOL_DEPENDENCIES} \$(top_builddir)/src/bullet/liblolbullet.a"
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(top_srcdir)/src"
 AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
-AM_CPPFLAGS="${AM_CPPFLAGS} $LOL_CFLAGS"
-AM_LDFLAGS="${AM_LDFLAGS} \$(top_builddir)/src/liblolcore.a"
-AM_LDFLAGS="${AM_LDFLAGS} \$(top_builddir)/src/bullet/liblolbullet.a"
-AM_LDFLAGS="${AM_LDFLAGS} $LOL_LIBS"
+AM_CPPFLAGS="${AM_CPPFLAGS} ${LOL_CFLAGS}"
+AM_LDFLAGS="${AM_LDFLAGS} ${LOL_DEPENDENCIES}"
+AM_LDFLAGS="${AM_LDFLAGS} ${LOL_LIBS}"
 
 dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
+AC_SUBST(LOL_DEPENDENCIES)
 
 AC_SUBST(AM_CFLAGS)
 AC_SUBST(AM_CPPFLAGS)
