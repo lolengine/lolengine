@@ -104,15 +104,15 @@ public:
         }
 
 #if !defined __native_client__
-        m_centertext = new Text(NULL, "src/data/font/ascii.png");
+        m_centertext = new Text(NULL, "data/font/ascii.png");
         m_centertext->SetPos(ivec3(5, m_window_size.y - 15, 1));
         Ticker::Ref(m_centertext);
 
-        m_mousetext = new Text(NULL, "src/data/font/ascii.png");
+        m_mousetext = new Text(NULL, "data/font/ascii.png");
         m_mousetext->SetPos(ivec3(5, m_window_size.y - 29, 1));
         Ticker::Ref(m_mousetext);
 
-        m_zoomtext = new Text(NULL, "src/data/font/ascii.png");
+        m_zoomtext = new Text(NULL, "data/font/ascii.png");
         m_zoomtext->SetPos(ivec3(5, m_window_size.y - 43, 1));
         Ticker::Ref(m_zoomtext);
 #endif

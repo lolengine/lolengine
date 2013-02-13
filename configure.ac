@@ -378,7 +378,7 @@ LOL_DEPENDENCIES="${LOL_DEPENDENCIES} \$(top_builddir)/src/bullet/liblolbullet.a
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(top_srcdir)/src"
-AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_SOURCE_SUBDIR=\\\"\$(subdir)\\\""
+AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_CONFIG_SOURCESUBDIR=\\\"\$(subdir)\\\""
 AM_CPPFLAGS="${AM_CPPFLAGS} ${LOL_CFLAGS}"
 AM_LDFLAGS="${AM_LDFLAGS} ${LOL_DEPENDENCIES}"
 AM_LDFLAGS="${AM_LDFLAGS} ${LOL_LIBS}"

@@ -34,6 +34,10 @@ namespace lol
 #   define LOL_CONFIG_SOLUTIONDIR ""
 #endif
 
+#if !defined LOL_CONFIG_SOURCESUBDIR
+#   define LOL_CONFIG_SOURCESUBDIR ""
+#endif
+
 /*
  * System namespace. The platform-specific stuff in there makes the API
  * not as clean as the rest of the framework.
@@ -44,7 +48,8 @@ namespace System
 
 extern void Init(int argc, char *argv[],
                  String const &projectdir = LOL_CONFIG_PROJECTDIR,
-                 String const &solutiondir = LOL_CONFIG_SOLUTIONDIR);
+                 String const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
+                 String const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
 extern void AddDataDir(String const &dir);
 extern Array<String> GetPathList(String const &file);
