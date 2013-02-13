@@ -67,7 +67,7 @@ public:
         /* Allow n == Count() because we might have reasonable reasons
          * to access that hidden null character. */
         ASSERT(n >= 0);
-        ASSERT(n <= Count());
+        ASSERT((unsigned)n <= (unsigned)Count());
         return ((Super &)*this)[n];
     }
 
