@@ -47,7 +47,8 @@ namespace lol
 
 //-----------------------------------------------------------------------------
 EasyMesh::EasyMesh()
-  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0)
+  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0),
+    m_texcoord_offset(vec2(.0f)), m_texcoord_scale(vec2(1.f))
 {
     m_cursors.Push(0, 0);
 }
@@ -478,7 +479,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         //csgs : CSGSubstractLoss() -> m0_Outside
                         (csg_operation == CSGUsage::SubstractLoss &&
                             ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) || mesh_id == 1)) ||
-                        //csga : CSGAnd() -> Inside + Inside
+                        //csga : CSGAnd() -> m0_Inside + m1_Inside
                         (csg_operation == CSGUsage::And && tri_list[k].m1 == LEAF_FRONT))
                     {
                         triangle_to_kill.Push(tri_idx);
@@ -487,7 +488,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                     //Triangle Invert Test
                     if (//csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
                         (csg_operation == CSGUsage::Substract && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
-                        //csgx : CSGXor() -> Outside/Inside-inverted + Outside/Inside-inverted
+                        //csgx : CSGXor() -> m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted
                         (csg_operation == CSGUsage::Xor && tri_list[k].m1 == LEAF_BACK))
                     {
                         //a Xor means we will share vertices with the outside, so duplicate the vertices.
@@ -545,7 +546,6 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
 
     //DONE for the splitting !
 }
-
 
 //-----------------------------------------------------------------------------
 void EasyMesh::ToggleScaleWinding()
@@ -749,7 +749,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             vec3 v02 = m_vert[v[2]].m1 - m_vert[v[0]].m1;
             vec3 v_dir = normalize(cross(m_vert[m_indices[cur_tri]].m2, v01));
             vec2 texu_dir = uv[1] - uv[0];
-            vec2 texv_dir = vec2(texu_dir.y, -texu_dir.x);
+            vec2 texv_dir = vec2(texu_dir.y, texu_dir.x);
             //Final calculations
             uv[2] = texu_dir * dot(v01, v02) + texv_dir * dot(v_dir, v02);
 
@@ -776,7 +776,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             //Get connected triangles and go from there.
             for (int j = 0; j < 3; j++)
             {
-#if 0
+#if 1
                 //This finds triangle that are connected to this triangle
                 vert_dict.FindConnectedTriangles(ivec2(v[j], v[(j + 1) % 3]), tri_list, tri_check, &tri_done);
 #else
@@ -787,6 +787,17 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
         }
         else if (uv_set == 3)
         {
+            for (int j = 0; j < 3; j++)
+            {
+                m_vert[tri_list[cur_tri]].m4     = vec2(-1.0f);
+                m_vert[tri_list[cur_tri + 1]].m4 = vec2(-1.0f);
+                m_vert[tri_list[cur_tri + 2]].m4 = vec2(-1.0f);
+            }
+    
+            //uv[0] = vec2(-1.0f);
+            //uv[1] = vec2(-1.0f);
+            //uv[2] = vec2(-1.0f);
+            /*
             bool tri_present = false;
             for (int j = 0; j < tri_done.Count(); j++)
                 if (cur_tri == tri_done[j])
@@ -794,6 +805,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             if (!tri_present)
                 tri_done << cur_tri;
             tri_check.Remove(0);
+            */
         }
 
         if (tri_check.Count() == 0 && tri_done.Count() != tri_count)
@@ -821,6 +833,13 @@ void EasyMesh::SetVertColor(vec4 const &color)
 }
 
 //-----------------------------------------------------------------------------
+void EasyMesh::SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale)
+{
+    m_texcoord_offset = new_offset;
+    m_texcoord_scale = new_scale;
+}
+
+//-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertNormal(vec3 const &normal)
 {
     m_vert[m_vert.Count() - 1].m2 = normal;
@@ -833,6 +852,15 @@ void EasyMesh::SetCurVertColor(vec4 const &color)
 }
 
 //-----------------------------------------------------------------------------
+void EasyMesh::SetCurVertTexCoord(vec2 const &texcoord)
+{
+#if VERTEX_USEAGE == VU_BONES
+#elif VERTEX_USEAGE == VU_TEX_UV
+    m_vert[m_vert.Count() - 1].m4 = (texcoord * m_texcoord_scale) + m_texcoord_offset;
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void EasyMesh::Translate(vec3 const &v)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
@@ -840,14 +868,14 @@ void EasyMesh::Translate(vec3 const &v)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::RotateX(float t) { Rotate(t, vec3(1, 0, 0)); }
-void EasyMesh::RotateY(float t) { Rotate(t, vec3(0, 1, 0)); }
-void EasyMesh::RotateZ(float t) { Rotate(t, vec3(0, 0, 1)); }
+void EasyMesh::RotateX(float angle) { Rotate(angle, vec3(1, 0, 0)); }
+void EasyMesh::RotateY(float angle) { Rotate(angle, vec3(0, 1, 0)); }
+void EasyMesh::RotateZ(float angle) { Rotate(angle, vec3(0, 0, 1)); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::Rotate(float t, vec3 const &axis)
+void EasyMesh::Rotate(float angle, vec3 const &axis)
 {
-    mat3 m = mat3::rotate(t, axis);
+    mat3 m = mat3::rotate(angle, axis);
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
         m_vert[i].m1 = m * m_vert[i].m1;
@@ -906,8 +934,8 @@ void EasyMesh::TaperX(float y, float z, float xoff)
     /* FIXME: this code breaks normals! */
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1.y *= 1.f + (y * m_vert[i].m1.x + xoff);
-        m_vert[i].m1.z *= 1.f + (z * m_vert[i].m1.x + xoff);
+        m_vert[i].m1.y *= 1.f + (y * abs(m_vert[i].m1.x) + xoff);
+        m_vert[i].m1.z *= 1.f + (z * abs(m_vert[i].m1.x) + xoff);
     }
 }
 
@@ -916,8 +944,8 @@ void EasyMesh::TaperY(float x, float z, float yoff)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1.x *= 1.f + (x * m_vert[i].m1.y + yoff);
-        m_vert[i].m1.z *= 1.f + (z * m_vert[i].m1.y + yoff);
+        m_vert[i].m1.x *= 1.f + (x * abs(m_vert[i].m1.y) + yoff);
+        m_vert[i].m1.z *= 1.f + (z * abs(m_vert[i].m1.y) + yoff);
     }
 }
 
@@ -926,8 +954,8 @@ void EasyMesh::TaperZ(float x, float y, float zoff)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1.x *= 1.f + (x * m_vert[i].m1.z + zoff);
-        m_vert[i].m1.y *= 1.f + (y * m_vert[i].m1.z + zoff);
+        m_vert[i].m1.x *= 1.f + (x * abs(m_vert[i].m1.z) + zoff);
+        m_vert[i].m1.y *= 1.f + (y * abs(m_vert[i].m1.z) + zoff);
     }
 }
 
@@ -979,12 +1007,21 @@ void EasyMesh::DupAndScale(vec3 const &s)
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
-                    int dualside, int smooth)
+                              int dualside, int smooth, int close)
 {
+    //SAVE
+    vec4 Saved_Color = m_color;
+    vec4 Saved_Color2 = m_color2;
+    vec2 Save_texcoord_offset = m_texcoord_offset;
+    vec2 Save_texcoord_scale = m_texcoord_scale;
+
     int vbase = m_vert.Count();
 
-    mat3 rotmat = mat3::rotate(360.0f / nsides, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(360.0f / (float)nsides, 0.f, 1.f, 0.f);
     vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
+    vec2 uv1(.0f, .0f), uv2(.0f, 1.0f), uvadd(1.0f / (float)nsides, .0f);
+    if (close)
+        SetTexCoordData(vec2(.0f), vec2(1.0f, .5f));
 
     /* Construct normal */
     if (r2 != .0f)
@@ -1000,8 +1037,8 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
      * means duplicating the vertices again... */
     for (int i = 0; i < nsides; i++)
     {
-        AddVertex(p1); SetCurVertNormal(n);
-        AddVertex(p2); SetCurVertNormal(n);
+        AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1);
+        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2);
         SetCurVertColor(m_color2);
 
         if (smooth)
@@ -1012,13 +1049,13 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
                 AppendQuad(i * 2, i * 2 + 1, j * 2 + 1, j * 2, vbase);
         }
 
-        p1 = rotmat * p1;
-        p2 = rotmat * p2;
+        p1 = rotmat * p1; uv1 += uvadd;
+        p2 = rotmat * p2; uv2 += uvadd;
 
         if (!smooth)
         {
-            AddVertex(p1); SetCurVertNormal(n);
-            AddVertex(p2); SetCurVertNormal(n);
+            AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1);
+            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2);
             SetCurVertColor(m_color2);
 
             AppendQuad(i * 4 + 2, i * 4 + 3, i * 4 + 1, i * 4, vbase);
@@ -1028,6 +1065,34 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
 
         n = rotmat * n;
     }
+
+    if (close)
+    {
+        //START
+        OpenBrace();
+        //LOWER DISC
+        SetTexCoordData(vec2(.0f, .5f), vec2(.5f, .5f));
+        SetCurColor(m_color);
+        AppendDisc(nsides, r1);
+        Translate(vec3(.0f, h, .0f));
+        RotateX(180.0f);
+        //UPPER DISC
+        SetTexCoordData(vec2(.5f, .5f), vec2(.5f, .5f));
+        SetCurColor(m_color2);
+        AppendDisc(nsides, r2);
+        Translate(vec3(.0f, h * .5f, .0f));
+        CloseBrace();
+    }
+    //RESTORE
+    SetCurColor(Saved_Color);
+    SetCurColor2(Saved_Color2);
+    SetTexCoordData(Save_texcoord_offset, Save_texcoord_scale);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::AppendSphere(int ndivisions, float r)
+{
+    AppendCapsule(ndivisions, 0.f, r);
 }
 
 //-----------------------------------------------------------------------------
@@ -1036,11 +1101,18 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
     int ibase = m_indices.Count();
 
     Array<vec3> vertices;
+    float uv_h = 0;
+    float uv_r = 0;
 
     /* FIXME: we don't know how to handle even-divided capsules, so we
      * force the count to be odd. */
     if (h)
+    {
         ndivisions |= 1;
+        //calculate uv h&r percents
+        uv_h = (float)h / (float)(h + r * 2);
+        uv_r = (float)r / (float)(h + r * 2);
+    }
 
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
@@ -1083,14 +1155,31 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
                          p[0] + vb,
                          p[0] + vc,
                          p[0] + vb + vc };
+            vec2 uv[4];
 
             /* FIXME: when we normalise here, we get a volume that is slightly
              * smaller than the sphere of radius 1, since we are not using
              * the midradius. */
             for (int k = 0; k < 4; k++)
-                p[k] = normalize(p[k]) * r;
+            {
+                //keep normalized until the end of the UV calculations
+                p[k] = normalize(p[k]);
 
-            /* If this is a capsule, grow in the Z direction */
+                uv[k].x = (lol::atan2(p[k].z, p[k].x) + (float)M_PI) / ((float)M_PI * 2.f);
+                if (abs(p[k].y) >= 1.0f)
+                    uv[k].x = -1.f;
+                uv[k].y = (lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) + (float)M_PI_2) / (float)M_PI;
+                if (h)
+                {
+                    if (uv[k].y > .5f)
+                        uv[k].y = uv_r + uv_h + (uv[k].y - .5f) * uv_r * 2.f;
+                    else
+                        uv[k].y *= uv_r * 2.f;
+                }
+                p[k] *= r;
+            }
+
+            /* If this is a capsule, grow in the Y direction */
             if (h > 0.f)
             {
                 for (int k = 0; k < 4; k++)
@@ -1098,20 +1187,40 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
             }
 
             /* Add zero, one or two triangles */
-            if (y < line - 1)
+            int id[] = { 0, 1, 2,
+                         1, 3 ,2 };
+            int l = 6;
+            while ((l -= 3) >= 0)
             {
-                AddVertex(p[0]);
-                AddVertex(p[1]);
-                AddVertex(p[2]);
-                AppendTriangle(0, 2, 1, m_vert.Count() - 3);
-            }
-
-            if (y < line - 2)
-            {
-                AddVertex(p[1]);
-                AddVertex(p[3]);
-                AddVertex(p[2]);
-                AppendTriangle(0, 2, 1, m_vert.Count() - 3);
+                if ((l == 0 && y < line - 1) || (l == 3 && y < line - 2))
+                {
+                    int k = -1;
+                    while (++k < 3)
+                    {
+                        int rid[] = { id[k + l], id[(k + 1) % 3 + l] };
+                        if (uv[rid[0]].x >= .0f &&
+                            uv[rid[1]].x >= .0f &&
+                            abs(uv[rid[0]].x - uv[rid[1]].x) > .5f)
+                        {
+                            if (uv[rid[0]].x < uv[rid[1]].x)
+                                uv[rid[0]].x += 1.0f;
+                            else
+                                uv[rid[1]].x += 1.0f;
+                        }
+                    }
+                    k = -1;
+                    while (++k < 3)
+                    {
+                        int rid[] = { id[k + l], id[(k + 1) % 3 + l], id[(k + 2) % 3 + l] };
+                        AddVertex(p[rid[0]]);
+                        if (uv[rid[0]].x < .0f)
+                            SetCurVertTexCoord(vec2((uv[rid[1]].x + uv[rid[2]].x) * .5f,
+                                                    uv[rid[0]].y));
+                        else
+                            SetCurVertTexCoord(uv[rid[0]]);
+                    }
+                    AppendTriangle(0, 2, 1, m_vert.Count() - 3);
+                }
             }
 
             y++;
@@ -1125,15 +1234,6 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
     }
 
     ComputeNormals(ibase, m_indices.Count() - ibase);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSphere(int ndivisions, vec3 const &size)
-{
-    OpenBrace();
-    AppendCapsule(ndivisions, 0.f, 1.f);
-    Scale(size);
-    CloseBrace();
 }
 
 //-----------------------------------------------------------------------------
@@ -1151,16 +1251,22 @@ void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
         {
             int i2 = (i + di) % nidiv;
             int j2 = (j + dj) % njdiv;
-            float x = 0.5f * (r1 + r2) + 0.5f * (r2 - r1) * (float)lol::cos(2.0 * M_PI * i2 / nidiv);
+
+            //Location on the donut
+            float x = 0.5f * (r2 - r1) * (float)lol::cos(2.0 * M_PI * i2 / nidiv) + 0.5f * (r1 + r2);
             float y = 0.5f * (r2 - r1) * (float)lol::sin(2.0 * M_PI * i2 / nidiv);
             float z = 0.0f;
 
+            //Center circle
             float ca = (float)lol::cos(2.0 * M_PI * j2 / njdiv);
             float sa = (float)lol::sin(2.0 * M_PI * j2 / njdiv);
+
+            //Actual location
             float x2 = x * ca - z * sa;
             float z2 = z * ca + x * sa;
 
             AddVertex(vec3(x2, y, z2));
+            SetCurVertTexCoord(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
         }
 
         AppendTriangle(0, 2, 3, m_vert.Count() - 4);
@@ -1202,35 +1308,62 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 
     vec3 d = size * 0.5f;
 
+    //Side vertices
     AddVertex(vec3(-d.x, -d.y, -d.z - chamf));
+    SetCurVertTexCoord(vec2(0.f, .5f));
     AddVertex(vec3(-d.x, +d.y, -d.z - chamf));
+    SetCurVertTexCoord(vec2(0.f, 0.f));
     AddVertex(vec3(+d.x, +d.y, -d.z - chamf));
+    SetCurVertTexCoord(vec2(.5f, 0.f));
     AddVertex(vec3(+d.x, -d.y, -d.z - chamf));
+    SetCurVertTexCoord(vec2(.5f, .5f));
 
     AddVertex(vec3(-d.x - chamf, -d.y, +d.z));
+    SetCurVertTexCoord(vec2(.5f, 0.5f));
     AddVertex(vec3(-d.x - chamf, +d.y, +d.z));
+    SetCurVertTexCoord(vec2(.5f, 0.f));
     AddVertex(vec3(-d.x - chamf, +d.y, -d.z));
+    SetCurVertTexCoord(vec2(1.f, 0.f));
     AddVertex(vec3(-d.x - chamf, -d.y, -d.z));
+    SetCurVertTexCoord(vec2(1.f, .5f));
 
     AddVertex(vec3(+d.x, -d.y, +d.z + chamf));
+    SetCurVertTexCoord(vec2(0.f, .5f));
     AddVertex(vec3(+d.x, +d.y, +d.z + chamf));
+    SetCurVertTexCoord(vec2(0.f, 0.f));
     AddVertex(vec3(-d.x, +d.y, +d.z + chamf));
+    SetCurVertTexCoord(vec2(.5f, 0.f));
     AddVertex(vec3(-d.x, -d.y, +d.z + chamf));
+    SetCurVertTexCoord(vec2(.5f, .5f));
 
     AddVertex(vec3(+d.x + chamf, -d.y, -d.z));
+    SetCurVertTexCoord(vec2(.5f, .5f));
     AddVertex(vec3(+d.x + chamf, +d.y, -d.z));
+    SetCurVertTexCoord(vec2(.5f, .0f));
     AddVertex(vec3(+d.x + chamf, +d.y, +d.z));
+    SetCurVertTexCoord(vec2(1.f, .0f));
     AddVertex(vec3(+d.x + chamf, -d.y, +d.z));
+    SetCurVertTexCoord(vec2(1.f, .5f));
 
+    //Bottom vertices
     AddVertex(vec3(-d.x, -d.y - chamf, +d.z));
+    SetCurVertTexCoord(vec2(0.f, 1.f));
     AddVertex(vec3(-d.x, -d.y - chamf, -d.z));
+    SetCurVertTexCoord(vec2(0.f, .5f));
     AddVertex(vec3(+d.x, -d.y - chamf, -d.z));
+    SetCurVertTexCoord(vec2(.5f, .5f));
     AddVertex(vec3(+d.x, -d.y - chamf, +d.z));
+    SetCurVertTexCoord(vec2(.5f, 1.f));
 
+    //Top vertices
     AddVertex(vec3(-d.x, +d.y + chamf, -d.z));
+    SetCurVertTexCoord(vec2(0.f, 1.f));
     AddVertex(vec3(-d.x, +d.y + chamf, +d.z));
+    SetCurVertTexCoord(vec2(0.f, .5f));
     AddVertex(vec3(+d.x, +d.y + chamf, +d.z));
+    SetCurVertTexCoord(vec2(.5f, .5f));
     AddVertex(vec3(+d.x, +d.y + chamf, -d.z));
+    SetCurVertTexCoord(vec2(.5f, 1.f));
 
     /* The 6 quads on each side of the box */
     for (int i = 0; i < 24; i += 4)
@@ -1288,31 +1421,35 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 void EasyMesh::AppendStar(int nbranches, float r1, float r2,
                           int fade, int fade2)
 {
+    //TODO: It would probably be good to think of another way of UV painting this, like "branch repeating"
     int vbase = m_vert.Count();
+    float maxr = max(r1, r2);
 
-    AddVertex(vec3(0.f, 0.f, 0.f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f);
+    vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
+         uv2(0.f, 0.f, -.5f * ((float)r2 / maxr));
 
-    p2 = rotmat * p2;
+    p2 = rotmat * p2; uv2 = rotmat * uv2;
     rotmat = rotmat * rotmat;
 
     for (int i = 0; i < nbranches; i++)
     {
-        AddVertex(p1);
+        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f));
         if (fade2)
             SetCurVertColor(m_color2);
 
-        AddVertex(p2);
+        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f));
         if (fade)
             SetCurVertColor(m_color2);
 
         AppendQuad(0, 2 * i + 1, 2 * i + 2, (2 * i + 3) % (2 * nbranches),
                    vbase);
 
-        p1 = rotmat * p1;
-        p2 = rotmat * p2;
+        p1 = rotmat * p1; uv1 = rotmat * uv1;
+        p2 = rotmat * p2; uv2 = rotmat * uv2;
     }
 }
 
@@ -1321,33 +1458,38 @@ void EasyMesh::AppendExpandedStar(int nbranches, float r1,
                                   float r2, float extrar)
 {
     int vbase = m_vert.Count();
+    float maxr = (float)max(max(r1, r2), max(r1 + extrar, r2 + extrar));
 
-    AddVertex(vec3(0.f, 0.f, 0.f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f),
          p3(r1 + extrar, 0.f, 0.f), p4(r2 + extrar, 0.f, 0.f);;
+    vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
+         uv2(0.f, 0.f, -.5f * ((float)r2 / maxr)),
+         uv3(0.f, 0.f, -.5f * ((float)(r1 + extrar) / maxr)),
+         uv4(0.f, 0.f, -.5f * ((float)(r2 + extrar) / maxr));
 
-    p2 = rotmat * p2;
-    p4 = rotmat * p4;
+    p2 = rotmat * p2; uv2 = rotmat * uv2;
+    p4 = rotmat * p4; uv4 = rotmat * uv4;
     rotmat = rotmat * rotmat;
 
     for (int i = 0; i < nbranches; i++)
     {
-        AddVertex(p1);
-        AddVertex(p2);
-        AddVertex(p3); SetCurVertColor(m_color2);
-        AddVertex(p4); SetCurVertColor(m_color2);
+        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f));
+        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f));
+        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertColor(m_color2);
+        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertColor(m_color2);
 
         int j = (i + 1) % nbranches;
         AppendQuad(0, 4 * i + 1, 4 * i + 2, 4 * j + 1, vbase);
         AppendQuad(4 * i + 1, 4 * i + 3, 4 * i + 4, 4 * i + 2, vbase);
         AppendQuad(4 * j + 1, 4 * i + 2, 4 * i + 4, 4 * j + 3, vbase);
 
-        p1 = rotmat * p1;
-        p2 = rotmat * p2;
-        p3 = rotmat * p3;
-        p4 = rotmat * p4;
+        p1 = rotmat * p1; uv1 = rotmat * uv1;
+        p2 = rotmat * p2; uv2 = rotmat * uv2;
+        p3 = rotmat * p3; uv3 = rotmat * uv3;
+        p4 = rotmat * p4; uv4 = rotmat * uv4;
     }
 }
 
@@ -1356,18 +1498,20 @@ void EasyMesh::AppendDisc(int nsides, float r, int fade)
 {
     int vbase = m_vert.Count();
 
-    AddVertex(vec3(0.f, 0.f, 0.f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(360.0f / nsides, 0.f, 1.f, 0.f);
     vec3 p1(r, 0.f, 0.f);
+    vec3 uv(.5f, .0f, .0f);
 
     for (int i = 0; i < nsides; i++)
     {
-        AddVertex(p1);
+        AddVertex(p1); SetCurVertTexCoord(uv.xz + vec2(.5f, .5f));
         if (fade)
             SetCurVertColor(m_color2);
         AppendTriangle(0, i + 1, ((i + 1) % nsides) + 1, vbase);
         p1 = rotmat * p1;
+        uv = rotmat * uv;
     }
 }
 
@@ -1377,13 +1521,13 @@ void EasyMesh::AppendSimpleTriangle(float size, int fade)
     mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
     vec3 p(0.f, 0.f, size);
 
-    AddVertex(p);
+    AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f));
     p = m * p;
-    AddVertex(p);
+    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f));
     if (fade)
         SetCurVertColor(m_color2);
     p = m * p;
-    AddVertex(p);
+    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f));
     if (fade)
         SetCurVertColor(m_color2);
 
@@ -1399,16 +1543,16 @@ void EasyMesh::AppendSimpleQuad(float size, int fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 {
-    AddVertex(vec3(p2.x, z, -p1.y));
-    AddVertex(vec3(p2.x, z, -p2.y));
-    AddVertex(vec3(p1.x, z, -p2.y));
+    AddVertex(vec3(p2.x, z, -p1.y)); SetCurVertTexCoord(vec2(0.f, 1.f));
+    AddVertex(vec3(p2.x, z, -p2.y)); SetCurVertTexCoord(vec2(0.f, 0.f));
+    AddVertex(vec3(p1.x, z, -p2.y)); SetCurVertTexCoord(vec2(1.f, 0.f));
     if (fade)
         SetCurVertColor(m_color2);
-    AddVertex(vec3(p1.x, z, -p1.y));
+    AddVertex(vec3(p1.x, z, -p1.y)); SetCurVertTexCoord(vec2(1.f, 1.f));
     if (fade)
         SetCurVertColor(m_color2);
 
-    AppendQuad(3, 2, 1, 0, m_vert.Count() - 4);
+    AppendQuad(0, 1, 2, 3, m_vert.Count() - 4);
     ComputeNormals(m_indices.Count() - 6, 6);
 }
 
@@ -1430,6 +1574,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
 
     vec3 p[12];
 
+    //Upper points
     p[0] = vec3(r10, h * .5f, 0.f);
     p[1] = rotmat * p[0];
     p[2] = vec3(r1, h * .5f, 0.f);
@@ -1437,6 +1582,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
     p[4] = smat1 * (rotmat * vec3(r1 + r12, h * .5f, 0.f));
     p[5] = smat2 * (rotmat * p[4]);
 
+    //Lower points
     p[6] = vec3(r20, h * -.5f, 0.f);
     p[7] = rotmat * p[6];
     p[8] = vec3(r2, h * -.5f, 0.f);
@@ -1450,37 +1596,199 @@ void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
 
     rotmat = rotmat * rotmat;
 
+    //UV base computation
+    float maxr = max(max(r1 + r12, r2 + r22), max(r10, r20));
+    float InLn = length(p[1] - p[0]);
+    float CogLn[8] = { .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f };
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0, k = 2; j < 8 && k < 12; j += 4, k += 6)
+        {
+            CogLn[j + i] = length(p[k + i + 1] - p[k + i]);
+            CogLn[j + 3] += CogLn[j + i];
+            if (i == 1) //Add 3to4 twice since it's automatically completed by +1 loop.
+                CogLn[j + 3] += CogLn[j + i];
+        }
+    }
+
+    //Choose the biggest cog length
+    int CogSrc = (CogLn[7] > CogLn[3])?(4):(0);
+    CogLn[3] = CogLn[CogSrc + 3];
+    for (int i = 0; i < 3; i++)
+        CogLn[i] = CogLn[CogSrc + i] / CogLn[CogSrc + 3];
+
+    //Calculate Cog Modifiers
+    vec2 InUV[2] = { vec2(.0f), vec2(.5f) };
+    vec2 CogUV[2] = { vec2(.0f), vec2(.5f) };
+    vec2 upadd = vec2(.25f, .75f);
+    vec2 lowadd = vec2(.75f, .75f);
+    {
+        if (h < InLn)
+        {
+            InUV[0].x  = 1.0f;
+            InUV[0].y  = h / InLn;
+            InUV[1].x  = .0f;
+            InUV[1].y -= InUV[0].y * .5f;
+        }
+        else
+        {
+            InUV[0].x  = InLn / h;
+            InUV[0].y  = 1.0f;
+            InUV[1].x -= InUV[0].x * .5f;
+            InUV[1].y = .0f;
+        }
+        if (h < CogLn[3])
+        {
+            CogUV[0].x  = 1.0f;
+            CogUV[0].y  = h / CogLn[3];
+            CogUV[1].x  = .0f;
+            CogUV[1].y -= CogUV[0].y * .5f;
+        }
+        else
+        {
+            CogUV[0].x  = CogLn[3] / h;
+            CogUV[0].y  = 1.0f;
+            CogUV[1].x -= CogUV[0].x * .5f;
+            CogUV[1].y  = .0f;
+        }
+        if (InUV[0].x + CogUV[0].x < .5f)
+        {
+            InUV[1].x = .0f;
+            CogUV[1].x = .5f - CogUV[0].x;
+            upadd  = vec2(.75f, .25f);
+            lowadd = vec2(.75f, .75f);
+        }
+        else if (InUV[0].y + CogUV[0].y < .5f)
+        {
+            InUV[1].y = .0f;
+            CogUV[1].y = .5f - CogUV[0].y;
+        }
+        else
+        {
+            InUV[0] *= .5f;
+            InUV[1] *= .5f;
+            CogUV[0] *= .5f;
+            CogUV[1] *= .5f;
+            InUV[1] += vec2(.5f, .0f);
+        }
+    }
+
+    //Build UV tab
+    vec2 uv[12]; float CogSz;
+    //Upper points
+    CogSz = 1.0f - CogLn[1];
+    uv[0]  = vec2(0.f,   0.f) * InUV[0]  + InUV[1];
+    uv[1]  = vec2(1.f,   0.f) * InUV[0]  + InUV[1];
+    uv[5]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[2];
+    uv[4]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[1];
+    uv[3]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[0];
+    uv[2]  = vec2(0.f,   0.f) * CogUV[0] + CogUV[1];
+
+    //Lower points
+    CogSz = 1.0f - CogLn[1];
+    uv[6]  = vec2(0.f,   1.f) * InUV[0]  + InUV[1];
+    uv[7]  = vec2(1.f,   1.f) * InUV[0]  + InUV[1];
+    uv[11] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[2];
+    uv[10] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[1];
+    uv[ 9] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[0];
+    uv[ 8] = vec2(0.f,   1.f) * CogUV[0] + CogUV[1];
+
+    //Gear generation loop
     for (int i = 0; i < nbsides; i++)
     {
+        int j = 3 * 12 * i,
+            k = 3 * 12 * ((i + 1) % nbsides);
+
+        int q[] = { /* The top and bottom faces */
+                    j, j, j, j,  
+                    j, j, j, j, 
+                    j, j, k, k,      
+                    k, k, j, j, 
+                    j, j, j, k,  
+                    k, j, j, j, 
+                    /* The inner side quads */
+                    j, j, j, j,
+                    j, k, k, j,
+                    /* The outer side quads */
+                    j, j, j, j,
+                    j, j, j, j,
+                    j, j, j, j,
+                    k, j, j, k
+                    };
+        int m[] = { /* The top and bottom faces */
+                    0,  2,  3,  1,
+                    7,  9,  8,  6,
+                    1,  3,  2,  0,
+                    6,  8,  9,  7,
+                    3,  4,  5,  2,
+                    8, 11, 10,  9,
+                    /* The inner side quads */
+                    0,  1,  7,  6,
+                    1,  0,  6,  7,
+                    /* The outer side quads */
+                    3,  2,  8,  9,
+                    4,  3,  9, 10,
+                    5,  4, 10, 11,
+                    2,  5, 11, 8
+                    };
+        int a[] = { /* The top and bottom faces */
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    /* The inner side quads */
+                    1, 1, 1, 1,
+                    2, 2, 2, 2,
+                    /* The outer side quads */
+                    1, 1, 1, 1,
+                    1, 2, 2, 1,
+                    1, 2, 2, 1,
+                    2, 2, 2, 2
+                    };
+
         /* Each vertex will share three faces, so three different
          * normals, therefore we add each vertex three times. */
         for (int n = 0; n < 3 * 12; n++)
         {
-            AddVertex(p[n / 3]);
-            if (n / 3 >= 6)
+            int d = n / 3;
+            int m = d % 6;
+            AddVertex(p[d]);
+            if (n % 3 == 0) //Top-Bottom logic
+            {
+                vec2 tmp = (p[d].xz / maxr);
+                vec2 add;
+                if (d >= 6)
+                {
+                    tmp *= -1.0f;
+                    add = lowadd;
+                }
+                else
+                    add = upadd;
+                SetCurVertTexCoord(tmp * vec2(.25f) + add);
+            }
+            else if (m == 0 || m == 1) //inner Logic
+                SetCurVertTexCoord(uv[d]);
+            else //Cog logic
+            {
+                if (m == 2 && n % 3 == 2)
+                    SetCurVertTexCoord(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
+                else
+                    SetCurVertTexCoord(uv[d]);
+            }
+            if (d >= 6)
                 SetCurVertColor(m_color2);
         }
 
-        int j = 3 * 12 * i, k = 3 * 12 * ((i + 1) % nbsides);
-
-        /* The top and bottom faces */
-        AppendQuad(j, j + 6, j + 9, j + 3, vbase);
-        AppendQuad(j + 21, j + 27, j + 24, j + 18, vbase);
-        AppendQuad(j + 3, j + 9, k + 6, k, vbase);
-        AppendQuad(k + 18, k + 24, j + 27, j + 21, vbase);
-        AppendQuad(j + 9, j + 12, j + 15, k + 6, vbase);
-        AppendQuad(k + 24, j + 33, j + 30, j + 27, vbase);
-
-        /* The inner side quads */
-        AppendQuad(j + 1, j + 4, j + 22, j + 19, vbase);
-        AppendQuad(j + 5, k + 2, k + 20, j + 23, vbase);
-
-        /* The outer side quads */
-        AppendQuad(j + 10, j + 7, j + 25, j + 28, vbase);
-        AppendQuad(j + 13, j + 11, j + 29, j + 31, vbase);
-        AppendQuad(j + 16, j + 14, j + 32, j + 34, vbase);
-        AppendQuad(k + 8, j + 17, j + 35, k + 26, vbase);
-
+        int l = -4;
+        while ((l += 4) < 48)
+            AppendQuad(q[l + 0] + m[l + 0] * 3 + a[l + 0],
+                       q[l + 1] + m[l + 1] * 3 + a[l + 1],
+                       q[l + 2] + m[l + 2] * 3 + a[l + 2],
+                       q[l + 3] + m[l + 3] * 3 + a[l + 3],
+                       vbase);
+        
         for (int n = 0; n < 12; n++)
             p[n] = rotmat * p[n];
     }

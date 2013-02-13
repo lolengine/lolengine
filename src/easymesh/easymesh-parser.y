@@ -147,14 +147,16 @@ transform_command:
 primitive_command:
     T_CYLINDER args6       { mc.m_mesh.AppendCylinder((int)$2.f0, $2.f1,
                                                  $2.f2, $2.f3,
-                                                 (int)$2.f4, (int)$2.f5); }
+                                                 (int)$2.f4, (int)$2.f5, 0); }
+  | T_CYLINDER args7       { mc.m_mesh.AppendCylinder((int)$2.f0, $2.f1,
+                                                 $2.f2, $2.f3,
+                                                 (int)$2.f4, (int)$2.f5, (int)$2.f6); }
   | T_BOX args3            { mc.m_mesh.AppendBox(vec3($2.f0, $2.f1, $2.f2)); }
   | T_SMOOTHCHAMFBOX args4 { mc.m_mesh.AppendSmoothChamfBox(vec3($2.f0, $2.f1,
                                                             $2.f2), $2.f3); }
   | T_FLATCHAMFBOX args4   { mc.m_mesh.AppendFlatChamfBox(vec3($2.f0, $2.f1,
                                                           $2.f2), $2.f3); }
-  | T_SPHERE args4         { mc.m_mesh.AppendSphere($2.f0,
-                                               vec3($2.f1, $2.f2, $2.f3)); }
+  | T_SPHERE args2         { mc.m_mesh.AppendSphere($2.f0, $2.f1); }
   | T_CAPSULE args3        { mc.m_mesh.AppendCapsule($2.f0, $2.f1, $2.f2); }
   | T_TORUS args3          { mc.m_mesh.AppendTorus((int)$2.f0, $2.f1, $2.f2); }
   | T_STAR args5           { mc.m_mesh.AppendStar((int)$2.f0, $2.f1, $2.f2,

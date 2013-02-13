@@ -301,8 +301,8 @@ public:
                 m_meshes.Push(EasyMesh(), false, .0f, vec3(.0f));
                 if (!m_meshes.Last().m1.Compile(cmd.C()))
                     m_meshes.Pop();
-                else
-                    m_meshes.Last().m1.ComputeTexCoord(0.2f, 2);
+                //else
+                //    m_meshes.Last().m1.ComputeTexCoord(0.2f, 2);
             }
         }
     }
