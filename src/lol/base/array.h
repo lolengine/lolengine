@@ -119,7 +119,7 @@ public:
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
         ASSERT(n >= 0);
-        ASSERT(n < m_count || (!n && !m_count));
+        ASSERT((unsigned)n < (unsigned)m_count || (!n && !m_count));
         return m_data[n];
     }
 
