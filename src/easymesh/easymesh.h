@@ -235,34 +235,34 @@ public:
     //Mesh shape operations
     //-------------------------------------------------------------------------
 
-    /* [cmd:ac] Cylinder centered on (0,0,0) with BBox [-max(r1, r2), -.5*h, -max(r1, r2)][max(r1, r2), .5*h, max(r1, r2)]
-        - nbsides : Number of sides.
+    /* [cmd:ac] Cylinder centered on (0,0,0) with BBox [-.5*max(d1, d2), -.5*h, -.5*max(d1, d2)]
+        - nbsides : Number of sides.                   [+.5*max(d1, d2), +.5*h, +.5*max(d1, d2)]
         - h : Height of the cylinder.
-        - r1 : Lower radius. TODO:convert to diameter to be coherent with other funcs
-        - r2 : Upper radius. TODO:convert to diameter to be coherent with other funcs
+        - d1 : Lower diameter.
+        - d2 : Upper diameter.
         - dualside : if (1) will also create inner sides : TOOD:TOREMOVE?? : needed ?
         - smooth : if (1) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
         - close : if (1) will add discs to close the cylinder
      */
-    void AppendCylinder(int nsides, float h, float r1, float r2,
+    void AppendCylinder(int nsides, float h, float d1, float d2,
                         int dualside, int smooth, int close);
-    /* [cmd:asph] Sphere centered on (0,0,0) with BBox [-size][size]
+    /* [cmd:asph] Sphere centered on (0,0,0) with BBox [-.5*d][.5*d]
         - ndivisions : number of subdivisions each Sphere triangle will sustain.
-        - size : size of the Sphere.
+        - d : Diameter.
      */
-    void AppendSphere(int ndivisions, float r);
-    /* [cmd:acap] Capsule centered on (0,0,0) with BBox [-r, -(r+h) ,-r][r, (r+h) ,r]
+    void AppendSphere(int ndivisions, float d);
+    /* [cmd:acap] Capsule centered on (0,0,0) with BBox [-.5*d, -(.5*d+h), -.5*d][.5*d, (.5*d+h), .5*d]
         - ndivisions : number of subdivisions each Sphere triangle will sustain.
         - h : Inner height.
-        - r : Radius. TODO:convert to diameter to be coherent with other funcs
+        - d : Diameter.
      */
-    void AppendCapsule(int ndivisions, float h, float r);
-    /* [cmd:ato] Torus centered on (0,0,0) with BBox [-r2][r2]
+    void AppendCapsule(int ndivisions, float h, float d);
+    /* [cmd:ato] Torus centered on (0,0,0) with BBox [-.5*d2][.5*d2]
         - ndivisions : number of subdivisions of the torus.
-        - r1 : Inner radius. TODO:convert to diameter to be coherent with other funcs
-        - r2 : Outer radius. TODO:convert to diameter to be coherent with other funcs
+        - d1 : Inner diameter.
+        - d2 : Outer diameter.
      */
-    void AppendTorus(int ndivisions, float r1, float r2);
+    void AppendTorus(int ndivisions, float d1, float d2);
     /* [cmd:ab] Box centered on (0,0,0) with BBox [-.5 * size][.5 * size]
         - size : size of the box.
         - chamf : size of the chamfer.
@@ -276,35 +276,35 @@ public:
     //Same as AppendBox
     void AppendBox(vec3 const &size, float chamf, bool smooth);
     /* [cmd:as]
-       Append a Star centered on (0,0,0) contained within a disc of "max(r1, r2)" radius.
+       Append a Star centered on (0,0,0) contained within a disc of "max(d1, d2)" diameter.
         - nbranches : Number of branches.
-        - r1 : Length of the branches.
-        - r2 : Length of the "branch" located between r1-branches.
+        - d1 : double Length of the branches.
+        - d2 : double Length of the "branch" located between d1-branches.
         - fade : if (1) in-between branches use Color2.
         - fade2 : if (1) Star branches use Color2.
      */
-    void AppendStar(int nbranches, float r1, float r2,
+    void AppendStar(int nbranches, float d1, float d2,
                     int fade = 0, int fade2 = 0);
-    /* [cmd:aes] Star centered on (0,0,0) contained within a disc of "max(max(r1, r2), max(r1 + extrar, r2 + extrar))" radius.
+    /* [cmd:aes] Star centered on (0,0,0) contained within a disc of "max(max(d1, d2), max(d1 + extrad, d2 + extrad))" diameter.
        Expanded star branches use Color2.
         - nbranches : Number of branches.
-        - r1 : Length of the branches.
-        - r2 : Length of the "branch" located between r1-branches.
-        - extrar : Extra length added to expand all branches.
+        - d1 : Double Length of the branches.
+        - d2 : Double Length of the "branch" located between r1-branches.
+        - extrad : Extra length added to expand all branches.
      */
-    void AppendExpandedStar(int nbranches, float r1, float r2, float extrar);
-    /* [cmd:ad] Disc centered on (0,0,0) with BBox [-size][size]
+    void AppendExpandedStar(int nbranches, float d1, float d2, float extrad);
+    /* [cmd:ad] Disc centered on (0,0,0) with d diameter.
         - nbsides : Number of sides.
-        - r : Radius. TODO:convert to diameter to be coherent with other funcs
+        - d : Diameter.
         - fade : if (1) Outer vertices will use Color2
      */
-    void AppendDisc(int nsides, float r, int fade = 0);
-    /* [cmd:at] Triangle centered on (0,0,0) contained within a disc of "size" radius.
-        - size : Size of vector : origin-TO-vertex.
+    void AppendDisc(int nsides, float d, int fade = 0);
+    /* [cmd:at] Triangle centered on (0,0,0) contained within a disc of "d" diameter.
+        - d : diameter of the containing disc..
         - fade : if (1) 2nd & 3rd Vertices will use Color2
      */
-    void AppendSimpleTriangle(float size, int fade = 0);
-    /* [cmd:aq] Quad centered on (0,0,0) contained within BBox [-size,0,-size][size,0,size]
+    void AppendSimpleTriangle(float d, int fade = 0);
+    /* [cmd:aq] Quad centered on (0,0,0) contained within BBox [-size*.5f, 0, -size*.5f][size*.5f, 0, size*.5f]
         - size : Size of quad.
         - fade : if (1) 3rd & 4th Vertices will use Color2
      */
@@ -313,19 +313,19 @@ private:
     //complex version of above one
     void AppendSimpleQuad(vec2 p1, vec2 p2, float z = 0.f, int fade = 0);
 public:
-    /* [cmd:acg] Gear centered on (0,0,0) contained within BBox [-max(r1,r2), -.5*h, -max(r1, r2)][max(r1, r2), .5*h, max(r1, r2)]
-        - h : Height of the Gear.
-        - r10 : Upper Inner radius.
-        - r20 : Lower Inner radius.
-        - r1  : Upper Outer radius.
-        - r2  : Lower Outer radius.
-        - r12 : Upper Cog radius.
-        - r22 : Lower Cog radius.
+    /* [cmd:acg] Gear centered on (0,0,0) contained within BBox [-.5*max(d1,d2), -.5*h, -.5*max(d1, d2)]
+        - h : Height of the Gear.                               [+.5*max(d1,d2), +.5*h, +.5*max(d1, d2)]
+        - d10 : Upper Inner diameter.
+        - d20 : Lower Inner diameter.
+        - d1  : Upper Outer diameter.
+        - d2  : Lower Outer diameter.
+        - d12 : Upper Cog diameter.
+        - d22 : Lower Cog diameter.
         - sidemul : multiplier for the size of the cogs.
         - offset : useless
      */
-    void AppendCog(int nbsides, float h, float r10, float r20, float r1,
-                   float r2, float r12, float r22, float sidemul, int offset);
+    void AppendCog(int nbsides, float h, float d10, float d20, float d1,
+                   float d2, float d12, float d22, float sidemul, int offset);
 
     //-------------------------------------------------------------------------
     //TODO : Mesh Bone operations

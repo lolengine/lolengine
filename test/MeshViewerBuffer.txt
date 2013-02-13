@@ -1,5 +1,7 @@
-[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 tax .4 .4 0]
+//[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 tax .4 .4 0]
+//[sc#88f ab 4 4 4]
 //[sc#ff2 asph 2 4 tx 4 tax 1 1 0]
+[sc#ff2 asph 2 4]
 //[sc#ff2 acap 1 4 4]
 //[sc#ff2 scb#ff2 ac 10 4 4 4 0 0 1]
 //[sc#ff2 scb#ff2 ad 10 4 0]
@@ -7,7 +9,7 @@
 //[sc#ff2 scb#2ff at 4 1]
 //[sc#ff2 scb#2ff aq 4 0]
 //[sc#ff2 scb#2ff aes 5 3 6 2]
-//[sc#ff2 scb#2ff as 5 2 5 0 0]
+//[sc#ff2 scb#2ff as 4 2 4 0 0]
 //[sc#ff2 scb#2ff acg 2 10 .1 .1 .4 .4 .1 .1 0 1]
 
 //[sc#ff2 asph 2 10 10 10]
