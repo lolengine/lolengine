@@ -78,6 +78,20 @@ private:
     Array<int>              master_list;
 };
 
+struct Axis
+{
+    enum Value
+    {
+        X,
+        Y,
+        Z
+    }
+    m_value;
+
+    inline Axis(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 struct MeshBuildOperation
 {
     enum Value
@@ -184,28 +198,81 @@ public:
         - r : jitter maximum value.
      */
     void RadialJitter(float r);
-    //TODO : twist
-    //TODO : bend
-    //TODO : stretch
-    //TODO : shear
-    /* [cmd:tax] multiply y&z by (1.0 + (n * x + xoff))
-        - y : value of n for y.
-        - z : value of n for z.
+    /* [cmd:tax] multiply axis y&z by x as y *= (1.0 + (ny * x + xoff))
+        - ny : value of n for y.
+        - nz : value of n for z.
         - xoff : value of xoff.
+        - absolute (def:1) : if (1) Multiply will use an absolute x.
      */
-    void TaperX(float y, float z, float xoff);
-    /* [cmd:tay] multiply x&z by (1.0 + (n * y + yoff))
-        - x : value of n for x.
-        - z : value of n for z.
-        - yoff : value of yoff.
+    void TaperX(float ny, float nz, float xoff, int absolute=1);
+    /* [cmd:tay] Same as TaperX, with Y */
+    void TaperY(float nx, float nz, float yoff, int absolute=1);
+    /* [cmd:taz] Same as TaperX, with Z */
+    void TaperZ(float nx, float ny, float zoff, int absolute=1);
+    /* [cmd:twx] Twist vertices around x axis with x as rotation value as p = (RotateX(x * t + toff) * p)
+        - t : Angle multiplier.
+        - toff : Applied offset.
      */
-    void TaperY(float x, float z, float yoff);
-    /* [cmd:taz] multiply x&y by (1.0 + (n * z + zoff))
-        - x : value of n for x.
-        - y : value of n for y.
-        - zoff : value of zoff.
+    void TwistX(float t, float toff);
+    /* [cmd:twy] Same as TwistX, with Y */
+    void TwistY(float t, float toff);
+    /* [cmd:twz] Same as TwistX, with Z */
+    void TwistZ(float t, float toff);
+    /* [cmd:shx] Shear vertices using x value as shear quantity as y += (ny * x + xoff)
+        - ny : Value of n for y.
+        - nz : Value of n for z.
+        - xoff : Value of xoff.
+        - absolute (def:1) : if (1) Multiply will use an absolute x.
      */
-    void TaperZ(float x, float y, float zoff);
+    void ShearX(float ny, float nz, float xoff, int absolute=1);
+    /* [cmd:shy] Same as ShearX, with Y */
+    void ShearY(float nx, float nz, float yoff, int absolute=1);
+    /* [cmd:shz] Same as ShearX, with Z */
+    void ShearZ(float nx, float ny, float zoff, int absolute=1);
+    /* [cmd:stx] Stretch vertices using x value as stretch quantity as y += (pow(x, ny) + xoff)
+        - ny : Value of n for y.
+        - nz : Value of n for z.
+        - xoff : Value of xoff.
+     */
+    void StretchX(float ny, float nz, float xoff);
+    /* [cmd:sty] Same as StretchX, with Y */
+    void StretchY(float nx, float nz, float yoff);
+    /* [cmd:stz] Same as StretchX, with Z */
+    void StretchZ(float nx, float ny, float zoff);
+    /* [cmd:bdxy] Bend vertices using x as bend quantity along y axis using p = (RotateY(x * t + toff) * p)
+        - t : Angle multiplier.
+        - xoff : Applied offset.
+     */
+    void BendXY(float t, float toff);
+    /* [cmd:bdxz] Same as BendXY, with X & Z */
+    void BendXZ(float t, float toff);
+    /* [cmd:bdyx] Same as BendXY, with Y & X */
+    void BendYX(float t, float toff);
+    /* [cmd:bdyz] Same as BendXY, with Y & Z */
+    void BendYZ(float t, float toff);
+    /* [cmd:bdzx] Same as BendXY, with Z & X */
+    void BendZX(float t, float toff);
+    /* [cmd:bdzy] Same as BendXY, with Z & Y */
+    void BendZY(float t, float toff);
+private:
+    struct MeshTransform
+    {
+        enum Value
+        {
+            Taper,
+            Twist,
+            Bend,
+            Stretch,
+            Shear
+        }
+        m_value;
+
+        inline MeshTransform(Value v) : m_value(v) {}
+        inline operator Value() { return m_value; }
+    };
+
+    void DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, int absolute);
+public:
     /* [cmd:s/sx/sy/sz] Scale vertices
         - s : scale quantity.
      */

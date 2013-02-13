@@ -2,7 +2,7 @@
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2010 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -137,44 +137,59 @@ namespace lol {
      T_TRANSLATEX = 260,
      T_ROTATEX = 261,
      T_TAPERX = 262,
-     T_SCALEX = 263,
-     T_MIRRORX = 264,
-     T_TRANSLATEY = 265,
-     T_ROTATEY = 266,
-     T_TAPERY = 267,
-     T_SCALEY = 268,
-     T_MIRRORY = 269,
-     T_TRANSLATEZ = 270,
-     T_ROTATEZ = 271,
-     T_TAPERZ = 272,
-     T_SCALEZ = 273,
-     T_MIRRORZ = 274,
-     T_TRANSLATE = 275,
-     T_SCALE = 276,
-     T_TOGGLESCALEWINDING = 277,
-     T_RADIALJITTER = 278,
-     T_CSGUNION = 279,
-     T_CSGSUBSTRACT = 280,
-     T_CSGSUBSTRACTLOSS = 281,
-     T_CSGAND = 282,
-     T_CSGXOR = 283,
-     T_CHAMFER = 284,
-     T_CYLINDER = 285,
-     T_BOX = 286,
-     T_SMOOTHCHAMFBOX = 287,
-     T_FLATCHAMFBOX = 288,
-     T_SPHERE = 289,
-     T_CAPSULE = 290,
-     T_STAR = 291,
-     T_EXPANDEDSTAR = 292,
-     T_DISC = 293,
-     T_TRIANGLE = 294,
-     T_QUAD = 295,
-     T_COG = 296,
-     T_TORUS = 297,
-     T_ERROR = 298,
-     NUMBER = 299,
-     COLOR = 300
+     T_TWISTX = 263,
+     T_SHEARX = 264,
+     T_STRETCHX = 265,
+     T_BENDXY = 266,
+     T_BENDXZ = 267,
+     T_SCALEX = 268,
+     T_MIRRORX = 269,
+     T_TRANSLATEY = 270,
+     T_ROTATEY = 271,
+     T_TAPERY = 272,
+     T_TWISTY = 273,
+     T_SHEARY = 274,
+     T_STRETCHY = 275,
+     T_BENDYX = 276,
+     T_BENDYZ = 277,
+     T_SCALEY = 278,
+     T_MIRRORY = 279,
+     T_TRANSLATEZ = 280,
+     T_ROTATEZ = 281,
+     T_TAPERZ = 282,
+     T_TWISTZ = 283,
+     T_SHEARZ = 284,
+     T_STRETCHZ = 285,
+     T_BENDZX = 286,
+     T_BENDZY = 287,
+     T_SCALEZ = 288,
+     T_MIRRORZ = 289,
+     T_TRANSLATE = 290,
+     T_SCALE = 291,
+     T_TOGGLESCALEWINDING = 292,
+     T_RADIALJITTER = 293,
+     T_CSGUNION = 294,
+     T_CSGSUBSTRACT = 295,
+     T_CSGSUBSTRACTLOSS = 296,
+     T_CSGAND = 297,
+     T_CSGXOR = 298,
+     T_CHAMFER = 299,
+     T_CYLINDER = 300,
+     T_BOX = 301,
+     T_SMOOTHCHAMFBOX = 302,
+     T_FLATCHAMFBOX = 303,
+     T_SPHERE = 304,
+     T_CAPSULE = 305,
+     T_STAR = 306,
+     T_EXPANDEDSTAR = 307,
+     T_DISC = 308,
+     T_TRIANGLE = 309,
+     T_QUAD = 310,
+     T_COG = 311,
+     T_TORUS = 312,
+     T_ERROR = 313,
+     NUMBER = 314,
+     COLOR = 315
    };
 
     };
@@ -261,7 +276,7 @@ namespace lol {
     static const unsigned char yydefact_[];
 
     static const short int yypgoto_[];
-    static const signed char yydefgoto_[];
+    static const short int yydefgoto_[];
 
     /// What to do in a state.
     /// \a yytable_[yypact_[s]]: what to do in state \a s.
@@ -271,7 +286,7 @@ namespace lol {
     static const unsigned char yytable_[];
     static const signed char yytable_ninf_;
 
-    static const signed char yycheck_[];
+    static const short int yycheck_[];
 
     /// For a state, its accessing symbol.
     static const unsigned char yystos_[];
@@ -348,7 +363,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 352 "generated/easymesh-parser.h"
+#line 367 "generated/easymesh-parser.h"
 
 
 

@@ -44,9 +44,9 @@
 
 %token T_COLOR T_BGCOLOR
 
-%token T_TRANSLATEX T_ROTATEX T_TAPERX T_SCALEX T_MIRRORX
-%token T_TRANSLATEY T_ROTATEY T_TAPERY T_SCALEY T_MIRRORY
-%token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_SCALEZ T_MIRRORZ
+%token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
+%token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
+%token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_TWISTZ T_SHEARZ T_STRETCHZ T_BENDZX T_BENDZY T_SCALEZ T_MIRRORZ
 %token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER
 %token T_CSGUNION T_CSGSUBSTRACT T_CSGSUBSTRACTLOSS T_CSGAND T_CSGXOR
 %token T_CHAMFER
@@ -126,8 +126,29 @@ transform_command:
   | T_ROTATEY args1        { mc.m_mesh.RotateY($2.f0); }
   | T_ROTATEZ args1        { mc.m_mesh.RotateZ($2.f0); }
   | T_TAPERX args3         { mc.m_mesh.TaperX($2.f0, $2.f1, $2.f2); }
+  |  T_TAPERX args4        { mc.m_mesh.TaperX($2.f0, $2.f1, $2.f2, $2.f3); }
   | T_TAPERY args3         { mc.m_mesh.TaperY($2.f0, $2.f1, $2.f2); }
+  |  T_TAPERY args4        { mc.m_mesh.TaperY($2.f0, $2.f1, $2.f2, $2.f3); }
   | T_TAPERZ args3         { mc.m_mesh.TaperZ($2.f0, $2.f1, $2.f2); }
+  |  T_TAPERZ args4        { mc.m_mesh.TaperZ($2.f0, $2.f1, $2.f2, $2.f3); }
+  | T_TWISTX args2         { mc.m_mesh.TwistX($2.f0, $2.f1); }
+  | T_TWISTY args2         { mc.m_mesh.TwistY($2.f0, $2.f1); }
+  | T_TWISTZ args2         { mc.m_mesh.TwistZ($2.f0, $2.f1); }
+  | T_SHEARX args3         { mc.m_mesh.ShearX($2.f0, $2.f1, $2.f2); }
+  |  T_SHEARX args4        { mc.m_mesh.ShearX($2.f0, $2.f1, $2.f2, $2.f3); }
+  | T_SHEARY args3         { mc.m_mesh.ShearY($2.f0, $2.f1, $2.f2); }
+  |  T_SHEARY args4        { mc.m_mesh.ShearY($2.f0, $2.f1, $2.f2, $2.f3); }
+  | T_SHEARZ args3         { mc.m_mesh.ShearZ($2.f0, $2.f1, $2.f2); }
+  |  T_SHEARZ args4        { mc.m_mesh.ShearZ($2.f0, $2.f1, $2.f2, $2.f3); }
+  | T_STRETCHX args3       { mc.m_mesh.StretchX($2.f0, $2.f1, $2.f2); }
+  | T_STRETCHY args3       { mc.m_mesh.StretchY($2.f0, $2.f1, $2.f2); }
+  | T_STRETCHZ args3       { mc.m_mesh.StretchZ($2.f0, $2.f1, $2.f2); }
+  | T_BENDXY args2         { mc.m_mesh.BendXY($2.f0, $2.f1); }
+  | T_BENDXZ args2         { mc.m_mesh.BendXZ($2.f0, $2.f1); }
+  | T_BENDYX args2         { mc.m_mesh.BendYX($2.f0, $2.f1); }
+  | T_BENDYZ args2         { mc.m_mesh.BendYZ($2.f0, $2.f1); }
+  | T_BENDZX args2         { mc.m_mesh.BendZX($2.f0, $2.f1); }
+  | T_BENDZY args2         { mc.m_mesh.BendZY($2.f0, $2.f1); }
   | T_SCALEX args1         { mc.m_mesh.Scale(vec3($2.f0, 1.0, 1.0)); }
   | T_SCALEY args1         { mc.m_mesh.Scale(vec3(1.0, $2.f0, 1.0)); }
   | T_SCALEZ args1         { mc.m_mesh.Scale(vec3(1.0, 1.0, $2.f0)); }

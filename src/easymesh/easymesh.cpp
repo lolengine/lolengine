@@ -929,34 +929,78 @@ void EasyMesh::RadialJitter(float r)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::TaperX(float y, float z, float xoff)
-{
-    /* FIXME: this code breaks normals! */
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-    {
-        m_vert[i].m1.y *= 1.f + (y * abs(m_vert[i].m1.x) + xoff);
-        m_vert[i].m1.z *= 1.f + (z * abs(m_vert[i].m1.x) + xoff);
-    }
-}
+void EasyMesh::TaperX(float ny, float nz, float xoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::X, Axis::X, ny, nz, xoff, absolute); }
+void EasyMesh::TaperY(float nx, float nz, float yoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
+void EasyMesh::TaperZ(float nx, float ny, float zoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::TaperY(float x, float z, float yoff)
-{
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-    {
-        m_vert[i].m1.x *= 1.f + (x * abs(m_vert[i].m1.y) + yoff);
-        m_vert[i].m1.z *= 1.f + (z * abs(m_vert[i].m1.y) + yoff);
-    }
-}
+void EasyMesh::TwistX(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::X, Axis::X, t, t, toff, 0); }
+void EasyMesh::TwistY(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Y, Axis::Y, t, t, toff, 0); }
+void EasyMesh::TwistZ(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Z, Axis::Z, t, t, toff, 0); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::TaperZ(float x, float y, float zoff)
+void EasyMesh::ShearX(float ny, float nz, float xoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::X, Axis::X, ny, nz, xoff, absolute); }
+void EasyMesh::ShearY(float nx, float nz, float yoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
+void EasyMesh::ShearZ(float nx, float ny, float zoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
+
+//-----------------------------------------------------------------------------
+void EasyMesh::StretchX(float ny, float nz, float xoff) { DoMeshTransform(MeshTransform::Stretch, Axis::X, Axis::X, ny, nz, xoff, 0); }
+void EasyMesh::StretchY(float nx, float nz, float yoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Y, Axis::Y, nz, nx, yoff, 0); }
+void EasyMesh::StretchZ(float nx, float ny, float zoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Z, Axis::Z, nx, ny, zoff, 0); }
+
+//-----------------------------------------------------------------------------
+void EasyMesh::BendXY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Y, t, t, toff, 0); }
+void EasyMesh::BendXZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Z, t, t, toff, 0); }
+void EasyMesh::BendYX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::X, t, t, toff, 0); }
+void EasyMesh::BendYZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::Z, t, t, toff, 0); }
+void EasyMesh::BendZX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::X, t, t, toff, 0); }
+void EasyMesh::BendZY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::Y, t, t, toff, 0); }
+
+//-----------------------------------------------------------------------------
+void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, int absolute)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1.x *= 1.f + (x * abs(m_vert[i].m1.z) + zoff);
-        m_vert[i].m1.y *= 1.f + (y * abs(m_vert[i].m1.z) + zoff);
+        switch (ct)
+        {
+            case MeshTransform::Taper:
+            {
+                float value = m_vert[i].m1[axis0];
+                if (absolute) value = abs(value);
+                m_vert[i].m1[(axis0 + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
+                m_vert[i].m1[(axis0 + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
+                break;
+            }
+            case MeshTransform::Twist:
+            {
+                vec3 rotaxis = vec3(1.f); rotaxis[(axis0 + 1) % 3] = .0f; rotaxis[(axis0 + 2) % 3] = .0f;
+                m_vert[i].m1 = mat3::rotate(m_vert[i].m1[axis0] * n0 + noff, rotaxis) * m_vert[i].m1;
+                break;
+            }
+            case MeshTransform::Shear:
+            {
+                float value = m_vert[i].m1[axis0];
+                if (absolute) value = abs(value);
+                m_vert[i].m1[(axis0 + 1) % 3] += (n0 * value + noff);
+                m_vert[i].m1[(axis0 + 2) % 3] += (n1 * value + noff);
+                break;
+            }
+            case MeshTransform::Stretch:
+            {
+                //float value = abs(m_vert[i].m1[axis0]);
+                //m_vert[i].m1[(axis0 + 1) % 3] += (lol::pow(value, n0) + noff);
+                //m_vert[i].m1[(axis0 + 2) % 3] += (lol::pow(value, n1) + noff);
+                break;
+            }
+            case MeshTransform::Bend:
+            {
+                vec3 rotaxis = vec3(1.f); rotaxis[(axis1 + 1) % 3] = .0f; rotaxis[(axis1 + 2) % 3] = .0f;
+                m_vert[i].m1 = mat3::rotate(m_vert[i].m1[axis0] * n0 + noff, rotaxis) * m_vert[i].m1;
+                break;
+            }
+        }
     }
+    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
 }
 
 //-----------------------------------------------------------------------------
