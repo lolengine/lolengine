@@ -7,7 +7,7 @@ noinst_LIBRARIES = liblolbullet.a
 # what the compiler actually accepts.
 disable_cflags = $(filter $(AM_CPPFLAGS:-W%=-Wno-%), \
     -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
-    -Wno-reorder -Wno-maybe-uninitialized, -Wno-narrowing \
+    -Wno-reorder -Wno-maybe-uninitialized -Wno-narrowing \
     -Wno-parentheses)
 
 liblolbullet_a_SOURCES = $(bullet_sources)

@@ -158,8 +158,12 @@ LOL_TRY_CXXFLAGS(-Wsign-compare, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wsign-compare"])
 
 dnl  Add these even though they're implicitly set, so that we can safely
 dnl  remove them from within a Makefile.
-LOL_TRY_CXXFLAGS(-Wno-maybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wno-maybe-uninitialized"])
-LOL_TRY_CXXFLAGS(-Wno-narrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wno-narrowing"])
+LOL_TRY_CXXFLAGS(-Wmaybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wmaybe-uninitialized"])
+LOL_TRY_CXXFLAGS(-Wnarrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wnarrowing"])
+LOL_TRY_CXXFLAGS(-Wunused, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wunused"])
+LOL_TRY_CXXFLAGS(-Wstrict-aliasing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-aliasing"])
+LOL_TRY_CXXFLAGS(-Wreorder, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wreorder"])
+LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
 
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
