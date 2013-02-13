@@ -1006,9 +1006,13 @@ void EasyMesh::DupAndScale(vec3 const &s)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
+void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
                               int dualside, int smooth, int close)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r1 = d1 * .5f;
+    float r2 = d2 * .5f;
+
     //SAVE
     vec4 Saved_Color = m_color;
     vec4 Saved_Color2 = m_color2;
@@ -1090,14 +1094,17 @@ void EasyMesh::AppendCylinder(int nsides, float h, float r1, float r2,
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendSphere(int ndivisions, float r)
+void EasyMesh::AppendSphere(int ndivisions, float d)
 {
-    AppendCapsule(ndivisions, 0.f, r);
+    AppendCapsule(ndivisions, 0.f, d);
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
+void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r = d * .5f;
+
     int ibase = m_indices.Count();
 
     Array<vec3> vertices;
@@ -1237,8 +1244,12 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float r)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendTorus(int ndivisions, float r1, float r2)
+void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r1 = d1 * .5f;
+    float r2 = d2 * .5f;
+
     int ibase = m_indices.Count();
     int nidiv = ndivisions; /* Cross-section */
     int njdiv = ndivisions; /* Full circumference */
@@ -1418,9 +1429,13 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendStar(int nbranches, float r1, float r2,
+void EasyMesh::AppendStar(int nbranches, float d1, float d2,
                           int fade, int fade2)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r1 = d1 * .5f;
+    float r2 = d2 * .5f;
+
     //TODO: It would probably be good to think of another way of UV painting this, like "branch repeating"
     int vbase = m_vert.Count();
     float maxr = max(r1, r2);
@@ -1454,9 +1469,13 @@ void EasyMesh::AppendStar(int nbranches, float r1, float r2,
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendExpandedStar(int nbranches, float r1,
-                                  float r2, float extrar)
+void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extrad)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r1 = d1 * .5f;
+    float r2 = d2 * .5f;
+    float extrar = extrad * .5f;
+
     int vbase = m_vert.Count();
     float maxr = (float)max(max(r1, r2), max(r1 + extrar, r2 + extrar));
 
@@ -1494,8 +1513,11 @@ void EasyMesh::AppendExpandedStar(int nbranches, float r1,
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendDisc(int nsides, float r, int fade)
+void EasyMesh::AppendDisc(int nsides, float d, int fade)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r = d * .5f;
+
     int vbase = m_vert.Count();
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
@@ -1516,8 +1538,11 @@ void EasyMesh::AppendDisc(int nsides, float r, int fade)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleTriangle(float size, int fade)
+void EasyMesh::AppendSimpleTriangle(float d, int fade)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float size = d * .5f;
+
     mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
     vec3 p(0.f, 0.f, size);
 
@@ -1557,10 +1582,18 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendCog(int nbsides, float h, float r10, float r20,
-                         float r1, float r2, float r12, float r22,
+void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
+                         float d1, float d2, float d12, float d22,
                          float sidemul, int offset)
 {
+    //XXX : This operation is done to convert radius to diameter without changing all the code.
+    float r10 = d10 * .5f;
+    float r20 = d20 * .5f;
+    float r1  = d1  * .5f;
+    float r2  = d2  * .5f;
+    float r12 = d12 * .5f;
+    float r22 = d22 * .5f;
+
     int ibase = m_indices.Count();
     int vbase = m_vert.Count();
 
