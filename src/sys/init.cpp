@@ -38,7 +38,9 @@ namespace System
 static Array<String> data_dir;
 
 void Init(int argc, char *argv[],
-          String const &projectdir, String const &solutiondir)
+          String const &projectdir,
+          String const &solutiondir,
+          String const &sourcesubdir)
 {
     using namespace std;
 
@@ -76,10 +78,17 @@ void Init(int argc, char *argv[],
              * assume it was. */
             if (i)
             {
-                String rootdir = projectdir;
+                String rootdir = solutiondir;
+                if (rootdir.Last() != SEPARATOR)
+                    rootdir += SEPARATOR;
+                rootdir += "../../src/"; /* FIXME: use SEPARATOR? */
+                AddDataDir(rootdir);
+
+                rootdir = projectdir;
                 if (rootdir.Last() != SEPARATOR)
                     rootdir += SEPARATOR;
                 AddDataDir(rootdir);
+
                 got_rootdir = true;
             }
             break;
@@ -89,7 +98,22 @@ void Init(int argc, char *argv[],
     /* If no rootdir found, use the executable location */
     if (!got_rootdir)
     {
-        AddDataDir(binarydir);
+        String rootdir = binarydir;
+        if (rootdir.Last() != SEPARATOR)
+            rootdir += SEPARATOR;
+        for (int i = 1; i < sourcesubdir.Count(); ++i)
+        {
+            if ((sourcesubdir[i] == SEPARATOR
+                  && sourcesubdir[i - 1] != SEPARATOR)
+                 || i == sourcesubdir.Count() - 1)
+                rootdir += "../";
+        }
+        rootdir += "src/";
+        AddDataDir(rootdir);
+
+        rootdir = binarydir;
+        AddDataDir(rootdir);
+
         got_rootdir = true;
     }
 
@@ -113,7 +137,7 @@ Array<String> GetPathList(String const &file)
     Array<String> ret;
 
     for (int i = 0; i < data_dir.Count(); ++i)
-        ret << data_dir[0] + file;
+        ret << data_dir[i] + file;
 
     if (ret.Count() == 0)
         ret << file;
