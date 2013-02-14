@@ -815,7 +815,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
                 m_vert[tri_list[cur_tri + 1]].m4 = vec2(-1.0f);
                 m_vert[tri_list[cur_tri + 2]].m4 = vec2(-1.0f);
             }
-    
+
             //uv[0] = vec2(-1.0f);
             //uv[1] = vec2(-1.0f);
             //uv[2] = vec2(-1.0f);
@@ -1822,12 +1822,12 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
             k = 3 * 12 * ((i + 1) % nbsides);
 
         int q[] = { /* The top and bottom faces */
-                    j, j, j, j,  
-                    j, j, j, j, 
-                    j, j, k, k,      
-                    k, k, j, j, 
-                    j, j, j, k,  
-                    k, j, j, j, 
+                    j, j, j, j,
+                    j, j, j, j,
+                    j, j, k, k,
+                    k, k, j, j,
+                    j, j, j, k,
+                    k, j, j, j,
                     /* The inner side quads */
                     j, j, j, j,
                     j, k, k, j,
@@ -1910,7 +1910,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                        q[l + 2] + m[l + 2] * 3 + a[l + 2],
                        q[l + 3] + m[l + 3] * 3 + a[l + 3],
                        vbase);
-        
+
         for (int n = 0; n < 12; n++)
             p[n] = rotmat * p[n];
     }
