@@ -65,11 +65,12 @@ class VertexDictionnary
 public:
     int FindVertexMaster(const int search_idx);
     bool FindMatchingVertices(const int search_idx, Array<int> &matching_ids);
-    bool FindConnectedVertices(const int search_idx, const Array<int> &tri_list, Array<int> &connected_vert, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const int search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedVertices(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_vert, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
     void AddVertex(int vert_id, vec3 vert_coord);
+    bool GetMasterList(Array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
     void Clear() { vertex_list.Empty(); }
 private:
     //<VertexId, VertexLocation, VertexMasterId>
@@ -297,14 +298,24 @@ public:
         - f : Chamfer quantity.
      */
     void Chamfer(float f);
+    /* [cmd:splt] split triangles in 4 smaller ones.
+        - pass : Number of pass applied.
+     */
+    void SplitTriangles(int pass);
+private:
+    void SplitTriangles(int pass, VertexDictionnary *vert_dict);
+public:
+    /* [cmd:smth] Smooth the mesh by subdivising it.
+        - main_pass : a main pass is made of (n0 split then n1 smooth) repeat.
+        - split_per_main_pass : n0 value in above explanation.
+        - smooth_per_main_pass : n1 value in above explanation.
+     */
+    void SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass);
 
     //-------------------------------------------------------------------------
     //Mesh shape operations
     //-------------------------------------------------------------------------
 
-    /*
-    */
-    void SplitTriangles(int pass);
     /* [cmd:ac] Cylinder centered on (0,0,0) with BBox [-.5*max(d1, d2), -.5*h, -.5*max(d1, d2)]
         - nbsides : Number of sides.                   [+.5*max(d1, d2), +.5*h, +.5*max(d1, d2)]
         - h : Height of the cylinder.

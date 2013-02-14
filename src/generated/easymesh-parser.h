@@ -169,28 +169,29 @@ namespace lol {
      T_TOGGLESCALEWINDING = 292,
      T_RADIALJITTER = 293,
      T_SPLITTRIANGLE = 294,
-     T_CSGUNION = 295,
-     T_CSGSUBSTRACT = 296,
-     T_CSGSUBSTRACTLOSS = 297,
-     T_CSGAND = 298,
-     T_CSGXOR = 299,
-     T_CHAMFER = 300,
-     T_CYLINDER = 301,
-     T_BOX = 302,
-     T_SMOOTHCHAMFBOX = 303,
-     T_FLATCHAMFBOX = 304,
-     T_SPHERE = 305,
-     T_CAPSULE = 306,
-     T_STAR = 307,
-     T_EXPANDEDSTAR = 308,
-     T_DISC = 309,
-     T_TRIANGLE = 310,
-     T_QUAD = 311,
-     T_COG = 312,
-     T_TORUS = 313,
-     T_ERROR = 314,
-     NUMBER = 315,
-     COLOR = 316
+     T_SMOOTHMESH = 295,
+     T_CSGUNION = 296,
+     T_CSGSUBSTRACT = 297,
+     T_CSGSUBSTRACTLOSS = 298,
+     T_CSGAND = 299,
+     T_CSGXOR = 300,
+     T_CHAMFER = 301,
+     T_CYLINDER = 302,
+     T_BOX = 303,
+     T_SMOOTHCHAMFBOX = 304,
+     T_FLATCHAMFBOX = 305,
+     T_SPHERE = 306,
+     T_CAPSULE = 307,
+     T_STAR = 308,
+     T_EXPANDEDSTAR = 309,
+     T_DISC = 310,
+     T_TRIANGLE = 311,
+     T_QUAD = 312,
+     T_COG = 313,
+     T_TORUS = 314,
+     T_ERROR = 315,
+     NUMBER = 316,
+     COLOR = 317
    };
 
     };
@@ -364,7 +365,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 368 "generated/easymesh-parser.h"
+#line 369 "generated/easymesh-parser.h"
 
 
 

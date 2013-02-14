@@ -246,47 +246,54 @@ bool VertexDictionnary::FindMatchingVertices(const int search_idx, Array<int> &m
 
     for (int j = 0; j < vertex_list.Count(); j++)
         if (vertex_list[j].m3 == cur_mast && vertex_list[j].m1 != search_idx)
-            matching_ids << vertex_list[cur_mast].m1;
+            matching_ids << vertex_list[j].m1;
 
     return (matching_ids.Count() > 0);
 }
 
 //-----------------------------------------------------------------------------
 //Will return connected vertices (through triangles), if returned vertex has matching ones, it only returns the master.
-bool VertexDictionnary::FindConnectedVertices(const int search_idx, const Array<int> &tri_list, Array<int> &connected_vert, Array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedVertices(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_vert, Array<int> const *ignored_tri)
 {
     Array<int> connected_tri;
-    FindConnectedTriangles(search_idx, tri_list, connected_tri, ignored_tri);
+    FindConnectedTriangles(search_idx, tri_list, tri0, connected_tri, ignored_tri);
 
     for (int i = 0; i < connected_tri.Count(); i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            int v_indice = tri_list[connected_tri[j] + j];
+            int v_indice = tri_list[connected_tri[i] + j];
             if (v_indice != search_idx)
             {
-                int found_master = FindVertexMaster(tri_list[connected_tri[j] + j]);
+                int found_master = FindVertexMaster(tri_list[connected_tri[i] + j]);
                 if (found_master == VDictType::Alone || found_master == VDictType::Master)
-                    connected_vert << v_indice;
-                else
-                    connected_vert << found_master;
+                    found_master = v_indice;
+                if (found_master != search_idx)
+                {
+                    bool already_exist = false;
+                    for (int k = 0; !already_exist && k < connected_vert.Count(); k++)
+                        if (connected_vert[k] == found_master)
+                            already_exist = true;
+                    if (!already_exist)
+                        connected_vert << found_master;
+                }
             }
         }
     }
     return (connected_vert.Count() > 0);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri)
 {
-    return FindConnectedTriangles(ivec3(search_idx, search_idx, search_idx), tri_list, connected_tri, ignored_tri);
+    return FindConnectedTriangles(ivec3(search_idx, search_idx, search_idx), tri_list, tri0, connected_tri, ignored_tri);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const ivec2 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri)
 {
-    return FindConnectedTriangles(ivec3(search_idx, search_idx.x), tri_list, connected_tri, ignored_tri);
+    return FindConnectedTriangles(ivec3(search_idx, search_idx.x), tri_list, tri0, connected_tri, ignored_tri);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const Array<int> &tri_list, Array<int> &connected_tri, Array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri)
 {
     int needed_validation = 0;
     Array<int> vert_list[3];
@@ -305,7 +312,7 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const Ar
         }
     }
 
-    for (int i = 0; i < tri_list.Count(); i += 3)
+    for (int i = tri0; i < tri_list.Count(); i += 3)
     {
         if (ignored_tri)
         {
@@ -667,7 +674,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 {
-#if VERTEX_USEAGE == VU_TEX_UV
+#if 0//VERTEX_USEAGE == VU_TEX_UV
     VertexDictionnary vert_dict;
     Array<int> tri_list;
 
@@ -1071,29 +1078,6 @@ void EasyMesh::DupAndScale(vec3 const &s)
     m_cursors.Last().m2 -= tlen;
 }
 
-//-----------------------------------------------------------------------------
-void EasyMesh::SplitTriangles(int pass)
-{
-    while (pass--)
-    {
-        int trimax = m_indices.Count();
-        for (int i = m_cursors.Last().m2; i < trimax; i += 3)
-        {
-            int vbase = m_vert.Count();
-            int j = -1;
-            while (++j < 3)
-                AddLerpVertex(m_indices[i + j], m_indices[i + (j + 1) % 3], .5f);
-            //Add new triangles
-            AppendTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
-            AppendTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
-            AppendTriangle(vbase, vbase + 1, vbase + 2, 0);
-            //Change current triangle
-            m_indices[i + 1] = vbase;
-            m_indices[i + 2] = vbase + 2;
-        }
-    }
-    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
-}
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
                               int dualside, int smooth, int close)
@@ -1964,5 +1948,105 @@ void EasyMesh::Chamfer(float f)
     }
 }
 
-} /* namespace lol */
+//-----------------------------------------------------------------------------
+void EasyMesh::SplitTriangles(int pass) { SplitTriangles(pass, NULL); }
 
+//-----------------------------------------------------------------------------
+void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
+{
+    while (pass--)
+    {
+        int trimax = m_indices.Count();
+        for (int i = m_cursors.Last().m2; i < trimax; i += 3)
+        {
+            int vbase = m_vert.Count();
+            int j = -1;
+            while (++j < 3)
+            {
+                AddLerpVertex(m_indices[i + j], m_indices[i + (j + 1) % 3], .5f);
+                if (vert_dict)
+                    vert_dict->AddVertex(vbase + j, m_vert[vbase + j].m1);
+            }
+            //Add new triangles
+            AppendTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
+            AppendTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
+            AppendTriangle(vbase, vbase + 1, vbase + 2, 0);
+            //Change current triangle
+            m_indices[i + 1] = vbase;
+            m_indices[i + 2] = vbase + 2;
+        }
+    }
+    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass)
+{
+    VertexDictionnary vert_dict;
+    Array<vec3> smooth_buf[2];
+    Array<int> master_list;
+    Array<int> matching_ids;
+    Array<int> connected_vert;
+    int smbuf = 0;
+
+    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+        vert_dict.AddVertex(i, m_vert[i].m1);
+
+    while (main_pass--)
+    {
+        int split_pass = split_per_main_pass;
+        int smooth_pass = smooth_per_main_pass;
+
+        SplitTriangles(split_pass, &vert_dict);
+
+        matching_ids.Reserve(m_vert.Count() - m_cursors.Last().m1);
+        connected_vert.Reserve(m_vert.Count() - m_cursors.Last().m1);
+        smooth_buf[0].Resize(m_vert.Count() - m_cursors.Last().m1);
+        smooth_buf[1].Resize(m_vert.Count() - m_cursors.Last().m1);
+
+        for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+            smooth_buf[smbuf][i - m_cursors.Last().m1] = m_vert[i].m1;
+
+        while (smooth_pass--)
+        {
+            master_list.Empty();
+            if (vert_dict.GetMasterList(master_list))
+            {
+                for (int i = 0; i < master_list.Count(); i++)
+                {
+                    connected_vert.Empty();
+                    if (vert_dict.FindConnectedVertices(master_list[i], m_indices, m_cursors.Last().m2, connected_vert))
+                    {
+                        //Calculate vertices sum
+                        vec3 vert_sum = vec3(.0f);
+                        for (int j = 0; j < connected_vert.Count(); j++)
+                            vert_sum += smooth_buf[smbuf][connected_vert[j] - m_cursors.Last().m1];
+
+                        //Calculate new master vertex
+                        float n = (float)connected_vert.Count();
+                        //b(n) = 5/4 - pow(3 + 2 * cos(2 * M_PI / n), 2) / 32
+                        float beta = 3.f + 2.f * cos(2.f * (float)M_PI / n);
+                        beta = 5.f / 4.f - beta * beta / 32.f;
+                        //a(n) = n * (1 - b(n)) / b(n)
+                        float alpha = (n * (1 - beta)) / beta;
+                        //V = (a(n) * v + v1 + ... + vn) / (a(n) + n)
+                        vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.Last().m1] + vert_sum) / (alpha + n);
+                    
+                        //Set all matching vertices to new value
+                        matching_ids.Empty();
+                        matching_ids << master_list[i];
+                        vert_dict.FindMatchingVertices(master_list[i], matching_ids);
+                        for (int j = 0; j < matching_ids.Count(); j++)
+                            smooth_buf[1 - smbuf][matching_ids[j] - m_cursors.Last().m1] = new_vert;
+                    }
+                }
+            }
+            smbuf = 1 - smbuf;
+        }
+
+        for (int i = 0; i < smooth_buf[smbuf].Count(); i++)
+            m_vert[i + m_cursors.Last().m1].m1 = smooth_buf[smbuf][i];
+    }
+}
+
+} /* namespace lol */
