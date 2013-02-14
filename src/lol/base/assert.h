@@ -25,6 +25,15 @@ static inline void Abort()
 #endif
 }
 
+/* FIXME: see http://stackoverflow.com/q/3596781/111461 for discussions
+ * on implementing __debugbreak() on POSIX systems. */
+static inline void DebugBreak()
+{
+#if defined _WIN32
+    __debugbreak();
+#endif
+}
+
 #define LOL_CALL(macro, args) macro args
 #define LOL_EVAL(a) a
 #define LOL_1ST(a, ...) a
@@ -106,6 +115,7 @@ static inline void Abort()
             LOL_CALL(LOL_CAT(LOL_ERROR_, LOL_CALL(LOL_COUNT_TO_3, \
                                                   (__VA_ARGS__))), \
                      (__VA_ARGS__)); \
+            DebugBreak(); \
             Abort(); \
         }
 #endif
