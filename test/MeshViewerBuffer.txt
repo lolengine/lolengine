@@ -1,7 +1,7 @@
+[sc#88f ab 4 4 4 splt 5 tz 4 bdxy 90 0]//twy 45 0
 //[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 tax .4 .4 0]
-//[sc#88f ab 4 4 4]
 //[sc#88f ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .125 stx 10 0 0]
-[sc#ff2 scb#2ff acg 13 2 1 1 8 8 4 4 0 1 tax -2 0 0 0]
+//[sc#ff2 scb#2ff acg 13 2 1 1 8 8 4 4 0 1 tax -2 0 0 0]
 //[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 shz 1 0 0 0]
 //[sc#ff2 asph 4 4 shx 0 0 0 0]
 //[sc#ff2 asph 4 4 tax .4 .4 0]
