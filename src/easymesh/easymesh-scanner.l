@@ -87,6 +87,7 @@ my    { return token::T_MIRRORY; }
 mz    { return token::T_MIRRORZ; }
 rj    { return token::T_RADIALJITTER; }
 splt  { return token::T_SPLITTRIANGLE; }
+smth  { return token::T_SMOOTHMESH; }
 
 csgu  { return token::T_CSGUNION; }
 csgs  { return token::T_CSGSUBSTRACT; }
