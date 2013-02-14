@@ -568,22 +568,44 @@ void EasyMesh::SetCurColor2(vec4 const &color)
 //-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-#if VERTEX_USEAGE == VU_BONES
+    m_vert.Push(
+        coord, vec3(0.f, 1.f, 0.f), m_color
+#if VERTEX_USEAGE == VU_VANILLA
+    //-- VANILLA --
+#elif VERTEX_USEAGE == VU_BONES
     //TODO : -- BONE SUPPORT --
-    m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, ivec2(0), vec2(0));
+        , ivec2(0), vec2(0)
 #elif VERTEX_USEAGE == VU_TEX_UV
     //-- UV SUPPORT --
-    m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color, vec2(-1));
-#else
-    //-- VANILLA --
-    m_vert.Push(coord, vec3(0.f, 1.f, 0.f), m_color);
+        , vec2(-1)
 #endif
+    );
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AddDuplicateVertex(int i)
 {
     m_vert << m_vert[i];
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::AddLerpVertex(int i, int j, float alpha)
+{
+    m_vert.Push(
+        lol::lerp(m_vert[i].m1, m_vert[j].m1, alpha),
+        lol::lerp(m_vert[i].m2, m_vert[j].m2, alpha),
+        lol::lerp(m_vert[i].m3, m_vert[j].m3, alpha)
+#if VERTEX_USEAGE == VU_VANILLA
+    //-- VANILLA --
+#elif VERTEX_USEAGE == VU_BONES
+    //TODO : -- BONE SUPPORT --
+        , lol::lerp(m_vert[i].m4, m_vert[j].m4, alpha),
+        lol::lerp(m_vert[i].m5, m_vert[j].m5, alpha)
+#elif VERTEX_USEAGE == VU_TEX_UV
+    //-- UV SUPPORT --
+        , lol::lerp(m_vert[i].m4, m_vert[j].m4, alpha)
+#endif
+    );
 }
 
 //-----------------------------------------------------------------------------
@@ -1049,6 +1071,29 @@ void EasyMesh::DupAndScale(vec3 const &s)
     m_cursors.Last().m2 -= tlen;
 }
 
+//-----------------------------------------------------------------------------
+void EasyMesh::SplitTriangles(int pass)
+{
+    while (pass--)
+    {
+        int trimax = m_indices.Count();
+        for (int i = m_cursors.Last().m2; i < trimax; i += 3)
+        {
+            int vbase = m_vert.Count();
+            int j = -1;
+            while (++j < 3)
+                AddLerpVertex(m_indices[i + j], m_indices[i + (j + 1) % 3], .5f);
+            //Add new triangles
+            AppendTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
+            AppendTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
+            AppendTriangle(vbase, vbase + 1, vbase + 2, 0);
+            //Change current triangle
+            m_indices[i + 1] = vbase;
+            m_indices[i + 2] = vbase + 2;
+        }
+    }
+    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
+}
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
                               int dualside, int smooth, int close)

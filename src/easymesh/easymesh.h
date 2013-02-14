@@ -156,6 +156,7 @@ private:
     //-------------------------------------------------------------------------
     void AddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
+    void AddLerpVertex(int i, int j, float alpha);
     void AppendQuad(int i1, int i2, int i3, int i4, int base);
     void AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base);
     void AppendTriangle(int i1, int i2, int i3, int base);
@@ -270,7 +271,6 @@ private:
         inline MeshTransform(Value v) : m_value(v) {}
         inline operator Value() { return m_value; }
     };
-
     void DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, int absolute);
 public:
     /* [cmd:s/sx/sy/sz] Scale vertices
@@ -302,6 +302,9 @@ public:
     //Mesh shape operations
     //-------------------------------------------------------------------------
 
+    /*
+    */
+    void SplitTriangles(int pass);
     /* [cmd:ac] Cylinder centered on (0,0,0) with BBox [-.5*max(d1, d2), -.5*h, -.5*max(d1, d2)]
         - nbsides : Number of sides.                   [+.5*max(d1, d2), +.5*h, +.5*max(d1, d2)]
         - h : Height of the cylinder.
