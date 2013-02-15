@@ -2030,7 +2030,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
                         float alpha = (n * (1 - beta)) / beta;
                         //V = (a(n) * v + v1 + ... + vn) / (a(n) + n)
                         vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.Last().m1] + vert_sum) / (alpha + n);
-                    
+
                         //Set all matching vertices to new value
                         matching_ids.Empty();
                         matching_ids << master_list[i];
