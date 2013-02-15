@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="shinyfur.lolfx" />
+    <LolFxCompile Include="shinyMVTexture.lolfx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}</ProjectGuid>
