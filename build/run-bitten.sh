@@ -10,6 +10,7 @@ conffile="`mktemp -q "${tmpdir}/lol-bitten-XXXXXXXX" 2>/dev/null`"
 if [ "${conffile}" = "" ]; then
     conffile="`mktemp 2>/dev/null`"
 fi
+scriptfile=""
 builddir="${tmpdir}/lol-bitten-`whoami`"
 url="http://lol.zoy.org/builds"
 
@@ -22,7 +23,7 @@ append() {
 }
 
 cleanup() {
-    rm -f "${conffile}"
+    rm -f "${conffile}" "${scriptfile}"
     rm -rf "${builddir}"
 }
 
@@ -32,14 +33,29 @@ bailout() {
     exit 0
 }
 
-trap bailout HUP INT QUIT ABRT KILL ALRM TERM
+trap bailout EXIT HUP INT QUIT ABRT KILL ALRM TERM
+
+#
+# Fork if necessary
+#
+
+if [ "$1" = "--forked" ]; then
+    shift
+    scriptfile="$1"
+    shift
+else
+    cp "$0" "${conffile}"
+    chmod +x "${conffile}"
+    exec "${conffile}" --forked "${conffile}" "$@"
+    exit 0
+fi
 
 #
 # Check for command line
 #
 
 if [ "$#" != 2 ]; then
-    echo "Usage: $0 <username> <password>"
+    echo "Usage: run-bitten.sh <username> <password>"
     exit 1
 fi
 
@@ -238,5 +254,5 @@ while : ; do
     sleep 10
 done
 
-bailout
+exit 0
 
