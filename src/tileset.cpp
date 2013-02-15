@@ -174,6 +174,11 @@ ivec2 TileSet::GetSize(int tileid) const
     return data->size;
 }
 
+ShaderTexture TileSet::GetTexture() const
+{
+    return data->m_texture->GetTexture();
+}
+
 void TileSet::Bind()
 {
     if (!data->img && data->m_texture)

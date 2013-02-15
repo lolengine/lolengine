@@ -1150,13 +1150,13 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         //LOWER DISC
         SetTexCoordData(vec2(.0f, .5f), vec2(.5f, .5f));
         SetCurColor(m_color);
-        AppendDisc(nsides, r1);
+        AppendDisc(nsides, d1);
         Translate(vec3(.0f, h, .0f));
         RotateX(180.0f);
         //UPPER DISC
         SetTexCoordData(vec2(.5f, .5f), vec2(.5f, .5f));
         SetCurColor(m_color2);
-        AppendDisc(nsides, r2);
+        AppendDisc(nsides, d2);
         Translate(vec3(.0f, h * .5f, .0f));
         CloseBrace();
     }
@@ -1293,11 +1293,12 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                     {
                         int rid[] = { id[k + l], id[(k + 1) % 3 + l], id[(k + 2) % 3 + l] };
                         AddVertex(p[rid[0]]);
+                        vec2 new_uv;
                         if (uv[rid[0]].x < .0f)
-                            SetCurVertTexCoord(vec2((uv[rid[1]].x + uv[rid[2]].x) * .5f,
-                                                    uv[rid[0]].y));
+                            new_uv = vec2((uv[rid[1]].x + uv[rid[2]].x) * .5f, uv[rid[0]].y);
                         else
-                            SetCurVertTexCoord(uv[rid[0]]);
+                            new_uv = uv[rid[0]];
+                        SetCurVertTexCoord(vec2(0.f, 1.f) - new_uv);
                     }
                     AppendTriangle(0, 2, 1, m_vert.Count() - 3);
                 }
@@ -1431,19 +1432,19 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 
     //Bottom vertices
     AddVertex(vec3(-d.x, -d.y - chamf, +d.z));
-    SetCurVertTexCoord(vec2(0.f, 1.f));
-    AddVertex(vec3(-d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(vec2(0.f, .5f));
-    AddVertex(vec3(+d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(vec2(.5f, .5f));
-    AddVertex(vec3(+d.x, -d.y - chamf, +d.z));
     SetCurVertTexCoord(vec2(.5f, 1.f));
+    AddVertex(vec3(-d.x, -d.y - chamf, -d.z));
+    SetCurVertTexCoord(vec2(.5f, .5f));
+    AddVertex(vec3(+d.x, -d.y - chamf, -d.z));
+    SetCurVertTexCoord(vec2(.0f, .5f));
+    AddVertex(vec3(+d.x, -d.y - chamf, +d.z));
+    SetCurVertTexCoord(vec2(.0f, 1.f));
 
     //Top vertices
     AddVertex(vec3(-d.x, +d.y + chamf, -d.z));
-    SetCurVertTexCoord(vec2(0.f, 1.f));
+    SetCurVertTexCoord(vec2(1.f, 1.f));
     AddVertex(vec3(-d.x, +d.y + chamf, +d.z));
-    SetCurVertTexCoord(vec2(0.f, .5f));
+    SetCurVertTexCoord(vec2(1.f, .5f));
     AddVertex(vec3(+d.x, +d.y + chamf, +d.z));
     SetCurVertTexCoord(vec2(.5f, .5f));
     AddVertex(vec3(+d.x, +d.y + chamf, -d.z));
@@ -1621,11 +1622,11 @@ void EasyMesh::AppendSimpleTriangle(float d, int fade)
 
     AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f));
     p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f));
+    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f));
     if (fade)
         SetCurVertColor(m_color2);
     p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f));
+    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f));
     if (fade)
         SetCurVertColor(m_color2);
 
@@ -1641,14 +1642,12 @@ void EasyMesh::AppendSimpleQuad(float size, int fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 {
-    AddVertex(vec3(p2.x, z, -p1.y)); SetCurVertTexCoord(vec2(0.f, 1.f));
+    AddVertex(vec3(p2.x, z, -p1.y)); SetCurVertTexCoord(vec2(1.f, 0.f));
     AddVertex(vec3(p2.x, z, -p2.y)); SetCurVertTexCoord(vec2(0.f, 0.f));
-    AddVertex(vec3(p1.x, z, -p2.y)); SetCurVertTexCoord(vec2(1.f, 0.f));
-    if (fade)
-        SetCurVertColor(m_color2);
+    AddVertex(vec3(p1.x, z, -p2.y)); SetCurVertTexCoord(vec2(0.f, 1.f));
+    if (fade) SetCurVertColor(m_color2);
     AddVertex(vec3(p1.x, z, -p1.y)); SetCurVertTexCoord(vec2(1.f, 1.f));
-    if (fade)
-        SetCurVertColor(m_color2);
+    if (fade) SetCurVertColor(m_color2);
 
     AppendQuad(0, 1, 2, 3, m_vert.Count() - 4);
     ComputeNormals(m_indices.Count() - 6, 6);

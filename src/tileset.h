@@ -43,6 +43,7 @@ public:
     /* New methods */
     ivec2 GetCount() const;
     ivec2 GetSize(int tileid) const;
+    ShaderTexture GetTexture() const;
     void Bind();
     void Unbind();
     void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,

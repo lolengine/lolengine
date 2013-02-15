@@ -21,7 +21,10 @@
 using namespace std;
 using namespace lol;
 
+static int const TEXTURE_WIDTH = 256;
+
 LOLFX_RESOURCE_DECLARE(shinyfur);
+LOLFX_RESOURCE_DECLARE(shinyMVTexture);
 
 #define    IPT_CAM_RESET          "Cam_Center"
 #define    IPT_CAM_FORWARD        "Cam_Forward"
@@ -95,6 +98,7 @@ public:
         Input::LinkActionToKey(IPT_MESH_ROT_DOWN,       Key::KP5);
 
         m_angle = 0;
+        DefaultTexture = NULL;
 
         //Camera Setup
         m_fov_zoom_damp = .0f;
@@ -325,6 +329,22 @@ public:
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
 
+        if (!DefaultTexture)
+        {
+            m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinyMVTexture));
+            m_texture_uni = m_texture_shader->GetUniformLocation("u_Texture");
+            //m_image = new Image("data/MeshViewerTestTexture.png");
+            DefaultTexture = Tiler::Register("data/MeshViewerTestTexture.png", ivec2(0), ivec2(0,1));
+
+            //ivec2 size = m_image->GetSize();
+            //// m_image->GetFormat()
+            //m_texture = new Texture(m_image->GetSize(), PixelFormat::ABGR_8);
+            //m_texture->SetData(m_image->GetData());
+            // PixelFormat::ABGR_8
+        }
+        else if (m_texture && DefaultTexture)
+            m_texture_shader->SetUniform(m_texture_uni, DefaultTexture->GetTexture(), 0);
+
         for (int i = 0; i < m_meshes.Count(); i++)
         {
             if (!m_meshes[i].m2)
@@ -333,7 +353,8 @@ public:
 #if WITH_FUR
                 m_meshes[i].m1.MeshConvert(Shader::Create(LOLFX_RESOURCE_NAME(shinyfur)));
 #else
-                m_meshes[i].m1.MeshConvert();
+                m_meshes[i].m1.MeshConvert(m_texture_shader);
+                //m_meshes[i].m1.MeshConvert();
 #endif
                 m_meshes[i].m2 = true;
             }
@@ -401,6 +422,11 @@ private:
     Array<EasyMesh, bool, float, vec3> m_meshes;
     Array<Light *>  m_lights;
     Camera *        m_camera;
+    Shader *        m_texture_shader;
+    TileSet *       DefaultTexture;
+    Texture *       m_texture;
+    ShaderUniform   m_texture_uni;
+    Image *         m_image;
     float           m_fov;
     float           m_fov_damp;
     float           m_fov_zoom_damp;
