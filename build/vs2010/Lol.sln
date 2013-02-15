@@ -663,9 +663,9 @@ Global
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Any CPU.ActiveCfg = Release|Xbox 360
-		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
-		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.Build.0 = Release|Xbox 360
-		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.Deploy.0 = Release|Xbox 360
+		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Mixed Platforms.Deploy.0 = Release|Win32
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|PS3.ActiveCfg = Release|PS3
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|PS3.Build.0 = Release|PS3
 		{834852DB-EDB6-4FD0-BCF9-45CD01126962}.Release|Win32.ActiveCfg = Release|Win32
@@ -721,8 +721,8 @@ Global
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Debug|x64.Build.0 = Debug|x64
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Debug|Xbox 360.ActiveCfg = Debug|x64
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Any CPU.ActiveCfg = Release|x64
-		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|PS3.ActiveCfg = Release|x64
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Win32.ActiveCfg = Release|Win32
 		{25493FC8-75AC-4703-AD57-AB0C2A0FB79C}.Release|Win32.Build.0 = Release|Win32
