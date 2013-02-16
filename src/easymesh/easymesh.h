@@ -19,7 +19,7 @@
 #define VU_TEX_UV  1
 #define VU_VANILLA 0
 
-#define VERTEX_USEAGE VU_TEX_UV
+#define VERTEX_USEAGE VU_VANILLA
 
 #if !defined __EASYMESH_EASYMESH_H__
 #define __EASYMESH_EASYMESH_H__
