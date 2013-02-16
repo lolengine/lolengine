@@ -44,7 +44,8 @@ btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPENDENCIES@
 
-meshviewer_SOURCES = MeshViewer.cpp
+meshviewer_SOURCES = MeshViewer.cpp \
+    shinyMVTexture.lolfx shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPENDENCIES@
 
