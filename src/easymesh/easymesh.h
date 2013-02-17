@@ -15,19 +15,39 @@
 // ------------------
 //
 
-#define VU_BONES   2
-#define VU_TEX_UV  1
-#define VU_VANILLA 0
-
-#define VERTEX_USEAGE VU_TEX_UV
-
 #if !defined __EASYMESH_EASYMESH_H__
 #define __EASYMESH_EASYMESH_H__
 
 namespace lol
 {
 
-//-----------------------------------------------------------------------------
+//Vertex datas for easymesh vertex list.
+//TODO : <COORD, NORM, COLOR, UV>
+struct VertexData
+{
+    vec3    m_coord;
+    vec3    m_normal;
+    vec4    m_color;
+    vec4    m_texcoord;
+    ivec4   m_bone_id;
+    vec4    m_bone_weight;
+
+    VertexData(vec3  new_coord      = vec3(0.f),
+               vec3  new_normal     = vec3(0.f, 1.f, 0.f),
+               vec4  new_color      = vec4(0.f),
+               vec4  new_texcoord   = vec4(0.f),
+               ivec4 new_bone_id    = ivec4(0),
+               vec4  new_bone_weight= vec4(0.f))
+    {
+        m_coord         = new_coord;
+        m_normal        = new_normal;
+        m_color         = new_color;
+        m_texcoord      = new_texcoord;
+        m_bone_id       = new_bone_id;
+        m_bone_weight   = new_bone_weight;
+    }
+};
+
 //Base class to declare shader datas
 class GpuShaderData
 {
@@ -121,6 +141,7 @@ struct VDictType
     inline operator Value() { return m_value; }
 };
 
+/* TODO : replace VDict by a proper Half-edge system */
 //a class whose goal is to keep a list of the adjacent vertices for mesh operations purposes
 class VertexDictionnary
 {
@@ -238,6 +259,7 @@ public: //DEBUG
     void SetCurVertNormal(vec3 const &normal);
     void SetCurVertColor(vec4 const &color);
     void SetCurVertTexCoord(vec2 const &texcoord);
+    void SetCurVertTexCoord(vec4 const &texcoord);
 
 public:
     //-------------------------------------------------------------------------
@@ -479,25 +501,12 @@ public:
     //Convenience functions
 public:
     int GetVertexCount() { return m_vert.Count(); }
-    vec3 const &GetVertexLocation(int i) { return m_vert[i].m1; }
+    vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 private:
     vec4 m_color, m_color2;
     Array<uint16_t> m_indices;
-#if VERTEX_USEAGE == VU_BONES
-    //TODO : -- BONE SUPPORT --
-    //TODO : <COORD, NORM, COLOR, BONE_ID, BONE_WEIGHT>
-    Array<vec3, vec3, vec4, ivec2, vec2> m_vert;
-    //TODO : More bone blend support than 2 ?
-#elif VERTEX_USEAGE == VU_TEX_UV
-    //TODO : -- UV SUPPORT --
-    //TODO : <COORD, NORM, COLOR, UV>
-    Array<vec3, vec3, vec4, vec2> m_vert;
-#else
-    //-- VANILLA --
-    //<COORD, NORM, COLOR>
-    Array<vec3, vec3, vec4> m_vert;
-#endif
+    Array<VertexData> m_vert;
 
     //<vert count, indices count>
     Array<int, int> m_cursors;
