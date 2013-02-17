@@ -88,11 +88,12 @@ private:
     {
         if (seconds > 5e-4f)
             Sleep((int)(seconds * 1e3f + 0.5f));
+        return .0f; /* FIXME */
     }
 
     static float GetSecondsPerCycle()
     {
-        LARGE_INTEGER tmp
+        LARGE_INTEGER tmp;
         QueryPerformanceFrequency(&tmp);
         return 1.f / tmp.QuadPart;
     }
