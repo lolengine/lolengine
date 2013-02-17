@@ -45,32 +45,6 @@ LOLFX_RESOURCE_DECLARE(shiny_SK);
 namespace lol
 {
 
-//-----------------------------------------------------------------------------
-EasyMesh::EasyMesh()
-  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0),
-    m_texcoord_offset(vec2(.0f)), m_texcoord_scale(vec2(1.f))
-{
-    m_cursors.Push(0, 0);
-}
-
-//-----------------------------------------------------------------------------
-bool EasyMesh::Compile(char const *command)
-{
-    EasyMeshCompiler mc(*this);
-    return mc.ParseString(command);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::OpenBrace()
-{
-    m_cursors.Push(m_vert.Count(), m_indices.Count());
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::CloseBrace()
-{
-    m_cursors.Pop();
-}
 
 //-----------------------------------------------------------------------------
 GpuShaderData::GpuShaderData()
@@ -267,10 +241,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
     memcpy(mesh, vbo_data, vbo_bytes); \
     new_vbo->Unlock();
 
-    if (vdecl_flags ==  ((VertexUsage::Position<<1) |
-                         (VertexUsage::Normal<<1)   |
-                         (VertexUsage::Color<<1)    |
-                         (VertexUsage::TexCoord<<1)))
+    if (vdecl_flags ==  ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
+                         (VertexUsage::Color<<1)    | (VertexUsage::TexCoord<<1)))
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec2>(
@@ -281,10 +253,10 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         Array<vec3, vec3, u8vec4, vec2> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m1,
-                            src_mesh->m_vert[i].m2,
-                            (u8vec4)(src_mesh->m_vert[i].m3 * 255.f),
-                            src_mesh->m_vert[i].m4);
+            vertexlist.Push(src_mesh->m_vert[i].m_coord,
+                            src_mesh->m_vert[i].m_normal,
+                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
+                            src_mesh->m_vert[i].m_texcoord.xy);
 
         vbo_data = &vertexlist[0];
         vbo_bytes = vertexlist.Bytes();
@@ -292,8 +264,30 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags ==  ((VertexUsage::Position<<1) |
-                              (VertexUsage::Normal<<1)   |
+    else if (vdecl_flags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
+                             (VertexUsage::Color<<1)    | (VertexUsage::TexCoordExt<<1)))
+    {
+        new_vdecl = new VertexDeclaration(
+                         VertexStream<vec3,vec3,u8vec4,vec4>(
+                          VertexUsage::Position,
+                          VertexUsage::Normal,
+                          VertexUsage::Color,
+                          VertexUsage::TexCoord));
+
+        Array<vec3, vec3, u8vec4, vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord,
+                            src_mesh->m_vert[i].m_normal,
+                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
+                            src_mesh->m_vert[i].m_texcoord);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else if (vdecl_flags ==  ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
                               (VertexUsage::Color<<1)))
     {
         new_vdecl = new VertexDeclaration(
@@ -304,9 +298,9 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         Array<vec3,vec3,u8vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m1,
-                            src_mesh->m_vert[i].m2,
-                            (u8vec4)(src_mesh->m_vert[i].m3 * 255.f));
+            vertexlist.Push(src_mesh->m_vert[i].m_coord,
+                            src_mesh->m_vert[i].m_normal,
+                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
 
         vbo_data = &vertexlist[0];
         vbo_bytes = vertexlist.Bytes();
@@ -363,6 +357,32 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
     vdecl->Unbind();
 }
 
+//-----------------------------------------------------------------------------
+EasyMesh::EasyMesh()
+  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0),
+    m_texcoord_offset(vec2(.0f)), m_texcoord_scale(vec2(1.f))
+{
+    m_cursors.Push(0, 0);
+}
+
+//-----------------------------------------------------------------------------
+bool EasyMesh::Compile(char const *command)
+{
+    EasyMeshCompiler mc(*this);
+    return mc.ParseString(command);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::OpenBrace()
+{
+    m_cursors.Push(m_vert.Count(), m_indices.Count());
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::CloseBrace()
+{
+    m_cursors.Pop();
+}
 //-----------------------------------------------------------------------------
 void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
 {
@@ -589,7 +609,9 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(m_indices.Count());
         CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_0):(mesh_bsp_1);
         for (int i = start_point; i < end_point; i += 3)
-            mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m1, m_vert[m_indices[i + 1]].m1, m_vert[m_indices[i + 2]].m1);
+            mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m_coord,
+                                          m_vert[m_indices[i + 1]].m_coord,
+                                          m_vert[m_indices[i + 2]].m_coord);
     }
 
     //BSP Useage : let's crunch all triangles on the correct BSP
@@ -610,7 +632,9 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
 
         for (int i = start_point; i < end_point; i += 3)
         {
-            int Result = mesh_bsp.TestTriangleToTree(m_vert[m_indices[i]].m1, m_vert[m_indices[i + 1]].m1, m_vert[m_indices[i + 2]].m1, vert_list, tri_list);
+            int Result = mesh_bsp.TestTriangleToTree(m_vert[m_indices[i]].m_coord,
+                                                     m_vert[m_indices[i + 1]].m_coord,
+                                                     m_vert[m_indices[i + 2]].m_coord, vert_list, tri_list);
             int tri_base_idx = m_indices.Count();
 
             //one split has been done, we need to had the new vertices & the new triangles.
@@ -627,14 +651,14 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                     AddVertex(vert_list[k].m1);
 
                     //Normal : bad calculations there.
-                    n0 = m_vert[P0].m2;
-                    n1 = m_vert[P1].m2;
+                    n0 = m_vert[P0].m_normal;
+                    n1 = m_vert[P1].m_normal;
                     SetCurVertNormal(normalize(n0 + (n1 - n0) * vert_list[k].m4));
 
 #if 1
                     //Color
-                    c0 = m_vert[P0].m3;
-                    c1 = m_vert[P1].m3;
+                    c0 = m_vert[P0].m_color;
+                    c1 = m_vert[P1].m_color;
                     vec4 res = c0 + ((c1 - c0) * vert_list[k].m4);
                     SetCurVertColor(res);
 #else
@@ -707,7 +731,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     }
 
     for (int i = 0; i < m_vert.Count(); i++)
-        if (length(m_vert[i].m2) < 1.0f)
+        if (length(m_vert[i].m_normal) < 1.0f)
             i = i;
 
     int dir = 1;
@@ -760,18 +784,7 @@ void EasyMesh::SetCurColor2(vec4 const &color)
 //-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-    m_vert.Push(
-        coord, vec3(0.f, 1.f, 0.f), m_color
-#if VERTEX_USEAGE == VU_VANILLA
-    //-- VANILLA --
-#elif VERTEX_USEAGE == VU_BONES
-    //TODO : -- BONE SUPPORT --
-        , ivec2(0), vec2(0)
-#elif VERTEX_USEAGE == VU_TEX_UV
-    //-- UV SUPPORT --
-        , vec2(-1)
-#endif
-    );
+    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), m_color));
 }
 
 //-----------------------------------------------------------------------------
@@ -783,21 +796,13 @@ void EasyMesh::AddDuplicateVertex(int i)
 //-----------------------------------------------------------------------------
 void EasyMesh::AddLerpVertex(int i, int j, float alpha)
 {
-    m_vert.Push(
-        lol::lerp(m_vert[i].m1, m_vert[j].m1, alpha),
-        lol::lerp(m_vert[i].m2, m_vert[j].m2, alpha),
-        lol::lerp(m_vert[i].m3, m_vert[j].m3, alpha)
-#if VERTEX_USEAGE == VU_VANILLA
-    //-- VANILLA --
-#elif VERTEX_USEAGE == VU_BONES
-    //TODO : -- BONE SUPPORT --
-        , lol::lerp(m_vert[i].m4, m_vert[j].m4, alpha),
-        lol::lerp(m_vert[i].m5, m_vert[j].m5, alpha)
-#elif VERTEX_USEAGE == VU_TEX_UV
-    //-- UV SUPPORT --
-        , lol::lerp(m_vert[i].m4, m_vert[j].m4, alpha)
-#endif
-    );
+    m_vert.Push(VertexData(
+        lol::lerp(m_vert[i].m_coord,    m_vert[j].m_coord,      alpha),
+        lol::lerp(m_vert[i].m_normal,   m_vert[j].m_normal,     alpha),
+        lol::lerp(m_vert[i].m_color,    m_vert[j].m_color,      alpha),
+        lol::lerp(m_vert[i].m_texcoord, m_vert[j].m_texcoord,   alpha),
+        ((alpha < .5f) ? (m_vert[i].m_bone_id) : (m_vert[j].m_bone_id)), /* FIXME ? */
+        lol::lerp(m_vert[i].m_bone_weight, m_vert[j].m_bone_weight, alpha)));
 }
 
 //-----------------------------------------------------------------------------
@@ -845,21 +850,21 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 {
     for (int i = 0; i < vcount; i += 3)
     {
-        vec3 v0 = m_vert[m_indices[start + i + 2]].m1
-                - m_vert[m_indices[start + i + 0]].m1;
-        vec3 v1 = m_vert[m_indices[start + i + 1]].m1
-                - m_vert[m_indices[start + i + 0]].m1;
+        vec3 v0 = m_vert[m_indices[start + i + 2]].m_coord
+                - m_vert[m_indices[start + i + 0]].m_coord;
+        vec3 v1 = m_vert[m_indices[start + i + 1]].m_coord
+                - m_vert[m_indices[start + i + 0]].m_coord;
         vec3 n = normalize(cross(v1, v0));
 
         for (int j = 0; j < 3; j++)
-            m_vert[m_indices[start + i + j]].m2 = n;
+            m_vert[m_indices[start + i + j]].m_normal = n;
     }
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 {
-#if 0//VERTEX_USEAGE == VU_TEX_UV
+#if 1
     VertexDictionnary vert_dict;
     Array<int> tri_list;
 
@@ -1043,7 +1048,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 void EasyMesh::SetVertColor(vec4 const &color)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        m_vert[i].m3 = color;
+        m_vert[i].m_color = color;
 }
 
 //-----------------------------------------------------------------------------
@@ -1056,29 +1061,32 @@ void EasyMesh::SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale)
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertNormal(vec3 const &normal)
 {
-    m_vert[m_vert.Count() - 1].m2 = normal;
+    m_vert[m_vert.Count() - 1].m_normal = normal;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertColor(vec4 const &color)
 {
-    m_vert[m_vert.Count() - 1].m3 = color;
+    m_vert[m_vert.Count() - 1].m_color = color;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertTexCoord(vec2 const &texcoord)
 {
-#if VERTEX_USEAGE == VU_BONES
-#elif VERTEX_USEAGE == VU_TEX_UV
-    m_vert[m_vert.Count() - 1].m4 = (texcoord * m_texcoord_scale) + m_texcoord_offset;
-#endif
+    m_vert[m_vert.Count() - 1].m_texcoord = vec4(texcoord, m_vert[m_vert.Count() - 1].m_texcoord.zw);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SetCurVertTexCoord(vec4 const &texcoord)
+{
+    m_vert[m_vert.Count() - 1].m_texcoord = texcoord;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::Translate(vec3 const &v)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        m_vert[i].m1 += v;
+        m_vert[i].m_coord += v;
 }
 
 //-----------------------------------------------------------------------------
@@ -1092,8 +1100,8 @@ void EasyMesh::Rotate(float angle, vec3 const &axis)
     mat3 m = mat3::rotate(angle, axis);
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1 = m * m_vert[i].m1;
-        m_vert[i].m2 = m * m_vert[i].m2;
+        m_vert[i].m_coord  = m * m_vert[i].m_coord;
+        m_vert[i].m_normal = m * m_vert[i].m_normal;
     }
 }
 
@@ -1109,7 +1117,7 @@ void EasyMesh::RadialJitter(float r)
         {
             if(Welded[k] < 0)
             {
-                vec3 diff = m_vert[i].m1 - m_vert[j].m1;
+                vec3 diff = m_vert[i].m_coord - m_vert[j].m_coord;
 
                 if(diff.x > 0.1f || diff.x < -0.1f)
                     continue;
@@ -1134,9 +1142,9 @@ void EasyMesh::RadialJitter(float r)
     for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
     {
         if(Welded[j] == -1)
-            m_vert[i].m1 *= 1.0f + RandF(r);
+            m_vert[i].m_coord *= 1.0f + RandF(r);
         else
-            m_vert[i].m1 = m_vert[Welded[j]].m1;
+            m_vert[i].m_coord = m_vert[Welded[j]].m_coord;
     }
 
     ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
@@ -1179,24 +1187,24 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
         {
             case MeshTransform::Taper:
             {
-                float value = m_vert[i].m1[axis0];
+                float value = m_vert[i].m_coord[axis0];
                 if (absolute) value = abs(value);
-                m_vert[i].m1[(axis0 + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
-                m_vert[i].m1[(axis0 + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
+                m_vert[i].m_coord[(axis0 + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
+                m_vert[i].m_coord[(axis0 + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
                 break;
             }
             case MeshTransform::Twist:
             {
                 vec3 rotaxis = vec3(1.f); rotaxis[(axis0 + 1) % 3] = .0f; rotaxis[(axis0 + 2) % 3] = .0f;
-                m_vert[i].m1 = mat3::rotate(m_vert[i].m1[axis0] * n0 + noff, rotaxis) * m_vert[i].m1;
+                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0] * n0 + noff, rotaxis) * m_vert[i].m_coord;
                 break;
             }
             case MeshTransform::Shear:
             {
-                float value = m_vert[i].m1[axis0];
+                float value = m_vert[i].m_coord[axis0];
                 if (absolute) value = abs(value);
-                m_vert[i].m1[(axis0 + 1) % 3] += (n0 * value + noff);
-                m_vert[i].m1[(axis0 + 2) % 3] += (n1 * value + noff);
+                m_vert[i].m_coord[(axis0 + 1) % 3] += (n0 * value + noff);
+                m_vert[i].m_coord[(axis0 + 2) % 3] += (n1 * value + noff);
                 break;
             }
             case MeshTransform::Stretch:
@@ -1209,7 +1217,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             case MeshTransform::Bend:
             {
                 vec3 rotaxis = vec3(1.f); rotaxis[(axis1 + 1) % 3] = .0f; rotaxis[(axis1 + 2) % 3] = .0f;
-                m_vert[i].m1 = mat3::rotate(m_vert[i].m1[axis0] * n0 + noff, rotaxis) * m_vert[i].m1;
+                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0] * n0 + noff, rotaxis) * m_vert[i].m_coord;
                 break;
             }
         }
@@ -1224,8 +1232,8 @@ void EasyMesh::Scale(vec3 const &s)
 
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        m_vert[i].m1 *= s;
-        m_vert[i].m2 = normalize(m_vert[i].m2 * invs);
+        m_vert[i].m_coord *= s;
+        m_vert[i].m_normal = normalize(m_vert[i].m_normal * invs);
     }
 
     /* Flip winding if the scaling involves mirroring */
@@ -2121,12 +2129,12 @@ void EasyMesh::Chamfer(float f)
             continue;
     #endif
 
-        vec3 bary = 1.f / 3.f * (m_vert[m_indices[i * 3]].m1 +
-                                 m_vert[m_indices[i * 3 + 1]].m1 +
-                                 m_vert[m_indices[i * 3 + 2]].m1);
+        vec3 bary = 1.f / 3.f * (m_vert[m_indices[i * 3]].m_coord +
+                                 m_vert[m_indices[i * 3 + 1]].m_coord +
+                                 m_vert[m_indices[i * 3 + 2]].m_coord);
         for (int k = 0; k < 3; k++)
         {
-            vec3 &p = m_vert[m_indices[i * 3 + k]].m1;
+            vec3 &p = m_vert[m_indices[i * 3 + k]].m_coord;
             p -= normalize(p - bary) * f;
         }
     }
@@ -2149,7 +2157,7 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
             {
                 AddLerpVertex(m_indices[i + j], m_indices[i + (j + 1) % 3], .5f);
                 if (vert_dict)
-                    vert_dict->AddVertex(vbase + j, m_vert[vbase + j].m1);
+                    vert_dict->AddVertex(vbase + j, m_vert[vbase + j].m_coord);
             }
             //Add new triangles
             AppendTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
@@ -2164,6 +2172,8 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
 }
 
 //-----------------------------------------------------------------------------
+//TODO : Add an half-edges implementation to refine smooth.
+//TODO : Smooth should only use connected vertices that are on edges of the mesh (See box).
 void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass)
 {
     VertexDictionnary vert_dict;
@@ -2174,7 +2184,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
     int smbuf = 0;
 
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        vert_dict.AddVertex(i, m_vert[i].m1);
+        vert_dict.AddVertex(i, m_vert[i].m_coord);
 
     while (main_pass--)
     {
@@ -2189,7 +2199,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
         smooth_buf[1].Resize(m_vert.Count() - m_cursors.Last().m1);
 
         for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-            smooth_buf[smbuf][i - m_cursors.Last().m1] = m_vert[i].m1;
+            smooth_buf[smbuf][i - m_cursors.Last().m1] = m_vert[i].m_coord;
 
         while (smooth_pass--)
         {
@@ -2229,7 +2239,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
         }
 
         for (int i = 0; i < smooth_buf[smbuf].Count(); i++)
-            m_vert[i + m_cursors.Last().m1].m1 = smooth_buf[smbuf][i];
+            m_vert[i + m_cursors.Last().m1].m_coord = smooth_buf[smbuf][i];
     }
 }
 

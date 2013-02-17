@@ -50,6 +50,7 @@ struct VertexUsage
         Normal,
         PointSize,
         TexCoord,
+        TexCoordExt,
         Tangent,
         Binormal,
         TessFactor,
