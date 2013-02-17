@@ -33,6 +33,10 @@ public:
 
 private:
     TimerData *data;
+
+    /* Copying timers is forbidden for now. */
+    Timer(Timer const &t);
+    Timer operator =(Timer const &t);
 };
 
 } /* namespace lol */
