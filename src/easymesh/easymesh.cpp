@@ -51,7 +51,7 @@ GpuShaderData::GpuShaderData()
 {
     m_render_mode = DebugRenderMode::Default;
 }
-    
+
 //-----------------------------------------------------------------------------
 GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode)
 {
