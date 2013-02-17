@@ -73,144 +73,329 @@ void EasyMesh::CloseBrace()
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::MeshConvert(Shader* provided_shader)
+GpuShaderData::GpuShaderData()
 {
-    for (int i = 0; i < DebugRenderMode::Max; i++)
-    {
-        if (i == DebugRenderMode::Default)
-        {
-            if(provided_shader == NULL)
-                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shiny));
-            else
-                m_gpu.shader << provided_shader;
-        }
-        else if (i == DebugRenderMode::Wireframe)
-                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugwireframe));
-        else if (i == DebugRenderMode::Lighting)
-                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebuglighting));
-        else if (i == DebugRenderMode::Normal)
-                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugnormal));
-        else if (i == DebugRenderMode::UV)
-                m_gpu.shader << Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
-
-        m_gpu.modelview << m_gpu.shader.Last()->GetUniformLocation("in_ModelView");
-        m_gpu.invmodelview << m_gpu.shader.Last()->GetUniformLocation("in_Inv_ModelView");
-        m_gpu.view << m_gpu.shader.Last()->GetUniformLocation("in_View");
-        m_gpu.invview << m_gpu.shader.Last()->GetUniformLocation("in_Inv_View");
-        m_gpu.proj << m_gpu.shader.Last()->GetUniformLocation("in_Proj");
-        m_gpu.normalmat << m_gpu.shader.Last()->GetUniformLocation("in_NormalMat");
-        m_gpu.damage << m_gpu.shader.Last()->GetUniformLocation("in_Damage");
-        m_gpu.lights << m_gpu.shader.Last()->GetUniformLocation("u_Lights");
-        m_gpu.coord << m_gpu.shader.Last()->GetAttribLocation("in_Vertex",
-                                             VertexUsage::Position, 0);
-        m_gpu.norm << m_gpu.shader.Last()->GetAttribLocation("in_Normal",
-                                             VertexUsage::Normal, 0);
-        m_gpu.color << m_gpu.shader.Last()->GetAttribLocation("in_Color",
-                                             VertexUsage::Color, 0);
-#if VERTEX_USEAGE == VU_BONES
-        //TODO : -- BONE SUPPORT --
-#elif VERTEX_USEAGE == VU_TEX_UV
-        //UV SUPPORT --
-        m_gpu.tex_coord << m_gpu.shader.Last()->GetAttribLocation("in_TexCoord",
-                                              VertexUsage::TexCoord, 0);
-#endif
-    }
-
-#if VERTEX_USEAGE == VU_BONES
-        //TODO : -- BONE SUPPORT --
-#elif VERTEX_USEAGE == VU_TEX_UV
-    //UV SUPPORT --
-    m_gpu.vdecl = new VertexDeclaration(
-        VertexStream<vec3,vec3,u8vec4,vec2>(VertexUsage::Position,
-                                            VertexUsage::Normal,
-                                            VertexUsage::Color,
-                                            VertexUsage::TexCoord));
-
-    Array<vec3,vec3,u8vec4,vec2> vertexlist;
-    for (int i = 0; i < m_vert.Count(); i++)
-        vertexlist.Push(m_vert[i].m1,
-                        m_vert[i].m2,
-                        (u8vec4)(m_vert[i].m3 * 255.f),
-                        m_vert[i].m4);
-#else
-    //-- VANILLA --
-    m_gpu.vdecl = new VertexDeclaration(
-        VertexStream<vec3,vec3,u8vec4>(VertexUsage::Position,
-                                        VertexUsage::Normal,
-                                        VertexUsage::Color));
-
-    Array<vec3,vec3,u8vec4> vertexlist;
-    for (int i = 0; i < m_vert.Count(); i++)
-        vertexlist.Push(m_vert[i].m1,
-                        m_vert[i].m2,
-                        (u8vec4)(m_vert[i].m3 * 255.f));
-#endif
-
-    Array<uint16_t> indexlist;
-    for (int i = 0; i < m_indices.Count(); i += 3)
-    {
-        indexlist << m_indices[i + 0];
-        indexlist << m_indices[i + 1];
-        indexlist << m_indices[i + 2];
-    }
-
-    m_gpu.vbo = new VertexBuffer(vertexlist.Bytes());
-    void *mesh = m_gpu.vbo->Lock(0, 0);
-    memcpy(mesh, &vertexlist[0], vertexlist.Bytes());
-    m_gpu.vbo->Unlock();
-
-    m_gpu.ibo = new IndexBuffer(indexlist.Bytes());
-    void *indices = m_gpu.ibo->Lock(0, 0);
-    memcpy(indices, &indexlist[0], indexlist.Bytes());
-    m_gpu.ibo->Unlock();
-
-    m_gpu.vertexcount = vertexlist.Count();
-    m_gpu.indexcount = indexlist.Count();
+    m_render_mode = DebugRenderMode::Default;
+}
+    
+//-----------------------------------------------------------------------------
+GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode)
+{
+    m_render_mode = render_mode;
+    m_shader = shader;
+    m_vert_decl_flags = vert_decl_flags;
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::Render(mat4 const &model, float damage)
+GpuShaderData::~GpuShaderData()
 {
-    DebugRenderMode d = Video::GetDebugRenderMode();
+    m_shader_uniform.Empty();
+    m_shader_attrib.Empty();
+}
 
+//-----------------------------------------------------------------------------
+void GpuShaderData::AddUniform(const lol::String &new_uniform)
+{
+    m_shader_uniform.Push(new_uniform, m_shader->GetUniformLocation(new_uniform.C()));
+}
+
+//-----------------------------------------------------------------------------
+void GpuShaderData::AddAttribute(const lol::String &new_attribute, VertexUsage usage, int index)
+{
+    m_shader_attrib.Push(new_attribute, m_shader->GetAttribLocation(new_attribute.C(), usage, index));
+}
+
+//-----------------------------------------------------------------------------
+ShaderUniform const *GpuShaderData::GetUniform(const lol::String &uniform)
+{
+    for (int i = 0; i < m_shader_uniform.Count(); ++i)
+        if (m_shader_uniform[i].m1 == uniform)
+            return &m_shader_uniform[i].m2;
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+ShaderAttrib const *GpuShaderData::GetAttribute(const lol::String &attribute)
+{
+    for (int i = 0; i < m_shader_attrib.Count(); ++i)
+        if (m_shader_attrib[i].m1 == attribute)
+            return &m_shader_attrib[i].m2;
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
+{
+    bool with_UV = false;
+    m_render_mode = render_mode;
+    m_vert_decl_flags = (VertexUsage::Position << 1) |
+                        (VertexUsage::Normal << 1)   |
+                        (VertexUsage::Color << 1);
+
+    if (render_mode == DebugRenderMode::Default)
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+    else if (render_mode == DebugRenderMode::Wireframe)
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugwireframe));
+    else if (render_mode == DebugRenderMode::Lighting)
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebuglighting));
+    else if (render_mode == DebugRenderMode::Normal)
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugnormal));
+    else if (render_mode == DebugRenderMode::UV)
+    {
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
+        m_vert_decl_flags |= (VertexUsage::TexCoord << 1);
+        with_UV = true;
+    }
+    SetupDefaultData(with_UV);
+}
+
+//-----------------------------------------------------------------------------
+DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV)
+    : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
+{
+    SetupDefaultData(with_UV);
+}
+
+//-----------------------------------------------------------------------------
+void DefaultShaderData::SetupDefaultData(bool with_UV)
+{
+    AddUniform("in_ModelView");
+    AddUniform("in_Inv_ModelView");
+    AddUniform("in_View");
+    AddUniform("in_Inv_View");
+    AddUniform("in_Proj");
+    AddUniform("in_NormalMat");
+    AddUniform("in_Damage");
+    AddUniform("u_Lights");
+    AddAttribute("in_Vertex", VertexUsage::Position, 0);
+    AddAttribute("in_Normal", VertexUsage::Normal, 0);
+    AddAttribute("in_Color",  VertexUsage::Color, 0);
+    if (with_UV)
+        AddAttribute("in_TexCoord", VertexUsage::TexCoord, 0);
+}
+
+//-----------------------------------------------------------------------------
+void DefaultShaderData::SetupShaderDatas(mat4 const &model)
+{
     mat4 modelview = Scene::GetDefault()->GetViewMatrix() * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
 
-    m_gpu.shader[d]->Bind();
-
     /* FIXME: this should be hidden in the shader */
     /* FIXME: the 4th component of the position can be used for other things */
+    /* FIXME: GetUniform("blabla") is costly */
     Array<Light *> const lights = Scene::GetDefault()->GetLights();
     Array<vec4> light_data;
     for (int i = 0; i < lights.Count(); ++i)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();
     while (light_data.Count() < 8)
         light_data << vec4(0.f) << vec4(0.f);
-    m_gpu.shader[d]->SetUniform(m_gpu.lights[d], light_data);
+    m_shader->SetUniform(*GetUniform("u_Lights"), light_data);
 
-    m_gpu.shader[d]->SetUniform(m_gpu.modelview[d], modelview);
-    m_gpu.shader[d]->SetUniform(m_gpu.invmodelview[d], inverse(modelview));
-    m_gpu.shader[d]->SetUniform(m_gpu.view[d], Scene::GetDefault()->GetViewMatrix());
-    m_gpu.shader[d]->SetUniform(m_gpu.invview[d], inverse(Scene::GetDefault()->GetViewMatrix()));
-    m_gpu.shader[d]->SetUniform(m_gpu.proj[d], Scene::GetDefault()->GetProjMatrix());
-    m_gpu.shader[d]->SetUniform(m_gpu.normalmat[d], normalmat);
-    m_gpu.shader[d]->SetUniform(m_gpu.damage[d], damage);
-    m_gpu.vdecl->Bind();
-#if VERTEX_USEAGE == VU_BONES
-    //TODO : -- BONE SUPPORT --
-#elif VERTEX_USEAGE == VU_TEX_UV
-    //UV SUPPORT --
-    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord[d], m_gpu.norm[d], m_gpu.color[d], m_gpu.tex_coord[d]);
-#else
-    //-- VANILLA --
-    m_gpu.vdecl->SetStream(m_gpu.vbo, m_gpu.coord[d], m_gpu.norm[d], m_gpu.color[d]);
-#endif
-    m_gpu.ibo->Bind();
-    m_gpu.vdecl->DrawIndexedElements(MeshPrimitive::Triangles,
-                                     0, 0, m_gpu.vertexcount,
-                                     0, m_gpu.indexcount);
-    m_gpu.ibo->Unbind();
-    m_gpu.vdecl->Unbind();
+    m_shader->SetUniform(*GetUniform("in_ModelView"), modelview);
+    m_shader->SetUniform(*GetUniform("in_Inv_ModelView"), inverse(modelview));
+    m_shader->SetUniform(*GetUniform("in_View"), Scene::GetDefault()->GetViewMatrix());
+    m_shader->SetUniform(*GetUniform("in_Inv_View"), inverse(Scene::GetDefault()->GetViewMatrix()));
+    m_shader->SetUniform(*GetUniform("in_Proj"), Scene::GetDefault()->GetProjMatrix());
+    m_shader->SetUniform(*GetUniform("in_NormalMat"), normalmat);
+    m_shader->SetUniform(*GetUniform("in_Damage"), 0);
+}
+
+//-----------------------------------------------------------------------------
+GpuEasyMeshData::GpuEasyMeshData()
+{
+    m_vertexcount = 0;
+    m_indexcount = 0;
+    m_ibo = NULL;
+}
+
+//-----------------------------------------------------------------------------
+GpuEasyMeshData::~GpuEasyMeshData()
+{
+    m_gpudatas.Empty();
+    m_vdatas.Empty();
+    if (m_ibo)
+        delete(m_ibo);
+}
+
+//-----------------------------------------------------------------------------
+void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
+{
+    SetupVertexData(gpudata->m_vert_decl_flags, src_mesh);
+
+    if (!m_ibo)
+    {
+        Array<uint16_t> indexlist;
+        for (int i = 0; i < src_mesh->m_indices.Count(); i += 3)
+        {
+            indexlist << src_mesh->m_indices[i + 0];
+            indexlist << src_mesh->m_indices[i + 1];
+            indexlist << src_mesh->m_indices[i + 2];
+        }
+
+        m_ibo = new IndexBuffer(indexlist.Bytes());
+        void *indices = m_ibo->Lock(0, 0);
+        memcpy(indices, &indexlist[0], indexlist.Bytes());
+        m_ibo->Unlock();
+
+        m_indexcount = indexlist.Count();
+    }
+
+    if (m_gpudatas.Count() != DebugRenderMode::Max)
+    {
+        m_gpudatas.Reserve(DebugRenderMode::Max);
+        for (int i = 0; i < DebugRenderMode::Max; i++)
+            m_gpudatas << NULL;
+    }
+    m_gpudatas[gpudata->m_render_mode] = gpudata;
+}
+
+//-----------------------------------------------------------------------------
+void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
+{
+    for (int i = 0; i < m_vdatas.Count(); ++i)
+        if (m_vdatas[i].m1 == vdecl_flags)
+            return;
+
+    VertexDeclaration* new_vdecl = NULL;
+    VertexBuffer* new_vbo = NULL;
+    void *vbo_data = NULL;
+    int vbo_bytes = 0;
+
+#define COPY_VBO \
+    new_vbo = new VertexBuffer(vbo_bytes); \
+    void *mesh = new_vbo->Lock(0, 0); \
+    memcpy(mesh, vbo_data, vbo_bytes); \
+    new_vbo->Unlock();
+
+    if (vdecl_flags ==  ((VertexUsage::Position<<1) |
+                         (VertexUsage::Normal<<1)   |
+                         (VertexUsage::Color<<1)    |
+                         (VertexUsage::TexCoord<<1)))
+    {
+        new_vdecl = new VertexDeclaration(
+                         VertexStream<vec3,vec3,u8vec4,vec2>(
+                          VertexUsage::Position,
+                          VertexUsage::Normal,
+                          VertexUsage::Color,
+                          VertexUsage::TexCoord));
+
+        Array<vec3, vec3, u8vec4, vec2> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m1,
+                            src_mesh->m_vert[i].m2,
+                            (u8vec4)(src_mesh->m_vert[i].m3 * 255.f),
+                            src_mesh->m_vert[i].m4);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else if (vdecl_flags ==  ((VertexUsage::Position<<1) |
+                              (VertexUsage::Normal<<1)   |
+                              (VertexUsage::Color<<1)))
+    {
+        new_vdecl = new VertexDeclaration(
+                         VertexStream<vec3,vec3,u8vec4>(
+                          VertexUsage::Position,
+                          VertexUsage::Normal,
+                          VertexUsage::Color));
+
+        Array<vec3,vec3,u8vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m1,
+                            src_mesh->m_vert[i].m2,
+                            (u8vec4)(src_mesh->m_vert[i].m3 * 255.f));
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+
+    m_vdatas.Push(vdecl_flags, new_vdecl, new_vbo);
+}
+
+//-----------------------------------------------------------------------------
+void GpuEasyMeshData::RenderMeshData(mat4 const &model)
+{
+    DebugRenderMode d = Video::GetDebugRenderMode();
+    GpuShaderData& gpu_sd = *(m_gpudatas[d]);
+
+    int vdecl_idx = 0;
+    for (; vdecl_idx < m_vdatas.Count(); ++vdecl_idx)
+        if (m_vdatas[vdecl_idx].m1 == gpu_sd.m_vert_decl_flags)
+            break;
+
+    if (vdecl_idx >= m_vdatas.Count())
+        return;
+
+    uint16_t vflags = m_vdatas[vdecl_idx].m1;
+    VertexDeclaration* vdecl = m_vdatas[vdecl_idx].m2;
+    VertexBuffer* vbo = m_vdatas[vdecl_idx].m3;
+
+    gpu_sd.m_shader->Bind();
+    gpu_sd.SetupShaderDatas(model);
+
+    vdecl->Bind();
+
+    if (vflags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
+                   (VertexUsage::Color<<1)    | (VertexUsage::TexCoord<<1)))
+    {
+        vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
+                              *gpu_sd.GetAttribute(lol::String("in_Normal")),
+                              *gpu_sd.GetAttribute(lol::String("in_Color")),
+                              *gpu_sd.GetAttribute(lol::String("in_TexCoord")));
+    }
+    else if (vflags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
+                        (VertexUsage::Color<<1)))
+    {
+        vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
+                              *gpu_sd.GetAttribute(lol::String("in_Normal")),
+                              *gpu_sd.GetAttribute(lol::String("in_Color")));
+    }
+
+    m_ibo->Bind();
+    vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, m_vertexcount, 0, m_indexcount);
+    m_ibo->Unbind();
+    vdecl->Unbind();
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
+{
+    if (new_gpu_sdata)
+    {
+        m_gpu_data.AddGpuData(new_gpu_sdata, this);
+        for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
+            m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::MeshConvert(Shader* provided_shader)
+{
+    if (provided_shader)
+    {
+        GpuShaderData *new_gpu_sdata = new DefaultShaderData(((VertexUsage::Position<<1) |
+                                                              (VertexUsage::Normal<<1) |
+                                                              (VertexUsage::Color<<1)),
+                                                              provided_shader,
+                                                              false);
+        m_gpu_data.AddGpuData(new_gpu_sdata, this);
+    }
+    else
+        m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode::Default), this);
+    for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
+        m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::Render(mat4 const &model, float damage)
+{
+    m_gpu_data.RenderMeshData(model);
 }
 
 //-------------------

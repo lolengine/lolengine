@@ -19,13 +19,75 @@
 #define VU_TEX_UV  1
 #define VU_VANILLA 0
 
-#define VERTEX_USEAGE VU_VANILLA
+#define VERTEX_USEAGE VU_TEX_UV
 
 #if !defined __EASYMESH_EASYMESH_H__
 #define __EASYMESH_EASYMESH_H__
 
 namespace lol
 {
+
+//-----------------------------------------------------------------------------
+//Base class to declare shader datas
+class GpuShaderData
+{
+    friend class GpuEasyMeshData;
+
+protected:
+    GpuShaderData();
+public:
+    //--
+    GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode);
+    ~GpuShaderData();
+    //--
+    void AddUniform(const lol::String &new_uniform);
+    void AddAttribute(const lol::String &new_attribute, VertexUsage usage, int index);
+    ShaderUniform const *GetUniform(const lol::String &uniform);
+    ShaderAttrib const *GetAttribute(const lol::String &attribute);
+    //--
+    virtual void SetupShaderDatas(mat4 const &model) { }
+
+protected:
+    uint16_t                            m_vert_decl_flags;
+    Shader*                             m_shader;
+    DebugRenderMode                     m_render_mode;
+    Array<lol::String, ShaderUniform>   m_shader_uniform;
+    Array<lol::String, ShaderAttrib>    m_shader_attrib;
+};
+
+class DefaultShaderData : public GpuShaderData
+{
+public:
+    //---
+    DefaultShaderData(DebugRenderMode render_mode);
+    DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV);
+    //---
+    void SetupDefaultData(bool with_UV);
+    virtual void SetupShaderDatas(mat4 const &model);
+};
+
+class GpuEasyMeshData
+{
+public:
+    //---
+    GpuEasyMeshData();
+    ~GpuEasyMeshData();
+    //---
+    void AddGpuData(GpuShaderData* gpudata, class EasyMesh* src_mesh);
+    void RenderMeshData(mat4 const &model);
+
+private:
+    void SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh);
+
+    Array<GpuShaderData*>               m_gpudatas;
+    //uint16_t are the vdecl/vbo flags to avoid copy same vdecl several times.
+    Array<uint16_t, VertexDeclaration*,
+                    VertexBuffer*>      m_vdatas;
+    int                                 m_vertexcount;
+    //We only need only one ibo for the whole mesh
+    IndexBuffer *                       m_ibo;
+    int                                 m_indexcount;
+};
 
 /* A safe enum for MeshCSG operations. */
 struct CSGUsage
@@ -116,6 +178,7 @@ public:
     EasyMesh();
 
     bool Compile(char const *command);
+    void MeshConvert(GpuShaderData* new_gpu_sdata);
     void MeshConvert(Shader* ProvidedShader = NULL);
     void Render(mat4 const &model, float damage = 0.f);
 
@@ -444,29 +507,8 @@ private:
     vec2 m_texcoord_offset;
     vec2 m_texcoord_scale;
 
-    /* FIXME: put this in a separate class so that we can copy meshes. */
-    struct
-    {
-        /* FIXME: very naughty way of handling debug render modes */
-        Array<Shader *>shader;
-#if VERTEX_USEAGE == VU_BONES
-        //TODO : -- BONE SUPPORT --
-        Array<ShaderAttrib> coord, norm, color, bone_id, bone_weight;
-#elif VERTEX_USEAGE == VU_TEX_UV
-        //-- UV SUPPORT --
-        Array<ShaderAttrib> coord, norm, color, tex_coord;
-#else
-        //-- VANILLA --
-        Array<ShaderAttrib> coord, norm, color;
-#endif
-        Array<ShaderUniform> modelview, invmodelview, view, invview, proj, normalmat, damage, lights;
-
-        VertexDeclaration *vdecl;
-        VertexBuffer *vbo;
-        IndexBuffer *ibo;
-        int vertexcount, indexcount;
-    }
-    m_gpu;
+    friend class GpuEasyMeshData;
+    GpuEasyMeshData m_gpu_data;
 };
 
 } /* namespace lol */

@@ -56,7 +56,9 @@ struct DebugRenderMode
     }
     m_value;
 
+    inline DebugRenderMode() : m_value(Default) {}
     inline DebugRenderMode(Value v) : m_value(v) {}
+    inline DebugRenderMode(int v) : m_value((Value)v) {}
     inline operator Value() { return m_value; }
 };
 
