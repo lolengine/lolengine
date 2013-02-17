@@ -65,7 +65,7 @@ private:
         return 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);
     }
 
-    static float WaitSeconds(float seconds)
+    static void WaitSeconds(float seconds)
     {
         if (seconds > 0.0f)
             usleep((int)(seconds * 1e6f));
@@ -84,11 +84,10 @@ private:
         return secs_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
     }
 
-    static float WaitSeconds(float seconds)
+    static void WaitSeconds(float seconds)
     {
         if (seconds > 5e-4f)
             Sleep((int)(seconds * 1e3f + 0.5f));
-        return .0f; /* FIXME */
     }
 
     static float GetSecondsPerCycle()
@@ -111,7 +110,7 @@ private:
         return secs_per_cycle * (cycles - cycles0);
     }
 
-    static float WaitSeconds(float seconds)
+    static void WaitSeconds(float seconds)
     {
         if (seconds > 0.0f)
             sys_timer_usleep((int)(seconds * 1e6f));
@@ -136,7 +135,7 @@ private:
         return 1e-3f * (ticks - ticks0);
     }
 
-    static float WaitSeconds(float seconds)
+    static void WaitSeconds(float seconds)
     {
         if (seconds > 5e-4f)
             SDL_Delay((int)(seconds * 1e3f + 0.5f));
