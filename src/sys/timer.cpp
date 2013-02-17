@@ -52,87 +52,102 @@ class TimerData
 private:
     TimerData()
     {
-#if defined __linux__ || defined __native_client__ || defined __APPLE__
-        gettimeofday(&tv0, NULL);
-#elif defined _WIN32
-        QueryPerformanceCounter(&cycles0);
-#elif defined __CELLOS_LV2__
-        SYS_TIMEBASE_GET(cycles0);
-#else
-        SDL_Init(SDL_INIT_TIMER);
-        ticks0 = SDL_GetTicks();
-#endif
+        (void)GetSeconds(true);
     }
 
-    float GetOrWait(float seconds, bool update)
-    {
-        float secs_elapsed, secs_towait;
 #if defined __linux__ || defined __native_client__ || defined __APPLE__
-        struct timeval tv;
+    float GetSeconds(bool reset)
+    {
+        struct timeval tv, tv0 = m_tv;
         gettimeofday(&tv, NULL);
-        secs_elapsed = 1e-6f * (tv.tv_usec - tv0.tv_usec)
-                     + (tv.tv_sec - tv0.tv_sec);
-        if (update)
-            tv0 = tv;
-        secs_towait = seconds - secs_elapsed;
-        if (secs_towait > 0.0f)
-            usleep((int)(secs_towait * 1e6f));
+        if (reset)
+            m_tv = tv;
+        return 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);
+    }
+
+    static float WaitSeconds(float seconds)
+    {
+        if (seconds > 0.0f)
+            usleep((int)(seconds * 1e6f));
+    }
+
+    struct timeval m_tv;
+
 #elif defined _WIN32
-        LARGE_INTEGER cycles;
+    float GetSeconds(bool reset)
+    {
+        static float secs_per_cycle = GetSecondsPerCycle();
+        LARGE_INTEGER cycles, cycles0 = m_cycles;
         QueryPerformanceCounter(&cycles);
-        static float secs_per_cycle = GetSecondsPerCycle();
-        secs_elapsed = secs_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
-        if (update)
-            cycles0 = cycles;
-        secs_towait = seconds - secs_elapsed;
-        if (secs_towait > 5e-4f)
-            Sleep((int)(secs_towait * 1e3f + 0.5f));
-#elif defined __CELLOS_LV2__
-        uint64_t cycles;
-        SYS_TIMEBASE_GET(cycles);
-        static float secs_per_cycle = GetSecondsPerCycle();
-        secs_elapsed = secs_per_cycle * (cycles - cycles0);
-        if (update)
-            cycles0 = cycles;
-        secs_towait = seconds - secs_elapsed;
-        if (secs_towait > 0.0f)
-            sys_timer_usleep((int)(secs_towait * 1e6f));
-#else
-        /* The crappy SDL fallback */
-        Uint32 ticks = SDL_GetTicks();
-        secs_elapsed = 1e-3f * (ticks - ticks0);
-        if (update)
-            ticks0 = ticks;
-        secs_towait = seconds - secs_elapsed;
-        if (secs_towait > 5e-4f)
-            SDL_Delay((int)(secs_towait * 1e3f + 0.5f));
-#endif
-        return secs_elapsed;
+        if (reset)
+            m_cycles = cycles;
+        return secs_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
+    }
+
+    static float WaitSeconds(float seconds)
+    {
+        if (seconds > 5e-4f)
+            Sleep((int)(seconds * 1e3f + 0.5f));
     }
 
     static float GetSecondsPerCycle()
     {
-#if defined __linux__ || defined __native_client__ || defined __APPLE__
-        return 1e-3f;
-#elif defined _WIN32
-        LARGE_INTEGER tmp;
+        LARGE_INTEGER tmp
         QueryPerformanceFrequency(&tmp);
         return 1.f / tmp.QuadPart;
-#elif defined __CELLOS_LV2__
-        return 1.f / sys_time_get_timebase_frequency();
-#else
-        return 1e-3f;
-#endif
     }
 
-#if defined __linux__ || defined __native_client__ || defined __APPLE__
-    struct timeval tv0;
-#elif defined _WIN32
-    LARGE_INTEGER cycles0;
+    LARGE_INTEGER m_cycles;
+
 #elif defined __CELLOS_LV2__
-    uint64_t cycles0;
+    float GetSeconds(bool reset)
+    {
+        static float secs_per_cycle = GetSecondsPerCycle();
+        uint64_t cycles, cycles0 = m_cycles;
+        SYS_TIMEBASE_GET(cycles);
+        if (reset)
+            m_cycles = cycles;
+        return secs_per_cycle * (cycles - cycles0);
+    }
+
+    static float WaitSeconds(float seconds)
+    {
+        if (seconds > 0.0f)
+            sys_timer_usleep((int)(seconds * 1e6f));
+    }
+
+    static float GetSecondsPerCycle()
+    {
+        return 1.f / sys_time_get_timebase_frequency();
+    }
+
+    uint64_t m_cycles;
+
 #else
-    Uint32 ticks0;
+    float GetSeconds(bool reset)
+    {
+        static bool initialised = Init();
+
+        /* The crappy SDL fallback */
+        Uint32 ticks = SDL_GetTicks(), ticks0 = m_ticks;
+        if (reset)
+            m_ticks = ticks;
+        return 1e-3f * (ticks - ticks0);
+    }
+
+    static float WaitSeconds(float seconds)
+    {
+        if (seconds > 5e-4f)
+            SDL_Delay((int)(seconds * 1e3f + 0.5f));
+    }
+
+    static bool Init()
+    {
+        SDL_Init(SDL_INIT_TIMER);
+        return true;
+    }
+
+    Uint32 m_ticks;
 #endif
 };
 
@@ -152,17 +167,18 @@ Timer::~Timer()
 
 float Timer::Get()
 {
-    return data->GetOrWait(0.0f, true);
+    return data->GetSeconds(true);
 }
 
 float Timer::Poll()
 {
-    return data->GetOrWait(0.0f, false);
+    return data->GetSeconds(false);
 }
 
 void Timer::Wait(float seconds)
 {
-    (void)data->GetOrWait(seconds, false);
+    float secs_elapsed = data->GetSeconds(false);
+    data->WaitSeconds(seconds - secs_elapsed);
 }
 
 } /* namespace lol */
