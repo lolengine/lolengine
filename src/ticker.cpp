@@ -184,6 +184,9 @@ void *TickerData::GameThreadMain(void * /* p */)
 
         data->frame++;
 
+        /* Ensure some randomness */
+        (void)rand();
+
         /* If recording with fixed framerate, set deltatime to a fixed value */
         if (data->recording && data->fps)
         {
