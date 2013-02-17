@@ -864,14 +864,14 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 {
-#if 1
+#if 0
     VertexDictionnary vert_dict;
     Array<int> tri_list;
 
     tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
     for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
     {
-        vert_dict.AddVertex(m_indices[i], m_vert[m_indices[i]].m1);
+        vert_dict.AddVertex(m_indices[i], m_vert[m_indices[i]].m_coord);
         tri_list << m_indices[i];
     }
 
@@ -886,7 +886,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     {
         int cur_tri = tri_check[0];
         int v[3]   = { tri_list[cur_tri + uv_offset % 3], tri_list[cur_tri + (1 + uv_offset) % 3], tri_list[cur_tri + (2 + uv_offset) % 3] };
-        vec2 uv[3] = { m_vert[tri_list[cur_tri]].m4, m_vert[tri_list[cur_tri + 1]].m4, m_vert[tri_list[cur_tri + 2]].m4 };
+        vec2 uv[3] = { m_vert[tri_list[cur_tri]].m_texcoord.xy, m_vert[tri_list[cur_tri + 1]].m_texcoord.xy, m_vert[tri_list[cur_tri + 2]].m_texcoord.xy };
         for (int j = 0; j < 3; j++)
         {
             if (uv[j] != vec2(-1.0f) && uv[j] == uv[(j + 1) % 3])
@@ -923,8 +923,8 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             int base_i = 0;
             for (int j = 0; j < 3; j++)
             {
-                float tmp_dot = abs(dot(normalize(m_vert[v[(j + 1) % 3]].m1 - m_vert[v[j]].m1),
-                                        normalize(m_vert[v[(j + 2) % 3]].m1 - m_vert[v[j]].m1)));
+                float tmp_dot = abs(dot(normalize(m_vert[v[(j + 1) % 3]].m_coord - m_vert[v[j]].m_coord),
+                                        normalize(m_vert[v[(j + 2) % 3]].m_coord - m_vert[v[j]].m_coord)));
                 if (tmp_dot < new_dot)
                 {
                     base_i = j;
@@ -932,7 +932,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
                 }
             }
             uv[base_i] = vec2(.0f);
-            uv[(base_i + 1) % 3] = vec2(.0f, uv_scale * length(m_vert[v[base_i]].m1 - m_vert[v[(base_i + 1) % 3]].m1));
+            uv[(base_i + 1) % 3] = vec2(.0f, uv_scale * length(m_vert[v[base_i]].m_coord - m_vert[v[(base_i + 1) % 3]].m_coord));
             uv_set = 2;
         }
         //2 points have been set, let's figure the third
@@ -964,9 +964,9 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 
             //Do this to be sure the normal is OK.
             ComputeNormals(cur_tri, 3);
-            vec3 v01 = normalize(m_vert[v[1]].m1 - m_vert[v[0]].m1);
-            vec3 v02 = m_vert[v[2]].m1 - m_vert[v[0]].m1;
-            vec3 v_dir = normalize(cross(m_vert[m_indices[cur_tri]].m2, v01));
+            vec3 v01 = normalize(m_vert[v[1]].m_coord - m_vert[v[0]].m_coord);
+            vec3 v02 = m_vert[v[2]].m_coord - m_vert[v[0]].m_coord;
+            vec3 v_dir = normalize(cross(m_vert[m_indices[cur_tri]].m_normal, v01));
             vec2 texu_dir = uv[1] - uv[0];
             vec2 texv_dir = vec2(texu_dir.y, texu_dir.x);
             //Final calculations
@@ -982,10 +982,10 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
                 matching_vert << v[i];
                 vert_dict.FindMatchingVertices(v[i], matching_vert);
                 for (int j = 0; j < matching_vert.Count(); j++)
-                    if (m_vert[matching_vert[j]].m4 == vec2(-1.0f))
-                        m_vert[matching_vert[j]].m4 = abs(uv[i]);
+                    if (m_vert[matching_vert[j]].m_texcoord.xy == vec2(-1.0f))
+                        m_vert[matching_vert[j]].m_texcoord = vec4(abs(uv[i]), m_vert[matching_vert[j]].m_texcoord.zw);
 #else
-                m_vert[v[i]].m4 = abs(uv[i]);
+                m_vert[v[i]].m_texcoord = abs(uv[i]);
 #endif
             }
 
@@ -1008,9 +1008,9 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
         {
             for (int j = 0; j < 3; j++)
             {
-                m_vert[tri_list[cur_tri]].m4     = vec2(-1.0f);
-                m_vert[tri_list[cur_tri + 1]].m4 = vec2(-1.0f);
-                m_vert[tri_list[cur_tri + 2]].m4 = vec2(-1.0f);
+                m_vert[tri_list[cur_tri]].m_texcoord     = vec4(vec2(-1.0f), m_vert[tri_list[cur_tri]].m_texcoord.zw);
+                m_vert[tri_list[cur_tri + 1]].m_texcoord = vec4(vec2(-1.0f), m_vert[tri_list[cur_tri + 1]].m_texcoord.zw);
+                m_vert[tri_list[cur_tri + 2]].m_texcoord = vec4(vec2(-1.0f), m_vert[tri_list[cur_tri + 2]].m_texcoord.zw);
             }
 
             //uv[0] = vec2(-1.0f);
