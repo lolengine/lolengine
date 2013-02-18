@@ -1,7 +1,7 @@
-[sc#fff scb#fff ato 20 8 12 rx0]
-[sc#fff scb#fff acg 8 2 5 1 6 8 4 2 .1 1]
+//[sc#fff scb#fff ato 20 8 12 rx0]
+//[sc#fff scb#fff acg 8 2 5 1 6 8 4 2 .1 1]
 
-//[sc#fff ab 4 4 4 smth 0 1 1 ]//twy 45 0 bdxy 90 0 splt 5 tz 2 
+[sc#fff ab 4 4 4 smth 0 1 1 ]//twy 45 0 bdxy 90 0 splt 5 tz 2 
 //[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 tax .4 .4 0]
 //[sc#88f ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .125 stx 10 0 0]
  // tax -2 0 0 0

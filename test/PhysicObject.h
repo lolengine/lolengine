@@ -218,7 +218,7 @@ public:
         }
 
         m_physics->SetCollisionChannel(0, 0xFF);
-        //m_physics->SetCollisionChannel(ColGroup, (1<<ColGroup)|(1));
+        //m_physics->SetCollisionChannel(ColGroup, (1 << ColGroup)|(1));
         m_physics->SetMass(base_mass);
         m_physics->SetTransform(base_location);
         m_physics->InitBodyToRigid();

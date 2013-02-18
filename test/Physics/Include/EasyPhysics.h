@@ -111,7 +111,7 @@ public:
     {
         if (CanChangeCollisionChannel())
         {
-            m_collision_group = (1<<NewGroup);
+            m_collision_group = (1 << NewGroup);
             m_collision_mask = NewMask;
             return true;
         }

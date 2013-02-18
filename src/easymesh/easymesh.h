@@ -109,6 +109,324 @@ private:
     int                                 m_indexcount;
 };
 
+
+struct MeshBuildOperation
+{
+    enum Value
+    {
+        //When this flag is up, negative scaling will not invert faces.
+        Scale_Winding   = 1 << 0,
+
+        All     = 0xffffffff
+    }
+    m_value;
+
+    inline MeshBuildOperation(Value v) : m_value(v) {}
+    inline MeshBuildOperation(uint64_t i) : m_value((Value)i) {}
+    inline operator Value() { return m_value; }
+};
+
+struct MeshType
+{
+    enum Value
+    {
+        Triangle = 0,
+        Quad,
+        Box,
+        Sphere,
+        Capsule,
+        Torus,
+        Cylinder,
+        Disc,
+        Star,
+        ExpandedStar,
+        Cog,
+
+        Max
+    }
+    m_value;
+
+    inline MeshType(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+//TODO : Add other Build type
+struct TexCoordBuildType
+{
+    enum Value
+    {
+        TriangleDefault     = 0,
+        QuadDefault         = 0,
+        BoxDefault          = 0,
+        SphereDefault       = 0,
+        CapsuleDefault      = 0,
+        TorusDefault        = 0,
+        CylinderDefault     = 0,
+        DiscDefault         = 0,
+        StarDefault         = 0,
+        ExpandedStarDefault = 0,
+        CogDefault          = 0,
+
+        Max
+    }
+    m_value;
+
+    inline TexCoordBuildType() : m_value(TriangleDefault) {}
+    inline TexCoordBuildType(Value v) : m_value(v) {}
+    inline TexCoordBuildType(int v) : m_value((Value)v) {}
+    inline operator Value() { return m_value; }
+};
+
+struct MeshFaceType
+{
+    enum Value
+    {
+        BoxFront = 0,
+        BoxLeft  = 1,
+        BoxBack  = 2,
+        BoxRight = 3,
+        BoxTop    = 4,
+        BoxBottom  = 5,
+        QuadDefault = 0,
+
+        Max
+    }
+    m_value;
+
+    inline MeshFaceType(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+struct TexCoordPos
+{
+    enum Value
+    {
+        BL, //BottomLeft
+        BR, //BottomRight
+        TL, //TopLeft
+        TR  //TopRight
+    }
+    m_value;
+
+    inline TexCoordPos(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+class EasyMeshBuildData
+{
+public:
+    EasyMeshBuildData()
+    {
+        m_color = vec4(0.f, 0.f, 0.f, 1.f);
+        m_color2 = vec4(0.f, 0.f, 0.f, 1.f);
+        m_texcoord_offset = vec2(0.f);
+        m_texcoord_offset2 = vec2(0.f);
+        m_texcoord_scale = vec2(1.f);
+        m_texcoord_scale2 = vec2(1.f);
+        m_build_flags = 0;
+        for (int i = 0; i < MeshType::Max; ++i)
+        {
+            m_texcoord_build_type[i] = TexCoordBuildType::TriangleDefault;
+            m_texcoord_build_type2[i] = TexCoordBuildType::TriangleDefault;
+        }
+    }
+
+    inline vec4 &Color()           { return m_color; }
+    inline vec4 &Color2()          { return m_color2; }
+    inline vec2 &TexCoordOffset()  { return m_texcoord_offset; }
+    inline vec2 &TexCoordScale()   { return m_texcoord_scale; }
+    inline vec2 &TexCoordOffset2() { return m_texcoord_offset2; }
+    inline vec2 &TexCoordScale2()  { return m_texcoord_scale2; }
+
+    //UV1
+    void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt] & 1); }
+    TexCoordBuildType GetTexCoordBuildType(MeshType mt)
+    {
+        int flag = ((m_texcoord_build_type[mt] & ~(1)) >> 1);
+        int i = 0;
+        while (flag >>= 1)
+            i++;
+        return TexCoordBuildType(i);
+    }
+    void SetTexCoordCustomBuild(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
+    {
+        if (face >= m_texcoord_custom_build[mt].Count())
+            m_texcoord_custom_build[mt].Resize(face + 1);
+        m_texcoord_custom_build[mt][face].m1 = BL;
+        m_texcoord_custom_build[mt][face].m2 = TR;
+        m_texcoord_build_type[mt] |= 1;
+    }
+    void ClearTexCoordCustomBuild(MeshType mt) { m_texcoord_build_type[mt] &= ~1; }
+    /* FIXME : Do something better ? */
+    vec2 TexCoord(MeshType mt, TexCoordPos tcp, MeshFaceType face)
+    {
+        vec2 BL = vec2(0.f);
+        vec2 TR = vec2(0.f);
+        if (m_texcoord_build_type[mt] & 1 && face < m_texcoord_custom_build[mt].Count())
+        {
+            BL = m_texcoord_custom_build[mt][face].m1;
+            TR = m_texcoord_custom_build[mt][face].m2;
+        }
+        else
+        {
+            TexCoordBuildType tcbt = GetTexCoordBuildType(mt);
+            if (mt == MeshType::Triangle)
+                mt = mt;
+            else if (mt == MeshType::Quad)
+            {
+                //There's nothin' else than QuadDefault
+                BL = vec2(0.f);
+                TR = vec2(1.f);
+            }
+            else if (mt == MeshType::Box)
+            {
+                vec2 data[][2] =
+                { //TexCoordBuildType::BoxDefault
+                    { vec2(0.f), vec2(.5f) },
+                    { vec2(.5f, 0.f), vec2(1.f, .5f) },
+                    { vec2(0.f), vec2(.5f) },
+                    { vec2(.5f, 0.f), vec2(1.f, .5f) },
+                    { vec2(0.f, .5f), vec2(.5f, 1.f) },
+                    { vec2(.5f, .5f), vec2(1.f, 1.f) }
+                };
+                BL = data[face][0]; //[tcbt]
+                TR = data[face][1]; //[tcbt]
+            }
+            else if (mt == MeshType::Sphere)
+                mt = mt;
+            else if (mt == MeshType::Capsule)
+                mt = mt;
+            else if (mt == MeshType::Torus)
+                mt = mt;
+            else if (mt == MeshType::Cylinder)
+                mt = mt;
+            else if (mt == MeshType::Disc)
+                mt = mt;
+            else if (mt == MeshType::Star)
+                mt = mt;
+            else if (mt == MeshType::ExpandedStar)
+                mt = mt;
+            else if (mt == MeshType::Cog)
+                mt = mt;
+        }
+
+        vec2 res = vec2(.0f);
+        if (tcp == TexCoordPos::BL)
+            res = BL;
+        else if (tcp == TexCoordPos::BR)
+            res = vec2(TR.x, BL.y);
+        else if (tcp == TexCoordPos::TL)
+            res = vec2(BL.x, TR.y);
+        else if (tcp == TexCoordPos::TR)
+            res = TR;
+
+        return res * m_texcoord_scale + m_texcoord_offset2;
+    }
+
+    //UV2
+    void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt] & 1); }
+    TexCoordBuildType GetTexCoordBuildType2(MeshType mt)
+    {
+        int flag = ((m_texcoord_build_type2[mt] & ~(1)) >> 1);
+        int i = 0;
+        while (flag >>= 1)
+            i++;
+        return TexCoordBuildType(i);
+    }
+    void SetTexCoordCustomBuild2(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
+    {
+        if (face >= m_texcoord_custom_build2[mt].Count())
+            m_texcoord_custom_build2[mt].Resize(face + 1);
+        m_texcoord_custom_build2[mt][face].m1 = BL;
+        m_texcoord_custom_build2[mt][face].m2 = TR;
+        m_texcoord_build_type2[mt] |= 1;
+    }
+    void ClearTexCoordCustomBuild2(MeshType mt) { m_texcoord_build_type2[mt] &= ~1; }
+    vec2 TexCoord2(MeshType mt, TexCoordPos tcp, MeshFaceType face)
+    {
+        vec2 BL = vec2(0.f);
+        vec2 TR = vec2(0.f);
+        if (m_texcoord_build_type2[mt] & 1 && face < m_texcoord_custom_build2[mt].Count())
+        {
+            BL = m_texcoord_custom_build2[mt][face].m1;
+            TR = m_texcoord_custom_build2[mt][face].m2;
+        }
+        else
+        {
+            TexCoordBuildType tcbt = GetTexCoordBuildType2(mt);
+            if (mt == MeshType::Triangle)
+                mt = mt;
+            else if (mt == MeshType::Quad)
+            {
+                //There's nothin' else than QuadDefault
+                BL = vec2(0.f);
+                TR = vec2(1.f);
+            }
+            else if (mt == MeshType::Box)
+            {
+                vec2 data[][2] =
+                { //TexCoordBuildType::BoxDefault
+                    { vec2(0.f), vec2(.5f) },
+                    { vec2(.5f, 0.f), vec2(1.f, .5f) },
+                    { vec2(0.f), vec2(.5f) },
+                    { vec2(.5f, 0.f), vec2(1.f, .5f) },
+                    { vec2(0.f, .5f), vec2(.5f, 1.f) },
+                    { vec2(.5f, .5f), vec2(1.f, 1.f) }
+                };
+                BL = data[face][0]; //[tcbt]
+                TR = data[face][1]; //[tcbt]
+            }
+            else if (mt == MeshType::Sphere)
+                mt = mt;
+            else if (mt == MeshType::Capsule)
+                mt = mt;
+            else if (mt == MeshType::Torus)
+                mt = mt;
+            else if (mt == MeshType::Cylinder)
+                mt = mt;
+            else if (mt == MeshType::Disc)
+                mt = mt;
+            else if (mt == MeshType::Star)
+                mt = mt;
+            else if (mt == MeshType::ExpandedStar)
+                mt = mt;
+            else if (mt == MeshType::Cog)
+                mt = mt;
+        }
+
+        vec2 res = vec2(.0f);
+        if (tcp == TexCoordPos::BL)
+            res = BL;
+        else if (tcp == TexCoordPos::BR)
+            res = vec2(TR.x, BL.y);
+        else if (tcp == TexCoordPos::TL)
+            res = vec2(BL.x, TR.y);
+        else if (tcp == TexCoordPos::TR)
+            res = TR;
+
+        return res * m_texcoord_scale + m_texcoord_offset2;
+    }
+
+    inline bool IsEnabled(MeshBuildOperation mbo) { return (m_build_flags & mbo) != 0; }
+    inline void Enable(MeshBuildOperation mbo) { m_build_flags |= mbo; }
+    inline void Disable(MeshBuildOperation mbo) { m_build_flags &= ~mbo; }
+    inline void Toggle(MeshBuildOperation mbo) { m_build_flags ^= mbo; }
+    inline void Set(MeshBuildOperation mbo, bool value) { if (value) Enable(mbo); else Disable(mbo); }
+
+public:
+    vec4                m_color;
+    vec4                m_color2;
+    vec2                m_texcoord_offset;
+    vec2                m_texcoord_offset2;
+    vec2                m_texcoord_scale;
+    vec2                m_texcoord_scale2;
+    int                 m_texcoord_build_type[MeshType::Max];
+    Array<vec2, vec2>   m_texcoord_custom_build[MeshType::Max];
+    int                 m_texcoord_build_type2[MeshType::Max];
+    Array<vec2, vec2>   m_texcoord_custom_build2[MeshType::Max];
+    uint16_t            m_build_flags;
+};
+
 /* A safe enum for MeshCSG operations. */
 struct CSGUsage
 {
@@ -176,21 +494,6 @@ struct Axis
     inline operator Value() { return m_value; }
 };
 
-struct MeshBuildOperation
-{
-    enum Value
-    {
-        Scale_Winding   = 1 << 0,
-
-        All     = 0xffffffff
-    }
-    m_value;
-
-    inline MeshBuildOperation(Value v) : m_value(v) {}
-    inline MeshBuildOperation(uint64_t i) : m_value((Value)i) {}
-    inline operator Value() { return m_value; }
-};
-
 class EasyMesh
 {
     friend class EasyMeshParser;
@@ -255,11 +558,12 @@ public: //DEBUG
     //-------------------------------------------------------------------------
     void SetVertColor(vec4 const &color);
     void SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale);
+    void SetTexCoordData2(vec2 const &new_offset, vec2 const &new_scale);
 
     void SetCurVertNormal(vec3 const &normal);
     void SetCurVertColor(vec4 const &color);
     void SetCurVertTexCoord(vec2 const &texcoord);
-    void SetCurVertTexCoord(vec4 const &texcoord);
+    void SetCurVertTexCoord2(vec2 const &texcoord);
 
 public:
     //-------------------------------------------------------------------------
@@ -504,22 +808,25 @@ public:
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 private:
-    vec4 m_color, m_color2;
     Array<uint16_t> m_indices;
     Array<VertexData> m_vert;
 
     //<vert count, indices count>
     Array<int, int> m_cursors;
-    //When this flag is up, negative scaling will not invert faces.
-    bool m_ignore_winding_on_scale;
-    //Texture coordinate modifiers.
-    vec2 m_texcoord_offset;
-    vec2 m_texcoord_scale;
 
     friend class GpuEasyMeshData;
     GpuEasyMeshData m_gpu_data;
-};
 
+public:
+    inline EasyMeshBuildData* BD()
+    {
+        if (!m_build_data)
+            m_build_data = new EasyMeshBuildData();
+        return m_build_data;
+    };
+private:
+    class EasyMeshBuildData* m_build_data;
+};
 } /* namespace lol */
 
 #endif /* __EASYMESH_EASYMESH_H__ */

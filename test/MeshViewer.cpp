@@ -353,8 +353,11 @@ public:
 #if WITH_FUR
                 m_meshes[i].m1.MeshConvert(Shader::Create(LOLFX_RESOURCE_NAME(shinyfur)));
 #else
-                m_meshes[i].m1.MeshConvert(m_texture_shader);
+                //m_meshes[i].m1.MeshConvert(m_texture_shader);
                 //m_meshes[i].m1.MeshConvert();
+                m_meshes[i].m1.MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                                                                  (1 << VertexUsage::Color)    | (VertexUsage::TexCoord)),
+                                                                  m_texture_shader, true));
 #endif
                 m_meshes[i].m2 = true;
             }
