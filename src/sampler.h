@@ -29,6 +29,9 @@ public:
     static void Deregister(int id);
 
     static void PlaySample(int id);
+
+private:
+    Sampler() {}
 };
 
 } /* namespace lol */
