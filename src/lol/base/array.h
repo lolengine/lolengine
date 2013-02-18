@@ -168,6 +168,21 @@ public:
         Remove(m_count - 1, 1);
     }
 
+    void Swap(int pos1, int pos2)
+    {
+        ASSERT(pos1 >= 0);
+        ASSERT(pos2 >= 0);
+        ASSERT(pos1 < m_count);
+        ASSERT(pos2 < m_count);
+
+        if (pos1 != pos2)
+        {
+            Element tmp = (*this)[pos1];
+            (*this)[pos1] = (*this)[pos2];
+            (*this)[pos2] = tmp;
+        }
+    }
+
     void Remove(int pos, int todelete = 1)
     {
         ASSERT(pos >= 0);

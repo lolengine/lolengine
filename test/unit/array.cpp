@@ -100,6 +100,19 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(a[0].m8, 0);
     }
 
+    LOLUNIT_TEST(ArraySwap)
+    {
+        Array<int, int> a;
+        a.Push(10, 20);
+        a.Push(30, 40);
+        a.Swap(0, 1);
+
+        LOLUNIT_ASSERT_EQUAL(30, a[0].m1);
+        LOLUNIT_ASSERT_EQUAL(40, a[0].m2);
+        LOLUNIT_ASSERT_EQUAL(10, a[1].m1);
+        LOLUNIT_ASSERT_EQUAL(20, a[1].m2);
+    }
+
     LOLUNIT_TEST(ArrayConcat)
     {
         Array<int> a, b;
