@@ -84,7 +84,7 @@ LOLUNIT_FIXTURE(ColorTest)
             LOLUNIT_SET_CONTEXT(n / 7);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(d1, d2, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(d2, d3, 0.0001);
-            LOLUNIT_UNSET_CONTEXT();
+            LOLUNIT_UNSET_CONTEXT(n / 7);
         }
     }
 
@@ -106,7 +106,7 @@ LOLUNIT_FIXTURE(ColorTest)
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.g, v3.g, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.b, v3.b, 0.0001);
 
-            LOLUNIT_UNSET_CONTEXT();
+            LOLUNIT_UNSET_CONTEXT(&rgb[0]);
         }
     }
 
@@ -128,7 +128,7 @@ LOLUNIT_FIXTURE(ColorTest)
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.y, v3.y, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.z, v3.z, 0.0001);
 
-            LOLUNIT_UNSET_CONTEXT();
+            LOLUNIT_UNSET_CONTEXT(&rgb[0]);
         }
     }
 };

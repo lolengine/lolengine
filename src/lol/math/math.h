@@ -16,6 +16,7 @@
 #include <lol/math/real.h>
 #include <lol/math/vector.h>
 #include <lol/math/geometry.h>
+#include <lol/math/interp.h>
 
 #endif // __LOL_MATH_MATH_H__
 

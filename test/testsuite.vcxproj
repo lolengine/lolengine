@@ -42,6 +42,7 @@
     <ClCompile Include="unit\color.cpp" />
     <ClCompile Include="unit\half.cpp" />
     <ClCompile Include="unit\image.cpp" />
+    <ClCompile Include="unit\interp.cpp" />
     <ClCompile Include="unit\map.cpp" />
     <ClCompile Include="unit\matrix.cpp" />
     <ClCompile Include="unit\quat.cpp" />
