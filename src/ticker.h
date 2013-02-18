@@ -45,6 +45,9 @@ public:
 
     static void Shutdown();
     static int Finished();
+
+private:
+    Ticker() {}
 };
 
 } /* namespace lol */

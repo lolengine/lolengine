@@ -26,6 +26,9 @@ class Audio
 {
 public:
     static void Setup(int channels);
+
+private:
+    Audio() {}
 };
 
 } /* namespace lol */

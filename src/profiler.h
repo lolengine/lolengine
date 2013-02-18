@@ -48,6 +48,9 @@ public:
     static void Stop(int id);
     static float GetAvg(int id);
     static float GetMax(int id);
+
+private:
+    Profiler() {}
 };
 
 } /* namespace lol */
