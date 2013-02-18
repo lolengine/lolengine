@@ -241,8 +241,10 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
     memcpy(mesh, vbo_data, vbo_bytes); \
     new_vbo->Unlock();
 
-    if (vdecl_flags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                        (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoordExt)))
+    uint16_t baseflag = (1 << VertexUsage::Position) | (1 << VertexUsage::Normal) | (1 << VertexUsage::Color);
+    if (vdecl_flags == (baseflag | (1 << VertexUsage::TexCoordExt)) ||
+        vdecl_flags == (baseflag | (1 << VertexUsage::TexCoord) |
+                                   (1 << VertexUsage::TexCoordExt)))
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec4>(
@@ -264,8 +266,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags ==  ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                              (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)))
+    else if (vdecl_flags ==  (baseflag | (1 << VertexUsage::TexCoord)))
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec2>(
@@ -287,8 +288,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags ==  ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                              (1 << VertexUsage::Color)))
+    else if (vdecl_flags == baseflag)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4>(
@@ -335,16 +335,19 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
 
     vdecl->Bind();
 
-    if (vflags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                   (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)))
+    uint16_t baseflag = (1 << VertexUsage::Position) | (1 << VertexUsage::Normal) | (1 << VertexUsage::Color);
+    if (vflags == (baseflag | (1 << VertexUsage::TexCoord)) ||
+        vflags == (baseflag | (1 << VertexUsage::TexCoordExt)) ||
+        vflags == (baseflag | (1 << VertexUsage::TexCoord) |
+                              (1 << VertexUsage::TexCoordExt)))
+                   
     {
         vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
                               *gpu_sd.GetAttribute(lol::String("in_Normal")),
                               *gpu_sd.GetAttribute(lol::String("in_Color")),
                               *gpu_sd.GetAttribute(lol::String("in_TexCoord")));
     }
-    else if (vflags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                        (1 << VertexUsage::Color)))
+    else if (vflags == baseflag)
     {
         vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
                               *gpu_sd.GetAttribute(lol::String("in_Normal")),

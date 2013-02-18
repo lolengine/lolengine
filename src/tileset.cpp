@@ -174,6 +174,11 @@ ivec2 TileSet::GetSize(int tileid) const
     return data->size;
 }
 
+vec2 TileSet::GetTileSize() const
+{
+    return vec2(data->tx, data->ty);
+}
+
 ShaderTexture TileSet::GetTexture() const
 {
     return data->m_texture->GetTexture();

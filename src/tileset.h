@@ -43,6 +43,7 @@ public:
     /* New methods */
     ivec2 GetCount() const;
     ivec2 GetSize(int tileid) const;
+    vec2 GetTileSize() const;
     ShaderTexture GetTexture() const;
     void Bind();
     void Unbind();
