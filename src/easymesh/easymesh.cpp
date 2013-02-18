@@ -102,9 +102,9 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
 {
     bool with_UV = false;
     m_render_mode = render_mode;
-    m_vert_decl_flags = (VertexUsage::Position << 1) |
-                        (VertexUsage::Normal << 1)   |
-                        (VertexUsage::Color << 1);
+    m_vert_decl_flags = (1 << VertexUsage::Position) |
+                        (1 << VertexUsage::Normal)   |
+                        (1 << VertexUsage::Color);
 
     if (render_mode == DebugRenderMode::Default)
         m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
@@ -117,7 +117,7 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
     else if (render_mode == DebugRenderMode::UV)
     {
         m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
-        m_vert_decl_flags |= (VertexUsage::TexCoord << 1);
+        m_vert_decl_flags |= (1 << VertexUsage::TexCoord);
         with_UV = true;
     }
     SetupDefaultData(with_UV);
@@ -241,31 +241,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
     memcpy(mesh, vbo_data, vbo_bytes); \
     new_vbo->Unlock();
 
-    if (vdecl_flags ==  ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
-                         (VertexUsage::Color<<1)    | (VertexUsage::TexCoord<<1)))
-    {
-        new_vdecl = new VertexDeclaration(
-                         VertexStream<vec3,vec3,u8vec4,vec2>(
-                          VertexUsage::Position,
-                          VertexUsage::Normal,
-                          VertexUsage::Color,
-                          VertexUsage::TexCoord));
-
-        Array<vec3, vec3, u8vec4, vec2> vertexlist;
-        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m_coord,
-                            src_mesh->m_vert[i].m_normal,
-                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
-                            src_mesh->m_vert[i].m_texcoord.xy);
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
-        COPY_VBO;
-    }
-    else if (vdecl_flags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
-                             (VertexUsage::Color<<1)    | (VertexUsage::TexCoordExt<<1)))
+    if (vdecl_flags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                        (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoordExt)))
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec4>(
@@ -287,8 +264,31 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags ==  ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
-                              (VertexUsage::Color<<1)))
+    else if (vdecl_flags ==  ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                              (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)))
+    {
+        new_vdecl = new VertexDeclaration(
+                         VertexStream<vec3,vec3,u8vec4,vec2>(
+                          VertexUsage::Position,
+                          VertexUsage::Normal,
+                          VertexUsage::Color,
+                          VertexUsage::TexCoord));
+
+        Array<vec3, vec3, u8vec4, vec2> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord,
+                            src_mesh->m_vert[i].m_normal,
+                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
+                            src_mesh->m_vert[i].m_texcoord.xy);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else if (vdecl_flags ==  ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                              (1 << VertexUsage::Color)))
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4>(
@@ -335,16 +335,16 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
 
     vdecl->Bind();
 
-    if (vflags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
-                   (VertexUsage::Color<<1)    | (VertexUsage::TexCoord<<1)))
+    if (vflags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                   (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)))
     {
         vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
                               *gpu_sd.GetAttribute(lol::String("in_Normal")),
                               *gpu_sd.GetAttribute(lol::String("in_Color")),
                               *gpu_sd.GetAttribute(lol::String("in_TexCoord")));
     }
-    else if (vflags == ((VertexUsage::Position<<1) | (VertexUsage::Normal<<1) |
-                        (VertexUsage::Color<<1)))
+    else if (vflags == ((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                        (1 << VertexUsage::Color)))
     {
         vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
                               *gpu_sd.GetAttribute(lol::String("in_Normal")),
@@ -359,8 +359,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
 
 //-----------------------------------------------------------------------------
 EasyMesh::EasyMesh()
-  : m_color(0), m_color2(0), m_ignore_winding_on_scale(0),
-    m_texcoord_offset(vec2(.0f)), m_texcoord_scale(vec2(1.f))
+  : m_build_data(NULL)
 {
     m_cursors.Push(0, 0);
 }
@@ -369,7 +368,9 @@ EasyMesh::EasyMesh()
 bool EasyMesh::Compile(char const *command)
 {
     EasyMeshCompiler mc(*this);
-    return mc.ParseString(command);
+    bool res = mc.ParseString(command);
+    delete(m_build_data);
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -399,9 +400,9 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 {
     if (provided_shader)
     {
-        GpuShaderData *new_gpu_sdata = new DefaultShaderData(((VertexUsage::Position<<1) |
-                                                              (VertexUsage::Normal<<1) |
-                                                              (VertexUsage::Color<<1)),
+        GpuShaderData *new_gpu_sdata = new DefaultShaderData(((1 << VertexUsage::Position) |
+                                                              (1 << VertexUsage::Normal) |
+                                                              (1 << VertexUsage::Color)),
                                                               provided_shader,
                                                               false);
         m_gpu_data.AddGpuData(new_gpu_sdata, this);
@@ -766,25 +767,25 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
 //-----------------------------------------------------------------------------
 void EasyMesh::ToggleScaleWinding()
 {
-    m_ignore_winding_on_scale = !m_ignore_winding_on_scale;
+    BD()->Toggle(MeshBuildOperation::Scale_Winding);
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor(vec4 const &color)
 {
-    m_color = color;
+    BD()->Color() = color;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor2(vec4 const &color)
 {
-    m_color2 = color;
+    BD()->Color2() = color;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), m_color));
+    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->Color()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1054,8 +1055,15 @@ void EasyMesh::SetVertColor(vec4 const &color)
 //-----------------------------------------------------------------------------
 void EasyMesh::SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale)
 {
-    m_texcoord_offset = new_offset;
-    m_texcoord_scale = new_scale;
+    BD()->TexCoordOffset() = new_offset;
+    BD()->TexCoordScale() = new_scale;
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SetTexCoordData2(vec2 const &new_offset, vec2 const &new_scale)
+{
+    BD()->TexCoordOffset2() = new_offset;
+    BD()->TexCoordScale2() = new_scale;
 }
 
 //-----------------------------------------------------------------------------
@@ -1077,9 +1085,9 @@ void EasyMesh::SetCurVertTexCoord(vec2 const &texcoord)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurVertTexCoord(vec4 const &texcoord)
+void EasyMesh::SetCurVertTexCoord2(vec2 const &texcoord)
 {
-    m_vert[m_vert.Count() - 1].m_texcoord = texcoord;
+    m_vert[m_vert.Count() - 1].m_texcoord = vec4(m_vert[m_vert.Count() - 1].m_texcoord.xy, texcoord);
 }
 
 //-----------------------------------------------------------------------------
@@ -1237,7 +1245,7 @@ void EasyMesh::Scale(vec3 const &s)
     }
 
     /* Flip winding if the scaling involves mirroring */
-    if (!m_ignore_winding_on_scale && s.x * s.y * s.z < 0)
+    if (!BD()->IsEnabled(MeshBuildOperation::Scale_Winding) && s.x * s.y * s.z < 0)
     {
         for (int i = m_cursors.Last().m2; i < m_indices.Count(); i += 3)
         {
@@ -1280,10 +1288,10 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
     float r2 = d2 * .5f;
 
     //SAVE
-    vec4 Saved_Color = m_color;
-    vec4 Saved_Color2 = m_color2;
-    vec2 Save_texcoord_offset = m_texcoord_offset;
-    vec2 Save_texcoord_scale = m_texcoord_scale;
+    vec4 Saved_Color = BD()->Color();
+    vec4 Saved_Color2 = BD()->Color2();
+    vec2 Save_texcoord_offset = BD()->TexCoordOffset();
+    vec2 Save_texcoord_scale = BD()->TexCoordScale();
 
     int vbase = m_vert.Count();
 
@@ -1307,9 +1315,9 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
      * means duplicating the vertices again... */
     for (int i = 0; i < nsides; i++)
     {
-        AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1);
-        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2);
-        SetCurVertColor(m_color2);
+        AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
+        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2);
+        SetCurVertColor(BD()->Color2());
 
         if (smooth)
         {
@@ -1324,9 +1332,9 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
 
         if (!smooth)
         {
-            AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1);
-            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2);
-            SetCurVertColor(m_color2);
+            AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
+            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2);
+            SetCurVertColor(BD()->Color2());
 
             AppendQuad(i * 4 + 2, i * 4 + 3, i * 4 + 1, i * 4, vbase);
             if (dualside)
@@ -1342,13 +1350,13 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         OpenBrace();
         //LOWER DISC
         SetTexCoordData(vec2(.0f, .5f), vec2(.5f, .5f));
-        SetCurColor(m_color);
+        SetCurColor(BD()->Color());
         AppendDisc(nsides, d1);
         Translate(vec3(.0f, h, .0f));
         RotateX(180.0f);
         //UPPER DISC
         SetTexCoordData(vec2(.5f, .5f), vec2(.5f, .5f));
-        SetCurColor(m_color2);
+        SetCurColor(BD()->Color2());
         AppendDisc(nsides, d2);
         Translate(vec3(.0f, h * .5f, .0f));
         CloseBrace();
@@ -1492,6 +1500,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                         else
                             new_uv = uv[rid[0]];
                         SetCurVertTexCoord(vec2(0.f, 1.f) - new_uv);
+                        SetCurVertTexCoord2(vec2(0.f, 1.f) - new_uv);
                     }
                     AppendTriangle(0, 2, 1, m_vert.Count() - 3);
                 }
@@ -1545,6 +1554,7 @@ void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
 
             AddVertex(vec3(x2, y, z2));
             SetCurVertTexCoord(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
+            SetCurVertTexCoord2(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
         }
 
         AppendTriangle(0, 2, 3, m_vert.Count() - 4);
@@ -1586,62 +1596,125 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 
     vec3 d = size * 0.5f;
 
+    MeshType mt = MeshType::Box;
+    TexCoordPos bl = TexCoordPos::BL;
+    TexCoordPos br = TexCoordPos::BR;
+    TexCoordPos tl = TexCoordPos::TL;
+    TexCoordPos tr = TexCoordPos::TR;
+
+    //--
     //Side vertices
+    //--
+    MeshFaceType mft = MeshFaceType::BoxFront;
     AddVertex(vec3(-d.x, -d.y, -d.z - chamf));
-    SetCurVertTexCoord(vec2(0.f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x, +d.y, -d.z - chamf));
-    SetCurVertTexCoord(vec2(0.f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, +d.y, -d.z - chamf));
-    SetCurVertTexCoord(vec2(.5f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, -d.y, -d.z - chamf));
-    SetCurVertTexCoord(vec2(.5f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
+    //--
+    mft = MeshFaceType::BoxLeft;
     AddVertex(vec3(-d.x - chamf, -d.y, +d.z));
-    SetCurVertTexCoord(vec2(.5f, 0.5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x - chamf, +d.y, +d.z));
-    SetCurVertTexCoord(vec2(.5f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x - chamf, +d.y, -d.z));
-    SetCurVertTexCoord(vec2(1.f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x - chamf, -d.y, -d.z));
-    SetCurVertTexCoord(vec2(1.f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
+    //--
+    mft = MeshFaceType::BoxBack;
     AddVertex(vec3(+d.x, -d.y, +d.z + chamf));
-    SetCurVertTexCoord(vec2(0.f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, +d.y, +d.z + chamf));
-    SetCurVertTexCoord(vec2(0.f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x, +d.y, +d.z + chamf));
-    SetCurVertTexCoord(vec2(.5f, 0.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x, -d.y, +d.z + chamf));
-    SetCurVertTexCoord(vec2(.5f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
+    //--
+    mft = MeshFaceType::BoxRight;
     AddVertex(vec3(+d.x + chamf, -d.y, -d.z));
-    SetCurVertTexCoord(vec2(.5f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x + chamf, +d.y, -d.z));
-    SetCurVertTexCoord(vec2(.5f, .0f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x + chamf, +d.y, +d.z));
-    SetCurVertTexCoord(vec2(1.f, .0f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x + chamf, -d.y, +d.z));
-    SetCurVertTexCoord(vec2(1.f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
+    //--
     //Bottom vertices
+    //--
+    mft = MeshFaceType::BoxBottom;
     AddVertex(vec3(-d.x, -d.y - chamf, +d.z));
-    SetCurVertTexCoord(vec2(.5f, 1.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(vec2(.5f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(vec2(.0f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, -d.y - chamf, +d.z));
-    SetCurVertTexCoord(vec2(.0f, 1.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
+    //--
     //Top vertices
+    //--
+    mft = MeshFaceType::BoxTop;
     AddVertex(vec3(-d.x, +d.y + chamf, -d.z));
-    SetCurVertTexCoord(vec2(1.f, 1.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(-d.x, +d.y + chamf, +d.z));
-    SetCurVertTexCoord(vec2(1.f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, +d.y + chamf, +d.z));
-    SetCurVertTexCoord(vec2(.5f, .5f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    //--
     AddVertex(vec3(+d.x, +d.y + chamf, -d.z));
-    SetCurVertTexCoord(vec2(.5f, 1.f));
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
     /* The 6 quads on each side of the box */
     for (int i = 0; i < 24; i += 4)
@@ -1707,7 +1780,7 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
     int vbase = m_vert.Count();
     float maxr = max(r1, r2);
 
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f);
@@ -1719,13 +1792,13 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
 
     for (int i = 0; i < nbranches; i++)
     {
-        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f));
+        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
         if (fade2)
-            SetCurVertColor(m_color2);
+            SetCurVertColor(BD()->Color2());
 
-        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f));
+        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
         if (fade)
-            SetCurVertColor(m_color2);
+            SetCurVertColor(BD()->Color2());
 
         AppendQuad(0, 2 * i + 1, 2 * i + 2, (2 * i + 3) % (2 * nbranches),
                    vbase);
@@ -1746,7 +1819,7 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
     int vbase = m_vert.Count();
     float maxr = (float)max(max(r1, r2), max(r1 + extrar, r2 + extrar));
 
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f),
@@ -1762,10 +1835,10 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
 
     for (int i = 0; i < nbranches; i++)
     {
-        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f));
-        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f));
-        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertColor(m_color2);
-        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertColor(m_color2);
+        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
+        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
+        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertTexCoord2(uv3.xz + vec2(.5f)); SetCurVertColor(BD()->Color2());
+        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertTexCoord2(uv4.xz + vec2(.5f)); SetCurVertColor(BD()->Color2());
 
         int j = (i + 1) % nbranches;
         AppendQuad(0, 4 * i + 1, 4 * i + 2, 4 * j + 1, vbase);
@@ -1787,7 +1860,7 @@ void EasyMesh::AppendDisc(int nsides, float d, int fade)
 
     int vbase = m_vert.Count();
 
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f));
+    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
     mat3 rotmat = mat3::rotate(360.0f / nsides, 0.f, 1.f, 0.f);
     vec3 p1(r, 0.f, 0.f);
@@ -1795,9 +1868,9 @@ void EasyMesh::AppendDisc(int nsides, float d, int fade)
 
     for (int i = 0; i < nsides; i++)
     {
-        AddVertex(p1); SetCurVertTexCoord(uv.xz + vec2(.5f, .5f));
+        AddVertex(p1); SetCurVertTexCoord(uv.xz + vec2(.5f, .5f)); SetCurVertTexCoord2(uv.xz + vec2(.5f, .5f));
         if (fade)
-            SetCurVertColor(m_color2);
+            SetCurVertColor(BD()->Color2());
         AppendTriangle(0, i + 1, ((i + 1) % nsides) + 1, vbase);
         p1 = rotmat * p1;
         uv = rotmat * uv;
@@ -1813,15 +1886,15 @@ void EasyMesh::AppendSimpleTriangle(float d, int fade)
     mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
     vec3 p(0.f, 0.f, size);
 
-    AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f));
+    AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f)); SetCurVertTexCoord2(vec2(.5f, 0.133975f));
     p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f));
+    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f)); SetCurVertTexCoord2(vec2(0.f, 1.f));
     if (fade)
-        SetCurVertColor(m_color2);
+        SetCurVertColor(BD()->Color2());
     p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f));
+    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f)); SetCurVertTexCoord2(vec2(1.f, 1.f));
     if (fade)
-        SetCurVertColor(m_color2);
+        SetCurVertColor(BD()->Color2());
 
     AppendTriangle(0, 1, 2, m_vert.Count() - 3);
 }
@@ -1835,12 +1908,31 @@ void EasyMesh::AppendSimpleQuad(float size, int fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 {
-    AddVertex(vec3(p2.x, z, -p1.y)); SetCurVertTexCoord(vec2(1.f, 0.f));
-    AddVertex(vec3(p2.x, z, -p2.y)); SetCurVertTexCoord(vec2(0.f, 0.f));
-    AddVertex(vec3(p1.x, z, -p2.y)); SetCurVertTexCoord(vec2(0.f, 1.f));
-    if (fade) SetCurVertColor(m_color2);
-    AddVertex(vec3(p1.x, z, -p1.y)); SetCurVertTexCoord(vec2(1.f, 1.f));
-    if (fade) SetCurVertColor(m_color2);
+    MeshType mt = MeshType::Quad;
+    MeshFaceType mft = MeshFaceType::QuadDefault;
+
+    //--
+    AddVertex(vec3(p2.x, z, -p1.y));
+    TexCoordPos br = TexCoordPos::BR;
+    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, br, mft));
+    //--
+    AddVertex(vec3(p2.x, z, -p2.y));
+    TexCoordPos bl = TexCoordPos::BL;
+    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, bl, mft));
+    //--
+    AddVertex(vec3(p1.x, z, -p2.y));
+    TexCoordPos tl = TexCoordPos::TL;
+    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tl, mft));
+    if (fade) SetCurVertColor(BD()->Color2());
+    //--
+    AddVertex(vec3(p1.x, z, -p1.y));
+    TexCoordPos tr = TexCoordPos::TR;
+    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
+    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
+    if (fade) SetCurVertColor(BD()->Color2());
 
     AppendQuad(0, 1, 2, 3, m_vert.Count() - 4);
     ComputeNormals(m_indices.Count() - 6, 6);
@@ -2065,18 +2157,28 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                 else
                     add = upadd;
                 SetCurVertTexCoord(tmp * vec2(.25f) + add);
+                SetCurVertTexCoord2(tmp * vec2(.25f) + add);
             }
             else if (m == 0 || m == 1) //inner Logic
+            {
                 SetCurVertTexCoord(uv[d]);
+                SetCurVertTexCoord2(uv[d]);
+            }
             else //Cog logic
             {
                 if (m == 2 && n % 3 == 2)
+                {
                     SetCurVertTexCoord(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
+                    SetCurVertTexCoord2(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
+                }
                 else
+                {
                     SetCurVertTexCoord(uv[d]);
+                    SetCurVertTexCoord2(uv[d]);
+                }
             }
             if (d >= 6)
-                SetCurVertColor(m_color2);
+                SetCurVertColor(BD()->Color2());
         }
 
         int l = -4;
