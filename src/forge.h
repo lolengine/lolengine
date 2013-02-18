@@ -28,6 +28,9 @@ public:
     static int Register(char const *path);
     static void Deregister(int id);
     static Font *GetFont(int id);
+
+private:
+    Forge() {}
 };
 
 } /* namespace lol */

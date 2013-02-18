@@ -29,6 +29,9 @@ class Tiler
 public:
     static TileSet *Register(char const *path, ivec2 size, ivec2 count);
     static void Deregister(TileSet *);
+
+private:
+    Tiler() {}
 };
 
 } /* namespace lol */

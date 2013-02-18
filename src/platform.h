@@ -26,6 +26,9 @@ class Platform
 {
 public:
     static int GetMouseCount();
+
+private:
+    Platform() {}
 };
 
 } /* namespace lol */
