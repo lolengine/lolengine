@@ -37,7 +37,7 @@ liblolcore_headers = \
     \
     lol/math/math.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
-    lol/math/remez.h lol/math/math.h lol/math/geometry.h \
+    lol/math/remez.h lol/math/math.h lol/math/geometry.h lol/math/interp.h \
     \
     lol/sys/sys.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \

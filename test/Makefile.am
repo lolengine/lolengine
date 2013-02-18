@@ -21,7 +21,7 @@ testsuite_SOURCES = testsuite.cpp \
     unit/vector.cpp unit/matrix.cpp unit/half.cpp unit/trig.cpp \
     unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
     unit/array.cpp unit/rotation.cpp unit/string.cpp unit/map.cpp \
-    unit/color.cpp unit/atomic.cpp
+    unit/color.cpp unit/atomic.cpp unit/interp.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
 testsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
 
