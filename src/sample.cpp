@@ -66,7 +66,7 @@ Sample::Sample(char const *path)
     Array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
-        data->chunk = Mix_LoadWAV(pathlist[0].C());
+        data->chunk = Mix_LoadWAV(pathlist[i].C());
         if (data->chunk)
             break;
     }
