@@ -19,34 +19,55 @@
 namespace lol
 {
 
-template<typename T, int N = 16> class Interp
+template<typename T, int N = 16> class TimeInterp
 {
 public:
-    inline Interp() : m_pos(-N) {}
-    inline ~Interp() {}
+    inline TimeInterp()
+      : m_precision(0.f),
+        m_accum(0.f),
+        m_pos(-N)
+    {}
 
-    void Set(float key, T const &val)
+    inline ~TimeInterp() {}
+
+    void SetPrecision(float seconds)
     {
+        m_precision = seconds;
+    }
+
+    void Set(float seconds, T const &val)
+    {
+        m_accum += seconds;
+        if (m_accum < m_precision)
+            return;
+        m_accum = 0.f;
+
         if (m_pos < 0)
         {
-            m_key[m_pos + N] = key;
+            if (m_pos > -N)
+                seconds += m_key[m_pos + N - 1];
+            m_key[m_pos + N] = seconds;
             m_val[m_pos + N] = val;
             ++m_pos;
         }
         else
         {
-            m_key[m_pos] = key;
+            if (m_pos > 0)
+                seconds += m_key[m_pos - 1];
+            m_key[m_pos] = seconds;
             m_val[m_pos] = val;
             m_pos = (m_pos + 1) % N;
         }
     }
 
-    T Get(float key)
+    T Get(float seconds)
     {
         if (m_pos == -N)
             return T();
         if (m_pos == 1 - N)
             return m_val[0];
+
+        seconds += m_accum;
 
         int start = max(0, m_pos);
         int a = 0;
@@ -55,15 +76,15 @@ public:
         while (a + 1 < b)
         {
             int c = (a + b) / 2;
-            if (m_key[(start + c) % N] >= key)
+            if (GetTime((start + c) % N) >= seconds)
                 b = c;
             else
                 a = c;
         }
 
-        float ka = m_key[(start + a) % N];
-        float kb = m_key[(start + b) % N];
-        float u = (key - ka) / (kb - ka);
+        float ka = GetTime((start + a) % N);
+        float kb = GetTime((start + b) % N);
+        float u = (seconds - ka) / (kb - ka);
 
         return (1.f - u) * m_val[(start + a) % N] + u * m_val[(start + b) % N];
     }
@@ -74,8 +95,20 @@ public:
     }
 
 private:
+    inline float GetTime(int i)
+    {
+        float k = m_key[i % N];
+        if (m_pos >= 0 && i >= m_pos)
+            k -= m_key[N - 1];
+        if (m_pos != 0)
+            k -= m_key[(m_pos + N - 1) % N];
+        return k;
+    }
+
     float m_key[N];
     T m_val[N];
+
+    float m_precision, m_accum;
 
     /* If m_pos < 0, the value indicates how many free slots
      * there are. */
