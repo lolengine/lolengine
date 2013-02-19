@@ -442,7 +442,7 @@ AC_CONFIG_FILES(
   people/peeweek/private/Makefile
   people/touky/Makefile
   people/touky/private/Makefile
-  people/touky/private/Tactics/Makefile
+  people/touky/private/tactics/Makefile
   people/jylam/Makefile
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile

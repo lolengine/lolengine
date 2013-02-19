@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include "../include/lolbtphysicsintegration.h"
-#include "../include/lolphysics.h"
+#include "lolbtphysicsintegration.h"
+#include "lolphysics.h"
 
 namespace lol
 {

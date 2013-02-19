@@ -19,10 +19,10 @@
 #ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include <stdio.h>
-#include "../include/lolbtphysicsintegration.h"
-#include "../include/lolphysics.h"
-#include "../include/easycharactercontroller.h"
-#include "../include/bulletcharactercontroller.h"
+#include "lolbtphysicsintegration.h"
+#include "lolphysics.h"
+#include "easycharactercontroller.h"
+#include "bulletcharactercontroller.h"
 //#include "LinearMath/btIDebugDraw.h"
 //#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 //#include "BulletCollision/CollisionShapes/btMultiSphereShape.h"
