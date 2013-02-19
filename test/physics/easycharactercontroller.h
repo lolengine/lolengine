@@ -22,8 +22,8 @@
 
 #ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
-#include "EasyPhysics.h"
-#include "BulletCharacterController.h"
+#include "easyphysics.h"
+#include "bulletcharactercontroller.h"
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #endif
 

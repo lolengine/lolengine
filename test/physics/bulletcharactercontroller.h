@@ -20,7 +20,7 @@
 
 #ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
-#include "EasyPhysics.h"
+#include "easyphysics.h"
 //#include "BulletDynamics\Character\btCharacterControllerInterface.h"
 #endif
 

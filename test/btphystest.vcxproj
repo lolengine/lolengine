@@ -35,7 +35,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MeshViewer.cpp" />
+    <ClInclude Include="btphystest.h" />
+    <ClInclude Include="PhysicObject.h" />
+    <ClInclude Include="Physics\Include\BulletCharacterController.h" />
+    <ClInclude Include="Physics\Include\EasyCharacterController.h" />
+    <ClInclude Include="Physics\Include\EasyConstraint.h" />
+    <ClInclude Include="Physics\Include\EasyPhysics.h" />
+    <ClInclude Include="Physics\Include\LolBtPhysicsIntegration.h" />
+    <ClInclude Include="Physics\Include\LolPhysics.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="btphystest.cpp" />
+    <ClCompile Include="Physics\Src\BulletCharacterController.cpp" />
+    <ClCompile Include="Physics\Src\EasyCharacterController.cpp" />
+    <ClCompile Include="Physics\Src\EasyConstraint.cpp" />
+    <ClCompile Include="Physics\Src\EasyPhysics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">
@@ -46,16 +60,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MeshViewerBuffer.txt">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    <None Include="Makefile.am">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <LolFxCompile Include="shinyfur.lolfx" />
-    <LolFxCompile Include="shinyMVTexture.lolfx" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}</ProjectGuid>
+    <ProjectGuid>{ee203b88-44cf-4859-9d42-7a1f43fecb52}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

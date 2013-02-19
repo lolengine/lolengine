@@ -24,7 +24,7 @@ using namespace lol;
 static int const TEXTURE_WIDTH = 256;
 
 LOLFX_RESOURCE_DECLARE(shinyfur);
-LOLFX_RESOURCE_DECLARE(shinyMVTexture);
+LOLFX_RESOURCE_DECLARE(shinymvtexture);
 
 #define    IPT_CAM_RESET          "Cam_Center"
 #define    IPT_CAM_FORWARD        "Cam_Forward"
@@ -69,7 +69,7 @@ public:
             m_camera->SetOrtho((float)video_size.x, (float)video_size.y, .1f, 1000.f);
     }
 
-    MeshViewer(char const *file_name = "MeshViewerBuffer.txt")
+    MeshViewer(char const *file_name = "data/mesh-buffer.txt")
       : m_file_name(file_name)
     {
         //Input setup
@@ -331,10 +331,10 @@ public:
 
         if (!DefaultTexture)
         {
-            m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinyMVTexture));
+            m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
             m_texture_uni = m_texture_shader->GetUniformLocation("u_Texture");
-            //m_image = new Image("data/MeshViewerTestTexture.png");
-            DefaultTexture = Tiler::Register("data/MeshViewerTestTexture.png", ivec2(0), ivec2(0,1));
+            //m_image = new Image("data/test-texture.png");
+            DefaultTexture = Tiler::Register("data/test-texture.png", ivec2(0), ivec2(0,1));
 
             //ivec2 size = m_image->GetSize();
             //// m_image->GetFormat()

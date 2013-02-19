@@ -33,10 +33,10 @@ using namespace lol;
 #define HAVE_PHYS_USE_BULLET
 #endif /* HAVE_PHYS_USE_BULLET */
 
-#include "Physics/Include/LolPhysics.h"
-#include "Physics/Include/EasyPhysics.h"
-#include "PhysicObject.h"
-#include "BtPhysTest.h"
+#include "physics/include/lolphysics.h"
+#include "physics/include/easyphysics.h"
+#include "physicobject.h"
+#include "btphystest.h"
 
 using namespace lol::phys;
 
