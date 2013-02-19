@@ -13,9 +13,9 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
-#include "LolBtPhysicsIntegration.h"
-#include "EasyPhysics.h"
-#include "EasyConstraint.h"
+#include "lolbtphysicsintegration.h"
+#include "easyphysics.h"
+#include "easyconstraint.h"
 #endif
 
 namespace lol

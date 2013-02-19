@@ -96,7 +96,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Touky", "Touky", "{9EA99B18
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToukyDemo", "..\..\people\touky\private\ToukyDemo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BtPhysTest", "..\..\test\BtPhysTest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "btphystest", "..\..\test\btphystest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_fbo", "..\..\tutorial\08_fbo.vcxproj", "{BCEE0132-8E24-49BE-AFEB-96DAD14396BA}"
 EndProject
@@ -126,9 +126,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benlitz", "Benlitz", "{B583
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benlitzTest1", "..\..\people\benlitz\test1\benlitzTest1.vcxproj", "{FAF82AD2-D9F4-4694-9A01-103BC5B771B4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeshViewer", "..\..\test\MeshViewer.vcxproj", "{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meshviewer", "..\..\test\meshviewer.vcxproj", "{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tactics", "..\..\people\touky\private\Tactics\Tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tactics", "..\..\people\touky\private\tactics\tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

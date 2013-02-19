@@ -31,21 +31,19 @@ benchsuite_SOURCES = benchsuite.cpp \
 benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
 benchsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
 
-btphystest_SOURCES = BtPhysTest.cpp BtPhysTest.h PhysicObject.h \
-    Physics/Src/EasyPhysics.cpp Physics/Include/EasyPhysics.h \
-    Physics/Include/LolBtPhysicsIntegration.h Physics/Include/LolPhysics.h \
-    Physics/Src/EasyCharacterController.cpp \
-    Physics/Include/EasyCharacterController.h \
-    Physics/Src/EasyConstraint.cpp \
-    Physics/Include/EasyConstraint.h \
-    Physics/Src/BulletCharacterController.cpp \
-    Physics/Include/BulletCharacterController.h
+btphystest_SOURCES = \
+    btphystest.cpp btphystest.h physicobject.h \
+    physics/easyphysics.cpp physics/easyphysics.h \
+    physics/lolbtphysicsintegration.h physics/lolphysics.h \
+    physics/easycharactercontroller.cpp physics/easycharactercontroller.h \
+    physics/easyconstraint.cpp physics/easyconstraint.h \
+    physics/bulletcharactercontroller.cpp physics/bulletcharactercontroller.h
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPENDENCIES@
 
-meshviewer_SOURCES = MeshViewer.cpp \
-    shinyMVTexture.lolfx shinyfur.lolfx
+meshviewer_SOURCES = meshviewer.cpp \
+    shinymvtexture.lolfx shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPENDENCIES@
 
