@@ -24,16 +24,19 @@ LOLUNIT_FIXTURE(InterpTest)
 
     void TearDown() {}
 
-    LOLUNIT_TEST(FloatInterp)
+    LOLUNIT_TEST(TimeInterpTest)
     {
-        Interp<float> interp;
+        TimeInterp<float> ti;
 
-        interp.Set(1.f, 100.f);
-        interp.Set(2.f, 150.f);
+        ti.Set(1.f, 10.f);
+        ti.Set(1.f, 20.f);
+        ti.Set(1.f, 30.f);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(75.f, interp.Get(0.5f), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(125.f, interp.Get(1.5f), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(175.f, interp.Get(2.5f), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(0.f, ti.Get(-3.0f), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(10.f, ti.Get(-2.0f), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(20.f, ti.Get(-1.0f), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(30.f, ti.Get(0.0f), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(40.f, ti.Get(1.0f), 1.e-5f);
     }
 };
 
