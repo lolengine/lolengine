@@ -50,7 +50,7 @@ public:
 
         int start = max(0, m_pos);
         int a = 0;
-        int b = min(m_pos + N, N);
+        int b = min(m_pos + N - 1, N - 1);
 
         while (a + 1 < b)
         {

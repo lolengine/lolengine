@@ -65,7 +65,7 @@ public:
     ShaderUniform const *GetUniform(const lol::String &uniform);
     ShaderAttrib const *GetAttribute(const lol::String &attribute);
     //--
-    virtual void SetupShaderDatas(mat4 const &model) { }
+    virtual void SetupShaderDatas(mat4 const &model) { UNUSED(model); }
 
 protected:
     uint16_t                            m_vert_decl_flags;
@@ -356,6 +356,7 @@ public:
         else
         {
             TexCoordBuildType tcbt = GetTexCoordBuildType2(mt);
+            UNUSED(tcbt);
             if (mt == MeshType::Triangle)
                 mt = mt;
             else if (mt == MeshType::Quad)
