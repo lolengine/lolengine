@@ -1452,7 +1452,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                 uv[k].x = (lol::atan2(p[k].z, p[k].x) + (float)M_PI) / ((float)M_PI * 2.f);
                 if (abs(p[k].y) >= 1.0f)
                     uv[k].x = -1.f;
-                uv[k].y = (lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) + (float)M_PI_2) / (float)M_PI;
+                uv[k].y = lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) / (float)M_PI + 0.5f;
                 if (h)
                 {
                     if (uv[k].y > .5f)
