@@ -340,7 +340,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
         vflags == (baseflag | (1 << VertexUsage::TexCoordExt)) ||
         vflags == (baseflag | (1 << VertexUsage::TexCoord) |
                               (1 << VertexUsage::TexCoordExt)))
-                   
+
     {
         vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
                               *gpu_sd.GetAttribute(lol::String("in_Normal")),
