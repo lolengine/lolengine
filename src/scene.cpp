@@ -175,7 +175,7 @@ void Scene::Render() // XXX: rename to Blit()
     for (int i = 0; i < data->m_tiles.Count(); i++)
     {
         Tile tmp = data->m_tiles[i];
-        int j = rand() % data->m_tiles.Count();
+        int j = std::rand() % data->m_tiles.Count();
         data->m_tiles[i] = data->m_tiles[j];
         data->m_tiles[j] = tmp;
     }
