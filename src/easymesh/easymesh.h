@@ -269,7 +269,9 @@ public:
         }
         else
         {
+            /* unused for now, but will be if new BuildType are added. */
             TexCoordBuildType tcbt = GetTexCoordBuildType(mt);
+            UNUSED(tcbt);
             if (mt == MeshType::Triangle)
                 mt = mt;
             else if (mt == MeshType::Quad)
