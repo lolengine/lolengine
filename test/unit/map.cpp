@@ -57,6 +57,23 @@ LOLUNIT_FIXTURE(MapTest)
         LOLUNIT_ASSERT(!map.HasKey(1));
         LOLUNIT_ASSERT(map.HasKey(2));
     }
+
+    LOLUNIT_TEST(StringMap)
+    {
+        Map<char const *, int> map;
+
+        map["foo"] = 42;
+        map["bar"] = 12;
+        map["baz"] = 2;
+
+        int foo = map["foo"];
+        int bar = map["bar"];
+        int baz = map["baz"];
+
+        LOLUNIT_ASSERT_EQUAL(42, foo);
+        LOLUNIT_ASSERT_EQUAL(12, bar);
+        LOLUNIT_ASSERT_EQUAL(2, baz);
+    }
 };
 
 } /* namespace lol */
