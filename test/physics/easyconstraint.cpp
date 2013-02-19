@@ -3,9 +3,9 @@
 #   include "config.h"
 #endif
 
-#include "../include/lolbtphysicsintegration.h"
-#include "../include/lolphysics.h"
-#include "../include/easyconstraint.h"
+#include "lolbtphysicsintegration.h"
+#include "lolphysics.h"
+#include "easyconstraint.h"
 
 namespace lol
 {
