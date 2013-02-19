@@ -167,7 +167,8 @@ struct TexCoordBuildType
         ExpandedStarDefault = 0,
         CogDefault          = 0,
 
-        Max
+        //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
+        Max = 1
     }
     m_value;
 
@@ -189,7 +190,8 @@ struct MeshFaceType
         BoxBottom  = 5,
         QuadDefault = 0,
 
-        Max
+        //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
+        Max = 6
     }
     m_value;
 
@@ -242,7 +244,7 @@ public:
     void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt] & 1); }
     TexCoordBuildType GetTexCoordBuildType(MeshType mt)
     {
-        int flag = ((m_texcoord_build_type[mt] & ~(1)) >> 1);
+        uint32_t flag = (uint32_t)((m_texcoord_build_type[mt] & ~(1)) >> 1);
         int i = 0;
         while (flag >>= 1)
             i++;
@@ -329,7 +331,7 @@ public:
     void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt] & 1); }
     TexCoordBuildType GetTexCoordBuildType2(MeshType mt)
     {
-        int flag = ((m_texcoord_build_type2[mt] & ~(1)) >> 1);
+        uint32_t flag = ((m_texcoord_build_type2[mt] & ~(1)) >> 1);
         int i = 0;
         while (flag >>= 1)
             i++;
@@ -423,11 +425,11 @@ public:
     vec2                m_texcoord_offset2;
     vec2                m_texcoord_scale;
     vec2                m_texcoord_scale2;
-    int                 m_texcoord_build_type[MeshType::Max];
     Array<vec2, vec2>   m_texcoord_custom_build[MeshType::Max];
-    int                 m_texcoord_build_type2[MeshType::Max];
     Array<vec2, vec2>   m_texcoord_custom_build2[MeshType::Max];
-    uint16_t            m_build_flags;
+    uint32_t            m_texcoord_build_type[MeshType::Max];
+    uint32_t            m_texcoord_build_type2[MeshType::Max];
+    uint32_t            m_build_flags;
 };
 
 /* A safe enum for MeshCSG operations. */

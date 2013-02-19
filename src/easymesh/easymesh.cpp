@@ -373,6 +373,7 @@ bool EasyMesh::Compile(char const *command)
     EasyMeshCompiler mc(*this);
     bool res = mc.ParseString(command);
     delete(m_build_data);
+    m_build_data = NULL;
     return res;
 }
 
