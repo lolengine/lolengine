@@ -30,6 +30,11 @@ namespace lol
 
 struct Box2D
 {
+    inline Box2D()
+      : A(0.f, 0.f),
+        B(0.f, 0.f)
+    {}
+
     inline Box2D(vec2 a, vec2 b)
       : A(a),
         B(b)
@@ -40,6 +45,11 @@ struct Box2D
 
 struct Box3D
 {
+    inline Box3D()
+      : A(0.f, 0.f, 0.f),
+        B(0.f, 0.f, 0.f)
+    {}
+
     inline Box3D(vec3 a, vec3 b)
       : A(a),
         B(b)
