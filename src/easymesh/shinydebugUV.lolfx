@@ -53,14 +53,14 @@ void main(void)
     float mode = 0.0;
     if (mode == 0.0)
     {
-        gl_FragColor = vec4(mod(pass_TexCoord.x, 1.0f),
+        gl_FragColor = vec4(mod(pass_TexCoord.x, 1.0),
                             0.1,
                             mod(pass_TexCoord.y, 1.0), 1.0);
     }
     else
     {
-        float col = ((mod(mode, 2.0) == 1)?(mod(pass_TexCoord.x, 1.0)):(mod(pass_TexCoord.y, 1.0)));
-        if (mode == 1 || mode == 2)
+        float col = ((mod(mode, 2.0) == 1.0)?(mod(pass_TexCoord.x, 1.0)):(mod(pass_TexCoord.y, 1.0)));
+        if (mode == 1.0 || mode == 2.0)
         {
             if (col > 1.0/3.0) gl_FragColor.r = 0.0;
             else gl_FragColor.r = min(col, 1.0/3.0);
@@ -68,14 +68,14 @@ void main(void)
             else gl_FragColor.g = min(max(col, 1.0/3.0) - 1.0/3.0, 1.0/3.0);
             gl_FragColor.b = min(max(col, 2.0/3.0) - 2.0/3.0, 1.0/3.0);
         }
-        else if (mode == 3 || mode == 4)
+        else if (mode == 3.0 || mode == 4.0)
         {
             if (col > 0.5) gl_FragColor.r = 0.0;
             else gl_FragColor.r = min(col, 0.5);
             gl_FragColor.g = min(max(col, 0.5) - 0.5, 0.5);
             gl_FragColor.b = 0.1;
         }
-        else if (mode == 5 || mode == 6)
+        else if (mode == 5.0 || mode == 6.0)
         {
             gl_FragColor.r = col;
             gl_FragColor.g = 0.1;
