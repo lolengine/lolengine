@@ -371,10 +371,7 @@ EasyMesh::EasyMesh()
 bool EasyMesh::Compile(char const *command)
 {
     EasyMeshCompiler mc(*this);
-    bool res = mc.ParseString(command);
-    delete(m_build_data);
-    m_build_data = NULL;
-    return res;
+    return mc.ParseString(command);
 }
 
 //-----------------------------------------------------------------------------
@@ -391,6 +388,9 @@ void EasyMesh::CloseBrace()
 //-----------------------------------------------------------------------------
 void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
 {
+    delete(m_build_data);
+    m_build_data = NULL;
+
     if (new_gpu_sdata)
     {
         m_gpu_data.AddGpuData(new_gpu_sdata, this);

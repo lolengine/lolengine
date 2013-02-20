@@ -21,6 +21,22 @@
 namespace lol
 {
 
+//Utility enum for renderers
+struct MeshRender
+{
+    enum Value
+    {
+        NeedInit,
+        CanRender,
+        IgnoreRender
+    }
+    m_value;
+
+    inline MeshRender(Value v) : m_value(v) {}
+    inline MeshRender() : m_value(NeedInit) {}
+    inline operator Value() { return m_value; }
+};
+
 //Vertex datas for easymesh vertex list.
 //TODO : <COORD, NORM, COLOR, UV>
 struct VertexData
