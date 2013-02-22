@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="testsuite.cpp" />
     <ClCompile Include="unit\array.cpp" />
+    <ClCompile Include="unit\box.cpp" />
     <ClCompile Include="unit\build.cpp" />
     <ClCompile Include="unit\cmplx.cpp" />
     <ClCompile Include="unit\color.cpp" />
