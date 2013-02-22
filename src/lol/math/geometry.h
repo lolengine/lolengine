@@ -60,13 +60,12 @@ struct Box3D
 
 static inline bool BoxIsectBox(Box2D const &b1, Box2D const &b2)
 {
-    vec2 c1 = 0.5f * (b1.A + b1.B);
-    vec2 c2 = 0.5f * (b2.A + b2.B);
+    vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
     vec2 e1 = 0.5f * (b1.B - b1.A);
     vec2 e2 = 0.5f * (b2.B - b2.A);
 
-    return abs(c1.x - c2.x) < abs(e1.x) + abs(e2.x)
-        || abs(c1.y - c2.y) < abs(e1.y) + abs(e2.y);
+    return abs(dist.x) < abs(e1.x) + abs(e2.x)
+        && abs(dist.y) < abs(e1.y) + abs(e2.y);
 }
 
 bool TriangleIsectTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02,
