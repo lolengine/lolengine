@@ -36,20 +36,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="btphystest.h" />
-    <ClInclude Include="PhysicObject.h" />
-    <ClInclude Include="Physics\Include\BulletCharacterController.h" />
-    <ClInclude Include="Physics\Include\EasyCharacterController.h" />
-    <ClInclude Include="Physics\Include\EasyConstraint.h" />
-    <ClInclude Include="Physics\Include\EasyPhysics.h" />
-    <ClInclude Include="Physics\Include\LolBtPhysicsIntegration.h" />
-    <ClInclude Include="Physics\Include\LolPhysics.h" />
+    <ClInclude Include="physicobject.h" />
+    <ClInclude Include="physics\bulletcharactercontroller.h" />
+    <ClInclude Include="physics\easycharactercontroller.h" />
+    <ClInclude Include="physics\easyconstraint.h" />
+    <ClInclude Include="physics\easyphysics.h" />
+    <ClInclude Include="physics\lolbtphysicsintegration.h" />
+    <ClInclude Include="physics\lolphysics.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="btphystest.cpp" />
-    <ClCompile Include="Physics\Src\BulletCharacterController.cpp" />
-    <ClCompile Include="Physics\Src\EasyCharacterController.cpp" />
-    <ClCompile Include="Physics\Src\EasyConstraint.cpp" />
-    <ClCompile Include="Physics\Src\EasyPhysics.cpp" />
+    <ClCompile Include="physics\bulletcharactercontroller.cpp" />
+    <ClCompile Include="physics\easycharactercontroller.cpp" />
+    <ClCompile Include="physics\easyconstraint.cpp" />
+    <ClCompile Include="physics\easyphysics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">

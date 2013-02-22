@@ -1,54 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="BtPhysTest.h" />
-    <ClInclude Include="PhysicObject.h" />
-    <ClInclude Include="Physics\Include\EasyCharacterController.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="btphystest.h" />
+    <ClInclude Include="physicobject.h" />
+    <ClInclude Include="physics\easycharactercontroller.h">
+      <filter>physics</filter>
     </ClInclude>
-    <ClInclude Include="Physics\Include\LolPhysics.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="physics\lolphysics.h">
+      <filter>physics</filter>
     </ClInclude>
-    <ClInclude Include="Physics\Include\EasyConstraint.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="physics\easyconstraint.h">
+      <filter>physics</filter>
     </ClInclude>
-    <ClInclude Include="Physics\Include\EasyPhysics.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="physics\easyphysics.h">
+      <filter>physics</filter>
     </ClInclude>
-    <ClInclude Include="Physics\Include\LolBtPhysicsIntegration.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="physics\lolbtphysicsintegration.h">
+      <filter>physics</filter>
     </ClInclude>
-    <ClInclude Include="Physics\Include\BulletCharacterController.h">
-      <Filter>Physics\Include</Filter>
+    <ClInclude Include="physics\bulletcharactercontroller.h">
+      <filter>physics</filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BtPhysTest.cpp" />
-    <ClCompile Include="Physics\Src\EasyCharacterController.cpp">
-      <Filter>Physics\Src</Filter>
+    <ClCompile Include="btphystest.cpp" />
+    <ClCompile Include="physics\easycharactercontroller.cpp">
+      <filter>physics</filter>
     </ClCompile>
-    <ClCompile Include="Physics\Src\EasyConstraint.cpp">
-      <Filter>Physics\Src</Filter>
+    <ClCompile Include="physics\easyconstraint.cpp">
+      <filter>physics</filter>
     </ClCompile>
-    <ClCompile Include="Physics\Src\EasyPhysics.cpp">
-      <Filter>Physics\Src</Filter>
+    <ClCompile Include="physics\easyphysics.cpp">
+      <filter>physics</filter>
     </ClCompile>
-    <ClCompile Include="Physics\Src\BulletCharacterController.cpp">
-      <Filter>Physics\Src</Filter>
+    <ClCompile Include="physics\bulletcharactercontroller.cpp">
+      <filter>physics</filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="generated">
       <UniqueIdentifier>{4fc7662b-b17a-49b9-acd1-0cf767183b06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics">
+    <Filter Include="physics">
       <UniqueIdentifier>{ccecd634-9321-4c49-9471-e9da50dda6d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\Include">
-      <UniqueIdentifier>{ef37a177-b550-435b-bfb1-a09ca8059137}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics\Src">
-      <UniqueIdentifier>{7e5d19e0-b2be-46cc-8fa4-f582ecb4318d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
