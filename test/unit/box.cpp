@@ -32,6 +32,11 @@ LOLUNIT_FIXTURE(BoxTest)
 
         LOLUNIT_ASSERT_EQUAL(true, BoxIsectBox(b1, b2));
         LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b1, b3));
+
+        Box2D b4(vec2(96.f, 33.f), vec2(144.f, 129.f));
+        Box2D b5(vec2(264.f, 91.f), vec2(244.f, 71.f));
+
+        LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b4, b5));
     }
 };
 
