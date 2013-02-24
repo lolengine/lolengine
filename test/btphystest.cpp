@@ -66,13 +66,12 @@ BtPhysTest::BtPhysTest(bool editor)
     m_loop_value = .0f;
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
-    m_camera = new Camera(vec3(0.f, 600.f, 0.f),
-                          vec3(0.f, 0.f, 0.f),
-                          vec3(0, 1, 0));
-    m_camera->SetRotation(quat::fromeuler_xyz(0.f, 0.f, 0.f));
-    m_camera->SetPerspective(45.f, 1280.f, 960.f, .1f, 1000.f);
-    //m_camera->SetOrtho(1280.f / 6, 960.f / 6, -1000.f, 1000.f);
-    Ticker::Ref(m_camera);
+    m_camera = new Camera();
+    m_camera->SetView(vec3(0.f, 600.f, 0.f),
+                      vec3(0.f, 0.f, 0.f),
+                      vec3(0, 1, 0));
+    m_camera->SetProjection(mat4::perspective(45.f, 1280.f, 960.f, .1f, 1000.f));
+    Scene::GetDefault()->PushCamera(m_camera);
 
     m_ready = false;
 
@@ -304,7 +303,7 @@ void BtPhysTest::TickGame(float seconds)
 
             mat4 GroundMat = PhysObj->GetTransform();
             vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
-            vec3 CenterToCam = m_camera->m_position - GroundBarycenter;
+            vec3 CenterToCam = m_camera->GetPosition() - GroundBarycenter;
 
             if (dot(normalize(CenterToCam - CenterToGround),
                     normalize(CenterToGround)) > 0.f)
@@ -393,9 +392,11 @@ void BtPhysTest::TickGame(float seconds)
 
         PhysObjBarycenter /= factor;
 
+#if 0
         m_camera->SetTarget(m_camera->GetTarget() + (seconds / (seconds + 0.18f)) * (PhysObjBarycenter - m_camera->GetTarget()));
         vec3 CamPosCenter = m_camera->GetTarget() + vec3(.0f, 5.0f, .0f);
         m_camera->SetPosition(CamPosCenter + normalize(m_camera->GetPosition() - CamPosCenter) * 20.0f);
+#endif
     }
     else
     {
@@ -411,8 +412,10 @@ void BtPhysTest::TickGame(float seconds)
 
         PhysObjBarycenter /= factor;
 
+#if 0
         m_camera->SetTarget(PhysObjBarycenter);
         m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
+#endif
     }
 
 }
@@ -433,7 +436,7 @@ void BtPhysTest::TickDraw(float seconds)
 
 BtPhysTest::~BtPhysTest()
 {
-    Ticker::Unref(m_camera);
+    Scene::GetDefault()->PopCamera(m_camera);
     Ticker::Unref(m_light1);
     Ticker::Unref(m_light2);
 

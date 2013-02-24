@@ -57,16 +57,15 @@ private:
         return 0;
     }
 
-    mat4 m_model_matrix;
-    mat4 m_view_matrix;
-    mat4 m_proj_matrix;
-
     Array<Tile> m_tiles;
     Array<Light *> m_lights;
 
     Shader *m_shader;
     VertexDeclaration *m_vdecl;
     Array<VertexBuffer *> bufs;
+
+    Camera *m_default_cam;
+    Array<Camera *> m_camera_stack;
 
     static Scene *scene;
 };
@@ -80,10 +79,12 @@ Scene *SceneData::scene = NULL;
 Scene::Scene()
   : data(new SceneData())
 {
-    data->m_model_matrix = mat4(1.f);
-    data->m_view_matrix = mat4(1.f);
-    data->m_proj_matrix = mat4::ortho(0, Video::GetSize().x,
-                                      0, Video::GetSize().y, -1000.f, 1000.f);
+    /* Create a default orthographic camera, in case the user doesn’t. */
+    data->m_default_cam = new Camera();
+    mat4 proj = mat4::ortho(0, Video::GetSize().x, 0, Video::GetSize().y,
+                            -1000.f, 1000.f);
+    data->m_default_cam->SetProjection(proj);
+    PushCamera(data->m_default_cam);
 
     data->m_shader = 0;
     data->m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
@@ -92,6 +93,8 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    PopCamera(data->m_default_cam);
+
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
     /* FIXME: also, make sure we do not add code to Reset() that will
@@ -109,32 +112,40 @@ Scene *Scene::GetDefault()
     return SceneData::scene;
 }
 
+void Scene::PushCamera(Camera *cam)
+{
+    Ticker::Ref(cam);
+    data->m_camera_stack.Push(cam);
+}
+
+void Scene::PopCamera(Camera *cam)
+{
+    /* Parse from the end because that’s probably where we’ll find
+     * our camera first. */
+    for (int i = data->m_camera_stack.Count(); i--; )
+    {
+        if (data->m_camera_stack[i] == cam)
+        {
+            Ticker::Unref(cam);
+            data->m_camera_stack.Remove(i);
+            return;
+        }
+    }
+
+    ASSERT(false, "trying to pop a nonexistent camera from the scene");
+}
+
+Camera *Scene::GetCamera()
+{
+    return data->m_camera_stack.Last();
+}
+
 void Scene::Reset()
 {
     for (int i = 0; i < data->bufs.Count(); i++)
         delete data->bufs[i];
     data->bufs.Empty();
     data->m_lights.Empty();
-}
-
-void Scene::SetViewMatrix(mat4 const &m)
-{
-    data->m_view_matrix = m;
-}
-
-void Scene::SetProjMatrix(mat4 const &m)
-{
-    data->m_proj_matrix = m;
-}
-
-mat4 const &Scene::GetViewMatrix(void)
-{
-    return data->m_view_matrix;
-}
-
-mat4 const &Scene::GetProjMatrix(void)
-{
-    return data->m_proj_matrix;
 }
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
@@ -183,22 +194,6 @@ void Scene::Render() // XXX: rename to Blit()
     qsort(&data->m_tiles[0], data->m_tiles.Count(),
           sizeof(Tile), SceneData::Compare);
 
-    // XXX: debug stuff
-    data->m_model_matrix = mat4::translate(320.0f, 240.0f, 0.0f);
-#if 0
-    static float f = 0.0f;
-    f += 0.01f;
-    data->m_model_matrix *= mat4::rotate(6.0f * sinf(f), 1.0f, 0.0f, 0.0f);
-    data->m_model_matrix *= mat4::rotate(17.0f * cosf(f), 0.0f, 0.0f, 1.0f);
-#endif
-    data->m_model_matrix *= mat4::translate(-320.0f, -240.0f, 0.0f);
-#if __ANDROID__
-    data->m_model_matrix = mat4::scale(1280.0f / 640,
-                                       736.0f / 480,
-                                       1.0f) * data->m_model_matrix;
-#endif
-    // XXX: end of debug stuff
-
     ShaderUniform uni_mat, uni_tex;
     ShaderAttrib attr_pos, attr_tex;
     attr_pos = data->m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
@@ -207,11 +202,11 @@ void Scene::Render() // XXX: rename to Blit()
     data->m_shader->Bind();
 
     uni_mat = data->m_shader->GetUniformLocation("proj_matrix");
-    data->m_shader->SetUniform(uni_mat, data->m_proj_matrix);
+    data->m_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
     uni_mat = data->m_shader->GetUniformLocation("view_matrix");
-    data->m_shader->SetUniform(uni_mat, data->m_view_matrix);
+    data->m_shader->SetUniform(uni_mat, GetCamera()->GetView());
     uni_mat = data->m_shader->GetUniformLocation("model_matrix");
-    data->m_shader->SetUniform(uni_mat, data->m_model_matrix);
+    data->m_shader->SetUniform(uni_mat, mat4(1.f));
 
 #if defined USE_D3D9 || defined _XBOX
 #else

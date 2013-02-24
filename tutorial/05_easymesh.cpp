@@ -46,13 +46,12 @@ public:
 
         m_angle = 0;
 
-        m_camera = new Camera(vec3(0.f, 600.f, 0.f),
-                              vec3(0.f, 0.f, 0.f),
-                              vec3(0, 1, 0));
-        m_camera->SetPerspective(30.f, 960.f, 600.f, .1f, 1000.f);
-        m_camera->SetTarget(vec3(0.f, -1.f, 0.f));
-        m_camera->SetPosition(vec3(-15.f, 5.f, 0.f));
-        Ticker::Ref(m_camera);
+        m_camera = new Camera();
+        m_camera->SetProjection(mat4::perspective(30.f, 960.f, 600.f, .1f, 1000.f));
+        m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
+                                       vec3(0.f, -1.f, 0.f),
+                                       vec3(0.f, 1.f, 0.f)));
+        Scene::GetDefault()->PushCamera(m_camera);
 
         /* Add a white directional light */
         m_light1 = new Light();
@@ -71,7 +70,7 @@ public:
 
     ~EasyMeshTutorial()
     {
-        Ticker::Unref(m_camera);
+        Scene::GetDefault()->PopCamera(m_camera);
         Ticker::Unref(m_light1);
         Ticker::Unref(m_light2);
     }
