@@ -26,7 +26,7 @@ namespace lol
 
 void DumpStack()
 {
-#if defined HAVE_CXA_DEMANGLE
+#if defined HAVE_CXA_DEMANGLE && defined HAVE_BACKTRACE_SYMBOLS
     /* Get current stack frames */
     void *stack_ptrs[50];
     size_t size = backtrace(stack_ptrs, 50);
