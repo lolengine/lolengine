@@ -40,6 +40,30 @@ struct Box2D
         B(b)
     {}
 
+    Box2D operator +(vec2 v)
+    {
+        return Box2D(A + v, B + v);
+    }
+
+    Box2D &operator +=(vec2 v)
+    {
+        A += v;
+        B += v;
+        return *this;
+    }
+
+    Box2D operator -(vec2 v)
+    {
+        return Box2D(A - v, B - v);
+    }
+
+    Box2D &operator -=(vec2 v)
+    {
+        A -= v;
+        B -= v;
+        return *this;
+    }
+
     vec2 A, B;
 };
 
@@ -54,6 +78,30 @@ struct Box3D
       : A(a),
         B(b)
     {}
+
+    Box3D operator +(vec3 v)
+    {
+        return Box3D(A + v, B + v);
+    }
+
+    Box3D &operator +=(vec3 v)
+    {
+        A += v;
+        B += v;
+        return *this;
+    }
+
+    Box3D operator -(vec3 v)
+    {
+        return Box3D(A - v, B - v);
+    }
+
+    Box3D &operator -=(vec3 v)
+    {
+        A -= v;
+        B -= v;
+        return *this;
+    }
 
     vec3 A, B;
 };
