@@ -88,7 +88,7 @@ AC_CHECK_HEADERS(cxxabi.h)
 AC_LANG_POP(C++)
 
 dnl  Common C functions
-AC_CHECK_FUNCS(getcwd _getcwd)
+AC_CHECK_FUNCS(getcwd _getcwd backtrace_symbols)
 
 
 if test "${enable_debug}" = "yes"; then
