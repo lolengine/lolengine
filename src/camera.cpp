@@ -26,111 +26,70 @@
 namespace lol
 {
 
-Camera::Camera(vec3 const &position, vec3 const &target, vec3 const &up)
-  : m_target(target),
-    m_up(up)
+Camera::Camera()
 {
     m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_CAMERA;
 
     /* Create a default perspective */
-    SetPerspective(45.f, 800.f, 600.f, -1000.f, 1000.f);
-    SetPosition(position);
+    SetProjection(mat4::perspective(45.f, 800.f, 600.f, -1000.f, 1000.f));
+    SetView(mat4::lookat(vec3(0.f, 50.f, 50.f),
+                         vec3(0.f),
+                         vec3(0.f, 1.f, 0.f)));
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::SetPosition(vec3 const &pos)
+void Camera::SetView(mat4 const &view)
 {
+    m_view_matrix = view;
+    m_position = inverse(view)[3].xyz;
+}
+
+void Camera::SetView(vec3 eye, vec3 target, vec3 up)
+{
+    m_view_matrix = mat4::lookat(eye, target, up);
+    m_position = eye;
+}
+
+void Camera::SetView(vec3 pos, quat rot)
+{
+    m_view_matrix = mat4::lookat(pos,
+                                 pos + rot.transform(vec3(0.f, 0.f, -1.f)),
+                                 rot.transform(vec3(0.f, 1.f, 0.f)));
     m_position = pos;
 }
 
-void Camera::SetRotation(quat const &rot)
+void Camera::SetProjection(mat4 const &proj)
 {
-    m_rotation = rot;
+    m_proj_matrix = proj;
 }
 
-void Camera::SetOrtho(float width, float height, float near, float far)
+mat4 Camera::GetView()
 {
-    m_proj_matrix = mat4::ortho(width, height, near, far);
+    return m_view_matrix;
 }
 
-void Camera::SetPerspective(float fov, float width, float height,
-                            float near, float far)
+mat4 Camera::GetProjection()
 {
-    m_proj_matrix = mat4::perspective(fov, width, height, near, far);
+    return m_proj_matrix;
 }
 
-void Camera::SetTarget(vec3 const &pos)
-{
-    m_target = pos;
-}
-
-vec3 Camera::GetTarget()
-{
-    return m_target;
-}
 vec3 Camera::GetPosition()
 {
     return m_position;
 }
 
-mat4 const &Camera::GetViewMatrix()
-{
-    return m_view_matrix;
-}
-
-mat4 const &Camera::GetProjMatrix()
-{
-    return m_proj_matrix;
-}
-
-void Camera::ForceSceneUpdate()
-{
-    Scene::GetDefault()->SetViewMatrix(m_view_matrix);
-    Scene::GetDefault()->SetProjMatrix(m_proj_matrix);
-}
-
 void Camera::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
-
-#if 0
-    /* Hackish keyboard support */
-    float updown = 2.f * (Input::GetButtonState('w')
-                           + Input::GetButtonState('z')
-                           - Input::GetButtonState('s'));
-    float rightleft = 2.f * (Input::GetButtonState('d')
-                              - Input::GetButtonState('q')
-                              - Input::GetButtonState('a'));
-    float pgupdown = 2.f * (Input::GetButtonState('r')
-                             - Input::GetButtonState('f'));
-
-    /* Hackish stick support */
-    static Stick *stick = NULL;
-    if (!stick)
-        stick = Input::TrackStick();
-    if (stick && stick->GetAxisCount() >= 2)
-    {
-        rightleft += 2.f * stick->GetAxis(0) * std::abs(stick->GetAxis(0));
-        updown += -2.f * stick->GetAxis(1) * std::abs(stick->GetAxis(1));
-    }
-
-    m_position += vec3(rightleft, pgupdown, -updown) * 200.f * seconds;
-    m_target += vec3(rightleft, 0, -updown) * 200.f * seconds;
-
-#endif
-    m_view_matrix = mat4::lookat(m_position, m_target, m_up)
-                  * mat4(m_rotation);
 }
 
 void Camera::TickDraw(float seconds)
 {
     WorldEntity::TickDraw(seconds);
-
-    ForceSceneUpdate();
 }
 
 } /* namespace lol */

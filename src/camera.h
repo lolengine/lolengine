@@ -24,23 +24,21 @@ namespace lol
 class Camera : public WorldEntity
 {
 public:
-    Camera(vec3 const &position, vec3 const &target, vec3 const &up);
+    Camera();
     ~Camera();
 
     char const *GetName() { return "<camera>"; }
 
-    void SetPosition(vec3 const &pos);
-    void SetRotation(quat const &rot);
-    void SetOrtho(float width, float height, float near, float far);
-    void SetPerspective(float fov, float width, float height,
-                        float near, float far);
-    void SetTarget(vec3 const &pos);
-    vec3 GetTarget();
-    vec3 GetPosition();
+    void SetView(mat4 const &view);
+    void SetView(vec3 eye, vec3 target, vec3 up);
+    void SetView(vec3 pos, quat rot);
 
-    mat4 const &GetViewMatrix();
-    mat4 const &GetProjMatrix();
-    void ForceSceneUpdate();
+    void SetProjection(mat4 const &proj);
+
+    mat4 GetView();
+    mat4 GetProjection();
+
+    vec3 GetPosition();
 
 protected:
     virtual void TickGame(float seconds);
@@ -48,7 +46,6 @@ protected:
 
 private:
     mat4 m_view_matrix, m_proj_matrix;
-    vec3 m_target, m_up;
 };
 
 } /* namespace lol */

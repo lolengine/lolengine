@@ -151,7 +151,9 @@ void DefaultShaderData::SetupDefaultData(bool with_UV)
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupShaderDatas(mat4 const &model)
 {
-    mat4 modelview = Scene::GetDefault()->GetViewMatrix() * model;
+    mat4 proj = Scene::GetDefault()->GetCamera()->GetProjection();
+    mat4 view = Scene::GetDefault()->GetCamera()->GetView();
+    mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
 
     /* FIXME: this should be hidden in the shader */
@@ -167,9 +169,9 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
 
     m_shader->SetUniform(*GetUniform("in_ModelView"), modelview);
     m_shader->SetUniform(*GetUniform("in_Inv_ModelView"), inverse(modelview));
-    m_shader->SetUniform(*GetUniform("in_View"), Scene::GetDefault()->GetViewMatrix());
-    m_shader->SetUniform(*GetUniform("in_Inv_View"), inverse(Scene::GetDefault()->GetViewMatrix()));
-    m_shader->SetUniform(*GetUniform("in_Proj"), Scene::GetDefault()->GetProjMatrix());
+    m_shader->SetUniform(*GetUniform("in_View"), view);
+    m_shader->SetUniform(*GetUniform("in_Inv_View"), inverse(view));
+    m_shader->SetUniform(*GetUniform("in_Proj"), proj);
     m_shader->SetUniform(*GetUniform("in_NormalMat"), normalmat);
     m_shader->SetUniform(*GetUniform("in_Damage"), 0);
 }

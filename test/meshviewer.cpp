@@ -64,9 +64,9 @@ public:
         //m_fov_compensation = mat4::translate(-0.5f * video_size.x, -0.5f * video_size.y, -dist);
         m_fov_compensation = mat4::translate(vec3(.0f));
         if (new_fov > 0.1f)
-            m_camera->SetPerspective(new_fov, (float)video_size.x, (float)video_size.y, .1f, 1000.f);
+            Scene::GetDefault()->GetCamera()->SetProjection(mat4::perspective(new_fov, (float)video_size.x, (float)video_size.y, .1f, 1000.f));
         else
-            m_camera->SetOrtho((float)video_size.x, (float)video_size.y, .1f, 1000.f);
+            Scene::GetDefault()->GetCamera()->SetProjection(mat4::ortho((float)video_size.x, (float)video_size.y, .1f, 1000.f));
     }
 
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
@@ -98,20 +98,18 @@ public:
         Input::LinkActionToKey(IPT_MESH_ROT_DOWN,       Key::KP5);
 
         m_angle = 0;
-        DefaultTexture = NULL;
+        m_default_texture = NULL;
 
         //Camera Setup
         m_fov_zoom_damp = .0f;
         m_fov_damp = 60.0f;
         m_fov = 60.0f;
-        m_camera = new Camera(vec3(0.f, 600.f, 0.f),
-                              vec3(0.f, 0.f, 0.f),
-                              vec3(0, 1, 0));
+        m_camera = new Camera();
         SetFov(m_fov_damp);
-        m_camera->SetTarget(vec3(0.f, 0.f, 0.f));
-        m_camera->SetPosition(vec3(0.f, 0.f, 10.f));
-        m_camera->ForceSceneUpdate();
-        Ticker::Ref(m_camera);
+        m_camera->SetView(vec3(0.f, 0.f, 10.f),
+                          vec3(0.f, 0.f, 0.f),
+                          vec3(0.f, 1.f, 0.f));
+        Scene::GetDefault()->PushCamera(m_camera);
 
         //Lights setup
         m_lights << new Light();
@@ -148,7 +146,7 @@ public:
 
     ~MeshViewer()
     {
-        Ticker::Unref(m_camera);
+        Scene::GetDefault()->PopCamera(m_camera);
         for (int i = 0; i < m_lights.Count(); ++i)
             Ticker::Unref(m_lights[i]);
     }
@@ -213,8 +211,8 @@ public:
         m_fov_damp = damp(m_fov_damp, m_fov, .2f, seconds);
         SetFov(m_fov_damp);
 
-        m_camera->SetPosition(m_camera->GetPosition() + cam_move);
-        m_camera->SetTarget(m_camera->GetPosition() + vec3(0, 0, -5.0f));
+        vec3 campos = Scene::GetDefault()->GetCamera()->GetPosition();
+        Scene::GetDefault()->GetCamera()->SetView(campos + cam_move, quat(1.f));
 
         //--
         //Mesh movement handling
@@ -329,12 +327,12 @@ public:
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
 
-        if (!DefaultTexture)
+        if (!m_default_texture)
         {
             m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
             m_texture_uni = m_texture_shader->GetUniformLocation("u_Texture");
             //m_image = new Image("data/test-texture.png");
-            DefaultTexture = Tiler::Register("data/test-texture.png", ivec2(0), ivec2(0,1));
+            m_default_texture = Tiler::Register("data/test-texture.png", ivec2(0), ivec2(0,1));
 
             //ivec2 size = m_image->GetSize();
             //// m_image->GetFormat()
@@ -342,8 +340,8 @@ public:
             //m_texture->SetData(m_image->GetData());
             // PixelFormat::ABGR_8
         }
-        else if (m_texture && DefaultTexture)
-            m_texture_shader->SetUniform(m_texture_uni, DefaultTexture->GetTexture(), 0);
+        else if (m_texture && m_default_texture)
+            m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
 
         for (int i = 0; i < m_meshes.Count(); i++)
         {
@@ -365,7 +363,7 @@ public:
 
         Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        mat4 default_proj = Scene::GetDefault()->GetProjMatrix();
+        mat4 default_proj = Scene::GetDefault()->GetCamera()->GetProjection();
         for (int i = 0; i < m_meshes.Count(); i++)
         {
             float new_scale = max(.0f, 1.0f - (m_mesh_offset_damp.y * (float)(m_meshes.Count() - (i + 1))));
@@ -379,11 +377,11 @@ public:
                     new_mesh_offset = new_mesh_offset + vec3(m_meshes[j].m3 * ofs_scale * ofs_scale * m_mesh_offset_damp.x, .0f, .0f);
                 }
                 m_meshes[i].m4 = damp(m_meshes[i].m4, new_mesh_offset, .35f, seconds);
-                Scene::GetDefault()->SetProjMatrix(mat4::translate(m_meshes[i].m4) *
-                                                   mat4::translate(vec3(m_mesh_screen_offset_damp, .0f)) *
-                                                   mat4::scale(vec3(vec2(m_meshes[i].m3), 1.0f)) *
-                                                   default_proj *
-                                                   m_fov_compensation);
+                Scene::GetDefault()->GetCamera()->SetProjection(mat4::translate(m_meshes[i].m4) *
+                                                                mat4::translate(vec3(m_mesh_screen_offset_damp, .0f)) *
+                                                                mat4::scale(vec3(vec2(m_meshes[i].m3), 1.0f)) *
+                                                                default_proj *
+                                                                m_fov_compensation);
 #if WITH_FUR
                 for (int j=0; j < 40; j++)
                     m_meshes[i].m1.Render(m_mat, 0.1 * j);
@@ -393,40 +391,40 @@ public:
                 Video::Clear(ClearMask::Depth);
             }
         }
-        Scene::GetDefault()->SetProjMatrix(default_proj);
+        Scene::GetDefault()->GetCamera()->SetProjection(default_proj);
     }
 
 private:
-    float           m_angle;
-    mat4            m_mat;
+    Camera * m_camera;
+    float    m_angle;
+    mat4     m_mat;
 
     //Mesh infos
     //Move damping
-    vec2            m_mesh_rotate_damp;
-    vec2            m_mesh_screen_move_damp;
-    vec2            m_mesh_move_damp;
+    vec2 m_mesh_rotate_damp;
+    vec2 m_mesh_screen_move_damp;
+    vec2 m_mesh_move_damp;
 
     //Move transform damping
-    vec2            m_mesh_rotation_damp;
-    vec2            m_mesh_screen_offset_damp;
-    vec2            m_mesh_offset_damp;
+    vec2 m_mesh_rotation_damp;
+    vec2 m_mesh_screen_offset_damp;
+    vec2 m_mesh_offset_damp;
 
-    vec2            m_mesh_rotation;     //Meshes rotation
-    vec2            m_mesh_screen_offset;//Meshes screen offset
-    vec2            m_mesh_offset;       //Mesh Offset after first mesh (x: offset, y: scale)
+    vec2 m_mesh_rotation;     //Meshes rotation
+    vec2 m_mesh_screen_offset;//Meshes screen offset
+    vec2 m_mesh_offset;       //Mesh Offset after first mesh (x: offset, y: scale)
 
     //File data
-    String          m_file_name;
-    Array<String>   m_cmdlist;
-    float           m_stream_update_time;
-    float           m_stream_update_timer;
+    String        m_file_name;
+    Array<String> m_cmdlist;
+    float         m_stream_update_time;
+    float         m_stream_update_timer;
 
     //misc datas
     Array<EasyMesh, bool, float, vec3> m_meshes;
     Array<Light *>  m_lights;
-    Camera *        m_camera;
     Shader *        m_texture_shader;
-    TileSet *       DefaultTexture;
+    TileSet *       m_default_texture;
     Texture *       m_texture;
     ShaderUniform   m_texture_uni;
     Image *         m_image;

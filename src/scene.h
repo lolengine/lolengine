@@ -20,6 +20,7 @@
 
 #include "tileset.h"
 #include "light.h"
+#include "camera.h"
 
 namespace lol
 {
@@ -34,10 +35,9 @@ public:
 
     static Scene *GetDefault();
 
-    void SetViewMatrix(mat4 const &m);
-    void SetProjMatrix(mat4 const &m);
-    mat4 const &GetViewMatrix(void);
-    mat4 const &GetProjMatrix(void);
+    Camera *GetCamera();
+    void PushCamera(Camera *cam);
+    void PopCamera(Camera *cam);
 
     void Reset();
     void Render();
