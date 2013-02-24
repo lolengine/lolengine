@@ -525,7 +525,7 @@ public:
     bool Compile(char const *command);
     void MeshConvert(GpuShaderData* new_gpu_sdata);
     void MeshConvert(Shader* ProvidedShader = NULL);
-    void Render(mat4 const &model, float damage = 0.f);
+    void Render(mat4 const &model);
 
 private:
     void UpdateVertexDict(Array< int, int > &vertex_dict);

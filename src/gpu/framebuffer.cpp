@@ -209,9 +209,9 @@ void FrameBuffer::Unbind()
     m_data->m_back_surface->Release();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
-    glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #   else
-    glBindFramebufferOES(GL_FRAMEBUFFER_OES, NULL);
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
 #   endif
 #endif
 }

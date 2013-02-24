@@ -55,7 +55,8 @@ static bool RegisterAllLoaders()
 
 Image::Image(char const *path)
 {
-    static bool unused = RegisterAllLoaders();
+    static bool init = RegisterAllLoaders();
+    UNUSED(init);
 
     data = ImageLoader::Load(path);
 }
