@@ -67,7 +67,7 @@ liblolcore_sources = \
     generated/easymesh-parser.cpp generated/easymesh-parser.h \
     generated/easymesh-scanner.cpp \
     \
-    base/hash.cpp base/log.cpp base/string.cpp \
+    base/assert.cpp base/hash.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     math/geometry.cpp \

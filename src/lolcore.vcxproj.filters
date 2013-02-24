@@ -270,6 +270,9 @@
     <ClCompile Include="gpu\lolfx.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
+    <ClCompile Include="base\assert.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
     <ClCompile Include="base\hash.cpp">
       <Filter>base</Filter>
     </ClCompile>
