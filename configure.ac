@@ -61,7 +61,6 @@ else
 fi
 
 
-AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 dnl conditional builds
 AC_ARG_ENABLE(debug,
   [  --enable-debug          build debug versions of the game (default no)])
@@ -72,15 +71,25 @@ AC_ARG_ENABLE(experimental,
 AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
 
+
+dnl  Common C headers
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h)
+AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h)
 AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
 AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
 AC_CHECK_HEADERS(pam/pam_appl.h pam/pam_misc.h)
 
+dnl  Common C++ headers
+AC_LANG_PUSH(C++)
+AC_CHECK_HEADERS(cxxabi.h)
+AC_LANG_POP(C++)
+
+dnl  Common C functions
 AC_CHECK_FUNCS(getcwd _getcwd)
+
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
@@ -147,6 +156,9 @@ LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
 dnl  Optimizations
 AM_CXXFLAGS="${AM_CXXFLAGS} ${REL} ${OPT}"
 
+dnl  Debug symbols
+LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
+
 dnl  Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 LOL_TRY_CXXFLAGS(-Wall, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wall"])
 LOL_TRY_CXXFLAGS(-Wextra, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wextra"])
@@ -169,13 +181,25 @@ LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
 
+
+dnl  Unix-specific libutil
 AC_CHECK_LIB(util, forkpty,
  [UTIL_LIBS="${UTIL_LIBS} -lutil"
   dnl  Override future forkpty detection
   ac_cv_func_forkpty="yes"])
 AC_CHECK_FUNCS(forkpty)
 
-dnl Are we on the PS3?
+
+dnl  GCC-specific symbol demangling
+AC_LANG_PUSH(C++)
+AC_TRY_LINK(
+ [#include <cxxabi.h>],
+ [abi::__cxa_demangle(NULL, 0, 0, NULL);],
+ [AC_DEFINE(HAVE_CXA_DEMANGLE, 1, Define to 1 if abi::__cxa_demangle is available)])
+AC_LANG_POP(C++)
+
+
+dnl  Are we on the PS3?
 ac_cv_my_have_ps3="no"
 AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
  [ac_cv_my_have_ps3="yes"

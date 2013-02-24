@@ -34,6 +34,8 @@ static inline void DebugBreak()
 #endif
 }
 
+extern void DumpStack();
+
 #define LOL_CALL(macro, args) macro args
 #define LOL_EVAL(a) a
 #define LOL_1ST(a, ...) a
@@ -115,6 +117,7 @@ static inline void DebugBreak()
             LOL_CALL(LOL_CAT(LOL_ERROR_, LOL_CALL(LOL_COUNT_TO_3, \
                                                   (__VA_ARGS__))), \
                      (__VA_ARGS__)); \
+            DumpStack(); \
             DebugBreak(); \
             Abort(); \
         }
