@@ -44,6 +44,7 @@ SubMesh::~SubMesh()
 
 void SubMesh::Render(mat4 const &model)
 {
+    /* FIXME: TODO */
 }
 
 } /* namespace lol */

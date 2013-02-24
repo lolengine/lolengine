@@ -420,7 +420,7 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::Render(mat4 const &model, float damage)
+void EasyMesh::Render(mat4 const &model)
 {
     m_gpu_data.RenderMeshData(model);
 }
@@ -871,6 +871,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 {
+    UNUSED(uv_scale, uv_offset);
 #if 0
     VertexDictionnary vert_dict;
     Array<int> tri_list;
@@ -2149,7 +2150,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
         for (int n = 0; n < 3 * 12; n++)
         {
             int d = n / 3;
-            int m = d % 6;
+            int e = d % 6;
             AddVertex(p[d]);
             if (n % 3 == 0) //Top-Bottom logic
             {
@@ -2165,14 +2166,14 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                 SetCurVertTexCoord(tmp * vec2(.25f) + add);
                 SetCurVertTexCoord2(tmp * vec2(.25f) + add);
             }
-            else if (m == 0 || m == 1) //inner Logic
+            else if (e == 0 || e == 1) //inner Logic
             {
                 SetCurVertTexCoord(uv[d]);
                 SetCurVertTexCoord2(uv[d]);
             }
             else //Cog logic
             {
-                if (m == 2 && n % 3 == 2)
+                if (e == 2 && n % 3 == 2)
                 {
                     SetCurVertTexCoord(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
                     SetCurVertTexCoord2(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);

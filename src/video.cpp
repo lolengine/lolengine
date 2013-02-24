@@ -239,9 +239,6 @@ void Video::SetClearDepth(float f)
 
 void Video::SetDebugRenderMode(DebugRenderMode d)
 {
-    if (d == DebugRenderMode::Max)
-        return;
-
     switch(d)
     {
         //All these modes are handled in the shaders.
@@ -289,6 +286,8 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 #endif
             break;
         }
+        default:
+            return; /* Unknown render mode */
     }
     VideoData::render_mode = d;
 }

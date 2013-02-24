@@ -42,6 +42,8 @@ private:
 
 bool DummyImageData::Open(char const *path)
 {
+    UNUSED(path);
+
     size = ivec2(256);
     format = Image::FORMAT_RGBA;
     pixels = (uint8_t *)malloc(256 * 256 * 4 * sizeof(*pixels));
