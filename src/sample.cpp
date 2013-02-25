@@ -47,7 +47,8 @@ class SampleData
 private:
     char *name, *path;
 #if defined USE_SDL_MIXER
-    Mix_Chunk *chunk;
+    Mix_Chunk *m_chunk;
+    int m_channel;
 #endif
 };
 
@@ -66,11 +67,11 @@ Sample::Sample(char const *path)
     Array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
-        data->chunk = Mix_LoadWAV(pathlist[i].C());
-        if (data->chunk)
+        data->m_chunk = Mix_LoadWAV(pathlist[i].C());
+        if (data->m_chunk)
             break;
     }
-    if (!data->chunk)
+    if (!data->m_chunk)
     {
 #if !LOL_RELEASE
         Log::Error("could not load sample %s\n", path);
@@ -78,13 +79,14 @@ Sample::Sample(char const *path)
         SDL_Quit();
         exit(1);
     }
+    data->m_channel = -1;
 #endif
 }
 
 Sample::~Sample()
 {
 #if defined USE_SDL_MIXER
-    Mix_FreeChunk(data->chunk);
+    Mix_FreeChunk(data->m_chunk);
 #endif
     free(data->name);
     delete data;
@@ -103,7 +105,16 @@ char const *Sample::GetName()
 void Sample::Play()
 {
 #if defined USE_SDL_MIXER
-    Mix_PlayChannel(-1, data->chunk, 0);
+    data->m_channel = Mix_PlayChannel(-1, data->m_chunk, 0);
+#endif
+}
+
+void Sample::Stop()
+{
+#if defined USE_SDL_MIXER
+    if (data->m_channel >= 0)
+        Mix_HaltChannel(data->m_channel);
+    data->m_channel = -1;
 #endif
 }
 
