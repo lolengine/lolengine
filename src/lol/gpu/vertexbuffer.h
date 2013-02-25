@@ -76,6 +76,7 @@ struct MeshPrimitive
         TriangleStrips,
         TriangleFans,
         Points,
+        Lines,
     }
     m_value;
 
