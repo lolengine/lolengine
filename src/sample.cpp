@@ -109,6 +109,13 @@ void Sample::Play()
 #endif
 }
 
+void Sample::Loop()
+{
+#if defined USE_SDL_MIXER
+    data->m_channel = Mix_PlayChannel(-1, data->m_chunk, -1);
+#endif
+}
+
 void Sample::Stop()
 {
 #if defined USE_SDL_MIXER
