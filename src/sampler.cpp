@@ -60,5 +60,11 @@ void Sampler::PlaySample(int id)
     sample->Play();
 }
 
+void Sampler::StopSample(int id)
+{
+    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
+    sample->Stop();
+}
+
 } /* namespace lol */
 
