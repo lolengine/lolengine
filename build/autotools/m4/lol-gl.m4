@@ -15,7 +15,7 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
    [AC_MSG_RESULT(yes)
     ac_cv_my_have_gl="yes"
     GL_LIBS="${GL_LIBS} -framework OpenGL"
-    CXXFLAGS="${CXXFLAGS} -ObjC++"
+    LOL_TRY_CXXFLAGS(-ObjC++, [CXXFLAGS="${CXXFLAGS} -ObjC++"])
     AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)],
    [AC_MSG_RESULT(no)])
   LIBS="$LIBS_save"
