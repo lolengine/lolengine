@@ -60,6 +60,12 @@ void Sampler::PlaySample(int id)
     sample->Play();
 }
 
+void Sampler::LoopSample(int id)
+{
+    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
+    sample->Loop();
+}
+
 void Sampler::StopSample(int id)
 {
     Sample *sample = (Sample *)data->samples.GetEntity(id - 1);

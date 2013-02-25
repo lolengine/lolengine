@@ -29,6 +29,7 @@ public:
     static void Deregister(int id);
 
     static void PlaySample(int id);
+    static void LoopSample(int id);
     static void StopSample(int id);
 
 private:
