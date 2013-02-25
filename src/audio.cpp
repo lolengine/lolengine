@@ -38,6 +38,8 @@ void Audio::Setup(int channels)
 {
 #if defined USE_SDL_MIXER
     Mix_OpenAudio(22050, AUDIO_S16, channels, 1024);
+#else
+    UNUSED(channels);
 #endif
 }
 

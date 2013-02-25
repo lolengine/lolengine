@@ -40,6 +40,7 @@ protected:
 public:
     /* New methods */
     void Play();
+    void Stop();
 
 private:
     SampleData *data;
