@@ -38,18 +38,16 @@ public:
         m_mesh.Push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
         m_mesh.Push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
 
-        m_indices << i16vec3(0, 1, 2);
-        m_indices << i16vec3(2, 3, 0);
-        m_indices << i16vec3(1, 5, 6);
-        m_indices << i16vec3(6, 2, 1);
-        m_indices << i16vec3(7, 6, 5);
-        m_indices << i16vec3(5, 4, 7);
-        m_indices << i16vec3(4, 0, 3);
-        m_indices << i16vec3(3, 7, 4);
-        m_indices << i16vec3(4, 5, 1);
-        m_indices << i16vec3(1, 0, 4);
-        m_indices << i16vec3(3, 2, 6);
-        m_indices << i16vec3(6, 7, 3);
+        m_faces_indices << 0 << 1 << 2 << 2 << 3 << 0;
+        m_faces_indices << 1 << 5 << 6 << 6 << 2 << 1;
+        m_faces_indices << 7 << 6 << 5 << 5 << 4 << 7;
+        m_faces_indices << 4 << 0 << 3 << 3 << 7 << 4;
+        m_faces_indices << 4 << 5 << 1 << 1 << 0 << 4;
+        m_faces_indices << 3 << 2 << 6 << 6 << 7 << 3;
+
+        m_lines_indices << 0 << 1 << 1 << 2 << 2 << 3 << 3 << 0;
+        m_lines_indices << 4 << 5 << 5 << 6 << 6 << 7 << 7 << 4;
+        m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
 
         m_ready = false;
     }
@@ -91,10 +89,15 @@ public:
             memcpy(mesh, &m_mesh[0], m_mesh.Bytes());
             m_vbo->Unlock();
 
-            m_ibo = new IndexBuffer(m_indices.Bytes());
-            void *indices = m_ibo->Lock(0, 0);
-            memcpy(indices, &m_indices[0], m_indices.Bytes());
-            m_ibo->Unlock();
+            m_lines_ibo = new IndexBuffer(m_lines_indices.Bytes());
+            void *indices = m_lines_ibo->Lock(0, 0);
+            memcpy(indices, &m_lines_indices[0], m_lines_indices.Bytes());
+            m_lines_ibo->Unlock();
+
+            m_faces_ibo = new IndexBuffer(m_faces_indices.Bytes());
+            indices = m_faces_ibo->Lock(0, 0);
+            memcpy(indices, &m_faces_indices[0], m_faces_indices.Bytes());
+            m_faces_ibo->Unlock();
 
             /* FIXME: this object never cleans up */
             m_ready = true;
@@ -103,13 +106,21 @@ public:
         Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_shader->Bind();
-        m_shader->SetUniform(m_mvp, m_matrix);
         m_vdecl->SetStream(m_vbo, m_coord, m_color);
         m_vdecl->Bind();
-        m_ibo->Bind();
+
+        m_shader->SetUniform(m_mvp, m_matrix);
+        m_lines_ibo->Bind();
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, 0, 0,
+                                     m_mesh.Count(), 0, m_lines_indices.Count());
+        m_lines_ibo->Unbind();
+
+        m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
+        m_faces_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
-                                     m_mesh.Count(), 0, m_indices.Count() * 3);
-        m_ibo->Unbind();
+                                     m_mesh.Count(), 0, m_faces_indices.Count());
+        m_faces_ibo->Unbind();
+
         m_vdecl->Unbind();
     }
 
@@ -117,14 +128,14 @@ private:
     float m_angle;
     mat4 m_matrix;
     Array<vec3,vec3> m_mesh;
-    Array<i16vec3> m_indices;
+    Array<uint16_t> m_lines_indices, m_faces_indices;
 
     Shader *m_shader;
     ShaderAttrib m_coord, m_color;
     ShaderUniform m_mvp;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-    IndexBuffer *m_ibo;
+    IndexBuffer *m_lines_ibo, *m_faces_ibo;
 
     bool m_ready;
 };

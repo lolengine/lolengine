@@ -154,6 +154,11 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
                                               skip, count)))
             Abort();
         break;
+    case MeshPrimitive::Lines:
+        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_LINELIST,
+                                              skip, count)))
+            Abort();
+        break;
     }
 #else
     /* FIXME: this has nothing to do here! */
@@ -174,6 +179,9 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         break;
     case MeshPrimitive::Points:
         glDrawArrays(GL_POINTS, skip, count);
+        break;
+    case MeshPrimitive::Lines:
+        glDrawArrays(GL_LINES, skip, count);
         break;
     }
 #endif
@@ -217,6 +225,11 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
+    case MeshPrimitive::Lines:
+        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_LINELIST,
+                                           vbase, vskip, vcount, skip, count)))
+            Abort();
+        break;
     }
 #else
     /* FIXME: this has nothing to do here! */
@@ -245,6 +258,11 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         /* FIXME: ignores most of the arguments! */
         (void)vbase; (void)vskip; (void)vcount; (void)skip;
         glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
+        break;
+    case MeshPrimitive::Lines:
+        /* FIXME: ignores most of the arguments! */
+        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        glDrawElements(GL_LINES, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
 #endif
