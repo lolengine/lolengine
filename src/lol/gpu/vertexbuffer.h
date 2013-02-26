@@ -59,10 +59,64 @@ struct VertexUsage
         Fog,
         Depth,
         Sample,
+
+        Max
     }
     m_value;
 
+private:
+    static String GetName(Value v, bool use_simple)
+    {
+        String tmp = String("");
+        if (!use_simple) tmp += "<";
+        switch (v)
+        {
+            case Position:      { tmp += "Position";    break; }
+            case BlendWeight:   { tmp += "BlendWeight"; break; }
+            case BlendIndices:  { tmp += "BlendIndices";break; }
+            case Normal:        { tmp += "Normal";      break; }
+            case PointSize:     { tmp += "PointSize";   break; }
+            case TexCoord:      { tmp += "TexCoord";    break; }
+            case TexCoordExt:   { tmp += "TexCoordExt"; break; }
+            case Tangent:       { tmp += "Tangent";     break; }
+            case Binormal:      { tmp += "Binormal";    break; }
+            case TessFactor:    { tmp += "TessFactor";  break; }
+            case PositionT:     { tmp += "PositionT";   break; }
+            case Color:         { tmp += "Color";       break; }
+            case Fog:           { tmp += "Fog";         break; }
+            case Depth:         { tmp += "Depth";       break; }
+            case Sample:        { tmp += "Sample";      break; }
+            default:            { tmp += "UNDEFINED";   break; }
+        }
+        if (!use_simple) tmp += ">";
+        return tmp;
+    }
+
+public:
+    static String GetName(Value v)
+    {
+        return GetName(v, false);
+    }
+
+    static String GetNameList(uint32_t v)
+    {
+        String tmp = String("<");
+        int nb = 0;
+        for (int i = 0; i < Max; ++i)
+        {
+            if (v & (1<<i))
+            {
+                if (nb != 0)
+                    tmp += ", ";
+                tmp += GetName(Value(i), true);
+                ++nb;
+            }
+        }
+        return tmp + ">";
+    }
+
     inline VertexUsage(Value v) : m_value(v) {}
+    inline VertexUsage(int v) : m_value((Value)v) {}
     inline operator Value() { return m_value; }
 };
 
