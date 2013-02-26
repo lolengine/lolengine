@@ -56,7 +56,7 @@ LevelMap::LevelMap(char const *path)
 
     char tmp[BUFSIZ];
     int gids[LevelMapData::MAX_TILESETS];
-    uint32_t *tiles = NULL;
+    uint32_t *tiles = nullptr;
     int level = 0, orientation = 0, ntiles = 0;
 
     FILE *fp = fopen(path, "r");
@@ -118,7 +118,7 @@ LevelMap::LevelMap(char const *path)
                 Layer *l = new Layer(data->width, data->height,
                                      level, orientation, tiles);
                 data->m_layers.Push(l);
-                tiles = NULL;
+                tiles = nullptr;
                 //Log::Debug("new layer %ix%i\n", data->width, data->height);
             }
         }

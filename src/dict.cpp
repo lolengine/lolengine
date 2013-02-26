@@ -106,10 +106,10 @@ int Dict::MakeSlot(char const *name)
         if (slotid == data->m_entities.Count())
         {
             empty = data->m_entities.Count();
-            data->m_entities.Push(NULL);
+            data->m_entities.Push(nullptr);
         }
 
-        data->m_entities[empty] = NULL;
+        data->m_entities[empty] = nullptr;
         slotid = empty;
         data->nentities++;
     }
@@ -125,7 +125,7 @@ void Dict::RemoveSlot(int slotid)
 {
     if (Ticker::Unref(data->m_entities[slotid]) == 0)
     {
-        data->m_entities[slotid] = NULL;
+        data->m_entities[slotid] = nullptr;
         data->nentities--;
     }
 }

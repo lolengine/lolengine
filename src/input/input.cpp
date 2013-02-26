@@ -31,7 +31,7 @@ namespace lol
  * Input implementation class
  */
 
-InputTracker* Input::m_input_tracker = NULL;
+InputTracker* Input::m_input_tracker = nullptr;
 
 static class InputData
 {
@@ -116,9 +116,9 @@ void InputTracker::UpdateActionStatus(float seconds)
 {
 #if defined USE_SDL
 #   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
 #   else
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 *keystate = SDL_GetKeyState(nullptr);
 #   endif
     //SOOOoooo ugly.
     for (int i = 0; i < Key::Last; ++i)
@@ -270,9 +270,9 @@ vec2 Input::GetAxis(int axis)
 #if defined USE_SDL
     /* Simulate a joystick using the keyboard. This SDL call is free. */
 #   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
 #   else
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 *keystate = SDL_GetKeyState(nullptr);
 #   endif
     int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
     int up = (keystate[SDLK_w] | keystate[SDLK_z]) - keystate[SDLK_s] ;
@@ -303,9 +303,9 @@ int Input::GetButtonState(int button)
 {
 #if defined USE_SDL
 #   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
 #   else
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 *keystate = SDL_GetKeyState(nullptr);
 #   endif
     return keystate[button];
 #else
@@ -401,7 +401,7 @@ void Input::SetMousePos(ivec2 coord)
 {
     data->mouse = coord;
 
-    WorldEntity *top = NULL;
+    WorldEntity *top = nullptr;
 
     /* Find the top “widget” amongst all entities that match the
      * mouse coordinates */
@@ -486,7 +486,7 @@ Stick *Input::TrackStick(int desired)
 {
     /* FIXME: add the possibility to choose amongst sticks */
     if (desired >= data->m_sticks.Count())
-        return NULL;
+        return nullptr;
     Ticker::Ref(data->m_sticks[desired]);
     return data->m_sticks[desired];
 }

@@ -48,7 +48,7 @@ Gradient::Gradient(vec3 aa, vec3 bb)
     m_bbox[0] = aa;
     m_bbox[1] = bb;
 
-    data->shader = NULL;
+    data->shader = nullptr;
 }
 
 void Gradient::TickGame(float seconds)

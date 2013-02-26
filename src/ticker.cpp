@@ -39,7 +39,7 @@ public:
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
-            list[i] = NULL;
+            list[i] = nullptr;
     }
 
     ~TickerData()
@@ -114,7 +114,7 @@ void Ticker::Register(Entity *entity)
 
 void Ticker::Ref(Entity *entity)
 {
-    ASSERT(entity, "dereferencing NULL entity\n");
+    ASSERT(entity, "dereferencing nullptr entity\n");
     ASSERT(!entity->m_destroy,
            "referencing entity scheduled for destruction %s\n",
            entity->GetName());
@@ -124,7 +124,7 @@ void Ticker::Ref(Entity *entity)
         /* Get the entity out of the m_autorelease list. This is usually
          * very fast since the first entry in autolist is the last
          * registered entity. */
-        for (Entity *e = data->autolist, *prev = NULL; e;
+        for (Entity *e = data->autolist, *prev = nullptr; e;
              prev = e, e = e->m_autonext)
         {
             if (e == entity)
@@ -141,7 +141,7 @@ void Ticker::Ref(Entity *entity)
 
 int Ticker::Unref(Entity *entity)
 {
-    ASSERT(entity, "dereferencing NULL entity\n");
+    ASSERT(entity, "dereferencing null entity\n");
     ASSERT(entity->m_ref > 0, "dereferencing unreferenced entity %s\n",
            entity->GetName())
     ASSERT(!entity->m_autorelease, "dereferencing autoreleased entity %s\n",
@@ -247,7 +247,7 @@ void *TickerData::GameThreadMain(void * /* p */)
          * before inserting awaiting objects, because only objects already
          * inthe tick lists can be marked for destruction. */
         for (int i = 0; i < Entity::ALLGROUP_END; i++)
-            for (Entity *e = data->list[i], *prev = NULL; e; )
+            for (Entity *e = data->list[i], *prev = nullptr; e; )
             {
                 if (e->m_destroy && i < Entity::GAMEGROUP_END)
                 {
@@ -321,7 +321,7 @@ void *TickerData::GameThreadMain(void * /* p */)
     Log::Info("ticker game thread terminated\n");
 #endif
 
-    return NULL;
+    return nullptr;
 }
 
 void *TickerData::DrawThreadMain(void * /* p */)
@@ -335,7 +335,7 @@ void *TickerData::DrawThreadMain(void * /* p */)
         data->gametick.Push(1);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void *TickerData::DiskThreadMain(void * /* p */)
@@ -343,7 +343,7 @@ void *TickerData::DiskThreadMain(void * /* p */)
     /* FIXME: temporary hack to avoid crashes on the PS3 */
     data->disktick.Pop();
 
-    return NULL;
+    return nullptr;
 }
 
 void Ticker::SetState(Entity * /* entity */, uint32_t /* state */)
@@ -361,10 +361,10 @@ void Ticker::Setup(float fps)
 {
     data->fps = fps;
 
-    data->gamethread = new Thread(TickerData::GameThreadMain, NULL);
+    data->gamethread = new Thread(TickerData::GameThreadMain, nullptr);
     data->gametick.Push(1);
 
-    data->diskthread = new Thread(TickerData::DiskThreadMain, NULL);
+    data->diskthread = new Thread(TickerData::DiskThreadMain, nullptr);
 }
 
 void Ticker::TickDraw()

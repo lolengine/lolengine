@@ -307,7 +307,7 @@ void Video::Clear(ClearMask m)
         mask |= D3DCLEAR_ZBUFFER;
     if (m & ClearMask::Stencil)
         mask |= D3DCLEAR_STENCIL;
-    if (FAILED(VideoData::d3d_dev->Clear(0, NULL, mask,
+    if (FAILED(VideoData::d3d_dev->Clear(0, nullptr, mask,
                                          VideoData::clear_color,
                                          VideoData::clear_depth, 0)))
         Abort();

@@ -39,8 +39,8 @@ public:
 private:
     static ImageData *Load(char const *path)
     {
-        ImageLoader *parser = Helper(NULL);
-        ImageData *ret = NULL;
+        ImageLoader *parser = Helper(nullptr);
+        ImageData *ret = nullptr;
 
         while (parser && !ret)
         {
@@ -53,7 +53,7 @@ private:
 
     static ImageLoader *Helper(ImageLoader *set)
     {
-        static ImageLoader *loaders = NULL;
+        static ImageLoader *loaders = nullptr;
 
         if (!set)
             return loaders;
@@ -64,7 +64,7 @@ private:
         set->next = *parser;
         *parser = set;
 
-        return NULL;
+        return nullptr;
     }
 };
 
@@ -106,7 +106,7 @@ protected:
             if (!ret->Open(path)) \
             { \
                 delete ret; \
-                return NULL; \
+                return nullptr; \
             } \
             return ret; \
         } \

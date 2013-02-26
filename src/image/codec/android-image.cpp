@@ -55,7 +55,7 @@ bool AndroidImageData::Open(char const *path)
 #if !LOL_RELEASE
         Log::Error("JVM environment not found, trying to attach thread\n");
 #endif
-        res = g_vm->AttachCurrentThread(&env, NULL);
+        res = g_vm->AttachCurrentThread(&env, nullptr);
     }
     if (res < 0)
     {

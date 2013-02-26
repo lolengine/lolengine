@@ -75,7 +75,7 @@ private:
     static Scene *scene;
 };
 
-Scene *SceneData::scene = NULL;
+Scene *SceneData::scene = nullptr;
 
 /*
  * Public Scene class

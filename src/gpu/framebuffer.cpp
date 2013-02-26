@@ -67,19 +67,19 @@ FrameBuffer::FrameBuffer(ivec2 size)
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
                                           D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                          &m_data->m_texture, NULL)))
+                                          &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
 #elif defined _XBOX
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1, 0,
                                           D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                          &m_data->m_texture, NULL)))
+                                          &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(g_d3ddevice->CreateRenderTarget(size.x, size.y,
                                                D3DFMT_A8R8G8B8,
                                                D3DMULTISAMPLE_NONE, 0, 0,
-                                               &m_data->m_surface, NULL)))
+                                               &m_data->m_surface, nullptr)))
         Abort();
 #else
 #   if GL_VERSION_1_1
@@ -114,7 +114,7 @@ FrameBuffer::FrameBuffer(ivec2 size)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLenum)filtering);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)filtering);
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
-                 format, GL_UNSIGNED_BYTE, NULL);
+                 format, GL_UNSIGNED_BYTE, nullptr);
 
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -200,9 +200,9 @@ void FrameBuffer::Unbind()
         Abort();
     m_data->m_back_surface->Release();
 #elif defined _XBOX
-    if (FAILED(g_d3ddevice->Resolve(D3DRESOLVE_RENDERTARGET0, NULL,
-                                    m_data->m_texture, NULL, 0, 0, NULL,
-                                    0, 0, NULL)))
+    if (FAILED(g_d3ddevice->Resolve(D3DRESOLVE_RENDERTARGET0, nullptr,
+                                    m_data->m_texture, nullptr, 0, 0, nullptr,
+                                    0, 0, nullptr)))
         Abort();
     if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
         Abort();

@@ -56,7 +56,7 @@ class FileData
 #elif HAVE_STDIO_H
         if (m_fd)
             fclose(m_fd);
-        m_fd = NULL;
+        m_fd = nullptr;
 #endif
     }
 

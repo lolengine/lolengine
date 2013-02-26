@@ -39,7 +39,7 @@ public:
     MutexBase()
     {
 #if defined HAVE_PTHREAD_H
-        pthread_mutex_init(&m_mutex, NULL);
+        pthread_mutex_init(&m_mutex, nullptr);
 #elif defined _WIN32
         InitializeCriticalSection(&m_mutex);
 #endif
@@ -88,12 +88,12 @@ public:
         m_start = m_count = 0;
 #if defined HAVE_PTHREAD_H
         m_poppers = m_pushers = 0;
-        pthread_mutex_init(&m_mutex, NULL);
-        pthread_cond_init(&m_empty_cond, NULL);
-        pthread_cond_init(&m_full_cond, NULL);
+        pthread_mutex_init(&m_mutex, nullptr);
+        pthread_cond_init(&m_empty_cond, nullptr);
+        pthread_cond_init(&m_full_cond, nullptr);
 #elif defined _WIN32
-        m_empty_sem = CreateSemaphore(NULL, CAPACITY, CAPACITY, NULL);
-        m_full_sem = CreateSemaphore(NULL, 0, CAPACITY, NULL);
+        m_empty_sem = CreateSemaphore(nullptr, CAPACITY, CAPACITY, nullptr);
+        m_full_sem = CreateSemaphore(nullptr, 0, CAPACITY, nullptr);
         InitializeCriticalSection(&m_mutex);
 #endif
     }
@@ -136,7 +136,7 @@ public:
         pthread_mutex_unlock(&m_mutex);
 #elif defined _WIN32
         LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_full_sem, 1, NULL);
+        ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
     }
 
@@ -168,7 +168,7 @@ public:
         pthread_mutex_unlock(&m_mutex);
 #else
         LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_empty_sem, 1, NULL);
+        ReleaseSemaphore(m_empty_sem, 1, nullptr);
 #endif
 
         return ret;
@@ -200,7 +200,7 @@ public:
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
         pthread_create(&m_thread, &attr, fn, data);
 #elif defined _WIN32
-        m_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)fn,
+        m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)fn,
                                 data, 0, &m_tid);
 #endif
     }
@@ -208,7 +208,7 @@ public:
     virtual ~ThreadBase()
     {
 #if defined HAVE_PTHREAD_H
-        pthread_join(m_thread, NULL);
+        pthread_join(m_thread, nullptr);
 #elif defined _WIN32
         WaitForSingleObject(m_thread, INFINITE);
 #endif

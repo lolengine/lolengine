@@ -136,7 +136,7 @@ public:
 
     virtual ~ThreadBase()
     {
-        sys_ppu_thread_join(m_thread, NULL);
+        sys_ppu_thread_join(m_thread, nullptr);
     }
 
 private:

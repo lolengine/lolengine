@@ -69,15 +69,15 @@ void AndroidApp::Tick()
 void *AndroidApp::MainRun(void *data)
 {
     int argc = 1;
-    char *argv[] = { "", NULL };
-    char *env[] = { NULL };
+    char *argv[] = { "", nullptr };
+    char *env[] = { nullptr };
 
     /* Call the user's main() function. One of these will work. */
     lol_android_main();
     lol_android_main(argc, argv);
     lol_android_main(argc, argv, env);
 
-    return NULL;
+    return nullptr;
 }
 
 AndroidApp::~AndroidApp()
@@ -107,7 +107,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 {
     /* Initialise app thread and wait for it to be ready, ie. set
      * the FPS value at least. */
-    g_main_thread = new Thread(lol::AndroidApp::MainRun, NULL);;
+    g_main_thread = new Thread(lol::AndroidApp::MainRun, nullptr);
     g_main_queue.Pop();
 
     /* Launch our ticker */

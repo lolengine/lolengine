@@ -78,8 +78,8 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 
     data->egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 #   else
-    data->dpy = XOpenDisplay(NULL);
-    if (data->dpy == NULL)
+    data->dpy = XOpenDisplay(nullptr);
+    if (data->dpy == nullptr)
     {
         Log::Error("cannot connect to X server\n");
         exit(EXIT_FAILURE);
@@ -115,7 +115,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
-    if (!eglInitialize(data->egl_dpy, NULL, NULL))
+    if (!eglInitialize(data->egl_dpy, nullptr, nullptr))
     {
         Log::Error("cannot initialize EGL\n");
         exit(EXIT_FAILURE);
@@ -187,11 +187,11 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     vc_dispmanx_update_submit_sync(dispman_update);
 
     data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
-                                            &data->nativewindow, NULL);
+                                            &data->nativewindow, nullptr);
 #   else
     data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
                                             (EGLNativeWindowType)data->win,
-                                            NULL);
+                                            nullptr);
 #   endif
     if (data->egl_surf == EGL_NO_SURFACE)
     {

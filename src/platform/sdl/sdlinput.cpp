@@ -196,7 +196,7 @@ void SdlInputData::Tick(float seconds)
 
     /* Send the whole keyboard state to the input system */
 #if 0
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 *keystate = SDL_GetKeyState(nullptr);
     for (int i = 0; i < 256; i++)
         if (keystate[i])
             Input::KeyPressed(i, seconds);

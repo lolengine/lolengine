@@ -70,7 +70,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     data->path = data->name + 10;
     sprintf(data->name, "<tileset> %s", path);
 
-    data->tiles = NULL;
+    data->tiles = nullptr;
     data->m_texture = 0;
     data->img = new Image(path);
     data->isize = data->img->GetSize();
@@ -153,7 +153,7 @@ void TileSet::TickDraw(float seconds)
         if (pixels != data->img->GetData())
             free(pixels);
         delete data->img;
-        data->img = NULL;
+        data->img = nullptr;
     }
 }
 

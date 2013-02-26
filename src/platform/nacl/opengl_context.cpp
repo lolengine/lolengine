@@ -38,8 +38,10 @@ OpenGLContext::~OpenGLContext() {
   glSetCurrentContextPPAPI(0);
 }
 
-bool OpenGLContext::MakeContextCurrent(pp::Instance* instance) {
-  if (instance == NULL) {
+bool OpenGLContext::MakeContextCurrent(pp::Instance* instance)
+{
+  if (instance == nullptr)
+  {
     glSetCurrentContextPPAPI(0);
     return false;
   }
