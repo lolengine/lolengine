@@ -74,7 +74,7 @@ protected:
 public:
     //--
     GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode);
-    ~GpuShaderData();
+    virtual ~GpuShaderData();
     //--
     void AddUniform(const lol::String &new_uniform);
     void AddAttribute(const lol::String &new_attribute, VertexUsage usage, int index);
@@ -102,6 +102,7 @@ public:
     //---
     DefaultShaderData(DebugRenderMode render_mode);
     DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV);
+    virtual ~DefaultShaderData() {}
     //---
     void SetupDefaultData(bool with_UV);
     virtual void SetupShaderDatas(mat4 const &model);
