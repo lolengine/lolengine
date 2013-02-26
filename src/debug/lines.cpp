@@ -32,20 +32,14 @@ void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
         v[i].z = i & 4 ? a.z : b.z;
     }
 
-    Scene::GetDefault()->AddLine(v[0], v[1], color);
-    Scene::GetDefault()->AddLine(v[1], v[3], color);
-    Scene::GetDefault()->AddLine(v[3], v[2], color);
-    Scene::GetDefault()->AddLine(v[2], v[0], color);
+    for (int i = 0; i < 4; i++)
+    {
+        int j = ((i & 1) << 1) | ((i >> 1) ^ 1);
 
-    Scene::GetDefault()->AddLine(v[4], v[5], color);
-    Scene::GetDefault()->AddLine(v[5], v[7], color);
-    Scene::GetDefault()->AddLine(v[7], v[6], color);
-    Scene::GetDefault()->AddLine(v[6], v[4], color);
-
-    Scene::GetDefault()->AddLine(v[0], v[4], color);
-    Scene::GetDefault()->AddLine(v[1], v[5], color);
-    Scene::GetDefault()->AddLine(v[2], v[6], color);
-    Scene::GetDefault()->AddLine(v[3], v[7], color);
+        Scene::GetDefault()->AddLine(v[i], v[i + 4], color);
+        Scene::GetDefault()->AddLine(v[i], v[j], color);
+        Scene::GetDefault()->AddLine(v[i + 4], v[j + 4], color);
+    }
 }
 
 } /* namespace lol */
