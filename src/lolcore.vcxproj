@@ -95,6 +95,7 @@
     <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />
+    <ClCompile Include="debug\lines.cpp" />
     <ClCompile Include="debug\record.cpp" />
     <ClCompile Include="debug\stats.cpp" />
     <ClCompile Include="dict.cpp" />
@@ -203,6 +204,8 @@
     <ClInclude Include="lol\base\map.h" />
     <ClInclude Include="lol\base\string.h" />
     <ClInclude Include="lol\base\types.h" />
+    <ClInclude Include="lol\debug\debug.h" />
+    <ClInclude Include="lol\debug\lines.h" />
     <ClInclude Include="lol\gpu\framebuffer.h" />
     <ClInclude Include="lol\gpu\gpu.h" />
     <ClInclude Include="lol\gpu\indexbuffer.h" />
@@ -263,6 +266,7 @@
     <LolFxCompile Include="easymesh\shiny_SK.lolfx" />
     <LolFxCompile Include="gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="gpu\emptymaterial.lolfx" />
+    <LolFxCompile Include="gpu\line.lolfx" />
     <LolFxCompile Include="gpu\testmaterial.lolfx" />
     <LolFxCompile Include="gpu\tile.lolfx" />
     <LolFxCompile Include="gradient.lolfx" />

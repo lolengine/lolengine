@@ -45,6 +45,7 @@ public:
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
+    void AddLine(vec3 a, vec3 b, vec4 color);
 
     void AddLight(Light *light);
     Array<Light *> const &GetLights() const;

@@ -84,6 +84,7 @@ static inline int isnan(float f)
 #include <lol/sys/sys.h>
 #include <lol/image/image.h>
 #include <lol/gpu/gpu.h>
+#include <lol/debug/debug.h>
 
 #include "numeric.h"
 
