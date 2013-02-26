@@ -141,11 +141,6 @@ void DefaultShaderData::SetupDefaultData(bool with_UV)
     AddUniform("in_NormalMat");
     AddUniform("in_Damage");
     AddUniform("u_Lights");
-    AddAttribute("in_Vertex", VertexUsage::Position, 0);
-    AddAttribute("in_Normal", VertexUsage::Normal, 0);
-    AddAttribute("in_Color",  VertexUsage::Color, 0);
-    if (with_UV)
-        AddAttribute("in_TexCoord", VertexUsage::TexCoord, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -193,9 +188,33 @@ GpuEasyMeshData::~GpuEasyMeshData()
         delete(m_ibo);
 }
 
+#define BUILD_VFLAG(bool_value, flag_value, check_flag) \
+    bool bool_value = (check_flag & (1 << flag_value)) != 0; \
+    check_flag &= ~(1 << flag_value);
+#define BUILD_VFLAG_OR(bool_value, flag_value, check_flag) \
+    bool_value = (bool_value || (check_flag & (1 << flag_value)) != 0); \
+    check_flag &= ~(1 << flag_value);
+#define BUILD_VFLAG_COUNT(bool_value, flag_value, check_flag, count_value) \
+    BUILD_VFLAG(bool_value, flag_value, check_flag) \
+    count_value += (int)bool_value;
+
 //-----------------------------------------------------------------------------
 void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
 {
+    uint16_t vflags = gpudata->m_vert_decl_flags;
+
+    BUILD_VFLAG(has_position,    VertexUsage::Position,     vflags);
+    BUILD_VFLAG(has_normal,      VertexUsage::Normal,       vflags);
+    BUILD_VFLAG(has_color,       VertexUsage::Color,        vflags);
+    BUILD_VFLAG(has_texcoord,    VertexUsage::TexCoord,     vflags);
+    BUILD_VFLAG_OR(has_texcoord, VertexUsage::TexCoordExt,  vflags);
+    ASSERT(!vflags, String("Vertex Useage setup is not implemented for : ") + VertexUsage::GetNameList(vflags) + String(", feel free to do so."));
+
+    if (has_position)   gpudata->AddAttribute(gpudata->GetInVertexName(),   VertexUsage::Position, 0);
+    if (has_normal)     gpudata->AddAttribute(gpudata->GetInNormalName(),   VertexUsage::Normal, 0);
+    if (has_color)      gpudata->AddAttribute(gpudata->GetInColorName(),    VertexUsage::Color, 0);
+    if (has_texcoord)   gpudata->AddAttribute(gpudata->GetInTexCoordName(), VertexUsage::TexCoord, 0);
+
     SetupVertexData(gpudata->m_vert_decl_flags, src_mesh);
 
     if (!m_ibo)
@@ -226,10 +245,10 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
 }
 
 //-----------------------------------------------------------------------------
-void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
+void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 {
     for (int i = 0; i < m_vdatas.Count(); ++i)
-        if (m_vdatas[i].m1 == vdecl_flags)
+        if (m_vdatas[i].m1 == vflags)
             return;
 
     VertexDeclaration* new_vdecl = nullptr;
@@ -243,10 +262,17 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
     memcpy(mesh, vbo_data, vbo_bytes); \
     new_vbo->Unlock();
 
-    uint16_t baseflag = (1 << VertexUsage::Position) | (1 << VertexUsage::Normal) | (1 << VertexUsage::Color);
-    if (vdecl_flags == (baseflag | (1 << VertexUsage::TexCoordExt)) ||
-        vdecl_flags == (baseflag | (1 << VertexUsage::TexCoord) |
-                                   (1 << VertexUsage::TexCoordExt)))
+    //Keep a count of the flags
+    uint16_t saveflags = vflags;
+    int flagnb = 0;
+    BUILD_VFLAG_COUNT(has_position,   VertexUsage::Position,    saveflags, flagnb);
+    BUILD_VFLAG_COUNT(has_normal,     VertexUsage::Normal,      saveflags, flagnb);
+    BUILD_VFLAG_COUNT(has_color,      VertexUsage::Color,       saveflags, flagnb);
+    BUILD_VFLAG_COUNT(has_texcoord,   VertexUsage::TexCoord,    saveflags, flagnb);
+    BUILD_VFLAG_COUNT(has_texcoordExt,VertexUsage::TexCoordExt, saveflags, flagnb);
+    ASSERT(!saveflags, String("Vertex Declaration setup is not implemented for : ") + VertexUsage::GetNameList(vflags) + String(", feel free to do so."));
+
+    if (has_position && has_normal && has_color && has_texcoord && has_texcoordExt && flagnb == 5)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec4>(
@@ -268,7 +294,35 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags ==  (baseflag | (1 << VertexUsage::TexCoord)))
+    else if (has_position && has_texcoord && has_texcoordExt && flagnb == 3)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
+
+        Array<vec3, vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else if (has_position && has_texcoord && flagnb == 2)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
+
+        Array<vec3, vec2> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord.xy);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else if (has_position && has_normal && has_color && has_texcoord && flagnb == 4)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec2>(
@@ -290,7 +344,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
-    else if (vdecl_flags == baseflag)
+    else if (has_position && has_normal && has_color && flagnb == 3)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4>(
@@ -311,7 +365,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
         COPY_VBO;
     }
 
-    m_vdatas.Push(vdecl_flags, new_vdecl, new_vbo);
+    m_vdatas.Push(vflags, new_vdecl, new_vbo);
 }
 
 //-----------------------------------------------------------------------------
@@ -337,24 +391,22 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
 
     vdecl->Bind();
 
-    uint16_t baseflag = (1 << VertexUsage::Position) | (1 << VertexUsage::Normal) | (1 << VertexUsage::Color);
-    if (vflags == (baseflag | (1 << VertexUsage::TexCoord)) ||
-        vflags == (baseflag | (1 << VertexUsage::TexCoordExt)) ||
-        vflags == (baseflag | (1 << VertexUsage::TexCoord) |
-                              (1 << VertexUsage::TexCoordExt)))
+    BUILD_VFLAG(has_position,   VertexUsage::Position,    vflags);
+    BUILD_VFLAG(has_normal,     VertexUsage::Normal,      vflags);
+    BUILD_VFLAG(has_color,      VertexUsage::Color,       vflags);
+    BUILD_VFLAG(has_texcoord,   VertexUsage::TexCoord,    vflags);
+    BUILD_VFLAG_OR(has_texcoord,VertexUsage::TexCoordExt, vflags);
+    ASSERT(!vflags, String("Vertex Stream setup is not implemented for : ") + VertexUsage::GetNameList(vflags) + String(", feel free to do so."));
 
-    {
-        vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
-                              *gpu_sd.GetAttribute(lol::String("in_Normal")),
-                              *gpu_sd.GetAttribute(lol::String("in_Color")),
-                              *gpu_sd.GetAttribute(lol::String("in_TexCoord")));
-    }
-    else if (vflags == baseflag)
-    {
-        vdecl->SetStream(vbo, *gpu_sd.GetAttribute(lol::String("in_Vertex")),
-                              *gpu_sd.GetAttribute(lol::String("in_Normal")),
-                              *gpu_sd.GetAttribute(lol::String("in_Color")));
-    }
+    int idx = 0;
+    ShaderAttrib Attribs[4] = { lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib() };
+
+    if (has_position)   Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInVertexName());
+    if (has_normal)     Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInNormalName());
+    if (has_color)      Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInColorName());
+    if (has_texcoord)   Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInTexCoordName());
+
+    vdecl->SetStream(vbo, Attribs[0], Attribs[1], Attribs[2], Attribs[3]);
 
     m_ibo->Bind();
     vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, m_vertexcount, 0, m_indexcount);

@@ -82,6 +82,11 @@ public:
     ShaderAttrib const *GetAttribute(const lol::String &attribute);
     //--
     virtual void SetupShaderDatas(mat4 const &model) { UNUSED(model); }
+    //--
+    virtual lol::String GetInVertexName()   { return lol::String("in_Vertex");   }
+    virtual lol::String GetInNormalName()   { return lol::String("in_Normal");   }
+    virtual lol::String GetInColorName()    { return lol::String("in_Color");    }
+    virtual lol::String GetInTexCoordName() { return lol::String("in_TexCoord"); }
 
 protected:
     uint16_t                            m_vert_decl_flags;
