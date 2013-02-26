@@ -57,18 +57,14 @@ bool Ps3ImageData::Open(char const *path)
     err = cellSysmoduleLoadModule(CELL_SYSMODULE_FS);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not open Fs sysmodule\n");
-#endif
+        Log::Error("could not open Fs sysmodule (0x%08x)\n", err);
         return false;
     }
 
     err = cellSysmoduleLoadModule(CELL_SYSMODULE_PNGDEC);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not open PngDec sysmodule\n");
-#endif
+        Log::Error("could not open PngDec sysmodule (0x%08x)\n", err);
         return false;
     }
 
@@ -84,9 +80,7 @@ bool Ps3ImageData::Open(char const *path)
     err = cellPngDecCreate(&hmain, &in_param, &out_param);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not create PngDec library\n");
-#endif
+        Log::Error("could not create PngDec library (0x%08x)\n", err);
         return false;
     }
 
@@ -104,17 +98,17 @@ bool Ps3ImageData::Open(char const *path)
     Array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
-        dec_src.fileName = (String("/app_home") + pathlist[i]).C();
+        String name = String("/app_home/") + pathlist[i];
+        dec_src.fileName = name.C();
         err = cellPngDecOpen(hmain, &hsub, &dec_src, &open_info);
         if (err == CELL_OK)
             break;
+        cellPngDecClose(hmain, hsub);
     }
 
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not open %s for decoding\n", path);
-#endif
+        Log::Error("could not open %s for decoding (0x%08x)\n", path, err);
         return false;
     }
 
@@ -122,9 +116,7 @@ bool Ps3ImageData::Open(char const *path)
     err = cellPngDecReadHeader(hmain, hsub, &info);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not read image header in %s\n", path);
-#endif
+        Log::Error("could not read image header in %s (0x%08x)\n", path, err);
         return false;
     }
 
@@ -140,9 +132,7 @@ bool Ps3ImageData::Open(char const *path)
     err = cellPngDecSetParameter(hmain, hsub, &in_dec_param, &out_dec_param);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not configure PngDec decoder\n");
-#endif
+        Log::Error("could not configure PngDec decoder (0x%08x)\n", err);
         return false;
     }
 
@@ -157,9 +147,7 @@ bool Ps3ImageData::Open(char const *path)
                                &data_ctrl_param, &data_out_info);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not run PngDec decoder on %s\n", path);
-#endif
+        Log::Error("could not run PngDec decoder on %s (0x%08x)\n", path, err);
         return false;
     }
 
@@ -167,9 +155,7 @@ bool Ps3ImageData::Open(char const *path)
     err = cellPngDecClose(hmain, hsub);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not close PngDec decoder\n");
-#endif
+        Log::Error("could not close PngDec decoder (0x%08x)\n", err);
         return false;
     }
 
@@ -177,9 +163,7 @@ bool Ps3ImageData::Open(char const *path)
     err = cellPngDecDestroy(hmain);
     if (err != CELL_OK)
     {
-#if !LOL_RELEASE
-        Log::Error("could not destroy PngDec decoder\n");
-#endif
+        Log::Error("could not destroy PngDec decoder (0x%08x)\n", err);
         return false;
     }
     err = cellSysmoduleUnloadModule(CELL_SYSMODULE_PNGDEC);
