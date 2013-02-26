@@ -59,7 +59,7 @@ String String::Printf(char const *format, va_list ap)
 
     /* vsnprintf() tells us how many character we need, and we need to
      * add one for the terminating null byte. */
-    size_t needed = vsnprintf(NULL, 0, format, ap2) + 1;
+    size_t needed = vsnprintf(nullptr, 0, format, ap2) + 1;
 
     ((Super &)ret).Reserve(needed);
     ret.m_count = needed;

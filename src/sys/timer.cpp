@@ -59,7 +59,7 @@ private:
     float GetSeconds(bool reset)
     {
         struct timeval tv, tv0 = m_tv;
-        gettimeofday(&tv, NULL);
+        gettimeofday(&tv, nullptr);
         if (reset)
             m_tv = tv;
         return 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);

@@ -487,10 +487,10 @@ class VertexDictionnary
 public:
     int FindVertexMaster(const int search_idx);
     bool FindMatchingVertices(const int search_idx, Array<int> &matching_ids);
-    bool FindConnectedVertices(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_vert, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
-    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = NULL);
+    bool FindConnectedVertices(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_vert, Array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
     void AddVertex(int vert_id, vec3 vert_coord);
     bool GetMasterList(Array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
     void Clear() { vertex_list.Empty(); }
@@ -524,7 +524,7 @@ public:
 
     bool Compile(char const *command);
     void MeshConvert(GpuShaderData* new_gpu_sdata);
-    void MeshConvert(Shader* ProvidedShader = NULL);
+    void MeshConvert(Shader* ProvidedShader = nullptr);
     void Render(mat4 const &model);
 
 private:

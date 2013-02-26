@@ -33,7 +33,7 @@
 #endif
 
 #if defined USE_SDL && defined USE_D3D9
-HWND g_hwnd = NULL;
+HWND g_hwnd = nullptr;
 extern IDirect3DDevice9 *g_d3ddevice;
 #endif
 
@@ -87,7 +87,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
-    SDL_WM_SetCaption(title, NULL);
+    SDL_WM_SetCaption(title, nullptr);
 
     /* Initialise everything */
     Ticker::Setup(fps);
@@ -126,7 +126,7 @@ void SdlApp::Tick()
     hr = g_d3ddevice->EndScene();
     if (FAILED(hr))
         Abort();
-    hr = g_d3ddevice->Present(NULL, NULL, NULL, NULL);
+    hr = g_d3ddevice->Present(nullptr, nullptr, nullptr, nullptr);
     if (FAILED(hr))
         Abort();
 #   else

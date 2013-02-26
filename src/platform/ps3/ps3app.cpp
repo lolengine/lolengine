@@ -63,7 +63,7 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
     cellSysmoduleLoadModule(CELL_SYSMODULE_USBD);
     cellSysmoduleLoadModule(CELL_SYSMODULE_IO);
 
-    cellSysutilRegisterCallback(0, Ps3AppData::SysCallBack, NULL);
+    cellSysutilRegisterCallback(0, Ps3AppData::SysCallBack, nullptr);
 
     PSGLinitOptions psglio;
     psglio.enable = PSGL_INIT_MAX_SPUS

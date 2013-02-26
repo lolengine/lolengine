@@ -85,7 +85,7 @@ ShaderUniform const *GpuShaderData::GetUniform(const lol::String &uniform)
     for (int i = 0; i < m_shader_uniform.Count(); ++i)
         if (m_shader_uniform[i].m1 == uniform)
             return &m_shader_uniform[i].m2;
-    return NULL;
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ ShaderAttrib const *GpuShaderData::GetAttribute(const lol::String &attribute)
     for (int i = 0; i < m_shader_attrib.Count(); ++i)
         if (m_shader_attrib[i].m1 == attribute)
             return &m_shader_attrib[i].m2;
-    return NULL;
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -181,7 +181,7 @@ GpuEasyMeshData::GpuEasyMeshData()
 {
     m_vertexcount = 0;
     m_indexcount = 0;
-    m_ibo = NULL;
+    m_ibo = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
     {
         m_gpudatas.Reserve(DebugRenderMode::Max);
         for (int i = 0; i < DebugRenderMode::Max; i++)
-            m_gpudatas << NULL;
+            m_gpudatas << nullptr;
     }
     m_gpudatas[gpudata->m_render_mode] = gpudata;
 }
@@ -232,9 +232,9 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh)
         if (m_vdatas[i].m1 == vdecl_flags)
             return;
 
-    VertexDeclaration* new_vdecl = NULL;
-    VertexBuffer* new_vbo = NULL;
-    void *vbo_data = NULL;
+    VertexDeclaration* new_vdecl = nullptr;
+    VertexBuffer* new_vbo = nullptr;
+    void *vbo_data = nullptr;
     int vbo_bytes = 0;
 
 #define COPY_VBO \
@@ -364,7 +364,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
 
 //-----------------------------------------------------------------------------
 EasyMesh::EasyMesh()
-  : m_build_data(NULL)
+  : m_build_data(nullptr)
 {
     m_cursors.Push(0, 0);
 }
@@ -391,7 +391,7 @@ void EasyMesh::CloseBrace()
 void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
 {
     delete(m_build_data);
-    m_build_data = NULL;
+    m_build_data = nullptr;
 
     if (new_gpu_sdata)
     {
@@ -2250,7 +2250,7 @@ void EasyMesh::Chamfer(float f)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SplitTriangles(int pass) { SplitTriangles(pass, NULL); }
+void EasyMesh::SplitTriangles(int pass) { SplitTriangles(pass, nullptr); }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)

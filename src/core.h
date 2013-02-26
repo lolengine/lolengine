@@ -45,6 +45,18 @@
 #   define FP_USE(x) (void)(x)
 #endif
 
+
+/* Ensure we have nullptr */
+#if defined nullptr
+    /* do nothing */
+#elif defined __GNUC__
+#   define nullptr __null
+#else
+#   include <cstddef>
+#   define nullptr NULL
+#endif
+
+
 /* Ensure isnan() is present even on systems that don't define it, or
  * when -ffast-math is being used. */
 #include <cmath>

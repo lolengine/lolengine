@@ -77,9 +77,9 @@ bool Ps3ImageData::Open(char const *path)
     in_param.ppuThreadPriority = 1000;
     in_param.spuThreadPriority = 200;
     in_param.cbCtrlMallocFunc = Ps3ImageData::Malloc;
-    in_param.cbCtrlMallocArg = NULL;
+    in_param.cbCtrlMallocArg = nullptr;
     in_param.cbCtrlFreeFunc = Ps3ImageData::Free;
-    in_param.cbCtrlFreeArg = NULL;
+    in_param.cbCtrlFreeArg = nullptr;
     CellPngDecThreadOutParam out_param;
     err = cellPngDecCreate(&hmain, &in_param, &out_param);
     if (err != CELL_OK)
@@ -95,7 +95,7 @@ bool Ps3ImageData::Open(char const *path)
     dec_src.srcSelect = CELL_PNGDEC_FILE;
     dec_src.fileOffset = 0;
     dec_src.fileSize = 0;
-    dec_src.streamPtr = NULL;
+    dec_src.streamPtr = nullptr;
     dec_src.streamSize = 0;
     dec_src.spuThreadEnable  = CELL_PNGDEC_SPU_THREAD_ENABLE;
     CellPngDecSubHandle hsub;
@@ -129,7 +129,7 @@ bool Ps3ImageData::Open(char const *path)
     }
 
     CellPngDecInParam in_dec_param;
-    in_dec_param.commandPtr = NULL;
+    in_dec_param.commandPtr = nullptr;
     in_dec_param.outputMode = CELL_PNGDEC_TOP_TO_BOTTOM;
     in_dec_param.outputColorSpace = CELL_PNGDEC_RGBA;
     in_dec_param.outputBitDepth = 8;

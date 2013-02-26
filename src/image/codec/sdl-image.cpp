@@ -78,7 +78,7 @@ bool SdlImageData::Open(char const *path)
     if (m_img->format->BytesPerPixel != 4)
     {
         SDL_Surface *tmp = Create32BppSurface(size);
-        SDL_BlitSurface(m_img, NULL, tmp, NULL);
+        SDL_BlitSurface(m_img, nullptr, tmp, nullptr);
         SDL_FreeSurface(m_img);
         m_img = tmp;
     }

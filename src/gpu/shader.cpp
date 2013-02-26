@@ -91,10 +91,10 @@ Shader *Shader::Create(char const *lolfx)
 
     /* Parse the crap */
     Array<char const *, char const *> sections;
-    char *key = NULL;
+    char *key = nullptr;
     for (char *parser = src; *parser; )
     {
-        if (key == NULL && (parser[0] == '\n' || parser[0] == '\r')
+        if (key == nullptr && (parser[0] == '\n' || parser[0] == '\r')
              && parser[1] == '[')
         {
             *parser = '\0';
@@ -109,7 +109,7 @@ Shader *Shader::Create(char const *lolfx)
         {
             sections.Push(key, parser);
             parser++;
-            key = NULL;
+            key = nullptr;
         }
         else
         {
@@ -117,7 +117,7 @@ Shader *Shader::Create(char const *lolfx)
         }
     }
 
-    char const *vert = NULL, *frag = NULL;
+    char const *vert = nullptr, *frag = nullptr;
     for (int i = 0; i < sections.Count(); i++)
     {
 #if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
@@ -177,7 +177,7 @@ Shader::Shader(char const *vert, char const *frag)
 #if defined _XBOX
         { "_XBOX", "1" },
 #endif
-        { NULL, NULL }
+        { nullptr, nullptr }
     };
 #elif !defined __CELLOS_LV2__
     char buf[4096], errbuf[4096];
@@ -193,7 +193,7 @@ Shader::Shader(char const *vert, char const *frag)
     /* Compile vertex shader */
     data->vert_crc = ShaderData::hash(vert);
 #if defined USE_D3D9 || defined _XBOX
-    hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, NULL, "main",
+    hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, nullptr, "main",
                            "vs_3_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
     if (FAILED(hr))
@@ -206,9 +206,9 @@ Shader::Shader(char const *vert, char const *frag)
                                     &data->vert_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
-    ShaderData::Patch(buf, vert, NULL);
+    ShaderData::Patch(buf, vert, nullptr);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(data->vert_id, 1, &shader, NULL);
+    glShaderSource(data->vert_id, 1, &shader, nullptr);
     glCompileShader(data->vert_id);
 
     glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
@@ -226,8 +226,8 @@ Shader::Shader(char const *vert, char const *frag)
 #else
     data->vert_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, vert,
                                     cgGLGetLatestProfile(CG_GL_VERTEX),
-                                    NULL, NULL);
-    if (data->vert_id == NULL)
+                                    nullptr, nullptr);
+    if (data->vert_id == nullptr)
     {
         Log::Error("failed to compile vertex shader");
         Log::Error("shader source:\n%s\n", vert);
@@ -237,7 +237,7 @@ Shader::Shader(char const *vert, char const *frag)
     /* Compile fragment shader */
     data->frag_crc = ShaderData::hash(frag);
 #if defined USE_D3D9 || defined _XBOX
-    hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, NULL, "main",
+    hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, nullptr, "main",
                            "ps_3_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
     if (FAILED(hr))
@@ -250,9 +250,9 @@ Shader::Shader(char const *vert, char const *frag)
                                    &data->frag_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
-    ShaderData::Patch(buf, NULL, frag);
+    ShaderData::Patch(buf, nullptr, frag);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(data->frag_id, 1, &shader, NULL);
+    glShaderSource(data->frag_id, 1, &shader, nullptr);
     glCompileShader(data->frag_id);
 
     glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
@@ -270,8 +270,8 @@ Shader::Shader(char const *vert, char const *frag)
 #else
     data->frag_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, frag,
                                     cgGLGetLatestProfile(CG_GL_FRAGMENT),
-                                    NULL, NULL);
-    if (data->frag_id == NULL)
+                                    nullptr, nullptr);
+    if (data->frag_id == nullptr)
     {
         Log::Error("failed to compile fragment shader");
         Log::Error("shader source:\n%s\n", frag);
@@ -286,7 +286,7 @@ Shader::Shader(char const *vert, char const *frag)
     {
         D3DXCONSTANT_DESC cdesc;
         UINT count = 1;
-        D3DXHANDLE h = data->frag_table->GetConstant(NULL, i);
+        D3DXHANDLE h = data->frag_table->GetConstant(nullptr, i);
         data->frag_table->GetConstantDesc(h, &cdesc, &count);
     }
     data->vert_table->GetDesc(&desc);
@@ -294,7 +294,7 @@ Shader::Shader(char const *vert, char const *frag)
     {
         D3DXCONSTANT_DESC cdesc;
         UINT count = 1;
-        D3DXHANDLE h = data->vert_table->GetConstant(NULL, i);
+        D3DXHANDLE h = data->vert_table->GetConstant(nullptr, i);
         data->frag_table->GetConstantDesc(h, &cdesc, &count);
     }
 #elif !defined __CELLOS_LV2__
@@ -351,7 +351,7 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     UINT count;
 
     count = 0;
-    hr = data->frag_table->GetConstantByName(NULL, tmpname);
+    hr = data->frag_table->GetConstantByName(nullptr, tmpname);
     if (hr)
         data->frag_table->GetConstantDesc(hr, &cdesc, &count);
     if (count)
@@ -361,7 +361,7 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     }
 
     count = 0;
-    hr = data->vert_table->GetConstantByName(NULL, tmpname);
+    hr = data->vert_table->GetConstantByName(nullptr, tmpname);
     if (hr)
         data->vert_table->GetConstantDesc(hr, &cdesc, &count);
     if (count)
@@ -675,8 +675,8 @@ void Shader::Unbind() const
 {
 #if defined USE_D3D9 || defined _XBOX
     HRESULT hr;
-    hr = g_d3ddevice->SetVertexShader(NULL);
-    hr = g_d3ddevice->SetPixelShader(NULL);
+    hr = g_d3ddevice->SetVertexShader(nullptr);
+    hr = g_d3ddevice->SetPixelShader(nullptr);
 #elif !defined __CELLOS_LV2__
     /* FIXME: untested */
     glUseProgram(0);
@@ -728,7 +728,7 @@ int ShaderData::GetVersion()
         char const *test130 =
             "#version 130\n"
             "void main() { gl_Position = vec4(0.0, 0.0, 0.0, 0.0); }";
-        glShaderSource(id, 1, &test130, NULL);
+        glShaderSource(id, 1, &test130, nullptr);
         glCompileShader(id);
         glGetShaderInfoLog(id, sizeof(buf), &len, buf);
         if (len <= 0)
@@ -740,7 +740,7 @@ int ShaderData::GetVersion()
             char const *test120 =
                 "#version 120\n"
                 "void main() { gl_Position = vec4(0.0, 0.0, 0.0, 0.0); }";
-            glShaderSource(id, 1, &test120, NULL);
+            glShaderSource(id, 1, &test120, nullptr);
             glCompileShader(id);
             glGetShaderInfoLog(id, sizeof(buf), &len, buf);
             if (len <= 0)
@@ -835,7 +835,7 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
                "vec2 in_MultiTexCoord7 = gl_MultiTexCoord7.xy;",
 #endif
 
-            NULL
+            nullptr
         };
 
         for (char const * const *rep = main_replaces; rep[0]; rep += 2)
@@ -865,7 +865,7 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
             "out vec3", "varying vec3",
             "out vec4", "varying vec4",
             "out mat4", "varying mat4",
-            NULL
+            nullptr
         };
 
         for (char const * const *rep = fast_replaces; rep[0]; rep += 2)

@@ -67,7 +67,7 @@ IndexBuffer::IndexBuffer(size_t size)
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,
                                               D3DFMT_INDEX16, D3DPOOL_MANAGED,
-                                              &m_data->m_ibo, NULL)))
+                                              &m_data->m_ibo, nullptr)))
         Abort();
 #else
     glGenBuffers(1, &m_data->m_ibo);
@@ -93,7 +93,7 @@ IndexBuffer::~IndexBuffer()
 void *IndexBuffer::Lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
-        return NULL;
+        return nullptr;
 
 #if defined USE_D3D9 || defined _XBOX
     void *ret;
@@ -142,7 +142,7 @@ void IndexBuffer::Unbind()
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->SetIndices(NULL)))
+    if (FAILED(g_d3ddevice->SetIndices(nullptr)))
         Abort();
 #else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

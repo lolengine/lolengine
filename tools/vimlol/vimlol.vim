@@ -39,6 +39,11 @@ au Syntax cpp
    \ int2 int3 int4 int2x2 int3x3 int4x4
    \ float2 float3 float4 float2x2 float3x3 float4x4
 
+" Ensure we know about nullptr
+au Syntax cpp
+   \ syn keyword cConstant
+   \ nullptr
+
 
 """
 """ LolFx language handler

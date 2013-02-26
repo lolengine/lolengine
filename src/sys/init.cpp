@@ -49,11 +49,11 @@ void Init(int argc, char *argv[],
      */
 
 #if defined HAVE_GETCWD
-    char *cwd = getcwd(NULL, 0);
+    char *cwd = getcwd(nullptr, 0);
 #elif defined HAVE__GETCWD || (defined _WIN32 && !defined _XBOX)
-    char *cwd = _getcwd(NULL, 0);
+    char *cwd = _getcwd(nullptr, 0);
 #else
-    char *cwd = NULL;
+    char *cwd = nullptr;
 #endif
     String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
     free(cwd);

@@ -19,7 +19,7 @@ namespace lol
 static inline void Abort()
 {
 #if defined __CELLOS_LV2__
-    *(uint32_t *)NULL = 0xdead;
+    *(uint32_t *)nullptr = 0xdead;
 #else
     std::abort();
 #endif

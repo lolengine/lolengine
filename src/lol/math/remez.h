@@ -74,7 +74,7 @@ public:
 
     inline void Run(T a, T b, RealFunc *func, int decimals)
     {
-        Run(a, b, func, NULL, decimals);
+        Run(a, b, func, nullptr, decimals);
     }
 
     T EvalCheby(T const &x)

@@ -45,7 +45,7 @@ Text::Text(char const *text, char const *font)
   : data(new TextData())
 {
     data->font = Forge::Register(font);
-    data->text = text ? strdup(text) : NULL;
+    data->text = text ? strdup(text) : nullptr;
     data->length = text ? strlen(text) : 0;
     data->pos = vec3(0, 0, 0);
 
@@ -56,7 +56,7 @@ void Text::SetText(char const *text)
 {
     if (data->text)
         free(data->text);
-    data->text = text ? strdup(text) : NULL;
+    data->text = text ? strdup(text) : nullptr;
     data->length = text ? strlen(text) : 0;
 }
 

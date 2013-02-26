@@ -120,7 +120,7 @@ protected:
 
     template<typename T> inline void AddStream(int n, VertexUsage usage)
     {
-        m_streams[n].stream_type = GetType((T *)NULL);
+        m_streams[n].stream_type = GetType((T *)nullptr);
         m_streams[n].usage = usage;
         m_streams[n].size = sizeof(T);
     }

@@ -91,13 +91,13 @@ bool NaClInstance::Init(uint32_t argc,
 {
     /* Ensure only one NaClInstance does Init() at the same time. */
     main_mutex.Lock();
-    char *env[] = { NULL };
+    char *env[] = { nullptr };
     Args arglist(argc, const_cast<char **>(argv), const_cast<char **>(env));
     main_queue.Push(&arglist);
-    m_main_thread = new Thread(MainRun, NULL);
+    m_main_thread = new Thread(MainRun, nullptr);
     /* Push so that only MainSignal() can unblock us */
-    main_queue.Push(NULL);
-    main_queue.Push(NULL);
+    main_queue.Push(nullptr);
+    main_queue.Push(nullptr);
     main_mutex.Unlock();
 
     // My timer callback
@@ -120,7 +120,7 @@ void * NaClInstance::MainRun(void *data)
     lol_nacl_main(arglist->m_argc, arglist->m_argv);
     lol_nacl_main(arglist->m_argc, arglist->m_argv, arglist->m_env);
 
-    return NULL;
+    return nullptr;
 }
 
 void NaClInstance::MainSignal()
@@ -145,7 +145,7 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
     m_size = ivec2(position.size().width(), position.size().height());
 
-    if (m_opengl_ctx == NULL)
+    if (m_opengl_ctx == nullptr)
         m_opengl_ctx.reset(new OpenGLContext(this));
     m_opengl_ctx->InvalidateContext(this);
     m_opengl_ctx->ResizeContext(position.size());
@@ -177,7 +177,7 @@ bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
 
 void NaClInstance::DrawSelf()
 {
-    if (m_opengl_ctx == NULL)
+    if (m_opengl_ctx == nullptr)
         return;
 
     m_opengl_ctx->MakeContextCurrent(this);

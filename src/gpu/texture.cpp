@@ -115,7 +115,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
     g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                d3d_usage, d3d_format,
-                               D3DPOOL_DEFAULT, &m_data->m_texture, NULL);
+                               D3DPOOL_DEFAULT, &m_data->m_texture, nullptr);
     m_data->m_bytes_per_elem = GET_CLAMPED(d3d_formats, format).bytes;
 #else
     static struct
@@ -196,9 +196,9 @@ void Texture::SetData(void *data)
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
 #   if defined USE_D3D9
-    m_data->m_texture->LockRect(0, &rect, NULL, D3DLOCK_DISCARD);
+    m_data->m_texture->LockRect(0, &rect, nullptr, D3DLOCK_DISCARD);
 #   else
-    m_data->m_texture->LockRect(0, &rect, NULL, 0);
+    m_data->m_texture->LockRect(0, &rect, nullptr, 0);
 #   endif
 
     memcpy(rect.pBits, data, rect.Pitch * m_data->m_size.y);
@@ -216,7 +216,7 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 {
 #if defined _XBOX || defined USE_D3D9
     D3DLOCKED_RECT rect;
-    m_data->m_texture->LockRect(0, &rect, NULL, 0);
+    m_data->m_texture->LockRect(0, &rect, nullptr, 0);
 
     int stride = size.x * m_data->m_bytes_per_elem;
     for (int j = 0; j < size.y; j++)

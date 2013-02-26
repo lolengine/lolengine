@@ -612,8 +612,8 @@ VertexBuffer::VertexBuffer(size_t size)
     if (!size)
         return;
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, NULL,
-                                               D3DPOOL_MANAGED, &m_data->m_vbo, NULL)))
+    if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,
+                                               D3DPOOL_MANAGED, &m_data->m_vbo, nullptr)))
         Abort();
 #else
     glGenBuffers(1, &m_data->m_vbo);
@@ -639,7 +639,7 @@ VertexBuffer::~VertexBuffer()
 void *VertexBuffer::Lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
-        return NULL;
+        return nullptr;
 #if defined USE_D3D9 || defined _XBOX
     void *ret;
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))

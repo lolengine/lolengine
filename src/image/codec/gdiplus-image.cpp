@@ -53,7 +53,7 @@ bool GdiPlusImageData::Open(char const *path)
     Gdiplus::Status status;
     ULONG_PTR token;
     Gdiplus::GdiplusStartupInput input;
-    status = Gdiplus::GdiplusStartup(&token, &input, NULL);
+    status = Gdiplus::GdiplusStartup(&token, &input, nullptr);
     if (status != Gdiplus::Ok)
     {
 #if !LOL_RELEASE
@@ -63,11 +63,11 @@ bool GdiPlusImageData::Open(char const *path)
     }
 
     Array<String> pathlist = System::GetPathList(path);
-    m_bitmap = NULL;
+    m_bitmap = nullptr;
     for (int i = 0; i < pathlist.Count(); ++i)
     {
         size_t len;
-        len = mbstowcs(NULL, pathlist[i].C(), 0);
+        len = mbstowcs(nullptr, pathlist[i].C(), 0);
         wchar_t *wpath = new wchar_t[len + 1];
         if (mbstowcs(wpath, pathlist[i].C(), len + 1) == (size_t)-1)
         {
@@ -92,7 +92,7 @@ bool GdiPlusImageData::Open(char const *path)
                                status, pathlist[i].C());
 #endif
                 delete m_bitmap;
-                m_bitmap = NULL;
+                m_bitmap = nullptr;
             }
         }
 

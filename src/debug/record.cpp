@@ -56,7 +56,7 @@ DebugRecord::DebugRecord(char const *path, float fps)
     data->size = ivec2(0);
     data->fps = (int)(fps + 0.5f);
 #if defined USE_PIPI
-    data->sequence = NULL;
+    data->sequence = nullptr;
 #endif
 
     m_drawgroup = DRAWGROUP_CAPTURE;

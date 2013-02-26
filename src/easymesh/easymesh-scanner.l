@@ -110,14 +110,14 @@ at    { return token::T_TRIANGLE; }
 ato   { return token::T_TORUS; }
 
 #[0-9a-fA-F]{3} {
-        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
         yylval->u32val = 0x11000000u * (tmp >> 8)
                        | 0x00110000u * ((tmp >> 4) & 0xf)
                        | 0x00001100u * (tmp & 0xf)
                        | 0x000000ffu;
         return token::COLOR; }
 #[0-9a-fA-F]{4} {
-        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
         yylval->u32val = 0x11000000u * (tmp >> 12)
                        | 0x00110000u * ((tmp >> 8) & 0xf)
                        | 0x00001100u * ((tmp >> 4) & 0xf)
@@ -125,10 +125,10 @@ ato   { return token::T_TORUS; }
         return token::COLOR; }
 #[0-9a-fA-F]{6} {
         yylval->u32val = 0xffu
-                       | 0x100u * (uint32_t)std::strtol(yytext + 1, NULL, 16);
+                       | 0x100u * (uint32_t)std::strtol(yytext + 1, nullptr, 16);
         return token::COLOR; }
 #[0-9a-fA-F]{8} {
-        yylval->u32val = (uint32_t)std::strtol(yytext + 1, NULL, 16);
+        yylval->u32val = (uint32_t)std::strtol(yytext + 1, nullptr, 16);
         return token::COLOR; }
 [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {
         yylval->fval = std::atof(yytext); return token::NUMBER; }
