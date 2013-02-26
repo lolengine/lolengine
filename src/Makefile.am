@@ -50,6 +50,9 @@ liblolcore_headers = \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
     \
+    lol/debug/debug.h \
+    lol/debug/line.h \
+    \
     lol/unit.h
 
 liblolcore_sources = \
@@ -80,7 +83,7 @@ liblolcore_sources = \
     input/stick.cpp input/stick.h \
     \
     gpu/defaultmaterial.lolfx \
-    gpu/tile.lolfx \
+    gpu/tile.lolfx gpu/line.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
     \
@@ -101,7 +104,7 @@ liblolcore_sources = \
     image/color/cie1931.cpp \
     \
     loldebug.h \
-    debug/fps.cpp debug/fps.h \
+    debug/fps.cpp debug/fps.h debug/lines.cpp \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 
 sdl_sources = \

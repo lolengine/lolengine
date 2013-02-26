@@ -592,6 +592,9 @@
     <LolFxCompile Include="gradient.lolfx">
       <Filter>...</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="gpu\line.lolfx">
+      <Filter>...</Filter>
+    </LolFxCompile>
     <LolFxCompile Include="gpu\tile.lolfx">
       <Filter>...</Filter>
     </LolFxCompile>
