@@ -51,15 +51,15 @@ void bench_trig(int mode)
         {
         case 1:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-                pf[i] = RandF(-1e5f, 1e5f);
+                pf[i] = rand(-1e5f, 1e5f);
             break;
         case 2:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-                pf[i] = RandF(-M_PI, M_PI);
+                pf[i] = rand(-M_PI, M_PI);
             break;
         case 3:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-                pf[i] = RandF(-1e-2f, 1e-2f);
+                pf[i] = rand(-1e-2f, 1e-2f);
             break;
         }
 
