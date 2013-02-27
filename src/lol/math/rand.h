@@ -94,7 +94,7 @@ template<typename T> static inline T rand()
             ret = (ret << 8) ^ std::rand();
             ret = (ret << 8) ^ std::rand();
         }
-        return static_cast<T>(ret & 0x7fffffffffffffffllu);
+        return static_cast<T>(ret & (~(uint64_t)0 >> 1));
     }
     default:
         ASSERT(false, "rand() doesn’t support types of size %d\n",
