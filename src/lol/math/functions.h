@@ -142,34 +142,47 @@ static inline float fmod(float x, float y) { return std::fmod(x, y); }
 static inline double fmod(double x, double y) { return std::fmod(x, y); }
 static inline ldouble fmod(ldouble x, ldouble y) { return std::fmod(x, y); }
 
-static inline uint8_t fract(uint8_t x) { (void)x; return 0; }
-static inline int8_t fract(int8_t x) { (void)x; return 0; }
-static inline uint16_t fract(uint16_t x) { (void)x; return 0; }
-static inline int16_t fract(int16_t x) { (void)x; return 0; }
-static inline uint32_t fract(uint32_t x) { (void)x; return 0; }
-static inline int32_t fract(int32_t x) { (void)x; return 0; }
-static inline uint64_t fract(uint64_t x) { (void)x; return 0; }
-static inline int64_t fract(int64_t x) { (void)x; return 0; }
-static inline float fract(float x) { return x - std::floor(x); }
-static inline double fract(double x) { return x - std::floor(x); }
-static inline ldouble fract(ldouble x) { return x - std::floor(x); }
+static inline uint8_t floor(uint8_t x) { return x; }
+static inline int8_t floor(int8_t x) { return x; }
+static inline uint16_t floor(uint16_t x) { return x; }
+static inline int16_t floor(int16_t x) { return x; }
+static inline uint32_t floor(uint32_t x) { return x; }
+static inline int32_t floor(int32_t x) { return x; }
+static inline uint64_t floor(uint64_t x) { return x; }
+static inline int64_t floor(int64_t x) { return x; }
+static inline float floor(float x) { return std::floor(x); }
+static inline double floor(double x) { return std::floor(x); }
+static inline ldouble floor(ldouble x) { return std::floor(x); }
 
-#define LOL_MIN_MAX_CLAMP(T) \
+static inline uint8_t ceil(uint8_t x) { return x; }
+static inline int8_t ceil(int8_t x) { return x; }
+static inline uint16_t ceil(uint16_t x) { return x; }
+static inline int16_t ceil(int16_t x) { return x; }
+static inline uint32_t ceil(uint32_t x) { return x; }
+static inline int32_t ceil(int32_t x) { return x; }
+static inline uint64_t ceil(uint64_t x) { return x; }
+static inline int64_t ceil(int64_t x) { return x; }
+static inline float ceil(float x) { return std::ceil(x); }
+static inline double ceil(double x) { return std::ceil(x); }
+static inline ldouble ceil(ldouble x) { return std::ceil(x); }
+
+#define LOL_GENERIC_FUNC(T) \
+    static inline T fract(T x) { return x - lol::floor(x); } \
     static inline T min(T x, T y) { return std::min(x, y); } \
     static inline T max(T x, T y) { return std::max(x, y); } \
     static inline T clamp(T x, T y, T z) { return min(max(x, y), z); }
-LOL_MIN_MAX_CLAMP(uint8_t)
-LOL_MIN_MAX_CLAMP(int8_t)
-LOL_MIN_MAX_CLAMP(uint16_t)
-LOL_MIN_MAX_CLAMP(int16_t)
-LOL_MIN_MAX_CLAMP(uint32_t)
-LOL_MIN_MAX_CLAMP(int32_t)
-LOL_MIN_MAX_CLAMP(uint64_t)
-LOL_MIN_MAX_CLAMP(int64_t)
-LOL_MIN_MAX_CLAMP(float)
-LOL_MIN_MAX_CLAMP(double)
-LOL_MIN_MAX_CLAMP(ldouble)
-#undef LOL_CLAMP
+LOL_GENERIC_FUNC(uint8_t)
+LOL_GENERIC_FUNC(int8_t)
+LOL_GENERIC_FUNC(uint16_t)
+LOL_GENERIC_FUNC(int16_t)
+LOL_GENERIC_FUNC(uint32_t)
+LOL_GENERIC_FUNC(int32_t)
+LOL_GENERIC_FUNC(uint64_t)
+LOL_GENERIC_FUNC(int64_t)
+LOL_GENERIC_FUNC(float)
+LOL_GENERIC_FUNC(double)
+LOL_GENERIC_FUNC(ldouble)
+#undef LOL_GENERIC_FUNC
 
 } /* namespace lol */
 
