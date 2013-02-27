@@ -21,6 +21,20 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   LIBS="$LIBS_save"
 fi
 
+if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
+  LIBS_save="$LIBS"
+  LIBS="$LIBS -Wl,-framework -Wl,OpenGLES"
+  AC_MSG_CHECKING(for -framework OpenGLES)
+  AC_TRY_LINK([], [],
+   [AC_MSG_RESULT(yes)
+    ac_cv_my_have_gl="yes"
+    GL_LIBS="${GL_LIBS} -framework OpenGLES"
+    LOL_TRY_CXXFLAGS(-ObjC++, [CXXFLAGS="${CXXFLAGS} -ObjC++"])
+    AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)],
+   [AC_MSG_RESULT(no)])
+  LIBS="$LIBS_save"
+fi
+
 dnl  Use the Raspberry Pi libraries?
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   AC_CHECK_HEADERS(bcm_host.h,
