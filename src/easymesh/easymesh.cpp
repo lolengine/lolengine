@@ -271,7 +271,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     BUILD_VFLAG_COUNT(has_color,      VertexUsage::Color,       saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoord,   VertexUsage::TexCoord,    saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoordExt,VertexUsage::TexCoordExt, saveflags, flagnb);
-    ASSERT(!vflags, "Vertex Declaration setup is not implemented for %s, feel free to do so.",
+    ASSERT(!saveflags, "Vertex Declaration setup is not implemented for %s, feel free to do so.",
            VertexUsage::GetNameList(vflags).C());
 
     if (has_position && has_normal && has_color && has_texcoord && has_texcoordExt && flagnb == 5)
@@ -398,7 +398,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
     BUILD_VFLAG(has_color,      VertexUsage::Color,       vflags);
     BUILD_VFLAG(has_texcoord,   VertexUsage::TexCoord,    vflags);
     BUILD_VFLAG_OR(has_texcoord,VertexUsage::TexCoordExt, vflags);
-    ASSERT(!vflags, "Vertex Streamsetup is not implemented for %s, feel free to do so.",
+    ASSERT(!vflags, "Vertex Stream setup is not implemented for %s, feel free to do so.",
            VertexUsage::GetNameList(vflags).C());
 
     int idx = 0;
