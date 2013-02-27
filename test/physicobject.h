@@ -157,32 +157,32 @@ public:
         {
             case 0:
             {
-                RandValue = (int)(lol::RandF() * (SphereLimit - 1));
+                RandValue = rand(SphereLimit);
                 break;
             }
             case 1:
             {
-                RandValue = SphereLimit + (int)(lol::RandF() * ((ConeLimit - SphereLimit) - 1));
+                RandValue = rand(SphereLimit, ConeLimit);
                 break;
             }
             case 2:
             {
-                RandValue = ConeLimit + (int)(lol::RandF() * ((CylLimit - ConeLimit) - 1));
+                RandValue = rand(ConeLimit, CylLimit);
                 break;
             }
             case 3:
             {
-                RandValue = CylLimit + (int)(lol::RandF() * ((CapsLimit - CylLimit) - 1));
+                RandValue = rand(CylLimit, CapsLimit);
                 break;
             }
             case 4:
             {
-                RandValue = CapsLimit + (int)(lol::RandF() * ((MeshRand.Count() - CapsLimit) - 1));
+                RandValue = rand(CapsLimit, MeshRand.Count());
                 break;
             }
             default:
             {
-                RandValue = (int)(lol::RandF() * (MeshRand.Count() - 1));
+                RandValue = rand(MeshRand.Count());
             }
         }
 

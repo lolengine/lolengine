@@ -1212,7 +1212,7 @@ void EasyMesh::RadialJitter(float r)
     for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
     {
         if(Welded[j] == -1)
-            m_vert[i].m_coord *= 1.0f + RandF(r);
+            m_vert[i].m_coord *= 1.0f + rand(r);
         else
             m_vert[i].m_coord = m_vert[Welded[j]].m_coord;
     }

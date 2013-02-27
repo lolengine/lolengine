@@ -132,7 +132,7 @@ LOLUNIT_FIXTURE(BuildTest)
     {
         double x, y;
 
-        y = x = 1.0 + RandF(0.1f, 0.2f);
+        y = x = 1.0 + rand(0.1f, 0.2f);
         y += 4503599627370496.0;
         /* The compiler should optimise this away */
         y -= 4503599627370496.0;
@@ -145,7 +145,7 @@ LOLUNIT_FIXTURE(BuildTest)
     {
         double x, y;
 
-        y = x = 1.0 + RandF(0.1f, 0.2f);
+        y = x = 1.0 + rand(0.1f, 0.2f);
         y += 4503599627370496.0;
         FP_USE(y);
         /* The compiler should not optimise this away */

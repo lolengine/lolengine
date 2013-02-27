@@ -37,11 +37,11 @@ void bench_half(int mode)
         {
         case 1:
             for (size_t i = 0; i < HALF_TABLE_SIZE + 1; i++)
-                ph[i] = half::makebits(rand());
+                ph[i] = half::makebits(rand<uint16_t>());
             break;
         case 2:
             for (size_t i = 0; i < HALF_TABLE_SIZE + 1; i++)
-                ph[i] = RandF(-2.0f, 2.0f);
+                ph[i] = rand(-2.0f, 2.0f);
             break;
         }
 

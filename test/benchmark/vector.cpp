@@ -39,7 +39,7 @@ void bench_matrix(int mode)
             for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
                 for (int j = 0; j < 4; j++)
                     for (int k = 0; k < 4; k++)
-                        pm[i][j][k] = RandF(-2.0f, 2.0f);
+                        pm[i][j][k] = rand(-2.0f, 2.0f);
             break;
         }
 
