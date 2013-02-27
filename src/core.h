@@ -91,12 +91,12 @@ static inline int isnan(float f)
 #endif
 
 // Base types
-#include <lol/base/base.h>
-#include <lol/math/math.h>
-#include <lol/sys/sys.h>
-#include <lol/image/image.h>
-#include <lol/gpu/gpu.h>
-#include <lol/debug/debug.h>
+#include <lol/base/all.h>
+#include <lol/math/all.h>
+#include <lol/sys/all.h>
+#include <lol/image/all.h>
+#include <lol/gpu/all.h>
+#include <lol/debug/all.h>
 
 #include "numeric.h"
 

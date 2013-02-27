@@ -19,7 +19,6 @@
 #include <stdint.h>
 #include <ostream>
 
-#include <lol/math/math.h>
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 

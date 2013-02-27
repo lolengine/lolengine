@@ -8,10 +8,10 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_DEBUG_DEBUG_H__
-#define __LOL_DEBUG_DEBUG_H__
+#if !defined __LOL_DEBUG_ALL_H__
+#define __LOL_DEBUG_ALL_H__
 
 #include <lol/debug/lines.h>
 
-#endif // __LOL_DEBUG_DEBUG_H__
+#endif // __LOL_DEBUG_ALL_H__
 

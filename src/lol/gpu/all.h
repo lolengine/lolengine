@@ -8,14 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_SYS_SYS_H__
-#define __LOL_SYS_SYS_H__
+#if !defined __LOL_GPU_ALL_H__
+#define __LOL_GPU_ALL_H__
 
-#include <lol/sys/thread.h>
-#include <lol/sys/atomic.h>
-#include <lol/sys/init.h>
-#include <lol/sys/file.h>
-#include <lol/sys/timer.h>
+#include <lol/gpu/shader.h>
+#include <lol/gpu/indexbuffer.h>
+#include <lol/gpu/vertexbuffer.h>
+#include <lol/gpu/texture.h>
+#include <lol/gpu/framebuffer.h>
+#include <lol/gpu/lolfx.h>
 
-#endif // __LOL_SYS_SYS_H__
+#endif // __LOL_GPU_ALL_H__
 

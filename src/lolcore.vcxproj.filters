@@ -326,7 +326,10 @@
     <ClInclude Include="lol\math\half.h">
       <Filter>lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="lol\math\math.h">
+    <ClInclude Include="lol\math\all.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\math\rand.h">
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\real.h">
@@ -521,7 +524,7 @@
     <ClInclude Include="easymesh\csgbsp.h">
       <Filter>easymesh</Filter>
     </ClInclude>
-    <ClInclude Include="lol\base\base.h">
+    <ClInclude Include="lol\base\all.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\sys\atomic.h">
@@ -539,10 +542,10 @@
     <ClInclude Include="lol\gpu\indexbuffer.h">
       <Filter>lol\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="lol\image\image.h">
+    <ClInclude Include="lol\image\all.h">
       <Filter>lol\image</Filter>
     </ClInclude>
-    <ClInclude Include="lol\gpu\gpu.h">
+    <ClInclude Include="lol\gpu\all.h">
       <Filter>lol\gpu</Filter>
     </ClInclude>
     <ClInclude Include="lol\sys\init.h">
@@ -566,7 +569,7 @@
     <ClInclude Include="lol\gpu\vertexbuffer.h">
       <Filter>lol\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="lol\sys\sys.h">
+    <ClInclude Include="lol\sys\all.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
     <ClInclude Include="lol\gpu\lolfx.h">
