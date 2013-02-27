@@ -8,16 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_BASE_BASE_H__
-#define __LOL_BASE_BASE_H__
+#if !defined __LOL_SYS_ALL_H__
+#define __LOL_SYS_ALL_H__
 
-#include <lol/base/types.h>
-#include <lol/base/log.h>
-#include <lol/base/assert.h>
-#include <lol/base/array.h>
-#include <lol/base/string.h>
-#include <lol/base/hash.h>
-#include <lol/base/map.h>
+#include <lol/sys/thread.h>
+#include <lol/sys/atomic.h>
+#include <lol/sys/init.h>
+#include <lol/sys/file.h>
+#include <lol/sys/timer.h>
 
-#endif // __LOL_BASE_BASE_H__
+#endif // __LOL_SYS_ALL_H__
 

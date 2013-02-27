@@ -47,6 +47,7 @@
     <ClCompile Include="unit\map.cpp" />
     <ClCompile Include="unit\matrix.cpp" />
     <ClCompile Include="unit\quat.cpp" />
+    <ClCompile Include="unit\rand.cpp" />
     <ClCompile Include="unit\real.cpp" />
     <ClCompile Include="unit\rotation.cpp" />
     <ClCompile Include="unit\string.cpp" />

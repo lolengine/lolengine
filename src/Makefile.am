@@ -31,26 +31,27 @@ EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
              gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
 liblolcore_headers = \
-    lol/base/base.h \
+    lol/base/all.h \
     lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
     lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
     \
-    lol/math/math.h \
+    lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
     lol/math/remez.h lol/math/math.h lol/math/geometry.h lol/math/interp.h \
+    lol/math/rand.h \
     \
-    lol/sys/sys.h \
+    lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \
     lol/sys/timer.h \
     \
-    lol/image/image.h \
+    lol/image/all.h \
     lol/image/color.h \
     \
-    lol/gpu/gpu.h \
+    lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
     \
-    lol/debug/debug.h \
+    lol/debug/all.h \
     lol/debug/line.h \
     \
     lol/unit.h
