@@ -239,6 +239,12 @@ if [ "$family" = "osx" ]; then
     # use the one in /usr/local/bin instead.
     PATH="/usr/local/bin:$PATH"
     export PATH
+    # HACK: the version of llvm-g++ shipped by Apple has an insane
+    # memory leak; use clang++ instead.
+    CC="clang"
+    export CC
+    CXX="clang++"
+    export CXX
 fi
 
 #
