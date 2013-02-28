@@ -4,7 +4,7 @@ dnl check if $CC supports a given set of cflags
 AC_DEFUN([LOL_TRY_CFLAGS],
     [AC_MSG_CHECKING([if $CC supports $1 flags])
     save_CFLAGS="$CFLAGS"
-    CFLAGS="$1"
+    CFLAGS="$1 -Werror"
     AC_TRY_COMPILE([],[],[ac_cv_try_cflags_ok=yes],[ac_cv_try_cflags_ok=no])
     CFLAGS="$save_CFLAGS"
     AC_MSG_RESULT([$ac_cv_try_cflags_ok])
@@ -20,7 +20,7 @@ AC_DEFUN([LOL_TRY_CXXFLAGS],
     [AC_MSG_CHECKING([if $CXX supports $1 flags])
     AC_LANG_PUSH(C++)
     save_CXXFLAGS="$CXXFLAGS"
-    CXXFLAGS="$1"
+    CXXFLAGS="$1 -Werror"
     AC_TRY_COMPILE([],[],[ac_cv_try_cxxflags_ok=yes],[ac_cv_try_cxxflags_ok=no])
     CXXFLAGS="$save_CXXFLAGS"
     AC_MSG_RESULT([$ac_cv_try_cxxflags_ok])
@@ -36,7 +36,7 @@ dnl check if $CC supports a given set of ldflags
 AC_DEFUN([LOL_TRY_LDFLAGS],
     [AC_MSG_CHECKING([if $CC supports $1 flags])
     save_LDFLAGS="$LDFLAGS"
-    LDFLAGS="$1"
+    LDFLAGS="$1 -Werror"
     AC_TRY_LINK([],[],[ac_cv_try_ldflags_ok=yes],[ac_cv_try_ldflags_ok=no])
     LDFLAGS="$save_LDFLAGS"
     AC_MSG_RESULT([$ac_cv_try_ldflags_ok])
