@@ -1344,14 +1344,23 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     LOL_BINARY_NONVECTOR_FUNS(tname, static, type) \
     LOL_UNARY_FUNS(tname, static, type)
 
+/* HACK: This trick fails with Apple’s clang++, which sometimes fails to deduce
+ * the arguments for simple stuff such as vec3 + vec3. Disable it for now.
+ * Note that llvm-g++ doesn’t have the problem. */
+#if defined __clang__
+#   define LOL_OPEN_NAMESPACE(x)
+#   define LOL_CLOSE_NAMESPACE(x)
+#else
+#   define LOL_OPEN_NAMESPACE(x) namespace x {
+#   define LOL_CLOSE_NAMESPACE(x) } using namespace x;
+#endif
+
 #define LOL_ALL_VECTOR_OPS_AND_FUNS(type) \
-    namespace x##type \
-    { \
+    LOL_OPEN_NAMESPACE(x##type) \
         LOL_ALL_VECTOR_OPS_INNER(Vec2, type) \
         LOL_ALL_VECTOR_OPS_INNER(Vec3, type) \
         LOL_ALL_VECTOR_OPS_INNER(Vec4, type) \
-    } \
-    using namespace x##type; \
+    LOL_CLOSE_NAMESPACE(x##type) \
     LOL_ALL_VECTOR_FUNS_INNER(Vec2, type) \
     LOL_ALL_VECTOR_FUNS_INNER(Vec3, type) \
     LOL_ALL_VECTOR_FUNS_INNER(Vec4, type) \
@@ -1410,6 +1419,9 @@ LOL_ALL_VECTOR_OPS_AND_FUNS(uint64_t)
 #undef LOL_ALL_VECTOR_OPS_INNER
 #undef LOL_ALL_VECTOR_FUNS_INNER
 #undef LOL_ALL_VECTOR_OPS_AND_FUNS
+
+#undef LOL_OPEN_NAMESPACE
+#undef LOL_CLOSE_NAMESPACE
 
 /*
  * Definition of additional functions requiring vector functions

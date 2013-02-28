@@ -93,16 +93,17 @@ AC_CHECK_FUNCS(getcwd _getcwd backtrace_symbols)
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
-  OPT="-O"
+  OPT_CXXFLAGS="-O"
 else
-  OPT="-O3 -ffast-math -fno-strength-reduce -fomit-frame-pointer"
+  OPT_CXXFLAGS="-O3 -ffast-math -fomit-frame-pointer"
+  OPT_LDFLAGS="-fno-strength-reduce"
 fi
 
 if test "${enable_release}" = "yes"; then
   AC_DEFINE(LOL_RELEASE, 1, Define to 1 to activate final release)
-  REL=""
+  REL_CXXFLAGS=""
 else
-  REL="-g"
+  REL_CXXFLAGS="-g"
 fi
 
 if test "${enable_experimental}" = "yes"; then
@@ -154,7 +155,8 @@ LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"]
 LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
 
 dnl  Optimizations
-AM_CXXFLAGS="${AM_CXXFLAGS} ${REL} ${OPT}"
+AM_CXXFLAGS="${AM_CXXFLAGS} ${REL_CXXFLAGS} ${OPT_CXXFLAGS}"
+AM_LDFLAGS="${AM_LDFLAGS} ${REL_LDFLAGS} ${OPT_LDFLAGS}"
 
 dnl  Debug symbols
 LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
@@ -235,20 +237,25 @@ AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
 
 
 dnl  Are we building using MinGW?
-LIBS_save="$LIBS"
-LIBS="$LIBS -mwindows -mwin32"
-AC_MSG_CHECKING(for -mwindows -mwin32)
-AC_TRY_LINK([], [],
- [AC_MSG_RESULT(yes)
-  AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"
-  LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"],
- [AC_MSG_RESULT(no)])
-LIBS="$LIBS_save"
+LOL_TRY_CXXFLAGS(-mwindows -mwin32,
+ [AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"
+  LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"])
 
 
 dnl  Are we on the Xbox 360?
 dnl  Answer: NO! we don't know how to build for it anyway
 AM_CONDITIONAL(USE_X360, false)
+
+
+dnl  Are we on an OS X or iOS platform?
+LOL_TRY_LDFLAGS(-framework Foundation,
+ [LOL_LIBS="${LOL_LIBS} -framework Foundation"])
+LOL_TRY_LDFLAGS(-framework CoreGraphics,
+ [LOL_LIBS="${LOL_LIBS} -framework CoreGraphics"])
+LOL_TRY_LDFLAGS(-framework CoreData,
+ [LOL_LIBS="${LOL_LIBS} -framework CoreData"])
+LOL_TRY_LDFLAGS(-framework UIKit,
+ [LOL_LIBS="${LOL_LIBS} -framework UIKit"])
 
 
 dnl Are we on a Direct3D 9 platform?
