@@ -33,14 +33,29 @@ template<typename T> static inline T rand(T a)
     return rand<T>() % a;
 }
 
-template<>
-inline half rand<half>(half a) { return a * std::rand() / RAND_MAX; }
-template<>
-inline float rand<float>(float a) { return a * std::rand() / RAND_MAX; }
-template<>
-inline double rand<double>(double a) { return a * std::rand() / RAND_MAX; }
-template<>
-inline ldouble rand<ldouble>(ldouble a) { return a * std::rand() / RAND_MAX; }
+template<> inline half rand<half>(half a)
+{
+    float f = (float)std::rand() / (float)RAND_MAX;
+    return (half)(a * f);
+}
+
+template<> inline float rand<float>(float a)
+{
+    float f = (float)std::rand() / (float)RAND_MAX;
+    return a * f;
+}
+
+template<> inline double rand<double>(double a)
+{
+    double f = (double)std::rand() / (double)RAND_MAX;
+    return a * f;
+}
+
+template<> inline ldouble rand<ldouble>(ldouble a)
+{
+    ldouble f = (ldouble)std::rand() / (ldouble)RAND_MAX;
+    return a * f;
+}
 
 /* Two-value random number generator -- no need for specialisation */
 template<typename T> static inline T rand(T a, T b)
