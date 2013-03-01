@@ -98,9 +98,6 @@ bootstrap()
 {
     cd "$top_srcdir"
     case "$platform" in
-        ios-arm)
-            # No bootstrapping needed
-            ;;
         *)
             PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
             ;;
@@ -177,7 +174,13 @@ configure()
     esac
     case "$platform" in
         ios-arm)
-            # No configuration needed
+            XCODE="/Applications/Xcode.app/Contents/Developer"
+            SDKVER="6.1"
+            DEVROOT="$XCODE/Platforms/iPhoneOS.platform/Developer"
+            SDKROOT="$DEVROOT/SDKs/iPhoneOS$SDKVER.sdk"
+            CC="$XCODE/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang"
+            CXX="$XCODE/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++"
+            ./configure --host=armv7-apple-darwin10 CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX"
             ;;
         android-arm)
             CPPFLAGS="$CPPFLAGS -Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
@@ -240,10 +243,6 @@ build()
 {
     cd "$top_srcdir"
     case "$platform" in
-        ios-arm)
-            cd monsterz/ios
-            xcodebuild -configuration Release -sdk iphonesimulator4.3
-            ;;
         *)
             make -j$LOL_PARALLEL
             ;;
@@ -287,10 +286,6 @@ clean()
 {
     cd "$top_srcdir"
     case "$platform" in
-        ios-arm)
-            cd monsterz/ios
-            xcodebuild -configuration Release -sdk iphonesimulator4.3 clean
-            ;;
         *)
             make distclean
             ;;

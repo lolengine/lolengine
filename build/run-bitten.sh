@@ -138,6 +138,16 @@ fi
 append ""
 
 #
+# iOS development kit
+#
+
+append "[ios]"
+if [ -d "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk" ]; then
+    append "version = 6.1"
+fi
+append ""
+
+#
 # Xbox development kit
 #
 
