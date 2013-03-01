@@ -123,9 +123,12 @@ LOLUNIT_FIXTURE(ColorTest)
             String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
             LOLUNIT_SET_CONTEXT(&rgb[0]);
 
+            /* Don’t check hue if saturation is zero. */
             if (r != g || g != b)
                 LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.x, v3.x, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.y, v3.y, 0.0001);
+            /* Don’t check saturation if lightness is zero. */
+            if (r || g || b)
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.y, v3.y, 0.0001);
             LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.z, v3.z, 0.0001);
 
             LOLUNIT_UNSET_CONTEXT(&rgb[0]);
