@@ -5,7 +5,9 @@
 */
 
 
+#if 0 // LOL BEGIN
 #include <signal.h>
+#endif // LOL END
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -85,7 +87,9 @@
 
 
 
+#if 0 // LOL BEGIN
 static lua_State *globalL = NULL;
+#endif // LOL END
 
 static const char *progname = LUA_PROGNAME;
 
@@ -98,11 +102,13 @@ static void lstop (lua_State *L, lua_Debug *ar) {
 }
 
 
+#if 0 // LOL BEGIN
 static void laction (int i) {
   signal(i, SIG_DFL); /* if another SIGINT happens before lstop,
                               terminate process (default action) */
   lua_sethook(globalL, lstop, LUA_MASKCALL | LUA_MASKRET | LUA_MASKCOUNT, 1);
 }
+#endif // LOL END
 
 
 static void print_usage (const char *badoption) {
@@ -174,10 +180,14 @@ static int docall (lua_State *L, int narg, int nres) {
   int base = lua_gettop(L) - narg;  /* function index */
   lua_pushcfunction(L, traceback);  /* push traceback function */
   lua_insert(L, base);  /* put it under chunk and args */
+#if 0 // LOL BEGIN
   globalL = L;  /* to be available to 'laction' */
   signal(SIGINT, laction);
+#endif // LOL END
   status = lua_pcall(L, narg, nres, base);
+#if 0 // LOL BEGIN
   signal(SIGINT, SIG_DFL);
+#endif // LOL END
   lua_remove(L, base);  /* remove traceback function */
   return status;
 }
