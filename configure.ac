@@ -299,8 +299,7 @@ ac_cv_my_have_nacl="no"
 AC_LANG_PUSH(C++)
 AC_CHECK_HEADERS(ppapi/cpp/instance.h,
  [ac_cv_my_have_nacl="yes"
-  dnl  Disable this warning, it's too verbose with vector.h
-  AM_CXXFLAGS="${AM_CXXFLAGS} -Wno-sign-compare"])
+  LOL_LIBS="${LOL_LIBS} -lnosys"])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
