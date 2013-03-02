@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+#if defined HAVE_CONFIG_H // LOL BEGIN
+#   include "config.h"
+#endif // LOL END
 
 #include <errno.h>
 #include <locale.h>
@@ -114,7 +117,11 @@ static int os_tmpname (lua_State *L) {
 
 
 static int os_getenv (lua_State *L) {
+#if HAVE_GETENV // LOL BEGIN
   lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+#else
+  lua_pushstring(L, NULL);
+#endif // LOL END
   return 1;
 }
 
