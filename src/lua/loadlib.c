@@ -8,6 +8,9 @@
 ** systems.
 */
 
+#if defined HAVE_CONFIG_H // LOL BEGIN
+#   include "config.h"
+#endif // LOL END
 
 /*
 ** if needed, includes windows header before everything else
@@ -636,9 +639,13 @@ static int noenv (lua_State *L) {
 
 static void setpath (lua_State *L, const char *fieldname, const char *envname1,
                                    const char *envname2, const char *def) {
+#if HAVE_GETENV // LOL BEGIN
   const char *path = getenv(envname1);
   if (path == NULL)  /* no environment variable? */
     path = getenv(envname2);  /* try alternative name */
+#else
+  const char *path = NULL;
+#endif // LOL END
   if (path == NULL || noenv(L))  /* no environment variable? */
     lua_pushstring(L, def);  /* use default */
   else {

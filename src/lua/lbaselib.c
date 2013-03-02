@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+#if defined HAVE_CONFIG_H // LOL BEGIN
+#   include "config.h"
+#endif // LOL END
 
 
 #include <ctype.h>
