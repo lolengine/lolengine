@@ -24,13 +24,13 @@ testsuite_SOURCES = testsuite.cpp \
     unit/color.cpp unit/atomic.cpp unit/interp.cpp unit/box.cpp \
     unit/rand.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
-testsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
+testsuite_DEPENDENCIES = @LOL_DEPS@
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
     benchmark/real.cpp
 benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
-benchsuite_DEPENDENCIES = @LOL_DEPENDENCIES@
+benchsuite_DEPENDENCIES = @LOL_DEPS@
 
 btphystest_SOURCES = \
     btphystest.cpp btphystest.h physicobject.h \
@@ -41,10 +41,10 @@ btphystest_SOURCES = \
     physics/bulletcharactercontroller.cpp physics/bulletcharactercontroller.h
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
-btphystest_DEPENDENCIES = @LOL_DEPENDENCIES@
+btphystest_DEPENDENCIES = @LOL_DEPS@
 
 meshviewer_SOURCES = meshviewer.cpp \
     shinymvtexture.lolfx shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
-meshviewer_DEPENDENCIES = @LOL_DEPENDENCIES@
+meshviewer_DEPENDENCIES = @LOL_DEPS@
 

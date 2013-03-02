@@ -176,8 +176,8 @@ LOL_TRY_CXXFLAGS(-Wmaybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wmaybe-uni
 LOL_TRY_CXXFLAGS(-Wnarrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wnarrowing"])
 LOL_TRY_CXXFLAGS(-Wunused, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wunused"])
 LOL_TRY_CXXFLAGS(-Wstrict-aliasing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-aliasing"])
-LOL_TRY_CXXFLAGS(-Wreorder, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wreorder"])
 LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
+LOL_TRY_CXXFLAGS(-Wreorder, [AM_CXXFLAGS="${AM_CXXFLAGS} -Wreorder"])
 
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
@@ -404,20 +404,21 @@ AC_SUBST(UTIL_LIBS)
 dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
-LOL_DEPENDENCIES="${LOL_DEPENDENCIES} \$(top_builddir)/src/liblolcore.a"
-LOL_DEPENDENCIES="${LOL_DEPENDENCIES} \$(top_builddir)/src/bullet/liblolbullet.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/liblolcore.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/bullet/liblolbullet.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/lua/liblollua.a"
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(top_srcdir)/src"
 AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_CONFIG_SOURCESUBDIR=\\\"\$(subdir)\\\""
 AM_CPPFLAGS="${AM_CPPFLAGS} ${LOL_CFLAGS}"
-AM_LDFLAGS="${AM_LDFLAGS} ${LOL_DEPENDENCIES}"
+AM_LDFLAGS="${AM_LDFLAGS} ${LOL_DEPS}"
 AM_LDFLAGS="${AM_LDFLAGS} ${LOL_LIBS}"
 
 dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
-AC_SUBST(LOL_DEPENDENCIES)
+AC_SUBST(LOL_DEPS)
 
 AC_SUBST(AM_CFLAGS)
 AC_SUBST(AM_CPPFLAGS)
@@ -430,6 +431,7 @@ AC_CONFIG_FILES(
  [Makefile
   src/Makefile
   src/bullet/Makefile
+  src/lua/Makefile
   src/data/Makefile
   src/data/font/Makefile
   tutorial/Makefile
