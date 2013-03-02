@@ -3,15 +3,8 @@ include $(top_srcdir)/build/autotools/common.am
 
 noinst_LIBRARIES = liblollua.a
 
-# Only remove flags that were actually set, because we don't know
-# what the compiler actually accepts.
-#disable_cflags = $(filter $(AM_CPPFLAGS:-W%=-Wno-%), \
-#    -Wno-shadow -Wno-unused -Wno-cast-qual -Wno-strict-aliasing \
-#    -Wno-reorder -Wno-maybe-uninitialized -Wno-narrowing \
-#    -Wno-parentheses)
-
 liblollua_a_SOURCES = $(lua_sources)
-liblollua_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) $(disable_cflags)
+liblollua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI
 
 lua_sources = \
     lapi.c lapi.h lauxlib.c lauxlib.h lbaselib.c lbitlib.c \

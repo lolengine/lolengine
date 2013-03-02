@@ -434,11 +434,15 @@ static int runargs (lua_State *L, char **argv, int n) {
 
 static int handle_luainit (lua_State *L) {
   const char *name = "=" LUA_INITVERSION;
+#if HAVE_GETENV // LOL BEGIN
   const char *init = getenv(name + 1);
   if (init == NULL) {
     name = "=" LUA_INIT;
     init = getenv(name + 1);  /* try alternative name */
   }
+#else
+  const char *init = NULL;
+#endif // LOL END
   if (init == NULL) return LUA_OK;
   else if (init[0] == '@')
     return dofile(L, init+1);
