@@ -32,8 +32,8 @@ class TextData
     friend class Text;
 
 private:
-    int font, align, length;
-    char *text;
+    int font, align;
+    String m_text;
     vec3 pos;
 };
 
@@ -45,8 +45,8 @@ Text::Text(char const *text, char const *font)
   : data(new TextData())
 {
     data->font = Forge::Register(font);
-    data->text = text ? strdup(text) : nullptr;
-    data->length = text ? strlen(text) : 0;
+    if (text)
+        data->m_text = text;
     data->pos = vec3(0, 0, 0);
 
     m_drawgroup = DRAWGROUP_HUD;
@@ -54,20 +54,12 @@ Text::Text(char const *text, char const *font)
 
 void Text::SetText(char const *text)
 {
-    if (data->text)
-        free(data->text);
-    data->text = text ? strdup(text) : nullptr;
-    data->length = text ? strlen(text) : 0;
+    data->m_text = text;
 }
 
 void Text::SetInt(int val)
 {
-    if (data->text)
-        free(data->text);
-    char text[128];
-    sprintf(text, "%i", val);
-    data->text = strdup(text);
-    data->length = strlen(text);
+    data->m_text = String::Printf("%i", val);
 }
 
 void Text::SetPos(vec3 pos)
@@ -90,22 +82,21 @@ void Text::TickDraw(float seconds)
 {
     Entity::TickDraw(seconds);
 
-    if (data->text)
+    int length = data->m_text.Count();
+    if (length)
     {
         Font *font = Forge::GetFont(data->font);
         vec3 delta(0.0f);
         if (data->align == ALIGN_RIGHT)
-            delta.x -= data->length * font->GetSize().x;
+            delta.x -= length * font->GetSize().x;
         else if (data->align == ALIGN_CENTER)
-            delta.x -= data->length * font->GetSize().x / 2;
-        font->Print(data->pos + delta, data->text);
+            delta.x -= length * font->GetSize().x / 2;
+        font->Print(data->pos + delta, data->m_text.C());
     }
 }
 
 Text::~Text()
 {
-    if (data->text)
-        free(data->text);
     Forge::Deregister(data->font);
     delete data;
 }

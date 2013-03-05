@@ -49,7 +49,7 @@ class TileSetData
     friend class TileSet;
 
 private:
-    char *name, *path;
+    String m_name;
     int *tiles, ntiles;
     ivec2 size, isize, count;
     vec2 scale;
@@ -66,9 +66,7 @@ private:
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
   : data(new TileSetData())
 {
-    data->name = (char *)malloc(10 + strlen(path) + 1);
-    data->path = data->name + 10;
-    sprintf(data->name, "<tileset> %s", path);
+    data->m_name = String("<tileset> ") + path;
 
     data->tiles = nullptr;
     data->m_texture = 0;
@@ -100,7 +98,6 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
 TileSet::~TileSet()
 {
     free(data->tiles);
-    free(data->name);
     delete data;
 }
 
@@ -159,7 +156,7 @@ void TileSet::TickDraw(float seconds)
 
 char const *TileSet::GetName()
 {
-    return data->name;
+    return data->m_name.C();
 }
 
 ivec2 TileSet::GetCount() const

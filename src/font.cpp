@@ -31,7 +31,7 @@ class FontData
     friend class Font;
 
 private:
-    char *name;
+    String m_name;
     TileSet *tileset;
     ivec2 size;
 };
@@ -43,8 +43,7 @@ private:
 Font::Font(char const *path)
   : data(new FontData())
 {
-    data->name = (char *)malloc(7 + strlen(path) + 1);
-    sprintf(data->name, "<font> %s", path);
+    data->m_name = String("<font> ") + path;
 
     data->tileset = Tiler::Register(path, ivec2(0), ivec2(16));
     data->size = data->tileset->GetSize(0);
@@ -55,7 +54,6 @@ Font::Font(char const *path)
 Font::~Font()
 {
     Tiler::Deregister(data->tileset);
-    free(data->name);
     delete data;
 }
 
@@ -66,7 +64,7 @@ void Font::TickDraw(float seconds)
 
 char const *Font::GetName()
 {
-    return data->name;
+    return data->m_name.C();
 }
 
 void Font::Print(vec3 pos, char const *str, vec2 scale)

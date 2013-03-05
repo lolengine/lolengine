@@ -344,14 +344,13 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     ShaderUniform ret;
 #if defined USE_D3D9 || defined _XBOX
     /* Global variables are prefixed with "$" */
-    char tmpname[128];
-    sprintf(tmpname, "$%s", uni);
+    String tmpname = String("$") + uni;
     D3DXCONSTANT_DESC cdesc;
     D3DXHANDLE hr;
     UINT count;
 
     count = 0;
-    hr = data->frag_table->GetConstantByName(nullptr, tmpname);
+    hr = data->frag_table->GetConstantByName(nullptr, tmpname.C());
     if (hr)
         data->frag_table->GetConstantDesc(hr, &cdesc, &count);
     if (count)
@@ -361,7 +360,7 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
     }
 
     count = 0;
-    hr = data->vert_table->GetConstantByName(nullptr, tmpname);
+    hr = data->vert_table->GetConstantByName(nullptr, tmpname.C());
     if (hr)
         data->vert_table->GetConstantDesc(hr, &cdesc, &count);
     if (count)

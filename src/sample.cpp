@@ -45,7 +45,7 @@ class SampleData
     friend class Sample;
 
 private:
-    char *name, *path;
+    String m_name;
 #if defined USE_SDL_MIXER
     Mix_Chunk *m_chunk;
     int m_channel;
@@ -59,9 +59,7 @@ private:
 Sample::Sample(char const *path)
   : data(new SampleData())
 {
-    data->name = (char *)malloc(9 + strlen(path) + 1);
-    data->path = data->name + 9;
-    sprintf(data->name, "<sample> %s", path);
+    data->m_name = String("<sample> ") + path;
 
 #if defined USE_SDL_MIXER
     Array<String> pathlist = System::GetPathList(path);
@@ -88,7 +86,6 @@ Sample::~Sample()
 #if defined USE_SDL_MIXER
     Mix_FreeChunk(data->m_chunk);
 #endif
-    free(data->name);
     delete data;
 }
 
@@ -99,7 +96,7 @@ void Sample::TickGame(float seconds)
 
 char const *Sample::GetName()
 {
-    return data->name;
+    return data->m_name.C();
 }
 
 void Sample::Play()
