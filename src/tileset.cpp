@@ -70,7 +70,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
 
     data->tiles = nullptr;
     data->m_texture = 0;
-    data->img = new Image(path);
+    data->img = Image::Create(path);
     data->isize = data->img->GetSize();
 
     if (count.x > 0 && count.y > 0)
@@ -108,9 +108,15 @@ void TileSet::TickDraw(float seconds)
     if (IsDestroying())
     {
         if (data->img)
-            delete data->img;
+        {
+            Image::Destroy(data->img);
+            data->img = nullptr;
+        }
         else
+        {
             delete data->m_texture;
+            data->m_texture = nullptr;
+        }
     }
     else if (data->img)
     {
@@ -149,7 +155,7 @@ void TileSet::TickDraw(float seconds)
 
         if (pixels != data->img->GetData())
             delete[] pixels;
-        delete data->img;
+        Image::Destroy(data->img);
         data->img = nullptr;
     }
 }

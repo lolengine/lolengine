@@ -53,15 +53,32 @@ static bool RegisterAllLoaders()
 }
 
 /*
- * Public Image class
+ * Static image loader
  */
 
-Image::Image(char const *path)
+Image *Image::Create(char const *path)
 {
+    /* Initialise loaders (see above) */
     static bool init = RegisterAllLoaders();
     UNUSED(init);
 
-    m_data = ImageLoader::Load(path);
+    Image *ret = new Image();
+    ret->m_data = ImageLoader::Load(path);
+    return ret;
+}
+
+void Image::Destroy(Image *img)
+{
+    delete img;
+}
+
+/*
+ * Public Image class
+ */
+
+Image::Image()
+  : m_data(nullptr)
+{
 }
 
 ivec2 Image::GetSize() const
@@ -74,7 +91,7 @@ PixelFormat Image::GetFormat() const
     return m_data->m_format;
 }
 
-uint8_t * Image::GetData() const
+uint8_t *Image::GetData() const
 {
     return m_data->GetData();
 }

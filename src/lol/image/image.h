@@ -24,14 +24,17 @@ namespace lol
 class Image
 {
 public:
-    Image(char const *path);
-    ~Image();
+    static Image *Create(char const *path);
+    static void Destroy(Image *img);
 
     ivec2 GetSize() const;
     PixelFormat GetFormat() const;
     uint8_t *GetData() const;
 
 private:
+    Image();
+    ~Image();
+
     class ImageData *m_data;
 };
 
