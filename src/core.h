@@ -94,8 +94,8 @@ static inline int isnan(float f)
 #include <lol/base/all.h>
 #include <lol/math/all.h>
 #include <lol/sys/all.h>
-#include <lol/image/all.h>
 #include <lol/gpu/all.h>
+#include <lol/image/all.h>
 #include <lol/debug/all.h>
 
 #include "numeric.h"
@@ -130,7 +130,6 @@ static inline int isnan(float f)
 #include "map.h"
 #include "layer.h"
 #include "mesh/mesh.h"
-#include "image/image.h"
 #include "application/application.h"
 #include "easymesh/csgbsp.h"
 #include "easymesh/easymesh.h"

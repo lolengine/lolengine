@@ -16,8 +16,6 @@
 #if !defined __LOL_IMAGE_PRIVATE_H__
 #define __LOL_IMAGE_PRIVATE_H__
 
-#include "image.h"
-
 namespace lol
 {
 
@@ -81,8 +79,8 @@ public:
     virtual void *GetData() const = 0;
 
 protected:
-    ivec2 size;
-    Image::format_t format;
+    ivec2 m_size;
+    PixelFormat m_format;
 };
 
 #define REGISTER_IMAGE_LOADER(name) \

@@ -115,17 +115,17 @@ void TileSet::TickDraw(float seconds)
     else if (data->img)
     {
         int planes;
-        PixelFormat format = PixelFormat::Unknown;
+        PixelFormat format = data->img->GetFormat();
 
-        switch (data->img->GetFormat())
+        switch (format)
         {
-        case Image::FORMAT_RGB:
-            format = PixelFormat::RGB_8;
+        case PixelFormat::RGB_8:
             planes = 3;
             break;
-        case Image::FORMAT_RGBA:
+        case PixelFormat::RGBA_8:
+        case PixelFormat::ARGB_8:
+        case PixelFormat::ABGR_8:
         default:
-            format = PixelFormat::ARGB_8;
             planes = 4;
             break;
         }

@@ -188,7 +188,6 @@
     <ClInclude Include="gpu\lolfx-compiler.h" />
     <ClInclude Include="gradient.h" />
     <ClInclude Include="image\image-private.h" />
-    <ClInclude Include="image\image.h" />
     <ClInclude Include="input\input.h" />
     <ClInclude Include="input\keyboard.h" />
     <ClInclude Include="input\stick.h" />
@@ -215,6 +214,7 @@
     <ClInclude Include="lol\gpu\vertexbuffer.h" />
     <ClInclude Include="lol\image\all.h" />
     <ClInclude Include="lol\image\color.h" />
+    <ClInclude Include="lol\image\image.h" />
     <ClInclude Include="lol\math\all.h" />
     <ClInclude Include="lol\math\functions.h" />
     <ClInclude Include="lol\math\geometry.h" />

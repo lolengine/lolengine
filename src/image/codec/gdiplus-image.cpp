@@ -109,10 +109,10 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
-    size = ivec2(m_bitmap->GetWidth(), m_bitmap->GetHeight());
-    format = Image::FORMAT_RGBA;
+    m_size = ivec2(m_bitmap->GetWidth(), m_bitmap->GetHeight());
+    m_format = PixelFormat::RGBA_8;
 
-    Gdiplus::Rect rect(0, 0, size.x, size.y);
+    Gdiplus::Rect rect(0, 0, m_size.x, m_size.y);
     if(m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
                           PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
     {
@@ -127,8 +127,8 @@ bool GdiPlusImageData::Open(char const *path)
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
     uint8_t *p = static_cast<uint8_t *>(m_bdata.Scan0);
-    for (int y = 0; y < size.y; y++)
-        for (int x = 0; x < size.x; x++)
+    for (int y = 0; y < m_size.y; y++)
+        for (int x = 0; x < m_size.x; x++)
         {
             uint8_t tmp = p[2];
             p[2] = p[0];
