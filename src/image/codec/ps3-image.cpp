@@ -35,7 +35,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
 private:
     static void* Malloc(uint32_t size, void* data) { return malloc(size); };
@@ -179,7 +179,7 @@ bool Ps3ImageData::Close()
     return true;
 }
 
-void * Ps3ImageData::GetData() const
+uint8_t * Ps3ImageData::GetData() const
 {
     return pixels;
 }

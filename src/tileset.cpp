@@ -133,10 +133,10 @@ void TileSet::TickDraw(float seconds)
         int w = PotUp(data->isize.x);
         int h = PotUp(data->isize.y);
 
-        uint8_t *pixels = (uint8_t *)data->img->GetData();
+        uint8_t *pixels = data->img->GetData();
         if (w != data->isize.x || h != data->isize.y)
         {
-            uint8_t *tmp = (uint8_t *)malloc(planes * w * h);
+            uint8_t *tmp = new uint8_t[planes * w * h];
             for (int line = 0; line < data->isize.y; line++)
                 memcpy(tmp + planes * w * line,
                        pixels + planes * data->isize.x * line,
@@ -148,7 +148,7 @@ void TileSet::TickDraw(float seconds)
         data->m_texture->SetData(pixels);
 
         if (pixels != data->img->GetData())
-            free(pixels);
+            delete[] pixels;
         delete data->img;
         data->img = nullptr;
     }

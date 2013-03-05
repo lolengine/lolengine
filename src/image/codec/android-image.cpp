@@ -38,7 +38,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
 private:
     jobject bmp;
@@ -130,9 +130,9 @@ bool AndroidImageData::Close()
     return true;
 }
 
-void * AndroidImageData::GetData() const
+uint8_t *AndroidImageData::GetData() const
 {
-    return pixels;
+    return (uint8_t *)pixels;
 }
 
 } /* namespace lol */

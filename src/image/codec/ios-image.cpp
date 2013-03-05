@@ -34,7 +34,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
 private:
     uint8_t *pixels;
@@ -90,7 +90,7 @@ bool IosImageData::Close()
     return true;
 }
 
-void * IosImageData::GetData() const
+uint8_t * IosImageData::GetData() const
 {
     return pixels;
 }

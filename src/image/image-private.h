@@ -76,7 +76,7 @@ public:
     virtual bool Open(char const *) = 0;
     virtual bool Close() = 0;
 
-    virtual void *GetData() const = 0;
+    virtual uint8_t *GetData() const = 0;
 
 protected:
     ivec2 m_size;

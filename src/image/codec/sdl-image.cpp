@@ -43,7 +43,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
     static SDL_Surface *Create32BppSurface(ivec2 size);
 
@@ -96,9 +96,9 @@ bool SdlImageData::Close()
     return true;
 }
 
-void * SdlImageData::GetData() const
+uint8_t * SdlImageData::GetData() const
 {
-    return m_img->pixels;
+    return (uint8_t *)m_img->pixels;
 }
 
 SDL_Surface *SdlImageData::Create32BppSurface(ivec2 size)
