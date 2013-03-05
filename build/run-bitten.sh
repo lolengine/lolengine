@@ -12,7 +12,7 @@ if [ "${conffile}" = "" ]; then
 fi
 scriptfile=""
 builddir="${tmpdir}/lol-bitten-`whoami`"
-url="http://lol.zoy.org/builds"
+url="http://lolengine.net/builds"
 
 #
 # Utility functions
