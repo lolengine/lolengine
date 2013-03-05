@@ -12,6 +12,7 @@
 #define __LOL_IMAGE_ALL_H__
 
 #include <lol/image/color.h>
+#include <lol/image/image.h>
 
 #endif // __LOL_IMAGE_ALL_H__
 

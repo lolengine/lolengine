@@ -83,24 +83,24 @@ bool AndroidImageData::Open(char const *path)
 
     /* Get image dimensions */
     mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    size.x = env->CallIntMethod(g_activity, mid, bmp);
+    m_size.x = env->CallIntMethod(g_activity, mid, bmp);
     mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    size.y = env->CallIntMethod(g_activity, mid, bmp);
+    m_size.y = env->CallIntMethod(g_activity, mid, bmp);
 
     /* Get pixels */
-    array = env->NewIntArray(size.x * size.y);
+    array = env->NewIntArray(m_size.x * m_size.y);
     env->NewGlobalRef(array);
     mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
     env->CallVoidMethod(g_activity, mid, bmp, array);
 
     pixels = env->GetIntArrayElements(array, 0);
-    for (int n = 0; n < size.x * size.y; n++)
+    for (int n = 0; n < m_size.x * m_size.y; n++)
     {
         uint32_t u = pixels[n];
         u = (u & 0xff00ff00) | ((u & 0xff0000) >> 16) | ((u & 0xff) << 16);
         pixels[n] = u;
     }
-    format = Image::FORMAT_RGBA;
+    m_format = PixelFormat::RGBA_8;
 
     return true;
 }

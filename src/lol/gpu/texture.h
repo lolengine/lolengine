@@ -26,6 +26,7 @@ struct PixelFormat
     {
         Unknown = 0,
         RGB_8,
+        RGBA_8,
         ARGB_8,
         ABGR_8,
         Y_8,

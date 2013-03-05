@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -13,15 +13,13 @@
 // ---------------
 //
 
-#if !defined __LOL_IMAGE_H__
-#define __LOL_IMAGE_H__
+#if !defined __LOL_IMAGE_IMAGE_H__
+#define __LOL_IMAGE_IMAGE_H__
 
-#include "lol/math/vector.h"
+#include <lol/math/vector.h>
 
 namespace lol
 {
-
-class ImageData;
 
 class Image
 {
@@ -29,23 +27,15 @@ public:
     Image(char const *path);
     ~Image();
 
-    typedef enum
-    {
-        FORMAT_RGBA = 0,
-        FORMAT_RGB,
-        FORMAT_UNKNOWN,
-    }
-    format_t;
-
     ivec2 GetSize() const;
-    format_t GetFormat() const;
+    PixelFormat GetFormat() const;
     void *GetData() const;
 
 private:
-    ImageData *data;
+    class ImageData *m_data;
 };
 
 } /* namespace lol */
 
-#endif // __LOL_IMAGE_H__
+#endif // __LOL_IMAGE_IMAGE_H__
 

@@ -73,17 +73,18 @@ bool SdlImageData::Open(char const *path)
         return false;
     }
 
-    size = ivec2(m_img->w, m_img->h);
+    m_size = ivec2(m_img->w, m_img->h);
 
     if (m_img->format->BytesPerPixel != 4)
     {
-        SDL_Surface *tmp = Create32BppSurface(size);
+        SDL_Surface *tmp = Create32BppSurface(m_size);
         SDL_BlitSurface(m_img, nullptr, tmp, nullptr);
         SDL_FreeSurface(m_img);
         m_img = tmp;
     }
 
-    format = m_img->format->Amask ? Image::FORMAT_RGBA : Image::FORMAT_RGB;
+    m_format = m_img->format->Amask ? PixelFormat::RGBA_8
+                                    : PixelFormat::RGB_8;
 
     return true;
 }

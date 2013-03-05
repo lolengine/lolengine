@@ -137,8 +137,8 @@ bool Ps3ImageData::Open(char const *path)
     }
 
     /* Decode image */
-    size = ivec2(info.imageWidth, info.imageHeight);
-    format = Image::FORMAT_RGBA;
+    m_size = ivec2(info.imageWidth, info.imageHeight);
+    m_format = PixelFormat::RGBA_8;
     pixels = (uint8_t *)malloc(info.imageWidth * 4 * info.imageHeight);
     CellPngDecDataCtrlParam data_ctrl_param;
     data_ctrl_param.outputBytesPerLine = info.imageWidth * 4;

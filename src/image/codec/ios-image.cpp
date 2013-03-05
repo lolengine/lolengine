@@ -64,8 +64,8 @@ bool IosImageData::Open(char const *path)
 
     int w = CGImageGetWidth(image.CGImage);
     int h = CGImageGetHeight(image.CGImage);
-    size = ivec2(w, h);
-    format = Image::FORMAT_RGBA;
+    m_size = ivec2(w, h);
+    m_format = PixelFormat::RGBA_8;
 
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
     pixels = (uint8_t *)malloc(w * h * 4);

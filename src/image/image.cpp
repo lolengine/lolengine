@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -58,28 +58,28 @@ Image::Image(char const *path)
     static bool init = RegisterAllLoaders();
     UNUSED(init);
 
-    data = ImageLoader::Load(path);
+    m_data = ImageLoader::Load(path);
 }
 
 ivec2 Image::GetSize() const
 {
-    return data->size;
+    return m_data->m_size;
 }
 
-Image::format_t Image::GetFormat() const
+PixelFormat Image::GetFormat() const
 {
-    return data->format;
+    return m_data->m_format;
 }
 
 void * Image::GetData() const
 {
-    return data->GetData();
+    return m_data->GetData();
 }
 
 Image::~Image()
 {
-    data->Close();
-    delete data;
+    m_data->Close();
+    delete m_data;
 }
 
 } /* namespace lol */
