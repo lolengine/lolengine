@@ -149,7 +149,7 @@ bool GdiPlusImageData::Close()
 
 uint8_t * GdiPlusImageData::GetData() const
 {
-    return m_bdata.Scan0;
+    return static_cast<uint8_t *>(m_bdata.Scan0);
 }
 
 } /* namespace lol */
