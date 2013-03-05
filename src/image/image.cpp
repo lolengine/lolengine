@@ -22,13 +22,16 @@ namespace lol
 
 static bool RegisterAllLoaders()
 {
-    /* We cannot make this an ImageLoader member function, because the
+    /* HACK: We cannot make this an ImageLoader member function, because the
      * REGISTER_IMAGE_LOADER macro forward-declares free functions from
      * the "lol" namespace. An apparent bug in Visual Studio's compiler
      * makes it think these functions are actually in the top-level
      * namespace when the forward declaration is in a class member function.
      * To avoid the problem, we make the forward declaration in a free
-     * function. */
+     * function.
+     * The bug was reported to Microsoft and fixed by them, but the fix
+     * is not yet available.
+     * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
 #if defined __ANDROID__
     REGISTER_IMAGE_LOADER(AndroidImageData)
 #endif
@@ -71,7 +74,7 @@ PixelFormat Image::GetFormat() const
     return m_data->m_format;
 }
 
-void * Image::GetData() const
+uint8_t * Image::GetData() const
 {
     return m_data->GetData();
 }

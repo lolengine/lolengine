@@ -29,7 +29,7 @@ public:
 
     ivec2 GetSize() const;
     PixelFormat GetFormat() const;
-    void *GetData() const;
+    uint8_t *GetData() const;
 
 private:
     class ImageData *m_data;

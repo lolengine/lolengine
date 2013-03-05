@@ -30,7 +30,7 @@ LOLUNIT_FIXTURE(ImageTest)
         LOLUNIT_ASSERT_EQUAL(size.x, 256);
         LOLUNIT_ASSERT_EQUAL(size.y, 16);
 
-        uint8_t *data = (uint8_t *)image.GetData();
+        uint8_t *data = image.GetData();
         LOLUNIT_ASSERT(data);
 
         LOLUNIT_ASSERT_EQUAL((int)data[0], 0x00);

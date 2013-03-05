@@ -30,7 +30,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
 private:
     uint8_t *pixels;
@@ -46,7 +46,7 @@ bool DummyImageData::Open(char const *path)
 
     m_size = ivec2(256);
     m_format = PixelFormat::RGBA_8;
-    pixels = (uint8_t *)malloc(256 * 256 * 4 * sizeof(*pixels));
+    pixels = new uint8_t[256 * 256 * 4 * sizeof(*pixels)];
     uint8_t *parser = pixels;
     for (int j = 0; j < 256; j++)
         for (int i = 0; i < 256; i++)
@@ -62,12 +62,12 @@ bool DummyImageData::Open(char const *path)
 
 bool DummyImageData::Close()
 {
-    free(pixels);
+    delete[] pixels;
 
     return true;
 }
 
-void * DummyImageData::GetData() const
+uint8_t * DummyImageData::GetData() const
 {
     return pixels;
 }

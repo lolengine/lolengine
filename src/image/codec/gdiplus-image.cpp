@@ -37,7 +37,7 @@ public:
     virtual bool Open(char const *);
     virtual bool Close();
 
-    virtual void *GetData() const;
+    virtual uint8_t *GetData() const;
 
 private:
     Gdiplus::Bitmap *m_bitmap;
@@ -147,7 +147,7 @@ bool GdiPlusImageData::Close()
     return true;
 }
 
-void * GdiPlusImageData::GetData() const
+uint8_t * GdiPlusImageData::GetData() const
 {
     return m_bdata.Scan0;
 }
