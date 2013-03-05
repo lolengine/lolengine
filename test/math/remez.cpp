@@ -20,7 +20,7 @@
 using lol::real;
 using lol::RemezSolver;
 
-/* See the tutorial at http://lol.zoy.org/wiki/doc/maths/remez */
+/* See the tutorial at http://lolengine.net/wiki/doc/maths/remez */
 real f(real const &x)
 {
     return exp(x);

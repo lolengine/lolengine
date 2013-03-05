@@ -114,7 +114,7 @@ static inline uint16_t float_to_half_branch(uint32_t x)
 /* We use this magic table, inspired by De Bruijn sequences, to compute a
  * branchless integer log2. The actual value fetched is 24-log2(x+1) for x
  * in 1, 3, 7, f, 1f, 3f, 7f, ff, 1fe, 1ff, 3fc, 3fd, 3fe, 3ff. See
- * http://lol.zoy.org/blog/2012/4/3/beyond-de-bruijn for an explanation
+ * http://lolengine.net/blog/2012/04/03/beyond-de-bruijn for an explanation
  * of how the value 0x5a1a1a2u was obtained. */
 static uint32_t const shifttable[16] =
 {

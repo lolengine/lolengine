@@ -2,7 +2,7 @@
 """ Experimental Lol Engine Vim plugin
 """
 """ More info here:
-""" http://lol.zoy.org/wiki/dev/setup/vim
+""" http://lolengine.net/wiki/dev/setup/vim
 """
 
 
