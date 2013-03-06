@@ -23,6 +23,8 @@ namespace lol
 
 class Image
 {
+    friend class ImageLoader;
+
 public:
     static Image *Create(char const *path);
     static void Destroy(Image *img);

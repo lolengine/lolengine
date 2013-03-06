@@ -19,17 +19,17 @@
 namespace lol
 {
 
-class ImageLoader
+class ImageCodec
 {
-    friend class Image;
+    friend class ImageLoader;
     friend class ImageData;
 
 public:
     ImageData *(*fun)(char const *path);
-    ImageLoader *next;
+    ImageCodec *next;
     int priority;
 
-    static void RegisterLoader(ImageLoader *loader)
+    static void RegisterLoader(ImageCodec *loader)
     {
         Helper(loader);
     }
@@ -37,7 +37,7 @@ public:
 private:
     static ImageData *Load(char const *path)
     {
-        ImageLoader *parser = Helper(nullptr);
+        ImageCodec *parser = Helper(nullptr);
         ImageData *ret = nullptr;
 
         while (parser && !ret)
@@ -49,14 +49,14 @@ private:
         return ret;
     }
 
-    static ImageLoader *Helper(ImageLoader *set)
+    static ImageCodec *Helper(ImageCodec *set)
     {
-        static ImageLoader *loaders = nullptr;
+        static ImageCodec *loaders = nullptr;
 
         if (!set)
             return loaders;
 
-        ImageLoader **parser = &loaders;
+        ImageCodec **parser = &loaders;
         while (*parser && (*parser)->priority > set->priority)
             parser = &(*parser)->next;
         set->next = *parser;
@@ -69,8 +69,15 @@ private:
 class ImageData
 {
     friend class Image;
+    friend class ImageLoader;
 
 public:
+    inline ImageData()
+      : m_size(0, 0),
+        m_format(PixelFormat::Unknown),
+        m_refcount(0)
+    { }
+
     virtual ~ImageData() {}
 
     virtual bool Open(char const *) = 0;
@@ -81,6 +88,7 @@ public:
 protected:
     ivec2 m_size;
     PixelFormat m_format;
+    int m_refcount;
 };
 
 #define REGISTER_IMAGE_LOADER(name) \
@@ -88,12 +96,12 @@ protected:
     Register##name();
 
 #define DECLARE_IMAGE_LOADER(name, prio) \
-    template<typename T> class name##ImageLoader : public ImageLoader \
+    template<typename T> class name##ImageCodec : public ImageCodec \
     { \
     public: \
-        name##ImageLoader() \
+        name##ImageCodec() \
         { \
-            static ImageLoader loader; \
+            static ImageCodec loader; \
             loader.fun = Load; \
             loader.priority = prio; \
             RegisterLoader(&loader); \
@@ -110,10 +118,10 @@ protected:
         } \
     }; \
     class name; \
-    name##ImageLoader<name> name##ImageLoaderInstance; \
+    name##ImageCodec<name> name##ImageCodecInstance; \
     void Register##name() \
     { \
-        (void)&name##ImageLoaderInstance; \
+        (void)&name##ImageCodecInstance; \
     } \
     class name : public ImageData
 
