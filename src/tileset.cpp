@@ -177,6 +177,11 @@ ivec2 TileSet::GetSize(int tileid) const
     return data->size;
 }
 
+vec2 TileSet::GetImageSize() const
+{
+    return vec2(data->isize);
+}
+
 vec2 TileSet::GetTileSize() const
 {
     return vec2(data->tx, data->ty);

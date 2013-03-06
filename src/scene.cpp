@@ -224,7 +224,7 @@ void Scene::Render() // XXX: rename to Blit()
         qsort(&data->m_tiles[0], data->m_tiles.Count(),
               sizeof(Tile), SceneData::Compare);
 
-        ShaderUniform uni_mat, uni_tex;
+        ShaderUniform uni_mat, uni_tex, uni_texsize;
         ShaderAttrib attr_pos, attr_tex;
         attr_pos = data->m_tile_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
         attr_tex = data->m_tile_shader->GetAttribLocation("in_TexCoord", VertexUsage::TexCoord, 0);
@@ -240,6 +240,7 @@ void Scene::Render() // XXX: rename to Blit()
 
         uni_tex = data->m_tile_shader->GetUniformLocation("in_Texture");
         data->m_tile_shader->SetUniform(uni_tex, 0);
+        uni_texsize = data->m_tile_shader->GetUniformLocation("in_TexSize");
 
         for (int buf = 0, i = 0, n; i < data->m_tiles.Count(); i = n, buf += 2)
         {
@@ -270,6 +271,8 @@ void Scene::Render() // XXX: rename to Blit()
 
             /* Bind texture */
             data->m_tiles[i].tileset->Bind();
+            data->m_tile_shader->SetUniform(uni_texsize,
+                                   data->m_tiles[i].tileset->GetImageSize());
 
             /* Bind vertex and texture coordinate buffers */
             data->m_tile_vdecl->Bind();

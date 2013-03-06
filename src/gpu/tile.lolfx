@@ -26,45 +26,12 @@ precision mediump float;
 #endif
 
 uniform sampler2D in_Texture;
+uniform vec2 in_TexSize;
 varying vec2 pass_TexCoord;
 
 void main()
 {
     vec4 col = texture2D(in_Texture, pass_TexCoord);
-//    vec4 col = vec4(0.5, 1.0, 0.0, 0.5);
-//    vec4 col = vec4(pass_TexCoord * 4.0, 0.0, 0.25);
-
-#if 0
-    float mul = 2.0;
-#   if 1
-    vec2 d1 = mod(vec2(gl_FragCoord), vec2(2.0, 2.0));
-    float t1 = mod(3.0 * d1.x + 2.0 * d1.y, 4.0);
-    float dx2 = mod(floor(gl_FragCoord.x * 0.5), 2.0);
-    float dy2 = mod(floor(gl_FragCoord.y * 0.5), 2.0);
-    float t2 = mod(3.0 * dx2 + 2.0 * dy2, 4.0);
-    float dx3 = mod(floor(gl_FragCoord.x * 0.25), 2.0);
-    float dy3 = mod(floor(gl_FragCoord.y * 0.25), 2.0);
-    float t3 = mod(3.0 * dx3 + 2.0 * dy3, 4.0);
-    t1 = (1.0 + 16.0 * t1 + 4.0 * t2 + t3) / 65.0;
-    t2 = t1;
-    t3 = t1;
-#   else
-    float rand = sin(gl_FragCoord.x * 1.23456) * 123.456
-               + cos(gl_FragCoord.y * 2.34567) * 789.012;
-    float t1 = mod(sin(rand) * 17.13043, 1.0);
-    float t2 = mod(sin(rand) * 27.13043, 1.0);
-    float t3 = mod(sin(rand) * 37.13043, 1.0);
-#   endif
-    float fracx = fract(col.x * mul);
-    float fracy = fract(col.y * mul);
-    float fracz = fract(col.z * mul);
-    fracx = fracx > t1 ? 1.0 : 0.0;
-    fracy = fracy > t2 ? 1.0 : 0.0;
-    fracz = fracz > t3 ? 1.0 : 0.0;
-    col.x = (floor(col.x * mul) + fracx) / mul;
-    col.y = (floor(col.y * mul) + fracy) / mul;
-    col.z = (floor(col.z * mul) + fracz) / mul;
-#endif
     gl_FragColor = col;
 }
 
@@ -85,46 +52,12 @@ void main(float4 in_Position : POSITION,
 [frag.hlsl]
 
 void main(float2 in_TexCoord : TEXCOORD0,
-#if 0
-          float4 in_FragCoord : WPOS,
-#endif
-          uniform sampler2D tex,
+          uniform sampler2D in_Texture,
+          uniform float2 in_TexSize,
           out float4 out_FragColor : COLOR)
 {
-    float4 col = tex2D(tex, in_TexCoord);
-#if 0
-    float mul = 2.0;
-    float t1, t2, t3;
-#   if 1
-    float dx1 = frac(in_FragCoord.x * 0.5) * 2.0;
-    float dy1 = frac(in_FragCoord.y * 0.5) * 2.0;
-    t1 = frac((3.0 * dx1 + 2.0 * dy1) / 4.0) * 4.0;
-    float dx2 = frac(floor(in_FragCoord.x * 0.5) * 0.5) * 2.0;
-    float dy2 = frac(floor(in_FragCoord.y * 0.5) * 0.5) * 2.0;
-    t2 = frac((3.0 * dx2 + 2.0 * dy2) / 4.0) * 4.0;
-    float dx3 = frac(floor(in_FragCoord.x * 0.25) * 0.5) * 2.0;
-    float dy3 = frac(floor(in_FragCoord.y * 0.25) * 0.5) * 2.0;
-    t3 = frac((3.0 * dx3 + 2.0 * dy3) / 4.0) * 4.0;
-    t1 = (1.0 + 4.0 * t1 + t2) / 17.0;
-    t2 = t1;
-    t3 = t1;
-#   else
-    float rand = sin(in_FragCoord.x * 1.23456) * 123.456
-               + cos(in_FragCoord.y * 2.34567) * 789.012;
-    t1 = frac(sin(rand) * 17.13043);
-    t2 = frac(sin(rand) * 27.13043);
-    t3 = frac(sin(rand) * 37.13043);
-#   endif
-    float fracx = frac(col.x * mul);
-    float fracy = frac(col.y * mul);
-    float fracz = frac(col.z * mul);
-    fracx = fracx > t1 ? 1.0 : 0.0;
-    fracy = fracy > t2 ? 1.0 : 0.0;
-    fracz = fracz > t3 ? 1.0 : 0.0;
-    col.x = (floor(col.x * mul) + fracx) / mul;
-    col.y = (floor(col.y * mul) + fracy) / mul;
-    col.z = (floor(col.z * mul) + fracz) / mul;
-#endif
+    float2 delta = float2(-0.5, -0.5) / in_TexSize;
+    float4 col = tex2D(in_Texture, in_TexCoord + delta);
     out_FragColor = col;
 }
 
