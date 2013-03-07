@@ -18,6 +18,8 @@
 
 #include "core.h"
 
+#include "lua/lua.hpp"
+
 namespace lol
 {
 
@@ -29,51 +31,42 @@ class WorldData
 {
     friend class World;
 
-private:
-    int width, height;
+    lua_State *m_lua_state;
 };
+
+static WorldData g_world_data;
+World g_world;
 
 /*
  * Public World class
  */
 
 World::World()
-  : data(new WorldData())
 {
-    data->width = 0;
-    data->height = 0;
-
-    m_drawgroup = DRAWGROUP_BEFORE;
+    g_world_data.m_lua_state = luaL_newstate();
+    luaL_openlibs(g_world_data.m_lua_state);
 }
 
 World::~World()
 {
-    delete data;
+    lua_close(g_world_data.m_lua_state);
 }
 
-char const *World::GetName()
+bool World::ExecLua(String const &lua)
 {
-    return "<world>";
+    Array<String> pathlist = System::GetPathList(lua);
+    for (int i = 0; i < pathlist.Count(); ++i)
+    {
+        luaL_dofile(g_world_data.m_lua_state, pathlist[i].C());
+    }
+
+    return true;
 }
 
-void World::TickGame(float seconds)
+double World::GetLuaNumber(String const &var)
 {
-    Entity::TickGame(seconds);
-}
-
-void World::TickDraw(float seconds)
-{
-    Entity::TickDraw(seconds);
-}
-
-int World::GetWidth()
-{
-    return data->width * 32;
-}
-
-int World::GetHeight()
-{
-    return data->height * 32;
+    lua_getglobal(g_world_data.m_lua_state, var.C());
+    return lua_tonumber(g_world_data.m_lua_state, -1);
 }
 
 } /* namespace lol */

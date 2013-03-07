@@ -13,6 +13,7 @@
 #endif
 
 #include "core.h"
+
 #include "lolgl.h"
 
 #if defined __CELLOS_LV2__
@@ -68,6 +69,8 @@ class ApplicationData
 Application::Application(char const *name, ivec2 resolution, float framerate)
 {
     data = new ApplicationData(name, resolution, framerate);
+
+    g_world.ExecLua("lua/init.lua");
 }
 
 bool Application::MustTick()

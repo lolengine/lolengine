@@ -16,33 +16,21 @@
 #if !defined __LOL_WORLD_H__
 #define __LOL_WORLD_H__
 
-#include "entity.h"
-
 namespace lol
 {
 
-class WorldData;
-
-class World : public Entity
+class World
 {
 public:
+    bool ExecLua(String const &lua);
+    double GetLuaNumber(String const &var);
+
+//private:
     World();
-    virtual ~World();
-
-protected:
-    /* Inherited from Entity */
-    virtual char const *GetName();
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds);
-
-public:
-    /* New methods */
-    int GetWidth();
-    int GetHeight();
-
-private:
-    WorldData *data;
+    ~World();
 };
+
+extern World g_world;
 
 } /* namespace lol */
 
