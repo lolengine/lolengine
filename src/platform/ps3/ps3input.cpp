@@ -76,23 +76,6 @@ Ps3Input::Ps3Input()
             cellPadFilterIIRInit(&m_data->filter_sos[i][j],
                                  CELL_PADFILTER_IIR_CUTOFF_2ND_LPF_BT_010);
 
-    /* Try to detect connected pads. We should do this each frame. */
-    CellPadInfo2 pad_info2;
-    ret = cellPadGetInfo2(&pad_info2);
-    if (ret == CELL_PAD_OK)
-    {
-        for (int i = 0; i < NUM_PADS; i++)
-        {
-            if (!(pad_info2.port_status[i] & CELL_PAD_STATUS_CONNECTED))
-                continue;
-
-            Stick *stick = Input::CreateStick();
-            stick->SetAxisCount(4);
-            stick->SetButtonCount(16);
-            m_data->m_joysticks.Push(i, stick);
-        }
-    }
-
     m_data->mousepos = vec2(320.0f, 240.0f);
     m_data->mousebuttons = ivec3(0, 0, 0);
 
@@ -110,6 +93,27 @@ void Ps3Input::TickGame(float seconds)
     if (ret != CELL_PAD_OK)
         return;
 
+    /* Try to detect newly connected pads. */
+    for (int i = 0; i < NUM_PADS; i++)
+    {
+        if (!(pad_info2.port_status[i] & CELL_PAD_STATUS_CONNECTED))
+            continue;
+
+        bool new_stick = true;
+        for (int j = 0; j < m_data->m_joysticks.Count(); ++j)
+            if (m_data->m_joysticks[j].m1 == i)
+                new_stick = false;
+
+        if (new_stick)
+        {
+            Stick *stick = Input::CreateStick();
+            stick->SetAxisCount(4);
+            stick->SetButtonCount(16);
+            m_data->m_joysticks.Push(i, stick);
+        }
+    }
+
+    /* Update pad status */
     for (int i = 0; i < m_data->m_joysticks.Count(); i++)
     {
         int j = m_data->m_joysticks[i].m1;
