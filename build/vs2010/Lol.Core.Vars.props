@@ -80,7 +80,8 @@
     <!-- PS3-specific -->
     <Ps3Deps>libsysmodule_stub.a;libsysutil_stub.a;libresc_stub.a;
              libpngdec_stub.a;
-             libio_stub.a;libusbd_stub.a;libpadfilter.a</Ps3Deps>
+             libio_stub.a;libusbd_stub.a;libpadfilter.a;
+             libaudio_stub.a;libspurs_stub.a;libmstreamSPURSMP3.a</Ps3Deps>
 
     <!-- X360-specific -->
     <XboxDefines>$(XboxDefines)</XboxDefines>

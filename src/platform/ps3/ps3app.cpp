@@ -18,6 +18,12 @@
 #   include <sys/paths.h> /* SYS_HOST_ROOT */
 #   include <cell/sysmodule.h>
 #   include <PSGL/psgl.h>
+
+#   include <cell/mstream.h> /* multistream */
+
+#   include <cell/spurs/control.h> /* SPURS */
+#   include <cell/spurs/task.h>
+#   include <cell/spurs/event_flag.h>
 #endif
 
 #include "core.h"
@@ -32,6 +38,9 @@ namespace lol
  * PS3 App implementation class
  */
 
+/* FIXME: this shouldn't be a global */
+static unsigned int port_num;
+
 class Ps3AppData
 {
     friend class Ps3App;
@@ -43,6 +52,27 @@ private:
         if (status == CELL_SYSUTIL_REQUEST_EXITGAME)
             Ticker::Shutdown();
     }
+
+    static void MultiStreamThread(uint64_t param)
+    {
+        Timer t;
+        cellAudioPortStart(port_num);
+        /* FIXME: quit gracefully if needed */
+        while (true)
+        {
+            if (!cellMSSystemSignalSPU())
+            {
+               t.Get();
+               t.Wait(1.f / 60.f / 32);
+            }
+
+            cellMSSystemGenerateCallbacks();
+        }
+        cellAudioPortStop(port_num);
+        sys_ppu_thread_exit(0);
+    }
+
+    CellSpurs m_spurs __attribute__((aligned (128)));
 #endif
 };
 
@@ -133,6 +163,75 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
     //psglLoadShaderLibrary("/shaders.bin");
     psglResetCurrentContext();
 
+    /* Create audio device */
+    cellSysmoduleLoadModule(CELL_SYSMODULE_IO);
+    cellSysmoduleLoadModule(CELL_SYSMODULE_AUDIO);
+    cellSysmoduleLoadModule(CELL_SYSMODULE_RESC);
+    cellSysmoduleLoadModule(CELL_SYSMODULE_SPURS);
+
+    int ret = cellMSSystemConfigureSysUtilEx(CELL_MS_AUDIOMODESELECT_SUPPORTSLPCM
+                                           | CELL_MS_AUDIOMODESELECT_SUPPORTSDOLBY
+                                           | CELL_MS_AUDIOMODESELECT_SUPPORTSDTS
+                                           | CELL_MS_AUDIOMODESELECT_PREFERDOLBY);
+    int num_chans = ret & 0xf;
+    int has_dolby = (ret & 0x10) >> 4;
+    int has_dts = (ret & 0x20) >> 5;
+
+    Log::Debug("audio channels %d, dolby %d, DTS %d\n",
+               num_chans, has_dolby, has_dts);
+    ret = cellAudioInit();
+
+    CellAudioPortParam ap;
+    memset(&ap, 0, sizeof(ap));
+    ap.nChannel = CELL_AUDIO_PORT_8CH;
+    ap.nBlock = CELL_AUDIO_BLOCK_8;
+    ret = cellAudioPortOpen(&ap, &port_num);
+    Log::Debug("audio port %d\n", port_num);
+
+    CellAudioPortConfig pc;
+    ret = cellAudioGetPortConfig(port_num, &pc);
+
+    cellMSSystemConfigureLibAudio(&ap, &pc);
+
+    CellMSSystemConfig cfg;
+    cfg.channelCount = 400; /* Maximum number of streams */
+    cfg.subCount = 31; /* ? */
+    cfg.dspPageCount = 5;
+    cfg.flags = CELL_MS_NOFLAGS;
+
+    uint8_t const prios[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+    int mem_needed = cellMSSystemGetNeededMemorySize(&cfg);
+    void *ms_mem = memalign(128, mem_needed);
+    sys_ppu_thread_t tid;
+    sys_ppu_thread_get_id(&tid);
+    int tprio;
+    sys_ppu_thread_get_priority(tid, &tprio);
+    cellSpursInitialize(&data->m_spurs, 1, 250 /* thread group priority */,
+                        tprio - 1, false);
+    cellMSSystemInitSPURS(ms_mem, &cfg, &data->m_spurs, &prios[0]);
+
+    float const bus_vols[64] =
+    {
+        1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
+        0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f,
+        0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f,
+        0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f,
+        0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
+        0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f,
+    };
+
+    sys_ppu_thread_t thread;
+    ret = sys_ppu_thread_create(&thread, Ps3AppData::MultiStreamThread,
+                                NULL, 0 /* Server prio */,
+                                0x4000 /* 16 KiB stack */,
+                                SYS_PPU_THREAD_CREATE_JOINABLE,
+                                "Audio Thread");
+
+    cellMSCoreSetVolume64(CELL_MS_SUBBUS_1, CELL_MS_DRY, bus_vols);
+    cellMSCoreSetVolume64(CELL_MS_MASTER_BUS, CELL_MS_DRY, bus_vols);
+
     /* Initialise everything */
     Ticker::Setup(fps);
     Video::Setup(newres);
@@ -165,6 +264,12 @@ Ps3App::~Ps3App()
 {
 #if defined __CELLOS_LV2__
     glFinish();
+
+    /* Unload audio modules */
+    cellSysmoduleUnloadModule(CELL_SYSMODULE_IO);
+    cellSysmoduleUnloadModule(CELL_SYSMODULE_AUDIO);
+    cellSysmoduleUnloadModule(CELL_SYSMODULE_RESC);
+    cellSysmoduleUnloadModule(CELL_SYSMODULE_SPURS);
 #endif
     delete data;
 }
