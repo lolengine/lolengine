@@ -42,22 +42,26 @@ void main(float4 in_Position : POSITION,
           uniform float4x4 proj_matrix,
           uniform float4x4 view_matrix,
           uniform float4x4 model_matrix,
+          uniform float2 in_TexSize,
           out float2 out_TexCoord : TEXCOORD0,
           out float4 out_Position : POSITION)
 {
+#if _XBOX
+    float2 delta = float2(-0.5, -0.5) / in_TexSize;
+#else
+    float2 delta = float2(0.0, 0.0);
+#endif
     out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Position)));
-    out_TexCoord = in_TexCoord;
+    out_TexCoord = in_TexCoord + delta;
 }
 
 [frag.hlsl]
 
 void main(float2 in_TexCoord : TEXCOORD0,
           uniform sampler2D in_Texture,
-          uniform float2 in_TexSize,
           out float4 out_FragColor : COLOR)
 {
-    float2 delta = float2(-0.5, -0.5) / in_TexSize;
-    float4 col = tex2D(in_Texture, in_TexCoord + delta);
+    float4 col = tex2D(in_Texture, in_TexCoord);
     out_FragColor = col;
 }
 
