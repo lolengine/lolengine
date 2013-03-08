@@ -46,6 +46,8 @@ class FileData
         return m_fd > -1;
 #elif HAVE_STDIO_H
         return !!m_fd;
+#else
+        return false;
 #endif
     }
 
@@ -65,6 +67,8 @@ class FileData
             return -1;
 
         return (int)done;
+#else
+        return 0;
 #endif
     }
 
