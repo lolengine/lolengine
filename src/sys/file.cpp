@@ -19,17 +19,6 @@
 
 #include "core.h"
 
-/* HACK: use fopen() for now so that we get FIOS. */
-#if 0//__CELLOS_LV2__
-extern "C" {
-#   include <stdio.h>
-}
-#   undef __CELLOS_LV2__
-#   define HAVE_STDIO_H 1
-#   undef BUFSIZ
-#   define BUFSIZ 1024
-#endif
-
 namespace lol
 {
 
@@ -81,19 +70,22 @@ class FileData
 
     String ReadString()
     {
+        Array<uint8_t> buf;
+        buf.Resize(BUFSIZ);
         String ret;
         while (IsValid())
         {
-	    /* XXX: BUFSIZ would overflow the stack here */
-            uint8_t buf[1024];
-            int done = Read(buf, 1024);
+            int done = Read(&buf[0], buf.Count());
 
             if (done <= 0)
                 break;
 
             int oldsize = ret.Count();
             ret.Resize(oldsize + done);
-            memcpy(&ret[oldsize], buf, done);
+            memcpy(&ret[oldsize], &buf[0], done);
+
+            /* XXX: we could resize the buffer here
+             * buf.Resize(buf.Count() * 3 / 2); */
         }
         return ret;
     }
