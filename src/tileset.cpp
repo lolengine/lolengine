@@ -179,7 +179,7 @@ ivec2 TileSet::GetSize(int tileid) const
 
 vec2 TileSet::GetImageSize() const
 {
-    return vec2(data->isize);
+    return vec2(PotUp(data->isize.x), PotUp(data->isize.y));
 }
 
 vec2 TileSet::GetTileSize() const
@@ -224,6 +224,14 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
         tx += dtx;
         dtx = -dtx;
     }
+
+#if 1
+    /* HACK: tweak UV values */
+    tx += (1.f / 128.f) * dtx;
+    ty += (1.f / 128.f) * dty;
+    dtx *= 126.f / 128.f;
+    dty *= 126.f / 128.f;
+#endif
 
     if (!data->img && data->m_texture)
     {
