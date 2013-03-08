@@ -84,8 +84,7 @@ class FileData
             ret.Resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
-            /* XXX: we could resize the buffer here
-             * buf.Resize(buf.Count() * 3 / 2); */
+            buf.Resize(buf.Count() * 3 / 2);
         }
         return ret;
     }
