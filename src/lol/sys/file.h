@@ -43,8 +43,11 @@ public:
     ~File();
 
     void Open(String const &file, FileAccess mode);
-    String ReadString();
+    bool IsValid() const;
     void Close();
+
+    int Read(uint8_t *buf, int count);
+    String ReadString();
 
 private:
     class FileData *m_data;

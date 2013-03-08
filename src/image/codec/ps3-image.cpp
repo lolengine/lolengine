@@ -14,6 +14,7 @@
 
 #if defined __CELLOS_LV2__
 
+#include <sys/paths.h>
 #include <cell/sysmodule.h>
 #include <cell/codec/pngdec.h>
 
@@ -98,7 +99,7 @@ bool Ps3ImageData::Open(char const *path)
     Array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
-        String name = String("/app_home/") + pathlist[i];
+        String name = String(SYS_APP_HOME) + '/' + pathlist[i];
         dec_src.fileName = name.C();
         err = cellPngDecOpen(hmain, &hsub, &dec_src, &open_info);
         if (err == CELL_OK)
