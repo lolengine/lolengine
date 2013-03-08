@@ -25,16 +25,18 @@ static inline void Abort()
 #endif
 }
 
+extern void DumpStack();
+
 /* FIXME: see http://stackoverflow.com/q/3596781/111461 for discussions
  * on implementing __debugbreak() on POSIX systems. */
-static inline void DebugBreak()
+static inline void DebugAbort()
 {
+    DumpStack();
 #if defined _WIN32
     __debugbreak();
 #endif
+    Abort();
 }
-
-extern void DumpStack();
 
 #define LOL_CALL(macro, args) macro args
 #define LOL_EVAL(a) a
@@ -117,9 +119,7 @@ extern void DumpStack();
             LOL_CALL(LOL_CAT(LOL_ERROR_, LOL_CALL(LOL_COUNT_TO_3, \
                                                   (__VA_ARGS__))), \
                      (__VA_ARGS__)); \
-            DumpStack(); \
-            DebugBreak(); \
-            Abort(); \
+            DebugAbort(); \
         }
 #endif
 

@@ -12,7 +12,23 @@
 #   include "config.h"
 #endif
 
+#if __CELLOS_LV2__
+#   include <sys/paths.h>
+#   include <cell/cell_fs.h>
+#endif
+
 #include "core.h"
+
+/* HACK: use fopen() for now so that we get FIOS. */
+#if 0//__CELLOS_LV2__
+extern "C" {
+#   include <stdio.h>
+}
+#   undef __CELLOS_LV2__
+#   define HAVE_STDIO_H 1
+#   undef BUFSIZ
+#   define BUFSIZ 1024
+#endif
 
 namespace lol
 {
@@ -24,35 +40,69 @@ class FileData
     void Open(String const &file, FileAccess mode)
     {
 #if __CELLOS_LV2__
+        String realfile = String(SYS_APP_HOME) + '/' + file;
+        CellFsErrno err = cellFsOpen(realfile.C(), CELL_FS_O_RDONLY,
+                                     &m_fd, NULL, 0);
+        if (err != CELL_FS_SUCCEEDED)
+            m_fd = -1;
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
         m_fd = fopen(file.C(), "r");
 #endif
     }
 
+    inline bool IsValid() const
+    {
+#if __CELLOS_LV2__
+        return m_fd > -1;
+#elif HAVE_STDIO_H
+        return !!m_fd;
+#endif
+    }
+
+    int Read(uint8_t *buf, int count)
+    {
+#if __CELLOS_LV2__
+        uint64_t done;
+        CellFsErrno err = cellFsRead(m_fd, buf, count, &done);
+
+        if (err != CELL_FS_SUCCEEDED)
+            return -1;
+
+        return (int)done;
+#elif HAVE_STDIO_H
+        size_t done = fread(buf, 1, count, m_fd);
+        if (done <= 0)
+            return -1;
+
+        return (int)done;
+#endif
+    }
+
     String ReadString()
     {
         String ret;
-#if __CELLOS_LV2__
-#elif HAVE_STDIO_H
-        while (m_fd && !feof(m_fd))
+        while (IsValid())
         {
-            char buf[BUFSIZ];
-            size_t count = fread(buf, 1, BUFSIZ, m_fd);
-            if (count <= 0)
+	    /* XXX: BUFSIZ would overflow the stack here */
+            uint8_t buf[1024];
+            int done = Read(buf, 1024);
+
+            if (done <= 0)
                 break;
 
             int oldsize = ret.Count();
-            ret.Resize(oldsize + count);
-            memcpy(&ret[oldsize], buf, count);
+            ret.Resize(oldsize + done);
+            memcpy(&ret[oldsize], buf, done);
         }
-#endif
         return ret;
     }
 
     void Close()
     {
 #if __CELLOS_LV2__
+        if (m_fd >= 0)
+            cellFsClose(m_fd);
 #elif HAVE_STDIO_H
         if (m_fd)
             fclose(m_fd);
@@ -61,6 +111,7 @@ class FileData
     }
 
 #if __CELLOS_LV2__
+    int m_fd;
 #elif HAVE_STDIO_H
     FILE *m_fd;
 #endif
@@ -84,6 +135,7 @@ File &File::operator =(File const &that)
     if (this == &that)
         return *this;
 
+    /* FIXME: this needs auditing */
     int refcount = --m_data->m_refcount;
     if (refcount == 0)
     {
@@ -110,6 +162,16 @@ File::~File()
 void File::Open(String const &file, FileAccess mode)
 {
     return m_data->Open(file, mode);
+}
+
+bool File::IsValid() const
+{
+    return m_data->IsValid();
+}
+
+int File::Read(uint8_t *buf, int count)
+{
+    return m_data->Read(buf, count);
 }
 
 String File::ReadString()

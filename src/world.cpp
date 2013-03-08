@@ -31,6 +31,12 @@ class WorldData
 {
     friend class World;
 
+    static int LuaPanic(lua_State* L)
+    {
+        DebugAbort();
+        return 0;
+    }
+
     lua_State *m_lua_state;
 };
 
@@ -44,6 +50,7 @@ World g_world;
 World::World()
 {
     g_world_data.m_lua_state = luaL_newstate();
+    lua_atpanic(g_world_data.m_lua_state, WorldData::LuaPanic);
     luaL_openlibs(g_world_data.m_lua_state);
 }
 
@@ -55,18 +62,32 @@ World::~World()
 bool World::ExecLua(String const &lua)
 {
     Array<String> pathlist = System::GetPathList(lua);
+    File f;
     for (int i = 0; i < pathlist.Count(); ++i)
     {
-        luaL_dofile(g_world_data.m_lua_state, pathlist[i].C());
+        f.Open(pathlist[i], FileAccess::Read);
+        if (f.IsValid())
+        {
+            String s = f.ReadString();
+            f.Close();
+
+            luaL_dostring(g_world_data.m_lua_state, s.C());
+            Log::Debug("loaded Lua file %s\n", pathlist[i].C());
+            return true;
+        }
     }
 
-    return true;
+    Log::Error("could not find Lua file %s\n", lua.C());
+    return false;
 }
 
 double World::GetLuaNumber(String const &var)
 {
+    double ret;
     lua_getglobal(g_world_data.m_lua_state, var.C());
-    return lua_tonumber(g_world_data.m_lua_state, -1);
+    ret = lua_tonumber(g_world_data.m_lua_state, -1);
+    lua_pop(g_world_data.m_lua_state, 1);
+    return ret;
 }
 
 } /* namespace lol */
