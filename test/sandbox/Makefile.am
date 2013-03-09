@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-noinst_PROGRAMS = sample
+bin_PROGRAMS = sample
 
 sample_SOURCES = sample.cpp
 sample_CPPFLAGS = $(AM_CPPFLAGS)

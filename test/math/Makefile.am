@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-EXTRA_DIST = NEWS.txt lolremez.sln remez.vcxproj remez.vcxproj.filters
+EXTRA_DIST += NEWS.txt lolremez.sln remez.vcxproj remez.vcxproj.filters
 
 noinst_PROGRAMS = pi poly remez
 
