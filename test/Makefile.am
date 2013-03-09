@@ -6,8 +6,6 @@ SUBDIRS = math sandbox xolotl
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-EXTRA_DIST = data/gradient.png
-
 noinst_PROGRAMS = benchsuite $(testsuite) btphystest meshviewer
 
 TESTS = $(testsuite)
@@ -25,6 +23,7 @@ testsuite_SOURCES = testsuite.cpp \
     unit/rand.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
 testsuite_DEPENDENCIES = @LOL_DEPS@
+noinst_DATA = data/gradient.png
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \

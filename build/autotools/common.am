@@ -5,6 +5,7 @@
 
 CLEANFILES =
 SUFFIXES =
+EXTRA_DIST =
 
 
 #
@@ -103,6 +104,10 @@ CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.exe) \
 #
 # Additional rules
 #
+
+EXTRA_DIST += $(foreach p, $(noinst_PROGRAMS), $($(p)_DATA))
+EXTRA_DIST += $(foreach p, $(bin_PROGRAMS), $($(p)_DATA))
+
 
 .PHONY: bench lolcheck generated
 

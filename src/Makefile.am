@@ -27,8 +27,8 @@ liblolcore_a_SOURCES = \
     $(android_sources)
 liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 
-EXTRA_DIST = easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
-             gpu/lolfx-scanner.l gpu/lolfx-parser.y
+EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
+              gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
 liblolcore_headers = \
     lol/base/all.h \
@@ -37,8 +37,7 @@ liblolcore_headers = \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
-    lol/math/remez.h lol/math/math.h lol/math/geometry.h lol/math/interp.h \
-    lol/math/rand.h \
+    lol/math/remez.h lol/math/geometry.h lol/math/interp.h lol/math/rand.h \
     \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \
@@ -52,7 +51,7 @@ liblolcore_headers = \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
     \
     lol/debug/all.h \
-    lol/debug/line.h \
+    lol/debug/lines.h \
     \
     lol/unit.h
 
