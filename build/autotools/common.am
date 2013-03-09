@@ -102,11 +102,42 @@ CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.exe) \
 
 
 #
+# Android rules
+#
+
+all-local: all-local-android
+clean-local: clean-local-android
+if USE_ANDROID
+all-local-android: $(foreach p, $(PROGRAMS:%$(EXEEXT)=%), $($(p)_DATA))
+	$(foreach p, $(PROGRAMS:%$(EXEEXT)=%), \
+	    rm -rf "android-$(p)"; \
+	    $(MKDIR_P) "android-$(p)" $(sort $(foreach f, $($(p)_DATA), "android-$(p)/assets/$(dir $(f))")); \
+	    $(foreach f, $($(p)_DATA), $(LN_S) "$(abs_srcdir)/$(f)" "android-$(p)/assets/$(f)";) \
+	    $(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/AndroidManifest.xml" > "android-$(p)/AndroidManifest.xml"; \
+	    $(MKDIR_P) "android-$(p)/src/net/lolengine"; \
+	    $(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/LolActivity.java" > "android-$(p)/src/net/lolengine/LolActivity.java"; \
+	    $(MKDIR_P) "android-$(p)/res/values"; \
+	    $(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/strings.xml" > "android-$(p)/res/values/strings.xml"; \
+	    $(MKDIR_P) "android-$(p)/res/drawable"; \
+	    cp "$(top_srcdir)/build/android/icon.png" "android-$(p)/res/drawable/"; \
+	    $(MKDIR_P) "android-$(p)/libs/armeabi"; \
+	    $(LN_S) "$(abs_builddir)/$(p).so" "android-$(p)/libs/armeabi/lib$(p).so"; \
+	    $(LN_S) "$${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so" "android-$(p)/libs/armeabi"; \
+	    android update project -t android-8 -p "android-$(p)"; \
+	    ant debug -f "android-$(p)/build.xml"; \
+	)
+else
+all-local-android:
+endif
+clean-local-android:
+	$(foreach p, $(PROGRAMS:%$(EXEEXT)=%), rm -rf "android-$(p)";)
+
+
+#
 # Additional rules
 #
 
-EXTRA_DIST += $(foreach p, $(noinst_PROGRAMS), $($(p)_DATA))
-EXTRA_DIST += $(foreach p, $(bin_PROGRAMS), $($(p)_DATA))
+EXTRA_DIST += $(foreach p, $(PROGRAMS), $($(p)_DATA))
 
 
 .PHONY: bench lolcheck generated

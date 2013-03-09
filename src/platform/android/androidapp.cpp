@@ -95,7 +95,7 @@ JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
+Java_net_lolengine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 {
     Log::Info("Java layer initialising activity 0x%08lx", (long)thiz);
     env->NewGlobalRef(thiz); /* FIXME: never released! */
@@ -103,7 +103,7 @@ Java_org_zoy_LolEngine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
+Java_net_lolengine_LolRenderer_nativeInit(JNIEnv* env)
 {
     /* Initialise app thread and wait for it to be ready, ie. set
      * the FPS value at least. */
@@ -120,7 +120,7 @@ Java_org_zoy_LolEngine_LolRenderer_nativeInit(JNIEnv* env)
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
+Java_net_lolengine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
                                                 jint w, jint h)
 {
     Log::Info("Java layer resizing to %i x %i", w, h);
@@ -128,32 +128,32 @@ Java_org_zoy_LolEngine_LolRenderer_nativeResize(JNIEnv* env, jobject thiz,
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolRenderer_nativeDone(JNIEnv* env)
+Java_net_lolengine_LolRenderer_nativeDone(JNIEnv* env)
 {
     /* FIXME: clean up */
     delete g_main_thread;
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolView_nativePause(JNIEnv* env)
+Java_net_lolengine_LolView_nativePause(JNIEnv* env)
 {
     /* TODO: unimplemented */
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolView_nativeDown(JNIEnv* env)
+Java_net_lolengine_LolView_nativeDown(JNIEnv* env)
 {
     Input::SetMouseButton(0);
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolView_nativeUp(JNIEnv* env)
+Java_net_lolengine_LolView_nativeUp(JNIEnv* env)
 {
     Input::UnsetMouseButton(0);
 }
 
 extern "C" void
-Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
+Java_net_lolengine_LolView_nativeMove(JNIEnv* env, jobject thiz,
                                           jint x, jint y)
 {
     Input::SetMousePos(ivec2(x, y));
@@ -161,7 +161,7 @@ Java_org_zoy_LolEngine_LolView_nativeMove(JNIEnv* env, jobject thiz,
 
 /* Call to render the next GL frame */
 extern "C" void
-Java_org_zoy_LolEngine_LolRenderer_nativeRender(JNIEnv* env)
+Java_net_lolengine_LolRenderer_nativeRender(JNIEnv* env)
 {
     Ticker::TickDraw();
 }
