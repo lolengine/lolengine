@@ -11,6 +11,10 @@
 #include <locale.h>
 #include <string.h>
 
+#if defined __ANDROID__ // LOL BEGIN
+#   define getlocaledecpoint() '.'
+#endif // LOL END
+
 #define llex_c
 #define LUA_CORE
 
