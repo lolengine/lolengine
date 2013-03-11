@@ -312,7 +312,7 @@ dnl  Use Android? FIXME: super hacks!
 ac_cv_my_have_android="no"
 AC_CHECK_LIB(log, __android_log_vprint,
  [ac_cv_my_have_android="yes"
-  LOL_LIBS="${LOL_LIBS} -llog -module"])
+  LOL_LIBS="${LOL_LIBS} -llog -landroid -module -lEGL -lGLESv2"])
 AM_CONDITIONAL(USE_ANDROID, test "${ac_cv_my_have_android}" != "no")
 
 

@@ -32,8 +32,6 @@ public:
     void ShowPointer(bool show);
     void Tick();
 
-    static void *MainRun(void *data);
-
 private:
     AndroidAppData *m_data;
 };
