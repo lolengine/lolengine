@@ -116,17 +116,17 @@ all-local-android: $(foreach p, $(PROGRAMS:%$(EXEEXT)=%), .$(p).androidstamp)
 	rm -rf "$(d)"
 	$(MKDIR_P) "$(d)" $(sort $(foreach f, $($(p)_DATA), "$(d)/assets/$(dir $(f))"))
 	$(foreach f, $($(p)_DATA), $(LN_S) "$(abs_srcdir)/$(f)" "$(d)/assets/$(f)" &&) true
-	$(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/AndroidManifest.xml" > "$(d)/AndroidManifest.xml"
+	$(SED) -e 's,@PROGRAM@,$(subst -,_,$(p)),' "$(top_srcdir)/build/android/AndroidManifest.xml" > "$(d)/AndroidManifest.xml"
 	$(MKDIR_P) "$(d)/src/net/lolengine"
-	$(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/LolActivity.java" > "$(d)/src/net/lolengine/LolActivity.java"
+	$(SED) -e 's,@PROGRAM@,$(subst -,_,$(p)),' "$(top_srcdir)/build/android/LolActivity.java" > "$(d)/src/net/lolengine/LolActivity.java"
 	$(MKDIR_P) "$(d)/res/values"
-	$(SED) -e 's,@PROGRAM@,$(p),' "$(top_srcdir)/build/android/strings.xml" > "$(d)/res/values/strings.xml"
+	$(SED) -e 's,@PROGRAM@,$(subst -,_,$(p)),' "$(top_srcdir)/build/android/strings.xml" > "$(d)/res/values/strings.xml"
 	$(MKDIR_P) "$(d)/res/drawable"
 	cp "$(top_srcdir)/build/android/icon.png" "$(d)/res/drawable/"
 	$(MKDIR_P) "$(d)/libs/armeabi"
 	$(LN_S) "$(abs_builddir)/$(p)$(EXEEXT)" "$(d)/libs/armeabi/lib$(p).so"
 	$(LN_S) "$${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so" "$(d)/libs/armeabi"
-	android update project -t android-8 -p "$(d)"
+	android update project -t android-9 -n "$(p)" -p "$(d)"
 	ant debug -f "$(d)/build.xml"
 	touch $@
 else

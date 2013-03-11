@@ -183,10 +183,10 @@ configure()
             ./configure --host=armv7-apple-darwin10 CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX"
             ;;
         android-arm)
-            CPPFLAGS="$CPPFLAGS -Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
+            CPPFLAGS="$CPPFLAGS -Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -I$ANDROID_NDK_ROOT/sources/android/native_app_glue -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
             CFLAGS="$CFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb"
             CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb -fno-rtti -fno-exceptions"
-            LOL_LIBS="$LOL_LIBS -L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared"
+            LOL_LIBS="$LOL_LIBS -L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared -u ANativeActivity_onCreate"
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure --host=arm-linux-androideabi ac_cv_exeext=.so CPPFLAGS="$CPPFLAGS" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" LOL_LIBS="$LOL_LIBS"
             # FIXME: is this needed?
             # ant debug
