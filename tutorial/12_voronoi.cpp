@@ -26,12 +26,12 @@ LOLFX_RESOURCE_DECLARE(12_texture_to_screen);
 
 enum FboType
 {
-    src_voronoi,
-    voronoi,
-    distance_voronoi,
-    distance,
+    SrcVoronoiFbo,
+    VoronoiFbo,
+    DistanceVoronoiFbo,
+    DistanceFbo,
 
-    MAX
+    MaxFboType
 };
 
 class Voronoi : public WorldEntity
@@ -89,11 +89,11 @@ public:
             m_screen_coord = m_screen_shader->GetAttribLocation("in_position", VertexUsage::Position, 0);
             m_screen_texture = m_screen_shader->GetUniformLocation("in_texture");
 
-            for (int i = 0; i < FboType::MAX; ++i)
+            for (int i = 0; i < MaxFboType; ++i)
             {
                 m_fbos.Push(new FrameBuffer(Video::GetSize()), 0, Array<ShaderUniform>(), Array<ShaderAttrib>() );
 
-                if (i == src_voronoi)
+                if (i == SrcVoronoiFbo)
                 {
                     m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_setup));
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_texture");
@@ -101,7 +101,7 @@ public:
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_screen_res");
                     m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation("in_position", VertexUsage::Position, 0);
                 }
-                else if (i == voronoi)
+                else if (i == VoronoiFbo)
                 {
                     m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi));
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_texture");
@@ -109,11 +109,11 @@ public:
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_screen_res");
                     m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation("in_position", VertexUsage::Position, 0);
                 }
-                else if (i == distance_voronoi)
+                else if (i == DistanceVoronoiFbo)
                 {
                     m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_distance));
                 }
-                else if (i == FboType::distance)
+                else if (i == DistanceFbo)
                 {
                     m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_distance));
                 }
@@ -149,7 +149,7 @@ public:
             //voronoi_points.Push(vec3(128.f, 400.f, .0f), vec2( 128.f));
             //voronoi_points.Push(vec3(400.f,  24.f, .0f), vec2(-128.f));
 
-            m_cur_fbo = voronoi;
+            m_cur_fbo = VoronoiFbo;
         }
 
         {
@@ -160,9 +160,9 @@ public:
                 voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                         vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
             else if (Input::WasReleased(Key::F1))
-                m_cur_fbo = src_voronoi;
+                m_cur_fbo = SrcVoronoiFbo;
             else if (Input::WasReleased(Key::F2))
-                m_cur_fbo = voronoi;
+                m_cur_fbo = VoronoiFbo;
         }
 
 
@@ -191,7 +191,7 @@ public:
                 voronoi_points[j].m1.z = ((float)j + 1) / ((float)voronoi_points.Count());
             }
 
-            int f = src_voronoi;
+            int f = SrcVoronoiFbo;
 
             m_fbos[f].m1->Bind();
             Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
@@ -241,7 +241,7 @@ public:
 
         //FRAME BUFFER DRAW
         m_timer -= seconds;
-        if (m_timer < .0f && m_cur_fbo != src_voronoi)
+        if (m_timer < .0f && m_cur_fbo != SrcVoronoiFbo)
         {
             //m_timer = 1.0f;
             m_fbos[m_cur_fbo].m1->Bind();
@@ -264,7 +264,7 @@ public:
                     shader = m_fbos[m_cur_fbo].m2;
 
                 if (curres.x == 256)
-                    src_buf = m_fbos[src_voronoi].m1;
+                    src_buf = m_fbos[SrcVoronoiFbo].m1;
                 else if (buf)
                     src_buf = m_fbos[m_cur_fbo].m1;
                 else
@@ -296,7 +296,7 @@ public:
                 int i = 0;
                 if (curres == ivec2(0))
                     m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTexture(), 0);
-                else if (m_cur_fbo == voronoi)
+                else if (m_cur_fbo == VoronoiFbo)
                 {
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], src_buf->GetTexture(), 0); //"in_texture"
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], ((float)curres.x) / 512.f); //"in_step"
