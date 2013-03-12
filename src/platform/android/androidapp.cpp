@@ -70,25 +70,39 @@ struct SavedState
 class lol::AndroidAppData
 {
 public:
+    int CreateDisplay();
+    void DestroyDisplay();
+    void DrawFrame();
+
+    static void StaticHandleCommand(android_app* native_app, int32_t cmd)
+    {
+        return ((AndroidAppData*)native_app->userData)->HandleCommand(cmd);
+    }
+
+    static int32_t StaticHandleInput(android_app* native_app, AInputEvent* ev)
+    {
+        return ((AndroidAppData*)native_app->userData)->HandleInput(ev);
+    }
+
     android_app* m_native_app;
 
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-
     SavedState m_state;
+
+private:
+    void HandleCommand(int32_t cmd);
+    int32_t HandleInput(AInputEvent* event);
+
+    EGLDisplay m_display;
+    EGLSurface m_surface;
+    EGLContext m_context;
 };
 
 /**
  * Initialize an EGL context for the current display.
  */
-static int engine_init_display(struct AndroidAppData* engine)
+int lol::AndroidAppData::CreateDisplay()
 {
-    /*
-     * Here specify the attributes of the desired configuration.
-     * Below, we select an EGLConfig with at least 8 bits per color
-     * component compatible with on-screen windows
-     */
+    /* FIXME: there is a lot of code common to eglapp.cpp here. */
     const EGLint attribs[] =
     {
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -104,39 +118,33 @@ static int engine_init_display(struct AndroidAppData* engine)
     EGLint w, h, dummy, format;
     EGLint numConfigs;
     EGLConfig config;
-    EGLSurface surface;
-    EGLContext context;
 
-    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    eglInitialize(display, 0, 0);
-    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
-    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+    eglInitialize(m_display, 0, 0);
+    eglChooseConfig(m_display, attribs, &config, 1, &numConfigs);
+    eglGetConfigAttrib(m_display, config, EGL_NATIVE_VISUAL_ID, &format);
 
-    ANativeWindow_setBuffersGeometry(engine->m_native_app->window,
+    ANativeWindow_setBuffersGeometry(m_native_app->window,
                                      0, 0, format);
-    surface = eglCreateWindowSurface(display, config,
-                                     engine->m_native_app->window, nullptr);
+    m_surface = eglCreateWindowSurface(m_display, config,
+                                       m_native_app->window, nullptr);
 
     EGLint ctxattr[] =
     {
         EGL_CONTEXT_CLIENT_VERSION, 2,
         EGL_NONE
     };
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctxattr);
+    m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, ctxattr);
 
-    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
+    if (eglMakeCurrent(m_display, m_surface, m_surface, m_context) == EGL_FALSE)
     {
         Log::Error("unable to eglMakeCurrent");
         return -1;
     }
 
-    eglQuerySurface(display, surface, EGL_WIDTH, &w);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-
-    engine->display = display;
-    engine->context = context;
-    engine->surface = surface;
+    eglQuerySurface(m_display, m_surface, EGL_WIDTH, &w);
+    eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &h);
 
     /* Launch our ticker */
     Log::Info("Java layer initialising renderer at %g fps", 60.0f);
@@ -146,45 +154,44 @@ static int engine_init_display(struct AndroidAppData* engine)
     return 0;
 }
 
-static void engine_draw_frame(AndroidAppData* engine)
+void lol::AndroidAppData::DrawFrame()
 {
-    if (!engine->display)
+    if (!m_display)
         return;
 
     Ticker::TickDraw();
 
-    eglSwapBuffers(engine->display, engine->surface);
+    eglSwapBuffers(m_display, m_surface);
 }
 
 /**
  * Tear down the EGL context currently associated with the display.
  */
-static void engine_term_display(AndroidAppData* engine)
+void lol::AndroidAppData::DestroyDisplay()
 {
-    if (engine->display != EGL_NO_DISPLAY)
+    if (m_display != EGL_NO_DISPLAY)
     {
-        eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (engine->context != EGL_NO_CONTEXT)
+        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (m_context != EGL_NO_CONTEXT)
         {
-            eglDestroyContext(engine->display, engine->context);
+            eglDestroyContext(m_display, m_context);
         }
-        if (engine->surface != EGL_NO_SURFACE)
+        if (m_surface != EGL_NO_SURFACE)
         {
-            eglDestroySurface(engine->display, engine->surface);
+            eglDestroySurface(m_display, m_surface);
         }
-        eglTerminate(engine->display);
+        eglTerminate(m_display);
     }
-    engine->display = EGL_NO_DISPLAY;
-    engine->context = EGL_NO_CONTEXT;
-    engine->surface = EGL_NO_SURFACE;
+    m_display = EGL_NO_DISPLAY;
+    m_context = EGL_NO_CONTEXT;
+    m_surface = EGL_NO_SURFACE;
 }
 
 /**
  * Process the next input event.
  */
-static int32_t engine_handle_input(android_app* native_app, AInputEvent* event)
+int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
 {
-    AndroidAppData* engine = (AndroidAppData*)native_app->userData;
     switch (AInputEvent_getType(event))
     {
     case AINPUT_EVENT_TYPE_MOTION:
@@ -207,34 +214,33 @@ static int32_t engine_handle_input(android_app* native_app, AInputEvent* event)
 /**
  * Process the next main command.
  */
-static void engine_handle_cmd(android_app* native_app, int32_t cmd)
+void lol::AndroidAppData::HandleCommand(int32_t cmd)
 {
-    AndroidAppData* engine = (AndroidAppData*)native_app->userData;
     switch (cmd)
     {
         case APP_CMD_SAVE_STATE:
             /* The system has asked us to save our current state. Do so. */
-            engine->m_native_app->savedState = malloc(sizeof(SavedState));
-            *((SavedState*)engine->m_native_app->savedState) = engine->m_state;
-            engine->m_native_app->savedStateSize = sizeof(SavedState);
+            m_native_app->savedState = malloc(sizeof(SavedState));
+            *((SavedState*)m_native_app->savedState) = m_state;
+            m_native_app->savedStateSize = sizeof(SavedState);
             break;
         case APP_CMD_INIT_WINDOW:
             /* The window is being shown, get it ready. */
-            if (engine->m_native_app->window != nullptr)
+            if (m_native_app->window != nullptr)
             {
-                engine_init_display(engine);
-                engine_draw_frame(engine);
+                CreateDisplay();
+                DrawFrame();
             }
             break;
         case APP_CMD_TERM_WINDOW:
             /* The window is being hidden or closed, clean it up. */
-            engine_term_display(engine);
+            DestroyDisplay();
             break;
         case APP_CMD_GAINED_FOCUS:
             break;
         case APP_CMD_LOST_FOCUS:
             /* FIXME: stop animating */
-            engine_draw_frame(engine);
+            DrawFrame();
             break;
     }
 }
@@ -245,14 +251,14 @@ AndroidAppData *g_data;
 void android_main(android_app* native_app)
 {
     g_data = new AndroidAppData();
+    g_data->m_native_app = native_app;
 
     /* Make sure glue isn't stripped */
     app_dummy();
 
     native_app->userData = g_data;
-    native_app->onAppCmd = engine_handle_cmd;
-    native_app->onInputEvent = engine_handle_input;
-    g_data->m_native_app = native_app;
+    native_app->onAppCmd = lol::AndroidAppData::StaticHandleCommand;
+    native_app->onInputEvent = lol::AndroidAppData::StaticHandleInput;
 
     if (native_app->savedState != nullptr)
     {
@@ -282,7 +288,7 @@ void lol::AndroidApp::ShowPointer(bool show)
 
 lol::AndroidApp::~AndroidApp()
 {
-    engine_term_display(m_data);
+    m_data->DestroyDisplay();
     delete m_data;
 }
 
@@ -307,7 +313,7 @@ void lol::AndroidApp::Tick()
             Ticker::Shutdown();
     }
 
-    engine_draw_frame(m_data);
+    m_data->DrawFrame();
 }
 
 /*
