@@ -48,15 +48,21 @@ void Init(int argc, char *argv[],
      * Retrieve binary directory, defaulting to current dir.
      */
 
-#if defined HAVE_GETCWD
+#if __ANDROID__
+    /* Android assets are accessed using no prefix at all. */
+    String binarydir = "";
+#elif defined HAVE_GETCWD
     char *cwd = getcwd(nullptr, 0);
-#elif defined HAVE__GETCWD || (defined _WIN32 && !defined _XBOX)
-    char *cwd = _getcwd(nullptr, 0);
-#else
-    char *cwd = nullptr;
-#endif
     String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
     free(cwd);
+#elif defined HAVE__GETCWD || (defined _WIN32 && !defined _XBOX)
+    char *cwd = _getcwd(nullptr, 0);
+    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
+    free(cwd);
+#else
+    String binarydir = "./";
+#endif
+
     if (argc > 0)
     {
         char const *last_sep = strrchr(argv[0], SEPARATOR);
@@ -99,7 +105,7 @@ void Init(int argc, char *argv[],
     if (!got_rootdir)
     {
         String rootdir = binarydir;
-        if (rootdir.Last() != SEPARATOR)
+        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
             rootdir += SEPARATOR;
         for (int i = 1; i < sourcesubdir.Count(); ++i)
         {
@@ -117,9 +123,9 @@ void Init(int argc, char *argv[],
         got_rootdir = true;
     }
 
-    Log::Debug("binary dir: %s\n", binarydir.C());
+    Log::Debug("binary dir: “%s”\n", binarydir.C());
     for (int i = 0; i < data_dir.Count(); ++i)
-        Log::Debug("data dir %d/%d: %s\n", i + 1, data_dir.Count(),
+        Log::Debug("data dir %d/%d: “%s”\n", i + 1, data_dir.Count(),
                    data_dir[i].C());
 }
 
