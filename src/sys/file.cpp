@@ -15,12 +15,18 @@
 #if __CELLOS_LV2__
 #   include <sys/paths.h>
 #   include <cell/cell_fs.h>
+#elif __ANDROID__
+#   include <android/asset_manager_jni.h>
 #endif
 
 #include "core.h"
 
 namespace lol
 {
+
+#if __ANDROID__
+extern AAssetManager *g_assets;
+#endif
 
 class FileData
 {
@@ -34,6 +40,8 @@ class FileData
                                      &m_fd, NULL, 0);
         if (err != CELL_FS_SUCCEEDED)
             m_fd = -1;
+#elif __ANDROID__
+        m_asset = AAssetManager_open(g_assets, file.C(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
         m_fd = fopen(file.C(), "r");
@@ -44,6 +52,8 @@ class FileData
     {
 #if __CELLOS_LV2__
         return m_fd > -1;
+#elif __ANDROID__
+        return !!m_asset;
 #elif HAVE_STDIO_H
         return !!m_fd;
 #else
@@ -61,6 +71,8 @@ class FileData
             return -1;
 
         return (int)done;
+#elif __ANDROID__
+        return AAsset_read(m_asset, buf, count);
 #elif HAVE_STDIO_H
         size_t done = fread(buf, 1, count, m_fd);
         if (done <= 0)
@@ -98,6 +110,11 @@ class FileData
 #if __CELLOS_LV2__
         if (m_fd >= 0)
             cellFsClose(m_fd);
+        m_fd = -1;
+#elif __ANDROID__
+        if (m_asset)
+            AAsset_close(m_asset);
+        m_asset = nullptr;
 #elif HAVE_STDIO_H
         if (m_fd)
             fclose(m_fd);
@@ -107,6 +124,8 @@ class FileData
 
 #if __CELLOS_LV2__
     int m_fd;
+#elif __ANDROID__
+    AAsset *m_asset;
 #elif HAVE_STDIO_H
     FILE *m_fd;
 #endif

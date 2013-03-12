@@ -10,7 +10,8 @@
 
 package net.lolengine;
 
-import android.app.NativeActivity;
+import android.app.NativeActivity; /* NativeActivity */
+import android.os.Bundle; /* Bundle */
 
 import android.content.res.AssetManager; /* getAssets() */
 import android.graphics.Bitmap;
@@ -26,12 +27,19 @@ public class LolActivity extends NativeActivity
         System.loadLibrary("@PROGRAM@");
     }
 
-    public LolActivity()
+    @Override
+    protected void onCreate(Bundle saved_instance)
     {
-        nativeInit();
+        super.onCreate(saved_instance);
+
+        m_assets = getAssets();
+
+        nativeInit(m_assets);
     }
 
-    private native void nativeInit();
+    private native void nativeInit(AssetManager assets);
+
+    private AssetManager m_assets;
 
     /*
      * Bitmap loading helpers
@@ -41,7 +49,7 @@ public class LolActivity extends NativeActivity
     {
         try
         {
-            return BitmapFactory.decodeStream(getAssets().open(name));
+            return BitmapFactory.decodeStream(m_assets.open(name));
         }
         catch (Exception e) { }
         return null;

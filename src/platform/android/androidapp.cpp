@@ -15,6 +15,7 @@
 #if defined __ANDROID__
 
 #include <jni.h>
+#include <android/asset_manager_jni.h>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
@@ -33,6 +34,7 @@ namespace lol
 {
 JavaVM *g_vm;
 jobject g_activity;
+AAssetManager *g_assets;
 }; /* namespace lol */
 
 extern "C" jint
@@ -44,11 +46,14 @@ JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 extern "C" void
-Java_net_lolengine_LolActivity_nativeInit(JNIEnv* env, jobject thiz)
+Java_net_lolengine_LolActivity_nativeInit(JNIEnv* env, jobject thiz,
+                                          jobject assets)
 {
     Log::Info("Java layer initialising activity 0x%08lx", (long)thiz);
     env->NewGlobalRef(thiz); /* FIXME: never released! */
     g_activity = thiz;
+    env->NewGlobalRef(assets); /* FIXME: never released! */
+    g_assets = AAssetManager_fromJava(env, assets);
 }
 
 /* One of these wrappers will be overridden by the user's version */
