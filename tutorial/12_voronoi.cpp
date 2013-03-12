@@ -12,6 +12,19 @@
 #   include "config.h"
 #endif
 
+#if defined _XBOX
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#elif defined _WIN32
+#   define _USE_MATH_DEFINES /* for M_PI */
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
+
 #include "core.h"
 #include "loldebug.h"
 
@@ -48,6 +61,7 @@ public:
         m_ready = false;
         m_cur_fbo = 0;
         m_timer = -1.0f;
+        mode = 0;
     }
 
     virtual void TickGame(float seconds)
@@ -136,19 +150,6 @@ public:
             /* FIXME: this object never cleans up */
 
             //SRC SETUP
-            int i = 4;
-            while (i-- > 0)
-            {
-                voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                                    vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
-            }
-            
-            //voronoi_points.Push(vec3(511.f, 511.f, .0f), vec2(-128.f));
-            //voronoi_points.Push(vec3(256.f, 256.f, .0f), vec2( 128.f));
-            //voronoi_points.Push(vec3(128.f, 128.f, .0f), vec2(-128.f));
-            //voronoi_points.Push(vec3(128.f, 400.f, .0f), vec2( 128.f));
-            //voronoi_points.Push(vec3(400.f,  24.f, .0f), vec2(-128.f));
-
             m_cur_fbo = VoronoiFbo;
         }
 
@@ -163,8 +164,37 @@ public:
                 m_cur_fbo = SrcVoronoiFbo;
             else if (Input::WasReleased(Key::F2))
                 m_cur_fbo = VoronoiFbo;
+            else if (Input::WasReleased(Key::F3))
+            {
+                voronoi_points.Empty();
+                if (mode == 0)
+                {
+                    int i = 4;
+                    while (i-- > 0)
+                        voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                                            vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
+                    mode = 1;
+                }
+                else
+                {
+                    mode = 0;
+                }
+            }
         }
 
+        if (mode == 0)
+        {
+            voronoi_points.Empty();
+            int maxi = 6;
+            for (int i = 0; i < maxi; ++i)
+            {
+                voronoi_points.Push(vec3(256.f) + 196.f * vec3((float)lol::cos(m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 128.f * vec3((float)lol::cos(-m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(-m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 64.f *  vec3((float)lol::cos(m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 32.f *  vec3((float)lol::cos(-m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(-m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
+            }
+            voronoi_points.Push(vec3(256.f), vec2(.0f));
+        }
 
         temp_buffer->Bind();
         Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
@@ -347,6 +377,7 @@ private:
     Array<FrameBuffer *, Shader *, Array<ShaderUniform>, Array<ShaderAttrib> > m_fbos;
     FrameBuffer *temp_buffer;
 
+    int mode;
     int m_cur_fbo;
     double m_time;
     vec3 m_hotspot, m_color;
