@@ -2,7 +2,8 @@
 include $(top_srcdir)/build/autotools/common.am
 
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
-                  08_fbo 11_fractal
+                  08_fbo 11_fractal \
+                  12_fractal
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
 01_triangle_CPPFLAGS = $(AM_CPPFLAGS)
@@ -31,4 +32,10 @@ noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
 11_fractal_SOURCES = 11_fractal.cpp 11_fractal.lolfx
 11_fractal_CPPFLAGS = $(AM_CPPFLAGS)
 11_fractal_DEPENDENCIES = @LOL_DEPS@
+
+12_voronoi_SOURCES = 12_voronoi.cpp 12_voronoi.lolfx \
+                     12_voronoi_distance.lolfx 12_voronoi_setup.lolfx \
+                     12_texture_to_screen.lolfx 12_distance.lolfx
+12_voronoi_CPPFLAGS = $(AM_CPPFLAGS)
+12_voronoi_DEPENDENCIES = @LOL_DEPS@
 
