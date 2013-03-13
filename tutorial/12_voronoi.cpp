@@ -1,7 +1,8 @@
 //
 // Lol Engine - Framebuffer Object tutorial
 //
-// Copyright: (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2013-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2013-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -47,6 +48,7 @@ public:
         m_vertices << vec2(-1.0,  1.0);
         m_ready = false;
         m_cur_fbo = 0;
+        m_time = .0f;
         m_timer = -1.0f;
         mode = 0;
     }
@@ -159,7 +161,9 @@ public:
                     int i = 4;
                     while (i-- > 0)
                         voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                                            vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
+                                            vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
+                                            //vec2(0.f)
+                                            );
                     mode = 1;
                 }
                 else
