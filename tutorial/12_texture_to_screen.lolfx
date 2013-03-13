@@ -23,6 +23,13 @@ precision highp float;
 uniform sampler2D in_texture;
 varying vec2 pass_position;
 
+vec3 rand_color(float t)
+{
+    return vec3(0.5 + 0.5 * sin(t * 19.0 + 17.0),
+                0.5 + 0.5 * sin(t * 24.0 + 23.0),
+                0.5 + 0.5 * sin(t * 37.0 + 12.0));
+}
+
 void main(void)
 {
     vec2 texcoords = pass_position * 0.5 + vec2(0.5, 0.5);
@@ -31,7 +38,7 @@ void main(void)
     float newb = 0.0;
     if (newg > 0.0)
         newb = 1.0;
-    gl_FragColor = vec4(0.0, newg, 0.0, 1.0);
+    gl_FragColor = vec4(rand_color(newg), 1.0);
 }
 
 [vert.hlsl]
@@ -45,6 +52,13 @@ void main(float2 in_Position : POSITION,
 }
 
 [frag.hlsl]
+
+float3 rand_color(float t)
+{
+    return float3(0.5 + 0.5 * sin(t * 9.0 + 3.0),
+                  0.5 + 0.5 * sin(t * 4.0 + 1.0),
+                  0.5 + 0.5 * sin(t * 7.0 + 2.0));
+}
 
 void main(in float2 pass_Position : TEXCOORD0,
           uniform sampler2D in_Texture,
