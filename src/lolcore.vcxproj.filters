@@ -530,6 +530,12 @@
     <ClInclude Include="lol\sys\atomic.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\constants.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\math\functions.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\functions.h">
       <Filter>lol\math</Filter>
     </ClInclude>

@@ -11,6 +11,7 @@
 #if !defined __LOL_MATH_ALL_H__
 #define __LOL_MATH_ALL_H__
 
+#include <lol/math/constants.h>
 #include <lol/math/functions.h>
 #include <lol/math/half.h>
 #include <lol/math/real.h>

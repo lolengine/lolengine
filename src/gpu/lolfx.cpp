@@ -17,19 +17,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#endif
-
 #include "core.h"
 #include "gpu/lolfx-compiler.h"
 

@@ -12,15 +12,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#endif
-
 #include <cstdio>
 
 #if defined HAVE_FASTMATH_H
@@ -55,7 +46,7 @@ void bench_trig(int mode)
             break;
         case 2:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-                pf[i] = rand(-M_PI, M_PI);
+                pf[i] = rand(-F_PI, F_PI);
             break;
         case 3:
             for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)

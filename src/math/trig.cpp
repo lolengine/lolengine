@@ -23,8 +23,6 @@ using namespace std;
 namespace lol
 {
 
-static const double PI     = 3.14159265358979323846264;
-static const double NEG_PI = -3.14159265358979323846264;
 static const double PI_2   = 1.57079632679489661923132;
 static const double PI_4   = 0.785398163397448309615661;
 static const double INV_PI = 0.318309886183790671537768;
@@ -255,7 +253,7 @@ double lol_sin(double x)
      * cycles required. If odd, we'll need to change the sign of the
      * result. */
 #if defined __CELLOS_LV2__
-    double sign = lol_fsel(x, PI, NEG_PI);
+    double sign = lol_fsel(x, D_PI, -D_PI);
     double num_cycles = lol_round(absx);
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
     sign = lol_fsel(is_even, sign, -sign);
@@ -291,7 +289,7 @@ double lol_sin(double x)
 #endif
 
 #if !defined __CELLOS_LV2__
-    sign *= (x >= 0.0) ? PI : NEG_PI;
+    sign *= (x >= 0.0) ? D_PI : -D_PI;
 #endif
 
     /* Compute a Tailor series for sin() and combine sign information. */
@@ -352,7 +350,7 @@ double lol_cos(double x)
         double sub2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
         double taylor = sub2 * x2 + sub1;
 
-        return x1 * taylor * sign * PI;
+        return x1 * taylor * sign * D_PI;
     }
 #endif
 
@@ -401,7 +399,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
     double num_cycles = lol_round(absx);
     double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
 
-    double sin_sign = lol_fsel(x, PI, NEG_PI);
+    double sin_sign = lol_fsel(x, D_PI, -D_PI);
     sin_sign = lol_fsel(is_even, sin_sign, -sin_sign);
     double cos_sign = lol_fsel(is_even, ONE, NEG_ONE);
 #else
@@ -436,14 +434,14 @@ void lol_sincos(double x, double *sinx, double *cosx)
         double subc1 = ((SC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
         double subc2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
         double taylorc = subc2 * x2 + subc1;
-        *cosx = x1 * taylorc * cos_sign * PI;
+        *cosx = x1 * taylorc * cos_sign * D_PI;
 
         return;
     }
 #endif
 
 #if !defined __CELLOS_LV2__
-    sin_sign *= (x >= 0.0) ? PI : NEG_PI;
+    sin_sign *= (x >= 0.0) ? D_PI : -D_PI;
 #endif
 
     double x2 = absx * absx;
