@@ -9,21 +9,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#else
-#   include <cmath>
-#endif
-
 #include "core.h"
 #include "loldebug.h"
 
@@ -277,8 +262,8 @@ void BtPhysTest::TickGame(float seconds)
         Ticker::Shutdown();
 
     m_loop_value += seconds;
-    if (m_loop_value > M_PI * 2.0f)
-        m_loop_value -= M_PI * 2.0f;
+    if (m_loop_value > F_PI * 2.0f)
+        m_loop_value -= F_PI * 2.0f;
 
     vec3 GroundBarycenter = vec3(.0f);
     vec3 PhysObjBarycenter = vec3(.0f);

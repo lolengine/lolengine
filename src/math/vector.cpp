@@ -12,19 +12,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#endif
-
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
 
@@ -348,7 +335,7 @@ template<> mat4 mat4::translate(vec3 v)
 
 template<> mat2 mat2::rotate(float degrees)
 {
-    degrees *= (M_PI / 180.0f);
+    degrees *= (F_PI / 180.0f);
 
     float st = sin(degrees);
     float ct = cos(degrees);
@@ -366,7 +353,7 @@ template<> mat2 mat2::rotate(float degrees)
 
 template<> mat3 mat3::rotate(float degrees, float x, float y, float z)
 {
-    degrees *= (M_PI / 180.0f);
+    degrees *= (F_PI / 180.0f);
 
     float st = sin(degrees);
     float ct = cos(degrees);
@@ -485,7 +472,7 @@ template<> quat::Quat(mat4 const &m)
 
 template<> quat quat::rotate(float degrees, vec3 const &v)
 {
-    degrees *= (M_PI / 360.0f);
+    degrees *= (F_PI / 360.0f);
 
     vec3 tmp = normalize(v) * sin(degrees);
 
@@ -531,14 +518,14 @@ template<> vec3 vec3::toeuler(quat const &q)
              atan2(2.f * (q.w * q.z + q.y * q.x),
                    1.f - 2.f * (q.z * q.z + q.y * q.y)));
 
-    return (float)(180.0f / M_PI / n) * ret;
+    return (180.0f / F_PI / n) * ret;
 }
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     mat3 ret;
 
-    vec3 radians = (float)(M_PI / 180.0f) * v;
+    vec3 radians = (F_PI / 180.0f) * v;
     float s0 = sin(radians[0]), c0 = cos(radians[0]);
     float s1 = sin(radians[1]), c1 = cos(radians[1]);
     float s2 = sin(radians[2]), c2 = cos(radians[2]);
@@ -604,7 +591,7 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    vec3 half_angles = (float)(M_PI / 360.0f) * v;
+    vec3 half_angles = (F_PI / 360.0f) * v;
     float s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
     float s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
@@ -754,7 +741,7 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
 template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
-    fov_y *= (M_PI / 180.0f);
+    fov_y *= (F_PI / 180.0f);
 
     float t2 = tanf(fov_y * 0.5f);
     float t1 = t2 * width / height;

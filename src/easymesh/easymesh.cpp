@@ -19,19 +19,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#endif
-
 #include "core.h"
 #include "easymesh/easymesh-compiler.h"
 
@@ -1460,7 +1447,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / (float)M_PI),
+    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / F_PI),
                             vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {
@@ -1508,10 +1495,10 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                 //keep normalized until the end of the UV calculations
                 p[k] = normalize(p[k]);
 
-                uv[k].x = (lol::atan2(p[k].z, p[k].x) + (float)M_PI) / ((float)M_PI * 2.f);
+                uv[k].x = (lol::atan2(p[k].z, p[k].x) + F_PI) / (F_PI * 2.f);
                 if (abs(p[k].y) >= 1.0f)
                     uv[k].x = -1.f;
-                uv[k].y = lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) / (float)M_PI + 0.5f;
+                uv[k].y = lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) / F_PI + 0.5f;
                 if (h)
                 {
                     if (uv[k].y > .5f)
@@ -1602,13 +1589,13 @@ void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
             int j2 = (j + dj) % njdiv;
 
             //Location on the donut
-            float x = 0.5f * (r2 - r1) * (float)lol::cos(2.0 * M_PI * i2 / nidiv) + 0.5f * (r1 + r2);
-            float y = 0.5f * (r2 - r1) * (float)lol::sin(2.0 * M_PI * i2 / nidiv);
+            float x = 0.5f * (r2 - r1) * (float)lol::cos(2.f * F_PI * i2 / nidiv) + 0.5f * (r1 + r2);
+            float y = 0.5f * (r2 - r1) * (float)lol::sin(2.f * F_PI * i2 / nidiv);
             float z = 0.0f;
 
             //Center circle
-            float ca = (float)lol::cos(2.0 * M_PI * j2 / njdiv);
-            float sa = (float)lol::sin(2.0 * M_PI * j2 / njdiv);
+            float ca = (float)lol::cos(2.f * F_PI * j2 / njdiv);
+            float sa = (float)lol::sin(2.f * F_PI * j2 / njdiv);
 
             //Actual location
             float x2 = x * ca - z * sa;
@@ -2382,8 +2369,8 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
 
                         //Calculate new master vertex
                         float n = (float)connected_vert.Count();
-                        //b(n) = 5/4 - pow(3 + 2 * cos(2 * M_PI / n), 2) / 32
-                        float beta = 3.f + 2.f * cos(2.f * (float)M_PI / n);
+                        //b(n) = 5/4 - pow(3 + 2 * cos(2.f * F_PI / n), 2) / 32
+                        float beta = 3.f + 2.f * cos(2.f * F_PI / n);
                         beta = 5.f / 4.f - beta * beta / 32.f;
                         //a(n) = n * (1 - b(n)) / b(n)
                         float alpha = (n * (1 - beta)) / beta;

@@ -26,8 +26,6 @@ namespace lol
 
 float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
 {
-    float const pi = 3.141592653589793f;
-
     float C1 = length(lab1.yz);
     float C2 = length(lab2.yz);
     float C_ = 0.5f * (C1 + C2);
@@ -48,20 +46,20 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
 
     float hp1 = atan2(lab1.z, ap1);
     float hp2 = atan2(lab2.z, ap2);
-    float dhp = fmod(hp2 - hp1 + 3.f * pi, 2.f * pi) - pi; /* -pi .. pi */
+    float dhp = fmod(hp2 - hp1 + 3.f * F_PI, 2.f * F_PI) - F_PI; /* -pi .. pi */
     float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(0.5f * dhp);
-    float Hp_ = Cp1 * Cp2 ? fmod(hp1 + 0.5f * dhp + 2.f * pi, 2.f * pi) : hp1 + hp2; /* 0 .. 2pi */
+    float Hp_ = Cp1 * Cp2 ? fmod(hp1 + 0.5f * dhp + 2.f * F_PI, 2.f * F_PI) : hp1 + hp2; /* 0 .. 2pi */
 
-    float T = 1.f - 0.17f * cos(Hp_ - pi / 6.f)
+    float T = 1.f - 0.17f * cos(Hp_ - F_PI / 6.f)
                   + 0.24f * cos(2.f * Hp_)
-                  + 0.32f * cos(3.f * Hp_ + pi / 30.f)
-                  - 0.20f * cos(4.f * Hp_ - 0.35f * pi);
+                  + 0.32f * cos(3.f * Hp_ + F_PI / 30.f)
+                  - 0.20f * cos(4.f * Hp_ - 0.35f * F_PI);
     float SL = 1.f + 0.015f * (L_ - 50) * (L_ - 50)
                             / sqrt(20.f + (L_ - 50) * (L_ - 50));
     float SC = 1.f + 0.045f * Cp_;
     float SH = 1.f + 0.015f * Cp_ * T;
     float RT = -2.f * sqrt(pow(Cp_, 7.f) / (pow(Cp_, 7.f) + pow(25.f, 7.f)))
-                    * sin(pi / 3.f * exp(-pow((Hp_ * 180.f / pi - 275.f) / 25.f, 2.f)));
+                    * sin(F_PI / 3.f * exp(-pow((Hp_ * 180.f / F_PI - 275.f) / 25.f, 2.f)));
 
     dLp /= SL;
     dCp /= SC;

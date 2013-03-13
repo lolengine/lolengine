@@ -12,19 +12,6 @@
 #   include "config.h"
 #endif
 
-#if defined _XBOX
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define _USE_MATH_DEFINES /* for M_PI */
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#endif
-
 #include "core.h"
 #include "loldebug.h"
 
@@ -188,10 +175,10 @@ public:
             int maxi = 6;
             for (int i = 0; i < maxi; ++i)
             {
-                voronoi_points.Push(vec3(256.f) + 196.f * vec3((float)lol::cos(m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 128.f * vec3((float)lol::cos(-m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(-m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 64.f *  vec3((float)lol::cos(m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 32.f *  vec3((float)lol::cos(-m_time + (double)i * 2.0 * M_PI / (double)maxi), (float)lol::sin(-m_time + (double)i * 2.0 * M_PI / (double)maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos(m_time + i * 2.f * F_PI / maxi), lol::sin(m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-m_time + i * 2.f * F_PI / maxi), lol::sin(-m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 64.f *  vec3(lol::cos(m_time + i * 2.f * F_PI / maxi), lol::sin(m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 32.f *  vec3(lol::cos(-m_time + i * 2.f * F_PI / maxi), lol::sin(-m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
             }
             voronoi_points.Push(vec3(256.f), vec2(.0f));
         }
