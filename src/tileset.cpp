@@ -50,12 +50,11 @@ class TileSetData
 
 private:
     String m_name;
-    int *tiles, ntiles;
-    ivec2 size, isize, count;
-    vec2 scale;
-    float tx, ty;
+    int ntiles;
+    ivec2 m_tile_size, m_image_size, count;
+    vec2 m_texcoord;
 
-    Image *img;
+    Image *m_img;
     Texture *m_texture;
 };
 
@@ -64,41 +63,39 @@ private:
  */
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
-  : data(new TileSetData())
+  : m_data(new TileSetData())
 {
-    data->m_name = String("<tileset> ") + path;
+    m_data->m_name = String("<tileset> ") + path;
 
-    data->tiles = nullptr;
-    data->m_texture = 0;
-    data->img = Image::Create(path);
-    data->isize = data->img->GetSize();
+    m_data->m_texture = 0;
+    m_data->m_img = Image::Create(path);
+    m_data->m_image_size = m_data->m_img->GetSize();
 
     if (count.x > 0 && count.y > 0)
     {
-        data->count = count;
-        data->size = data->isize / count;
+        m_data->count = count;
+        m_data->m_tile_size = m_data->m_image_size / count;
     }
     else
     {
         if (size.x <= 0 || size.y <= 0)
             size = ivec2(32, 32);
-        data->count.x = data->isize.x > size.x ? data->isize.x / size.x : 1;
-        data->count.y = data->isize.y > size.y ? data->isize.y / size.y : 1;
-        data->size = size;
+        m_data->count.x = m_data->m_image_size.x / max(size.x, m_data->m_image_size.x);
+        m_data->count.y = m_data->m_image_size.y / max(size.y, m_data->m_image_size.y);
+        m_data->m_tile_size = size;
     }
 
-    data->tx = (float)data->size.x / PotUp(data->isize.x);
-    data->ty = (float)data->size.y / PotUp(data->isize.y);
+    m_data->m_texcoord.x = (float)m_data->m_tile_size.x / PotUp(m_data->m_image_size.x);
+    m_data->m_texcoord.y = (float)m_data->m_tile_size.y / PotUp(m_data->m_image_size.y);
 
-    data->ntiles = data->count.x * data->count.y;
+    m_data->ntiles = m_data->count.x * m_data->count.y;
 
     m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 TileSet::~TileSet()
 {
-    free(data->tiles);
-    delete data;
+    delete m_data;
 }
 
 void TileSet::TickDraw(float seconds)
@@ -107,21 +104,21 @@ void TileSet::TickDraw(float seconds)
 
     if (IsDestroying())
     {
-        if (data->img)
+        if (m_data->m_img)
         {
-            Image::Destroy(data->img);
-            data->img = nullptr;
+            Image::Destroy(m_data->m_img);
+            m_data->m_img = nullptr;
         }
         else
         {
-            delete data->m_texture;
-            data->m_texture = nullptr;
+            delete m_data->m_texture;
+            m_data->m_texture = nullptr;
         }
     }
-    else if (data->img)
+    else if (m_data->m_img)
     {
         int planes;
-        PixelFormat format = data->img->GetFormat();
+        PixelFormat format = m_data->m_img->GetFormat();
 
         switch (format)
         {
@@ -136,66 +133,62 @@ void TileSet::TickDraw(float seconds)
             break;
         }
 
-        int w = PotUp(data->isize.x);
-        int h = PotUp(data->isize.y);
+        int w = PotUp(m_data->m_image_size.x);
+        int h = PotUp(m_data->m_image_size.y);
 
-        uint8_t *pixels = data->img->GetData();
-        if (w != data->isize.x || h != data->isize.y)
+        uint8_t *pixels = m_data->m_img->GetData();
+        if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {
             uint8_t *tmp = new uint8_t[planes * w * h];
-            for (int line = 0; line < data->isize.y; line++)
+            for (int line = 0; line < m_data->m_image_size.y; line++)
                 memcpy(tmp + planes * w * line,
-                       pixels + planes * data->isize.x * line,
-                       planes * data->isize.x);
+                       pixels + planes * m_data->m_image_size.x * line,
+                       planes * m_data->m_image_size.x);
             pixels = tmp;
         }
 
-        data->m_texture = new Texture(ivec2(w, h), format);
-        data->m_texture->SetData(pixels);
+        m_data->m_texture = new Texture(ivec2(w, h), format);
+        m_data->m_texture->SetData(pixels);
 
-        if (pixels != data->img->GetData())
+        if (pixels != m_data->m_img->GetData())
             delete[] pixels;
-        Image::Destroy(data->img);
-        data->img = nullptr;
+        Image::Destroy(m_data->m_img);
+        m_data->m_img = nullptr;
     }
 }
 
 char const *TileSet::GetName()
 {
-    return data->m_name.C();
+    return m_data->m_name.C();
 }
 
-ivec2 TileSet::GetCount() const
+ivec2 TileSet::GetTileCount() const
 {
-    return data->count;
+    return m_data->count;
 }
 
-ivec2 TileSet::GetSize(int tileid) const
+ivec2 TileSet::GetTileSize(int tileid) const
 {
     (void)tileid;
 
-    return data->size;
+    return m_data->m_tile_size;
 }
 
 vec2 TileSet::GetImageSize() const
 {
-    return vec2(PotUp(data->isize.x), PotUp(data->isize.y));
-}
-
-vec2 TileSet::GetTileSize() const
-{
-    return vec2(data->tx, data->ty);
+    return vec2(PotUp(m_data->m_image_size.x),
+                PotUp(m_data->m_image_size.y));
 }
 
 ShaderTexture TileSet::GetTexture() const
 {
-    return data->m_texture->GetTexture();
+    return m_data->m_texture->GetTexture();
 }
 
 void TileSet::Bind()
 {
-    if (!data->img && data->m_texture)
-        data->m_texture->Bind();
+    if (!m_data->m_img && m_data->m_texture)
+        m_data->m_texture->Bind();
 }
 
 void TileSet::Unbind()
@@ -206,14 +199,14 @@ void TileSet::Unbind()
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                        float *vertex, float *texture)
 {
-    float dtx = data->tx;
-    float dty = data->ty;
-    float tx = dtx * ((id & 0xffff) % data->count.x);
-    float ty = dty * ((id & 0xffff) / data->count.x);
+    float dtx = m_data->m_texcoord.x;
+    float dty = m_data->m_texcoord.y;
+    float tx = dtx * ((id & 0xffff) % m_data->count.x);
+    float ty = dty * ((id & 0xffff) / m_data->count.x);
 
-    int dx = data->size.x * scale.x;
-    int dy = o ? 0 : data->size.y * scale.y;
-    int dz = o ? data->size.y * scale.y : 0;
+    int dx = m_data->m_tile_size.x * scale.x;
+    int dy = o ? 0 : m_data->m_tile_size.y * scale.y;
+    int dz = o ? m_data->m_tile_size.y * scale.y : 0;
 
     /* If scaling is negative, switch triangle winding */
     if (scale.x * scale.y < 0.0f)
@@ -233,7 +226,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     dty *= 126.f / 128.f;
 #endif
 
-    if (!data->img && data->m_texture)
+    if (!m_data->m_img && m_data->m_texture)
     {
         float tmp[10];
 

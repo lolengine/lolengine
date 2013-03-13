@@ -31,8 +31,11 @@ class TileSetData;
 class TileSet : public Entity
 {
 public:
-    TileSet(char const *path, ivec2 size, ivec2 count);
+    TileSet(char const *path);
     virtual ~TileSet();
+
+    /* Old style: path to PNG file */
+    TileSet(char const *path, ivec2 size, ivec2 count);
 
 protected:
     /* Inherited from Entity */
@@ -41,10 +44,9 @@ protected:
 
 public:
     /* New methods */
-    ivec2 GetCount() const;
-    ivec2 GetSize(int tileid) const;
+    ivec2 GetTileCount() const;
+    ivec2 GetTileSize(int tileid) const;
     vec2 GetImageSize() const;
-    vec2 GetTileSize() const;
     ShaderTexture GetTexture() const;
     void Bind();
     void Unbind();
@@ -52,7 +54,7 @@ public:
                   float *vertex, float *texture);
 
 private:
-    TileSetData *data;
+    TileSetData *m_data;
 };
 
 } /* namespace lol */
