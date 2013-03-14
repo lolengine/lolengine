@@ -55,45 +55,216 @@ class FrameBufferData
 };
 
 //
+// The FrameBufferFormat struct
+// ----------------------
+//
+
+uint32_t FrameBufferFormat::GetFormat()
+{
+    switch (m_format)
+    {
+#if defined USE_D3D9 || defined _XBOX
+        case R_16_F:        return D3DFMT_R16F;
+        case R_32_F:        return D3DFMT_R32F;
+        case RG_16:         
+        case RG_16_I:       
+        case RG_16_UI:      return D3DFMT_G16R16;
+        case RG_16_F:       return D3DFMT_G16R16F;
+        case RG_32_F:       return D3DFMT_G32R32F;
+        case RGB_8:         
+        case RGB_8_I:       
+        case RGB_8_UI:      return D3DFMT_R8G8B8;
+        case RGBA_8:        
+        case RGBA_8_I:      
+        case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
+        case RGBA_16:       
+        case RGBA_16_I:     
+        case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
+        case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
+        case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
+
+        default:            ASSERT(0, "Not supported by DirectX.");
+#else
+#   if defined __CELLOS_LV2__
+    /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
+     * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
+        case RGB_16_F:      return GL_RGB16F_ARB;
+        case RGB_32_F:      return GL_RGB32F_ARB;
+        case RGBA_8:        return GL_ARGB_SCE;
+        case RGBA_16_F:     return GL_RGBA16F_ARB;
+        case RGBA_32_F:     return GL_RGBA32F_ARB;
+
+        default:            ASSERT(0, "Not supported by the PS3.");
+#   else
+        case R_8:           return GL_R8;
+        case R_8_I:         return GL_R8I;
+        case R_8_UI:        return GL_R8UI;
+
+        case R_16:          return GL_R16;
+        case R_16_I:        return GL_R16I;
+        case R_16_UI:       return GL_R16UI;
+        case R_16_F:        return GL_R16F;
+
+        case R_32_I:        return GL_R32I;
+        case R_32_UI:       return GL_R32UI;
+        case R_32_F:        return GL_R32F;
+
+        case RG_8:          return GL_RG8;
+        case RG_8_I:        return GL_RG8I;
+        case RG_8_UI:       return GL_RG8UI;
+
+        case RG_16:         return GL_RG16;
+        case RG_16_I:       return GL_RG16I;
+        case RG_16_UI:      return GL_RG16UI;
+        case RG_16_F:       return GL_RG16F;
+
+        case RG_32_I:       return GL_RG32I;
+        case RG_32_UI:      return GL_RG32UI;
+        case RG_32_F:       return GL_RG32F;
+
+        case RGB_8:         return GL_RGB8;
+        case RGB_8_I:       return GL_RGB8I;
+        case RGB_8_UI:      return GL_RGB8UI;
+
+        case RGB_16:        return GL_RGB16;
+        case RGB_16_I:      return GL_RGB16I;
+        case RGB_16_UI:     return GL_RGB16UI;
+        case RGB_16_F:      return GL_RGB16F;
+
+        case RGB_32_I:      return GL_RGB32I;
+        case RGB_32_UI:     return GL_RGB32UI;
+        case RGB_32_F:      return GL_RGB32F;
+
+        case RGBA_8:        return GL_RGBA8;
+        case RGBA_8_I:      return GL_RGBA8I;
+        case RGBA_8_UI:     return GL_RGBA8UI;
+
+        case RGBA_16:       return GL_RGBA16;
+        case RGBA_16_I:     return GL_RGBA16I;
+        case RGBA_16_UI:    return GL_RGBA16UI;
+        case RGBA_16_F:     return GL_RGBA16F;
+
+        case RGBA_32_I:     return GL_RGBA32I;
+        case RGBA_32_UI:    return GL_RGBA32UI;
+        case RGBA_32_F:     return GL_RGBA32F;
+
+        default:            ASSERT(0, "Not supported by OpenGL.");
+#   endif
+#endif
+    };
+    ASSERT(0, "Not implemented.");
+    return 0;
+}
+
+uint32_t FrameBufferFormat::GetFormatOrder()
+{
+    switch (m_format)
+    {
+#if !defined USE_D3D9 && !defined _XBOX
+        case R_8:         
+        case R_8_I:         
+        case R_8_UI:        
+        case R_8_F:    
+
+        case R_16:        
+        case R_16_I:        
+        case R_16_UI:       
+        case R_16_F:   
+
+        case R_32_I:        
+        case R_32:          
+        case R_32_UI:  
+        case R_32_F:        return GL_RED;
+
+        case RG_8:          
+        case RG_8_I:        
+        case RG_8_UI:       
+        case RG_8_F:        
+
+        case RG_16:         
+        case RG_16_I:       
+        case RG_16_UI:      
+        case RG_16_F:       
+
+        case RG_32:         
+        case RG_32_I:       
+        case RG_32_UI:      
+        case RG_32_F:       return GL_RG;
+
+        case RGB_8:         
+        case RGB_8_I:       
+        case RGB_8_UI:      
+        case RGB_8_F:       
+
+        case RGB_16:        
+        case RGB_16_I:      
+        case RGB_16_UI:     
+        case RGB_16_F:      
+
+        case RGB_32:        
+        case RGB_32_I:      
+        case RGB_32_UI:     
+        case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
+
+        case RGBA_8:        
+        case RGBA_8_I:      
+        case RGBA_8_UI:     
+        case RGBA_8_F:      
+
+        case RGBA_16:       
+        case RGBA_16_I:     
+        case RGBA_16_UI:    
+        case RGBA_16_F:     
+
+
+        case RGBA_32:       
+        case RGBA_32_I:     
+        case RGBA_32_UI:    
+        case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
+#endif
+    }
+}
+
+//
 // The FrameBuffer class
 // ----------------------
 //
 
-FrameBuffer::FrameBuffer(ivec2 size)
+FrameBuffer::FrameBuffer(ivec2 size, FrameBufferFormat fbo_format)
   : m_data(new FrameBufferData)
 {
     m_data->m_size = size;
 #if defined USE_D3D9
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
-                                          D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
+                                          fbo_format.GetFormat(), D3DPOOL_DEFAULT,
                                           &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
 #elif defined _XBOX
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1, 0,
-                                          D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
+                                          fbo_format.GetFormat(), D3DPOOL_DEFAULT,
                                           &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(g_d3ddevice->CreateRenderTarget(size.x, size.y,
-                                               D3DFMT_A8R8G8B8,
+                                               fbo_format.GetFormat(),
                                                D3DMULTISAMPLE_NONE, 0, 0,
                                                &m_data->m_surface, nullptr)))
         Abort();
 #else
 #   if GL_VERSION_1_1
-    GLenum internal_format = GL_RGBA8;
-    GLenum format = GL_BGRA;
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum format = fbo_format.GetFormatOrder();
     GLenum depth = GL_DEPTH_COMPONENT;
 #   elif defined __CELLOS_LV2__
     /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
      * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
-    GLenum internal_format = GL_ARGB_SCE;
-    GLenum format = GL_RGBA;
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum format = fbo_format.GetFormatOrder();
 #   else
-    GLenum internal_format = GL_RGBA;
-    GLenum format = GL_RGBA;
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum format = fbo_format.GetFormatOrder();
 #   endif
     GLenum wrapmode = GL_REPEAT;
     GLenum filtering = GL_NEAREST;
