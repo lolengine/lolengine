@@ -28,6 +28,7 @@ public:
     ~FrameBuffer();
 
     ShaderTexture GetTexture() const;
+    ivec2 GetSize() const;
 
     void Bind();
     void Unbind();

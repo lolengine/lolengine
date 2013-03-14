@@ -66,9 +66,15 @@ class Video
 {
 public:
     static void Setup(ivec2 size);
+    static void SetCustomSize(ivec2 size);
+    static void RestoreSize();
     static void Destroy();
     static void SetFov(float theta);
     static void SetDepth(bool set);
+    static void SetFaceCulling(bool set);
+    static bool HasFaceCulling();
+    static void SetAlphaBlend(bool set);
+    static bool HasAlphaBlend();
     static void SetClearColor(vec4 color);
     static void SetClearDepth(float f);
     static void SetDebugRenderMode(DebugRenderMode d);

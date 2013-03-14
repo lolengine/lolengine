@@ -177,6 +177,11 @@ ShaderTexture FrameBuffer::GetTexture() const
     return ret;
 }
 
+ivec2 FrameBuffer::GetSize() const
+{
+    return m_data->m_size;
+}
+
 void FrameBuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
@@ -190,6 +195,8 @@ void FrameBuffer::Bind()
 #   else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
 #   endif
+    //change viewport draw size
+    Video::SetCustomSize(m_data->m_size);
 #endif
 }
 
@@ -208,6 +215,8 @@ void FrameBuffer::Unbind()
         Abort();
     m_data->m_back_surface->Release();
 #else
+    //Restore viewport draw size
+    Video::RestoreSize();
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #   else
