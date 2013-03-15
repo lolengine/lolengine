@@ -70,7 +70,7 @@ public:
             memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
             m_vbo->Unlock();
 
-            m_fbo = new FrameBuffer(Video::GetSize());
+            m_fbo = new Framebuffer(Video::GetSize());
             m_fbo->Bind();
             Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
             Video::SetClearDepth(1.f);
@@ -90,7 +90,7 @@ public:
 #if _XBOX
         /* FIXME: the Xbox enforces full EDRAM clears on each frame, so
          * we cannot expect the render target contents to be preserved.
-         * This code snippet should be moved inside the FrameBuffer class. */
+         * This code snippet should be moved inside the Framebuffer class. */
         m_shader->SetUniform(m_uni_flag, 1.f);
         m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
@@ -126,7 +126,7 @@ private:
     ShaderUniform m_uni_flag, m_uni_point, m_uni_color, m_uni_texture;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-    FrameBuffer *m_fbo;
+    Framebuffer *m_fbo;
     double m_time;
     vec3 m_hotspot, m_color;
     bool m_ready;

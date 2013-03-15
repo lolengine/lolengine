@@ -49,7 +49,7 @@ private:
 struct ShaderTexture
 {
     friend class Shader;
-    friend class FrameBuffer;
+    friend class Framebuffer;
     friend class Texture;
 
 public:

@@ -33,13 +33,13 @@ namespace lol
 {
 
 //
-// The FrameBufferData class
+// The FramebufferData class
 // -------------------------
 //
 
-class FrameBufferData
+class FramebufferData
 {
-    friend class FrameBuffer;
+    friend class Framebuffer;
 
     ivec2 m_size;
 
@@ -55,11 +55,11 @@ class FrameBufferData
 };
 
 //
-// The FrameBufferFormat struct
+// The FramebufferFormat struct
 // ----------------------
 //
 
-uint32_t FrameBufferFormat::GetFormat()
+uint32_t FramebufferFormat::GetFormat()
 {
     switch (m_format)
     {
@@ -156,7 +156,7 @@ uint32_t FrameBufferFormat::GetFormat()
     return 0;
 }
 
-uint32_t FrameBufferFormat::GetFormatOrder()
+uint32_t FramebufferFormat::GetFormatOrder()
 {
     switch (m_format)
     {
@@ -226,12 +226,12 @@ uint32_t FrameBufferFormat::GetFormatOrder()
 }
 
 //
-// The FrameBuffer class
+// The Framebuffer class
 // ----------------------
 //
 
-FrameBuffer::FrameBuffer(ivec2 size, FrameBufferFormat fbo_format)
-  : m_data(new FrameBufferData)
+Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
+  : m_data(new FramebufferData)
 {
     m_data->m_size = size;
 #if defined USE_D3D9
@@ -317,7 +317,7 @@ FrameBuffer::FrameBuffer(ivec2 size, FrameBufferFormat fbo_format)
 #endif
 }
 
-FrameBuffer::~FrameBuffer()
+Framebuffer::~Framebuffer()
 {
 #if defined USE_D3D9 || defined _XBOX
     m_data->m_surface->Release();
@@ -337,7 +337,7 @@ FrameBuffer::~FrameBuffer()
     delete m_data;
 }
 
-ShaderTexture FrameBuffer::GetTexture() const
+ShaderTexture Framebuffer::GetTexture() const
 {
     ShaderTexture ret;
 #if defined USE_D3D9 || defined _XBOX
@@ -348,12 +348,12 @@ ShaderTexture FrameBuffer::GetTexture() const
     return ret;
 }
 
-ivec2 FrameBuffer::GetSize() const
+ivec2 Framebuffer::GetSize() const
 {
     return m_data->m_size;
 }
 
-void FrameBuffer::Bind()
+void Framebuffer::Bind()
 {
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->GetRenderTarget(0, &m_data->m_back_surface)))
@@ -371,7 +371,7 @@ void FrameBuffer::Bind()
 #endif
 }
 
-void FrameBuffer::Unbind()
+void Framebuffer::Unbind()
 {
 #if defined USE_D3D9
     if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))

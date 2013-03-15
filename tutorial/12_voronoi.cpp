@@ -94,7 +94,7 @@ public:
 
             for (int i = 0; i < MaxFboType; ++i)
             {
-                m_fbos.Push(new FrameBuffer(Video::GetSize()), 0, Array<ShaderUniform>(), Array<ShaderAttrib>() );
+                m_fbos.Push(new Framebuffer(Video::GetSize()), 0, Array<ShaderUniform>(), Array<ShaderAttrib>() );
 
                 if (i == SrcVoronoiFbo)
                 {
@@ -128,7 +128,7 @@ public:
                 m_fbos.Last().m1->Unbind();
             }
 
-            temp_buffer = new FrameBuffer(Video::GetSize());
+            temp_buffer = new Framebuffer(Video::GetSize());
             temp_buffer->Bind();
             Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
             Video::SetClearDepth(1.f);
@@ -223,8 +223,8 @@ public:
             int buf = voronoi_points.Count() % 2;
             for (int j = 0; j < voronoi_points.Count(); ++j)
             {
-                FrameBuffer *dst_buf;
-                FrameBuffer *src_buf;
+                Framebuffer *dst_buf;
+                Framebuffer *src_buf;
                 
                 if (buf)
                 {
@@ -275,8 +275,8 @@ public:
             int buf = 0;
             while (1)
             {
-                FrameBuffer *dst_buf;
-                FrameBuffer *src_buf;
+                Framebuffer *dst_buf;
+                Framebuffer *src_buf;
                 Shader *shader;
 
                 if (curres == ivec2(0))
@@ -305,7 +305,7 @@ public:
     #if _XBOX
                 /* FIXME: the Xbox enforces full EDRAM clears on each frame, so
                 * we cannot expect the render target contents to be preserved.
-                * This code snippet should be moved inside the FrameBuffer class. */
+                * This code snippet should be moved inside the Framebuffer class. */
                 //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_flag, 1.f);
                 //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
                 //m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.Last());
@@ -365,8 +365,8 @@ private:
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
 
-    Array<FrameBuffer *, Shader *, Array<ShaderUniform>, Array<ShaderAttrib> > m_fbos;
-    FrameBuffer *temp_buffer;
+    Array<Framebuffer *, Shader *, Array<ShaderUniform>, Array<ShaderAttrib> > m_fbos;
+    Framebuffer *temp_buffer;
 
     int mode;
     int m_cur_fbo;
