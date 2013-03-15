@@ -9,7 +9,7 @@
 //
 
 //
-// The FrameBuffer class
+// The Framebuffer class
 // ---------------------
 //
 
@@ -21,7 +21,7 @@
 namespace lol
 {
 
-struct FrameBufferFormat
+struct FramebufferFormat
 {
     enum Value
     {
@@ -88,18 +88,18 @@ struct FrameBufferFormat
     m_format;
     bool m_invert_rgb;
 
-    inline FrameBufferFormat(Value format=RGBA_8, bool invert_rgb=true)
+    inline FramebufferFormat(Value format=RGBA_8, bool invert_rgb=true)
             : m_format(format), m_invert_rgb(invert_rgb) {}
     inline uint32_t GetFormat();
     inline uint32_t GetFormatOrder();
     inline operator Value() { return m_format; }
 };
 
-class FrameBuffer
+class Framebuffer
 {
 public:
-    FrameBuffer(ivec2 size, FrameBufferFormat fbo_format=FrameBufferFormat());
-    ~FrameBuffer();
+    Framebuffer(ivec2 size, FramebufferFormat fbo_format = FramebufferFormat());
+    ~Framebuffer();
 
     ShaderTexture GetTexture() const;
     ivec2 GetSize() const;
@@ -108,7 +108,7 @@ public:
     void Unbind();
 
 private:
-    class FrameBufferData *m_data;
+    class FramebufferData *m_data;
 };
 
 } /* namespace lol */
