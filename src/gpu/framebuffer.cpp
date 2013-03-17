@@ -66,26 +66,26 @@ uint32_t FramebufferFormat::GetFormat()
 #if defined USE_D3D9 || defined _XBOX
         case R_16_F:        return D3DFMT_R16F;
         case R_32_F:        return D3DFMT_R32F;
-        case RG_16:         
-        case RG_16_I:       
+        case RG_16:
+        case RG_16_I:
         case RG_16_UI:      return D3DFMT_G16R16;
         case RG_16_F:       return D3DFMT_G16R16F;
         case RG_32_F:       return D3DFMT_G32R32F;
-        case RGB_8:         
-        case RGB_8_I:       
+        case RGB_8:
+        case RGB_8_I:
         case RGB_8_UI:      return D3DFMT_R8G8B8;
-        case RGBA_8:        
-        case RGBA_8_I:      
+        case RGBA_8:
+        case RGBA_8_I:
         case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
-        case RGBA_16:       
-        case RGBA_16_I:     
+        case RGBA_16:
+        case RGBA_16_I:
         case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
         case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
         case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
 
-        default:            ASSERT(0, "Not supported by DirectX.");
-#else
-#   if defined __CELLOS_LV2__
+        default:            ASSERT(false, "not supported by DirectX");
+                            return 0;
+#elif defined __CELLOS_LV2__
     /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
      * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
         case RGB_16_F:      return GL_RGB16F_ARB;
@@ -94,8 +94,14 @@ uint32_t FramebufferFormat::GetFormat()
         case RGBA_16_F:     return GL_RGBA16F_ARB;
         case RGBA_32_F:     return GL_RGBA32F_ARB;
 
-        default:            ASSERT(0, "Not supported by the PS3.");
-#   else
+        default:            ASSERT(false, "not supported by the PS3");
+                            return 0;
+#elif defined HAVE_GLES_2X
+        /* FIXME: not implemented at all */
+
+        default:            ASSERT(false, "not implemented");
+                            return 0;
+#else
         case R_8:           return GL_R8;
         case R_8_I:         return GL_R8I;
         case R_8_UI:        return GL_R8UI;
@@ -148,11 +154,12 @@ uint32_t FramebufferFormat::GetFormat()
         case RGBA_32_UI:    return GL_RGBA32UI;
         case RGBA_32_F:     return GL_RGBA32F;
 
-        default:            ASSERT(0, "Not supported by OpenGL.");
-#   endif
+        default:            ASSERT(false, "not supported by OpenGL");
+                            return 0;
 #endif
     };
-    ASSERT(0, "Not implemented.");
+
+    ASSERT(false, "not implemented");
     return 0;
 }
 
@@ -160,69 +167,83 @@ uint32_t FramebufferFormat::GetFormatOrder()
 {
     switch (m_format)
     {
-#if !defined USE_D3D9 && !defined _XBOX
-        case R_8:         
-        case R_8_I:         
-        case R_8_UI:        
-        case R_8_F:    
+#if defined USE_D3D9 || defined _XBOX
+        /* FIXME: not implemented at all */
+        default:            ASSERT(false, "not implemented");
+                            return 0;
+#elif defined __CELLOS_LV2__
+        /* FIXME: not implemented at all */
+        default:            ASSERT(false, "not implemented");
+                            return 0;
+#elif defined HAVE_GLES_2X
+        /* FIXME: not implemented at all */
+        default:            ASSERT(false, "not implemented");
+                            return 0;
+#else
+        case R_8:
+        case R_8_I:
+        case R_8_UI:
+        case R_8_F:
 
-        case R_16:        
-        case R_16_I:        
-        case R_16_UI:       
-        case R_16_F:   
+        case R_16:
+        case R_16_I:
+        case R_16_UI:
+        case R_16_F:
 
-        case R_32_I:        
-        case R_32:          
-        case R_32_UI:  
+        case R_32_I:
+        case R_32:
+        case R_32_UI:
         case R_32_F:        return GL_RED;
 
-        case RG_8:          
-        case RG_8_I:        
-        case RG_8_UI:       
-        case RG_8_F:        
+        case RG_8:
+        case RG_8_I:
+        case RG_8_UI:
+        case RG_8_F:
 
-        case RG_16:         
-        case RG_16_I:       
-        case RG_16_UI:      
-        case RG_16_F:       
+        case RG_16:
+        case RG_16_I:
+        case RG_16_UI:
+        case RG_16_F:
 
-        case RG_32:         
-        case RG_32_I:       
-        case RG_32_UI:      
+        case RG_32:
+        case RG_32_I:
+        case RG_32_UI:
         case RG_32_F:       return GL_RG;
 
-        case RGB_8:         
-        case RGB_8_I:       
-        case RGB_8_UI:      
-        case RGB_8_F:       
+        case RGB_8:
+        case RGB_8_I:
+        case RGB_8_UI:
+        case RGB_8_F:
 
-        case RGB_16:        
-        case RGB_16_I:      
-        case RGB_16_UI:     
-        case RGB_16_F:      
+        case RGB_16:
+        case RGB_16_I:
+        case RGB_16_UI:
+        case RGB_16_F:
 
-        case RGB_32:        
-        case RGB_32_I:      
-        case RGB_32_UI:     
+        case RGB_32:
+        case RGB_32_I:
+        case RGB_32_UI:
         case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
 
-        case RGBA_8:        
-        case RGBA_8_I:      
-        case RGBA_8_UI:     
-        case RGBA_8_F:      
+        case RGBA_8:
+        case RGBA_8_I:
+        case RGBA_8_UI:
+        case RGBA_8_F:
 
-        case RGBA_16:       
-        case RGBA_16_I:     
-        case RGBA_16_UI:    
-        case RGBA_16_F:     
+        case RGBA_16:
+        case RGBA_16_I:
+        case RGBA_16_UI:
+        case RGBA_16_F:
 
-
-        case RGBA_32:       
-        case RGBA_32_I:     
-        case RGBA_32_UI:    
+        case RGBA_32:
+        case RGBA_32_I:
+        case RGBA_32_UI:
         case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #endif
     }
+
+    ASSERT(false, "unknown pixel format");
+    return 0;
 }
 
 //
