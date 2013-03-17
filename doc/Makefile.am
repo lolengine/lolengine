@@ -29,9 +29,9 @@ stamp-latex: stamp-doxygen
 if BUILD_DOCUMENTATION
 if USE_LATEX
 	rm -f latex/lolengine.tex latex/lolengine.pdf
-	mv latex/refman.tex latex/lolengine.tex
-	sed 's/setlength{/renewcommand{/' latex/lolengine.tex \
-	  | sed 's/.*usepackage.*times.*//' > latex/refman.tex
+	$(SED) -i -e 's/setlength{/renewcommand{/' latex/refman.tex
+	$(SED) -i -e 's/.*usepackage.*times.*//' latex/refman.tex
+	$(SED) -i -e 's/latex refman/latex -file-line-error -halt-on-error refman/' latex/Makefile
 	cd latex && $(MAKE) $(AM_CFLAGS) refman.pdf || (cat refman.log; exit 1)
 	mv latex/refman.pdf latex/lolengine.pdf
 	touch stamp-latex
