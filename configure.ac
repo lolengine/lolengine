@@ -479,6 +479,7 @@ AC_CONFIG_FILES(
   people/touky/Makefile
   people/touky/private/Makefile
   people/touky/private/tactics/Makefile
+  people/touky/private/the_unfortunate_voronoid/Makefile
   people/jylam/Makefile
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile
