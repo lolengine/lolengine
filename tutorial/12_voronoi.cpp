@@ -225,7 +225,7 @@ public:
             {
                 Framebuffer *dst_buf;
                 Framebuffer *src_buf;
-                
+
                 if (buf)
                 {
                     dst_buf = m_fbos[f].m1;
