@@ -106,6 +106,7 @@ for file in $FILES; do
     case "$file" in
       # These files aren't ours, don't fix
       src/bullet/*|\
+      src/lua/*|\
       external/*|\
       */generated/*|\
       web/plugins/*)
@@ -119,7 +120,7 @@ for file in $FILES; do
           :
           ;;
       # These files we know how to handle
-      *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.l|*.y|*.sh|*.py)
+      *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.lua|*.l|*.y|*.sh|*.py)
           clean=true
 
           # Check for CR LF
