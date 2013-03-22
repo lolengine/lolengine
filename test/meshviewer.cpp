@@ -354,7 +354,7 @@ public:
                 //m_meshes[i].m1.MeshConvert(m_texture_shader);
                 //m_meshes[i].m1.MeshConvert();
                 m_meshes[i].m1.MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                                                                  (1 << VertexUsage::Color)    | (VertexUsage::TexCoord)),
+                                                                  (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
                                                                   m_texture_shader, true));
 #endif
                 m_meshes[i].m2 = true;
