@@ -80,8 +80,8 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     {
         if (size.x <= 0 || size.y <= 0)
             size = ivec2(32, 32);
-        m_data->count.x = m_data->m_image_size.x / max(size.x, m_data->m_image_size.x);
-        m_data->count.y = m_data->m_image_size.y / max(size.y, m_data->m_image_size.y);
+        m_data->count.x = m_data->m_image_size.x / min(size.x, m_data->m_image_size.x);
+        m_data->count.y = m_data->m_image_size.y / min(size.y, m_data->m_image_size.y);
         m_data->m_tile_size = size;
     }
 
