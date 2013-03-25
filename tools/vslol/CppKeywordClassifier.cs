@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Text.RegularExpressions;
 using System.Diagnostics; /* For debugging purposes */
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -37,6 +38,12 @@ internal class LolClassifierProvider : IClassifierProvider
     internal IClassifierAggregatorService m_aggregator = null;
     [Import]
     internal IClassificationFormatMapService m_format_map = null;
+#if FALSE
+    [Import]
+    internal ITextDocumentFactoryService m_textdoc_factory = null;
+#endif
+    [Import]
+    internal SVsServiceProvider m_sp = null;
 
     internal static bool m_inprogress = false;
 
@@ -46,12 +53,26 @@ internal class LolClassifierProvider : IClassifierProvider
         if (m_inprogress)
             return null;
 
+        /* Try to guess whether this is a Lol Engine project */
+#if FALSE
+        if (m_textdoc_factory != null)
+        {
+            ITextDocument doc;
+            m_textdoc_factory.TryGetTextDocument(buffer, out doc);
+            /* print doc.FilePath */
+        }
+#endif
+        EnvDTE.DTE dte = m_sp.GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+        bool islolengine = false;
+        if (dte.Solution.FullName.Contains("Lol.sln"))
+            islolengine = true;
+
         LolGenericFormat.SetRegistry(m_type_registry, m_format_map);
 
         try
         {
             m_inprogress = true;
-            return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_type_registry, m_aggregator.GetClassifier(buffer), buffer.ContentType); });
+            return buffer.Properties.GetOrCreateSingletonProperty<CppKeywordClassifier>(delegate { return new CppKeywordClassifier(m_type_registry, m_aggregator.GetClassifier(buffer), buffer.ContentType, islolengine); });
         }
         finally { m_inprogress = false; }
     }
@@ -60,7 +81,7 @@ internal class LolClassifierProvider : IClassifierProvider
 class CppKeywordClassifier : IClassifier
 {
     private IClassifier m_classifier;
-    private bool m_inprogress;
+    private bool m_inprogress, m_islolengine;
 
     private IClassificationType m_types_type, m_constant_type, m_normal_type;
     private Regex m_types_regex, m_constant_regex, m_normal_regex;
@@ -83,9 +104,11 @@ class CppKeywordClassifier : IClassifier
         "__(int(8|16|32|64)|ptr(32|64)|m(64|128|128d|128i))",
     };
 
-    /* ldouble real half
-       "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)";
-     */
+    private static string[] m_lol_types =
+    {
+        "ldouble|real|half",
+        "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)",
+    };
 
     private static string[] m_csharp_types =
     {
@@ -109,9 +132,14 @@ class CppKeywordClassifier : IClassifier
     {
         "NULL|nullptr",
         "EXIT_SUCCESS|EXIT_FAILURE",
-        "M_(E|LOG(2|10)E|LN2|LN10|PI|PI_2|PI_4|1_PI|2_PI|2_SQRTPI|SQRT(2|1_2))",
+        "M_(E|LOG(2|10)E|LN2|LN10|PI|PI_[24]|[12]_PI|2_SQRTPI|SQRT(2|1_2))",
         "SIG(HUP|INT|QUIT|ILL|TRAP|ABRT|FPE|KILL|USR1|SEGV|USR2|PIPE|ALRM)",
         "SIG(TERM|CHLD|CONT|STOP|TSTP|TTIN|TTOU)"
+    };
+
+    private static string[] m_lol_constants =
+    {
+        "(F|D|LD)_(PI|PI_[234]|[12]_PI|SQRT(2|3|1_2))",
     };
 
     private static string[] m_csharp_constants =
@@ -136,10 +164,12 @@ class CppKeywordClassifier : IClassifier
 
     internal CppKeywordClassifier(IClassificationTypeRegistryService registry,
                                   IClassifier classifier,
-                                  IContentType type)
+                                  IContentType type,
+                                  bool islolengine)
     {
         m_classifier = classifier;
         m_inprogress = false;
+        m_islolengine = islolengine;
 
         m_types_type = registry.GetClassificationType("LolAnyType");
         m_normal_type = registry.GetClassificationType("LolAnyIdentifier");
@@ -166,6 +196,12 @@ class CppKeywordClassifier : IClassifier
         {
             types_list = types_list.Concat(m_lolfx_types).ToList();
             constants_list = constants_list.Concat(m_lolfx_constants).ToList();
+        }
+
+        if (m_islolengine)
+        {
+            types_list = types_list.Concat(m_lol_types).ToList();
+            constants_list = constants_list.Concat(m_lol_constants).ToList();
         }
 
         m_types_regex =
