@@ -53,7 +53,6 @@ internal class LolClassifierProvider : IClassifierProvider
         if (m_inprogress)
             return null;
 
-        /* Try to guess whether this is a Lol Engine project */
 #if FALSE
         if (m_textdoc_factory != null)
         {
@@ -62,6 +61,8 @@ internal class LolClassifierProvider : IClassifierProvider
             /* print doc.FilePath */
         }
 #endif
+
+        /* Try to guess whether this is a Lol Engine project */
         EnvDTE.DTE dte = m_sp.GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
         bool islolengine = false;
         if (dte.Solution.FullName.Contains("Lol.sln"))
@@ -107,6 +108,7 @@ class CppKeywordClassifier : IClassifier
     private static string[] m_lol_types =
     {
         "ldouble|real|half",
+        "(float|int)([234]|2x2|3x3|4x4)",
         "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)",
     };
 

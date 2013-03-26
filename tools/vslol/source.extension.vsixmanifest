@@ -3,7 +3,7 @@
   <Identifier Id="VsLol">
     <Name>VsLol</Name>
     <Author>Lol</Author>
-    <Version>1.0.0.8</Version>
+    <Version>1.0.1.0</Version>
     <Description xml:space="preserve">Lol Engine Productivity Tools.</Description>
     <Locale>1033</Locale>
     <MoreInfoUrl>http://lolengine.net/</MoreInfoUrl>
