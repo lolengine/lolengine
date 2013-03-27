@@ -1,7 +1,7 @@
 //
 // Lol Engine - VsLol add-in for Visual Studio
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -90,8 +90,8 @@ internal class MenuGenerateCompilers : OleMenuCommand
         foreach (Project project in projects)
             foreach (ProjectItem item in ParseProjectItems(project))
             {
-                if (item.Name.EndsWith("-scanner.l")
-                     || item.Name.EndsWith("-parser.y"))
+                if (item.Name.EndsWith("-scanner.l", StringComparison.CurrentCultureIgnoreCase)
+                     || item.Name.EndsWith("-parser.y", StringComparison.CurrentCultureIgnoreCase))
                     Visible = true;
             }
     }
@@ -217,9 +217,9 @@ internal class MenuGenerateCompilers : OleMenuCommand
             if (p.ExitCode != 0)
             {
                 Logger.Info("Error: " + executable + " exited with code " + p.ExitCode + "\n");
-                if (arguments != "")
+                if (!string.IsNullOrEmpty(arguments))
                     Logger.Info("Error: args: " + arguments + "\n");
-                if (env != "")
+                if (!string.IsNullOrEmpty(env))
                     Logger.Info("Error: env: " + env + "\n");
                 return false;
             }
