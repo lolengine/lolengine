@@ -1,7 +1,7 @@
 //
 // Lol Engine - VsLol add-in for Visual Studio
 //
-// Copyright: (c) 2010-2012 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -48,14 +48,16 @@ public sealed class PluginPackage : Package
 {
     public PluginPackage()
     {
-        Trace.WriteLine(String.Format("Entering constructor for: {0}", this.ToString()));
+        Trace.WriteLine(String.Format(CultureInfo.InvariantCulture,
+                                      "Entering constructor for: {0}", this.ToString()));
     }
 
     [SecurityPermission(SecurityAction.Demand, Flags=SecurityPermissionFlag.UnmanagedCode)]
     protected override void Initialize()
     {
         // Trace the beginning of this method and call the base implementation.
-        Trace.WriteLine(String.Format("Entering Initialize() of: {0}", this.ToString()));
+        Trace.WriteLine(String.Format(CultureInfo.InvariantCulture,
+                                      "Entering Initialize() of: {0}", this.ToString()));
         base.Initialize();
 
         Logger.Initialize(GetService(typeof(SVsOutputWindow)) as IVsOutputWindow);
