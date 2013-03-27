@@ -42,8 +42,8 @@ au Syntax cpp
 " More GLSL-like types from the Lol Engine
 au Syntax cpp
    \ syn keyword cType
-   \ box2 dbox2 ivec2 uvec2
-   \ box3 dbox3 ivec3 uvec3
+   \ box2 dbox2 ibox2 ubox2
+   \ box3 dbox3 ibox3 ubox3
 
 " Ensure we know about nullptr
 au Syntax cpp
