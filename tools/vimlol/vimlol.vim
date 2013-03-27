@@ -39,6 +39,12 @@ au Syntax cpp
    \ int2 int3 int4 int2x2 int3x3 int4x4
    \ float2 float3 float4 float2x2 float3x3 float4x4
 
+" More GLSL-like types from the Lol Engine
+au Syntax cpp
+   \ syn keyword cType
+   \ box2 dbox2 ivec2 uvec2
+   \ box3 dbox3 ivec3 uvec3
+
 " Ensure we know about nullptr
 au Syntax cpp
    \ syn keyword cConstant

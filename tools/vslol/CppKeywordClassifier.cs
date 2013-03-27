@@ -110,6 +110,7 @@ class CppKeywordClassifier : IClassifier
         "ldouble|real|half",
         "(float|int)([234]|2x2|3x3|4x4)",
         "(f(16|128)||d|[ui](8|16||64)|r)(vec[234]|mat[234]|quat|cmplx)",
+        "(|[dui])box[23]",
     };
 
     private static string[] m_csharp_types =

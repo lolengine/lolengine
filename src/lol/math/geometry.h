@@ -28,77 +28,101 @@
 namespace lol
 {
 
-struct Box2D
+#define LOL_BOX_TYPEDEFS(tname, suffix) \
+    template <typename T> struct tname; \
+    typedef tname<float> suffix; \
+    typedef tname<double> d##suffix; \
+    typedef tname<int32_t> i##suffix; \
+    typedef tname<uint32_t> u##suffix;
+
+LOL_BOX_TYPEDEFS(Box2, box2)
+LOL_BOX_TYPEDEFS(Box3, box3)
+
+#undef LOL_BOX_TYPEDEFS
+
+/*
+ * 2D boxes
+ */
+
+template <typename T> struct Box2
 {
-    inline Box2D()
-      : A(0.f, 0.f),
-        B(0.f, 0.f)
+    inline Box2()
+      : A(T(0)),
+        B(T(0))
     {}
 
-    inline Box2D(vec2 a, vec2 b)
+    inline Box2(Vec2<T> a, Vec2<T> b)
       : A(a),
         B(b)
     {}
 
-    Box2D operator +(vec2 v)
+    Box2<T> operator +(Vec2<T> v)
     {
-        return Box2D(A + v, B + v);
+        return Box2<T>(A + v, B + v);
     }
 
-    Box2D &operator +=(vec2 v)
+    Box2<T> &operator +=(Vec2<T> v)
     {
         return *this = *this + v;
     }
 
-    Box2D operator -(vec2 v)
+    Box2<T> operator -(Vec2<T> v)
     {
-        return Box2D(A - v, B - v);
+        return Box2<T>(A - v, B - v);
     }
 
-    Box2D &operator -=(vec2 v)
+    Box2<T> &operator -=(Vec2<T> v)
     {
         return *this = *this - v;
     }
 
-    vec2 A, B;
+    Vec2<T> A, B;
 };
 
-struct Box3D
+/*
+ * 3D boxes
+ */
+
+template <typename T> struct Box3
 {
-    inline Box3D()
-      : A(0.f, 0.f, 0.f),
-        B(0.f, 0.f, 0.f)
+    inline Box3()
+      : A(T(0)),
+        B(T(0))
     {}
 
-    inline Box3D(vec3 a, vec3 b)
+    inline Box3(Vec3<T> a, Vec3<T> b)
       : A(a),
         B(b)
     {}
 
-    Box3D operator +(vec3 v)
+    Box3<T> operator +(Vec3<T> v)
     {
-        return Box3D(A + v, B + v);
+        return Box3<T>(A + v, B + v);
     }
 
-    Box3D &operator +=(vec3 v)
+    Box3<T> &operator +=(Vec3<T> v)
     {
         return *this = *this + v;
     }
 
-    Box3D operator -(vec3 v)
+    Box3<T> operator -(Vec3<T> v)
     {
-        return Box3D(A - v, B - v);
+        return Box3<T>(A - v, B - v);
     }
 
-    Box3D &operator -=(vec3 v)
+    Box3<T> &operator -=(Vec3<T> v)
     {
         return *this = *this - v;
     }
 
-    vec3 A, B;
+    Vec3<T> A, B;
 };
 
-static inline bool BoxIsectBox(Box2D const &b1, Box2D const &b2)
+/*
+ * Helper geometry functions
+ */
+
+static inline bool BoxIsectBox(box2 const &b1, box2 const &b2)
 {
     vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
     vec2 e1 = 0.5f * (b1.B - b1.A);
