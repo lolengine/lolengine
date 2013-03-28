@@ -50,11 +50,12 @@ class TileSetData
 
 private:
     String m_name;
-    int ntiles;
-    ivec2 m_tile_size, m_image_size, count;
-    vec2 m_texcoord;
 
-    Image *m_img;
+    /* Pixels, then texture coordinates */
+    Array<ibox2, box2> m_tiles;
+    ivec2 m_tile_size, m_image_size, m_texture_size;
+
+    Image *m_image;
     Texture *m_texture;
 };
 
@@ -62,35 +63,59 @@ private:
  * Public TileSet class
  */
 
+TileSet::TileSet(char const *path)
+  : m_data(new TileSetData())
+{
+    Init(path);
+
+    m_drawgroup = DRAWGROUP_BEFORE;
+}
+
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
   : m_data(new TileSetData())
 {
-    m_data->m_name = String("<tileset> ") + path;
+    Init(path);
 
-    m_data->m_texture = 0;
-    m_data->m_img = Image::Create(path);
-    m_data->m_image_size = m_data->m_img->GetSize();
-
+    /* If count is valid, fix size; otherwise, fix count. */
     if (count.x > 0 && count.y > 0)
     {
-        m_data->count = count;
-        m_data->m_tile_size = m_data->m_image_size / count;
+        size = m_data->m_image_size / count;
     }
     else
     {
         if (size.x <= 0 || size.y <= 0)
             size = ivec2(32, 32);
-        m_data->count.x = m_data->m_image_size.x / min(size.x, m_data->m_image_size.x);
-        m_data->count.y = m_data->m_image_size.y / min(size.y, m_data->m_image_size.y);
-        m_data->m_tile_size = size;
+        count = ivec2(max(1, m_data->m_image_size.x / size.x),
+                      max(1, m_data->m_image_size.y / size.y));
     }
 
-    m_data->m_texcoord.x = (float)m_data->m_tile_size.x / PotUp(m_data->m_image_size.x);
-    m_data->m_texcoord.y = (float)m_data->m_tile_size.y / PotUp(m_data->m_image_size.y);
-
-    m_data->ntiles = m_data->count.x * m_data->count.y;
+    for (int j = 0; j < count.y; ++j)
+    for (int i = 0; i < count.x; ++i)
+    {
+        AddTile(ibox2(size * ivec2(i, j),
+                      size * ivec2(i + 1, j + 1)));
+    }
 
     m_drawgroup = DRAWGROUP_BEFORE;
+}
+
+void TileSet::Init(char const *path)
+{
+    m_data->m_name = String("<tileset> ") + path;
+
+    m_data->m_texture = 0;
+    m_data->m_image = Image::Create(path);
+    m_data->m_image_size = m_data->m_image->GetSize();
+    m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
+                                   PotUp(m_data->m_image_size.y));
+}
+
+int TileSet::AddTile(ibox2 rect)
+{
+    m_data->m_tiles.Push(rect,
+                         box2((vec2)rect.A / (vec2)m_data->m_texture_size,
+                              (vec2)rect.B / (vec2)m_data->m_texture_size));
+    return m_data->m_tiles.Count() - 1;
 }
 
 TileSet::~TileSet()
@@ -104,10 +129,10 @@ void TileSet::TickDraw(float seconds)
 
     if (IsDestroying())
     {
-        if (m_data->m_img)
+        if (m_data->m_image)
         {
-            Image::Destroy(m_data->m_img);
-            m_data->m_img = nullptr;
+            Image::Destroy(m_data->m_image);
+            m_data->m_image = nullptr;
         }
         else
         {
@@ -115,10 +140,10 @@ void TileSet::TickDraw(float seconds)
             m_data->m_texture = nullptr;
         }
     }
-    else if (m_data->m_img)
+    else if (m_data->m_image)
     {
         int planes;
-        PixelFormat format = m_data->m_img->GetFormat();
+        PixelFormat format = m_data->m_image->GetFormat();
 
         switch (format)
         {
@@ -133,10 +158,10 @@ void TileSet::TickDraw(float seconds)
             break;
         }
 
-        int w = PotUp(m_data->m_image_size.x);
-        int h = PotUp(m_data->m_image_size.y);
+        int w = m_data->m_texture_size.x;
+        int h = m_data->m_texture_size.y;
 
-        uint8_t *pixels = m_data->m_img->GetData();
+        uint8_t *pixels = m_data->m_image->GetData();
         if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {
             uint8_t *tmp = new uint8_t[planes * w * h];
@@ -150,10 +175,10 @@ void TileSet::TickDraw(float seconds)
         m_data->m_texture = new Texture(ivec2(w, h), format);
         m_data->m_texture->SetData(pixels);
 
-        if (pixels != m_data->m_img->GetData())
+        if (pixels != m_data->m_image->GetData())
             delete[] pixels;
-        Image::Destroy(m_data->m_img);
-        m_data->m_img = nullptr;
+        Image::Destroy(m_data->m_image);
+        m_data->m_image = nullptr;
     }
 }
 
@@ -162,22 +187,22 @@ char const *TileSet::GetName()
     return m_data->m_name.C();
 }
 
-ivec2 TileSet::GetTileCount() const
+int TileSet::GetTileCount() const
 {
-    return m_data->count;
+    return m_data->m_tiles.Count();
 }
 
 ivec2 TileSet::GetTileSize(int tileid) const
 {
     (void)tileid;
 
-    return m_data->m_tile_size;
+    ibox2 const &box = m_data->m_tiles[tileid].m1;
+    return box.B - box.A;
 }
 
-vec2 TileSet::GetImageSize() const
+ivec2 TileSet::GetTextureSize() const
 {
-    return vec2(PotUp(m_data->m_image_size.x),
-                PotUp(m_data->m_image_size.y));
+    return m_data->m_texture_size;
 }
 
 ShaderTexture TileSet::GetTexture() const
@@ -187,7 +212,7 @@ ShaderTexture TileSet::GetTexture() const
 
 void TileSet::Bind()
 {
-    if (!m_data->m_img && m_data->m_texture)
+    if (!m_data->m_image && m_data->m_texture)
         m_data->m_texture->Bind();
 }
 
@@ -199,14 +224,16 @@ void TileSet::Unbind()
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
                        float *vertex, float *texture)
 {
-    float dtx = m_data->m_texcoord.x;
-    float dty = m_data->m_texcoord.y;
-    float tx = dtx * ((id & 0xffff) % m_data->count.x);
-    float ty = dty * ((id & 0xffff) / m_data->count.x);
+    ibox2 pixels = m_data->m_tiles[id].m1;
+    box2 texels = m_data->m_tiles[id].m2;
+    float dtx = texels.B.x - texels.A.x;
+    float dty = texels.B.y - texels.A.y;
+    float tx = texels.A.x;
+    float ty = texels.A.y;
 
-    int dx = m_data->m_tile_size.x * scale.x;
-    int dy = o ? 0 : m_data->m_tile_size.y * scale.y;
-    int dz = o ? m_data->m_tile_size.y * scale.y : 0;
+    int dx = (pixels.B.x - pixels.A.x) * scale.x;
+    int dy = o ? 0 : (pixels.B.y - pixels.A.y) * scale.y;
+    int dz = o ? (pixels.B.y - pixels.A.y) * scale.y : 0;
 
     /* If scaling is negative, switch triangle winding */
     if (scale.x * scale.y < 0.0f)
@@ -226,7 +253,7 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     dty *= 126.f / 128.f;
 #endif
 
-    if (!m_data->m_img && m_data->m_texture)
+    if (!m_data->m_image && m_data->m_texture)
     {
         float tmp[10];
 
