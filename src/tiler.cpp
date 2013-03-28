@@ -54,6 +54,20 @@ TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count)
     return tileset;
 }
 
+TileSet *Tiler::Register(char const *path)
+{
+    int id = data->tilesets.MakeSlot(path);
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
+
+    if (!tileset)
+    {
+        tileset = new TileSet(path);
+        data->tilesets.SetEntity(id, tileset);
+    }
+
+    return tileset;
+}
+
 void Tiler::Deregister(TileSet *tileset)
 {
     data->tilesets.RemoveSlot(tileset);
