@@ -52,7 +52,7 @@ char const *Entity::GetName()
 
 void Entity::TickGame(float seconds)
 {
-    (void)seconds;
+    UNUSED(seconds);
 #if !LOL_RELEASE
     if (m_tickstate != STATE_PRETICK_GAME)
         Log::Error("invalid entity game tick\n");

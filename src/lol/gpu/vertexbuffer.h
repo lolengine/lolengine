@@ -158,7 +158,7 @@ protected:
     };
 
 #define LOL_TYPE(T) \
-    static uint8_t GetType(T *x) { (void)x; return Type##T; }
+    static uint8_t GetType(T *x) { UNUSED(x); return Type##T; }
 
     LOL_TYPE(void)
     LOL_TYPE(half)     LOL_TYPE(f16vec2) LOL_TYPE(f16vec3) LOL_TYPE(f16vec4)
@@ -191,7 +191,7 @@ private:
 template<>
 inline void VertexStreamBase::AddStream<void>(int n, VertexUsage usage)
 {
-    (void)usage;
+    UNUSED(usage);
     m_streams[n].size = 0;
 }
 

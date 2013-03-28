@@ -239,27 +239,27 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     {
     case MeshPrimitive::Triangles:
         /* FIXME: ignores most of the arguments! */
-        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        UNUSED(vbase, vskip, vcount, skip);
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::TriangleStrips:
         /* FIXME: ignores most of the arguments! */
-        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        UNUSED(vbase, vskip, vcount, skip);
         glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::TriangleFans:
         /* FIXME: ignores most of the arguments! */
-        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        UNUSED(vbase, vskip, vcount, skip);
         glDrawElements(GL_TRIANGLE_FAN, count, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::Points:
         /* FIXME: ignores most of the arguments! */
-        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        UNUSED(vbase, vskip, vcount, skip);
         glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
         break;
     case MeshPrimitive::Lines:
         /* FIXME: ignores most of the arguments! */
-        (void)vbase; (void)vskip; (void)vcount; (void)skip;
+        UNUSED(vbase, vskip, vcount, skip);
         glDrawElements(GL_LINES, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
@@ -645,7 +645,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
     return ret;
 #else
     /* FIXME: is there a way to use "size"? */
-    (void)size;
+    UNUSED(size);
     return m_data->m_memory + offset;
 #endif
 }

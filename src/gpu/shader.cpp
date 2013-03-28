@@ -163,7 +163,7 @@ Shader *Shader::Create(char const *lolfx)
 void Shader::Destroy(Shader *shader)
 {
     /* XXX: do nothing! the shader should remain in cache */
-    (void)shader;
+    UNUSED(shader);
 }
 
 Shader::Shader(char const *vert, char const *frag)
