@@ -272,7 +272,7 @@ void Scene::Render() // XXX: rename to Blit()
             /* Bind texture */
             data->m_tiles[i].tileset->Bind();
             data->m_tile_shader->SetUniform(uni_texsize,
-                                   data->m_tiles[i].tileset->GetImageSize());
+                           (vec2)data->m_tiles[i].tileset->GetTextureSize());
 
             /* Bind vertex and texture coordinate buffers */
             data->m_tile_vdecl->Bind();
