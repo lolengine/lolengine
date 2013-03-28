@@ -201,7 +201,7 @@ void SdlInputData::Tick(float seconds)
         if (keystate[i])
             Input::KeyPressed(i, seconds);
 #else
-    (void)seconds;
+    UNUSED(seconds);
 #endif
 #endif
 }

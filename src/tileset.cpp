@@ -67,8 +67,6 @@ TileSet::TileSet(char const *path)
   : m_data(new TileSetData())
 {
     Init(path);
-
-    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
@@ -85,8 +83,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     {
         if (size.x <= 0 || size.y <= 0)
             size = ivec2(32, 32);
-        count = ivec2(max(1, m_data->m_image_size.x / size.x),
-                      max(1, m_data->m_image_size.y / size.y));
+        count = max(ivec2(1, 1), m_data->m_image_size / size);
     }
 
     for (int j = 0; j < count.y; ++j)
@@ -95,8 +92,6 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
         AddTile(ibox2(size * ivec2(i, j),
                       size * ivec2(i + 1, j + 1)));
     }
-
-    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 void TileSet::Init(char const *path)
@@ -108,6 +103,8 @@ void TileSet::Init(char const *path)
     m_data->m_image_size = m_data->m_image->GetSize();
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
                                    PotUp(m_data->m_image_size.y));
+
+    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
 int TileSet::AddTile(ibox2 rect)
@@ -194,8 +191,6 @@ int TileSet::GetTileCount() const
 
 ivec2 TileSet::GetTileSize(int tileid) const
 {
-    (void)tileid;
-
     ibox2 const &box = m_data->m_tiles[tileid].m1;
     return box.B - box.A;
 }
