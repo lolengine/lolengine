@@ -62,6 +62,9 @@ protected:
         DRAWGROUP_LIGHT,
         DRAWGROUP_CAMERA,
         DRAWGROUP_DEFAULT,
+        DRAWGROUP_AFTER,
+        DRAWGROUP_AFTER_0,
+        DRAWGROUP_AFTER_1,
         DRAWGROUP_HUD,
         DRAWGROUP_CAPTURE,
         // Must be the last element
