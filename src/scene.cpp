@@ -160,6 +160,8 @@ void Scene::Reset()
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
+    ASSERT(id < tileset->GetTileCount());
+
     Tile t;
     /* FIXME: this sorting only works for a 45-degree camera */
     t.prio = -pos.y - 2 * 32 * pos.z + (o ? 0 : 32);

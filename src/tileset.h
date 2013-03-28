@@ -44,8 +44,10 @@ protected:
 
 public:
     /* New methods */
+    int AddTile(ibox2 rect);
     int GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
+
     ivec2 GetTextureSize() const;
     ShaderTexture GetTexture() const;
     void Bind();
@@ -55,7 +57,6 @@ public:
 
 private:
     void Init(char const *path);
-    int AddTile(ibox2 rect);
 
     TileSetData *m_data;
 };
