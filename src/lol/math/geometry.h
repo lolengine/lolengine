@@ -51,27 +51,32 @@ template <typename T> struct Box2
         B(T(0))
     {}
 
-    inline Box2(Vec2<T> a, Vec2<T> b)
+    inline Box2(Vec2<T> const &a, Vec2<T> const &b)
       : A(a),
         B(b)
     {}
 
-    Box2<T> operator +(Vec2<T> v)
+    inline Box2(T const &ax, T const &ay, T const &bx, T const &by)
+      : A(ax, ay),
+        B(bx, by)
+    {}
+
+    Box2<T> operator +(Vec2<T> const &v)
     {
         return Box2<T>(A + v, B + v);
     }
 
-    Box2<T> &operator +=(Vec2<T> v)
+    Box2<T> &operator +=(Vec2<T> const &v)
     {
         return *this = *this + v;
     }
 
-    Box2<T> operator -(Vec2<T> v)
+    Box2<T> operator -(Vec2<T> const &v)
     {
         return Box2<T>(A - v, B - v);
     }
 
-    Box2<T> &operator -=(Vec2<T> v)
+    Box2<T> &operator -=(Vec2<T> const &v)
     {
         return *this = *this - v;
     }
@@ -90,27 +95,33 @@ template <typename T> struct Box3
         B(T(0))
     {}
 
-    inline Box3(Vec3<T> a, Vec3<T> b)
+    inline Box3(Vec3<T> const &a, Vec3<T> const &b)
       : A(a),
         B(b)
     {}
 
-    Box3<T> operator +(Vec3<T> v)
+    inline Box3(T const &ax, T const &ay, T const &az,
+                T const &bx, T const &by, T const &bz)
+      : A(ax, ay, az),
+        B(bx, by, bz)
+    {}
+
+    Box3<T> operator +(Vec3<T> const &v)
     {
         return Box3<T>(A + v, B + v);
     }
 
-    Box3<T> &operator +=(Vec3<T> v)
+    Box3<T> &operator +=(Vec3<T> const &v)
     {
         return *this = *this + v;
     }
 
-    Box3<T> operator -(Vec3<T> v)
+    Box3<T> operator -(Vec3<T> const &v)
     {
         return Box3<T>(A - v, B - v);
     }
 
-    Box3<T> &operator -=(Vec3<T> v)
+    Box3<T> &operator -=(Vec3<T> const &v)
     {
         return *this = *this - v;
     }
