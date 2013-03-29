@@ -411,7 +411,7 @@ public:
 
     /* These methods are general queries */
     static ivec2 GetMousePos();
-    static ivec3 GetMouseButtons();
+    static uint32_t GetMouseButtons();
 
     //BH : Shouldn't use this
     static int GetButtonState(int button);

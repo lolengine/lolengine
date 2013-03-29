@@ -33,9 +33,9 @@ WorldEntity::WorldEntity()
 
     m_mousepos = ivec2(0);
     m_mousebuttons = ivec3(0);
-    m_pressed = ivec3(0);
-    m_clicked = ivec3(0);
-    m_released = ivec3(0);
+    m_pressed = 0;
+    m_clicked = 0;
+    m_released = 0;
 }
 
 WorldEntity::~WorldEntity()
