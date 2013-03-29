@@ -91,6 +91,10 @@ public:
 
     android_app* m_native_app;
 
+    /* The resolution that was asked (not the one we got) */
+    /* FIXME: we need proper unproject or at least screen space events!! */
+    ivec2 m_wanted_resolution;
+
     SavedState m_state;
 
 private:
@@ -200,8 +204,12 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
     switch (AInputEvent_getType(event))
     {
     case AINPUT_EVENT_TYPE_MOTION:
-        Input::SetMousePos(ivec2(AMotionEvent_getX(event, 0),
-                                 AMotionEvent_getY(event, 0)));
+        /* FIXME: we flip the Y axis here, but is it the right place? */
+        ivec2 pos(AMotionEvent_getX(event, 0),
+                  AMotionEvent_getY(event, 0));
+        pos = pos * m_wanted_resolution / Video::GetSize();
+        pos.y = m_wanted_resolution.y - 1 - pos.y;
+        Input::SetMousePos(pos);
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
         case AMOTION_EVENT_ACTION_DOWN:
@@ -284,7 +292,7 @@ void android_main(android_app* native_app)
 lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
   : m_data(g_data)
 {
-    ;
+    m_data->m_wanted_resolution = res;
 }
 
 void lol::AndroidApp::ShowPointer(bool show)
