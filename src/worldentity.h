@@ -35,7 +35,7 @@ public:
 
     ivec2 m_mousepos;
     ivec3 m_mousebuttons;
-    ivec3 m_pressed, m_clicked, m_released;
+    uint32_t m_pressed, m_clicked, m_released;
 
 protected:
     WorldEntity();

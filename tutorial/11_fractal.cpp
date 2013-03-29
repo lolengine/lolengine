@@ -171,9 +171,9 @@ public:
 
         rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
 
-        ivec3 buttons = Input::GetMouseButtons();
+        uint32_t buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
-        if (buttons[1])
+        if (buttons & 0x2)
         {
             if (!m_drag)
             {
@@ -201,9 +201,9 @@ public:
             }
         }
 
-        if ((buttons[0] || buttons[2]) && m_mousepos.x != -1)
+        if (buttons & 0x5 && m_mousepos.x != -1)
         {
-            double zoom = buttons[0] ? -0.5 : 0.5;
+            double zoom = (buttons & 0x1) ? -0.5 : 0.5;
             m_zoom_speed += zoom * seconds;
             if (m_zoom_speed / zoom > 5e-3f)
                 m_zoom_speed = zoom * 5e-3f;

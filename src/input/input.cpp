@@ -47,7 +47,7 @@ public:
 
 private:
     ivec2 mouse;
-    ivec3 buttons;
+    uint32_t buttons;
 
     static int const MAX_ENTITIES = 100;
     WorldEntity *entities[MAX_ENTITIES];
@@ -293,7 +293,7 @@ ivec2 Input::GetMousePos()
     return data->mouse;
 }
 
-ivec3 Input::GetMouseButtons()
+uint32_t Input::GetMouseButtons()
 {
     return data->buttons;
 }
@@ -425,15 +425,15 @@ void Input::SetMousePos(ivec2 coord)
             if (top != data->lastfocus)
                 data->entities[n]->m_pressed = data->buttons;
             else
-                data->entities[n]->m_clicked = ivec3(0);
+                data->entities[n]->m_clicked = 0;
         }
         else
         {
             data->entities[n]->m_mousepos = ivec2(-1);
             /* FIXME */
-            data->entities[n]->m_released = ivec3(0);
-            data->entities[n]->m_pressed = ivec3(0);
-            data->entities[n]->m_clicked = ivec3(0);
+            data->entities[n]->m_released = 0;
+            data->entities[n]->m_pressed = 0;
+            data->entities[n]->m_clicked = 0;
         }
     }
 
@@ -442,27 +442,29 @@ void Input::SetMousePos(ivec2 coord)
 
 void Input::SetMouseButton(int index)
 {
-    data->buttons[index] = 1;
+    uint32_t flag = 1 << index;
+    data->buttons |= flag;
 
     if (data->lastfocus)
     {
-        if (!data->lastfocus->m_pressed[index])
-            data->lastfocus->m_clicked[index] = 1;
-        data->lastfocus->m_pressed[index] = 1;
-        data->lastfocus->m_released[index] = 0;
+        if (!(data->lastfocus->m_pressed & flag))
+            data->lastfocus->m_clicked |= flag;
+        data->lastfocus->m_pressed |= flag;
+        data->lastfocus->m_released &= ~flag;
     }
 }
 
 void Input::UnsetMouseButton(int index)
 {
-    data->buttons[index] = 0;
+    uint32_t flag = 1 << index;
+    data->buttons &= ~flag;
 
     if (data->lastfocus)
     {
-        if (data->lastfocus->m_pressed[index])
-            data->lastfocus->m_released[index] = 1;
-        data->lastfocus->m_pressed[index] = 0;
-        data->lastfocus->m_clicked[index] = 0;
+        if (!(data->lastfocus->m_pressed & flag))
+            data->lastfocus->m_released |= flag;
+        data->lastfocus->m_pressed &= ~flag;
+        data->lastfocus->m_clicked &= ~flag;
     }
 }
 
