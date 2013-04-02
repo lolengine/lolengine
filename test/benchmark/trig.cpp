@@ -8,13 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
 #include <cstdio>
 
-#if defined HAVE_FASTMATH_H
+#if HAVE_FASTMATH_H
 #   include <fastmath.h>
 #endif
 
@@ -57,7 +57,7 @@ void bench_trig(int mode)
         /* Sin */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__ && !defined __SNC__
+#if __GNUC__ && !__SNC__
             pf2[i] = __builtin_sinf(pf[i]);
 #else
             pf2[i] = sinf(pf[i]);
@@ -67,7 +67,7 @@ void bench_trig(int mode)
         /* Fast sin */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined HAVE_FASTMATH_H && !defined __native_client__
+#if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_sinf(pf[i]);
 #else
             pf2[i] = sinf(pf[i]);
@@ -83,7 +83,7 @@ void bench_trig(int mode)
         /* Cos */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__ && !defined __SNC__
+#if __GNUC__ && !__SNC__
             pf2[i] = __builtin_cosf(pf[i]);
 #else
             pf2[i] = cosf(pf[i]);
@@ -93,7 +93,7 @@ void bench_trig(int mode)
         /* Fast cos */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined HAVE_FASTMATH_H && !defined __native_client__
+#if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_cosf(pf[i]);
 #else
             pf2[i] = cosf(pf[i]);
@@ -110,7 +110,7 @@ void bench_trig(int mode)
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
-#if defined __GNUC__ && !defined __SNC__
+#if __GNUC__ && !__SNC__
             pf2[i] = __builtin_sinf(pf[i]);
             pf3[i] = __builtin_cosf(pf[i]);
 #else
@@ -124,7 +124,7 @@ void bench_trig(int mode)
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
-#if defined HAVE_FASTMATH_H && !defined __native_client__
+#if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_sinf(pf[i]);
             pf3[i] = f_cosf(pf[i]);
 #else
@@ -143,7 +143,7 @@ void bench_trig(int mode)
         /* Tan */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined __GNUC__ && !defined __SNC__
+#if __GNUC__ && !__SNC__
             pf2[i] = __builtin_tanf(pf[i]);
 #else
             pf2[i] = tanf(pf[i]);
@@ -153,7 +153,7 @@ void bench_trig(int mode)
         /* Fast tan */
         timer.Get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
-#if defined HAVE_FASTMATH_H && !defined __native_client__
+#if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_tanf(pf[i]);
 #else
             pf2[i] = tanf(pf[i]);
