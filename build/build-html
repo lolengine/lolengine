@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# This can't hurt
+make distclean
+
+set -e
+./build/lol-build bootstrap emscripten-html
+./build/lol-build configure emscripten-html
+./build/lol-build build emscripten-html
+
