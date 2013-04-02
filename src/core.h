@@ -16,12 +16,17 @@
 #if !defined __LOL_CORE_H__
 #define __LOL_CORE_H__
 
-// CPU features
+// System and CPU features
+#undef LOL_FEATURE_THREADS
 #undef LOL_FEATURE_CHEAP_BRANCHES
 #undef LOL_FEATURE_VERY_CHEAP_BRANCHES
 
+#if !defined EMSCRIPTEN
+#   define LOL_FEATURE_THREADS 1
+#endif
+
 #if !defined __CELLOS_LV2__
-#   define LOL_FEATURE_CHEAP_BRANCHES
+#   define LOL_FEATURE_CHEAP_BRANCHES 1
 #endif
 
 // Optimisation helpers
