@@ -65,7 +65,12 @@ SUFFIXES += .lolfx
          echo "lolfx_resource_$(notdir $(basename $(filter %.lolfx, $^))) ="; \
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") \
-	| $(CXXCOMPILE) -xc++ -c - -o $@
+	> $@.lolfx.cpp && \
+	$(CXXCOMPILE) -xc++ -c $@.lolfx.cpp -o $@ && \
+	exit=0 || exit=1; rm -f $@.lolfx.cpp ; exit "$$exit"
+
+# Disable on the fly compilation because emscripten doesn't support it
+#	| $(CXXCOMPILE) -xc++ -c - -o $@
 
 
 #

@@ -24,6 +24,8 @@
 #  - win*-i386
 #  - win*-amd64
 #  - raspi-arm
+#  - emscripten-html
+#  - emscripten-js
 #
 
 set -e
@@ -88,6 +90,9 @@ __init__()
     # Ensure we don’t launch weird Windows binaries when cross-compiling
     WINEDLLOVERRIDES="winemenubuilder.exe,wineboot.exe,explorer.exe,winedbg.exe=d"
     export WINEDLLOVERRIDES
+
+    LLVM_ADD_VERSION=3.0
+    export LLVM_ADD_VERSION
 
     # Ensure SDL does not redirect stdout/stderr to local files
     SDL_STDIO_REDIRECT=0
@@ -232,6 +237,10 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/external/libcaca-0.99.beta18/include -DCACA_STATIC"
 
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
+            ;;
+        emscripten-*)
+            EM_HOME=$HOME/emscripten
+            ./configure CC=$EM_HOME/emcc CXX=$EM_HOME/em++ AR=$EM_HOME/emar RANLIB=$EM_HOME/emranlib PKG_CONFIG=false ac_cv_exeext=".${platform##emscripten-}"
             ;;
         *)
             PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
