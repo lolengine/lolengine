@@ -37,12 +37,14 @@ public:
     Queue() : QueueBase<T, N>() {}
 };
 
+#if LOL_FEATURE_THREADS
 class Thread : ThreadBase
 {
 public:
     Thread(void *(*fn)(void *), void *data) : ThreadBase(fn, data) {}
     virtual ~Thread() {}
 };
+#endif
 
 } /* namespace lol */
 
