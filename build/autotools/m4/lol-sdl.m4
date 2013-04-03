@@ -66,7 +66,7 @@ if test "x${cross_compiling}" != xyes -a "x${ac_cv_my_have_sdl}" = xno; then
     ac_cv_my_have_sdl="yes"
     SDL_CFLAGS="${SDL_CFLAGS} `${SDL_CONFIG} --cflags`"
     SDL_LIBS="${SDL_LIBS} `${SDL_CONFIG} --libs`"
-    AC_DEFINE(HAVE_SDL_H, 1, Define to 1 to use SDL.h),
+    AC_DEFINE(HAVE_SDL_H, 1, Define to 1 to use SDL.h)
   fi
 fi
 

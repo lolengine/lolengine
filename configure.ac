@@ -77,7 +77,7 @@ AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
 AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h)
 AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
-AC_CHECK_HEADERS(sys/wait.h)
+AC_CHECK_HEADERS(sys/wait.h sys/time.h)
 AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
 AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
 AC_CHECK_HEADERS(pam/pam_appl.h pam/pam_misc.h)
@@ -89,6 +89,7 @@ AC_LANG_POP(C++)
 
 dnl  Common C functions
 AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd backtrace_symbols)
+AC_CHECK_FUNCS(gettimeofday usleep)
 
 
 if test "${enable_debug}" = "yes"; then
