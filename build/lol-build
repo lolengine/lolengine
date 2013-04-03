@@ -240,7 +240,7 @@ configure()
             ;;
         emscripten-*)
             EM_HOME=$HOME/emscripten
-            ./configure CC=$EM_HOME/emcc CXX=$EM_HOME/em++ AR=$EM_HOME/emar RANLIB=$EM_HOME/emranlib PKG_CONFIG=false ac_cv_exeext=".${platform##emscripten-}"
+            ./configure CC=$EM_HOME/emcc CXX=$EM_HOME/em++ AR=$EM_HOME/emar RANLIB=$EM_HOME/emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
             ;;
         *)
             PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"

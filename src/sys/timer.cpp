@@ -8,29 +8,30 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
 #include <cstdlib>
 #include <stdint.h>
 
-#if defined __linux__ || defined __native_client__ || defined __APPLE__
+#if __linux__ || __native_client__ || __APPLE__ \
+ || (HAVE_GETTIMEOFDAY && HAVE_USLEEP && HAVE_SYS_TIME_H && HAVE_UNISTD_H)
 #   include <sys/time.h>
 #   include <unistd.h>
-#elif defined _XBOX
+#elif _XBOX
 #   include <xtl.h>
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
 #   include <xbox.h>
-#elif defined _WIN32
+#elif _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#elif defined __CELLOS_LV2__
+#elif __CELLOS_LV2__
 #   include <sys/sys_time.h>
 #   include <sys/timer.h>
 #   include <sys/time_util.h>
-#elif defined HAVE_SDL_SDL_H
+#elif HAVE_SDL_SDL_H
 #   include <SDL/SDL.h>
 #else
 #   include <SDL.h>
@@ -55,7 +56,8 @@ private:
         (void)GetSeconds(true);
     }
 
-#if defined __linux__ || defined __native_client__ || defined __APPLE__
+#if __linux__ || __native_client__ || __APPLE__ \
+ || (HAVE_GETTIMEOFDAY && HAVE_USLEEP)
     float GetSeconds(bool reset)
     {
         struct timeval tv, tv0 = m_tv;
@@ -73,7 +75,7 @@ private:
 
     struct timeval m_tv;
 
-#elif defined _WIN32
+#elif _WIN32
     float GetSeconds(bool reset)
     {
         static float secs_per_cycle = GetSecondsPerCycle();
@@ -99,7 +101,7 @@ private:
 
     LARGE_INTEGER m_cycles;
 
-#elif defined __CELLOS_LV2__
+#elif __CELLOS_LV2__
     float GetSeconds(bool reset)
     {
         static float secs_per_cycle = GetSecondsPerCycle();

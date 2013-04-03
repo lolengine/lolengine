@@ -422,6 +422,11 @@ void TickerData::DrawThreadTick()
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
 }
 
+void TickerData::DiskThreadTick()
+{
+    ;
+}
+
 void Ticker::SetState(Entity * /* entity */, uint32_t /* state */)
 {
 

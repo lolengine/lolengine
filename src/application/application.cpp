@@ -24,11 +24,11 @@
 #   include "platform/nacl/nacl-app.h"
 #elif defined __ANDROID__
 #   include "platform/android/androidapp.h"
-#elif defined HAVE_GLES_2X
-#   include "eglapp.h"
-#else
+#elif defined USE_SDL
 #   include "platform/sdl/sdlapp.h"
 #   include "platform/sdl/sdlinput.h"
+#elif defined HAVE_GLES_2X
+#   include "eglapp.h"
 #endif
 
 using namespace std;
@@ -52,11 +52,11 @@ class ApplicationData
     NaClApp app;
 #elif defined __ANDROID__
     AndroidApp app;
+#elif defined USE_SDL
+    SdlApp app;
 #elif defined HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;
-#elif defined USE_SDL
-    SdlApp app;
 #else
 #   error No application class available on this platform
 #endif
