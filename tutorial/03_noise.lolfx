@@ -46,6 +46,10 @@ void main(void)
 
 #version 120
 
+#if defined GL_ES
+precision highp float;
+#endif
+
 uniform float u_Time;
 
 varying vec4 pass_Position;
@@ -93,11 +97,18 @@ void main(void)
     test += 0.5 * (length(fract(d) - 0.5) - length(fract(d + 0.5) - 0.5));
 
     /* Compute 4 octaves of noise */
+#if defined GL_ES
+    vec4 n = vec4(noise3d((test > 0.0) ? fire[0] : water[0]),
+                  noise3d((test > 0.0) ? fire[1] : water[1]),
+                  noise3d((test > 0.0) ? fire[2] : water[2]),
+                  noise3d((test > 0.0) ? fire[3] : water[3]));
+#else
     vec3 points[4] = (test > 0.0) ? fire : water;
     vec4 n = vec4(noise3d(points[0]),
                   noise3d(points[1]),
                   noise3d(points[2]),
                   noise3d(points[3]));
+#endif
 
     vec4 color;
 
