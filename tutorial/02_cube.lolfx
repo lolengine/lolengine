@@ -17,6 +17,10 @@ void main(void)
 
 #version 120
 
+#if defined GL_ES
+precision highp float;
+#endif
+
 varying vec3 pass_Color;
 
 void main(void)
