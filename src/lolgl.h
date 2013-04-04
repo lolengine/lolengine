@@ -18,6 +18,11 @@
 
 #define GL_GLEXT_PROTOTYPES
 
+/* Prefer GLES on browsers */
+#if defined EMSCRIPTEN
+#   undef HAVE_GL_2X
+#endif
+
 /* Only define one GL platform */
 #if defined HAVE_GL_2X
 #   undef HAVE_GLES_2X
