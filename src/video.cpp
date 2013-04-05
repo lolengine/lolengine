@@ -170,6 +170,8 @@ void Video::SetCustomSize(ivec2 size)
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetSize() not implemented")
+#elif defined __CELLOS_LV2__
+    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
 #else
     glGetIntegerv(GL_VIEWPORT, (GLint*)&current_size);
     if (current_size.zw != size)
@@ -184,6 +186,8 @@ void Video::RestoreSize()
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
 #   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetSize() not implemented")
+#elif defined __CELLOS_LV2__
+    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
 #else
     glGetIntegerv(GL_VIEWPORT, (GLint*)&current_size);
     if (current_size.zw != VideoData::saved_viewport)
