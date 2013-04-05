@@ -40,7 +40,7 @@
 #       define MACOS_OPENGL
 #       define GL_GLEXT_PROTOTYPES
 #       include <OpenGL/OpenGL.h>
-#       include <OpenGL/glut.h>
+#       include <GL/glut.h>
 //#       include <OpenGL/glext.h>
 #   else
 #       define GL_GLEXT_PROTOTYPES
