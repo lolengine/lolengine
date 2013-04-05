@@ -145,6 +145,9 @@ uint32_t FramebufferFormat::GetFormat()
         case RG_32_F:       
         case RGB_32_F:      
         case RGBA_32_F:     return GL_FLOAT;
+
+        default:            ASSERT(false, "not supported by IOS:OGL:ES");
+                            return 0;
 #else
         case R_8:           return GL_R8;
         case R_8_I:         return GL_R8I;
