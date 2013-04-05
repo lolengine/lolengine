@@ -16,6 +16,10 @@ void main(void)
 
 #version 120
 
+#if defined GL_ES
+precision highp float;
+#endif
+
 uniform sampler2D u_Texture;
 
 varying vec4 pass_Position;

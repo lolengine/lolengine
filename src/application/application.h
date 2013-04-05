@@ -29,8 +29,7 @@ public:
 
     bool MustTick();
     void Tick();
-
-    void Run() { while(MustTick()) Tick(); }
+    void Run();
 
     void ShowPointer(bool show);
 
