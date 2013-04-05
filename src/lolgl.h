@@ -40,16 +40,16 @@
 #       define MACOS_OPENGL
 #       define GL_GLEXT_PROTOTYPES
 #       include <OpenGL/OpenGL.h>
-#       include <OpenGL/gl.h>
-#       include <OpenGL/glext.h>
+#       include <OpenGL/glut.h>
+//#       include <OpenGL/glext.h>
 #   else
 #       define GL_GLEXT_PROTOTYPES
 #       include <GL/gl.h>
 #   endif
 #elif defined HAVE_GLES_2X
 #   if defined __APPLE__ && defined __MACH__
-#       include <OpenGLES/ES2/gl.h>
-#       include <OpenGLES/ES2/glext.h>
+#       include <OpenGLES/ES2/glut.h>
+//#       include <OpenGLES/ES2/glext.h>
 #   elif defined __CELLOS_LV2__
 #       include <PSGL/psgl.h>
 #       include <PSGL/psglu.h>
