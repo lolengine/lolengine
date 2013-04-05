@@ -309,6 +309,10 @@ AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
 
+dnl  Use Emscripten?
+AC_CHECK_HEADERS(emscripten.h)
+
+
 dnl  Use Android? FIXME: super hacks!
 ac_cv_my_have_android="no"
 AC_CHECK_LIB(log, __android_log_vprint,

@@ -8,26 +8,30 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
+#endif
+
+#if HAVE_EMSCRIPTEN_H
+#   include <emscripten.h>
 #endif
 
 #include "core.h"
 
 #include "lolgl.h"
 
-#if defined __CELLOS_LV2__
+#if __CELLOS_LV2__
 #   include "platform/ps3/ps3app.h"
-#elif defined _XBOX
+#elif _XBOX
 #   include "platform/xbox/xboxapp.h"
-#elif defined __native_client__
+#elif __native_client__
 #   include "platform/nacl/nacl-app.h"
-#elif defined __ANDROID__
+#elif __ANDROID__
 #   include "platform/android/androidapp.h"
-#elif defined USE_SDL
+#elif USE_SDL
 #   include "platform/sdl/sdlapp.h"
 #   include "platform/sdl/sdlinput.h"
-#elif defined HAVE_GLES_2X
+#elif HAVE_GLES_2X
 #   include "eglapp.h"
 #endif
 
@@ -44,23 +48,32 @@ class ApplicationData
         : app(name, resolution, framerate)
     { }
 
-#if defined __CELLOS_LV2__
+#if __CELLOS_LV2__
     Ps3App app;
-#elif defined _XBOX
+#elif _XBOX
     XboxApp app;
-#elif defined __native_client__
+#elif __native_client__
     NaClApp app;
-#elif defined __ANDROID__
+#elif __ANDROID__
     AndroidApp app;
-#elif defined USE_SDL
+#elif USE_SDL
     SdlApp app;
-#elif defined HAVE_GLES_2X
+#elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;
 #else
 #   error No application class available on this platform
 #endif
 };
+
+#if EMSCRIPTEN
+static Application *g_app;
+
+static void AppCallback()
+{
+    g_app->Tick();
+}
+#endif
 
 /*
  * Public Application class
@@ -81,6 +94,16 @@ bool Application::MustTick()
 void Application::Tick()
 {
     data->app.Tick();
+}
+
+void Application::Run()
+{
+#if EMSCRIPTEN
+    emscripten_set_main_loop(AppCallback, 0, 1);
+#else
+    while (MustTick())
+        Tick();
+#endif
 }
 
 void Application::ShowPointer(bool show)

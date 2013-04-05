@@ -2,10 +2,6 @@
 
 #version 120
 
-#if defined GL_ES
-precision highp float;
-#endif
-
 uniform mat4 u_ZoomSettings;
 uniform vec4 u_TexelSize;
 uniform vec4 u_ScreenSize;
