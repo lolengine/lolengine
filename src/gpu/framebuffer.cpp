@@ -102,52 +102,65 @@ uint32_t FramebufferFormat::GetFormat()
         default:            ASSERT(false, "not implemented");
                             return 0;
 #elif defined __APPLE__ && defined __MACH__
-        case R_8:           
-        case RG_8:          
-        case RGB_8:         
-        case RGBA_8:        
-        case R_8_I:         
-        case RG_8_I:        
-        case RGB_8_I:       
-        case RGBA_8_I:      return GL_BYTE;
-        case R_8_UI:        
-        case RG_8_UI:       
-        case RGB_8_UI:      
-        case RGBA_8_UI:     return GL_UNSIGNED_BYTE;
+        case R_8:
+        case R_8_I:
+        case R_8_UI:
+        case R_8_F:
 
-        case R_16:          
-        case RG_16:         
-        case RGB_16:        
-        case RGBA_16:       
-        case R_16_I:        
-        case RG_16_I:       
-        case RGB_16_I:      
-        case RGBA_16_I:     return GL_SHORT;
-        case R_16_UI:       
-        case RG_16_UI:      
-        case RGB_16_UI:     
-        case RGBA_16_UI:    return GL_UNSIGNED_SHORT;
-        case R_16_F:        
-        case RG_16_F:       
-        case RGB_16_F:      
-        case RGBA_16_F:     ASSERT(false, "not supported by IOS:OGL:ES");
-                            return 0;
+        case R_16:
+        case R_16_I:
+        case R_16_UI:
+        case R_16_F:
 
-        case R_32_I:        
-        case RG_32_I:       
-        case RGB_32_I:      
-        case RGBA_32_I:     return GL_INT;
-        case R_32_UI:       
-        case RG_32_UI:      
-        case RGB_32_UI:     
-        case RGBA_32_UI:    return GL_UNSIGNED_INT;
-        case R_32_F:        
-        case RG_32_F:       
-        case RGB_32_F:      
-        case RGBA_32_F:     return GL_FLOAT;
+        case R_32_I:
+        case R_32:
+        case R_32_UI:
+        case R_32_F:        return GL_RED;
 
-        default:            ASSERT(false, "not supported by IOS:OGL:ES");
-                            return 0;
+        case RG_8:
+        case RG_8_I:
+        case RG_8_UI:
+        case RG_8_F:
+
+        case RG_16:
+        case RG_16_I:
+        case RG_16_UI:
+        case RG_16_F:
+
+        case RG_32:
+        case RG_32_I:
+        case RG_32_UI:
+        case RG_32_F:       return GL_RG;
+
+        case RGB_8:
+        case RGB_8_I:
+        case RGB_8_UI:
+        case RGB_8_F:
+
+        case RGB_16:
+        case RGB_16_I:
+        case RGB_16_UI:
+        case RGB_16_F:
+
+        case RGB_32:
+        case RGB_32_I:
+        case RGB_32_UI:
+        case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
+
+        case RGBA_8:
+        case RGBA_8_I:
+        case RGBA_8_UI:
+        case RGBA_8_F:
+
+        case RGBA_16:
+        case RGBA_16_I:
+        case RGBA_16_UI:
+        case RGBA_16_F:
+
+        case RGBA_32:
+        case RGBA_32_I:
+        case RGBA_32_UI:
+        case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #else
         case R_8:           return GL_R8;
         case R_8_I:         return GL_R8I;
@@ -227,65 +240,52 @@ uint32_t FramebufferFormat::GetFormatOrder()
         default:            ASSERT(false, "not implemented");
                             return 0;
 #elif defined __APPLE__ && defined __MACH__
-        case R_8:
-        case R_8_I:
-        case R_8_UI:
-        case R_8_F:
+        case R_8:           
+        case RG_8:          
+        case RGB_8:         
+        case RGBA_8:        
+        case R_8_I:         
+        case RG_8_I:        
+        case RGB_8_I:       
+        case RGBA_8_I:      return GL_BYTE;
+        case R_8_UI:        
+        case RG_8_UI:       
+        case RGB_8_UI:      
+        case RGBA_8_UI:     return GL_UNSIGNED_BYTE;
 
-        case R_16:
-        case R_16_I:
-        case R_16_UI:
-        case R_16_F:
+        case R_16:          
+        case RG_16:         
+        case RGB_16:        
+        case RGBA_16:       
+        case R_16_I:        
+        case RG_16_I:       
+        case RGB_16_I:      
+        case RGBA_16_I:     return GL_SHORT;
+        case R_16_UI:       
+        case RG_16_UI:      
+        case RGB_16_UI:     
+        case RGBA_16_UI:    return GL_UNSIGNED_SHORT;
+        case R_16_F:        
+        case RG_16_F:       
+        case RGB_16_F:      
+        case RGBA_16_F:     ASSERT(false, "not supported by IOS:OGL:ES");
+                            return 0;
 
-        case R_32_I:
-        case R_32:
-        case R_32_UI:
-        case R_32_F:
+        case R_32_I:        
+        case RG_32_I:       
+        case RGB_32_I:      
+        case RGBA_32_I:     return GL_INT;
+        case R_32_UI:       
+        case RG_32_UI:      
+        case RGB_32_UI:     
+        case RGBA_32_UI:    return GL_UNSIGNED_INT;
+        case R_32_F:        
+        case RG_32_F:       
+        case RGB_32_F:      
+        case RGBA_32_F:     return GL_FLOAT;
 
-        case RG_8:
-        case RG_8_I:
-        case RG_8_UI:
-        case RG_8_F:
-
-        case RG_16:
-        case RG_16_I:
-        case RG_16_UI:
-        case RG_16_F:
-
-        case RG_32:
-        case RG_32_I:
-        case RG_32_UI:
-        case RG_32_F:
-
-        case RGB_8:
-        case RGB_8_I:
-        case RGB_8_UI:
-        case RGB_8_F:
-
-        case RGB_16:
-        case RGB_16_I:
-        case RGB_16_UI:
-        case RGB_16_F:
-
-        case RGB_32:
-        case RGB_32_I:
-        case RGB_32_UI:
-        case RGB_32_F:
-
-        case RGBA_8:
-        case RGBA_8_I:
-        case RGBA_8_UI:
-        case RGBA_8_F:
-
-        case RGBA_16:
-        case RGBA_16_I:
-        case RGBA_16_UI:
-        case RGBA_16_F:
-
-        case RGBA_32:
-        case RGBA_32_I:
-        case RGBA_32_UI:
-        case RGBA_32_F:
+        default:            ASSERT(false, "not supported by IOS:OGL:ES");
+                            return 0;
 #else
         case R_8:
         case R_8_I:
