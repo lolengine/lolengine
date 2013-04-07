@@ -112,11 +112,7 @@ Sample::Sample(char const *path)
     }
     if (!data->m_chunk)
     {
-#if !LOL_RELEASE
         Log::Error("could not load sample %s\n", path);
-#endif
-        SDL_Quit();
-        exit(1);
     }
     data->m_channel = -1;
 #endif
@@ -127,7 +123,8 @@ Sample::~Sample()
 #if __CELLOS_LV2__
     /* Nothing to do */
 #elif defined USE_SDL_MIXER
-    Mix_FreeChunk(data->m_chunk);
+    if (data->m_chunk)
+        Mix_FreeChunk(data->m_chunk);
 #endif
     delete data;
 }
@@ -174,7 +171,8 @@ void Sample::Play()
                          CELL_MS_SPEAKER_FR, CELL_MS_CHANNEL_0, 1.0f);
     cellMSStreamPlay(data->m_channel);
 #elif defined USE_SDL_MIXER
-    data->m_channel = Mix_PlayChannel(-1, data->m_chunk, 0);
+    if (data->m_chunk)
+        data->m_channel = Mix_PlayChannel(-1, data->m_chunk, 0);
 #endif
 }
 
@@ -184,7 +182,8 @@ void Sample::Loop()
     /* FIXME: not implemented */
     Play();
 #elif defined USE_SDL_MIXER
-    data->m_channel = Mix_PlayChannel(-1, data->m_chunk, -1);
+    if (data->m_chunk)
+        data->m_channel = Mix_PlayChannel(-1, data->m_chunk, -1);
 #endif
 }
 
