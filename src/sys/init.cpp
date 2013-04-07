@@ -8,15 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#if defined HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #   include <unistd.h>
 #endif
 
-#ifdef _WIN32
+#if _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <direct.h>
 #endif
@@ -29,7 +29,7 @@ namespace lol
 namespace System
 {
 
-#if defined _WIN32
+#if _WIN32
 #   define SEPARATOR '\\'
 #else
 #   define SEPARATOR '/'
@@ -45,23 +45,29 @@ void Init(int argc, char *argv[],
     using namespace std;
 
     /*
-     * Retrieve binary directory, defaulting to current dir.
+     * Retrieve binary directory, defaulting to no directory on Android
+     * and emscripten, and the current directory on other platforms.
      */
 
-#if __ANDROID__
-    /* Android assets are accessed using no prefix at all. */
+#if __ANDROID__ || EMSCRIPTEN
     String binarydir = "";
-#elif defined HAVE_GETCWD
-    char *cwd = getcwd(nullptr, 0);
-    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
-    free(cwd);
-#elif defined HAVE__GETCWD || (defined _WIN32 && !defined _XBOX)
-    char *cwd = _getcwd(nullptr, 0);
-    String binarydir = String(cwd ? cwd : ".") + SEPARATOR;
-    free(cwd);
 #else
-    String binarydir = "./";
-#endif
+    String binarydir = ".";
+    char *cwd = nullptr;
+
+#   if HAVE_GETCWD
+    cwd = getcwd(nullptr, 0);
+#   elif HAVE__GETCWD || (_WIN32 && !_XBOX)
+    cwd = _getcwd(nullptr, 0);
+#   endif
+
+    if (cwd)
+    {
+        binarydir = cwd;
+        free(cwd);
+    }
+
+    binarydir += SEPARATOR;
 
     if (argc > 0)
     {
@@ -69,6 +75,7 @@ void Init(int argc, char *argv[],
         if (last_sep)
             binarydir = String(argv[0], last_sep - argv[0] + 1);
     }
+#endif
 
     /*
      * Find the common prefix between project dir and solution dir.
