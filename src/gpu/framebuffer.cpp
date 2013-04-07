@@ -240,48 +240,48 @@ uint32_t FramebufferFormat::GetFormatOrder()
         default:            ASSERT(false, "not implemented");
                             return 0;
 #elif defined __APPLE__ && defined __MACH__
-        case R_8:           
-        case RG_8:          
-        case RGB_8:         
-        case RGBA_8:        
-        case R_8_I:         
-        case RG_8_I:        
-        case RGB_8_I:       
+        case R_8:
+        case RG_8:
+        case RGB_8:
+        case RGBA_8:
+        case R_8_I:
+        case RG_8_I:
+        case RGB_8_I:
         case RGBA_8_I:      return GL_BYTE;
-        case R_8_UI:        
-        case RG_8_UI:       
-        case RGB_8_UI:      
+        case R_8_UI:
+        case RG_8_UI:
+        case RGB_8_UI:
         case RGBA_8_UI:     return GL_UNSIGNED_BYTE;
 
-        case R_16:          
-        case RG_16:         
-        case RGB_16:        
-        case RGBA_16:       
-        case R_16_I:        
-        case RG_16_I:       
-        case RGB_16_I:      
+        case R_16:
+        case RG_16:
+        case RGB_16:
+        case RGBA_16:
+        case R_16_I:
+        case RG_16_I:
+        case RGB_16_I:
         case RGBA_16_I:     return GL_SHORT;
-        case R_16_UI:       
-        case RG_16_UI:      
-        case RGB_16_UI:     
+        case R_16_UI:
+        case RG_16_UI:
+        case RGB_16_UI:
         case RGBA_16_UI:    return GL_UNSIGNED_SHORT;
-        case R_16_F:        
-        case RG_16_F:       
-        case RGB_16_F:      
+        case R_16_F:
+        case RG_16_F:
+        case RGB_16_F:
         case RGBA_16_F:     ASSERT(false, "not supported by IOS:OGL:ES");
                             return 0;
 
-        case R_32_I:        
-        case RG_32_I:       
-        case RGB_32_I:      
+        case R_32_I:
+        case RG_32_I:
+        case RGB_32_I:
         case RGBA_32_I:     return GL_INT;
-        case R_32_UI:       
-        case RG_32_UI:      
-        case RGB_32_UI:     
+        case R_32_UI:
+        case RG_32_UI:
+        case RGB_32_UI:
         case RGBA_32_UI:    return GL_UNSIGNED_INT;
-        case R_32_F:        
-        case RG_32_F:       
-        case RGB_32_F:      
+        case R_32_F:
+        case RG_32_F:
+        case RGB_32_F:
         case RGBA_32_F:     return GL_FLOAT;
 
         default:            ASSERT(false, "not supported by IOS:OGL:ES");
