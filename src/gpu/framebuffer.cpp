@@ -64,163 +64,152 @@ uint32_t FramebufferFormat::GetFormat()
     switch (m_format)
     {
 #if defined USE_D3D9 || defined _XBOX
-        case R_16_F:        return D3DFMT_R16F;
-        case R_32_F:        return D3DFMT_R32F;
-        case RG_16:
-        case RG_16_I:
-        case RG_16_UI:      return D3DFMT_G16R16;
-        case RG_16_F:       return D3DFMT_G16R16F;
-        case RG_32_F:       return D3DFMT_G32R32F;
-        case RGB_8:
-        case RGB_8_I:
-        case RGB_8_UI:      return D3DFMT_R8G8B8;
-        case RGBA_8:
-        case RGBA_8_I:
-        case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
-        case RGBA_16:
-        case RGBA_16_I:
-        case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
-        case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
-        case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
-
-        default:            ASSERT(false, "not supported by DirectX");
-                            return 0;
+    case R_16_F:        return D3DFMT_R16F;
+    case R_32_F:        return D3DFMT_R32F;
+    case RG_16:
+    case RG_16_I:
+    case RG_16_UI:      return D3DFMT_G16R16;
+    case RG_16_F:       return D3DFMT_G16R16F;
+    case RG_32_F:       return D3DFMT_G32R32F;
+    case RGB_8:
+    case RGB_8_I:
+    case RGB_8_UI:      return D3DFMT_R8G8B8;
+    case RGBA_8:
+    case RGBA_8_I:
+    case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
+    case RGBA_16:
+    case RGBA_16_I:
+    case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
+    case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
+    case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
 #elif defined __CELLOS_LV2__
     /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
      * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
-        case RGB_16_F:      return GL_RGB16F_ARB;
-        case RGB_32_F:      return GL_RGB32F_ARB;
-        case RGBA_8:        return GL_ARGB_SCE;
-        case RGBA_16_F:     return GL_RGBA16F_ARB;
-        case RGBA_32_F:     return GL_RGBA32F_ARB;
-
-        default:            ASSERT(false, "not supported by the PS3");
-                            return 0;
+    case RGB_16_F:      return GL_RGB16F_ARB;
+    case RGB_32_F:      return GL_RGB32F_ARB;
+    case RGBA_8:        return GL_ARGB_SCE;
+    case RGBA_16_F:     return GL_RGBA16F_ARB;
+    case RGBA_32_F:     return GL_RGBA32F_ARB;
 #elif defined HAVE_GLES_2X
-        /* FIXME: not implemented at all */
+    /* FIXME: not implemented at all */
 
-        default:            ASSERT(false, "not implemented");
-                            return 0;
 #elif defined __APPLE__ && defined __MACH__
-        case R_8:
-        case R_8_I:
-        case R_8_UI:
-        case R_8_F:
+    case R_8:
+    case R_8_I:
+    case R_8_UI:
+    case R_8_F:
 
-        case R_16:
-        case R_16_I:
-        case R_16_UI:
-        case R_16_F:
+    case R_16:
+    case R_16_I:
+    case R_16_UI:
+    case R_16_F:
 
-        case R_32_I:
-        case R_32:
-        case R_32_UI:
-        case R_32_F:        return GL_RED;
+    case R_32_I:
+    case R_32:
+    case R_32_UI:
+    case R_32_F:        return GL_RED;
 
-        case RG_8:
-        case RG_8_I:
-        case RG_8_UI:
-        case RG_8_F:
+    case RG_8:
+    case RG_8_I:
+    case RG_8_UI:
+    case RG_8_F:
 
-        case RG_16:
-        case RG_16_I:
-        case RG_16_UI:
-        case RG_16_F:
+    case RG_16:
+    case RG_16_I:
+    case RG_16_UI:
+    case RG_16_F:
 
-        case RG_32:
-        case RG_32_I:
-        case RG_32_UI:
-        case RG_32_F:       return GL_RG;
+    case RG_32:
+    case RG_32_I:
+    case RG_32_UI:
+    case RG_32_F:       return GL_RG;
 
-        case RGB_8:
-        case RGB_8_I:
-        case RGB_8_UI:
-        case RGB_8_F:
+    case RGB_8:
+    case RGB_8_I:
+    case RGB_8_UI:
+    case RGB_8_F:
 
-        case RGB_16:
-        case RGB_16_I:
-        case RGB_16_UI:
-        case RGB_16_F:
+    case RGB_16:
+    case RGB_16_I:
+    case RGB_16_UI:
+    case RGB_16_F:
 
-        case RGB_32:
-        case RGB_32_I:
-        case RGB_32_UI:
-        case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
+    case RGB_32:
+    case RGB_32_I:
+    case RGB_32_UI:
+    case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
 
-        case RGBA_8:
-        case RGBA_8_I:
-        case RGBA_8_UI:
-        case RGBA_8_F:
+    case RGBA_8:
+    case RGBA_8_I:
+    case RGBA_8_UI:
+    case RGBA_8_F:
 
-        case RGBA_16:
-        case RGBA_16_I:
-        case RGBA_16_UI:
-        case RGBA_16_F:
+    case RGBA_16:
+    case RGBA_16_I:
+    case RGBA_16_UI:
+    case RGBA_16_F:
 
-        case RGBA_32:
-        case RGBA_32_I:
-        case RGBA_32_UI:
-        case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
+    case RGBA_32:
+    case RGBA_32_I:
+    case RGBA_32_UI:
+    case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #else
-        case R_8:           return GL_R8;
-        case R_8_I:         return GL_R8I;
-        case R_8_UI:        return GL_R8UI;
+    case R_8:           return GL_R8;
+    case R_8_I:         return GL_R8I;
+    case R_8_UI:        return GL_R8UI;
 
-        case R_16:          return GL_R16;
-        case R_16_I:        return GL_R16I;
-        case R_16_UI:       return GL_R16UI;
-        case R_16_F:        return GL_R16F;
+    case R_16:          return GL_R16;
+    case R_16_I:        return GL_R16I;
+    case R_16_UI:       return GL_R16UI;
+    case R_16_F:        return GL_R16F;
 
-        case R_32_I:        return GL_R32I;
-        case R_32_UI:       return GL_R32UI;
-        case R_32_F:        return GL_R32F;
+    case R_32_I:        return GL_R32I;
+    case R_32_UI:       return GL_R32UI;
+    case R_32_F:        return GL_R32F;
 
-        case RG_8:          return GL_RG8;
-        case RG_8_I:        return GL_RG8I;
-        case RG_8_UI:       return GL_RG8UI;
+    case RG_8:          return GL_RG8;
+    case RG_8_I:        return GL_RG8I;
+    case RG_8_UI:       return GL_RG8UI;
 
-        case RG_16:         return GL_RG16;
-        case RG_16_I:       return GL_RG16I;
-        case RG_16_UI:      return GL_RG16UI;
-        case RG_16_F:       return GL_RG16F;
+    case RG_16:         return GL_RG16;
+    case RG_16_I:       return GL_RG16I;
+    case RG_16_UI:      return GL_RG16UI;
+    case RG_16_F:       return GL_RG16F;
 
-        case RG_32_I:       return GL_RG32I;
-        case RG_32_UI:      return GL_RG32UI;
-        case RG_32_F:       return GL_RG32F;
+    case RG_32_I:       return GL_RG32I;
+    case RG_32_UI:      return GL_RG32UI;
+    case RG_32_F:       return GL_RG32F;
 
-        case RGB_8:         return GL_RGB8;
-        case RGB_8_I:       return GL_RGB8I;
-        case RGB_8_UI:      return GL_RGB8UI;
+    case RGB_8:         return GL_RGB8;
+    case RGB_8_I:       return GL_RGB8I;
+    case RGB_8_UI:      return GL_RGB8UI;
 
-        case RGB_16:        return GL_RGB16;
-        case RGB_16_I:      return GL_RGB16I;
-        case RGB_16_UI:     return GL_RGB16UI;
-        case RGB_16_F:      return GL_RGB16F;
+    case RGB_16:        return GL_RGB16;
+    case RGB_16_I:      return GL_RGB16I;
+    case RGB_16_UI:     return GL_RGB16UI;
+    case RGB_16_F:      return GL_RGB16F;
 
-        case RGB_32_I:      return GL_RGB32I;
-        case RGB_32_UI:     return GL_RGB32UI;
-        case RGB_32_F:      return GL_RGB32F;
+    case RGB_32_I:      return GL_RGB32I;
+    case RGB_32_UI:     return GL_RGB32UI;
+    case RGB_32_F:      return GL_RGB32F;
 
-        case RGBA_8:        return GL_RGBA8;
-        case RGBA_8_I:      return GL_RGBA8I;
-        case RGBA_8_UI:     return GL_RGBA8UI;
+    case RGBA_8:        return GL_RGBA8;
+    case RGBA_8_I:      return GL_RGBA8I;
+    case RGBA_8_UI:     return GL_RGBA8UI;
 
-        case RGBA_16:       return GL_RGBA16;
-        case RGBA_16_I:     return GL_RGBA16I;
-        case RGBA_16_UI:    return GL_RGBA16UI;
-        case RGBA_16_F:     return GL_RGBA16F;
+    case RGBA_16:       return GL_RGBA16;
+    case RGBA_16_I:     return GL_RGBA16I;
+    case RGBA_16_UI:    return GL_RGBA16UI;
+    case RGBA_16_F:     return GL_RGBA16F;
 
-        case RGBA_32_I:     return GL_RGBA32I;
-        case RGBA_32_UI:    return GL_RGBA32UI;
-        case RGBA_32_F:     return GL_RGBA32F;
-
-        default:            ASSERT(false, "not supported by OpenGL");
-                            return 0;
+    case RGBA_32_I:     return GL_RGBA32I;
+    case RGBA_32_UI:    return GL_RGBA32UI;
+    case RGBA_32_F:     return GL_RGBA32F;
 #endif
-    };
-
-    ASSERT(false, "not implemented");
-    return 0;
+    default:
+        ASSERT(false, "unknown framebuffer format %d", m_format);
+        return 0;
+    }
 }
 
 uint32_t FramebufferFormat::GetFormatOrder()
@@ -228,129 +217,63 @@ uint32_t FramebufferFormat::GetFormatOrder()
     switch (m_format)
     {
 #if defined USE_D3D9 || defined _XBOX
-        /* FIXME: not implemented at all */
-        default:            ASSERT(false, "not implemented");
-                            return 0;
+    /* FIXME: not implemented at all */
 #elif defined __CELLOS_LV2__
-        /* FIXME: not implemented at all */
-        default:            ASSERT(false, "not implemented");
-                            return 0;
+    /* FIXME: not implemented at all */
 #elif defined HAVE_GLES_2X
-        /* FIXME: not implemented at all */
-        default:            ASSERT(false, "not implemented");
-                            return 0;
+    /* FIXME: not implemented at all */
 #elif defined __APPLE__ && defined __MACH__
-        case R_8:
-        case RG_8:
-        case RGB_8:
-        case RGBA_8:
-        case R_8_I:
-        case RG_8_I:
-        case RGB_8_I:
-        case RGBA_8_I:      return GL_BYTE;
-        case R_8_UI:
-        case RG_8_UI:
-        case RGB_8_UI:
-        case RGBA_8_UI:     return GL_UNSIGNED_BYTE;
+    case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
+    case R_8_I: case RG_8_I: case RGB_8_I: case RGBA_8_I:
+        return GL_BYTE;
+    case R_8_UI: case RG_8_UI: case RGB_8_UI: case RGBA_8_UI:
+        return GL_UNSIGNED_BYTE;
 
-        case R_16:
-        case RG_16:
-        case RGB_16:
-        case RGBA_16:
-        case R_16_I:
-        case RG_16_I:
-        case RGB_16_I:
-        case RGBA_16_I:     return GL_SHORT;
-        case R_16_UI:
-        case RG_16_UI:
-        case RGB_16_UI:
-        case RGBA_16_UI:    return GL_UNSIGNED_SHORT;
-        case R_16_F:
-        case RG_16_F:
-        case RGB_16_F:
-        case RGBA_16_F:     ASSERT(false, "not supported by IOS:OGL:ES");
-                            return 0;
+    case R_16:   case RG_16:   case RGB_16:   case RGBA_16:
+    case R_16_I: case RG_16_I: case RGB_16_I: case RGBA_16_I:
+        return GL_SHORT;
+    case R_16_UI: case RG_16_UI: case RGB_16_UI: case RGBA_16_UI:
+        return GL_UNSIGNED_SHORT;
 
-        case R_32_I:
-        case RG_32_I:
-        case RGB_32_I:
-        case RGBA_32_I:     return GL_INT;
-        case R_32_UI:
-        case RG_32_UI:
-        case RGB_32_UI:
-        case RGBA_32_UI:    return GL_UNSIGNED_INT;
-        case R_32_F:
-        case RG_32_F:
-        case RGB_32_F:
-        case RGBA_32_F:     return GL_FLOAT;
+    case R_16_F: case RG_16_F: case RGB_16_F: case RGBA_16_F:
+        ASSERT(false, "unsupported framebuffer format order %d", m_format);
+        return 0;
 
-        default:            ASSERT(false, "not supported by IOS:OGL:ES");
-                            return 0;
+    case R_32_I: case RG_32_I: case RGB_32_I: case RGBA_32_I:
+        return GL_INT;
+    case R_32_UI: case RG_32_UI: case RGB_32_UI: case RGBA_32_UI:
+        return GL_UNSIGNED_INT;
+    case R_32_F: case RG_32_F: case RGB_32_F: case RGBA_32_F:
+        return GL_FLOAT;
+
+    default:
+        ASSERT(false, "unsupported framebuffer format order %d", m_format);
+        return 0;
 #else
-        case R_8:
-        case R_8_I:
-        case R_8_UI:
-        case R_8_F:
+    case R_8:  case R_8_I:  case R_8_UI:  case R_8_F:
+    case R_16: case R_16_I: case R_16_UI: case R_16_F:
+    case R_32: case R_32_I: case R_32_UI: case R_32_F:
+        return GL_RED;
 
-        case R_16:
-        case R_16_I:
-        case R_16_UI:
-        case R_16_F:
+    case RG_8:  case RG_8_I:  case RG_8_UI:  case RG_8_F:
+    case RG_16: case RG_16_I: case RG_16_UI: case RG_16_F:
+    case RG_32: case RG_32_I: case RG_32_UI: case RG_32_F:
+        return GL_RG;
 
-        case R_32_I:
-        case R_32:
-        case R_32_UI:
-        case R_32_F:        return GL_RED;
+    case RGB_8:  case RGB_8_I:  case RGB_8_UI:  case RGB_8_F:
+    case RGB_16: case RGB_16_I: case RGB_16_UI: case RGB_16_F:
+    case RGB_32: case RGB_32_I: case RGB_32_UI: case RGB_32_F:
+        return m_invert_rgb ? GL_BGR : GL_RGB;
 
-        case RG_8:
-        case RG_8_I:
-        case RG_8_UI:
-        case RG_8_F:
-
-        case RG_16:
-        case RG_16_I:
-        case RG_16_UI:
-        case RG_16_F:
-
-        case RG_32:
-        case RG_32_I:
-        case RG_32_UI:
-        case RG_32_F:       return GL_RG;
-
-        case RGB_8:
-        case RGB_8_I:
-        case RGB_8_UI:
-        case RGB_8_F:
-
-        case RGB_16:
-        case RGB_16_I:
-        case RGB_16_UI:
-        case RGB_16_F:
-
-        case RGB_32:
-        case RGB_32_I:
-        case RGB_32_UI:
-        case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
-
-        case RGBA_8:
-        case RGBA_8_I:
-        case RGBA_8_UI:
-        case RGBA_8_F:
-
-        case RGBA_16:
-        case RGBA_16_I:
-        case RGBA_16_UI:
-        case RGBA_16_F:
-
-        case RGBA_32:
-        case RGBA_32_I:
-        case RGBA_32_UI:
-        case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
+    case RGBA_8:  case RGBA_8_I:  case RGBA_8_UI:  case RGBA_8_F:
+    case RGBA_16: case RGBA_16_I: case RGBA_16_UI: case RGBA_16_F:
+    case RGBA_32: case RGBA_32_I: case RGBA_32_UI: case RGBA_32_F:
+        return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #endif
+    default:
+        ASSERT(false, "unknown framebuffer format order %d", m_format);
+        return 0;
     }
-
-    ASSERT(false, "unknown pixel format");
-    return 0;
 }
 
 //
