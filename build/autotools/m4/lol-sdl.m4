@@ -62,7 +62,7 @@ fi
 dnl  Then the old sdl-config method
 if test "x${cross_compiling}" != xyes -a "x${ac_cv_my_have_sdl}" = xno; then
   AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-  if test "${SDL_CONFIG}" != "no"; then
+  if test "${SDL_CONFIG}" != "no" && "${SDL_CONFIG}" --version >/dev/null; then
     ac_cv_my_have_sdl="yes"
     SDL_CFLAGS="${SDL_CFLAGS} `${SDL_CONFIG} --cflags`"
     SDL_LIBS="${SDL_LIBS} `${SDL_CONFIG} --libs`"

@@ -310,7 +310,10 @@ AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
 
 dnl  Use Emscripten?
-AC_CHECK_HEADERS(emscripten.h)
+ac_cv_my_have_emscripten="no"
+AC_CHECK_HEADERS(emscripten.h,
+ [ac_cv_my_have_emscripten="yes"])
+AM_CONDITIONAL(USE_EMSCRIPTEN, test "${ac_cv_my_have_emscripten}" != "no")
 
 
 dnl  Use Android? FIXME: super hacks!

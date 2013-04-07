@@ -107,6 +107,13 @@ CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.exe) \
 
 
 #
+# Emscripten rules
+#
+
+CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.data) \
+              $(noinst_PROGRAMS:%$(EXEEXT)=%.data)
+
+#
 # Android rules
 #
 
