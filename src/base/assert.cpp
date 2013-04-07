@@ -8,15 +8,19 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#if defined HAVE_CXXABI_H
+#if HAVE_CXXABI_H
 #   include <cxxabi.h>
 #endif
-#if defined HAVE_EXECINFO_H
+#if HAVE_EXECINFO_H
 #   include <execinfo.h>
+#endif
+
+#if EMSCRIPTEN
+#   include <emscripten.h>
 #endif
 
 #include "core.h"
@@ -26,7 +30,10 @@ namespace lol
 
 void DumpStack()
 {
-#if defined HAVE_CXA_DEMANGLE && defined HAVE_BACKTRACE_SYMBOLS
+#if EMSCRIPTEN
+    /* This would require demangling but we don't care yet. */
+    Log::Debug("%s\n", emscripten_run_script_string("(new Error).stack"));
+#elif HAVE_CXA_DEMANGLE && HAVE_BACKTRACE_SYMBOLS
     /* Get current stack frames */
     void *stack_ptrs[50];
     size_t size = backtrace(stack_ptrs, 50);
