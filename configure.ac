@@ -247,6 +247,19 @@ LOL_TRY_CXXFLAGS(-mwindows -mwin32,
   LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"])
 
 
+dnl  Are we building using Emscripten?
+ac_cv_my_have_emscripten="no"
+AC_CHECK_HEADERS(emscripten.h,
+ [ac_cv_my_have_emscripten="yes"
+  AM_CXXFLAGS="${AM_CXXFLAGS} -s ALLOW_MEMORY_GROWTH=1"
+  dnl  HACK: until emcc properly adds these to EMSDK_OPTS
+  CPPFLAGS="${CPPFLAGS} -U__i386__ -U__x86_64__ -U__i386 -U__x86_64 -Ui386 -Ux86_64"
+  CPPFLAGS="${CPPFLAGS} -U__SSE__ -U__SSE2__ -U__MMX__ -UX87_DOUBLE_ROUNDING"
+  CPPFLAGS="${CPPFLAGS} -UHAVE_GCC_ASM_FOR_X87 -DEMSCRIPTEN -U__STRICT_ANSI__"
+  CPPFLAGS="${CPPFLAGS} -U__CYGWIN__"])
+AM_CONDITIONAL(USE_EMSCRIPTEN, test "${ac_cv_my_have_emscripten}" != "no")
+
+
 dnl  Are we on the Xbox 360?
 dnl  Answer: NO! we don't know how to build for it anyway
 AM_CONDITIONAL(USE_X360, false)
@@ -307,13 +320,6 @@ AC_CHECK_HEADERS(ppapi/cpp/instance.h,
   LOL_LIBS="${LOL_LIBS} -lnosys"])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
-
-
-dnl  Use Emscripten?
-ac_cv_my_have_emscripten="no"
-AC_CHECK_HEADERS(emscripten.h,
- [ac_cv_my_have_emscripten="yes"])
-AM_CONDITIONAL(USE_EMSCRIPTEN, test "${ac_cv_my_have_emscripten}" != "no")
 
 
 dnl  Use Android? FIXME: super hacks!
