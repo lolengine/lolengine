@@ -91,9 +91,6 @@ __init__()
     WINEDLLOVERRIDES="winemenubuilder.exe,wineboot.exe,explorer.exe,winedbg.exe=d"
     export WINEDLLOVERRIDES
 
-    LLVM_ADD_VERSION=3.0
-    export LLVM_ADD_VERSION
-
     # Ensure SDL does not redirect stdout/stderr to local files
     SDL_STDIO_REDIRECT=0
     export SDL_STDIO_REDIRECT
@@ -239,8 +236,7 @@ configure()
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         emscripten-*)
-            EM_HOME=$HOME/emscripten
-            ./configure CC=$EM_HOME/emcc CXX=$EM_HOME/em++ AR=$EM_HOME/emar RANLIB=$EM_HOME/emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
+            ./configure CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
             ;;
         *)
             PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
