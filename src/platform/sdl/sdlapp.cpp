@@ -101,9 +101,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     new D3d9Input();
 #   endif
 
-#   if !defined EMSCRIPTEN
     new SdlInput();
-#   endif
 #endif
 }
 

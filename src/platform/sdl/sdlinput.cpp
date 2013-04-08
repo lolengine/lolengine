@@ -8,12 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#if defined USE_SDL
-#   if defined HAVE_SDL_SDL_H
+#if USE_SDL
+#   if HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
@@ -42,7 +42,7 @@ private:
     void Tick(float seconds);
 
     static ivec2 GetMousePos();
-#if defined USE_SDL
+#if USE_SDL
     Array<SDL_Joystick *, Stick *> m_joysticks;
 #endif
 };
@@ -54,17 +54,18 @@ private:
 SdlInput::SdlInput()
   : m_data(new SdlInputData())
 {
-#if defined USE_SDL
+#if USE_SDL
     /* Enable Unicode translation of keyboard events */
     SDL_EnableUNICODE(1);
 
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
-#   if SDL_FORCE_POLL_JOYSTICK
+#   if !EMSCRIPTEN
+#       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
-#   else
+#       else
     SDL_JoystickEventState(SDL_ENABLE);
-#   endif
+#       endif
 
     /* Register all the joysticks we can find, and let the input
      * system decide what it wants to track. */
@@ -78,9 +79,9 @@ SdlInput::SdlInput()
          *    it won't think there is only one trigger axis. */
         char const *name = SDL_JoystickName(i);
         if (strstr(name, "HDAPS")
-#   if defined USE_XINPUT
+#       if USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
-#   endif
+#       endif
              || false)
         {
             SDL_JoystickClose(sdlstick);
@@ -97,6 +98,7 @@ SdlInput::SdlInput()
 
         m_data->m_joysticks.Push(sdlstick, stick);
     }
+#   endif
 #endif
 
     m_gamegroup = GAMEGROUP_BEFORE;
@@ -104,7 +106,7 @@ SdlInput::SdlInput()
 
 SdlInput::~SdlInput()
 {
-#if defined USE_SDL
+#if USE_SDL && !EMSCRIPTEN
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.Count())
     {
@@ -120,7 +122,7 @@ void SdlInput::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 
-#if !defined _WIN32
+#if !_WIN32
     m_data->Tick(seconds);
 #endif
 }
@@ -129,19 +131,19 @@ void SdlInput::TickDraw(float seconds)
 {
     Entity::TickDraw(seconds);
 
-#if defined _WIN32
+#if _WIN32
     m_data->Tick(seconds);
 #endif
 }
 
 void SdlInputData::Tick(float seconds)
 {
-#if defined USE_SDL
+#if USE_SDL
     /* Handle mouse input */
     ivec2 mouse = SdlInputData::GetMousePos();;
     Input::SetMousePos(mouse);
 
-#   if SDL_FORCE_POLL_JOYSTICK
+#   if SDL_FORCE_POLL_JOYSTICK && EMSCRIPTEN
     /* Pump all joystick events because no event is coming to us. */
     SDL_JoystickUpdate();
     for (int j = 0; j < m_joysticks.Count(); j++)
@@ -210,8 +212,10 @@ ivec2 SdlInputData::GetMousePos()
 {
     ivec2 ret(-1, -1);
 
-#if defined USE_SDL
+#if USE_SDL
+#   if !EMSCRIPTEN
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
+#   endif
     {
         SDL_GetMouseState(&ret.x, &ret.y);
         ret.y = Video::GetSize().y - 1 - ret.y;
