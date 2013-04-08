@@ -245,10 +245,6 @@ uint32_t FramebufferFormat::GetFormatOrder()
         return GL_UNSIGNED_INT;
     case R_32_F: case RG_32_F: case RGB_32_F: case RGBA_32_F:
         return GL_FLOAT;
-
-    default:
-        ASSERT(false, "unsupported framebuffer format order %d", m_format);
-        return 0;
 #else
     case R_8:  case R_8_I:  case R_8_UI:  case R_8_F:
     case R_16: case R_16_I: case R_16_UI: case R_16_F:
