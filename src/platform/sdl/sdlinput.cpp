@@ -144,7 +144,7 @@ void SdlInputData::Tick(float seconds)
     Input::SetMousePos(mouse);
 
     /* Pump all joystick events because no event is coming to us. */
-#   if SDL_FORCE_POLL_JOYSTICK && EMSCRIPTEN
+#   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
     for (int j = 0; j < m_joysticks.Count(); j++)
     {
@@ -279,6 +279,7 @@ void SdlInputData::Tick(float seconds)
     lolstate[Key::Z] = sdlstate[SDLK_z];
     lolstate[Key::Delete] = sdlstate[SDLK_DELETE];
 
+#if SDLK_WORLD_0
     lolstate[Key::World0] = sdlstate[SDLK_WORLD_0];
     lolstate[Key::World1] = sdlstate[SDLK_WORLD_1];
     lolstate[Key::World2] = sdlstate[SDLK_WORLD_2];
@@ -375,6 +376,7 @@ void SdlInputData::Tick(float seconds)
     lolstate[Key::World93] = sdlstate[SDLK_WORLD_93];
     lolstate[Key::World94] = sdlstate[SDLK_WORLD_94];
     lolstate[Key::World95] = sdlstate[SDLK_WORLD_95];
+#endif
 
     lolstate[Key::KP0] = sdlstate[SDLK_KP0];
     lolstate[Key::KP1] = sdlstate[SDLK_KP1];
