@@ -14,14 +14,6 @@
 
 #include <cstdlib>
 
-#if defined USE_SDL
-#   if defined HAVE_SDL_SDL_H
-#      include <SDL/SDL.h>
-#   else
-#      include <SDL.h>
-#   endif
-#endif
-
 #include "core.h"
 
 namespace lol
@@ -43,11 +35,16 @@ public:
         buttons(0),
         nentities(0),
         lastfocus(0)
-    { }
+    {
+        m_keystate.Resize(Key::Last);
+        memset(&m_keystate[0], 0, m_keystate.Bytes());
+    }
 
 private:
     ivec2 mouse;
     uint32_t buttons;
+
+    Array<uint8_t> m_keystate;
 
     static int const MAX_ENTITIES = 100;
     WorldEntity *entities[MAX_ENTITIES];
@@ -114,19 +111,14 @@ int InputTracker::GetPreviousButtonStatus(Key k)
 //Internal : Updates the action status & timers
 void InputTracker::UpdateActionStatus(float seconds)
 {
-#if defined USE_SDL
-#   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
-#   else
-    Uint8 *keystate = SDL_GetKeyState(nullptr);
-#   endif
+    Array<uint8_t> &keystate = Input::GetKeyboardState();
+
     //SOOOoooo ugly.
     for (int i = 0; i < Key::Last; ++i)
     {
         m_input_status[i + Key::Last] = m_input_status[i];
         m_input_status[i] = keystate[i];
     }
-#endif
 
     for (int i = 0; i < m_input_assocation_list.Count(); i++)
     {
@@ -267,22 +259,13 @@ vec2 Input::GetAxis(int axis)
 {
     vec2 ret;
 
-#if defined USE_SDL
-    /* Simulate a joystick using the keyboard. This SDL call is free. */
-#   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
-#   else
-    Uint8 *keystate = SDL_GetKeyState(nullptr);
-#   endif
-    int left = keystate[SDLK_d] - (keystate[SDLK_a] | keystate[SDLK_q]);
-    int up = (keystate[SDLK_w] | keystate[SDLK_z]) - keystate[SDLK_s] ;
+    /* Simulate a joystick using the keyboard. */
+    int left = GetKeyState(Key::D) - (GetKeyState(Key::A) | GetKeyState(Key::Q));
+    int up = (GetKeyState(Key::W) | GetKeyState(Key::Z)) - GetKeyState(Key::S);
     ret.x += left;
     ret.y += up;
     if (left && up)
         ret = ret * sqrtf(0.5f);
-#else
-    ret = vec2(0, 0);
-#endif
 
     return ret;
 }
@@ -298,19 +281,14 @@ uint32_t Input::GetMouseButtons()
     return data->buttons;
 }
 
-//BH : Added this, is a v0.1 Alpha version.
-int Input::GetButtonState(int button)
+Array<uint8_t> &Input::GetKeyboardState()
 {
-#if defined USE_SDL
-#   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *keystate = SDL_GetKeyboardState(nullptr);
-#   else
-    Uint8 *keystate = SDL_GetKeyState(nullptr);
-#   endif
-    return keystate[button];
-#else
-    return 0;
-#endif
+    return data->m_keystate;
+}
+
+int Input::GetKeyState(int key)
+{
+    return data->m_keystate[key];
 }
 
 //Helps link a software input Action-Id to an hardware input Button-Id.
