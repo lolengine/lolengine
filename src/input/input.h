@@ -413,9 +413,6 @@ public:
     static ivec2 GetMousePos();
     static uint32_t GetMouseButtons();
 
-    //BH : Shouldn't use this
-    static int GetButtonState(int button);
-
     /* Action management */
     static void LinkActionToKey(Action a, struct Key k);
     static void UnlinkAction(Action a);
@@ -440,6 +437,9 @@ public:
     static void UnsetMouseButton(int index);
 
     /* Keyboard handling */
+    static Array<uint8_t> &GetKeyboardState();
+    static int GetKeyState(int key);
+
     static Keyboard *CreateKeyboard();
     static void DestroyKeyboard(Keyboard *keyboard);
 
