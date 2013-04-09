@@ -472,18 +472,20 @@ void Ticker::TickDraw()
     /* Clamp FPS */
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
+#if !EMSCRIPTEN
     /* If framerate is fixed, force wait time to 1/FPS. Otherwise, set wait
      * time to 0. */
     float frametime = data->fps ? 1.f / data->fps : 0.f;
 
     if (frametime > data->bias + .2f)
-        frametime = data->bias + .2f; // Don't go below 5 fps
+        frametime = data->bias + .2f; /* Don't go below 5 fps */
     if (frametime > data->bias)
         data->timer.Wait(frametime - data->bias);
 
     /* If recording, do not try to compensate for lag. */
     if (!data->recording)
         data->bias -= frametime;
+#endif
 }
 
 void Ticker::StartRecording()
