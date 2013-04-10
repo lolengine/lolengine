@@ -98,7 +98,10 @@ esac
 append "name = $name"
 processor="`uname -m`"
 case "$processor" in
-  x86_64) processor="amd64" ;;
+  x86_64) processor="amd64"
+    if test "`getconf LONG_BIT 2>/dev/null`" = 32; then
+      processor="i386"
+    fi ;;
   i*86) processor="i386" ;;
 esac
 # Windows defines a lot of crazy shit, try to make sense of it
