@@ -22,6 +22,15 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_RANLIB
 
+dnl  Check that the C++ compiler really works
+AC_LANG_PUSH(C++)
+AC_MSG_CHECKING(for a fully working C++ compiler)
+AC_TRY_LINK([], [],
+ [AC_MSG_RESULT(yes)],
+ [AC_MSG_RESULT(no)
+  AC_MSG_ERROR([[C++ compiler cannot link executables]])])
+AC_LANG_POP(C++)
+
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AC_LIBTOOL_CXX
