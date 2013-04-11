@@ -310,7 +310,7 @@ AC_CHECK_HEADERS(FlexLexer.h,
       class Foo : public FlexLexer
       {
           Foo() { int &test = yyleng; }
-      }],
+      };],
      [])],
    [AC_MSG_RESULT(yes)
     ac_cv_my_have_flexlexer_h="yes"],
