@@ -85,7 +85,9 @@ tutorial/02_cube
 tutorial/03_noise
 tutorial/04_texture
 tutorial/05_easymesh
+tutorial/06_sprite
 tutorial/08_fbo
 tutorial/11_fractal
+tutorial/12_voronoi
 # Our data
 doc/doxygen.cfg
