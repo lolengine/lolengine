@@ -173,6 +173,12 @@ configure()
             # Ensure we're _really_ on amd64
             CXXFLAGS="$CXXFLAGS -m64"
             ;;
+        emscripten-*)
+            # Force cross-compilation because AC_TRY_LINK is going to check
+            # whether our binaries have the executable bit set.
+            HOSTFLAGS=--host=none
+            BUILDFLAGS=--build=`$top_srcdir/.auto/config.guess`
+            ;;
     esac
     case "$platform" in
         ios-arm)
@@ -236,7 +242,7 @@ configure()
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         emscripten-*)
-            ./configure CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
+            ./configure $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
             ;;
         *)
             PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
