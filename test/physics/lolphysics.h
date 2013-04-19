@@ -115,7 +115,6 @@ public:
             //the "+1" is to have at least one Timestep and to ensure float to int .5f conversion.
             int steps = (int)(seconds / m_timestep) + 1;
             m_dynamics_world->stepSimulation(seconds, steps, m_timestep);
-			printf("STEP\n");
         }
     }
 
