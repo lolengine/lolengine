@@ -122,21 +122,25 @@ public:
         m_bbox[1] = ivec3(m_window_size, 0);
         Input::TrackMouse(this);
 
+#if LOL_FEATURE_THREADS
         /* Spawn worker threads and wait for their readiness. */
         for (int i = 0; i < MAX_THREADS; i++)
             m_threads[i] = new Thread(DoWorkHelper, this);
         for (int i = 0; i < MAX_THREADS; i++)
             m_spawnqueue.Pop();
+#endif
     }
 
     ~Fractal()
     {
+#if LOL_FEATURE_THREADS
         /* Signal worker threads for completion and wait for
          * them to quit. */
         for (int i = 0; i < MAX_THREADS; i++)
             m_jobqueue.Push(-1);
         for (int i = 0; i < MAX_THREADS; i++)
             m_donequeue.Pop();
+#endif
 
         Input::UntrackMouse(this);
 #if !defined __native_client__
@@ -299,10 +303,17 @@ public:
             m_dirty[m_frame]--;
 
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
+            {
+#if LOL_FEATURE_THREADS
                 m_jobqueue.Push(i);
+#else
+                DoWork(i);
+#endif
+            }
         }
     }
 
+#if LOL_FEATURE_THREADS
     static void *DoWorkHelper(void *data)
     {
         Fractal *that = (Fractal *)data;
@@ -318,6 +329,7 @@ public:
         that->m_donequeue.Push(0);
         return NULL;
     };
+#endif
 
     void DoWork(int line)
     {
@@ -478,8 +490,10 @@ public:
 
         if (m_dirty[m_frame])
         {
+#if LOL_FEATURE_THREADS
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
                 m_donequeue.Pop();
+#endif
 
             m_dirty[m_frame]--;
 
@@ -535,12 +549,14 @@ private:
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
 
+#if LOL_FEATURE_THREADS
     /* Worker threads */
     Thread *m_threads[MAX_THREADS];
     Queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
+#endif
 
-    /* Debug information */
 #if !defined __native_client__
+    /* Debug information */
     Text *m_centertext, *m_mousetext, *m_zoomtext;
 #endif
 };
