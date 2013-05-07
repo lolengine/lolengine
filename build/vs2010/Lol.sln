@@ -106,7 +106,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\..\tools\neerc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Touky", "Touky", "{9EA99B18-D352-47F6-BC04-A0B49CAA2772}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Touky_Demo", "..\..\people\touky\private\touky_demo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Touky_Demo", "..\..\people\touky\private\touky_demo\touky_demo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "btphystest", "..\..\test\btphystest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
 EndProject
