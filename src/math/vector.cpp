@@ -24,12 +24,18 @@ using namespace std;
 namespace lol
 {
 
+/*
+ * Return the determinant of a 2×2 matrix.
+ */
 static inline float det2(float a, float b,
                          float c, float d)
 {
     return a * d - b * c;
 }
 
+/*
+ * Return the determinant of a 3×3 matrix.
+ */
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
                          float g, float h, float i)
@@ -39,11 +45,18 @@ static inline float det3(float a, float b, float c,
          + c * (d * h - g * e);
 }
 
+/*
+ * Return the cofactor of the (i,j) entry in a 2×2 matrix.
+ */
 static inline float cofact(mat2 const &mat, int i, int j)
 {
-    return mat[(i + 1) & 1][(j + 1) & 1] * (((i + j) & 1) ? -1.0f : 1.0f);
+    float tmp = mat[(i + 1) & 1][(j + 1) & 1];
+    return ((i + j) & 1) ? -tmp : tmp;
 }
 
+/*
+ * Return the cofactor of the (i,j) entry in a 3×3 matrix.
+ */
 static inline float cofact(mat3 const &mat, int i, int j)
 {
     return det2(mat[(i + 1) % 3][(j + 1) % 3],
@@ -52,6 +65,9 @@ static inline float cofact(mat3 const &mat, int i, int j)
                 mat[(i + 2) % 3][(j + 2) % 3]);
 }
 
+/*
+ * Return the cofactor of the (i,j) entry in a 4×4 matrix.
+ */
 static inline float cofact(mat4 const &mat, int i, int j)
 {
     return det3(mat[(i + 1) & 3][(j + 1) & 3],
@@ -67,7 +83,8 @@ static inline float cofact(mat4 const &mat, int i, int j)
 
 template<> float determinant(mat2 const &mat)
 {
-    return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+    return det2(mat[0][0], mat[0][1],
+                mat[1][0], mat[1][1]);
 }
 
 template<> mat2 transpose(mat2 const &mat)
