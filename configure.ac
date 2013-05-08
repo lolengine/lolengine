@@ -501,6 +501,7 @@ AC_CONFIG_FILES(
   people/peeweek/private/Makefile
   people/touky/Makefile
   people/touky/private/Makefile
+  people/touky/private/touky_demo/Makefile
   people/touky/private/tactics/Makefile
   people/touky/private/the_unfortunate_voronoid/Makefile
   people/jylam/Makefile
