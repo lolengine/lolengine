@@ -78,6 +78,13 @@ static inline int isnan(float f)
 }
 #endif
 
+
+/* XXX: workaround for a compilation bug in NaCl headers */
+#if defined __native_client__
+#   define typeid(x) (*(type_info*)nullptr)
+#endif
+
+
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \
     extern "C" char const *LOLFX_RESOURCE_NAME(name)
