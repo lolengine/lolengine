@@ -210,15 +210,9 @@ append ""
 
 append "[pepper]"
 if [ "$family" != "windows" ]; then
-    if [ -d "$NACL_SDK_ROOT" ]; then
-        pepper_version=0
-        for dir in "$NACL_SDK_ROOT/pepper_"*; do
-            new_version="$(echo "$dir" | sed 's/.*_//')"
-            if [ "$new_version" -gt "$pepper_version" ]; then
-                pepper_version="$new_version"
-            fi
-        done
-        if [ "$pepper_version" != 0 ]; then
+    if [ -f "$NACL_SDK_ROOT/README" ]; then
+        pepper_version=$(sed -ne 's/Version: //p' "$NACL_SDK_ROOT/README")
+        if [ "x$pepper_version" != "x" ]; then
             append "version = $pepper_version"
         fi
     fi
