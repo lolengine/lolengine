@@ -155,6 +155,8 @@ if test "${enable_doc}" != "no"; then
     fi
   fi
 fi
+dnl  XXX: disable LaTeX because we use too much memory
+LATEX=no
 AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
@@ -260,7 +262,8 @@ dnl  Are we building using Emscripten?
 ac_cv_my_have_emscripten="no"
 AC_CHECK_HEADERS(emscripten.h,
  [ac_cv_my_have_emscripten="yes"
-  AM_CXXFLAGS="${AM_CXXFLAGS} -s ALLOW_MEMORY_GROWTH=1"
+  dnl  XXX: activate this if memory heap is too small
+  #AM_CXXFLAGS="${AM_CXXFLAGS} -s ALLOW_MEMORY_GROWTH=1"
   dnl  HACK: until emcc properly adds these to EMSDK_OPTS
   CPPFLAGS="${CPPFLAGS} -U__i386__ -U__x86_64__ -U__i386 -U__x86_64 -Ui386 -Ux86_64"
   CPPFLAGS="${CPPFLAGS} -U__SSE__ -U__SSE2__ -U__MMX__ -UX87_DOUBLE_ROUNDING"
