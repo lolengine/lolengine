@@ -37,6 +37,38 @@ class WorldData
         return 0;
     }
 
+    static int LuaDoFile(lua_State *L)
+    {
+        if (lua_isnoneornil(L, 1))
+            return LUA_ERRFILE;
+
+        char const *filename = lua_tostring(L, 1);
+        int status = LUA_ERRFILE;
+
+        Array<String> pathlist = System::GetPathList(filename);
+        File f;
+        for (int i = 0; i < pathlist.Count(); ++i)
+        {
+            f.Open(pathlist[i], FileAccess::Read);
+            if (f.IsValid())
+            {
+                String s = f.ReadString();
+                f.Close();
+
+                Log::Debug("loading Lua file %s\n", pathlist[i].C());
+                status = luaL_dostring(L, s.C());
+                break;
+            }
+        }
+
+        if (status == LUA_ERRFILE)
+           Log::Error("could not find Lua file %s\n", filename);
+
+        lua_pop(L, 1);
+
+        return status;
+    }
+
     lua_State *m_lua_state;
 };
 
@@ -49,9 +81,14 @@ World g_world;
 
 World::World()
 {
+    /* Initialise the Lua engine */
     g_world_data.m_lua_state = luaL_newstate();
     lua_atpanic(g_world_data.m_lua_state, WorldData::LuaPanic);
     luaL_openlibs(g_world_data.m_lua_state);
+
+    /* Override dofile() */
+    lua_pushcfunction(g_world_data.m_lua_state, WorldData::LuaDoFile);
+    lua_setglobal(g_world_data.m_lua_state, "dofile");
 }
 
 World::~World()
@@ -61,24 +98,9 @@ World::~World()
 
 bool World::ExecLua(String const &lua)
 {
-    Array<String> pathlist = System::GetPathList(lua);
-    File f;
-    for (int i = 0; i < pathlist.Count(); ++i)
-    {
-        f.Open(pathlist[i], FileAccess::Read);
-        if (f.IsValid())
-        {
-            String s = f.ReadString();
-            f.Close();
-
-            luaL_dostring(g_world_data.m_lua_state, s.C());
-            Log::Debug("loaded Lua file %s\n", pathlist[i].C());
-            return true;
-        }
-    }
-
-    Log::Error("could not find Lua file %s\n", lua.C());
-    return false;
+    lua_pushstring(g_world_data.m_lua_state, lua.C());
+    int status = WorldData::LuaDoFile(g_world_data.m_lua_state);
+    return status == 0;
 }
 
 double World::GetLuaNumber(String const &var)
