@@ -510,6 +510,7 @@ AC_CONFIG_FILES(
   people/jylam/Makefile
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile
+  people/jylam/private/lander/Makefile
   people/sam/Makefile
   people/sam/private/Makefile
   people/sam/private/kanagawa/Makefile
