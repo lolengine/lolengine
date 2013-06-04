@@ -1,7 +1,22 @@
+[sc#f8f afcb 10 10 10 .25 tx 0]
+
+//sc#fff
+//[afcb 1 1 1 -.1 tx 1]
+//[afcb 1 1 1 -.1 tx 0]
+//[afcb 1 1 1 -.1 tx -1]
+//[[afcb 1 1 1 -.1 tx 1]
+//[afcb 1 1 1 -.1 tx 0]
+//[afcb 1 1 1 -.1 tx -1]tz 1]
+//[[afcb 1 1 1 -.1 tx 1]
+//[afcb 1 1 1 -.1 tx 0]
+//[afcb 1 1 1 -.1 tx -1]tz -1]
+//[afcb 3 .2 3 -.05 ty -.6]
+
+
 //[sc#fff scb#fff ato 20 8 12 rx0]
 //[sc#fff scb#fff acg 8 2 5 1 6 8 4 2 .1 1]
 
-[sc#fff ab 4 4 4 smth 0 1 1 ]//twy 45 0 bdxy 90 0 splt 5 tz 2 
+//[sc#fff ab 4 4 4 ]//twy 45 0 bdxy 90 0 splt 5 tz 2 
 //[sc#88f ab 4 4 4 tx 4 ab 4 4 4 tx -2 tax .4 .4 0]
 //[sc#88f ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .25 ab .25 1 1 tx .125 stx 10 0 0]
  // tax -2 0 0 0
@@ -20,7 +35,8 @@
 
 //[sc#ff2 asph 2 10 10 10]
 //[sc#400 asph 2 10 10 10 t 2 2 2 csgs]
+
 //[sc#88f afcb 10 10 10 .25 tx 0]
-//[sc#fff afcb 10 10 10 .25 t 2 2 2]
+[sc#fff afcb 10 10 10 .25 t 2 2 2 csgs]
 //[sc#fff afcb 7 7 7 .25]
-//[sc#ff2 afcb 7 7 7 .25 t 1 1 1]
+//[sc#ff2 afcb 7 7 7 .25 t 1 1 1 csgs]
