@@ -48,25 +48,20 @@ LOLFX_RESOURCE_DECLARE(shinymvtexture);
 #define    IPT_MESH_ROT_UP        "Mesh_Rot_Up"
 #define    IPT_MESH_ROT_DOWN      "Mesh_Rot_Down"
 
+#define    MIN_FOV                1.f
+
 #define    WITH_FUR               0
+#define    WITH_TEXTURE           0
 
 class MeshViewer : public WorldEntity
 {
 public:
-    void SetFov(float new_fov=60.0f)
+    void SetFov(float new_fov=60.0f, vec2 video_size = vec2(Video::GetSize()))
     {
-        //FOV compensation doesn't work
-        ivec2 video_size = Video::GetSize();
-        float near = (float)-video_size.x - video_size.y;
-        float far = (float)video_size.x + video_size.y;
-        float t1 = tanf(new_fov / 2);
-        float dist = (float)video_size.x / (2.0f * t1);
-        //m_fov_compensation = mat4::translate(-0.5f * video_size.x, -0.5f * video_size.y, -dist);
-        m_fov_compensation = mat4::translate(vec3(.0f));
-        if (new_fov > 0.1f)
-            Scene::GetDefault()->GetCamera()->SetProjection(mat4::perspective(new_fov, (float)video_size.x, (float)video_size.y, .1f, 1000.f));
+        if (new_fov > MIN_FOV)
+            Scene::GetDefault()->GetCamera()->SetProjection(mat4::perspective(new_fov, video_size.x, video_size.y, .1f, 1000.f));
         else
-            Scene::GetDefault()->GetCamera()->SetProjection(mat4::ortho((float)video_size.x, (float)video_size.y, .1f, 1000.f));
+            Scene::GetDefault()->GetCamera()->SetProjection(mat4::ortho(video_size.x, video_size.y, .1f, 1000.f));
     }
 
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
@@ -74,10 +69,8 @@ public:
     {
         //Input setup
         Input::LinkActionToKey(IPT_CAM_RESET,           Key::Return);
-        Input::LinkActionToKey(IPT_CAM_FORWARD,         Key::PageUp);
-        Input::LinkActionToKey(IPT_CAM_BACKWARD,        Key::PageDown);
-        Input::LinkActionToKey(IPT_CAM_ZOOM_IN,         Key::Home);
-        Input::LinkActionToKey(IPT_CAM_ZOOM_OUT,        Key::End);
+        Input::LinkActionToKey(IPT_CAM_ZOOM_IN,         Key::PageUp);
+        Input::LinkActionToKey(IPT_CAM_ZOOM_OUT,        Key::PageDown);
 
         Input::LinkActionToKey(IPT_MESH_LEFT,           Key::Left);
         Input::LinkActionToKey(IPT_MESH_RIGHT,          Key::Right);
@@ -169,26 +162,42 @@ public:
                 Ticker::Shutdown();
         }
 
+        //--
         //Update Mesh BBox - Get the Min/Max needed
+        //--
+        vec2 screen_min_max[2] = { vec2(FLT_MAX), vec2(-FLT_MAX) };
         vec3 min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
         int mesh_id = m_meshes.Count() - 1;
         for (; mesh_id >= 0; mesh_id--)
             if (m_meshes[mesh_id].m2)
                 break;
 
+        mat4 world_screen = Scene::GetDefault()->GetCamera()->GetProjection() * Scene::GetDefault()->GetCamera()->GetView();
+
         if (m_meshes.Count() && mesh_id >= 0)
         {
             for (int i = 0; i < m_meshes[mesh_id].m1.GetVertexCount(); i++)
             {
-                vec3 vpos = m_meshes[mesh_id].m1.GetVertexLocation(i);
+                mat4 LocalPos = m_mat * mat4::translate(m_meshes[mesh_id].m1.GetVertexLocation(i));
+                vec3 vpos = LocalPos.v3.xyz;
+                //vec3 vpos = m_meshes[mesh_id].m1.GetVertexLocation(i);
+
                 min_max[0] = min(vpos.xyz, min_max[0]);
                 min_max[1] = max(vpos.xyz, min_max[1]);
+
+                LocalPos = world_screen * LocalPos;
+                vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
+
+                screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
+                screen_min_max[1] = max(vpos.xy, screen_min_max[1]);
             }
         }
         else
         {
-            min_max[0] = vec3(.0f);
             min_max[1] = vec3(.0f);
+            min_max[0] = vec3(.0f);
+            screen_min_max[0] = vec2(.0f);
+            screen_min_max[1] = vec2(.0f);
         }
         //[0] : center, [1] : size.
         vec3 BBox[2] = { vec3(.0f), vec3(.0f) };
@@ -199,20 +208,35 @@ public:
         //--
         //Camera movement handling
         //--
-        vec3 cam_move = BBox_mod * seconds *
-                        vec3(.0f, .0f, (float)(Input::GetStatus(IPT_CAM_BACKWARD) - Input::GetStatus(IPT_CAM_FORWARD)));
-
         if (Input::WasReleased(IPT_CAM_RESET))
             SetFov();
 
+        //Auto Fov
+        float local_max = max(max(lol::abs(min_max[0].x), lol::abs(min_max[0].y)),
+                          max(lol::abs(min_max[1].x),     lol::abs(min_max[1].y)));
+        float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
+                              max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
+
+        //Fov modification
         float fov_zoom = (float)(Input::GetStatus(IPT_CAM_ZOOM_OUT) - Input::GetStatus(IPT_CAM_ZOOM_IN));
         m_fov_zoom_damp = damp(m_fov_zoom_damp, fov_zoom, (fov_zoom == .0f)?(.15f):(0.5f), seconds);
         m_fov = max(.0f, m_fov + seconds * 10.0f * m_fov_zoom_damp);
         m_fov_damp = damp(m_fov_damp, m_fov, .2f, seconds);
-        SetFov(m_fov_damp);
 
+        if (m_fov_damp < MIN_FOV)
+        {
+            vec2 tmp = vec2(Video::GetSize());
+            SetFov(0, vec2(local_max * 2.2f) * (tmp / vec2(tmp.y)));
+        }
+        else
+            SetFov(m_fov_damp);
+
+        //Move modification
         vec3 campos = Scene::GetDefault()->GetCamera()->GetPosition();
-        Scene::GetDefault()->GetCamera()->SetView(campos + cam_move, quat(1.f));
+        if (m_fov_damp < MIN_FOV)
+            Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, 10.f), quat(1.f));
+        else if (fov_ratio > .0f)
+            Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, campos.z * fov_ratio * 1.1f), quat(1.f));
 
         //--
         //Mesh movement handling
@@ -350,12 +374,14 @@ public:
                 //Fur support
 #if WITH_FUR
                 m_meshes[i].m1.MeshConvert(Shader::Create(LOLFX_RESOURCE_NAME(shinyfur)));
-#else
+#elif WITH_TEXTURE
                 //m_meshes[i].m1.MeshConvert(m_texture_shader);
                 //m_meshes[i].m1.MeshConvert();
                 m_meshes[i].m1.MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
                                                                   (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
                                                                   m_texture_shader, true));
+#else
+                m_meshes[i].m1.MeshConvert();
 #endif
                 m_meshes[i].m2 = true;
             }
@@ -377,11 +403,12 @@ public:
                     new_mesh_offset = new_mesh_offset + vec3(m_meshes[j].m3 * ofs_scale * ofs_scale * m_mesh_offset_damp.x, .0f, .0f);
                 }
                 m_meshes[i].m4 = damp(m_meshes[i].m4, new_mesh_offset, .35f, seconds);
-                Scene::GetDefault()->GetCamera()->SetProjection(mat4::translate(m_meshes[i].m4) *
+
+                Scene::GetDefault()->GetCamera()->SetProjection(
+                                                                mat4::translate(m_meshes[i].m4) *
                                                                 mat4::translate(vec3(m_mesh_screen_offset_damp, .0f)) *
                                                                 mat4::scale(vec3(vec2(m_meshes[i].m3), 1.0f)) *
-                                                                default_proj *
-                                                                m_fov_compensation);
+                                                                default_proj);
 #if WITH_FUR
                 for (int j=0; j < 40; j++)
                     m_meshes[i].m1.Render(m_mat, 0.1 * j);
