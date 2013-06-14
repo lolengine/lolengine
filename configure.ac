@@ -514,6 +514,7 @@ AC_CONFIG_FILES(
   people/sam/Makefile
   people/sam/private/Makefile
   people/sam/private/kanagawa/Makefile
+  people/sam/private/lol.js/Makefile
   people/sam/private/sapp/Makefile
 ])
 
