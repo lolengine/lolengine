@@ -598,6 +598,46 @@ void VertexDeclaration::AddStream(VertexStreamBase const &s)
     }
 }
 
+int VertexDeclaration::GetStreamCount() const
+{
+	return m_count ? m_streams[m_count - 1].index + 1 : 0;
+}
+
+VertexStreamBase VertexDeclaration::GetStream(int index) const
+{
+	VertexStreamBase stream;
+	int n = 0;
+
+	for (int i = 0; i < m_count; ++i)
+	{
+		if (m_streams[i].index != index)
+			continue;
+
+		switch (m_streams[i].stream_type)
+		{
+#define LOL_TYPE(T) \
+			case VertexStreamBase::Type##T: stream.AddStream<T>(n++, m_streams[i].usage); break;
+
+			LOL_TYPE(void)
+			LOL_TYPE(half)     LOL_TYPE(f16vec2) LOL_TYPE(f16vec3) LOL_TYPE(f16vec4)
+			LOL_TYPE(float)    LOL_TYPE(vec2)    LOL_TYPE(vec3)    LOL_TYPE(vec4)
+			LOL_TYPE(double)   LOL_TYPE(dvec2)   LOL_TYPE(dvec3)   LOL_TYPE(dvec4)
+			LOL_TYPE(int8_t)   LOL_TYPE(i8vec2)  LOL_TYPE(i8vec3)  LOL_TYPE(i8vec4)
+			LOL_TYPE(uint8_t)  LOL_TYPE(u8vec2)  LOL_TYPE(u8vec3)  LOL_TYPE(u8vec4)
+			LOL_TYPE(int16_t)  LOL_TYPE(i16vec2) LOL_TYPE(i16vec3) LOL_TYPE(i16vec4)
+			LOL_TYPE(uint16_t) LOL_TYPE(u16vec2) LOL_TYPE(u16vec3) LOL_TYPE(u16vec4)
+			LOL_TYPE(int32_t)  LOL_TYPE(ivec2)   LOL_TYPE(ivec3)   LOL_TYPE(ivec4)
+			LOL_TYPE(uint32_t) LOL_TYPE(uvec2)   LOL_TYPE(uvec3)   LOL_TYPE(uvec4)
+#undef LOL_TYPE
+		}
+	}
+
+	for (int i = m_count; i < 12; ++i)
+		stream.AddStream<void>(i, VertexStreamBase::Typevoid);
+
+	return stream;
+}
+
 //
 // The VertexBuffer class
 // ----------------------
@@ -632,6 +672,11 @@ VertexBuffer::~VertexBuffer()
 #endif
     }
     delete m_data;
+}
+
+size_t VertexBuffer::GetSize()
+{
+	return m_data->m_size;
 }
 
 void *VertexBuffer::Lock(size_t offset, size_t size)
