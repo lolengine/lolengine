@@ -29,7 +29,7 @@ public:
     VertexBuffer(size_t size);
     ~VertexBuffer();
 
-	size_t GetSize();
+    size_t GetSize();
 
     void *Lock(size_t offset, size_t size);
     void Unlock();
@@ -159,35 +159,35 @@ public:
         Typeuint32_t, Typeuvec2,   Typeuvec3,   Typeuvec4,
     };
 
-	int GetSize() const
-	{
-		int size = 0, i = 0;
-		while (m_streams[i].size)
-			size += m_streams[i++].size;
-		return size;
-	}
+    int GetSize() const
+    {
+        int size = 0, i = 0;
+        while (m_streams[i].size)
+            size += m_streams[i++].size;
+        return size;
+    }
 
-	int GetStreamCount() const
-	{
-		int i = 0;
-		while (m_streams[i].size) ++i;
-		return i;
-	}
+    int GetStreamCount() const
+    {
+        int i = 0;
+        while (m_streams[i].size) ++i;
+        return i;
+    }
 
-	VertexUsage GetUsage(int index) const
-	{
-		return m_streams[index].usage;
-	}
+    VertexUsage GetUsage(int index) const
+    {
+        return m_streams[index].usage;
+    }
 
-	uint8_t GetType(int index) const
-	{
-		return m_streams[index].stream_type;
-	}
+    uint8_t GetType(int index) const
+    {
+        return m_streams[index].stream_type;
+    }
 
-	uint8_t GetSize(int index) const
-	{
-		return m_streams[index].size;
-	}
+    uint8_t GetSize(int index) const
+    {
+        return m_streams[index].size;
+    }
 
 protected:
 
@@ -300,9 +300,9 @@ public:
                                      ShaderAttrib attr11 = ShaderAttrib(),
                                      ShaderAttrib attr12 = ShaderAttrib());
 
-	int GetStreamCount() const;
+    int GetStreamCount() const;
 
-	VertexStreamBase GetStream(int index) const;
+    VertexStreamBase GetStream(int index) const;
 
 private:
     void Initialize();
