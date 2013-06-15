@@ -117,6 +117,66 @@ public:
         return String(&(*this)[start], count);
     }
 
+	int IndexOf(const char token) const
+	{
+		for (int i = 0; i < Count(); ++i)
+		{
+			if ((*this)[i] == token)
+				return i;
+		}
+		return -1;
+	}
+
+	int IndexOf(const char* token) const
+	{
+		int token_len = strlen(token);
+		if (Count() < token_len)
+			return -1;
+
+		for (int i = 0; i < Count() - token_len + 1; ++i)
+		{
+			int j = 0;
+			for (; j < token_len; ++j)
+			{
+				if ((*this)[i + j] != token[j])
+					break;
+			}
+			if (j == token_len)
+				return i;
+		}
+		return -1;
+	}
+
+	int LastIndexOf(const char token) const
+	{
+		for (int i = Count() - 1; i >= 0; --i)
+		{
+			if ((*this)[i] == token)
+				return i;
+		}
+		return -1;
+	}
+
+	int LastIndexOf(const char* token) const
+	{
+		int token_len = strlen(token);
+		if (Count() < token_len)
+			return -1;
+
+		for (int i = Count() - token_len; i >= 0; --i)
+		{
+			int j = 0;
+			for (; j < token_len; ++j)
+			{
+				if ((*this)[i + j] != token[j])
+					break;
+			}
+			if (j == token_len)
+				return i;
+		}
+		return -1;
+	}
+
     inline String operator +(String const &s) const
     {
         String ret(*this);
