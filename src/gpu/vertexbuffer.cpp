@@ -607,6 +607,7 @@ VertexStreamBase VertexDeclaration::GetStream(int index) const
 {
 	VertexStreamBase stream;
 	int n = 0;
+	int count = 0;
 
 	for (int i = 0; i < m_count; ++i)
 	{
@@ -630,10 +631,11 @@ VertexStreamBase VertexDeclaration::GetStream(int index) const
 			LOL_TYPE(uint32_t) LOL_TYPE(uvec2)   LOL_TYPE(uvec3)   LOL_TYPE(uvec4)
 #undef LOL_TYPE
 		}
+		++count;
 	}
 
-	for (int i = m_count; i < 12; ++i)
-		stream.AddStream<void>(i, VertexStreamBase::Typevoid);
+	while (count < 12)
+		stream.AddStream<void>(count++, VertexStreamBase::Typevoid);
 
 	return stream;
 }
