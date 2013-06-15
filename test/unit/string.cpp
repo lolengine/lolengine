@@ -155,7 +155,6 @@ LOLUNIT_FIXTURE(StringTest)
 		int i1 = s1.IndexOf('H');
 		int i2 = s1.IndexOf('W');
 		int i3 = s1.IndexOf('d');
-
 		int i4 = s1.IndexOf("Hello");
 		int i5 = s1.IndexOf("World");
 		int i6 = s1.IndexOf("lo");
@@ -178,14 +177,12 @@ LOLUNIT_FIXTURE(StringTest)
 		int i1 = s1.LastIndexOf('H');
 		int i2 = s1.LastIndexOf('W');
 		int i3 = s1.LastIndexOf('d');
-
 		int i4 = s1.LastIndexOf("Hello");
 		int i5 = s1.LastIndexOf("World");
 		int i6 = s1.LastIndexOf("lo");
 		int i7 = s1.LastIndexOf("Hello World");
 		int i8 = s1.LastIndexOf("Sup' dude");
 		int i9 = s1.LastIndexOf('l');
-		int i10 = s1.LastIndexOf('o');
 
 		LOLUNIT_ASSERT(i1 == 0);
 		LOLUNIT_ASSERT(i2 == 6);
@@ -196,7 +193,6 @@ LOLUNIT_FIXTURE(StringTest)
 		LOLUNIT_ASSERT(i7 == 0);
 		LOLUNIT_ASSERT(i8 == -1);
 		LOLUNIT_ASSERT(i9 == 9);
-		LOLUNIT_ASSERT(i10 == 7);
 	}};
 
 } /* namespace lol */
