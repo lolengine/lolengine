@@ -117,49 +117,38 @@ public:
         return String(&(*this)[start], count);
     }
 
-    int IndexOf(const char token) const
+    int IndexOf(char token) const
     {
         using namespace std;
 
-        char *tmp = strchr(C(), token);
+        char const *tmp = strchr(C(), token);
         return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
-    int IndexOf(const char* token) const
+    int IndexOf(char const* token) const
     {
         using namespace std;
 
-        char *tmp = strstr(C(), token);
+        char const *tmp = strstr(C(), token);
         return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
-    int LastIndexOf(const char token) const
+    int LastIndexOf(char token) const
     {
         using namespace std;
 
-        char *tmp = strrchr(C(), token);
+        char const *tmp = strrchr(C(), token);
         return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
-    int LastIndexOf(const char* token) const
+    int LastIndexOf(char const* token) const
     {
         using namespace std;
 
         int token_len = strlen(token);
-        if (Count() < token_len)
-            return -1;
-
         for (int i = Count() - token_len; i >= 0; --i)
-        {
-            int j = 0;
-            for (; j < token_len; ++j)
-            {
-                if ((*this)[i + j] != token[j])
-                    break;
-            }
-            if (j == token_len)
+            if (strstr(C() + i, token))
                 return i;
-        }
         return -1;
     }
 
