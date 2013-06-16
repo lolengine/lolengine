@@ -36,13 +36,13 @@ LOLUNIT_FIXTURE(MapTest)
     {
         Map<int, int> map;
 
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < 1000; i++)
             map[i] = -1;
 
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < 1000; i++)
             map[i] = i;
 
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < 1000; i++)
             LOLUNIT_ASSERT_EQUAL(map[i], i);
     }
 
