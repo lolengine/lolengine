@@ -119,46 +119,32 @@ public:
 
     int IndexOf(const char token) const
     {
-        for (int i = 0; i < Count(); ++i)
-        {
-            if ((*this)[i] == token)
-                return i;
-        }
-        return -1;
+        using namespace std;
+
+        char *tmp = strchr(C(), token);
+        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
     int IndexOf(const char* token) const
     {
-        int token_len = strlen(token);
-        if (Count() < token_len)
-            return -1;
+        using namespace std;
 
-        for (int i = 0; i < Count() - token_len + 1; ++i)
-        {
-            int j = 0;
-            for (; j < token_len; ++j)
-            {
-                if ((*this)[i + j] != token[j])
-                    break;
-            }
-            if (j == token_len)
-                return i;
-        }
-        return -1;
+        char *tmp = strstr(C(), token);
+        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
     int LastIndexOf(const char token) const
     {
-        for (int i = Count() - 1; i >= 0; --i)
-        {
-            if ((*this)[i] == token)
-                return i;
-        }
-        return -1;
+        using namespace std;
+
+        char *tmp = strrchr(C(), token);
+        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
     int LastIndexOf(const char* token) const
     {
+        using namespace std;
+
         int token_len = strlen(token);
         if (Count() < token_len)
             return -1;
