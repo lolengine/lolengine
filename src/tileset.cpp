@@ -139,21 +139,8 @@ void TileSet::TickDraw(float seconds)
     }
     else if (m_data->m_image)
     {
-        int planes;
         PixelFormat format = m_data->m_image->GetFormat();
-
-        switch (format)
-        {
-        case PixelFormat::RGB_8:
-            planes = 3;
-            break;
-        case PixelFormat::RGBA_8:
-        case PixelFormat::ARGB_8:
-        case PixelFormat::ABGR_8:
-        default:
-            planes = 4;
-            break;
-        }
+        int planes = format.BytesPerPixel();
 
         int w = m_data->m_texture_size.x;
         int h = m_data->m_texture_size.y;

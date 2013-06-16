@@ -36,6 +36,22 @@ struct PixelFormat
     inline PixelFormat() : m_value(Unknown) {}
     inline PixelFormat(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
+
+    inline uint8_t BytesPerPixel()
+    {
+        switch (m_value)
+        {
+        case Y_8:
+            return 1;
+        case RGB_8:
+            return 3;
+        case RGBA_8:
+        case ARGB_8:
+        case ABGR_8:
+        default:
+            return 4;
+        }
+    }
 };
 
 class Texture
