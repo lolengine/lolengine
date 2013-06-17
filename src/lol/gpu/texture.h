@@ -54,6 +54,40 @@ struct PixelFormat
     }
 };
 
+struct TextureMagFilter
+{
+    enum Value
+    {
+        Unknown = 0,
+		NEAREST_TEXEL,
+		LINEAR_TEXEL,
+    }
+    m_value;
+
+    inline TextureMagFilter() : m_value(Unknown) {}
+    inline TextureMagFilter(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+struct TextureMinFilter
+{
+    enum Value
+    {
+        Unknown = 0,
+		NEAREST_TEXEL_NO_MIPMAP,
+		LINEAR_TEXEL_NO_MIPMAP,
+		NEAREST_TEXEL_NEAREST_MIPMAP,
+		NEAREST_TEXEL_LINEAR_MIPMAP,
+		LINEAR_TEXEL_NEAREST_MIPMAP,
+		LINEAR_TEXEL_LINEAR_MIPMAP,
+    }
+    m_value;
+
+    inline TextureMinFilter() : m_value(Unknown) {}
+    inline TextureMinFilter(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Texture
 {
 public:
@@ -63,6 +97,9 @@ public:
     void Bind();
     void SetData(void *data);
     void SetSubData(ivec2 origin, ivec2 size, void *data);
+
+	void SetMagFiltering(TextureMagFilter filter);
+	void SetMinFiltering(TextureMinFilter filter);
 
     ShaderTexture GetTexture() const;
 
