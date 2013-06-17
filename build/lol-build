@@ -3,7 +3,12 @@
 #
 # Lol Engine build script
 # Usage:
-#   lol-build <action> [<platform>]
+#   lol-build [<flags>...] <action> [<platform>]
+#
+# Supported flags:
+#  --enable-debug
+#  --enable-devel
+#  --enable-release
 #
 # Where <action> is one of:
 #  - bootstrap
@@ -30,8 +35,31 @@
 
 set -e
 
-action="$1"
-platform="$2"
+###############################################################################
+# Commandline parsing
+#
+action=""
+platform=""
+configure_flags=""
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --enable-debug|--enable-devel|--enable-release)
+        configure_flags="${configure_flags} $1"
+        ;;
+      --*)
+        echo "E: invalid flag $1"
+        exit 1
+        ;;
+      *)
+        if [ -z "$action" ]; then
+            action="$1"
+        else
+            platform="$1"
+        fi
+        ;;
+    esac
+    shift
+done
 
 ###############################################################################
 # Initialisation code
@@ -104,6 +132,11 @@ bootstrap()
             PATH="$PATH" M4PATH="$M4PATH" ./bootstrap
             ;;
     esac
+}
+
+do_configure()
+{
+    ./configure ${configure_flags} "$@"
 }
 
 configure()
@@ -188,34 +221,34 @@ configure()
             SDKROOT="$DEVROOT/SDKs/iPhoneOS$SDKVER.sdk"
             CC="$XCODE/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang"
             CXX="$XCODE/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++"
-            ./configure --host=armv7-apple-darwin10 CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX"
+            do_configure --host=armv7-apple-darwin10 CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX"
             ;;
         android-arm)
             CPPFLAGS="$CPPFLAGS -Wno-psabi -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport -I$ANDROID_NDK_ROOT/sources/android/native_app_glue -fpic -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64"
             CFLAGS="$CFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb"
             CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float -mthumb -fno-rtti -fno-exceptions"
             LOL_LIBS="$LOL_LIBS -L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi -lstlport_shared -lm -fpic -XCClinker -shared -u ANativeActivity_onCreate"
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure --host=arm-linux-androideabi ac_cv_exeext=.so CPPFLAGS="$CPPFLAGS" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" LOL_LIBS="$LOL_LIBS"
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH" do_configure --host=arm-linux-androideabi ac_cv_exeext=.so CPPFLAGS="$CPPFLAGS" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" LOL_LIBS="$LOL_LIBS"
             # FIXME: is this needed?
             # ant debug
             # ant debug install
             # ant clean
             ;;
         raspi-arm)
-            ./configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads -I$RASPI_SDK_ROOT/chroot/usr/include" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib -L$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -L$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,--unresolved-symbols=ignore-in-shared-libs"
+            do_configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads -I$RASPI_SDK_ROOT/chroot/usr/include" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib -L$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -L$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,--unresolved-symbols=ignore-in-shared-libs"
             ;;
         nacl-i386)
-            ./configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=i386 CPPFLAGS="-I$NACL_SDK_ROOT/include" LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
+            do_configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=i386 CPPFLAGS="-I$NACL_SDK_ROOT/include" LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
             ;;
         nacl-amd64)
-            ./configure CXX=x86_64-nacl-g++ CC=x86_64-nacl-gcc ac_cv_exeext=.64.nexe --host=x86_64 CPPFLAGS="-I$NACL_SDK_ROOT/include" LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
+            do_configure CXX=x86_64-nacl-g++ CC=x86_64-nacl-gcc ac_cv_exeext=.64.nexe --host=x86_64 CPPFLAGS="-I$NACL_SDK_ROOT/include" LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
             ;;
         osx-amd64)
             # HACK: use clang++ because of a memory leak in llvm-g++.
-            ./configure CXX=clang++ CC=clang
+            do_configure CXX=clang++ CC=clang
             ;;
         ps3-ppu)
-            PATH="$PATH" ./configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
+            PATH="$PATH" do_configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
             ;;
         win*-i386|win*-amd64)
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-1.2.15/include"
@@ -239,13 +272,13 @@ configure()
 
             CPPFLAGS="$CPPFLAGS -I$PWD/external/libcaca-0.99.beta18/include -DCACA_STATIC"
 
-            PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" ./configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
+            PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" do_configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         emscripten-*)
-            ./configure $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
+            do_configure $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
             ;;
         *)
-            PATH="$PATH" ./configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
+            PATH="$PATH" do_configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
             ;;
     esac
 }

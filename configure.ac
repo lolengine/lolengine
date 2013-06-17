@@ -101,26 +101,41 @@ AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd backtrace_symbols)
 AC_CHECK_FUNCS(gettimeofday usleep)
 
 
-if test "${enable_debug}" = "yes"; then
-  AC_DEFINE(LOL_DEBUG, 1, Define to 1 to activate debug)
-  OPT_CXXFLAGS="-O"
+dnl  Build mode
+ac_cv_my_build_mode="devel"
+if test "x${enable_release}" = "xyes"; then
+  ac_cv_my_build_mode="release"
+  CFLAGS=""
+  LDFLAGS=""
+  CXXFLAGS=""
+fi
+if test "x${enable_devel}" = "xyes"; then
+  ac_cv_my_build_mode="devel"
+  CFLAGS=""
+  LDFLAGS=""
+  CXXFLAGS=""
+fi
+if test "x${enable_debug}" = "xyes"; then
+  ac_cv_my_build_mode="debug"
+  CFLAGS=""
+  LDFLAGS=""
+  CXXFLAGS=""
+fi
+
+if test "x${ac_cv_my_build_mode}" = "xdebug"; then
+  AC_DEFINE(LOL_BUILD_DEBUG, 1, Define to 1 to activate debug build)
+  BUILD_CXXFLAGS="-O -g"
+elif test "x${ac_cv_my_build_mode}" = "xdevel"; then
+  AC_DEFINE(LOL_BUILD_DEVEL, 1, Define to 1 to activate development build)
+  BUILD_CXXFLAGS="-Os -g -ffast-math"
 else
-  OPT_CXXFLAGS="-O3 -ffast-math -fomit-frame-pointer"
-  OPT_LDFLAGS="-fno-strength-reduce"
+  AC_DEFINE(LOL_BUILD_RELEASE, 1, Define to 1 to activate final release)
+  BUILD_CXXFLAGS="-Os -ffast-math -fomit-frame-pointer"
+  BUILD_LDFLAGS="-fno-strength-reduce"
 fi
 
-if test "${enable_release}" = "yes"; then
-  AC_DEFINE(LOL_RELEASE, 1, Define to 1 to activate final release)
-  REL_CXXFLAGS=""
-else
-  REL_CXXFLAGS="-g"
-fi
 
-if test "${enable_experimental}" = "yes"; then
-  AC_DEFINE(LOL_EXPERIMENTAL, 1, Define to 1 to activate experimental build)
-fi
-
-# Build documentation?
+dnl  Build documentation?
 DOXYGEN="no"
 LATEX="no"
 if test "${enable_doc}" != "no"; then
@@ -166,9 +181,9 @@ dnl  No exceptions
 LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
 LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
 
-dnl  Optimizations
-AM_CXXFLAGS="${AM_CXXFLAGS} ${REL_CXXFLAGS} ${OPT_CXXFLAGS}"
-AM_LDFLAGS="${AM_LDFLAGS} ${REL_LDFLAGS} ${OPT_LDFLAGS}"
+dnl  Build mode specific flags
+AM_CXXFLAGS="${AM_CXXFLAGS} ${BUILD_CXXFLAGS}"
+AM_LDFLAGS="${AM_LDFLAGS} ${BUILD_LDFLAGS}"
 
 dnl  Debug symbols
 LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])

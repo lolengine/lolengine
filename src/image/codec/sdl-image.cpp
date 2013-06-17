@@ -67,7 +67,7 @@ bool SdlImageData::Open(char const *path)
 
     if (!m_img)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("could not load image %s\n", path);
 #endif
         return false;

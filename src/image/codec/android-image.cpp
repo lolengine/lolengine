@@ -52,14 +52,14 @@ bool AndroidImageData::Open(char const *path)
     jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("JVM environment not found, trying to attach thread\n");
 #endif
         res = g_vm->AttachCurrentThread(&env, nullptr);
     }
     if (res < 0)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("JVM environment not found, cannot open image %s\n", path);
 #endif
         return false;
@@ -74,7 +74,7 @@ bool AndroidImageData::Open(char const *path)
     env->DeleteLocalRef(name);
     if (!bmp)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
         return false;
@@ -111,7 +111,7 @@ bool AndroidImageData::Close()
     jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("JVM environment not found, cannot close image\n");
 #endif
         return false;

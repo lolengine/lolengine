@@ -56,7 +56,7 @@ bool GdiPlusImageData::Open(char const *path)
     status = Gdiplus::GdiplusStartup(&token, &input, nullptr);
     if (status != Gdiplus::Ok)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("error %d while initialising GDI+\n", status);
 #endif
         return false;
@@ -71,7 +71,7 @@ bool GdiPlusImageData::Open(char const *path)
         wchar_t *wpath = new wchar_t[len + 1];
         if (mbstowcs(wpath, pathlist[i].C(), len + 1) == (size_t)-1)
         {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
             Log::Error("invalid image name %s\n", pathlist[i].C());
 #endif
             delete[] wpath;
@@ -86,7 +86,7 @@ bool GdiPlusImageData::Open(char const *path)
             status = m_bitmap->GetLastStatus();
             if (status != Gdiplus::Ok)
             {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
                 if (status != Gdiplus::InvalidParameter)
                     Log::Error("error %d loading %s\n",
                                status, pathlist[i].C());
@@ -103,7 +103,7 @@ bool GdiPlusImageData::Open(char const *path)
 
     if (!m_bitmap)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
         return false;
@@ -116,7 +116,7 @@ bool GdiPlusImageData::Open(char const *path)
     if(m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
                           PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("could not lock bits in %s\n", path);
 #endif
         delete m_bitmap;

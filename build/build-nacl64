@@ -4,7 +4,7 @@
 make distclean
 
 set -e
-./build/lol-build bootstrap nacl-amd64
-./build/lol-build configure nacl-amd64
-./build/lol-build build nacl-amd64
+./build/lol-build "$@" bootstrap nacl-amd64
+./build/lol-build "$@" configure nacl-amd64
+./build/lol-build "$@" build nacl-amd64
 

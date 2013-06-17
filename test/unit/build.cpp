@@ -127,7 +127,7 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(u64mat4), 128);
     }
 
-#if !defined LOL_DEBUG
+#if !defined LOL_BUILD_DEBUG
     LOLUNIT_TEST(FastMath)
     {
         double x, y;

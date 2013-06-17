@@ -29,7 +29,7 @@ Entity::Entity() :
     m_ref(0),
     m_destroy(0)
 {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
     m_tickstate = STATE_IDLE;
 #endif
     m_gamegroup = GAMEGROUP_DEFAULT;
@@ -39,7 +39,7 @@ Entity::Entity() :
 
 Entity::~Entity()
 {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
     if (!m_destroy)
         Log::Error("entity destructor called directly\n");
 #endif
@@ -53,7 +53,7 @@ char const *Entity::GetName()
 void Entity::TickGame(float seconds)
 {
     UNUSED(seconds);
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
     if (m_tickstate != STATE_PRETICK_GAME)
         Log::Error("invalid entity game tick\n");
     m_tickstate = STATE_POSTTICK_GAME;
@@ -63,7 +63,7 @@ void Entity::TickGame(float seconds)
 void Entity::TickDraw(float seconds)
 {
     (void)seconds;
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
     if (m_tickstate != STATE_PRETICK_DRAW)
         Log::Error("invalid entity draw tick\n");
     m_tickstate = STATE_POSTTICK_DRAW;

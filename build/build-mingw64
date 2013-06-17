@@ -4,7 +4,7 @@
 make distclean
 
 set -e
-./build/lol-build bootstrap windows-amd64
-./build/lol-build configure windows-amd64
-./build/lol-build build windows-amd64
+./build/lol-build "$@" bootstrap windows-amd64
+./build/lol-build "$@" configure windows-amd64
+./build/lol-build "$@" build windows-amd64
 
