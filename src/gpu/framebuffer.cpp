@@ -284,7 +284,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 #if defined USE_D3D9
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
-                                          fbo_format.GetFormat(), D3DPOOL_DEFAULT,
+                                          (D3DFORMAT)fbo_format.GetFormat(), D3DPOOL_DEFAULT,
                                           &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
