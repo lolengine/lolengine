@@ -550,9 +550,9 @@ void Shader::SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index)
 {
 #if defined USE_D3D9 || defined _XBOX
     g_d3ddevice->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
-	g_d3ddevice->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
-	g_d3ddevice->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
-	g_d3ddevice->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
+    g_d3ddevice->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
+    g_d3ddevice->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
+    g_d3ddevice->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
 #elif !defined __CELLOS_LV2__
     glActiveTexture(GL_TEXTURE0 + index);
     //glEnable(GL_TEXTURE_2D);

@@ -58,7 +58,7 @@ public:
 private:
     uint64_t m_flags;
 #if defined USE_D3D9 || defined _XBOX
-	uint32_t m_attrib;
+    uint32_t m_attrib;
 #endif
 };
 
