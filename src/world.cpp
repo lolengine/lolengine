@@ -33,6 +33,8 @@ class WorldData
 
     static int LuaPanic(lua_State* L)
     {
+        char const *message = lua_tostring(L, -1);
+        Log::Error("%s\n", message);
         DebugAbort();
         return 0;
     }
