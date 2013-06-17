@@ -46,9 +46,9 @@ class TextureData
 
 #if defined USE_D3D9
     IDirect3DTexture9 *m_texture;
-	D3DTEXTUREFILTERTYPE m_mag_filter;
-	D3DTEXTUREFILTERTYPE  m_min_filter;
-	D3DTEXTUREFILTERTYPE  m_mip_filter;
+    D3DTEXTUREFILTERTYPE m_mag_filter;
+    D3DTEXTUREFILTERTYPE  m_min_filter;
+    D3DTEXTUREFILTERTYPE  m_mip_filter;
 #elif defined _XBOX
     D3DTexture *m_texture;
 #else
@@ -173,9 +173,9 @@ ShaderTexture Texture::GetTexture() const
     ShaderTexture ret;
 #if defined USE_D3D9 || defined _XBOX
     ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
-	ret.m_attrib = m_data->m_mag_filter;
-	ret.m_attrib |= m_data->m_min_filter << 8;
-	ret.m_attrib |= m_data->m_mip_filter << 16;
+    ret.m_attrib = m_data->m_mag_filter;
+    ret.m_attrib |= m_data->m_min_filter << 8;
+    ret.m_attrib |= m_data->m_mip_filter << 16;
 #else
     ret.m_flags = m_data->m_texture;
 #endif
@@ -240,54 +240,54 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 void Texture::SetMagFiltering(TextureMagFilter filter)
 {
 #if defined _XBOX || defined USE_D3D9
-	// In DirectX, texture filtering is a per-texture-unit state
-	switch (filter)
-	{
-	case TextureMagFilter::NEAREST_TEXEL: m_data->m_mag_filter = D3DTEXF_POINT; break;
-	case TextureMagFilter::LINEAR_TEXEL: m_data->m_mag_filter = D3DTEXF_LINEAR; break;
-	}	
+    // In DirectX, texture filtering is a per-texture-unit state
+    switch (filter)
+    {
+    case TextureMagFilter::NEAREST_TEXEL: m_data->m_mag_filter = D3DTEXF_POINT; break;
+    case TextureMagFilter::LINEAR_TEXEL: m_data->m_mag_filter = D3DTEXF_LINEAR; break;
+    }
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
-	GLenum gl_filter;
-	switch (filter)
-	{
-	case TextureMagFilter::NEAREST_TEXEL: gl_filter = GL_NEAREST; break;
-	case TextureMagFilter::LINEAR_TEXEL: gl_filter = GL_LINEAR; break;
-	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter);
+    GLenum gl_filter;
+    switch (filter)
+    {
+    case TextureMagFilter::NEAREST_TEXEL: gl_filter = GL_NEAREST; break;
+    case TextureMagFilter::LINEAR_TEXEL: gl_filter = GL_LINEAR; break;
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter);
 #endif
 }
 
 void Texture::SetMinFiltering(TextureMinFilter filter)
 {
 #if defined _XBOX || defined USE_D3D9
-	// In DirectX, texture filtering is a per-texture-unit state
+    // In DirectX, texture filtering is a per-texture-unit state
 #define F(x, y) \
-	m_data->m_min_filter = x; m_data->m_mip_filter = y;
-	switch (filter)
-	{
-	case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
-	case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
-	case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_POINT); break;
-	case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_POINT); break;
-	case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_LINEAR); break;
-	case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_LINEAR); break;
-	}
+    m_data->m_min_filter = x; m_data->m_mip_filter = y;
+    switch (filter)
+    {
+    case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
+    case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
+    case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_POINT); break;
+    case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_POINT); break;
+    case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_LINEAR); break;
+    case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_LINEAR); break;
+    }
 #undef F
 
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
-	GLenum gl_filter;
-	switch (filter)
-	{
-	case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: gl_filter = GL_NEAREST; break;
-	case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: gl_filter = GL_LINEAR; break;
-	case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_NEAREST; break;
-	case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_LINEAR; break;
-	case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_NEAREST; break;
-	case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_LINEAR; break;
-	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter);
+    GLenum gl_filter;
+    switch (filter)
+    {
+    case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: gl_filter = GL_NEAREST; break;
+    case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: gl_filter = GL_LINEAR; break;
+    case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_NEAREST; break;
+    case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_LINEAR; break;
+    case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_NEAREST; break;
+    case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_LINEAR; break;
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter);
 #endif
 }
 
