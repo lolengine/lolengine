@@ -56,7 +56,7 @@ bool IosImageData::Open(char const *path)
     UIImage *image = [[UIImage alloc] initWithData:pngdata];
     if (!image)
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
         return false;

@@ -43,7 +43,7 @@ public:
 
     ~DictData()
     {
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
         if (nentities)
             Log::Error("still %i entities in dict\n", nentities);
 #endif
@@ -139,7 +139,7 @@ void Dict::RemoveSlot(Entity *entity)
             return;
         }
 
-#if !LOL_RELEASE
+#if !LOL_BUILD_RELEASE
     Log::Error("removing unregistered entity %p (%s)\n",
                entity, entity->GetName());
 #endif

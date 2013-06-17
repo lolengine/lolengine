@@ -4,7 +4,7 @@
 make distclean
 
 set -e
-./build/lol-build bootstrap windows-i386
-./build/lol-build configure windows-i386
-./build/lol-build build windows-i386
+./build/lol-build "$@" bootstrap windows-i386
+./build/lol-build "$@" configure windows-i386
+./build/lol-build "$@" build windows-i386
 
