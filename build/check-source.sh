@@ -103,6 +103,17 @@ done
 
 total_errors=0
 for file in $FILES; do
+
+    case "$file" in
+      # These files we know how to handle
+      *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.lua|*.l|*.y|*.sh|*.py)
+          fix_method="all"
+          ;;
+      *)
+          continue
+          ;;
+    esac
+
     case "$file" in
       # These files aren't ours, don't fix
       src/bullet/*|\
@@ -110,65 +121,66 @@ for file in $FILES; do
       external/*|\
       */generated/*|\
       web/plugins/*)
-          :
+          continue
           ;;
-      # Don't harass these people
+    esac
+
+    case "$file" in
+      # Don't harass these people, but fix their line endings
       people/peeweek/*|\
       people/touky/*|\
       people/benlitz/*|\
       people/sam/lua-*)
-          :
-          ;;
-      # These files we know how to handle
-      *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.lua|*.l|*.y|*.sh|*.py)
-          clean=true
-
-          # Check for CR LF
-          if [ "$check_crlf" = true ]; then
-              ncrlfs="$(od -tx1 "$file" | cut -b8- | tr ' ' '\n' | grep -c 0d || true)"
-              total_crlfs="$(($total_crlfs + $ncrlfs))"
-              if [ "$ncrlfs" -gt 0 ]; then
-                  clean=false
-                  if [ "$fix" = true ]; then
-                      $d2u -q "$file"
-                      info "$file has $ncrlfs CR characters"
-                  else
-                      error "$file has $ncrlfs CR characters"
-                  fi
-              fi
-          fi
-
-          # Check for trailing spaces
-          nspaces="$($SED 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
-          total_spaces="$(($total_spaces + $nspaces))"
-          if [ "$nspaces" -gt 0 ]; then
-              clean=false
-              if [ "$fix" = true ]; then
-                  $SED -i 's/[[:space:]][[:space:]]*$//g' "$file"
-                  info "$file has $nspaces trailing spaces"
-              else
-                  error "$file has $nspaces trailing spaces"
-              fi
-          fi
-
-          # Check for tabs
-          ntabs="$(tr -cd '\t' < "$file" | wc -c)"
-          total_tabs="$(($total_tabs + $ntabs))"
-          if [ "$ntabs" -gt 0 ]; then
-              clean=false
-              if [ "$fix" = true ]; then
-                  $SED -i 's/\t/    /g' "$file"
-                  info "$file has $ntabs tabs"
-              else
-                  error "$file has $ntabs tabs"
-              fi
-          fi
-
-          if [ "$clean" != true ]; then
-              total_errors="$(($total_errors + 1))"
-          fi
+          fix_method="crlf"
           ;;
     esac
+
+    clean=true
+
+    # Check for CR LF
+    if [ "$check_crlf" = true ]; then
+        ncrlfs="$(od -tx1 "$file" | cut -b8- | tr ' ' '\n' | grep -c 0d || true)"
+        total_crlfs="$(($total_crlfs + $ncrlfs))"
+        if [ "$ncrlfs" -gt 0 ]; then
+            clean=false
+            if [ "$fix" = true ]; then
+                $d2u -q "$file"
+                info "$file has $ncrlfs CR characters"
+            else
+                error "$file has $ncrlfs CR characters"
+            fi
+        fi
+    fi
+
+    # Check for trailing spaces
+    nspaces="$($SED 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
+    total_spaces="$(($total_spaces + $nspaces))"
+    if [ "$nspaces" -gt 0 -a "$fix_method" = "all" ]; then
+        clean=false
+        if [ "$fix" = true ]; then
+            $SED -i 's/[[:space:]][[:space:]]*$//g' "$file"
+            info "$file has $nspaces trailing spaces"
+        else
+            error "$file has $nspaces trailing spaces"
+        fi
+    fi
+
+    # Check for tabs
+    ntabs="$(tr -cd '\t' < "$file" | wc -c)"
+    total_tabs="$(($total_tabs + $ntabs))"
+    if [ "$ntabs" -gt 0 -a "$fix_method" = "all" ]; then
+        clean=false
+        if [ "$fix" = true ]; then
+            $SED -i 's/\t/    /g' "$file"
+            info "$file has $ntabs tabs"
+        else
+            error "$file has $ntabs tabs"
+        fi
+    fi
+
+    if [ "$clean" != true ]; then
+        total_errors="$(($total_errors + 1))"
+    fi
 done
 IFS="$OIFS"
 
