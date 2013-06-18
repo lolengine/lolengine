@@ -737,6 +737,11 @@ template<> mat4 mat4::ortho(float width, float height,
                        -0.5f * height, 0.5f * height, near, far);
 }
 
+template<> mat4 mat4::ortho(float screen_size, float screen_ratio_xy, float draw_distance)
+{
+    return mat4::ortho(screen_size * screen_ratio_xy, screen_size, .00001f, draw_distance);
+}
+
 template<> mat4 mat4::frustum(float left, float right, float bottom,
                               float top, float near, float far)
 {
@@ -764,6 +769,17 @@ template<> mat4 mat4::perspective(float fov_y, float width,
     float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
+}
+
+template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
+                                          float screen_ratio_xy, float draw_distance)
+{
+    float new_fov_y = fov_y * (F_PI / 180.0f);
+
+    float near = (screen_size * .5f) / tanf(new_fov_y * .5f);
+    float far = near + draw_distance;
+
+    return mat4::perspective(fov_y, screen_size * screen_ratio_xy, screen_size, near - .000001f, far) * mat4::translate(.0f, .0f, -near);
 }
 
 } /* namespace lol */

@@ -34,6 +34,8 @@ LOLFX_RESOURCE_DECLARE(shinymvtexture);
 
 #define    IPT_MESH_UPDATE        "Mesh_Update"
 #define    IPT_MESH_RESET         "Mesh_Reset"
+#define    IPT_MESH_PREV          "Mesh_Previous"
+#define    IPT_MESH_NEXT          "Mesh_Next"
 
 #define    IPT_MESH_LEFT          "Mesh_Left"
 #define    IPT_MESH_RIGHT         "Mesh_Right"
@@ -48,7 +50,7 @@ LOLFX_RESOURCE_DECLARE(shinymvtexture);
 #define    IPT_MESH_ROT_UP        "Mesh_Rot_Up"
 #define    IPT_MESH_ROT_DOWN      "Mesh_Rot_Down"
 
-#define    MIN_FOV                1.f
+#define    MIN_FOV                0.1f
 
 #define    WITH_FUR               0
 #define    WITH_TEXTURE           0
@@ -79,6 +81,8 @@ public:
 
         Input::LinkActionToKey(IPT_MESH_UPDATE,         Key::Space);
         Input::LinkActionToKey(IPT_MESH_RESET,          Key::KP0);
+        Input::LinkActionToKey(IPT_MESH_PREV,           Key::KPPlus);
+        Input::LinkActionToKey(IPT_MESH_NEXT,           Key::KPMinus);
 
         Input::LinkActionToKey(IPT_MESH_OFFSET_DOWN,    Key::KP1);
         Input::LinkActionToKey(IPT_MESH_OFFSET_UP,      Key::KP3);
@@ -90,6 +94,7 @@ public:
         Input::LinkActionToKey(IPT_MESH_ROT_UP,         Key::KP8);
         Input::LinkActionToKey(IPT_MESH_ROT_DOWN,       Key::KP5);
 
+        m_mesh_shown = 0;
         m_angle = 0;
         m_default_texture = NULL;
 
@@ -166,26 +171,36 @@ public:
         //Update Mesh BBox - Get the Min/Max needed
         //--
         vec2 screen_min_max[2] = { vec2(FLT_MAX), vec2(-FLT_MAX) };
-        vec3 min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
+        vec3 cam_min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
+        vec3 world_min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
         int mesh_id = m_meshes.Count() - 1;
         for (; mesh_id >= 0; mesh_id--)
             if (m_meshes[mesh_id].m2)
                 break;
 
-        mat4 world_screen = Scene::GetDefault()->GetCamera()->GetProjection() * Scene::GetDefault()->GetCamera()->GetView();
+        mat4 world_cam = Scene::GetDefault()->GetCamera()->GetView();
+        mat4 cam_screen = Scene::GetDefault()->GetCamera()->GetProjection();
 
         if (m_meshes.Count() && mesh_id >= 0)
         {
             for (int i = 0; i < m_meshes[mesh_id].m1.GetVertexCount(); i++)
             {
+                //--
                 mat4 LocalPos = m_mat * mat4::translate(m_meshes[mesh_id].m1.GetVertexLocation(i));
                 vec3 vpos = LocalPos.v3.xyz;
-                //vec3 vpos = m_meshes[mesh_id].m1.GetVertexLocation(i);
 
-                min_max[0] = min(vpos.xyz, min_max[0]);
-                min_max[1] = max(vpos.xyz, min_max[1]);
+                world_min_max[0] = min(vpos.xyz, world_min_max[0]);
+                world_min_max[1] = max(vpos.xyz, world_min_max[1]);
 
-                LocalPos = world_screen * LocalPos;
+                //--
+                LocalPos = world_cam * LocalPos;
+                vpos = LocalPos.v3.xyz;
+
+                cam_min_max[0] = min(vpos.xyz, cam_min_max[0]);
+                cam_min_max[1] = max(vpos.xyz, cam_min_max[1]);
+
+                //--
+                LocalPos = cam_screen * LocalPos;
                 vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
 
                 screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
@@ -194,16 +209,19 @@ public:
         }
         else
         {
-            min_max[1] = vec3(.0f);
-            min_max[0] = vec3(.0f);
+            world_min_max[1] = vec3(.0f);
+            world_min_max[0] = vec3(.0f);
+            cam_min_max[1] = vec3(.0f);
+            cam_min_max[0] = vec3(.0f);
             screen_min_max[0] = vec2(.0f);
             screen_min_max[1] = vec2(.0f);
         }
         //[0] : center, [1] : size.
         vec3 BBox[2] = { vec3(.0f), vec3(.0f) };
-        BBox[1] = min_max[1] - min_max[0];
-        BBox[0] = min_max[0] + BBox[1] * .5f;
+        BBox[1] = world_min_max[1] - world_min_max[0];
+        BBox[0] = world_min_max[0] + BBox[1] * .5f;
         vec3 BBox_mod = BBox[1];
+#if 0
 
         //--
         //Camera movement handling
@@ -212,8 +230,8 @@ public:
             SetFov();
 
         //Auto Fov
-        float local_max = max(max(lol::abs(min_max[0].x), lol::abs(min_max[0].y)),
-                          max(lol::abs(min_max[1].x),     lol::abs(min_max[1].y)));
+        float local_max = max(max(lol::abs(world_min_max[0].x), lol::abs(world_min_max[0].y)),
+                          max(    lol::abs(world_min_max[1].x), lol::abs(world_min_max[1].y)));
         float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                               max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
 
@@ -237,12 +255,47 @@ public:
             Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, 10.f), quat(1.f));
         else if (fov_ratio > .0f)
             Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, campos.z * fov_ratio * 1.1f), quat(1.f));
+#else
+        Camera* cur_cam = Scene::GetDefault()->GetCamera();
+        vec3 min_max_diff = (cam_min_max[1] - cam_min_max[0]);
+        float screen_size = max(max(lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)),
+                            max(    lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)));
+        float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
+                              max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
+
+        float fov_zoom = (float)(Input::GetStatus(IPT_CAM_ZOOM_OUT) - Input::GetStatus(IPT_CAM_ZOOM_IN));
+        m_fov_zoom_damp = damp(m_fov_zoom_damp, fov_zoom, (fov_zoom == .0f)?(.15f):(0.5f), seconds);
+        m_fov = max(.0f, m_fov + seconds * 10.0f * m_fov_zoom_damp);
+        m_fov_damp = damp(m_fov_damp, m_fov, .2f, seconds);
+
+        if (m_fov_damp < MIN_FOV)
+            cur_cam->SetProjection(mat4::ortho(screen_size * fov_ratio * 1.1f, 1600.f / 600.f, 1000.f));
+        else if (fov_ratio > .0f)
+            cur_cam->SetProjection(mat4::shifted_perspective(m_fov_damp, screen_size * fov_ratio * 1.1f, 1600.f / 600.f, 1000.f));
+
+        vec3 cam_center = cam_min_max[0] + min_max_diff * .5f;
+        
+        vec4 test = inverse(world_cam) * vec4(.0f,.0f,-1.0f,1.f);
+        test = test;
+        test = inverse(world_cam) * vec4(.0f,.0f,.0f,1.f);
+        test = inverse(world_cam) * vec4(.0f,.0f,1.0f,1.f);
+
+        vec3 eye = (inverse(world_cam) * vec4(vec3(cam_center.xy, cam_min_max[1].z), 1.f)).xyz;
+        vec3 target = (inverse(world_cam) * vec4(vec3(cam_center.xy, cam_min_max[0].z), 1.f)).xyz;
+        if (eye == target)
+            cur_cam->SetView(vec3(.0f), vec3(.0f, .0f, -1.f), vec3(0.f, 1.f, 0.f));
+        else
+            cur_cam->SetView(eye, target, vec3(0,1,0));
+#endif
 
         //--
         //Mesh movement handling
         //--
         if (Input::WasReleased(IPT_MESH_RESET))
             SetDefaultMeshTransform();
+
+        m_mesh_shown += ((int)Input::WasReleased(IPT_MESH_NEXT)) - ((int)Input::WasReleased(IPT_MESH_PREV));
+        m_mesh_shown = clamp(m_mesh_shown, 0, max(m_meshes.Count(), 1) - 1);
 
         vec2 new_move = vec2(.0f);
 
@@ -390,16 +443,20 @@ public:
         Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         mat4 default_proj = Scene::GetDefault()->GetCamera()->GetProjection();
-        for (int i = 0; i < m_meshes.Count(); i++)
+        int max_drawn = m_meshes.Count() - m_mesh_shown;
+        for (int i = max_drawn; i < m_meshes.Count(); i++)
+            m_meshes[i].m4 = vec3(.0f);
+        for (int i = 0; i < max_drawn; i++)
         {
-            float new_scale = max(.0f, 1.0f - (m_mesh_offset_damp.y * (float)(m_meshes.Count() - (i + 1))));
+            float new_scale = max(.0f, 1.0f - (m_mesh_offset_damp.y * (float)(max_drawn - (i + 1))));
             m_meshes[i].m3 = damp(m_meshes[i].m3, new_scale, .35f, seconds);
             if (m_meshes[i].m3 > .0f)
             {
                 vec3 new_mesh_offset = vec3(.0f);
-                for (int j = m_meshes.Count() - 1; j > i; j--)
+                //damping calculations
+                for (int j = max_drawn - 1; j > i; j--)
                 {
-                    float ofs_scale = max(.0f, 1.0f - (m_mesh_offset_damp.y * (float)(m_meshes.Count() - (j + 0))));
+                    float ofs_scale = max(.0f, 1.0f - (m_mesh_offset_damp.y * (float)(max_drawn - (j + 0))));
                     new_mesh_offset = new_mesh_offset + vec3(m_meshes[j].m3 * ofs_scale * ofs_scale * m_mesh_offset_damp.x, .0f, .0f);
                 }
                 m_meshes[i].m4 = damp(m_meshes[i].m4, new_mesh_offset, .35f, seconds);
@@ -440,6 +497,7 @@ private:
     vec2 m_mesh_rotation;     //Meshes rotation
     vec2 m_mesh_screen_offset;//Meshes screen offset
     vec2 m_mesh_offset;       //Mesh Offset after first mesh (x: offset, y: scale)
+    int  m_mesh_shown;
 
     //File data
     String        m_file_name;
