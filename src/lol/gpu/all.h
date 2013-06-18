@@ -17,6 +17,8 @@
 #include <lol/gpu/texture.h>
 #include <lol/gpu/framebuffer.h>
 #include <lol/gpu/lolfx.h>
+#include <lol/gpu/renderer.h>
+#include <lol/gpu/rendercontext.h>
 
 #endif // __LOL_GPU_ALL_H__
 

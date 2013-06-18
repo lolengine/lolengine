@@ -111,6 +111,12 @@
     <ClCompile Include="mesh\mesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
+    <ClCompile Include="gpu\rendercontext.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\renderer.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
     <ClCompile Include="gpu\shader.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
@@ -559,6 +565,12 @@
     </ClInclude>
     <ClInclude Include="lol\base\log.h">
       <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\rendercontext.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\renderer.h">
+      <Filter>lol\gpu</Filter>
     </ClInclude>
     <ClInclude Include="lol\gpu\shader.h">
       <Filter>lol\gpu</Filter>

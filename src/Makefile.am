@@ -50,6 +50,7 @@ liblolcore_headers = \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
+    lol/gpu/renderer.h lol/gpu/rendercontext.h \
     \
     lol/debug/all.h \
     lol/debug/lines.h \
@@ -77,7 +78,8 @@ liblolcore_sources = \
     math/geometry.cpp \
     \
     gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \
-    gpu/framebuffer.cpp gpu/texture.cpp \
+    gpu/framebuffer.cpp gpu/texture.cpp gpu/renderer.cpp \
+    gpu/rendercontext.cpp \
     \
     input/input.cpp input/input.h \
     input/keyboard.cpp input/keyboard.h \

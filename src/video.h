@@ -66,9 +66,10 @@ class Video
 {
 public:
     static void Setup(ivec2 size);
+    static void Destroy();
+
     static void SetCustomSize(ivec2 size);
     static void RestoreSize();
-    static void Destroy();
     static void SetFov(float theta);
     static void SetDepth(bool set);
     static void SetFaceCulling(bool set);

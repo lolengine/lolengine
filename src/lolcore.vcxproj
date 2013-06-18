@@ -115,6 +115,8 @@
     <ClCompile Include="gpu\indexbuffer.cpp" />
     <ClCompile Include="gpu\lolfx-compiler.cpp" />
     <ClCompile Include="gpu\lolfx.cpp" />
+    <ClCompile Include="gpu\rendercontext.cpp" />
+    <ClCompile Include="gpu\renderer.cpp" />
     <ClCompile Include="gpu\shader.cpp" />
     <ClCompile Include="gpu\texture.cpp" />
     <ClCompile Include="gpu\vertexbuffer.cpp" />
@@ -209,6 +211,8 @@
     <ClInclude Include="lol\gpu\framebuffer.h" />
     <ClInclude Include="lol\gpu\indexbuffer.h" />
     <ClInclude Include="lol\gpu\lolfx.h" />
+    <ClInclude Include="lol\gpu\rendercontext.h" />
+    <ClInclude Include="lol\gpu\renderer.h" />
     <ClInclude Include="lol\gpu\shader.h" />
     <ClInclude Include="lol\gpu\texture.h" />
     <ClInclude Include="lol\gpu\vertexbuffer.h" />
