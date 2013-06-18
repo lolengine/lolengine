@@ -52,8 +52,6 @@ private:
     static mat4 proj_matrix;
     static ivec2 saved_viewport;
     static DebugRenderMode render_mode;
-    static bool face_culling;
-    static bool alpha_blend;
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
     static IDirect3D9 *d3d_ctx;
@@ -70,8 +68,6 @@ private:
 mat4 VideoData::proj_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
-bool VideoData::face_culling = true;
-bool VideoData::alpha_blend = true;
 
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
@@ -91,8 +87,6 @@ float VideoData::clear_depth;
 
 void Video::Setup(ivec2 size)
 {
-    g_renderer = new Renderer();
-
 #if defined USE_D3D9 || defined _XBOX
     VideoData::d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
     if (!VideoData::d3d_ctx)
@@ -158,10 +152,11 @@ void Video::Setup(ivec2 size)
 #   endif
 #endif
 
+    g_renderer = new Renderer();
+
     /* Initialise reasonable scene default properties */
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
     SetClearDepth(1.f);
-    SetAlphaBlend(true);
     SetDebugRenderMode(DebugRenderMode::Default);
 }
 
@@ -238,60 +233,6 @@ void Video::SetFov(float theta)
     }
 }
 
-void Video::SetDepth(bool set)
-{
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetDepth() not implemented")
-#else
-    if (set)
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
-#endif
-}
-
-void Video::SetFaceCulling(bool set)
-{
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetFaceCulling() not implemented")
-#else
-    VideoData::face_culling = set;
-    if (set)
-        glEnable(GL_CULL_FACE);
-    else
-        glDisable(GL_CULL_FACE);
-#endif
-}
-
-bool Video::HasFaceCulling()
-{
-    return VideoData::face_culling;
-}
-
-void Video::SetAlphaBlend(bool set)
-{
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetAlphaBlend() not implemented")
-#else
-    VideoData::alpha_blend = set;
-    if (set)
-        glEnable(GL_BLEND);
-    else
-        glDisable(GL_BLEND);
-#endif
-}
-
-bool Video::HasAlphaBlend()
-{
-    return VideoData::alpha_blend;
-}
-
 void Video::SetClearColor(vec4 color)
 {
 #if defined USE_D3D9 || defined _XBOX
@@ -328,10 +269,10 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 #elif defined HAVE_GLES_2X
             glEnable(GL_CULL_FACE);
 #else
-            if (VideoData::render_mode == d && glIsEnabled(GL_CULL_FACE) == GL_TRUE)
-                SetFaceCulling(false);
-            else
-                SetFaceCulling(true);
+//            if (VideoData::render_mode == d && glIsEnabled(GL_CULL_FACE) == GL_TRUE)
+//                SetFaceCulling(false);
+//            else
+//                SetFaceCulling(true);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
             break;
@@ -342,14 +283,14 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
             {
 #if defined USE_D3D9 || defined _XBOX
 #else
-                SetFaceCulling(!VideoData::face_culling);
+//                SetFaceCulling(!VideoData::face_culling);
 #endif
             }
             else
             {
 #if defined USE_D3D9 || defined _XBOX
 #else
-                SetFaceCulling(false);
+//                SetFaceCulling(false);
 #endif
             }
 #if defined USE_D3D9 || defined _XBOX
