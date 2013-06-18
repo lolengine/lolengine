@@ -145,7 +145,7 @@ public:
     {
         using namespace std;
 
-        int token_len = strlen(token);
+        int token_len = (int)strlen(token);
         for (int i = Count() - token_len; i >= 0; --i)
             if (strstr(C() + i, token))
                 return i;
