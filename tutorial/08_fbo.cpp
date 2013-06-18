@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("Tutorial 08: Framebuffer Object", ivec2(640, 480), 60.0f);
+    Application app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
 
     new FBO();
 

@@ -91,8 +91,10 @@ uint32_t FramebufferFormat::GetFormat()
     case RGBA_16_F:     return GL_RGBA16F_ARB;
     case RGBA_32_F:     return GL_RGBA32F_ARB;
 #elif defined HAVE_GLES_2X
-    /* FIXME: not implemented at all */
-
+    /* FIXME: incomplete */
+    case RGBA_8:
+    case RGBA_8_I:
+    case RGBA_8_UI:     return GL_RGBA;
 #elif defined __APPLE__ && defined __MACH__
     case R_8:
     case R_8_I:
@@ -221,7 +223,12 @@ uint32_t FramebufferFormat::GetFormatOrder()
 #elif defined __CELLOS_LV2__
     /* FIXME: not implemented at all */
 #elif defined HAVE_GLES_2X
-    /* FIXME: not implemented at all */
+    /* FIXME: incomplete */
+    case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
+    case R_8_I: case RG_8_I: case RGB_8_I: case RGBA_8_I:
+        return GL_BYTE;
+    case R_8_UI: case RG_8_UI: case RGB_8_UI: case RGBA_8_UI:
+        return GL_UNSIGNED_BYTE;
 #elif defined __APPLE__ && defined __MACH__
     case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
     case R_8_I: case RG_8_I: case RGB_8_I: case RGBA_8_I:
@@ -310,8 +317,9 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormatOrder();
 #   else
+    /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
-    GLenum format = fbo_format.GetFormatOrder();
+    GLenum format = fbo_format.GetFormat();
 #   endif
     GLenum wrapmode = GL_REPEAT;
     GLenum filtering = GL_NEAREST;
@@ -327,10 +335,10 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glGenTextures(1, &m_data->m_texture);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLenum)wrapmode);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLenum)wrapmode);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLenum)filtering);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)filtering);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapmode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapmode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
 
@@ -357,7 +365,9 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 #   endif
 
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
-    glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    ASSERT(status == GL_FRAMEBUFFER_COMPLETE,
+           "invalid framebuffer status 0x%x", status);
 #   endif
 
     Unbind();
