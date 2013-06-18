@@ -389,11 +389,7 @@ void TickerData::DrawThreadTick()
             Scene::GetDefault()->Reset();
             Video::Clear(ClearMask::All);
             break;
-        case Entity::DRAWGROUP_HUD:
-            Video::SetDepth(false);
-            break;
         default:
-            Video::SetDepth(true);
             break;
         }
 

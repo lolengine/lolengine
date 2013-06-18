@@ -27,7 +27,9 @@ public:
     RenderContext();
     ~RenderContext();
 
-    void SetBlendState(bool set);
+    void SetAlphaBlend(bool set);
+    void SetDepthTest(bool set);
+    void SetFaceCulling(bool set);
 
 private:
     RenderContextData *m_data;

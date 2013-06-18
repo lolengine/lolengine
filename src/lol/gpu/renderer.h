@@ -27,8 +27,14 @@ public:
     Renderer();
     ~Renderer();
 
-    void SetBlendState(bool set);
-    bool GetBlendState() const;
+    void SetAlphaBlend(bool set);
+    bool GetAlphaBlend() const;
+
+    void SetDepthTest(bool set);
+    bool GetDepthTest() const;
+
+    void SetFaceCulling(bool set);
+    bool GetFaceCulling() const;
 
 private:
     RendererData *m_data;

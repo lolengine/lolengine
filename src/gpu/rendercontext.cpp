@@ -58,7 +58,7 @@ class RenderContextData
 private:
     Scene *m_scene;
 
-    TrackedState m_blend;
+    TrackedState m_alpha_blend, m_depth_test, m_face_culling;
 };
 
 /*
@@ -73,18 +73,40 @@ RenderContext::RenderContext()
 
 RenderContext::~RenderContext()
 {
-    if (m_data->m_blend.HasChanged())
-        g_renderer->SetBlendState(m_data->m_blend.GetValue());
+    if (m_data->m_alpha_blend.HasChanged())
+        g_renderer->SetAlphaBlend(m_data->m_alpha_blend.GetValue());
+
+    if (m_data->m_depth_test.HasChanged())
+        g_renderer->SetDepthTest(m_data->m_depth_test.GetValue());
+
+    if (m_data->m_face_culling.HasChanged())
+        g_renderer->SetFaceCulling(m_data->m_face_culling.GetValue());
 
     delete m_data;
 }
 
-void RenderContext::SetBlendState(bool set)
+void RenderContext::SetAlphaBlend(bool set)
 {
-    if (!m_data->m_blend.HasChanged())
-        m_data->m_blend.TrackValue(g_renderer->GetBlendState());
+    if (!m_data->m_alpha_blend.HasChanged())
+        m_data->m_alpha_blend.TrackValue(g_renderer->GetAlphaBlend());
 
-    g_renderer->SetBlendState(set);
+    g_renderer->SetAlphaBlend(set);
+}
+
+void RenderContext::SetDepthTest(bool set)
+{
+    if (!m_data->m_depth_test.HasChanged())
+        m_data->m_depth_test.TrackValue(g_renderer->GetDepthTest());
+
+    g_renderer->SetDepthTest(set);
+}
+
+void RenderContext::SetFaceCulling(bool set)
+{
+    if (!m_data->m_face_culling.HasChanged())
+        m_data->m_face_culling.TrackValue(g_renderer->GetFaceCulling());
+
+    g_renderer->SetFaceCulling(set);
 }
 
 } /* namespace lol */
