@@ -102,13 +102,13 @@ static inline void DebugAbort()
  */
 
 #define LOL_ERROR_1(t) \
-    Log::Error("assertion failure: " #t "\n")
+    Log::Error("assertion at %s:%d: %s\n", __FILE__, __LINE__, #t)
 
 #define LOL_ERROR_2(t, s) \
-    Log::Error("assertion failure: %s\n", s)
+    Log::Error("assertion at %s:%d: %s\n", __FILE__, __LINE__, s)
 
 #define LOL_ERROR_3(t, s, ...) \
-    Log::Error("assertion failure: " s "\n", __VA_ARGS__)
+    Log::Error("assertion at %s:%d: " s "\n", __FILE__, __LINE__, __VA_ARGS__)
 
 #if FINAL_RELEASE
 #   define ASSERT(...) UNUSED(LOL_CALL(LOL_1ST, (__VA_ARGS__)))
