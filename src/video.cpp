@@ -91,6 +91,8 @@ float VideoData::clear_depth;
 
 void Video::Setup(ivec2 size)
 {
+    g_renderer = new Renderer();
+
 #if defined USE_D3D9 || defined _XBOX
     VideoData::d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
     if (!VideoData::d3d_ctx)
@@ -402,7 +404,8 @@ void Video::Clear(ClearMask m)
 
 void Video::Destroy()
 {
-    ;
+    delete g_renderer;
+    g_renderer = nullptr;
 }
 
 void Video::Capture(uint32_t *buffer)
