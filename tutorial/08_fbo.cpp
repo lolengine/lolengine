@@ -83,9 +83,11 @@ public:
             /* FIXME: this object never cleans up */
         }
 
-        m_fbo->Bind();
         /* FIXME: we should just disable depth test in the shader */
-        Video::Clear(ClearMask::Depth);
+        RenderContext rc;
+        rc.SetDepthTest(false);
+
+        m_fbo->Bind();
         m_shader->Bind();
 
 #if _XBOX
