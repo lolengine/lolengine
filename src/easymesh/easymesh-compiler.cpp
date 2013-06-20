@@ -33,7 +33,10 @@ bool EasyMeshCompiler::ParseString(char const *command)
     m_lexer = &scanner;
     EasyMeshParser parser(*this);
     if (parser.parse() != 0)
+    {
+        Log::Debug("Mesh source: %s\n", command);
         return false;
+    }
     return true;
 }
 
