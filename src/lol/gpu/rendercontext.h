@@ -27,6 +27,8 @@ public:
     RenderContext();
     ~RenderContext();
 
+    void SetClearColor(vec4 color);
+    void SetClearDepth(float depth);
     void SetAlphaBlend(bool set);
     void SetDepthTest(bool set);
     void SetFaceCulling(bool set);

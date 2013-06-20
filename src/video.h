@@ -71,8 +71,6 @@ public:
     static void SetCustomSize(ivec2 size);
     static void RestoreSize();
     static void SetFov(float theta);
-    static void SetClearColor(vec4 color);
-    static void SetClearDepth(float f);
     static void SetDebugRenderMode(DebugRenderMode d);
     static DebugRenderMode GetDebugRenderMode();
     static void Clear(ClearMask m);

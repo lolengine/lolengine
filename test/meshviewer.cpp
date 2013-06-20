@@ -440,7 +440,7 @@ public:
             }
         }
 
-        Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         mat4 default_proj = Scene::GetDefault()->GetCamera()->GetProjection();
         int max_drawn = m_meshes.Count() - m_mesh_shown;

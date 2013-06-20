@@ -103,7 +103,7 @@ public:
             m_ready = true;
         }
 
-        Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_shader->Bind();
         m_vdecl->SetStream(m_vbo, m_coord, m_color);

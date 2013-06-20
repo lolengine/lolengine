@@ -19,36 +19,32 @@
 namespace lol
 {
 
-class TrackedState
+template<typename T> class TrackedState
 {
 public:
     inline TrackedState()
-      : m_state(Unchanged)
+      : m_changed(false)
     {}
 
-    inline void TrackValue(bool set)
+    inline void TrackValue(T const &value)
     {
-        m_state = set ? MustSet : MustUnset;
+        m_value = value;
+        m_changed = true;
     }
 
     inline bool HasChanged()
     {
-        return m_state != Unchanged;
+        return m_changed;
     }
 
-    inline bool GetValue()
+    inline T GetValue()
     {
-        return m_state == MustSet;
+        return m_value;
     }
 
 private:
-    enum
-    {
-        Unchanged,
-        MustSet,
-        MustUnset,
-    }
-    m_state;
+    T m_value;
+    bool m_changed;
 };
 
 class RenderContextData
@@ -58,7 +54,11 @@ class RenderContextData
 private:
     Scene *m_scene;
 
-    TrackedState m_alpha_blend, m_depth_test, m_face_culling;
+    TrackedState<vec4> m_clear_color;
+    TrackedState<float> m_clear_depth;
+    TrackedState<bool> m_alpha_blend;
+    TrackedState<bool> m_depth_test;
+    TrackedState<bool> m_face_culling;
 };
 
 /*
@@ -83,6 +83,22 @@ RenderContext::~RenderContext()
         g_renderer->SetFaceCulling(m_data->m_face_culling.GetValue());
 
     delete m_data;
+}
+
+void RenderContext::SetClearColor(vec4 color)
+{
+    if (!m_data->m_clear_color.HasChanged())
+        m_data->m_clear_color.TrackValue(g_renderer->GetClearColor());
+
+    g_renderer->SetClearColor(color);
+}
+
+void RenderContext::SetClearDepth(float depth)
+{
+    if (!m_data->m_clear_depth.HasChanged())
+        m_data->m_clear_depth.TrackValue(g_renderer->GetClearDepth());
+
+    g_renderer->SetClearDepth(depth);
 }
 
 void RenderContext::SetAlphaBlend(bool set)
