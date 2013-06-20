@@ -59,6 +59,21 @@ private:
 Renderer::Renderer()
   : m_data(new RendererData())
 {
+#if defined USE_D3D9 || defined _XBOX
+    /* TODO */
+#else
+#   if defined USE_GLEW && !defined __APPLE__
+    /* Initialise GLEW if necessary */
+    GLenum glerr = glewInit();
+    if (glerr != GLEW_OK)
+    {
+        Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
+        exit(EXIT_FAILURE);
+    }
+#   endif
+#endif
+
+    /* Initialise rendering states */
     m_data->m_clear_color = vec4(-1.f);
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
 
@@ -73,6 +88,15 @@ Renderer::Renderer()
 
     m_data->m_face_culling = false;
     SetFaceCulling(true);
+
+    /* Add some rendering states that we don't export to the user */
+#if defined USE_D3D9 || defined _XBOX
+    /* TODO */
+#else
+#   if defined HAVE_GL_2X && !defined __APPLE__
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+#   endif
+#endif
 }
 
 Renderer::~Renderer()

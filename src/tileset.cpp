@@ -27,15 +27,8 @@
 #endif
 
 #include "core.h"
-#include "lolgl.h"
 
 using namespace std;
-
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
 
 namespace lol
 {

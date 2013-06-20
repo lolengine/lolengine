@@ -13,7 +13,6 @@
 #endif
 
 #include "core.h"
-#include "lolgl.h"
 
 using namespace std;
 

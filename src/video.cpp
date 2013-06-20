@@ -34,11 +34,10 @@ using namespace std;
 /* FIXME: g_d3ddevice should never be exported */
 #if defined USE_D3D9
 IDirect3DDevice9 *g_d3ddevice;
-#   if defined USE_SDL
 extern HWND g_hwnd;
-#   endif
 #elif defined _XBOX
 D3DDevice *g_d3ddevice;
+HWND g_hwnd = 0;
 #endif
 
 namespace lol
@@ -49,7 +48,6 @@ class VideoData
     friend class Video;
 
 private:
-    static mat4 proj_matrix;
     static ivec2 saved_viewport;
     static DebugRenderMode render_mode;
 #if defined USE_D3D9 || defined _XBOX
@@ -63,7 +61,6 @@ private:
 #endif
 };
 
-mat4 VideoData::proj_matrix;
 ivec2 VideoData::saved_viewport(0, 0);
 DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 
@@ -91,34 +88,31 @@ void Video::Setup(ivec2 size)
         exit(EXIT_FAILURE);
     }
 
-    HWND window = 0;
-    D3DPRESENT_PARAMETERS d3dpp;
-    memset(&d3dpp, 0, sizeof(d3dpp));
-
-#   if defined USE_SDL
-    window = g_hwnd;
-    d3dpp.hDeviceWindow = g_hwnd;
-    d3dpp.Windowed = TRUE;
-#   elif defined _XBOX
+    /* Choose best viewport size */
+#   if defined _XBOX
     XVIDEO_MODE VideoMode;
-    XGetVideoMode( &VideoMode );
-    if (size.x > VideoMode.dwDisplayWidth)
-        size.x = VideoMode.dwDisplayWidth;
-    if (size.y > VideoMode.dwDisplayHeight)
-        size.y = VideoMode.dwDisplayHeight;
+    XGetVideoMode(&VideoMode);
+    size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
+                                VideoMode.dwDisplayHeight);
 #   endif
     VideoData::saved_viewport = size;
 
+    D3DPRESENT_PARAMETERS d3dpp;
+    memset(&d3dpp, 0, sizeof(d3dpp));
     d3dpp.BackBufferWidth = size.x;
     d3dpp.BackBufferHeight = size.y;
     d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
     d3dpp.BackBufferCount = 1;
+    d3dpp.hDeviceWindow = g_hwnd;
+#   if defined USE_SDL
+    d3dpp.Windowed = TRUE;
+#   endif
     d3dpp.EnableAutoDepthStencil = TRUE;
     d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
     d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, window,
+    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, g_hwnd,
                                                   D3DCREATE_HARDWARE_VERTEXPROCESSING,
                                                   &d3dpp, &VideoData::d3d_dev);
     if (FAILED(hr))
@@ -128,27 +122,15 @@ void Video::Setup(ivec2 size)
     }
 
     g_d3ddevice = VideoData::d3d_dev;
-#else
-#   if defined USE_GLEW && !defined __APPLE__
-    /* Initialise GLEW if necessary */
-    GLenum glerr = glewInit();
-    if (glerr != GLEW_OK)
-    {
-        Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
-        exit(EXIT_FAILURE);
-    }
-#   endif
-
-    /* Initialise OpenGL */
-    glViewport(0, 0, size.x, size.y);
-    VideoData::saved_viewport = size;
-
-#   if defined HAVE_GL_2X && !defined __APPLE__
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-#   endif
-#endif
 
     g_renderer = new Renderer();
+#else
+    /* Initialise OpenGL */
+    g_renderer = new Renderer();
+
+    glViewport(0, 0, size.x, size.y);
+    VideoData::saved_viewport = size;
+#endif
 
     /* Initialise reasonable scene default properties */
     SetDebugRenderMode(DebugRenderMode::Default);
@@ -184,47 +166,6 @@ void Video::RestoreSize()
     if (current_size.zw != VideoData::saved_viewport)
         glViewport(0, 0, VideoData::saved_viewport.x, VideoData::saved_viewport.y);
 #endif
-}
-
-void Video::SetFov(float theta)
-{
-    vec2 size = GetSize();
-    float near = -size.x - size.y;
-    float far = size.x + size.y;
-
-#if defined __ANDROID__
-    size = vec2(640.0f, 480.0f);
-#endif
-
-    /* Set the projection matrix */
-    if (theta < 1e-4f)
-    {
-        /* The easy way: purely orthogonal projection. */
-        VideoData::proj_matrix = mat4::ortho(0, size.x, 0, size.y, near, far);
-    }
-    else
-    {
-        /* Compute a view that approximates the glOrtho view when theta
-         * approaches zero. This view ensures that the z=0 plane fills
-         * the screen. */
-        float t1 = tanf(theta / 2);
-        float t2 = t1 * size.y / size.y;
-        float dist = size.x / (2.0f * t1);
-
-        near += dist;
-        far += dist;
-
-        if (near <= 0.0f)
-        {
-            far -= (near - 1.0f);
-            near = 1.0f;
-        }
-
-        mat4 proj = mat4::frustum(-near * t1, near * t1,
-                                  -near * t2, near * t2, near, far);
-        mat4 trans = mat4::translate(-0.5f * size.x, -0.5f * size.y, -dist);
-        VideoData::proj_matrix = proj * trans;
-    }
 }
 
 void Video::SetDebugRenderMode(DebugRenderMode d)
@@ -315,8 +256,6 @@ void Video::Clear(ClearMask m)
         mask |= GL_STENCIL_BUFFER_BIT;
     glClear(mask);
 #endif
-
-    SetFov(0.0f);
 }
 
 void Video::Destroy()
