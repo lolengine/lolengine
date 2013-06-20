@@ -70,7 +70,6 @@ public:
 
     static void SetCustomSize(ivec2 size);
     static void RestoreSize();
-    static void SetFov(float theta);
     static void SetDebugRenderMode(DebugRenderMode d);
     static DebugRenderMode GetDebugRenderMode();
     static void Clear(ClearMask m);
