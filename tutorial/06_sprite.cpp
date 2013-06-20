@@ -69,7 +69,7 @@ public:
 
         if (!m_ready)
         {
-            Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+            g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
             m_ready = true;
         }
 

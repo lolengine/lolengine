@@ -111,12 +111,12 @@ public:
 
         if (!m_ready)
         {
+            g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
             for (int i = 0; i < m_gears.Count(); i++)
                 m_gears[i].m1.MeshConvert();
             m_ready = true;
         }
-
-        Video::SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         for (int i = 0; i < m_gears.Count(); i++)
             m_gears[i].m1.Render(m_mat * m_gears[i].m2);

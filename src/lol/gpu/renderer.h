@@ -27,6 +27,12 @@ public:
     Renderer();
     ~Renderer();
 
+    void SetClearColor(vec4 color);
+    vec4 GetClearColor() const;
+
+    void SetClearDepth(float depth);
+    float GetClearDepth() const;
+
     void SetAlphaBlend(bool set);
     bool GetAlphaBlend() const;
 

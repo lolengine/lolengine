@@ -47,6 +47,8 @@ class RendererData
     friend class Renderer;
 
 private:
+    vec4 m_clear_color;
+    float m_clear_depth;
     bool m_blend, m_depth_test, m_face_culling;
 };
 
@@ -57,6 +59,12 @@ private:
 Renderer::Renderer()
   : m_data(new RendererData())
 {
+    m_data->m_clear_color = vec4(-1.f);
+    SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
+
+    m_data->m_clear_depth = -1.f;
+    SetClearDepth(1.f);
+
     m_data->m_blend = false;
     SetAlphaBlend(true);
 
@@ -73,6 +81,48 @@ Renderer::~Renderer()
 }
 
 /*
+ * Clear color
+ */
+
+void Renderer::SetClearColor(vec4 color)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* Nothing to do */
+#else
+    glClearColor(color.r, color.g, color.b, color.a);
+#endif
+
+    m_data->m_clear_color = color;
+}
+
+vec4 Renderer::GetClearColor() const
+{
+    return m_data->m_clear_color;
+}
+
+/*
+ * Clear depth
+ */
+
+void Renderer::SetClearDepth(float depth)
+{
+#if defined USE_D3D9 || defined _XBOX
+    /* Nothing to do */
+#elif defined HAVE_GLES_2X
+    glClearDepthf(depth);
+#else
+    glClearDepth(depth);
+#endif
+
+    m_data->m_clear_depth = depth;
+}
+
+float Renderer::GetClearDepth() const
+{
+    return m_data->m_clear_depth;
+}
+
+/*
  * Alpha blending
  */
 
@@ -80,8 +130,6 @@ void Renderer::SetAlphaBlend(bool set)
 {
     if (m_data->m_blend == set)
         return;
-
-    m_data->m_blend = set;
 
 #if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
@@ -93,6 +141,8 @@ void Renderer::SetAlphaBlend(bool set)
     else
         glDisable(GL_BLEND);
 #endif
+
+    m_data->m_blend = set;
 }
 
 bool Renderer::GetAlphaBlend() const
@@ -109,8 +159,6 @@ void Renderer::SetDepthTest(bool set)
     if (m_data->m_depth_test == set)
         return;
 
-    m_data->m_depth_test = set;
-
 #if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
@@ -121,6 +169,8 @@ void Renderer::SetDepthTest(bool set)
     else
         glDisable(GL_DEPTH_TEST);
 #endif
+
+    m_data->m_depth_test = set;
 }
 
 bool Renderer::GetDepthTest() const
@@ -137,8 +187,6 @@ void Renderer::SetFaceCulling(bool set)
     if (m_data->m_face_culling == set)
         return;
 
-    m_data->m_face_culling = set;
-
 #if defined USE_D3D9 || defined _XBOX
 #   define STR0(x) #x
 #   define STR(x) STR0(x)
@@ -149,6 +197,8 @@ void Renderer::SetFaceCulling(bool set)
     else
         glDisable(GL_CULL_FACE);
 #endif
+
+    m_data->m_face_culling = set;
 }
 
 bool Renderer::GetFaceCulling() const

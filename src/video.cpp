@@ -60,8 +60,6 @@ private:
     static Direct3D *d3d_ctx;
     static D3DDevice *d3d_dev;
 #   endif
-    static D3DCOLOR clear_color;
-    static float clear_depth;
 #endif
 };
 
@@ -77,8 +75,6 @@ IDirect3DDevice9 *VideoData::d3d_dev;
 Direct3D *VideoData::d3d_ctx;
 D3DDevice *VideoData::d3d_dev;
 #   endif
-D3DCOLOR VideoData::clear_color;
-float VideoData::clear_depth;
 #endif
 
 /*
@@ -155,8 +151,6 @@ void Video::Setup(ivec2 size)
     g_renderer = new Renderer();
 
     /* Initialise reasonable scene default properties */
-    SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
-    SetClearDepth(1.f);
     SetDebugRenderMode(DebugRenderMode::Default);
 }
 
@@ -233,28 +227,6 @@ void Video::SetFov(float theta)
     }
 }
 
-void Video::SetClearColor(vec4 color)
-{
-#if defined USE_D3D9 || defined _XBOX
-    VideoData::clear_color = D3DCOLOR_XRGB((int)(color.r * 255.999f),
-                                           (int)(color.g * 255.999f),
-                                           (int)(color.b * 255.999f));
-#else
-    glClearColor(color.r, color.g, color.b, color.a);
-#endif
-}
-
-void Video::SetClearDepth(float f)
-{
-#if defined USE_D3D9 || defined _XBOX
-    VideoData::clear_depth = f;
-#elif defined HAVE_GLES_2X
-    glClearDepthf(f);
-#else
-    glClearDepth(f);
-#endif
-}
-
 void Video::SetDebugRenderMode(DebugRenderMode d)
 {
     switch(d)
@@ -321,9 +293,13 @@ void Video::Clear(ClearMask m)
         mask |= D3DCLEAR_ZBUFFER;
     if (m & ClearMask::Stencil)
         mask |= D3DCLEAR_STENCIL;
+
+    vec4 tmp = 255.999f * g_renderer->GetClearColor();
+    D3DCOLOR clear_color = D3DCOLOR_XRGB((int)tmp.r, (int)tmp.g, (int)tmp.b);
+
     if (FAILED(VideoData::d3d_dev->Clear(0, nullptr, mask,
-                                         VideoData::clear_color,
-                                         VideoData::clear_depth, 0)))
+                                         clear_color,
+                                         g_renderer->GetClearDepth(), 0)))
         Abort();
 #else
     /* FIXME: is this necessary here? */

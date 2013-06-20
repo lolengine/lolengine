@@ -73,9 +73,14 @@ public:
 
             m_fbo = new Framebuffer(Video::GetSize());
             m_fbo->Bind();
-            Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            Video::SetClearDepth(1.f);
-            Video::Clear(ClearMask::Color | ClearMask::Depth);
+
+            {
+                RenderContext rc;
+                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.SetClearDepth(1.f);
+                Video::Clear(ClearMask::Color | ClearMask::Depth);
+            }
+
             m_fbo->Unbind();
 
             m_ready = true;

@@ -122,17 +122,23 @@ public:
                 }
 
                 m_fbos.Last().m1->Bind();
-                Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                Video::SetClearDepth(1.f);
-                Video::Clear(ClearMask::Color | ClearMask::Depth);
+                {
+                    RenderContext rc;
+                    rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+                    rc.SetClearDepth(1.f);
+                    Video::Clear(ClearMask::Color | ClearMask::Depth);
+                }
                 m_fbos.Last().m1->Unbind();
             }
 
             temp_buffer = new Framebuffer(Video::GetSize());
             temp_buffer->Bind();
-            Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            Video::SetClearDepth(1.f);
-            Video::Clear(ClearMask::Color | ClearMask::Depth);
+            {
+                RenderContext rc;
+                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.SetClearDepth(1.f);
+                Video::Clear(ClearMask::Color | ClearMask::Depth);
+            }
             temp_buffer->Unbind();
 
             m_ready = true;
@@ -188,9 +194,12 @@ public:
         }
 
         temp_buffer->Bind();
-        Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-        Video::SetClearDepth(1.f);
-        Video::Clear(ClearMask::Color | ClearMask::Depth);
+        {
+            RenderContext rc;
+            rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+            rc.SetClearDepth(1.f);
+            Video::Clear(ClearMask::Color | ClearMask::Depth);
+        }
         temp_buffer->Unbind();
 
         {
@@ -215,9 +224,12 @@ public:
             int f = SrcVoronoiFbo;
 
             m_fbos[f].m1->Bind();
-            Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            Video::SetClearDepth(1.f);
-            Video::Clear(ClearMask::Color | ClearMask::Depth);
+            {
+                RenderContext rc;
+                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.SetClearDepth(1.f);
+                Video::Clear(ClearMask::Color | ClearMask::Depth);
+            }
             m_fbos[f].m1->Unbind();
 
             int buf = voronoi_points.Count() % 2;
@@ -266,9 +278,12 @@ public:
         {
             //m_timer = 1.0f;
             m_fbos[m_cur_fbo].m1->Bind();
-            Video::SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            Video::SetClearDepth(1.f);
-            Video::Clear(ClearMask::Color | ClearMask::Depth);
+            {
+                RenderContext rc;
+                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.SetClearDepth(1.f);
+                Video::Clear(ClearMask::Color | ClearMask::Depth);
+            }
             m_fbos[m_cur_fbo].m1->Unbind();
 
             ivec2 curres = ivec2(512, 512) / 2;
