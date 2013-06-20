@@ -52,7 +52,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
-    m_camera->SetView(vec3(0.f, 600.f, 0.f),
+    m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
     m_camera->SetProjection(mat4::perspective(45.f, 1280.f, 960.f, .1f, 1000.f));
