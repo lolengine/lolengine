@@ -291,6 +291,16 @@ void Texture::SetMinFiltering(TextureMinFilter filter)
 #endif
 }
 
+void Texture::GenerateMipmaps()
+{
+#if defined _XBOX || defined USE_D3D9
+    m_data->m_texture->GenerateMipSubLevels();
+#else
+    glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+#endif
+}
+
 Texture::~Texture()
 {
 #if defined USE_D3D9 || defined _XBOX
