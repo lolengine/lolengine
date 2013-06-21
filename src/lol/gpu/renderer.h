@@ -23,10 +23,14 @@ class RendererData;
 
 class Renderer
 {
-public:
+private:
+    /* Only the Video class can create a renderer for now. */
+    friend class Video;
+
     Renderer();
     ~Renderer();
 
+public:
     void SetClearColor(vec4 color);
     vec4 GetClearColor() const;
 
