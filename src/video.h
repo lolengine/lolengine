@@ -68,8 +68,6 @@ public:
     static void Setup(ivec2 size);
     static void Destroy();
 
-    static void SetCustomSize(ivec2 size);
-    static void RestoreSize();
     static void SetDebugRenderMode(DebugRenderMode d);
     static DebugRenderMode GetDebugRenderMode();
     static void Clear(ClearMask m);

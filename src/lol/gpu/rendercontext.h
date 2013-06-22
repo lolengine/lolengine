@@ -27,6 +27,7 @@ public:
     RenderContext();
     ~RenderContext();
 
+    void SetViewport(ibox2 viewport);
     void SetClearColor(vec4 color);
     void SetClearDepth(float depth);
     void SetAlphaFunc(AlphaFunc func, float alpha);

@@ -115,10 +115,13 @@ private:
     /* Only the Video class can create a renderer for now. */
     friend class Video;
 
-    Renderer();
+    Renderer(ivec2 size);
     ~Renderer();
 
 public:
+    void SetViewport(ibox2 viewport);
+    ibox2 GetViewport() const;
+
     void SetClearColor(vec4 color);
     vec4 GetClearColor() const;
 

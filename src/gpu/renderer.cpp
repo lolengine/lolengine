@@ -53,6 +53,7 @@ class RendererData
     friend class Renderer;
 
 private:
+    ibox2 m_viewport;
     vec4 m_clear_color;
     float m_clear_depth;
     AlphaFunc m_alpha_func;
@@ -72,7 +73,7 @@ private:
  * Public Renderer class
  */
 
-Renderer::Renderer()
+Renderer::Renderer(ivec2 size)
   : m_data(new RendererData())
 {
 #if defined USE_D3D9 || defined _XBOX
@@ -91,6 +92,9 @@ Renderer::Renderer()
 #endif
 
     /* Initialise rendering states */
+    m_data->m_viewport = ibox2(0, 0, 0, 0);
+    SetViewport(ibox2(vec2(0), size));
+
     m_data->m_clear_color = vec4(-1.f);
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
 
@@ -127,11 +131,40 @@ Renderer::~Renderer()
 }
 
 /*
+ * Viewport dimensions
+ */
+
+void Renderer::SetViewport(ibox2 viewport)
+{
+    if (m_data->m_viewport == viewport)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    D3DVIEWPORT9 vp = { viewport.A.x, viewport.A.y,
+                        viewport.B.x, viewport.B.y,
+                        0.0f, 1.0f };
+    m_data->m_d3d_dev->SetViewport(&vp);
+#else
+    glViewport(viewport.A.x, viewport.A.y, viewport.B.x, viewport.B.y);
+#endif
+
+    m_data->m_viewport = viewport;
+}
+
+ibox2 Renderer::GetViewport() const
+{
+    return m_data->m_viewport;
+}
+
+/*
  * Clear color
  */
 
 void Renderer::SetClearColor(vec4 color)
 {
+    if (m_data->m_clear_color == color)
+        return;
+
 #if defined USE_D3D9 || defined _XBOX
     /* Nothing to do */
 #else
@@ -152,6 +185,9 @@ vec4 Renderer::GetClearColor() const
 
 void Renderer::SetClearDepth(float depth)
 {
+    if (m_data->m_clear_depth == depth)
+        return;
+
 #if defined USE_D3D9 || defined _XBOX
     /* Nothing to do */
 #elif defined HAVE_GLES_2X

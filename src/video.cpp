@@ -48,7 +48,6 @@ class VideoData
     friend class Video;
 
 private:
-    static ivec2 saved_viewport;
     static DebugRenderMode render_mode;
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
@@ -61,7 +60,6 @@ private:
 #endif
 };
 
-ivec2 VideoData::saved_viewport(0, 0);
 DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 
 #if defined USE_D3D9 || defined _XBOX
@@ -95,8 +93,6 @@ void Video::Setup(ivec2 size)
     size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
                                 VideoMode.dwDisplayHeight);
 #   endif
-    VideoData::saved_viewport = size;
-
     D3DPRESENT_PARAMETERS d3dpp;
     memset(&d3dpp, 0, sizeof(d3dpp));
     d3dpp.BackBufferWidth = size.x;
@@ -123,49 +119,14 @@ void Video::Setup(ivec2 size)
 
     g_d3ddevice = VideoData::d3d_dev;
 
-    g_renderer = new Renderer();
+    g_renderer = new Renderer(size);
 #else
     /* Initialise OpenGL */
-    g_renderer = new Renderer();
-
-    glViewport(0, 0, size.x, size.y);
-    VideoData::saved_viewport = size;
+    g_renderer = new Renderer(size);
 #endif
 
     /* Initialise reasonable scene default properties */
     SetDebugRenderMode(DebugRenderMode::Default);
-}
-
-void Video::SetCustomSize(ivec2 size)
-{
-    ivec4 current_size(0);
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetSize() not implemented")
-#elif defined __CELLOS_LV2__
-    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-#else
-    glGetIntegerv(GL_VIEWPORT, (GLint*)&current_size);
-    if (current_size.zw != size)
-        glViewport(0, 0, size.x, size.y);
-#endif
-}
-
-void Video::RestoreSize()
-{
-    ivec4 current_size(0);
-#if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Video::SetSize() not implemented")
-#elif defined __CELLOS_LV2__
-    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-#else
-    glGetIntegerv(GL_VIEWPORT, (GLint*)&current_size);
-    if (current_size.zw != VideoData::saved_viewport)
-        glViewport(0, 0, VideoData::saved_viewport.x, VideoData::saved_viewport.y);
-#endif
 }
 
 void Video::SetDebugRenderMode(DebugRenderMode d)
@@ -243,10 +204,6 @@ void Video::Clear(ClearMask m)
                                          g_renderer->GetClearDepth(), 0)))
         Abort();
 #else
-    /* FIXME: is this necessary here? */
-    ivec2 size = GetSize();
-    glViewport(0, 0, size.x, size.y);
-
     GLbitfield mask = 0;
     if (m & ClearMask::Color)
         mask |= GL_COLOR_BUFFER_BIT;
@@ -302,19 +259,9 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-#if defined USE_D3D9 || defined _XBOX
-    return VideoData::saved_viewport;
-#elif 1
-    /* GetSize() is called too often on the game thread; we cannot rely on
-     * the GL context at this point */
-    return VideoData::saved_viewport;
-#elif defined __CELLOS_LV2__
-    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-#else
-    GLint v[4];
-    glGetIntegerv(GL_VIEWPORT, v);
-    return ivec2(v[2], v[3]);
-#endif
+    ibox2 viewport = g_renderer->GetViewport();
+
+    return viewport.B - viewport.A;
 }
 
 } /* namespace lol */
