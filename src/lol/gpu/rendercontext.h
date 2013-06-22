@@ -29,9 +29,8 @@ public:
 
     void SetClearColor(vec4 color);
     void SetClearDepth(float depth);
-    void SetAlphaBlend(bool set);
+    void SetAlphaFunc(AlphaFunc func, float alpha);
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
-    void SetAlphaTest(bool set);
     void SetDepthFunc(DepthFunc func);
     void SetFaceCulling(CullMode mode);
 
