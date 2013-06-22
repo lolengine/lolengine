@@ -54,17 +54,13 @@ class RenderContextData
 private:
     Scene *m_scene;
 
+    TrackedState<ibox2> m_viewport;
     TrackedState<vec4> m_clear_color;
-
     TrackedState<float> m_clear_depth;
-
     TrackedState<AlphaFunc> m_alpha_func;
     TrackedState<float> m_alpha_value;
-
     TrackedState<BlendFunc> m_blend_src, m_blend_dst;
-
     TrackedState<DepthFunc> m_depth_func;
-
     TrackedState<CullMode> m_face_culling;
 };
 
@@ -80,6 +76,9 @@ RenderContext::RenderContext()
 
 RenderContext::~RenderContext()
 {
+    if (m_data->m_viewport.HasChanged())
+        g_renderer->SetViewport(m_data->m_viewport.GetValue());
+
     if (m_data->m_clear_color.HasChanged())
         g_renderer->SetClearColor(m_data->m_clear_color.GetValue());
 
@@ -101,6 +100,14 @@ RenderContext::~RenderContext()
         g_renderer->SetFaceCulling(m_data->m_face_culling.GetValue());
 
     delete m_data;
+}
+
+void RenderContext::SetViewport(ibox2 viewport)
+{
+    if (!m_data->m_viewport.HasChanged())
+        m_data->m_viewport.TrackValue(g_renderer->GetViewport());
+
+    g_renderer->SetViewport(viewport);
 }
 
 void RenderContext::SetClearColor(vec4 color)

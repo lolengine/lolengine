@@ -41,7 +41,9 @@ class FramebufferData
 {
     friend class Framebuffer;
 
+    ibox2 m_saved_viewport;
     ivec2 m_size;
+    bool m_bound;
 
 #if defined USE_D3D9
     IDirect3DTexture9 *m_texture;
@@ -288,6 +290,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
   : m_data(new FramebufferData)
 {
     m_data->m_size = size;
+    m_data->m_bound = false;
 #if defined USE_D3D9
     if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
@@ -370,7 +373,11 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
            "invalid framebuffer status 0x%x", status);
 #   endif
 
-    Unbind();
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#   else
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
+#   endif
 #endif
 }
 
@@ -412,6 +419,8 @@ ivec2 Framebuffer::GetSize() const
 
 void Framebuffer::Bind()
 {
+    ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
+
 #if defined USE_D3D9 || defined _XBOX
     if (FAILED(g_d3ddevice->GetRenderTarget(0, &m_data->m_back_surface)))
         Abort();
@@ -423,34 +432,40 @@ void Framebuffer::Bind()
 #   else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
 #   endif
-    //change viewport draw size
-    Video::SetCustomSize(m_data->m_size);
 #endif
+
+    /* FIXME: this should be done in the RenderContext object
+     * instead, maybe by getting rid of Framebuffer::Bind() and
+     * creating RenderContext::SetFramebuffer() instead. */
+    m_data->m_saved_viewport = g_renderer->GetViewport();
+    g_renderer->SetViewport(ibox2(ivec2(0), m_data->m_size));
+    m_data->m_bound = true;
 }
 
 void Framebuffer::Unbind()
 {
-#if defined USE_D3D9
-    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
-        Abort();
-    m_data->m_back_surface->Release();
-#elif defined _XBOX
+    ASSERT(m_data->m_bound, "trying to unbind an unbound framebuffer");
+
+#if defined USE_D3D9 || defined _XBOX
+#   if defined _XBOX
     if (FAILED(g_d3ddevice->Resolve(D3DRESOLVE_RENDERTARGET0, nullptr,
                                     m_data->m_texture, nullptr, 0, 0, nullptr,
                                     0, 0, nullptr)))
         Abort();
+#   endif
     if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
         Abort();
     m_data->m_back_surface->Release();
 #else
-    //Restore viewport draw size
-    Video::RestoreSize();
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #   else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
 #   endif
 #endif
+
+    g_renderer->SetViewport(m_data->m_saved_viewport);
+    m_data->m_bound = false;
 }
 
 } /* namespace lol */
