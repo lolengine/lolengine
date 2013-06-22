@@ -197,6 +197,27 @@ public:
         return !(*this == s);
     }
 
+
+    inline bool operator ==(char const* sz) const
+    {
+        int i;
+        for (i = 0; i < this->m_count; ++i)
+        {
+            if (i < this->m_count - 1 && sz[i] == '\0')
+                return false;
+
+            if ((*this)[i] != sz[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    inline bool operator !=(char const* sz) const
+    {
+        return !(*this == sz);
+    }
+
 #ifdef __GNUC__
 #   define LOL_FMT_ATTR(n, p) __attribute__((format(printf, n, p)))
 #else
@@ -206,6 +227,16 @@ public:
 #undef LOL_FMT_ATTR
     static String Printf(char const *format, va_list ap);
 };
+
+inline bool operator ==(char const* sz, String const &s)
+{
+    return s == sz;
+}
+
+inline bool operator !=(char const* sz, String const &s)
+{
+    return s != sz;
+}
 
 } /* namespace lol */
 
