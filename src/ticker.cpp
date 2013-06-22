@@ -387,7 +387,7 @@ void TickerData::DrawThreadTick()
         {
         case Entity::DRAWGROUP_BEGIN:
             Scene::GetDefault()->Reset();
-            Video::Clear(ClearMask::All);
+            g_renderer->Clear(ClearMask::All);
             break;
         default:
             break;

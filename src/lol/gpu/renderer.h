@@ -21,6 +21,26 @@ namespace lol
 
 class RendererData;
 
+/* A list of bitmasks to clear a render buffer. */
+struct ClearMask
+{
+    enum Value
+    {
+        /* Note: D3D9 doesn't appear to support the accumulation buffer,
+         * and it is a deprecated OpenGL feature. No reason to support it. */
+        Color   = 1 << 0,
+        Depth   = 1 << 1,
+        Stencil = 1 << 2,
+
+        All     = 0xffffffff
+    }
+    m_value;
+
+    inline ClearMask(Value v) : m_value(v) {}
+    inline ClearMask(uint64_t i) : m_value((Value)i) {}
+    inline operator Value() { return m_value; }
+};
+
 /* A safe enum to indicate the blending factors. */
 struct BlendFunc
 {
@@ -117,6 +137,9 @@ private:
 
     Renderer(ivec2 size);
     ~Renderer();
+
+public:
+    void Clear(ClearMask mask);
 
 public:
     void SetViewport(ibox2 viewport);

@@ -472,7 +472,7 @@ public:
 #else
                 m_meshes[i].m1.Render(m_mat);
 #endif
-                Video::Clear(ClearMask::Depth);
+                g_renderer->Clear(ClearMask::Depth);
             }
         }
         Scene::GetDefault()->GetCamera()->SetProjection(default_proj);
