@@ -49,7 +49,8 @@ class RendererData
 private:
     vec4 m_clear_color;
     float m_clear_depth;
-    bool m_blend, m_depth_test, m_face_culling;
+    BlendFactor m_blend_src, m_blend_dst;
+    bool m_alpha_blend, m_alpha_test, m_depth_test, m_face_culling;
 };
 
 /*
@@ -80,8 +81,15 @@ Renderer::Renderer()
     m_data->m_clear_depth = -1.f;
     SetClearDepth(1.f);
 
-    m_data->m_blend = false;
+    m_data->m_alpha_blend = false;
     SetAlphaBlend(true);
+
+    m_data->m_alpha_test = true;
+    SetAlphaTest(false);
+
+    m_data->m_blend_src = BlendFactor::Zero;
+    m_data->m_blend_dst = BlendFactor::Zero;
+    SetBlendFunc(BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha);
 
     m_data->m_depth_test = false;
     SetDepthTest(true);
@@ -152,13 +160,11 @@ float Renderer::GetClearDepth() const
 
 void Renderer::SetAlphaBlend(bool set)
 {
-    if (m_data->m_blend == set)
+    if (m_data->m_alpha_blend == set)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Renderer::SetAlphaBlend() not implemented")
+    m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHABLENDENABLE, set ? 1 : 0);
 #else
     if (set)
         glEnable(GL_BLEND);
@@ -166,12 +172,149 @@ void Renderer::SetAlphaBlend(bool set)
         glDisable(GL_BLEND);
 #endif
 
-    m_data->m_blend = set;
+    m_data->m_alpha_blend = set;
 }
 
 bool Renderer::GetAlphaBlend() const
 {
-    return m_data->m_blend;
+    return m_data->m_alpha_blend;
+}
+
+/*
+ * Blend function
+ */
+
+void Renderer::SetBlendFunc(BlendFactor src, BlendFactor dst)
+{
+    if (m_data->m_blend_src == src && m_data->m_blend_dst == dst)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    enum D3DBLEND s1[2] = { D3DBLEND_ONE, D3DBLEND_ZERO };
+    BlendFactor s2[2] = { src, dst };
+
+    for (int i = 0; i < 2; ++i)
+    {
+        switch (s2[i])
+        {
+            case BlendFactor::Zero:
+                s1[i] = D3DBLEND_ZERO; break;
+            case BlendFactor::One:
+                s1[i] = D3DBLEND_ONE; break;
+            case BlendFactor::SrcColor:
+                s1[i] = D3DBLEND_SRCCOLOR; break;
+            case BlendFactor::OneMinusSrcColor:
+                s1[i] = D3DBLEND_INVSRCCOLOR; break;
+            case BlendFactor::DstColor:
+                s1[i] = D3DBLEND_DESTCOLOR; break;
+            case BlendFactor::OneMinusDstColor:
+                s1[i] = D3DBLEND_INVDESTCOLOR; break;
+            case BlendFactor::SrcAlpha:
+                s1[i] = D3DBLEND_SRCALPHA; break;
+            case BlendFactor::OneMinusSrcAlpha:
+                s1[i] = D3DBLEND_INVSRCALPHA; break;
+            case BlendFactor::DstAlpha:
+                s1[i] = D3DBLEND_DESTALPHA; break;
+            case BlendFactor::OneMinusDstAlpha:
+                s1[i] = D3DBLEND_INVDESTALPHA; break;
+            /* FiXME: these can be supported using D3DPBLENDCAPS_BLENDFACTOR */
+            case BlendFactor::ConstantColor:
+                assert(0, "BlendFactor::ConstantColor not supported");
+                break;
+            case BlendFactor::OneMinusConstantColor:
+                assert(0, "BlendFactor::OneMinusConstantColor not supported");
+                break;
+            case BlendFactor::ConstantAlpha:
+                assert(0, "BlendFactor::ConstantAlpha not supported");
+                break;
+            case BlendFactor::OneMinusConstantAlpha:
+                assert(0, "BlendFactor::OneMinusConstantAlpha not supported");
+                break;
+        }
+    }
+
+    m_data->m_d3d_dev->SetRenderState(D3DRS_SRCBLEND, s1[0]);
+    m_data->m_d3d_dev->SetRenderState(D3DRS_DESTBLEND, s1[1]);
+#else
+    GLenum s1[2] = { GL_ONE, GL_ZERO };
+    BlendFactor s2[2] = { src, dst };
+
+    for (int i = 0; i < 2; ++i)
+    {
+        switch (s2[i])
+        {
+            case BlendFactor::Zero:
+                s1[i] = GL_ZERO; break;
+            case BlendFactor::One:
+                s1[i] = GL_ONE; break;
+            case BlendFactor::SrcColor:
+                s1[i] = GL_SRC_COLOR; break;
+            case BlendFactor::OneMinusSrcColor:
+                s1[i] = GL_ONE_MINUS_SRC_COLOR; break;
+            case BlendFactor::DstColor:
+                s1[i] = GL_DST_COLOR; break;
+            case BlendFactor::OneMinusDstColor:
+                s1[i] = GL_ONE_MINUS_DST_COLOR; break;
+            case BlendFactor::SrcAlpha:
+                s1[i] = GL_SRC_ALPHA; break;
+            case BlendFactor::OneMinusSrcAlpha:
+                s1[i] = GL_ONE_MINUS_SRC_ALPHA; break;
+            case BlendFactor::DstAlpha:
+                s1[i] = GL_DST_ALPHA; break;
+            case BlendFactor::OneMinusDstAlpha:
+                s1[i] = GL_ONE_MINUS_DST_ALPHA; break;
+            case BlendFactor::ConstantColor:
+                s1[i] = GL_CONSTANT_COLOR; break;
+            case BlendFactor::OneMinusConstantColor:
+                s1[i] = GL_ONE_MINUS_CONSTANT_COLOR; break;
+            case BlendFactor::ConstantAlpha:
+                s1[i] = GL_CONSTANT_ALPHA; break;
+            case BlendFactor::OneMinusConstantAlpha:
+                s1[i] = GL_ONE_MINUS_CONSTANT_ALPHA; break;
+        }
+    }
+
+    glBlendFunc(s1[0], s1[1]);
+#endif
+
+    m_data->m_blend_src = src;
+    m_data->m_blend_dst = dst;
+}
+
+BlendFactor Renderer::GetBlendFuncSrc() const
+{
+    return m_data->m_blend_src;
+}
+
+BlendFactor Renderer::GetBlendFuncDst() const
+{
+    return m_data->m_blend_dst;
+}
+
+/*
+ * Alpha testing
+ */
+
+void Renderer::SetAlphaTest(bool set)
+{
+    if (m_data->m_alpha_test == set)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHATESTENABLE, set ? 1 : 0);
+#else
+    if (set)
+        glEnable(GL_ALPHA_TEST);
+    else
+        glDisable(GL_ALPHA_TEST);
+#endif
+
+    m_data->m_alpha_test = set;
+}
+
+bool Renderer::GetAlphaTest() const
+{
+    return m_data->m_alpha_test;
 }
 
 /*

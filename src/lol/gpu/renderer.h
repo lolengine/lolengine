@@ -21,6 +21,33 @@ namespace lol
 
 class RendererData;
 
+/* A safe enum to indicate the blending factors. */
+struct BlendFactor
+{
+    enum Value
+    {
+        Zero,
+        One,
+        SrcColor,
+        OneMinusSrcColor,
+        DstColor,
+        OneMinusDstColor,
+        SrcAlpha,
+        OneMinusSrcAlpha,
+        DstAlpha,
+        OneMinusDstAlpha,
+        ConstantColor,
+        OneMinusConstantColor,
+        ConstantAlpha,
+        OneMinusConstantAlpha,
+    }
+    m_value;
+
+    inline BlendFactor() : m_value(Zero) {}
+    inline BlendFactor(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Renderer
 {
 private:
@@ -39,6 +66,13 @@ public:
 
     void SetAlphaBlend(bool set);
     bool GetAlphaBlend() const;
+
+    void SetBlendFunc(BlendFactor src, BlendFactor dst);
+    BlendFactor GetBlendFuncSrc() const;
+    BlendFactor GetBlendFuncDst() const;
+
+    void SetAlphaTest(bool set);
+    bool GetAlphaTest() const;
 
     void SetDepthTest(bool set);
     bool GetDepthTest() const;

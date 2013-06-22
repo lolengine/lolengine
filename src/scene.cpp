@@ -194,6 +194,7 @@ void Scene::Render() // XXX: rename to Blit()
     RenderContext rc;
     rc.SetDepthTest(true);
     rc.SetAlphaBlend(true);
+    rc.SetBlendFunc(BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha);
 
 #if defined USE_D3D9 || defined _XBOX
 #else
@@ -202,7 +203,6 @@ void Scene::Render() // XXX: rename to Blit()
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);
 #endif
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
     /* Early test if nothing needs to be rendered */
