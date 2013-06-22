@@ -78,7 +78,7 @@ public:
                 RenderContext rc;
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                Video::Clear(ClearMask::Color | ClearMask::Depth);
+                g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
             }
 
             m_fbo->Unbind();

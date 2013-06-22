@@ -131,6 +131,39 @@ Renderer::~Renderer()
 }
 
 /*
+ * Buffer clearing
+ */
+
+void Renderer::Clear(ClearMask mask)
+{
+#if defined USE_D3D9 || defined _XBOX
+    int m = 0;
+    if (mask & ClearMask::Color)
+        m |= D3DCLEAR_TARGET;
+    if (mask & ClearMask::Depth)
+        m |= D3DCLEAR_ZBUFFER;
+    if (mask & ClearMask::Stencil)
+        m |= D3DCLEAR_STENCIL;
+
+    vec3 tmp = 255.999f * GetClearColor().rgb;
+    D3DCOLOR clear_color = D3DCOLOR_XRGB((int)tmp.r, (int)tmp.g, (int)tmp.b);
+
+    if (FAILED(VideoData::d3d_dev->Clear(0, nullptr, m, clear_color,
+                                         g_renderer->GetClearDepth(), 0)))
+        Abort();
+#else
+    GLbitfield m = 0;
+    if (mask & ClearMask::Color)
+        m |= GL_COLOR_BUFFER_BIT;
+    if (mask & ClearMask::Depth)
+        m |= GL_DEPTH_BUFFER_BIT;
+    if (mask & ClearMask::Stencil)
+        m |= GL_STENCIL_BUFFER_BIT;
+    glClear(m);
+#endif
+}
+
+/*
  * Viewport dimensions
  */
 

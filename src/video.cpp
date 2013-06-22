@@ -185,36 +185,6 @@ DebugRenderMode Video::GetDebugRenderMode()
     return VideoData::render_mode;
 }
 
-void Video::Clear(ClearMask m)
-{
-#if defined USE_D3D9 || defined _XBOX
-    int mask = 0;
-    if (m & ClearMask::Color)
-        mask |= D3DCLEAR_TARGET;
-    if (m & ClearMask::Depth)
-        mask |= D3DCLEAR_ZBUFFER;
-    if (m & ClearMask::Stencil)
-        mask |= D3DCLEAR_STENCIL;
-
-    vec4 tmp = 255.999f * g_renderer->GetClearColor();
-    D3DCOLOR clear_color = D3DCOLOR_XRGB((int)tmp.r, (int)tmp.g, (int)tmp.b);
-
-    if (FAILED(VideoData::d3d_dev->Clear(0, nullptr, mask,
-                                         clear_color,
-                                         g_renderer->GetClearDepth(), 0)))
-        Abort();
-#else
-    GLbitfield mask = 0;
-    if (m & ClearMask::Color)
-        mask |= GL_COLOR_BUFFER_BIT;
-    if (m & ClearMask::Depth)
-        mask |= GL_DEPTH_BUFFER_BIT;
-    if (m & ClearMask::Stencil)
-        mask |= GL_STENCIL_BUFFER_BIT;
-    glClear(mask);
-#endif
-}
-
 void Video::Destroy()
 {
     delete g_renderer;
