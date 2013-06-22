@@ -123,6 +123,31 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT(!(s1 != s3));
     }
 
+	LOLUNIT_TEST(StringCharsEqual)
+    {
+		char const* sz = "abc";
+        String s1("abc");
+        String s2("ab");
+
+        LOLUNIT_ASSERT(s1 == sz);
+        LOLUNIT_ASSERT(sz == s1);
+        LOLUNIT_ASSERT(!(s2 == sz));
+        LOLUNIT_ASSERT(!(sz == s2));
+    }
+
+	LOLUNIT_TEST(StringCharsDifferent)
+    {
+		char const* sz = "abc";
+        String s1("ab");
+        String s2("abc");
+
+        LOLUNIT_ASSERT(s1 != sz);
+        LOLUNIT_ASSERT(sz != s1);
+        LOLUNIT_ASSERT(!(s2 != sz));
+        LOLUNIT_ASSERT(!(sz != s2));
+    }
+
+
     LOLUNIT_TEST(StringPrintf)
     {
         String s1 = "3a";
