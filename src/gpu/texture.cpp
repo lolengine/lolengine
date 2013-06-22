@@ -295,6 +295,9 @@ void Texture::GenerateMipmaps()
 {
 #if defined _XBOX || defined USE_D3D9
     m_data->m_texture->GenerateMipSubLevels();
+#elif defined __CELLOS_LV2__
+    glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
+    glGenerateMipmapOES(GL_TEXTURE_2D);
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     glGenerateMipmap(GL_TEXTURE_2D);
