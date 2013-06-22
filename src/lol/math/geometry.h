@@ -61,7 +61,7 @@ template <typename T> struct Box2
         B(bx, by)
     {}
 
-    Box2<T> operator +(Vec2<T> const &v)
+    Box2<T> operator +(Vec2<T> const &v) const
     {
         return Box2<T>(A + v, B + v);
     }
@@ -71,7 +71,7 @@ template <typename T> struct Box2
         return *this = *this + v;
     }
 
-    Box2<T> operator -(Vec2<T> const &v)
+    Box2<T> operator -(Vec2<T> const &v) const
     {
         return Box2<T>(A - v, B - v);
     }
@@ -79,6 +79,16 @@ template <typename T> struct Box2
     Box2<T> &operator -=(Vec2<T> const &v)
     {
         return *this = *this - v;
+    }
+
+    bool operator ==(Box2<T> const &box)
+    {
+        return A == box.A && B == box.B;
+    }
+
+    bool operator !=(Box2<T> const &box)
+    {
+        return A != box.A || B != box.B;
     }
 
     Vec2<T> A, B;
@@ -106,7 +116,7 @@ template <typename T> struct Box3
         B(bx, by, bz)
     {}
 
-    Box3<T> operator +(Vec3<T> const &v)
+    Box3<T> operator +(Vec3<T> const &v) const
     {
         return Box3<T>(A + v, B + v);
     }
@@ -116,7 +126,7 @@ template <typename T> struct Box3
         return *this = *this + v;
     }
 
-    Box3<T> operator -(Vec3<T> const &v)
+    Box3<T> operator -(Vec3<T> const &v) const
     {
         return Box3<T>(A - v, B - v);
     }
@@ -124,6 +134,16 @@ template <typename T> struct Box3
     Box3<T> &operator -=(Vec3<T> const &v)
     {
         return *this = *this - v;
+    }
+
+    bool operator ==(Box3<T> const &box)
+    {
+        return A == box.A && B == box.B;
+    }
+
+    bool operator !=(Box3<T> const &box)
+    {
+        return A != box.A || B != box.B;
     }
 
     Vec3<T> A, B;
