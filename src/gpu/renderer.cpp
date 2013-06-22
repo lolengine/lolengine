@@ -55,9 +55,10 @@ class RendererData
 private:
     vec4 m_clear_color;
     float m_clear_depth;
-    BlendFactor m_blend_src, m_blend_dst;
+    BlendFunc m_blend_src, m_blend_dst;
+    DepthFunc m_depth_func;
     CullMode m_face_culling;
-    bool m_alpha_blend, m_alpha_test, m_depth_test;
+    bool m_alpha_blend, m_alpha_test;
 
 #if defined USE_D3D9
     IDirect3DDevice9 *m_d3d_dev;
@@ -101,15 +102,15 @@ Renderer::Renderer()
     m_data->m_alpha_test = true;
     SetAlphaTest(false);
 
-    m_data->m_blend_src = BlendFactor::Zero;
-    m_data->m_blend_dst = BlendFactor::Zero;
-    SetBlendFunc(BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha);
+    m_data->m_blend_src = BlendFunc::Zero;
+    m_data->m_blend_dst = BlendFunc::Zero;
+    SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
 
-    m_data->m_depth_test = false;
-    SetDepthTest(true);
+    m_data->m_depth_func = DepthFunc::Disabled;
+    SetDepthFunc(DepthFunc::LessOrEqual);
 
-    m_data->m_face_culling = CullMode::None;
-    SetFaceCulling(CullMode::CCW);
+    m_data->m_face_culling = CullMode::Disabled;
+    SetFaceCulling(CullMode::CounterClockwise);
 
     /* Add some rendering states that we don't export to the user */
 #if defined USE_D3D9 || defined _XBOX
@@ -198,51 +199,51 @@ bool Renderer::GetAlphaBlend() const
  * Blend function
  */
 
-void Renderer::SetBlendFunc(BlendFactor src, BlendFactor dst)
+void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
 {
     if (m_data->m_blend_src == src && m_data->m_blend_dst == dst)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
     enum D3DBLEND s1[2] = { D3DBLEND_ONE, D3DBLEND_ZERO };
-    BlendFactor s2[2] = { src, dst };
+    BlendFunc s2[2] = { src, dst };
 
     for (int i = 0; i < 2; ++i)
     {
         switch (s2[i])
         {
-            case BlendFactor::Zero:
+            case BlendFunc::Zero:
                 s1[i] = D3DBLEND_ZERO; break;
-            case BlendFactor::One:
+            case BlendFunc::One:
                 s1[i] = D3DBLEND_ONE; break;
-            case BlendFactor::SrcColor:
+            case BlendFunc::SrcColor:
                 s1[i] = D3DBLEND_SRCCOLOR; break;
-            case BlendFactor::OneMinusSrcColor:
+            case BlendFunc::OneMinusSrcColor:
                 s1[i] = D3DBLEND_INVSRCCOLOR; break;
-            case BlendFactor::DstColor:
+            case BlendFunc::DstColor:
                 s1[i] = D3DBLEND_DESTCOLOR; break;
-            case BlendFactor::OneMinusDstColor:
+            case BlendFunc::OneMinusDstColor:
                 s1[i] = D3DBLEND_INVDESTCOLOR; break;
-            case BlendFactor::SrcAlpha:
+            case BlendFunc::SrcAlpha:
                 s1[i] = D3DBLEND_SRCALPHA; break;
-            case BlendFactor::OneMinusSrcAlpha:
+            case BlendFunc::OneMinusSrcAlpha:
                 s1[i] = D3DBLEND_INVSRCALPHA; break;
-            case BlendFactor::DstAlpha:
+            case BlendFunc::DstAlpha:
                 s1[i] = D3DBLEND_DESTALPHA; break;
-            case BlendFactor::OneMinusDstAlpha:
+            case BlendFunc::OneMinusDstAlpha:
                 s1[i] = D3DBLEND_INVDESTALPHA; break;
             /* FiXME: these can be supported using D3DPBLENDCAPS_BLENDFACTOR */
-            case BlendFactor::ConstantColor:
-                assert(0, "BlendFactor::ConstantColor not supported");
+            case BlendFunc::ConstantColor:
+                assert(0, "BlendFunc::ConstantColor not supported");
                 break;
-            case BlendFactor::OneMinusConstantColor:
-                assert(0, "BlendFactor::OneMinusConstantColor not supported");
+            case BlendFunc::OneMinusConstantColor:
+                assert(0, "BlendFunc::OneMinusConstantColor not supported");
                 break;
-            case BlendFactor::ConstantAlpha:
-                assert(0, "BlendFactor::ConstantAlpha not supported");
+            case BlendFunc::ConstantAlpha:
+                assert(0, "BlendFunc::ConstantAlpha not supported");
                 break;
-            case BlendFactor::OneMinusConstantAlpha:
-                assert(0, "BlendFactor::OneMinusConstantAlpha not supported");
+            case BlendFunc::OneMinusConstantAlpha:
+                assert(0, "BlendFunc::OneMinusConstantAlpha not supported");
                 break;
         }
     }
@@ -251,39 +252,39 @@ void Renderer::SetBlendFunc(BlendFactor src, BlendFactor dst)
     m_data->m_d3d_dev->SetRenderState(D3DRS_DESTBLEND, s1[1]);
 #else
     GLenum s1[2] = { GL_ONE, GL_ZERO };
-    BlendFactor s2[2] = { src, dst };
+    BlendFunc s2[2] = { src, dst };
 
     for (int i = 0; i < 2; ++i)
     {
         switch (s2[i])
         {
-            case BlendFactor::Zero:
+            case BlendFunc::Zero:
                 s1[i] = GL_ZERO; break;
-            case BlendFactor::One:
+            case BlendFunc::One:
                 s1[i] = GL_ONE; break;
-            case BlendFactor::SrcColor:
+            case BlendFunc::SrcColor:
                 s1[i] = GL_SRC_COLOR; break;
-            case BlendFactor::OneMinusSrcColor:
+            case BlendFunc::OneMinusSrcColor:
                 s1[i] = GL_ONE_MINUS_SRC_COLOR; break;
-            case BlendFactor::DstColor:
+            case BlendFunc::DstColor:
                 s1[i] = GL_DST_COLOR; break;
-            case BlendFactor::OneMinusDstColor:
+            case BlendFunc::OneMinusDstColor:
                 s1[i] = GL_ONE_MINUS_DST_COLOR; break;
-            case BlendFactor::SrcAlpha:
+            case BlendFunc::SrcAlpha:
                 s1[i] = GL_SRC_ALPHA; break;
-            case BlendFactor::OneMinusSrcAlpha:
+            case BlendFunc::OneMinusSrcAlpha:
                 s1[i] = GL_ONE_MINUS_SRC_ALPHA; break;
-            case BlendFactor::DstAlpha:
+            case BlendFunc::DstAlpha:
                 s1[i] = GL_DST_ALPHA; break;
-            case BlendFactor::OneMinusDstAlpha:
+            case BlendFunc::OneMinusDstAlpha:
                 s1[i] = GL_ONE_MINUS_DST_ALPHA; break;
-            case BlendFactor::ConstantColor:
+            case BlendFunc::ConstantColor:
                 s1[i] = GL_CONSTANT_COLOR; break;
-            case BlendFactor::OneMinusConstantColor:
+            case BlendFunc::OneMinusConstantColor:
                 s1[i] = GL_ONE_MINUS_CONSTANT_COLOR; break;
-            case BlendFactor::ConstantAlpha:
+            case BlendFunc::ConstantAlpha:
                 s1[i] = GL_CONSTANT_ALPHA; break;
-            case BlendFactor::OneMinusConstantAlpha:
+            case BlendFunc::OneMinusConstantAlpha:
                 s1[i] = GL_ONE_MINUS_CONSTANT_ALPHA; break;
         }
     }
@@ -295,12 +296,12 @@ void Renderer::SetBlendFunc(BlendFactor src, BlendFactor dst)
     m_data->m_blend_dst = dst;
 }
 
-BlendFactor Renderer::GetBlendFuncSrc() const
+BlendFunc Renderer::GetBlendFuncSrc() const
 {
     return m_data->m_blend_src;
 }
 
-BlendFactor Renderer::GetBlendFuncDst() const
+BlendFunc Renderer::GetBlendFuncDst() const
 {
     return m_data->m_blend_dst;
 }
@@ -335,28 +336,81 @@ bool Renderer::GetAlphaTest() const
  * Depth test
  */
 
-void Renderer::SetDepthTest(bool set)
+void Renderer::SetDepthFunc(DepthFunc func)
 {
-    if (m_data->m_depth_test == set)
+    if (m_data->m_depth_func == func)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Renderer::SetDepthTest() not implemented")
-#else
-    if (set)
-        glEnable(GL_DEPTH_TEST);
+    switch (func)
+    {
+        case DepthFunc::Disabled:
+            break; /* Nothing to do */
+        case DepthFunc::Never:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_NEVER);
+            break;
+        case DepthFunc::Less:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
+            break;
+        case DepthFunc::Equal:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
+            break;
+        case DepthFunc::LessOrEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+            break;
+        case DepthFunc::Greater:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATER);
+            break;
+        case DepthFunc::NotEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_NOTEQUAL);
+            break;
+        case DepthFunc::GreaterOrEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
+            break;
+        case DepthFunc::Always:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+            break;
+    }
+
+    if (func == DepthFunc::Disabled)
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
     else
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+#else
+    switch (func)
+    {
+        case DepthFunc::Disabled:
+            break; /* Nothing to do */
+        case DepthFunc::Never:
+            glDepthFunc(GL_NEVER); break;
+        case DepthFunc::Less:
+            glDepthFunc(GL_LESS); break;
+        case DepthFunc::Equal:
+            glDepthFunc(GL_EQUAL); break;
+        case DepthFunc::LessOrEqual:
+            glDepthFunc(GL_LEQUAL); break;
+        case DepthFunc::Greater:
+            glDepthFunc(GL_GREATER); break;
+        case DepthFunc::NotEqual:
+            glDepthFunc(GL_NOTEQUAL); break;
+        case DepthFunc::GreaterOrEqual:
+            glDepthFunc(GL_GEQUAL); break;
+        case DepthFunc::Always:
+            glDepthFunc(GL_ALWAYS); break;
+    }
+
+    if (func == DepthFunc::Disabled)
         glDisable(GL_DEPTH_TEST);
+    else
+        glEnable(GL_DEPTH_TEST);
 #endif
 
-    m_data->m_depth_test = set;
+    m_data->m_depth_func = func;
 }
 
-bool Renderer::GetDepthTest() const
+DepthFunc Renderer::GetDepthFunc() const
 {
-    return m_data->m_depth_test;
+    return m_data->m_depth_func;
 }
 
 /*
@@ -371,27 +425,27 @@ void Renderer::SetFaceCulling(CullMode mode)
 #if defined USE_D3D9 || defined _XBOX
     switch (mode)
     {
-    case CullMode::None:
+    case CullMode::Disabled:
         m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
         break;
-    case CullMode::CW:
+    case CullMode::Clockwise:
         m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
         break;
-    case CullMode::CCW:
+    case CullMode::CounterClockwise:
         m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
         break;
     }
 #else
     switch (mode)
     {
-    case CullMode::None:
+    case CullMode::Disabled:
         glDisable(GL_CULL_FACE);
         break;
-    case CullMode::CW:
+    case CullMode::Clockwise:
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
         break;
-    case CullMode::CCW:
+    case CullMode::CounterClockwise:
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CCW);
         break;

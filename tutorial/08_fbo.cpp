@@ -90,7 +90,7 @@ public:
 
         /* FIXME: we should just disable depth test in the shader */
         RenderContext rc;
-        rc.SetDepthTest(false);
+        rc.SetDepthFunc(DepthFunc::Disabled);
 
         m_fbo->Bind();
         m_shader->Bind();

@@ -57,10 +57,10 @@ private:
     TrackedState<vec4> m_clear_color;
     TrackedState<float> m_clear_depth;
     TrackedState<bool> m_alpha_blend;
-    TrackedState<BlendFactor> m_blend_src;
-    TrackedState<BlendFactor> m_blend_dst;
+    TrackedState<BlendFunc> m_blend_src;
+    TrackedState<BlendFunc> m_blend_dst;
     TrackedState<bool> m_alpha_test;
-    TrackedState<bool> m_depth_test;
+    TrackedState<DepthFunc> m_depth_func;
     TrackedState<CullMode> m_face_culling;
 };
 
@@ -92,8 +92,8 @@ RenderContext::~RenderContext()
     if (m_data->m_alpha_test.HasChanged())
         g_renderer->SetAlphaTest(m_data->m_alpha_test.GetValue());
 
-    if (m_data->m_depth_test.HasChanged())
-        g_renderer->SetDepthTest(m_data->m_depth_test.GetValue());
+    if (m_data->m_depth_func.HasChanged())
+        g_renderer->SetDepthFunc(m_data->m_depth_func.GetValue());
 
     if (m_data->m_face_culling.HasChanged())
         g_renderer->SetFaceCulling(m_data->m_face_culling.GetValue());
@@ -125,7 +125,7 @@ void RenderContext::SetAlphaBlend(bool set)
     g_renderer->SetAlphaBlend(set);
 }
 
-void RenderContext::SetBlendFunc(BlendFactor src, BlendFactor dst)
+void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
 {
     if (!m_data->m_blend_src.HasChanged())
         m_data->m_blend_src.TrackValue(g_renderer->GetBlendFuncSrc());
@@ -143,12 +143,12 @@ void RenderContext::SetAlphaTest(bool set)
     g_renderer->SetAlphaTest(set);
 }
 
-void RenderContext::SetDepthTest(bool set)
+void RenderContext::SetDepthFunc(DepthFunc func)
 {
-    if (!m_data->m_depth_test.HasChanged())
-        m_data->m_depth_test.TrackValue(g_renderer->GetDepthTest());
+    if (!m_data->m_depth_func.HasChanged())
+        m_data->m_depth_func.TrackValue(g_renderer->GetDepthFunc());
 
-    g_renderer->SetDepthTest(set);
+    g_renderer->SetDepthFunc(func);
 }
 
 void RenderContext::SetFaceCulling(CullMode mode)

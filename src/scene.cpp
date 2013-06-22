@@ -192,13 +192,12 @@ Array<Light *> const &Scene::GetLights() const
 void Scene::Render() // XXX: rename to Blit()
 {
     RenderContext rc;
-    rc.SetDepthTest(true);
+    rc.SetDepthFunc(DepthFunc::LessOrEqual);
     rc.SetAlphaBlend(true);
-    rc.SetBlendFunc(BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha);
+    rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
 
 #if defined USE_D3D9 || defined _XBOX
 #else
-    glDepthFunc(GL_LEQUAL);
 #if defined HAVE_GL_2X && !defined __APPLE__
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GEQUAL, 0.01f);
