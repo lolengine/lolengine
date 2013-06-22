@@ -22,7 +22,7 @@ namespace lol
 class RendererData;
 
 /* A safe enum to indicate the blending factors. */
-struct BlendFactor
+struct BlendFunc
 {
     enum Value
     {
@@ -43,8 +43,8 @@ struct BlendFactor
     }
     m_value;
 
-    inline BlendFactor() : m_value(Zero) {}
-    inline BlendFactor(Value v) : m_value(v) {}
+    inline BlendFunc() : m_value(Zero) {}
+    inline BlendFunc(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
 };
 
@@ -53,14 +53,36 @@ struct CullMode
 {
     enum Value
     {
-        None,
-        CW,
-        CCW,
+        Disabled,
+        Clockwise,
+        CounterClockwise,
     }
     m_value;
 
-    inline CullMode() : m_value(None) {}
+    inline CullMode() : m_value(Disabled) {}
     inline CullMode(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
+/* A safe enum to indicate the depth test mode. */
+struct DepthFunc
+{
+    enum Value
+    {
+        Disabled,
+        Never,
+        Less,
+        Equal,
+        LessOrEqual,
+        Greater,
+        NotEqual,
+        GreaterOrEqual,
+        Always,
+    }
+    m_value;
+
+    inline DepthFunc() : m_value(Disabled) {}
+    inline DepthFunc(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
 };
 
@@ -83,15 +105,15 @@ public:
     void SetAlphaBlend(bool set);
     bool GetAlphaBlend() const;
 
-    void SetBlendFunc(BlendFactor src, BlendFactor dst);
-    BlendFactor GetBlendFuncSrc() const;
-    BlendFactor GetBlendFuncDst() const;
+    void SetBlendFunc(BlendFunc src, BlendFunc dst);
+    BlendFunc GetBlendFuncSrc() const;
+    BlendFunc GetBlendFuncDst() const;
 
     void SetAlphaTest(bool set);
     bool GetAlphaTest() const;
 
-    void SetDepthTest(bool set);
-    bool GetDepthTest() const;
+    void SetDepthFunc(DepthFunc func);
+    DepthFunc GetDepthFunc() const;
 
     void SetFaceCulling(CullMode mode);
     CullMode GetFaceCulling() const;

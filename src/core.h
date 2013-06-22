@@ -85,7 +85,9 @@ static inline int isnan(float f)
 #endif
 
 
-/* XXX: workaround for X11 headers that try to #define None */
+/* XXX: workaround for X11 headers that try to #define these */
+#undef Always
+#define Always Always
 #undef None
 #define None None
 
