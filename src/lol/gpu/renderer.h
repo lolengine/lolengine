@@ -48,6 +48,22 @@ struct BlendFactor
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate the face culling mode. */
+struct CullMode
+{
+    enum Value
+    {
+        None,
+        CW,
+        CCW,
+    }
+    m_value;
+
+    inline CullMode() : m_value(None) {}
+    inline CullMode(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Renderer
 {
 private:
@@ -77,8 +93,8 @@ public:
     void SetDepthTest(bool set);
     bool GetDepthTest() const;
 
-    void SetFaceCulling(bool set);
-    bool GetFaceCulling() const;
+    void SetFaceCulling(CullMode mode);
+    CullMode GetFaceCulling() const;
 
 private:
     RendererData *m_data;

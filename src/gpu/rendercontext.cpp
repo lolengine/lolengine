@@ -61,7 +61,7 @@ private:
     TrackedState<BlendFactor> m_blend_dst;
     TrackedState<bool> m_alpha_test;
     TrackedState<bool> m_depth_test;
-    TrackedState<bool> m_face_culling;
+    TrackedState<CullMode> m_face_culling;
 };
 
 /*
@@ -151,12 +151,12 @@ void RenderContext::SetDepthTest(bool set)
     g_renderer->SetDepthTest(set);
 }
 
-void RenderContext::SetFaceCulling(bool set)
+void RenderContext::SetFaceCulling(CullMode mode)
 {
     if (!m_data->m_face_culling.HasChanged())
         m_data->m_face_culling.TrackValue(g_renderer->GetFaceCulling());
 
-    g_renderer->SetFaceCulling(set);
+    g_renderer->SetFaceCulling(mode);
 }
 
 } /* namespace lol */

@@ -31,6 +31,12 @@
 #include "core.h"
 #include "lolgl.h"
 
+#if defined USE_D3D9
+extern IDirect3DDevice9 *g_d3ddevice;
+#elif defined _XBOX
+extern D3DDevice *g_d3ddevice;
+#endif
+
 namespace lol
 {
 
@@ -50,7 +56,14 @@ private:
     vec4 m_clear_color;
     float m_clear_depth;
     BlendFactor m_blend_src, m_blend_dst;
-    bool m_alpha_blend, m_alpha_test, m_depth_test, m_face_culling;
+    CullMode m_face_culling;
+    bool m_alpha_blend, m_alpha_test, m_depth_test;
+
+#if defined USE_D3D9
+    IDirect3DDevice9 *m_d3d_dev;
+#elif defined _XBOX
+    D3DDevice *m_d3d_dev;
+#endif
 };
 
 /*
@@ -61,7 +74,8 @@ Renderer::Renderer()
   : m_data(new RendererData())
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* TODO */
+    /* FIXME: we should be in charge of creating this */
+    m_data->m_d3d_dev = g_d3ddevice;
 #else
 #   if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
@@ -94,8 +108,8 @@ Renderer::Renderer()
     m_data->m_depth_test = false;
     SetDepthTest(true);
 
-    m_data->m_face_culling = false;
-    SetFaceCulling(true);
+    m_data->m_face_culling = CullMode::None;
+    SetFaceCulling(CullMode::CCW);
 
     /* Add some rendering states that we don't export to the user */
 #if defined USE_D3D9 || defined _XBOX
@@ -349,26 +363,45 @@ bool Renderer::GetDepthTest() const
  * Face culling
  */
 
-void Renderer::SetFaceCulling(bool set)
+void Renderer::SetFaceCulling(CullMode mode)
 {
-    if (m_data->m_face_culling == set)
+    if (m_data->m_face_culling == mode)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-#   define STR0(x) #x
-#   define STR(x) STR0(x)
-#   pragma message(__FILE__ "(" STR(__LINE__) "): warning: Renderer::SetFaceCulling() not implemented")
+    switch (mode)
+    {
+    case CullMode::None:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+        break;
+    case CullMode::CW:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+        break;
+    case CullMode::CCW:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+        break;
+    }
 #else
-    if (set)
-        glEnable(GL_CULL_FACE);
-    else
+    switch (mode)
+    {
+    case CullMode::None:
         glDisable(GL_CULL_FACE);
+        break;
+    case CullMode::CW:
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        break;
+    case CullMode::CCW:
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+        break;
+    }
 #endif
 
-    m_data->m_face_culling = set;
+    m_data->m_face_culling = mode;
 }
 
-bool Renderer::GetFaceCulling() const
+CullMode Renderer::GetFaceCulling() const
 {
     return m_data->m_face_culling;
 }

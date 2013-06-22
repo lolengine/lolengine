@@ -180,7 +180,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         {
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
-            glEnable(GL_CULL_FACE);
+//            glEnable(GL_CULL_FACE);
 #else
 //            if (VideoData::render_mode == d && glIsEnabled(GL_CULL_FACE) == GL_TRUE)
 //                SetFaceCulling(false);

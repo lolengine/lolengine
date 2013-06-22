@@ -33,7 +33,7 @@ public:
     void SetBlendFunc(BlendFactor src, BlendFactor dst);
     void SetAlphaTest(bool set);
     void SetDepthTest(bool set);
-    void SetFaceCulling(bool set);
+    void SetFaceCulling(CullMode mode);
 
 private:
     RenderContextData *m_data;
