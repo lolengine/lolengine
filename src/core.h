@@ -85,6 +85,11 @@ static inline int isnan(float f)
 #endif
 
 
+/* XXX: workaround for X11 headers that try to #define None */
+#undef None
+#define None None
+
+
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \
     extern "C" char const *LOLFX_RESOURCE_NAME(name)

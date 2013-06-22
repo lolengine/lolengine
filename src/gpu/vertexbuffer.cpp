@@ -127,8 +127,6 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         return;
 
 #if defined _XBOX || defined USE_D3D9
-    if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
-        Abort();
     switch (type)
     {
     case MeshPrimitive::Triangles:
@@ -159,8 +157,6 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     }
 #else
     /* FIXME: this has nothing to do here! */
-    glFrontFace(GL_CCW);
-
     switch (type)
     {
     case MeshPrimitive::Triangles:
@@ -190,8 +186,6 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         return;
 
 #if defined _XBOX || defined USE_D3D9
-    if (FAILED(g_d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW)))
-        Abort();
     switch (type)
     {
     case MeshPrimitive::Triangles:
@@ -225,8 +219,6 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     }
 #else
     /* FIXME: this has nothing to do here! */
-    glFrontFace(GL_CCW);
-
     switch (type)
     {
     case MeshPrimitive::Triangles:
