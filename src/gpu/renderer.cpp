@@ -218,7 +218,7 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
         m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAREF,
                                           (DWORD)(alpha * 255.999f));
     }
-#else
+#elif defined HAVE_GL_2X
     switch (func)
     {
         case AlphaFunc::Disabled:
@@ -245,6 +245,8 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
         glDisable(GL_ALPHA_TEST);
     else
         glEnable(GL_ALPHA_TEST);
+#else
+    /* XXX: alpha test not available in GL ES */
 #endif
 
     m_data->m_alpha_func = func;
