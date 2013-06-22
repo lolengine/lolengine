@@ -55,10 +55,11 @@ class RendererData
 private:
     vec4 m_clear_color;
     float m_clear_depth;
+    AlphaFunc m_alpha_func;
+    float m_alpha_value;
     BlendFunc m_blend_src, m_blend_dst;
     DepthFunc m_depth_func;
     CullMode m_face_culling;
-    bool m_alpha_blend, m_alpha_test;
 
 #if defined USE_D3D9
     IDirect3DDevice9 *m_d3d_dev;
@@ -96,14 +97,12 @@ Renderer::Renderer()
     m_data->m_clear_depth = -1.f;
     SetClearDepth(1.f);
 
-    m_data->m_alpha_blend = false;
-    SetAlphaBlend(true);
+    m_data->m_alpha_func = AlphaFunc::Never;
+    m_data->m_alpha_value = -1.0f;
+    SetAlphaFunc(AlphaFunc::Disabled, 0.0f);
 
-    m_data->m_alpha_test = true;
-    SetAlphaTest(false);
-
-    m_data->m_blend_src = BlendFunc::Zero;
-    m_data->m_blend_dst = BlendFunc::Zero;
+    m_data->m_blend_src = BlendFunc::Disabled;
+    m_data->m_blend_dst = BlendFunc::Disabled;
     SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
 
     m_data->m_depth_func = DepthFunc::Disabled;
@@ -170,29 +169,96 @@ float Renderer::GetClearDepth() const
 }
 
 /*
- * Alpha blending
+ * Alpha testing
  */
 
-void Renderer::SetAlphaBlend(bool set)
+void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
 {
-    if (m_data->m_alpha_blend == set)
+    if (m_data->m_alpha_func == func && m_data->m_alpha_value == alpha)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHABLENDENABLE, set ? 1 : 0);
-#else
-    if (set)
-        glEnable(GL_BLEND);
+    switch (func)
+    {
+        case AlphaFunc::Disabled:
+            break; /* Nothing to do */
+        case AlphaFunc::Never:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_NEVER);
+            break;
+        case AlphaFunc::Less:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_LESS);
+            break;
+        case AlphaFunc::Equal:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_EQUAL);
+            break;
+        case AlphaFunc::LessOrEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_LESSEQUAL);
+            break;
+        case AlphaFunc::Greater:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+            break;
+        case AlphaFunc::NotEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_NOTEQUAL);
+            break;
+        case AlphaFunc::GreaterOrEqual:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+            break;
+        case AlphaFunc::Always:
+            m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+            break;
+    }
+
+    if (func == AlphaFunc::Disabled)
+    {
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+    }
     else
-        glDisable(GL_BLEND);
+    {
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAREF,
+                                          (DWORD)(alpha * 255.999f));
+    }
+#else
+    switch (func)
+    {
+        case AlphaFunc::Disabled:
+            break; /* Nothing to do */
+        case AlphaFunc::Never:
+            glAlphaFunc(GL_NEVER, alpha); break;
+        case AlphaFunc::Less:
+            glAlphaFunc(GL_LESS, alpha); break;
+        case AlphaFunc::Equal:
+            glAlphaFunc(GL_EQUAL, alpha); break;
+        case AlphaFunc::LessOrEqual:
+            glAlphaFunc(GL_LEQUAL, alpha); break;
+        case AlphaFunc::Greater:
+            glAlphaFunc(GL_GREATER, alpha); break;
+        case AlphaFunc::NotEqual:
+            glAlphaFunc(GL_NOTEQUAL, alpha); break;
+        case AlphaFunc::GreaterOrEqual:
+            glAlphaFunc(GL_GEQUAL, alpha); break;
+        case AlphaFunc::Always:
+            glAlphaFunc(GL_ALWAYS, alpha); break;
+    }
+
+    if (func == AlphaFunc::Disabled)
+        glDisable(GL_ALPHA_TEST);
+    else
+        glEnable(GL_ALPHA_TEST);
 #endif
 
-    m_data->m_alpha_blend = set;
+    m_data->m_alpha_func = func;
+    m_data->m_alpha_value = alpha;
 }
 
-bool Renderer::GetAlphaBlend() const
+AlphaFunc Renderer::GetAlphaFunc() const
 {
-    return m_data->m_alpha_blend;
+    return m_data->m_alpha_func;
+}
+
+float Renderer::GetAlphaValue() const
+{
+    return m_data->m_alpha_value;
 }
 
 /*
@@ -212,6 +278,8 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
     {
         switch (s2[i])
         {
+            case BlendFunc::Disabled:
+                break; /* Nothing to do */
             case BlendFunc::Zero:
                 s1[i] = D3DBLEND_ZERO; break;
             case BlendFunc::One:
@@ -248,8 +316,16 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
         }
     }
 
-    m_data->m_d3d_dev->SetRenderState(D3DRS_SRCBLEND, s1[0]);
-    m_data->m_d3d_dev->SetRenderState(D3DRS_DESTBLEND, s1[1]);
+    if (src == BlendFunc::Disabled)
+    {
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+    }
+    else
+    {
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+        m_data->m_d3d_dev->SetRenderState(D3DRS_SRCBLEND, s1[0]);
+        m_data->m_d3d_dev->SetRenderState(D3DRS_DESTBLEND, s1[1]);
+    }
 #else
     GLenum s1[2] = { GL_ONE, GL_ZERO };
     BlendFunc s2[2] = { src, dst };
@@ -258,6 +334,8 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
     {
         switch (s2[i])
         {
+            case BlendFunc::Disabled:
+                break; /* Nothing to do */
             case BlendFunc::Zero:
                 s1[i] = GL_ZERO; break;
             case BlendFunc::One:
@@ -289,7 +367,15 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
         }
     }
 
-    glBlendFunc(s1[0], s1[1]);
+    if (src == BlendFunc::Disabled)
+    {
+        glDisable(GL_BLEND);
+    }
+    else
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(s1[0], s1[1]);
+    }
 #endif
 
     m_data->m_blend_src = src;
@@ -304,32 +390,6 @@ BlendFunc Renderer::GetBlendFuncSrc() const
 BlendFunc Renderer::GetBlendFuncDst() const
 {
     return m_data->m_blend_dst;
-}
-
-/*
- * Alpha testing
- */
-
-void Renderer::SetAlphaTest(bool set)
-{
-    if (m_data->m_alpha_test == set)
-        return;
-
-#if defined USE_D3D9 || defined _XBOX
-    m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHATESTENABLE, set ? 1 : 0);
-#else
-    if (set)
-        glEnable(GL_ALPHA_TEST);
-    else
-        glDisable(GL_ALPHA_TEST);
-#endif
-
-    m_data->m_alpha_test = set;
-}
-
-bool Renderer::GetAlphaTest() const
-{
-    return m_data->m_alpha_test;
 }
 
 /*
@@ -443,10 +503,12 @@ void Renderer::SetFaceCulling(CullMode mode)
         break;
     case CullMode::Clockwise:
         glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glFrontFace(GL_CW);
         break;
     case CullMode::CounterClockwise:
         glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
         break;
     }

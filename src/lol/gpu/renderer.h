@@ -26,6 +26,7 @@ struct BlendFunc
 {
     enum Value
     {
+        Disabled,
         Zero,
         One,
         SrcColor,
@@ -86,6 +87,28 @@ struct DepthFunc
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate the alpha test mode. */
+struct AlphaFunc
+{
+    enum Value
+    {
+        Disabled,
+        Never,
+        Less,
+        Equal,
+        LessOrEqual,
+        Greater,
+        NotEqual,
+        GreaterOrEqual,
+        Always,
+    }
+    m_value;
+
+    inline AlphaFunc() : m_value(Disabled) {}
+    inline AlphaFunc(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Renderer
 {
 private:
@@ -102,15 +125,13 @@ public:
     void SetClearDepth(float depth);
     float GetClearDepth() const;
 
-    void SetAlphaBlend(bool set);
-    bool GetAlphaBlend() const;
+    void SetAlphaFunc(AlphaFunc func, float alpha);
+    AlphaFunc GetAlphaFunc() const;
+    float GetAlphaValue() const;
 
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
     BlendFunc GetBlendFuncSrc() const;
     BlendFunc GetBlendFuncDst() const;
-
-    void SetAlphaTest(bool set);
-    bool GetAlphaTest() const;
 
     void SetDepthFunc(DepthFunc func);
     DepthFunc GetDepthFunc() const;

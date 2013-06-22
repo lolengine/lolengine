@@ -55,12 +55,16 @@ private:
     Scene *m_scene;
 
     TrackedState<vec4> m_clear_color;
+
     TrackedState<float> m_clear_depth;
-    TrackedState<bool> m_alpha_blend;
-    TrackedState<BlendFunc> m_blend_src;
-    TrackedState<BlendFunc> m_blend_dst;
-    TrackedState<bool> m_alpha_test;
+
+    TrackedState<AlphaFunc> m_alpha_func;
+    TrackedState<float> m_alpha_value;
+
+    TrackedState<BlendFunc> m_blend_src, m_blend_dst;
+
     TrackedState<DepthFunc> m_depth_func;
+
     TrackedState<CullMode> m_face_culling;
 };
 
@@ -82,15 +86,13 @@ RenderContext::~RenderContext()
     if (m_data->m_clear_depth.HasChanged())
         g_renderer->SetClearDepth(m_data->m_clear_depth.GetValue());
 
-    if (m_data->m_alpha_blend.HasChanged())
-        g_renderer->SetAlphaBlend(m_data->m_alpha_blend.GetValue());
+    if (m_data->m_alpha_func.HasChanged())
+        g_renderer->SetAlphaFunc(m_data->m_alpha_func.GetValue(),
+                                 m_data->m_alpha_value.GetValue());
 
     if (m_data->m_blend_src.HasChanged())
         g_renderer->SetBlendFunc(m_data->m_blend_src.GetValue(),
                                  m_data->m_blend_dst.GetValue());
-
-    if (m_data->m_alpha_test.HasChanged())
-        g_renderer->SetAlphaTest(m_data->m_alpha_test.GetValue());
 
     if (m_data->m_depth_func.HasChanged())
         g_renderer->SetDepthFunc(m_data->m_depth_func.GetValue());
@@ -117,12 +119,14 @@ void RenderContext::SetClearDepth(float depth)
     g_renderer->SetClearDepth(depth);
 }
 
-void RenderContext::SetAlphaBlend(bool set)
+void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
 {
-    if (!m_data->m_alpha_blend.HasChanged())
-        m_data->m_alpha_blend.TrackValue(g_renderer->GetAlphaBlend());
+    if (!m_data->m_alpha_func.HasChanged())
+        m_data->m_alpha_func.TrackValue(g_renderer->GetAlphaFunc());
+    if (!m_data->m_alpha_value.HasChanged())
+        m_data->m_alpha_value.TrackValue(g_renderer->GetAlphaValue());
 
-    g_renderer->SetAlphaBlend(set);
+    g_renderer->SetAlphaFunc(func, alpha);
 }
 
 void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
@@ -133,14 +137,6 @@ void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
         m_data->m_blend_dst.TrackValue(g_renderer->GetBlendFuncDst());
 
     g_renderer->SetBlendFunc(src, dst);
-}
-
-void RenderContext::SetAlphaTest(bool set)
-{
-    if (!m_data->m_alpha_test.HasChanged())
-        m_data->m_alpha_test.TrackValue(g_renderer->GetAlphaTest());
-
-    g_renderer->SetAlphaTest(set);
 }
 
 void RenderContext::SetDepthFunc(DepthFunc func)

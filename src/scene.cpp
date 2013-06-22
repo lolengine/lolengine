@@ -193,16 +193,8 @@ void Scene::Render() // XXX: rename to Blit()
 {
     RenderContext rc;
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
-    rc.SetAlphaBlend(true);
     rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
-
-#if defined USE_D3D9 || defined _XBOX
-#else
-#if defined HAVE_GL_2X && !defined __APPLE__
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.01f);
-#endif
-#endif
+    rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
     /* Early test if nothing needs to be rendered */
     if (data->m_tiles.Count())
@@ -344,14 +336,6 @@ void Scene::Render() // XXX: rename to Blit()
         data->m_lines.Empty();
         delete vb;
     }
-
-#if defined USE_D3D9 || defined _XBOX
-    /* TODO */
-#else
-#   if defined HAVE_GL_2X && !defined __APPLE__
-    glDisable(GL_ALPHA_TEST);
-#   endif
-#endif
 }
 
 } /* namespace lol */
