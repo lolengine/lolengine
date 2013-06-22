@@ -182,14 +182,9 @@ public:
 
     inline bool operator ==(String const &s) const
     {
-        if (this->m_count != s.m_count)
-            return false;
-
-        for (int i = 0; i < this->m_count; ++i)
-            if ((*this)[i] != s[i])
-                return false;
-
-        return true;
+        using namespace std;
+        return Count() == s.Count()
+                && memcmp(C(), s.C(), Count()) == 0;
     }
 
     inline bool operator !=(String const &s) const
@@ -197,20 +192,14 @@ public:
         return !(*this == s);
     }
 
-
     inline bool operator ==(char const* sz) const
     {
-        int i;
-        for (i = 0; i < this->m_count; ++i)
-        {
-            if (i < this->m_count - 1 && sz[i] == '\0')
-                return false;
-
-            if ((*this)[i] != sz[i])
-                return false;
-        }
-
-        return true;
+        /* We parse the C string twice because of strlen + memcmp
+         * but it's probably still faster than doing it by hand. */
+        using namespace std;
+        int sz_len = (int)strlen(sz);
+        return Count() == sz_len
+                && memcmp(C(), sz, sz_len) == 0;
     }
 
     inline bool operator !=(char const* sz) const
