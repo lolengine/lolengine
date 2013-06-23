@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2013 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,10 +30,15 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/**
+ ** \file generated/lolfx-parser.h
+ ** Define the lol::parser class.
+ */
+
 /* C++ LALR(1) parser skeleton written by Akim Demaille.  */
 
-#ifndef PARSER_HEADER_H
-# define PARSER_HEADER_H
+#ifndef YY_LOL_GENERATED_LOLFX_PARSER_H_INCLUDED
+# define YY_LOL_GENERATED_LOLFX_PARSER_H_INCLUDED
 
 
 
@@ -47,24 +52,10 @@
 # define YYDEBUG 1
 #endif
 
-/* Enabling verbose error messages.  */
-#ifdef YYERROR_VERBOSE
-# undef YYERROR_VERBOSE
-# define YYERROR_VERBOSE 1
-#else
-# define YYERROR_VERBOSE 1
-#endif
-
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
-#endif
-
 
 namespace lol {
-
-/* Line 35 of lalr1.cc  */
-#line 68 "generated/lolfx-parser.h"
+/* Line 33 of lalr1.cc  */
+#line 59 "generated/lolfx-parser.h"
 
   /// A Bison parser.
   class LolFxParser
@@ -74,9 +65,8 @@ namespace lol {
 #ifndef YYSTYPE
     union semantic_type
     {
-
-/* Line 35 of lalr1.cc  */
-#line 34 "gpu/lolfx-parser.y"
+/* Line 33 of lalr1.cc  */
+#line 38 "gpu/lolfx-parser.y"
 
     int ival;
     unsigned uval;
@@ -84,9 +74,8 @@ namespace lol {
     char *sval;
 
 
-
-/* Line 35 of lalr1.cc  */
-#line 90 "generated/lolfx-parser.h"
+/* Line 33 of lalr1.cc  */
+#line 79 "generated/lolfx-parser.h"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -563,6 +552,10 @@ namespace lol {
 #endif
 
   private:
+    /// This class is not copyable.
+    LolFxParser (const LolFxParser&);
+    LolFxParser& operator= (const LolFxParser&);
+
     /// Report a syntax error.
     /// \param loc    where the syntax error is found.
     /// \param msg    a description of the syntax error.
@@ -646,16 +639,14 @@ namespace lol {
     /// For a rule, its LHS.
     static const unsigned short int yyr1_[];
     /// For a rule, its RHS length.
-    static const unsigned char yyr2_[];
-
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
-    /// For a symbol, its name in clear.
-    static const char* const yytname_[];
-#endif
+    static const unsigned char yyr2_[]; 
 
     /// Convert the symbol name \a n to a form suitable for a diagnostic.
     static std::string yytnamerr_ (const char *n);
 
+
+    /// For a symbol, its name in clear.
+    static const char* const yytname_[];
 #if YYDEBUG
     /// A type to store symbol numbers and -1.
     typedef short int rhs_number_type;
@@ -682,6 +673,7 @@ namespace lol {
 
     /// \brief Reclaim the memory associated to a symbol.
     /// \param yymsg        Why this token is reclaimed.
+    ///                     If null, do not display the symbol, just free it.
     /// \param yytype       The symbol type.
     /// \param yyvaluep     Its semantic value.
     /// \param yylocationp  Its location.
@@ -711,10 +703,9 @@ namespace lol {
   };
 
 } // lol
-
-/* Line 35 of lalr1.cc  */
-#line 717 "generated/lolfx-parser.h"
-
+/* Line 33 of lalr1.cc  */
+#line 708 "generated/lolfx-parser.h"
 
 
-#endif /* ! defined PARSER_HEADER_H */
+
+#endif /* !YY_LOL_GENERATED_LOLFX_PARSER_H_INCLUDED  */

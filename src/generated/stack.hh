@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
 
 /* Stack handling for Bison parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2013 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,21 +30,24 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef BISON_STACK_HH
-# define BISON_STACK_HH
+/**
+ ** \file generated/stack.hh
+ ** Define the lol::stack class.
+ */
 
-#include <deque>
+#ifndef YY_LOL_GENERATED_STACK_HH_INCLUDED
+# define YY_LOL_GENERATED_STACK_HH_INCLUDED
+
+# include <deque>
 
 
 namespace lol {
-
-/* Line 1149 of lalr1.cc  */
-#line 43 "generated/stack.hh"
+/* Line 34 of stack.hh  */
+#line 47 "generated/stack.hh"
   template <class T, class S = std::deque<T> >
   class stack
   {
   public:
-
     // Hide our reversed order.
     typedef typename S::reverse_iterator iterator;
     typedef typename S::const_reverse_iterator const_iterator;
@@ -83,7 +86,13 @@ namespace lol {
     pop (unsigned int n = 1)
     {
       for (; n; --n)
-	seq_.pop_front ();
+        seq_.pop_front ();
+    }
+
+    void
+    clear ()
+    {
+      seq_.clear ();
     }
 
     inline
@@ -97,7 +106,8 @@ namespace lol {
     inline const_iterator end () const { return seq_.rend (); }
 
   private:
-
+    stack (const stack&);
+    stack& operator= (const stack&);
     S seq_;
   };
 
@@ -106,10 +116,9 @@ namespace lol {
   class slice
   {
   public:
-
-    slice (const S& stack,
-	   unsigned int range) : stack_ (stack),
-				 range_ (range)
+    slice (const S& stack, unsigned int range)
+      : stack_ (stack)
+      , range_ (range)
     {
     }
 
@@ -121,15 +130,12 @@ namespace lol {
     }
 
   private:
-
     const S& stack_;
     unsigned int range_;
   };
 
 } // lol
+/* Line 124 of stack.hh  */
+#line 140 "generated/stack.hh"
 
-/* Line 1235 of lalr1.cc  */
-#line 133 "generated/stack.hh"
-
-#endif // not BISON_STACK_HH[]dnl
-
+#endif /* !YY_LOL_GENERATED_STACK_HH_INCLUDED  */

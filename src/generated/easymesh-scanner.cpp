@@ -1003,7 +1003,7 @@ case 58:
 YY_RULE_SETUP
 #line 112 "easymesh/easymesh-scanner.l"
 {
-        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
         yylval->u32val = 0x11000000u * (tmp >> 8)
                        | 0x00110000u * ((tmp >> 4) & 0xf)
                        | 0x00001100u * (tmp & 0xf)
@@ -1014,7 +1014,7 @@ case 59:
 YY_RULE_SETUP
 #line 119 "easymesh/easymesh-scanner.l"
 {
-        uint32_t tmp = std::strtol(yytext + 1, NULL, 16);
+        uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
         yylval->u32val = 0x11000000u * (tmp >> 12)
                        | 0x00110000u * ((tmp >> 8) & 0xf)
                        | 0x00001100u * ((tmp >> 4) & 0xf)
@@ -1026,14 +1026,14 @@ YY_RULE_SETUP
 #line 126 "easymesh/easymesh-scanner.l"
 {
         yylval->u32val = 0xffu
-                       | 0x100u * (uint32_t)std::strtol(yytext + 1, NULL, 16);
+                       | 0x100u * (uint32_t)std::strtol(yytext + 1, nullptr, 16);
         return token::COLOR; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 130 "easymesh/easymesh-scanner.l"
 {
-        yylval->u32val = (uint32_t)std::strtol(yytext + 1, NULL, 16);
+        yylval->u32val = (uint32_t)std::strtol(yytext + 1, nullptr, 16);
         return token::COLOR; }
 	YY_BREAK
 case 62:

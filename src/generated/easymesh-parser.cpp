@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2013 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@
 #define yylex   lollex
 
 /* First part of user declarations.  */
-
-/* Line 293 of lalr1.cc  */
+/* Line 283 of lalr1.cc  */
 #line 1 "easymesh/easymesh-parser.y"
 
 //
@@ -59,27 +58,37 @@
 
 #include <string>
 
+/* HACK: workaround for Bison who insists on using exceptions */
+#define try if (true)
+#define catch(...) if (false)
+#define throw (void)0
 
-
-/* Line 293 of lalr1.cc  */
-#line 66 "generated/easymesh-parser.cpp"
+/* Line 283 of lalr1.cc  */
+#line 68 "generated/easymesh-parser.cpp"
 
 
 #include "easymesh-parser.h"
 
 /* User implementation prologue.  */
-
-/* Line 299 of lalr1.cc  */
-#line 66 "easymesh/easymesh-parser.y"
+/* Line 289 of lalr1.cc  */
+#line 70 "easymesh/easymesh-parser.y"
 
 #include "easymesh/easymesh-compiler.h"
 
 #undef yylex
 #define yylex mc.m_lexer->lex
 
-
-/* Line 299 of lalr1.cc  */
+/* Line 289 of lalr1.cc  */
 #line 83 "generated/easymesh-parser.cpp"
+
+
+# ifndef YY_NULL
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULL nullptr
+#  else
+#   define YY_NULL 0
+#  endif
+# endif
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
@@ -93,25 +102,26 @@
 # endif
 #endif
 
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
    the previous symbol: RHS[0] (always defined).  */
 
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
- do                                                                    \
-   if (N)                                                              \
-     {                                                                 \
-       (Current).begin = YYRHSLOC (Rhs, 1).begin;                      \
-       (Current).end   = YYRHSLOC (Rhs, N).end;                        \
-     }                                                                 \
-   else                                                                \
-     {                                                                 \
-       (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;        \
-     }                                                                 \
- while (false)
-#endif
+# ifndef YYLLOC_DEFAULT
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+    do                                                                  \
+      if (N)                                                            \
+        {                                                               \
+          (Current).begin  = YYRHSLOC (Rhs, 1).begin;                   \
+          (Current).end    = YYRHSLOC (Rhs, N).end;                     \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
+        }                                                               \
+    while (/*CONSTCOND*/ false)
+# endif
+
 
 /* Suppress unused-variable warnings by "using" E.  */
 #define YYUSE(e) ((void) (e))
@@ -147,9 +157,9 @@ do {					\
 #else /* !YYDEBUG */
 
 # define YYCDEBUG if (false) std::cerr
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
-# define YY_REDUCE_PRINT(Rule)
-# define YY_STACK_PRINT()
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location) YYUSE(Type)
+# define YY_REDUCE_PRINT(Rule)        static_cast<void>(0)
+# define YY_STACK_PRINT()             static_cast<void>(0)
 
 #endif /* !YYDEBUG */
 
@@ -163,9 +173,8 @@ do {					\
 
 
 namespace lol {
-
-/* Line 382 of lalr1.cc  */
-#line 169 "generated/easymesh-parser.cpp"
+/* Line 357 of lalr1.cc  */
+#line 178 "generated/easymesh-parser.cpp"
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -231,11 +240,10 @@ namespace lol {
   {
     YYUSE (yylocationp);
     YYUSE (yyvaluep);
-    switch (yytype)
-      {
-         default:
-	  break;
-      }
+    std::ostream& yyo = debug_stream ();
+    std::ostream& yyoutput = yyo;
+    YYUSE (yyoutput);
+    YYUSE (yytype);
   }
 
 
@@ -259,14 +267,10 @@ namespace lol {
     YYUSE (yymsg);
     YYUSE (yyvaluep);
 
-    YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+    if (yymsg)
+      YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
-    switch (yytype)
-      {
-  
-	default:
-	  break;
-      }
+    YYUSE (yytype);
   }
 
   void
@@ -323,17 +327,18 @@ namespace lol {
     int yychar = yyempty_;
     int yytoken = 0;
 
-    /* State.  */
+    // State.
     int yyn;
     int yylen = 0;
     int yystate = 0;
 
-    /* Error handling.  */
+    // Error handling.
     int yynerrs_ = 0;
     int yyerrstatus_ = 0;
 
     /// Semantic value of the lookahead.
-    semantic_type yylval;
+    static semantic_type yyval_default;
+    semantic_type yylval = yyval_default;
     /// Location of the lookahead.
     location_type yylloc;
     /// The locations where the error started and ended.
@@ -346,6 +351,10 @@ namespace lol {
 
     int yyresult;
 
+    // FIXME: This shoud be completely indented.  It is not yet to
+    // avoid gratuitous conflicts when merging into the master branch.
+    try
+      {
     YYCDEBUG << "Starting parse" << std::endl;
 
 
@@ -353,9 +362,9 @@ namespace lol {
        yynewstate, since the latter expects the semantical and the
        location values to have been already stored, initialize these
        stacks with a primary value.  */
-    yystate_stack_ = state_stack_type (0);
-    yysemantic_stack_ = semantic_stack_type (0);
-    yylocation_stack_ = location_stack_type (0);
+    yystate_stack_.clear ();
+    yysemantic_stack_.clear ();
+    yylocation_stack_.clear ();
     yysemantic_stack_.push (yylval);
     yylocation_stack_.push (yylloc);
 
@@ -381,10 +390,9 @@ namespace lol {
     /* Read a lookahead token.  */
     if (yychar == yyempty_)
       {
-	YYCDEBUG << "Reading a token: ";
-	yychar = yylex (&yylval, &yylloc);
+        YYCDEBUG << "Reading a token: ";
+        yychar = yylex (&yylval, &yylloc);
       }
-
 
     /* Convert token to internal form.  */
     if (yychar <= yyeof_)
@@ -456,594 +464,517 @@ namespace lol {
     else
       yyval = yysemantic_stack_[0];
 
+    // Compute the default @$.
     {
       slice<location_type, location_stack_type> slice (yylocation_stack_, yylen);
       YYLLOC_DEFAULT (yyloc, slice, yylen);
     }
+
+    // Perform the reduction.
     YY_REDUCE_PRINT (yyn);
     switch (yyn)
       {
-	  case 7:
-
-/* Line 690 of lalr1.cc  */
-#line 90 "easymesh/easymesh-parser.y"
+          case 7:
+/* Line 664 of lalr1.cc  */
+#line 94 "easymesh/easymesh-parser.y"
     { mc.m_mesh.OpenBrace(); }
     break;
 
   case 8:
-
-/* Line 690 of lalr1.cc  */
-#line 94 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 98 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CloseBrace(); }
     break;
 
   case 14:
-
-/* Line 690 of lalr1.cc  */
-#line 109 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 113 "easymesh/easymesh-parser.y"
     { mc.m_mesh.SetCurColor(vec4((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3)); }
     break;
 
   case 15:
-
-/* Line 690 of lalr1.cc  */
-#line 110 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 114 "easymesh/easymesh-parser.y"
     { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
                       vec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                       mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255)); }
     break;
 
   case 16:
-
-/* Line 690 of lalr1.cc  */
-#line 113 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 117 "easymesh/easymesh-parser.y"
     { mc.m_mesh.SetCurColor2(vec4((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3)); }
     break;
 
   case 17:
-
-/* Line 690 of lalr1.cc  */
-#line 114 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 118 "easymesh/easymesh-parser.y"
     { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
                       vec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                       mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255)); }
     break;
 
   case 18:
-
-/* Line 690 of lalr1.cc  */
-#line 120 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 124 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Chamfer((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 19:
-
-/* Line 690 of lalr1.cc  */
-#line 121 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 125 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].args).f0, 0, 0)); }
     break;
 
   case 20:
-
-/* Line 690 of lalr1.cc  */
-#line 122 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 126 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Translate(vec3(0, (yysemantic_stack_[(2) - (2)].args).f0, 0)); }
     break;
 
   case 21:
-
-/* Line 690 of lalr1.cc  */
-#line 123 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 127 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Translate(vec3(0, 0, (yysemantic_stack_[(2) - (2)].args).f0)); }
     break;
 
   case 22:
-
-/* Line 690 of lalr1.cc  */
-#line 124 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 128 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2)); }
     break;
 
   case 23:
-
-/* Line 690 of lalr1.cc  */
-#line 125 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 129 "easymesh/easymesh-parser.y"
     { mc.m_mesh.RotateX((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 24:
-
-/* Line 690 of lalr1.cc  */
-#line 126 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 130 "easymesh/easymesh-parser.y"
     { mc.m_mesh.RotateY((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 25:
-
-/* Line 690 of lalr1.cc  */
-#line 127 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 131 "easymesh/easymesh-parser.y"
     { mc.m_mesh.RotateZ((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 26:
-
-/* Line 690 of lalr1.cc  */
-#line 128 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 132 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 27:
-
-/* Line 690 of lalr1.cc  */
-#line 129 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 133 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 28:
-
-/* Line 690 of lalr1.cc  */
-#line 130 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 134 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 29:
-
-/* Line 690 of lalr1.cc  */
-#line 131 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 135 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 30:
-
-/* Line 690 of lalr1.cc  */
-#line 132 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 136 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 31:
-
-/* Line 690 of lalr1.cc  */
-#line 133 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 137 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TaperZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 32:
-
-/* Line 690 of lalr1.cc  */
-#line 134 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 138 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TwistX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 33:
-
-/* Line 690 of lalr1.cc  */
-#line 135 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 139 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TwistY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 34:
-
-/* Line 690 of lalr1.cc  */
-#line 136 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 140 "easymesh/easymesh-parser.y"
     { mc.m_mesh.TwistZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 35:
-
-/* Line 690 of lalr1.cc  */
-#line 137 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 141 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 36:
-
-/* Line 690 of lalr1.cc  */
-#line 138 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 142 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 37:
-
-/* Line 690 of lalr1.cc  */
-#line 139 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 143 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 38:
-
-/* Line 690 of lalr1.cc  */
-#line 140 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 144 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 39:
-
-/* Line 690 of lalr1.cc  */
-#line 141 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 145 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 40:
-
-/* Line 690 of lalr1.cc  */
-#line 142 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 146 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ShearZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 41:
-
-/* Line 690 of lalr1.cc  */
-#line 143 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 147 "easymesh/easymesh-parser.y"
     { mc.m_mesh.StretchX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 42:
-
-/* Line 690 of lalr1.cc  */
-#line 144 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 148 "easymesh/easymesh-parser.y"
     { mc.m_mesh.StretchY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 43:
-
-/* Line 690 of lalr1.cc  */
-#line 145 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 149 "easymesh/easymesh-parser.y"
     { mc.m_mesh.StretchZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 44:
-
-/* Line 690 of lalr1.cc  */
-#line 146 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 150 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendXY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 45:
-
-/* Line 690 of lalr1.cc  */
-#line 147 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 151 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendXZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 46:
-
-/* Line 690 of lalr1.cc  */
-#line 148 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 152 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendYX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 47:
-
-/* Line 690 of lalr1.cc  */
-#line 149 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 153 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendYZ((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 48:
-
-/* Line 690 of lalr1.cc  */
-#line 150 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 154 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendZX((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 49:
-
-/* Line 690 of lalr1.cc  */
-#line 151 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 155 "easymesh/easymesh-parser.y"
     { mc.m_mesh.BendZY((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 50:
-
-/* Line 690 of lalr1.cc  */
-#line 152 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 156 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].args).f0, 1.0, 1.0)); }
     break;
 
   case 51:
-
-/* Line 690 of lalr1.cc  */
-#line 153 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 157 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Scale(vec3(1.0, (yysemantic_stack_[(2) - (2)].args).f0, 1.0)); }
     break;
 
   case 52:
-
-/* Line 690 of lalr1.cc  */
-#line 154 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 158 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Scale(vec3(1.0, 1.0, (yysemantic_stack_[(2) - (2)].args).f0)); }
     break;
 
   case 53:
-
-/* Line 690 of lalr1.cc  */
-#line 155 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 159 "easymesh/easymesh-parser.y"
     { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2)); }
     break;
 
   case 54:
-
-/* Line 690 of lalr1.cc  */
-#line 156 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 160 "easymesh/easymesh-parser.y"
     { mc.m_mesh.MirrorX(); }
     break;
 
   case 55:
-
-/* Line 690 of lalr1.cc  */
-#line 157 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 161 "easymesh/easymesh-parser.y"
     { mc.m_mesh.MirrorY(); }
     break;
 
   case 56:
-
-/* Line 690 of lalr1.cc  */
-#line 158 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 162 "easymesh/easymesh-parser.y"
     { mc.m_mesh.MirrorZ(); }
     break;
 
   case 57:
-
-/* Line 690 of lalr1.cc  */
-#line 159 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 163 "easymesh/easymesh-parser.y"
     { mc.m_mesh.RadialJitter((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 58:
-
-/* Line 690 of lalr1.cc  */
-#line 160 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 164 "easymesh/easymesh-parser.y"
     { mc.m_mesh.SplitTriangles((yysemantic_stack_[(2) - (2)].args).f0); }
     break;
 
   case 59:
-
-/* Line 690 of lalr1.cc  */
-#line 161 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 165 "easymesh/easymesh-parser.y"
     { mc.m_mesh.SmoothMesh((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 60:
-
-/* Line 690 of lalr1.cc  */
-#line 162 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 166 "easymesh/easymesh-parser.y"
     { mc.m_mesh.ToggleScaleWinding(); }
     break;
 
   case 61:
-
-/* Line 690 of lalr1.cc  */
-#line 163 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 167 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CsgUnion(); }
     break;
 
   case 62:
-
-/* Line 690 of lalr1.cc  */
-#line 164 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 168 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CsgSubstract(); }
     break;
 
   case 63:
-
-/* Line 690 of lalr1.cc  */
-#line 165 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 169 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CsgSubstractLoss(); }
     break;
 
   case 64:
-
-/* Line 690 of lalr1.cc  */
-#line 166 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 170 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CsgAnd(); }
     break;
 
   case 65:
-
-/* Line 690 of lalr1.cc  */
-#line 167 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 171 "easymesh/easymesh-parser.y"
     { mc.m_mesh.CsgXor(); }
     break;
 
   case 66:
-
-/* Line 690 of lalr1.cc  */
-#line 171 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 175 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendCylinder((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                                  (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3,
                                                  (int)(yysemantic_stack_[(2) - (2)].args).f4, (int)(yysemantic_stack_[(2) - (2)].args).f5, 0); }
     break;
 
   case 67:
-
-/* Line 690 of lalr1.cc  */
-#line 174 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 178 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendCylinder((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                                  (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3,
                                                  (int)(yysemantic_stack_[(2) - (2)].args).f4, (int)(yysemantic_stack_[(2) - (2)].args).f5, (int)(yysemantic_stack_[(2) - (2)].args).f6); }
     break;
 
   case 68:
-
-/* Line 690 of lalr1.cc  */
-#line 177 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 181 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2)); }
     break;
 
   case 69:
-
-/* Line 690 of lalr1.cc  */
-#line 178 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 182 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                                             (yysemantic_stack_[(2) - (2)].args).f2), (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 70:
-
-/* Line 690 of lalr1.cc  */
-#line 180 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 184 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                                           (yysemantic_stack_[(2) - (2)].args).f2), (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 71:
-
-/* Line 690 of lalr1.cc  */
-#line 182 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 186 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendSphere((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 72:
-
-/* Line 690 of lalr1.cc  */
-#line 183 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 187 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendCapsule((yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 73:
-
-/* Line 690 of lalr1.cc  */
-#line 184 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 188 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendTorus((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 74:
-
-/* Line 690 of lalr1.cc  */
-#line 185 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 189 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (yysemantic_stack_[(2) - (2)].args).f2,
                                              (int)(yysemantic_stack_[(2) - (2)].args).f3, (int)(yysemantic_stack_[(2) - (2)].args).f4); }
     break;
 
   case 75:
-
-/* Line 690 of lalr1.cc  */
-#line 187 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 191 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendExpandedStar((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                                      (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3); }
     break;
 
   case 76:
-
-/* Line 690 of lalr1.cc  */
-#line 189 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 193 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendDisc((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1, (int)(yysemantic_stack_[(2) - (2)].args).f2); }
     break;
 
   case 77:
-
-/* Line 690 of lalr1.cc  */
-#line 190 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 194 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 78:
-
-/* Line 690 of lalr1.cc  */
-#line 191 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 195 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(2) - (2)].args).f0, (int)(yysemantic_stack_[(2) - (2)].args).f1); }
     break;
 
   case 79:
-
-/* Line 690 of lalr1.cc  */
-#line 192 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 196 "easymesh/easymesh-parser.y"
     { mc.m_mesh.AppendCog((int)(yysemantic_stack_[(2) - (2)].args).f0, (yysemantic_stack_[(2) - (2)].args).f1,
                                  (yysemantic_stack_[(2) - (2)].args).f2, (yysemantic_stack_[(2) - (2)].args).f3, (yysemantic_stack_[(2) - (2)].args).f4, (yysemantic_stack_[(2) - (2)].args).f5, (yysemantic_stack_[(2) - (2)].args).f6,
                                  (yysemantic_stack_[(2) - (2)].args).f7, (yysemantic_stack_[(2) - (2)].args).f8, (int)(yysemantic_stack_[(2) - (2)].args).f9); }
     break;
 
   case 80:
-
-/* Line 690 of lalr1.cc  */
-#line 197 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 201 "easymesh/easymesh-parser.y"
     { (yyval.args).f0 = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 81:
-
-/* Line 690 of lalr1.cc  */
-#line 198 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 202 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f1 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 82:
-
-/* Line 690 of lalr1.cc  */
-#line 199 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 203 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f2 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 83:
-
-/* Line 690 of lalr1.cc  */
-#line 200 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 204 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f3 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 84:
-
-/* Line 690 of lalr1.cc  */
-#line 201 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 205 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f4 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 85:
-
-/* Line 690 of lalr1.cc  */
-#line 202 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 206 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f5 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 86:
-
-/* Line 690 of lalr1.cc  */
-#line 203 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 207 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f6 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 87:
-
-/* Line 690 of lalr1.cc  */
-#line 204 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 208 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f7 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 88:
-
-/* Line 690 of lalr1.cc  */
-#line 205 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 209 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f8 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 89:
-
-/* Line 690 of lalr1.cc  */
-#line 206 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 210 "easymesh/easymesh-parser.y"
     { (yyval.args) = (yysemantic_stack_[(2) - (1)].args); (yyval.args).f9 = (yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 90:
-
-/* Line 690 of lalr1.cc  */
-#line 209 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 213 "easymesh/easymesh-parser.y"
     { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 91:
-
-/* Line 690 of lalr1.cc  */
-#line 210 "easymesh/easymesh-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 214 "easymesh/easymesh-parser.y"
     { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
 
-
-/* Line 690 of lalr1.cc  */
-#line 1044 "generated/easymesh-parser.cpp"
-	default:
-          break;
+/* Line 664 of lalr1.cc  */
+#line 974 "generated/easymesh-parser.cpp"
+      default:
+        break;
       }
+
     /* User semantic actions sometimes alter yychar, and that requires
        that yytoken be updated with the new translation.  We take the
        approach of translating immediately before every use of yytoken.
@@ -1094,20 +1025,19 @@ namespace lol {
     yyerror_range[1] = yylloc;
     if (yyerrstatus_ == 3)
       {
-	/* If just tried and failed to reuse lookahead token after an
-	 error, discard it.  */
-
-	if (yychar <= yyeof_)
-	  {
-	  /* Return failure if at end of input.  */
-	  if (yychar == yyeof_)
-	    YYABORT;
-	  }
-	else
-	  {
-	    yydestruct_ ("Error: discarding", yytoken, &yylval, &yylloc);
-	    yychar = yyempty_;
-	  }
+        /* If just tried and failed to reuse lookahead token after an
+           error, discard it.  */
+        if (yychar <= yyeof_)
+          {
+            /* Return failure if at end of input.  */
+            if (yychar == yyeof_)
+              YYABORT;
+          }
+        else
+          {
+            yydestruct_ ("Error: discarding", yytoken, &yylval, &yylloc);
+            yychar = yyempty_;
+          }
       }
 
     /* Else will try to reuse lookahead token after shifting the error
@@ -1156,7 +1086,7 @@ namespace lol {
 
 	/* Pop the current state because it cannot handle the error token.  */
 	if (yystate_stack_.height () == 1)
-	YYABORT;
+	  YYABORT;
 
 	yyerror_range[1] = yylocation_stack_[0];
 	yydestruct_ ("Error: popping",
@@ -1204,16 +1134,42 @@ namespace lol {
     /* Do not reclaim the symbols of the rule which action triggered
        this YYABORT or YYACCEPT.  */
     yypop_ (yylen);
-    while (yystate_stack_.height () != 1)
+    while (1 < yystate_stack_.height ())
       {
-	yydestruct_ ("Cleanup: popping",
-		   yystos_[yystate_stack_[0]],
-		   &yysemantic_stack_[0],
-		   &yylocation_stack_[0]);
-	yypop_ ();
+        yydestruct_ ("Cleanup: popping",
+                     yystos_[yystate_stack_[0]],
+                     &yysemantic_stack_[0],
+                     &yylocation_stack_[0]);
+        yypop_ ();
       }
 
     return yyresult;
+    }
+    catch (...)
+      {
+        YYCDEBUG << "Exception caught: cleaning lookahead and stack"
+                 << std::endl;
+        // Do not try to display the values of the reclaimed symbols,
+        // as their printer might throw an exception.
+        if (yychar != yyempty_)
+          {
+            /* Make sure we have latest lookahead translation.  See
+               comments at user semantic actions for why this is
+               necessary.  */
+            yytoken = yytranslate_ (yychar);
+            yydestruct_ (YY_NULL, yytoken, &yylval, &yylloc);
+          }
+
+        while (1 < yystate_stack_.height ())
+          {
+            yydestruct_ (YY_NULL,
+                         yystos_[yystate_stack_[0]],
+                         &yysemantic_stack_[0],
+                         &yylocation_stack_[0]);
+            yypop_ ();
+          }
+        throw;
+      }
   }
 
   // Generate an error message.
@@ -1282,7 +1238,7 @@ namespace lol {
           }
       }
 
-    char const* yyformat = 0;
+    char const* yyformat = YY_NULL;
     switch (yycount)
       {
 #define YYCASE_(N, S)                         \
@@ -1520,7 +1476,7 @@ namespace lol {
        1,     2
   };
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+
   /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
      First, the terminals, then, starting at \a yyntokens_, nonterminals.  */
   const char*
@@ -1543,9 +1499,8 @@ namespace lol {
   "mesh_open", "mesh_close", "mesh_command_list", "mesh_command",
   "color_command", "transform_command", "primitive_command", "args1",
   "args2", "args3", "args4", "args5", "args6", "args7", "args8", "args9",
-  "args10", "number", 0
+  "args10", "number", YY_NULL
   };
-#endif
 
 #if YYDEBUG
   /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -1601,16 +1556,16 @@ namespace lol {
   const unsigned char
   EasyMeshParser::yyrline_[] =
   {
-         0,    76,    76,    80,    81,    85,    86,    90,    94,    98,
-      99,   103,   104,   105,   109,   110,   113,   114,   120,   121,
-     122,   123,   124,   125,   126,   127,   128,   129,   130,   131,
-     132,   133,   134,   135,   136,   137,   138,   139,   140,   141,
-     142,   143,   144,   145,   146,   147,   148,   149,   150,   151,
-     152,   153,   154,   155,   156,   157,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   171,   174,   177,   178,
-     180,   182,   183,   184,   185,   187,   189,   190,   191,   192,
-     197,   198,   199,   200,   201,   202,   203,   204,   205,   206,
-     209,   210
+         0,    80,    80,    84,    85,    89,    90,    94,    98,   102,
+     103,   107,   108,   109,   113,   114,   117,   118,   124,   125,
+     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
+     136,   137,   138,   139,   140,   141,   142,   143,   144,   145,
+     146,   147,   148,   149,   150,   151,   152,   153,   154,   155,
+     156,   157,   158,   159,   160,   161,   162,   163,   164,   165,
+     166,   167,   168,   169,   170,   171,   175,   178,   181,   182,
+     184,   186,   187,   188,   189,   191,   193,   194,   195,   196,
+     201,   202,   203,   204,   205,   206,   207,   208,   209,   210,
+     213,   214
   };
 
   // Print the state stack on the debug stream.
@@ -1703,13 +1658,10 @@ namespace lol {
 
 
 } // lol
-
+/* Line 1135 of lalr1.cc  */
+#line 1663 "generated/easymesh-parser.cpp"
 /* Line 1136 of lalr1.cc  */
-#line 1709 "generated/easymesh-parser.cpp"
-
-
-/* Line 1138 of lalr1.cc  */
-#line 213 "easymesh/easymesh-parser.y"
+#line 217 "easymesh/easymesh-parser.y"
 
 
 void lol::EasyMeshParser::error(const EasyMeshParser::location_type& l,
@@ -1717,5 +1669,4 @@ void lol::EasyMeshParser::error(const EasyMeshParser::location_type& l,
 {
     mc.Error(l, m);
 }
-
 
