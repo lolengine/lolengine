@@ -347,6 +347,10 @@ group_glsl_type:
   | GT_USAMPLERCUBE
   | GT_USAMPLERCUBEARRAY
   | GT_USAMPLERBUFFER
+  | HGT_SAMPLER1D
+  | HGT_SAMPLER2D
+  | HGT_SAMPLER3D
+  | HGT_SAMPLERCUBE
     ;
 
 group_glsl_keyword_in_hlsl:
@@ -403,10 +407,6 @@ group_hlsl_keyword_in_glsl:
   | HGT_NOPERSPECTIVE
   | HGT_OUT
   | HGT_RETURN
-  | HGT_SAMPLER1D
-  | HGT_SAMPLER2D
-  | HGT_SAMPLER3D
-  | HGT_SAMPLERCUBE
   | HGT_STRUCT
   | HGT_SWITCH
   | HGT_UINT
@@ -712,6 +712,7 @@ group_language_symbols:
 
 lolfx_file:
     lolfx_section_list
+    T_END
     ;
 
 lolfx_section_list:
