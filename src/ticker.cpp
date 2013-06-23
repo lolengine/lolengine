@@ -386,7 +386,7 @@ void TickerData::DrawThreadTick()
         switch (i)
         {
         case Entity::DRAWGROUP_BEGIN:
-            Scene::GetDefault()->Reset();
+            g_scene->Reset();
             g_renderer->Clear(ClearMask::All);
             break;
         default:
@@ -412,7 +412,7 @@ void TickerData::DrawThreadTick()
             }
 
         /* Do this render step */
-        Scene::GetDefault()->Render();
+        g_scene->Render();
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

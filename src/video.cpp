@@ -51,6 +51,7 @@ DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 void Video::Setup(ivec2 size)
 {
     g_renderer = new Renderer(size);
+    g_scene = new Scene(size);
 
     /* Initialise reasonable scene default properties */
     SetDebugRenderMode(DebugRenderMode::Default);
@@ -114,6 +115,9 @@ DebugRenderMode Video::GetDebugRenderMode()
 
 void Video::Destroy()
 {
+    delete g_scene;
+    g_scene = nullptr;
+
     delete g_renderer;
     g_renderer = nullptr;
 }

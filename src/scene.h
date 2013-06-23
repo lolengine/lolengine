@@ -29,12 +29,13 @@ class SceneData;
 
 class Scene
 {
-public:
-    Scene();
+    friend class Video;
+
+private:
+    Scene(ivec2 size);
     ~Scene();
 
-    static Scene *GetDefault();
-
+public:
     Camera *GetCamera();
     void PushCamera(Camera *cam);
     void PopCamera(Camera *cam);
@@ -53,6 +54,8 @@ public:
 private:
     SceneData *data;
 };
+
+extern Scene *g_scene;
 
 } /* namespace lol */
 

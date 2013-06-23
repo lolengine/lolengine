@@ -50,8 +50,7 @@ void Sprite::TickDraw(float seconds)
 {
     Entity::TickDraw(seconds);
 
-    Scene::GetDefault()->AddTile(data->tileset, data->id, m_position,
-                                 0, vec2(1.0f));
+    g_scene->AddTile(data->tileset, data->id, m_position, 0, vec2(1.0f));
 }
 
 Sprite::~Sprite()

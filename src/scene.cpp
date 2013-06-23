@@ -28,6 +28,16 @@ LOLFX_RESOURCE_DECLARE(line);
 namespace lol
 {
 
+/*
+ * The global g_scene object, initialised by Video::Init
+ */
+
+Scene *g_scene = nullptr;
+
+/*
+ * A quick and dirty Tile structure for 2D blits
+ */
+
 struct Tile
 {
     TileSet *tileset;
@@ -71,23 +81,18 @@ private:
 
     Camera *m_default_cam;
     Array<Camera *> m_camera_stack;
-
-    static Scene *scene;
 };
-
-Scene *SceneData::scene = nullptr;
 
 /*
  * Public Scene class
  */
 
-Scene::Scene()
+Scene::Scene(ivec2 size)
   : data(new SceneData())
 {
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
-    mat4 proj = mat4::ortho(0, Video::GetSize().x, 0, Video::GetSize().y,
-                            -1000.f, 1000.f);
+    mat4 proj = mat4::ortho(0, size.x, 0, size.y, -1000.f, 1000.f);
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
@@ -112,13 +117,6 @@ Scene::~Scene()
     delete data->m_line_vdecl;
     delete data->m_tile_vdecl;
     delete data;
-}
-
-Scene *Scene::GetDefault()
-{
-    if (!SceneData::scene)
-        SceneData::scene = new Scene();
-    return SceneData::scene;
 }
 
 void Scene::PushCamera(Camera *cam)

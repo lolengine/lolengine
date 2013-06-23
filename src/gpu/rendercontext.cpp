@@ -52,8 +52,6 @@ class RenderContextData
     friend class RenderContext;
 
 private:
-    Scene *m_scene;
-
     TrackedState<ibox2> m_viewport;
     TrackedState<vec4> m_clear_color;
     TrackedState<float> m_clear_depth;
@@ -71,7 +69,6 @@ private:
 RenderContext::RenderContext()
   : m_data(new RenderContextData())
 {
-    m_data->m_scene = Scene::GetDefault();
 }
 
 RenderContext::~RenderContext()

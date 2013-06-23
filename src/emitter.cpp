@@ -73,8 +73,8 @@ void Emitter::TickDraw(float seconds)
     Entity::TickDraw(seconds);
 
     for (int i = 0; i < data->nparticles; i++)
-        Scene::GetDefault()->AddTile(data->tileset, data->particles[i],
-                                     data->positions[i], 0, vec2(1.0f));
+        g_scene->AddTile(data->tileset, data->particles[i],
+                         data->positions[i], 0, vec2(1.0f));
 }
 
 void Emitter::AddParticle(int id, vec3 pos, vec3 vel)

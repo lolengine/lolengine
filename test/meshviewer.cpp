@@ -61,9 +61,9 @@ public:
     void SetFov(float new_fov=60.0f, vec2 video_size = vec2(Video::GetSize()))
     {
         if (new_fov > MIN_FOV)
-            Scene::GetDefault()->GetCamera()->SetProjection(mat4::perspective(new_fov, video_size.x, video_size.y, .1f, 1000.f));
+            g_scene->GetCamera()->SetProjection(mat4::perspective(new_fov, video_size.x, video_size.y, .1f, 1000.f));
         else
-            Scene::GetDefault()->GetCamera()->SetProjection(mat4::ortho(video_size.x, video_size.y, .1f, 1000.f));
+            g_scene->GetCamera()->SetProjection(mat4::ortho(video_size.x, video_size.y, .1f, 1000.f));
     }
 
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
@@ -107,7 +107,7 @@ public:
         m_camera->SetView(vec3(0.f, 0.f, 10.f),
                           vec3(0.f, 0.f, 0.f),
                           vec3(0.f, 1.f, 0.f));
-        Scene::GetDefault()->PushCamera(m_camera);
+        g_scene->PushCamera(m_camera);
 
         //Lights setup
         m_lights << new Light();
@@ -144,7 +144,7 @@ public:
 
     ~MeshViewer()
     {
-        Scene::GetDefault()->PopCamera(m_camera);
+        g_scene->PopCamera(m_camera);
         for (int i = 0; i < m_lights.Count(); ++i)
             Ticker::Unref(m_lights[i]);
     }
@@ -178,8 +178,8 @@ public:
             if (m_meshes[mesh_id].m2)
                 break;
 
-        mat4 world_cam = Scene::GetDefault()->GetCamera()->GetView();
-        mat4 cam_screen = Scene::GetDefault()->GetCamera()->GetProjection();
+        mat4 world_cam = g_scene->GetCamera()->GetView();
+        mat4 cam_screen = g_scene->GetCamera()->GetProjection();
 
         if (m_meshes.Count() && mesh_id >= 0)
         {
@@ -250,13 +250,13 @@ public:
             SetFov(m_fov_damp);
 
         //Move modification
-        vec3 campos = Scene::GetDefault()->GetCamera()->GetPosition();
+        vec3 campos = g_scene->GetCamera()->GetPosition();
         if (m_fov_damp < MIN_FOV)
-            Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, 10.f), quat(1.f));
+            g_scene->GetCamera()->SetView(vec3(campos.xy, 10.f), quat(1.f));
         else if (fov_ratio > .0f)
-            Scene::GetDefault()->GetCamera()->SetView(vec3(campos.xy, campos.z * fov_ratio * 1.1f), quat(1.f));
+            g_scene->GetCamera()->SetView(vec3(campos.xy, campos.z * fov_ratio * 1.1f), quat(1.f));
 #else
-        Camera* cur_cam = Scene::GetDefault()->GetCamera();
+        Camera* cur_cam = g_scene->GetCamera();
         vec3 min_max_diff = (cam_min_max[1] - cam_min_max[0]);
         float screen_size = max(max(lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)),
                             max(    lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)));
@@ -442,7 +442,7 @@ public:
 
         g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        mat4 default_proj = Scene::GetDefault()->GetCamera()->GetProjection();
+        mat4 default_proj = g_scene->GetCamera()->GetProjection();
         int max_drawn = m_meshes.Count() - m_mesh_shown;
         for (int i = max_drawn; i < m_meshes.Count(); i++)
             m_meshes[i].m4 = vec3(.0f);
@@ -461,7 +461,7 @@ public:
                 }
                 m_meshes[i].m4 = damp(m_meshes[i].m4, new_mesh_offset, .35f, seconds);
 
-                Scene::GetDefault()->GetCamera()->SetProjection(
+                g_scene->GetCamera()->SetProjection(
                                                                 mat4::translate(m_meshes[i].m4) *
                                                                 mat4::translate(vec3(m_mesh_screen_offset_damp, .0f)) *
                                                                 mat4::scale(vec3(vec2(m_meshes[i].m3), 1.0f)) *
@@ -475,7 +475,7 @@ public:
                 g_renderer->Clear(ClearMask::Depth);
             }
         }
-        Scene::GetDefault()->GetCamera()->SetProjection(default_proj);
+        g_scene->GetCamera()->SetProjection(default_proj);
     }
 
 private:

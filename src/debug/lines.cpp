@@ -19,7 +19,7 @@ namespace lol
 
 void Debug::DrawLine(vec3 a, vec3 b, vec4 color)
 {
-    Scene::GetDefault()->AddLine(a, b, color);
+    g_scene->AddLine(a, b, color);
 }
 
 void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
@@ -36,9 +36,9 @@ void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
     {
         int j = ((i & 1) << 1) | ((i >> 1) ^ 1);
 
-        Scene::GetDefault()->AddLine(v[i], v[i + 4], color);
-        Scene::GetDefault()->AddLine(v[i], v[j], color);
-        Scene::GetDefault()->AddLine(v[i + 4], v[j + 4], color);
+        g_scene->AddLine(v[i], v[i + 4], color);
+        g_scene->AddLine(v[i], v[j], color);
+        g_scene->AddLine(v[i + 4], v[j + 4], color);
     }
 }
 
