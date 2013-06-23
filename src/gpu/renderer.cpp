@@ -63,7 +63,8 @@ private:
     float m_alpha_value;
     BlendFunc m_blend_src, m_blend_dst;
     DepthFunc m_depth_func;
-    CullMode m_face_culling;
+    CullMode m_cull_mode;
+    PolygonMode m_polygon_mode;
 
 private:
 #if defined USE_D3D9
@@ -155,8 +156,11 @@ Renderer::Renderer(ivec2 size)
     m_data->m_depth_func = DepthFunc::Disabled;
     SetDepthFunc(DepthFunc::LessOrEqual);
 
-    m_data->m_face_culling = CullMode::Disabled;
-    SetFaceCulling(CullMode::CounterClockwise);
+    m_data->m_cull_mode = CullMode::Disabled;
+    SetCullMode(CullMode::CounterClockwise);
+
+    m_data->m_polygon_mode = PolygonMode::Point;
+    SetPolygonMode(PolygonMode::Fill);
 
     /* Add some rendering states that we don't export to the user */
 #if defined USE_D3D9 || defined _XBOX
@@ -600,9 +604,9 @@ DepthFunc Renderer::GetDepthFunc() const
  * Face culling
  */
 
-void Renderer::SetFaceCulling(CullMode mode)
+void Renderer::SetCullMode(CullMode mode)
 {
-    if (m_data->m_face_culling == mode)
+    if (m_data->m_cull_mode == mode)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
@@ -637,12 +641,57 @@ void Renderer::SetFaceCulling(CullMode mode)
     }
 #endif
 
-    m_data->m_face_culling = mode;
+    m_data->m_cull_mode = mode;
 }
 
-CullMode Renderer::GetFaceCulling() const
+CullMode Renderer::GetCullMode() const
 {
-    return m_data->m_face_culling;
+    return m_data->m_cull_mode;
+}
+
+/*
+ * Polygon rendering mode
+ */
+
+void Renderer::SetPolygonMode(PolygonMode mode)
+{
+    if (m_data->m_polygon_mode == mode)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    switch (mode)
+    {
+    case PolygonMode::Point:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_POINT);
+        break;
+    case PolygonMode::Line:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+        break;
+    case PolygonMode::Fill:
+        m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DCULL_SOLID);
+        break;
+    }
+#else
+    switch (mode)
+    {
+    case PolygonMode::Point:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+        break;
+    case PolygonMode::Line:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        break;
+    case PolygonMode::Fill:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        break;
+    }
+#endif
+
+    m_data->m_polygon_mode = mode;
+}
+
+PolygonMode Renderer::GetPolygonMode() const
+{
+    return m_data->m_polygon_mode;
 }
 
 } /* namespace lol */

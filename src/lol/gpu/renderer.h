@@ -85,6 +85,22 @@ struct CullMode
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate the polygon mode. */
+struct PolygonMode
+{
+    enum Value
+    {
+        Fill,
+        Line,
+        Point,
+    }
+    m_value;
+
+    inline PolygonMode() : m_value(Fill) {}
+    inline PolygonMode(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 /* A safe enum to indicate the depth test mode. */
 struct DepthFunc
 {
@@ -164,8 +180,11 @@ public:
     void SetDepthFunc(DepthFunc func);
     DepthFunc GetDepthFunc() const;
 
-    void SetFaceCulling(CullMode mode);
-    CullMode GetFaceCulling() const;
+    void SetCullMode(CullMode mode);
+    CullMode GetCullMode() const;
+
+    void SetPolygonMode(PolygonMode mode);
+    PolygonMode GetPolygonMode() const;
 
 private:
     RendererData *m_data;

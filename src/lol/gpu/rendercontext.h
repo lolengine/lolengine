@@ -33,7 +33,8 @@ public:
     void SetAlphaFunc(AlphaFunc func, float alpha);
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
     void SetDepthFunc(DepthFunc func);
-    void SetFaceCulling(CullMode mode);
+    void SetCullMode(CullMode mode);
+    void SetPolygonMode(PolygonMode mode);
 
 private:
     RenderContextData *m_data;

@@ -75,7 +75,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 //                SetFaceCulling(false);
 //            else
 //                SetFaceCulling(true);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
             break;
         }
@@ -98,7 +98,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
 #else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
             break;
         }

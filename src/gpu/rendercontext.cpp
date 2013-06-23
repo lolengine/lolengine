@@ -59,7 +59,8 @@ private:
     TrackedState<float> m_alpha_value;
     TrackedState<BlendFunc> m_blend_src, m_blend_dst;
     TrackedState<DepthFunc> m_depth_func;
-    TrackedState<CullMode> m_face_culling;
+    TrackedState<CullMode> m_cull_mode;
+    TrackedState<PolygonMode> m_polygon_mode;
 };
 
 /*
@@ -93,8 +94,11 @@ RenderContext::~RenderContext()
     if (m_data->m_depth_func.HasChanged())
         g_renderer->SetDepthFunc(m_data->m_depth_func.GetValue());
 
-    if (m_data->m_face_culling.HasChanged())
-        g_renderer->SetFaceCulling(m_data->m_face_culling.GetValue());
+    if (m_data->m_cull_mode.HasChanged())
+        g_renderer->SetCullMode(m_data->m_cull_mode.GetValue());
+
+    if (m_data->m_polygon_mode.HasChanged())
+        g_renderer->SetPolygonMode(m_data->m_polygon_mode.GetValue());
 
     delete m_data;
 }
@@ -151,12 +155,20 @@ void RenderContext::SetDepthFunc(DepthFunc func)
     g_renderer->SetDepthFunc(func);
 }
 
-void RenderContext::SetFaceCulling(CullMode mode)
+void RenderContext::SetCullMode(CullMode mode)
 {
-    if (!m_data->m_face_culling.HasChanged())
-        m_data->m_face_culling.TrackValue(g_renderer->GetFaceCulling());
+    if (!m_data->m_cull_mode.HasChanged())
+        m_data->m_cull_mode.TrackValue(g_renderer->GetCullMode());
 
-    g_renderer->SetFaceCulling(mode);
+    g_renderer->SetCullMode(mode);
+}
+
+void RenderContext::SetPolygonMode(PolygonMode mode)
+{
+    if (!m_data->m_polygon_mode.HasChanged())
+        m_data->m_polygon_mode.TrackValue(g_renderer->GetPolygonMode());
+
+    g_renderer->SetPolygonMode(mode);
 }
 
 } /* namespace lol */
