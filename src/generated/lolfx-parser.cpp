@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2013 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@
 #define yylex   lollex
 
 /* First part of user declarations.  */
-
-/* Line 293 of lalr1.cc  */
+/* Line 283 of lalr1.cc  */
 #line 1 "gpu/lolfx-parser.y"
 
 //
@@ -56,27 +55,37 @@
 
 #include <string>
 
+/* HACK: workaround for Bison who insists on using exceptions */
+#define try if (true)
+#define catch(...) if (false)
+#define throw (void)0
 
-
-/* Line 293 of lalr1.cc  */
-#line 63 "generated/lolfx-parser.cpp"
+/* Line 283 of lalr1.cc  */
+#line 65 "generated/lolfx-parser.cpp"
 
 
 #include "lolfx-parser.h"
 
 /* User implementation prologue.  */
-
-/* Line 299 of lalr1.cc  */
-#line 241 "gpu/lolfx-parser.y"
+/* Line 289 of lalr1.cc  */
+#line 245 "gpu/lolfx-parser.y"
 
 #include "gpu/lolfx-compiler.h"
 
 #undef yylex
 #define yylex mc.m_lexer->lex
 
-
-/* Line 299 of lalr1.cc  */
+/* Line 289 of lalr1.cc  */
 #line 80 "generated/lolfx-parser.cpp"
+
+
+# ifndef YY_NULL
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULL nullptr
+#  else
+#   define YY_NULL 0
+#  endif
+# endif
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
@@ -90,25 +99,26 @@
 # endif
 #endif
 
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
    the previous symbol: RHS[0] (always defined).  */
 
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
- do                                                                    \
-   if (N)                                                              \
-     {                                                                 \
-       (Current).begin = YYRHSLOC (Rhs, 1).begin;                      \
-       (Current).end   = YYRHSLOC (Rhs, N).end;                        \
-     }                                                                 \
-   else                                                                \
-     {                                                                 \
-       (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;        \
-     }                                                                 \
- while (false)
-#endif
+# ifndef YYLLOC_DEFAULT
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+    do                                                                  \
+      if (N)                                                            \
+        {                                                               \
+          (Current).begin  = YYRHSLOC (Rhs, 1).begin;                   \
+          (Current).end    = YYRHSLOC (Rhs, N).end;                     \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
+        }                                                               \
+    while (/*CONSTCOND*/ false)
+# endif
+
 
 /* Suppress unused-variable warnings by "using" E.  */
 #define YYUSE(e) ((void) (e))
@@ -144,9 +154,9 @@ do {					\
 #else /* !YYDEBUG */
 
 # define YYCDEBUG if (false) std::cerr
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
-# define YY_REDUCE_PRINT(Rule)
-# define YY_STACK_PRINT()
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location) YYUSE(Type)
+# define YY_REDUCE_PRINT(Rule)        static_cast<void>(0)
+# define YY_STACK_PRINT()             static_cast<void>(0)
 
 #endif /* !YYDEBUG */
 
@@ -160,9 +170,8 @@ do {					\
 
 
 namespace lol {
-
-/* Line 382 of lalr1.cc  */
-#line 166 "generated/lolfx-parser.cpp"
+/* Line 357 of lalr1.cc  */
+#line 175 "generated/lolfx-parser.cpp"
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -228,11 +237,10 @@ namespace lol {
   {
     YYUSE (yylocationp);
     YYUSE (yyvaluep);
-    switch (yytype)
-      {
-         default:
-	  break;
-      }
+    std::ostream& yyo = debug_stream ();
+    std::ostream& yyoutput = yyo;
+    YYUSE (yyoutput);
+    YYUSE (yytype);
   }
 
 
@@ -256,14 +264,10 @@ namespace lol {
     YYUSE (yymsg);
     YYUSE (yyvaluep);
 
-    YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+    if (yymsg)
+      YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
-    switch (yytype)
-      {
-  
-	default:
-	  break;
-      }
+    YYUSE (yytype);
   }
 
   void
@@ -320,17 +324,18 @@ namespace lol {
     int yychar = yyempty_;
     int yytoken = 0;
 
-    /* State.  */
+    // State.
     int yyn;
     int yylen = 0;
     int yystate = 0;
 
-    /* Error handling.  */
+    // Error handling.
     int yynerrs_ = 0;
     int yyerrstatus_ = 0;
 
     /// Semantic value of the lookahead.
-    semantic_type yylval;
+    static semantic_type yyval_default;
+    semantic_type yylval = yyval_default;
     /// Location of the lookahead.
     location_type yylloc;
     /// The locations where the error started and ended.
@@ -343,6 +348,10 @@ namespace lol {
 
     int yyresult;
 
+    // FIXME: This shoud be completely indented.  It is not yet to
+    // avoid gratuitous conflicts when merging into the master branch.
+    try
+      {
     YYCDEBUG << "Starting parse" << std::endl;
 
 
@@ -350,9 +359,9 @@ namespace lol {
        yynewstate, since the latter expects the semantical and the
        location values to have been already stored, initialize these
        stacks with a primary value.  */
-    yystate_stack_ = state_stack_type (0);
-    yysemantic_stack_ = semantic_stack_type (0);
-    yylocation_stack_ = location_stack_type (0);
+    yystate_stack_.clear ();
+    yysemantic_stack_.clear ();
+    yylocation_stack_.clear ();
     yysemantic_stack_.push (yylval);
     yylocation_stack_.push (yylloc);
 
@@ -378,10 +387,9 @@ namespace lol {
     /* Read a lookahead token.  */
     if (yychar == yyempty_)
       {
-	YYCDEBUG << "Reading a token: ";
-	yychar = yylex (&yylval, &yylloc);
+        YYCDEBUG << "Reading a token: ";
+        yychar = yylex (&yylval, &yylloc);
       }
-
 
     /* Convert token to internal form.  */
     if (yychar <= yyeof_)
@@ -453,55 +461,53 @@ namespace lol {
     else
       yyval = yysemantic_stack_[0];
 
+    // Compute the default @$.
     {
       slice<location_type, location_stack_type> slice (yylocation_stack_, yylen);
       YYLLOC_DEFAULT (yyloc, slice, yylen);
     }
+
+    // Perform the reduction.
     YY_REDUCE_PRINT (yyn);
     switch (yyn)
       {
-	  case 202:
-
-/* Line 690 of lalr1.cc  */
-#line 728 "gpu/lolfx-parser.y"
+          case 202:
+/* Line 664 of lalr1.cc  */
+#line 732 "gpu/lolfx-parser.y"
     { std::cout << "New tech " << std::endl; }
     break;
 
   case 203:
-
-/* Line 690 of lalr1.cc  */
-#line 736 "gpu/lolfx-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 740 "gpu/lolfx-parser.y"
     { std::cout << "New name " << (yysemantic_stack_[(1) - (1)].sval) << std::endl; }
     break;
 
   case 204:
-
-/* Line 690 of lalr1.cc  */
-#line 737 "gpu/lolfx-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 741 "gpu/lolfx-parser.y"
     { std::cout << "New name " << (yysemantic_stack_[(1) - (1)].sval) << std::endl; }
     break;
 
   case 207:
-
-/* Line 690 of lalr1.cc  */
-#line 750 "gpu/lolfx-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 754 "gpu/lolfx-parser.y"
     { std::cout << "New pass " << std::endl; }
     break;
 
   case 226:
-
-/* Line 690 of lalr1.cc  */
-#line 786 "gpu/lolfx-parser.y"
+/* Line 664 of lalr1.cc  */
+#line 790 "gpu/lolfx-parser.y"
     { std::cout << "new shader" << std::endl; }
     break;
 
 
-
-/* Line 690 of lalr1.cc  */
-#line 502 "generated/lolfx-parser.cpp"
-	default:
-          break;
+/* Line 664 of lalr1.cc  */
+#line 507 "generated/lolfx-parser.cpp"
+      default:
+        break;
       }
+
     /* User semantic actions sometimes alter yychar, and that requires
        that yytoken be updated with the new translation.  We take the
        approach of translating immediately before every use of yytoken.
@@ -552,20 +558,19 @@ namespace lol {
     yyerror_range[1] = yylloc;
     if (yyerrstatus_ == 3)
       {
-	/* If just tried and failed to reuse lookahead token after an
-	 error, discard it.  */
-
-	if (yychar <= yyeof_)
-	  {
-	  /* Return failure if at end of input.  */
-	  if (yychar == yyeof_)
-	    YYABORT;
-	  }
-	else
-	  {
-	    yydestruct_ ("Error: discarding", yytoken, &yylval, &yylloc);
-	    yychar = yyempty_;
-	  }
+        /* If just tried and failed to reuse lookahead token after an
+           error, discard it.  */
+        if (yychar <= yyeof_)
+          {
+            /* Return failure if at end of input.  */
+            if (yychar == yyeof_)
+              YYABORT;
+          }
+        else
+          {
+            yydestruct_ ("Error: discarding", yytoken, &yylval, &yylloc);
+            yychar = yyempty_;
+          }
       }
 
     /* Else will try to reuse lookahead token after shifting the error
@@ -614,7 +619,7 @@ namespace lol {
 
 	/* Pop the current state because it cannot handle the error token.  */
 	if (yystate_stack_.height () == 1)
-	YYABORT;
+	  YYABORT;
 
 	yyerror_range[1] = yylocation_stack_[0];
 	yydestruct_ ("Error: popping",
@@ -662,16 +667,42 @@ namespace lol {
     /* Do not reclaim the symbols of the rule which action triggered
        this YYABORT or YYACCEPT.  */
     yypop_ (yylen);
-    while (yystate_stack_.height () != 1)
+    while (1 < yystate_stack_.height ())
       {
-	yydestruct_ ("Cleanup: popping",
-		   yystos_[yystate_stack_[0]],
-		   &yysemantic_stack_[0],
-		   &yylocation_stack_[0]);
-	yypop_ ();
+        yydestruct_ ("Cleanup: popping",
+                     yystos_[yystate_stack_[0]],
+                     &yysemantic_stack_[0],
+                     &yylocation_stack_[0]);
+        yypop_ ();
       }
 
     return yyresult;
+    }
+    catch (...)
+      {
+        YYCDEBUG << "Exception caught: cleaning lookahead and stack"
+                 << std::endl;
+        // Do not try to display the values of the reclaimed symbols,
+        // as their printer might throw an exception.
+        if (yychar != yyempty_)
+          {
+            /* Make sure we have latest lookahead translation.  See
+               comments at user semantic actions for why this is
+               necessary.  */
+            yytoken = yytranslate_ (yychar);
+            yydestruct_ (YY_NULL, yytoken, &yylval, &yylloc);
+          }
+
+        while (1 < yystate_stack_.height ())
+          {
+            yydestruct_ (YY_NULL,
+                         yystos_[yystate_stack_[0]],
+                         &yysemantic_stack_[0],
+                         &yylocation_stack_[0]);
+            yypop_ ();
+          }
+        throw;
+      }
   }
 
   // Generate an error message.
@@ -740,7 +771,7 @@ namespace lol {
           }
       }
 
-    char const* yyformat = 0;
+    char const* yyformat = YY_NULL;
     switch (yycount)
       {
 #define YYCASE_(N, S)                         \
@@ -3359,7 +3390,7 @@ namespace lol {
        1,     2,     1,     1,     2
   };
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+
   /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
      First, the terminals, then, starting at \a yyntokens_, nonterminals.  */
   const char*
@@ -3512,9 +3543,8 @@ namespace lol {
   "glsl_iteration_statement", "glsl_for_init_statement",
   "glsl_conditionopt", "glsl_for_rest_statement", "glsl_jump_statement",
   "glsl_translation_unit", "glsl_external_declaration",
-  "glsl_function_definition", 0
+  "glsl_function_definition", YY_NULL
   };
-#endif
 
 #if YYDEBUG
   /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -3711,54 +3741,54 @@ namespace lol {
   const unsigned short int
   LolFxParser::yyrline_[] =
   {
-         0,   255,   271,   272,   273,   274,   275,   276,   277,   278,
-     279,   280,   281,   282,   283,   284,   285,   286,   287,   288,
-     289,   290,   291,   292,   293,   294,   295,   296,   297,   298,
-     299,   300,   301,   302,   303,   304,   305,   306,   307,   308,
-     309,   310,   311,   312,   313,   314,   315,   316,   317,   318,
-     319,   320,   321,   322,   323,   324,   325,   326,   327,   328,
-     329,   330,   331,   332,   333,   334,   335,   336,   337,   338,
-     339,   340,   341,   342,   343,   344,   345,   508,   509,   510,
-     511,   512,   513,   514,   515,   516,   517,   518,   519,   520,
-     521,   522,   523,   524,   525,   526,   527,   528,   529,   530,
-     531,   532,   533,   534,   535,   536,   537,   538,   539,   540,
-     541,   542,   543,   544,   545,   546,   547,   548,   549,   550,
-     551,   552,   553,   554,   555,   556,   557,   558,   559,   560,
-     561,   562,   563,   564,   565,   566,   567,   568,   569,   570,
-     571,   572,   573,   574,   575,   576,   577,   578,   579,   580,
-     581,   582,   583,   584,   585,   586,   587,   588,   589,   590,
-     591,   592,   593,   594,   595,   596,   597,   598,   599,   600,
-     601,   602,   603,   604,   605,   606,   607,   608,   609,   610,
-     611,   612,   613,   614,   615,   616,   617,   618,   619,   620,
-     621,   622,   623,   624,   625,   626,   627,   710,   714,   715,
-     719,   720,   728,   736,   737,   745,   746,   750,   754,   755,
-     760,   761,   762,   763,   764,   765,   766,   767,   768,   769,
-     770,   771,   772,   773,   774,   782,   786,   790,   791,   795,
-     803,   807,   808,   809,   810,   811,   812,   816,   817,   818,
-     819,   820,   821,   825,   829,   833,   834,   838,   839,   843,
-     844,   848,   849,   853,   857,   858,   859,   863,   864,   865,
-     866,   870,   871,   872,   873,   877,   878,   879,   880,   884,
-     885,   886,   890,   891,   892,   896,   897,   898,   899,   900,
-     904,   905,   906,   910,   911,   915,   916,   920,   921,   925,
-     926,   930,   931,   935,   936,   940,   941,   945,   946,   950,
-     951,   952,   953,   954,   955,   956,   957,   958,   959,   960,
-     964,   965,   969,   973,   974,   975,   976,   977,   978,   979,
-     980,   984,   988,   989,   993,   994,   998,  1002,  1003,  1007,
-    1008,  1012,  1013,  1014,  1015,  1019,  1020,  1023,  1025,  1026,
-    1027,  1028,  1029,  1033,  1037,  1038,  1039,  1040,  1041,  1042,
-    1043,  1047,  1048,  1049,  1050,  1051,  1052,  1053,  1054,  1058,
-    1059,  1063,  1067,  1068,  1069,  1073,  1077,  1078,  1082,  1083,
-    1087,  1091,  1092,  1093,  1094,  1095,  1096,  1097,  1098,  1102,
-    1103,  1104,  1105,  1106,  1107,  1108,  1109,  1110,  1111,  1112,
-    1113,  1117,  1118,  1122,  1123,  1124,  1127,  1128,  1132,  1133,
-    1134,  1135,  1136,  1137,  1138,  1139,  1140,  1141,  1142,  1143,
-    1144,  1148,  1149,  1150,  1154,  1155,  1159,  1160,  1164,  1165,
-    1169,  1170,  1174,  1175,  1176,  1180,  1184,  1188,  1189,  1193,
-    1194,  1195,  1196,  1197,  1198,  1199,  1203,  1204,  1208,  1209,
-    1213,  1214,  1218,  1219,  1223,  1224,  1228,  1232,  1233,  1237,
-    1238,  1242,  1245,  1247,  1251,  1252,  1256,  1257,  1258,  1262,
-    1263,  1267,  1268,  1272,  1273,  1277,  1278,  1279,  1280,  1281,
-    1285,  1286,  1290,  1291,  1295
+         0,   259,   275,   276,   277,   278,   279,   280,   281,   282,
+     283,   284,   285,   286,   287,   288,   289,   290,   291,   292,
+     293,   294,   295,   296,   297,   298,   299,   300,   301,   302,
+     303,   304,   305,   306,   307,   308,   309,   310,   311,   312,
+     313,   314,   315,   316,   317,   318,   319,   320,   321,   322,
+     323,   324,   325,   326,   327,   328,   329,   330,   331,   332,
+     333,   334,   335,   336,   337,   338,   339,   340,   341,   342,
+     343,   344,   345,   346,   347,   348,   349,   512,   513,   514,
+     515,   516,   517,   518,   519,   520,   521,   522,   523,   524,
+     525,   526,   527,   528,   529,   530,   531,   532,   533,   534,
+     535,   536,   537,   538,   539,   540,   541,   542,   543,   544,
+     545,   546,   547,   548,   549,   550,   551,   552,   553,   554,
+     555,   556,   557,   558,   559,   560,   561,   562,   563,   564,
+     565,   566,   567,   568,   569,   570,   571,   572,   573,   574,
+     575,   576,   577,   578,   579,   580,   581,   582,   583,   584,
+     585,   586,   587,   588,   589,   590,   591,   592,   593,   594,
+     595,   596,   597,   598,   599,   600,   601,   602,   603,   604,
+     605,   606,   607,   608,   609,   610,   611,   612,   613,   614,
+     615,   616,   617,   618,   619,   620,   621,   622,   623,   624,
+     625,   626,   627,   628,   629,   630,   631,   714,   718,   719,
+     723,   724,   732,   740,   741,   749,   750,   754,   758,   759,
+     764,   765,   766,   767,   768,   769,   770,   771,   772,   773,
+     774,   775,   776,   777,   778,   786,   790,   794,   795,   799,
+     807,   811,   812,   813,   814,   815,   816,   820,   821,   822,
+     823,   824,   825,   829,   833,   837,   838,   842,   843,   847,
+     848,   852,   853,   857,   861,   862,   863,   867,   868,   869,
+     870,   874,   875,   876,   877,   881,   882,   883,   884,   888,
+     889,   890,   894,   895,   896,   900,   901,   902,   903,   904,
+     908,   909,   910,   914,   915,   919,   920,   924,   925,   929,
+     930,   934,   935,   939,   940,   944,   945,   949,   950,   954,
+     955,   956,   957,   958,   959,   960,   961,   962,   963,   964,
+     968,   969,   973,   977,   978,   979,   980,   981,   982,   983,
+     984,   988,   992,   993,   997,   998,  1002,  1006,  1007,  1011,
+    1012,  1016,  1017,  1018,  1019,  1023,  1024,  1027,  1029,  1030,
+    1031,  1032,  1033,  1037,  1041,  1042,  1043,  1044,  1045,  1046,
+    1047,  1051,  1052,  1053,  1054,  1055,  1056,  1057,  1058,  1062,
+    1063,  1067,  1071,  1072,  1073,  1077,  1081,  1082,  1086,  1087,
+    1091,  1095,  1096,  1097,  1098,  1099,  1100,  1101,  1102,  1106,
+    1107,  1108,  1109,  1110,  1111,  1112,  1113,  1114,  1115,  1116,
+    1117,  1121,  1122,  1126,  1127,  1128,  1131,  1132,  1136,  1137,
+    1138,  1139,  1140,  1141,  1142,  1143,  1144,  1145,  1146,  1147,
+    1148,  1152,  1153,  1154,  1158,  1159,  1163,  1164,  1168,  1169,
+    1173,  1174,  1178,  1179,  1180,  1184,  1188,  1192,  1193,  1197,
+    1198,  1199,  1200,  1201,  1202,  1203,  1207,  1208,  1212,  1213,
+    1217,  1218,  1222,  1223,  1227,  1228,  1232,  1236,  1237,  1241,
+    1242,  1246,  1249,  1251,  1255,  1256,  1260,  1261,  1262,  1266,
+    1267,  1271,  1272,  1276,  1277,  1281,  1282,  1283,  1284,  1285,
+    1289,  1290,  1294,  1295,  1299
   };
 
   // Print the state stack on the debug stream.
@@ -3889,13 +3919,10 @@ namespace lol {
 
 
 } // lol
-
+/* Line 1135 of lalr1.cc  */
+#line 3924 "generated/lolfx-parser.cpp"
 /* Line 1136 of lalr1.cc  */
-#line 3895 "generated/lolfx-parser.cpp"
-
-
-/* Line 1138 of lalr1.cc  */
-#line 1298 "gpu/lolfx-parser.y"
+#line 1302 "gpu/lolfx-parser.y"
 
 
 void lol::LolFxParser::error(const LolFxParser::location_type& l,
@@ -3903,5 +3930,4 @@ void lol::LolFxParser::error(const LolFxParser::location_type& l,
 {
     mc.Error(l, m);
 }
-
 
