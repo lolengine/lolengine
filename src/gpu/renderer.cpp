@@ -343,7 +343,7 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
         m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAREF,
                                           (DWORD)(alpha * 255.999f));
     }
-#elif defined HAVE_GL_2X
+#elif defined GL_VERSION_1_1
     switch (func)
     {
         case AlphaFunc::Disabled:
@@ -371,7 +371,7 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
     else
         glEnable(GL_ALPHA_TEST);
 #else
-    /* XXX: alpha test not available in GL ES */
+    /* XXX: alpha test not available in GL ES and deprecated anyway. */
 #endif
 
     m_data->m_alpha_func = func;
@@ -671,7 +671,7 @@ void Renderer::SetPolygonMode(PolygonMode mode)
         m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DCULL_SOLID);
         break;
     }
-#else
+#elif defined __CELLOS_LV2__ || defined GL_VERSION_1_1
     switch (mode)
     {
     case PolygonMode::Point:
