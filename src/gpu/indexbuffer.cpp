@@ -23,12 +23,6 @@
 
 using namespace std;
 
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -44,8 +38,10 @@ class IndexBufferData
     size_t m_size;
 
 #if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
+    D3DDevice9 *m_dev;
     D3DIndexBuffer *m_ibo;
 #else
     GLuint m_ibo;
@@ -65,7 +61,13 @@ IndexBuffer::IndexBuffer(size_t size)
     if (!size)
         return;
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,
+#   if defined USE_D3D9
+    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+#   elif defined _XBOX
+    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+#   endif
+
+    if (FAILED(m_data->m_dev->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,
                                               D3DFMT_INDEX16, D3DPOOL_MANAGED,
                                               &m_data->m_ibo, nullptr)))
         Abort();
@@ -126,7 +128,7 @@ void IndexBuffer::Bind()
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->SetIndices(m_data->m_ibo)))
+    if (FAILED(m_data->m_dev->SetIndices(m_data->m_ibo)))
         Abort();
 #else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_data->m_ibo);
@@ -142,7 +144,7 @@ void IndexBuffer::Unbind()
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->SetIndices(nullptr)))
+    if (FAILED(m_data->m_dev->SetIndices(nullptr)))
         Abort();
 #else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

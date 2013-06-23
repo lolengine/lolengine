@@ -34,7 +34,6 @@
 
 #if defined USE_SDL && defined USE_D3D9
 HWND g_hwnd = nullptr;
-extern IDirect3DDevice9 *g_d3ddevice;
 #endif
 
 namespace lol
@@ -115,24 +114,25 @@ void SdlApp::ShowPointer(bool show)
 void SdlApp::Tick()
 {
 #if defined USE_SDL && defined USE_D3D9
+    IDirect3DDevice9 *d3d_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
     HRESULT hr;
-    hr = g_d3ddevice->BeginScene();
+    hr = d3d_dev->BeginScene();
     if (FAILED(hr))
         Abort();
 #endif
+
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     Ticker::TickDraw();
-#if defined USE_SDL
-#   if defined USE_D3D9
-    hr = g_d3ddevice->EndScene();
+
+#if defined USE_SDL && defined USE_D3D9
+    hr = d3d_dev->EndScene();
     if (FAILED(hr))
         Abort();
-    hr = g_d3ddevice->Present(nullptr, nullptr, nullptr, nullptr);
+    hr = d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
     if (FAILED(hr))
         Abort();
-#   else
+#elif defined USE_SDL
     SDL_GL_SwapBuffers();
-#   endif
 #endif
 }
 

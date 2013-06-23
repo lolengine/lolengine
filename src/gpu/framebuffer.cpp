@@ -23,12 +23,6 @@
 
 using namespace std;
 
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -46,9 +40,11 @@ class FramebufferData
     bool m_bound;
 
 #if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
     IDirect3DTexture9 *m_texture;
     IDirect3DSurface9 *m_surface, *m_back_surface;
 #elif defined _XBOX
+    D3DDevice9 *m_dev;
     D3DTexture *m_texture;
     D3DSurface *m_surface, *m_back_surface;
 #else
@@ -292,7 +288,9 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     m_data->m_size = size;
     m_data->m_bound = false;
 #if defined USE_D3D9
-    if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1,
+    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+
+    if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1,
                                           D3DUSAGE_RENDERTARGET,
                                           (D3DFORMAT)fbo_format.GetFormat(), D3DPOOL_DEFAULT,
                                           &m_data->m_texture, nullptr)))
@@ -300,11 +298,13 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
 #elif defined _XBOX
-    if (FAILED(g_d3ddevice->CreateTexture(size.x, size.y, 1, 0,
+    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+
+    if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1, 0,
                                           fbo_format.GetFormat(), D3DPOOL_DEFAULT,
                                           &m_data->m_texture, nullptr)))
         Abort();
-    if (FAILED(g_d3ddevice->CreateRenderTarget(size.x, size.y,
+    if (FAILED(m_data->m_dev->CreateRenderTarget(size.x, size.y,
                                                fbo_format.GetFormat(),
                                                D3DMULTISAMPLE_NONE, 0, 0,
                                                &m_data->m_surface, nullptr)))
@@ -422,9 +422,9 @@ void Framebuffer::Bind()
     ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
 
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->GetRenderTarget(0, &m_data->m_back_surface)))
+    if (FAILED(m_data->m_dev->GetRenderTarget(0, &m_data->m_back_surface)))
         Abort();
-    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_surface)))
+    if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_surface)))
         Abort();
 #else
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
@@ -448,12 +448,12 @@ void Framebuffer::Unbind()
 
 #if defined USE_D3D9 || defined _XBOX
 #   if defined _XBOX
-    if (FAILED(g_d3ddevice->Resolve(D3DRESOLVE_RENDERTARGET0, nullptr,
+    if (FAILED(m_data->m_dev->Resolve(D3DRESOLVE_RENDERTARGET0, nullptr,
                                     m_data->m_texture, nullptr, 0, 0, nullptr,
                                     0, 0, nullptr)))
         Abort();
 #   endif
-    if (FAILED(g_d3ddevice->SetRenderTarget(0, m_data->m_back_surface)))
+    if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_back_surface)))
         Abort();
     m_data->m_back_surface->Release();
 #else

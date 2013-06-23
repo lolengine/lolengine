@@ -23,12 +23,6 @@
 
 using namespace std;
 
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -45,11 +39,13 @@ class TextureData
     PixelFormat m_format;
 
 #if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
     IDirect3DTexture9 *m_texture;
     D3DTEXTUREFILTERTYPE m_mag_filter;
-    D3DTEXTUREFILTERTYPE  m_min_filter;
-    D3DTEXTUREFILTERTYPE  m_mip_filter;
+    D3DTEXTUREFILTERTYPE m_min_filter;
+    D3DTEXTUREFILTERTYPE m_mip_filter;
 #elif defined _XBOX
+    D3DDevice9 *m_dev;
     D3DTexture *m_texture;
 #else
     GLuint m_texture;
@@ -75,6 +71,12 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_format = format;
 
 #if defined USE_D3D9 || defined _XBOX
+#   if defined USE_D3D9
+    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+#   elif defined _XBOX
+    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+#   endif
+
     static struct
     {
         D3DFORMAT format;
@@ -109,7 +111,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
     int d3d_usage = D3DUSAGE_WRITEONLY;
 #   endif
 
-    g_d3ddevice->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
+    m_data->m_dev->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
                                d3d_usage, d3d_format,
                                D3DPOOL_DEFAULT, &m_data->m_texture, nullptr);
     m_data->m_bytes_per_elem = GET_CLAMPED(d3d_formats, format).bytes;
@@ -185,7 +187,7 @@ ShaderTexture Texture::GetTexture() const
 void Texture::Bind()
 {
 #if defined _XBOX || defined USE_D3D9
-    g_d3ddevice->SetTexture(0, m_data->m_texture);
+    m_data->m_dev->SetTexture(0, m_data->m_texture);
 #else
 #   if !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);

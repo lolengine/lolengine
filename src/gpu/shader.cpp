@@ -32,12 +32,6 @@
 
 using namespace std;
 
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -51,10 +45,12 @@ class ShaderData
 
 private:
 #if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
     IDirect3DVertexShader9 *vert_shader;
     IDirect3DPixelShader9 *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
 #elif defined _XBOX
+    D3DDevice9 *m_dev;
     D3DVertexShader *vert_shader;
     D3DPixelShader *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
@@ -193,6 +189,12 @@ Shader::Shader(char const *vert, char const *frag)
     /* Compile vertex shader */
     data->vert_crc = ShaderData::hash(vert);
 #if defined USE_D3D9 || defined _XBOX
+#   if defined USE_D3D9
+    data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+#   elif defined _XBOX
+    data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+#   endif
+
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, nullptr, "main",
                            "vs_3_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
@@ -202,7 +204,7 @@ Shader::Shader(char const *vert, char const *frag)
                    error_msg ? error_msg->GetBufferPointer() : "error");
         Log::Error("shader source:\n%s\n", vert);
     }
-    g_d3ddevice->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
+    data->m_dev->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
                                     &data->vert_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
@@ -246,7 +248,7 @@ Shader::Shader(char const *vert, char const *frag)
                    error_msg ? error_msg->GetBufferPointer() : "error");
         Log::Error("shader source:\n%s\n", frag);
     }
-    g_d3ddevice->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
+    data->m_dev->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
                                    &data->frag_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
@@ -419,9 +421,9 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
+        data->m_dev->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
+        data->m_dev->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
     glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
 #else
@@ -475,9 +477,9 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
 #elif !defined __CELLOS_LV2__
     glUniform4fv(uni.frag, 1, &v[0]);
 #else
@@ -493,9 +495,9 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: do we need padding here like for the mat3 version? */
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
@@ -514,9 +516,9 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
      * a new data structure; a 4×4 matrix will do. */
     mat4 tmp(m, 1.0f);
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
@@ -533,9 +535,9 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
 #elif !defined __CELLOS_LV2__
     glUniformMatrix4fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
@@ -549,10 +551,10 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 void Shader::SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index)
 {
 #if defined USE_D3D9 || defined _XBOX
-    g_d3ddevice->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
-    g_d3ddevice->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
-    g_d3ddevice->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
-    g_d3ddevice->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
+    data->m_dev->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
+    data->m_dev->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
+    data->m_dev->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
+    data->m_dev->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
 #elif !defined __CELLOS_LV2__
     glActiveTexture(GL_TEXTURE0 + index);
     //glEnable(GL_TEXTURE_2D);
@@ -573,10 +575,10 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<float> const &v)
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of floats instead of vec4. */
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
                                              &v[0], v.Count() / 4);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0], v.Count() / 4);
 #elif !defined __CELLOS_LV2__
     glUniform1fv(uni.frag, v.Count(), &v[0]);
@@ -596,10 +598,10 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec2> const &v)
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of vec2 instead of vec4. */
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
                                              &v[0][0], v.Count() / 2);
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count() / 2);
 #elif !defined __CELLOS_LV2__
     glUniform2fv(uni.frag, v.Count(), &v[0][0]);
@@ -619,10 +621,10 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec3> const &v)
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of vec3 instead of vec4. */
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
                                              &v[0][0], v.Count());
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
 #elif !defined __CELLOS_LV2__
     glUniform3fv(uni.frag, v.Count(), &v[0][0]);
@@ -640,10 +642,10 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec4> const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
-        g_d3ddevice->SetPixelShaderConstantF((UINT)uni.frag,
+        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
                                              &v[0][0], v.Count());
     if (uni.flags & 2)
-        g_d3ddevice->SetVertexShaderConstantF((UINT)uni.vert,
+        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
 #elif !defined __CELLOS_LV2__
     glUniform4fv(uni.frag, v.Count(), &v[0][0]);
@@ -661,8 +663,8 @@ void Shader::Bind() const
 {
 #if defined USE_D3D9 || defined _XBOX
     HRESULT hr;
-    hr = g_d3ddevice->SetVertexShader(data->vert_shader);
-    hr = g_d3ddevice->SetPixelShader(data->frag_shader);
+    hr = data->m_dev->SetVertexShader(data->vert_shader);
+    hr = data->m_dev->SetPixelShader(data->frag_shader);
 #elif !defined __CELLOS_LV2__
     glUseProgram(data->prog_id);
 #else
@@ -677,8 +679,8 @@ void Shader::Unbind() const
 {
 #if defined USE_D3D9 || defined _XBOX
     HRESULT hr;
-    hr = g_d3ddevice->SetVertexShader(nullptr);
-    hr = g_d3ddevice->SetPixelShader(nullptr);
+    hr = data->m_dev->SetVertexShader(nullptr);
+    hr = data->m_dev->SetPixelShader(nullptr);
 #elif !defined __CELLOS_LV2__
     /* FIXME: untested */
     glUseProgram(0);

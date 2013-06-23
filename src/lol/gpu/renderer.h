@@ -138,6 +138,8 @@ private:
     Renderer(ivec2 size);
     ~Renderer();
 
+    void *GetDevice();
+
 public:
     void Clear(ClearMask mask);
 

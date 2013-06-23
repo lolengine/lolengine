@@ -31,10 +31,11 @@
 #include "core.h"
 #include "lolgl.h"
 
+/* FIXME: find a way to pass g_hwnd from the windowing system */
 #if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
+extern HWND g_hwnd;
 #elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
+HWND g_hwnd = 0;
 #endif
 
 namespace lol
@@ -62,9 +63,12 @@ private:
     DepthFunc m_depth_func;
     CullMode m_face_culling;
 
+private:
 #if defined USE_D3D9
+    IDirect3D9 *m_d3d_ctx;
     IDirect3DDevice9 *m_d3d_dev;
 #elif defined _XBOX
+    Direct3D *m_d3d_ctx;
     D3DDevice *m_d3d_dev;
 #endif
 };
@@ -77,8 +81,45 @@ Renderer::Renderer(ivec2 size)
   : m_data(new RendererData())
 {
 #if defined USE_D3D9 || defined _XBOX
-    /* FIXME: we should be in charge of creating this */
-    m_data->m_d3d_dev = g_d3ddevice;
+    /* Create Direct3D context */
+    m_data->m_d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
+    if (!m_data->m_d3d_ctx)
+    {
+        Log::Error("cannot initialise D3D\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Create Direct3D device */
+#   if defined _XBOX
+    XVIDEO_MODE VideoMode;
+    XGetVideoMode(&VideoMode);
+    size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
+                                VideoMode.dwDisplayHeight);
+#   endif
+    D3DPRESENT_PARAMETERS d3dpp;
+    memset(&d3dpp, 0, sizeof(d3dpp));
+    d3dpp.BackBufferWidth = size.x;
+    d3dpp.BackBufferHeight = size.y;
+    d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+    d3dpp.BackBufferCount = 1;
+    d3dpp.hDeviceWindow = g_hwnd;
+#   if defined USE_SDL
+    d3dpp.Windowed = TRUE;
+#   endif
+    d3dpp.EnableAutoDepthStencil = TRUE;
+    d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+
+    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, g_hwnd,
+                                                  D3DCREATE_HARDWARE_VERTEXPROCESSING,
+                                                  &d3dpp, &m_data->m_d3d_dev);
+    if (FAILED(hr))
+    {
+        Log::Error("cannot create D3D device\n");
+        exit(EXIT_FAILURE);
+    }
+
 #else
 #   if defined USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
@@ -128,6 +169,15 @@ Renderer::Renderer(ivec2 size)
 Renderer::~Renderer()
 {
     delete m_data;
+}
+
+void *Renderer::GetDevice()
+{
+#if defined USE_D3D9 || defined _XBOX
+    return m_data->m_d3d_dev;
+#else
+    return nullptr;
+#endif
 }
 
 /*
