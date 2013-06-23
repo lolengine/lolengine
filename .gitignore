@@ -91,3 +91,8 @@ tutorial/11_fractal
 tutorial/12_voronoi
 # Our data
 doc/doxygen.cfg
+doc/doxygen.log
+doc/html
+doc/latex
+doc/man
+
