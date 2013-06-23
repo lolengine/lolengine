@@ -133,15 +133,15 @@ void DefaultShaderData::SetupDefaultData(bool with_UV)
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupShaderDatas(mat4 const &model)
 {
-    mat4 proj = Scene::GetDefault()->GetCamera()->GetProjection();
-    mat4 view = Scene::GetDefault()->GetCamera()->GetView();
+    mat4 proj = g_scene->GetCamera()->GetProjection();
+    mat4 view = g_scene->GetCamera()->GetView();
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
 
     /* FIXME: this should be hidden in the shader */
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
-    Array<Light *> const lights = Scene::GetDefault()->GetLights();
+    Array<Light *> const lights = g_scene->GetLights();
     Array<vec4> light_data;
     for (int i = 0; i < lights.Count(); ++i)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();

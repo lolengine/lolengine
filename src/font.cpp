@@ -69,14 +69,12 @@ char const *Font::GetName()
 
 void Font::Print(vec3 pos, char const *str, vec2 scale)
 {
-    Scene *scene = Scene::GetDefault();
-
     while (*str)
     {
         uint32_t ch = (uint8_t)*str++;
 
         if (ch != ' ')
-            scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
+            g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
 
         pos.x += data->size.x * scale.x;
     }

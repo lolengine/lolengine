@@ -26,7 +26,7 @@ public:
         m_camera = new Camera();
         m_camera->SetView(mat4(1.f));
         m_camera->SetProjection(mat4::ortho(0.f, 640.f, 0.f, 480.f, -100.f, 100.f));
-        Scene::GetDefault()->PushCamera(m_camera);
+        g_scene->PushCamera(m_camera);
         Ticker::Ref(m_camera);
 
         m_tileset = Tiler::Register("06_sprite.png");
@@ -46,7 +46,7 @@ public:
     {
         Tiler::Deregister(m_tileset);
 
-        Scene::GetDefault()->PopCamera(m_camera);
+        g_scene->PopCamera(m_camera);
         Ticker::Unref(m_camera);
     }
 
@@ -77,8 +77,8 @@ public:
         {
             int frame = (int)(m_sprites[i].m2 * FRAME_COUNT);
 //            m_sprites[i].m1.z = frame;
-            Scene::GetDefault()->AddTile(m_tileset, frame,
-                                         (ivec3)m_sprites[i].m1, 0, vec2(2.f));
+            g_scene->AddTile(m_tileset, frame,
+                             (ivec3)m_sprites[i].m1, 0, vec2(2.f));
         }
     }
 

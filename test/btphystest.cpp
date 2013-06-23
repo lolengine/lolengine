@@ -56,7 +56,7 @@ BtPhysTest::BtPhysTest(bool editor)
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
     m_camera->SetProjection(mat4::perspective(45.f, 1280.f, 960.f, .1f, 1000.f));
-    Scene::GetDefault()->PushCamera(m_camera);
+    g_scene->PushCamera(m_camera);
 
     m_ready = false;
 
@@ -421,7 +421,7 @@ void BtPhysTest::TickDraw(float seconds)
 
 BtPhysTest::~BtPhysTest()
 {
-    Scene::GetDefault()->PopCamera(m_camera);
+    g_scene->PopCamera(m_camera);
     Ticker::Unref(m_light1);
     Ticker::Unref(m_light2);
 

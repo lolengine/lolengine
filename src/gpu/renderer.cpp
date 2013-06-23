@@ -44,11 +44,13 @@ namespace lol
 /*
  * The global g_renderer object, initialised by Video::Init
  */
-Renderer *g_renderer;
+
+Renderer *g_renderer = nullptr;
 
 /*
  * Private RendererData class
  */
+
 class RendererData
 {
     friend class Renderer;
