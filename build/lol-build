@@ -29,8 +29,8 @@
 #  - win*-i386
 #  - win*-amd64
 #  - raspi-arm
-#  - emscripten-html
-#  - emscripten-js
+#  - web-html
+#  - web-js
 #
 
 set -e
@@ -206,7 +206,7 @@ configure()
             # Ensure we're _really_ on amd64
             CXXFLAGS="$CXXFLAGS -m64"
             ;;
-        emscripten-*)
+        web-*)
             # Force cross-compilation because AC_TRY_LINK is going to check
             # whether our binaries have the executable bit set.
             HOSTFLAGS=--host=none
@@ -274,8 +274,9 @@ configure()
 
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" do_configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
-        emscripten-*)
-            do_configure $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##emscripten-}"
+        web-*)
+            # We use --enable-release otherwise builds are really too slow
+            do_configure --enable-release $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##web-}"
             ;;
         *)
             PATH="$PATH" do_configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
