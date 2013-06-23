@@ -162,10 +162,12 @@ public:
         *this << x;
     }
 
-    inline void Pop()
+    inline T Pop()
     {
         ASSERT(m_count > 0);
+        Element tmp = Last();
         Remove(m_count - 1, 1);
+        return tmp;
     }
 
     void Swap(int pos1, int pos2)
