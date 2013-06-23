@@ -31,15 +31,6 @@
 
 using namespace std;
 
-/* FIXME: g_d3ddevice should never be exported */
-#if defined USE_D3D9
-IDirect3DDevice9 *g_d3ddevice;
-extern HWND g_hwnd;
-#elif defined _XBOX
-D3DDevice *g_d3ddevice;
-HWND g_hwnd = 0;
-#endif
-
 namespace lol
 {
 
@@ -49,28 +40,9 @@ class VideoData
 
 private:
     static DebugRenderMode render_mode;
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
-    static IDirect3D9 *d3d_ctx;
-    static IDirect3DDevice9 *d3d_dev;
-#   elif defined _XBOX
-    static Direct3D *d3d_ctx;
-    static D3DDevice *d3d_dev;
-#   endif
-#endif
 };
 
 DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
-
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
-IDirect3D9 *VideoData::d3d_ctx;
-IDirect3DDevice9 *VideoData::d3d_dev;
-#   elif defined _XBOX
-Direct3D *VideoData::d3d_ctx;
-D3DDevice *VideoData::d3d_dev;
-#   endif
-#endif
 
 /*
  * Public Video class
@@ -78,52 +50,7 @@ D3DDevice *VideoData::d3d_dev;
 
 void Video::Setup(ivec2 size)
 {
-#if defined USE_D3D9 || defined _XBOX
-    VideoData::d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
-    if (!VideoData::d3d_ctx)
-    {
-        Log::Error("cannot initialise D3D\n");
-        exit(EXIT_FAILURE);
-    }
-
-    /* Choose best viewport size */
-#   if defined _XBOX
-    XVIDEO_MODE VideoMode;
-    XGetVideoMode(&VideoMode);
-    size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
-                                VideoMode.dwDisplayHeight);
-#   endif
-    D3DPRESENT_PARAMETERS d3dpp;
-    memset(&d3dpp, 0, sizeof(d3dpp));
-    d3dpp.BackBufferWidth = size.x;
-    d3dpp.BackBufferHeight = size.y;
-    d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
-    d3dpp.BackBufferCount = 1;
-    d3dpp.hDeviceWindow = g_hwnd;
-#   if defined USE_SDL
-    d3dpp.Windowed = TRUE;
-#   endif
-    d3dpp.EnableAutoDepthStencil = TRUE;
-    d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-
-    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, g_hwnd,
-                                                  D3DCREATE_HARDWARE_VERTEXPROCESSING,
-                                                  &d3dpp, &VideoData::d3d_dev);
-    if (FAILED(hr))
-    {
-        Log::Error("cannot create D3D device\n");
-        exit(EXIT_FAILURE);
-    }
-
-    g_d3ddevice = VideoData::d3d_dev;
-
     g_renderer = new Renderer(size);
-#else
-    /* Initialise OpenGL */
-    g_renderer = new Renderer(size);
-#endif
 
     /* Initialise reasonable scene default properties */
     SetDebugRenderMode(DebugRenderMode::Default);

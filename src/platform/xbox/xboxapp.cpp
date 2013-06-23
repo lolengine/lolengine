@@ -20,10 +20,6 @@
 #include "xboxapp.h"
 #include "xboxinput.h"
 
-#if defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -67,7 +63,8 @@ void XboxApp::Tick()
     Ticker::TickDraw();
 
 #if defined _XBOX
-    g_d3ddevice->Present(nullptr, nullptr, nullptr, nullptr);
+    D3DDevice9 *d3d_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
 #endif
 }
 

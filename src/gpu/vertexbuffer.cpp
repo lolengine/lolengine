@@ -23,12 +23,6 @@
 
 using namespace std;
 
-#if defined USE_D3D9
-extern IDirect3DDevice9 *g_d3ddevice;
-#elif defined _XBOX
-extern D3DDevice *g_d3ddevice;
-#endif
-
 namespace lol
 {
 
@@ -45,12 +39,34 @@ class VertexBufferData
     size_t m_size;
 
 #if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
+    D3DDevice9 *m_dev;
     D3DVertexBuffer *m_vbo;
 #else
     GLuint m_vbo;
     uint8_t *m_memory;
+#endif
+};
+
+//
+// The VertexDeclarationData class
+// -------------------------------
+//
+
+class VertexDeclarationData
+{
+    friend class VertexBuffer;
+    friend class VertexDeclaration;
+
+#if defined USE_D3D9
+    IDirect3DDevice9 *m_dev;
+    IDirect3DVertexDeclaration9 *m_vdecl;
+#elif defined _XBOX
+    D3DDevice9 *m_dev;
+    D3DVertexDeclaration *m_vdecl;
+#else
 #endif
 };
 
@@ -72,7 +88,9 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
                                      VertexStreamBase const &s9,
                                      VertexStreamBase const &s10,
                                      VertexStreamBase const &s11,
-                                     VertexStreamBase const &s12) : m_count(0)
+                                     VertexStreamBase const &s12)
+  : m_count(0),
+    m_data(new VertexDeclarationData())
 {
     if (&s1 != &VertexStreamBase::Empty) AddStream(s1);
     if (&s2 != &VertexStreamBase::Empty) AddStream(s2);
@@ -92,29 +110,19 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
 VertexDeclaration::~VertexDeclaration()
 {
 #if defined _XBOX || defined USE_D3D9
-#   if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *vdecl = (IDirect3DVertexDeclaration9 *)m_data;
-#   elif defined _XBOX
-    D3DVertexDeclaration *vdecl = (D3DVertexDeclaration *)m_data;
-#   endif
-
-    if (FAILED(vdecl->Release()))
+    if (FAILED(m_data->m_vdecl->Release()))
         Abort();
 #else
 
 #endif
+
+    delete m_data;
 }
 
 void VertexDeclaration::Bind()
 {
 #if defined _XBOX || defined USE_D3D9
-#   if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *vdecl = (IDirect3DVertexDeclaration9 *)m_data;
-#   elif defined _XBOX
-    D3DVertexDeclaration *vdecl = (D3DVertexDeclaration *)m_data;
-#   endif
-
-    if (FAILED(g_d3ddevice->SetVertexDeclaration(vdecl)))
+    if (FAILED(m_data->m_dev->SetVertexDeclaration(m_data->m_vdecl)))
         Abort();
 #else
     /* FIXME: Nothing to do? */
@@ -130,28 +138,28 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     switch (type)
     {
     case MeshPrimitive::Triangles:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLELIST,
-                                              skip, count)))
+        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLELIST,
+                                                skip, count)))
             Abort();
         break;
     case MeshPrimitive::TriangleStrips:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
-                                              skip, count)))
+        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLESTRIP,
+                                                skip, count)))
             Abort();
         break;
     case MeshPrimitive::TriangleFans:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_TRIANGLEFAN,
-                                              skip, count)))
+        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLEFAN,
+                                                skip, count)))
             Abort();
         break;
     case MeshPrimitive::Points:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_POINTLIST,
-                                              skip, count)))
+        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_POINTLIST,
+                                                skip, count)))
             Abort();
         break;
     case MeshPrimitive::Lines:
-        if (FAILED(g_d3ddevice->DrawPrimitive(D3DPT_LINELIST,
-                                              skip, count)))
+        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_LINELIST,
+                                                skip, count)))
             Abort();
         break;
     }
@@ -190,29 +198,29 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     {
     case MeshPrimitive::Triangles:
         count = count / 3;
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
+        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     case MeshPrimitive::TriangleStrips:
         count = count - 2;
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
+        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     case MeshPrimitive::TriangleFans:
         count = count - 2;
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN,
+        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     case MeshPrimitive::Points:
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_POINTLIST,
+        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_POINTLIST,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
     case MeshPrimitive::Lines:
-        if (FAILED(g_d3ddevice->DrawIndexedPrimitive(D3DPT_LINELIST,
+        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_LINELIST,
                                            vbase, vskip, vcount, skip, count)))
             Abort();
         break;
@@ -258,7 +266,7 @@ void VertexDeclaration::Unbind()
         if (m_streams[i].index != stream)
         {
             stream = m_streams[i].index;
-            if (FAILED(g_d3ddevice->SetStreamSource(stream, 0, 0, 0)))
+            if (FAILED(m_data->m_dev->SetStreamSource(stream, 0, 0, 0)))
                 Abort();
         }
     /* "NULL is an invalid input to SetVertexDeclaration" (DX9 guide), so
@@ -329,7 +337,8 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     /* FIXME: precompute most of the crap above! */
     if (stream >= 0)
     {
-        if (FAILED(g_d3ddevice->SetStreamSource(stream, vb->m_data->m_vbo, 0, stride)))
+        if (FAILED(m_data->m_dev->SetStreamSource(stream, vb->m_data->m_vbo,
+                                                  0, stride)))
             Abort();
     }
 #else
@@ -553,15 +562,14 @@ void VertexDeclaration::Initialize()
     elements[m_count] = end_element[0];
 
 #   if defined USE_D3D9
-    IDirect3DVertexDeclaration9 *vdecl;
+    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    D3DVertexDeclaration *vdecl;
+    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
 #   endif
 
-    if (FAILED(g_d3ddevice->CreateVertexDeclaration(elements, &vdecl)))
+    if (FAILED(m_data->m_dev->CreateVertexDeclaration(elements,
+                                                      &m_data->m_vdecl)))
         Abort();
-
-    m_data = vdecl;
 #else
 
 #endif
@@ -636,7 +644,13 @@ VertexBuffer::VertexBuffer(size_t size)
     if (!size)
         return;
 #if defined USE_D3D9 || defined _XBOX
-    if (FAILED(g_d3ddevice->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,
+#   if defined USE_D3D9
+    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+#   elif defined _XBOX
+    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+#   endif
+
+    if (FAILED(m_data->m_dev->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, nullptr)))
         Abort();
 #else

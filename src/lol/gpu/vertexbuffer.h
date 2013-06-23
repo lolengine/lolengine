@@ -311,7 +311,8 @@ private:
     struct { uint8_t stream_type, index, usage, size; int reg; } m_streams[12 + 1];
     int m_count;
 
-    void *m_data;
+private:
+    class VertexDeclarationData *m_data;
 };
 
 } /* namespace lol */
