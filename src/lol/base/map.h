@@ -24,9 +24,14 @@ namespace lol
 template<typename K, typename V> class Map : protected Hash<K>
 {
 public:
+	/* If E is different from K, Hash<K> must implement operator()(E const&)
+     * and an equality operator between K and E must exist in order to use this method.
+      */
+
     /* I choose to make this inline because passing the key by reference
      * is usually suboptimal. */
-    inline V const& operator[] (K const &key) const
+	template <typename E>
+    inline V const& operator[] (E const &key) const
     {
         /* Look for the hash in our table and return the value. */
         uint32_t hash = ((Hash<K> const &)*this)(key);
@@ -39,7 +44,8 @@ public:
         return V();
     }
 
-    inline V & operator[] (K const &key)
+	template <typename E>
+    inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
         uint32_t hash = ((Hash<K> const &)*this)(key);
@@ -52,7 +58,8 @@ public:
         return m_array.Last().m3;
     }
 
-    inline void Remove(K const &key)
+	template <typename E>
+    inline void Remove(E const &key)
     {
         uint32_t hash = ((Hash<K> const &)*this)(key);
         for (int i = 0; i < m_array.Count(); ++i)
@@ -64,7 +71,8 @@ public:
                 }
     }
 
-    inline bool HasKey(K const &key)
+	template <typename E>
+    inline bool HasKey(E const &key)
     {
         uint32_t hash = ((Hash<K> const &)*this)(key);
         for (int i = 0; i < m_array.Count(); ++i)
@@ -73,6 +81,23 @@ public:
                     return true;
         return false;
     }
+
+	template <typename E>
+    inline bool TryGetValue(E const &key, V& value)
+    {
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        for (int i = 0; i < m_array.Count(); ++i)
+            if (m_array[i].m1 == hash)
+                if (m_array[i].m2 == key)
+                {
+                    value = m_array[i].m3;
+                    return true;
+                }
+
+        return false;
+    }
+
+    inline int Count() const { return m_array.Count(); }
 
 private:
     Array<uint32_t, K, V> m_array;

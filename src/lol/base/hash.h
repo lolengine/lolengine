@@ -40,12 +40,14 @@ template<> class Hash<char const *>
 {
 public:
     uint32_t operator()(char const *x) const;
+    uint32_t operator()(String const &s) const;
 };
 
 template<> class Hash<String>
 {
 public:
     uint32_t operator()(String const &s) const;
+    uint32_t operator()(char const *x) const;
 };
 
 } /* namespace lol */
