@@ -308,21 +308,23 @@ check()
             ;;
         nacl-*)
             ;;
+        web-*)
+            ;;
         win*-i386)
             # If neither $MSYSTEM or $DISPLAY are set, and xvfb-run
             # exists, use it to run the test suite.
             if test "x${MSYSTEM}${DISPLAY}" = x \
                && xvfb-run --help 2>&1 >/dev/null; then
-                xvfb-run -a make check
+                xvfb-run -a make check VERBOSE=1
             else
-                make check
+                make check VERBOSE=1
             fi
             ;;
         win*-amd64)
             # No support for Wine64 yet
             ;;
         *)
-            make check
+            make check VERBOSE=1
             ;;
     esac
 }
