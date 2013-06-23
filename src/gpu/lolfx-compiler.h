@@ -36,6 +36,18 @@ public:
                                         LolFxParser::location_type* yylloc);
 
 private:
+    bool IsExpressionTrue(char const *buf);
+
+    Map<String, String> m_pp_defines;
+
+    enum
+    {
+        BlockIsFalse,
+        BlockIsForeverFalse,
+        BlockIsTrue,
+    };
+    Array<int> m_pp_stack;
+
     char const *m_input;
 };
 

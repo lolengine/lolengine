@@ -42,6 +42,7 @@ typedef lol::LolFxParser::token_type token_type;
 
 %x C_COMMENT
 %x CPP_COMMENT
+%x PREPROCESSOR_COMMENT
 
 %%
 
@@ -50,6 +51,7 @@ typedef lol::LolFxParser::token_type token_type;
     yylloc->step();
 
     int language_guess = INITIAL;
+    m_pp_stack.Push(BlockIsTrue);
 %}
 
  /*
@@ -466,24 +468,174 @@ typedef lol::LolFxParser::token_type token_type;
   * Gathered from http://msdn.microsoft.com/en-us/library/windows/desktop/bb943993%28v=vs.85%29.aspx
   */
 
-"#"[ \t]*"define"            { return token::PREPROCESSOR_DEFINE; }
-"#"[ \t]*"elif"              { return token::PREPROCESSOR_ELIF; }
-"#"[ \t]*"else"              { return token::PREPROCESSOR_ELSE; }
-"#"[ \t]*"endif"             { return token::PREPROCESSOR_ENDIF; }
-"#"[ \t]*"error"             { return token::PREPROCESSOR_ERROR; }
-"#"[ \t]*"if"                { return token::PREPROCESSOR_IF; }
-"#"[ \t]*"ifdef"             { return token::PREPROCESSOR_IFDEF; }
-"#"[ \t]*"ifndef"            { return token::PREPROCESSOR_IFNDEF; }
-"#"[ \t]*"include"           { return token::PREPROCESSOR_INCLUDE; }
-"#"[ \t]*"line"              { return token::PREPROCESSOR_LINE; }
-"#"[ \t]*"pragma"            { return token::PREPROCESSOR_PRAGMA; }
-"#"[ \t]*"undef"             { return token::PREPROCESSOR_UNDEF; }
+^[ \t]*"#"[ \t]*"define".* {
+    /* FIXME: this is very, very limited */
+    char const *tmp = strstr(yytext, "define") + 6;
+    while (*tmp == ' ' || *tmp == '\n')
+        tmp++;
+    if (*tmp == '\0')
+        return token::PREPROCESSOR_DEFINE;
+    char const *tmp2 = tmp;
+    while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
+        tmp++;
+    String key(tmp2, (int)(tmp - tmp2));
+    while (*tmp == ' ' || *tmp == '\n')
+        tmp++;
+    String val(*tmp ? tmp : "1");
+
+    Log::Debug("new macro: ‘%s’ = ‘%s’\n", key.C(), val.C());
+    m_pp_defines[key] = val;
+}
+
+^[ \t]*"#"[ \t]*"elif" {
+    if (m_pp_stack.Count() <= 1)
+        return token::PREPROCESSOR_ELIF;
+    m_pp_stack.Last() = BlockIsForeverFalse;
+    BEGIN(PREPROCESSOR_COMMENT);
+}
+
+^[ \t]*"#"[ \t]*"else" {
+    if (m_pp_stack.Count() <= 1)
+        return token::PREPROCESSOR_ELSE;
+    m_pp_stack.Last() = BlockIsForeverFalse;
+    BEGIN(PREPROCESSOR_COMMENT);
+}
+
+^[ \t]*"#"[ \t]*"endif" {
+    if (m_pp_stack.Count() <= 1)
+        return token::PREPROCESSOR_ENDIF;
+    m_pp_stack.Pop();
+}
+
+^[ \t]*"#"[ \t]*"error".*    { return token::PREPROCESSOR_ERROR; }
+
+^[ \t]*"#"[ \t]*"if".* {
+    if (IsExpressionTrue(strstr(yytext, "if") + 2))
+    {
+        m_pp_stack.Push(BlockIsTrue);
+    }
+    else
+    {
+        m_pp_stack.Push(BlockIsFalse);
+        BEGIN(PREPROCESSOR_COMMENT);
+    }
+}
+
+^[ \t]*"#"[ \t]*"ifdef" {
+    /* FIXME: this is very, very limited */
+    char const *tmp = strstr(yytext, "ifdef") + 5;
+    while (*tmp == ' ' || *tmp == '\n')
+        tmp++;
+    if (*tmp == '\0')
+        return token::PREPROCESSOR_IFDEF;
+    char const *tmp2 = tmp;
+    while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
+        tmp++;
+    String key(tmp2, (int)(tmp - tmp2));
+    if (m_pp_defines.HasKey(key))
+    {
+        m_pp_stack.Push(BlockIsTrue);
+    }
+    else
+    {
+        m_pp_stack.Push(BlockIsFalse);
+        BEGIN(PREPROCESSOR_COMMENT);
+    }
+}
+
+^[ \t]*"#"[ \t]*"ifndef" {
+    /* FIXME: this is very, very limited */
+    char const *tmp = strstr(yytext, "ifndef") + 6;
+    while (*tmp == ' ' || *tmp == '\n')
+        tmp++;
+    if (*tmp == '\0')
+        return token::PREPROCESSOR_IFDEF;
+    char const *tmp2 = tmp;
+    while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
+        tmp++;
+    String key(tmp2, (int)(tmp - tmp2));
+    if (m_pp_defines.HasKey(key))
+    {
+        m_pp_stack.Push(BlockIsFalse);
+        BEGIN(PREPROCESSOR_COMMENT);
+    }
+    else
+    {
+        m_pp_stack.Push(BlockIsTrue);
+    }
+}
+
+^[ \t]*"#"[ \t]*"include"    { return token::PREPROCESSOR_INCLUDE; }
+
+^[ \t]*"#"[ \t]*"line".*     { /* ignore for now */ }
+
+^[ \t]*"#"[ \t]*"pragma".*   { /* ignore for now */ }
+
+^[ \t]*"#"[ \t]*"undef" {
+    /* FIXME: this is very, very limited */
+    char const *tmp = strstr(yytext, "undef") + 5;
+    while (*tmp == ' ' || *tmp == '\n')
+        tmp++;
+    if (*tmp == '\0')
+        return token::PREPROCESSOR_UNDEF;
+    char const *tmp2 = tmp;
+    while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
+        tmp++;
+    String key(tmp2, (int)(tmp - tmp2));
+
+    Log::Debug("undef macro: ‘%s’\n", key.C());
+    m_pp_defines.Remove(key);
+}
+
+<PREPROCESSOR_COMMENT>^[ \t]*"#"[ \t]*(if|ifdef|ifndef)[ \t]+.*$ {
+    m_pp_stack.Push(BlockIsForeverFalse);
+}
+<PREPROCESSOR_COMMENT>^[ \t]*"#"[ \t]*"else" {
+    switch (m_pp_stack.Last())
+    {
+        case BlockIsFalse:
+            m_pp_stack.Last() = BlockIsTrue;
+            BEGIN(INITIAL);
+            break;
+        case BlockIsForeverFalse:
+            break;
+        case BlockIsTrue:
+            m_pp_stack.Last() = BlockIsForeverFalse;
+            break;
+    }
+}
+<PREPROCESSOR_COMMENT>^[ \t]*"#"[ \t]*"elif" {
+    switch (m_pp_stack.Last())
+    {
+        case BlockIsFalse:
+            if (IsExpressionTrue(strstr(yytext, "elif") + 4))
+            {
+                m_pp_stack.Last() = BlockIsTrue;
+                BEGIN(INITIAL);
+            }
+            break;
+        case BlockIsForeverFalse:
+            break;
+        case BlockIsTrue:
+            m_pp_stack.Last() = BlockIsForeverFalse;
+            break;
+    }
+}
+<PREPROCESSOR_COMMENT>^[ \t]*"#"[ \t]*"endif" {
+    m_pp_stack.Pop();
+    if (m_pp_stack.Last() == BlockIsTrue)
+        BEGIN(INITIAL);
+}
+<PREPROCESSOR_COMMENT>\n     { yylloc->lines(1); }
+<PREPROCESSOR_COMMENT>[^/#]* { }
+<PREPROCESSOR_COMMENT>"/*"   { BEGIN(C_COMMENT); }
+<PREPROCESSOR_COMMENT>[/#]   { }
 
  /*
   * GLSL preprocessor directives
   */
 
-"#"[ \t]*"version".*         { /* ignore for now */ }
+^[ \t]*"#"[ \t]*"version"[^\n]* { /* ignore for now */ }
 
  /*
   * HLSL reserved keywords
@@ -584,10 +736,15 @@ typedef lol::LolFxParser::token_type token_type;
   */
 
 "/*"                { BEGIN(C_COMMENT); }
-<C_COMMENT>"*/"     { BEGIN(INITIAL); }
 <C_COMMENT>[^*\n]*  { }
 <C_COMMENT>\n       { yylloc->lines(1); }
 <C_COMMENT>.        { }
+<C_COMMENT>"*/"     {
+    if (m_pp_stack.Last() == BlockIsTrue)
+        BEGIN(INITIAL);
+    else
+        BEGIN(PREPROCESSOR_COMMENT);
+}
 
  /*
   * Ignore C++ comments
@@ -615,6 +772,12 @@ int lol::LolFxScanner::LexerInput(char* buf, int max_size)
     if (buf[0])
         ++m_input;
     return buf[0] ? 1 : 0;
+}
+
+bool lol::LolFxScanner::IsExpressionTrue(char const *buf)
+{
+    /* FIXME: this is really too limited */
+    return atoi(buf) != 0;
 }
 
 #ifdef yylex

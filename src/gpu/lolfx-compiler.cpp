@@ -30,6 +30,7 @@ bool LolFxCompiler::ParseString(char const *command)
     LolFxScanner scanner(command);
     m_lexer = &scanner;
     LolFxParser parser(*this);
+    //parser.set_debug_level(1);
     if (parser.parse() != 0)
         return false;
     return true;
