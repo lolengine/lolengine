@@ -154,10 +154,10 @@ private:
     Renderer(ivec2 size);
     ~Renderer();
 
-    void *GetDevice();
-
 public:
     void Clear(ClearMask mask);
+
+    void *GetDevice();
 
 public:
     void SetViewport(ibox2 viewport);

@@ -90,7 +90,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
         /* FIXME: this is all mixed up for the RGBA/ARGB combinations */
 #   if defined USE_D3D9
         { D3DFMT_R8G8B8, 3 },   /* RGB_8 */
-        { D3DFMT_UNKNOWN, 0 },  /* RGBA_8 */
+        { D3DFMT_A8R8G8B8, 4 }, /* RGBA_8 */
         { D3DFMT_A8R8G8B8, 4 }, /* ARGB_8 */
         { D3DFMT_UNKNOWN, 0 },  /* ABGR_8 */
         { D3DFMT_L8, 1 },       /* Y8 */
@@ -105,6 +105,8 @@ Texture::Texture(ivec2 size, PixelFormat format)
     };
 
     D3DFORMAT d3d_format = GET_CLAMPED(d3d_formats, format).format;
+    ASSERT(d3d_format != D3DFMT_UNKNOWN,
+           "unsupported texture format %d\n", format);
 #   if defined USE_D3D9
     int d3d_usage = D3DUSAGE_DYNAMIC;
 #   else
@@ -112,8 +114,8 @@ Texture::Texture(ivec2 size, PixelFormat format)
 #   endif
 
     m_data->m_dev->CreateTexture(m_data->m_size.x, m_data->m_size.y, 1,
-                               d3d_usage, d3d_format,
-                               D3DPOOL_DEFAULT, &m_data->m_texture, nullptr);
+                                 d3d_usage, d3d_format,
+                                 D3DPOOL_DEFAULT, &m_data->m_texture, nullptr);
     m_data->m_bytes_per_elem = GET_CLAMPED(d3d_formats, format).bytes;
 #else
     static struct

@@ -76,6 +76,9 @@
     <Filter Include="sys">
       <UniqueIdentifier>{1d945673-ee9a-48a7-9ee8-34338c5fefc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lol\debug">
+      <UniqueIdentifier>{01285b11-c6c7-4a9e-8dee-daa2c63901e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\image.cpp">
@@ -306,11 +309,11 @@
     <ClCompile Include="base\log.cpp">
       <Filter>base</Filter>
     </ClCompile>
+    <ClCompile Include="debug\lines.cpp">
+      <Filter>debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="image\image.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="debug\fps.h">
       <Filter>debug</Filter>
     </ClInclude>
@@ -595,6 +598,15 @@
     </ClInclude>
     <ClInclude Include="sys\threadbase.h">
       <Filter>sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\debug\all.h">
+      <Filter>lol\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\debug\lines.h">
+      <Filter>lol\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\image\image.h">
+      <Filter>lol\image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

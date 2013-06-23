@@ -233,7 +233,6 @@
     <ClInclude Include="lol\sys\atomic.h" />
     <ClInclude Include="lol\sys\file.h" />
     <ClInclude Include="lol\sys\init.h" />
-    <ClInclude Include="lol\sys\sys.h" />
     <ClInclude Include="lol\sys\thread.h" />
     <ClInclude Include="lol\sys\timer.h" />
     <ClInclude Include="lol\unit.h" />
