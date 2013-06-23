@@ -167,9 +167,19 @@ uint32_t Hash<char const *>::operator ()(char const *s) const
     return HashCharString(s);
 }
 
+uint32_t Hash<char const *>::operator ()(String const &s) const
+{
+    return HashCharString(&s[0]);
+}
+
 uint32_t Hash<String>::operator ()(String const &s) const
 {
     return HashCharString(&s[0]);
+}
+
+uint32_t Hash<String>::operator ()(char const *s) const
+{
+    return HashCharString(s);
 }
 
 } /* namespace lol */
