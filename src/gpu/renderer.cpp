@@ -114,9 +114,9 @@ Renderer::Renderer(ivec2 size)
     d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-    HRESULT hr = VideoData::d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, g_hwnd,
-                                                  D3DCREATE_HARDWARE_VERTEXPROCESSING,
-                                                  &d3dpp, &m_data->m_d3d_dev);
+    HRESULT hr = m_data->m_d3d_ctx->CreateDevice(0, D3DDEVTYPE_HAL, g_hwnd,
+                                                 D3DCREATE_HARDWARE_VERTEXPROCESSING,
+                                                 &d3dpp, &m_data->m_d3d_dev);
     if (FAILED(hr))
     {
         Log::Error("cannot create D3D device\n");
@@ -157,7 +157,7 @@ Renderer::Renderer(ivec2 size)
     SetDepthFunc(DepthFunc::LessOrEqual);
 
     m_data->m_cull_mode = CullMode::Disabled;
-    SetCullMode(CullMode::CounterClockwise);
+    SetCullMode(CullMode::Clockwise);
 
     m_data->m_polygon_mode = PolygonMode::Point;
     SetPolygonMode(PolygonMode::Fill);
@@ -204,8 +204,8 @@ void Renderer::Clear(ClearMask mask)
     vec3 tmp = 255.999f * GetClearColor().rgb;
     D3DCOLOR clear_color = D3DCOLOR_XRGB((int)tmp.r, (int)tmp.g, (int)tmp.b);
 
-    if (FAILED(VideoData::d3d_dev->Clear(0, nullptr, m, clear_color,
-                                         g_renderer->GetClearDepth(), 0)))
+    if (FAILED(m_data->m_d3d_dev->Clear(0, nullptr, m, clear_color,
+                                        GetClearDepth(), 0)))
         Abort();
 #else
     GLbitfield m = 0;
@@ -398,7 +398,7 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    enum D3DBLEND s1[2] = { D3DBLEND_ONE, D3DBLEND_ZERO };
+    D3DBLEND s1[2] = { D3DBLEND_ONE, D3DBLEND_ZERO };
     BlendFunc s2[2] = { src, dst };
 
     for (int i = 0; i < 2; ++i)
@@ -429,16 +429,16 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
                 s1[i] = D3DBLEND_INVDESTALPHA; break;
             /* FiXME: these can be supported using D3DPBLENDCAPS_BLENDFACTOR */
             case BlendFunc::ConstantColor:
-                assert(0, "BlendFunc::ConstantColor not supported");
+                ASSERT(0, "BlendFunc::ConstantColor not supported");
                 break;
             case BlendFunc::OneMinusConstantColor:
-                assert(0, "BlendFunc::OneMinusConstantColor not supported");
+                ASSERT(0, "BlendFunc::OneMinusConstantColor not supported");
                 break;
             case BlendFunc::ConstantAlpha:
-                assert(0, "BlendFunc::ConstantAlpha not supported");
+                ASSERT(0, "BlendFunc::ConstantAlpha not supported");
                 break;
             case BlendFunc::OneMinusConstantAlpha:
-                assert(0, "BlendFunc::OneMinusConstantAlpha not supported");
+                ASSERT(0, "BlendFunc::OneMinusConstantAlpha not supported");
                 break;
         }
     }
@@ -630,12 +630,12 @@ void Renderer::SetCullMode(CullMode mode)
         break;
     case CullMode::Clockwise:
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
         break;
     case CullMode::CounterClockwise:
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
         glFrontFace(GL_CCW);
         break;
     }
@@ -668,7 +668,7 @@ void Renderer::SetPolygonMode(PolygonMode mode)
         m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
         break;
     case PolygonMode::Fill:
-        m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DCULL_SOLID);
+        m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
         break;
     }
 #elif defined __CELLOS_LV2__ || defined GL_VERSION_1_1
