@@ -193,6 +193,16 @@ fi
 append ""
 
 #
+# Emscripten
+#
+
+append "[emscripten]"
+if em++ --version >/dev/null 2>&1; then
+    append "version = $(version | sed -ne 's/.*emcc.* \([0-9.]\{1,\}\).*/\1/p')"
+fi
+append ""
+
+#
 # Android NDK
 #
 
