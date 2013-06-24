@@ -45,8 +45,11 @@ class TextureData
     D3DTEXTUREFILTERTYPE m_min_filter;
     D3DTEXTUREFILTERTYPE m_mip_filter;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DTexture *m_texture;
+    D3DTEXTUREFILTERTYPE m_mag_filter;
+    D3DTEXTUREFILTERTYPE m_min_filter;
+    D3DTEXTUREFILTERTYPE m_mip_filter;
 #else
     GLuint m_texture;
     GLint m_internal_format;
@@ -74,7 +77,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
 #   if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 #   endif
 
     static struct
@@ -297,8 +300,10 @@ void Texture::SetMinFiltering(TextureMinFilter filter)
 
 void Texture::GenerateMipmaps()
 {
-#if defined _XBOX || defined USE_D3D9
-    m_data->m_texture->GenerateMipSubLevels();
+#if defined USE_D3D9
+    m_data->m_texture->->GenerateMipSubLevels();
+#elif defined _XBOX
+    /* FIXME: No direct mipmap generation support on X360 */
 #elif defined __CELLOS_LV2__
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     glGenerateMipmapOES(GL_TEXTURE_2D);
