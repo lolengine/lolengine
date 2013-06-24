@@ -63,7 +63,7 @@ void XboxApp::Tick()
     Ticker::TickDraw();
 
 #if defined _XBOX
-    D3DDevice9 *d3d_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    D3DDevice *d3d_dev = (D3DDevice *)g_renderer->GetDevice();
     d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
 #endif
 }

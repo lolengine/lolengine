@@ -19,6 +19,10 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
+#elif defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 using namespace std;
@@ -44,7 +48,7 @@ class FramebufferData
     IDirect3DTexture9 *m_texture;
     IDirect3DSurface9 *m_surface, *m_back_surface;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DTexture *m_texture;
     D3DSurface *m_surface, *m_back_surface;
 #else
@@ -61,7 +65,7 @@ uint32_t FramebufferFormat::GetFormat()
 {
     switch (m_format)
     {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     case R_16_F:        return D3DFMT_R16F;
     case R_32_F:        return D3DFMT_R32F;
     case RG_16:
@@ -72,6 +76,25 @@ uint32_t FramebufferFormat::GetFormat()
     case RGB_8:
     case RGB_8_I:
     case RGB_8_UI:      return D3DFMT_R8G8B8;
+    case RGBA_8:
+    case RGBA_8_I:
+    case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
+    case RGBA_16:
+    case RGBA_16_I:
+    case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
+    case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
+    case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
+#elif defined _XBOX
+    case R_16_F:        return D3DFMT_R16F;
+    case R_32_F:        return D3DFMT_R32F;
+    case RG_16:
+    case RG_16_I:
+    case RG_16_UI:      return D3DFMT_G16R16;
+    case RG_16_F:       return D3DFMT_G16R16F;
+    case RG_32_F:       return D3DFMT_G32R32F;
+    case RGB_8:
+    case RGB_8_I:
+    case RGB_8_UI:      return D3DFMT_X8R8G8B8;
     case RGBA_8:
     case RGBA_8_I:
     case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
@@ -291,23 +314,25 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 
     if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1,
-                                          D3DUSAGE_RENDERTARGET,
-                                          (D3DFORMAT)fbo_format.GetFormat(), D3DPOOL_DEFAULT,
-                                          &m_data->m_texture, nullptr)))
+                                            D3DUSAGE_RENDERTARGET,
+                                            (D3DFORMAT)fbo_format.GetFormat(),
+                                            D3DPOOL_DEFAULT,
+                                            &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
 #elif defined _XBOX
-    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 
     if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1, 0,
-                                          fbo_format.GetFormat(), D3DPOOL_DEFAULT,
-                                          &m_data->m_texture, nullptr)))
+                                            (D3DFORMAT)fbo_format.GetFormat(),
+                                            D3DPOOL_DEFAULT,
+                                            &m_data->m_texture, nullptr)))
         Abort();
     if (FAILED(m_data->m_dev->CreateRenderTarget(size.x, size.y,
-                                               fbo_format.GetFormat(),
-                                               D3DMULTISAMPLE_NONE, 0, 0,
-                                               &m_data->m_surface, nullptr)))
+                                                 (D3DFORMAT)fbo_format.GetFormat(),
+                                                 D3DMULTISAMPLE_NONE, 0, 0,
+                                                 &m_data->m_surface, nullptr)))
         Abort();
 #else
 #   if GL_VERSION_1_1

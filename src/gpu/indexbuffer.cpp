@@ -19,6 +19,10 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
+#elif defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 using namespace std;
@@ -41,7 +45,7 @@ class IndexBufferData
     IDirect3DDevice9 *m_dev;
     IDirect3DIndexBuffer9 *m_ibo;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DIndexBuffer *m_ibo;
 #else
     GLuint m_ibo;
@@ -64,7 +68,7 @@ IndexBuffer::IndexBuffer(size_t size)
 #   if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 #   endif
 
     if (FAILED(m_data->m_dev->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,

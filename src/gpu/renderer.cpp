@@ -97,7 +97,7 @@ Renderer::Renderer(ivec2 size)
     XVIDEO_MODE VideoMode;
     XGetVideoMode(&VideoMode);
     size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
-                                VideoMode.dwDisplayHeight);
+                                VideoMode.dwDisplayHeight));
 #   endif
     D3DPRESENT_PARAMETERS d3dpp;
     memset(&d3dpp, 0, sizeof(d3dpp));

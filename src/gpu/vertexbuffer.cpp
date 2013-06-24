@@ -19,6 +19,10 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
+#elif defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 using namespace std;
@@ -42,7 +46,7 @@ class VertexBufferData
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexBuffer9 *m_vbo;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DVertexBuffer *m_vbo;
 #else
     GLuint m_vbo;
@@ -64,7 +68,7 @@ class VertexDeclarationData
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexDeclaration9 *m_vdecl;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DVertexDeclaration *m_vdecl;
 #else
 #endif
@@ -564,7 +568,7 @@ void VertexDeclaration::Initialize()
 #   if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 #   endif
 
     if (FAILED(m_data->m_dev->CreateVertexDeclaration(elements,
@@ -647,7 +651,7 @@ VertexBuffer::VertexBuffer(size_t size)
 #   if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 #   endif
 
     if (FAILED(m_data->m_dev->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,

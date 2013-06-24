@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdio>
 
-#ifdef WIN32
+#if defined WIN32 && !defined _XBOX
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   if defined USE_D3D9
@@ -25,6 +25,10 @@
 #       include <d3d9.h>
 #       include <d3dx9shader.h>
 #   endif
+#elif defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
 #endif
 
 #include "core.h"
@@ -50,7 +54,7 @@ private:
     IDirect3DPixelShader9 *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
 #elif defined _XBOX
-    D3DDevice9 *m_dev;
+    D3DDevice *m_dev;
     D3DVertexShader *vert_shader;
     D3DPixelShader *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
@@ -192,7 +196,7 @@ Shader::Shader(char const *vert, char const *frag)
 #   if defined USE_D3D9
     data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
 #   elif defined _XBOX
-    data->m_dev = (D3DDevice9 *)g_renderer->GetDevice();
+    data->m_dev = (D3DDevice *)g_renderer->GetDevice();
 #   endif
 
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, nullptr, "main",
