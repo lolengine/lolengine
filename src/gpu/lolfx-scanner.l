@@ -777,7 +777,7 @@ int lol::LolFxScanner::LexerInput(char* buf, int max_size)
 bool lol::LolFxScanner::IsExpressionTrue(char const *buf)
 {
     /* FIXME: this is really too limited */
-    return atoi(buf) != 0;
+    return std::atoi(buf) != 0;
 }
 
 #ifdef yylex

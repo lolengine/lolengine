@@ -66,7 +66,7 @@ namespace lol {
     union semantic_type
     {
 /* Line 33 of lalr1.cc  */
-#line 38 "gpu/lolfx-parser.y"
+#line 34 "gpu/lolfx-parser.y"
 
     int ival;
     unsigned uval;

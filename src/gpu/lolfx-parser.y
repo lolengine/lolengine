@@ -17,10 +17,6 @@
 
 #include <string>
 
-/* HACK: workaround for Bison who insists on using exceptions */
-#define try if (true)
-#define catch(...) if (false)
-#define throw (void)0
 %}
 
 %require "2.3"
@@ -247,6 +243,11 @@
 
 #undef yylex
 #define yylex mc.m_lexer->lex
+
+/* HACK: workaround for Bison who insists on using exceptions */
+#define try if (true)
+#define catch(...) if (false)
+#define throw (void)0
 %}
 
 %%

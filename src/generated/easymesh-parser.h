@@ -66,7 +66,7 @@ namespace lol {
     union semantic_type
     {
 /* Line 33 of lalr1.cc  */
-#line 40 "easymesh/easymesh-parser.y"
+#line 35 "easymesh/easymesh-parser.y"
 
     float fval;
     /* Can't use uin32_t here for some reason */

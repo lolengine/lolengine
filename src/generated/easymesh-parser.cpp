@@ -58,25 +58,25 @@
 
 #include <string>
 
-/* HACK: workaround for Bison who insists on using exceptions */
-#define try if (true)
-#define catch(...) if (false)
-#define throw (void)0
-
 /* Line 283 of lalr1.cc  */
-#line 68 "generated/easymesh-parser.cpp"
+#line 63 "generated/easymesh-parser.cpp"
 
 
 #include "easymesh-parser.h"
 
 /* User implementation prologue.  */
 /* Line 289 of lalr1.cc  */
-#line 70 "easymesh/easymesh-parser.y"
+#line 65 "easymesh/easymesh-parser.y"
 
 #include "easymesh/easymesh-compiler.h"
 
 #undef yylex
 #define yylex mc.m_lexer->lex
+
+/* HACK: workaround for Bison who insists on using exceptions */
+#define try if (true)
+#define catch(...) if (false)
+#define throw (void)0
 
 /* Line 289 of lalr1.cc  */
 #line 83 "generated/easymesh-parser.cpp"
