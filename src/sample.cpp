@@ -112,7 +112,7 @@ Sample::Sample(char const *path)
     }
     if (!data->m_chunk)
     {
-        Log::Error("could not load sample %s\n", path);
+        Log::Error("could not load sample %s: %s\n", path, Mix_GetError());
     }
     data->m_channel = -1;
 #endif
