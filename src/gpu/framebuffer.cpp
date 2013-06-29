@@ -344,12 +344,17 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
      * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormatOrder();
+#   elif GL_ES_VERSION_2_0
+    /* In OpenGL ES, internal format and format must match. */
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum format = fbo_format.GetFormat();
+    GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
 #   else
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
 #   endif
-    GLenum wrapmode = GL_REPEAT;
+    GLenum wrapmode = GL_CLAMP_TO_EDGE;
     GLenum filtering = GL_NEAREST;
 
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
@@ -379,11 +384,12 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 #   endif
 
     m_data->m_depth = GL_INVALID_ENUM;
-#   if GL_VERSION_1_1
-    /* FIXME: not implemented on GL ES, see
-     * http://stackoverflow.com/q/4041682/111461 */
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     if (depth != GL_INVALID_ENUM)
     {
+        /* XXX: might not work on GL ES, see
+         * http://stackoverflow.com/q/4041682/111461
+         * See also http://qt-project.org/forums/viewthread/11734 */
         glGenRenderbuffers(1, &m_data->m_depth);
         glBindRenderbuffer(GL_RENDERBUFFER, m_data->m_depth);
         glRenderbufferStorage(GL_RENDERBUFFER, depth, size.x, size.y);
@@ -391,6 +397,8 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
                                   GL_RENDERBUFFER, m_data->m_depth);
     }
 #   endif
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -418,7 +426,7 @@ Framebuffer::~Framebuffer()
     glDeleteFramebuffersOES(1, &m_data->m_fbo);
 #   endif
     glDeleteTextures(1, &m_data->m_texture);
-#   if GL_VERSION_1_1
+#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
 #   endif
