@@ -50,28 +50,28 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testsuite", "..\..\test\tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{E74CF679-CA2A-47E9-B1F4-3779D6AC6B04}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_triangle", "..\..\tutorial\01_triangle.vcxproj", "{B92ABADC-45BE-4CC5-B724-9426053123A1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_triangle", "..\..\demos\tutorial\01_triangle.vcxproj", "{B92ABADC-45BE-4CC5-B724-9426053123A1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 		{83D3B207-C601-4025-8F41-01DEDC354661} = {83D3B207-C601-4025-8F41-01DEDC354661}
 		{D84021CA-B233-4E0F-8A52-071B83BBCCC4} = {D84021CA-B233-4E0F-8A52-071B83BBCCC4}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_cube", "..\..\tutorial\02_cube.vcxproj", "{7B083DA2-FE08-4F6D-BFDD-195D5C2783EB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_cube", "..\..\demos\tutorial\02_cube.vcxproj", "{7B083DA2-FE08-4F6D-BFDD-195D5C2783EB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 		{83D3B207-C601-4025-8F41-01DEDC354661} = {83D3B207-C601-4025-8F41-01DEDC354661}
 		{D84021CA-B233-4E0F-8A52-071B83BBCCC4} = {D84021CA-B233-4E0F-8A52-071B83BBCCC4}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05_easymesh", "..\..\tutorial\05_easymesh.vcxproj", "{1C5B8702-290C-42DA-AA9E-671348F5B747}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05_easymesh", "..\..\demos\tutorial\05_easymesh.vcxproj", "{1C5B8702-290C-42DA-AA9E-671348F5B747}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 		{83D3B207-C601-4025-8F41-01DEDC354661} = {83D3B207-C601-4025-8F41-01DEDC354661}
 		{D84021CA-B233-4E0F-8A52-071B83BBCCC4} = {D84021CA-B233-4E0F-8A52-071B83BBCCC4}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_fractal", "..\..\tutorial\11_fractal.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_fractal", "..\..\demos\tutorial\11_fractal.vcxproj", "{6BF81B39-EDC2-4227-9992-C2D8ABEA95AF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9E62F2FE-3408-4EAE-8238-FD84238CEEDA} = {9E62F2FE-3408-4EAE-8238-FD84238CEEDA}
 		{83D3B207-C601-4025-8F41-01DEDC354661} = {83D3B207-C601-4025-8F41-01DEDC354661}
@@ -110,7 +110,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touky_demo", "..\..\people\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "btphystest", "..\..\test\btphystest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_fbo", "..\..\tutorial\08_fbo.vcxproj", "{BCEE0132-8E24-49BE-AFEB-96DAD14396BA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_fbo", "..\..\demos\tutorial\08_fbo.vcxproj", "{BCEE0132-8E24-49BE-AFEB-96DAD14396BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jnat", "Jnat", "{0A1651FC-322B-4B04-82CB-28E9046D9383}"
 EndProject
@@ -124,7 +124,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Peeweek", "Peeweek", "{E27F
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo-peeweek", "..\..\people\peeweek\private\demo-peeweek.vcxproj", "{C2E01551-B636-4324-8461-71811DF6FBB5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_noise", "..\..\tutorial\03_noise.vcxproj", "{B0A53D75-CBB4-4FDF-93AC-2D12A79ADA0E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_noise", "..\..\demos\tutorial\03_noise.vcxproj", "{B0A53D75-CBB4-4FDF-93AC-2D12A79ADA0E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestProject", "..\..\people\jnat\TestProject\TestProject.vcxproj", "{5A77DCDD-2CBA-43E9-8B45-00C281443F77}"
 EndProject
@@ -132,7 +132,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VsLol", "VsLol", "{9CC50C06
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VsLol", "..\..\tools\vslol\VsLol.csproj", "{58922993-9830-4A40-B462-0326342F69ED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_texture", "..\..\tutorial\04_texture.vcxproj", "{834852DB-EDB6-4FD0-BCF9-45CD01126962}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_texture", "..\..\demos\tutorial\04_texture.vcxproj", "{834852DB-EDB6-4FD0-BCF9-45CD01126962}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benlitz", "Benlitz", "{B583BBFF-BE97-4F4E-BA1E-1F978A31EAB0}"
 EndProject
@@ -142,13 +142,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meshviewer", "..\..\test\me
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tactics", "..\..\people\touky\private\Tactics\tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_Voronoi", "..\..\tutorial\12_Voronoi.vcxproj", "{6BF81B39-EDC2-4227-9982-C2D8ABEA95AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_Voronoi", "..\..\demos\tutorial\12_Voronoi.vcxproj", "{6BF81B39-EDC2-4227-9982-C2D8ABEA95AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "the_unfortunate_voronoid", "..\..\people\touky\private\the_unfortunate_voronoid\the_unfortunate_voronoid.vcxproj", "{6BF81B39-EDC2-4127-9982-C2D8ABEA95AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lol.js", "Lol.js", "{430E9EC0-0E54-4BBB-BC31-3ECE04BAFCC5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol.js", "..\..\people\sam\private\lol.js\lol.js.vcxproj", "{AA376B9B-484B-4DC4-982F-6CFA645E441E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol.js", "..\..\demos\lol.js\lol.js.vcxproj", "{AA376B9B-484B-4DC4-982F-6CFA645E441E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

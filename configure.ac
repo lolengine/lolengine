@@ -478,7 +478,6 @@ AC_CONFIG_FILES(
   src/lua/Makefile
   src/data/Makefile
   src/data/font/Makefile
-  tutorial/Makefile
   test/Makefile
   test/math/Makefile
   test/sandbox/Makefile
@@ -487,6 +486,7 @@ AC_CONFIG_FILES(
   binaries/Makefile
   people/Makefile
   games/Makefile
+  demos/tutorial/Makefile
   tools/Makefile
   tools/vimlol/Makefile
   tools/vslol/Makefile
@@ -510,6 +510,10 @@ AC_CONFIG_FILES(
  [games/orbital/Makefile
 ])
 AC_CONFIG_FILES(
+ [demos/tutorial/Makefile
+  demos/lol.js/Makefile
+])
+AC_CONFIG_FILES(
  [tools/neercs/Makefile
 ])
 AC_CONFIG_FILES(
@@ -529,7 +533,6 @@ AC_CONFIG_FILES(
   people/sam/Makefile
   people/sam/private/Makefile
   people/sam/private/kanagawa/Makefile
-  people/sam/private/lol.js/Makefile
   people/sam/private/sapp/Makefile
 ])
 
