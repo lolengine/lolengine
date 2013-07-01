@@ -80,15 +80,16 @@ test/math/poly
 test/math/remez
 test/xolotl/xolotl
 tools/make-font
-tutorial/01_triangle
-tutorial/02_cube
-tutorial/03_noise
-tutorial/04_texture
-tutorial/05_easymesh
-tutorial/06_sprite
-tutorial/08_fbo
-tutorial/11_fractal
-tutorial/12_voronoi
+demos/lol.js/lol.js
+demos/tutorial/01_triangle
+demos/tutorial/02_cube
+demos/tutorial/03_noise
+demos/tutorial/04_texture
+demos/tutorial/05_easymesh
+demos/tutorial/06_sprite
+demos/tutorial/08_fbo
+demos/tutorial/11_fractal
+demos/tutorial/12_voronoi
 # Our data
 doc/doxygen.cfg
 doc/doxygen.log
