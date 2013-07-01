@@ -486,7 +486,7 @@ AC_CONFIG_FILES(
   binaries/Makefile
   people/Makefile
   games/Makefile
-  demos/tutorial/Makefile
+  demos/Makefile
   tools/Makefile
   tools/vimlol/Makefile
   tools/vslol/Makefile
