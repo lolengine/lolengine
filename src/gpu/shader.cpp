@@ -60,6 +60,8 @@ private:
     ID3DXConstantTable *vert_table, *frag_table;
 #elif !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
+	// Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
+	Map<String, GLint> attrib_locations;
 #else
     CGprogram vert_id, frag_id;
 #endif
@@ -332,12 +334,21 @@ ShaderAttrib Shader::GetAttribLocation(char const *attr,
     ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
 #elif !defined __CELLOS_LV2__
-    GLint l = glGetAttribLocation(data->prog_id, attr);
-    if (l < 0)
-    {
-        Log::Warn("tried to query invalid attribute: %s\n", attr);
-        l = 0;
-    }
+	GLint l;
+	
+	if (!data->attrib_locations.TryGetValue(attr, l))
+	{
+		l = glGetAttribLocation(data->prog_id, attr);
+		if (l < 0)
+		{
+			Log::Warn("tried to query invalid attribute: %s\n", attr);
+			l = 0;
+		}
+		else
+		{
+			data->attrib_locations[String(attr)] = l;
+		}
+	}
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
 #else
     /* FIXME: can we do this at all on the PS3? */
