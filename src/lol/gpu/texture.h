@@ -100,7 +100,7 @@ public:
 
     void SetMagFiltering(TextureMagFilter filter);
     void SetMinFiltering(TextureMinFilter filter);
-	void GenerateMipmaps();
+    void GenerateMipmaps();
 
     ShaderTexture GetTexture() const;
 

@@ -123,9 +123,9 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT(!(s1 != s3));
     }
 
-	LOLUNIT_TEST(StringCharsEqual)
+    LOLUNIT_TEST(StringCharsEqual)
     {
-		char const* sz = "abc";
+        char const* sz = "abc";
         String s1("abc");
         String s2("ab");
 
@@ -135,9 +135,9 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT(!(sz == s2));
     }
 
-	LOLUNIT_TEST(StringCharsDifferent)
+    LOLUNIT_TEST(StringCharsDifferent)
     {
-		char const* sz = "abc";
+        char const* sz = "abc";
         String s1("ab");
         String s2("abc");
 
