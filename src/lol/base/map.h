@@ -24,13 +24,13 @@ namespace lol
 template<typename K, typename V> class Map : protected Hash<K>
 {
 public:
-	/* If E is different from K, Hash<K> must implement operator()(E const&)
+    /* If E is different from K, Hash<K> must implement operator()(E const&)
      * and an equality operator between K and E must exist in order to use this method.
       */
 
     /* I choose to make this inline because passing the key by reference
      * is usually suboptimal. */
-	template <typename E>
+    template <typename E>
     inline V const& operator[] (E const &key) const
     {
         /* Look for the hash in our table and return the value. */
@@ -44,7 +44,7 @@ public:
         return V();
     }
 
-	template <typename E>
+    template <typename E>
     inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
@@ -58,7 +58,7 @@ public:
         return m_array.Last().m3;
     }
 
-	template <typename E>
+    template <typename E>
     inline void Remove(E const &key)
     {
         uint32_t hash = ((Hash<K> const &)*this)(key);
@@ -71,7 +71,7 @@ public:
                 }
     }
 
-	template <typename E>
+    template <typename E>
     inline bool HasKey(E const &key)
     {
         uint32_t hash = ((Hash<K> const &)*this)(key);
@@ -82,7 +82,7 @@ public:
         return false;
     }
 
-	template <typename E>
+    template <typename E>
     inline bool TryGetValue(E const &key, V& value)
     {
         uint32_t hash = ((Hash<K> const &)*this)(key);
