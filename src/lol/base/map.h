@@ -43,7 +43,8 @@ public:
     inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
-        int i = FindIndex(key);
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        int i = FindIndex(key, hash);
         if (i >= 0)
             return m_array[i].m3;
 
@@ -86,14 +87,20 @@ public:
 
 private:
     template <typename E>
-    int FindIndex(E const &key)
+    inline int FindIndex(E const &key, uint32_t hash)
     {
-        uint32_t hash = ((Hash<K> const &)*this)(key);
         for (int i = 0; i < m_array.Count(); ++i)
             if (m_array[i].m1 == hash)
                 if (m_array[i].m2 == key)
                     return i;
         return -1;
+    }
+
+    template <typename E>
+    inline int FindIndex(E const &key)
+    {
+        uint32_t hash = ((Hash<K> const &)*this)(key);
+        return FindIndex(key, hash);
     }
 
     Array<uint32_t, K, V> m_array;
