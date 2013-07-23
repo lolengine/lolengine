@@ -83,9 +83,39 @@ LOLUNIT_FIXTURE(ArrayTest)
         a << 0 << 1 << 2 << 3;
         a.Remove(1);
 
+        LOLUNIT_ASSERT_EQUAL(a.Count(), 3);
         LOLUNIT_ASSERT_EQUAL(a[0], 0);
         LOLUNIT_ASSERT_EQUAL(a[1], 2);
         LOLUNIT_ASSERT_EQUAL(a[2], 3);
+
+        Array<int> b;
+        b << 0 << 1 << 2 << 3;
+        b.Remove(-2);
+
+        LOLUNIT_ASSERT_EQUAL(b.Count(), 3);
+        LOLUNIT_ASSERT_EQUAL(b[0], 0);
+        LOLUNIT_ASSERT_EQUAL(b[1], 1);
+        LOLUNIT_ASSERT_EQUAL(b[2], 3);
+    }
+
+    LOLUNIT_TEST(ArrayRemoveSwap)
+    {
+        Array<int> a;
+        a << 0 << 1 << 2 << 3;
+        a.RemoveSwap(1);
+
+        LOLUNIT_ASSERT_EQUAL(a.Count(), 3);
+        LOLUNIT_ASSERT_EQUAL(a[0], 0);
+        LOLUNIT_ASSERT_EQUAL(a[1], 3);
+        LOLUNIT_ASSERT_EQUAL(a[2], 2);
+
+        Array<int> b;
+        b << 0 << 1 << 2 << 3;
+        b.Remove(1, 2);
+
+        LOLUNIT_ASSERT_EQUAL(b.Count(), 2);
+        LOLUNIT_ASSERT_EQUAL(b[0], 0);
+        LOLUNIT_ASSERT_EQUAL(b[1], 3);
     }
 #endif
 

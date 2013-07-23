@@ -187,13 +187,33 @@ public:
 
     void Remove(int pos, int todelete = 1)
     {
-        ASSERT(pos >= 0);
         ASSERT(todelete >= 0);
+        ASSERT(pos - todelete >= -m_count - 1);
         ASSERT(pos + todelete <= m_count);
+        if (pos < 0)
+            pos = m_count + pos;
+
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
         for (int i = m_count - todelete; i < m_count; i++)
             m_data[i].~Element();
+        m_count -= todelete;
+    }
+
+    void RemoveSwap(int pos, int todelete = 1)
+    {
+        ASSERT(todelete >= 0);
+        ASSERT(pos - todelete >= -m_count - 1);
+        ASSERT(pos + todelete <= m_count);
+        if (pos < 0)
+            pos = m_count + pos;
+
+        for (int i = 0; i < todelete; i++)
+        {
+            if (pos + i < m_count - 1 - i)
+                m_data[pos + i] = m_data[m_count - 1 - i];
+            m_data[m_count - 1 - i].~Element();
+        }
         m_count -= todelete;
     }
 
