@@ -53,7 +53,7 @@ private:
     SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
         m_prevmouse(ivec2(0)),
         m_app_w((float)app_w),
-        m_app_h((float)app_h), 
+        m_app_h((float)app_h),
         m_screen_w((float)screen_w),
         m_screen_h((float)screen_h)
     { }
@@ -239,7 +239,7 @@ void SdlInputData::Tick(float seconds)
         }
 
 #   if !SDL_FORCE_POLL_JOYSTICK
-#	 ifdef LOL_INPUT_V2
+#     ifdef LOL_INPUT_V2
         case SDL_JOYAXISMOTION:
             m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
@@ -248,7 +248,7 @@ void SdlInputData::Tick(float seconds)
         case SDL_JOYBUTTONDOWN:
             m_joysticks[event.jbutton.which].m2->SetKey(event.jbutton.button, event.jbutton.state);
             break;
-#	 else // !LOL_INPUT_V2
+#     else // !LOL_INPUT_V2
         case SDL_JOYAXISMOTION:
             m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
@@ -257,7 +257,7 @@ void SdlInputData::Tick(float seconds)
         case SDL_JOYBUTTONDOWN:
             m_joysticks[event.jbutton.which].m2->SetButton(event.jbutton.button, event.jbutton.state);
             break;
-#	 endif // LOL_INPUT_V2
+#     endif // LOL_INPUT_V2
 #   endif
         }
     }
@@ -290,7 +290,7 @@ void SdlInputData::Tick(float seconds)
 
 #   else // !LOL_INPUT_V2
     Input::SetMousePos(mouse);
-#	endif // LOL_INPUT_V2
+#    endif // LOL_INPUT_V2
 
 #   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *sdlstate = SDL_GetKeyboardState(nullptr);
@@ -299,14 +299,14 @@ void SdlInputData::Tick(float seconds)
 #   endif
 
     int keyindex = 0;
-#	ifdef LOL_INPUT_V2
-#	define KEY_FUNC(name, index) m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
-#	if !defined SDLK_WORLD_0
-#	 define KEY_DISABLE_WORLD
+#    ifdef LOL_INPUT_V2
+#    define KEY_FUNC(name, index) m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
+#    if !defined SDLK_WORLD_0
+#     define KEY_DISABLE_WORLD
 #   endif // !SDLK_WORLD_0
-#	include "input/keys.h"
-#	undef KEY_FUNC
-#	else // !LOL_INPUT_V2
+#    include "input/keys.h"
+#    undef KEY_FUNC
+#    else // !LOL_INPUT_V2
 
     /* Send the whole keyboard state to the input system */
     Array<uint8_t> &lolstate = Input::GetKeyboardState();
@@ -554,7 +554,7 @@ void SdlInputData::Tick(float seconds)
     lolstate[Key::Undo] = sdlstate[SDLK_UNDO];
 
     UNUSED(seconds);
-#	endif // LOL_INPUT_V2
+#    endif // LOL_INPUT_V2
 
 #endif // USE_SDL
 }

@@ -55,11 +55,11 @@ public:
 
     /** Get an input device by its name */
     static InputDevice* Get(const char* name) { return GetDevice(name); }
-	/** Set whether the mouse cursor should be captured. */
-	static void CaptureMouse(bool activated) { m_capturemouse = activated; }
+    /** Set whether the mouse cursor should be captured. */
+    static void CaptureMouse(bool activated) { m_capturemouse = activated; }
 
 protected:
-	// TODO: hide all of this in a InputDeviceData?
+    // TODO: hide all of this in a InputDeviceData?
 
     String m_name;
 
@@ -74,7 +74,7 @@ protected:
     /** cursor position */
     Array<vec2, ivec2> m_cursors;
 
-	static bool m_capturemouse;
+    static bool m_capturemouse;
 
     InputDevice(const char* name) : m_name(name)
     {
