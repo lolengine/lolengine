@@ -559,6 +559,7 @@ void SdlInputData::Tick(float seconds)
 #endif // USE_SDL
 }
 
+// NOTE: these two functions are pointless now and could be inlined directly
 ivec2 SdlInputData::GetMousePos()
 {
     ivec2 ret(-1, -1);
@@ -577,7 +578,9 @@ ivec2 SdlInputData::GetMousePos()
 
 void SdlInputData::SetMousePos(ivec2 position)
 {
+#if USE_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
+#endif
 }
 
 } /* namespace lol */
