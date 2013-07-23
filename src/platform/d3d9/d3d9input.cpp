@@ -59,14 +59,14 @@ D3d9Input::D3d9Input()
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
 #if defined LOL_INPUT_V2
-		// TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
-		InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
-		for (int j = 0; j < 4; ++j)
-			stick->AddAxis(String::Printf("Axis%d", j+1).C());
-		for (int j = 0; j < 16; ++j)
-			stick->AddKey(String::Printf("Button%d", j+1).C());
+        // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
+        InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+        for (int j = 0; j < 4; ++j)
+            stick->AddAxis(String::Printf("Axis%d", j+1).C());
+        for (int j = 0; j < 16; ++j)
+            stick->AddKey(String::Printf("Button%d", j+1).C());
 
-		m_data->m_joysticks.Push(i, stick);
+        m_data->m_joysticks.Push(i, stick);
 #else
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(4);
@@ -86,11 +86,11 @@ D3d9Input::~D3d9Input()
     while (m_data->m_joysticks.Count())
     {
 #if defined LOL_INPUT_V2
-		delete m_data->m_joysticks[0].m2;
+        delete m_data->m_joysticks[0].m2;
 #else
-		Input::DestroyStick(m_data->m_joysticks[0].m2);
+        Input::DestroyStick(m_data->m_joysticks[0].m2);
 #endif // LOL_INPUT_V2
-		m_data->m_joysticks.Remove(0);
+        m_data->m_joysticks.Remove(0);
     }
 #endif
     delete m_data;
@@ -119,11 +119,11 @@ void D3d9Input::TickDraw(float seconds)
 
         for (int b = 0; b < 16; b++)
 #if defined LOL_INPUT_V2
-			m_data->m_joysticks[i].m2->SetKey(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            m_data->m_joysticks[i].m2->SetKey(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
 #else
-			m_data->m_joysticks[i].m2->SetButton(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            m_data->m_joysticks[i].m2->SetButton(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
 #endif // LOL_INPUT_V2
-	}
+    }
 #endif
 }
 

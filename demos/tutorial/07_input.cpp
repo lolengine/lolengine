@@ -215,7 +215,7 @@ int main(int argc, char **argv)
     new DebugFps(5, 5);
     new Cube();
 
-    controller = new Controller(KEY_MAX, AXIS_MAX); 
+    controller = new Controller(KEY_MAX, AXIS_MAX);
     controller->GetKey(KEY_MANUAL_ROTATION).Bind("Keyboard", "Space");
     controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "ButtonLeft");
     controller->GetAxis(AXIS_DRAG_PITCH).Bind("Mouse", "Y");

@@ -175,7 +175,7 @@ public:
 
         rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
 
-		uint32_t buttons = 0;
+        uint32_t buttons = 0;
         //uint32_t buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
         if (buttons & 0x2)
