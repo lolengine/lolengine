@@ -66,6 +66,12 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
+#   ifdef LOL_INPUT_V2
+	const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
+	int screen_w = vidinfo->current_w;
+	int screen_h = vidinfo->current_h;
+#   endif
+
 #   if defined USE_D3D9
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 16, 0);
     SDL_SysWMinfo wminfo;
@@ -77,6 +83,9 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 #   else
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+#   ifdef LOL_INPUT_V2
+	// TODO: when implementing fullscreen, be sure to overwrite screen_w and screen_h with the value of vidinfo after the call to SDL_SetVideoMode
+#   endif
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
 #   endif
     if (!video)
@@ -100,7 +109,11 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     new D3d9Input();
 #   endif
 
-    new SdlInput();
+#   ifdef LOL_INPUT_V2
+    new SdlInput(video->w, video->h, screen_w, screen_h);
+#   else
+	new SdlInput();
+#   endif
 #endif
 }
 

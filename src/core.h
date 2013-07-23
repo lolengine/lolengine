@@ -129,6 +129,11 @@ static inline int isnan(float f)
 #include "input/stick.h"
 #include "profiler.h"
 
+// Input (v2)
+#include "input/input.h"
+#include "input/inputdevice.h"
+#include "input/controller.h"
+
 // Entities
 #include "entity.h"
 #include "worldentity.h"

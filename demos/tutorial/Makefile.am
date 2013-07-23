@@ -33,6 +33,10 @@ if USE_EMSCRIPTEN
 06_sprite_LDFLAGS += --preload-file 06_sprite.png
 endif
 
+07_input_SOURCES = 07_input.cpp 07_input.lolfx
+07_input_CPPFLAGS = $(AM_CPPFLAGS)
+07_input_DEPENDENCIES = @LOL_DEPS@
+
 08_fbo_SOURCES = 08_fbo.cpp 08_fbo.lolfx
 08_fbo_CPPFLAGS = $(AM_CPPFLAGS)
 08_fbo_DEPENDENCIES = @LOL_DEPS@

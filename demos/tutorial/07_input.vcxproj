@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ORBIS">
+      <Configuration>Debug</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|PS3">
       <Configuration>Debug</Configuration>
       <Platform>PS3</Platform>
@@ -16,6 +20,10 @@
     <ProjectConfiguration Include="Debug|Xbox 360">
       <Configuration>Debug</Configuration>
       <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ORBIS">
+      <Configuration>Release</Configuration>
+      <Platform>ORBIS</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|PS3">
       <Configuration>Release</Configuration>
@@ -35,7 +43,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="06_sprite.cpp" />
+    <ClCompile Include="07_input.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="07_input.lolfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">
@@ -49,7 +60,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E05E23A5-67DE-42B5-98A3-E63CCE0CC0AF}</ProjectGuid>
+    <ProjectGuid>{572E5B9C-7E19-489C-BD8A-E8401CFBBC47}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

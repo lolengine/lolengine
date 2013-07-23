@@ -20,6 +20,10 @@
 #include "core.h"
 #include "d3d9input.h"
 
+#ifdef LOL_INPUT_V2
+#include "input/inputdevice_internal.h"
+#endif // LOL_INPUT_V2
+
 namespace lol
 {
 
@@ -33,8 +37,12 @@ class D3d9InputData
 
 private:
 #if defined USE_XINPUT
+#if defined LOL_INPUT_V2
+    Array<int, InputDeviceInternal*> m_joysticks;
+#else
     Array<int, Stick *> m_joysticks;
-#endif
+#endif // LOL_INPUT_V2
+#endif // USE_XINPUT
 };
 
 /*
@@ -50,11 +58,21 @@ D3d9Input::D3d9Input()
         XINPUT_STATE state;
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
+#if defined LOL_INPUT_V2
+		// TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
+		InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+		for (int j = 0; j < 4; ++j)
+			stick->AddAxis(String::Printf("Axis%d", j+1).C());
+		for (int j = 0; j < 16; ++j)
+			stick->AddKey(String::Printf("Button%d", j+1).C());
 
+		m_data->m_joysticks.Push(i, stick);
+#else
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(4);
         stick->SetButtonCount(16);
         m_data->m_joysticks.Push(i, stick);
+#endif // LOL_INPUT_V2
     }
 #endif
 
@@ -67,8 +85,12 @@ D3d9Input::~D3d9Input()
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.Count())
     {
-        Input::DestroyStick(m_data->m_joysticks[0].m2);
-        m_data->m_joysticks.Remove(0);
+#if defined LOL_INPUT_V2
+		delete m_data->m_joysticks[0].m2;
+#else
+		Input::DestroyStick(m_data->m_joysticks[0].m2);
+#endif // LOL_INPUT_V2
+		m_data->m_joysticks.Remove(0);
     }
 #endif
     delete m_data;
@@ -96,8 +118,12 @@ void D3d9Input::TickDraw(float seconds)
         m_data->m_joysticks[i].m2->SetAxis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
 
         for (int b = 0; b < 16; b++)
-            m_data->m_joysticks[i].m2->SetButton(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
-    }
+#if defined LOL_INPUT_V2
+			m_data->m_joysticks[i].m2->SetKey(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+#else
+			m_data->m_joysticks[i].m2->SetButton(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+#endif // LOL_INPUT_V2
+	}
 #endif
 }
 

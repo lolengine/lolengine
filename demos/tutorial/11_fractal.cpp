@@ -120,7 +120,7 @@ public:
         m_position = ivec3(0, 0, 0);
         m_bbox[0] = m_position;
         m_bbox[1] = ivec3(m_window_size, 0);
-        Input::TrackMouse(this);
+        //Input::TrackMouse(this);
 
 #if LOL_FEATURE_THREADS
         /* Spawn worker threads and wait for their readiness. */
@@ -142,7 +142,7 @@ public:
             m_donequeue.Pop();
 #endif
 
-        Input::UntrackMouse(this);
+        //Input::UntrackMouse(this);
 #if !defined __native_client__
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
@@ -175,7 +175,8 @@ public:
 
         rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
 
-        uint32_t buttons = Input::GetMouseButtons();
+		uint32_t buttons = 0;
+        //uint32_t buttons = Input::GetMouseButtons();
 #if !defined __CELLOS_LV2__ && !defined _XBOX
         if (buttons & 0x2)
         {
