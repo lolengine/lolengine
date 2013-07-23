@@ -8,6 +8,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#ifndef LOL_INPUT_V2
+
 #if defined HAVE_CONFIG_H
 #   include "config.h"
 #endif
@@ -107,3 +109,4 @@ int Stick::GetButton(int n)
 
 } /* namespace lol */
 
+#endif // !LOL_INPUT_V2

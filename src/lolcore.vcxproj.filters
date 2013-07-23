@@ -312,6 +312,12 @@
     <ClCompile Include="debug\lines.cpp">
       <Filter>debug</Filter>
     </ClCompile>
+    <ClCompile Include="input\controller.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="input\inputdevice.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -607,6 +613,18 @@
     </ClInclude>
     <ClInclude Include="lol\image\image.h">
       <Filter>lol\image</Filter>
+    </ClInclude>
+    <ClInclude Include="input\inputdevice.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\keys.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\inputdevice_internal.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\controller.h">
+      <Filter>input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

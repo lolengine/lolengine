@@ -144,7 +144,9 @@
     <ClCompile Include="image\codec\sdl-image.cpp" />
     <ClCompile Include="image\color\cie1931.cpp" />
     <ClCompile Include="image\image.cpp" />
+    <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
+    <ClCompile Include="input\inputdevice.cpp" />
     <ClCompile Include="input\keyboard.cpp" />
     <ClCompile Include="input\stick.cpp" />
     <ClCompile Include="layer.cpp" />
@@ -205,8 +207,12 @@
     <ClInclude Include="gpu\lolfx-compiler.h" />
     <ClInclude Include="gradient.h" />
     <ClInclude Include="image\image-private.h" />
+    <ClInclude Include="input\controller.h" />
     <ClInclude Include="input\input.h" />
+    <ClInclude Include="input\inputdevice.h" />
+    <ClInclude Include="input\inputdevice_internal.h" />
     <ClInclude Include="input\keyboard.h" />
+    <ClInclude Include="input\keys.h" />
     <ClInclude Include="input\stick.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="light.h" />

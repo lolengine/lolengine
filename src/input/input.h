@@ -16,6 +16,8 @@
 #if !defined __LOL_INPUT_INPUT_H__
 #define __LOL_INPUT_INPUT_H__
 
+#ifndef LOL_INPUT_V2
+
 #include <cstring>
 #include <string.h>
 
@@ -455,6 +457,8 @@ public:
 };
 
 } /* namespace lol */
+
+#endif // !LOL_INPUT_V2
 
 #endif // __LOL_INPUT_INPUT_H__
 

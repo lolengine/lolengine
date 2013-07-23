@@ -16,6 +16,8 @@
 #if !defined __LOL_INPUT_STICK_H__
 #define __LOL_INPUT_STICK_H__
 
+#ifndef LOL_INPUT_V2
+
 #include "entity.h"
 
 namespace lol
@@ -47,6 +49,8 @@ private:
 };
 
 } /* namespace lol */
+
+#endif // !LOL_INPUT_V2
 
 #endif // __LOL_INPUT_STICK_H__
 

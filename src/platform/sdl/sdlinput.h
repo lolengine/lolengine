@@ -26,8 +26,14 @@ class SdlInputData;
 class SdlInput : public Entity
 {
 public:
+#ifdef LOL_INPUT_V2
+    /** passing the screen resolution (note: not the windowed app resolution!) allows to make the mouse axis resolution-independent */
+    SdlInput(int app_w, int app_h, int screen_w, int screen_h);
+#else
     SdlInput();
+#endif
     virtual ~SdlInput();
+    void SetScreenResolution();
 
 protected:
     virtual void TickGame(float seconds);

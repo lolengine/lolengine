@@ -23,6 +23,10 @@
 #include "core.h"
 #include "sdlinput.h"
 
+#ifdef LOL_INPUT_V2
+#include "input/inputdevice_internal.h"
+#endif // LOL_INPUT_V2
+
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */
 #define SDL_FORCE_POLL_JOYSTICK 1
@@ -42,17 +46,44 @@ private:
     void Tick(float seconds);
 
     static ivec2 GetMousePos();
+    static void SetMousePos(ivec2 position);
+
 #if USE_SDL
+# ifdef LOL_INPUT_V2
+    SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
+        m_prevmouse(ivec2(0)),
+        m_app_w((float)app_w),
+        m_app_h((float)app_h), 
+        m_screen_w((float)screen_w),
+        m_screen_h((float)screen_h)
+    { }
+
+    Array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
+    InputDeviceInternal* m_mouse;
+    InputDeviceInternal* m_keyboard;
+    ivec2 m_prevmouse;
+    float m_app_w;
+    float m_app_h;
+    float m_screen_w;
+    float m_screen_h;
+    bool m_mousecapture;
+# else
     Array<SDL_Joystick *, Stick *> m_joysticks;
-#endif
+# endif // LOL_INPUT_V2
+#endif // USE_SDL
 };
 
 /*
  * Public SdlInput class
  */
 
+#ifdef LOL_INPUT_V2
+SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
+  : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
+#else
 SdlInput::SdlInput()
   : m_data(new SdlInputData())
+#endif
 {
 #if USE_SDL
     /* Enable Unicode translation of keyboard events */
@@ -66,6 +97,11 @@ SdlInput::SdlInput()
 #       else
     SDL_JoystickEventState(SDL_ENABLE);
 #       endif
+
+#ifdef LOL_INPUT_V2
+    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
+    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
+#endif
 
     /* Register all the joysticks we can find, and let the input
      * system decide what it wants to track. */
@@ -88,6 +124,15 @@ SdlInput::SdlInput()
             continue;
         }
 
+#       ifdef LOL_INPUT_V2
+        InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+        for (int i = 0; i < SDL_JoystickNumAxes(sdlstick); ++i)
+            stick->AddAxis(String::Printf("Axis%d", i+1).C());
+        for (int i = 0; i < SDL_JoystickNumButtons(sdlstick); ++i)
+            stick->AddKey(String::Printf("Button%d", i+1).C());
+
+        m_data->m_joysticks.Push(sdlstick, stick);
+#       else // !LOL_INPUT_V2
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(SDL_JoystickNumAxes(sdlstick));
         stick->SetButtonCount(SDL_JoystickNumButtons(sdlstick));
@@ -97,6 +142,7 @@ SdlInput::SdlInput()
         //stick->RemapAxis(2, 4);
 
         m_data->m_joysticks.Push(sdlstick, stick);
+#       endif
     }
 #   endif
 #endif
@@ -111,7 +157,11 @@ SdlInput::~SdlInput()
     while (m_data->m_joysticks.Count())
     {
         SDL_JoystickClose(m_data->m_joysticks[0].m1);
+#       ifdef LOL_INPUT_V2
+        delete m_data->m_joysticks[0].m2;
+#       else
         Input::DestroyStick(m_data->m_joysticks[0].m2);
+#       endif
         m_data->m_joysticks.Remove(0);
     }
 #endif
@@ -139,19 +189,23 @@ void SdlInput::TickDraw(float seconds)
 void SdlInputData::Tick(float seconds)
 {
 #if USE_SDL
-    /* Handle mouse input */
-    ivec2 mouse = SdlInputData::GetMousePos();;
-    Input::SetMousePos(mouse);
-
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
     for (int j = 0; j < m_joysticks.Count(); j++)
     {
+#       ifdef LOL_INPUT_V2
+        for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
+            m_joysticks[j].m2->SetKey(i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
+        for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
+            m_joysticks[j].m2->SetAxis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+#       else // !LOL_INPUT_V2
         for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
             m_joysticks[j].m2->SetButton(i, SDL_JoystickGetButton(m_joysticks[j].m1, i));
         for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
             m_joysticks[j].m2->SetAxis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+
+#       endif
     }
 #   endif
 
@@ -173,17 +227,28 @@ void SdlInputData::Tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
-            ivec2 newmouse = SdlInputData::GetMousePos();
-            if (newmouse != mouse)
-                Input::SetMousePos(mouse = newmouse);
+#ifdef LOL_INPUT_V2
+            m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+#else // !LOL_INPUT_V2
             if (event.type == SDL_MOUSEBUTTONDOWN)
                 Input::SetMouseButton(event.button.button - 1);
             else
                 Input::UnsetMouseButton(event.button.button - 1);
+#endif // LOL_INPUT_V2
             break;
         }
 
 #   if !SDL_FORCE_POLL_JOYSTICK
+#	 ifdef LOL_INPUT_V2
+        case SDL_JOYAXISMOTION:
+            m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
+            break;
+
+        case SDL_JOYBUTTONUP:
+        case SDL_JOYBUTTONDOWN:
+            m_joysticks[event.jbutton.which].m2->SetKey(event.jbutton.button, event.jbutton.state);
+            break;
+#	 else // !LOL_INPUT_V2
         case SDL_JOYAXISMOTION:
             m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
@@ -192,18 +257,59 @@ void SdlInputData::Tick(float seconds)
         case SDL_JOYBUTTONDOWN:
             m_joysticks[event.jbutton.which].m2->SetButton(event.jbutton.button, event.jbutton.state);
             break;
+#	 endif // LOL_INPUT_V2
 #   endif
         }
     }
 
-    /* Send the whole keyboard state to the input system */
-    Array<uint8_t> &lolstate = Input::GetKeyboardState();
+    /* Handle mouse input */
+    ivec2 mouse = SdlInputData::GetMousePos();
+#   ifdef LOL_INPUT_V2
+    if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
+    {
+        m_mousecapture = InputDeviceInternal::GetMouseCapture();
+        SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
+        //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
+    }
+
+    if (mouse.x >= 0 && mouse.x < m_app_w && mouse.y >= 0 && mouse.y < m_app_h)
+    {
+        m_mouse->SetCursor(0, vec2((float)(mouse.x) / m_app_w, (float)(mouse.y) / m_app_h), mouse);
+        // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
+        m_mouse->SetAxis(0, (float)(mouse.x - m_prevmouse.x) * 100.0f / m_screen_w);
+        m_mouse->SetAxis(1, (float)(mouse.y - m_prevmouse.y) * 100.0f / m_screen_h);
+    }
+
+    if (m_mousecapture)
+    {
+        mouse = ivec2((int)m_app_w / 2, (int)m_app_h / 2);
+        SdlInputData::SetMousePos(mouse);
+    }
+
+    m_prevmouse = mouse;
+
+#   else // !LOL_INPUT_V2
+    Input::SetMousePos(mouse);
+#	endif // LOL_INPUT_V2
 
 #   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *sdlstate = SDL_GetKeyboardState(nullptr);
 #   else
     Uint8 *sdlstate = SDL_GetKeyState(nullptr);
 #   endif
+
+    int keyindex = 0;
+#	ifdef LOL_INPUT_V2
+#	define KEY_FUNC(name, index) m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
+#	if !defined SDLK_WORLD_0
+#	 define KEY_DISABLE_WORLD
+#   endif // !SDLK_WORLD_0
+#	include "input/keys.h"
+#	undef KEY_FUNC
+#	else // !LOL_INPUT_V2
+
+    /* Send the whole keyboard state to the input system */
+    Array<uint8_t> &lolstate = Input::GetKeyboardState();
 
     lolstate[Key::Unknown] = sdlstate[SDLK_UNKNOWN];
     lolstate[Key::Backspace] = sdlstate[SDLK_BACKSPACE];
@@ -376,7 +482,7 @@ void SdlInputData::Tick(float seconds)
     lolstate[Key::World93] = sdlstate[SDLK_WORLD_93];
     lolstate[Key::World94] = sdlstate[SDLK_WORLD_94];
     lolstate[Key::World95] = sdlstate[SDLK_WORLD_95];
-#endif
+#endif // SDLK_WORLD_0
 
     lolstate[Key::KP0] = sdlstate[SDLK_KP0];
     lolstate[Key::KP1] = sdlstate[SDLK_KP1];
@@ -448,7 +554,9 @@ void SdlInputData::Tick(float seconds)
     lolstate[Key::Undo] = sdlstate[SDLK_UNDO];
 
     UNUSED(seconds);
-#endif
+#	endif // LOL_INPUT_V2
+
+#endif // USE_SDL
 }
 
 ivec2 SdlInputData::GetMousePos()
@@ -465,6 +573,11 @@ ivec2 SdlInputData::GetMousePos()
     }
 #endif
     return ret;
+}
+
+void SdlInputData::SetMousePos(ivec2 position)
+{
+    SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 }
 
 } /* namespace lol */
