@@ -8,8 +8,6 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#ifndef LOL_INPUT_V2
-
 #if defined HAVE_CONFIG_H
 #   include "config.h"
 #endif
@@ -17,6 +15,8 @@
 #include <cstdlib>
 
 #include "core.h"
+
+#ifndef LOL_INPUT_V2
 
 namespace lol
 {

@@ -11,9 +11,9 @@
 #if !defined __LOL_INPUT_CONTROLLER_H__
 #define __LOL_INPUT_CONTROLLER_H__
 
-#if defined LOL_INPUT_V2
-
 #include "core.h"
+
+#if defined LOL_INPUT_V2
 
 namespace lol
 {
@@ -21,7 +21,7 @@ namespace lol
 class KeyBinding
 {
 public:
-    KeyBinding() : m_current(false), m_previous(false), m_device(nullptr) {}
+    KeyBinding() : m_device(nullptr), m_current(false), m_previous(false) {}
 
     bool IsDown() const { return m_current; }
     bool IsUp() const { return !m_current; }
@@ -44,7 +44,7 @@ protected:
 class AxisBinding
 {
 public:
-    AxisBinding() : m_current(0.0f), m_previous(0.0f), m_device(nullptr) {}
+    AxisBinding() : m_device(nullptr), m_current(0.0f), m_previous(0.0f) {}
 
     float GetValue() const { return m_current; }
     float GetDelta() const { return m_current - m_previous; }
