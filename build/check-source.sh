@@ -158,12 +158,12 @@ for file in $FILES; do
         fi
     fi
 
-    # Check for CR LF SVN prop
+    # Check for LF SVN prop
     if [ "$repo" = svn -a "$should_check_props" = true ]; then
-        if [ "$(svn propget svn:eol-style "$file")" != "CR" ]; then
+        if [ "$(svn propget svn:eol-style "$file")" != "LF" ]; then
             clean=false
             if [ "$fix" = true ]; then
-                svn propset svn:eol-style CR "$file"
+                svn propset svn:eol-style LF "$file"
                 info "$file is missing svn:eol-style property"
             else
                 error "$file is missing svn:eol-style property"
@@ -241,4 +241,5 @@ EOF
 else
     info "all $total_files source files appear to be OK, congratulations"
 fi
+
 
