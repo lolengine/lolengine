@@ -1,1 +1,183 @@
-[vert.glsl]#version 120attribute vec3 in_Vertex;attribute vec3 in_Normal;attribute vec4 in_Color;uniform mat4 in_ModelView;uniform mat4 in_View;uniform mat4 in_Proj;uniform mat3 in_NormalMat;uniform float in_Damage;varying vec4 pass_Vertex; /* View space */varying vec3 pass_TNormal;varying vec4 pass_Color;void main(void){    vec4 vertex = vec4(in_Vertex + (in_Normal * in_Damage), 1.0);    float dam_perc = in_Damage / (0.1 * 40);    vec3 vGravity = vec3(0.0, -0.981, 0.0) * 2.0;    float k = pow(dam_perc, 3);    vertex = in_ModelView * vertex + in_View * vec4(vGravity * k, 1.0);    vec3 tnorm = normalize(in_NormalMat * in_Normal);    pass_Vertex = vertex;    pass_TNormal = tnorm;    pass_Color = in_Color;    gl_Position = in_Proj * vertex;}[frag.glsl]#version 120#if defined GL_ESprecision highp float;#endifuniform mat4 in_View;uniform mat4 in_Inv_View;uniform mat4 in_Inv_ModelView;uniform float in_Damage;//Light listuniform vec4 u_Lights[8 * 2];varying vec4 pass_Vertex; /* View space */varying vec3 pass_TNormal;varying vec4 pass_Color;void main(void){    /* Material properties */    vec3 specular_reflect = vec3(0.8, 0.75, 0.4);    float specular_power = 60.0;    /* World properties */    vec3 ambient = vec3(0.7, 0.7, 0.7);    vec3 specular = vec3(0.0, 0.0, 0.0);    vec3 diffuse = vec3(0.0, 0.0, 0.0);    /* Light precalculations */    vec3 v = normalize(-pass_Vertex.xyz);    /* Apply lighting */    for (int i = 0; i < 8; i++)    {        vec4 pos = u_Lights[i * 2];        vec4 color = u_Lights[i * 2 + 1];        vec3 s, r;        if (pos.w > 0.0)        {            /* Point light -- no attenuation yet */            s = normalize((in_View * pos).xyz - pass_Vertex.xyz);            r = reflect(-s, pass_TNormal);        }        else        {            /* Directional light */            s = normalize(-pos.xyz);            r = reflect(s, pass_TNormal);        }        float sdotn = max(dot(s, pass_TNormal), 0.0);        diffuse += color.xyz * sdotn;        if (sdotn > 0.0)            specular += color.xyz * specular_reflect                         * pow(max(dot(r, v), 0.0), specular_power);    }    vec3 light = ambient + diffuse + specular;    vec4 world_vertex = in_Inv_ModelView * pass_Vertex;    vec4 world_normal = in_Inv_ModelView * vec4(pass_TNormal, 1.0);    float dam_perc = in_Damage / (0.1 * 40);    float PI = 3.14159265358979323846264;    dam_perc = (sin(PI * (dam_perc - 0.5)) * 0.5 + 0.5);    dam_perc *= dam_perc;    dam_perc = 1.0 - dam_perc;    float mod = 2.0;    float transp = dam_perc;                   /*                   abs(sin(world_vertex.x * mod) * dam_perc * 0.5 + 0.5) *                   abs(sin(world_vertex.y * mod) * dam_perc * 0.5 + 0.5) *                   abs(sin(world_vertex.z * mod) * dam_perc * 0.5 + 0.5)                   */    //vec4 real_color = mix(pass_Color, vec4(1.2, 1.2, 1.2, 1.0), in_Damage);    // - in_Damage    gl_FragColor = pass_Color * vec4(light, (in_Damage == 0)?(1.0):(transp));}[vert.hlsl]void main(float3 in_Vertex : POSITION,          float3 in_Normal : NORMAL,          float4 in_Color : COLOR,          uniform float4x4 in_ModelView,          uniform float4x4 in_Model,          uniform float4x4 in_Proj,          uniform float3x3 in_NormalMat,          out float4 pass_Vertex : TEXCOORD0,          out float3 pass_TNormal : TEXCOORD1,          out float4 pass_Color : COLOR,          out float4 out_Position : POSITION){    float4 eye = mul(in_ModelView, float4(in_Vertex, 1.0));    float3 tnorm = normalize(mul(in_NormalMat, in_Normal));    pass_Vertex = eye;    pass_TNormal = tnorm;#ifdef _XBOX    pass_Color = in_Color.abgr;#else    pass_Color = in_Color;#endif    out_Position = mul(in_Proj, eye);}[frag.hlsl]void main(float4 pass_Vertex : TEXCOORD0,          float3 pass_TNormal : TEXCOORD1,          float4 pass_Color : COLOR,          uniform float in_Damage,          out float4 out_FragColor : COLOR){    float3 in_LightDir = float3(0.3, 0.3, 0.7);    /* Material properties */    float3 specular_reflect = float3(0.8, 0.75, 0.4);    float specular_power = 60.0;    /* World properties */    float ambient_mul = 0.5;    float3 ambient_color = float3(0.25, 0.2, 0.35);    float3 diffuse_color = float3(1.0, 1.0, 0.6);    float3 specular_color = float3(1.0, 1.0, 0.6);    float3 s = normalize(in_LightDir); /* normalize(pass_Vertex - lightpos); */    float3 v = normalize(-pass_Vertex.xyz);    float3 r = reflect(-s, pass_TNormal);    float3 ambient = ambient_color;    float sdotn = max(dot(s, pass_TNormal), 0.0);    float3 diffuse = diffuse_color * sdotn;    float3 specular = float3(0.0, 0.0, 0.0);    if (sdotn > 0.0)        specular = specular_color * specular_reflect                 * pow(max(dot(r, v), 0.0), specular_power);    float3 light = ambient + diffuse + specular;    float4 real_color = in_Damage * float4(1.2, 1.2, 1.2, 1.0)                      + (1.0 - in_Damage) * pass_Color;    out_FragColor = real_color * float4(light, 1.0);}
+
+[vert.glsl]
+#version 120
+
+attribute vec3 in_Vertex;
+attribute vec3 in_Normal;
+attribute vec4 in_Color;
+
+uniform mat4 in_ModelView;
+uniform mat4 in_View;
+uniform mat4 in_Proj;
+uniform mat3 in_NormalMat;
+uniform float in_Damage;
+
+varying vec4 pass_Vertex; /* View space */
+varying vec3 pass_TNormal;
+varying vec4 pass_Color;
+
+void main(void)
+{
+    vec4 vertex = vec4(in_Vertex + (in_Normal * in_Damage), 1.0);
+    float dam_perc = in_Damage / (0.1 * 40);
+    vec3 vGravity = vec3(0.0, -0.981, 0.0) * 2.0;
+    float k = pow(dam_perc, 3);
+    vertex = in_ModelView * vertex + in_View * vec4(vGravity * k, 1.0);
+    vec3 tnorm = normalize(in_NormalMat * in_Normal);
+
+    pass_Vertex = vertex;
+    pass_TNormal = tnorm;
+    pass_Color = in_Color;
+
+    gl_Position = in_Proj * vertex;
+}
+
+[frag.glsl]
+#version 120
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+uniform mat4 in_View;
+uniform mat4 in_Inv_View;
+uniform mat4 in_Inv_ModelView;
+uniform float in_Damage;
+
+//Light list
+uniform vec4 u_Lights[8 * 2];
+
+varying vec4 pass_Vertex; /* View space */
+varying vec3 pass_TNormal;
+varying vec4 pass_Color;
+
+void main(void)
+{
+    /* Material properties */
+    vec3 specular_reflect = vec3(0.8, 0.75, 0.4);
+    float specular_power = 60.0;
+
+    /* World properties */
+    vec3 ambient = vec3(0.7, 0.7, 0.7);
+    vec3 specular = vec3(0.0, 0.0, 0.0);
+    vec3 diffuse = vec3(0.0, 0.0, 0.0);
+
+    /* Light precalculations */
+    vec3 v = normalize(-pass_Vertex.xyz);
+
+    /* Apply lighting */
+    for (int i = 0; i < 8; i++)
+    {
+        vec4 pos = u_Lights[i * 2];
+        vec4 color = u_Lights[i * 2 + 1];
+        vec3 s, r;
+
+        if (pos.w > 0.0)
+        {
+            /* Point light -- no attenuation yet */
+            s = normalize((in_View * pos).xyz - pass_Vertex.xyz);
+            r = reflect(-s, pass_TNormal);
+        }
+        else
+        {
+            /* Directional light */
+            s = normalize(-pos.xyz);
+            r = reflect(s, pass_TNormal);
+        }
+
+        float sdotn = max(dot(s, pass_TNormal), 0.0);
+        diffuse += color.xyz * sdotn;
+        if (sdotn > 0.0)
+            specular += color.xyz * specular_reflect
+                         * pow(max(dot(r, v), 0.0), specular_power);
+    }
+
+    vec3 light = ambient + diffuse + specular;
+
+    vec4 world_vertex = in_Inv_ModelView * pass_Vertex;
+    vec4 world_normal = in_Inv_ModelView * vec4(pass_TNormal, 1.0);
+
+    float dam_perc = in_Damage / (0.1 * 40);
+    float PI = 3.14159265358979323846264;
+    dam_perc = (sin(PI * (dam_perc - 0.5)) * 0.5 + 0.5);
+    dam_perc *= dam_perc;
+    dam_perc = 1.0 - dam_perc;
+    float mod = 2.0;
+    float transp = dam_perc;
+                   /*
+                   abs(sin(world_vertex.x * mod) * dam_perc * 0.5 + 0.5) *
+                   abs(sin(world_vertex.y * mod) * dam_perc * 0.5 + 0.5) *
+                   abs(sin(world_vertex.z * mod) * dam_perc * 0.5 + 0.5)
+                   */
+
+    //vec4 real_color = mix(pass_Color, vec4(1.2, 1.2, 1.2, 1.0), in_Damage);
+    // - in_Damage
+    gl_FragColor = pass_Color * vec4(light, (in_Damage == 0)?(1.0):(transp));
+}
+
+[vert.hlsl]
+
+void main(float3 in_Vertex : POSITION,
+          float3 in_Normal : NORMAL,
+          float4 in_Color : COLOR,
+          uniform float4x4 in_ModelView,
+          uniform float4x4 in_Model,
+          uniform float4x4 in_Proj,
+          uniform float3x3 in_NormalMat,
+          out float4 pass_Vertex : TEXCOORD0,
+          out float3 pass_TNormal : TEXCOORD1,
+          out float4 pass_Color : COLOR,
+          out float4 out_Position : POSITION)
+{
+    float4 eye = mul(in_ModelView, float4(in_Vertex, 1.0));
+    float3 tnorm = normalize(mul(in_NormalMat, in_Normal));
+
+    pass_Vertex = eye;
+    pass_TNormal = tnorm;
+#ifdef _XBOX
+    pass_Color = in_Color.abgr;
+#else
+    pass_Color = in_Color;
+#endif
+
+    out_Position = mul(in_Proj, eye);
+}
+
+[frag.hlsl]
+
+void main(float4 pass_Vertex : TEXCOORD0,
+          float3 pass_TNormal : TEXCOORD1,
+          float4 pass_Color : COLOR,
+          uniform float in_Damage,
+          out float4 out_FragColor : COLOR)
+{
+    float3 in_LightDir = float3(0.3, 0.3, 0.7);
+
+    /* Material properties */
+    float3 specular_reflect = float3(0.8, 0.75, 0.4);
+    float specular_power = 60.0;
+
+    /* World properties */
+    float ambient_mul = 0.5;
+    float3 ambient_color = float3(0.25, 0.2, 0.35);
+    float3 diffuse_color = float3(1.0, 1.0, 0.6);
+    float3 specular_color = float3(1.0, 1.0, 0.6);
+
+    float3 s = normalize(in_LightDir); /* normalize(pass_Vertex - lightpos); */
+    float3 v = normalize(-pass_Vertex.xyz);
+    float3 r = reflect(-s, pass_TNormal);
+
+    float3 ambient = ambient_color;
+    float sdotn = max(dot(s, pass_TNormal), 0.0);
+    float3 diffuse = diffuse_color * sdotn;
+    float3 specular = float3(0.0, 0.0, 0.0);
+    if (sdotn > 0.0)
+        specular = specular_color * specular_reflect
+                 * pow(max(dot(r, v), 0.0), specular_power);
+    float3 light = ambient + diffuse + specular;
+
+    float4 real_color = in_Damage * float4(1.2, 1.2, 1.2, 1.0)
+                      + (1.0 - in_Damage) * pass_Color;
+    out_FragColor = real_color * float4(light, 1.0);
+}
+

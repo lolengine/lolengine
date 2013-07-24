@@ -1,1 +1,101 @@
-/* * LolFx Test Material */// Can have lots of different techniques in a single lolfx file,// especially if they share common shader code.technique Foo{    // Multiple passes, with alpha on/off, with various blending methods,    // with depth test disabled...    pass p0    {        texture[0] = null;        texture[1] = null;        texture[2] = null;        cullmode = none; // ccw        lighting = false;        zenable = true; // false        alphablendenable = true; // false        srcblend = src_alpha; // one        destblend = inv_src_alpha;        colorop[0] = select_arg1;        colorarg1[0] = diffuse;        alphaop[0] = select_arg1;        alphaarg1[0] = diffuse;        colorop[1] = disable;        alphaop[1] = disable;        // Ye old way        vertexshader = blah;        geometryshader = blah;        pixelshader = blah;        // Ogre crap        // The D3D11 way, but we must make it work with GLSL too        //SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);        //SetDepthStencilState(DisableDepth, 0);        //SetRasterizerState()        //SetVertexShader        //SetDomainShader        //SetHullShader        //SetGeometryShader        //SetPixelShader        //SetComputeShader /* WTF? */        //SetRenderTargets(RTV0, DSV);        //SetRenderTargets(RTV0, RTV1, DSV);        //...        //SetRenderTargets(RTV0, RTV1, RTV2, RTV3, RTV4, RTV5, RTV6, RTV7, DSV);    }    pass p1    {        // Autres vertex/pixel shaders avec éventuellement des        // dépendances sur le résultat des passes précédentes        vertexshader = something_else;    }}/* Defines GLSL shader "Prout" */[prout.glsl]#version 120/* Valid with my GLSL compiler *///#pragma lolfx semantic(in_Vertex, POSITION)//#pragma lolfx semantic(in_Normal, NORMAL)//#pragma lolfx semantic(in_Color, COLOR)attribute vec3 in_Vertex;attribute vec3 in_Normal;attribute vec4 in_Color;void main(void){    /* ... */}/* Defines GLSL shader "Zob" */[zob.glsl]void main(void){    shit(); fuck(); fuck(); shit();}/* Defines HLSL vertex shader "Prout" */[prout.hlsl]void main(void){    /* Blah */}
+/*
+ * LolFx Test Material
+ */
+
+// Can have lots of different techniques in a single lolfx file,
+// especially if they share common shader code.
+technique Foo
+{
+    // Multiple passes, with alpha on/off, with various blending methods,
+    // with depth test disabled...
+    pass p0
+    {
+        texture[0] = null;
+        texture[1] = null;
+        texture[2] = null;
+
+        cullmode = none; // ccw
+        lighting = false;
+        zenable = true; // false
+        alphablendenable = true; // false
+        srcblend = src_alpha; // one
+        destblend = inv_src_alpha;
+
+        colorop[0] = select_arg1;
+        colorarg1[0] = diffuse;
+
+        alphaop[0] = select_arg1;
+        alphaarg1[0] = diffuse;
+
+        colorop[1] = disable;
+
+        alphaop[1] = disable;
+
+        // Ye old way
+        vertexshader = blah;
+        geometryshader = blah;
+        pixelshader = blah;
+
+        // Ogre crap
+
+        // The D3D11 way, but we must make it work with GLSL too
+        //SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        //SetDepthStencilState(DisableDepth, 0);
+        //SetRasterizerState()
+
+        //SetVertexShader
+        //SetDomainShader
+        //SetHullShader
+        //SetGeometryShader
+        //SetPixelShader
+        //SetComputeShader /* WTF? */
+
+        //SetRenderTargets(RTV0, DSV);
+        //SetRenderTargets(RTV0, RTV1, DSV);
+        //...
+        //SetRenderTargets(RTV0, RTV1, RTV2, RTV3, RTV4, RTV5, RTV6, RTV7, DSV);
+    }
+
+    pass p1
+    {
+        // Autres vertex/pixel shaders avec éventuellement des
+        // dépendances sur le résultat des passes précédentes
+        vertexshader = something_else;
+    }
+}
+
+/* Defines GLSL shader "Prout" */
+
+[prout.glsl]
+#version 120
+
+/* Valid with my GLSL compiler */
+//#pragma lolfx semantic(in_Vertex, POSITION)
+//#pragma lolfx semantic(in_Normal, NORMAL)
+//#pragma lolfx semantic(in_Color, COLOR)
+attribute vec3 in_Vertex;
+attribute vec3 in_Normal;
+attribute vec4 in_Color;
+
+void main(void)
+{
+    /* ... */
+}
+
+/* Defines GLSL shader "Zob" */
+[zob.glsl]
+
+void main(void)
+{
+    shit(); fuck(); fuck(); shit();
+}
+
+/* Defines HLSL vertex shader "Prout" */
+
+[prout.hlsl]
+
+void main(void)
+{
+    /* Blah */
+}
+
