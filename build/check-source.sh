@@ -84,6 +84,7 @@ fi
 total_crlfs=0
 total_spaces=0
 total_tabs=0
+total_props=0
 
 OIFS="$IFS"
 IFS='
@@ -105,12 +106,14 @@ total_errors=0
 for file in $FILES; do
     should_check_crlf=false
     should_check_spaces=false
+    should_check_props=false
 
     case "$file" in
       # These files we know how to handle
       *.c|*.cpp|*.m|*.mm|*.h|*.hh|*.lolfx|*.lua|*.l|*.y|*.sh|*.py)
           should_check_crlf=true
           should_check_spaces=true
+          should_check_props=true
           ;;
       *)
           continue
@@ -152,6 +155,20 @@ for file in $FILES; do
             else
                 error "$file has $ncrlfs CR characters"
             fi
+        fi
+    fi
+
+    # Check for CR LF SVN prop
+    if [ "$repo" = svn -a "$should_check_props" = true ]; then
+        if [ "$(svn propget svn:eol-style "$file")" != "CR" ]; then
+            clean=false
+            if [ "$fix" = true ]; then
+                svn propset svn:eol-style CR "$file"
+                info "$file is missing svn:eol-style property"
+            else
+                error "$file is missing svn:eol-style property"
+            fi
+            total_props="$(($total_props + 1))"
         fi
     fi
 
@@ -199,6 +216,7 @@ fixed $total_errors files out of $total_files:
  - removed $total_crlfs CR characters
  - removed $total_spaces trailing whitespaces
  - replaced $total_tabs tabs with spaces
+ - fixed $total_props svn:eol-style properties
 EOF
     elif [ "$fix" = "true" ]; then
         # OR: report in stdout
@@ -211,6 +229,9 @@ EOF
         fi
         if [ "$total_tabs" -gt 0 ]; then
             info " - fixed $total_tabs tabs"
+        fi
+        if [ "$total_props" -gt 0 ]; then
+            info " - fixed $total_props svn:eol-style properties"
         fi
         info "re-run with -c to commit fixes"
     else
