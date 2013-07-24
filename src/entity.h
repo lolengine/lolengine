@@ -24,6 +24,22 @@
 namespace lol
 {
 
+struct InitState
+{
+    enum Value
+    {
+        Unknown,
+        Error,
+        NeedInitDraw,
+        NeedInitGame,
+        Ready,
+    }
+    m_value;
+
+    inline InitState(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 class Entity
 {
     friend class Ticker;
@@ -39,6 +55,9 @@ protected:
     virtual ~Entity();
 
     inline int IsDestroying() { return m_destroy; }
+
+    virtual void InitGame();
+    virtual void InitDraw();
 
     virtual void TickGame(float seconds);
     virtual void TickDraw(float seconds);
@@ -76,6 +95,9 @@ protected:
     static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
     static int const ALLGROUP_END = DRAWGROUP_END;
 
+    /* The initialisation state */
+    InitState m_initstate;
+
 #if !LOL_BUILD_RELEASE
     enum
     {
@@ -102,7 +124,6 @@ private:
     // Emcee end
 
 private:
-    Entity *m_gamenext, *m_drawnext, *m_autonext;
     int m_ref, m_autorelease, m_destroy;
 };
 

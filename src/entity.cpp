@@ -24,8 +24,7 @@ namespace lol
  */
 
 Entity::Entity() :
-    m_gamenext(0),
-    m_drawnext(0),
+    m_initstate(InitState::Ready),
     m_ref(0),
     m_destroy(0)
 {
@@ -48,6 +47,14 @@ Entity::~Entity()
 char const *Entity::GetName()
 {
     return "<entity>";
+}
+
+void Entity::InitGame()
+{
+}
+
+void Entity::InitDraw()
+{
 }
 
 void Entity::TickGame(float seconds)

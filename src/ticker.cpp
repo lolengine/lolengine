@@ -30,7 +30,6 @@ static class TickerData
 
 public:
     TickerData() :
-        todolist(0), autolist(0),
         nentities(0),
         frame(0), recording(0), deltatime(0), bias(0), fps(0),
 #if LOL_BUILD_DEBUG
@@ -38,25 +37,15 @@ public:
 #endif
         quit(0), quitframe(0), quitdelay(20), panic(0)
     {
-        for (int i = 0; i < Entity::ALLGROUP_END; i++)
-            list[i] = nullptr;
     }
 
     ~TickerData()
     {
         ASSERT(nentities == 0,
                "still %i entities in ticker\n", nentities);
-#if !LOL_BUILD_RELEASE
-        if (autolist)
-        {
-            int count = 0;
-            for (Entity *e = autolist; e; e = e->m_autonext, count++)
-                ;
-            ASSERT(count == 0, "still %i autoreleased entities\n", count);
-        }
-#endif
-        Log::Debug("%i frames required to quit\n",
-                frame - quitframe);
+        ASSERT(m_autolist.Count() == 0,
+               "still %i autoreleased entities\n", m_autolist.Count());
+        Log::Debug("%i frames required to quit\n", frame - quitframe);
 
 #if LOL_FEATURE_THREADS
         gametick.Push(0);
@@ -68,8 +57,8 @@ public:
 
 private:
     /* Entity management */
-    Entity *todolist, *autolist;
-    Entity *list[Entity::ALLGROUP_END];
+    Array<Entity *> m_todolist, m_autolist;
+    Array<Entity *> m_list[Entity::ALLGROUP_END];
     int nentities;
 
     /* Fixed framerate management */
@@ -110,12 +99,11 @@ void Ticker::Register(Entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    entity->m_gamenext = data->todolist;
-    data->todolist = entity;
-    /* Objects are autoreleased by default. Put them in a circular list. */
+    data->m_todolist.Push(entity);
+
+    /* Objects are autoreleased by default. Put them in a list. */
+    data->m_autolist.Push(entity);
     entity->m_autorelease = 1;
-    entity->m_autonext = data->autolist;
-    data->autolist = entity;
     entity->m_ref = 1;
 
     data->nentities++;
@@ -131,14 +119,13 @@ void Ticker::Ref(Entity *entity)
     if (entity->m_autorelease)
     {
         /* Get the entity out of the m_autorelease list. This is usually
-         * very fast since the first entry in autolist is the last
+         * very fast since the last entry in autolist is the last
          * registered entity. */
-        for (Entity *e = data->autolist, *prev = nullptr; e;
-             prev = e, e = e->m_autonext)
+        for (int i = data->m_autolist.Count(); --i; )
         {
-            if (e == entity)
+            if (data->m_autolist[i] == entity)
             {
-                (prev ? prev->m_autonext : data->autolist) = e->m_autonext;
+                data->m_autolist.RemoveSwap(i);
                 break;
             }
         }
@@ -232,15 +219,15 @@ void TickerData::GameThreadTick()
 
 #if 0
     Log::Debug("-------------------------------------\n");
-    for (int i = 0; i < Entity::ALLGROUP_END; i++)
+    for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
         Log::Debug("%s Group %i\n",
-                   (i < Entity::GAMEGROUP_END) ? "Game" : "Draw", i);
+                   (g < Entity::GAMEGROUP_END) ? "Game" : "Draw", g);
 
-        for (Entity *e = data->list[i]; e; )
+        for (int i = 0; i < data->m_list[g].Count(); ++i)
         {
+            Entity *e = data->m_list[g][i];
             Log::Debug("  \\-- %s (m_ref %i, destroy %i)\n", e->GetName(), e->m_ref, e->m_destroy);
-            e = (i < Entity::GAMEGROUP_END) ? e->m_gamenext : e->m_drawnext;
         }
     }
 #endif
@@ -286,8 +273,10 @@ void TickerData::GameThreadTick()
         int n = 0;
         data->panic = 2 * (data->panic + 1);
 
-        for (int i = 0; i < Entity::ALLGROUP_END && n < data->panic; i++)
-        for (Entity *e = data->list[i]; e && n < data->panic; e = e->m_gamenext)
+        for (int g = 0; g < Entity::ALLGROUP_END && n < data->panic; ++g)
+        for (int i = 0; i < data->m_list[g].Count() && n < data->panic; ++i)
+        {
+            Entity * e = data->m_list[g][i];
             if (e->m_ref)
             {
 #if !LOL_BUILD_RELEASE
@@ -296,6 +285,7 @@ void TickerData::GameThreadTick()
                 e->m_ref--;
                 n++;
             }
+        }
 
 #if !LOL_BUILD_RELEASE
         if (n)
@@ -309,53 +299,51 @@ void TickerData::GameThreadTick()
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already
      * inthe tick lists can be marked for destruction. */
-    for (int i = 0; i < Entity::ALLGROUP_END; i++)
-        for (Entity *e = data->list[i], *prev = nullptr; e; )
+    for (int g = 0; g < Entity::ALLGROUP_END; ++g)
+    {
+        for (int i = 0; i < data->m_list[g].Count(); ++i)
         {
-            if (e->m_destroy && i < Entity::GAMEGROUP_END)
+            Entity *e = data->m_list[g][i];
+
+            if (e->m_destroy && g < Entity::GAMEGROUP_END)
             {
                 /* If entity is to be destroyed, remove it from the
                  * game tick list. */
-                (prev ? prev->m_gamenext : data->list[i]) = e->m_gamenext;
-
-                e = e->m_gamenext;
+                data->m_list[g].RemoveSwap(i);
             }
             else if (e->m_destroy)
             {
                 /* If entity is to be destroyed, remove it from the
                  * draw tick list and destroy it. */
-                (prev ? prev->m_drawnext : data->list[i]) = e->m_drawnext;
-
-                Entity *tmp = e;
-                e = e->m_drawnext; /* Can only be in a draw group list */
-                delete tmp;
+                data->m_list[g].RemoveSwap(i);
+                delete e;
 
                 data->nentities--;
             }
             else
             {
-                if (e->m_ref <= 0 && i >= Entity::DRAWGROUP_BEGIN)
+                if (e->m_ref <= 0 && g >= Entity::DRAWGROUP_BEGIN)
                     e->m_destroy = 1;
-                prev = e;
-                e = (i < Entity::GAMEGROUP_END) ? e->m_gamenext : e->m_drawnext;
             }
         }
+    }
 
     /* Insert waiting objects into the appropriate lists */
-    while (data->todolist)
+    while (data->m_todolist.Count())
     {
-        Entity *e = data->todolist;
-        data->todolist = e->m_gamenext;
+        Entity *e = data->m_todolist.Last();
 
-        e->m_gamenext = data->list[e->m_gamegroup];
-        data->list[e->m_gamegroup] = e;
-        e->m_drawnext = data->list[e->m_drawgroup];
-        data->list[e->m_drawgroup] = e;
+        data->m_todolist.Remove(-1);
+        data->m_list[e->m_gamegroup].Push(e);
+        data->m_list[e->m_drawgroup].Push(e);
     }
 
     /* Tick objects for the game loop */
-    for (int i = Entity::GAMEGROUP_BEGIN; i < Entity::GAMEGROUP_END; i++)
-        for (Entity *e = data->list[i]; e; e = e->m_gamenext)
+    for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END; ++g)
+        for (int i = 0; i < data->m_list[g].Count(); ++i)
+        {
+            Entity *e = data->m_list[g][i];
+
             if (!e->m_destroy)
             {
 #if !LOL_BUILD_RELEASE
@@ -372,6 +360,7 @@ void TickerData::GameThreadTick()
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
+        }
 
     Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
@@ -381,9 +370,9 @@ void TickerData::DrawThreadTick()
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
     /* Tick objects for the draw loop */
-    for (int i = Entity::DRAWGROUP_BEGIN; i < Entity::DRAWGROUP_END; i++)
+    for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END; ++g)
     {
-        switch (i)
+        switch (g)
         {
         case Entity::DRAWGROUP_BEGIN:
             g_scene->Reset();
@@ -393,7 +382,10 @@ void TickerData::DrawThreadTick()
             break;
         }
 
-        for (Entity *e = data->list[i]; e; e = e->m_drawnext)
+        for (int i = 0; i < data->m_list[g].Count(); ++i)
+        {
+            Entity *e = data->m_list[g][i];
+
             if (!e->m_destroy)
             {
 #if !LOL_BUILD_RELEASE
@@ -410,6 +402,7 @@ void TickerData::DrawThreadTick()
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
+        }
 
         /* Do this render step */
         g_scene->Render();
@@ -502,10 +495,10 @@ int Ticker::GetFrameNum()
 void Ticker::Shutdown()
 {
     /* We're bailing out. Release all m_autorelease objects. */
-    while (data->autolist)
+    while (data->m_autolist.Count())
     {
-        data->autolist->m_ref--;
-        data->autolist = data->autolist->m_autonext;
+        data->m_autolist.Last()->m_ref--;
+        data->m_autolist.Remove(-1);
     }
 
     data->quit = 1;
