@@ -104,7 +104,7 @@ public:
         }
         if (lol::abs(controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
             m_pitch_angle -= controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
-        if (lol::abs(controller->GetAxis(AXIS_YAW).GetValue()) > 1.0f)
+        if (lol::abs(controller->GetAxis(AXIS_YAW).GetValue()) > 0.2f)
             m_yaw_angle += controller->GetAxis(AXIS_YAW).GetValue() * seconds * 100;
 
         InputDevice* mouse = InputDevice::Get("Mouse");
