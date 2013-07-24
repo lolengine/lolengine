@@ -1,54 +1,1 @@
-[vert.glsl]
-
-#version 130
-
-attribute vec3 in_Position;
-attribute vec4 in_Color;
-varying vec4 pass_Color;
-
-uniform mat4 proj_matrix;
-uniform mat4 view_matrix;
-
-void main()
-{
-    gl_Position = proj_matrix * view_matrix
-                * vec4(in_Position, 1.0);
-    pass_Color = in_Color;
-}
-
-[frag.glsl]
-
-#version 130
-
-#if defined GL_ES
-precision mediump float;
-#endif
-
-varying vec4 pass_Color;
-
-void main()
-{
-    gl_FragColor = pass_Color;
-}
-
-[vert.hlsl]
-
-void main(float4 in_Position : POSITION,
-          float4 in_Color : COLOR,
-          uniform float4x4 proj_matrix,
-          uniform float4x4 view_matrix,
-          out float4 out_Color : COLOR,
-          out float4 out_Position : POSITION)
-{
-    out_Position = mul(proj_matrix, mul(view_matrix, in_Position));
-    out_Color = in_Color;
-}
-
-[frag.hlsl]
-
-void main(float4 in_Color : COLOR,
-          out float4 out_FragColor : COLOR)
-{
-    out_FragColor = in_Color;
-}
-
+[vert.glsl]#version 130attribute vec3 in_Position;attribute vec4 in_Color;varying vec4 pass_Color;uniform mat4 proj_matrix;uniform mat4 view_matrix;void main(){    gl_Position = proj_matrix * view_matrix                * vec4(in_Position, 1.0);    pass_Color = in_Color;}[frag.glsl]#version 130#if defined GL_ESprecision mediump float;#endifvarying vec4 pass_Color;void main(){    gl_FragColor = pass_Color;}[vert.hlsl]void main(float4 in_Position : POSITION,          float4 in_Color : COLOR,          uniform float4x4 proj_matrix,          uniform float4x4 view_matrix,          out float4 out_Color : COLOR,          out float4 out_Position : POSITION){    out_Position = mul(proj_matrix, mul(view_matrix, in_Position));    out_Color = in_Color;}[frag.hlsl]void main(float4 in_Color : COLOR,          out float4 out_FragColor : COLOR){    out_FragColor = in_Color;}
