@@ -11,9 +11,9 @@
 #if !defined __LOL_INPUT_DEVICE_INTERNAL_H__
 #define __LOL_INPUT_DEVICE_H__
 
-#if defined LOL_INPUT_V2
-
 #include "core.h"
+
+#if defined LOL_INPUT_V2
 
 namespace lol
 {

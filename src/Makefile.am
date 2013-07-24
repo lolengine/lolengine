@@ -84,6 +84,8 @@ liblolcore_sources = \
     input/input.cpp input/input.h \
     input/keyboard.cpp input/keyboard.h \
     input/stick.cpp input/stick.h \
+    input/inputdevice.cpp input/inputdevice.h input/inputdevice_internal.h \
+    input/controller.cpp input/controller.h \
     \
     gpu/defaultmaterial.lolfx \
     gpu/tile.lolfx gpu/line.lolfx \

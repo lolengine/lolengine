@@ -16,12 +16,12 @@
 #if !defined __LOL_INPUT_INPUT_H__
 #define __LOL_INPUT_INPUT_H__
 
-#ifndef LOL_INPUT_V2
-
 #include <cstring>
 #include <string.h>
 
 #include "core.h"
+
+#ifndef LOL_INPUT_V2
 
 #include "lol/math/vector.h"
 #include "input/keyboard.h"

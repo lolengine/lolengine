@@ -2,7 +2,7 @@
 include $(top_srcdir)/build/autotools/common.am
 
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
-                  06_sprite 08_fbo 11_fractal \
+                  06_sprite 07_input 08_fbo 11_fractal \
                   12_voronoi
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx

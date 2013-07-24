@@ -35,6 +35,7 @@ libtool
 stamp-*
 *-stamp
 lolengine-*.tar.*
+test-suite.log
 # Personal stuff
 patch-*.diff
 # Debugging cruft
@@ -96,4 +97,6 @@ doc/doxygen.log
 doc/html
 doc/latex
 doc/man
-
+# Our test suites
+test/testsuite.log
+test/testsuite.trs

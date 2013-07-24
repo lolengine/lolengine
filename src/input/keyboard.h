@@ -16,9 +16,9 @@
 #if !defined __LOL_INPUT_KEYBOARD_H__
 #define __LOL_INPUT_KEYBOARD_H__
 
-#ifndef LOL_INPUT_V2
-
 #include "entity.h"
+
+#ifndef LOL_INPUT_V2
 
 namespace lol
 {
