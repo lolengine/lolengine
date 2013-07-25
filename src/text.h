@@ -26,10 +26,10 @@ class TextData;
 class Text : public Entity
 {
 public:
-    Text(char const *text, char const *font);
+    Text(String const &text, char const *font);
     virtual ~Text();
 
-    void SetText(char const *text);
+    void SetText(String const &text);
     void SetInt(int val);
     void SetPos(vec3 pos);
     vec3 GetPos();
