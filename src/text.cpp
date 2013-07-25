@@ -41,18 +41,17 @@ private:
  * Public Text class
  */
 
-Text::Text(char const *text, char const *font)
+Text::Text(String const &text, char const *font)
   : data(new TextData())
 {
     data->font = Forge::Register(font);
-    if (text)
-        data->m_text = text;
+    data->m_text = text;
     data->pos = vec3(0, 0, 0);
 
     m_drawgroup = DRAWGROUP_HUD;
 }
 
-void Text::SetText(char const *text)
+void Text::SetText(String const &text)
 {
     data->m_text = text;
 }
