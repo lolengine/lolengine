@@ -8,8 +8,6 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#define LOL_INPUT_V2
-
 #if defined HAVE_CONFIG_H
 #   include "config.h"
 #endif
@@ -38,7 +36,9 @@ enum
     AXIS_MAX
 };
 
+#if LOL_INPUT_V2
 Controller* controller;
+#endif
 
 class Cube : public WorldEntity
 {
@@ -87,6 +87,7 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
+#if LOL_INPUT_V2
         if (controller->GetKey(KEY_MANUAL_ROTATION).IsPressed())
             m_autorot = !m_autorot;
 
@@ -99,8 +100,10 @@ public:
         else
         {
             InputDevice::CaptureMouse(false);
+#endif
             if (m_autorot)
                m_yaw_angle += seconds * 20;
+#if LOL_INPUT_V2
         }
         if (lol::abs(controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
             m_pitch_angle -= controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
@@ -110,13 +113,13 @@ public:
         InputDevice* mouse = InputDevice::Get("Mouse");
         if (mouse)
         {
-            char buf[128];
-            std::sprintf(buf, "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
+            m_text->SetText(String::Printf(
+                "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
                 mouse->GetCursor(0).x, mouse->GetCursor(0).y,
-                mouse->GetCursorPixel(0).x, mouse->GetCursorPixel(0).y);
-            m_text->SetText(buf);
+                mouse->GetCursorPixel(0).x, mouse->GetCursorPixel(0).y));
         }
         else
+#endif
         {
             m_text->SetText("no mouse detected");
         }
@@ -215,6 +218,7 @@ int main(int argc, char **argv)
     new DebugFps(5, 5);
     new Cube();
 
+#if LOL_INPUT_V2
     controller = new Controller(KEY_MAX, AXIS_MAX);
     controller->GetKey(KEY_MANUAL_ROTATION).Bind("Keyboard", "Space");
     controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "ButtonLeft");
@@ -222,6 +226,7 @@ int main(int argc, char **argv)
     controller->GetAxis(AXIS_DRAG_YAW).Bind("Mouse", "X");
     controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
     controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
+#endif
 
     app.Run();
 
