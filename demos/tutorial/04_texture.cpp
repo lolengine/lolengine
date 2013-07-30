@@ -76,6 +76,7 @@ public:
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
             m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_texture_uni = m_shader->GetUniformLocation("u_Texture");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
@@ -119,6 +120,7 @@ int main(int argc, char **argv)
 
     Application app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
 
+//new DebugFps(50, 50);
     new TextureDemo();
 
     app.Run();
