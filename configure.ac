@@ -440,6 +440,10 @@ dnl  Can we build neercs?
 AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no")
 
 
+dnl Should we ship non-free data?
+AM_CONDITIONAL(HAVE_NONFREE, true)
+
+
 dnl  Extra libraries we may need
 AC_SUBST(MATH_LIBS)
 AC_SUBST(PAM_LIBS)
@@ -508,6 +512,16 @@ AC_CONFIG_FILES(
 ])
 AC_CONFIG_FILES(
  [games/orbital/Makefile
+])
+AC_CONFIG_FILES(
+ [games/abuse/Makefile
+  games/abuse/src/Makefile
+  games/abuse/src/lisp/Makefile
+  games/abuse/src/imlib/Makefile
+  games/abuse/src/net/Makefile
+  games/abuse/src/sdlport/Makefile
+  games/abuse/data/Makefile
+  games/abuse/doc/Makefile
 ])
 AC_CONFIG_FILES(
  [demos/tutorial/Makefile
