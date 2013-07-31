@@ -30,8 +30,10 @@ public:
 
     void Bind(const char* device_name, const char* key_name);
 
+    bool IsBound() { return m_device && m_keyindex != -1; }
+
 protected:
-    void Update() { m_previous = m_current; m_current = m_device ? m_device->GetKey(m_keyindex) : false; }
+    void Update() { m_previous = m_current; m_current = IsBound() ? m_device->GetKey(m_keyindex) : false; }
 
     const InputDevice* m_device;
     int m_keyindex;
@@ -51,8 +53,10 @@ public:
 
     void Bind(const char* device_name, const char* axis_name);
 
+    bool IsBound() { return m_device && m_axisindex != -1; }
+
 protected:
-    void Update() { m_previous = m_current; m_current = m_device ? m_device->GetAxis(m_axisindex) : 0.0f; }
+    void Update() { m_previous = m_current; m_current = IsBound() ? m_device->GetAxis(m_axisindex) : 0.0f; }
 
     const InputDevice* m_device;
     int m_axisindex;
