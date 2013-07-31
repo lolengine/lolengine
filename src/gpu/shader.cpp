@@ -342,7 +342,6 @@ ShaderAttrib Shader::GetAttribLocation(char const *attr,
         if (l < 0)
         {
             Log::Warn("tried to query invalid attribute: %s\n", attr);
-            l = 0;
         }
         else
         {
