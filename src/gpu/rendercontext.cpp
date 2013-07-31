@@ -110,6 +110,10 @@ void RenderContext::SetViewport(ibox2 viewport)
 
     g_renderer->SetViewport(viewport);
 }
+ibox2 RenderContext::GetViewport()
+{
+    return g_renderer->GetViewport();
+}
 
 void RenderContext::SetClearColor(vec4 color)
 {
@@ -119,12 +123,22 @@ void RenderContext::SetClearColor(vec4 color)
     g_renderer->SetClearColor(color);
 }
 
+vec4 RenderContext::GetClearColor()
+{
+    return g_renderer->GetClearColor();
+}
+
 void RenderContext::SetClearDepth(float depth)
 {
     if (!m_data->m_clear_depth.HasChanged())
         m_data->m_clear_depth.TrackValue(g_renderer->GetClearDepth());
 
     g_renderer->SetClearDepth(depth);
+}
+
+float RenderContext::GetClearDepth()
+{
+    return g_renderer->GetClearDepth();
 }
 
 void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
@@ -137,6 +151,16 @@ void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
     g_renderer->SetAlphaFunc(func, alpha);
 }
 
+AlphaFunc RenderContext::GetAlphaFunc()
+{
+    return g_renderer->GetAlphaFunc();
+}
+
+float RenderContext::GetAlphaValue()
+{
+    return g_renderer->GetAlphaValue();
+}
+
 void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
 {
     if (!m_data->m_blend_src.HasChanged())
@@ -147,12 +171,27 @@ void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
     g_renderer->SetBlendFunc(src, dst);
 }
 
+BlendFunc RenderContext::GetBlendFuncSrc()
+{
+    return g_renderer->GetBlendFuncSrc();
+}
+
+BlendFunc RenderContext::GetBlendFuncDst()
+{
+    return g_renderer->GetBlendFuncDst();
+}
+
 void RenderContext::SetDepthFunc(DepthFunc func)
 {
     if (!m_data->m_depth_func.HasChanged())
         m_data->m_depth_func.TrackValue(g_renderer->GetDepthFunc());
 
     g_renderer->SetDepthFunc(func);
+}
+
+DepthFunc RenderContext::GetDepthFunc()
+{
+    return g_renderer->GetDepthFunc();
 }
 
 void RenderContext::SetCullMode(CullMode mode)
@@ -163,12 +202,22 @@ void RenderContext::SetCullMode(CullMode mode)
     g_renderer->SetCullMode(mode);
 }
 
+CullMode RenderContext::GetCullMode()
+{
+    return g_renderer->GetCullMode();
+}
+
 void RenderContext::SetPolygonMode(PolygonMode mode)
 {
     if (!m_data->m_polygon_mode.HasChanged())
         m_data->m_polygon_mode.TrackValue(g_renderer->GetPolygonMode());
 
     g_renderer->SetPolygonMode(mode);
+}
+
+PolygonMode RenderContext::GetPolygonMode()
+{
+    return g_renderer->GetPolygonMode();
 }
 
 } /* namespace lol */
