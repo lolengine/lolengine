@@ -136,6 +136,16 @@ public:
         return m_data[m_count - 1];
     }
 
+    inline Element *Data()
+    {
+        return m_data;
+    }
+
+    inline Element const *Data() const
+    {
+        return m_data;
+    }
+
     inline Element const& Last() const
     {
         ASSERT(m_count > 0);
