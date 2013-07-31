@@ -36,6 +36,17 @@ public:
     void SetCullMode(CullMode mode);
     void SetPolygonMode(PolygonMode mode);
 
+    ibox2 GetViewport();
+    vec4 GetClearColor();
+    float GetClearDepth();
+    AlphaFunc GetAlphaFunc();
+    float GetAlphaValue();
+    BlendFunc GetBlendFuncSrc();
+    BlendFunc GetBlendFuncDst();
+    DepthFunc GetDepthFunc();
+    CullMode GetCullMode();
+    PolygonMode GetPolygonMode();
+
 private:
     RenderContextData *m_data;
 };
