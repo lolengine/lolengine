@@ -548,6 +548,9 @@ AC_CONFIG_FILES(
   people/sam/private/Makefile
   people/sam/private/kanagawa/Makefile
   people/sam/private/sapp/Makefile
+  people/benlitz/Makefile
+  people/benlitz/private/Makefile
+  people/benlitz/private/voxel/Makefile
 ])
 
 AC_OUTPUT
