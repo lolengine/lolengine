@@ -522,6 +522,8 @@ AC_CONFIG_FILES(
   games/abuse/src/sdlport/Makefile
   games/abuse/data/Makefile
   games/abuse/doc/Makefile
+  games/abuse/doc/abuse.6
+  games/abuse/doc/abuse-tool.6
 ])
 AC_CONFIG_FILES(
  [demos/tutorial/Makefile
