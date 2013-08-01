@@ -1,5 +1,5 @@
 //
-// Lol Engine - Cube tutorial
+// Lol Engine - Input tutorial
 //
 // Copyright: (c) 2011-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
@@ -20,31 +20,34 @@ using namespace lol;
 
 LOLFX_RESOURCE_DECLARE(07_input);
 
-enum
-{
-    KEY_MANUAL_ROTATION,
-    KEY_DRAG_MESH,
-    KEY_MAX
-};
-
-enum
-{
-    AXIS_DRAG_PITCH,
-    AXIS_DRAG_YAW,
-    AXIS_PITCH,
-    AXIS_YAW,
-    AXIS_MAX
-};
-
-#if LOL_INPUT_V2
-Controller* controller;
-#endif
-
-class Cube : public WorldEntity
+class InputTutorial : public WorldEntity
 {
 public:
-    Cube()
+    InputTutorial()
     {
+#if LOL_INPUT_V2
+        m_controller = new Controller(KEY_MAX, AXIS_MAX);
+
+        m_keyboard = InputDevice::Get("Keyboard");
+        if (m_keyboard)
+            m_controller->GetKey(KEY_MANUAL_ROTATION).Bind("Keyboard", "Space");
+
+        m_mouse = InputDevice::Get("Mouse");
+        if (m_mouse)
+        {
+            m_controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "ButtonLeft");
+            m_controller->GetAxis(AXIS_DRAG_PITCH).Bind("Mouse", "Y");
+            m_controller->GetAxis(AXIS_DRAG_YAW).Bind("Mouse", "X");
+        }
+
+        m_joystick = InputDevice::Get("Joystick1");
+        if (m_joystick)
+        {
+            m_controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
+            m_controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
+        }
+#endif
+
         m_pitch_angle = 0;
         m_yaw_angle = 0;
         m_autorot = true;
@@ -71,14 +74,14 @@ public:
         m_lines_indices << 4 << 5 << 5 << 6 << 6 << 7 << 7 << 4;
         m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
 
-        m_text = new Text(NULL, "data/font/ascii.png");
+        m_text = new Text("", "data/font/ascii.png");
         m_text->SetPos(ivec3(5, 5, 1));
         Ticker::Ref(m_text);
 
         m_ready = false;
     }
 
-    ~Cube()
+    ~InputTutorial()
     {
         Ticker::Unref(m_text);
     }
@@ -88,35 +91,42 @@ public:
         WorldEntity::TickGame(seconds);
 
 #if LOL_INPUT_V2
-        if (controller->GetKey(KEY_MANUAL_ROTATION).IsPressed())
-            m_autorot = !m_autorot;
-
-        if (controller->GetKey(KEY_DRAG_MESH).IsDown())
+        /* Handle keyboard */
+        if (m_keyboard)
         {
-            InputDevice::CaptureMouse(true);
-            m_pitch_angle -= controller->GetAxis(AXIS_DRAG_PITCH).GetValue() * seconds * 100;
-            m_yaw_angle += controller->GetAxis(AXIS_DRAG_YAW).GetValue() * seconds * 100;
+            if (m_controller->GetKey(KEY_MANUAL_ROTATION).IsPressed())
+                m_autorot = !m_autorot;
         }
-        else
-        {
-            InputDevice::CaptureMouse(false);
-#endif
-            if (m_autorot)
-               m_yaw_angle += seconds * 20;
-#if LOL_INPUT_V2
-        }
-        if (lol::abs(controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
-            m_pitch_angle -= controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
-        if (lol::abs(controller->GetAxis(AXIS_YAW).GetValue()) > 0.2f)
-            m_yaw_angle += controller->GetAxis(AXIS_YAW).GetValue() * seconds * 100;
 
-        InputDevice* mouse = InputDevice::Get("Mouse");
-        if (mouse)
+        /* Handle joystick */
+        if (m_joystick)
         {
+            if (lol::abs(m_controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
+                m_pitch_angle -= m_controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
+            if (lol::abs(m_controller->GetAxis(AXIS_YAW).GetValue()) > 0.2f)
+                m_yaw_angle += m_controller->GetAxis(AXIS_YAW).GetValue() * seconds * 100;
+        }
+
+        /* Handle mouse */
+        if (m_mouse)
+        {
+            if (m_controller->GetKey(KEY_DRAG_MESH).IsDown())
+            {
+                InputDevice::CaptureMouse(true);
+                m_pitch_angle -= m_controller->GetAxis(AXIS_DRAG_PITCH).GetValue() * seconds * 100;
+                m_yaw_angle += m_controller->GetAxis(AXIS_DRAG_YAW).GetValue() * seconds * 100;
+            }
+            else
+            {
+                InputDevice::CaptureMouse(false);
+                if (m_autorot)
+                    m_yaw_angle += seconds * 20;
+            }
+
             m_text->SetText(String::Printf(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
-                mouse->GetCursor(0).x, mouse->GetCursor(0).y,
-                mouse->GetCursorPixel(0).x, mouse->GetCursorPixel(0).y));
+                m_mouse->GetCursor(0).x, m_mouse->GetCursor(0).y,
+                m_mouse->GetCursorPixel(0).x, m_mouse->GetCursorPixel(0).y));
         }
         else
 #endif
@@ -191,6 +201,27 @@ public:
     }
 
 private:
+    enum
+    {
+        KEY_MANUAL_ROTATION,
+        KEY_DRAG_MESH,
+        KEY_MAX
+    };
+
+    enum
+    {
+        AXIS_DRAG_PITCH,
+        AXIS_DRAG_YAW,
+        AXIS_PITCH,
+        AXIS_YAW,
+        AXIS_MAX
+    };
+
+#if LOL_INPUT_V2
+    InputDevice *m_keyboard, *m_mouse, *m_joystick;
+    Controller *m_controller;
+#endif
+
     bool m_autorot;
     float m_pitch_angle;
     float m_yaw_angle;
@@ -216,17 +247,7 @@ int main(int argc, char **argv)
     Application app("Tutorial 7: Input", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
-    new Cube();
-
-#if LOL_INPUT_V2
-    controller = new Controller(KEY_MAX, AXIS_MAX);
-    controller->GetKey(KEY_MANUAL_ROTATION).Bind("Keyboard", "Space");
-    controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "ButtonLeft");
-    controller->GetAxis(AXIS_DRAG_PITCH).Bind("Mouse", "Y");
-    controller->GetAxis(AXIS_DRAG_YAW).Bind("Mouse", "X");
-    controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
-    controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
-#endif
+    new InputTutorial();
 
     app.Run();
 
