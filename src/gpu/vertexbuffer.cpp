@@ -356,8 +356,8 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
         uint32_t index = l[n].m_flags & 0xffff;
 
 #   if !defined __CELLOS_LV2__
-		if (reg != 0xffffffff)
-	        glEnableVertexAttribArray((GLint)reg);
+        if (reg != 0xffffffff)
+            glEnableVertexAttribArray((GLint)reg);
 #   else
         switch (usage)
         {
@@ -439,35 +439,35 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
 
 
 #   if !defined __CELLOS_LV2__
-		if (reg != 0xffffffff)
-		{
-			if (tlut[type_index].type == GL_FLOAT
-				 || tlut[type_index].type == GL_DOUBLE
-				 || tlut[type_index].type == GL_BYTE
-				 || tlut[type_index].type == GL_UNSIGNED_BYTE
+        if (reg != 0xffffffff)
+        {
+            if (tlut[type_index].type == GL_FLOAT
+                 || tlut[type_index].type == GL_DOUBLE
+                 || tlut[type_index].type == GL_BYTE
+                 || tlut[type_index].type == GL_UNSIGNED_BYTE
 #       if defined USE_GLEW && !defined __APPLE__
-				 /* If this is not available, don't use it */
-				 || !glVertexAttribIPointer
+                 /* If this is not available, don't use it */
+                 || !glVertexAttribIPointer
 #       endif
-				 || false)
-			{
-				/* Normalize unsigned bytes by default, because it's usually
-				 * some color information. */
-				GLboolean normalize = (tlut[type_index].type == GL_UNSIGNED_BYTE)
-								   || (tlut[type_index].type == GL_BYTE);
-				glVertexAttribPointer((GLint)reg, tlut[type_index].size,
-									  tlut[type_index].type, normalize,
-									  stride, (GLvoid const *)(uintptr_t)offset);
-			}
+                 || false)
+            {
+                /* Normalize unsigned bytes by default, because it's usually
+                 * some color information. */
+                GLboolean normalize = (tlut[type_index].type == GL_UNSIGNED_BYTE)
+                                   || (tlut[type_index].type == GL_BYTE);
+                glVertexAttribPointer((GLint)reg, tlut[type_index].size,
+                                      tlut[type_index].type, normalize,
+                                      stride, (GLvoid const *)(uintptr_t)offset);
+            }
 #       if defined GL_VERSION_3_0
-			else
-			{
-				glVertexAttribIPointer((GLint)reg, tlut[type_index].size,
-									   tlut[type_index].type,
-									   stride, (GLvoid const *)(uintptr_t)offset);
-			}
+            else
+            {
+                glVertexAttribIPointer((GLint)reg, tlut[type_index].size,
+                                       tlut[type_index].type,
+                                       stride, (GLvoid const *)(uintptr_t)offset);
+            }
 #       endif
-		}
+        }
 #   else
         switch (usage)
         {
