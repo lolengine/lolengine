@@ -197,6 +197,8 @@ void Scene::Render() // XXX: rename to Blit()
     /* Early test if nothing needs to be rendered */
     if (data->m_tiles.Count())
     {
+        PushCamera(data->m_default_cam);
+
 #if defined USE_D3D9 || defined _XBOX
 #elif !defined HAVE_GLES_2X
         glEnable(GL_TEXTURE_2D);
@@ -287,6 +289,8 @@ void Scene::Render() // XXX: rename to Blit()
 #elif !defined HAVE_GLES_2X
         glDisable(GL_TEXTURE_2D);
 #endif
+
+        PopCamera(data->m_default_cam);
     }
 
     if (data->m_lines.Count())
