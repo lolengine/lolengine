@@ -21,7 +21,21 @@ protected:
     virtual void TickDraw(float seconds);
 
 private:
+    enum
+    {
+        KEY_MOVE_FORWARD,
+        KEY_MOVE_BACK,
+        KEY_MOVE_LEFT,
+        KEY_MOVE_RIGHT,
+        KEY_MOVE_UP,
+        KEY_MOVE_DOWN,
+        KEY_MOVE_JUMP,
+        KEY_QUIT,
+        KEY_MAX,
+    };
+
     Camera*                     m_camera;
+    Controller *                m_controller;
     Light *                     m_light1;
     Light *                     m_light2;
     bool                        m_ready;

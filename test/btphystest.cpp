@@ -33,22 +33,25 @@ int gNumObjects = 64;
 #define USE_WALL        1
 #define USE_PLATFORM    1
 #define USE_ROPE        0
-#define USE_BODIES        1
+#define USE_BODIES      1
 #define USE_ROTATION    0
-#define USE_CHARACTER    1
-#define USE_STAIRS        1
-
-#define    IPT_MOVE_FORWARD        "Move_Forward"
-#define    IPT_MOVE_BACKWARD        "Move_Backward"
-#define    IPT_MOVE_LEFT            "Move_Left"
-#define    IPT_MOVE_RIGHT            "Move_Right"
-#define    IPT_MOVE_UP                "Move_Up"
-#define    IPT_MOVE_DOWN            "Move_Down"
-#define    IPT_MOVE_JUMP            "Move_Jump"
+#define USE_CHARACTER   1
+#define USE_STAIRS      1
 
 BtPhysTest::BtPhysTest(bool editor)
 {
     m_loop_value = .0f;
+
+    /* Register an input controller for the keyboard */
+    m_controller = new Controller(KEY_MAX, 0);
+    m_controller->GetKey(KEY_MOVE_FORWARD).Bind("Keyboard", "Up");
+    m_controller->GetKey(KEY_MOVE_BACK).Bind("Keyboard", "Down");
+    m_controller->GetKey(KEY_MOVE_LEFT).Bind("Keyboard", "Left");
+    m_controller->GetKey(KEY_MOVE_RIGHT).Bind("Keyboard", "Right");
+    m_controller->GetKey(KEY_MOVE_JUMP).Bind("Keyboard", "Space");
+    m_controller->GetKey(KEY_MOVE_UP).Bind("Keyboard", "PageUp");
+    m_controller->GetKey(KEY_MOVE_DOWN).Bind("Keyboard", "PageDown");
+    m_controller->GetKey(KEY_QUIT).Bind("Keyboard", "Escape");
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
@@ -196,15 +199,6 @@ BtPhysTest::BtPhysTest(bool editor)
         m_character_list << NewPhyobj;
         Ticker::Ref(NewPhyobj);
 
-
-        Input::LinkActionToKey(IPT_MOVE_FORWARD,        Key::Up);
-        Input::LinkActionToKey(IPT_MOVE_BACKWARD,        Key::Down);
-        Input::LinkActionToKey(IPT_MOVE_LEFT,            Key::Left);
-        Input::LinkActionToKey(IPT_MOVE_RIGHT,            Key::Right);
-        Input::LinkActionToKey(IPT_MOVE_JUMP,            Key::Space);
-        Input::LinkActionToKey(IPT_MOVE_UP,                Key::PageUp);
-        Input::LinkActionToKey(IPT_MOVE_DOWN,            Key::PageDown);
-
         //NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
     }
 
@@ -258,7 +252,7 @@ void BtPhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    if (Input::WasReleased(Key::Escape))
+    if (m_controller->GetKey(KEY_QUIT).IsReleased())
         Ticker::Shutdown();
 
     m_loop_value += seconds;
@@ -344,12 +338,16 @@ void BtPhysTest::TickGame(float seconds)
             EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
             mat4 CtlrMx = Character->GetTransform();
 
-            int HMovement = Input::GetStatus(IPT_MOVE_RIGHT) - Input::GetStatus(IPT_MOVE_LEFT);
-            int VMovement = Input::GetStatus(IPT_MOVE_FORWARD) - Input::GetStatus(IPT_MOVE_BACKWARD);
-            int RMovement = Input::GetStatus(IPT_MOVE_UP) - Input::GetStatus(IPT_MOVE_DOWN);
-            vec3 CharMove = vec3((float)VMovement * seconds * 4.f, (float)RMovement * seconds * 10.f, (float)HMovement * seconds * 4.f);
+            vec3 movement(0.f);
+            movement.z = (m_controller->GetKey(KEY_MOVE_RIGHT).IsDown() ? 1.f : 0.f)
+                       - (m_controller->GetKey(KEY_MOVE_LEFT).IsDown() ? 1.f : 0.f);
+            movement.x = (m_controller->GetKey(KEY_MOVE_FORWARD).IsDown() ? 1.f : 0.f)
+                       - (m_controller->GetKey(KEY_MOVE_BACK).IsDown() ? 1.f : 0.f);
+            movement.y = (m_controller->GetKey(KEY_MOVE_UP).IsDown() ? 1.f : 0.f)
+                       - (m_controller->GetKey(KEY_MOVE_DOWN).IsDown() ? 1.f : 0.f);
+            vec3 CharMove = movement * seconds * vec3(4.f, 10.f, 4.f);
 
-            if (Input::WasReleased(IPT_MOVE_JUMP))
+            if (m_controller->GetKey(KEY_MOVE_JUMP).IsReleased())
                 Character->Jump();
             Character->SetMovementForFrame(CharMove);
 

@@ -26,29 +26,41 @@ static int const TEXTURE_WIDTH = 256;
 LOLFX_RESOURCE_DECLARE(shinyfur);
 LOLFX_RESOURCE_DECLARE(shinymvtexture);
 
-#define    IPT_CAM_RESET          "Cam_Center"
-#define    IPT_CAM_FORWARD        "Cam_Forward"
-#define    IPT_CAM_BACKWARD       "Cam_Backward"
-#define    IPT_CAM_ZOOM_OUT       "Cam_Zoom_In"
-#define    IPT_CAM_ZOOM_IN        "Cam_Zoom_Out"
+enum
+{
+    KEY_CAM_RESET,
+    KEY_CAM_FORWARD,
+    KEY_CAM_BACKWARD,
+    KEY_CAM_ZOOM_OUT,
+    KEY_CAM_ZOOM_IN,
 
-#define    IPT_MESH_UPDATE        "Mesh_Update"
-#define    IPT_MESH_RESET         "Mesh_Reset"
-#define    IPT_MESH_PREV          "Mesh_Previous"
-#define    IPT_MESH_NEXT          "Mesh_Next"
+    KEY_MESH_UPDATE,
+    KEY_MESH_RESET,
+    KEY_MESH_PREV,
+    KEY_MESH_NEXT,
 
-#define    IPT_MESH_LEFT          "Mesh_Left"
-#define    IPT_MESH_RIGHT         "Mesh_Right"
-#define    IPT_MESH_UP            "Mesh_Up"
-#define    IPT_MESH_DOWN          "Mesh_Down"
-#define    IPT_MESH_SCALE_UP      "Mesh_Scale_Up"
-#define    IPT_MESH_SCALE_DOWN    "Mesh_Scale_Down"
-#define    IPT_MESH_OFFSET_UP     "Mesh_Offset_Up"
-#define    IPT_MESH_OFFSET_DOWN   "Mesh_Offset_Down"
-#define    IPT_MESH_ROT_LEFT      "Mesh_Rot_Left"
-#define    IPT_MESH_ROT_RIGHT     "Mesh_Rot_Right"
-#define    IPT_MESH_ROT_UP        "Mesh_Rot_Up"
-#define    IPT_MESH_ROT_DOWN      "Mesh_Rot_Down"
+    KEY_MESH_LEFT,
+    KEY_MESH_RIGHT,
+    KEY_MESH_UP,
+    KEY_MESH_DOWN,
+    KEY_MESH_SCALE_UP,
+    KEY_MESH_SCALE_DOWN,
+    KEY_MESH_OFFSET_UP,
+    KEY_MESH_OFFSET_DOWN,
+    KEY_MESH_ROT_LEFT,
+    KEY_MESH_ROT_RIGHT,
+    KEY_MESH_ROT_UP,
+    KEY_MESH_ROT_DOWN,
+
+    KEY_F1,
+    KEY_F2,
+    KEY_F3,
+    KEY_F4,
+    KEY_F5,
+    KEY_ESC,
+
+    KEY_MAX,
+};
 
 #define    MIN_FOV                0.1f
 
@@ -69,31 +81,41 @@ public:
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
       : m_file_name(file_name)
     {
-        //Input setup
-        Input::LinkActionToKey(IPT_CAM_RESET,           Key::Return);
-        Input::LinkActionToKey(IPT_CAM_ZOOM_IN,         Key::PageUp);
-        Input::LinkActionToKey(IPT_CAM_ZOOM_OUT,        Key::PageDown);
+        /* Register an input controller for the keyboard */
+        m_controller = new Controller(KEY_MAX, 0);
 
-        Input::LinkActionToKey(IPT_MESH_LEFT,           Key::Left);
-        Input::LinkActionToKey(IPT_MESH_RIGHT,          Key::Right);
-        Input::LinkActionToKey(IPT_MESH_UP,             Key::Up);
-        Input::LinkActionToKey(IPT_MESH_DOWN,           Key::Down);
+        m_controller->GetKey(KEY_CAM_RESET).Bind("Keyboard", "Return");
+        m_controller->GetKey(KEY_CAM_ZOOM_IN).Bind("Keyboard", "PageUp");
+        m_controller->GetKey(KEY_CAM_ZOOM_OUT).Bind("Keyboard", "PageDown");
 
-        Input::LinkActionToKey(IPT_MESH_UPDATE,         Key::Space);
-        Input::LinkActionToKey(IPT_MESH_RESET,          Key::KP0);
-        Input::LinkActionToKey(IPT_MESH_PREV,           Key::KPPlus);
-        Input::LinkActionToKey(IPT_MESH_NEXT,           Key::KPMinus);
+        m_controller->GetKey(KEY_MESH_LEFT).Bind("Keyboard", "Left");
+        m_controller->GetKey(KEY_MESH_RIGHT).Bind("Keyboard", "Right");
+        m_controller->GetKey(KEY_MESH_UP).Bind("Keyboard", "Up");
+        m_controller->GetKey(KEY_MESH_DOWN).Bind("Keyboard", "Down");
 
-        Input::LinkActionToKey(IPT_MESH_OFFSET_DOWN,    Key::KP1);
-        Input::LinkActionToKey(IPT_MESH_OFFSET_UP,      Key::KP3);
-        Input::LinkActionToKey(IPT_MESH_SCALE_DOWN,     Key::KP7);
-        Input::LinkActionToKey(IPT_MESH_SCALE_UP,       Key::KP9);
+        m_controller->GetKey(KEY_MESH_UPDATE).Bind("Keyboard", "Space");
+        m_controller->GetKey(KEY_MESH_RESET).Bind("Keyboard", "KP0");
+        m_controller->GetKey(KEY_MESH_PREV).Bind("Keyboard", "KPPlus");
+        m_controller->GetKey(KEY_MESH_NEXT).Bind("Keyboard", "KPMinus");
 
-        Input::LinkActionToKey(IPT_MESH_ROT_LEFT,       Key::KP4);
-        Input::LinkActionToKey(IPT_MESH_ROT_RIGHT,      Key::KP6);
-        Input::LinkActionToKey(IPT_MESH_ROT_UP,         Key::KP8);
-        Input::LinkActionToKey(IPT_MESH_ROT_DOWN,       Key::KP5);
+        m_controller->GetKey(KEY_MESH_OFFSET_DOWN).Bind("Keyboard", "KP1");
+        m_controller->GetKey(KEY_MESH_OFFSET_UP).Bind("Keyboard", "KP3");
+        m_controller->GetKey(KEY_MESH_SCALE_DOWN).Bind("Keyboard", "KP7");
+        m_controller->GetKey(KEY_MESH_SCALE_UP).Bind("Keyboard", "KP9");
 
+        m_controller->GetKey(KEY_MESH_ROT_LEFT).Bind("Keyboard", "KP4");
+        m_controller->GetKey(KEY_MESH_ROT_RIGHT).Bind("Keyboard", "KP6");
+        m_controller->GetKey(KEY_MESH_ROT_UP).Bind("Keyboard", "KP8");
+        m_controller->GetKey(KEY_MESH_ROT_DOWN).Bind("Keyboard", "KP5");
+
+        m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
+        m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
+        m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
+        m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
+        m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
+        m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+
+        // State
         m_mesh_shown = 0;
         m_angle = 0;
         m_default_texture = NULL;
@@ -163,7 +185,7 @@ public:
         //TODO : This should probably be "standard LoL behaviour"
         {
             //Shutdown logic
-            if (Input::WasReleased(Key::Escape))
+            if (m_controller->GetKey(KEY_ESC).IsReleased())
                 Ticker::Shutdown();
         }
 
@@ -226,7 +248,7 @@ public:
         //--
         //Camera movement handling
         //--
-        if (Input::WasReleased(IPT_CAM_RESET))
+        if (m_controller->GetKey(KEY_CAM_RESET).IsReleased())
             SetFov();
 
         //Auto Fov
@@ -263,7 +285,9 @@ public:
         float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                               max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
 
-        float fov_zoom = (float)(Input::GetStatus(IPT_CAM_ZOOM_OUT) - Input::GetStatus(IPT_CAM_ZOOM_IN));
+        float fov_zoom = 0.f;
+        fov_zoom += m_controller->GetKey(KEY_CAM_ZOOM_OUT).IsDown() ? 1.f : 0.f;
+        fov_zoom -= m_controller->GetKey(KEY_CAM_ZOOM_IN).IsDown() ? 1.f : 0.f;
         m_fov_zoom_damp = damp(m_fov_zoom_damp, fov_zoom, (fov_zoom == .0f)?(.15f):(0.5f), seconds);
         m_fov = max(.0f, m_fov + seconds * 10.0f * m_fov_zoom_damp);
         m_fov_damp = damp(m_fov_damp, m_fov, .2f, seconds);
@@ -291,26 +315,33 @@ public:
         //--
         //Mesh movement handling
         //--
-        if (Input::WasReleased(IPT_MESH_RESET))
+        if (m_controller->GetKey(KEY_MESH_RESET).IsReleased())
             SetDefaultMeshTransform();
 
-        m_mesh_shown += ((int)Input::WasReleased(IPT_MESH_NEXT)) - ((int)Input::WasReleased(IPT_MESH_PREV));
+        m_mesh_shown += m_controller->GetKey(KEY_MESH_NEXT).IsReleased() ? 1 : 0;
+        m_mesh_shown -= m_controller->GetKey(KEY_MESH_PREV).IsReleased() ? 1 : 0;
         m_mesh_shown = clamp(m_mesh_shown, 0, max(m_meshes.Count(), 1) - 1);
 
         vec2 new_move = vec2(.0f);
+        new_move.x += m_controller->GetKey(KEY_MESH_RIGHT).IsDown() ? 1.f : 0.f;
+        new_move.x -= m_controller->GetKey(KEY_MESH_LEFT).IsDown() ? 1.f : 0.f;
+        new_move.y += m_controller->GetKey(KEY_MESH_UP).IsDown() ? 1.f : 0.f;
+        new_move.y -= m_controller->GetKey(KEY_MESH_DOWN).IsDown() ? 1.f : 0.f;
 
-        new_move = vec2((float)(Input::GetStatus(IPT_MESH_RIGHT) - Input::GetStatus(IPT_MESH_LEFT)),
-                        (float)(Input::GetStatus(IPT_MESH_UP)    - Input::GetStatus(IPT_MESH_DOWN)));
         m_mesh_screen_move_damp = vec2(damp(m_mesh_screen_move_damp.x, new_move.x, (new_move.x == .0f)?(.15f):(0.5f), seconds),
                                          damp(m_mesh_screen_move_damp.y, new_move.y, (new_move.y == .0f)?(.15f):(0.5f), seconds));
 
-        new_move = vec2((float)(Input::GetStatus(IPT_MESH_OFFSET_UP) - Input::GetStatus(IPT_MESH_OFFSET_DOWN)),
-                        (float)(Input::GetStatus(IPT_MESH_SCALE_UP)  - Input::GetStatus(IPT_MESH_SCALE_DOWN)));
+        new_move.x = m_controller->GetKey(KEY_MESH_OFFSET_UP).IsDown() ? 1.f : 0.f;
+        new_move.x -= m_controller->GetKey(KEY_MESH_OFFSET_DOWN).IsDown() ? 1.f : 0.f;
+        new_move.y = m_controller->GetKey(KEY_MESH_SCALE_UP).IsDown() ? 1.f : 0.f;
+        new_move.y -= m_controller->GetKey(KEY_MESH_SCALE_DOWN).IsDown() ? 1.f : 0.f;
         m_mesh_move_damp = vec2(damp(m_mesh_move_damp.x, new_move.x, (new_move.x == .0f)?(.15f):(0.5f), seconds),
                                   damp(m_mesh_move_damp.y, new_move.y, (new_move.y == .0f)?(.15f):(0.5f), seconds));
 
-        new_move = vec2((float)(Input::GetStatus(IPT_MESH_ROT_UP)    - Input::GetStatus(IPT_MESH_ROT_DOWN)),
-                        (float)(Input::GetStatus(IPT_MESH_ROT_RIGHT) - Input::GetStatus(IPT_MESH_ROT_LEFT)));
+        new_move.x = m_controller->GetKey(KEY_MESH_ROT_UP).IsDown() ? 1.f : 0.f;
+        new_move.x -= m_controller->GetKey(KEY_MESH_ROT_DOWN).IsDown() ? 1.f : 0.f;
+        new_move.y = m_controller->GetKey(KEY_MESH_ROT_RIGHT).IsDown() ? 1.f : 0.f;
+        new_move.y -= m_controller->GetKey(KEY_MESH_ROT_LEFT).IsDown() ? 1.f : 0.f;
         m_mesh_rotate_damp = vec2(damp(m_mesh_rotate_damp.x, new_move.x, (new_move.x == .0f)?(.15f):(0.5f), seconds),
                                     damp(m_mesh_rotate_damp.y, new_move.y, (new_move.y == .0f)?(.15f):(0.5f), seconds));
 
@@ -340,7 +371,7 @@ public:
         //--
         //File management
         //--
-        if (Input::WasReleased(IPT_MESH_UPDATE))
+        if (m_controller->GetKey(KEY_MESH_UPDATE).IsReleased())
             m_stream_update_time = m_stream_update_timer + 1.0f;
         m_stream_update_time += seconds;
 
@@ -392,15 +423,15 @@ public:
 
         //TODO : This should probably be "standard LoL behaviour"
         {
-            if (Input::WasReleased(Key::F1))
+            if (m_controller->GetKey(KEY_F1).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Default);
-            if (Input::WasReleased(Key::F2))
+            if (m_controller->GetKey(KEY_F2).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Wireframe);
-            if (Input::WasReleased(Key::F3))
+            if (m_controller->GetKey(KEY_F3).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Lighting);
-            if (Input::WasReleased(Key::F4))
+            if (m_controller->GetKey(KEY_F4).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Normal);
-            if (Input::WasReleased(Key::F5))
+            if (m_controller->GetKey(KEY_F5).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
 
@@ -479,9 +510,10 @@ public:
     }
 
 private:
-    Camera * m_camera;
-    float    m_angle;
-    mat4     m_mat;
+    Controller *m_controller;
+    Camera *m_camera;
+    float m_angle;
+    mat4 m_mat;
 
     //Mesh infos
     //Move damping
