@@ -63,6 +63,7 @@ private:
     float m_alpha_value;
     BlendFunc m_blend_src, m_blend_dst;
     DepthFunc m_depth_func;
+    DepthMask m_depth_mask;
     CullMode m_cull_mode;
     PolygonMode m_polygon_mode;
 
@@ -155,6 +156,9 @@ Renderer::Renderer(ivec2 size)
 
     m_data->m_depth_func = DepthFunc::Disabled;
     SetDepthFunc(DepthFunc::LessOrEqual);
+
+    m_data->m_depth_mask = DepthMask::Disabled;
+    SetDepthMask(DepthMask::Enabled);
 
     m_data->m_cull_mode = CullMode::Disabled;
     SetCullMode(CullMode::Clockwise);
@@ -598,6 +602,35 @@ void Renderer::SetDepthFunc(DepthFunc func)
 DepthFunc Renderer::GetDepthFunc() const
 {
     return m_data->m_depth_func;
+}
+
+/*
+ * Depth mask
+ */
+
+void Renderer::SetDepthMask(DepthMask mask)
+{
+    if (m_data->m_depth_mask == mask)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    if (mask == DepthMask::Disabled)
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ZWRITEENABLE, D3DZB_FALSE);
+    else
+        m_data->m_d3d_dev->SetRenderState(D3DRS_ZWRITEENABLE, D3DZB_TRUE);
+#else
+    if (mask == DepthMask::Disabled)
+        glDepthMask(GL_FALSE);
+    else
+        glDepthMask(GL_TRUE);
+#endif
+
+    m_data->m_depth_mask = mask;
+}
+
+DepthMask Renderer::GetDepthMask() const
+{
+    return m_data->m_depth_mask;
 }
 
 /*

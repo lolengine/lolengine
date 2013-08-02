@@ -123,6 +123,21 @@ struct DepthFunc
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate the depth mask. */
+struct DepthMask
+{
+    enum Value
+    {
+        Disabled,
+        Enabled,
+    }
+    m_value;
+
+    inline DepthMask() : m_value(Disabled) {}
+    inline DepthMask(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 /* A safe enum to indicate the alpha test mode. */
 struct AlphaFunc
 {
@@ -179,6 +194,9 @@ public:
 
     void SetDepthFunc(DepthFunc func);
     DepthFunc GetDepthFunc() const;
+
+    void SetDepthMask(DepthMask mask);
+    DepthMask GetDepthMask() const;
 
     void SetCullMode(CullMode mode);
     CullMode GetCullMode() const;
