@@ -59,6 +59,7 @@ private:
     TrackedState<float> m_alpha_value;
     TrackedState<BlendFunc> m_blend_src, m_blend_dst;
     TrackedState<DepthFunc> m_depth_func;
+    TrackedState<DepthMask> m_depth_mask;
     TrackedState<CullMode> m_cull_mode;
     TrackedState<PolygonMode> m_polygon_mode;
 };
@@ -94,6 +95,9 @@ RenderContext::~RenderContext()
     if (m_data->m_depth_func.HasChanged())
         g_renderer->SetDepthFunc(m_data->m_depth_func.GetValue());
 
+    if (m_data->m_depth_mask.HasChanged())
+        g_renderer->SetDepthMask(m_data->m_depth_mask.GetValue());
+
     if (m_data->m_cull_mode.HasChanged())
         g_renderer->SetCullMode(m_data->m_cull_mode.GetValue());
 
@@ -110,6 +114,7 @@ void RenderContext::SetViewport(ibox2 viewport)
 
     g_renderer->SetViewport(viewport);
 }
+
 ibox2 RenderContext::GetViewport()
 {
     return g_renderer->GetViewport();
@@ -192,6 +197,19 @@ void RenderContext::SetDepthFunc(DepthFunc func)
 DepthFunc RenderContext::GetDepthFunc()
 {
     return g_renderer->GetDepthFunc();
+}
+
+void RenderContext::SetDepthMask(DepthMask mask)
+{
+    if (!m_data->m_depth_mask.HasChanged())
+        m_data->m_depth_mask.TrackValue(g_renderer->GetDepthMask());
+
+    g_renderer->SetDepthMask(mask);
+}
+
+DepthMask RenderContext::GetDepthMask()
+{
+    return g_renderer->GetDepthMask();
 }
 
 void RenderContext::SetCullMode(CullMode mode)

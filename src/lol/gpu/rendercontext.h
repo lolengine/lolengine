@@ -33,6 +33,7 @@ public:
     void SetAlphaFunc(AlphaFunc func, float alpha);
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
     void SetDepthFunc(DepthFunc func);
+    void SetDepthMask(DepthMask mask);
     void SetCullMode(CullMode mode);
     void SetPolygonMode(PolygonMode mode);
 
@@ -44,6 +45,7 @@ public:
     BlendFunc GetBlendFuncSrc();
     BlendFunc GetBlendFuncDst();
     DepthFunc GetDepthFunc();
+    DepthMask GetDepthMask();
     CullMode GetCullMode();
     PolygonMode GetPolygonMode();
 
