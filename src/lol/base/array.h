@@ -229,7 +229,7 @@ public:
 
     void Resize(int count, Element e = Element())
     {
-        ASSERT(count > 0);
+        ASSERT(count >= 0);
         Reserve(count);
 
         /* Too many elements? Remove them. */
