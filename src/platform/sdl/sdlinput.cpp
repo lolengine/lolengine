@@ -61,6 +61,7 @@ private:
     Array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
     InputDeviceInternal* m_mouse;
     InputDeviceInternal* m_keyboard;
+
     ivec2 m_prevmouse;
     float m_app_w;
     float m_app_h;
@@ -126,10 +127,10 @@ SdlInput::SdlInput()
 
 #       ifdef LOL_INPUT_V2
         InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
-        for (int i = 0; i < SDL_JoystickNumAxes(sdlstick); ++i)
-            stick->AddAxis(String::Printf("Axis%d", i+1).C());
-        for (int i = 0; i < SDL_JoystickNumButtons(sdlstick); ++i)
-            stick->AddKey(String::Printf("Button%d", i+1).C());
+        for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
+            stick->AddAxis(String::Printf("Axis%d", j + 1).C());
+        for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
+            stick->AddKey(String::Printf("Button%d", j + 1).C());
 
         m_data->m_joysticks.Push(sdlstick, stick);
 #       else // !LOL_INPUT_V2
@@ -290,7 +291,7 @@ void SdlInputData::Tick(float seconds)
 
 #   else // !LOL_INPUT_V2
     Input::SetMousePos(mouse);
-#    endif // LOL_INPUT_V2
+#   endif // LOL_INPUT_V2
 
 #   if SDL_VERSION_ATLEAST(1,3,0)
     Uint8 *sdlstate = SDL_GetKeyboardState(nullptr);
@@ -299,14 +300,14 @@ void SdlInputData::Tick(float seconds)
 #   endif
 
     int keyindex = 0;
-#    ifdef LOL_INPUT_V2
-#    define KEY_FUNC(name, index) m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
-#    if !defined SDLK_WORLD_0
-#     define KEY_DISABLE_WORLD
-#   endif // !SDLK_WORLD_0
-#    include "input/keys.h"
-#    undef KEY_FUNC
-#    else // !LOL_INPUT_V2
+#   ifdef LOL_INPUT_V2
+#       define KEY_FUNC(name, index) \
+            m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
+        /* FIXME: we ignore SDLK_WORLD_0, which means our list of
+         * keys and SDL's list of keys could be out of sync. */
+#       include "input/keys.h"
+#       undef KEY_FUNC
+#   else // !LOL_INPUT_V2
 
     /* Send the whole keyboard state to the input system */
     Array<uint8_t> &lolstate = Input::GetKeyboardState();

@@ -45,7 +45,9 @@ void InputDeviceInternal::AddCursor(const char* name)
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 {
     InputDeviceInternal* keyboard = new InputDeviceInternal("Keyboard");
-#   define KEY_FUNC(key, value) keyboard->AddKey(#key);
+    /* "value" is unused, what matters is the index. */
+#   define KEY_FUNC(key, value) \
+        keyboard->AddKey(#key);
 #   include "input/keys.h"
 #   undef KEY_FUNC
     return keyboard;
