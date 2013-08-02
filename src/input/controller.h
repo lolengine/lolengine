@@ -82,14 +82,12 @@ public:
     /** Deactivate every active controller on next frame and return an array of deactivated (previously active) controllers */
     static Array<Controller*> DeactivateAll();
 
-    KeyBinding& GetKey(int index) { ASSERT(index >= 0 && index < m_nb_keys); return m_keys[index]; }
-    AxisBinding& GetAxis(int index) { ASSERT(index >= 0 && index < m_nb_axis); return m_axis[index]; }
+    KeyBinding& GetKey(int index) { return m_keys[index]; }
+    AxisBinding& GetAxis(int index) { return m_axis[index]; }
 
 protected:
-    KeyBinding* m_keys;
-    AxisBinding* m_axis;
-    int m_nb_keys;
-    int m_nb_axis;
+    Array<KeyBinding> m_keys;
+    Array<AxisBinding> m_axis;
 
 private:
     static Array<Controller*> controllers;

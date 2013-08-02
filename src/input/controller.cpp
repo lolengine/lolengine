@@ -68,10 +68,8 @@ Array<Controller*> Controller::controllers;
 Controller::Controller(int nb_keys, int nb_axis)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
-    m_nb_keys = nb_keys;
-    m_nb_axis = nb_axis;
-    m_keys = new KeyBinding[m_nb_keys];
-    m_axis = new AxisBinding[m_nb_axis];
+    m_keys.Resize(nb_keys);
+    m_axis.Resize(nb_axis);
     m_activate_nextframe = false;
     m_deactivate_nextframe = false;
     m_active = false;
@@ -94,15 +92,11 @@ void Controller::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 
-    for (int i = 0; i < m_nb_keys; ++i)
-    {
+    for (int i = 0; i < m_keys.Count(); ++i)
         m_keys[i].Update();
-    }
 
-    for (int i = 0; i < m_nb_axis; ++i)
-    {
+    for (int i = 0; i < m_axis.Count(); ++i)
         m_axis[i].Update();
-    }
 
     if (m_activate_nextframe)
         m_active = true;
