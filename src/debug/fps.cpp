@@ -93,7 +93,7 @@ void DebugFps::TickGame(float seconds)
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             1.0f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
-			1e3f * Profiler::GetAvg(Profiler::STAT_USER_00),
+            1e3f * Profiler::GetAvg(Profiler::STAT_USER_00),
            Ticker::GetFrameNum());
     data->lines[0]->SetText(buf);
 #endif
