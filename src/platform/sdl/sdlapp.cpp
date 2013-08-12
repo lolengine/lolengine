@@ -82,7 +82,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
-	// TODO: when implementing fullscreen, be sure to overwrite screen_w and screen_h with the value of vidinfo after the call to SDL_SetVideoMode
+    // TODO: when implementing fullscreen, be sure to overwrite screen_w and screen_h with the value of vidinfo after the call to SDL_SetVideoMode
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
 #   endif
     if (!video)
