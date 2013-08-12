@@ -43,21 +43,6 @@
     <Filter Include="mesh">
       <UniqueIdentifier>{1eaa8df5-7a31-4358-a1e9-0e265de6ed49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform">
-      <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="platform\sdl">
-      <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="platform\xbox">
-      <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="platform\d3d9">
-      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="platform\ps3">
-      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lol\base">
       <UniqueIdentifier>{e17b998c-d494-480b-ae29-5d1564f73327}</UniqueIdentifier>
     </Filter>
@@ -79,6 +64,21 @@
     <Filter Include="lol\debug">
       <UniqueIdentifier>{01285b11-c6c7-4a9e-8dee-daa2c63901e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mesh\platform">
+      <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh\platform\sdl">
+      <UniqueIdentifier>{4089421f-2cc2-4036-a6b2-9df8a2f4efc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh\platform\xbox">
+      <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh\platform\d3d9">
+      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh\platform\ps3">
+      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\image.cpp">
@@ -94,10 +94,10 @@
       <Filter>debug</Filter>
     </ClCompile>
     <ClCompile Include="platform\sdl\sdlapp.cpp">
-      <Filter>platform\sdl</Filter>
+      <Filter>mesh\platform\sdl</Filter>
     </ClCompile>
     <ClCompile Include="platform\sdl\sdlinput.cpp">
-      <Filter>platform\sdl</Filter>
+      <Filter>mesh\platform\sdl</Filter>
     </ClCompile>
     <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
@@ -151,10 +151,10 @@
       <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="platform\xbox\xboxapp.cpp">
-      <Filter>platform\xbox</Filter>
+      <Filter>mesh\platform\xbox</Filter>
     </ClCompile>
     <ClCompile Include="platform\xbox\xboxinput.cpp">
-      <Filter>platform\xbox</Filter>
+      <Filter>mesh\platform\xbox</Filter>
     </ClCompile>
     <ClCompile Include="gpu\indexbuffer.cpp">
       <Filter>gpu</Filter>
@@ -162,14 +162,8 @@
     <ClCompile Include="input\input.cpp">
       <Filter>input</Filter>
     </ClCompile>
-    <ClCompile Include="input\keyboard.cpp">
-      <Filter>input</Filter>
-    </ClCompile>
-    <ClCompile Include="input\stick.cpp">
-      <Filter>input</Filter>
-    </ClCompile>
     <ClCompile Include="platform\d3d9\d3d9input.cpp">
-      <Filter>platform\d3d9</Filter>
+      <Filter>mesh\platform\d3d9</Filter>
     </ClCompile>
     <ClCompile Include="audio.cpp">
       <Filter>...</Filter>
@@ -268,10 +262,10 @@
       <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="platform\ps3\ps3app.cpp">
-      <Filter>platform\ps3</Filter>
+      <Filter>mesh\platform\ps3</Filter>
     </ClCompile>
     <ClCompile Include="platform\ps3\ps3input.cpp">
-      <Filter>platform\ps3</Filter>
+      <Filter>mesh\platform\ps3</Filter>
     </ClCompile>
     <ClCompile Include="gpu\lolfx-compiler.cpp">
       <Filter>gpu</Filter>
@@ -315,9 +309,6 @@
     <ClCompile Include="input\controller.cpp">
       <Filter>input</Filter>
     </ClCompile>
-    <ClCompile Include="input\inputdevice.cpp">
-      <Filter>input</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -330,10 +321,10 @@
       <Filter>debug</Filter>
     </ClInclude>
     <ClInclude Include="platform\sdl\sdlinput.h">
-      <Filter>platform\sdl</Filter>
+      <Filter>mesh\platform\sdl</Filter>
     </ClInclude>
     <ClInclude Include="platform\sdl\sdlapp.h">
-      <Filter>platform\sdl</Filter>
+      <Filter>mesh\platform\sdl</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\color.h">
       <Filter>lol\image</Filter>
@@ -369,22 +360,16 @@
       <Filter>image</Filter>
     </ClInclude>
     <ClInclude Include="platform\xbox\xboxapp.h">
-      <Filter>platform\xbox</Filter>
+      <Filter>mesh\platform\xbox</Filter>
     </ClInclude>
     <ClInclude Include="platform\xbox\xboxinput.h">
-      <Filter>platform\xbox</Filter>
+      <Filter>mesh\platform\xbox</Filter>
     </ClInclude>
     <ClInclude Include="input\input.h">
       <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="input\keyboard.h">
-      <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="input\stick.h">
-      <Filter>input</Filter>
-    </ClInclude>
     <ClInclude Include="platform\d3d9\d3d9input.h">
-      <Filter>platform\d3d9</Filter>
+      <Filter>mesh\platform\d3d9</Filter>
     </ClInclude>
     <ClInclude Include="audio.h">
       <Filter>...</Filter>
@@ -501,13 +486,13 @@
       <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\ps3app.h">
-      <Filter>platform\ps3</Filter>
+      <Filter>mesh\platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\ps3input.h">
-      <Filter>platform\ps3</Filter>
+      <Filter>mesh\platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="platform\ps3\threadbase.h">
-      <Filter>platform\ps3</Filter>
+      <Filter>mesh\platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
       <Filter>src\...</Filter>
@@ -614,16 +599,13 @@
     <ClInclude Include="lol\image\image.h">
       <Filter>lol\image</Filter>
     </ClInclude>
-    <ClInclude Include="input\inputdevice.h">
-      <Filter>input</Filter>
-    </ClInclude>
     <ClInclude Include="input\keys.h">
       <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="input\inputdevice_internal.h">
+    <ClInclude Include="input\controller.h">
       <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="input\controller.h">
+    <ClInclude Include="input\input_internal.h">
       <Filter>input</Filter>
     </ClInclude>
   </ItemGroup>

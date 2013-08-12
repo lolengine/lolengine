@@ -14,8 +14,6 @@
 
 #include "core.h"
 
-#ifdef LOL_INPUT_V2
-
 namespace lol
 {
 
@@ -137,5 +135,3 @@ Array<Controller*> Controller::DeactivateAll()
 }
 
 } /* namespace lol */
-
-#endif // LOL_INPUT_V2

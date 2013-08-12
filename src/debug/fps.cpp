@@ -87,13 +87,14 @@ void DebugFps::TickGame(float seconds)
             1e3f * Profiler::GetMax(Profiler::STAT_TICK_FRAME));
     data->lines[4]->SetText(buf);
 #else
-    sprintf(buf, "%2.2f/%2.2f/%2.2f/%2.2f %2.2f fps (%i)",
+    sprintf(buf, "%2.2f/%2.2f/%2.2f/%2.2f %2.2f fps (%i) %2.2f",
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_GAME),
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_DRAW),
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_BLIT),
             1e3f * Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
             1.0f / Profiler::GetAvg(Profiler::STAT_TICK_FRAME),
-            Ticker::GetFrameNum());
+			1e3f * Profiler::GetAvg(Profiler::STAT_USER_00),
+           Ticker::GetFrameNum());
     data->lines[0]->SetText(buf);
 #endif
 }

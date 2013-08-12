@@ -146,9 +146,6 @@
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
-    <ClCompile Include="input\inputdevice.cpp" />
-    <ClCompile Include="input\keyboard.cpp" />
-    <ClCompile Include="input\stick.cpp" />
     <ClCompile Include="layer.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="map.cpp" />
@@ -209,11 +206,8 @@
     <ClInclude Include="image\image-private.h" />
     <ClInclude Include="input\controller.h" />
     <ClInclude Include="input\input.h" />
-    <ClInclude Include="input\inputdevice.h" />
-    <ClInclude Include="input\inputdevice_internal.h" />
-    <ClInclude Include="input\keyboard.h" />
+    <ClInclude Include="input\input_internal.h" />
     <ClInclude Include="input\keys.h" />
-    <ClInclude Include="input\stick.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />

@@ -251,11 +251,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   endif
 
 #   if defined USE_SDL
-#       if defined LOL_INPUT_V2
     new SdlInput(res.x, res.y, data->screen_size.x, data->screen_size.y);
-#       else
-    new SdlInput();
-#       endif
 #   endif
 
     /* Initialise everything */

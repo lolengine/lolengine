@@ -124,14 +124,10 @@ static inline int isnan(float f)
 #include "video.h"
 #include "audio.h"
 #include "scene.h"
-#include "input/input.h"
-#include "input/keyboard.h"
-#include "input/stick.h"
 #include "profiler.h"
 
-// Input (v2)
+// Input
 #include "input/input.h"
-#include "input/inputdevice.h"
 #include "input/controller.h"
 
 // Entities

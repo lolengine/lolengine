@@ -13,8 +13,6 @@
 
 #include "core.h"
 
-#if defined LOL_INPUT_V2
-
 namespace lol
 {
 
@@ -97,8 +95,6 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // LOL_INPUT_V2
 
 #endif // __LOL_INPUT_CONTROLLER_H__
 

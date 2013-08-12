@@ -25,7 +25,6 @@ class InputTutorial : public WorldEntity
 public:
     InputTutorial()
     {
-#if LOL_INPUT_V2
         m_controller = new Controller(KEY_MAX, AXIS_MAX);
 
         m_keyboard = InputDevice::Get("Keyboard");
@@ -46,7 +45,6 @@ public:
             m_controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
             m_controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
         }
-#endif
 
         m_pitch_angle = 0;
         m_yaw_angle = 0;
@@ -90,7 +88,6 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-#if LOL_INPUT_V2
         /* Handle keyboard */
         if (m_keyboard)
         {
@@ -129,7 +126,6 @@ public:
                 m_mouse->GetCursorPixel(0).x, m_mouse->GetCursorPixel(0).y));
         }
         else
-#endif
         {
             m_text->SetText("no mouse detected");
         }
@@ -217,10 +213,8 @@ private:
         AXIS_MAX
     };
 
-#if LOL_INPUT_V2
     InputDevice *m_keyboard, *m_mouse, *m_joystick;
     Controller *m_controller;
-#endif
 
     bool m_autorot;
     float m_pitch_angle;
