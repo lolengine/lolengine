@@ -190,13 +190,14 @@ Array<Light *> const &Scene::GetLights() const
 void Scene::Render() // XXX: rename to Blit()
 {
     RenderContext rc;
-    rc.SetDepthFunc(DepthFunc::LessOrEqual);
-    rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
-    rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
     /* Early test if nothing needs to be rendered */
     if (data->m_tiles.Count())
     {
+        rc.SetDepthFunc(DepthFunc::LessOrEqual);
+        rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+        rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
+
         PushCamera(data->m_default_cam);
 
 #if defined USE_D3D9 || defined _XBOX
@@ -295,6 +296,10 @@ void Scene::Render() // XXX: rename to Blit()
 
     if (data->m_lines.Count())
     {
+        rc.SetDepthFunc(DepthFunc::LessOrEqual);
+        rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+        rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
+
         int linecount = data->m_lines.Count();
 
         if (!data->m_line_shader)
