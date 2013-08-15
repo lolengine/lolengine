@@ -59,6 +59,7 @@
     <ClCompile Include="unit\real.cpp" />
     <ClCompile Include="unit\rotation.cpp" />
     <ClCompile Include="unit\string.cpp" />
+    <ClCompile Include="unit\thread.cpp" />
     <ClCompile Include="unit\trig.cpp" />
     <ClCompile Include="unit\vector.cpp" />
   </ItemGroup>

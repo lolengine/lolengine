@@ -96,6 +96,22 @@ public:
         sys_lwmutex_unlock(&m_mutex);
     }
 
+    bool TryPush(T value)
+    {
+        sys_lwmutex_lock(&m_mutex, 0);
+        if (m_count == CAPACITY)
+        {
+            sys_lwmutex_unlock(&m_mutex);
+            return false;
+        }
+        m_values[(m_start + m_count) % CAPACITY] = value;
+        m_count++;
+        if (m_poppers)
+            sys_lwcond_signal(&m_empty_cond);
+        sys_lwmutex_unlock(&m_mutex);
+        return true;
+    }
+
     T Pop()
     {
         sys_lwmutex_lock(&m_mutex, 0);
@@ -110,6 +126,23 @@ public:
             sys_lwcond_signal(&m_full_cond);
         sys_lwmutex_unlock(&m_mutex);
         return ret;
+    }
+
+    bool TryPop(T &ret)
+    {
+        sys_lwmutex_lock(&m_mutex, 0);
+        if (m_count == 0)
+        {
+            sys_lwmutex_unlock(&m_mutex);
+            return false;
+        }
+        ret = m_values[m_start];
+        m_start = (m_start + 1) % CAPACITY;
+        m_count--;
+        if (m_pushers)
+            sys_lwcond_signal(&m_full_cond);
+        sys_lwmutex_unlock(&m_mutex);
+        return true;
     }
 
 private:

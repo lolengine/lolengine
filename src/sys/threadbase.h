@@ -140,6 +140,40 @@ public:
 #endif
     }
 
+    bool TryPush(T value)
+    {
+#if defined HAVE_PTHREAD_H
+        pthread_mutex_lock(&m_mutex);
+        /* If queue is full, wait on the "full" cond var. */
+        if (m_count == CAPACITY)
+        {
+            pthread_mutex_unlock(&m_mutex);
+            return false;
+        }
+#elif defined _WIN32
+        DWORD status = WaitForSingleObject(m_empty_sem, 0);
+        if (status == WAIT_TIMEOUT)
+            return false;
+        EnterCriticalSection(&m_mutex);
+#endif
+
+        /* Push value */
+        m_values[(m_start + m_count) % CAPACITY] = value;
+        m_count++;
+
+#if defined HAVE_PTHREAD_H
+        /* If there were poppers waiting, signal the "empty" cond var. */
+        if (m_poppers)
+            pthread_cond_signal(&m_empty_cond);
+        pthread_mutex_unlock(&m_mutex);
+#elif defined _WIN32
+        LeaveCriticalSection(&m_mutex);
+        ReleaseSemaphore(m_full_sem, 1, nullptr);
+#endif
+
+        return true;
+    }
+
     T Pop()
     {
 #if defined HAVE_PTHREAD_H
@@ -172,6 +206,40 @@ public:
 #endif
 
         return ret;
+    }
+
+    bool TryPop(T &ret)
+    {
+#if defined HAVE_PTHREAD_H
+        pthread_mutex_lock(&m_mutex);
+        if (m_count == 0)
+        {
+            pthread_mutex_unlock(&m_mutex);
+            return false;
+        }
+#elif defined _WIN32
+        DWORD status = WaitForSingleObject(m_full_sem, 0);
+        if (status == WAIT_TIMEOUT)
+            return false;
+        EnterCriticalSection(&m_mutex);
+#endif
+
+        /* Pop value */
+        ret = m_values[m_start];
+        m_start = (m_start + 1) % CAPACITY;
+        m_count--;
+
+#if defined HAVE_PTHREAD_H
+        /* If there were pushers waiting, signal the "full" cond var. */
+        if (m_pushers)
+            pthread_cond_signal(&m_full_cond);
+        pthread_mutex_unlock(&m_mutex);
+#else
+        LeaveCriticalSection(&m_mutex);
+        ReleaseSemaphore(m_empty_sem, 1, nullptr);
+#endif
+
+        return true;
     }
 
 private:
