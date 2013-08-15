@@ -20,7 +20,7 @@ testsuite_SOURCES = testsuite.cpp \
     unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
     unit/array.cpp unit/rotation.cpp unit/string.cpp unit/map.cpp \
     unit/color.cpp unit/atomic.cpp unit/interp.cpp unit/box.cpp \
-    unit/rand.cpp
+    unit/rand.cpp unit/thread.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
 testsuite_DEPENDENCIES = @LOL_DEPS@
 noinst_DATA = data/gradient.png
