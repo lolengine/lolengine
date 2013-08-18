@@ -18,11 +18,23 @@ set -e
 
 # LolEngine specific:
 sed -ne '/AC_CONFIG_FILES/,$p' configure.ac \
-  | sed -ne 's/[ \[*]*\([a-z].*\).Makefile.*/\1/p' | while read p; do
-    if [ ! -f "$p/Makefile.am" ]; then
-        echo "bootstrap: $p/Makefile.am does not exist -- creating stub"
-        mkdir -p "$p"
-        echo "# Stub created by bootstrap" > "$p/Makefile.am"
+  | sed -ne 's@[^a-z]*\(.*/.*\)[^a-z]*@\1@p' | while read p; do
+    case "$p" in
+        *Makefile)
+            required="${p}.am"
+            ;;
+        *)
+            required="${p}.in"
+            ;;
+    esac
+    if [ ! -f "${required}" ]; then
+        echo "bootstrap: ${required} does not exist -- creating stub"
+        case "$p" in
+            */*)
+                mkdir -p "${p%/*}"
+                ;;
+        esac
+        echo "# Stub created by bootstrap" > "${required}"
     fi
 done
 
