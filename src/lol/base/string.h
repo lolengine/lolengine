@@ -101,6 +101,12 @@ public:
         return &(*this)[0];
     }
 
+    /* Non-const version; make sure to not overflow the internal array */
+    inline char *C()
+    {
+        return &(*this)[0];
+    }
+
     /* Does not initialise the newly allocated characters */
     void Resize(int count)
     {
