@@ -67,14 +67,14 @@ LOLUNIT_FIXTURE(QuaternionTest)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
 
-        LOLUNIT_ASSERT_EQUAL(norm(a), 81.f);
+        LOLUNIT_ASSERT_EQUAL(norm(a), 9.f);
 
         quat b = a * ~a;
-        quat c(norm(a), 0.f, 0.f, 0.f);
+        quat c(norm(a) * norm(a), 0.f, 0.f, 0.f);
 
         LOLUNIT_ASSERT_EQUAL(b, c);
 
-        quat d(2.f, 3.f, -4.f, -1.f);
+        quat d(2.f, 5.f, -4.f, -2.f);
 
         LOLUNIT_ASSERT_EQUAL(norm(a * d), norm(a) * norm(d));
     }
