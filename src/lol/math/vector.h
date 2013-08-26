@@ -1006,13 +1006,13 @@ template <typename T> struct Quat
 template<typename T>
 inline T norm(Quat<T> const &val)
 {
-    return sqlength(val);
+    return length(val);
 }
 
 template<typename T>
 static inline Quat<T> re(Quat<T> const &val)
 {
-    return ~val / norm(val);
+    return ~val / sqlength(val);
 }
 
 template<typename T>
