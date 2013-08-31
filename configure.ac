@@ -537,8 +537,8 @@ AC_CONFIG_FILES(
   people/jnat/TestProject/Makefile
   people/peeweek/Makefile
   people/peeweek/private/Makefile
-  people/benlitz/Makefile
-  people/benlitz/private/Makefile
+  people/benlitz/test1/Makefile
+  people/benlitz/private/voxel/Makefile
   people/touky/Makefile
   people/touky/private/Makefile
   people/touky/private/touky_demo/Makefile
