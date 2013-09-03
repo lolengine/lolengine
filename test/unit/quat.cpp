@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -164,6 +164,29 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(e.x, d.x, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(e.y, d.y, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(e.z, d.z, 1e-5);
+    }
+
+    LOLUNIT_TEST(FromTwoVectors)
+    {
+        vec3 a(1.f, 2.f, 3.f);
+        vec3 b(4.f, 5.f, 6.f);
+        float ratio = length(a) / length(b);
+
+        quat q = quat::rotate(a, b);
+
+        /* Check that q transforms a into b */
+        vec3 c = q.transform(a);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.x, b.x * ratio, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.y, b.y * ratio, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.z, b.z * ratio, 1e-5);
+
+        /* Check that ~q transforms b into a */
+        vec3 d = (~q).transform(b);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.x, a.x / ratio, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.y, a.y / ratio, 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z, a.z / ratio, 1e-5);
     }
 };
 
