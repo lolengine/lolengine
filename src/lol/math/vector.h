@@ -939,6 +939,10 @@ template <typename T> struct Quat
     static Quat<T> rotate(T degrees, T x, T y, T z);
     static Quat<T> rotate(T degrees, Vec3<T> const &v);
 
+    /* Create a unit quaternion representing a rotation between two vectors.
+     * Input vectors need not be normalised. */
+    static Quat<T> rotate(Vec3<T> const &src, Vec3<T> const &dst);
+
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
      * If you want to rotate around static axes, just reverse the order

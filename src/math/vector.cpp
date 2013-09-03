@@ -501,6 +501,14 @@ template<> quat quat::rotate(float degrees, float x, float y, float z)
     return quat::rotate(degrees, vec3(x, y, z));
 }
 
+template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
+{
+    vec3 v = cross(src, dst);
+    float d = dot(src, dst) + lol::sqrt(sqlength(src) * sqlength(dst));
+
+    return normalize(quat(d, v.x, v.y, v.z));
+}
+
 template<> quat slerp(quat const &qa, quat const &qb, float f)
 {
     float const magnitude = lol::sqrt(sqlength(qa) * sqlength(qb));
