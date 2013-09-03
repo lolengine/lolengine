@@ -504,9 +504,7 @@ template<> quat quat::rotate(float degrees, float x, float y, float z)
 template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
 {
     vec3 v = cross(src, dst);
-v.printf();
     float d = dot(src, dst) + lol::sqrt(sqlength(src) * sqlength(dst));
-fprintf(stderr, "%f + %f = %f\n", dot(src, dst), lol::sqrt(sqlength(src) * sqlength(dst)), d);
 
     return normalize(quat(d, v.x, v.y, v.z));
 }
