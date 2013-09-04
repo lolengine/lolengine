@@ -52,7 +52,8 @@ private:
         m_app_w((float)app_w),
         m_app_h((float)app_h),
         m_screen_w((float)screen_w),
-        m_screen_h((float)screen_h)
+        m_screen_h((float)screen_h),
+        m_mousecapture(false)
     { }
 
     Array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
