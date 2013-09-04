@@ -121,7 +121,7 @@ void Ticker::Ref(Entity *entity)
         /* Get the entity out of the m_autorelease list. This is usually
          * very fast since the last entry in autolist is the last
          * registered entity. */
-        for (int i = data->m_autolist.Count(); --i; )
+        for (int i = data->m_autolist.Count(); i--; )
         {
             if (data->m_autolist[i] == entity)
             {
@@ -227,7 +227,8 @@ void TickerData::GameThreadTick()
         for (int i = 0; i < data->m_list[g].Count(); ++i)
         {
             Entity *e = data->m_list[g][i];
-            Log::Debug("  \\-- %s (m_ref %i, destroy %i)\n", e->GetName(), e->m_ref, e->m_destroy);
+            Log::Debug("  \\-- [%p] %s (m_ref %i, destroy %i)\n",
+                       e, e->GetName(), e->m_ref, e->m_destroy);
         }
     }
 #endif
@@ -298,10 +299,10 @@ void TickerData::GameThreadTick()
 
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already
-     * inthe tick lists can be marked for destruction. */
+     * in the tick lists can be marked for destruction. */
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
-        for (int i = 0; i < data->m_list[g].Count(); ++i)
+        for (int i = data->m_list[g].Count(); i--; )
         {
             Entity *e = data->m_list[g][i];
 
