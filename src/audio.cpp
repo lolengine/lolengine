@@ -43,5 +43,32 @@ void Audio::Setup(int channels)
 #endif
 }
 
+void Audio::SetVolume(int channel, int volume)
+{
+#if defined USE_SDL_MIXER
+    Mix_Volume(channel,volume);
+#else
+    UNUSED(channel);
+#endif
+}
+
+void Audio::MuteAll()
+{
+#if defined USE_SDL_MIXER
+    Mix_Volume(-1,0);
+#else
+    UNUSED(false);
+#endif
+}
+
+void Audio::UnmuteAll()
+{
+#if defined USE_SDL_MIXER
+    Mix_Volume(-1,MIX_MAX_VOLUME);
+#else
+    UNUSED(false);
+#endif
+}
+
 } /* namespace lol */
 
