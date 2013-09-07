@@ -26,6 +26,9 @@ class Audio
 {
 public:
     static void Setup(int channels);
+    static void SetVolume(int channel,int volume);
+    static void MuteAll();
+    static void UnmuteAll();
 
 private:
     Audio() {}
