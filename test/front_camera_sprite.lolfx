@@ -1,0 +1,49 @@
+
+[vert.glsl]
+#version 120
+
+attribute vec3 in_vertex;
+attribute vec4 in_color;
+attribute vec4 in_texcoord;
+
+uniform mat4 in_model_view;
+uniform mat3 in_normal_mat;
+uniform mat4 in_proj;
+
+varying vec4 pass_texcoord;
+varying vec4 pass_color;
+
+void main(void)
+{
+    vec4 vertex = in_model_view * vec4(in_vertex - vec3(0.0,0.5,0.0), 1.0);
+
+    //Billboard calculations
+    vertex.x += (1.0 * in_texcoord.z);
+    vertex.y += (- 1.0 * in_texcoord.w);
+
+    //pass datas
+    pass_texcoord = in_texcoord;
+    pass_color = in_color;
+
+    gl_Position = in_proj * vertex;
+}
+
+[frag.glsl]
+#version 120
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+uniform sampler2D in_texture;
+
+varying vec4 pass_texcoord;
+varying vec4 pass_color;
+
+const float cos_45      = 0.70710678118;
+const float PI = 3.14159265358979323846264;
+
+void main(void)
+{
+    gl_FragColor = texture2D(in_texture, pass_texcoord.xy) * pass_color;
+}
