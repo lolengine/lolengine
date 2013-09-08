@@ -38,6 +38,7 @@ EasyPhysic::EasyPhysic(WorldEntity* NewOwnerEntity) :
     m_convex_shape(NULL),
     m_motion_state(NULL),
     m_mass(.0f),
+    m_hit_restitution(.0f),
     m_collision_group(1),
     m_collision_mask(1),
     m_owner_entity(NewOwnerEntity),
@@ -174,7 +175,7 @@ void EasyPhysic::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol
 //-------------------------------------------------------------------------
 //Mass related functions
 //--
-//Set Shape functions
+//Set Mass functions
 void EasyPhysic::SetMass(float mass)
 {
     m_mass = mass;
@@ -182,12 +183,26 @@ void EasyPhysic::SetMass(float mass)
     if (m_rigid_body)
     {
         SetLocalInertia(m_mass);
-        m_rigid_body->setMassProps(mass, m_local_inertia);
+        m_rigid_body->setMassProps(m_mass, m_local_inertia);
     }
 }
 
 //-------------------------------------------------------------------------
-//Final conversion pass functons : Body related
+//Hit restitution functions
+//--
+//Set Hit Restitution functions
+void EasyPhysic::SetHitRestitution(float hit_restitution)
+{
+    m_hit_restitution = hit_restitution;
+
+    if (m_rigid_body)
+    {
+        m_rigid_body->setRestitution(m_hit_restitution);
+    }
+}
+
+//-------------------------------------------------------------------------
+//Final conversion pass functions : Body related
 //--
 
 //Init to rigid body
@@ -200,6 +215,7 @@ void EasyPhysic::InitBodyToRigid(bool SetToKinematic)
         SetTransform(vec3(.0f));
 
     btRigidBody::btRigidBodyConstructionInfo NewInfos(m_mass, m_motion_state, m_collision_shape, m_local_inertia);
+    NewInfos.m_restitution = m_hit_restitution;
     m_rigid_body = new btRigidBody(NewInfos);
     m_collision_object = m_rigid_body;
     m_collision_object->setUserPointer(this);
@@ -327,6 +343,77 @@ void EasyPhysic::RemoveFromSimulation(class Simulation* current_simulation)
             current_simulation->ObjectRegistration(false, this, Simulation::EEPT_CollisionObject);
         }
     }
+}
+
+//-------------------------------------------------------------------------
+//Force/Impulse functions
+//--
+void EasyPhysic::AddImpulse(const lol::vec3& impulse)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyCentralImpulse(LOL2BT_VEC3(impulse));
+}
+
+void EasyPhysic::AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyImpulse(LOL2BT_VEC3(impulse), LOL2BTU_VEC3(rel_pos));
+}
+
+void EasyPhysic::AddImpulseTorque(const lol::vec3& torque)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyTorqueImpulse(LOL2BT_VEC3(torque));
+}
+
+//--
+void EasyPhysic::AddForce(const lol::vec3& force)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyCentralForce(LOL2BT_VEC3(force));
+}
+
+void EasyPhysic::AddForce(const lol::vec3& force, const lol::vec3& rel_pos)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyForce(LOL2BT_VEC3(force), LOL2BTU_VEC3(rel_pos));
+}
+
+void EasyPhysic::AddForceTorque(const lol::vec3& torque)
+{
+    if (m_rigid_body)
+        m_rigid_body->applyTorque(LOL2BT_VEC3(torque));
+}
+
+//-------------------------------------------------------------------------
+//Movements getter
+//--
+lol::vec3 EasyPhysic::GetLinearVelocity() const
+{
+    if (m_rigid_body)
+        return BT2LOL_VEC3(m_rigid_body->getLinearVelocity());
+    return lol::vec3(.0f);
+}
+
+lol::vec3 EasyPhysic::GetLinearForce() const
+{
+    if (m_rigid_body)
+        return BT2LOL_VEC3(m_rigid_body->getTotalForce());
+    return lol::vec3(.0f);
+}
+
+lol::vec3 EasyPhysic::GetAngularVelocity() const
+{
+    if (m_rigid_body)
+        return BT2LOL_VEC3(m_rigid_body->getAngularVelocity());
+    return lol::vec3(.0f);
+}
+
+lol::vec3 EasyPhysic::GetAngularForce() const
+{
+    if (m_rigid_body)
+        return BT2LOL_VEC3(m_rigid_body->getTotalTorque());
+    return lol::vec3(.0f);
 }
 
 //Set Local Inertia

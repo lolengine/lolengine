@@ -8,6 +8,25 @@
 #if !defined __BTPHYSTEST_H__
 #define __BTPHYSTEST_H__
 
+class CatShaderData : public GpuShaderData
+{
+    friend class CRenderer;
+
+public:
+    //---
+    CatShaderData(uint32_t vert_decl_flags, Shader* shader);
+    //---
+    void SetupDefaultData();
+    virtual void SetupShaderDatas(mat4 const &model);
+    //--
+    virtual lol::String GetInVertexName()   { return lol::String("in_vertex");   }
+    virtual lol::String GetInNormalName()   { return lol::String("in_normal");   }
+    virtual lol::String GetInColorName()    { return lol::String("in_color");    }
+    virtual lol::String GetInTexCoordName() { return lol::String("in_texcoord"); }
+
+    ShaderTexture   m_shader_texture;
+};
+
 class BtPhysTest : public WorldEntity
 {
 public:
@@ -34,21 +53,24 @@ private:
         KEY_MAX,
     };
 
-    Camera*                     m_camera;
-    Controller *                m_controller;
-    Light *                     m_light1;
-    Light *                     m_light2;
-    bool                        m_ready;
+    TileSet*                        m_cat_texture;
+    Shader*                         m_cat_shader;
+    CatShaderData*                  m_cat_sdata;
+    Camera*                         m_camera;
+    Controller *                    m_controller;
+    Light *                         m_light1;
+    Light *                         m_light2;
+    bool                            m_ready;
 
-    lol::phys::Simulation*      m_simulation;
-    Array<EasyConstraint*>      m_constraint_list;
-    Array<PhysicsObject*>       m_physobj_list;
-    Array<PhysicsObject*>       m_ground_list;
-    Array<PhysicsObject*>       m_platform_list;
-    Array<PhysicsObject*>       m_character_list;
-    Array<PhysicsObject*>       m_stairs_list;
+    lol::phys::Simulation*          m_simulation;
+    Array<EasyConstraint*>          m_constraint_list;
+    Array<PhysicsObject*, float>    m_physobj_list;
+    Array<PhysicsObject*>           m_ground_list;
+    Array<PhysicsObject*>           m_platform_list;
+    Array<PhysicsObject*>           m_character_list;
+    Array<PhysicsObject*>           m_stairs_list;
 
-    float                       m_loop_value;
+    float                           m_loop_value;
 };
 
 #endif // __BTPHYSTEST_H__

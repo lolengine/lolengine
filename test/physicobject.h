@@ -20,12 +20,25 @@
 using namespace lol;
 using namespace lol::phys;
 
+#if CAT_MODE
+#define USE_SPHERE          1
+#else
+#define USE_BOX             1
+#define USE_SPHERE          1
+#define USE_CONE            1
+#define USE_CYLINDER        1
+#define USE_CAPSULE         1
+#endif
+
 class PhysicsObject : public WorldEntity
 {
 public:
     PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation)
-        : m_ready(false), m_should_render(true), m_is_character(false)
+        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
     {
+#if CAT_MODE
+        m_is_phys = false;
+#endif //CAT_MODE
         m_physics = new EasyPhysic(this);
 
         m_mesh.Compile("[sc#ddd afcb 60 1 60 -.1]");
@@ -39,8 +52,11 @@ public:
     }
 
     PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation, int dummy)
-        : m_ready(false), m_should_render(true), m_is_character(false)
+        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
     {
+#if CAT_MODE
+        m_is_phys = false;
+#endif //CAT_MODE
         if (dummy == 1) //for platform purpose
         {
             m_physics = new EasyPhysic(this);
@@ -106,10 +122,19 @@ public:
     }
 
     PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
-        : m_ready(false), m_should_render(true), m_is_character(false)
+        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
     {
         Array<char const *> MeshRand;
+        Array<int> MeshLimit;
+        Array<int> MeshType;
 
+#if CAT_MODE
+        m_is_phys = true;
+#endif //CAT_MODE
+
+        MeshLimit << 0;
+
+#if USE_BOX
         MeshRand << "[sc#add afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
         MeshRand << "[sc#dad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
         MeshRand << "[sc#dda afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
@@ -117,17 +142,41 @@ public:
         MeshRand << "[sc#ada afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
         MeshRand << "[sc#aad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
 
-        int SphereLimit = MeshRand.Count();
+        MeshLimit << MeshRand.Count();
+        MeshType << 0;
+#endif //USE_BOX
 
+
+#if USE_SPHERE
+#if CAT_MODE
+        int nb_sprite = 4;
+        //SPRITE
+        vec2 start_point = vec2((float)rand(nb_sprite), (float)rand(nb_sprite)) / vec2((float)nb_sprite);
+        vec2 size = vec2(1.f) / vec2((float)nb_sprite);
+        m_mesh.BD()->SetTexCoordCustomBuild(MeshType::Quad, MeshFaceType::QuadDefault,
+                                            start_point, start_point + size);
+        m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
+                                             vec2(-4.f), vec2(4.f));
+        MeshRand << "[sc#ffff aq 0 0]";
+        MeshRand << "[sc#ffff aq 0 0]";
+        MeshRand << "[sc#ffff aq 0 0]";
+        MeshRand << "[sc#fbbf aq 0 0]";
+        MeshRand << "[sc#bbff aq 0 0]";
+        MeshRand << "[sc#bfbf aq 0 0]";
+#else
         MeshRand << "[sc#add asph1 2]";
         MeshRand << "[sc#dad asph1 2]";
         MeshRand << "[sc#dda asph1 2]";
         MeshRand << "[sc#daa asph1 2]";
         MeshRand << "[sc#ada asph1 2]";
         MeshRand << "[sc#aad asph1 2]";
+#endif
 
-        int ConeLimit = MeshRand.Count();
+        MeshLimit << MeshRand.Count();
+        MeshType << 1;
+#endif //USE_SPHERE
 
+#if USE_CONE
         MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
         MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
         MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
@@ -135,8 +184,11 @@ public:
         MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
         MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
 
-        int CylLimit = MeshRand.Count();
+        MeshLimit << MeshRand.Count();
+        MeshType << 2;
+#endif //USE_CONE
 
+#if USE_CYLINDER
         MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
         MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
         MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
@@ -144,8 +196,11 @@ public:
         MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
         MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
 
-        int CapsLimit = MeshRand.Count();
+        MeshLimit << MeshRand.Count();
+        MeshType << 3;
+#endif //USE_CYLINDER
 
+#if USE_CAPSULE
         MeshRand << "[sc#add scb#add acap1 2 1]";
         MeshRand << "[sc#dad scb#dad acap1 2 1]";
         MeshRand << "[sc#dda scb#dda acap1 2 1]";
@@ -153,70 +208,60 @@ public:
         MeshRand << "[sc#ada scb#ada acap1 2 1]";
         MeshRand << "[sc#aad scb#aad acap1 2 1]";
 
-        switch (RandValue)
-        {
-            case 0:
-            {
-                RandValue = rand(SphereLimit);
-                break;
-            }
-            case 1:
-            {
-                RandValue = rand(SphereLimit, ConeLimit);
-                break;
-            }
-            case 2:
-            {
-                RandValue = rand(ConeLimit, CylLimit);
-                break;
-            }
-            case 3:
-            {
-                RandValue = rand(CylLimit, CapsLimit);
-                break;
-            }
-            case 4:
-            {
-                RandValue = rand(CapsLimit, MeshRand.Count());
-                break;
-            }
-            default:
-            {
-                RandValue = rand(MeshRand.Count());
-            }
-        }
+        MeshLimit << MeshRand.Count();
+        MeshType << 4;
+#endif //USE_CAPSULE
+
+        int RandLimit = RandValue;
+        if (MeshLimit.Count() <= RandValue || RandValue < 0)
+            RandLimit = rand(MeshLimit.Count() - 1);
+        RandValue = rand(MeshLimit[RandLimit], MeshLimit[RandLimit + 1]);
 
         m_physics = new EasyPhysic(this);
 
         m_mesh.Compile(MeshRand[RandValue]);
-        vec3 BoxSize = vec3(2.0f);
+        m_mesh.Scale(vec3(OBJ_SIZE));
+        vec3 BoxSize = vec3(2.0f) * OBJ_SIZE;
         int ColGroup = 1;
-        if (RandValue < SphereLimit)
+
+        switch (MeshType[RandLimit])
         {
-            m_physics->SetShapeToBox(BoxSize);
-            ColGroup += 0;
-        }
-        else if (RandValue < ConeLimit)
-        {
-            m_physics->SetShapeToSphere(BoxSize.x * 2.f);
-            ColGroup += 1;
-        }
-        else if (RandValue < CylLimit)
-        {
-            m_physics->SetShapeToCone(BoxSize.x, BoxSize.y);
-            ColGroup += 2;
-        }
-        else if (RandValue < CapsLimit)
-        {
-            m_physics->SetShapeToCylinder(BoxSize);
-            ColGroup += 3;
-        }
-        else
-        {
-            m_physics->SetShapeToCapsule(BoxSize.x, BoxSize.y);
-            ColGroup += 4;
+            case 0:
+            {
+                m_physics->SetShapeToBox(BoxSize);
+                ColGroup += 0;
+                break;
+            }
+            case 1:
+            {
+                m_physics->SetShapeToSphere(BoxSize.x);
+                ColGroup += 1;
+                break;
+            }
+            case 2:
+            {
+                m_physics->SetShapeToCone(BoxSize.x, BoxSize.y);
+                ColGroup += 2;
+                break;
+            }
+            case 3:
+            {
+                m_physics->SetShapeToCylinder(BoxSize);
+                ColGroup += 3;
+                break;
+            }
+            case 4:
+            {
+                m_physics->SetShapeToCapsule(BoxSize.x, BoxSize.y);
+                ColGroup += 4;
+                break;
+            }
+            default:
+            {
+            }
         }
 
+        m_physics->SetHitRestitution(1.0f);
         m_physics->SetCollisionChannel(0, 0xFF);
         //m_physics->SetCollisionChannel(ColGroup, (1 << ColGroup)|(1));
         m_physics->SetMass(base_mass);
@@ -246,6 +291,11 @@ public:
         m_should_render = should_render;
     }
 
+    void SetCustomShaderData(GpuShaderData* custom_shader)
+    {
+        m_custom_shader = custom_shader;
+    }
+
     EasyMesh *GetMesh() { return &m_mesh; }
     EasyPhysic *GetPhysic() { return m_physics; }
     EasyCharacterController *GetCharacter() { return m_character; }
@@ -266,30 +316,41 @@ protected:
     {
         WorldEntity::TickDraw(seconds);
 
-        if (!m_ready)
+#if CAT_MODE
+        if (!m_is_phys || m_custom_shader)
+#endif //CAT_MODE
         {
-            m_mesh.MeshConvert();
-            m_ready = true;
-        }
-
-        if (m_should_render)
-        {
-            if (m_is_character)
-                m_mesh.Render(m_character->GetTransform());
-            else
-                m_mesh.Render(m_physics->GetTransform());
+            if (!m_ready)
+            {
+                if (m_custom_shader)
+                    m_mesh.MeshConvert(m_custom_shader);
+                else
+                    m_mesh.MeshConvert();
+                m_ready = true;
+            }
+            else if (m_should_render)
+            {
+                if (m_is_character)
+                    m_mesh.Render(m_character->GetTransform());
+                else
+                    m_mesh.Render(m_physics->GetTransform());
+            }
         }
     }
 
 private:
     //Base datas
     EasyMesh                    m_mesh;
-    EasyPhysic*                    m_physics;
+    EasyPhysic*                 m_physics;
     EasyCharacterController*    m_character;
+    GpuShaderData*              m_custom_shader;
 
     bool                        m_ready;
     bool                        m_should_render;
     bool                        m_is_character;
+#if CAT_MODE
+    bool                        m_is_phys;
+#endif //CAT_MODE
 };
 
 #endif /* __PHYSICOBJECT_H__ */

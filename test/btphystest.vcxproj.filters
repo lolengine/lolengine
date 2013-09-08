@@ -48,4 +48,7 @@
   <ItemGroup>
     <None Include="Makefile.am" />
   </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="front_camera_sprite.lolfx" />
+  </ItemGroup>
 </Project>
