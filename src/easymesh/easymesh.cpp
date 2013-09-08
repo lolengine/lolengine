@@ -353,6 +353,23 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 
         COPY_VBO;
     }
+    else if (has_position && has_color && has_texcoord && has_texcoordExt && flagnb == 4)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
+
+        Array<vec3, vec4, vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_color, src_mesh->m_vert[i].m_texcoord);
+
+        vbo_data = &vertexlist[0];
+        vbo_bytes = vertexlist.Bytes();
+        m_vertexcount = vertexlist.Count();
+
+        COPY_VBO;
+    }
+    else
+        ASSERT(!saveflags, "Vertex Declaration combination is not implemented for %s, feel free to do so.",
+           VertexUsage::GetNameList(vflags).C());
 
     m_vdatas.Push(vflags, new_vdecl, new_vbo);
 }

@@ -20,27 +20,50 @@ using namespace lol;
 
 #include "physics/lolphysics.h"
 #include "physics/easyphysics.h"
+
+#define CAT_MODE        0
+#define OBJ_SIZE        2.f
 #include "physicobject.h"
+
 #include "btphystest.h"
 
 using namespace lol::phys;
 
 #define CUBE_HALF_EXTENTS .5f
 #define EXTRA_HEIGHT 1.f
+#define BASE_TIME 2.f
+#define ZERO_TIME (BASE_TIME + rand(-BASE_TIME * .4f, BASE_TIME * .4f))
+#define ZERO_SPEED 3.5f
+#define JUMP_HEIGHT 30.f
+#define JUMP_STRAFE .5f
 
 int gNumObjects = 64;
 
+#if CAT_MODE
+#define USE_WALL        1
+#define USE_BODIES      1
+#else
 #define USE_WALL        1
 #define USE_PLATFORM    1
 #define USE_ROPE        0
 #define USE_BODIES      1
 #define USE_ROTATION    0
-#define USE_CHARACTER   1
-#define USE_STAIRS      1
+#define USE_CHARACTER   0
+#define USE_STAIRS      0
+#endif
+
+LOLFX_RESOURCE_DECLARE(front_camera_sprite);
 
 BtPhysTest::BtPhysTest(bool editor)
 {
     m_loop_value = .0f;
+
+    g_renderer->SetAlphaFunc(AlphaFunc::Greater, 0.0);
+
+#if CAT_MODE
+    /* cat datas setup */
+    m_cat_texture = Tiler::Register("data/CatsSheet.png", ivec2(0), ivec2(0,1));
+#endif //CAT_MODE
 
     /* Register an input controller for the keyboard */
     m_controller = new Controller(KEY_MAX, 0);
@@ -55,10 +78,17 @@ BtPhysTest::BtPhysTest(bool editor)
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
+#if CAT_MODE
+    m_camera->SetView(vec3(70.f, 50.f, 0.f),
+                      vec3(0.f, 0.f, 0.f),
+                      vec3(0, 1, 0));
+    m_camera->SetProjection(mat4::perspective(60.f, 1280.f, 960.f, .1f, 1000.f));
+#else
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
     m_camera->SetProjection(mat4::perspective(45.f, 1280.f, 960.f, .1f, 1000.f));
+#endif
     g_scene->PushCamera(m_camera);
 
     m_ready = false;
@@ -86,7 +116,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
     float offset = 29.5f;
     vec3 pos_offset = vec3(.0f, 30.f, .0f);
-    if (USE_STAIRS)
+#if USE_STAIRS
     {
         vec3 new_offset = vec3(1.0f, .125f, .0f);
         quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
@@ -118,8 +148,9 @@ BtPhysTest::BtPhysTest(bool editor)
             m_stairs_list << NewPhyobj;
         }
     }
+#endif //USE_STAIRS
 
-    if (USE_WALL)
+#if USE_WALL
     {
         for (int i=0; i < 6; i++)
         {
@@ -145,9 +176,10 @@ BtPhysTest::BtPhysTest(bool editor)
             m_ground_list << NewPhyobj;
         }
     }
+#endif //USE_WALL
 
     PhysicsObject* BasePhyobj = NULL;
-    if (USE_PLATFORM)
+#if USE_PLATFORM
     {
         quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
         vec3 NewPosition = pos_offset + vec3(5.0f, -25.0f, -15.0f);
@@ -188,8 +220,9 @@ BtPhysTest::BtPhysTest(bool editor)
         //m_platform_list << NewPhyobj;
         //Ticker::Ref(NewPhyobj);
     }
+#endif //USE_PLATFORM
 
-    if (USE_CHARACTER)
+#if USE_CHARACTER
     {
         quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
         vec3 NewPosition = pos_offset + vec3(-5.0f, -10.0f, 15.0f);
@@ -201,26 +234,28 @@ BtPhysTest::BtPhysTest(bool editor)
 
         //NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
     }
+#endif //USE_CHARACTER
 
-    if (USE_BODIES)
+#if USE_BODIES
     {
         for (int x=0; x < 6; x++)
         {
-            for (int y=0; y < 6; y++)
+            for (int y=0; y < 2; y++)
             {
                 for (int z=0; z < 5; z++)
                 {
                     PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
                         vec3(-20.f, 15.f, -20.f) +
                         vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
-                    m_physobj_list << new_physobj;
+                    m_physobj_list.Push(new_physobj, ZERO_TIME);
                     Ticker::Ref(new_physobj);
                 }
             }
         }
     }
+#endif //USE_BODIES
 
-    if (USE_ROPE)
+#if USE_ROPE
     {
         Array<PhysicsObject*> RopeElements;
         for (int i = 0; i < 14; i++)
@@ -229,7 +264,7 @@ BtPhysTest::BtPhysTest(bool editor)
                 vec3(0.f, 15.f, -20.f) +
                 vec3(0.f, 0.f, 2.f * (float)i), 1);
             RopeElements << new_physobj;
-            m_physobj_list << new_physobj;
+            m_physobj_list.Push(new_physobj, ZERO_TIME);
             Ticker::Ref(new_physobj);
             if (RopeElements.Count() > 1)
             {
@@ -246,6 +281,7 @@ BtPhysTest::BtPhysTest(bool editor)
             }
         }
     }
+#endif //USE_ROPE
 }
 
 void BtPhysTest::TickGame(float seconds)
@@ -262,8 +298,66 @@ void BtPhysTest::TickGame(float seconds)
     vec3 GroundBarycenter = vec3(.0f);
     vec3 PhysObjBarycenter = vec3(.0f);
     float factor = .0f;
+#if CAT_MODE
+#if USE_BODIES
+    vec3 cam_center(0.f);
+    float cam_factor = .0f;
+    vec2 screen_min_max[2] = { vec2(FLT_MAX), vec2(-FLT_MAX) };
+    vec3 cam_min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
+    mat4 world_cam = g_scene->GetCamera()->GetView();
+    mat4 cam_screen = g_scene->GetCamera()->GetProjection();
 
-    if (USE_WALL)
+    for (int i = 0; i < m_physobj_list.Count(); i++)
+    {
+        PhysicsObject* PhysObj = m_physobj_list[i].m1;
+        float &Timer = m_physobj_list[i].m2;
+
+        vec3 obj_loc = PhysObj->GetPhysic()->GetTransform().v3.xyz;
+
+        cam_center += obj_loc;
+        cam_factor += 1.f;
+
+        mat4 LocalPos = mat4::translate(obj_loc);
+        vec3 vpos;
+
+        LocalPos = world_cam * LocalPos;
+        vpos = LocalPos.v3.xyz;
+        cam_min_max[0] = min(vpos.xyz, cam_min_max[0]);
+        cam_min_max[1] = max(vpos.xyz, cam_min_max[1]);
+
+        LocalPos = cam_screen * LocalPos;
+        vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
+        screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
+        screen_min_max[1] = max(vpos.xy, screen_min_max[1]);
+
+        //if (length(PhysObj->GetPhysic()->GetLinearVelocity()) < ZERO_SPEED)
+        if (lol::abs(PhysObj->GetPhysic()->GetLinearVelocity().y) < ZERO_SPEED)
+            Timer -= seconds;
+
+        if (Timer < .0f)
+        {
+            PhysObj->GetPhysic()->AddImpulse(JUMP_HEIGHT *
+                                             vec3(JUMP_STRAFE, 1.f, JUMP_STRAFE) *
+                                             vec3(rand(-1.f, 1.f), 1.0f, rand(-1.f, 1.f)) *
+                                             PhysObj->GetPhysic()->GetMass());
+            Timer = ZERO_TIME;
+        }
+    }
+
+    vec3 min_max_diff = (cam_min_max[1] - cam_min_max[0]);
+    float screen_size = max(max(lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)),
+                        max(    lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)));
+    float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
+                          max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
+
+    //m_camera->SetProjection(mat4::perspective(30.f * fov_ratio * 1.1f, 1280.f, 960.f, .1f, 1000.f));
+    m_camera->SetView((mat4::rotate(10.f * seconds, vec3(.0f, 1.f, .0f)) * vec4(m_camera->GetPosition(), 1.0f)).xyz,
+                      //vec3(70.f, 30.f, 0.f),
+                      cam_center / cam_factor, vec3(0, 1, 0));
+#endif //USE_BODIES
+#endif //CAT_MODE
+
+#if USE_WALL
     {
         for (int i = 0; i < m_ground_list.Count(); i++)
         {
@@ -291,8 +385,9 @@ void BtPhysTest::TickGame(float seconds)
                 PhysObj->SetRender(true);
         }
     }
+#endif //USE_WALL
 
-    if (USE_ROTATION)
+#if USE_ROTATION
     {
         for (int i = 0; i < m_ground_list.Count(); i++)
         {
@@ -307,8 +402,9 @@ void BtPhysTest::TickGame(float seconds)
             PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
         }
     }
+#endif //USE_ROTATION
 
-    if (USE_PLATFORM)
+#if USE_PLATFORM
     {
         for (int i = 0; i < m_platform_list.Count(); i++)
         {
@@ -329,8 +425,9 @@ void BtPhysTest::TickGame(float seconds)
             }
         }
     }
+#endif //USE_PLATFORM
 
-    if (USE_CHARACTER)
+#if USE_CHARACTER
     {
         for (int i = 0; i < m_character_list.Count(); i++)
         {
@@ -358,8 +455,9 @@ void BtPhysTest::TickGame(float seconds)
                 Character->AttachTo(NULL);
         }
     }
+#endif //USE_CHARACTER
 
-    if (USE_CHARACTER)
+#if USE_CHARACTER
     {
         PhysObjBarycenter = vec3(.0f);
         factor = .0f;
@@ -381,12 +479,12 @@ void BtPhysTest::TickGame(float seconds)
         m_camera->SetPosition(CamPosCenter + normalize(m_camera->GetPosition() - CamPosCenter) * 20.0f);
 #endif
     }
-    else
+#else
     {
         PhysObjBarycenter = vec3(.0f);
         for (int i = 0; i < m_physobj_list.Count(); i++)
         {
-            PhysicsObject* PhysObj = m_physobj_list[i];
+            PhysicsObject* PhysObj = m_physobj_list[i].m1;
             mat4 GroundMat = PhysObj->GetTransform();
 
             PhysObjBarycenter += GroundMat.v3.xyz;
@@ -400,7 +498,7 @@ void BtPhysTest::TickGame(float seconds)
         m_camera->SetPosition(GroundBarycenter + normalize(GroundBarycenter - PhysObjBarycenter) * 60.0f);
 #endif
     }
-
+#endif //USE_CHARACTER
 }
 
 void BtPhysTest::TickDraw(float seconds)
@@ -409,6 +507,26 @@ void BtPhysTest::TickDraw(float seconds)
 
     if (!m_ready)
     {
+#if CAT_MODE
+        /* cat datas setup */
+        m_cat_shader = Shader::Create(LOLFX_RESOURCE_NAME(front_camera_sprite));
+#if USE_BODIES
+        for (int i = 0; i < m_physobj_list.Count(); i++)
+        {
+            PhysicsObject* PhysObj = m_physobj_list[i].m1;
+            m_cat_sdata = new CatShaderData(((1 << VertexUsage::Position) |
+                                                (1 << VertexUsage::Color) |
+                                                (1 << VertexUsage::TexCoord) |
+                                                (1 << VertexUsage::TexCoordExt)),
+                                                m_cat_shader);
+            m_cat_sdata->m_shader_texture = m_cat_texture->GetTexture();
+            PhysObj->SetCustomShaderData(m_cat_sdata);
+        }
+#endif //USE_BODIES
+
+
+#endif //CAT_MODE
+
         /* FIXME: this object never cleans up */
         m_ready = true;
     }
@@ -422,6 +540,13 @@ BtPhysTest::~BtPhysTest()
     g_scene->PopCamera(m_camera);
     Ticker::Unref(m_light1);
     Ticker::Unref(m_light2);
+
+#if CAT_MODE
+    /* cat datas setup */
+    delete(m_cat_sdata);
+    Shader::Destroy(m_cat_shader);
+    Tiler::Deregister(m_cat_texture);
+#endif //CAT_MODE
 
     while (m_constraint_list.Count())
     {
@@ -460,7 +585,7 @@ BtPhysTest::~BtPhysTest()
     }
     while (m_physobj_list.Count())
     {
-        PhysicsObject* CurPop = m_physobj_list.Last();
+        PhysicsObject* CurPop = m_physobj_list.Last().m1;
         m_physobj_list.Pop();
         CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
         Ticker::Unref(CurPop);
@@ -469,11 +594,43 @@ BtPhysTest::~BtPhysTest()
 
 }
 
+//-----------------------------------------------------------------------------
+// CShaderData
+//-----------------------------------------------------------------------------
+CatShaderData::CatShaderData(uint32_t vert_decl_flags, Shader* shader)
+    : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
+{
+    SetupDefaultData();
+}
+
+//-----------------------------------------------------------------------------
+void CatShaderData::SetupDefaultData()
+{
+    AddUniform("in_model_view");
+    AddUniform("in_normal_mat");
+    AddUniform("in_proj");
+    AddUniform("in_texture");
+}
+
+//-----------------------------------------------------------------------------
+void CatShaderData::SetupShaderDatas(mat4 const &model)
+{
+    mat4 proj = g_scene->GetCamera()->GetProjection();
+    mat4 view = g_scene->GetCamera()->GetView();
+
+    mat4 modelview = view * model;
+    mat3 normalmat = transpose(inverse(mat3(view)));
+
+    m_shader->SetUniform(*GetUniform("in_model_view"), modelview);
+    m_shader->SetUniform(*GetUniform("in_normal_mat"), normalmat);
+    m_shader->SetUniform(*GetUniform("in_proj"), proj);
+}
+
 int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("BtPhysTest", ivec2(1280, 720), 60.0f);
+    Application app("BtPhysTest", ivec2(1280, 960), 60.0f);
 
     new BtPhysTest(argc > 1);
     app.ShowPointer(false);

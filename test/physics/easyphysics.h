@@ -55,10 +55,26 @@ protected:
     virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
 public:
     virtual void SetMass(float mass);
+    virtual float GetMass() { return m_mass; }
+    virtual void SetHitRestitution(float hit_restitution);
     virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false);
     virtual void InitBodyToGhost();
     virtual void AddToSimulation(class Simulation* current_simulation);
     virtual void RemoveFromSimulation(class Simulation* current_simulation);
+
+    //Force/Impulse functions
+	virtual void AddImpulse(const lol::vec3& impulse);
+    virtual void AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos);
+  	virtual void AddImpulseTorque(const lol::vec3& torque);
+	virtual void AddForce(const lol::vec3& force);
+	virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos);
+    virtual void AddForceTorque(const lol::vec3& torque);
+
+    //Movements getter
+	lol::vec3 GetLinearVelocity() const;
+	lol::vec3 GetLinearForce() const;
+	lol::vec3 GetAngularVelocity() const;
+	lol::vec3 GetAngularForce() const;
 
 protected:
     virtual void SetLocalInertia(float mass);
@@ -66,16 +82,16 @@ protected:
 
     virtual btGhostObject* GetGhostObjectInstance();
 
-    btCollisionObject*                            m_collision_object;
+    btCollisionObject*                          m_collision_object;
 
-    btGhostObject*                                m_ghost_object;
+    btGhostObject*                              m_ghost_object;
 
     btRigidBody*                                m_rigid_body;
-    btVector3                                    m_local_inertia;
+    btVector3                                   m_local_inertia;
 
-    btCollisionShape*                            m_collision_shape;
-    btConvexShape*                                m_convex_shape;
-    btMotionState*                                m_motion_state;
+    btCollisionShape*                           m_collision_shape;
+    btConvexShape*                              m_convex_shape;
+    btMotionState*                              m_motion_state;
 
 #else  // NO PHYSIC IMPLEMENTATION
 
@@ -95,10 +111,26 @@ private:
     virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix) { }
 public:
     virtual void SetMass(float mass) { }
+    virtual float GetMass() { return .0f; }
+    virtual void SetHitRestitution(float hit_restitution) { }
     virtual void InitBodyToRigid() { }
     virtual void InitBodyToGhost() { }
     virtual void AddToSimulation(class Simulation* current_simulation) { }
     virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
+
+    //Force/Impulse functions
+	virtual void AddImpulse(const lol::vec3& impulse) { }
+    virtual void AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos) { }
+  	virtual void AddImpulseTorque(const lol::vec3& torque) { }
+	virtual void AddForce(const lol::vec3& force) { }
+	virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos) { }
+    virtual void AddForceTorque(const lol::vec3& torque) { }
+
+    //Movements getter
+    lol::vec3 GetLinearVelocity()    const { return lol::vec3(.0f); }
+	lol::vec3 GetLinearForce()       const { return lol::vec3(.0f); }
+	lol::vec3 GetAngularVelocity()   const { return lol::vec3(.0f); }
+	lol::vec3 GetAngularForce()      const { return lol::vec3(.0f); }
 
     virtual void InitBodyToGhost() { }
 
@@ -148,21 +180,22 @@ public:
     }
 
 protected:
-    lol::mat4                                    m_local_to_world;
-    float                                        m_mass;
-    int                                            m_collision_group;
-    int                                            m_collision_mask;
-    WorldEntity*                                m_owner_entity;
-    Simulation*                                    m_owner_simulation;
+    lol::mat4                                       m_local_to_world;
+    float                                           m_mass;
+    float                                           m_hit_restitution;
+    int                                             m_collision_group;
+    int                                             m_collision_mask;
+    WorldEntity*                                    m_owner_entity;
+    Simulation*                                     m_owner_simulation;
 
     //Base/Attachment logic
-    Array<EasyPhysic*>                            m_based_physic_list;    //List of objects based on this : this object moves, its based object MoveStep with it.
-    EasyPhysic*                                    m_base_physic;            //Base for this object : The base moves, the object moves with it.
-    bool                                        m_base_lock_location;    //when this is TRUE, location moves with rotation change.
-    bool                                        m_base_lock_rotation;    //when this is TRUE, rotation moves with rotation change.
+    Array<EasyPhysic*>                              m_based_physic_list;     //List of objects based on this : this object moves, its based object MoveStep with it.
+    EasyPhysic*                                     m_base_physic;           //Base for this object : The base moves, the object moves with it.
+    bool                                            m_base_lock_location;    //when this is TRUE, location moves with rotation change.
+    bool                                            m_base_lock_rotation;    //when this is TRUE, rotation moves with rotation change.
 
     //Touch logic
-    Array<EasyPhysic*>                            m_touching_physic;        //Maintained by ghost objects
+    Array<EasyPhysic*>                              m_touching_physic;        //Maintained by ghost objects
 };
 
 } /* namespace phys */

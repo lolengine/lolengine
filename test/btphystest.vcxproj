@@ -75,6 +75,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="front_camera_sprite.lolfx" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ee203b88-44cf-4859-9d42-7a1f43fecb52}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
