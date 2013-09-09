@@ -45,7 +45,9 @@ btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
 btphystest_DEPENDENCIES = @LOL_DEPS@
 btphystest_LDFLAGS = $(AM_LDFLAGS)
 if USE_EMSCRIPTEN
-btphystest_LDFLAGS += --preload-file data
+btphystest_LDFLAGS += \
+    --preload-file data/CatsSheet.png \
+    -s TOTAL_MEMORY=$(shell expr 32 '*' 1024 '*' 1024)
 endif
 
 meshviewer_SOURCES = meshviewer.cpp \
