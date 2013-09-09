@@ -21,7 +21,7 @@ using namespace lol;
 #include "physics/lolphysics.h"
 #include "physics/easyphysics.h"
 
-#define CAT_MODE        0
+#define CAT_MODE        1
 #define OBJ_SIZE        2.f
 #include "physicobject.h"
 

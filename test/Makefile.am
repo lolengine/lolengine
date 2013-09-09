@@ -43,8 +43,9 @@ btphystest_SOURCES = \
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPS@
+btphystest_LDFLAGS = $(AM_LDFLAGS)
 if USE_EMSCRIPTEN
-btphystest_LDFLAGS = --preload-file data/CatsSheet.png
+btphystest_LDFLAGS += --preload-file data
 endif
 
 meshviewer_SOURCES = meshviewer.cpp \
