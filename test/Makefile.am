@@ -37,10 +37,15 @@ btphystest_SOURCES = \
     physics/lolbtphysicsintegration.h physics/lolphysics.h \
     physics/easycharactercontroller.cpp physics/easycharactercontroller.h \
     physics/easyconstraint.cpp physics/easyconstraint.h \
-    physics/bulletcharactercontroller.cpp physics/bulletcharactercontroller.h
+    physics/bulletcharactercontroller.cpp physics/bulletcharactercontroller.h \
+    \
+    front_camera_sprite.lolfx
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPS@
+if USE_EMSCRIPTEN
+btphystest_LDFLAGS = --preload-file data/CatsSheet.png
+endif
 
 meshviewer_SOURCES = meshviewer.cpp \
     shinymvtexture.lolfx shinyfur.lolfx
