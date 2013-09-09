@@ -58,8 +58,6 @@ BtPhysTest::BtPhysTest(bool editor)
 {
     m_loop_value = .0f;
 
-    g_renderer->SetAlphaFunc(AlphaFunc::Greater, 0.0);
-
 #if CAT_MODE
     /* cat datas setup */
     m_cat_texture = Tiler::Register("data/CatsSheet.png", ivec2(0), ivec2(0,1));
