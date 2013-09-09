@@ -152,17 +152,16 @@ public:
         int nb_sprite = 4;
         //SPRITE
         vec2 start_point = vec2((float)rand(nb_sprite), (float)rand(nb_sprite)) / vec2((float)nb_sprite);
+                           //vec2(2.f, .0f) / vec2((float)nb_sprite);
         vec2 size = vec2(1.f) / vec2((float)nb_sprite);
         m_mesh.BD()->SetTexCoordCustomBuild(MeshType::Quad, MeshFaceType::QuadDefault,
                                             start_point, start_point + size);
         m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
                                              vec2(-4.f), vec2(4.f));
         MeshRand << "[sc#ffff aq 0 0]";
-        MeshRand << "[sc#ffff aq 0 0]";
-        MeshRand << "[sc#ffff aq 0 0]";
-        MeshRand << "[sc#fbbf aq 0 0]";
-        MeshRand << "[sc#bbff aq 0 0]";
-        MeshRand << "[sc#bfbf aq 0 0]";
+        MeshRand << "[sc#faaf aq 0 0]";
+        MeshRand << "[sc#afaf aq 0 0]";
+        MeshRand << "[sc#aaff aq 0 0]";
 #else
         MeshRand << "[sc#add asph1 2]";
         MeshRand << "[sc#dad asph1 2]";
