@@ -58,7 +58,8 @@ aclocalflags="`sed -ne 's/^[ \t]*ACLOCAL_AMFLAGS[ \t]*=//p' Makefile.am 2>/dev/n
 
 # Check for automake
 amvers="no"
-for v in 13 12 11 10 9 8 7 6 5; do
+v=20; vend=5
+while [ "$v" -gt "$vend" ]; do
   if automake-1.${v} --version >/dev/null 2>&1; then
     amvers="-1.${v}"
     break
@@ -66,6 +67,7 @@ for v in 13 12 11 10 9 8 7 6 5; do
     amvers="1.${v}"
     break
   fi
+  v="`expr "$v" - 1`"
 done
 
 if test "${amvers}" = "no" && automake --version > /dev/null 2>&1; then
