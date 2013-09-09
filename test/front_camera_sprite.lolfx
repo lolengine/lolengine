@@ -45,5 +45,9 @@ const float PI = 3.14159265358979323846264;
 
 void main(void)
 {
-    gl_FragColor = texture2D(in_texture, pass_texcoord.xy) * pass_color;
+    vec4 color = texture2D(in_texture, pass_texcoord.xy);
+    if (color.a < 0.01)
+        discard;
+    gl_FragColor = color * pass_color;
 }
+
