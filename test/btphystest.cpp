@@ -652,7 +652,7 @@ int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("BtPhysTest", ivec2(1280, 720), 60.0f);
+    Application app("BtPhysTest", ivec2(1280, 960), 60.0f);
 
     new BtPhysTest(argc > 1);
     app.ShowPointer(false);
