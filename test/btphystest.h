@@ -25,6 +25,8 @@ public:
     virtual lol::String GetInTexCoordName() { return lol::String("in_texcoord"); }
 
     ShaderTexture   m_shader_texture;
+    float           m_sprite_orientation;
+    float           m_sprite_flip;
 };
 
 class BtPhysTest : public WorldEntity
