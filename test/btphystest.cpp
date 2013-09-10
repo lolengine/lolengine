@@ -23,19 +23,21 @@ using namespace lol;
 
 #define CAT_MODE        1
 #define OBJ_SIZE        2.f
+#define NB_SPRITE       4
+#define PARTICLE_SIZE   4
 #include "physicobject.h"
 
 #include "btphystest.h"
 
 using namespace lol::phys;
 
-#define CUBE_HALF_EXTENTS .5f
-#define EXTRA_HEIGHT 1.f
-#define BASE_TIME 2.f
+#define CUBE_HALF_EXTENTS   .5f
+#define EXTRA_HEIGHT        1.f
+#define BASE_TIME           2.f
 #define ZERO_TIME (BASE_TIME + rand(-BASE_TIME * .4f, BASE_TIME * .4f))
-#define ZERO_SPEED 3.5f
-#define JUMP_HEIGHT 30.f
-#define JUMP_STRAFE .5f
+#define ZERO_SPEED          3.5f
+#define JUMP_HEIGHT         30.f
+#define JUMP_STRAFE         .5f
 
 int gNumObjects = 64;
 
@@ -76,16 +78,17 @@ BtPhysTest::BtPhysTest(bool editor)
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
+    
 #if CAT_MODE
     m_camera->SetView(vec3(70.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(mat4::perspective(60.f, 1280.f, 960.f, .1f, 1000.f));
+    m_camera->SetProjection(mat4::perspective(60.f, (float)Video::GetSize().x, (float)Video::GetSize().y, .1f, 1000.f));
 #else
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(mat4::perspective(45.f, 1280.f, 960.f, .1f, 1000.f));
+    m_camera->SetProjection(mat4::perspective(45.f, (float)Video::GetSize().x, (float)Video::GetSize().y, .1f, 1000.f));
 #endif
     g_scene->PushCamera(m_camera);
 
@@ -518,15 +521,30 @@ void BtPhysTest::TickDraw(float seconds)
                                                 (1 << VertexUsage::TexCoordExt)),
                                                 m_cat_shader);
             m_cat_sdata->m_shader_texture = m_cat_texture->GetTexture();
+            m_cat_sdata->m_sprite_flip = ((rand(2) == 1)?(1.f):(0.f)) / (float)(NB_SPRITE * PARTICLE_SIZE);
             PhysObj->SetCustomShaderData(m_cat_sdata);
+            m_cat_sdata = NULL;
         }
 #endif //USE_BODIES
-
-
 #endif //CAT_MODE
 
         /* FIXME: this object never cleans up */
         m_ready = true;
+    }
+    else
+    {
+#if CAT_MODE
+        for (int i = 0; i < m_physobj_list.Count(); i++)
+        {
+            PhysicsObject* PhysObj = m_physobj_list[i].m1;
+            CatShaderData* ShaderData = (CatShaderData*)PhysObj->GetCustomShaderData();
+
+            ShaderData->m_sprite_orientation = damp(ShaderData->m_sprite_orientation,
+                                                    F_PI_4 * ((ShaderData->m_sprite_flip * 2.f * (float)(NB_SPRITE * PARTICLE_SIZE)) - 1.f) *
+                                                    clamp(PhysObj->GetPhysic()->GetLinearVelocity().y / 20.0f, -1.f, 1.f),
+                                                    0.1f, seconds);
+        }
+#endif //CAT_MODE
     }
 
     //Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
@@ -541,7 +559,6 @@ BtPhysTest::~BtPhysTest()
 
 #if CAT_MODE
     /* cat datas setup */
-    delete(m_cat_sdata);
     Shader::Destroy(m_cat_shader);
     Tiler::Deregister(m_cat_texture);
 #endif //CAT_MODE
@@ -598,6 +615,8 @@ BtPhysTest::~BtPhysTest()
 CatShaderData::CatShaderData(uint32_t vert_decl_flags, Shader* shader)
     : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
 {
+    m_sprite_orientation = .0f;
+    m_sprite_flip = .0f;
     SetupDefaultData();
 }
 
@@ -608,6 +627,8 @@ void CatShaderData::SetupDefaultData()
     AddUniform("in_normal_mat");
     AddUniform("in_proj");
     AddUniform("in_texture");
+    AddUniform("in_sprite_orientation");
+    AddUniform("in_sprite_flip");
 }
 
 //-----------------------------------------------------------------------------
@@ -622,13 +643,16 @@ void CatShaderData::SetupShaderDatas(mat4 const &model)
     m_shader->SetUniform(*GetUniform("in_model_view"), modelview);
     m_shader->SetUniform(*GetUniform("in_normal_mat"), normalmat);
     m_shader->SetUniform(*GetUniform("in_proj"), proj);
+    m_shader->SetUniform(*GetUniform("in_texture"), m_shader_texture, 0);
+    m_shader->SetUniform(*GetUniform("in_sprite_orientation"), m_sprite_orientation);
+    m_shader->SetUniform(*GetUniform("in_sprite_flip"), m_sprite_flip);
 }
 
 int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("BtPhysTest", ivec2(1280, 960), 60.0f);
+    Application app("BtPhysTest", ivec2(1280, 720), 60.0f);
 
     new BtPhysTest(argc > 1);
     app.ShowPointer(false);
