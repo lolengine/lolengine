@@ -73,8 +73,32 @@ vec3 hsv2rgb(vec3 c)
 
 void main(void)
 {
-    vec4 color = texture2D(in_texture, pass_texcoord.xy -
-                                 vec2(pass_texcoord.z * in_sprite_flip, 0.0));
+    vec2 texcoord = pass_texcoord.xy - vec2(pass_texcoord.z * in_sprite_flip, 0.0);
+    vec4 color = texture2D(in_texture, texcoord) * pass_color;
+
+    //need 130 : ivec2 tex_size = textureSize(in_texture, 0);
+    int sample_nb = 5;
+    if (color.a < 0.9)
+    {
+        for (int x = -sample_nb; x <= sample_nb; x++)
+        {
+            for (int y = -sample_nb; y <= sample_nb; y++)
+            {
+                if (x != 0 && y != 0)
+                {
+                    vec2 new_tc = clamp(texcoord + (vec2(x, y) / 1024.0), vec2(0.0), vec2(1.0));
+                    vec4 new_col = texture2D(in_texture, new_tc);
+                    //need 130 : vec4 new_col = texelFetch(in_texture, ivec2(tex_size * texcoord) + ivec2(x, y), 0);
+                    if (new_col.a > 0.9)
+                    {
+                        color = vec4(0.0, 0.0, 0.0, 1.0);
+                        x = sample_nb + 1;
+                        y = sample_nb + 1;
+                    }
+                }
+            }
+        }
+    }
     if (color.a < 0.01)
         discard;
     vec3 hsv = rgb2hsv(color.rgb);
