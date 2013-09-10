@@ -78,7 +78,7 @@ BtPhysTest::BtPhysTest(bool editor)
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
-    
+
 #if CAT_MODE
     m_camera->SetView(vec3(70.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),

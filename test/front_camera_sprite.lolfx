@@ -24,7 +24,7 @@ void main(void)
     float cosX = cos(in_sprite_orientation);
     float sinY = sinX;
     mat2 rotationMatrix = mat2(cosX, -sinX, sinY, cosX);
-    
+
     v_offset.xy = rotationMatrix * v_offset.xy;
 
     //Billboard calculations

@@ -63,18 +63,18 @@ public:
     virtual void RemoveFromSimulation(class Simulation* current_simulation);
 
     //Force/Impulse functions
-	virtual void AddImpulse(const lol::vec3& impulse);
+    virtual void AddImpulse(const lol::vec3& impulse);
     virtual void AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos);
-  	virtual void AddImpulseTorque(const lol::vec3& torque);
-	virtual void AddForce(const lol::vec3& force);
-	virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos);
+      virtual void AddImpulseTorque(const lol::vec3& torque);
+    virtual void AddForce(const lol::vec3& force);
+    virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos);
     virtual void AddForceTorque(const lol::vec3& torque);
 
     //Movements getter
-	lol::vec3 GetLinearVelocity() const;
-	lol::vec3 GetLinearForce() const;
-	lol::vec3 GetAngularVelocity() const;
-	lol::vec3 GetAngularForce() const;
+    lol::vec3 GetLinearVelocity() const;
+    lol::vec3 GetLinearForce() const;
+    lol::vec3 GetAngularVelocity() const;
+    lol::vec3 GetAngularForce() const;
 
 protected:
     virtual void SetLocalInertia(float mass);
@@ -119,18 +119,18 @@ public:
     virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
 
     //Force/Impulse functions
-	virtual void AddImpulse(const lol::vec3& impulse) { }
+    virtual void AddImpulse(const lol::vec3& impulse) { }
     virtual void AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos) { }
-  	virtual void AddImpulseTorque(const lol::vec3& torque) { }
-	virtual void AddForce(const lol::vec3& force) { }
-	virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos) { }
+      virtual void AddImpulseTorque(const lol::vec3& torque) { }
+    virtual void AddForce(const lol::vec3& force) { }
+    virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos) { }
     virtual void AddForceTorque(const lol::vec3& torque) { }
 
     //Movements getter
     lol::vec3 GetLinearVelocity()    const { return lol::vec3(.0f); }
-	lol::vec3 GetLinearForce()       const { return lol::vec3(.0f); }
-	lol::vec3 GetAngularVelocity()   const { return lol::vec3(.0f); }
-	lol::vec3 GetAngularForce()      const { return lol::vec3(.0f); }
+    lol::vec3 GetLinearForce()       const { return lol::vec3(.0f); }
+    lol::vec3 GetAngularVelocity()   const { return lol::vec3(.0f); }
+    lol::vec3 GetAngularForce()      const { return lol::vec3(.0f); }
 
     virtual void InitBodyToGhost() { }
 
