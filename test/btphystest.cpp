@@ -38,6 +38,7 @@ using namespace lol::phys;
 #define ZERO_SPEED          3.5f
 #define JUMP_HEIGHT         30.f
 #define JUMP_STRAFE         .5f
+#define TARGET_TIMER        10.f + (rand(4.f) - 2.f)
 
 int gNumObjects = 64;
 
@@ -83,12 +84,14 @@ BtPhysTest::BtPhysTest(bool editor)
     m_camera->SetView(vec3(70.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(mat4::perspective(60.f, (float)Video::GetSize().x, (float)Video::GetSize().y, .1f, 1000.f));
+    m_camera->SetProjection(60.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_target_timer = TARGET_TIMER;
+    m_cam_target = -1;
 #else
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(mat4::perspective(45.f, (float)Video::GetSize().x, (float)Video::GetSize().y, .1f, 1000.f));
+    m_camera->SetProjection(45.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
 #endif
     g_scene->PushCamera(m_camera);
 
@@ -304,9 +307,18 @@ void BtPhysTest::TickGame(float seconds)
     vec3 cam_center(0.f);
     float cam_factor = .0f;
     vec2 screen_min_max[2] = { vec2(FLT_MAX), vec2(-FLT_MAX) };
-    vec3 cam_min_max[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
     mat4 world_cam = g_scene->GetCamera()->GetView();
     mat4 cam_screen = g_scene->GetCamera()->GetProjection();
+
+    m_target_timer -= seconds;
+    if (m_target_timer < .0f)
+    {
+        m_target_timer = TARGET_TIMER;
+        if (m_cam_target == -1)
+            m_cam_target = rand(m_physobj_list.Count());
+        else
+            m_cam_target = -1;
+    }
 
     for (int i = 0; i < m_physobj_list.Count(); i++)
     {
@@ -315,22 +327,33 @@ void BtPhysTest::TickGame(float seconds)
 
         vec3 obj_loc = PhysObj->GetPhysic()->GetTransform().v3.xyz;
 
-        cam_center += obj_loc;
-        cam_factor += 1.f;
+        if (m_cam_target == -1 || m_cam_target == i)
+        {
+            cam_center += obj_loc;
+            cam_factor += 1.f;
 
-        mat4 LocalPos = mat4::translate(obj_loc);
-        vec3 vpos;
+            mat4 LocalPos = mat4::translate(obj_loc);
+            vec3 vpos;
 
-        LocalPos = world_cam * LocalPos;
-        vpos = LocalPos.v3.xyz;
-        cam_min_max[0] = min(vpos.xyz, cam_min_max[0]);
-        cam_min_max[1] = max(vpos.xyz, cam_min_max[1]);
+            LocalPos = world_cam * LocalPos;
+            mat4 LocalPos0 = LocalPos;
 
-        LocalPos = cam_screen * LocalPos;
-        vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
-        screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
-        screen_min_max[1] = max(vpos.xy, screen_min_max[1]);
+            int j = 2;
+            while (j-- > 0)
+            {
+                if (j == 1)
+                    LocalPos = mat4::translate(vec3(-4.f)) * LocalPos0;
+                else
+                    LocalPos = mat4::translate(vec3(4.f)) * LocalPos0;
 
+                LocalPos = cam_screen * LocalPos;
+                vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
+                screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
+                screen_min_max[1] = max(vpos.xy, screen_min_max[1]);
+            }
+        }
+
+        //Jump handling
         //if (length(PhysObj->GetPhysic()->GetLinearVelocity()) < ZERO_SPEED)
         if (lol::abs(PhysObj->GetPhysic()->GetLinearVelocity().y) < ZERO_SPEED)
             Timer -= seconds;
@@ -345,16 +368,29 @@ void BtPhysTest::TickGame(float seconds)
         }
     }
 
-    vec3 min_max_diff = (cam_min_max[1] - cam_min_max[0]);
-    float screen_size = max(max(lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)),
-                        max(    lol::abs(min_max_diff.x), lol::abs(min_max_diff.y)));
     float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                           max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
 
-    //m_camera->SetProjection(mat4::perspective(30.f * fov_ratio * 1.1f, 1280.f, 960.f, .1f, 1000.f));
+    vec3 new_target = cam_center / cam_factor;
+    float fov_dp = .0f;
+    float loc_dp = .0f;
+
+    //ideally fov is on the target
+    if (lol::abs(fov_ratio - 1.f) < .2f)
+        fov_dp = ((m_cam_target == -1)?(.7f):(.2f));
+    else
+        fov_dp = ((m_cam_target == -1)?(1.7f):(.9f));
+
+    //ideally loc is on the target
+    if (length(new_target - m_camera->GetTarget()) < 6.f)
+        loc_dp = ((m_cam_target == -1)?(.5f):(.03f));
+    else
+        loc_dp = ((m_cam_target == -1)?(.9f):(.5f));
+
+    m_camera->SetFov(damp(m_camera->GetFov(), m_camera->GetFov() * fov_ratio * 1.1f, fov_dp, seconds));
+    vec3 tmp = damp(m_camera->GetTarget(), new_target, loc_dp, seconds);
     m_camera->SetView((mat4::rotate(10.f * seconds, vec3(.0f, 1.f, .0f)) * vec4(m_camera->GetPosition(), 1.0f)).xyz,
-                      //vec3(70.f, 30.f, 0.f),
-                      cam_center / cam_factor, vec3(0, 1, 0));
+                      tmp, vec3(0, 1, 0));
 #endif //USE_BODIES
 #endif //CAT_MODE
 
