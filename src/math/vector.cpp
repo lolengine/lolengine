@@ -768,6 +768,7 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
     return ret;
 }
 
+//Returns a standard perspective matrix
 template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
@@ -779,6 +780,7 @@ template<> mat4 mat4::perspective(float fov_y, float width,
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
 }
 
+//Returns a perspective matrix with the camera location shifted to be on the near plane
 template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
                                           float screen_ratio_xy, float draw_distance)
 {
@@ -787,7 +789,8 @@ template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
     float near = (screen_size * .5f) / tanf(new_fov_y * .5f);
     float far = near + draw_distance;
 
-    return mat4::perspective(fov_y, screen_size * screen_ratio_xy, screen_size, near - .000001f, far) * mat4::translate(.0f, .0f, -near);
+    return mat4::perspective(fov_y, screen_size * screen_ratio_xy, screen_size, near - .000001f, far) *
+           mat4::translate(.0f, .0f, -near);
 }
 
 } /* namespace lol */

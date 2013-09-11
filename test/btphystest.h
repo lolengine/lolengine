@@ -73,6 +73,8 @@ private:
     Array<PhysicsObject*>           m_stairs_list;
 
     float                           m_loop_value;
+    float                           m_target_timer;
+    int                             m_cam_target;
 };
 
 #endif // __BTPHYSTEST_H__
