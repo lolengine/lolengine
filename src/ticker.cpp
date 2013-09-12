@@ -406,7 +406,9 @@ void TickerData::DrawThreadTick()
         }
 
         /* Do this render step */
-        g_scene->Render();
+        g_scene->RenderPrimitives();
+        g_scene->RenderTiles();
+        g_scene->RenderLines();
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

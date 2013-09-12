@@ -774,7 +774,7 @@ template<> mat4 mat4::perspective(float fov_y, float width,
 {
     fov_y *= (F_PI / 180.0f);
 
-    float t2 = tanf(fov_y * 0.5f);
+    float t2 = lol::tan(fov_y * 0.5f);
     float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
@@ -786,7 +786,7 @@ template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
 {
     float new_fov_y = fov_y * (F_PI / 180.0f);
 
-    float near = (screen_size * .5f) / tanf(new_fov_y * .5f);
+    float near = (screen_size * .5f) / lol::tan(new_fov_y * .5f);
     float far = near + draw_distance;
 
     return mat4::perspective(fov_y, screen_size * screen_ratio_xy, screen_size, near - .000001f, far) *
