@@ -37,7 +37,7 @@ LOLUNIT_FIXTURE(CameraTest)
 
     void SetUp()
     {
-        eye = vec3(0.f, 50.f, 50.f);
+        eye = vec3(0.f, 0.f, 50.f);
         target = vec3(0.f);
         up = vec3(0.f, 1.f, 0.f);
         m_lookat = mat4::lookat(eye, target, up);
@@ -79,6 +79,9 @@ LOLUNIT_FIXTURE(CameraTest)
         TEST_VECTOR(eye, tc.GetPosition());
         TEST_VECTOR(target, tc.GetTarget());
         TEST_VECTOR(up, tc.GetUp());
+
+        tc.UseTarget(false);
+        TEST_VECTOR(vec3(0.f, 0.f, 49.f), tc.GetTarget());
     }
 
 #define TEST_MATRIX(m0, m1) \
@@ -105,19 +108,7 @@ LOLUNIT_FIXTURE(CameraTest)
 
     LOLUNIT_TEST(SetProjectionTest)
     {
-        mat4 refmx = mat4::perspective(fov, screen_size, screen_ratio, near, far);
-
-        tc.SetProjection(refmx);
-        TEST_MATRIX(refmx, tc.GetProjection());
-
-        tc.SetProjection(fov, near, far);
-        TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        mat4 refmx = mat4::perspective(fov, screen_size, screen_size * screen_ratio, near, far);
 
         tc.SetProjection(fov, near, far, screen_size, screen_ratio);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -126,7 +117,19 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+
+        tc.SetProjection(fov, near, far);
+        TEST_MATRIX(refmx, tc.GetProjection());
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+
+        tc.SetProjection(refmx);
+        TEST_MATRIX(refmx, tc.GetProjection());
 
         tc.SetFov(fov);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -135,7 +138,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         tc.SetScreenInfos(screen_size);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -144,7 +147,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         tc.SetScreenInfos(screen_size, screen_ratio);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -153,7 +156,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         tc.SetDrawInfos(far);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -162,7 +165,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         tc.SetDrawInfos(near, far);
         TEST_MATRIX(refmx, tc.GetProjection());
@@ -171,7 +174,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         is_shifted = true;
         refmx = mat4::shifted_perspective(fov, screen_size, screen_ratio, far - near);
@@ -183,7 +186,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted != tc.IsShifted());
+        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
     }
 };
 
