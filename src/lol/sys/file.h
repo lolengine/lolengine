@@ -34,6 +34,22 @@ struct FileAccess
     inline operator Value() { return m_value; }
 };
 
+struct StreamType
+{
+    enum Value
+    {
+        StdIn = 0,
+        StdOut,
+        StdErr,
+        File
+    }
+    m_value;
+
+    inline StreamType(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+    inline int Value() { return m_value; }
+};
+
 class File
 {
 public:
@@ -42,12 +58,15 @@ public:
     File &operator =(File const &that);
     ~File();
 
+    void Open(StreamType stream);
     void Open(String const &file, FileAccess mode);
     bool IsValid() const;
     void Close();
 
     int Read(uint8_t *buf, int count);
     String ReadString();
+    int Write(uint8_t *buf, int count);
+    int WriteString(const String &buf);
 
 private:
     class FileData *m_data;
