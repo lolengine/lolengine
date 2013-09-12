@@ -58,15 +58,6 @@ void NaClInstance::TickCallback(void* data, int32_t result)
     pp::Module::Get()->core()->CallOnMainThread(
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
 
-    /* Propagate gamepad information */
-    InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
-    for (int j = 0; j < 4; ++j)
-        stick->AddAxis(String::Printf("Axis%d", j+1).C());
-    for (int j = 0; j < 16; ++j)
-        stick->AddKey(String::Printf("Button%d", j+1).C());
-
-    m_data->m_joysticks.Push(i, stick);
-
     /* 12/09/2013 : Deactivated to get build back.
     PP_GamepadsSampleData all_pads_data;
     instance->m_pad_interface->Sample(instance->pp_instance(), &all_pads_data);
