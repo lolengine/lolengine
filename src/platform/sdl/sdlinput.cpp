@@ -74,7 +74,9 @@ private:
  */
 
 SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
+#if USE_SDL
   : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
+#endif //USE_SDL
 {
 #if USE_SDL
     /* Enable Unicode translation of keyboard events */
