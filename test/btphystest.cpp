@@ -64,6 +64,8 @@ BtPhysTest::BtPhysTest(bool editor)
 #if CAT_MODE
     /* cat datas setup */
     m_cat_texture = Tiler::Register("data/CatsSheet.png", ivec2(0), ivec2(0,1));
+    m_fov_dp = .0f;
+    m_loc_dp = .0f;
 #endif //CAT_MODE
 
     /* Register an input controller for the keyboard */
@@ -250,6 +252,10 @@ BtPhysTest::BtPhysTest(bool editor)
                 {
                     PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
                         vec3(-20.f, 15.f, -20.f) +
+#if CAT_MODE
+                        vec3(rand(4.f), rand(2.f), rand(4.f)) -
+                        vec3(2.f       , 1.f      , 2.f) +
+#endif //CAT_MODE
                         vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
                     m_physobj_list.Push(new_physobj, ZERO_TIME);
                     Ticker::Ref(new_physobj);
@@ -387,8 +393,10 @@ void BtPhysTest::TickGame(float seconds)
     else
         loc_dp = ((m_cam_target == -1)?(.9f):(.5f));
 
-    m_camera->SetFov(damp(m_camera->GetFov(), m_camera->GetFov() * fov_ratio * 1.1f, fov_dp, seconds));
-    vec3 tmp = damp(m_camera->GetTarget(), new_target, loc_dp, seconds);
+    m_fov_dp = damp(m_fov_dp, fov_dp, 0.08f, seconds);
+    m_loc_dp = damp(m_loc_dp, loc_dp, 0.08f, seconds);
+    m_camera->SetFov(damp(m_camera->GetFov(), m_camera->GetFov() * fov_ratio * 1.1f, m_fov_dp, seconds));
+    vec3 tmp = damp(m_camera->GetTarget(), new_target, m_loc_dp, seconds);
     m_camera->SetView((mat4::rotate(10.f * seconds, vec3(.0f, 1.f, .0f)) * vec4(m_camera->GetPosition(), 1.0f)).xyz,
                       tmp, vec3(0, 1, 0));
 #endif //USE_BODIES

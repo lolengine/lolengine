@@ -75,6 +75,8 @@ private:
     float                           m_loop_value;
     float                           m_target_timer;
     int                             m_cam_target;
+    float                           m_fov_dp;
+    float                           m_loc_dp;
 };
 
 #endif // __BTPHYSTEST_H__
