@@ -41,7 +41,10 @@ public:
     void PopCamera(Camera *cam);
 
     void Reset();
-    void Render();
+
+    void RenderPrimitives();
+    void RenderTiles();
+    void RenderLines();
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
