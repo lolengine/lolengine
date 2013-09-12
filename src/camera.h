@@ -53,6 +53,7 @@ public:
     void SetDrawInfos(float far);
     void SetDrawInfos(float near, float far);
     void UseShift(bool should_shift);
+    void UseTarget(bool use_target);
 
     float GetFov()          { return m_fov; }
     float GetScreenSize()   { return m_screen_size; }
@@ -60,6 +61,7 @@ public:
     float GetNear()         { return m_near; }
     float GetFar()          { return m_far; }
     bool  IsShifted()       { return m_is_shifted; }
+    bool  IsTargeting()     { return (m_target_distance != .0f); }
 
     //camera manipulation Functions
     void SetPosition(vec3 pos);

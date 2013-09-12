@@ -74,10 +74,9 @@ void Camera::SetView(vec3 pos, vec3 rot)
 void Camera::SetView(vec3 pos, quat rot)
 {
     m_view_matrix = mat4::lookat(pos,
-                                 pos + rot.transform(vec3(0.f, 0.f, -1.f)),
+                                 pos + rot.transform(vec3(0.f, 0.f, -max(m_target_distance, 1.f))),
                                  rot.transform(vec3(0.f, 1.f, 0.f)));
     m_position = pos;
-    m_target_distance = .0f;
 }
 
 mat4 Camera::GetView()
@@ -156,6 +155,10 @@ void Camera::UseShift(bool should_shift)
     SetProjection(m_fov, m_near, m_far, m_screen_size, m_screen_ratio);
 }
 
+void Camera::UseTarget(bool use_target)
+{
+    m_target_distance = ((use_target)?(max(m_target_distance, 1.f)):(.0f));
+}
 
 //-----------------------------------------------------------------------------
 //camera manipulation Functions
@@ -163,26 +166,20 @@ void Camera::UseShift(bool should_shift)
 void Camera::SetPosition(vec3 pos)
 {
     if (m_target_distance > .0f)
-    {
-        vec4 up = m_view_matrix * vec4(0.f, 1.f, 0.f, 0.f);
-        vec4 target = m_view_matrix * vec4(0.f, 0.f, -m_target_distance, 0.f);
-        SetView(m_position, m_position + target.xyz, up.xyz);
-    }
+        SetView(m_position, m_position + GetTarget(), GetUp());
     else
-        m_view_matrix = m_view_matrix * mat4::translate(pos - m_position);
+        SetView(GetView() * mat4::translate(pos - m_position));
     m_position = pos;
 }
 
 void Camera::SetTarget(vec3 target)
 {
-    vec4 up = inverse(m_view_matrix) * vec4(0.f, 1.f, 0.f, 0.f);
-    SetView(m_position, target, up.xyz);
+    SetView(m_position, target, GetUp());
 }
 
 void Camera::SetUp(vec3 up)
 {
-    vec4 target = inverse(m_view_matrix) * vec4(0.f, 0.f, -max(m_target_distance, 1.f), 0.f);
-    SetView(m_position, m_position + target.xyz, up);
+    SetView(m_position, GetTarget(), up);
 }
 
 void Camera::SetRotation(vec3 rot)
