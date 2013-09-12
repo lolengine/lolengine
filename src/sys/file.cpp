@@ -32,8 +32,30 @@ class FileData
 {
     friend class File;
 
+    FileData() : m_type(StreamType::File) { }
+
+    void Open(StreamType stream)
+    {
+        if (m_type == StreamType::File)
+            return;
+        m_type = stream;
+        switch((int)stream)
+        {
+#if __CELLOS_LV2__
+        /* FIXME: no modes, no error checking, no nothing */
+#elif __ANDROID__
+        /* FIXME: no modes, no error checking, no nothing */
+#elif HAVE_STDIO_H
+            case StreamType::StdIn:  m_fd = stdin;  break;
+            case StreamType::StdOut: m_fd = stdout; break;
+            case StreamType::StdErr: m_fd = stderr; break;
+#endif
+        }
+    }
+
     void Open(String const &file, FileAccess mode)
     {
+        m_type = StreamType::File;
 #if __CELLOS_LV2__
         String realfile = String(SYS_APP_HOME) + '/' + file;
         CellFsErrno err = cellFsOpen(realfile.C(), CELL_FS_O_RDONLY,
@@ -105,8 +127,42 @@ class FileData
         return ret;
     }
 
+    int Write(uint8_t *buf, int count)
+    {
+#if __CELLOS_LV2__
+/*
+        uint64_t done;
+        CellFsErrno err = cellFsRead(m_fd, buf, count, &done);
+
+        if (err != CELL_FS_SUCCEEDED)
+            return -1;
+
+        return (int)done;
+*/
+        return 0;
+#elif __ANDROID__
+        //return AAsset_read(m_asset, buf, count);
+        return 0;
+#elif HAVE_STDIO_H
+        size_t done = fwrite(buf, 1, count, m_fd);
+        if (done <= 0)
+            return -1;
+
+        return (int)done;
+#else
+        return 0;
+#endif
+    }
+
+    int WriteString(const String &buf)
+    {
+        return Write((uint8_t *)buf.C(), buf.Count());
+    }
+
     void Close()
     {
+        if (m_type != StreamType::File)
+            return;
 #if __CELLOS_LV2__
         if (m_fd >= 0)
             cellFsClose(m_fd);
@@ -130,6 +186,7 @@ class FileData
     FILE *m_fd;
 #endif
     Atomic<int> m_refcount;
+    StreamType m_type;
 };
 
 File::File()
@@ -173,6 +230,11 @@ File::~File()
     }
 }
 
+void File::Open(StreamType stream)
+{
+    return m_data->Open(stream);
+}
+
 void File::Open(String const &file, FileAccess mode)
 {
     return m_data->Open(file, mode);
@@ -191,6 +253,16 @@ int File::Read(uint8_t *buf, int count)
 String File::ReadString()
 {
     return m_data->ReadString();
+}
+
+int File::Write(uint8_t *buf, int count)
+{
+    return m_data->Write(buf, count);
+}
+
+int File::WriteString(const String &buf)
+{
+    return m_data->WriteString(buf);
 }
 
 void File::Close()
