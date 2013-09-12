@@ -59,6 +59,15 @@ void NaClInstance::TickCallback(void* data, int32_t result)
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
 
     /* Propagate gamepad information */
+    InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+    for (int j = 0; j < 4; ++j)
+        stick->AddAxis(String::Printf("Axis%d", j+1).C());
+    for (int j = 0; j < 16; ++j)
+        stick->AddKey(String::Printf("Button%d", j+1).C());
+
+    m_data->m_joysticks.Push(i, stick);
+
+    /* 12/09/2013 : Deactivated to get build back.
     PP_GamepadsSampleData all_pads_data;
     instance->m_pad_interface->Sample(instance->pp_instance(), &all_pads_data);
 
@@ -80,6 +89,7 @@ void NaClInstance::TickCallback(void* data, int32_t result)
         for (int j = 0; j < pad_data.buttons_length; j++)
             instance->m_sticks[i]->SetButton(j, pad_data.buttons[j] > 0.5f);
     }
+    */
 }
 
 Mutex NaClInstance::main_mutex;
@@ -158,6 +168,8 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
 bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
 {
+    ///---------------------------------
+    /* 12/09/2013 : Deactivated to get build back.
     switch (event.GetType())
     {
     case PP_INPUTEVENT_TYPE_MOUSEDOWN:
@@ -172,6 +184,7 @@ bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
     default:
         break;
     }
+    */
     return true;
 }
 
