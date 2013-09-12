@@ -224,13 +224,13 @@ quat Camera::GetRotation()
 // Calculate the frustum height at a given distance from the camera.
 float Camera::GetFrustumHeightAtDistance(float distance, float fov)
 {
-	return 2.f * distance * lol::tan(fov * .5f * (F_PI / 180.f));
+    return 2.f * distance * lol::tan(fov * .5f * (F_PI / 180.f));
 }
 
 // Calculate the FOV needed to get a given frustum height at a given distance.
 float Camera::GetFOVForHeightAndDistance(float distance, float height)
 {
-	return 2.f * lol::atan(height * .5f / distance) * (180.f / F_PI);
+    return 2.f * lol::atan(height * .5f / distance) * (180.f / F_PI);
 }
 
 void Camera::TickGame(float seconds)
