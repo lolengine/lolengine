@@ -23,8 +23,6 @@ namespace lol
 namespace phys
 {
 
-#ifdef HAVE_PHYS_USE_BULLET
-
 //-------------------------------------------------------------------------
 //EASY_PHYSIC
 //--
@@ -424,8 +422,6 @@ void EasyPhysic::SetLocalInertia(float mass)
     else
         m_local_inertia = btVector3(.0f, .0f, .0f);
 }
-
-#endif // HAVE_PHYS_USE_BULLET
 
 } /* namespace phys */
 

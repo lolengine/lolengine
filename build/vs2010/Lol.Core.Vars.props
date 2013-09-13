@@ -20,13 +20,6 @@
     <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
     <Win32Defines>USE_SDL_MIXER;USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
 
-    <!-- BulletPhysics -->
-    <BtPhysDir>$(ExternalDir)\bullet-2.80-rev2531</BtPhysDir>
-    <BtPhysIncludes>$(BtPhysDir)\include;$(BtPhysDir)\include\bullet</BtPhysIncludes>
-    <Win32Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Win32Defines)</Win32Defines>
-    <Ps3Defines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(Ps3Defines)</Ps3Defines>
-    <XboxDefines Condition="'$(UseBullet)'=='true'">HAVE_PHYS_USE_BULLET;$(XboxDefines)</XboxDefines>
-
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ExternalDir)\gtkglarea-2.0.1</GtkGlDir>

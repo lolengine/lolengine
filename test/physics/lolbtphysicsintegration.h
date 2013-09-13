@@ -28,8 +28,6 @@ namespace lol
 #define GAMEGROUP_EZP_CHAR_CTRLR    GAMEGROUP_AFTER_0
 #define GAMEGROUP_SIMULATION        GAMEGROUP_AFTER_1
 
-#ifdef HAVE_PHYS_USE_BULLET
-
 #define LOL2BT_UNIT                1.0f
 #define BT2LOL_UNIT                1.0f
 
@@ -45,8 +43,6 @@ namespace lol
 
 #define LOL2BT_QUAT(ELEMENT)    btQuaternion((ELEMENT).x, (ELEMENT).y, (ELEMENT).z, (ELEMENT).w)
 #define BT2LOL_QUAT(ELEMENT)    lol::quat((ELEMENT).getW(), BT2LOL_VEC3((ELEMENT).getAxis())
-
-#endif // HAVE_PHYS_USE_BULLET
 
 } /* namespace lol */
 

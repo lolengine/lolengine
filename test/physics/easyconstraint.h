@@ -17,10 +17,8 @@
 #if !defined __EASYCONSTRAINT_EASYCONSTRAINT_H__
 #define __EASYCONSTRAINT_EASYCONSTRAINT_H__
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include "easyphysics.h"
-#endif
 
 namespace lol
 {
@@ -33,8 +31,6 @@ class EasyConstraint
 
     friend class Simulation;
     friend class EasyPhysic;
-
-#ifdef HAVE_PHYS_USE_BULLET
 
 public:
     EasyConstraint() :
@@ -132,34 +128,6 @@ private:
     btSliderConstraint*            m_slider_constraint;
     btConeTwistConstraint*        m_cone_twist_constraint;
     btGeneric6DofConstraint*    m_6dof_constraint;
-
-#else  // NO PHYSIC IMPLEMENTATION
-
-public:
-    EasyConstraint() :
-        m_a_physobj(NULL),
-        m_b_physobj(NULL),
-        m_a_transform(lol::mat4(1.f)),
-        m_b_transform(lol::mat4(1.f)),
-        m_using_ref_a(false),
-        m_disable_a2b_collision(false)
-    {
-    }
-
-private:
-
-    void AddToSimulation(class Simulation* current_simulation) { }
-    void RemoveFromSimulation(class Simulation* current_simulation) { }
-
-    //check if Init can be done
-    bool CanProceedWithInit() { return false; }
-    void CustomInitConstraintToPoint2Point() { }
-    void CustomInitConstraintToHinge() { }
-    void CustomInitConstraintToSlider() { }
-    void CustomInitConstraintToConeTwist() { }
-    void CustomInitConstraintTo6Dof() { }
-
-#endif // PHYSIC IMPLEMENTATION
 
 public:
     void InitConstraintToPoint2Point()    { if (CanProceedWithInit()) CustomInitConstraintToPoint2Point(); }

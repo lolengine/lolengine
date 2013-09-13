@@ -17,12 +17,10 @@
 #if !defined __EASYPHYSICS_EASYPHYSICS_H__
 #define __EASYPHYSICS_EASYPHYSICS_H__
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
-#endif //HAVE_PHYS_USE_BULLET
 
 namespace lol
 {
@@ -35,8 +33,6 @@ class EasyPhysic
 
     friend class Simulation;
     friend class EasyConstraint;
-
-#ifdef HAVE_PHYS_USE_BULLET
 
 public:
     EasyPhysic(WorldEntity* NewOwnerEntity);
@@ -92,49 +88,6 @@ protected:
     btCollisionShape*                           m_collision_shape;
     btConvexShape*                              m_convex_shape;
     btMotionState*                              m_motion_state;
-
-#else  // NO PHYSIC IMPLEMENTATION
-
-public:
-    EasyPhysic(WorldEntity* NewOwnerEntity) { m_owner_entity = NewOwnerEntity; }
-
-    virtual void SetShapeToBox(lol::vec3& BoxSize) { }
-    virtual void SetShapeToSphere(float radius) { }
-    virtual void SetShapeToCone(float radius, float height) { }
-    virtual void SetShapeToCylinder(lol::vec3& cyl_size) { }
-    virtual void SetShapeToCapsule(float radius, float height) { }
-
-    virtual bool CanChangeCollisionChannel() { return true; }
-    virtual mat4 GetTransform() { return mat4(1.0f); }
-    virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f))) { }
-private:
-    virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix) { }
-public:
-    virtual void SetMass(float mass) { }
-    virtual float GetMass() { return .0f; }
-    virtual void SetHitRestitution(float hit_restitution) { }
-    virtual void InitBodyToRigid() { }
-    virtual void InitBodyToGhost() { }
-    virtual void AddToSimulation(class Simulation* current_simulation) { }
-    virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
-
-    //Force/Impulse functions
-    virtual void AddImpulse(const lol::vec3& impulse) { }
-    virtual void AddImpulse(const lol::vec3& impulse, const lol::vec3& rel_pos) { }
-      virtual void AddImpulseTorque(const lol::vec3& torque) { }
-    virtual void AddForce(const lol::vec3& force) { }
-    virtual void AddForce(const lol::vec3& force, const lol::vec3& rel_pos) { }
-    virtual void AddForceTorque(const lol::vec3& torque) { }
-
-    //Movements getter
-    lol::vec3 GetLinearVelocity()    const { return lol::vec3(.0f); }
-    lol::vec3 GetLinearForce()       const { return lol::vec3(.0f); }
-    lol::vec3 GetAngularVelocity()   const { return lol::vec3(.0f); }
-    lol::vec3 GetAngularForce()      const { return lol::vec3(.0f); }
-
-    virtual void InitBodyToGhost() { }
-
-#endif // PHYSIC IMPLEMENTATION
 
 public:
     //Sets the collision Group & Mask.
