@@ -6,7 +6,7 @@ SUBDIRS = math sandbox xolotl
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-noinst_PROGRAMS = benchsuite $(testsuite) btphystest meshviewer
+noinst_PROGRAMS = benchsuite $(testsuite) btphystest nacl_phystest meshviewer
 
 TESTS = $(testsuite)
 
@@ -49,6 +49,13 @@ btphystest_LDFLAGS += \
     --preload-file data/CatsSheet.png \
     -s TOTAL_MEMORY=$(shell expr 32 '*' 1024 '*' 1024)
 endif
+
+nacl_phystest_SOURCES = \
+    nacl_phystest.cpp nacl_phystest.h
+nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
+    -DHAVE_PHYS_USE_BULLET
+nacl_phystest_DEPENDENCIES = @LOL_DEPS@
+nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
 
 meshviewer_SOURCES = meshviewer.cpp \
     shinymvtexture.lolfx shinyfur.lolfx
