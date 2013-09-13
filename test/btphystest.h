@@ -64,7 +64,7 @@ private:
     Controller *                    m_controller;
     Light *                         m_light1;
     Light *                         m_light2;
-    bool                            m_init_done;
+    int                             m_init_status;
     bool                            m_ready;
 
     lol::phys::Simulation*          m_simulation;
