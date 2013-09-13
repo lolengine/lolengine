@@ -59,12 +59,12 @@ LOLFX_RESOURCE_DECLARE(front_camera_sprite);
 
 BtPhysTest::BtPhysTest(bool editor)
 {
-    m_init_done = false;
+    m_init_status = 0;
 }
 
 void BtPhysTest::InitApp()
 {
-    m_init_done = true;
+    m_init_status = 1;
 
     m_loop_value = .0f;
 
@@ -305,13 +305,18 @@ void BtPhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    if (!m_init_done)
+    if (!m_init_status)
     {
         if (g_renderer)
             InitApp();
-        else
-            return;
+        return;
     }
+    else if (m_init_status == 1)
+    {
+        m_init_status++;
+        return;
+    }
+
 
     if (m_controller->GetKey(KEY_QUIT).IsReleased())
         Ticker::Shutdown();
@@ -565,7 +570,7 @@ void BtPhysTest::TickDraw(float seconds)
 {
     WorldEntity::TickDraw(seconds);
 
-    if (!m_init_done)
+    if (m_init_status != 2)
         return;
 
     if (!m_ready)
