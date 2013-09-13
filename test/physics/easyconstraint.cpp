@@ -13,8 +13,6 @@ namespace lol
 namespace phys
 {
 
-#ifdef HAVE_PHYS_USE_BULLET
-
 //-------------------------------------------------------------------------
 //EASY_CONSTRAINT
 //--
@@ -39,8 +37,7 @@ void EasyConstraint::RemoveFromSimulation(class Simulation* current_simulation)
     }
 }
 
-#endif // HAVE_PHYS_USE_BULLET
-
 } /* namespace phys */
 
 } /* namespace lol */
+

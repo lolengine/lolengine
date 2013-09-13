@@ -24,8 +24,6 @@ namespace lol
 namespace phys
 {
 
-#ifdef HAVE_PHYS_USE_BULLET
-
 //-------------------------------------------------------------------------
 //EASY_CHARACTER_CONTROLLER
 //--
@@ -145,8 +143,6 @@ void EasyCharacterController::TickGame(float seconds)
         m_base_cached_movement = vec3(.0f);
     }
 }
-
-#endif // HAVE_PHYS_USE_BULLET
 
 } /* namespace phys */
 

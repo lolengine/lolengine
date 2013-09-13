@@ -8,7 +8,6 @@
 #if !defined __LOLPHYSICS_H__
 #define __LOLPHYSICS_H__
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include <cstring>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
@@ -16,7 +15,6 @@
 #include "lolbtphysicsintegration.h"
 #include "easyphysics.h"
 #include "easyconstraint.h"
-#endif
 
 namespace lol
 {
@@ -80,7 +78,6 @@ public:
 
     char const *GetName() { return "<Simulation>"; }
 
-#ifdef HAVE_PHYS_USE_BULLET
 public:
     void Init()
     {
@@ -266,21 +263,6 @@ private:
     btSequentialImpulseConstraintSolver*    m_solver;
     // The world.
     btDiscreteDynamicsWorld*                m_dynamics_world;
-
-#else  // NO PHYSIC IMPLEMENTATION
-
-public:
-    void Init() { }
-    void TickGame(float seconds) { }
-    bool RayHits(RayCastResult& HitResult, eRaycastType RaycastType, const vec3& RayFrom, const vec3& RayTo, EasyPhysic* SourceCaster=NULL) { return false; }
-    void Exit() { }
-private:
-    void CustomSetContinuousDetection(bool ShouldUseCCD) { }
-    void CustomSetGravity(vec3 &NewGravity) { }
-    void CustomSetWorldLimit(vec3 &NewWorldMin, vec3 &NewWorldMax) { }
-    void CustomSetTimestep(float NewTimestep) { }
-
-#endif // PHYSIC IMPLEMENTATION
 
 public:
     //Main logic :

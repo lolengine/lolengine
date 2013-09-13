@@ -16,7 +16,6 @@
 
 #define USE_LOL_CTRLR_CHARAC
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include <stdio.h>
 #include "lolbtphysicsintegration.h"
@@ -30,8 +29,6 @@
 //#include "BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
 //#include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
 //#include "LinearMath/btDefaultMotionState.h"
-#endif //HAVE_PHYS_USE_BULLET
-
 
 namespace lol
 {
@@ -40,7 +37,6 @@ namespace phys
 {
 
 #ifdef USE_LOL_CTRLR_CHARAC
-#ifdef HAVE_PHYS_USE_BULLET
 
 //When called, will try to remove Character controller from its collision.
 bool BulletKinematicCharacterController::RecoverFromPenetration(btCollisionWorld* CollisionWorld)
@@ -238,7 +234,6 @@ void BulletKinematicCharacterController::Jump()
     m_was_jumping = true;
 }
 
-#endif // HAVE_PHYS_USE_BULLET
 #endif // USE_LOL_CTRLR_CHARAC
 
     } /* namespace phys */

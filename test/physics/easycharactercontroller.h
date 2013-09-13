@@ -20,12 +20,10 @@
 #if !defined __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 #define __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include "easyphysics.h"
 #include "bulletcharactercontroller.h"
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
-#endif
 
 namespace lol
 {
@@ -39,8 +37,6 @@ class EasyCharacterController : public EasyPhysic,
 
     friend class Simulation;
     friend class EasyPhysic;
-
-#ifdef HAVE_PHYS_USE_BULLET
 
 public:
     EasyCharacterController(WorldEntity* NewOwnerEntity) :
@@ -101,17 +97,6 @@ protected:
     //----
     vec3                            m_walk_velocity;
     vec3                            m_current_velocity;
-
-#else  // NO PHYSIC IMPLEMENTATION
-
-    virtual void InitBodyToRigid(bool ZeroMassIsKinematic=false) { }
-    virtual void InitBodyToGhost() { }
-    virtual void AddToSimulation(class Simulation* current_simulation) { }
-    virtual void RemoveFromSimulation(class Simulation* current_simulation) { }
-    virtual void SetMovementForFrame(vec3 const &MoveQuantity) { }
-
-#endif // PHYSIC IMPLEMENTATION
-
 };
 
 } /* namespace phys */

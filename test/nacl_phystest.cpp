@@ -14,10 +14,6 @@
 
 using namespace lol;
 
-#ifndef HAVE_PHYS_USE_BULLET
-#define HAVE_PHYS_USE_BULLET
-#endif /* HAVE_PHYS_USE_BULLET */
-
 //#include "physics/lolphysics.h"
 //#include "physics/easyphysics.h"
 

@@ -18,11 +18,9 @@
 #if !defined __BULLETCHARACTERCONTROLLER_BULLETCHARACTERCONTROLLER_H__
 #define __BULLETCHARACTERCONTROLLER_BULLETCHARACTERCONTROLLER_H__
 
-#ifdef HAVE_PHYS_USE_BULLET
 #include "core.h"
 #include "easyphysics.h"
 //#include "BulletDynamics\Character\btCharacterControllerInterface.h"
-#endif
 
 #define USE_LOL_CTRLR_CHARAC
 
@@ -33,7 +31,6 @@ namespace lol
     {
 
 #ifdef USE_LOL_CTRLR_CHARAC
-#ifdef HAVE_PHYS_USE_BULLET
 
     //SweepCallback used for Swweep Tests.
     class ClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
@@ -278,7 +275,6 @@ namespace lol
             vec3                        m_velocity;
         };
 
-#endif // HAVE_PHYS_USE_BULLET
 #endif // USE_LOL_CTRLR_CHARAC
 
     } /* namespace phys */
