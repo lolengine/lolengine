@@ -82,7 +82,7 @@ public:
       : m_file_name(file_name)
     {
         /* Register an input controller for the keyboard */
-        m_controller = new Controller(KEY_MAX, 0);
+        m_controller = new Controller("Default", KEY_MAX, 0);
 
         m_controller->GetKey(KEY_CAM_RESET).Bind("Keyboard", "Return");
         m_controller->GetKey(KEY_CAM_ZOOM_IN).Bind("Keyboard", "PageUp");
