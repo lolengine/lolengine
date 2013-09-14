@@ -158,6 +158,42 @@ public:
         return -1;
     }
 
+    bool StartsWith(char const* token) const
+    {
+        const char* p = C();
+        while (*token != '\0')
+        {
+            if (*p != *token)
+                return false;
+
+            ++p;
+            ++token;
+        }
+
+        return true;
+    }
+
+    bool EndsWith(char const* token) const
+    {
+        const char* p = C();
+        int token_idx = strlen(token) - 1;
+        int c_idx = strlen(p) - 1;
+
+        if (c_idx < token_idx)
+            return false;
+
+        while (token_idx >= 0)
+        {
+            if (token[token_idx] != p[c_idx])
+                return false;
+
+            --token_idx;
+            --c_idx;
+        }
+
+        return true;
+    }
+
     inline String operator +(String const &s) const
     {
         String ret(*this);
