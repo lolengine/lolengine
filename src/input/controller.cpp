@@ -22,6 +22,8 @@ namespace lol
 
 void KeyBinding::Bind(const char* device_name, const char* key_name)
 {
+    ClearBinding();
+
     m_device = InputDevice::Get(device_name);
     if (!m_device)
     {
@@ -37,11 +39,18 @@ void KeyBinding::Bind(const char* device_name, const char* key_name)
     }
 }
 
+void KeyBinding::ClearBinding()
+{
+    m_keyindex = -1;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // AxisBinding
 
 void AxisBinding::Bind(const char* device_name, const char* axis_name)
 {
+    ClearBinding();
+
     m_device = InputDevice::Get(device_name);
     if (!m_device)
     {
@@ -57,6 +66,73 @@ void AxisBinding::Bind(const char* device_name, const char* axis_name)
     }
 }
 
+void AxisBinding::BindKey(const char* device_name, const char* key_name)
+{
+    ClearBinding();
+
+    m_device = InputDevice::Get(device_name);
+    if (!m_device)
+    {
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        return;
+    }
+
+    m_maxkeyindex = m_device->GetKeyIndex(key_name);
+
+    if (m_maxkeyindex < 0)
+    {
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, key_name);
+    }
+}
+
+void AxisBinding::BindKeys(const char* device_name, const char* min_key_name, const char* max_key_name)
+{
+    ClearBinding();
+    m_device = InputDevice::Get(device_name);
+    if (!m_device)
+    {
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        return;
+    }
+
+    m_minkeyindex = m_device->GetKeyIndex(min_key_name);
+    m_maxkeyindex = m_device->GetKeyIndex(max_key_name);
+
+    if (m_minkeyindex < 0)
+    {
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, min_key_name);
+        ClearBinding();
+    }
+
+    if (m_maxkeyindex < 0)
+    {
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, max_key_name);
+        ClearBinding();
+    }
+}
+
+void AxisBinding::ClearBinding()
+{
+    m_axisindex = -1;
+    m_minkeyindex = -1;
+    m_maxkeyindex = -1;
+}
+
+float AxisBinding::RetrieveCurrentValue()
+{
+    if (m_axisindex != -1)
+    {
+        return m_device->GetAxis(m_axisindex);
+    }
+
+    float value = 0.0f;
+    if (m_minkeyindex != -1)
+        value += m_device->GetKey(m_minkeyindex) ? -1.0f : 0.0f;
+    if (m_maxkeyindex != -1)
+        value += m_device->GetKey(m_maxkeyindex) ? 1.0f : 0.0f;
+
+    return value;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Controller
