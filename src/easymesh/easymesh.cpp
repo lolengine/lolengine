@@ -61,9 +61,9 @@ void GpuShaderData::AddUniform(const lol::String &new_uniform)
 }
 
 //-----------------------------------------------------------------------------
-void GpuShaderData::AddAttribute(const lol::String &new_attribute, VertexUsage usage, int index)
+void GpuShaderData::AddAttribute(VertexUsage usage, int index)
 {
-    m_shader_attrib.Push(new_attribute, m_shader->GetAttribLocation(new_attribute.C(), usage, index));
+    m_shader_attrib.Push(m_shader->GetAttribLocation(usage, index));
 }
 
 //-----------------------------------------------------------------------------
@@ -76,11 +76,11 @@ ShaderUniform const *GpuShaderData::GetUniform(const lol::String &uniform)
 }
 
 //-----------------------------------------------------------------------------
-ShaderAttrib const *GpuShaderData::GetAttribute(const lol::String &attribute)
+ShaderAttrib const *GpuShaderData::GetAttribute(VertexUsage usage, int index)
 {
     for (int i = 0; i < m_shader_attrib.Count(); ++i)
-        if (m_shader_attrib[i].m1 == attribute)
-            return &m_shader_attrib[i].m2;
+        if (m_shader_attrib[i].GetUsage() == usage && m_shader_attrib[i].GetIndex() == index)
+            return &m_shader_attrib[i];
     return nullptr;
 }
 
@@ -198,10 +198,10 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
     ASSERT(!vflags, "Vertex Usage setup is not implemented for %s, feel free to do so.",
            VertexUsage::GetNameList(vflags).C());
 
-    if (has_position)   gpudata->AddAttribute(gpudata->GetInVertexName(),   VertexUsage::Position, 0);
-    if (has_normal)     gpudata->AddAttribute(gpudata->GetInNormalName(),   VertexUsage::Normal, 0);
-    if (has_color)      gpudata->AddAttribute(gpudata->GetInColorName(),    VertexUsage::Color, 0);
-    if (has_texcoord)   gpudata->AddAttribute(gpudata->GetInTexCoordName(), VertexUsage::TexCoord, 0);
+    if (has_position)   gpudata->AddAttribute(VertexUsage::Position, 0);
+    if (has_normal)     gpudata->AddAttribute(VertexUsage::Normal, 0);
+    if (has_color)      gpudata->AddAttribute(VertexUsage::Color, 0);
+    if (has_texcoord)   gpudata->AddAttribute(VertexUsage::TexCoord, 0);
 
     SetupVertexData(gpudata->m_vert_decl_flags, src_mesh);
 
@@ -408,10 +408,10 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model)
     int idx = 0;
     ShaderAttrib Attribs[4] = { lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib() };
 
-    if (has_position)   Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInVertexName());
-    if (has_normal)     Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInNormalName());
-    if (has_color)      Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInColorName());
-    if (has_texcoord)   Attribs[idx++] = *gpu_sd.GetAttribute(gpu_sd.GetInTexCoordName());
+    if (has_position)   Attribs[idx++] = *gpu_sd.GetAttribute(VertexUsage::Position, 0);
+    if (has_normal)     Attribs[idx++] = *gpu_sd.GetAttribute(VertexUsage::Normal, 0);
+    if (has_color)      Attribs[idx++] = *gpu_sd.GetAttribute(VertexUsage::Color, 0);
+    if (has_texcoord)   Attribs[idx++] = *gpu_sd.GetAttribute(VertexUsage::TexCoord, 0);
 
     vdecl->SetStream(vbo, Attribs[0], Attribs[1], Attribs[2], Attribs[3]);
 

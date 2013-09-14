@@ -463,8 +463,8 @@ public:
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(11_fractal));
 
-            m_vertexattrib = m_shader->GetAttribLocation("a_Vertex", VertexUsage::Position, 0);
-            m_texattrib = m_shader->GetAttribLocation("a_TexCoord", VertexUsage::TexCoord, 0);
+            m_vertexattrib = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+            m_texattrib = m_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
             m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
             m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
             m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");

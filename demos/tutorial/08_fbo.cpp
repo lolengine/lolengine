@@ -58,7 +58,7 @@ public:
         if (!m_ready)
         {
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(08_fbo));
-            m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_uni_flag = m_shader->GetUniformLocation("in_Flag");
             m_uni_point = m_shader->GetUniformLocation("in_Point");
             m_uni_color = m_shader->GetUniformLocation("in_Color");

@@ -6,14 +6,14 @@ uniform mat4 u_ZoomSettings;
 uniform vec4 u_TexelSize;
 uniform vec4 u_ScreenSize;
 
-attribute vec2 a_TexCoord;
-attribute vec2 a_Vertex;
+attribute vec2 in_TexCoord;
+attribute vec2 in_Position;
 
 varying vec4 v_CenterX, v_CenterY, v_IndexX, v_IndexY;
 
 void main(void)
 {
-    gl_Position = vec4(a_Vertex, 0.0, 1.0);
+    gl_Position = vec4(in_Position, 0.0, 1.0);
     /* Center point in [-.5,.5], apply zoom and translation
      * transformation, and go back to texture coordinates
      * in [0,1]. That's the ideal point we would like to
@@ -33,9 +33,9 @@ void main(void)
                        u_ZoomSettings[1][1],
                        u_ZoomSettings[2][1],
                        u_ZoomSettings[3][1]);
-    v_CenterX = zoomscale * a_TexCoord.x + zoomtx
+    v_CenterX = zoomscale * in_TexCoord.x + zoomtx
               + offsets.xyxy * u_TexelSize.x;
-    v_CenterY = zoomscale * a_TexCoord.y - zoomty
+    v_CenterY = zoomscale * in_TexCoord.y - zoomty
               + offsets.xyyx * u_TexelSize.y;
     /* Precompute the multiple of one texel where our ideal
      * point lies. The fragment shader will call floor() on

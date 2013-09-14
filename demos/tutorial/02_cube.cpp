@@ -75,10 +75,8 @@ public:
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(02_cube));
 
             m_mvp = m_shader->GetUniformLocation("in_Matrix");
-            m_coord = m_shader->GetAttribLocation("in_Vertex",
-                                                  VertexUsage::Position, 0);
-            m_color = m_shader->GetAttribLocation("in_Color",
-                                                  VertexUsage::Color, 0);
+            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+            m_color = m_shader->GetAttribLocation(VertexUsage::Color, 0);
 
             m_vdecl =
               new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,

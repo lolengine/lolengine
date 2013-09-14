@@ -5,7 +5,7 @@
 
 #version 120
 
-attribute vec2 in_position;
+attribute vec2 in_Position;
 
 uniform vec2 in_screen_res;
 
@@ -16,7 +16,7 @@ varying vec2 pass_p[8];
 void main()
 {
     //JFA ALGO
-    pass_pos = ((vec2(1.0) + in_position) * 0.5);
+    pass_pos = ((vec2(1.0) + in_Position) * 0.5);
 
     float k = in_step;
 
@@ -30,7 +30,7 @@ void main()
     pass_p[6] = p2 + vec2( 0,  k);
     pass_p[7] = p2 + vec2( k,  k);
 
-    gl_Position = vec4(in_position, 0.0, 1.0);
+    gl_Position = vec4(in_Position, 0.0, 1.0);
 }
 
 [frag.glsl]

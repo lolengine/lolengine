@@ -202,8 +202,8 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 
     ShaderUniform uni_mat, uni_tex, uni_texsize;
     ShaderAttrib attr_pos, attr_tex;
-    attr_pos = data->m_tile_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
-    attr_tex = data->m_tile_shader->GetAttribLocation("in_TexCoord", VertexUsage::TexCoord, 0);
+    attr_pos = data->m_tile_shader->GetAttribLocation(VertexUsage::Position, 0);
+    attr_tex = data->m_tile_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
 
     data->m_tile_shader->Bind();
 
@@ -307,8 +307,8 @@ void Scene::RenderLines() // XXX: rename to Blit()
 
     ShaderUniform uni_mat, uni_tex;
     ShaderAttrib attr_pos, attr_col;
-    attr_pos = data->m_line_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
-    attr_col = data->m_line_shader->GetAttribLocation("in_Color", VertexUsage::Color, 0);
+    attr_pos = data->m_line_shader->GetAttribLocation(VertexUsage::Position, 0);
+    attr_col = data->m_line_shader->GetAttribLocation(VertexUsage::Color, 0);
 
     data->m_line_shader->Bind();
 

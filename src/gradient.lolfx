@@ -2,7 +2,7 @@
 
 #version 130
 
-attribute vec3 in_Vertex;
+attribute vec3 in_Position;
 attribute vec4 in_Color;
 varying vec4 pass_Color;
 
@@ -13,7 +13,7 @@ uniform mat4 model_matrix;
 void main()
 {
     gl_Position = proj_matrix * view_matrix * model_matrix
-                * vec4(in_Vertex, 1.0);
+                * vec4(in_Position, 1.0);
     pass_Color = in_Color;
 }
 

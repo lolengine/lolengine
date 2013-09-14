@@ -39,6 +39,24 @@ using namespace std;
 namespace lol
 {
 
+static const char* attribute_names[] = {
+    "in_Position",
+    "in_BlendWeight",
+    "in_BlendIndices",
+    "in_Normal",
+    "in_PointSize",
+    "in_TexCoord",
+    "in_TexCoordExt",
+    "in_Tangent",
+    "in_Binormal",
+    "in_TessFactor",
+    "in_PositionT",
+    "in_Color",
+    "in_Fog",
+    "in_Depth",
+    "in_Sample"
+};
+
 /*
  * Shader implementation class
  */
@@ -61,7 +79,7 @@ private:
 #elif !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
-    Map<String, GLint> attrib_locations;
+    Map<uint64_t, GLint> attrib_locations;
 #else
     CGprogram vert_id, frag_id;
 #endif
@@ -322,12 +340,68 @@ Shader::Shader(char const *vert, char const *frag)
     {
         Log::Debug("link log for program: %s", errbuf);
     }
+
+    GLint validated;
     glValidateProgram(data->prog_id);
+    glGetProgramiv(data->prog_id, GL_VALIDATE_STATUS, &validated);
+    if (validated != GL_TRUE)
+    {
+        Log::Error("failed to validate program");
+    }
+
+    GLint num_attribs;
+    glGetProgramiv(data->prog_id, GL_ACTIVE_ATTRIBUTES, &num_attribs);
+
+    GLint max_len;
+    glGetProgramiv(data->prog_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len);
+
+    char* name_buffer = new char[max_len];
+    for (int i = 0; i < num_attribs; ++i)
+    {
+        int attrib_len;
+        int attrib_size;
+        int attrib_type;
+        glGetActiveAttrib(data->prog_id, i, max_len, &attrib_len, (GLint*)&attrib_size, (GLenum*)&attrib_type, name_buffer);
+
+        String name(name_buffer);
+        int index = 0;
+        VertexUsage usage = VertexUsage::Max;
+        for (int j = 0; j < VertexUsage::Max; ++j)
+        {
+            if (name.StartsWith(attribute_names[j]))
+            {
+                usage = VertexUsage(j);
+                char* idx_ptr = name.C() + strlen(attribute_names[j]);
+                index = strtol(idx_ptr, nullptr, 10);
+                break;
+            }
+        }
+
+        if (usage == VertexUsage::Max || index == LONG_MIN || index == LONG_MAX)
+        {
+            Log::Error("unable to parse attribute sementic from name: %s", name_buffer);
+        }
+        else
+        {
+            GLint location = glGetAttribLocation(data->prog_id, name_buffer);
+            uint64_t flags = (uint64_t)(uint16_t)usage << 16;
+            flags |= (uint64_t)(uint16_t)index;
+            // TODO: this is here just in case. Remove this once everything has been correctly tested
+#ifdef _DEBUG
+            if (data->attrib_locations.HasKey(flags))
+            {
+                Log::Error("an error occured while parsing attribute sementics");
+            }
+#endif
+            data->attrib_locations[flags] = location;
+        }
+    }
+
+    delete[] name_buffer;
 #endif
 }
 
-ShaderAttrib Shader::GetAttribLocation(char const *attr,
-                                       VertexUsage usage, int index) const
+ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
 {
     ShaderAttrib ret;
     ret.m_flags = (uint64_t)(uint16_t)usage << 16;
@@ -336,17 +410,9 @@ ShaderAttrib Shader::GetAttribLocation(char const *attr,
 #elif !defined __CELLOS_LV2__
     GLint l;
 
-    if (!data->attrib_locations.TryGetValue(attr, l))
+    if (!data->attrib_locations.TryGetValue(ret.m_flags, l))
     {
-        l = glGetAttribLocation(data->prog_id, attr);
-        if (l < 0)
-        {
-            Log::Warn("tried to query invalid attribute: %s\n", attr);
-        }
-        else
-        {
-            data->attrib_locations[String(attr)] = l;
-        }
+        Log::Error("queried attribute is unavailable for this shader");
     }
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
 #else

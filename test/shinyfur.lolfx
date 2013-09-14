@@ -2,7 +2,7 @@
 [vert.glsl]
 #version 120
 
-attribute vec3 in_Vertex;
+attribute vec3 in_Position;
 attribute vec3 in_Normal;
 attribute vec4 in_Color;
 
@@ -18,7 +18,7 @@ varying vec4 pass_Color;
 
 void main(void)
 {
-    vec4 vertex = vec4(in_Vertex + (in_Normal * in_Damage), 1.0);
+    vec4 vertex = vec4(in_Position + (in_Normal * in_Damage), 1.0);
     float dam_perc = in_Damage / (0.1 * 40);
     vec3 vGravity = vec3(0.0, -0.981, 0.0) * 2.0;
     float k = pow(dam_perc, 3);

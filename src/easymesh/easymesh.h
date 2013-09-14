@@ -77,23 +77,19 @@ public:
     virtual ~GpuShaderData();
     //--
     void AddUniform(const lol::String &new_uniform);
-    void AddAttribute(const lol::String &new_attribute, VertexUsage usage, int index);
+    void AddAttribute(VertexUsage usage, int index);
     ShaderUniform const *GetUniform(const lol::String &uniform);
-    ShaderAttrib const *GetAttribute(const lol::String &attribute);
+    ShaderAttrib const *GetAttribute(VertexUsage usage, int index);
     //--
     virtual void SetupShaderDatas(mat4 const &model) { UNUSED(model); }
     //--
-    virtual lol::String GetInVertexName()   { return lol::String("in_Vertex");   }
-    virtual lol::String GetInNormalName()   { return lol::String("in_Normal");   }
-    virtual lol::String GetInColorName()    { return lol::String("in_Color");    }
-    virtual lol::String GetInTexCoordName() { return lol::String("in_TexCoord"); }
 
 protected:
     uint16_t                            m_vert_decl_flags;
     Shader*                             m_shader;
     DebugRenderMode                     m_render_mode;
     Array<lol::String, ShaderUniform>   m_shader_uniform;
-    Array<lol::String, ShaderAttrib>    m_shader_attrib;
+    Array<ShaderAttrib>                 m_shader_attrib;
 };
 
 class DefaultShaderData : public GpuShaderData

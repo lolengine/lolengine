@@ -2,14 +2,14 @@
 
 #version 120
 
-attribute vec3 in_Vertex;
+attribute vec3 in_Position;
 attribute vec3 in_Color;
 uniform mat4 in_Matrix;
 varying vec3 pass_Color;
 
 void main(void)
 {
-    gl_Position = in_Matrix * vec4(in_Vertex, 1.0);
+    gl_Position = in_Matrix * vec4(in_Position, 1.0);
     pass_Color = in_Color;
 }
 
