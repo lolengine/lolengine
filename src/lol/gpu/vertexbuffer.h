@@ -300,6 +300,8 @@ public:
                                      ShaderAttrib attr11 = ShaderAttrib(),
                                      ShaderAttrib attr12 = ShaderAttrib());
 
+    void SetStream(VertexBuffer *vb, ShaderAttrib attribs[]);
+
     int GetStreamCount() const;
 
     VertexStreamBase GetStream(int index) const;

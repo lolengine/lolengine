@@ -310,6 +310,19 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                                     ShaderAttrib attr11,
                                                     ShaderAttrib attr12)
 {
+#if defined _XBOX || defined USE_D3D9
+    // Don't bother in DirectX world, shader attributes are not used
+    SetStream(vb, NULL);
+#else
+    ShaderAttrib attribs[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
+                           attr7, attr8, attr9, attr10, attr11, attr12 };
+
+    SetStream(vb, attribs);
+#endif
+}
+
+void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
+{
     if (!vb->m_data->m_size)
         return;
 
@@ -347,13 +360,11 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     }
 #else
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
-    ShaderAttrib l[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
-                           attr7, attr8, attr9, attr10, attr11, attr12 };
-    for (int n = 0; n < 12 && l[n].m_flags != (uint64_t)0 - 1; n++)
+    for (int n = 0; n < 12 && attribs[n].m_flags != (uint64_t)0 - 1; n++)
     {
-        uint32_t reg = l[n].m_flags >> 32;
-        uint32_t usage = (l[n].m_flags >> 16) & 0xffff;
-        uint32_t index = l[n].m_flags & 0xffff;
+        uint32_t reg = attribs[n].m_flags >> 32;
+        uint32_t usage = (attribs[n].m_flags >> 16) & 0xffff;
+        uint32_t index = attribs[n].m_flags & 0xffff;
 
 #   if !defined __CELLOS_LV2__
         if (reg != 0xffffffff)
