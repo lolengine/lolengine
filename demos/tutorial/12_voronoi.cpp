@@ -89,7 +89,7 @@ public:
             m_vbo->Unlock();
 
             m_screen_shader = Shader::Create(LOLFX_RESOURCE_NAME(12_texture_to_screen));
-            m_screen_coord = m_screen_shader->GetAttribLocation("in_position", VertexUsage::Position, 0);
+            m_screen_coord = m_screen_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_screen_texture = m_screen_shader->GetUniformLocation("in_texture");
 
             for (int i = 0; i < MaxFboType; ++i)
@@ -102,7 +102,7 @@ public:
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_texture");
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_source_point");
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_screen_res");
-                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation("in_position", VertexUsage::Position, 0);
+                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation(VertexUsage::Position, 0);
                 }
                 else if (i == VoronoiFbo)
                 {
@@ -110,7 +110,7 @@ public:
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_texture");
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_step");
                     m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("in_screen_res");
-                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation("in_position", VertexUsage::Position, 0);
+                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation(VertexUsage::Position, 0);
                 }
                 else if (i == DistanceVoronoiFbo)
                 {

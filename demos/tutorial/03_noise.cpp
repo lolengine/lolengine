@@ -45,7 +45,7 @@ public:
         if (!m_ready)
         {
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(03_noise));
-            m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_time_uni = m_shader->GetUniformLocation("u_Time");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
