@@ -167,6 +167,7 @@ static inline double ceil(double x) { return std::ceil(x); }
 static inline ldouble ceil(ldouble x) { return std::ceil(x); }
 
 #define LOL_GENERIC_FUNC(T) \
+    static inline T sq(T x) { return x * x; } \
     static inline T fract(T x) { return x - lol::floor(x); } \
     static inline T min(T x, T y) { return std::min(x, y); } \
     static inline T max(T x, T y) { return std::max(x, y); } \

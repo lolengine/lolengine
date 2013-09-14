@@ -25,7 +25,7 @@ namespace lol
 {
 
 /*
- * Return the determinant of a 2×2 matrix.
+ * Return the determinant of a 2Ã—2 matrix.
  */
 static inline float det2(float a, float b,
                          float c, float d)
@@ -34,7 +34,7 @@ static inline float det2(float a, float b,
 }
 
 /*
- * Return the determinant of a 3×3 matrix.
+ * Return the determinant of a 3Ã—3 matrix.
  */
 static inline float det3(float a, float b, float c,
                          float d, float e, float f,
@@ -46,7 +46,7 @@ static inline float det3(float a, float b, float c,
 }
 
 /*
- * Return the cofactor of the (i,j) entry in a 2×2 matrix.
+ * Return the cofactor of the (i,j) entry in a 2Ã—2 matrix.
  */
 static inline float cofact(mat2 const &mat, int i, int j)
 {
@@ -55,7 +55,7 @@ static inline float cofact(mat2 const &mat, int i, int j)
 }
 
 /*
- * Return the cofactor of the (i,j) entry in a 3×3 matrix.
+ * Return the cofactor of the (i,j) entry in a 3Ã—3 matrix.
  */
 static inline float cofact(mat3 const &mat, int i, int j)
 {
@@ -66,7 +66,7 @@ static inline float cofact(mat3 const &mat, int i, int j)
 }
 
 /*
- * Return the cofactor of the (i,j) entry in a 4×4 matrix.
+ * Return the cofactor of the (i,j) entry in a 4Ã—4 matrix.
  */
 static inline float cofact(mat4 const &mat, int i, int j)
 {
@@ -537,26 +537,18 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
     if (!n)
         return vec3(0.f);
 
-    vec3 v(q.x, q.y, q.z), ret;
+    /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
+    float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;
+
+    vec3 ret;
 
     if (i != k)
     {
-        if ((2 + i - j) % 3)
-        {
-            ret[0] = atan2(2.f * (q.w * v[i] - v[j] * v[k]),
-                           1.f - 2.f * (v[i] * v[i] + v[j] * v[j]));
-            ret[1] = asin(2.f * (q.w * v[j] + v[i] * v[k]));
-            ret[2] = atan2(2.f * (q.w * v[k] - v[j] * v[i]),
-                           1.f - 2.f * (v[k] * v[k] + v[j] * v[j]));
-        }
-        else
-        {
-            ret[0] = atan2(2.f * (q.w * v[i] + v[j] * v[k]),
-                           1.f - 2.f * (v[i] * v[i] + v[j] * v[j]));
-            ret[1] = asin(2.f * (q.w * v[j] - v[i] * v[k]));
-            ret[2] = atan2(2.f * (q.w * v[k] + v[j] * v[i]),
-                           1.f - 2.f * (v[k] * v[k] + v[j] * v[j]));
-        }
+        ret[0] = atan2(2.f * (q.w * q[1 + i] - sign * (q[1 + j] * q[1 + k])),
+                       1.f - 2.f * (sq(q[1 + i]) + sq(q[1 + j])));
+        ret[1] = asin(2.f * (q.w * q[1 + j] + sign * (q[1 + i] * q[1 + k])));
+        ret[2] = atan2(2.f * (q.w * q[1 + k] - sign * (q[1 + j] * q[1 + i])),
+                       1.f - 2.f * (sq(q[1 + k]) + sq(q[1 + j])));
     }
     else
     {
@@ -570,65 +562,45 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     mat3 ret;
 
-    vec3 radians = (F_PI / 180.0f) * v;
-    float s0 = sin(radians[0]), c0 = cos(radians[0]);
-    float s1 = sin(radians[1]), c1 = cos(radians[1]);
-    float s2 = sin(radians[2]), c2 = cos(radians[2]);
+    vec3 const radians = (F_PI / 180.0f) * v;
+    float const s0 = sin(radians[0]), c0 = cos(radians[0]);
+    float const s1 = sin(radians[1]), c1 = cos(radians[1]);
+    float const s2 = sin(radians[2]), c2 = cos(radians[2]);
 
+    /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
+    float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;
+
+    /* k == i means X-Y-X style Euler angles; otherwise weâ€™re
+     * actually handling X-Y-Z style Tait-Bryan angles. */
     if (k == i)
     {
         k = 3 - i - j;
 
         ret[i][i] =   c1;
-        ret[j][i] =   s1 * s2;
         ret[i][j] =   s0 * s1;
-        ret[j][j] =   c0 * c2 - s0 * c1 * s2;
-        ret[k][k] = - s0 * s2 + c0 * c1 * c2;
+        ret[i][k] = - sign * (c0 * s1);
 
-        if ((2 + i - j) % 3)
-        {
-            ret[k][i] =   s1 * c2;
-            ret[k][j] = - c0 * s2 - s0 * c1 * c2;
-            ret[i][k] = - c0 * s1;
-            ret[j][k] =   s0 * c2 + c0 * c1 * s2;
-        }
-        else
-        {
-            ret[k][i] = - s1 * c2;
-            ret[k][j] =   c0 * s2 + s0 * c1 * c2;
-            ret[i][k] =   c0 * s1;
-            ret[j][k] = - s0 * c2 - c0 * c1 * s2;
-        }
+        ret[j][i] =   s1 * s2;
+        ret[j][j] =   c0 * c2 - s0 * c1 * s2;
+        ret[j][k] =   sign * (s0 * c2 + c0 * c1 * s2);
+
+        ret[k][i] =   sign * (s1 * c2);
+        ret[k][j] = - sign * (c0 * s2 + s0 * c1 * c2);
+        ret[k][k] = - s0 * s2 + c0 * c1 * c2;
     }
     else
     {
         ret[i][i] =   c1 * c2;
+        ret[i][j] =   sign * (c0 * s2) + s0 * s1 * c2;
+        ret[i][k] =   s0 * s2 - sign * (c0 * s1 * c2);
+
+        ret[j][i] = - sign * (c1 * s2);
+        ret[j][j] =   c0 * c2 - sign * (s0 * s1 * s2);
+        ret[j][k] =   sign * (s0 * c2) + c0 * s1 * s2;
+
+        ret[k][i] =   sign * s1;
+        ret[k][j] = - sign * (s0 * c1);
         ret[k][k] =   c0 * c1;
-
-        if ((2 + i - j) % 3)
-        {
-            ret[j][i] = - c1 * s2;
-            ret[k][i] =   s1;
-
-            ret[i][j] =   c0 * s2 + s0 * s1 * c2;
-            ret[j][j] =   c0 * c2 - s0 * s1 * s2;
-            ret[k][j] = - s0 * c1;
-
-            ret[i][k] =   s0 * s2 - c0 * s1 * c2;
-            ret[j][k] =   s0 * c2 + c0 * s1 * s2;
-        }
-        else
-        {
-            ret[j][i] =   c1 * s2;
-            ret[k][i] = - s1;
-
-            ret[i][j] = - c0 * s2 + s0 * s1 * c2;
-            ret[j][j] =   c0 * c2 + s0 * s1 * s2;
-            ret[k][j] =   s0 * c1;
-
-            ret[i][k] =   s0 * s2 + c0 * s1 * c2;
-            ret[j][k] = - s0 * c2 + c0 * s1 * s2;
-        }
     }
 
     return ret;
@@ -636,13 +608,18 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    vec3 half_angles = (F_PI / 360.0f) * v;
-    float s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
-    float s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
-    float s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
+    vec3 const half_angles = (F_PI / 360.0f) * v;
+    float const s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
+    float const s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
+    float const s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
 
     quat ret;
 
+    /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
+    float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;
+
+    /* k == i means X-Y-X style Euler angles; otherwise weâ€™re
+     * actually handling X-Y-Z style Tait-Bryan angles. */
     if (k == i)
     {
         k = 3 - i - j;
@@ -650,29 +627,23 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         ret[0] = c1 * (c0 * c2 - s0 * s2);
         ret[1 + i] = c1 * (c0 * s2 + s0 * c2);
         ret[1 + j] = s1 * (c0 * c2 + s0 * s2);
-        ret[1 + k] = ((2 + i - j) % 3) ? s1 * (s0 * c2 - c0 * s2)
-                                       : s1 * (c0 * s2 - s0 * c2);
+        ret[1 + k] = sign * (s0 * c2 - c0 * s2);
     }
     else
     {
         vec4 v1(c0 * c1 * c2,  s0 * c1 * c2, c0 * s1 * c2,  c0 * c1 * s2);
         vec4 v2(s0 * s1 * s2, -c0 * s1 * s2, s0 * c1 * s2, -s0 * s1 * c2);
 
-        if ((2 + i - j) % 3)
-            v1 -= v2;
-        else
-            v1 += v2;
-
-        ret[0] = v1[0];
-        ret[1 + i] = v1[1];
-        ret[1 + j] = v1[2];
-        ret[1 + k] = v1[3];
+        ret[0] = v1[0] + sign * v2[0];
+        ret[1 + i] = v1[1] + sign * v2[1];
+        ret[1 + j] = v1[2] + sign * v2[2];
+        ret[1 + k] = v1[3] + sign * v2[3];
     }
 
     return ret;
 }
 
-#define DEFINE_FROMEULER_GENERIC(name, i, j, k) \
+#define DEFINE_GENERIC_EULER_CONVERSIONS(name, i, j, k) \
     /* Create quaternions from Euler angles */ \
     template<> quat quat::fromeuler_##name(vec3 const &v) \
     { \
@@ -684,7 +655,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         return quat::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
-    /* Create 3×3 matrices from Euler angles */ \
+    /* Create 3Ã—3 matrices from Euler angles */ \
     template<> mat3 mat3::fromeuler_##name(vec3 const &v) \
     { \
         return mat3_fromeuler_generic(v, i, j, k); \
@@ -695,7 +666,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         return mat3::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
-    /* Create 4×4 matrices from Euler angles */ \
+    /* Create 4Ã—4 matrices from Euler angles */ \
     template<> mat4 mat4::fromeuler_##name(vec3 const &v) \
     { \
         return mat4(mat3_fromeuler_generic(v, i, j, k), 1.f); \
@@ -712,21 +683,21 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         return quat_toeuler_generic(q, i, j, k); \
     }
 
-DEFINE_FROMEULER_GENERIC(xyx, 0, 1, 0)
-DEFINE_FROMEULER_GENERIC(xzx, 0, 2, 0)
-DEFINE_FROMEULER_GENERIC(yxy, 1, 0, 1)
-DEFINE_FROMEULER_GENERIC(yzy, 1, 2, 1)
-DEFINE_FROMEULER_GENERIC(zxz, 2, 0, 2)
-DEFINE_FROMEULER_GENERIC(zyz, 2, 1, 2)
+DEFINE_GENERIC_EULER_CONVERSIONS(xyx, 0, 1, 0)
+DEFINE_GENERIC_EULER_CONVERSIONS(xzx, 0, 2, 0)
+DEFINE_GENERIC_EULER_CONVERSIONS(yxy, 1, 0, 1)
+DEFINE_GENERIC_EULER_CONVERSIONS(yzy, 1, 2, 1)
+DEFINE_GENERIC_EULER_CONVERSIONS(zxz, 2, 0, 2)
+DEFINE_GENERIC_EULER_CONVERSIONS(zyz, 2, 1, 2)
 
-DEFINE_FROMEULER_GENERIC(xyz, 0, 1, 2)
-DEFINE_FROMEULER_GENERIC(xzy, 0, 2, 1)
-DEFINE_FROMEULER_GENERIC(yxz, 1, 0, 2)
-DEFINE_FROMEULER_GENERIC(yzx, 1, 2, 0)
-DEFINE_FROMEULER_GENERIC(zxy, 2, 0, 1)
-DEFINE_FROMEULER_GENERIC(zyx, 2, 1, 0)
+DEFINE_GENERIC_EULER_CONVERSIONS(xyz, 0, 1, 2)
+DEFINE_GENERIC_EULER_CONVERSIONS(xzy, 0, 2, 1)
+DEFINE_GENERIC_EULER_CONVERSIONS(yxz, 1, 0, 2)
+DEFINE_GENERIC_EULER_CONVERSIONS(yzx, 1, 2, 0)
+DEFINE_GENERIC_EULER_CONVERSIONS(zxy, 2, 0, 1)
+DEFINE_GENERIC_EULER_CONVERSIONS(zyx, 2, 1, 0)
 
-#undef DEFINE_FROMEULER_GENERIC
+#undef DEFINE_GENERIC_EULER_CONVERSIONS
 
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
