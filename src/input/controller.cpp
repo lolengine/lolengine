@@ -139,14 +139,19 @@ float AxisBinding::RetrieveCurrentValue()
 
 Array<Controller*> Controller::controllers;
 
-Controller::Controller(int nb_keys, int nb_axis)
+Controller::Controller(char const* name, int nb_keys, int nb_axis)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
+    m_name = name;
     m_keys.Resize(nb_keys);
     m_axis.Resize(nb_axis);
     m_activate_nextframe = false;
     m_deactivate_nextframe = false;
     m_active = false;
+	if (Get(name) != nullptr)
+	{
+		Log::Warn("a controller with this name has already been registered");
+	}
     controllers.Push(this);
 }
 
@@ -160,6 +165,16 @@ Controller::~Controller()
             break;
         }
     }
+}
+
+Controller* Controller::Get(char const* name)
+{
+    for (int i = 0; i < controllers.Count(); ++i)
+    {
+        if (controllers[i]->m_name == name)
+            return controllers[i];
+    }
+    return nullptr;
 }
 
 void Controller::TickGame(float seconds)

@@ -73,7 +73,7 @@ public:
 
 protected:
     void Update() { m_previous = m_current; m_current = IsBound() ? RetrieveCurrentValue() : 0.0f; }
-	float RetrieveCurrentValue();
+    float RetrieveCurrentValue();
 
     const InputDevice* m_device;
     int m_axisindex;
@@ -86,10 +86,10 @@ protected:
 };
 
 
-class Controller : Entity
+class Controller : public Entity
 {
 public:
-    Controller(int nb_keys, int nb_axis);
+    Controller(char const* name, int nb_keys, int nb_axis);
     ~Controller();
 
     virtual void TickGame(float seconds);
@@ -104,12 +104,15 @@ public:
     KeyBinding& GetKey(int index) { return m_keys[index]; }
     AxisBinding& GetAxis(int index) { return m_axis[index]; }
 
+    static Controller* Get(char const* name);
+
 protected:
     Array<KeyBinding> m_keys;
     Array<AxisBinding> m_axis;
 
 private:
     static Array<Controller*> controllers;
+    String m_name;
     bool m_activate_nextframe;
     bool m_deactivate_nextframe;
     bool m_active;
