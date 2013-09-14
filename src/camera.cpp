@@ -210,7 +210,7 @@ vec3 Camera::GetUp()
 
 vec3 Camera::GetRotationEuler()
 {
-    return vec3::toeuler(GetRotation());
+    return vec3::toeuler_zyx(GetRotation());
 }
 
 quat Camera::GetRotation()

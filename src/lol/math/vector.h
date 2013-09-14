@@ -503,7 +503,19 @@ template <typename T> struct Vec3 : BVec3<T>
     explicit inline Vec3(XVec3<U, N> const &v)
       : BVec3<T>(v[0], v[1], v[2]) {}
 
-    static Vec3<T> toeuler(Quat<T> const &q);
+    static Vec3<T> toeuler_xyx(Quat<T> const &q);
+    static Vec3<T> toeuler_xzx(Quat<T> const &q);
+    static Vec3<T> toeuler_yxy(Quat<T> const &q);
+    static Vec3<T> toeuler_yzy(Quat<T> const &q);
+    static Vec3<T> toeuler_zxz(Quat<T> const &q);
+    static Vec3<T> toeuler_zyz(Quat<T> const &q);
+
+    static Vec3<T> toeuler_xyz(Quat<T> const &q);
+    static Vec3<T> toeuler_xzy(Quat<T> const &q);
+    static Vec3<T> toeuler_yxz(Quat<T> const &q);
+    static Vec3<T> toeuler_yzx(Quat<T> const &q);
+    static Vec3<T> toeuler_zxy(Quat<T> const &q);
+    static Vec3<T> toeuler_zyx(Quat<T> const &q);
 
     LOL_MEMBER_OPS(Vec3, x)
 

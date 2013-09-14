@@ -530,18 +530,38 @@ template<> quat slerp(quat const &qa, quat const &qb, float f)
     return qa * (s0 * d) + qb * (s1 * d);
 }
 
-template<> vec3 vec3::toeuler(quat const &q)
+static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
 {
     float n = norm(q);
 
     if (!n)
         return vec3(0.f);
 
-    vec3 ret(atan2(2.f * (q.w * q.x + q.y * q.z),
-                   1.f - 2.f * (q.x * q.x + q.y * q.y)),
-             asin(2.f * (q.w * q.y - q.z * q.x)),
-             atan2(2.f * (q.w * q.z + q.y * q.x),
-                   1.f - 2.f * (q.z * q.z + q.y * q.y)));
+    vec3 v(q.x, q.y, q.z), ret;
+
+    if (i != k)
+    {
+        if ((2 + i - j) % 3)
+        {
+            ret[0] = atan2(2.f * (q.w * v[i] - v[j] * v[k]),
+                           1.f - 2.f * (v[i] * v[i] + v[j] * v[j]));
+            ret[1] = asin(2.f * (q.w * v[j] + v[i] * v[k]));
+            ret[2] = atan2(2.f * (q.w * v[k] - v[j] * v[i]),
+                           1.f - 2.f * (v[k] * v[k] + v[j] * v[j]));
+        }
+        else
+        {
+            ret[0] = atan2(2.f * (q.w * v[i] + v[j] * v[k]),
+                           1.f - 2.f * (v[i] * v[i] + v[j] * v[j]));
+            ret[1] = asin(2.f * (q.w * v[j] - v[i] * v[k]));
+            ret[2] = atan2(2.f * (q.w * v[k] + v[j] * v[i]),
+                           1.f - 2.f * (v[k] * v[k] + v[j] * v[j]));
+        }
+    }
+    else
+    {
+        /* FIXME: TODO */
+    }
 
     return (180.0f / F_PI / n) * ret;
 }
@@ -653,6 +673,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 }
 
 #define DEFINE_FROMEULER_GENERIC(name, i, j, k) \
+    /* Create quaternions from Euler angles */ \
     template<> quat quat::fromeuler_##name(vec3 const &v) \
     { \
         return quat_fromeuler_generic(v, i, j, k); \
@@ -663,6 +684,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         return quat::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
+    /* Create 3×3 matrices from Euler angles */ \
     template<> mat3 mat3::fromeuler_##name(vec3 const &v) \
     { \
         return mat3_fromeuler_generic(v, i, j, k); \
@@ -673,6 +695,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
         return mat3::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
+    /* Create 4×4 matrices from Euler angles */ \
     template<> mat4 mat4::fromeuler_##name(vec3 const &v) \
     { \
         return mat4(mat3_fromeuler_generic(v, i, j, k), 1.f); \
@@ -681,6 +704,12 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     template<> mat4 mat4::fromeuler_##name(float phi, float theta, float psi) \
     { \
         return mat4::fromeuler_##name(vec3(phi, theta, psi)); \
+    } \
+    \
+    /* Retrieve Euler angles from a quaternion */ \
+    template<> vec3 vec3::toeuler_##name(quat const &q) \
+    { \
+        return quat_toeuler_generic(q, i, j, k); \
     }
 
 DEFINE_FROMEULER_GENERIC(xyx, 0, 1, 0)
