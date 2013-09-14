@@ -22,6 +22,16 @@ namespace lol
 Array<InputDevice*> InputDevice::devices;
 bool InputDevice::m_capturemouse;
 
+Array<String> InputDevice::GetAvailableDevices()
+{
+    Array<String> result;
+    for (int i = 0; i < devices.Count(); ++i)
+    {
+        result.Push(devices[i]->m_name);
+    }
+    return result;
+}
+
 void InputDeviceInternal::AddKey(const char* name)
 {
     m_keynames.Push(name);
