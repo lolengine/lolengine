@@ -218,7 +218,19 @@ LOLUNIT_FIXTURE(StringTest)
         LOLUNIT_ASSERT(i7 == 0);
         LOLUNIT_ASSERT(i8 == -1);
         LOLUNIT_ASSERT(i9 == 9);
-    }};
+    }
+
+    LOLUNIT_TEST(StartsEndsWith)
+    {
+        String s = "lolilol";
+        LOLUNIT_ASSERT(s.StartsWith("loli"));
+        LOLUNIT_ASSERT(!s.StartsWith("lolo"));
+        LOLUNIT_ASSERT(!s.StartsWith("lolilolilol"));
+        LOLUNIT_ASSERT(s.EndsWith("ilol"));
+        LOLUNIT_ASSERT(!s.EndsWith("olol"));
+        LOLUNIT_ASSERT(!s.EndsWith("lolilolilol"));
+    }
+};
 
 } /* namespace lol */
 

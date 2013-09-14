@@ -171,7 +171,9 @@ static inline ldouble ceil(ldouble x) { return std::ceil(x); }
     static inline T fract(T x) { return x - lol::floor(x); } \
     static inline T min(T x, T y) { return std::min(x, y); } \
     static inline T max(T x, T y) { return std::max(x, y); } \
-    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); }
+    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); } \
+    static inline T sign(T x) { return (T)(((T)0 < x) - (x < (T)0)); }
+
 LOL_GENERIC_FUNC(uint8_t)
 LOL_GENERIC_FUNC(int8_t)
 LOL_GENERIC_FUNC(uint16_t)
