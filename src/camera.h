@@ -52,6 +52,7 @@ public:
     void SetScreenInfos(float screen_size, float screen_ratio);
     void SetDrawInfos(float far);
     void SetDrawInfos(float near, float far);
+    void SetScreenScale(vec2 scale);
     void UseShift(bool should_shift);
     void UseTarget(bool use_target);
 
@@ -60,13 +61,13 @@ public:
     float GetScreenRatio()  { return m_screen_ratio; }
     float GetNear()         { return m_near; }
     float GetFar()          { return m_far; }
+    vec2  GetScreenScale()  { return m_screen_scale; }
     bool  IsShifted()       { return m_is_shifted; }
     bool  IsTargeting()     { return (m_target_distance != .0f); }
 
     //camera manipulation Functions
-    void SetPosition(vec3 pos);
-    void SetTarget(vec3 target);
-    void SetUp(vec3 up);
+    void SetPosition(vec3 pos, bool keep_target=false);
+    void SetTarget(vec3 target, vec3 up);
     void SetRotation(vec3 rot);
     void SetRotation(quat rot);
 
@@ -96,7 +97,9 @@ private:
     float   m_screen_ratio;
     float   m_near;
     float   m_far;
+    vec2    m_screen_scale;
     bool    m_is_shifted;
+    bool    m_fix_up;
 };
 
 } /* namespace lol */
