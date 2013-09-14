@@ -745,11 +745,6 @@ template<> mat4 mat4::ortho(float width, float height,
                        -0.5f * height, 0.5f * height, near, far);
 }
 
-template<> mat4 mat4::ortho(float screen_size, float screen_ratio_xy, float draw_distance)
-{
-    return mat4::ortho(screen_size * screen_ratio_xy, screen_size, .00001f, draw_distance);
-}
-
 template<> mat4 mat4::frustum(float left, float right, float bottom,
                               float top, float near, float far)
 {
@@ -782,15 +777,15 @@ template<> mat4 mat4::perspective(float fov_y, float width,
 
 //Returns a perspective matrix with the camera location shifted to be on the near plane
 template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
-                                          float screen_ratio_xy, float draw_distance)
+                                          float screen_ratio_yx, float near, float far)
 {
     float new_fov_y = fov_y * (F_PI / 180.0f);
+    float dist_scr = (screen_size * screen_ratio_yx * .5f) / tanf(new_fov_y * .5f);
 
-    float near = (screen_size * .5f) / lol::tan(new_fov_y * .5f);
-    float far = near + draw_distance;
-
-    return mat4::perspective(fov_y, screen_size * screen_ratio_xy, screen_size, near - .000001f, far) *
-           mat4::translate(.0f, .0f, -near);
+    return mat4::perspective(fov_y, screen_size, screen_size * screen_ratio_yx,
+                             max(.001f, dist_scr + near),
+                             max(.001f, dist_scr + far)) *
+           mat4::translate(.0f, .0f, -dist_scr);
 }
 
 } /* namespace lol */

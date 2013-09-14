@@ -2,6 +2,7 @@
 // Lol Engine
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//                2012-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -38,12 +39,13 @@ Camera::Camera()
     m_screen_size = (float)screen_size.x;
     m_screen_ratio = (float)screen_size.x / (float)screen_size.y;
     m_is_shifted = false;
+    m_screen_scale = vec2(1.f);
+
+    m_target_distance = .0f;
 
     /* Create a default perspective */
     SetProjection(mat4::perspective(45.f, 800.f, 600.f, -1000.f, 1000.f));
-    SetView(mat4::lookat(vec3(0.f, 50.f, 50.f),
-                         vec3(0.f),
-                         vec3(0.f, 1.f, 0.f)));
+    SetView(mat4::lookat(vec3(0.f, 50.f, 50.f), vec3(0.f), vec3(0.f, 1.f, 0.f)));
 }
 
 Camera::~Camera()
@@ -53,6 +55,8 @@ Camera::~Camera()
 //-----------------------------------------------------------------------------
 //View functions
 //--
+
+//WARNING : Don't forget the position
 void Camera::SetView(mat4 const &view)
 {
     m_view_matrix = view;
@@ -68,14 +72,12 @@ void Camera::SetView(vec3 eye, vec3 target, vec3 up)
 
 void Camera::SetView(vec3 pos, vec3 rot)
 {
-    SetView(pos, quat::fromeuler_xyz(rot));
+    SetView(pos, quat::fromeuler_zyx(rot.zyx));
 }
 
 void Camera::SetView(vec3 pos, quat rot)
 {
-    m_view_matrix = mat4::lookat(pos,
-                                 pos + rot.transform(vec3(0.f, 0.f, -max(m_target_distance, 1.f))),
-                                 rot.transform(vec3(0.f, 1.f, 0.f)));
+    m_view_matrix = inverse(mat4(rot)) * mat4::translate(-pos);
     m_position = pos;
 }
 
@@ -104,16 +106,16 @@ void Camera::SetProjection(float fov, float near, float far, float screen_size, 
     m_far = far;
     m_screen_size = screen_size;
     m_screen_ratio = screen_ratio;
-
+    mat4 screen_scale = mat4::scale(vec3(m_screen_scale.xy, 1.f));
     if (m_fov > .0f)
     {
         if (m_is_shifted)
-            SetProjection(mat4::shifted_perspective(m_fov, screen_size, screen_ratio, m_far - m_near));
+            SetProjection(screen_scale * mat4::shifted_perspective(m_fov, screen_size, screen_ratio, m_near, m_far));
         else
-            SetProjection(mat4::perspective(m_fov, screen_size, screen_size * screen_ratio, m_near, m_far));
+            SetProjection(screen_scale * mat4::perspective(m_fov, screen_size, screen_size * screen_ratio, m_near, m_far));
     }
     else
-        SetProjection(mat4::ortho(screen_size, screen_size * screen_ratio, m_near, m_far));
+        SetProjection(screen_scale * mat4::ortho(screen_size, screen_size * screen_ratio, m_near, m_far));
 }
 
 mat4 Camera::GetProjection()
@@ -149,6 +151,12 @@ void Camera::SetDrawInfos(float near, float far)
     SetProjection(m_fov, near, far, m_screen_size, m_screen_ratio);
 }
 
+void Camera::SetScreenScale(vec2 screen_scale)
+{
+    m_screen_scale = screen_scale;
+    SetProjection(m_fov, m_near, m_far, m_screen_size, m_screen_ratio);
+}
+
 void Camera::UseShift(bool should_shift)
 {
     m_is_shifted = should_shift;
@@ -163,28 +171,23 @@ void Camera::UseTarget(bool use_target)
 //-----------------------------------------------------------------------------
 //camera manipulation Functions
 //--
-void Camera::SetPosition(vec3 pos)
+void Camera::SetPosition(vec3 pos, bool keep_target)
 {
-    if (m_target_distance > .0f)
-        SetView(m_position, m_position + GetTarget(), GetUp());
+    if (keep_target)
+        SetView(pos, GetTarget(), GetUp());
     else
         SetView(GetView() * mat4::translate(pos - m_position));
     m_position = pos;
 }
 
-void Camera::SetTarget(vec3 target)
+void Camera::SetTarget(vec3 target, vec3 up)
 {
-    SetView(m_position, target, GetUp());
-}
-
-void Camera::SetUp(vec3 up)
-{
-    SetView(m_position, GetTarget(), up);
+    SetView(m_position, target, up);
 }
 
 void Camera::SetRotation(vec3 rot)
 {
-    SetRotation(quat::fromeuler_xyz(rot));
+    SetView(m_position, rot);
 }
 
 void Camera::SetRotation(quat rot)

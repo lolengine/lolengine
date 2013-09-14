@@ -295,7 +295,7 @@ public:
         if (m_fov_damp < MIN_FOV)
             cur_cam->SetProjection(mat4::ortho(screen_size * fov_ratio * 1.1f, 1600.f / 600.f, 1000.f));
         else if (fov_ratio > .0f)
-            cur_cam->SetProjection(mat4::shifted_perspective(m_fov_damp, screen_size * fov_ratio * 1.1f, 1600.f / 600.f, 1000.f));
+            cur_cam->SetProjection(mat4::shifted_perspective(m_fov_damp, screen_size * fov_ratio * 1.1f, 1600.f / 600.f, .00001f, 1000.f));
 
         vec3 cam_center = cam_min_max[0] + min_max_diff * .5f;
 

@@ -43,6 +43,45 @@ template <typename T1, typename T2, typename Tf> static inline T1 damp(const T1 
     return lol::lerp(a, b, dt / (dt + x));
 }
 
+template< class T > inline void Swap( T& A, T& B )
+{
+	const T Temp = A;
+	A = B;
+	B = Temp;
+}
+
+//SmoothClamp clamps x in [a - sd, b + sd] and returns a value in [a, b] that is smoothed at the borders.
+static inline float SmoothClamp(float &x, float a, float b, float sd)
+{
+	if (b < a)
+		Swap(a, b);
+
+    float tx = x;
+    float ta = a - sd;
+    float tb = b + sd;
+	if (sd > 0.f)
+	{
+		if ((b - a) < 2.f * sd)
+			sd = .5f * (b - a);
+
+		if (tx < a + sd && tx > a - sd)
+		{
+			float t = (tx - a) / sd;
+			t = 0.25f * (t + 1.0f) * (t + 1.0f);
+			tx = a + t * sd;
+		}
+		else if (tx < b + sd && tx > b - sd)
+		{
+			float t = -(tx - b) / sd;
+			t = 0.25f * (t + 1.0f) * (t + 1.0f);
+			tx = b - t * sd;
+		}
+	}
+
+    x = lol::clamp(x, ta, tb);
+	return lol::clamp(tx, a, b);
+}
+
 } /* namespace lol */
 
 #endif // __LOL_NUMERIC_H__
