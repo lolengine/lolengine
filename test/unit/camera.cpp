@@ -42,7 +42,7 @@ LOLUNIT_FIXTURE(CameraTest)
         up = vec3(0.f, 1.f, 0.f);
         m_lookat = mat4::lookat(eye, target, up);
         q_lookat = quat(m_lookat);
-        v_lookat = vec3::toeuler(q_lookat);
+        v_lookat = vec3::toeuler_zyx(q_lookat);
         fov = 90.f;
         screen_size = 800.f;
         screen_ratio = 1.0f;
