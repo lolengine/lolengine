@@ -88,8 +88,8 @@ void Gradient::TickDraw(float seconds)
 
     ShaderUniform uni_mat;
     ShaderAttrib attr_pos, attr_col;
-    attr_pos = data->shader->GetAttribLocation("in_Vertex", VertexUsage::Position, 0);
-    attr_col = data->shader->GetAttribLocation("in_Color", VertexUsage::Color, 0);
+    attr_pos = data->shader->GetAttribLocation(VertexUsage::Position, 0);
+    attr_col = data->shader->GetAttribLocation(VertexUsage::Color, 0);
 
     data->shader->Bind();
 

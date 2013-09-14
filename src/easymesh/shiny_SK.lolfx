@@ -2,7 +2,7 @@
 [vert.glsl]
 #version 120
 
-attribute vec3 in_Vertex;
+attribute vec3 in_Position;
 attribute vec3 in_Normal;
 attribute vec4 in_Color;
 attribute vec2 in_Index;
@@ -21,7 +21,7 @@ varying vec4 pass_Color;
 
 void main(void)
 {
-    vec4 vertex = in_ModelView * vec4(in_Vertex, 1.0);
+    vec4 vertex = in_ModelView * vec4(in_Position, 1.0);
     vec3 tnorm = normalize(in_NormalMat * in_Normal);
 
     pass_Vertex = vertex;

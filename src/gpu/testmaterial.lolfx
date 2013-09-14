@@ -70,10 +70,10 @@ technique Foo
 #version 120
 
 /* Valid with my GLSL compiler */
-//#pragma lolfx semantic(in_Vertex, POSITION)
+//#pragma lolfx semantic(in_Position, POSITION)
 //#pragma lolfx semantic(in_Normal, NORMAL)
 //#pragma lolfx semantic(in_Color, COLOR)
-attribute vec3 in_Vertex;
+attribute vec3 in_Position;
 attribute vec3 in_Normal;
 attribute vec4 in_Color;
 
