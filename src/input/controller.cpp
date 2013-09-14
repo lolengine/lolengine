@@ -148,10 +148,10 @@ Controller::Controller(char const* name, int nb_keys, int nb_axis)
     m_activate_nextframe = false;
     m_deactivate_nextframe = false;
     m_active = false;
-	if (Get(name) != nullptr)
-	{
-		Log::Warn("a controller with this name has already been registered");
-	}
+    if (Get(name) != nullptr)
+    {
+        Log::Warn("a controller with this name has already been registered");
+    }
     controllers.Push(this);
 }
 
