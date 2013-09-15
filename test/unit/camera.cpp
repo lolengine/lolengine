@@ -177,7 +177,7 @@ LOLUNIT_FIXTURE(CameraTest)
         LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
 
         is_shifted = true;
-        refmx = mat4::shifted_perspective(fov, screen_size, screen_ratio, far - near);
+        refmx = mat4::shifted_perspective(fov, screen_size, screen_ratio, near, far);
 
         tc.UseShift(is_shifted);
         TEST_MATRIX(refmx, tc.GetProjection());
