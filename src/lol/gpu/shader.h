@@ -157,6 +157,7 @@ public:
     static Shader *Create(char const *lolfx);
     static void Destroy(Shader *shader);
 
+    int GetAttribCount() const;
     ShaderAttrib GetAttribLocation(struct VertexUsage usage, int index) const;
 
     ShaderUniform GetUniformLocation(char const *uni) const;

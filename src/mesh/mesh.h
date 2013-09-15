@@ -22,15 +22,22 @@ namespace lol
 class SubMesh
 {
 public:
-    SubMesh();
+    SubMesh(VertexDeclaration* vdecl);
     ~SubMesh();
 
-    void Render(mat4 const &model);
+    void SetMeshPrimitive(MeshPrimitive mesh_primitive);
+    void SetVertexBuffer(int index, VertexBuffer* vbo);
+    void AddTexture(const char* name, Texture* texture);
 
-private:
-    Array<vec3> m_vertices;
-    Array<vec2> m_uvs;
-    Array<vec3> m_normals;
+    void Render(Shader* shader);
+
+protected:
+    VertexDeclaration* m_vdecl;
+    MeshPrimitive m_mesh_prim;
+    VertexBuffer** m_vbos;
+    int m_vertex_count;
+
+    Array<String, Texture*> m_textures;
 };
 
 class Mesh
