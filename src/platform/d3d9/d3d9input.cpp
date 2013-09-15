@@ -56,8 +56,21 @@ D3d9Input::D3d9Input()
         InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
         for (int j = 0; j < 4; ++j)
             stick->AddAxis(String::Printf("Axis%d", j+1).C());
-        for (int j = 0; j < 16; ++j)
-            stick->AddKey(String::Printf("Button%d", j+1).C());
+
+        stick->AddKey("DPadUp");
+        stick->AddKey("DPadDown");
+        stick->AddKey("DPadLeft");
+        stick->AddKey("DPadRight");
+        stick->AddKey("Start");
+        stick->AddKey("Back");
+        stick->AddKey("LeftThumb");
+        stick->AddKey("RightThumb");
+        stick->AddKey("LeftShoulder");
+        stick->AddKey("RightShoulder");
+        stick->AddKey("A");
+        stick->AddKey("B");
+        stick->AddKey("X");
+        stick->AddKey("Y");
 
         m_data->m_joysticks.Push(i, stick);
     }
@@ -82,11 +95,6 @@ D3d9Input::~D3d9Input()
 void D3d9Input::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
-}
-
-void D3d9Input::TickDraw(float seconds)
-{
-    Entity::TickDraw(seconds);
 
 #if defined USE_XINPUT
     for (int i = 0; i < m_data->m_joysticks.Count(); i++)
@@ -101,9 +109,22 @@ void D3d9Input::TickDraw(float seconds)
         m_data->m_joysticks[i].m2->SetAxis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
 
         for (int b = 0; b < 16; b++)
-            m_data->m_joysticks[i].m2->SetKey(b, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+        {
+            // Reserved values
+            if ((1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER && (1 << b) < XINPUT_GAMEPAD_A)
+                continue;
+
+            int key_index = (1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER ? b - 2 : b;
+
+            m_data->m_joysticks[i].m2->SetKey(key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+        }
     }
 #endif
+}
+
+void D3d9Input::TickDraw(float seconds)
+{
+    Entity::TickDraw(seconds);
 }
 
 } /* namespace lol */

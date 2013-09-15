@@ -337,6 +337,9 @@ void TickerData::GameThreadTick()
         data->m_todolist.Remove(-1);
         data->m_list[e->m_gamegroup].Push(e);
         data->m_list[e->m_drawgroup].Push(e);
+
+        // Initialize the entity
+        e->InitGame();
     }
 
     /* Tick objects for the game loop */

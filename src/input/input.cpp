@@ -64,9 +64,9 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
 {
     InputDeviceInternal* mouse = new InputDeviceInternal("Mouse");
-    mouse->AddKey("ButtonLeft");
-    mouse->AddKey("ButtonMiddle");
-    mouse->AddKey("ButtonRight");
+    mouse->AddKey("Left");
+    mouse->AddKey("Middle");
+    mouse->AddKey("Right");
 
     mouse->AddAxis("X");
     mouse->AddAxis("Y");

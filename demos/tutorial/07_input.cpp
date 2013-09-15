@@ -34,7 +34,7 @@ public:
         m_mouse = InputDevice::Get("Mouse");
         if (m_mouse)
         {
-            m_controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "ButtonLeft");
+            m_controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "Left");
             m_controller->GetAxis(AXIS_DRAG_PITCH).Bind("Mouse", "Y");
             m_controller->GetAxis(AXIS_DRAG_YAW).Bind("Mouse", "X");
         }
@@ -99,7 +99,7 @@ public:
         if (m_joystick)
         {
             if (lol::abs(m_controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
-                m_pitch_angle -= m_controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
+                m_pitch_angle += m_controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
             if (lol::abs(m_controller->GetAxis(AXIS_YAW).GetValue()) > 0.2f)
                 m_yaw_angle += m_controller->GetAxis(AXIS_YAW).GetValue() * seconds * 100;
         }

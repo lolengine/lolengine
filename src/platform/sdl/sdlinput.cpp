@@ -225,7 +225,8 @@ void SdlInputData::Tick(float seconds)
         m_mouse->SetCursor(0, vec2((float)(mouse.x) / m_app_w, (float)(mouse.y) / m_app_h), mouse);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
         m_mouse->SetAxis(0, (float)(mouse.x - m_prevmouse.x) * 100.0f / m_screen_w);
-        m_mouse->SetAxis(1, (float)(mouse.y - m_prevmouse.y) * 100.0f / m_screen_h);
+        // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
+        m_mouse->SetAxis(1, -(float)(mouse.y - m_prevmouse.y) * 100.0f / m_screen_h);
     }
 
     if (m_mousecapture)
