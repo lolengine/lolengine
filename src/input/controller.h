@@ -19,7 +19,12 @@ namespace lol
 class KeyBinding
 {
 public:
-    KeyBinding() : m_device(nullptr), m_current(false), m_previous(false), m_keyindex(-1) {}
+    KeyBinding()
+      : m_device(nullptr),
+        m_keyindex(-1),
+        m_current(false),
+        m_previous(false)
+    {}
 
     /** Indicate wheither the key is currently down */
     bool IsDown() const { return m_current; }
@@ -52,7 +57,14 @@ protected:
 class AxisBinding
 {
 public:
-    AxisBinding() : m_device(nullptr), m_current(0.0f), m_previous(0.0f), m_axisindex(-1), m_minkeyindex(-1), m_maxkeyindex(-1) {}
+    AxisBinding()
+      : m_device(nullptr),
+        m_axisindex(-1),
+        m_minkeyindex(-1),
+        m_maxkeyindex(-1),
+        m_current(0.0f),
+        m_previous(0.0f)
+    {}
 
     /** Gets the current absolute value of this axis */
     float GetValue() const { return m_current; }
@@ -69,7 +81,8 @@ public:
     void ClearBinding();
 
     /** Indicate wheither a physical device and axis has been bound */
-    bool IsBound() { return m_device && m_axisindex != -1 || m_maxkeyindex != -1; }
+    bool IsBound() { return m_device &&
+                            (m_axisindex != -1 || m_maxkeyindex != -1); }
 
 protected:
     void Update() { m_previous = m_current; m_current = IsBound() ? RetrieveCurrentValue() : 0.0f; }

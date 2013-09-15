@@ -364,7 +364,7 @@ Shader::Shader(char const *vert, char const *frag)
         glGetActiveAttrib(data->prog_id, i, max_len, &attrib_len, (GLint*)&attrib_size, (GLenum*)&attrib_type, name_buffer);
 
         String name(name_buffer);
-        int index = 0;
+        int index = -1;
         VertexUsage usage = VertexUsage::Max;
         for (int j = 0; j < VertexUsage::Max; ++j)
         {
@@ -377,9 +377,10 @@ Shader::Shader(char const *vert, char const *frag)
             }
         }
 
-        if (usage == VertexUsage::Max || index == LONG_MIN || index == LONG_MAX)
+        if (usage == VertexUsage::Max || index == -1)
         {
-            Log::Error("unable to parse attribute sementic from name: %s", name_buffer);
+            Log::Error("unable to parse attribute semantic from name: %s",
+                       name_buffer);
         }
         else
         {
@@ -390,7 +391,7 @@ Shader::Shader(char const *vert, char const *frag)
 #ifdef _DEBUG
             if (data->attrib_locations.HasKey(flags))
             {
-                Log::Error("an error occured while parsing attribute sementics");
+                Log::Error("an error occured while parsing attribute semantics");
             }
 #endif
             data->attrib_locations[flags] = location;
