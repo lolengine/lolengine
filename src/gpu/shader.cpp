@@ -401,6 +401,11 @@ Shader::Shader(char const *vert, char const *frag)
 #endif
 }
 
+int Shader::GetAttribCount() const
+{
+    return data->attrib_locations.Count();
+}
+
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
 {
     ShaderAttrib ret;
