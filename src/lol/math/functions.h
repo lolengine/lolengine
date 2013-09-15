@@ -171,20 +171,27 @@ static inline ldouble ceil(ldouble x) { return std::ceil(x); }
     static inline T fract(T x) { return x - lol::floor(x); } \
     static inline T min(T x, T y) { return std::min(x, y); } \
     static inline T max(T x, T y) { return std::max(x, y); } \
-    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); } \
+    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); }
+
+#define LOL_GENERIC_FUNC_SIGNED(T) \
+    LOL_GENERIC_FUNC(T) \
     static inline T sign(T x) { return (T)(((T)0 < x) - (x < (T)0)); }
 
-LOL_GENERIC_FUNC(uint8_t)
-LOL_GENERIC_FUNC(int8_t)
-LOL_GENERIC_FUNC(uint16_t)
-LOL_GENERIC_FUNC(int16_t)
-LOL_GENERIC_FUNC(uint32_t)
-LOL_GENERIC_FUNC(int32_t)
-LOL_GENERIC_FUNC(uint64_t)
-LOL_GENERIC_FUNC(int64_t)
-LOL_GENERIC_FUNC(float)
-LOL_GENERIC_FUNC(double)
-LOL_GENERIC_FUNC(ldouble)
+#define LOL_GENERIC_FUNC_UNSIGNED(T) \
+    LOL_GENERIC_FUNC(T) \
+    static inline T sign(T x) { return (T)((T)0 < x); }
+
+LOL_GENERIC_FUNC_UNSIGNED(uint8_t)
+LOL_GENERIC_FUNC_SIGNED(int8_t)
+LOL_GENERIC_FUNC_UNSIGNED(uint16_t)
+LOL_GENERIC_FUNC_SIGNED(int16_t)
+LOL_GENERIC_FUNC_UNSIGNED(uint32_t)
+LOL_GENERIC_FUNC_SIGNED(int32_t)
+LOL_GENERIC_FUNC_UNSIGNED(uint64_t)
+LOL_GENERIC_FUNC_SIGNED(int64_t)
+LOL_GENERIC_FUNC_SIGNED(float)
+LOL_GENERIC_FUNC_SIGNED(double)
+LOL_GENERIC_FUNC_SIGNED(ldouble)
 #undef LOL_GENERIC_FUNC
 
 } /* namespace lol */
