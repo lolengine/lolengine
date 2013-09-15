@@ -125,9 +125,9 @@ struct ShaderAttrib
 
 public:
     inline ShaderAttrib() : m_flags((uint64_t)0 - 1) {}
-	inline bool IsValid() { return m_flags != (uint64_t)0 - 1; }
-	inline VertexUsage GetUsage() { return VertexUsage((int)(m_flags >> 16) & 0xffff); }
-	inline int GetIndex() { return (int)(m_flags & 0xffff); }
+    inline bool IsValid() { return m_flags != (uint64_t)0 - 1; }
+    inline VertexUsage GetUsage() { return VertexUsage((int)(m_flags >> 16) & 0xffff); }
+    inline int GetIndex() { return (int)(m_flags & 0xffff); }
 
 private:
     uint64_t m_flags;
