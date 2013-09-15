@@ -188,6 +188,73 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.y, a.y / ratio, 1e-5);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z, a.z / ratio, 1e-5);
     }
+
+    LOLUNIT_TEST(TaitBryanAngles)
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            /* Pick a random point and a random quaternion. We’re going
+             * to check whether going to Tait-Bryan angles and back to
+             * quaternion creates the same transform. */
+            vec3 p(rand(1.f, 2.f), rand(1.f, 2.f), rand(1.f, 2.f));
+            quat q = normalize(quat(rand(-1.f, 1.f), rand(-1.f, 1.f),
+                                    rand(-1.f, 1.f), rand(-1.f, 1.f)));
+            vec3 p0 = q.transform(p);
+
+            /* x-y-z */
+            quat q1 = quat::fromeuler_xyz(vec3::toeuler_xyz(q));
+            vec3 p1 = q1.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.z, p0.z, 1e-4);
+
+            /* y-z-x */
+            quat q2 = quat::fromeuler_yzx(vec3::toeuler_yzx(q));
+            vec3 p2 = q2.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p2.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p2.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p2.z, p0.z, 1e-4);
+
+            /* z-x-y */
+            quat q3 = quat::fromeuler_zxy(vec3::toeuler_zxy(q));
+            vec3 p3 = q3.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p3.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p3.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p3.z, p0.z, 1e-4);
+
+            /* x-z-y */
+            quat q4 = quat::fromeuler_xzy(vec3::toeuler_xzy(q));
+            vec3 p4 = q4.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p4.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p4.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p4.z, p0.z, 1e-4);
+
+            /* z-y-x */
+            quat q5 = quat::fromeuler_zyx(vec3::toeuler_zyx(q));
+            vec3 p5 = q5.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p5.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p5.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p5.z, p0.z, 1e-4);
+
+            /* y-x-z */
+            quat q6 = quat::fromeuler_yxz(vec3::toeuler_yxz(q));
+            vec3 p6 = q6.transform(p);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p6.x, p0.x, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p6.y, p0.y, 1e-4);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(p6.z, p0.z, 1e-4);
+        }
+    }
+
+    LOLUNIT_TEST(EulerAngles)
+    {
+
+    }
 };
 
 } /* namespace lol */

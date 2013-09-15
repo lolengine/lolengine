@@ -631,13 +631,10 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     }
     else
     {
-        vec4 v1(c0 * c1 * c2,  s0 * c1 * c2, c0 * s1 * c2,  c0 * c1 * s2);
-        vec4 v2(s0 * s1 * s2, -c0 * s1 * s2, s0 * c1 * s2, -s0 * s1 * c2);
-
-        ret[0] = v1[0] + sign * v2[0];
-        ret[1 + i] = v1[1] + sign * v2[1];
-        ret[1 + j] = v1[2] + sign * v2[2];
-        ret[1 + k] = v1[3] + sign * v2[3];
+        ret[0] =     c0 * c1 * c2 - sign * (s0 * s1 * s2);
+        ret[1 + i] = s0 * c1 * c2 + sign * (c0 * s1 * s2);
+        ret[1 + j] = c0 * s1 * c2 - sign * (s0 * c1 * s2);
+        ret[1 + k] = c0 * c1 * s2 + sign * (s0 * s1 * c2);
     }
 
     return ret;
