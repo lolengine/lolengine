@@ -553,6 +553,9 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
     else
     {
         /* FIXME: TODO */
+        ret[0] = rand(360.f);
+        ret[1] = rand(360.f);
+        ret[2] = rand(360.f);
     }
 
     return (180.0f / F_PI / n) * ret;
@@ -624,10 +627,10 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     {
         k = 3 - i - j;
 
-        ret[0] = c1 * (c0 * c2 - s0 * s2);
+        ret[0] =     c1 * (c0 * c2 - s0 * s2);
         ret[1 + i] = c1 * (c0 * s2 + s0 * c2);
         ret[1 + j] = s1 * (c0 * c2 + s0 * s2);
-        ret[1 + k] = sign * (s0 * c2 - c0 * s2);
+        ret[1 + k] = sign * (s1 * (s0 * c2 - c0 * s2));
     }
     else
     {
