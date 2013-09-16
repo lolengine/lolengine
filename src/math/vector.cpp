@@ -542,20 +542,25 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
 
     vec3 ret;
 
-    if (i != k)
+    /* k == i means X-Y-X style Euler angles; otherwise we’re
+     * actually handling X-Y-Z style Tait-Bryan angles. */
+    if (k == i)
+    {
+        k = 3 - i - j;
+
+        ret[0] = atan2(q[1 + i] * q[1 + j] + sign * (q.w * q[1 + k]),
+                       q.w * q[1 + j] - sign * (q[1 + i] * q[1 + k]));
+        ret[1] = acos(2.f * (sq(q.w) + sq(q[1 + i])) - 1.f);
+        ret[2] = atan2(q[1 + i] * q[1 + j] - sign * (q.w * q[1 + k]),
+                       q.w * q[1 + j] + sign * (q[1 + i] * q[1 + k]));
+    }
+    else
     {
         ret[0] = atan2(2.f * (q.w * q[1 + i] - sign * (q[1 + j] * q[1 + k])),
                        1.f - 2.f * (sq(q[1 + i]) + sq(q[1 + j])));
         ret[1] = asin(2.f * (q.w * q[1 + j] + sign * (q[1 + i] * q[1 + k])));
         ret[2] = atan2(2.f * (q.w * q[1 + k] - sign * (q[1 + j] * q[1 + i])),
                        1.f - 2.f * (sq(q[1 + k]) + sq(q[1 + j])));
-    }
-    else
-    {
-        /* FIXME: TODO */
-        ret[0] = rand(360.f);
-        ret[1] = rand(360.f);
-        ret[2] = rand(360.f);
     }
 
     return (180.0f / F_PI / n) * ret;
