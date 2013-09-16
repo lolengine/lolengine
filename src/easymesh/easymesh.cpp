@@ -680,7 +680,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                                           m_vert[m_indices[i + 2]].m_coord);
     }
 
-    //BSP Useage : let's crunch all triangles on the correct BSP
+    //BSP Usage : let's crunch all triangles on the correct BSP
     int indices_count = m_indices.Count();
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
