@@ -189,11 +189,57 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z, a.z / ratio, 1e-5);
     }
 
+    LOLUNIT_TEST(FromEulerNorm)
+    {
+        for (int i = 0; i < 100; ++i)
+        {
+            vec3 angles(rand(360.f), rand(360.f), rand(360.f));
+
+            /* Tait-Bryan */
+            quat q1 = quat::fromeuler_xyz(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q1), 1.f, 1e-5);
+
+            quat q2 = quat::fromeuler_yzx(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q2), 1.f, 1e-5);
+
+            quat q3 = quat::fromeuler_zxy(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q3), 1.f, 1e-5);
+
+            quat q4 = quat::fromeuler_xzy(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q4), 1.f, 1e-5);
+
+            quat q5 = quat::fromeuler_zyx(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q5), 1.f, 1e-5);
+
+            quat q6 = quat::fromeuler_yxz(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q6), 1.f, 1e-5);
+
+            /* Euler */
+            quat q7 = quat::fromeuler_xyx(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q7), 1.f, 1e-5);
+
+            quat q8 = quat::fromeuler_yzy(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q8), 1.f, 1e-5);
+
+            quat q9 = quat::fromeuler_zxz(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q9), 1.f, 1e-5);
+
+            quat q10 = quat::fromeuler_xzx(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q10), 1.f, 1e-5);
+
+            quat q11 = quat::fromeuler_zyz(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q11), 1.f, 1e-5);
+
+            quat q12 = quat::fromeuler_yxy(angles);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(q12), 1.f, 1e-5);
+        }
+    }
+
     LOLUNIT_TEST(TaitBryanAngles)
     {
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 100; ++i)
         {
-            /* Pick a random point and a random quaternion. We’re going
+            /* Pick a random point and a random quaternion. We want
              * to check whether going to Tait-Bryan angles and back to
              * quaternion creates the same transform. */
             vec3 p(rand(1.f, 2.f), rand(1.f, 2.f), rand(1.f, 2.f));
@@ -253,7 +299,24 @@ LOLUNIT_FIXTURE(QuaternionTest)
 
     LOLUNIT_TEST(EulerAngles)
     {
+        for (int i = 0; i < 100; ++i)
+        {
+            /* Pick a random point and a random quaternion. We want
+             * to check whether going to Euler angles and back to
+             * quaternion creates the same transform. */
+            vec3 p(rand(1.f, 2.f), rand(1.f, 2.f), rand(1.f, 2.f));
+            quat q = normalize(quat(rand(-1.f, 1.f), rand(-1.f, 1.f),
+                                    rand(-1.f, 1.f), rand(-1.f, 1.f)));
+            vec3 p0 = q.transform(p);
 
+            /* x-y-z */
+            quat q1 = quat::fromeuler_xyx(vec3::toeuler_xyx(q));
+            vec3 p1 = q1.transform(p);
+
+//            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.x, p0.x, 1e-4);
+//            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.y, p0.y, 1e-4);
+//            LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.z, p0.z, 1e-4);
+        }
     }
 };
 
