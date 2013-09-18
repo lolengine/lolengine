@@ -274,6 +274,7 @@
     <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="worldentity.h" />

@@ -147,6 +147,40 @@ public:
         return tmp ? (int)(intptr_t)(tmp - C()) : -1;
     }
 
+    int Replace(const char old_token, const char new_token, bool all_occurence=false)
+    {
+        using namespace std;
+
+        int res = 0;
+        char *tmp = NULL;
+        while ((tmp = strrchr(C(), old_token)))
+        {
+            *tmp = new_token;
+            res++;
+            if (!all_occurence)
+                break;
+        }
+        return res;
+    }
+
+    inline String& ToLower()
+    {
+        char* p = C();
+        for (int i = 0; i < Count(); ++i)
+            if ('A' <= p[i] && p[i] <= 'Z')
+                p[i] += 'a' - 'A';
+        return *this;
+    }
+
+    inline String& ToUpper()
+    {
+        char* p = C();
+        for (int i = 0; i < Count(); ++i)
+            if ('a' <= p[i] && p[i] <= 'z')
+                p[i] += 'A' - 'a';
+        return *this;
+    }
+
     int LastIndexOf(char const* token) const
     {
         using namespace std;

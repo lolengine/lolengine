@@ -117,6 +117,7 @@ static inline int isnan(float f)
 #include <lol/image/all.h>
 #include <lol/debug/all.h>
 
+#include "utils.h"
 #include "numeric.h"
 
 // Static classes
