@@ -73,21 +73,23 @@ class LolFxLanguageService : LanguageService
             while (m_offset < m_source.Length)
             {
                 if (m_source[m_offset] == ' ' || m_source[m_offset] == '\t')
-                   {
+                {
                     ++m_offset;
                     continue;
-                   }
+                }
 
                 tokeninfo.StartIndex = m_offset;
                 tokeninfo.EndIndex = m_offset;
                 tokeninfo.Type = TokenType.Unknown;
                 switch (state % 4)
-                   {
+                {
                     case 0: tokeninfo.Color = TokenColor.Number; break;
                     case 1: tokeninfo.Color = TokenColor.Text; break;
                     case 2: tokeninfo.Color = TokenColor.Keyword; break;
                     case 3: tokeninfo.Color = TokenColor.Comment; break;
                 }
+                // Disable this crap for now
+                tokeninfo.Color = TokenColor.Text;
                 ++m_offset;
                 ++state;
                 return true;
