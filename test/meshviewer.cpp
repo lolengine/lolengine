@@ -83,6 +83,13 @@ public:
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
       : m_file_name(file_name)
     {
+        m_init = false;
+    }
+
+    void Init()
+    {
+        m_init = true;
+
 #if !__native_client__
         /* Register an input controller for the keyboard */
         m_controller = new Controller("Default", KEY_MAX, 0);
@@ -128,7 +135,7 @@ public:
         m_zoom = -100.f;
         m_zoom_mesh = 0.f;
         m_zoom_speed = 0.f;
-        m_rot = vec2(0.f);
+        m_rot = vec2(45.f);
         m_rot_mesh = vec2(0.f);
         m_rot_speed = vec2(0.f);
         m_pos = vec2(0.f);
@@ -161,7 +168,8 @@ public:
 
     ~MeshViewer()
     {
-        g_scene->PopCamera(m_camera);
+        if (m_camera)
+            g_scene->PopCamera(m_camera);
         for (int i = 0; i < m_lights.Count(); ++i)
             Ticker::Unref(m_lights[i]);
         MessageService::Destroy();
@@ -170,6 +178,15 @@ public:
     virtual void TickGame(float seconds)
     {
         WorldEntity::TickGame(seconds);
+
+        if (!m_init && g_scene)
+        {
+            Init();
+            return;
+        }
+
+        if (!m_init)
+            return;
 
         //TODO : This should probably be "standard LoL behaviour"
 #if !__native_client__
@@ -332,7 +349,7 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-//            MessageService::Send(MSG_IN, "[sc#f8f afcb 1 1 1 0]");
+            MessageService::Send(MSG_IN, "[sc#f8f afcb 1 1 1 0]");
 //            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
         }
@@ -381,6 +398,9 @@ public:
     virtual void TickDraw(float seconds)
     {
         WorldEntity::TickDraw(seconds);
+
+        if (!m_init)
+            return;
 
         //TODO : This should probably be "standard LoL behaviour"
 #if !__native_client__
@@ -459,6 +479,7 @@ private:
     Array<Light *> m_lights;
     Controller *m_controller;
     mat4 m_mat;
+    bool m_init;
 
     //Camera Setup
     Camera *m_camera;
