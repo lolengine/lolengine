@@ -17,7 +17,7 @@
 #if !defined __LOL_UTILS_H__
 #define __LOL_UTILS_H__
 
-#include "lol\base\string.h"
+#include <lol/base/string.h>
 
 namespace lol
 {
