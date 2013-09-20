@@ -22,7 +22,7 @@ namespace lol
 
 struct MessageList
 {
-    MessageList(time_t timestamp, String& message)
+    MessageList(time_t timestamp, const String& message)
     {
         m_timestamp = timestamp;
         m_message = message;
