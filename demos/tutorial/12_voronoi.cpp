@@ -25,6 +25,18 @@ LOLFX_RESOURCE_DECLARE(12_voronoi_distance);
 LOLFX_RESOURCE_DECLARE(12_distance);
 LOLFX_RESOURCE_DECLARE(12_texture_to_screen);
 
+enum
+{
+    KEY_ESC,
+    KEY_PUSH,
+    KEY_POP,
+    KEY_F1,
+    KEY_F2,
+    KEY_F3,
+
+    KEY_MAX
+};
+
 enum FboType
 {
     SrcVoronoiFbo,
@@ -51,6 +63,13 @@ public:
         m_time = .0f;
         m_timer = -1.0f;
         mode = 0;
+        m_controller = new Controller("Default", KEY_MAX, 0);
+        m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+        m_controller->GetKey(KEY_PUSH).Bind("Keyboard", "p");
+        m_controller->GetKey(KEY_POP).Bind("Keyboard", "o");
+        m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
+        m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
+        m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
     }
 
     virtual void TickGame(float seconds)
@@ -59,17 +78,17 @@ public:
 
         {
             //Shutdown logic
-            if (Input::WasReleased(Key::Escape))
+            if (m_controller->GetKey(KEY_ESC).IsReleased())
                 Ticker::Shutdown();
         }
 
         m_time += seconds;
-        m_hotspot = 0.4f * vec3(lol::sin(m_time * 4.f) + lol::cos(m_time * 5.3f),
-                                lol::sin(m_time * 5.7f) + lol::cos(m_time * 4.4f),
-                                lol::sin(m_time * 5.f));
-        m_color = 0.25f * vec3(1.1f + lol::sin(m_time * 2.5f + 1.f),
-                               1.1f + lol::sin(m_time * 2.8f + 1.3f),
-                               1.1f + lol::sin(m_time * 2.7f));
+        m_hotspot = 0.4f * vec3((float)lol::sin(m_time * 4.0) + (float)lol::cos(m_time * 5.3),
+                                (float)lol::sin(m_time * 5.7) + (float)lol::cos(m_time * 4.4),
+                                (float)lol::sin(m_time * 5.0));
+        m_color = 0.25f * vec3(1.1f + (float)lol::sin(m_time * 2.5 + 1.0),
+                               1.1f + (float)lol::sin(m_time * 2.8 + 1.3),
+                               1.1f + (float)lol::sin(m_time * 2.7));
         /* Saturate dot color */
         float x = std::max(m_color.x, std::max(m_color.y, m_color.z));
         m_color /= x;
@@ -150,16 +169,16 @@ public:
 
         {
             //Shutdown logic
-            if (Input::WasReleased(Key::O))
+            if (m_controller->GetKey(KEY_POP).IsReleased())
                 voronoi_points.Pop();
-            else if (Input::WasReleased(Key::P))
+            else if (m_controller->GetKey(KEY_PUSH).IsReleased())
                 voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                         vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
-            else if (Input::WasReleased(Key::F1))
+            else if (m_controller->GetKey(KEY_F1).IsReleased())
                 m_cur_fbo = SrcVoronoiFbo;
-            else if (Input::WasReleased(Key::F2))
+            else if (m_controller->GetKey(KEY_F2).IsReleased())
                 m_cur_fbo = VoronoiFbo;
-            else if (Input::WasReleased(Key::F3))
+            else if (m_controller->GetKey(KEY_F3).IsReleased())
             {
                 voronoi_points.Empty();
                 if (mode == 0)
@@ -185,10 +204,13 @@ public:
             int maxi = 6;
             for (int i = 0; i < maxi; ++i)
             {
-                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos(m_time + i * 2.f * F_PI / maxi), lol::sin(m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-m_time + i * 2.f * F_PI / maxi), lol::sin(-m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 64.f *  vec3(lol::cos(m_time + i * 2.f * F_PI / maxi), lol::sin(m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 32.f *  vec3(lol::cos(-m_time + i * 2.f * F_PI / maxi), lol::sin(-m_time + i * 2.f * F_PI / maxi), .0f), vec2(.0f));
+                float mi = (float)maxi;
+                float j = (float)i;
+                float f_time = (float)m_time;
+                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.0 * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.0 * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 64.f *  vec3(lol::cos( f_time + j * 2.0 * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 32.f *  vec3(lol::cos(-f_time + j * 2.0 * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
             }
             voronoi_points.Push(vec3(256.f), vec2(.0f));
         }
@@ -371,6 +393,7 @@ public:
     }
 
 private:
+    Controller* m_controller;
     Array<vec3, vec2> voronoi_points;
     Array<vec2> m_vertices;
     Shader *m_screen_shader;
