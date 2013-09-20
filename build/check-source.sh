@@ -125,9 +125,15 @@ for file in $FILES; do
       src/bullet/*|\
       src/lua/*|\
       external/*|\
-      */generated/*|\
       web/plugins/*)
           continue
+          ;;
+    esac
+
+    case "$file" in
+      # These files aren't ours, but fix their line endings
+      */generated/*)
+          should_check_spaces=false
           ;;
     esac
 
