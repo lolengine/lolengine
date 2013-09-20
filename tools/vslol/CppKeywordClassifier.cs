@@ -82,6 +82,7 @@ internal class LolClassifierProvider : IClassifierProvider
 class CppKeywordClassifier : IClassifier
 {
     private IClassifier m_classifier;
+    private Regex m_classifier_regex;
     private bool m_inprogress, m_islolengine;
 
     private IClassificationType m_types_type, m_constant_type, m_normal_type;
@@ -171,6 +172,7 @@ class CppKeywordClassifier : IClassifier
                                   bool islolengine)
     {
         m_classifier = classifier;
+        m_classifier_regex = new Regex(@"^(keyword|identifier)\b");
         m_inprogress = false;
         m_islolengine = islolengine;
 
@@ -238,7 +240,7 @@ class CppKeywordClassifier : IClassifier
             string cs_class = cs.ClassificationType.Classification.ToLower();
 
             /* Only apply our rules if we found a keyword or an identifier */
-            if (cs_class == "keyword" || cs_class == "identifier")
+            if (m_classifier_regex.IsMatch(cs_class))
             {
                 if (m_types_regex.IsMatch(cs.Span.GetText()))
                 {
