@@ -135,7 +135,9 @@ void NaClInstance::HandleMessage(const pp::Var& message)
 {
     if (!message.is_string())
         return;
+
     /* FIXME: do some shit here */
+    MessageService::Send(MSG_IN, message.AsString().c_str());
 }
 
 void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
