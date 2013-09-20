@@ -126,6 +126,7 @@ static inline int isnan(float f)
 #include "audio.h"
 #include "scene.h"
 #include "profiler.h"
+#include "messageservice.h"
 
 // Input
 #include "input/input.h"

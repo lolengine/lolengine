@@ -309,6 +309,9 @@
     <ClCompile Include="input\controller.cpp">
       <Filter>input</Filter>
     </ClCompile>
+    <ClCompile Include="MessageService.cpp">
+      <Filter>...</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -611,6 +614,9 @@
     <ClInclude Include="utils.h">
       <Filter>...</Filter>
     </ClInclude>
+    <ClInclude Include="messageservice.h">
+      <Filter>...</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">
@@ -663,5 +669,6 @@
     <None Include="gpu\lolfx-parser.y">
       <Filter>gpu</Filter>
     </None>
+    <None Include="Makefile.am" />
   </ItemGroup>
 </Project>

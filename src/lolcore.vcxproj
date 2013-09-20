@@ -155,6 +155,7 @@
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
     <ClCompile Include="mesh\mesh.cpp" />
+    <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="platform\d3d9\d3d9input.cpp" />
     <ClCompile Include="platform\ps3\ps3app.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="messageservice.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="platform\d3d9\d3d9input.h" />
@@ -298,6 +300,7 @@
     <None Include="easymesh\easymesh-scanner.l" />
     <None Include="gpu\lolfx-parser.y" />
     <None Include="gpu\lolfx-scanner.l" />
+    <None Include="Makefile.am" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bullet\lolbullet.vcxproj">
