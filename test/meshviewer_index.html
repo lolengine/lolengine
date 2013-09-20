@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+  <!--
+  Copyright (c) 2012 The Native Client Authors. All rights reserved.
+  Use of this source code is governed by a BSD-style license that can be
+  found in the LICENSE file.
+  -->
+
+<head>
+
+<style type="text/css">
+#canvas_loading {
+	position: relative;
+	left: -2px;
+	top: -487px;
+	z-index: 1;
+	border:2px solid #c3c3c3;
+	width:640px;height:480px;
+}
+#nacl_div {
+	position: relative;
+	left: 0px;
+	top: 0px;
+	z-index: 0;
+}
+</style>
+<!--
+-->
+  <title>mesh viewer NaCl</title>
+
+  <script type="text/javascript">
+    NaClModule = null;  // Global application object.
+    MeshCodeModule = null;
+    statusText = 'NO-STATUS';
+
+    window.setTimeout("Tick()", 100);
+    document.getElementById('prout').style.top = 0;
+
+    function Tick() {
+	window.setTimeout("Tick()", 100);
+    var truc = parseInt(document.getElementById('prout').style.top);
+   	//document.getElementById('prout').style.top = truc + 1 + "px";
+      var statusField = document.getElementById('tick_field');
+      if (statusField) {
+        statusField.innerHTML = truc;
+	}
+    }
+
+
+    // Indicate load success.
+    function moduleDidLoad() {
+      NaClModule = document.getElementById('ID_NaClModule');
+      MeshCodeModule = document.getElementById('ID_MeshCode');
+      //document.getElementById('listener').style.visibility = "visible";
+      //document.getElementById('canvas_loading').style.display = "none";
+	//document.getElementById('ID_NaClModule').width = 640;
+	//document.getElementById('ID_NaClModule').height = 480;
+
+      updateStatus('SUCCESS');
+    }
+
+    // The 'message' event handler.  This handler is fired when the NaCl module
+    // posts a message to the browser by calling PPB_Messaging.PostMessage()
+    // (in C) or pp::Instance.PostMessage() (in C++).  This implementation
+    // simply displays the content of the message in an alert panel.
+    function handleMessage(message_event) {
+      alert(message_event.data);
+    }
+
+    // If the page loads before the Native Client module loads, then set the
+    // status message indicating that the module is still loading.  Otherwise,
+    // do not change the status message.
+    function pageDidLoad() {
+      if (NaClModule == null) {
+        updateStatus('LOADING...');
+      } else {
+        // It's possible that the Native Client module onload event fired
+        // before the page's onload event.  In this case, the status message
+        // will reflect 'SUCCESS', but won't be displayed.  This call will
+        // display the current message.
+        updateStatus();
+      }
+    }
+
+    // Set the global status message.  If the element with id 'statusField'
+    // exists, then set its HTML to the status message as well.
+    // opt_message The message test.  If this is null or undefined, then
+    // attempt to set the element with id 'statusField' to the value of
+    // |statusText|.
+    function updateStatus(opt_message) {
+      if (opt_message)
+        statusText = opt_message;
+      var statusField = document.getElementById('status_field');
+      if (statusField) {
+        statusField.innerHTML = statusText;
+      }
+    }
+
+    function SendMeshData()
+    {
+        if (NaClModule)
+        {
+            NaClModule.postMessage(MeshCodeModule.value);
+            //NaClModule.postMessage("sc#f8f afcb 1 1 1 0");
+            alert("Data sent");
+        }
+        else
+            alert("Module not loaded");
+    }
+  </script>
+</head>
+<body onload="pageDidLoad()">
+
+<h1>Native Client Module HelloTutorial</h1>
+<p>
+  <!-- Load the published .nexe.  This includes the 'nacl' attribute which
+  shows how to load multi-architecture modules.  Each entry in the "nexes"
+  object in the .nmf manifest file is a key-value pair: the key is the
+  instruction set architecture ('x86-32', 'x86-64', etc.); the value is a URL
+  for the desired NaCl module.
+  To load the debug versions of your .nexes, set the 'nacl' attribute to the
+  _dbg.nmf version of the manifest file.
+
+  Note: Since this NaCl module does not use any real-estate in the browser,
+  it's width and height are set to 0.
+
+  Note: The <EMBED> element is wrapped inside a <DIV>, which has both a 'load'
+  and a 'message' event listener attached.  This wrapping method is used
+  instead of attaching the event listeners directly to the <EMBED> element to
+  ensure that the listeners are active before the NaCl module 'load' event
+  fires.  This also allows you to use PPB_Messaging.PostMessage() (in C) or
+  pp::Instance.PostMessage() (in C++) from within the initialization code in
+  your NaCl module.
+
+visibility="hidden"
+  -->
+  <div id="listener" >
+    <script type="text/javascript">
+      var listener = document.getElementById('listener');
+      listener.addEventListener('load', moduleDidLoad, true);
+      listener.addEventListener('message', handleMessage, true);
+    </script>
+<!--
+    <canvas id="myCanvas" width="640" height="480" style="border:1px solid #c3c3c3;">
+    Your browser does not support the HTML5 canvas tag.
+    </canvas>
+-->
+     
+<!--
+    <table border="1" cellspacing="0" cellpadding="0" style="width:640px;height:490px">
+      <tr> <td align="center" style="vertical-align:middle">
+      </td> </tr>
+-->
+
+	<div id="nacl_div">
+	    <embed name="nacl_module"
+	       id="ID_NaClModule"
+	       width=770 height=200
+	       src="nacl.nmf"
+	       type="application/x-nacl" />
+	</div>
+<!--
+	<div id="canvas_loading">
+	   <canvas id="myCanvas" width="640" height="480" visibility="hidden"></canvas>
+	</div>
+-->
+    <script>
+     
+    var c=document.getElementById("myCanvas");
+    var ctx=c.getContext("2d");
+    ctx.fillStyle="#FF0000";
+    ctx.fillRect(0,0,640,480);
+    //ctx.clearRect(10,10,620,460);
+
+    ctx.fillStyle="#000000";
+    ctx.font="30px Arial";
+    ctx.fillText("LOADING",10,50);
+     
+    </script>
+
+
+<!--style="width:640px;height:480px;z-index:1" position:absolute;left:0%;top:0%;
+
+      <tr> <td align="center" style="vertical-align:middle">
+testestestset
+      </td> </tr>
+    </table>
+-->
+  </div>
+  <div id="prout" style="position:absolute;top:0px">
+    test
+  </div>
+
+</p>
+<h2>Status</h2>
+<div id="bouton">
+  <textarea id="ID_MeshCode" rows="5" cols="80">
+    //This is a comment
+    sc#f8f afcb 1 1 1 0
+  </textarea>
+  <button onclick="SendMeshData()">Try Me !</button>
+</div>
+<div id="status_field">NO-STATUS</div>
+<div id="tick_field"></div>
+</body>
+</html>
