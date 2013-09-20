@@ -69,13 +69,13 @@ enum
     KEY_MAX,
 };
 
-enum
+enum MessageType
 {
     MSG_IN,
     MSG_OUT,
 
     MSG_MAX
-} MessageType;
+};
 
 class MeshViewer : public WorldEntity
 {
@@ -83,6 +83,7 @@ public:
     MeshViewer(char const *file_name = "data/mesh-buffer.txt")
       : m_file_name(file_name)
     {
+#if !__native_client__
         /* Register an input controller for the keyboard */
         m_controller = new Controller("Default", KEY_MAX, 0);
 
@@ -110,6 +111,7 @@ public:
         m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
         m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
         m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+#endif //!__native_client__
 
         // Message Service
         MessageService::Setup(MSG_MAX);
@@ -170,22 +172,32 @@ public:
         WorldEntity::TickGame(seconds);
 
         //TODO : This should probably be "standard LoL behaviour"
+#if !__native_client__
         {
             //Shutdown logic
             if (m_controller->GetKey(KEY_ESC).IsReleased())
                 Ticker::Shutdown();
         }
+#endif //!__native_client__
 
         //Mesh Change
+#if !__native_client__
         m_mesh_id = clamp(m_mesh_id + ((int)m_controller->GetKey(KEY_MESH_PREV).IsPressed() - (int)m_controller->GetKey(KEY_MESH_NEXT).IsPressed()), 0, m_meshes.Count() - 1);
+#endif //!__native_client__
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
         //Camera update
-        bool is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
-        bool is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
+        bool is_pos = false;
+        bool is_fov = false;
+        vec2 tmp = vec2(0.f);
+
+#if !__native_client__
+        is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
+        is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
 
         vec2 tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
                        ((float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown()));
+#endif //!__native_client__
 
         //Base data
         vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
@@ -199,10 +211,11 @@ public:
         float fov_factor = 1.f + lol::pow((m_fov_mesh / FOV_CLAMP) * 1.f, 2.f);
         m_fov_speed = damp(m_fov_speed, fov.x * FOV_SPEED * fov_factor, .2f, seconds);
         float zom_factor = 1.f + lol::pow((m_zoom_mesh / ZOM_CLAMP) * 1.f, 2.f);
-        m_zoom_speed = damp(m_zoom_speed, fov.y * ZOM_SPEED, .2f, seconds);
+        m_zoom_speed = damp(m_zoom_speed, fov.y * ZOM_SPEED * zom_factor, .2f, seconds);
 
         m_rot += m_rot_speed * seconds;
 
+#if !__native_client__
         //Transform update
         if (!m_controller->GetKey(KEY_CAM_RESET).IsDown())
         {
@@ -210,6 +223,7 @@ public:
             m_fov += m_fov_speed * seconds;
             m_zoom += m_zoom_speed * seconds;
         }
+#endif //!__native_client__
 
         //clamp
         vec2 rot_mesh = vec2(SmoothClamp(m_rot.x, -ROT_CLAMP, ROT_CLAMP, ROT_CLAMP * .1f), m_rot.y);
@@ -218,11 +232,13 @@ public:
         float fov_mesh = SmoothClamp(m_fov, 0.f, FOV_CLAMP, FOV_CLAMP * .1f);
         float zoom_mesh = SmoothClamp(m_zoom, 0.f, ZOM_CLAMP, ZOM_CLAMP * .1f);
 
+#if !__native_client__
         if (m_controller->GetKey(KEY_CAM_RESET).IsDown())
         {
             pos_mesh = vec2(0.f);
             zoom_mesh = 0.f;
         }
+#endif //!__native_client__
 
         m_rot_mesh = vec2(damp(m_rot_mesh.x, rot_mesh.x, .2f, seconds), damp(m_rot_mesh.y, rot_mesh.y, .2f, seconds));
         m_pos_mesh = vec2(damp(m_pos_mesh.x, pos_mesh.x, .2f, seconds), damp(m_pos_mesh.y, pos_mesh.y, .2f, seconds));
@@ -316,9 +332,9 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-            MessageService::Send(MSG_IN, "[sc#f8f afcb 1 1 1 0]");
-            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
-            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
+//            MessageService::Send(MSG_IN, "[sc#f8f afcb 1 1 1 0]");
+//            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
+//            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
         }
 #elif WIN32
         //--
@@ -367,6 +383,7 @@ public:
         WorldEntity::TickDraw(seconds);
 
         //TODO : This should probably be "standard LoL behaviour"
+#if !__native_client__
         {
             if (m_controller->GetKey(KEY_F1).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Default);
@@ -379,7 +396,9 @@ public:
             if (m_controller->GetKey(KEY_F5).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
+#endif //!__native_client__
 
+#if !__native_client__
         if (!m_default_texture)
         {
             m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
@@ -388,6 +407,7 @@ public:
         }
         else if (m_texture && m_default_texture)
             m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
+#endif //!__native_client__
 
         for (int i = 0; i < m_meshes.Count(); i++)
         {
