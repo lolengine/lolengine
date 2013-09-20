@@ -785,7 +785,9 @@ template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
                                           float screen_ratio_yx, float near, float far)
 {
     float new_fov_y = fov_y * (F_PI / 180.0f);
-    float dist_scr = (screen_size * screen_ratio_yx * .5f) / tanf(new_fov_y * .5f);
+    float tan_y = tanf(new_fov_y * .5f);
+    ASSERT(tan_y > 0.000001f);
+    float dist_scr = (screen_size * screen_ratio_yx * .5f) / tan_y;
 
     return mat4::perspective(fov_y, screen_size, screen_size * screen_ratio_yx,
                              max(.001f, dist_scr + near),

@@ -107,7 +107,7 @@ void Camera::SetProjection(float fov, float near, float far, float screen_size, 
     m_screen_size = screen_size;
     m_screen_ratio = screen_ratio;
     mat4 screen_scale = mat4::scale(vec3(m_screen_scale.xy, 1.f));
-    if (m_fov > .0f)
+    if (m_fov > .001f)
     {
         if (m_is_shifted)
             SetProjection(screen_scale * mat4::shifted_perspective(m_fov, screen_size, screen_ratio, m_near, m_far));
