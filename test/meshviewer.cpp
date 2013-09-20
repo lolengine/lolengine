@@ -212,8 +212,8 @@ public:
         is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
         is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
 
-        vec2 tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
-                       ((float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown()));
+        tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
+                  ((float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown()));
 #endif //!__native_client__
 
         //Base data
@@ -367,6 +367,7 @@ public:
             String cmd = f.ReadString();
             f.Close();
 
+            /*
             for (int i = 0; i < cmd.Count() - 1; i++)
             {
                 if (cmd[i] == '/' && cmd[i + 1] == '/')
@@ -384,6 +385,7 @@ public:
                     i--;
                 }
             }
+            */
 
             if (cmd.Count()
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))

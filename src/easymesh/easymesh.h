@@ -616,58 +616,58 @@ public:
         - ny : value of n for y.
         - nz : value of n for z.
         - xoff : value of xoff.
-        - absolute (def:1) : if (1) Multiply will use an absolute x.
+        - absolute (def:true) : if (true) Multiply will use an absolute x.
      */
-    void TaperX(float ny, float nz, float xoff, int absolute=1);
+    void TaperX(float ny, float nz, float xoff=0.f, bool absolute=true);
     /* [cmd:tay] Same as TaperX, with Y */
-    void TaperY(float nx, float nz, float yoff, int absolute=1);
+    void TaperY(float nx, float nz, float yoff=0.f, bool absolute=true);
     /* [cmd:taz] Same as TaperX, with Z */
-    void TaperZ(float nx, float ny, float zoff, int absolute=1);
+    void TaperZ(float nx, float ny, float zoff=0.f, bool absolute=true);
     /* [cmd:twx] Twist vertices around x axis with x as rotation value as p = (RotateX(x * t + toff) * p)
         - t : Angle multiplier.
         - toff : Applied offset.
      */
-    void TwistX(float t, float toff);
+    void TwistX(float t, float toff=0.f);
     /* [cmd:twy] Same as TwistX, with Y */
-    void TwistY(float t, float toff);
+    void TwistY(float t, float toff=0.f);
     /* [cmd:twz] Same as TwistX, with Z */
-    void TwistZ(float t, float toff);
+    void TwistZ(float t, float toff=0.f);
     /* [cmd:shx] Shear vertices using x value as shear quantity as y += (ny * x + xoff)
         - ny : Value of n for y.
         - nz : Value of n for z.
         - xoff : Value of xoff.
-        - absolute (def:1) : if (1) Multiply will use an absolute x.
+        - absolute (def:true) : if (true) Multiply will use an absolute x.
      */
-    void ShearX(float ny, float nz, float xoff, int absolute=1);
+    void ShearX(float ny, float nz, float xoff=0.f, bool absolute=true);
     /* [cmd:shy] Same as ShearX, with Y */
-    void ShearY(float nx, float nz, float yoff, int absolute=1);
+    void ShearY(float nx, float nz, float yoff=0.f, bool absolute=true);
     /* [cmd:shz] Same as ShearX, with Z */
-    void ShearZ(float nx, float ny, float zoff, int absolute=1);
+    void ShearZ(float nx, float ny, float zoff=0.f, bool absolute=true);
     /* [cmd:stx] Stretch vertices using x value as stretch quantity as y += (pow(x, ny) + xoff)
         - ny : Value of n for y.
         - nz : Value of n for z.
         - xoff : Value of xoff.
      */
-    void StretchX(float ny, float nz, float xoff);
+    void StretchX(float ny, float nz, float xoff=0.f);
     /* [cmd:sty] Same as StretchX, with Y */
-    void StretchY(float nx, float nz, float yoff);
+    void StretchY(float nx, float nz, float yoff=0.f);
     /* [cmd:stz] Same as StretchX, with Z */
-    void StretchZ(float nx, float ny, float zoff);
+    void StretchZ(float nx, float ny, float zoff=0.f);
     /* [cmd:bdxy] Bend vertices using x as bend quantity along y axis using p = (RotateY(x * t + toff) * p)
         - t : Angle multiplier.
         - xoff : Applied offset.
      */
-    void BendXY(float t, float toff);
+    void BendXY(float t, float toff=0.f);
     /* [cmd:bdxz] Same as BendXY, with X & Z */
-    void BendXZ(float t, float toff);
+    void BendXZ(float t, float toff=0.f);
     /* [cmd:bdyx] Same as BendXY, with Y & X */
-    void BendYX(float t, float toff);
+    void BendYX(float t, float toff=0.f);
     /* [cmd:bdyz] Same as BendXY, with Y & Z */
-    void BendYZ(float t, float toff);
+    void BendYZ(float t, float toff=0.f);
     /* [cmd:bdzx] Same as BendXY, with Z & X */
-    void BendZX(float t, float toff);
+    void BendZX(float t, float toff=0.f);
     /* [cmd:bdzy] Same as BendXY, with Z & Y */
-    void BendZY(float t, float toff);
+    void BendZY(float t, float toff=0.f);
 private:
     struct MeshTransform
     {
@@ -684,12 +684,13 @@ private:
         inline MeshTransform(Value v) : m_value(v) {}
         inline operator Value() { return m_value; }
     };
-    void DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, int absolute);
+    void DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, bool absolute=false);
 public:
     /* [cmd:s/sx/sy/sz] Scale vertices
         - s : scale quantity.
      */
     void Scale(vec3 const &s);
+    void Scale(float s) { Scale(vec3(s)); }
     /* [cmd:mx] Mirror vertices through X-plane
         Acts as an OpenBrace
      */
@@ -733,12 +734,12 @@ public:
         - h : Height of the cylinder.
         - d1 : Lower diameter.
         - d2 : Upper diameter.
-        - dualside : if (1) will also create inner sides : TOOD:TOREMOVE?? : needed ?
-        - smooth : if (1) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
-        - close : if (1) will add discs to close the cylinder
+        - dualside : if (true) will also create inner sides : TOOD:TOREMOVE?? : needed ?
+        - smooth : if (true) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
+        - close : if (true) will add discs to close the cylinder
      */
     void AppendCylinder(int nsides, float h, float d1, float d2,
-                        int dualside, int smooth, int close);
+                        bool dualside=false, bool smooth=false, bool close=false);
     /* [cmd:asph] Sphere centered on (0,0,0) with BBox [-.5*d][.5*d]
         - ndivisions : number of subdivisions each Sphere triangle will sustain.
         - d : Diameter.
@@ -759,9 +760,9 @@ public:
     /* [cmd:ab] Box centered on (0,0,0) with BBox [-.5 * size][.5 * size]
         - size : size of the box.
         - chamf : size of the chamfer.
-        - smooth : if (1) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
+        - smooth : if (true) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
      */
-    void AppendBox(vec3 const &size, float chamf = 0.f);
+    void AppendBox(vec3 const &size, float chamf=0.f);
     //Same as AppendBox
     void AppendSmoothChamfBox(vec3 const &size, float chamf);
     //Same as AppendBox
@@ -773,11 +774,11 @@ public:
         - nbranches : Number of branches.
         - d1 : double Length of the branches.
         - d2 : double Length of the "branch" located between d1-branches.
-        - fade : if (1) in-between branches use Color2.
-        - fade2 : if (1) Star branches use Color2.
+        - fade : if (true) in-between branches use Color2.
+        - fade2 : if (true) Star branches use Color2.
      */
     void AppendStar(int nbranches, float d1, float d2,
-                    int fade = 0, int fade2 = 0);
+                    bool fade=false, bool fade2=false);
     /* [cmd:aes] Star centered on (0,0,0) contained within a disc of "max(max(d1, d2), max(d1 + extrad, d2 + extrad))" diameter.
        Expanded star branches use Color2.
         - nbranches : Number of branches.
@@ -785,26 +786,26 @@ public:
         - d2 : Double Length of the "branch" located between r1-branches.
         - extrad : Extra length added to expand all branches.
      */
-    void AppendExpandedStar(int nbranches, float d1, float d2, float extrad);
+    void AppendExpandedStar(int nbranches, float d1, float d2, float extrad=0.f);
     /* [cmd:ad] Disc centered on (0,0,0) with d diameter.
         - nbsides : Number of sides.
         - d : Diameter.
-        - fade : if (1) Outer vertices will use Color2
+        - fade : if (true) Outer vertices will use Color2
      */
-    void AppendDisc(int nsides, float d, int fade = 0);
+    void AppendDisc(int nsides, float d, bool fade=false);
     /* [cmd:at] Triangle centered on (0,0,0) contained within a disc of "d" diameter.
         - d : diameter of the containing disc..
-        - fade : if (1) 2nd & 3rd Vertices will use Color2
+        - fade : if (true) 2nd & 3rd Vertices will use Color2
      */
-    void AppendSimpleTriangle(float d, int fade = 0);
+    void AppendSimpleTriangle(float d, bool fade=false);
     /* [cmd:aq] Quad centered on (0,0,0) contained within BBox [-size*.5f, 0, -size*.5f][size*.5f, 0, size*.5f]
         - size : Size of quad.
-        - fade : if (1) 3rd & 4th Vertices will use Color2
+        - fade : if (true) 3rd & 4th Vertices will use Color2
      */
-    void AppendSimpleQuad(float size, int fade = 0);
+    void AppendSimpleQuad(float size, bool fade=false);
 private:
     //complex version of above one
-    void AppendSimpleQuad(vec2 p1, vec2 p2, float z = 0.f, int fade = 0);
+    void AppendSimpleQuad(vec2 p1, vec2 p2, float z=0.f, bool fade=false);
 public:
     /* [cmd:acg] Gear centered on (0,0,0) contained within BBox [-.5*max(d1,d2), -.5*h, -.5*max(d1, d2)]
         - h : Height of the Gear.                               [+.5*max(d1,d2), +.5*h, +.5*max(d1, d2)]
@@ -818,7 +819,7 @@ public:
         - offset : useless
      */
     void AppendCog(int nbsides, float h, float d10, float d20, float d1,
-                   float d2, float d12, float d22, float sidemul, int offset);
+                   float d2, float d12, float d22, float sidemul=1.f, bool offset=false);
 
     //-------------------------------------------------------------------------
     //TODO : Mesh Bone operations

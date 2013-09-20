@@ -1225,35 +1225,35 @@ void EasyMesh::RadialJitter(float r)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::TaperX(float ny, float nz, float xoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::X, Axis::X, ny, nz, xoff, absolute); }
-void EasyMesh::TaperY(float nx, float nz, float yoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
-void EasyMesh::TaperZ(float nx, float ny, float zoff, int absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
+void EasyMesh::TaperX(float ny, float nz, float xoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::X, Axis::X, ny, nz, xoff, absolute); }
+void EasyMesh::TaperY(float nx, float nz, float yoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
+void EasyMesh::TaperZ(float nx, float ny, float zoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::TwistX(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::X, Axis::X, t, t, toff, 0); }
-void EasyMesh::TwistY(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Y, Axis::Y, t, t, toff, 0); }
-void EasyMesh::TwistZ(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Z, Axis::Z, t, t, toff, 0); }
+void EasyMesh::TwistX(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::X, Axis::X, t, t, toff); }
+void EasyMesh::TwistY(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Y, Axis::Y, t, t, toff); }
+void EasyMesh::TwistZ(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Z, Axis::Z, t, t, toff); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::ShearX(float ny, float nz, float xoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::X, Axis::X, ny, nz, xoff, absolute); }
-void EasyMesh::ShearY(float nx, float nz, float yoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
-void EasyMesh::ShearZ(float nx, float ny, float zoff, int absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
+void EasyMesh::ShearX(float ny, float nz, float xoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::X, Axis::X, ny, nz, xoff, absolute); }
+void EasyMesh::ShearY(float nx, float nz, float yoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
+void EasyMesh::ShearZ(float nx, float ny, float zoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::StretchX(float ny, float nz, float xoff) { DoMeshTransform(MeshTransform::Stretch, Axis::X, Axis::X, ny, nz, xoff, 0); }
-void EasyMesh::StretchY(float nx, float nz, float yoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Y, Axis::Y, nz, nx, yoff, 0); }
-void EasyMesh::StretchZ(float nx, float ny, float zoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Z, Axis::Z, nx, ny, zoff, 0); }
+void EasyMesh::StretchX(float ny, float nz, float xoff) { DoMeshTransform(MeshTransform::Stretch, Axis::X, Axis::X, ny, nz, xoff); }
+void EasyMesh::StretchY(float nx, float nz, float yoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Y, Axis::Y, nz, nx, yoff); }
+void EasyMesh::StretchZ(float nx, float ny, float zoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Z, Axis::Z, nx, ny, zoff); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::BendXY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Y, t, t, toff, 0); }
-void EasyMesh::BendXZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Z, t, t, toff, 0); }
-void EasyMesh::BendYX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::X, t, t, toff, 0); }
-void EasyMesh::BendYZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::Z, t, t, toff, 0); }
-void EasyMesh::BendZX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::X, t, t, toff, 0); }
-void EasyMesh::BendZY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::Y, t, t, toff, 0); }
+void EasyMesh::BendXY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Y, t, t, toff); }
+void EasyMesh::BendXZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Z, t, t, toff); }
+void EasyMesh::BendYX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::X, t, t, toff); }
+void EasyMesh::BendYZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::Z, t, t, toff); }
+void EasyMesh::BendZX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::X, t, t, toff); }
+void EasyMesh::BendZY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::Y, t, t, toff); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, int absolute)
+void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, bool absolute)
 {
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
@@ -1347,7 +1347,7 @@ void EasyMesh::DupAndScale(vec3 const &s)
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
-                              int dualside, int smooth, int close)
+                              bool dualside, bool smooth, bool close)
 {
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
@@ -1836,7 +1836,7 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendStar(int nbranches, float d1, float d2,
-                          int fade, int fade2)
+                          bool fade, bool fade2)
 {
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
@@ -1919,7 +1919,7 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendDisc(int nsides, float d, int fade)
+void EasyMesh::AppendDisc(int nsides, float d, bool fade)
 {
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r = d * .5f;
@@ -1944,7 +1944,7 @@ void EasyMesh::AppendDisc(int nsides, float d, int fade)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleTriangle(float d, int fade)
+void EasyMesh::AppendSimpleTriangle(float d, bool fade)
 {
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float size = d * .5f;
@@ -1966,13 +1966,13 @@ void EasyMesh::AppendSimpleTriangle(float d, int fade)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleQuad(float size, int fade)
+void EasyMesh::AppendSimpleQuad(float size, bool fade)
 {
     AppendSimpleQuad(vec2(size * .5f), vec2(size * -.5f), 0.f, fade);
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
+void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
 {
     MeshType mt = MeshType::Quad;
     MeshFaceType mft = MeshFaceType::QuadDefault;
@@ -2007,7 +2007,7 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, int fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                          float d1, float d2, float d12, float d22,
-                         float sidemul, int offset)
+                         float sidemul, bool offset)
 {
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r10 = d10 * .5f;
@@ -2046,7 +2046,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     p[10] = smat1 * (rotmat * vec3(r2 + r22, h * -.5f, 0.f));
     p[11] = smat2 * (rotmat * p[10]);
 
-    if (offset & 1)
+    if (offset)
         for (int n = 0; n < 12; n++)
             p[n] = rotmat * p[n];
 
