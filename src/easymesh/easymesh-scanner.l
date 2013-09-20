@@ -43,72 +43,73 @@ typedef lol::EasyMeshParser::token_type token_type;
 
 %%
 
-%{
-    /* reset location at the beginning of yylex() */
+%{  /* reset location at the beginning of yylex() */
     yylloc->step();
 %}
 
-sc    { return token::T_COLOR; }
-scb   { return token::T_BGCOLOR; }
+(sc|setcolor)            { return token::T_COLOR; }
+(scb|setbgcolor)         { return token::T_BGCOLOR; }
 
-ch    { return token::T_CHAMFER; }
-tx    { return token::T_TRANSLATEX; }
-ty    { return token::T_TRANSLATEY; }
-tz    { return token::T_TRANSLATEZ; }
-t     { return token::T_TRANSLATE; }
-rx    { return token::T_ROTATEX; }
-ry    { return token::T_ROTATEY; }
-rz    { return token::T_ROTATEZ; }
-tax   { return token::T_TAPERX; }
-tay   { return token::T_TAPERY; }
-taz   { return token::T_TAPERZ; }
-twx   { return token::T_TWISTX; }
-twy   { return token::T_TWISTY; }
-twz   { return token::T_TWISTZ; }
-shx   { return token::T_SHEARX; }
-shy   { return token::T_SHEARY; }
-shz   { return token::T_SHEARZ; }
-stx   { return token::T_STRETCHX; }
-sty   { return token::T_STRETCHY; }
-stz   { return token::T_STRETCHZ; }
-bdxy  { return token::T_BENDXY; }
-bdxz  { return token::T_BENDXZ; }
-bdyx  { return token::T_BENDYX; }
-bdyz  { return token::T_BENDYZ; }
-bdzx  { return token::T_BENDZX; }
-bdzy  { return token::T_BENDZY; }
-sx    { return token::T_SCALEX; }
-sy    { return token::T_SCALEY; }
-sz    { return token::T_SCALEZ; }
-s     { return token::T_SCALE; }
-tsw   { return token::T_TOGGLESCALEWINDING; }
-mx    { return token::T_MIRRORX; }
-my    { return token::T_MIRRORY; }
-mz    { return token::T_MIRRORZ; }
-rj    { return token::T_RADIALJITTER; }
-splt  { return token::T_SPLITTRIANGLE; }
-smth  { return token::T_SMOOTHMESH; }
+(ch|chamfer)             { return token::T_CHAMFER; }
+(tx|translatex)          { return token::T_TRANSLATEX; }
+(ty|translatey)          { return token::T_TRANSLATEY; }
+(tz|translatez)          { return token::T_TRANSLATEZ; }
+(t|translate)            { return token::T_TRANSLATE; }
+(rx|rotatex)             { return token::T_ROTATEX; }
+(ry|rotatey)             { return token::T_ROTATEY; }
+(rz|rotatez)             { return token::T_ROTATEZ; }
+(tax|taperx)             { return token::T_TAPERX; }
+(tay|tapery)             { return token::T_TAPERY; }
+(taz|taperz)             { return token::T_TAPERZ; }
+(twx|twistx)             { return token::T_TWISTX; }
+(twy|twisty)             { return token::T_TWISTY; }
+(twz|twistz)             { return token::T_TWISTZ; }
+(shx|shearx)             { return token::T_SHEARX; }
+(shy|sheary)             { return token::T_SHEARY; }
+(shz|shearz)             { return token::T_SHEARZ; }
+(stx|stretchx)           { return token::T_STRETCHX; }
+(sty|stretchy)           { return token::T_STRETCHY; }
+(stz|stretchz)           { return token::T_STRETCHZ; }
+(bdxy|bendxy)            { return token::T_BENDXY; }
+(bdxz|bendxz)            { return token::T_BENDXZ; }
+(bdyx|bendyx)            { return token::T_BENDYX; }
+(bdyz|bendyz)            { return token::T_BENDYZ; }
+(bdzx|bendzx)            { return token::T_BENDZX; }
+(bdzy|bendzy)            { return token::T_BENDZY; }
+(sx|scalex)              { return token::T_SCALEX; }
+(sy|scaley)              { return token::T_SCALEY; }
+(sz|scalez)              { return token::T_SCALEZ; }
+(s|scale)                { return token::T_SCALE; }
+(tsw|scalewinding)       { return token::T_TOGGLESCALEWINDING; }
+(mx|mirrorx)             { return token::T_MIRRORX; }
+(my|mirrory)             { return token::T_MIRRORY; }
+(mz|mirrorz)             { return token::T_MIRRORZ; }
+(rj|radialjitter)        { return token::T_RADIALJITTER; }
+(splt|splittriangle)     { return token::T_SPLITTRIANGLE; }
+(smth|smooth)            { return token::T_SMOOTHMESH; }
 
-csgu  { return token::T_CSGUNION; }
-csgs  { return token::T_CSGSUBSTRACT; }
-csgsl { return token::T_CSGSUBSTRACTLOSS; }
-csga  { return token::T_CSGAND; }
-csgx  { return token::T_CSGXOR; }
+(csgu|csgunion)          { return token::T_CSGUNION; }
+(csgs|csgsubstract)      { return token::T_CSGSUBSTRACT; }
+(csgsl|csgsubstractloss) { return token::T_CSGSUBSTRACTLOSS; }
+(csga|csgand)            { return token::T_CSGAND; }
+(csgx|csgxor)            { return token::T_CSGXOR; }
 
-ab    { return token::T_BOX; }
-ac    { return token::T_CYLINDER; }
-acap  { return token::T_CAPSULE; }
-acg   { return token::T_COG; }
-ad    { return token::T_DISC; }
-aes   { return token::T_EXPANDEDSTAR; }
-afcb  { return token::T_FLATCHAMFBOX; }
-aq    { return token::T_QUAD; }
-as    { return token::T_STAR; }
-ascb  { return token::T_SMOOTHCHAMFBOX; }
-asph  { return token::T_SPHERE; }
-at    { return token::T_TRIANGLE; }
-ato   { return token::T_TORUS; }
+(ab|addbox)              { return token::T_BOX; }
+(ac|addcylinder)         { return token::T_CYLINDER; }
+(acap|addcapsule)        { return token::T_CAPSULE; }
+(acg|addcog)             { return token::T_COG; }
+(ad|adddisc)             { return token::T_DISC; }
+(aes|addexpandedstar)    { return token::T_EXPANDEDSTAR; }
+(afcb|addflatchamfbox)   { return token::T_FLATCHAMFBOX; }
+(aq|addquad)             { return token::T_QUAD; }
+(as|addstar)             { return token::T_STAR; }
+(ascb|addsmoothchamfbox) { return token::T_SMOOTHCHAMFBOX; }
+(asph|adsphere)          { return token::T_SPHERE; }
+(at|addtriangle)         { return token::T_TRIANGLE; }
+(ato|addtorus)           { return token::T_TORUS; }
 
+%{ /* =======  BASE DATA TYPES  ========================================= */ %}
+%{ /* COLOR */ %}
 #[0-9a-fA-F]{3} {
         uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
         yylval->u32val = 0x11000000u * (tmp >> 8)
@@ -130,9 +131,25 @@ ato   { return token::T_TORUS; }
 #[0-9a-fA-F]{8} {
         yylval->u32val = (uint32_t)std::strtol(yytext + 1, nullptr, 16);
         return token::COLOR; }
-[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? {
-        yylval->fval = std::atof(yytext); return token::NUMBER; }
--     { return token_type('-'); }
+
+%{ /* =======  BASE DATA TYPES  ========================================= */ %}
+%{ /* BOOL */ %}
+true { yylval->bval = true; return token::BOOLEAN; }
+false { yylval->bval = false; return token::BOOLEAN; }
+%{ /* FLOAT */ %}
+[-+]?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)? {
+        yylval->fval = (float)std::atof(yytext); return token::F_NUMBER; }
+%{ /* INT */ %}
+[-+]?[0-9]+ {
+        yylval->ival = std::atoi(yytext); return token::I_NUMBER; }
+
+%{ /* ======= COMMENTS ======= */ %}
+"//"[^\n\r]*[\n\r] { /* ignore this */ }
+
+%{ /* Semantics tokens */ %}
+"-"   { return token_type('-'); }
+"("   { return token_type('('); }
+")"   { return token_type(')'); }
 "["   { return token_type('['); }
 "]"   { return token_type(']'); }
 [ ,]  { /* ignore this */ }

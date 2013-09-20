@@ -111,15 +111,18 @@ namespace lol {
 /* Line 34 of lalr1.cc  */
 #line 35 "easymesh/easymesh-parser.y"
 
-    float fval;
+    float   fval;
+    int     ival;
+    bool    bval;
+    float   vval[4];
+    int     ivval[4];
     /* Can't use uin32_t here for some reason */
     unsigned u32val;
-    struct { float f0, f1, f2, f3, f4, f5, f6, f7, f8, f9; } args;
 
 
 
 /* Line 34 of lalr1.cc  */
-#line 123 "generated/easymesh-parser.h"
+#line 126 "generated/easymesh-parser.h"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -190,8 +193,10 @@ namespace lol {
      T_COG = 313,
      T_TORUS = 314,
      T_ERROR = 315,
-     NUMBER = 316,
-     COLOR = 317
+     F_NUMBER = 316,
+     I_NUMBER = 317,
+     BOOLEAN = 318,
+     COLOR = 319
    };
 
     };
@@ -269,7 +274,7 @@ namespace lol {
     typedef unsigned char token_number_type;
     /* Tables.  */
     /// For a state, the index in \a yytable_ of its portion.
-    static const signed char yypact_[];
+    static const short int yypact_[];
     static const signed char yypact_ninf_;
 
     /// For a state, default rule to reduce.
@@ -314,9 +319,9 @@ namespace lol {
     /// A `-1'-separated list of the rules' RHS.
     static const rhs_number_type yyrhs_[];
     /// For each rule, the index of the first RHS symbol in \a yyrhs_.
-    static const unsigned char yyprhs_[];
+    static const unsigned short int yyprhs_[];
     /// For each rule, its source line number.
-    static const unsigned char yyrline_[];
+    static const unsigned short int yyrline_[];
     /// For each scanner token number, its symbol number.
     static const unsigned short int yytoken_number_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
@@ -365,7 +370,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 369 "generated/easymesh-parser.h"
+#line 374 "generated/easymesh-parser.h"
 
 
 
