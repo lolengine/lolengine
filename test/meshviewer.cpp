@@ -290,7 +290,7 @@ public:
             m_camera->SetFov(m_fov_mesh);
             m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio), 1.2f, seconds));
         }
-    
+
         //--
         //Message Service
         //--

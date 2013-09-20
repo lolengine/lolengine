@@ -32,7 +32,7 @@ struct MessageList
     String  m_message;
 };
 
-/* 
+/*
     A template class perhaps ?
 */
 class MessageService
