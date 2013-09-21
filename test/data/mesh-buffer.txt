@@ -1,7 +1,9 @@
-[sc#f8f ab 1 splt 3 twy 90]
-// splt 5 twy 90 0 
-//[sc#f8f afcb 10 10 10 .25 tx 0 splt 3 twy 1.6 0 ]
+[sc#f8f ab 1 splt 4 twy 90]
 
+
+
+// splt 5 twy 90 0 
+//[sc#f8f afcb 10 10 10 .25 tx 0 splt 4 twy 1.6 0 ]
 //sc#fff
 //[afcb 1 1 1 -.1 tx 1]
 //[afcb 1 1 1 -.1 tx 0]

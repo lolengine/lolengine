@@ -26,14 +26,17 @@ struct MeshRender
 {
     enum Value
     {
-        NeedInit,
+        NeedData,
+        NeedConvert,
         CanRender,
-        IgnoreRender
+        IgnoreRender,
+
+        Max
     }
     m_value;
 
     inline MeshRender(Value v) : m_value(v) {}
-    inline MeshRender() : m_value(NeedInit) {}
+    inline MeshRender() : m_value(NeedData) {}
     inline operator Value() { return m_value; }
 };
 
@@ -106,6 +109,8 @@ public:
 
 class GpuEasyMeshData
 {
+    friend class EasyMesh;
+
 public:
     //---
     GpuEasyMeshData();
@@ -520,14 +525,18 @@ struct Axis
 class EasyMesh
 {
     friend class EasyMeshParser;
+    friend class GpuEasyMeshData;
 
 public:
     EasyMesh();
+    EasyMesh(const EasyMesh& em);
 
-    bool Compile(char const *command);
-    void MeshConvert(GpuShaderData* new_gpu_sdata);
-    void MeshConvert(Shader* ProvidedShader = nullptr);
-    void Render(mat4 const &model);
+    bool        Compile(char const *command);
+    void        MeshConvert(GpuShaderData* new_gpu_sdata);
+    void        MeshConvert(Shader* ProvidedShader = nullptr);
+    bool        Render(mat4 const &model);
+    MeshRender  GetMeshState() { return m_state; }
+    bool        SetRender(bool should_render);
 
 private:
     void UpdateVertexDict(Array< int, int > &vertex_dict);
@@ -832,14 +841,14 @@ public:
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 private:
-    Array<uint16_t> m_indices;
-    Array<VertexData> m_vert;
+    Array<uint16_t>     m_indices;
+    Array<VertexData>   m_vert;
 
     //<vert count, indices count>
-    Array<int, int> m_cursors;
+    Array<int, int>     m_cursors;
 
-    friend class GpuEasyMeshData;
-    GpuEasyMeshData m_gpu_data;
+    MeshRender          m_state;
+    GpuEasyMeshData     m_gpu_data;
 
 public:
     inline EasyMeshBuildData* BD()

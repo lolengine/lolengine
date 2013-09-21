@@ -426,6 +426,19 @@ EasyMesh::EasyMesh()
   : m_build_data(nullptr)
 {
     m_cursors.Push(0, 0);
+    m_state = MeshRender::NeedData;
+}
+
+//-----------------------------------------------------------------------------
+EasyMesh::EasyMesh(const EasyMesh& em)
+{
+    *this = em;
+    m_build_data = nullptr;
+    m_gpu_data = GpuEasyMeshData();
+    if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
+        m_state = MeshRender::NeedConvert;
+    else
+        m_state = MeshRender::NeedData;
 }
 
 //-----------------------------------------------------------------------------
@@ -458,6 +471,7 @@ void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
         for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
             m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
     }
+    m_state = MeshRender::CanRender;
 }
 
 //-----------------------------------------------------------------------------
@@ -476,12 +490,36 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
         m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode::Default), this);
     for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
         m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
+    m_state = MeshRender::CanRender;
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::Render(mat4 const &model)
+bool EasyMesh::Render(mat4 const &model)
 {
-    m_gpu_data.RenderMeshData(model);
+    if (m_state == MeshRender::CanRender)
+    {
+        m_gpu_data.RenderMeshData(model);
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+bool EasyMesh::SetRender(bool should_render)
+{
+    if (m_state == MeshRender::CanRender)
+    {
+        if (!should_render)
+            m_state = MeshRender::IgnoreRender;
+        return true;
+    }
+    else if (m_state == MeshRender::IgnoreRender)
+    {
+        if (should_render)
+            m_state = MeshRender::CanRender;
+        return true;
+    }
+    return false;
 }
 
 //-------------------
@@ -851,12 +889,14 @@ void EasyMesh::SetCurColor2(vec4 const &color)
 void EasyMesh::AddVertex(vec3 const &coord)
 {
     m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->Color()));
+    m_state = MeshRender::NeedConvert;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AddDuplicateVertex(int i)
 {
     m_vert << m_vert[i];
+    m_state = MeshRender::NeedConvert;
 }
 
 //-----------------------------------------------------------------------------
@@ -869,6 +909,7 @@ void EasyMesh::AddLerpVertex(int i, int j, float alpha)
         lol::lerp(m_vert[i].m_texcoord, m_vert[j].m_texcoord,   alpha),
         ((alpha < .5f) ? (m_vert[i].m_bone_id) : (m_vert[j].m_bone_id)), /* FIXME ? */
         lol::lerp(m_vert[i].m_bone_weight, m_vert[j].m_bone_weight, alpha)));
+    m_state = MeshRender::NeedConvert;
 }
 
 //-----------------------------------------------------------------------------
