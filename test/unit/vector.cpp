@@ -124,6 +124,32 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_EQUAL(c.w, 0.0f);
         LOLUNIT_ASSERT_EQUAL(a3, a1);
     }
+
+    LOLUNIT_TEST(Orthogonal)
+    {
+        vec3 a(1.f, 0.f, 0.f);
+        vec3 b(0.f, 1.f, 0.f);
+        vec3 c(0.f, 0.f, 1.f);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthogonal(a), a), 0.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthogonal(b), b), 0.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthogonal(c), c), 0.f, 1e-6f);
+
+        /* The length of the orthogonal vector should be at least
+         * sqrt(2)/2 times the length of the original vector. */
+        LOLUNIT_ASSERT_GREATER(length(orthogonal(a)), 0.7f);
+        LOLUNIT_ASSERT_GREATER(length(orthogonal(b)), 0.7f);
+        LOLUNIT_ASSERT_GREATER(length(orthogonal(c)), 0.7f);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthonormal(a), a), 0.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthonormal(b), b), 0.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(dot(orthonormal(c), c), 0.f, 1e-6f);
+
+        /* The length of the orthonormal vector should be 1. */
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(length(orthonormal(a)), 1.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(length(orthonormal(b)), 1.f, 1e-6f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(length(orthonormal(c)), 1.f, 1e-6f);
+    }
 };
 
 } /* namespace lol */
