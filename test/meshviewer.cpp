@@ -331,7 +331,7 @@ public:
         int u = 4;
         while (u-- > 0 && MessageService::FetchFirst(MSG_IN, mesh))
         {
-            int o = 4;
+            int o = 1;
             while (o-- > 0)
             {
                 if (m_mesh_id == m_meshes.Count() - 1)
@@ -347,7 +347,8 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-            MessageService::Send(MSG_IN, "[sc#f8f afcb 1 1 1 0]");
+            MessageService::Send(MSG_IN, "[sc#f8f afcb 1]");
+//            MessageService::Send(MSG_IN, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
         }
