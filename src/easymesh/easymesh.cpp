@@ -432,7 +432,10 @@ EasyMesh::EasyMesh()
 //-----------------------------------------------------------------------------
 EasyMesh::EasyMesh(const EasyMesh& em)
 {
-    *this = em;
+    //*this = em;
+    m_indices = em.m_indices;
+    m_vert = em.m_vert;
+    m_cursors = em.m_cursors;
     m_build_data = nullptr;
     m_gpu_data = GpuEasyMeshData();
     if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
