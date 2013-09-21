@@ -16,7 +16,6 @@ progress {
     height: 18px;  
     border-radius: 9px;  
 }
-
 progress::-webkit-progress-bar {  
     background-color: #f3f3f3;
     border: 1px solid #000000;
@@ -30,6 +29,24 @@ progress::-webkit-progress-value {
     height: 14px;
     border-radius: 0px;
 }
+#listener {
+    position: relative;
+}
+#progress_bar {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    z-index: 3;
+}
+#nacl_div {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: -1;
+}
+#BGCanvas {
+    border:1px solid #000000;
+}
 </style>
 <!--
 -->
@@ -39,31 +56,20 @@ progress::-webkit-progress-value {
     NaClModule = null;  // Global application object.
     MeshCodeModule = null;
     statusText = 'NO-STATUS';
-
     window.setTimeout("Tick()", 100);
-    document.getElementById('prout').style.top = 0;
 
     function Tick() {
-    window.setTimeout("Tick()", 100);
-    var truc = parseInt(document.getElementById('prout').style.top);
-    //document.getElementById('prout').style.top = truc + 1 + "px";
-      var statusField = document.getElementById('tick_field');
-      if (statusField) {
-        statusField.innerHTML = truc;
-    }
+        window.setTimeout("Tick()", 100);
     }
 
 
     // Indicate load success.
     function moduleDidLoad() {
-      NaClModule = document.getElementById('ID_NaClModule');
-      MeshCodeModule = document.getElementById('ID_MeshCode');
-      //document.getElementById('listener').style.visibility = "visible";
-      //document.getElementById('canvas_loading').style.display = "none";
-    //document.getElementById('ID_NaClModule').width = 640;
-    //document.getElementById('ID_NaClModule').height = 480;
-
-      updateStatus('Rock n\' Roll !!');
+        NaClModule = document.getElementById('ID_NaClModule');
+        MeshCodeModule = document.getElementById('ID_MeshCode');
+        updateStatus('Rock n\' Roll !!');
+        var progress_bar = document.getElementById('progress_bar');
+        progress_bar.style.visibility="hidden";
     }
 
     // The 'message' event handler.  This handler is fired when the NaCl module
@@ -111,7 +117,7 @@ progress::-webkit-progress-value {
             progressBar.max = event.total;
             progressBar.value = event.loaded;
             var load_progress = ((event.loaded / event.total) * 100.0);
-            status_field.innerHTML = 'Loading [' + load_progress.toFixed(0) + '%]';
+            status_field.innerHTML = 'Please wait, loading [' + load_progress.toFixed(0) + '%]';
         }
         else {
             progressBar.value = -1;
@@ -123,11 +129,7 @@ progress::-webkit-progress-value {
     function SendMeshData()
     {
         if (NaClModule)
-        {
             NaClModule.postMessage(MeshCodeModule.value);
-            //NaClModule.postMessage("sc#f8f afcb 1 1 1 0");
-            alert("Data sent");
-        }
         else
             alert("Module not loaded");
     }
@@ -137,66 +139,43 @@ progress::-webkit-progress-value {
 
 <h1>Mesh Viewer : Native Client version.</h1>
 <p>
-<div>
-    <table border="1" cellspacing="0" cellpadding="0" style="width:770px;height:200px">
-    <tr border="0"> <td border="0" align="center">
-
-    <div id="status_field">NO-STATUS</div>
-    <progress id=p align="left"></progress>
-    <script type="text/javascript">
-        var progressBar = document.getElementById("p");
-        progressBar.max = 100;
-        progressBar.value = 100;
-    </script>
-<!--
-<script>
-    var progressBar = document.getElementById("p"), client = new XMLHttpRequest()
-    client.open("GET", "magical-unicorns")
-    client.onprogress = function (pe) {
-        if (pe.lengthComputable) {
-            progressBar.max = pe.total
-            progressBar.value = pe.loaded
-        }
-    }
-    client.onloadend = function (pe) {
-        progressBar.value = pe.loaded
-    }
-    client.send()
-    progressBar.max = pe.total;
-    progressBar.value = pe.loaded;
-</script>
--->
-
-    </td> </tr>
-    </table>
-  </div>
+<div id="final_div">
+        <div id="listener" align="center" style="width:770px;height:200px">
+        <canvas id="BGCanvas" width="772" height="202">
+        test
+        </canvas>
+            <div id="progress_bar">
+                <div id="status_field">NO-STATUS</div>
+                <progress id=p align="left"></progress>
+            </div>
+            <div id="nacl_div">
+                <param name="wmode" value="opaque"/>
+                <embed name="nacl_module"
+                   id="ID_NaClModule"
+                   width=770 height=200
+                   src="meshviewer_nacl.nmf"
+                   type="application/x-nacl" />
+            </div>
+            <script type="text/javascript">
+                var listener = document.getElementById('listener');
+                listener.addEventListener('load', moduleDidLoad, true);
+                listener.addEventListener('progress', moduleLoadProgress, true);
+                listener.addEventListener('message', handleMessage, true);
+            </script>
+        </div>
+</div>
 </p>
 <h2>Status</h2>
 <div id="tick_field"></div>
 <div id="bouton">
-  <textarea id="ID_MeshCode" rows="5" cols="80">
+<textarea id="ID_MeshCode" rows="5" cols="80">
 //This is a comment
 sc#f8f afcb 1 1 1 0
-  </textarea>
+</textarea>
 </div>
 <div>
   <button onclick="SendMeshData()">Update Mesh</button>
 </div>
 
-  <div id="listener" >
-    <script type="text/javascript">
-        var listener = document.getElementById('listener');
-        listener.addEventListener('load', moduleDidLoad, true);
-        listener.addEventListener('progress', moduleLoadProgress, true);
-        listener.addEventListener('message', handleMessage, true);
-    </script>
-    <div id="nacl_div">
-        <embed name="nacl_module"
-           id="ID_NaClModule"
-           width=770 height=200
-           src="meshviewer_nacl.nmf"
-           type="application/x-nacl" />
-    </div>
-    </div>
 </body>
 </html>
