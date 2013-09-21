@@ -268,8 +268,8 @@ public:
         //Target List Setup
         Array<vec3> target_list;
         if (m_meshes.Count() && m_mesh_id >= 0)
-            for (int i = 0; i < m_meshes[m_mesh_id].m1.GetVertexCount(); i++)
-                target_list << (m_mat * mat4::translate(m_meshes[m_mesh_id].m1.GetVertexLocation(i))).v3.xyz;
+            for (int i = 0; i < m_meshes[m_mesh_id].GetVertexCount(); i++)
+                target_list << (m_mat * mat4::translate(m_meshes[m_mesh_id].GetVertexLocation(i))).v3.xyz;
 
         //--
         //Update mesh screen location - Get the Min/Max needed
@@ -331,17 +331,15 @@ public:
         int u = 4;
         while (u-- > 0 && MessageService::FetchFirst(MSG_IN, mesh))
         {
-            int o = 1;
+            int o = 4;
             while (o-- > 0)
             {
                 if (m_mesh_id == m_meshes.Count() - 1)
                     m_mesh_id++;
                 //Create a new mesh
-                m_meshes.Push(EasyMesh(), false);
-                if (!m_meshes.Last().m1.Compile(mesh.C()))
-                    m_meshes.Pop();
-                //else
-                //    m_meshes.Last().m1.ComputeTexCoord(0.2f, 2);
+                EasyMesh tmp;
+                if (tmp.Compile(mesh.C()))
+                    m_meshes.Push(tmp);
             }
         }
 
@@ -431,49 +429,47 @@ public:
             m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
 #endif //!__native_client__
 
-        for (int i = 0; i < m_meshes.Count(); i++)
-        {
-            if (!m_meshes[i].m2)
-            {
-#if WITH_TEXTURE
-                m_meshes[i].m1.MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                                                                  (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
-                                                                  m_texture_shader, true));
-#else
-                m_meshes[i].m1.MeshConvert();
-#endif
-                m_meshes[i].m2 = true;
-            }
-        }
-
         g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);
         for (int i = 0; i < m_meshes.Count(); i++)
         {
-            mat4 save_proj = m_camera->GetProjection();
-            float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
-            if (m_meshes[i].m2)
             {
-                mat4 new_proj =
-                    //Y object Offset
-                    mat4::translate(x * m_screen_offset.x + y * m_screen_offset.y) *
-                    //Mesh Pos Offset
-                    mat4::translate((x * m_pos_mesh.x * RATIO_HW + y * m_pos_mesh.y) * 2.f * (1.f + .5f * m_zoom_mesh / SCREEN_LIMIT)) *
-                    //Mesh count offset
-                    mat4::translate(x * RATIO_HW * 2.f * j) *
-                    //Align right meshes
-                    mat4::translate(x - x * RATIO_HW) *
-                    //Mesh count scale
-                    //mat4::scale(1.f - .2f * j * (1.f / (float)m_meshes.Count())) *
-                    //Camera projection
-                    save_proj;
-                m_camera->SetProjection(new_proj);
-                m_meshes[i].m1.Render(m_mat);
-                g_renderer->Clear(ClearMask::Depth);
+                if (m_meshes[i].GetMeshState() == MeshRender::NeedConvert)
+                {
+#if WITH_TEXTURE
+                    m_meshes[i].MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                                                                       (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
+                                                                       m_texture_shader, true));
+#else
+                    m_meshes[i].MeshConvert();
+#endif //WITH_TEXTURE
+                }
+                mat4 save_proj = m_camera->GetProjection();
+                float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
+
+                if (m_meshes[i].GetMeshState() > MeshRender::NeedConvert)
+                {
+                    mat4 new_proj =
+                        //Y object Offset
+                        mat4::translate(x * m_screen_offset.x + y * m_screen_offset.y) *
+                        //Mesh Pos Offset
+                        mat4::translate((x * m_pos_mesh.x * RATIO_HW + y * m_pos_mesh.y) * 2.f * (1.f + .5f * m_zoom_mesh / SCREEN_LIMIT)) *
+                        //Mesh count offset
+                        mat4::translate(x * RATIO_HW * 2.f * j) *
+                        //Align right meshes
+                        mat4::translate(x - x * RATIO_HW) *
+                        //Mesh count scale
+                        //mat4::scale(1.f - .2f * j * (1.f / (float)m_meshes.Count())) *
+                        //Camera projection
+                        save_proj;
+                    m_camera->SetProjection(new_proj);
+                    m_meshes[i].Render(m_mat);
+                    g_renderer->Clear(ClearMask::Depth);
+                }
+                m_camera->SetProjection(save_proj);
             }
-            m_camera->SetProjection(save_proj);
         }
     }
 
@@ -502,7 +498,7 @@ private:
     //Mesh infos
     int     m_mesh_id;
     float   m_mesh_id1;
-    Array<EasyMesh, bool> m_meshes;
+    Array<EasyMesh> m_meshes;
 
     //File data
     String        m_file_name;

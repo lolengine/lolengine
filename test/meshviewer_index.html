@@ -11,18 +11,18 @@
 
 <style type="text/css">
 #canvas_loading {
-	position: relative;
-	left: -2px;
-	top: -487px;
-	z-index: 1;
-	border:2px solid #c3c3c3;
-	width:640px;height:480px;
+    position: relative;
+    left: -2px;
+    top: -487px;
+    z-index: 1;
+    border:2px solid #c3c3c3;
+    width:640px;height:480px;
 }
 #nacl_div {
-	position: relative;
-	left: 0px;
-	top: 0px;
-	z-index: 0;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
 }
 </style>
 <!--
@@ -38,13 +38,13 @@
     document.getElementById('prout').style.top = 0;
 
     function Tick() {
-	window.setTimeout("Tick()", 100);
+    window.setTimeout("Tick()", 100);
     var truc = parseInt(document.getElementById('prout').style.top);
-   	//document.getElementById('prout').style.top = truc + 1 + "px";
+    //document.getElementById('prout').style.top = truc + 1 + "px";
       var statusField = document.getElementById('tick_field');
       if (statusField) {
         statusField.innerHTML = truc;
-	}
+    }
     }
 
 
@@ -54,8 +54,8 @@
       MeshCodeModule = document.getElementById('ID_MeshCode');
       //document.getElementById('listener').style.visibility = "visible";
       //document.getElementById('canvas_loading').style.display = "none";
-	//document.getElementById('ID_NaClModule').width = 640;
-	//document.getElementById('ID_NaClModule').height = 480;
+    //document.getElementById('ID_NaClModule').width = 640;
+    //document.getElementById('ID_NaClModule').height = 480;
 
       updateStatus('SUCCESS');
     }
@@ -153,17 +153,17 @@ visibility="hidden"
       </td> </tr>
 -->
 
-	<div id="nacl_div">
-	    <embed name="nacl_module"
-	       id="ID_NaClModule"
-	       width=770 height=200
-	       src="nacl.nmf"
-	       type="application/x-nacl" />
-	</div>
+    <div id="nacl_div">
+        <embed name="nacl_module"
+           id="ID_NaClModule"
+           width=770 height=200
+           src="nacl.nmf"
+           type="application/x-nacl" />
+    </div>
 <!--
-	<div id="canvas_loading">
-	   <canvas id="myCanvas" width="640" height="480" visibility="hidden"></canvas>
-	</div>
+    <div id="canvas_loading">
+       <canvas id="myCanvas" width="640" height="480" visibility="hidden"></canvas>
+    </div>
 -->
     <script>
      
