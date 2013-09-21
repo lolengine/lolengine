@@ -1298,12 +1298,29 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     }
 
 #define LOL_VEC_3_FUNS(tname, tprefix, type) \
+    /* Return the cross product (vector product) of "a" and "b" */ \
     tprefix \
     inline tname<type> cross(tname<type> const &a, tname<type> const &b) \
     { \
         return tname<type>((type)(a.y * b.z - a.z * b.y), \
                            (type)(a.z * b.x - a.x * b.z), \
                            (type)(a.x * b.y - a.y * b.x)); \
+    } \
+    \
+    /* Return a vector that is orthogonal to "a" */ \
+    tprefix \
+    inline tname<type> orthogonal(tname<type> const &a) \
+    { \
+        return lol::abs(a.x) > lol::abs(a.z) \
+             ? tname<type>(-a.y, a.x, (type)0) \
+             : tname<type>((type)0, -a.z, a.y); \
+    } \
+    \
+    /* Return a vector that is orthonormal to "a" */ \
+    tprefix \
+    inline tname<type> orthonormal(tname<type> const &a) \
+    { \
+        return normalize(orthogonal(a)); \
     }
 
 #define LOL_BINARY_NONVECTOR_OPS(tname, tprefix, type) \
