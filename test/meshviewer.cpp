@@ -213,7 +213,7 @@ public:
         is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
 
         tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
-                  ((float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown()));
+                   (float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown());
 #endif //!__native_client__
 
         //Base data
