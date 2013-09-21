@@ -20,35 +20,45 @@ class KeyBinding
 {
 public:
     KeyBinding()
-      : m_device(nullptr),
-        m_keyindex(-1),
-        m_current(false),
+      : m_current(false),
         m_previous(false)
     {}
 
-    /** Indicate wheither the key is currently down */
+    /** Indicates wheither the key is currently down */
     bool IsDown() const { return m_current; }
-    /** Indicate wheither the key is currently up */
+    /** Indicates wheither the key is currently up */
     bool IsUp() const { return !m_current; }
-    /** Indicate wheither the key has just been pressed */
+    /** Indicates wheither the key has just been pressed */
     bool IsPressed() const { return m_current && !m_previous; }
-    /** Indicate wheither the key has just been released */
+    /** Indicates wheither the key has just been released */
     bool IsReleased() const { return !m_current && m_previous; }
 
     /** Bind a physical device and key */
     void Bind(const char* device_name, const char* key_name);
+    /** Unbind a previously bound physical device and key. Returns true if the binding was existing. */
+    bool Unbind(const char* device_name, const char* key_name);
     /** Clear current binding */
-    void ClearBinding();
-
-    /** Indicate wheither a physical device and key has been bound */
-    bool IsBound() { return m_device && m_keyindex != -1; }
+    void ClearBindings();
+    /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
+    int IsBound() const { return m_keybindings.Count(); }
 
 protected:
-    void Update() { m_previous = m_current; m_current = IsBound() ? m_device->GetKey(m_keyindex) : false; }
+    /** Update the binding value. Called internally by the controller, once per frame */
+    void Update()
+    {
+        m_previous = m_current;
+        m_current = false;
+        for (int i = 0; i < m_keybindings.Count(); ++i)
+        {
+            m_current = m_current || m_keybindings[i].m1->GetKey(m_keybindings[i].m2);
+        }
+    }
 
-    const InputDevice* m_device;
-    int m_keyindex;
+    /** m1 is the InputDevice, m2 is the key index on the InputDevice */
+    Array<const InputDevice*, int> m_keybindings;
+    /** Value at the previous frame */
     bool m_current;
+    /** Value at the current frame */
     bool m_previous;
 
     friend class Controller;
@@ -58,11 +68,7 @@ class AxisBinding
 {
 public:
     AxisBinding()
-      : m_device(nullptr),
-        m_axisindex(-1),
-        m_minkeyindex(-1),
-        m_maxkeyindex(-1),
-        m_current(0.0f),
+      : m_current(0.0f),
         m_previous(0.0f)
     {}
 
@@ -70,28 +76,33 @@ public:
     float GetValue() const { return m_current; }
     /** Gets the current delta value of this axis */
     float GetDelta() const { return m_current - m_previous; }
-
+	
     /** Bind a physical device and axis */
     void Bind(const char* device_name, const char* axis_name);
     /** Bind a physical device and key over this axis. The axis value will be 0 if the key is up and 1 if it's down */
     void BindKey(const char* device_name, const char* key_name);
     /** Bind physical device and keys over this axis. The axis value will be 0 if both the key are up, -1 if minkey is down, and 1 if maxkey is down */
     void BindKeys(const char* device_name, const char* min_key_name, const char* max_key_name);
+    /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
+    bool Unbind(const char* device_name, const char* axis_name);
+    /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
+    bool UnbindKey(const char* device_name, const char* key_name);
+    /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
+    bool UnbindKeys(const char* device_name, const char* min_key_name, const char* max_key_name);
     /** Clear current binding */
-    void ClearBinding();
+    void ClearBindings();
+    /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
+    int IsBound() const { return m_axisbindings.Count() + m_keybindings.Count(); }
 
-    /** Indicate wheither a physical device and axis has been bound */
-    bool IsBound() { return m_device &&
-                            (m_axisindex != -1 || m_maxkeyindex != -1); }
 
 protected:
     void Update() { m_previous = m_current; m_current = IsBound() ? RetrieveCurrentValue() : 0.0f; }
     float RetrieveCurrentValue();
 
-    const InputDevice* m_device;
-    int m_axisindex;
-    int m_minkeyindex;
-    int m_maxkeyindex;
+    /** m1 is the InputDevice, m2 is the axis index on the InputDevice, m3 and m4 are an optional key indices to bind one or two keys over the axis */
+    Array<const InputDevice*, int> m_axisbindings;
+    /** m1 is the InputDevice, m2 is the key index on the InputDevice for the negative value, m3 is the key index on the InputDevice for the positive value. Only one key is required to bind key over axis. */
+    Array<const InputDevice*, int, int> m_keybindings;
     float m_current;
     float m_previous;
 
