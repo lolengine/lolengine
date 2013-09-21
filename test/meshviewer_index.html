@@ -110,7 +110,8 @@ progress::-webkit-progress-value {
         if (event.lengthComputable) {
             progressBar.max = event.total;
             progressBar.value = event.loaded;
-            status_field.innerHTML = 'Loading [' + (event.total / event.max * 100.0) + ']';
+            var load_progress = ((event.loaded / event.total) * 100.0);
+            status_field.innerHTML = 'Loading [' + load_progress.toFixed(0) + '%]';
         }
         else {
             progressBar.value = -1;
@@ -193,7 +194,7 @@ sc#f8f afcb 1 1 1 0
         <embed name="nacl_module"
            id="ID_NaClModule"
            width=770 height=200
-           src="nacl.nmf"
+           src="meshviewer_nacl.nmf"
            type="application/x-nacl" />
     </div>
     </div>
