@@ -20,7 +20,7 @@ class InputDevice
 {
 public:
     /** Gets the name of this input device */
-    const String& GetName();
+    const String& GetName() const { return m_name; }
 
     /** Gets the index of the corresponding key, needed to call GetKey */
     int GetKeyIndex(const char* name) const { return GetItemIndex(name, m_keynames); }
