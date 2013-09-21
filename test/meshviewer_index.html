@@ -10,24 +10,30 @@
 <head>
 
 <style type="text/css">
-#canvas_loading {
-    position: relative;
-    left: -2px;
-    top: -487px;
-    z-index: 1;
-    border:2px solid #c3c3c3;
-    width:640px;height:480px;
+progress {  
+    background-color: #f3f3f3;  
+    border: 0;  
+    height: 18px;  
+    border-radius: 9px;  
 }
-#nacl_div {
-    position: relative;
-    left: 0px;
-    top: 0px;
-    z-index: 0;
+
+progress::-webkit-progress-bar {  
+    background-color: #f3f3f3;
+    border: 1px solid #000000;
+    padding: 2px 2px;
+    height: 20px;
+    border-radius: 0px;
+}
+progress::-webkit-progress-value {  
+    background-color: #22BB22;
+    border: 0px;
+    height: 14px;
+    border-radius: 0px;
 }
 </style>
 <!--
 -->
-  <title>mesh viewer NaCl</title>
+  <title>Mesh Viewer NaCl</title>
 
   <script type="text/javascript">
     NaClModule = null;  // Global application object.
@@ -57,7 +63,7 @@
     //document.getElementById('ID_NaClModule').width = 640;
     //document.getElementById('ID_NaClModule').height = 480;
 
-      updateStatus('SUCCESS');
+      updateStatus('Rock n\' Roll !!');
     }
 
     // The 'message' event handler.  This handler is fired when the NaCl module
@@ -73,7 +79,7 @@
     // do not change the status message.
     function pageDidLoad() {
       if (NaClModule == null) {
-        updateStatus('LOADING...');
+        updateStatus('Please wait, loading ...');
       } else {
         // It's possible that the Native Client module onload event fired
         // before the page's onload event.  In this case, the status message
@@ -97,6 +103,22 @@
       }
     }
 
+    function moduleLoadProgress(event)
+    {
+        var progressBar = document.getElementById("p");
+        var statusField = document.getElementById('status_field');
+        if (event.lengthComputable) {
+            progressBar.max = event.total;
+            progressBar.value = event.loaded;
+            status_field.innerHTML = 'Loading [' + (event.total / event.max * 100.0) + ']';
+        }
+        else {
+            progressBar.value = -1;
+            status_field.innerHTML = 'Computing progress ...'
+        }
+    }
+
+
     function SendMeshData()
     {
         if (NaClModule)
@@ -112,47 +134,61 @@
 </head>
 <body onload="pageDidLoad()">
 
-<h1>Native Client Module HelloTutorial</h1>
+<h1>Mesh Viewer : Native Client version.</h1>
 <p>
-  <!-- Load the published .nexe.  This includes the 'nacl' attribute which
-  shows how to load multi-architecture modules.  Each entry in the "nexes"
-  object in the .nmf manifest file is a key-value pair: the key is the
-  instruction set architecture ('x86-32', 'x86-64', etc.); the value is a URL
-  for the desired NaCl module.
-  To load the debug versions of your .nexes, set the 'nacl' attribute to the
-  _dbg.nmf version of the manifest file.
+<div>
+    <table border="1" cellspacing="0" cellpadding="0" style="width:770px;height:200px">
+    <tr border="0"> <td border="0" align="center">
 
-  Note: Since this NaCl module does not use any real-estate in the browser,
-  it's width and height are set to 0.
-
-  Note: The <EMBED> element is wrapped inside a <DIV>, which has both a 'load'
-  and a 'message' event listener attached.  This wrapping method is used
-  instead of attaching the event listeners directly to the <EMBED> element to
-  ensure that the listeners are active before the NaCl module 'load' event
-  fires.  This also allows you to use PPB_Messaging.PostMessage() (in C) or
-  pp::Instance.PostMessage() (in C++) from within the initialization code in
-  your NaCl module.
-
-visibility="hidden"
-  -->
-  <div id="listener" >
+    <div id="status_field">NO-STATUS</div>
+    <progress id=p align="left"></progress>
     <script type="text/javascript">
-      var listener = document.getElementById('listener');
-      listener.addEventListener('load', moduleDidLoad, true);
-      listener.addEventListener('message', handleMessage, true);
+        var progressBar = document.getElementById("p");
+        progressBar.max = 100;
+        progressBar.value = 100;
     </script>
 <!--
-    <canvas id="myCanvas" width="640" height="480" style="border:1px solid #c3c3c3;">
-    Your browser does not support the HTML5 canvas tag.
-    </canvas>
--->
-     
-<!--
-    <table border="1" cellspacing="0" cellpadding="0" style="width:640px;height:490px">
-      <tr> <td align="center" style="vertical-align:middle">
-      </td> </tr>
+<script>
+    var progressBar = document.getElementById("p"), client = new XMLHttpRequest()
+    client.open("GET", "magical-unicorns")
+    client.onprogress = function (pe) {
+        if (pe.lengthComputable) {
+            progressBar.max = pe.total
+            progressBar.value = pe.loaded
+        }
+    }
+    client.onloadend = function (pe) {
+        progressBar.value = pe.loaded
+    }
+    client.send()
+    progressBar.max = pe.total;
+    progressBar.value = pe.loaded;
+</script>
 -->
 
+    </td> </tr>
+    </table>
+  </div>
+</p>
+<h2>Status</h2>
+<div id="tick_field"></div>
+<div id="bouton">
+  <textarea id="ID_MeshCode" rows="5" cols="80">
+//This is a comment
+sc#f8f afcb 1 1 1 0
+  </textarea>
+</div>
+<div>
+  <button onclick="SendMeshData()">Update Mesh</button>
+</div>
+
+  <div id="listener" >
+    <script type="text/javascript">
+        var listener = document.getElementById('listener');
+        listener.addEventListener('load', moduleDidLoad, true);
+        listener.addEventListener('progress', moduleLoadProgress, true);
+        listener.addEventListener('message', handleMessage, true);
+    </script>
     <div id="nacl_div">
         <embed name="nacl_module"
            id="ID_NaClModule"
@@ -160,48 +196,6 @@ visibility="hidden"
            src="nacl.nmf"
            type="application/x-nacl" />
     </div>
-<!--
-    <div id="canvas_loading">
-       <canvas id="myCanvas" width="640" height="480" visibility="hidden"></canvas>
     </div>
--->
-    <script>
-     
-    var c=document.getElementById("myCanvas");
-    var ctx=c.getContext("2d");
-    ctx.fillStyle="#FF0000";
-    ctx.fillRect(0,0,640,480);
-    //ctx.clearRect(10,10,620,460);
-
-    ctx.fillStyle="#000000";
-    ctx.font="30px Arial";
-    ctx.fillText("LOADING",10,50);
-     
-    </script>
-
-
-<!--style="width:640px;height:480px;z-index:1" position:absolute;left:0%;top:0%;
-
-      <tr> <td align="center" style="vertical-align:middle">
-testestestset
-      </td> </tr>
-    </table>
--->
-  </div>
-  <div id="prout" style="position:absolute;top:0px">
-    test
-  </div>
-
-</p>
-<h2>Status</h2>
-<div id="bouton">
-  <textarea id="ID_MeshCode" rows="5" cols="80">
-    //This is a comment
-    sc#f8f afcb 1 1 1 0
-  </textarea>
-  <button onclick="SendMeshData()">Try Me !</button>
-</div>
-<div id="status_field">NO-STATUS</div>
-<div id="tick_field"></div>
 </body>
 </html>
