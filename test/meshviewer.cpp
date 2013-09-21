@@ -337,11 +337,11 @@ public:
                 if (m_mesh_id == m_meshes.Count() - 1)
                     m_mesh_id++;
                 //Create a new mesh
-                EasyMesh* tmp = new EasyMesh();
-                if (tmp->Compile(mesh.C()))
-                    m_meshes.Push(tmp);
+                EasyMesh* em = new EasyMesh();
+                if (em->Compile(mesh.C()))
+                    m_meshes.Push(em);
                 else
-                    delete(tmp);
+                    delete(em);
             }
         }
 
