@@ -32,19 +32,20 @@ Camera::Camera()
     m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_CAMERA;
 
-    ivec2 screen_size = (g_renderer)?(Video::GetSize()):(ivec2(0));
+    //Arbitrary values when g_renderer is not ready.
+    ivec2 screen_size = (g_renderer)?(Video::GetSize()):(ivec2(800, 600));
     m_fov = 45.f;
     m_near = -1000.f;
     m_far = 1000.f;
     m_screen_size = (float)screen_size.x;
-    m_screen_ratio = (float)screen_size.x / (float)screen_size.y;
+    m_screen_ratio = (float)screen_size.y / (float)screen_size.x;
     m_is_shifted = false;
     m_screen_scale = vec2(1.f);
 
     m_target_distance = .0f;
 
     /* Create a default perspective */
-    SetProjection(mat4::perspective(45.f, 800.f, 600.f, -1000.f, 1000.f));
+    SetProjection(m_fov, m_near, m_far, m_screen_size, m_screen_ratio);
     SetView(mat4::lookat(vec3(0.f, 50.f, 50.f), vec3(0.f), vec3(0.f, 1.f, 0.f)));
 }
 
