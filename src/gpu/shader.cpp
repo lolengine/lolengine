@@ -404,7 +404,12 @@ Shader::Shader(char const *vert, char const *frag)
 
 int Shader::GetAttribCount() const
 {
+#if !defined __CELLOS_LV2__
     return data->attrib_locations.Count();
+#else
+    // TODO
+    return 0;
+#endif
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const

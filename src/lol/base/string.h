@@ -192,40 +192,18 @@ public:
         return -1;
     }
 
-    bool StartsWith(char const* token) const
+    bool StartsWith(String const &s) const
     {
-        const char* p = C();
-        while (*token != '\0')
-        {
-            if (*p != *token)
-                return false;
-
-            ++p;
-            ++token;
-        }
-
-        return true;
+        using namespace std;
+        return Count() >= s.Count()
+                && memcmp(C(), s.C(), s.Count()) == 0;
     }
 
-    bool EndsWith(char const* token) const
+    bool EndsWith(String const &s) const
     {
-        const char* p = C();
-        int token_idx = strlen(token) - 1;
-        int c_idx = strlen(p) - 1;
-
-        if (c_idx < token_idx)
-            return false;
-
-        while (token_idx >= 0)
-        {
-            if (token[token_idx] != p[c_idx])
-                return false;
-
-            --token_idx;
-            --c_idx;
-        }
-
-        return true;
+        using namespace std;
+        return Count() >= s.Count()
+                && memcmp(C() + Count() - s.Count(), s.C(), s.Count()) == 0;
     }
 
     inline String operator +(String const &s) const
