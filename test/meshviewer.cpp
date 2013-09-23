@@ -24,8 +24,10 @@ using namespace lol;
 static int const TEXTURE_WIDTH = 256;
 
 #define     R_M                 2.f
-#define     WIDTH               (770.f * R_M)
-#define     HEIGHT              (200.f * R_M)
+#define     DEFAULT_WIDTH       (770.f * R_M)
+#define     DEFAULT_HEIGHT      (200.f * R_M)
+#define     WIDTH               ((float)Video::GetSize().x)
+#define     HEIGHT              ((float)Video::GetSize().y)
 #define     SCREEN_W            (10.f / WIDTH)
 #define     SCREEN_LIMIT        1.1f
 #define     RATIO_HW            (HEIGHT / WIDTH)
@@ -522,7 +524,7 @@ int main(int argc, char **argv)
 {
     System::Init(argc, argv);
 
-    Application app("MeshViewer", ivec2((int)WIDTH, (int)HEIGHT), 60.0f);
+    Application app("MeshViewer", ivec2((int)DEFAULT_WIDTH, (int)DEFAULT_HEIGHT), 60.0f);
     if (argc > 1)
         new MeshViewer(argv[1]);
     else

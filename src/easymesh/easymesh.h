@@ -558,22 +558,25 @@ public:
     /* [cmd:csgx] Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted) */
     void CsgXor()           { MeshCsg(CSGUsage::Xor); }
 
+    //-------------------------------------------------------------------------
+    //Mesh Base operations
+    //-------------------------------------------------------------------------
 public:
     /* [cmd:[] from this point onward, any operation will not be performed on previous vertices */
     void OpenBrace();
     /* [cmd:]] Merge current vertices with previous context */
     void CloseBrace();
-    /* [cmd:tsw] When activation, on negative-scaling, normal fixing will not occur */
+    /* [cmd:tsw] When activated, on negative-scaling, normal-vector correction will not occur */
     void ToggleScaleWinding();
-    /* [cmd:sc] Set vertices color */
+    /* [cmd:sc] Set base color */
     void SetCurColor(vec4 const &color);
-    /* [cmd:scb] Set vertices color 2 */
+    /* [cmd:scb] Set base color 2 */
     void SetCurColor2(vec4 const &color);
 
-private:
     //-------------------------------------------------------------------------
     //Internal : Basic triangle/vertex operations
     //-------------------------------------------------------------------------
+private:
     void AddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
     void AddLerpVertex(int i, int j, float alpha);
@@ -586,8 +589,9 @@ public: //DEBUG
     void ComputeTexCoord(float uv_scale, int uv_offset);
 
     //-------------------------------------------------------------------------
-    //Vertices operations
+    //Internal : Vertices operations
     //-------------------------------------------------------------------------
+private:
     void SetVertColor(vec4 const &color);
     void SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale);
     void SetTexCoordData2(vec2 const &new_offset, vec2 const &new_scale);
@@ -617,11 +621,11 @@ public:
         - axis : rotation axis.
      */
     void Rotate(float angle, vec3 const &axis);
-    /* [cmd:rj] Randomly move vertices along Origin-to-vertex as o2v *= (1.0 + rand(r))
+    /* [cmd:rj] Randomly move vertices along Origin-to-vertex as f(vtx) = vtx + o2v * (1.0 + rand(r))
         - r : jitter maximum value.
      */
     void RadialJitter(float r);
-    /* [cmd:tax] multiply axis y&z by x as y *= (1.0 + (ny * x + xoff))
+    /* [cmd:tax] multiply axis y&z by x as f(y) = y * (1.0 + (ny * x + xoff))
         - ny : value of n for y.
         - nz : value of n for z.
         - xoff : value of xoff.
@@ -632,7 +636,7 @@ public:
     void TaperY(float nx, float nz, float yoff=0.f, bool absolute=true);
     /* [cmd:taz] Same as TaperX, with Z */
     void TaperZ(float nx, float ny, float zoff=0.f, bool absolute=true);
-    /* [cmd:twx] Twist vertices around x axis with x as rotation value as p = (RotateX(x * t + toff) * p)
+    /* [cmd:twx] Twist vertices around x axis with x as rotation value as f(p) = (RotateX(x * t + toff) * p)
         - t : Angle multiplier.
         - toff : Applied offset.
      */
@@ -641,7 +645,7 @@ public:
     void TwistY(float t, float toff=0.f);
     /* [cmd:twz] Same as TwistX, with Z */
     void TwistZ(float t, float toff=0.f);
-    /* [cmd:shx] Shear vertices using x value as shear quantity as y += (ny * x + xoff)
+    /* [cmd:shx] Shear vertices using x value as shear quantity as f(y) = y + (ny * x + xoff)
         - ny : Value of n for y.
         - nz : Value of n for z.
         - xoff : Value of xoff.
@@ -652,7 +656,7 @@ public:
     void ShearY(float nx, float nz, float yoff=0.f, bool absolute=true);
     /* [cmd:shz] Same as ShearX, with Z */
     void ShearZ(float nx, float ny, float zoff=0.f, bool absolute=true);
-    /* [cmd:stx] Stretch vertices using x value as stretch quantity as y += (pow(x, ny) + xoff)
+    /* [cmd:stx] Stretch vertices using x value as stretch quantity as f(y) = y + (pow(x, ny) + xoff)
         - ny : Value of n for y.
         - nz : Value of n for z.
         - xoff : Value of xoff.
@@ -662,7 +666,7 @@ public:
     void StretchY(float nx, float nz, float yoff=0.f);
     /* [cmd:stz] Same as StretchX, with Z */
     void StretchZ(float nx, float ny, float zoff=0.f);
-    /* [cmd:bdxy] Bend vertices using x as bend quantity along y axis using p = (RotateY(x * t + toff) * p)
+    /* [cmd:bdxy] Bend vertices using x as bend quantity along y axis using f(p) = (RotateY(x * t + toff) * p)
         - t : Angle multiplier.
         - xoff : Applied offset.
      */
@@ -716,11 +720,11 @@ public:
         Acts as an OpenBrace
      */
     void DupAndScale(vec3 const &s);
-    /* [cmd:ch] Performs a chamfer operation //TODO : Make it work.
+    /* [cmd:ch] Performs a chamfer operation //TODO : Make it work
         - f : Chamfer quantity.
      */
     void Chamfer(float f);
-    /* [cmd:splt] split triangles in 4 smaller ones.
+    /* [cmd:splt] split triangles in 4 smaller ones
         - pass : Number of pass applied.
      */
     void SplitTriangles(int pass);
@@ -728,11 +732,11 @@ private:
     void SplitTriangles(int pass, VertexDictionnary *vert_dict);
 public:
     /* [cmd:smth] Smooth the mesh by subdivising it.
-        - main_pass : a main pass is made of (n0 split then n1 smooth) repeat.
-        - split_per_main_pass : n0 value in above explanation.
-        - smooth_per_main_pass : n1 value in above explanation.
+        - pass : a pass is made of (n0 split then n1 smooth) repeat.
+        - split_per_pass : n0 value in above explanation.
+        - smooth_per_pass : n1 value in above explanation.
      */
-    void SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass);
+    void SmoothMesh(int pass, int split_per_pass, int smooth_per_pass);
 
     //-------------------------------------------------------------------------
     //Mesh shape operations
@@ -769,7 +773,6 @@ public:
     /* [cmd:ab] Box centered on (0,0,0) with BBox [-.5 * size][.5 * size]
         - size : size of the box.
         - chamf : size of the chamfer.
-        - smooth : if (true) will smooth normals : TOOD:TOREMOVE : smooth should be handled elsewhere
      */
     void AppendBox(vec3 const &size, float chamf=0.f);
     //Same as AppendBox

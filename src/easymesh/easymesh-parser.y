@@ -49,7 +49,7 @@
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_TWISTZ T_SHEARZ T_STRETCHZ T_BENDZX T_BENDZY T_SCALEZ T_MIRRORZ
-%token T_TRANSLATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER T_SPLITTRIANGLE T_SMOOTHMESH
+%token T_TRANSLATE T_ROTATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER T_SPLITTRIANGLE T_SMOOTHMESH
 %token T_CSGUNION T_CSGSUBSTRACT T_CSGSUBSTRACTLOSS T_CSGAND T_CSGXOR
 %token T_CHAMFER
 
@@ -101,14 +101,6 @@ mesh_expression:
   | mesh_open mesh_expression_list mesh_close
   ;
 
-mesh_open:
-    '['       { mc.m_mesh.OpenBrace(); }
-  ;
-
-mesh_close:
-    ']'       { mc.m_mesh.CloseBrace(); }
-  ;
-
 mesh_command_list:
     mesh_command
   | mesh_command_list mesh_command
@@ -118,6 +110,23 @@ mesh_command:
     color_command
   | transform_command
   | primitive_command
+  | csg_command
+  ;
+
+csg_command:
+    T_CSGUNION             { mc.m_mesh.CsgUnion(); }
+  | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }
+  | T_CSGSUBSTRACTLOSS     { mc.m_mesh.CsgSubstractLoss(); }
+  | T_CSGAND               { mc.m_mesh.CsgAnd(); }
+  | T_CSGXOR               { mc.m_mesh.CsgXor(); }
+  ;
+
+mesh_open:
+    '['       { mc.m_mesh.OpenBrace(); }
+  ;
+
+mesh_close:
+    ']'       { mc.m_mesh.CloseBrace(); }
   ;
 
 color_command:
@@ -126,16 +135,15 @@ color_command:
   | T_COLOR COLOR           { uint32_t x = $2;
                               ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                               mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255.f)); }
-  | T_BGCOLOR fv fv fv fv   { mc.m_mesh.SetCurColor2(vec4($2, $3, $4, $5)); }
-  | T_BGCOLOR v4            { mc.m_mesh.SetCurColor2(vec4($2[0], $2[1], $2[2], $2[3])); }
-  | T_BGCOLOR COLOR         { uint32_t x = $2;
+  | T_BCOLOR fv fv fv fv    { mc.m_mesh.SetCurColor2(vec4($2, $3, $4, $5)); }
+  | T_BCOLOR v4             { mc.m_mesh.SetCurColor2(vec4($2[0], $2[1], $2[2], $2[3])); }
+  | T_BCOLOR COLOR          { uint32_t x = $2;
                               ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                               mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255.f)); }
   ;
 
 transform_command:
-    T_CHAMFER fv           { mc.m_mesh.Chamfer($2); }
-  | T_TRANSLATEX fv        { mc.m_mesh.Translate(vec3($2, 0.f, 0.f)); }
+    T_TRANSLATEX fv        { mc.m_mesh.Translate(vec3($2, 0.f, 0.f)); }
   | T_TRANSLATEY fv        { mc.m_mesh.Translate(vec3(0.f, $2, 0.f)); }
   | T_TRANSLATEZ fv        { mc.m_mesh.Translate(vec3(0.f, 0.f, $2)); }
   | T_TRANSLATE  fv fv fv  { mc.m_mesh.Translate(vec3($2, $3, $4)); }
@@ -143,6 +151,9 @@ transform_command:
   | T_ROTATEX fv           { mc.m_mesh.RotateX($2); }
   | T_ROTATEY fv           { mc.m_mesh.RotateY($2); }
   | T_ROTATEZ fv           { mc.m_mesh.RotateZ($2); }
+  | T_ROTATE  fv fv fv fv  { mc.m_mesh.RotateZ($2, vec3($3, $4, $5)); }
+  |  T_ROTATE fv vec3      { mc.m_mesh.RotateZ($2, vec3($3[0], $3[1], $3[2])); }
+  | T_RADIALJITTER fv      { mc.m_mesh.RadialJitter($2); }
   | T_TAPERX  fv fv fv bv  { mc.m_mesh.TaperX($2, $3, $4, $5); }
   |  T_TAPERX fv fv fv     { mc.m_mesh.TaperX($2, $3, $4); }
   |  T_TAPERX fv fv        { mc.m_mesh.TaperX($2, $3); }
@@ -194,15 +205,10 @@ transform_command:
   | T_MIRRORX              { mc.m_mesh.MirrorX(); }
   | T_MIRRORY              { mc.m_mesh.MirrorY(); }
   | T_MIRRORZ              { mc.m_mesh.MirrorZ(); }
-  | T_RADIALJITTER fv      { mc.m_mesh.RadialJitter($2); }
+  | T_CHAMFER fv           { mc.m_mesh.Chamfer($2); }
   | T_SPLITTRIANGLE iv     { mc.m_mesh.SplitTriangles($2); }
   | T_SMOOTHMESH iv iv iv  { mc.m_mesh.SmoothMesh($2, $3, $4); }
   | T_TOGGLESCALEWINDING   { mc.m_mesh.ToggleScaleWinding(); }
-  | T_CSGUNION             { mc.m_mesh.CsgUnion(); }
-  | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }
-  | T_CSGSUBSTRACTLOSS     { mc.m_mesh.CsgSubstractLoss(); }
-  | T_CSGAND               { mc.m_mesh.CsgAnd(); }
-  | T_CSGXOR               { mc.m_mesh.CsgXor(); }
   ;
 
 primitive_command:
@@ -210,6 +216,9 @@ primitive_command:
   |  T_CYLINDER iv fv fv fv bv bv   { mc.m_mesh.AppendCylinder($2, $3, $4, $5, $6, $7); }
   |  T_CYLINDER iv fv fv fv bv      { mc.m_mesh.AppendCylinder($2, $3, $4, $5, $6); }
   |  T_CYLINDER iv fv fv fv         { mc.m_mesh.AppendCylinder($2, $3, $4, $5); }
+  | T_SPHERE iv fv                  { mc.m_mesh.AppendSphere($2, $3); }
+  | T_CAPSULE iv fv fv              { mc.m_mesh.AppendCapsule($2, $3, $4); }
+  | T_TORUS iv fv fv                { mc.m_mesh.AppendTorus($2, $3, $4); }
   | T_BOX  fv fv fv fv              { mc.m_mesh.AppendBox(vec3($2, $3, $4), $5); }
   |  T_BOX fv fv fv                 { mc.m_mesh.AppendBox(vec3($2, $3, $4)); }
   |  T_BOX fv                       { mc.m_mesh.AppendBox(vec3($2, $2, $2)); }
@@ -221,14 +230,12 @@ primitive_command:
   | T_FLATCHAMFBOX  fv fv fv fv     { mc.m_mesh.AppendFlatChamfBox(vec3($2, $3, $4), $5); }
   |  T_FLATCHAMFBOX fv fv           { mc.m_mesh.AppendFlatChamfBox(vec3($2, $2, $2), $3); }
   |  T_FLATCHAMFBOX v3 fv           { mc.m_mesh.AppendFlatChamfBox(vec3($2[0], $2[1], $2[2]), $3); }
-  | T_SPHERE iv fv                  { mc.m_mesh.AppendSphere($2, $3); }
-  | T_CAPSULE iv fv fv              { mc.m_mesh.AppendCapsule($2, $3, $4); }
-  | T_TORUS iv fv fv                { mc.m_mesh.AppendTorus($2, $3, $4); }
   | T_STAR  iv fv fv bv bv          { mc.m_mesh.AppendStar($2, $3, $4, $5, $6); }
   |  T_STAR iv fv fv bv             { mc.m_mesh.AppendStar($2, $3, $4, $5); }
   |  T_STAR iv fv fv                { mc.m_mesh.AppendStar($2, $3, $4); }
   | T_EXPANDEDSTAR  iv fv fv fv     { mc.m_mesh.AppendExpandedStar($2, $3, $4, $5); }
   |  T_EXPANDEDSTAR iv fv fv        { mc.m_mesh.AppendExpandedStar($2, $3, $4); }
+
   | T_DISC  iv fv bv                { mc.m_mesh.AppendDisc($2, $3, $4); }
   |  T_DISC iv fv                   { mc.m_mesh.AppendDisc($2, $3); }
   | T_TRIANGLE  fv bv               { mc.m_mesh.AppendSimpleTriangle($2, $3); }

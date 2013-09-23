@@ -47,10 +47,16 @@ typedef lol::EasyMeshParser::token_type token_type;
     yylloc->step();
 %}
 
-(sc|setcolor)            { return token::T_COLOR; }
-(scb|setbgcolor)         { return token::T_BGCOLOR; }
+(csgu|csgunion)          { return token::T_CSGUNION; }
+(csgs|csgsubstract)      { return token::T_CSGSUBSTRACT; }
+(csgsl|csgsubstractloss) { return token::T_CSGSUBSTRACTLOSS; }
+(csga|csgand)            { return token::T_CSGAND; }
+(csgx|csgxor)            { return token::T_CSGXOR; }
 
-(ch|chamfer)             { return token::T_CHAMFER; }
+(tsw|scalewinding)       { return token::T_TOGGLESCALEWINDING; }
+(sc|setcolor)            { return token::T_COLOR; }
+(scb|setbcolor)          { return token::T_BCOLOR; }
+
 (tx|translatex)          { return token::T_TRANSLATEX; }
 (ty|translatey)          { return token::T_TRANSLATEY; }
 (tz|translatez)          { return token::T_TRANSLATEZ; }
@@ -58,6 +64,8 @@ typedef lol::EasyMeshParser::token_type token_type;
 (rx|rotatex)             { return token::T_ROTATEX; }
 (ry|rotatey)             { return token::T_ROTATEY; }
 (rz|rotatez)             { return token::T_ROTATEZ; }
+(r|rotate)               { return token::T_ROTATE; }
+(rj|radialjitter)        { return token::T_RADIALJITTER; }
 (tax|taperx)             { return token::T_TAPERX; }
 (tay|tapery)             { return token::T_TAPERY; }
 (taz|taperz)             { return token::T_TAPERZ; }
@@ -80,33 +88,26 @@ typedef lol::EasyMeshParser::token_type token_type;
 (sy|scaley)              { return token::T_SCALEY; }
 (sz|scalez)              { return token::T_SCALEZ; }
 (s|scale)                { return token::T_SCALE; }
-(tsw|scalewinding)       { return token::T_TOGGLESCALEWINDING; }
 (mx|mirrorx)             { return token::T_MIRRORX; }
 (my|mirrory)             { return token::T_MIRRORY; }
 (mz|mirrorz)             { return token::T_MIRRORZ; }
-(rj|radialjitter)        { return token::T_RADIALJITTER; }
+(ch|chamfer)             { return token::T_CHAMFER; }
 (splt|splittriangle)     { return token::T_SPLITTRIANGLE; }
 (smth|smooth)            { return token::T_SMOOTHMESH; }
 
-(csgu|csgunion)          { return token::T_CSGUNION; }
-(csgs|csgsubstract)      { return token::T_CSGSUBSTRACT; }
-(csgsl|csgsubstractloss) { return token::T_CSGSUBSTRACTLOSS; }
-(csga|csgand)            { return token::T_CSGAND; }
-(csgx|csgxor)            { return token::T_CSGXOR; }
-
-(ab|addbox)              { return token::T_BOX; }
 (ac|addcylinder)         { return token::T_CYLINDER; }
+(asph|addsphere)         { return token::T_SPHERE; }
 (acap|addcapsule)        { return token::T_CAPSULE; }
-(acg|addcog)             { return token::T_COG; }
-(ad|adddisc)             { return token::T_DISC; }
-(aes|addexpandedstar)    { return token::T_EXPANDEDSTAR; }
-(afcb|addflatchamfbox)   { return token::T_FLATCHAMFBOX; }
-(aq|addquad)             { return token::T_QUAD; }
-(as|addstar)             { return token::T_STAR; }
-(ascb|addsmoothchamfbox) { return token::T_SMOOTHCHAMFBOX; }
-(asph|adsphere)          { return token::T_SPHERE; }
-(at|addtriangle)         { return token::T_TRIANGLE; }
 (ato|addtorus)           { return token::T_TORUS; }
+(ab|addbox)              { return token::T_BOX; }
+(ascb|addsmoothchamfbox) { return token::T_SMOOTHCHAMFBOX; }
+(afcb|addflatchamfbox)   { return token::T_FLATCHAMFBOX; }
+(as|addstar)             { return token::T_STAR; }
+(aes|addexpandedstar)    { return token::T_EXPANDEDSTAR; }
+(ad|adddisc)             { return token::T_DISC; }
+(at|addtriangle)         { return token::T_TRIANGLE; }
+(aq|addquad)             { return token::T_QUAD; }
+(acg|addcog)             { return token::T_COG; }
 
 %{ /* =======  BASE DATA TYPES  ========================================= */ %}
 %{ /* COLOR */ %}
