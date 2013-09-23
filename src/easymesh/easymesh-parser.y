@@ -151,8 +151,8 @@ transform_command:
   | T_ROTATEX fv           { mc.m_mesh.RotateX($2); }
   | T_ROTATEY fv           { mc.m_mesh.RotateY($2); }
   | T_ROTATEZ fv           { mc.m_mesh.RotateZ($2); }
-  | T_ROTATE  fv fv fv fv  { mc.m_mesh.RotateZ($2, vec3($3, $4, $5)); }
-  |  T_ROTATE fv v3        { mc.m_mesh.RotateZ($2, vec3($3[0], $3[1], $3[2])); }
+  | T_ROTATE  fv fv fv fv  { mc.m_mesh.Rotate($2, vec3($3, $4, $5)); }
+  |  T_ROTATE fv v3        { mc.m_mesh.Rotate($2, vec3($3[0], $3[1], $3[2])); }
   | T_RADIALJITTER fv      { mc.m_mesh.RadialJitter($2); }
   | T_TAPERX  fv fv fv bv  { mc.m_mesh.TaperX($2, $3, $4, $5); }
   |  T_TAPERX fv fv fv     { mc.m_mesh.TaperX($2, $3, $4); }
