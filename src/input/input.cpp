@@ -47,7 +47,7 @@ void InputDeviceInternal::AddAxis(const char* name, float sensitivity)
 void InputDeviceInternal::AddCursor(const char* name)
 {
     m_cursornames.Push(name);
-    m_cursors.Push(vec2(0.0), ivec2(0));
+    m_cursors.Push(vec2::zero, ivec2::zero);
 }
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()

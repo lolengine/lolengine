@@ -45,7 +45,7 @@ Font::Font(char const *path)
 {
     data->m_name = String("<font> ") + path;
 
-    data->tileset = Tiler::Register(path, ivec2(0), ivec2(16));
+    data->tileset = Tiler::Register(path, ivec2::zero, ivec2(16));
     data->size = data->tileset->GetTileSize(0);
 
     m_drawgroup = DRAWGROUP_BEFORE;

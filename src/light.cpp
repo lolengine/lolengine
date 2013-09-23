@@ -27,7 +27,7 @@ Light::Light()
     m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_CAMERA;
 
-    SetPosition(vec4(0.f));
+    SetPosition(vec4::zero);
 }
 
 Light::~Light()

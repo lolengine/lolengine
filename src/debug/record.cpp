@@ -53,7 +53,7 @@ DebugRecord::DebugRecord(char const *path, float fps)
     Ticker::StartRecording();
 
     data->path = strdup(path);
-    data->size = ivec2(0);
+    data->size = ivec2::zero;
     data->fps = (int)(fps + 0.5f);
 #if defined USE_PIPI
     data->sequence = nullptr;

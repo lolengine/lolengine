@@ -582,7 +582,7 @@ vec3 Color::WavelengthToCIExyY(float nm)
 
     int i = (int)nm;
     if (i < 0 || i > 830 - 360)
-        return vec3(0.0f);
+        return vec3::zero;
 
     float t = nm - i, s = 1.0 - t;
     float x = s * cie_1931_xyz[i * 3 + 0] + t * cie_1931_xyz[i * 3 + 3];

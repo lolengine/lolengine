@@ -25,11 +25,11 @@ namespace lol
 
 WorldEntity::WorldEntity()
 {
-    m_position = vec3(0);
+    m_position = vec3::zero;
     m_rotation = quat(1);
-    m_velocity = vec3(0);
-    m_rotation_velocity = vec3(0);
-    m_bbox[0] = m_bbox[1] = vec3(0);
+    m_velocity = vec3::zero;
+    m_rotation_velocity = vec3::zero;
+    m_bbox[0] = m_bbox[1] = vec3::zero;
 }
 
 WorldEntity::~WorldEntity()
