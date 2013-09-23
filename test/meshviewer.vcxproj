@@ -60,12 +60,14 @@
     <None Include="data\mesh-buffer.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="EasyMeshDictionnary.js" />
     <None Include="meshviewer_index.html">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="meshviewer_nacl.nmf">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="TypeDictionnary.js" />
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="shinyfur.lolfx" />
