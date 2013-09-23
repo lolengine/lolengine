@@ -177,6 +177,9 @@ AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
 
+dnl  C++11 mode
+LOL_TRY_CXXFLAGS(-std=c++11, [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"])
+
 dnl  No exceptions
 LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
 LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
