@@ -437,882 +437,896 @@ namespace lol {
     YY_REDUCE_PRINT (yyn);
     switch (yyn)
       {
-	  case 7:
+	  case 13:
 
 /* Line 677 of lalr1.cc  */
-#line 105 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.OpenBrace(); }
-    break;
-
-  case 8:
-
-/* Line 677 of lalr1.cc  */
-#line 109 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CloseBrace(); }
+#line 117 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CsgUnion(); }
     break;
 
   case 14:
 
 /* Line 677 of lalr1.cc  */
-#line 124 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SetCurColor(vec4((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval))); }
+#line 118 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CsgSubstract(); }
     break;
 
   case 15:
 
 /* Line 677 of lalr1.cc  */
-#line 125 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SetCurColor(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
+#line 119 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CsgSubstractLoss(); }
     break;
 
   case 16:
 
 /* Line 677 of lalr1.cc  */
-#line 126 "easymesh/easymesh-parser.y"
-    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
-                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                              mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255.f)); }
+#line 120 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CsgAnd(); }
     break;
 
   case 17:
 
 /* Line 677 of lalr1.cc  */
-#line 129 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SetCurColor2(vec4((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval))); }
+#line 121 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CsgXor(); }
     break;
 
   case 18:
 
 /* Line 677 of lalr1.cc  */
-#line 130 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SetCurColor2(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
+#line 125 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.OpenBrace(); }
     break;
 
   case 19:
 
 /* Line 677 of lalr1.cc  */
-#line 131 "easymesh/easymesh-parser.y"
-    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
-                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                              mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255.f)); }
+#line 129 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.CloseBrace(); }
     break;
 
   case 20:
 
 /* Line 677 of lalr1.cc  */
-#line 137 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Chamfer((yysemantic_stack_[(2) - (2)].fval)); }
+#line 133 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.SetCurColor(vec4((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval))); }
     break;
 
   case 21:
 
 /* Line 677 of lalr1.cc  */
-#line 138 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].fval), 0.f, 0.f)); }
+#line 134 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.SetCurColor(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
     break;
 
   case 22:
 
 /* Line 677 of lalr1.cc  */
-#line 139 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Translate(vec3(0.f, (yysemantic_stack_[(2) - (2)].fval), 0.f)); }
+#line 135 "easymesh/easymesh-parser.y"
+    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
+                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                              mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255.f)); }
     break;
 
   case 23:
 
 /* Line 677 of lalr1.cc  */
-#line 140 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Translate(vec3(0.f, 0.f, (yysemantic_stack_[(2) - (2)].fval))); }
+#line 138 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.SetCurColor2(vec4((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval))); }
     break;
 
   case 24:
 
 /* Line 677 of lalr1.cc  */
-#line 141 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
+#line 139 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.SetCurColor2(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
     break;
 
   case 25:
 
 /* Line 677 of lalr1.cc  */
-#line 142 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
+#line 140 "easymesh/easymesh-parser.y"
+    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
+                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                              mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255.f)); }
     break;
 
   case 26:
 
 /* Line 677 of lalr1.cc  */
-#line 143 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.RotateX((yysemantic_stack_[(2) - (2)].fval)); }
+#line 146 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].fval), 0.f, 0.f)); }
     break;
 
   case 27:
 
 /* Line 677 of lalr1.cc  */
-#line 144 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.RotateY((yysemantic_stack_[(2) - (2)].fval)); }
+#line 147 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Translate(vec3(0.f, (yysemantic_stack_[(2) - (2)].fval), 0.f)); }
     break;
 
   case 28:
 
 /* Line 677 of lalr1.cc  */
-#line 145 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.RotateZ((yysemantic_stack_[(2) - (2)].fval)); }
+#line 148 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Translate(vec3(0.f, 0.f, (yysemantic_stack_[(2) - (2)].fval))); }
     break;
 
   case 29:
 
 /* Line 677 of lalr1.cc  */
-#line 146 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperX((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 149 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
     break;
 
   case 30:
 
 /* Line 677 of lalr1.cc  */
-#line 147 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 150 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Translate(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
     break;
 
   case 31:
 
 /* Line 677 of lalr1.cc  */
-#line 148 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 151 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RotateX((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 32:
 
 /* Line 677 of lalr1.cc  */
-#line 149 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperY((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 152 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RotateY((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 33:
 
 /* Line 677 of lalr1.cc  */
-#line 150 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 153 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RotateZ((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 34:
 
 /* Line 677 of lalr1.cc  */
-#line 151 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 154 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RotateZ((yysemantic_stack_[(5) - (2)].fval), vec3((yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval))); }
     break;
 
   case 35:
 
 /* Line 677 of lalr1.cc  */
-#line 152 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperZ((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 155 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RotateZ((yysemantic_stack_[(3) - (2)].fval), vec3((yysemantic_stack_[(3) - (3)].vval)[0], (yysemantic_stack_[(3) - (3)].vval)[1], (yysemantic_stack_[(3) - (3)].vval)[2])); }
     break;
 
   case 36:
 
 /* Line 677 of lalr1.cc  */
-#line 153 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 156 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.RadialJitter((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 37:
 
 /* Line 677 of lalr1.cc  */
-#line 154 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TaperZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 157 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperX((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 38:
 
 /* Line 677 of lalr1.cc  */
-#line 155 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 158 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 39:
 
 /* Line 677 of lalr1.cc  */
-#line 156 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistX((yysemantic_stack_[(2) - (2)].fval)); }
+#line 159 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 40:
 
 /* Line 677 of lalr1.cc  */
-#line 157 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 160 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperY((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 41:
 
 /* Line 677 of lalr1.cc  */
-#line 158 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistY((yysemantic_stack_[(2) - (2)].fval)); }
+#line 161 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 42:
 
 /* Line 677 of lalr1.cc  */
-#line 159 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 162 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 43:
 
 /* Line 677 of lalr1.cc  */
-#line 160 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.TwistZ((yysemantic_stack_[(2) - (2)].fval)); }
+#line 163 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperZ((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 44:
 
 /* Line 677 of lalr1.cc  */
-#line 161 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearX((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 164 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 45:
 
 /* Line 677 of lalr1.cc  */
-#line 162 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 165 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TaperZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 46:
 
 /* Line 677 of lalr1.cc  */
-#line 163 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 166 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 47:
 
 /* Line 677 of lalr1.cc  */
-#line 164 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearY((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 167 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistX((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 48:
 
 /* Line 677 of lalr1.cc  */
-#line 165 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 168 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 49:
 
 /* Line 677 of lalr1.cc  */
-#line 166 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 169 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistY((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 50:
 
 /* Line 677 of lalr1.cc  */
-#line 167 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearZ((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 170 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 51:
 
 /* Line 677 of lalr1.cc  */
-#line 168 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 171 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.TwistZ((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 52:
 
 /* Line 677 of lalr1.cc  */
-#line 169 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ShearZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 172 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearX((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 53:
 
 /* Line 677 of lalr1.cc  */
-#line 170 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 173 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 54:
 
 /* Line 677 of lalr1.cc  */
-#line 171 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 174 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 55:
 
 /* Line 677 of lalr1.cc  */
-#line 172 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 175 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearY((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 56:
 
 /* Line 677 of lalr1.cc  */
-#line 173 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 176 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 57:
 
 /* Line 677 of lalr1.cc  */
-#line 174 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 177 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 58:
 
 /* Line 677 of lalr1.cc  */
-#line 175 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.StretchZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 178 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearZ((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 59:
 
 /* Line 677 of lalr1.cc  */
-#line 176 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendXY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 179 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 60:
 
 /* Line 677 of lalr1.cc  */
-#line 177 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendXY((yysemantic_stack_[(2) - (2)].fval)); }
+#line 180 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.ShearZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 61:
 
 /* Line 677 of lalr1.cc  */
-#line 178 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendXZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 181 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchX((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 62:
 
 /* Line 677 of lalr1.cc  */
-#line 179 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendXZ((yysemantic_stack_[(2) - (2)].fval)); }
+#line 182 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 63:
 
 /* Line 677 of lalr1.cc  */
-#line 180 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendYX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 183 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchY((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 64:
 
 /* Line 677 of lalr1.cc  */
-#line 181 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendYX((yysemantic_stack_[(2) - (2)].fval)); }
+#line 184 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 65:
 
 /* Line 677 of lalr1.cc  */
-#line 182 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendYZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 185 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchZ((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 66:
 
 /* Line 677 of lalr1.cc  */
-#line 183 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendYZ((yysemantic_stack_[(2) - (2)].fval)); }
+#line 186 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.StretchZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 67:
 
 /* Line 677 of lalr1.cc  */
-#line 184 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendZX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 187 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendXY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 68:
 
 /* Line 677 of lalr1.cc  */
-#line 185 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendZX((yysemantic_stack_[(2) - (2)].fval)); }
+#line 188 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendXY((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 69:
 
 /* Line 677 of lalr1.cc  */
-#line 186 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendZY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 189 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendXZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 70:
 
 /* Line 677 of lalr1.cc  */
-#line 187 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.BendZY((yysemantic_stack_[(2) - (2)].fval)); }
+#line 190 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendXZ((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 71:
 
 /* Line 677 of lalr1.cc  */
-#line 188 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].fval), 1.f, 1.f)); }
+#line 191 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendYX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 72:
 
 /* Line 677 of lalr1.cc  */
-#line 189 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3(1.f, (yysemantic_stack_[(2) - (2)].fval), 1.f)); }
+#line 192 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendYX((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 73:
 
 /* Line 677 of lalr1.cc  */
-#line 190 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3(1.f, 1.f, (yysemantic_stack_[(2) - (2)].fval))); }
+#line 193 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendYZ((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 74:
 
 /* Line 677 of lalr1.cc  */
-#line 191 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
+#line 194 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendYZ((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 75:
 
 /* Line 677 of lalr1.cc  */
-#line 192 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
+#line 195 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendZX((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 76:
 
 /* Line 677 of lalr1.cc  */
-#line 193 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval))); }
+#line 196 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendZX((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 77:
 
 /* Line 677 of lalr1.cc  */
-#line 194 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.MirrorX(); }
+#line 197 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendZY((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 78:
 
 /* Line 677 of lalr1.cc  */
-#line 195 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.MirrorY(); }
+#line 198 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.BendZY((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 79:
 
 /* Line 677 of lalr1.cc  */
-#line 196 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.MirrorZ(); }
+#line 199 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].fval), 1.f, 1.f)); }
     break;
 
   case 80:
 
 /* Line 677 of lalr1.cc  */
-#line 197 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.RadialJitter((yysemantic_stack_[(2) - (2)].fval)); }
+#line 200 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3(1.f, (yysemantic_stack_[(2) - (2)].fval), 1.f)); }
     break;
 
   case 81:
 
 /* Line 677 of lalr1.cc  */
-#line 198 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SplitTriangles((yysemantic_stack_[(2) - (2)].ival)); }
+#line 201 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3(1.f, 1.f, (yysemantic_stack_[(2) - (2)].fval))); }
     break;
 
   case 82:
 
 /* Line 677 of lalr1.cc  */
-#line 199 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.SmoothMesh((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].ival), (yysemantic_stack_[(4) - (4)].ival)); }
+#line 202 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
     break;
 
   case 83:
 
 /* Line 677 of lalr1.cc  */
-#line 200 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.ToggleScaleWinding(); }
+#line 203 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
     break;
 
   case 84:
 
 /* Line 677 of lalr1.cc  */
-#line 201 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CsgUnion(); }
+#line 204 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Scale(vec3((yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval))); }
     break;
 
   case 85:
 
 /* Line 677 of lalr1.cc  */
-#line 202 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CsgSubstract(); }
+#line 205 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.MirrorX(); }
     break;
 
   case 86:
 
 /* Line 677 of lalr1.cc  */
-#line 203 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CsgSubstractLoss(); }
+#line 206 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.MirrorY(); }
     break;
 
   case 87:
 
 /* Line 677 of lalr1.cc  */
-#line 204 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CsgAnd(); }
+#line 207 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.MirrorZ(); }
     break;
 
   case 88:
 
 /* Line 677 of lalr1.cc  */
-#line 205 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.CsgXor(); }
+#line 208 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.Chamfer((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 89:
 
 /* Line 677 of lalr1.cc  */
 #line 209 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(8) - (2)].ival), (yysemantic_stack_[(8) - (3)].fval), (yysemantic_stack_[(8) - (4)].fval), (yysemantic_stack_[(8) - (5)].fval), (yysemantic_stack_[(8) - (6)].bval), (yysemantic_stack_[(8) - (7)].bval), (yysemantic_stack_[(8) - (8)].bval)); }
+    { mc.m_mesh.SplitTriangles((yysemantic_stack_[(2) - (2)].ival)); }
     break;
 
   case 90:
 
 /* Line 677 of lalr1.cc  */
 #line 210 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(7) - (2)].ival), (yysemantic_stack_[(7) - (3)].fval), (yysemantic_stack_[(7) - (4)].fval), (yysemantic_stack_[(7) - (5)].fval), (yysemantic_stack_[(7) - (6)].bval), (yysemantic_stack_[(7) - (7)].bval)); }
+    { mc.m_mesh.SmoothMesh((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].ival), (yysemantic_stack_[(4) - (4)].ival)); }
     break;
 
   case 91:
 
 /* Line 677 of lalr1.cc  */
 #line 211 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(6) - (2)].ival), (yysemantic_stack_[(6) - (3)].fval), (yysemantic_stack_[(6) - (4)].fval), (yysemantic_stack_[(6) - (5)].fval), (yysemantic_stack_[(6) - (6)].bval)); }
+    { mc.m_mesh.ToggleScaleWinding(); }
     break;
 
   case 92:
 
 /* Line 677 of lalr1.cc  */
-#line 212 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval)); }
+#line 215 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(8) - (2)].ival), (yysemantic_stack_[(8) - (3)].fval), (yysemantic_stack_[(8) - (4)].fval), (yysemantic_stack_[(8) - (5)].fval), (yysemantic_stack_[(8) - (6)].bval), (yysemantic_stack_[(8) - (7)].bval), (yysemantic_stack_[(8) - (8)].bval)); }
     break;
 
   case 93:
 
 /* Line 677 of lalr1.cc  */
-#line 213 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
+#line 216 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(7) - (2)].ival), (yysemantic_stack_[(7) - (3)].fval), (yysemantic_stack_[(7) - (4)].fval), (yysemantic_stack_[(7) - (5)].fval), (yysemantic_stack_[(7) - (6)].bval), (yysemantic_stack_[(7) - (7)].bval)); }
     break;
 
   case 94:
 
 /* Line 677 of lalr1.cc  */
-#line 214 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
+#line 217 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(6) - (2)].ival), (yysemantic_stack_[(6) - (3)].fval), (yysemantic_stack_[(6) - (4)].fval), (yysemantic_stack_[(6) - (5)].fval), (yysemantic_stack_[(6) - (6)].bval)); }
     break;
 
   case 95:
 
 /* Line 677 of lalr1.cc  */
-#line 215 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval))); }
+#line 218 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCylinder((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval)); }
     break;
 
   case 96:
 
 /* Line 677 of lalr1.cc  */
-#line 216 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 219 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSphere((yysemantic_stack_[(3) - (2)].ival), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 97:
 
 /* Line 677 of lalr1.cc  */
-#line 217 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
+#line 220 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendCapsule((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 98:
 
 /* Line 677 of lalr1.cc  */
-#line 218 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
+#line 221 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendTorus((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 99:
 
 /* Line 677 of lalr1.cc  */
-#line 219 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval)), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 222 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
     break;
 
   case 100:
 
 /* Line 677 of lalr1.cc  */
-#line 220 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 223 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(4) - (2)].fval), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval))); }
     break;
 
   case 101:
 
 /* Line 677 of lalr1.cc  */
-#line 221 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
+#line 224 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval), (yysemantic_stack_[(2) - (2)].fval))); }
     break;
 
   case 102:
 
 /* Line 677 of lalr1.cc  */
-#line 222 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval)), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 225 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 103:
 
 /* Line 677 of lalr1.cc  */
-#line 223 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 226 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendBox(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
     break;
 
   case 104:
 
 /* Line 677 of lalr1.cc  */
-#line 224 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSphere((yysemantic_stack_[(3) - (2)].ival), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 227 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
     break;
 
   case 105:
 
 /* Line 677 of lalr1.cc  */
-#line 225 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCapsule((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 228 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval)), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 106:
 
 /* Line 677 of lalr1.cc  */
-#line 226 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendTorus((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 229 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSmoothChamfBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 107:
 
 /* Line 677 of lalr1.cc  */
-#line 227 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendStar((yysemantic_stack_[(6) - (2)].ival), (yysemantic_stack_[(6) - (3)].fval), (yysemantic_stack_[(6) - (4)].fval), (yysemantic_stack_[(6) - (5)].bval), (yysemantic_stack_[(6) - (6)].bval)); }
+#line 230 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(5) - (2)].fval), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval)), (yysemantic_stack_[(5) - (5)].fval)); }
     break;
 
   case 108:
 
 /* Line 677 of lalr1.cc  */
-#line 228 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendStar((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
+#line 231 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (2)].fval)), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 109:
 
 /* Line 677 of lalr1.cc  */
-#line 229 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendStar((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 232 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendFlatChamfBox(vec3((yysemantic_stack_[(3) - (2)].vval)[0], (yysemantic_stack_[(3) - (2)].vval)[1], (yysemantic_stack_[(3) - (2)].vval)[2]), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 110:
 
 /* Line 677 of lalr1.cc  */
-#line 230 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendExpandedStar((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval)); }
+#line 233 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendStar((yysemantic_stack_[(6) - (2)].ival), (yysemantic_stack_[(6) - (3)].fval), (yysemantic_stack_[(6) - (4)].fval), (yysemantic_stack_[(6) - (5)].bval), (yysemantic_stack_[(6) - (6)].bval)); }
     break;
 
   case 111:
 
 /* Line 677 of lalr1.cc  */
-#line 231 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendExpandedStar((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
+#line 234 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendStar((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].bval)); }
     break;
 
   case 112:
 
 /* Line 677 of lalr1.cc  */
-#line 232 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendDisc((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].bval)); }
+#line 235 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendStar((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 113:
 
 /* Line 677 of lalr1.cc  */
-#line 233 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendDisc((yysemantic_stack_[(3) - (2)].ival), (yysemantic_stack_[(3) - (3)].fval)); }
+#line 236 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendExpandedStar((yysemantic_stack_[(5) - (2)].ival), (yysemantic_stack_[(5) - (3)].fval), (yysemantic_stack_[(5) - (4)].fval), (yysemantic_stack_[(5) - (5)].fval)); }
     break;
 
   case 114:
 
 /* Line 677 of lalr1.cc  */
-#line 234 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].bval)); }
+#line 237 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendExpandedStar((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].fval)); }
     break;
 
   case 115:
 
 /* Line 677 of lalr1.cc  */
-#line 235 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(2) - (2)].fval)); }
+#line 239 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendDisc((yysemantic_stack_[(4) - (2)].ival), (yysemantic_stack_[(4) - (3)].fval), (yysemantic_stack_[(4) - (4)].bval)); }
     break;
 
   case 116:
 
 /* Line 677 of lalr1.cc  */
-#line 236 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].bval)); }
+#line 240 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendDisc((yysemantic_stack_[(3) - (2)].ival), (yysemantic_stack_[(3) - (3)].fval)); }
     break;
 
   case 117:
 
 /* Line 677 of lalr1.cc  */
-#line 237 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(2) - (2)].fval)); }
+#line 241 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].bval)); }
     break;
 
   case 118:
 
 /* Line 677 of lalr1.cc  */
-#line 238 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCog((yysemantic_stack_[(11) - (2)].ival), (yysemantic_stack_[(11) - (3)].fval), (yysemantic_stack_[(11) - (4)].fval), (yysemantic_stack_[(11) - (5)].fval), (yysemantic_stack_[(11) - (6)].fval), (yysemantic_stack_[(11) - (7)].fval), (yysemantic_stack_[(11) - (8)].fval), (yysemantic_stack_[(11) - (9)].fval), (yysemantic_stack_[(11) - (10)].fval), (yysemantic_stack_[(11) - (11)].bval)); }
+#line 242 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSimpleTriangle((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 119:
 
 /* Line 677 of lalr1.cc  */
-#line 239 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCog((yysemantic_stack_[(10) - (2)].ival), (yysemantic_stack_[(10) - (3)].fval), (yysemantic_stack_[(10) - (4)].fval), (yysemantic_stack_[(10) - (5)].fval), (yysemantic_stack_[(10) - (6)].fval), (yysemantic_stack_[(10) - (7)].fval), (yysemantic_stack_[(10) - (8)].fval), (yysemantic_stack_[(10) - (9)].fval), (yysemantic_stack_[(10) - (10)].fval)); }
+#line 243 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(3) - (2)].fval), (yysemantic_stack_[(3) - (3)].bval)); }
     break;
 
   case 120:
 
 /* Line 677 of lalr1.cc  */
-#line 240 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.AppendCog((yysemantic_stack_[(9) - (2)].ival), (yysemantic_stack_[(9) - (3)].fval), (yysemantic_stack_[(9) - (4)].fval), (yysemantic_stack_[(9) - (5)].fval), (yysemantic_stack_[(9) - (6)].fval), (yysemantic_stack_[(9) - (7)].fval), (yysemantic_stack_[(9) - (8)].fval), (yysemantic_stack_[(9) - (9)].fval)); }
+#line 244 "easymesh/easymesh-parser.y"
+    { mc.m_mesh.AppendSimpleQuad((yysemantic_stack_[(2) - (2)].fval)); }
     break;
 
   case 121:
 
 /* Line 677 of lalr1.cc  */
 #line 245 "easymesh/easymesh-parser.y"
-    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
+    { mc.m_mesh.AppendCog((yysemantic_stack_[(11) - (2)].ival), (yysemantic_stack_[(11) - (3)].fval), (yysemantic_stack_[(11) - (4)].fval), (yysemantic_stack_[(11) - (5)].fval), (yysemantic_stack_[(11) - (6)].fval), (yysemantic_stack_[(11) - (7)].fval), (yysemantic_stack_[(11) - (8)].fval), (yysemantic_stack_[(11) - (9)].fval), (yysemantic_stack_[(11) - (10)].fval), (yysemantic_stack_[(11) - (11)].bval)); }
     break;
 
   case 122:
 
 /* Line 677 of lalr1.cc  */
 #line 246 "easymesh/easymesh-parser.y"
-    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
+    { mc.m_mesh.AppendCog((yysemantic_stack_[(10) - (2)].ival), (yysemantic_stack_[(10) - (3)].fval), (yysemantic_stack_[(10) - (4)].fval), (yysemantic_stack_[(10) - (5)].fval), (yysemantic_stack_[(10) - (6)].fval), (yysemantic_stack_[(10) - (7)].fval), (yysemantic_stack_[(10) - (8)].fval), (yysemantic_stack_[(10) - (9)].fval), (yysemantic_stack_[(10) - (10)].fval)); }
     break;
 
   case 123:
 
 /* Line 677 of lalr1.cc  */
 #line 247 "easymesh/easymesh-parser.y"
-    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
+    { mc.m_mesh.AppendCog((yysemantic_stack_[(9) - (2)].ival), (yysemantic_stack_[(9) - (3)].fval), (yysemantic_stack_[(9) - (4)].fval), (yysemantic_stack_[(9) - (5)].fval), (yysemantic_stack_[(9) - (6)].fval), (yysemantic_stack_[(9) - (7)].fval), (yysemantic_stack_[(9) - (8)].fval), (yysemantic_stack_[(9) - (9)].fval)); }
     break;
 
   case 124:
 
 /* Line 677 of lalr1.cc  */
-#line 248 "easymesh/easymesh-parser.y"
-    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
+#line 252 "easymesh/easymesh-parser.y"
+    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 125:
 
 /* Line 677 of lalr1.cc  */
-#line 252 "easymesh/easymesh-parser.y"
-    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
+#line 253 "easymesh/easymesh-parser.y"
+    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 126:
 
 /* Line 677 of lalr1.cc  */
-#line 253 "easymesh/easymesh-parser.y"
-    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
+#line 254 "easymesh/easymesh-parser.y"
+    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 127:
 
 /* Line 677 of lalr1.cc  */
-#line 254 "easymesh/easymesh-parser.y"
-    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
+#line 255 "easymesh/easymesh-parser.y"
+    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 128:
 
 /* Line 677 of lalr1.cc  */
-#line 255 "easymesh/easymesh-parser.y"
-    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
+#line 259 "easymesh/easymesh-parser.y"
+    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 129:
 
 /* Line 677 of lalr1.cc  */
 #line 260 "easymesh/easymesh-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
+    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 130:
 
 /* Line 677 of lalr1.cc  */
 #line 261 "easymesh/easymesh-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
+    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 131:
 
 /* Line 677 of lalr1.cc  */
-#line 265 "easymesh/easymesh-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
+#line 262 "easymesh/easymesh-parser.y"
+    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 132:
 
 /* Line 677 of lalr1.cc  */
-#line 266 "easymesh/easymesh-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
+#line 267 "easymesh/easymesh-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 133:
 
 /* Line 677 of lalr1.cc  */
-#line 271 "easymesh/easymesh-parser.y"
-    { (yyval.bval) = (yysemantic_stack_[(1) - (1)].bval); }
+#line 268 "easymesh/easymesh-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
     break;
 
   case 134:
 
 /* Line 677 of lalr1.cc  */
 #line 272 "easymesh/easymesh-parser.y"
-    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].ival); }
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 135:
 
 /* Line 677 of lalr1.cc  */
 #line 273 "easymesh/easymesh-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
+    break;
+
+  case 136:
+
+/* Line 677 of lalr1.cc  */
+#line 278 "easymesh/easymesh-parser.y"
+    { (yyval.bval) = (yysemantic_stack_[(1) - (1)].bval); }
+    break;
+
+  case 137:
+
+/* Line 677 of lalr1.cc  */
+#line 279 "easymesh/easymesh-parser.y"
+    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].ival); }
+    break;
+
+  case 138:
+
+/* Line 677 of lalr1.cc  */
+#line 280 "easymesh/easymesh-parser.y"
     { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].fval); }
     break;
 
 
 
 /* Line 677 of lalr1.cc  */
-#line 1316 "generated/easymesh-parser.cpp"
+#line 1330 "generated/easymesh-parser.cpp"
 	default:
           break;
       }
@@ -1517,36 +1531,36 @@ namespace lol {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char EasyMeshParser::yypact_ninf_ = -37;
+  const signed char EasyMeshParser::yypact_ninf_ = -33;
   const short int
   EasyMeshParser::yypact_[] =
   {
-       317,    46,    72,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
-     -24,   -24,   -37,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
-     -24,   -24,   -37,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
-     -24,   -24,   -37,     5,     5,   -37,   -24,    70,    70,   -37,
-     -37,   -37,   -37,   -37,   -24,    70,     5,     5,     5,    70,
-      70,    70,    70,    70,   -24,   -24,    70,    70,   -37,    10,
-      20,   317,   317,   380,   -37,   -37,   -37,   -37,   -37,   -37,
-     -37,    87,   -24,   -24,   -37,   -37,   -24,   -37,   -37,   -37,
-     -24,   -24,   -24,   -24,   -24,   -24,   -37,   -37,   -37,   -24,
-     -24,   -24,   -24,   -24,   -24,   -37,   -37,   -37,   -24,   -24,
-     -24,   -24,   -24,   -24,   -37,   -24,   -24,   -37,   -24,   -37,
-     -37,   -37,   -37,    87,   -37,    70,   -37,   -24,   -24,   -24,
-     -24,   -24,   -24,   -24,   -24,   -24,   -24,   -24,   -24,   -22,
-     -22,   -24,   -24,   -37,   -37,   -37,   -36,   -37,   -37,   -37,
-      87,   -37,   -37,   -11,   -24,   -24,   -24,   -37,   -24,   -24,
-     -37,   -37,   -24,   -37,   -24,   -24,   -37,   -37,   -24,   -37,
-     -24,   -24,   -37,   -37,    -7,   -24,   -24,   -37,   -37,    70,
-     -24,   -24,   -37,   -24,   -37,   -24,   -37,   -37,   -24,   -24,
-     -24,   -22,   -37,   -37,   -37,   -37,   -37,   -24,   -24,   -37,
-     -37,   -37,   -37,   -37,   -24,   -24,   -24,   -22,   -22,   -37,
-     -22,   -22,   -37,   -22,   -22,   -37,   -37,   -24,   -37,   -37,
-     -37,   -24,   -24,   -24,   -24,   -37,   -22,   -24,   -37,   -24,
-     -37,   -24,   -37,   -37,   -37,   -37,   -37,   -37,   -37,   -37,
-     -33,   -22,   -37,   -37,   -37,   -22,   -37,   -24,   -12,   -37,
-     -22,   -37,   -24,   -37,   -22,   -24,   -37,   -24,   -24,   -22,
-     -37
+       353,    74,    89,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
+     -24,   -24,   -33,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
+     -24,   -24,   -33,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
+     -24,   -24,   -33,     6,   -24,     6,   -33,   -24,     2,     2,
+     -33,   -33,   -33,   -33,   -33,   -24,     2,     6,     6,     6,
+       2,     2,     2,     2,     2,   -24,   -24,     2,     2,   -33,
+      10,    20,   353,   417,   -33,   -33,   353,   -33,   -33,   -33,
+     -33,   -33,   -33,    72,   -24,   -24,   -33,   -33,   -24,   -33,
+     -33,   -33,   -24,   -24,   -24,   -24,   -24,   -24,   -33,   -33,
+     -33,   -24,   -24,   -24,   -24,   -24,   -24,   -33,   -33,   -33,
+     -24,   -24,   -24,   -24,   -24,   -24,   -33,   -24,   -24,   -33,
+       6,   -24,   -33,   -33,   -33,   -33,    72,   -33,     2,   -33,
+     -24,   -24,   -24,   -24,   -24,   -24,   -24,   -24,   -24,   -24,
+     -24,   -24,   -22,   -22,   -24,   -24,   -33,   -33,   -33,   -33,
+     -30,   -33,   -33,    72,   -33,   -33,   -11,   -24,   -24,   -24,
+     -33,   -24,   -24,   -33,   -33,   -24,   -33,   -24,   -24,   -33,
+     -33,   -24,   -33,   -24,   -24,   -33,   -33,    -7,   -24,   -24,
+     -33,   -24,   -33,   -33,     2,   -24,   -24,   -33,   -24,   -33,
+     -24,   -33,   -33,   -24,   -24,   -24,   -22,   -33,   -33,   -33,
+     -33,   -33,   -24,   -24,   -33,   -33,   -33,   -33,   -33,   -24,
+     -24,   -24,   -22,   -22,   -33,   -22,   -22,   -33,   -22,   -22,
+     -33,   -33,   -24,   -33,   -24,   -33,   -33,   -24,   -24,   -24,
+     -24,   -33,   -22,   -24,   -33,   -24,   -33,   -24,   -33,   -33,
+     -33,   -33,   -33,   -33,   -33,   -33,   -12,   -33,   -22,   -33,
+     -33,   -33,   -22,   -33,   -24,   -10,   -33,   -22,   -33,   -24,
+     -33,   -22,   -24,   -33,   -24,   -24,   -22,   -33
   };
 
   /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
@@ -1556,100 +1570,104 @@ namespace lol {
   EasyMeshParser::yydefact_[] =
   {
          0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    77,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    78,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    79,     0,     0,    83,     0,     0,     0,    84,
-      85,    86,    87,    88,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     7,     0,
-       0,     3,     0,     5,     9,    11,    12,    13,   121,   123,
-      16,     0,     0,     0,    15,    19,     0,    18,    21,    26,
-       0,    39,     0,     0,    60,    62,    71,    22,    27,     0,
-      41,     0,     0,    64,    66,    72,    23,    28,     0,    43,
-       0,     0,    68,    70,    73,     0,     0,    25,    76,    75,
-      80,   127,   125,     0,    81,     0,    20,     0,    95,    97,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   115,
-     117,     0,     0,     1,     2,     4,     0,    10,   121,   123,
-       0,   122,   124,     0,     0,     0,    31,    38,    46,    54,
-      59,    61,    34,    40,    49,    56,    63,    65,    37,    42,
-      52,    58,    67,    69,     0,     0,     0,   128,   126,     0,
-       0,     0,    96,    99,   100,   102,   103,   104,     0,     0,
-       0,   113,   135,   134,   133,   114,   116,     0,     0,     8,
-       6,   122,   124,   131,     0,     0,     0,    30,    45,    53,
-      33,    48,    55,    36,    51,    57,   129,     0,    24,    74,
-      82,     0,    94,     0,     0,   105,   109,   111,   112,     0,
-     106,     0,    14,    17,    29,    44,    32,    47,    35,    50,
-       0,    92,    93,    98,   101,   108,   110,     0,     0,   130,
-      91,   107,     0,   132,    90,     0,    89,     0,   120,   119,
-     118
+       0,     0,    85,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    86,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    87,     0,     0,     0,    91,     0,     0,     0,
+      13,    14,    15,    16,    17,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    18,
+       0,     0,     3,     5,     7,    12,     0,     9,    10,    11,
+     124,   126,    22,     0,     0,     0,    21,    25,     0,    24,
+      26,    31,     0,    47,     0,     0,    68,    70,    79,    27,
+      32,     0,    49,     0,     0,    72,    74,    80,    28,    33,
+       0,    51,     0,     0,    76,    78,    81,     0,     0,    30,
+       0,    84,    83,    36,   130,   128,     0,    89,     0,    88,
+       0,   101,   103,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   118,   120,     0,     0,     1,     2,     4,     8,
+       0,   124,   126,     0,   125,   127,     0,     0,     0,    39,
+      46,    54,    62,    67,    69,    42,    48,    57,    64,    71,
+      73,    45,    50,    60,    66,    75,    77,     0,     0,     0,
+      35,     0,   131,   129,     0,     0,     0,   102,   105,   106,
+     108,   109,    96,     0,     0,     0,   116,   138,   137,   136,
+     117,   119,     0,     0,    19,     6,   125,   127,   134,     0,
+       0,     0,    38,    53,    61,    41,    56,    63,    44,    59,
+      65,   132,     0,    29,     0,    82,    90,     0,   100,     0,
+       0,    97,   112,   114,   115,     0,    98,     0,    20,    23,
+      37,    52,    40,    55,    43,    58,     0,    34,    95,    99,
+     104,   107,   111,   113,     0,     0,   133,    94,   110,     0,
+     135,    93,     0,    92,     0,   123,   122,   121
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const short int
   EasyMeshParser::yypgoto_[] =
   {
-       -37,   -37,     2,   -37,   -37,   -37,   -37,   -30,   -37,   -37,
-     -37,    -2,   150,     1,    57,    51
+       -33,   -33,   -32,   -33,   -33,    -1,   -33,   -33,   -33,   -33,
+     -33,   -33,    -2,   181,     1,    64,    54
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const short int
   EasyMeshParser::yydefgoto_[] =
   {
-        -1,    59,    60,    61,    62,   190,    63,    64,    65,    66,
-      67,    73,   114,   107,    74,   185
+        -1,    60,    61,    62,    63,    64,    65,    66,   195,    67,
+      68,    69,    75,   117,   109,    76,   190
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule which
      number is the opposite.  If zero, do what YYDEFACT says.  */
   const signed char EasyMeshParser::yytable_ninf_ = -1;
-  const unsigned char
+  const unsigned short int
   EasyMeshParser::yytable_[] =
   {
-        76,    78,    79,    80,    81,    82,    83,    84,    85,    86,
-     133,    87,    88,    89,    90,    91,    92,    93,    94,    95,
-     134,    96,    97,    98,    99,   100,   101,   102,   103,   104,
-     189,   106,   108,   137,   110,   109,   239,    68,    69,   182,
-     183,   184,   116,    71,   118,   120,   122,   119,   121,   123,
-      68,    69,   129,   130,    68,    69,    71,   243,   193,    77,
-      71,     0,   206,   135,   136,     0,    68,    69,     0,   141,
-     143,   144,    71,   105,   145,     0,     0,     0,   146,   147,
-     148,   149,   150,   151,     0,     0,     0,   152,   153,   154,
-     155,   156,   157,     0,     0,     0,   158,   159,   160,   161,
-     162,   163,     0,   164,   165,     0,   166,    68,    69,     0,
-      70,   167,     0,    71,    72,   170,   171,   172,   173,   174,
-     175,   176,   177,   178,   179,   180,   181,     0,     0,   187,
-     188,   111,   112,    68,    69,     0,    75,   113,   191,    71,
-      72,   194,   195,   196,   197,     0,   198,   199,   138,   139,
-     200,     0,   201,   202,   140,     0,   203,     0,   204,   205,
-       0,     0,   207,   208,   209,     0,     0,     0,   211,   212,
-       0,   213,     0,   214,     0,     0,   215,   216,   217,     0,
-       0,   186,     0,     0,     0,   219,   220,     0,   115,     0,
-       0,     0,   221,   222,   223,   117,     0,     0,     0,   124,
-     125,   126,   127,   128,     0,   230,   131,   132,     0,   231,
-     232,   233,   234,     0,     0,   236,     0,   237,     0,   238,
-       0,   142,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   218,     0,     0,   242,     0,     0,     0,     0,
-     245,     0,     0,   247,     0,   248,   249,     0,   224,   225,
-       0,   226,   227,     0,   228,   229,     0,     0,     0,     0,
-       0,     0,     0,   168,     0,   169,     0,   235,     0,     0,
+        78,    80,    81,    82,    83,    84,    85,    86,    87,    88,
+     136,    89,    90,    91,    92,    93,    94,    95,    96,    97,
+     137,    98,    99,   100,   101,   102,   103,   104,   105,   106,
+     138,   108,   110,   111,   140,   113,   112,   194,    70,    71,
+     187,   188,   189,   119,    73,   121,   123,   125,   122,   124,
+     126,    70,    71,   132,   133,    70,    71,    73,   246,   198,
+     250,    73,   139,   211,   114,   115,    79,     0,    70,    71,
+     116,   144,   146,   147,    73,   107,   148,     0,     0,     0,
+     149,   150,   151,   152,   153,   154,     0,     0,     0,   155,
+     156,   157,   158,   159,   160,     0,     0,     0,   161,   162,
+     163,   164,   165,   166,     0,   167,   168,     0,   169,   171,
+       0,   170,     0,     0,   172,     0,     0,     0,   175,   176,
+     177,   178,   179,   180,   181,   182,   183,   184,   185,   186,
+       0,     0,   192,   193,   141,   142,    70,    71,     0,    72,
+     143,   196,    73,    74,   199,   200,   201,   202,     0,   203,
+     204,    70,    71,   205,    77,   206,   207,    73,    74,   208,
+       0,   209,   210,     0,     0,   212,   213,   214,     0,   215,
+       0,     0,     0,   217,   218,     0,   219,     0,   220,     0,
+       0,   221,   222,   223,     0,     0,     0,   191,     0,     0,
+     225,   226,     0,     0,     0,     0,     0,   227,   228,   229,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   240,     0,     0,     0,   241,     0,     0,     0,
-     192,   244,     0,     0,     0,   246,     0,     0,     0,     0,
-     250,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   210,
+     236,     0,   237,     0,     0,   238,   239,   240,   241,     0,
+     118,   243,     0,   244,     0,   245,     0,   120,     0,     0,
+       0,   127,   128,   129,   130,   131,     0,     0,   134,   135,
+     224,     0,   249,     0,     0,     0,     0,   252,     0,     0,
+     254,     0,   255,   256,   145,     0,   230,   231,     0,   232,
+     233,     0,   234,   235,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,   242,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   247,     0,     0,     0,   248,   173,     0,   174,
+       0,   251,     0,     0,     0,   253,     0,     0,     0,     0,
+     257,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,   197,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,   216,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+      55,    56,    57,    58,     0,     0,     0,     0,     0,    59,
        1,     2,     3,     4,     5,     6,     7,     8,     9,    10,
       11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
       21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
       31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
       41,    42,    43,    44,    45,    46,    47,    48,    49,    50,
-      51,    52,    53,    54,    55,    56,    57,     0,     0,     0,
-       0,     0,    58,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
-      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
-      38,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-      48,    49,    50,    51,    52,    53,    54,    55,    56,    57
+      51,    52,    53,    54,    55,    56,    57,    58
   };
 
   /* YYCHECK.  */
@@ -1659,47 +1677,51 @@ namespace lol {
          2,     3,     4,     5,     6,     7,     8,     9,    10,    11,
        0,    13,    14,    15,    16,    17,    18,    19,    20,    21,
        0,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-      66,    33,    34,    63,    36,    34,    69,    61,    62,    61,
-      62,    63,    44,    67,    46,    47,    48,    46,    47,    48,
-      61,    62,    54,    55,    61,    62,    67,    69,    69,     2,
-      67,    -1,    69,    61,    62,    -1,    61,    62,    -1,    71,
-      72,    73,    67,    68,    76,    -1,    -1,    -1,    80,    81,
-      82,    83,    84,    85,    -1,    -1,    -1,    89,    90,    91,
-      92,    93,    94,    -1,    -1,    -1,    98,    99,   100,   101,
-     102,   103,    -1,   105,   106,    -1,   108,    61,    62,    -1,
-      64,   113,    -1,    67,    68,   117,   118,   119,   120,   121,
-     122,   123,   124,   125,   126,   127,   128,    -1,    -1,   131,
-     132,    61,    62,    61,    62,    -1,    64,    67,   140,    67,
-      68,   143,   144,   145,   146,    -1,   148,   149,    61,    62,
-     152,    -1,   154,   155,    67,    -1,   158,    -1,   160,   161,
-      -1,    -1,   164,   165,   166,    -1,    -1,    -1,   170,   171,
-      -1,   173,    -1,   175,    -1,    -1,   178,   179,   180,    -1,
-      -1,   130,    -1,    -1,    -1,   187,   188,    -1,    38,    -1,
-      -1,    -1,   194,   195,   196,    45,    -1,    -1,    -1,    49,
-      50,    51,    52,    53,    -1,   207,    56,    57,    -1,   211,
-     212,   213,   214,    -1,    -1,   217,    -1,   219,    -1,   221,
-      -1,    71,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,   181,    -1,    -1,   237,    -1,    -1,    -1,    -1,
-     242,    -1,    -1,   245,    -1,   247,   248,    -1,   197,   198,
-      -1,   200,   201,    -1,   203,   204,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,   113,    -1,   115,    -1,   216,    -1,    -1,
+      62,    33,    34,    35,    66,    37,    35,    67,    62,    63,
+      62,    63,    64,    45,    68,    47,    48,    49,    47,    48,
+      49,    62,    63,    55,    56,    62,    63,    68,    70,    70,
+      70,    68,    63,    70,    62,    63,     2,    -1,    62,    63,
+      68,    73,    74,    75,    68,    69,    78,    -1,    -1,    -1,
+      82,    83,    84,    85,    86,    87,    -1,    -1,    -1,    91,
+      92,    93,    94,    95,    96,    -1,    -1,    -1,   100,   101,
+     102,   103,   104,   105,    -1,   107,   108,    -1,   110,   111,
+      -1,   110,    -1,    -1,   116,    -1,    -1,    -1,   120,   121,
+     122,   123,   124,   125,   126,   127,   128,   129,   130,   131,
+      -1,    -1,   134,   135,    62,    63,    62,    63,    -1,    65,
+      68,   143,    68,    69,   146,   147,   148,   149,    -1,   151,
+     152,    62,    63,   155,    65,   157,   158,    68,    69,   161,
+      -1,   163,   164,    -1,    -1,   167,   168,   169,    -1,   171,
+      -1,    -1,    -1,   175,   176,    -1,   178,    -1,   180,    -1,
+      -1,   183,   184,   185,    -1,    -1,    -1,   133,    -1,    -1,
+     192,   193,    -1,    -1,    -1,    -1,    -1,   199,   200,   201,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,   231,    -1,    -1,    -1,   235,    -1,    -1,    -1,
-     140,   240,    -1,    -1,    -1,   244,    -1,    -1,    -1,    -1,
-     249,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   169,
+     212,    -1,   214,    -1,    -1,   217,   218,   219,   220,    -1,
+      39,   223,    -1,   225,    -1,   227,    -1,    46,    -1,    -1,
+      -1,    50,    51,    52,    53,    54,    -1,    -1,    57,    58,
+     186,    -1,   244,    -1,    -1,    -1,    -1,   249,    -1,    -1,
+     252,    -1,   254,   255,    73,    -1,   202,   203,    -1,   205,
+     206,    -1,   208,   209,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,   222,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,   238,    -1,    -1,    -1,   242,   116,    -1,   118,
+      -1,   247,    -1,    -1,    -1,   251,    -1,    -1,    -1,    -1,
+     256,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,   143,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   174,     3,     4,     5,     6,
+       7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
+      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
+      27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
+      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    -1,    -1,    -1,    -1,    -1,    66,
        3,     4,     5,     6,     7,     8,     9,    10,    11,    12,
       13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
       23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
       33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
       43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    -1,    -1,    -1,
-      -1,    -1,    65,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    15,    16,    17,    18,    19,
-      20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
-      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
-      40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-      50,    51,    52,    53,    54,    55,    56,    57,    58,    59
+      53,    54,    55,    56,    57,    58,    59,    60
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -1712,27 +1734,27 @@ namespace lol {
       22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
       32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
       42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
-      52,    53,    54,    55,    56,    57,    58,    59,    65,    71,
-      72,    73,    74,    76,    77,    78,    79,    80,    61,    62,
-      64,    67,    68,    81,    84,    64,    81,    84,    81,    81,
-      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
-      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
-      81,    81,    81,    81,    81,    68,    81,    83,    81,    83,
-      81,    61,    62,    67,    82,    82,    81,    82,    81,    83,
-      81,    83,    81,    83,    82,    82,    82,    82,    82,    81,
-      81,    82,    82,     0,     0,    72,    72,    77,    61,    62,
-      67,    81,    82,    81,    81,    81,    81,    81,    81,    81,
-      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
-      81,    81,    81,    81,    81,    81,    81,    81,    82,    82,
-      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
-      81,    81,    61,    62,    63,    85,    85,    81,    81,    66,
-      75,    81,    82,    69,    81,    81,    81,    81,    81,    81,
-      81,    81,    81,    81,    81,    81,    69,    81,    81,    81,
-      82,    81,    81,    81,    81,    81,    81,    81,    85,    81,
-      81,    81,    81,    81,    85,    85,    85,    85,    85,    85,
-      81,    81,    81,    81,    81,    85,    81,    81,    81,    69,
-      85,    85,    81,    69,    85,    81,    85,    81,    81,    81,
-      85
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    66,
+      72,    73,    74,    75,    76,    77,    78,    80,    81,    82,
+      62,    63,    65,    68,    69,    83,    86,    65,    83,    86,
+      83,    83,    83,    83,    83,    83,    83,    83,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    83,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    69,    83,    85,
+      83,    83,    85,    83,    62,    63,    68,    84,    84,    83,
+      84,    83,    85,    83,    85,    83,    85,    84,    84,    84,
+      84,    84,    83,    83,    84,    84,     0,     0,    73,    76,
+      73,    62,    63,    68,    83,    84,    83,    83,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    83,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    83,    83,    83,
+      85,    83,    83,    84,    84,    83,    83,    83,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    62,    63,    64,
+      87,    87,    83,    83,    67,    79,    83,    84,    70,    83,
+      83,    83,    83,    83,    83,    83,    83,    83,    83,    83,
+      83,    70,    83,    83,    83,    83,    84,    83,    83,    83,
+      83,    83,    83,    83,    87,    83,    83,    83,    83,    83,
+      87,    87,    87,    87,    87,    87,    83,    83,    83,    83,
+      83,    83,    87,    83,    83,    83,    70,    87,    87,    83,
+      70,    87,    83,    87,    83,    83,    83,    87
   };
 
 #if YYDEBUG
@@ -1747,7 +1769,8 @@ namespace lol {
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
-     315,   316,   317,   318,   319,    91,    93,    45,    40,    41
+     315,   316,   317,   318,   319,   320,    91,    93,    45,    40,
+      41
   };
 #endif
 
@@ -1755,40 +1778,40 @@ namespace lol {
   const unsigned char
   EasyMeshParser::yyr1_[] =
   {
-         0,    70,    71,    72,    72,    73,    73,    74,    75,    76,
-      76,    77,    77,    77,    78,    78,    78,    78,    78,    78,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    79,
-      79,    79,    79,    79,    79,    79,    79,    79,    79,    80,
-      80,    80,    80,    80,    80,    80,    80,    80,    80,    80,
-      80,    80,    80,    80,    80,    80,    80,    80,    80,    80,
-      80,    80,    80,    80,    80,    80,    80,    80,    80,    80,
-      80,    81,    81,    81,    81,    82,    82,    82,    82,    83,
-      83,    84,    84,    85,    85,    85
+         0,    71,    72,    73,    73,    74,    74,    75,    75,    76,
+      76,    76,    76,    77,    77,    77,    77,    77,    78,    79,
+      80,    80,    80,    80,    80,    80,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    81,    81,    81,    81,    81,    81,    81,    81,
+      81,    81,    82,    82,    82,    82,    82,    82,    82,    82,
+      82,    82,    82,    82,    82,    82,    82,    82,    82,    82,
+      82,    82,    82,    82,    82,    82,    82,    82,    82,    82,
+      82,    82,    82,    82,    83,    83,    83,    83,    84,    84,
+      84,    84,    85,    85,    86,    86,    87,    87,    87
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
   const unsigned char
   EasyMeshParser::yyr2_[] =
   {
-         0,     2,     2,     1,     2,     1,     3,     1,     1,     1,
-       2,     1,     1,     1,     5,     2,     2,     5,     2,     2,
-       2,     2,     2,     2,     4,     2,     2,     2,     2,     5,
-       4,     3,     5,     4,     3,     5,     4,     3,     3,     2,
-       3,     2,     3,     2,     5,     4,     3,     5,     4,     3,
-       5,     4,     3,     4,     3,     4,     3,     4,     3,     3,
-       2,     3,     2,     3,     2,     3,     2,     3,     2,     3,
-       2,     2,     2,     2,     4,     2,     2,     1,     1,     1,
-       2,     2,     4,     1,     1,     1,     1,     1,     1,     8,
-       7,     6,     5,     5,     4,     2,     3,     2,     5,     3,
-       3,     5,     3,     3,     3,     4,     4,     6,     5,     4,
-       5,     4,     4,     3,     3,     2,     3,     2,    11,    10,
-       9,     1,     2,     1,     2,     1,     2,     1,     2,     3,
-       5,     3,     6,     1,     1,     1
+         0,     2,     2,     1,     2,     1,     3,     1,     2,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       5,     2,     2,     5,     2,     2,     2,     2,     2,     4,
+       2,     2,     2,     2,     5,     3,     2,     5,     4,     3,
+       5,     4,     3,     5,     4,     3,     3,     2,     3,     2,
+       3,     2,     5,     4,     3,     5,     4,     3,     5,     4,
+       3,     4,     3,     4,     3,     4,     3,     3,     2,     3,
+       2,     3,     2,     3,     2,     3,     2,     3,     2,     2,
+       2,     2,     4,     2,     2,     1,     1,     1,     2,     2,
+       4,     1,     8,     7,     6,     5,     3,     4,     4,     5,
+       4,     2,     3,     2,     5,     3,     3,     5,     3,     3,
+       6,     5,     4,     5,     4,     4,     3,     3,     2,     3,
+       2,    11,    10,     9,     1,     2,     1,     2,     1,     2,
+       1,     2,     3,     5,     3,     6,     1,     1,     1
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -1797,23 +1820,24 @@ namespace lol {
   const char*
   const EasyMeshParser::yytname_[] =
   {
-    "T_END", "error", "$undefined", "T_COLOR", "T_BGCOLOR", "T_TRANSLATEX",
+    "T_END", "error", "$undefined", "T_COLOR", "T_BCOLOR", "T_TRANSLATEX",
   "T_ROTATEX", "T_TAPERX", "T_TWISTX", "T_SHEARX", "T_STRETCHX",
   "T_BENDXY", "T_BENDXZ", "T_SCALEX", "T_MIRRORX", "T_TRANSLATEY",
   "T_ROTATEY", "T_TAPERY", "T_TWISTY", "T_SHEARY", "T_STRETCHY",
   "T_BENDYX", "T_BENDYZ", "T_SCALEY", "T_MIRRORY", "T_TRANSLATEZ",
   "T_ROTATEZ", "T_TAPERZ", "T_TWISTZ", "T_SHEARZ", "T_STRETCHZ",
   "T_BENDZX", "T_BENDZY", "T_SCALEZ", "T_MIRRORZ", "T_TRANSLATE",
-  "T_SCALE", "T_TOGGLESCALEWINDING", "T_RADIALJITTER", "T_SPLITTRIANGLE",
-  "T_SMOOTHMESH", "T_CSGUNION", "T_CSGSUBSTRACT", "T_CSGSUBSTRACTLOSS",
-  "T_CSGAND", "T_CSGXOR", "T_CHAMFER", "T_CYLINDER", "T_BOX",
-  "T_SMOOTHCHAMFBOX", "T_FLATCHAMFBOX", "T_SPHERE", "T_CAPSULE", "T_STAR",
-  "T_EXPANDEDSTAR", "T_DISC", "T_TRIANGLE", "T_QUAD", "T_COG", "T_TORUS",
-  "T_ERROR", "F_NUMBER", "I_NUMBER", "BOOLEAN", "COLOR", "'['", "']'",
-  "'-'", "'('", "')'", "$accept", "mesh_description",
-  "mesh_expression_list", "mesh_expression", "mesh_open", "mesh_close",
-  "mesh_command_list", "mesh_command", "color_command",
-  "transform_command", "primitive_command", "fv", "iv", "v3", "v4", "bv", 0
+  "T_ROTATE", "T_SCALE", "T_TOGGLESCALEWINDING", "T_RADIALJITTER",
+  "T_SPLITTRIANGLE", "T_SMOOTHMESH", "T_CSGUNION", "T_CSGSUBSTRACT",
+  "T_CSGSUBSTRACTLOSS", "T_CSGAND", "T_CSGXOR", "T_CHAMFER", "T_CYLINDER",
+  "T_BOX", "T_SMOOTHCHAMFBOX", "T_FLATCHAMFBOX", "T_SPHERE", "T_CAPSULE",
+  "T_STAR", "T_EXPANDEDSTAR", "T_DISC", "T_TRIANGLE", "T_QUAD", "T_COG",
+  "T_TORUS", "T_ERROR", "F_NUMBER", "I_NUMBER", "BOOLEAN", "COLOR", "'['",
+  "']'", "'-'", "'('", "')'", "$accept", "mesh_description",
+  "mesh_expression_list", "mesh_expression", "mesh_command_list",
+  "mesh_command", "csg_command", "mesh_open", "mesh_close",
+  "color_command", "transform_command", "primitive_command", "fv", "iv",
+  "v3", "v4", "bv", 0
   };
 #endif
 
@@ -1822,60 +1846,62 @@ namespace lol {
   const EasyMeshParser::rhs_number_type
   EasyMeshParser::yyrhs_[] =
   {
-        71,     0,    -1,    72,     0,    -1,    73,    -1,    73,    72,
-      -1,    76,    -1,    74,    72,    75,    -1,    65,    -1,    66,
-      -1,    77,    -1,    76,    77,    -1,    78,    -1,    79,    -1,
-      80,    -1,     3,    81,    81,    81,    81,    -1,     3,    84,
-      -1,     3,    64,    -1,     4,    81,    81,    81,    81,    -1,
-       4,    84,    -1,     4,    64,    -1,    46,    81,    -1,     5,
-      81,    -1,    15,    81,    -1,    25,    81,    -1,    35,    81,
-      81,    81,    -1,    35,    83,    -1,     6,    81,    -1,    16,
-      81,    -1,    26,    81,    -1,     7,    81,    81,    81,    85,
-      -1,     7,    81,    81,    81,    -1,     7,    81,    81,    -1,
-      17,    81,    81,    81,    85,    -1,    17,    81,    81,    81,
-      -1,    17,    81,    81,    -1,    27,    81,    81,    81,    85,
-      -1,    27,    81,    81,    81,    -1,    27,    81,    81,    -1,
-       8,    81,    81,    -1,     8,    81,    -1,    18,    81,    81,
-      -1,    18,    81,    -1,    28,    81,    81,    -1,    28,    81,
-      -1,     9,    81,    81,    81,    85,    -1,     9,    81,    81,
-      81,    -1,     9,    81,    81,    -1,    19,    81,    81,    81,
-      85,    -1,    19,    81,    81,    81,    -1,    19,    81,    81,
-      -1,    29,    81,    81,    81,    85,    -1,    29,    81,    81,
-      81,    -1,    29,    81,    81,    -1,    10,    81,    81,    81,
-      -1,    10,    81,    81,    -1,    20,    81,    81,    81,    -1,
-      20,    81,    81,    -1,    30,    81,    81,    81,    -1,    30,
-      81,    81,    -1,    11,    81,    81,    -1,    11,    81,    -1,
-      12,    81,    81,    -1,    12,    81,    -1,    21,    81,    81,
-      -1,    21,    81,    -1,    22,    81,    81,    -1,    22,    81,
-      -1,    31,    81,    81,    -1,    31,    81,    -1,    32,    81,
-      81,    -1,    32,    81,    -1,    13,    81,    -1,    23,    81,
-      -1,    33,    81,    -1,    36,    81,    81,    81,    -1,    36,
-      83,    -1,    36,    81,    -1,    14,    -1,    24,    -1,    34,
-      -1,    38,    81,    -1,    39,    82,    -1,    40,    82,    82,
-      82,    -1,    37,    -1,    41,    -1,    42,    -1,    43,    -1,
-      44,    -1,    45,    -1,    47,    82,    81,    81,    81,    85,
-      85,    85,    -1,    47,    82,    81,    81,    81,    85,    85,
-      -1,    47,    82,    81,    81,    81,    85,    -1,    47,    82,
-      81,    81,    81,    -1,    48,    81,    81,    81,    81,    -1,
-      48,    81,    81,    81,    -1,    48,    81,    -1,    48,    83,
-      81,    -1,    48,    83,    -1,    49,    81,    81,    81,    81,
-      -1,    49,    81,    81,    -1,    49,    83,    81,    -1,    50,
-      81,    81,    81,    81,    -1,    50,    81,    81,    -1,    50,
-      83,    81,    -1,    51,    82,    81,    -1,    52,    82,    81,
-      81,    -1,    59,    82,    81,    81,    -1,    53,    82,    81,
-      81,    85,    85,    -1,    53,    82,    81,    81,    85,    -1,
-      53,    82,    81,    81,    -1,    54,    82,    81,    81,    81,
-      -1,    54,    82,    81,    81,    -1,    55,    82,    81,    85,
-      -1,    55,    82,    81,    -1,    56,    81,    85,    -1,    56,
-      81,    -1,    57,    81,    85,    -1,    57,    81,    -1,    58,
-      82,    81,    81,    81,    81,    81,    81,    81,    81,    85,
-      -1,    58,    82,    81,    81,    81,    81,    81,    81,    81,
-      81,    -1,    58,    82,    81,    81,    81,    81,    81,    81,
-      81,    -1,    61,    -1,    67,    81,    -1,    62,    -1,    67,
-      82,    -1,    62,    -1,    67,    82,    -1,    61,    -1,    67,
-      81,    -1,    68,    81,    69,    -1,    68,    81,    81,    81,
-      69,    -1,    68,    81,    69,    -1,    68,    81,    81,    81,
-      81,    69,    -1,    63,    -1,    62,    -1,    61,    -1
+        72,     0,    -1,    73,     0,    -1,    74,    -1,    74,    73,
+      -1,    75,    -1,    78,    73,    79,    -1,    76,    -1,    75,
+      76,    -1,    80,    -1,    81,    -1,    82,    -1,    77,    -1,
+      42,    -1,    43,    -1,    44,    -1,    45,    -1,    46,    -1,
+      66,    -1,    67,    -1,     3,    83,    83,    83,    83,    -1,
+       3,    86,    -1,     3,    65,    -1,     4,    83,    83,    83,
+      83,    -1,     4,    86,    -1,     4,    65,    -1,     5,    83,
+      -1,    15,    83,    -1,    25,    83,    -1,    35,    83,    83,
+      83,    -1,    35,    85,    -1,     6,    83,    -1,    16,    83,
+      -1,    26,    83,    -1,    36,    83,    83,    83,    83,    -1,
+      36,    83,    85,    -1,    39,    83,    -1,     7,    83,    83,
+      83,    87,    -1,     7,    83,    83,    83,    -1,     7,    83,
+      83,    -1,    17,    83,    83,    83,    87,    -1,    17,    83,
+      83,    83,    -1,    17,    83,    83,    -1,    27,    83,    83,
+      83,    87,    -1,    27,    83,    83,    83,    -1,    27,    83,
+      83,    -1,     8,    83,    83,    -1,     8,    83,    -1,    18,
+      83,    83,    -1,    18,    83,    -1,    28,    83,    83,    -1,
+      28,    83,    -1,     9,    83,    83,    83,    87,    -1,     9,
+      83,    83,    83,    -1,     9,    83,    83,    -1,    19,    83,
+      83,    83,    87,    -1,    19,    83,    83,    83,    -1,    19,
+      83,    83,    -1,    29,    83,    83,    83,    87,    -1,    29,
+      83,    83,    83,    -1,    29,    83,    83,    -1,    10,    83,
+      83,    83,    -1,    10,    83,    83,    -1,    20,    83,    83,
+      83,    -1,    20,    83,    83,    -1,    30,    83,    83,    83,
+      -1,    30,    83,    83,    -1,    11,    83,    83,    -1,    11,
+      83,    -1,    12,    83,    83,    -1,    12,    83,    -1,    21,
+      83,    83,    -1,    21,    83,    -1,    22,    83,    83,    -1,
+      22,    83,    -1,    31,    83,    83,    -1,    31,    83,    -1,
+      32,    83,    83,    -1,    32,    83,    -1,    13,    83,    -1,
+      23,    83,    -1,    33,    83,    -1,    37,    83,    83,    83,
+      -1,    37,    85,    -1,    37,    83,    -1,    14,    -1,    24,
+      -1,    34,    -1,    47,    83,    -1,    40,    84,    -1,    41,
+      84,    84,    84,    -1,    38,    -1,    48,    84,    83,    83,
+      83,    87,    87,    87,    -1,    48,    84,    83,    83,    83,
+      87,    87,    -1,    48,    84,    83,    83,    83,    87,    -1,
+      48,    84,    83,    83,    83,    -1,    52,    84,    83,    -1,
+      53,    84,    83,    83,    -1,    60,    84,    83,    83,    -1,
+      49,    83,    83,    83,    83,    -1,    49,    83,    83,    83,
+      -1,    49,    83,    -1,    49,    85,    83,    -1,    49,    85,
+      -1,    50,    83,    83,    83,    83,    -1,    50,    83,    83,
+      -1,    50,    85,    83,    -1,    51,    83,    83,    83,    83,
+      -1,    51,    83,    83,    -1,    51,    85,    83,    -1,    54,
+      84,    83,    83,    87,    87,    -1,    54,    84,    83,    83,
+      87,    -1,    54,    84,    83,    83,    -1,    55,    84,    83,
+      83,    83,    -1,    55,    84,    83,    83,    -1,    56,    84,
+      83,    87,    -1,    56,    84,    83,    -1,    57,    83,    87,
+      -1,    57,    83,    -1,    58,    83,    87,    -1,    58,    83,
+      -1,    59,    84,    83,    83,    83,    83,    83,    83,    83,
+      83,    87,    -1,    59,    84,    83,    83,    83,    83,    83,
+      83,    83,    83,    -1,    59,    84,    83,    83,    83,    83,
+      83,    83,    83,    -1,    62,    -1,    68,    83,    -1,    63,
+      -1,    68,    84,    -1,    63,    -1,    68,    84,    -1,    62,
+      -1,    68,    83,    -1,    69,    83,    70,    -1,    69,    83,
+      83,    83,    70,    -1,    69,    83,    70,    -1,    69,    83,
+      83,    83,    83,    70,    -1,    64,    -1,    63,    -1,    62,
+      -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1883,40 +1909,40 @@ namespace lol {
   const unsigned short int
   EasyMeshParser::yyprhs_[] =
   {
-         0,     0,     3,     6,     8,    11,    13,    17,    19,    21,
-      23,    26,    28,    30,    32,    38,    41,    44,    50,    53,
-      56,    59,    62,    65,    68,    73,    76,    79,    82,    85,
-      91,    96,   100,   106,   111,   115,   121,   126,   130,   134,
-     137,   141,   144,   148,   151,   157,   162,   166,   172,   177,
-     181,   187,   192,   196,   201,   205,   210,   214,   219,   223,
-     227,   230,   234,   237,   241,   244,   248,   251,   255,   258,
-     262,   265,   268,   271,   274,   279,   282,   285,   287,   289,
-     291,   294,   297,   302,   304,   306,   308,   310,   312,   314,
-     323,   331,   338,   344,   350,   355,   358,   362,   365,   371,
-     375,   379,   385,   389,   393,   397,   402,   407,   414,   420,
-     425,   431,   436,   441,   445,   449,   452,   456,   459,   471,
-     482,   492,   494,   497,   499,   502,   504,   507,   509,   512,
-     516,   522,   526,   533,   535,   537
+         0,     0,     3,     6,     8,    11,    13,    17,    19,    22,
+      24,    26,    28,    30,    32,    34,    36,    38,    40,    42,
+      44,    50,    53,    56,    62,    65,    68,    71,    74,    77,
+      82,    85,    88,    91,    94,   100,   104,   107,   113,   118,
+     122,   128,   133,   137,   143,   148,   152,   156,   159,   163,
+     166,   170,   173,   179,   184,   188,   194,   199,   203,   209,
+     214,   218,   223,   227,   232,   236,   241,   245,   249,   252,
+     256,   259,   263,   266,   270,   273,   277,   280,   284,   287,
+     290,   293,   296,   301,   304,   307,   309,   311,   313,   316,
+     319,   324,   326,   335,   343,   350,   356,   360,   365,   370,
+     376,   381,   384,   388,   391,   397,   401,   405,   411,   415,
+     419,   426,   432,   437,   443,   448,   453,   457,   461,   464,
+     468,   471,   483,   494,   504,   506,   509,   511,   514,   516,
+     519,   521,   524,   528,   534,   538,   545,   547,   549
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
   const unsigned short int
   EasyMeshParser::yyrline_[] =
   {
-         0,    91,    91,    95,    96,   100,   101,   105,   109,   113,
-     114,   118,   119,   120,   124,   125,   126,   129,   130,   131,
-     137,   138,   139,   140,   141,   142,   143,   144,   145,   146,
-     147,   148,   149,   150,   151,   152,   153,   154,   155,   156,
-     157,   158,   159,   160,   161,   162,   163,   164,   165,   166,
-     167,   168,   169,   170,   171,   172,   173,   174,   175,   176,
-     177,   178,   179,   180,   181,   182,   183,   184,   185,   186,
-     187,   188,   189,   190,   191,   192,   193,   194,   195,   196,
-     197,   198,   199,   200,   201,   202,   203,   204,   205,   209,
-     210,   211,   212,   213,   214,   215,   216,   217,   218,   219,
-     220,   221,   222,   223,   224,   225,   226,   227,   228,   229,
-     230,   231,   232,   233,   234,   235,   236,   237,   238,   239,
-     240,   245,   246,   247,   248,   252,   253,   254,   255,   260,
-     261,   265,   266,   271,   272,   273
+         0,    91,    91,    95,    96,   100,   101,   105,   106,   110,
+     111,   112,   113,   117,   118,   119,   120,   121,   125,   129,
+     133,   134,   135,   138,   139,   140,   146,   147,   148,   149,
+     150,   151,   152,   153,   154,   155,   156,   157,   158,   159,
+     160,   161,   162,   163,   164,   165,   166,   167,   168,   169,
+     170,   171,   172,   173,   174,   175,   176,   177,   178,   179,
+     180,   181,   182,   183,   184,   185,   186,   187,   188,   189,
+     190,   191,   192,   193,   194,   195,   196,   197,   198,   199,
+     200,   201,   202,   203,   204,   205,   206,   207,   208,   209,
+     210,   211,   215,   216,   217,   218,   219,   220,   221,   222,
+     223,   224,   225,   226,   227,   228,   229,   230,   231,   232,
+     233,   234,   235,   236,   237,   239,   240,   241,   242,   243,
+     244,   245,   246,   247,   252,   253,   254,   255,   259,   260,
+     261,   262,   267,   268,   272,   273,   278,   279,   280
   };
 
   // Print the state stack on the debug stream.
@@ -1960,12 +1986,12 @@ namespace lol {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      68,    69,     2,     2,     2,    67,     2,     2,     2,     2,
+      69,    70,     2,     2,     2,    68,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    65,     2,    66,     2,     2,     2,     2,     2,     2,
+       2,    66,     2,    67,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1987,7 +2013,8 @@ namespace lol {
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,    62,    63,    64
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65
     };
     if ((unsigned int) t <= yyuser_token_number_max_)
       return translate_table[t];
@@ -1996,26 +2023,26 @@ namespace lol {
   }
 
   const int EasyMeshParser::yyeof_ = 0;
-  const int EasyMeshParser::yylast_ = 439;
-  const int EasyMeshParser::yynnts_ = 16;
+  const int EasyMeshParser::yylast_ = 477;
+  const int EasyMeshParser::yynnts_ = 17;
   const int EasyMeshParser::yyempty_ = -2;
-  const int EasyMeshParser::yyfinal_ = 133;
+  const int EasyMeshParser::yyfinal_ = 136;
   const int EasyMeshParser::yyterror_ = 1;
   const int EasyMeshParser::yyerrcode_ = 256;
-  const int EasyMeshParser::yyntokens_ = 70;
+  const int EasyMeshParser::yyntokens_ = 71;
 
-  const unsigned int EasyMeshParser::yyuser_token_number_max_ = 319;
+  const unsigned int EasyMeshParser::yyuser_token_number_max_ = 320;
   const EasyMeshParser::token_number_type EasyMeshParser::yyundef_token_ = 2;
 
 
 } // lol
 
 /* Line 1053 of lalr1.cc  */
-#line 2015 "generated/easymesh-parser.cpp"
+#line 2042 "generated/easymesh-parser.cpp"
 
 
 /* Line 1055 of lalr1.cc  */
-#line 276 "easymesh/easymesh-parser.y"
+#line 283 "easymesh/easymesh-parser.y"
 
 
 void lol::EasyMeshParser::error(const EasyMeshParser::location_type& l,

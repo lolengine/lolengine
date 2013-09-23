@@ -136,7 +136,7 @@ namespace lol {
    enum yytokentype {
      T_END = 0,
      T_COLOR = 258,
-     T_BGCOLOR = 259,
+     T_BCOLOR = 259,
      T_TRANSLATEX = 260,
      T_ROTATEX = 261,
      T_TAPERX = 262,
@@ -168,35 +168,36 @@ namespace lol {
      T_SCALEZ = 288,
      T_MIRRORZ = 289,
      T_TRANSLATE = 290,
-     T_SCALE = 291,
-     T_TOGGLESCALEWINDING = 292,
-     T_RADIALJITTER = 293,
-     T_SPLITTRIANGLE = 294,
-     T_SMOOTHMESH = 295,
-     T_CSGUNION = 296,
-     T_CSGSUBSTRACT = 297,
-     T_CSGSUBSTRACTLOSS = 298,
-     T_CSGAND = 299,
-     T_CSGXOR = 300,
-     T_CHAMFER = 301,
-     T_CYLINDER = 302,
-     T_BOX = 303,
-     T_SMOOTHCHAMFBOX = 304,
-     T_FLATCHAMFBOX = 305,
-     T_SPHERE = 306,
-     T_CAPSULE = 307,
-     T_STAR = 308,
-     T_EXPANDEDSTAR = 309,
-     T_DISC = 310,
-     T_TRIANGLE = 311,
-     T_QUAD = 312,
-     T_COG = 313,
-     T_TORUS = 314,
-     T_ERROR = 315,
-     F_NUMBER = 316,
-     I_NUMBER = 317,
-     BOOLEAN = 318,
-     COLOR = 319
+     T_ROTATE = 291,
+     T_SCALE = 292,
+     T_TOGGLESCALEWINDING = 293,
+     T_RADIALJITTER = 294,
+     T_SPLITTRIANGLE = 295,
+     T_SMOOTHMESH = 296,
+     T_CSGUNION = 297,
+     T_CSGSUBSTRACT = 298,
+     T_CSGSUBSTRACTLOSS = 299,
+     T_CSGAND = 300,
+     T_CSGXOR = 301,
+     T_CHAMFER = 302,
+     T_CYLINDER = 303,
+     T_BOX = 304,
+     T_SMOOTHCHAMFBOX = 305,
+     T_FLATCHAMFBOX = 306,
+     T_SPHERE = 307,
+     T_CAPSULE = 308,
+     T_STAR = 309,
+     T_EXPANDEDSTAR = 310,
+     T_DISC = 311,
+     T_TRIANGLE = 312,
+     T_QUAD = 313,
+     T_COG = 314,
+     T_TORUS = 315,
+     T_ERROR = 316,
+     F_NUMBER = 317,
+     I_NUMBER = 318,
+     BOOLEAN = 319,
+     COLOR = 320
    };
 
     };
@@ -290,7 +291,7 @@ namespace lol {
     /// - if positive, shift that token.
     /// - if negative, reduce the rule which number is the opposite.
     /// - if zero, do what YYDEFACT says.
-    static const unsigned char yytable_[];
+    static const unsigned short int yytable_[];
     static const signed char yytable_ninf_;
 
     static const short int yycheck_[];
@@ -370,7 +371,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 374 "generated/easymesh-parser.h"
+#line 375 "generated/easymesh-parser.h"
 
 
 
