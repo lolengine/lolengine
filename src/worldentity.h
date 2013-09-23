@@ -33,10 +33,6 @@ public:
     vec3 m_rotation_velocity;
     vec3 m_bbox[2];
 
-    ivec2 m_mousepos;
-    ivec3 m_mousebuttons;
-    uint32_t m_pressed, m_clicked, m_released;
-
 protected:
     WorldEntity();
     virtual ~WorldEntity();
