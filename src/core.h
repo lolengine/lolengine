@@ -55,16 +55,8 @@
 
 #if LOL_FEATURE_CXX11_CONSTEXPR
 #   define LOL_CONSTEXPR constexpr
-#   define LOL_CONSTEXPR_DECLARATION(type, name, value) \
-        static type constexpr name = value;
-#   define LOL_CONSTEXPR_DEFINITION(type, name, value) \
-        /* Nothing */
 #else
 #   define LOL_CONSTEXPR /* Nothing */
-#   define LOL_CONSTEXPR_DECLARATION(type, name, value) \
-        static type const name;
-#   define LOL_CONSTEXPR_DEFINITION(type, name, value) \
-        type const name = value;
 #endif
 
 

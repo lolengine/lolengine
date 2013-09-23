@@ -131,7 +131,7 @@ LevelMap::LevelMap(char const *path)
         {
             /* This is a tileset image file. Associate it with firstgid. */
             data->tilesets[data->ntilers] = Tiler::Register(str, ivec2(32),
-                                                            ivec2(0));
+                                                            ivec2::zero);
             data->ntilers++;
             //Log::Debug("new tiler %s\n", str);
         }

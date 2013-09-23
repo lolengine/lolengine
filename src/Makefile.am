@@ -76,7 +76,7 @@ liblolcore_sources = \
     base/assert.cpp base/hash.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
-    math/geometry.cpp \
+    math/constants.cpp math/geometry.cpp \
     \
     gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \
     gpu/framebuffer.cpp gpu/texture.cpp gpu/renderer.cpp \

@@ -187,7 +187,7 @@ public:
                     while (i-- > 0)
                         voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                                             vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
-                                            //vec2(0.f)
+                                            //vec2::zero
                                             );
                     mode = 1;
                 }
@@ -316,7 +316,7 @@ public:
                 Framebuffer *src_buf;
                 Shader *shader;
 
-                if (curres == ivec2(0))
+                if (curres == ivec2::zero)
                     shader = m_screen_shader;
                 else
                     shader = m_fbos[m_cur_fbo].m2;
@@ -352,7 +352,7 @@ public:
     #endif
 
                 int i = 0;
-                if (curres == ivec2(0))
+                if (curres == ivec2::zero)
                     m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTexture(), 0);
                 else if (m_cur_fbo == VoronoiFbo)
                 {
@@ -368,12 +368,12 @@ public:
                 m_fbos[m_cur_fbo].m2->Unbind();
                 dst_buf->Unbind();
 
-                if (curres == ivec2(0))
+                if (curres == ivec2::zero)
                     break;
                 if (curres == ivec2(1))
                 {
                     if (buf == 1)
-                        curres = ivec2(0);
+                        curres = ivec2::zero;
                     else
                         break;
                 }

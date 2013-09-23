@@ -138,7 +138,7 @@ Renderer::Renderer(ivec2 size)
 
     /* Initialise rendering states */
     m_data->m_viewport = ibox2(0, 0, 0, 0);
-    SetViewport(ibox2(vec2(0), size));
+    SetViewport(ibox2(vec2::zero, size));
 
     m_data->m_clear_color = vec4(-1.f);
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));

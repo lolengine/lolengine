@@ -168,8 +168,8 @@ template<typename T, int N> struct XVec4
 
 template <typename T> struct BVec2
 {
-    explicit inline BVec2() {}
-    explicit inline BVec2(T X, T Y) : x(X), y(Y) {}
+    explicit inline LOL_CONSTEXPR BVec2() {}
+    explicit inline LOL_CONSTEXPR BVec2(T X, T Y) : x(X), y(Y) {}
 
     union
     {
@@ -236,20 +236,24 @@ template <> struct BVec2<real>
 
 template <typename T> struct Vec2 : BVec2<T>
 {
-    inline Vec2() {}
-    inline Vec2(T X, T Y) : BVec2<T>(X, Y) {}
+    inline LOL_CONSTEXPR Vec2() {}
+    inline LOL_CONSTEXPR Vec2(T X, T Y) : BVec2<T>(X, Y) {}
 
-    explicit inline Vec2(T X) : BVec2<T>(X, X) {}
+    explicit LOL_CONSTEXPR inline Vec2(T X) : BVec2<T>(X, X) {}
 
     template<int N>
-    inline Vec2(XVec2<T, N> const &v)
+    inline LOL_CONSTEXPR Vec2(XVec2<T, N> const &v)
       : BVec2<T>(v[0], v[1]) {}
 
     template<typename U, int N>
-    explicit inline Vec2(XVec2<U, N> const &v)
+    explicit inline LOL_CONSTEXPR Vec2(XVec2<U, N> const &v)
       : BVec2<T>(v[0], v[1]) {}
 
     LOL_MEMBER_OPS(Vec2, x)
+
+    static const Vec2<T> zero;
+    static const Vec2<T> axis_x;
+    static const Vec2<T> axis_y;
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
@@ -261,9 +265,9 @@ template <typename T> struct Vec2 : BVec2<T>
 
 template <typename T> struct Cmplx
 {
-    inline Cmplx() {}
-    inline Cmplx(T X) : x(X), y(0) {}
-    inline Cmplx(T X, T Y) : x(X), y(Y) {}
+    inline LOL_CONSTEXPR Cmplx() {}
+    inline LOL_CONSTEXPR Cmplx(T X) : x(X), y(0) {}
+    inline LOL_CONSTEXPR Cmplx(T X, T Y) : x(X), y(Y) {}
 
     LOL_MEMBER_OPS(Cmplx, x)
 
@@ -331,8 +335,8 @@ static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
 
 template <typename T> struct BVec3
 {
-    explicit inline BVec3() {}
-    explicit inline BVec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
+    explicit inline LOL_CONSTEXPR BVec3() {}
+    explicit inline LOL_CONSTEXPR BVec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
 
     union
     {
@@ -473,7 +477,8 @@ template <typename T> struct BVec3
 template <> struct BVec3<half>
 {
     explicit inline BVec3() {}
-    explicit inline BVec3(half X, half Y, half Z) : x(X), y(Y), z(Z) {}
+    explicit inline BVec3(half X, half Y, half Z)
+      : x(X), y(Y), z(Z) {}
 
     half x, y, z;
 };
@@ -488,19 +493,19 @@ template <> struct BVec3<real>
 
 template <typename T> struct Vec3 : BVec3<T>
 {
-    inline Vec3() {}
-    inline Vec3(T X, T Y, T Z) : BVec3<T>(X, Y, Z) {}
-    inline Vec3(Vec2<T> XY, T Z) : BVec3<T>(XY.x, XY.y, Z) {}
-    inline Vec3(T X, Vec2<T> YZ) : BVec3<T>(X, YZ.x, YZ.y) {}
+    inline LOL_CONSTEXPR Vec3() {}
+    inline LOL_CONSTEXPR Vec3(T X, T Y, T Z) : BVec3<T>(X, Y, Z) {}
+    inline LOL_CONSTEXPR Vec3(Vec2<T> XY, T Z) : BVec3<T>(XY.x, XY.y, Z) {}
+    inline LOL_CONSTEXPR Vec3(T X, Vec2<T> YZ) : BVec3<T>(X, YZ.x, YZ.y) {}
 
-    explicit inline Vec3(T X) : BVec3<T>(X, X, X) {}
+    explicit inline LOL_CONSTEXPR Vec3(T X) : BVec3<T>(X, X, X) {}
 
     template<int N>
-    inline Vec3(XVec3<T, N> const &v)
+    inline LOL_CONSTEXPR Vec3(XVec3<T, N> const &v)
       : BVec3<T>(v[0], v[1], v[2]) {}
 
     template<typename U, int N>
-    explicit inline Vec3(XVec3<U, N> const &v)
+    explicit inline LOL_CONSTEXPR Vec3(XVec3<U, N> const &v)
       : BVec3<T>(v[0], v[1], v[2]) {}
 
     static Vec3<T> toeuler_xyx(Quat<T> const &q);
@@ -519,6 +524,11 @@ template <typename T> struct Vec3 : BVec3<T>
 
     LOL_MEMBER_OPS(Vec3, x)
 
+    static const Vec3<T> zero;
+    static const Vec3<T> axis_x;
+    static const Vec3<T> axis_y;
+    static const Vec3<T> axis_z;
+
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
 };
@@ -529,8 +539,9 @@ template <typename T> struct Vec3 : BVec3<T>
 
 template <typename T> struct BVec4
 {
-    explicit inline BVec4() {}
-    explicit inline BVec4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
+    explicit inline LOL_CONSTEXPR BVec4() {}
+    explicit inline LOL_CONSTEXPR BVec4(T X, T Y, T Z, T W)
+      : x(X), y(Y), z(Z), w(W) {}
 
     union
     {
@@ -907,26 +918,39 @@ template <> struct BVec4<real>
 
 template <typename T> struct Vec4 : BVec4<T>
 {
-    inline Vec4() {}
-    inline Vec4(T X, T Y, T Z, T W) : BVec4<T>(X, Y, Z, W) {}
-    inline Vec4(Vec2<T> XY, T Z, T W) : BVec4<T>(XY.x, XY.y, Z, W) {}
-    inline Vec4(T X, Vec2<T> YZ, T W) : BVec4<T>(X, YZ.x, YZ.y, W) {}
-    inline Vec4(T X, T Y, Vec2<T> ZW) : BVec4<T>(X, Y, ZW.x, ZW.y) {}
-    inline Vec4(Vec2<T> XY, Vec2<T> ZW) : BVec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
-    inline Vec4(Vec3<T> XYZ, T W) : BVec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
-    inline Vec4(T X, Vec3<T> YZW) : BVec4<T>(X, YZW.x, YZW.y, YZW.z) {}
+    inline LOL_CONSTEXPR Vec4() {}
+    inline LOL_CONSTEXPR Vec4(T X, T Y, T Z, T W)
+      : BVec4<T>(X, Y, Z, W) {}
+    inline LOL_CONSTEXPR Vec4(Vec2<T> XY, T Z, T W)
+      : BVec4<T>(XY.x, XY.y, Z, W) {}
+    inline LOL_CONSTEXPR Vec4(T X, Vec2<T> YZ, T W)
+      : BVec4<T>(X, YZ.x, YZ.y, W) {}
+    inline LOL_CONSTEXPR Vec4(T X, T Y, Vec2<T> ZW)
+      : BVec4<T>(X, Y, ZW.x, ZW.y) {}
+    inline LOL_CONSTEXPR Vec4(Vec2<T> XY, Vec2<T> ZW)
+      : BVec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
+    inline LOL_CONSTEXPR Vec4(Vec3<T> XYZ, T W)
+      : BVec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
+    inline LOL_CONSTEXPR Vec4(T X, Vec3<T> YZW)
+      : BVec4<T>(X, YZW.x, YZW.y, YZW.z) {}
 
-    explicit inline Vec4(T X) : BVec4<T>(X, X, X, X) {}
+    explicit inline LOL_CONSTEXPR Vec4(T X) : BVec4<T>(X, X, X, X) {}
 
     template<int N>
-    inline Vec4(XVec4<T, N> const &v)
+    inline LOL_CONSTEXPR Vec4(XVec4<T, N> const &v)
       : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
     template<typename U, int N>
-    explicit inline Vec4(XVec4<U, N> const &v)
+    explicit inline LOL_CONSTEXPR Vec4(XVec4<U, N> const &v)
       : BVec4<T>(v[0], v[1], v[2], v[3]) {}
 
     LOL_MEMBER_OPS(Vec4, x)
+
+    static const Vec4<T> zero;
+    static const Vec4<T> axis_x;
+    static const Vec4<T> axis_y;
+    static const Vec4<T> axis_z;
+    static const Vec4<T> axis_w;
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
@@ -938,9 +962,9 @@ template <typename T> struct Vec4 : BVec4<T>
 
 template <typename T> struct Quat
 {
-    inline Quat() {}
-    inline Quat(T W) : w(W),  x(0), y(0), z(0) {}
-    inline Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
+    inline LOL_CONSTEXPR Quat() {}
+    inline LOL_CONSTEXPR Quat(T W) : w(W),  x(0), y(0), z(0) {}
+    inline LOL_CONSTEXPR Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
 
     Quat(Mat3<T> const &m);
     Quat(Mat4<T> const &m);

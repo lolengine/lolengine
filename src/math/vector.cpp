@@ -535,7 +535,7 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
     float n = norm(q);
 
     if (!n)
-        return vec3(0.f);
+        return vec3::zero;
 
     /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
     float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;

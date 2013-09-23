@@ -146,7 +146,7 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     for (int i = 0; i < lights.Count(); ++i)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();
     while (light_data.Count() < 8)
-        light_data << vec4(0.f) << vec4(0.f);
+        light_data << vec4::zero << vec4::zero;
     m_shader->SetUniform(*GetUniform("u_Lights"), light_data);
 
     m_shader->SetUniform(*GetUniform("in_ModelView"), modelview);

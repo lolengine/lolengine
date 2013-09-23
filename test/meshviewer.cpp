@@ -136,12 +136,12 @@ public:
         m_zoom_mesh = 0.f;
         m_zoom_speed = 0.f;
         m_rot = vec2(45.f);
-        m_rot_mesh = vec2(0.f);
-        m_rot_speed = vec2(0.f);
-        m_pos = vec2(0.f);
-        m_pos_mesh = vec2(0.f);
-        m_pos_speed = vec2(0.f);
-        m_screen_offset = vec2(0.f);
+        m_rot_mesh = vec2::zero;
+        m_rot_speed = vec2::zero;
+        m_pos = vec2::zero;
+        m_pos_mesh = vec2::zero;
+        m_pos_speed = vec2::zero;
+        m_screen_offset = vec2::zero;
 
         m_camera = new Camera();
         m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
@@ -206,7 +206,7 @@ public:
         //Camera update
         bool is_pos = false;
         bool is_fov = false;
-        vec2 tmp = vec2(0.f);
+        vec2 tmp = vec2::zero;
 
 #if !__native_client__
         is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
@@ -252,7 +252,7 @@ public:
 #if !__native_client__
         if (m_controller->GetKey(KEY_CAM_RESET).IsDown())
         {
-            pos_mesh = vec2(0.f);
+            pos_mesh = vec2::zero;
             zoom_mesh = 0.f;
         }
 #endif //!__native_client__
@@ -426,7 +426,7 @@ public:
         {
             m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
             m_texture_uni = m_texture_shader->GetUniformLocation("u_Texture");
-            m_default_texture = Tiler::Register("data/test-texture.png", ivec2(0), ivec2(0,1));
+            m_default_texture = Tiler::Register("data/test-texture.png", ivec2::zero, ivec2(0,1));
         }
         else if (m_texture && m_default_texture)
             m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);

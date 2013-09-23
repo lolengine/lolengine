@@ -46,7 +46,7 @@ Camera::Camera()
 
     /* Create a default perspective */
     SetProjection(m_fov, m_near, m_far, m_screen_size, m_screen_ratio);
-    SetView(mat4::lookat(vec3(0.f, 50.f, 50.f), vec3(0.f), vec3(0.f, 1.f, 0.f)));
+    SetView(mat4::lookat(vec3(0.f, 50.f, 50.f), vec3::zero, vec3::axis_y));
 }
 
 Camera::~Camera()

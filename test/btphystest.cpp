@@ -66,7 +66,7 @@ void BtPhysTest::InitApp()
 
 #if CAT_MODE
     /* cat datas setup */
-    m_cat_texture = Tiler::Register("data/CatsSheet.png", ivec2(0), ivec2(0,1));
+    m_cat_texture = Tiler::Register("data/CatsSheet.png", ivec2::zero, ivec2(0,1));
     m_fov_dp = .0f;
     m_loc_dp = .0f;
 #endif //CAT_MODE

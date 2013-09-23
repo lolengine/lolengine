@@ -149,6 +149,7 @@
     <ClCompile Include="layer.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\real.cpp" />

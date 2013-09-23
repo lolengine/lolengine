@@ -48,7 +48,7 @@ private:
 
 #if USE_SDL
     SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
-        m_prevmouse(ivec2(0)),
+        m_prevmouse(ivec2::zero),
         m_app_w((float)app_w),
         m_app_h((float)app_h),
         m_screen_w((float)screen_w),

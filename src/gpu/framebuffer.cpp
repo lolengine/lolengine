@@ -471,7 +471,7 @@ void Framebuffer::Bind()
      * instead, maybe by getting rid of Framebuffer::Bind() and
      * creating RenderContext::SetFramebuffer() instead. */
     m_data->m_saved_viewport = g_renderer->GetViewport();
-    g_renderer->SetViewport(ibox2(ivec2(0), m_data->m_size));
+    g_renderer->SetViewport(ibox2(ivec2::zero, m_data->m_size));
     m_data->m_bound = true;
 }
 
