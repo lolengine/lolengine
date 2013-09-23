@@ -44,7 +44,7 @@
 
 %start mesh_description
 
-%token T_COLOR T_BGCOLOR
+%token T_COLOR T_BCOLOR
 
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
@@ -152,7 +152,7 @@ transform_command:
   | T_ROTATEY fv           { mc.m_mesh.RotateY($2); }
   | T_ROTATEZ fv           { mc.m_mesh.RotateZ($2); }
   | T_ROTATE  fv fv fv fv  { mc.m_mesh.RotateZ($2, vec3($3, $4, $5)); }
-  |  T_ROTATE fv vec3      { mc.m_mesh.RotateZ($2, vec3($3[0], $3[1], $3[2])); }
+  |  T_ROTATE fv v3        { mc.m_mesh.RotateZ($2, vec3($3[0], $3[1], $3[2])); }
   | T_RADIALJITTER fv      { mc.m_mesh.RadialJitter($2); }
   | T_TAPERX  fv fv fv bv  { mc.m_mesh.TaperX($2, $3, $4, $5); }
   |  T_TAPERX fv fv fv     { mc.m_mesh.TaperX($2, $3, $4); }
