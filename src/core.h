@@ -16,7 +16,9 @@
 #if !defined __LOL_CORE_H__
 #define __LOL_CORE_H__
 
-// System and CPU features
+/*
+ * System and CPU features.
+ */
 #undef LOL_FEATURE_THREADS
 #undef LOL_FEATURE_CHEAP_BRANCHES
 #undef LOL_FEATURE_VERY_CHEAP_BRANCHES
@@ -28,6 +30,43 @@
 #if !defined __CELLOS_LV2__
 #   define LOL_FEATURE_CHEAP_BRANCHES 1
 #endif
+
+
+/*
+ * Check for C++11 features.
+ */
+#undef LOL_FEATURE_CXX11_CONSTEXPR
+#undef LOL_FEATURE_CXX11_ISNAN
+
+#if defined __GNUC__ /* GCC */
+#   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
+#       define LOL_FEATURE_CXX11_CONSTEXPR 1
+#       define LOL_FEATURE_CXX11_ISNAN 1
+#   endif
+
+#elif defined _MSC_VER /* Visual Studio */
+    /* Even Visual Studio 2012 doesn't support constexpr. Idiots. */
+
+#elif defined __has_feature /* Clang */
+#   if __has_feature(cxx_constexpr)
+#       define LOL_FEATURE_CXX11_CONSTEXPR 1
+#   endif
+#endif
+
+#if LOL_FEATURE_CXX11_CONSTEXPR
+#   define LOL_CONSTEXPR constexpr
+#   define LOL_CONSTEXPR_DECLARATION(type, name, value) \
+        static type constexpr name = value;
+#   define LOL_CONSTEXPR_DEFINITION(type, name, value) \
+        /* Nothing */
+#else
+#   define LOL_CONSTEXPR /* Nothing */
+#   define LOL_CONSTEXPR_DECLARATION(type, name, value) \
+        static type const name;
+#   define LOL_CONSTEXPR_DEFINITION(type, name, value) \
+        type const name = value;
+#endif
+
 
 // Optimisation helpers
 #if defined __GNUC__
@@ -68,7 +107,7 @@
 #if defined __FAST_MATH__
 #   undef isnan
 #endif
-#if !defined isnan
+#if !defined isnan && !defined LOL_FEATURE_CXX11_ISNAN
 #   define isnan isnan
 #   include <stdint.h>
 static inline int isnan(float f)
