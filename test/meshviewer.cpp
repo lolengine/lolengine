@@ -41,6 +41,8 @@ static int const TEXTURE_WIDTH = 256;
 #define     FOV_CLAMP           120.f
 #define     ZOM_SPEED           3.f
 #define     ZOM_CLAMP           20.f
+#define     HST_SPEED           .5f
+#define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
 
@@ -126,6 +128,7 @@ public:
         MessageService::Setup(MSG_MAX);
 
         // Mesh Setup
+        m_render_max = vec2(-.9f, 6.1f);
         m_mesh_id = 0;
         m_mesh_id1 = 0.f;
         m_default_texture = NULL;
@@ -144,22 +147,24 @@ public:
         m_pos_mesh = vec2::zero;
         m_pos_speed = vec2::zero;
         m_screen_offset = vec2::zero;
+        m_hist_scale = vec2(.13f, .03f);
+        m_hist_scale_mesh = vec2(.0f);
+        m_hist_scale_speed = vec2(.0f);
 
         m_camera = new Camera();
         m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
         m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
-        //m_camera->SetScreenScale(vec2(10.f));
         m_camera->UseShift(true);
         g_scene->PushCamera(m_camera);
 
         //Lights setup
         m_lights << new Light();
-        m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 1.f));
+        m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
         m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
         Ticker::Ref(m_lights.Last());
 
         m_lights << new Light();
-        m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 1.f));
+        m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
         m_lights.Last()->SetColor(vec4(1.f, 1.f, 1.f, 1.f));
         Ticker::Ref(m_lights.Last());
 
@@ -208,6 +213,7 @@ public:
         //Camera update
         bool is_pos = false;
         bool is_fov = false;
+        bool is_hsc = false;
         vec2 tmp = vec2::zero;
 
 #if !__native_client__
@@ -222,6 +228,7 @@ public:
         vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
         vec2 pos = (is_pos && !is_fov)?(tmp):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
         vec2 fov = (!is_pos && is_fov)?(tmp):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
+        vec2 hsc = vec2(0.f);
 
         //speed
         m_rot_speed = damp(m_rot_speed, rot * ROT_SPEED, .2f, seconds);
@@ -231,6 +238,7 @@ public:
         m_fov_speed = damp(m_fov_speed, fov.x * FOV_SPEED * fov_factor, .2f, seconds);
         float zom_factor = 1.f + lol::pow((m_zoom_mesh / ZOM_CLAMP) * 1.f, 2.f);
         m_zoom_speed = damp(m_zoom_speed, fov.y * ZOM_SPEED * zom_factor, .2f, seconds);
+        m_hist_scale_speed = damp(m_hist_scale_speed, hsc * HST_SPEED, .2f, seconds);
 
         m_rot += m_rot_speed * seconds;
 
@@ -241,6 +249,7 @@ public:
             m_pos += m_pos_speed * seconds;
             m_fov += m_fov_speed * seconds;
             m_zoom += m_zoom_speed * seconds;
+            m_hist_scale += m_hist_scale_speed * seconds;
         }
 #endif //!__native_client__
 
@@ -250,6 +259,8 @@ public:
                              SmoothClamp(m_pos.y, -POS_CLAMP, POS_CLAMP, POS_CLAMP * .1f));
         float fov_mesh = SmoothClamp(m_fov, 0.f, FOV_CLAMP, FOV_CLAMP * .1f);
         float zoom_mesh = SmoothClamp(m_zoom, 0.f, ZOM_CLAMP, ZOM_CLAMP * .1f);
+        vec2 hist_scale_mesh = vec2(SmoothClamp(m_hist_scale.x, 0.f, HST_CLAMP, HST_CLAMP * .1f),
+                                    SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
 #if !__native_client__
         if (m_controller->GetKey(KEY_CAM_RESET).IsDown())
@@ -263,6 +274,7 @@ public:
         m_pos_mesh = vec2(damp(m_pos_mesh.x, pos_mesh.x, .2f, seconds), damp(m_pos_mesh.y, pos_mesh.y, .2f, seconds));
         m_fov_mesh = damp(m_fov_mesh, fov_mesh, .2f, seconds);
         m_zoom_mesh = damp(m_zoom_mesh, zoom_mesh, .2f, seconds);
+        m_hist_scale_mesh = damp(m_hist_scale_mesh, hist_scale_mesh, .2f, seconds);
 
         //Mesh mat calculation
         m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
@@ -445,8 +457,8 @@ public:
                 {
 #if WITH_TEXTURE
                     m_meshes[i]->MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                                                                       (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
-                                                                       m_texture_shader, true));
+                                                                    (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
+                                                                    m_texture_shader, true));
 #else
                     m_meshes[i]->MeshConvert();
 #endif //WITH_TEXTURE
@@ -454,19 +466,23 @@ public:
                 mat4 save_proj = m_camera->GetProjection();
                 float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
 
-                if (m_meshes[i]->GetMeshState() > MeshRender::NeedConvert)
+                if (m_mesh_id1 - m_render_max[0] > (float)i && m_mesh_id1 - m_render_max[1] < (float)i &&
+                    m_meshes[i]->GetMeshState() > MeshRender::NeedConvert)
                 {
+                    float a_j = lol::abs(j);
+                    float i_trans = (a_j * a_j * m_hist_scale_mesh.x + a_j * m_hist_scale_mesh.x) * .5f;
+                    float i_scale = clamp(1.f - (m_hist_scale_mesh.y * (m_mesh_id1 - (float)i)), 0.f, 1.f);
                     mat4 new_proj =
                         //Y object Offset
                         mat4::translate(x * m_screen_offset.x + y * m_screen_offset.y) *
                         //Mesh Pos Offset
                         mat4::translate((x * m_pos_mesh.x * RATIO_HW + y * m_pos_mesh.y) * 2.f * (1.f + .5f * m_zoom_mesh / SCREEN_LIMIT)) *
                         //Mesh count offset
-                        mat4::translate(x * RATIO_HW * 2.f * j) *
+                        mat4::translate(x * RATIO_HW * 2.f * (j + i_trans)) *
                         //Align right meshes
                         mat4::translate(x - x * RATIO_HW) *
                         //Mesh count scale
-                        //mat4::scale(1.f - .2f * j * (1.f / (float)m_meshes.Count())) *
+                        mat4::scale(vec3(vec2(i_scale), 1.f)) *
                         //Camera projection
                         save_proj;
                     m_camera->SetProjection(new_proj);
@@ -498,9 +514,13 @@ private:
     vec2    m_pos;
     vec2    m_pos_mesh;
     vec2    m_pos_speed;
+    vec2    m_hist_scale;
+    vec2    m_hist_scale_mesh;
+    vec2    m_hist_scale_speed;
     vec2    m_screen_offset;
 
     //Mesh infos
+    vec2    m_render_max;
     int     m_mesh_id;
     float   m_mesh_id1;
     Array<EasyMesh*> m_meshes;

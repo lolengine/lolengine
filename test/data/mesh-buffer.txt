@@ -1,15 +1,6 @@
-sc#f8f afcb 1 1 1 0
+sc#fff ab 2 tx 2 tz 1 splt 6 bdzy -90 
 
-
-
-
-
-
-
-
-
-
-
+//splt 0 
 //test
 //[sc#f8f ab 1 splt 4 twy 90]
 
