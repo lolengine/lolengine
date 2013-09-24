@@ -235,7 +235,6 @@ primitive_command:
   |  T_STAR iv fv fv                { mc.m_mesh.AppendStar($2, $3, $4); }
   | T_EXPANDEDSTAR  iv fv fv fv     { mc.m_mesh.AppendExpandedStar($2, $3, $4, $5); }
   |  T_EXPANDEDSTAR iv fv fv        { mc.m_mesh.AppendExpandedStar($2, $3, $4); }
-
   | T_DISC  iv fv bv                { mc.m_mesh.AppendDisc($2, $3, $4); }
   |  T_DISC iv fv                   { mc.m_mesh.AppendDisc($2, $3); }
   | T_TRIANGLE  fv bv               { mc.m_mesh.AppendSimpleTriangle($2, $3); }
