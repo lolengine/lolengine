@@ -119,7 +119,7 @@ static inline int16_t abs(int16_t x) { return std::abs(x); }
 static inline uint16_t abs(uint16_t x) { return x; }
 static inline int32_t abs(int32_t x) { return std::abs(x); }
 static inline uint32_t abs(uint32_t x) { return x; }
-#if defined __native_client__
+#if defined __native_client__ || defined __ANDROID__
 /* The pepper 19 toolchain doesn't provide abs() for long long int. */
 static inline int64_t abs(int64_t x) { return x > 0 ? x : -x; }
 #else
