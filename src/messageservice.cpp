@@ -22,6 +22,19 @@
 namespace lol
 {
 
+// This is needed to map MessageService::Send() to the JS when building the HTML.
+#if EMSCRIPTEN
+extern "C"
+{
+    bool C_Send(int id, const char* message)
+    {
+        return MessageService::Send(id, message);
+    }
+    //NOT IMPLEMENTED
+    //bool C_FetchFirst(int id, String& message);
+}
+#endif //EMSCRIPTEN
+
 /*
  * The global g_renderer object, initialised by Video::Init
  */
