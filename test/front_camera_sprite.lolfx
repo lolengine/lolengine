@@ -71,15 +71,17 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
+const int sample_nb = 2;
+
 void main(void)
 {
     vec2 texcoord = pass_texcoord.xy - vec2(pass_texcoord.z * in_sprite_flip, 0.0);
     vec4 color = texture2D(in_texture, texcoord) * pass_color;
 
     //need 130 : ivec2 tex_size = textureSize(in_texture, 0);
-    int sample_nb = 2;
     if (color.a < 0.9)
     {
+        bool break_loop = false;
         for (int x = -sample_nb; x <= sample_nb; x++)
         {
             for (int y = -sample_nb; y <= sample_nb; y++)
@@ -92,11 +94,16 @@ void main(void)
                     if (new_col.a > 0.9)
                     {
                         color = vec4(0.0, 0.0, 0.0, 1.0);
-                        x = sample_nb + 1;
-                        y = sample_nb + 1;
+                        break_loop = true;
+                        //x = sample_nb + 1;
+                        //y = sample_nb + 1;
                     }
+                    if (break_loop)
+                        break;
                 }
             }
+            if (break_loop)
+                break;
         }
     }
     if (color.a < 0.01)
