@@ -1,0 +1,32 @@
+
+[vert.glsl]
+#version 120
+
+attribute vec3 in_Position;
+attribute vec4 in_Color;
+
+uniform mat4 in_ModelView;
+uniform mat4 in_Proj;
+
+varying vec4 pass_Color;
+
+void main(void)
+{
+    pass_Color = in_Color;
+
+    gl_Position = in_Proj * in_ModelView * vec4(in_Position, 1.0);
+}
+
+[frag.glsl]
+#version 120
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+varying vec4 pass_Color;
+
+void main(void)
+{
+    gl_FragColor = pass_Color;
+}
