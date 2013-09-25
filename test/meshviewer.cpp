@@ -91,7 +91,7 @@ class MVTestShaderData : public GpuShaderData
 {
 public:
     //-----------------------------------------------------------------------------
-    MVTestShaderData::MVTestShaderData()
+    MVTestShaderData()
     {
         m_render_mode = DebugRenderMode::Default;
         m_vert_decl_flags = (1 << VertexUsage::Position) | (1 << VertexUsage::Color);
@@ -100,14 +100,14 @@ public:
     }
 
     //-----------------------------------------------------------------------------
-    void MVTestShaderData::SetupDefaultData(bool with_UV)
+    void SetupDefaultData(bool with_UV)
     {
         AddUniform("in_ModelView");
         AddUniform("in_Proj");
     }
 
     //-----------------------------------------------------------------------------
-    void MVTestShaderData::SetupShaderDatas(mat4 const &model)
+    void SetupShaderDatas(mat4 const &model)
     {
         mat4 proj = g_scene->GetCamera()->GetProjection();
         mat4 view = g_scene->GetCamera()->GetView();
