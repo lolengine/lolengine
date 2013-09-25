@@ -159,19 +159,13 @@ LOLUNIT_FIXTURE(HalfTest)
         for (uint32_t i = 0; i < 0x10000; i++)
         {
             half h = half::makebits(i);
+            if (h.is_nan())
+                continue;
+
             float f = (float)h;
             half g = (half)f;
             LOLUNIT_SET_CONTEXT(i);
-            if (h.is_nan())
-            {
-                LOLUNIT_ASSERT(isnan(f));
-                LOLUNIT_ASSERT(g.is_nan());
-            }
-            else
-            {
-                LOLUNIT_ASSERT(!isnan(f));
-                LOLUNIT_ASSERT_EQUAL(g.bits, h.bits);
-            }
+            LOLUNIT_ASSERT_EQUAL(g.bits, h.bits);
         }
     }
 

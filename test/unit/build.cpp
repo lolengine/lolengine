@@ -153,14 +153,6 @@ LOLUNIT_FIXTURE(BuildTest)
 
         LOLUNIT_ASSERT_EQUAL(1.0, y);
     }
-
-    LOLUNIT_TEST(IsNaN)
-    {
-        union { float f; uint32_t x; } u;
-
-        u.x = 0x7fc00000u;
-        LOLUNIT_ASSERT(isnan(u.f));
-    }
 };
 
 } /* namespace lol */
