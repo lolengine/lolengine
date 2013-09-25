@@ -61,4 +61,7 @@ meshviewer_SOURCES = meshviewer.cpp \
     shinymvtexture.lolfx shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPS@
+if USE_EMSCRIPTEN
+meshviewer_LDFLAGS = $(AM_LDFLAGS) -s EXPORTED_FUNCTIONS="['_main', '_C_Send']"
+endif
 
