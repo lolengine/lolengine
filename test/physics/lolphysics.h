@@ -183,6 +183,10 @@ public:
                 BtRayResult = BtRayResult_Closest;
                 break;
             }
+            default:
+            {
+                break;
+            }
         }
 
         m_dynamics_world->rayTest(LOL2BTU_VEC3(RayFrom), LOL2BTU_VEC3(RayTo), *BtRayResult);
@@ -209,6 +213,10 @@ public:
                         HitResult.m_hit_point_list        << BT2LOLU_VEC3(BtRayResult_AllHits->m_hitPointWorld[i]);
                         HitResult.m_hit_fraction_list    << BtRayResult_AllHits->m_hitFractions[i];
                     }
+                    break;
+                }
+                default:
+                {
                     break;
                 }
             }
