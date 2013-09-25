@@ -81,12 +81,18 @@ AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
 
 
+dnl  C++11 mode. Checked early so that we don't run into surprises.
+LOL_TRY_CXXFLAGS(-std=c++11,
+ [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"
+  CXXFLAGS="${CXXFLAGS} -std=c++11"])
+
+
 dnl  Common C headers
-AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h)
+AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h math.h)
 AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h)
 AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
-AC_CHECK_HEADERS(sys/wait.h sys/time.h)
+AC_CHECK_HEADERS(sys/wait.h sys/time.h sys/types.h)
 AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
 AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
 AC_CHECK_HEADERS(pam/pam_appl.h pam/pam_misc.h)
@@ -176,9 +182,6 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
-
-dnl  C++11 mode
-LOL_TRY_CXXFLAGS(-std=c++11, [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"])
 
 dnl  No exceptions
 LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
