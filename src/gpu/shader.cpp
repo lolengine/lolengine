@@ -352,8 +352,12 @@ Shader::Shader(char const *vert, char const *frag)
     GLint num_attribs;
     glGetProgramiv(data->prog_id, GL_ACTIVE_ATTRIBUTES, &num_attribs);
 
+#if EMSCRIPTEN //WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
+    GLint max_len = 256;
+#else
     GLint max_len;
     glGetProgramiv(data->prog_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len);
+#endif
 
     char* name_buffer = new char[max_len];
     for (int i = 0; i < num_attribs; ++i)
