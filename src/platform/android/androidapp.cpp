@@ -28,6 +28,8 @@ extern "C" {
 #include "core.h"
 #include "androidapp.h"
 
+#include "input/input_internal.h"
+
 using namespace lol;
 
 namespace lol
@@ -95,11 +97,15 @@ public:
     /* FIXME: we need proper unproject or at least screen space events!! */
     ivec2 m_wanted_resolution;
 
+    InputDeviceInternal* m_mouse;
+
     SavedState m_state;
 
 private:
     void HandleCommand(int32_t cmd);
     int32_t HandleInput(AInputEvent* event);
+
+    vec2 m_prev_pos;
 
     EGLDisplay m_display;
     EGLSurface m_surface;
@@ -209,14 +215,19 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
                   AMotionEvent_getY(event, 0));
         pos = pos * m_wanted_resolution / Video::GetSize();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
-        Input::SetMousePos(pos);
+        m_mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
+        // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
+        m_mouse->SetAxis(0, (pos.x - m_prev_pos.x) / m_wanted_resolution.x * 100.f);
+        // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
+        m_mouse->SetAxis(1, (pos.y - m_prev_pos.y) / m_wanted_resolution.y * -100.f);
+        m_prev_pos = pos;
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
         case AMOTION_EVENT_ACTION_DOWN:
-            Input::SetMouseButton(0);
+            m_mouse->SetKey(0, true);
             break;
         case AMOTION_EVENT_ACTION_UP:
-            Input::UnsetMouseButton(0);
+            m_mouse->SetKey(0, false);
             break;
         }
         return 1;
@@ -293,6 +304,7 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
   : m_data(g_data)
 {
     m_data->m_wanted_resolution = res;
+    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 }
 
 void lol::AndroidApp::ShowPointer(bool show)
@@ -302,6 +314,7 @@ void lol::AndroidApp::ShowPointer(bool show)
 lol::AndroidApp::~AndroidApp()
 {
     m_data->DestroyDisplay();
+    /* FIXME: handle m_data->m_mouse */
     delete m_data;
 }
 
