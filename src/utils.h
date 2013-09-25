@@ -69,9 +69,9 @@ template< class T > inline T FindValue(const char* name)
     n.ToLower();
     for (int i = 0; i < T::Max; ++i)
     {
-        String s = T::GetName(T::Value(i));
+        String s = T::GetName(typename T::Value(i));
         if (s.ToLower().IndexOf(n.C()) > -1)
-            return T(T::Value(i));
+            return T(typename T::Value(i));
     }
     return T::Max;
 }
