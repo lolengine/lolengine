@@ -121,7 +121,6 @@ DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, b
 void DefaultShaderData::SetupDefaultData(bool with_UV)
 {
     AddUniform("in_ModelView");
-    //AddUniform("in_Inv_ModelView");
     AddUniform("in_View");
     AddUniform("in_Inv_View");
     AddUniform("in_Proj");
@@ -150,11 +149,11 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     m_shader->SetUniform(*GetUniform("u_Lights"), light_data);
 
     m_shader->SetUniform(*GetUniform("in_ModelView"), modelview);
-    //m_shader->SetUniform(*GetUniform("in_Inv_ModelView"), inverse(modelview));
     m_shader->SetUniform(*GetUniform("in_View"), view);
     m_shader->SetUniform(*GetUniform("in_Inv_View"), inverse(view));
     m_shader->SetUniform(*GetUniform("in_Proj"), proj);
     m_shader->SetUniform(*GetUniform("in_NormalMat"), normalmat);
+    //This is not very nice, but necessary for emscripten WebGL generation.
     float f = 0.f;
     m_shader->SetUniform(*GetUniform("in_Damage"), f);
 }
