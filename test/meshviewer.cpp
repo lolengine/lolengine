@@ -23,7 +23,7 @@ using namespace lol;
 
 static int const TEXTURE_WIDTH = 256;
 
-#define     R_M                 2.f
+#define     R_M                 1.f
 #define     DEFAULT_WIDTH       (770.f * R_M)
 #define     DEFAULT_HEIGHT      (200.f * R_M)
 #define     WIDTH               ((float)Video::GetSize().x)
@@ -45,6 +45,9 @@ static int const TEXTURE_WIDTH = 256;
 #define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
+
+#define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
+#define     NACL_EM             (__native_client__ || EMSCRIPTEN)
 
 LOLFX_RESOURCE_DECLARE(shinyfur);
 LOLFX_RESOURCE_DECLARE(shinymvtexture);
@@ -94,7 +97,7 @@ public:
     {
         m_init = true;
 
-#if !__native_client__
+#if NO_NACL_EM
         /* Register an input controller for the keyboard */
         m_controller = new Controller("Default", KEY_MAX, 0);
 
@@ -122,7 +125,7 @@ public:
         m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
         m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
         m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         // Message Service
         MessageService::Setup(MSG_MAX);
@@ -196,18 +199,18 @@ public:
             return;
 
         //TODO : This should probably be "standard LoL behaviour"
-#if !__native_client__
+#if NO_NACL_EM
         {
             //Shutdown logic
             if (m_controller->GetKey(KEY_ESC).IsReleased())
                 Ticker::Shutdown();
         }
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         //Mesh Change
-#if !__native_client__
+#if NO_NACL_EM
         m_mesh_id = clamp(m_mesh_id + ((int)m_controller->GetKey(KEY_MESH_PREV).IsPressed() - (int)m_controller->GetKey(KEY_MESH_NEXT).IsPressed()), 0, m_meshes.Count() - 1);
-#endif //!__native_client__
+#endif //NO_NACL_EM
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
         //Camera update
@@ -216,13 +219,13 @@ public:
         bool is_hsc = false;
         vec2 tmp = vec2::zero;
 
-#if !__native_client__
+#if NO_NACL_EM
         is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
         is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
 
         tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
                    (float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown());
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         //Base data
         vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
@@ -242,7 +245,7 @@ public:
 
         m_rot += m_rot_speed * seconds;
 
-#if !__native_client__
+#if NO_NACL_EM
         //Transform update
         if (!m_controller->GetKey(KEY_CAM_RESET).IsDown())
         {
@@ -251,7 +254,7 @@ public:
             m_zoom += m_zoom_speed * seconds;
             m_hist_scale += m_hist_scale_speed * seconds;
         }
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         //clamp
         vec2 rot_mesh = vec2(SmoothClamp(m_rot.x, -ROT_CLAMP, ROT_CLAMP, ROT_CLAMP * .1f), m_rot.y);
@@ -262,13 +265,13 @@ public:
         vec2 hist_scale_mesh = vec2(SmoothClamp(m_hist_scale.x, 0.f, HST_CLAMP, HST_CLAMP * .1f),
                                     SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
-#if !__native_client__
+#if NO_NACL_EM
         if (m_controller->GetKey(KEY_CAM_RESET).IsDown())
         {
             pos_mesh = vec2::zero;
             zoom_mesh = 0.f;
         }
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         m_rot_mesh = vec2(damp(m_rot_mesh.x, rot_mesh.x, .2f, seconds), damp(m_rot_mesh.y, rot_mesh.y, .2f, seconds));
         m_pos_mesh = vec2(damp(m_pos_mesh.x, pos_mesh.x, .2f, seconds), damp(m_pos_mesh.y, pos_mesh.y, .2f, seconds));
@@ -359,11 +362,11 @@ public:
             }
         }
 
-#if __native_client__
+#if NACL_EM
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-            MessageService::Send(MSG_IN, "[sc#f8f afcb 1]");
+            MessageService::Send(MSG_IN, "[sc#f8f ab 1]");
 //            MessageService::Send(MSG_IN, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
@@ -420,7 +423,7 @@ public:
             return;
 
         //TODO : This should probably be "standard LoL behaviour"
-#if !__native_client__
+#if NO_NACL_EM
         {
             if (m_controller->GetKey(KEY_F1).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::Default);
@@ -433,9 +436,9 @@ public:
             if (m_controller->GetKey(KEY_F5).IsReleased())
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
-#if !__native_client__
+#if NO_NACL_EM
         if (!m_default_texture)
         {
             m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
@@ -444,7 +447,7 @@ public:
         }
         else if (m_texture && m_default_texture)
             m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
-#endif //!__native_client__
+#endif //NO_NACL_EM
 
         g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -486,7 +489,9 @@ public:
                         //Camera projection
                         save_proj;
                     m_camera->SetProjection(new_proj);
+//#if NO_NACL_EM
                     m_meshes[i]->Render(m_mat);
+//#endif //NO_NACL_EM
                     g_renderer->Clear(ClearMask::Depth);
                 }
                 m_camera->SetProjection(save_proj);
