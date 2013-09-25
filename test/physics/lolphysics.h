@@ -147,6 +147,8 @@ public:
 
         virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
         {
+            UNUSED(rayResult);
+            UNUSED(normalInWorldSpace);
             return .0f;
         }
     };
@@ -185,7 +187,7 @@ public:
             }
             default:
             {
-                break;
+                ASSERT(0, "Raycast not handled");
             }
         }
 
@@ -217,7 +219,7 @@ public:
                 }
                 default:
                 {
-                    break;
+                    ASSERT(0, "Raycast not handled");
                 }
             }
         }
@@ -257,6 +259,8 @@ private:
 
     void CustomSetWorldLimit(vec3 const &NewWorldMin, vec3 const &NewWorldMax)
     {
+        UNUSED(NewWorldMin);
+        UNUSED(NewWorldMax);
     }
 
     void CustomSetTimestep(float NewTimestep) { }
@@ -357,6 +361,10 @@ private:
             {
                 SearchList = &m_character_controller_list;
                 break;
+            }
+            default:
+            {
+                ASSERT(0, "Physic type does not exist.");
             }
         }
 
