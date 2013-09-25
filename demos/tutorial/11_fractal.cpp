@@ -170,10 +170,12 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
+        ivec2 mousepos = ivec2::zero; /* FIXME: input */
+
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
 
-        rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
+        rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(mousepos));
 
         uint32_t buttons = 0;
         //uint32_t buttons = Input::GetMouseButtons();
@@ -182,18 +184,18 @@ public:
         {
             if (!m_drag)
             {
-                m_oldmouse = m_mousepos;
+                m_oldmouse = mousepos;
                 m_drag = true;
             }
             m_translate = ScreenToWorldOffset(m_oldmouse)
-                        - ScreenToWorldOffset(m_mousepos);
+                        - ScreenToWorldOffset(mousepos);
             /* XXX: the purpose of this hack is to avoid translating by
              * an exact number of pixels. If this were to happen, the step()
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
              * would have tie rankings in the distance calculation. */
             m_translate *= real(1023.0 / 1024.0);
-            m_oldmouse = m_mousepos;
+            m_oldmouse = mousepos;
         }
         else
         {
@@ -206,7 +208,7 @@ public:
             }
         }
 
-        if (buttons & 0x5 && m_mousepos.x != -1)
+        if (buttons & 0x5 && mousepos.x != -1)
         {
             double zoom = (buttons & 0x1) ? -0.5 : 0.5;
             m_zoom_speed += zoom * seconds;
@@ -240,7 +242,7 @@ public:
 #if !defined __CELLOS_LV2__ && !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
-            worldmouse = m_center + rcmplx(ScreenToWorldOffset(m_mousepos));
+            worldmouse = m_center + rcmplx(ScreenToWorldOffset(mousepos));
 #endif
 
             /* Store the transformation properties to go from m_frame - 1
