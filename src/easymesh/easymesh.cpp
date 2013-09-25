@@ -245,6 +245,9 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     int vbo_bytes = 0;
 
 #define COPY_VBO \
+    vbo_data = &vertexlist[0]; \
+    vbo_bytes = vertexlist.Bytes(); \
+    m_vertexcount = vertexlist.Count(); \
     new_vbo = new VertexBuffer(vbo_bytes); \
     void *mesh = new_vbo->Lock(0, 0); \
     memcpy(mesh, vbo_data, vbo_bytes); \
@@ -261,7 +264,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     ASSERT(!saveflags, "Vertex Declaration setup is not implemented for %s, feel free to do so.",
            VertexUsage::GetNameList(vflags).C());
 
-    if (has_position && has_normal && has_color && has_texcoord && has_texcoordExt && flagnb == 5)
+    if (flagnb == 5 && has_position && has_normal && has_color && has_texcoord && has_texcoordExt)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec4>(
@@ -276,42 +279,9 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
                             src_mesh->m_vert[i].m_normal,
                             (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
                             src_mesh->m_vert[i].m_texcoord);
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
         COPY_VBO;
     }
-    else if (has_position && has_texcoord && has_texcoordExt && flagnb == 3)
-    {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
-
-        Array<vec3, vec4> vertexlist;
-        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord);
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
-        COPY_VBO;
-    }
-    else if (has_position && has_texcoord && flagnb == 2)
-    {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
-
-        Array<vec3, vec2> vertexlist;
-        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord.xy);
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
-        COPY_VBO;
-    }
-    else if (has_position && has_normal && has_color && has_texcoord && flagnb == 4)
+    else if (flagnb == 4 && has_position && has_normal && has_color && has_texcoord)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4,vec2>(
@@ -326,14 +296,18 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
                             src_mesh->m_vert[i].m_normal,
                             (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
                             src_mesh->m_vert[i].m_texcoord.xy);
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
         COPY_VBO;
     }
-    else if (has_position && has_normal && has_color && flagnb == 3)
+    else if (flagnb == 4 && has_position && has_color && has_texcoord && has_texcoordExt)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
+
+        Array<vec3, vec4, vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_color, src_mesh->m_vert[i].m_texcoord);
+        COPY_VBO;
+    }
+    else if (flagnb == 3 && has_position && has_normal && has_color)
     {
         new_vdecl = new VertexDeclaration(
                          VertexStream<vec3,vec3,u8vec4>(
@@ -346,30 +320,38 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
             vertexlist.Push(src_mesh->m_vert[i].m_coord,
                             src_mesh->m_vert[i].m_normal,
                             (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
-
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
-
         COPY_VBO;
     }
-    else if (has_position && has_color && has_texcoord && has_texcoordExt && flagnb == 4)
+    else if (flagnb == 3 && has_position && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        Array<vec3, vec4, vec4> vertexlist;
+        Array<vec3, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
-            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_color, src_mesh->m_vert[i].m_texcoord);
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord);
+        COPY_VBO;
+    }
+    else if (flagnb == 2 && has_position && has_texcoord)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        vbo_data = &vertexlist[0];
-        vbo_bytes = vertexlist.Bytes();
-        m_vertexcount = vertexlist.Count();
+        Array<vec3, vec2> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord.xy);
+        COPY_VBO;
+    }
+    else if (flagnb == 2 && has_position && has_color)
+    {
+        new_vdecl = new VertexDeclaration(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
 
+        Array<vec3, u8vec4> vertexlist;
+        for (int i = 0; i < src_mesh->m_vert.Count(); i++)
+            vertexlist.Push(src_mesh->m_vert[i].m_coord, (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
         COPY_VBO;
     }
     else
-        ASSERT(!saveflags, "Vertex Declaration combination is not implemented for %s, feel free to do so.",
-           VertexUsage::GetNameList(vflags).C());
+        ASSERT(0, "Vertex Declaration combination is not implemented for %s, feel free to do so.",
+                   VertexUsage::GetNameList(vflags).C());
 
     m_vdatas.Push(vflags, new_vdecl, new_vbo);
 }
