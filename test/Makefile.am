@@ -58,7 +58,7 @@ nacl_phystest_DEPENDENCIES = @LOL_DEPS@
 nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
 
 meshviewer_SOURCES = meshviewer.cpp \
-    shinymvtexture.lolfx shinyfur.lolfx mviewer_em_test.lolfx
+    shinymvtexture.lolfx shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPS@
 meshviewer_LDFLAGS = $(AM_LDFLAGS)

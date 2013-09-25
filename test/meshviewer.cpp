@@ -45,7 +45,6 @@ static int const TEXTURE_WIDTH = 256;
 #define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
-#define     EM_TEST             (1 && EMSCRIPTEN)
 
 #define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
 #define     NACL_EM             (__native_client__ || EMSCRIPTEN)
@@ -83,38 +82,6 @@ enum MessageType
     MSG_OUT,
 
     MSG_MAX
-};
-
-LOLFX_RESOURCE_DECLARE(mviewer_em_test);
-
-class MVTestShaderData : public GpuShaderData
-{
-public:
-    //-----------------------------------------------------------------------------
-    MVTestShaderData()
-    {
-        m_render_mode = DebugRenderMode::Default;
-        m_vert_decl_flags = (1 << VertexUsage::Position) | (1 << VertexUsage::Color);
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(mviewer_em_test));
-        SetupDefaultData(false);
-    }
-
-    //-----------------------------------------------------------------------------
-    void SetupDefaultData(bool with_UV)
-    {
-        AddUniform("in_ModelView");
-        AddUniform("in_Proj");
-    }
-
-    //-----------------------------------------------------------------------------
-    void SetupShaderDatas(mat4 const &model)
-    {
-        mat4 proj = g_scene->GetCamera()->GetProjection();
-        mat4 view = g_scene->GetCamera()->GetView();
-
-        m_shader->SetUniform(*GetUniform("in_ModelView"), view * model);
-        m_shader->SetUniform(*GetUniform("in_Proj"), proj);
-    }
 };
 
 class MeshViewer : public WorldEntity
@@ -491,9 +458,7 @@ public:
             {
                 if (m_meshes[i]->GetMeshState() == MeshRender::NeedConvert)
                 {
-#if EM_TEST
-                    m_meshes[i]->MeshConvert(new MVTestShaderData());
-#elif WITH_TEXTURE
+#if WITH_TEXTURE
                     m_meshes[i]->MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
                                                                     (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
                                                                     m_texture_shader, true));
