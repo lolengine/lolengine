@@ -193,6 +193,7 @@ function CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src)
     var cur_dict = GetCmdDictionnary();
     if (text_src != undefined)
     {
+        var type_list = new Array();
         var cmd_size = 8;
         var found = FindMatchingCommand(text_src);
         if (found.match_list.length > 0)
@@ -224,7 +225,6 @@ function CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src)
             found.match_list[0] = found.match_list[best_match];
             found.match_list[best_match] = tmp;
 
-            var type_list = new Array();
             div_cmds[0].innerHTML = "";
             div_cmds[1].innerHTML = "";
             div_args.innerHTML = "";
@@ -254,7 +254,7 @@ function CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src)
                 while (word-- > 0)
                     div_cmds[word].innerHTML += "<br>";
                 //Go through the arguments and show them, force if we found the perfect match
-                if (perfect_match || (found.match_list.length < 4 && i == 0))
+                if ((perfect_match || found.match_list.length < 4) && i == 0)
                 {
                     div_args.innerHTML += "&nbsp;>&nbsp;";
                     if (cur_match.m_arg != undefined)
@@ -298,45 +298,6 @@ function CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src)
                     }
                 }
             }
-            //Go through the type list and bold the used ones.
-            if (cur_dict.m_vars != undefined)
-            {
-                div_vars.innerHTML = "";
-                var max = cur_dict.m_vars.length;
-                for (var j = 0; j < max; j++)
-                {
-                    var cur_var = cur_dict.m_vars[j];
-                    div_vars.innerHTML += "&nbsp;>&nbsp;";
-                    var k = 0;
-                    for (; k < type_list.length; k++)
-                        if (cur_var.m_type == type_list[k])
-                            break;
-
-                    //Bold the used variables
-                    if (k < type_list.length) 
-                        div_vars.innerHTML += "<b>" + cur_var.m_type + "</b>";
-                    else
-                        div_vars.innerHTML += cur_var.m_type;
-                        
-                    if (cur_var.m_syntax != undefined)
-                    {
-                        var align_size = 9;
-                        var cmd_size = cur_var.m_type.length + 3;
-                        for (var m = 0; m < cur_var.m_syntax.length; m++)
-                        {
-                            for (var l = 0; l < align_size - cmd_size; l++)
-                                div_vars.innerHTML += "&nbsp;";
-                            div_vars.innerHTML += cur_var.m_syntax[m] + "<br>";
-                            cmd_size = 0;
-                        }
-                        var tab = '';
-                        for (var l = 0; l < align_size - cmd_size; l++)
-                            tab += "&nbsp;";
-                        while (div_vars.innerHTML.indexOf('\n') > -1)
-                            div_vars.innerHTML = div_vars.innerHTML.replace('\n', '<br>' + tab);
-                    }
-                }
-            }
         }
         else
         {
@@ -344,6 +305,45 @@ function CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src)
             div_cmds[1].innerHTML = "";
             div_args.innerHTML = "";
             div_cmnt.innerHTML = "";
+        }
+        //Go through the type list and bold the used ones.
+        if (cur_dict.m_vars != undefined)
+        {
+            div_vars.innerHTML = "";
+            var max = cur_dict.m_vars.length;
+            for (var j = 0; j < max; j++)
+            {
+                var cur_var = cur_dict.m_vars[j];
+                div_vars.innerHTML += "&nbsp;>&nbsp;";
+                var k = 0;
+                for (; k < type_list.length; k++)
+                    if (cur_var.m_type == type_list[k])
+                        break;
+
+                //Bold the used variables
+                if (k < type_list.length) 
+                    div_vars.innerHTML += "<b>" + cur_var.m_type + "</b>";
+                else
+                    div_vars.innerHTML += cur_var.m_type;
+                        
+                if (cur_var.m_syntax != undefined)
+                {
+                    var align_size = 9;
+                    var cmd_size = cur_var.m_type.length + 3;
+                    for (var m = 0; m < cur_var.m_syntax.length; m++)
+                    {
+                        for (var l = 0; l < align_size - cmd_size; l++)
+                            div_vars.innerHTML += "&nbsp;";
+                        div_vars.innerHTML += cur_var.m_syntax[m] + "<br>";
+                        cmd_size = 0;
+                    }
+                    var tab = '';
+                    for (var l = 0; l < align_size - cmd_size; l++)
+                        tab += "&nbsp;";
+                    while (div_vars.innerHTML.indexOf('\n') > -1)
+                        div_vars.innerHTML = div_vars.innerHTML.replace('\n', '<br>' + tab);
+                }
+            }
         }
     }
 }
