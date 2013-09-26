@@ -96,7 +96,7 @@ function RestartModule()
     var div_embed_data = GetDivEmbedData();
     var div_embed_data_save = GetDivEmbedDataSave();
 
-    if (div_embed_data && div_embed_data_save)
+    if (div_embed_data)
     {
         HideProgressStatus(false);
 
@@ -111,10 +111,10 @@ function RestartModuleRestoreEmbed()
     var div_embed_data = GetDivEmbedData();
     var div_embed_data_save = GetDivEmbedDataSave();
 
-    if (div_embed_data && div_embed_data_save)
+    if (div_embed_data)
     {
         div_embed_data.innerHTML = div_embed_data_save;
-        div_embed_data.innerHTML = '';
+        div_embed_data_save = '';
         HideProgressStatus(false);
     }
 }
