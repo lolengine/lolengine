@@ -82,7 +82,7 @@ progress::-webkit-progress-value
 
 <script type="text/javascript">
     //Base data Setup
-    g_div_embed_data_save   = null;
+    g_div_embed_data_save   = '';
     g_div_embed_data        = null;  // Global application object.
     g_embed_nacl_module     = null;  // Global application object.
     g_txtarea_code_src      = null;
@@ -180,14 +180,12 @@ progress::-webkit-progress-value
                 <progress id="id_progress_bar" align="left"></progress>
             </div>
             <div id="id_div_embed_data">
-            <!--
                 <param name="wmode" value="opaque"/>
                 <embed name="g_embed_nacl_module"
                 id="id_embed_nacl_module"
                 width=770 height=200
                 src="meshviewer_nacl.nmf"
                 type="application/x-nacl" />
-            -->
             </div>
         </div>
     </div>
