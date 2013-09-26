@@ -14,10 +14,6 @@ body
 {
     font:12px Consolas;
 }
-#status_field
-{
-    font:12px Consolas;
-}
 button
 {
     font:14px Consolas;
@@ -26,13 +22,25 @@ textarea
 {
     font:14px Consolas;
 }
+#id_div_progress_status
+{
+    font:12px Consolas;
+}
+#id_div_progress
+{
+    position: absolute;
+    top: 40%;
+    left: 30%;
+    right: 30%;
+    z-index: 3;
+}
 progress
 {
     background-color: #f3f3f3;  
     border: 0;  
     height: 18px;
     width: 200px;
-    border-radius: 9px;  
+    border-radius: 9px;
 }
 progress::-webkit-progress-bar
 {
@@ -49,18 +57,11 @@ progress::-webkit-progress-value
     height: 14px;
     border-radius: 0px;
 }
-#listener
+#id_div_listener
 {
     position: relative;
 }
-#progress_bar
-{
-    position: absolute;
-    top: 40%;
-    left: 40%;
-    z-index: 3;
-}
-#DIV_nacl_div
+#id_div_embed_data
 {
     position: absolute;
     top: 2px;
@@ -71,7 +72,7 @@ progress::-webkit-progress-value
 {
     border:1px solid #000000;
 }
-#DIV_command0 
+#id_div_helper_cmd_0 
 {
     margin-left: 5px;
 }
@@ -79,331 +80,146 @@ progress::-webkit-progress-value
 
 <title>Mesh Viewer NaCl</title>
 
+<script type="text/javascript">
+    //Base data Setup
+    g_div_embed_data_save   = null;
+    g_div_embed_data        = null;  // Global application object.
+    g_embed_nacl_module     = null;  // Global application object.
+    g_txtarea_code_src      = null;
+    g_div_helper_cmd        = [null, null];
+    g_div_helper_args       = null;
+    g_div_helper_cmnt       = null;
+    g_div_helper_vars       = null;
+    g_div_alphabet          = null;
+    g_div_progress          = null;
+    g_div_progress_status   = null;
+    g_progress_bar          = null;
+    g_var_progress_bar      = -1;
+
+    function GetNaClListenerDiv()   { return document.getElementById('id_div_listener'); }
+    function GetNaClModuleVar()     { return g_embed_nacl_module; }
+    function InitNaClModuleVar()    { g_embed_nacl_module = document.getElementById('id_embed_nacl_module'); }
+    function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
+    function GetDivProgress()       { return g_div_progress; }
+    function GetProgressBar()       { return g_progress_bar; }
+    function GetDivProgressStatus() { return g_div_progress_status; }
+    function GetDivEmbedData()      { return g_div_embed_data; }
+    function GetDivEmbedDataSave()  { return g_div_embed_data_save; }
+    function IsUsingNaCl()          { return true; }
+</script>
+
 <script src="./TypeDictionnary.js"></script>
 <script type="text/javascript">
     var EasyMeshDict = new TypeDictionnary("EasyMesh");
-    function GetCmdDictionnary() { return EasyMeshDict; }
+    function GetCmdDictionnary()    { return EasyMeshDict; }
 </script>
 <script src="./EasyMeshDictionnary.js"></script>
+<script src="./nacl_loading.js"></script>
 
 <script type="text/javascript">
-    nacl_div = null;  // Global application object.
-    nacl_module = null;  // Global application object.
-    mesh_code_module = null;
-    code_helper_cmd = [null, null];
-    code_helper_arg = null;
-    code_helper_cmt = null;
-    code_helper_var = null;
-    code_helper_alpha = null;
-
-    status_text = 'NO-STATUS';
-    window.setTimeout("Tick()", 100);
+    //Init should always start before the first tick
     window.setTimeout("Init()", 100);
+    window.setTimeout("Tick()", 200);
 
+    //Base init for all datas
     function Init()
     {
-        nacl_div = document.getElementById('DIV_nacl_div');
-        mesh_code_module = document.getElementById('DIV_MeshCode');
-        code_helper_cmd[0] = document.getElementById('DIV_command0');
-        code_helper_cmd[1] = document.getElementById('DIV_command1');
-        code_helper_arg = document.getElementById('DIV_args');
-        code_helper_cmt = document.getElementById('DIV_comment');
-        code_helper_var = document.getElementById('DIV_var_usage');
-        code_helper_alpha = document.getElementById('DIV_alphabet');
+        g_div_embed_data        = document.getElementById('id_div_embed_data');
+        g_txtarea_code_src      = document.getElementById('id_txtarea_code_src');
+        g_div_helper_cmd[0]     = document.getElementById('id_div_helper_cmd_0');
+        g_div_helper_cmd[1]     = document.getElementById('id_div_helper_cmd_1');
+        g_div_helper_args       = document.getElementById('id_div_helper_args');
+        g_div_helper_cmnt       = document.getElementById('id_div_helper_cmnt');
+        g_div_helper_vars       = document.getElementById('id_div_helper_vars');
+        g_div_alphabet          = document.getElementById('id_div_alphabet');
+        g_div_progress          = document.getElementById('id_div_progress');
+        g_div_progress_status   = document.getElementById('id_div_progress_status');
+        g_progress_bar          = document.getElementById('id_progress_bar');
 
-        code_helper_alpha.innerHTML = '&nbsp;Table of content [';
-        for (var a = 'a'.charCodeAt(0); a <= 'z'.charCodeAt(0); a++)
-        {
-            var stop = false;
-            for (var i = 0; !stop && i < EasyMeshDict.m_cmds.length; i++)
-            {
-                for (var j = 0; j < EasyMeshDict.m_cmds[i].m_name.length; j++)
-                {
-                    if (EasyMeshDict.m_cmds[i].m_name[j][0] == String.fromCharCode(a))
-                    {
-                        code_helper_alpha.innerHTML += '<b>' + String.fromCharCode(a) + '</b>';
-                        stop = true;
-                        break;
-                    }
-                }
-            }
-            if (!stop)
-                code_helper_alpha.innerHTML += '.';
-        }
-        code_helper_alpha.innerHTML += ']&nbsp;<br>&nbsp;';
+        //Fill the TOC
+        g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[';
+        var new_toc = BuildTOC(true);
+        var pattern = new RegExp("^[a-zA-Z\.]");
+        while (pattern.test(new_toc))
+            new_toc = new_toc.replace(pattern, "<b>$&");
+        pattern = new RegExp("[a-zA-Z\.]$");
+        while (pattern.test(new_toc))
+            new_toc = new_toc.replace(pattern, "$&</b>");
+        pattern = new RegExp("([a-zA-Z])([\.])");
+        while (pattern.test(new_toc))
+            new_toc = new_toc.replace(pattern, "$1</b>$2");
+        pattern = new RegExp("([\.])([a-zA-Z])");
+        while (pattern.test(new_toc))
+            new_toc = new_toc.replace(pattern, "$1<b>$2");
+        g_div_alphabet.innerHTML += new_toc + ']&nbsp;<br>&nbsp;';
     }
 
     function Tick()
     {
         window.setTimeout("Tick()", 100);
-
-/* -- cmd lookup code. */
-        if (mesh_code_module != undefined)
-        {
-            var cmd_size = 8;
-            var found = FindMatchingCommand(mesh_code_module);
-            if (found.match_list.length > 0)
-            {
-                var type_list = new Array();
-                code_helper_cmd[0].innerHTML = "";
-                code_helper_cmd[1].innerHTML = "";
-                code_helper_arg.innerHTML = "";
-                code_helper_cmt.innerHTML = "";
-                //Go through the found matches and show them.
-                for (var i = 0; i < found.match_list.length; i++)
-                {
-                    var cur_match = EasyMeshDict.m_cmds[found.match_list[i]];
-                    code_helper_cmd[0].innerHTML += '[';
-                    var max = cur_match.m_name.length;
-                    var word = 0;
-                    for (var j = 0; j < max; j++)
-                    {
-                        var mth = found.match;
-                        var cmd = cur_match.m_name[j];
-                        //Matching start caracters should be bold
-                        if (mth == cmd.slice(0, mth.length))
-                        {
-                            code_helper_cmd[word].innerHTML += '&nbsp;';
-                            code_helper_cmd[word].innerHTML += '<b>' + mth + '</b>';
-                            code_helper_cmd[word].innerHTML += cmd.slice(mth.length, cmd.length);
-                            word++;
-                        }
-                    }
-                    //Complete empty command by <br> so commands in the two columns are on the same line
-                    word = (word > 0)?(2):(0);
-                    while (word-- > 0)
-                        code_helper_cmd[word].innerHTML += "<br>";
-                    //Go through the arguments and show them
-                    if (found.match_list.length < 4 && i == 0)
-                    {
-                        code_helper_arg.innerHTML += "&nbsp;>&nbsp;";
-                        if (cur_match.m_arg != undefined)
-                        {
-                            max = cur_match.m_arg.length;
-                            var found_optional = false;
-                            for (var j = 0; j < max; j++)
-                            {
-                                if (cur_match.m_arg[j].m_optional != undefined && found_optional == false)
-                                {
-                                    var tab = '<br>'; for (var l = 0; l < 5; l++) tab += '&nbsp;';
-                                    code_helper_arg.innerHTML += tab + 'Opt: [';
-                                    found_optional = true;
-                                }
-                                else if (j > 0)
-                                    code_helper_arg.innerHTML += ', ';
-
-                                //Types are bold
-                                code_helper_arg.innerHTML += '<b>' + cur_match.m_arg[j].m_type + '</b> ';
-                                type_list[type_list.length] = cur_match.m_arg[j].m_type;
-                                //Names are not
-                                code_helper_arg.innerHTML += cur_match.m_arg[j].m_name;
-                                if (cur_match.m_arg[j].m_optional != undefined)
-                                    code_helper_arg.innerHTML += ' = <b>' + cur_match.m_arg[j].m_optional + '</b>';
-                            }
-                            if (found_optional == true)
-                                code_helper_arg.innerHTML += '] ';
-                            code_helper_arg.innerHTML += '&nbsp;<br>';
-                        }
-                        //Add the comment
-                        if (cur_match.m_comment != undefined)
-                        {
-                            var tb_i = 16; var in_i = 8;
-                            var tab = '<br>';
-                            if (cur_match.m_arg == undefined) { tb_i -= 8; in_i -= 8; }
-                            for (var l = 0; l < in_i; l++) code_helper_arg.innerHTML += '&nbsp;';
-                            for (var l = 0; l < tb_i; l++) tab += '&nbsp;';
-                            code_helper_arg.innerHTML += cur_match.m_comment + '&nbsp;';
-                            while (code_helper_arg.innerHTML.indexOf('\n') > -1)
-                                code_helper_arg.innerHTML = code_helper_arg.innerHTML.replace('\n', tab);
-                        }
-                    }
-                }
-                //Go through the type list and bold the used ones.
-                if (EasyMeshDict.m_vars != undefined)
-                {
-                    code_helper_var.innerHTML = "";
-                    var max = EasyMeshDict.m_vars.length;
-                    for (var j = 0; j < max; j++)
-                    {
-                        var cur_var = EasyMeshDict.m_vars[j];
-                        code_helper_var.innerHTML += "&nbsp;>&nbsp;";
-                        var k = 0;
-                        for (; k < type_list.length; k++)
-                            if (cur_var.m_type == type_list[k])
-                                break;
-
-                        //Bold the used variables
-                        if (k < type_list.length) 
-                            code_helper_var.innerHTML += "<b>" + cur_var.m_type + "</b>";
-                        else
-                            code_helper_var.innerHTML += cur_var.m_type;
-                        
-                        if (cur_var.m_syntax != undefined)
-                        {
-                            var align_size = 9;
-                            var cmd_size = cur_var.m_type.length + 3;
-                            for (var m = 0; m < cur_var.m_syntax.length; m++)
-                            {
-                                for (var l = 0; l < align_size - cmd_size; l++)
-                                    code_helper_var.innerHTML += "&nbsp;";
-                                code_helper_var.innerHTML += cur_var.m_syntax[m] + "<br>";
-                                cmd_size = 0;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                code_helper_cmd[0].innerHTML = "[ ...&nbsp;";
-                code_helper_cmd[1].innerHTML = "";
-                code_helper_arg.innerHTML = "";
-                code_helper_cmt.innerHTML = "";
-            }
-        }
-/* -- */
+        var text_src = g_txtarea_code_src;
+        var div_cmds = g_div_helper_cmd;
+        var div_args = g_div_helper_args;
+        var div_cmnt = g_div_helper_cmnt;
+        var div_vars = g_div_helper_vars;
+        CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
     }
 
-
-    // Indicate load success.
-    function moduleDidLoad() {
-        nacl_module = document.getElementById('ID_NaClModule');
-        mesh_code_module = document.getElementById('DIV_MeshCode');
-        updateStatus('Rock n\' Roll !!');
-        var progress_bar = document.getElementById('progress_bar');
-        progress_bar.style.visibility = "hidden";
-    }
-
-    // The 'message' event handler.  This handler is fired when the NaCl module
-    // posts a message to the browser by calling PPB_Messaging.PostMessage()
-    // (in C) or pp::Instance.PostMessage() (in C++).  This implementation
-    // simply displays the content of the message in an alert panel.
-    function handleMessage(message_event) {
-      alert(message_event.data);
-    }
-
-    // If the page loads before the Native Client module loads, then set the
-    // status message indicating that the module is still loading.  Otherwise,
-    // do not change the status message.
-    function pageDidLoad() {
-      if (nacl_module == null) {
-        updateStatus('Please wait, loading ...');
-      } else {
-        // It's possible that the Native Client module onload event fired
-        // before the page's onload event.  In this case, the status message
-        // will reflect 'SUCCESS', but won't be displayed.  This call will
-        // display the current message.
-        updateStatus();
-      }
-    }
-
-    // Set the global status message.  If the element with id 'statusField'
-    // exists, then set its HTML to the status message as well.
-    // opt_message The message test.  If this is null or undefined, then
-    // attempt to set the element with id 'statusField' to the value of
-    // |status_text|.
-    function updateStatus(opt_message) {
-      if (opt_message)
-        status_text = opt_message;
-      var statusField = document.getElementById('status_field');
-      if (statusField) {
-        statusField.innerHTML = status_text;
-      }
-    }
-
-    function moduleCrash(event)
-    {
-        alert("Module has crashed !");
-        //nacl_module.src = null;
-    }
-
-    function moduleLoadProgress(event)
-    {
-        var progressBar = document.getElementById("p");
-        var statusField = document.getElementById('status_field');
-        if (event.lengthComputable)
-        {
-            progressBar.max = event.total;
-            progressBar.value = event.loaded;
-            var load_progress = ((event.loaded / event.total) * 100.0);
-            status_field.innerHTML = 'Please wait, loading [' + load_progress.toFixed(0) + '%]';
-            
-        }
-        else
-        {
-            progressBar.value = -1;
-            status_field.innerHTML = 'Computing progress ...'
-        }
-    }
-
-    //Called by the "Send Mesh Command !" button
-    function SendMeshData()
-    {
-        if (nacl_module)
-            nacl_module.postMessage(mesh_code_module.value);
-        else
-            alert("Module not loaded");
-    }
   </script>
 </head>
 
-<body onload="pageDidLoad()">
+<body onload="PageDidLoad()">
 
 <h1>Mesh Viewer : Native Client version.</h1>
 <p>
     <div id="final_div">
-        <div id="listener" align="center" style="width:770px;height:200px">
+        <div id="id_div_listener" align="center" style="width:770px;height:200px">
             <canvas id="BGCanvas" width="772" height="202"></canvas>
-            <div id="progress_bar">
-                <div id="status_field">NO-STATUS</div>
-                <progress id="p" align="left" width="200"></progress>
+            <div id="id_div_progress">
+                <div id="id_div_progress_status">....</div>
+                <progress id="id_progress_bar" align="left"></progress>
             </div>
-            <div id="DIV_nacl_div">
+            <div id="id_div_embed_data">
+            <!--
                 <param name="wmode" value="opaque"/>
-                <embed name="nacl_module"
-                id="ID_NaClModule"
+                <embed name="g_embed_nacl_module"
+                id="id_embed_nacl_module"
                 width=770 height=200
                 src="meshviewer_nacl.nmf"
                 type="application/x-nacl" />
+            -->
             </div>
-            <script type="text/javascript">
-                var listener = document.getElementById('listener');
-                listener.addEventListener('load', moduleDidLoad, true);
-                listener.addEventListener('progress', moduleLoadProgress, true);
-                listener.addEventListener('message', handleMessage, true);
-                listener.addEventListener('crash', moduleCrash, true);
-            </script>
         </div>
     </div>
 </p>
-<div><button onclick="SendMeshData()">Send Mesh Command !</button></div>
+<div><button onclick="SendMessageToModule()">Send Mesh Command !</button></div>
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td>
             <div id="bouton">
-                <textarea autofocus id="DIV_MeshCode" rows="6" cols="94" style="font: 14px Consolas; resize: none;">//This is a comment
+                <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;">//This is a comment
 sc#f8f afcb 1 1 1 0</textarea>
             </div>
         </td>
         <td valign="top" rowspan="3">&nbsp;</td>
         <td valign="top" rowspan="3">
             <div><b><u>Variable Types usage :</u></b></div>
-            <div id="DIV_var_usage"></div>
+            <div id="id_div_helper_vars"></div>
         </td>
     </tr>
     <tr>
     <td>
-        <div id="DIV_alphabet"></div>
+        <div id="id_div_alphabet"></div>
     </td>
     </tr>
     <tr>
         <td valign="top">
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                    <td valign="top"><div id="DIV_command0"></div></td>
-                    <td valign="top"><div id="DIV_command1"></div></td>
-                    <td valign="top"><div id="DIV_args"    ></div></td>
-                    <td valign="top"><div id="DIV_comment" ></div></td>
+                    <td valign="top"><div id="id_div_helper_cmd_0"></div></td>
+                    <td valign="top"><div id="id_div_helper_cmd_1"></div></td>
+                    <td valign="top"><div id="id_div_helper_args"    ></div></td>
+                    <td valign="top"><div id="id_div_helper_cmnt" ></div></td>
                 </tr>
             </table>
         </td>
