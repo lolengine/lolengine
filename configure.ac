@@ -522,10 +522,6 @@ AC_CONFIG_FILES(
 AC_CONFIG_FILES(
  [games/abuse/Makefile
   games/abuse/src/Makefile
-  games/abuse/src/lisp/Makefile
-  games/abuse/src/imlib/Makefile
-  games/abuse/src/net/Makefile
-  games/abuse/src/sdlport/Makefile
   games/abuse/data/Makefile
   games/abuse/doc/Makefile
   games/abuse/doc/abuse.6
