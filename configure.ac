@@ -89,7 +89,7 @@ LOL_TRY_CXXFLAGS(-std=c++11,
 
 dnl  Common C headers
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h math.h)
-AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h)
+AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h io.h)
 AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h sys/time.h sys/types.h)
@@ -103,7 +103,8 @@ AC_CHECK_HEADERS(cxxabi.h)
 AC_LANG_POP(C++)
 
 dnl  Common C functions
-AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd backtrace_symbols)
+AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd getlogin)
+AC_CHECK_FUNCS(backtrace_symbols)
 AC_CHECK_FUNCS(gettimeofday usleep)
 
 
