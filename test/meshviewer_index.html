@@ -112,7 +112,7 @@ progress::-webkit-progress-value
 
     //NaCl Specific
     function GetiFrameModuleVar()   { return g_frame_embed.contentDocument.getElementById('id_embed_nacl_module'); }
-    function IsUsingNaCl()          { return false; /*window.chrome;*/ }
+    function IsUsingNaCl()          { return window.chrome; }
 </script>
 
 <script src="./utils.js"></script>
