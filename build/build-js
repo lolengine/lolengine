@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# This can't hurt
+make distclean
+
+set -e
+./build/lol-build "$@" bootstrap web-js
+./build/lol-build "$@" configure web-js
+./build/lol-build "$@" build web-js
+
