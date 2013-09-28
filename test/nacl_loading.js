@@ -1,7 +1,3 @@
-g_status_text           = [null];
-g_status_timer          = [-1.0];
-g_var_progress_bar      = -1;
-
 g_embed_nacl_module     = null;
 
 if (IsUsingNaCl()) NaClLoadingInit();
@@ -49,26 +45,10 @@ function ModuleStartedLoad()
 //Module progress event
 function ModuleLoadUpdate(event)
 {
-    var progress_bar = GetProgressBar();
-    if (progress_bar)
-    {
-        if (event.lengthComputable)
-        {
-            if (progress_bar.value < 0)
-                g_var_progress_bar = -1;
-            var loading_text = 'Please wait, loading [' + (Math.min(1.0, event.loaded / event.total) * 100.0).toFixed(0) + '%]';
-            //update the progress status.
-            progress_bar.max = event.total;
-            progress_bar.value = event.loaded;
-            g_var_progress_bar = AddTextStatus(loading_text, g_var_progress_bar);
-        }
-        //Load length is not usable.
-        else
-        {
-            progress_bar.value = -1;
-            g_var_progress_bar = AddTextStatus('Please wait, calculating load balance ...', g_var_progress_bar);
-        }
-    }
+    if (event.lengthComputable)
+        UpdateProgressBarValue('Please wait, loading', event.loaded, event.total);
+    else
+        UpdateProgressBarValue('Please wait, calculating load balance ...');
 }
 
 //Indicate module load success.
@@ -79,11 +59,7 @@ function ModuleDidLoad()
 
     //Hide the progress div
     AddTextStatus('Module is live, thank you for your patience.');
-    var hide_timer = 0.1;
-    for (var i = 0; i < g_status_timer.length; i++)
-        if (g_status_timer[i])
-            hide_timer = Math.max(g_status_timer[i], hide_timer);
-    window.setTimeout('HideProgressStatus(true)', hide_timer * 1000);
+    window.setTimeout('HideProgressStatus(true)', GetMaxStatusTime(0.5) * 1000);
 }
 
 //Module did crash
@@ -129,82 +105,3 @@ function SendMessageToModule()
     else
         alert("Module not loaded !");
 }
-
-//-------------------------------------------------------------------------
-// PROGRESS BAR STATUS FUNCTIONS
-//-------------------------------------------------------------------------
-
-//Update progress bar status
-function UpdateTextStatus(seconds)
-{
-    var div_progress_status = GetDivProgressStatus();
-    if (div_progress_status)
-    {
-        div_progress_status.innerHTML = '';
-        for (var i = 0; i < g_status_text.length; i++)
-        {
-            if (g_status_timer[i] == undefined || g_status_timer[i] < 0.0)
-            {
-                g_status_timer[i] = -1.0;
-                g_status_text[i] = undefined;
-            }
-            else
-            {
-                g_status_timer[i] -= seconds;
-                div_progress_status.innerHTML += g_status_text[i];
-                //div_progress_status.innerHTML += '[' + g_status_timer[i].toFixed(2) + ']';
-                if (i < g_status_text.length - 1)
-                    div_progress_status.innerHTML += '<br>';
-            }
-        }
-        window.setTimeout("UpdateTextStatus(0.1)", 100);
-    }
-}
-
-//Add text status to the stack
-function AddTextStatus(message, message_id)
-{
-    var msg_timer = 2.0;
-    if (message_id == undefined || message_id < 0)
-    {
-        for (var i = g_status_timer.length - 1; i >= 0; i--)
-            if (g_status_timer[i])
-                msg_timer = Math.max(msg_timer, g_status_timer[i] + 0.5);
-
-        g_status_text[g_status_text.length] = message;
-        g_status_timer[g_status_timer.length] = msg_timer;
-        return g_status_timer.length - 1;
-    }
-    else
-    {
-        g_status_text[message_id] = message;
-        g_status_timer[message_id] = msg_timer;
-        return message_id;
-    }
-}
-
-//Hide Progress Status and empty status texts
-function HideProgressStatus(should_hide)
-{
-    var progress_bar = GetProgressBar();
-    var div_progress = GetDivProgress();
-    if (div_progress && progress_bar)
-    {
-        if (should_hide == true)
-        {
-            div_progress.style.visibility = "hidden";
-            g_status_text.splice(0, g_status_text.length);
-            g_status_timer.splice(0, g_status_timer.length);
-            progress_bar.value = -1;
-            UpdateTextStatus(1.0);
-        }
-        else
-        {
-            div_progress.style.visibility = "visible";
-            progress_bar.value = -1;
-            AddTextStatus('Please wait for module loading');
-            UpdateTextStatus(1.0);
-        }
-    }
-}
-
