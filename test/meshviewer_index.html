@@ -29,10 +29,12 @@ textarea
 #id_div_progress
 {
     position: absolute;
-    top: 40%;
+    top: 20%;
     left: 30%;
     right: 30%;
     z-index: 3;
+	background-color:white;
+	border:1px solid #000000;
 }
 progress
 {
@@ -95,6 +97,7 @@ progress::-webkit-progress-value
     g_div_progress_status   = null;
     g_progress_bar          = null;
     g_var_progress_bar      = -1;
+    g_frame_embed           = null;
 
     function GetNaClListenerDiv()   { return document.getElementById('id_div_listener'); }
     function GetNaClModuleVar()     { return g_embed_nacl_module; }
@@ -105,6 +108,7 @@ progress::-webkit-progress-value
     function GetDivProgressStatus() { return g_div_progress_status; }
     function GetDivEmbedData()      { return g_div_embed_data; }
     function GetDivEmbedDataSave()  { return g_div_embed_data_save; }
+    function GetFrameData()         { return g_frame_embed; }
     function IsUsingNaCl()          { return true; }
 </script>
 
@@ -120,11 +124,19 @@ progress::-webkit-progress-value
     //Init should always start before the first tick
     window.setTimeout("Init()", 100);
     window.setTimeout("Tick()", 200);
+    window.setTimeout("UpdateEmbed()", 2000);
+
+	function UpdateEmbed()
+	{
+		window.setTimeout("UpdateEmbed()", 2000);
+		g_frame_embed.contentDocument.location.reload(true);
+	}
 
     //Base init for all datas
     function Init()
     {
         g_div_embed_data        = document.getElementById('id_div_embed_data');
+		g_frame_embed           = document.getElementById('id_frame_embed');
         g_txtarea_code_src      = document.getElementById('id_txtarea_code_src');
         g_div_helper_cmd[0]     = document.getElementById('id_div_helper_cmd_0');
         g_div_helper_cmd[1]     = document.getElementById('id_div_helper_cmd_1');
@@ -176,16 +188,12 @@ progress::-webkit-progress-value
         <div id="id_div_listener" align="center" style="width:770px;height:200px">
             <canvas id="BGCanvas" width="772" height="202"></canvas>
             <div id="id_div_progress">
-                <div id="id_div_progress_status">....</div>
-                <progress id="id_progress_bar" align="left"></progress>
+				<br>&nbsp;
+				<progress id="id_progress_bar" align="left"></progress>
+				<div id="id_div_progress_status">....</div>&nbsp;
             </div>
             <div id="id_div_embed_data">
-                <param name="wmode" value="opaque"/>
-                <embed name="g_embed_nacl_module"
-                id="id_embed_nacl_module"
-                width=770 height=200
-                src="meshviewer_nacl.nmf"
-                type="application/x-nacl" />
+				<iframe id="id_frame_embed" src="meshviewer_nacl.html" width=770 height=200 frameborder=0 scrolling=no></iframe>
             </div>
         </div>
     </div>
