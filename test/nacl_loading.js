@@ -2,7 +2,7 @@ g_status_text           = [null];
 g_status_timer          = [-1.0];
 g_var_progress_bar      = -1;
 
-window.setTimeout("RegisterListener()", 200);
+//window.setTimeout("RegisterListener()", 200);
 
 function RegisterListener()
 {
@@ -16,7 +16,7 @@ function RegisterListener()
         div_listener.addEventListener('progress', ModuleLoadUpdate, true);
         div_listener.addEventListener('message', ModuleSentMessage, true);
         div_listener.addEventListener('crash', ModuleCrash, true);
-        window.setTimeout("UpdateTextStatus()", 100);
+        window.setTimeout("UpdateTextStatus(0.1)", 100);
     }
     else if (IsUsingNaCl())
         window.setTimeout("RegisterListener()", 200);
@@ -29,8 +29,9 @@ function RegisterListener()
 function PageDidLoad()
 {
     //Page did load before NaCl module
-    if (GetNaClModuleVar() == null)
+    if (!GetNaClModuleVar())
         AddTextStatus('Please wait for module loading');
+    RegisterListener();
 }
 
 //Module starts load
@@ -68,12 +69,16 @@ function ModuleLoadUpdate(event)
 //Indicate module load success.
 function ModuleDidLoad()
 {
-    if (GetNaClModuleVar() == null)
+    if (!GetNaClModuleVar())
         InitNaClModuleVar();
 
     //Hide the progress div
     AddTextStatus('Module is live, thank you for your patience.');
-    window.setTimeout('HideProgressStatus(true)', 4000);
+    var hide_timer = 0.1;
+    for (var i = 0; i < g_status_timer.length; i++)
+        if (g_status_timer[i])
+            hide_timer = Math.max(g_status_timer[i], hide_timer);
+    window.setTimeout('HideProgressStatus(true)', hide_timer * 1000);
 }
 
 //Module did crash
@@ -93,6 +98,13 @@ function ModuleError(event)
 //Used to restart module on crash/error/load fail ....
 function RestartModule()
 {
+    var id_frame_embed = GetFrameData();
+    if (id_frame_embed)
+    {
+        HideProgressStatus(false);
+        window.setTimeout('GetFrameData().contentDocument.location.reload(true)', 1000);
+    }
+/*
     var div_embed_data = GetDivEmbedData();
     var div_embed_data_save = GetDivEmbedDataSave();
 
@@ -102,12 +114,14 @@ function RestartModule()
 
         div_embed_data_save = div_embed_data.innerHTML;
         div_embed_data.innerHTML = '';
-        window.setTimeout('RestartModuleRestoreEmbed()', 1000);
     }
+*/
 }
 
+//Called after the Restart to effectively do it
 function RestartModuleRestoreEmbed()
 {
+/*
     var div_embed_data = GetDivEmbedData();
     var div_embed_data_save = GetDivEmbedDataSave();
 
@@ -117,6 +131,7 @@ function RestartModuleRestoreEmbed()
         div_embed_data_save = '';
         HideProgressStatus(false);
     }
+*/
 }
 
 //-------------------------------------------------------------------------
@@ -160,27 +175,33 @@ function UpdateTextStatus(seconds)
             {
                 g_status_timer[i] -= seconds;
                 div_progress_status.innerHTML += g_status_text[i];
+                //div_progress_status.innerHTML += '[' + g_status_timer[i].toFixed(2) + ']';
                 if (i < g_status_text.length - 1)
                     div_progress_status.innerHTML += '<br>';
             }
         }
-        window.setTimeout("UpdateTextStatus()", 100);
+        window.setTimeout("UpdateTextStatus(0.1)", 100);
     }
 }
 
 //Add text status to the stack
 function AddTextStatus(message, message_id)
 {
+    var msg_timer = 2.0;
     if (message_id == undefined || message_id < 0)
     {
+        for (var i = g_status_timer.length - 1; i >= 0; i--)
+            if (g_status_timer[i])
+                msg_timer = Math.max(msg_timer, g_status_timer[i] + 0.5);
+
         g_status_text[g_status_text.length] = message;
-        g_status_timer[g_status_timer.length] = 5.0;
+        g_status_timer[g_status_timer.length] = msg_timer;
         return g_status_timer.length - 1;
     }
     else
     {
         g_status_text[message_id] = message;
-        g_status_timer[message_id] = 5.0;
+        g_status_timer[message_id] = msg_timer;
         return message_id;
     }
 }
@@ -198,14 +219,14 @@ function HideProgressStatus(should_hide)
             g_status_text.splice(0, g_status_text.length);
             g_status_timer.splice(0, g_status_timer.length);
             progress_bar.value = -1;
-            UpdateTextStatus(0.1);
+            UpdateTextStatus(1.0);
         }
         else
         {
             div_progress.style.visibility = "visible";
             progress_bar.value = -1;
             AddTextStatus('Please wait for module loading');
-            UpdateTextStatus(0.1);
+            UpdateTextStatus(1.0);
         }
     }
 }

@@ -63,7 +63,7 @@ progress::-webkit-progress-value
 {
     position: relative;
 }
-#id_div_embed_data
+#id_div_frame_embed
 {
     position: absolute;
     top: 2px;
@@ -82,10 +82,12 @@ progress::-webkit-progress-value
 
 <title>Mesh Viewer NaCl</title>
 
+</head>
+
 <script type="text/javascript">
     //Base data Setup
-    g_div_embed_data_save   = '';
-    g_div_embed_data        = null;  // Global application object.
+    g_div_frame_embed_save   = '';
+    g_div_frame_embed        = null;  // Global application object.
     g_embed_nacl_module     = null;  // Global application object.
     g_txtarea_code_src      = null;
     g_div_helper_cmd        = [null, null];
@@ -99,15 +101,15 @@ progress::-webkit-progress-value
     g_var_progress_bar      = -1;
     g_frame_embed           = null;
 
-    function GetNaClListenerDiv()   { return document.getElementById('id_div_listener'); }
+    function GetNaClListenerDiv()   { return g_frame_embed.contentDocument.getElementById('id_div_embed_data'); }
     function GetNaClModuleVar()     { return g_embed_nacl_module; }
-    function InitNaClModuleVar()    { g_embed_nacl_module = document.getElementById('id_embed_nacl_module'); }
+    function InitNaClModuleVar()    { g_embed_nacl_module = g_frame_embed.contentDocument.getElementById('id_embed_nacl_module'); }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
     function GetDivProgress()       { return g_div_progress; }
     function GetProgressBar()       { return g_progress_bar; }
     function GetDivProgressStatus() { return g_div_progress_status; }
-    function GetDivEmbedData()      { return g_div_embed_data; }
-    function GetDivEmbedDataSave()  { return g_div_embed_data_save; }
+    function GetDivEmbedData()      { return g_div_frame_embed; }
+    function GetDivEmbedDataSave()  { return g_div_frame_embed_save; }
     function GetFrameData()         { return g_frame_embed; }
     function IsUsingNaCl()          { return true; }
 </script>
@@ -121,22 +123,15 @@ progress::-webkit-progress-value
 <script src="./nacl_loading.js"></script>
 
 <script type="text/javascript">
-    //Init should always start before the first tick
-    window.setTimeout("Init()", 100);
-    window.setTimeout("Tick()", 200);
-    window.setTimeout("UpdateEmbed()", 2000);
-
-	function UpdateEmbed()
-	{
-		window.setTimeout("UpdateEmbed()", 2000);
-		g_frame_embed.contentDocument.location.reload(true);
-	}
-
     //Base init for all datas
     function Init()
     {
-        g_div_embed_data        = document.getElementById('id_div_embed_data');
-		g_frame_embed           = document.getElementById('id_frame_embed');
+        alert('INIT PROUT');
+        //Init frame variable first.
+        g_frame_embed           = document.getElementById('id_frame_embed');
+        //This is in an iframe.
+        g_div_frame_embed       = g_frame_embed.contentDocument.getElementById('id_div_frame_embed');
+        //The rest of these are in this page.
         g_txtarea_code_src      = document.getElementById('id_txtarea_code_src');
         g_div_helper_cmd[0]     = document.getElementById('id_div_helper_cmd_0');
         g_div_helper_cmd[1]     = document.getElementById('id_div_helper_cmd_1');
@@ -148,22 +143,32 @@ progress::-webkit-progress-value
         g_div_progress_status   = document.getElementById('id_div_progress_status');
         g_progress_bar          = document.getElementById('id_progress_bar');
 
+        //Pulg here any cookie update
+        if (!g_txtarea_code_src.value)
+            g_txtarea_code_src.value = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+
         //Fill the TOC
-        g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[';
-        var new_toc = BuildTOC(true);
-        var pattern = new RegExp("^[a-zA-Z\.]");
-        while (pattern.test(new_toc))
-            new_toc = new_toc.replace(pattern, "<b>$&");
-        pattern = new RegExp("[a-zA-Z\.]$");
-        while (pattern.test(new_toc))
-            new_toc = new_toc.replace(pattern, "$&</b>");
-        pattern = new RegExp("([a-zA-Z])([\.])");
-        while (pattern.test(new_toc))
-            new_toc = new_toc.replace(pattern, "$1</b>$2");
-        pattern = new RegExp("([\.])([a-zA-Z])");
-        while (pattern.test(new_toc))
-            new_toc = new_toc.replace(pattern, "$1<b>$2");
-        g_div_alphabet.innerHTML += new_toc + ']&nbsp;<br>&nbsp;';
+        if (!g_div_alphabet.innerHTML)
+        {
+            g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[';
+            var new_toc = BuildTOC(true);
+            var pattern = new RegExp("^[a-zA-Z\.]");
+            while (pattern.test(new_toc))
+                new_toc = new_toc.replace(pattern, "<b>$&");
+            pattern = new RegExp("[a-zA-Z\.]$");
+            while (pattern.test(new_toc))
+                new_toc = new_toc.replace(pattern, "$&</b>");
+            pattern = new RegExp("([a-zA-Z])([\.])");
+            while (pattern.test(new_toc))
+                new_toc = new_toc.replace(pattern, "$1</b>$2");
+            pattern = new RegExp("([\.])([a-zA-Z])");
+            while (pattern.test(new_toc))
+                new_toc = new_toc.replace(pattern, "$1<b>$2");
+            g_div_alphabet.innerHTML += new_toc + ']&nbsp;<br>&nbsp;';
+        }
+
+        //Tick has been done, start Tick
+        window.setTimeout("Tick()", 200);
     }
 
     function Tick()
@@ -176,35 +181,35 @@ progress::-webkit-progress-value
         var div_vars = g_div_helper_vars;
         CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
     }
+</script>
 
-  </script>
-</head>
-
-<body onload="PageDidLoad()">
+<body>
 
 <h1>Mesh Viewer : Native Client version.</h1>
+
 <p>
     <div id="final_div">
         <div id="id_div_listener" align="center" style="width:770px;height:200px">
             <canvas id="BGCanvas" width="772" height="202"></canvas>
             <div id="id_div_progress">
-				<br>&nbsp;
-				<progress id="id_progress_bar" align="left"></progress>
-				<div id="id_div_progress_status">....</div>&nbsp;
+                <br>&nbsp;
+                <progress id="id_progress_bar" align="left"></progress>
+                <div id="id_div_progress_status">....</div>&nbsp;
             </div>
-            <div id="id_div_embed_data">
-				<iframe id="id_frame_embed" src="meshviewer_nacl.html" width=770 height=200 frameborder=0 scrolling=no></iframe>
+            <div id="id_div_frame_embed">
+                <iframe onload="Init(); PageDidLoad();" id="id_frame_embed" src="meshviewer_nacl.html" width=770 height=200 frameborder=0 scrolling=no></iframe>
             </div>
         </div>
     </div>
 </p>
+
 <div><button onclick="SendMessageToModule()">Send Mesh Command !</button></div>
+
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td>
             <div id="bouton">
-                <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;">//This is a comment
-sc#f8f afcb 1 1 1 0</textarea>
+                <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;"></textarea>
             </div>
         </td>
         <td valign="top" rowspan="3">&nbsp;</td>
@@ -214,9 +219,9 @@ sc#f8f afcb 1 1 1 0</textarea>
         </td>
     </tr>
     <tr>
-    <td>
-        <div id="id_div_alphabet"></div>
-    </td>
+        <td>
+            <div id="id_div_alphabet"></div>
+        </td>
     </tr>
     <tr>
         <td valign="top">
