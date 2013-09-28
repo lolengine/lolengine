@@ -2,12 +2,16 @@ g_status_text           = [null];
 g_status_timer          = [-1.0];
 g_var_progress_bar      = -1;
 
-//window.setTimeout("RegisterListener()", 200);
+g_embed_nacl_module     = null;
+
+if (IsUsingNaCl()) NaClLoadingInit();
+
+function InitNaClModuleVar() { g_embed_nacl_module = GetiFrameModuleVar(); }
 
 function RegisterListener()
 {
     //Register all the correct functions to the listener
-    var div_listener = GetNaClListenerDiv();
+    var div_listener = GetiFrameDivEmbed();
     if (div_listener)
     {
         div_listener.addEventListener('loadstart', ModuleStartedLoad, true);
@@ -26,10 +30,11 @@ function RegisterListener()
 // MODULE LOADING FUNCTIONS
 //-------------------------------------------------------------------------
 //Indicate page has been loaded.
-function PageDidLoad()
+function NaClLoadingInit()
 {
+    HideProgressStatus(false);
     //Page did load before NaCl module
-    if (!GetNaClModuleVar())
+    if (!g_embed_nacl_module)
         AddTextStatus('Please wait for module loading');
     RegisterListener();
 }
@@ -69,7 +74,7 @@ function ModuleLoadUpdate(event)
 //Indicate module load success.
 function ModuleDidLoad()
 {
-    if (!GetNaClModuleVar())
+    if (!g_embed_nacl_module)
         InitNaClModuleVar();
 
     //Hide the progress div
@@ -104,34 +109,6 @@ function RestartModule()
         HideProgressStatus(false);
         window.setTimeout('GetFrameData().contentDocument.location.reload(true)', 1000);
     }
-/*
-    var div_embed_data = GetDivEmbedData();
-    var div_embed_data_save = GetDivEmbedDataSave();
-
-    if (div_embed_data)
-    {
-        HideProgressStatus(false);
-
-        div_embed_data_save = div_embed_data.innerHTML;
-        div_embed_data.innerHTML = '';
-    }
-*/
-}
-
-//Called after the Restart to effectively do it
-function RestartModuleRestoreEmbed()
-{
-/*
-    var div_embed_data = GetDivEmbedData();
-    var div_embed_data_save = GetDivEmbedDataSave();
-
-    if (div_embed_data)
-    {
-        div_embed_data.innerHTML = div_embed_data_save;
-        div_embed_data_save = '';
-        HideProgressStatus(false);
-    }
-*/
 }
 
 //-------------------------------------------------------------------------
@@ -147,8 +124,8 @@ function ModuleSentMessage(message)
 //Called by the "Send Mesh Command !" button
 function SendMessageToModule()
 {
-    if (GetNaClModuleVar())
-        GetNaClModuleVar().postMessage(GetTextAreaCodeSrc().value);
+    if (g_embed_nacl_module)
+        g_embed_nacl_module.postMessage(GetTextAreaCodeSrc().value);
     else
         alert("Module not loaded !");
 }
@@ -230,3 +207,4 @@ function HideProgressStatus(should_hide)
         }
     }
 }
+
