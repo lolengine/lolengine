@@ -140,30 +140,40 @@ canvas.emscripten
                             Module.setStatus('All downloads complete.', 1, 1);
                     },
         //IMPORTANT : This is the C -> Javascript wraping, add your functions list here.
-        wrapup_list: [ {src_obj: this, func_name: 'DoSendMessage', c_func_name: '_C_Send', return_var: 'number', args: ['number', 'string'] } ],
+        wrapup_list: [ {src_obj: null, func_name: 'DoSendMessage', c_func_name: 'C_Send', return_var: 'number', args: ['number', 'string'] } ],
         do_wrapup:  function()
                     {
                         for (var i = 0; i < this.wrapup_list.length; i++)
-                            this.wrapup_list[i].src_obj[this.wrapup_list[i].func_var] =
+                        {
+                            if (!this.wrapup_list[i].src_obj)
+                                this.wrapup_list[i].src_obj = this;
+                            this.wrapup_list[i].src_obj[this.wrapup_list[i].func_name] =
                                 cwrap(this.wrapup_list[i].c_func_name, 
                                       this.wrapup_list[i].return_var,
                                       this.wrapup_list[i].args);
+                        }
                     },
-        SendMessage:function()
+        SendMessage:function(message)
                     {
-                        this.DoSendMessage(1, 'prout');
+                        this.DoSendMessage(0, message);
                     }
     };
     Module.setStatus('Please wait, calculating load balance ...', 0, 1);
     //Module <-> Page communication setup
-    parent.g_embed_em_module = Module;
-    parent.SendMessageToModule = function() { g_embed_em_module.DoSendMessage(); };
-    parent.ModuleSentMessage = function(message) { /* */ };
-    window.setTimeout("Module.do_wrapup()", 100);
-    </script>      
+    var cur_obj = (parent) ? (parent) : (this);
+    cur_obj.g_embed_em_module = Module;
+    cur_obj.SendMessageToModule = function() { this.g_embed_em_module.SendMessage(this.GetTextAreaCodeSrc().value); };
+    cur_obj.ModuleSentMessage = function(message) { /* */ };
+</script>
 
-<!-- Copy this HTML in your site folder and put your built program script in the src.
-    <script src="./my_program_script.js"></script>
--->
+<!-- Copy this HTML in your site folder and put your built program script in the src. -->
+<!-- <script src="./my_program_script.js"></script> -->
+<!-- -->
+
+<script>
+    //This call NEEDS TO BE after the .js include, because "cwrap" is set in it.
+    Module.do_wrapup();
+</script>
+
   </body>
 </html>
