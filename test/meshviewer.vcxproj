@@ -81,7 +81,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <LolFxCompile Include="mviewer_em_test.lolfx" />
     <LolFxCompile Include="shinyfur.lolfx" />
     <LolFxCompile Include="shinymvtexture.lolfx" />
   </ItemGroup>
