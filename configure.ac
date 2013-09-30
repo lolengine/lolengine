@@ -351,7 +351,10 @@ ac_cv_my_have_nacl="no"
 AC_LANG_PUSH(C++)
 AC_CHECK_HEADERS(ppapi/cpp/instance.h,
  [ac_cv_my_have_nacl="yes"
-  LOL_LIBS="${LOL_LIBS} -lnosys"])
+  LOL_LIBS="${LOL_LIBS} -lnosys"
+  if test "${ac_cv_my_build_mode}" = "xrelease"; then
+    LOL_LIBS="${LOL_LIBS} -s"
+  fi])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
 
