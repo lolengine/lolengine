@@ -1,8 +1,6 @@
-g_embed_nacl_module     = null;
-
 if (IsUsingNaCl()) NaClLoadingInit();
 
-function InitNaClModuleVar() { g_embed_nacl_module = GetiFrameModuleVar(); }
+function InitNaClModuleVar() { g_embed_module = GetiFrameModuleVar(); }
 
 function RegisterListener()
 {
@@ -30,7 +28,7 @@ function NaClLoadingInit()
 {
     HideProgressStatus(false);
     //Page did load before NaCl module
-    if (!g_embed_nacl_module)
+    if (!g_embed_module)
         AddTextStatus('Please wait for module loading');
     RegisterListener();
 }
@@ -54,7 +52,7 @@ function ModuleLoadUpdate(event)
 //Indicate module load success.
 function ModuleDidLoad()
 {
-    if (!g_embed_nacl_module)
+    if (!g_embed_module)
         InitNaClModuleVar();
 
     //Hide the progress div
@@ -100,8 +98,8 @@ function ModuleSentMessage(message)
 //Called by the "Send Mesh Command !" button
 function SendMessageToModule()
 {
-    if (g_embed_nacl_module)
-        g_embed_nacl_module.postMessage(GetTextAreaCodeSrc().value);
+    if (g_embed_module)
+        g_embed_module.postMessage(GetTextAreaCodeSrc().value);
     else
         alert("Module not loaded !");
 }
