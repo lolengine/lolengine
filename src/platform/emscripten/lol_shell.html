@@ -73,10 +73,12 @@ canvas.emscripten
                         {
                             this.text = Array.prototype.slice.call(arguments).join(' ');
                             // These replacements are necessary if you render to raw HTML
-                            //text = text.replace(/&/g, "&amp;");
-                            //text = text.replace(/</g, "&lt;");
-                            //text = text.replace(/>/g, "&gt;");
-                            //text = text.replace('\n', '<br>', 'g');
+                            /*
+                            text = text.replace(/&/g, "&amp;");
+                            text = text.replace(/</g, "&lt;");
+                            text = text.replace(/ >/g, "&gt;");
+                            text = text.replace('\n', '<br>', 'g');
+                            */
                             this.output.value += text + "\n";
                             this.output.scrollTop = 99999; // focus on bottom
                         };
@@ -153,26 +155,31 @@ canvas.emscripten
                                       this.wrapup_list[i].args);
                         }
                     },
+        //Module <-> Page communication setup
         SendMessage:function(message)
                     {
                         this.DoSendMessage(0, message);
+                    },
+        ModuleSendMessage:function(message)
+                    {
+                        alert(message);
                     }
     };
-    Module.setStatus('Please wait, calculating load balance ...', 0, 1);
-    //Module <-> Page communication setup
-    var cur_obj = (parent) ? (parent) : (this);
-    cur_obj.g_embed_module = Module;
-    cur_obj.SendMessageToModule = function() { this.g_embed_module.SendMessage(this.GetTextAreaCodeSrc().value); };
-    cur_obj.ModuleSentMessage = function(message) { /* */ };
 </script>
 
 <!-- Copy this HTML in your site folder and put your built program script in the src. -->
 <!-- <script src="./my_program_script.js"></script> -->
 <!-- -->
 
-<script>
-    //This call NEEDS TO BE after the .js include, because "cwrap" is set in it.
+<script type='text/javascript'>
     Module.do_wrapup();
+
+    //Parent communication datas
+    function GetDivEmbed()      { return document.getElementById('id_div_embed_data'); }
+    function GetEmbedModule()   { return Module; }
+
+    parent.InitModuleVar();
+    Module.setStatus('Please wait, calculating load balance ...', 0, 1);
 </script>
 
   </body>
