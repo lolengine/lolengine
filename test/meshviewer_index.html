@@ -102,9 +102,9 @@ progress::-webkit-progress-value
     g_var_progress_bar      = -1;
     g_frame_embed           = null;
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
-    g_embed_module = null;
+    g_embed_module          = null;
 
-
+function machinchose() { return 'test machin '; }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
     function GetDivProgress()       { return g_div_progress; }
     function GetProgressBar()       { return g_progress_bar; }
@@ -112,10 +112,11 @@ progress::-webkit-progress-value
     function GetDivEmbedData()      { return g_div_frame_embed; }
     function GetDivEmbedDataSave()  { return g_div_frame_embed_save; }
     function GetFrameData()         { return g_frame_embed; }
-    function GetiFrameDivEmbed()    { return g_frame_embed.contentDocument.getElementById('id_div_embed_data'); }
 
-    //NaCl Specific
-    function GetiFrameModuleVar()   { return g_frame_embed.contentDocument.getElementById('id_embed_nacl_module'); }
+    //Communication with iframe content.
+    function InitModuleVar()        { g_embed_module = GetiFrameModuleVar(); }
+    function GetiFrameDivEmbed()    { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetDivEmbed()); }
+    function GetiFrameModuleVar()   { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetEmbedModule()); }
     function IsUsingNaCl()          { return window.chrome; }
 </script>
 
@@ -202,6 +203,21 @@ progress::-webkit-progress-value
         var div_cmnt = g_div_helper_cmnt;
         var div_vars = g_div_helper_vars;
         CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
+    }
+
+    //Handle message from the NaCl module
+    function ModuleSentMessage(message)
+    {
+        alert('Module sent message: ' + message.data);
+    }
+
+    //Called by the "Send Mesh Command !" button
+    function SendMessageToModule()
+    {
+        if (g_embed_module)
+            g_embed_module.SendMessage(GetTextAreaCodeSrc().value);
+        else
+            alert("Module not loaded !");
     }
 </script>
 

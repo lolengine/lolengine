@@ -231,7 +231,7 @@ public:
         vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
         vec2 pos = (is_pos && !is_fov)?(tmp):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
         vec2 fov = (!is_pos && is_fov)?(tmp):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
-        vec2 hsc = vec2(0.f);
+        vec2 hsc = (is_hsc)?(vec2(0.f)):(vec2(0.f));
 
         //speed
         m_rot_speed = damp(m_rot_speed, rot * ROT_SPEED, .2f, seconds);

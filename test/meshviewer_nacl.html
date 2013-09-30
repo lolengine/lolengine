@@ -1,6 +1,12 @@
 <DOCTYPE html>
 <html>
 <body>
+<script type="text/javascript">
+function GetDivEmbed()      { return document.getElementById('id_div_embed_data'); }
+function GetEmbedModule()   { return document.getElementById('id_embed_nacl_module'); }
+
+if (parent.IsUsingNaCl()) parent.NaClLoadingInit();
+</script>
     <div id="id_div_embed_data" style="left:0px;top:0px;position:absolute;">
         <embed  name="name_embed_nacl_module" id="id_embed_nacl_module" width=770 height=200 src="meshviewer_nacl.nmf" type="application/x-nacl" />
     </div>

@@ -1,23 +1,26 @@
-if (IsUsingNaCl()) NaClLoadingInit();
-
-function InitNaClModuleVar() { g_embed_module = GetiFrameModuleVar(); }
-
 function RegisterListener()
 {
     //Register all the correct functions to the listener
     var div_listener = GetiFrameDivEmbed();
     if (div_listener)
     {
-        div_listener.addEventListener('loadstart', ModuleStartedLoad, true);
-        div_listener.addEventListener('load', ModuleDidLoad, true);
-        div_listener.addEventListener('error', ModuleError, true);
-        div_listener.addEventListener('progress', ModuleLoadUpdate, true);
-        div_listener.addEventListener('message', ModuleSentMessage, true);
-        div_listener.addEventListener('crash', ModuleCrash, true);
+        div_listener.addEventListener('loadstart', NaClModuleStartedLoad, true);
+        div_listener.addEventListener('load', NaClModuleDidLoad, true);
+        div_listener.addEventListener('error', NaClModuleError, true);
+        div_listener.addEventListener('progress', NaClModuleLoadUpdate, true);
+        div_listener.addEventListener('message', NaClModuleSentMessage, true);
+        div_listener.addEventListener('crash', NaClModuleCrash, true);
         window.setTimeout("UpdateTextStatus(0.1)", 100);
     }
     else if (IsUsingNaCl())
         window.setTimeout("RegisterListener()", 200);
+}
+
+function NaClInitModuleVar()
+{
+    InitModuleVar();
+    if (g_embed_module)
+        g_embed_module['SendMessage'] = function(message) { g_embed_module.postMessage(message); }
 }
 
 //-------------------------------------------------------------------------
@@ -34,14 +37,14 @@ function NaClLoadingInit()
 }
 
 //Module starts load
-function ModuleStartedLoad()
+function NaClModuleStartedLoad()
 {
     AddTextStatus('Module Started Loading');
-    InitNaClModuleVar();
+    NaClInitModuleVar();
 }
 
 //Module progress event
-function ModuleLoadUpdate(event)
+function NaClModuleLoadUpdate(event)
 {
     if (event.lengthComputable)
         UpdateProgressBarValue('Please wait, loading', event.loaded, event.total);
@@ -50,10 +53,10 @@ function ModuleLoadUpdate(event)
 }
 
 //Indicate module load success.
-function ModuleDidLoad()
+function NaClModuleDidLoad()
 {
     if (!g_embed_module)
-        InitNaClModuleVar();
+        NaClInitModuleVar();
 
     //Hide the progress div
     AddTextStatus('Module is live, thank you for your patience.');
@@ -61,21 +64,21 @@ function ModuleDidLoad()
 }
 
 //Module did crash
-function ModuleCrash(event)
+function NaClModuleCrash(event)
 {
-    RestartModule();
+    NaClRestartModule();
     AddTextStatus("Module has crashed ! Restarting ...");
 }
 
 //Module had an error
-function ModuleError(event)
+function NaClModuleError(event)
 {
-    RestartModule();
+    NaClRestartModule();
     AddTextStatus("Module Load/start Error ! Restarting ...");
 }
 
 //Used to restart module on crash/error/load fail ....
-function RestartModule()
+function NaClRestartModule()
 {
     var id_frame_embed = GetFrameData();
     if (id_frame_embed)
@@ -90,16 +93,8 @@ function RestartModule()
 //-------------------------------------------------------------------------
 
 //Handle message from the NaCl module
-function ModuleSentMessage(message)
+function NaClModuleSentMessage(message)
 {
-    alert('Module sent message: ' + message.data);
+    ModuleSentMessage(message);
 }
 
-//Called by the "Send Mesh Command !" button
-function SendMessageToModule()
-{
-    if (g_embed_module)
-        g_embed_module.postMessage(GetTextAreaCodeSrc().value);
-    else
-        alert("Module not loaded !");
-}
