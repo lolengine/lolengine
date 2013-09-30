@@ -1,5 +1,6 @@
 <DOCTYPE html>
 <html>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 
   <!--
   Copyright (c) 2012 The Native Client Authors. All rights reserved.
@@ -100,6 +101,9 @@ progress::-webkit-progress-value
     g_progress_bar          = null;
     g_var_progress_bar      = -1;
     g_frame_embed           = null;
+    //This is the module pointer : can be either the NaCl or Em one depending on the context.
+    g_embed_module = null;
+
 
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
     function GetDivProgress()       { return g_div_progress; }

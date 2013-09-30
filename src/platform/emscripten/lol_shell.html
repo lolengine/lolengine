@@ -161,8 +161,8 @@ canvas.emscripten
     Module.setStatus('Please wait, calculating load balance ...', 0, 1);
     //Module <-> Page communication setup
     var cur_obj = (parent) ? (parent) : (this);
-    cur_obj.g_embed_em_module = Module;
-    cur_obj.SendMessageToModule = function() { this.g_embed_em_module.SendMessage(this.GetTextAreaCodeSrc().value); };
+    cur_obj.g_embed_module = Module;
+    cur_obj.SendMessageToModule = function() { this.g_embed_module.SendMessage(this.GetTextAreaCodeSrc().value); };
     cur_obj.ModuleSentMessage = function(message) { /* */ };
 </script>
 
