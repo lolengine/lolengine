@@ -131,14 +131,19 @@ fi
 
 if test "x${ac_cv_my_build_mode}" = "xdebug"; then
   AC_DEFINE(LOL_BUILD_DEBUG, 1, Define to 1 to activate debug build)
-  BUILD_CXXFLAGS="-O -g"
+  LOL_TRY_CXXFLAGS(-O, [AM_CXXFLAGS="${AM_CXXFLAGS} -O"])
+  LOL_TRY_CXXFLAGS(-g, [AM_CXXFLAGS="${AM_CXXFLAGS} -g"])
 elif test "x${ac_cv_my_build_mode}" = "xdevel"; then
   AC_DEFINE(LOL_BUILD_DEVEL, 1, Define to 1 to activate development build)
-  BUILD_CXXFLAGS="-Os -g -ffast-math"
+  LOL_TRY_CXXFLAGS(-Os, [AM_CXXFLAGS="${AM_CXXFLAGS} -Os"])
+  LOL_TRY_CXXFLAGS(-g, [AM_CXXFLAGS="${AM_CXXFLAGS} -g"])
+  LOL_TRY_CXXFLAGS(-ffast-math, [AM_CXXFLAGS="${AM_CXXFLAGS} -ffast-math"])
 else
   AC_DEFINE(LOL_BUILD_RELEASE, 1, Define to 1 to activate final release)
-  BUILD_CXXFLAGS="-Os -ffast-math -fomit-frame-pointer"
-  BUILD_LDFLAGS="-fno-strength-reduce"
+  LOL_TRY_CXXFLAGS(-Os, [AM_CXXFLAGS="${AM_CXXFLAGS} -Os"])
+  LOL_TRY_CXXFLAGS(-ffast-math, [AM_CXXFLAGS="${AM_CXXFLAGS} -ffast-math"])
+  LOL_TRY_CXXFLAGS(-fomit-frame-pointer, [AM_CXXFLAGS="${AM_CXXFLAGS} -fomit-frame-pointer"])
+  LOL_TRY_CXXFLAGS(-fno-strength-reduce, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-strength-reduce"])
 fi
 
 
@@ -188,9 +193,6 @@ dnl  No exceptions
 LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
 LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
 
-dnl  Build mode specific flags
-AM_CXXFLAGS="${AM_CXXFLAGS} ${BUILD_CXXFLAGS}"
-AM_LDFLAGS="${AM_LDFLAGS} ${BUILD_LDFLAGS}"
 
 dnl  Debug symbols
 LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
@@ -353,7 +355,7 @@ AC_CHECK_HEADERS(ppapi/cpp/instance.h,
  [ac_cv_my_have_nacl="yes"
   LOL_LIBS="${LOL_LIBS} -lnosys"
   if test "${ac_cv_my_build_mode}" = "xrelease"; then
-    LOL_LIBS="${LOL_LIBS} -s"
+    LOL_TRY_CXXFLAGS(-s, [AM_CXXFLAGS="${AM_CXXFLAGS} -s"])
   fi])
 AC_LANG_POP(C++)
 AM_CONDITIONAL(USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
