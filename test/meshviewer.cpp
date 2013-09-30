@@ -33,6 +33,7 @@ static int const TEXTURE_WIDTH = 256;
 #define     RATIO_HW            (HEIGHT / WIDTH)
 #define     RATIO_WH            (WIDTH / HEIGHT)
 
+#define     RESET_TIMER         .2f
 #define     ROT_SPEED           vec2(50.f)
 #define     ROT_CLAMP           89.f
 #define     POS_SPEED           vec2(1.2f)
@@ -49,12 +50,23 @@ static int const TEXTURE_WIDTH = 256;
 #define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
 #define     NACL_EM             (__native_client__ || EMSCRIPTEN)
 
+#define     HAS_KBOARD          (m_input_usage & (1<<IPT_MV_KBOARD))
+#define     HAS_MOUSE           (m_input_usage & (1<<IPT_MV_MOUSE))
+
 LOLFX_RESOURCE_DECLARE(shinyfur);
 LOLFX_RESOURCE_DECLARE(shinymvtexture);
 
 enum
 {
-    KEY_CAM_RESET,
+    IPT_MV_KBOARD = 0,
+    IPT_MV_MOUSE,
+
+    INPUT_MAX
+};
+
+enum MVKeyboardList
+{
+    KEY_CAM_RESET = 0,
     KEY_CAM_POS,
     KEY_CAM_FOV,
 
@@ -73,8 +85,28 @@ enum
     KEY_F5,
     KEY_ESC,
 
-    KEY_MAX,
+    KEY_MAX
 };
+
+enum MVMouseKeyList
+{
+    MSE_CAM_ROT = KEY_MAX,
+    MSE_CAM_POS,
+    MSE_CAM_FOV,
+
+    MSE_MAX
+};
+
+enum MVMouseAxisList
+{
+    MSEX_CAM_Y = 0,
+    MSEX_CAM_X,
+
+    MSEX_MAX
+};
+
+#define     MAX_KEYS    MSE_MAX
+#define     MAX_AXIS    MSEX_MAX
 
 enum MessageType
 {
@@ -93,38 +125,72 @@ public:
         m_init = false;
     }
 
+    ~MeshViewer()
+    {
+        if (m_camera)
+            g_scene->PopCamera(m_camera);
+        for (int i = 0; i < m_lights.Count(); ++i)
+            Ticker::Unref(m_lights[i]);
+        MessageService::Destroy();
+    }
+
+    bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->GetKey(index).IsReleased()); }
+    bool  KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->GetKey(index).IsPressed()); }
+    bool  KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->GetKey(index).IsDown()); }
+    bool  KeyReleased(MVMouseKeyList index) { return (HAS_MOUSE  && m_controller->GetKey(index).IsReleased()); }
+    bool  KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->GetKey(index).IsPressed()); }
+    bool  KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->GetKey(index).IsDown()); }
+    float AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE)?(m_controller->GetAxis(index).GetValue()):(0.f); }
+
     void Init()
     {
         m_init = true;
+        m_input_usage = 0;
 
 #if NO_NACL_EM
         /* Register an input controller for the keyboard */
-        m_controller = new Controller("Default", KEY_MAX, 0);
+        m_controller = new Controller("Default", MAX_KEYS, MAX_AXIS);
 
-        //Camera keyboard rotation
-        m_controller->GetKey(KEY_CAM_UP   ).Bind("Keyboard", "Up");
-        m_controller->GetKey(KEY_CAM_DOWN ).Bind("Keyboard", "Down");
-        m_controller->GetKey(KEY_CAM_LEFT ).Bind("Keyboard", "Left");
-        m_controller->GetKey(KEY_CAM_RIGHT).Bind("Keyboard", "Right");
+        if (InputDevice::Get("Mouse"))
+        {
+            m_input_usage |= (1<<IPT_MV_MOUSE);
 
-        //Camera keyboard position switch
-        m_controller->GetKey(KEY_CAM_POS  ).Bind("Keyboard", "LeftShift");
-        m_controller->GetKey(KEY_CAM_FOV  ).Bind("Keyboard", "LeftCtrl");
+            m_controller->GetKey(MSE_CAM_ROT).Bind("Mouse", "Left");
+            m_controller->GetKey(MSE_CAM_POS).Bind("Mouse", "Right");
+            m_controller->GetKey(MSE_CAM_FOV).Bind("Mouse", "Middle");
+            m_controller->GetAxis(MSEX_CAM_Y).Bind("Mouse", "Y");
+            m_controller->GetAxis(MSEX_CAM_X).Bind("Mouse", "X");
+        }
 
-        //Camera unzoom switch
-        m_controller->GetKey(KEY_CAM_RESET).Bind("Keyboard", "Space");
+        if (InputDevice::Get("Keyboard"))
+        {
+            m_input_usage |= (1<<IPT_MV_KBOARD);
 
-        //Mesh change
-        m_controller->GetKey(KEY_MESH_NEXT).Bind("Keyboard", "PageUp");
-        m_controller->GetKey(KEY_MESH_PREV).Bind("Keyboard", "PageDown");
+            //Camera keyboard rotation
+            m_controller->GetKey(KEY_CAM_UP   ).Bind("Keyboard", "Up");
+            m_controller->GetKey(KEY_CAM_DOWN ).Bind("Keyboard", "Down");
+            m_controller->GetKey(KEY_CAM_LEFT ).Bind("Keyboard", "Left");
+            m_controller->GetKey(KEY_CAM_RIGHT).Bind("Keyboard", "Right");
 
-        //Base setup
-        m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
-        m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
-        m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
-        m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
-        m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
-        m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+            //Camera keyboard position switch
+            m_controller->GetKey(KEY_CAM_POS  ).Bind("Keyboard", "LeftShift");
+            m_controller->GetKey(KEY_CAM_FOV  ).Bind("Keyboard", "LeftCtrl");
+
+            //Camera unzoom switch
+            m_controller->GetKey(KEY_CAM_RESET).Bind("Keyboard", "Space");
+
+            //Mesh change
+            m_controller->GetKey(KEY_MESH_NEXT).Bind("Keyboard", "PageUp");
+            m_controller->GetKey(KEY_MESH_PREV).Bind("Keyboard", "PageDown");
+
+            //Base setup
+            m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
+            m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
+            m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
+            m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
+            m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
+            m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+        }
 #endif //NO_NACL_EM
 
         // Message Service
@@ -137,6 +203,7 @@ public:
         m_default_texture = NULL;
 
         //Camera Setup
+        m_reset_timer = -1.f;
         m_fov = -100.f;
         m_fov_mesh = 0.f;
         m_fov_speed = 0.f;
@@ -176,15 +243,6 @@ public:
         m_stream_update_timer = 1.0f;
     }
 
-    ~MeshViewer()
-    {
-        if (m_camera)
-            g_scene->PopCamera(m_camera);
-        for (int i = 0; i < m_lights.Count(); ++i)
-            Ticker::Unref(m_lights[i]);
-        MessageService::Destroy();
-    }
-
     virtual void TickGame(float seconds)
     {
         WorldEntity::TickGame(seconds);
@@ -202,14 +260,14 @@ public:
 #if NO_NACL_EM
         {
             //Shutdown logic
-            if (m_controller->GetKey(KEY_ESC).IsReleased())
+            if (KeyReleased(KEY_ESC))
                 Ticker::Shutdown();
         }
 #endif //NO_NACL_EM
 
         //Mesh Change
 #if NO_NACL_EM
-        m_mesh_id = clamp(m_mesh_id + ((int)m_controller->GetKey(KEY_MESH_PREV).IsPressed() - (int)m_controller->GetKey(KEY_MESH_NEXT).IsPressed()), 0, m_meshes.Count() - 1);
+        m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, m_meshes.Count() - 1);
 #endif //NO_NACL_EM
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
@@ -220,17 +278,28 @@ public:
         vec2 tmp = vec2::zero;
 
 #if NO_NACL_EM
-        is_pos = m_controller->GetKey(KEY_CAM_POS).IsDown();
-        is_fov = m_controller->GetKey(KEY_CAM_FOV).IsDown();
+        is_pos = KeyDown(KEY_CAM_POS) || KeyDown(MSE_CAM_POS);
+        is_fov = KeyDown(KEY_CAM_FOV) || KeyDown(MSE_CAM_FOV);
 
-        tmp = vec2((float)m_controller->GetKey(KEY_CAM_UP      ).IsDown() - (float)m_controller->GetKey(KEY_CAM_DOWN).IsDown(),
-                   (float)m_controller->GetKey(KEY_CAM_RIGHT   ).IsDown() - (float)m_controller->GetKey(KEY_CAM_LEFT).IsDown());
+        if (KeyDown(MSE_CAM_ROT) || KeyDown(MSE_CAM_POS) || KeyDown(MSE_CAM_FOV))
+        {
+            tmp += vec2(AxisValue(MSEX_CAM_Y), AxisValue(MSEX_CAM_X));
+            if (KeyDown(MSE_CAM_ROT))
+                tmp *= 6.f;
+            if (KeyDown(MSE_CAM_POS))
+                tmp *= vec2(1.f, -1.f) * 3.f;
+            if (KeyDown(MSE_CAM_FOV))
+                tmp = vec2(tmp.y * 4.f, tmp.x * 6.f);
+        }
+
+        tmp += vec2((float)KeyDown(KEY_CAM_UP   ) - (float)KeyDown(KEY_CAM_DOWN),
+                    (float)KeyDown(KEY_CAM_RIGHT) - (float)KeyDown(KEY_CAM_LEFT));
 #endif //NO_NACL_EM
 
         //Base data
         vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
-        vec2 pos = (is_pos && !is_fov)?(tmp):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
-        vec2 fov = (!is_pos && is_fov)?(tmp):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
+        vec2 pos = ( is_pos && !is_fov)?(tmp):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
+        vec2 fov = (!is_pos && is_fov )?(tmp):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
         vec2 hsc = (is_hsc)?(vec2(0.f)):(vec2(0.f));
 
         //speed
@@ -246,8 +315,21 @@ public:
         m_rot += m_rot_speed * seconds;
 
 #if NO_NACL_EM
+        if (m_reset_timer >= 0.f)
+            m_reset_timer -= seconds;
+        if (KeyPressed(KEY_CAM_RESET))
+        {
+            if (m_reset_timer >= 0.f)
+            {
+                m_pos = vec2(0.f);
+                m_zoom = -100.f;
+            }
+            else
+                m_reset_timer = RESET_TIMER;
+        }
+
         //Transform update
-        if (!m_controller->GetKey(KEY_CAM_RESET).IsDown())
+        if (!KeyDown(KEY_CAM_RESET))
         {
             m_pos += m_pos_speed * seconds;
             m_fov += m_fov_speed * seconds;
@@ -266,7 +348,7 @@ public:
                                     SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
 #if NO_NACL_EM
-        if (m_controller->GetKey(KEY_CAM_RESET).IsDown())
+        if (KeyDown(KEY_CAM_RESET) && m_reset_timer < 0.f)
         {
             pos_mesh = vec2::zero;
             zoom_mesh = 0.f;
@@ -425,15 +507,15 @@ public:
         //TODO : This should probably be "standard LoL behaviour"
 #if NO_NACL_EM
         {
-            if (m_controller->GetKey(KEY_F1).IsReleased())
+            if (KeyReleased(KEY_F1))
                 Video::SetDebugRenderMode(DebugRenderMode::Default);
-            if (m_controller->GetKey(KEY_F2).IsReleased())
+            if (KeyReleased(KEY_F2))
                 Video::SetDebugRenderMode(DebugRenderMode::Wireframe);
-            if (m_controller->GetKey(KEY_F3).IsReleased())
+            if (KeyReleased(KEY_F3))
                 Video::SetDebugRenderMode(DebugRenderMode::Lighting);
-            if (m_controller->GetKey(KEY_F4).IsReleased())
+            if (KeyReleased(KEY_F4))
                 Video::SetDebugRenderMode(DebugRenderMode::Normal);
-            if (m_controller->GetKey(KEY_F5).IsReleased())
+            if (KeyReleased(KEY_F5))
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
 #endif //NO_NACL_EM
@@ -500,50 +582,52 @@ public:
     }
 
 private:
-    Array<Light *> m_lights;
-    Controller *m_controller;
-    mat4 m_mat;
-    bool m_init;
+    Array<Light *>      m_lights;
+    byte                m_input_usage;
+    Controller*         m_controller;
+    mat4                m_mat;
+    bool                m_init;
 
     //Camera Setup
-    Camera *m_camera;
-    float   m_fov;
-    float   m_fov_mesh;
-    float   m_fov_speed;
-    float   m_zoom;
-    float   m_zoom_mesh;
-    float   m_zoom_speed;
-    vec2    m_rot;
-    vec2    m_rot_mesh;
-    vec2    m_rot_speed;
-    vec2    m_pos;
-    vec2    m_pos_mesh;
-    vec2    m_pos_speed;
-    vec2    m_hist_scale;
-    vec2    m_hist_scale_mesh;
-    vec2    m_hist_scale_speed;
-    vec2    m_screen_offset;
+    Camera *            m_camera;
+    float               m_reset_timer;
+    float               m_fov;
+    float               m_fov_mesh;
+    float               m_fov_speed;
+    float               m_zoom;
+    float               m_zoom_mesh;
+    float               m_zoom_speed;
+    vec2                m_rot;
+    vec2                m_rot_mesh;
+    vec2                m_rot_speed;
+    vec2                m_pos;
+    vec2                m_pos_mesh;
+    vec2                m_pos_speed;
+    vec2                m_hist_scale;
+    vec2                m_hist_scale_mesh;
+    vec2                m_hist_scale_speed;
+    vec2                m_screen_offset;
 
     //Mesh infos
-    vec2    m_render_max;
-    int     m_mesh_id;
-    float   m_mesh_id1;
-    Array<EasyMesh*> m_meshes;
+    vec2                m_render_max;
+    int                 m_mesh_id;
+    float               m_mesh_id1;
+    Array<EasyMesh*>    m_meshes;
 
     //File data
-    String        m_file_name;
-    Array<String> m_cmdlist;
-    float         m_stream_update_time;
-    float         m_stream_update_timer;
+    String              m_file_name;
+    Array<String>       m_cmdlist;
+    float               m_stream_update_time;
+    float               m_stream_update_timer;
 
-    Shader *      m_test_shader;
+    Shader *            m_test_shader;
 
     //misc datas
-    Shader *        m_texture_shader;
-    TileSet *       m_default_texture;
-    Texture *       m_texture;
-    ShaderUniform   m_texture_uni;
-    Image *         m_image;
+    Shader *            m_texture_shader;
+    TileSet *           m_default_texture;
+    Texture *           m_texture;
+    ShaderUniform       m_texture_uni;
+    Image *             m_image;
 };
 
 //The basic main :
