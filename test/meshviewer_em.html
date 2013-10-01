@@ -1,0 +1,187 @@
+﻿<!doctype html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>YOUR PAGE NAME HERE</title>
+
+<style>
+.emscripten
+{
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+textarea.emscripten
+{
+    font-family: monospace;
+    width: 80%;
+}
+div.emscripten
+{
+    text-align: center;
+}
+div.emscripten_border
+{
+    border: 1px solid black;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+/* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+canvas.emscripten
+{
+    border: 0px none;
+}
+</style>
+</head>
+
+<body>
+    <div class="emscripten_border" id="id_div_embed_data">
+        <canvas class="emscripten" id="id_cvas_render" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+
+<!-- this part is a little weird, I don't really know what to do with it. -->
+    <div class="emscripten">
+        <input type="checkbox" id="id_ckbox_resize">Resize canvas
+        <input type="checkbox" id="id_ckbox_pointer_lock" checked>Lock/hide mouse pointer
+        &nbsp;&nbsp;&nbsp;
+        <input type="button" value="Fullscreen" onclick="ClickFullscreen()">
+    </div>
+    <textarea class="emscripten" id="id_txt_output" rows="8"> </textarea>
+
+<script type='text/javascript'>
+    // connect to canvas
+    var Module =
+    {
+        output:  document.getElementById('id_txt_output'),
+        canvas:  document.getElementById('id_cvas_render'),
+        preRun:  [],
+        postRun: [],
+        clickFullsreen: function()
+                        {
+                            Module.requestFullScreen(document.getElementById('id_ckbox_pointer_lock').checked,
+                                                     document.getElementById('id_ckbox_resize').checked);
+                        },
+        print: (function()
+                {
+                    if (this.output)
+                    {
+                        this.output.value = ''; // clear browser cache
+                        return function(text)
+                        {
+                            this.text = Array.prototype.slice.call(arguments).join(' ');
+                            // These replacements are necessary if you render to raw HTML
+                            /*
+                            text = text.replace(/&/g, "&amp;");
+                            text = text.replace(/</g, "&lt;");
+                            text = text.replace(/ >/g, "&gt;");
+                            text = text.replace('\n', '<br>', 'g');
+                            */
+                            this.output.value += text + "\n";
+                            this.output.scrollTop = 99999; // focus on bottom
+                        };
+                    }
+                    else
+                        return '';
+                })(),
+        printErr:   function(text)
+                    {
+                        text = Array.prototype.slice.call(arguments).join(' ');
+                        if (0)  // XXX disabled for safety typeof dump == 'function')
+                            dump(text + '\n'); // fast, straight to the real console
+                        else
+                            console.log(text);
+                    },
+        //Load Status handling
+        setStatus:  function(text, new_value, new_max)
+                    {
+                        var tmp_status = '';
+                        var tmp_value = undefined;
+                        var tmp_max = undefined;
+                        var should_hide = false;
+
+                        //Clear any interval put on this Status.
+                        if (Module.setStatus.interval)
+                            clearInterval(Module.setStatus.interval);
+                        //If value and max have been set, directly go for the win.
+                        if (new_value != undefined && new_max != undefined)
+                        {
+                            tmp_status = text;
+                            tmp_value = new_value;
+                            tmp_max = new_max;
+                        }
+                        else
+                        //Else do the complicated stuff.
+                        {
+                            var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+                            if (m)
+                            {
+                                text = m[1];
+                                tmp_value = parseInt(m[2]) * 100;
+                                tmp_max = parseInt(m[4]) * 100;
+                            }
+                            else
+                                should_hide = true;
+                        }
+                        if (parent)
+                        {
+                            //parent.UpdateProgressBarValue(tmp_status, tmp_value, tmp_max);
+                            //parent.HideProgressStatus(should_hide);
+                        }
+                    },
+        totalDependencies: 0,
+        monitorRunDependencies:
+                    function(left)
+                    {
+                        this.totalDependencies = Math.max(this.totalDependencies, left);
+                        if (left)
+                            Module.setStatus('Downloading dependencies ', (this.totalDependencies - left), this.totalDependencies);
+                        else
+                            Module.setStatus('All downloads complete.', 1, 1);
+                    },
+        //IMPORTANT : This is the C -> Javascript wraping, add your functions list here.
+        wrapup_list: [ {src_obj: null, func_name: 'DoSendMessage', c_func_name: 'C_Send', return_var: 'number', args: ['number', 'string'] } ],
+        do_wrapup:  function()
+                    {
+                        for (var i = 0; i < this.wrapup_list.length; i++)
+                        {
+                            if (!this.wrapup_list[i].src_obj)
+                                this.wrapup_list[i].src_obj = this;
+                            this.wrapup_list[i].src_obj[this.wrapup_list[i].func_name] =
+                                cwrap(this.wrapup_list[i].c_func_name, 
+                                      this.wrapup_list[i].return_var,
+                                      this.wrapup_list[i].args);
+                        }
+                    },
+        //Module <-> Page communication setup
+        SendMessage:function(message)
+                    {
+                        this.DoSendMessage(0, message);
+                    },
+        ModuleSendMessage:function(message)
+                    {
+                        alert(message);
+                    }
+    };
+</script>
+
+<!-- Copy this HTML in your site folder and put your built program script in the src. -->
+    <script src="./meshviewer.em.js"></script>
+<!-- -->
+
+<script type='text/javascript'>
+    //This call NEEDS TO BE after the .js include, because "cwrap" is set in it.
+    Module.do_wrapup();
+
+    //Parent communication datas
+    function GetDivEmbed()      { return document.getElementById('id_div_embed_data'); }
+    function GetEmbedModule()   { return Module; }
+
+    parent.InitModuleVar();
+    Module.setStatus('Please wait, calculating load balance ...', 0, 1);
+</script>
+
+  </body>
+</html>
