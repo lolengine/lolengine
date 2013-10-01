@@ -227,6 +227,9 @@ public:
         m_hist_scale_mesh = vec2(.0f);
         m_hist_scale_speed = vec2(.0f);
 
+        m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
+        m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+
         m_camera = new Camera();
         m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
         m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
@@ -272,6 +275,13 @@ public:
         m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, m_meshes.Count() - 1);
 #endif //NO_NACL_EM
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
+
+        //Update light position
+        for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+        {
+            vec4 v = m_ssetup->m_lights[i]->GetPosition();
+            m_ssetup->m_lights[i]->SetPosition(vec4((m_mat * inverse(m_mat_prev) * vec4(v.xyz, 1.f)).xyz, v.w));
+        }
 
         //Camera update
         bool is_pos = false;
@@ -364,6 +374,7 @@ public:
         m_hist_scale_mesh = damp(m_hist_scale_mesh, hist_scale_mesh, .2f, seconds);
 
         //Mesh mat calculation
+        m_mat_prev = m_mat;
         m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
 
         //Target List Setup
@@ -420,7 +431,7 @@ public:
         {
             vec2 new_screen_scale = m_camera->GetScreenScale();
             m_camera->SetScreenScale(max(vec2(0.001f), new_screen_scale * ((1.0f + m_zoom_mesh) / (scale_ratio * SCREEN_LIMIT))));
-            m_camera->m_position.z = damp(m_camera->m_position.z, z_pos + screen_ratio * 2.f, .1f, seconds);
+            m_camera->SetPosition(vec3(vec2::zero, damp(m_camera->m_position.z, z_pos + screen_ratio * 2.f, .1f, seconds)), true);
             m_camera->SetFov(m_fov_mesh);
             m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio), 1.2f, seconds));
         }
@@ -441,6 +452,7 @@ public:
                     delete(m_ssetup);
                     m_ssetup = new_ssetup;
                     m_ssetup->Startup();
+                    m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
                     for (int i = 0; i < m_ssetup->m_custom_cmd.Count(); ++i)
                     {
                         if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
@@ -493,9 +505,11 @@ public:
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
                 m_cmdlist << cmd;
+                /*
                 cmd = String(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
                                addlight 0.0 position (8 2 6) color #ffff \
                                custom setmesh \"") + cmd + "\"";
+                               */
                 MessageService::Send(MessageBucket::AppIn, cmd);
             }
         }
@@ -591,6 +605,7 @@ private:
     short               m_input_usage;
     Controller*         m_controller;
     mat4                m_mat;
+    mat4                m_mat_prev;
     bool                m_init;
 
     //Camera Setup
