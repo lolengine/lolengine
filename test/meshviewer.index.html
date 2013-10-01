@@ -127,19 +127,19 @@ function machinchose() { return 'test machin '; }
     function IsUsingNaCl()          { return window.chrome; }
 </script>
 
-<script src="./utils.js"></script>
-<script src="./progressstatus.js"></script>
+<script src="./javascript/utils.js"></script>
+<script src="./javascript/progressstatus.js"></script>
 <script type="text/javascript">
     //Used by typedictionnary.js
     function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
     g_code_id = 1;
 </script>
-<script src="./typedictionnary.js"></script>
+<script src="./javascript/typedictionnary.js"></script>
 <!-- Init Scene setup dictionnary -->
 <script type="text/javascript">
     CodeDictionnary[g_code_id--] = new TypeDictionnary("SceneSetup");
 </script>
-<script src="./scenesetup.js"></script>
+<script src="./scenesetupdictionnary.js"></script>
 <!-- Init Easy mesh dictionnary -->
 <script type="text/javascript">
     CodeDictionnary[g_code_id] = new TypeDictionnary("EasyMesh");
@@ -208,7 +208,7 @@ function machinchose() { return 'test machin '; }
         //NaCl Specific
         if (IsUsingNaCl())
         {
-            DynLoadFile("naclloading.js");
+            DynLoadFile("./javascript/naclloading.js");
             g_frame_embed.src = 'meshviewer.nacl.html';
         }
         else

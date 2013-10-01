@@ -38,7 +38,7 @@ canvas.emscripten
 </head>
 
 <body>
-    <div class="emscripten_border">
+    <div class="emscripten_border" id="id_div_embed_data">
         <canvas class="emscripten" id="id_cvas_render" oncontextmenu="event.preventDefault()"></canvas>
     </div>
 
@@ -172,6 +172,7 @@ canvas.emscripten
 <!-- -->
 
 <script type='text/javascript'>
+    //This call NEEDS TO BE after the .js include, because "cwrap" is set in it.
     Module.do_wrapup();
 
     //Parent communication datas
