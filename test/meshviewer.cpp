@@ -466,6 +466,10 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
+            MessageService::Send(MessageBucket::AppIn,
+                             " addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
+                               addlight 0.0 position (8 2 6) color #ffff \
+                               custom setmesh \"[sc#f8f ab 1]\"");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");

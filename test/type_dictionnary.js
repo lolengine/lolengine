@@ -1,6 +1,7 @@
 function TypeDictionnary(m_name)
 {
     this.m_name = m_name;
+    this.m_alphabet = '';
     this.m_cmds = new Array();
     this.m_vars = new Array();
 }

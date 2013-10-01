@@ -88,8 +88,8 @@ progress::-webkit-progress-value
 
 <script type="text/javascript">
     //Base data Setup : GLOBAL STYLE
-    g_div_frame_embed_save   = '';
-    g_div_frame_embed        = null;
+    g_div_frame_embed_save  = '';
+    g_div_frame_embed       = null;
     g_txtarea_code_src      = null;
     g_div_helper_cmd        = [null, null];
     g_div_helper_args       = null;
@@ -104,8 +104,12 @@ progress::-webkit-progress-value
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
     g_embed_module          = null;
 
-    g_mesh_code_base        = "//This is a comment\nsc#f8f afcb 1 1 1 0";
-    g_scene_code_base        = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) addlight 0.0 position (8 2 6) color #ffff";
+    var g_mesh_code_base    = [];
+    var CodeDictionnary     = [];
+
+    g_code_id               = 0;
+    g_mesh_code_base[0]     = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+    g_mesh_code_base[1]     = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff";
     
 function machinchose() { return 'test machin '; }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
@@ -121,16 +125,24 @@ function machinchose() { return 'test machin '; }
     function GetiFrameDivEmbed()    { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetDivEmbed()); }
     function GetiFrameModuleVar()   { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetEmbedModule()); }
     function IsUsingNaCl()          { return window.chrome; }
+    function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
 </script>
 
 <script src="./utils.js"></script>
 <script src="./progress_status.js"></script>
 <script src="./type_dictionnary.js"></script>
 <script type="text/javascript">
-    var EasyMeshDict = new TypeDictionnary("EasyMesh");
-    function GetCmdDictionnary()    { return EasyMeshDict; }
+    CodeDictionnary[0] = new TypeDictionnary("EasyMesh");
 </script>
 <script src="./easy_mesh_dictionnary.js"></script>
+<script type="text/javascript">
+    g_code_id = 1;
+    CodeDictionnary[1] = new TypeDictionnary("EasyMesh");
+</script>
+<script src="./scenesetup.js"></script>
+<script type="text/javascript">
+    g_code_id = 0;
+</script>
 
 <script type="text/javascript">
     //Base init for all datas
@@ -160,26 +172,31 @@ function machinchose() { return 'test machin '; }
 
         //Put here any cookie update
         if (!g_txtarea_code_src.value)
-            g_txtarea_code_src.value = g_mesh_code_base;
+            g_txtarea_code_src.value = g_mesh_code_base[g_code_id];
 
         //Fill the TOC
         if (!g_div_alphabet.innerHTML)
         {
-            g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[';
-            var new_toc = BuildTOC(true);
-            var pattern = new RegExp("^[a-zA-Z\.]");
-            while (pattern.test(new_toc))
-                new_toc = new_toc.replace(pattern, "<b>$&");
-            pattern = new RegExp("[a-zA-Z\.]$");
-            while (pattern.test(new_toc))
-                new_toc = new_toc.replace(pattern, "$&</b>");
-            pattern = new RegExp("([a-zA-Z])([\.])");
-            while (pattern.test(new_toc))
-                new_toc = new_toc.replace(pattern, "$1</b>$2");
-            pattern = new RegExp("([\.])([a-zA-Z])");
-            while (pattern.test(new_toc))
-                new_toc = new_toc.replace(pattern, "$1<b>$2");
-            g_div_alphabet.innerHTML += new_toc + ']&nbsp;<br>&nbsp;';
+            for (var i = 0; i < CodeDictionnary.length; i++)
+            {
+                g_code_id = i;
+                var new_toc = BuildTOC(true);
+                var pattern = new RegExp("^[a-zA-Z\.]");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "<b>$&");
+                pattern = new RegExp("[a-zA-Z\.]$");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$&</b>");
+                pattern = new RegExp("([a-zA-Z])([\.])");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$1</b>$2");
+                pattern = new RegExp("([\.])([a-zA-Z])");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$1<b>$2");
+                CodeDictionnary[i].m_alphabet = new_toc;
+            }
+            g_code_id = 0;
+            InitEditValues();
         }
 
         //NaCl Specific
@@ -208,6 +225,24 @@ function machinchose() { return 'test machin '; }
         CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
     }
 
+    function StoreTextAreaValue()
+    {
+        g_mesh_code_base[g_code_id] = GetTextAreaCodeSrc().value;
+    }
+
+    function ExchangeSetup()
+    {
+        StoreTextAreaValue();
+        g_code_id = (g_code_id + 1) % 2;
+        InitEditValues();
+    }
+
+    function InitEditValues()
+    {
+        GetTextAreaCodeSrc().value = g_mesh_code_base[g_code_id];
+        g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[' + CodeDictionnary[g_code_id].m_alphabet + ']&nbsp;<br>&nbsp;';
+    }
+
     //Handle message from the NaCl module
     function ModuleSentMessage(message)
     {
@@ -217,8 +252,11 @@ function machinchose() { return 'test machin '; }
     //Called by the "Send Mesh Command !" button
     function SendMessageToModule()
     {
+        StoreTextAreaValue();
+        var message = g_mesh_code_base[1] + ' \n';
+        message += ' custom setmesh "' + g_mesh_code_base[0] + '"';
         if (g_embed_module)
-            g_embed_module.SendMessage(g_scene_code_base + ' ' + GetTextAreaCodeSrc().value);
+            g_embed_module.SendMessage(message);
         else
             alert("Module not loaded !");
     }
@@ -244,7 +282,16 @@ function machinchose() { return 'test machin '; }
     </div>
 </p>
 
-<div><button onclick="SendMessageToModule()">Send Mesh Command !</button></div>
+<table border="0" cellpadding="0" cellspacing="0" width="772">
+    <tr>
+        <td align="left">
+            <div><button onclick="SendMessageToModule()">Send Mesh Command !</button></div>
+        </td>
+        <td align="right">
+            <div><button onclick="ExchangeSetup()">Edit Scene Setup.</button></div>
+        </td>
+    </tr>
+</table>
 
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
