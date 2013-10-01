@@ -194,7 +194,9 @@ void SdlInputData::Tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
-            m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
+                m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            // TODO: mouse wheel as axis
             break;
         }
 
