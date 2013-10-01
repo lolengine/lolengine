@@ -104,6 +104,9 @@ progress::-webkit-progress-value
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
     g_embed_module          = null;
 
+    g_mesh_code_base        = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+    g_scene_code_base        = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) addlight 0.0 position (8 2 6) color #ffff";
+    
 function machinchose() { return 'test machin '; }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
     function GetDivProgress()       { return g_div_progress; }
@@ -157,7 +160,7 @@ function machinchose() { return 'test machin '; }
 
         //Put here any cookie update
         if (!g_txtarea_code_src.value)
-            g_txtarea_code_src.value = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+            g_txtarea_code_src.value = g_mesh_code_base;
 
         //Fill the TOC
         if (!g_div_alphabet.innerHTML)
@@ -215,7 +218,7 @@ function machinchose() { return 'test machin '; }
     function SendMessageToModule()
     {
         if (g_embed_module)
-            g_embed_module.SendMessage(GetTextAreaCodeSrc().value);
+            g_embed_module.SendMessage(g_scene_code_base + ' ' + GetTextAreaCodeSrc().value);
         else
             alert("Module not loaded !");
     }

@@ -109,7 +109,7 @@ typedef lol::EasyMeshParser::token_type token_type;
 (aq|addquad)             { return token::T_QUAD; }
 (acg|addcog)             { return token::T_COG; }
 
-%{ /* =======  BASE DATA TYPES  ========================================= */ %}
+%{ /* =======  BASE COLOR TYPES  ========================================= */ %}
 %{ /* COLOR */ %}
 #[0-9a-fA-F]{3} {
         uint32_t tmp = std::strtol(yytext + 1, nullptr, 16);
