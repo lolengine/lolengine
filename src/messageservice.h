@@ -20,6 +20,35 @@
 namespace lol
 {
 
+//Utility enum for message service
+struct MessageBucket
+{
+    enum Value
+    {
+        AppIn = 0,
+        AppOut,
+
+        Bckt0,
+        Bckt1,
+        Bckt2,
+        Bckt3,
+        Bckt4,
+        Bckt5,
+        Bckt6,
+        Bckt7,
+        Bckt8,
+        Bckt9,
+
+        Max
+    }
+    m_value;
+
+    inline MessageBucket(Value v) : m_value(v) {}
+    inline MessageBucket() : m_value(AppIn) {}
+    inline operator Value() { return m_value; }
+};
+
+//Message list container with time in it
 struct MessageList
 {
     MessageList(time_t timestamp, const String& message)
@@ -45,16 +74,16 @@ public:
     static char const *GetName() { return "<messageservice>"; }
 
     //Setup/Destroy
-    static void Setup(int bucket_size);
+    static void Setup();
     static void Destroy();
 
     //Common interactions
-    static bool Send(int id, const String& message);
-    static bool Send(int id, const char* message);
-    static bool FetchFirst(int id, String& message);
-    static bool FetchFirst(int id, String& message, time_t &timestamp);
-    static bool FetchAll(int id, String& message);
-    static bool FetchAll(int id, String& message, time_t &first_timestamp);
+    static bool Send(MessageBucket id, const String& message);
+    static bool Send(MessageBucket id, const char* message);
+    static bool FetchFirst(MessageBucket id, String& message);
+    static bool FetchFirst(MessageBucket id, String& message, time_t &timestamp);
+    static bool FetchAll(MessageBucket id, String& message);
+    static bool FetchAll(MessageBucket id, String& message, time_t &first_timestamp);
 
 private:
     Array<Array<MessageList> >  m_bucket;
