@@ -194,7 +194,7 @@ public:
 #endif //NO_NACL_EM
 
         // Message Service
-        MessageService::Setup(MSG_MAX);
+        MessageService::Setup();
 
         // Mesh Setup
         m_render_max = vec2(-.9f, 6.1f);
@@ -428,7 +428,7 @@ public:
         //--
         String mesh("");
         int u = 4;
-        while (u-- > 0 && MessageService::FetchFirst(MSG_IN, mesh))
+        while (u-- > 0 && MessageService::FetchFirst(MessageBucket::AppIn, mesh))
         {
             int o = 1;
             while (o-- > 0)
@@ -448,10 +448,10 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-            MessageService::Send(MSG_IN, "[sc#f8f ab 1]");
-//            MessageService::Send(MSG_IN, "[sc#f8f ab 1 splt 4 twy 90]");
-//            MessageService::Send(MSG_IN, "[sc#8ff afcb 1 1 1 0]");
-//            MessageService::Send(MSG_IN, "[sc#ff8 afcb 1 1 1 0]");
+            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
+//            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1 splt 4 twy 90]");
+//            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");
+//            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
         }
 #elif WIN32
         //--
@@ -491,7 +491,7 @@ public:
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
                 m_cmdlist << cmd;
-                MessageService::Send(MSG_IN, cmd);
+                MessageService::Send(MessageBucket::AppIn, cmd);
             }
         }
 #endif //WINDOWS

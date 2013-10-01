@@ -1,3 +1,6 @@
+//-------------------------------------------------------------------------
+// MODULE INIT FUNCTIONS
+//-------------------------------------------------------------------------
 function RegisterListener()
 {
     //Register all the correct functions to the listener

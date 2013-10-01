@@ -142,7 +142,7 @@ canvas.emscripten
                             Module.setStatus('All downloads complete.', 1, 1);
                     },
         //IMPORTANT : This is the C -> Javascript wraping, add your functions list here.
-        wrapup_list: [ {src_obj: null, func_name: 'DoSendMessage', c_func_name: 'C_Send', return_var: 'number', args: ['number', 'string'] } ],
+        wrapup_list: [ {src_obj: null, func_name: 'DoSendMessage', c_func_name: 'C_Send', return_var: 'number', args: ['string'] } ],
         do_wrapup:  function()
                     {
                         for (var i = 0; i < this.wrapup_list.length; i++)
@@ -158,7 +158,7 @@ canvas.emscripten
         //Module <-> Page communication setup
         SendMessage:function(message)
                     {
-                        this.DoSendMessage(0, message);
+                        this.DoSendMessage(message);
                     },
         ModuleSendMessage:function(message)
                     {

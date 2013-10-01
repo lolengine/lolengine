@@ -26,12 +26,9 @@ namespace lol
 #if EMSCRIPTEN
 extern "C"
 {
-    int C_Send(int id, const char* message)
-    {
-        return (int)MessageService::Send(id, message);
-    }
+    int C_Send(const char* message) { return (int)MessageService::Send(MessageBucket::In, message); }
     //NOT IMPLEMENTED
-    //bool C_FetchFirst(int id, String& message);
+    //bool C_FetchFirst(String& message);
 }
 #endif //EMSCRIPTEN
 
@@ -53,10 +50,10 @@ MessageService::~MessageService()
 }
 
 //Setup/Destroy
-void MessageService::Setup(int bucket_size)
+void MessageService::Setup()
 {
     g_messageservice = new MessageService();
-    g_messageservice->m_bucket.Resize(bucket_size);
+    g_messageservice->m_bucket.Resize(MessageBucket::Max);
 }
 
 void MessageService::Destroy()
@@ -66,7 +63,7 @@ void MessageService::Destroy()
 }
 
 //-----------------------------------------------------------------------------
-bool MessageService::Send(int id, const String& message)
+bool MessageService::Send(MessageBucket id, const String& message)
 {
     if (g_messageservice)
     {
@@ -76,7 +73,7 @@ bool MessageService::Send(int id, const String& message)
     return false;
 }
 
-bool MessageService::Send(int id, const char* message)
+bool MessageService::Send(MessageBucket id, const char* message)
 {
     if (g_messageservice)
     {
@@ -90,7 +87,7 @@ bool MessageService::Send(int id, const char* message)
 }
 
 //----
-bool MessageService::FetchFirst(int id, String& message)
+bool MessageService::FetchFirst(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
@@ -101,7 +98,7 @@ bool MessageService::FetchFirst(int id, String& message)
     return false;
 }
 
-bool MessageService::FetchFirst(int id, String& message, time_t& timestamp)
+bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& timestamp)
 {
     if (g_messageservice)
     {
@@ -121,7 +118,7 @@ bool MessageService::FetchFirst(int id, String& message, time_t& timestamp)
 }
 
 //----
-bool MessageService::FetchAll(int id, String& message)
+bool MessageService::FetchAll(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
@@ -132,7 +129,7 @@ bool MessageService::FetchAll(int id, String& message)
     return false;
 }
 
-bool MessageService::FetchAll(int id, String& message, time_t& first_timestamp)
+bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_timestamp)
 {
     if (g_messageservice)
     {
