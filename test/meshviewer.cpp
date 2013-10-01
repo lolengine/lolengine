@@ -138,6 +138,7 @@ public:
         m_camera = nullptr;
     }
 
+#if NO_NACL_EM
     bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->GetKey(index).IsReleased()); }
     bool  KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->GetKey(index).IsPressed()); }
     bool  KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->GetKey(index).IsDown()); }
@@ -145,6 +146,7 @@ public:
     bool  KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->GetKey(index).IsPressed()); }
     bool  KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->GetKey(index).IsDown()); }
     float AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE)?(m_controller->GetAxis(index).GetValue()):(0.f); }
+#endif //NO_NACL_EM
 
     void Init()
     {
@@ -582,7 +584,7 @@ public:
 
 private:
     SceneSetup*         m_ssetup;
-    byte                m_input_usage;
+    short               m_input_usage;
     Controller*         m_controller;
     mat4                m_mat;
     bool                m_init;

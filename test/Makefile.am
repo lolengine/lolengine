@@ -59,10 +59,9 @@ nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
 
 meshviewer_SOURCES = meshviewer.cpp \
     shinymvtexture.lolfx shinyfur.lolfx \
-    scenesetup-compiler.cpp \
-    scenesetup-compiler.h \
-    generated/scenesetup-scanner.cpp \
-    generated/scenesetup-scanner.h \
+    scenesetup.cpp scenesetup.h \
+    scenesetup-compiler.cpp scenesetup-compiler.h \
+    generated/scenesetup-scanner.cpp generated/scenesetup-scanner.h \
     generated/scenesetup-parser.cpp
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPS@
