@@ -43,7 +43,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="generated\scenesetup-parser.cpp" />
+    <ClCompile Include="generated\scenesetup-scanner.cpp" />
     <ClCompile Include="meshviewer.cpp" />
+    <ClCompile Include="scenesetup-compiler.cpp" />
+    <ClCompile Include="scenesetup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\..\..\src\lolcore.vcxproj">
@@ -63,6 +67,10 @@
     <None Include="easy_mesh_dictionnary.js">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="generated\location.hh" />
+    <None Include="generated\position.hh" />
+    <None Include="generated\scenesetup-parser.output" />
+    <None Include="generated\stack.hh" />
     <None Include="meshviewer_index.html">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -76,6 +84,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="progress_status.js" />
+    <None Include="scenesetup-parser.y" />
+    <None Include="scenesetup-scanner.l" />
     <None Include="type_dictionnary.js">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -83,6 +93,11 @@
   <ItemGroup>
     <LolFxCompile Include="shinyfur.lolfx" />
     <LolFxCompile Include="shinymvtexture.lolfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="generated\scenesetup-parser.h" />
+    <ClInclude Include="scenesetup-compiler.h" />
+    <ClInclude Include="scenesetup.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}</ProjectGuid>

@@ -17,6 +17,7 @@
 #include <cfloat> /* for FLT_MAX */
 
 #include "core.h"
+#include "scenesetup.h"
 
 using namespace std;
 using namespace lol;
@@ -129,9 +130,12 @@ public:
     {
         if (m_camera)
             g_scene->PopCamera(m_camera);
-        for (int i = 0; i < m_lights.Count(); ++i)
-            Ticker::Unref(m_lights[i]);
+        if (m_ssetup)
+            delete(m_ssetup);
         MessageService::Destroy();
+
+        m_ssetup = nullptr;
+        m_camera = nullptr;
     }
 
     bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->GetKey(index).IsReleased()); }
@@ -228,15 +232,11 @@ public:
         g_scene->PushCamera(m_camera);
 
         //Lights setup
-        m_lights << new Light();
-        m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
-        m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
-        Ticker::Ref(m_lights.Last());
-
-        m_lights << new Light();
-        m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
-        m_lights.Last()->SetColor(vec4(1.f, 1.f, 1.f, 1.f));
-        Ticker::Ref(m_lights.Last());
+        m_ssetup = new SceneSetup();
+        m_ssetup->Compile(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)"
+                          " addlight 0.0 position (8 2 6) color #ffff"
+                          " custom setmesh \"sc#fff ab 1\"");
+        m_ssetup->Startup();
 
         //stream update
         m_stream_update_time = 2.0f;
@@ -433,14 +433,30 @@ public:
             int o = 1;
             while (o-- > 0)
             {
-                if (m_mesh_id == m_meshes.Count() - 1)
-                    m_mesh_id++;
-                //Create a new mesh
-                EasyMesh* em = new EasyMesh();
-                if (em->Compile(mesh.C()))
-                    m_meshes.Push(em);
-                else
-                    delete(em);
+                SceneSetup* new_ssetup = new SceneSetup();
+                if (new_ssetup->Compile(mesh.C()))
+                {
+                    delete(m_ssetup);
+                    m_ssetup = new_ssetup;
+                    m_ssetup->Startup();
+                    for (int i = 0; i < m_ssetup->m_custom_cmd.Count(); ++i)
+                    {
+                        if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
+                        {
+                            //Create a new mesh
+                            EasyMesh* em = new EasyMesh();
+                            if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
+                            {
+                                if (m_mesh_id == m_meshes.Count() - 1)
+                                    m_mesh_id++;
+                                m_meshes.Push(em);
+                            }
+                            else
+                                delete(em);
+                        }
+                    }
+                    m_ssetup->m_custom_cmd.Empty();
+                }
             }
         }
 
@@ -448,7 +464,7 @@ public:
         if (m_stream_update_time > .0f)
         {
             m_stream_update_time = -1.f;
-            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
+//            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
@@ -467,30 +483,13 @@ public:
             String cmd = f.ReadString();
             f.Close();
 
-            /*
-            for (int i = 0; i < cmd.Count() - 1; i++)
-            {
-                if (cmd[i] == '/' && cmd[i + 1] == '/')
-                {
-                    int j = i;
-                    for (; j < cmd.Count(); j++)
-                    {
-                        if (cmd[j] == '\r' || cmd[j] == '\n')
-                            break;
-                    }
-                    String new_cmd = cmd.Sub(0, i);
-                    if (j < cmd.Count())
-                        new_cmd += cmd.Sub(j, cmd.Count() - j);
-                    cmd = new_cmd;
-                    i--;
-                }
-            }
-            */
-
             if (cmd.Count()
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
                 m_cmdlist << cmd;
+                cmd = String(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
+                               addlight 0.0 position (8 2 6) color #ffff \
+                               custom setmesh \"") + cmd + "\"";
                 MessageService::Send(MessageBucket::AppIn, cmd);
             }
         }
@@ -582,7 +581,7 @@ public:
     }
 
 private:
-    Array<Light *>      m_lights;
+    SceneSetup*         m_ssetup;
     byte                m_input_usage;
     Controller*         m_controller;
     mat4                m_mat;
@@ -619,8 +618,6 @@ private:
     Array<String>       m_cmdlist;
     float               m_stream_update_time;
     float               m_stream_update_timer;
-
-    Shader *            m_test_shader;
 
     //misc datas
     Shader *            m_texture_shader;
