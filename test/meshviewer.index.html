@@ -125,21 +125,27 @@ function machinchose() { return 'test machin '; }
     function GetiFrameDivEmbed()    { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetDivEmbed()); }
     function GetiFrameModuleVar()   { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetEmbedModule()); }
     function IsUsingNaCl()          { return window.chrome; }
-    function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
 </script>
 
 <script src="./utils.js"></script>
-<script src="./progress_status.js"></script>
-<script src="./type_dictionnary.js"></script>
+<script src="./progressstatus.js"></script>
 <script type="text/javascript">
-    CodeDictionnary[0] = new TypeDictionnary("EasyMesh");
-</script>
-<script src="./easy_mesh_dictionnary.js"></script>
-<script type="text/javascript">
+    //Used by typedictionnary.js
+    function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
     g_code_id = 1;
-    CodeDictionnary[1] = new TypeDictionnary("EasyMesh");
+</script>
+<script src="./typedictionnary.js"></script>
+<!-- Init Scene setup dictionnary -->
+<script type="text/javascript">
+    CodeDictionnary[g_code_id--] = new TypeDictionnary("SceneSetup");
 </script>
 <script src="./scenesetup.js"></script>
+<!-- Init Easy mesh dictionnary -->
+<script type="text/javascript">
+    CodeDictionnary[g_code_id] = new TypeDictionnary("EasyMesh");
+</script>
+<script src="./easymeshdictionnary.js"></script>
+<!-- Revert datas to normal -->
 <script type="text/javascript">
     g_code_id = 0;
 </script>
@@ -202,11 +208,11 @@ function machinchose() { return 'test machin '; }
         //NaCl Specific
         if (IsUsingNaCl())
         {
-            DynLoadFile("nacl_loading.js");
-            g_frame_embed.src = 'meshviewer_nacl.html';
+            DynLoadFile("naclloading.js");
+            g_frame_embed.src = 'meshviewer.nacl.html';
         }
         else
-            g_frame_embed.src = 'meshviewer_em.html';
+            g_frame_embed.src = 'meshviewer.em.html';
 
         g_frame_embed.onload = function() { VarInit(); }
 

@@ -1,7 +1,6 @@
 //-------------------------------------------------------------------------
 //Command vars operations
 //-------------------------------------------------------------------------
-CmdVar("[ ]", ["Opens a new context,\nevery operations between the braces\nwill only be done to the vertices added\nsince the start of this context."]);
 CmdVar("float", ["Fraction value", "0.0"]);
 CmdVar("int", ["No decimal value", "0"]);
 CmdVar("bool", ["Boolean value", "true/false", "1/0"]);
