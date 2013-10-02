@@ -26,7 +26,7 @@ namespace lol
 #if EMSCRIPTEN
 extern "C"
 {
-    int C_Send(const char* message) { return (int)MessageService::Send(MessageBucket::In, message); }
+    int C_Send(const char* message) { return (int)MessageService::Send(MessageBucket::AppIn, message); }
     //NOT IMPLEMENTED
     //bool C_FetchFirst(String& message);
 }
