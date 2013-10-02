@@ -53,11 +53,18 @@ class TimerData
 private:
     TimerData()
     {
+        Init();
         (void)GetSeconds(true);
     }
 
 #if __linux__ || __native_client__ || __APPLE__ \
  || (HAVE_GETTIMEOFDAY && HAVE_USLEEP)
+    inline void Init()
+    {
+        m_tv.tv_usec = 0;
+        m_tv.tv_sec = 0;
+    }
+
     float GetSeconds(bool reset)
     {
         struct timeval tv, tv0 = m_tv;
@@ -76,6 +83,11 @@ private:
     struct timeval m_tv;
 
 #elif _WIN32
+    inline void Init()
+    {
+        m_cycles.QuadPart = 0;
+    }
+
     float GetSeconds(bool reset)
     {
         static float secs_per_cycle = GetSecondsPerCycle();
@@ -102,6 +114,11 @@ private:
     LARGE_INTEGER m_cycles;
 
 #elif __CELLOS_LV2__
+    inline void Init()
+    {
+        m_cycles = 0;
+    }
+
     float GetSeconds(bool reset)
     {
         static float secs_per_cycle = GetSecondsPerCycle();
@@ -126,6 +143,11 @@ private:
     uint64_t m_cycles;
 
 #else
+    inline void Init()
+    {
+        m_ticks = 0;
+    }
+
     float GetSeconds(bool reset)
     {
         static bool initialised = Init();

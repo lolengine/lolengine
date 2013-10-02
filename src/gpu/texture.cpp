@@ -250,16 +250,26 @@ void Texture::SetMagFiltering(TextureMagFilter filter)
     // In DirectX, texture filtering is a per-texture-unit state
     switch (filter)
     {
-    case TextureMagFilter::NEAREST_TEXEL: m_data->m_mag_filter = D3DTEXF_POINT; break;
-    case TextureMagFilter::LINEAR_TEXEL: m_data->m_mag_filter = D3DTEXF_LINEAR; break;
+        case TextureMagFilter::LINEAR_TEXEL:
+            m_data->m_mag_filter = D3DTEXF_LINEAR;
+            break;
+        case TextureMagFilter::NEAREST_TEXEL:
+        default:
+            m_data->m_mag_filter = D3DTEXF_POINT;
+            break;
     }
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     GLenum gl_filter;
     switch (filter)
     {
-    case TextureMagFilter::NEAREST_TEXEL: gl_filter = GL_NEAREST; break;
-    case TextureMagFilter::LINEAR_TEXEL: gl_filter = GL_LINEAR; break;
+        case TextureMagFilter::LINEAR_TEXEL:
+            gl_filter = GL_LINEAR;
+            break;
+        case TextureMagFilter::NEAREST_TEXEL:
+        default:
+            gl_filter = GL_NEAREST;
+            break;
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter);
 #endif
@@ -273,12 +283,25 @@ void Texture::SetMinFiltering(TextureMinFilter filter)
     m_data->m_min_filter = x; m_data->m_mip_filter = y;
     switch (filter)
     {
-    case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
-    case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_NONE); break;
-    case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_POINT); break;
-    case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_POINT); break;
-    case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_POINT, D3DTEXF_LINEAR); break;
-    case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: F(D3DTEXF_LINEAR, D3DTEXF_LINEAR); break;
+        case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP:
+            F(D3DTEXF_POINT, D3DTEXF_NONE);
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP:
+            F(D3DTEXF_POINT, D3DTEXF_POINT);
+            break;
+        case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP:
+            F(D3DTEXF_LINEAR, D3DTEXF_POINT);
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP:
+            F(D3DTEXF_POINT, D3DTEXF_LINEAR);
+            break;
+        case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP:
+            F(D3DTEXF_LINEAR, D3DTEXF_LINEAR);
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP:
+        default:
+            F(D3DTEXF_POINT, D3DTEXF_NONE);
+            break;
     }
 #undef F
 
@@ -287,12 +310,25 @@ void Texture::SetMinFiltering(TextureMinFilter filter)
     GLenum gl_filter;
     switch (filter)
     {
-    case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP: gl_filter = GL_NEAREST; break;
-    case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP: gl_filter = GL_LINEAR; break;
-    case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_NEAREST; break;
-    case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP: gl_filter = GL_NEAREST_MIPMAP_LINEAR; break;
-    case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_NEAREST; break;
-    case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP: gl_filter = GL_LINEAR_MIPMAP_LINEAR; break;
+        case TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP:
+            gl_filter = GL_LINEAR;
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_NEAREST_MIPMAP:
+            gl_filter = GL_NEAREST_MIPMAP_NEAREST;
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_LINEAR_MIPMAP:
+            gl_filter = GL_NEAREST_MIPMAP_LINEAR;
+            break;
+        case TextureMinFilter::LINEAR_TEXEL_NEAREST_MIPMAP:
+            gl_filter = GL_LINEAR_MIPMAP_NEAREST;
+            break;
+        case TextureMinFilter::LINEAR_TEXEL_LINEAR_MIPMAP:
+            gl_filter = GL_LINEAR_MIPMAP_LINEAR;
+            break;
+        case TextureMinFilter::NEAREST_TEXEL_NO_MIPMAP:
+        default:
+            gl_filter = GL_NEAREST;
+            break;
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter);
 #endif

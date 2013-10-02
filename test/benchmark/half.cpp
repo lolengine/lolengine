@@ -40,26 +40,27 @@ void bench_half(int mode)
                 ph[i] = half::makebits(rand<uint16_t>());
             break;
         case 2:
+        default:
             for (size_t i = 0; i < HALF_TABLE_SIZE + 1; i++)
                 ph[i] = rand(-2.0f, 2.0f);
             break;
         }
 
-        /* Copy float */
-        timer.Get();
-        for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
-            pf[i] = pf[i + 1];
-        result[0] += timer.Get();
-
         /* Convert half to float (array) */
         timer.Get();
         half::convert(pf, ph, HALF_TABLE_SIZE);
-        result[1] += timer.Get();
+        result[0] += timer.Get();
 
         /* Convert half to float (fast) */
         timer.Get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = (float)ph[i];
+        result[1] += timer.Get();
+
+        /* Copy float */
+        timer.Get();
+        for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
+            pf[i] = pf[i + 1];
         result[2] += timer.Get();
 
         /* Add a half to every float */
@@ -111,9 +112,9 @@ void bench_half(int mode)
         result[i] *= 1e9f / (HALF_TABLE_SIZE * HALF_RUNS);
 
     Log::Info("                          ns/elem\n");
-    Log::Info("float = float            %7.3f\n", result[0]);
-    Log::Info("float = half (array)     %7.3f\n", result[1]);
-    Log::Info("float = half (fast)      %7.3f\n", result[2]);
+    Log::Info("float = half (array)     %7.3f\n", result[0]);
+    Log::Info("float = half (fast)      %7.3f\n", result[1]);
+    Log::Info("float = float            %7.3f\n", result[2]);
     Log::Info("float += half            %7.3f\n", result[3]);
     Log::Info("half = half              %7.3f\n", result[4]);
     Log::Info("half = -half             %7.3f\n", result[5]);
