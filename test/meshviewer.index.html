@@ -127,21 +127,22 @@ function machinchose() { return 'test machin '; }
     function IsUsingNaCl()          { return window.chrome; }
 </script>
 
-<script src="./javascript/utils.js"></script>
-<script src="./javascript/progressstatus.js"></script>
+<script src="../javascript/utils.js"></script>
+<script src="../javascript/progressstatus.js"></script>
 <script type="text/javascript">
     //Used by typedictionnary.js
     function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
     g_code_id = 1;
 </script>
-<script src="./javascript/typedictionnary.js"></script>
+<script src="../javascript/typedictionnary.js"></script>
 <!-- Init Scene setup dictionnary -->
 <script type="text/javascript">
-    CodeDictionnary[g_code_id--] = new TypeDictionnary("SceneSetup");
+    CodeDictionnary[g_code_id] = new TypeDictionnary("SceneSetup");
 </script>
 <script src="./scenesetupdictionnary.js"></script>
 <!-- Init Easy mesh dictionnary -->
 <script type="text/javascript">
+    g_code_id--;
     CodeDictionnary[g_code_id] = new TypeDictionnary("EasyMesh");
 </script>
 <script src="./easymeshdictionnary.js"></script>
@@ -208,7 +209,7 @@ function machinchose() { return 'test machin '; }
         //NaCl Specific
         if (IsUsingNaCl())
         {
-            DynLoadFile("./javascript/naclloading.js");
+            DynLoadFile("../javascript/naclloading.js");
             g_frame_embed.src = 'meshviewer.nacl.html';
         }
         else
@@ -291,10 +292,10 @@ function machinchose() { return 'test machin '; }
 <table border="0" cellpadding="0" cellspacing="0" width="772">
     <tr>
         <td align="left">
-            <div><button onclick="SendMessageToModule()">Send Mesh Command !</button></div>
+            <div><button onclick="SendMessageToModule()">Send Mesh Command</button></div>
         </td>
         <td align="right">
-            <div><button onclick="ExchangeSetup()">Edit Scene Setup.</button></div>
+            <div><button onclick="ExchangeSetup()">Edit Scene Setup</button></div>
         </td>
     </tr>
 </table>
