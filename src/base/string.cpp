@@ -46,20 +46,18 @@ String String::Printf(char const *format, va_list ap)
 
     String ret;
 
-    /* Visual Studio 2010 does not support it va_copy. */
-#if defined _MSC_VER
-#   undef va_copy
-#   define va_copy(dst, src) (dst = src)
-#endif
     va_list ap2;
+#if !defined _MSC_VER
+    /* Visual Studio 2010 does not support va_copy. */
     va_copy(ap2, ap);
-#if defined _MSC_VER
-#   undef va_copy
+#else
+    ap2 = ap;
 #endif
 
     /* vsnprintf() tells us how many character we need, and we need to
      * add one for the terminating null byte. */
     size_t needed = vsnprintf(nullptr, 0, format, ap2) + 1;
+    va_end(ap2);
 
     ((Super &)ret).Reserve(needed);
     ret.m_count = needed;
