@@ -39,7 +39,7 @@ public:
     bool Shutdown(bool destroy=false);
 
     //--
-    int GetLightNb() { m_lights.Count(); }
+    int GetLightNb() { return m_lights.Count(); }
 
 //private:
     Array<Light *>          m_lights;
