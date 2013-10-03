@@ -65,7 +65,7 @@ meshviewer_SOURCES = meshviewer.cpp \
     generated/scenesetup-parser.cpp
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPS@
-meshviewer_LDFLAGS = $(AM_LDFLAGS) -s
+meshviewer_LDFLAGS = $(AM_LDFLAGS)
 if USE_EMSCRIPTEN
 meshviewer_LDFLAGS += -s EXPORTED_FUNCTIONS="['_main', '_C_Send']"
 endif
