@@ -256,9 +256,11 @@ public:
         m_ssetup->m_lights << new Light();
         m_ssetup->m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
         m_ssetup->m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
+        Ticker::Ref(m_ssetup->m_lights.Last());
         m_ssetup->m_lights << new Light();
         m_ssetup->m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
         m_ssetup->m_lights.Last()->SetColor(vec4(1.f));
+        Ticker::Ref(m_ssetup->m_lights.Last());
         EasyMesh* em = new EasyMesh();
         if (em->Compile("sc#fff ab 1"))
         {
@@ -270,8 +272,8 @@ public:
         m_ssetup->Compile(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)"
                           " addlight 0.0 position (8 2 6) color #ffff"
                           " custom setmesh \"sc#fff ab 1\"");
-#endif //MV_TEST
         m_ssetup->Startup();
+#endif //MV_TEST
     }
 
     virtual void TickGame(float seconds)
@@ -488,7 +490,7 @@ public:
             }
         }
         //Check the custom cmd even if we don't have new messages.
-        for (int i = 0; i < m_ssetup->m_custom_cmd.Count(); ++i)
+        for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.Count(); ++i)
         {
             if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
             {
