@@ -125,6 +125,47 @@ public:
     {
         m_init = false;
         m_first_tick = false;
+
+        // Message Service
+        MessageService::Setup();
+
+        m_ssetup = nullptr;
+        m_camera = nullptr;
+        m_controller = nullptr;
+
+        // Mesh Setup
+        m_render_max = vec2(-.9f, 6.1f);
+        m_mesh_id = 0;
+        m_mesh_id1 = 0.f;
+        m_default_texture = nullptr;
+        m_texture_shader = nullptr;
+        m_texture = nullptr;
+
+        //Camera Setup
+        m_reset_timer = -1.f;
+        m_fov = -100.f;
+        m_fov_mesh = 0.f;
+        m_fov_speed = 0.f;
+        m_zoom = -100.f;
+        m_zoom_mesh = 0.f;
+        m_zoom_speed = 0.f;
+        m_rot = vec2(45.f);
+        m_rot_mesh = vec2::zero;
+        m_rot_speed = vec2::zero;
+        m_pos = vec2::zero;
+        m_pos_mesh = vec2::zero;
+        m_pos_speed = vec2::zero;
+        m_screen_offset = vec2::zero;
+        m_hist_scale = vec2(.13f, .03f);
+        m_hist_scale_mesh = vec2(.0f);
+        m_hist_scale_speed = vec2(.0f);
+
+        m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
+        m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+
+        //stream update
+        m_stream_update_time = 2.0f;
+        m_stream_update_timer = 1.0f;
     }
 
     ~MeshViewer()
@@ -135,8 +176,9 @@ public:
             delete(m_ssetup);
         MessageService::Destroy();
 
-        m_ssetup = nullptr;
+        m_controller = nullptr;
         m_camera = nullptr;
+        m_ssetup = nullptr;
     }
 
 #if NO_NACL_EM
@@ -200,44 +242,12 @@ public:
         }
 #endif //NO_NACL_EM
 
-        // Message Service
-        MessageService::Setup();
-
-        // Mesh Setup
-        m_render_max = vec2(-.9f, 6.1f);
-        m_mesh_id = 0;
-        m_mesh_id1 = 0.f;
-        m_default_texture = NULL;
-
-        //Camera Setup
-        m_reset_timer = -1.f;
-        m_fov = -100.f;
-        m_fov_mesh = 0.f;
-        m_fov_speed = 0.f;
-        m_zoom = -100.f;
-        m_zoom_mesh = 0.f;
-        m_zoom_speed = 0.f;
-        m_rot = vec2(45.f);
-        m_rot_mesh = vec2::zero;
-        m_rot_speed = vec2::zero;
-        m_pos = vec2::zero;
-        m_pos_mesh = vec2::zero;
-        m_pos_speed = vec2::zero;
-        m_screen_offset = vec2::zero;
-        m_hist_scale = vec2(.13f, .03f);
-        m_hist_scale_mesh = vec2(.0f);
-        m_hist_scale_speed = vec2(.0f);
-
-        m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
-        m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
 
         m_camera = new Camera();
         m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
         m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
         m_camera->UseShift(true);
         g_scene->PushCamera(m_camera);
-
-        m_ssetup = nullptr;
 
         //Lights setup
         m_ssetup = new SceneSetup();
@@ -262,10 +272,6 @@ public:
                           " custom setmesh \"sc#fff ab 1\"");
 #endif //MV_TEST
         m_ssetup->Startup();
-
-        //stream update
-        m_stream_update_time = 2.0f;
-        m_stream_update_timer = 1.0f;
     }
 
     virtual void TickGame(float seconds)
@@ -565,7 +571,7 @@ public:
         }
 #endif //NO_NACL_EM
 
-#if NO_NACL_EM
+#if NO_NACL_EM && WITH_TEXTURE
         if (!m_default_texture)
         {
             m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
@@ -628,8 +634,8 @@ public:
 
 private:
     SceneSetup*         m_ssetup;
-    short               m_input_usage;
     Controller*         m_controller;
+    short               m_input_usage;
     mat4                m_mat;
     mat4                m_mat_prev;
     bool                m_init;
@@ -672,7 +678,6 @@ private:
     TileSet *           m_default_texture;
     Texture *           m_texture;
     ShaderUniform       m_texture_uni;
-    Image *             m_image;
 };
 
 //The basic main :
