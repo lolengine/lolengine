@@ -106,8 +106,10 @@ enum MVMouseAxisList
     MSEX_MAX
 };
 
-#define     MAX_KEYS    MSE_MAX
-#define     MAX_AXIS    MSEX_MAX
+#define     MAX_KEYS        MSE_MAX
+#define     MAX_AXIS        MSEX_MAX
+#define     ALL_FEATURES    1
+#define     NO_SC_SETUP     1
 
 enum MessageType
 {
@@ -244,15 +246,14 @@ public:
 
 
         m_camera = new Camera();
-        m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
+        m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3::zero, vec3::axis_y);
         m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
         m_camera->UseShift(true);
         g_scene->PushCamera(m_camera);
 
         //Lights setup
         m_ssetup = new SceneSetup();
-#define MV_TEST 0
-#if MV_TEST
+#if NO_SC_SETUP
         m_ssetup->m_lights << new Light();
         m_ssetup->m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
         m_ssetup->m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
@@ -273,7 +274,7 @@ public:
                           " addlight 0.0 position (8 2 6) color #ffff"
                           " custom setmesh \"sc#fff ab 1\"");
         m_ssetup->Startup();
-#endif //MV_TEST
+#endif //NO_SC_SETUP
     }
 
     virtual void TickGame(float seconds)
@@ -306,6 +307,7 @@ public:
 #endif //NO_NACL_EM
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
+#if ALL_FEATURES
         //Update light position
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
         {
@@ -507,6 +509,7 @@ public:
             }
         }
         m_ssetup->m_custom_cmd.Empty();
+#endif //ALL_FEATURES
 
 #if NACL_EM
         //if (m_stream_update_time > .0f)
@@ -601,6 +604,7 @@ public:
                     m_meshes[i]->MeshConvert();
 #endif //WITH_TEXTURE
                 }
+#if ALL_FEATURES
                 mat4 save_proj = m_camera->GetProjection();
                 float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
 
@@ -630,6 +634,9 @@ public:
                     g_renderer->Clear(ClearMask::Depth);
                 }
                 m_camera->SetProjection(save_proj);
+#else
+                m_meshes[i]->Render(m_mat);
+#endif //ALL_FEATURES
             }
         }
     }
