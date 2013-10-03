@@ -38,6 +38,9 @@ public:
     bool Startup();
     bool Shutdown(bool destroy=false);
 
+    //--
+    int GetLightNb() { m_lights.Count(); }
+
 //private:
     Array<Light *>          m_lights;
     Array<String, String>   m_custom_cmd;

@@ -481,10 +481,13 @@ public:
                 SceneSetup* new_ssetup = new SceneSetup();
                 if (new_ssetup->Compile(mesh.C()))
                 {
-                    if (m_ssetup)
-                        delete(m_ssetup);
-                    m_ssetup = new_ssetup;
-                    m_ssetup->Startup();
+                    if (new_ssetup->GetLightNb())
+                    {
+                        if (m_ssetup)
+                            delete(m_ssetup);
+                        m_ssetup = new_ssetup;
+                        m_ssetup->Startup();
+                    }
                     m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
                 }
                 else
@@ -524,7 +527,7 @@ public:
 //            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
         //}
-#elif WIN32 && 0
+#elif WIN32
         //--
         //File management
         //--
@@ -542,11 +545,6 @@ public:
                  && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
             {
                 m_cmdlist << cmd;
-                /*
-                cmd = String(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
-                               addlight 0.0 position (8 2 6) color #ffff \
-                               custom setmesh \"") + cmd + "\"";
-                               */
                 MessageService::Send(MessageBucket::AppIn, cmd);
             }
         }
