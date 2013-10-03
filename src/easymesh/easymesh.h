@@ -102,9 +102,12 @@ public:
     DefaultShaderData(DebugRenderMode render_mode);
     DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV);
     virtual ~DefaultShaderData() {}
+    void StoreUniformNames();
     //---
     void SetupDefaultData(bool with_UV);
     virtual void SetupShaderDatas(mat4 const &model);
+    //--
+    Array<String>   m_uniform_names;
 };
 
 class GpuEasyMeshData

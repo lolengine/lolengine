@@ -107,6 +107,7 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
         m_vert_decl_flags |= (1 << VertexUsage::TexCoord);
         with_UV = true;
     }
+    StoreUniformNames();
     SetupDefaultData(with_UV);
 }
 
@@ -114,19 +115,27 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
 DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV)
     : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
 {
+    StoreUniformNames();
     SetupDefaultData(with_UV);
+}
+
+//-----------------------------------------------------------------------------
+void DefaultShaderData::StoreUniformNames()
+{
+    m_uniform_names << String("u_Lights");
+    m_uniform_names << String("in_ModelView");
+    m_uniform_names << String("in_View");
+    m_uniform_names << String("in_Inv_View");
+    m_uniform_names << String("in_Proj");
+    m_uniform_names << String("in_NormalMat");
+    m_uniform_names << String("in_Damage");
 }
 
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupDefaultData(bool with_UV)
 {
-    AddUniform("in_ModelView");
-    AddUniform("in_View");
-    AddUniform("in_Inv_View");
-    AddUniform("in_Proj");
-    AddUniform("in_NormalMat");
-    AddUniform("in_Damage");
-    AddUniform("u_Lights");
+    for (int i = 0; i < m_uniform_names.Count(); i++)
+        AddUniform(m_uniform_names[i].C());
 }
 
 //-----------------------------------------------------------------------------
@@ -136,26 +145,27 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     mat4 view = g_scene->GetCamera()->GetView();
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
-
     /* FIXME: this should be hidden in the shader */
+    Array<Light *> const &lights = g_scene->GetLights();
+    Array<vec4> light_data;
+    //This is not very nice, but necessary for emscripten WebGL generation.
+    float f = 0.f;
+    int i = 0;
+
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
-    Array<Light *> const lights = g_scene->GetLights();
-    Array<vec4> light_data;
     for (int i = 0; i < lights.Count(); ++i)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();
     while (light_data.Count() < 8)
         light_data << vec4::zero << vec4::zero;
-    m_shader->SetUniform(*GetUniform("u_Lights"), light_data);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), light_data);
 
-    m_shader->SetUniform(*GetUniform("in_ModelView"), modelview);
-    m_shader->SetUniform(*GetUniform("in_View"), view);
-    m_shader->SetUniform(*GetUniform("in_Inv_View"), inverse(view));
-    m_shader->SetUniform(*GetUniform("in_Proj"), proj);
-    m_shader->SetUniform(*GetUniform("in_NormalMat"), normalmat);
-    //This is not very nice, but necessary for emscripten WebGL generation.
-    float f = 0.f;
-    m_shader->SetUniform(*GetUniform("in_Damage"), f);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), modelview);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), view);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), inverse(view));
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), proj);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), normalmat);
+    m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), f);
 }
 
 //-----------------------------------------------------------------------------
