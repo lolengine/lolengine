@@ -124,6 +124,7 @@ public:
       : m_file_name(file_name)
     {
         m_init = false;
+        m_first_tick = false;
     }
 
     ~MeshViewer()
@@ -236,11 +237,30 @@ public:
         m_camera->UseShift(true);
         g_scene->PushCamera(m_camera);
 
+        m_ssetup = nullptr;
+
         //Lights setup
         m_ssetup = new SceneSetup();
+#define MV_TEST 0
+#if MV_TEST
+        m_ssetup->m_lights << new Light();
+        m_ssetup->m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
+        m_ssetup->m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
+        m_ssetup->m_lights << new Light();
+        m_ssetup->m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
+        m_ssetup->m_lights.Last()->SetColor(vec4(1.f));
+        EasyMesh* em = new EasyMesh();
+        if (em->Compile("sc#fff ab 1"))
+        {
+            if (m_mesh_id == m_meshes.Count() - 1)
+                m_mesh_id++;
+            m_meshes.Push(em);
+        }
+#else
         m_ssetup->Compile(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)"
                           " addlight 0.0 position (8 2 6) color #ffff"
                           " custom setmesh \"sc#fff ab 1\"");
+#endif //MV_TEST
         m_ssetup->Startup();
 
         //stream update
@@ -260,6 +280,8 @@ public:
 
         if (!m_init)
             return;
+
+        m_first_tick = true;
 
         //TODO : This should probably be "standard LoL behaviour"
 #if NO_NACL_EM
@@ -449,45 +471,49 @@ public:
                 SceneSetup* new_ssetup = new SceneSetup();
                 if (new_ssetup->Compile(mesh.C()))
                 {
-                    delete(m_ssetup);
+                    if (m_ssetup)
+                        delete(m_ssetup);
                     m_ssetup = new_ssetup;
                     m_ssetup->Startup();
                     m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
-                    for (int i = 0; i < m_ssetup->m_custom_cmd.Count(); ++i)
-                    {
-                        if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
-                        {
-                            //Create a new mesh
-                            EasyMesh* em = new EasyMesh();
-                            if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
-                            {
-                                if (m_mesh_id == m_meshes.Count() - 1)
-                                    m_mesh_id++;
-                                m_meshes.Push(em);
-                            }
-                            else
-                                delete(em);
-                        }
-                    }
-                    m_ssetup->m_custom_cmd.Empty();
                 }
+                else
+                    delete(new_ssetup);
             }
         }
+        //Check the custom cmd even if we don't have new messages.
+        for (int i = 0; i < m_ssetup->m_custom_cmd.Count(); ++i)
+        {
+            if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
+            {
+                //Create a new mesh
+                EasyMesh* em = new EasyMesh();
+                if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
+                {
+                    if (m_mesh_id == m_meshes.Count() - 1)
+                        m_mesh_id++;
+                    m_meshes.Push(em);
+                }
+                else
+                    delete(em);
+            }
+        }
+        m_ssetup->m_custom_cmd.Empty();
 
 #if NACL_EM
-        if (m_stream_update_time > .0f)
-        {
-            m_stream_update_time = -1.f;
-            MessageService::Send(MessageBucket::AppIn,
-                             " addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
-                               addlight 0.0 position (8 2 6) color #ffff \
-                               custom setmesh \"[sc#f8f ab 1]\"");
+        //if (m_stream_update_time > .0f)
+        //{
+        //    m_stream_update_time = -1.f;
+        //    MessageService::Send(MessageBucket::AppIn,
+        //                     " addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
+        //                       addlight 0.0 position (8 2 6) color #ffff \
+        //                       custom setmesh \"[sc#f8f ab 1]\"");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
-        }
-#elif WIN32
+        //}
+#elif WIN32 && 0
         //--
         //File management
         //--
@@ -520,7 +546,7 @@ public:
     {
         WorldEntity::TickDraw(seconds);
 
-        if (!m_init)
+        if (!m_init || !m_first_tick)
             return;
 
         //TODO : This should probably be "standard LoL behaviour"
@@ -607,6 +633,7 @@ private:
     mat4                m_mat;
     mat4                m_mat_prev;
     bool                m_init;
+    bool                m_first_tick;
 
     //Camera Setup
     Camera *            m_camera;
