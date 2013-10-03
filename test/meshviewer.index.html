@@ -104,12 +104,13 @@ progress::-webkit-progress-value
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
     g_embed_module          = null;
 
-    var g_mesh_code_base    = [];
+    var g_code_addin        = ['custom setmesh "#CODE#"', ''];
+    var g_code_base         = [];
     var CodeDictionnary     = [];
 
     g_code_id               = 0;
-    g_mesh_code_base[0]     = "//This is a comment\nsc#f8f afcb 1 1 1 0";
-    g_mesh_code_base[1]     = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff";
+    g_code_base[0]     = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+    g_code_base[1]     = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff";
     
 function machinchose() { return 'test machin '; }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
@@ -179,7 +180,7 @@ function machinchose() { return 'test machin '; }
 
         //Put here any cookie update
         if (!g_txtarea_code_src.value)
-            g_txtarea_code_src.value = g_mesh_code_base[g_code_id];
+            g_txtarea_code_src.value = g_code_base[g_code_id];
 
         //Fill the TOC
         if (!g_div_alphabet.innerHTML)
@@ -234,7 +235,7 @@ function machinchose() { return 'test machin '; }
 
     function StoreTextAreaValue()
     {
-        g_mesh_code_base[g_code_id] = GetTextAreaCodeSrc().value;
+        g_code_base[g_code_id] = GetTextAreaCodeSrc().value;
     }
 
     function ExchangeSetup()
@@ -246,7 +247,7 @@ function machinchose() { return 'test machin '; }
 
     function InitEditValues()
     {
-        GetTextAreaCodeSrc().value = g_mesh_code_base[g_code_id];
+        GetTextAreaCodeSrc().value = g_code_base[g_code_id];
         g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[' + CodeDictionnary[g_code_id].m_alphabet + ']&nbsp;<br>&nbsp;';
     }
 
@@ -260,8 +261,7 @@ function machinchose() { return 'test machin '; }
     function SendMessageToModule()
     {
         StoreTextAreaValue();
-        var message = g_mesh_code_base[1] + ' \n';
-        message += ' custom setmesh "' + g_mesh_code_base[0] + '"';
+        var message = g_code_addin[g_code_id].Replace('#CODE#', g_code_base[g_code_id]);
         if (g_embed_module)
             g_embed_module.SendMessage(message);
         else
@@ -292,10 +292,10 @@ function machinchose() { return 'test machin '; }
 <table border="0" cellpadding="0" cellspacing="0" width="772">
     <tr>
         <td align="left">
-            <div><button onclick="SendMessageToModule()">Send Mesh Command</button></div>
+            <div><button onclick="SendMessageToModule()">Update program</button></div>
         </td>
         <td align="right">
-            <div><button onclick="ExchangeSetup()">Edit Scene Setup</button></div>
+            <div><button onclick="ExchangeSetup()">Change edit data</button></div>
         </td>
     </tr>
 </table>
