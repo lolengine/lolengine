@@ -51,7 +51,8 @@ bool SceneSetup::Startup()
 bool SceneSetup::Shutdown(bool destroy)
 {
     for (int i = 0; i < m_lights.Count(); i++)
-        Ticker::Unref(m_lights[i]);
+        if (m_lights[i]->IsTicked())
+            Ticker::Unref(m_lights[i]);
 
     if (destroy)
         m_lights.Empty();

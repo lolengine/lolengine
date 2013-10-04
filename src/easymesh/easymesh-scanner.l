@@ -145,7 +145,7 @@ false { yylval->bval = false; return token::BOOLEAN; }
         yylval->ival = std::atoi(yytext); return token::I_NUMBER; }
 
 %{ /* ======= COMMENTS ======= */ %}
-"//"[^\n\r]*[\n\r] { /* ignore this */ }
+"//".* { /* ignore this */ }
 
 %{ /* Semantics tokens */ %}
 "-"   { return token_type('-'); }

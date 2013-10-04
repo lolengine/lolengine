@@ -50,11 +50,12 @@ class Entity
 public:
     virtual char const *GetName();
 
+    inline bool IsTicked() { return !!m_ref && !m_autorelease; }
 protected:
     Entity();
     virtual ~Entity();
 
-    inline int IsDestroying() { return m_destroy; }
+    inline int  IsDestroying() { return m_destroy; }
 
     virtual void InitGame();
     virtual void InitDraw();

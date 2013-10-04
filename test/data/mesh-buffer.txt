@@ -1,12 +1,11 @@
+//addlight 0.0 position (0.6 0.5 1) color #ddf 
 addlight 0.0 position (-0.2 -1 -0.5) color (.0 .2 .5 1)
-addlight 0.0 position (0.6 0.5 1) color #ddd
 
-custom setmesh "
-sc#fff ab 4 ty 4 ab 2
-
+custom setmesh "sc#fff ab 2 ty 1.5 ab 2"
 //splt 0 
 //test
 //[sc#f8f ab 1 splt 4 twy 90]
+
 
 // splt 5 twy 90 0 
 //[sc#f8f afcb 10 10 10 .25 tx 0 splt 4 twy 1.6 0 ]
@@ -50,4 +49,3 @@ sc#fff ab 4 ty 4 ab 2
 //[sc#fff afcb 10 10 10 .25 t 2 2 2 csgs]
 //[sc#fff afcb 7 7 7 .25]
 //[sc#ff2 afcb 7 7 7 .25 t 1 1 1 csgs]
-"
