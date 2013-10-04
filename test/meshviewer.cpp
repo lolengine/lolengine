@@ -119,6 +119,18 @@ enum MessageType
     MSG_MAX
 };
 
+struct LightData
+{
+    LightData(vec3 pos, vec4 col)
+    {
+        m_pos = pos;
+        m_col = col;
+    }
+
+    vec3 m_pos;
+    vec4 m_col;
+};
+
 class MeshViewer : public WorldEntity
 {
 public:
@@ -275,6 +287,12 @@ public:
 //                          " custom setmesh \"sc#fff ab 1\""
         m_ssetup->Startup();
 #endif //NO_SC_SETUP
+        for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+        {
+            m_light_datas << LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+            m_ssetup->m_lights[i]->SetPosition(vec4(vec3::zero, m_ssetup->m_lights[i]->GetPosition().w));
+            m_ssetup->m_lights[i]->SetColor(vec4::zero);
+        }
     }
 
     virtual void TickGame(float seconds)
@@ -308,11 +326,18 @@ public:
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
 #if ALL_FEATURES
-        //Update light position
+
+        //Update light position & damping
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
         {
-            vec4 v = m_ssetup->m_lights[i]->GetPosition();
-            m_ssetup->m_lights[i]->SetPosition(vec4((m_mat * inverse(m_mat_prev) * vec4(v.xyz, 1.f)).xyz, v.w));
+            vec3 pos = (m_mat * inverse(m_mat_prev) * vec4(m_ssetup->m_lights[i]->GetPosition().xyz, 1.f)).xyz;
+            vec3 tgt = (m_mat * vec4(m_light_datas[i].m_pos, 1.f)).xyz;
+
+            vec3 new_pos = damp(pos, tgt, .3f, seconds);
+            vec4 new_col = damp(m_ssetup->m_lights[i]->GetColor(), m_light_datas[i].m_col, .3f, seconds);
+
+            m_ssetup->m_lights[i]->SetPosition(vec4(new_pos, m_ssetup->m_lights[i]->GetPosition().w));
+            m_ssetup->m_lights[i]->SetColor(new_col);
         }
 
         //Camera update
@@ -481,11 +506,39 @@ public:
                 SceneSetup* new_ssetup = new SceneSetup();
                 if (new_ssetup->Compile(mesh.C()) && new_ssetup->GetLightNb())
                 {
+                    //Store current light datas, in World
+                    Array<LightData> light_datas;
+                    for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+                        light_datas << LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+
                     if (m_ssetup)
                         delete(m_ssetup);
                     m_ssetup = new_ssetup;
                     m_ssetup->Startup();
-                    m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
+
+                    //Restore all light datas so blend can occur
+                    mat4 light_mat = m_mat * inverse(mat4(quat::fromeuler_xyz(vec3::zero)));
+                    for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+                    {
+                        //Store local dst in current m_ld
+                        LightData tmp = LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+                        if (i < m_light_datas.Count())
+                            m_light_datas[i] = tmp;
+                        else
+                            m_light_datas << tmp;
+
+                        vec3 loc = vec3::zero;
+                        vec4 col = vec4::zero;
+                        if (i < light_datas.Count())
+                        {
+                            loc = light_datas[i].m_pos;
+                            col = light_datas[i].m_col;
+                        }
+
+                        //Restore old light datas in new lights
+                        m_ssetup->m_lights[i]->SetPosition(vec4(loc, m_ssetup->m_lights[i]->GetPosition().w));
+                        m_ssetup->m_lights[i]->SetColor(col);
+                    }
                 }
                 else
                 {
@@ -494,6 +547,7 @@ public:
                 }
             }
         }
+
         //Check the custom cmd even if we don't have new messages.
         for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.Count(); ++i)
         {
@@ -643,6 +697,7 @@ public:
 
 private:
     SceneSetup*         m_ssetup;
+    Array<LightData>    m_light_datas;
     Controller*         m_controller;
     short               m_input_usage;
     mat4                m_mat;
