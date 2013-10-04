@@ -479,19 +479,19 @@ public:
             while (o-- > 0)
             {
                 SceneSetup* new_ssetup = new SceneSetup();
-                if (new_ssetup->Compile(mesh.C()))
+                if (new_ssetup->Compile(mesh.C()) && new_ssetup->GetLightNb())
                 {
-                    if (new_ssetup->GetLightNb())
-                    {
-                        if (m_ssetup)
-                            delete(m_ssetup);
-                        m_ssetup = new_ssetup;
-                        m_ssetup->Startup();
-                    }
+                    if (m_ssetup)
+                        delete(m_ssetup);
+                    m_ssetup = new_ssetup;
+                    m_ssetup->Startup();
                     m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
                 }
                 else
+                {
+                    m_ssetup->m_custom_cmd += new_ssetup->m_custom_cmd;
                     delete(new_ssetup);
+                }
             }
         }
         //Check the custom cmd even if we don't have new messages.

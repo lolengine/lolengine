@@ -96,7 +96,7 @@ false { yylval->bval = false; return token::BOOLEAN; }
         yylval->svval = strdup(yytext); return token::STRING_VAR; }
 
 %{ /* ======= COMMENTS ======= */ %}
-"//"[^\n\r]*[\n\r] { /* ignore this */ }
+"//".* { /* ignore this */ }
 
 %{ /* Semantics tokens */ %}
 "-"   { return token_type('-'); }
