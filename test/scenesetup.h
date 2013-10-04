@@ -41,7 +41,6 @@ public:
     //--
     int GetLightNb() { return m_lights.Count(); }
 
-//private:
     Array<Light *>          m_lights;
     Array<String, String>   m_custom_cmd;
 };
