@@ -109,7 +109,7 @@ enum MVMouseAxisList
 #define     MAX_KEYS        MSE_MAX
 #define     MAX_AXIS        MSEX_MAX
 #define     ALL_FEATURES    1
-#define     NO_SC_SETUP     1
+#define     NO_SC_SETUP     0
 
 enum MessageType
 {
@@ -271,8 +271,8 @@ public:
         }
 #else
         m_ssetup->Compile(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)"
-                          " addlight 0.0 position (8 2 6) color #ffff"
-                          " custom setmesh \"sc#fff ab 1\"");
+                          " addlight 0.0 position (8 2 6) color #ffff");
+//                          " custom setmesh \"sc#fff ab 1\""
         m_ssetup->Startup();
 #endif //NO_SC_SETUP
     }
@@ -515,18 +515,20 @@ public:
 #endif //ALL_FEATURES
 
 #if NACL_EM
-        //if (m_stream_update_time > .0f)
-        //{
-        //    m_stream_update_time = -1.f;
-        //    MessageService::Send(MessageBucket::AppIn,
-        //                     " addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
-        //                       addlight 0.0 position (8 2 6) color #ffff \
-        //                       custom setmesh \"[sc#f8f ab 1]\"");
+/*
+        if (m_stream_update_time > .0f)
+        {
+            m_stream_update_time = -1.f;
+            MessageService::Send(MessageBucket::AppIn,
+                             " addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) \
+                               addlight 0.0 position (8 2 6) color #ffff \
+                               custom setmesh \"[sc#f8f ab 1]\"");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#f8f ab 1 splt 4 twy 90]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#8ff afcb 1 1 1 0]");
 //            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
-        //}
+        }
+*/
 #elif WIN32
         //--
         //File management

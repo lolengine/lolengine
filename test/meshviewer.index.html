@@ -104,7 +104,7 @@ progress::-webkit-progress-value
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
     g_embed_module          = null;
 
-    var g_code_addin        = ['custom setmesh "#CODE#"', ''];
+    var g_code_addin        = ['custom setmesh "#CODE#"', '#CODE#'];
     var g_code_base         = [];
     var CodeDictionnary     = [];
 
@@ -261,9 +261,8 @@ function machinchose() { return 'test machin '; }
     function SendMessageToModule()
     {
         StoreTextAreaValue();
-        var message = g_code_addin[g_code_id].Replace('#CODE#', g_code_base[g_code_id]);
         if (g_embed_module)
-            g_embed_module.SendMessage(message);
+            g_embed_module.SendMessage(g_code_addin[g_code_id].replace('#CODE#', g_code_base[g_code_id]));
         else
             alert("Module not loaded !");
     }
