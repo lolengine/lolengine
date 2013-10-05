@@ -787,11 +787,11 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                     //Triangle Kill Test
                     if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
                         (csg_operation == CSGUsage::Union && tri_list[k].m1 == LEAF_BACK) ||
-                        //csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
+                        //csgs : CsgSub() -> m0_Outside + m1_Inside-inverted
                         (csg_operation == CSGUsage::Substract &&
                             ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) ||
                             (mesh_id == 1 && tri_list[k].m1 == LEAF_FRONT))) ||
-                        //csgs : CSGSubstractLoss() -> m0_Outside
+                        //csgs : CsgSubL() -> m0_Outside
                         (csg_operation == CSGUsage::SubstractLoss &&
                             ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) || mesh_id == 1)) ||
                         //csga : CSGAnd() -> m0_Inside + m1_Inside
@@ -801,7 +801,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                     }
 
                     //Triangle Invert Test
-                    if (//csgs : CSGSubstract() -> m0_Outside + m1_Inside-inverted
+                    if (//csgs : CsgSub() -> m0_Outside + m1_Inside-inverted
                         (csg_operation == CSGUsage::Substract && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
                         //csgx : CSGXor() -> m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted
                         (csg_operation == CSGUsage::Xor && tri_list[k].m1 == LEAF_BACK))
@@ -1364,7 +1364,7 @@ void EasyMesh::MirrorY() { DupAndScale(vec3(1, -1, 1)); }
 void EasyMesh::MirrorZ() { DupAndScale(vec3(1, 1, -1)); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::DupAndScale(vec3 const &s)
+void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
 {
     int vlen = m_vert.Count() - m_cursors.Last().m1;
     int tlen = m_indices.Count() - m_cursors.Last().m2;
@@ -1379,6 +1379,14 @@ void EasyMesh::DupAndScale(vec3 const &s)
 
     m_cursors.Last().m1 -= vlen;
     m_cursors.Last().m2 -= tlen;
+
+    if (open_brace)
+    {
+        OpenBrace();
+
+        m_cursors.Last().m1 -= vlen;
+        m_cursors.Last().m2 -= tlen;
+    }
 }
 
 //-----------------------------------------------------------------------------

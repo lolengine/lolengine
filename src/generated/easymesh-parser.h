@@ -116,13 +116,14 @@ namespace lol {
     bool    bval;
     float   vval[4];
     int     ivval[4];
+    char*   lval;
     /* Can't use uin32_t here for some reason */
     unsigned u32val;
 
 
 
 /* Line 34 of lalr1.cc  */
-#line 126 "generated/easymesh-parser.h"
+#line 127 "generated/easymesh-parser.h"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -174,30 +175,31 @@ namespace lol {
      T_RADIALJITTER = 294,
      T_SPLITTRIANGLE = 295,
      T_SMOOTHMESH = 296,
-     T_CSGUNION = 297,
-     T_CSGSUBSTRACT = 298,
-     T_CSGSUBSTRACTLOSS = 299,
-     T_CSGAND = 300,
-     T_CSGXOR = 301,
-     T_CHAMFER = 302,
-     T_CYLINDER = 303,
-     T_BOX = 304,
-     T_SMOOTHCHAMFBOX = 305,
-     T_FLATCHAMFBOX = 306,
-     T_SPHERE = 307,
-     T_CAPSULE = 308,
-     T_STAR = 309,
-     T_EXPANDEDSTAR = 310,
-     T_DISC = 311,
-     T_TRIANGLE = 312,
-     T_QUAD = 313,
-     T_COG = 314,
-     T_TORUS = 315,
-     T_ERROR = 316,
-     F_NUMBER = 317,
-     I_NUMBER = 318,
-     BOOLEAN = 319,
-     COLOR = 320
+     T_DUPLICATE = 297,
+     T_CSGUNION = 298,
+     T_CSGSUBSTRACT = 299,
+     T_CSGSUBSTRACTLOSS = 300,
+     T_CSGAND = 301,
+     T_CSGXOR = 302,
+     T_CHAMFER = 303,
+     T_CYLINDER = 304,
+     T_BOX = 305,
+     T_SMOOTHCHAMFBOX = 306,
+     T_FLATCHAMFBOX = 307,
+     T_SPHERE = 308,
+     T_CAPSULE = 309,
+     T_STAR = 310,
+     T_EXPANDEDSTAR = 311,
+     T_DISC = 312,
+     T_TRIANGLE = 313,
+     T_QUAD = 314,
+     T_COG = 315,
+     T_TORUS = 316,
+     T_ERROR = 317,
+     F_NUMBER = 318,
+     I_NUMBER = 319,
+     BOOLEAN = 320,
+     COLOR = 321
    };
 
     };
@@ -371,7 +373,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 375 "generated/easymesh-parser.h"
+#line 377 "generated/easymesh-parser.h"
 
 
 

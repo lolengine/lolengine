@@ -24,6 +24,7 @@ namespace lol
 //CTor/DTor
 SceneSetup::SceneSetup()
 {
+    m_clear_color = vec4(vec3::zero, 1.f);
 }
 
 //----

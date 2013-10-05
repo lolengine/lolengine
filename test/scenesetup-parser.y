@@ -46,7 +46,7 @@
 
 %token T_COLOR
 
-%token T_ADDLIGHT T_OBJPOSITION T_OBJLOOKAT T_OBJCOLOR
+%token T_ADDLIGHT T_OBJPOSITION T_OBJLOOKAT T_OBJCOLOR T_CLEARCOLOR
 %token T_CUSTOMCMD
 
 %token T_END 0
@@ -128,6 +128,9 @@ setup_command:
                                       vec4 vv = vec4(v) * (1.f / 255.f);
                                       if (uc.m_last_cmd == "ADDLIGHT")
                                         uc.m_sstp.m_lights.Last()->SetColor(vv); }
+  | T_CLEARCOLOR    v4              { uc.m_sstp.m_clear_color = vec4($2[0], $2[1], $2[2], $2[3]); }
+  | T_CLEARCOLOR    COLOR           { uint32_t x = $2; ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                                      uc.m_sstp.m_clear_color = vec4(v) * (1.f / 255.f); }
   ;
 
 custom_command:

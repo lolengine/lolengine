@@ -13,11 +13,11 @@ CmdVar("vec3", ["X/Y/Z as float", "&nbsp;f f f", "(f f f)", "(f)"]);
 //-------------------------------------------------------------------------
 //Mesh CSG operations
 //-------------------------------------------------------------------------
-CmdType(["csgu",  "csgunion"], "Performs a Union operation as (mesh0_Outside + mesh1_Outside)");
-CmdType(["csgs",  "csgsubstract"], "Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted)");
-CmdType(["csgsl", "csgsubstractloss"], "Performs a Substract operation without keeping the mesh1 part");
-CmdType(["csga",  "csgand"], "Performs an And operation as (mesh0_Inside + mesh1_Inside)");
-CmdType(["csgx",  "csgxor"], "Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted)");
+CmdType(["csgu",  "csgunion"], "Performs a Union operation as (mesh0_Outside + mesh1_Outside)", [CmdArg("[ ]", "")]);
+CmdType(["csgs",  "csgsubstract"], "Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted)", [CmdArg("[ ]", "")]);
+CmdType(["csgsl", "csgsubstractloss"], "Performs a Substract operation without keeping the mesh1 part", [CmdArg("[ ]", "")]);
+CmdType(["csga",  "csgand"], "Performs an And operation as (mesh0_Inside + mesh1_Inside)", [CmdArg("[ ]", "")]);
+CmdType(["csgx",  "csgxor"], "Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted)", [CmdArg("[ ]", "")]);
 
 //-------------------------------------------------------------------------
 //Mesh Base operations
@@ -60,6 +60,7 @@ CmdType(["sx",   "scalex"], "Scale vertices", [CmdArg("vec3", "s")]);
 CmdType(["sy",   "scaley"], "Scale vertices", [CmdArg("vec3", "s")]);
 CmdType(["sz",   "scalez"], "Scale vertices", [CmdArg("vec3", "s")]);
 CmdType(["s",    "scale"], "Uniformly Scale vertices", [CmdArg("float", "s")]);
+CmdType(["dup",  "duplicate"], "Duplicate scope mesh and apply commands in the brackets.", [CmdArg("[ ]", "")]);
 CmdType(["mx",   "mirrorx"], "Mirror vertices through X-plane");
 CmdType(["my",   "mirrory"], "Mirror vertices through Y-plane");
 CmdType(["mz",   "mirrorz"], "Mirror vertices through Z-plane");
