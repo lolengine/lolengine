@@ -251,6 +251,7 @@ template <typename T> struct Vec2 : BVec2<T>
 
     LOL_MEMBER_OPS(Vec2, x)
 
+    static const Vec2<T> one;
     static const Vec2<T> zero;
     static const Vec2<T> axis_x;
     static const Vec2<T> axis_y;
@@ -524,6 +525,7 @@ template <typename T> struct Vec3 : BVec3<T>
 
     LOL_MEMBER_OPS(Vec3, x)
 
+    static const Vec3<T> one;
     static const Vec3<T> zero;
     static const Vec3<T> axis_x;
     static const Vec3<T> axis_y;
@@ -946,6 +948,7 @@ template <typename T> struct Vec4 : BVec4<T>
 
     LOL_MEMBER_OPS(Vec4, x)
 
+    static const Vec4<T> one;
     static const Vec4<T> zero;
     static const Vec4<T> axis_x;
     static const Vec4<T> axis_y;

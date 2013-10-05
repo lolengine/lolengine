@@ -142,14 +142,15 @@ namespace lol {
      T_OBJPOSITION = 260,
      T_OBJLOOKAT = 261,
      T_OBJCOLOR = 262,
-     T_CUSTOMCMD = 263,
-     T_ERROR = 264,
-     F_NUMBER = 265,
-     I_NUMBER = 266,
-     STRING = 267,
-     STRING_VAR = 268,
-     BOOLEAN = 269,
-     COLOR = 270
+     T_CLEARCOLOR = 263,
+     T_CUSTOMCMD = 264,
+     T_ERROR = 265,
+     F_NUMBER = 266,
+     I_NUMBER = 267,
+     STRING = 268,
+     STRING_VAR = 269,
+     BOOLEAN = 270,
+     COLOR = 271
    };
 
     };
@@ -323,7 +324,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 327 "generated/scenesetup-parser.h"
+#line 328 "generated/scenesetup-parser.h"
 
 
 

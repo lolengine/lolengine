@@ -488,115 +488,130 @@ namespace lol {
   case 17:
 
 /* Line 677 of lalr1.cc  */
-#line 134 "scenesetup-parser.y"
-    { uc.m_sstp.m_custom_cmd.Push((yysemantic_stack_[(3) - (2)].svval), (yysemantic_stack_[(3) - (3)].sval)); }
+#line 131 "scenesetup-parser.y"
+    { uc.m_sstp.m_clear_color = vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3]); }
     break;
 
   case 18:
 
 /* Line 677 of lalr1.cc  */
-#line 140 "scenesetup-parser.y"
-    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
+#line 132 "scenesetup-parser.y"
+    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val); ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                                      uc.m_sstp.m_clear_color = vec4(v) * (1.f / 255.f); }
     break;
 
   case 19:
 
 /* Line 677 of lalr1.cc  */
-#line 141 "scenesetup-parser.y"
-    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
+#line 137 "scenesetup-parser.y"
+    { uc.m_sstp.m_custom_cmd.Push((yysemantic_stack_[(3) - (2)].svval), (yysemantic_stack_[(3) - (3)].sval)); }
     break;
 
   case 20:
 
 /* Line 677 of lalr1.cc  */
-#line 142 "scenesetup-parser.y"
-    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
+#line 143 "scenesetup-parser.y"
+    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 21:
 
 /* Line 677 of lalr1.cc  */
-#line 143 "scenesetup-parser.y"
-    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
+#line 144 "scenesetup-parser.y"
+    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 22:
 
 /* Line 677 of lalr1.cc  */
-#line 147 "scenesetup-parser.y"
-    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
+#line 145 "scenesetup-parser.y"
+    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 23:
 
 /* Line 677 of lalr1.cc  */
-#line 148 "scenesetup-parser.y"
-    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
+#line 146 "scenesetup-parser.y"
+    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 24:
 
 /* Line 677 of lalr1.cc  */
-#line 149 "scenesetup-parser.y"
-    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
+#line 150 "scenesetup-parser.y"
+    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 25:
 
 /* Line 677 of lalr1.cc  */
-#line 150 "scenesetup-parser.y"
-    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
+#line 151 "scenesetup-parser.y"
+    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 26:
 
 /* Line 677 of lalr1.cc  */
-#line 155 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
+#line 152 "scenesetup-parser.y"
+    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 27:
 
 /* Line 677 of lalr1.cc  */
-#line 156 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
+#line 153 "scenesetup-parser.y"
+    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 28:
 
 /* Line 677 of lalr1.cc  */
-#line 165 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
+#line 158 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 29:
 
 /* Line 677 of lalr1.cc  */
-#line 166 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
+#line 159 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
     break;
 
   case 30:
 
 /* Line 677 of lalr1.cc  */
-#line 177 "scenesetup-parser.y"
-    { (yyval.svval) = (yysemantic_stack_[(1) - (1)].svval); }
+#line 168 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 31:
 
 /* Line 677 of lalr1.cc  */
-#line 181 "scenesetup-parser.y"
+#line 169 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
+    break;
+
+  case 32:
+
+/* Line 677 of lalr1.cc  */
+#line 180 "scenesetup-parser.y"
+    { (yyval.svval) = (yysemantic_stack_[(1) - (1)].svval); }
+    break;
+
+  case 33:
+
+/* Line 677 of lalr1.cc  */
+#line 184 "scenesetup-parser.y"
     { String t = (yysemantic_stack_[(1) - (1)].sval);
                       t.Replace('"', ' ', true);
                       free((yysemantic_stack_[(1) - (1)].sval));
                       (yyval.sval) = strdup((const char *)t.C()); }
     break;
 
-  case 32:
+  case 34:
 
 /* Line 677 of lalr1.cc  */
-#line 185 "scenesetup-parser.y"
+#line 188 "scenesetup-parser.y"
     { String t = (yysemantic_stack_[(2) - (1)].sval);
                       t += (yysemantic_stack_[(2) - (2)].sval);
                       t.Replace('"', ' ', true);
@@ -608,7 +623,7 @@ namespace lol {
 
 
 /* Line 677 of lalr1.cc  */
-#line 612 "generated/scenesetup-parser.cpp"
+#line 627 "generated/scenesetup-parser.cpp"
 	default:
           break;
       }
@@ -813,16 +828,16 @@ namespace lol {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char SceneSetupParser::yypact_ninf_ = -17;
+  const signed char SceneSetupParser::yypact_ninf_ = -18;
   const signed char
   SceneSetupParser::yypact_[] =
   {
-        28,     7,   -12,   -12,    -5,     1,    24,    25,    28,    28,
-     -17,   -17,   -17,   -17,   -17,   -17,    11,   -17,     7,   -17,
-     -17,   -17,     7,   -17,   -17,   -11,   -17,   -17,   -17,   -17,
-     -17,   -17,    11,   -17,   -17,    -7,    -3,   -11,   -17,   -17,
-     -17,   -17,     7,   -17,     7,   -17,    12,     7,   -17,    19,
-     -17
+        30,     8,   -13,   -13,    -6,    -2,     3,     1,    26,    30,
+      30,   -18,   -18,   -18,   -18,   -18,   -18,    12,   -18,     8,
+     -18,   -18,   -18,     8,   -18,   -18,   -18,   -18,    14,   -18,
+     -18,   -18,   -18,   -18,   -18,    12,   -18,   -18,    -8,    -4,
+      14,   -18,   -18,   -18,   -18,     8,   -18,     8,   -18,    13,
+       8,   -18,    21,   -18
   };
 
   /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
@@ -831,28 +846,28 @@ namespace lol {
   const unsigned char
   SceneSetupParser::yydefact_[] =
   {
-         0,    11,     0,     0,     0,     0,     0,     0,     3,     5,
-       6,     8,     9,    10,    18,    20,     0,    12,     0,    13,
-      14,    16,     0,    15,    30,     0,     1,     2,     4,     7,
-      18,    20,     0,    19,    21,     0,     0,    31,    17,    19,
-      21,    26,     0,    28,     0,    32,     0,     0,    27,     0,
-      29
+         0,    11,     0,     0,     0,     0,     0,     0,     0,     3,
+       5,     6,     8,     9,    10,    20,    22,     0,    12,     0,
+      13,    14,    16,     0,    15,    18,    17,    32,     0,     1,
+       2,     4,     7,    20,    22,     0,    21,    23,     0,     0,
+      33,    19,    21,    23,    28,     0,    30,     0,    34,     0,
+       0,    29,     0,    31
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   SceneSetupParser::yypgoto_[] =
   {
-       -17,   -17,    21,   -17,   -17,    29,   -17,   -17,   -17,   -16,
-       8,    36,   -17,   -17,     4
+       -18,   -18,    22,   -18,   -18,    31,   -18,   -18,   -18,   -17,
+       7,    40,    39,   -18,     5
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   SceneSetupParser::yydefgoto_[] =
   {
-        -1,     6,     7,     8,     9,    10,    11,    12,    13,    17,
-      34,    19,    23,    25,    38
+        -1,     7,     8,     9,    10,    11,    12,    13,    14,    18,
+      37,    20,    24,    28,    41
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -862,22 +877,22 @@ namespace lol {
   const unsigned char
   SceneSetupParser::yytable_[] =
   {
-        33,    37,    35,    14,    15,    18,    36,    14,    15,    16,
-      21,    41,    22,    16,    24,    43,    39,    14,    15,    42,
-      44,    30,    31,    16,    26,    27,    46,    32,    47,    28,
-      48,    49,     1,     2,     3,     4,     5,    50,    29,    20,
-      40,    45
+        36,    29,    38,    15,    16,    19,    39,    15,    16,    17,
+      22,    44,    23,    17,    25,    46,    23,    27,    42,    15,
+      16,    45,    47,    33,    34,    17,    30,    40,    49,    35,
+      50,    31,    51,    52,     1,     2,     3,     4,     5,     6,
+      53,    32,    43,    21,    26,    48
   };
 
   /* YYCHECK.  */
   const unsigned char
   SceneSetupParser::yycheck_[] =
   {
-        16,    12,    18,    10,    11,    17,    22,    10,    11,    16,
-      15,    18,    17,    16,    13,    18,    32,    10,    11,    35,
-      36,    10,    11,    16,     0,     0,    42,    16,    44,     8,
-      18,    47,     4,     5,     6,     7,     8,    18,     9,     3,
-      32,    37
+        17,     0,    19,    11,    12,    18,    23,    11,    12,    17,
+      16,    19,    18,    17,    16,    19,    18,    14,    35,    11,
+      12,    38,    39,    11,    12,    17,     0,    13,    45,    17,
+      47,     9,    19,    50,     4,     5,     6,     7,     8,     9,
+      19,    10,    35,     3,     5,    40
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -885,12 +900,12 @@ namespace lol {
   const unsigned char
   SceneSetupParser::yystos_[] =
   {
-         0,     4,     5,     6,     7,     8,    20,    21,    22,    23,
-      24,    25,    26,    27,    10,    11,    16,    28,    17,    30,
-      30,    15,    17,    31,    13,    32,     0,     0,    21,    24,
-      10,    11,    16,    28,    29,    28,    28,    12,    33,    28,
-      29,    18,    28,    18,    28,    33,    28,    28,    18,    28,
-      18
+         0,     4,     5,     6,     7,     8,     9,    21,    22,    23,
+      24,    25,    26,    27,    28,    11,    12,    17,    29,    18,
+      31,    31,    16,    18,    32,    16,    32,    14,    33,     0,
+       0,    22,    25,    11,    12,    17,    29,    30,    29,    29,
+      13,    34,    29,    30,    19,    29,    19,    29,    34,    29,
+      29,    19,    29,    19
   };
 
 #if YYDEBUG
@@ -900,7 +915,7 @@ namespace lol {
   SceneSetupParser::yytoken_number_[] =
   {
          0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,    45,    40,    41
+     265,   266,   267,   268,   269,   270,   271,    45,    40,    41
   };
 #endif
 
@@ -908,10 +923,10 @@ namespace lol {
   const unsigned char
   SceneSetupParser::yyr1_[] =
   {
-         0,    19,    20,    21,    21,    22,    23,    23,    24,    24,
-      24,    25,    25,    26,    26,    26,    26,    27,    28,    28,
-      28,    28,    29,    29,    29,    29,    30,    30,    31,    31,
-      32,    33,    33
+         0,    20,    21,    22,    22,    23,    24,    24,    25,    25,
+      25,    26,    26,    27,    27,    27,    27,    27,    27,    28,
+      29,    29,    29,    29,    30,    30,    30,    30,    31,    31,
+      32,    32,    33,    34,    34
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -919,9 +934,9 @@ namespace lol {
   SceneSetupParser::yyr2_[] =
   {
          0,     2,     2,     1,     2,     1,     1,     2,     1,     1,
-       1,     1,     2,     2,     2,     2,     2,     3,     1,     2,
-       1,     2,     1,     2,     1,     2,     3,     5,     3,     6,
-       1,     1,     2
+       1,     1,     2,     2,     2,     2,     2,     2,     2,     3,
+       1,     2,     1,     2,     1,     2,     1,     2,     3,     5,
+       3,     6,     1,     1,     2
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -931,9 +946,9 @@ namespace lol {
   const SceneSetupParser::yytname_[] =
   {
     "T_END", "error", "$undefined", "T_COLOR", "T_ADDLIGHT",
-  "T_OBJPOSITION", "T_OBJLOOKAT", "T_OBJCOLOR", "T_CUSTOMCMD", "T_ERROR",
-  "F_NUMBER", "I_NUMBER", "STRING", "STRING_VAR", "BOOLEAN", "COLOR",
-  "'-'", "'('", "')'", "$accept", "sstp_description",
+  "T_OBJPOSITION", "T_OBJLOOKAT", "T_OBJCOLOR", "T_CLEARCOLOR",
+  "T_CUSTOMCMD", "T_ERROR", "F_NUMBER", "I_NUMBER", "STRING", "STRING_VAR",
+  "BOOLEAN", "COLOR", "'-'", "'('", "')'", "$accept", "sstp_description",
   "sstp_expression_list", "sstp_expression", "sstp_command_list",
   "sstp_command", "light_command", "setup_command", "custom_command", "fv",
   "iv", "v3", "v4", "svv", "sv", 0
@@ -945,16 +960,16 @@ namespace lol {
   const SceneSetupParser::rhs_number_type
   SceneSetupParser::yyrhs_[] =
   {
-        20,     0,    -1,    21,     0,    -1,    22,    -1,    22,    21,
-      -1,    23,    -1,    24,    -1,    23,    24,    -1,    25,    -1,
-      26,    -1,    27,    -1,     4,    -1,     4,    28,    -1,     5,
-      30,    -1,     6,    30,    -1,     7,    31,    -1,     7,    15,
-      -1,     8,    32,    33,    -1,    10,    -1,    16,    28,    -1,
-      11,    -1,    16,    29,    -1,    11,    -1,    16,    29,    -1,
-      10,    -1,    16,    28,    -1,    17,    28,    18,    -1,    17,
-      28,    28,    28,    18,    -1,    17,    28,    18,    -1,    17,
-      28,    28,    28,    28,    18,    -1,    13,    -1,    12,    -1,
-      12,    33,    -1
+        21,     0,    -1,    22,     0,    -1,    23,    -1,    23,    22,
+      -1,    24,    -1,    25,    -1,    24,    25,    -1,    26,    -1,
+      27,    -1,    28,    -1,     4,    -1,     4,    29,    -1,     5,
+      31,    -1,     6,    31,    -1,     7,    32,    -1,     7,    16,
+      -1,     8,    32,    -1,     8,    16,    -1,     9,    33,    34,
+      -1,    11,    -1,    17,    29,    -1,    12,    -1,    17,    30,
+      -1,    12,    -1,    17,    30,    -1,    11,    -1,    17,    29,
+      -1,    18,    29,    19,    -1,    18,    29,    29,    29,    19,
+      -1,    18,    29,    19,    -1,    18,    29,    29,    29,    29,
+      19,    -1,    14,    -1,    13,    -1,    13,    34,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -963,9 +978,9 @@ namespace lol {
   SceneSetupParser::yyprhs_[] =
   {
          0,     0,     3,     6,     8,    11,    13,    15,    18,    20,
-      22,    24,    26,    29,    32,    35,    38,    41,    45,    47,
-      50,    52,    55,    57,    60,    62,    65,    69,    75,    79,
-      86,    88,    90
+      22,    24,    26,    29,    32,    35,    38,    41,    44,    47,
+      51,    53,    56,    58,    61,    63,    66,    68,    71,    75,
+      81,    85,    92,    94,    96
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
@@ -973,9 +988,9 @@ namespace lol {
   SceneSetupParser::yyrline_[] =
   {
          0,    90,    90,    94,    95,    99,   103,   104,   108,   109,
-     110,   114,   115,   120,   122,   124,   126,   134,   140,   141,
-     142,   143,   147,   148,   149,   150,   155,   156,   165,   166,
-     177,   181,   185
+     110,   114,   115,   120,   122,   124,   126,   131,   132,   137,
+     143,   144,   145,   146,   150,   151,   152,   153,   158,   159,
+     168,   169,   180,   184,   188
   };
 
   // Print the state stack on the debug stream.
@@ -1019,7 +1034,7 @@ namespace lol {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      17,    18,     2,     2,     2,    16,     2,     2,     2,     2,
+      18,    19,     2,     2,     2,    17,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1042,7 +1057,7 @@ namespace lol {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16
     };
     if ((unsigned int) t <= yyuser_token_number_max_)
       return translate_table[t];
@@ -1051,26 +1066,26 @@ namespace lol {
   }
 
   const int SceneSetupParser::yyeof_ = 0;
-  const int SceneSetupParser::yylast_ = 41;
+  const int SceneSetupParser::yylast_ = 45;
   const int SceneSetupParser::yynnts_ = 15;
   const int SceneSetupParser::yyempty_ = -2;
-  const int SceneSetupParser::yyfinal_ = 26;
+  const int SceneSetupParser::yyfinal_ = 29;
   const int SceneSetupParser::yyterror_ = 1;
   const int SceneSetupParser::yyerrcode_ = 256;
-  const int SceneSetupParser::yyntokens_ = 19;
+  const int SceneSetupParser::yyntokens_ = 20;
 
-  const unsigned int SceneSetupParser::yyuser_token_number_max_ = 270;
+  const unsigned int SceneSetupParser::yyuser_token_number_max_ = 271;
   const SceneSetupParser::token_number_type SceneSetupParser::yyundef_token_ = 2;
 
 
 } // lol
 
 /* Line 1053 of lalr1.cc  */
-#line 1070 "generated/scenesetup-parser.cpp"
+#line 1085 "generated/scenesetup-parser.cpp"
 
 
 /* Line 1055 of lalr1.cc  */
-#line 193 "scenesetup-parser.y"
+#line 196 "scenesetup-parser.y"
 
 
 void lol::SceneSetupParser::error(const SceneSetupParser::location_type& l,

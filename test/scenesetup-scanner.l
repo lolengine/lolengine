@@ -51,6 +51,7 @@ addlight            { return token::T_ADDLIGHT;     }
 position            { return token::T_OBJPOSITION;  }
 lookat              { return token::T_OBJLOOKAT;    }
 color               { return token::T_OBJCOLOR;     }
+clearcolor          { return token::T_CLEARCOLOR;   }
 
 custom              { return token::T_CUSTOMCMD;    }
 

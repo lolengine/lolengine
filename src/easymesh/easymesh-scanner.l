@@ -48,8 +48,8 @@ typedef lol::EasyMeshParser::token_type token_type;
 %}
 
 (csgu|csgunion)          { return token::T_CSGUNION; }
-(csgs|csgsubstract)      { return token::T_CSGSUBSTRACT; }
-(csgsl|csgsubstractloss) { return token::T_CSGSUBSTRACTLOSS; }
+(csgs|CsgSub)      { return token::T_CSGSUBSTRACT; }
+(csgsl|CsgSubL) { return token::T_CSGSUBSTRACTLOSS; }
 (csga|csgand)            { return token::T_CSGAND; }
 (csgx|csgxor)            { return token::T_CSGXOR; }
 
@@ -94,6 +94,7 @@ typedef lol::EasyMeshParser::token_type token_type;
 (ch|chamfer)             { return token::T_CHAMFER; }
 (splt|splittriangle)     { return token::T_SPLITTRIANGLE; }
 (smth|smooth)            { return token::T_SMOOTHMESH; }
+(dup|duplicate)          { return token::T_DUPLICATE; }
 
 (ac|addcylinder)         { return token::T_CYLINDER; }
 (asph|addsphere)         { return token::T_SPHERE; }
@@ -151,8 +152,10 @@ false { yylval->bval = false; return token::BOOLEAN; }
 "-"   { return token_type('-'); }
 "("   { return token_type('('); }
 ")"   { return token_type(')'); }
-"["   { return token_type('['); }
-"]"   { return token_type(']'); }
+"{"   { return token_type('{'); }
+"}"   { return token_type('}'); }
+[\[]  { return token_type('['); }
+[\]]  { return token_type(']'); }
 [ ,]  { /* ignore this */ }
 [\n]  { /* ignore this */ }
 .     { return token::T_ERROR; }

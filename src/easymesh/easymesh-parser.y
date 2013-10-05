@@ -38,6 +38,7 @@
     bool    bval;
     float   vval[4];
     int     ivval[4];
+    char*   lval;
     /* Can't use uin32_t here for some reason */
     unsigned u32val;
 }
@@ -50,6 +51,7 @@
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_TWISTZ T_SHEARZ T_STRETCHZ T_BENDZX T_BENDZY T_SCALEZ T_MIRRORZ
 %token T_TRANSLATE T_ROTATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER T_SPLITTRIANGLE T_SMOOTHMESH
+%token T_DUPLICATE
 %token T_CSGUNION T_CSGSUBSTRACT T_CSGSUBSTRACTLOSS T_CSGAND T_CSGXOR
 %token T_CHAMFER
 
@@ -103,30 +105,35 @@ mesh_expression:
 
 mesh_command_list:
     mesh_command
-  | mesh_command_list mesh_command
+  | mesh_command mesh_command_list
   ;
 
 mesh_command:
     color_command
   | transform_command
   | primitive_command
-  | csg_command
+  | post_brace_command
+  | pre_brace_command '[' mesh_expression_list mesh_close
   ;
 
-csg_command:
-    T_CSGUNION             { mc.m_mesh.CsgUnion(); }
-  | T_CSGSUBSTRACT         { mc.m_mesh.CsgSubstract(); }
-  | T_CSGSUBSTRACTLOSS     { mc.m_mesh.CsgSubstractLoss(); }
-  | T_CSGAND               { mc.m_mesh.CsgAnd(); }
-  | T_CSGXOR               { mc.m_mesh.CsgXor(); }
+post_brace_command:
+    T_CSGUNION          mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgUnion();  mc.m_mesh.CloseBrace(); }
+  | T_CSGSUBSTRACT      mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgSub();    mc.m_mesh.CloseBrace(); }
+  | T_CSGSUBSTRACTLOSS  mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgSubL();   mc.m_mesh.CloseBrace(); }
+  | T_CSGAND            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgAnd();    mc.m_mesh.CloseBrace(); }
+  | T_CSGXOR            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgXor();    mc.m_mesh.CloseBrace(); }
+  ;
+
+pre_brace_command:
+    T_DUPLICATE             { mc.m_mesh.DupAndScale(vec3::one, true); }
   ;
 
 mesh_open:
-    '['       { mc.m_mesh.OpenBrace(); }
+    '['                     { mc.m_mesh.OpenBrace(); }
   ;
 
 mesh_close:
-    ']'       { mc.m_mesh.CloseBrace(); }
+    ']'                     { mc.m_mesh.CloseBrace(); }
   ;
 
 color_command:

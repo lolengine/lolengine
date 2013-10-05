@@ -29,15 +29,18 @@ namespace lol {
     Vec4<type> const Vec4<type>::name = Vec4<type>((type)a, (type)b, (type)c, (type)d);
 
 #define LOL_ALL_VECTOR_CONST_INNER(type) \
+    LOL_VEC_2_CONST(type, one, 1, 1) \
     LOL_VEC_2_CONST(type, zero, 0, 0) \
     LOL_VEC_2_CONST(type, axis_x, 1, 0) \
     LOL_VEC_2_CONST(type, axis_y, 0, 1) \
     \
+    LOL_VEC_3_CONST(type, one, 1, 1, 1) \
     LOL_VEC_3_CONST(type, zero, 0, 0, 0) \
     LOL_VEC_3_CONST(type, axis_x, 1, 0, 0) \
     LOL_VEC_3_CONST(type, axis_y, 0, 1, 0) \
     LOL_VEC_3_CONST(type, axis_z, 0, 0, 1) \
     \
+    LOL_VEC_4_CONST(type, one, 1, 1, 1, 1) \
     LOL_VEC_4_CONST(type, zero, 0, 0, 0, 0) \
     LOL_VEC_4_CONST(type, axis_x, 1, 0, 0, 0) \
     LOL_VEC_4_CONST(type, axis_y, 0, 1, 0, 0) \

@@ -504,7 +504,7 @@ public:
             while (o-- > 0)
             {
                 SceneSetup* new_ssetup = new SceneSetup();
-                if (new_ssetup->Compile(mesh.C()) && new_ssetup->GetLightNb())
+                if (new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.Count())
                 {
                     //Store current light datas, in World
                     Array<LightData> light_datas;
@@ -641,7 +641,7 @@ public:
             m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
 #endif //NO_NACL_EM
 
-        g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        g_renderer->SetClearColor(m_ssetup->m_clear_color);
 
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);

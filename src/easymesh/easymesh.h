@@ -553,9 +553,9 @@ public:
     /* [cmd:csgu] Performs a Union operation as (mesh0_Outside + mesh1_Outside) */
     void CsgUnion()         { MeshCsg(CSGUsage::Union); }
     /* [cmd:csgs] Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted) */
-    void CsgSubstract()     { MeshCsg(CSGUsage::Substract); }
+    void CsgSub()     { MeshCsg(CSGUsage::Substract); }
     /* [cmd:csgsl] Performs a Substract operation without keeping the mesh1 part */
-    void CsgSubstractLoss() { MeshCsg(CSGUsage::SubstractLoss); }
+    void CsgSubL() { MeshCsg(CSGUsage::SubstractLoss); }
     /* [cmd:csga] Performs an And operation as (mesh0_Inside + mesh1_Inside) */
     void CsgAnd()           { MeshCsg(CSGUsage::And); }
     /* [cmd:csgx] Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted) */
@@ -722,7 +722,7 @@ public:
     /* [no-cmd] Duplicates vertices and scale duplicate
         Acts as an OpenBrace
      */
-    void DupAndScale(vec3 const &s);
+    void DupAndScale(vec3 const &s, bool open_brace=false);
     /* [cmd:ch] Performs a chamfer operation //TODO : Make it work
         - f : Chamfer quantity.
      */
