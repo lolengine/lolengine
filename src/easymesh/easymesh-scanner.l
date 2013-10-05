@@ -48,14 +48,15 @@ typedef lol::EasyMeshParser::token_type token_type;
 %}
 
 (csgu|csgunion)          { return token::T_CSGUNION; }
-(csgs|CsgSub)      { return token::T_CSGSUBSTRACT; }
-(csgsl|CsgSubL) { return token::T_CSGSUBSTRACTLOSS; }
+(csgs|CsgSub)            { return token::T_CSGSUBSTRACT; }
+(csgsl|CsgSubL)          { return token::T_CSGSUBSTRACTLOSS; }
 (csga|csgand)            { return token::T_CSGAND; }
 (csgx|csgxor)            { return token::T_CSGXOR; }
 
 (tsw|scalewinding)       { return token::T_TOGGLESCALEWINDING; }
 (sc|setcolor)            { return token::T_COLOR; }
 (scb|setbcolor)          { return token::T_BCOLOR; }
+(scv|setcolorvert)       { return token::T_VCOLOR; }
 
 (tx|translatex)          { return token::T_TRANSLATEX; }
 (ty|translatey)          { return token::T_TRANSLATEY; }

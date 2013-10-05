@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 //Command vars operations
 //-------------------------------------------------------------------------
-CmdVar("[ ]", ["Opens a new context,\nevery operations between the braces\nwill only be done to the vertices added\nsince the start of this context."]);
+CmdVar("[ ]", ["Opens a new scope,\nevery operations between the braces\nwill only be done to the vertices added\nsince the start of this scope."]);
 CmdVar("float", ["Fraction value", "0.0"]);
 CmdVar("int", ["No decimal value", "0"]);
 CmdVar("bool", ["Boolean value", "true/false", "1/0"]);
@@ -24,7 +24,8 @@ CmdType(["csgx",  "csgxor"], "Performs a Xor operation as (m0_Outside/m0_Inside-
 //-------------------------------------------------------------------------
 CmdType(["tsw", "scalewinding"], "When activated, on negative-scaling,\nnormal-vector correction will not occur");
 CmdType(["sc",  "setcolor"], "Set A color", [CmdArg("color", "color")]);
-CmdType(["scb", "setbgcolor"], "Set B color", [CmdArg("color", "color")]);
+CmdType(["scb", "setcolorb"], "Set B color", [CmdArg("color", "color")]);
+CmdType(["scv", "setcolorv"], "Set the color of all vertices in this scope", [CmdArg("color", "color")]);
 
 //-------------------------------------------------------------------------
 //Mesh transform operations
