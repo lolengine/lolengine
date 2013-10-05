@@ -45,7 +45,7 @@
 
 %start mesh_description
 
-%token T_COLOR T_BCOLOR
+%token T_COLOR T_BCOLOR T_VCOLOR
 
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
@@ -147,6 +147,11 @@ color_command:
   | T_BCOLOR COLOR          { uint32_t x = $2;
                               ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                               mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255.f)); }
+  | T_VCOLOR fv fv fv fv    { mc.m_mesh.SetVertColor(vec4($2, $3, $4, $5)); }
+  | T_VCOLOR v4             { mc.m_mesh.SetVertColor(vec4($2[0], $2[1], $2[2], $2[3])); }
+  | T_VCOLOR COLOR          { uint32_t x = $2;
+                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                              mc.m_mesh.SetVertColor(vec4(v) * (1.f / 255.f)); }
   ;
 
 transform_command:
