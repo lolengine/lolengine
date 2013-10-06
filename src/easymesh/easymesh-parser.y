@@ -114,6 +114,7 @@ mesh_command:
   | primitive_command
   | post_brace_command
   | pre_brace_command '[' mesh_expression_list mesh_close
+  | doloop            '[' mesh_expression_list ']'             { mc.m_mesh.LoopEnd(); }
   ;
 
 post_brace_command:
@@ -122,11 +123,12 @@ post_brace_command:
   | T_CSGSUBSTRACTLOSS  mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgSubL();   mc.m_mesh.CloseBrace(); }
   | T_CSGAND            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgAnd();    mc.m_mesh.CloseBrace(); }
   | T_CSGXOR            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgXor();    mc.m_mesh.CloseBrace(); }
-  | doloop '[' mesh_expression_list ']'           { mc.m_mesh.LoopEnd(); }
   ;
 
 doloop:
-    T_LOOP iv           { mc.m_mesh.LoopStart($2); }
+    T_LOOP iv               { mc.m_mesh.LoopStart($2); }
+  ;
+
 pre_brace_command:
     T_DUPLICATE             { mc.m_mesh.DupAndScale(vec3::one, true); }
   ;
@@ -231,6 +233,7 @@ primitive_command:
   |  T_CYLINDER iv fv fv fv bv bv   { mc.m_mesh.AppendCylinder($2, $3, $4, $5, $6, $7); }
   |  T_CYLINDER iv fv fv fv bv      { mc.m_mesh.AppendCylinder($2, $3, $4, $5, $6); }
   |  T_CYLINDER iv fv fv fv         { mc.m_mesh.AppendCylinder($2, $3, $4, $5); }
+  |  T_CYLINDER iv fv fv            { mc.m_mesh.AppendCylinder($2, $3, $4, $4); }
   | T_SPHERE iv fv                  { mc.m_mesh.AppendSphere($2, $3); }
   | T_CAPSULE iv fv fv              { mc.m_mesh.AppendCapsule($2, $3, $4); }
   | T_TORUS iv fv fv                { mc.m_mesh.AppendTorus($2, $3, $4); }

@@ -13,11 +13,11 @@ CmdVar("vec3", ["X/Y/Z as float", "&nbsp;f f f", "(f f f)", "(f)"]);
 //-------------------------------------------------------------------------
 //Mesh CSG operations
 //-------------------------------------------------------------------------
-CmdType(["csgu",  "csgunion"], "Performs a Union operation as (mesh0_Outside + mesh1_Outside)", [CmdArg("[ ]", "")]);
-CmdType(["csgs",  "csgsubstract"], "Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted)", [CmdArg("[ ]", "")]);
-CmdType(["csgsl", "csgsubstractloss"], "Performs a Substract operation without keeping the mesh1 part", [CmdArg("[ ]", "")]);
-CmdType(["csga",  "csgand"], "Performs an And operation as (mesh0_Inside + mesh1_Inside)", [CmdArg("[ ]", "")]);
-CmdType(["csgx",  "csgxor"], "Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted)", [CmdArg("[ ]", "")]);
+CmdType(["csgu",  "csgunion"], "Performs a Union operation as :\n(current_scope_outside + new_scope_Outside)", [CmdArg("[ ]", "New scope")]);
+CmdType(["csgs",  "csgsubstract"], "Performs a Substract operation as :\n(current_scope_Outside + new_scope_Inside-inverted)", [CmdArg("[ ]", "New scope")]);
+CmdType(["csgsl", "csgsubstractloss"], "Performs a Substract operation without keeping the new_scope part", [CmdArg("[ ]", "New scope")]);
+CmdType(["csga",  "csgand"], "Performs an And operation as :\n(current_scope_Inside + new_scope__Inside)", [CmdArg("[ ]", "New scope")]);
+CmdType(["csgx",  "csgxor"], "Performs a Xor operation as :\n(current_scope_Outside + current_scope_Inside-inverted + new_scope_Outside + new_scope_Inside-inverted)", [CmdArg("[ ]", "New scope")]);
 
 //-------------------------------------------------------------------------
 //Mesh Base operations
@@ -26,7 +26,7 @@ CmdType(["tsw", "scalewinding"], "When activated, on negative-scaling,\nnormal-v
 CmdType(["sc",  "setcolor"], "Set A color", [CmdArg("color", "color")]);
 CmdType(["scb", "setcolorb"], "Set B color", [CmdArg("color", "color")]);
 CmdType(["scv", "setcolorv"], "Set the color of all vertices in this scope", [CmdArg("color", "color")]);
-CmdType(["lp",  "loop"], "performs a loop", [CmdArg("int", "loopnb"), CmdArg("[ ]", "command to loop, no new context")]);
+CmdType(["lp",  "loop"], "Performs a loop with the code in the braces.\nDoesn't open a new scope.", [CmdArg("int", "loopnb"), CmdArg("[ ]", "Loop command")]);
 
 //-------------------------------------------------------------------------
 //Mesh transform operations
@@ -74,7 +74,7 @@ CmdType(["smth", "smooth"], "Smooth the mesh by subdivising it", [CmdArg("int", 
 //Mesh shape operations
 //-------------------------------------------------------------------------
 CmdType(["ac", "addcylinder"], "Cylinder centered on (0,0,0) with BBox:\nMin: [-.5 * max(d1, d2),-.5 * h,-.5 * max(d1, d2)]\nMax: [ .5 * max(d1, d2), .5 * h,  .5 * max(d1, d2)]",
-                             [CmdArg("int", "nsides"), CmdArg("float", "h"), CmdArg("float", "d1"), CmdArg("float", "d2"),
+                             [CmdArg("int", "nsides"), CmdArg("float", "h"), CmdArg("float", "d1"), CmdArg("float", "d2", "d1"),
                               CmdArg("bool", "dualsides", "false"), CmdArg("bool", "smooth", "false"), CmdArg("bool", "close", "false")]);
 CmdType(["asph", "addsphere"], "Sphere centered on (0,0,0) with BBox:\nMin: [-.5 * d]\nMax: [ .5 * d]", [CmdArg("int", "ndivisions"), CmdArg("float", "d")]);
 CmdType(["acap", "addcapsule"], "Capsule centered on (0,0,0) with BBox:\nMin: [-.5 * d,-(.5 * d + h),-.5 * d]\nMax: [ .5 * d, (.5 * d + h), .5 * d]", [CmdArg("int", "ndivisions"), CmdArg("float", "h"), CmdArg("float", "d")]);
