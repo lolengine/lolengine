@@ -9,6 +9,7 @@ CmdVar("color", ["Red/Green/Blue/{Alpha}",
                 "HEXA: #ABC{D}", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#AABBCC{DD}",
                 "FLOAT:&nbsp;f f f f", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(f f f f)", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(f)"]);
 CmdVar("vec3", ["X/Y/Z as float", "&nbsp;f f f", "(f f f)", "(f)"]);
+CmdVar("vec2", ["X/Y/Z as float", "&nbsp;f f", "(f f)", "(f)"]);
 
 //-------------------------------------------------------------------------
 //Mesh CSG operations
@@ -22,8 +23,10 @@ CmdType(["csgx",  "csgxor"], "Performs a Xor operation as :\n(current_scope_Outs
 //-------------------------------------------------------------------------
 //Mesh Base operations
 //-------------------------------------------------------------------------
-CmdType(["tsw", "scalewinding"], "When activated, on negative-scaling,\nnormal-vector correction will not occur");
-CmdType(["sc",  "setcolor"], "Set A color", [CmdArg("color", "color")]);
+CmdType(["tsw", "tglscalewind"], "When active, on negative-scaling,\nnormal-vector correction will not occur\nDefault : Inactive");
+CmdType(["tqw", "tglquadweight"], "When active, quad will have a fifth center vertex\nDefault : Inactive");
+CmdType(["sc",  "setcolor"], "Set A & B color", [CmdArg("color", "color")]);
+CmdType(["sca", "setcolora"], "Set A color", [CmdArg("color", "color")]);
 CmdType(["scb", "setcolorb"], "Set B color", [CmdArg("color", "color")]);
 CmdType(["scv", "setcolorv"], "Set the color of all vertices in this scope", [CmdArg("color", "color")]);
 CmdType(["lp",  "loop"], "Performs a loop with the code in the braces.\nDoesn't open a new scope.", [CmdArg("int", "loopnb"), CmdArg("[ ]", "Loop command")]);
@@ -91,5 +94,5 @@ CmdType(["ad", "adddisc"], "Disc centered on (0,0,0) with d diameter.", [CmdArg(
 CmdType(["at", "addtriangle"], "Triangle centered on (0,0,0)\nContained in a disc of d diameter.", [CmdArg("float", "d"), CmdArg("bool", "fade", "false")]);
 CmdType(["aq", "addquad"], "Quad centered on (0,0,0) with BBox:\nMin: [-size * .5f, 0,-size * .5f]\nMax: [ size * .5f, 0, size * .5f]", [CmdArg("float", "size"), CmdArg("bool", "fade", "false")]);
 CmdType(["acg", "addcog"], "Gear centered on (0,0,0) with BBox:\nMin: [-.5 * max(d1, d2),-.5 * h,-.5 * max(d1, d2)]\nMax: [ .5 * max(d1, d2), .5 * h, .5 * max(d1, d2)]",
-                            [CmdArg("float", "h"), CmdArg("float", "d10"), CmdArg("float", "d20"), CmdArg("float", "d1"), CmdArg("float", "d2"), CmdArg("float", "d12"), CmdArg("float", "d22"),
-                             CmdArg("float", "sidemul", "1.0"), CmdArg("bool", "offset", "false")]);
+                            [CmdArg("float", "h"), CmdArg("vec2", "d10d20"), CmdArg("vec2", "d11d21"), CmdArg("vec2", "d12d22"),
+                             CmdArg("float", "sidemul", "0.0"), CmdArg("bool", "offset", "false")]);

@@ -519,14 +519,19 @@ void EasyMesh::ExecuteCmdStack()
                 EZM_CALL_FUNC(ToggleScaleWinding);
                 break;
             }
-            case EasyMeshCmdType::SetColor:
+            case EasyMeshCmdType::QuadWeighting:
             {
-                EZM_CALL_FUNC(SetCurColor, vec4);
+                EZM_CALL_FUNC(ToggleQuadWeighting);
                 break;
             }
-            case EasyMeshCmdType::SetColor2:
+            case EasyMeshCmdType::SetColorA:
             {
-                EZM_CALL_FUNC(SetCurColor2, vec4);
+                EZM_CALL_FUNC(SetCurColorA, vec4);
+                break;
+            }
+            case EasyMeshCmdType::SetColorB:
+            {
+                EZM_CALL_FUNC(SetCurColorB, vec4);
                 break;
             }
             case EasyMeshCmdType::SetVertColor:
@@ -1127,29 +1132,48 @@ void EasyMesh::ToggleScaleWinding()
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurColor(vec4 const &color)
+void EasyMesh::ToggleQuadWeighting()
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColor);
-        BD()->CmdStack() << color;
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::QuadWeighting);
         return;
     }
 
-    BD()->Color() = color;
+    BD()->Toggle(MeshBuildOperation::QuadWeighting);
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurColor2(vec4 const &color)
+void EasyMesh::SetCurColor(vec4 const &color)
+{
+    SetCurColorA(color);
+    SetCurColorB(color);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SetCurColorA(vec4 const &color)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColor2);
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColorA);
         BD()->CmdStack() << color;
         return;
     }
 
-    BD()->Color2() = color;
+    BD()->ColorA() = color;
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SetCurColorB(vec4 const &color)
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColorB);
+        BD()->CmdStack() << color;
+        return;
+    }
+
+    BD()->ColorB() = color;
 }
 
 //-----------------------------------------------------------------------------
@@ -1169,7 +1193,7 @@ void EasyMesh::SetVertColor(vec4 const &color)
 //-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->Color()));
+    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->ColorA()));
     m_state = MeshRender::NeedConvert;
 }
 
@@ -1183,38 +1207,81 @@ void EasyMesh::AddDuplicateVertex(int i)
 //-----------------------------------------------------------------------------
 void EasyMesh::AddLerpVertex(int i, int j, float alpha)
 {
-    m_vert.Push(VertexData(
-        lol::lerp(m_vert[i].m_coord,    m_vert[j].m_coord,      alpha),
-        lol::lerp(m_vert[i].m_normal,   m_vert[j].m_normal,     alpha),
-        lol::lerp(m_vert[i].m_color,    m_vert[j].m_color,      alpha),
-        lol::lerp(m_vert[i].m_texcoord, m_vert[j].m_texcoord,   alpha),
-        ((alpha < .5f) ? (m_vert[i].m_bone_id) : (m_vert[j].m_bone_id)), /* FIXME ? */
-        lol::lerp(m_vert[i].m_bone_weight, m_vert[j].m_bone_weight, alpha)));
+    AddLerpVertex(m_vert[i], m_vert[j], alpha);
+
+}
+//-----------------------------------------------------------------------------
+void EasyMesh::AddLerpVertex(VertexData &vi, VertexData &vj, float alpha)
+{
+    m_vert.Push(GetLerpVertex(vi, vj, alpha));
     m_state = MeshRender::NeedConvert;
+}
+
+//-----------------------------------------------------------------------------
+VertexData EasyMesh::GetLerpVertex(int i, int j, float alpha)
+{
+    return GetLerpVertex(m_vert[i], m_vert[j], alpha);
+}
+
+//-----------------------------------------------------------------------------
+VertexData EasyMesh::GetLerpVertex(VertexData &vi, VertexData &vj, float alpha)
+{
+    return VertexData(
+        lol::lerp(vi.m_coord,    vj.m_coord,      alpha),
+        lol::lerp(vi.m_normal,   vj.m_normal,     alpha),
+        lol::lerp(vi.m_color,    vj.m_color,      alpha),
+        lol::lerp(vi.m_texcoord, vj.m_texcoord,   alpha),
+        ((alpha < .5f) ? (vi.m_bone_id) : (vj.m_bone_id)), /* FIXME ? */
+        lol::lerp(vi.m_bone_weight, vj.m_bone_weight, alpha));
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
 {
-    m_indices << base + i1;
-    m_indices << base + i2;
-    m_indices << base + i3;
+    if (BD()->IsEnabled(MeshBuildOperation::QuadWeighting) &&
+        !BD()->IsEnabled(MeshBuildOperation::IgnoreQuadWeighting))
+    {
+        int i5 = m_vert.Count();
+        AddLerpVertex(GetLerpVertex(base + i1, base + i3, .5f),
+                      GetLerpVertex(base + i2, base + i4, .5f), .5f);
+        m_indices << i1 + base;
+        m_indices << i2 + base;
+        m_indices << i5;
 
-    m_indices << base + i4;
-    m_indices << base + i1;
-    m_indices << base + i3;
+        m_indices << i2 + base;
+        m_indices << i3 + base;
+        m_indices << i5;
+
+        m_indices << i4 + base;
+        m_indices << i1 + base;
+        m_indices << i5;
+
+        m_indices << i5;
+        m_indices << i3 + base;
+        m_indices << i4 + base;
+    }
+    else
+    {
+        m_indices << base + i1;
+        m_indices << base + i2;
+        m_indices << base + i3;
+
+        m_indices << base + i4;
+        m_indices << base + i1;
+        m_indices << base + i3;
+    }
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base)
 {
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i1);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i2);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i3);
+    int vbase = m_vert.Count();
+    AddDuplicateVertex(base + i1);
+    AddDuplicateVertex(base + i2);
+    AddDuplicateVertex(base + i3);
+    AddDuplicateVertex(base + i4);
 
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i4);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i1);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i3);
+    AppendQuad(0, 1, 2, 3, vbase);
 }
 
 //-----------------------------------------------------------------------------
@@ -1726,8 +1793,8 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
     float r2 = d2 * .5f;
 
     //SAVE
-    vec4 Saved_Color = BD()->Color();
-    vec4 Saved_Color2 = BD()->Color2();
+    vec4 Saved_ColorA = BD()->ColorA();
+    vec4 Saved_ColorB = BD()->ColorB();
     vec2 Save_texcoord_offset = BD()->TexCoordOffset();
     vec2 Save_texcoord_scale = BD()->TexCoordScale();
 
@@ -1749,21 +1816,14 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         n = mat3::rotate(180.0f / nsides, 0.f, 1.f, 0.f) * n;
     n = normalize(n);
 
-    /* FIXME: normals should be flipped in two-sided mode, but that
-     * means duplicating the vertices again... */
+    //Two passes necessary to ensure "weighted quad" compatibility
+    //First pass : Add vertices
     for (int i = 0; i < nsides; i++)
     {
+        /* FIXME: normals should be flipped in two-sided mode, but that
+         * means duplicating the vertices again... */
         AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
-        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2);
-        SetCurVertColor(BD()->Color2());
-
-        if (smooth)
-        {
-            int j = (i + 1) % nsides;
-            AppendQuad(j * 2, j * 2 + 1, i * 2 + 1, i * 2, vbase);
-            if (dualside)
-                AppendQuad(i * 2, i * 2 + 1, j * 2 + 1, j * 2, vbase);
-        }
+        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2); SetCurVertColor(BD()->ColorB());
 
         p1 = rotmat * p1; uv1 += uvadd;
         p2 = rotmat * p2; uv2 += uvadd;
@@ -1771,15 +1831,28 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         if (!smooth)
         {
             AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
-            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2);
-            SetCurVertColor(BD()->Color2());
+            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2); SetCurVertColor(BD()->ColorB());
+        }
 
+        n = rotmat * n;
+    }
+    //Second pass : Build quad
+    for (int i = 0; i < nsides; i++)
+    {
+        if (smooth)
+        {
+            int j = (i + 1) % nsides;
+            AppendQuad(j * 2, j * 2 + 1, i * 2 + 1, i * 2, vbase);
+            if (dualside)
+                AppendQuad(i * 2, i * 2 + 1, j * 2 + 1, j * 2, vbase);
+        }
+        else
+        {
             AppendQuad(i * 4 + 2, i * 4 + 3, i * 4 + 1, i * 4, vbase);
             if (dualside)
                 AppendQuad(i * 4, i * 4 + 1, i * 4 + 3, i * 4 + 2, vbase);
         }
 
-        n = rotmat * n;
     }
 
     if (close)
@@ -1788,20 +1861,20 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         OpenBrace();
         //LOWER DISC
         SetTexCoordData(vec2(.0f, .5f), vec2(.5f, .5f));
-        SetCurColor(BD()->Color());
+        SetCurColorA(BD()->ColorA());
         AppendDisc(nsides, d1);
         Translate(vec3(.0f, h, .0f));
         RotateX(180.0f);
         //UPPER DISC
         SetTexCoordData(vec2(.5f, .5f), vec2(.5f, .5f));
-        SetCurColor(BD()->Color2());
+        SetCurColorA(BD()->ColorB());
         AppendDisc(nsides, d2);
         Translate(vec3(.0f, h * .5f, .0f));
         CloseBrace();
     }
     //RESTORE
-    SetCurColor(Saved_Color);
-    SetCurColor2(Saved_Color2);
+    SetCurColorA(Saved_ColorA);
+    SetCurColorB(Saved_ColorB);
     SetTexCoordData(Save_texcoord_offset, Save_texcoord_scale);
 }
 
@@ -2175,12 +2248,12 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
     SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
     SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
-    /* The 6 quads on each side of the box */
-    for (int i = 0; i < 24; i += 4)
-        AppendQuad(i, i + 1, i + 2, i + 3, vbase);
-
     ComputeNormals(ibase, m_indices.Count() - ibase);
     ibase = m_indices.Count();
+
+    //Build the box at the end : The 6 quads on each side of the box.
+    for (int i = 0; i < 24; i += 4)
+        AppendQuad(i, i + 1, i + 2, i + 3, vbase);
 
     /* The 8 quads at each edge of the box */
     if (chamf)
@@ -2195,11 +2268,11 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
         for (int i = 0; i < 48; i += 4)
         {
             if (smooth)
-                AppendQuad(quadlist[i], quadlist[i + 1],
+                AppendQuad(quadlist[i],     quadlist[i + 1],
                            quadlist[i + 2], quadlist[i + 3], vbase);
             else
-                AppendQuadDuplicateVerts(quadlist[i], quadlist[i + 1],
-                                 quadlist[i + 2], quadlist[i + 3], vbase);
+                AppendQuadDuplicateVerts(quadlist[i],     quadlist[i + 1],
+                                         quadlist[i + 2], quadlist[i + 3], vbase);
         }
     }
 
@@ -2215,11 +2288,9 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
         for (int i = 0; i < 24; i += 3)
         {
             if (smooth)
-                AppendTriangle(trilist[i], trilist[i + 1],
-                               trilist[i + 2], vbase);
+                AppendTriangle(trilist[i], trilist[i + 1], trilist[i + 2], vbase);
             else
-                AppendTriangleDuplicateVerts(trilist[i], trilist[i + 1],
-                                             trilist[i + 2], vbase);
+                AppendTriangleDuplicateVerts(trilist[i], trilist[i + 1], trilist[i + 2], vbase);
         }
     }
 
@@ -2237,6 +2308,9 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
         BD()->CmdStack() << nbranches << d1 << d2 << fade << fade2;
         return;
     }
+
+    //Should ignore quad weight, as it does not destroy star symmetry
+    BD()->Enable(MeshBuildOperation::IgnoreQuadWeighting);
 
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
@@ -2260,18 +2334,21 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
     {
         AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
         if (fade2)
-            SetCurVertColor(BD()->Color2());
+            SetCurVertColor(BD()->ColorB());
 
         AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
         if (fade)
-            SetCurVertColor(BD()->Color2());
+            SetCurVertColor(BD()->ColorB());
 
-        AppendQuad(0, 2 * i + 1, 2 * i + 2, (2 * i + 3) % (2 * nbranches),
-                   vbase);
+        //Append quad at the end
+        AppendQuad(0, 2 * i + 1, 2 * i + 2, (2 * i + 3) % (2 * nbranches), vbase);
 
         p1 = rotmat * p1; uv1 = rotmat * uv1;
         p2 = rotmat * p2; uv2 = rotmat * uv2;
     }
+
+    //Restore
+    BD()->Disable(MeshBuildOperation::IgnoreQuadWeighting);
 }
 
 //-----------------------------------------------------------------------------
@@ -2283,6 +2360,9 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
         BD()->CmdStack() << nbranches << d1 << d2 << extrad;
         return;
     }
+
+    //Should ignore quad weight, as it does not destroy star symmetry
+    BD()->Enable(MeshBuildOperation::IgnoreQuadWeighting);
 
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
@@ -2310,10 +2390,11 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
     {
         AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
         AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
-        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertTexCoord2(uv3.xz + vec2(.5f)); SetCurVertColor(BD()->Color2());
-        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertTexCoord2(uv4.xz + vec2(.5f)); SetCurVertColor(BD()->Color2());
+        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertTexCoord2(uv3.xz + vec2(.5f)); SetCurVertColor(BD()->ColorB());
+        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertTexCoord2(uv4.xz + vec2(.5f)); SetCurVertColor(BD()->ColorB());
 
         int j = (i + 1) % nbranches;
+        //
         AppendQuad(0, 4 * i + 1, 4 * i + 2, 4 * j + 1, vbase);
         AppendQuad(4 * i + 1, 4 * i + 3, 4 * i + 4, 4 * i + 2, vbase);
         AppendQuad(4 * j + 1, 4 * i + 2, 4 * i + 4, 4 * j + 3, vbase);
@@ -2323,6 +2404,9 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
         p3 = rotmat * p3; uv3 = rotmat * uv3;
         p4 = rotmat * p4; uv4 = rotmat * uv4;
     }
+
+    //Restore
+    BD()->Disable(MeshBuildOperation::IgnoreQuadWeighting);
 }
 
 //-----------------------------------------------------------------------------
@@ -2350,7 +2434,7 @@ void EasyMesh::AppendDisc(int nsides, float d, bool fade)
     {
         AddVertex(p1); SetCurVertTexCoord(uv.xz + vec2(.5f, .5f)); SetCurVertTexCoord2(uv.xz + vec2(.5f, .5f));
         if (fade)
-            SetCurVertColor(BD()->Color2());
+            SetCurVertColor(BD()->ColorB());
         AppendTriangle(0, i + 1, ((i + 1) % nsides) + 1, vbase);
         p1 = rotmat * p1;
         uv = rotmat * uv;
@@ -2377,11 +2461,11 @@ void EasyMesh::AppendSimpleTriangle(float d, bool fade)
     p = m * p;
     AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f)); SetCurVertTexCoord2(vec2(0.f, 1.f));
     if (fade)
-        SetCurVertColor(BD()->Color2());
+        SetCurVertColor(BD()->ColorB());
     p = m * p;
     AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f)); SetCurVertTexCoord2(vec2(1.f, 1.f));
     if (fade)
-        SetCurVertColor(BD()->Color2());
+        SetCurVertColor(BD()->ColorB());
 
     AppendTriangle(0, 1, 2, m_vert.Count() - 3);
 }
@@ -2420,13 +2504,13 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
     TexCoordPos tl = TexCoordPos::TL;
     SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
     SetCurVertTexCoord2(BD()->TexCoord2(mt, tl, mft));
-    if (fade) SetCurVertColor(BD()->Color2());
+    if (fade) SetCurVertColor(BD()->ColorB());
     //--
     AddVertex(vec3(p1.x, z, -p1.y));
     TexCoordPos tr = TexCoordPos::TR;
     SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
     SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    if (fade) SetCurVertColor(BD()->Color2());
+    if (fade) SetCurVertColor(BD()->ColorB());
 
     AppendQuad(0, 1, 2, 3, m_vert.Count() - 4);
     ComputeNormals(m_indices.Count() - 6, 6);
@@ -2434,7 +2518,7 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
 
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
-                         float d1, float d2, float d12, float d22,
+                         float d11, float d21, float d12, float d22,
                          float sidemul, bool offset)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
@@ -2442,7 +2526,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
         BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCog);
         BD()->CmdStack() << nbsides << h
                          << d10 << d20
-                         << d1 << d2
+                         << d11 << d21
                          << d12 << d22
                          << sidemul << offset;
         return;
@@ -2451,8 +2535,8 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r10 = d10 * .5f;
     float r20 = d20 * .5f;
-    float r1  = d1  * .5f;
-    float r2  = d2  * .5f;
+    float r11 = d11 * .5f;
+    float r21 = d21 * .5f;
     float r12 = d12 * .5f;
     float r22 = d22 * .5f;
 
@@ -2472,17 +2556,17 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     //Upper points
     p[0] = vec3(r10, h * .5f, 0.f);
     p[1] = rotmat * p[0];
-    p[2] = vec3(r1, h * .5f, 0.f);
+    p[2] = vec3(r11, h * .5f, 0.f);
     p[3] = rotmat * p[2];
-    p[4] = smat1 * (rotmat * vec3(r1 + r12, h * .5f, 0.f));
+    p[4] = smat1 * (rotmat * vec3(r11 + r12, h * .5f, 0.f));
     p[5] = smat2 * (rotmat * p[4]);
 
     //Lower points
     p[6] = vec3(r20, h * -.5f, 0.f);
     p[7] = rotmat * p[6];
-    p[8] = vec3(r2, h * -.5f, 0.f);
+    p[8] = vec3(r21, h * -.5f, 0.f);
     p[9] = rotmat * p[8];
-    p[10] = smat1 * (rotmat * vec3(r2 + r22, h * -.5f, 0.f));
+    p[10] = smat1 * (rotmat * vec3(r21 + r22, h * -.5f, 0.f));
     p[11] = smat2 * (rotmat * p[10]);
 
     if (offset)
@@ -2492,7 +2576,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     rotmat = rotmat * rotmat;
 
     //UV base computation
-    float maxr = max(max(r1 + r12, r2 + r22), max(r10, r20));
+    float maxr = max(max(r11 + r12, r21 + r22), max(r10, r20));
     float InLn = length(p[1] - p[0]);
     float CogLn[8] = { .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f };
     for (int i = 0; i < 3; i++)
@@ -2588,60 +2672,64 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     uv[ 9] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[0];
     uv[ 8] = vec2(0.f,   1.f) * CogUV[0] + CogUV[1];
 
+#define DEF_J_K_Q                         \
+    int j = 3 * 12 * i,                   \
+        k = 3 * 12 * ((i + 1) % nbsides); \
+    int q[] = {                \
+/* The top and bottom faces */ \
+                j, j, j, j, \
+                j, j, j, j, \
+                j, j, k, k, \
+                k, k, j, j, \
+                j, j, j, k, \
+                k, j, j, j, \
+/* The inner side quads */  \
+                j, j, j, j, \
+                j, k, k, j, \
+/* The outer side quads */  \
+                j, j, j, j, \
+                j, j, j, j, \
+                j, j, j, j, \
+                k, j, j, k  \
+                };
+    int m[] = { /* The top and bottom faces */
+                0,  2,  3,  1,
+                7,  9,  8,  6,
+                1,  3,  2,  0,
+                6,  8,  9,  7,
+                3,  4,  5,  2,
+                8, 11, 10,  9,
+                /* The inner side quads */
+                0,  1,  7,  6,
+                1,  0,  6,  7,
+                /* The outer side quads */
+                3,  2,  8,  9,
+                4,  3,  9, 10,
+                5,  4, 10, 11,
+                2,  5, 11, 8
+                };
+    int a[] = { /* The top and bottom faces */
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                /* The inner side quads */
+                1, 1, 1, 1,
+                2, 2, 2, 2,
+                /* The outer side quads */
+                1, 1, 1, 1,
+                1, 2, 2, 1,
+                1, 2, 2, 1,
+                2, 2, 2, 2
+                };
     //Gear generation loop
+    //Two passes necessary to ensure "weighted quad" compatibility
+    //First pass : Add vertices
     for (int i = 0; i < nbsides; i++)
     {
-        int j = 3 * 12 * i,
-            k = 3 * 12 * ((i + 1) % nbsides);
-
-        int q[] = { /* The top and bottom faces */
-                    j, j, j, j,
-                    j, j, j, j,
-                    j, j, k, k,
-                    k, k, j, j,
-                    j, j, j, k,
-                    k, j, j, j,
-                    /* The inner side quads */
-                    j, j, j, j,
-                    j, k, k, j,
-                    /* The outer side quads */
-                    j, j, j, j,
-                    j, j, j, j,
-                    j, j, j, j,
-                    k, j, j, k
-                    };
-        int m[] = { /* The top and bottom faces */
-                    0,  2,  3,  1,
-                    7,  9,  8,  6,
-                    1,  3,  2,  0,
-                    6,  8,  9,  7,
-                    3,  4,  5,  2,
-                    8, 11, 10,  9,
-                    /* The inner side quads */
-                    0,  1,  7,  6,
-                    1,  0,  6,  7,
-                    /* The outer side quads */
-                    3,  2,  8,  9,
-                    4,  3,  9, 10,
-                    5,  4, 10, 11,
-                    2,  5, 11, 8
-                    };
-        int a[] = { /* The top and bottom faces */
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    /* The inner side quads */
-                    1, 1, 1, 1,
-                    2, 2, 2, 2,
-                    /* The outer side quads */
-                    1, 1, 1, 1,
-                    1, 2, 2, 1,
-                    1, 2, 2, 1,
-                    2, 2, 2, 2
-                    };
+        DEF_J_K_Q;
 
         /* Each vertex will share three faces, so three different
          * normals, therefore we add each vertex three times. */
@@ -2683,9 +2771,16 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                 }
             }
             if (d >= 6)
-                SetCurVertColor(BD()->Color2());
+                SetCurVertColor(BD()->ColorB());
         }
 
+        for (int n = 0; n < 12; n++)
+            p[n] = rotmat * p[n];
+    }
+    //Second pass : Build quad
+    for (int i = 0; i < nbsides; i++)
+    {
+        DEF_J_K_Q;
         int l = -4;
         while ((l += 4) < 48)
             AppendQuad(q[l + 0] + m[l + 0] * 3 + a[l + 0],
@@ -2693,9 +2788,6 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                        q[l + 2] + m[l + 2] * 3 + a[l + 2],
                        q[l + 3] + m[l + 3] * 3 + a[l + 3],
                        vbase);
-
-        for (int n = 0; n < 12; n++)
-            p[n] = rotmat * p[n];
     }
 
     ComputeNormals(ibase, m_indices.Count() - ibase);
