@@ -8,7 +8,25 @@ clearcolor #000
 
 custom setmesh "
 
-[sc#0f0 scb#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 .1 ty .5 dup [ rz 90 ry 90 scv#00f dup [ ry 90 scv#f00 ] ] ] 
+tqw
+//CMD TEST
+//sc#0f0 ab 1
+//sc#0f0 afcb 1 -.2
+//sc#0f0 acg 8 1 1 1 2 2 1.5 1.5 -.4
+//sc#0f0 as 6 1 2
+//sc#0f0 scb#f00 aes 6 1 2 2
+//sc#0f0 ac 6 1 1
+//sc#0f0 aq 1
+//splt 2 smth 4 0 1
+
+//[sc#0f0 ac 3 .5 .4 0 false false true ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 .1 false false true ty .5 dup [ rz 90 ry 90 scv#00f dup [ ry 90 scv#f00 ] ] ] 
+//[sc#fff ab 1 tx 2]
+
+//[sc#fff ab 1 tx .5 ty .5]
+//[sc#fff ab 1 tx -.5 ty -.5]
+
+
+//smth 3 1 1 smth 8 0 1
 //[sc#fff loop 4 [ [loop 4 [ab 1 tx 2]] tz 2]]
 
 

@@ -45,12 +45,12 @@
 
 %start mesh_description
 
-%token T_LOOP T_COLOR T_BCOLOR T_VCOLOR
+%token T_LOOP T_COLOR T_ACOLOR T_BCOLOR T_VCOLOR
 
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
 %token T_TRANSLATEZ T_ROTATEZ T_TAPERZ T_TWISTZ T_SHEARZ T_STRETCHZ T_BENDZX T_BENDZY T_SCALEZ T_MIRRORZ
-%token T_TRANSLATE T_ROTATE T_SCALE T_TOGGLESCALEWINDING T_RADIALJITTER T_SPLITTRIANGLE T_SMOOTHMESH
+%token T_TRANSLATE T_ROTATE T_SCALE T_TOGGLESCALEWINDING T_TOGGLEQUADWEIGHTING T_RADIALJITTER T_SPLITTRIANGLE T_SMOOTHMESH
 %token T_DUPLICATE
 %token T_CSGUNION T_CSGSUBSTRACT T_CSGSUBSTRACTLOSS T_CSGAND T_CSGXOR
 %token T_CHAMFER
@@ -70,6 +70,7 @@
 %type <fval>    fv
 %type <ival>    iv
 /* Vector types */
+%type <vval>    v2
 %type <vval>    v3
 %type <vval>    v4
 /* Special types */
@@ -147,11 +148,16 @@ color_command:
   | T_COLOR COLOR           { uint32_t x = $2;
                               ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                               mc.m_mesh.SetCurColor(vec4(v) * (1.f / 255.f)); }
-  | T_BCOLOR fv fv fv fv    { mc.m_mesh.SetCurColor2(vec4($2, $3, $4, $5)); }
-  | T_BCOLOR v4             { mc.m_mesh.SetCurColor2(vec4($2[0], $2[1], $2[2], $2[3])); }
+  | T_ACOLOR fv fv fv fv    { mc.m_mesh.SetCurColorA(vec4($2, $3, $4, $5)); }
+  | T_ACOLOR v4             { mc.m_mesh.SetCurColorA(vec4($2[0], $2[1], $2[2], $2[3])); }
+  | T_ACOLOR COLOR          { uint32_t x = $2;
+                              ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                              mc.m_mesh.SetCurColorA(vec4(v) * (1.f / 255.f)); }
+  | T_BCOLOR fv fv fv fv    { mc.m_mesh.SetCurColorB(vec4($2, $3, $4, $5)); }
+  | T_BCOLOR v4             { mc.m_mesh.SetCurColorB(vec4($2[0], $2[1], $2[2], $2[3])); }
   | T_BCOLOR COLOR          { uint32_t x = $2;
                               ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                              mc.m_mesh.SetCurColor2(vec4(v) * (1.f / 255.f)); }
+                              mc.m_mesh.SetCurColorB(vec4(v) * (1.f / 255.f)); }
   | T_VCOLOR fv fv fv fv    { mc.m_mesh.SetVertColor(vec4($2, $3, $4, $5)); }
   | T_VCOLOR v4             { mc.m_mesh.SetVertColor(vec4($2[0], $2[1], $2[2], $2[3])); }
   | T_VCOLOR COLOR          { uint32_t x = $2;
@@ -226,6 +232,7 @@ transform_command:
   | T_SPLITTRIANGLE iv     { mc.m_mesh.SplitTriangles($2); }
   | T_SMOOTHMESH iv iv iv  { mc.m_mesh.SmoothMesh($2, $3, $4); }
   | T_TOGGLESCALEWINDING   { mc.m_mesh.ToggleScaleWinding(); }
+  | T_TOGGLEQUADWEIGHTING  { mc.m_mesh.ToggleQuadWeighting(); }
   ;
 
 primitive_command:
@@ -262,6 +269,9 @@ primitive_command:
   | T_COG  iv fv fv fv fv fv fv fv fv bv { mc.m_mesh.AppendCog($2, $3, $4, $5, $6, $7, $8, $9, $10, $11); }
   |  T_COG iv fv fv fv fv fv fv fv fv    { mc.m_mesh.AppendCog($2, $3, $4, $5, $6, $7, $8, $9, $10); }
   |  T_COG iv fv fv fv fv fv fv fv       { mc.m_mesh.AppendCog($2, $3, $4, $5, $6, $7, $8, $9); }
+  |  T_COG iv fv v2 v2 v2 fv bv          { mc.m_mesh.AppendCog($2, $3, $4[0], $4[1], $5[0], $5[1], $6[0], $6[1], $7, $8); }
+  |  T_COG iv fv v2 v2 v2 fv             { mc.m_mesh.AppendCog($2, $3, $4[0], $4[1], $5[0], $5[1], $6[0], $6[1], $7); }
+  |  T_COG iv fv v2 v2 v2                { mc.m_mesh.AppendCog($2, $3, $4[0], $4[1], $5[0], $5[1], $6[0], $6[1]); }
   ;
 
 /* Base Number types */
@@ -280,6 +290,11 @@ iv:
   ;
 
 /* Vector types */
+v2:
+    '('fv')'        { $$[0] = $2; $$[1] = $2; }
+  | '('fv fv')'     { $$[0] = $2; $$[1] = $3; }
+  ;
+
 v3:
     '('fv')'        { $$[0] = $2; $$[1] = $2; $$[2] = $2; }
   | '('fv fv fv')'  { $$[0] = $2; $$[1] = $3; $$[2] = $4; }

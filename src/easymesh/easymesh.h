@@ -201,9 +201,11 @@ struct MeshBuildOperation
     enum Value
     {
         //When this flag is up, negative scaling will not invert faces.
-        ScaleWinding       = (1 << 0),
-        CommandRecording   = (1 << 1),
-        CommandExecution   = (1 << 2),
+        ScaleWinding        = (1 << 0),
+        CommandRecording    = (1 << 1),
+        CommandExecution    = (1 << 2),
+        QuadWeighting       = (1 << 3),
+        IgnoreQuadWeighting = (1 << 4),
 
         All     = 0xffffffff
     }
@@ -226,8 +228,9 @@ struct EasyMeshCmdType
         CloseBrace,
 
         ScaleWinding,
-        SetColor,
-        SetColor2,
+        QuadWeighting,
+        SetColorA,
+        SetColorB,
         SetVertColor,
 
         Translate,
@@ -355,8 +358,8 @@ class EasyMeshBuildData
 public:
     EasyMeshBuildData()
     {
-        m_color = vec4(0.f, 0.f, 0.f, 1.f);
-        m_color2 = vec4(0.f, 0.f, 0.f, 1.f);
+        m_color_a = vec4(0.f, 0.f, 0.f, 1.f);
+        m_color_b = vec4(0.f, 0.f, 0.f, 1.f);
         m_texcoord_offset = vec2(0.f);
         m_texcoord_offset2 = vec2(0.f);
         m_texcoord_scale = vec2(1.f);
@@ -372,8 +375,8 @@ public:
     inline CommandStack &CmdStack() { return m_stack; }
     inline int &Cmdi()              { return m_cmd_i; }
     inline Array<int, int> &LoopStack(){ return m_loop_stack; }
-    inline vec4 &Color()            { return m_color; }
-    inline vec4 &Color2()           { return m_color2; }
+    inline vec4 &ColorA()           { return m_color_a; }
+    inline vec4 &ColorB()           { return m_color_b; }
     inline vec2 &TexCoordOffset()   { return m_texcoord_offset; }
     inline vec2 &TexCoordScale()    { return m_texcoord_scale; }
     inline vec2 &TexCoordOffset2()  { return m_texcoord_offset2; }
@@ -561,8 +564,8 @@ public:
     CommandStack        m_stack;
     int                 m_cmd_i;
     Array<int, int>     m_loop_stack;
-    vec4                m_color;
-    vec4                m_color2;
+    vec4                m_color_a;
+    vec4                m_color_b;
     vec2                m_texcoord_offset;
     vec2                m_texcoord_offset2;
     vec2                m_texcoord_scale;
@@ -695,12 +698,16 @@ public:
     void OpenBrace();
     /* [cmd:]] Merge current vertices with previous context */
     void CloseBrace();
-    /* [cmd:tsw] When activated, on negative-scaling, normal-vector correction will not occur */
+    /* [cmd:tsw] When active, on negative-scaling, normal-vector correction will not occur */
     void ToggleScaleWinding();
-    /* [cmd:sc] Set base color */
+    /* [cmd:tqw] When active, quad will have a fifth center vertex */
+    void ToggleQuadWeighting();
+    /* [cmd:sc] Set both color */
     void SetCurColor(vec4 const &color);
-    /* [cmd:scb] Set base color 2 */
-    void SetCurColor2(vec4 const &color);
+    /* [cmd:sca] Set base color A */
+    void SetCurColorA(vec4 const &color);
+    /* [cmd:scb] Set base color B */
+    void SetCurColorB(vec4 const &color);
     /* [cmd:scv] Sets all vertices in this scope color. */
     void SetVertColor(vec4 const &color);
 
@@ -711,6 +718,9 @@ private:
     void AddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
     void AddLerpVertex(int i, int j, float alpha);
+    void AddLerpVertex(VertexData &vi, VertexData &vj, float alpha);
+    VertexData GetLerpVertex(int i, int j, float alpha);
+    VertexData GetLerpVertex(VertexData &vi,VertexData &vj, float alpha);
     void AppendQuad(int i1, int i2, int i3, int i4, int base);
     void AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base);
     void AppendTriangle(int i1, int i2, int i3, int base);
@@ -917,13 +927,13 @@ public:
         - nbranches : Number of branches.
         - d1 : double Length of the branches.
         - d2 : double Length of the "branch" located between d1-branches.
-        - fade : if (true) in-between branches use Color2.
-        - fade2 : if (true) Star branches use Color2.
+        - fade : if (true) in-between branches use ColorB.
+        - fade2 : if (true) Star branches use ColorB.
      */
     void AppendStar(int nbranches, float d1, float d2,
                     bool fade=false, bool fade2=false);
     /* [cmd:aes] Star centered on (0,0,0) contained within a disc of "max(max(d1, d2), max(d1 + extrad, d2 + extrad))" diameter.
-       Expanded star branches use Color2.
+       Expanded star branches use ColorB.
         - nbranches : Number of branches.
         - d1 : Double Length of the branches.
         - d2 : Double Length of the "branch" located between r1-branches.
@@ -933,17 +943,17 @@ public:
     /* [cmd:ad] Disc centered on (0,0,0) with d diameter.
         - nbsides : Number of sides.
         - d : Diameter.
-        - fade : if (true) Outer vertices will use Color2
+        - fade : if (true) Outer vertices will use ColorB
      */
     void AppendDisc(int nsides, float d, bool fade=false);
     /* [cmd:at] Triangle centered on (0,0,0) contained within a disc of "d" diameter.
         - d : diameter of the containing disc..
-        - fade : if (true) 2nd & 3rd Vertices will use Color2
+        - fade : if (true) 2nd & 3rd Vertices will use ColorB
      */
     void AppendSimpleTriangle(float d, bool fade=false);
     /* [cmd:aq] Quad centered on (0,0,0) contained within BBox [-size*.5f, 0, -size*.5f][size*.5f, 0, size*.5f]
         - size : Size of quad.
-        - fade : if (true) 3rd & 4th Vertices will use Color2
+        - fade : if (true) 3rd & 4th Vertices will use ColorB
      */
     void AppendSimpleQuad(float size, bool fade=false);
 private:
@@ -961,8 +971,8 @@ public:
         - sidemul : multiplier for the size of the cogs.
         - offset : useless
      */
-    void AppendCog(int nbsides, float h, float d10, float d20, float d1,
-                   float d2, float d12, float d22, float sidemul=1.f, bool offset=false);
+    void AppendCog(int nbsides, float h, float d10, float d20, float d11,
+                   float d21, float d12, float d22, float sidemul=0.f, bool offset=false);
 
     //-------------------------------------------------------------------------
     //TODO : Mesh Bone operations
