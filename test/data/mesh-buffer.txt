@@ -9,7 +9,7 @@ clearcolor #000
 custom setmesh "
 
 [sc#0f0 scb#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 .1 ty .5 dup [ rz 90 ry 90 scv#00f dup [ ry 90 scv#f00 ] ] ] 
-[sc#fff ab .1]
+//[sc#fff loop 4 [ [loop 4 [ab 1 tx 2]] tz 2]]
 
 
 //[sc#f00 scb#f00 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 .1 ty .5 rz -90]
@@ -21,6 +21,7 @@ custom setmesh "
 //sc#00f ab 2 ty 1.5 ab 2
 
 "
+
 
 
 //splt 0 

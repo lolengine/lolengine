@@ -53,6 +53,7 @@ typedef lol::EasyMeshParser::token_type token_type;
 (csga|csgand)            { return token::T_CSGAND; }
 (csgx|csgxor)            { return token::T_CSGXOR; }
 
+(lp|loop)                { return token::T_LOOP; }
 (tsw|scalewinding)       { return token::T_TOGGLESCALEWINDING; }
 (sc|setcolor)            { return token::T_COLOR; }
 (scb|setbcolor)          { return token::T_BCOLOR; }

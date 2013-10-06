@@ -26,6 +26,7 @@ CmdType(["tsw", "scalewinding"], "When activated, on negative-scaling,\nnormal-v
 CmdType(["sc",  "setcolor"], "Set A color", [CmdArg("color", "color")]);
 CmdType(["scb", "setcolorb"], "Set B color", [CmdArg("color", "color")]);
 CmdType(["scv", "setcolorv"], "Set the color of all vertices in this scope", [CmdArg("color", "color")]);
+CmdType(["lp",  "loop"], "performs a loop", [CmdArg("int", "loopnb"), CmdArg("[ ]", "command to loop, no new context")]);
 
 //-------------------------------------------------------------------------
 //Mesh transform operations
