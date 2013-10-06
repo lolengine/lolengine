@@ -45,7 +45,7 @@
 
 %start mesh_description
 
-%token T_COLOR T_BCOLOR T_VCOLOR
+%token T_LOOP T_COLOR T_BCOLOR T_VCOLOR
 
 %token T_TRANSLATEX T_ROTATEX T_TAPERX T_TWISTX T_SHEARX T_STRETCHX T_BENDXY T_BENDXZ T_SCALEX T_MIRRORX
 %token T_TRANSLATEY T_ROTATEY T_TAPERY T_TWISTY T_SHEARY T_STRETCHY T_BENDYX T_BENDYZ T_SCALEY T_MIRRORY
@@ -122,8 +122,11 @@ post_brace_command:
   | T_CSGSUBSTRACTLOSS  mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgSubL();   mc.m_mesh.CloseBrace(); }
   | T_CSGAND            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgAnd();    mc.m_mesh.CloseBrace(); }
   | T_CSGXOR            mesh_open mesh_expression_list ']'     { mc.m_mesh.CsgXor();    mc.m_mesh.CloseBrace(); }
+  | doloop '[' mesh_expression_list ']'           { mc.m_mesh.LoopEnd(); }
   ;
 
+doloop:
+    T_LOOP iv           { mc.m_mesh.LoopStart($2); }
 pre_brace_command:
     T_DUPLICATE             { mc.m_mesh.DupAndScale(vec3::one, true); }
   ;

@@ -439,19 +439,264 @@ EasyMesh::EasyMesh(const EasyMesh& em)
 //-----------------------------------------------------------------------------
 bool EasyMesh::Compile(char const *command)
 {
+    bool res = false;
     EasyMeshCompiler mc(*this);
-    return mc.ParseString(command);
+    BD()->Enable(MeshBuildOperation::CommandRecording);
+    if ((res = mc.ParseString(command)))
+    {
+        BD()->Disable(MeshBuildOperation::CommandRecording);
+        BD()->Enable(MeshBuildOperation::CommandExecution);
+        ExecuteCmdStack();
+        BD()->Disable(MeshBuildOperation::CommandExecution);
+    }
+    return res;
+}
+
+//-----------------------------------------------------------------------------
+#define EZSET(M0)                                               BD()->CmdStack().GetValue(M0);
+#define EZDEF_1(T0)                                             T0 m0; EZSET(m0)
+#define EZDEF_2(T0, T1)                                         EZDEF_1(T0) T1 m1; EZSET(m1)
+#define EZDEF_3(T0, T1, T2)                                     EZDEF_2(T0, T1) T2 m2; EZSET(m2)
+#define EZDEF_4(T0, T1, T2, T3)                                 EZDEF_3(T0, T1, T2) T3 m3; EZSET(m3)
+#define EZDEF_5(T0, T1, T2, T3, T4)                             EZDEF_4(T0, T1, T2, T3) T4 m4; EZSET(m4)
+#define EZDEF_6(T0, T1, T2, T3, T4, T5)                         EZDEF_5(T0, T1, T2, T3, T4) T5 m5; EZSET(m5)
+#define EZDEF_7(T0, T1, T2, T3, T4, T5, T6)                     EZDEF_6(T0, T1, T2, T3, T4, T5) T6 m6; EZSET(m6)
+#define EZDEF_8(T0, T1, T2, T3, T4, T5, T6, T7)                 EZDEF_7(T0, T1, T2, T3, T4, T5, T6) T7 m7; EZSET(m7)
+#define EZDEF_9(T0, T1, T2, T3, T4, T5, T6, T7, T8)             EZDEF_8(T0, T1, T2, T3, T4, T5, T6, T7) T8 m8; EZSET(m8)
+#define EZDEF_10(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)        EZDEF_9(T0, T1, T2, T3, T4, T5, T6, T7, T8) T9 m9; EZSET(m9)
+
+//----
+#define EZCALL_1(F)                                             F();
+#define EZCALL_2(F, T0)                                         EZDEF_1(T0) F(m0);
+#define EZCALL_3(F, T0, T1)                                     EZDEF_2(T0, T1) F(m0, m1);
+#define EZCALL_4(F, T0, T1, T2)                                 EZDEF_3(T0, T1, T2) F(m0, m1, m2);
+#define EZCALL_5(F, T0, T1, T2, T3)                             EZDEF_4(T0, T1, T2, T3) F(m0, m1, m2, m3);
+#define EZCALL_6(F, T0, T1, T2, T3, T4)                         EZDEF_5(T0, T1, T2, T3, T4) F(m0, m1, m2, m3, m4);
+#define EZCALL_7(F, T0, T1, T2, T3, T4, T5)                     EZDEF_6(T0, T1, T2, T3, T4, T5) F(m0, m1, m2, m3, m4, m5);
+#define EZCALL_8(F, T0, T1, T2, T3, T4, T5, T6)                 EZDEF_7(T0, T1, T2, T3, T4, T5, T6) F(m0, m1, m2, m3, m4, m5, m6);
+#define EZCALL_9(F, T0, T1, T2, T3, T4, T5, T6, T7)             EZDEF_8(T0, T1, T2, T3, T4, T5, T6, T7) F(m0, m1, m2, m3, m4, m5, m6, m7);
+#define EZCALL_10(F, T0, T1, T2, T3, T4, T5, T6, T7, T8)        EZDEF_9(T0, T1, T2, T3, T4, T5, T6, T7, T8) F(m0, m1, m2, m3, m4, m5, m6, m7, m8);
+#define EZCALL_11(F, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)    EZDEF_10(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) F(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9);
+
+//----
+#define EZM_CALL_FUNC(...) \
+            LOL_CALL(LOL_CAT(EZCALL_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))
+
+//-----------------------------------------------------------------------------
+void EasyMesh::ExecuteCmdStack()
+{
+    for (BD()->Cmdi() = 0; BD()->Cmdi() < BD()->CmdStack().GetCmdNb(); ++BD()->Cmdi())
+    {
+        switch (BD()->CmdStack().GetCmd(BD()->Cmdi()))
+        {
+            case EasyMeshCmdType::MeshCsg:
+            {
+                EZM_CALL_FUNC(MeshCsg, CSGUsage);
+                break;
+            }
+            case EasyMeshCmdType::LoopStart:
+            {
+                EZM_CALL_FUNC(LoopStart, int);
+                break;
+            }
+            case EasyMeshCmdType::LoopEnd:
+            {
+                EZM_CALL_FUNC(LoopEnd);
+                break;
+            }
+            case EasyMeshCmdType::OpenBrace:
+            {
+                EZM_CALL_FUNC(OpenBrace);
+                break;
+            }
+            case EasyMeshCmdType::CloseBrace:
+            {
+                EZM_CALL_FUNC(CloseBrace);
+                break;
+            }
+            case EasyMeshCmdType::ScaleWinding:
+            {
+                EZM_CALL_FUNC(ToggleScaleWinding);
+                break;
+            }
+            case EasyMeshCmdType::SetColor:
+            {
+                EZM_CALL_FUNC(SetCurColor, vec4);
+                break;
+            }
+            case EasyMeshCmdType::SetColor2:
+            {
+                EZM_CALL_FUNC(SetCurColor2, vec4);
+                break;
+            }
+            case EasyMeshCmdType::SetVertColor:
+            {
+                EZM_CALL_FUNC(SetVertColor, vec4);
+                break;
+            }
+            case EasyMeshCmdType::Translate:
+            {
+                EZM_CALL_FUNC(Translate, vec3);
+                break;
+            }
+            case EasyMeshCmdType::Rotate:
+            {
+                EZM_CALL_FUNC(Rotate, float, vec3);
+                break;
+            }
+            case EasyMeshCmdType::RadialJitter:
+            {
+                EZM_CALL_FUNC(RadialJitter, float);
+                break;
+            }
+            case EasyMeshCmdType::MeshTranform:
+            {
+                EZM_CALL_FUNC(DoMeshTransform, MeshTransform, Axis, Axis, float, float, float, bool);
+                break;
+            }
+            case EasyMeshCmdType::Scale:
+            {
+                EZM_CALL_FUNC(Scale, vec3);
+                break;
+            }
+            case EasyMeshCmdType::DupAndScale:
+            {
+                EZM_CALL_FUNC(DupAndScale, vec3, bool);
+                break;
+            }
+            case EasyMeshCmdType::Chamfer:
+            {
+                EZM_CALL_FUNC(Chamfer, float);
+                break;
+            }
+            case EasyMeshCmdType::SplitTriangles:
+            {
+                EZM_CALL_FUNC(SplitTriangles, int);
+                break;
+            }
+            case EasyMeshCmdType::SmoothMesh:
+            {
+                EZM_CALL_FUNC(SmoothMesh, int, int, int);
+                break;
+            }
+            case EasyMeshCmdType::AppendCylinder:
+            {
+                EZM_CALL_FUNC(AppendCylinder, int, float, float, float, bool, bool, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendCapsule:
+            {
+                EZM_CALL_FUNC(AppendCapsule, int, float, float);
+                break;
+            }
+            case EasyMeshCmdType::AppendTorus:
+            {
+                EZM_CALL_FUNC(AppendTorus, int, float, float);
+                break;
+            }
+            case EasyMeshCmdType::AppendBox:
+            {
+                EZM_CALL_FUNC(AppendBox, vec3, float, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendStar:
+            {
+                EZM_CALL_FUNC(AppendStar, int, float, float, bool, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendExpandedStar:
+            {
+                EZM_CALL_FUNC(AppendExpandedStar, int, float, float, float);
+                break;
+            }
+            case EasyMeshCmdType::AppendDisc:
+            {
+                EZM_CALL_FUNC(AppendDisc, int, float, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendSimpleTriangle:
+            {
+                EZM_CALL_FUNC(AppendSimpleTriangle, float, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendSimpleQuad:
+            {
+                EZM_CALL_FUNC(AppendSimpleQuad, vec2, vec2, float, bool);
+                break;
+            }
+            case EasyMeshCmdType::AppendCog:
+            {
+                EZM_CALL_FUNC(AppendCog, int, float, float, float, float, float, float, float, float, bool);
+                break;
+            }
+            default:
+                ASSERT(0, "Unknown command pseudo bytecode");
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::LoopStart(int loopnb)
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::LoopStart);
+        BD()->CmdStack() << loopnb;
+        return;
+    }
+    //Loop is only available when executing a command recording
+    else if (BD()->IsEnabled(MeshBuildOperation::CommandExecution))
+    {
+        //Only register if we're not the current loop command
+        if (!BD()->LoopStack().Count() || BD()->LoopStack().Last().m1 != BD()->Cmdi())
+            BD()->LoopStack().Push(BD()->Cmdi(), loopnb);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::LoopEnd()
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::LoopEnd);
+        return;
+    }
+    //Loop is only available when executing a command recording
+    else if (BD()->IsEnabled(MeshBuildOperation::CommandExecution))
+    {
+        //Only register if we're not the current loop command
+        if (BD()->LoopStack().Count())
+        {
+            BD()->LoopStack().Last().m2--;
+            if (BD()->LoopStack().Last().m2 > 0)
+                BD()->Cmdi() = BD()->LoopStack().Last().m1 - 1;
+            else
+                BD()->LoopStack().Pop();
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::OpenBrace()
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::OpenBrace);
+        return;
+    }
+
     m_cursors.Push(m_vert.Count(), m_indices.Count());
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::CloseBrace()
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::CloseBrace);
+        return;
+    }
+
     m_cursors.Pop();
 }
 //-----------------------------------------------------------------------------
@@ -682,6 +927,13 @@ void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
 //-----------------------------------------------------------------------------
 void EasyMesh::MeshCsg(CSGUsage csg_operation)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::MeshCsg);
+        BD()->CmdStack() << csg_operation;
+        return;
+    }
+
     //A vertex dictionnary for vertices on the same spot.
     Array< int, int > vertex_dict;
     //This list keeps track of the triangle that will need deletion at the end.
@@ -865,19 +1117,53 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
 //-----------------------------------------------------------------------------
 void EasyMesh::ToggleScaleWinding()
 {
-    BD()->Toggle(MeshBuildOperation::Scale_Winding);
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::ScaleWinding);
+        return;
+    }
+
+    BD()->Toggle(MeshBuildOperation::ScaleWinding);
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor(vec4 const &color)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColor);
+        BD()->CmdStack() << color;
+        return;
+    }
+
     BD()->Color() = color;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurColor2(vec4 const &color)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColor2);
+        BD()->CmdStack() << color;
+        return;
+    }
+
     BD()->Color2() = color;
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::SetVertColor(vec4 const &color)
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SetVertColor);
+        BD()->CmdStack() << color;
+        return;
+    }
+
+    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+        m_vert[i].m_color = color;
 }
 
 //-----------------------------------------------------------------------------
@@ -1148,13 +1434,6 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetVertColor(vec4 const &color)
-{
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        m_vert[i].m_color = color;
-}
-
-//-----------------------------------------------------------------------------
 void EasyMesh::SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale)
 {
     BD()->TexCoordOffset() = new_offset;
@@ -1195,6 +1474,13 @@ void EasyMesh::SetCurVertTexCoord2(vec2 const &texcoord)
 //-----------------------------------------------------------------------------
 void EasyMesh::Translate(vec3 const &v)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::Translate);
+        BD()->CmdStack() << v;
+        return;
+    }
+
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
         m_vert[i].m_coord += v;
 }
@@ -1207,6 +1493,13 @@ void EasyMesh::RotateZ(float angle) { Rotate(angle, vec3(0, 0, 1)); }
 //-----------------------------------------------------------------------------
 void EasyMesh::Rotate(float angle, vec3 const &axis)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::Rotate);
+        BD()->CmdStack() << angle << axis;
+        return;
+    }
+
     mat3 m = mat3::rotate(angle, axis);
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
@@ -1218,6 +1511,13 @@ void EasyMesh::Rotate(float angle, vec3 const &axis)
 //-----------------------------------------------------------------------------
 void EasyMesh::RadialJitter(float r)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::RadialJitter);
+        BD()->CmdStack() << r;
+        return;
+    }
+
     Array<int> Welded;
     Welded.Push(-1);
     for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
@@ -1291,6 +1591,13 @@ void EasyMesh::BendZY(float t, float toff) { DoMeshTransform(MeshTransform::Bend
 //-----------------------------------------------------------------------------
 void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, bool absolute)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::MeshTranform);
+        BD()->CmdStack() << ct << axis0 << axis1 << n0 << n1 << noff << absolute;
+        return;
+    }
+
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
         switch (ct)
@@ -1338,6 +1645,13 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
 //-----------------------------------------------------------------------------
 void EasyMesh::Scale(vec3 const &s)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::Scale);
+        BD()->CmdStack() << s;
+        return;
+    }
+
     vec3 const invs = vec3(1) / s;
 
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
@@ -1347,7 +1661,7 @@ void EasyMesh::Scale(vec3 const &s)
     }
 
     /* Flip winding if the scaling involves mirroring */
-    if (!BD()->IsEnabled(MeshBuildOperation::Scale_Winding) && s.x * s.y * s.z < 0)
+    if (!BD()->IsEnabled(MeshBuildOperation::ScaleWinding) && s.x * s.y * s.z < 0)
     {
         for (int i = m_cursors.Last().m2; i < m_indices.Count(); i += 3)
         {
@@ -1366,6 +1680,13 @@ void EasyMesh::MirrorZ() { DupAndScale(vec3(1, 1, -1)); }
 //-----------------------------------------------------------------------------
 void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::DupAndScale);
+        BD()->CmdStack() << s << open_brace;
+        return;
+    }
+
     int vlen = m_vert.Count() - m_cursors.Last().m1;
     int tlen = m_indices.Count() - m_cursors.Last().m2;
 
@@ -1393,6 +1714,13 @@ void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
 void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
                               bool dualside, bool smooth, bool close)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCylinder);
+        BD()->CmdStack() << nsides << h << d1 << d2 << dualside << smooth << close;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
     float r2 = d2 * .5f;
@@ -1486,6 +1814,13 @@ void EasyMesh::AppendSphere(int ndivisions, float d)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCapsule);
+        BD()->CmdStack() << ndivisions << h << d;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r = d * .5f;
 
@@ -1632,6 +1967,13 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendTorus);
+        BD()->CmdStack() << ndivisions << d1 << d2;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
     float r2 = d2 * .5f;
@@ -1695,6 +2037,13 @@ void EasyMesh::AppendFlatChamfBox(vec3 const &size, float chamf)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendBox);
+        BD()->CmdStack() << size << chamf << smooth;
+        return;
+    }
+
     if (chamf < 0.0f)
     {
         AppendBox(size + vec3(chamf * 2.0f), -chamf, smooth);
@@ -1882,6 +2231,13 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
 void EasyMesh::AppendStar(int nbranches, float d1, float d2,
                           bool fade, bool fade2)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendStar);
+        BD()->CmdStack() << nbranches << d1 << d2 << fade << fade2;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
     float r2 = d2 * .5f;
@@ -1921,6 +2277,13 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extrad)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendExpandedStar);
+        BD()->CmdStack() << nbranches << d1 << d2 << extrad;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r1 = d1 * .5f;
     float r2 = d2 * .5f;
@@ -1965,6 +2328,13 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendDisc(int nsides, float d, bool fade)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendDisc);
+        BD()->CmdStack() << nsides << d << fade;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r = d * .5f;
 
@@ -1990,6 +2360,13 @@ void EasyMesh::AppendDisc(int nsides, float d, bool fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleTriangle(float d, bool fade)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendSimpleTriangle);
+        BD()->CmdStack() << d << fade;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float size = d * .5f;
 
@@ -2018,6 +2395,13 @@ void EasyMesh::AppendSimpleQuad(float size, bool fade)
 //-----------------------------------------------------------------------------
 void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendSimpleQuad);
+        BD()->CmdStack() << p1 << p2 << z << fade;
+        return;
+    }
+
     MeshType mt = MeshType::Quad;
     MeshFaceType mft = MeshFaceType::QuadDefault;
 
@@ -2053,6 +2437,17 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                          float d1, float d2, float d12, float d22,
                          float sidemul, bool offset)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCog);
+        BD()->CmdStack() << nbsides << h
+                         << d10 << d20
+                         << d1 << d2
+                         << d12 << d22
+                         << sidemul << offset;
+        return;
+    }
+
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r10 = d10 * .5f;
     float r20 = d20 * .5f;
@@ -2309,6 +2704,13 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
 //-----------------------------------------------------------------------------
 void EasyMesh::Chamfer(float f)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::Chamfer);
+        BD()->CmdStack() << f;
+        return;
+    }
+
     int vlen = m_vert.Count() - m_cursors.Last().m1;
     int ilen = m_indices.Count() - m_cursors.Last().m2;
 
@@ -2353,7 +2755,17 @@ void EasyMesh::Chamfer(float f)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SplitTriangles(int pass) { SplitTriangles(pass, nullptr); }
+void EasyMesh::SplitTriangles(int pass)
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SplitTriangles);
+        BD()->CmdStack() << pass;
+        return;
+    }
+
+    SplitTriangles(pass, nullptr);
+}
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
@@ -2388,6 +2800,13 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
 //TODO : Smooth should only use connected vertices that are on edges of the mesh (See box).
 void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass)
 {
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::SmoothMesh);
+        BD()->CmdStack() << main_pass << split_per_main_pass << smooth_per_main_pass;
+        return;
+    }
+
     VertexDictionnary vert_dict;
     Array<vec3> smooth_buf[2];
     Array<int> master_list;

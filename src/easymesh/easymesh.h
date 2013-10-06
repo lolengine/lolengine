@@ -21,6 +21,66 @@
 namespace lol
 {
 
+//Utility struct to convert command code to pseudo-bytecode
+struct CommandStack
+{
+private:
+    Array<int, int, int>    m_commands;
+    Array<float>            m_floats;
+    Array<int>              m_ints;
+    int                     m_f_cur;
+    int                     m_i_cur;
+
+public:
+    //cmd storage
+    void    AddCmd(int cmd) { m_commands.Push(cmd, m_floats.Count(), m_ints.Count()); }
+    int     GetCmdNb()      { return m_commands.Count(); }
+    int     GetCmd(int i)
+    {
+        ASSERT(0 <= i && i < m_commands.Count());
+        m_f_cur = m_commands[i].m2;
+        m_i_cur = m_commands[i].m3;
+        return m_commands[i].m1;
+    }
+
+    //GETTER
+    inline float   F()      { return m_floats[m_f_cur++]; }
+    inline int     I()      { return m_ints[m_i_cur++]; }
+    inline int     E()      { return I(); }
+    inline bool    B()      { return !!I(); }
+    inline vec2    V2()     { vec2  v(F());       v.y = F(); return v; }
+    inline vec3    V3()     { vec3  v(V2(), 0.f); v.z = F(); return v; }
+    inline vec4    V4()     { vec4  v(V3(), 0.f); v.w = F(); return v; }
+    inline ivec2   IV2()    { ivec2 v(I());       v.y = I(); return v; }
+    inline ivec3   IV3()    { ivec3 v(IV2(), 0);  v.z = I(); return v; }
+    inline ivec4   IV4()    { ivec4 v(IV3(), 0);  v.w = I(); return v; }
+
+    //Alternate getters
+    inline void    GetValue(float &f)   { f = F(); }
+    inline void    GetValue(int &i)     { i = I(); }
+    inline void    GetValue(bool &b)    { b = B(); }
+    inline void    GetValue(vec2 &v2)   { v2 = V2(); }
+    inline void    GetValue(vec3 &v3)   { v3 = V3(); }
+    inline void    GetValue(vec4 &v4)   { v4 = V4(); }
+    inline void    GetValue(ivec2 &iv2) { iv2 = IV2(); }
+    inline void    GetValue(ivec3 &iv3) { iv3 = IV3(); }
+    inline void    GetValue(ivec4 &iv4) { iv4 = IV4(); }
+    //For Safe Enum
+    template< class T > inline
+    void GetValue(T &i) { i = T((typename T::Value)I()); }
+
+    //SETTER
+    CommandStack &operator<<(int i)     { m_ints << i; return *this; }
+    CommandStack &operator<<(float f)   { m_floats << f; return *this; }
+    CommandStack &operator<<(bool b)    { return (*this << (int)b); }
+    CommandStack &operator<<(vec2 v)    { return (*this << v.x   << v.y); }
+    CommandStack &operator<<(vec3 v)    { return (*this << v.xy  << v.z); }
+    CommandStack &operator<<(vec4 v)    { return (*this << v.xyz << v.w); }
+    CommandStack &operator<<(ivec2 iv)  { return (*this << iv.x   << iv.y); }
+    CommandStack &operator<<(ivec3 iv)  { return (*this << iv.xy  << iv.z); }
+    CommandStack &operator<<(ivec4 iv)  { return (*this << iv.xyz << iv.w); }
+};
+
 //Utility enum for renderers
 struct MeshRender
 {
@@ -141,7 +201,9 @@ struct MeshBuildOperation
     enum Value
     {
         //When this flag is up, negative scaling will not invert faces.
-        Scale_Winding   = 1 << 0,
+        ScaleWinding       = (1 << 0),
+        CommandRecording   = (1 << 1),
+        CommandExecution   = (1 << 2),
 
         All     = 0xffffffff
     }
@@ -151,6 +213,54 @@ struct MeshBuildOperation
     inline MeshBuildOperation(uint64_t i) : m_value((Value)i) {}
     inline operator Value() { return m_value; }
 };
+
+struct EasyMeshCmdType
+{
+    enum Value
+    {
+        MeshCsg = 0,
+
+        LoopStart,
+        LoopEnd,
+        OpenBrace,
+        CloseBrace,
+
+        ScaleWinding,
+        SetColor,
+        SetColor2,
+        SetVertColor,
+
+        Translate,
+        Rotate,
+        RadialJitter,
+        MeshTranform,
+        Scale,
+        DupAndScale,
+        Chamfer,
+
+        SplitTriangles,
+        SmoothMesh,
+
+        AppendCylinder,
+        AppendCapsule,
+        AppendTorus,
+        AppendBox,
+        AppendStar,
+        AppendExpandedStar,
+        AppendDisc,
+        AppendSimpleTriangle,
+        AppendSimpleQuad,
+        AppendCog,
+
+        Max
+    }
+    m_value;
+
+    inline EasyMeshCmdType(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+    inline int Value() { return m_value; }
+};
+
 
 struct MeshType
 {
@@ -259,12 +369,15 @@ public:
         }
     }
 
-    inline vec4 &Color()           { return m_color; }
-    inline vec4 &Color2()          { return m_color2; }
-    inline vec2 &TexCoordOffset()  { return m_texcoord_offset; }
-    inline vec2 &TexCoordScale()   { return m_texcoord_scale; }
-    inline vec2 &TexCoordOffset2() { return m_texcoord_offset2; }
-    inline vec2 &TexCoordScale2()  { return m_texcoord_scale2; }
+    inline CommandStack &CmdStack() { return m_stack; }
+    inline int &Cmdi()              { return m_cmd_i; }
+    inline Array<int, int> &LoopStack(){ return m_loop_stack; }
+    inline vec4 &Color()            { return m_color; }
+    inline vec4 &Color2()           { return m_color2; }
+    inline vec2 &TexCoordOffset()   { return m_texcoord_offset; }
+    inline vec2 &TexCoordScale()    { return m_texcoord_scale; }
+    inline vec2 &TexCoordOffset2()  { return m_texcoord_offset2; }
+    inline vec2 &TexCoordScale2()   { return m_texcoord_scale2; }
 
     //UV1
     void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt] & 1); }
@@ -445,6 +558,9 @@ public:
     inline void Set(MeshBuildOperation mbo, bool value) { if (value) Enable(mbo); else Disable(mbo); }
 
 public:
+    CommandStack        m_stack;
+    int                 m_cmd_i;
+    Array<int, int>     m_loop_stack;
     vec4                m_color;
     vec4                m_color2;
     vec2                m_texcoord_offset;
@@ -463,15 +579,19 @@ struct CSGUsage
 {
     enum Value
     {
-        Union,
+        Union = 0,
         Substract,
         SubstractLoss, //will remove B from A, but not add inverted B
         And,
         Xor,
+
+        Max
     }
     m_value;
 
+    inline CSGUsage() : m_value(Union) {}
     inline CSGUsage(Value v) : m_value(v) {}
+    inline CSGUsage(int v) : m_value((Value)v) {}
     inline operator Value() { return m_value; }
 };
 
@@ -521,6 +641,7 @@ struct Axis
     }
     m_value;
 
+    inline Axis() : m_value(X) {}
     inline Axis(Value v) : m_value(v) {}
     inline operator Value() { return m_value; }
 };
@@ -535,6 +656,7 @@ public:
     EasyMesh(const EasyMesh& em);
 
     bool        Compile(char const *command);
+    void        ExecuteCmdStack();
     void        MeshConvert(GpuShaderData* new_gpu_sdata);
     void        MeshConvert(Shader* ProvidedShader = nullptr);
     bool        Render(mat4 const &model);
@@ -551,20 +673,24 @@ private:
     void MeshCsg(CSGUsage csg_operation);
 public:
     /* [cmd:csgu] Performs a Union operation as (mesh0_Outside + mesh1_Outside) */
-    void CsgUnion()         { MeshCsg(CSGUsage::Union); }
+    void CsgUnion() { MeshCsg(CSGUsage::Union); }
     /* [cmd:csgs] Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted) */
-    void CsgSub()     { MeshCsg(CSGUsage::Substract); }
+    void CsgSub()   { MeshCsg(CSGUsage::Substract); }
     /* [cmd:csgsl] Performs a Substract operation without keeping the mesh1 part */
-    void CsgSubL() { MeshCsg(CSGUsage::SubstractLoss); }
+    void CsgSubL()  { MeshCsg(CSGUsage::SubstractLoss); }
     /* [cmd:csga] Performs an And operation as (mesh0_Inside + mesh1_Inside) */
-    void CsgAnd()           { MeshCsg(CSGUsage::And); }
+    void CsgAnd()   { MeshCsg(CSGUsage::And); }
     /* [cmd:csgx] Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted) */
-    void CsgXor()           { MeshCsg(CSGUsage::Xor); }
+    void CsgXor()   { MeshCsg(CSGUsage::Xor); }
 
     //-------------------------------------------------------------------------
     //Mesh Base operations
     //-------------------------------------------------------------------------
 public:
+    /* [cmd:lp[ ]] will perform a loop of loopnb */
+    void LoopStart(int loopnb);
+    /* No cmd, implicit ] */
+    void LoopEnd();
     /* [cmd:[] from this point onward, any operation will not be performed on previous vertices */
     void OpenBrace();
     /* [cmd:]] Merge current vertices with previous context */
@@ -575,6 +701,8 @@ public:
     void SetCurColor(vec4 const &color);
     /* [cmd:scb] Set base color 2 */
     void SetCurColor2(vec4 const &color);
+    /* [cmd:scv] Sets all vertices in this scope color. */
+    void SetVertColor(vec4 const &color);
 
     //-------------------------------------------------------------------------
     //Internal : Basic triangle/vertex operations
@@ -595,7 +723,6 @@ public: //DEBUG
     //Internal : Vertices operations
     //-------------------------------------------------------------------------
 private:
-    void SetVertColor(vec4 const &color);
     void SetTexCoordData(vec2 const &new_offset, vec2 const &new_scale);
     void SetTexCoordData2(vec2 const &new_offset, vec2 const &new_scale);
 
@@ -697,6 +824,7 @@ private:
         }
         m_value;
 
+        inline MeshTransform() : m_value(Taper) {}
         inline MeshTransform(Value v) : m_value(v) {}
         inline operator Value() { return m_value; }
     };

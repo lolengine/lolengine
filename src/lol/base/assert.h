@@ -66,6 +66,15 @@ static inline void DebugAbort()
                                        8, 8, 8, 8, 8, 7, 6, 5, 4, 3, \
                                        2, 1, TOO_FEW_ARGUMENTS))
 
+#define LOL_COUNT_TO_12(...) \
+    LOL_EVAL(LOL_GET_63RD(__VA_ARGS__, 10,10,10,10,10,10,10,10,10,10,\
+                                       10,10,10,10,10,10,10,10,10,10,\
+                                       10,10,10,10,10,10,10,10,10,10,\
+                                       10,10,10,10,10,10,10,10,10,10,\
+                                       10,10,10,10,10,10,10,10,10,10,\
+                                       12,11,10,9, 8, 7, 6, 5, 4, 3, \
+                                       2, 1, TOO_FEW_ARGUMENTS))
+
 /* Three levels of dispatch are needed because of Visual Studio's bizarre
  * handling of __VA_ARGS__ inside macro calls */
 #define LOL_CAT3(a, b) a##b
