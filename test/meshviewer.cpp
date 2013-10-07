@@ -359,7 +359,7 @@ public:
         bool is_pos = false;
         bool is_fov = false;
         bool is_hsc = false;
-        vec2 tmp = vec2::zero;
+        vec2 tmpv = vec2::zero;
 
 #if NO_NACL_EM
         is_pos = KeyDown(KEY_CAM_POS) || KeyDown(MSE_CAM_POS);
@@ -367,23 +367,23 @@ public:
 
         if (KeyDown(MSE_CAM_ROT) || KeyDown(MSE_CAM_POS) || KeyDown(MSE_CAM_FOV))
         {
-            tmp += vec2(AxisValue(MSEX_CAM_Y), AxisValue(MSEX_CAM_X));
+            tmpv += vec2(AxisValue(MSEX_CAM_Y), AxisValue(MSEX_CAM_X));
             if (KeyDown(MSE_CAM_ROT))
-                tmp *= 6.f;
+                tmpv *= 6.f;
             if (KeyDown(MSE_CAM_POS))
-                tmp *= vec2(1.f, -1.f) * 3.f;
+                tmpv *= vec2(1.f, -1.f) * 3.f;
             if (KeyDown(MSE_CAM_FOV))
-                tmp = vec2(tmp.y * 4.f, tmp.x * 6.f);
+                tmpv = vec2(tmpv.y * 4.f, tmpv.x * 6.f);
         }
 
-        tmp += vec2((float)KeyDown(KEY_CAM_UP   ) - (float)KeyDown(KEY_CAM_DOWN),
-                    (float)KeyDown(KEY_CAM_RIGHT) - (float)KeyDown(KEY_CAM_LEFT));
+        tmpv += vec2((float)KeyDown(KEY_CAM_UP   ) - (float)KeyDown(KEY_CAM_DOWN),
+                     (float)KeyDown(KEY_CAM_RIGHT) - (float)KeyDown(KEY_CAM_LEFT));
 #endif //NO_NACL_EM
 
         //Base data
-        vec2 rot = (!is_pos && !is_fov)?(tmp):(vec2(.0f)); rot = vec2(rot.x, rot.y);
-        vec2 pos = ( is_pos && !is_fov)?(tmp):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
-        vec2 fov = (!is_pos && is_fov )?(tmp):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
+        vec2 rot = (!is_pos && !is_fov)?(tmpv):(vec2(.0f)); rot = vec2(rot.x, rot.y);
+        vec2 pos = ( is_pos && !is_fov)?(tmpv):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
+        vec2 fov = (!is_pos && is_fov )?(tmpv):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
         vec2 hsc = (is_hsc)?(vec2(0.f)):(vec2(0.f));
 
         //speed
@@ -536,11 +536,11 @@ public:
                     for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
                     {
                         //Store local dst in current m_ld
-                        LightData tmp = LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+                        LightData ltmp = LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
                         if (i < m_light_datas.Count())
-                            m_light_datas[i] = tmp;
+                            m_light_datas[i] = ltmp;
                         else
-                            m_light_datas << tmp;
+                            m_light_datas << ltmp;
 
                         vec3 loc = vec3::zero;
                         vec4 col = vec4::zero;
@@ -732,14 +732,14 @@ public:
             {
                 for (int k = 0; k < m_ssetup->m_lights.Count(); ++k)
                 {
-                    Light* tmp = m_ssetup->m_lights[k];
-                    mat4 world = mat4::translate(tmp->GetPosition().xyz);
+                    Light* ltmp = m_ssetup->m_lights[k];
+                    mat4 world = mat4::translate(ltmp->GetPosition().xyz);
                     mat4 local = mat4::translate((inverse(m_mat) * world).v3.xyz);
                     //dir light
-                    if (tmp->GetPosition().w == 0.f)
+                    if (ltmp->GetPosition().w == 0.f)
                     {
                         m_gizmos[GZ_LightPos]->Render(m_mat * inverse(local));
-                        m_gizmos[GZ_LightDir]->Render(inverse(world) * inverse(mat4::lookat(vec3::zero, -tmp->GetPosition().xyz, vec3::axis_y)));
+                        m_gizmos[GZ_LightDir]->Render(inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition().xyz, vec3::axis_y)));
                     }
                     else //point light
                     {
