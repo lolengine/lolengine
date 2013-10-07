@@ -139,7 +139,7 @@ void DefaultShaderData::SetupDefaultData(bool with_UV)
 {
     UNUSED(with_UV);
     for (int i = 0; i < 7; i++)
-        AddUniform(DefaultUniforms[i].C());
+        AddUniform(DefaultUniforms[i]);
 }
 
 //-----------------------------------------------------------------------------
@@ -163,14 +163,14 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
         light_data << vec4::zero << vec4::zero;
 
     int i = 0;
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), light_data);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), light_data);
 
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), modelview);
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), view);
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), inverse(view));
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), proj);
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), normalmat);
-    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++].C()), f);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), modelview);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), view);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), inverse(view));
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), proj);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), normalmat);
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), f);
 }
 
 //-----------------------------------------------------------------------------

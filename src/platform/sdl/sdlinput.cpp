@@ -220,13 +220,15 @@ void SdlInputData::Tick(float seconds)
 
     if (mouse.x >= 0 && mouse.x < m_app.x && mouse.y >= 0 && mouse.y < m_app.y)
     {
+        //We need the max if we want coherent mouse speed between axis
+        float max_screen_size = lol::max(m_screen.x, m_screen.y);
         vec2 vmouse = vec2(mouse);
         vec2 vprevmouse = vec2(m_prevmouse);
         m_mouse->SetCursor(0, vmouse / m_app, mouse);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * 100.0f / m_screen.x);
+        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * 100.0f / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * 100.0f / m_screen.y);
+        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * 100.0f / max_screen_size);
     }
 
     if (m_mousecapture)
