@@ -24,9 +24,17 @@ using namespace lol;
 
 static int const TEXTURE_WIDTH = 256;
 
+#define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
+#define     NACL_EM             (__native_client__ || EMSCRIPTEN)
+
 #define     R_M                 1.f
+#if NACL_EM
+#define     DEFAULT_WIDTH       (770.f * R_M)
+#define     DEFAULT_HEIGHT      (200.f * R_M)
+#else
 #define     DEFAULT_WIDTH       (1200.f * R_M)
 #define     DEFAULT_HEIGHT      (400.f * R_M)
+#endif //NACL_EM
 #define     WIDTH               ((float)Video::GetSize().x)
 #define     HEIGHT              ((float)Video::GetSize().y)
 #define     SCREEN_W            (10.f / WIDTH)
@@ -47,9 +55,6 @@ static int const TEXTURE_WIDTH = 256;
 #define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
-
-#define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
-#define     NACL_EM             (__native_client__ || EMSCRIPTEN)
 
 #define     HAS_KBOARD          (m_input_usage & (1<<IPT_MV_KBOARD))
 #define     HAS_MOUSE           (m_input_usage & (1<<IPT_MV_MOUSE))
