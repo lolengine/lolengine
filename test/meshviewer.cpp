@@ -26,6 +26,7 @@ static int const TEXTURE_WIDTH = 256;
 
 #define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
 #define     NACL_EM             (__native_client__ || EMSCRIPTEN)
+#define     NO_NACL_EM_INPUT    (1 && NO_NACL_EM)
 
 #define     R_M                 1.f
 #if NACL_EM
@@ -55,6 +56,7 @@ static int const TEXTURE_WIDTH = 256;
 #define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
+
 
 #define     HAS_KBOARD          (m_input_usage & (1<<IPT_MV_KBOARD))
 #define     HAS_MOUSE           (m_input_usage & (1<<IPT_MV_MOUSE))
@@ -209,7 +211,7 @@ public:
         m_ssetup = nullptr;
     }
 
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
     bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->GetKey(index).IsReleased()); }
     bool  KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->GetKey(index).IsPressed()); }
     bool  KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->GetKey(index).IsDown()); }
@@ -217,58 +219,58 @@ public:
     bool  KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->GetKey(index).IsPressed()); }
     bool  KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->GetKey(index).IsDown()); }
     float AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE)?(m_controller->GetAxis(index).GetValue()):(0.f); }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
     void Init()
     {
         m_init = true;
         m_input_usage = 0;
 
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         /* Register an input controller for the keyboard */
         m_controller = new Controller("Default", MAX_KEYS, MAX_AXIS);
 
-        if (InputDevice::Get("Mouse"))
+        if (InputDevice::Get(g_name_mouse.C()))
         {
             m_input_usage |= (1<<IPT_MV_MOUSE);
 
-            m_controller->GetKey(MSE_CAM_ROT).Bind("Mouse", "Left");
-            m_controller->GetKey(MSE_CAM_POS).Bind("Mouse", "Right");
-            m_controller->GetKey(MSE_CAM_FOV).Bind("Mouse", "Middle");
-            m_controller->GetAxis(MSEX_CAM_Y).Bind("Mouse", "Y");
-            m_controller->GetAxis(MSEX_CAM_X).Bind("Mouse", "X");
+            m_controller->GetKey(MSE_CAM_ROT).BindMouse("Left");
+            m_controller->GetKey(MSE_CAM_POS).BindMouse("Right");
+            m_controller->GetKey(MSE_CAM_FOV).BindMouse("Middle");
+            m_controller->GetAxis(MSEX_CAM_Y).BindMouse("Y");
+            m_controller->GetAxis(MSEX_CAM_X).BindMouse("X");
         }
 
-        if (InputDevice::Get("Keyboard"))
+        if (InputDevice::Get(g_name_keyboard.C()))
         {
             m_input_usage |= (1<<IPT_MV_KBOARD);
 
             //Camera keyboard rotation
-            m_controller->GetKey(KEY_CAM_UP   ).Bind("Keyboard", "Up");
-            m_controller->GetKey(KEY_CAM_DOWN ).Bind("Keyboard", "Down");
-            m_controller->GetKey(KEY_CAM_LEFT ).Bind("Keyboard", "Left");
-            m_controller->GetKey(KEY_CAM_RIGHT).Bind("Keyboard", "Right");
+            m_controller->GetKey(KEY_CAM_UP   ).BindKeyboard("Up");
+            m_controller->GetKey(KEY_CAM_DOWN ).BindKeyboard("Down");
+            m_controller->GetKey(KEY_CAM_LEFT ).BindKeyboard("Left");
+            m_controller->GetKey(KEY_CAM_RIGHT).BindKeyboard("Right");
 
             //Camera keyboard position switch
-            m_controller->GetKey(KEY_CAM_POS  ).Bind("Keyboard", "LeftShift");
-            m_controller->GetKey(KEY_CAM_FOV  ).Bind("Keyboard", "LeftCtrl");
+            m_controller->GetKey(KEY_CAM_POS  ).BindKeyboard("LeftShift");
+            m_controller->GetKey(KEY_CAM_FOV  ).BindKeyboard("LeftCtrl");
 
             //Camera unzoom switch
-            m_controller->GetKey(KEY_CAM_RESET).Bind("Keyboard", "Space");
+            m_controller->GetKey(KEY_CAM_RESET).BindKeyboard("Space");
 
             //Mesh change
-            m_controller->GetKey(KEY_MESH_NEXT).Bind("Keyboard", "PageUp");
-            m_controller->GetKey(KEY_MESH_PREV).Bind("Keyboard", "PageDown");
+            m_controller->GetKey(KEY_MESH_NEXT).BindKeyboard("PageUp");
+            m_controller->GetKey(KEY_MESH_PREV).BindKeyboard("PageDown");
 
             //Base setup
-            m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
-            m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
-            m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
-            m_controller->GetKey(KEY_F4).Bind("Keyboard", "F4");
-            m_controller->GetKey(KEY_F5).Bind("Keyboard", "F5");
-            m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
+            m_controller->GetKey(KEY_F1).BindKeyboard("F1");
+            m_controller->GetKey(KEY_F2).BindKeyboard("F2");
+            m_controller->GetKey(KEY_F3).BindKeyboard("F3");
+            m_controller->GetKey(KEY_F4).BindKeyboard("F4");
+            m_controller->GetKey(KEY_F5).BindKeyboard("F5");
+            m_controller->GetKey(KEY_ESC).BindKeyboard("Escape");
         }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
 
         m_camera = new Camera();
@@ -325,13 +327,13 @@ public:
         m_first_tick = true;
 
         //TODO : This should probably be "standard LoL behaviour"
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         {
             //Shutdown logic
             if (KeyReleased(KEY_ESC))
                 Ticker::Shutdown();
         }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
         //Compute render mesh count
         float a_j = lol::abs(m_render_max[1]);
@@ -340,9 +342,9 @@ public:
         m_render_max[1] = a_j * ((RATIO_WH * 1.f) / ((i_trans != 0.f)?(i_trans):(RATIO_WH))) - RATIO_HW * .3f;
 
         //Mesh Change
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, m_meshes.Count() - 1);
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
 #if ALL_FEATURES
@@ -366,7 +368,7 @@ public:
         bool is_hsc = false;
         vec2 tmpv = vec2::zero;
 
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         is_pos = KeyDown(KEY_CAM_POS) || KeyDown(MSE_CAM_POS);
         is_fov = KeyDown(KEY_CAM_FOV) || KeyDown(MSE_CAM_FOV);
 
@@ -383,7 +385,7 @@ public:
 
         tmpv += vec2((float)KeyDown(KEY_CAM_UP   ) - (float)KeyDown(KEY_CAM_DOWN),
                      (float)KeyDown(KEY_CAM_RIGHT) - (float)KeyDown(KEY_CAM_LEFT));
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
         //Base data
         vec2 rot = (!is_pos && !is_fov)?(tmpv):(vec2(.0f)); rot = vec2(rot.x, rot.y);
@@ -403,7 +405,7 @@ public:
 
         m_rot += m_rot_speed * seconds;
 
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         if (m_reset_timer >= 0.f)
             m_reset_timer -= seconds;
         if (KeyPressed(KEY_CAM_RESET))
@@ -425,7 +427,7 @@ public:
             m_zoom += m_zoom_speed * seconds;
             m_hist_scale += m_hist_scale_speed * seconds;
         }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
         //clamp
         vec2 rot_mesh = vec2(SmoothClamp(m_rot.x, -ROT_CLAMP, ROT_CLAMP, ROT_CLAMP * .1f), m_rot.y);
@@ -436,13 +438,13 @@ public:
         vec2 hist_scale_mesh = vec2(SmoothClamp(m_hist_scale.x, 0.f, HST_CLAMP, HST_CLAMP * .1f),
                                     SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         if (KeyDown(KEY_CAM_RESET) && m_reset_timer < 0.f)
         {
             pos_mesh = vec2::zero;
             zoom_mesh = 0.f;
         }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
         m_rot_mesh = vec2(damp(m_rot_mesh.x, rot_mesh.x, .2f, seconds), damp(m_rot_mesh.y, rot_mesh.y, .2f, seconds));
         m_pos_mesh = vec2(damp(m_pos_mesh.x, pos_mesh.x, .2f, seconds), damp(m_pos_mesh.y, pos_mesh.y, .2f, seconds));
@@ -639,7 +641,7 @@ public:
             return;
 
         //TODO : This should probably be "standard LoL behaviour"
-#if NO_NACL_EM
+#if NO_NACL_EM_INPUT
         {
             if (KeyReleased(KEY_F1))
                 Video::SetDebugRenderMode(DebugRenderMode::Default);
@@ -652,7 +654,7 @@ public:
             if (KeyReleased(KEY_F5))
                 Video::SetDebugRenderMode(DebugRenderMode::UV);
         }
-#endif //NO_NACL_EM
+#endif //NO_NACL_EM_INPUT
 
 #if NO_NACL_EM && WITH_TEXTURE
         if (!m_default_texture)
@@ -716,9 +718,7 @@ public:
                     //Camera projection
                     mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                     m_camera->SetProjection(new_proj);
-//#if NO_NACL_EM
                     m_meshes[i]->Render(m_mat);
-//#endif //NO_NACL_EM
                     g_renderer->Clear(ClearMask::Depth);
                 }
                 m_camera->SetProjection(save_proj);
