@@ -1,16 +1,22 @@
-addlight 0.0 position (1 -1 1) color #fff
-addlight 0.0 position (-1 -1 -1) color #fff
-clearcolor #000
+addlight 0 position (4 -4 0) color #fff
+addlight 1 position (0 0 6) color #bfb
+clearcolor #d0d
+showgizmo true
+showlight true
+
+//SCENE SETUP END
+
 //addlight 0.0 position (1 0 1) color #0ff
 //addlight 0.0 position (-0.2 -1 -0.5) color (.0 .2 .5 1)
 
 //custom setmesh "sc#f00 ab 2 ty 1.5 ab 2"
 
+
 custom setmesh "
 
-tqw
+//tqw
 //CMD TEST
-//sc#0f0 ab 1
+sc#0f0 ab 5
 //sc#0f0 afcb 1 -.2
 //sc#0f0 acg 8 1 1 1 2 2 1.5 1.5 -.4
 //sc#0f0 as 6 1 2
@@ -19,12 +25,16 @@ tqw
 //sc#0f0 aq 1
 //splt 2 smth 4 0 1
 
-//[sc#0f0 ac 3 .5 .4 0 false false true ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 .1 false false true ty .5 dup [ rz 90 ry 90 scv#00f dup [ ry 90 scv#f00 ] ] ] 
-//[sc#fff ab 1 tx 2]
+//[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 dup [ rz 90 ry 90 scv#00f dup [ ry 90 scv#f00 ] ] ]
+//[sc#fff ab .1]
+
+//[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]
 
 //[sc#fff ab 1 tx .5 ty .5]
 //[sc#fff ab 1 tx -.5 ty -.5]
 
+
+//[sc#fff ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 [ad 3 .1 sy -1] ty 1]
 
 //smth 3 1 1 smth 8 0 1
 //[sc#fff loop 4 [ [loop 4 [ab 1 tx 2]] tz 2]]
@@ -39,8 +49,6 @@ tqw
 //sc#00f ab 2 ty 1.5 ab 2
 
 "
-
-
 
 //splt 0 
 //test

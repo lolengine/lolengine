@@ -53,6 +53,10 @@ lookat              { return token::T_OBJLOOKAT;    }
 color               { return token::T_OBJCOLOR;     }
 clearcolor          { return token::T_CLEARCOLOR;   }
 
+showgizmo           { return token::T_SHOWGIZMO;    }
+showlight           { return token::T_SHOWLIGHT;    }
+custom              { return token::T_CUSTOMCMD;    }
+
 custom              { return token::T_CUSTOMCMD;    }
 
 %{ /* =======  BASE COLOR TYPES  ========================================= */ %}

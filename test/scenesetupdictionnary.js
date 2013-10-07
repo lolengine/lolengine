@@ -16,4 +16,6 @@ CmdType(["addlight"],   "Add a light to the scene.\nUse other commands after thi
 CmdType(["position"],   "Set a position.\nWhen put after a light, sets its position.", [CmdArg("vec3", "pos")]);
 CmdType(["color"],      "Set a color.", [CmdArg("color", "color")]);
 CmdType(["clearcolor"], "Sets the color used for screen clearing.", [CmdArg("color", "color")]);
+CmdType(["showgizmo"],  "If true, show the axis gizmo.", [CmdArg("bool", "show")]);
+CmdType(["showlight"],  "If true, show the light locations.", [CmdArg("bool", "show")]);
 
