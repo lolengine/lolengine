@@ -26,7 +26,7 @@ static int const TEXTURE_WIDTH = 256;
 
 #define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
 #define     NACL_EM             (__native_client__ || EMSCRIPTEN)
-#define     NO_NACL_EM_INPUT    (1 && NO_NACL_EM)
+#define     NO_NACL_EM_INPUT    (1 && !EMSCRIPTEN)
 
 #define     R_M                 1.f
 #if NACL_EM

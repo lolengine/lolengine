@@ -99,6 +99,7 @@ function HideProgressStatus(should_hide)
         if (should_hide == true)
         {
             div_progress.style.visibility = "hidden";
+            div_progress.style.zIndex = "-999";
             g_status_text.splice(0, g_status_text.length);
             g_status_timer.splice(0, g_status_timer.length);
             progress_bar.value = -1;
@@ -107,6 +108,7 @@ function HideProgressStatus(should_hide)
         else
         {
             div_progress.style.visibility = "visible";
+            div_progress.style.zIndex = "999";
             progress_bar.value = -1;
             AddTextStatus('Please wait for module loading');
             UpdateTextStatus(1.0);
