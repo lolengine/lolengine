@@ -16,7 +16,6 @@
 #include <ppapi/cpp/var.h>
 #include <ppapi/cpp/module.h>
 #include <ppapi/cpp/completion_callback.h>
-#include <ppapi/cpp/input_event.h>
 
 #include "core.h"
 
@@ -27,9 +26,9 @@
 void lol_nacl_main(void) __attribute__((weak));
 void lol_nacl_main(void) {}
 void lol_nacl_main(int argc, char **argv) __attribute__((weak));
-void lol_nacl_main(int argc, char **argv) {}
+void lol_nacl_main(int argc, char **argv) { UNUSED(argc, argv); }
 void lol_nacl_main(int argc, char **argv, char **envp) __attribute__((weak));
-void lol_nacl_main(int argc, char **argv, char **envp) {}
+void lol_nacl_main(int argc, char **argv, char **envp) { UNUSED(argc, argv, envp); }
 
 namespace lol
 {
@@ -39,43 +38,16 @@ namespace lol
  * This is a ripoff of the SDL one
  */
 
-class NaClInputData
-{
-    friend class NaClInstance;
-
-private:
-    void Tick(float seconds);
-    bool IsViewportSizeValid() { return (m_app.x > 0.f && m_app.y > 0.f && m_screen.x > 0.f && m_screen.y > 0.f); }
-    void InitViewportSize();
-
-    static void SetMousePos(ivec2 position);
-
-    NaClInputData() :
-        m_prevmouse(ivec2::zero),
-        m_mousecapture(false)
-    {
-        InitViewportSize();
-    }
-
-    Array<pp::InputEvent>               m_input_events;
-    InputDeviceInternal*                m_mouse;
-    InputDeviceInternal*                m_keyboard;
-
-    vec2 m_app;
-    vec2 m_screen;
-    bool m_mousecapture;
-};
-
 NaClInstance::NaClInstance(PP_Instance instance)
     : pp::Instance(instance),
-      m_input_data(new NaClInputData()),
       m_size(0, 0)
 {
     RequestInputEvents(PP_INPUTEVENT_CLASS_MOUSE | PP_INPUTEVENT_CLASS_WHEEL);
     RequestFilteringInputEvents(PP_INPUTEVENT_CLASS_KEYBOARD);
 
-    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
-    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
+    m_input_data = new NaClInputData();
+    m_input_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
+    m_input_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 }
 
 NaClInstance::~NaClInstance()
@@ -89,6 +61,7 @@ static double const DELTA_MS = 1000.0 / 60.0;
 
 void NaClInstance::TickCallback(void* data, int32_t result)
 {
+    UNUSED(result);
     NaClInstance *instance = (NaClInstance *)data;
     instance->DrawSelf();
 
@@ -96,8 +69,8 @@ void NaClInstance::TickCallback(void* data, int32_t result)
     pp::Module::Get()->core()->CallOnMainThread(
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
 
-    //Tick input
-    m_input_data->Tick(seconds);
+    //Tick input : TODO: DELTA_MS is not exactly kasher ?
+    instance->m_input_data->Tick(DELTA_MS);
 }
 
 Mutex NaClInstance::main_mutex;
@@ -131,6 +104,7 @@ bool NaClInstance::Init(uint32_t argc,
 
 void * NaClInstance::MainRun(void *data)
 {
+    UNUSED(data);
     Args *arglist = main_queue.Pop();
 
     /* Call the user's main() function. One of these will work. */
@@ -159,6 +133,7 @@ void NaClInstance::HandleMessage(const pp::Var& message)
 
 void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 {
+    UNUSED(clip);
     if (position.size().width() == m_size.x &&
         position.size().height() == m_size.y)
         return;  // Size didn't change, no need to update anything.
@@ -178,8 +153,7 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
 bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
 {
-    m_input_events << event;
-
+    m_input_data->m_input_events << event;
     return true;
 }
 
@@ -195,6 +169,7 @@ void NaClInstance::DrawSelf()
 
 void NaClInputData::Tick(float seconds)
 {
+    UNUSED(seconds);
     //Init cursor position, if mouse didn't move.
     ivec2 mousepos = m_mouse->GetCursorPixelPos(0);
     vec2 mousepos_prev = vec2(mousepos);
@@ -205,28 +180,25 @@ void NaClInputData::Tick(float seconds)
         pp::InputEvent &e = m_input_events[i];
         switch (e.GetType())
         {
-            case PP_INPUTEVENT_TYPE_UNDEFINED:
-            {
-                break;
-            }
             case PP_INPUTEVENT_TYPE_MOUSEDOWN:
             case PP_INPUTEVENT_TYPE_MOUSEUP:
             {
-                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                pp::MouseInputEvent em = pp::MouseInputEvent(e);
                 m_mouse->SetKey(em.GetButton() - 1, em.GetType() == PP_INPUTEVENT_TYPE_MOUSEDOWN);
+//Debug::DrawBox(vec3(-1.f), vec3(1.f), vec4(1.f, 0.f, 0.f, 1.f))
                 break;
             }
             case PP_INPUTEVENT_TYPE_MOUSELEAVE:
             case PP_INPUTEVENT_TYPE_MOUSEENTER:
             {
                 /* TODO: "InScreen" hardcoded, not nice */
-                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                pp::MouseInputEvent em = pp::MouseInputEvent(e);
                 m_mouse->SetKey(3, em.GetType() == PP_INPUTEVENT_TYPE_MOUSELEAVE);
                 break;
             }
             case PP_INPUTEVENT_TYPE_MOUSEMOVE:
             {
-                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                pp::MouseInputEvent em = pp::MouseInputEvent(e);
                 mousepos = ivec2(em.GetPosition().x(), em.GetPosition().y());
                 break;
             }
@@ -241,8 +213,13 @@ void NaClInputData::Tick(float seconds)
             case PP_INPUTEVENT_TYPE_KEYDOWN:
             case PP_INPUTEVENT_TYPE_KEYUP:
             {
-                pp::KeyboardInputEvent ek = &pp::KeyboardInputEvent(e);
-                m_keyboard->SetKey(ek.SetKeyCode(), ek.GetType() == PP_INPUTEVENT_TYPE_KEYUP);
+                pp::KeyboardInputEvent ek = pp::KeyboardInputEvent(e);
+                m_keyboard->SetKey(ek.GetKeyCode(), ek.GetType() == PP_INPUTEVENT_TYPE_KEYUP);
+                break;
+            }
+            case PP_INPUTEVENT_TYPE_UNDEFINED:
+            default:
+            {
                 break;
             }
         }
@@ -289,6 +266,7 @@ void NaClInputData::InitViewportSize()
 
 void NaClInputData::SetMousePos(ivec2 position)
 {
+    UNUSED(position);
     //? How to do that ?
     //SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 }
