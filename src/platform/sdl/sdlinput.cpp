@@ -85,7 +85,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     SDL_JoystickEventState(SDL_QUERY);
 #       else
     SDL_JoystickEventState(SDL_ENABLE);
-#       endif
+#       endif //SDL_FORCE_POLL_JOYSTICK
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
@@ -104,7 +104,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
         if (strstr(name, "HDAPS")
 #       if USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
-#       endif
+#       endif //USE_XINPUT
              || false)
         {
             SDL_JoystickClose(sdlstick);
@@ -119,8 +119,10 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
         m_data->m_joysticks.Push(sdlstick, stick);
     }
-#   endif
-#endif
+#   endif //EMSCRIPTEN
+#else
+    UNUSED(app_w, app_h, screen_w, screen_h);
+#endif //USE_SDL
 
     m_gamegroup = GAMEGROUP_BEFORE;
 }
@@ -154,7 +156,7 @@ void SdlInput::TickDraw(float seconds)
 
 #if _WIN32
     m_data->Tick(seconds);
-#endif
+#endif //_WIN32
 }
 
 void SdlInputData::Tick(float seconds)
@@ -257,7 +259,9 @@ void SdlInputData::Tick(float seconds)
 #    include "input/keys.h"
 #    undef KEY_FUNC
 
-#endif // USE_SDL
+#else
+    UNUSED(seconds);
+#endif //USE_SDL
 }
 
 // NOTE: these two functions are pointless now and could be inlined directly
@@ -273,7 +277,7 @@ ivec2 SdlInputData::GetMousePos()
         SDL_GetMouseState(&ret.x, &ret.y);
         ret.y = Video::GetSize().y - 1 - ret.y;
     }
-#endif
+#endif //USE_SDL
     return ret;
 }
 
@@ -281,7 +285,9 @@ void SdlInputData::SetMousePos(ivec2 position)
 {
 #if USE_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
-#endif
+#else
+    UNUSED(position);
+#endif //USE_SDL
 }
 
 } /* namespace lol */
