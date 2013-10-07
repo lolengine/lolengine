@@ -231,6 +231,10 @@ void SdlInputData::Tick(float seconds)
         m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * 100.0f / max_screen_size);
     }
 
+    //Mouse is focused, Validate the InScreen Key
+    //Hardcoded 3, not very nice.
+    m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
+
     if (m_mousecapture)
     {
         mouse = ivec2(m_app * .5f);
