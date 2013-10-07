@@ -101,6 +101,7 @@ enum MVMouseKeyList
     MSE_CAM_ROT = KEY_MAX,
     MSE_CAM_POS,
     MSE_CAM_FOV,
+    MSE_FOCUS,
 
     MSE_MAX
 };
@@ -237,6 +238,7 @@ public:
             m_controller->GetKey(MSE_CAM_ROT).BindMouse("Left");
             m_controller->GetKey(MSE_CAM_POS).BindMouse("Right");
             m_controller->GetKey(MSE_CAM_FOV).BindMouse("Middle");
+            m_controller->GetKey(MSE_FOCUS).BindMouse("InScreen");
             m_controller->GetAxis(MSEX_CAM_Y).BindMouse("Y");
             m_controller->GetAxis(MSEX_CAM_X).BindMouse("X");
         }
@@ -372,7 +374,7 @@ public:
         is_pos = KeyDown(KEY_CAM_POS) || KeyDown(MSE_CAM_POS);
         is_fov = KeyDown(KEY_CAM_FOV) || KeyDown(MSE_CAM_FOV);
 
-        if (KeyDown(MSE_CAM_ROT) || KeyDown(MSE_CAM_POS) || KeyDown(MSE_CAM_FOV))
+        if (KeyDown(MSE_FOCUS) && (KeyDown(MSE_CAM_ROT) || KeyDown(MSE_CAM_POS) || KeyDown(MSE_CAM_FOV)))
         {
             tmpv += vec2(AxisValue(MSEX_CAM_Y), AxisValue(MSEX_CAM_X));
             if (KeyDown(MSE_CAM_ROT))
