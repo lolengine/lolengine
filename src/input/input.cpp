@@ -52,7 +52,7 @@ void InputDeviceInternal::AddCursor(const char* name)
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 {
-    InputDeviceInternal* keyboard = new InputDeviceInternal("Keyboard");
+    InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.C());
     /* "value" is unused, what matters is the index. */
 #   define KEY_FUNC(key, value) \
         keyboard->AddKey(#key);
@@ -63,10 +63,12 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
 {
-    InputDeviceInternal* mouse = new InputDeviceInternal("Mouse");
+    InputDeviceInternal* mouse = new InputDeviceInternal(g_name_mouse.C());
     mouse->AddKey("Left");
     mouse->AddKey("Middle");
     mouse->AddKey("Right");
+    //Added to manage if mouse is in the screen or not.
+    mouse->AddKey("InScreen");
 
     mouse->AddAxis("X");
     mouse->AddAxis("Y");

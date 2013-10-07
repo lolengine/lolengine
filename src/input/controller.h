@@ -34,9 +34,14 @@ public:
     bool IsReleased() const { return !m_current && m_previous; }
 
     /** Bind a physical device and key */
-    void Bind(const char* device_name, const char* key_name);
+    void Bind(const String& device_name, const String& key_name);
     /** Unbind a previously bound physical device and key. Returns true if the binding was existing. */
-    bool Unbind(const char* device_name, const char* key_name);
+    bool Unbind(const String& device_name, const String& key_name);
+    /* Small helpers */
+    void BindMouse(const String& key_name)        { Bind(g_name_mouse, key_name); }
+    void BindKeyboard(const String& key_name)     { Bind(g_name_keyboard, key_name); }
+    bool UnbindMouse(const String& key_name)      { return Unbind(g_name_mouse, key_name); }
+    bool UnbindKeyboard(const String& key_name)   { return Unbind(g_name_mouse, key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
@@ -78,17 +83,24 @@ public:
     float GetDelta() const { return m_current - m_previous; }
 	
     /** Bind a physical device and axis */
-    void Bind(const char* device_name, const char* axis_name);
+    void Bind(const String& device_name, const String& axis_name);
     /** Bind a physical device and key over this axis. The axis value will be 0 if the key is up and 1 if it's down */
-    void BindKey(const char* device_name, const char* key_name);
+    void BindKey(const String& device_name, const String& key_name);
     /** Bind physical device and keys over this axis. The axis value will be 0 if both the key are up, -1 if minkey is down, and 1 if maxkey is down */
-    void BindKeys(const char* device_name, const char* min_key_name, const char* max_key_name);
+    void BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool Unbind(const char* device_name, const char* axis_name);
+    bool Unbind(const String& device_name, const String& axis_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool UnbindKey(const char* device_name, const char* key_name);
+    bool UnbindKey(const String& device_name, const String& key_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool UnbindKeys(const char* device_name, const char* min_key_name, const char* max_key_name);
+    bool UnbindKeys(const String& device_name, const String& min_key_name, const String& max_key_name);
+    /* Small helpers */
+    void BindMouse(const String& axis_name)                                     { Bind(g_name_mouse, axis_name); }
+    void BindMouseKey(const String& key_name)                                   { BindKey(g_name_mouse, key_name); }
+    void BindMouseKeys(const String& min_key_name, const String& max_key_name)  { BindKeys(g_name_mouse, min_key_name, max_key_name); }
+    bool UnbindMouse(const String& axis_name)                                   { return Unbind(g_name_mouse, axis_name); }
+    bool UnbindMouseKey(const String& key_name)                                 { return UnbindKey(g_name_mouse, key_name); }
+    bool UnbindMouseKeys(const String& min_key_name, const String& max_key_name){ return UnbindKeys(g_name_mouse, min_key_name, max_key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
