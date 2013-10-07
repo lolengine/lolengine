@@ -210,6 +210,8 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
     switch (AInputEvent_getType(event))
     {
     case AINPUT_EVENT_TYPE_MOTION:
+        //We need the max if we want coherent mouse speed between axis
+        float max_screen_size = lol::max(m_wanted_resolution.x, m_wanted_resolution.y);
         /* FIXME: we flip the Y axis here, but is it the right place? */
         ivec2 pos(AMotionEvent_getX(event, 0),
                   AMotionEvent_getY(event, 0));
@@ -217,9 +219,9 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
         pos.y = m_wanted_resolution.y - 1 - pos.y;
         m_mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (pos.x - m_prev_pos.x) / m_wanted_resolution.x * 100.f);
-        // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        m_mouse->SetAxis(1, (pos.y - m_prev_pos.y) / m_wanted_resolution.y * -100.f);
+        m_mouse->SetAxis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
+        // Unlike SDL, no need to negate Y axis
+        m_mouse->SetAxis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
         m_prev_pos = pos;
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
