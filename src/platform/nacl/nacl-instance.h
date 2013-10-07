@@ -54,8 +54,8 @@ private:
 
     /* Gamepad support */
     PPB_Gamepad const *m_pad_interface;
-    //12/09/2013 : Should use new system. Array<Stick *> m_sticks;
-    Array<InputDevice*> m_sticks;
+    //12/09/2013 : Should use new system.
+    NaClInputData m_input_data;
 
     /* Communication with the application object */
     struct Args

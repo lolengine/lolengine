@@ -34,17 +34,55 @@ void lol_nacl_main(int argc, char **argv, char **envp) {}
 namespace lol
 {
 
+/*
+ * NACL Input implementation class
+ * This is a ripoff of the SDL one
+ */
+
+class NaClInputData
+{
+    friend class NaClInstance;
+
+private:
+    void Tick(float seconds);
+    bool IsViewportSizeValid() { return (m_app.x > 0.f && m_app.y > 0.f && m_screen.x > 0.f && m_screen.y > 0.f); }
+    void InitViewportSize();
+
+    static void SetMousePos(ivec2 position);
+
+    NaClInputData() :
+        m_prevmouse(ivec2::zero),
+        m_mousecapture(false)
+    {
+        InitViewportSize();
+    }
+
+    Array<pp::InputEvent>               m_input_events;
+    InputDeviceInternal*                m_mouse;
+    InputDeviceInternal*                m_keyboard;
+
+    vec2 m_app;
+    vec2 m_screen;
+    bool m_mousecapture;
+};
+
 NaClInstance::NaClInstance(PP_Instance instance)
     : pp::Instance(instance),
+      m_input_data(new NaClInputData()),
       m_size(0, 0)
 {
-    RequestInputEvents(PP_INPUTEVENT_CLASS_MOUSE);
+    RequestInputEvents(PP_INPUTEVENT_CLASS_MOUSE | PP_INPUTEVENT_CLASS_WHEEL);
+    RequestFilteringInputEvents(PP_INPUTEVENT_CLASS_KEYBOARD);
+
+    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
+    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 }
 
 NaClInstance::~NaClInstance()
 {
     // Destroy the cube view while GL context is current.
     m_opengl_ctx->MakeContextCurrent(this);
+    delete m_input_data;
 }
 
 static double const DELTA_MS = 1000.0 / 60.0;
@@ -58,29 +96,8 @@ void NaClInstance::TickCallback(void* data, int32_t result)
     pp::Module::Get()->core()->CallOnMainThread(
             DELTA_MS, pp::CompletionCallback(&TickCallback, data), PP_OK);
 
-    /* 12/09/2013 : Deactivated to get build back.
-    PP_GamepadsSampleData all_pads_data;
-    instance->m_pad_interface->Sample(instance->pp_instance(), &all_pads_data);
-
-    for (int i = 0; i < all_pads_data.length; i++)
-    {
-        PP_GamepadSampleData const& pad_data = all_pads_data.items[i];
-
-        if (i >= instance->m_sticks.Count())
-        {
-            Stick *stick = Input::CreateStick();
-            instance->m_sticks.Push(stick);
-        }
-
-        instance->m_sticks[i]->SetAxisCount(pad_data.axes_length);
-        for (int j = 0; j < pad_data.axes_length; j++)
-            instance->m_sticks[i]->SetAxis(j, pad_data.axes[j]);
-
-        instance->m_sticks[i]->SetButtonCount(pad_data.buttons_length);
-        for (int j = 0; j < pad_data.buttons_length; j++)
-            instance->m_sticks[i]->SetButton(j, pad_data.buttons[j] > 0.5f);
-    }
-    */
+    //Tick input
+    m_input_data->Tick(seconds);
 }
 
 Mutex NaClInstance::main_mutex;
@@ -161,23 +178,8 @@ void NaClInstance::DidChangeView(const pp::Rect& position, const pp::Rect& clip)
 
 bool NaClInstance::HandleInputEvent(const pp::InputEvent& event)
 {
-    ///---------------------------------
-    /* 12/09/2013 : Deactivated to get build back.
-    switch (event.GetType())
-    {
-    case PP_INPUTEVENT_TYPE_MOUSEDOWN:
-        Input::SetMouseButton(pp::MouseInputEvent(event).GetButton());
-        break;
-    case PP_INPUTEVENT_TYPE_MOUSEUP:
-        Input::UnsetMouseButton(pp::MouseInputEvent(event).GetButton());
-        break;
-    case PP_INPUTEVENT_TYPE_MOUSEMOVE:
-        Input::SetMousePos(ivec2(pp::MouseInputEvent(event).GetPosition().x(), m_opengl_ctx->GetSize().height() - 1 - pp::MouseInputEvent(event).GetPosition().y()));
-        break;
-    default:
-        break;
-    }
-    */
+    m_input_events << event;
+
     return true;
 }
 
@@ -189,6 +191,106 @@ void NaClInstance::DrawSelf()
     m_opengl_ctx->MakeContextCurrent(this);
     Ticker::TickDraw();
     m_opengl_ctx->FlushContext();
+}
+
+void NaClInputData::Tick(float seconds)
+{
+    //Init cursor position, if mouse didn't move.
+    ivec2 mousepos = m_mouse->GetCursorPixelPos(0);
+    vec2 mousepos_prev = vec2(mousepos);
+
+    /* Handle keyboard and WM events */
+    for (int i = 0; i < m_input_events.Count(); ++i)
+    {
+        pp::InputEvent &e = m_input_events[i];
+        switch (e.GetType())
+        {
+            case PP_INPUTEVENT_TYPE_UNDEFINED:
+            {
+                break;
+            }
+            case PP_INPUTEVENT_TYPE_MOUSEDOWN:
+            case PP_INPUTEVENT_TYPE_MOUSEUP:
+            {
+                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                m_mouse->SetKey(em.GetButton() - 1, em.GetType() == PP_INPUTEVENT_TYPE_MOUSEDOWN);
+                break;
+            }
+            case PP_INPUTEVENT_TYPE_MOUSELEAVE:
+            case PP_INPUTEVENT_TYPE_MOUSEENTER:
+            {
+                /* TODO: "InScreen" hardcoded, not nice */
+                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                m_mouse->SetKey(3, em.GetType() == PP_INPUTEVENT_TYPE_MOUSELEAVE);
+                break;
+            }
+            case PP_INPUTEVENT_TYPE_MOUSEMOVE:
+            {
+                pp::MouseInputEvent em = &pp::MouseInputEvent(e);
+                mousepos = ivec2(em.GetPosition().x(), em.GetPosition().y());
+                break;
+            }
+            case PP_INPUTEVENT_TYPE_WHEEL:
+            {
+                /* TODO: MOUSE WHEEL NOT IMPLEMENTED IN LOL */
+                break;
+            }
+            // Use ?
+            //case PP_INPUTEVENT_TYPE_RAWKEYDOWN:
+            //case PP_INPUTEVENT_TYPE_CHAR:
+            case PP_INPUTEVENT_TYPE_KEYDOWN:
+            case PP_INPUTEVENT_TYPE_KEYUP:
+            {
+                pp::KeyboardInputEvent ek = &pp::KeyboardInputEvent(e);
+                m_keyboard->SetKey(ek.SetKeyCode(), ek.GetType() == PP_INPUTEVENT_TYPE_KEYUP);
+                break;
+            }
+        }
+    }
+
+    /* Handle mouse input */
+    if (IsViewportSizeValid())
+    {
+        if (mousepos.x >= 0 && mousepos.x < m_app.x && mousepos.y >= 0 && mousepos.y < m_app.y)
+        {
+            vec2 vmousepos = vec2(mousepos);
+            m_mouse->SetCursor(0, vmousepos / m_app, mousepos);
+            // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
+            m_mouse->SetAxis(0, (vmousepos.x - mousepos_prev.x) * 100.0f / m_screen.x);
+            // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
+            m_mouse->SetAxis(1,-(vmousepos.y - mousepos_prev.y) * 100.0f / m_screen.y);
+        }
+
+        if (m_mousecapture)
+        {
+            /*
+            mousepos = ivec2(m_app * .5f);
+            NaClInputData::SetMousePos(mousepos);
+            */
+        }
+    }
+}
+
+//----
+void NaClInputData::InitViewportSize()
+{
+    if (g_scene)
+    {
+        m_app = vec2(Video::GetSize());
+        //Dunno if its the good idea.
+        m_screen = vec2(Video::GetSize());
+    }
+    else
+    {
+        m_app = vec2(-1.f);
+        m_screen = vec2(-1.f);
+    }
+}
+
+void NaClInputData::SetMousePos(ivec2 position)
+{
+    //? How to do that ?
+    //SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 }
 
 }  // namespace lol
