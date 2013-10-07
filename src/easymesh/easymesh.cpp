@@ -134,6 +134,7 @@ void DefaultShaderData::StoreUniformNames()
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupDefaultData(bool with_UV)
 {
+    UNUSED(with_UV);
     for (int i = 0; i < m_uniform_names.Count(); i++)
         AddUniform(m_uniform_names[i].C());
 }
@@ -150,7 +151,6 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     Array<vec4> light_data;
     //This is not very nice, but necessary for emscripten WebGL generation.
     float f = 0.f;
-    int i = 0;
 
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
@@ -158,6 +158,8 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
         light_data << lights[i]->GetPosition() << lights[i]->GetColor();
     while (light_data.Count() < 8)
         light_data << vec4::zero << vec4::zero;
+
+    int i = 0;
     m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), light_data);
 
     m_shader->SetUniform(*GetUniform(m_uniform_names[i++].C()), modelview);
@@ -2691,7 +2693,8 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                 j, j, j, j, \
                 j, j, j, j, \
                 k, j, j, k  \
-                };
+                };          \
+    UNUSED(q);
     int m[] = { /* The top and bottom faces */
                 0,  2,  3,  1,
                 7,  9,  8,  6,
