@@ -170,10 +170,12 @@ void NaClInstance::DrawSelf()
 void NaClInputData::Tick(float seconds)
 {
     UNUSED(seconds);
+    if (!IsViewportSizeValid())
+        InitViewportSize();
+
     //Init cursor position, if mouse didn't move.
     ivec2 mousepos = m_mouse->GetCursorPixelPos(0);
     vec2 mousepos_prev = vec2(mousepos);
-
     /* Handle keyboard and WM events */
     for (int i = 0; i < m_input_events.Count(); ++i)
     {
@@ -184,14 +186,15 @@ void NaClInputData::Tick(float seconds)
             case PP_INPUTEVENT_TYPE_MOUSEUP:
             {
                 pp::MouseInputEvent em = pp::MouseInputEvent(e);
-                m_mouse->SetKey(em.GetButton() - 1, em.GetType() == PP_INPUTEVENT_TYPE_MOUSEDOWN);
-//Debug::DrawBox(vec3(-1.f), vec3(1.f), vec4(1.f, 0.f, 0.f, 1.f))
+                //Show probably do a switch.
+                if (em.GetButton() != PP_INPUTEVENT_MOUSEBUTTON_NONE)
+                    m_mouse->SetKey(em.GetButton(), em.GetType() == PP_INPUTEVENT_TYPE_MOUSEDOWN);
                 break;
             }
             case PP_INPUTEVENT_TYPE_MOUSELEAVE:
             case PP_INPUTEVENT_TYPE_MOUSEENTER:
             {
-                /* TODO: "InScreen" hardcoded, not nice */
+                /* TODO: "InScreen" idx hardcoded, not nice */
                 pp::MouseInputEvent em = pp::MouseInputEvent(e);
                 m_mouse->SetKey(3, em.GetType() == PP_INPUTEVENT_TYPE_MOUSELEAVE);
                 break;
@@ -224,18 +227,21 @@ void NaClInputData::Tick(float seconds)
             }
         }
     }
+    m_input_events.Empty();
 
     /* Handle mouse input */
     if (IsViewportSizeValid())
     {
         if (mousepos.x >= 0 && mousepos.x < m_app.x && mousepos.y >= 0 && mousepos.y < m_app.y)
         {
+            //We need the max if we want coherent mouse speed between axis
+            float max_screen_size = lol::max(m_screen.x, m_screen.y);
             vec2 vmousepos = vec2(mousepos);
             m_mouse->SetCursor(0, vmousepos / m_app, mousepos);
             // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-            m_mouse->SetAxis(0, (vmousepos.x - mousepos_prev.x) * 100.0f / m_screen.x);
-            // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-            m_mouse->SetAxis(1,-(vmousepos.y - mousepos_prev.y) * 100.0f / m_screen.y);
+            m_mouse->SetAxis(0, (vmousepos.x - mousepos_prev.x) * 100.0f / max_screen_size);
+            // Unlike SDL, no need to negate Y axis.
+            m_mouse->SetAxis(1, (vmousepos.y - mousepos_prev.y) * 100.0f / max_screen_size);
         }
 
         if (m_mousecapture)
