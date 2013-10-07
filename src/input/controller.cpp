@@ -20,33 +20,33 @@ namespace lol
 ///////////////////////////////////////////////////////////////////////////////
 // KeyBinding
 
-void KeyBinding::Bind(const char* device_name, const char* key_name)
+void KeyBinding::Bind(const String& device_name, const String& key_name)
 {
-    const InputDevice* device = InputDevice::Get(device_name);
+    const InputDevice* device = InputDevice::Get(device_name.C());
 
     if (!device)
     {
-        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name.C());
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    int keyindex = device->GetKeyIndex(key_name.C());
     if (keyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, key_name);
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name.C(), key_name.C());
         return;
     }
 
     m_keybindings.Push(device, keyindex);
 }
 
-bool KeyBinding::Unbind(const char* device_name, const char* key_name)
+bool KeyBinding::Unbind(const String& device_name, const String& key_name)
 {
     for (int i = 0; i < m_keybindings.Count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
-            if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(key_name))
+            if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(key_name.C()))
             {
                 m_keybindings.Remove(i);
                 return true;
@@ -64,77 +64,77 @@ void KeyBinding::ClearBindings()
 ///////////////////////////////////////////////////////////////////////////////
 // AxisBinding
 
-void AxisBinding::Bind(const char* device_name, const char* axis_name)
+void AxisBinding::Bind(const String& device_name, const String& axis_name)
 {
-    const InputDevice* device = InputDevice::Get(device_name);
+    const InputDevice* device = InputDevice::Get(device_name.C());
     if (!device)
     {
-        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name.C());
         return;
     }
 
-    int axisindex = device->GetAxisIndex(axis_name);
+    int axisindex = device->GetAxisIndex(axis_name.C());
     if (axisindex < 0)
     {
-        Log::Warn("Trying to bind controller to axis %s.%s which doesn't exist", device_name, axis_name);
+        Log::Warn("Trying to bind controller to axis %s.%s which doesn't exist", device_name.C(), axis_name.C());
         return;
     }
 
     m_axisbindings.Push(device, axisindex);
 }
 
-void AxisBinding::BindKey(const char* device_name, const char* key_name)
+void AxisBinding::BindKey(const String& device_name, const String& key_name)
 {
-    const InputDevice* device = InputDevice::Get(device_name);
+    const InputDevice* device = InputDevice::Get(device_name.C());
     if (!device)
     {
-        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name.C());
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    int keyindex = device->GetKeyIndex(key_name.C());
     if (keyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, key_name);
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name.C(), key_name.C());
         return;
     }
 
     m_keybindings.Push(device, -1, keyindex);
 }
 
-void AxisBinding::BindKeys(const char* device_name, const char* min_key_name, const char* max_key_name)
+void AxisBinding::BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
 {
-    const InputDevice* device = InputDevice::Get(device_name);
+    const InputDevice* device = InputDevice::Get(device_name.C());
     if (!device)
     {
-        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name);
+        Log::Warn("Trying to bind controller to device %s which doesn't exist", device_name.C());
         return;
     }
 
-    int minkeyindex = device->GetKeyIndex(min_key_name);
+    int minkeyindex = device->GetKeyIndex(min_key_name.C());
     if (minkeyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, min_key_name);
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, min_key_name.C());
         return;
     }
 
-    int maxkeyindex = device->GetKeyIndex(max_key_name);
+    int maxkeyindex = device->GetKeyIndex(max_key_name.C());
     if (maxkeyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, max_key_name);
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, max_key_name.C());
         return;
     }
 
     m_keybindings.Push(device, minkeyindex, maxkeyindex);
 }
 
-bool AxisBinding::Unbind(const char* device_name, const char* axis_name)
+bool AxisBinding::Unbind(const String& device_name, const String& axis_name)
 {
     for (int i = 0; i < m_keybindings.Count(); ++i)
     {
         if (m_axisbindings[i].m1->GetName() == device_name)
         {
-            if (m_axisbindings[i].m2 == m_axisbindings[i].m1->GetAxisIndex(axis_name))
+            if (m_axisbindings[i].m2 == m_axisbindings[i].m1->GetAxisIndex(axis_name.C()))
             {
                 m_axisbindings.Remove(i);
                 return true;
@@ -144,13 +144,13 @@ bool AxisBinding::Unbind(const char* device_name, const char* axis_name)
     return false;
 }
 
-bool AxisBinding::UnbindKey(const char* device_name, const char* key_name)
+bool AxisBinding::UnbindKey(const String& device_name, const String& key_name)
 {
     for (int i = 0; i < m_keybindings.Count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
-            if (m_keybindings[i].m2 == -1 && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(key_name))
+            if (m_keybindings[i].m2 == -1 && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(key_name.C()))
             {
                 m_keybindings.Remove(i);
                 return true;
@@ -160,14 +160,14 @@ bool AxisBinding::UnbindKey(const char* device_name, const char* key_name)
     return false;
 }
 
-bool AxisBinding::UnbindKeys(const char* device_name, const char* min_key_name, const char* max_key_name)
+bool AxisBinding::UnbindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
 {
     for (int i = 0; i < m_keybindings.Count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
-            if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(min_key_name)
-                && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(max_key_name))
+            if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(min_key_name.C())
+                && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(max_key_name.C()))
             {
                 m_keybindings.Remove(i);
                 return true;

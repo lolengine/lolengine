@@ -49,10 +49,8 @@ private:
 #if USE_SDL
     SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
         m_prevmouse(ivec2::zero),
-        m_app_w((float)app_w),
-        m_app_h((float)app_h),
-        m_screen_w((float)screen_w),
-        m_screen_h((float)screen_h),
+        m_app(vec2((float)app_w, (float)app_h)),
+        m_screen(vec2((float)screen_w, (float)screen_h)),
         m_mousecapture(false)
     { }
 
@@ -61,10 +59,8 @@ private:
     InputDeviceInternal* m_keyboard;
 
     ivec2 m_prevmouse;
-    float m_app_w;
-    float m_app_h;
-    float m_screen_w;
-    float m_screen_h;
+    vec2 m_app;
+    vec2 m_screen;
     bool m_mousecapture;
 #endif // USE_SDL
 };
@@ -222,18 +218,20 @@ void SdlInputData::Tick(float seconds)
         //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
     }
 
-    if (mouse.x >= 0 && mouse.x < m_app_w && mouse.y >= 0 && mouse.y < m_app_h)
+    if (mouse.x >= 0 && mouse.x < m_app.x && mouse.y >= 0 && mouse.y < m_app.y)
     {
-        m_mouse->SetCursor(0, vec2((float)(mouse.x) / m_app_w, (float)(mouse.y) / m_app_h), mouse);
+        vec2 vmouse = vec2(mouse);
+        vec2 vprevmouse = vec2(m_prevmouse);
+        m_mouse->SetCursor(0, vmouse / m_app, mouse);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (float)(mouse.x - m_prevmouse.x) * 100.0f / m_screen_w);
+        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * 100.0f / m_screen.x);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        m_mouse->SetAxis(1, -(float)(mouse.y - m_prevmouse.y) * 100.0f / m_screen_h);
+        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * 100.0f / m_screen.y);
     }
 
     if (m_mousecapture)
     {
-        mouse = ivec2((int)m_app_w / 2, (int)m_app_h / 2);
+        mouse = ivec2(m_app * .5f);
         SdlInputData::SetMousePos(mouse);
     }
 
