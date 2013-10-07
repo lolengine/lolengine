@@ -718,9 +718,9 @@ private:
     void AddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
     void AddLerpVertex(int i, int j, float alpha);
-    void AddLerpVertex(VertexData &vi, VertexData &vj, float alpha);
+    void AddLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
     VertexData GetLerpVertex(int i, int j, float alpha);
-    VertexData GetLerpVertex(VertexData &vi,VertexData &vj, float alpha);
+    VertexData GetLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
     void AppendQuad(int i1, int i2, int i3, int i4, int base);
     void AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base);
     void AppendTriangle(int i1, int i2, int i3, int base);

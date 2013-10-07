@@ -1211,7 +1211,7 @@ void EasyMesh::AddLerpVertex(int i, int j, float alpha)
 
 }
 //-----------------------------------------------------------------------------
-void EasyMesh::AddLerpVertex(VertexData &vi, VertexData &vj, float alpha)
+void EasyMesh::AddLerpVertex(VertexData const &vi, VertexData const &vj, float alpha)
 {
     m_vert.Push(GetLerpVertex(vi, vj, alpha));
     m_state = MeshRender::NeedConvert;
@@ -1224,7 +1224,7 @@ VertexData EasyMesh::GetLerpVertex(int i, int j, float alpha)
 }
 
 //-----------------------------------------------------------------------------
-VertexData EasyMesh::GetLerpVertex(VertexData &vi, VertexData &vj, float alpha)
+VertexData EasyMesh::GetLerpVertex(VertexData const &vi, VertexData const &vj, float alpha)
 {
     return VertexData(
         lol::lerp(vi.m_coord,    vj.m_coord,      alpha),
