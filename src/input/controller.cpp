@@ -114,14 +114,14 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     int minkeyindex = device->GetKeyIndex(min_key_name.C());
     if (minkeyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, min_key_name.C());
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name.C(), min_key_name.C());
         return;
     }
 
     int maxkeyindex = device->GetKeyIndex(max_key_name.C());
     if (maxkeyindex < 0)
     {
-        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name, max_key_name.C());
+        Log::Warn("Trying to bind controller to key %s.%s which doesn't exist", device_name.C(), max_key_name.C());
         return;
     }
 
