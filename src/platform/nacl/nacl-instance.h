@@ -7,13 +7,41 @@
 
 #include <ppapi/cpp/instance.h>
 #include <ppapi/c/ppb_gamepad.h>
+#include <ppapi/cpp/input_event.h>
 
 #include "platform/nacl/opengl_context.h"
 #include "platform/nacl/opengl_context_ptrs.h"
 
 #include "input/input.h"
+#include "input/input_internal.h"
 
 namespace lol {
+
+class NaClInputData
+{
+    friend class NaClInstance;
+
+private:
+    void Tick(float seconds);
+    bool IsViewportSizeValid() { return (m_app.x > 0.f && m_app.y > 0.f && m_screen.x > 0.f && m_screen.y > 0.f); }
+    void InitViewportSize();
+
+    static void SetMousePos(ivec2 position);
+
+    NaClInputData()
+        : m_mousecapture(false)
+    {
+        InitViewportSize();
+    }
+
+    Array<class pp::InputEvent>     m_input_events;
+    class InputDeviceInternal*      m_mouse;
+    class InputDeviceInternal*      m_keyboard;
+
+    vec2 m_app;
+    vec2 m_screen;
+    bool m_mousecapture;
+};
 
 class NaClInstance : public pp::Instance
 {
@@ -54,8 +82,9 @@ private:
 
     /* Gamepad support */
     PPB_Gamepad const *m_pad_interface;
+
     //12/09/2013 : Should use new system.
-    NaClInputData m_input_data;
+    NaClInputData *m_input_data;
 
     /* Communication with the application object */
     struct Args
