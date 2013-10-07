@@ -25,12 +25,12 @@ using namespace lol;
 static int const TEXTURE_WIDTH = 256;
 
 #define     R_M                 1.f
-#define     DEFAULT_WIDTH       (770.f * R_M)
-#define     DEFAULT_HEIGHT      (200.f * R_M)
+#define     DEFAULT_WIDTH       (1200.f * R_M)
+#define     DEFAULT_HEIGHT      (400.f * R_M)
 #define     WIDTH               ((float)Video::GetSize().x)
 #define     HEIGHT              ((float)Video::GetSize().y)
 #define     SCREEN_W            (10.f / WIDTH)
-#define     SCREEN_LIMIT        1.1f
+#define     SCREEN_LIMIT        1.4f
 #define     RATIO_HW            (HEIGHT / WIDTH)
 #define     RATIO_WH            (WIDTH / HEIGHT)
 
@@ -111,12 +111,13 @@ enum MVMouseAxisList
 #define     ALL_FEATURES    1
 #define     NO_SC_SETUP     0
 
-enum MessageType
+enum GizmoType
 {
-    MSG_IN,
-    MSG_OUT,
+    GZ_Editor = 0,
+    GZ_LightPos,
+    GZ_LightDir,
 
-    MSG_MAX
+    GZ_MAX
 };
 
 struct LightData
@@ -147,8 +148,16 @@ public:
         m_camera = nullptr;
         m_controller = nullptr;
 
+        //Compile ref meshes
+        m_gizmos << new EasyMesh();
+        m_gizmos.Last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
+        m_gizmos << new EasyMesh();
+        m_gizmos.Last()->Compile("[sc#666 acap 1 .5 .5 ty -.5 sc#fff asph 2 1]");
+        m_gizmos << new EasyMesh();
+        m_gizmos.Last()->Compile("[sc#fff ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 [ad 3 .1 sy -1] ty 1 rz 90 ry 90]");
+
         // Mesh Setup
-        m_render_max = vec2(-.9f, 6.1f);
+        m_render_max = vec2(-.9f, 4.1f);
         m_mesh_id = 0;
         m_mesh_id1 = 0.f;
         m_default_texture = nullptr;
@@ -282,9 +291,9 @@ public:
             m_meshes.Push(em);
         }
 #else
-        m_ssetup->Compile(" addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)"
-                          " addlight 0.0 position (8 2 6) color #ffff");
-//                          " custom setmesh \"sc#fff ab 1\""
+        m_ssetup->Compile("addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) "
+                          "addlight 0.0 position (8 2 6) color #ffff "
+                          "showgizmo true ");
         m_ssetup->Startup();
 #endif //NO_SC_SETUP
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
@@ -318,6 +327,12 @@ public:
                 Ticker::Shutdown();
         }
 #endif //NO_NACL_EM
+
+        //Compute render mesh count
+        float a_j = lol::abs(m_render_max[1]);
+        float i_m = m_hist_scale_mesh.x;
+        float i_trans = a_j - ((a_j * a_j * i_m * i_m + a_j * i_m) * .5f);
+        m_render_max[1] = a_j * ((RATIO_WH * 1.f) / ((i_trans != 0.f)?(i_trans):(RATIO_WH))) - RATIO_HW * .3f;
 
         //Mesh Change
 #if NO_NACL_EM
@@ -497,7 +512,7 @@ public:
         //Message Service
         //--
         String mesh("");
-        int u = 4;
+        int u = 1;
         while (u-- > 0 && MessageService::FetchFirst(MessageBucket::AppIn, mesh))
         {
             int o = 1;
@@ -549,20 +564,24 @@ public:
         }
 
         //Check the custom cmd even if we don't have new messages.
-        for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.Count(); ++i)
+        int o = 1;
+        while (o-- > 0)
         {
-            if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
+            for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.Count(); ++i)
             {
-                //Create a new mesh
-                EasyMesh* em = new EasyMesh();
-                if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
+                if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
                 {
-                    if (m_mesh_id == m_meshes.Count() - 1)
-                        m_mesh_id++;
-                    m_meshes.Push(em);
+                    //Create a new mesh
+                    EasyMesh* em = new EasyMesh();
+                    if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
+                    {
+                        if (m_mesh_id == m_meshes.Count() - 1)
+                            m_mesh_id++;
+                        m_meshes.Push(em);
+                    }
+                    else
+                        delete(em);
                 }
-                else
-                    delete(em);
             }
         }
         m_ssetup->m_custom_cmd.Empty();
@@ -643,8 +662,24 @@ public:
 
         g_renderer->SetClearColor(m_ssetup->m_clear_color);
 
+        for (int i = 0; i < m_gizmos.Count(); ++i)
+        {
+            if (m_gizmos[i]->GetMeshState() == MeshRender::NeedConvert)
+                m_gizmos[i]->MeshConvert();
+            else
+                break;
+        }
+
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);
+        mat4 save_proj = m_camera->GetProjection();
+                              //Y object Offset
+        mat4 mat_obj_offset = mat4::translate(x * m_screen_offset.x + y * m_screen_offset.y) *
+                              //Mesh Pos Offset
+                              mat4::translate((x * m_pos_mesh.x * RATIO_HW + y * m_pos_mesh.y) * 2.f * (1.f + .5f * m_zoom_mesh / SCREEN_LIMIT));
+                              //Align right meshes
+        mat4 mat_align =      mat4::translate(x - x * RATIO_HW);
+        mat4 mat_gizmo = mat_obj_offset * mat_align * save_proj;
         for (int i = 0; i < m_meshes.Count(); i++)
         {
             {
@@ -659,7 +694,6 @@ public:
 #endif //WITH_TEXTURE
                 }
 #if ALL_FEATURES
-                mat4 save_proj = m_camera->GetProjection();
                 float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
 
                 if (m_mesh_id1 - m_render_max[0] > (float)i && m_mesh_id1 - m_render_max[1] < (float)i &&
@@ -668,19 +702,14 @@ public:
                     float a_j = lol::abs(j);
                     float i_trans = (a_j * a_j * m_hist_scale_mesh.x + a_j * m_hist_scale_mesh.x) * .5f;
                     float i_scale = clamp(1.f - (m_hist_scale_mesh.y * (m_mesh_id1 - (float)i)), 0.f, 1.f);
-                    mat4 new_proj =
-                        //Y object Offset
-                        mat4::translate(x * m_screen_offset.x + y * m_screen_offset.y) *
-                        //Mesh Pos Offset
-                        mat4::translate((x * m_pos_mesh.x * RATIO_HW + y * m_pos_mesh.y) * 2.f * (1.f + .5f * m_zoom_mesh / SCREEN_LIMIT)) *
-                        //Mesh count offset
-                        mat4::translate(x * RATIO_HW * 2.f * (j + i_trans)) *
-                        //Align right meshes
-                        mat4::translate(x - x * RATIO_HW) *
-                        //Mesh count scale
-                        mat4::scale(vec3(vec2(i_scale), 1.f)) *
-                        //Camera projection
-                        save_proj;
+
+                    //Mesh count offset
+                    mat4 mat_count_offset = mat4::translate(x * RATIO_HW * 2.f * (j + i_trans));
+                    //Mesh count scale
+                    mat4 mat_count_scale = mat4::scale(vec3(vec2(i_scale), 1.f));
+
+                    //Camera projection
+                    mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                     m_camera->SetProjection(new_proj);
 //#if NO_NACL_EM
                     m_meshes[i]->Render(m_mat);
@@ -692,6 +721,33 @@ public:
                 m_meshes[i]->Render(m_mat);
 #endif //ALL_FEATURES
             }
+        }
+        if (m_ssetup)
+        {
+            m_camera->SetProjection(mat_gizmo);
+            if (m_ssetup->m_show_gizmo)
+                m_gizmos[GZ_Editor]->Render(m_mat);
+
+            if (m_ssetup->m_show_lights)
+            {
+                for (int k = 0; k < m_ssetup->m_lights.Count(); ++k)
+                {
+                    Light* tmp = m_ssetup->m_lights[k];
+                    mat4 world = mat4::translate(tmp->GetPosition().xyz);
+                    mat4 local = mat4::translate((inverse(m_mat) * world).v3.xyz);
+                    //dir light
+                    if (tmp->GetPosition().w == 0.f)
+                    {
+                        m_gizmos[GZ_LightPos]->Render(m_mat * inverse(local));
+                        m_gizmos[GZ_LightDir]->Render(inverse(world) * inverse(mat4::lookat(vec3::zero, -tmp->GetPosition().xyz, vec3::axis_y)));
+                    }
+                    else //point light
+                    {
+                        m_gizmos[GZ_LightPos]->Render(m_mat * local);
+                    }
+                }
+            }
+            m_camera->SetProjection(save_proj);
         }
     }
 
@@ -730,6 +786,7 @@ private:
     int                 m_mesh_id;
     float               m_mesh_id1;
     Array<EasyMesh*>    m_meshes;
+    Array<EasyMesh*>    m_gizmos;
 
     //File data
     String              m_file_name;

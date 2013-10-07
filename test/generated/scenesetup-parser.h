@@ -143,14 +143,16 @@ namespace lol {
      T_OBJLOOKAT = 261,
      T_OBJCOLOR = 262,
      T_CLEARCOLOR = 263,
-     T_CUSTOMCMD = 264,
-     T_ERROR = 265,
-     F_NUMBER = 266,
-     I_NUMBER = 267,
-     STRING = 268,
-     STRING_VAR = 269,
-     BOOLEAN = 270,
-     COLOR = 271
+     T_SHOWGIZMO = 264,
+     T_SHOWLIGHT = 265,
+     T_CUSTOMCMD = 266,
+     T_ERROR = 267,
+     F_NUMBER = 268,
+     I_NUMBER = 269,
+     STRING = 270,
+     STRING_VAR = 271,
+     BOOLEAN = 272,
+     COLOR = 273
    };
 
     };
@@ -247,7 +249,7 @@ namespace lol {
     static const unsigned char yytable_[];
     static const signed char yytable_ninf_;
 
-    static const unsigned char yycheck_[];
+    static const signed char yycheck_[];
 
     /// For a state, its accessing symbol.
     static const unsigned char yystos_[];
@@ -324,7 +326,7 @@ namespace lol {
 } // lol
 
 /* Line 34 of lalr1.cc  */
-#line 328 "generated/scenesetup-parser.h"
+#line 330 "generated/scenesetup-parser.h"
 
 
 

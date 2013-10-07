@@ -25,6 +25,8 @@ namespace lol
 SceneSetup::SceneSetup()
 {
     m_clear_color = vec4(vec3::zero, 1.f);
+    m_show_gizmo = true;
+    m_show_lights = true;
 }
 
 //----
