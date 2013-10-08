@@ -105,13 +105,15 @@ progress::-webkit-progress-value
     //This is the module pointer : can be either the NaCl or Em one depending on the context.
     g_embed_module          = null;
 
+    var g_autosave_timer    = 4.0;
+    var g_autosave_time     = 4.0;
     var g_code_addin        = ['custom setmesh "#CODE#"', '#CODE#'];
     var g_code_base         = [];
     var CodeDictionnary     = [];
 
     g_code_id               = 0;
-    g_code_base[0]     = "//This is a comment\nsc#f8f afcb 1 1 1 0";
-    g_code_base[1]     = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff\nshowgizmo true\nshowlight true";
+    g_code_base             = ["//This is a comment\nsc#f8f afcb 1 1 1 0",
+                               "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff\nshowgizmo true\nshowlight true"];
     
 function machinchose() { return 'test machin '; }
     function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
@@ -180,7 +182,16 @@ function machinchose() { return 'test machin '; }
         VarInit();
 
         //Put here any cookie update
-        if (!g_txtarea_code_src.value)
+        if (DoesLolCookieExist("LolMeshViewerAutosave"))
+        {
+            var lol_cookie = GetLolCookie("LolMeshViewerAutosave");
+            var value_list = lol_cookie.m_value.split(";");
+
+            for (var i = 0; i < g_code_base.length && i < value_list.length; i++)
+                g_code_base[i] = value_list[i];
+            g_txtarea_code_src.value = g_code_base[g_code_id];
+        }
+        else if (!g_txtarea_code_src.value)
             g_txtarea_code_src.value = g_code_base[g_code_id];
 
         //Fill the TOC
@@ -220,18 +231,38 @@ function machinchose() { return 'test machin '; }
         g_frame_embed.onload = function() { VarInit(); }
 
         //Tick has been done, start Tick
-        window.setTimeout("Tick()", 200);
+        window.setTimeout("Tick(.2)", 200);
     }
 
-    function Tick()
+    function Tick(seconds)
     {
-        window.setTimeout("Tick()", 100);
+        window.setTimeout("Tick(.1)", 100);
+
         var text_src = g_txtarea_code_src;
         var div_cmds = g_div_helper_cmd;
         var div_args = g_div_helper_args;
         var div_cmnt = g_div_helper_cmnt;
         var div_vars = g_div_helper_vars;
         CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
+
+        g_autosave_timer -= seconds;
+        if (g_autosave_timer < 0.0)
+        {
+            g_autosave_timer = g_autosave_time;
+            StoreLolCookie("LolMeshViewerAutosave", GetTextValue(true), 10);
+        }
+    }
+
+    function GetTextValue(getall)
+    {
+        var result = '';
+        for (var i = (getall)?(0):(g_code_id); i < g_code_base.length; i++)
+        {
+            result += g_code_addin[i].replace('#CODE#', g_code_base[i]) + (getall)?(';'):('');
+            if (getall && i == g_code_id)
+                break;
+        }
+        return result;
     }
 
     function StoreTextAreaValue()
@@ -263,7 +294,10 @@ function machinchose() { return 'test machin '; }
     {
         StoreTextAreaValue();
         if (g_embed_module)
-            g_embed_module.SendMessage(g_code_addin[g_code_id].replace('#CODE#', g_code_base[g_code_id]));
+        {
+            StoreLolCookie("LolMeshViewerAutosave", GetTextValue(true), 10);
+            g_embed_module.SendMessage(GetTextValue(false));
+        }
         else
             alert("Module not loaded !");
     }
