@@ -142,8 +142,8 @@ else
   AC_DEFINE(LOL_BUILD_RELEASE, 1, Define to 1 to activate final release)
   LOL_TRY_CXXFLAGS(-Os, [AM_CXXFLAGS="${AM_CXXFLAGS} -Os"])
   LOL_TRY_CXXFLAGS(-ffast-math, [AM_CXXFLAGS="${AM_CXXFLAGS} -ffast-math"])
-  LOL_TRY_CXXFLAGS(-fomit-frame-pointer, [AM_CXXFLAGS="${AM_CXXFLAGS} -fomit-frame-pointer"])
 dnl Removed this so .nexe build ok.
+dnl  LOL_TRY_CXXFLAGS(-fomit-frame-pointer, [AM_CXXFLAGS="${AM_CXXFLAGS} -fomit-frame-pointer"])
 dnl  LOL_TRY_CXXFLAGS(-fno-strength-reduce, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-strength-reduce"])
 fi
 
