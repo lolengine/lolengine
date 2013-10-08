@@ -64,6 +64,8 @@ function NaClModuleDidLoad()
     //Hide the progress div
     AddTextStatus('Module is live, thank you for your patience.');
     window.setTimeout('HideProgressStatus(true)', GetMaxStatusTime(0.5) * 1000);
+
+    ModuleIsLive();
 }
 
 //Module did crash
