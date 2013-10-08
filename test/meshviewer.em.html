@@ -139,7 +139,10 @@ canvas.emscripten
                         if (left)
                             Module.setStatus('Downloading dependencies ', (this.totalDependencies - left), this.totalDependencies);
                         else
+                        {
                             Module.setStatus('All downloads complete.', 1, 1);
+                            parent.ModuleIsLive();
+                        }
                     },
         //IMPORTANT : This is the C -> Javascript wraping, add your functions list here.
         wrapup_list: [ {src_obj: null, func_name: 'DoSendMessage', c_func_name: 'C_Send', return_var: 'number', args: ['string'] } ],

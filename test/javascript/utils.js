@@ -28,7 +28,6 @@ function LolCookieDate(m_name, m_value, m_expire_date)
 //Set a cookie
 function StoreLolCookie(cookie)
 {
-    //Get the cookie and removes it if it exists.
     GetLolCookie(cookie.m_name, true);
 
     var enc_value = escape(cookie.m_value) + ";";
@@ -58,6 +57,8 @@ function GetLolCookie(name, remove)
         //Retrieve value
         var val_start = cki_doc.indexOf("=", cki_start) + 1;
         var val_end = cki_doc.indexOf(";", cki_start);
+        if (val_end < 0)
+            val_end = cki_doc.length;
         cookie.m_value = unescape(cki_doc.substring(val_start, val_end));
 
         if (remove)
