@@ -196,7 +196,7 @@ void NaClInputData::Tick(float seconds)
             {
                 /* TODO: "InScreen" idx hardcoded, not nice */
                 pp::MouseInputEvent em = pp::MouseInputEvent(e);
-                m_mouse->SetKey(3, em.GetType() == PP_INPUTEVENT_TYPE_MOUSELEAVE);
+                m_mouse->SetKey(3, em.GetType() == PP_INPUTEVENT_TYPE_MOUSEENTER);
                 break;
             }
             case PP_INPUTEVENT_TYPE_MOUSEMOVE:
