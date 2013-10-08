@@ -13,16 +13,11 @@ function CmdVarObj() { }
 function CmdVar(m_type, m_syntax)
 {
     var current_dict = GetCmdDictionnary();
+
     new_obj = new CmdVarObj();
     new_obj.m_type = m_type;
     new_obj.m_syntax = m_syntax;
-    new_obj.ToString = function()
-    {
-        var res = m_type + ' ';
-        if (m_syntax != undefined)
-            for (var i = 0; i < m_syntax.length; i++)
-                res += m_syntax[i] + ' ';
-    }
+
     current_dict.m_vars[current_dict.m_vars.length] = new_obj;
 }
 
@@ -33,15 +28,11 @@ function CmdArgObj() { }
 function CmdArg(m_type, m_name, m_optional)
 {
     new_obj = new CmdArgObj();
+
     new_obj.m_type = m_type;
     new_obj.m_name = m_name;
     new_obj.m_optional = m_optional;
-    new_obj.ToString = function()
-    {
-        if (m_optional != undefined)
-            return m_type + ' ' + m_name + ' = ' + m_optional;
-        return m_type + ' ' + m_name;
-    }
+
     return new_obj;
 }
 
@@ -52,34 +43,12 @@ function CmdTypeObj() { }
 function CmdType(m_name, m_comment, m_arg)
 {
     var current_dict = GetCmdDictionnary();
+
     new_obj = new CmdTypeObj();
     new_obj.m_name = m_name;
     new_obj.m_comment = m_comment;
     new_obj.m_arg = m_arg;
-    new_obj.ToString = function()
-    {
-        var str = m_name.toString() + ' [' + m_comment + ']';
-        if (m_arg != undefined)
-        {
-            str += '{';
-            var found_optional = false;
-            for (var vi = 0; vi < m_arg.length; vi++)
-            {
-                if (m_arg[vi].m_optional != undefined && found_optional == false)
-                {
-                    str += ' [';
-                    found_optional = true;
-                }
-                if (vi != 0)
-                    str += ', ';
-                str += m_arg[vi].ToString();
-            }
-            if (found_optional == true)
-                str += ']';
-            str += '}';
-        }
-        return str;
-    }
+
     new_obj.CheckCommand = function(check_name)
     {
         if (m_name != undefined && check_name.length > 0)

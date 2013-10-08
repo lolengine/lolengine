@@ -158,7 +158,7 @@ public:
 
         //Compile ref meshes
         m_gizmos << new EasyMesh();
-        m_gizmos.Last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
+        m_gizmos.Last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .075 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
         m_gizmos << new EasyMesh();
         m_gizmos.Last()->Compile("[sc#666 acap 1 .5 .5 ty -.5 sc#fff asph 2 1]");
         m_gizmos << new EasyMesh();
