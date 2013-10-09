@@ -54,12 +54,18 @@ typedef lol::EasyMeshParser::token_type token_type;
 (csgx|csgxor)            { return token::T_CSGXOR; }
 
 (lp|loop)                { return token::T_LOOP; }
-(tsw|tglscalewind)       { return token::T_TOGGLESCALEWINDING; }
-(tqw|tglquadweight)      { return token::T_TOGGLEQUADWEIGHTING; }
 (sc|setcolor)            { return token::T_COLOR; }
 (sca|setcolora)          { return token::T_ACOLOR; }
 (scb|setcolorb)          { return token::T_BCOLOR; }
 (scv|setcolorv)          { return token::T_VCOLOR; }
+
+(tsw|tglscalewind)       { return token::T_TOGGLESCALEWINDING; }
+(tqw|tglquadweight)      { return token::T_TOGGLEQUADWEIGHTING; }
+(tpbn|tglpstbuildnormal) { return token::T_TOGGLEPOSTBUILDNORMAL; }
+(tvnc|tglvertnocleanup)  { return token::T_TOGGLEVERTNOCLEANUP; }
+
+(vm|vertmerge)           { return token::T_VERTMERGE; }
+(vs|vertseparate)        { return token::T_VERTSEPARATE; }
 
 (tx|translatex)          { return token::T_TRANSLATEX; }
 (ty|translatey)          { return token::T_TRANSLATEY; }

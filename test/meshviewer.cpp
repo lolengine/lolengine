@@ -729,6 +729,8 @@ public:
 #endif //ALL_FEATURES
             }
         }
+
+        //Scene setup update
         if (m_ssetup)
         {
             m_camera->SetProjection(mat_gizmo);
@@ -756,6 +758,29 @@ public:
             }
             m_camera->SetProjection(save_proj);
         }
+
+#if 0 //Debug normal draw
+        for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
+        {
+            for (int j = 0; j < m_meshes[i]->m_indices.Count(); j += 3)
+            {
+                VertexData v[3] = { m_meshes[i]->m_vert[m_meshes[i]->m_indices[j  ]],
+                                    m_meshes[i]->m_vert[m_meshes[i]->m_indices[j+1]],
+                                    m_meshes[i]->m_vert[m_meshes[i]->m_indices[j+2]]
+                                    };
+                for (int k = 0; k < 3; k++)
+                    Debug::DrawLine((m_mat * mat4::translate(v[k].m_coord)).v3.xyz,
+                                    (m_mat * mat4::translate(v[(k+1)%3].m_coord)).v3.xyz, vec4(vec3((v[k].m_coord.z + 1.f)*.5f),1.f));
+            }
+            for (int j = 0; j < m_meshes[i]->m_vert.Count(); j++)
+            {
+                VertexData &v = m_meshes[i]->m_vert[m_meshes[i]->m_indices[j]];
+                Debug::DrawLine((m_mat * mat4::translate(v.m_coord)).v3.xyz,
+                                (m_mat * mat4::translate(v.m_coord)).v3.xyz +
+                                (m_mat * vec4(v.m_normal * 5.f, 0.f)).xyz, vec4(lol::abs(v.m_normal), 1.f));
+            }
+        }
+#endif
     }
 
 private:

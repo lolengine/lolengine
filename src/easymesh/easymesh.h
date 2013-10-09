@@ -201,11 +201,13 @@ struct MeshBuildOperation
     enum Value
     {
         //When this flag is up, negative scaling will not invert faces.
-        ScaleWinding        = (1 << 0),
-        CommandRecording    = (1 << 1),
-        CommandExecution    = (1 << 2),
-        QuadWeighting       = (1 << 3),
-        IgnoreQuadWeighting = (1 << 4),
+        ScaleWinding                = (1 << 0),
+        CommandRecording            = (1 << 1),
+        CommandExecution            = (1 << 2),
+        QuadWeighting               = (1 << 3),
+        IgnoreQuadWeighting         = (1 << 4),
+        PostBuildComputeNormals     = (1 << 5),
+        PreventVertCleanup          = (1 << 6),
 
         All     = 0xffffffff
     }
@@ -229,9 +231,14 @@ struct EasyMeshCmdType
 
         ScaleWinding,
         QuadWeighting,
+        PostBuildNormal,
+        PreventVertCleanup,
         SetColorA,
         SetColorB,
         SetVertColor,
+
+        VerticesMerge,
+        VerticesSeparate,
 
         Translate,
         Rotate,
@@ -702,6 +709,10 @@ public:
     void ToggleScaleWinding();
     /* [cmd:tqw] When active, quad will have a fifth center vertex */
     void ToggleQuadWeighting();
+    /* [cmd:tpbn] When active, normal will be computed after the build */
+    void TogglePostBuildNormal();
+    /* [cmd:tpbn] When active, normal will be computed after the build */
+    void ToggleVerticeNoCleanup();
     /* [cmd:sc] Set both color */
     void SetCurColor(vec4 const &color);
     /* [cmd:sca] Set base color A */
@@ -726,6 +737,13 @@ private:
     void AppendTriangle(int i1, int i2, int i3, int base);
     void AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base);
     void ComputeNormals(int start, int vcount);
+public:
+    /* Remove all unused */
+    void VerticesCleanup();
+    /* Merge vertices AKA: smooth */
+    void VerticesMerge();
+    /* Merge vertices AKA: Flat */
+    void VerticesSeparate();
 public: //DEBUG
     void ComputeTexCoord(float uv_scale, int uv_offset);
 
@@ -984,7 +1002,7 @@ public:
     int GetVertexCount() { return m_vert.Count(); }
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
-private:
+//private:
     Array<uint16_t>     m_indices;
     Array<VertexData>   m_vert;
 

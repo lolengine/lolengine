@@ -1,8 +1,9 @@
-addlight 0 position (4 -4 0) color #fff
+//addlight 0 position (1 -.5 1.5) color #fff
 addlight 1 position (0 0 6) color #bfb
-clearcolor #d0d
+clearcolor #ddd
 showgizmo true
 showlight true
+
 
 //SCENE SETUP END
 
@@ -11,17 +12,17 @@ showlight true
 
 //custom setmesh "sc#f00 ab 2 ty 1.5 ab 2"
 
-
 custom setmesh "
 
 //tqw
 //CMD TEST
-sc#0f0 ab 5
+//sc#0f0 asph 1 10
+//sc#0f0 ab 10
 //sc#0f0 afcb 1 -.2
 //sc#0f0 acg 8 1 1 1 2 2 1.5 1.5 -.4
 //sc#0f0 as 6 1 2
 //sc#0f0 scb#f00 aes 6 1 2 2
-//sc#0f0 ac 6 1 1
+//sc#0f0 ac 6 5 2 2 false true true
 //sc#0f0 aq 1
 //splt 2 smth 4 0 1
 
@@ -47,6 +48,14 @@ sc#0f0 ab 5
 //[sc#00f ab .2 tz 1]
 //sc#0f0 ab 2 ty 1.5 ab 2
 //sc#00f ab 2 ty 1.5 ab 2
+
+
+
+[sc#88f afcb 10 10 10 .25 tx 0]
+csgs [sc#fff afcb 10 10 10 .25 t 2 2 2]
+//[sc#fff afcb 7 7 7 .25]
+//[sc#ff2 afcb 7 7 7 .25 t 1 1 1 csgs]
+
 
 "
 
@@ -92,8 +101,3 @@ sc#0f0 ab 5
 
 //[sc#ff2 asph 2 10 10 10]
 //[sc#400 asph 2 10 10 10 t 2 2 2 csgs]
-
-//[sc#88f afcb 10 10 10 .25 tx 0]
-//[sc#fff afcb 10 10 10 .25 t 2 2 2 csgs]
-//[sc#fff afcb 7 7 7 .25]
-//[sc#ff2 afcb 7 7 7 .25 t 1 1 1 csgs]

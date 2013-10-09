@@ -25,11 +25,19 @@ CmdType(["csgx",  "csgxor"], "Performs a Xor operation as :\n(current_scope_Outs
 //-------------------------------------------------------------------------
 CmdType(["tsw", "tglscalewind"], "When active, on negative-scaling,\nnormal-vector correction will not occur\nDefault : Inactive");
 CmdType(["tqw", "tglquadweight"], "When active, quad will have a fifth center vertex\nDefault : Inactive");
+CmdType(["tpbn", "tglpstbuildnormal"], "When active, normal will be only computed after all the command\nDefault : Inactive");
+CmdType(["tvnc", "tglvertnocleanup"], "When active, vertices cleanup will not be done at the end of all the commands\nDefault : Inactive");
 CmdType(["sc",  "setcolor"], "Set A & B color", [CmdArg("color", "color")]);
 CmdType(["sca", "setcolora"], "Set A color", [CmdArg("color", "color")]);
 CmdType(["scb", "setcolorb"], "Set B color", [CmdArg("color", "color")]);
 CmdType(["scv", "setcolorv"], "Set the color of all vertices in this scope", [CmdArg("color", "color")]);
 CmdType(["lp",  "loop"], "Performs a loop with the code in the braces.\nDoesn't open a new scope.", [CmdArg("int", "loopnb"), CmdArg("[ ]", "Loop command")]);
+
+//-------------------------------------------------------------------------
+//Vertices operations
+//-------------------------------------------------------------------------
+CmdType(["vm", "vertmerge"], "Will merge all the same face vertices");
+CmdType(["vs", "vertseparate"], "Will separate all the same face vertices");
 
 //-------------------------------------------------------------------------
 //Mesh transform operations
