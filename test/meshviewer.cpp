@@ -26,12 +26,12 @@ static int const TEXTURE_WIDTH = 256;
 
 #define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
 #define     NACL_EM             (__native_client__ || EMSCRIPTEN)
-#define     NO_NACL_EM_INPUT    (1 && !EMSCRIPTEN)
+#define     NO_NACL_EM_INPUT    (1)
 
 #define     R_M                 1.f
 #if NACL_EM
-#define     DEFAULT_WIDTH       (770.f * R_M)
-#define     DEFAULT_HEIGHT      (200.f * R_M)
+#define     DEFAULT_WIDTH       (800.f * R_M)
+#define     DEFAULT_HEIGHT      (400.f * R_M)
 #else
 #define     DEFAULT_WIDTH       (1200.f * R_M)
 #define     DEFAULT_HEIGHT      (400.f * R_M)
@@ -180,7 +180,7 @@ public:
         m_zoom = -100.f;
         m_zoom_mesh = 0.f;
         m_zoom_speed = 0.f;
-        m_rot = vec2(45.f);
+        m_rot = vec2(45.f, -45.f);
         m_rot_mesh = vec2::zero;
         m_rot_speed = vec2::zero;
         m_pos = vec2::zero;
