@@ -683,6 +683,9 @@
     <LolFxCompile Include="easymesh\shinydebugwireframe.lolfx">
       <Filter>easymesh</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="easymesh\shinyflat.lolfx">
+      <Filter>easymesh</Filter>
+    </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y">
