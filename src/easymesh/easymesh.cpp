@@ -453,6 +453,15 @@ bool EasyMesh::Compile(char const *command)
         BD()->Enable(MeshBuildOperation::CommandExecution);
         ExecuteCmdStack();
         BD()->Disable(MeshBuildOperation::CommandExecution);
+
+        if (!BD()->IsEnabled(MeshBuildOperation::PreventVertCleanup))
+            VerticesCleanup();
+
+        if (BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
+            ComputeNormals(0, m_indices.Count());
+
+        BD()->Disable(MeshBuildOperation::PostBuildComputeNormals);
+        BD()->Disable(MeshBuildOperation::PreventVertCleanup);
     }
     return res;
 }
@@ -490,155 +499,47 @@ bool EasyMesh::Compile(char const *command)
 //-----------------------------------------------------------------------------
 void EasyMesh::ExecuteCmdStack()
 {
+#define DO_EXEC_CMD(MESH_CMD, FUNC_PARAMS)  \
+        case EasyMeshCmdType::MESH_CMD:     \
+        { EZM_CALL_FUNC FUNC_PARAMS; break; }
+
     for (BD()->Cmdi() = 0; BD()->Cmdi() < BD()->CmdStack().GetCmdNb(); ++BD()->Cmdi())
     {
         switch (BD()->CmdStack().GetCmd(BD()->Cmdi()))
         {
-            case EasyMeshCmdType::MeshCsg:
-            {
-                EZM_CALL_FUNC(MeshCsg, CSGUsage);
-                break;
-            }
-            case EasyMeshCmdType::LoopStart:
-            {
-                EZM_CALL_FUNC(LoopStart, int);
-                break;
-            }
-            case EasyMeshCmdType::LoopEnd:
-            {
-                EZM_CALL_FUNC(LoopEnd);
-                break;
-            }
-            case EasyMeshCmdType::OpenBrace:
-            {
-                EZM_CALL_FUNC(OpenBrace);
-                break;
-            }
-            case EasyMeshCmdType::CloseBrace:
-            {
-                EZM_CALL_FUNC(CloseBrace);
-                break;
-            }
-            case EasyMeshCmdType::ScaleWinding:
-            {
-                EZM_CALL_FUNC(ToggleScaleWinding);
-                break;
-            }
-            case EasyMeshCmdType::QuadWeighting:
-            {
-                EZM_CALL_FUNC(ToggleQuadWeighting);
-                break;
-            }
-            case EasyMeshCmdType::SetColorA:
-            {
-                EZM_CALL_FUNC(SetCurColorA, vec4);
-                break;
-            }
-            case EasyMeshCmdType::SetColorB:
-            {
-                EZM_CALL_FUNC(SetCurColorB, vec4);
-                break;
-            }
-            case EasyMeshCmdType::SetVertColor:
-            {
-                EZM_CALL_FUNC(SetVertColor, vec4);
-                break;
-            }
-            case EasyMeshCmdType::Translate:
-            {
-                EZM_CALL_FUNC(Translate, vec3);
-                break;
-            }
-            case EasyMeshCmdType::Rotate:
-            {
-                EZM_CALL_FUNC(Rotate, float, vec3);
-                break;
-            }
-            case EasyMeshCmdType::RadialJitter:
-            {
-                EZM_CALL_FUNC(RadialJitter, float);
-                break;
-            }
-            case EasyMeshCmdType::MeshTranform:
-            {
-                EZM_CALL_FUNC(DoMeshTransform, MeshTransform, Axis, Axis, float, float, float, bool);
-                break;
-            }
-            case EasyMeshCmdType::Scale:
-            {
-                EZM_CALL_FUNC(Scale, vec3);
-                break;
-            }
-            case EasyMeshCmdType::DupAndScale:
-            {
-                EZM_CALL_FUNC(DupAndScale, vec3, bool);
-                break;
-            }
-            case EasyMeshCmdType::Chamfer:
-            {
-                EZM_CALL_FUNC(Chamfer, float);
-                break;
-            }
-            case EasyMeshCmdType::SplitTriangles:
-            {
-                EZM_CALL_FUNC(SplitTriangles, int);
-                break;
-            }
-            case EasyMeshCmdType::SmoothMesh:
-            {
-                EZM_CALL_FUNC(SmoothMesh, int, int, int);
-                break;
-            }
-            case EasyMeshCmdType::AppendCylinder:
-            {
-                EZM_CALL_FUNC(AppendCylinder, int, float, float, float, bool, bool, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendCapsule:
-            {
-                EZM_CALL_FUNC(AppendCapsule, int, float, float);
-                break;
-            }
-            case EasyMeshCmdType::AppendTorus:
-            {
-                EZM_CALL_FUNC(AppendTorus, int, float, float);
-                break;
-            }
-            case EasyMeshCmdType::AppendBox:
-            {
-                EZM_CALL_FUNC(AppendBox, vec3, float, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendStar:
-            {
-                EZM_CALL_FUNC(AppendStar, int, float, float, bool, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendExpandedStar:
-            {
-                EZM_CALL_FUNC(AppendExpandedStar, int, float, float, float);
-                break;
-            }
-            case EasyMeshCmdType::AppendDisc:
-            {
-                EZM_CALL_FUNC(AppendDisc, int, float, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendSimpleTriangle:
-            {
-                EZM_CALL_FUNC(AppendSimpleTriangle, float, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendSimpleQuad:
-            {
-                EZM_CALL_FUNC(AppendSimpleQuad, vec2, vec2, float, bool);
-                break;
-            }
-            case EasyMeshCmdType::AppendCog:
-            {
-                EZM_CALL_FUNC(AppendCog, int, float, float, float, float, float, float, float, float, bool);
-                break;
-            }
+            DO_EXEC_CMD(MeshCsg,                (MeshCsg, CSGUsage))
+            DO_EXEC_CMD(LoopStart,              (LoopStart, int))
+            DO_EXEC_CMD(LoopEnd,                (LoopEnd))
+            DO_EXEC_CMD(OpenBrace,              (OpenBrace))
+            DO_EXEC_CMD(CloseBrace,             (CloseBrace))
+            DO_EXEC_CMD(ScaleWinding,           (ToggleScaleWinding))
+            DO_EXEC_CMD(QuadWeighting,          (ToggleQuadWeighting))
+            DO_EXEC_CMD(PostBuildNormal,        (TogglePostBuildNormal))
+            DO_EXEC_CMD(PreventVertCleanup,     (ToggleVerticeNoCleanup))
+            DO_EXEC_CMD(VerticesMerge,          (VerticesMerge))
+            DO_EXEC_CMD(VerticesSeparate,       (VerticesSeparate))
+            DO_EXEC_CMD(SetColorA,              (SetCurColorA, vec4))
+            DO_EXEC_CMD(SetColorB,              (SetCurColorB, vec4))
+            DO_EXEC_CMD(SetVertColor,           (SetVertColor, vec4))
+            DO_EXEC_CMD(Translate,              (Translate, vec3))
+            DO_EXEC_CMD(Rotate,                 (Rotate, float, vec3))
+            DO_EXEC_CMD(RadialJitter,           (RadialJitter, float))
+            DO_EXEC_CMD(MeshTranform,           (DoMeshTransform, MeshTransform, Axis, Axis, float, float, float, bool))
+            DO_EXEC_CMD(Scale,                  (Scale, vec3))
+            DO_EXEC_CMD(DupAndScale,            (DupAndScale, vec3, bool))
+            DO_EXEC_CMD(Chamfer,                (Chamfer, float))
+            DO_EXEC_CMD(SplitTriangles,         (SplitTriangles, int))
+            DO_EXEC_CMD(SmoothMesh,             (SmoothMesh, int, int, int))
+            DO_EXEC_CMD(AppendCylinder,         (AppendCylinder, int, float, float, float, bool, bool, bool))
+            DO_EXEC_CMD(AppendCapsule,          (AppendCapsule, int, float, float))
+            DO_EXEC_CMD(AppendTorus,            (AppendTorus, int, float, float))
+            DO_EXEC_CMD(AppendBox,              (AppendBox, vec3, float, bool))
+            DO_EXEC_CMD(AppendStar,             (AppendStar, int, float, float, bool, bool))
+            DO_EXEC_CMD(AppendExpandedStar,     (AppendExpandedStar, int, float, float, float))
+            DO_EXEC_CMD(AppendDisc,             (AppendDisc, int, float, bool))
+            DO_EXEC_CMD(AppendSimpleTriangle,   (AppendSimpleTriangle, float, bool))
+            DO_EXEC_CMD(AppendSimpleQuad,       (AppendSimpleQuad, vec2, vec2, float, bool))
+            DO_EXEC_CMD(AppendCog,              (AppendCog, int, float, float, float, float, float, float, float, float, bool))
             default:
                 ASSERT(0, "Unknown command pseudo bytecode");
         }
@@ -775,8 +676,6 @@ bool EasyMesh::SetRender(bool should_render)
 //-------------------
 // "Collisions" functions
 //-------------------
-#define VX_ALONE -2
-#define VX_MASTER -1
 
 //-----------------------------------------------------------------------------
 //helpers func to retrieve a vertex.
@@ -1121,6 +1020,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     m_cursors.Last().m1 = m_vert.Count();
     m_cursors.Last().m2 = m_indices.Count();
 
+    VerticesCleanup();
     //DONE for the splitting !
 }
 
@@ -1146,6 +1046,30 @@ void EasyMesh::ToggleQuadWeighting()
     }
 
     BD()->Toggle(MeshBuildOperation::QuadWeighting);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::TogglePostBuildNormal()
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::PostBuildNormal);
+        return;
+    }
+
+    BD()->Toggle(MeshBuildOperation::PostBuildComputeNormals);
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::ToggleVerticeNoCleanup()
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::PreventVertCleanup);
+        return;
+    }
+
+    BD()->Toggle(MeshBuildOperation::PreventVertCleanup);
 }
 
 //-----------------------------------------------------------------------------
@@ -1308,6 +1232,13 @@ void EasyMesh::AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base)
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeNormals(int start, int vcount)
 {
+    
+    if (BD()->IsEnabled(MeshBuildOperation::CommandExecution) &&
+        BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
+        return;
+
+    Array< Array<vec3> > normals;
+    normals.Resize(m_vert.Count());
     for (int i = 0; i < vcount; i += 3)
     {
         vec3 v0 = m_vert[m_indices[start + i + 2]].m_coord
@@ -1317,8 +1248,143 @@ void EasyMesh::ComputeNormals(int start, int vcount)
         vec3 n = normalize(cross(v1, v0));
 
         for (int j = 0; j < 3; j++)
-            m_vert[m_indices[start + i + j]].m_normal = n;
+            normals[m_indices[start + i + j]] << n;
     }
+
+    for (int i = 0; i < normals.Count(); i++)
+    {
+        if (normals[i].Count() > 0)
+        {
+            //remove doubles
+            for (int j = 0; j < normals[i].Count(); ++j)
+                for (int k = j + 1; k < normals[i].Count(); ++k)
+                    if (1.f - dot(normals[i][k], normals[i][j]) < .00001f)
+                        normals[i].Remove(k--);
+
+            vec3 newv = vec3::zero;
+            for (int j = 0; j < normals[i].Count(); ++j)
+                newv += normals[i][j];
+            m_vert[i].m_normal = normalize(newv / (float)normals[i].Count());
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::VerticesCleanup()
+{
+    Array<int> vert_ids;
+    vert_ids.Resize(m_vert.Count(), 0);
+
+    //1: Remove triangles with two vertices on each other
+    for (int i = 0; i < m_indices.Count(); i += 3)
+    {
+        bool remove = false;
+        for (int j = 0; !remove && j < 3; ++j)
+            if (length(m_vert[m_indices[i + j]].m_coord - m_vert[m_indices[i + (j + 1) % 3]].m_coord) < .00001f)
+                remove = true;
+        if (remove)
+        {
+            m_indices.RemoveSwap(i, 3);
+            i -= 3;
+        }
+        else
+        {
+            //1.5: Mark all used vertices
+            for (int j = 0; j < 3; ++j)
+                vert_ids[m_indices[i + j]] = 1;
+        }
+    }
+
+    //2: Remove all unused vertices
+    Array<VertexData> old_vert = m_vert;
+    int shift = 0;
+    m_vert.Empty();
+    for (int i = 0; i < vert_ids.Count(); ++i)
+    {
+        //Unused vertex, update the shift quantity instead of keeping it.
+        if (vert_ids[i] == 0)
+            shift++;
+        else
+            m_vert << old_vert[i];
+        //Always mark it with the shift quantity
+        vert_ids[i] = shift;
+    }
+
+    //3: Update the indices
+    for (int i = 0; i < m_indices.Count(); ++i)
+        m_indices[i] -= vert_ids[m_indices[i]];
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::VerticesMerge()
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::VerticesMerge);
+        return;
+    }
+
+    //1: Crunch all vertices in the dictionnary
+    VertexDictionnary vert_dict;
+    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+        vert_dict.AddVertex(i, m_vert[i].m_coord);
+
+    //2: Update the indices
+    for (int i = 0; i < m_indices.Count(); ++i)
+    {
+        int master = vert_dict.FindVertexMaster(m_indices[i]);
+        if (master >= 0)
+            m_indices[i] = master;
+    }
+
+    //2: Cleanup
+    VerticesCleanup();
+}
+
+//-----------------------------------------------------------------------------
+void EasyMesh::VerticesSeparate()
+{
+    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
+    {
+        BD()->CmdStack().AddCmd(EasyMeshCmdType::VerticesSeparate);
+        return;
+    }
+
+    Array< Array<int> > new_ids;
+    Array<int> vert_ids;
+    vert_ids.Resize(m_vert.Count(), 0);
+
+    //1: Mark all used vertices
+    for (int i = 0; i < m_indices.Count(); ++i)
+        vert_ids[m_indices[i]]++;
+
+    //2: Update the vertices
+    int vbase = m_cursors.Last().m1;
+    int vcount = m_vert.Count();
+    new_ids.Resize(vcount);
+    for (int i = vbase; i < vcount; i++)
+    {
+        while (vert_ids[i] > 1)
+        {
+            //Add duplicate
+            new_ids[i] << m_vert.Count();
+            AddDuplicateVertex(i);
+            vert_ids[i]--;
+        }
+    }
+
+    //3: Update the indices
+    for (int i = 0; i < m_indices.Count(); ++i)
+    {
+        if (new_ids[m_indices[i]].Count())
+        {
+            int j = new_ids[m_indices[i]].Pop();
+            m_indices[i] = j;
+        }
+    }
+
+    //4: Cleanup
+    VerticesCleanup();
 }
 
 //-----------------------------------------------------------------------------
