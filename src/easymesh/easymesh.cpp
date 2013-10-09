@@ -23,6 +23,7 @@
 #include "easymesh/easymesh-compiler.h"
 
 LOLFX_RESOURCE_DECLARE(shiny);
+LOLFX_RESOURCE_DECLARE(shinyflat);
 LOLFX_RESOURCE_DECLARE(shinydebugwireframe);
 LOLFX_RESOURCE_DECLARE(shinydebuglighting);
 LOLFX_RESOURCE_DECLARE(shinydebugnormal);
