@@ -318,61 +318,76 @@ function machinchose() { return 'test machin '; }
 
 <h1>Mesh Viewer : Web version.</h1>
 
-<p>
-    <div id="final_div">
-        <div id="id_div_listener" align="center" style="width:770px;height:200px">
-            <canvas id="BGCanvas" width="772" height="202"></canvas>
-            <div id="id_div_progress">
-                <br>&nbsp;
-                <progress id="id_progress_bar" align="left"></progress>
-                <div id="id_div_progress_status">....</div>&nbsp;
-            </div>
-            <div id="id_div_frame_embed">
-                <iframe onload="Init();" id="id_frame_embed" src="../javascript/empty.html" width=770 height=200 frameborder=0 scrolling=no></iframe>
-            </div>
-        </div>
-    </div>
-</p>
-
-<table border="0" cellpadding="0" cellspacing="0" width="772">
-    <tr>
-        <td align="left">
-            <div><button onclick="SendMessageToModule()">Update program</button></div>
-        </td>
-        <td align="right">
-            <div><button onclick="ExchangeSetup()">Change edit data</button></div>
-        </td>
-    </tr>
-</table>
-
 <table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td height="1%">
-            <div id="bouton">
-                <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;"></textarea>
-            </div>
+    <tr height="404">
+        <td>
+
+            <p>
+                <div id="final_div">
+                    <div id="id_div_listener" align="center" style="width:800px;height:400px">
+                        <canvas id="BGCanvas" width="802" height="402"></canvas>
+                        <div id="id_div_progress">
+                            <br>&nbsp;
+                            <progress id="id_progress_bar" align="left"></progress>
+                            <div id="id_div_progress_status">....</div>&nbsp;
+                        </div>
+                        <div id="id_div_frame_embed">
+                            <iframe onload="Init();" id="id_frame_embed" src="../javascript/empty.html" width=800 height=400 frameborder=0 scrolling=no></iframe>
+                        </div>
+                    </div>
+                </div>
+            </p>
+
         </td>
-        <td valign="top" rowspan="3">&nbsp;</td>
-        <td valign="top" rowspan="3">
-            <div><b><u>Variable Types usage :</u></b></div>
-            <div id="id_div_helper_vars"></div>
+        <td>
         </td>
     </tr>
     <tr>
-        <td height="1%">
-            <div id="id_div_alphabet"></div>
-        </td>
-    </tr>
-    <tr>
-        <td valign="top">
-            <table border="0" cellpadding="0" cellspacing="0">
+        <td rowspan="2">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="802">
                 <tr>
-                    <td valign="top"><div id="id_div_helper_cmd_0"></div></td>
-                    <td valign="top"><div id="id_div_helper_cmd_1"></div></td>
-                    <td valign="top"><div id="id_div_helper_args"    ></div></td>
-                    <td valign="top"><div id="id_div_helper_cmnt" ></div></td>
+                    <td align="left">
+                        <div><button onclick="SendMessageToModule()">Update program</button></div>
+                    </td>
+                    <td align="right">
+                        <div><button onclick="ExchangeSetup()">Change edit data</button></div>
+                    </td>
                 </tr>
             </table>
+
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td height="1%">
+                        <div id="bouton">
+                            <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;"></textarea>
+                        </div>
+                    </td>
+                    <td valign="top" rowspan="3">&nbsp;</td>
+                    <td valign="top" rowspan="3">
+                        <div><b><u>Variable Types usage :</u></b></div>
+                        <div id="id_div_helper_vars"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="1%">
+                        <div id="id_div_alphabet"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td valign="top"><div id="id_div_helper_cmd_0"></div></td>
+                                <td valign="top"><div id="id_div_helper_cmd_1"></div></td>
+                                <td valign="top"><div id="id_div_helper_args"    ></div></td>
+                                <td valign="top"><div id="id_div_helper_cmnt" ></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
         </td>
     </tr>
 </table>
