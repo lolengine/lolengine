@@ -28,6 +28,11 @@
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */
 #define SDL_FORCE_POLL_JOYSTICK 1
+#if EMSCRIPTEN
+#define MOUSE_SPEED_MOD 10.f
+#else
+#define MOUSE_SPEED_MOD 100.f
+#endif
 
 namespace lol
 {
@@ -80,15 +85,15 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
+    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
+    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
+
 #   if !EMSCRIPTEN
 #       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
 #       else
     SDL_JoystickEventState(SDL_ENABLE);
 #       endif //SDL_FORCE_POLL_JOYSTICK
-
-    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
-    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 
     /* Register all the joysticks we can find, and let the input
      * system decide what it wants to track. */
@@ -228,14 +233,18 @@ void SdlInputData::Tick(float seconds)
         vec2 vprevmouse = vec2(m_prevmouse);
         m_mouse->SetCursor(0, vmouse / m_app, mouse);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * 100.0f / max_screen_size);
+        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * 100.0f / max_screen_size);
+        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
     }
 
     //Mouse is focused, Validate the InScreen Key
     //Hardcoded 3, not very nice.
+#   if !EMSCRIPTEN
     m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
+#else //Emscripten doesn't seem to handle SDL_APPMOUSEFOCUS
+    m_mouse->SetKey(3, true);
+#endif
 
     if (m_mousecapture)
     {
