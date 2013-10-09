@@ -177,7 +177,7 @@ public:
         m_fov = -100.f;
         m_fov_mesh = 0.f;
         m_fov_speed = 0.f;
-        m_zoom = -100.f;
+        m_zoom = 0.f;
         m_zoom_mesh = 0.f;
         m_zoom_speed = 0.f;
         m_rot = vec2(45.f, -45.f);
@@ -415,7 +415,7 @@ public:
             if (m_reset_timer >= 0.f)
             {
                 m_pos = vec2(0.f);
-                m_zoom = -100.f;
+                m_zoom = 0.f;
             }
             else
                 m_reset_timer = RESET_TIMER;
@@ -436,7 +436,7 @@ public:
         vec2 pos_mesh = vec2(SmoothClamp(m_pos.x, -POS_CLAMP, POS_CLAMP, POS_CLAMP * .1f),
                              SmoothClamp(m_pos.y, -POS_CLAMP, POS_CLAMP, POS_CLAMP * .1f));
         float fov_mesh = SmoothClamp(m_fov, 0.f, FOV_CLAMP, FOV_CLAMP * .1f);
-        float zoom_mesh = SmoothClamp(m_zoom, 0.f, ZOM_CLAMP, ZOM_CLAMP * .1f);
+        float zoom_mesh = SmoothClamp(m_zoom, -ZOM_CLAMP, ZOM_CLAMP, ZOM_CLAMP * .1f);
         vec2 hist_scale_mesh = vec2(SmoothClamp(m_hist_scale.x, 0.f, HST_CLAMP, HST_CLAMP * .1f),
                                     SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
@@ -511,10 +511,10 @@ public:
         if (cam_factor > 0.f)
         {
             vec2 new_screen_scale = m_camera->GetScreenScale();
-            m_camera->SetScreenScale(max(vec2(0.001f), new_screen_scale * ((1.0f + m_zoom_mesh) / (scale_ratio * SCREEN_LIMIT))));
+            m_camera->SetScreenScale(max(vec2(0.001f), new_screen_scale * ((1.0f + lol::max(0.f, m_zoom_mesh)) / (scale_ratio * (1.f + lol::max(0.f, -m_zoom_mesh)) * SCREEN_LIMIT))));
             m_camera->SetPosition(vec3(vec2::zero, damp(m_camera->m_position.z, z_pos + screen_ratio * 2.f, .1f, seconds)), true);
             m_camera->SetFov(m_fov_mesh);
-            m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio), 1.2f, seconds));
+            m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio * (1.f + lol::max(0.f, -m_zoom_mesh))), 1.2f, seconds));
         }
 
         //--
