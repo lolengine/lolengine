@@ -79,7 +79,7 @@
     <Filter Include="platform\ps3">
       <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform\NaCl">
+    <Filter Include="platform\nacl">
       <UniqueIdentifier>{f6cc3470-c841-4581-969b-e60cea841c27}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -317,16 +317,16 @@
     </ClCompile>
     <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="platform\nacl\nacl-app.cpp">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClCompile>
     <ClCompile Include="platform\nacl\nacl-instance.cpp">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClCompile>
     <ClCompile Include="platform\nacl\nacl-module.cpp">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClCompile>
     <ClCompile Include="platform\nacl\opengl_context.cpp">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -634,16 +634,16 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="platform\nacl\nacl-app.h">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClInclude>
     <ClInclude Include="platform\nacl\nacl-instance.h">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClInclude>
     <ClInclude Include="platform\nacl\opengl_context.h">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClInclude>
     <ClInclude Include="platform\nacl\opengl_context_ptrs.h">
-      <Filter>platform\NaCl</Filter>
+      <Filter>platform\nacl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
