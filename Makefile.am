@@ -2,7 +2,7 @@
 include $(top_srcdir)/build/autotools/common.am
 
 # Put "people" at the end because they're more likely to break builds.
-SUBDIRS = build src test tools games demos people doc
+SUBDIRS = build src test tools demos games people doc
 DIST_SUBDIRS = $(SUBDIRS) binaries
 
 EXTRA_DIST += bootstrap COPYING TODO
