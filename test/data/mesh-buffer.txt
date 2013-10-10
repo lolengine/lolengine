@@ -1,8 +1,7 @@
-//addlight 0 position (1 -.5 1.5) color #fff
-addlight 1 position (0 0 6) color #bfb
+addlight 0 position (1 -.5 1.5) color #bbb addlight 0 position (-1 -.5 -1.5) color #bbb addlight 1 position (0 1 0) color #444
 clearcolor #ddd
-showgizmo true
-showlight true
+showgizmo false
+showlight false
 
 
 //SCENE SETUP END
@@ -50,12 +49,7 @@ custom setmesh "
 //sc#00f ab 2 ty 1.5 ab 2
 
 
-
-[sc#88f afcb 10 10 10 .25 tx 0]
-csgs [sc#fff afcb 10 10 10 .25 t 2 2 2]
-//[sc#fff afcb 7 7 7 .25]
-//[sc#ff2 afcb 7 7 7 .25 t 1 1 1 csgs]
-
+[sc#66f afcb(10) .25tx0]csgs[sc#fff afcb(10).25t(2)][[sc#6f6 afcb(7).25]csgs[sc#fff afcb(7).25t(1.5)]][[sc#f44 asph4 12t(-2.5)]csga[sc#fff afcb(7).25t(1.4)]csgs[sc#fff afcb(7).25t(2.5)]][[sc#ff0 ato6 2.5 1.2rx90tz-1.25tx-.9][sc#ff0 ab.5 2.1 .5dup[rz90sx.5ty-.8tx-.28]ty.55tx.25tz-.4taz1 1sy.8sx.8ty-.55tx-.25tz.4tz-1.2tx1.2]tz1.25tx1.25dup[sx-1ry90]tz-1.25tx-1.25]
 
 "
 
