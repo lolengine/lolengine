@@ -81,7 +81,7 @@ public:
     float GetValue() const { return m_current; }
     /** Gets the current delta value of this axis */
     float GetDelta() const { return m_current - m_previous; }
-	
+
     /** Bind a physical device and axis */
     void Bind(const String& device_name, const String& axis_name);
     /** Bind a physical device and key over this axis. The axis value will be 0 if the key is up and 1 if it's down */

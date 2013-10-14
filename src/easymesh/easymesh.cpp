@@ -1233,7 +1233,7 @@ void EasyMesh::AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base)
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeNormals(int start, int vcount)
 {
-    
+
     if (BD()->IsEnabled(MeshBuildOperation::CommandExecution) &&
         BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
         return;
