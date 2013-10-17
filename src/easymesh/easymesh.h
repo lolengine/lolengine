@@ -150,7 +150,7 @@ public:
 protected:
     uint16_t                            m_vert_decl_flags;
     Shader*                             m_shader;
-    DebugRenderMode                     m_render_mode;
+    int				                    m_render_mode;
     Array<lol::String, ShaderUniform>   m_shader_uniform;
     Array<ShaderAttrib>                 m_shader_attrib;
 };
@@ -180,7 +180,8 @@ public:
     ~GpuEasyMeshData();
     //---
     void AddGpuData(GpuShaderData* gpudata, class EasyMesh* src_mesh);
-    void RenderMeshData(mat4 const &model);
+    void RenderMeshData(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
+	bool HasData(int render_mode) { return (0 <= render_mode && render_mode < m_gpudatas.Count() && !!m_gpudatas[render_mode]); }
 
 private:
     void SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh);
@@ -632,6 +633,7 @@ public:
     bool FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
     bool FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
     void AddVertex(int vert_id, vec3 vert_coord);
+    void RemoveVertex(int vert_id);
     bool GetMasterList(Array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
     void Clear() { vertex_list.Empty(); }
 private:
@@ -669,7 +671,7 @@ public:
     void        ExecuteCmdStack();
     void        MeshConvert(GpuShaderData* new_gpu_sdata);
     void        MeshConvert(Shader* ProvidedShader = nullptr);
-    bool        Render(mat4 const &model);
+    bool        Render(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
     MeshRender  GetMeshState() { return m_state; }
     bool        SetRender(bool should_render);
 

@@ -239,10 +239,13 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
         m_indexcount = indexlist.Count();
     }
 
-    if (m_gpudatas.Count() != DebugRenderMode::Max)
+	//init to a minimum of gpudata->m_render_mode size
+    if (m_gpudatas.Count() <= gpudata->m_render_mode)
     {
-        m_gpudatas.Reserve(DebugRenderMode::Max);
-        for (int i = 0; i < DebugRenderMode::Max; i++)
+		int i = m_gpudatas.Count();
+		int max = gpudata->m_render_mode + 1;
+        m_gpudatas.Reserve(max);
+        for (; i < max; i++)
             m_gpudatas << nullptr;
     }
     m_gpudatas[gpudata->m_render_mode] = gpudata;
@@ -373,10 +376,11 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 }
 
 //-----------------------------------------------------------------------------
-void GpuEasyMeshData::RenderMeshData(mat4 const &model)
+void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
 {
-    DebugRenderMode d = Video::GetDebugRenderMode();
-    GpuShaderData& gpu_sd = *(m_gpudatas[d]);
+	ASSERT(0 <= render_mode && render_mode < m_gpudatas.Count(), "render mode is not in the defined range");
+	ASSERT(m_gpudatas[render_mode], "gpu datas for this render mode don't exist");
+    GpuShaderData& gpu_sd = *(m_gpudatas[render_mode]);
 
     int vdecl_idx = 0;
     for (; vdecl_idx < m_vdatas.Count(); ++vdecl_idx)
@@ -620,8 +624,9 @@ void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
     if (new_gpu_sdata)
     {
         m_gpu_data.AddGpuData(new_gpu_sdata, this);
-        for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
-            m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
+        for (int i = DebugRenderMode::Default; i < DebugRenderMode::Max; i++)
+			if (!m_gpu_data.HasData(i))
+				m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
     }
     m_state = MeshRender::CanRender;
 }
@@ -646,11 +651,11 @@ void EasyMesh::MeshConvert(Shader* provided_shader)
 }
 
 //-----------------------------------------------------------------------------
-bool EasyMesh::Render(mat4 const &model)
+bool EasyMesh::Render(mat4 const &model, int render_mode)
 {
     if (m_state == MeshRender::CanRender)
     {
-        m_gpu_data.RenderMeshData(model);
+        m_gpu_data.RenderMeshData(model, render_mode);
         return true;
     }
     return false;
@@ -832,6 +837,39 @@ void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
     //We're here because we couldn't find any matching vertex
     master_list.Push(vertex_list.Count());
     vertex_list.Push(vert_id, vert_coord, VDictType::Alone);
+}
+
+//-----------------------------------------------------------------------------
+//Will update the given list with all the vertices on the same spot.
+void VertexDictionnary::RemoveVertex(const int vert_id)
+{
+	int j = 0;
+    for (; j < vertex_list.Count(); j++)
+        if (vertex_list[j].m1 == vert_id)
+            break;
+
+	if (vertex_list[j].m3 == VDictType::Master)
+	{
+		int jf = -1;
+		//change all the master ref in the list
+	    for (int i = 0; i < vertex_list.Count(); i++)
+		{
+			if (vertex_list[i].m3 == j)
+			{
+				if (jf < 0)
+				{
+					jf = i;
+					vertex_list[i].m3 == VDictType::Master;
+				}
+				else
+					vertex_list[i].m3 == jf;
+			}
+		}
+	}
+	vertex_list.Remove(j);
+    for (int i = 0; i < master_list.Count(); i++)
+        if (master_list[j] == j)
+            break;
 }
 
 //-----------------------------------------------------------------------------
