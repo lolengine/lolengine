@@ -80,7 +80,7 @@ Scene::Scene(ivec2 size)
 {
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
-    mat4 proj = mat4::ortho(0, size.x, 0, size.y, -1000.f, 1000.f);
+    mat4 proj = mat4::ortho(0.f, size.x, 0.f, size.y, -1000.f, 1000.f);
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
@@ -150,7 +150,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 
     Tile t;
     /* FIXME: this sorting only works for a 45-degree camera */
-    t.prio = -pos.y - 2 * 32 * pos.z + (o ? 0 : 32);
+    t.prio = -pos.y - 2 * 32 * pos.z + ((float)o ? 0 : 32);
     t.tileset = tileset;
     t.id = id;
     t.pos = pos;
