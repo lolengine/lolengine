@@ -158,10 +158,10 @@ public:
                                             start_point, start_point + size);
         m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
                                              vec2(-PARTICLE_SIZE), vec2(PARTICLE_SIZE));
-        MeshRand << "[sc#ffff aq 0 0]";
-        MeshRand << "[sc#faaf aq 0 0]";
-        MeshRand << "[sc#afaf aq 0 0]";
-        MeshRand << "[sc#aaff aq 0 0]";
+        MeshRand << "[tpbn tvnc sc#ffff aq 0 0]";
+        MeshRand << "[tpbn tvnc sc#faaf aq 0 0]";
+        MeshRand << "[tpbn tvnc sc#afaf aq 0 0]";
+        MeshRand << "[tpbn tvnc sc#aaff aq 0 0]";
 #else
         MeshRand << "[sc#add asph1 2]";
         MeshRand << "[sc#dad asph1 2]";
