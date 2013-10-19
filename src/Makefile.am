@@ -64,6 +64,9 @@ liblolcore_sources = \
     application/application.cpp application/application.h \
     eglapp.cpp eglapp.h \
     \
+    commandstack.h \
+    easymesh/easymeshbuild.cpp easymesh/easymeshbuild.h \
+    easymesh/easymeshrender.cpp easymesh/easymeshrender.h \
     easymesh/easymesh.cpp easymesh/easymesh.h \
     easymesh/csgbsp.cpp easymesh/csgbsp.h \
     easymesh/shiny.lolfx easymesh/shinyflat.lolfx \
