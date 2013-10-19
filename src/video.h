@@ -28,6 +28,7 @@ struct DebugRenderMode
     {
         //Add your new rendermode at your convenience
         Default,
+        Flat,
         Wireframe,
         Lighting,
         Normal,

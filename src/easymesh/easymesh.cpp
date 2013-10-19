@@ -96,6 +96,8 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
 
     if (render_mode == DebugRenderMode::Default)
         m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+    else if (render_mode == DebugRenderMode::Flat)
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinyflat));
     else if (render_mode == DebugRenderMode::Wireframe)
         m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugwireframe));
     else if (render_mode == DebugRenderMode::Lighting)
@@ -434,12 +436,13 @@ EasyMesh::EasyMesh()
 //-----------------------------------------------------------------------------
 EasyMesh::EasyMesh(const EasyMesh& em)
 {
-    //*this = em;
     m_indices = em.m_indices;
     m_vert = em.m_vert;
     m_cursors = em.m_cursors;
     m_build_data = nullptr;
     m_gpu_data = GpuEasyMeshData();
+	if (em.m_build_data)
+		m_build_data = new EasyMeshBuildData(*em.m_build_data);
     if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
         m_state = MeshRender::NeedConvert;
     else
@@ -447,7 +450,7 @@ EasyMesh::EasyMesh(const EasyMesh& em)
 }
 
 //-----------------------------------------------------------------------------
-bool EasyMesh::Compile(char const *command)
+bool EasyMesh::Compile(char const *command, bool Execute)
 {
     bool res = false;
     EasyMeshCompiler mc(*this);
@@ -455,18 +458,8 @@ bool EasyMesh::Compile(char const *command)
     if ((res = mc.ParseString(command)))
     {
         BD()->Disable(MeshBuildOperation::CommandRecording);
-        BD()->Enable(MeshBuildOperation::CommandExecution);
-        ExecuteCmdStack();
-        BD()->Disable(MeshBuildOperation::CommandExecution);
-
-        if (!BD()->IsEnabled(MeshBuildOperation::PreventVertCleanup))
-            VerticesCleanup();
-
-        if (BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
-            ComputeNormals(0, m_indices.Count());
-
-        BD()->Disable(MeshBuildOperation::PostBuildComputeNormals);
-        BD()->Disable(MeshBuildOperation::PreventVertCleanup);
+        if (Execute)
+            ExecuteCmdStack();
     }
     return res;
 }
@@ -502,14 +495,21 @@ bool EasyMesh::Compile(char const *command)
             LOL_CALL(LOL_CAT(EZCALL_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))
 
 //-----------------------------------------------------------------------------
-void EasyMesh::ExecuteCmdStack()
+void EasyMesh::ExecuteCmdStack(bool ExecAllStack)
 {
 #define DO_EXEC_CMD(MESH_CMD, FUNC_PARAMS)  \
         case EasyMeshCmdType::MESH_CMD:     \
         { EZM_CALL_FUNC FUNC_PARAMS; break; }
 
-    for (BD()->Cmdi() = 0; BD()->Cmdi() < BD()->CmdStack().GetCmdNb(); ++BD()->Cmdi())
+    BD()->Enable(MeshBuildOperation::CommandExecution);
+    if (ExecAllStack)
+        BD()->Cmdi() = 0;
+
+    for (; BD()->Cmdi() < BD()->CmdStack().GetCmdNb() && BD()->CmdExecNb() != 0; ++BD()->Cmdi())
     {
+        if (BD()->CmdExecNb() > 0)
+            --BD()->CmdExecNb();
+
         switch (BD()->CmdStack().GetCmd(BD()->Cmdi()))
         {
             DO_EXEC_CMD(MeshCsg,                (MeshCsg, CSGUsage))
@@ -549,6 +549,19 @@ void EasyMesh::ExecuteCmdStack()
                 ASSERT(0, "Unknown command pseudo bytecode");
         }
     }
+    BD()->Disable(MeshBuildOperation::CommandExecution);
+
+    if (!BD()->IsEnabled(MeshBuildOperation::PreventVertCleanup))
+        VerticesCleanup();
+
+    if (BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
+        ComputeNormals(0, m_indices.Count());
+
+    BD()->Disable(MeshBuildOperation::PostBuildComputeNormals);
+    BD()->Disable(MeshBuildOperation::PreventVertCleanup);
+
+    if (BD()->CmdExecNb() > 0)
+        BD()->CmdExecNb() = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -859,10 +872,10 @@ void VertexDictionnary::RemoveVertex(const int vert_id)
 				if (jf < 0)
 				{
 					jf = i;
-					vertex_list[i].m3 == VDictType::Master;
+					vertex_list[i].m3 = VDictType::Master;
 				}
 				else
-					vertex_list[i].m3 == jf;
+					vertex_list[i].m3 = jf;
 			}
 		}
 	}

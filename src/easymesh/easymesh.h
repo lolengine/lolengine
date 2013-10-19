@@ -32,8 +32,7 @@ private:
     int                     m_i_cur;
 
 public:
-    //cmd storage
-    void    AddCmd(int cmd) { m_commands.Push(cmd, m_floats.Count(), m_ints.Count()); }
+	//GET/SET exec
     int     GetCmdNb()      { return m_commands.Count(); }
     int     GetCmd(int i)
     {
@@ -42,6 +41,9 @@ public:
         m_i_cur = m_commands[i].m3;
         return m_commands[i].m1;
     }
+
+	//cmd storage
+    void    AddCmd(int cmd) { m_commands.Push(cmd, m_floats.Count(), m_ints.Count()); }
 
     //GETTER
     inline float   F()      { return m_floats[m_f_cur++]; }
@@ -373,6 +375,8 @@ public:
         m_texcoord_scale = vec2(1.f);
         m_texcoord_scale2 = vec2(1.f);
         m_build_flags = 0;
+		m_i_cmd = 0;
+        m_exec_nb = -1;
         for (int i = 0; i < MeshType::Max; ++i)
         {
             m_texcoord_build_type[i] = TexCoordBuildType::TriangleDefault;
@@ -381,7 +385,8 @@ public:
     }
 
     inline CommandStack &CmdStack() { return m_stack; }
-    inline int &Cmdi()              { return m_cmd_i; }
+    inline int &Cmdi()              { return m_i_cmd; }
+    inline int &CmdExecNb()         { return m_exec_nb; }
     inline Array<int, int> &LoopStack(){ return m_loop_stack; }
     inline vec4 &ColorA()           { return m_color_a; }
     inline vec4 &ColorB()           { return m_color_b; }
@@ -570,7 +575,8 @@ public:
 
 public:
     CommandStack        m_stack;
-    int                 m_cmd_i;
+    int                 m_i_cmd;
+    int                 m_exec_nb;
     Array<int, int>     m_loop_stack;
     vec4                m_color_a;
     vec4                m_color_b;
@@ -667,8 +673,8 @@ public:
     EasyMesh();
     EasyMesh(const EasyMesh& em);
 
-    bool        Compile(char const *command);
-    void        ExecuteCmdStack();
+    bool        Compile(char const *command, bool Execute=true);
+    void        ExecuteCmdStack(bool ExecAllStack=true);
     void        MeshConvert(GpuShaderData* new_gpu_sdata);
     void        MeshConvert(Shader* ProvidedShader = nullptr);
     bool        Render(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
