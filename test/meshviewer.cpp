@@ -166,6 +166,7 @@ public:
 
         // Mesh Setup
         m_render_max = vec2(-.9f, 4.1f);
+        m_mesh_render = 0;
         m_mesh_id = 0;
         m_mesh_id1 = 0.f;
         m_default_texture = nullptr;
@@ -193,6 +194,9 @@ public:
 
         m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
         m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+
+        m_build_timer = 0.1f;
+        m_build_time = -1.f;
 
         //stream update
         m_stream_update_time = 2.0f;
@@ -297,7 +301,7 @@ public:
         {
             if (m_mesh_id == m_meshes.Count() - 1)
                 m_mesh_id++;
-            m_meshes.Push(em);
+            m_meshes.Push(em, nullptr);
         }
 #else
         m_ssetup->Compile("addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) "
@@ -461,8 +465,8 @@ public:
         //Target List Setup
         Array<vec3> target_list;
         if (m_meshes.Count() && m_mesh_id >= 0)
-            for (int i = 0; i < m_meshes[m_mesh_id]->GetVertexCount(); i++)
-                target_list << (m_mat * mat4::translate(m_meshes[m_mesh_id]->GetVertexLocation(i))).v3.xyz;
+            for (int i = 0; i < m_meshes[m_mesh_id].m1->GetVertexCount(); i++)
+                target_list << (m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i))).v3.xyz;
 
         //--
         //Update mesh screen location - Get the Min/Max needed
@@ -582,11 +586,12 @@ public:
                 {
                     //Create a new mesh
                     EasyMesh* em = new EasyMesh();
-                    if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C()))
+                    if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C(), false))
                     {
+                        em->BD()->Cmdi() = 0;
                         if (m_mesh_id == m_meshes.Count() - 1)
                             m_mesh_id++;
-                        m_meshes.Push(em);
+                        m_meshes.Push(em, nullptr);
                     }
                     else
                         delete(em);
@@ -645,16 +650,10 @@ public:
         //TODO : This should probably be "standard LoL behaviour"
 #if NO_NACL_EM_INPUT
         {
-            if (KeyReleased(KEY_F1))
-                Video::SetDebugRenderMode(DebugRenderMode::Default);
             if (KeyReleased(KEY_F2))
-                Video::SetDebugRenderMode(DebugRenderMode::Wireframe);
-            if (KeyReleased(KEY_F3))
-                Video::SetDebugRenderMode(DebugRenderMode::Lighting);
-            if (KeyReleased(KEY_F4))
-                Video::SetDebugRenderMode(DebugRenderMode::Normal);
-            if (KeyReleased(KEY_F5))
-                Video::SetDebugRenderMode(DebugRenderMode::UV);
+                Video::SetDebugRenderMode((Video::GetDebugRenderMode() + 1) % DebugRenderMode::Max);
+            else if (KeyReleased(KEY_F1))
+                Video::SetDebugRenderMode((Video::GetDebugRenderMode() + DebugRenderMode::Max - 1) % DebugRenderMode::Max);
         }
 #endif //NO_NACL_EM_INPUT
 
@@ -679,6 +678,63 @@ public:
                 break;
         }
 
+        if (m_build_timer > .0f)
+        {
+            if (m_build_time < .0f)
+            {
+                m_build_time = m_build_timer;
+                for (int i = 0; i < m_meshes.Count(); ++i)
+                {
+                    if (m_meshes[i].m1 && m_meshes[i].m1->BD()->Cmdi() < m_meshes[i].m1->BD()->CmdStack().GetCmdNb())
+                    {
+                        EasyMesh* tmp = m_meshes[i].m1;
+                        EasyMesh* newtmp = new EasyMesh(*tmp);
+                        int ii = 1;
+#if 1
+                        bool stop = false;
+                        while (!stop)
+                        {
+                            int cmdi = newtmp->BD()->Cmdi() + ii;
+                            if (cmdi < newtmp->BD()->CmdStack().GetCmdNb())
+                            {
+                                switch (newtmp->BD()->CmdStack().GetCmd(cmdi))
+                                {
+                                    case EasyMeshCmdType::LoopStart:
+                                    case EasyMeshCmdType::LoopEnd:
+                                    case EasyMeshCmdType::OpenBrace:
+                                    case EasyMeshCmdType::CloseBrace:
+                                    case EasyMeshCmdType::ScaleWinding:
+                                    case EasyMeshCmdType::QuadWeighting:
+                                    case EasyMeshCmdType::PostBuildNormal:
+                                    case EasyMeshCmdType::PreventVertCleanup:
+                                    case EasyMeshCmdType::SetColorA:
+                                    case EasyMeshCmdType::SetColorB:
+                                    {
+                                        ii++;
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        stop = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                                stop = true;
+                        }
+#endif
+                        newtmp->BD()->CmdExecNb() = ii;
+                        newtmp->ExecuteCmdStack(false);
+
+                        m_meshes[i].m1 = newtmp;
+                        delete(tmp);
+                    }
+                }
+            }
+            m_build_time -= seconds;
+        }
+
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);
         mat4 save_proj = m_camera->GetProjection();
@@ -692,21 +748,21 @@ public:
         for (int i = 0; i < m_meshes.Count(); i++)
         {
             {
-                if (m_meshes[i]->GetMeshState() == MeshRender::NeedConvert)
+                if (m_meshes[i].m1->GetMeshState() == MeshRender::NeedConvert)
                 {
 #if WITH_TEXTURE
-                    m_meshes[i]->MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
-                                                                    (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
-                                                                    m_texture_shader, true));
+                    m_meshes[i].m1->MeshConvert(new DefaultShaderData(((1 << VertexUsage::Position) | (1 << VertexUsage::Normal) |
+                                                                       (1 << VertexUsage::Color)    | (1 << VertexUsage::TexCoord)),
+                                                                       m_texture_shader, true));
 #else
-                    m_meshes[i]->MeshConvert();
+                    m_meshes[i].m1->MeshConvert();
 #endif //WITH_TEXTURE
                 }
 #if ALL_FEATURES
                 float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
 
                 if (m_mesh_id1 - m_render_max[0] > (float)i && m_mesh_id1 - m_render_max[1] < (float)i &&
-                    m_meshes[i]->GetMeshState() > MeshRender::NeedConvert)
+                    m_meshes[i].m1->GetMeshState() > MeshRender::NeedConvert)
                 {
                     float a_j = lol::abs(j);
                     float i_trans = (a_j * a_j * m_hist_scale_mesh.x + a_j * m_hist_scale_mesh.x) * .5f;
@@ -720,12 +776,12 @@ public:
                     //Camera projection
                     mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                     m_camera->SetProjection(new_proj);
-                    m_meshes[i]->Render(m_mat);
+                    m_meshes[i].m1->Render(m_mat);
                     g_renderer->Clear(ClearMask::Depth);
                 }
                 m_camera->SetProjection(save_proj);
 #else
-                m_meshes[i]->Render(m_mat);
+                m_meshes[i].m1->Render(m_mat);
 #endif //ALL_FEATURES
             }
         }
@@ -762,19 +818,19 @@ public:
 #if 0 //Debug normal draw
         for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
         {
-            for (int j = 0; j < m_meshes[i]->m_indices.Count(); j += 3)
+            for (int j = 0; j < m_meshes[i].m1->m_indices.Count(); j += 3)
             {
-                VertexData v[3] = { m_meshes[i]->m_vert[m_meshes[i]->m_indices[j  ]],
-                                    m_meshes[i]->m_vert[m_meshes[i]->m_indices[j+1]],
-                                    m_meshes[i]->m_vert[m_meshes[i]->m_indices[j+2]]
+                VertexData v[3] = { m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j  ]],
+                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+1]],
+                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+2]]
                                     };
                 for (int k = 0; k < 3; k++)
                     Debug::DrawLine((m_mat * mat4::translate(v[k].m_coord)).v3.xyz,
                                     (m_mat * mat4::translate(v[(k+1)%3].m_coord)).v3.xyz, vec4(vec3((v[k].m_coord.z + 1.f)*.5f),1.f));
             }
-            for (int j = 0; j < m_meshes[i]->m_vert.Count(); j++)
+            for (int j = 0; j < m_meshes[i].m1->m_vert.Count(); j++)
             {
-                VertexData &v = m_meshes[i]->m_vert[m_meshes[i]->m_indices[j]];
+                VertexData &v = m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j]];
                 Debug::DrawLine((m_mat * mat4::translate(v.m_coord)).v3.xyz,
                                 (m_mat * mat4::translate(v.m_coord)).v3.xyz +
                                 (m_mat * vec4(v.m_normal * 5.f, 0.f)).xyz, vec4(lol::abs(v.m_normal), 1.f));
@@ -813,11 +869,16 @@ private:
     vec2                m_hist_scale_speed;
     vec2                m_screen_offset;
 
+    //Mesh update timer
+    float               m_build_timer;
+    float               m_build_time;
+
     //Mesh infos
     vec2                m_render_max;
+    int                 m_mesh_render;
     int                 m_mesh_id;
     float               m_mesh_id1;
-    Array<EasyMesh*>    m_meshes;
+    Array<EasyMesh*, EasyMesh*> m_meshes;
     Array<EasyMesh*>    m_gizmos;
 
     //File data

@@ -63,42 +63,26 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
     {
         //All these modes are handled in the shaders.
         case DebugRenderMode::Default:
+        case DebugRenderMode::Flat:
         case DebugRenderMode::Lighting:
         case DebugRenderMode::Normal:
         case DebugRenderMode::UV:
         {
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
-//            glEnable(GL_CULL_FACE);
 #else
-//            if (VideoData::render_mode == d && glIsEnabled(GL_CULL_FACE) == GL_TRUE)
-//                SetFaceCulling(false);
-//            else
-//                SetFaceCulling(true);
-//            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glEnable(GL_CULL_FACE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
             break;
         }
         case DebugRenderMode::Wireframe:
         {
-            if (VideoData::render_mode == d)
-            {
-#if defined USE_D3D9 || defined _XBOX
-#else
-//                SetFaceCulling(!VideoData::face_culling);
-#endif
-            }
-            else
-            {
-#if defined USE_D3D9 || defined _XBOX
-#else
-//                SetFaceCulling(false);
-#endif
-            }
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
 #else
-//            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glDisable(GL_CULL_FACE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
             break;
         }
