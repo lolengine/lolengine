@@ -328,6 +328,12 @@
     <ClCompile Include="platform\nacl\opengl_context.cpp">
       <Filter>platform\nacl</Filter>
     </ClCompile>
+    <ClCompile Include="easymesh\easymeshrender.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="easymesh\easymeshbuild.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -644,6 +650,13 @@
     </ClInclude>
     <ClInclude Include="platform\nacl\opengl_context_ptrs.h">
       <Filter>platform\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="easymesh\easymeshrender.h">
+      <Filter>easymesh</Filter>
+    </ClInclude>
+    <ClInclude Include="commandstack.h" />
+    <ClInclude Include="easymesh\easymeshbuild.h">
+      <Filter>easymesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

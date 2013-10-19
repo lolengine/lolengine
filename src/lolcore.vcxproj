@@ -117,6 +117,8 @@
     <ClCompile Include="easymesh\csgbsp.cpp" />
     <ClCompile Include="easymesh\easymesh-compiler.cpp" />
     <ClCompile Include="easymesh\easymesh.cpp" />
+    <ClCompile Include="easymesh\easymeshbuild.cpp" />
+    <ClCompile Include="easymesh\easymeshrender.cpp" />
     <ClCompile Include="eglapp.cpp" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="entity.cpp" />
@@ -233,6 +235,7 @@
     <ClInclude Include="application\application.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="commandstack.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="debug\fps.h" />
     <ClInclude Include="debug\record.h" />
@@ -241,6 +244,8 @@
     <ClInclude Include="easymesh\csgbsp.h" />
     <ClInclude Include="easymesh\easymesh-compiler.h" />
     <ClInclude Include="easymesh\easymesh.h" />
+    <ClInclude Include="easymesh\easymeshbuild.h" />
+    <ClInclude Include="easymesh\easymeshrender.h" />
     <ClInclude Include="eglapp.h" />
     <ClInclude Include="emitter.h" />
     <ClInclude Include="entity.h" />
