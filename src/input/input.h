@@ -16,8 +16,8 @@
 namespace lol
 {
 
-static const String g_name_mouse("Mouse");
-static const String g_name_keyboard("Keyboard");
+const String g_name_mouse("Mouse");
+const String g_name_keyboard("Keyboard");
 
 class InputDevice
 {
