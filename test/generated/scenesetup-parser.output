@@ -11,23 +11,23 @@ Terminals unused in grammar
 
 Rules useless in grammar
 
-   41 iv3: '(' iv ')'
-   42    | '(' iv iv iv ')'
+   42 iv3: '(' iv ')'
+   43    | '(' iv iv iv ')'
 
 
 Rules useless in parser due to conflicts
 
-   27 iv: I_NUMBER
-   28   | '-' iv
-   29   | F_NUMBER
-   30   | '-' fv
+   28 iv: I_NUMBER
+   29   | '-' iv
+   30   | F_NUMBER
+   31   | '-' fv
 
 
 State 12 conflicts: 8 shift/reduce
-State 41 conflicts: 13 reduce/reduce
 State 42 conflicts: 13 reduce/reduce
-State 51 conflicts: 13 reduce/reduce
+State 43 conflicts: 13 reduce/reduce
 State 52 conflicts: 13 reduce/reduce
+State 53 conflicts: 13 reduce/reduce
 
 
 Grammar
@@ -51,70 +51,71 @@ Grammar
 
    11 light_command: T_ADDLIGHT
    12              | T_ADDLIGHT fv
+   13              | T_ADDLIGHT svv
 
-   13 setup_command: T_OBJPOSITION v3
-   14              | T_OBJLOOKAT v3
-   15              | T_OBJCOLOR v4
-   16              | T_OBJCOLOR COLOR
+   14 setup_command: T_OBJPOSITION v3
+   15              | T_OBJLOOKAT v3
+   16              | T_OBJCOLOR v4
+   17              | T_OBJCOLOR COLOR
 
-   17 $@1: /* empty */
+   18 $@1: /* empty */
 
-   18 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR v3
-   19              | T_CLEARCOLOR COLOR
-   20              | T_SHOWGIZMO bv
-   21              | T_SHOWLIGHT bv
+   19 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR v3
+   20              | T_CLEARCOLOR COLOR
+   21              | T_SHOWGIZMO bv
+   22              | T_SHOWLIGHT bv
 
-   22 custom_command: T_CUSTOMCMD svv sv
+   23 custom_command: T_CUSTOMCMD svv sv
 
-   23 fv: F_NUMBER
-   24   | '-' fv
-   25   | I_NUMBER
-   26   | '-' iv
+   24 fv: F_NUMBER
+   25   | '-' fv
+   26   | I_NUMBER
+   27   | '-' iv
 
-   27 iv: I_NUMBER
-   28   | '-' iv
-   29   | F_NUMBER
-   30   | '-' fv
+   28 iv: I_NUMBER
+   29   | '-' iv
+   30   | F_NUMBER
+   31   | '-' fv
 
-   31 v3: '(' fv ')'
-   32   | '(' fv fv fv ')'
+   32 v3: '(' fv ')'
+   33   | '(' fv fv fv ')'
 
-   33 v4: '(' fv ')'
-   34   | '(' fv fv fv fv ')'
+   34 v4: '(' fv ')'
+   35   | '(' fv fv fv fv ')'
 
-   35 bv: BOOLEAN
-   36   | I_NUMBER
-   37   | F_NUMBER
+   36 bv: BOOLEAN
+   37   | I_NUMBER
+   38   | F_NUMBER
 
-   38 svv: STRING_VAR
+   39 svv: STRING_VAR
 
-   39 sv: STRING
-   40   | STRING sv
+   40 sv: STRING
+   41   | STRING sv
 
 
 Terminals, with rules where they appear
 
 T_END (0) 0 1
-'(' (40) 31 32 33 34
-')' (41) 31 32 33 34
-'-' (45) 24 26 28 30
+'(' (40) 32 33 34 35
+')' (41) 32 33 34 35
+'-' (45) 25 27 29 31
 error (256)
 T_COLOR (258)
-T_ADDLIGHT (259) 11 12
-T_OBJPOSITION (260) 13
-T_OBJLOOKAT (261) 14
-T_OBJCOLOR (262) 15 16
-T_CLEARCOLOR (263) 18 19
-T_SHOWGIZMO (264) 20
-T_SHOWLIGHT (265) 21
-T_CUSTOMCMD (266) 22
+T_ADDLIGHT (259) 11 12 13
+T_OBJPOSITION (260) 14
+T_OBJLOOKAT (261) 15
+T_OBJCOLOR (262) 16 17
+T_CLEARCOLOR (263) 19 20
+T_SHOWGIZMO (264) 21
+T_SHOWLIGHT (265) 22
+T_CUSTOMCMD (266) 23
 T_ERROR (267)
-F_NUMBER (268) 23 29 37
-I_NUMBER (269) 25 27 36
-STRING (270) 39 40
-STRING_VAR (271) 38
-BOOLEAN (272) 35
-COLOR (273) 16 19
+F_NUMBER (268) 24 30 38
+I_NUMBER (269) 26 28 37
+STRING (270) 40 41
+STRING_VAR (271) 39
+BOOLEAN (272) 36
+COLOR (273) 17 20
 
 
 Nonterminals, with rules where they appear
@@ -132,29 +133,29 @@ sstp_command_list (26)
 sstp_command (27)
     on left: 7 8 9 10, on right: 5 6
 light_command (28)
-    on left: 11 12, on right: 7
+    on left: 11 12 13, on right: 7
 setup_command (29)
-    on left: 13 14 15 16, on right: 8
+    on left: 14 15 16 17, on right: 8
 scene_command (30)
-    on left: 18 19 20 21, on right: 9
+    on left: 19 20 21 22, on right: 9
 $@1 (31)
-    on left: 17, on right: 18
+    on left: 18, on right: 19
 custom_command (32)
-    on left: 22, on right: 10
+    on left: 23, on right: 10
 fv (33)
-    on left: 23 24 25 26, on right: 12 24 30 31 32 33 34
+    on left: 24 25 26 27, on right: 12 25 31 32 33 34 35
 iv (34)
-    on left: 27 28 29 30, on right: 26 28
+    on left: 28 29 30 31, on right: 27 29
 v3 (35)
-    on left: 31 32, on right: 13 14 18
+    on left: 32 33, on right: 14 15 19
 v4 (36)
-    on left: 33 34, on right: 15 18
+    on left: 34 35, on right: 16 19
 bv (37)
-    on left: 35 36 37, on right: 20 21
+    on left: 36 37 38, on right: 21 22
 svv (38)
-    on left: 38, on right: 22
+    on left: 39, on right: 13 23
 sv (39)
-    on left: 39 40, on right: 22 40
+    on left: 40 41, on right: 23 41
 
 
 state 0
@@ -185,99 +186,102 @@ state 1
 
    11 light_command: T_ADDLIGHT .
    12              | T_ADDLIGHT . fv
+   13              | T_ADDLIGHT . svv
 
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
+    F_NUMBER    shift, and go to state 18
+    I_NUMBER    shift, and go to state 19
+    STRING_VAR  shift, and go to state 20
+    '-'         shift, and go to state 21
 
     $default  reduce using rule 11 (light_command)
 
-    fv  go to state 21
+    fv   go to state 22
+    svv  go to state 23
 
 
 state 2
 
-   13 setup_command: T_OBJPOSITION . v3
+   14 setup_command: T_OBJPOSITION . v3
 
-    '('  shift, and go to state 22
+    '('  shift, and go to state 24
 
-    v3  go to state 23
+    v3  go to state 25
 
 
 state 3
 
-   14 setup_command: T_OBJLOOKAT . v3
+   15 setup_command: T_OBJLOOKAT . v3
 
-    '('  shift, and go to state 22
+    '('  shift, and go to state 24
 
-    v3  go to state 24
+    v3  go to state 26
 
 
 state 4
 
-   15 setup_command: T_OBJCOLOR . v4
-   16              | T_OBJCOLOR . COLOR
+   16 setup_command: T_OBJCOLOR . v4
+   17              | T_OBJCOLOR . COLOR
 
-    COLOR  shift, and go to state 25
-    '('    shift, and go to state 26
-
-    v4  go to state 27
-
-
-state 5
-
-   18 scene_command: T_CLEARCOLOR . v4 $@1 T_CLEARCOLOR v3
-   19              | T_CLEARCOLOR . COLOR
-
-    COLOR  shift, and go to state 28
-    '('    shift, and go to state 26
+    COLOR  shift, and go to state 27
+    '('    shift, and go to state 28
 
     v4  go to state 29
 
 
+state 5
+
+   19 scene_command: T_CLEARCOLOR . v4 $@1 T_CLEARCOLOR v3
+   20              | T_CLEARCOLOR . COLOR
+
+    COLOR  shift, and go to state 30
+    '('    shift, and go to state 28
+
+    v4  go to state 31
+
+
 state 6
 
-   20 scene_command: T_SHOWGIZMO . bv
+   21 scene_command: T_SHOWGIZMO . bv
 
-    F_NUMBER  shift, and go to state 30
-    I_NUMBER  shift, and go to state 31
-    BOOLEAN   shift, and go to state 32
+    F_NUMBER  shift, and go to state 32
+    I_NUMBER  shift, and go to state 33
+    BOOLEAN   shift, and go to state 34
 
-    bv  go to state 33
+    bv  go to state 35
 
 
 state 7
 
-   21 scene_command: T_SHOWLIGHT . bv
+   22 scene_command: T_SHOWLIGHT . bv
 
-    F_NUMBER  shift, and go to state 30
-    I_NUMBER  shift, and go to state 31
-    BOOLEAN   shift, and go to state 32
+    F_NUMBER  shift, and go to state 32
+    I_NUMBER  shift, and go to state 33
+    BOOLEAN   shift, and go to state 34
 
-    bv  go to state 34
+    bv  go to state 36
 
 
 state 8
 
-   22 custom_command: T_CUSTOMCMD . svv sv
+   23 custom_command: T_CUSTOMCMD . svv sv
 
-    STRING_VAR  shift, and go to state 35
+    STRING_VAR  shift, and go to state 20
 
-    svv  go to state 36
+    svv  go to state 37
 
 
 state 9
 
     0 $accept: sstp_description . T_END
 
-    T_END  shift, and go to state 37
+    T_END  shift, and go to state 38
 
 
 state 10
 
     1 sstp_description: sstp_expression_list . T_END
 
-    T_END  shift, and go to state 38
+    T_END  shift, and go to state 39
 
 
 state 11
@@ -296,7 +300,7 @@ state 11
 
     $default  reduce using rule 2 (sstp_expression_list)
 
-    sstp_expression_list  go to state 39
+    sstp_expression_list  go to state 40
     sstp_expression       go to state 11
     sstp_command_list     go to state 12
     sstp_command          go to state 13
@@ -330,7 +334,7 @@ state 12
     T_CUSTOMCMD    [reduce using rule 4 (sstp_expression)]
     $default       reduce using rule 4 (sstp_expression)
 
-    sstp_command    go to state 40
+    sstp_command    go to state 41
     light_command   go to state 14
     setup_command   go to state 15
     scene_command   go to state 16
@@ -374,338 +378,196 @@ state 17
 
 state 18
 
-   23 fv: F_NUMBER .
+   24 fv: F_NUMBER .
 
-    $default  reduce using rule 23 (fv)
+    $default  reduce using rule 24 (fv)
 
 
 state 19
 
-   25 fv: I_NUMBER .
+   26 fv: I_NUMBER .
 
-    $default  reduce using rule 25 (fv)
+    $default  reduce using rule 26 (fv)
 
 
 state 20
 
-   24 fv: '-' . fv
-   26   | '-' . iv
+   39 svv: STRING_VAR .
 
-    F_NUMBER  shift, and go to state 41
-    I_NUMBER  shift, and go to state 42
-    '-'       shift, and go to state 43
-
-    fv  go to state 44
-    iv  go to state 45
+    $default  reduce using rule 39 (svv)
 
 
 state 21
+
+   25 fv: '-' . fv
+   27   | '-' . iv
+
+    F_NUMBER  shift, and go to state 42
+    I_NUMBER  shift, and go to state 43
+    '-'       shift, and go to state 44
+
+    fv  go to state 45
+    iv  go to state 46
+
+
+state 22
 
    12 light_command: T_ADDLIGHT fv .
 
     $default  reduce using rule 12 (light_command)
 
 
-state 22
-
-   31 v3: '(' . fv ')'
-   32   | '(' . fv fv fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-
-    fv  go to state 46
-
-
 state 23
 
-   13 setup_command: T_OBJPOSITION v3 .
+   13 light_command: T_ADDLIGHT svv .
 
-    $default  reduce using rule 13 (setup_command)
+    $default  reduce using rule 13 (light_command)
 
 
 state 24
 
-   14 setup_command: T_OBJLOOKAT v3 .
-
-    $default  reduce using rule 14 (setup_command)
-
-
-state 25
-
-   16 setup_command: T_OBJCOLOR COLOR .
-
-    $default  reduce using rule 16 (setup_command)
-
-
-state 26
-
-   33 v4: '(' . fv ')'
-   34   | '(' . fv fv fv fv ')'
+   32 v3: '(' . fv ')'
+   33   | '(' . fv fv fv ')'
 
     F_NUMBER  shift, and go to state 18
     I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
+    '-'       shift, and go to state 21
 
     fv  go to state 47
 
 
-state 27
+state 25
 
-   15 setup_command: T_OBJCOLOR v4 .
+   14 setup_command: T_OBJPOSITION v3 .
+
+    $default  reduce using rule 14 (setup_command)
+
+
+state 26
+
+   15 setup_command: T_OBJLOOKAT v3 .
 
     $default  reduce using rule 15 (setup_command)
 
 
+state 27
+
+   17 setup_command: T_OBJCOLOR COLOR .
+
+    $default  reduce using rule 17 (setup_command)
+
+
 state 28
 
-   19 scene_command: T_CLEARCOLOR COLOR .
+   34 v4: '(' . fv ')'
+   35   | '(' . fv fv fv fv ')'
 
-    $default  reduce using rule 19 (scene_command)
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+
+    fv  go to state 48
 
 
 state 29
 
-   18 scene_command: T_CLEARCOLOR v4 . $@1 T_CLEARCOLOR v3
+   16 setup_command: T_OBJCOLOR v4 .
 
-    $default  reduce using rule 17 ($@1)
-
-    $@1  go to state 48
+    $default  reduce using rule 16 (setup_command)
 
 
 state 30
 
-   37 bv: F_NUMBER .
-
-    $default  reduce using rule 37 (bv)
-
-
-state 31
-
-   36 bv: I_NUMBER .
-
-    $default  reduce using rule 36 (bv)
-
-
-state 32
-
-   35 bv: BOOLEAN .
-
-    $default  reduce using rule 35 (bv)
-
-
-state 33
-
-   20 scene_command: T_SHOWGIZMO bv .
+   20 scene_command: T_CLEARCOLOR COLOR .
 
     $default  reduce using rule 20 (scene_command)
 
 
+state 31
+
+   19 scene_command: T_CLEARCOLOR v4 . $@1 T_CLEARCOLOR v3
+
+    $default  reduce using rule 18 ($@1)
+
+    $@1  go to state 49
+
+
+state 32
+
+   38 bv: F_NUMBER .
+
+    $default  reduce using rule 38 (bv)
+
+
+state 33
+
+   37 bv: I_NUMBER .
+
+    $default  reduce using rule 37 (bv)
+
+
 state 34
 
-   21 scene_command: T_SHOWLIGHT bv .
+   36 bv: BOOLEAN .
 
-    $default  reduce using rule 21 (scene_command)
+    $default  reduce using rule 36 (bv)
 
 
 state 35
 
-   38 svv: STRING_VAR .
+   21 scene_command: T_SHOWGIZMO bv .
 
-    $default  reduce using rule 38 (svv)
+    $default  reduce using rule 21 (scene_command)
 
 
 state 36
 
-   22 custom_command: T_CUSTOMCMD svv . sv
+   22 scene_command: T_SHOWLIGHT bv .
 
-    STRING  shift, and go to state 49
-
-    sv  go to state 50
+    $default  reduce using rule 22 (scene_command)
 
 
 state 37
+
+   23 custom_command: T_CUSTOMCMD svv . sv
+
+    STRING  shift, and go to state 50
+
+    sv  go to state 51
+
+
+state 38
 
     0 $accept: sstp_description T_END .
 
     $default  accept
 
 
-state 38
+state 39
 
     1 sstp_description: sstp_expression_list T_END .
 
     $default  reduce using rule 1 (sstp_description)
 
 
-state 39
+state 40
 
     3 sstp_expression_list: sstp_expression sstp_expression_list .
 
     $default  reduce using rule 3 (sstp_expression_list)
 
 
-state 40
+state 41
 
     6 sstp_command_list: sstp_command_list sstp_command .
 
     $default  reduce using rule 6 (sstp_command_list)
 
 
-state 41
-
-   23 fv: F_NUMBER .
-   29 iv: F_NUMBER .
-
-    T_END          reduce using rule 23 (fv)
-    T_END          [reduce using rule 29 (iv)]
-    T_ADDLIGHT     reduce using rule 23 (fv)
-    T_ADDLIGHT     [reduce using rule 29 (iv)]
-    T_OBJPOSITION  reduce using rule 23 (fv)
-    T_OBJPOSITION  [reduce using rule 29 (iv)]
-    T_OBJLOOKAT    reduce using rule 23 (fv)
-    T_OBJLOOKAT    [reduce using rule 29 (iv)]
-    T_OBJCOLOR     reduce using rule 23 (fv)
-    T_OBJCOLOR     [reduce using rule 29 (iv)]
-    T_CLEARCOLOR   reduce using rule 23 (fv)
-    T_CLEARCOLOR   [reduce using rule 29 (iv)]
-    T_SHOWGIZMO    reduce using rule 23 (fv)
-    T_SHOWGIZMO    [reduce using rule 29 (iv)]
-    T_SHOWLIGHT    reduce using rule 23 (fv)
-    T_SHOWLIGHT    [reduce using rule 29 (iv)]
-    T_CUSTOMCMD    reduce using rule 23 (fv)
-    T_CUSTOMCMD    [reduce using rule 29 (iv)]
-    F_NUMBER       reduce using rule 23 (fv)
-    F_NUMBER       [reduce using rule 29 (iv)]
-    I_NUMBER       reduce using rule 23 (fv)
-    I_NUMBER       [reduce using rule 29 (iv)]
-    '-'            reduce using rule 23 (fv)
-    '-'            [reduce using rule 29 (iv)]
-    ')'            reduce using rule 23 (fv)
-    ')'            [reduce using rule 29 (iv)]
-    $default       reduce using rule 23 (fv)
-
-
 state 42
 
-   25 fv: I_NUMBER .
-   27 iv: I_NUMBER .
-
-    T_END          reduce using rule 25 (fv)
-    T_END          [reduce using rule 27 (iv)]
-    T_ADDLIGHT     reduce using rule 25 (fv)
-    T_ADDLIGHT     [reduce using rule 27 (iv)]
-    T_OBJPOSITION  reduce using rule 25 (fv)
-    T_OBJPOSITION  [reduce using rule 27 (iv)]
-    T_OBJLOOKAT    reduce using rule 25 (fv)
-    T_OBJLOOKAT    [reduce using rule 27 (iv)]
-    T_OBJCOLOR     reduce using rule 25 (fv)
-    T_OBJCOLOR     [reduce using rule 27 (iv)]
-    T_CLEARCOLOR   reduce using rule 25 (fv)
-    T_CLEARCOLOR   [reduce using rule 27 (iv)]
-    T_SHOWGIZMO    reduce using rule 25 (fv)
-    T_SHOWGIZMO    [reduce using rule 27 (iv)]
-    T_SHOWLIGHT    reduce using rule 25 (fv)
-    T_SHOWLIGHT    [reduce using rule 27 (iv)]
-    T_CUSTOMCMD    reduce using rule 25 (fv)
-    T_CUSTOMCMD    [reduce using rule 27 (iv)]
-    F_NUMBER       reduce using rule 25 (fv)
-    F_NUMBER       [reduce using rule 27 (iv)]
-    I_NUMBER       reduce using rule 25 (fv)
-    I_NUMBER       [reduce using rule 27 (iv)]
-    '-'            reduce using rule 25 (fv)
-    '-'            [reduce using rule 27 (iv)]
-    ')'            reduce using rule 25 (fv)
-    ')'            [reduce using rule 27 (iv)]
-    $default       reduce using rule 25 (fv)
-
-
-state 43
-
-   24 fv: '-' . fv
-   26   | '-' . iv
-   28 iv: '-' . iv
-   30   | '-' . fv
-
-    F_NUMBER  shift, and go to state 41
-    I_NUMBER  shift, and go to state 42
-    '-'       shift, and go to state 43
-
-    fv  go to state 51
-    iv  go to state 52
-
-
-state 44
-
-   24 fv: '-' fv .
-
-    $default  reduce using rule 24 (fv)
-
-
-state 45
-
-   26 fv: '-' iv .
-
-    $default  reduce using rule 26 (fv)
-
-
-state 46
-
-   31 v3: '(' fv . ')'
-   32   | '(' fv . fv fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-    ')'       shift, and go to state 53
-
-    fv  go to state 54
-
-
-state 47
-
-   33 v4: '(' fv . ')'
-   34   | '(' fv . fv fv fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-    ')'       shift, and go to state 55
-
-    fv  go to state 56
-
-
-state 48
-
-   18 scene_command: T_CLEARCOLOR v4 $@1 . T_CLEARCOLOR v3
-
-    T_CLEARCOLOR  shift, and go to state 57
-
-
-state 49
-
-   39 sv: STRING .
-   40   | STRING . sv
-
-    STRING  shift, and go to state 49
-
-    $default  reduce using rule 39 (sv)
-
-    sv  go to state 58
-
-
-state 50
-
-   22 custom_command: T_CUSTOMCMD svv sv .
-
-    $default  reduce using rule 22 (custom_command)
-
-
-state 51
-
-   24 fv: '-' fv .
-   30 iv: '-' fv .
+   24 fv: F_NUMBER .
+   30 iv: F_NUMBER .
 
     T_END          reduce using rule 24 (fv)
     T_END          [reduce using rule 30 (iv)]
@@ -736,10 +598,10 @@ state 51
     $default       reduce using rule 24 (fv)
 
 
-state 52
+state 43
 
-   26 fv: '-' iv .
-   28 iv: '-' iv .
+   26 fv: I_NUMBER .
+   28 iv: I_NUMBER .
 
     T_END          reduce using rule 26 (fv)
     T_END          [reduce using rule 28 (iv)]
@@ -770,99 +632,248 @@ state 52
     $default       reduce using rule 26 (fv)
 
 
+state 44
+
+   25 fv: '-' . fv
+   27   | '-' . iv
+   29 iv: '-' . iv
+   31   | '-' . fv
+
+    F_NUMBER  shift, and go to state 42
+    I_NUMBER  shift, and go to state 43
+    '-'       shift, and go to state 44
+
+    fv  go to state 52
+    iv  go to state 53
+
+
+state 45
+
+   25 fv: '-' fv .
+
+    $default  reduce using rule 25 (fv)
+
+
+state 46
+
+   27 fv: '-' iv .
+
+    $default  reduce using rule 27 (fv)
+
+
+state 47
+
+   32 v3: '(' fv . ')'
+   33   | '(' fv . fv fv ')'
+
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+    ')'       shift, and go to state 54
+
+    fv  go to state 55
+
+
+state 48
+
+   34 v4: '(' fv . ')'
+   35   | '(' fv . fv fv fv ')'
+
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+    ')'       shift, and go to state 56
+
+    fv  go to state 57
+
+
+state 49
+
+   19 scene_command: T_CLEARCOLOR v4 $@1 . T_CLEARCOLOR v3
+
+    T_CLEARCOLOR  shift, and go to state 58
+
+
+state 50
+
+   40 sv: STRING .
+   41   | STRING . sv
+
+    STRING  shift, and go to state 50
+
+    $default  reduce using rule 40 (sv)
+
+    sv  go to state 59
+
+
+state 51
+
+   23 custom_command: T_CUSTOMCMD svv sv .
+
+    $default  reduce using rule 23 (custom_command)
+
+
+state 52
+
+   25 fv: '-' fv .
+   31 iv: '-' fv .
+
+    T_END          reduce using rule 25 (fv)
+    T_END          [reduce using rule 31 (iv)]
+    T_ADDLIGHT     reduce using rule 25 (fv)
+    T_ADDLIGHT     [reduce using rule 31 (iv)]
+    T_OBJPOSITION  reduce using rule 25 (fv)
+    T_OBJPOSITION  [reduce using rule 31 (iv)]
+    T_OBJLOOKAT    reduce using rule 25 (fv)
+    T_OBJLOOKAT    [reduce using rule 31 (iv)]
+    T_OBJCOLOR     reduce using rule 25 (fv)
+    T_OBJCOLOR     [reduce using rule 31 (iv)]
+    T_CLEARCOLOR   reduce using rule 25 (fv)
+    T_CLEARCOLOR   [reduce using rule 31 (iv)]
+    T_SHOWGIZMO    reduce using rule 25 (fv)
+    T_SHOWGIZMO    [reduce using rule 31 (iv)]
+    T_SHOWLIGHT    reduce using rule 25 (fv)
+    T_SHOWLIGHT    [reduce using rule 31 (iv)]
+    T_CUSTOMCMD    reduce using rule 25 (fv)
+    T_CUSTOMCMD    [reduce using rule 31 (iv)]
+    F_NUMBER       reduce using rule 25 (fv)
+    F_NUMBER       [reduce using rule 31 (iv)]
+    I_NUMBER       reduce using rule 25 (fv)
+    I_NUMBER       [reduce using rule 31 (iv)]
+    '-'            reduce using rule 25 (fv)
+    '-'            [reduce using rule 31 (iv)]
+    ')'            reduce using rule 25 (fv)
+    ')'            [reduce using rule 31 (iv)]
+    $default       reduce using rule 25 (fv)
+
+
 state 53
 
-   31 v3: '(' fv ')' .
+   27 fv: '-' iv .
+   29 iv: '-' iv .
 
-    $default  reduce using rule 31 (v3)
+    T_END          reduce using rule 27 (fv)
+    T_END          [reduce using rule 29 (iv)]
+    T_ADDLIGHT     reduce using rule 27 (fv)
+    T_ADDLIGHT     [reduce using rule 29 (iv)]
+    T_OBJPOSITION  reduce using rule 27 (fv)
+    T_OBJPOSITION  [reduce using rule 29 (iv)]
+    T_OBJLOOKAT    reduce using rule 27 (fv)
+    T_OBJLOOKAT    [reduce using rule 29 (iv)]
+    T_OBJCOLOR     reduce using rule 27 (fv)
+    T_OBJCOLOR     [reduce using rule 29 (iv)]
+    T_CLEARCOLOR   reduce using rule 27 (fv)
+    T_CLEARCOLOR   [reduce using rule 29 (iv)]
+    T_SHOWGIZMO    reduce using rule 27 (fv)
+    T_SHOWGIZMO    [reduce using rule 29 (iv)]
+    T_SHOWLIGHT    reduce using rule 27 (fv)
+    T_SHOWLIGHT    [reduce using rule 29 (iv)]
+    T_CUSTOMCMD    reduce using rule 27 (fv)
+    T_CUSTOMCMD    [reduce using rule 29 (iv)]
+    F_NUMBER       reduce using rule 27 (fv)
+    F_NUMBER       [reduce using rule 29 (iv)]
+    I_NUMBER       reduce using rule 27 (fv)
+    I_NUMBER       [reduce using rule 29 (iv)]
+    '-'            reduce using rule 27 (fv)
+    '-'            [reduce using rule 29 (iv)]
+    ')'            reduce using rule 27 (fv)
+    ')'            [reduce using rule 29 (iv)]
+    $default       reduce using rule 27 (fv)
 
 
 state 54
 
-   32 v3: '(' fv fv . fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-
-    fv  go to state 59
-
-
-state 55
-
-   33 v4: '(' fv ')' .
-
-    $default  reduce using rule 33 (v4)
-
-
-state 56
-
-   34 v4: '(' fv fv . fv fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-
-    fv  go to state 60
-
-
-state 57
-
-   18 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR . v3
-
-    '('  shift, and go to state 22
-
-    v3  go to state 61
-
-
-state 58
-
-   40 sv: STRING sv .
-
-    $default  reduce using rule 40 (sv)
-
-
-state 59
-
-   32 v3: '(' fv fv fv . ')'
-
-    ')'  shift, and go to state 62
-
-
-state 60
-
-   34 v4: '(' fv fv fv . fv ')'
-
-    F_NUMBER  shift, and go to state 18
-    I_NUMBER  shift, and go to state 19
-    '-'       shift, and go to state 20
-
-    fv  go to state 63
-
-
-state 61
-
-   18 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR v3 .
-
-    $default  reduce using rule 18 (scene_command)
-
-
-state 62
-
-   32 v3: '(' fv fv fv ')' .
+   32 v3: '(' fv ')' .
 
     $default  reduce using rule 32 (v3)
 
 
+state 55
+
+   33 v3: '(' fv fv . fv ')'
+
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+
+    fv  go to state 60
+
+
+state 56
+
+   34 v4: '(' fv ')' .
+
+    $default  reduce using rule 34 (v4)
+
+
+state 57
+
+   35 v4: '(' fv fv . fv fv ')'
+
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+
+    fv  go to state 61
+
+
+state 58
+
+   19 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR . v3
+
+    '('  shift, and go to state 24
+
+    v3  go to state 62
+
+
+state 59
+
+   41 sv: STRING sv .
+
+    $default  reduce using rule 41 (sv)
+
+
+state 60
+
+   33 v3: '(' fv fv fv . ')'
+
+    ')'  shift, and go to state 63
+
+
+state 61
+
+   35 v4: '(' fv fv fv . fv ')'
+
+    F_NUMBER  shift, and go to state 18
+    I_NUMBER  shift, and go to state 19
+    '-'       shift, and go to state 21
+
+    fv  go to state 64
+
+
+state 62
+
+   19 scene_command: T_CLEARCOLOR v4 $@1 T_CLEARCOLOR v3 .
+
+    $default  reduce using rule 19 (scene_command)
+
+
 state 63
 
-   34 v4: '(' fv fv fv fv . ')'
+   33 v3: '(' fv fv fv ')' .
 
-    ')'  shift, and go to state 64
+    $default  reduce using rule 33 (v3)
 
 
 state 64
 
-   34 v4: '(' fv fv fv fv ')' .
+   35 v4: '(' fv fv fv fv . ')'
 
-    $default  reduce using rule 34 (v4)
+    ')'  shift, and go to state 65
+
+
+state 65
+
+   35 v4: '(' fv fv fv fv ')' .
+
+    $default  reduce using rule 35 (v4)

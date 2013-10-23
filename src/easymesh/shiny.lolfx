@@ -79,18 +79,19 @@ void main(void)
     {
         vec4 pos = u_Lights[i * 2];
         vec4 color = u_Lights[i * 2 + 1];
-        vec3 s, r;
+        vec3 s, r, p;
 
+        p = (in_View * pos).xyz;
         if (pos.w > 0.0)
         {
             /* Point light -- no attenuation yet */
-            s = normalize((in_View * pos).xyz - pass_Vertex.xyz);
+            s = normalize(p - pass_Vertex.xyz);
             r = reflect(-s, TNormal);
         }
         else
         {
             /* Directional light */
-            s = normalize(-pos.xyz);
+            s = normalize(-p);
             r = reflect(s, TNormal);
         }
 

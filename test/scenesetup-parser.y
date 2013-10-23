@@ -115,12 +115,14 @@ sstp_command:
 light_command:
     T_ADDLIGHT                      { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT"; }
   | T_ADDLIGHT      fv              { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
-                                      uc.m_sstp.m_lights.Last()->SetPosition(vec4(vec3::zero, $2)); }
+                                      uc.m_sstp.m_lights.Last()->SetType(LightType($2)); }
+  | T_ADDLIGHT      svv             { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
+                                      uc.m_sstp.m_lights.Last()->SetType(FindValue<LightType>($2)); }
   ;
 
 setup_command:
     T_OBJPOSITION   v3              { if (uc.m_last_cmd == "ADDLIGHT")
-                                        uc.m_sstp.m_lights.Last()->SetPosition(vec4(vec3($2[0], $2[1], $2[2]), uc.m_sstp.m_lights.Last()->GetPosition().w)); }
+                                        uc.m_sstp.m_lights.Last()->SetPosition(vec3($2[0], $2[1], $2[2])); }
   | T_OBJLOOKAT     v3              { if (uc.m_last_cmd == "ADDLIGHT")
                                         { /* */ } }
   | T_OBJCOLOR      v4              { if (uc.m_last_cmd == "ADDLIGHT")

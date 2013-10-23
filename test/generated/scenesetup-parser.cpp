@@ -447,15 +447,15 @@ namespace lol {
 /* Line 677 of lalr1.cc  */
 #line 117 "scenesetup-parser.y"
     { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
-                                      uc.m_sstp.m_lights.Last()->SetPosition(vec4(vec3::zero, (yysemantic_stack_[(2) - (2)].fval))); }
+                                      uc.m_sstp.m_lights.Last()->SetType(LightType((yysemantic_stack_[(2) - (2)].fval))); }
     break;
 
   case 14:
 
 /* Line 677 of lalr1.cc  */
-#line 122 "scenesetup-parser.y"
-    { if (uc.m_last_cmd == "ADDLIGHT")
-                                        uc.m_sstp.m_lights.Last()->SetPosition(vec4(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2]), uc.m_sstp.m_lights.Last()->GetPosition().w)); }
+#line 119 "scenesetup-parser.y"
+    { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
+                                      uc.m_sstp.m_lights.Last()->SetType(FindValue<LightType>((yysemantic_stack_[(2) - (2)].svval))); }
     break;
 
   case 15:
@@ -463,7 +463,7 @@ namespace lol {
 /* Line 677 of lalr1.cc  */
 #line 124 "scenesetup-parser.y"
     { if (uc.m_last_cmd == "ADDLIGHT")
-                                        { /* */ } }
+                                        uc.m_sstp.m_lights.Last()->SetPosition(vec3((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2])); }
     break;
 
   case 16:
@@ -471,13 +471,21 @@ namespace lol {
 /* Line 677 of lalr1.cc  */
 #line 126 "scenesetup-parser.y"
     { if (uc.m_last_cmd == "ADDLIGHT")
-                                        uc.m_sstp.m_lights.Last()->SetColor(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
+                                        { /* */ } }
     break;
 
   case 17:
 
 /* Line 677 of lalr1.cc  */
 #line 128 "scenesetup-parser.y"
+    { if (uc.m_last_cmd == "ADDLIGHT")
+                                        uc.m_sstp.m_lights.Last()->SetColor(vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3])); }
+    break;
+
+  case 18:
+
+/* Line 677 of lalr1.cc  */
+#line 130 "scenesetup-parser.y"
     { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val);
                                       ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
                                       vec4 vv = vec4(v) * (1.f / 255.f);
@@ -485,175 +493,175 @@ namespace lol {
                                         uc.m_sstp.m_lights.Last()->SetColor(vv); }
     break;
 
-  case 18:
-
-/* Line 677 of lalr1.cc  */
-#line 136 "scenesetup-parser.y"
-    { uc.m_sstp.m_clear_color = vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3]); }
-    break;
-
   case 19:
 
 /* Line 677 of lalr1.cc  */
-#line 137 "scenesetup-parser.y"
-    { uc.m_sstp.m_clear_color = vec4((yysemantic_stack_[(5) - (2)].vval)[0], (yysemantic_stack_[(5) - (2)].vval)[1], (yysemantic_stack_[(5) - (2)].vval)[2], 1.f); }
+#line 138 "scenesetup-parser.y"
+    { uc.m_sstp.m_clear_color = vec4((yysemantic_stack_[(2) - (2)].vval)[0], (yysemantic_stack_[(2) - (2)].vval)[1], (yysemantic_stack_[(2) - (2)].vval)[2], (yysemantic_stack_[(2) - (2)].vval)[3]); }
     break;
 
   case 20:
 
 /* Line 677 of lalr1.cc  */
-#line 138 "scenesetup-parser.y"
-    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val); ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
-                                      uc.m_sstp.m_clear_color = vec4(v) * (1.f / 255.f); }
+#line 139 "scenesetup-parser.y"
+    { uc.m_sstp.m_clear_color = vec4((yysemantic_stack_[(5) - (2)].vval)[0], (yysemantic_stack_[(5) - (2)].vval)[1], (yysemantic_stack_[(5) - (2)].vval)[2], 1.f); }
     break;
 
   case 21:
 
 /* Line 677 of lalr1.cc  */
 #line 140 "scenesetup-parser.y"
-    { uc.m_sstp.m_show_gizmo = (yysemantic_stack_[(2) - (2)].bval); }
+    { uint32_t x = (yysemantic_stack_[(2) - (2)].u32val); ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
+                                      uc.m_sstp.m_clear_color = vec4(v) * (1.f / 255.f); }
     break;
 
   case 22:
 
 /* Line 677 of lalr1.cc  */
-#line 141 "scenesetup-parser.y"
-    { uc.m_sstp.m_show_lights = (yysemantic_stack_[(2) - (2)].bval); }
+#line 142 "scenesetup-parser.y"
+    { uc.m_sstp.m_show_gizmo = (yysemantic_stack_[(2) - (2)].bval); }
     break;
 
   case 23:
 
 /* Line 677 of lalr1.cc  */
-#line 145 "scenesetup-parser.y"
-    { uc.m_sstp.m_custom_cmd.Push((yysemantic_stack_[(3) - (2)].svval), (yysemantic_stack_[(3) - (3)].sval)); }
+#line 143 "scenesetup-parser.y"
+    { uc.m_sstp.m_show_lights = (yysemantic_stack_[(2) - (2)].bval); }
     break;
 
   case 24:
 
 /* Line 677 of lalr1.cc  */
-#line 151 "scenesetup-parser.y"
-    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
+#line 147 "scenesetup-parser.y"
+    { uc.m_sstp.m_custom_cmd.Push((yysemantic_stack_[(3) - (2)].svval), (yysemantic_stack_[(3) - (3)].sval)); }
     break;
 
   case 25:
 
 /* Line 677 of lalr1.cc  */
-#line 152 "scenesetup-parser.y"
-    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
+#line 153 "scenesetup-parser.y"
+    { (yyval.fval) = (yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 26:
 
 /* Line 677 of lalr1.cc  */
-#line 153 "scenesetup-parser.y"
-    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
+#line 154 "scenesetup-parser.y"
+    { (yyval.fval) = -(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 27:
 
 /* Line 677 of lalr1.cc  */
-#line 154 "scenesetup-parser.y"
-    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
+#line 155 "scenesetup-parser.y"
+    { (yyval.fval) = (float)(yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 28:
 
 /* Line 677 of lalr1.cc  */
-#line 158 "scenesetup-parser.y"
-    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
+#line 156 "scenesetup-parser.y"
+    { (yyval.fval) = -(float)(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 29:
 
 /* Line 677 of lalr1.cc  */
-#line 159 "scenesetup-parser.y"
-    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
+#line 160 "scenesetup-parser.y"
+    { (yyval.ival) = (yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 30:
 
 /* Line 677 of lalr1.cc  */
-#line 160 "scenesetup-parser.y"
-    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
+#line 161 "scenesetup-parser.y"
+    { (yyval.ival) = -(yysemantic_stack_[(2) - (2)].ival); }
     break;
 
   case 31:
 
 /* Line 677 of lalr1.cc  */
-#line 161 "scenesetup-parser.y"
-    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
+#line 162 "scenesetup-parser.y"
+    { (yyval.ival) = (int)(yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 32:
 
 /* Line 677 of lalr1.cc  */
-#line 166 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
+#line 163 "scenesetup-parser.y"
+    { (yyval.ival) = -(int)(yysemantic_stack_[(2) - (2)].fval); }
     break;
 
   case 33:
 
 /* Line 677 of lalr1.cc  */
-#line 167 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
+#line 168 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 34:
 
 /* Line 677 of lalr1.cc  */
-#line 176 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
+#line 169 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(5) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(5) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(5) - (4)].fval); }
     break;
 
   case 35:
 
 /* Line 677 of lalr1.cc  */
-#line 177 "scenesetup-parser.y"
-    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
+#line 178 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[2] = (yysemantic_stack_[(3) - (2)].fval); (yyval.vval)[3] = (yysemantic_stack_[(3) - (2)].fval); }
     break;
 
   case 36:
 
 /* Line 677 of lalr1.cc  */
-#line 182 "scenesetup-parser.y"
-    { (yyval.bval) = (yysemantic_stack_[(1) - (1)].bval); }
+#line 179 "scenesetup-parser.y"
+    { (yyval.vval)[0] = (yysemantic_stack_[(6) - (2)].fval); (yyval.vval)[1] = (yysemantic_stack_[(6) - (3)].fval); (yyval.vval)[2] = (yysemantic_stack_[(6) - (4)].fval); (yyval.vval)[3] = (yysemantic_stack_[(6) - (5)].fval); }
     break;
 
   case 37:
 
 /* Line 677 of lalr1.cc  */
-#line 183 "scenesetup-parser.y"
-    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].ival); }
+#line 184 "scenesetup-parser.y"
+    { (yyval.bval) = (yysemantic_stack_[(1) - (1)].bval); }
     break;
 
   case 38:
 
 /* Line 677 of lalr1.cc  */
-#line 184 "scenesetup-parser.y"
-    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].fval); }
+#line 185 "scenesetup-parser.y"
+    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].ival); }
     break;
 
   case 39:
 
 /* Line 677 of lalr1.cc  */
-#line 188 "scenesetup-parser.y"
-    { (yyval.svval) = (yysemantic_stack_[(1) - (1)].svval); }
+#line 186 "scenesetup-parser.y"
+    { (yyval.bval) = !!(yysemantic_stack_[(1) - (1)].fval); }
     break;
 
   case 40:
 
 /* Line 677 of lalr1.cc  */
-#line 192 "scenesetup-parser.y"
+#line 190 "scenesetup-parser.y"
+    { (yyval.svval) = (yysemantic_stack_[(1) - (1)].svval); }
+    break;
+
+  case 41:
+
+/* Line 677 of lalr1.cc  */
+#line 194 "scenesetup-parser.y"
     { String t = (yysemantic_stack_[(1) - (1)].sval);
                       t.Replace('"', ' ', true);
                       free((yysemantic_stack_[(1) - (1)].sval));
                       (yyval.sval) = strdup((const char *)t.C()); }
     break;
 
-  case 41:
+  case 42:
 
 /* Line 677 of lalr1.cc  */
-#line 196 "scenesetup-parser.y"
+#line 198 "scenesetup-parser.y"
     { String t = (yysemantic_stack_[(2) - (1)].sval);
                       t += (yysemantic_stack_[(2) - (2)].sval);
                       t.Replace('"', ' ', true);
@@ -665,7 +673,7 @@ namespace lol {
 
 
 /* Line 677 of lalr1.cc  */
-#line 669 "generated/scenesetup-parser.cpp"
+#line 677 "generated/scenesetup-parser.cpp"
 	default:
           break;
       }
@@ -870,17 +878,17 @@ namespace lol {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char SceneSetupParser::yypact_ninf_ = -20;
+  const signed char SceneSetupParser::yypact_ninf_ = -21;
   const signed char
   SceneSetupParser::yypact_[] =
   {
-        38,     4,   -18,   -18,    -7,    14,    16,    16,   -10,    15,
-      21,    38,    38,   -20,   -20,   -20,   -20,   -20,   -20,   -20,
-       6,   -20,     4,   -20,   -20,   -20,     4,   -20,   -20,   -20,
-     -20,   -20,   -20,   -20,   -20,   -20,     7,   -20,   -20,   -20,
-     -20,   -20,   -20,     6,   -20,   -20,    -9,    -5,    18,     7,
-     -20,   -20,   -20,   -20,     4,   -20,     4,   -18,   -20,    10,
-       4,   -20,   -20,    17,   -20
+        38,     6,   -18,   -18,    -6,    -2,    37,    37,   -13,     7,
+      21,    38,    38,   -21,   -21,   -21,   -21,   -21,   -21,   -21,
+     -21,    17,   -21,   -21,    19,   -21,   -21,   -21,    19,   -21,
+     -21,   -21,   -21,   -21,   -21,   -21,   -21,     8,   -21,   -21,
+     -21,   -21,   -21,   -21,    17,   -21,   -21,    -8,    -4,    18,
+       8,   -21,   -21,   -21,   -21,    19,   -21,    19,   -18,   -21,
+      13,    19,   -21,   -21,    31,   -21
   };
 
   /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
@@ -890,28 +898,28 @@ namespace lol {
   SceneSetupParser::yydefact_[] =
   {
          0,    12,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     3,     5,     6,     8,     9,    10,    11,    24,    26,
-       0,    13,     0,    14,    15,    17,     0,    16,    20,    18,
-      38,    37,    36,    21,    22,    39,     0,     1,     2,     4,
-       7,    24,    26,     0,    25,    27,     0,     0,     0,    40,
-      23,    25,    27,    32,     0,    34,     0,     0,    41,     0,
-       0,    19,    33,     0,    35
+       0,     3,     5,     6,     8,     9,    10,    11,    25,    27,
+      40,     0,    13,    14,     0,    15,    16,    18,     0,    17,
+      21,    19,    39,    38,    37,    22,    23,     0,     1,     2,
+       4,     7,    25,    27,     0,    26,    28,     0,     0,     0,
+      41,    24,    26,    28,    33,     0,    35,     0,     0,    42,
+       0,     0,    20,    34,     0,    36
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   SceneSetupParser::yypgoto_[] =
   {
-       -20,   -20,    25,   -20,   -20,    27,   -20,   -20,   -20,   -20,
-     -20,   -19,     8,    -3,    35,    43,   -20,     3
+       -21,   -21,    28,   -21,   -21,    41,   -21,   -21,   -21,   -21,
+     -21,   -20,   -15,    -3,    35,    49,    50,     9
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   SceneSetupParser::yydefgoto_[] =
   {
-        -1,     9,    10,    11,    12,    13,    14,    15,    16,    48,
-      17,    21,    45,    23,    27,    33,    36,    50
+        -1,     9,    10,    11,    12,    13,    14,    15,    16,    49,
+      17,    22,    46,    25,    29,    35,    23,    51
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -921,24 +929,24 @@ namespace lol {
   const unsigned char
   SceneSetupParser::yytable_[] =
   {
-        24,    44,    22,    46,    18,    19,    35,    47,    18,    19,
-      20,    25,    53,    26,    20,    37,    55,    18,    19,    41,
-      42,    38,    49,    20,    51,    43,    57,    54,    56,    30,
-      31,    62,    28,    32,    26,    59,    39,    60,    64,    40,
-      29,    63,     1,     2,     3,     4,     5,     6,     7,     8,
-      34,    52,    58,     0,    61
+        26,    45,    24,    20,    47,    18,    19,    38,    48,    18,
+      19,    21,    27,    54,    28,    21,    30,    56,    28,    18,
+      19,    39,    20,    50,    52,    21,    58,    55,    57,    53,
+      42,    43,    18,    19,    63,    60,    44,    61,    21,    40,
+      31,    64,     1,     2,     3,     4,     5,     6,     7,     8,
+      32,    33,    65,    41,    34,    62,    36,     0,    37,    59
   };
 
   /* YYCHECK.  */
   const signed char
   SceneSetupParser::yycheck_[] =
   {
-         3,    20,    20,    22,    13,    14,    16,    26,    13,    14,
-      19,    18,    21,    20,    19,     0,    21,    13,    14,    13,
-      14,     0,    15,    19,    43,    19,     8,    46,    47,    13,
-      14,    21,    18,    17,    20,    54,    11,    56,    21,    12,
-       5,    60,     4,     5,     6,     7,     8,     9,    10,    11,
-       7,    43,    49,    -1,    57
+         3,    21,    20,    16,    24,    13,    14,     0,    28,    13,
+      14,    19,    18,    21,    20,    19,    18,    21,    20,    13,
+      14,     0,    16,    15,    44,    19,     8,    47,    48,    44,
+      13,    14,    13,    14,    21,    55,    19,    57,    19,    11,
+       5,    61,     4,     5,     6,     7,     8,     9,    10,    11,
+      13,    14,    21,    12,    17,    58,     7,    -1,     8,    50
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -948,11 +956,11 @@ namespace lol {
   {
          0,     4,     5,     6,     7,     8,     9,    10,    11,    23,
       24,    25,    26,    27,    28,    29,    30,    32,    13,    14,
-      19,    33,    20,    35,    35,    18,    20,    36,    18,    36,
-      13,    14,    17,    37,    37,    16,    38,     0,     0,    24,
-      27,    13,    14,    19,    33,    34,    33,    33,    31,    15,
-      39,    33,    34,    21,    33,    21,    33,     8,    39,    33,
-      33,    35,    21,    33,    21
+      16,    19,    33,    38,    20,    35,    35,    18,    20,    36,
+      18,    36,    13,    14,    17,    37,    37,    38,     0,     0,
+      24,    27,    13,    14,    19,    33,    34,    33,    33,    31,
+      15,    39,    33,    34,    21,    33,    21,    33,     8,    39,
+      33,    33,    35,    21,    33,    21
   };
 
 #if YYDEBUG
@@ -972,10 +980,10 @@ namespace lol {
   SceneSetupParser::yyr1_[] =
   {
          0,    22,    23,    24,    24,    25,    26,    26,    27,    27,
-      27,    27,    28,    28,    29,    29,    29,    29,    31,    30,
-      30,    30,    30,    32,    33,    33,    33,    33,    34,    34,
-      34,    34,    35,    35,    36,    36,    37,    37,    37,    38,
-      39,    39
+      27,    27,    28,    28,    28,    29,    29,    29,    29,    31,
+      30,    30,    30,    30,    32,    33,    33,    33,    33,    34,
+      34,    34,    34,    35,    35,    36,    36,    37,    37,    37,
+      38,    39,    39
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -983,10 +991,10 @@ namespace lol {
   SceneSetupParser::yyr2_[] =
   {
          0,     2,     2,     1,     2,     1,     1,     2,     1,     1,
-       1,     1,     1,     2,     2,     2,     2,     2,     0,     5,
-       2,     2,     2,     3,     1,     2,     1,     2,     1,     2,
-       1,     2,     3,     5,     3,     6,     1,     1,     1,     1,
-       1,     2
+       1,     1,     1,     2,     2,     2,     2,     2,     2,     0,
+       5,     2,     2,     2,     3,     1,     2,     1,     2,     1,
+       2,     1,     2,     3,     5,     3,     6,     1,     1,     1,
+       1,     1,     2
   };
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
@@ -1014,15 +1022,15 @@ namespace lol {
         23,     0,    -1,    24,     0,    -1,    25,    -1,    25,    24,
       -1,    26,    -1,    27,    -1,    26,    27,    -1,    28,    -1,
       29,    -1,    30,    -1,    32,    -1,     4,    -1,     4,    33,
-      -1,     5,    35,    -1,     6,    35,    -1,     7,    36,    -1,
-       7,    18,    -1,    -1,     8,    36,    31,     8,    35,    -1,
-       8,    18,    -1,     9,    37,    -1,    10,    37,    -1,    11,
-      38,    39,    -1,    13,    -1,    19,    33,    -1,    14,    -1,
-      19,    34,    -1,    14,    -1,    19,    34,    -1,    13,    -1,
-      19,    33,    -1,    20,    33,    21,    -1,    20,    33,    33,
-      33,    21,    -1,    20,    33,    21,    -1,    20,    33,    33,
-      33,    33,    21,    -1,    17,    -1,    14,    -1,    13,    -1,
-      16,    -1,    15,    -1,    15,    39,    -1
+      -1,     4,    38,    -1,     5,    35,    -1,     6,    35,    -1,
+       7,    36,    -1,     7,    18,    -1,    -1,     8,    36,    31,
+       8,    35,    -1,     8,    18,    -1,     9,    37,    -1,    10,
+      37,    -1,    11,    38,    39,    -1,    13,    -1,    19,    33,
+      -1,    14,    -1,    19,    34,    -1,    14,    -1,    19,    34,
+      -1,    13,    -1,    19,    33,    -1,    20,    33,    21,    -1,
+      20,    33,    33,    33,    21,    -1,    20,    33,    21,    -1,
+      20,    33,    33,    33,    33,    21,    -1,    17,    -1,    14,
+      -1,    13,    -1,    16,    -1,    15,    -1,    15,    39,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1031,10 +1039,10 @@ namespace lol {
   SceneSetupParser::yyprhs_[] =
   {
          0,     0,     3,     6,     8,    11,    13,    15,    18,    20,
-      22,    24,    26,    28,    31,    34,    37,    40,    43,    44,
-      50,    53,    56,    59,    63,    65,    68,    70,    73,    75,
-      78,    80,    83,    87,    93,    97,   104,   106,   108,   110,
-     112,   114
+      22,    24,    26,    28,    31,    34,    37,    40,    43,    46,
+      47,    53,    56,    59,    62,    66,    68,    71,    73,    76,
+      78,    81,    83,    86,    90,    96,   100,   107,   109,   111,
+     113,   115,   117
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
@@ -1042,10 +1050,10 @@ namespace lol {
   SceneSetupParser::yyrline_[] =
   {
          0,    91,    91,    95,    96,   100,   104,   105,   109,   110,
-     111,   112,   116,   117,   122,   124,   126,   128,   136,   136,
-     138,   140,   141,   145,   151,   152,   153,   154,   158,   159,
-     160,   161,   166,   167,   176,   177,   182,   183,   184,   188,
-     192,   196
+     111,   112,   116,   117,   119,   124,   126,   128,   130,   138,
+     138,   140,   142,   143,   147,   153,   154,   155,   156,   160,
+     161,   162,   163,   168,   169,   178,   179,   184,   185,   186,
+     190,   194,   198
   };
 
   // Print the state stack on the debug stream.
@@ -1121,10 +1129,10 @@ namespace lol {
   }
 
   const int SceneSetupParser::yyeof_ = 0;
-  const int SceneSetupParser::yylast_ = 54;
+  const int SceneSetupParser::yylast_ = 59;
   const int SceneSetupParser::yynnts_ = 18;
   const int SceneSetupParser::yyempty_ = -2;
-  const int SceneSetupParser::yyfinal_ = 37;
+  const int SceneSetupParser::yyfinal_ = 38;
   const int SceneSetupParser::yyterror_ = 1;
   const int SceneSetupParser::yyerrcode_ = 256;
   const int SceneSetupParser::yyntokens_ = 22;
@@ -1136,11 +1144,11 @@ namespace lol {
 } // lol
 
 /* Line 1053 of lalr1.cc  */
-#line 1140 "generated/scenesetup-parser.cpp"
+#line 1148 "generated/scenesetup-parser.cpp"
 
 
 /* Line 1055 of lalr1.cc  */
-#line 204 "scenesetup-parser.y"
+#line 206 "scenesetup-parser.y"
 
 
 void lol::SceneSetupParser::error(const SceneSetupParser::location_type& l,

@@ -39,9 +39,9 @@ static int const TEXTURE_WIDTH = 256;
 #define     WIDTH               ((float)Video::GetSize().x)
 #define     HEIGHT              ((float)Video::GetSize().y)
 #define     SCREEN_W            (10.f / WIDTH)
-#define     SCREEN_LIMIT        1.4f
 #define     RATIO_HW            (HEIGHT / WIDTH)
 #define     RATIO_WH            (WIDTH / HEIGHT)
+#define     SCREEN_LIMIT        1.4f
 
 #define     RESET_TIMER         .2f
 #define     ROT_SPEED           vec2(50.f)
@@ -140,6 +140,34 @@ struct LightData
     vec4 m_col;
 };
 
+class TargetCamera
+{
+public:
+    void EmptyTargets()             { m_targets.Empty(); }
+    void AddTarget(vec3 new_target) { m_targets << new_target; }
+    //This considers the box usage A to B as top-left to bottom-right
+    void AddTarget(box3 new_target)
+    {
+        vec3 base_off = .5f * (new_target.B - new_target.A);
+        vec3 base_pos = new_target.A + base_off;
+        int pass = 0;
+        while (pass < 3)
+        {
+            int mask = 3 - max(0, pass - 1);
+            while (mask-- > 0)
+            {
+                ivec3 A((pass == 1 || (pass == 2 && mask == 1))?(1):(0));
+                ivec3 B((pass == 2)?(1):(0)); B[mask] = 1;
+                vec3 offset = vec3(ivec3((int)(!A.x != !B.x), (int)(!A.y != !B.y), (int)(!A.z != !B.z)));
+                AddTarget(base_pos + offset * base_off * 2.f - base_off);
+            }
+            pass++;
+        }
+    }
+
+    Array<vec3>     m_targets;
+};
+
 class MeshViewer : public WorldEntity
 {
 public:
@@ -193,7 +221,7 @@ public:
         m_hist_scale_speed = vec2(.0f);
 
         m_mat_prev = mat4(quat::fromeuler_xyz(vec3::zero));
-        m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+        m_mat = mat4::translate(vec3(0.f));//mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
 
         m_build_timer = 0.1f;
         m_build_time = -1.f;
@@ -312,7 +340,7 @@ public:
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
         {
             m_light_datas << LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
-            m_ssetup->m_lights[i]->SetPosition(vec4(vec3::zero, m_ssetup->m_lights[i]->GetPosition().w));
+            m_ssetup->m_lights[i]->SetPosition(vec3::zero);
             m_ssetup->m_lights[i]->SetColor(vec4::zero);
         }
     }
@@ -358,13 +386,13 @@ public:
         //Update light position & damping
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
         {
-            vec3 pos = (m_mat * inverse(m_mat_prev) * vec4(m_ssetup->m_lights[i]->GetPosition().xyz, 1.f)).xyz;
+            vec3 pos = (m_mat * inverse(m_mat_prev) * vec4(m_ssetup->m_lights[i]->GetPosition(), 1.f)).xyz;
             vec3 tgt = (m_mat * vec4(m_light_datas[i].m_pos, 1.f)).xyz;
 
             vec3 new_pos = damp(pos, tgt, .3f, seconds);
             vec4 new_col = damp(m_ssetup->m_lights[i]->GetColor(), m_light_datas[i].m_col, .3f, seconds);
 
-            m_ssetup->m_lights[i]->SetPosition(vec4(new_pos, m_ssetup->m_lights[i]->GetPosition().w));
+            m_ssetup->m_lights[i]->SetPosition(new_pos);
             m_ssetup->m_lights[i]->SetColor(new_col);
         }
 
@@ -382,7 +410,7 @@ public:
         {
             tmpv += vec2(AxisValue(MSEX_CAM_Y), AxisValue(MSEX_CAM_X));
             if (KeyDown(MSE_CAM_ROT))
-                tmpv *= 6.f;
+                tmpv *= vec2(1.f, 1.f) * 6.f;
             if (KeyDown(MSE_CAM_POS))
                 tmpv *= vec2(1.f, -1.f) * 3.f;
             if (KeyDown(MSE_CAM_FOV))
@@ -394,7 +422,7 @@ public:
 #endif //NO_NACL_EM_INPUT
 
         //Base data
-        vec2 rot = (!is_pos && !is_fov)?(tmpv):(vec2(.0f)); rot = vec2(rot.x, rot.y);
+        vec2 rot = (!is_pos && !is_fov)?(tmpv):(vec2(.0f)); rot = vec2(rot.x, -rot.y);
         vec2 pos = ( is_pos && !is_fov)?(tmpv):(vec2(.0f)); pos = -vec2(pos.y, pos.x);
         vec2 fov = (!is_pos && is_fov )?(tmpv):(vec2(.0f)); fov = vec2(-fov.x, fov.y);
         vec2 hsc = (is_hsc)?(vec2(0.f)):(vec2(0.f));
@@ -460,13 +488,22 @@ public:
 
         //Mesh mat calculation
         m_mat_prev = m_mat;
-        m_mat = mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+        m_mat = mat4::translate(vec3(0.f));//mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
 
         //Target List Setup
-        Array<vec3> target_list;
+        TargetCamera tc;
         if (m_meshes.Count() && m_mesh_id >= 0)
             for (int i = 0; i < m_meshes[m_mesh_id].m1->GetVertexCount(); i++)
-                target_list << (m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i))).v3.xyz;
+                tc.AddTarget((m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i))).v3.xyz);
+        tc.AddTarget(box3(vec3::zero, vec3::one));
+        for (int k = 0; k < m_ssetup->m_lights.Count() && m_ssetup->m_show_lights; ++k)
+        {
+            vec3 light_pos = m_ssetup->m_lights[k]->GetPosition();
+            mat4 world_cam = m_camera->GetView();
+            light_pos = (inverse(world_cam) * vec4((world_cam * vec4(light_pos, 1.0f)).xyz * vec3::axis_z, 1.0f)).xyz;
+            tc.AddTarget(box3(vec3::mone, vec3::one) + light_pos *
+                         ((m_ssetup->m_lights[k]->GetType() == LightType::Directional)?(-1.f):(1.f)));
+        }
 
         //--
         //Update mesh screen location - Get the Min/Max needed
@@ -479,9 +516,9 @@ public:
         mat4 cam_screen = m_camera->GetProjection();
 
         //target on-screen computation
-        for (int i = 0; i < target_list.Count(); i++)
+        for (int i = 0; i < tc.m_targets.Count(); i++)
         {
-            vec3 obj_loc = target_list[i];
+            vec3 obj_loc = tc.m_targets[i];
             {
                 //Debug::DrawBox(obj_loc - vec3(4.f), obj_loc + vec3(4.f), vec4(1.f, 0.f, 0.f, 1.f));
                 mat4 target_mx = mat4::translate(obj_loc);
@@ -504,21 +541,25 @@ public:
                 cam_factor += 1.f;
             }
         }
-        float screen_ratio = max(max(lol::abs(local_min_max[0].x), lol::abs(local_min_max[0].y)),
-                                 max(lol::abs(local_min_max[1].x), lol::abs(local_min_max[1].y)));
-        float scale_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
+        float screen_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                                  max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
+        float z_dist = length(m_camera->m_position) + max(local_min_max[0].z, local_min_max[1].z);
+
         vec2 screen_offset = vec2(0.f, -(screen_min_max[1].y + screen_min_max[0].y) * .5f);
         m_screen_offset = damp(m_screen_offset, screen_offset, .9f, seconds);
-        float z_pos = (inverse(world_cam) * mat4::translate(vec3(0.f, 0.f, max(local_min_max[0].z, local_min_max[1].z)))).v3.z;
 
         if (cam_factor > 0.f)
         {
             vec2 new_screen_scale = m_camera->GetScreenScale();
-            m_camera->SetScreenScale(max(vec2(0.001f), new_screen_scale * ((1.0f + lol::max(0.f, m_zoom_mesh)) / (scale_ratio * (1.f + lol::max(0.f, -m_zoom_mesh)) * SCREEN_LIMIT))));
-            m_camera->SetPosition(vec3(vec2::zero, damp(m_camera->m_position.z, z_pos + screen_ratio * 2.f, .1f, seconds)), true);
+            float zoom_in  = 1.f + lol::max(0.f, m_zoom_mesh);
+            float zoom_out = 1.f + lol::max(0.f, -m_zoom_mesh);
+            m_camera->SetScreenScale(max(vec2(0.001f), ((new_screen_scale * zoom_in) / (screen_ratio * zoom_out * SCREEN_LIMIT))));
             m_camera->SetFov(m_fov_mesh);
-            m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio * (1.f + lol::max(0.f, -m_zoom_mesh))), 1.2f, seconds));
+            m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio * zoom_out), 1.2f, seconds));
+
+            vec3 posz = ((mat4::rotate(m_rot_mesh.y, vec3::axis_y) * mat4::rotate(-m_rot_mesh.x, vec3::axis_x) * vec4::axis_z)).xyz;
+            vec3 newpos = posz * damp(length(m_camera->m_position), z_dist * 1.2f, .1f, seconds);
+            m_camera->SetView(newpos, vec3(0.f), vec3::axis_y);
         }
 
         //--
@@ -537,7 +578,7 @@ public:
                     //Store current light datas, in World
                     Array<LightData> light_datas;
                     for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
-                        light_datas << LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+                        light_datas << LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
 
                     if (m_ssetup)
                         delete(m_ssetup);
@@ -549,7 +590,7 @@ public:
                     for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
                     {
                         //Store local dst in current m_ld
-                        LightData ltmp = LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
+                        LightData ltmp = LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
                         if (i < m_light_datas.Count())
                             m_light_datas[i] = ltmp;
                         else
@@ -564,7 +605,7 @@ public:
                         }
 
                         //Restore old light datas in new lights
-                        m_ssetup->m_lights[i]->SetPosition(vec4(loc, m_ssetup->m_lights[i]->GetPosition().w));
+                        m_ssetup->m_lights[i]->SetPosition(loc);
                         m_ssetup->m_lights[i]->SetColor(col);
                     }
                 }
@@ -798,13 +839,13 @@ public:
                 for (int k = 0; k < m_ssetup->m_lights.Count(); ++k)
                 {
                     Light* ltmp = m_ssetup->m_lights[k];
-                    mat4 world = mat4::translate(ltmp->GetPosition().xyz);
+                    mat4 world = mat4::translate(ltmp->GetPosition());
                     mat4 local = mat4::translate((inverse(m_mat) * world).v3.xyz);
                     //dir light
-                    if (ltmp->GetPosition().w == 0.f)
+                    if (ltmp->GetType() == LightType::Directional)
                     {
                         m_gizmos[GZ_LightPos]->Render(m_mat * inverse(local));
-                        m_gizmos[GZ_LightDir]->Render(inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition().xyz, vec3::axis_y)));
+                        m_gizmos[GZ_LightDir]->Render(inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition(), vec3::axis_y)));
                     }
                     else //point light
                     {

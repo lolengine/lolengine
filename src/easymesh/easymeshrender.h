@@ -26,7 +26,7 @@ struct MeshRender
 {
     enum Value
     {
-        NeedData,
+        NeedData = 0,
         NeedConvert,
         CanRender,
         IgnoreRender,
