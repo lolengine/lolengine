@@ -22,27 +22,36 @@ namespace lol
 
 Light::Light()
   : m_color(1.f),
-    m_directional(true)
+    m_type(LightType::Directional)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_CAMERA;
 
-    SetPosition(vec4::zero);
+    SetPosition(vec3::zero);
 }
 
 Light::~Light()
 {
 }
 
-void Light::SetPosition(vec4 const &pos)
+void Light::SetType(LightType const &type)
 {
-    m_directional = (pos.w > 0.f);
-    m_position = pos.xyz;
+    m_type = type;
 }
 
-vec4 Light::GetPosition()
+LightType Light::GetType()
 {
-    return vec4(m_position, m_directional ? 1.f : 0.f);
+    return m_type;
+}
+
+void Light::SetPosition(vec3 const &pos)
+{
+    m_position = pos;
+}
+
+vec3 Light::GetPosition()
+{
+    return m_position;
 }
 
 void Light::SetColor(vec4 const &color)

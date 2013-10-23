@@ -21,6 +21,54 @@
 namespace lol
 {
 
+struct LightType
+{
+    enum Value
+    {
+        Directional = 0,
+        Point,
+
+        Max,
+    }
+    m_value;
+
+    static char const *GetName(Value v)
+    {
+        switch (v)
+        {
+            case Directional:
+                return "<Directional>";
+            case Point:
+                return "<Point>";
+            default:
+                return "<UNDEFINED>";
+        }
+    }
+
+    inline LightType(float v)
+    {
+        float top = FLT_MAX;
+        int iv = Directional;
+        for (int i = 0; i < Max; ++i)
+        {
+            LightType lv = LightType(i);
+            float nv = lv.f();
+            float ntop = lol::abs(nv - v);
+            if (ntop < top)
+            {
+                top = ntop;
+                iv = i;
+            }
+        }
+        m_value = LightType(iv);
+    }
+    inline LightType(int v) : m_value((Value)v) {}
+    inline LightType(Value v) : m_value(v) {}
+    inline LightType() : m_value(Directional) {}
+    inline operator Value() { return m_value; }
+    inline float f() { return ((float)m_value / (float)Max); }
+};
+
 class Light : public WorldEntity
 {
 public:
@@ -29,19 +77,22 @@ public:
 
     char const *GetName() { return "<light>"; }
 
-    void SetColor(vec4 const &col);
+    void SetType(LightType const &type);
+    LightType GetType();
+
+    void SetColor(vec4 const &color);
     vec4 GetColor();
 
-    void SetPosition(vec4 const &pos);
-    vec4 GetPosition();
+    void SetPosition(vec3 const &pos);
+    vec3 GetPosition();
 
 protected:
     virtual void TickGame(float seconds);
     virtual void TickDraw(float seconds);
 
 private:
-    vec4 m_color;
-    bool m_directional;
+    vec4        m_color;
+    LightType   m_type;
 };
 
 } /* namespace lol */

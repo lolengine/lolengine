@@ -159,7 +159,7 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
     for (int i = 0; i < lights.Count(); ++i)
-        light_data << lights[i]->GetPosition() << lights[i]->GetColor();
+        light_data << vec4(lights[i]->GetPosition(), lights[i]->GetType()) << lights[i]->GetColor();
     while (light_data.Count() < 8)
         light_data << vec4::zero << vec4::zero;
 
