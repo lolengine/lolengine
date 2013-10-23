@@ -488,7 +488,7 @@ public:
 
         //Mesh mat calculation
         m_mat_prev = m_mat;
-        m_mat = mat4::translate(vec3(0.f));//mat4(quat::fromeuler_xyz(vec3(m_rot_mesh, .0f)));
+        m_mat = mat4::translate(vec3(0.f));
 
         //Target List Setup
         TargetCamera tc;

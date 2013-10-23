@@ -89,14 +89,13 @@ void main(void)
         {
             /* Point light -- no attenuation yet */
             s = normalize(p - pass_Vertex.xyz);
-            r = reflect(-s, TNormal);
         }
         else
         {
             /* Directional light */
             s = normalize(-p);
-            r = reflect(s, TNormal);
         }
+        r = reflect(-s, TNormal);
 
         float sdotn = max(dot(s, TNormal), 0.0);
         diffuse += color.xyz * sdotn;
