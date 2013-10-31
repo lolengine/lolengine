@@ -6,13 +6,13 @@ attribute vec3 in_Position;
 attribute vec4 in_Color;
 varying vec4 pass_Color;
 
-uniform mat4 proj_matrix;
-uniform mat4 view_matrix;
-uniform mat4 model_matrix;
+uniform mat4 u_projection;
+uniform mat4 u_view;
+uniform mat4 u_model;
 
 void main()
 {
-    gl_Position = proj_matrix * view_matrix * model_matrix
+    gl_Position = u_projection * u_view * u_model
                 * vec4(in_Position, 1.0);
     pass_Color = in_Color;
 }
@@ -81,13 +81,13 @@ void main()
 
 void main(float4 in_Vertex : POSITION,
           float4 in_Color : COLOR,
-          uniform float4x4 proj_matrix,
-          uniform float4x4 view_matrix,
-          uniform float4x4 model_matrix,
+          uniform float4x4 u_projection,
+          uniform float4x4 u_view,
+          uniform float4x4 u_model,
           out float4 out_Color : COLOR,
           out float4 out_Position : POSITION)
 {
-    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Vertex)));
+    out_Position = mul(u_projection, mul(u_view, mul(u_model, in_Vertex)));
     out_Color = in_Color;
 }
 

@@ -100,6 +100,7 @@ liblolcore_sources = \
     generated/lolfx-scanner.cpp \
     \
     mesh/mesh.cpp mesh/mesh.h \
+    mesh/primitive.cpp mesh/primitive.h \
     \
     sys/init.cpp sys/timer.cpp sys/file.cpp \
     sys/threadbase.h \

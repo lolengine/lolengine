@@ -56,6 +56,10 @@ class SceneData
     friend class Scene;
 
 private:
+    /* New scenegraph */
+    Array<Primitive> m_primitives;
+
+    /* Old API */
     Array<vec3, vec3, vec4> m_lines;
     Shader *m_line_shader;
     VertexDeclaration *m_line_vdecl;
@@ -144,6 +148,11 @@ void Scene::Reset()
     data->m_lights.Empty();
 }
 
+void Scene::AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix)
+{
+    data->m_primitives.Push(Primitive(mesh, shader, matrix));
+}
+
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
 {
     ASSERT(id < tileset->GetTileCount());
@@ -179,6 +188,36 @@ void Scene::RenderPrimitives()
 {
     /* TODO: this should be the main entry for rendering of all
      * primitives found in the scene graph. When we have one. */
+
+    Shader *shader = nullptr;
+    ShaderUniform u_model, uni_tex, uni_texsize;
+    ShaderAttrib a_pos, a_tex;
+
+    for (int i = 0; i < data->m_primitives.Count(); ++i)
+    {
+        Primitive &p = data->m_primitives[i];
+
+        /* If this primitive uses a new shader, update attributes */
+        if (p.m_shader != shader)
+        {
+            shader = p.m_shader;
+
+            a_pos = shader->GetAttribLocation(VertexUsage::Position, 0);
+            a_tex = shader->GetAttribLocation(VertexUsage::TexCoord, 0);
+
+            shader->Bind();
+
+            ShaderUniform u_mat;
+            u_mat = shader->GetUniformLocation("u_projection");
+            shader->SetUniform(u_mat, GetCamera()->GetProjection());
+            u_mat = shader->GetUniformLocation("u_view");
+            shader->SetUniform(u_mat, GetCamera()->GetView());
+
+            u_model = shader->GetUniformLocation("u_model");
+        }
+
+        shader->SetUniform(u_model, p.m_matrix);
+    }
 }
 
 void Scene::RenderTiles() // XXX: rename to Blit()
@@ -207,11 +246,11 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 
     data->m_tile_shader->Bind();
 
-    uni_mat = data->m_tile_shader->GetUniformLocation("proj_matrix");
+    uni_mat = data->m_tile_shader->GetUniformLocation("u_projection");
     data->m_tile_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
-    uni_mat = data->m_tile_shader->GetUniformLocation("view_matrix");
+    uni_mat = data->m_tile_shader->GetUniformLocation("u_view");
     data->m_tile_shader->SetUniform(uni_mat, GetCamera()->GetView());
-    uni_mat = data->m_tile_shader->GetUniformLocation("model_matrix");
+    uni_mat = data->m_tile_shader->GetUniformLocation("u_model");
     data->m_tile_shader->SetUniform(uni_mat, mat4(1.f));
 
     uni_tex = data->m_tile_shader->GetUniformLocation("in_Texture");
@@ -312,9 +351,9 @@ void Scene::RenderLines() // XXX: rename to Blit()
 
     data->m_line_shader->Bind();
 
-    uni_mat = data->m_line_shader->GetUniformLocation("proj_matrix");
+    uni_mat = data->m_line_shader->GetUniformLocation("u_projection");
     data->m_line_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
-    uni_mat = data->m_line_shader->GetUniformLocation("view_matrix");
+    uni_mat = data->m_line_shader->GetUniformLocation("u_view");
     data->m_line_shader->SetUniform(uni_mat, GetCamera()->GetView());
 
     data->m_line_vdecl->Bind();
