@@ -16,6 +16,8 @@
 #if !defined __LIGHT_H__
 #define __LIGHT_H__
 
+#include <cfloat> /* for FLT_MAX */
+
 #include "worldentity.h"
 
 namespace lol
