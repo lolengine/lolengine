@@ -113,14 +113,16 @@ void BtPhysTest::InitApp()
 
     /* Add a white directional light */
     m_light1 = new Light();
-    m_light1->SetPosition(vec4(0.2f, 0.2f, 0.f, 0.f));
+    m_light1->SetPosition(vec3(0.2f, 0.2f, 0.f));
     m_light1->SetColor(vec4(0.5f, 0.5f, 0.5f, 1.f));
+    m_light1->SetType(LightType::Directional);
     Ticker::Ref(m_light1);
 
     /* Add an orangeish point light */
     m_light2 = new Light();
-    m_light2->SetPosition(vec4(-15.f, 15.f, 15.f, 1.f));
+    m_light2->SetPosition(vec3(-15.f, 15.f, 15.f));
     m_light2->SetColor(vec4(0.4f, 0.3f, 0.2f, 1.f));
+    m_light2->SetType(LightType::Point);
     Ticker::Ref(m_light2);
 
     float offset = 29.5f;
