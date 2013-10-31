@@ -6,13 +6,13 @@ attribute vec3 in_Position;
 attribute vec2 in_TexCoord;
 varying vec2 pass_TexCoord;
 
-uniform mat4 proj_matrix;
-uniform mat4 view_matrix;
-uniform mat4 model_matrix;
+uniform mat4 u_projection;
+uniform mat4 u_view;
+uniform mat4 u_model;
 
 void main()
 {
-    gl_Position = proj_matrix * view_matrix * model_matrix
+    gl_Position = u_projection * u_view * u_model
                 * vec4(in_Position, 1.0);
     pass_TexCoord = in_TexCoord;
 }
@@ -39,9 +39,9 @@ void main()
 
 void main(float4 in_Position : POSITION,
           float2 in_TexCoord : TEXCOORD0,
-          uniform float4x4 proj_matrix,
-          uniform float4x4 view_matrix,
-          uniform float4x4 model_matrix,
+          uniform float4x4 u_projection,
+          uniform float4x4 u_view,
+          uniform float4x4 u_model,
           uniform float2 in_TexSize,
           out float2 out_TexCoord : TEXCOORD0,
           out float4 out_Position : POSITION)
@@ -51,7 +51,7 @@ void main(float4 in_Position : POSITION,
 #else
     float2 delta = float2(0.0, 0.0);
 #endif
-    out_Position = mul(proj_matrix, mul(view_matrix, mul(model_matrix, in_Position)));
+    out_Position = mul(u_projection, mul(u_view, mul(u_model, in_Position)));
     out_TexCoord = in_TexCoord + delta;
 }
 

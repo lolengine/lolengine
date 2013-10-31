@@ -21,6 +21,7 @@
 #include "tileset.h"
 #include "light.h"
 #include "camera.h"
+#include "mesh/primitive.h"
 
 namespace lol
 {
@@ -45,6 +46,9 @@ public:
     void RenderPrimitives();
     void RenderTiles();
     void RenderLines();
+
+    /* New scenegraph */
+    void AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix);
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */

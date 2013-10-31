@@ -117,6 +117,9 @@
     <ClCompile Include="mesh\mesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
+    <ClCompile Include="mesh\primitive.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
     <ClCompile Include="gpu\rendercontext.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
@@ -376,6 +379,9 @@
       <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="mesh\mesh.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh\primitive.h">
       <Filter>mesh</Filter>
     </ClInclude>
     <ClInclude Include="application\application.h">

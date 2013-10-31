@@ -93,11 +93,11 @@ void Gradient::TickDraw(float seconds)
 
     data->shader->Bind();
 
-    uni_mat = data->shader->GetUniformLocation("proj_matrix");
+    uni_mat = data->shader->GetUniformLocation("u_projection");
     data->shader->SetUniform(uni_mat, g_scene->GetCamera()->GetProjection());
-    uni_mat = data->shader->GetUniformLocation("view_matrix");
+    uni_mat = data->shader->GetUniformLocation("u_view");
     data->shader->SetUniform(uni_mat, g_scene->GetCamera()->GetView());
-    uni_mat = data->shader->GetUniformLocation("model_matrix");
+    uni_mat = data->shader->GetUniformLocation("u_model");
     data->shader->SetUniform(uni_mat, model_matrix);
 
     data->shader->Bind();

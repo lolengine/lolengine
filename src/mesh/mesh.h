@@ -19,6 +19,31 @@
 namespace lol
 {
 
+/*
+ * A mesh contains a list of submeshes. This is a convenient way to
+ * handle different materials or mesh types (static, skeletal, morph
+ * targets, etc.) within the same container object.
+ */
+
+class Mesh
+{
+public:
+    Mesh();
+    ~Mesh();
+
+    void Render(mat4 const &model);
+
+private:
+    Array<class SubMesh *> m_submeshes;
+};
+
+/*
+ * A submesh contains:
+ *  - a vertex declaration
+ *  - a list of VBOs
+ *  - a list of textures
+ */
+
 class SubMesh
 {
 public:
@@ -34,22 +59,9 @@ public:
 protected:
     VertexDeclaration* m_vdecl;
     MeshPrimitive m_mesh_prim;
-    VertexBuffer** m_vbos;
-    int m_vertex_count;
+    Array<VertexBuffer *> m_vbos;
 
     Array<String, Texture*> m_textures;
-};
-
-class Mesh
-{
-public:
-    Mesh();
-    ~Mesh();
-
-    void Render(mat4 const &model);
-
-private:
-    Array<SubMesh *> m_submeshes;
 };
 
 } /* namespace lol */

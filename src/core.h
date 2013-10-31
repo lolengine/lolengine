@@ -183,6 +183,7 @@ static inline int isnan(float f)
 #include "map.h"
 #include "layer.h"
 #include "mesh/mesh.h"
+#include "mesh/primitive.h"
 #include "application/application.h"
 #include "easymesh/csgbsp.h"
 #include "easymesh/easymesh.h"
