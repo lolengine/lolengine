@@ -648,11 +648,15 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     return ret;
 }
 
-#define DEFINE_GENERIC_EULER_CONVERSIONS(name, i, j, k) \
+#define DEFINE_GENERIC_EULER_CONVERSIONS(a1, a2, a3) \
+    DEFINE_GENERIC_EULER_CONVERSIONS_INNER(a1, a2, a3, a1##a2##a3) \
+
+#define DEFINE_GENERIC_EULER_CONVERSIONS_INNER(a1, a2, a3, name) \
     /* Create quaternions from Euler angles */ \
     template<> quat quat::fromeuler_##name(vec3 const &v) \
     { \
-        return quat_fromeuler_generic(v, i, j, k); \
+        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        return quat_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
     template<> quat quat::fromeuler_##name(float phi, float theta, float psi) \
@@ -663,7 +667,8 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Create 3×3 matrices from Euler angles */ \
     template<> mat3 mat3::fromeuler_##name(vec3 const &v) \
     { \
-        return mat3_fromeuler_generic(v, i, j, k); \
+        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        return mat3_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
     template<> mat3 mat3::fromeuler_##name(float phi, float theta, float psi) \
@@ -674,7 +679,8 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Create 4×4 matrices from Euler angles */ \
     template<> mat4 mat4::fromeuler_##name(vec3 const &v) \
     { \
-        return mat4(mat3_fromeuler_generic(v, i, j, k), 1.f); \
+        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        return mat4(mat3_fromeuler_generic(v, a1, a2, a3), 1.f); \
     } \
     \
     template<> mat4 mat4::fromeuler_##name(float phi, float theta, float psi) \
@@ -685,24 +691,26 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Retrieve Euler angles from a quaternion */ \
     template<> vec3 vec3::toeuler_##name(quat const &q) \
     { \
-        return quat_toeuler_generic(q, i, j, k); \
+        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        return quat_toeuler_generic(q, a1, a2, a3); \
     }
 
-DEFINE_GENERIC_EULER_CONVERSIONS(xyx, 0, 1, 0)
-DEFINE_GENERIC_EULER_CONVERSIONS(xzx, 0, 2, 0)
-DEFINE_GENERIC_EULER_CONVERSIONS(yxy, 1, 0, 1)
-DEFINE_GENERIC_EULER_CONVERSIONS(yzy, 1, 2, 1)
-DEFINE_GENERIC_EULER_CONVERSIONS(zxz, 2, 0, 2)
-DEFINE_GENERIC_EULER_CONVERSIONS(zyz, 2, 1, 2)
+DEFINE_GENERIC_EULER_CONVERSIONS(x, y, x)
+DEFINE_GENERIC_EULER_CONVERSIONS(x, z, x)
+DEFINE_GENERIC_EULER_CONVERSIONS(y, x, y)
+DEFINE_GENERIC_EULER_CONVERSIONS(y, z, y)
+DEFINE_GENERIC_EULER_CONVERSIONS(z, x, z)
+DEFINE_GENERIC_EULER_CONVERSIONS(z, y, z)
 
-DEFINE_GENERIC_EULER_CONVERSIONS(xyz, 0, 1, 2)
-DEFINE_GENERIC_EULER_CONVERSIONS(xzy, 0, 2, 1)
-DEFINE_GENERIC_EULER_CONVERSIONS(yxz, 1, 0, 2)
-DEFINE_GENERIC_EULER_CONVERSIONS(yzx, 1, 2, 0)
-DEFINE_GENERIC_EULER_CONVERSIONS(zxy, 2, 0, 1)
-DEFINE_GENERIC_EULER_CONVERSIONS(zyx, 2, 1, 0)
+DEFINE_GENERIC_EULER_CONVERSIONS(x, y, z)
+DEFINE_GENERIC_EULER_CONVERSIONS(x, z, y)
+DEFINE_GENERIC_EULER_CONVERSIONS(y, x, z)
+DEFINE_GENERIC_EULER_CONVERSIONS(y, z, x)
+DEFINE_GENERIC_EULER_CONVERSIONS(z, x, y)
+DEFINE_GENERIC_EULER_CONVERSIONS(z, y, x)
 
 #undef DEFINE_GENERIC_EULER_CONVERSIONS
+#undef DEFINE_GENERIC_EULER_CONVERSIONS_INNER
 
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
