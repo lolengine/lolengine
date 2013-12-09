@@ -2,6 +2,7 @@
 include $(top_srcdir)/build/autotools/common.am
 
 SUBDIRS =
+SUBDIRS += lolremez
 SUBDIRS += neercs
 SUBDIRS += vimlol
 SUBDIRS += vslol

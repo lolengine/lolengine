@@ -539,6 +539,9 @@ AC_CONFIG_FILES(
   demos/lol.js/Makefile
 ])
 AC_CONFIG_FILES(
+ [tools/lolremez/Makefile
+])
+AC_CONFIG_FILES(
  [tools/neercs/Makefile
 ])
 AC_CONFIG_FILES(

@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="real.cpp" />
-    <ClCompile Include="remez.cpp" />
+    <ClCompile Include="lolremez.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lol\math\matrix.h">
@@ -21,8 +21,6 @@
     <ClInclude Include="lol\math\real.h">
       <Filter>lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="lol\math\remez.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
+    <ClInclude Include="lolremez.h" />
   </ItemGroup>
 </Project>
