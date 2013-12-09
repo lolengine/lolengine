@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "remez", "remez.vcxproj", "{A2767731-6FBF-442C-900F-301D095516E7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolremez", "lolremez.vcxproj", "{A2767731-6FBF-442C-900F-301D095516E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{663F5D32-D212-4A88-A681-84B54D3188A3}"
 	ProjectSection(SolutionItems) = preProject

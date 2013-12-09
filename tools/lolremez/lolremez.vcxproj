@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A2767731-6FBF-442C-900F-301D095516E7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>remez</RootNamespace>
+    <RootNamespace>lolremez</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -138,12 +138,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="real.cpp" />
-    <ClCompile Include="remez.cpp" />
+    <ClCompile Include="lolremez.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lol\math\matrix.h" />
     <ClInclude Include="lol\math\real.h" />
-    <ClInclude Include="lol\math\remez.h" />
+    <ClInclude Include="lolremez.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

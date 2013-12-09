@@ -15,7 +15,8 @@
 #include "core.h"
 
 #include <lol/math/real.h>
-#include <lol/math/remez.h>
+
+#include "lolremez.h"
 
 using lol::real;
 using lol::RemezSolver;
