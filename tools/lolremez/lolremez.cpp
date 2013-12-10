@@ -1,5 +1,5 @@
 //
-// Lol Engine - Sample math program: Chebyshev polynomials
+// LolRemez - Remez algorithm implementation
 //
 // Copyright: (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
@@ -16,10 +16,9 @@
 
 #include <lol/math/real.h>
 
-#include "lolremez.h"
+#include "solver.h"
 
 using lol::real;
-using lol::RemezSolver;
 
 /* See the tutorial at http://lolengine.net/wiki/doc/maths/remez */
 real f(real const &x)
@@ -36,8 +35,9 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    RemezSolver<4, real> solver;
-    solver.Run(-1, 1, f, g, 40);
+    RemezSolver<real> solver;
+    solver.Run(4, 40, -1, 1, f, g);
+
     return 0;
 }
 
