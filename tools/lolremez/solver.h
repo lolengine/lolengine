@@ -17,41 +17,39 @@
 
 #include <cstdio>
 
-template<typename NUMERIC_T> class RemezSolver
+class RemezSolver
 {
 public:
-    typedef NUMERIC_T RealFunc(NUMERIC_T const &x);
+    typedef lol::real RealFunc(lol::real const &x);
 
-    inline RemezSolver()
-      : m_order(0)
-    {
-    }
+    RemezSolver(int order, int decimals);
 
-    void Run(int order, int decimals, NUMERIC_T a, NUMERIC_T b,
+    void Run(lol::real a, lol::real b,
              RealFunc *func, RealFunc *weight = nullptr);
 
-    NUMERIC_T EvalCheby(NUMERIC_T const &x);
+private:
+    lol::real EvalCheby(lol::real const &x);
     void Init();
     void FindZeroes();
-    NUMERIC_T FindExtrema();
+    lol::real FindExtrema();
     void Step();
 
     int Cheby(int n, int k);
     int Comb(int n, int k);
 
     void PrintPoly();
-    NUMERIC_T EvalFunc(NUMERIC_T const &x);
-    NUMERIC_T Weight(NUMERIC_T const &x);
+    lol::real EvalFunc(lol::real const &x);
+    lol::real Weight(lol::real const &x);
 
 private:
     int m_order;
 
-    lol::Array<NUMERIC_T> m_coeff;
-    lol::Array<NUMERIC_T> m_zeroes;
-    lol::Array<NUMERIC_T> m_control;
+    lol::Array<lol::real> m_coeff;
+    lol::Array<lol::real> m_zeroes;
+    lol::Array<lol::real> m_control;
 
     RealFunc *m_func, *m_weight;
-    NUMERIC_T m_k1, m_k2, m_invk1, m_invk2, m_epsilon;
+    lol::real m_k1, m_k2, m_invk1, m_invk2, m_epsilon;
     int m_decimals;
 };
 
