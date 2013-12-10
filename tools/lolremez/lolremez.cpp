@@ -35,8 +35,8 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    RemezSolver<real> solver;
-    solver.Run(4, 40, -1, 1, f, g);
+    RemezSolver solver(4, 40);
+    solver.Run(-1, 1, f, g);
 
     return 0;
 }

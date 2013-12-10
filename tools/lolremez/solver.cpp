@@ -21,33 +21,25 @@
 
 using lol::real;
 
-/* Some forward declarations first. */
-template<> void RemezSolver<real>::Init();
-template<> void RemezSolver<real>::FindZeroes();
-template<> real RemezSolver<real>::FindExtrema();
-template<> void RemezSolver<real>::Step();
-template<> int RemezSolver<real>::Cheby(int n, int k);
-template<> void RemezSolver<real>::PrintPoly();
-template<> real RemezSolver<real>::EvalFunc(real const &x);
-template<> real RemezSolver<real>::Weight(real const &x);
+RemezSolver::RemezSolver(int order, int decimals)
+  : m_order(order),
+    m_decimals(decimals)
+{
+}
 
-
-template<>
-void RemezSolver<real>::Run(int order, int decimals, real a, real b,
-                            RemezSolver<real>::RealFunc *func,
-                            RemezSolver<real>::RealFunc *weight)
+void RemezSolver::Run(real a, real b,
+                      RemezSolver::RealFunc *func,
+                      RemezSolver::RealFunc *weight)
 {
     using std::printf;
 
-    m_order = order;
     m_func = func;
     m_weight = weight;
     m_k1 = (b + a) / 2;
     m_k2 = (b - a) / 2;
     m_invk2 = re(m_k2);
     m_invk1 = -m_k1 * m_invk2;
-    m_decimals = decimals;
-    m_epsilon = pow((real)10, (real)-(decimals + 2));
+    m_epsilon = pow((real)10, (real)-(m_decimals + 2));
 
     Init();
 
@@ -76,8 +68,7 @@ void RemezSolver<real>::Run(int order, int decimals, real a, real b,
     PrintPoly();
 }
 
-template<>
-real RemezSolver<real>::EvalCheby(real const &x)
+real RemezSolver::EvalCheby(real const &x)
 {
     real ret = 0.0, xn = 1.0;
 
@@ -93,8 +84,7 @@ real RemezSolver<real>::EvalCheby(real const &x)
     return ret;
 }
 
-template<>
-void RemezSolver<real>::Init()
+void RemezSolver::Init()
 {
     /* m_order + 1 Chebyshev coefficients, plus 1 error value */
     m_coeff.Resize(m_order + 2);
@@ -146,8 +136,7 @@ void RemezSolver<real>::Init()
     }
 }
 
-template<>
-void RemezSolver<real>::FindZeroes()
+void RemezSolver::FindZeroes()
 {
     /* Find m_order + 1 zeroes of the error function. No need to
      * compute the relative error: its zeroes are at the same
@@ -179,8 +168,7 @@ void RemezSolver<real>::FindZeroes()
     }
 }
 
-template<>
-real RemezSolver<real>::FindExtrema()
+real RemezSolver::FindExtrema()
 {
     using std::printf;
 
@@ -248,8 +236,7 @@ real RemezSolver<real>::FindExtrema()
     return final;
 }
 
-template<>
-void RemezSolver<real>::Step()
+void RemezSolver::Step()
 {
     /* Pick up x_i where error will be 0 and compute f(x_i) */
     real fxn[m_order + 2];
@@ -298,8 +285,7 @@ void RemezSolver<real>::Step()
         error += mat.m(m_order + 1, i) * fxn[i];
 }
 
-template<>
-int RemezSolver<real>::Cheby(int n, int k)
+int RemezSolver::Cheby(int n, int k)
 {
     if (k > n || k < 0)
         return 0;
@@ -308,16 +294,14 @@ int RemezSolver<real>::Cheby(int n, int k)
     return 2 * Cheby(n - 1, k - 1) - Cheby(n - 2, k);
 }
 
-template<>
-int RemezSolver<real>::Comb(int n, int k)
+int RemezSolver::Comb(int n, int k)
 {
     if (k == 0 || k == n)
         return 1;
     return Comb(n - 1, k - 1) + Comb(n - 1, k);
 }
 
-template<>
-void RemezSolver<real>::PrintPoly()
+void RemezSolver::PrintPoly()
 {
     using std::printf;
 
@@ -361,14 +345,12 @@ void RemezSolver<real>::PrintPoly()
     printf("\n\n");
 }
 
-template<>
-real RemezSolver<real>::EvalFunc(real const &x)
+real RemezSolver::EvalFunc(real const &x)
 {
     return m_func(x * m_k2 + m_k1);
 }
 
-template<>
-real RemezSolver<real>::Weight(real const &x)
+real RemezSolver::Weight(real const &x)
 {
     if (m_weight)
         return m_weight(x * m_k2 + m_k1);
