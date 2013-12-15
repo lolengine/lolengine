@@ -31,6 +31,30 @@ float segdist(vec2 p1, vec2 p2, vec2 a)
     return distance(a, mix(p1, p2, t));
 }
 
+vec3 hsv2rgb(vec3 c)
+{
+    vec3 tmp = abs(fract(c[0] + vec3(3.0, 2.0, 1.0) / 3.0) * 6.0 - 3.0);
+    return c[2] * mix(vec3(1.0), clamp((tmp - 1.0), 0.0, 1.0), c[1]);
+}
+
+vec3 rgb2hsv(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 v1 = mix(vec4(c.bg, K.wz),
+                  vec4(c.gb, K.xy),
+                  step(c.b, c.g));
+
+    vec4 v3 = mix(vec4(v1.x, v1.yw, c.r),
+                  vec4(c.r, v1.yzx),
+                  step(v1.x, c.r));
+
+    float chroma = v3.r - min(v3.a, v3.g);
+float    h = abs(v3.b + (v3.a - v3.g) / (6.0 * chroma + 1.0e-10));
+float    s = chroma / (v3.r + 1.0e-10);
+float    v = v3.r;
+ return vec3(h, s, v);
+}
+
 void main(void)
 {
     float width = 800.0;
@@ -75,7 +99,12 @@ void main(void)
     lum = pow(1.0 - lum, 1.0 / 2.4);
 
     /* Choose some funny colours */
-    gl_FragColor = vec4(mix(p.x, 1.0, lum), lum, lum, 1.0);
+    vec4 col = vec4(mix(p.x, 1.0, lum), lum, lum, 1.0);
+    col.rgb = hsv2rgb(rgb2hsv(col.rgb) * vec3(1.0, 1.0, 0.5) + vec3(p.x, 0.5, 0.0));
+    col.rgb = hsv2rgb(rgb2hsv(col.rgb));
+    col.rgb = hsv2rgb(rgb2hsv(col.rgb));
+    col.rgb = hsv2rgb(rgb2hsv(col.rgb));
+    gl_FragColor = col;
 }
 
 [vert.hlsl]
