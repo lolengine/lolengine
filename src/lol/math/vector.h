@@ -1283,6 +1283,12 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
     } \
     \
     tprefix \
+    inline type distance(tname<type> const &a, tname<type> const &b) \
+    { \
+        return length(a - b); \
+    } \
+    \
+    tprefix \
     inline tname<type> fract(tname<type> const &a) \
     { \
         tname<type> ret; \
