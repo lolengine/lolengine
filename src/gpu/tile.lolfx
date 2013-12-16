@@ -32,6 +32,8 @@ varying vec2 pass_TexCoord;
 void main()
 {
     vec4 col = texture2D(in_Texture, pass_TexCoord);
+    if (col.a == 0.0)
+        discard;
     gl_FragColor = col;
 }
 
