@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include <cctype>
+
 #if HAVE_UNISTD_H
 #   include <unistd.h>
 #endif
@@ -84,7 +86,13 @@ void Init(int argc, char *argv[],
     bool got_rootdir = false;
     for (int i = 0; ; i++)
     {
-        if (projectdir[i] != solutiondir[i] || projectdir[i] == '\0')
+#if _WIN32
+        using std::toupper;
+        bool mismatch = toupper(projectdir[i]) != toupper(solutiondir[i]);
+#else
+        bool mismatch = projectdir[i] != solutiondir[i];
+#endif
+        if (mismatch || projectdir[i] == '\0')
         {
             /* FIXME: at this point we should check whether the binary
              * was launched from this subdirectory; from now we just
