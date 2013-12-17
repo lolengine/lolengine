@@ -46,6 +46,10 @@ void Init(int argc, char *argv[],
 {
     using namespace std;
 
+    Log::Debug("project dir: “%s”\n", projectdir.C());
+    Log::Debug("solution dir: “%s”\n", solutiondir.C());
+    Log::Debug("source subdir: “%s”\n", sourcesubdir.C());
+
     /*
      * Retrieve binary directory, defaulting to no directory on Android
      * and emscripten, and the current directory on other platforms.
@@ -79,46 +83,45 @@ void Init(int argc, char *argv[],
     }
 #endif
 
+    bool got_rootdir = false;
+
     /*
-     * Find the common prefix between project dir and solution dir.
+     * If project dir and solution dir are set, add them to data; also
+     * add current directory in case we were launched from another place.
      */
 
-    bool got_rootdir = false;
-    for (int i = 0; ; i++)
+    if (!got_rootdir && projectdir.Count() && solutiondir.Count())
     {
-#if _WIN32
-        using std::toupper;
-        bool mismatch = toupper(projectdir[i]) != toupper(solutiondir[i]);
-#else
-        bool mismatch = projectdir[i] != solutiondir[i];
-#endif
-        if (mismatch || projectdir[i] == '\0')
-        {
-            /* FIXME: at this point we should check whether the binary
-             * was launched from this subdirectory; from now we just
-             * assume it was. */
-            if (i)
-            {
-                String rootdir = solutiondir;
-                if (rootdir.Last() != SEPARATOR)
-                    rootdir += SEPARATOR;
-                rootdir += "../../src/"; /* FIXME: use SEPARATOR? */
-                AddDataDir(rootdir);
+        /* This data dir is for standalone executables */
+        String rootdir = binarydir;
+        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+            rootdir += SEPARATOR;
+        AddDataDir(rootdir);
 
-                rootdir = projectdir;
-                if (rootdir.Last() != SEPARATOR)
-                    rootdir += SEPARATOR;
-                AddDataDir(rootdir);
+        /* This data dir is for engine stuff */
+        rootdir = solutiondir;
+        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+            rootdir += SEPARATOR;
+        rootdir += "../../src/"; /* FIXME: use SEPARATOR? */
+        AddDataDir(rootdir);
 
-                got_rootdir = true;
-            }
-            break;
-        }
+        /* This data dir is for project-specific stuff */
+        rootdir = projectdir;
+        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+            rootdir += SEPARATOR;
+        AddDataDir(rootdir);
+
+        got_rootdir = true;
     }
 
-    /* If no rootdir found, use the executable location */
+    /*
+     * If no project dir, use the executable location as the starting point
+     * to guess the data dir.
+     */
     if (!got_rootdir)
     {
+        /* First climb back the hierarchy to get to the engine root and
+         * add a data dir for engine stuff. */
         String rootdir = binarydir;
         if (rootdir.Count() && rootdir.Last() != SEPARATOR)
             rootdir += SEPARATOR;
@@ -132,6 +135,7 @@ void Init(int argc, char *argv[],
         rootdir += "src/";
         AddDataDir(rootdir);
 
+        /* This data dir is for project-specific stuff */
         rootdir = binarydir;
         AddDataDir(rootdir);
 
