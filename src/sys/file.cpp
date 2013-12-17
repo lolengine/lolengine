@@ -63,6 +63,7 @@ class FileData
         if (err != CELL_FS_SUCCEEDED)
             m_fd = -1;
 #elif __ANDROID__
+        ASSERT(g_assets);
         m_asset = AAssetManager_open(g_assets, file.C(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */

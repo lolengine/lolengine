@@ -276,6 +276,8 @@ AndroidAppData *g_data;
 
 void android_main(android_app* native_app)
 {
+    Log::Info("Java layer calling main() for app 0x%08lx", (long)native_app);
+
     g_data = new AndroidAppData();
     g_data->m_native_app = native_app;
 
