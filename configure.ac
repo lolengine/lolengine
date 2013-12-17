@@ -535,6 +535,9 @@ AC_CONFIG_FILES(
   games/abuse/doc/abuse-tool.6
 ])
 AC_CONFIG_FILES(
+ [games/singlshot/Makefile
+])
+AC_CONFIG_FILES(
  [demos/tutorial/Makefile
   demos/lol.js/Makefile
 ])
@@ -563,7 +566,6 @@ AC_CONFIG_FILES(
   people/jylam/private/lander/Makefile
   people/sam/Makefile
   people/sam/ld27/Makefile
-  people/sam/ld28/Makefile
   people/sam/private/Makefile
   people/sam/private/kanagawa/Makefile
   people/sam/private/sapp/Makefile
