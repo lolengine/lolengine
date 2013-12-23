@@ -8,13 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#if defined __ANDROID__
+#if __ANDROID__
 
 #include <jni.h>
+
+#include <sys/types.h>
 #include <android/asset_manager_jni.h>
 
 #include <EGL/egl.h>
@@ -35,7 +37,7 @@ using namespace lol;
 namespace lol
 {
 JavaVM *g_vm;
-jobject g_activity;
+ANativeActivity *g_activity;
 AAssetManager *g_assets;
 }; /* namespace lol */
 
@@ -43,19 +45,7 @@ extern "C" jint
 JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     Log::Info("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
-    g_vm = vm;
     return JNI_VERSION_1_4;
-}
-
-extern "C" void
-Java_net_lolengine_LolActivity_nativeInit(JNIEnv* env, jobject thiz,
-                                          jobject assets)
-{
-    Log::Info("Java layer initialising activity 0x%08lx", (long)thiz);
-    env->NewGlobalRef(thiz); /* FIXME: never released! */
-    g_activity = thiz;
-    env->NewGlobalRef(assets); /* FIXME: never released! */
-    g_assets = AAssetManager_fromJava(env, assets);
 }
 
 /* One of these wrappers will be overridden by the user's version */
@@ -161,9 +151,8 @@ int lol::AndroidAppData::CreateDisplay()
     eglQuerySurface(m_display, m_surface, EGL_WIDTH, &w);
     eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &h);
 
-    /* Launch our ticker */
-    Log::Info("Java layer initialising renderer at %g fps", 60.0f);
-    Ticker::Setup(60.0f);
+    /* Launch our renderer */
+    Log::Info("Java layer initialising renderer");
     Video::Setup(ivec2(w, h));
 
     return 0;
@@ -278,6 +267,35 @@ void android_main(android_app* native_app)
 {
     Log::Info("Java layer calling main() for app 0x%08lx", (long)native_app);
 
+    /* Register native activity */
+    g_activity = native_app->activity;
+
+    /* Register Java VM */
+    g_vm = g_activity->vm;
+
+    /* Get JNI environment */
+    JNIEnv *jni_env;
+    jint res = g_vm->GetEnv((void **)&jni_env, JNI_VERSION_1_2);
+    if (res < 0)
+    {
+        Log::Error("JVM environment not found, trying to attach thread\n");
+        res = g_vm->AttachCurrentThread(&jni_env, nullptr);
+    }
+    if (res < 0)
+    {
+        Log::Error("JVM environment not found, cannot run main()\n");
+        return;
+    }
+
+    /* Get asset manager */
+    jclass cls = jni_env->GetObjectClass(g_activity->clazz);
+    jmethodID mid = jni_env->GetMethodID(cls, "getAssets",
+                                     "()Landroid/content/res/AssetManager;");
+    jobject assets = jni_env->CallObjectMethod(g_activity->clazz, mid);
+    jni_env->NewGlobalRef(assets); /* FIXME: never released! */
+    g_assets = AAssetManager_fromJava(jni_env, assets);
+
+    /* Create our app data */
     g_data = new AndroidAppData();
     g_data->m_native_app = native_app;
 
@@ -298,6 +316,16 @@ void android_main(android_app* native_app)
     char *argv[] = { "", nullptr };
     char *env[] = { nullptr };
 
+    /* FIXME: this is fucking pathetic. */
+    while (!g_scene)
+    {
+        Log::Debug("waiting for g_scene...\n");
+        Timer t;
+        t.Wait(0.1);
+    }
+
+    Log::Info("running main()\n");
+
     /* Call the user's main() function. One of these will work. */
     lol_android_main();
     lol_android_main(argc, argv);
@@ -307,6 +335,10 @@ void android_main(android_app* native_app)
 lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
   : m_data(g_data)
 {
+    /* Launch our ticker */
+    Log::Info("Java layer initialising ticker at %g fps", fps);
+    Ticker::Setup(fps);
+
     m_data->m_wanted_resolution = res;
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 }
