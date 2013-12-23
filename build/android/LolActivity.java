@@ -31,13 +31,8 @@ public class LolActivity extends NativeActivity
     protected void onCreate(Bundle saved_instance)
     {
         super.onCreate(saved_instance);
-
         m_assets = getAssets();
-
-        nativeInit(m_assets);
     }
-
-    private native void nativeInit(AssetManager assets);
 
     private AssetManager m_assets;
 

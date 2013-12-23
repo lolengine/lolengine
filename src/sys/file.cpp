@@ -8,7 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
@@ -16,6 +16,7 @@
 #   include <sys/paths.h>
 #   include <cell/cell_fs.h>
 #elif __ANDROID__
+#   include <sys/types.h>
 #   include <android/asset_manager_jni.h>
 #endif
 

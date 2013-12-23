@@ -8,14 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
 #include <cstdlib>
 
-#ifdef WIN32
-#   define WIN32_LEAN_AND_MEAN
+#if WIN32
+#   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
 #endif
 
@@ -113,12 +113,16 @@ Scene::~Scene()
 
 void Scene::PushCamera(Camera *cam)
 {
+    ASSERT(this, "trying to push a camera before g_scene is ready");
+
     Ticker::Ref(cam);
     data->m_camera_stack.Push(cam);
 }
 
 void Scene::PopCamera(Camera *cam)
 {
+    ASSERT(this, "trying to pop a camera before g_scene is ready");
+
     /* Parse from the end because that’s probably where we’ll find
      * our camera first. */
     for (int i = data->m_camera_stack.Count(); i--; )
