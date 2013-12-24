@@ -36,7 +36,6 @@ using namespace lol;
 
 namespace lol
 {
-JavaVM *g_vm;
 ANativeActivity *g_activity;
 AAssetManager *g_assets;
 }; /* namespace lol */
@@ -90,6 +89,8 @@ public:
     InputDeviceInternal* m_mouse;
 
     SavedState m_state;
+
+    bool m_video_ready;
 
 private:
     void HandleCommand(int32_t cmd);
@@ -152,7 +153,7 @@ int lol::AndroidAppData::CreateDisplay()
     eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &h);
 
     /* Launch our renderer */
-    Log::Info("Java layer initialising renderer");
+    Log::Info("Java layer initialising renderer (%dx%d)", w, h);
     Video::Setup(ivec2(w, h));
 
     return 0;
@@ -199,12 +200,13 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
     switch (AInputEvent_getType(event))
     {
     case AINPUT_EVENT_TYPE_MOTION:
-        //We need the max if we want coherent mouse speed between axis
-        float max_screen_size = lol::max(m_wanted_resolution.x, m_wanted_resolution.y);
+        // We need the max if we want consistent mouse speed between axis
+        float max_screen_size = lol::max(m_wanted_resolution.x,
+                                         m_wanted_resolution.y);
         /* FIXME: we flip the Y axis here, but is it the right place? */
         ivec2 pos(AMotionEvent_getX(event, 0),
                   AMotionEvent_getY(event, 0));
-        pos = pos * m_wanted_resolution / Video::GetSize();
+        pos *= m_wanted_resolution / Video::GetSize();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
         m_mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
@@ -244,7 +246,8 @@ void lol::AndroidAppData::HandleCommand(int32_t cmd)
             if (m_native_app->window != nullptr)
             {
                 CreateDisplay();
-                DrawFrame();
+                m_video_ready = true;
+                //DrawFrame();
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -265,21 +268,19 @@ AndroidAppData *g_data;
 
 void android_main(android_app* native_app)
 {
-    Log::Info("Java layer calling main() for app 0x%08lx", (long)native_app);
+    Log::Info("Java layer calling android_main() for app 0x%08lx",
+              (long)native_app);
 
     /* Register native activity */
     g_activity = native_app->activity;
 
-    /* Register Java VM */
-    g_vm = g_activity->vm;
-
     /* Get JNI environment */
     JNIEnv *jni_env;
-    jint res = g_vm->GetEnv((void **)&jni_env, JNI_VERSION_1_2);
+    jint res = g_activity->vm->GetEnv((void **)&jni_env, JNI_VERSION_1_2);
     if (res < 0)
     {
-        Log::Error("JVM environment not found, trying to attach thread\n");
-        res = g_vm->AttachCurrentThread(&jni_env, nullptr);
+        Log::Info("JVM environment not found, trying to attach thread\n");
+        res = g_activity->vm->AttachCurrentThread(&jni_env, nullptr);
     }
     if (res < 0)
     {
@@ -298,6 +299,7 @@ void android_main(android_app* native_app)
     /* Create our app data */
     g_data = new AndroidAppData();
     g_data->m_native_app = native_app;
+    g_data->m_video_ready = false;
 
     /* Make sure glue isn't stripped */
     app_dummy();
@@ -313,18 +315,22 @@ void android_main(android_app* native_app)
     }
 
     int argc = 1;
-    char *argv[] = { "", nullptr };
+    char *argv[] = { const_cast<char *>(""), nullptr };
     char *env[] = { nullptr };
 
-    /* FIXME: this is fucking pathetic. */
-    while (!g_scene)
+    /* Wait for GL context */
+    while (!g_data->m_video_ready)
     {
-        Log::Debug("waiting for g_scene...\n");
-        Timer t;
-        t.Wait(0.1);
+        int ident, fdesc, events;
+        struct android_poll_source* source;
+ 
+        ident = ALooper_pollAll(0, &fdesc, &events, (void**)&source);
+
+        if (ident >= 0 && source)
+            source->process(native_app, source);
     }
 
-    Log::Info("running main()\n");
+    Log::Info("Java layer running real main()\n");
 
     /* Call the user's main() function. One of these will work. */
     lol_android_main();

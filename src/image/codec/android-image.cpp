@@ -17,6 +17,10 @@
 #include <jni.h>
 #include <android/log.h>
 
+extern "C" {
+#include <android_native_app_glue.h>
+}
+
 #include "core.h"
 #include "../../image/image-private.h"
 
@@ -25,8 +29,7 @@ using namespace std;
 namespace lol
 {
 
-extern JavaVM *g_vm;
-extern jobject g_activity;
+extern ANativeActivity *g_activity;
 
 /*
  * Image implementation class
@@ -49,13 +52,13 @@ private:
 bool AndroidImageData::Open(char const *path)
 {
     JNIEnv *env;
-    jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
+    jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("JVM environment not found, trying to attach thread\n");
 #endif
-        res = g_vm->AttachCurrentThread(&env, nullptr);
+        res = g_activity->vm->AttachCurrentThread(&env, nullptr);
     }
     if (res < 0)
     {
@@ -64,13 +67,13 @@ bool AndroidImageData::Open(char const *path)
 #endif
         return false;
     }
-    jclass cls = env->GetObjectClass(g_activity);
+    jclass cls = env->GetObjectClass(g_activity->clazz);
     jmethodID mid;
 
     mid = env->GetMethodID(cls, "openImage",
                            "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
     jstring name = env->NewStringUTF(path);
-    bmp = env->CallObjectMethod(g_activity, mid, name);
+    bmp = env->CallObjectMethod(g_activity->clazz, mid, name);
     env->DeleteLocalRef(name);
     if (!bmp)
     {
@@ -83,15 +86,15 @@ bool AndroidImageData::Open(char const *path)
 
     /* Get image dimensions */
     mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    m_size.x = env->CallIntMethod(g_activity, mid, bmp);
+    m_size.x = env->CallIntMethod(g_activity->clazz, mid, bmp);
     mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    m_size.y = env->CallIntMethod(g_activity, mid, bmp);
+    m_size.y = env->CallIntMethod(g_activity->clazz, mid, bmp);
 
     /* Get pixels */
     array = env->NewIntArray(m_size.x * m_size.y);
     env->NewGlobalRef(array);
     mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
-    env->CallVoidMethod(g_activity, mid, bmp, array);
+    env->CallVoidMethod(g_activity->clazz, mid, bmp, array);
 
     pixels = env->GetIntArrayElements(array, 0);
     for (int n = 0; n < m_size.x * m_size.y; n++)
@@ -108,7 +111,7 @@ bool AndroidImageData::Open(char const *path)
 bool AndroidImageData::Close()
 {
     JNIEnv *env;
-    jint res = g_vm->GetEnv((void **)&env, JNI_VERSION_1_2);
+    jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
@@ -116,7 +119,7 @@ bool AndroidImageData::Close()
 #endif
         return false;
     }
-    jclass cls = env->GetObjectClass(g_activity);
+    jclass cls = env->GetObjectClass(g_activity->clazz);
     jmethodID mid;
 
     env->ReleaseIntArrayElements(array, pixels, 0);
@@ -124,7 +127,7 @@ bool AndroidImageData::Close()
 
     /* Free image */
     mid = env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
-    env->CallVoidMethod(g_activity, mid, bmp);
+    env->CallVoidMethod(g_activity->clazz, mid, bmp);
     env->DeleteGlobalRef(bmp);
 
     return true;
