@@ -74,12 +74,14 @@ void Font::Print(vec3 pos, char const *str, vec2 scale)
     {
         uint32_t ch = (uint8_t)*str++;
 
-        if(ch == '\n')
+        if (ch == '\n')
         {
             pos.x = origin_x;
             pos.y-=data->size.y * scale.y;
             continue;
-        }else if (ch != ' '){
+        }
+        else if (ch != ' ')
+        {
             g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
         }
         pos.x += data->size.x * scale.x;
