@@ -2,6 +2,7 @@
 // Lol Engine
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//                     2013 Jean-Yves Lamoureux <jylam@lnxscene.org>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -69,22 +70,29 @@ char const *Font::GetName()
 
 void Font::Print(vec3 pos, char const *str, vec2 scale)
 {
-    int origin_x = pos.x;
+    float origin_x = pos.x;
     while (*str)
     {
         uint32_t ch = (uint8_t)*str++;
 
-        if (ch == '\n')
+        switch (ch)
         {
+        case '\r': /* carriage return */
             pos.x = origin_x;
-            pos.y-=data->size.y * scale.y;
-            continue;
+            break;
+        case '\b': /* backspace */
+            pos.x -= data->size.x * scale.x;
+            break;
+        case '\n': /* new line */
+            pos.x = origin_x;
+            pos.y -= data->size.y * scale.y;
+            break;
+        default:
+            if (ch != ' ')
+                g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
+            pos.x += data->size.x * scale.x;
+            break;
         }
-        else if (ch != ' ')
-        {
-            g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
-        }
-        pos.x += data->size.x * scale.x;
     }
 }
 
