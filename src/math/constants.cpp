@@ -28,7 +28,17 @@ namespace lol {
     template<> \
     Vec4<type> const Vec4<type>::name = Vec4<type>((type)a, (type)b, (type)c, (type)d);
 
-#define LOL_ALL_VECTOR_CONST_INNER(type) \
+#define LOL_MAT_CONST(type, name, a) \
+    template<> \
+    Mat2<type> const Mat2<type>::name = Mat2<type>((type)a); \
+    \
+    template<> \
+    Mat3<type> const Mat3<type>::name = Mat3<type>((type)a); \
+    \
+    template<> \
+    Mat4<type> const Mat4<type>::name = Mat4<type>((type)a);
+
+#define LOL_ALL_CONST_INNER(type) \
     LOL_VEC_2_CONST(type, one, 1, 1) \
     LOL_VEC_2_CONST(type, mone,-1,-1) \
     LOL_VEC_2_CONST(type, zero, 0, 0) \
@@ -48,22 +58,24 @@ namespace lol {
     LOL_VEC_4_CONST(type, axis_x, 1, 0, 0, 0) \
     LOL_VEC_4_CONST(type, axis_y, 0, 1, 0, 0) \
     LOL_VEC_4_CONST(type, axis_z, 0, 0, 1, 0) \
-    LOL_VEC_4_CONST(type, axis_w, 0, 0, 0, 1)
+    LOL_VEC_4_CONST(type, axis_w, 0, 0, 0, 1) \
+    \
+    LOL_MAT_CONST(type, identity, 1)
 
-LOL_ALL_VECTOR_CONST_INNER(half)
-LOL_ALL_VECTOR_CONST_INNER(float)
-LOL_ALL_VECTOR_CONST_INNER(double)
-LOL_ALL_VECTOR_CONST_INNER(ldouble)
-LOL_ALL_VECTOR_CONST_INNER(real)
+LOL_ALL_CONST_INNER(half)
+LOL_ALL_CONST_INNER(float)
+LOL_ALL_CONST_INNER(double)
+LOL_ALL_CONST_INNER(ldouble)
+LOL_ALL_CONST_INNER(real)
 
-LOL_ALL_VECTOR_CONST_INNER(int8_t)
-LOL_ALL_VECTOR_CONST_INNER(uint8_t)
-LOL_ALL_VECTOR_CONST_INNER(int16_t)
-LOL_ALL_VECTOR_CONST_INNER(uint16_t)
-LOL_ALL_VECTOR_CONST_INNER(int32_t)
-LOL_ALL_VECTOR_CONST_INNER(uint32_t)
-LOL_ALL_VECTOR_CONST_INNER(int64_t)
-LOL_ALL_VECTOR_CONST_INNER(uint64_t)
+LOL_ALL_CONST_INNER(int8_t)
+LOL_ALL_CONST_INNER(uint8_t)
+LOL_ALL_CONST_INNER(int16_t)
+LOL_ALL_CONST_INNER(uint16_t)
+LOL_ALL_CONST_INNER(int32_t)
+LOL_ALL_CONST_INNER(uint32_t)
+LOL_ALL_CONST_INNER(int64_t)
+LOL_ALL_CONST_INNER(uint64_t)
 
 }; /* namespace lol */
 
