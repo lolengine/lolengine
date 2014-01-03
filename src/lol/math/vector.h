@@ -1035,11 +1035,28 @@ template <typename T> struct Quat
         return Quat<T>(w, -x, -y, -z);
     }
 
-    inline Vec3<T> transform(Vec3<T> const &v)
+    inline Vec3<T> transform(Vec3<T> const &v) const
     {
         Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
         Quat<T> q = *this * p / *this;
         return Vec3<T>(q.x, q.y, q.z);
+    }
+
+    inline Vec4<T> transform(Vec4<T> const &v) const
+    {
+        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
+        Quat<T> q = *this * p / *this;
+        return Vec4<T>(q.x, q.y, q.z, v.w);
+    }
+
+    inline Vec3<T> operator *(Vec3<T> const &v) const
+    {
+        return transform(v);
+    }
+
+    inline Vec4<T> operator *(Vec4<T> const &v) const
+    {
+        return transform(v);
     }
 
     template<typename U>
