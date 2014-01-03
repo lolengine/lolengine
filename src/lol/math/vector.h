@@ -1632,6 +1632,8 @@ template <typename T> struct Mat2
     }
 
     Vec2<T> v0, v1;
+
+    static const Mat2<T> identity;
 };
 
 /*
@@ -1756,6 +1758,8 @@ template <typename T> struct Mat3
     }
 
     Vec3<T> v0, v1, v2;
+
+    static const Mat3<T> identity;
 };
 
 /*
@@ -1927,6 +1931,8 @@ template <typename T> struct Mat4
     }
 
     Vec4<T> v0, v1, v2, v3;
+
+    static const Mat4<T> identity;
 };
 
 template<typename T> T determinant(Mat2<T> const &);
