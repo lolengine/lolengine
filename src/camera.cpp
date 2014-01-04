@@ -82,7 +82,7 @@ void Camera::SetView(vec3 pos, quat rot)
     m_position = pos;
 }
 
-mat4 Camera::GetView()
+mat4 Camera::GetView() const
 {
     return m_view_matrix;
 }
@@ -119,7 +119,7 @@ void Camera::SetProjection(float fov, float near, float far, float screen_size, 
         SetProjection(screen_scale * mat4::ortho(screen_size, screen_size * screen_ratio, m_near, m_far));
 }
 
-mat4 Camera::GetProjection()
+mat4 Camera::GetProjection() const
 {
     return m_proj_matrix;
 }
@@ -197,39 +197,39 @@ void Camera::SetRotation(quat rot)
 }
 
 //--
-vec3 Camera::GetPosition()
+vec3 Camera::GetPosition() const
 {
     return m_position;
 }
 
-vec3 Camera::GetTarget()
+vec3 Camera::GetTarget() const
 {
     return m_position + (inverse(m_view_matrix) * vec4(0.f, 0.f, -max(m_target_distance, 1.f), 0.f)).xyz;
 }
 
-vec3 Camera::GetUp()
+vec3 Camera::GetUp() const
 {
     return (inverse(m_view_matrix) * vec4(0.f, 1.f, 0.f, 0.f)).xyz;
 }
 
-vec3 Camera::GetRotationEuler()
+vec3 Camera::GetRotationEuler() const
 {
     return vec3::toeuler_zyx(GetRotation());
 }
 
-quat Camera::GetRotation()
+quat Camera::GetRotation() const
 {
     return quat(inverse(m_view_matrix));
 }
 
 // Calculate the frustum height at a given distance from the camera.
-float Camera::GetFrustumHeightAtDistance(float distance, float fov)
+float Camera::GetFrustumHeightAtDistance(float distance, float fov) const
 {
     return 2.f * distance * lol::tan(fov * .5f * (F_PI / 180.f));
 }
 
 // Calculate the FOV needed to get a given frustum height at a given distance.
-float Camera::GetFOVForHeightAndDistance(float distance, float height)
+float Camera::GetFOVForHeightAndDistance(float distance, float height) const
 {
     return 2.f * lol::atan(height * .5f / distance) * (180.f / F_PI);
 }
