@@ -67,6 +67,8 @@ build/vs2012/*.sdf
 build/vs2012/*.suo
 build/vs2012/*.log
 build/vs2012/*.XGD
+# ReSharper cruft
+_ReSharper.*
 # Do not exclude anything in external. There is no way to do this recursively
 # but the nesting below is currently one level more than our current max.
 !external/*
