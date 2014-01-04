@@ -12,6 +12,7 @@
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
     <PlatformToolset>SNC</PlatformToolset>

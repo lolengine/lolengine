@@ -107,3 +107,9 @@ doc/man
 # Our test suites
 test/testsuite.log
 test/testsuite.trs
+# Our tools
+tools/vslol/bin/*/*
+tools/vslol/obj/*/*
+tools/vslol/obj/*/*/*
+tools/vslol/obj/*/*/*
+tools/vslol/*.suo
