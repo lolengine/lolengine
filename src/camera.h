@@ -35,7 +35,7 @@ public:
     void SetView(vec3 pos, vec3 rot);
     void SetView(vec3 pos, quat rot);
 
-    mat4 GetView();
+    mat4 GetView() const;
 
     //Projections functions
 //private:
@@ -44,7 +44,7 @@ public:
     void SetProjection(float fov, float near, float far);
     void SetProjection(float fov, float near, float far, float screen_size, float screen_ratio);
 
-    mat4 GetProjection();
+    mat4 GetProjection() const;
 
     //Projections manipulation functions
     void SetFov(float fov);
@@ -56,14 +56,14 @@ public:
     void UseShift(bool should_shift);
     void UseTarget(bool use_target);
 
-    float GetFov()          { return m_fov; }
-    float GetScreenSize()   { return m_screen_size; }
-    float GetScreenRatio()  { return m_screen_ratio; }
-    float GetNear()         { return m_near; }
-    float GetFar()          { return m_far; }
-    vec2  GetScreenScale()  { return m_screen_scale; }
-    bool  IsShifted()       { return m_is_shifted; }
-    bool  IsTargeting()     { return (m_target_distance != .0f); }
+    float GetFov() const         { return m_fov; }
+    float GetScreenSize() const  { return m_screen_size; }
+    float GetScreenRatio() const { return m_screen_ratio; }
+    float GetNear() const        { return m_near; }
+    float GetFar() const         { return m_far; }
+    vec2  GetScreenScale() const { return m_screen_scale; }
+    bool  IsShifted() const      { return m_is_shifted; }
+    bool  IsTargeting() const    { return (m_target_distance != .0f); }
 
     //camera manipulation Functions
     void SetPosition(vec3 pos, bool keep_target=false);
@@ -71,15 +71,15 @@ public:
     void SetRotation(vec3 rot);
     void SetRotation(quat rot);
 
-    vec3 GetPosition();
-    vec3 GetTarget();
-    vec3 GetUp();
-    vec3 GetRotationEuler();
-    quat GetRotation();
+    vec3 GetPosition() const;
+    vec3 GetTarget() const;
+    vec3 GetUp() const;
+    vec3 GetRotationEuler() const;
+    quat GetRotation() const;
 
     //Convenience functions
-    float GetFrustumHeightAtDistance(float distance, float fov);
-    float GetFOVForHeightAndDistance(float distance, float height);
+    float GetFrustumHeightAtDistance(float distance, float fov) const;
+    float GetFOVForHeightAndDistance(float distance, float height) const;
 
 protected:
     virtual void TickGame(float seconds);
