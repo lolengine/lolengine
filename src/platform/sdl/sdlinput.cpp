@@ -222,7 +222,7 @@ void SdlInputData::Tick(float seconds)
     {
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
         SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
-        mouse = m_app/2.0f;
+        mouse = (ivec2)m_app / 2;
         SdlInputData::SetMousePos(mouse);
         //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
     }
