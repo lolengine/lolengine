@@ -93,6 +93,17 @@
 #endif
 
 
+/* Ensure we have ssize_t */
+#if defined ssize_t
+    /* do nothing */
+#elif HAVE_SYS_TYPES_H
+#   include <sys/types.h>
+#elif _MSC_VER /* Visual Studio compiler */
+#   include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
+
 /* Ensure isnan() is present even on systems that don't define it, or
  * when -ffast-math is being used. */
 #include <cmath>
