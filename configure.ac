@@ -555,6 +555,7 @@ AC_CONFIG_FILES(
   people/benlitz/Makefile
   people/benlitz/test1/Makefile
   people/benlitz/private/voxel/Makefile
+  people/benlitz/private/lolui/Makefile
   people/touky/Makefile
   people/touky/private/Makefile
   people/touky/private/touky_demo/Makefile
