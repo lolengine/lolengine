@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -277,6 +277,14 @@ public:
      * Convert a wavelength into an xyY fully saturated colour.
      */
     static vec3 WavelengthToCIExyY(float nm);
+
+    /*
+     * Convert colors to hex strings.
+     */
+    static String HexString4Bpp(vec3 c);
+    static String HexString4Bpp(vec4 c);
+    static String HexString8Bpp(vec3 c);
+    static String HexString8Bpp(vec4 c);
 };
 
 } /* namespace lol */

@@ -110,6 +110,7 @@ liblolcore_sources = \
     image/codec/ios-image.cpp \
     image/codec/dummy-image.cpp \
     image/color/cie1931.cpp \
+    image/color/color.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \
