@@ -19,25 +19,25 @@ namespace lol
 
 String Color::HexString4Bpp(vec3 c)
 {
-    uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.0f);
+    uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
     return String::Printf("%01x%01x%01x", c2.r, c2.g, c2.b);
 }
 
 String Color::HexString4Bpp(vec4 c)
 {
-    uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 255.0f);
+    uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
     return String::Printf("%01x%1x%01x%01x", c2.r, c2.g, c2.b, c2.a);
 }
 
 String Color::HexString8Bpp(vec3 c)
 {
-    uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.0f);
+    uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
     return String::Printf("%02x%02x%02x", c2.r, c2.g, c2.b);
 }
 
 String Color::HexString8Bpp(vec4 c)
 {
-    uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 255.0f);
+    uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
     return String::Printf("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
 }
 
