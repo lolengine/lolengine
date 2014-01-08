@@ -715,22 +715,13 @@ DEFINE_GENERIC_EULER_CONVERSIONS(z, y, x)
 template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
     vec3 v3 = normalize(eye - center);
-    vec3 v2 = normalize(up);
-    vec3 v1 = normalize(cross(v2, v3));
-    v2 = cross(v3, v1);
+    vec3 v1 = normalize(cross(up, v3));
+    vec3 v2 = cross(v3, v1);
 
-    mat4 orient(1.0f);
-    orient[0][0] = v1.x;
-    orient[0][1] = v2.x;
-    orient[0][2] = v3.x;
-    orient[1][0] = v1.y;
-    orient[1][1] = v2.y;
-    orient[1][2] = v3.y;
-    orient[2][0] = v1.z;
-    orient[2][1] = v2.z;
-    orient[2][2] = v3.z;
-
-    return orient * mat4::translate(-eye);
+    return mat4(vec4(v1.x, v2.x, v3.x, 0.f),
+                vec4(v1.y, v2.y, v3.y, 0.f),
+                vec4(v1.z, v2.z, v3.z, 0.f),
+                vec4(-eye, 1.f));
 }
 
 template<> mat4 mat4::ortho(float left, float right, float bottom,
