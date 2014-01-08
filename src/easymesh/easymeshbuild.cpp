@@ -184,30 +184,30 @@ void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
 //Will update the given list with all the vertices on the same spot.
 void VertexDictionnary::RemoveVertex(const int vert_id)
 {
-	int j = 0;
+    int j = 0;
     for (; j < vertex_list.Count(); j++)
         if (vertex_list[j].m1 == vert_id)
             break;
 
-	if (vertex_list[j].m3 == VDictType::Master)
-	{
-		int jf = -1;
-		//change all the master ref in the list
-	    for (int i = 0; i < vertex_list.Count(); i++)
-		{
-			if (vertex_list[i].m3 == j)
-			{
-				if (jf < 0)
-				{
-					jf = i;
-					vertex_list[i].m3 = VDictType::Master;
-				}
-				else
-					vertex_list[i].m3 = jf;
-			}
-		}
-	}
-	vertex_list.Remove(j);
+    if (vertex_list[j].m3 == VDictType::Master)
+    {
+        int jf = -1;
+        //change all the master ref in the list
+        for (int i = 0; i < vertex_list.Count(); i++)
+        {
+            if (vertex_list[i].m3 == j)
+            {
+                if (jf < 0)
+                {
+                    jf = i;
+                    vertex_list[i].m3 = VDictType::Master;
+                }
+                else
+                    vertex_list[i].m3 = jf;
+            }
+        }
+    }
+    vertex_list.Remove(j);
     for (int i = 0; i < master_list.Count(); i++)
         if (master_list[j] == j)
             break;

@@ -323,7 +323,7 @@ void android_main(android_app* native_app)
     {
         int ident, fdesc, events;
         struct android_poll_source* source;
- 
+
         ident = ALooper_pollAll(0, &fdesc, &events, (void**)&source);
 
         if (ident >= 0 && source)
