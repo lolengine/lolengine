@@ -196,7 +196,7 @@ public:
         m_texcoord_scale = vec2(1.f);
         m_texcoord_scale2 = vec2(1.f);
         m_build_flags = 0;
-		m_i_cmd = 0;
+        m_i_cmd = 0;
         m_exec_nb = -1;
         for (int i = 0; i < MeshType::Max; ++i)
         {

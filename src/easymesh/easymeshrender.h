@@ -90,7 +90,7 @@ public:
 protected:
     uint16_t                            m_vert_decl_flags;
     Shader*                             m_shader;
-    int				                    m_render_mode;
+    int                                    m_render_mode;
     Array<lol::String, ShaderUniform>   m_shader_uniform;
     Array<ShaderAttrib>                 m_shader_attrib;
 };
@@ -121,7 +121,7 @@ public:
     //---
     void AddGpuData(GpuShaderData* gpudata, class EasyMesh* src_mesh);
     void RenderMeshData(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
-	bool HasData(int render_mode) { return (0 <= render_mode && render_mode < m_gpudatas.Count() && !!m_gpudatas[render_mode]); }
+    bool HasData(int render_mode) { return (0 <= render_mode && render_mode < m_gpudatas.Count() && !!m_gpudatas[render_mode]); }
 
 private:
     void SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh);

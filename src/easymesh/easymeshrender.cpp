@@ -239,11 +239,11 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
         m_indexcount = indexlist.Count();
     }
 
-	//init to a minimum of gpudata->m_render_mode size
+    //init to a minimum of gpudata->m_render_mode size
     if (m_gpudatas.Count() <= gpudata->m_render_mode)
     {
-		int i = m_gpudatas.Count();
-		int max = gpudata->m_render_mode + 1;
+        int i = m_gpudatas.Count();
+        int max = gpudata->m_render_mode + 1;
         m_gpudatas.Reserve(max);
         for (; i < max; i++)
             m_gpudatas << nullptr;
@@ -378,8 +378,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 //-----------------------------------------------------------------------------
 void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
 {
-	ASSERT(0 <= render_mode && render_mode < m_gpudatas.Count(), "render mode is not in the defined range");
-	ASSERT(m_gpudatas[render_mode], "gpu datas for this render mode don't exist");
+    ASSERT(0 <= render_mode && render_mode < m_gpudatas.Count(), "render mode is not in the defined range");
+    ASSERT(m_gpudatas[render_mode], "gpu datas for this render mode don't exist");
     GpuShaderData& gpu_sd = *(m_gpudatas[render_mode]);
 
     int vdecl_idx = 0;

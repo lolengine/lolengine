@@ -31,7 +31,7 @@ private:
     int                     m_i_cur;
 
 public:
-	//GET/SET exec
+    //GET/SET exec
     int     GetCmdNb()      { return m_commands.Count(); }
     int     GetCmd(int i)
     {
@@ -41,7 +41,7 @@ public:
         return m_commands[i].m1;
     }
 
-	//cmd storage
+    //cmd storage
     void    AddCmd(int cmd) { m_commands.Push(cmd, m_floats.Count(), m_ints.Count()); }
 
     //GETTER

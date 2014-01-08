@@ -41,8 +41,8 @@ EasyMesh::EasyMesh(const EasyMesh& em)
     m_cursors = em.m_cursors;
     m_build_data = nullptr;
     m_gpu_data = GpuEasyMeshData();
-	if (em.m_build_data)
-		m_build_data = new EasyMeshBuildData(*em.m_build_data);
+    if (em.m_build_data)
+        m_build_data = new EasyMeshBuildData(*em.m_build_data);
     if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
         m_state = MeshRender::NeedConvert;
     else
@@ -238,8 +238,8 @@ void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
     {
         m_gpu_data.AddGpuData(new_gpu_sdata, this);
         for (int i = DebugRenderMode::Default; i < DebugRenderMode::Max; i++)
-			if (!m_gpu_data.HasData(i))
-				m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
+            if (!m_gpu_data.HasData(i))
+                m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
     }
     m_state = MeshRender::CanRender;
 }
