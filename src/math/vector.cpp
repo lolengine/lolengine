@@ -721,7 +721,7 @@ template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
     return mat4(vec4(v1.x, v2.x, v3.x, 0.f),
                 vec4(v1.y, v2.y, v3.y, 0.f),
                 vec4(v1.z, v2.z, v3.z, 0.f),
-                vec4(-eye, 1.f));
+                vec4(-dot(eye, v1), -dot(eye, v2), -dot(eye, v3), 1.f));
 }
 
 template<> mat4 mat4::ortho(float left, float right, float bottom,
