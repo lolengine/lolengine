@@ -32,13 +32,13 @@ String String::Printf(char const *format, ...)
 
     va_list ap;
     va_start(ap, format);
-    ret = String::Printf(format, ap);
+    ret = String::VPrintf(format, ap);
     va_end(ap);
 
     return ret;
 }
 
-String String::Printf(char const *format, va_list ap)
+String String::VPrintf(char const *format, va_list ap)
 {
 #if defined __CELLOS_LV2__
     using std::vsnprintf;
