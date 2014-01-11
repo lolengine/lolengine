@@ -39,7 +39,25 @@ using namespace std;
 namespace lol
 {
 
-static const char* attribute_names[] = {
+struct ShaderType
+{
+    enum Value
+    {
+        Vertex = 1,
+        Fragment,
+        Geometry,
+        TessControl,
+        TessEval,
+    }
+    m_value;
+
+    inline ShaderType(Value v) : m_value(v) {}
+    inline ShaderType(int v) : m_value((Value)v) {}
+    inline operator Value() { return m_value; }
+};
+
+static const char* attribute_names[] =
+{
     "in_Position",
     "in_BlendWeight",
     "in_BlendIndices",
@@ -87,7 +105,7 @@ private:
 
     /* Shader patcher */
     static int GetVersion();
-    static void Patch(char *dst, char const *vert, char const *frag);
+    static String Patch(String const &code, ShaderType type);
 
     /* Global shader cache */
     static Shader *shaders[];
@@ -200,8 +218,9 @@ Shader::Shader(char const *vert, char const *frag)
         { nullptr, nullptr }
     };
 #elif !defined __CELLOS_LV2__
-    char buf[4096], errbuf[4096];
-    char const *shader = buf;
+    char errbuf[4096];
+    String shader_code;
+    GLchar const *gl_code;
     GLint status;
     GLsizei len;
 #else
@@ -232,9 +251,10 @@ Shader::Shader(char const *vert, char const *frag)
                                     &data->vert_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
-    ShaderData::Patch(buf, vert, nullptr);
+    shader_code = ShaderData::Patch(vert, ShaderType::Vertex);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(data->vert_id, 1, &shader, nullptr);
+    gl_code = shader_code.C();
+    glShaderSource(data->vert_id, 1, &gl_code, nullptr);
     glCompileShader(data->vert_id);
 
     glGetShaderInfoLog(data->vert_id, sizeof(errbuf), &len, errbuf);
@@ -242,12 +262,12 @@ Shader::Shader(char const *vert, char const *frag)
     if (status != GL_TRUE)
     {
         Log::Error("failed to compile vertex shader: %s", errbuf);
-        Log::Error("shader source:\n%s\n", buf);
+        Log::Error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
         Log::Debug("compile log for vertex shader: %s", errbuf);
-        Log::Debug("shader source:\n%s\n", buf);
+        Log::Debug("shader source:\n%s\n", shader_code.C());
     }
 #else
     data->vert_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, vert,
@@ -276,9 +296,10 @@ Shader::Shader(char const *vert, char const *frag)
                                    &data->frag_shader);
     shader_code->Release();
 #elif !defined __CELLOS_LV2__
-    ShaderData::Patch(buf, nullptr, frag);
+    shader_code = ShaderData::Patch(frag, ShaderType::Fragment);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(data->frag_id, 1, &shader, nullptr);
+    gl_code = shader_code.C();
+    glShaderSource(data->frag_id, 1, &gl_code, nullptr);
     glCompileShader(data->frag_id);
 
     glGetShaderInfoLog(data->frag_id, sizeof(errbuf), &len, errbuf);
@@ -286,12 +307,12 @@ Shader::Shader(char const *vert, char const *frag)
     if (status != GL_TRUE)
     {
         Log::Error("failed to compile fragment shader: %s", errbuf);
-        Log::Error("shader source:\n%s\n", buf);
+        Log::Error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
         Log::Debug("compile log for fragment shader: %s", errbuf);
-        Log::Debug("shader source:\n%s\n", buf);
+        Log::Debug("shader source:\n%s\n", shader_code.C());
     }
 #else
     data->frag_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, frag,
@@ -858,18 +879,19 @@ int ShaderData::GetVersion()
     return version;
 }
 
-/* Simple shader source patching for old GLSL versions.
+/*
+ * Simple shader source patching for old GLSL versions.
  */
-void ShaderData::Patch(char *dst, char const *vert, char const *frag)
+String ShaderData::Patch(String const &code, ShaderType type)
 {
     int ver_driver = GetVersion();
 
-    strcpy(dst, vert ? vert : frag);
+    String patched_code = code;
     if (ver_driver >= 130)
-        return;
+        return patched_code;
 
     int ver_shader = 110;
-    char *parser = strstr(dst, "#version");
+    char *parser = strstr(patched_code.C(), "#version");
     if (parser)
         ver_shader = atoi(parser + strlen("#version"));
 
@@ -878,7 +900,7 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
     {
         /* FIXME: this isn't elegant but honestly, we don't care, this
          * whole file is going to die soon. */
-        char *p = strstr(dst, "#version");
+        char *p = strstr(patched_code.C(), "#version");
         if (p)
         {
             p += 8;
@@ -891,17 +913,17 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
 
     if (ver_shader > 120 && ver_driver <= 120)
     {
-        char const *end = dst + strlen(dst) + 1;
+        char const *end = patched_code.C() + patched_code.Count() + 1;
 
         /* Find main() */
-        parser = strstr(dst, "main");
-        if (!parser) return;
+        parser = strstr(patched_code.C(), "main");
+        if (!parser) return patched_code;
         parser = strstr(parser, "(");
-        if (!parser) return;
+        if (!parser) return patched_code;
         parser = strstr(parser, ")");
-        if (!parser) return;
+        if (!parser) return patched_code;
         parser = strstr(parser, "{");
-        if (!parser) return;
+        if (!parser) return patched_code;
         char *main = parser + 1;
 
         /* Perform main() replaces */
@@ -939,7 +961,7 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
 
         for (char const * const *rep = main_replaces; rep[0]; rep += 2)
         {
-            char *match = strstr(dst, rep[0]);
+            char *match = strstr(patched_code.C(), rep[0]);
             if (match && match < main)
             {
                 size_t l0 = strlen(rep[0]);
@@ -956,10 +978,10 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
         char const * const fast_replaces[] =
         {
             "#version 130", "#version 120",
-            "in vec2", vert ? "attribute vec2" : "varying vec2",
-            "in vec3", vert ? "attribute vec3" : "varying vec3",
-            "in vec4", vert ? "attribute vec4" : "varying vec4",
-            "in mat4", vert ? "attribute mat4" : "varying mat4",
+            "in vec2", type == ShaderType::Vertex ? "attribute vec2" : "varying vec2",
+            "in vec3", type == ShaderType::Vertex ? "attribute vec3" : "varying vec3",
+            "in vec4", type == ShaderType::Vertex ? "attribute vec4" : "varying vec4",
+            "in mat4", type == ShaderType::Vertex ? "attribute mat4" : "varying mat4",
             "out vec2", "varying vec2",
             "out vec3", "varying vec3",
             "out vec4", "varying vec4",
@@ -970,7 +992,7 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
         for (char const * const *rep = fast_replaces; rep[0]; rep += 2)
         {
             char *match;
-            while ((match = strstr(dst, rep[0])))
+            while ((match = strstr(patched_code.C(), rep[0])))
             {
                 size_t l0 = strlen(rep[0]);
                 size_t l1 = strlen(rep[1]);
@@ -984,6 +1006,10 @@ void ShaderData::Patch(char *dst, char const *vert, char const *frag)
             }
         }
     }
+
+    patched_code.Resize(strlen(patched_code.C()));
+
+    return patched_code;
 }
 
 } /* namespace lol */
