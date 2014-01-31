@@ -73,7 +73,7 @@ void Camera::SetView(vec3 eye, vec3 target, vec3 up)
 
 void Camera::SetView(vec3 pos, vec3 rot)
 {
-    SetView(pos, quat::fromeuler_zyx(rot.zyx));
+    SetView(pos, quat::fromeuler_zyx(rot));
 }
 
 void Camera::SetView(vec3 pos, quat rot)
