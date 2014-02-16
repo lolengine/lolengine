@@ -36,10 +36,61 @@ void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
     {
         int j = ((i & 1) << 1) | ((i >> 1) ^ 1);
 
-        g_scene->AddLine(v[i], v[i + 4], color);
-        g_scene->AddLine(v[i], v[j], color);
-        g_scene->AddLine(v[i + 4], v[j + 4], color);
+        Debug::DrawLine(v[i], v[i + 4], color);
+        Debug::DrawLine(v[i], v[j], color);
+        Debug::DrawLine(v[i + 4], v[j + 4], color);
     }
+}
+
+void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)
+{
+     mat4 view_proj = proj * view;
+
+     //Pos to center
+    vec3 p0 = (inverse(view) * vec4(vec3::zero, 1.f)).xyz;
+
+    //Near plane
+    vec4 p[4] = { inverse(view_proj) * vec4(-1.f, 1.f, -1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f, 1.f, -1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f,-1.f, -1.f, 1.f),
+                  inverse(view_proj) * vec4(-1.f,-1.f, -1.f, 1.f) };
+    for (int i = 0; i < 4; i++)
+        p[i] = p[i] / p[i].w;
+
+    //Draw near
+    for (int i = 0; i < 4; i++)
+        Debug::DrawLine(p[i].xyz, p0, color);
+
+    Debug::DrawViewProj(view_proj, color);
+}
+
+void Debug::DrawViewProj(mat4 view_proj, vec4 color)
+{
+    //Near plane
+    vec4 p[8] = { inverse(view_proj) * vec4(-1.f, 1.f, 1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f, 1.f, 1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f,-1.f, 1.f, 1.f),
+                  inverse(view_proj) * vec4(-1.f,-1.f, 1.f, 1.f),
+                  inverse(view_proj) * vec4(-1.f, 1.f,-1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f, 1.f,-1.f, 1.f),
+                  inverse(view_proj) * vec4( 1.f,-1.f,-1.f, 1.f),
+                  inverse(view_proj) * vec4(-1.f,-1.f,-1.f, 1.f)
+                };
+    for (int i = 0; i < 8; i++)
+        p[i] = p[i] / p[i].w;
+
+    //Draw near
+    for (int i = 0; i < 4; i++)
+        Debug::DrawLine(p[i].xyz, p[(i + 1) % 4].xyz, color);
+    //Draw far
+    for (int i = 4; i < 8; i++)
+        Debug::DrawLine(p[i].xyz, p[(i - 4 + 1) % 4 + 4].xyz, color);
+    //Draw near to far
+    for (int i = 0; i < 4; i++)
+        Debug::DrawLine(p[i].xyz, p[i + 4].xyz, color);
+    //Draw diagonal
+    for (int i = 2; i < 6; i++)
+        Debug::DrawLine(p[i].xyz, p[i + ((i < 4)?(-2):(+2))].xyz, color);
 }
 
 } /* namespace lol */
