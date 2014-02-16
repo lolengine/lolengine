@@ -129,7 +129,7 @@ class FileData
         return ret;
     }
 
-    int Write(uint8_t *buf, int count)
+    int Write(uint8_t const *buf, int count)
     {
 #if __CELLOS_LV2__
 /*
@@ -158,7 +158,7 @@ class FileData
 
     int WriteString(const String &buf)
     {
-        return Write((uint8_t *)buf.C(), buf.Count());
+        return Write((uint8_t const *)buf.C(), buf.Count());
     }
 
     void Close()
@@ -257,7 +257,7 @@ String File::ReadString()
     return m_data->ReadString();
 }
 
-int File::Write(uint8_t *buf, int count)
+int File::Write(uint8_t const *buf, int count)
 {
     return m_data->Write(buf, count);
 }
