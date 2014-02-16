@@ -289,5 +289,18 @@ namespace lol
         return true;
     }
 
+    //--
+    bool TestPointInFrustum(const vec3& point, const mat4& frustum, vec3* result_point)
+    {
+        vec4 proj_point = frustum * vec4(point, 1.f);
+        proj_point /= proj_point.w;
+
+        if (result_point)
+            *result_point = proj_point.xyz;
+        for (int i = 0; i < 3; i++)
+            if (lol::abs(proj_point[i]) > 1.f)
+                return false;
+        return true;
+    }
 } /* namespace lol */
 

@@ -184,7 +184,7 @@ vec3 ProjPointOnPlane(vec3 const &point, vec3 const &planeP, vec3 const &planeN)
 bool RayIsectPlane(vec3 const &rayP0, vec3 const &rayP1,
                    vec3 const &planeP, vec3 const &planeN,
                    vec3 &vIsec, bool test_line_only = false);
-
+bool TestPointInFrustum(const vec3& point, const mat4& frustum, vec3* result_point=nullptr);
 } /* namespace lol */
 
 #endif // __LOL_MATH_GEOMETRY_H__
