@@ -65,7 +65,7 @@ public:
 
     int Read(uint8_t *buf, int count);
     String ReadString();
-    int Write(uint8_t *buf, int count);
+    int Write(uint8_t const *buf, int count);
     int WriteString(const String &buf);
 
 private:
