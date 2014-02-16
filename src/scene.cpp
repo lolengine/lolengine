@@ -257,9 +257,9 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     uni_mat = data->m_tile_shader->GetUniformLocation("u_model");
     data->m_tile_shader->SetUniform(uni_mat, mat4(1.f));
 
-    uni_tex = data->m_tile_shader->GetUniformLocation("in_Texture");
+    uni_tex = data->m_tile_shader->GetUniformLocation("u_texture");
     data->m_tile_shader->SetUniform(uni_tex, 0);
-    uni_texsize = data->m_tile_shader->GetUniformLocation("in_TexSize");
+    uni_texsize = data->m_tile_shader->GetUniformLocation("u_texsize");
 
     for (int buf = 0, i = 0, n; i < data->m_tiles.Count(); i = n, buf += 2)
     {
