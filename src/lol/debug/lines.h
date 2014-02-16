@@ -26,6 +26,8 @@ namespace Debug
 
 void DrawLine(vec3 a, vec3 b, vec4 color);
 void DrawBox(vec3 a, vec3 b, vec4 color);
+void DrawViewProj(mat4 view_proj, vec4 color);
+void DrawViewProj(mat4 view, mat4 proj, vec4 color);
 
 } /* namespace Debug */
 
