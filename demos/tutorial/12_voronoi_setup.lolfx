@@ -59,7 +59,6 @@ void main(float2 in_Position : POSITION,
 [frag.hlsl]
 
 void main(in float2 pass_Position : TEXCOORD0,
-          uniform sampler2D in_Texture,
           uniform float in_Flag,
           uniform float3 in_Point,
           uniform float3 in_Color,

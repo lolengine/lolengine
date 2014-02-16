@@ -122,12 +122,12 @@ DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, b
 
 static const String DefaultUniforms[7] =
 {
-    String("u_Lights"),
-    String("in_ModelView"),
-    String("in_View"),
-    String("in_Inv_View"),
-    String("in_Proj"),
-    String("in_NormalMat"),
+    String("u_lights"),
+    String("u_modelview"),
+    String("u_view"),
+    String("u_inv_view"),
+    String("u_proj"),
+    String("u_normalmat"),
     String("in_Damage")
 };
 //-----------------------------------------------------------------------------

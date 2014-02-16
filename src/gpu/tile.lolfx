@@ -25,13 +25,13 @@ void main()
 precision mediump float;
 #endif
 
-uniform sampler2D in_Texture;
-uniform vec2 in_TexSize;
+uniform sampler2D u_texture;
+uniform vec2 u_texsize;
 varying vec2 pass_TexCoord;
 
 void main()
 {
-    vec4 col = texture2D(in_Texture, pass_TexCoord);
+    vec4 col = texture2D(u_texture, pass_TexCoord);
     if (col.a == 0.0)
         discard;
     gl_FragColor = col;
@@ -44,12 +44,12 @@ void main(float4 in_Position : POSITION,
           uniform float4x4 u_projection,
           uniform float4x4 u_view,
           uniform float4x4 u_model,
-          uniform float2 in_TexSize,
+          uniform float2 u_texsize,
           out float2 out_TexCoord : TEXCOORD0,
           out float4 out_Position : POSITION)
 {
 #if _XBOX
-    float2 delta = float2(-0.5, -0.5) / in_TexSize;
+    float2 delta = float2(-0.5, -0.5) / u_texsize;
 #else
     float2 delta = float2(0.0, 0.0);
 #endif
@@ -60,10 +60,10 @@ void main(float4 in_Position : POSITION,
 [frag.hlsl]
 
 void main(float2 in_TexCoord : TEXCOORD0,
-          uniform sampler2D in_Texture,
+          uniform sampler2D u_texture,
           out float4 out_FragColor : COLOR)
 {
-    float4 col = tex2D(in_Texture, in_TexCoord);
+    float4 col = tex2D(u_texture, in_TexCoord);
     out_FragColor = col;
 }
 

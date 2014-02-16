@@ -62,7 +62,7 @@ public:
             m_uni_flag = m_shader->GetUniformLocation("in_Flag");
             m_uni_point = m_shader->GetUniformLocation("in_Point");
             m_uni_color = m_shader->GetUniformLocation("in_Color");
-            m_uni_texture = m_shader->GetUniformLocation("in_Texture");
+            m_uni_texture = m_shader->GetUniformLocation("u_texture");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 

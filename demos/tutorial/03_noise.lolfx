@@ -2,7 +2,7 @@
 
 #version 120
 
-uniform float u_Time;
+uniform float u_time;
 
 attribute vec2 in_Position;
 
@@ -19,7 +19,7 @@ void main(void)
 {
     mat3 r = mat3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
     vec3 p_pos = r * vec3(in_Position * vec2(16.0, 9.0), 0.0);
-    vec3 p_time = r * vec3(0.0, 0.0, u_Time * 2.0);
+    vec3 p_time = r * vec3(0.0, 0.0, u_time * 2.0);
 
     /* Noise sampling points for water */
     water[0] = p_pos / 2.0 + p_time;
@@ -28,7 +28,7 @@ void main(void)
     water[3] = p_pos / 16.0 + p_time;
 
     /* Noise sampling points for fire */
-    p_pos = 16.0 * p_pos - r * vec3(0.0, mod289(u_Time) * 128.0, 0.0);
+    p_pos = 16.0 * p_pos - r * vec3(0.0, mod289(u_time) * 128.0, 0.0);
     fire[0] = p_pos / 2.0 + p_time * 2.0;
     fire[1] = p_pos / 4.0 + p_time * 1.5;
     fire[2] = p_pos / 8.0 + p_time;
@@ -36,7 +36,7 @@ void main(void)
 
     /* Pass rotated screen coordinates */
     pass_Position.xy = in_Position;
-    mat2 rot = mat2(cos(u_Time), sin(u_Time), -sin(u_Time), cos(u_Time));
+    mat2 rot = mat2(cos(u_time), sin(u_time), -sin(u_time), cos(u_time));
     pass_Position.zw = rot * in_Position;
 
     gl_Position = vec4(in_Position, 0.0, 1.0);
@@ -50,7 +50,7 @@ void main(void)
 precision highp float;
 #endif
 
-uniform float u_Time;
+uniform float u_time;
 
 varying vec4 pass_Position;
 varying vec3 water[4];
@@ -92,7 +92,7 @@ float noise3d(vec3 p)
 void main(void)
 {
     /* Dither the transition between water and fire */
-    float test = pass_Position.z * pass_Position.w + 1.5 * sin(u_Time);
+    float test = pass_Position.z * pass_Position.w + 1.5 * sin(u_time);
     vec2 d = vec2(16.0, 9.0) * pass_Position.xy;
     test += 0.5 * (length(fract(d) - 0.5) - length(fract(d + 0.5) - 0.5));
 
@@ -153,7 +153,7 @@ float mod289(float x)
 }
 
 void main(float2 in_Position : POSITION,
-          uniform float u_Time,
+          uniform float u_time,
           out float4 out_Position : POSITION,
           out float4 pass_Position : TEXCOORD0,
           out float3 water[4] : TEXCOORD1,
@@ -161,7 +161,7 @@ void main(float2 in_Position : POSITION,
 {
     float3x3 r = float3x3(0.36, 0.48, -0.8, -0.8, 0.60, 0.0, 0.48, 0.64, 0.60);
     float3 p_pos = mul(r, float3(in_Position * float2(16.0, 9.0), 0.0));
-    float3 p_time = mul(r, float3(0.0, 0.0, u_Time * 2.0));
+    float3 p_time = mul(r, float3(0.0, 0.0, u_time * 2.0));
 
     /* Noise sampling points for water */
     water[0] = p_pos / 2.0 + p_time;
@@ -170,7 +170,7 @@ void main(float2 in_Position : POSITION,
     water[3] = p_pos / 16.0 + p_time;
 
     /* Noise sampling points for fire */
-    p_pos = 16.0 * p_pos - mul(r, float3(0.0, mod289(u_Time) * 128.0, 0.0));
+    p_pos = 16.0 * p_pos - mul(r, float3(0.0, mod289(u_time) * 128.0, 0.0));
     fire[0] = p_pos / 2.0 + p_time * 2.0;
     fire[1] = p_pos / 4.0 + p_time * 1.5;
     fire[2] = p_pos / 8.0 + p_time;
@@ -178,7 +178,7 @@ void main(float2 in_Position : POSITION,
 
     /* Pass rotated screen coordinates */
     pass_Position.xy = in_Position;
-    float2x2 rot = float2x2(cos(u_Time), sin(u_Time), -sin(u_Time), cos(u_Time));
+    float2x2 rot = float2x2(cos(u_time), sin(u_time), -sin(u_time), cos(u_time));
     pass_Position.zw = mul(rot, in_Position);
 
     out_Position = float4(in_Position, 0.0, 1.0);
@@ -222,11 +222,11 @@ float noise3d(float3 p)
 void main(in float4 pass_Position : TEXCOORD0,
           in float3 water[4] : TEXCOORD1,
           in float3 fire[4] : TEXCOORD5,
-          uniform float u_Time,
+          uniform float u_time,
           out float4 out_FragColor : COLOR)
 {
     /* Dither the transition between water and fire */
-    float test = pass_Position.z * pass_Position.w + 1.5 * sin(u_Time);
+    float test = pass_Position.z * pass_Position.w + 1.5 * sin(u_time);
     float2 d = float2(16.0, 9.0) * pass_Position.xy;
     test += 0.5 * (length(frac(d) - 0.5) - length(frac(d + 0.5) - 0.5));
 
