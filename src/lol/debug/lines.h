@@ -24,6 +24,12 @@ namespace lol
 namespace Debug
 {
 
+//This func MUST be specialized
+template<typename T> void Draw(T& x, vec4 color)
+{
+    ASSERT(0);
+}
+
 void DrawLine(vec3 a, vec3 b, vec4 color);
 void DrawBox(vec3 a, vec3 b, vec4 color);
 void DrawViewProj(mat4 view_proj, vec4 color);
