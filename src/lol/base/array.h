@@ -26,6 +26,8 @@
 namespace lol
 {
 
+#define INDEX_NONE -1
+
 /*
  * The base array type.
  *
@@ -167,9 +169,68 @@ public:
         return *this;
     }
 
+    inline ArrayBase& operator>>(T const &x)
+    {
+        RemoveItem(x);
+        return *this;
+    }
+
     inline void Push(T const &x)
     {
         *this << x;
+    }
+
+    inline bool PushUnique(T const &x)
+    {
+        int idx = Find(x);
+        if (idx == INDEX_NONE)
+        {
+            Push(x);
+            return true;
+        }
+        return false;
+    }
+
+    inline int Find(T const &x)
+    {
+        for (int i = 0; i < m_count; ++i)
+            if (x == m_data[i])
+                return i;
+        return INDEX_NONE;
+    }
+
+    bool RemoveItem(T const &x)
+    {
+        int idx = Find(x);
+        if (idx != INDEX_NONE)
+        {
+            Remove(idx);
+            return true;
+        }
+        return false;
+    }
+
+    bool RemoveSwapItem(T const &x)
+    {
+        int idx = Find(x);
+        if (idx != INDEX_NONE)
+        {
+            RemoveSwap(idx);
+            return true;
+        }
+        return false;
+    }
+
+    bool SwapItem(T const &x1, T const &x2)
+    {
+        int idx1 = Find(x1);
+        int idx2 = Find(x2);
+        if (idx1 != INDEX_NONE && idx2 != INDEX_NONE)
+        {
+            Swap(idx1, idx2);
+            return true;
+        }
+        return false;
     }
 
     inline T Pop()
