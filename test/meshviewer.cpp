@@ -543,7 +543,9 @@ public:
         }
         float screen_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                                  max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
-        float z_dist = m_camera->m_target_distance /*length(m_camera->m_position)*/ + max(local_min_max[0].z, local_min_max[1].z);
+        float z_dist = //m_camera->m_target_distance
+            length(m_camera->m_position)
+            + max(local_min_max[0].z, local_min_max[1].z);
 
         vec2 screen_offset = vec2(0.f, -(screen_min_max[1].y + screen_min_max[0].y) * .5f);
         m_screen_offset = damp(m_screen_offset, screen_offset, .9f, seconds);
