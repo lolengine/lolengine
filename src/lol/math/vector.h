@@ -251,11 +251,23 @@ template <typename T> struct Vec2 : BVec2<T>
 
     LOL_MEMBER_OPS(Vec2, x)
 
-    static const Vec2<T> mone;
+    //Constants: n post-fix is negative values
+    static const Vec2<T> onen;
     static const Vec2<T> one;
     static const Vec2<T> zero;
     static const Vec2<T> axis_x;
     static const Vec2<T> axis_y;
+    static const Vec2<T> axis_xn;
+    static const Vec2<T> axis_yn;
+    //Pos values
+    static const Vec2<T> v11;
+    static const Vec2<T> v00;
+    static const Vec2<T> v01;
+    static const Vec2<T> v10;
+    //Neg values
+    static const Vec2<T> v00n;
+    static const Vec2<T> v01n;
+    static const Vec2<T> v10n;
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
@@ -526,12 +538,33 @@ template <typename T> struct Vec3 : BVec3<T>
 
     LOL_MEMBER_OPS(Vec3, x)
 
-    static const Vec3<T> mone;
+    //Constants: n post-fix is negative values
+    static const Vec3<T> onen;
     static const Vec3<T> one;
     static const Vec3<T> zero;
     static const Vec3<T> axis_x;
     static const Vec3<T> axis_y;
     static const Vec3<T> axis_z;
+    static const Vec3<T> axis_xn;
+    static const Vec3<T> axis_yn;
+    static const Vec3<T> axis_zn;
+    //Pos values
+    static const Vec3<T> v111;
+    static const Vec3<T> v000;
+    static const Vec3<T> v100;
+    static const Vec3<T> v010;
+    static const Vec3<T> v001;
+    static const Vec3<T> v110;
+    static const Vec3<T> v101;
+    static const Vec3<T> v011;
+    //Neg values
+    static const Vec3<T> v000n;
+    static const Vec3<T> v100n;
+    static const Vec3<T> v010n;
+    static const Vec3<T> v001n;
+    static const Vec3<T> v110n;
+    static const Vec3<T> v101n;
+    static const Vec3<T> v011n;
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
@@ -950,13 +983,51 @@ template <typename T> struct Vec4 : BVec4<T>
 
     LOL_MEMBER_OPS(Vec4, x)
 
-    static const Vec4<T> mone;
+    //Constants: n post-fix is negative values
+    static const Vec4<T> onen;
     static const Vec4<T> one;
     static const Vec4<T> zero;
     static const Vec4<T> axis_x;
     static const Vec4<T> axis_y;
     static const Vec4<T> axis_z;
     static const Vec4<T> axis_w;
+    static const Vec4<T> axis_xn;
+    static const Vec4<T> axis_yn;
+    static const Vec4<T> axis_zn;
+    static const Vec4<T> axis_wn;
+    //Pos values
+    static const Vec4<T> v1111; //( 1, 1, 1, 1)
+    static const Vec4<T> v0000; //( 0, 0, 0, 0)
+    static const Vec4<T> v1000; //( 1, 0, 0, 0)
+    static const Vec4<T> v0100; //( 0, 1, 0, 0)
+    static const Vec4<T> v0010; //( 0, 0, 1, 0)
+    static const Vec4<T> v0001; //( 0, 0, 0, 1)
+    static const Vec4<T> v1100; //( 1, 1, 0, 0)
+    static const Vec4<T> v0110; //( 0, 1, 1, 0)
+    static const Vec4<T> v0011; //( 0, 0, 1, 1)
+    static const Vec4<T> v1010; //( 1, 0, 1, 0)
+    static const Vec4<T> v0101; //( 0, 1, 0, 1)
+    static const Vec4<T> v1001; //( 1, 0, 0, 1)
+    static const Vec4<T> v0111; //( 0, 1, 1, 1)
+    static const Vec4<T> v1011; //( 1, 0, 1, 1)
+    static const Vec4<T> v1101; //( 1, 1, 0, 1)
+    static const Vec4<T> v1110; //( 1, 1, 1, 0)
+    //Neg values
+    static const Vec4<T> v0000n;//(-1,-1,-1,-1)
+    static const Vec4<T> v1000n;//( 1,-1,-1,-1)
+    static const Vec4<T> v0100n;//(-1, 1,-1,-1)
+    static const Vec4<T> v0010n;//(-1,-1, 1,-1)
+    static const Vec4<T> v0001n;//(-1,-1,-1, 1)
+    static const Vec4<T> v1100n;//( 1, 1,-1,-1)
+    static const Vec4<T> v0110n;//(-1, 1, 1,-1)
+    static const Vec4<T> v0011n;//(-1,-1, 1, 1)
+    static const Vec4<T> v1010n;//( 1,-1, 1,-1)
+    static const Vec4<T> v0101n;//(-1, 1,-1, 1)
+    static const Vec4<T> v1001n;//( 1,-1,-1, 1)
+    static const Vec4<T> v0111n;//(-1, 1, 1, 1)
+    static const Vec4<T> v1011n;//( 1,-1, 1, 1)
+    static const Vec4<T> v1101n;//( 1, 1,-1, 1)
+    static const Vec4<T> v1110n;//( 1, 1, 1,-1)
 
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
