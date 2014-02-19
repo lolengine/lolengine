@@ -209,7 +209,7 @@ public:
         m_zoom = 0.f;
         m_zoom_mesh = 0.f;
         m_zoom_speed = 0.f;
-        m_rot = vec2(45.f, -45.f);
+        m_rot = vec2(/*45.f*/0.f, -45.f);
         m_rot_mesh = vec2::zero;
         m_rot_speed = vec2::zero;
         m_pos = vec2::zero;
@@ -501,7 +501,7 @@ public:
             vec3 light_pos = m_ssetup->m_lights[k]->GetPosition();
             mat4 world_cam = m_camera->GetView();
             light_pos = (inverse(world_cam) * vec4((world_cam * vec4(light_pos, 1.0f)).xyz * vec3::axis_z, 1.0f)).xyz;
-            tc.AddTarget(box3(vec3::mone, vec3::one) + light_pos *
+            tc.AddTarget(box3(vec3::onen, vec3::one) + light_pos *
                          ((m_ssetup->m_lights[k]->GetType() == LightType::Directional)?(-1.f):(1.f)));
         }
 
@@ -543,19 +543,22 @@ public:
         }
         float screen_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
                                  max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
-        float z_dist = length(m_camera->m_position) + max(local_min_max[0].z, local_min_max[1].z);
+        float z_dist = m_camera->m_target_distance /*length(m_camera->m_position)*/ + max(local_min_max[0].z, local_min_max[1].z);
 
         vec2 screen_offset = vec2(0.f, -(screen_min_max[1].y + screen_min_max[0].y) * .5f);
         m_screen_offset = damp(m_screen_offset, screen_offset, .9f, seconds);
 
+        float forced_zoom = m_zoom_mesh;
+
         if (cam_factor > 0.f)
         {
-            vec2 new_screen_scale = m_camera->GetScreenScale();
-            float zoom_in  = 1.f + lol::max(0.f, m_zoom_mesh);
-            float zoom_out = 1.f + lol::max(0.f, -m_zoom_mesh);
-            m_camera->SetScreenScale(max(vec2(0.001f), ((new_screen_scale * zoom_in) / (screen_ratio * zoom_out * SCREEN_LIMIT))));
+            vec2 old_sscale = m_camera->GetScreenScale();
+            float old_ssize = m_camera->GetScreenSize();
+            float zoom_in  = 1.f + lol::max(0.f, forced_zoom);
+            float zoom_out = 1.f + lol::max(0.f, -forced_zoom);
+            m_camera->SetScreenScale(max(vec2(0.001f), ((old_sscale * zoom_in) / (screen_ratio * zoom_out * SCREEN_LIMIT))));
             m_camera->SetFov(m_fov_mesh);
-            m_camera->SetScreenInfos(damp(m_camera->GetScreenSize(), max(1.f, screen_ratio * zoom_out), 1.2f, seconds));
+            m_camera->SetScreenInfos(damp(old_ssize, max(1.f, screen_ratio * zoom_out), 1.2f, seconds));
 
             vec3 posz = ((mat4::rotate(m_rot_mesh.y, vec3::axis_y) * mat4::rotate(-m_rot_mesh.x, vec3::axis_x) * vec4::axis_z)).xyz;
             vec3 newpos = posz * damp(length(m_camera->m_position), z_dist * 1.2f, .1f, seconds);
@@ -776,6 +779,67 @@ public:
             m_build_time -= seconds;
         }
 
+#define NORMAL_USAGE 1
+#if 0
+        PrimitiveFace NewFace;
+        NewFace.SetNormal(vec3::axis_z);
+        NewFace.SetCenter(vec3::zero);
+        int imax = 4, jmax = 4;
+        int sz = 2;
+        for (int i = 0; i < imax; ++i)
+        {
+            for (int j = 0; j < jmax; ++j)
+            {
+                NewFace.AddPolygon(vec3(ivec3(i, j, 0) * sz),
+                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz,  0, 0)),
+                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz, sz, 0)));
+                NewFace.AddPolygon(vec3(ivec3(i, j, 0) * sz),
+                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz, sz, 0)),
+                                   vec3(ivec3(i, j, 0) * sz + ivec3( 0, sz, 0)));
+            }
+        }
+        for (int i = 0; i < NewFace.m_edges.Count(); ++i)
+        {
+            Debug::DrawLine(NewFace.EV0(i) + vec3(.0f, .0f, 2.f), NewFace.EV1(i) + vec3(.0f, .0f, 2.f),
+                            NewFace.m_edges[i].m3 ? vec4(.0f, .7f, .0f, 1.f) : vec4(.7f, .0f, .0f, 1.f));
+            Debug::DrawBox(NewFace.EV0(i) + vec3(.0f, .0f, 2.f) + vec3(-.1f),
+                           NewFace.EV0(i) + vec3(.0f, .0f, 2.f) + vec3(+.1f),
+                           NewFace.m_edges[i].m3 ? vec4(.0f, .7f, .0f, 1.f) : vec4(.7f, .0f, .0f, 1.f));
+        }
+        NewFace.CleanEdges();
+        for (int i = 0; i < NewFace.m_edges.Count(); ++i)
+        {
+            Debug::DrawLine(NewFace.EV0(i), NewFace.EV1(i), vec4(vec3::zero, 1.f));
+            Debug::DrawBox(NewFace.EV0(i) + vec3(-.1f),
+                           NewFace.EV0(i) + vec3(+.1f),
+                           vec4(vec3::zero, 1.f));
+        }
+        //Try with mesh
+        PrimitiveMesh NewMesh;
+        for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
+        {
+            for (int j = 0; j < m_meshes[i].m1->m_indices.Count(); j += 3)
+            {
+                VertexData v[3] = { m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j  ]],
+                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+1]],
+                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+2]] };
+                NewMesh.AddPolygon(v[0].m_coord, v[1].m_coord, v[2].m_coord, v[0].m_normal);
+            }
+            NewMesh.CleanFaces();
+            break;
+        }
+        for (int j = 0; j < NewMesh.m_faces.Count(); ++j)
+        {
+            for (int i = 0; i < NewMesh.m_faces[j].m_edges.Count(); ++i)
+            {
+                vec3 v0 = NewMesh.m_faces[j].EV0(i) + NewMesh.m_faces[j].GetNormal() * .4f;
+                vec3 v1 = NewMesh.m_faces[j].EV1(i) + NewMesh.m_faces[j].GetNormal() * .4f;
+                Debug::DrawLine(v0, v1, vec4(vec3::zero, 1.f));
+                Debug::DrawBox(v0 + vec3(-.1f), v0 + vec3(+.1f), vec4(vec3::zero, 1.f));
+            }
+        }
+
+#elif NORMAL_USAGE
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);
         mat4 save_proj = m_camera->GetProjection();
@@ -855,6 +919,7 @@ public:
             }
             m_camera->SetProjection(save_proj);
         }
+#endif //NORMAL_USAGE
 
 #if 0 //Debug normal draw
         for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
