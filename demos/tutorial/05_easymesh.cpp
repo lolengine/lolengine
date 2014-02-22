@@ -18,6 +18,11 @@
 using namespace std;
 using namespace lol;
 
+#define USE_CUSTOM_SHADER 1
+#if USE_CUSTOM_SHADER
+LOLFX_RESOURCE_DECLARE(shiny);
+#endif //USE_CUSTOM_SHADER
+
 class EasyMeshTutorial : public WorldEntity
 {
 public:
@@ -113,10 +118,27 @@ public:
 
         if (!m_ready)
         {
-            g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+#if USE_CUSTOM_SHADER
+            //Custom Shader: Init the shader
+            m_custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+            // any other shader stuf here (Get uniform, mostly, and set texture)
+#endif //USE_CUSTOM_SHADER
 
+            g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
             for (int i = 0; i < m_gears.Count(); i++)
+            {
+#if USE_CUSTOM_SHADER
+                //Custom shader, Convert by setuping a shaderData with the vertex useage.
+                //DefaultShaderData is only a basic class, if needed, don't hesitate to create your own
+                m_gears[i].m1.MeshConvert(new DefaultShaderData(
+                                            ((1 << VertexUsage::Position) |
+                                             (1 << VertexUsage::Normal)   |
+                                             (1 << VertexUsage::Color)),
+                                            m_custom_shader, false));
+#else //USE_CUSTOM_SHADER
                 m_gears[i].m1.MeshConvert();
+#endif //USE_CUSTOM_SHADER
+            }   
             m_ready = true;
         }
 
@@ -125,6 +147,7 @@ public:
     }
 
 private:
+    Shader* m_custom_shader;
     Array<EasyMesh, mat4, float> m_gears;
     float m_angle;
     mat4 m_mat;
