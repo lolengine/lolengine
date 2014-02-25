@@ -22,6 +22,21 @@ namespace lol
 
 LOLUNIT_FIXTURE(TrigTest)
 {
+    LOLUNIT_TEST(AngleConversions)
+    {
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(D_PI, radians(180.0), 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(D_PI_2, radians(90.0), 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(F_PI, radians(180.0f), 1e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(F_PI_2, radians(90.0f), 1e-5f);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(180.0, degrees(D_PI), 1e-5);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(90.0, degrees(D_PI_2), 1e-5);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(180.0f, degrees(F_PI), 1e-5f);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(90.0f, degrees(F_PI_2), 1e-5f);
+    }
+
     LOLUNIT_TEST(Sin)
     {
         using std::fabs;

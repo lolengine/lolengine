@@ -125,6 +125,8 @@ public:
     /* Functions inherited from GLSL */
     template<int K> friend Real<K> abs(Real<K> const &x);
     template<int K> friend Real<K> fract(Real<K> const &x);
+    template<int K> friend Real<K> degrees(Real<K> const &x);
+    template<int K> friend Real<K> radians(Real<K> const &x);
 
     void hexprint() const;
     void print(int ndigits = 150) const;
@@ -276,6 +278,8 @@ template<int K> Real<K> round(Real<K> const &x);
 template<int K> Real<K> fmod(Real<K> const &x, Real<K> const &y);
 template<int K> Real<K> abs(Real<K> const &x);
 template<int K> Real<K> fract(Real<K> const &x);
+template<int K> Real<K> degrees(Real<K> const &x);
+template<int K> Real<K> radians(Real<K> const &x);
 
 template<> real min(real const &a, real const &b);
 template<> real max(real const &a, real const &b);
@@ -314,6 +318,8 @@ template<> real round(real const &x);
 template<> real fmod(real const &x, real const &y);
 template<> real abs(real const &x);
 template<> real fract(real const &x);
+template<> real degrees(real const &x);
+template<> real radians(real const &x);
 
 template<> void real::hexprint() const;
 template<> void real::print(int ndigits) const;

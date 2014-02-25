@@ -1399,6 +1399,24 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = lol::abs(a[n]); \
         return ret; \
+    } \
+    \
+    tprefix \
+    inline tname<type> degrees(tname<type> const &a) \
+    { \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = lol::degrees(a[n]); \
+        return ret; \
+    } \
+    \
+    tprefix \
+    inline tname<type> radians(tname<type> const &a) \
+    { \
+        tname<type> ret; \
+        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
+            ret[n] = lol::radians(a[n]); \
+        return ret; \
     }
 
 #define LOL_BINARY_NONVECTOR_FUNS(tname, tprefix, type) \
