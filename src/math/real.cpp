@@ -820,6 +820,20 @@ template<> real fract(real const &x)
     return x - floor(x);
 }
 
+template<> real degrees(real const &x)
+{
+    static real mul = real(180) * real::R_1_PI();
+
+    return x * mul;
+}
+
+template<> real radians(real const &x)
+{
+    static real mul = real::R_PI() / real(180);
+
+    return x * mul;
+}
+
 static real fast_log(real const &x)
 {
     /* This fast log method is tuned to work on the [1..2] range and

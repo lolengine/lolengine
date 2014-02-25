@@ -352,10 +352,8 @@ template<> mat4 mat4::translate(vec3 v)
 
 template<> mat2 mat2::rotate(float degrees)
 {
-    degrees *= (F_PI / 180.0f);
-
-    float st = sin(degrees);
-    float ct = cos(degrees);
+    float st = sin(radians(degrees));
+    float ct = cos(radians(degrees));
 
     mat2 ret;
 
@@ -370,10 +368,8 @@ template<> mat2 mat2::rotate(float degrees)
 
 template<> mat3 mat3::rotate(float degrees, float x, float y, float z)
 {
-    degrees *= (F_PI / 180.0f);
-
-    float st = sin(degrees);
-    float ct = cos(degrees);
+    float st = sin(radians(degrees));
+    float ct = cos(radians(degrees));
 
     float len = std::sqrt(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
@@ -489,11 +485,11 @@ template<> quat::Quat(mat4 const &m)
 
 template<> quat quat::rotate(float degrees, vec3 const &v)
 {
-    degrees *= (F_PI / 360.0f);
+    float half_angle = radians(degrees) * 0.5f;
 
-    vec3 tmp = normalize(v) * sin(degrees);
+    vec3 tmp = normalize(v) * sin(half_angle);
 
-    return quat(cos(degrees), tmp.x, tmp.y, tmp.z);
+    return quat(cos(half_angle), tmp.x, tmp.y, tmp.z);
 }
 
 template<> quat quat::rotate(float degrees, float x, float y, float z)
@@ -563,17 +559,17 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
                        1.f - 2.f * (sq(q[1 + k]) + sq(q[1 + j])));
     }
 
-    return (180.0f / F_PI / n) * ret;
+    return degrees(ret / n);
 }
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     mat3 ret;
 
-    vec3 const radians = (F_PI / 180.0f) * v;
-    float const s0 = sin(radians[0]), c0 = cos(radians[0]);
-    float const s1 = sin(radians[1]), c1 = cos(radians[1]);
-    float const s2 = sin(radians[2]), c2 = cos(radians[2]);
+    vec3 const w = radians(v);
+    float const s0 = sin(w[0]), c0 = cos(w[0]);
+    float const s1 = sin(w[1]), c1 = cos(w[1]);
+    float const s2 = sin(w[2]), c2 = cos(w[2]);
 
     /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
     float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;
@@ -616,7 +612,7 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    vec3 const half_angles = (F_PI / 360.0f) * v;
+    vec3 const half_angles = radians(v * 0.5f);
     float const s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float const s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
     float const s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);
@@ -771,9 +767,7 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
 template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
-    fov_y *= (F_PI / 180.0f);
-
-    float t2 = lol::tan(fov_y * 0.5f);
+    float t2 = lol::tan(radians(fov_y) * 0.5f);
     float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
@@ -783,8 +777,7 @@ template<> mat4 mat4::perspective(float fov_y, float width,
 template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
                                           float screen_ratio_yx, float near, float far)
 {
-    float new_fov_y = fov_y * (F_PI / 180.0f);
-    float tan_y = tanf(new_fov_y * .5f);
+    float tan_y = tanf(radians(fov_y) * .5f);
     ASSERT(tan_y > 0.000001f);
     float dist_scr = (screen_size * screen_ratio_yx * .5f) / tan_y;
 

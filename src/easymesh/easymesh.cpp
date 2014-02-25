@@ -1450,7 +1450,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 mat = mat3::rotate(asin(1.f / sqrt(2.f + phi)) * (180.f / F_PI),
+    mat3 mat = mat3::rotate(degrees(asin(1.f / sqrt(2.f + phi))),
                             vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {

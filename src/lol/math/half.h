@@ -124,6 +124,8 @@ static inline float fmod(half a, half b)
     return fmod((float)a, (float)b);
 }
 static inline float fract(half a) { return fract((float)a); }
+static inline float degrees(half a) { return degrees((float)a); }
+static inline float radians(half a) { return radians((float)a); }
 static inline half abs(half a) { return half::makebits(a.bits & 0x7fffu); }
 
 static inline half clamp(half x, half a, half b)
