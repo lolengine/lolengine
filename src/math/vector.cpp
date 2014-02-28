@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -499,10 +499,29 @@ template<> quat quat::rotate(float degrees, float x, float y, float z)
 
 template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
 {
-    vec3 v = cross(src, dst);
-    float d = dot(src, dst) + lol::sqrt(sqlength(src) * sqlength(dst));
+    /* Algorithm directly taken from Sam Hocevar's article "Quaternion from
+     * two vectors: the final version".
+     * http://lolengine.net/blog/2014/02/24/quaternion-from-two-vectors-final */
+    float magnitude = lol::sqrt(sqlength(src) * sqlength(dst));
+    float real_part = magnitude + dot(src, dst);
+    vec3 w;
 
-    return normalize(quat(d, v.x, v.y, v.z));
+    if (real_part < 1.e-6f * magnitude)
+    {
+        /* If src and dst are exactly opposite, rotate 180 degrees
+         * around an arbitrary orthogonal axis. Axis normalisation
+         * can happen later, when we normalise the quaternion. */
+        real_part = 0.0f;
+        w = abs(src.x) > abs(src.z) ? vec3(-src.y, src.x, 0.f)
+                                    : vec3(0.f, -src.z, src.y);
+    }
+    else
+    {
+        /* Otherwise, build quaternion the standard way. */
+        w = cross(src, dst);
+    }
+
+    return normalize(quat(real_part, w.x, w.y, w.z));
 }
 
 template<> quat slerp(quat const &qa, quat const &qb, float f)

@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -20,7 +20,30 @@ namespace lol
 
 LOLUNIT_FIXTURE(QuaternionTest)
 {
-    void SetUp() {}
+    void SetUp()
+    {
+        /* Generate identity quaternions */
+        m_vectorpairs.Push(vec3::axis_x, vec3::axis_x);
+        m_vectorpairs.Push(2.f * vec3::axis_x, 3.f * vec3::axis_x);
+
+        /* Generate 90-degree rotations */
+        m_vectorpairs.Push(vec3::axis_x, vec3::axis_y);
+        m_vectorpairs.Push(2.f * vec3::axis_x, 3.f * vec3::axis_y);
+
+        /* Generate 180-degree rotations */
+        m_vectorpairs.Push(vec3::axis_x, -vec3::axis_x);
+        m_vectorpairs.Push(2.f * vec3::axis_x, -3.f * vec3::axis_x);
+
+        /* Fill array with random test values */
+        for (int i = 0; i < 10000; ++i)
+        {
+            vec3 v1 = lol::pow(10.f, rand(-5.f, 5.f))
+                    * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
+            vec3 v2 = lol::pow(10.f, rand(-5.f, 5.f))
+                    * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
+            m_vectorpairs.Push(v1, v2);
+        }
+    }
 
     void TearDown() {}
 
@@ -147,8 +170,8 @@ LOLUNIT_FIXTURE(QuaternionTest)
     LOLUNIT_TEST(Rotation)
     {
         /* Check that rotating 10 degrees twice means rotating 20 degrees */
-        quat a = quat::rotate(10.f, vec3(1, 0, 0));
-        quat b = quat::rotate(20.f, vec3(1, 0, 0));
+        quat a = quat::rotate(10.f, vec3::axis_x);
+        quat b = quat::rotate(20.f, vec3::axis_x);
         quat c = a * a;
 
         LOLUNIT_ASSERT_DOUBLES_EQUAL(c.w, b.w, 1e-5);
@@ -166,27 +189,62 @@ LOLUNIT_FIXTURE(QuaternionTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(e.z, d.z, 1e-5);
     }
 
+    LOLUNIT_TEST(ToAxisAngle)
+    {
+        quat q = quat::rotate(10.f, vec3::axis_x);
+        vec3 axis = q.axis();
+        float angle = q.angle();
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(1.0, axis.x, 1e-6);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(0.0, axis.y, 1e-6);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(0.0, axis.z, 1e-6);
+
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(10.0, (double)degrees(angle), 1e-6);
+    }
+
     LOLUNIT_TEST(FromTwoVectors)
     {
-        vec3 a(1.f, 2.f, 3.f);
-        vec3 b(4.f, 5.f, 6.f);
-        float ratio = length(a) / length(b);
+        for (int i = 0; i < m_vectorpairs.Count(); ++i)
+        {
+            vec3 a = m_vectorpairs[i].m1;
+            vec3 b = m_vectorpairs[i].m2;
+            vec3 da = normalize(a);
+            vec3 db = normalize(b);
 
-        quat q = quat::rotate(a, b);
+            quat q = quat::rotate(a, b);
 
-        /* Check that q transforms a into b */
-        vec3 c = q.transform(a);
+            /* Check that q is a unit quaternion */
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(1.0, (double)norm(q), 1e-5);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.x, b.x * ratio, 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.y, b.y * ratio, 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(c.z, b.z * ratio, 1e-5);
+            /* Check that q transforms da into db */
+            vec3 c = q.transform(da);
 
-        /* Check that ~q transforms b into a */
-        vec3 d = (~q).transform(b);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(c.x, db.x, 1e-5);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(c.y, db.y, 1e-5);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(c.z, db.z, 1e-5);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.x, a.x / ratio, 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.y, a.y / ratio, 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z, a.z / ratio, 1e-5);
+            /* Check that ~q transforms db into da */
+            vec3 d = (~q).transform(db);
+
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(d.x, da.x, 1e-5);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(d.y, da.y, 1e-5);
+            LOLUNIT_ASSERT_DOUBLES_EQUAL(d.z, da.z, 1e-5);
+
+            if (distance(da, db) > 1e-6f)
+            {
+                /* If da and db differ, check that the rotation axis is normal to both
+                 * vectors, which is only true if the rotation uses the shortest path. */
+                vec3 axis = q.axis();
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(0.0, (double)dot(axis, da), 1e-5);
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(0.0, (double)dot(axis, db), 1e-5);
+            }
+            else
+            {
+                /* If da and db are roughly the same, check that the rotation angle
+                 * is zero. */
+                LOLUNIT_ASSERT_DOUBLES_EQUAL(0.0, (double)q.angle(), 1e-5);
+            }
+        }
     }
 
     LOLUNIT_TEST(FromEulerNorm)
@@ -476,6 +534,9 @@ LOLUNIT_FIXTURE(QuaternionTest)
             LOLUNIT_ASSERT_DOUBLES_EQUAL(p1.z, p0.z, 1e-4);
         }
     }
+
+private:
+    Array<vec3, vec3> m_vectorpairs;
 };
 
 } /* namespace lol */
