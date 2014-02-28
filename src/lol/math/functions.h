@@ -100,14 +100,14 @@ static inline ldouble degrees(ldouble radians)
     return radians * (180.0L / LD_PI);
 }
 
-static inline int8_t degrees(int8_t x) { return degrees((float)x); }
-static inline uint8_t degrees(uint8_t x) { return degrees((float)x); }
-static inline int16_t degrees(int16_t x) { return degrees((float)x); }
-static inline uint16_t degrees(uint16_t x) { return degrees((float)x); }
-static inline int32_t degrees(int32_t x) { return degrees((double)x); }
-static inline uint32_t degrees(uint32_t x) { return degrees((double)x); }
-static inline int64_t degrees(int64_t x) { return degrees((ldouble)x); }
-static inline uint64_t degrees(uint64_t x) { return degrees((ldouble)x); }
+static inline int8_t degrees(int8_t x)      { return (int8_t)  degrees((float)x); }
+static inline uint8_t degrees(uint8_t x)    { return (uint8_t) degrees((float)x); }
+static inline int16_t degrees(int16_t x)    { return (int16_t) degrees((float)x); }
+static inline uint16_t degrees(uint16_t x)  { return (uint16_t)degrees((float)x); }
+static inline int32_t degrees(int32_t x)    { return (int32_t) degrees((double)x); }
+static inline uint32_t degrees(uint32_t x)  { return (uint32_t)degrees((double)x); }
+static inline int64_t degrees(int64_t x)    { return (int64_t) degrees((ldouble)x); }
+static inline uint64_t degrees(uint64_t x)  { return (uint64_t)degrees((ldouble)x); }
 
 static inline float radians(float degrees)
 {
@@ -124,14 +124,14 @@ static inline ldouble radians(ldouble degrees)
     return degrees * (LD_PI / 180.0L);
 }
 
-static inline int8_t radians(int8_t x) { return radians((float)x); }
-static inline uint8_t radians(uint8_t x) { return radians((float)x); }
-static inline int16_t radians(int16_t x) { return radians((float)x); }
-static inline uint16_t radians(uint16_t x) { return radians((float)x); }
-static inline int32_t radians(int32_t x) { return radians((double)x); }
-static inline uint32_t radians(uint32_t x) { return radians((double)x); }
-static inline int64_t radians(int64_t x) { return radians((ldouble)x); }
-static inline uint64_t radians(uint64_t x) { return radians((ldouble)x); }
+static inline int8_t radians(int8_t x)      { return (int8_t)  radians((float)x); }
+static inline uint8_t radians(uint8_t x)    { return (uint8_t) radians((float)x); }
+static inline int16_t radians(int16_t x)    { return (int16_t) radians((float)x); }
+static inline uint16_t radians(uint16_t x)  { return (uint16_t)radians((float)x); }
+static inline int32_t radians(int32_t x)    { return (int32_t) radians((double)x); }
+static inline uint32_t radians(uint32_t x)  { return (uint32_t)radians((double)x); }
+static inline int64_t radians(int64_t x)    { return (int64_t) radians((ldouble)x); }
+static inline uint64_t radians(uint64_t x)  { return (uint64_t)radians((ldouble)x); }
 
 static inline float lerp(float const &a, float const &b, float const &x)
 {
