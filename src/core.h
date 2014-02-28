@@ -95,11 +95,12 @@
 
 /* Ensure we have ssize_t */
 #if defined ssize_t
-    /* do nothing */
+    /* Do nothing, someone knows better than us it seems */
 #elif HAVE_SYS_TYPES_H
 #   include <sys/types.h>
 #elif _MSC_VER /* Visual Studio compiler */
 #   include <BaseTsd.h>
+#   define _MSC_STDINT_H_
 typedef SSIZE_T ssize_t;
 #endif
 
