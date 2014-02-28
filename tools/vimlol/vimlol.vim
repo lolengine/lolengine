@@ -55,6 +55,11 @@ au Syntax cpp
    \ syn match cConstant
    \ "\<\(F\|D\|LD\)_\(PI\|PI_[234]\|[12]_PI\|SQRT_[23]\|SQRT_1_2\)\>"
 
+" Global keywords
+au Syntax cpp
+  \ syn keyword cConstant
+  \ UNUSED ASSERT
+
 
 """
 """ LolFx language handler
