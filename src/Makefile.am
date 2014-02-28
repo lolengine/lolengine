@@ -41,6 +41,9 @@ liblolcore_headers = \
     lol/math/geometry.h lol/math/interp.h lol/math/rand.h \
     lol/math/constants.h \
     \
+    lol/algorithm/all.h \
+    lol/algorithm/sort.h \
+    \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \
     lol/sys/timer.h \
