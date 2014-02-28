@@ -31,6 +31,9 @@
     <Filter Include="lol">
       <UniqueIdentifier>{0edcf1a5-3c9c-4425-918c-aa2cbebc51c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lol\algorithm">
+      <UniqueIdentifier>{39f6f872-186f-48af-8e87-bcceb06b1b21}</UniqueIdentifier>
+    </Filter>
     <Filter Include="lol\image">
       <UniqueIdentifier>{f25b3187-b24c-469a-b038-5a968eaa83f6}</UniqueIdentifier>
     </Filter>
@@ -356,6 +359,12 @@
     </ClInclude>
     <ClInclude Include="platform\sdl\sdlapp.h">
       <Filter>platform\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\algorithm\all.h">
+      <Filter>lol\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\algorithm\sort.h">
+      <Filter>lol\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\color.h">
       <Filter>lol\image</Filter>

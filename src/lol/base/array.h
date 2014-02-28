@@ -1,7 +1,8 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
+//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -331,81 +332,10 @@ public:
         m_reserved = toreserve;
     }
 
-    void Sort(int sort)
-    {
-        int s = 0;
-        //Classic bubble
-        if (s++ == sort)
-        {
-            int d = 1;
-            for (int i = 0; i < Count() - 1; i = lol::max(i + d, 0))
-            {
-                if (m_data[i] < m_data[i + 1] || i <= 0)
-                    d = 1;
-                if (m_data[i + 1] < m_data[i])
-                {
-                    Swap(i, i + 1);
-                    d = -1;
-                }
-            }
-        }
-        //Quick sort with swap
-        else if (s++ == sort)
-        {
-            SortQuickSwap(0, Count());
-        }
-    }
-    void SortQuickSwap(int start, int max)
-    {
-        int m[3] = { start + rand(max - start),
-                     start + rand(max - start),
-                     start + rand(max - start) };
-        int i = 0;
-        while (i < 2)
-        {
-            if (m_data[m[i+1]] < m_data[m[i]])
-            {
-                int mt = m[i+1];
-                m[i+1] = m[i];
-                m[i] = mt;
-                i = 0;
-            }
-            else
-                i++;
-        }
-        //actual stuff
-        T median = m_data[m[1]];
-        int i0 = start;
-        int i1 = max - 1;
-        bool swap = false;
-        while (i0 < i1)
-        {
-            if (m_data[i0] >= median &&
-                m_data[i1] < median)
-            {
-                Swap(i0, i1);
-                i0++;
-                i1--;
-                swap = true;
-            }
-            else
-            {
-                if (m_data[i0] < median)
-                    i0++;
-                if (m_data[i1] >= median)
-                    i1--;
-            }
-        }
-        if (max - start == 1 || !swap)
-            return;
-        if (start < i0)
-            SortQuickSwap(start, i0);
-        if (i0 < max)
-            SortQuickSwap(i0, max);
-    }
+    void Sort(int sort);
+    void SortQuickSwap(int start, int stop);
 
 public:
-
     inline int Count() const { return m_count; }
     inline int Bytes() const { return m_count * sizeof(Element); }
 

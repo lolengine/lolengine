@@ -269,6 +269,8 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
+    <ClInclude Include="lol\algorithm\all.h" />
+    <ClInclude Include="lol\algorithm\sort.h" />
     <ClInclude Include="lol\base\all.h" />
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
