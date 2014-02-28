@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -1128,6 +1128,24 @@ template <typename T> struct Quat
     inline Vec4<T> operator *(Vec4<T> const &v) const
     {
         return transform(v);
+    }
+
+    inline Vec3<T> axis()
+    {
+        Vec3<T> v(x, y, z);
+        T n2 = sqlength(v);
+        if (n2 <= (T)1e-6)
+            return Vec3<T>::axis_x;
+        return normalize(v);
+    }
+
+    inline T angle()
+    {
+        Vec3<T> v(x, y, z);
+        T n2 = sqlength(v);
+        if (n2 <= (T)1e-6)
+            return (T)0;
+        return (T)2 * lol::atan2(lol::sqrt(n2), w);
     }
 
     template<typename U>
