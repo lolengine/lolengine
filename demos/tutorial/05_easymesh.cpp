@@ -138,7 +138,7 @@ public:
 #else //USE_CUSTOM_SHADER
                 m_gears[i].m1.MeshConvert();
 #endif //USE_CUSTOM_SHADER
-            }   
+            }
             m_ready = true;
         }
 
