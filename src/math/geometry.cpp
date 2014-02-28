@@ -25,33 +25,37 @@ using namespace std;
 namespace lol
 {
     //Projects Point on Plane : Normal must be given normalized. returns point on plane.
-    vec3 ProjPointOnPlane(vec3 const &point, vec3 const &planeP, vec3 const &planeN)
+    vec3 ProjectPointOnPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal)
     {
-        vec3 o2p = point - planeP;
-        float d = -dot(o2p, planeN);
-        return point + d * planeN;
+        vec3 o2p = proj_point - plane_point;
+        float d = -dot(o2p, plane_normal);
+        return proj_point + d * plane_normal;
+    }
+    //Line
+    vec3 ProjectPointOnRay(vec3 const &proj_point, vec3 const &ray_point, vec3 const &ray_dir)
+    {
+        return ray_point + ray_dir * dot(proj_point - ray_point, ray_dir);
     }
 
     //gets the dist from a Point to a Plane : Normal must be given normalized. returns distance.
-    float PointDistToPlane(vec3 const &point, vec3 const &planeP, vec3 const &planeN)
+    float PointDistToPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal)
     {
-        vec3 o2p = point - planeP;
-        return abs(dot(o2p, planeN));
+        return abs(dot(proj_point - plane_point, plane_normal));
     }
 
-    // Line/triangle : sets vIsec as the intersection point & return true if ok.
-    bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD,
-                                 vec3 const &triV0, vec3 const &triV1, vec3 const &triV2,
-                                 vec3 &vIsec)
+    // Line/triangle : sets isec_point as the intersection point & return true if ok.
+    bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
+                           vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
+                           vec3 &isec_point)
     {
         vec3 v01, v02, h, v0P, q;
         float a, f, triU, triV;
 
         //
-        v01 = triV1 - triV0;
-        v02 = triV2 - triV0;
+        v01 = tri_p1 - tri_p0;
+        v02 = tri_p2 - tri_p0;
 
-        h = cross(rayD, v02);
+        h = cross(ray_dir, v02);
         a = dot(v01, h);
 
         //rayDir is coplanar to the triangle, exit.
@@ -59,7 +63,7 @@ namespace lol
             return false;
 
         f = 1 / a;
-        v0P = rayP - triV0;
+        v0P = ray_point - tri_p0;
         triU = f * (dot(v0P, h));
 
         //point is supposed to have an U on the segment v01
@@ -67,7 +71,7 @@ namespace lol
             return false;
 
         q = cross(v0P, v01);
-        triV = f * dot(rayD, q);
+        triV = f * dot(ray_dir, q);
 
         //point is not in the triangle
         if (triV < -CSG_EPSILON || triU + triV > 1.0)
@@ -79,7 +83,7 @@ namespace lol
 
         if (t > CSG_EPSILON) // ray intersection
         {
-            vIsec = triV0 + v01 * triU + v02 * triV;
+            isec_point = tri_p0 + v01 * triU + v02 * triV;
             return true;
         }
         else // this means that there is a line intersection
@@ -88,9 +92,9 @@ namespace lol
     }
 
     // Triangle/Triangle
-    bool TriangleIsectTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02, //triangle 0
+    bool TestTriangleVsTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02, //triangle 0
                                       vec3 const &v10, vec3 const &v11, vec3 const &v12, //triangle 1
-                                      vec3 &iP00, vec3 &iP10) //triangle intersection, iPx means gives the actual intersection points.
+                                      vec3 &ip00, vec3 &ip10) //triangle intersection, iPx means gives the actual intersection points.
     {
         vec3 isec[2] = { vec3(0, 0, 0), vec3(0, 0, 0) };
         vec3 triV[6] = { v00, v01, v02,
@@ -98,7 +102,7 @@ namespace lol
         vec3 triD[6] = { v01 - v00, v02 - v01, v00 - v02,
                          v11 - v10, v12 - v11, v10 - v12 };
         int isecIdx = 0;
-        vec3 vIsec(0);
+        vec3 isec_point(0);
 
         //Check the normal before doing any other calculations
         vec3 plane_norm[2] = { cross(normalize(triD[0]), normalize(triD[1])),
@@ -129,7 +133,7 @@ namespace lol
             {
                 int pIdx = j + i * 3;
                 int tIdx = (1 - i) * 3;
-                if (RayIsectTriangle(triV[pIdx], triD[pIdx],
+                if (TestRayVsTriangle(triV[pIdx], triD[pIdx],
                                      triV[tIdx + 0], triV[tIdx + 1], triV[tIdx + 2],
                                      isec[isecIdx]))
                 {
@@ -160,8 +164,8 @@ namespace lol
 
         if (isecIdx >= 2)
         {
-            iP00 = isec[0];
-            iP10 = isec[1];
+            ip00 = isec[0];
+            ip10 = isec[1];
             return true;
         }
         return false;
@@ -170,7 +174,7 @@ namespace lol
     //Ray/Line : returns one of the RAY_ISECT_* defines.
     int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01,
                            vec3 const &rayP10, vec3 const &rayP11,
-                           vec3 &vIsec)
+                           vec3 &isec_point)
     {
         vec3 rayD0 = rayP01 - rayP00;
         float rayS0 = length(rayD0);
@@ -197,13 +201,13 @@ namespace lol
 
         if (sqlength(isec0 - isec1) < CSG_EPSILON) //ray intersection
         {
-            vIsec = (isec0 + isec0) * .5f;
-            float d0 = (length(rayP01 - vIsec) < CSG_EPSILON || length(rayP00 - vIsec) < CSG_EPSILON)?
+            isec_point = (isec0 + isec0) * .5f;
+            float d0 = (length(rayP01 - isec_point) < CSG_EPSILON || length(rayP00 - isec_point) < CSG_EPSILON)?
                         (-1.0f):
-                        (dot(rayP00 - vIsec, rayP01 - vIsec));
-            float d1 = (length(rayP10 - vIsec) < CSG_EPSILON || length(rayP11 - vIsec) < CSG_EPSILON)?
+                        (dot(rayP00 - isec_point, rayP01 - isec_point));
+            float d1 = (length(rayP10 - isec_point) < CSG_EPSILON || length(rayP11 - isec_point) < CSG_EPSILON)?
                         (-1.0f):
-                        (dot(rayP10 - vIsec, rayP11 - vIsec));
+                        (dot(rayP10 - isec_point, rayP11 - isec_point));
 
             //if the dot is negative, your point is in each ray, so say OK.
             if (d0 < .0f && d1 < .0f)
@@ -221,34 +225,34 @@ namespace lol
 
     //Ray/Plane : Normal must be given normalized. returns 1 if succeeded.
     bool RayIsectPlane(vec3 const &rayP0, vec3 const &rayP1,
-                              vec3 const &planeP, vec3 const &planeN,
-                              vec3 &vIsec, bool test_line_only)
+                              vec3 const &plane_point, vec3 const &plane_normal,
+                              vec3 &isec_point, bool test_line_only)
     {
         vec3 ray_dir = rayP1 - rayP0;
-        float d = dot(ray_dir, planeN);
+        float d = dot(ray_dir, plane_normal);
 
         if (d > -CSG_EPSILON && d < CSG_EPSILON)
             return false;
 
-        vec3 o2p1 = rayP1 - planeP;
-        vec3 o2p0 = rayP0 - planeP;
+        vec3 o2p1 = rayP1 - plane_point;
+        vec3 o2p0 = rayP0 - plane_point;
 
         if (!test_line_only)
         {
-            d = dot(o2p1, planeN);
-            d *= dot(o2p0, planeN);
+            d = dot(o2p1, plane_normal);
+            d *= dot(o2p0, plane_normal);
 
             //point are on the same side, so ray can intersect.
             if (d > .0f)
                 return false;
         }
 
-        float t = (dot(ProjPointOnPlane(rayP0, planeP, planeN) - rayP0, planeN)) / dot(ray_dir, planeN);
+        float t = (dot(ProjectPointOnPlane(rayP0, plane_point, plane_normal) - rayP0, plane_normal)) / dot(ray_dir, plane_normal);
 
         if (!test_line_only && (t < -CSG_EPSILON || t > 1.0f))
             return false;
 
-        vIsec = rayP0 + t * ray_dir;
+        isec_point = rayP0 + t * ray_dir;
         return true;
     }
 
@@ -262,16 +266,16 @@ namespace lol
 
         vec3 triV[3] = { v0, v1, v2 };
         int isecIdx = 0;
-        vec3 vIsec(0);
+        vec3 isec_point(0);
 
         //Two points given, so we test each triangle side to find the intersect
         isecIdx = 0;
         for (int j = 0; j < 3 && isecIdx < 2; j++)
         {
-            int Result = RayIsectRay(triV[j], triV[(j + 1) % 3], iP0, iP1, vIsec);
+            int Result = RayIsectRay(triV[j], triV[(j + 1) % 3], iP0, iP1, isec_point);
             if (Result == RAY_ISECT_P0 || Result == RAY_ISECT_ALL)
             {
-                isecV[isecIdx] = vIsec;
+                isecV[isecIdx] = isec_point;
                 isecI[isecIdx] = j;
                 isecIdx++;
             }
@@ -290,7 +294,7 @@ namespace lol
     }
 
     //--
-    bool TestPointInFrustum(const vec3& point, const mat4& frustum, vec3* result_point)
+    bool TestPointVsFrustum(const vec3& point, const mat4& frustum, vec3* result_point)
     {
         vec4 proj_point = frustum * vec4(point, 1.f);
         proj_point /= proj_point.w;

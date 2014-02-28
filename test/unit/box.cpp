@@ -30,13 +30,13 @@ LOLUNIT_FIXTURE(BoxTest)
         box2 b2(vec2(5.f, 8.f), vec2(8.f, 12.f));
         box2 b3(vec2(5.f, 11.f), vec2(8.f, 13.f));
 
-        LOLUNIT_ASSERT_EQUAL(true, BoxIsectBox(b1, b2));
-        LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b1, b3));
+        LOLUNIT_ASSERT_EQUAL(true, TestBoxVsBox(b1, b2));
+        LOLUNIT_ASSERT_EQUAL(false, TestBoxVsBox(b1, b3));
 
         box2 b4(vec2(96.f, 33.f), vec2(144.f, 129.f));
         box2 b5(vec2(264.f, 91.f), vec2(244.f, 71.f));
 
-        LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b4, b5));
+        LOLUNIT_ASSERT_EQUAL(false, TestBoxVsBox(b4, b5));
     }
 
     LOLUNIT_TEST(Box2DMove)
@@ -45,13 +45,13 @@ LOLUNIT_FIXTURE(BoxTest)
         box2 b2(vec2(2.f, 2.f), vec2(3.f, 3.f));
 
         b1 += vec2(0.6f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b1, b2));
+        LOLUNIT_ASSERT_EQUAL(false, TestBoxVsBox(b1, b2));
 
         b1 += vec2(0.6f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(true, BoxIsectBox(b1, b2));
+        LOLUNIT_ASSERT_EQUAL(true, TestBoxVsBox(b1, b2));
 
         b1 -= vec2(0.0f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(false, BoxIsectBox(b1, b2));
+        LOLUNIT_ASSERT_EQUAL(false, TestBoxVsBox(b1, b2));
     }
 };
 

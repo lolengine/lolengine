@@ -152,25 +152,43 @@ template <typename T> struct Box3
 /*
  * Helper geometry functions
  */
-
-static inline bool BoxIsectBox(box2 const &b1, box2 const &b2)
+static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
     vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
     vec2 e1 = 0.5f * (b1.B - b1.A);
     vec2 e2 = 0.5f * (b2.B - b2.A);
 
-    return abs(dist.x) < abs(e1.x) + abs(e2.x)
-        && abs(dist.y) < abs(e1.y) + abs(e2.y);
+    return abs(dist.x) <= abs(e1.x) + abs(e2.x)
+        && abs(dist.y) <= abs(e1.y) + abs(e2.y);
+}
+static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
+{
+    return TestAABBVsAABB(b1, box2(p, p));
 }
 
-bool TriangleIsectTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02,
+static inline bool TestAABBVsAABB(box3 const &b1, box3 const &b2)
+{
+    vec3 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
+    vec3 e1 = 0.5f * (b1.B - b1.A);
+    vec3 e2 = 0.5f * (b2.B - b2.A);
+
+    return abs(dist.x) <= abs(e1.x) + abs(e2.x)
+        && abs(dist.y) <= abs(e1.y) + abs(e2.y)
+        && abs(dist.z) <= abs(e1.z) + abs(e2.z);
+}
+static inline bool TestAABBVsPoint(box3 const &b1, vec3 const &p)
+{
+    return TestAABBVsAABB(b1, box3(p, p));
+}
+
+bool TestTriangleVsTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02,
                            vec3 const &v10, vec3 const &v11, vec3 const &v12,
-                           vec3 &iP00, vec3 &iP10);
+                           vec3 &ip00, vec3 &ip10);
 bool RayIsectTriangleSide(vec3 const &v0, vec3 const &v1, vec3 const &v2,
                           vec3 const &iP0, vec3 const &iP1,
                           vec3 &iV0, int &iIdx0, vec3 &iV1, int &iIdx1);
-bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD,
-                      vec3 const &triV0, vec3 const &triV1, vec3 const &triV2,
+bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
+                      vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                       vec3 &vi);
 #define RAY_ISECT_NOTHING   0
 #define RAY_ISECT_ALL       1
@@ -179,12 +197,19 @@ bool RayIsectTriangle(vec3 const &rayP, vec3 const &rayD,
 #define RAY_ISECT_P1        4
 int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01,
                 vec3 const &rayP10, vec3 const &rayP11,
-                vec3 &vIsec);
-vec3 ProjPointOnPlane(vec3 const &point, vec3 const &planeP, vec3 const &planeN);
+                vec3 &isec_point);
 bool RayIsectPlane(vec3 const &rayP0, vec3 const &rayP1,
-                   vec3 const &planeP, vec3 const &planeN,
-                   vec3 &vIsec, bool test_line_only = false);
-bool TestPointInFrustum(const vec3& point, const mat4& frustum, vec3* result_point=nullptr);
+                   vec3 const &plane_point, vec3 const &plane_normal,
+                   vec3 &isec_point, bool test_line_only = false);
+bool TestPointVsFrustum(const vec3& point, const mat4& frustum, vec3* result_point=nullptr);
+
+//Project points functions
+//Plane
+vec3 ProjectPointOnPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal);
+//Line
+vec3 ProjectPointOnRay(vec3 const &proj_point, vec3 const &ray_point, vec3 const &ray_dir);
+//Point dist to plane
+float PointDistToPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal);
 } /* namespace lol */
 
 #endif // __LOL_MATH_GEOMETRY_H__
