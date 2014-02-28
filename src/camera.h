@@ -85,7 +85,8 @@ protected:
     virtual void TickGame(float seconds);
     virtual void TickDraw(float seconds);
 
-private:
+//private:
+public:
     //Work datas
     mat4    m_view_matrix;
     mat4    m_proj_matrix;

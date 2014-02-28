@@ -23,6 +23,206 @@
 namespace lol
 {
 
+//-- Face stuff
+void PrimitiveFace::AddPolygon(vec3 v0, vec3 v1, vec3 v2)
+{
+    vec3 vp[3] = { v0, v1, v2 };
+    int  vi[3];
+
+    //Add vertices, if needed
+    for (int i = 0; i < 3; ++i)
+    {
+        vi[i] = FindVert(vp[i]);
+        if (vi[i] == -1)
+            vi[i] = AddVert(vp[i]);
+    }
+
+    //Add edges, if needed
+    for (int j = 0; j < 3; ++j)
+    {
+        bool found = false;
+        for (int i = 0; !found && i < m_edges.Count(); ++i)
+        {
+            if ((vi[j] == m_edges[i].m1 && vi[(j + 1) % 3] == m_edges[i].m2) ||
+                (vi[j] == m_edges[i].m2 && vi[(j + 1) % 3] == m_edges[i].m1))
+            {
+                found = true;
+                m_edges[i].m3 = PrimitiveEdge::OriginalFull;
+            }
+        }
+        if (!found)
+            m_edges.Push(vi[j], vi[(j + 1) % 3], PrimitiveEdge::OriginalHalf);
+    }
+}
+
+//--
+void PrimitiveFace::CleanEdges()
+{
+    Array<int> vert_num;
+
+    vert_num.Resize(m_vertices.Count());
+    //Check the vertices useage first
+    for (int i = 0; i < m_edges.Count(); ++i)
+    {
+        vert_num[EI0(i)]++;
+        vert_num[EI1(i)]++;
+    }
+    //Remove the full edges
+    for (int i = 0; i < m_edges.Count(); ++i)
+    {
+        if (m_edges[i].m3 == PrimitiveEdge::OriginalFull)
+        {
+            vert_num[EI0(i)] -= 1;
+            vert_num[EI1(i)] -= 1;
+            m_edges.Remove(i--);
+        }
+    }
+
+    //Reorder edges
+    for (int i = 0; i < m_edges.Count() - 1; ++i)
+    {
+        int starter_i;
+        //Find the starters
+        for (int j = i + 1; j < m_edges.Count(); ++j)
+        {
+            if (EI1(i) == EI1(j))
+                Swap(m_edges[j].m1, m_edges[j].m2);
+            if (EI1(i) == EI0(j))
+            {
+                if (i + 1 != j)
+                    m_edges.Swap(i + 1, j);
+                starter_i = i;
+                break;
+            }
+        }
+
+        //Change order to be ok with normal
+        if (dot(cross(EV0(i) - EV1(i), EV1(i + 1) - EV0(i + 1)), m_normal) < 0.f)
+        {
+            m_edges.Swap(i, i + 1);
+            Swap(m_edges[i].m1, m_edges[i].m2);
+            Swap(m_edges[i + 1].m1, m_edges[i + 1].m2);
+        }
+
+        //Go on with the sorting
+        if (++i < m_edges.Count() - 1)
+        {
+            for (int j = i + 1; j < m_edges.Count(); ++j)
+            {
+                if (EI1(i) == EI1(j))
+                    Swap(m_edges[j].m1, m_edges[j].m2);
+                if (EI1(i) == EI0(j))
+                {
+                    if (i + 1 != j)
+                        m_edges.Swap(i + 1, j);
+                    //We encountered a loop, push i toward the next potential edge
+                    if (EI1(i + 1) == EI0(starter_i))
+                    {
+                        i += 2;
+                        break;
+                    }
+                    //Or, we're at the end
+                    else if (++i >= m_edges.Count() - 1)
+                        break;
+                }
+            }
+        }
+    }
+
+    //Remove same direction edges
+    int starter_i = 0;
+    for (int i = 0; i < m_edges.Count() - 1; ++i)
+    {
+        int ia = i;
+        int ib = i + 1;
+        if (EI1(ia) == EI0(starter_i))
+            ib = starter_i;
+
+        if (EI1(ia) == EI0(ib) &&
+            dot(normalize(EV1(ia) - EV0(ia)), normalize(EV1(ib) - EV0(ib))) == 1.f)
+        {
+            vert_num[EI1(ia)] -= 2;
+            m_edges[ib].m1 = m_edges[ia].m1;
+            m_edges.Remove(ia);
+            i--;
+            if (EI1(ia) == EI0(starter_i))
+            {
+                i += 2;
+                starter_i = i;
+            }
+        }
+    }
+
+    //Build the new indices
+    int rem = 0;
+    for (int i = 0; i < vert_num.Count(); ++i)
+    {
+        if (vert_num[i] != 2)
+        {
+            rem++;
+            vert_num[i] = -1;
+        }
+        else
+            vert_num[i] = i - rem;
+    }
+
+    //Apply the new indices
+    for (int i = 0; rem > 0 && i < m_edges.Count(); ++i)
+    {
+        m_edges[i].m1 = vert_num[EI0(i)];
+        m_edges[i].m2 = vert_num[EI1(i)];
+    }
+
+    //Remove the surnumeral vertices
+    for (int i = m_vertices.Count() - 1; i >= 0; --i)
+        if (vert_num[i] == -1)
+            m_vertices.Remove(i);
+}
+
+//Edge functions
+int PrimitiveFace::FindVert(vec3 vertex)
+{
+    for (int i = 0; i < m_vertices.Count(); ++i)
+        if (length(m_vertices[i] - vertex) < .00001f)
+            return i;
+    return -1;
+}
+
+//--
+int PrimitiveFace::AddVert(vec3 vertex)
+{
+    m_vertices.Push(vertex);
+    return m_vertices.Count() - 1;
+}
+
+//--
+void PrimitiveMesh::AddPolygon(vec3 v0, vec3 v1, vec3 v2, vec3 normal)
+{
+    for (int i = 0; i < m_faces.Count(); ++i)
+    {
+        vec3 proj_point = ProjectPointOnPlane(v0, m_faces[i].GetCenter(), m_faces[i].GetNormal());
+        //Found the same face
+        if (dot(normal, m_faces[i].GetNormal()) == 1.f && length(proj_point - v0) == .0f)
+        {
+            m_faces[i].AddPolygon(v0, v1, v2);
+            return;
+        }
+    }
+    //Didn't find a thing, so add .....
+    m_faces.Resize(m_faces.Count() + 1);
+    m_faces.Last().SetCenter(v0);
+    m_faces.Last().SetNormal(normal);
+    m_faces.Last().AddPolygon(v0, v1, v2);
+}
+
+//--
+void PrimitiveMesh::CleanFaces()
+{
+    for (int i = 0; i < m_faces.Count(); ++i)
+        m_faces[i].CleanEdges();
+}
+
+//--
 int CsgBsp::AddLeaf(int leaf_type, vec3 origin, vec3 normal, int above_idx)
 {
     if (leaf_type > 2 && leaf_type < -1)
@@ -63,7 +263,7 @@ int CsgBsp::TestPoint(int leaf_idx, vec3 point)
     return LEAF_CURRENT;
 }
 
-void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 const &tri_v1, vec3 const &tri_v2)
+void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2)
 {
     //<Leaf_Id, v0, v1, v2>
     Array< int, vec3, vec3, vec3 > tri_to_process;
@@ -73,13 +273,13 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 cons
     //Tree is empty, so this leaf is the first
     if (m_tree.Count() == 0)
     {
-        AddLeaf(LEAF_CURRENT, tri_v0, cross(normalize(tri_v1 - tri_v0), normalize(tri_v2 - tri_v1)), LEAF_CURRENT);
-        m_tree.Last().m_tri_list.Push(tri_idx, tri_v0, tri_v1, tri_v2);
+        AddLeaf(LEAF_CURRENT, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), LEAF_CURRENT);
+        m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
         return;
     }
 
     tri_to_process.Reserve(20);
-    tri_to_process.Push(0, tri_v0, tri_v1, tri_v2);
+    tri_to_process.Push(0, tri_p0, tri_p1, tri_p2);
 
     while (tri_to_process.Count())
     {
@@ -194,7 +394,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 cons
             for (int i = 0; !already_exist && i < m_tree[leaf_idx].m_tri_list.Count(); i++)
                 already_exist = (m_tree[leaf_idx].m_tri_list[i].m1 == tri_idx);
             if (!already_exist)
-                m_tree[leaf_idx].m_tri_list.Push(tri_idx, tri_v0, tri_v1, tri_v2);
+                m_tree[leaf_idx].m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
     }
 
@@ -204,18 +404,18 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 cons
         //If we had it to an already existing leaf.
         if (Leaf_to_add[i].m2 < m_tree.Count() && m_tree[Leaf_to_add[i].m2].m_leaves[Leaf_to_add[i].m1] == LEAF_CURRENT)
         {
-            AddLeaf(Leaf_to_add[i].m1, tri_v0, cross(normalize(tri_v1 - tri_v0), normalize(tri_v2 - tri_v1)), Leaf_to_add[i].m2);
-            m_tree.Last().m_tri_list.Push(tri_idx, tri_v0, tri_v1, tri_v2);
+            AddLeaf(Leaf_to_add[i].m1, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), Leaf_to_add[i].m2);
+            m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
 
         /*
         if (Leaf_to_add[i].m6 == -1)
         {
-            AddLeaf(Leaf_to_add[i].m1, tri_v0, cross(normalize(tri_v1 - tri_v0), normalize(tri_v2 - tri_v1)), Leaf_to_add[i].m2);
-            m_tree.Last().m_tri_list.Push(tri_idx, tri_v0, tri_v1, tri_v2);
+            AddLeaf(Leaf_to_add[i].m1, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), Leaf_to_add[i].m2);
+            m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
         else
-            m_tree[Leaf_to_add[i].m6].m_tri_list.Push(tri_idx, tri_v0, tri_v1, tri_v2);
+            m_tree[Leaf_to_add[i].m6].m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
         */
     }
 }
@@ -223,7 +423,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_v0, vec3 cons
 //return 0 when no split has been done.
 //return 1 when split has been done.
 //return -1 when error.
-int CsgBsp::TestTriangleToTree(vec3 const &tri_v0, vec3 const &tri_v1, vec3 const &tri_v2,
+int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                                //In order to easily build the actual vertices list afterward, this list stores each Vertices location and its source vertices & Alpha.
                                //<Point_Loc, Src_V0, Src_V1, Alpha> as { Point_Loc = Src_V0 + (Src_V1 - Src_V0) * Alpha; }
                                Array< vec3, int, int, float > &vert_list,
@@ -240,9 +440,9 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_v0, vec3 const &tri_v1, vec3 cons
         return -1;
 
     //Let's push the source vertices in here.
-    vert_list.Push(tri_v0, -1, -1, .0f);
-    vert_list.Push(tri_v1, -1, -1, .0f);
-    vert_list.Push(tri_v2, -1, -1, .0f);
+    vert_list.Push(tri_p0, -1, -1, .0f);
+    vert_list.Push(tri_p1, -1, -1, .0f);
+    vert_list.Push(tri_p2, -1, -1, .0f);
 
     //Let's push the triangle in here.
     tri_to_process.Reserve(20);
@@ -287,7 +487,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_v0, vec3 const &tri_v1, vec3 cons
                 int i = 0;
                 for (; i < m_tree[leaf_idx].m_tri_list.Count(); i++)
                 {
-                    if (TriangleIsectTriangle(v[0], v[1], v[2],
+                    if (TestTriangleVsTriangle(v[0], v[1], v[2],
                                                 m_tree[leaf_idx].m_tri_list[i].m2, m_tree[leaf_idx].m_tri_list[i].m3, m_tree[leaf_idx].m_tri_list[i].m4,
                                                 isec_v[0], isec_v[1]))
                         break;
