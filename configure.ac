@@ -561,6 +561,7 @@ AC_CONFIG_FILES(
   people/touky/private/touky_demo/Makefile
   people/touky/private/tactics/Makefile
   people/touky/private/the_unfortunate_voronoid/Makefile
+  people/touky/private/workbench/Makefile
   people/jylam/Makefile
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile
