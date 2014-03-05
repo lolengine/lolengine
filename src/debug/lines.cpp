@@ -22,6 +22,11 @@ void Debug::DrawLine(vec3 a, vec3 b, vec4 color)
     g_scene->AddLine(a, b, color);
 }
 
+void Debug::DrawBox(box3 a, vec4 color)
+{
+    DrawBox(a.A, a.B, color);
+}
+
 void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
 {
     vec3 v[8];

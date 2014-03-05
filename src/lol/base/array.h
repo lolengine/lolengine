@@ -195,7 +195,7 @@ public:
     inline int Find(T const &x)
     {
         for (int i = 0; i < m_count; ++i)
-            if (x == m_data[i])
+            if (m_data[i] == x)
                 return i;
         return INDEX_NONE;
     }
