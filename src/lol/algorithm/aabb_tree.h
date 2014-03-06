@@ -13,6 +13,7 @@
 #define __LOL_SPACE_PARTITIONING_H__
 
 #include <lol/base/array.h>
+#include <lol/debug/lines.h>
 
 namespace lol
 {
