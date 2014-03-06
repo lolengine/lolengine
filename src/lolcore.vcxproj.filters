@@ -676,6 +676,9 @@
     <ClInclude Include="easymesh\easymeshbuild.h">
       <Filter>easymesh</Filter>
     </ClInclude>
+    <ClInclude Include="lol\algorithm\aabb_tree.h">
+      <Filter>lol\algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">

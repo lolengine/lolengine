@@ -12,6 +12,7 @@
 #define __LOL_ALGORITHM_ALL_H__
 
 #include <lol/algorithm/sort.h>
+#include <lol/algorithm/aabb_tree.h>
 
 #endif // __LOL_ALGORITHM_ALL_H__
 
