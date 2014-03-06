@@ -47,7 +47,7 @@ String String::VPrintf(char const *format, va_list ap)
     String ret;
 
     va_list ap2;
-#if !defined _MSC_VER
+#if defined va_copy || !defined _MSC_VER
     /* Visual Studio 2010 does not support va_copy. */
     va_copy(ap2, ap);
 #else
@@ -57,7 +57,11 @@ String String::VPrintf(char const *format, va_list ap)
     /* vsnprintf() tells us how many character we need, and we need to
      * add one for the terminating null byte. */
     size_t needed = vsnprintf(nullptr, 0, format, ap2) + 1;
+
+#if defined va_copy || !defined _MSC_VER
+    /* do not call va_end() if va_copy() wasn’t called. */
     va_end(ap2);
+#endif
 
     ((Super &)ret).Reserve(needed);
     ret.m_count = needed;
