@@ -321,13 +321,13 @@ public:
          * aligned data. */
         Element *tmp = reinterpret_cast<Element *>(reinterpret_cast<uintptr_t>
                                (new uint8_t[sizeof(Element) * toreserve]));
+        ASSERT(tmp, "out of memory in Array class");
         for (int i = 0; i < m_count; i++)
         {
             new(&tmp[i]) Element(m_data[i]);
             m_data[i].~Element();
         }
-        if (m_data)
-            delete[] reinterpret_cast<uint8_t *>(m_data);
+        delete[] reinterpret_cast<uint8_t *>(m_data);
         m_data = tmp;
         m_reserved = toreserve;
     }

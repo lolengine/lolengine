@@ -370,29 +370,29 @@ public:
 
 
 #define LOLUNIT_ASSERT_EQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(==, !!, "equality", "", a, b)
+    LOLUNIT_ASSERT_OP(==, (bool), "equality", "", a, b)
 #define LOLUNIT_ASSERT_EQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(==, !!, "equality", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(==, (bool), "equality", LOLUNIT_MSG(m), a, b)
 #define LOLUNIT_ASSERT_DIFFERENT(a, b) \
-    LOLUNIT_ASSERT_OP(!=, !!, "inequality", "", a, b)
+    LOLUNIT_ASSERT_OP(!=, (bool), "inequality", "", a, b)
 #define LOLUNIT_ASSERT_DIFFERENT_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(!=, !!, "inequality", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(!=, (bool), "inequality", LOLUNIT_MSG(m), a, b)
 #define LOLUNIT_ASSERT_LESS(a, b) \
-    LOLUNIT_ASSERT_OP(<, !!, "less than", "", a, b)
+    LOLUNIT_ASSERT_OP(<, (bool), "less than", "", a, b)
 #define LOLUNIT_ASSERT_LESS_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<, !!, "less than", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(<, (bool), "less than", LOLUNIT_MSG(m), a, b)
 #define LOLUNIT_ASSERT_LEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(<=, !!, "less than or equal", "", a, b)
+    LOLUNIT_ASSERT_OP(<=, (bool), "less than or equal", "", a, b)
 #define LOLUNIT_ASSERT_LEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<=, !!, "less than or equal", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(<=, (bool), "less than or equal", LOLUNIT_MSG(m), a, b)
 #define LOLUNIT_ASSERT_GREATER(a, b) \
-    LOLUNIT_ASSERT_OP(>, !!, "greater than", "", a, b)
+    LOLUNIT_ASSERT_OP(>, (bool), "greater than", "", a, b)
 #define LOLUNIT_ASSERT_GREATER_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>, !!, "greater than", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(>, (bool), "greater than", LOLUNIT_MSG(m), a, b)
 #define LOLUNIT_ASSERT_GEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(>=, !!, "greater than or equal", "", a, b)
+    LOLUNIT_ASSERT_OP(>=, (bool), "greater than or equal", "", a, b)
 #define LOLUNIT_ASSERT_GEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>=, !!, "greater than or equal", LOLUNIT_MSG(m), a, b)
+    LOLUNIT_ASSERT_OP(>=, (bool), "greater than or equal", LOLUNIT_MSG(m), a, b)
 
 
 #define LOLUNIT_ASSERT_NOT_EQUAL(a, b) \
