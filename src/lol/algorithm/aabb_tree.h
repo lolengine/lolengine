@@ -94,7 +94,7 @@ void Draw(QuadTree<TE>* tree, vec4 color)
 template <typename TE>
 void Draw(OcTree<TE>* tree, vec4 color)
 {
-    Array<vec3, vec4> boxes;
+    Array<box3, vec4> boxes;
     Array<TE*, int, vec4> elements;
     Array<int, box3> leaves;
 
