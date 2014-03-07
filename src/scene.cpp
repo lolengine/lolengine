@@ -59,8 +59,11 @@ private:
     /* New scenegraph */
     Array<Primitive> m_primitives;
 
-    /* Old API */
-    Array<vec3, vec3, vec4> m_lines;
+    /* Old API <P0, P1, COLOR, TIME, MASK> */
+    float m_new_line_time;
+    int m_new_line_mask;
+    Array<vec3, vec3, vec4, float, int> m_lines;
+    int m_debug_mask;
     Shader *m_line_shader;
     VertexDeclaration *m_line_vdecl;
 
@@ -94,6 +97,10 @@ Scene::Scene(ivec2 size)
 
     data->m_line_shader = 0;
     data->m_line_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::Color));
+
+    data->m_debug_mask = 1;
+    SetLineTime();
+    SetLineMask();
 }
 
 Scene::~Scene()
@@ -173,9 +180,18 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
     data->m_tiles.Push(t);
 }
 
+void Scene::SetLineTime(float new_time)
+{
+    data->m_new_line_time = new_time;
+}
+void Scene::SetLineMask(int new_mask)
+{
+    data->m_new_line_mask = new_mask;
+}
+
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
-    data->m_lines.Push(a, b, color);
+    data->m_lines.Push(a, b, color, data->m_new_line_time, data->m_new_line_mask);
 }
 
 void Scene::AddLight(Light *l)
@@ -315,7 +331,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 #endif
 }
 
-void Scene::RenderLines() // XXX: rename to Blit()
+void Scene::RenderLines(float seconds) // XXX: rename to Blit()
 {
     RenderContext rc;
 
@@ -331,19 +347,30 @@ void Scene::RenderLines() // XXX: rename to Blit()
     if (!data->m_line_shader)
         data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
 
-    VertexBuffer *vb = new VertexBuffer((sizeof(vec3) + sizeof(vec4)) * 2 * linecount);
-    float *vertex = (float *)vb->Lock(0, 0);
+    Array<vec3, vec4, vec3, vec4> buff;
+    buff.Resize(linecount);
+    int real_linecount = 0;
     for (int i = 0; i < linecount; i++)
     {
-        memcpy(vertex, &data->m_lines[i].m1, sizeof(vec3));
-        vertex += 3;
-        memcpy(vertex, &data->m_lines[i].m3, sizeof(vec4));
-        vertex += 4;
-        memcpy(vertex, &data->m_lines[i].m2, sizeof(vec3));
-        vertex += 3;
-        memcpy(vertex, &data->m_lines[i].m3, sizeof(vec4));
-        vertex += 4;
+        if (data->m_lines[i].m5 & data->m_debug_mask)
+        {
+            buff[real_linecount].m1 = data->m_lines[i].m1;
+            buff[real_linecount].m2 = data->m_lines[i].m3;
+            buff[real_linecount].m3 = data->m_lines[i].m2;
+            buff[real_linecount].m4 = data->m_lines[i].m3;
+            real_linecount++;
+        }
+        data->m_lines[i].m4 -= seconds;
+        if (data->m_lines[i].m4 < 0.f)
+        {
+            data->m_lines.RemoveSwap(i--);
+            linecount--;
+        }
     }
+    int vb_size = (sizeof(vec3) + sizeof(vec4)) * 2 * real_linecount;
+    VertexBuffer *vb = new VertexBuffer(vb_size);
+    float *vertex = (float *)vb->Lock(0, 0);
+    memcpy(vertex, buff.Data(), vb_size);
     vb->Unlock();
 
     data->m_line_shader->Bind();
@@ -362,11 +389,11 @@ void Scene::RenderLines() // XXX: rename to Blit()
 
     data->m_line_vdecl->Bind();
     data->m_line_vdecl->SetStream(vb, attr_pos, attr_col);
-    data->m_line_vdecl->DrawElements(MeshPrimitive::Lines, 0, 2 * linecount);
+    data->m_line_vdecl->DrawElements(MeshPrimitive::Lines, 0, 2 * real_linecount);
     data->m_line_vdecl->Unbind();
     data->m_line_shader->Unbind();
 
-    data->m_lines.Empty();
+    //data->m_lines.Empty();
     delete vb;
 }
 

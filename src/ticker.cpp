@@ -411,7 +411,7 @@ void TickerData::DrawThreadTick()
         /* Do this render step */
         g_scene->RenderPrimitives();
         g_scene->RenderTiles();
-        g_scene->RenderLines();
+        g_scene->RenderLines(data->deltatime);
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

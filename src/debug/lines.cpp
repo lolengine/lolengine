@@ -17,6 +17,27 @@
 namespace lol
 {
 
+//Resets draw infos
+void Debug::ResetDrawSetup()
+{
+    g_scene->SetLineTime();
+    g_scene->SetLineMask();
+}
+//Sets draw infos
+void Debug::DrawSetup(float new_time)
+{
+    g_scene->SetLineTime(new_time);
+}
+void Debug::DrawSetup(int new_mask)
+{
+    g_scene->SetLineMask(new_mask);
+}
+void Debug::DrawSetup(float new_time, int new_mask)
+{
+    g_scene->SetLineTime(new_time);
+    g_scene->SetLineMask(new_mask);
+}
+
 void Debug::DrawLine(vec3 a, vec3 b, vec4 color)
 {
     g_scene->AddLine(a, b, color);

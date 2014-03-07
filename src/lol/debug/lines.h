@@ -24,6 +24,13 @@ namespace lol
 namespace Debug
 {
 
+//Resets draw infos
+void ResetDrawSetup();
+//Sets draw infos
+void DrawSetup(float new_time);
+void DrawSetup(int new_mask);
+void DrawSetup(float new_time, int new_mask);
+
 void DrawLine(vec3 a, vec3 b, vec4 color);
 void DrawBox(box3 a, vec4 color);
 void DrawBox(vec3 a, vec3 b, vec4 color);
