@@ -20,8 +20,8 @@ namespace lol
 
 //------ AABB TREE SYSTEM -----
 template <typename TE, typename TV, typename TB, size_t child_nb> class AABBTree;
-template <typename TE> class QuadTree;
-template <typename TE> class OcTree;
+template <typename TE> class Quadtree;
+template <typename TE> class Octree;
 
 //--
 namespace Debug {
@@ -67,13 +67,13 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
 
 //--
 template <typename TE>
-void Draw(QuadTree<TE>* tree, vec4 color)
+void Draw(Quadtree<TE>* tree, vec4 color)
 {
     Array<box2, vec4> boxes;
     Array<TE*, int, vec4> elements;
     Array<int, box2> leaves;
 
-    DrawInner<QuadTree<TE>, TE, box2>(tree, boxes, elements, leaves, 4, color);
+    DrawInner<Quadtree<TE>, TE, box2>(tree, boxes, elements, leaves, 4, color);
 
     vec3 off = vec3::v010 * .1f;
     vec3 add = vec3::v010 * .1f;
@@ -98,13 +98,13 @@ void Draw(QuadTree<TE>* tree, vec4 color)
 }
 //--
 template <typename TE>
-void Draw(OcTree<TE>* tree, vec4 color)
+void Draw(Octree<TE>* tree, vec4 color)
 {
     Array<box3, vec4> boxes;
     Array<TE*, int, vec4> elements;
     Array<int, box3> leaves;
 
-    DrawInner<OcTree<TE>, TE, box3>(tree, boxes, elements, leaves, 8, color);
+    DrawInner<Octree<TE>, TE, box3>(tree, boxes, elements, leaves, 8, color);
 
     vec3 off = vec3::v010 * .1f;
     vec3 add = vec3::v010 * .1f;
@@ -356,12 +356,12 @@ protected:
 
 //--
 template <typename TE>
-class QuadTree : public AABBTree<TE, vec2, box2, 4>
+class Quadtree : public AABBTree<TE, vec2, box2, 4>
 {
-    friend void Debug::Draw<TE>(OcTree<TE>* tree, vec4 color);
+    friend void Debug::Draw<TE>(Octree<TE>* tree, vec4 color);
 public:
-    QuadTree()          { m_debug_y_offset = 0.f; }
-    virtual ~QuadTree() { }
+    Quadtree()          { m_debug_y_offset = 0.f; }
+    virtual ~Quadtree() { }
     float               m_debug_y_offset;
 protected:
     virtual vec2        GetSubOffset(int sub) { return vec2(ivec2(sub % 2, sub / 2)); }
@@ -369,12 +369,12 @@ protected:
 
 //--
 template <typename TE>
-class OcTree : public AABBTree<TE, vec3, box3, 8>
+class Octree : public AABBTree<TE, vec3, box3, 8>
 {
-    friend void Debug::Draw<TE>(OcTree<TE>* tree, vec4 color);
+    friend void Debug::Draw<TE>(Octree<TE>* tree, vec4 color);
 public:
-    OcTree()            { }
-    virtual ~OcTree()   { }
+    Octree()            { }
+    virtual ~Octree()   { }
 protected:
     virtual vec3        GetSubOffset(int sub) { return vec3(ivec3(sub % 2, sub / 4, (sub % 4) / 2)); }
 };
