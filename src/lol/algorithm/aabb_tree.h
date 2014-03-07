@@ -26,37 +26,37 @@ template <typename TE> class OcTree;
 //--
 namespace Debug {
 //--
-#define GET_DRAW_DATA(DEF_TREE, DEF_BOXES, DEF_ELEM, CHILD_NB, TBB)                                                 \
-boxes.Push(tree->GetAABB(), vec4::one);                                                                             \
-leaves.Push(0, boxes.Last().m1);                                                                                    \
-while (leaves.Count() > 0)                                                                                          \
-{                                                                                                                   \
-    for (int j = 0; j < tree->m_tree[leaves[0].m1].m_elements.Count(); j++)                                         \
-    {                                                                                                               \
-        bool done = false;                                                                                          \
-        for (int k = 0; k < elements.Count(); k++)                                                                  \
-        {                                                                                                           \
-            if (elements[k].m1 == tree->m_elements[tree->m_tree[leaves[0].m1].m_elements[j]].m_element)             \
-            {                                                                                                       \
-                elements[k].m2++;                                                                                   \
-                done = true;                                                                                        \
-                break;                                                                                              \
-            }                                                                                                       \
-        }                                                                                                           \
-        if (!done)                                                                                                  \
-            elements.Push(tree->m_elements[tree->m_tree[leaves[0].m1].m_elements[j]].m_element, 1, vec4::v1001);    \
-    }                                                                                                               \
-                                                                                                                    \
-    for (int i = 0; i < CHILD_NB; i++)                                                                              \
-    {                                                                                                               \
-        if (tree->m_tree[leaves[0].m1].m_children[i] != 0)                                                          \
-        {                                                                                                           \
-            TBB bbox = tree->GetSubAABB(leaves[0].m2, i);                                                           \
-            leaves.Push(tree->m_tree[leaves[0].m1].m_children[i], bbox);                                            \
-            boxes.Push(bbox, color);                                                                                \
-        }                                                                                                           \
-    }                                                                                                               \
-    leaves.Remove(0);                                                                                               \
+#define GET_DRAW_DATA(DEF_TREE, DEF_BOXES, DEF_ELEM, CHILD_NB, TBB)                                                    \
+boxes.Push(tree->GetAABB(), vec4::one);                                                                                \
+leaves.Push(0, boxes.Last().m1);                                                                                       \
+while (leaves.Count() > 0)                                                                                             \
+{                                                                                                                      \
+    for (int j = 0; j < tree->GetTree()[leaves[0].m1].m_elements.Count(); j++)                                         \
+    {                                                                                                                  \
+        bool done = false;                                                                                             \
+        for (int k = 0; k < elements.Count(); k++)                                                                     \
+        {                                                                                                              \
+            if (elements[k].m1 == tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element)          \
+            {                                                                                                          \
+                elements[k].m2++;                                                                                      \
+                done = true;                                                                                           \
+                break;                                                                                                 \
+            }                                                                                                          \
+        }                                                                                                              \
+        if (!done)                                                                                                     \
+            elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, vec4::v1001); \
+    }                                                                                                                  \
+                                                                                                                       \
+    for (int i = 0; i < CHILD_NB; i++)                                                                                 \
+    {                                                                                                                  \
+        if (tree->GetTree()[leaves[0].m1].m_children[i] != 0)                                                          \
+        {                                                                                                              \
+            TBB bbox = tree->GetSubAABB(leaves[0].m2, i);                                                              \
+            leaves.Push(tree->GetTree()[leaves[0].m1].m_children[i], bbox);                                            \
+            boxes.Push(bbox, color);                                                                                   \
+        }                                                                                                              \
+    }                                                                                                                  \
+    leaves.Remove(0);                                                                                                  \
 }
 
 //--
@@ -328,6 +328,16 @@ public:
     //--
     void                SetSize(TV size)            { m_size = size; }
     void                SetMaxDepth(int max_depth)  { m_max_depth = max_depth; }
+
+    Array<NodeLeaf> const & GetTree() const
+    {
+        return m_tree;
+    }
+
+    Array<TreeElement> const & GetElements() const
+    {
+        return m_elements;
+    }
 
 protected:
     Array<NodeLeaf>     m_tree;         //actual tree
