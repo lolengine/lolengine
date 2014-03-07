@@ -12,6 +12,8 @@
 #if !defined __LOL_PORTAL_H__
 #define __LOL_PORTAL_H__
 
+#include <cfloat> /* for FLT_MAX */
+
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
 
@@ -46,9 +48,9 @@ void Draw(PortalDoor<TE>& port, vec4 color)
 template <typename TE>
 class PortalDoor
 {
-    /*template<typename TE>*/ friend class PortalSet<TE>;
-    /*template<typename TE>*/ friend class PortalRoom<TE>;
-    /*template<typename TE>*/ friend void Debug::Draw<TE>(PortalDoor<TE>& port, vec4 color);
+    friend class PortalSet<TE>;
+    friend class PortalRoom<TE>;
+    friend void Debug::Draw<TE>(PortalDoor<TE>& port, vec4 color);
 
 private:
     void Init()
@@ -244,8 +246,8 @@ private:
 template <typename TE>
 class PortalRoom
 {
-    /*template<typename TE>*/ friend class PortalSet<TE>;
-    /*template<typename TE>*/ friend class PortalDoor<TE>;
+    friend class PortalSet<TE>;
+    friend class PortalDoor<TE>;
 
 public:
     PortalRoom(TE* element=nullptr)
