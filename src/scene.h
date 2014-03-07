@@ -45,7 +45,7 @@ public:
 
     void RenderPrimitives();
     void RenderTiles();
-    void RenderLines();
+    void RenderLines(float seconds);
 
     /* New scenegraph */
     void AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix);
@@ -53,6 +53,8 @@ public:
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
+    void SetLineTime(float new_time=-1.f);
+    void SetLineMask(int new_mask=0xFFFFFFFF);
     void AddLine(vec3 a, vec3 b, vec4 color);
 
     void AddLight(Light *light);
