@@ -9,8 +9,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_SPACE_PARTITIONING_H__
-#define __LOL_SPACE_PARTITIONING_H__
+#if !defined __LOL_AABB_TREE_H__
+#define __LOL_AABB_TREE_H__
 
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
@@ -19,6 +19,114 @@ namespace lol
 {
 
 //------ AABB TREE SYSTEM -----
+template <typename TE, typename TV, typename TB, size_t child_nb> class AABBTree;
+template <typename TE> class QuadTree;
+template <typename TE> class OcTree;
+
+//--
+namespace Debug {
+//--
+#define GET_DRAW_DATA(DEF_TREE, DEF_BOXES, DEF_ELEM, CHILD_NB, TBB)                                                 \
+boxes.Push(tree->GetAABB(), vec4::one);                                                                             \
+leaves.Push(0, boxes.Last().m1);                                                                                    \
+while (leaves.Count() > 0)                                                                                          \
+{                                                                                                                   \
+    for (int j = 0; j < tree->m_tree[leaves[0].m1].m_elements.Count(); j++)                                         \
+    {                                                                                                               \
+        bool done = false;                                                                                          \
+        for (int k = 0; k < elements.Count(); k++)                                                                  \
+        {                                                                                                           \
+            if (elements[k].m1 == tree->m_elements[tree->m_tree[leaves[0].m1].m_elements[j]].m_element)             \
+            {                                                                                                       \
+                elements[k].m2++;                                                                                   \
+                done = true;                                                                                        \
+                break;                                                                                              \
+            }                                                                                                       \
+        }                                                                                                           \
+        if (!done)                                                                                                  \
+            elements.Push(tree->m_elements[tree->m_tree[leaves[0].m1].m_elements[j]].m_element, 1, vec4::v1001);    \
+    }                                                                                                               \
+                                                                                                                    \
+    for (int i = 0; i < CHILD_NB; i++)                                                                              \
+    {                                                                                                               \
+        if (tree->m_tree[leaves[0].m1].m_children[i] != 0)                                                          \
+        {                                                                                                           \
+            TBB bbox = tree->GetSubAABB(leaves[0].m2, i);                                                           \
+            leaves.Push(tree->m_tree[leaves[0].m1].m_children[i], bbox);                                            \
+            boxes.Push(bbox, color);                                                                                \
+        }                                                                                                           \
+    }                                                                                                               \
+    leaves.Remove(0);                                                                                               \
+}
+
+//--
+template <typename TE>
+void Draw(QuadTree<TE>* tree, vec4 color)
+{
+    Array<box2, vec4> boxes;
+    Array<TE*, int, vec4> elements;
+    Array<int, box2> leaves;
+
+    GET_DRAW_DATA(tree, boxes, elements, 4, box2);
+
+    vec3 off = vec3::v010 * .1f;
+    vec3 add = vec3::v010 * .1f;
+    while (boxes.Count() > 0)
+    {
+        Debug::DrawBox(vec3(boxes[0].m1.A.x, tree->m_debug_y_offset, boxes[0].m1.A.y),
+                       vec3(boxes[0].m1.B.x, tree->m_debug_y_offset, boxes[0].m1.B.y),
+                       boxes[0].m2);
+        boxes.Remove(0);
+    }
+    while (elements.Count() > 0)
+    {
+        while (elements[0].m2 > 0)
+        {
+            Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().A.y) + off * (float)elements[0].m2,
+                           vec3(elements[0].m1->GetAABB().B.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().B.y) + off * (float)elements[0].m2,
+                           elements[0].m3);
+            elements[0].m2--;
+        }
+        elements.Remove(0);
+    }
+}
+//--
+template <typename TE>
+void Draw(OcTree<TE>* tree, vec4 color)
+{
+    Array<vec3, vec4> boxes;
+    Array<TE*, int, vec4> elements;
+    Array<int, box3> leaves;
+
+    GET_DRAW_DATA(tree, boxes, elements, 8, box3);
+
+    vec3 off = vec3::v010 * .1f;
+    vec3 add = vec3::v010 * .1f;
+    while (boxes.Count() > 0)
+    {
+        float size = boxes[0].m1.B.x - boxes[0].m1.A.x;
+        Debug::DrawBox(vec3(boxes[0].m1.A.x, boxes[0].m1.A.y, boxes[0].m1.A.z) /* + off * (m_size.x / size) */,
+                        vec3(boxes[0].m1.B.x, boxes[0].m1.B.y, boxes[0].m1.B.z) /* + off * (m_size.x / size) */,
+                        boxes[0].m2);
+        //off += add;
+        boxes.Remove(0);
+    }
+    while (elements.Count() > 0)
+    {
+        while (elements[0].m2 > 0)
+        {
+            Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, elements[0].m1->GetAABB().A.y, elements[0].m1->GetAABB().A.z) + off * (float)elements[0].m2,
+                            vec3(elements[0].m1->GetAABB().B.x, elements[0].m1->GetAABB().B.y, elements[0].m1->GetAABB().B.z) + off * (float)elements[0].m2,
+                            elements[0].m3);
+            elements[0].m2--;
+        }
+        elements.Remove(0);
+    }
+}
+//--
+}
+
+//--
 template <typename TE, typename TV, typename TB, size_t child_nb>
 class AABBTree
 {
@@ -53,9 +161,7 @@ public:
         m_max_element = 1;
         AddLeaf(0);
     }
-    ~AABBTree()
-    {
-    }
+    ~AABBTree() { }
 
 private:
     //--
@@ -127,16 +233,6 @@ private:
         return idx;
     }
 
-    //--
-    virtual TV          GetSubOffset(int sub) = 0;
-    virtual TB          GetAABB() { return TB(-m_size * .5f, m_size * .5f); }
-    virtual TB          GetSubAABB(const TB& bbox, int sub)
-    {
-        TV v(GetSubOffset(sub));
-        TV half_vec = (bbox.B - bbox.A) * .5f;
-        return TB(bbox.A + half_vec * v,
-                  bbox.A + half_vec * (v + TV::one));
-    }
     //--
     bool                TestLeaf(int leaf, const TB& leaf_bb, const TB& test_bb, Array<TE*>& elements)
     {
@@ -218,53 +314,20 @@ public:
         m_elements.Empty();
     }
 
+    //--
+    virtual TV          GetSubOffset(int sub) = 0;
+    virtual TB          GetAABB() { return TB(-m_size * .5f, m_size * .5f); }
+    virtual TB          GetSubAABB(const TB& bbox, int sub)
+    {
+        TV v(GetSubOffset(sub));
+        TV half_vec = (bbox.B - bbox.A) * .5f;
+        return TB(bbox.A + half_vec * v,
+                  bbox.A + half_vec * (v + TV::one));
+    }
+
+    //--
     void                SetSize(TV size)            { m_size = size; }
     void                SetMaxDepth(int max_depth)  { m_max_depth = max_depth; }
-
-#if LOL_BUILD_DEBUG
-    //DEBUG DRAW
-    virtual void        DebugDraw(vec4 color)
-    {
-        Array<int, TB> leaves;
-        Array<TB, vec4> boxes;
-        Array<TE*, int, vec4> elements;
-        boxes.Push(GetAABB(), vec4::one);
-        leaves.Push(0, boxes.Last().m1);
-        while (leaves.Count() > 0)
-        {
-            for (int j = 0; j < m_tree[leaves[0].m1].m_elements.Count(); j++)
-            {
-                bool done = false;
-                for (int k = 0; k < elements.Count(); k++)
-                {
-                    if (elements[k].m1 == m_elements[m_tree[leaves[0].m1].m_elements[j]].m_element)
-                    {
-                        elements[k].m2++;
-                        done = true;
-                        break;
-                    }
-                }
-                if (!done)
-                    elements.Push(m_elements[m_tree[leaves[0].m1].m_elements[j]].m_element, 1, vec4::v1001);
-            }
-
-            for (int i = 0; i < child_nb; i++)
-            {
-                if (m_tree[leaves[0].m1].m_children[i] != 0)
-                {
-                    TB bbox = GetSubAABB(leaves[0].m2, i);
-                    leaves.Push(m_tree[leaves[0].m1].m_children[i], bbox);
-                    boxes.Push(bbox, color);
-                }
-            }
-            leaves.Remove(0);
-        }
-        DebugDrawBoxes(boxes, elements);
-    }
-protected:
-    //DEBUG DRAW
-    virtual void        DebugDrawBoxes(Array<TB, vec4> boxes, Array<TE*, int, vec4> elements) = 0;
-#endif //LOL_BUILD_DEBUG
 
 protected:
     Array<NodeLeaf>     m_tree;         //actual tree
@@ -275,86 +338,32 @@ protected:
     int                 m_max_element;  //Maximum element per leaf
 };
 
+//--
 template <typename TE>
 class QuadTree : public AABBTree<TE, vec2, box2, 4>
 {
+    template <typename TE> friend void Debug::Draw(QuadTree<TE>* tree, vec4 color);
 public:
-    QuadTree()
-    {
-#if LOL_BUILD_DEBUG
-        m_debug_y_offset = 0;
-#endif //LOL_BUILD_DEBUG
-    }
-#if LOL_BUILD_DEBUG
-public:
+    QuadTree()          { m_debug_y_offset = 0.f; }
+    virtual ~QuadTree() { }
     float               m_debug_y_offset;
-protected:
-    virtual void        DebugDrawBoxes(Array<box2, vec4> boxes, Array<TE*, int, vec4> elements)
-    {
-        vec3 off = vec3::v010 * .1f;
-        vec3 add = vec3::v010 * .1f;
-        while (boxes.Count() > 0)
-        {
-            Debug::DrawBox(vec3(boxes[0].m1.A.x, m_debug_y_offset, boxes[0].m1.A.y),
-                           vec3(boxes[0].m1.B.x, m_debug_y_offset, boxes[0].m1.B.y),
-                           boxes[0].m2);
-            boxes.Remove(0);
-        }
-        while (elements.Count() > 0)
-        {
-            while (elements[0].m2 > 0)
-            {
-                Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, m_debug_y_offset, elements[0].m1->GetAABB().A.y) + off * (float)elements[0].m2,
-                               vec3(elements[0].m1->GetAABB().B.x, m_debug_y_offset, elements[0].m1->GetAABB().B.y) + off * (float)elements[0].m2,
-                               elements[0].m3);
-                elements[0].m2--;
-            }
-            elements.Remove(0);
-        }
-    }
-#endif //LOL_BUILD_DEBUG
 protected:
     virtual vec2        GetSubOffset(int sub) { return vec2(ivec2(sub % 2, sub / 2)); }
 };
 
+//--
 template <typename TE>
 class OcTree : public AABBTree<TE, vec3, box3, 8>
 {
+    template <typename TE> friend void Debug::Draw(OcTree<TE>* tree, vec4 color);
 public:
-    virtual ~OcTree() {}
-
+    OcTree()            { }
+    virtual ~OcTree()   { }
 protected:
-#if LOL_BUILD_DEBUG
-    virtual void DebugDrawBoxes(Array<box3, vec4> boxes, Array<TE*, int, vec4> elements)
-    {
-        vec3 off = vec3::v010 * .1f;
-        vec3 add = vec3::v010 * .1f;
-        while (boxes.Count() > 0)
-        {
-            float size = boxes[0].m1.B.x - boxes[0].m1.A.x;
-            Debug::DrawBox(vec3(boxes[0].m1.A.x, boxes[0].m1.A.y, boxes[0].m1.A.z) /* + off * (m_size.x / size) */,
-                           vec3(boxes[0].m1.B.x, boxes[0].m1.B.y, boxes[0].m1.B.z) /* + off * (m_size.x / size) */,
-                           boxes[0].m2);
-            //off += add;
-            boxes.Remove(0);
-        }
-        while (elements.Count() > 0)
-        {
-            while (elements[0].m2 > 0)
-            {
-                Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, elements[0].m1->GetAABB().A.y, elements[0].m1->GetAABB().A.z) + off * (float)elements[0].m2,
-                               vec3(elements[0].m1->GetAABB().B.x, elements[0].m1->GetAABB().B.y, elements[0].m1->GetAABB().B.z) + off * (float)elements[0].m2,
-                               elements[0].m3);
-                elements[0].m2--;
-            }
-            elements.Remove(0);
-        }
-    }
-#endif //LOL_BUILD_DEBUG
     virtual vec3        GetSubOffset(int sub) { return vec3(ivec3(sub % 2, sub / 4, (sub % 4) / 2)); }
 };
 
 } /* namespace lol */
 
-#endif // __LOL_SPACE_PARTITIONING_H__
+#endif // __LOL_AABB_TREE_H__
 

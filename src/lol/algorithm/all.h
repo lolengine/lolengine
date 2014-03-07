@@ -13,6 +13,7 @@
 
 #include <lol/algorithm/sort.h>
 #include <lol/algorithm/aabb_tree.h>
+#include <lol/algorithm/portal.h>
 
 #endif // __LOL_ALGORITHM_ALL_H__
 

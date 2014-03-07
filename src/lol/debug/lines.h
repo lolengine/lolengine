@@ -24,18 +24,6 @@ namespace lol
 namespace Debug
 {
 
-//This funcs MUST be specialized
-template<typename T>
-void Draw(T& x, vec4 color)
-{
-    ASSERT(0);
-}
-template<template <typename> class B, typename T>
-void Draw(B<T>* x, vec4 color)
-{
-    x->DebugDraw(color);
-}
-
 void DrawLine(vec3 a, vec3 b, vec4 color);
 void DrawBox(box3 a, vec4 color);
 void DrawBox(vec3 a, vec3 b, vec4 color);
