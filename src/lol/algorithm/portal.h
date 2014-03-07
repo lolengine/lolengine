@@ -46,9 +46,9 @@ void Draw(PortalDoor<TE>& port, vec4 color)
 template <typename TE>
 class PortalDoor
 {
-    template<typename TE> friend class PortalSet;
-    template<typename TE> friend class PortalRoom;
-    template<typename TE> friend void Debug::Draw(PortalDoor<TE>& port, vec4 color);
+    /*template<typename TE>*/ friend class PortalSet<TE>;
+    /*template<typename TE>*/ friend class PortalRoom<TE>;
+    /*template<typename TE>*/ friend void Debug::Draw<TE>(PortalDoor<TE>& port, vec4 color);
 
 private:
     void Init()
@@ -244,8 +244,8 @@ private:
 template <typename TE>
 class PortalRoom
 {
-    template<typename TE> friend class PortalSet;
-    template<typename TE> friend class PortalDoor;
+    /*template<typename TE>*/ friend class PortalSet<TE>;
+    /*template<typename TE>*/ friend class PortalDoor<TE>;
 
 public:
     PortalRoom(TE* element=nullptr)
