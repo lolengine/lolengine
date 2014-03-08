@@ -166,7 +166,7 @@ void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
         if (cur_id == vert_id)
             return;
 
-        if (sqlength(cur_loc - vert_coord) < CSG_EPSILON)
+        if (sqlength(cur_loc - vert_coord) < TestEpsilon::Get())
         {
             if (cur_type == VDictType::Alone)
                 cur_type = VDictType::Master;

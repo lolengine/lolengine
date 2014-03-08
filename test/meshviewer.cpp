@@ -782,66 +782,7 @@ public:
         }
 
 #define NORMAL_USAGE 1
-#if 0
-        PrimitiveFace NewFace;
-        NewFace.SetNormal(vec3::axis_z);
-        NewFace.SetCenter(vec3::zero);
-        int imax = 4, jmax = 4;
-        int sz = 2;
-        for (int i = 0; i < imax; ++i)
-        {
-            for (int j = 0; j < jmax; ++j)
-            {
-                NewFace.AddPolygon(vec3(ivec3(i, j, 0) * sz),
-                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz,  0, 0)),
-                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz, sz, 0)));
-                NewFace.AddPolygon(vec3(ivec3(i, j, 0) * sz),
-                                   vec3(ivec3(i, j, 0) * sz + ivec3(sz, sz, 0)),
-                                   vec3(ivec3(i, j, 0) * sz + ivec3( 0, sz, 0)));
-            }
-        }
-        for (int i = 0; i < NewFace.m_edges.Count(); ++i)
-        {
-            Debug::DrawLine(NewFace.EV0(i) + vec3(.0f, .0f, 2.f), NewFace.EV1(i) + vec3(.0f, .0f, 2.f),
-                            NewFace.m_edges[i].m3 ? vec4(.0f, .7f, .0f, 1.f) : vec4(.7f, .0f, .0f, 1.f));
-            Debug::DrawBox(NewFace.EV0(i) + vec3(.0f, .0f, 2.f) + vec3(-.1f),
-                           NewFace.EV0(i) + vec3(.0f, .0f, 2.f) + vec3(+.1f),
-                           NewFace.m_edges[i].m3 ? vec4(.0f, .7f, .0f, 1.f) : vec4(.7f, .0f, .0f, 1.f));
-        }
-        NewFace.CleanEdges();
-        for (int i = 0; i < NewFace.m_edges.Count(); ++i)
-        {
-            Debug::DrawLine(NewFace.EV0(i), NewFace.EV1(i), vec4(vec3::zero, 1.f));
-            Debug::DrawBox(NewFace.EV0(i) + vec3(-.1f),
-                           NewFace.EV0(i) + vec3(+.1f),
-                           vec4(vec3::zero, 1.f));
-        }
-        //Try with mesh
-        PrimitiveMesh NewMesh;
-        for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
-        {
-            for (int j = 0; j < m_meshes[i].m1->m_indices.Count(); j += 3)
-            {
-                VertexData v[3] = { m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j  ]],
-                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+1]],
-                                    m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+2]] };
-                NewMesh.AddPolygon(v[0].m_coord, v[1].m_coord, v[2].m_coord, v[0].m_normal);
-            }
-            NewMesh.CleanFaces();
-            break;
-        }
-        for (int j = 0; j < NewMesh.m_faces.Count(); ++j)
-        {
-            for (int i = 0; i < NewMesh.m_faces[j].m_edges.Count(); ++i)
-            {
-                vec3 v0 = NewMesh.m_faces[j].EV0(i) + NewMesh.m_faces[j].GetNormal() * .4f;
-                vec3 v1 = NewMesh.m_faces[j].EV1(i) + NewMesh.m_faces[j].GetNormal() * .4f;
-                Debug::DrawLine(v0, v1, vec4(vec3::zero, 1.f));
-                Debug::DrawBox(v0 + vec3(-.1f), v0 + vec3(+.1f), vec4(vec3::zero, 1.f));
-            }
-        }
-
-#elif NORMAL_USAGE
+#if NORMAL_USAGE
         vec3 x = vec3(1.f,0.f,0.f);
         vec3 y = vec3(0.f,1.f,0.f);
         mat4 save_proj = m_camera->GetProjection();
