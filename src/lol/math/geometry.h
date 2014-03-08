@@ -23,8 +23,6 @@
 
 #include <stdint.h>
 
-#define CSG_EPSILON     0.0001
-
 namespace lol
 {
 
@@ -152,6 +150,15 @@ template <typename T> struct Box3
 /*
  * Helper geometry functions
  */
+class TestEpsilon
+{
+private:
+    static float g_test_epsilon;
+public:
+    static inline float Get();
+    static inline void  Set(float epsilon=.0001f);
+};
+
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
     vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
@@ -184,21 +191,41 @@ static inline bool TestAABBVsPoint(box3 const &b1, vec3 const &p)
 bool TestTriangleVsTriangle(vec3 const &v00, vec3 const &v01, vec3 const &v02,
                            vec3 const &v10, vec3 const &v11, vec3 const &v12,
                            vec3 &ip00, vec3 &ip10);
-bool RayIsectTriangleSide(vec3 const &v0, vec3 const &v1, vec3 const &v2,
-                          vec3 const &iP0, vec3 const &iP1,
+bool TestRayVsTriangleSide(vec3 const &v0, vec3 const &v1, vec3 const &v2,
+                          vec3 const &ip0, vec3 const &ip1,
                           vec3 &iV0, int &iIdx0, vec3 &iV1, int &iIdx1);
 bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
                       vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                       vec3 &vi);
+
+struct RayIntersect
+{
+    enum Value
+    {
+        Nothing = 0,
+        All,
+        None,
+        P0,
+        P1,
+
+        MAX
+    }
+    m_value;
+
+    inline RayIntersect() : m_value(Nothing) {}
+    inline RayIntersect(Value v) : m_value(v) {}
+    inline RayIntersect(int v) : m_value((Value)v) {}
+    inline operator Value() { return m_value; }
+};
 #define RAY_ISECT_NOTHING   0
 #define RAY_ISECT_ALL       1
 #define RAY_ISECT_NONE      2
 #define RAY_ISECT_P0        3
 #define RAY_ISECT_P1        4
-int RayIsectRay(vec3 const &rayP00, vec3 const &rayP01,
-                vec3 const &rayP10, vec3 const &rayP11,
-                vec3 &isec_point);
-bool RayIsectPlane(vec3 const &rayP0, vec3 const &rayP1,
+int TestRayVsRay(vec3 const &ray_p00, vec3 const &ray_p01,
+                 vec3 const &ray_p10, vec3 const &ray_p11,
+                 vec3 &isec_point);
+bool TestRayVsPlane(vec3 const &ray_p0, vec3 const &ray_p1,
                    vec3 const &plane_point, vec3 const &plane_normal,
                    vec3 &isec_point, bool test_line_only = false);
 bool TestPointVsFrustum(const vec3& point, const mat4& frustum, vec3* result_point=nullptr);
