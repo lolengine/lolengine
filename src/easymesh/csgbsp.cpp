@@ -19,6 +19,7 @@
 #endif
 
 #include "core.h"
+#include <lol/math/geometry.h>
 
 namespace lol
 {
