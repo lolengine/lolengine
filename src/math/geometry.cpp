@@ -26,8 +26,6 @@ namespace lol
 {
     //Test epsilon stuff
     float TestEpsilon::g_test_epsilon = .0001f;
-    float TestEpsilon::Get()                { return g_test_epsilon; }
-    void  TestEpsilon::Set(float epsilon)   { g_test_epsilon = epsilon; }
 
     //Projects Point on Plane : Normal must be given normalized. returns point on plane.
     vec3 ProjectPointOnPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal)

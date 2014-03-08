@@ -155,8 +155,8 @@ class TestEpsilon
 private:
     static float g_test_epsilon;
 public:
-    static inline float Get();
-    static inline void  Set(float epsilon=.0001f);
+    static inline float Get() { return g_test_epsilon; }
+    static inline void  Set(float epsilon=.0001f) { g_test_epsilon = epsilon; }
 };
 
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
