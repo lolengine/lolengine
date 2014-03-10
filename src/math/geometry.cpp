@@ -27,29 +27,10 @@ namespace lol
     //Test epsilon stuff
     float TestEpsilon::g_test_epsilon = .0001f;
 
-    //Projects Point on Plane : Normal must be given normalized. returns point on plane.
-    vec3 ProjectPointOnPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal)
-    {
-        vec3 o2p = proj_point - plane_point;
-        float d = -dot(o2p, plane_normal);
-        return proj_point + d * plane_normal;
-    }
-    //Line
-    vec3 ProjectPointOnRay(vec3 const &proj_point, vec3 const &ray_point, vec3 const &ray_dir)
-    {
-        return ray_point + ray_dir * dot(proj_point - ray_point, ray_dir);
-    }
-
-    //gets the dist from a Point to a Plane : Normal must be given normalized. returns distance.
-    float PointDistToPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal)
-    {
-        return abs(dot(proj_point - plane_point, plane_normal));
-    }
-
-    // Line/triangle : sets isec_point as the intersection point & return true if ok.
+    // Line/triangle : sets isec_p as the intersection point & return true if ok.
     bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
                            vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
-                           vec3 &isec_point)
+                           vec3 &isec_p)
     {
         vec3 v01, v02, h, v0P, q;
         float a, f, triU, triV;
@@ -86,7 +67,7 @@ namespace lol
 
         if (t > TestEpsilon::Get()) // ray intersection
         {
-            isec_point = tri_p0 + v01 * triU + v02 * triV;
+            isec_p = tri_p0 + v01 * triU + v02 * triV;
             return true;
         }
         else // this means that there is a line intersection
@@ -105,7 +86,7 @@ namespace lol
         vec3 triD[6] = { v01 - v00, v02 - v01, v00 - v02,
                          v11 - v10, v12 - v11, v10 - v12 };
         int isecIdx = 0;
-        vec3 isec_point(0);
+        vec3 isec_p(0);
 
         //Check the normal before doing any other calculations
         vec3 plane_norm[2] = { cross(normalize(triD[0]), normalize(triD[1])),
@@ -177,7 +158,7 @@ namespace lol
     //Ray/Line : returns one of the RAY_ISECT_* defines.
     int TestRayVsRay(vec3 const &ray_p00, vec3 const &ray_p01,
                            vec3 const &ray_p10, vec3 const &ray_p11,
-                           vec3 &isec_point)
+                           vec3 &isec_p)
     {
         vec3 rayD0 = ray_p01 - ray_p00;
         float rayS0 = length(rayD0);
@@ -204,13 +185,13 @@ namespace lol
 
         if (sqlength(isec0 - isec1) < TestEpsilon::Get()) //ray intersection
         {
-            isec_point = (isec0 + isec0) * .5f;
-            float d0 = (length(ray_p01 - isec_point) < TestEpsilon::Get() || length(ray_p00 - isec_point) < TestEpsilon::Get())?
+            isec_p = (isec0 + isec0) * .5f;
+            float d0 = (length(ray_p01 - isec_p) < TestEpsilon::Get() || length(ray_p00 - isec_p) < TestEpsilon::Get())?
                         (-1.0f):
-                        (dot(ray_p00 - isec_point, ray_p01 - isec_point));
-            float d1 = (length(ray_p10 - isec_point) < TestEpsilon::Get() || length(ray_p11 - isec_point) < TestEpsilon::Get())?
+                        (dot(ray_p00 - isec_p, ray_p01 - isec_p));
+            float d1 = (length(ray_p10 - isec_p) < TestEpsilon::Get() || length(ray_p11 - isec_p) < TestEpsilon::Get())?
                         (-1.0f):
-                        (dot(ray_p10 - isec_point, ray_p11 - isec_point));
+                        (dot(ray_p10 - isec_p, ray_p11 - isec_p));
 
             //if the dot is negative, your point is in each ray, so say OK.
             if (d0 < .0f && d1 < .0f)
@@ -226,39 +207,6 @@ namespace lol
              return RAY_ISECT_NOTHING;
     }
 
-    //Ray/Plane : Normal must be given normalized. returns 1 if succeeded.
-    bool TestRayVsPlane(vec3 const &ray_p0, vec3 const &ray_p1,
-                              vec3 const &plane_point, vec3 const &plane_normal,
-                              vec3 &isec_point, bool test_line_only)
-    {
-        vec3 ray_dir = ray_p1 - ray_p0;
-        float d = dot(ray_dir, plane_normal);
-
-        if (d > -TestEpsilon::Get() && d < TestEpsilon::Get())
-            return false;
-
-        vec3 o2p1 = ray_p1 - plane_point;
-        vec3 o2p0 = ray_p0 - plane_point;
-
-        if (!test_line_only)
-        {
-            d = dot(o2p1, plane_normal);
-            d *= dot(o2p0, plane_normal);
-
-            //point are on the same side, so ray can intersect.
-            if (d > .0f)
-                return false;
-        }
-
-        float t = (dot(ProjectPointOnPlane(ray_p0, plane_point, plane_normal) - ray_p0, plane_normal)) / dot(ray_dir, plane_normal);
-
-        if (!test_line_only && (t < -TestEpsilon::Get() || t > 1.0f))
-            return false;
-
-        isec_point = ray_p0 + t * ray_dir;
-        return true;
-    }
-
     //used to find the intersecting points between a triangle side and a coplanar line.
     bool TestRayVsTriangleSide(vec3 const &v0, vec3 const &v1, vec3 const &v2,
                                      vec3 const &ip0, vec3 const &ip1,
@@ -269,16 +217,16 @@ namespace lol
 
         vec3 triV[3] = { v0, v1, v2 };
         int isecIdx = 0;
-        vec3 isec_point(0);
+        vec3 isec_p(0);
 
         //Two points given, so we test each triangle side to find the intersect
         isecIdx = 0;
         for (int j = 0; j < 3 && isecIdx < 2; j++)
         {
-            int Result = TestRayVsRay(triV[j], triV[(j + 1) % 3], ip0, ip1, isec_point);
+            int Result = TestRayVsRay(triV[j], triV[(j + 1) % 3], ip0, ip1, isec_p);
             if (Result == RAY_ISECT_P0 || Result == RAY_ISECT_ALL)
             {
-                isecV[isecIdx] = isec_point;
+                isecV[isecIdx] = isec_p;
                 isecI[isecIdx] = j;
                 isecIdx++;
             }

@@ -271,6 +271,7 @@
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lol\algorithm\aabb_tree.h" />
     <ClInclude Include="lol\algorithm\all.h" />
+    <ClInclude Include="lol\algorithm\portal.h" />
     <ClInclude Include="lol\algorithm\sort.h" />
     <ClInclude Include="lol\base\all.h" />
     <ClInclude Include="lol\base\array.h" />

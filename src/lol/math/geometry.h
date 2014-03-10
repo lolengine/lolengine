@@ -155,8 +155,8 @@ class TestEpsilon
 private:
     static float g_test_epsilon;
 public:
-    static inline float Get() { return g_test_epsilon; }
-    static inline void  Set(float epsilon=.0001f) { g_test_epsilon = epsilon; }
+    static inline float Get()                       { return g_test_epsilon; }
+    static inline void  Set(float epsilon=.0001f)   { g_test_epsilon = lol::max(epsilon, .0f); }
 };
 
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
@@ -224,19 +224,63 @@ struct RayIntersect
 #define RAY_ISECT_P1        4
 int TestRayVsRay(vec3 const &ray_p00, vec3 const &ray_p01,
                  vec3 const &ray_p10, vec3 const &ray_p11,
-                 vec3 &isec_point);
-bool TestRayVsPlane(vec3 const &ray_p0, vec3 const &ray_p1,
-                   vec3 const &plane_point, vec3 const &plane_normal,
-                   vec3 &isec_point, bool test_line_only = false);
+                 vec3 &isec_p);
 bool TestPointVsFrustum(const vec3& point, const mat4& frustum, vec3* result_point=nullptr);
+
+//Ray/Plane : Normal must be given normalized. returns 1 if succeeded.
+template <typename TV>
+bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
+                    const TV &plane_p, const TV &plane_n,
+                          TV &isec_p,  bool test_line_only=false)
+{
+    TV ray_dir = ray_p1 - ray_p0;
+    float d = dot(ray_dir, plane_n);
+
+    if (d > -TestEpsilon::Get() && d < TestEpsilon::Get())
+        return false;
+
+    TV o2p1 = ray_p1 - plane_p;
+    TV o2p0 = ray_p0 - plane_p;
+
+    if (!test_line_only)
+    {
+        d = dot(o2p1, plane_n);
+        d *= dot(o2p0, plane_n);
+
+        //point are on the same side, so ray can intersect.
+        if (d > .0f)
+            return false;
+    }
+
+    float t = (dot(ProjectPointOnPlane(ray_p0, plane_p, plane_n) - ray_p0, plane_n)) / dot(ray_dir, plane_n);
+
+    if (!test_line_only && (t < -TestEpsilon::Get() || t > 1.0f))
+        return false;
+
+    isec_p = ray_p0 + t * ray_dir;
+    return true;
+}
 
 //Project points functions
 //Plane
-vec3 ProjectPointOnPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal);
+template <typename TV>
+TV ProjectPointOnPlane(TV const &proj_point, TV const &plane_point, TV const &plane_normal)
+{
+    return proj_point - dot(proj_point - plane_point, plane_normal) * plane_normal;
+}
 //Line
-vec3 ProjectPointOnRay(vec3 const &proj_point, vec3 const &ray_point, vec3 const &ray_dir);
+template <typename TV>
+TV ProjectPointOnRay(TV const &proj_point, TV const &ray_point, TV const &ray_dir)
+{
+    return ray_point + ray_dir * dot(proj_point - ray_point, ray_dir);
+}
 //Point dist to plane
-float PointDistToPlane(vec3 const &proj_point, vec3 const &plane_point, vec3 const &plane_normal);
+template <typename TV>
+float PointDistToPlane(TV const &proj_point, TV const &plane_point, TV const &plane_normal)
+{
+    return abs(dot(proj_point - plane_point, plane_normal));
+}
+
 } /* namespace lol */
 
 #endif // __LOL_MATH_GEOMETRY_H__
