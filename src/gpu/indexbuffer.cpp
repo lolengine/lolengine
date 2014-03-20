@@ -107,6 +107,7 @@ void *IndexBuffer::Lock(size_t offset, size_t size)
         Abort();
     return ret;
 #else
+    UNUSED(size);
     return m_data->m_memory + offset;
 #endif
 }

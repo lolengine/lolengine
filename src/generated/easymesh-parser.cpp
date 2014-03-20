@@ -490,7 +490,7 @@ namespace lol {
 
 /* Line 677 of lalr1.cc  */
 #line 136 "easymesh/easymesh-parser.y"
-    { mc.m_mesh.DupAndScale(vec3::one, true); }
+    { mc.m_mesh.DupAndScale(vec3(1.f), true); }
     break;
 
   case 22:

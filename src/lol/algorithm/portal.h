@@ -32,11 +32,11 @@ void Draw(PortalDoor<TE>& port, vec4 color)
 {
     vec3 points[4]; port.GetPoints(points);
 
-    //Draw normal
+    // Draw normal
     vec3 p = port.m_center + port.m_up * port.m_size.y * .5f;
-    Debug::DrawLine(p, p + port.m_normal, vec4::v1001);
-    Debug::DrawLine(p, p + port.m_up, vec4::v0101);
-    //draw door
+    Debug::DrawLine(p, p + port.m_normal, vec4(1, 0, 0, 1));
+    Debug::DrawLine(p, p + port.m_up, vec4(0, 1, 0, 1));
+    // Draw door
     for (int l = 0; l < 4; l++)
         Debug::DrawLine(points[l], points[(l + 1) % 4], color);
     Debug::DrawLine(points[0], points[2], color);
@@ -135,11 +135,11 @@ public:
         mat4 cam_mx = proj * view;
         mat4 inv_proj_mx = inverse(proj);
 
-        //First: Check normal dot
-        if (lol::abs(dot((inverse(view) * vec4::v0010).xyz, m_normal)) < .00001f)
+        // First: Check normal dot
+        if (lol::abs(dot(mat3(inverse(view)) * vec3(0.f, 0.f, 1.f), m_normal)) < .00001f)
             return false;
 
-        //Second: convert in screen
+        // Second: convert to screen coordinates
         vec3 port_2d[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
         vec3 door_points[4];
         vec4 proj_p[4];
@@ -155,8 +155,8 @@ public:
             //Clamp points within screen
             port_2d[0] = lol::min(proj_p[i].xyz, port_2d[0]);
             port_2d[1] = lol::max(proj_p[i].xyz, port_2d[1]);
-            port_2d[0] = vec3(lol::clamp(port_2d[0].xy, vec2::onen, vec2::one), port_2d[0].z);
-            port_2d[1] = vec3(lol::clamp(port_2d[1].xy, vec2::onen, vec2::one), port_2d[1].z);
+            port_2d[0] = vec3(lol::clamp(port_2d[0].xy, vec2(-1.f), vec2(1.f)), port_2d[0].z);
+            port_2d[1] = vec3(lol::clamp(port_2d[1].xy, vec2(-1.f), vec2(1.f)), port_2d[1].z);
         }
 
         //Quit if door not within the screen
@@ -165,8 +165,8 @@ public:
                 return false;
 
         //Third: Convert back to view
-        ivec2 j[4] = { ivec2::v00, ivec2::v01, ivec2::v11, ivec2::v10 };
-        vec3 frust[2] = { vec3::one * FLT_MAX, vec3::one * -FLT_MAX };
+        ivec2 j[4] = { ivec2(0), ivec2(0, 1), ivec2(1), ivec2(1, 0) };
+        vec3 frust[2] = { vec3(FLT_MAX), vec3(-FLT_MAX) };
         for (int i = 0; i < 5; i++)
         {
             int k = i % 4;
@@ -219,7 +219,7 @@ public:
                 return true;
 
             //Add points on test stuff
-            pos_test += ivec3(lol::clamp(res_points[i], vec3::onen * 1.1f, vec3::one * 1.1f));
+            pos_test += ivec3(lol::clamp(res_points[i], vec3(-1.1f), vec3(1.1f)));
         }
 
         return false;
@@ -308,17 +308,17 @@ public:
             for (int i = 0; i < visible_rooms[j]->m_doors.Count(); i++)
             {
                 PortalDoor<TE>* port = visible_rooms[j]->m_doors[i];
-                Debug::Draw(*port, vec4::v0111);
+                Debug::Draw(*port, vec4(0, 1, 1, 1));
                 tmp += vec4(port->m_center, 1.f);
             }
             tmp /= tmp.w;
-            Debug::DrawBox(tmp.xyz-vec3::one,tmp.xyz+vec3::one,vec4::v1101);
+            Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), vec4(1, 1, 0, 1));
         }
         for (int i = 0; i < ignore_doors.Count(); i++)
         {
             PortalDoor<TE>* port = ignore_doors[i];
-            Debug::Draw(*port, vec4::v1011);
-            Debug::DrawViewProj(port->m_view, port->m_proj, vec4::v1011);
+            Debug::Draw(*port, vec4(1, 0, 1, 1));
+            Debug::DrawViewProj(port->m_view, port->m_proj, vec4(1, 0, 1, 1));
         }
     #endif //LOL_BUILD_DEBUG
     }

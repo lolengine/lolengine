@@ -495,13 +495,13 @@ public:
         if (m_meshes.Count() && m_mesh_id >= 0)
             for (int i = 0; i < m_meshes[m_mesh_id].m1->GetVertexCount(); i++)
                 tc.AddTarget((m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i))).v3.xyz);
-        tc.AddTarget(box3(vec3::zero, vec3::one));
+        tc.AddTarget(box3(vec3(0.f), vec3(1.f)));
         for (int k = 0; k < m_ssetup->m_lights.Count() && m_ssetup->m_show_lights; ++k)
         {
             vec3 light_pos = m_ssetup->m_lights[k]->GetPosition();
             mat4 world_cam = m_camera->GetView();
             light_pos = (inverse(world_cam) * vec4((world_cam * vec4(light_pos, 1.0f)).xyz * vec3::axis_z, 1.0f)).xyz;
-            tc.AddTarget(box3(vec3::onen, vec3::one) + light_pos *
+            tc.AddTarget(box3(vec3(-1.f), vec3(1.f)) + light_pos *
                          ((m_ssetup->m_lights[k]->GetType() == LightType::Directional)?(-1.f):(1.f)));
         }
 
