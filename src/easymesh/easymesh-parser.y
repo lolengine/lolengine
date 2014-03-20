@@ -133,7 +133,7 @@ doloop:
   ;
 
 pre_brace_command:
-    T_DUPLICATE             { mc.m_mesh.DupAndScale(vec3::one, true); }
+    T_DUPLICATE             { mc.m_mesh.DupAndScale(vec3(1.f), true); }
   ;
 
 mesh_open:

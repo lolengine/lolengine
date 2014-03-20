@@ -96,11 +96,11 @@ void RemezSolver::Init()
     m_control.Resize(m_order + 2);
 
     /* Pick up x_i where error will be 0 and compute f(x_i) */
-    real fxn[m_order + 1];
+    Array<real> fxn;
     for (int i = 0; i < m_order + 1; i++)
     {
         m_zeroes[i] = (real)(2 * i - m_order) / (real)(m_order + 1);
-        fxn[i] = EvalFunc(m_zeroes[i]);
+        fxn.Push(EvalFunc(m_zeroes[i]));
     }
 
     /* We build a matrix of Chebishev evaluations: row i contains the
@@ -109,10 +109,10 @@ void RemezSolver::Init()
     for (int i = 0; i < m_order + 1; i++)
     {
         /* Compute the powers of x_i */
-        real powers[m_order + 1];
-        powers[0] = 1.0;
+        Array<real> powers;
+        powers.Push(real(1.0));
         for (int n = 1; n < m_order + 1; n++)
-             powers[n] = powers[n - 1] * m_zeroes[i];
+             powers.Push(powers.Last() * m_zeroes[i]);
 
         /* Compute the Chebishev evaluations at x_i */
         for (int n = 0; n < m_order + 1; n++)
@@ -239,9 +239,9 @@ real RemezSolver::FindExtrema()
 void RemezSolver::Step()
 {
     /* Pick up x_i where error will be 0 and compute f(x_i) */
-    real fxn[m_order + 2];
+    Array<real> fxn;
     for (int i = 0; i < m_order + 2; i++)
-        fxn[i] = EvalFunc(m_control[i]);
+        fxn.Push(EvalFunc(m_control[i]));
 
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
@@ -249,10 +249,10 @@ void RemezSolver::Step()
     for (int i = 0; i < m_order + 2; i++)
     {
         /* Compute the powers of x_i */
-        real powers[m_order + 1];
-        powers[0] = 1.0;
+        Array<real> powers;
+        powers.Push(real(1.0));
         for (int n = 1; n < m_order + 1; n++)
-             powers[n] = powers[n - 1] * m_control[i];
+             powers.Push(powers.Last() * m_control[i]);
 
         /* Compute the Chebishev evaluations at x_i */
         for (int n = 0; n < m_order + 1; n++)
@@ -307,32 +307,32 @@ void RemezSolver::PrintPoly()
 
     /* Transform Chebyshev polynomial weights into powers of X^i
      * in the [-1..1] range. */
-    real bn[m_order + 1];
+    Array<real> bn;
 
     for (int i = 0; i < m_order + 1; i++)
     {
-        bn[i] = 0;
+        real tmp = 0;
         for (int j = 0; j < m_order + 1; j++)
-            bn[i] += m_coeff[j] * (real)Cheby(j, i);
+            tmp += m_coeff[j] * (real)Cheby(j, i);
+        bn.Push(tmp);
     }
 
     /* Transform a polynomial in the [-1..1] range into a polynomial
      * in the [a..b] range. */
-    real k1p[m_order + 1], k2p[m_order + 1];
-    real an[m_order + 1];
+    Array<real> k1p, k2p, an;
 
     for (int i = 0; i < m_order + 1; i++)
     {
-        k1p[i] = i ? k1p[i - 1] * m_invk1 : (real)1;
-        k2p[i] = i ? k2p[i - 1] * m_invk2 : (real)1;
+        k1p.Push(i ? k1p[i - 1] * m_invk1 : (real)1);
+        k2p.Push(i ? k2p[i - 1] * m_invk2 : (real)1);
     }
 
     for (int i = 0; i < m_order + 1; i++)
     {
-        an[i] = 0;
+        real tmp = 0;
         for (int j = i; j < m_order + 1; j++)
-            an[i] += (real)Comb(j, i) * k1p[j - i] * bn[j];
-        an[i] *= k2p[i];
+            tmp += (real)Comb(j, i) * k1p[j - i] * bn[j];
+        an.Push(tmp * k2p[i]);
     }
 
     printf("Polynomial estimate: ");

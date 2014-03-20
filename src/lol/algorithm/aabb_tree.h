@@ -32,7 +32,7 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
                Array<TE *, int, vec4> &elements,
                Array<int, TBB> &leaves, int children, vec4 color)
 {
-    boxes.Push(tree->GetAABB(), vec4::one);
+    boxes.Push(tree->GetAABB(), vec4(1.f));
     leaves.Push(0, boxes.Last().m1);
     while (leaves.Count() > 0)
     {
@@ -49,7 +49,7 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
                 }
             }
             if (!done)
-                elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, vec4::v1001);
+                elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, vec4(1, 0, 0, 1));
         }
 
         for (int i = 0; i < children; i++)
@@ -75,8 +75,8 @@ void Draw(Quadtree<TE>* tree, vec4 color)
 
     DrawInner<Quadtree<TE>, TE, box2>(tree, boxes, elements, leaves, 4, color);
 
-    vec3 off = vec3::v010 * .1f;
-    vec3 add = vec3::v010 * .1f;
+    vec3 off = vec3(0.0f, 0.1f, 0.0f);
+    //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.Count() > 0)
     {
         Debug::DrawBox(vec3(boxes[0].m1.A.x, tree->m_debug_y_offset, boxes[0].m1.A.y),
@@ -106,11 +106,11 @@ void Draw(Octree<TE>* tree, vec4 color)
 
     DrawInner<Octree<TE>, TE, box3>(tree, boxes, elements, leaves, 8, color);
 
-    vec3 off = vec3::v010 * .1f;
-    vec3 add = vec3::v010 * .1f;
+    vec3 off = vec3(0.0f, 0.1f, 0.0f);
+    //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.Count() > 0)
     {
-        float size = boxes[0].m1.B.x - boxes[0].m1.A.x;
+        //float size = boxes[0].m1.B.x - boxes[0].m1.A.x;
         Debug::DrawBox(vec3(boxes[0].m1.A.x, boxes[0].m1.A.y, boxes[0].m1.A.z) /* + off * (m_size.x / size) */,
                         vec3(boxes[0].m1.B.x, boxes[0].m1.B.y, boxes[0].m1.B.z) /* + off * (m_size.x / size) */,
                         boxes[0].m2);
@@ -328,7 +328,7 @@ public:
         TV v(GetSubOffset(sub));
         TV half_vec = (bbox.B - bbox.A) * .5f;
         return TB(bbox.A + half_vec * v,
-                  bbox.A + half_vec * (v + TV::one));
+                  bbox.A + half_vec * (v + TV(1.f)));
     }
 
     //--
