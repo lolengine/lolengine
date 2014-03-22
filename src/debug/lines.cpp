@@ -70,16 +70,17 @@ void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
 
 void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)
 {
-     mat4 view_proj = proj * view;
+    mat4 const view_proj = proj * view;
 
-     //Pos to center
+    //Pos to center
     vec3 p0 = (inverse(view) * vec4(vec3::zero, 1.f)).xyz;
 
     //Near plane
-    vec4 p[4] = { inverse(view_proj) * vec4(-1.f, 1.f, -1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f, 1.f, -1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f,-1.f, -1.f, 1.f),
-                  inverse(view_proj) * vec4(-1.f,-1.f, -1.f, 1.f) };
+    mat4 const inv_view_proj = inverse(view_proj);
+    vec4 p[4] = { inv_view_proj * vec4(-1.f, 1.f, -1.f, 1.f),
+                  inv_view_proj * vec4( 1.f, 1.f, -1.f, 1.f),
+                  inv_view_proj * vec4( 1.f,-1.f, -1.f, 1.f),
+                  inv_view_proj * vec4(-1.f,-1.f, -1.f, 1.f) };
     for (int i = 0; i < 4; i++)
         p[i] = p[i] / p[i].w;
 
@@ -93,14 +94,15 @@ void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)
 void Debug::DrawViewProj(mat4 view_proj, vec4 color)
 {
     //Near plane
-    vec4 p[8] = { inverse(view_proj) * vec4(-1.f, 1.f, 1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f, 1.f, 1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f,-1.f, 1.f, 1.f),
-                  inverse(view_proj) * vec4(-1.f,-1.f, 1.f, 1.f),
-                  inverse(view_proj) * vec4(-1.f, 1.f,-1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f, 1.f,-1.f, 1.f),
-                  inverse(view_proj) * vec4( 1.f,-1.f,-1.f, 1.f),
-                  inverse(view_proj) * vec4(-1.f,-1.f,-1.f, 1.f)
+    mat4 const inv_view_proj = inverse(view_proj);
+    vec4 p[8] = { inv_view_proj * vec4(-1.f, 1.f, 1.f, 1.f),
+                  inv_view_proj * vec4( 1.f, 1.f, 1.f, 1.f),
+                  inv_view_proj * vec4( 1.f,-1.f, 1.f, 1.f),
+                  inv_view_proj * vec4(-1.f,-1.f, 1.f, 1.f),
+                  inv_view_proj * vec4(-1.f, 1.f,-1.f, 1.f),
+                  inv_view_proj * vec4( 1.f, 1.f,-1.f, 1.f),
+                  inv_view_proj * vec4( 1.f,-1.f,-1.f, 1.f),
+                  inv_view_proj * vec4(-1.f,-1.f,-1.f, 1.f)
                 };
     for (int i = 0; i < 8; i++)
         p[i] = p[i] / p[i].w;

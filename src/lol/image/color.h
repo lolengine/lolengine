@@ -230,14 +230,14 @@ public:
      * Note: XYZ values are normalised using a D65 illuminant if
      * no white value is provided.
      */
-    static vec3 CIEXYZToCIELab(vec3 src, vec3 white)
+    static vec3 CIEXYZToCIELab(vec3 src, vec3 white_value)
     {
         float const a = (6.0 * 6.0 * 6.0) / (29 * 29 * 29);
         float const b = (29.0 * 29.0) / (3 * 6 * 6);
         float const c = 4.0 / 29;
         float const d = 1.0 / 3;
 
-        src /= white;
+        src /= white_value;
 
         vec3 f = b * src + vec3(c);
         if (src.x > a)
@@ -257,9 +257,9 @@ public:
         return CIEXYZToCIELab(src, vec3(95.047f, 100.f, 108.883f));
     }
 
-    static vec4 CIEXYZToCIELab(vec4 src, vec4 white)
+    static vec4 CIEXYZToCIELab(vec4 src, vec4 white_value)
     {
-        return vec4(CIEXYZToCIELab(src.rgb, white.rgb), src.a);
+        return vec4(CIEXYZToCIELab(src.rgb, white_value.rgb), src.a);
     }
 
     static vec4 CIEXYZToCIELab(vec4 src)
@@ -285,6 +285,11 @@ public:
     static String HexString4Bpp(vec4 c);
     static String HexString8Bpp(vec3 c);
     static String HexString8Bpp(vec4 c);
+
+    /*
+     * Some predefined colours
+     */
+    static const vec4 black, red, green, yellow, blue, magenta, cyan, white;
 };
 
 } /* namespace lol */

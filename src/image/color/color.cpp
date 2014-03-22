@@ -17,6 +17,21 @@
 namespace lol
 {
 
+/*
+ * Hardcoded constants for colours
+ */
+vec4 const Color::black   = vec4(0, 0, 0, 1);
+vec4 const Color::red     = vec4(1, 0, 0, 1);
+vec4 const Color::green   = vec4(0, 1, 0, 1);
+vec4 const Color::yellow  = vec4(1, 1, 0, 1);
+vec4 const Color::blue    = vec4(0, 0, 1, 1);
+vec4 const Color::magenta = vec4(1, 0, 1, 1);
+vec4 const Color::cyan    = vec4(0, 1, 1, 1);
+vec4 const Color::white   = vec4(1, 1, 1, 1);
+
+/*
+ * Conversion from colours to hexadecimal
+ */
 String Color::HexString4Bpp(vec3 c)
 {
     uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
