@@ -14,6 +14,7 @@
 
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
+#include <lol/image/color.h>
 
 namespace lol
 {
@@ -32,7 +33,7 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
                Array<TE *, int, vec4> &elements,
                Array<int, TBB> &leaves, int children, vec4 color)
 {
-    boxes.Push(tree->GetAABB(), vec4(1.f));
+    boxes.Push(tree->GetAABB(), Color::white);
     leaves.Push(0, boxes.Last().m1);
     while (leaves.Count() > 0)
     {
@@ -49,7 +50,7 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
                 }
             }
             if (!done)
-                elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, vec4(1, 0, 0, 1));
+                elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, Color::red);
         }
 
         for (int i = 0; i < children; i++)

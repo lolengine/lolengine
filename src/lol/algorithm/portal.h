@@ -16,6 +16,7 @@
 
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
+#include <lol/image/color.h>
 
 namespace lol
 {
@@ -34,8 +35,8 @@ void Draw(PortalDoor<TE>& port, vec4 color)
 
     // Draw normal
     vec3 p = port.m_center + port.m_up * port.m_size.y * .5f;
-    Debug::DrawLine(p, p + port.m_normal, vec4(1, 0, 0, 1));
-    Debug::DrawLine(p, p + port.m_up, vec4(0, 1, 0, 1));
+    Debug::DrawLine(p, p + port.m_normal, Color::red);
+    Debug::DrawLine(p, p + port.m_up, Color::green);
     // Draw door
     for (int l = 0; l < 4; l++)
         Debug::DrawLine(points[l], points[(l + 1) % 4], color);
@@ -308,17 +309,17 @@ public:
             for (int i = 0; i < visible_rooms[j]->m_doors.Count(); i++)
             {
                 PortalDoor<TE>* port = visible_rooms[j]->m_doors[i];
-                Debug::Draw(*port, vec4(0, 1, 1, 1));
+                Debug::Draw(*port, Color::cyan);
                 tmp += vec4(port->m_center, 1.f);
             }
             tmp /= tmp.w;
-            Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), vec4(1, 1, 0, 1));
+            Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), Color::yellow);
         }
         for (int i = 0; i < ignore_doors.Count(); i++)
         {
             PortalDoor<TE>* port = ignore_doors[i];
-            Debug::Draw(*port, vec4(1, 0, 1, 1));
-            Debug::DrawViewProj(port->m_view, port->m_proj, vec4(1, 0, 1, 1));
+            Debug::Draw(*port, Color::magenta);
+            Debug::DrawViewProj(port->m_view, port->m_proj, Color::magenta);
         }
     #endif //LOL_BUILD_DEBUG
     }
