@@ -254,7 +254,7 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
 
     float t = (dot(ProjectPointOnPlane(ray_p0, plane_p, plane_n) - ray_p0, plane_n)) / dot(ray_dir, plane_n);
 
-    if (!test_line_only && (t < -TestEpsilon::Get() || t > 1.0f))
+    if (!test_line_only && (t < -TestEpsilon::Get() || t > 1.f + TestEpsilon::Get()))
         return false;
 
     isec_p = ray_p0 + t * ray_dir;
