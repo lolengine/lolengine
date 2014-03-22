@@ -192,6 +192,38 @@ public:
         return false;
     }
 
+    //PushFirst, insert, etc : CRUDE VERSION
+    inline void PushFirst(T const &x)
+    {
+        ArrayBase<T, ARRAY> tmp;
+        tmp.Push(x);
+        tmp += *this;
+        *this = tmp;
+    }
+
+    inline bool PushUniqueFirst(T const &x)
+    {
+        int idx = Find(x);
+        if (idx == INDEX_NONE)
+        {
+            PushFirst(x);
+            return true;
+        }
+        return false;
+    }
+
+    inline void Insert(T const &x, int pos)
+    {
+        ArrayBase<T, ARRAY> tmp;
+        for (int i = 0; i < m_count; i++)
+        {
+            if (i == pos)
+                tmp.Push(x);
+            tmp.Push(m_data[i]);
+        }
+        *this = tmp;
+    }
+
     inline int Find(T const &x)
     {
         for (int i = 0; i < m_count; ++i)
