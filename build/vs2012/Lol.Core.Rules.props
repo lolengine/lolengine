@@ -20,15 +20,18 @@
 
       <!-- Escape backslashes for C++, but replace \ with / on the PS3
            because the SNC VSI seems to have trouble with backslashes -->
-      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3' And '$(Platform)'!='Orbis'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'!='PS3' And '$(Platform)'!='Orbis'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='PS3'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='PS3'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Xbox 360'">_XBOX;$(XboxDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='PS3'">$(Ps3Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">$(OrbisDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BufferSecurityCheck Condition="'$(Platform)'=='Xbox 360'">false</BufferSecurityCheck>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Debug'">
@@ -70,6 +73,8 @@
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='PS3'">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(Ps3Deps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Platform)'=='PS3'">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Orbis'">$(OrbisLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Platform)'=='Orbis'">$(OrbisDeps);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
       <SubSystem>Windows</SubSystem>
