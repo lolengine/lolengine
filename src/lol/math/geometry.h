@@ -261,6 +261,39 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
     return true;
 }
 
+/* A safe enum for Primitive edge face. */
+struct PlaneIntersection
+{
+    enum Value
+    {
+        Invalid=-1,
+        Back,
+        Front,
+        Plane,
+
+        MAX
+    }
+    m_value;
+
+    inline PlaneIntersection() : m_value(Invalid) {}
+    inline PlaneIntersection(Value v) : m_value(v) {}
+    inline PlaneIntersection(int v) : m_value((Value)v) {}
+    inline operator Value() { return m_value; }
+};
+
+//Point/Plane : Normal must be given normalized.
+template <typename TV>
+PlaneIntersection TestPointVsPlane(const TV &point, const TV &plane_p, const TV &plane_n)
+{
+    float d = dot(normalize(point - plane_p), plane_n);
+    if (d > TestEpsilon::Get())
+        return PlaneIntersection::Front;
+    else if (d < -TestEpsilon::Get())
+        return PlaneIntersection::Back;
+    else
+        return PlaneIntersection::Plane;
+}
+
 //Project points functions
 //Plane
 template <typename TV>
