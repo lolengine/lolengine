@@ -123,7 +123,12 @@ static inline void DebugAbort()
 #   define ASSERT(...) UNUSED(LOL_CALL(LOL_1ST, (__VA_ARGS__)))
 #else
 #   define ASSERT(...) \
-        if (!(LOL_CALL(LOL_1ST, (__VA_ARGS__)))) \
+        if (LOL_CALL(LOL_1ST, (__VA_ARGS__))) \
+        { \
+            /* Don't use "!" so that ASSERT(x = 1) instead of ASSERT(x == 1)
+             * triggers a compilation warning. */ \
+        } \
+        else \
         { \
             LOL_CALL(LOL_CAT(LOL_ERROR_, LOL_CALL(LOL_COUNT_TO_3, \
                                                   (__VA_ARGS__))), \
