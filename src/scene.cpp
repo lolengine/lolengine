@@ -62,6 +62,8 @@ private:
     /* Old API <P0, P1, COLOR, TIME, MASK> */
     float m_new_line_time;
     int m_new_line_mask;
+    float m_new_line_segment_size;
+    vec4 m_new_line_color;
     Array<vec3, vec3, vec4, float, int> m_lines;
     int m_debug_mask;
     Shader *m_line_shader;
@@ -99,8 +101,11 @@ Scene::Scene(ivec2 size)
     data->m_line_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::Color));
 
     data->m_debug_mask = 1;
+
     SetLineTime();
     SetLineMask();
+    SetLineSegmentSize();
+    SetLineColor();
 }
 
 Scene::~Scene()
@@ -180,14 +185,12 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
     data->m_tiles.Push(t);
 }
 
-void Scene::SetLineTime(float new_time)
-{
-    data->m_new_line_time = new_time;
-}
-void Scene::SetLineMask(int new_mask)
-{
-    data->m_new_line_mask = new_mask;
-}
+void Scene::SetLineTime(float new_time)     { data->m_new_line_time = new_time; }
+void Scene::SetLineMask(int new_mask)       { data->m_new_line_mask = new_mask; }
+void Scene::SetLineSegmentSize(float new_segment_size) { data->m_new_line_segment_size = new_segment_size; }
+float Scene::GetLineSegmentSize()           { return data->m_new_line_segment_size; }
+void Scene::SetLineColor(vec4 new_color)    { data->m_new_line_color = new_color; }
+vec4 Scene::GetLineColor()                  { return data->m_new_line_color; }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {

@@ -55,6 +55,10 @@ public:
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
     void SetLineTime(float new_time=-1.f);
     void SetLineMask(int new_mask=0xFFFFFFFF);
+    void SetLineSegmentSize(float new_segment_size=100000.f);
+    float GetLineSegmentSize();
+    void SetLineColor(vec4 new_color=vec4(1.f));
+    vec4 GetLineColor();
     void AddLine(vec3 a, vec3 b, vec4 color);
 
     void AddLight(Light *light);
