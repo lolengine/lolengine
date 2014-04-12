@@ -157,8 +157,12 @@ void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z)
 void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z, vec4 color)
 {
     Debug::DrawCircle(a, x, y, color);
+    Debug::DrawCircle(a, x, (y + z) * .707f, color);
+    Debug::DrawCircle(a, x, (y - z) * .707f, color);
+    Debug::DrawCircle(a, x, z, color);
     Debug::DrawCircle(a, y, z, color);
-    Debug::DrawCircle(a, z, x, color);
+    Debug::DrawCircle(a, y, (z + x) * .707f, color);
+    Debug::DrawCircle(a, y, (z - x) * .707f, color);
 }
 
 //--
