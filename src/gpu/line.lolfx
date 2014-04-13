@@ -2,7 +2,7 @@
 
 #version 130
 
-attribute vec3 in_Position;
+attribute vec4 in_Position;
 attribute vec4 in_Color;
 varying vec4 pass_Color;
 
@@ -11,8 +11,11 @@ uniform mat4 u_view;
 
 void main()
 {
-    gl_Position = u_projection * u_view
-                * vec4(in_Position, 1.0);
+    if (in_Position.w > 0.5)
+        gl_Position = vec4(in_Position.xyz, 1.0);
+    else
+        gl_Position = u_projection * u_view
+                      * vec4(in_Position.xyz, 1.0);
     pass_Color = in_Color;
 }
 

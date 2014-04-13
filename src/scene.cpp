@@ -60,11 +60,11 @@ private:
     Array<Primitive> m_primitives;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
-    float m_new_line_time;
-    int m_new_line_mask;
-    float m_new_line_segment_size;
-    vec4 m_new_line_color;
-    Array<vec3, vec3, vec4, float, int> m_lines;
+    float   m_new_line_time;
+    int     m_new_line_mask;
+    float   m_new_line_segment_size;
+    vec4    m_new_line_color;
+    Array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
     int m_debug_mask;
     Shader *m_line_shader;
     VertexDeclaration *m_line_vdecl;
@@ -98,7 +98,7 @@ Scene::Scene(ivec2 size)
                                                VertexStream<vec2>(VertexUsage::TexCoord));
 
     data->m_line_shader = 0;
-    data->m_line_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::Color));
+    data->m_line_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
 
     data->m_debug_mask = 1;
 
@@ -194,7 +194,17 @@ vec4 Scene::GetLineColor()                  { return data->m_new_line_color; }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
-    data->m_lines.Push(a, b, color, data->m_new_line_time, data->m_new_line_mask);
+    data->m_lines.Push(a, b, color, data->m_new_line_time, data->m_new_line_mask, false, false);
+}
+
+void Scene::AddLine(vec2 a, vec3 b, vec4 color, float az)
+{
+    data->m_lines.Push(vec3(a, az), b, color, data->m_new_line_time, data->m_new_line_mask, true, false);
+}
+
+void Scene::AddLine(vec2 a, vec2 b, vec4 color, float az, float bz)
+{
+    data->m_lines.Push(vec3(a, az), vec3(b, bz), color, data->m_new_line_time, data->m_new_line_mask, true, true);
 }
 
 void Scene::AddLight(Light *l)
@@ -350,16 +360,17 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     if (!data->m_line_shader)
         data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
 
-    Array<vec3, vec4, vec3, vec4> buff;
+    Array<vec4, vec4, vec4, vec4> buff;
     buff.Resize(linecount);
     int real_linecount = 0;
+    mat4 const inv_view_proj = inverse(g_scene->GetCamera()->GetProjection() * g_scene->GetCamera()->GetView());
     for (int i = 0; i < linecount; i++)
     {
         if (data->m_lines[i].m5 & data->m_debug_mask)
         {
-            buff[real_linecount].m1 = data->m_lines[i].m1;
+            buff[real_linecount].m1 = vec4(data->m_lines[i].m1, (float)data->m_lines[i].m6);
             buff[real_linecount].m2 = data->m_lines[i].m3;
-            buff[real_linecount].m3 = data->m_lines[i].m2;
+            buff[real_linecount].m3 = vec4(data->m_lines[i].m2, (float)data->m_lines[i].m7);
             buff[real_linecount].m4 = data->m_lines[i].m3;
             real_linecount++;
         }
@@ -370,7 +381,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
             linecount--;
         }
     }
-    int vb_size = (sizeof(vec3) + sizeof(vec4)) * 2 * real_linecount;
+    int vb_size = sizeof(vec4) * 4 * real_linecount;
     VertexBuffer *vb = new VertexBuffer(vb_size);
     float *vertex = (float *)vb->Lock(0, 0);
     memcpy(vertex, buff.Data(), vb_size);

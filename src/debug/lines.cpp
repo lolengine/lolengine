@@ -56,41 +56,123 @@ void Debug::DrawSetup(float new_time, int new_mask, float segment_size, vec4 col
     Debug::DrawSetupColor(color);
 }
 
-//Draw stuff
-void Debug::DrawLine(vec3 a, vec3 b)
+//Screen to world conversion
+vec3 Debug::WorldToScreen(vec3 pos)
 {
-    Debug::DrawLine(a, b, g_scene->GetLineColor());
+    return Debug::WorldToScreen(vec4(pos, 1.f));
 }
-void Debug::DrawLine(vec3 a, vec3 b, vec4 color)
-{ g_scene->AddLine(a, b, color); }
-
-//--
-void Debug::DrawBox(box3 a)
-{ DrawBox(a.A, a.B, g_scene->GetLineColor()); }
-void Debug::DrawBox(box3 a, vec4 color)
+vec3 Debug::WorldToScreen(vec3 pos, mat4 view_proj)
 {
-    DrawBox(a.A, a.B, color);
+    return Debug::WorldToScreen(vec4(pos, 1.f), view_proj);
 }
-
-//--
-void Debug::DrawBox(vec3 a, vec3 b)
-{ Debug::DrawBox(a, b, g_scene->GetLineColor()); }
-void Debug::DrawBox(vec3 a, vec3 b, vec4 color)
+vec3 Debug::WorldToScreen(vec4 pos)
 {
-    Debug::DrawBox(a, b, mat4::identity, color);
+    if (!g_scene || !g_scene->GetCamera())
+        return vec3::zero;
+    mat4 const view_proj = g_scene->GetCamera()->GetProjection() * g_scene->GetCamera()->GetView();
+    return Debug::WorldToScreen(pos, view_proj);
+}
+vec3 Debug::WorldToScreen(vec4 pos, mat4 view_proj)
+{
+    vec4 screen_pos = view_proj * pos;
+    return (screen_pos / screen_pos.w).xyz;
 }
 
 //--
-void Debug::DrawBox(box3 a, mat4 transform)
-{ DrawBox(a.A, a.B, transform, g_scene->GetLineColor()); }
-void Debug::DrawBox(box3 a, mat4 transform, vec4 color)
+vec3 Debug::ScreenToWorld(vec2 pos, float z)
+   { return Debug::ScreenToWorld(vec3(pos, z)); }
+vec3 Debug::ScreenToWorld(vec3 pos)
 {
-    DrawBox(a.A, a.B, transform, color);
+    if (!g_scene || !g_scene->GetCamera())
+        return vec3::zero;
+    mat4 const inv_view_proj = inverse(g_scene->GetCamera()->GetProjection() * g_scene->GetCamera()->GetView());
+    return Debug::ScreenToWorld(pos, inv_view_proj);
+}
+vec3 Debug::ScreenToWorld(vec2 pos, mat4 inv_view_proj, float z)
+   { return Debug::ScreenToWorld(vec3(pos, z), inv_view_proj); }
+vec3 Debug::ScreenToWorld(vec3 pos, mat4 inv_view_proj)
+{
+    vec4 screen_pos = inv_view_proj * vec4(pos, 1.f);
+    return (screen_pos / screen_pos.w).xyz;
+}
+vec3 Debug::ScreenToWorld(vec3 pos, mat4 view, mat4 proj)
+{
+    vec4 screen_pos = inverse(proj) * vec4(pos, 1.f);
+    return (inverse(view) * (screen_pos / screen_pos.w)).xyz;
 }
 
-//--
-void Debug::DrawBox(vec3 a, vec3 b, mat4 transform)
-{ Debug::DrawBox(a, b, transform, g_scene->GetLineColor()); }
+//Draw stuff in World
+//-- LINE
+void Debug::DrawLine(vec3 a, vec3 b)                                { Debug::DrawLine(a, b, g_scene->GetLineColor()); }
+void Debug::DrawLine(vec2 a, vec3 b, float az)                      { Debug::DrawLine(a, b, g_scene->GetLineColor(), az); }
+void Debug::DrawLine(vec2 a, vec2 b, float az, float bz)            { Debug::DrawLine(a, b, g_scene->GetLineColor(), az, bz); }
+void Debug::DrawLine(vec3 a, vec3 b, vec4 color)                    { g_scene->AddLine(a, b, color); }
+void Debug::DrawLine(vec2 a, vec3 b, vec4 color, float az)          { g_scene->AddLine(a, b, color, az); }
+void Debug::DrawLine(vec2 a, vec2 b, vec4 color, float az, float bz){ g_scene->AddLine(a, b, color, az, bz); }
+
+//-- ARROW
+void Debug::DrawArrow(vec3 a, vec3 b, vec2 s)                       { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y)); }
+void Debug::DrawArrow(vec2 a, vec3 b, vec2 s, float az)             { Debug::DrawArrow(a, b.xy, vec3(s.x, s.y, s.y), az, b.z); }
+void Debug::DrawArrow(vec2 a, vec2 b, vec2 s, float az, float bz)   { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y), az, bz); }
+void Debug::DrawArrow(vec3 a, vec3 b, vec3 s)                       { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y), g_scene->GetLineColor()); }
+void Debug::DrawArrow(vec2 a, vec3 b, vec3 s, float az)             { Debug::DrawArrow(a, b.xy, vec3(s.x, s.y, s.y), g_scene->GetLineColor(), az, b.z); }
+void Debug::DrawArrow(vec2 a, vec2 b, vec3 s, float az, float bz)   { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y), g_scene->GetLineColor(), az, bz); }
+void Debug::DrawArrow(vec3 a, vec3 b, vec3 s, vec4 color)
+{
+    vec3 z = s.x * normalize(b - a);
+    vec3 x = s.z * orthonormal(b - a);
+    vec3 y = s.y * cross(normalize(x), normalize(z));
+
+    Debug::DrawLine(a, b, color);
+    Debug::DrawLine(b, b - z + x, color);
+    Debug::DrawLine(b, b - z - x, color);
+    Debug::DrawLine(b, b - z + y, color);
+    Debug::DrawLine(b, b - z - y, color);
+
+    Debug::DrawLine(b - z + x, b - z + y, color);
+    Debug::DrawLine(b - z + x, b - z - y, color);
+    Debug::DrawLine(b - z - x, b - z + y, color);
+    Debug::DrawLine(b - z - x, b - z - y, color);
+
+    Debug::DrawLine(b - z + x, b - z - x, color);
+    Debug::DrawLine(b - z + y, b - z - y, color);
+}
+void Debug::DrawArrow(vec2 a, vec3 b, vec3 s, vec4 color, float az)
+{
+    vec3 bn = Debug::WorldToScreen(b);
+    DrawArrow(a, bn.xy, s, color, az, bn.z);
+}
+void Debug::DrawArrow(vec2 a, vec2 b, vec3 s, vec4 color, float az, float bz)
+{
+    vec3 an = vec3(a, az);
+    vec3 bn = vec3(b, bz);
+    vec3 z = s.x * normalize(bn - an);
+    vec3 x = s.z * orthonormal(bn - an);
+    vec3 y = s.y * cross(normalize(x), normalize(z));
+
+    Debug::DrawLine(a, b, color, az, bz);
+    Debug::DrawLine(b, b - (z + x).xy, color, bz, bz - (z + x).z);
+    Debug::DrawLine(b, b - (z - x).xy, color, bz, bz - (z - x).z);
+    Debug::DrawLine(b, b - (z + y).xy, color, bz, bz - (z + y).z);
+    Debug::DrawLine(b, b - (z - y).xy, color, bz, bz - (z - y).z);
+
+    Debug::DrawLine(b - (z + x).xy, b - (z + y).xy, color, bz - (z + x).z, bz - (z + y).z);
+    Debug::DrawLine(b - (z + x).xy, b - (z - y).xy, color, bz - (z + x).z, bz - (z - y).z);
+    Debug::DrawLine(b - (z - x).xy, b - (z + y).xy, color, bz - (z - x).z, bz - (z + y).z);
+    Debug::DrawLine(b - (z - x).xy, b - (z - y).xy, color, bz - (z - x).z, bz - (z - y).z);
+
+    Debug::DrawLine(b - (z + x).xy, b - (z - x).xy, color, bz - (z + x).z, bz - (z - x).z);
+    Debug::DrawLine(b - (z + y).xy, b - (z - y).xy, color, bz - (z + y).z, bz - (z - y).z);
+}
+
+//-- BOX
+void Debug::DrawBox(box3 a)                             { Debug::DrawBox(a.A, a.B, g_scene->GetLineColor()); }
+void Debug::DrawBox(box3 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
+void Debug::DrawBox(vec3 a, vec3 b)                     { Debug::DrawBox(a, b, g_scene->GetLineColor()); }
+void Debug::DrawBox(vec3 a, vec3 b, vec4 color)         { Debug::DrawBox(a, b, mat4::identity, color); }
+void Debug::DrawBox(box3 a, mat4 transform)             { Debug::DrawBox(a.A, a.B, transform, g_scene->GetLineColor()); }
+void Debug::DrawBox(box3 a, mat4 transform, vec4 color) { Debug::DrawBox(a.A, a.B, transform, color); }
+void Debug::DrawBox(vec3 a, vec3 b, mat4 transform)     { Debug::DrawBox(a, b, transform, g_scene->GetLineColor()); }
 void Debug::DrawBox(vec3 a, vec3 b, mat4 transform, vec4 color)
 {
     vec4 v[8];
@@ -112,19 +194,16 @@ void Debug::DrawBox(vec3 a, vec3 b, mat4 transform, vec4 color)
     }
 }
 
-//--
-void Debug::DrawCircle(vec3 a, vec3 n)
-{ Debug::DrawCircle(a, n, g_scene->GetLineColor()); }
+//-- CIRCLE
+void Debug::DrawCircle(vec3 a, vec3 n)                  { Debug::DrawCircle(a, n, g_scene->GetLineColor()); }
+void Debug::DrawCircle(vec3 a, vec3 x, vec3 y)          { Debug::DrawCircle(a, x, y, g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n, vec4 color)
 {
     vec3 x = orthogonal(n);
     vec3 y = cross(normalize(n), normalize(x)) * length(n);
     DrawCircle(a, x, y, color);
 }
-
 //--
-void Debug::DrawCircle(vec3 a, vec3 x, vec3 y)
-{ Debug::DrawCircle(a, x, y, g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y, vec4 color)
 {
     float size = F_PI * 2.f * lol::max(length(x), length(y));
@@ -143,41 +222,33 @@ void Debug::DrawCircle(vec3 a, vec3 x, vec3 y, vec4 color)
     }
 }
 
-//--
-void Debug::DrawSphere(vec3 a, float s)
-{ Debug::DrawSphere(a, s, g_scene->GetLineColor()); }
-void Debug::DrawSphere(vec3 a, float s, vec4 color)
-{
-    Debug::DrawSphere(a, vec3::axis_x * s, vec3::axis_y * s, vec3::axis_z * s, color);
-}
-
-//--
-void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z)
-{ Debug::DrawSphere(a, x, y, z, g_scene->GetLineColor()); }
+//-- SPHERE
+void Debug::DrawSphere(vec3 a, float s)                 { Debug::DrawSphere(a, s, g_scene->GetLineColor()); }
+void Debug::DrawSphere(vec3 a, float s, vec4 color)     { Debug::DrawSphere(a, vec3::axis_x * s, vec3::axis_y * s, vec3::axis_z * s, color); }
+void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z)  { Debug::DrawSphere(a, x, y, z, g_scene->GetLineColor()); }
 void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z, vec4 color)
 {
     Debug::DrawCircle(a, x, y, color);
     Debug::DrawCircle(a, x, (y + z) * .707f, color);
     Debug::DrawCircle(a, x, (y - z) * .707f, color);
-    Debug::DrawCircle(a, x, z, color);
+    Debug::DrawCircle(a, z, x, color);
+    Debug::DrawCircle(a, z, (x + y) * .707f, color);
+    Debug::DrawCircle(a, z, (x - y) * .707f, color);
     Debug::DrawCircle(a, y, z, color);
     Debug::DrawCircle(a, y, (z + x) * .707f, color);
     Debug::DrawCircle(a, y, (z - x) * .707f, color);
 }
 
-//--
-void Debug::DrawCapsule(vec3 a, float s, vec3 h)
-{ Debug::DrawCapsule(a, s, h, g_scene->GetLineColor()); }
+//-- CAPSULE
+void Debug::DrawCapsule(vec3 a, float s, vec3 h)                { Debug::DrawCapsule(a, s, h, g_scene->GetLineColor()); }
+void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h) { Debug::DrawCapsule(a, x, y, z, h, g_scene->GetLineColor()); }
 void Debug::DrawCapsule(vec3 a, float s, vec3 h, vec4 color)
 {
     vec3 x = orthonormal(h) * s;
     vec3 y = cross(normalize(h), normalize(x)) * s;
     Debug::DrawCapsule(a, x, y, normalize(h) * s, h, color);
 }
-
 //--
-void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h)
-{ Debug::DrawCapsule(a, x, y, z, h, g_scene->GetLineColor()); }
 void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h, vec4 color)
 {
     float size = F_PI * 2.f * lol::max(length(x), length(y));
@@ -204,9 +275,9 @@ void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h, vec4 color)
     }
 }
 
-//--
-void Debug::DrawViewProj(mat4 view, mat4 proj)
-{ Debug::DrawViewProj(view, proj, g_scene->GetLineColor()); }
+//-- VIEW PROJ
+void Debug::DrawViewProj(mat4 view, mat4 proj)  { Debug::DrawViewProj(view, proj, g_scene->GetLineColor()); }
+void Debug::DrawViewProj(mat4 view_proj)        { Debug::DrawViewProj(view_proj, g_scene->GetLineColor()); }
 void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)
 {
     mat4 const view_proj = proj * view;
@@ -231,8 +302,6 @@ void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)
 }
 
 //--
-void Debug::DrawViewProj(mat4 view_proj)
-{ Debug::DrawViewProj(view_proj, g_scene->GetLineColor()); }
 void Debug::DrawViewProj(mat4 view_proj, vec4 color)
 {
     //Near plane
