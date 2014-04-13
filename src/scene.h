@@ -60,6 +60,8 @@ public:
     void SetLineColor(vec4 new_color=vec4(1.f));
     vec4 GetLineColor();
     void AddLine(vec3 a, vec3 b, vec4 color);
+    void AddLine(vec2 a, vec3 b, vec4 color, float az=-1.f);
+    void AddLine(vec2 a, vec2 b, vec4 color, float az=-1.f, float bz=-1.f);
 
     void AddLight(Light *light);
     Array<Light *> const &GetLights() const;
