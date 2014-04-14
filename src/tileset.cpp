@@ -197,7 +197,7 @@ void TileSet::Unbind()
 }
 
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
-                       float *vertex, float *texture)
+                       vec3 *vertex, vec2 *texture)
 {
     ibox2 pixels = m_data->m_tiles[id].m1;
     box2 texels = m_data->m_tiles[id].m2;
@@ -228,50 +228,30 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     dty *= 126.f / 128.f;
 #endif
 
+    vec3 extent_x = 0.5f * vec3(dx, 0.f, 0.f);
+    vec3 extent_y = 0.5f * vec3(0.f, dy, dz);
+    vec3 center = pos + extent_x + extent_y;
+
     if (!m_data->m_image && m_data->m_texture)
     {
-        float tmp[10];
+        *vertex++ = center + extent_x + extent_y;
+        *vertex++ = center - extent_x + extent_y;
+        *vertex++ = center + extent_x - extent_y;
+        *vertex++ = center + extent_x - extent_y;
+        *vertex++ = center - extent_x + extent_y;
+        *vertex++ = center - extent_x - extent_y;
 
-        *vertex++ = pos.x + dx;
-        *vertex++ = pos.y + dy;
-        *vertex++ = pos.z + dz;
-        *texture++ = tx + dtx;
-        *texture++ = ty;
-
-        *vertex++ = tmp[0] = pos.x;
-        *vertex++ = tmp[1] = pos.y + dy;
-        *vertex++ = tmp[2] = pos.z + dz;
-        *texture++ = tmp[3] = tx;
-        *texture++ = tmp[4] = ty;
-
-        *vertex++ = tmp[5] = pos.x + dx;
-        *vertex++ = tmp[6] = pos.y;
-        *vertex++ = tmp[7] = pos.z;
-        *texture++ = tmp[8] = tx + dtx;
-        *texture++ = tmp[9] = ty + dty;
-
-        *vertex++ = tmp[5];
-        *vertex++ = tmp[6];
-        *vertex++ = tmp[7];
-        *texture++ = tmp[8];
-        *texture++ = tmp[9];
-
-        *vertex++ = tmp[0];
-        *vertex++ = tmp[1];
-        *vertex++ = tmp[2];
-        *texture++ = tmp[3];
-        *texture++ = tmp[4];
-
-        *vertex++ = pos.x;
-        *vertex++ = pos.y;
-        *vertex++ = pos.z;
-        *texture++ = tx;
-        *texture++ = ty + dty;
+        *texture++ = vec2(tx + dtx, ty);
+        *texture++ = vec2(tx,       ty);
+        *texture++ = vec2(tx + dtx, ty + dty);
+        *texture++ = vec2(tx + dtx, ty + dty);
+        *texture++ = vec2(tx,       ty);
+        *texture++ = vec2(tx,       ty + dty);
     }
     else
     {
-        memset(vertex, 0, 3 * sizeof(float));
-        memset(texture, 0, 2 * sizeof(float));
+        memset(vertex, 0, 6 * sizeof(vec3));
+        memset(texture, 0, 6 * sizeof(vec2));
     }
 }
 

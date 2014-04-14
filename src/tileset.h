@@ -53,7 +53,7 @@ public:
     void Bind();
     void Unbind();
     void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
-                  float *vertex, float *texture);
+                  vec3 *vertex, vec2 *texture);
 
 private:
     void Init(char const *path);
