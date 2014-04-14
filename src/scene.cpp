@@ -298,10 +298,10 @@ void Scene::RenderTiles() // XXX: rename to Blit()
                 break;
 
         /* Create a vertex array object */
-        VertexBuffer *vb1 = new VertexBuffer(6 * 3 * (n - i) * sizeof(float));
-        float *vertex = (float *)vb1->Lock(0, 0);
-        VertexBuffer *vb2 = new VertexBuffer(6 * 2 * (n - i) * sizeof(float));
-        float *texture = (float *)vb2->Lock(0, 0);
+        VertexBuffer *vb1 = new VertexBuffer(6 * (n - i) * sizeof(vec3));
+        vec3 *vertex = (vec3 *)vb1->Lock(0, 0);
+        VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
+        vec2 *texture = (vec2 *)vb2->Lock(0, 0);
 
         data->m_tile_bufs.Push(vb1);
         data->m_tile_bufs.Push(vb2);
@@ -311,7 +311,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             data->m_tiles[i].tileset->BlitTile(data->m_tiles[j].id,
                             data->m_tiles[j].pos, data->m_tiles[j].o,
                             data->m_tiles[j].scale,
-                            vertex + 18 * (j - i), texture + 12 * (j - i));
+                            vertex + 6 * (j - i), texture + 6 * (j - i));
         }
 
         vb1->Unlock();
