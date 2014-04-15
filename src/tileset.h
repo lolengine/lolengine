@@ -52,7 +52,7 @@ public:
     ShaderTexture GetTexture() const;
     void Bind();
     void Unbind();
-    void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
+    void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
                   vec3 *vertex, vec2 *texture);
 
 private:

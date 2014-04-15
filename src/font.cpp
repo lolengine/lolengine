@@ -89,7 +89,7 @@ void Font::Print(vec3 pos, char const *str, vec2 scale)
             break;
         default:
             if (ch != ' ')
-                g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale);
+                g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale, 0.0f);
             pos.x += data->size.x * scale.x;
             break;
         }
