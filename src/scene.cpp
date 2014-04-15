@@ -44,6 +44,7 @@ struct Tile
     uint32_t prio;
     vec3 pos;
     vec2 scale;
+    float angle;
     int id, o;
 };
 
@@ -169,7 +170,7 @@ void Scene::AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix)
     data->m_primitives.Push(Primitive(mesh, shader, matrix));
 }
 
-void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
+void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle)
 {
     ASSERT(id < tileset->GetTileCount());
 
@@ -181,6 +182,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale)
     t.pos = pos;
     t.o = o;
     t.scale = scale;
+    t.angle = angle;
 
     data->m_tiles.Push(t);
 }
@@ -310,7 +312,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
         {
             data->m_tiles[i].tileset->BlitTile(data->m_tiles[j].id,
                             data->m_tiles[j].pos, data->m_tiles[j].o,
-                            data->m_tiles[j].scale,
+                            data->m_tiles[j].scale, data->m_tiles[j].angle,
                             vertex + 6 * (j - i), texture + 6 * (j - i));
         }
 

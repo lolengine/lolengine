@@ -196,7 +196,7 @@ void TileSet::Unbind()
     ;
 }
 
-void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
+void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
                        vec3 *vertex, vec2 *texture)
 {
     ibox2 pixels = m_data->m_tiles[id].m1;
@@ -231,6 +231,8 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale,
     vec3 extent_x = 0.5f * vec3(dx, 0.f, 0.f);
     vec3 extent_y = 0.5f * vec3(0.f, dy, dz);
     vec3 center = pos + extent_x + extent_y;
+    extent_x = mat3::rotate(angle, vec3::axis_z) * extent_x;
+    extent_y = mat3::rotate(angle, vec3::axis_z) * extent_y;
 
     if (!m_data->m_image && m_data->m_texture)
     {

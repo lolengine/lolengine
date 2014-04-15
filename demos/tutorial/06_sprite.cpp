@@ -78,7 +78,7 @@ public:
             int frame = (int)(m_sprites[i].m2 * FRAME_COUNT);
 //            m_sprites[i].m1.z = frame;
             g_scene->AddTile(m_tileset, frame,
-                             (ivec3)m_sprites[i].m1, 0, vec2(2.f));
+                             (ivec3)m_sprites[i].m1, 0, vec2(2.f), 0.f);
         }
     }
 

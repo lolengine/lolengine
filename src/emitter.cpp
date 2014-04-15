@@ -74,7 +74,7 @@ void Emitter::TickDraw(float seconds)
 
     for (int i = 0; i < data->nparticles; i++)
         g_scene->AddTile(data->tileset, data->particles[i],
-                         data->positions[i], 0, vec2(1.0f));
+                         data->positions[i], 0, vec2(1.0f), 0.0f);
 }
 
 void Emitter::AddParticle(int id, vec3 pos, vec3 vel)

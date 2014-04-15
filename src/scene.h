@@ -52,7 +52,7 @@ public:
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
-    void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale);
+    void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle);
     void SetLineTime(float new_time=-1.f);
     void SetLineMask(int new_mask=0xFFFFFFFF);
     void SetLineSegmentSize(float new_segment_size=100000.f);
