@@ -235,7 +235,7 @@ configure()
             # ant clean
             ;;
         raspi-arm)
-            do_configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads -I$RASPI_SDK_ROOT/chroot/usr/include" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib -L$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -L$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,--unresolved-symbols=ignore-in-shared-libs"
+            do_configure --host=arm-bcm2708hardfp-linux-gnueabi CPPFLAGS="-I$RASPI_SDK_ROOT/firmware/opt/vc/include -I$RASPI_SDK_ROOT/firmware/opt/vc/include/interface/vcos/pthreads -I$RASPI_SDK_ROOT/chroot/usr/include -I$RASPI_SDK_ROOT/chroot/usr/include/arm-linux-gnueabihf" LDFLAGS="-L$RASPI_SDK_ROOT/firmware/opt/vc/lib -L$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/lib/arm-linux-gnueabihf -L$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,-rpath-link -Wl,$RASPI_SDK_ROOT/chroot/usr/lib/arm-linux-gnueabihf -Wl,--unresolved-symbols=ignore-in-shared-libs"
             ;;
         nacl-i386)
             do_configure CXX=i686-nacl-g++ CC=i686-nacl-gcc ac_cv_exeext=.32.nexe --host=i386 CPPFLAGS="-I$NACL_SDK_ROOT/include" LOL_LIBS="-lppapi -lppapi_gles2 -lppapi_cpp -u _ZN2pp12CreateModuleEv"
