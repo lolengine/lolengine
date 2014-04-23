@@ -216,6 +216,9 @@ LOL_TRY_CXXFLAGS(-Wstrict-aliasing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-aliasi
 LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
 LOL_TRY_CXXFLAGS(-Wreorder, [AM_CXXFLAGS="${AM_CXXFLAGS} -Wreorder"])
 
+dnl  Disable these warnings because they're annoyingly verbose
+LOL_TRY_CXXFLAGS(-Wno-psabi, [AM_CPPFLAGS="${AM_CXXFLAGS} -Wno-psabi"])
+
 
 AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
