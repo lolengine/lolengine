@@ -20,6 +20,13 @@
 #   include <android/asset_manager_jni.h>
 #endif
 
+#if WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#   include <windows.h>
+#else
+#   include <dirent.h>
+#endif
+
 #include "core.h"
 
 namespace lol
@@ -29,6 +36,7 @@ namespace lol
 extern AAssetManager *g_assets;
 #endif
 
+//---------------
 class FileData
 {
     friend class File;
@@ -191,18 +199,21 @@ class FileData
     StreamType m_type;
 };
 
+//-- FILE --
 File::File()
   : m_data(new FileData)
 {
     ++m_data->m_refcount;
 }
 
+//--
 File::File(File const &that)
   : m_data(that.m_data)
 {
     ++m_data->m_refcount;
 }
 
+//--
 File &File::operator =(File const &that)
 {
     if (this == &that)
@@ -222,6 +233,7 @@ File &File::operator =(File const &that)
     return *this;
 }
 
+//--
 File::~File()
 {
     int refcount = --m_data->m_refcount;
@@ -232,44 +244,309 @@ File::~File()
     }
 }
 
+//--
 void File::Open(StreamType stream)
 {
     return m_data->Open(stream);
 }
 
+//--
 void File::Open(String const &file, FileAccess mode)
 {
     return m_data->Open(file, mode);
 }
 
+//--
 bool File::IsValid() const
 {
     return m_data->IsValid();
 }
 
+//--
 int File::Read(uint8_t *buf, int count)
 {
     return m_data->Read(buf, count);
 }
 
+//--
 String File::ReadString()
 {
     return m_data->ReadString();
 }
 
+//--
 int File::Write(uint8_t const *buf, int count)
 {
     return m_data->Write(buf, count);
 }
 
+//--
 int File::WriteString(const String &buf)
 {
     return m_data->WriteString(buf);
 }
 
+//--
 void File::Close()
 {
     m_data->Close();
+}
+
+//---------------
+class DirectoryData
+{
+    friend class Directory;
+
+    DirectoryData() : m_type(StreamType::File)
+    {
+#if WIN32
+        m_handle = INVALID_HANDLE_VALUE;
+#elif HAVE_STDIO_H
+        m_dd = nullptr;
+#endif WIN32
+    }
+
+    void Open(String const &directory, FileAccess mode)
+    {
+        m_type = StreamType::File;
+#if __CELLOS_LV2__ || __ANDROID__
+        //NO IMPLEMENTATION
+#elif WIN32
+        m_directory = directory;
+        String filter = m_directory + String("*");
+        filter.Replace('/', '\\', true);
+        WIN32_FIND_DATA FindFileData;
+        m_handle = FindFirstFile(filter.C(), &FindFileData);
+#elif HAVE_STDIO_H
+        m_dd = opendir(directory.C());
+#endif
+    }
+
+    void Close()
+    {
+        if (m_type != StreamType::File)
+            return;
+
+        if (IsValid())
+        {
+#if __CELLOS_LV2__ || __ANDROID__
+            //NO IMPLEMENTATION
+#elif WIN32
+            FindClose(m_handle);
+#elif HAVE_STDIO_H
+            closedir(m_dd);
+#endif
+        }
+#if __CELLOS_LV2__ || __ANDROID__
+        //NO IMPLEMENTATION
+#elif WIN32
+        m_handle = INVALID_HANDLE_VALUE;
+#elif HAVE_STDIO_H
+        m_dd = nullptr;
+#endif
+    }
+
+    bool GetContentList(Array<String>* files, Array<String>* directories)
+    {
+        if (!IsValid())
+            return false;
+
+#if __CELLOS_LV2__ || __ANDROID__
+        //NO IMPLEMENTATION
+#elif WIN32
+        String filter = m_directory + String("*");
+        filter.Replace('/', '\\', true);
+        WIN32_FIND_DATA find_data;
+        HANDLE handle = FindFirstFile(filter.C(), &find_data);
+        bool file_valid = (handle != INVALID_HANDLE_VALUE);
+
+        while (file_valid)
+        {
+            if (find_data.cFileName[0] != '.')
+            {
+                //We have a directory
+                if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+                {
+                    if (directories)
+                        *directories << String(std::string(find_data.cFileName).c_str());
+                }
+                else
+                {
+                    if (files)
+                        *files << String(find_data.cFileName);
+                }
+            }
+            //Go for next one
+            file_valid = FindNextFile(m_handle, &find_data);
+        }
+#elif HAVE_STDIO_H
+        //NO IMPLEMENTATION
+#endif
+        return ((files && files->Count()) || (directories && directories->Count()));
+    }
+
+    inline bool IsValid() const
+    {
+#if __CELLOS_LV2__ || __ANDROID__
+        //NO IMPLEMENTATION
+#elif WIN32
+        return (m_handle != INVALID_HANDLE_VALUE);
+#elif HAVE_STDIO_H
+        return !!m_dd;
+#else
+        return false;
+#endif
+    }
+
+#if __CELLOS_LV2__ || __ANDROID__
+    //NO IMPLEMENTATION
+#elif WIN32
+    HANDLE m_handle;
+    String m_directory;
+#elif HAVE_STDIO_H
+    DIR *m_dd;
+#endif
+    Atomic<int> m_refcount;
+    StreamType m_type;
+};
+
+//-- DIRECTORY --
+Directory::Directory(String const &name)
+  : m_data(new DirectoryData),
+    m_name(name + String("/"))
+{
+    ++m_data->m_refcount;
+}
+
+//--
+Directory::Directory(Directory const &that)
+  : m_data(that.m_data),
+    m_name(that.m_name)
+{
+    ++m_data->m_refcount;
+}
+
+//--
+Directory &Directory::operator =(Directory const &that)
+{
+    if (this == &that)
+        return *this;
+
+    /* FIXME: this needs auditing */
+    int refcount = --m_data->m_refcount;
+    if (refcount == 0)
+    {
+        m_data->Close();
+        delete m_data;
+    }
+
+    m_data = that.m_data;
+    m_name = that.m_name;
+    ++m_data->m_refcount;
+
+    return *this;
+}
+
+//--
+Directory::~Directory()
+{
+    int refcount = --m_data->m_refcount;
+    if (refcount == 0)
+    {
+        m_data->Close();
+        delete m_data;
+    }
+}
+
+//--
+void Directory::Open(FileAccess mode)
+{
+    return m_data->Open(m_name, mode);
+}
+
+//--
+bool Directory::IsValid() const
+{
+    return m_data->IsValid();
+}
+
+//--
+void Directory::Close()
+{
+    m_data->Close();
+}
+
+//--
+bool Directory::GetContent(Array<String>* files, Array<Directory>* directories)
+{
+    Array<String> sfiles, sdirectories;
+    bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
+
+    if (directories)
+        for (int i = 0; i < sdirectories.Count(); i++)
+            directories->Push(Directory(m_name + sdirectories[i]));
+
+    if (files)
+        for (int i = 0; i < sfiles.Count(); i++)
+            files->Push(m_name + sfiles[i]);
+
+    return (files && files->Count()) || (directories || directories->Count());
+}
+
+//--
+bool Directory::GetContent(Array<String>& files, Array<Directory>& directories)
+{
+    return GetContent(&files, &directories);
+}
+
+//--
+bool Directory::GetContent(Array<Directory>& directories)
+{
+    return GetContent(nullptr, &directories);
+}
+
+//--
+bool Directory::GetContent(Array<String>& files)
+{
+    return GetContent(&files, nullptr);
+}
+
+//--
+String Directory::GetName()
+{
+    return m_name;
+}
+
+//--
+String Directory::GetCurrent()
+{
+    String result;
+#if __CELLOS_LV2__ || __ANDROID__
+    //NO IMPLEMENTATION
+#elif WIN32
+    TCHAR buff[MAX_PATH * 2];
+    GetCurrentDirectory(MAX_PATH, buff);
+    result = buff;
+    result.Replace('\\', '/', true);
+#elif HAVE_STDIO_H
+    //NO IMPLEMENTATION
+#endif
+    return result;
+}
+
+//--
+bool Directory::SetCurrent(String directory)
+{
+#if __CELLOS_LV2__ || __ANDROID__
+    //NO IMPLEMENTATION
+#elif WIN32
+    String result = directory;
+    result.Replace('/', '\\', true);
+    return SetCurrentDirectory(result.C());
+#elif HAVE_STDIO_H
+    //NO IMPLEMENTATION
+#endif
+    return false;
 }
 
 } /* namespace lol */
