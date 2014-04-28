@@ -40,6 +40,10 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
+TileSet *Tiler::Register(String const &path, ivec2 size, ivec2 count)
+{
+    return Tiler::Register(path.C(), size, count);
+}
 TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count)
 {
     int id = data->tilesets.MakeSlot(path);
@@ -54,6 +58,10 @@ TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count)
     return tileset;
 }
 
+TileSet *Tiler::Register(String const &path)
+{
+    return Tiler::Register(path.C());
+}
 TileSet *Tiler::Register(char const *path)
 {
     int id = data->tilesets.MakeSlot(path);

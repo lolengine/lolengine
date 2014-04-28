@@ -37,9 +37,10 @@ private:
     ~Scene();
 
 public:
-    Camera *GetCamera();
-    void PushCamera(Camera *cam);
+    Camera *GetCamera(int cam_idx=-1);
+    int PushCamera(Camera *cam);
     void PopCamera(Camera *cam);
+    void SetTileCam(int cam_idx);
 
     void Reset();
 

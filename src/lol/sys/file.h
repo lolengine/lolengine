@@ -54,7 +54,7 @@ class File
 {
 public:
     File();
-    File(File const &that);
+    File(File const &directory);
     File &operator =(File const &that);
     ~File();
 
@@ -70,6 +70,34 @@ public:
 
 private:
     class FileData *m_data;
+};
+
+class Directory
+{
+public:
+    Directory(String const &name);
+    Directory(Directory const &that);
+    Directory &operator =(Directory const &that);
+    ~Directory();
+
+    void Open(FileAccess mode);
+    bool IsValid() const;
+    void Close();
+
+private:
+    bool GetContent(Array<String>* files, Array<Directory>* directories);
+public:
+    bool GetContent(Array<String>& files, Array<Directory>& directories);
+    bool GetContent(Array<Directory>& directories);
+    bool GetContent(Array<String>& files);
+    String GetName();
+
+    static String GetCurrent();
+    static bool SetCurrent(String directory);
+
+private:
+    class DirectoryData*    m_data;
+    String                  m_name;
 };
 
 } /* namespace lol */

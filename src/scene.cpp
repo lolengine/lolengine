@@ -70,6 +70,7 @@ private:
     Shader *m_line_shader;
     VertexDeclaration *m_line_vdecl;
 
+    int m_tile_cam;
     Array<Tile> m_tiles;
     Array<Light *> m_lights;
 
@@ -94,6 +95,7 @@ Scene::Scene(ivec2 size)
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
+    data->m_tile_cam = -1;
     data->m_tile_shader = 0;
     data->m_tile_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
                                                VertexStream<vec2>(VertexUsage::TexCoord));
@@ -124,12 +126,13 @@ Scene::~Scene()
     delete data;
 }
 
-void Scene::PushCamera(Camera *cam)
+int Scene::PushCamera(Camera *cam)
 {
     ASSERT(this, "trying to push a camera before g_scene is ready");
 
     Ticker::Ref(cam);
     data->m_camera_stack.Push(cam);
+    return data->m_camera_stack.Count() - 1;
 }
 
 void Scene::PopCamera(Camera *cam)
@@ -151,9 +154,16 @@ void Scene::PopCamera(Camera *cam)
     ASSERT(false, "trying to pop a nonexistent camera from the scene");
 }
 
-Camera *Scene::GetCamera()
+void Scene::SetTileCam(int cam_idx)
 {
-    return data->m_camera_stack.Last();
+    data->m_tile_cam = cam_idx;
+}
+
+Camera *Scene::GetCamera(int cam_idx)
+{
+    return (0 <= cam_idx && cam_idx < data->m_camera_stack.Count()) ?
+                data->m_camera_stack[cam_idx] :
+                data->m_camera_stack.Last();
 }
 
 void Scene::Reset()
@@ -282,9 +292,9 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     data->m_tile_shader->Bind();
 
     uni_mat = data->m_tile_shader->GetUniformLocation("u_projection");
-    data->m_tile_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
+    data->m_tile_shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetProjection());
     uni_mat = data->m_tile_shader->GetUniformLocation("u_view");
-    data->m_tile_shader->SetUniform(uni_mat, GetCamera()->GetView());
+    data->m_tile_shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetView());
     uni_mat = data->m_tile_shader->GetUniformLocation("u_model");
     data->m_tile_shader->SetUniform(uni_mat, mat4(1.f));
 
