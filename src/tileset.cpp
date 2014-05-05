@@ -180,9 +180,14 @@ ivec2 TileSet::GetTextureSize() const
     return m_data->m_texture_size;
 }
 
-ShaderTexture TileSet::GetTexture() const
+ShaderTexture TileSet::GetShaderTexture() const
 {
     return m_data->m_texture->GetTexture();
+}
+
+Texture const * TileSet::GetTexture() const
+{
+    return m_data->m_texture;
 }
 
 void TileSet::Bind()

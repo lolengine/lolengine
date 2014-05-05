@@ -585,7 +585,7 @@ void BtPhysTest::TickDraw(float seconds)
                                                 (1 << VertexUsage::TexCoord) |
                                                 (1 << VertexUsage::TexCoordExt)),
                                                 m_cat_shader);
-            m_cat_sdata->m_shader_texture = m_cat_texture->GetTexture();
+            m_cat_sdata->m_shader_texture = m_cat_texture->GetShaderTexture();
             m_cat_sdata->m_sprite_flip = ((rand(2) == 1)?(1.f):(0.f)) / (float)(NB_SPRITE * PARTICLE_SIZE);
             PhysObj->SetCustomShaderData(m_cat_sdata);
             m_cat_sdata = NULL;
