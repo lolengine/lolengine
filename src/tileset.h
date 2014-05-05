@@ -49,7 +49,8 @@ public:
     ivec2 GetTileSize(int tileid) const;
 
     ivec2 GetTextureSize() const;
-    ShaderTexture GetTexture() const;
+    ShaderTexture GetShaderTexture() const;
+    Texture const * GetTexture() const;
     void Bind();
     void Unbind();
     void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
