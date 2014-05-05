@@ -112,21 +112,12 @@ dnl  Build mode
 ac_cv_my_build_mode="devel"
 if test "x${enable_release}" = "xyes"; then
   ac_cv_my_build_mode="release"
-  CFLAGS=""
-  LDFLAGS=""
-  CXXFLAGS=""
 fi
 if test "x${enable_devel}" = "xyes"; then
   ac_cv_my_build_mode="devel"
-  CFLAGS=""
-  LDFLAGS=""
-  CXXFLAGS=""
 fi
 if test "x${enable_debug}" = "xyes"; then
   ac_cv_my_build_mode="debug"
-  CFLAGS=""
-  LDFLAGS=""
-  CXXFLAGS=""
 fi
 
 if test "x${ac_cv_my_build_mode}" = "xdebug"; then
