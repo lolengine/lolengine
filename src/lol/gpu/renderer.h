@@ -177,6 +177,8 @@ public:
 public:
     void SetViewport(ibox2 viewport);
     ibox2 GetViewport() const;
+    float GetXYRatio() const;
+    float GetYXRatio() const;
 
     void SetClearColor(vec4 color);
     vec4 GetClearColor() const;

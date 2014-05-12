@@ -153,12 +153,32 @@ template <typename T> struct Box3
 class TestEpsilon
 {
 private:
-    static float g_test_epsilon;
+    float           m_epsilon;
+    float           m_value;
 public:
-    static inline float Get()                       { return g_test_epsilon; }
-    static inline void  Set(float epsilon=.0001f)   { g_test_epsilon = lol::max(epsilon, .0f); }
+    TestEpsilon()   { m_value = 0.f; m_epsilon = .0001f; }
+    static float Get();
+    static void Set(float epsilon=.0001f);
+    static const TestEpsilon& F(float value);
+private:
+    float Minus() const;
+    float Plus()  const;
+public:
+    bool operator==(float value) const;
+    bool operator!=(float value) const;
+    bool operator<(float value)  const;
+    bool operator<=(float value) const;
+    bool operator>(float value)  const;
+    bool operator>=(float value) const;
 };
+bool operator==(float value, const TestEpsilon& epsilon);
+bool operator!=(float value, const TestEpsilon& epsilon);
+bool operator<(float value, const TestEpsilon& epsilon);
+bool operator<=(float value, const TestEpsilon& epsilon);
+bool operator>(float value, const TestEpsilon& epsilon);
+bool operator>=(float value, const TestEpsilon& epsilon);
 
+//--
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
     vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
