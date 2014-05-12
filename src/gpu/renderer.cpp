@@ -249,6 +249,22 @@ ibox2 Renderer::GetViewport() const
     return m_data->m_viewport;
 }
 
+float Renderer::GetXYRatio() const
+{
+    ibox2 a = GetViewport();
+    box2 b(a.A, a.B);
+    vec2 s = b.B - b.A;
+    return s.x / s.y;
+}
+
+float Renderer::GetYXRatio() const
+{
+    ibox2 a = GetViewport();
+    box2 b(a.A, a.B);
+    vec2 s = b.B - b.A;
+    return s.y / s.x;
+}
+
 /*
  * Clear color
  */

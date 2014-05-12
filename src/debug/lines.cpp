@@ -102,7 +102,7 @@ vec3 Debug::ScreenToWorld(vec3 pos, mat4 view, mat4 proj)
 }
 
 //Draw stuff in World
-//-- LINE
+//-- LINE: 3D -2D - 3D_to_2D
 void Debug::DrawLine(vec3 a, vec3 b)                                { Debug::DrawLine(a, b, g_scene->GetLineColor()); }
 void Debug::DrawLine(vec2 a, vec3 b, float az)                      { Debug::DrawLine(a, b, g_scene->GetLineColor(), az); }
 void Debug::DrawLine(vec2 a, vec2 b, float az, float bz)            { Debug::DrawLine(a, b, g_scene->GetLineColor(), az, bz); }
@@ -110,7 +110,7 @@ void Debug::DrawLine(vec3 a, vec3 b, vec4 color)                    { g_scene->A
 void Debug::DrawLine(vec2 a, vec3 b, vec4 color, float az)          { g_scene->AddLine(a, b, color, az); }
 void Debug::DrawLine(vec2 a, vec2 b, vec4 color, float az, float bz){ g_scene->AddLine(a, b, color, az, bz); }
 
-//-- ARROW
+//-- ARROW: 3D -2D - 3D_to_2D
 void Debug::DrawArrow(vec3 a, vec3 b, vec2 s)                       { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y)); }
 void Debug::DrawArrow(vec2 a, vec3 b, vec2 s, float az)             { Debug::DrawArrow(a, b.xy, vec3(s.x, s.y, s.y), az, b.z); }
 void Debug::DrawArrow(vec2 a, vec2 b, vec2 s, float az, float bz)   { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y), az, bz); }
@@ -165,14 +165,24 @@ void Debug::DrawArrow(vec2 a, vec2 b, vec3 s, vec4 color, float az, float bz)
     Debug::DrawLine(b - (z + y).xy, b - (z - y).xy, color, bz - (z + y).z, bz - (z - y).z);
 }
 
-//-- BOX
+//-- BOX: 3D -2D - 3D_to_2D
 void Debug::DrawBox(box3 a)                             { Debug::DrawBox(a.A, a.B, g_scene->GetLineColor()); }
+void Debug::DrawBox(box2 a)                             { Debug::DrawBox(a.A, a.B, g_scene->GetLineColor()); }
 void Debug::DrawBox(box3 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
+void Debug::DrawBox(box2 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
 void Debug::DrawBox(vec3 a, vec3 b)                     { Debug::DrawBox(a, b, g_scene->GetLineColor()); }
+void Debug::DrawBox(vec2 a, vec2 b)                     { Debug::DrawBox(a, b, g_scene->GetLineColor()); }
+void Debug::DrawBox(vec2 a, float s)                    { Debug::DrawBox(a, s, g_scene->GetLineColor()); }
 void Debug::DrawBox(vec3 a, vec3 b, vec4 color)         { Debug::DrawBox(a, b, mat4::identity, color); }
+void Debug::DrawBox(vec2 a, vec2 b, vec4 color)         { Debug::DrawBox(a, b, mat2::identity, color); }
+void Debug::DrawBox(vec2 a, float s, vec4 color)        { Debug::DrawBox(a, s, mat2::identity, color); }
 void Debug::DrawBox(box3 a, mat4 transform)             { Debug::DrawBox(a.A, a.B, transform, g_scene->GetLineColor()); }
+void Debug::DrawBox(box2 a, mat2 transform)             { Debug::DrawBox(a.A, a.B, transform, g_scene->GetLineColor()); }
 void Debug::DrawBox(box3 a, mat4 transform, vec4 color) { Debug::DrawBox(a.A, a.B, transform, color); }
+void Debug::DrawBox(box2 a, mat2 transform, vec4 color) { Debug::DrawBox(a.A, a.B, transform, color); }
 void Debug::DrawBox(vec3 a, vec3 b, mat4 transform)     { Debug::DrawBox(a, b, transform, g_scene->GetLineColor()); }
+void Debug::DrawBox(vec2 a, vec2 b, mat2 transform)     { Debug::DrawBox(a, b, transform, g_scene->GetLineColor()); }
+void Debug::DrawBox(vec2 a, float s, mat2 transform)    { Debug::DrawBox(a, s, transform, g_scene->GetLineColor()); }
 void Debug::DrawBox(vec3 a, vec3 b, mat4 transform, vec4 color)
 {
     vec4 v[8];
@@ -193,18 +203,64 @@ void Debug::DrawBox(vec3 a, vec3 b, mat4 transform, vec4 color)
         Debug::DrawLine((transform * v[i + 4]).xyz, (transform * v[j + 4]).xyz, color);
     }
 }
+void Debug::DrawBox(vec2 a, vec2 b, mat2 transform, vec4 color)
+{
+    vec2 v[4];
+    v[0] = a;
+    v[1] = vec2(a.x, b.y);
+    v[2] = b;
+    v[3] = vec2(b.x, a.y);
+
+    int i = 0;
+    Debug::DrawLine((transform * v[0]).xy, (transform * v[1]).xy, color);
+    Debug::DrawLine((transform * v[1]).xy, (transform * v[2]).xy, color);
+    Debug::DrawLine((transform * v[2]).xy, (transform * v[3]).xy, color);
+    Debug::DrawLine((transform * v[3]).xy, (transform * v[0]).xy, color);
+}
+void Debug::DrawBox(vec2 a, float s, mat2 transform, vec4 color)
+{
+    vec2 b = s * vec2(1.f, g_renderer->GetXYRatio());
+    Debug::DrawBox(a - b, a + b, transform, color);
+}
 
 //-- CIRCLE
+void Debug::DrawCircle(vec2 a, float s)                 { Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n)                  { Debug::DrawCircle(a, n, g_scene->GetLineColor()); }
+void Debug::DrawCircle(vec2 a, vec2 s)                  { Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y)          { Debug::DrawCircle(a, x, y, g_scene->GetLineColor()); }
+void Debug::DrawCircle(vec2 a, vec2 x, vec2 y)          { Debug::DrawCircle(a, x, y, g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n, vec4 color)
 {
     vec3 x = orthogonal(n);
     vec3 y = cross(normalize(n), normalize(x)) * length(n);
     DrawCircle(a, x, y, color);
 }
+void Debug::DrawCircle(vec2 a, vec2 s, vec4 color)
+{
+    vec2 x = vec2::axis_x * s.x;
+    vec2 y = vec2::axis_y * s.y;
+    DrawCircle(a, x, y, color);
+}
 //--
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y, vec4 color)
+{
+    float size = F_PI * 2.f * lol::max(length(x), length(y));
+    int segment_nb = lol::max(1, (int)((size * .25f) / g_scene->GetLineSegmentSize()));
+    for (int i = 0; i < segment_nb; i++)
+    {
+        float a0 = (((float)i)     / (float)segment_nb) * F_PI_2;
+        float a1 = (((float)i + 1) / (float)segment_nb) * F_PI_2;
+        vec2 p0 = vec2(lol::cos(a0), lol::sin(a0));
+        vec2 p1 = vec2(lol::cos(a1), lol::sin(a1));
+
+        Debug::DrawLine(a + p0.x *  x + p0.y *  y, a + p1.x *  x + p1.y *  y, color);
+        Debug::DrawLine(a + p0.x * -x + p0.y * -y, a + p1.x * -x + p1.y * -y, color);
+        Debug::DrawLine(a + p0.x *  x + p0.y * -y, a + p1.x *  x + p1.y * -y, color);
+        Debug::DrawLine(a + p0.x * -x + p0.y *  y, a + p1.x * -x + p1.y *  y, color);
+    }
+}
+//--
+void Debug::DrawCircle(vec2 a, vec2 x, vec2 y, vec4 color)
 {
     float size = F_PI * 2.f * lol::max(length(x), length(y));
     int segment_nb = lol::max(1, (int)((size * .25f) / g_scene->GetLineSegmentSize()));

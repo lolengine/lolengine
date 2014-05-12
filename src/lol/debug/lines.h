@@ -64,18 +64,35 @@ void DrawArrow(vec2 a, vec3 b, vec3 s, vec4 color, float az=-1.f);
 void DrawArrow(vec2 a, vec2 b, vec3 s, vec4 color, float az=-1.f, float bz=-1.f);
 //-- BOX
 void DrawBox(box3 a);
+void DrawBox(box2 a);
 void DrawBox(box3 a, vec4 color);
+void DrawBox(box2 a, vec4 color);
 void DrawBox(vec3 a, vec3 b);
+void DrawBox(vec2 a, vec2 b);
+void DrawBox(vec2 a, float s);
 void DrawBox(vec3 a, vec3 b, vec4 color);
+void DrawBox(vec2 a, vec2 b, vec4 color);
+void DrawBox(vec2 a, float s, vec4 color);
 void DrawBox(box3 a, mat4 transform);
+void DrawBox(box2 a, mat2 transform);
 void DrawBox(box3 a, mat4 transform, vec4 color);
+void DrawBox(box2 a, mat2 transform, vec4 color);
 void DrawBox(vec3 a, vec3 b, mat4 transform);
+void DrawBox(vec2 a, vec2 b, mat2 transform);
+void DrawBox(vec2 a, float s, mat2 transform);
 void DrawBox(vec3 a, vec3 b, mat4 transform, vec4 color);
+void DrawBox(vec2 a, vec2 b, mat2 transform, vec4 color);
+void DrawBox(vec2 a, float s, mat2 transform, vec4 color);
 //-- CIRCLE
+void DrawCircle(vec2 a, float s);
 void DrawCircle(vec3 a, vec3 n);
+void DrawCircle(vec2 a, vec2 s);
 void DrawCircle(vec3 a, vec3 n, vec4 color);
+void DrawCircle(vec2 a, vec2 s, vec4 color);
 void DrawCircle(vec3 a, vec3 x, vec3 y);
+void DrawCircle(vec2 a, vec2 x, vec2 y);
 void DrawCircle(vec3 a, vec3 x, vec3 y, vec4 color);
+void DrawCircle(vec2 a, vec2 x, vec2 y, vec4 color);
 //-- SPHERE
 void DrawSphere(vec3 a, float s);
 void DrawSphere(vec3 a, float s, vec4 color);

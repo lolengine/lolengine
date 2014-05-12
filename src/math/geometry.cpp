@@ -25,7 +25,24 @@ using namespace std;
 namespace lol
 {
     //Test epsilon stuff
-    float TestEpsilon::g_test_epsilon = .0001f;
+    TestEpsilon g_test_epsilon;
+    float TestEpsilon::Get()                                    { return g_test_epsilon.m_epsilon; }
+    void  TestEpsilon::Set(float epsilon)                       { g_test_epsilon.m_epsilon = lol::max(epsilon, .0f); }
+    const TestEpsilon& TestEpsilon::F(float value)              { g_test_epsilon.m_value = value; return g_test_epsilon; }
+    float TestEpsilon::Minus()const                             { return m_value - m_epsilon; }
+    float TestEpsilon::Plus() const                             { return m_value + m_epsilon; }
+    bool  TestEpsilon::operator==(float value)const             { return (Minus() <= value && value <= Plus()); }
+    bool  TestEpsilon::operator!=(float value)const             { return (value < Minus() || Plus() < value); }
+    bool  TestEpsilon::operator<(float value) const             { return (value < Minus()); }
+    bool  TestEpsilon::operator<=(float value)const             { return (value <= Plus()); }
+    bool  TestEpsilon::operator>(float value) const             { return (value > Plus()); }
+    bool  TestEpsilon::operator>=(float value)const             { return (value >= Minus()); }
+    bool operator==(float value, const TestEpsilon& epsilon)    { return epsilon == value; }
+    bool operator!=(float value, const TestEpsilon& epsilon)    { return epsilon != value; }
+    bool operator<(float value, const TestEpsilon& epsilon)     { return epsilon <  value; }
+    bool operator<=(float value, const TestEpsilon& epsilon)    { return epsilon <= value; }
+    bool operator>(float value, const TestEpsilon& epsilon)     { return epsilon >  value; }
+    bool operator>=(float value, const TestEpsilon& epsilon)    { return epsilon >= value; }
 
     // Line/triangle : sets isec_p as the intersection point & return true if ok.
     bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,

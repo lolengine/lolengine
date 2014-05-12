@@ -128,7 +128,7 @@ public:
         using namespace std;
 
         char const *tmp = strchr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
+        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
     }
 
     int IndexOf(char const* token) const
@@ -136,7 +136,12 @@ public:
         using namespace std;
 
         char const *tmp = strstr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
+        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
+    }
+
+    bool Contains(String const &s) const
+    {
+        return IndexOf(s.C()) != INDEX_NONE;
     }
 
     int LastIndexOf(char token) const
@@ -144,7 +149,7 @@ public:
         using namespace std;
 
         char const *tmp = strrchr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : -1;
+        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
     }
 
     int Replace(const char old_token, const char new_token, bool all_occurence=false)
@@ -204,6 +209,14 @@ public:
         using namespace std;
         return Count() >= s.Count()
                 && memcmp(C() + Count() - s.Count(), s.C(), s.Count()) == 0;
+    }
+
+    bool IsAlpha()
+    {
+        for (int i = 0; i < m_count; i++)
+            if (m_data[i] != '\0' && (m_data[i] < '0' || '9' < m_data[i]))
+                return false;
+        return true;
     }
 
     inline String operator +(String const &s) const
