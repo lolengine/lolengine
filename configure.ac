@@ -562,9 +562,9 @@ AC_CONFIG_FILES(
   people/jylam/private/lander/Makefile
   people/sam/Makefile
   people/sam/ld27/Makefile
-  people/sam/private/Makefile
-  people/sam/private/kanagawa/Makefile
-  people/sam/private/sapp/Makefile
+  people/sam/vip2014/Makefile
+  people/sam/kanagawa/Makefile
+  people/sam/sapp/Makefile
 ])
 
 AC_OUTPUT
