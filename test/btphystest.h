@@ -24,7 +24,7 @@ public:
     virtual lol::String GetInColorName()    { return lol::String("in_color");    }
     virtual lol::String GetInTexCoordName() { return lol::String("in_texcoord"); }
 
-    ShaderTexture   m_shader_texture;
+    TextureUniform   m_tex_uniform;
     float           m_sprite_orientation;
     float           m_sprite_flip;
 };

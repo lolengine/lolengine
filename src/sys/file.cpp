@@ -299,18 +299,20 @@ class DirectoryData
 
     DirectoryData() : m_type(StreamType::File)
     {
-#if WIN32
+#if __CELLOS_LV2__ || __ANDROID__
+        /* FIXME: not implemented */
+#elif WIN32
         m_handle = INVALID_HANDLE_VALUE;
 #elif HAVE_STDIO_H
         m_dd = nullptr;
-#endif WIN32
+#endif
     }
 
     void Open(String const &directory, FileAccess mode)
     {
         m_type = StreamType::File;
 #if __CELLOS_LV2__ || __ANDROID__
-        //NO IMPLEMENTATION
+        /* FIXME: not implemented */
 #elif WIN32
         m_directory = directory;
         String filter = m_directory + String("*");
@@ -330,15 +332,16 @@ class DirectoryData
         if (IsValid())
         {
 #if __CELLOS_LV2__ || __ANDROID__
-            //NO IMPLEMENTATION
+            /* FIXME: not implemented */
 #elif WIN32
             FindClose(m_handle);
 #elif HAVE_STDIO_H
             closedir(m_dd);
 #endif
         }
+
 #if __CELLOS_LV2__ || __ANDROID__
-        //NO IMPLEMENTATION
+        /* FIXME: not implemented */
 #elif WIN32
         m_handle = INVALID_HANDLE_VALUE;
 #elif HAVE_STDIO_H
@@ -352,7 +355,7 @@ class DirectoryData
             return false;
 
 #if __CELLOS_LV2__ || __ANDROID__
-        //NO IMPLEMENTATION
+        /* FIXME: not implemented */
 #elif WIN32
         String filter = m_directory + String("*");
         filter.Replace('/', '\\', true);
@@ -364,7 +367,7 @@ class DirectoryData
         {
             if (find_data.cFileName[0] != '.')
             {
-                //We have a directory
+                // We have a directory
                 if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
                     if (directories)
@@ -380,7 +383,7 @@ class DirectoryData
             file_valid = FindNextFile(m_handle, &find_data);
         }
 #elif HAVE_STDIO_H
-        //NO IMPLEMENTATION
+        /* FIXME: not implemented */
 #endif
         return ((files && files->Count()) || (directories && directories->Count()));
     }
@@ -388,7 +391,7 @@ class DirectoryData
     inline bool IsValid() const
     {
 #if __CELLOS_LV2__ || __ANDROID__
-        //NO IMPLEMENTATION
+        /* FIXME: not implemented */
 #elif WIN32
         return (m_handle != INVALID_HANDLE_VALUE);
 #elif HAVE_STDIO_H
@@ -399,7 +402,7 @@ class DirectoryData
     }
 
 #if __CELLOS_LV2__ || __ANDROID__
-    //NO IMPLEMENTATION
+    /* FIXME: not implemented */
 #elif WIN32
     HANDLE m_handle;
     String m_directory;
@@ -522,14 +525,14 @@ String Directory::GetCurrent()
 {
     String result;
 #if __CELLOS_LV2__ || __ANDROID__
-    //NO IMPLEMENTATION
+    /* FIXME: not implemented */
 #elif WIN32
     TCHAR buff[MAX_PATH * 2];
     GetCurrentDirectory(MAX_PATH, buff);
     result = buff;
     result.Replace('\\', '/', true);
 #elif HAVE_STDIO_H
-    //NO IMPLEMENTATION
+    /* FIXME: not implemented */
 #endif
     return result;
 }
@@ -538,13 +541,13 @@ String Directory::GetCurrent()
 bool Directory::SetCurrent(String directory)
 {
 #if __CELLOS_LV2__ || __ANDROID__
-    //NO IMPLEMENTATION
+    /* FIXME: not implemented */
 #elif WIN32
     String result = directory;
     result.Replace('/', '\\', true);
     return SetCurrentDirectory(result.C());
 #elif HAVE_STDIO_H
-    //NO IMPLEMENTATION
+    /* FIXME: not implemented */
 #endif
     return false;
 }
