@@ -545,7 +545,6 @@ AC_CONFIG_FILES(
  [people/jnat/Makefile
   people/jnat/TestProject/Makefile
   people/peeweek/Makefile
-  people/peeweek/private/Makefile
   people/benlitz/Makefile
   people/benlitz/test1/Makefile
   people/benlitz/private/voxel/Makefile
