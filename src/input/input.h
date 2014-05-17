@@ -100,11 +100,11 @@ private:
     static Array<InputDevice*> devices;
 
     template <typename T>
-    int GetItemIndex(const char* name, const Array<String, T>& Array) const
+    int GetItemIndex(const char* name, const Array<String, T>& array) const
     {
-        for (int i = 0; i < Array.Count(); ++i)
+        for (int i = 0; i < array.Count(); ++i)
         {
-            if (Array[i] == name)
+            if (array[i] == name)
                 return i;
         }
         return -1;

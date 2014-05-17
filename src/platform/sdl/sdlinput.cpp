@@ -179,6 +179,8 @@ void SdlInputData::Tick(float seconds)
     }
 #   endif
 
+    m_mouse->SetAxis(2, 0);
+
     /* Handle keyboard and WM events */
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -199,6 +201,8 @@ void SdlInputData::Tick(float seconds)
         {
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                 m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            else
+                m_mouse->SetAxis(2, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
             // TODO: mouse wheel as axis
             break;
         }
