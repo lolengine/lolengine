@@ -314,24 +314,34 @@ PlaneIntersection TestPointVsPlane(const TV &point, const TV &plane_p, const TV 
         return PlaneIntersection::Plane;
 }
 
-//Project points functions
-//Plane
+/* Project point on plane */
 template <typename TV>
-TV ProjectPointOnPlane(TV const &proj_point, TV const &plane_point, TV const &plane_normal)
+TV ProjectPointOnPlane(TV const &p, TV const &origin, TV const &normal)
 {
-    return proj_point - dot(proj_point - plane_point, plane_normal) * plane_normal;
+    return p - dot(p - origin, normal) * normal;
 }
-//Line
+
+/* Project point on line */
 template <typename TV>
-TV ProjectPointOnRay(TV const &proj_point, TV const &ray_point, TV const &ray_dir)
+TV ProjectPointOnRay(TV const &p, TV const &origin, TV const &direction)
 {
-    return ray_point + ray_dir * dot(proj_point - ray_point, ray_dir);
+    return origin + direction * dot(p - origin, direction);
 }
-//Point dist to plane
+
+/* Distance from point to plane */
 template <typename TV>
-float PointDistToPlane(TV const &proj_point, TV const &plane_point, TV const &plane_normal)
+float PointDistToPlane(TV const &p, TV const &origin, TV const &normal)
 {
-    return abs(dot(proj_point - plane_point, plane_normal));
+    return abs(dot(p - origin, normal));
+}
+
+/* Distance from point to segment */
+template <typename TV>
+float PointDistToSegment(TV const &p, TV const &a, TV const &b)
+{
+    float d2 = sqlength(b - a);
+    float u = d2 ? dot(p - a, b - a) / d2 : 0.0f;
+    return distance(p, mix(a, b, clamp(u, 0.0f, 1.0f)));
 }
 
 } /* namespace lol */
