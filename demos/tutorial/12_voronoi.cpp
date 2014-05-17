@@ -277,7 +277,7 @@ public:
                 m_fbos[f].m2->Bind();
 
                 int i = 0;
-                m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], src_buf->GetTexture(), 0); //"in_texture"
+                m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], src_buf->GetTextureUniform(), 0); //"in_texture"
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], voronoi_points[j].m1); //"in_source_point"
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], vec2(512.f, 512.f)); //"in_screen_res"
 
@@ -344,7 +344,7 @@ public:
                 * we cannot expect the render target contents to be preserved.
                 * This code snippet should be moved inside the Framebuffer class. */
                 //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_flag, 1.f);
-                //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
+                //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
                 //m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.Last());
                 //m_vdecl->Bind();
                 //m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
@@ -353,10 +353,10 @@ public:
 
                 int i = 0;
                 if (curres == ivec2::zero)
-                    m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTexture(), 0);
+                    m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTextureUniform(), 0);
                 else if (m_cur_fbo == VoronoiFbo)
                 {
-                    shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], src_buf->GetTexture(), 0); //"in_texture"
+                    shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], src_buf->GetTextureUniform(), 0); //"in_texture"
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], ((float)curres.x) / 512.f); //"in_step"
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], vec2(512.f, 512.f)); //"in_screen_res"
                 }
@@ -384,7 +384,7 @@ public:
 
         //SCREEN DRAW
         m_screen_shader->Bind();
-        m_screen_shader->SetUniform(m_screen_texture, m_fbos[m_cur_fbo].m1->GetTexture(), 0);
+        m_screen_shader->SetUniform(m_screen_texture, m_fbos[m_cur_fbo].m1->GetTextureUniform(), 0);
         m_vdecl->SetStream(m_vbo, m_screen_coord);
         m_vdecl->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);

@@ -133,14 +133,14 @@ private:
     uint64_t m_flags;
 };
 
-struct ShaderTexture
+struct TextureUniform
 {
     friend class Shader;
     friend class Framebuffer;
     friend class Texture;
 
 public:
-    inline ShaderTexture() : m_flags(0) {}
+    inline TextureUniform() : m_flags(0) {}
 
 private:
     uint64_t m_flags;
@@ -172,7 +172,7 @@ public:
     void SetUniform(ShaderUniform const &uni, mat2 const &m);
     void SetUniform(ShaderUniform const &uni, mat3 const &m);
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
-    void SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index);
+    void SetUniform(ShaderUniform const &uni, TextureUniform tex, int index);
 
     void SetUniform(ShaderUniform const &uni, Array<float> const &v);
     void SetUniform(ShaderUniform const &uni, Array<vec2> const &v);

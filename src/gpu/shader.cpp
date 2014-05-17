@@ -664,7 +664,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 #endif
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, ShaderTexture tex, int index)
+void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 {
 #if defined USE_D3D9 || defined _XBOX
     data->m_dev->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);

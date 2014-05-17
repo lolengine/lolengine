@@ -101,7 +101,7 @@ public:
     Framebuffer(ivec2 size, FramebufferFormat fbo_format = FramebufferFormat());
     ~Framebuffer();
 
-    ShaderTexture GetTexture() const;
+    TextureUniform GetTextureUniform() const;
     ivec2 GetSize() const;
 
     void Bind();

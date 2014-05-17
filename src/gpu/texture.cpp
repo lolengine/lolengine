@@ -175,9 +175,9 @@ Texture::Texture(ivec2 size, PixelFormat format)
 #endif
 }
 
-ShaderTexture Texture::GetTexture() const
+TextureUniform Texture::GetTextureUniform() const
 {
-    ShaderTexture ret;
+    TextureUniform ret;
 #if defined USE_D3D9 || defined _XBOX
     ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
     ret.m_attrib = m_data->m_mag_filter;

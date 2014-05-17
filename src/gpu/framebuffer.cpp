@@ -434,9 +434,9 @@ Framebuffer::~Framebuffer()
     delete m_data;
 }
 
-ShaderTexture Framebuffer::GetTexture() const
+TextureUniform Framebuffer::GetTextureUniform() const
 {
-    ShaderTexture ret;
+    TextureUniform ret;
 #if defined USE_D3D9 || defined _XBOX
     ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
 #else

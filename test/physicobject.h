@@ -34,11 +34,12 @@ class PhysicsObject : public WorldEntity
 {
 public:
     PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation)
-        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
+      : m_custom_shader(0),
+        m_ready(false),
+        m_should_render(true),
+        m_is_character(false),
+        m_is_phys(false)
     {
-#if CAT_MODE
-        m_is_phys = false;
-#endif //CAT_MODE
         m_physics = new EasyPhysic(this);
 
         m_mesh.Compile("[sc#ddd afcb 60 1 60 -.1]");
@@ -52,11 +53,12 @@ public:
     }
 
     PhysicsObject(Simulation* new_sim, const vec3 &base_location, const quat &base_rotation, int dummy)
-        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
+      : m_custom_shader(0),
+        m_ready(false),
+        m_should_render(true),
+        m_is_character(false),
+        m_is_phys(false)
     {
-#if CAT_MODE
-        m_is_phys = false;
-#endif //CAT_MODE
         if (dummy == 1) //for platform purpose
         {
             m_physics = new EasyPhysic(this);
@@ -122,15 +124,15 @@ public:
     }
 
     PhysicsObject(Simulation* new_sim, float base_mass, const vec3 &base_location, int RandValue = -1)
-        : m_ready(false), m_should_render(true), m_is_character(false), m_custom_shader(0)
+      : m_custom_shader(0),
+        m_ready(false),
+        m_should_render(true),
+        m_is_character(false),
+        m_is_phys(false)
     {
         Array<char const *> MeshRand;
         Array<int> MeshLimit;
         Array<int> MeshType;
-
-#if CAT_MODE
-        m_is_phys = true;
-#endif //CAT_MODE
 
         MeshLimit << 0;
 
@@ -342,18 +344,16 @@ protected:
     }
 
 private:
-    //Base datas
-    EasyMesh                    m_mesh;
-    EasyPhysic*                 m_physics;
-    EasyCharacterController*    m_character;
-    GpuShaderData*              m_custom_shader;
+    // Base data
+    EasyMesh                 m_mesh;
+    EasyPhysic*              m_physics;
+    EasyCharacterController* m_character;
+    GpuShaderData*           m_custom_shader;
 
-    bool                        m_ready;
-    bool                        m_should_render;
-    bool                        m_is_character;
-#if CAT_MODE
-    bool                        m_is_phys;
-#endif //CAT_MODE
+    bool m_ready;
+    bool m_should_render;
+    bool m_is_character;
+    bool m_is_phys; /* Only used in CAT_MODE */
 };
 
 #endif /* __PHYSICOBJECT_H__ */

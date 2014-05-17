@@ -585,7 +585,7 @@ void BtPhysTest::TickDraw(float seconds)
                                                 (1 << VertexUsage::TexCoord) |
                                                 (1 << VertexUsage::TexCoordExt)),
                                                 m_cat_shader);
-            m_cat_sdata->m_shader_texture = m_cat_texture->GetShaderTexture();
+            m_cat_sdata->m_tex_uniform = m_cat_texture->GetTexture()->GetTextureUniform();
             m_cat_sdata->m_sprite_flip = ((rand(2) == 1)?(1.f):(0.f)) / (float)(NB_SPRITE * PARTICLE_SIZE);
             PhysObj->SetCustomShaderData(m_cat_sdata);
             m_cat_sdata = NULL;
@@ -708,7 +708,7 @@ void CatShaderData::SetupShaderDatas(mat4 const &model)
     m_shader->SetUniform(*GetUniform("in_model_view"), modelview);
     m_shader->SetUniform(*GetUniform("in_normal_mat"), normalmat);
     m_shader->SetUniform(*GetUniform("in_proj"), proj);
-    m_shader->SetUniform(*GetUniform("in_texture"), m_shader_texture, 0);
+    m_shader->SetUniform(*GetUniform("in_texture"), m_tex_uniform, 0);
     m_shader->SetUniform(*GetUniform("in_sprite_orientation"), m_sprite_orientation);
     m_shader->SetUniform(*GetUniform("in_sprite_flip"), m_sprite_flip);
 }

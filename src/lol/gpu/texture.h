@@ -102,7 +102,7 @@ public:
     void SetMinFiltering(TextureMinFilter filter);
     void GenerateMipmaps();
 
-    ShaderTexture GetTexture() const;
+    TextureUniform GetTextureUniform() const;
 
 private:
     class TextureData *m_data;

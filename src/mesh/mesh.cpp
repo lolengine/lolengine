@@ -104,7 +104,7 @@ void SubMesh::Render(Shader* shader)
     {
         // TODO: might be good to cache this
         ShaderUniform u_tex = shader->GetUniformLocation(m_textures[i].m1.C());
-        shader->SetUniform(u_tex, m_textures[i].m2->GetTexture(), i);
+        shader->SetUniform(u_tex, m_textures[i].m2->GetTextureUniform(), i);
     }
 
     m_vdecl->Bind();

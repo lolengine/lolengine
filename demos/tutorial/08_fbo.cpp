@@ -100,7 +100,7 @@ public:
          * we cannot expect the render target contents to be preserved.
          * This code snippet should be moved inside the Framebuffer class. */
         m_shader->SetUniform(m_uni_flag, 1.f);
-        m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
+        m_shader->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
@@ -119,7 +119,7 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_uni_flag, 1.f);
-        m_shader->SetUniform(m_uni_texture, m_fbo->GetTexture(), 0);
+        m_shader->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
