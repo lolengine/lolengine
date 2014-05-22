@@ -84,6 +84,7 @@ public:
     virtual bool Close() = 0;
 
     virtual uint8_t *GetData() const = 0;
+    virtual bool RetrieveTiles(Array<ivec2, ivec2>& tiles) { return false; }
 
 protected:
     ivec2 m_size;

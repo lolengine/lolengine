@@ -27,11 +27,14 @@ class Image
 
 public:
     static Image *Create(char const *path);
+    static Image *Store(char const *path, Image *img);
+    static Image *Load(char const *path);
     static void Destroy(Image *img);
 
     ivec2 GetSize() const;
     PixelFormat GetFormat() const;
     uint8_t *GetData() const;
+    bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
 private:
     Image();

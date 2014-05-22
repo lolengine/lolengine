@@ -41,7 +41,8 @@ struct StreamType
         StdIn = 0,
         StdOut,
         StdErr,
-        File
+        File,
+        FileBinary
     }
     m_value;
 
@@ -59,7 +60,7 @@ public:
     ~File();
 
     void Open(StreamType stream);
-    void Open(String const &file, FileAccess mode);
+    void Open(String const &file, FileAccess mode, bool force_binary=false);
     bool IsValid() const;
     void Close();
 
@@ -67,6 +68,9 @@ public:
     String ReadString();
     int Write(uint8_t const *buf, int count);
     int WriteString(const String &buf);
+    long int GetPosFromStart();
+    void SetPosFromStart(long int pos);
+    long int GetSize();
 
 private:
     class FileData *m_data;

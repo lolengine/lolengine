@@ -76,6 +76,42 @@ TileSet *Tiler::Register(char const *path)
     return tileset;
 }
 
+TileSet *Tiler::Register(String const &path, Image* image, ivec2 size, ivec2 count)
+{
+    return Tiler::Register(path.C(), image, size, count);
+}
+TileSet *Tiler::Register(char const *path, Image* image, ivec2 size, ivec2 count)
+{
+    int id = data->tilesets.MakeSlot(path);
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
+
+    if (!tileset)
+    {
+        tileset = new TileSet(path, image, size, count);
+        data->tilesets.SetEntity(id, tileset);
+    }
+
+    return tileset;
+}
+
+TileSet *Tiler::Register(String const &path, Image* image)
+{
+    return Tiler::Register(path.C(), image);
+}
+TileSet *Tiler::Register(char const *path, Image* image)
+{
+    int id = data->tilesets.MakeSlot(path);
+    TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
+
+    if (!tileset)
+    {
+        tileset = new TileSet(path, image);
+        data->tilesets.SetEntity(id, tileset);
+    }
+
+    return tileset;
+}
+
 void Tiler::Deregister(TileSet *tileset)
 {
     data->tilesets.RemoveSlot(tileset);

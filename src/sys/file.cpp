@@ -27,6 +27,8 @@
 #   include <dirent.h>
 #endif
 
+#include <sys/stat.h>
+
 #include "core.h"
 
 namespace lol
@@ -45,7 +47,8 @@ class FileData
 
     void Open(StreamType stream)
     {
-        if (m_type == StreamType::File)
+        if (m_type == StreamType::File ||
+            m_type == StreamType::FileBinary)
             return;
         m_type = stream;
         switch((int)stream)
@@ -62,9 +65,9 @@ class FileData
         }
     }
 
-    void Open(String const &file, FileAccess mode)
+    void Open(String const &file, FileAccess mode, bool force_binary)
     {
-        m_type = StreamType::File;
+        m_type = (force_binary) ? (StreamType::FileBinary) : (StreamType::File);
 #if __CELLOS_LV2__
         String realfile = String(SYS_APP_HOME) + '/' + file;
         CellFsErrno err = cellFsOpen(realfile.C(), CELL_FS_O_RDONLY,
@@ -76,7 +79,8 @@ class FileData
         m_asset = AAssetManager_open(g_assets, file.C(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
-        m_fd = fopen(file.C(), "r");
+        stat(file.C(), &m_stat);
+        m_fd = fopen(file.C(), (!force_binary) ? ("r") : ("rb"));
 #endif
     }
 
@@ -90,6 +94,26 @@ class FileData
         return !!m_fd;
 #else
         return false;
+#endif
+    }
+
+    void Close()
+    {
+        if (m_type != StreamType::File &&
+            m_type != StreamType::FileBinary)
+            return;
+#if __CELLOS_LV2__
+        if (m_fd >= 0)
+            cellFsClose(m_fd);
+        m_fd = -1;
+#elif __ANDROID__
+        if (m_asset)
+            AAsset_close(m_asset);
+        m_asset = nullptr;
+#elif HAVE_STDIO_H
+        if (m_fd)
+            fclose(m_fd);
+        m_fd = nullptr;
 #endif
     }
 
@@ -169,24 +193,45 @@ class FileData
         return Write((uint8_t const *)buf.C(), buf.Count());
     }
 
-    void Close()
+    long int GetPosFromStart()
     {
-        if (m_type != StreamType::File)
-            return;
 #if __CELLOS_LV2__
-        if (m_fd >= 0)
-            cellFsClose(m_fd);
-        m_fd = -1;
+        return 0;
 #elif __ANDROID__
-        if (m_asset)
-            AAsset_close(m_asset);
-        m_asset = nullptr;
+        return 0;
 #elif HAVE_STDIO_H
-        if (m_fd)
-            fclose(m_fd);
-        m_fd = nullptr;
+        return ftell(m_fd);
+#else
+        return 0;
 #endif
     }
+
+    void SetPosFromStart(long int pos)
+    {
+#if __CELLOS_LV2__
+        //NOT IMPLEMENTED
+#elif __ANDROID__
+        //NOT IMPLEMENTED
+#elif HAVE_STDIO_H
+        fseek(m_fd, pos, SEEK_SET);
+#else
+        //NOT IMPLEMENTED
+#endif
+    }
+
+    long int GetSize()
+    {
+#if __CELLOS_LV2__
+        return 0;
+#elif __ANDROID__
+        return 0;
+#elif HAVE_STDIO_H
+        return m_stat.st_size;
+#else
+        return 0;
+#endif
+    }
+
 
 #if __CELLOS_LV2__
     int m_fd;
@@ -195,8 +240,9 @@ class FileData
 #elif HAVE_STDIO_H
     FILE *m_fd;
 #endif
-    Atomic<int> m_refcount;
-    StreamType m_type;
+    Atomic<int>     m_refcount;
+    StreamType      m_type;
+    struct stat     m_stat;
 };
 
 //-- FILE --
@@ -251,15 +297,21 @@ void File::Open(StreamType stream)
 }
 
 //--
-void File::Open(String const &file, FileAccess mode)
+void File::Open(String const &file, FileAccess mode, bool force_binary)
 {
-    return m_data->Open(file, mode);
+    return m_data->Open(file, mode, force_binary);
 }
 
 //--
 bool File::IsValid() const
 {
     return m_data->IsValid();
+}
+
+//--
+void File::Close()
+{
+    m_data->Close();
 }
 
 //--
@@ -287,9 +339,21 @@ int File::WriteString(const String &buf)
 }
 
 //--
-void File::Close()
+long int File::GetPosFromStart()
 {
-    m_data->Close();
+    return m_data->GetPosFromStart();
+}
+
+//--
+void File::SetPosFromStart(long int pos)
+{
+    m_data->SetPosFromStart(pos);
+}
+
+//--
+long int File::GetSize()
+{
+    return m_data->GetSize();
 }
 
 //---------------

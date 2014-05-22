@@ -179,7 +179,7 @@ void SdlInputData::Tick(float seconds)
     }
 #   endif
 
-    m_mouse->SetAxis(2, 0);
+    m_mouse->SetAxis(4, 0);
 
     /* Handle keyboard and WM events */
     SDL_Event event;
@@ -202,7 +202,7 @@ void SdlInputData::Tick(float seconds)
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                 m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             else
-                m_mouse->SetAxis(2, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
+                m_mouse->SetAxis(4, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
             // TODO: mouse wheel as axis
             break;
         }
@@ -242,6 +242,9 @@ void SdlInputData::Tick(float seconds)
         m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
         m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
+        //Pixel movement
+        m_mouse->SetAxis(2, (mouse.x - vprevmouse.x));
+        m_mouse->SetAxis(3,-(mouse.y - vprevmouse.y));
     }
 
     //Mouse is focused, Validate the InScreen Key
