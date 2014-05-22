@@ -72,6 +72,8 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
 
     mouse->AddAxis("X");
     mouse->AddAxis("Y");
+    mouse->AddAxis("XPixel");
+    mouse->AddAxis("YPixel");
     mouse->AddAxis("Scroll");
 
     mouse->AddCursor("Cursor");

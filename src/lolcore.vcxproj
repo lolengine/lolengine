@@ -144,6 +144,8 @@
     <ClCompile Include="image\codec\ios-image.cpp" />
     <ClCompile Include="image\codec\ps3-image.cpp" />
     <ClCompile Include="image\codec\sdl-image.cpp" />
+    <ClCompile Include="image\codec\zed-image.cpp" />
+    <ClCompile Include="image\codec\zed-palette-image.cpp" />
     <ClCompile Include="image\color\cie1931.cpp" />
     <ClCompile Include="image\color\color.cpp" />
     <ClCompile Include="image\image.cpp" />

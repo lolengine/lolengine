@@ -32,10 +32,12 @@ class TileSet : public Entity
 {
 public:
     TileSet(char const *path);
+    TileSet(char const *path, Image* image);
     virtual ~TileSet();
 
     /* Old style: path to PNG file */
     TileSet(char const *path, ivec2 size, ivec2 count);
+    TileSet(char const *path, Image* image, ivec2 size, ivec2 count);
 
 protected:
     /* Inherited from Entity */
@@ -45,6 +47,7 @@ protected:
 public:
     /* New methods */
     int AddTile(ibox2 rect);
+    void AddTile(ivec2 count);
     int GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
 
@@ -58,6 +61,7 @@ public:
 
 private:
     void Init(char const *path);
+    void Init(char const *path, Image* image);
 
     TileSetData *m_data;
 };

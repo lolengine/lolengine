@@ -48,6 +48,8 @@ static bool RegisterAllLoaders()
 #if defined USE_SDL_IMAGE
     REGISTER_IMAGE_LOADER(SdlImageData)
 #endif
+    REGISTER_IMAGE_LOADER(ZedImageData)
+    REGISTER_IMAGE_LOADER(ZedPaletteImageData)
 
     return true;
 }
@@ -59,7 +61,11 @@ static bool RegisterAllLoaders()
 static class ImageLoader
 {
 public:
+    void Init();
     Image *Create(char const *path);
+    Image *Get(char const *path);
+    Image *Load(char const *path);
+    Image *Store(char const *path, Image *image);
     void Destroy(Image *img);
 
 private:
@@ -67,11 +73,16 @@ private:
 }
 image_loader;
 
-Image *ImageLoader::Create(char const *path)
+void ImageLoader::Init()
 {
     /* Initialise loaders (see above) */
     static bool init = RegisterAllLoaders();
     UNUSED(init);
+}
+
+Image *ImageLoader::Create(char const *path)
+{
+    Init();
 
     /* Is our image already in the bank? If so, no need to create it. */
     Image *img;
@@ -82,13 +93,40 @@ Image *ImageLoader::Create(char const *path)
     }
     else
     {
-        img = new Image();
-        img->m_data = ImageCodec::Load(path);
-        m_images[path] = img;
+        m_images[path] = Load(path);
+        img = m_images[path];
     }
 
     ++img->m_data->m_refcount;
     return img;
+}
+
+Image *ImageLoader::Get(char const *path)
+{
+    /* Is our image already in the bank? If so, no need to create it. */
+    Image *img;
+    if (m_images.HasKey(path))
+    {
+        img = m_images[path];
+        ++img->m_data->m_refcount;
+        return img;
+    }
+
+    return nullptr;
+}
+
+Image *ImageLoader::Load(char const *path)
+{
+    Image* img = new Image();
+    img->m_data = ImageCodec::Load(path);
+    return img;
+}
+
+Image *ImageLoader::Store(char const *path, Image *image)
+{
+    m_images[path] = image;
+    ++image->m_data->m_refcount;
+    return image;
 }
 
 void ImageLoader::Destroy(Image *img)
@@ -114,6 +152,16 @@ void ImageLoader::Destroy(Image *img)
 Image *Image::Create(char const *path)
 {
     return image_loader.Create(path);
+}
+
+Image *Image::Store(char const *path, Image *img)
+{
+    return image_loader.Store(path, img);
+}
+
+Image *Image::Load(char const *path)
+{
+    return image_loader.Load(path);
 }
 
 void Image::Destroy(Image *img)
@@ -143,6 +191,11 @@ PixelFormat Image::GetFormat() const
 uint8_t *Image::GetData() const
 {
     return m_data->GetData();
+}
+
+bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
+{
+    return m_data->RetrieveTiles(tiles);
 }
 
 Image::~Image()

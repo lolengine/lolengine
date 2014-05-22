@@ -60,6 +60,22 @@ TileSet::TileSet(char const *path)
   : m_data(new TileSetData())
 {
     Init(path);
+
+    Array<ivec2, ivec2> tiles;
+    if (m_data->m_image->RetrieveTiles(tiles))
+        for (int i = 0; i < tiles.Count(); i++)
+            AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
+}
+
+TileSet::TileSet(char const *path, Image* image)
+  : m_data(new TileSetData())
+{
+    Init(path, image);
+
+    Array<ivec2, ivec2> tiles;
+    if (m_data->m_image->RetrieveTiles(tiles))
+        for (int i = 0; i < tiles.Count(); i++)
+            AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
@@ -85,14 +101,54 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
         AddTile(ibox2(size * ivec2(i, j),
                       size * ivec2(i + 1, j + 1)));
     }
+
+    Array<ivec2, ivec2> tiles;
+    if (m_data->m_image->RetrieveTiles(tiles))
+        for (int i = 0; i < tiles.Count(); i++)
+            AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
+}
+
+TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
+  : m_data(new TileSetData())
+{
+    Init(path, image);
+
+    /* If count is valid, fix size; otherwise, fix count. */
+    if (count.x > 0 && count.y > 0)
+    {
+        size = m_data->m_image_size / count;
+    }
+    else
+    {
+        if (size.x <= 0 || size.y <= 0)
+            size = ivec2(32, 32);
+        count = max(ivec2(1, 1), m_data->m_image_size / size);
+    }
+
+    for (int j = 0; j < count.y; ++j)
+    for (int i = 0; i < count.x; ++i)
+    {
+        AddTile(ibox2(size * ivec2(i, j),
+                      size * ivec2(i + 1, j + 1)));
+    }
+
+    Array<ivec2, ivec2> tiles;
+    if (m_data->m_image->RetrieveTiles(tiles))
+        for (int i = 0; i < tiles.Count(); i++)
+            AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
 }
 
 void TileSet::Init(char const *path)
 {
+    Init(path, Image::Create(path));
+}
+
+void TileSet::Init(char const *path, Image* image)
+{
     m_data->m_name = String("<tileset> ") + path;
 
     m_data->m_texture = 0;
-    m_data->m_image = Image::Create(path);
+    m_data->m_image = image;
     m_data->m_image_size = m_data->m_image->GetSize();
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
                                    PotUp(m_data->m_image_size.y));
@@ -106,6 +162,18 @@ int TileSet::AddTile(ibox2 rect)
                          box2((vec2)rect.A / (vec2)m_data->m_texture_size,
                               (vec2)rect.B / (vec2)m_data->m_texture_size));
     return m_data->m_tiles.Count() - 1;
+}
+
+void TileSet::AddTile(ivec2 count)
+{
+    ivec2 size = m_data->m_image_size / count;
+
+    for (int j = 0; j < count.y; ++j)
+    for (int i = 0; i < count.x; ++i)
+    {
+        AddTile(ibox2(size * ivec2(i, j),
+                      size * ivec2(i + 1, j + 1)));
+    }
 }
 
 TileSet::~TileSet()

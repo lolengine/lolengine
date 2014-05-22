@@ -31,6 +31,10 @@ public:
     static TileSet *Register(char const *path, ivec2 size, ivec2 count);
     static TileSet *Register(String const &path);
     static TileSet *Register(char const *path);
+    static TileSet *Register(String const &path, Image* image, ivec2 size, ivec2 count);
+    static TileSet *Register(char const *path, Image* image, ivec2 size, ivec2 count);
+    static TileSet *Register(String const &path, Image* image);
+    static TileSet *Register(char const *path, Image* image);
     static void Deregister(TileSet *);
 
 private:
