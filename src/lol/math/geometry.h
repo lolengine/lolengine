@@ -181,12 +181,12 @@ bool operator>=(float value, const TestEpsilon& epsilon);
 //--
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
-    vec2 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
-    vec2 e1 = 0.5f * (b1.B - b1.A);
-    vec2 e2 = 0.5f * (b2.B - b2.A);
+    vec2 c  = 0.5f * ((b1.A + b1.B) - (b2.A + b2.B));
+    vec2 e1 = 0.5f *  (b1.B - b1.A);
+    vec2 e2 = 0.5f *  (b2.B - b2.A);
 
-    return abs(dist.x) <= abs(e1.x) + abs(e2.x)
-        && abs(dist.y) <= abs(e1.y) + abs(e2.y);
+    return abs(c.x) <= e1.x + e2.x
+        && abs(c.y) <= e1.y + e2.y;
 }
 static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
 {
@@ -195,13 +195,13 @@ static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
 
 static inline bool TestAABBVsAABB(box3 const &b1, box3 const &b2)
 {
-    vec3 dist = 0.5f * (b1.A - b2.A + b1.B - b2.B);
-    vec3 e1 = 0.5f * (b1.B - b1.A);
-    vec3 e2 = 0.5f * (b2.B - b2.A);
+    vec3 c =  0.5f * ((b1.A + b1.B) - (b2.A + b2.B));
+    vec3 e1 = 0.5f *  (b1.B - b1.A);
+    vec3 e2 = 0.5f *  (b2.B - b2.A);
 
-    return abs(dist.x) <= abs(e1.x) + abs(e2.x)
-        && abs(dist.y) <= abs(e1.y) + abs(e2.y)
-        && abs(dist.z) <= abs(e1.z) + abs(e2.z);
+    return abs(c.x) <= e1.x + e2.x
+        && abs(c.y) <= e1.y + e2.y
+        && abs(c.z) <= e1.z + e2.z;
 }
 static inline bool TestAABBVsPoint(box3 const &b1, vec3 const &p)
 {
