@@ -73,7 +73,7 @@ esac
 if [ -f "$top_srcdir/.git/index" ]; then
     info "detected Git repository"
     repo=git
-elif [ -f "$top_srcdir/.svn/format" ]; then
+elif [ -f "$top_srcdir/.svn/format" -o -f "$top_srcdir/.svn/wc.db" ]; then
     info "detected SVN repository"
     repo=svn
 else
