@@ -67,14 +67,36 @@ struct ThreadCommand
 template<typename T1>
 struct JobCommand : public ThreadCommand
 {
-    T1 m_data;
+    inline JobCommand()
+      : ThreadCommand(ThreadCommand::WORK_TODO)
+    {}
 
-    inline JobCommand()                     : ThreadCommand(ThreadCommand::WORK_TODO) {}
-    inline JobCommand(Value v)              : ThreadCommand(v) {}
-    inline JobCommand(T1 data)              : ThreadCommand(ThreadCommand::WORK_TODO) { m_data = data; }
-    inline JobCommand(Value v, T1 data)     : m_value(v) { m_data = data; }
-    inline void SetData(T1 data)            { m_data = data; }
-    inline T1 GetData()                     { return m_data; }
+    inline JobCommand(Value v)
+      : ThreadCommand(v)
+    {}
+
+    inline JobCommand(T1 const &data)
+      : ThreadCommand(ThreadCommand::WORK_TODO),
+        m_data(data)
+    {}
+
+    inline JobCommand(Value v, T1 const &data)
+      : ThreadCommand(v),
+        m_data(data)
+    {}
+
+    inline void SetData(T1 const &data)
+    {
+        m_data = data;
+    }
+
+    inline T1 GetData()
+    {
+        return m_data;
+    }
+
+private:
+    T1 m_data;
 };
 
 template<typename T1, typename T2> class ThreadManager
