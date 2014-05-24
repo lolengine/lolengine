@@ -333,8 +333,9 @@ public:
     }
 
     //--
-    void                SetSize(TV size)            { m_size = size; }
-    void                SetMaxDepth(int max_depth)  { m_max_depth = max_depth; }
+    void                SetSize(TV size)                { m_size = size; }
+    void                SetMaxDepth(int max_depth)      { m_max_depth = max_depth; }
+    void                SetMaxElement(int max_element)  { m_max_element = max_element; }
 
     Array<NodeLeaf> const & GetTree() const
     {
