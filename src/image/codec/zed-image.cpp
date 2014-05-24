@@ -168,7 +168,7 @@ bool ZedImageData::Open(char const *path)
 
         //Prepare read
         uint32_t header_length = (size_y + 5) & 0xFC;
-	    uint32_t data_length = (file_offset[i+1] - file_offset[i]) - header_length;
+        uint32_t data_length = (file_offset[i+1] - file_offset[i]) - header_length;
         uint32_t data_pos = file_offset[i] + header_length;
 
         //Prepare buffer and tiles infos
