@@ -343,6 +343,11 @@
     <ClCompile Include="easymesh\easymeshbuild.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="image\codec\zed-image.cpp" />
+    <ClCompile Include="image\codec\zed-palette-image.cpp" />
+    <ClCompile Include="sys\thread.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
