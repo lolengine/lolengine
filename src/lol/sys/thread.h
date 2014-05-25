@@ -22,6 +22,8 @@
 #   include "sys/threadbase.h"
 #endif
 
+#include "entity.h"
+
 namespace lol
 {
 
@@ -69,6 +71,7 @@ struct ThreadJobType
         NONE = 0,
         WORK_TODO,
         WORK_DONE,
+        WORK_FAILED,
         THREAD_STOP,
 
         MAX
@@ -96,82 +99,25 @@ protected:
     ThreadJobType m_type;
 };
 
-class ThreadManager
+class ThreadManager : public Entity
 {
 public:
-    ThreadManager(int thread_count)
-    {
-        m_thread_count = thread_count;
-    }
+    ThreadManager(int thread_count);
+    ~ThreadManager();
 
-    //Initialize and start the thread
-    bool Start()
-    {
-        if (m_threads.Count() > 0)
-            return false;
+    //Initialize, Ticker::Ref and start the thread
+    bool Start();
+    //Stop the threads
+    bool Stop();
+    //Work stuff
+    bool AddWork(ThreadJob* job);
+    bool FetchResult(Array<ThreadJob*>& results);
+    //Base thread work function
+    static void *BaseThreadWork(void* data);
+    virtual void TickGame(float seconds);
+    virtual void TreatResult(ThreadJob* result) { }
 
-        /* Spawn worker threads and wait for their readiness. */
-        m_threads.Resize(m_thread_count);
-        for (int i = 0; i < m_thread_count; i++)
-            m_threads[i] = new Thread(BaseThreadWork, this);
-        for (int i = 0; i < m_thread_count; i++)
-            m_spawnqueue.Pop();
-
-        return true;
-    }
-
-    bool AddWork(ThreadJob* job)
-    {
-        if (m_jobqueue.TryPush(job))
-            return true;
-        return false;
-    }
-    bool FetchResult(Array<ThreadJob*>& results)
-    {
-        ThreadJob* result;
-        while (m_resultqueue.TryPop(result))
-            results << result;
-        return results.Count() > 0;
-    }
-
-    static void *BaseThreadWork(void* data)
-    {
-        ThreadManager *that = (ThreadManager *)data;
-        that->m_spawnqueue.Push(ThreadStatus::THREAD_STARTED);
-        for ( ; ; )
-        {
-            ThreadJob* job = that->m_jobqueue.Pop();
-            if (job->GetJobType() == ThreadJobType::THREAD_STOP)
-                break;
-            else if (*job == ThreadJobType::WORK_TODO)
-            {
-                if (job->DoWork())
-                {
-                    job->SetJobType(ThreadJobType::WORK_DONE);
-                    that->m_resultqueue.Push(job);
-                }
-            }
-        }
-        that->m_donequeue.Push(ThreadStatus::THREAD_STOPPED);
-        return NULL;
-    }
-
-    //Stop the thread
-    bool Stop()
-    {
-        if (m_threads.Count() <= 0)
-            return false;
-
-        /* Signal worker threads for completion and wait for
-         * them to quit. */
-        ThreadJob stop_job(ThreadJobType::THREAD_STOP);
-        for (int i = 0; i < m_thread_count; i++)
-            m_jobqueue.Push(&stop_job);
-        for (int i = 0; i < m_thread_count; i++)
-            m_donequeue.Pop();
-
-        return true;
-    }
+    char const *GetName() { return "<ThreadManager>"; }
 
 protected:
     /* Worker threads */
@@ -180,6 +126,7 @@ protected:
     Queue<ThreadStatus>     m_spawnqueue, m_donequeue;
     Queue<ThreadJob*>       m_jobqueue;
     Queue<ThreadJob*>       m_resultqueue;
+    Array<ThreadJob*>       m_job_dispatch;
 };
 #endif
 
