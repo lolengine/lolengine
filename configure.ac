@@ -551,6 +551,8 @@ AC_CONFIG_FILES(
   people/benlitz/private/lolui/Makefile
   people/touky/Makefile
   people/touky/private/Makefile
+  people/touky/private/sprite_sorter/Makefile
+  people/touky/private/squad_shooter/Makefile
   people/touky/private/touky_demo/Makefile
   people/touky/private/tactics/Makefile
   people/touky/private/the_unfortunate_voronoid/Makefile
