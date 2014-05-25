@@ -279,9 +279,9 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
     float tx = texels.A.x;
     float ty = texels.A.y;
 
-    int dx = (pixels.B.x - pixels.A.x) * scale.x;
-    int dy = o ? 0 : (pixels.B.y - pixels.A.y) * scale.y;
-    int dz = o ? (pixels.B.y - pixels.A.y) * scale.y : 0;
+    int dx = (pixels.B.x - pixels.A.x) * (int)scale.x;
+    int dy = o ? 0 : (pixels.B.y - pixels.A.y) * (int)scale.y;
+    int dz = o ? (pixels.B.y - pixels.A.y) * (int)scale.y : 0;
 
     /* If scaling is negative, switch triangle winding */
     if (scale.x * scale.y < 0.0f)
@@ -301,8 +301,8 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
     dty *= 126.f / 128.f;
 #endif
 
-    vec3 extent_x = 0.5f * vec3(dx, 0.f, 0.f);
-    vec3 extent_y = 0.5f * vec3(0.f, dy, dz);
+    vec3 extent_x = 0.5f * vec3((float)dx, 0.f, 0.f);
+    vec3 extent_y = 0.5f * vec3(0.f, (float)dy, (float)dz);
     vec3 center = pos + extent_x + extent_y;
     extent_x = mat3::rotate(angle, vec3::axis_z) * extent_x;
     extent_y = mat3::rotate(angle, vec3::axis_z) * extent_y;
