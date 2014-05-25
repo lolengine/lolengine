@@ -45,12 +45,28 @@ public:
     virtual ~Thread() {}
 };
 
-struct ThreadCommand
+struct ThreadStatus
 {
     enum Value
     {
+        NOTHING = 0,
         THREAD_STARTED,
         THREAD_STOPPED,
+
+        MAX
+    }
+    m_value;
+
+    inline ThreadStatus()                   : m_value(ThreadStatus::NOTHING) {}
+    inline ThreadStatus(Value v)            : m_value(v) {}
+    bool operator==(const ThreadStatus& v)  { return m_value == v.m_value; }
+};
+
+struct ThreadJobType
+{
+    enum Value
+    {
+        NONE = 0,
         WORK_TODO,
         WORK_DONE,
         THREAD_STOP,
@@ -59,47 +75,28 @@ struct ThreadCommand
     }
     m_value;
 
-    inline ThreadCommand()                  : m_value(ThreadCommand::MAX) {}
-    inline ThreadCommand(Value v)           : m_value(v) {}
-    bool operator==(const ThreadCommand& v) { return m_value == v.m_value; }
+    inline ThreadJobType()                  : m_value(ThreadJobType::MAX) {}
+    inline ThreadJobType(Value v)           : m_value(v) {}
+    bool operator==(const ThreadJobType& o) { return m_value == o.m_value; }
 };
 
-template<typename T1>
-struct JobCommand : public ThreadCommand
+class ThreadJob
 {
-    inline JobCommand()
-      : ThreadCommand(ThreadCommand::WORK_TODO)
-    {}
+    friend class ThreadManager;
 
-    inline JobCommand(Value v)
-      : ThreadCommand(v)
-    {}
+public:
+    ThreadJob()                             { m_type = ThreadJobType::NONE; }
+    ThreadJob(ThreadJobType type)           { m_type = type; }
+    ThreadJobType GetJobType()              { return m_type; }
+    void SetJobType(ThreadJobType type)     { m_type = type; }
+    bool operator==(const ThreadJobType& o) { return GetJobType() == o; }
+protected:
+    virtual bool DoWork()                   { return false; }
 
-    inline JobCommand(T1 const &data)
-      : ThreadCommand(ThreadCommand::WORK_TODO),
-        m_data(data)
-    {}
-
-    inline JobCommand(Value v, T1 const &data)
-      : ThreadCommand(v),
-        m_data(data)
-    {}
-
-    inline void SetData(T1 const &data)
-    {
-        m_data = data;
-    }
-
-    inline T1 GetData()
-    {
-        return m_data;
-    }
-
-private:
-    T1 m_data;
+    ThreadJobType m_type;
 };
 
-template<typename T1, typename T2> class ThreadManager
+class ThreadManager
 {
 public:
     ThreadManager(int thread_count)
@@ -123,15 +120,15 @@ public:
         return true;
     }
 
-    bool AddWork(const JobCommand<T1>& job)
+    bool AddWork(ThreadJob* job)
     {
         if (m_jobqueue.TryPush(job))
             return true;
         return false;
     }
-    bool FetchResult(Array<JobCommand<T2> >& results)
+    bool FetchResult(Array<ThreadJob*>& results)
     {
-        JobCommand<T2> result;
+        ThreadJob* result;
         while (m_resultqueue.TryPop(result))
             results << result;
         return results.Count() > 0;
@@ -140,26 +137,23 @@ public:
     static void *BaseThreadWork(void* data)
     {
         ThreadManager *that = (ThreadManager *)data;
-        that->m_spawnqueue.Push(ThreadCommand::THREAD_STARTED);
+        that->m_spawnqueue.Push(ThreadStatus::THREAD_STARTED);
         for ( ; ; )
         {
-            JobCommand<T1> job = that->m_jobqueue.Pop();
-            if (job == ThreadCommand::THREAD_STOP)
+            ThreadJob* job = that->m_jobqueue.Pop();
+            if (job->GetJobType() == ThreadJobType::THREAD_STOP)
                 break;
-            else if (job == ThreadCommand::WORK_TODO)
+            else if (*job == ThreadJobType::WORK_TODO)
             {
-                JobCommand<T2> result(ThreadCommand::WORK_DONE);
-                if (that->DoThreadWork(job, result))
-                    that->m_resultqueue.Push(result);
+                if (job->DoWork())
+                {
+                    job->SetJobType(ThreadJobType::WORK_DONE);
+                    that->m_resultqueue.Push(job);
+                }
             }
         }
-        that->m_donequeue.Push(ThreadCommand::THREAD_STOPPED);
+        that->m_donequeue.Push(ThreadStatus::THREAD_STOPPED);
         return NULL;
-    }
-
-    virtual bool DoThreadWork(JobCommand<T1>& job, JobCommand<T2>& result)
-    {
-        return false;
     }
 
     //Stop the thread
@@ -170,8 +164,9 @@ public:
 
         /* Signal worker threads for completion and wait for
          * them to quit. */
+        ThreadJob stop_job(ThreadJobType::THREAD_STOP);
         for (int i = 0; i < m_thread_count; i++)
-            m_jobqueue.Push(ThreadCommand::THREAD_STOP);
+            m_jobqueue.Push(&stop_job);
         for (int i = 0; i < m_thread_count; i++)
             m_donequeue.Pop();
 
@@ -182,9 +177,9 @@ protected:
     /* Worker threads */
     int                     m_thread_count;
     Array<Thread*>          m_threads;
-    Queue<ThreadCommand>    m_spawnqueue, m_donequeue;
-    Queue<JobCommand<T1> >  m_jobqueue;
-    Queue<JobCommand<T2> >  m_resultqueue;
+    Queue<ThreadStatus>     m_spawnqueue, m_donequeue;
+    Queue<ThreadJob*>       m_jobqueue;
+    Queue<ThreadJob*>       m_resultqueue;
 };
 #endif
 
