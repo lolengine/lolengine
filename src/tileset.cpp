@@ -279,9 +279,9 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
     float tx = texels.A.x;
     float ty = texels.A.y;
 
-    int dx = (pixels.B.x - pixels.A.x) * (int)scale.x;
-    int dy = o ? 0 : (pixels.B.y - pixels.A.y) * (int)scale.y;
-    int dz = o ? (pixels.B.y - pixels.A.y) * (int)scale.y : 0;
+    int dx =         (int)((float)(pixels.B.x - pixels.A.x) * scale.x);
+    int dy = o ? 0 : (int)((float)(pixels.B.y - pixels.A.y) * scale.y);
+    int dz = o ?     (int)((float)(pixels.B.y - pixels.A.y) * scale.y) : 0;
 
     /* If scaling is negative, switch triangle winding */
     if (scale.x * scale.y < 0.0f)
