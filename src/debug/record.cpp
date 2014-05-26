@@ -35,11 +35,11 @@ class DebugRecordData
     friend class DebugRecord;
 
 private:
-    char const *path;
-    ivec2 size;
-    int fps;
+    String m_path;
+    ivec2 m_size;
+    int m_fps;
 #if defined USE_PIPI
-    pipi_sequence_t *sequence;
+    pipi_sequence_t *m_sequence;
 #endif
 };
 
@@ -47,16 +47,16 @@ private:
  * Public DebugRecord class
  */
 
-DebugRecord::DebugRecord(char const *path, float fps)
-  : data(new DebugRecordData())
+DebugRecord::DebugRecord(String const &path, float fps)
+  : m_data(new DebugRecordData())
 {
     Ticker::StartRecording();
 
-    data->path = strdup(path);
-    data->size = ivec2::zero;
-    data->fps = (int)(fps + 0.5f);
+    m_data->m_path = path;
+    m_data->m_size = ivec2::zero;
+    m_data->m_fps = (int)(fps + 0.5f);
 #if defined USE_PIPI
-    data->sequence = nullptr;
+    m_data->m_sequence = nullptr;
 #endif
 
     m_drawgroup = DRAWGROUP_CAPTURE;
@@ -73,26 +73,27 @@ void DebugRecord::TickDraw(float seconds)
 
     ivec2 size = Video::GetSize();
 
-    if (data->size != size)
+    if (m_data->m_size != size)
     {
-        data->size = size;
+        m_data->m_size = size;
 
 #if defined USE_PIPI
-        if (data->sequence)
-            pipi_close_sequence(data->sequence);
+        if (m_data->m_sequence)
+            pipi_close_sequence(m_data->m_sequence);
 
-        data->sequence = pipi_open_sequence(data->path, size.x, size.y,
-                                            1 /* RGB */, data->fps,
-                                            1, 1, 60 * 1024 * 1024);
+        m_data->m_sequence = pipi_open_sequence(m_data->m_path, size.x, size.y,
+                                                1 /* RGB */, m_data->m_fps,
+                                                1, 1, 60 * 1024 * 1024);
 #endif
     }
 
 #if defined USE_PIPI
-    if (data->sequence)
+    if (m_data->m_sequence)
     {
         uint32_t *buffer = new uint32_t[size.x * size.y];
         Video::Capture(buffer);
-        pipi_feed_sequence(data->sequence, (uint8_t *)buffer, size.x, size.y);
+        pipi_feed_sequence(m_data->m_sequence, (uint8_t *)buffer,
+                           size.x, size.y);
         delete[] buffer;
     }
 #endif
@@ -102,7 +103,7 @@ DebugRecord::~DebugRecord()
 {
     Ticker::StopRecording();
 
-    delete data;
+    delete m_data;
 }
 
 } /* namespace lol */

@@ -26,7 +26,7 @@ class DebugRecordData;
 class DebugRecord : public Entity
 {
 public:
-    DebugRecord(char const *path, float fps);
+    DebugRecord(String const &path, float fps);
     virtual ~DebugRecord();
 
 protected:
@@ -34,7 +34,7 @@ protected:
     virtual void TickDraw(float seconds);
 
 private:
-    DebugRecordData *data;
+    DebugRecordData *m_data;
 };
 
 } /* namespace lol */

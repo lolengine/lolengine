@@ -133,21 +133,36 @@ static inline uint32_t radians(uint32_t x)  { return (uint32_t)radians((double)x
 static inline int64_t radians(int64_t x)    { return (int64_t) radians((ldouble)x); }
 static inline uint64_t radians(uint64_t x)  { return (uint64_t)radians((ldouble)x); }
 
-static inline float lerp(float const &a, float const &b, float const &x)
+static inline float mix(float const &a, float const &b, float const &x)
 {
     return a + (b - a) * x;
+}
+
+static inline double mix(double const &a, double const &b, double const &x)
+{
+    return a + (b - a) * x;
+}
+
+static inline ldouble mix(ldouble const &a, ldouble const &b, ldouble const &x)
+{
+    return a + (b - a) * x;
+}
+
+/* Inherited from HLSL */
+static inline float lerp(float const &a, float const &b, float const &x)
+{
+    return mix(a, b, x);
 }
 
 static inline double lerp(double const &a, double const &b, double const &x)
 {
-    return a + (b - a) * x;
+    return mix(a, b, x);
 }
 
 static inline ldouble lerp(ldouble const &a, ldouble const &b, ldouble const &x)
 {
-    return a + (b - a) * x;
+    return mix(a, b, x);
 }
-
 
 /* These accelerated functions will be merged into the above, one day */
 double lol_sin(double);

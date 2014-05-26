@@ -584,10 +584,10 @@ vec3 Color::WavelengthToCIExyY(float nm)
     if (i < 0 || i > 830 - 360)
         return vec3::zero;
 
-    float t = nm - i, s = 1.0 - t;
-    float x = s * cie_1931_xyz[i * 3 + 0] + t * cie_1931_xyz[i * 3 + 3];
-    float y = s * cie_1931_xyz[i * 3 + 1] + t * cie_1931_xyz[i * 3 + 4];
-    float z = s * cie_1931_xyz[i * 3 + 2] + t * cie_1931_xyz[i * 3 + 5];
+    float t = nm - i;
+    float x = lol::lerp(cie_1931_xyz[i * 3 + 0], cie_1931_xyz[i * 3 + 3], t);
+    float y = lol::lerp(cie_1931_xyz[i * 3 + 1], cie_1931_xyz[i * 3 + 4], t);
+    float z = lol::lerp(cie_1931_xyz[i * 3 + 2], cie_1931_xyz[i * 3 + 5], t);
     float normalize = 1.f / (x + y + z);
 
     return vec3(x * normalize, y * normalize, 100.0f);
