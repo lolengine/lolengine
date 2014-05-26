@@ -783,7 +783,8 @@ template<> real gamma(real const &x)
      * precision values in order to attain the desired accuracy. It might
      * also be useful to sort the ck values by decreasing absolute value
      * and do the addition in this order. */
-    int a = ceilf(logf(2) / logf(2 * F_PI) * real::BIGITS * real::BIGIT_BITS);
+    int a = (int)ceilf(logf(2) / logf(2 * F_PI)
+                          * real::BIGITS * real::BIGIT_BITS);
 
     real ret = sqrt(real::R_PI() * 2);
     real fact_k_1 = real::R_1();
