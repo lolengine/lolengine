@@ -85,7 +85,7 @@ struct ThreadJobType
 
 class ThreadJob
 {
-    friend class ThreadManager;
+    friend class BaseThreadManager;
 
 public:
     ThreadJob()                             { m_type = ThreadJobType::NONE; }
@@ -99,11 +99,14 @@ protected:
     ThreadJobType m_type;
 };
 
-class ThreadManager : public Entity
+//Base class for thread manager
+class BaseThreadManager : public Entity
 {
 public:
-    ThreadManager(int thread_count);
-    ~ThreadManager();
+    BaseThreadManager(int thread_count);
+    ~BaseThreadManager();
+
+    char const *GetName() { return "<BaseThreadManager>"; }
 
     //Initialize, Ticker::Ref and start the thread
     bool Start();
@@ -111,15 +114,14 @@ public:
     bool Stop();
     //Work stuff
     bool AddWork(ThreadJob* job);
+protected:
     bool FetchResult(Array<ThreadJob*>& results);
     //Base thread work function
     static void *BaseThreadWork(void* data);
     virtual void TickGame(float seconds);
-    virtual void TreatResult(ThreadJob* result) { }
+    //Default behaviour : delete the job result
+    virtual void TreatResult(ThreadJob* result) { delete(result); }
 
-    char const *GetName() { return "<ThreadManager>"; }
-
-protected:
     /* Worker threads */
     int                     m_thread_count;
     Array<Thread*>          m_threads;
@@ -127,6 +129,28 @@ protected:
     Queue<ThreadJob*>       m_jobqueue;
     Queue<ThreadJob*>       m_resultqueue;
     Array<ThreadJob*>       m_job_dispatch;
+};
+
+//Generic class for thread manager, executes work and store results, for you to use
+class GenericThreadManager : public BaseThreadManager
+{
+public:
+    GenericThreadManager(int thread_count)
+        : BaseThreadManager(thread_count) { }
+
+    char const *GetName() { return "<GenericThreadManager>"; }
+
+    bool GetWorkResult(Array<ThreadJob*>& results)
+    {
+        results += m_job_result;
+        m_job_result.Empty();
+        return results.Count() > 0;
+    }
+
+protected:
+    virtual void TreatResult(ThreadJob* result) { m_job_result << result; }
+
+    Array<ThreadJob*>       m_job_result;
 };
 #endif
 
