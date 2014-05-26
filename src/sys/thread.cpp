@@ -19,17 +19,17 @@ namespace lol
 {
 
 #if LOL_FEATURE_THREADS
-ThreadManager::ThreadManager(int thread_count)
+BaseThreadManager::BaseThreadManager(int thread_count)
 {
     m_thread_count = thread_count;
 }
-ThreadManager::~ThreadManager()
+BaseThreadManager::~BaseThreadManager()
 {
     Stop();
 }
 
 //Initialize, Ticker::Ref and start the thread
-bool ThreadManager::Start()
+bool BaseThreadManager::Start()
 {
     if (m_threads.Count() > 0)
         return false;
@@ -45,7 +45,7 @@ bool ThreadManager::Start()
 }
 
 //Stop the threads
-bool ThreadManager::Stop()
+bool BaseThreadManager::Stop()
 {
     if (m_threads.Count() <= 0)
         return false;
@@ -62,13 +62,13 @@ bool ThreadManager::Stop()
 }
     
 //Work stuff
-bool ThreadManager::AddWork(ThreadJob* job)
+bool BaseThreadManager::AddWork(ThreadJob* job)
 {
     if (m_jobqueue.TryPush(job))
         return true;
     return false;
 }
-bool ThreadManager::FetchResult(Array<ThreadJob*>& results)
+bool BaseThreadManager::FetchResult(Array<ThreadJob*>& results)
 {
     ThreadJob* result;
     while (m_resultqueue.TryPop(result))
@@ -77,9 +77,9 @@ bool ThreadManager::FetchResult(Array<ThreadJob*>& results)
 }
 
 //Base thread work function
-void *ThreadManager::BaseThreadWork(void* data)
+void *BaseThreadManager::BaseThreadWork(void* data)
 {
-    ThreadManager *that = (ThreadManager *)data;
+    BaseThreadManager *that = (BaseThreadManager *)data;
     that->m_spawnqueue.Push(ThreadStatus::THREAD_STARTED);
     for ( ; ; )
     {
@@ -99,7 +99,7 @@ void *ThreadManager::BaseThreadWork(void* data)
     return NULL;
 }
 
-void ThreadManager::TickGame(float seconds)
+void BaseThreadManager::TickGame(float seconds)
 {
     //Start if needed
     Start();
@@ -117,7 +117,6 @@ void ThreadManager::TickGame(float seconds)
             ThreadJob* job = result[i];
             if (job->GetJobType() == ThreadJobType::WORK_DONE)
                 TreatResult(job);
-            delete(job);
         }
     }
 }
