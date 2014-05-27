@@ -116,7 +116,10 @@ void BaseThreadManager::TickGame(float seconds)
         {
             ThreadJob* job = result[i];
             if (job->GetJobType() == ThreadJobType::WORK_DONE)
+            {
+                job->SetJobType(ThreadJobType::WORK_FETCHED);
                 TreatResult(job);
+            }
         }
     }
 }

@@ -168,7 +168,20 @@ public:
         m_max_element = 1;
         AddLeaf(0);
     }
-    ~AABBTree() { }
+    ~AABBTree()
+    {
+        Clear();
+    }
+    void CopySetup(const AABBTree<TE, TV, TB, child_nb>* src)
+    {
+        CopySetup(*src);
+    }
+    void CopySetup(const AABBTree<TE, TV, TB, child_nb>& src)
+    {
+        m_size = src.m_size;
+        m_max_depth = src.m_max_depth;
+        m_max_element = src.m_max_element;
+    }
 
 private:
     //--
@@ -333,6 +346,9 @@ public:
     }
 
     //--
+    TV                  GetSize()                       { return m_size; }
+    int                 GetMaxDepth()                   { return m_max_depth; }
+    int                 GetMaxElement()                 { return m_max_element; }
     void                SetSize(TV size)                { m_size = size; }
     void                SetMaxDepth(int max_depth)      { m_max_depth = max_depth; }
     void                SetMaxElement(int max_element)  { m_max_element = max_element; }
