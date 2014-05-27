@@ -72,6 +72,7 @@ struct ThreadJobType
         WORK_TODO,
         WORK_DONE,
         WORK_FAILED,
+        WORK_FETCHED,
         THREAD_STOP,
 
         MAX
