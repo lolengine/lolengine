@@ -39,9 +39,9 @@ public:
     TileSet(char const *path, ivec2 size, ivec2 count);
     TileSet(char const *path, Image* image, ivec2 size, ivec2 count);
 
-protected:
     /* Inherited from Entity */
     virtual char const *GetName();
+protected:
     virtual void TickDraw(float seconds);
 
 public:
@@ -63,7 +63,7 @@ private:
     void Init(char const *path);
     void Init(char const *path, Image* image);
 
-    TileSetData *m_data;
+    TileSetData*    m_data;
 };
 
 } /* namespace lol */
