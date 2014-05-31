@@ -34,9 +34,10 @@ public:
     virtual uint8_t *GetData() const;
     virtual bool RetrieveTiles(Array<ivec2, ivec2>& tiles)
     {
+        bool result = m_tiles.Count() > 0;
         tiles += m_tiles;
         m_tiles.Empty();
-        return true;
+        return result;
     }
 
 private:
@@ -54,33 +55,7 @@ bool ZedImageData::Open(char const *path)
     if (!lol::String(path).EndsWith(".RSC"))
         return false;
 
-    File file;
-    file.Open(path, FileAccess::Read, true);
-
-    //Put file in memory
-    long file_size = file.GetSize();
-    Array<uint8_t> file_buffer;
-    file_buffer.Resize(file_size);
-    file.Read((uint8_t*)&file_buffer[0], file_size);
-    file.Close();
-
-    //Get FileCount
-    uint32_t file_pos = 0;
-    uint16_t file_count = 0;
-    file_count = *((uint16_t*)(&file_buffer[file_pos]));
-    file_pos += sizeof(uint16_t);
-
-    Array<long int> file_offset;
-    file_offset.Resize(file_count);
-    //Get all the file offsets
-    for (int i = 0; i < file_count; i++)
-    {
-        file_offset[i] = *((long int*)(&file_buffer[file_pos]));
-        file_pos += sizeof(long int);
-    }
-    file_offset << file_size;
-
-    m_tiles.Reserve(file_count);
+    //Compacter definition
     struct CompactSecondary
     {
         CompactSecondary(int32_t size) { m_size = size; }
@@ -145,6 +120,34 @@ bool ZedImageData::Open(char const *path)
         Array<CompactMain>      m_primary;
     };
 
+    File file;
+    file.Open(path, FileAccess::Read, true);
+
+    //Put file in memory
+    long file_size = file.GetSize();
+    Array<uint8_t> file_buffer;
+    file_buffer.Resize(file_size);
+    file.Read((uint8_t*)&file_buffer[0], file_size);
+    file.Close();
+
+    //Get FileCount
+    uint32_t file_pos = 0;
+    uint16_t file_count = 0;
+    file_count = *((uint16_t*)(&file_buffer[file_pos]));
+    file_pos += sizeof(uint16_t);
+
+    Array<long int> file_offset;
+    file_offset.Resize(file_count);
+    //Get all the file offsets
+    for (int i = 0; i < file_count; i++)
+    {
+        file_offset[i] = *((long int*)(&file_buffer[file_pos]));
+        file_pos += sizeof(long int);
+    }
+    file_offset << file_size;
+
+    m_tiles.Reserve(file_count);
+    
     Compacter2d compacter;
     compacter.StepSetup(8, 8, 10);
 
@@ -171,45 +174,62 @@ bool ZedImageData::Open(char const *path)
         uint32_t data_length = (file_offset[i+1] - file_offset[i]) - header_length;
         uint32_t data_pos = file_offset[i] + header_length;
 
+        /* Seems useless in the end
+        //Retrieve Header & footer
+        Array<uint8_t> header_data;
+        header_data.Resize(header_length);
+        memcpy(&header_data[0], &file_buffer[file_offset[i]], header_length);
+        Array<uint8_t> footer_data;
+        uint32_t footer_length = lol::min((uint32_t)file_buffer.Count(), data_pos + data_length + header_length) - (data_pos + data_length);
+        if (footer_length > 0)
+        {
+            footer_data.Resize(footer_length);
+            memcpy(&footer_data[0], &file_buffer[data_pos + data_length], footer_length);
+        }
+        */
+
         //Prepare buffer and tiles infos
         int32_t convert_pos = file_convert.Count();
         ivec2 size = ivec2(size_x, size_y);
         compacter.Store(m_tiles.Count(), ivec2(size_x, size_y));
         m_tiles.Push(ivec2(file_convert.Count(), data_length), ivec2(size_x, size_y));
         file_convert.Resize(convert_pos + data_length);
-
-        ivec2 size_16 = size;
-        int32_t s_16 = 8;
-        while (1)
-        {
-            if (size_16.x <= s_16)
-            {
-                size_16.x = s_16;
-                break;
-            }
-            s_16 <<= 1;
-        }
-        s_16 = 8;
-        while (1)
-        {
-            if (size_16.y <= s_16)
-            {
-                size_16.y = s_16;
-                break;
-            }
-            s_16 <<= 1;
-        }
-        int j = 0;
-        for (; j < available_sizes.Count(); j++)
-            if (available_sizes[j] == size_16)
-                break;
-        if (j >= available_sizes.Count())
-            available_sizes << size_16;
-
+        
         //Retrieve actual datas
         file_pos = data_pos;
         memcpy(&file_convert[convert_pos], &file_buffer[file_pos], data_length);
         file_pos += data_length;
+
+        //Store size type
+        {
+            ivec2 size_16 = size;
+            int32_t s_16 = 16;
+            while (1)
+            {
+                if (size_16.x <= s_16)
+                {
+                    size_16.x = s_16;
+                    break;
+                }
+                s_16 <<= 1;
+            }
+            s_16 = 8;
+            while (1)
+            {
+                if (size_16.y <= s_16)
+                {
+                    size_16.y = s_16;
+                    break;
+                }
+                s_16 <<= 1;
+            }
+            int j = 0;
+            for (; j < available_sizes.Count(); j++)
+                if (available_sizes[j] == size_16)
+                    break;
+            if (j >= available_sizes.Count())
+                available_sizes << size_16;
+        }
     }
 
     int32_t tex_sqrt = (int32_t)lol::sqrt((float)total_size);
