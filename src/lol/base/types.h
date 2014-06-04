@@ -28,6 +28,37 @@ typedef Real<16> real;
 /* The “half” type used for 16-bit floating point numbers. */
 class half;
 
+#define DEFINE_ENUM(NEW_ENUM)   struct NEW_ENUM {
+
+#define START_VALUE             enum Value {
+#define ADD_VALUE(NEW_VALUE)    E##NEW_VALUE,
+#define END_VALUE               MAX } m_value;
+
+#define START_TEXT                                                          \
+inline String C()                                                           \
+{                                                                           \
+    static String text[] = {
+#define ADD_TEXT(NEW_TEXT)      #NEW_TEXT,
+#define END_TEXT                                                            \
+};                                                                          \
+if (m_value >= MAX)                                                         \
+    return "INVALID";                                                       \
+return text[m_value];                                                       \
+};                                                                          \
+
+#define END_ENUM(NEW_ENUM)                                                  \
+    inline NEW_ENUM()                   : m_value(MAX) {}                   \
+    inline NEW_ENUM(Value v)            : m_value(v) {}                     \
+    inline NEW_ENUM(int v)              : m_value((Value)v) {}              \
+    inline NEW_ENUM(float v)            : m_value((Value)(int)v) {}         \
+    bool operator==(const NEW_ENUM& v)  { return m_value == v.m_value; }    \
+    bool operator==(const int& v)       { return m_value == NEW_ENUM(v); }  \
+    bool operator==(const float& v)     { return m_value == NEW_ENUM(v); }  \
+    inline operator Value()             { return m_value; }                 \
+};                                                                          \
+bool operator== (int e1, NEW_ENUM& e2)  { return (e2 == e1); }              \
+bool operator== (float e1, NEW_ENUM& e2){ return (e2 == e1); }
+
 } /* namespace lol */
 
 #endif // __LOL_BASE_TYPES_H__

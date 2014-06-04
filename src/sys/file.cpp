@@ -80,7 +80,9 @@ class FileData
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
         stat(file.C(), &m_stat);
-        m_fd = fopen(file.C(), (!force_binary) ? ("r") : ("rb"));
+        String access = (mode == FileAccess::Write) ? ("w") : ("r");
+        if (force_binary) access += "b";
+        m_fd = fopen(file.C(), access.C());
 #endif
     }
 
@@ -293,13 +295,13 @@ File::~File()
 //--
 void File::Open(StreamType stream)
 {
-    return m_data->Open(stream);
+    m_data->Open(stream);
 }
 
 //--
 void File::Open(String const &file, FileAccess mode, bool force_binary)
 {
-    return m_data->Open(file, mode, force_binary);
+    m_data->Open(file, mode, force_binary);
 }
 
 //--

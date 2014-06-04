@@ -53,6 +53,11 @@ public:
 
     Texture * GetTexture();
     Texture const * GetTexture() const;
+    Image * GetImage();
+    Image const * GetImage() const;
+    void SetPalette(TileSet* palette);
+    TileSet* GetPalette();
+    TileSet const * GetPalette() const;
     ivec2 GetTextureSize() const;
     void Bind();
     void Unbind();
@@ -64,6 +69,7 @@ private:
     void Init(char const *path, Image* image);
 
     TileSetData*    m_data;
+    TileSet*        m_palette;
 };
 
 } /* namespace lol */

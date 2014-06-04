@@ -101,6 +101,8 @@ void *BaseThreadManager::BaseThreadWork(void* data)
 
 void BaseThreadManager::TickGame(float seconds)
 {
+    Entity::TickGame(seconds);
+
     //Start if needed
     Start();
 

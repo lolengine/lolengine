@@ -203,10 +203,10 @@ bool ZedImageData::Open(char const *path)
         //Store size type
         {
             ivec2 size_16 = size;
-            int32_t s_16 = 16;
+            int32_t s_16 = 8;
             while (1)
             {
-                if (size_16.x <= s_16)
+                if (size_16.x < s_16)
                 {
                     size_16.x = s_16;
                     break;
@@ -216,7 +216,7 @@ bool ZedImageData::Open(char const *path)
             s_16 = 8;
             while (1)
             {
-                if (size_16.y <= s_16)
+                if (size_16.y < s_16)
                 {
                     size_16.y = s_16;
                     break;
