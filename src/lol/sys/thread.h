@@ -113,9 +113,10 @@ public:
     bool Start();
     //Stop the threads
     bool Stop();
+protected:
     //Work stuff
     bool AddWork(ThreadJob* job);
-protected:
+    //Fetch Results
     bool FetchResult(Array<ThreadJob*>& results);
     //Base thread work function
     static void *BaseThreadWork(void* data);
@@ -141,6 +142,8 @@ public:
 
     char const *GetName() { return "<GenericThreadManager>"; }
 
+    //Work stuff
+    bool AddJob(ThreadJob* job) { return AddWork(job); }
     bool GetWorkResult(Array<ThreadJob*>& results)
     {
         results += m_job_result;

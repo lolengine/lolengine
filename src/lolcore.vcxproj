@@ -404,6 +404,7 @@
     <LolFxCompile Include="gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="gpu\emptymaterial.lolfx" />
     <LolFxCompile Include="gpu\line.lolfx" />
+    <LolFxCompile Include="gpu\palette.lolfx" />
     <LolFxCompile Include="gpu\testmaterial.lolfx" />
     <LolFxCompile Include="gpu\tile.lolfx" />
     <LolFxCompile Include="gradient.lolfx" />

@@ -147,6 +147,7 @@ void TileSet::Init(char const *path, Image* image)
 {
     m_data->m_name = String("<tileset> ") + path;
 
+    m_palette = nullptr;
     m_data->m_texture = 0;
     m_data->m_image = image;
     m_data->m_image_size = m_data->m_image->GetSize();
@@ -256,6 +257,31 @@ Texture * TileSet::GetTexture()
 Texture const * TileSet::GetTexture() const
 {
     return m_data->m_texture;
+}
+
+Image * TileSet::GetImage()
+{
+    return m_data->m_image;
+}
+
+Image const * TileSet::GetImage() const
+{
+    return m_data->m_image;
+}
+
+void TileSet::SetPalette(TileSet* palette)
+{
+    m_palette = palette;
+}
+
+TileSet* TileSet::GetPalette()
+{
+    return m_palette;
+}
+
+TileSet const* TileSet::GetPalette() const
+{
+    return m_palette;
 }
 
 void TileSet::Bind()

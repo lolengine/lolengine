@@ -1,6 +1,6 @@
 [vert.glsl]
 
-#version 130
+#version 120
 
 attribute vec3 in_Position;
 attribute vec2 in_TexCoord;
@@ -19,22 +19,22 @@ void main()
 
 [frag.glsl]
 
-#version 130
+#version 120
 
 #if defined GL_ES
 precision mediump float;
 #endif
 
-uniform sampler1D u_palette;
 uniform sampler2D u_texture;
+uniform sampler2D u_palette;
 uniform vec2 u_texsize;
 varying vec2 pass_TexCoord;
 
 void main()
 {
-    vec4 pal_pos = texture2D(u_texture, pass_TexCoord);
-    vec4 col = texture2D(u_palette, pal_pos.x);
-    if (col.a == 0.0)
+    vec4 pal = texture2D(u_texture, pass_TexCoord);
+    vec4 col = texture2D(u_palette, vec2(pal.x, 0.f));
+    if (pal.x == 0.0)
         discard;
     gl_FragColor = col;
 }

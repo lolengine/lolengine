@@ -732,6 +732,9 @@
     <LolFxCompile Include="easymesh\shinyflat.lolfx">
       <Filter>easymesh</Filter>
     </LolFxCompile>
+    <LolFxCompile Include="gpu\palette.lolfx">
+      <Filter>...</Filter>
+    </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="easymesh\easymesh-parser.y">

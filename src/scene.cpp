@@ -23,6 +23,7 @@
 #include "lolgl.h"
 
 LOLFX_RESOURCE_DECLARE(tile);
+LOLFX_RESOURCE_DECLARE(palette);
 LOLFX_RESOURCE_DECLARE(line);
 
 namespace lol
@@ -72,9 +73,11 @@ private:
 
     int m_tile_cam;
     Array<Tile> m_tiles;
+    Array<Tile> m_palettes;
     Array<Light *> m_lights;
 
     Shader *m_tile_shader;
+    Shader *m_palette_shader;
     VertexDeclaration *m_tile_vdecl;
     Array<VertexBuffer *> m_tile_bufs;
 
@@ -97,6 +100,7 @@ Scene::Scene(ivec2 size)
 
     data->m_tile_cam = -1;
     data->m_tile_shader = 0;
+    data->m_palette_shader = 0;
     data->m_tile_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
                                                VertexStream<vec2>(VertexUsage::TexCoord));
 
@@ -194,7 +198,10 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
     t.scale = scale;
     t.angle = angle;
 
-    data->m_tiles.Push(t);
+    if (tileset->GetPalette())
+        data->m_palettes.Push(t);
+    else
+        data->m_tiles.Push(t);
 }
 
 void Scene::SetLineTime(float new_time)     { data->m_new_line_time = new_time; }
@@ -270,7 +277,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     RenderContext rc;
 
     /* Early test if nothing needs to be rendered */
-    if (!data->m_tiles.Count())
+    if (!data->m_tiles.Count() && !data->m_palettes.Count())
         return;
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
@@ -283,71 +290,96 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 #endif
     if (!data->m_tile_shader)
         data->m_tile_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
+    if (!data->m_palette_shader)
+        data->m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(palette));
 
-    ShaderUniform uni_mat, uni_tex, uni_texsize;
-    ShaderAttrib attr_pos, attr_tex;
-    attr_pos = data->m_tile_shader->GetAttribLocation(VertexUsage::Position, 0);
-    attr_tex = data->m_tile_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
-
-    data->m_tile_shader->Bind();
-
-    uni_mat = data->m_tile_shader->GetUniformLocation("u_projection");
-    data->m_tile_shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetProjection());
-    uni_mat = data->m_tile_shader->GetUniformLocation("u_view");
-    data->m_tile_shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetView());
-    uni_mat = data->m_tile_shader->GetUniformLocation("u_model");
-    data->m_tile_shader->SetUniform(uni_mat, mat4(1.f));
-
-    uni_tex = data->m_tile_shader->GetUniformLocation("u_texture");
-    data->m_tile_shader->SetUniform(uni_tex, 0);
-    uni_texsize = data->m_tile_shader->GetUniformLocation("u_texsize");
-
-    for (int buf = 0, i = 0, n; i < data->m_tiles.Count(); i = n, buf += 2)
+    for (int p = 0; p < 2; p++)
     {
-        /* Count how many quads will be needed */
-        for (n = i + 1; n < data->m_tiles.Count(); n++)
-            if (data->m_tiles[i].tileset != data->m_tiles[n].tileset)
-                break;
+        Shader *shader      = (p == 0) ? data->m_tile_shader : data->m_palette_shader;
+        Array<Tile>& tiles  = (p == 0) ? data->m_tiles : data->m_palettes;
 
-        /* Create a vertex array object */
-        VertexBuffer *vb1 = new VertexBuffer(6 * (n - i) * sizeof(vec3));
-        vec3 *vertex = (vec3 *)vb1->Lock(0, 0);
-        VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
-        vec2 *texture = (vec2 *)vb2->Lock(0, 0);
+        if (tiles.Count() == 0)
+            continue;
 
-        data->m_tile_bufs.Push(vb1);
-        data->m_tile_bufs.Push(vb2);
+        ShaderUniform uni_mat, uni_tex, uni_pal, uni_texsize;
+        ShaderAttrib attr_pos, attr_tex;
+        attr_pos = shader->GetAttribLocation(VertexUsage::Position, 0);
+        attr_tex = shader->GetAttribLocation(VertexUsage::TexCoord, 0);
 
-        for (int j = i; j < n; j++)
+        shader->Bind();
+
+        uni_mat = shader->GetUniformLocation("u_projection");
+        shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetProjection());
+        uni_mat = shader->GetUniformLocation("u_view");
+        shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetView());
+        uni_mat = shader->GetUniformLocation("u_model");
+        shader->SetUniform(uni_mat, mat4(1.f));
+
+        uni_tex = shader->GetUniformLocation("u_texture");
+        uni_pal = data->m_palette_shader->GetUniformLocation("u_palette");
+        uni_texsize = shader->GetUniformLocation("u_texsize");
+
+        for (int buf = 0, i = 0, n; i < tiles.Count(); i = n, buf += 2)
         {
-            data->m_tiles[i].tileset->BlitTile(data->m_tiles[j].id,
-                            data->m_tiles[j].pos, data->m_tiles[j].o,
-                            data->m_tiles[j].scale, data->m_tiles[j].angle,
-                            vertex + 6 * (j - i), texture + 6 * (j - i));
+            /* Count how many quads will be needed */
+            for (n = i + 1; n < tiles.Count(); n++)
+                if (tiles[i].tileset != tiles[n].tileset)
+                    break;
+
+            /* Create a vertex array object */
+            VertexBuffer *vb1 = new VertexBuffer(6 * (n - i) * sizeof(vec3));
+            vec3 *vertex = (vec3 *)vb1->Lock(0, 0);
+            VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
+            vec2 *texture = (vec2 *)vb2->Lock(0, 0);
+
+            data->m_tile_bufs.Push(vb1);
+            data->m_tile_bufs.Push(vb2);
+
+            for (int j = i; j < n; j++)
+            {
+                tiles[i].tileset->BlitTile(tiles[j].id,
+                                tiles[j].pos, tiles[j].o,
+                                tiles[j].scale, tiles[j].angle,
+                                vertex + 6 * (j - i), texture + 6 * (j - i));
+            }
+
+            vb1->Unlock();
+            vb2->Unlock();
+
+            /* Bind texture */
+            if (tiles[i].tileset->GetPalette())
+            {
+                if (tiles[i].tileset->GetTexture())
+                    shader->SetUniform(uni_tex, tiles[i].tileset->GetTexture()->GetTextureUniform(), 0);
+                if (tiles[i].tileset->GetPalette()->GetTexture())
+                    shader->SetUniform(uni_pal, tiles[i].tileset->GetPalette()->GetTexture()->GetTextureUniform(), 1);
+            }
+            else
+            {
+                shader->SetUniform(uni_tex, 0);
+                if (tiles[i].tileset->GetTexture())
+                    shader->SetUniform(uni_tex, tiles[i].tileset->GetTexture()->GetTextureUniform(), 0);
+                tiles[i].tileset->Bind();
+            }
+            shader->SetUniform(uni_texsize,
+                           (vec2)tiles[i].tileset->GetTextureSize());
+
+            /* Bind vertex and texture coordinate buffers */
+            data->m_tile_vdecl->Bind();
+            data->m_tile_vdecl->SetStream(vb1, attr_pos);
+            data->m_tile_vdecl->SetStream(vb2, attr_tex);
+
+            /* Draw arrays */
+            data->m_tile_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
+            data->m_tile_vdecl->Unbind();
+            tiles[i].tileset->Unbind();
         }
 
-        vb1->Unlock();
-        vb2->Unlock();
+        tiles.Empty();
 
-        /* Bind texture */
-        data->m_tiles[i].tileset->Bind();
-        data->m_tile_shader->SetUniform(uni_texsize,
-                       (vec2)data->m_tiles[i].tileset->GetTextureSize());
-
-        /* Bind vertex and texture coordinate buffers */
-        data->m_tile_vdecl->Bind();
-        data->m_tile_vdecl->SetStream(vb1, attr_pos);
-        data->m_tile_vdecl->SetStream(vb2, attr_tex);
-
-        /* Draw arrays */
-        data->m_tile_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
-        data->m_tile_vdecl->Unbind();
-        data->m_tiles[i].tileset->Unbind();
+        shader->Unbind();
     }
 
-    data->m_tiles.Empty();
-
-    data->m_tile_shader->Unbind();
 
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */
