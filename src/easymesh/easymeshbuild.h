@@ -21,168 +21,124 @@
 namespace lol
 {
 
-struct MeshBuildOperation
-{
-    enum Value
-    {
+DEF_ENUM(MeshBuildOperation)
+    DEF_VALUE
         //When this flag is up, negative scaling will not invert faces.
-        ScaleWinding                = (1 << 0),
-        CommandRecording            = (1 << 1),
-        CommandExecution            = (1 << 2),
-        QuadWeighting               = (1 << 3),
-        IgnoreQuadWeighting         = (1 << 4),
-        PostBuildComputeNormals     = (1 << 5),
-        PreventVertCleanup          = (1 << 6),
+        ADD_VALUE_SET(ScaleWinding                , (1 << 0))
+        ADD_VALUE_SET(CommandRecording            , (1 << 1))
+        ADD_VALUE_SET(CommandExecution            , (1 << 2))
+        ADD_VALUE_SET(QuadWeighting               , (1 << 3))
+        ADD_VALUE_SET(IgnoreQuadWeighting         , (1 << 4))
+        ADD_VALUE_SET(PostBuildComputeNormals     , (1 << 5))
+        ADD_VALUE_SET(PreventVertCleanup          , (1 << 6))
 
-        All     = 0xffffffff
-    }
-    m_value;
+        ADD_VALUE_SET(All                         , 0xffffffff)
+    END_E_VALUE
+END_ENUM(MeshBuildOperation)
 
-    inline MeshBuildOperation(Value v) : m_value(v) {}
-    inline MeshBuildOperation(uint64_t i) : m_value((Value)i) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(EasyMeshCmdType)
+    DEF_VALUE
+        ADD_VALUE(MeshCsg)
 
-struct EasyMeshCmdType
-{
-    enum Value
-    {
-        MeshCsg = 0,
+        ADD_VALUE(LoopStart)
+        ADD_VALUE(LoopEnd)
+        ADD_VALUE(OpenBrace)
+        ADD_VALUE(CloseBrace)
 
-        LoopStart,
-        LoopEnd,
-        OpenBrace,
-        CloseBrace,
+        ADD_VALUE(ScaleWinding)
+        ADD_VALUE(QuadWeighting)
+        ADD_VALUE(PostBuildNormal)
+        ADD_VALUE(PreventVertCleanup)
+        ADD_VALUE(SetColorA)
+        ADD_VALUE(SetColorB)
+        ADD_VALUE(SetVertColor)
 
-        ScaleWinding,
-        QuadWeighting,
-        PostBuildNormal,
-        PreventVertCleanup,
-        SetColorA,
-        SetColorB,
-        SetVertColor,
+        ADD_VALUE(VerticesMerge)
+        ADD_VALUE(VerticesSeparate)
 
-        VerticesMerge,
-        VerticesSeparate,
+        ADD_VALUE(Translate)
+        ADD_VALUE(Rotate)
+        ADD_VALUE(RadialJitter)
+        ADD_VALUE(MeshTranform)
+        ADD_VALUE(Scale)
+        ADD_VALUE(DupAndScale)
+        ADD_VALUE(Chamfer)
 
-        Translate,
-        Rotate,
-        RadialJitter,
-        MeshTranform,
-        Scale,
-        DupAndScale,
-        Chamfer,
+        ADD_VALUE(SplitTriangles)
+        ADD_VALUE(SmoothMesh)
 
-        SplitTriangles,
-        SmoothMesh,
+        ADD_VALUE(AppendCylinder)
+        ADD_VALUE(AppendCapsule)
+        ADD_VALUE(AppendTorus)
+        ADD_VALUE(AppendBox)
+        ADD_VALUE(AppendStar)
+        ADD_VALUE(AppendExpandedStar)
+        ADD_VALUE(AppendDisc)
+        ADD_VALUE(AppendSimpleTriangle)
+        ADD_VALUE(AppendSimpleQuad)
+        ADD_VALUE(AppendCog)
+    END_E_VALUE
+END_ENUM(EasyMeshCmdType)
 
-        AppendCylinder,
-        AppendCapsule,
-        AppendTorus,
-        AppendBox,
-        AppendStar,
-        AppendExpandedStar,
-        AppendDisc,
-        AppendSimpleTriangle,
-        AppendSimpleQuad,
-        AppendCog,
+DEF_ENUM(MeshType)
+    DEF_VALUE
+        ADD_VALUE(Triangle)
+        ADD_VALUE(Quad)
+        ADD_VALUE(Box)
+        ADD_VALUE(Sphere)
+        ADD_VALUE(Capsule)
+        ADD_VALUE(Torus)
+        ADD_VALUE(Cylinder)
+        ADD_VALUE(Disc)
+        ADD_VALUE(Star)
+        ADD_VALUE(ExpandedStar)
+        ADD_VALUE(Cog)
+        ADD_VALUE(NEW_VALUE)
+    END_E_VALUE
+END_ENUM(MeshType)
 
-        Max
-    }
-    m_value;
-
-    inline EasyMeshCmdType(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-    inline int Value() { return m_value; }
-};
-
-struct MeshType
-{
-    enum Value
-    {
-        Triangle = 0,
-        Quad,
-        Box,
-        Sphere,
-        Capsule,
-        Torus,
-        Cylinder,
-        Disc,
-        Star,
-        ExpandedStar,
-        Cog,
-
-        Max
-    }
-    m_value;
-
-    inline MeshType(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
-
-//TODO : Add other Build type
-struct TexCoordBuildType
-{
-    enum Value
-    {
-        TriangleDefault     = 0,
-        QuadDefault         = 0,
-        BoxDefault          = 0,
-        SphereDefault       = 0,
-        CapsuleDefault      = 0,
-        TorusDefault        = 0,
-        CylinderDefault     = 0,
-        DiscDefault         = 0,
-        StarDefault         = 0,
-        ExpandedStarDefault = 0,
-        CogDefault          = 0,
+DEF_ENUM(TexCoordBuildType)
+    DEF_VALUE
+        ADD_VALUE_SET(TriangleDefault     , 0)
+        ADD_VALUE_SET(QuadDefault         , 0)
+        ADD_VALUE_SET(BoxDefault          , 0)
+        ADD_VALUE_SET(SphereDefault       , 0)
+        ADD_VALUE_SET(CapsuleDefault      , 0)
+        ADD_VALUE_SET(TorusDefault        , 0)
+        ADD_VALUE_SET(CylinderDefault     , 0)
+        ADD_VALUE_SET(DiscDefault         , 0)
+        ADD_VALUE_SET(StarDefault         , 0)
+        ADD_VALUE_SET(ExpandedStarDefault , 0)
+        ADD_VALUE_SET(CogDefault          , 0)
 
         //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
-        Max = 1
-    }
-    m_value;
+        ADD_VALUE_SET(Max                 , 1)
+    END_E_VALUE
+END_ENUM(TexCoordBuildType)
 
-    inline TexCoordBuildType() : m_value(TriangleDefault) {}
-    inline TexCoordBuildType(Value v) : m_value(v) {}
-    inline TexCoordBuildType(int v) : m_value((Value)v) {}
-    inline operator Value() { return m_value; }
-};
-
-struct MeshFaceType
-{
-    enum Value
-    {
-        BoxFront = 0,
-        BoxLeft  = 1,
-        BoxBack  = 2,
-        BoxRight = 3,
-        BoxTop    = 4,
-        BoxBottom  = 5,
-        QuadDefault = 0,
+DEF_ENUM(MeshFaceType)
+    DEF_VALUE
+        ADD_VALUE_SET(BoxFront    , 0)
+        ADD_VALUE_SET(BoxLeft     , 1)
+        ADD_VALUE_SET(BoxBack     , 2)
+        ADD_VALUE_SET(BoxRight    , 3)
+        ADD_VALUE_SET(BoxTop      , 4)
+        ADD_VALUE_SET(BoxBottom   , 5)
+        ADD_VALUE_SET(QuadDefault , 0)
 
         //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
-        Max = 6
-    }
-    m_value;
+        ADD_VALUE_SET(Max         , 6)
+    END_E_VALUE
+END_ENUM(MeshFaceType)
 
-    inline MeshFaceType(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
-
-struct TexCoordPos
-{
-    enum Value
-    {
-        BL, //BottomLeft
-        BR, //BottomRight
-        TL, //TopLeft
-        TR  //TopRight
-    }
-    m_value;
-
-    inline TexCoordPos(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(TexCoordPos)
+    DEF_VALUE
+        ADD_VALUE(BL) //BottomLeft
+        ADD_VALUE(BR) //BottomRight
+        ADD_VALUE(TL) //TopLeft
+        ADD_VALUE(TR) //TopRight
+    END_E_VALUE
+END_ENUM(TexCoordPos)
 
 class EasyMeshBuildData
 {
@@ -198,7 +154,7 @@ public:
         m_build_flags = 0;
         m_i_cmd = 0;
         m_exec_nb = -1;
-        for (int i = 0; i < MeshType::Max; ++i)
+        for (int i = 0; i < MeshType::MAX; ++i)
         {
             m_texcoord_build_type[i] = TexCoordBuildType::TriangleDefault;
             m_texcoord_build_type2[i] = TexCoordBuildType::TriangleDefault;
@@ -405,27 +361,21 @@ public:
     vec2                m_texcoord_offset2;
     vec2                m_texcoord_scale;
     vec2                m_texcoord_scale2;
-    Array<vec2, vec2>   m_texcoord_custom_build[MeshType::Max];
-    Array<vec2, vec2>   m_texcoord_custom_build2[MeshType::Max];
-    uint32_t            m_texcoord_build_type[MeshType::Max];
-    uint32_t            m_texcoord_build_type2[MeshType::Max];
+    Array<vec2, vec2>   m_texcoord_custom_build[MeshType::MAX];
+    Array<vec2, vec2>   m_texcoord_custom_build2[MeshType::MAX];
+    uint32_t            m_texcoord_build_type[MeshType::MAX];
+    uint32_t            m_texcoord_build_type2[MeshType::MAX];
     uint32_t            m_build_flags;
 };
 
 /* A safe enum for VertexDictionnary operations. */
-struct VDictType
-{
-    enum Value
-    {
-        DoesNotExist=-3,
-        Alone=-2,
-        Master=-1
-    }
-    m_value;
-
-    inline VDictType(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(VDictType)
+    DEF_VALUE
+        ADD_VALUE_SET(DoesNotExist  , -3)
+        ADD_VALUE_SET(Alone         , -2)
+        ADD_VALUE_SET(Master        , -1)
+    END_E_VALUE
+END_ENUM(VDictType)
 
 /* TODO : replace VDict by a proper Half-edge system */
 //a class whose goal is to keep a list of the adjacent vertices for mesh operations purposes

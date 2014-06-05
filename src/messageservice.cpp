@@ -53,7 +53,7 @@ MessageService::~MessageService()
 void MessageService::Setup()
 {
     g_messageservice = new MessageService();
-    g_messageservice->m_bucket.Resize(MessageBucket::Max);
+    g_messageservice->m_bucket.Resize(MessageBucket::MAX);
 }
 
 void MessageService::Destroy()

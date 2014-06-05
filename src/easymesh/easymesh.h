@@ -26,40 +26,33 @@ namespace lol
 {
 
 /* A safe enum for MeshCSG operations. */
-struct CSGUsage
-{
-    enum Value
-    {
-        Union = 0,
-        Substract,
-        SubstractLoss, //will remove B from A, but not add inverted B
-        And,
-        Xor,
+DEF_ENUM(CSGUsage)
+    DEF_VALUE
+        ADD_VALUE(Union)
+        ADD_VALUE(Substract)
+        ADD_VALUE(SubstractLoss) //will remove B from A, but not add inverted B
+        ADD_VALUE(And)
+        ADD_VALUE(Xor)
+    END_E_VALUE
+END_ENUM(CSGUsage)
 
-        Max
-    }
-    m_value;
+DEF_ENUM(Axis)
+    DEF_VALUE
+        ADD_VALUE(X)
+        ADD_VALUE(Y)
+        ADD_VALUE(Z)
+    END_E_VALUE
+END_ENUM(Axis)
 
-    inline CSGUsage() : m_value(Union) {}
-    inline CSGUsage(Value v) : m_value(v) {}
-    inline CSGUsage(int v) : m_value((Value)v) {}
-    inline operator Value() { return m_value; }
-};
-
-struct Axis
-{
-    enum Value
-    {
-        X,
-        Y,
-        Z
-    }
-    m_value;
-
-    inline Axis() : m_value(X) {}
-    inline Axis(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(MeshTransform)
+    DEF_VALUE
+        ADD_VALUE(Taper)
+        ADD_VALUE(Twist)
+        ADD_VALUE(Bend)
+        ADD_VALUE(Stretch)
+        ADD_VALUE(Shear)
+    END_E_VALUE
+END_ENUM(MeshTransform)
 
 class EasyMesh
 {
@@ -245,22 +238,6 @@ public:
     /* [cmd:bdzy] Same as BendXY, with Z & Y */
     void BendZY(float t, float toff=0.f);
 private:
-    struct MeshTransform
-    {
-        enum Value
-        {
-            Taper,
-            Twist,
-            Bend,
-            Stretch,
-            Shear
-        }
-        m_value;
-
-        inline MeshTransform() : m_value(Taper) {}
-        inline MeshTransform(Value v) : m_value(v) {}
-        inline operator Value() { return m_value; }
-    };
     void DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, bool absolute=false);
 public:
     /* [cmd:s/sx/sy/sz] Scale vertices

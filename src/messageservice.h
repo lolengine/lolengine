@@ -21,32 +21,23 @@ namespace lol
 {
 
 //Utility enum for message service
-struct MessageBucket
-{
-    enum Value
-    {
-        AppIn = 0,
-        AppOut,
+DEF_ENUM(MessageBucket)
+    DEF_VALUE
+        ADD_VALUE(AppIn)
+        ADD_VALUE(AppOut)
 
-        Bckt0,
-        Bckt1,
-        Bckt2,
-        Bckt3,
-        Bckt4,
-        Bckt5,
-        Bckt6,
-        Bckt7,
-        Bckt8,
-        Bckt9,
-
-        Max
-    }
-    m_value;
-
-    inline MessageBucket(Value v) : m_value(v) {}
-    inline MessageBucket() : m_value(AppIn) {}
-    inline operator Value() { return m_value; }
-};
+        ADD_VALUE(Bckt0)
+        ADD_VALUE(Bckt1)
+        ADD_VALUE(Bckt2)
+        ADD_VALUE(Bckt3)
+        ADD_VALUE(Bckt4)
+        ADD_VALUE(Bckt5)
+        ADD_VALUE(Bckt6)
+        ADD_VALUE(Bckt7)
+        ADD_VALUE(Bckt8)
+        ADD_VALUE(Bckt9)
+    END_E_VALUE
+END_ENUM(MessageBucket)
 
 //Message list container with time in it
 struct MessageList

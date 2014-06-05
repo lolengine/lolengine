@@ -47,42 +47,24 @@ public:
     virtual ~Thread() {}
 };
 
-struct ThreadStatus
-{
-    enum Value
-    {
-        NOTHING = 0,
-        THREAD_STARTED,
-        THREAD_STOPPED,
+DEF_ENUM(ThreadStatus)
+    DEF_VALUE
+        ADD_VALUE(NOTHING)
+        ADD_VALUE(THREAD_STARTED)
+        ADD_VALUE(THREAD_STOPPED)
+    END_E_VALUE
+END_ENUM(ThreadStatus)
 
-        MAX
-    }
-    m_value;
-
-    inline ThreadStatus()                   : m_value(ThreadStatus::NOTHING) {}
-    inline ThreadStatus(Value v)            : m_value(v) {}
-    bool operator==(const ThreadStatus& v)  { return m_value == v.m_value; }
-};
-
-struct ThreadJobType
-{
-    enum Value
-    {
-        NONE = 0,
-        WORK_TODO,
-        WORK_DONE,
-        WORK_FAILED,
-        WORK_FETCHED,
-        THREAD_STOP,
-
-        MAX
-    }
-    m_value;
-
-    inline ThreadJobType()                  : m_value(ThreadJobType::MAX) {}
-    inline ThreadJobType(Value v)           : m_value(v) {}
-    bool operator==(const ThreadJobType& o) { return m_value == o.m_value; }
-};
+DEF_ENUM(ThreadJobType)
+    DEF_VALUE
+        ADD_VALUE(NONE)
+        ADD_VALUE(WORK_TODO)
+        ADD_VALUE(WORK_DONE)
+        ADD_VALUE(WORK_FAILED)
+        ADD_VALUE(WORK_FETCHED)
+        ADD_VALUE(THREAD_STOP)
+    END_E_VALUE
+END_ENUM(ThreadJobType)
 
 class ThreadJob
 {

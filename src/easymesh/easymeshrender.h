@@ -22,23 +22,14 @@ namespace lol
 {
 
 //Utility enum for renderers
-struct MeshRender
-{
-    enum Value
-    {
-        NeedData = 0,
-        NeedConvert,
-        CanRender,
-        IgnoreRender,
-
-        Max
-    }
-    m_value;
-
-    inline MeshRender(Value v) : m_value(v) {}
-    inline MeshRender() : m_value(NeedData) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(MeshRender)
+    DEF_VALUE
+        ADD_VALUE(NeedData)
+        ADD_VALUE(NeedConvert)
+        ADD_VALUE(CanRender)
+        ADD_VALUE(IgnoreRender)
+    END_E_VALUE
+END_ENUM(MeshRender)
 
 //Vertex datas for easymesh vertex list.
 //TODO : <COORD, NORM, COLOR, UV>
