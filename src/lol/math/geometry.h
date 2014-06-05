@@ -238,25 +238,16 @@ bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
                       vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                       vec3 &vi);
 
-struct RayIntersect
-{
-    enum Value
-    {
-        Nothing = 0,
-        All,
-        None,
-        P0,
-        P1,
+DEF_ENUM(RayIntersect)
+    DEF_VALUE
+        ADD_VALUE(Nothing)
+        ADD_VALUE(All)
+        ADD_VALUE(None)
+        ADD_VALUE(P0)
+        ADD_VALUE(P1)
+    END_E_VALUE
+END_ENUM(RayIntersect)
 
-        MAX
-    }
-    m_value;
-
-    inline RayIntersect() : m_value(Nothing) {}
-    inline RayIntersect(Value v) : m_value(v) {}
-    inline RayIntersect(int v) : m_value((Value)v) {}
-    inline operator Value() { return m_value; }
-};
 #define RAY_ISECT_NOTHING   0
 #define RAY_ISECT_ALL       1
 #define RAY_ISECT_NONE      2
@@ -302,24 +293,13 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
 }
 
 /* A safe enum for Primitive edge face. */
-struct PlaneIntersection
-{
-    enum Value
-    {
-        Invalid=-1,
-        Back,
-        Front,
-        Plane,
-
-        MAX
-    }
-    m_value;
-
-    inline PlaneIntersection() : m_value(Invalid) {}
-    inline PlaneIntersection(Value v) : m_value(v) {}
-    inline PlaneIntersection(int v) : m_value((Value)v) {}
-    inline operator Value() { return m_value; }
-};
+DEF_ENUM(PlaneIntersection)
+    DEF_VALUE
+        ADD_VALUE(Back)
+        ADD_VALUE(Front)
+        ADD_VALUE(Plane)
+    END_E_VALUE
+END_ENUM(PlaneIntersection)
 
 //Point/Plane : Normal must be given normalized.
 template <typename TV>

@@ -21,35 +21,22 @@
 namespace lol
 {
 
-struct FileAccess
-{
-    enum Value
-    {
-        Read = 0,
-        Write,
-    }
-    m_value;
+DEF_ENUM(FileAccess)
+    DEF_VALUE
+        ADD_VALUE(Read)
+        ADD_VALUE(Write)
+    END_E_VALUE
+END_ENUM(FileAccess)
 
-    inline FileAccess(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
-
-struct StreamType
-{
-    enum Value
-    {
-        StdIn = 0,
-        StdOut,
-        StdErr,
-        File,
-        FileBinary
-    }
-    m_value;
-
-    inline StreamType(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-    inline int Value() { return m_value; }
-};
+DEF_ENUM(StreamType)
+    DEF_VALUE
+        ADD_VALUE(StdIn)
+        ADD_VALUE(StdOut)
+        ADD_VALUE(StdErr)
+        ADD_VALUE(File)
+        ADD_VALUE(FileBinary)
+    END_E_VALUE
+END_ENUM(StreamType)
 
 class File
 {

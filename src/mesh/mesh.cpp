@@ -85,8 +85,8 @@ void SubMesh::Render(Shader* shader)
             return;
         }
 
-        int indices[VertexUsage::Max];
-        memset(indices, 0, sizeof(int) * VertexUsage::Max);
+        int indices[VertexUsage::MAX];
+        memset(indices, 0, sizeof(int) * VertexUsage::MAX);
 
         VertexStreamBase stream = m_vdecl->GetStream(i);
         for (int j = 0; j < stream.GetStreamCount(); ++j)

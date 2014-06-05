@@ -25,54 +25,47 @@ namespace lol
  * now there is only TexCoord and not TexCoord0 TexCoord1 etc. because
  * we can always reorganise the vertex declaration for the indices to
  * match. If the need arises these enums will be added. */
-struct VertexUsage
-{
-    enum Value
-    {
-        Position = 0,
-        BlendWeight,
-        BlendIndices,
-        Normal,
-        PointSize,
-        TexCoord,
-        TexCoordExt,
-        Tangent,
-        Binormal,
-        TessFactor,
-        PositionT,
-        Color,
-        Fog,
-        Depth,
-        Sample,
-
-        Max
-    }
-    m_value;
-
+DEF_ENUM(VertexUsage)
+    DEF_VALUE
+        ADD_VALUE(Position)
+        ADD_VALUE(BlendWeight)
+        ADD_VALUE(BlendIndices)
+        ADD_VALUE(Normal)
+        ADD_VALUE(PointSize)
+        ADD_VALUE(TexCoord)
+        ADD_VALUE(TexCoordExt)
+        ADD_VALUE(Tangent)
+        ADD_VALUE(Binormal)
+        ADD_VALUE(TessFactor)
+        ADD_VALUE(PositionT)
+        ADD_VALUE(Color)
+        ADD_VALUE(Fog)
+        ADD_VALUE(Depth)
+        ADD_VALUE(Sample)
+    END_E_VALUE
+    DEF_TEXT
+        ADD_TEXT(Position)
+        ADD_TEXT(BlendWeight)
+        ADD_TEXT(BlendIndices)
+        ADD_TEXT(Normal)
+        ADD_TEXT(PointSize)
+        ADD_TEXT(TexCoord)
+        ADD_TEXT(TexCoordExt)
+        ADD_TEXT(Tangent)
+        ADD_TEXT(Binormal)
+        ADD_TEXT(TessFactor)
+        ADD_TEXT(PositionT)
+        ADD_TEXT(Color)
+        ADD_TEXT(Fog)
+        ADD_TEXT(Depth)
+        ADD_TEXT(Sample)
+    END_TEXT
 private:
     static String GetName(Value v, bool use_simple)
     {
         String tmp = String("");
         if (!use_simple) tmp += "<";
-        switch (v)
-        {
-            case Position:      { tmp += "Position";    break; }
-            case BlendWeight:   { tmp += "BlendWeight"; break; }
-            case BlendIndices:  { tmp += "BlendIndices";break; }
-            case Normal:        { tmp += "Normal";      break; }
-            case PointSize:     { tmp += "PointSize";   break; }
-            case TexCoord:      { tmp += "TexCoord";    break; }
-            case TexCoordExt:   { tmp += "TexCoordExt"; break; }
-            case Tangent:       { tmp += "Tangent";     break; }
-            case Binormal:      { tmp += "Binormal";    break; }
-            case TessFactor:    { tmp += "TessFactor";  break; }
-            case PositionT:     { tmp += "PositionT";   break; }
-            case Color:         { tmp += "Color";       break; }
-            case Fog:           { tmp += "Fog";         break; }
-            case Depth:         { tmp += "Depth";       break; }
-            case Sample:        { tmp += "Sample";      break; }
-            default:            { tmp += "UNDEFINED";   break; }
-        }
+        tmp += VertexUsage(v).C();
         if (!use_simple) tmp += ">";
         return tmp;
     }
@@ -87,7 +80,7 @@ public:
     {
         String tmp = String("<");
         int nb = 0;
-        for (int i = 0; i < Max; ++i)
+        for (int i = 0; i < MAX; ++i)
         {
             if (v & (1<<i))
             {
@@ -99,11 +92,7 @@ public:
         }
         return tmp + ">";
     }
-
-    inline VertexUsage(Value v) : m_value(v) {}
-    inline VertexUsage(int v) : m_value((Value)v) {}
-    inline operator Value() { return m_value; }
-};
+END_ENUM(VertexUsage)
 
 struct ShaderUniform
 {

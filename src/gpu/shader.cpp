@@ -390,8 +390,8 @@ Shader::Shader(char const *vert, char const *frag)
 
         String name(name_buffer);
         int index = -1;
-        VertexUsage usage = VertexUsage::Max;
-        for (int j = 0; j < VertexUsage::Max; ++j)
+        VertexUsage usage = VertexUsage::MAX;
+        for (int j = 0; j < VertexUsage::MAX; ++j)
         {
             if (name.StartsWith(attribute_names[j]))
             {
@@ -402,7 +402,7 @@ Shader::Shader(char const *vert, char const *frag)
             }
         }
 
-        if (usage == VertexUsage::Max || index == -1)
+        if (usage == VertexUsage::MAX || index == -1)
         {
             Log::Error("unable to parse attribute semantic from name: %s",
                        name_buffer);
