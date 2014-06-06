@@ -93,7 +93,7 @@ liblolcore_sources = \
     input/controller.cpp input/controller.h \
     \
     gpu/defaultmaterial.lolfx \
-    gpu/tile.lolfx gpu/line.lolfx \
+    gpu/tile.lolfx gpu/palette.lolfx gpu/line.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
     \
