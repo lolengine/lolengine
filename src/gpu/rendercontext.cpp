@@ -57,6 +57,7 @@ private:
     TrackedState<float> m_clear_depth;
     TrackedState<AlphaFunc> m_alpha_func;
     TrackedState<float> m_alpha_value;
+    TrackedState<BlendEquation> m_blend_rgb, m_blend_alpha;
     TrackedState<BlendFunc> m_blend_src, m_blend_dst;
     TrackedState<DepthFunc> m_depth_func;
     TrackedState<DepthMask> m_depth_mask;
@@ -164,6 +165,26 @@ AlphaFunc RenderContext::GetAlphaFunc()
 float RenderContext::GetAlphaValue()
 {
     return g_renderer->GetAlphaValue();
+}
+
+void RenderContext::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
+{
+    if (!m_data->m_blend_rgb.HasChanged())
+        m_data->m_blend_rgb.TrackValue(g_renderer->GetBlendEquationRgb());
+    if (!m_data->m_blend_alpha.HasChanged())
+        m_data->m_blend_alpha.TrackValue(g_renderer->GetBlendEquationAlpha());
+
+    g_renderer->SetBlendEquation(rgb, alpha);
+}
+
+BlendEquation RenderContext::GetBlendEquationRgb()
+{
+    return g_renderer->GetBlendEquationRgb();
+}
+
+BlendEquation RenderContext::GetBlendEquationAlpha()
+{
+    return g_renderer->GetBlendEquationAlpha();
 }
 
 void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
