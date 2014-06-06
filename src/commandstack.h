@@ -56,7 +56,7 @@ public:
     inline ivec3   IV3()    { ivec3 v(IV2(), 0);  v.z = I(); return v; }
     inline ivec4   IV4()    { ivec4 v(IV3(), 0);  v.w = I(); return v; }
 
-    //Alternate getters
+    // Alternate getters
     inline void    GetValue(float &f)   { f = F(); }
     inline void    GetValue(int &i)     { i = I(); }
     inline void    GetValue(bool &b)    { b = B(); }
@@ -66,9 +66,9 @@ public:
     inline void    GetValue(ivec2 &iv2) { iv2 = IV2(); }
     inline void    GetValue(ivec3 &iv3) { iv3 = IV3(); }
     inline void    GetValue(ivec4 &iv4) { iv4 = IV4(); }
-    //For Safe Enum
-    template< class T > inline
-    void GetValue(T &i) { i = T((typename T::Value)I()); }
+    // For Safe Enum
+    template<class DEF> inline
+    void GetValue(SafeEnum<DEF> &i) { i = typename DEF::Type(I()); }
 
     //SETTER
     CommandStack &operator<<(int i)     { m_ints << i; return *this; }
@@ -80,6 +80,9 @@ public:
     CommandStack &operator<<(ivec2 iv)  { return (*this << iv.x   << iv.y); }
     CommandStack &operator<<(ivec3 iv)  { return (*this << iv.xy  << iv.z); }
     CommandStack &operator<<(ivec4 iv)  { return (*this << iv.xyz << iv.w); }
+    // For Safe Enum
+    template<class DEF> inline
+    CommandStack &operator<<(SafeEnum<DEF> &i) { return *this << i.ToScalar(); }
 };
 
 } /* namespace lol */

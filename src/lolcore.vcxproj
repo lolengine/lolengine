@@ -279,6 +279,7 @@
     <ClInclude Include="lol\base\all.h" />
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
+    <ClInclude Include="lol\base\enum.h" />
     <ClInclude Include="lol\base\hash.h" />
     <ClInclude Include="lol\base\log.h" />
     <ClInclude Include="lol\base\map.h" />

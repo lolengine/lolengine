@@ -238,7 +238,8 @@ bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
                       vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                       vec3 &vi);
 
-DEF_ENUM(RayIntersect)
+struct RayIntersect
+{
     DEF_VALUE
         ADD_VALUE(Nothing)
         ADD_VALUE(All)
@@ -246,7 +247,9 @@ DEF_ENUM(RayIntersect)
         ADD_VALUE(P0)
         ADD_VALUE(P1)
     END_E_VALUE
-END_ENUM(RayIntersect)
+
+    LOL_DECLARE_ENUM_METHODS(RayIntersect)
+};
 
 #define RAY_ISECT_NOTHING   0
 #define RAY_ISECT_ALL       1
@@ -293,13 +296,16 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
 }
 
 /* A safe enum for Primitive edge face. */
-DEF_ENUM(PlaneIntersection)
+struct PlaneIntersection
+{
     DEF_VALUE
         ADD_VALUE(Back)
         ADD_VALUE(Front)
         ADD_VALUE(Plane)
     END_E_VALUE
-END_ENUM(PlaneIntersection)
+
+    LOL_DECLARE_ENUM_METHODS(PlaneIntersection)
+};
 
 //Point/Plane : Normal must be given normalized.
 template <typename TV>

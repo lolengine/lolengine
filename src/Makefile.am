@@ -35,6 +35,7 @@ liblolcore_headers = \
     lol/base/all.h \
     lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
     lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
+    lol/base/enum.h \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \

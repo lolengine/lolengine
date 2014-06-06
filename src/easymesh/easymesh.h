@@ -26,33 +26,42 @@ namespace lol
 {
 
 /* A safe enum for MeshCSG operations. */
-DEF_ENUM(CSGUsage)
-    DEF_VALUE
-        ADD_VALUE(Union)
-        ADD_VALUE(Substract)
-        ADD_VALUE(SubstractLoss) //will remove B from A, but not add inverted B
-        ADD_VALUE(And)
-        ADD_VALUE(Xor)
-    END_E_VALUE
-END_ENUM(CSGUsage)
+struct CSGUsageDef
+{
+    enum Type
+    {
+        Union,
+        Substract,
+        SubstractLoss, //will remove B from A, but not add inverted B
+        And,
+        Xor,
+    };
+};
+typedef SafeEnum<CSGUsageDef> CSGUsage;
 
-DEF_ENUM(Axis)
-    DEF_VALUE
-        ADD_VALUE(X)
-        ADD_VALUE(Y)
-        ADD_VALUE(Z)
-    END_E_VALUE
-END_ENUM(Axis)
+struct AxisDef
+{
+    enum Type
+    {
+        X,
+        Y,
+        Z,
+    };
+};
+typedef SafeEnum<AxisDef> Axis;
 
-DEF_ENUM(MeshTransform)
-    DEF_VALUE
-        ADD_VALUE(Taper)
-        ADD_VALUE(Twist)
-        ADD_VALUE(Bend)
-        ADD_VALUE(Stretch)
-        ADD_VALUE(Shear)
-    END_E_VALUE
-END_ENUM(MeshTransform)
+struct MeshTransformDef
+{
+    enum Type
+    {
+        Taper,
+        Twist,
+        Bend,
+        Stretch,
+        Shear,
+    };
+};
+typedef SafeEnum<MeshTransformDef> MeshTransform;
 
 class EasyMesh
 {

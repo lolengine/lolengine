@@ -25,7 +25,8 @@ namespace lol
  * now there is only TexCoord and not TexCoord0 TexCoord1 etc. because
  * we can always reorganise the vertex declaration for the indices to
  * match. If the need arises these enums will be added. */
-DEF_ENUM(VertexUsage)
+struct VertexUsage
+{
     DEF_VALUE
         ADD_VALUE(Position)
         ADD_VALUE(BlendWeight)
@@ -43,6 +44,7 @@ DEF_ENUM(VertexUsage)
         ADD_VALUE(Depth)
         ADD_VALUE(Sample)
     END_E_VALUE
+
     DEF_TEXT
         ADD_TEXT(Position)
         ADD_TEXT(BlendWeight)
@@ -60,6 +62,9 @@ DEF_ENUM(VertexUsage)
         ADD_TEXT(Depth)
         ADD_TEXT(Sample)
     END_TEXT
+
+    LOL_DECLARE_ENUM_METHODS(VertexUsage);
+
 private:
     static String GetName(Value v, bool use_simple)
     {
@@ -92,7 +97,7 @@ public:
         }
         return tmp + ">";
     }
-END_ENUM(VertexUsage)
+};
 
 struct ShaderUniform
 {

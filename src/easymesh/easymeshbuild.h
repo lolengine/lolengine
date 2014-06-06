@@ -21,7 +21,8 @@
 namespace lol
 {
 
-DEF_ENUM(MeshBuildOperation)
+struct MeshBuildOperation
+{
     DEF_VALUE
         //When this flag is up, negative scaling will not invert faces.
         ADD_VALUE_SET(ScaleWinding                , (1 << 0))
@@ -34,9 +35,12 @@ DEF_ENUM(MeshBuildOperation)
 
         ADD_VALUE_SET(All                         , 0xffffffff)
     END_E_VALUE
-END_ENUM(MeshBuildOperation)
 
-DEF_ENUM(EasyMeshCmdType)
+    LOL_DECLARE_ENUM_METHODS(MeshBuildOperation)
+};
+
+struct EasyMeshCmdType
+{
     DEF_VALUE
         ADD_VALUE(MeshCsg)
 
@@ -78,26 +82,32 @@ DEF_ENUM(EasyMeshCmdType)
         ADD_VALUE(AppendSimpleQuad)
         ADD_VALUE(AppendCog)
     END_E_VALUE
-END_ENUM(EasyMeshCmdType)
 
-DEF_ENUM(MeshType)
-    DEF_VALUE
-        ADD_VALUE(Triangle)
-        ADD_VALUE(Quad)
-        ADD_VALUE(Box)
-        ADD_VALUE(Sphere)
-        ADD_VALUE(Capsule)
-        ADD_VALUE(Torus)
-        ADD_VALUE(Cylinder)
-        ADD_VALUE(Disc)
-        ADD_VALUE(Star)
-        ADD_VALUE(ExpandedStar)
-        ADD_VALUE(Cog)
-        ADD_VALUE(NEW_VALUE)
-    END_E_VALUE
-END_ENUM(MeshType)
+    LOL_DECLARE_ENUM_METHODS(EasyMeshCmdType)
+};
 
-DEF_ENUM(TexCoordBuildType)
+struct MeshTypeDef
+{
+    enum Type
+    {
+        Triangle,
+        Quad,
+        Box,
+        Sphere,
+        Capsule,
+        Torus,
+        Cylinder,
+        Disc,
+        Star,
+        ExpandedStar,
+        Cog,
+        MAX,
+    };
+};
+typedef SafeEnum<MeshTypeDef> MeshType;
+
+struct TexCoordBuildType
+{
     DEF_VALUE
         ADD_VALUE_SET(TriangleDefault     , 0)
         ADD_VALUE_SET(QuadDefault         , 0)
@@ -114,31 +124,37 @@ DEF_ENUM(TexCoordBuildType)
         //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
         ADD_VALUE_SET(Max                 , 1)
     END_E_VALUE
-END_ENUM(TexCoordBuildType)
 
-DEF_ENUM(MeshFaceType)
-    DEF_VALUE
-        ADD_VALUE_SET(BoxFront    , 0)
-        ADD_VALUE_SET(BoxLeft     , 1)
-        ADD_VALUE_SET(BoxBack     , 2)
-        ADD_VALUE_SET(BoxRight    , 3)
-        ADD_VALUE_SET(BoxTop      , 4)
-        ADD_VALUE_SET(BoxBottom   , 5)
-        ADD_VALUE_SET(QuadDefault , 0)
+    LOL_DECLARE_ENUM_METHODS(TexCoordBuildType)
+};
 
-        //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
-        ADD_VALUE_SET(Max         , 6)
-    END_E_VALUE
-END_ENUM(MeshFaceType)
+struct MeshFaceTypeDef
+{
+    enum Type
+    {
+        BoxFront    = 0,
+        QuadDefault = 0,
+        BoxLeft     = 1,
+        BoxBack     = 2,
+        BoxRight    = 3,
+        BoxTop      = 4,
+        BoxBottom   = 5,
+        Max,
+    };
+};
+typedef SafeEnum<MeshFaceTypeDef> MeshFaceType;
 
-DEF_ENUM(TexCoordPos)
-    DEF_VALUE
-        ADD_VALUE(BL) //BottomLeft
-        ADD_VALUE(BR) //BottomRight
-        ADD_VALUE(TL) //TopLeft
-        ADD_VALUE(TR) //TopRight
-    END_E_VALUE
-END_ENUM(TexCoordPos)
+struct TexCoordPosDef
+{
+    enum Type
+    {
+        BL, //BottomLeft
+        BR, //BottomRight
+        TL, //TopLeft
+        TR, //TopRight
+    };
+};
+typedef SafeEnum<TexCoordPosDef> TexCoordPos;
 
 class EasyMeshBuildData
 {
@@ -173,10 +189,10 @@ public:
     inline vec2 &TexCoordScale2()   { return m_texcoord_scale2; }
 
     //UV1
-    void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt] & 1); }
+    void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt.ToScalar()] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt.ToScalar()] & 1); }
     TexCoordBuildType GetTexCoordBuildType(MeshType mt)
     {
-        uint32_t flag = (uint32_t)((m_texcoord_build_type[mt] & ~(1)) >> 1);
+        uint32_t flag = (uint32_t)((m_texcoord_build_type[mt.ToScalar()] & ~(1)) >> 1);
         int i = 0;
         while (flag >>= 1)
             i++;
@@ -184,22 +200,23 @@ public:
     }
     void SetTexCoordCustomBuild(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
     {
-        if (face >= m_texcoord_custom_build[mt].Count())
-            m_texcoord_custom_build[mt].Resize(face + 1);
-        m_texcoord_custom_build[mt][face].m1 = BL;
-        m_texcoord_custom_build[mt][face].m2 = TR;
-        m_texcoord_build_type[mt] |= 1;
+        if (face.ToScalar() >= m_texcoord_custom_build[mt.ToScalar()].Count())
+            m_texcoord_custom_build[mt.ToScalar()].Resize(face.ToScalar() + 1);
+        m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1 = BL;
+        m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2 = TR;
+        m_texcoord_build_type[mt.ToScalar()] |= 1;
     }
-    void ClearTexCoordCustomBuild(MeshType mt) { m_texcoord_build_type[mt] &= ~1; }
+    void ClearTexCoordCustomBuild(MeshType mt) { m_texcoord_build_type[mt.ToScalar()] &= ~1; }
     /* FIXME : Do something better ? */
     vec2 TexCoord(MeshType mt, TexCoordPos tcp, MeshFaceType face)
     {
         vec2 BL = vec2(0.f);
         vec2 TR = vec2(0.f);
-        if (m_texcoord_build_type[mt] & 1 && face < m_texcoord_custom_build[mt].Count())
+        if (m_texcoord_build_type[mt.ToScalar()] & 1
+             && face.ToScalar() < m_texcoord_custom_build[mt.ToScalar()].Count())
         {
-            BL = m_texcoord_custom_build[mt][face].m1;
-            TR = m_texcoord_custom_build[mt][face].m2;
+            BL = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1;
+            TR = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2;
         }
         else
         {
@@ -225,8 +242,8 @@ public:
                     { vec2(0.f, .5f), vec2(.5f, 1.f) },
                     { vec2(.5f, .5f), vec2(1.f, 1.f) }
                 };
-                BL = data[face][0]; //[tcbt]
-                TR = data[face][1]; //[tcbt]
+                BL = data[face.ToScalar()][0]; //[tcbt]
+                TR = data[face.ToScalar()][1]; //[tcbt]
             }
             else if (mt == MeshType::Sphere)
                 mt = mt;
@@ -260,10 +277,10 @@ public:
     }
 
     //UV2
-    void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt] & 1); }
+    void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt.ToScalar()] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt.ToScalar()] & 1); }
     TexCoordBuildType GetTexCoordBuildType2(MeshType mt)
     {
-        uint32_t flag = ((m_texcoord_build_type2[mt] & ~(1)) >> 1);
+        uint32_t flag = ((m_texcoord_build_type2[mt.ToScalar()] & ~(1)) >> 1);
         int i = 0;
         while (flag >>= 1)
             i++;
@@ -271,21 +288,22 @@ public:
     }
     void SetTexCoordCustomBuild2(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
     {
-        if (face >= m_texcoord_custom_build2[mt].Count())
-            m_texcoord_custom_build2[mt].Resize(face + 1);
-        m_texcoord_custom_build2[mt][face].m1 = BL;
-        m_texcoord_custom_build2[mt][face].m2 = TR;
-        m_texcoord_build_type2[mt] |= 1;
+        if (face.ToScalar() >= m_texcoord_custom_build2[mt.ToScalar()].Count())
+            m_texcoord_custom_build2[mt.ToScalar()].Resize(face.ToScalar() + 1);
+        m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1 = BL;
+        m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2 = TR;
+        m_texcoord_build_type2[mt.ToScalar()] |= 1;
     }
-    void ClearTexCoordCustomBuild2(MeshType mt) { m_texcoord_build_type2[mt] &= ~1; }
+    void ClearTexCoordCustomBuild2(MeshType mt) { m_texcoord_build_type2[mt.ToScalar()] &= ~1; }
     vec2 TexCoord2(MeshType mt, TexCoordPos tcp, MeshFaceType face)
     {
         vec2 BL = vec2(0.f);
         vec2 TR = vec2(0.f);
-        if (m_texcoord_build_type2[mt] & 1 && face < m_texcoord_custom_build2[mt].Count())
+        if (m_texcoord_build_type2[mt.ToScalar()] & 1
+             && face.ToScalar() < m_texcoord_custom_build2[mt.ToScalar()].Count())
         {
-            BL = m_texcoord_custom_build2[mt][face].m1;
-            TR = m_texcoord_custom_build2[mt][face].m2;
+            BL = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1;
+            TR = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2;
         }
         else
         {
@@ -310,8 +328,8 @@ public:
                     { vec2(0.f, .5f), vec2(.5f, 1.f) },
                     { vec2(.5f, .5f), vec2(1.f, 1.f) }
                 };
-                BL = data[face][0]; //[tcbt]
-                TR = data[face][1]; //[tcbt]
+                BL = data[face.ToScalar()][0]; //[tcbt]
+                TR = data[face.ToScalar()][1]; //[tcbt]
             }
             else if (mt == MeshType::Sphere)
                 mt = mt;
@@ -369,13 +387,16 @@ public:
 };
 
 /* A safe enum for VertexDictionnary operations. */
-DEF_ENUM(VDictType)
+struct VDictType
+{
     DEF_VALUE
         ADD_VALUE_SET(DoesNotExist  , -3)
         ADD_VALUE_SET(Alone         , -2)
         ADD_VALUE_SET(Master        , -1)
     END_E_VALUE
-END_ENUM(VDictType)
+
+    LOL_DECLARE_ENUM_METHODS(VDictType)
+};
 
 /* TODO : replace VDict by a proper Half-edge system */
 //a class whose goal is to keep a list of the adjacent vertices for mesh operations purposes

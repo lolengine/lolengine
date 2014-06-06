@@ -402,7 +402,7 @@ Shader::Shader(char const *vert, char const *frag)
             }
         }
 
-        if (usage == VertexUsage::MAX || index == -1)
+        if ((int)usage == VertexUsage::MAX || index == -1)
         {
             Log::Error("unable to parse attribute semantic from name: %s",
                        name_buffer);

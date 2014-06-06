@@ -67,7 +67,7 @@ bool MessageService::Send(MessageBucket id, const String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         return g_messageservice->Send(id, message.C());
     }
     return false;
@@ -77,7 +77,7 @@ bool MessageService::Send(MessageBucket id, const char* message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
         Array<MessageList>& bucket = g.m_bucket[id];
         bucket << MessageList(time(nullptr), String(message));
@@ -91,7 +91,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         time_t timestamp;
         return g_messageservice->FetchFirst(id, message, timestamp);
     }
@@ -102,7 +102,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& times
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
         Array<MessageList>& bucket = g.m_bucket[id];
 
@@ -122,7 +122,7 @@ bool MessageService::FetchAll(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         time_t timestamp;
         return g_messageservice->FetchAll(id, message, timestamp);
     }
@@ -133,7 +133,7 @@ bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_t
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id && id < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
         Array<MessageList>& bucket = g.m_bucket[id];
         message = String("");

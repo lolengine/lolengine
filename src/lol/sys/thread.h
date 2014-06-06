@@ -47,24 +47,30 @@ public:
     virtual ~Thread() {}
 };
 
-DEF_ENUM(ThreadStatus)
+struct ThreadStatus
+{
     DEF_VALUE
         ADD_VALUE(NOTHING)
         ADD_VALUE(THREAD_STARTED)
         ADD_VALUE(THREAD_STOPPED)
     END_E_VALUE
-END_ENUM(ThreadStatus)
 
-DEF_ENUM(ThreadJobType)
-    DEF_VALUE
-        ADD_VALUE(NONE)
-        ADD_VALUE(WORK_TODO)
-        ADD_VALUE(WORK_DONE)
-        ADD_VALUE(WORK_FAILED)
-        ADD_VALUE(WORK_FETCHED)
-        ADD_VALUE(THREAD_STOP)
-    END_E_VALUE
-END_ENUM(ThreadJobType)
+    LOL_DECLARE_ENUM_METHODS(ThreadStatus)
+};
+
+struct ThreadJobTypeDef
+{
+    enum Type
+    {
+        NONE,
+        WORK_TODO,
+        WORK_DONE,
+        WORK_FAILED,
+        WORK_FETCHED,
+        THREAD_STOP,
+    };
+};
+typedef SafeEnum<ThreadJobTypeDef> ThreadJobType;
 
 class ThreadJob
 {

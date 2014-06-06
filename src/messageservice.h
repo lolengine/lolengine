@@ -20,8 +20,9 @@
 namespace lol
 {
 
-//Utility enum for message service
-DEF_ENUM(MessageBucket)
+// Utility enum for message service
+struct MessageBucket
+{
     DEF_VALUE
         ADD_VALUE(AppIn)
         ADD_VALUE(AppOut)
@@ -37,7 +38,9 @@ DEF_ENUM(MessageBucket)
         ADD_VALUE(Bckt8)
         ADD_VALUE(Bckt9)
     END_E_VALUE
-END_ENUM(MessageBucket)
+
+    LOL_DECLARE_ENUM_METHODS(MessageBucket)
+};
 
 //Message list container with time in it
 struct MessageList
