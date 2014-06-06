@@ -60,7 +60,7 @@ bool BaseThreadManager::Stop()
 
     return true;
 }
-    
+
 //Work stuff
 bool BaseThreadManager::AddWork(ThreadJob* job)
 {

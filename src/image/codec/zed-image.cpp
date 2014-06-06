@@ -147,7 +147,7 @@ bool ZedImageData::Open(char const *path)
     file_offset << file_size;
 
     m_tiles.Reserve(file_count);
-    
+
     Compacter2d compacter;
     compacter.StepSetup(8, 8, 10);
 
@@ -194,7 +194,7 @@ bool ZedImageData::Open(char const *path)
         compacter.Store(m_tiles.Count(), ivec2(size_x, size_y));
         m_tiles.Push(ivec2(file_convert.Count(), data_length), ivec2(size_x, size_y));
         file_convert.Resize(convert_pos + data_length);
-        
+
         //Retrieve actual datas
         file_pos = data_pos;
         memcpy(&file_convert[convert_pos], &file_buffer[file_pos], data_length);
