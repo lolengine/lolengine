@@ -1201,41 +1201,41 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
 
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
     {
-        switch (ct)
+        switch (ct.ToScalar())
         {
             case MeshTransform::Taper:
             {
-                float value = m_vert[i].m_coord[axis0];
+                float value = m_vert[i].m_coord[axis0.ToScalar()];
                 if (absolute) value = abs(value);
-                m_vert[i].m_coord[(axis0 + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
-                m_vert[i].m_coord[(axis0 + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
+                m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
+                m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
                 break;
             }
             case MeshTransform::Twist:
             {
-                vec3 rotaxis = vec3(1.f); rotaxis[(axis0 + 1) % 3] = .0f; rotaxis[(axis0 + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0] * n0 + noff, rotaxis) * m_vert[i].m_coord;
+                vec3 rotaxis = vec3(1.f); rotaxis[(axis0.ToScalar() + 1) % 3] = .0f; rotaxis[(axis0.ToScalar() + 2) % 3] = .0f;
+                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
                 break;
             }
             case MeshTransform::Shear:
             {
-                float value = m_vert[i].m_coord[axis0];
+                float value = m_vert[i].m_coord[axis0.ToScalar()];
                 if (absolute) value = abs(value);
-                m_vert[i].m_coord[(axis0 + 1) % 3] += (n0 * value + noff);
-                m_vert[i].m_coord[(axis0 + 2) % 3] += (n1 * value + noff);
+                m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] += (n0 * value + noff);
+                m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] += (n1 * value + noff);
                 break;
             }
             case MeshTransform::Stretch:
             {
-                //float value = abs(m_vert[i].m1[axis0]);
-                //m_vert[i].m1[(axis0 + 1) % 3] += (lol::pow(value, n0) + noff);
-                //m_vert[i].m1[(axis0 + 2) % 3] += (lol::pow(value, n1) + noff);
+                //float value = abs(m_vert[i].m1[axis0.ToScalar()]);
+                //m_vert[i].m1[(axis0.ToScalar() + 1) % 3] += (lol::pow(value, n0) + noff);
+                //m_vert[i].m1[(axis0.ToScalar() + 2) % 3] += (lol::pow(value, n1) + noff);
                 break;
             }
             case MeshTransform::Bend:
             {
-                vec3 rotaxis = vec3(1.f); rotaxis[(axis1 + 1) % 3] = .0f; rotaxis[(axis1 + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0] * n0 + noff, rotaxis) * m_vert[i].m_coord;
+                vec3 rotaxis = vec3(1.f); rotaxis[(axis1.ToScalar() + 1) % 3] = .0f; rotaxis[(axis1.ToScalar() + 2) % 3] = .0f;
+                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
                 break;
             }
         }

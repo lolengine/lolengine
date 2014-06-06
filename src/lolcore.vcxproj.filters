@@ -555,6 +555,9 @@
     <ClInclude Include="lol\base\assert.h">
       <Filter>lol\base</Filter>
     </ClInclude>
+    <ClInclude Include="lol\base\enum.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
     <ClInclude Include="lol\base\hash.h">
       <Filter>lol\base</Filter>
     </ClInclude>

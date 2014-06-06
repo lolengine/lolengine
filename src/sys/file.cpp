@@ -51,7 +51,7 @@ class FileData
             m_type == StreamType::FileBinary)
             return;
         m_type = stream;
-        switch((int)stream)
+        switch (stream.ToScalar())
         {
 #if __CELLOS_LV2__
         /* FIXME: no modes, no error checking, no nothing */

@@ -12,6 +12,7 @@
 #define __LOL_BASE_ALL_H__
 
 #include <lol/base/types.h>
+#include <lol/base/enum.h>
 #include <lol/base/log.h>
 #include <lol/base/assert.h>
 #include <lol/base/array.h>
