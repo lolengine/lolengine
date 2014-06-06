@@ -41,6 +41,24 @@ struct ClearMask
     inline operator Value() { return m_value; }
 };
 
+/* A safe enum to indicate the blend equation. */
+struct BlendEquation
+{
+    enum Value
+    {
+        Add,
+        Subtract,
+        ReverseSubtract,
+        Min,
+        Max,
+    }
+    m_value;
+
+    inline BlendEquation() : m_value(Add) {}
+    inline BlendEquation(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 /* A safe enum to indicate the blending factors. */
 struct BlendFunc
 {
@@ -189,6 +207,10 @@ public:
     void SetAlphaFunc(AlphaFunc func, float alpha);
     AlphaFunc GetAlphaFunc() const;
     float GetAlphaValue() const;
+
+    void SetBlendEquation(BlendEquation rgb, BlendEquation alpha);
+    BlendEquation GetBlendEquationRgb() const;
+    BlendEquation GetBlendEquationAlpha() const;
 
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
     BlendFunc GetBlendFuncSrc() const;

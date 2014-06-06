@@ -31,6 +31,7 @@ public:
     void SetClearColor(vec4 color);
     void SetClearDepth(float depth);
     void SetAlphaFunc(AlphaFunc func, float alpha);
+    void SetBlendEquation(BlendEquation rgb, BlendEquation alpha);
     void SetBlendFunc(BlendFunc src, BlendFunc dst);
     void SetDepthFunc(DepthFunc func);
     void SetDepthMask(DepthMask mask);
@@ -42,6 +43,8 @@ public:
     float GetClearDepth();
     AlphaFunc GetAlphaFunc();
     float GetAlphaValue();
+    BlendEquation GetBlendEquationRgb();
+    BlendEquation GetBlendEquationAlpha();
     BlendFunc GetBlendFuncSrc();
     BlendFunc GetBlendFuncDst();
     DepthFunc GetDepthFunc();

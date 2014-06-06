@@ -282,6 +282,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
     rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+    rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
 #if defined USE_D3D9 || defined _XBOX
@@ -397,6 +398,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
     rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+    rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
     int linecount = data->m_lines.Count();

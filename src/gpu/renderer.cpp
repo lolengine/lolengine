@@ -61,6 +61,7 @@ private:
     float m_clear_depth;
     AlphaFunc m_alpha_func;
     float m_alpha_value;
+    BlendEquation m_blend_rgb, m_blend_alpha;
     BlendFunc m_blend_src, m_blend_dst;
     DepthFunc m_depth_func;
     DepthMask m_depth_mask;
@@ -149,6 +150,10 @@ Renderer::Renderer(ivec2 size)
     m_data->m_alpha_func = AlphaFunc::Never;
     m_data->m_alpha_value = -1.0f;
     SetAlphaFunc(AlphaFunc::Disabled, 0.0f);
+
+    m_data->m_blend_rgb = BlendEquation::Subtract;
+    m_data->m_blend_alpha = BlendEquation::Subtract;
+    SetBlendEquation(BlendEquation::Add, BlendEquation::Add);
 
     m_data->m_blend_src = BlendFunc::Disabled;
     m_data->m_blend_dst = BlendFunc::Disabled;
@@ -406,6 +411,84 @@ AlphaFunc Renderer::GetAlphaFunc() const
 float Renderer::GetAlphaValue() const
 {
     return m_data->m_alpha_value;
+}
+
+/*
+ * Blend equation
+ */
+
+void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
+{
+    if (m_data->m_blend_rgb == rgb && m_data->m_blend_alpha == alpha)
+        return;
+
+#if defined USE_D3D9 || defined _XBOX
+    D3DBLEND s1[2] = { D3DBLENDOP_ADD, D3DBLENDOP_ADD };
+    BlendEquation s2[2] = { rgb, alpha };
+
+    for (int i = 0; i < 2; ++i)
+    {
+        switch (s2[i])
+        {
+            case BlendEquation::Add:
+                s1[i] = D3DBLENDOP_ADD; break;
+            case BlendEquation::Subtract:
+                s1[i] = D3DBLENDOP_SUBTRACT; break;
+            case BlendEquation::ReverseSubtract:
+                s1[i] = D3DBLENDOP_REVSUBTRACT; break;
+            case BlendEquation::Max:
+                s1[i] = D3DBLENDOP_MAX; break;
+            case BlendEquation::Min:
+                s1[i] = D3DBLENDOP_MIN; break;
+        }
+    }
+
+    m_data->m_d3d_dev->SetRenderState(D3DRS_BLENDOP, s1[0]);
+    m_data->m_d3d_dev->SetRenderState(D3DRS_BLENDOPALPHA, s1[1]);
+#else
+    GLenum s1[2] = { GL_FUNC_ADD, GL_FUNC_ADD };
+    BlendEquation s2[2] = { rgb, alpha };
+
+    for (int i = 0; i < 2; ++i)
+    {
+        switch (s2[i])
+        {
+            case BlendEquation::Add:
+                s1[i] = GL_FUNC_ADD; break;
+            case BlendEquation::Subtract:
+                s1[i] = GL_FUNC_SUBTRACT; break;
+            case BlendEquation::ReverseSubtract:
+                s1[i] = GL_FUNC_REVERSE_SUBTRACT; break;
+            case BlendEquation::Max:
+#if defined GL_MAX
+                s1[i] = GL_MAX; break;
+#else
+                s1[i] = GL_MAX_EXT; break;
+#endif
+            case BlendEquation::Min:
+#if defined GL_MIN
+                s1[i] = GL_MIN; break;
+#else
+                s1[i] = GL_MIN_EXT; break;
+#endif
+        }
+    }
+
+    glBlendEquationSeparate(s1[0], s1[1]);
+#endif
+
+    m_data->m_blend_rgb = rgb;
+    m_data->m_blend_alpha = alpha;
+}
+
+BlendEquation Renderer::GetBlendEquationRgb() const
+{
+    return m_data->m_blend_rgb;
+}
+
+BlendEquation Renderer::GetBlendEquationAlpha() const
+{
+    return m_data->m_blend_alpha;
 }
 
 /*
