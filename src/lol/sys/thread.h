@@ -58,19 +58,14 @@ struct ThreadStatus
     LOL_DECLARE_ENUM_METHODS(ThreadStatus)
 };
 
-struct ThreadJobTypeDef
-{
-    enum Type
-    {
-        NONE,
-        WORK_TODO,
-        WORK_DONE,
-        WORK_FAILED,
-        WORK_FETCHED,
-        THREAD_STOP,
-    };
-};
-typedef SafeEnum<ThreadJobTypeDef> ThreadJobType;
+LOL_SAFE_ENUM(ThreadJobType,
+    NONE,
+    WORK_TODO,
+    WORK_DONE,
+    WORK_FAILED,
+    WORK_FETCHED,
+    THREAD_STOP
+);
 
 class ThreadJob
 {

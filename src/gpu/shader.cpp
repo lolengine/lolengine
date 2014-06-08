@@ -391,7 +391,7 @@ Shader::Shader(char const *vert, char const *frag)
         String name(name_buffer);
         int index = -1;
         VertexUsage usage = VertexUsage::MAX;
-        for (int j = 0; j < VertexUsage::MAX; ++j)
+        for (int j = 0; j < (int)VertexUsage::MAX; ++j)
         {
             if (name.StartsWith(attribute_names[j]))
             {
@@ -402,7 +402,7 @@ Shader::Shader(char const *vert, char const *frag)
             }
         }
 
-        if ((int)usage == VertexUsage::MAX || index == -1)
+        if (usage == VertexUsage::MAX || index == -1)
         {
             Log::Error("unable to parse attribute semantic from name: %s",
                        name_buffer);
@@ -410,7 +410,7 @@ Shader::Shader(char const *vert, char const *frag)
         else
         {
             GLint location = glGetAttribLocation(data->prog_id, name_buffer);
-            uint64_t flags = (uint64_t)(uint16_t)usage << 16;
+            uint64_t flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
             flags |= (uint64_t)(uint16_t)index;
             // TODO: this is here just in case. Remove this once everything has been correctly tested
 #ifdef _DEBUG
@@ -440,7 +440,7 @@ int Shader::GetAttribCount() const
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
 {
     ShaderAttrib ret;
-    ret.m_flags = (uint64_t)(uint16_t)usage << 16;
+    ret.m_flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
     ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
 #elif !defined __CELLOS_LV2__

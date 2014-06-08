@@ -139,7 +139,7 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         return;
 
 #if defined _XBOX || defined USE_D3D9
-    switch (type)
+    switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
         if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLELIST,
@@ -169,7 +169,7 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     }
 #else
     /* FIXME: this has nothing to do here! */
-    switch (type)
+    switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
         glDrawArrays(GL_TRIANGLES, skip, count);
@@ -198,7 +198,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         return;
 
 #if defined _XBOX || defined USE_D3D9
-    switch (type)
+    switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
         count = count / 3;
@@ -231,7 +231,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     }
 #else
     /* FIXME: this has nothing to do here! */
-    switch (type)
+    switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
         /* FIXME: ignores most of the arguments! */
@@ -330,7 +330,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
     /* Only the first item is required to know which stream this
      * is about; the rest of the information is stored in the
      * vertex declaration already. */
-    uint32_t usage = (attr1.m_flags >> 16) & 0xffff;
+    VertexUsage usage = VertexUsage((attr1.m_flags >> 16) & 0xffff);
     uint32_t index = attr1.m_flags & 0xffff;
 
     /* Find the stream number */
@@ -362,15 +362,15 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
     for (int n = 0; n < 12 && attribs[n].m_flags != (uint64_t)0 - 1; n++)
     {
-        uint32_t reg = attribs[n].m_flags >> 32;
-        uint32_t usage = (attribs[n].m_flags >> 16) & 0xffff;
+        VertexUsage usage = VertexUsage((attribs[n].m_flags >> 16) & 0xffff);
         uint32_t index = attribs[n].m_flags & 0xffff;
+        uint32_t reg = attribs[n].m_flags >> 32;
 
 #   if !defined __CELLOS_LV2__
         if (reg != 0xffffffff)
             glEnableVertexAttribArray((GLint)reg);
 #   else
-        switch (usage)
+        switch (usage.ToScalar())
         {
         case VertexUsage::Position:
             glEnableClientState(GL_VERTEX_ARRAY);
@@ -627,26 +627,26 @@ VertexStreamBase VertexDeclaration::GetStream(int index) const
 
         switch (m_streams[i].stream_type)
         {
-#define LOL_TYPE(T) \
+#define __T(T) \
             case VertexStreamBase::Type##T: stream.AddStream<T>(n++, m_streams[i].usage); break;
 
-            LOL_TYPE(void)
-            LOL_TYPE(half)     LOL_TYPE(f16vec2) LOL_TYPE(f16vec3) LOL_TYPE(f16vec4)
-            LOL_TYPE(float)    LOL_TYPE(vec2)    LOL_TYPE(vec3)    LOL_TYPE(vec4)
-            LOL_TYPE(double)   LOL_TYPE(dvec2)   LOL_TYPE(dvec3)   LOL_TYPE(dvec4)
-            LOL_TYPE(int8_t)   LOL_TYPE(i8vec2)  LOL_TYPE(i8vec3)  LOL_TYPE(i8vec4)
-            LOL_TYPE(uint8_t)  LOL_TYPE(u8vec2)  LOL_TYPE(u8vec3)  LOL_TYPE(u8vec4)
-            LOL_TYPE(int16_t)  LOL_TYPE(i16vec2) LOL_TYPE(i16vec3) LOL_TYPE(i16vec4)
-            LOL_TYPE(uint16_t) LOL_TYPE(u16vec2) LOL_TYPE(u16vec3) LOL_TYPE(u16vec4)
-            LOL_TYPE(int32_t)  LOL_TYPE(ivec2)   LOL_TYPE(ivec3)   LOL_TYPE(ivec4)
-            LOL_TYPE(uint32_t) LOL_TYPE(uvec2)   LOL_TYPE(uvec3)   LOL_TYPE(uvec4)
-#undef LOL_TYPE
+            __T(void)
+            __T(half)     __T(f16vec2) __T(f16vec3) __T(f16vec4)
+            __T(float)    __T(vec2)    __T(vec3)    __T(vec4)
+            __T(double)   __T(dvec2)   __T(dvec3)   __T(dvec4)
+            __T(int8_t)   __T(i8vec2)  __T(i8vec3)  __T(i8vec4)
+            __T(uint8_t)  __T(u8vec2)  __T(u8vec3)  __T(u8vec4)
+            __T(int16_t)  __T(i16vec2) __T(i16vec3) __T(i16vec4)
+            __T(uint16_t) __T(u16vec2) __T(u16vec3) __T(u16vec4)
+            __T(int32_t)  __T(ivec2)   __T(ivec3)   __T(ivec4)
+            __T(uint32_t) __T(uvec2)   __T(uvec3)   __T(uvec4)
+#undef __T
         }
         ++count;
     }
 
     while (count < 12)
-        stream.AddStream<void>(count++, VertexStreamBase::Typevoid);
+        stream.AddStream<void>(count++, VertexUsage::Position);
 
     return stream;
 }

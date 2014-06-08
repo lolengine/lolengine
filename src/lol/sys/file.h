@@ -21,28 +21,18 @@
 namespace lol
 {
 
-struct FileAccessDef
-{
-    enum Type
-    {
-        Read = 0,
-        Write,
-    };
-};
-typedef SafeEnum<FileAccessDef> FileAccess;
+LOL_SAFE_ENUM(FileAccess,
+    Read = 0,
+    Write
+);
 
-struct StreamTypeDef
-{
-    enum Type
-    {
-        StdIn,
-        StdOut,
-        StdErr,
-        File,
-        FileBinary,
-    };
-};
-typedef SafeEnum<StreamTypeDef> StreamType;
+LOL_SAFE_ENUM(StreamType,
+    StdIn,
+    StdOut,
+    StdErr,
+    File,
+    FileBinary
+);
 
 class File
 {

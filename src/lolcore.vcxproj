@@ -106,6 +106,7 @@
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
+    <ClCompile Include="base\enum.cpp" />
     <ClCompile Include="base\hash.cpp" />
     <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />

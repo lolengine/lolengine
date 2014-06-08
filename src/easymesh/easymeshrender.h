@@ -21,18 +21,13 @@
 namespace lol
 {
 
-//Utility enum for renderers
-struct MeshRenderDef
-{
-    enum Type
-    {
-        NeedData,
-        NeedConvert,
-        CanRender,
-        IgnoreRender,
-    };
-};
-typedef SafeEnum<MeshRenderDef> MeshRender;
+// Utility enum for renderers
+LOL_SAFE_ENUM(MeshRender,
+    NeedData,
+    NeedConvert,
+    CanRender,
+    IgnoreRender,
+);
 
 //Vertex datas for easymesh vertex list.
 //TODO : <COORD, NORM, COLOR, UV>
