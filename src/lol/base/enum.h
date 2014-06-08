@@ -14,8 +14,10 @@
 namespace lol
 {
 
-template<typename DEF, typename T = typename DEF::Type>
-class SafeEnum : public DEF
+extern Map<int64_t, String> BuildEnumMap(char const *str);
+
+template<typename BASE, typename T = typename BASE::Type>
+class SafeEnum : public BASE
 {
     typedef T Type;
     Type m_value;
@@ -24,8 +26,26 @@ public:
     inline SafeEnum() : m_value() {}
     inline SafeEnum(Type v) : m_value(v) {}
 
-    /* Allow conversion from/to int */
+    /* Allow conversion from int and to the underlying type */
+    inline explicit SafeEnum(int i) : m_value(T(i)) {}
     inline Type ToScalar() const { return m_value; }
+
+    /* Convert to string description */
+    inline class String ToString() const
+    {
+        /* FIXME: we all know this isn’t thread safe. But is it really
+         * a big deal? */
+        static Map<int64_t, String> map;
+        static bool ready = false;
+
+        if (!ready)
+            map = BuildEnumMap(BASE::GetDescription());
+        ready = true;
+
+        if (map.HasKey((int64_t)m_value))
+            return map[(int64_t)m_value];
+        return "<invalid enum>";
+    }
 
     /* Safe comparisons between enums of the same type */
     friend bool operator == (SafeEnum const &a, SafeEnum const &b)
@@ -53,6 +73,15 @@ public:
         return a.m_value >= b.m_value;
     }
 };
+
+#define LOL_SAFE_ENUM(name, ...) \
+    struct name ## Base \
+    { \
+        enum Type {__VA_ARGS__}; \
+    protected: \
+        static inline char const *GetDescription() { return #__VA_ARGS__; } \
+    }; \
+    typedef SafeEnum<name ## Base> name;
 
 //-- STRUCT TEMPLATE:
 // enum E {

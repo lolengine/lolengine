@@ -82,6 +82,7 @@ liblolcore_sources = \
     generated/easymesh-scanner.cpp \
     \
     base/assert.cpp base/hash.cpp base/log.cpp base/string.cpp \
+    base/enum.cpp \
     \
     math/vector.cpp math/real.cpp math/half.cpp math/trig.cpp \
     math/constants.cpp math/geometry.cpp \
@@ -107,7 +108,7 @@ liblolcore_sources = \
     mesh/primitive.cpp mesh/primitive.h \
     \
     sys/init.cpp sys/timer.cpp sys/file.cpp \
-    sys/threadbase.h \
+    sys/thread.cpp sys/threadbase.h \
     \
     image/image.cpp image/image-private.h \
     image/codec/gdiplus-image.cpp \

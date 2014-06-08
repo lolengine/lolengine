@@ -50,6 +50,7 @@
     <ClCompile Include="unit\camera.cpp" />
     <ClCompile Include="unit\cmplx.cpp" />
     <ClCompile Include="unit\color.cpp" />
+    <ClCompile Include="unit\enum.cpp" />
     <ClCompile Include="unit\half.cpp" />
     <ClCompile Include="unit\image.cpp" />
     <ClCompile Include="unit\interp.cpp" />

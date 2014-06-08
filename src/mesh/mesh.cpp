@@ -92,7 +92,8 @@ void SubMesh::Render(Shader* shader)
         for (int j = 0; j < stream.GetStreamCount(); ++j)
         {
             VertexUsage usage = stream.GetUsage(j);
-            attribs[j] = shader->GetAttribLocation(usage, indices[usage]++);
+            int usage_index = usage.ToScalar();
+            attribs[j] = shader->GetAttribLocation(usage, indices[usage_index]++);
         }
 
         vertex_count = m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();

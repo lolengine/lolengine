@@ -25,79 +25,24 @@ namespace lol
  * now there is only TexCoord and not TexCoord0 TexCoord1 etc. because
  * we can always reorganise the vertex declaration for the indices to
  * match. If the need arises these enums will be added. */
-struct VertexUsage
-{
-    DEF_VALUE
-        ADD_VALUE(Position)
-        ADD_VALUE(BlendWeight)
-        ADD_VALUE(BlendIndices)
-        ADD_VALUE(Normal)
-        ADD_VALUE(PointSize)
-        ADD_VALUE(TexCoord)
-        ADD_VALUE(TexCoordExt)
-        ADD_VALUE(Tangent)
-        ADD_VALUE(Binormal)
-        ADD_VALUE(TessFactor)
-        ADD_VALUE(PositionT)
-        ADD_VALUE(Color)
-        ADD_VALUE(Fog)
-        ADD_VALUE(Depth)
-        ADD_VALUE(Sample)
-    END_E_VALUE
-
-    DEF_TEXT
-        ADD_TEXT(Position)
-        ADD_TEXT(BlendWeight)
-        ADD_TEXT(BlendIndices)
-        ADD_TEXT(Normal)
-        ADD_TEXT(PointSize)
-        ADD_TEXT(TexCoord)
-        ADD_TEXT(TexCoordExt)
-        ADD_TEXT(Tangent)
-        ADD_TEXT(Binormal)
-        ADD_TEXT(TessFactor)
-        ADD_TEXT(PositionT)
-        ADD_TEXT(Color)
-        ADD_TEXT(Fog)
-        ADD_TEXT(Depth)
-        ADD_TEXT(Sample)
-    END_TEXT
-
-    LOL_DECLARE_ENUM_METHODS(VertexUsage);
-
-private:
-    static String GetName(Value v, bool use_simple)
-    {
-        String tmp = String("");
-        if (!use_simple) tmp += "<";
-        tmp += VertexUsage(v).C();
-        if (!use_simple) tmp += ">";
-        return tmp;
-    }
-
-public:
-    static String GetName(Value v)
-    {
-        return GetName(v, false);
-    }
-
-    static String GetNameList(uint32_t v)
-    {
-        String tmp = String("<");
-        int nb = 0;
-        for (int i = 0; i < MAX; ++i)
-        {
-            if (v & (1<<i))
-            {
-                if (nb != 0)
-                    tmp += ", ";
-                tmp += GetName(Value(i), true);
-                ++nb;
-            }
-        }
-        return tmp + ">";
-    }
-};
+LOL_SAFE_ENUM(VertexUsage,
+    Position,
+    BlendWeight,
+    BlendIndices,
+    Normal,
+    PointSize,
+    TexCoord,
+    TexCoordExt,
+    Tangent,
+    Binormal,
+    TessFactor,
+    PositionT,
+    Color,
+    Fog,
+    Depth,
+    Sample,
+    MAX,
+);
 
 struct ShaderUniform
 {
@@ -152,7 +97,7 @@ public:
     static void Destroy(Shader *shader);
 
     int GetAttribCount() const;
-    ShaderAttrib GetAttribLocation(struct VertexUsage usage, int index) const;
+    ShaderAttrib GetAttribLocation(VertexUsage usage, int index) const;
 
     ShaderUniform GetUniformLocation(char const *uni) const;
     void SetUniform(ShaderUniform const &uni, int i);

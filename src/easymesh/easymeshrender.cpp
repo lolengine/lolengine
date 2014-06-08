@@ -211,8 +211,7 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
     BUILD_VFLAG(has_color,       VertexUsage::Color,        vflags);
     BUILD_VFLAG(has_texcoord,    VertexUsage::TexCoord,     vflags);
     BUILD_VFLAG_OR(has_texcoord, VertexUsage::TexCoordExt,  vflags);
-    ASSERT(!vflags, "Vertex Usage setup is not implemented for %s, feel free to do so.",
-           VertexUsage::GetNameList(vflags).C());
+    ASSERT(!vflags, "no Vertex Usage setup for 0x%04x", vflags);
 
     if (has_position)   gpudata->AddAttribute(VertexUsage::Position, 0);
     if (has_normal)     gpudata->AddAttribute(VertexUsage::Normal, 0);
@@ -280,8 +279,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     BUILD_VFLAG_COUNT(has_color,      VertexUsage::Color,       saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoord,   VertexUsage::TexCoord,    saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoordExt,VertexUsage::TexCoordExt, saveflags, flagnb);
-    ASSERT(!saveflags, "Vertex Declaration setup is not implemented for %s, feel free to do so.",
-           VertexUsage::GetNameList(vflags).C());
+    ASSERT(!saveflags, "no Vertex Declaration setup for 0x%04x", vflags);
 
     if (flagnb == 5 && has_position && has_normal && has_color && has_texcoord && has_texcoordExt)
     {
@@ -369,8 +367,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
         COPY_VBO;
     }
     else
-        ASSERT(0, "Vertex Declaration combination is not implemented for %s, feel free to do so.",
-                   VertexUsage::GetNameList(vflags).C());
+        ASSERT(0, "no Vertex Declaration combination for 0x%04x", vflags);
 
     m_vdatas.Push(vflags, new_vdecl, new_vbo);
 }
@@ -404,8 +401,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
     BUILD_VFLAG(has_color,      VertexUsage::Color,       vflags);
     BUILD_VFLAG(has_texcoord,   VertexUsage::TexCoord,    vflags);
     BUILD_VFLAG_OR(has_texcoord,VertexUsage::TexCoordExt, vflags);
-    ASSERT(!vflags, "Vertex Stream setup is not implemented for %s, feel free to do so.",
-           VertexUsage::GetNameList(vflags).C());
+    ASSERT(!vflags, "no Vertex Stream setup for 0x%04x", vflags);
 
     int idx = 0;
     ShaderAttrib Attribs[4] = { lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib() };

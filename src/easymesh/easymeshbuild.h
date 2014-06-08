@@ -86,25 +86,21 @@ struct EasyMeshCmdType
     LOL_DECLARE_ENUM_METHODS(EasyMeshCmdType)
 };
 
-struct MeshTypeDef
-{
-    enum Type
-    {
-        Triangle,
-        Quad,
-        Box,
-        Sphere,
-        Capsule,
-        Torus,
-        Cylinder,
-        Disc,
-        Star,
-        ExpandedStar,
-        Cog,
-        MAX,
-    };
-};
-typedef SafeEnum<MeshTypeDef> MeshType;
+LOL_SAFE_ENUM(MeshType,
+    Triangle,
+    Quad,
+    Box,
+    Sphere,
+    Capsule,
+    Torus,
+    Cylinder,
+    Disc,
+    Star,
+    ExpandedStar,
+    Cog,
+
+    MAX
+);
 
 struct TexCoordBuildType
 {
@@ -128,33 +124,24 @@ struct TexCoordBuildType
     LOL_DECLARE_ENUM_METHODS(TexCoordBuildType)
 };
 
-struct MeshFaceTypeDef
-{
-    enum Type
-    {
-        BoxFront    = 0,
-        QuadDefault = 0,
-        BoxLeft     = 1,
-        BoxBack     = 2,
-        BoxRight    = 3,
-        BoxTop      = 4,
-        BoxBottom   = 5,
-        Max,
-    };
-};
-typedef SafeEnum<MeshFaceTypeDef> MeshFaceType;
+LOL_SAFE_ENUM(MeshFaceType,
+    BoxFront    = 0,
+    QuadDefault = 0,
+    BoxLeft     = 1,
+    BoxBack     = 2,
+    BoxRight    = 3,
+    BoxTop      = 4,
+    BoxBottom   = 5,
 
-struct TexCoordPosDef
-{
-    enum Type
-    {
-        BL, //BottomLeft
-        BR, //BottomRight
-        TL, //TopLeft
-        TR, //TopRight
-    };
-};
-typedef SafeEnum<TexCoordPosDef> TexCoordPos;
+    Max
+);
+
+LOL_SAFE_ENUM(TexCoordPos,
+    BL, // Bottom Left
+    BR, // Bottom Right
+    TL, // Top Left
+    TR  // Top Right
+);
 
 class EasyMeshBuildData
 {
@@ -227,14 +214,14 @@ public:
                 mt = mt;
             else if (mt == MeshType::Quad)
             {
-                //There's nothin' else than QuadDefault
+                // There's nothin' else than QuadDefault
                 BL = vec2(0.f);
                 TR = vec2(1.f);
             }
             else if (mt == MeshType::Box)
             {
                 vec2 data[][2] =
-                { //TexCoordBuildType::BoxDefault
+                { // TexCoordBuildType::BoxDefault
                     { vec2(0.f), vec2(.5f) },
                     { vec2(.5f, 0.f), vec2(1.f, .5f) },
                     { vec2(0.f), vec2(.5f) },
@@ -242,8 +229,8 @@ public:
                     { vec2(0.f, .5f), vec2(.5f, 1.f) },
                     { vec2(.5f, .5f), vec2(1.f, 1.f) }
                 };
-                BL = data[face.ToScalar()][0]; //[tcbt]
-                TR = data[face.ToScalar()][1]; //[tcbt]
+                BL = data[face.ToScalar()][0]; // [tcbt]
+                TR = data[face.ToScalar()][1]; // [tcbt]
             }
             else if (mt == MeshType::Sphere)
                 mt = mt;
@@ -276,7 +263,7 @@ public:
         return res * m_texcoord_scale + m_texcoord_offset2;
     }
 
-    //UV2
+    // UV2
     void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt.ToScalar()] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt.ToScalar()] & 1); }
     TexCoordBuildType GetTexCoordBuildType2(MeshType mt)
     {
@@ -313,14 +300,14 @@ public:
                 mt = mt;
             else if (mt == MeshType::Quad)
             {
-                //There's nothin' else than QuadDefault
+                // There's nothin' else than QuadDefault
                 BL = vec2(0.f);
                 TR = vec2(1.f);
             }
             else if (mt == MeshType::Box)
             {
                 vec2 data[][2] =
-                { //TexCoordBuildType::BoxDefault
+                { // TexCoordBuildType::BoxDefault
                     { vec2(0.f), vec2(.5f) },
                     { vec2(.5f, 0.f), vec2(1.f, .5f) },
                     { vec2(0.f), vec2(.5f) },
@@ -328,8 +315,8 @@ public:
                     { vec2(0.f, .5f), vec2(.5f, 1.f) },
                     { vec2(.5f, .5f), vec2(1.f, 1.f) }
                 };
-                BL = data[face.ToScalar()][0]; //[tcbt]
-                TR = data[face.ToScalar()][1]; //[tcbt]
+                BL = data[face.ToScalar()][0]; // [tcbt]
+                TR = data[face.ToScalar()][1]; // [tcbt]
             }
             else if (mt == MeshType::Sphere)
                 mt = mt;
