@@ -22,160 +22,106 @@ namespace lol
 class RendererData;
 
 /* A list of bitmasks to clear a render buffer. */
-struct ClearMask
+enum class ClearMask : uint8_t
 {
-    enum Value
-    {
-        /* Note: D3D9 doesn't appear to support the accumulation buffer,
-         * and it is a deprecated OpenGL feature. No reason to support it. */
-        Color   = 1 << 0,
-        Depth   = 1 << 1,
-        Stencil = 1 << 2,
+    /* Note: D3D9 doesn't appear to support the accumulation buffer,
+     * and it is a deprecated OpenGL feature. No reason to support it. */
+    Color   = 1 << 0,
+    Depth   = 1 << 1,
+    Stencil = 1 << 2,
 
-        All     = 0xffffffff
-    }
-    m_value;
-
-    inline ClearMask(Value v) : m_value(v) {}
-    inline ClearMask(uint64_t i) : m_value((Value)i) {}
-    inline operator Value() { return m_value; }
+    All     = 0xff,
 };
 
-/* A safe enum to indicate the blend equation. */
-struct BlendEquation
+static inline ClearMask operator |(ClearMask const &a, ClearMask const &b)
 {
-    enum Value
-    {
-        Add,
-        Subtract,
-        ReverseSubtract,
-        Min,
-        Max,
-    }
-    m_value;
+    return ClearMask((uint8_t)a | (uint8_t)b);
+}
 
-    inline BlendEquation() : m_value(Add) {}
-    inline BlendEquation(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+static inline bool operator &(ClearMask const &a, ClearMask const &b)
+{
+    return (bool)((uint8_t)a & (uint8_t)b);
+}
+
+/* A safe enum to indicate the blend equation. */
+enum class BlendEquation : uint8_t
+{
+    Add,
+    Subtract,
+    ReverseSubtract,
+    Min,
+    Max,
 };
 
 /* A safe enum to indicate the blending factors. */
-struct BlendFunc
+enum class BlendFunc : uint8_t
 {
-    enum Value
-    {
-        Disabled,
-        Zero,
-        One,
-        SrcColor,
-        OneMinusSrcColor,
-        DstColor,
-        OneMinusDstColor,
-        SrcAlpha,
-        OneMinusSrcAlpha,
-        DstAlpha,
-        OneMinusDstAlpha,
-        ConstantColor,
-        OneMinusConstantColor,
-        ConstantAlpha,
-        OneMinusConstantAlpha,
-    }
-    m_value;
-
-    inline BlendFunc() : m_value(Zero) {}
-    inline BlendFunc(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Disabled,
+    Zero,
+    One,
+    SrcColor,
+    OneMinusSrcColor,
+    DstColor,
+    OneMinusDstColor,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    DstAlpha,
+    OneMinusDstAlpha,
+    ConstantColor,
+    OneMinusConstantColor,
+    ConstantAlpha,
+    OneMinusConstantAlpha,
 };
 
 /* A safe enum to indicate the face culling mode. */
-struct CullMode
+enum class CullMode : uint8_t
 {
-    enum Value
-    {
-        Disabled,
-        Clockwise,
-        CounterClockwise,
-    }
-    m_value;
-
-    inline CullMode() : m_value(Disabled) {}
-    inline CullMode(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Disabled,
+    Clockwise,
+    CounterClockwise,
 };
 
 /* A safe enum to indicate the polygon mode. */
-struct PolygonMode
+enum class PolygonMode : uint8_t
 {
-    enum Value
-    {
-        Fill,
-        Line,
-        Point,
-    }
-    m_value;
-
-    inline PolygonMode() : m_value(Fill) {}
-    inline PolygonMode(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Fill,
+    Line,
+    Point,
 };
 
 /* A safe enum to indicate the depth test mode. */
-struct DepthFunc
+enum class DepthFunc : uint8_t
 {
-    enum Value
-    {
-        Disabled,
-        Never,
-        Less,
-        Equal,
-        LessOrEqual,
-        Greater,
-        NotEqual,
-        GreaterOrEqual,
-        Always,
-    }
-    m_value;
-
-    inline DepthFunc() : m_value(Disabled) {}
-    inline DepthFunc(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Disabled,
+    Never,
+    Less,
+    Equal,
+    LessOrEqual,
+    Greater,
+    NotEqual,
+    GreaterOrEqual,
+    Always,
 };
 
 /* A safe enum to indicate the depth mask. */
-struct DepthMask
+enum class DepthMask : uint8_t
 {
-    enum Value
-    {
-        Disabled,
-        Enabled,
-    }
-    m_value;
-
-    inline DepthMask() : m_value(Disabled) {}
-    inline DepthMask(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Disabled,
+    Enabled,
 };
 
 /* A safe enum to indicate the alpha test mode. */
-struct AlphaFunc
+enum class AlphaFunc : uint8_t
 {
-    enum Value
-    {
-        Disabled,
-        Never,
-        Less,
-        Equal,
-        LessOrEqual,
-        Greater,
-        NotEqual,
-        GreaterOrEqual,
-        Always,
-    }
-    m_value;
-
-    inline AlphaFunc() : m_value(Disabled) {}
-    inline AlphaFunc(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
+    Disabled,
+    Never,
+    Less,
+    Equal,
+    LessOrEqual,
+    Greater,
+    NotEqual,
+    GreaterOrEqual,
+    Always,
 };
 
 class Renderer

@@ -436,10 +436,10 @@ void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
                 s1[i] = D3DBLENDOP_SUBTRACT; break;
             case BlendEquation::ReverseSubtract:
                 s1[i] = D3DBLENDOP_REVSUBTRACT; break;
-            case BlendEquation::Max:
-                s1[i] = D3DBLENDOP_MAX; break;
             case BlendEquation::Min:
                 s1[i] = D3DBLENDOP_MIN; break;
+            case BlendEquation::Max:
+                s1[i] = D3DBLENDOP_MAX; break;
         }
     }
 
@@ -459,17 +459,16 @@ void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
                 s1[i] = GL_FUNC_SUBTRACT; break;
             case BlendEquation::ReverseSubtract:
                 s1[i] = GL_FUNC_REVERSE_SUBTRACT; break;
+#if defined GL_MIN && defined GL_MAX
+            case BlendEquation::Min:
+                s1[i] = GL_MIN; break;
             case BlendEquation::Max:
-#if defined GL_MAX
                 s1[i] = GL_MAX; break;
 #else
-                s1[i] = GL_MAX_EXT; break;
-#endif
             case BlendEquation::Min:
-#if defined GL_MIN
-                s1[i] = GL_MIN; break;
-#else
                 s1[i] = GL_MIN_EXT; break;
+            case BlendEquation::Max:
+                s1[i] = GL_MAX_EXT; break;
 #endif
         }
     }
