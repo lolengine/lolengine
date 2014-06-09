@@ -34,9 +34,9 @@ struct LightType
     }
     m_value;
 
-    static char const *GetName(Value v)
+    String ToString()
     {
-        switch (v)
+        switch (m_value)
         {
             case Directional:
                 return "<Directional>";

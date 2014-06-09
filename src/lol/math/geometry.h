@@ -296,16 +296,11 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
 }
 
 /* A safe enum for Primitive edge face. */
-struct PlaneIntersection
-{
-    DEF_VALUE
-        ADD_VALUE(Back)
-        ADD_VALUE(Front)
-        ADD_VALUE(Plane)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(PlaneIntersection)
-};
+LOL_SAFE_ENUM(PlaneIntersection,
+    Back,
+    Front,
+    Plane,
+);
 
 //Point/Plane : Normal must be given normalized.
 template <typename TV>

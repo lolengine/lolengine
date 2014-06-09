@@ -59,19 +59,16 @@ template< class T > inline int GetRandom(Array<T> src)
     return (r_total > .0f)?(r_j):(-1);
 }
 
-//Gets the value for the given safe-enum, considering you have implemented what follows :
-//NEEDS : Contructor(Value)
-//NEEDS : static char const *GetName(Value v)
-//NEEDS : T::Max
-template< class T > inline T FindValue(const char* name)
+// Gets the value for the given LOL_SAFE_ENUM type.
+template<class T> inline T FindValue(const char* name)
 {
     String n = name;
     n.ToLower();
     for (int i = 0; i < T::Max; ++i)
     {
-        String s = T::GetName(typename T::Value(i));
-        if (s.ToLower().IndexOf(n.C()) > -1)
-            return T(typename T::Value(i));
+        String s = T(i).ToString().ToLower();
+        if (s == n)
+            return T(i);
     }
     return T::Max;
 }
