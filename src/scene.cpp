@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -14,7 +14,7 @@
 
 #include <cstdlib>
 
-#if WIN32
+#if defined(_WIN32)
 #   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
 #endif

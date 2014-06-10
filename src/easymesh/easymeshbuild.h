@@ -2,7 +2,7 @@
 // Lol Engine
 //
 // Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+//            (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
@@ -33,7 +33,7 @@ struct MeshBuildOperation
         ADD_VALUE_SET(PostBuildComputeNormals     , (1 << 5))
         ADD_VALUE_SET(PreventVertCleanup          , (1 << 6))
 
-        ADD_VALUE_SET(All                         , 0xffffffff)
+        ADD_VALUE_SET(All                         , 0xffff)
     END_E_VALUE
 
     LOL_DECLARE_ENUM_METHODS(MeshBuildOperation)

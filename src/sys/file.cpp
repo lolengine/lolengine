@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -20,7 +20,7 @@
 #   include <android/asset_manager_jni.h>
 #endif
 
-#if WIN32
+#if defined(_WIN32)
 #   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
 #else
@@ -367,7 +367,7 @@ class DirectoryData
     {
 #if __CELLOS_LV2__ || __ANDROID__
         /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
         m_handle = INVALID_HANDLE_VALUE;
 #elif HAVE_STDIO_H
         m_dd = nullptr;
@@ -379,7 +379,7 @@ class DirectoryData
         m_type = StreamType::File;
 #if __CELLOS_LV2__ || __ANDROID__
         /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
         m_directory = directory;
         String filter = m_directory + String("*");
         filter.Replace('/', '\\', true);
@@ -399,7 +399,7 @@ class DirectoryData
         {
 #if __CELLOS_LV2__ || __ANDROID__
             /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
             FindClose(m_handle);
 #elif HAVE_STDIO_H
             closedir(m_dd);
@@ -408,7 +408,7 @@ class DirectoryData
 
 #if __CELLOS_LV2__ || __ANDROID__
         /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
         m_handle = INVALID_HANDLE_VALUE;
 #elif HAVE_STDIO_H
         m_dd = nullptr;
@@ -422,7 +422,7 @@ class DirectoryData
 
 #if __CELLOS_LV2__ || __ANDROID__
         /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
         String filter = m_directory + String("*");
         filter.Replace('/', '\\', true);
         WIN32_FIND_DATA find_data;
@@ -458,7 +458,7 @@ class DirectoryData
     {
 #if __CELLOS_LV2__ || __ANDROID__
         /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
         return (m_handle != INVALID_HANDLE_VALUE);
 #elif HAVE_STDIO_H
         return !!m_dd;
@@ -469,7 +469,7 @@ class DirectoryData
 
 #if __CELLOS_LV2__ || __ANDROID__
     /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
     HANDLE m_handle;
     String m_directory;
 #elif HAVE_STDIO_H
@@ -592,7 +592,7 @@ String Directory::GetCurrent()
     String result;
 #if __CELLOS_LV2__ || __ANDROID__
     /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
     TCHAR buff[MAX_PATH * 2];
     GetCurrentDirectory(MAX_PATH, buff);
     result = buff;
@@ -608,7 +608,7 @@ bool Directory::SetCurrent(String directory)
 {
 #if __CELLOS_LV2__ || __ANDROID__
     /* FIXME: not implemented */
-#elif WIN32
+#elif defined(_WIN32)
     String result = directory;
     result.Replace('/', '\\', true);
     return (bool)SetCurrentDirectory(result.C());
