@@ -2,7 +2,7 @@
 //
 // Lol Engine - EasyMesh tutorial
 //
-// Copyright: (c) 2011-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2011-2014 Sam Hocevar <sam@hocevar.net>
 //            (c) 2012-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
@@ -662,7 +662,7 @@ public:
 //            MessageService::Send(MessageBucket::AppIn, "[sc#ff8 afcb 1 1 1 0]");
         }
 */
-#elif WIN32
+#elif defined(_WIN32)
         //--
         //File management
         //--

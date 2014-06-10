@@ -47,7 +47,11 @@ Map<int64_t, String> BuildEnumMap(char const *str)
             ++parser;
         if (*parser && *parser != ',')
         {
+#if defined _WIN32
+            current_value = _strtoi64(parser, nullptr, 0);
+#else
             current_value = strtoll(parser, nullptr, 0);
+#endif
 
             while (*parser && *parser != ' ' && *parser != ',')
                 ++parser;

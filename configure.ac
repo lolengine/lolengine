@@ -31,6 +31,19 @@ AC_TRY_LINK([], [],
   AC_MSG_ERROR([[C++ compiler cannot link executables]])])
 AC_LANG_POP(C++)
 
+dnl  C++11 mode. Checked early so that we don't run into surprises.
+LOL_TRY_CXXFLAGS(-std=c++11,
+ [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"
+  CXXFLAGS="${CXXFLAGS} -std=c++11"])
+
+AC_LANG_PUSH(C++)
+AC_MSG_CHECKING(for C++11 enum class support)
+AC_TRY_LINK([], [enum class Foo : int { Bar, Baz };],
+ [AC_MSG_RESULT(yes)],
+ [AC_MSG_RESULT(no)
+  AC_MSG_ERROR([[C++ compiler does not support C++11 enum classes]])])
+AC_LANG_POP(C++)
+
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AC_LIBTOOL_CXX
@@ -79,12 +92,6 @@ AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
-
-
-dnl  C++11 mode. Checked early so that we don't run into surprises.
-LOL_TRY_CXXFLAGS(-std=c++11,
- [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"
-  CXXFLAGS="${CXXFLAGS} -std=c++11"])
 
 
 dnl  Common C headers
