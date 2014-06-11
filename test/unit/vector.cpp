@@ -96,6 +96,49 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_LESS(a2, f2);
     }
 
+    LOLUNIT_TEST(VectorSwizzle)
+    {
+        vec3 a(1.0f, 2.0f, 3.0f);
+        vec3 b(4.0f, 5.0f, 6.0f);
+        vec3 c;
+
+        c = a;
+        c.x = b.y;
+        LOLUNIT_ASSERT_EQUAL(c.x, 5.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 3.0f);
+
+        c = a;
+        c.xy = b.yz;
+        LOLUNIT_ASSERT_EQUAL(c.x, 5.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 6.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 3.0f);
+
+        c = a;
+        c.xy = b.zz;
+        LOLUNIT_ASSERT_EQUAL(c.x, 6.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 6.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 3.0f);
+
+        c = a;
+        c.xz = b.xy;
+        LOLUNIT_ASSERT_EQUAL(c.x, 4.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 5.0f);
+
+        c = a;
+        c.xz = b.xz;
+        LOLUNIT_ASSERT_EQUAL(c.x, 4.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 6.0f);
+
+        c = a;
+        c.xz = c.zy = b.yx;
+        LOLUNIT_ASSERT_EQUAL(c.x, 5.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 4.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 4.0f);
+    }
+
     LOLUNIT_TEST(VectorUnaryMinus)
     {
         vec2 a(1.0f, 3.0f);

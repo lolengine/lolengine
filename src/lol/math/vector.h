@@ -25,14 +25,6 @@
 namespace lol
 {
 
-/* Some compilers do not support const members in anonymous unions. So
- * far, GCC (>= 4.6), CLang (3.0) and Visual Studio (>= 2010) appear to
- * work properly. */
-#undef LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#if defined __GNUC__ && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6))
-#   define LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS 1
-#endif
-
 #define LOL_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
@@ -85,11 +77,19 @@ typedef imat4 int4x4;
  * use static_cast instead of reinterpret_cast because there is a stronger
  * guarantee (by the standard) that the address will stay the same across
  * casts.
+ * We need to implement an assignment operator _and_ override the default
+ * assignment operator. We try to pass arguments by value so that we don't
+ * have to care about overwriting ourselves (e.g. c.rgb = c.bgr).
  */
 
 template<typename T, int N> struct XVec2
 {
-    inline Vec2<T> operator =(Vec2<T> const &that);
+    inline XVec2<T, N>& operator =(Vec2<T> that);
+
+    inline XVec2<T, N>& operator =(XVec2<T, N> const &that)
+    {
+        return *this = (Vec2<T>)that;
+    }
 
     inline T& operator[](size_t n)
     {
@@ -105,7 +105,12 @@ template<typename T, int N> struct XVec2
 
 template<typename T, int N> struct XVec3
 {
-    inline Vec3<T> operator =(Vec3<T> const &that);
+    inline XVec3<T, N>& operator =(Vec3<T> that);
+
+    inline XVec3<T, N>& operator =(XVec3<T, N> const &that)
+    {
+        return *this = (Vec3<T>)that;
+    }
 
     inline T& operator[](size_t n)
     {
@@ -121,7 +126,12 @@ template<typename T, int N> struct XVec3
 
 template<typename T, int N> struct XVec4
 {
-    inline Vec4<T> operator =(Vec4<T> const &that);
+    inline XVec4<T, N>& operator =(Vec4<T> that);
+
+    inline XVec4<T, N>& operator =(XVec4<T, N> const &that)
+    {
+        return *this = (Vec4<T>)that;
+    }
 
     inline T& operator[](size_t n)
     {
@@ -177,13 +187,10 @@ template <typename T> struct BVec2
         struct { T r, g; };
         struct { T s, t; };
 
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   define const /* disabled */
-#endif
 #if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> const xy, rg, st; /* lvalue */
-        XVec2<T,0x10> const yx, gr, ts; /* lvalue */
+        XVec2<T,0x01>       xy, rg, st; /* lvalue */
+        XVec2<T,0x10>       yx, gr, ts; /* lvalue */
         XVec2<T,0x11> const yy, gg, tt;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -211,9 +218,6 @@ template <typename T> struct BVec2
         XVec4<T,0x1101> const yyxy, ggrg, ttst;
         XVec4<T,0x1110> const yyyx, gggr, ttts;
         XVec4<T,0x1111> const yyyy, gggg, tttt;
-#endif
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   undef const
 #endif
     };
 };
@@ -344,18 +348,15 @@ template <typename T> struct BVec3
         struct { T r, g, b; };
         struct { T s, t, p; };
 
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   define const /* disabled */
-#endif
 #if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> const xy, rg, st; /* lvalue */
-        XVec2<T,0x02> const xz, rb, sp; /* lvalue */
-        XVec2<T,0x10> const yx, gr, ts; /* lvalue */
+        XVec2<T,0x01>       xy, rg, st; /* lvalue */
+        XVec2<T,0x02>       xz, rb, sp; /* lvalue */
+        XVec2<T,0x10>       yx, gr, ts; /* lvalue */
         XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> const yz, gb, tp; /* lvalue */
-        XVec2<T,0x20> const zx, br, ps; /* lvalue */
-        XVec2<T,0x21> const zy, bg, pt; /* lvalue */
+        XVec2<T,0x12>       yz, gb, tp; /* lvalue */
+        XVec2<T,0x20>       zx, br, ps; /* lvalue */
+        XVec2<T,0x21>       zy, bg, pt; /* lvalue */
         XVec2<T,0x22> const zz, bb, pp;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -363,23 +364,23 @@ template <typename T> struct BVec3
         XVec3<T,0x002> const xxz, rrb, ssp;
         XVec3<T,0x010> const xyx, rgr, sts;
         XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> const xyz, rgb, stp; /* lvalue */
+        XVec3<T,0x012>       xyz, rgb, stp; /* lvalue */
         XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> const xzy, rbg, spt; /* lvalue */
+        XVec3<T,0x021>       xzy, rbg, spt; /* lvalue */
         XVec3<T,0x022> const xzz, rbb, spp;
         XVec3<T,0x100> const yxx, grr, tss;
         XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> const yxz, grb, tsp; /* lvalue */
+        XVec3<T,0x102>       yxz, grb, tsp; /* lvalue */
         XVec3<T,0x110> const yyx, ggr, tts;
         XVec3<T,0x111> const yyy, ggg, ttt;
         XVec3<T,0x112> const yyz, ggb, ttp;
-        XVec3<T,0x120> const yzx, gbr, tps; /* lvalue */
+        XVec3<T,0x120>       yzx, gbr, tps; /* lvalue */
         XVec3<T,0x121> const yzy, gbg, tpt;
         XVec3<T,0x122> const yzz, gbb, tpp;
         XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> const zxy, brg, pst; /* lvalue */
+        XVec3<T,0x201>       zxy, brg, pst; /* lvalue */
         XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x210> const zyx, bgr, pts; /* lvalue */
+        XVec3<T,0x210>       zyx, bgr, pts; /* lvalue */
         XVec3<T,0x211> const zyy, bgg, ptt;
         XVec3<T,0x212> const zyz, bgb, ptp;
         XVec3<T,0x220> const zzx, bbr, pps;
@@ -467,9 +468,6 @@ template <typename T> struct BVec3
         XVec4<T,0x2220> const zzzx, bbbr, ppps;
         XVec4<T,0x2221> const zzzy, bbbg, pppt;
         XVec4<T,0x2222> const zzzz, bbbb, pppp;
-#endif
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   undef const
 #endif
     };
 };
@@ -549,25 +547,22 @@ template <typename T> struct BVec4
         struct { T r, g, b, a; };
         struct { T s, t, p, q; };
 
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   define const /* disabled */
-#endif
 #if !_DOXYGEN_SKIP_ME
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> const xy, rg, st; /* lvalue */
-        XVec2<T,0x02> const xz, rb, sp; /* lvalue */
-        XVec2<T,0x03> const xw, ra, sq; /* lvalue */
-        XVec2<T,0x10> const yx, gr, ts; /* lvalue */
+        XVec2<T,0x01>       xy, rg, st; /* lvalue */
+        XVec2<T,0x02>       xz, rb, sp; /* lvalue */
+        XVec2<T,0x03>       xw, ra, sq; /* lvalue */
+        XVec2<T,0x10>       yx, gr, ts; /* lvalue */
         XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> const yz, gb, tp; /* lvalue */
-        XVec2<T,0x13> const yw, ga, tq; /* lvalue */
-        XVec2<T,0x20> const zx, br, ps; /* lvalue */
-        XVec2<T,0x21> const zy, bg, pt; /* lvalue */
+        XVec2<T,0x12>       yz, gb, tp; /* lvalue */
+        XVec2<T,0x13>       yw, ga, tq; /* lvalue */
+        XVec2<T,0x20>       zx, br, ps; /* lvalue */
+        XVec2<T,0x21>       zy, bg, pt; /* lvalue */
         XVec2<T,0x22> const zz, bb, pp;
-        XVec2<T,0x23> const zw, ba, pq; /* lvalue */
-        XVec2<T,0x30> const wx, ar, qs; /* lvalue */
-        XVec2<T,0x31> const wy, ag, qt; /* lvalue */
-        XVec2<T,0x32> const wz, ab, qp; /* lvalue */
+        XVec2<T,0x23>       zw, ba, pq; /* lvalue */
+        XVec2<T,0x30>       wx, ar, qs; /* lvalue */
+        XVec2<T,0x31>       wy, ag, qt; /* lvalue */
+        XVec2<T,0x32>       wz, ab, qp; /* lvalue */
         XVec2<T,0x33> const ww, aa, qq;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -576,58 +571,58 @@ template <typename T> struct BVec4
         XVec3<T,0x003> const xxw, rra, ssq;
         XVec3<T,0x010> const xyx, rgr, sts;
         XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> const xyz, rgb, stp; /* lvalue */
-        XVec3<T,0x013> const xyw, rga, stq; /* lvalue */
+        XVec3<T,0x012>       xyz, rgb, stp; /* lvalue */
+        XVec3<T,0x013>       xyw, rga, stq; /* lvalue */
         XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> const xzy, rbg, spt; /* lvalue */
+        XVec3<T,0x021>       xzy, rbg, spt; /* lvalue */
         XVec3<T,0x022> const xzz, rbb, spp;
-        XVec3<T,0x023> const xzw, rba, spq; /* lvalue */
+        XVec3<T,0x023>       xzw, rba, spq; /* lvalue */
         XVec3<T,0x030> const xwx, rar, sqs;
-        XVec3<T,0x031> const xwy, rag, sqt; /* lvalue */
-        XVec3<T,0x032> const xwz, rab, sqp; /* lvalue */
+        XVec3<T,0x031>       xwy, rag, sqt; /* lvalue */
+        XVec3<T,0x032>       xwz, rab, sqp; /* lvalue */
         XVec3<T,0x033> const xww, raa, sqq;
         XVec3<T,0x100> const yxx, grr, tss;
         XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> const yxz, grb, tsp; /* lvalue */
-        XVec3<T,0x103> const yxw, gra, tsq; /* lvalue */
+        XVec3<T,0x102>       yxz, grb, tsp; /* lvalue */
+        XVec3<T,0x103>       yxw, gra, tsq; /* lvalue */
         XVec3<T,0x110> const yyx, ggr, tts;
         XVec3<T,0x111> const yyy, ggg, ttt;
         XVec3<T,0x112> const yyz, ggb, ttp;
         XVec3<T,0x113> const yyw, gga, ttq;
-        XVec3<T,0x120> const yzx, gbr, tps; /* lvalue */
+        XVec3<T,0x120>       yzx, gbr, tps; /* lvalue */
         XVec3<T,0x121> const yzy, gbg, tpt;
         XVec3<T,0x122> const yzz, gbb, tpp;
-        XVec3<T,0x123> const yzw, gba, tpq; /* lvalue */
-        XVec3<T,0x130> const ywx, gar, tqs; /* lvalue */
+        XVec3<T,0x123>       yzw, gba, tpq; /* lvalue */
+        XVec3<T,0x130>       ywx, gar, tqs; /* lvalue */
         XVec3<T,0x131> const ywy, gag, tqt;
-        XVec3<T,0x132> const ywz, gab, tqp; /* lvalue */
+        XVec3<T,0x132>       ywz, gab, tqp; /* lvalue */
         XVec3<T,0x133> const yww, gaa, tqq;
         XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> const zxy, brg, pst; /* lvalue */
+        XVec3<T,0x201>       zxy, brg, pst; /* lvalue */
         XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x203> const zxw, bra, psq; /* lvalue */
-        XVec3<T,0x210> const zyx, bgr, pts; /* lvalue */
+        XVec3<T,0x203>       zxw, bra, psq; /* lvalue */
+        XVec3<T,0x210>       zyx, bgr, pts; /* lvalue */
         XVec3<T,0x211> const zyy, bgg, ptt;
         XVec3<T,0x212> const zyz, bgb, ptp;
-        XVec3<T,0x213> const zyw, bga, ptq; /* lvalue */
+        XVec3<T,0x213>       zyw, bga, ptq; /* lvalue */
         XVec3<T,0x220> const zzx, bbr, pps;
         XVec3<T,0x221> const zzy, bbg, ppt;
         XVec3<T,0x222> const zzz, bbb, ppp;
         XVec3<T,0x223> const zzw, bba, ppq;
-        XVec3<T,0x230> const zwx, bar, pqs; /* lvalue */
-        XVec3<T,0x231> const zwy, bag, pqt; /* lvalue */
+        XVec3<T,0x230>       zwx, bar, pqs; /* lvalue */
+        XVec3<T,0x231>       zwy, bag, pqt; /* lvalue */
         XVec3<T,0x232> const zwz, bab, pqp;
         XVec3<T,0x233> const zww, baa, pqq;
         XVec3<T,0x300> const wxx, arr, qss;
-        XVec3<T,0x301> const wxy, arg, qst; /* lvalue */
-        XVec3<T,0x302> const wxz, arb, qsp; /* lvalue */
+        XVec3<T,0x301>       wxy, arg, qst; /* lvalue */
+        XVec3<T,0x302>       wxz, arb, qsp; /* lvalue */
         XVec3<T,0x303> const wxw, ara, qsq;
-        XVec3<T,0x310> const wyx, agr, qts; /* lvalue */
+        XVec3<T,0x310>       wyx, agr, qts; /* lvalue */
         XVec3<T,0x311> const wyy, agg, qtt;
-        XVec3<T,0x312> const wyz, agb, qtp; /* lvalue */
+        XVec3<T,0x312>       wyz, agb, qtp; /* lvalue */
         XVec3<T,0x313> const wyw, aga, qtq;
-        XVec3<T,0x320> const wzx, abr, qps; /* lvalue */
-        XVec3<T,0x321> const wzy, abg, qpt; /* lvalue */
+        XVec3<T,0x320>       wzx, abr, qps; /* lvalue */
+        XVec3<T,0x321>       wzy, abg, qpt; /* lvalue */
         XVec3<T,0x322> const wzz, abb, qpp;
         XVec3<T,0x323> const wzw, aba, qpq;
         XVec3<T,0x330> const wwx, aar, qqs;
@@ -662,10 +657,10 @@ template <typename T> struct BVec4
         XVec4<T,0x0120> const xyzx, rgbr, stps;
         XVec4<T,0x0121> const xyzy, rgbg, stpt;
         XVec4<T,0x0122> const xyzz, rgbb, stpp;
-        XVec4<T,0x0123> const xyzw, rgba, stpq; /* lvalue */
+        XVec4<T,0x0123>       xyzw, rgba, stpq; /* lvalue */
         XVec4<T,0x0130> const xywx, rgar, stqs;
         XVec4<T,0x0131> const xywy, rgag, stqt;
-        XVec4<T,0x0132> const xywz, rgab, stqp; /* lvalue */
+        XVec4<T,0x0132>       xywz, rgab, stqp; /* lvalue */
         XVec4<T,0x0133> const xyww, rgaa, stqq;
         XVec4<T,0x0200> const xzxx, rbrr, spss;
         XVec4<T,0x0201> const xzxy, rbrg, spst;
@@ -674,13 +669,13 @@ template <typename T> struct BVec4
         XVec4<T,0x0210> const xzyx, rbgr, spts;
         XVec4<T,0x0211> const xzyy, rbgg, sptt;
         XVec4<T,0x0212> const xzyz, rbgb, sptp;
-        XVec4<T,0x0213> const xzyw, rbga, sptq; /* lvalue */
+        XVec4<T,0x0213>       xzyw, rbga, sptq; /* lvalue */
         XVec4<T,0x0220> const xzzx, rbbr, spps;
         XVec4<T,0x0221> const xzzy, rbbg, sppt;
         XVec4<T,0x0222> const xzzz, rbbb, sppp;
         XVec4<T,0x0223> const xzzw, rbba, sppq;
         XVec4<T,0x0230> const xzwx, rbar, spqs;
-        XVec4<T,0x0231> const xzwy, rbag, spqt; /* lvalue */
+        XVec4<T,0x0231>       xzwy, rbag, spqt; /* lvalue */
         XVec4<T,0x0232> const xzwz, rbab, spqp;
         XVec4<T,0x0233> const xzww, rbaa, spqq;
         XVec4<T,0x0300> const xwxx, rarr, sqss;
@@ -689,10 +684,10 @@ template <typename T> struct BVec4
         XVec4<T,0x0303> const xwxw, rara, sqsq;
         XVec4<T,0x0310> const xwyx, ragr, sqts;
         XVec4<T,0x0311> const xwyy, ragg, sqtt;
-        XVec4<T,0x0312> const xwyz, ragb, sqtp; /* lvalue */
+        XVec4<T,0x0312>       xwyz, ragb, sqtp; /* lvalue */
         XVec4<T,0x0313> const xwyw, raga, sqtq;
         XVec4<T,0x0320> const xwzx, rabr, sqps;
-        XVec4<T,0x0321> const xwzy, rabg, sqpt; /* lvalue */
+        XVec4<T,0x0321>       xwzy, rabg, sqpt; /* lvalue */
         XVec4<T,0x0322> const xwzz, rabb, sqpp;
         XVec4<T,0x0323> const xwzw, raba, sqpq;
         XVec4<T,0x0330> const xwwx, raar, sqqs;
@@ -710,10 +705,10 @@ template <typename T> struct BVec4
         XVec4<T,0x1020> const yxzx, grbr, tsps;
         XVec4<T,0x1021> const yxzy, grbg, tspt;
         XVec4<T,0x1022> const yxzz, grbb, tspp;
-        XVec4<T,0x1023> const yxzw, grba, tspq; /* lvalue */
+        XVec4<T,0x1023>       yxzw, grba, tspq; /* lvalue */
         XVec4<T,0x1030> const yxwx, grar, tsqs;
         XVec4<T,0x1031> const yxwy, grag, tsqt;
-        XVec4<T,0x1032> const yxwz, grab, tsqp; /* lvalue */
+        XVec4<T,0x1032>       yxwz, grab, tsqp; /* lvalue */
         XVec4<T,0x1033> const yxww, graa, tsqq;
         XVec4<T,0x1100> const yyxx, ggrr, ttss;
         XVec4<T,0x1101> const yyxy, ggrg, ttst;
@@ -734,7 +729,7 @@ template <typename T> struct BVec4
         XVec4<T,0x1200> const yzxx, gbrr, tpss;
         XVec4<T,0x1201> const yzxy, gbrg, tpst;
         XVec4<T,0x1202> const yzxz, gbrb, tpsp;
-        XVec4<T,0x1203> const yzxw, gbra, tpsq; /* lvalue */
+        XVec4<T,0x1203>       yzxw, gbra, tpsq; /* lvalue */
         XVec4<T,0x1210> const yzyx, gbgr, tpts;
         XVec4<T,0x1211> const yzyy, gbgg, tptt;
         XVec4<T,0x1212> const yzyz, gbgb, tptp;
@@ -743,19 +738,19 @@ template <typename T> struct BVec4
         XVec4<T,0x1221> const yzzy, gbbg, tppt;
         XVec4<T,0x1222> const yzzz, gbbb, tppp;
         XVec4<T,0x1223> const yzzw, gbba, tppq;
-        XVec4<T,0x1230> const yzwx, gbar, tpqs; /* lvalue */
+        XVec4<T,0x1230>       yzwx, gbar, tpqs; /* lvalue */
         XVec4<T,0x1231> const yzwy, gbag, tpqt;
         XVec4<T,0x1232> const yzwz, gbab, tpqp;
         XVec4<T,0x1233> const yzww, gbaa, tpqq;
         XVec4<T,0x1300> const ywxx, garr, tqss;
         XVec4<T,0x1301> const ywxy, garg, tqst;
-        XVec4<T,0x1302> const ywxz, garb, tqsp; /* lvalue */
+        XVec4<T,0x1302>       ywxz, garb, tqsp; /* lvalue */
         XVec4<T,0x1303> const ywxw, gara, tqsq;
         XVec4<T,0x1310> const ywyx, gagr, tqts;
         XVec4<T,0x1311> const ywyy, gagg, tqtt;
         XVec4<T,0x1312> const ywyz, gagb, tqtp;
         XVec4<T,0x1313> const ywyw, gaga, tqtq;
-        XVec4<T,0x1320> const ywzx, gabr, tqps; /* lvalue */
+        XVec4<T,0x1320>       ywzx, gabr, tqps; /* lvalue */
         XVec4<T,0x1321> const ywzy, gabg, tqpt;
         XVec4<T,0x1322> const ywzz, gabb, tqpp;
         XVec4<T,0x1323> const ywzw, gaba, tqpq;
@@ -770,19 +765,19 @@ template <typename T> struct BVec4
         XVec4<T,0x2010> const zxyx, brgr, psts;
         XVec4<T,0x2011> const zxyy, brgg, pstt;
         XVec4<T,0x2012> const zxyz, brgb, pstp;
-        XVec4<T,0x2013> const zxyw, brga, pstq; /* lvalue */
+        XVec4<T,0x2013>       zxyw, brga, pstq; /* lvalue */
         XVec4<T,0x2020> const zxzx, brbr, psps;
         XVec4<T,0x2021> const zxzy, brbg, pspt;
         XVec4<T,0x2022> const zxzz, brbb, pspp;
         XVec4<T,0x2023> const zxzw, brba, pspq;
         XVec4<T,0x2030> const zxwx, brar, psqs;
-        XVec4<T,0x2031> const zxwy, brag, psqt; /* lvalue */
+        XVec4<T,0x2031>       zxwy, brag, psqt; /* lvalue */
         XVec4<T,0x2032> const zxwz, brab, psqp;
         XVec4<T,0x2033> const zxww, braa, psqq;
         XVec4<T,0x2100> const zyxx, bgrr, ptss;
         XVec4<T,0x2101> const zyxy, bgrg, ptst;
         XVec4<T,0x2102> const zyxz, bgrb, ptsp;
-        XVec4<T,0x2103> const zyxw, bgra, ptsq; /* lvalue */
+        XVec4<T,0x2103>       zyxw, bgra, ptsq; /* lvalue */
         XVec4<T,0x2110> const zyyx, bggr, ptts;
         XVec4<T,0x2111> const zyyy, bggg, pttt;
         XVec4<T,0x2112> const zyyz, bggb, pttp;
@@ -791,7 +786,7 @@ template <typename T> struct BVec4
         XVec4<T,0x2121> const zyzy, bgbg, ptpt;
         XVec4<T,0x2122> const zyzz, bgbb, ptpp;
         XVec4<T,0x2123> const zyzw, bgba, ptpq;
-        XVec4<T,0x2130> const zywx, bgar, ptqs; /* lvalue */
+        XVec4<T,0x2130>       zywx, bgar, ptqs; /* lvalue */
         XVec4<T,0x2131> const zywy, bgag, ptqt;
         XVec4<T,0x2132> const zywz, bgab, ptqp;
         XVec4<T,0x2133> const zyww, bgaa, ptqq;
@@ -812,10 +807,10 @@ template <typename T> struct BVec4
         XVec4<T,0x2232> const zzwz, bbab, ppqp;
         XVec4<T,0x2233> const zzww, bbaa, ppqq;
         XVec4<T,0x2300> const zwxx, barr, pqss;
-        XVec4<T,0x2301> const zwxy, barg, pqst; /* lvalue */
+        XVec4<T,0x2301>       zwxy, barg, pqst; /* lvalue */
         XVec4<T,0x2302> const zwxz, barb, pqsp;
         XVec4<T,0x2303> const zwxw, bara, pqsq;
-        XVec4<T,0x2310> const zwyx, bagr, pqts; /* lvalue */
+        XVec4<T,0x2310>       zwyx, bagr, pqts; /* lvalue */
         XVec4<T,0x2311> const zwyy, bagg, pqtt;
         XVec4<T,0x2312> const zwyz, bagb, pqtp;
         XVec4<T,0x2313> const zwyw, baga, pqtq;
@@ -833,10 +828,10 @@ template <typename T> struct BVec4
         XVec4<T,0x3003> const wxxw, arra, qssq;
         XVec4<T,0x3010> const wxyx, argr, qsts;
         XVec4<T,0x3011> const wxyy, argg, qstt;
-        XVec4<T,0x3012> const wxyz, argb, qstp; /* lvalue */
+        XVec4<T,0x3012>       wxyz, argb, qstp; /* lvalue */
         XVec4<T,0x3013> const wxyw, arga, qstq;
         XVec4<T,0x3020> const wxzx, arbr, qsps;
-        XVec4<T,0x3021> const wxzy, arbg, qspt; /* lvalue */
+        XVec4<T,0x3021>       wxzy, arbg, qspt; /* lvalue */
         XVec4<T,0x3022> const wxzz, arbb, qspp;
         XVec4<T,0x3023> const wxzw, arba, qspq;
         XVec4<T,0x3030> const wxwx, arar, qsqs;
@@ -845,13 +840,13 @@ template <typename T> struct BVec4
         XVec4<T,0x3033> const wxww, araa, qsqq;
         XVec4<T,0x3100> const wyxx, agrr, qtss;
         XVec4<T,0x3101> const wyxy, agrg, qtst;
-        XVec4<T,0x3102> const wyxz, agrb, qtsp; /* lvalue */
+        XVec4<T,0x3102>       wyxz, agrb, qtsp; /* lvalue */
         XVec4<T,0x3103> const wyxw, agra, qtsq;
         XVec4<T,0x3110> const wyyx, aggr, qtts;
         XVec4<T,0x3111> const wyyy, aggg, qttt;
         XVec4<T,0x3112> const wyyz, aggb, qttp;
         XVec4<T,0x3113> const wyyw, agga, qttq;
-        XVec4<T,0x3120> const wyzx, agbr, qtps; /* lvalue */
+        XVec4<T,0x3120>       wyzx, agbr, qtps; /* lvalue */
         XVec4<T,0x3121> const wyzy, agbg, qtpt;
         XVec4<T,0x3122> const wyzz, agbb, qtpp;
         XVec4<T,0x3123> const wyzw, agba, qtpq;
@@ -860,10 +855,10 @@ template <typename T> struct BVec4
         XVec4<T,0x3132> const wywz, agab, qtqp;
         XVec4<T,0x3133> const wyww, agaa, qtqq;
         XVec4<T,0x3200> const wzxx, abrr, qpss;
-        XVec4<T,0x3201> const wzxy, abrg, qpst; /* lvalue */
+        XVec4<T,0x3201>       wzxy, abrg, qpst; /* lvalue */
         XVec4<T,0x3202> const wzxz, abrb, qpsp;
         XVec4<T,0x3203> const wzxw, abra, qpsq;
-        XVec4<T,0x3210> const wzyx, abgr, qpts; /* lvalue */
+        XVec4<T,0x3210>       wzyx, abgr, qpts; /* lvalue */
         XVec4<T,0x3211> const wzyy, abgg, qptt;
         XVec4<T,0x3212> const wzyz, abgb, qptp;
         XVec4<T,0x3213> const wzyw, abga, qptq;
@@ -891,9 +886,6 @@ template <typename T> struct BVec4
         XVec4<T,0x3331> const wwwy, aaag, qqqt;
         XVec4<T,0x3332> const wwwz, aaab, qqqp;
         XVec4<T,0x3333> const wwww, aaaa, qqqq;
-#endif
-#if LOL_NO_CONST_MEMBERS_IN_ANONYMOUS_UNIONS
-#   undef const
 #endif
     };
 };
@@ -1555,33 +1547,29 @@ inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
 
 /*
  * Magic vector swizzling (part 2/2)
- * Unfortunately these assignment operators cannot be used for now, because
- * we would also need to override the default copy assignment operator, and
- * in C++98 unions cannot contain such objects. This is why all the swizzling
- * magic objects are marked 'const' even those that could be lvalues.
  */
 
 template<typename T, int N>
-inline Vec2<T> XVec2<T, N>::operator =(Vec2<T> const &that)
+inline XVec2<T, N>& XVec2<T, N>::operator =(Vec2<T> that)
 {
     for (int i = 0; i < 2; i++)
-        *this[i] = that[i];
+        (*this)[i] = that[i];
     return *this;
 }
 
 template<typename T, int N>
-inline Vec3<T> XVec3<T, N>::operator =(Vec3<T> const &that)
+inline XVec3<T, N>& XVec3<T, N>::operator =(Vec3<T> that)
 {
     for (int i = 0; i < 3; i++)
-        *this[i] = that[i];
+        (*this)[i] = that[i];
     return *this;
 }
 
 template<typename T, int N>
-inline Vec4<T> XVec4<T, N>::operator =(Vec4<T> const &that)
+inline XVec4<T, N>& XVec4<T, N>::operator =(Vec4<T> that)
 {
     for (int i = 0; i < 4; i++)
-        *this[i] = that[i];
+        (*this)[i] = that[i];
     return *this;
 }
 
