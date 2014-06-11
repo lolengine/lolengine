@@ -204,10 +204,10 @@ LOLUNIT_FIXTURE(QuaternionTest)
 
     LOLUNIT_TEST(FromTwoVectors)
     {
-        for (int i = 0; i < m_vectorpairs.Count(); ++i)
+        for (auto pair : m_vectorpairs)
         {
-            vec3 a = m_vectorpairs[i].m1;
-            vec3 b = m_vectorpairs[i].m2;
+            vec3 a = pair.m1;
+            vec3 b = pair.m2;
             vec3 da = normalize(a);
             vec3 db = normalize(b);
 

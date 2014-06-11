@@ -290,9 +290,9 @@ LOLUNIT_FIXTURE(RealTest)
             0.0, 1.0, 511.0, 512.0, 513.0, 1023.0, 1024.0
         };
 
-        for (unsigned int n = 0; n < sizeof(tests) / sizeof(*tests); n++)
+        for (double test : tests)
         {
-            double a = tests[n] / 1024;
+            double a = test / 1024;
             double b = sin(asin((real)a));
             double c = cos(acos((real)a));
 

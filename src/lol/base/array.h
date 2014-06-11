@@ -399,6 +399,70 @@ public:
     void Sort(int sort);
     void SortQuickSwap(int start, int stop);
 
+    /* Support C++11 range-based for loops */
+    class ConstIterator
+    {
+    public:
+        ConstIterator(ArrayBase const *array, int pos)
+          : m_pos(pos),
+            m_array(array)
+        { }
+
+        bool operator !=(const ConstIterator& that) const
+        {
+            return m_pos != that.m_pos;
+        }
+
+        Element const & operator *() const
+        {
+            return (*m_array)[m_pos];
+        }
+
+        ConstIterator const & operator ++()
+        {
+            ++m_pos;
+            return *this;
+        }
+
+    private:
+        int m_pos;
+        ArrayBase const *m_array;
+    };
+
+    class Iterator
+    {
+    public:
+        Iterator(ArrayBase *array, int pos)
+          : m_pos(pos),
+            m_array(array)
+        { }
+
+        bool operator !=(const Iterator& that) const
+        {
+            return m_pos != that.m_pos;
+        }
+
+        Element operator *()
+        {
+            return (*m_array)[m_pos];
+        }
+
+        Iterator const & operator ++()
+        {
+            ++m_pos;
+            return *this;
+        }
+
+    private:
+        int m_pos;
+        ArrayBase *m_array;
+    };
+
+    ConstIterator begin() const { return ConstIterator(this, 0); }
+    ConstIterator end() const { return ConstIterator(this, m_count); }
+    Iterator begin() { return Iterator(this, 0); }
+    Iterator end() { return Iterator(this, m_count); }
+
 public:
     inline int Count() const { return m_count; }
     inline int Bytes() const { return m_count * sizeof(Element); }
