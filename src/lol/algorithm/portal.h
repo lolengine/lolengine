@@ -257,8 +257,8 @@ public:
     }
     ~PortalRoom()
     {
-        for (int i = 0; i < m_doors.Count(); i++)
-            m_doors[i]->DisconnectRoom(this);
+        for (auto door : m_doors)
+            door->DisconnectRoom(this);
         m_doors.Empty();
     }
 
@@ -289,10 +289,10 @@ class PortalSet
 public:
     ~PortalSet()
     {
-        for (int i = 0; i < m_doors.Count(); i++)
-            delete m_doors[i];
-        for (int i = 0; i < m_rooms.Count(); i++)
-            delete m_rooms[i];
+        for (auto door : m_doors)
+            delete door;
+        for (auto room : m_rooms)
+            delete room;
         m_doors.Empty();
         m_rooms.Empty();
     }
@@ -303,21 +303,19 @@ public:
         Array<PortalDoor<TE>*> ignore_doors;
         GetVisibleRooms(see_through, start_room, visible_rooms, ignore_doors);
     #if LOL_BUILD_DEBUG
-        for (int j = 0; j < visible_rooms.Count(); j++)
+        for (auto room : visible_rooms)
         {
             vec4 tmp = vec4::zero;
-            for (int i = 0; i < visible_rooms[j]->m_doors.Count(); i++)
+            for (auto port : room->m_doors)
             {
-                PortalDoor<TE>* port = visible_rooms[j]->m_doors[i];
                 Debug::Draw(*port, Color::cyan);
                 tmp += vec4(port->m_center, 1.f);
             }
             tmp /= tmp.w;
             Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), Color::yellow);
         }
-        for (int i = 0; i < ignore_doors.Count(); i++)
+        for (auto port : ignore_doors)
         {
-            PortalDoor<TE>* port = ignore_doors[i];
             Debug::Draw(*port, Color::magenta);
             Debug::DrawViewProj(port->m_view, port->m_proj, Color::magenta);
         }
@@ -326,9 +324,8 @@ public:
 private:
     void GetVisibleRooms(PortalDoor<TE>* see_through, PortalRoom<TE>* start_room, Array<PortalRoom<TE>*>& visible_rooms, Array<PortalDoor<TE>*>& ignore_doors)
     {
-        for (int i = 0; i < start_room->m_doors.Count(); i++)
+        for (auto door : start_room->m_doors)
         {
-            PortalDoor<TE>* door = start_room->m_doors[i];
             if (door == see_through || ignore_doors.Find(door) != INDEX_NONE)
                 continue;
 
@@ -351,15 +348,15 @@ public:
     PortalSet<TE>& operator<<(class PortalRoom<TE>* room)
     {
         m_rooms.PushUnique(room);
-        for (int i = 0; i < room->m_doors.Count(); i++)
-            m_doors.PushUnique(room->m_doors[i]);
+        for (auto door : room->m_doors)
+            m_doors.PushUnique(door);
         return *this;
     }
     //--
     PortalSet<TE>& operator>>(class PortalRoom<TE>* room)
     {
-        for (int i = 0; i < room->m_doors.Count(); i++)
-            *this >> room->m_doors[i];
+        for (auto door : room->m_doors)
+            *this >> door;
         m_rooms.RemoveItem(room);
         return *this;
     }
