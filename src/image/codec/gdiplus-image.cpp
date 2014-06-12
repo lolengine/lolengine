@@ -65,15 +65,15 @@ bool GdiPlusImageData::Open(char const *path)
 
     Array<String> pathlist = System::GetPathList(path);
     m_bitmap = nullptr;
-    for (int i = 0; i < pathlist.Count(); ++i)
+    for (auto fullpath : pathlist)
     {
         size_t len;
-        len = mbstowcs(nullptr, pathlist[i].C(), 0);
+        len = mbstowcs(nullptr, fullpath.C(), 0);
         wchar_t *wpath = new wchar_t[len + 1];
-        if (mbstowcs(wpath, pathlist[i].C(), len + 1) == (size_t)-1)
+        if (mbstowcs(wpath, fullpath.C(), len + 1) == (size_t)-1)
         {
 #if !LOL_BUILD_RELEASE
-            Log::Error("invalid image name %s\n", pathlist[i].C());
+            Log::Error("invalid image name %s\n", fullpath.C());
 #endif
             delete[] wpath;
             continue;
@@ -90,7 +90,7 @@ bool GdiPlusImageData::Open(char const *path)
 #if !LOL_BUILD_RELEASE
                 if (status != Gdiplus::InvalidParameter)
                     Log::Error("error %d loading %s\n",
-                               status, pathlist[i].C());
+                               status, fullpath.C());
 #endif
                 delete m_bitmap;
                 m_bitmap = nullptr;
@@ -114,8 +114,8 @@ bool GdiPlusImageData::Open(char const *path)
     m_format = PixelFormat::RGBA_8;
 
     Gdiplus::Rect rect(0, 0, m_size.x, m_size.y);
-    if(m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-                          PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
+    if (m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                           PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not lock bits in %s\n", path);
@@ -142,9 +142,94 @@ bool GdiPlusImageData::Open(char const *path)
 
 bool GdiPlusImageData::Save(char const *path)
 {
-    UNUSED(path);
+    ULONG_PTR token;
+    Gdiplus::GdiplusStartupInput input;
+    Gdiplus::GdiplusStartup(&token, &input, NULL);
 
-    /* TODO: unimplemented */
+    wchar_t const *fmt;
+    if (strstr(path, ".gif"))
+        fmt = L"image/gif";
+    else if (strstr(path, ".jpg") || strstr(path, ".jpeg"))
+        fmt = L"image/jpeg";
+    else if (strstr(path, ".png"))
+        fmt = L"image/png";
+    else if (strstr(path, ".tiff"))
+        fmt = L"image/tiff";
+    else /* if (strstr(path, ".bmp")) */
+        fmt = L"image/bmp";
+
+    unsigned int num = 0, size = 0;
+    Gdiplus::GetImageEncodersSize(&num, &size);
+    if (num == 0)
+    {
+        Log::Error("no GDI+ image encoders found\n");
+        return false;
+    }
+    Gdiplus::ImageCodecInfo *codecs
+        = (Gdiplus::ImageCodecInfo *)new uint8_t[size];
+    Gdiplus::GetImageEncoders(num, size, codecs);
+    CLSID clsid;
+    for (unsigned int i = 0; i < num; i++)
+    {
+        if (wcscmp(codecs[i].MimeType, fmt) == 0)
+        {
+            clsid = codecs[i].Clsid;
+            break;
+        }
+    }
+
+    size_t len;
+    len = mbstowcs(NULL, path, 0);
+    wchar_t *wpath = new wchar_t[len + 1];
+    if (mbstowcs(wpath, path, len + 1) == (size_t)-1)
+    {
+        Log::Error("could not convert GDI+ filename '%s' to widechar\n", path);
+        delete[] wpath;
+        delete[] codecs;
+        return false;
+    }
+
+    /* FIXME: we create a new image because there is no guarantee that
+     * the image comes from GDI. But the engine architecture doesn't
+     * allow us to save other images anyway. */
+    Gdiplus::Bitmap *b = new Gdiplus::Bitmap(m_size.x, m_size.y,
+                                             PixelFormat32bppARGB);
+
+    Gdiplus::BitmapData bdata;
+    Gdiplus::Rect rect(0, 0, m_size.x, m_size.y);
+
+    if (b->LockBits(&rect, (unsigned int)Gdiplus::ImageLockModeWrite,
+                    PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
+    {
+        Log::Error("could not lock GDI+ image bits\n");
+        delete b;
+        delete[] wpath;
+        delete[] codecs;
+        return false;
+    }
+
+    u8vec4 *psrc = static_cast<u8vec4 *>(m_bdata.Scan0);
+    u8vec4 *pdst = static_cast<u8vec4 *>(bdata.Scan0);
+    for (int y = 0; y < m_size.y; y++)
+        for (int x = 0; x < m_size.x; x++)
+        {
+            *pdst++ = (*psrc++).bgra;
+        }
+
+    b->UnlockBits(&bdata);
+
+    if (b->Save(wpath, &clsid, NULL) != Gdiplus::Ok)
+    {
+        Log::Error("could not save GDI+ image '%s'\n", path);
+        delete[] wpath;
+        delete[] codecs;
+        delete b;
+        return false;
+    }
+    delete[] wpath;
+    delete[] codecs;
+    delete b;
+
     return true;
 }
 
