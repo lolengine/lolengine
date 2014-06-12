@@ -40,7 +40,7 @@ static inline ClearMask operator |(ClearMask const &a, ClearMask const &b)
 
 static inline bool operator &(ClearMask const &a, ClearMask const &b)
 {
-    return (bool)((uint8_t)a & (uint8_t)b);
+    return !!((uint8_t)a & (uint8_t)b);
 }
 
 /* A safe enum to indicate the blend equation. */
