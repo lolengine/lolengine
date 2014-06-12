@@ -81,6 +81,7 @@ public:
     virtual ~ImageData() {}
 
     virtual bool Open(char const *) = 0;
+    virtual bool Save(char const *) = 0;
     virtual bool Close() = 0;
 
     virtual uint8_t *GetData() const = 0;

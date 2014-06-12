@@ -29,6 +29,7 @@ DECLARE_IMAGE_LOADER(ZedImageData, 0)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -296,6 +297,13 @@ bool ZedImageData::Open(char const *path)
             j++;
         }
     }
+    return true;
+}
+
+bool ZedImageData::Save(char const *path)
+{
+    UNUSED(path);
+    /* FIXME: do we need to implement this? */
     return true;
 }
 

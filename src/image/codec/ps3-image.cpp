@@ -34,6 +34,7 @@ DECLARE_IMAGE_LOADER(Ps3ImageData, 100)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -170,6 +171,14 @@ bool Ps3ImageData::Open(char const *path)
     err = cellSysmoduleUnloadModule(CELL_SYSMODULE_PNGDEC);
     err = cellSysmoduleUnloadModule(CELL_SYSMODULE_FS);
 
+    return true;
+}
+
+bool Ps3ImageData::Open(char const *path)
+{
+    UNUSED(path);
+
+    /* TODO: unimplemented */
     return true;
 }
 

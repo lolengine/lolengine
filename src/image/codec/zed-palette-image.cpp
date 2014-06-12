@@ -28,6 +28,7 @@ DECLARE_IMAGE_LOADER(ZedPaletteImageData, 0)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -80,6 +81,13 @@ bool ZedPaletteImageData::Open(char const *path)
         *parser++ = (i == 0) ? 0 : 255;
     }
 
+    return true;
+}
+
+bool ZedPaletteImageData::Save(char const *path)
+{
+    UNUSED(path);
+    /* FIXME: do we need to implement this? */
     return true;
 }
 

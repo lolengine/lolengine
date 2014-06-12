@@ -28,6 +28,7 @@ DECLARE_IMAGE_LOADER(DummyImageData, 0)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -56,6 +57,13 @@ bool DummyImageData::Open(char const *path)
             *parser++ = (uint8_t)j;
             *parser++ = (((i >> 4) ^ (j >> 4)) & 1) * 0xff;
         }
+
+    return true;
+}
+
+bool DummyImageData::Save(char const *path)
+{
+    UNUSED(path);
 
     return true;
 }

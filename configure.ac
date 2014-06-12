@@ -549,6 +549,9 @@ AC_CONFIG_FILES(
  [tools/neercs/Makefile
 ])
 AC_CONFIG_FILES(
+ [tools/pimp/Makefile
+])
+AC_CONFIG_FILES(
  [people/jnat/Makefile
   people/jnat/TestProject/Makefile
   people/peeweek/Makefile
