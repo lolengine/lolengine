@@ -178,6 +178,11 @@ Image::Image()
 {
 }
 
+bool Image::Save(char const *path)
+{
+    return m_data->Save(path);
+}
+
 ivec2 Image::GetSize() const
 {
     return m_data->m_size;

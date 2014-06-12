@@ -39,6 +39,7 @@ DECLARE_IMAGE_LOADER(AndroidImageData, 100)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -106,6 +107,13 @@ bool AndroidImageData::Open(char const *path)
     m_format = PixelFormat::RGBA_8;
 
     return true;
+}
+
+bool AndroidImageData::Save(char const *path)
+{
+    UNUSED(path);
+
+    /* TODO: unimplemented */
 }
 
 bool AndroidImageData::Close()

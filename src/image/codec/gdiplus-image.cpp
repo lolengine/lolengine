@@ -35,6 +35,7 @@ DECLARE_IMAGE_LOADER(GdiPlusImageData, 100)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -136,6 +137,14 @@ bool GdiPlusImageData::Open(char const *path)
             p += 4;
         }
 
+    return true;
+}
+
+bool GdiPlusImageData::Save(char const *path)
+{
+    UNUSED(path);
+
+    /* TODO: unimplemented */
     return true;
 }
 

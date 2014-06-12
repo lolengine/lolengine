@@ -41,6 +41,7 @@ DECLARE_IMAGE_LOADER(SdlImageData, 50)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -87,6 +88,13 @@ bool SdlImageData::Open(char const *path)
                                     : PixelFormat::RGB_8;
 
     return true;
+}
+
+bool SdlImageData::Save(char const *path)
+{
+    int ret = SDL_SaveBMP(m_img, path);
+
+    return ret == 0;
 }
 
 bool SdlImageData::Close()

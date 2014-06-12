@@ -32,6 +32,7 @@ DECLARE_IMAGE_LOADER(IosImageData, 100)
 {
 public:
     virtual bool Open(char const *);
+    virtual bool Save(char const *);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -80,6 +81,14 @@ bool IosImageData::Open(char const *path)
     [image release];
     [pngdata release];
 
+    return true;
+}
+
+bool IosImageData::Save(char const *path)
+{
+    UNUSED(path);
+
+    /* TODO: unimplemented */
     return true;
 }
 
