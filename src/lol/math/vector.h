@@ -196,10 +196,10 @@ template <typename T> struct BVec2
         struct { T s, t; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const
+#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st; /* lvalue */
-        XVec2<T,0x10> _____ yx, gr, ts; /* lvalue */
+        XVec2<T,0x01> _____ xy, rg, st;
+        XVec2<T,0x10> _____ yx, gr, ts;
         XVec2<T,0x11> const yy, gg, tt;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -359,15 +359,15 @@ template <typename T> struct BVec3
         struct { T s, t, p; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const
+#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st; /* lvalue */
-        XVec2<T,0x02> _____ xz, rb, sp; /* lvalue */
-        XVec2<T,0x10> _____ yx, gr, ts; /* lvalue */
+        XVec2<T,0x01> _____ xy, rg, st;
+        XVec2<T,0x02> _____ xz, rb, sp;
+        XVec2<T,0x10> _____ yx, gr, ts;
         XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> _____ yz, gb, tp; /* lvalue */
-        XVec2<T,0x20> _____ zx, br, ps; /* lvalue */
-        XVec2<T,0x21> _____ zy, bg, pt; /* lvalue */
+        XVec2<T,0x12> _____ yz, gb, tp;
+        XVec2<T,0x20> _____ zx, br, ps;
+        XVec2<T,0x21> _____ zy, bg, pt;
         XVec2<T,0x22> const zz, bb, pp;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -375,23 +375,23 @@ template <typename T> struct BVec3
         XVec3<T,0x002> const xxz, rrb, ssp;
         XVec3<T,0x010> const xyx, rgr, sts;
         XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> _____ xyz, rgb, stp; /* lvalue */
+        XVec3<T,0x012> _____ xyz, rgb, stp;
         XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> _____ xzy, rbg, spt; /* lvalue */
+        XVec3<T,0x021> _____ xzy, rbg, spt;
         XVec3<T,0x022> const xzz, rbb, spp;
         XVec3<T,0x100> const yxx, grr, tss;
         XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> _____ yxz, grb, tsp; /* lvalue */
+        XVec3<T,0x102> _____ yxz, grb, tsp;
         XVec3<T,0x110> const yyx, ggr, tts;
         XVec3<T,0x111> const yyy, ggg, ttt;
         XVec3<T,0x112> const yyz, ggb, ttp;
-        XVec3<T,0x120> _____ yzx, gbr, tps; /* lvalue */
+        XVec3<T,0x120> _____ yzx, gbr, tps;
         XVec3<T,0x121> const yzy, gbg, tpt;
         XVec3<T,0x122> const yzz, gbb, tpp;
         XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> _____ zxy, brg, pst; /* lvalue */
+        XVec3<T,0x201> _____ zxy, brg, pst;
         XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x210> _____ zyx, bgr, pts; /* lvalue */
+        XVec3<T,0x210> _____ zyx, bgr, pts;
         XVec3<T,0x211> const zyy, bgg, ptt;
         XVec3<T,0x212> const zyz, bgb, ptp;
         XVec3<T,0x220> const zzx, bbr, pps;
@@ -560,22 +560,22 @@ template <typename T> struct BVec4
         struct { T s, t, p, q; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const
+#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st; /* lvalue */
-        XVec2<T,0x02> _____ xz, rb, sp; /* lvalue */
-        XVec2<T,0x03> _____ xw, ra, sq; /* lvalue */
-        XVec2<T,0x10> _____ yx, gr, ts; /* lvalue */
+        XVec2<T,0x01> _____ xy, rg, st;
+        XVec2<T,0x02> _____ xz, rb, sp;
+        XVec2<T,0x03> _____ xw, ra, sq;
+        XVec2<T,0x10> _____ yx, gr, ts;
         XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> _____ yz, gb, tp; /* lvalue */
-        XVec2<T,0x13> _____ yw, ga, tq; /* lvalue */
-        XVec2<T,0x20> _____ zx, br, ps; /* lvalue */
-        XVec2<T,0x21> _____ zy, bg, pt; /* lvalue */
+        XVec2<T,0x12> _____ yz, gb, tp;
+        XVec2<T,0x13> _____ yw, ga, tq;
+        XVec2<T,0x20> _____ zx, br, ps;
+        XVec2<T,0x21> _____ zy, bg, pt;
         XVec2<T,0x22> const zz, bb, pp;
-        XVec2<T,0x23> _____ zw, ba, pq; /* lvalue */
-        XVec2<T,0x30> _____ wx, ar, qs; /* lvalue */
-        XVec2<T,0x31> _____ wy, ag, qt; /* lvalue */
-        XVec2<T,0x32> _____ wz, ab, qp; /* lvalue */
+        XVec2<T,0x23> _____ zw, ba, pq;
+        XVec2<T,0x30> _____ wx, ar, qs;
+        XVec2<T,0x31> _____ wy, ag, qt;
+        XVec2<T,0x32> _____ wz, ab, qp;
         XVec2<T,0x33> const ww, aa, qq;
 
         XVec3<T,0x000> const xxx, rrr, sss;
@@ -584,58 +584,58 @@ template <typename T> struct BVec4
         XVec3<T,0x003> const xxw, rra, ssq;
         XVec3<T,0x010> const xyx, rgr, sts;
         XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> _____ xyz, rgb, stp; /* lvalue */
-        XVec3<T,0x013> _____ xyw, rga, stq; /* lvalue */
+        XVec3<T,0x012> _____ xyz, rgb, stp;
+        XVec3<T,0x013> _____ xyw, rga, stq;
         XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> _____ xzy, rbg, spt; /* lvalue */
+        XVec3<T,0x021> _____ xzy, rbg, spt;
         XVec3<T,0x022> const xzz, rbb, spp;
-        XVec3<T,0x023> _____ xzw, rba, spq; /* lvalue */
+        XVec3<T,0x023> _____ xzw, rba, spq;
         XVec3<T,0x030> const xwx, rar, sqs;
-        XVec3<T,0x031> _____ xwy, rag, sqt; /* lvalue */
-        XVec3<T,0x032> _____ xwz, rab, sqp; /* lvalue */
+        XVec3<T,0x031> _____ xwy, rag, sqt;
+        XVec3<T,0x032> _____ xwz, rab, sqp;
         XVec3<T,0x033> const xww, raa, sqq;
         XVec3<T,0x100> const yxx, grr, tss;
         XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> _____ yxz, grb, tsp; /* lvalue */
-        XVec3<T,0x103> _____ yxw, gra, tsq; /* lvalue */
+        XVec3<T,0x102> _____ yxz, grb, tsp;
+        XVec3<T,0x103> _____ yxw, gra, tsq;
         XVec3<T,0x110> const yyx, ggr, tts;
         XVec3<T,0x111> const yyy, ggg, ttt;
         XVec3<T,0x112> const yyz, ggb, ttp;
         XVec3<T,0x113> const yyw, gga, ttq;
-        XVec3<T,0x120> _____ yzx, gbr, tps; /* lvalue */
+        XVec3<T,0x120> _____ yzx, gbr, tps;
         XVec3<T,0x121> const yzy, gbg, tpt;
         XVec3<T,0x122> const yzz, gbb, tpp;
-        XVec3<T,0x123> _____ yzw, gba, tpq; /* lvalue */
-        XVec3<T,0x130> _____ ywx, gar, tqs; /* lvalue */
+        XVec3<T,0x123> _____ yzw, gba, tpq;
+        XVec3<T,0x130> _____ ywx, gar, tqs;
         XVec3<T,0x131> const ywy, gag, tqt;
-        XVec3<T,0x132> _____ ywz, gab, tqp; /* lvalue */
+        XVec3<T,0x132> _____ ywz, gab, tqp;
         XVec3<T,0x133> const yww, gaa, tqq;
         XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> _____ zxy, brg, pst; /* lvalue */
+        XVec3<T,0x201> _____ zxy, brg, pst;
         XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x203> _____ zxw, bra, psq; /* lvalue */
-        XVec3<T,0x210> _____ zyx, bgr, pts; /* lvalue */
+        XVec3<T,0x203> _____ zxw, bra, psq;
+        XVec3<T,0x210> _____ zyx, bgr, pts;
         XVec3<T,0x211> const zyy, bgg, ptt;
         XVec3<T,0x212> const zyz, bgb, ptp;
-        XVec3<T,0x213> _____ zyw, bga, ptq; /* lvalue */
+        XVec3<T,0x213> _____ zyw, bga, ptq;
         XVec3<T,0x220> const zzx, bbr, pps;
         XVec3<T,0x221> const zzy, bbg, ppt;
         XVec3<T,0x222> const zzz, bbb, ppp;
         XVec3<T,0x223> const zzw, bba, ppq;
-        XVec3<T,0x230> _____ zwx, bar, pqs; /* lvalue */
-        XVec3<T,0x231> _____ zwy, bag, pqt; /* lvalue */
+        XVec3<T,0x230> _____ zwx, bar, pqs;
+        XVec3<T,0x231> _____ zwy, bag, pqt;
         XVec3<T,0x232> const zwz, bab, pqp;
         XVec3<T,0x233> const zww, baa, pqq;
         XVec3<T,0x300> const wxx, arr, qss;
-        XVec3<T,0x301> _____ wxy, arg, qst; /* lvalue */
-        XVec3<T,0x302> _____ wxz, arb, qsp; /* lvalue */
+        XVec3<T,0x301> _____ wxy, arg, qst;
+        XVec3<T,0x302> _____ wxz, arb, qsp;
         XVec3<T,0x303> const wxw, ara, qsq;
-        XVec3<T,0x310> _____ wyx, agr, qts; /* lvalue */
+        XVec3<T,0x310> _____ wyx, agr, qts;
         XVec3<T,0x311> const wyy, agg, qtt;
-        XVec3<T,0x312> _____ wyz, agb, qtp; /* lvalue */
+        XVec3<T,0x312> _____ wyz, agb, qtp;
         XVec3<T,0x313> const wyw, aga, qtq;
-        XVec3<T,0x320> _____ wzx, abr, qps; /* lvalue */
-        XVec3<T,0x321> _____ wzy, abg, qpt; /* lvalue */
+        XVec3<T,0x320> _____ wzx, abr, qps;
+        XVec3<T,0x321> _____ wzy, abg, qpt;
         XVec3<T,0x322> const wzz, abb, qpp;
         XVec3<T,0x323> const wzw, aba, qpq;
         XVec3<T,0x330> const wwx, aar, qqs;
@@ -670,10 +670,10 @@ template <typename T> struct BVec4
         XVec4<T,0x0120> const xyzx, rgbr, stps;
         XVec4<T,0x0121> const xyzy, rgbg, stpt;
         XVec4<T,0x0122> const xyzz, rgbb, stpp;
-        XVec4<T,0x0123> _____ xyzw, rgba, stpq; /* lvalue */
+        XVec4<T,0x0123> _____ xyzw, rgba, stpq;
         XVec4<T,0x0130> const xywx, rgar, stqs;
         XVec4<T,0x0131> const xywy, rgag, stqt;
-        XVec4<T,0x0132> _____ xywz, rgab, stqp; /* lvalue */
+        XVec4<T,0x0132> _____ xywz, rgab, stqp;
         XVec4<T,0x0133> const xyww, rgaa, stqq;
         XVec4<T,0x0200> const xzxx, rbrr, spss;
         XVec4<T,0x0201> const xzxy, rbrg, spst;
@@ -682,13 +682,13 @@ template <typename T> struct BVec4
         XVec4<T,0x0210> const xzyx, rbgr, spts;
         XVec4<T,0x0211> const xzyy, rbgg, sptt;
         XVec4<T,0x0212> const xzyz, rbgb, sptp;
-        XVec4<T,0x0213> _____ xzyw, rbga, sptq; /* lvalue */
+        XVec4<T,0x0213> _____ xzyw, rbga, sptq;
         XVec4<T,0x0220> const xzzx, rbbr, spps;
         XVec4<T,0x0221> const xzzy, rbbg, sppt;
         XVec4<T,0x0222> const xzzz, rbbb, sppp;
         XVec4<T,0x0223> const xzzw, rbba, sppq;
         XVec4<T,0x0230> const xzwx, rbar, spqs;
-        XVec4<T,0x0231> _____ xzwy, rbag, spqt; /* lvalue */
+        XVec4<T,0x0231> _____ xzwy, rbag, spqt;
         XVec4<T,0x0232> const xzwz, rbab, spqp;
         XVec4<T,0x0233> const xzww, rbaa, spqq;
         XVec4<T,0x0300> const xwxx, rarr, sqss;
@@ -697,10 +697,10 @@ template <typename T> struct BVec4
         XVec4<T,0x0303> const xwxw, rara, sqsq;
         XVec4<T,0x0310> const xwyx, ragr, sqts;
         XVec4<T,0x0311> const xwyy, ragg, sqtt;
-        XVec4<T,0x0312> _____ xwyz, ragb, sqtp; /* lvalue */
+        XVec4<T,0x0312> _____ xwyz, ragb, sqtp;
         XVec4<T,0x0313> const xwyw, raga, sqtq;
         XVec4<T,0x0320> const xwzx, rabr, sqps;
-        XVec4<T,0x0321> _____ xwzy, rabg, sqpt; /* lvalue */
+        XVec4<T,0x0321> _____ xwzy, rabg, sqpt;
         XVec4<T,0x0322> const xwzz, rabb, sqpp;
         XVec4<T,0x0323> const xwzw, raba, sqpq;
         XVec4<T,0x0330> const xwwx, raar, sqqs;
@@ -718,10 +718,10 @@ template <typename T> struct BVec4
         XVec4<T,0x1020> const yxzx, grbr, tsps;
         XVec4<T,0x1021> const yxzy, grbg, tspt;
         XVec4<T,0x1022> const yxzz, grbb, tspp;
-        XVec4<T,0x1023> _____ yxzw, grba, tspq; /* lvalue */
+        XVec4<T,0x1023> _____ yxzw, grba, tspq;
         XVec4<T,0x1030> const yxwx, grar, tsqs;
         XVec4<T,0x1031> const yxwy, grag, tsqt;
-        XVec4<T,0x1032> _____ yxwz, grab, tsqp; /* lvalue */
+        XVec4<T,0x1032> _____ yxwz, grab, tsqp;
         XVec4<T,0x1033> const yxww, graa, tsqq;
         XVec4<T,0x1100> const yyxx, ggrr, ttss;
         XVec4<T,0x1101> const yyxy, ggrg, ttst;
@@ -742,7 +742,7 @@ template <typename T> struct BVec4
         XVec4<T,0x1200> const yzxx, gbrr, tpss;
         XVec4<T,0x1201> const yzxy, gbrg, tpst;
         XVec4<T,0x1202> const yzxz, gbrb, tpsp;
-        XVec4<T,0x1203> _____ yzxw, gbra, tpsq; /* lvalue */
+        XVec4<T,0x1203> _____ yzxw, gbra, tpsq;
         XVec4<T,0x1210> const yzyx, gbgr, tpts;
         XVec4<T,0x1211> const yzyy, gbgg, tptt;
         XVec4<T,0x1212> const yzyz, gbgb, tptp;
@@ -751,19 +751,19 @@ template <typename T> struct BVec4
         XVec4<T,0x1221> const yzzy, gbbg, tppt;
         XVec4<T,0x1222> const yzzz, gbbb, tppp;
         XVec4<T,0x1223> const yzzw, gbba, tppq;
-        XVec4<T,0x1230> _____ yzwx, gbar, tpqs; /* lvalue */
+        XVec4<T,0x1230> _____ yzwx, gbar, tpqs;
         XVec4<T,0x1231> const yzwy, gbag, tpqt;
         XVec4<T,0x1232> const yzwz, gbab, tpqp;
         XVec4<T,0x1233> const yzww, gbaa, tpqq;
         XVec4<T,0x1300> const ywxx, garr, tqss;
         XVec4<T,0x1301> const ywxy, garg, tqst;
-        XVec4<T,0x1302> _____ ywxz, garb, tqsp; /* lvalue */
+        XVec4<T,0x1302> _____ ywxz, garb, tqsp;
         XVec4<T,0x1303> const ywxw, gara, tqsq;
         XVec4<T,0x1310> const ywyx, gagr, tqts;
         XVec4<T,0x1311> const ywyy, gagg, tqtt;
         XVec4<T,0x1312> const ywyz, gagb, tqtp;
         XVec4<T,0x1313> const ywyw, gaga, tqtq;
-        XVec4<T,0x1320> _____ ywzx, gabr, tqps; /* lvalue */
+        XVec4<T,0x1320> _____ ywzx, gabr, tqps;
         XVec4<T,0x1321> const ywzy, gabg, tqpt;
         XVec4<T,0x1322> const ywzz, gabb, tqpp;
         XVec4<T,0x1323> const ywzw, gaba, tqpq;
@@ -778,19 +778,19 @@ template <typename T> struct BVec4
         XVec4<T,0x2010> const zxyx, brgr, psts;
         XVec4<T,0x2011> const zxyy, brgg, pstt;
         XVec4<T,0x2012> const zxyz, brgb, pstp;
-        XVec4<T,0x2013> _____ zxyw, brga, pstq; /* lvalue */
+        XVec4<T,0x2013> _____ zxyw, brga, pstq;
         XVec4<T,0x2020> const zxzx, brbr, psps;
         XVec4<T,0x2021> const zxzy, brbg, pspt;
         XVec4<T,0x2022> const zxzz, brbb, pspp;
         XVec4<T,0x2023> const zxzw, brba, pspq;
         XVec4<T,0x2030> const zxwx, brar, psqs;
-        XVec4<T,0x2031> _____ zxwy, brag, psqt; /* lvalue */
+        XVec4<T,0x2031> _____ zxwy, brag, psqt;
         XVec4<T,0x2032> const zxwz, brab, psqp;
         XVec4<T,0x2033> const zxww, braa, psqq;
         XVec4<T,0x2100> const zyxx, bgrr, ptss;
         XVec4<T,0x2101> const zyxy, bgrg, ptst;
         XVec4<T,0x2102> const zyxz, bgrb, ptsp;
-        XVec4<T,0x2103> _____ zyxw, bgra, ptsq; /* lvalue */
+        XVec4<T,0x2103> _____ zyxw, bgra, ptsq;
         XVec4<T,0x2110> const zyyx, bggr, ptts;
         XVec4<T,0x2111> const zyyy, bggg, pttt;
         XVec4<T,0x2112> const zyyz, bggb, pttp;
@@ -799,7 +799,7 @@ template <typename T> struct BVec4
         XVec4<T,0x2121> const zyzy, bgbg, ptpt;
         XVec4<T,0x2122> const zyzz, bgbb, ptpp;
         XVec4<T,0x2123> const zyzw, bgba, ptpq;
-        XVec4<T,0x2130> _____ zywx, bgar, ptqs; /* lvalue */
+        XVec4<T,0x2130> _____ zywx, bgar, ptqs;
         XVec4<T,0x2131> const zywy, bgag, ptqt;
         XVec4<T,0x2132> const zywz, bgab, ptqp;
         XVec4<T,0x2133> const zyww, bgaa, ptqq;
@@ -820,10 +820,10 @@ template <typename T> struct BVec4
         XVec4<T,0x2232> const zzwz, bbab, ppqp;
         XVec4<T,0x2233> const zzww, bbaa, ppqq;
         XVec4<T,0x2300> const zwxx, barr, pqss;
-        XVec4<T,0x2301> _____ zwxy, barg, pqst; /* lvalue */
+        XVec4<T,0x2301> _____ zwxy, barg, pqst;
         XVec4<T,0x2302> const zwxz, barb, pqsp;
         XVec4<T,0x2303> const zwxw, bara, pqsq;
-        XVec4<T,0x2310> _____ zwyx, bagr, pqts; /* lvalue */
+        XVec4<T,0x2310> _____ zwyx, bagr, pqts;
         XVec4<T,0x2311> const zwyy, bagg, pqtt;
         XVec4<T,0x2312> const zwyz, bagb, pqtp;
         XVec4<T,0x2313> const zwyw, baga, pqtq;
@@ -841,10 +841,10 @@ template <typename T> struct BVec4
         XVec4<T,0x3003> const wxxw, arra, qssq;
         XVec4<T,0x3010> const wxyx, argr, qsts;
         XVec4<T,0x3011> const wxyy, argg, qstt;
-        XVec4<T,0x3012> _____ wxyz, argb, qstp; /* lvalue */
+        XVec4<T,0x3012> _____ wxyz, argb, qstp;
         XVec4<T,0x3013> const wxyw, arga, qstq;
         XVec4<T,0x3020> const wxzx, arbr, qsps;
-        XVec4<T,0x3021> _____ wxzy, arbg, qspt; /* lvalue */
+        XVec4<T,0x3021> _____ wxzy, arbg, qspt;
         XVec4<T,0x3022> const wxzz, arbb, qspp;
         XVec4<T,0x3023> const wxzw, arba, qspq;
         XVec4<T,0x3030> const wxwx, arar, qsqs;
@@ -853,13 +853,13 @@ template <typename T> struct BVec4
         XVec4<T,0x3033> const wxww, araa, qsqq;
         XVec4<T,0x3100> const wyxx, agrr, qtss;
         XVec4<T,0x3101> const wyxy, agrg, qtst;
-        XVec4<T,0x3102> _____ wyxz, agrb, qtsp; /* lvalue */
+        XVec4<T,0x3102> _____ wyxz, agrb, qtsp;
         XVec4<T,0x3103> const wyxw, agra, qtsq;
         XVec4<T,0x3110> const wyyx, aggr, qtts;
         XVec4<T,0x3111> const wyyy, aggg, qttt;
         XVec4<T,0x3112> const wyyz, aggb, qttp;
         XVec4<T,0x3113> const wyyw, agga, qttq;
-        XVec4<T,0x3120> _____ wyzx, agbr, qtps; /* lvalue */
+        XVec4<T,0x3120> _____ wyzx, agbr, qtps;
         XVec4<T,0x3121> const wyzy, agbg, qtpt;
         XVec4<T,0x3122> const wyzz, agbb, qtpp;
         XVec4<T,0x3123> const wyzw, agba, qtpq;
@@ -868,10 +868,10 @@ template <typename T> struct BVec4
         XVec4<T,0x3132> const wywz, agab, qtqp;
         XVec4<T,0x3133> const wyww, agaa, qtqq;
         XVec4<T,0x3200> const wzxx, abrr, qpss;
-        XVec4<T,0x3201> _____ wzxy, abrg, qpst; /* lvalue */
+        XVec4<T,0x3201> _____ wzxy, abrg, qpst;
         XVec4<T,0x3202> const wzxz, abrb, qpsp;
         XVec4<T,0x3203> const wzxw, abra, qpsq;
-        XVec4<T,0x3210> _____ wzyx, abgr, qpts; /* lvalue */
+        XVec4<T,0x3210> _____ wzyx, abgr, qpts;
         XVec4<T,0x3211> const wzyy, abgg, qptt;
         XVec4<T,0x3212> const wzyz, abgb, qptp;
         XVec4<T,0x3213> const wzyw, abga, qptq;
