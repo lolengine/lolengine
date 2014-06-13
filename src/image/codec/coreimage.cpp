@@ -29,11 +29,11 @@ pipi_image_t *pipi_load_coreimage(const char *name)
     NSString *n = [NSString stringWithCString: name];
     CIImage *source;
     NSURL *url = [NSURL fileURLWithPath:n];
-   
+
     source = [CIImage imageWithContentsOfURL:url];
-    
+
     if(source == NULL) return NULL;
-    
+
     CGRect extent = [source extent];
     size_t w = (size_t)extent.size.width;
     size_t h = (size_t)extent.size.height;
@@ -52,17 +52,17 @@ pipi_image_t *pipi_load_coreimage(const char *name)
     img->p[PIPI_PIXELS_RGBA_U8].bytes  = ([myImage bitsPerPixel]/8) * img->w * img->h;
     img->last_modified                = PIPI_PIXELS_RGBA_U8;
 
-    
+
     /* CoreImage feeds us with BGRA while we need RGBA, so convert it.
      * We also need to get a pitch==(w*bpp) in order to pipi to opper properly.
      */
-    
+
     int pitch = (img->p[PIPI_PIXELS_RGBA_U8].bpp/8);
     unsigned char *tmp  = (unsigned char*)malloc(h*w*pitch);
     unsigned char *orig = (unsigned char*)[myImage bitmapData];
     int x, y, k=0, o=0, a=[myImage bytesPerRow] - (w*([myImage bitsPerPixel]/8));
 
-    for(y=0; y<h; y++) 
+    for(y=0; y<h; y++)
     {
         for(x=0; x<w*pitch; x+=4)
         {
@@ -77,9 +77,9 @@ pipi_image_t *pipi_load_coreimage(const char *name)
                 tmp[k+0] = orig[o];
                 tmp[k+1] = orig[o+1];
                 tmp[k+2] = orig[o+2];
-                tmp[k+3] = orig[o+3];                    
+                tmp[k+3] = orig[o+3];
             }
-                
+
             o+=4;
             k+=4;
         }
@@ -87,18 +87,18 @@ pipi_image_t *pipi_load_coreimage(const char *name)
     }
     img->p[PIPI_PIXELS_RGBA_U8].pixels = tmp;
     img->p[PIPI_PIXELS_RGBA_U8].pitch  = w*([myImage bitsPerPixel]/8);
-    
-    
-    
-    
+
+
+
+
     img->codec_priv = (struct pipi_codec_coreimage *) malloc(sizeof(struct pipi_codec_coreimage *));
     struct pipi_codec_coreimage *infos = (struct pipi_codec_coreimage *) img->codec_priv;
     infos->format = [myImage bitmapFormat];
 
     pipi_pixels_t *p = pipi_get_pixels(img, PIPI_PIXELS_RGBA_U8);
-    
+
     img->codec_free = pipi_free_coreimage;
-    
+
     [autoreleasepool release];
     return img;
 }
@@ -117,14 +117,14 @@ int pipi_save_coreimage(pipi_image_t *img, const char *name)
         unsigned char g = data[i*4 + 1];
         unsigned char b = data[i*4 + 2];
         unsigned char a = data[i*4 + 3];
-        
-        /* R */    data[i*4 + 0] = b; 
+
+        /* R */    data[i*4 + 0] = b;
         /* G */    data[i*4 + 1] = g;
         /* B */    data[i*4 + 2] = r;
-        /* A */    data[i*4 + 3] = a;   
+        /* A */    data[i*4 + 3] = a;
     }
-    
-    
+
+
     NSString *n = [NSString stringWithCString: name];
     NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc]
                                 initWithBitmapDataPlanes:NULL
@@ -143,8 +143,8 @@ int pipi_save_coreimage(pipi_image_t *img, const char *name)
     memcpy([bitmap bitmapData], data, p->w*p->h*4);
 
     NSBitmapImageFileType type = NSPNGFileType;
-    
-    
+
+
     if(strlen(name) > 4)
     {
         char *ext = (char*)&name[strlen(name) - 4];
@@ -159,7 +159,7 @@ int pipi_save_coreimage(pipi_image_t *img, const char *name)
         else if(!strncasecmp(ext, ".jp2",  3)) type = NSJPEG2000FileType;
         else if(!strncasecmp(ext, ".j2k",  3)) type = NSJPEG2000FileType;
     }
-    
+
     [[bitmap representationUsingType:type properties:nil] writeToFile:n  atomically:YES];
     [autoreleasepool release];
 
