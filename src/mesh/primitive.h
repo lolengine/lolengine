@@ -26,13 +26,11 @@ class Primitive
     friend class Scene;
 
 public:
-    Primitive(Mesh *mesh, Shader *shader, mat4 const &matrix);
+    Primitive(SubMesh *submesh, mat4 const &matrix);
     ~Primitive();
 
 private:
-    Mesh *m_mesh;
-    Shader *m_shader;
-
+    SubMesh *m_submesh;
     mat4 m_matrix;
 };
 

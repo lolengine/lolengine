@@ -23,6 +23,8 @@
 #include "camera.h"
 #include "mesh/primitive.h"
 
+#define LOL_MAX_LIGHT_COUNT 8
+
 namespace lol
 {
 
@@ -49,7 +51,7 @@ public:
     void RenderLines(float seconds);
 
     /* New scenegraph */
-    void AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix);
+    void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */

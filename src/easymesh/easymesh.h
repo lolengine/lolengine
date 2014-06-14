@@ -48,7 +48,7 @@ LOL_SAFE_ENUM(MeshTransform,
     Shear
 );
 
-class EasyMesh
+class EasyMesh : public Mesh
 {
     friend class EasyMeshParser;
     friend class GpuEasyMeshData;
@@ -57,13 +57,11 @@ public:
     EasyMesh();
     EasyMesh(const EasyMesh& em);
 
-    bool        Compile(char const *command, bool Execute=true);
-    void        ExecuteCmdStack(bool ExecAllStack=true);
-    void        MeshConvert(GpuShaderData* new_gpu_sdata);
-    void        MeshConvert(Shader* ProvidedShader = nullptr);
-    bool        Render(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
-    MeshRender  GetMeshState() { return m_state; }
-    bool        SetRender(bool should_render);
+    bool Compile(char const *command, bool Execute = true);
+    void ExecuteCmdStack(bool ExecAllStack = true);
+    void MeshConvert();
+    MeshRender GetMeshState() { return m_state; }
+    bool SetRender(bool should_render);
 
 private:
     void UpdateVertexDict(Array< int, int > &vertex_dict);
@@ -73,6 +71,7 @@ private:
     //-------------------------------------------------------------------------
 private:
     void MeshCsg(CSGUsage csg_operation);
+
 public:
     /* [cmd:csgu] Performs a Union operation as (mesh0_Outside + mesh1_Outside) */
     void CsgUnion() { MeshCsg(CSGUsage::Union); }
@@ -386,7 +385,6 @@ public:
     Array<int, int>     m_cursors;
 
     MeshRender          m_state;
-    GpuEasyMeshData     m_gpu_data;
 
 public:
     inline EasyMeshBuildData* BD()

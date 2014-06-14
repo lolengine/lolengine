@@ -120,9 +120,10 @@ DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, b
     SetupDefaultData(with_UV);
 }
 
-static const String DefaultUniforms[7] =
+static const String DefaultUniforms[8] =
 {
     String("u_lights"),
+    String("u_model"),
     String("u_modelview"),
     String("u_view"),
     String("u_inv_view"),
@@ -160,12 +161,13 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     /* FIXME: GetUniform("blabla") is costly */
     for (int i = 0; i < lights.Count(); ++i)
         light_data << vec4(lights[i]->GetPosition(), lights[i]->GetType()) << lights[i]->GetColor();
-    while (light_data.Count() < 8)
+    while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
         light_data << vec4::zero << vec4::zero;
 
     int i = 0;
     m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), light_data);
 
+    m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), model);
     m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), modelview);
     m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), view);
     m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), inverse(view));

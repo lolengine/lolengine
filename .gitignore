@@ -82,6 +82,7 @@ _ReSharper.*
 test/benchsuite
 test/btphystest
 test/meshviewer
+test/nacl_phystest
 test/testsuite
 test/sandbox/sample
 test/math/pi

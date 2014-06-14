@@ -53,6 +53,24 @@ enum class BlendEquation : uint8_t
     Max,
 };
 
+/* A safe enum to indicate the blend equation. */
+struct BlendEquation
+{
+    enum Value
+    {
+        Add,
+        Subtract,
+        ReverseSubtract,
+        Min,
+        Max,
+    }
+    m_value;
+
+    inline BlendEquation() : m_value(Add) {}
+    inline BlendEquation(Value v) : m_value(v) {}
+    inline operator Value() { return m_value; }
+};
+
 /* A safe enum to indicate the blending factors. */
 enum class BlendFunc : uint8_t
 {

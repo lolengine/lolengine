@@ -32,30 +32,56 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::Render(mat4 const &model)
+void Mesh::Render()
 {
-    //for (int i = 0; i < m_submeshes.Count(); ++i)
-    //    m_submeshes[i]->Render(model);
+    for (int i = 0; i < m_submeshes.Count(); ++i)
+        m_submeshes[i]->Render();
+}
+
+void Mesh::SetMaterial(Shader *shader)
+{
+    for (int i = 0; i < m_submeshes.Count(); ++i)
+        m_submeshes[i]->SetShader(shader);
 }
 
 /*
  * SubMesh class
  */
 
-SubMesh::SubMesh(lol::VertexDeclaration* vdecl)
-    : m_mesh_prim(MeshPrimitive::Triangles)
+SubMesh::SubMesh(Shader *shader, VertexDeclaration *vdecl)
+  : m_mesh_prim(MeshPrimitive::Triangles),
+    m_shader(shader),
+    m_vdecl(vdecl)
 {
-    m_vdecl = vdecl;
+    Ticker::Ref(m_shader);
 }
 
 SubMesh::~SubMesh()
 {
+    Ticker::Unref(m_shader);
     // TODO: cleanup
 }
 
 void SubMesh::SetMeshPrimitive(MeshPrimitive mesh_primitive)
 {
     m_mesh_prim = mesh_primitive;
+}
+
+void SubMesh::SetShader(Shader *shader)
+{
+    Ticker::Unref(m_shader);
+    m_shader = shader;
+    Ticker::Ref(m_shader);
+}
+
+Shader *SubMesh::GetShader()
+{
+    return m_shader;
+}
+
+void SubMesh::SetVertexDeclaration(VertexDeclaration *vdecl)
+{
+    m_vdecl = vdecl;
 }
 
 void SubMesh::SetVertexBuffer(int index, VertexBuffer* vbo)
@@ -66,12 +92,17 @@ void SubMesh::SetVertexBuffer(int index, VertexBuffer* vbo)
     m_vbos[index] = vbo;
 }
 
+void SubMesh::SetIndexBuffer(IndexBuffer* ibo)
+{
+    m_ibo = ibo;
+}
+
 void SubMesh::AddTexture(const char* name, Texture* texture)
 {
     m_textures.Push(String(name), texture);
 }
 
-void SubMesh::Render(Shader* shader)
+void SubMesh::Render()
 {
     int vertex_count = 0;
 
@@ -81,19 +112,17 @@ void SubMesh::Render(Shader* shader)
 
         if (m_vbos[i] == nullptr)
         {
-            Log::Error("trying to render a mesh with a null vbo");
-            return;
+            Log::Error("trying to render a mesh with a null VBO\n");
+            continue;
         }
 
-        int indices[VertexUsage::MAX];
-        memset(indices, 0, sizeof(int) * VertexUsage::MAX);
-
+        int usages[VertexUsage::MAX] = { 0 };
         VertexStreamBase stream = m_vdecl->GetStream(i);
         for (int j = 0; j < stream.GetStreamCount(); ++j)
         {
             VertexUsage usage = stream.GetUsage(j);
             int usage_index = usage.ToScalar();
-            attribs[j] = shader->GetAttribLocation(usage, indices[usage_index]++);
+            attribs[j] = m_shader->GetAttribLocation(usage, usages[usage_index]++);
         }
 
         vertex_count = m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
@@ -104,13 +133,16 @@ void SubMesh::Render(Shader* shader)
     for (int i = 0; i < m_textures.Count(); ++i)
     {
         // TODO: might be good to cache this
-        ShaderUniform u_tex = shader->GetUniformLocation(m_textures[i].m1.C());
-        shader->SetUniform(u_tex, m_textures[i].m2->GetTextureUniform(), i);
+        ShaderUniform u_tex = m_shader->GetUniformLocation(m_textures[i].m1.C());
+        m_shader->SetUniform(u_tex, m_textures[i].m2->GetTextureUniform(), i);
     }
 
+    m_ibo->Bind();
     m_vdecl->Bind();
-    m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, vertex_count);
+    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, vertex_count,
+                                 0, m_ibo->GetSize() / sizeof(uint16_t));
     m_vdecl->Unbind();
+    m_ibo->Unbind();
 }
 
 } /* namespace lol */

@@ -122,7 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "People", "People", "{5F1AAF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Peeweek", "Peeweek", "{E27FDF36-50C4-4ED2-8CF5-A20FED016910}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo-peeweek", "..\..\people\peeweek\private\demo-peeweek.vcxproj", "{C2E01551-B636-4324-8461-71811DF6FBB5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo-peeweek", "..\..\people\peeweek\demo-peeweek.vcxproj", "{C2E01551-B636-4324-8461-71811DF6FBB5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_noise", "..\..\demos\tutorial\03_noise.vcxproj", "{B0A53D75-CBB4-4FDF-93AC-2D12A79ADA0E}"
 EndProject
@@ -152,11 +152,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07_input", "..\..\demos\tut
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06_sprite", "..\..\demos\tutorial\06_sprite.vcxproj", "{E05E23A5-67DE-42B5-98A3-E63CCE0CC0AF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "voxel", "..\..\people\benlitz\private\voxel\voxel.vcxproj", "{52493826-AC00-470B-A745-4F602529B3B0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "voxel", "..\..\people\benlitz\voxel\voxel.vcxproj", "{52493826-AC00-470B-A745-4F602529B3B0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Puzzle", "..\..\people\benlitz\private\puzzle\Puzzle.vcxproj", "{9F291982-8C81-4105-BF39-16844648E55F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Puzzle", "..\..\people\benlitz\puzzle\Puzzle.vcxproj", "{9F291982-8C81-4105-BF39-16844648E55F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolui", "..\..\people\benlitz\private\lolui\lolui.vcxproj", "{950EDCC1-DF6A-4A75-B083-DFE98E7DD34F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolui", "..\..\people\benlitz\lolui\lolui.vcxproj", "{950EDCC1-DF6A-4A75-B083-DFE98E7DD34F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SinglShot", "SinglShot", "{50509BA3-D27B-4FAC-9772-9EC76146F709}"
 EndProject
@@ -175,6 +175,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pimp", "Pimp", "{2195FB18-53BF-48AF-96B6-9BD242924EA5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pimp", "..\..\tools\pimp\pimp.vcxproj", "{FFF58874-D460-41E6-AD65-DBFEC6E47A94}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "squad_shooter", "..\..\people\touky\private\squad_shooter\squad_shooter.vcxproj", "{DB344310-4938-4294-AEE2-18512454585D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

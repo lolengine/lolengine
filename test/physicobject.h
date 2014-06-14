@@ -327,18 +327,16 @@ protected:
         {
             if (!m_ready)
             {
-                if (m_custom_shader)
-                    m_mesh.MeshConvert(m_custom_shader);
-                else
-                    m_mesh.MeshConvert();
+                m_mesh.MeshConvert();
+                /* FIXME: m_custom_shader is ignored */
                 m_ready = true;
             }
             else if (m_should_render)
             {
                 if (m_is_character)
-                    m_mesh.Render(m_character->GetTransform());
+                    g_scene->AddPrimitive(m_mesh, m_character->GetTransform());
                 else
-                    m_mesh.Render(m_physics->GetTransform());
+                    g_scene->AddPrimitive(m_mesh, m_physics->GetTransform());
             }
         }
     }

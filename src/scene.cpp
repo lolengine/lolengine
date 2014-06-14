@@ -177,11 +177,16 @@ void Scene::Reset()
     data->m_tile_bufs.Empty();
 
     data->m_lights.Empty();
+    data->m_primitives.Empty();
 }
 
-void Scene::AddPrimitive(Mesh *mesh, Shader *shader, mat4 const &matrix)
+void Scene::AddPrimitive(Mesh const &mesh, mat4 const &matrix)
 {
-    data->m_primitives.Push(Primitive(mesh, shader, matrix));
+    for (int i = 0; i < mesh.m_submeshes.Count(); ++i)
+    {
+        data->m_primitives.Push(Primitive(mesh.m_submeshes[i],
+                                          matrix));
+    }
 }
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle)
@@ -190,7 +195,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
 
     Tile t;
     /* FIXME: this sorting only works for a 45-degree camera */
-    t.prio = -pos.y - 2 * 32 * pos.z + ((float)o ? 0 : 32);
+    t.prio = -pos.y - (int)(2 * 32 * pos.z) + (o ? 0 : 32);
     t.tileset = tileset;
     t.id = id;
     t.pos = pos;
@@ -242,7 +247,7 @@ void Scene::RenderPrimitives()
      * primitives found in the scene graph. When we have one. */
 
     Shader *shader = nullptr;
-    ShaderUniform u_model, uni_tex, uni_texsize;
+    ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
     ShaderAttrib a_pos, a_tex;
 
     for (int i = 0; i < data->m_primitives.Count(); ++i)
@@ -250,25 +255,50 @@ void Scene::RenderPrimitives()
         Primitive &p = data->m_primitives[i];
 
         /* If this primitive uses a new shader, update attributes */
-        if (p.m_shader != shader)
+        if (p.m_submesh->GetShader() != shader)
         {
-            shader = p.m_shader;
+            shader = p.m_submesh->GetShader();
 
             a_pos = shader->GetAttribLocation(VertexUsage::Position, 0);
             a_tex = shader->GetAttribLocation(VertexUsage::TexCoord, 0);
 
             shader->Bind();
 
+            /* Per-scene matrices */
             ShaderUniform u_mat;
             u_mat = shader->GetUniformLocation("u_projection");
             shader->SetUniform(u_mat, GetCamera()->GetProjection());
             u_mat = shader->GetUniformLocation("u_view");
             shader->SetUniform(u_mat, GetCamera()->GetView());
+            u_mat = shader->GetUniformLocation("u_inv_view");
+            shader->SetUniform(u_mat, inverse(GetCamera()->GetView()));
 
+            /* Per-object matrices, will be set later */
             u_model = shader->GetUniformLocation("u_model");
+            u_modelview = shader->GetUniformLocation("u_modelview");
+            u_normalmat = shader->GetUniformLocation("u_normalmat");
+
+            /* Per-scene environment */
+            Array<Light *> const &lights = GetLights();
+            Array<vec4> light_data;
+
+            /* FIXME: the 4th component of the position can be used for other things */
+            /* FIXME: GetUniform("blabla") is costly */
+            for (int i = 0; i < lights.Count(); ++i)
+                light_data << vec4(lights[i]->GetPosition(), lights[i]->GetType()) << lights[i]->GetColor();
+            while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
+                light_data << vec4::zero << vec4::zero;
+
+            ShaderUniform u_lights = shader->GetUniformLocation("u_lights");
+            shader->SetUniform(u_lights, light_data);
         }
 
         shader->SetUniform(u_model, p.m_matrix);
+        mat4 modelview = GetCamera()->GetView() * p.m_matrix;
+        shader->SetUniform(u_modelview, modelview);
+        shader->SetUniform(u_normalmat, transpose(inverse(mat3(modelview))));
+
+        p.m_submesh->Render();
     }
 }
 

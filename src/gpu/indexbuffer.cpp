@@ -96,6 +96,11 @@ IndexBuffer::~IndexBuffer()
     delete m_data;
 }
 
+size_t IndexBuffer::GetSize()
+{
+    return m_data->m_size;
+}
+
 void *IndexBuffer::Lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)

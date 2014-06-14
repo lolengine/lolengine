@@ -56,7 +56,7 @@ bool ZedImageData::Open(char const *path)
     if (!lol::String(path).EndsWith(".RSC"))
         return false;
 
-    //Compacter definition
+    // Compacter definition
     struct CompactSecondary
     {
         CompactSecondary(int32_t size) { m_size = size; }

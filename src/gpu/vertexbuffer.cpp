@@ -367,7 +367,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         uint32_t reg = attribs[n].m_flags >> 32;
 
 #   if !defined __CELLOS_LV2__
-        if (reg != 0xffffffff)
+        if (reg != 0xffffffffu)
             glEnableVertexAttribArray((GLint)reg);
 #   else
         switch (usage.ToScalar())

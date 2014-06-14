@@ -557,8 +557,8 @@ AC_CONFIG_FILES(
   people/peeweek/Makefile
   people/benlitz/Makefile
   people/benlitz/test1/Makefile
-  people/benlitz/private/voxel/Makefile
-  people/benlitz/private/lolui/Makefile
+  people/benlitz/voxel/Makefile
+  people/benlitz/lolui/Makefile
   people/touky/Makefile
   people/touky/sprite_sorter/Makefile
   people/touky/squad_shooter/Makefile
