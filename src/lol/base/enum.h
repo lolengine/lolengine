@@ -14,7 +14,7 @@
 namespace lol
 {
 
-extern Map<int64_t, String> BuildEnumMap(char const *str);
+extern Map<int64_t, String> BuildEnumMap(char const *str, char const **custom);
 
 template<typename BASE, typename T = typename BASE::Type>
 class SafeEnum : public BASE
@@ -39,7 +39,7 @@ public:
         static bool ready = false;
 
         if (!ready)
-            map = BuildEnumMap(BASE::GetDescription());
+            map = BuildEnumMap(BASE::GetDescription(), BASE::GetCustomString());
         ready = true;
 
         if (map.HasKey((int64_t)m_value))
@@ -74,12 +74,29 @@ public:
     }
 };
 
+#define LOL_OPEN_SAFE_ENUM(name, ...) \
+    struct name ## Base \
+    { \
+        enum Type {__VA_ARGS__}; \
+    protected: \
+        static inline char const *GetDescription() { return #__VA_ARGS__; }
+#define LOL_SAFE_ENUM_CUSTOM_TOSTRING(...) \
+        static inline char const **GetCustomString() \
+        { \
+            static char const *custom_list[] = { __VA_ARGS__ }; \
+            return &custom_list[0]; \
+        }
+#define LOL_CLOSE_SAFE_ENUM(name) \
+    }; \
+    typedef SafeEnum<name ## Base> name;
+
 #define LOL_SAFE_ENUM(name, ...) \
     struct name ## Base \
     { \
         enum Type {__VA_ARGS__}; \
     protected: \
-        static inline char const *GetDescription() { return #__VA_ARGS__; } \
+        static inline char const *GetDescription()      { return #__VA_ARGS__; } \
+        static inline char const **GetCustomString()    { return nullptr; } \
     }; \
     typedef SafeEnum<name ## Base> name;
 
