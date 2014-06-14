@@ -41,7 +41,7 @@ LOLUNIT_FIXTURE(ImageTest)
         LOLUNIT_ASSERT_EQUAL((int)data[255 * 4 + 1], 0xff);
         LOLUNIT_ASSERT_EQUAL((int)data[255 * 4 + 2], 0xff);
 
-        Image::Destroy(image);
+        image->Destroy();
     }
 };
 
