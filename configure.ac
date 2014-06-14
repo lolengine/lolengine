@@ -560,13 +560,12 @@ AC_CONFIG_FILES(
   people/benlitz/private/voxel/Makefile
   people/benlitz/private/lolui/Makefile
   people/touky/Makefile
-  people/touky/private/Makefile
-  people/touky/private/sprite_sorter/Makefile
-  people/touky/private/squad_shooter/Makefile
-  people/touky/private/touky_demo/Makefile
-  people/touky/private/tactics/Makefile
-  people/touky/private/the_unfortunate_voronoid/Makefile
-  people/touky/private/workbench/Makefile
+  people/touky/sprite_sorter/Makefile
+  people/touky/squad_shooter/Makefile
+  people/touky/touky_demo/Makefile
+  people/touky/tactics/Makefile
+  people/touky/the_unfortunate_voronoid/Makefile
+  people/touky/workbench/Makefile
   people/jylam/Makefile
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile
