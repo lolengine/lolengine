@@ -72,8 +72,10 @@ class ThreadJob
     friend class BaseThreadManager;
 
 public:
-    ThreadJob()                             { m_type = ThreadJobType::NONE; }
-    ThreadJob(ThreadJobType type)           { m_type = type; }
+    inline ThreadJob() : m_type(ThreadJobType::NONE) {}
+    inline ThreadJob(ThreadJobType type) : m_type(type) {}
+    virtual ~ThreadJob() {}
+
     ThreadJobType GetJobType()              { return m_type; }
     void SetJobType(ThreadJobType type)     { m_type = type; }
     bool operator==(const ThreadJobType& o) { return GetJobType() == o; }
