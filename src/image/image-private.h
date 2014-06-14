@@ -21,7 +21,7 @@ namespace lol
 
 class ImageCodec
 {
-    friend class ImageLoader;
+    friend class ImageBank;
     friend class ImageData;
 
 public:
@@ -69,7 +69,7 @@ private:
 class ImageData
 {
     friend class Image;
-    friend class ImageLoader;
+    friend class ImageBank;
 
 public:
     inline ImageData()

@@ -190,7 +190,7 @@ void TileSet::TickDraw(float seconds)
     {
         if (m_data->m_image)
         {
-            Image::Destroy(m_data->m_image);
+            m_data->m_image->Destroy();
             m_data->m_image = nullptr;
         }
         else
@@ -223,7 +223,7 @@ void TileSet::TickDraw(float seconds)
 
         if (pixels != m_data->m_image->GetData())
             delete[] pixels;
-        Image::Destroy(m_data->m_image);
+        m_data->m_image->Destroy();
         m_data->m_image = nullptr;
     }
 }

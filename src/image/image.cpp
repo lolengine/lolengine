@@ -58,29 +58,27 @@ static bool RegisterAllLoaders()
  * Our static image loader
  */
 
-static class ImageLoader
+static class ImageBank
 {
 public:
     void Init();
     Image *Create(char const *path);
-    Image *Get(char const *path);
-    Image *Load(char const *path);
-    Image *Store(char const *path, Image *image);
-    void Destroy(Image *img);
+
+    void Unref(Image *img);
 
 private:
     Map<String, Image *> m_images;
 }
-image_loader;
+g_image_bank;
 
-void ImageLoader::Init()
+void ImageBank::Init()
 {
     /* Initialise loaders (see above) */
     static bool init = RegisterAllLoaders();
     UNUSED(init);
 }
 
-Image *ImageLoader::Create(char const *path)
+Image *ImageBank::Create(char const *path)
 {
     Init();
 
@@ -93,7 +91,8 @@ Image *ImageLoader::Create(char const *path)
     }
     else
     {
-        m_images[path] = Load(path);
+        m_images[path] = new Image();
+        m_images[path]->m_data = ImageCodec::Load(path);
         img = m_images[path];
     }
 
@@ -101,35 +100,7 @@ Image *ImageLoader::Create(char const *path)
     return img;
 }
 
-Image *ImageLoader::Get(char const *path)
-{
-    /* Is our image already in the bank? If so, no need to create it. */
-    Image *img;
-    if (m_images.HasKey(path))
-    {
-        img = m_images[path];
-        ++img->m_data->m_refcount;
-        return img;
-    }
-
-    return nullptr;
-}
-
-Image *ImageLoader::Load(char const *path)
-{
-    Image* img = new Image();
-    img->m_data = ImageCodec::Load(path);
-    return img;
-}
-
-Image *ImageLoader::Store(char const *path, Image *image)
-{
-    m_images[path] = image;
-    ++image->m_data->m_refcount;
-    return image;
-}
-
-void ImageLoader::Destroy(Image *img)
+void ImageBank::Unref(Image *img)
 {
     ASSERT(img->m_data->m_refcount > 0);
     if (--img->m_data->m_refcount == 0)
@@ -151,22 +122,7 @@ void ImageLoader::Destroy(Image *img)
 
 Image *Image::Create(char const *path)
 {
-    return image_loader.Create(path);
-}
-
-Image *Image::Store(char const *path, Image *img)
-{
-    return image_loader.Store(path, img);
-}
-
-Image *Image::Load(char const *path)
-{
-    return image_loader.Load(path);
-}
-
-void Image::Destroy(Image *img)
-{
-    return image_loader.Destroy(img);
+    return g_image_bank.Create(path);
 }
 
 /*
@@ -176,6 +132,11 @@ void Image::Destroy(Image *img)
 Image::Image()
   : m_data(nullptr)
 {
+}
+
+void Image::Destroy()
+{
+    g_image_bank.Unref(this);
 }
 
 bool Image::Save(char const *path)

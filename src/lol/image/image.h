@@ -23,15 +23,14 @@ namespace lol
 
 class Image
 {
-    friend class ImageLoader;
+    friend class ImageBank;
 
 public:
     static Image *Create(char const *path);
-    static Image *Store(char const *path, Image *img);
-    static Image *Load(char const *path);
-    static void Destroy(Image *img);
 
     bool Save(char const *path);
+    void Destroy();
+
     ivec2 GetSize() const;
     PixelFormat GetFormat() const;
     uint8_t *GetData() const;
