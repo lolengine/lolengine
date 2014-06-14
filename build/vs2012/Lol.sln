@@ -106,7 +106,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neercs", "..\..\tools\neerc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Touky", "Touky", "{9EA99B18-D352-47F6-BC04-A0B49CAA2772}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touky_demo", "..\..\people\touky\private\touky_demo\touky_demo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touky_demo", "..\..\people\touky\touky_demo\touky_demo.vcxproj", "{EE203B88-44CF-4859-9D42-7A5F43FECB52}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "btphystest", "..\..\test\btphystest.vcxproj", "{EE203B88-44CF-4859-9D42-7A1F43FECB52}"
 EndProject
@@ -136,11 +136,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benlitzTest1", "..\..\peopl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meshviewer", "..\..\test\meshviewer.vcxproj", "{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tactics", "..\..\people\touky\private\tactics\tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tactics", "..\..\people\touky\tactics\tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_Voronoi", "..\..\demos\tutorial\12_Voronoi.vcxproj", "{6BF81B39-EDC2-4227-9982-C2D8ABEA95AF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "the_unfortunate_voronoid", "..\..\people\touky\private\the_unfortunate_voronoid\the_unfortunate_voronoid.vcxproj", "{6BF81B39-EDC2-4127-9982-C2D8ABEA95AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "the_unfortunate_voronoid", "..\..\people\touky\the_unfortunate_voronoid\the_unfortunate_voronoid.vcxproj", "{6BF81B39-EDC2-4127-9982-C2D8ABEA95AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol.js", "..\..\demos\lol.js\lol.js.vcxproj", "{AA376B9B-484B-4DC4-982F-6CFA645E441E}"
 EndProject
@@ -166,11 +166,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jylam", "Jylam", "{454DE15C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chat", "..\..\people\jylam\private\chat\chat.vcxproj", "{C3E2D690-F2B4-4A11-B317-D5CB8EF9561A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "workbench", "..\..\people\touky\private\workbench\workbench.vcxproj", "{EE203B88-44CF-4829-9D42-7A5F43FECB52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "workbench", "..\..\people\touky\workbench\workbench.vcxproj", "{EE203B88-44CF-4829-9D42-7A5F43FECB52}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sprite_sorter", "..\..\people\touky\private\sprite_sorter\sprite_sorter.vcxproj", "{7422B977-CA61-49BF-A586-F57B6FF9BD64}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sprite_sorter", "..\..\people\touky\sprite_sorter\sprite_sorter.vcxproj", "{7422B977-CA61-49BF-A586-F57B6FF9BD64}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "squad_shooter", "..\..\people\touky\private\squad_shooter\squad_shooter.vcxproj", "{DB344310-4938-4294-AEE2-18512454585D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "squad_shooter", "..\..\people\touky\squad_shooter\squad_shooter.vcxproj", "{DB344310-4938-4294-AEE2-18512454585D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pimp", "Pimp", "{2195FB18-53BF-48AF-96B6-9BD242924EA5}"
 EndProject
@@ -726,32 +726,24 @@ Global
 		{DB344310-4938-4294-AEE2-18512454585D}.Release|x64.ActiveCfg = Release|x64
 		{DB344310-4938-4294-AEE2-18512454585D}.Release|x64.Build.0 = Release|x64
 		{DB344310-4938-4294-AEE2-18512454585D}.Release|Xbox 360.ActiveCfg = Release|Win32
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|ORBIS.ActiveCfg = Debug|ORBIS
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|ORBIS.Build.0 = Debug|ORBIS
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|PS3.ActiveCfg = Debug|PS3
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|PS3.Build.0 = Debug|PS3
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|ORBIS.ActiveCfg = Debug|Win32
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|PS3.ActiveCfg = Debug|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Win32.ActiveCfg = Debug|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Win32.Build.0 = Debug|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Win32.Deploy.0 = Debug|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|x64.ActiveCfg = Debug|x64
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|x64.Build.0 = Debug|x64
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|x64.Deploy.0 = Debug|x64
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|ORBIS.ActiveCfg = Release|ORBIS
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|ORBIS.Build.0 = Release|ORBIS
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|PS3.ActiveCfg = Release|PS3
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|PS3.Build.0 = Release|PS3
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Debug|Xbox 360.ActiveCfg = Debug|Win32
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|ORBIS.ActiveCfg = Release|Win32
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|PS3.ActiveCfg = Release|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Win32.ActiveCfg = Release|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Win32.Build.0 = Release|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Win32.Deploy.0 = Release|Win32
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|x64.ActiveCfg = Release|x64
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|x64.Build.0 = Release|x64
 		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|x64.Deploy.0 = Release|x64
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{FFF58874-D460-41E6-AD65-DBFEC6E47A94}.Release|Xbox 360.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
