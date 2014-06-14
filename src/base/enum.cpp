@@ -21,11 +21,12 @@ namespace lol
  * Safe enum helpers
  */
 
-Map<int64_t, String> BuildEnumMap(char const *str)
+Map<int64_t, String> BuildEnumMap(char const *str, char const **custom)
 {
     Map<int64_t, String> ret;
     char const *parser = str;
     int64_t next_value = 0;
+    int64_t cur_idx = 0;
 
     for (;;)
     {
@@ -58,8 +59,9 @@ Map<int64_t, String> BuildEnumMap(char const *str)
         }
 
         /* Store in the map */
-        ret[current_value] = String(name, (int)(name_end - name));
+        ret[current_value] = (!custom) ? (String(name, (int)(name_end - name))) : (String(custom[cur_idx]));
         next_value = current_value + 1;
+        cur_idx++;
     }
 
     return ret;
