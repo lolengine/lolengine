@@ -27,6 +27,8 @@ public:
     IndexBuffer(size_t size);
     ~IndexBuffer();
 
+    size_t GetSize();
+
     void *Lock(size_t offset, size_t size);
     void Unlock();
 

@@ -99,6 +99,7 @@ public:
 protected:
     //Work stuff
     bool AddWork(ThreadJob* job);
+
     //Fetch Results
     bool FetchResult(Array<ThreadJob*>& results);
     //Base thread work function

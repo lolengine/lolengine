@@ -90,10 +90,10 @@ private:
 
 class ShaderData;
 
-class Shader
+class Shader : public Entity
 {
 public:
-    static Shader *Create(char const *lolfx);
+    static Shader *Create(String const &name, String const &code);
     static void Destroy(Shader *shader);
 
     int GetAttribCount() const;
@@ -122,7 +122,7 @@ public:
     void Unbind() const;
 
 protected:
-    Shader(char const *vert, char const *frag);
+    Shader(String const &name, char const *vert, char const *frag);
     ~Shader();
 
 private:

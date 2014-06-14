@@ -22,6 +22,8 @@
 #include "core.h"
 #include "easymesh/easymesh-compiler.h"
 
+LOLFX_RESOURCE_DECLARE(shiny);
+
 namespace lol
 {
 
@@ -40,7 +42,6 @@ EasyMesh::EasyMesh(const EasyMesh& em)
     m_vert = em.m_vert;
     m_cursors = em.m_cursors;
     m_build_data = nullptr;
-    m_gpu_data = GpuEasyMeshData();
     if (em.m_build_data)
         m_build_data = new EasyMeshBuildData(*em.m_build_data);
     if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
@@ -62,6 +63,49 @@ bool EasyMesh::Compile(char const *command, bool Execute)
             ExecuteCmdStack();
     }
     return res;
+}
+
+void EasyMesh::MeshConvert()
+{
+    /* Default material */
+    Shader *shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+
+    /* Push index buffer to GPU */
+    IndexBuffer *ibo = new IndexBuffer(m_indices.Count() * sizeof(uint16_t));
+    uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
+    for (int i = 0; i < m_indices.Count(); ++i)
+        indices[i] = m_indices[i];
+    ibo->Unlock();
+
+    /* Push vertex buffer to GPU */
+    struct Vertex
+    {
+        vec3 pos, normal;
+        u8vec4 color;
+        vec4 texcoord;
+    };
+
+    VertexDeclaration *vdecl = new VertexDeclaration(
+        VertexStream<vec3, vec3, u8vec4, vec4>(VertexUsage::Position,
+                                               VertexUsage::Normal,
+                                               VertexUsage::Color,
+                                               VertexUsage::TexCoord));
+
+    VertexBuffer *vbo = new VertexBuffer(m_vert.Count() * sizeof(Vertex));
+    Vertex *vert = (Vertex *)vbo->Lock(0, 0);
+    for (int i = 0; i < m_vert.Count(); ++i)
+    {
+        vert[i].pos = m_vert[i].m_coord,
+        vert[i].normal = m_vert[i].m_normal,
+        vert[i].color = (u8vec4)(m_vert[i].m_color * 255.f);
+        vert[i].texcoord = m_vert[i].m_texcoord;
+    }
+    vbo->Unlock();
+
+    /* Reference our new data in our submesh */
+    m_submeshes.Push(new SubMesh(shader, vdecl));
+    m_submeshes.Last()->SetIndexBuffer(ibo);
+    m_submeshes.Last()->SetVertexBuffer(0, vbo);
 }
 
 //-----------------------------------------------------------------------------
@@ -227,51 +271,6 @@ void EasyMesh::CloseBrace()
     }
 
     m_cursors.Pop();
-}
-//-----------------------------------------------------------------------------
-void EasyMesh::MeshConvert(GpuShaderData* new_gpu_sdata)
-{
-    delete(m_build_data);
-    m_build_data = nullptr;
-
-    if (new_gpu_sdata)
-    {
-        m_gpu_data.AddGpuData(new_gpu_sdata, this);
-        for (int i = DebugRenderMode::Default; i < DebugRenderMode::Max; i++)
-            if (!m_gpu_data.HasData(i))
-                m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
-    }
-    m_state = MeshRender::CanRender;
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::MeshConvert(Shader* provided_shader)
-{
-    if (provided_shader)
-    {
-        GpuShaderData *new_gpu_sdata = new DefaultShaderData(((1 << VertexUsage::Position) |
-                                                              (1 << VertexUsage::Normal) |
-                                                              (1 << VertexUsage::Color)),
-                                                              provided_shader,
-                                                              false);
-        m_gpu_data.AddGpuData(new_gpu_sdata, this);
-    }
-    else
-        m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode::Default), this);
-    for (int i = DebugRenderMode::Default + 1; i < DebugRenderMode::Max; i++)
-        m_gpu_data.AddGpuData(new DefaultShaderData(DebugRenderMode(i)), this);
-    m_state = MeshRender::CanRender;
-}
-
-//-----------------------------------------------------------------------------
-bool EasyMesh::Render(mat4 const &model, int render_mode)
-{
-    if (m_state == MeshRender::CanRender)
-    {
-        m_gpu_data.RenderMeshData(model, render_mode);
-        return true;
-    }
-    return false;
 }
 
 //-----------------------------------------------------------------------------

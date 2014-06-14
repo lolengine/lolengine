@@ -84,6 +84,8 @@ class ShaderData
     friend class Shader;
 
 private:
+    String m_name;
+
 #if defined USE_D3D9
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexShader9 *vert_shader;
@@ -98,6 +100,7 @@ private:
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
     Map<uint64_t, GLint> attrib_locations;
+    Map<uint64_t, bool> attrib_errors;
 #else
     CGprogram vert_id, frag_id;
 #endif
@@ -121,16 +124,14 @@ int ShaderData::nshaders = 0;
  * Public Shader class
  */
 
-Shader *Shader::Create(char const *lolfx)
+Shader *Shader::Create(String const &name, String const &code)
 {
-    char *src = new char[strlen(lolfx) + 2];
-    memcpy(src + 1, lolfx, strlen(lolfx) + 1);
-    src[0] = '\n';
+    String src = String("\n") + code;
 
     /* Parse the crap */
     Array<char const *, char const *> sections;
     char *key = nullptr;
-    for (char *parser = src; *parser; )
+    for (char *parser = src.C(); *parser; )
     {
         if (key == nullptr && (parser[0] == '\n' || parser[0] == '\r')
              && parser[1] == '[')
@@ -173,9 +174,11 @@ Shader *Shader::Create(char const *lolfx)
 
     /* FIXME: we don’t know how to handle these yet. */
     if (!vert)
-        Log::Error("no vertex shader found… sorry, I’m gonna crash now.\n");
+        Log::Error("no vertex shader found in %s… sorry, I’m gonna crash now.\n",
+                   name.C());
     if (!frag)
-        Log::Error("no fragment shader found… sorry, I’m gonna crash now.\n");
+        Log::Error("no fragment shader found in %s… sorry, I’m gonna crash now.\n",
+                   name.C());
 
     uint32_t new_vert_crc = ShaderData::hash(vert);
     uint32_t new_frag_crc = ShaderData::hash(frag);
@@ -185,16 +188,14 @@ Shader *Shader::Create(char const *lolfx)
         if (ShaderData::shaders[n]->data->vert_crc == new_vert_crc
              && ShaderData::shaders[n]->data->frag_crc == new_frag_crc)
         {
-            delete[] src;
             return ShaderData::shaders[n];
         }
     }
 
-    Shader *ret = new Shader(vert, frag);
+    Shader *ret = new Shader(name, vert, frag);
     ShaderData::shaders[ShaderData::nshaders] = ret;
     ShaderData::nshaders++;
 
-    delete[] src;
     return ret;
 }
 
@@ -204,9 +205,12 @@ void Shader::Destroy(Shader *shader)
     UNUSED(shader);
 }
 
-Shader::Shader(char const *vert, char const *frag)
+Shader::Shader(String const &name,
+               char const *vert, char const *frag)
   : data(new ShaderData())
 {
+    data->m_name = name;
+
 #if defined USE_D3D9 || defined _XBOX
     ID3DXBuffer *shader_code, *error_msg;
     HRESULT hr;
@@ -243,7 +247,7 @@ Shader::Shader(char const *vert, char const *frag)
                            &data->vert_table);
     if (FAILED(hr))
     {
-        Log::Error("failed to compile vertex shader: %s",
+        Log::Error("failed to compile vertex shader %s: %s\n", name.C(),
                    error_msg ? error_msg->GetBufferPointer() : "error");
         Log::Error("shader source:\n%s\n", vert);
     }
@@ -261,12 +265,13 @@ Shader::Shader(char const *vert, char const *frag)
     glGetShaderiv(data->vert_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to compile vertex shader: %s", errbuf);
+        Log::Error("failed to compile vertex shader %s: %s\n",
+                   name.C(), errbuf);
         Log::Error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
-        Log::Debug("compile log for vertex shader: %s", errbuf);
+        Log::Debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
         Log::Debug("shader source:\n%s\n", shader_code.C());
     }
 #else
@@ -275,7 +280,7 @@ Shader::Shader(char const *vert, char const *frag)
                                     nullptr, nullptr);
     if (data->vert_id == nullptr)
     {
-        Log::Error("failed to compile vertex shader");
+        Log::Error("failed to compile vertex shader %s\n", name.C());
         Log::Error("shader source:\n%s\n", vert);
     }
 #endif
@@ -288,7 +293,7 @@ Shader::Shader(char const *vert, char const *frag)
                            &data->frag_table);
     if (FAILED(hr))
     {
-        Log::Error("failed to compile fragment shader: %s",
+        Log::Error("failed to compile fragment shader %s: %s\n", name.C(),
                    error_msg ? error_msg->GetBufferPointer() : "error");
         Log::Error("shader source:\n%s\n", frag);
     }
@@ -306,12 +311,14 @@ Shader::Shader(char const *vert, char const *frag)
     glGetShaderiv(data->frag_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to compile fragment shader: %s", errbuf);
+        Log::Error("failed to compile fragment shader %s: %s\n",
+                   name.C(), errbuf);
         Log::Error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
-        Log::Debug("compile log for fragment shader: %s", errbuf);
+        Log::Debug("compile log for fragment shader %s: %s\n",
+                   name.C(), errbuf);
         Log::Debug("shader source:\n%s\n", shader_code.C());
     }
 #else
@@ -320,7 +327,7 @@ Shader::Shader(char const *vert, char const *frag)
                                     nullptr, nullptr);
     if (data->frag_id == nullptr)
     {
-        Log::Error("failed to compile fragment shader");
+        Log::Error("failed to compile fragment shader %s\n", name.C());
         Log::Error("shader source:\n%s\n", frag);
     }
 #endif
@@ -355,11 +362,11 @@ Shader::Shader(char const *vert, char const *frag)
     glGetProgramiv(data->prog_id, GL_LINK_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to link program: %s", errbuf);
+        Log::Error("failed to link program %s: %s\n", name.C(), errbuf);
     }
     else if (len > 16)
     {
-        Log::Debug("link log for program: %s", errbuf);
+        Log::Debug("link log for program %s: %s\n", name.C(), errbuf);
     }
 
     GLint validated;
@@ -367,7 +374,7 @@ Shader::Shader(char const *vert, char const *frag)
     glGetProgramiv(data->prog_id, GL_VALIDATE_STATUS, &validated);
     if (validated != GL_TRUE)
     {
-        Log::Error("failed to validate program");
+        Log::Error("failed to validate program %s\n", name.C());
     }
 
     GLint num_attribs;
@@ -413,10 +420,11 @@ Shader::Shader(char const *vert, char const *frag)
             uint64_t flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
             flags |= (uint64_t)(uint16_t)index;
             // TODO: this is here just in case. Remove this once everything has been correctly tested
-#ifdef _DEBUG
+#if _DEBUG
             if (data->attrib_locations.HasKey(flags))
             {
-                Log::Error("an error occured while parsing attribute semantics");
+                Log::Error("error while parsing attribute semantics in %s\n",
+                           name.C());
             }
 #endif
             data->attrib_locations[flags] = location;
@@ -444,11 +452,17 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
 #elif !defined __CELLOS_LV2__
-    GLint l;
+    GLint l = -1;
 
     if (!data->attrib_locations.TryGetValue(ret.m_flags, l))
     {
-        Log::Error("queried attribute is unavailable for this shader");
+        /* Only spit an error once, we don’t need to flood the console. */
+        if (!data->attrib_errors.HasKey(ret.m_flags))
+        {
+            Log::Error("attribute %s not found in shader %s\n",
+                       usage.ToString().C(), data->m_name.C());
+            data->attrib_errors[ret.m_flags] = true;
+        }
     }
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
 #else

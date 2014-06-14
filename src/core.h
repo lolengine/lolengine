@@ -137,8 +137,10 @@ static inline int isnan(float f)
 
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \
-    extern "C" char const *LOLFX_RESOURCE_NAME(name)
-#define LOLFX_RESOURCE_NAME(name) lolfx_resource_##name
+    extern "C" char const *lolfx_resource_##name
+#define LOLFX_RESOURCE_HELPER(name) #name ".lolfx"
+#define LOLFX_RESOURCE_NAME(name) \
+    LOLFX_RESOURCE_HELPER(name), lolfx_resource_##name
 
 /* If using NaCl or Android, override main() with our version */
 #if defined __native_client__

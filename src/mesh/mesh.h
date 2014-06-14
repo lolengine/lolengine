@@ -31,9 +31,12 @@ public:
     Mesh();
     ~Mesh();
 
-    void Render(mat4 const &model);
+    /* FIXME: this should eventually take a “material” as argument, which
+     * may behave differently between submeshes. */
+    void SetMaterial(Shader *shader);
+    void Render();
 
-private:
+public:
     Array<class SubMesh *> m_submeshes;
 };
 
@@ -42,24 +45,31 @@ private:
  *  - a vertex declaration
  *  - a list of VBOs
  *  - a list of textures
+ *  - a shader
  */
 
 class SubMesh
 {
 public:
-    SubMesh(VertexDeclaration* vdecl);
+    SubMesh(Shader *shader, VertexDeclaration* vdecl);
     ~SubMesh();
 
     void SetMeshPrimitive(MeshPrimitive mesh_primitive);
+    void SetShader(Shader *shader);
+    Shader *GetShader();
+    void SetVertexDeclaration(VertexDeclaration *vdecl);
     void SetVertexBuffer(int index, VertexBuffer* vbo);
+    void SetIndexBuffer(IndexBuffer* ibo);
     void AddTexture(const char* name, Texture* texture);
 
-    void Render(Shader* shader);
+    void Render();
 
 protected:
-    VertexDeclaration* m_vdecl;
     MeshPrimitive m_mesh_prim;
+    Shader *m_shader;
+    VertexDeclaration* m_vdecl;
     Array<VertexBuffer *> m_vbos;
+    IndexBuffer *m_ibo;
 
     Array<String, Texture*> m_textures;
 };

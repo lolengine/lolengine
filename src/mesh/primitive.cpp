@@ -24,9 +24,8 @@ namespace lol
  * Primitive class
  */
 
-Primitive::Primitive(Mesh *mesh, Shader *shader, mat4 const &matrix)
-  : m_mesh(mesh),
-    m_shader(shader),
+Primitive::Primitive(SubMesh *submesh, mat4 const &matrix)
+  : m_submesh(submesh),
     m_matrix(matrix)
 {
 }

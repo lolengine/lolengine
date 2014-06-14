@@ -23,6 +23,7 @@ BaseThreadManager::BaseThreadManager(int thread_count)
 {
     m_thread_count = thread_count;
 }
+
 BaseThreadManager::~BaseThreadManager()
 {
     Stop();
@@ -68,6 +69,7 @@ bool BaseThreadManager::AddWork(ThreadJob* job)
         return true;
     return false;
 }
+
 bool BaseThreadManager::FetchResult(Array<ThreadJob*>& results)
 {
     ThreadJob* result;
