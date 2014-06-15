@@ -39,10 +39,10 @@ namespace lol
     bool  TestEpsilon::operator>=(float value)const             { return (value >= Minus()); }
     bool operator==(float value, const TestEpsilon& epsilon)    { return epsilon == value; }
     bool operator!=(float value, const TestEpsilon& epsilon)    { return epsilon != value; }
-    bool operator<(float value, const TestEpsilon& epsilon)     { return epsilon <  value; }
-    bool operator<=(float value, const TestEpsilon& epsilon)    { return epsilon <= value; }
-    bool operator>(float value, const TestEpsilon& epsilon)     { return epsilon >  value; }
-    bool operator>=(float value, const TestEpsilon& epsilon)    { return epsilon >= value; }
+    bool operator<(float value, const TestEpsilon& epsilon)     { return epsilon >  value; }
+    bool operator<=(float value, const TestEpsilon& epsilon)    { return epsilon >= value; }
+    bool operator>(float value, const TestEpsilon& epsilon)     { return epsilon <  value; }
+    bool operator>=(float value, const TestEpsilon& epsilon)    { return epsilon <= value; }
 
     // Line/triangle : sets isec_p as the intersection point & return true if ok.
     bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
