@@ -26,7 +26,12 @@ class Image
     friend class ImageBank;
 
 public:
-    static Image *Create(char const *path);
+    //Create/Load/Store image into bank.    THREAD: NOT SAFE
+    static Image*   Create(char const *path);
+    //Create/Load image into bank.          THREAD: SAFE
+    static Image*   Load(char const *path);
+    //Store image into bank.                THREAD: NOT SAFE
+    static bool     Store(Image *img);
 
     bool Save(char const *path);
     void Destroy();
@@ -34,13 +39,15 @@ public:
     ivec2 GetSize() const;
     PixelFormat GetFormat() const;
     uint8_t *GetData() const;
+    String GetPath() const;
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
 private:
-    Image();
+    Image(char const* path);
     ~Image();
 
     class ImageData *m_data;
+    String m_path;
 };
 
 } /* namespace lol */

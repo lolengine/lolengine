@@ -63,6 +63,8 @@ static class ImageBank
 public:
     void Init();
     Image *Create(char const *path);
+    bool Store(Image *img);
+    Image *Load(char const *path);
 
     void Unref(Image *img);
 
@@ -80,8 +82,6 @@ void ImageBank::Init()
 
 Image *ImageBank::Create(char const *path)
 {
-    Init();
-
     /* Is our image already in the bank? If so, no need to create it. */
     Image *img;
 
@@ -91,13 +91,33 @@ Image *ImageBank::Create(char const *path)
     }
     else
     {
-        m_images[path] = new Image();
-        m_images[path]->m_data = ImageCodec::Load(path);
-        img = m_images[path];
+        img = Load(path);
+        m_images[path] = img;
     }
 
     ++img->m_data->m_refcount;
     return img;
+}
+
+Image *ImageBank::Load(char const *path)
+{
+    Init();
+
+    Image *img = new Image(path);
+    img->m_data = ImageCodec::Load(img->GetPath().C());
+    return img;
+}
+
+bool ImageBank::Store(Image *img)
+{
+    /* Is our image already in the bank? If so, no need to create it. */
+    if (m_images.HasKey(img->GetPath().C()))
+        return false;
+
+    m_images[img->GetPath().C()] = img;
+
+    ++img->m_data->m_refcount;
+    return true;
 }
 
 void ImageBank::Unref(Image *img)
@@ -125,13 +145,24 @@ Image *Image::Create(char const *path)
     return g_image_bank.Create(path);
 }
 
+Image *Image::Load(char const *path)
+{
+    return g_image_bank.Load(path);
+}
+
+bool Image::Store(Image *img)
+{
+    return g_image_bank.Store(img);
+}
+
 /*
  * Public Image class
  */
 
-Image::Image()
+Image::Image(char const* path)
   : m_data(nullptr)
 {
+    m_path = path;
 }
 
 void Image::Destroy()
@@ -157,6 +188,11 @@ PixelFormat Image::GetFormat() const
 uint8_t *Image::GetData() const
 {
     return m_data->GetData();
+}
+
+String Image::GetPath() const
+{
+    return m_path;
 }
 
 bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
