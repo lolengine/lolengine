@@ -31,12 +31,12 @@ namespace lol
     const TestEpsilon& TestEpsilon::F(float value)              { g_test_epsilon.m_value = value; return g_test_epsilon; }
     float TestEpsilon::Minus()const                             { return m_value - m_epsilon; }
     float TestEpsilon::Plus() const                             { return m_value + m_epsilon; }
-    bool  TestEpsilon::operator==(float value)const             { return (Minus() <= value && value <= Plus()); }
-    bool  TestEpsilon::operator!=(float value)const             { return (value < Minus() || Plus() < value); }
-    bool  TestEpsilon::operator<(float value) const             { return (value < Minus()); }
-    bool  TestEpsilon::operator<=(float value)const             { return (value <= Plus()); }
-    bool  TestEpsilon::operator>(float value) const             { return (value > Plus()); }
-    bool  TestEpsilon::operator>=(float value)const             { return (value >= Minus()); }
+    bool  TestEpsilon::operator==(float value)const             { return (Minus() <= value   && value  <= Plus()); }
+    bool  TestEpsilon::operator!=(float value)const             { return (value   <  Minus() || Plus() <  value); }
+    bool  TestEpsilon::operator<(float value) const             { return (Plus()  <  value); }
+    bool  TestEpsilon::operator<=(float value)const             { return (Minus() <= value); }
+    bool  TestEpsilon::operator>(float value) const             { return (Minus() >  value); }
+    bool  TestEpsilon::operator>=(float value)const             { return (Plus()  >= value); }
     bool operator==(float value, const TestEpsilon& epsilon)    { return epsilon == value; }
     bool operator!=(float value, const TestEpsilon& epsilon)    { return epsilon != value; }
     bool operator<(float value, const TestEpsilon& epsilon)     { return epsilon >  value; }
