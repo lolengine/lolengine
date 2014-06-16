@@ -110,7 +110,7 @@ liblolcore_sources = \
     sys/init.cpp sys/timer.cpp sys/file.cpp \
     sys/thread.cpp sys/threadbase.h \
     \
-    image/image.cpp image/image-private.h image/stock.cpp \
+    image/image.cpp image/image-private.h image/stock.cpp image/pixels.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
     image/codec/sdl-image.cpp image/codec/ios-image.cpp \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
