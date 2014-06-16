@@ -171,45 +171,18 @@ template<> mat4 inverse(mat4 const &mat)
     return ret;
 }
 
-template<> void vec2::printf() const
-{
-    Log::Debug("[ %6.6f %6.6f ]\n", x, y);
-}
+#define LOL_PRINTF_TOSTRING(type, ...) \
+template<> void type::printf() const        { Log::Debug(__VA_ARGS__); } \
+template<> String type::tostring() const    { return String::Printf(__VA_ARGS__); }
 
-template<> void ivec2::printf() const
-{
-    Log::Debug("[ %i %i ]\n", x, y);
-}
-
-template<> void cmplx::printf() const
-{
-    Log::Debug("[ %6.6f %6.6f ]\n", x, y);
-}
-
-template<> void vec3::printf() const
-{
-    Log::Debug("[ %6.6f %6.6f %6.6f ]\n", x, y, z);
-}
-
-template<> void ivec3::printf() const
-{
-    Log::Debug("[ %i %i %i ]\n", x, y, z);
-}
-
-template<> void vec4::printf() const
-{
-    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
-}
-
-template<> void ivec4::printf() const
-{
-    Log::Debug("[ %i %i %i %i ]\n", x, y, z, w);
-}
-
-template<> void quat::printf() const
-{
-    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f ]\n", w, x, y, z);
-}
+LOL_PRINTF_TOSTRING(vec2,   "[ %6.6f %6.6f ]\n", x, y);
+LOL_PRINTF_TOSTRING(ivec2,  "[ %i %i ]\n", x, y);
+LOL_PRINTF_TOSTRING(cmplx,  "[ %6.6f %6.6f ]\n", x, y);
+LOL_PRINTF_TOSTRING(vec3,   "[ %6.6f %6.6f %6.6f ]\n", x, y, z);
+LOL_PRINTF_TOSTRING(ivec3,  "[ %i %i %i ]\n", x, y, z);
+LOL_PRINTF_TOSTRING(vec4,   "[ %6.6f %6.6f %6.6f %6.6f ]\n", x, y, z, w);
+LOL_PRINTF_TOSTRING(ivec4,  "[ %i %i %i %i ]\n", x, y, z, w);
+LOL_PRINTF_TOSTRING(quat,   "[ %6.6f %6.6f %6.6f %6.6f ]\n", w, x, y, z);
 
 template<> void mat2::printf() const
 {
@@ -219,6 +192,14 @@ template<> void mat2::printf() const
     Log::Debug("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
 }
 
+template<> String mat2::tostring() const
+{
+    mat2 const &p = *this;
+
+    return String::Printf("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
+           String::Printf("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+}
+
 template<> void mat3::printf() const
 {
     mat3 const &p = *this;
@@ -226,6 +207,15 @@ template<> void mat3::printf() const
     Log::Debug("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]);
     Log::Debug("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]);
     Log::Debug("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
+}
+
+template<> String mat3::tostring() const
+{
+    mat3 const &p = *this;
+
+    return String::Printf("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
+           String::Printf("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
+           String::Printf("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
 template<> void mat4::printf() const
@@ -240,6 +230,20 @@ template<> void mat4::printf() const
                p[0][2], p[1][2], p[2][2], p[3][2]);
     Log::Debug("  %6.6f %6.6f %6.6f %6.6f ]\n",
                p[0][3], p[1][3], p[2][3], p[3][3]);
+}
+
+template<> String mat4::tostring() const
+{
+    mat4 const &p = *this;
+
+    return String::Printf("[ %6.6f %6.6f %6.6f %6.6f\n",
+                            p[0][0], p[1][0], p[2][0], p[3][0]) +
+           String::Printf("  %6.6f %6.6f %6.6f %6.6f\n",
+                            p[0][1], p[1][1], p[2][1], p[3][1]) +
+           String::Printf("  %6.6f %6.6f %6.6f %6.6f\n",
+                            p[0][2], p[1][2], p[2][2], p[3][2]) +
+           String::Printf("  %6.6f %6.6f %6.6f %6.6f ]\n",
+                            p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 
 template<> std::ostream &operator<<(std::ostream &stream, ivec2 const &v)
