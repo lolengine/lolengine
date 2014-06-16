@@ -27,7 +27,7 @@ void ArrayBase<T, ARRAY>::Sort(int sort)
         int d = 1;
         for (int i = 0; i < Count() - 1; i = lol::max(i + d, 0))
         {
-            if (m_data[i] < m_data[i + 1] || i <= 0)
+            if (i <= 0 || m_data[i] < m_data[i + 1])
                 d = 1;
             if (m_data[i + 1] < m_data[i])
             {
@@ -72,7 +72,7 @@ void ArrayBase<T, ARRAY>::SortQuickSwap(int start, int stop)
     bool swap = false;
     while (i0 < i1)
     {
-        if (m_data[i0] >= median && m_data[i1] < median)
+        if (!(m_data[i0] < median) && m_data[i1] < median)
         {
             Swap(i0, i1);
             i0++;
@@ -83,7 +83,7 @@ void ArrayBase<T, ARRAY>::SortQuickSwap(int start, int stop)
         {
             if (m_data[i0] < median)
                 i0++;
-            if (m_data[i1] >= median)
+            if (!(m_data[i1] < median))
                 i1--;
         }
     }
