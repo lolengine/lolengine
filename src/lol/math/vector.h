@@ -178,7 +178,8 @@ template<typename T, int N> struct XVec4
         return ret; \
     } \
     \
-    void printf() const;
+    void printf() const; \
+    String tostring() const;
 
 /*
  * 2-element vectors
@@ -1616,6 +1617,7 @@ template <typename T> struct Mat2
     }
 
     void printf() const;
+    String tostring() const;
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat2<U> const &m);
@@ -1742,6 +1744,7 @@ template <typename T> struct Mat3
     }
 
     void printf() const;
+    String tostring() const;
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat3<U> const &m);
@@ -1915,6 +1918,7 @@ template <typename T> struct Mat4
     static Mat4<T> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
 
     void printf() const;
+    String tostring() const;
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
