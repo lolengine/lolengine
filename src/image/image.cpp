@@ -20,7 +20,7 @@ using namespace std;
 namespace lol
 {
 
-/* HACK: We cannot make this an ImageCodec member function, because the
+/* HACK: We cannot make this an ImageLoader member function, because the
  * REGISTER_IMAGE_CODEC macro forward-declares free functions from
  * the "lol" namespace. An apparent bug in Visual Studio's compiler
  * makes it think these functions are actually in the top-level
@@ -50,6 +50,9 @@ static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
 #endif
     REGISTER_IMAGE_CODEC(ZedImageCodec)
     REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
+#if defined USE_IMLIB2
+    REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
+#endif
 
     return true;
 }
@@ -58,42 +61,21 @@ static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
  * Our static image loader
  */
 
-static class ImageBank
+static class ImageLoader
 {
-public:
-    ImageBank();
+    friend class Image;
 
-    bool Load(Image *image, char const *path);
-    bool Save(Image *image, char const *path);
+public:
+    inline ImageLoader()
+    {
+        RegisterAllCodecs(m_codecs);
+    }
 
 private:
     Array<ImageCodec *> m_codecs;
     Map<String, Image *> m_images;
 }
-g_image_bank;
-
-ImageBank::ImageBank()
-{
-    RegisterAllCodecs(m_codecs);
-}
-
-bool ImageBank::Load(Image *image, char const *path)
-{
-    /* FIXME: priority is ignored */
-    for (auto codec : m_codecs)
-        if (codec->Load(image, path))
-            return true;
-    return false;
-}
-
-bool ImageBank::Save(Image *image, char const *path)
-{
-    /* FIXME: priority is ignored */
-    for (auto codec : m_codecs)
-        if (codec->Save(image, path))
-            return true;
-    return false;
-}
+g_image_loader;
 
 /*
  * Public Image class
@@ -116,6 +98,29 @@ Image::Image(ivec2 size)
     SetSize(size);
 }
 
+Image::Image (Image const &other)
+  : m_data(new ImageData())
+{
+    ivec2 size = other.GetSize();
+    PixelFormat fmt = other.GetFormat();
+
+    SetSize(size);
+    if (fmt != PixelFormat::Unknown)
+    {
+        SetFormat(fmt);
+        void *psrc = other.m_data->m_pixels[(int)fmt];
+        void *pdst = m_data->m_pixels[(int)fmt];
+        memcpy(pdst, psrc, size.x * size.y * BytesPerPixel(fmt));
+    }
+}
+
+Image & Image::operator =(Image other)
+{
+    /* Since the argument is passed by value, we’re assured it’s a new
+     * object and we can safely swap our m_data pointers. */
+    std::swap(m_data, other.m_data);
+}
+
 Image::~Image()
 {
     delete m_data;
@@ -123,12 +128,18 @@ Image::~Image()
 
 bool Image::Load(char const *path)
 {
-    return g_image_bank.Load(this, path);
+    for (auto codec : g_image_loader.m_codecs)
+        if (codec->Load(this, path))
+            return true;
+    return false;
 }
 
 bool Image::Save(char const *path)
 {
-    return g_image_bank.Save(this, path);
+    for (auto codec : g_image_loader.m_codecs)
+        if (codec->Save(this, path))
+            return true;
+    return false;
 }
 
 ivec2 Image::GetSize() const
@@ -148,11 +159,10 @@ void Image::SetSize(ivec2 size)
     }
     m_data->m_size = size;
 
-    /* FIXME: don’t do this! */
+    /* FIXME: don’t do this! It’s useless. */
     if (m_data->m_format != PixelFormat::Unknown)
     {
-        Lock<PixelFormat::RGBA_8>();
-        Unlock();
+        Unlock(Lock<PixelFormat::RGBA_8>());
     }
 }
 
@@ -161,31 +171,45 @@ PixelFormat Image::GetFormat() const
     return m_data->m_format;
 }
 
-/* The Lock() method and its explicit specialisations */
+void Image::SetFormat(PixelFormat fmt)
+{
+    /* If we never used this format, allocate a new buffer: we will
+     * obviously need it. */
+    if (m_data->m_pixels[(int)fmt] == nullptr)
+    {
+        int bytes = m_data->m_size.x * m_data->m_size.y * BytesPerPixel(fmt);
+        m_data->m_pixels[(int)fmt] = new uint8_t[bytes];
+    }
+
+    /* If the requested format is different from the current format, and if
+     * the current format is a valid format, convert pixels. */
+    if (fmt != m_data->m_format && m_data->m_format != PixelFormat::Unknown)
+    {
+        /* TODO: convert data */
+    }
+    m_data->m_format = fmt;
+}
+
+/* The Lock() method */
 template<PixelFormat T>
 typename PixelType<T>::type *Image::Lock()
 {
-    /* TODO: convert data if this doesn’t match */
-    ASSERT(m_data->m_format == T || m_data->m_format == PixelFormat::Unknown);
-    m_data->m_format = (PixelFormat)T;
-
-    if (!m_data->m_pixels.HasKey((int)T))
-    {
-        m_data->m_pixels[(int)T] =
-          new typename PixelType<T>::type[m_data->m_size.x * m_data->m_size.y];
-    }
+    SetFormat(T);
 
     return (typename PixelType<T>::type *)m_data->m_pixels[(int)T];
 }
 
-template PixelType<PixelFormat::Y_8>::type *
-Image::Lock<PixelFormat::Y_8>();
-template PixelType<PixelFormat::RGB_8>::type *
-Image::Lock<PixelFormat::RGB_8>();
-template PixelType<PixelFormat::RGBA_8>::type *
-Image::Lock<PixelFormat::RGBA_8>();
+/* Explicit specialisations for the above template */
+#define _T(T) template PixelType<T>::type *Image::Lock<T>()
+_T(PixelFormat::Y_8);
+_T(PixelFormat::RGB_8);
+_T(PixelFormat::RGBA_8);
+_T(PixelFormat::Y_F32);
+_T(PixelFormat::RGB_F32);
+_T(PixelFormat::RGBA_F32);
+#undef _T
 
-/* Special case for the "any" format */
+/* Special case for the "any" format: return the last active buffer */
 template<>
 void *Image::Lock<PixelFormat::Unknown>()
 {
@@ -194,10 +218,17 @@ void *Image::Lock<PixelFormat::Unknown>()
     return m_data->m_pixels[(int)m_data->m_format];
 }
 
-void Image::Unlock()
+void Image::Unlock(void const *pixels)
 {
-    /* TODO: ensure we are actually unlocking something we locked */
     ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
+
+    /* Ensure that the unlocked data is inside the buffer */
+    uintptr_t start = (uintptr_t)m_data->m_pixels[(int)m_data->m_format];
+    uintptr_t end = start + m_data->m_size.x * m_data->m_size.y
+                                 * BytesPerPixel(m_data->m_format);
+
+    ASSERT(start <= (uintptr_t)pixels);
+    ASSERT((uintptr_t)pixels <= end);
 }
 
 bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const

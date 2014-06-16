@@ -75,7 +75,7 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
         pixels->a = (i == 0) ? 0 : 255;
         ++pixels;
     }
-    image->Unlock();
+    image->Unlock(pixels);
 
     return true;
 }

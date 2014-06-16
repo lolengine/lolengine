@@ -31,7 +31,9 @@ public:
 
     ivec2 m_size;
 
+    /* A map of the various available bitplanes */
     Map<int, void *> m_pixels;
+    /* The last bitplane being accessed for writing */
     PixelFormat m_format;
 };
 

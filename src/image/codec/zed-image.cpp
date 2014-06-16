@@ -40,7 +40,6 @@ public:
     }
 
 private:
-    uint8_t *m_pixels;
     //<Pos, Size>
     Array<ivec2, ivec2> m_tiles;
 };
@@ -295,7 +294,7 @@ bool ZedImageCodec::Load(Image *image, char const *path)
             j++;
         }
     }
-    image->Unlock();
+    image->Unlock(pixels);
 
     return true;
 }

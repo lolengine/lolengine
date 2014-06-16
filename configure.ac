@@ -429,15 +429,15 @@ fi
 AM_CONDITIONAL(USE_CACA, test "${ac_cv_my_have_caca}" != "no")
 
 
-dnl Use libpipi? (required for video recording)
-ac_cv_my_have_pipi="no"
-PKG_CHECK_MODULES(PIPI, pipi, [ac_cv_my_have_pipi="yes"], [:])
-if test "${ac_cv_my_have_pipi}" != "no"; then
-  AC_DEFINE(USE_PIPI, 1, Define to 1 to use libpipi)
-  LOL_CFLAGS="${LOL_CFLAGS} ${PIPI_CFLAGS}"
-  LOL_LIBS="${LOL_LIBS} ${PIPI_LIBS}"
+# Use Imlib2?
+ac_cv_my_have_imlib2="no"
+PKG_CHECK_MODULES(IMLIB2, imlib2, [ac_cv_my_have_imlib2="yes"], [:])
+if test "${ac_cv_my_have_imlib2}" != "no"; then
+  AC_DEFINE(USE_IMLIB2, 1, Define to 1 to use Imlib2)
+  LOL_CFLAGS="${LOL_CFLAGS} ${IMLIB2_CFLAGS}"
+  LOL_LIBS="${LOL_LIBS} ${IMLIB2_LIBS}"
 fi
-AM_CONDITIONAL(USE_PIPI, test "${ac_cv_my_have_pipi}" != "no")
+AM_CONDITIONAL(USE_IMLIB2, test "${ac_cv_my_have_imlib2}" = "yes")
 
 
 dnl Use GTK+? (required for the deushax editor)

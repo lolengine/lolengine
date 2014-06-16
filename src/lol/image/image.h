@@ -25,6 +25,9 @@ template <PixelFormat T> struct PixelType { typedef void type; };
 template<> struct PixelType<PixelFormat::Y_8> { typedef uint8_t type; };
 template<> struct PixelType<PixelFormat::RGB_8> { typedef u8vec3 type; };
 template<> struct PixelType<PixelFormat::RGBA_8> { typedef u8vec4 type; };
+template<> struct PixelType<PixelFormat::Y_F32> { typedef float type; };
+template<> struct PixelType<PixelFormat::RGB_F32> { typedef vec3 type; };
+template<> struct PixelType<PixelFormat::RGBA_F32> { typedef vec4 type; };
 
 class Image
 {
@@ -34,6 +37,10 @@ public:
     /* XXX: use of this ctor should be discouraged, as it will not
      * return information about a possible error. */
     Image(char const *path);
+
+    /* Rule of three */
+    Image (Image const &other);
+    Image & operator =(Image other);
     ~Image();
 
     bool Load(char const *path);
@@ -43,8 +50,11 @@ public:
     void SetSize(ivec2);
 
     PixelFormat GetFormat() const;
-    template<PixelFormat T> typename PixelType<T>::type *Lock();
-    void Unlock();
+    void SetFormat(PixelFormat fmt);
+
+    template<PixelFormat T = PixelFormat::Unknown>
+        typename PixelType<T>::type *Lock();
+    void Unlock(void const *pixels);
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 

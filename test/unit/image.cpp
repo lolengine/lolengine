@@ -41,7 +41,7 @@ LOLUNIT_FIXTURE(ImageTest)
         LOLUNIT_ASSERT_EQUAL((int)data[255].g, 0xff);
         LOLUNIT_ASSERT_EQUAL((int)data[255].b, 0xff);
 
-        image.Unlock();
+        image.Unlock(data);
     }
 };
 
