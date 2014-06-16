@@ -1,285 +1,158 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
 
-/*
- * pixels.c: pixel-level image manipulation
- */
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-#include "config.h"
+#include "core.h"
+#include "image-private.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <math.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-static void init_tables(void);
-
-static double global_gamma = 2.2;
-static int done = 0;
-
-static float u8tof32_table[256];
-static inline float u8tof32(uint8_t p) { return u8tof32_table[(int)p]; }
-
-/* Return a direct pointer to an image's pixels. */
-pipi_pixels_t *pipi_get_pixels(pipi_image_t *img, pipi_format_t type)
+namespace lol
 {
-    size_t bytes = 0;
-    int x, y, i, bpp = 0;
 
-    if(type < 0 || type >= PIPI_PIXELS_MAX)
-        return NULL;
+static vec4 u8tof32(u8vec4 pixel)
+{
+    //vec4 ret;
+    //ret.r = pow((float)pixel.r / 255.f, global_gamma);
+    //ret.g = pow((float)pixel.g / 255.f, global_gamma);
+    //ret.b = pow((float)pixel.b / 255.f, global_gamma);
+    return (vec4)pixel / 255.f;
+}
 
-    if(img->last_modified == type)
-        return &img->p[type];
+static u8vec4 f32tou8(vec4 pixel)
+{
+    return (u8vec4)(pixel * 255.99f);
+}
 
-    /* Handle special cases */
-    if(type == PIPI_PIXELS_MASK_U8)
-        return &img->p[type];
+/*
+ * Pixel-level image manipulation
+ */
 
-    /* Preliminary conversions */
-    if(img->last_modified == PIPI_PIXELS_RGBA_U8
-                  && type == PIPI_PIXELS_Y_F32)
-        pipi_get_pixels(img, PIPI_PIXELS_RGBA_F32);
-    else if(img->last_modified == PIPI_PIXELS_BGR_U8
-                       && type == PIPI_PIXELS_Y_F32)
-        pipi_get_pixels(img, PIPI_PIXELS_RGBA_F32);
-    else if(img->last_modified == PIPI_PIXELS_Y_F32
-                       && type == PIPI_PIXELS_RGBA_U8)
-        pipi_get_pixels(img, PIPI_PIXELS_RGBA_F32);
-    else if(img->last_modified == PIPI_PIXELS_Y_F32
-                       && type == PIPI_PIXELS_BGR_U8)
-        pipi_get_pixels(img, PIPI_PIXELS_RGBA_F32);
+PixelFormat Image::GetFormat() const
+{
+    return m_data->m_format;
+}
 
-    /* Allocate pixels if necessary */
-    if(!img->p[type].pixels)
+void Image::SetFormat(PixelFormat fmt)
+{
+    ivec2 size = GetSize();
+    int count = size.x * size.y;
+
+    /* Set the new active pixel format */
+    PixelFormat old_fmt = m_data->m_format;
+    m_data->m_format = fmt;
+
+    /* If we never used this format, allocate a new buffer: we will
+     * obviously need it. */
+    if (m_data->m_pixels[(int)fmt] == nullptr)
     {
-        switch(type)
-        {
-        case PIPI_PIXELS_RGBA_U8:
-            bytes = img->w * img->h * 4 * sizeof(uint8_t);
-            bpp = 4 * sizeof(uint8_t);
-            break;
-        case PIPI_PIXELS_BGR_U8:
-            bytes = img->w * img->h * 3 * sizeof(uint8_t);
-            bpp = 3 * sizeof(uint8_t);
-            break;
-        case PIPI_PIXELS_RGBA_F32:
-            bytes = img->w * img->h * 4 * sizeof(float);
-            bpp = 4 * sizeof(float);
-            break;
-        case PIPI_PIXELS_Y_F32:
-            bytes = img->w * img->h * sizeof(float);
-            bpp = sizeof(float);
-            break;
-        default:
-            return NULL;
-        }
-
-        img->p[type].pixels = malloc(bytes);
-        img->p[type].bytes = bytes;
-        img->p[type].bpp = bpp;
-        img->p[type].w = img->w;
-        img->p[type].h = img->h;
+        m_data->m_pixels[(int)fmt] = new uint8_t[count * BytesPerPixel(fmt)];
     }
+
+    /* If the requested format is already the current format, or if the
+     * current format is invalid, there is nothing to convert. */
+    if (fmt == old_fmt || old_fmt == PixelFormat::Unknown)
+        return;
+
+#if 0
+    /* Preliminary conversions */
+    if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::Y_F32)
+        pipi_get_pixels(img, PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::BGR_U8 && fmt == PixelFormat::Y_F32)
+        pipi_get_pixels(img, PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_8)
+        pipi_get_pixels(img, PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::BGR_U8)
+        pipi_get_pixels(img, PixelFormat::RGBA_F32);
+#endif
 
     /* Convert pixels */
-    if(img->last_modified == PIPI_PIXELS_RGBA_U8
-                  && type == PIPI_PIXELS_RGBA_F32)
+    if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::RGBA_F32)
     {
-        uint8_t *src = (uint8_t *)img->p[PIPI_PIXELS_RGBA_U8].pixels;
-        float *dest = (float *)img->p[type].pixels;
+        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt];
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt];
 
-        init_tables();
-
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-                for(i = 0; i < 4; i++)
-                    dest[4 * (y * img->w + x) + i]
-                        = u8tof32(src[4 * (y * img->w + x) + i]);
+        for (int n = 0; n < count; ++n)
+            dest[n] = u8tof32(src[n]);
     }
-    else if(img->last_modified == PIPI_PIXELS_BGR_U8
-                       && type == PIPI_PIXELS_RGBA_F32)
+    else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::RGBA_F32)
     {
-        uint8_t *src = (uint8_t *)img->p[PIPI_PIXELS_BGR_U8].pixels;
-        float *dest = (float *)img->p[type].pixels;
+        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt];
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt];
 
-        init_tables();
-
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-            {
-                dest[4 * (y * img->w + x)]
-                    = u8tof32(src[3 * (y * img->w + x) + 2]);
-                dest[4 * (y * img->w + x) + 1]
-                    = u8tof32(src[3 * (y * img->w + x) + 1]);
-                dest[4 * (y * img->w + x) + 2]
-                    = u8tof32(src[3 * (y * img->w + x)]);
-                dest[4 * (y * img->w + x) + 3] = 1.0;
-            }
+        for (int n = 0; n < count; ++n)
+            dest[n] = u8tof32(u8vec4(src[n], 255));
     }
-    else if(img->last_modified == PIPI_PIXELS_RGBA_F32
-                       && type == PIPI_PIXELS_RGBA_U8)
+    else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::RGBA_8)
     {
-        float *src = (float *)img->p[PIPI_PIXELS_RGBA_F32].pixels;
-        uint8_t *dest = (uint8_t *)img->p[type].pixels;
+        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt];
+        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt];
 
+        for (int n = 0; n < count; ++n)
+            dest[n] = f32tou8(src[n]);
+#if 0
         init_tables();
 
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-                for(i = 0; i < 4; i++)
+        for (int y = 0; y < size.y; y++)
+            for (int x = 0; x < size.x; x++)
+                for (i = 0; i < 4; i++)
                 {
                     double p, e;
                     uint8_t d;
 
-                    p = src[4 * (y * img->w + x) + i];
+                    p = src[4 * (y * size.x + x) + i];
 
-                    if(p < 0.) d = 0.;
-                    else if(p > 1.) d = 255;
+                    if (p < 0.) d = 0.;
+                    else if (p > 1.) d = 255;
                     else d = (int)(255.999 * pow(p, 1. / global_gamma));
 
-                    dest[4 * (y * img->w + x) + i] = d;
+                    dest[4 * (y * size.x + x) + i] = d;
 
                     e = (p - u8tof32(d)) / 16;
-                    if(x < img->w - 1)
-                        src[4 * (y * img->w + x + 1) + i] += e * 7;
-                    if(y < img->h - 1)
+                    if (x < size.x - 1)
+                        src[4 * (y * size.x + x + 1) + i] += e * 7;
+                    if (y < size.y - 1)
                     {
-                        if(x > 0)
-                            src[4 * ((y + 1) * img->w + x - 1) + i] += e * 3;
-                        src[4 * ((y + 1) * img->w + x) + i] += e * 5;
-                        if(x < img->w - 1)
-                            src[4 * ((y + 1) * img->w + x + 1) + i] += e;
+                        if (x > 0)
+                            src[4 * ((y + 1) * size.x + x - 1) + i] += e * 3;
+                        src[4 * ((y + 1) * size.x + x) + i] += e * 5;
+                        if (x < size.x - 1)
+                            src[4 * ((y + 1) * size.x + x + 1) + i] += e;
                     }
                 }
+#endif
     }
-    else if(img->last_modified == PIPI_PIXELS_RGBA_F32
-                       && type == PIPI_PIXELS_BGR_U8)
+    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_F32)
     {
-        float *src = (float *)img->p[PIPI_PIXELS_RGBA_F32].pixels;
-        uint8_t *dest = (uint8_t *)img->p[type].pixels;
+        float *src = (float *)m_data->m_pixels[(int)old_fmt];
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt];
 
-        init_tables();
-
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-                for(i = 0; i < 3; i++)
-                {
-                    double p, e;
-                    uint8_t d;
-
-                    p = src[4 * (y * img->w + x) + i];
-
-                    if(p < 0.) d = 0.;
-                    else if(p > 1.) d = 255;
-                    else d = (int)(255.999 * pow(p, 1. / global_gamma));
-
-                    dest[3 * (y * img->w + x) + i] = d;
-
-                    e = (p - u8tof32(d)) / 16;
-                    if(x < img->w - 1)
-                        src[4 * (y * img->w + x + 1) + i] += e * 7;
-                    if(y < img->h - 1)
-                    {
-                        if(x > 0)
-                            src[4 * ((y + 1) * img->w + x - 1) + i] += e * 3;
-                        src[4 * ((y + 1) * img->w + x) + i] += e * 5;
-                        if(x < img->w - 1)
-                            src[4 * ((y + 1) * img->w + x + 1) + i] += e;
-                    }
-                }
+        for (int n = 0; n < count; ++n)
+            dest[n] = vec4(vec3(src[n]), 1.0f);
     }
-    else if(img->last_modified == PIPI_PIXELS_Y_F32
-                       && type == PIPI_PIXELS_RGBA_F32)
+    else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::Y_F32)
     {
-        float *src = (float *)img->p[PIPI_PIXELS_Y_F32].pixels;
-        float *dest = (float *)img->p[PIPI_PIXELS_RGBA_F32].pixels;
+        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt];
+        float *dest = (float *)m_data->m_pixels[(int)fmt];
 
-        init_tables();
+        vec3 const coeff(0.299f, 0.587f, 0.114f);
 
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-            {
-                float p = src[y * img->w + x];
-                dest[4 * (y * img->w + x)] = p;
-                dest[4 * (y * img->w + x) + 1] = p;
-                dest[4 * (y * img->w + x) + 2] = p;
-                dest[4 * (y * img->w + x) + 3] = 1.0;
-            }
-    }
-    else if(img->last_modified == PIPI_PIXELS_RGBA_F32
-                       && type == PIPI_PIXELS_Y_F32)
-    {
-        float *src = (float *)img->p[PIPI_PIXELS_RGBA_F32].pixels;
-        float *dest = (float *)img->p[PIPI_PIXELS_Y_F32].pixels;
-
-        init_tables();
-
-        for(y = 0; y < img->h; y++)
-            for(x = 0; x < img->w; x++)
-            {
-                float p = 0.;
-                p += 0.299 * src[4 * (y * img->w + x)];
-                p += 0.587 * src[4 * (y * img->w + x) + 1];
-                p += 0.114 * src[4 * (y * img->w + x) + 2];
-                dest[y * img->w + x] = p;
-            }
+        for (int n = 0; n < count; ++n)
+            dest[n] = dot(coeff, src[n].rgb);
     }
     else
     {
-        memset(img->p[type].pixels, 0, bytes);
-    }
-
-    img->last_modified = type;
-
-    return &img->p[type];
-}
-
-void pipi_release_pixels(pipi_image_t *img, pipi_pixels_t *p)
-{
-    return;
-}
-
-void pipi_set_colorspace(pipi_image_t *img, pipi_format_t fmt)
-{
-    pipi_pixels_t *p = pipi_get_pixels(img, fmt);
-    pipi_release_pixels(img, p);
-}
-
-void pipi_set_gamma(double g)
-{
-    if(g > 0.)
-    {
-        global_gamma = g;
-        done = 0;
+        ASSERT(false, "Unable to find proper conversion");
     }
 }
 
-static void init_tables(void)
-{
-    int i;
-
-    if(done)
-        return;
-
-    for(i = 0; i < 256; i++)
-        u8tof32_table[i] = pow((double)i / 255., global_gamma);
-
-    done = 1;
-}
+} /* namespace lol */
 

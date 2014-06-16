@@ -10,6 +10,8 @@
 
 Image:
   - Handle pitch in SDL codec (and all others, actually)
+  - Fix the Floyd-Steinberg ode in pixels.cpp
+  - Add gamma handling in pixels.cpp
   - port libpipi files:
      · accessors.cpp
      · analysis/histogram.cpp
@@ -55,7 +57,6 @@ Image:
      · pipi-stubs.h
      · pipi-template.h
      · pipi-types.h
-     · pixels.cpp
      · quantize/reduce.cpp
      · resample/bicubic.cpp
      · resample/bresenham.cpp
