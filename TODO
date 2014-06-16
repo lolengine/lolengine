@@ -1,42 +1,68 @@
 
-Important stuff
----------------
-[ ] Add scripting support (lua?).
-[ ] Open several maps at the same time.
-[ ] See whether we should use floats or at least subpixel coordinates for
-    on-screen objects, in order to handle velocity and other physics stuff
-    (with rounding when displaying, of course)
+ Large projects
+----------------
 
-Needed for game
----------------
-[ ] Something to move a character around.
-  - [ ] Joystick input.
-  - [ ] Event listeners for keyboard or joystick.
-[ ] Map collisions!
-  - [ ] Find where to store world collisions
-  - [ ] Handle entity/world collisions
-  - [ ] Handle entity/entity collisions
-[ ] Pathfinding
+ - Add scripting support (lua?).
+ - Tiler and Forge are almost the same, try to refactor them.
 
-Performance
------------
-[ ] Switch rendering to vertex/index buffer objects
+ Engine classes
+----------------
 
-Editor
-------
-[ ] File requester for maps.
-[X] Scroller/panner for maps.
-[ ] Allow to modify maps.
-[X] Do GTK stuff instead of waiting for the framerate
-[X] "map viewer" object/asset, as opposed to more complex in-game manager
-
-Specs
------
-[ ] Write a map file format.
-[ ] Add special zones to the map.
-
-Architecture
-------------
-[ ] Tiler and Forge are almost the same, try to refactor them.
-
+Image:
+  - Handle pitch in SDL codec (and all others, actually)
+  - port libpipi files:
+     · accessors.cpp
+     · pipi-stubs.h
+     · render/noise.cpp
+     · render/screen.cpp
+     · tiles.cpp
+     · pipi-internals.h
+     · pipi-template.h
+     · paint/rectangle.cpp
+     · paint/line.cpp
+     · paint/floodfill.cpp
+     · paint/bezier.cpp
+     · paint/tile.cpp
+     · pipi-types.h
+     · stock.cpp
+     · context.cpp
+     · pipi.h
+     · dither.cpp
+     · colorstring.cpp
+     · codec/coreimage.cpp
+     · codec/coreimage.h
+     · codec/oric.cpp
+     · codec/jpeg.cpp
+     · resample/bresenham.cpp
+     · resample/bicubic.cpp
+     · quantize/reduce.cpp
+     · analysis/histogram.cpp
+     · analysis/measure.cpp
+     · crop.cpp
+     · pipi.cpp
+     · codec.cpp
+     · dither/ediff.cpp
+     · dither/ostromoukhov.cpp
+     · dither/random.cpp
+     · dither/ordered.cpp
+     · dither/dbs.cpp
+     · sequence.cpp
+     · filter/convolution.cpp
+     · filter/wave.cpp
+     · filter/dilate.cpp
+     · filter/color.cpp
+     · filter/blur.cpp
+     · filter/yuv.cpp
+     · filter/autocontrast.cpp
+     · filter/median.cpp
+     · filter/rotate.cpp
+     · filter/transform.cpp
+     · filter/sharpen.cpp
+     · combine/rgb.cpp
+     · combine/blit.cpp
+     · combine/minmax.cpp
+     · combine/subadd.cpp
+     · combine/merge.cpp
+     · combine/mulscreen.cpp
+     · pixels.cpp
 

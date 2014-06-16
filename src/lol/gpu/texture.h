@@ -23,11 +23,14 @@ enum class PixelFormat
 {
     /* XXX: make sure to update texture.cpp when this changes */
     Unknown = 0,
+    Y_8,
     RGB_8,
     RGBA_8,
     ARGB_8,
     ABGR_8,
-    Y_8,
+    Y_F32,
+    RGB_F32,
+    RGBA_F32,
 };
 
 static inline uint8_t BytesPerPixel(PixelFormat format)
@@ -41,8 +44,15 @@ static inline uint8_t BytesPerPixel(PixelFormat format)
     case PixelFormat::RGBA_8:
     case PixelFormat::ARGB_8:
     case PixelFormat::ABGR_8:
-    default:
         return 4;
+    case PixelFormat::Y_F32:
+        return 4;
+    case PixelFormat::RGB_F32:
+        return 12;
+    case PixelFormat::RGBA_F32:
+        return 16;
+    default:
+        return 1;
     }
 };
 

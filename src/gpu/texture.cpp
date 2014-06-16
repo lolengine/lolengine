@@ -92,18 +92,24 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
         /* FIXME: this is all mixed up for the RGBA/ARGB combinations */
 #   if defined USE_D3D9
+        { D3DFMT_L8, 1 },       /* Y8 */
         { D3DFMT_R8G8B8, 3 },   /* RGB_8 */
         { D3DFMT_A8R8G8B8, 4 }, /* RGBA_8 */
         { D3DFMT_A8R8G8B8, 4 }, /* ARGB_8 */
         { D3DFMT_UNKNOWN, 0 },  /* ABGR_8 */
-        { D3DFMT_L8, 1 },       /* Y8 */
+        { D3DFMT_UNKNOWN, 0 },  /* Y_F32 */
+        { D3DFMT_UNKNOWN, 0 },  /* RGB_F32 */
+        { D3DFMT_UNKNOWN, 0 },  /* RGBA_F32 */
 #   else
+        { D3DFMT_LIN_L8, 1 },
         { D3DFMT_UNKNOWN, 0 },
         { D3DFMT_UNKNOWN, 0 },
         /* By default the X360 will swizzle the texture. Ask for linear. */
         { D3DFMT_LIN_A8R8G8B8, 4 },
         { D3DFMT_UNKNOWN, 0 },
-        { D3DFMT_LIN_L8, 1 },
+        { D3DFMT_UNKNOWN, 0 },  /* Y_F32 */
+        { D3DFMT_UNKNOWN, 0 },  /* RGB_F32 */
+        { D3DFMT_UNKNOWN, 0 },  /* RGBA_F32 */
 #   endif
     };
 
@@ -133,27 +139,30 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
         /* FIXME: this is all mixed up for the RGBA/ARGB combinations */
 #if __CELLOS_LV2__
+        { GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
         { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, 4 },
         { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, 4 },
         { GL_ARGB_SCE, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, 4 },
-        { GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
 #elif defined __native_client__ || defined HAVE_GLES_2X
+        { GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
         { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
         /* FIXME: if GL_RGBA is not available, we should advertise
          * this format as "not available" on this platform. */
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
-        { GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
 #else
+        { GL_R8, GL_RED, GL_UNSIGNED_BYTE, 1 }, /* A8 */
         { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 }, /* RGB_8 */
         /* Seems efficient for little endian textures */
         { GL_RGBA8, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ARGB_8 */
         { GL_RGBA8, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ARGB_8 */
         { GL_RGBA8, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 4 }, /* ABGR_8 */
-        { GL_R8, GL_RED, GL_UNSIGNED_BYTE, 1 }, /* A8 */
 #endif
+        { 0, 0, 0, 0 }, /* Y_F32 */
+        { 0, 0, 0, 0 }, /* RGB_F32 */
+        { 0, 0, 0, 0 }, /* RGBA_F32 */
     };
 
     m_data->m_internal_format = GET_CLAMPED(gl_formats, format).internal_format;

@@ -52,7 +52,7 @@ bool DummyImageCodec::Load(Image *image, char const *path)
             pixels->a = (((i >> 4) ^ (j >> 4)) & 1) * 0xff;
             ++pixels;
         }
-    image->Unlock();
+    image->Unlock(pixels);
 
     return true;
 }

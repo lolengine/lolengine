@@ -111,8 +111,8 @@ liblolcore_sources = \
     sys/thread.cpp sys/threadbase.h \
     \
     image/image.cpp image/image-private.h \
-    image/codec/gdiplus-image.cpp \
-    image/codec/ios-image.cpp \
+    image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
+    image/codec/sdl-image.cpp image/codec/ios-image.cpp \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
     image/codec/dummy-image.cpp \
     image/color/cie1931.cpp \
@@ -123,7 +123,6 @@ liblolcore_sources = \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 
 sdl_sources = \
-    image/codec/sdl-image.cpp \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
 

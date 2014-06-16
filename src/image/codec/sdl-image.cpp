@@ -48,10 +48,6 @@ public:
 
 DECLARE_IMAGE_CODEC(SdlImageCodec, 50)
 
-/*
- * Public Image class
- */
-
 bool SdlImageCodec::Load(Image *image, char const *path)
 {
     SDL_Surface *surface = nullptr;
@@ -85,7 +81,7 @@ bool SdlImageCodec::Load(Image *image, char const *path)
     image->SetSize(size);
     u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
     memcpy(data, surface->pixels, 4 * size.x * size.y);
-    image->Unlock();
+    image->Unlock(data);
 
     SDL_FreeSurface(surface);
 
@@ -99,7 +95,7 @@ bool SdlImageCodec::Save(Image *image, char const *path)
 
     u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
     memcpy(surface->pixels, data, 4 * size.x * size.y);
-    image->Unlock();
+    image->Unlock(data);
 
     int ret = SDL_SaveBMP(surface, path);
     SDL_FreeSurface(surface);
