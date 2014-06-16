@@ -15,8 +15,6 @@
 #include "core.h"
 #include "image-private.h"
 
-using namespace std;
-
 namespace lol
 {
 
@@ -196,8 +194,7 @@ void Image::SetFormat(PixelFormat fmt)
 }
 
 /* The Lock() method */
-template<PixelFormat T>
-typename PixelType<T>::type *Image::Lock()
+template<PixelFormat T> typename PixelType<T>::type *Image::Lock()
 {
     SetFormat(T);
 
@@ -215,8 +212,7 @@ _T(PixelFormat::RGBA_F32);
 #undef _T
 
 /* Special case for the "any" format: return the last active buffer */
-template<>
-void *Image::Lock<PixelFormat::Unknown>()
+template<> void *Image::Lock<PixelFormat::Unknown>()
 {
     ASSERT(m_data->m_format != PixelFormat::Unknown);
 

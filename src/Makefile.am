@@ -110,13 +110,13 @@ liblolcore_sources = \
     sys/init.cpp sys/timer.cpp sys/file.cpp \
     sys/thread.cpp sys/threadbase.h \
     \
-    image/image.cpp image/image-private.h \
+    image/image.cpp image/image-private.h image/stock.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
     image/codec/sdl-image.cpp image/codec/ios-image.cpp \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
     image/codec/dummy-image.cpp \
-    image/color/cie1931.cpp \
-    image/color/color.cpp \
+    image/color/cie1931.cpp image/color/color.cpp \
+    image/render/noise.cpp image/render/screen.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \

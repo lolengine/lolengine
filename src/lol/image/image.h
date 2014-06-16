@@ -39,13 +39,14 @@ public:
     Image(char const *path);
 
     /* Rule of three */
-    Image (Image const &other);
+    Image(Image const &other);
     Image & operator =(Image other);
     ~Image();
 
     bool Load(char const *path);
     bool Save(char const *path);
 
+    /* Low level access */
     ivec2 GetSize() const;
     void SetSize(ivec2);
 
@@ -57,6 +58,16 @@ public:
     void Unlock(void const *pixels);
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
+
+    /* Rendering */
+    bool Stock(char const *desc);
+    bool RenderBayer(ivec2 size);
+    bool RenderHalftone(ivec2 size);
+    bool RenderRandom(ivec2 size);
+
+    /* Image processing */
+
+
 
 private:
     class ImageData *m_data;

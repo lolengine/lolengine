@@ -1,201 +1,193 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2013 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * stock.c: stock images
+ * Stock images
  */
 
-#include "config.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_load_stock(char const *name)
+namespace lol
 {
-    pipi_image_t *ret;
-    pipi_pixels_t *pix;
 
+bool Image::Stock(char const *name)
+{
     /* Generate a Bayer dithering pattern. */
-    if(!strncmp(name, "bayer:", 6))
+    if (!strncmp(name, "bayer:", 6))
     {
-        int w, h = 0;
-
-        w = atoi(name + 6);
+        ivec2 size(0);
+        size.x = atoi(name + 6);
         name = strchr(name + 6, 'x');
-        if(name)
-            h = atoi(name + 1);
-        if(!h)
-            h = w;
+        if (name)
+            size.y = atoi(name + 1);
+        if (!size.y)
+            size.y = size.x;
 
-        return pipi_render_bayer(w, h);
+        return RenderBayer(size);
     }
 
     /* Generate a clustered dithering pattern. */
-    if(!strncmp(name, "halftone:", 9))
+    if (!strncmp(name, "halftone:", 9))
     {
-        int w, h = 0;
-
-        w = atoi(name + 9);
+        ivec2 size(0);
+        size.x = atoi(name + 9);
         name = strchr(name + 9, 'x');
-        if(name)
-            h = atoi(name + 1);
-        if(!h)
-            h = w;
+        if (name)
+            size.y = atoi(name + 1);
+        if (!size.y)
+            size.y = size.x;
 
-        return pipi_render_halftone(w, h);
+        return RenderHalftone(size);
     }
 
     /* Generate an error diffusion matrix. */
-    if(!strncmp(name, "ediff:", 6))
+    if (!strncmp(name, "ediff:", 6))
     {
         float const *ker;
-        int w, h;
+        ivec2 size(0);
 
-        if(!strcmp(name + 6, "fs"))
+        if (!strcmp(name + 6, "fs"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     1.,  7./16,
                 3./16,  5./16,  1./16,
             };
-            ker = myker; w = 3; h = 2;
+            ker = myker; size = ivec2(3, 2);
         }
-        else if(!strcmp(name + 6, "jajuni"))
+        else if (!strcmp(name + 6, "jajuni"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  7./48,  5./48,
                 3./48,  5./48,  7./48,  5./48,  3./48,
                 1./48,  3./48,  5./48,  3./48,  1./48,
             };
-            ker = myker; w = 5; h = 3;
+            ker = myker; size = ivec2(5, 3);
         }
-        else if(!strcmp(name + 6, "atkinson"))
+        else if (!strcmp(name + 6, "atkinson"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                   0.,    1.,  1./8,  1./8,
                 1./8,  1./8,  1./8,    0.,
                   0.,  1./8,    0.,    0.,
             };
-            ker = myker; w = 4; h = 3;
+            ker = myker; size = ivec2(4, 3);
         }
-        else if(!strcmp(name + 6, "fan"))
+        else if (!strcmp(name + 6, "fan"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  7./16,
                 1./16,  3./16,  5./16,     0.,
             };
-            ker = myker; w = 4; h = 2;
+            ker = myker; size = ivec2(4, 2);
         }
-        else if(!strcmp(name + 6, "shiaufan"))
+        else if (!strcmp(name + 6, "shiaufan"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                   0.,    0.,    1.,  1./2,
                 1./8,  1./8,  1./4,    0.,
             };
-            ker = myker; w = 4; h = 2;
+            ker = myker; size = ivec2(4, 2);
         }
-        else if(!strcmp(name + 6, "shiaufan2"))
+        else if (!strcmp(name + 6, "shiaufan2"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,    0.,    1.,  1./2,
                 1./16,  1./16,  1./8,  1./4,    0.,
             };
-            ker = myker; w = 5; h = 2;
+            ker = myker; size = ivec2(5, 2);
         }
-        else if(!strcmp(name + 6, "stucki"))
+        else if (!strcmp(name + 6, "stucki"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  8./42,  4./42,
                 2./42,  4./42,  8./42,  4./42,  2./42,
                 1./42,  2./42,  4./42,  2./42,  1./42,
             };
-            ker = myker; w = 5; h = 3;
+            ker = myker; size = ivec2(5, 3);
         }
-        else if(!strcmp(name + 6, "burkes"))
+        else if (!strcmp(name + 6, "burkes"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  4./16,  2./16,
                 1./16,  2./16,  4./16,  2./16,  1./16,
             };
-            ker = myker; w = 5; h = 2;
+            ker = myker; size = ivec2(5, 2);
         }
-        else if(!strcmp(name + 6, "sierra"))
+        else if (!strcmp(name + 6, "sierra"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  5./32,  3./32,
                 2./32,  4./32,  5./32,  4./32,  2./32,
                    0.,  2./32,  3./32,  2./32,     0.,
             };
-            ker = myker; w = 5; h = 3;
+            ker = myker; size = ivec2(5, 3);
         }
-        else if(!strcmp(name + 6, "sierra2"))
+        else if (!strcmp(name + 6, "sierra2"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                    0.,     0.,     1.,  4./16,  3./16,
                 1./16,  2./16,  3./16,  2./16,  1./16,
             };
-            ker = myker; w = 5; h = 2;
+            ker = myker; size = ivec2(5, 2);
         }
-        else if(!strcmp(name + 6, "lite"))
+        else if (!strcmp(name + 6, "lite"))
         {
-            static float const myker[] =
+            float const myker[] =
             {
                   0.,    1.,  1./2,
                 1./4,  1./4,    0.,
             };
-            ker = myker; w = 3; h = 2;
+            ker = myker; size = ivec2(3, 2);
         }
-        else
-            return NULL;
 
-        ret = pipi_new(w, h);
-        pix = pipi_get_pixels(ret, PIPI_PIXELS_Y_F32);
-        memcpy(pix->pixels, ker, w * h * sizeof(float));
+        SetSize(size);
+        float *pixels = Lock<PixelFormat::Y_F32>();
+        memcpy(pixels, ker, size.x * size.y * sizeof(float));
+        Unlock(pixels);
 
-        return ret;
+        return true;
     }
 
     /* Generate a completely random image. */
-    if(!strncmp(name, "random:", 7))
+    if (!strncmp(name, "random:", 7))
     {
-        int w, h = 0;
+        ivec2 size(0);
 
-        w = atoi(name + 7);
+        size.x = atoi(name + 7);
         name = strchr(name + 7, 'x');
-        if(name)
-            h = atoi(name + 1);
-        if(!h)
-            h = w;
-        if(w <= 0 || h <= 0)
-            return NULL;
+        if (name)
+            size.y = atoi(name + 1);
+        if (!size.y)
+            size.y = size.x;
+        if (size.x <= 0 || size.y <= 0)
+            return false;
 
-        return pipi_render_random(w, h);
+        return RenderRandom(size);
     }
 
-    return NULL;
+    return false;
 }
+
+} /* namespace lol */
 

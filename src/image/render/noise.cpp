@@ -1,61 +1,55 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * noise.c: noise rendering functions
+ * Noise rendering functions
  */
 
-#include "config.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_render_random(int w, int h)
+namespace lol
 {
-    pipi_image_t *ret;
-    pipi_pixels_t *pix;
-    float *data;
+
+bool Image::RenderRandom(ivec2 size)
+{
     unsigned int ctx = 1;
-    int x, y, t;
 
-    ret = pipi_new(w, h);
-    pix = pipi_get_pixels(ret, PIPI_PIXELS_RGBA_F32);
-    data = (float *)pix->pixels;
+    SetSize(size);
+    vec4 *pixels = Lock<PixelFormat::RGBA_F32>();
+    int count = size.x * size.y;
 
-    for(y = 0; y < h; y++)
-        for(x = 0; x < w; x++)
+    for (int n = 0; n < count; ++n)
+    {
+        for (int t : { 0, 1, 2 })
         {
-            for(t = 0; t < 3; t++)
-            {
-                long hi, lo;
+            long hi, lo;
 
-                hi = ctx / 12773L;
-                lo = ctx % 12773L;
-                ctx = 16807L * lo - 2836L * hi;
-                if(ctx <= 0)
-                    ctx += 0x7fffffffL;
+            hi = ctx / 12773L;
+            lo = ctx % 12773L;
+            ctx = 16807L * lo - 2836L * hi;
+            if(ctx <= 0)
+                ctx += 0x7fffffffL;
 
-                data[4 * (y * w + x) + t]
-                    = (double)((ctx % 65536) / 65535.);
-            }
-            data[4 * (y * w + x) + 3] = 1.0;
+            pixels[n][t] = (float)((ctx % 65536) / 65535.);
         }
+        pixels[n][3] = 1.0f;
+    }
 
-    return ret;
+    Unlock(pixels);
+
+    return true;
 }
+
+} /* namespace lol */
 

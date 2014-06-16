@@ -12,57 +12,53 @@ Image:
   - Handle pitch in SDL codec (and all others, actually)
   - port libpipi files:
      · accessors.cpp
-     · pipi-stubs.h
-     · render/noise.cpp
-     · render/screen.cpp
-     · tiles.cpp
-     · pipi-internals.h
-     · pipi-template.h
-     · paint/rectangle.cpp
-     · paint/line.cpp
-     · paint/floodfill.cpp
-     · paint/bezier.cpp
-     · paint/tile.cpp
-     · pipi-types.h
-     · stock.cpp
-     · context.cpp
-     · pipi.h
-     · dither.cpp
-     · colorstring.cpp
-     · codec/coreimage.cpp
-     · codec/coreimage.h
-     · codec/oric.cpp
-     · codec/jpeg.cpp
-     · resample/bresenham.cpp
-     · resample/bicubic.cpp
-     · quantize/reduce.cpp
      · analysis/histogram.cpp
      · analysis/measure.cpp
-     · crop.cpp
-     · pipi.cpp
+     · codec/coreimage.cpp
+     · codec/coreimage.h
      · codec.cpp
+     · codec/jpeg.cpp
+     · codec/oric.cpp
+     · colorstring.cpp
+     · combine/blit.cpp
+     · combine/merge.cpp
+     · combine/minmax.cpp
+     · combine/mulscreen.cpp
+     · combine/rgb.cpp
+     · combine/subadd.cpp
+     · context.cpp
+     · crop.cpp
+     · dither.cpp
+     · dither/dbs.cpp
      · dither/ediff.cpp
+     · dither/ordered.cpp
      · dither/ostromoukhov.cpp
      · dither/random.cpp
-     · dither/ordered.cpp
-     · dither/dbs.cpp
-     · sequence.cpp
-     · filter/convolution.cpp
-     · filter/wave.cpp
-     · filter/dilate.cpp
-     · filter/color.cpp
-     · filter/blur.cpp
-     · filter/yuv.cpp
      · filter/autocontrast.cpp
+     · filter/blur.cpp
+     · filter/color.cpp
+     · filter/convolution.cpp
+     · filter/dilate.cpp
      · filter/median.cpp
      · filter/rotate.cpp
-     · filter/transform.cpp
      · filter/sharpen.cpp
-     · combine/rgb.cpp
-     · combine/blit.cpp
-     · combine/minmax.cpp
-     · combine/subadd.cpp
-     · combine/merge.cpp
-     · combine/mulscreen.cpp
+     · filter/transform.cpp
+     · filter/wave.cpp
+     · filter/yuv.cpp
+     · paint/bezier.cpp
+     · paint/floodfill.cpp
+     · paint/line.cpp
+     · paint/rectangle.cpp
+     · paint/tile.cpp
+     · pipi.h
+     · pipi-internals.h
+     · pipi-stubs.h
+     · pipi-template.h
+     · pipi-types.h
      · pixels.cpp
+     · quantize/reduce.cpp
+     · resample/bicubic.cpp
+     · resample/bresenham.cpp
+     · sequence.cpp
+     · tiles.cpp
 
