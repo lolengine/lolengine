@@ -37,36 +37,34 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(SdlImageData, 50)
+DECLARE_IMAGE_CODEC(SdlImageCodec, 50)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
-
-    virtual uint8_t *GetData() const;
 
     static SDL_Surface *Create32BppSurface(ivec2 size);
 
 private:
-    SDL_Surface *m_img;
+    SDL_Surface *m_surface;
 };
 
 /*
  * Public Image class
  */
 
-bool SdlImageData::Open(char const *path)
+bool SdlImageCodec::Load(Image *image, char const *path)
 {
     Array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); i++)
     {
-        m_img = IMG_Load(pathlist[i].C());
-        if (m_img)
+        m_surface = IMG_Load(pathlist[i].C());
+        if (m_surface)
             break;
     }
 
-    if (!m_img)
+    if (!m_surface)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not load image %s\n", path);
@@ -74,42 +72,37 @@ bool SdlImageData::Open(char const *path)
         return false;
     }
 
-    m_size = ivec2(m_img->w, m_img->h);
-
-    if (m_img->format->BytesPerPixel != 4)
+    if (m_surface->format->BytesPerPixel != 4)
     {
-        SDL_Surface *tmp = Create32BppSurface(m_size);
-        SDL_BlitSurface(m_img, nullptr, tmp, nullptr);
-        SDL_FreeSurface(m_img);
-        m_img = tmp;
+        SDL_Surface *tmp = Create32BppSurface(image->GetSize());
+        SDL_BlitSurface(m_surface, nullptr, tmp, nullptr);
+        SDL_FreeSurface(m_surface);
+        m_surface = tmp;
     }
 
-    m_format = m_img->format->Amask ? PixelFormat::RGBA_8
-                                    : PixelFormat::RGB_8;
+    image->SetSize(ivec2(m_surface->w, m_surface->h));
+    u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
+    memcpy(data, m_surface->pixels, 4 * m_surface->w * m_surface->h);
+    image->Unlock();
 
     return true;
 }
 
-bool SdlImageData::Save(char const *path)
+bool SdlImageCodec::Save(Image *image, char const *path)
 {
-    int ret = SDL_SaveBMP(m_img, path);
+    int ret = SDL_SaveBMP(m_surface, path);
 
     return ret == 0;
 }
 
-bool SdlImageData::Close()
+bool SdlImageCodec::Close()
 {
-    SDL_FreeSurface(m_img);
+    SDL_FreeSurface(m_surface);
 
     return true;
 }
 
-uint8_t * SdlImageData::GetData() const
-{
-    return (uint8_t *)m_img->pixels;
-}
-
-SDL_Surface *SdlImageData::Create32BppSurface(ivec2 size)
+SDL_Surface *SdlImageCodec::Create32BppSurface(ivec2 size)
 {
     uint32_t rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN

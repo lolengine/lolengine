@@ -24,24 +24,19 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(ZedPaletteImageData, 0)
+DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 0)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
-
-    virtual uint8_t *GetData() const;
-
-private:
-    uint8_t *m_pixels;
 };
 
 /*
  * Public Image class
  */
 
-bool ZedPaletteImageData::Open(char const *path)
+bool ZedPaletteImageCodec::Load(Image *image, char const *path)
 {
     if (!lol::String(path).EndsWith(".pal"))
         return false;
@@ -61,46 +56,39 @@ bool ZedPaletteImageData::Open(char const *path)
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    m_size = ivec2(tex_size);
+    image->m_data->m_size = ivec2(tex_size);
 #else
     int32_t tex_sqrt = file_size / 3;
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    m_size = ivec2(tex_size, 1);
+    image->SetSize(ivec2(tex_size, 1));
 #endif
 
-    m_format = PixelFormat::RGBA_8;
-    m_pixels = new uint8_t[tex_size * tex_size * 4 * sizeof(*m_pixels)];
-    uint8_t *parser = m_pixels;
+    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
     for (int i = 0; i < file_buffer.Count();)
     {
-        *parser++ = file_buffer[i++];
-        *parser++ = file_buffer[i++];
-        *parser++ = file_buffer[i++];
-        *parser++ = (i == 0) ? 0 : 255;
+        pixels->r = file_buffer[i++];
+        pixels->g = file_buffer[i++];
+        pixels->b = file_buffer[i++];
+        pixels->a = (i == 0) ? 0 : 255;
+        ++pixels;
     }
+    image->Unlock();
 
     return true;
 }
 
-bool ZedPaletteImageData::Save(char const *path)
+bool ZedPaletteImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
     /* FIXME: do we need to implement this? */
     return true;
 }
 
-bool ZedPaletteImageData::Close()
+bool ZedPaletteImageCodec::Close()
 {
-    delete[] m_pixels;
-
     return true;
-}
-
-uint8_t * ZedPaletteImageData::GetData() const
-{
-    return m_pixels;
 }
 
 } /* namespace lol */

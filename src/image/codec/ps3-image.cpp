@@ -30,11 +30,11 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(Ps3ImageData, 100)
+DECLARE_IMAGE_CODEC(Ps3ImageCodec, 100)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -49,7 +49,7 @@ private:
  * Public Image class
  */
 
-bool Ps3ImageData::Open(char const *path)
+bool Ps3ImageCodec::Load(Image *image, char const *path)
 {
     int32_t err;
 
@@ -74,9 +74,9 @@ bool Ps3ImageData::Open(char const *path)
     in_param.spuThreadEnable = CELL_PNGDEC_SPU_THREAD_ENABLE;
     in_param.ppuThreadPriority = 1000;
     in_param.spuThreadPriority = 200;
-    in_param.cbCtrlMallocFunc = Ps3ImageData::Malloc;
+    in_param.cbCtrlMallocFunc = Ps3ImageCodec::Malloc;
     in_param.cbCtrlMallocArg = nullptr;
-    in_param.cbCtrlFreeFunc = Ps3ImageData::Free;
+    in_param.cbCtrlFreeFunc = Ps3ImageCodec::Free;
     in_param.cbCtrlFreeArg = nullptr;
     CellPngDecThreadOutParam out_param;
     err = cellPngDecCreate(&hmain, &in_param, &out_param);
@@ -174,7 +174,7 @@ bool Ps3ImageData::Open(char const *path)
     return true;
 }
 
-bool Ps3ImageData::Open(char const *path)
+bool Ps3ImageCodec::Load(Image *image, char const *path)
 {
     UNUSED(path);
 
@@ -182,14 +182,14 @@ bool Ps3ImageData::Open(char const *path)
     return true;
 }
 
-bool Ps3ImageData::Close()
+bool Ps3ImageCodec::Close()
 {
     free(pixels);
 
     return true;
 }
 
-uint8_t * Ps3ImageData::GetData() const
+uint8_t * Ps3ImageCodec::GetData() const
 {
     return pixels;
 }

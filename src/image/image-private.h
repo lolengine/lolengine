@@ -9,8 +9,8 @@
 //
 
 //
-// The ImageData class
-// -------------------
+// The ImageCodecData class
+// ------------------------
 //
 
 #if !defined __LOL_IMAGE_PRIVATE_H__
@@ -19,103 +19,114 @@
 namespace lol
 {
 
+class ImageData
+{
+    friend class Image;
+    friend class ImageBank;
+    friend class ImageCodec;
+
+public:
+    ImageData()
+      : m_size(0, 0),
+        m_format(PixelFormat::Unknown),
+        m_refcount(0),
+        m_codecdata(nullptr)
+    {}
+
+    ivec2 m_size;
+
+    Map<int, void *> m_pixels;
+    PixelFormat m_format;
+
+    int m_refcount;
+
+/* protected: */ /* FIXME: fix the ImageCodec subclasses access rights */
+    class ImageCodecData *m_codecdata;
+};
+
 class ImageCodec
 {
     friend class ImageBank;
-    friend class ImageData;
+    friend class ImageCodecData;
 
 public:
-    ImageData *(*fun)(char const *path);
-    ImageCodec *next;
-    int priority;
+    bool (*m_tryload)(Image *image, char const *path);
+    ImageCodec *m_next;
+    int m_priority;
 
-    static void RegisterLoader(ImageCodec *loader)
+    static void RegisterCodec(ImageCodec *codec)
     {
-        Helper(loader);
+        Helper(codec);
     }
 
 private:
-    static ImageData *Load(char const *path)
+    static void Load(Image *image, char const *path)
     {
-        ImageCodec *parser = Helper(nullptr);
-        ImageData *ret = nullptr;
+        ImageCodec *codec = Helper(nullptr);
+        bool success = false;
 
-        while (parser && !ret)
+        while (codec && !success)
         {
-            ret = parser->fun(path);
-            parser = parser->next;
+            success = codec->m_tryload(image, path);
+            codec = codec->m_next;
         }
-
-        return ret;
     }
 
     static ImageCodec *Helper(ImageCodec *set)
     {
-        static ImageCodec *loaders = nullptr;
+        static ImageCodec *codec_list = nullptr;
 
         if (!set)
-            return loaders;
+            return codec_list;
 
-        ImageCodec **parser = &loaders;
-        while (*parser && (*parser)->priority > set->priority)
-            parser = &(*parser)->next;
-        set->next = *parser;
-        *parser = set;
+        ImageCodec **codec = &codec_list;
+        while (*codec && (*codec)->m_priority > set->m_priority)
+            codec = &(*codec)->m_next;
+        set->m_next = *codec;
+        *codec = set;
 
         return nullptr;
     }
 };
 
-class ImageData
+/*
+ * Codec-specific data that is stored in some images
+ */
+class ImageCodecData
 {
     friend class Image;
     friend class ImageBank;
 
 public:
-    inline ImageData()
-      : m_size(0, 0),
-        m_format(PixelFormat::Unknown),
-        m_refcount(0)
-    { }
+    inline ImageCodecData() {}
+    virtual ~ImageCodecData() {}
 
-    virtual ~ImageData() {}
+    virtual bool Load(Image *, char const *) = 0;
+    virtual bool Save(Image *, char const *) = 0;
 
-    virtual bool Open(char const *) = 0;
-    virtual bool Save(char const *) = 0;
-    virtual bool Close() = 0;
-
-    virtual uint8_t *GetData() const = 0;
     virtual bool RetrieveTiles(Array<ivec2, ivec2>& tiles) { return false; }
-
-protected:
-    ivec2 m_size;
-    PixelFormat m_format;
-    int m_refcount;
 };
 
-#define REGISTER_IMAGE_LOADER(name) \
+#define REGISTER_IMAGE_CODEC(name) \
     extern void Register##name(); \
     Register##name();
 
-#define DECLARE_IMAGE_LOADER(name, prio) \
+#define DECLARE_IMAGE_CODEC(name, prio) \
     template<typename T> class name##ImageCodec : public ImageCodec \
     { \
     public: \
         name##ImageCodec() \
         { \
-            static ImageCodec loader; \
-            loader.fun = Load; \
-            loader.priority = prio; \
-            RegisterLoader(&loader); \
+            static ImageCodec codec; \
+            codec.m_tryload = Load; \
+            codec.m_priority = prio; \
+            RegisterCodec(&codec); \
         } \
-        static ImageData *Load(char const *path) \
+        static bool Load(Image *image, char const *path) \
         { \
-            T *ret = new T(); \
-            if (!ret->Open(path)) \
-            { \
-                delete ret; \
-                return nullptr; \
-            } \
+            T *codecdata = new T(); \
+            bool ret = codecdata->Load(image, path); \
+            delete codecdata; \
             return ret; \
         } \
     }; \
@@ -125,7 +136,7 @@ protected:
     { \
         (void)&name##ImageCodecInstance; \
     } \
-    class name : public ImageData
+    class name : public ImageCodecData
 
 } /* namespace lol */
 

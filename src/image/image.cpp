@@ -21,7 +21,7 @@ namespace lol
 {
 
 /* HACK: We cannot make this an ImageCodec member function, because the
- * REGISTER_IMAGE_LOADER macro forward-declares free functions from
+ * REGISTER_IMAGE_CODEC macro forward-declares free functions from
  * the "lol" namespace. An apparent bug in Visual Studio's compiler
  * makes it think these functions are actually in the top-level
  * namespace when the forward declaration is in a class member function.
@@ -30,26 +30,26 @@ namespace lol
  * The bug was reported to Microsoft and fixed by them, but the fix
  * is not yet available.
  * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
-static bool RegisterAllLoaders()
+static bool RegisterAllCodecs()
 {
 #if defined __ANDROID__
-    REGISTER_IMAGE_LOADER(AndroidImageData)
+    REGISTER_IMAGE_CODEC(AndroidImageCodec)
 #endif
-    REGISTER_IMAGE_LOADER(DummyImageData)
+    REGISTER_IMAGE_CODEC(DummyImageCodec)
 #if defined USE_GDIPLUS
-    REGISTER_IMAGE_LOADER(GdiPlusImageData)
+    REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
 #endif
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
-    REGISTER_IMAGE_LOADER(IosImageData)
+    REGISTER_IMAGE_CODEC(IosImageCodec)
 #endif
 #if defined __CELLOS_LV2__
-    REGISTER_IMAGE_LOADER(Ps3ImageData)
+    REGISTER_IMAGE_CODEC(Ps3ImageCodec)
 #endif
 #if defined USE_SDL_IMAGE
-    REGISTER_IMAGE_LOADER(SdlImageData)
+    REGISTER_IMAGE_CODEC(SdlImageCodec)
 #endif
-    REGISTER_IMAGE_LOADER(ZedImageData)
-    REGISTER_IMAGE_LOADER(ZedPaletteImageData)
+    REGISTER_IMAGE_CODEC(ZedImageCodec)
+    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
 
     return true;
 }
@@ -63,8 +63,6 @@ static class ImageBank
 public:
     void Init();
     Image *Create(char const *path);
-    bool Store(Image *img);
-    Image *Load(char const *path);
 
     void Unref(Image *img);
 
@@ -75,49 +73,25 @@ g_image_bank;
 
 void ImageBank::Init()
 {
-    /* Initialise loaders (see above) */
-    static bool init = RegisterAllLoaders();
+    /* Initialise codecs (see above) */
+    static bool init = RegisterAllCodecs();
     UNUSED(init);
 }
 
 Image *ImageBank::Create(char const *path)
 {
-    /* Is our image already in the bank? If so, no need to create it. */
-    Image *img;
-
-    if (m_images.HasKey(path))
-    {
-        img = m_images[path];
-    }
-    else
-    {
-        img = Load(path);
-        m_images[path] = img;
-    }
-
-    ++img->m_data->m_refcount;
-    return img;
-}
-
-Image *ImageBank::Load(char const *path)
-{
     Init();
 
-    Image *img = new Image(path);
-    img->m_data = ImageCodec::Load(img->GetPath().C());
-    return img;
-}
-
-bool ImageBank::Store(Image *img)
-{
     /* Is our image already in the bank? If so, no need to create it. */
-    if (m_images.HasKey(img->GetPath().C()))
-        return false;
+    if (!m_images.HasKey(path))
+    {
+        m_images[path] = new Image();
+        ImageCodec::Load(m_images[path], path);
+    }
 
-    m_images[img->GetPath().C()] = img;
-
+    Image *img = m_images[path];
     ++img->m_data->m_refcount;
-    return true;
+    return img;
 }
 
 void ImageBank::Unref(Image *img)
@@ -145,24 +119,19 @@ Image *Image::Create(char const *path)
     return g_image_bank.Create(path);
 }
 
-Image *Image::Load(char const *path)
-{
-    return g_image_bank.Load(path);
-}
-
-bool Image::Store(Image *img)
-{
-    return g_image_bank.Store(img);
-}
-
 /*
  * Public Image class
  */
 
-Image::Image(char const* path)
-  : m_data(nullptr)
+Image::Image()
+  : m_data(new ImageData())
 {
-    m_path = path;
+}
+
+Image::~Image()
+{
+    delete m_data->m_codecdata;
+    delete m_data;
 }
 
 void Image::Destroy()
@@ -172,7 +141,10 @@ void Image::Destroy()
 
 bool Image::Save(char const *path)
 {
-    return m_data->Save(path);
+    /* FIXME: add autoloading of save codecs */
+    if (!m_data->m_codecdata)
+        return false;
+    return m_data->m_codecdata->Save(this, path);
 }
 
 ivec2 Image::GetSize() const
@@ -180,30 +152,73 @@ ivec2 Image::GetSize() const
     return m_data->m_size;
 }
 
+void Image::SetSize(ivec2 size)
+{
+    if (m_data->m_size != size)
+    {
+        /* FIXME: delete data or resize it */
+        if (m_data->m_format != PixelFormat::Unknown)
+        {
+            m_data->m_pixels.Remove((int)m_data->m_format);
+        }
+    }
+    m_data->m_size = size;
+
+    /* FIXME: don’t do this! */
+    if (m_data->m_format != PixelFormat::Unknown)
+    {
+        Lock<PixelFormat::RGBA_8>();
+        Unlock();
+    }
+}
+
 PixelFormat Image::GetFormat() const
 {
     return m_data->m_format;
 }
 
-uint8_t *Image::GetData() const
+void *Image::LockGeneric()
 {
-    return m_data->GetData();
+    ASSERT(m_data->m_format != PixelFormat::Unknown);
+
+    return m_data->m_pixels[(int)m_data->m_format];
 }
 
-String Image::GetPath() const
+/* The Lock() method and its explicit specialisations */
+template<PixelFormat T>
+typename PixelType<T>::type *Image::Lock()
 {
-    return m_path;
+    /* TODO: convert data if this doesn’t match */
+    ASSERT(m_data->m_format == T || m_data->m_format == PixelFormat::Unknown);
+    m_data->m_format = (PixelFormat)T;
+
+    if (!m_data->m_pixels.HasKey((int)T))
+    {
+        m_data->m_pixels[(int)T] =
+          new typename PixelType<T>::type(m_data->m_size.x * m_data->m_size.y);
+    }
+
+    return (typename PixelType<T>::type *)m_data->m_pixels[(int)T];
+}
+
+template typename PixelType<PixelFormat::Y_8>::type *
+Image::Lock<PixelFormat::Y_8>();
+template typename PixelType<PixelFormat::RGB_8>::type *
+Image::Lock<PixelFormat::RGB_8>();
+template typename PixelType<PixelFormat::RGBA_8>::type *
+Image::Lock<PixelFormat::RGBA_8>();
+
+void Image::Unlock()
+{
+    /* TODO: ensure we are actually unlocking something we locked */
+    ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
 }
 
 bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
 {
-    return m_data->RetrieveTiles(tiles);
-}
-
-Image::~Image()
-{
-    m_data->Close();
-    delete m_data;
+    if (!m_data->m_codecdata)
+        return false;
+    return m_data->m_codecdata->RetrieveTiles(tiles);
 }
 
 } /* namespace lol */

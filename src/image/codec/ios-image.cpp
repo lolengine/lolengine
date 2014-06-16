@@ -28,11 +28,11 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(IosImageData, 100)
+DECLARE_IMAGE_CODEC(IosImageCodec, 100)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -45,7 +45,7 @@ private:
  * Public Image class
  */
 
-bool IosImageData::Open(char const *path)
+bool IosImageCodec::Load(Image *image, char const *path)
 {
     NSString *fullpath = [NSString stringWithUTF8String:path];
     NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
@@ -84,7 +84,7 @@ bool IosImageData::Open(char const *path)
     return true;
 }
 
-bool IosImageData::Save(char const *path)
+bool IosImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
 
@@ -92,14 +92,14 @@ bool IosImageData::Save(char const *path)
     return true;
 }
 
-bool IosImageData::Close()
+bool IosImageCodec::Close()
 {
     free(pixels);
 
     return true;
 }
 
-uint8_t * IosImageData::GetData() const
+uint8_t * IosImageCodec::GetData() const
 {
     return pixels;
 }

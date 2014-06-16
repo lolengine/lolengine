@@ -30,17 +30,18 @@ LOLUNIT_FIXTURE(ImageTest)
         LOLUNIT_ASSERT_EQUAL(size.x, 256);
         LOLUNIT_ASSERT_EQUAL(size.y, 16);
 
-        uint8_t *data = image->GetData();
+        u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
         LOLUNIT_ASSERT(data);
 
-        LOLUNIT_ASSERT_EQUAL((int)data[0], 0x00);
-        LOLUNIT_ASSERT_EQUAL((int)data[1], 0x00);
-        LOLUNIT_ASSERT_EQUAL((int)data[2], 0x00);
+        LOLUNIT_ASSERT_EQUAL((int)data[0].r, 0x00);
+        LOLUNIT_ASSERT_EQUAL((int)data[0].g, 0x00);
+        LOLUNIT_ASSERT_EQUAL((int)data[0].b, 0x00);
 
-        LOLUNIT_ASSERT_EQUAL((int)data[255 * 4 + 0], 0xff);
-        LOLUNIT_ASSERT_EQUAL((int)data[255 * 4 + 1], 0xff);
-        LOLUNIT_ASSERT_EQUAL((int)data[255 * 4 + 2], 0xff);
+        LOLUNIT_ASSERT_EQUAL((int)data[255].r, 0xff);
+        LOLUNIT_ASSERT_EQUAL((int)data[255].g, 0xff);
+        LOLUNIT_ASSERT_EQUAL((int)data[255].b, 0xff);
 
+        image->Unlock();
         image->Destroy();
     }
 };
