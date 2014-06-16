@@ -80,6 +80,14 @@ public:
         return false;
     }
 
+    Array<K> Keys() const
+    {
+        Array<K> ret;
+        for (auto it : m_array)
+            ret.Push(it.m2);
+        return ret;
+    }
+
     inline int Count() const
     {
         return m_array.Count();

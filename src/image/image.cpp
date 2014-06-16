@@ -123,6 +123,11 @@ Image & Image::operator =(Image other)
 
 Image::~Image()
 {
+    for (int k : m_data->m_pixels.Keys())
+    {
+        delete m_data->m_pixels[k];
+        m_data->m_pixels[k] = nullptr;
+    }
     delete m_data;
 }
 
