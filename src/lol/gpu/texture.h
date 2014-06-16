@@ -19,38 +19,30 @@
 namespace lol
 {
 
-struct PixelFormat
+enum class PixelFormat
 {
     /* XXX: make sure to update texture.cpp when this changes */
-    enum Value
-    {
-        Unknown = 0,
-        RGB_8,
-        RGBA_8,
-        ARGB_8,
-        ABGR_8,
-        Y_8,
-    }
-    m_value;
+    Unknown = 0,
+    RGB_8,
+    RGBA_8,
+    ARGB_8,
+    ABGR_8,
+    Y_8,
+};
 
-    inline PixelFormat() : m_value(Unknown) {}
-    inline PixelFormat(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-
-    inline uint8_t BytesPerPixel()
+static inline uint8_t BytesPerPixel(PixelFormat format)
+{
+    switch (format)
     {
-        switch (m_value)
-        {
-        case Y_8:
-            return 1;
-        case RGB_8:
-            return 3;
-        case RGBA_8:
-        case ARGB_8:
-        case ABGR_8:
-        default:
-            return 4;
-        }
+    case PixelFormat::Y_8:
+        return 1;
+    case PixelFormat::RGB_8:
+        return 3;
+    case PixelFormat::RGBA_8:
+    case PixelFormat::ARGB_8:
+    case PixelFormat::ABGR_8:
+    default:
+        return 4;
     }
 };
 

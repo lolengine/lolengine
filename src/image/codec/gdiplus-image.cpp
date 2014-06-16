@@ -31,11 +31,11 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(GdiPlusImageData, 100)
+DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -49,7 +49,7 @@ private:
  * Public Image class
  */
 
-bool GdiPlusImageData::Open(char const *path)
+bool GdiPlusImageCodec::Load(Image *image, char const *path)
 {
     Gdiplus::Status status;
     ULONG_PTR token;
@@ -110,10 +110,11 @@ bool GdiPlusImageData::Open(char const *path)
         return false;
     }
 
-    m_size = ivec2(m_bitmap->GetWidth(), m_bitmap->GetHeight());
-    m_format = PixelFormat::RGBA_8;
+    image->m_data->m_size = ivec2(m_bitmap->GetWidth(),
+                                  m_bitmap->GetHeight());
+    image->m_data->m_format = PixelFormat::RGBA_8;
 
-    Gdiplus::Rect rect(0, 0, m_size.x, m_size.y);
+    Gdiplus::Rect rect(0, 0, image->m_data->m_size.x, image->m_data->m_size.y);
     if (m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
                            PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
     {
@@ -128,8 +129,8 @@ bool GdiPlusImageData::Open(char const *path)
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
     uint8_t *p = static_cast<uint8_t *>(m_bdata.Scan0);
-    for (int y = 0; y < m_size.y; y++)
-        for (int x = 0; x < m_size.x; x++)
+    for (int y = 0; y < image->m_data->m_size.y; y++)
+        for (int x = 0; x < image->m_data->m_size.x; x++)
         {
             uint8_t tmp = p[2];
             p[2] = p[0];
@@ -140,7 +141,7 @@ bool GdiPlusImageData::Open(char const *path)
     return true;
 }
 
-bool GdiPlusImageData::Save(char const *path)
+bool GdiPlusImageCodec::Save(Image *image, char const *path)
 {
     ULONG_PTR token;
     Gdiplus::GdiplusStartupInput input;
@@ -192,11 +193,12 @@ bool GdiPlusImageData::Save(char const *path)
     /* FIXME: we create a new image because there is no guarantee that
      * the image comes from GDI. But the engine architecture doesn't
      * allow us to save other images anyway. */
-    Gdiplus::Bitmap *b = new Gdiplus::Bitmap(m_size.x, m_size.y,
+    Gdiplus::Bitmap *b = new Gdiplus::Bitmap(image->m_data->m_size.x,
+                                             image->m_data->m_size.y,
                                              PixelFormat32bppARGB);
 
     Gdiplus::BitmapData bdata;
-    Gdiplus::Rect rect(0, 0, m_size.x, m_size.y);
+    Gdiplus::Rect rect(0, 0, image->m_data->m_size.x, image->m_data->m_size.y);
 
     if (b->LockBits(&rect, (unsigned int)Gdiplus::ImageLockModeWrite,
                     PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
@@ -210,8 +212,8 @@ bool GdiPlusImageData::Save(char const *path)
 
     u8vec4 *psrc = static_cast<u8vec4 *>(m_bdata.Scan0);
     u8vec4 *pdst = static_cast<u8vec4 *>(bdata.Scan0);
-    for (int y = 0; y < m_size.y; y++)
-        for (int x = 0; x < m_size.x; x++)
+    for (int y = 0; y < image->m_data->m_size.y; y++)
+        for (int x = 0; x < image->m_data->m_size.x; x++)
         {
             *pdst++ = (*psrc++).bgra;
         }
@@ -233,7 +235,7 @@ bool GdiPlusImageData::Save(char const *path)
     return true;
 }
 
-bool GdiPlusImageData::Close()
+bool GdiPlusImageCodec::Close()
 {
     m_bitmap->UnlockBits(&m_bdata);
     delete m_bitmap;
@@ -241,7 +243,7 @@ bool GdiPlusImageData::Close()
     return true;
 }
 
-uint8_t * GdiPlusImageData::GetData() const
+uint8_t * GdiPlusImageCodec::GetData() const
 {
     return static_cast<uint8_t *>(m_bdata.Scan0);
 }

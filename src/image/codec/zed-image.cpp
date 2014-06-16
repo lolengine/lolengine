@@ -25,11 +25,11 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(ZedImageData, 0)
+DECLARE_IMAGE_CODEC(ZedImageCodec, 0)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -51,7 +51,7 @@ private:
  * Public Image class
  */
 
-bool ZedImageData::Open(char const *path)
+bool ZedImageCodec::Load(Image *image, char const *path)
 {
     if (!lol::String(path).EndsWith(".RSC"))
         return false;
@@ -239,10 +239,8 @@ bool ZedImageData::Open(char const *path)
         tex_size <<= 1;
 
     //Prepare final imqge
-    m_size = ivec2(tex_size);
-    m_format = PixelFormat::Y_8;
-    m_pixels = new uint8_t[tex_size * tex_size * 1 * sizeof(*m_pixels)];
-    uint8_t *image = m_pixels;
+    image->SetSize(ivec2(tex_size));
+    uint8_t *pixels = image->Lock<PixelFormat::Y_8>();
 
     //Data refactor stage
     ivec2 pos = ivec2(0);
@@ -278,7 +276,7 @@ bool ZedImageData::Open(char const *path)
                         for (int x_cur = 0; x_cur < t_size.x / 4; x_cur++)
                         {
                             int32_t img_pos = img_off + pass + 4 * x_cur + y_cur * (int32_t)tex_size;
-                            image[img_pos] = file_convert[file_off++];
+                            pixels[img_pos] = file_convert[file_off++];
                         }
                     }
                 }
@@ -297,24 +295,24 @@ bool ZedImageData::Open(char const *path)
             j++;
         }
     }
+    image->Unlock();
+
     return true;
 }
 
-bool ZedImageData::Save(char const *path)
+bool ZedImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
     /* FIXME: do we need to implement this? */
     return true;
 }
 
-bool ZedImageData::Close()
+bool ZedImageCodec::Close()
 {
-    delete[] m_pixels;
-
     return true;
 }
 
-uint8_t * ZedImageData::GetData() const
+uint8_t * ZedImageCodec::GetData() const
 {
     return m_pixels;
 }

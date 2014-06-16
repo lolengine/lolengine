@@ -202,12 +202,13 @@ void TileSet::TickDraw(float seconds)
     else if (m_data->m_image)
     {
         PixelFormat format = m_data->m_image->GetFormat();
-        int planes = format.BytesPerPixel();
+        int planes = BytesPerPixel(format);
 
         int w = m_data->m_texture_size.x;
         int h = m_data->m_texture_size.y;
 
-        uint8_t *pixels = m_data->m_image->GetData();
+        uint8_t *pixels = (uint8_t *)m_data->m_image->LockGeneric();
+        bool resized = false;
         if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {
             uint8_t *tmp = new uint8_t[planes * w * h];
@@ -216,12 +217,13 @@ void TileSet::TickDraw(float seconds)
                        pixels + planes * m_data->m_image_size.x * line,
                        planes * m_data->m_image_size.x);
             pixels = tmp;
+            resized = false;
         }
 
         m_data->m_texture = new Texture(ivec2(w, h), format);
         m_data->m_texture->SetData(pixels);
 
-        if (pixels != m_data->m_image->GetData())
+        if (resized)
             delete[] pixels;
         m_data->m_image->Destroy();
         m_data->m_image = nullptr;

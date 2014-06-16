@@ -35,11 +35,11 @@ extern ANativeActivity *g_activity;
  * Image implementation class
  */
 
-DECLARE_IMAGE_LOADER(AndroidImageData, 100)
+DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
 {
 public:
-    virtual bool Open(char const *);
-    virtual bool Save(char const *);
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -50,7 +50,7 @@ private:
     jint *pixels;
 };
 
-bool AndroidImageData::Open(char const *path)
+bool AndroidImageCodec::Load(Image *image, char const *path)
 {
     JNIEnv *env;
     jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
@@ -109,14 +109,14 @@ bool AndroidImageData::Open(char const *path)
     return true;
 }
 
-bool AndroidImageData::Save(char const *path)
+bool AndroidImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
 
     /* TODO: unimplemented */
 }
 
-bool AndroidImageData::Close()
+bool AndroidImageCodec::Close()
 {
     JNIEnv *env;
     jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
@@ -141,7 +141,7 @@ bool AndroidImageData::Close()
     return true;
 }
 
-uint8_t *AndroidImageData::GetData() const
+uint8_t *AndroidImageCodec::GetData() const
 {
     return (uint8_t *)pixels;
 }
