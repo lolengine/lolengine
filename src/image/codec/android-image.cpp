@@ -35,7 +35,7 @@ extern ANativeActivity *g_activity;
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
+class AndroidImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
@@ -49,6 +49,8 @@ private:
     jintArray array;
     jint *pixels;
 };
+
+DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
 
 bool AndroidImageCodec::Load(Image *image, char const *path)
 {

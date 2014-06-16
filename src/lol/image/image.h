@@ -21,7 +21,6 @@
 namespace lol
 {
 
-/* FIXME: is it possible to avoid the cast to int here? */
 template <PixelFormat T> struct PixelType { typedef void type; };
 template<> struct PixelType<PixelFormat::Y_8> { typedef uint8_t type; };
 template<> struct PixelType<PixelFormat::RGB_8> { typedef u8vec3 type; };
@@ -29,31 +28,28 @@ template<> struct PixelType<PixelFormat::RGBA_8> { typedef u8vec4 type; };
 
 class Image
 {
-    friend class ImageBank;
-    friend class ImageCodec;
-
 public:
     Image();
+    Image(ivec2 size);
+    /* XXX: use of this ctor should be discouraged, as it will not
+     * return information about a possible error. */
+    Image(char const *path);
     ~Image();
 
-    static Image *Create(char const *path);
-
+    bool Load(char const *path);
     bool Save(char const *path);
-    void Destroy();
-
-    PixelFormat GetFormat() const;
-    void *LockGeneric();
-    template<PixelFormat T> typename PixelType<T>::type *Lock();
-    void Unlock();
 
     ivec2 GetSize() const;
     void SetSize(ivec2);
+
+    PixelFormat GetFormat() const;
+    template<PixelFormat T> typename PixelType<T>::type *Lock();
+    void Unlock();
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
 private:
     class ImageData *m_data;
-    String m_path;
 };
 
 } /* namespace lol */

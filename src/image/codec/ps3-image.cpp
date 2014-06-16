@@ -30,7 +30,7 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(Ps3ImageCodec, 100)
+class Ps3ImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
@@ -42,8 +42,9 @@ public:
 private:
     static void* Malloc(uint32_t size, void* data) { return malloc(size); };
     static int32_t Free(void* ptr, void* data) { free(ptr); return 0; };
-    uint8_t *pixels;
 };
+
+DECLARE_IMAGE_CODEC(Ps3ImageCodec, 100)
 
 /*
  * Public Image class

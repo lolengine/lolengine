@@ -25,14 +25,12 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(ZedImageCodec, 0)
+class ZedImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
-    virtual bool Close();
 
-    virtual uint8_t *GetData() const;
     virtual bool RetrieveTiles(Array<ivec2, ivec2>& tiles)
     {
         bool result = m_tiles.Count() > 0;
@@ -46,6 +44,8 @@ private:
     //<Pos, Size>
     Array<ivec2, ivec2> m_tiles;
 };
+
+DECLARE_IMAGE_CODEC(ZedImageCodec, 0)
 
 /*
  * Public Image class
@@ -305,16 +305,6 @@ bool ZedImageCodec::Save(Image *image, char const *path)
     UNUSED(path);
     /* FIXME: do we need to implement this? */
     return true;
-}
-
-bool ZedImageCodec::Close()
-{
-    return true;
-}
-
-uint8_t * ZedImageCodec::GetData() const
-{
-    return m_pixels;
 }
 
 } /* namespace lol */

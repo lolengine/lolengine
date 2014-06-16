@@ -30,7 +30,7 @@ namespace lol
  * The bug was reported to Microsoft and fixed by them, but the fix
  * is not yet available.
  * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
-static bool RegisterAllCodecs()
+static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
 {
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
@@ -61,62 +61,38 @@ static bool RegisterAllCodecs()
 static class ImageBank
 {
 public:
-    void Init();
-    Image *Create(char const *path);
+    ImageBank();
 
-    void Unref(Image *img);
+    bool Load(Image *image, char const *path);
+    bool Save(Image *image, char const *path);
 
 private:
+    Array<ImageCodec *> m_codecs;
     Map<String, Image *> m_images;
 }
 g_image_bank;
 
-void ImageBank::Init()
+ImageBank::ImageBank()
 {
-    /* Initialise codecs (see above) */
-    static bool init = RegisterAllCodecs();
-    UNUSED(init);
+    RegisterAllCodecs(m_codecs);
 }
 
-Image *ImageBank::Create(char const *path)
+bool ImageBank::Load(Image *image, char const *path)
 {
-    Init();
-
-    /* Is our image already in the bank? If so, no need to create it. */
-    if (!m_images.HasKey(path))
-    {
-        m_images[path] = new Image();
-        ImageCodec::Load(m_images[path], path);
-    }
-
-    Image *img = m_images[path];
-    ++img->m_data->m_refcount;
-    return img;
+    /* FIXME: priority is ignored */
+    for (auto codec : m_codecs)
+        if (codec->Load(image, path))
+            return true;
+    return false;
 }
 
-void ImageBank::Unref(Image *img)
+bool ImageBank::Save(Image *image, char const *path)
 {
-    ASSERT(img->m_data->m_refcount > 0);
-    if (--img->m_data->m_refcount == 0)
-    {
-        /* FIXME: unload images etc. here */
-        /* XXX: we’re gonna hit a problem here because we didn’t keep
-         * the image path within the object, so unless we store it
-         * ourselves we’re good for a O(n) lookup… which we can’t do
-         * on Map objects anyway. */
-        /* TODO: 1. remove image from Map
-                 2. delete img; */
-    }
-}
-
-
-/*
- * Static image methods
- */
-
-Image *Image::Create(char const *path)
-{
-    return g_image_bank.Create(path);
+    /* FIXME: priority is ignored */
+    for (auto codec : m_codecs)
+        if (codec->Save(image, path))
+            return true;
+    return false;
 }
 
 /*
@@ -128,23 +104,31 @@ Image::Image()
 {
 }
 
+Image::Image(char const *path)
+  : m_data(new ImageData())
+{
+    Load(path);
+}
+
+Image::Image(ivec2 size)
+  : m_data(new ImageData())
+{
+    SetSize(size);
+}
+
 Image::~Image()
 {
-    delete m_data->m_codecdata;
     delete m_data;
 }
 
-void Image::Destroy()
+bool Image::Load(char const *path)
 {
-    g_image_bank.Unref(this);
+    return g_image_bank.Load(this, path);
 }
 
 bool Image::Save(char const *path)
 {
-    /* FIXME: add autoloading of save codecs */
-    if (!m_data->m_codecdata)
-        return false;
-    return m_data->m_codecdata->Save(this, path);
+    return g_image_bank.Save(this, path);
 }
 
 ivec2 Image::GetSize() const
@@ -177,13 +161,6 @@ PixelFormat Image::GetFormat() const
     return m_data->m_format;
 }
 
-void *Image::LockGeneric()
-{
-    ASSERT(m_data->m_format != PixelFormat::Unknown);
-
-    return m_data->m_pixels[(int)m_data->m_format];
-}
-
 /* The Lock() method and its explicit specialisations */
 template<PixelFormat T>
 typename PixelType<T>::type *Image::Lock()
@@ -195,18 +172,27 @@ typename PixelType<T>::type *Image::Lock()
     if (!m_data->m_pixels.HasKey((int)T))
     {
         m_data->m_pixels[(int)T] =
-          new typename PixelType<T>::type(m_data->m_size.x * m_data->m_size.y);
+          new typename PixelType<T>::type[m_data->m_size.x * m_data->m_size.y];
     }
 
     return (typename PixelType<T>::type *)m_data->m_pixels[(int)T];
 }
 
-template typename PixelType<PixelFormat::Y_8>::type *
+template PixelType<PixelFormat::Y_8>::type *
 Image::Lock<PixelFormat::Y_8>();
-template typename PixelType<PixelFormat::RGB_8>::type *
+template PixelType<PixelFormat::RGB_8>::type *
 Image::Lock<PixelFormat::RGB_8>();
-template typename PixelType<PixelFormat::RGBA_8>::type *
+template PixelType<PixelFormat::RGBA_8>::type *
 Image::Lock<PixelFormat::RGBA_8>();
+
+/* Special case for the "any" format */
+template<>
+void *Image::Lock<PixelFormat::Unknown>()
+{
+    ASSERT(m_data->m_format != PixelFormat::Unknown);
+
+    return m_data->m_pixels[(int)m_data->m_format];
+}
 
 void Image::Unlock()
 {
@@ -216,9 +202,9 @@ void Image::Unlock()
 
 bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
 {
-    if (!m_data->m_codecdata)
-        return false;
-    return m_data->m_codecdata->RetrieveTiles(tiles);
+    /* TODO: re-implement this */
+    //return m_data->m_codecdata->RetrieveTiles(tiles);
+    return false;
 }
 
 } /* namespace lol */

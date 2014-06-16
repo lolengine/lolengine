@@ -24,13 +24,13 @@ LOLUNIT_FIXTURE(ImageTest)
 {
     LOLUNIT_TEST(OpenImage)
     {
-        Image *image = Image::Create("data/gradient.png");
+        Image image("data/gradient.png");
 
-        ivec2 size = image->GetSize();
+        ivec2 size = image.GetSize();
         LOLUNIT_ASSERT_EQUAL(size.x, 256);
         LOLUNIT_ASSERT_EQUAL(size.y, 16);
 
-        u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
+        u8vec4 *data = image.Lock<PixelFormat::RGBA_8>();
         LOLUNIT_ASSERT(data);
 
         LOLUNIT_ASSERT_EQUAL((int)data[0].r, 0x00);
@@ -41,8 +41,7 @@ LOLUNIT_FIXTURE(ImageTest)
         LOLUNIT_ASSERT_EQUAL((int)data[255].g, 0xff);
         LOLUNIT_ASSERT_EQUAL((int)data[255].b, 0xff);
 
-        image->Unlock();
-        image->Destroy();
+        image.Unlock();
     }
 };
 

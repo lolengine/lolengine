@@ -28,18 +28,14 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(IosImageCodec, 100)
+class IosImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
-    virtual bool Close();
-
-    virtual uint8_t *GetData() const;
-
-private:
-    uint8_t *pixels;
 };
+
+DECLARE_IMAGE_CODEC(IosImageCodec, 100)
 
 /*
  * Public Image class
