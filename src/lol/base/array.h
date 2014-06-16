@@ -193,12 +193,13 @@ public:
         {
             T tmp = x;
             Reserve(m_count * 13 / 8 + 8);
-            new (&m_data[m_count++]) Element(tmp);
+            new (&m_data[m_count]) Element(tmp);
         }
         else
         {
-            new (&m_data[m_count++]) Element(x);
+            new (&m_data[m_count]) Element(x);
         }
+        ++m_count;
         return *this;
     }
 
@@ -246,14 +247,19 @@ public:
 
     inline void Insert(T const &x, int pos)
     {
-        ArrayBase<T, ARRAY> tmp;
-        for (int i = 0; i < m_count; i++)
+        ASSERT(pos >= 0);
+        ASSERT(pos <= m_count);
+
+        if (m_count >= m_reserved)
+            Reserve(m_count * 13 / 8 + 8);
+
+        for (int i = m_count; i > pos; --i)
         {
-            if (i == pos)
-                tmp.Push(x);
-            tmp.Push(m_data[i]);
+            new (&m_data[i]) Element(m_data[i - 1]);
+            m_data[i - 1].~Element();
         }
-        *this = tmp;
+        new (&m_data[pos]) Element(x);
+        ++m_count;
     }
 
     inline int Find(T const &x)

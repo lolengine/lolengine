@@ -147,6 +147,30 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(20, a[1].m2);
     }
 
+    LOLUNIT_TEST(ArrayInsert)
+    {
+        Array<int> a;
+        a << 1 << 2;
+
+        a.Insert(5, 0);
+        LOLUNIT_ASSERT_EQUAL(5, a[0]);
+        LOLUNIT_ASSERT_EQUAL(1, a[1]);
+        LOLUNIT_ASSERT_EQUAL(2, a[2]);
+
+        a.Insert(6, 3);
+        LOLUNIT_ASSERT_EQUAL(5, a[0]);
+        LOLUNIT_ASSERT_EQUAL(1, a[1]);
+        LOLUNIT_ASSERT_EQUAL(2, a[2]);
+        LOLUNIT_ASSERT_EQUAL(6, a[3]);
+
+        a.Insert(7, 2);
+        LOLUNIT_ASSERT_EQUAL(5, a[0]);
+        LOLUNIT_ASSERT_EQUAL(1, a[1]);
+        LOLUNIT_ASSERT_EQUAL(7, a[2]);
+        LOLUNIT_ASSERT_EQUAL(2, a[3]);
+        LOLUNIT_ASSERT_EQUAL(6, a[4]);
+    }
+
     LOLUNIT_TEST(ArrayConcat)
     {
         Array<int> a, b;
