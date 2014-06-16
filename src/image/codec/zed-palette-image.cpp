@@ -24,13 +24,14 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 0)
+class ZedPaletteImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
-    virtual bool Close();
 };
+
+DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 0)
 
 /*
  * Public Image class
@@ -83,11 +84,6 @@ bool ZedPaletteImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
     /* FIXME: do we need to implement this? */
-    return true;
-}
-
-bool ZedPaletteImageCodec::Close()
-{
     return true;
 }
 

@@ -24,13 +24,14 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
+class DummyImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
-    virtual bool Close();
 };
+
+DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
 
 /*
  * Public Image class
@@ -60,11 +61,6 @@ bool DummyImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
 
-    return true;
-}
-
-bool DummyImageCodec::Close()
-{
     return true;
 }
 

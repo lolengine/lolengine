@@ -31,19 +31,14 @@ namespace lol
  * Image implementation class
  */
 
-DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
+class GdiPlusImageCodec : public ImageCodec
 {
 public:
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
-    virtual bool Close();
-
-    virtual uint8_t *GetData() const;
-
-private:
-    Gdiplus::Bitmap *m_bitmap;
-    Gdiplus::BitmapData m_bdata;
 };
+
+DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
 
 /*
  * Public Image class
@@ -64,7 +59,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     }
 
     Array<String> pathlist = System::GetPathList(path);
-    m_bitmap = nullptr;
+    Gdiplus::Bitmap *bitmap = nullptr;
     for (auto fullpath : pathlist)
     {
         size_t len;
@@ -80,11 +75,11 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
         }
 
         status = Gdiplus::Ok;
-        m_bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
+        bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
 
-        if (m_bitmap)
+        if (bitmap)
         {
-            status = m_bitmap->GetLastStatus();
+            status = bitmap->GetLastStatus();
             if (status != Gdiplus::Ok)
             {
 #if !LOL_BUILD_RELEASE
@@ -92,17 +87,17 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
                     Log::Error("error %d loading %s\n",
                                status, fullpath.C());
 #endif
-                delete m_bitmap;
-                m_bitmap = nullptr;
+                delete bitmap;
+                bitmap = nullptr;
             }
         }
 
         delete[] wpath;
-        if (m_bitmap)
+        if (bitmap)
             break;
     }
 
-    if (!m_bitmap)
+    if (!bitmap)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not load %s\n", path);
@@ -110,33 +105,32 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
         return false;
     }
 
-    image->m_data->m_size = ivec2(m_bitmap->GetWidth(),
-                                  m_bitmap->GetHeight());
-    image->m_data->m_format = PixelFormat::RGBA_8;
-
-    Gdiplus::Rect rect(0, 0, image->m_data->m_size.x, image->m_data->m_size.y);
-    if (m_bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-                           PixelFormat32bppARGB, &m_bdata) != Gdiplus::Ok)
+    ivec2 size(bitmap->GetWidth(), bitmap->GetHeight());
+    Gdiplus::Rect rect(0, 0, size.x, size.y);
+    Gdiplus::BitmapData bdata;
+    if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                           PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not lock bits in %s\n", path);
 #endif
-        delete m_bitmap;
+        delete bitmap;
         return false;
     }
 
     /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
-    uint8_t *p = static_cast<uint8_t *>(m_bdata.Scan0);
-    for (int y = 0; y < image->m_data->m_size.y; y++)
-        for (int x = 0; x < image->m_data->m_size.x; x++)
-        {
-            uint8_t tmp = p[2];
-            p[2] = p[0];
-            p[0] = tmp;
-            p += 4;
-        }
+    image->SetSize(size);
+    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *source = static_cast<u8vec4 *>(bdata.Scan0);
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
+            *pixels++ = (*source++).bgra;
+    image->Unlock();
+
+    bitmap->UnlockBits(&bdata);
+    delete bitmap;
 
     return true;
 }
@@ -159,16 +153,16 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     else /* if (strstr(path, ".bmp")) */
         fmt = L"image/bmp";
 
-    unsigned int num = 0, size = 0;
-    Gdiplus::GetImageEncodersSize(&num, &size);
+    unsigned int num = 0, encoder_size = 0;
+    Gdiplus::GetImageEncodersSize(&num, &encoder_size);
     if (num == 0)
     {
         Log::Error("no GDI+ image encoders found\n");
         return false;
     }
     Gdiplus::ImageCodecInfo *codecs
-        = (Gdiplus::ImageCodecInfo *)new uint8_t[size];
-    Gdiplus::GetImageEncoders(num, size, codecs);
+        = (Gdiplus::ImageCodecInfo *)new uint8_t[encoder_size];
+    Gdiplus::GetImageEncoders(num, encoder_size, codecs);
     CLSID clsid;
     for (unsigned int i = 0; i < num; i++)
     {
@@ -190,15 +184,16 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
         return false;
     }
 
+    ivec2 size = image->GetSize();
+
     /* FIXME: we create a new image because there is no guarantee that
      * the image comes from GDI. But the engine architecture doesn't
      * allow us to save other images anyway. */
-    Gdiplus::Bitmap *b = new Gdiplus::Bitmap(image->m_data->m_size.x,
-                                             image->m_data->m_size.y,
+    Gdiplus::Bitmap *b = new Gdiplus::Bitmap(size.x, size.y,
                                              PixelFormat32bppARGB);
 
     Gdiplus::BitmapData bdata;
-    Gdiplus::Rect rect(0, 0, image->m_data->m_size.x, image->m_data->m_size.y);
+    Gdiplus::Rect rect(0, 0, size.x, size.y);
 
     if (b->LockBits(&rect, (unsigned int)Gdiplus::ImageLockModeWrite,
                     PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
@@ -210,14 +205,12 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
         return false;
     }
 
-    u8vec4 *psrc = static_cast<u8vec4 *>(m_bdata.Scan0);
+    u8vec4 *psrc = image->Lock<PixelFormat::RGBA_8>();
     u8vec4 *pdst = static_cast<u8vec4 *>(bdata.Scan0);
-    for (int y = 0; y < image->m_data->m_size.y; y++)
-        for (int x = 0; x < image->m_data->m_size.x; x++)
-        {
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
             *pdst++ = (*psrc++).bgra;
-        }
-
+    image->Unlock();
     b->UnlockBits(&bdata);
 
     if (b->Save(wpath, &clsid, NULL) != Gdiplus::Ok)
@@ -233,19 +226,6 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     delete b;
 
     return true;
-}
-
-bool GdiPlusImageCodec::Close()
-{
-    m_bitmap->UnlockBits(&m_bdata);
-    delete m_bitmap;
-
-    return true;
-}
-
-uint8_t * GdiPlusImageCodec::GetData() const
-{
-    return static_cast<uint8_t *>(m_bdata.Scan0);
 }
 
 } /* namespace lol */

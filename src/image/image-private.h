@@ -22,121 +22,50 @@ namespace lol
 class ImageData
 {
     friend class Image;
-    friend class ImageBank;
-    friend class ImageCodec;
 
 public:
     ImageData()
       : m_size(0, 0),
-        m_format(PixelFormat::Unknown),
-        m_refcount(0),
-        m_codecdata(nullptr)
+        m_format(PixelFormat::Unknown)
     {}
 
     ivec2 m_size;
 
     Map<int, void *> m_pixels;
     PixelFormat m_format;
-
-    int m_refcount;
-
-/* protected: */ /* FIXME: fix the ImageCodec subclasses access rights */
-    class ImageCodecData *m_codecdata;
 };
 
 class ImageCodec
 {
-    friend class ImageBank;
-    friend class ImageCodecData;
-
 public:
-    bool (*m_tryload)(Image *image, char const *path);
-    ImageCodec *m_next;
+    virtual bool Load(Image *image, char const *path) = 0;
+    virtual bool Save(Image *image, char const *path) = 0;
+
+    /* TODO: this should become more fine-grained */
     int m_priority;
-
-    static void RegisterCodec(ImageCodec *codec)
-    {
-        Helper(codec);
-    }
-
-private:
-    static void Load(Image *image, char const *path)
-    {
-        ImageCodec *codec = Helper(nullptr);
-        bool success = false;
-
-        while (codec && !success)
-        {
-            success = codec->m_tryload(image, path);
-            codec = codec->m_next;
-        }
-    }
-
-    static ImageCodec *Helper(ImageCodec *set)
-    {
-        static ImageCodec *codec_list = nullptr;
-
-        if (!set)
-            return codec_list;
-
-        ImageCodec **codec = &codec_list;
-        while (*codec && (*codec)->m_priority > set->m_priority)
-            codec = &(*codec)->m_next;
-        set->m_next = *codec;
-        *codec = set;
-
-        return nullptr;
-    }
-};
-
-/*
- * Codec-specific data that is stored in some images
- */
-class ImageCodecData
-{
-    friend class Image;
-    friend class ImageBank;
-
-public:
-    inline ImageCodecData() {}
-    virtual ~ImageCodecData() {}
-
-    virtual bool Load(Image *, char const *) = 0;
-    virtual bool Save(Image *, char const *) = 0;
-
-    virtual bool RetrieveTiles(Array<ivec2, ivec2>& tiles) { return false; }
 };
 
 #define REGISTER_IMAGE_CODEC(name) \
-    extern void Register##name(); \
-    Register##name();
+    extern ImageCodec *Register##name(); \
+    { \
+        /* Insert image codecs in a sorted list */ \
+        ImageCodec *codec = Register##name(); \
+        int i = 0, prio = codec->m_priority; \
+        for ( ; i < codeclist.Count(); ++i) \
+        { \
+            if (codeclist[i]->m_priority <= prio) \
+                break; \
+        } \
+        codeclist.Insert(codec, i); \
+    }
 
-#define DECLARE_IMAGE_CODEC(name, prio) \
-    template<typename T> class name##ImageCodec : public ImageCodec \
+#define DECLARE_IMAGE_CODEC(name, priority) \
+    ImageCodec *Register##name() \
     { \
-    public: \
-        name##ImageCodec() \
-        { \
-            static ImageCodec codec; \
-            codec.m_tryload = Load; \
-            codec.m_priority = prio; \
-            RegisterCodec(&codec); \
-        } \
-        static bool Load(Image *image, char const *path) \
-        { \
-            T *codecdata = new T(); \
-            bool ret = codecdata->Load(image, path); \
-            delete codecdata; \
-            return ret; \
-        } \
-    }; \
-    class name; \
-    name##ImageCodec<name> name##ImageCodecInstance; \
-    void Register##name() \
-    { \
-        (void)&name##ImageCodecInstance; \
-    } \
-    class name : public ImageCodecData
+        ImageCodec *ret = new name(); \
+        ret->m_priority = priority; \
+        return ret; \
+    }
 
 } /* namespace lol */
 

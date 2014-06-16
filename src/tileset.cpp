@@ -140,7 +140,7 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
 
 void TileSet::Init(char const *path)
 {
-    Init(path, Image::Create(path));
+    Init(path, new Image(path));
 }
 
 void TileSet::Init(char const *path, Image* image)
@@ -190,7 +190,7 @@ void TileSet::TickDraw(float seconds)
     {
         if (m_data->m_image)
         {
-            m_data->m_image->Destroy();
+            delete m_data->m_image;
             m_data->m_image = nullptr;
         }
         else
@@ -207,7 +207,7 @@ void TileSet::TickDraw(float seconds)
         int w = m_data->m_texture_size.x;
         int h = m_data->m_texture_size.y;
 
-        uint8_t *pixels = (uint8_t *)m_data->m_image->LockGeneric();
+        uint8_t *pixels = (uint8_t *)m_data->m_image->Lock<PixelFormat::Unknown>();
         bool resized = false;
         if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {
@@ -225,7 +225,7 @@ void TileSet::TickDraw(float seconds)
 
         if (resized)
             delete[] pixels;
-        m_data->m_image->Destroy();
+        delete m_data->m_image;
         m_data->m_image = nullptr;
     }
 }
