@@ -192,7 +192,7 @@ public:
         if (m_count >= m_reserved)
         {
             T tmp = x;
-            Reserve(m_count * 13 / 8 + 8);
+            Grow();
             new (&m_data[m_count]) Element(tmp);
         }
         else
@@ -251,7 +251,7 @@ public:
         ASSERT(pos <= m_count);
 
         if (m_count >= m_reserved)
-            Reserve(m_count * 13 / 8 + 8);
+            Grow();
 
         for (int i = m_count; i > pos; --i)
         {
@@ -474,6 +474,11 @@ public:
     inline int Bytes() const { return m_count * sizeof(Element); }
 
 protected:
+    void Grow()
+    {
+        Reserve(m_count * 13 / 8 + 8);
+    }
+
     Element *m_data;
     int m_count, m_reserved;
 };
@@ -553,7 +558,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7; T8 tmp8 = m8;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -592,7 +597,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -629,7 +634,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5; T6 tmp6 = m6;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -663,7 +668,7 @@ public:
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
             T5 tmp5 = m5;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -693,7 +698,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -721,7 +726,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
             new (&this->m_data[this->m_count].m3) T3(tmp3);
@@ -747,7 +752,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             T1 tmp1 = m1; T2 tmp2 = m2;
-            this->Reserve(this->m_count * 13 / 8 + 8);
+            this->Grow();
             new (&this->m_data[this->m_count].m1) T1(tmp1);
             new (&this->m_data[this->m_count].m2) T2(tmp2);
         }
