@@ -2,11 +2,15 @@
  Large projects
 ----------------
 
- - Add scripting support (lua?).
- - Tiler and Forge are almost the same, try to refactor them.
+  - Add scripting support (lua?).
+  - Tiler and Forge are almost the same, try to refactor them.
 
  Engine classes
 ----------------
+
+Scene:
+  - Remove uses of g_scene
+  - Maybe make Camera a world object instead?
 
 Image:
   - Handle pitch in SDL codec (and all others, actually)
@@ -31,10 +35,7 @@ Image:
      · crop.cpp
      · dither.cpp
      · dither/dbs.cpp
-     · dither/ediff.cpp
      · dither/ordered.cpp
-     · dither/ostromoukhov.cpp
-     · dither/random.cpp
      · filter/blur.cpp
      · filter/color.cpp
      · filter/convolution.cpp

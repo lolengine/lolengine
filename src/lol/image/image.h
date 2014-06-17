@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -29,6 +29,18 @@ template<> struct PixelType<PixelFormat::Y_F32> { typedef float type; };
 template<> struct PixelType<PixelFormat::RGB_F32> { typedef vec3 type; };
 template<> struct PixelType<PixelFormat::RGBA_F32> { typedef vec4 type; };
 
+enum class WrapMode : uint8_t
+{
+    Clamp,
+    Repeat,
+};
+
+enum class ScanMode : uint8_t
+{
+    Raster,
+    Serpentine,
+};
+
 class Image
 {
 public:
@@ -53,6 +65,10 @@ public:
     PixelFormat GetFormat() const;
     void SetFormat(PixelFormat fmt);
 
+    WrapMode GetWrapX() const;
+    WrapMode GetWrapY() const;
+    void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
+
     template<PixelFormat T = PixelFormat::Unknown>
         typename PixelType<T>::type *Lock();
     void Unlock(void const *pixels);
@@ -67,6 +83,9 @@ public:
 
     /* Image processing */
     Image AutoContrast() const;
+    Image DitherRandom() const;
+    Image DitherEdiff(Image &kernel, ScanMode scan = ScanMode::Raster) const;
+    Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
 
 private:
     class ImageData *m_data;

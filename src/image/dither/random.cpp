@@ -1,60 +1,42 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * random.c: random dithering functions
+ * Random dithering
  */
 
-#include "config.h"
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_dither_random(pipi_image_t *img)
+namespace lol
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *dstp;
-    float *dstdata;
-    unsigned int ctx = 1;
-    int x, y, w, h;
 
-    w = img->w;
-    h = img->h;
+Image Image::DitherRandom() const
+{
+    Image dst = *this;
 
-    dst = pipi_copy(img);
-    dstp = pipi_get_pixels(dst, PIPI_PIXELS_Y_F32);
-    dstdata = (float *)dstp->pixels;
+    float *pixels = dst.Lock<PixelFormat::Y_F32>();
+    int count = GetSize().x * GetSize().y;
 
-    for(y = 0; y < h; y++)
+    for (int n = 0; n < count; ++n)
     {
-        for(x = 0; x < w; x++)
-        {
-            long hi, lo;
-            float p, q;
-
-            hi = ctx / 12773L;
-            lo = ctx % 12773L;
-            ctx = 16807L * lo - 2836L * hi;
-            if(ctx <= 0)
-                ctx += 0x7fffffffL;
-
-            p = dstdata[y * w + x];
-            q = p > (double)((ctx % 65536) / 65535.) ? 1. : 0.;
-            dstdata[y * w + x] = q;
-        }
+        pixels[n] = (pixels[n] > lol::rand(0.5f)) ? 1.f : 0.f;
     }
+
+    dst.Unlock(pixels);
 
     return dst;
 }
+
+} /* namespace lol */
 

@@ -1,25 +1,25 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * ed.c: generic error diffusion functions
+ * Generic error diffusion functions
  */
 
-#include "config.h"
-
-#include "pipi.h"
-#include "pipi-internals.h"
+namespace lol
+{
 
 /* Perform a generic error diffusion dithering. The first non-zero
  * element in ker is treated as the current pixel. All other non-zero
@@ -27,60 +27,58 @@
  * Making the matrix generic is not terribly slower: the performance
  * hit is around 4% for Floyd-Steinberg and 13% for JaJuNi, with the
  * benefit of a lot less code. */
-pipi_image_t *pipi_dither_ediff(pipi_image_t *img, pipi_image_t *ker,
-                                pipi_scan_t scan)
+Image Image::DitherEdiff(Image &kernel, ScanMode scan) const
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *dstp, *kerp;
-    float *dstdata, *kerdata;
-    int x, y, w, h, i, j, kx, kw, kh;
+    Image dst = *this;
 
-    w = img->w;
-    h = img->h;
-    kw = ker->w;
-    kh = ker->h;
+    float *pixels = dst.Lock<PixelFormat::Y_F32>();
+    int w = dst.GetSize().x;
+    int h = dst.GetSize().y;
 
-    dst = pipi_copy(img);
-    dstp = pipi_get_pixels(dst, PIPI_PIXELS_Y_F32);
-    dstdata = (float *)dstp->pixels;
+    float *kerdata = kernel.Lock<PixelFormat::Y_F32>();
+    int kw = kernel.GetSize().x;
+    int kh = kernel.GetSize().y;
 
-    kerp = pipi_get_pixels(ker, PIPI_PIXELS_Y_F32);
-    kerdata = (float *)kerp->pixels;
-    for(kx = 0; kx < kw; kx++)
-        if(kerdata[kx] > 0)
+    int kx;
+    for (kx = 0; kx < kw; kx++)
+        if (kerdata[kx] > 0.f)
             break;
 
-    for(y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
     {
-        int reverse = (y & 1) && (scan == PIPI_SCAN_SERPENTINE);
+        bool reverse = (y & 1) && (scan == ScanMode::Serpentine);
 
-        for(x = 0; x < w; x++)
+        for (int x = 0; x < w; x++)
         {
-            float p, q, e;
             int x2 = reverse ? w - 1 - x : x;
             int s = reverse ? -1 : 1;
 
-            p = dstdata[y * w + x2];
-            q = p < 0.5 ? 0. : 1.;
-            dstdata[y * w + x2] = q;
+            float p = pixels[y * w + x2];
+            float q = p < 0.5f ? 0.f : 1.f;
+            pixels[y * w + x2] = q;
 
-            e = (p - q);
+            float e = (p - q);
 
-            for(j = 0; j < kh && y < h - j; j++)
-                for(i = 0; i < kw; i++)
+            for (int j = 0; j < kh && y < h - j; j++)
+                for (int i = 0; i < kw; i++)
                 {
-                    if(j == 0 && i <= kx)
+                    if (j == 0 && i <= kx)
                         continue;
 
-                    if(x + i - kx < 0 || x + i - kx >= w)
+                    if (x + i - kx < 0 || x + i - kx >= w)
                         continue;
 
-                    dstdata[(y + j) * w + x2 + (i - kx) * s]
+                    pixels[(y + j) * w + x2 + (i - kx) * s]
                        += e * kerdata[j * kw + i];
                 }
         }
     }
 
+    kernel.Unlock(kerdata);
+    dst.Unlock(pixels);
+
     return dst;
 }
+
+} /* namespace lol */
 

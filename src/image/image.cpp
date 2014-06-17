@@ -124,7 +124,7 @@ Image::~Image()
 {
     for (int k : m_data->m_pixels.Keys())
     {
-        delete[] m_data->m_pixels[k];
+        delete[] (uint8_t *)m_data->m_pixels[k];
         m_data->m_pixels[k] = nullptr;
     }
     delete m_data;
@@ -168,6 +168,23 @@ void Image::SetSize(ivec2 size)
     {
         Unlock(Lock<PixelFormat::RGBA_8>());
     }
+}
+
+/* Wrap-around mode for some operations */
+WrapMode Image::GetWrapX() const
+{
+    return m_data->m_wrap_x;
+}
+
+WrapMode Image::GetWrapY() const
+{
+    return m_data->m_wrap_y;
+}
+
+void Image::SetWrap(WrapMode wrap_x, WrapMode wrap_y)
+{
+    m_data->m_wrap_x = wrap_x;
+    m_data->m_wrap_y = wrap_y;
 }
 
 /* The Lock() method */

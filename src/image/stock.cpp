@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2004-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -59,7 +59,7 @@ bool Image::Stock(char const *name)
 
         if (!strcmp(name + 6, "fs"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     1.,  7./16,
                 3./16,  5./16,  1./16,
@@ -68,7 +68,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "jajuni"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  7./48,  5./48,
                 3./48,  5./48,  7./48,  5./48,  3./48,
@@ -78,7 +78,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "atkinson"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                   0.,    1.,  1./8,  1./8,
                 1./8,  1./8,  1./8,    0.,
@@ -88,7 +88,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "fan"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  7./16,
                 1./16,  3./16,  5./16,     0.,
@@ -97,7 +97,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "shiaufan"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                   0.,    0.,    1.,  1./2,
                 1./8,  1./8,  1./4,    0.,
@@ -106,7 +106,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "shiaufan2"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,    0.,    1.,  1./2,
                 1./16,  1./16,  1./8,  1./4,    0.,
@@ -115,7 +115,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "stucki"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  8./42,  4./42,
                 2./42,  4./42,  8./42,  4./42,  2./42,
@@ -125,7 +125,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "burkes"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  4./16,  2./16,
                 1./16,  2./16,  4./16,  2./16,  1./16,
@@ -134,7 +134,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "sierra"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  5./32,  3./32,
                 2./32,  4./32,  5./32,  4./32,  2./32,
@@ -144,7 +144,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "sierra2"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                    0.,     0.,     1.,  4./16,  3./16,
                 1./16,  2./16,  3./16,  2./16,  1./16,
@@ -153,7 +153,7 @@ bool Image::Stock(char const *name)
         }
         else if (!strcmp(name + 6, "lite"))
         {
-            float const myker[] =
+            static float const myker[] =
             {
                   0.,    1.,  1./2,
                 1./4,  1./4,    0.,
