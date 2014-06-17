@@ -54,7 +54,7 @@ bool Image::Stock(char const *name)
     /* Generate an error diffusion matrix. */
     if (!strncmp(name, "ediff:", 6))
     {
-        float const *ker;
+        float const *ker = nullptr;
         ivec2 size(0);
 
         if (!strcmp(name + 6, "fs"))

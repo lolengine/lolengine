@@ -116,6 +116,7 @@ liblolcore_sources = \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
     image/codec/dummy-image.cpp \
     image/color/cie1931.cpp image/color/color.cpp \
+    image/filter/autocontrast.cpp \
     image/render/noise.cpp image/render/screen.cpp \
     \
     loldebug.h \

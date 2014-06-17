@@ -23,28 +23,14 @@ namespace lol
 
 bool Image::RenderRandom(ivec2 size)
 {
-    unsigned int ctx = 1;
-
     SetSize(size);
     vec4 *pixels = Lock<PixelFormat::RGBA_F32>();
-    int count = size.x * size.y;
 
-    for (int n = 0; n < count; ++n)
-    {
-        for (int t : { 0, 1, 2 })
-        {
-            long hi, lo;
-
-            hi = ctx / 12773L;
-            lo = ctx % 12773L;
-            ctx = 16807L * lo - 2836L * hi;
-            if(ctx <= 0)
-                ctx += 0x7fffffffL;
-
-            pixels[n][t] = (float)((ctx % 65536) / 65535.);
-        }
-        pixels[n][3] = 1.0f;
-    }
+    for (int n = 0; n < size.x * size.y; ++n)
+        pixels[n] = vec4(lol::rand(1.f),
+                         lol::rand(1.f),
+                         lol::rand(1.f),
+                         1.f);
 
     Unlock(pixels);
 

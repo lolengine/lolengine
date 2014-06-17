@@ -66,8 +66,7 @@ public:
     bool RenderRandom(ivec2 size);
 
     /* Image processing */
-
-
+    Image AutoContrast() const;
 
 private:
     class ImageData *m_data;

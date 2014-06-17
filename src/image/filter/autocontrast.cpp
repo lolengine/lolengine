@@ -1,111 +1,75 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * autocontrast.c: autocontrast functions
+ * Autocontrast functions
  * TODO: the current approach is naive; we should use the histogram in order
  * to decide how to change the contrast.
  */
 
-#include "config.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_autocontrast(pipi_image_t *src)
+namespace lol
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    float min = 1.0, max = 0.0, t;
-    int x, y, w, h, gray;
 
-    w = src->w;
-    h = src->h;
+Image Image::AutoContrast() const
+{
+    Image ret = *this;
 
-    gray = (src->last_modified == PIPI_PIXELS_Y_F32);
+    float min_val = 1.f, max_val = 0.f;
+    int count = GetSize().x * GetSize().y;
 
-    srcp = gray ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    for(y = 0; y < h; y++)
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
     {
-        for(x = 0; x < w; x++)
+        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        for (int n = 0; n < count; ++n)
         {
-            if(gray)
-            {
-                if(srcdata[y * w + x] < min)
-                    min = srcdata[y * w + x];
-                if(srcdata[y * w + x] > max)
-                    max = srcdata[y * w + x];
-            }
-            else
-            {
-                if(srcdata[4 * (y * w + x)] < min)
-                    min = srcdata[4 * (y * w + x)];
-                if(srcdata[4 * (y * w + x)] > max)
-                    max = srcdata[4 * (y * w + x)];
-                if(srcdata[4 * (y * w + x) + 1] < min)
-                    min = srcdata[4 * (y * w + x) + 1];
-                if(srcdata[4 * (y * w + x) + 1] > max)
-                    max = srcdata[4 * (y * w + x) + 1];
-                if(srcdata[4 * (y * w + x) + 2] < min)
-                    min = srcdata[4 * (y * w + x) + 2];
-                if(srcdata[4 * (y * w + x) + 2] > max)
-                    max = srcdata[4 * (y * w + x) + 2];
-            }
+            min_val = lol::min(min_val, pixels[n]);
+            max_val = lol::max(max_val, pixels[n]);
         }
+
+        float t = max_val > min_val ? 1.f / (max_val - min_val) : 1.f;
+        for (int n = 0; n < count; ++n)
+            pixels[n] = (pixels[n] - min_val) * t;
+
+        ret.Unlock(pixels);
+    }
+    else
+    {
+        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        for (int n = 0; n < count; ++n)
+        {
+            min_val = lol::min(min_val, pixels[n].r);
+            min_val = lol::min(min_val, pixels[n].g);
+            min_val = lol::min(min_val, pixels[n].b);
+            max_val = lol::max(max_val, pixels[n].r);
+            max_val = lol::max(max_val, pixels[n].g);
+            max_val = lol::max(max_val, pixels[n].b);
+        }
+
+        float t = max_val > min_val ? 1.f / (max_val - min_val) : 1.f;
+        for (int n = 0; n < count; ++n)
+            pixels[n] = vec4((pixels[n].r - min_val) * t,
+                             (pixels[n].g - min_val) * t,
+                             (pixels[n].b - min_val) * t,
+                             pixels[n].a);;
+
+        ret.Unlock(pixels);
     }
 
-    if(min >= max)
-        return pipi_copy(src);
-
-    t = 1. / (max - min);
-
-    dst = pipi_new(w, h);
-    dstp = gray ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    for(y = 0; y < h; y++)
-    {
-        for(x = 0; x < w; x++)
-        {
-            if(gray)
-            {
-                dstdata[y * w + x] = (srcdata[y * w + x] - min) * t;
-            }
-            else
-            {
-                dstdata[4 * (y * w + x)]
-                    = (srcdata[4 * (y * w + x)] - min) * t;
-                dstdata[4 * (y * w + x) + 1]
-                    = (srcdata[4 * (y * w + x) + 1] - min) * t;
-                dstdata[4 * (y * w + x) + 2]
-                    = (srcdata[4 * (y * w + x) + 2] - min) * t;
-                dstdata[4 * (y * w + x) + 3]
-                    = srcdata[4 * (y * w + x) + 3];
-            }
-        }
-    }
-
-    return dst;
+    return ret;
 }
+
+} /* namespace lol */
 

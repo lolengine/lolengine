@@ -13,7 +13,6 @@ Image:
   - Fix the Floyd-Steinberg ode in pixels.cpp
   - Add gamma handling in pixels.cpp
   - port libpipi files:
-     · accessors.cpp
      · analysis/histogram.cpp
      · analysis/measure.cpp
      · codec/coreimage.cpp
@@ -36,7 +35,6 @@ Image:
      · dither/ordered.cpp
      · dither/ostromoukhov.cpp
      · dither/random.cpp
-     · filter/autocontrast.cpp
      · filter/blur.cpp
      · filter/color.cpp
      · filter/convolution.cpp
@@ -54,9 +52,7 @@ Image:
      · paint/tile.cpp
      · pipi.h
      · pipi-internals.h
-     · pipi-stubs.h
      · pipi-template.h
-     · pipi-types.h
      · quantize/reduce.cpp
      · resample/bicubic.cpp
      · resample/bresenham.cpp
