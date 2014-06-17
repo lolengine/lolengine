@@ -90,7 +90,7 @@ public:
 
 protected:
     virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds);
+    virtual void TickDraw(float seconds, Scene &scene);
 
 private:
     vec4        m_color;

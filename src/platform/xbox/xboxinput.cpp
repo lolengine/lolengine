@@ -79,9 +79,9 @@ void XboxInput::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-void XboxInput::TickDraw(float seconds)
+void XboxInput::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
 #if defined _XBOX
     for (int i = 0; i < m_data->m_joysticks.Count(); i++)

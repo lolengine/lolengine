@@ -80,9 +80,9 @@ void Nacl_PhysTest::TickGame(float seconds)
         Ticker::Shutdown();
 }
 
-void Nacl_PhysTest::TickDraw(float seconds)
+void Nacl_PhysTest::TickDraw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds);
+    WorldEntity::TickDraw(seconds, scene);
 
     if (!m_ready)
     {

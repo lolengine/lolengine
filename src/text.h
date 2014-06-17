@@ -43,7 +43,7 @@ public:
     };
 
 protected:
-    virtual void TickDraw(float seconds);
+    virtual void TickDraw(float seconds, Scene &scene);
 
 private:
     TextData *data;

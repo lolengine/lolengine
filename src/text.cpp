@@ -77,9 +77,9 @@ void Text::SetAlign(int align)
     data->align = align;
 }
 
-void Text::TickDraw(float seconds)
+void Text::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
     int length = data->m_text.Count();
     if (length)

@@ -54,11 +54,11 @@ void Layer::Render(int /* x */, int /* y */, int /* z */)
     for (int j = 0; j < height; j++)
         for (int i = 0; i < width; i++)
             if (data[j * width + i])
-                g_scene->AddTile(data[j * width + i],
-                                 vec3(x + i * 32,
-                                       y + j * 32 - altitude,
-                                       altitude + z),
-                                 orientation);
+                scene.AddTile(data[j * width + i],
+                              vec3(x + i * 32,
+                                   y + j * 32 - altitude,
+                                   altitude + z),
+                              orientation);
 #endif
 }
 

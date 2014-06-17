@@ -182,9 +182,9 @@ TileSet::~TileSet()
     delete m_data;
 }
 
-void TileSet::TickDraw(float seconds)
+void TileSet::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
     if (IsDestroying())
     {

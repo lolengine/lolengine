@@ -122,9 +122,9 @@ void D3d9Input::TickGame(float seconds)
 #endif
 }
 
-void D3d9Input::TickDraw(float seconds)
+void D3d9Input::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 }
 
 } /* namespace lol */

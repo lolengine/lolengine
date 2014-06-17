@@ -155,9 +155,9 @@ void SdlInput::TickGame(float seconds)
 #endif
 }
 
-void SdlInput::TickDraw(float seconds)
+void SdlInput::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
 #if _WIN32
     m_data->Tick(seconds);
