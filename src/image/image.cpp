@@ -117,13 +117,14 @@ Image & Image::operator =(Image other)
     /* Since the argument is passed by value, we’re assured it’s a new
      * object and we can safely swap our m_data pointers. */
     std::swap(m_data, other.m_data);
+    return *this;
 }
 
 Image::~Image()
 {
     for (int k : m_data->m_pixels.Keys())
     {
-        delete m_data->m_pixels[k];
+        delete[] m_data->m_pixels[k];
         m_data->m_pixels[k] = nullptr;
     }
     delete m_data;
