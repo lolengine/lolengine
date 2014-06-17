@@ -428,9 +428,9 @@ public:
         }
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds);
+        WorldEntity::TickDraw(seconds, scene);
 
         static float const vertices[] =
         {

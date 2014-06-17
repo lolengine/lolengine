@@ -46,9 +46,9 @@ void WorldEntity::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-void WorldEntity::TickDraw(float seconds)
+void WorldEntity::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 }
 
 } /* namespace lol */

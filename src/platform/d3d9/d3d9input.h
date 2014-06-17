@@ -31,7 +31,7 @@ public:
 
 protected:
     virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds);
+    virtual void TickDraw(float seconds, Scene &scene);
 
 private:
     D3d9InputData *m_data;

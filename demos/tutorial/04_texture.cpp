@@ -65,9 +65,9 @@ public:
         ++m_frames;
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds);
+        WorldEntity::TickDraw(seconds, scene);
 
         /* Initialise GPU data */
         if (!m_ready)

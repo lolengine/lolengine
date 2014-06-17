@@ -112,9 +112,9 @@ public:
                       * mat4::rotate(m_gears[4].m3 - 80.0f, vec3(0, 1, 0));
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds);
+        WorldEntity::TickDraw(seconds, scene);
 
         if (!m_ready)
         {
@@ -138,7 +138,7 @@ public:
 
         for (int i = 0; i < m_gears.Count(); i++)
         {
-            g_scene->AddPrimitive(m_gears[i].m1, m_mat * m_gears[i].m2);
+            scene.AddPrimitive(m_gears[i].m1, m_mat * m_gears[i].m2);
         }
     }
 

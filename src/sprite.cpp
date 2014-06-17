@@ -46,11 +46,11 @@ void Sprite::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-void Sprite::TickDraw(float seconds)
+void Sprite::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
-    g_scene->AddTile(data->tileset, data->id, m_position, 0, vec2(1.0f), 0.0f);
+    scene.AddTile(data->tileset, data->id, m_position, 0, vec2(1.0f), 0.0f);
 }
 
 Sprite::~Sprite()

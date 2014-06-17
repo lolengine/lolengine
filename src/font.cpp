@@ -58,9 +58,9 @@ Font::~Font()
     delete data;
 }
 
-void Font::TickDraw(float seconds)
+void Font::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 }
 
 char const *Font::GetName()

@@ -317,9 +317,9 @@ protected:
         WorldEntity::TickGame(seconds);
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds);
+        WorldEntity::TickDraw(seconds, scene);
 
 #if CAT_MODE
         if (!m_is_phys || m_custom_shader)
@@ -334,9 +334,9 @@ protected:
             else if (m_should_render)
             {
                 if (m_is_character)
-                    g_scene->AddPrimitive(m_mesh, m_character->GetTransform());
+                    scene.AddPrimitive(m_mesh, m_character->GetTransform());
                 else
-                    g_scene->AddPrimitive(m_mesh, m_physics->GetTransform());
+                    scene.AddPrimitive(m_mesh, m_physics->GetTransform());
             }
         }
     }

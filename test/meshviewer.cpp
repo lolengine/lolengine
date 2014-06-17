@@ -686,9 +686,9 @@ public:
 #endif //WINDOWS
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds);
+        WorldEntity::TickDraw(seconds, scene);
 
         if (!m_init || !m_first_tick)
             return;
@@ -824,12 +824,12 @@ public:
                     //Camera projection
                     mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                     m_camera->SetProjection(new_proj);
-                    g_scene->AddPrimitive(*m_meshes[i].m1, m_mat);
+                    scene.AddPrimitive(*m_meshes[i].m1, m_mat);
                     g_renderer->Clear(ClearMask::Depth);
                 }
                 m_camera->SetProjection(save_proj);
 #else
-                g_scene->AddPrimitive(*m_meshes[i].m1, m_mat);
+                scene.AddPrimitive(*m_meshes[i].m1, m_mat);
 #endif //ALL_FEATURES
             }
         }
@@ -839,7 +839,7 @@ public:
         {
             m_camera->SetProjection(mat_gizmo);
             if (m_ssetup->m_show_gizmo)
-                g_scene->AddPrimitive(*m_gizmos[GZ_Editor], m_mat);
+                scene.AddPrimitive(*m_gizmos[GZ_Editor], m_mat);
 
             if (m_ssetup->m_show_lights)
             {
@@ -851,12 +851,12 @@ public:
                     //dir light
                     if (ltmp->GetType() == LightType::Directional)
                     {
-                        g_scene->AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * inverse(local));
-                        g_scene->AddPrimitive(*m_gizmos[GZ_LightDir], inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition(), vec3::axis_y)));
+                        scene.AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * inverse(local));
+                        scene.AddPrimitive(*m_gizmos[GZ_LightDir], inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition(), vec3::axis_y)));
                     }
                     else //point light
                     {
-                        g_scene->AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * local);
+                        scene.AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * local);
                     }
                 }
             }

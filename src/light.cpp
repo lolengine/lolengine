@@ -69,9 +69,9 @@ void Light::TickGame(float seconds)
     WorldEntity::TickGame(seconds);
 }
 
-void Light::TickDraw(float seconds)
+void Light::TickDraw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds);
+    WorldEntity::TickDraw(seconds, scene);
 
     g_scene->AddLight(this);
 }

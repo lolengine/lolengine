@@ -42,7 +42,7 @@ public:
     /* Inherited from Entity */
     virtual char const *GetName();
 protected:
-    virtual void TickDraw(float seconds);
+    virtual void TickDraw(float seconds, Scene &scene);
 
 public:
     /* New methods */

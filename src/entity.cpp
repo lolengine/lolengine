@@ -67,7 +67,7 @@ void Entity::TickGame(float seconds)
 #endif
 }
 
-void Entity::TickDraw(float seconds)
+void Entity::TickDraw(float seconds, Scene &scene)
 {
     (void)seconds;
 #if !LOL_BUILD_RELEASE

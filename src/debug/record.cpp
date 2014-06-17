@@ -67,9 +67,9 @@ void DebugRecord::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-void DebugRecord::TickDraw(float seconds)
+void DebugRecord::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
     ivec2 size = Video::GetSize();
 

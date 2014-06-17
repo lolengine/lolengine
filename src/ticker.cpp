@@ -398,7 +398,7 @@ void TickerData::DrawThreadTick()
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                e->TickDraw(data->deltatime);
+                e->TickDraw(data->deltatime, *g_scene);
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity %s [%p] missed super draw tick\n",

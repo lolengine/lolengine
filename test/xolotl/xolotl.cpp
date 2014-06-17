@@ -44,7 +44,7 @@ public:
 
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
 
     }

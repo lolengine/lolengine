@@ -239,9 +239,9 @@ void Camera::TickGame(float seconds)
     WorldEntity::TickGame(seconds);
 }
 
-void Camera::TickDraw(float seconds)
+void Camera::TickDraw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds);
+    WorldEntity::TickDraw(seconds, scene);
 }
 
 } /* namespace lol */

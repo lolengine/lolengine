@@ -55,9 +55,9 @@ void Gradient::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-void Gradient::TickDraw(float seconds)
+void Gradient::TickDraw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds);
+    Entity::TickDraw(seconds, scene);
 
     float const vertex[] = { m_bbox[0].x, m_bbox[0].y, 0.0f,
                              m_bbox[1].x, m_bbox[0].y, 0.0f,
