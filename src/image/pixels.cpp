@@ -43,12 +43,25 @@ PixelFormat Image::GetFormat() const
 
 void Image::SetFormat(PixelFormat fmt)
 {
-    ivec2 size = GetSize();
-    int count = size.x * size.y;
+    PixelFormat old_fmt = m_data->m_format;
+
+    /* Preliminary intermediate conversions */
+    if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::Y_F32)
+        SetFormat(PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::Y_F32)
+        SetFormat(PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_8)
+        SetFormat(PixelFormat::RGBA_F32);
+    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGB_8)
+        SetFormat(PixelFormat::RGBA_F32);
+
+    old_fmt = m_data->m_format;
 
     /* Set the new active pixel format */
-    PixelFormat old_fmt = m_data->m_format;
     m_data->m_format = fmt;
+
+    ivec2 size = GetSize();
+    int count = size.x * size.y;
 
     /* If we never used this format, allocate a new buffer: we will
      * obviously need it. */
@@ -61,18 +74,6 @@ void Image::SetFormat(PixelFormat fmt)
      * current format is invalid, there is nothing to convert. */
     if (fmt == old_fmt || old_fmt == PixelFormat::Unknown)
         return;
-
-#if 0
-    /* Preliminary conversions */
-    if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::Y_F32)
-        pipi_get_pixels(img, PixelFormat::RGBA_F32);
-    else if (old_fmt == PixelFormat::BGR_U8 && fmt == PixelFormat::Y_F32)
-        pipi_get_pixels(img, PixelFormat::RGBA_F32);
-    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_8)
-        pipi_get_pixels(img, PixelFormat::RGBA_F32);
-    else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::BGR_U8)
-        pipi_get_pixels(img, PixelFormat::RGBA_F32);
-#endif
 
     /* Convert pixels */
     if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::RGBA_F32)
