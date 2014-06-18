@@ -69,8 +69,8 @@ public:
     WrapMode GetWrapY() const;
     void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
 
-    template<PixelFormat T = PixelFormat::Unknown>
-        typename PixelType<T>::type *Lock();
+    template<PixelFormat T> typename PixelType<T>::type *Lock();
+    void *Lock();
     void Unlock(void const *pixels);
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;

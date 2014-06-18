@@ -208,7 +208,7 @@ _T(PixelFormat::RGBA_F32);
 #undef _T
 
 /* Special case for the "any" format: return the last active buffer */
-template<> void *Image::Lock<PixelFormat::Unknown>()
+void *Image::Lock()
 {
     ASSERT(m_data->m_format != PixelFormat::Unknown);
 

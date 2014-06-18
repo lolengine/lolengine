@@ -59,7 +59,7 @@ bool Image::RenderBayer(ivec2 size)
 typedef struct
 {
     int x, y;
-    double dist;
+    float dist;
 }
 dot_t;
 
@@ -78,10 +78,10 @@ bool Image::RenderHalftone(ivec2 size)
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
         {
-            double dy = ((double)y + .07) / size.y - .5;
-            double dx = (double)x / size.x - .5;
+            float dy = ((float)y + 0.07f) / size.y - 0.5f;
+            float dx = (float)x / size.x - 0.5f;
             /* Using dx²+dy² here creates another interesting halftone. */
-            double r = - cos(M_PI * (dx - dy)) - cos(M_PI * (dx + dy));
+            float r = - lol::cos(F_PI * (dx - dy)) - lol::cos(F_PI * (dx + dy));
             circle[y * size.x + x].x = x;
             circle[y * size.x + x].y = y;
             circle[y * size.x + x].dist = r;
@@ -98,8 +98,8 @@ bool Image::RenderHalftone(ivec2 size)
 
         pixels[y * (2 * size.x) + x] = (float)(2 * n + 1) * mul;
         pixels[(y + size.y) * (2 * size.x) + x + size.x] = (float)(2 * n + 2) * mul;
-        pixels[(y + size.y) * (2 * size.x) + x] = 1. - (float)(2 * n + 1) * mul;
-        pixels[y * (2 * size.x) + x + size.x] = 1. - (float)(2 * n + 2) * mul;
+        pixels[(y + size.y) * (2 * size.x) + x] = 1.0f - (float)(2 * n + 1) * mul;
+        pixels[y * (2 * size.x) + x + size.x] = 1.0f - (float)(2 * n + 2) * mul;
     }
     Unlock(pixels);
 
