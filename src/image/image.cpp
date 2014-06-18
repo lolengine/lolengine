@@ -15,6 +15,8 @@
 #include "core.h"
 #include "image-private.h"
 
+#include <algorithm> /* for std::swap */
+
 namespace lol
 {
 

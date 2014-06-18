@@ -13,7 +13,7 @@
 // The Array class
 // ---------------
 // A very simple Array class not unlike the std::vector, with some nice
-// additional features, eg. Array<int,float> for automatic arrays of structs.
+// additional features, eg. Array<int,float> for automatic arrays of tuples.
 //
 
 #if !defined __LOL_BASE_ARRAY_H__
@@ -21,7 +21,8 @@
 
 #include <lol/base/assert.h>
 
-#include <new>
+#include <new> /* for placement new */
+#include <algorithm> /* for std::swap */
 #include <stdint.h>
 
 namespace lol
@@ -216,33 +217,11 @@ public:
 
     inline bool PushUnique(T const &x)
     {
-        int idx = Find(x);
-        if (idx == INDEX_NONE)
-        {
-            Push(x);
-            return true;
-        }
-        return false;
-    }
+        if (Find(x) != INDEX_NONE)
+            return false;
 
-    //PushFirst, insert, etc : CRUDE VERSION
-    inline void PushFirst(T const &x)
-    {
-        ArrayBase<T, ARRAY> tmp;
-        tmp.Push(x);
-        tmp += *this;
-        *this = tmp;
-    }
-
-    inline bool PushUniqueFirst(T const &x)
-    {
-        int idx = Find(x);
-        if (idx == INDEX_NONE)
-        {
-            PushFirst(x);
-            return true;
-        }
-        return false;
+        Push(x);
+        return true;
     }
 
     inline void Insert(T const &x, int pos)
@@ -260,6 +239,18 @@ public:
         }
         new (&m_data[pos]) Element(x);
         ++m_count;
+    }
+
+    inline bool InsertUnique(T const &x, int pos)
+    {
+        ASSERT(pos >= 0);
+        ASSERT(pos <= m_count);
+
+        if (Find(x) != INDEX_NONE)
+            return false;
+
+        Insert(x, pos);
+        return true;
     }
 
     inline int Find(T const &x)
@@ -320,11 +311,7 @@ public:
         ASSERT(pos2 < m_count);
 
         if (pos1 != pos2)
-        {
-            Element tmp = (*this)[pos1];
-            (*this)[pos1] = (*this)[pos2];
-            (*this)[pos2] = tmp;
-        }
+            std::swap((*this)[pos1], (*this)[pos2]);
     }
 
     void Remove(int pos, int todelete = 1)
