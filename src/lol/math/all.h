@@ -16,6 +16,7 @@
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 #include <lol/math/vector.h>
+#include <lol/math/array2d.h>
 #include <lol/math/geometry.h>
 #include <lol/math/interp.h>
 #include <lol/math/rand.h>

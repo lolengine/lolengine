@@ -573,6 +573,9 @@
     <ClInclude Include="lol\base\types.h">
       <Filter>lol\base</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\array2d.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\geometry.h">
       <Filter>lol\math</Filter>
     </ClInclude>
