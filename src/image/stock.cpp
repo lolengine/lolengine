@@ -23,21 +23,6 @@ namespace lol
 
 bool Image::Stock(char const *name)
 {
-    /* Generate an error diffusion matrix. */
-    if (!strncmp(name, "ediff:", 6))
-    {
-        float const *ker = nullptr;
-        ivec2 size(0);
-
-
-        SetSize(size);
-        float *pixels = Lock<PixelFormat::Y_F32>();
-        memcpy(pixels, ker, size.x * size.y * sizeof(float));
-        Unlock(pixels);
-
-        return true;
-    }
-
     /* Generate a completely random image. */
     if (!strncmp(name, "random:", 7))
     {
@@ -134,7 +119,7 @@ Array2D<float> Image::HalftoneKernel(ivec2 size)
     return ret;
 }
 
-Array2D<float> EdiffKernel(EdiffAlgorithm algorithm)
+Array2D<float> Image::EdiffKernel(EdiffAlgorithm algorithm)
 {
     Array2D<float> ret;
 
