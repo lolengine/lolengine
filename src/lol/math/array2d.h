@@ -61,7 +61,7 @@ public:
         ASSERT(pos.x < m_size.x);
         ASSERT(pos.y < m_size.y);
 
-        int n = pos.y * m_size.y + pos.x;
+        int n = pos.y * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
@@ -75,7 +75,7 @@ public:
         ASSERT(pos.x < m_size.x);
         ASSERT(pos.y < m_size.y);
 
-        int n = pos.y * m_size.y + pos.x;
+        int n = pos.y * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
