@@ -207,7 +207,7 @@ void TileSet::TickDraw(float seconds, Scene &scene)
         int w = m_data->m_texture_size.x;
         int h = m_data->m_texture_size.y;
 
-        uint8_t *pixels = (uint8_t *)m_data->m_image->Lock<PixelFormat::Unknown>();
+        uint8_t *pixels = (uint8_t *)m_data->m_image->Lock();
         bool resized = false;
         if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {

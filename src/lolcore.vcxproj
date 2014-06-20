@@ -149,6 +149,8 @@
     <ClCompile Include="image\codec\zed-palette-image.cpp" />
     <ClCompile Include="image\color\cie1931.cpp" />
     <ClCompile Include="image\color\color.cpp" />
+    <ClCompile Include="image\filter\autocontrast.cpp" />
+    <ClCompile Include="image\filter\convolution.cpp" />
     <ClCompile Include="image\dither\ediff.cpp" />
     <ClCompile Include="image\dither\ostromoukhov.cpp" />
     <ClCompile Include="image\dither\random.cpp" />
