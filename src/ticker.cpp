@@ -139,9 +139,9 @@ int Ticker::Unref(Entity *entity)
 {
     ASSERT(entity, "dereferencing null entity\n");
     ASSERT(entity->m_ref > 0, "dereferencing unreferenced entity %s\n",
-           entity->GetName())
+           entity->GetName());
     ASSERT(!entity->m_autorelease, "dereferencing autoreleased entity %s\n",
-           entity->GetName())
+           entity->GetName());
 
     return --entity->m_ref;
 }
