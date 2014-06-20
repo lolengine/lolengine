@@ -250,10 +250,8 @@ void Scene::RenderPrimitives()
     ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
     ShaderAttrib a_pos, a_tex;
 
-    for (int i = 0; i < data->m_primitives.Count(); ++i)
+    for (Primitive const &p : data->m_primitives)
     {
-        Primitive &p = data->m_primitives[i];
-
         /* If this primitive uses a new shader, update attributes */
         if (p.m_submesh->GetShader() != shader)
         {
@@ -284,8 +282,8 @@ void Scene::RenderPrimitives()
 
             /* FIXME: the 4th component of the position can be used for other things */
             /* FIXME: GetUniform("blabla") is costly */
-            for (int i = 0; i < lights.Count(); ++i)
-                light_data << vec4(lights[i]->GetPosition(), lights[i]->GetType()) << lights[i]->GetColor();
+            for (auto l : lights)
+                light_data << vec4(l->GetPosition(), l->GetType()) << l->GetColor();
             while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
                 light_data << vec4::zero << vec4::zero;
 

@@ -1,289 +1,303 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * convolution.c: generic convolution functions
+ * Generic convolution functions
  */
 
-#include "config.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-#if !defined TEMPLATE_FILE /* This file uses the template system */
-#define TEMPLATE_FLAGS SET_FLAG_GRAY | SET_FLAG_WRAP
-#define TEMPLATE_FILE "filter/convolution.c"
-#include "pipi-template.h"
-
-pipi_image_t *pipi_convolution(pipi_image_t *src, int m, int n, double mat[])
+namespace lol
 {
-    pipi_image_t *ret;
-    double tmp;
-    double *hvec, *vvec;
-    int i, j, besti = -1, bestj = -1;
 
+static Image SepConv(Image &src, Array<float> const &hvec,
+                     Array<float> const &vvec);
+static Image NonSepConv(Image &src, Array2D<float> const &kernel);
+
+Image Image::Convolution(Array2D<float> const &kernel)
+{
     /* Find the cell with the largest value */
-    tmp = 0.0;
-    for(i = 0; i < m * n; i++)
-        if(mat[i] * mat[i] > tmp)
-        {
-            tmp = mat[i] * mat[i];
-            besti = i % m;
-            bestj = i / m;
-        }
+    ivec2 ksize = kernel.GetSize();
+    int besti = -1, bestj = -1;
+    float tmp = 0.f;
+    for (int j = 0; j < ksize.y; ++j)
+        for (int i = 0; i < ksize.x; ++i)
+            if (lol::sq(kernel[i][j] > tmp))
+            {
+                tmp = sq(kernel[i][j]);
+                besti = i;
+                bestj = j;
+            }
 
-    /* If the kernel is empty, return an empty picture */
-    if(tmp == 0.0)
-        return pipi_new(src->w, src->h);
+    /* If the kernel is empty, return a copy of the picture */
+    if (tmp == 0.f)
+        return *this;
 
     /* Check whether the matrix rank is 1 */
-    for(j = 0; j < n; j++)
+    bool separable = true;
+    for (int j = 0; j < ksize.y && separable; ++j)
     {
-        if(j == bestj)
+        if (j == bestj)
             continue;
 
-        for(i = 0; i < m; i++)
+        for (int i = 0; i < ksize.x && separable; ++i)
         {
-            double p, q;
-
-            if(i == besti)
+            if (i == besti)
                 continue;
 
-            p = mat[j * m + i] * mat[bestj * m + besti];
-            q = mat[bestj * m + i] * mat[j * m + besti];
+            float p = kernel[i][j] * kernel[besti][bestj];
+            float q = kernel[i][bestj] * kernel[besti][j];
 
-            if(fabs(p - q) > 0.0001 * 0.0001)
-            {
-                if(src->last_modified == PIPI_PIXELS_Y_F32)
-                {
-                    if(src->wrap)
-                        return conv_gray_wrap(src, m, n, mat);
-                    return conv_gray(src, m, n, mat);
-                }
-                else
-                {
-                    if(src->wrap)
-                        return conv_wrap(src, m, n, mat);
-                    return conv(src, m, n, mat);
-                }
-            }
+            if (lol::abs(p - q) > 1.0e-8f)
+                separable = false;
         }
     }
 
-    /* Matrix rank is 1! Separate the filter */
-    hvec = malloc(m * sizeof(double));
-    vvec = malloc(n * sizeof(double));
+    if (separable)
+    {
+        /* Matrix rank is 1! Separate the filter. */
+        Array<float> hvec, vvec;
 
-    tmp = sqrt(fabs(mat[bestj * m + besti]));
-    for(i = 0; i < m; i++)
-        hvec[i] = mat[bestj * m + i] / tmp;
-    for(j = 0; j < n; j++)
-        vvec[j] = mat[j * m + besti] / tmp;
+        float norm = 1.0f / lol::sqrt(lol::abs(kernel[besti][bestj]));
+        for (int i = 0; i < ksize.x; i++)
+            hvec << norm * kernel[i][bestj];
+        for (int j = 0; j < ksize.y; j++)
+            vvec << norm * kernel[besti][j];
 
-    if(src->last_modified == PIPI_PIXELS_Y_F32)
-        ret = src->wrap ? sepconv_gray_wrap(src, m, hvec, n, vvec)
-                        : sepconv_gray(src, m, hvec, n, vvec);
+        return SepConv(*this, hvec, vvec);
+    }
     else
-        ret = src->wrap ? sepconv_wrap(src, m, hvec, n, vvec)
-                        : sepconv(src, m, hvec, n, vvec);
-
-    free(hvec);
-    free(vvec);
-
-    return ret;
+    {
+        return NonSepConv(*this, kernel);
+    }
 }
 
-#else /* XXX: the following functions use the template system */
-
-static pipi_image_t *T(conv)(pipi_image_t *src, int m, int n, double mat[])
+static Image NonSepConv(Image &src, Array2D<float> const &kernel)
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    int x, y, i, j, w, h;
+    ivec2 const size = src.GetSize();
+    ivec2 const ksize = kernel.GetSize();
+    Image dst(size);
 
-    w = src->w;
-    h = src->h;
+    bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
+    bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
 
-    srcp = FLAG_GRAY ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                     : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = FLAG_GRAY ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                     : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    for(y = 0; y < h; y++)
+    if (src.GetFormat() == PixelFormat::Y_8
+         || src.GetFormat() == PixelFormat::Y_F32)
     {
-        for(x = 0; x < w; x++)
+        float const *srcp = src.Lock<PixelFormat::Y_F32>();
+        float *dstp = dst.Lock<PixelFormat::Y_F32>();
+
+        for (int y = 0; y < size.y; y++)
         {
-            double R = 0., G = 0., B = 0., A = 0.;
-            double Y = 0.;
-            int x2, y2, off = 4 * (y * w + x);
-
-            for(j = 0; j < n; j++)
+            for (int x = 0; x < size.x; x++)
             {
-                y2 = y + j - n / 2;
-                if(y2 < 0) y2 = FLAG_WRAP ? h - 1 - ((-y2 - 1) % h) : 0;
-                else if(y2 >= h) y2 = FLAG_WRAP ? y2 % h : h - 1;
+                float pixel = 0.f;
 
-                for(i = 0; i < m; i++)
+                for (int j = 0; j < ksize.y; j++)
                 {
-                    double f = mat[j * m + i];
+                    int y2 = y + j - ksize.y / 2;
+                    if (y2 < 0)
+                        y2 = wrap_y ? size.y - 1 - ((-y2 - 1) % size.y) : 0;
+                    else if (y2 >= size.y)
+                        y2 = wrap_y ? y2 % size.y : size.y - 1;
 
-                    x2 = x + i - m / 2;
-                    if(x2 < 0) x2 = FLAG_WRAP ? w - 1 - ((-x2 - 1) % w) : 0;
-                    else if(x2 >= w) x2 = FLAG_WRAP ? x2 % w : w - 1;
-
-                    if(FLAG_GRAY)
-                        Y += f * srcdata[y2 * w + x2];
-                    else
+                    for (int i = 0; i < ksize.x; i++)
                     {
-                        R += f * srcdata[(y2 * w + x2) * 4];
-                        G += f * srcdata[(y2 * w + x2) * 4 + 1];
-                        B += f * srcdata[(y2 * w + x2) * 4 + 2];
-                        A += f * srcdata[(y2 * w + x2) * 4 + 3];
+                        float f = kernel[i][j];
+
+                        int x2 = x + i - ksize.x / 2;
+                        if (x2 < 0)
+                            x2 = wrap_x ? size.x - 1 - ((-x2 - 1) % size.x) : 0;
+                        else if (x2 >= size.x)
+                            x2 = wrap_x ? x2 % size.x : size.x - 1;
+
+                        pixel += f * srcp[y2 * size.x + x2];
                     }
                 }
-            }
 
-            if(FLAG_GRAY)
-                dstdata[y * w + x] = Y < 0.0 ? 0.0 : Y > 1.0 ? 1.0 : Y;
-            else
-            {
-                dstdata[off] = R < 0.0 ? 0.0 : R > 1.0 ? 1.0 : R;
-                dstdata[off + 1] = G < 0.0 ? 0.0 : G > 1.0 ? 1.0 : G;
-                dstdata[off + 2] = B < 0.0 ? 0.0 : B > 1.0 ? 1.0 : B;
-                dstdata[off + 3] = A < 0.0 ? 0.0 : A > 1.0 ? 1.0 : A;
+                dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
             }
         }
+
+        src.Unlock(srcp);
+        dst.Unlock(dstp);
+    }
+    else
+    {
+        vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
+        vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
+
+        for (int y = 0; y < size.y; y++)
+        {
+            for (int x = 0; x < size.x; x++)
+            {
+                vec4 pixel(0.f);
+
+                for (int j = 0; j < ksize.y; j++)
+                {
+                    int y2 = y + j - ksize.y / 2;
+                    if (y2 < 0)
+                        y2 = wrap_y ? size.y - 1 - ((-y2 - 1) % size.y) : 0;
+                    else if (y2 >= size.y)
+                        y2 = wrap_y ? y2 % size.y : size.y - 1;
+
+                    for (int i = 0; i < ksize.x; i++)
+                    {
+                        float f = kernel[i][j];
+
+                        int x2 = x + i - ksize.x / 2;
+                        if (x2 < 0)
+                            x2 = wrap_x ? size.x - 1 - ((-x2 - 1) % size.x) : 0;
+                        else if (x2 >= size.x)
+                            x2 = wrap_x ? x2 % size.x : size.x - 1;
+
+                        pixel += f * srcp[y2 * size.x + x2];
+                    }
+                }
+
+                dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
+            }
+        }
+
+        src.Unlock(srcp);
+        dst.Unlock(dstp);
     }
 
     return dst;
 }
 
-static pipi_image_t *T(sepconv)(pipi_image_t *src,
-                                int m, double hvec[], int n, double vvec[])
+static Image SepConv(Image &src, Array<float> const &hvec,
+                     Array<float> const &vvec)
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    double *buffer;
-    int x, y, i, j, w, h;
+    ivec2 const size = src.GetSize();
+    ivec2 const ksize = ivec2(hvec.Count(), vvec.Count());
+    Image dst(size);
 
-    w = src->w;
-    h = src->h;
+    bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
+    bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
 
-    srcp = FLAG_GRAY ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                     : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = FLAG_GRAY ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                     : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    buffer = malloc(w * h * (FLAG_GRAY ? 1 : 4) * sizeof(double));
-
-    for(y = 0; y < h; y++)
+    if (src.GetFormat() == PixelFormat::Y_8
+         || src.GetFormat() == PixelFormat::Y_F32)
     {
-        for(x = 0; x < w; x++)
+        float const *srcp = src.Lock<PixelFormat::Y_F32>();
+        float *dstp = dst.Lock<PixelFormat::Y_F32>();
+        /* TODO: compare performances with Array2D here */
+        float *tmp = new float[size.x * size.y];
+
+        for (int y = 0; y < size.y; y++)
         {
-            double R = 0., G = 0., B = 0., A = 0.;
-            double Y = 0.;
-            int x2, off = 4 * (y * w + x);
-
-            for(i = 0; i < m; i++)
+            for (int x = 0; x < size.x; x++)
             {
-                double f = hvec[i];
+                float pixel = 0.f;
 
-                x2 = x + i - m / 2;
-                if(x2 < 0) x2 = FLAG_WRAP ? w - 1 - ((-x2 - 1) % w) : 0;
-                else if(x2 >= w) x2 = FLAG_WRAP ? x2 % w : w - 1;
-
-                if(FLAG_GRAY)
-                    Y += f * srcdata[y * w + x2];
-                else
+                for (int i = 0; i < ksize.x; i++)
                 {
-                    R += f * srcdata[(y * w + x2) * 4];
-                    G += f * srcdata[(y * w + x2) * 4 + 1];
-                    B += f * srcdata[(y * w + x2) * 4 + 2];
-                    A += f * srcdata[(y * w + x2) * 4 + 3];
-                }
-            }
+                    float f = hvec[i];
 
-            if(FLAG_GRAY)
-                buffer[y * w + x] = Y;
-            else
-            {
-                buffer[off] = R;
-                buffer[off + 1] = G;
-                buffer[off + 2] = B;
-                buffer[off + 3] = A;
+                    int x2 = x + i - ksize.x / 2;
+                    if (x2 < 0)
+                        x2 = wrap_x ? size.x - 1 - ((-x2 - 1) % size.x) : 0;
+                    else if (x2 >= size.x)
+                        x2 = wrap_x ? x2 % size.x : size.x - 1;
+
+                    pixel += f * srcp[y * size.x + x2];
+                }
+
+                tmp[y * size.x + x] = pixel;
             }
         }
-    }
 
-    for(y = 0; y < h; y++)
-    {
-        for(x = 0; x < w; x++)
+        for (int y = 0; y < size.y; y++)
         {
-            double R = 0., G = 0., B = 0., A = 0.;
-            double Y = 0.;
-            int y2, off = 4 * (y * w + x);
-
-            for(j = 0; j < n; j++)
+            for (int x = 0; x < size.x; x++)
             {
-                double f = vvec[j];
+                float pixel = 0.f;
 
-                y2 = y + j - n / 2;
-                if(y2 < 0) y2 = FLAG_WRAP ? h - 1 - ((-y2 - 1) % h) : 0;
-                else if(y2 >= h) y2 = FLAG_WRAP ? y2 % h : h - 1;
-
-                if(FLAG_GRAY)
-                    Y += f * buffer[y2 * w + x];
-                else
+                for (int j = 0; j < ksize.y; j++)
                 {
-                    R += f * buffer[(y2 * w + x) * 4];
-                    G += f * buffer[(y2 * w + x) * 4 + 1];
-                    B += f * buffer[(y2 * w + x) * 4 + 2];
-                    A += f * buffer[(y2 * w + x) * 4 + 3];
-                }
-            }
+                    double f = vvec[j];
 
-            if(FLAG_GRAY)
-                dstdata[y * w + x] = Y < 0.0 ? 0.0 : Y > 1.0 ? 1.0 : Y;
-            else
-            {
-                dstdata[off] = R < 0.0 ? 0.0 : R > 1.0 ? 1.0 : R;
-                dstdata[off + 1] = G < 0.0 ? 0.0 : G > 1.0 ? 1.0 : G;
-                dstdata[off + 2] = B < 0.0 ? 0.0 : B > 1.0 ? 1.0 : B;
-                dstdata[off + 3] = A < 0.0 ? 0.0 : A > 1.0 ? 1.0 : A;
+                    int y2 = y + j - ksize.y / 2;
+                    if (y2 < 0)
+                        y2 = wrap_y ? size.y - 1 - ((-y2 - 1) % size.y) : 0;
+                    else if (y2 >= size.y)
+                        y2 = wrap_y ? y2 % size.y : size.y - 1;
+
+                    pixel += f * tmp[y2 * size.x + x];
+                }
+
+                dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
             }
         }
+
+        src.Unlock(srcp);
+        dst.Unlock(dstp);
     }
+    else
+    {
+        vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
+        vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
+        /* TODO: compare performances with Array2D here */
+        vec4 *tmp = new vec4[size.x * size.y];
 
-    free(buffer);
+        for (int y = 0; y < size.y; y++)
+        {
+            for (int x = 0; x < size.x; x++)
+            {
+                vec4 pixel(0.f);
 
+                for (int i = 0; i < ksize.x; i++)
+                {
+                    int x2 = x + i - ksize.x / 2;
+                    if (x2 < 0)
+                        x2 = wrap_x ? size.x - 1 - ((-x2 - 1) % size.x) : 0;
+                    else if (x2 >= size.x)
+                        x2 = wrap_x ? x2 % size.x : size.x - 1;
+
+                    pixel += hvec[i] * srcp[y * size.x + x2];
+                }
+
+                tmp[y * size.x + x] = pixel;
+            }
+        }
+
+        for (int y = 0; y < size.y; y++)
+        {
+            for (int x = 0; x < size.x; x++)
+            {
+                vec4 pixel(0.f);
+
+                for (int j = 0; j < ksize.y; j++)
+                {
+                    int y2 = y + j - ksize.y / 2;
+                    if (y2 < 0)
+                        y2 = wrap_y ? size.y - 1 - ((-y2 - 1) % size.y) : 0;
+                    else if (y2 >= size.y)
+                        y2 = wrap_y ? y2 % size.y : size.y - 1;
+
+                    pixel += vvec[j] * tmp[y2 * size.x + x];
+                }
+
+                dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
+            }
+        }
+
+        src.Unlock(srcp);
+        dst.Unlock(dstp);
+    }
     return dst;
 }
 
-#endif
+} /* namespace lol */
 

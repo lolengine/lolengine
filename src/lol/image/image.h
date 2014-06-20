@@ -83,6 +83,8 @@ public:
 
     /* Image processing */
     Image AutoContrast() const;
+    Image Convolution(Array2D<float> const &kernel);
+
     Image DitherRandom() const;
     Image DitherEdiff(Image &kernel, ScanMode scan = ScanMode::Raster) const;
     Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
