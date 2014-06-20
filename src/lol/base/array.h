@@ -24,6 +24,9 @@
 #include <new> /* for placement new */
 #include <algorithm> /* for std::swap */
 #include <stdint.h>
+#if 0 // disabled: Visual Studio 2012 doesn't have this
+#include <initializer_list>
+#endif
 
 namespace lol
 {
@@ -45,6 +48,18 @@ public:
     inline ArrayBase() : m_data(0), m_count(0), m_reserved(0)
     {
     }
+
+#if 0
+    inline ArrayBase(std::initializer_list<Element> list)
+      : m_data(0),
+        m_count(0),
+        m_reserved(0)
+    {
+        Reserve(list.size);
+        for (auto elem : list)
+            Push(elem);
+    }
+#endif
 
     inline ~ArrayBase()
     {
