@@ -41,6 +41,21 @@ enum class ScanMode : uint8_t
     Serpentine,
 };
 
+enum class EdiffAlgorithm : uint8_t
+{
+    FloydSteinberg,
+    JaJuNi,
+    Atkinson,
+    Fan,
+    ShiauFan,
+    ShiauFan2,
+    Stucki,
+    Burkes,
+    Sierra,
+    Sierra2,
+    Lite,
+};
+
 class Image
 {
 public:
@@ -75,10 +90,13 @@ public:
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
+    /* Image processing kernels */
+    static Array2D<float> BayerKernel(ivec2 size);
+    static Array2D<float> HalftoneKernel(ivec2 size);
+    static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
+
     /* Rendering */
     bool Stock(char const *desc);
-    bool RenderBayer(ivec2 size);
-    bool RenderHalftone(ivec2 size);
     bool RenderRandom(ivec2 size);
 
     /* Image processing */
@@ -86,7 +104,8 @@ public:
     Image Convolution(Array2D<float> const &kernel);
 
     Image DitherRandom() const;
-    Image DitherEdiff(Image &kernel, ScanMode scan = ScanMode::Raster) const;
+    Image DitherEdiff(Array2D<float> const &kernel,
+                      ScanMode scan = ScanMode::Raster) const;
     Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
 
 private:

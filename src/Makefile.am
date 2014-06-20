@@ -119,7 +119,7 @@ liblolcore_sources = \
     image/dither/random.cpp image/dither/ediff.cpp \
     image/dither/ostromoukhov.cpp \
     image/filter/autocontrast.cpp image/filter/convolution.cpp \
-    image/render/noise.cpp image/render/screen.cpp \
+    image/render/noise.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \

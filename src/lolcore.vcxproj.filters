@@ -373,9 +373,6 @@
     <ClCompile Include="image\render\noise.cpp">
       <Filter>image\render</Filter>
     </ClCompile>
-    <ClCompile Include="image\render\screen.cpp">
-      <Filter>image\render</Filter>
-    </ClCompile>
     <ClCompile Include="image\pixels.cpp">
       <Filter>image</Filter>
     </ClCompile>

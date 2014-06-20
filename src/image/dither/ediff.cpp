@@ -27,54 +27,48 @@ namespace lol
  * Making the matrix generic is not terribly slower: the performance
  * hit is around 4% for Floyd-Steinberg and 13% for JaJuNi, with the
  * benefit of a lot less code. */
-Image Image::DitherEdiff(Image &kernel, ScanMode scan) const
+Image Image::DitherEdiff(Array2D<float> const &kernel, ScanMode scan) const
 {
     Image dst = *this;
 
-    float *pixels = dst.Lock<PixelFormat::Y_F32>();
-    int w = dst.GetSize().x;
-    int h = dst.GetSize().y;
-
-    float *kerdata = kernel.Lock<PixelFormat::Y_F32>();
-    int kw = kernel.GetSize().x;
-    int kh = kernel.GetSize().y;
+    ivec2 size = dst.GetSize();
+    ivec2 ksize = kernel.GetSize();
 
     int kx;
-    for (kx = 0; kx < kw; kx++)
-        if (kerdata[kx] > 0.f)
+    for (kx = 0; kx < ksize.x; kx++)
+        if (kernel[kx][0] > 0.f)
             break;
 
-    for (int y = 0; y < h; y++)
+    float *pixels = dst.Lock<PixelFormat::Y_F32>();
+    for (int y = 0; y < size.y; y++)
     {
         bool reverse = (y & 1) && (scan == ScanMode::Serpentine);
 
-        for (int x = 0; x < w; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            int x2 = reverse ? w - 1 - x : x;
+            int x2 = reverse ? size.x - 1 - x : x;
             int s = reverse ? -1 : 1;
 
-            float p = pixels[y * w + x2];
+            float p = pixels[y * size.x + x2];
             float q = p < 0.5f ? 0.f : 1.f;
-            pixels[y * w + x2] = q;
+            pixels[y * size.x + x2] = q;
 
             float e = (p - q);
 
-            for (int j = 0; j < kh && y < h - j; j++)
-                for (int i = 0; i < kw; i++)
+            for (int j = 0; j < ksize.y && y < size.y - j; j++)
+                for (int i = 0; i < ksize.x; i++)
                 {
                     if (j == 0 && i <= kx)
                         continue;
 
-                    if (x + i - kx < 0 || x + i - kx >= w)
+                    if (x + i - kx < 0 || x + i - kx >= size.x)
                         continue;
 
-                    pixels[(y + j) * w + x2 + (i - kx) * s]
-                       += e * kerdata[j * kw + i];
+                    pixels[(y + j) * size.x + x2 + (i - kx) * s]
+                       += e * kernel[i][j];
                 }
         }
     }
-
-    kernel.Unlock(kerdata);
     dst.Unlock(pixels);
 
     return dst;

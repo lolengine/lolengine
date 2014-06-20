@@ -157,7 +157,6 @@
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\pixels.cpp" />
     <ClCompile Include="image\render\noise.cpp" />
-    <ClCompile Include="image\render\screen.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
     <ClCompile Include="layer.cpp" />
