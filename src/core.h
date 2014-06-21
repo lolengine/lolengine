@@ -195,8 +195,6 @@ static inline int isnan(float f)
 
 // Other objects
 #include "dict.h"
-#include "map.h"
-#include "layer.h"
 #include "mesh/mesh.h"
 #include "mesh/primitive.h"
 #include "application/application.h"
