@@ -358,6 +358,9 @@
     <ClCompile Include="image\dither\ediff.cpp">
       <Filter>image\dither</Filter>
     </ClCompile>
+    <ClCompile Include="image\dither\ordered.cpp">
+      <Filter>image\dither</Filter>
+    </ClCompile>
     <ClCompile Include="image\dither\ostromoukhov.cpp">
       <Filter>image\dither</Filter>
     </ClCompile>

@@ -117,7 +117,7 @@ liblolcore_sources = \
     image/codec/dummy-image.cpp \
     image/color/cie1931.cpp image/color/color.cpp \
     image/dither/random.cpp image/dither/ediff.cpp \
-    image/dither/ostromoukhov.cpp \
+    image/dither/ostromoukhov.cpp image/dither/ordered.cpp \
     image/filter/autocontrast.cpp image/filter/convolution.cpp \
     image/render/noise.cpp \
     \

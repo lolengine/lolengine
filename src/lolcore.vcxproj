@@ -152,6 +152,7 @@
     <ClCompile Include="image\filter\autocontrast.cpp" />
     <ClCompile Include="image\filter\convolution.cpp" />
     <ClCompile Include="image\dither\ediff.cpp" />
+    <ClCompile Include="image\dither\ordered.cpp" />
     <ClCompile Include="image\dither\ostromoukhov.cpp" />
     <ClCompile Include="image\dither\random.cpp" />
     <ClCompile Include="image\image.cpp" />
