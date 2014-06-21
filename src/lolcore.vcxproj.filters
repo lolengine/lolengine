@@ -102,6 +102,9 @@
     <ClCompile Include="image\image.cpp">
       <Filter>image</Filter>
     </ClCompile>
+    <ClCompile Include="image\kernel.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
     <ClCompile Include="debug\fps.cpp">
       <Filter>debug</Filter>
     </ClCompile>
