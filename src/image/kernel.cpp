@@ -15,33 +15,11 @@
 #include "core.h"
 
 /*
- * Stock images and kernels
+ * Stock kernels
  */
 
 namespace lol
 {
-
-bool Image::Stock(char const *name)
-{
-    /* Generate a completely random image. */
-    if (!strncmp(name, "random:", 7))
-    {
-        ivec2 size(0);
-
-        size.x = atoi(name + 7);
-        name = strchr(name + 7, 'x');
-        if (name)
-            size.y = atoi(name + 1);
-        if (!size.y)
-            size.y = size.x;
-        if (size.x <= 0 || size.y <= 0)
-            return false;
-
-        return RenderRandom(size);
-    }
-
-    return false;
-}
 
 Array2D<float> Image::BayerKernel(ivec2 size)
 {

@@ -100,7 +100,6 @@ public:
                                          vec2 delta = vec2(0.f, 0.f));
 
     /* Rendering */
-    bool Stock(char const *desc);
     bool RenderRandom(ivec2 size);
 
     /* Image processing */
@@ -112,6 +111,7 @@ public:
     Image YUVToRGB() const;
     Image RGBToYUV() const;
 
+    /* Dithering */
     Image DitherRandom() const;
     Image DitherEdiff(Array2D<float> const &kernel,
                       ScanMode scan = ScanMode::Raster) const;
