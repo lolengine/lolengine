@@ -1,68 +1,69 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2009 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
+#include "image-private.h"
 
 /*
- * crop.c: image cropping functions
+ * Image cropping functions
  */
 
-#include "config.h"
-
-#include <stdlib.h>
-#include <string.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_crop(pipi_image_t *src, int w, int h, int dx, int dy)
+namespace lol
 {
-    float *srcdata, *dstdata;
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    int y, off, len;
 
-    srcp = pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
+Image Image::Crop(ibox2 box) const
+{
+    ivec2 const srcsize = GetSize();
+    ivec2 const dstsize = box.B - box.A;
 
-    dst = pipi_new(w, h);
-    dstp = pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
+    Image dst(dstsize);
+    PixelFormat format = GetFormat();
 
-    off = dx;
-    len = w;
-
-    if(dx < 0)
+    if (format != PixelFormat::Unknown)
     {
-        len += dx;
-        dx = 0;
-    }
+        dst.SetFormat(format);
+        uint8_t const *srcp = (uint8_t const *)m_data->m_pixels[(int)format];
+        uint8_t *dstp = (uint8_t *)dst.m_data->m_pixels[(int)format];
+        uint8_t bpp = BytesPerPixel(format);
 
-    if(dx + len > srcp->w)
-        len = srcp->w - dx;
+        int len = dstsize.x;
 
-    if(len > 0)
-    {
-        for(y = 0; y < h; y++)
+        if (box.A.x < 0)
         {
-            if(y + dy < 0 || y + dy >= srcp->h)
-                continue;
+            len += box.A.x;
+            box.A.x = 0;
+        }
 
-            memcpy(dstdata + y * w * 4,
-                   srcdata + ((y + dy) * srcp->w + dx) * 4,
-                   len * 4 * sizeof(float));
+        if (box.A.x + len > srcsize.x)
+            len = srcsize.x - box.A.x;
+
+        if (len > 0)
+        {
+            for (int y = 0; y < dstsize.y; y++)
+            {
+                if (y + box.A.y < 0 || y + box.A.y >= srcsize.y)
+                    continue;
+
+                memcpy(dstp + y * dstsize.x * bpp,
+                       srcp + ((y + box.A.y) * srcsize.x + box.A.x) * bpp,
+                       len * bpp);
+            }
         }
     }
 
     return dst;
 }
+
+} /* namespace lol */
 

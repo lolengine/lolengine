@@ -66,6 +66,45 @@ public:
     }
 
     /*
+     * Convert linear RGB to YUV
+     */
+    static vec3 RGBToYUV(vec3 src)
+    {
+        mat3 m(vec3(0.299f, -0.14713f,  0.615f),
+               vec3(0.587f, -0.28886f, -0.51499f),
+               vec3(0.114f,  0.436f,   -0.10001f));
+        vec3 tmp = m * src;
+        tmp.r = (tmp.r * 220.f + 16.f) / 255.f;
+        tmp.g += 0.5f;
+        tmp.b += 0.5f;
+        return clamp(tmp, 0.f, 1.f);
+    }
+
+    static vec4 RGBToYUV(vec4 src)
+    {
+        return vec4(RGBToYUV(src.rgb), src.a);
+    }
+
+    /*
+     * Convert YUV to linear RGB
+     */
+    static vec3 YUVToRGB(vec3 src)
+    {
+        src.r = (src.r * 255.f - 16.f) / 220.f;
+        src.g -= 0.5f;
+        src.b -= 0.5f;
+        mat3 m(vec3(1.f,       1.f,      1.f),
+               vec3(0.f,      -0.39465f, 2.03211f),
+               vec3(1.13983f, -0.58060f, 0.f));
+        return clamp(m * src, 0.f, 1.f);
+    }
+
+    static vec4 YUVToRGB(vec4 src)
+    {
+        return vec4(YUVToRGB(src.rgb), src.a);
+    }
+
+    /*
      * Convert linear HSV to linear RGB
      */
     static vec3 HSVToRGB(vec3 src)

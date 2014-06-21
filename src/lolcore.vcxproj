@@ -151,10 +151,13 @@
     <ClCompile Include="image\color\color.cpp" />
     <ClCompile Include="image\filter\autocontrast.cpp" />
     <ClCompile Include="image\filter\convolution.cpp" />
+    <ClCompile Include="image\filter\median.cpp" />
+    <ClCompile Include="image\filter\yuv.cpp" />
     <ClCompile Include="image\dither\ediff.cpp" />
     <ClCompile Include="image\dither\ordered.cpp" />
     <ClCompile Include="image\dither\ostromoukhov.cpp" />
     <ClCompile Include="image\dither\random.cpp" />
+    <ClCompile Include="image\crop.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\pixels.cpp" />
     <ClCompile Include="image\render\noise.cpp" />
