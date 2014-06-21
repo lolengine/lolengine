@@ -108,6 +108,7 @@ public:
     Image Convolution(Array2D<float> const &kernel);
     Image Crop(ibox2 box) const;
     Image Median(ivec2 radii) const;
+    Image Median(Array2D<float> const &kernel) const;
     Image YUVToRGB() const;
     Image RGBToYUV() const;
 

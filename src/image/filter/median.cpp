@@ -126,7 +126,91 @@ Image Image::Median(ivec2 ksize) const
                     for (int j = 0; j < lsize.y; ++j)
                         for (int i = 0; i < lsize.x; ++i)
                         {
-                            float d = 1.0f / (1e-10f + distance(median, list[i][j]));
+                            float d = 1.0f /
+                                      (1e-10f + distance(median, list[i][j]));
+                            s1 += list[i][j] * d;
+                            s2 += d;
+                        }
+                    median = s1 / s2;
+
+                    if (iter > 1 && iter < N)
+                    {
+                        median += K * (median - oldmed);
+                    }
+
+                    if (iter > 3 && distance(oldmed, median) < 1.e-5f)
+                        break;
+                }
+
+                /* Store the median value */
+                dstp[y * size.x + x] = vec4(median, srcp[y * size.x + x].a);
+            }
+        }
+
+        tmp.Unlock(srcp);
+        ret.Unlock(dstp);
+    }
+
+    return ret;
+}
+
+Image Image::Median(Array2D<float> const &kernel) const
+{
+    ivec2 const size = GetSize();
+    Image tmp = *this;
+    Image ret(size);
+
+    /* FIXME: TODO */
+#if 0
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    {
+    }
+    else
+#endif
+    {
+        ivec2 const ksize = kernel.GetSize();
+        Array2D<vec3> list(ksize);
+
+        vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();
+        vec4 *dstp = ret.Lock<PixelFormat::RGBA_F32>();
+
+        for (int y = 0; y < size.y; y++)
+        {
+            for (int x = 0; x < size.x; x++)
+            {
+                /* Make a list of neighbours */
+                for (int j = 0; j < ksize.y; j++)
+                {
+                    int y2 = y + j - ksize.y / 2;
+                    if (y2 < 0) y2 = size.y - 1 - ((-y2 - 1) % size.y);
+                    else if (y2 > 0) y2 = y2 % size.y;
+
+                    for (int i = 0; i < ksize.x; i++)
+                    {
+                        int x2 = x + i - ksize.x / 2;
+                        if (x2 < 0) x2 = size.x - 1 - ((-x2 - 1) % size.x);
+                        else if (x2 > 0) x2 = x2 % size.x;
+
+                        list[i][j] = srcp[y2 * size.x + x2].rgb;
+                    }
+                }
+
+                /* Algorithm constants, empirically chosen */
+                int const N = 5;
+                float const K = 1.5f;
+
+                /* Iterate using Weiszfeld’s algorithm */
+                vec3 oldmed(0.f), median(0.f);
+                for (int iter = 0; ; ++iter)
+                {
+                    oldmed = median;
+                    vec3 s1(0.f);
+                    float s2 = 0.f;
+                    for (int j = 0; j < ksize.y; ++j)
+                        for (int i = 0; i < ksize.x; ++i)
+                        {
+                            float d = kernel[i][j] /
+                                      (1e-10f + distance(median, list[i][j]));
                             s1 += list[i][j] * d;
                             s2 += d;
                         }
