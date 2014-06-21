@@ -7,8 +7,8 @@ noinst_LIBRARIES = liblolcore.a
 
 liblolcore_a_SOURCES = \
     core.h tiler.cpp tiler.h dict.cpp dict.h \
-    audio.cpp audio.h scene.cpp scene.h font.cpp font.h layer.cpp layer.h \
-    map.cpp map.h entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
+    audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
+    entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h numeric.h utils.h \

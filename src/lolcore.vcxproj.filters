@@ -207,16 +207,10 @@
     <ClCompile Include="gradient.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="layer.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="light.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="ticker.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="map.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="platform.cpp">
@@ -477,9 +471,6 @@
     <ClInclude Include="gradient.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="layer.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="light.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -487,9 +478,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="lolgl.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="numeric.h">
@@ -569,9 +557,6 @@
     </ClInclude>
     <ClInclude Include="platform\ps3\threadbase.h">
       <Filter>platform\ps3</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>src\...</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>

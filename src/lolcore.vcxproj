@@ -159,9 +159,7 @@
     <ClCompile Include="image\render\noise.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
-    <ClCompile Include="layer.cpp" />
     <ClCompile Include="light.cpp" />
-    <ClCompile Include="map.cpp" />
     <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
@@ -276,7 +274,6 @@
     <ClInclude Include="input\input.h" />
     <ClInclude Include="input\input_internal.h" />
     <ClInclude Include="input\keys.h" />
-    <ClInclude Include="layer.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
@@ -327,7 +324,6 @@
     <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="mesh\primitive.h" />
-    <ClInclude Include="map.h" />
     <ClInclude Include="messageservice.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
