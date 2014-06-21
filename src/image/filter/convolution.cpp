@@ -33,7 +33,7 @@ Image Image::Convolution(Array2D<float> const &kernel)
     float tmp = 0.f;
     for (int dy = 0; dy < ksize.y; ++dy)
         for (int dx = 0; dx < ksize.x; ++dx)
-            if (lol::sq(kernel[dx][dy] > tmp))
+            if (lol::sq(kernel[dx][dy]) > tmp)
             {
                 tmp = sq(kernel[dx][dy]);
                 bestx = dx;
@@ -176,8 +176,8 @@ static Image NonSepConv(Image &src, Array2D<float> const &kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static Image NonSepConv(Image &src, Array<float> const &hvec,
-                        Array<float> const &vvec)
+static Image SepConv(Image &src, Array<float> const &hvec,
+                     Array<float> const &vvec)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
@@ -250,16 +250,16 @@ static Image SepConv(Image &src, Array<float> const &hvec,
         if (wrap_x)
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::Y_F32, 1, 1>(src, hvec, vvec);
+                return SepConv<PixelFormat::Y_F32, 1, 1>(src, hvec, vvec);
             else
-                return NonSepConv<PixelFormat::Y_F32, 1, 0>(src, hvec, vvec);
+                return SepConv<PixelFormat::Y_F32, 1, 0>(src, hvec, vvec);
         }
         else
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::Y_F32, 0, 1>(src, hvec, vvec);
+                return SepConv<PixelFormat::Y_F32, 0, 1>(src, hvec, vvec);
             else
-                return NonSepConv<PixelFormat::Y_F32, 0, 0>(src, hvec, vvec);
+                return SepConv<PixelFormat::Y_F32, 0, 0>(src, hvec, vvec);
         }
     }
     else
@@ -267,16 +267,16 @@ static Image SepConv(Image &src, Array<float> const &hvec,
         if (wrap_x)
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::RGBA_F32, 1, 1>(src, hvec, vvec);
+                return SepConv<PixelFormat::RGBA_F32, 1, 1>(src, hvec, vvec);
             else
-                return NonSepConv<PixelFormat::RGBA_F32, 1, 0>(src, hvec, vvec);
+                return SepConv<PixelFormat::RGBA_F32, 1, 0>(src, hvec, vvec);
         }
         else
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::RGBA_F32, 0, 1>(src, hvec, vvec);
+                return SepConv<PixelFormat::RGBA_F32, 0, 1>(src, hvec, vvec);
             else
-                return NonSepConv<PixelFormat::RGBA_F32, 0, 0>(src, hvec, vvec);
+                return SepConv<PixelFormat::RGBA_F32, 0, 0>(src, hvec, vvec);
         }
     }
 }
