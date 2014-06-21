@@ -95,6 +95,7 @@ public:
     static Array2D<float> HalftoneKernel(ivec2 size);
     static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
     static Array2D<float> NormalizeKernel(Array2D<float> const &kernel);
+    static Array2D<float> GaussianKernel(vec2 radius, float angle, vec2 delta);
 
     /* Rendering */
     bool Stock(char const *desc);

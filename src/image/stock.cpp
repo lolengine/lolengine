@@ -277,5 +277,84 @@ Array2D<float> Image::EdiffKernel(EdiffAlgorithm algorithm)
     return ret;
 }
 
+/* Any standard deviation below this value will be rounded up, in order
+ * to avoid ridiculously low values. exp(-1/(2*0.2*0.2)) is < 10^-5 so
+ * there is little chance that any value below 0.2 will be useful. */
+#define BLUR_EPSILON 0.2f
+
+Array2D<float> Image::GaussianKernel(vec2 radius, float angle, vec2 delta)
+{
+    Array2D<float> kernel;
+
+    if (radius.x < BLUR_EPSILON)
+        radius.x = BLUR_EPSILON;
+    if (radius.y < BLUR_EPSILON)
+        radius.y = BLUR_EPSILON;
+
+    float const sint = lol::sin(angle);
+    float const cost = lol::cos(angle);
+
+    /* Compute the final ellipse's bounding box */
+    float const bbx = lol::sqrt(sq(radius.x * cost) + sq(radius.y * sint));
+    float const bby = lol::sqrt(sq(radius.y * cost) + sq(radius.x * sint));
+
+    /* FIXME: the kernel becomes far too big with large values of dx, because
+     * we grow both left and right. Fix the growing direction. */
+    int const krx = (int)(3.f * bbx + .99999f + lol::ceil(lol::abs(delta.x)));
+    int const kry = (int)(3.f * bby + .99999f + lol::ceil(lol::abs(delta.y)));
+    ivec2 size(2 * krx + 1, 2 * kry + 1);
+    float const Kx = -1.f / (2.f * radius.x * radius.x);
+    float const Ky = -1.f / (2.f * radius.y * radius.y);
+
+    kernel.SetSize(size);
+
+    float t = 0.f;
+
+    for (int j = -kry; j <= kry; j++)
+    {
+        for (int i = -krx; i <= krx; i++)
+        {
+            /* FIXME: this level of interpolation sucks. We should
+             * interpolate on the full NxN grid for better quality. */
+            static vec3 const samples[] =
+            {
+                vec3( 0.0f,  0.0f, 1.0f),
+                vec3(-0.4f, -0.4f, 0.8f),
+                vec3(-0.3f,  0.0f, 0.9f),
+                vec3(-0.4f,  0.4f, 0.8f),
+                vec3( 0.0f,  0.3f, 0.9f),
+                vec3( 0.4f,  0.4f, 0.8f),
+                vec3( 0.3f,  0.0f, 0.9f),
+                vec3( 0.4f, -0.4f, 0.8f),
+                vec3( 0.0f, -0.3f, 0.9f),
+            };
+
+            float d = 0.f;
+
+            for (auto p : samples)
+            {
+                float u = (i + p.x) * cost - (j + p.y) * sint + delta.x;
+                float v = (i + p.x) * sint + (j + p.y) * cost + delta.y;
+                float ex = Kx * u * u;
+                float ey = Ky * v * v;
+                d += p.z * lol::exp(ex + ey);
+
+                /* Do not interpolate if this is a standard gaussian. */
+                if (!delta.x && !delta.y && !angle)
+                    break;
+            }
+
+            kernel[i + krx][j + kry] = d;
+            t += d;
+        }
+    }
+
+    for (int j = 0; j < size.y; j++)
+        for (int i = 0; i < size.x; i++)
+            kernel[i][j] *= (1.f / t);
+
+    return kernel;
+}
+
 } /* namespace lol */
 
