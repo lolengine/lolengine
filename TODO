@@ -32,18 +32,14 @@ Image:
      · combine/rgb.cpp
      · combine/subadd.cpp
      · context.cpp
-     · crop.cpp
-     · dither.cpp
      · dither/dbs.cpp
      · filter/blur.cpp
      · filter/color.cpp
      · filter/dilate.cpp
-     · filter/median.cpp
      · filter/rotate.cpp
      · filter/sharpen.cpp
      · filter/transform.cpp
      · filter/wave.cpp
-     · filter/yuv.cpp
      · paint/bezier.cpp
      · paint/floodfill.cpp
      · paint/line.cpp

@@ -95,7 +95,9 @@ public:
     static Array2D<float> HalftoneKernel(ivec2 size);
     static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
     static Array2D<float> NormalizeKernel(Array2D<float> const &kernel);
-    static Array2D<float> GaussianKernel(vec2 radius, float angle, vec2 delta);
+    static Array2D<float> GaussianKernel(vec2 radius,
+                                         float angle = 0.f,
+                                         vec2 delta = vec2(0.f, 0.f));
 
     /* Rendering */
     bool Stock(char const *desc);
@@ -104,6 +106,10 @@ public:
     /* Image processing */
     Image AutoContrast() const;
     Image Convolution(Array2D<float> const &kernel);
+    Image Crop(ibox2 box) const;
+    Image Median(ivec2 radii) const;
+    Image YUVToRGB() const;
+    Image RGBToYUV() const;
 
     Image DitherRandom() const;
     Image DitherEdiff(Array2D<float> const &kernel,
