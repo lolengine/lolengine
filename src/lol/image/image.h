@@ -94,6 +94,7 @@ public:
     static Array2D<float> BayerKernel(ivec2 size);
     static Array2D<float> HalftoneKernel(ivec2 size);
     static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
+    static Array2D<float> NormalizeKernel(Array2D<float> const &kernel);
 
     /* Rendering */
     bool Stock(char const *desc);
@@ -107,6 +108,8 @@ public:
     Image DitherEdiff(Array2D<float> const &kernel,
                       ScanMode scan = ScanMode::Raster) const;
     Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
+    Image DitherOrdered(Array2D<float> const &kernel) const;
+    Image DitherHalftone(float radius, float angle) const;
 
 private:
     class ImageData *m_data;

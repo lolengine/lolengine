@@ -35,7 +35,6 @@ Image:
      · crop.cpp
      · dither.cpp
      · dither/dbs.cpp
-     · dither/ordered.cpp
      · filter/blur.cpp
      · filter/color.cpp
      · filter/dilate.cpp

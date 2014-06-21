@@ -72,51 +72,73 @@ Array2D<float> Image::BayerKernel(ivec2 size)
     return ret;
 }
 
-struct Dot
-{
-    int x, y;
-    float dist;
-};
-
-static int cmpdot(const void *p1, const void *p2)
-{
-    return ((Dot const *)p1)->dist > ((Dot const *)p2)->dist;
-}
-
 Array2D<float> Image::HalftoneKernel(ivec2 size)
 {
     Array2D<float> ret(size);
 
-    ivec2 csize = (size + ivec2(1)) / 2;
-    Array<Dot> circle;
-    circle.Resize(csize.x * csize.y);
-    for (int y = 0; y < csize.y; y++)
-        for (int x = 0; x < csize.x; x++)
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
         {
-            float dy = ((float)y + 0.07f) / csize.y - 0.5f;
-            float dx = (float)x / csize.x - 0.5f;
+            float dx = 2.f * x / size.x - 0.5f;
+            float dy = 2.f * (y + 0.07f) / size.y - 0.5f;
+            bool flip = false;
+            if (dx > 0.5f)
+            {
+                flip = !flip;
+                dx -= 1.0f;
+            }
+            if (dy > 0.5f)
+            {
+                flip = !flip;
+                dy -= 1.0f;
+            }
             /* Using dx²+dy² here creates another interesting halftone. */
             float r = - lol::cos(F_PI * (dx - dy)) - lol::cos(F_PI * (dx + dy));
-            circle[y * csize.x + x].x = x;
-            circle[y * csize.x + x].y = y;
-            circle[y * csize.x + x].dist = r;
+
+            ret[x][y] = flip ? 10.f - r : r;
         }
-    /* FIXME: use std::sort here */
-    std::qsort(circle.Data(), csize.x * csize.y, sizeof(Dot), cmpdot);
 
-    float mul = 1.f / (csize.x * csize.y * 4 + 1);
-    for (int n = 0; n < csize.x * csize.y; n++)
+    return NormalizeKernel(ret);
+}
+
+struct Dot
+{
+    int x, y;
+    float val;
+};
+
+static int cmpdot(const void *p1, const void *p2)
+{
+    return ((Dot const *)p1)->val > ((Dot const *)p2)->val;
+}
+
+Array2D<float> Image::NormalizeKernel(Array2D<float> const &kernel)
+{
+    ivec2 size = kernel.GetSize();
+
+    Array<Dot> tmp;
+    tmp.Resize(size.x * size.y);
+
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
+        {
+            tmp[y * size.x + x].x = x;
+            tmp[y * size.x + x].y = y;
+            tmp[y * size.x + x].val = kernel[x][y];
+        }
+    std::qsort(tmp.Data(), size.x * size.y, sizeof(Dot), cmpdot);
+
+    Array2D<float> dst(size);
+
+    float epsilon = 1.f / (size.x * size.y + 1);
+    for (int n = 0; n < size.x * size.y; n++)
     {
-        int x = circle[n].x;
-        int y = circle[n].y;
-
-        ret[x][y] = (float)(2 * n + 1) * mul;
-        ret[x + csize.x][y + csize.y] = (float)(2 * n + 2) * mul;
-        ret[x][y + csize.y] = 1.0f - (float)(2 * n + 1) * mul;
-        ret[x + csize.x][y] = 1.0f - (float)(2 * n + 2) * mul;
+        int x = tmp[n].x;
+        int y = tmp[n].y;
+        dst[x][y] = (float)(n + 1) * epsilon;
     }
 
-    return ret;
+    return dst;
 }
 
 Array2D<float> Image::EdiffKernel(EdiffAlgorithm algorithm)

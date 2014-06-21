@@ -1,144 +1,74 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
 
-/*
- * ordered.c: Bayer ordered dithering functions
- */
-
-#include "config.h"
-
-#include <stdlib.h>
-#include <math.h>
-#ifndef M_PI
-#   define M_PI 3.14159265358979323846
+#if defined HAVE_CONFIG_H
+#   include "config.h"
 #endif
 
-#include "pipi.h"
-#include "pipi-internals.h"
+#include "core.h"
 
-pipi_image_t *pipi_dither_halftone(pipi_image_t *img, double r, double angle)
+/*
+ * Bayer ordered dithering functions
+ */
+
+namespace lol
 {
-#define PRECISION 4.
-    pipi_image_t *ret, *kernel;
-    int k = (r * PRECISION / 2. / sqrt(2.) + .5);
 
-    kernel = pipi_render_halftone(k, k);
-    ret = pipi_dither_ordered_ext(img, kernel, 1. / PRECISION, angle + 45.);
-    pipi_free(kernel);
+static Image DitherHelper(Image const &image, Array2D<float> const &kernel,
+                          float scale, float angle);
+
+Image Image::DitherOrdered(Array2D<float> const &kernel) const
+{
+    return DitherHelper(*this, kernel, 1.0f, 0.0f);
+}
+
+Image Image::DitherHalftone(float radius, float angle) const
+{
+    /* Increasing the precision is necessary or the rotation will look
+     * like crap. So we create a kernel PRECISION times larger, and ask
+     * the ditherer to scale it by 1/PRECISION. */
+    float const PRECISION = 4.f;
+    int k = (radius * PRECISION * lol::sqrt(2.f) + 0.5f);
+    Array2D<float> kernel = Image::HalftoneKernel(ivec2(k, k));
+
+    return DitherHelper(*this, kernel, 1.f / PRECISION, angle + F_PI / 4.f);
+}
+
+static Image DitherHelper(Image const &image, Array2D<float> const &kernel,
+                          float scale, float angle)
+{
+    ivec2 size = image.GetSize();
+    ivec2 ksize = kernel.GetSize();
+
+    float cost = lol::cos(angle);
+    float sint = lol::sin(angle);
+
+    Image ret = image;
+    float *dstp = ret.Lock<PixelFormat::Y_F32>();
+
+    for (int y = 0; y < size.y; y++)
+    {
+        for (int x = 0; x < size.x; x++)
+        {
+            int kx = (int)((cost * x - sint * y + 2 * size.x * size.y) / scale) % ksize.x;
+            int ky = (int)((cost * y + sint * x + 2 * size.x * size.y) / scale) % ksize.y;
+
+            float p = dstp[y * size.x + x];
+            dstp[y * size.x + x] = (p > kernel[kx][ky]) ? 1.f : 0.f;
+        }
+    }
+
+    ret.Unlock(dstp);
 
     return ret;
 }
 
-pipi_image_t *pipi_dither_ordered(pipi_image_t *img, pipi_image_t *kernel)
-{
-    return pipi_dither_ordered_ext(img, kernel, 1.0, 0.0);
-}
-
-pipi_image_t *pipi_dither_ordered_ext(pipi_image_t *img, pipi_image_t *kernel,
-                                      double scale, double angle)
-{
-    double sint, cost;
-    pipi_image_t *dst;
-    pipi_pixels_t *dstp, *kernelp;
-    float *dstdata, *kerneldata;
-    int x, y, w, h, kx, ky, kw, kh;
-
-    w = img->w;
-    h = img->h;
-    kw = kernel->w;
-    kh = kernel->h;
-
-    cost = cos(angle * (M_PI / 180));
-    sint = sin(angle * (M_PI / 180));
-
-    dst = pipi_copy(img);
-    dstp = pipi_get_pixels(dst, PIPI_PIXELS_Y_F32);
-    dstdata = (float *)dstp->pixels;
-
-    kernelp = pipi_get_pixels(kernel, PIPI_PIXELS_Y_F32);
-    kerneldata = (float *)kernelp->pixels;
-
-    for(y = 0; y < h; y++)
-    {
-        for(x = 0; x < w; x++)
-        {
-            float p, q;
-
-            kx = (int)((cost * x - sint * y + 2 * w * h) / scale) % kw;
-            ky = (int)((cost * y + sint * x + 2 * w * h) / scale) % kh;
-
-            p = dstdata[y * w + x];
-            q = p > kerneldata[ky * kw + kx] ? 1. : 0.;
-            dstdata[y * w + x] = q;
-        }
-    }
-
-    return dst;
-}
-
-typedef struct
-{
-    int x, y;
-    double val;
-}
-dot_t;
-
-static int cmpdot(const void *p1, const void *p2)
-{
-    return ((dot_t const *)p1)->val > ((dot_t const *)p2)->val;
-}
-
-pipi_image_t *pipi_order(pipi_image_t *src)
-{
-    double epsilon;
-    pipi_image_t *dst;
-    pipi_pixels_t *dstp, *srcp;
-    float *dstdata, *srcdata;
-    dot_t *circle;
-    int x, y, w, h, n;
-
-    w = src->w;
-    h = src->h;
-    epsilon = 1. / (w * h + 1);
-
-    srcp = pipi_get_pixels(src, PIPI_PIXELS_Y_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = pipi_get_pixels(dst, PIPI_PIXELS_Y_F32);
-    dstdata = (float *)dstp->pixels;
-
-    circle = malloc(w * h * sizeof(dot_t));
-
-    for(y = 0; y < h; y++)
-        for(x = 0; x < w; x++)
-        {
-            circle[y * w + x].x = x;
-            circle[y * w + x].y = y;
-            circle[y * w + x].val = srcdata[y * w + x];
-        }
-    qsort(circle, w * h, sizeof(dot_t), cmpdot);
-
-    for(n = 0; n < w * h; n++)
-    {
-        x = circle[n].x;
-        y = circle[n].y;
-        dstdata[y * w + x] = (float)(n + 1) * epsilon;
-    }
-
-    free(circle);
-
-    return dst;
-}
+} /* namespace lol */
 
