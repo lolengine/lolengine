@@ -23,7 +23,6 @@ Image:
      · codec/coreimage.h
      · codec.cpp
      · codec/jpeg.cpp
-     · codec/oric.cpp
      · colorstring.cpp
      · combine/blit.cpp
      · combine/merge.cpp

@@ -1,30 +1,24 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
 
-/*
- * oric.c: Oric Atmos import/export functions
- */
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-#include "config.h"
+#include "core.h"
+#include "../../image/image-private.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+using namespace std;
 
-#include "pipi.h"
-#include "pipi-internals.h"
+namespace lol
+{
 
 /* Image dimensions and recursion depth. DEPTH = 2 is a reasonable value,
  * DEPTH = 3 gives good quality, and higher values may improve the results
@@ -33,86 +27,127 @@
 #define HEIGHT 200
 #define DEPTH 2
 
-static int read_screen(char const *name, uint8_t *screen);
-static void write_screen(float const *data, uint8_t *screen);
+/*
+ * Image implementation class
+ */
 
-pipi_image_t *pipi_load_oric(char const *name)
+class OricImageCodec : public ImageCodec
 {
-    static uint8_t const pal[32] =
+public:
+    virtual bool Load(Image *image, char const *path);
+    virtual bool Save(Image *image, char const *path);
+
+private:
+    static String ReadScreen(char const *name);
+};
+
+DECLARE_IMAGE_CODEC(OricImageCodec, 100)
+
+/*
+ * Public Image class
+ */
+
+bool OricImageCodec::Load(Image *image, char const *path)
+{
+    static u8vec4 const pal[8] =
     {
-        0x00, 0x00, 0x00, 0xff,
-        0x00, 0x00, 0xff, 0xff,
-        0x00, 0xff, 0x00, 0xff,
-        0x00, 0xff, 0xff, 0xff,
-        0xff, 0x00, 0x00, 0xff,
-        0xff, 0x00, 0xff, 0xff,
-        0xff, 0xff, 0x00, 0xff,
-        0xff, 0xff, 0xff, 0xff,
+        u8vec4(0x00, 0x00, 0x00, 0xff),
+        u8vec4(0x00, 0x00, 0xff, 0xff),
+        u8vec4(0x00, 0xff, 0x00, 0xff),
+        u8vec4(0x00, 0xff, 0xff, 0xff),
+        u8vec4(0xff, 0x00, 0x00, 0xff),
+        u8vec4(0xff, 0x00, 0xff, 0xff),
+        u8vec4(0xff, 0xff, 0x00, 0xff),
+        u8vec4(0xff, 0xff, 0xff, 0xff),
     };
 
-    pipi_image_t *img;
-    pipi_pixels_t *p;
-    uint8_t *screen, *data;
-    int x, y, i;
+    String screen = ReadScreen(path);
+    if (screen.Count() == 0)
+        return false;
 
-    screen = malloc(WIDTH * HEIGHT / 6);
+    image->SetSize(ivec2(WIDTH, screen.Count() * 6 / WIDTH));
 
-    if(read_screen(name, screen) < 0)
-    {
-        free(screen);
-        return NULL;
-    }
+    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
 
-    img = pipi_new(WIDTH, HEIGHT);
-    p = pipi_get_pixels(img, PIPI_PIXELS_RGBA_U8);
-    data = p->pixels;
-
-    for(y = 0; y < HEIGHT; y++)
+    for (int y = 0; y < image->GetSize().y; y++)
     {
         int bg = 0, fg = 7;
 
-        for(x = 0; x < 40; x++)
+        for (int x = 0; x < 40; x++)
         {
             int col;
             uint8_t c = screen[y * 40 + x];
 
-            if(c & 0x40)
+            if (c & 0x40)
             {
-                for(i = 0; i < 6; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     col = (c & (1 << (5 - i))) ? (c & 0x80) ? 7 - fg : fg
                                                : (c & 0x80) ? 7 - bg : bg;
-                    memcpy(data + (y * WIDTH + x * 6 + i) * 4,
-                           pal + 4 * col, 4);
+                    pixels[y * WIDTH + x * 6 + i] = pal[col];
                 }
             }
-            else if((c & 0x60) == 0x00)
+            else if ((c & 0x60) == 0x00)
             {
-                if(c & 0x10)
+                if (c & 0x10)
                     bg = c & 0x7;
                 else
                     fg = c & 0x7;
 
                 col = (c & 0x80) ? 7 - bg : bg;
 
-                for(i = 0; i < 6; i++)
-                    memcpy(data + (y * WIDTH + x * 6 + i) * 4,
-                           pal + 4 * col, 4);
+                for (int i = 0; i < 6; i++)
+                    pixels[y * WIDTH + x * 6 + i] = pal[col];
             }
             /* else: invalid sequence */
         }
     }
 
-    free(screen);
+    image->Unlock(pixels);
 
-    img->codec_priv = NULL;
+    return true;
+}
 
-    img->wrap = 0;
-    img->u8 = 1;
+bool OricImageCodec::Save(Image *image, char const *path)
+{
+    return false;
+}
 
-    pipi_release_pixels(img, p);
+String OricImageCodec::ReadScreen(char const *name)
+{
+    File f;
+    f.Open(name, FileAccess::Read);
+    String data = f.ReadString();
+    f.Close();
 
-    return img;
+    /* Skip the sync bytes */
+    if (data[0] != 0x16)
+        return "";
+    int header = 1;
+    while (data[header] == 0x16)
+        ++header;
+    if (data[header] != 0x24)
+        return "";
+    ++header;
+
+    /* Skip the header, ignoring the last byte’s value */
+    if (data.Sub(header, 8) != String("\x00\xff\x80\x00\xbf\x3f\xa0\x00", 8))
+        return "";
+
+    /* Skip the file name, including trailing nul char */
+    data = data.Sub(header + 8);
+    int filename_end = data.IndexOf('\0');
+    if (filename_end < 0)
+            return "";
+
+    /* Read screen data */
+    return data.Sub(filename_end + 1);
+}
+
+#if 0
+
+pipi_image_t *pipi_load_oric(char const *name)
+{
 }
 
 int pipi_save_oric(pipi_image_t *img, char const *name)
@@ -125,14 +160,14 @@ int pipi_save_oric(pipi_image_t *img, char const *name)
     size_t len;
 
     len = strlen(name);
-    if(len < 4 || name[len - 4] != '.'
+    if (len < 4 || name[len - 4] != '.'
         || toupper(name[len - 3]) != 'T'
         || toupper(name[len - 2]) != 'A'
         || toupper(name[len - 1]) != 'P')
         return -1;
 
     fp = fopen(name, "w");
-    if(!fp)
+    if (!fp)
         return -1;
 
     fwrite("\x16\x16\x16\x16\x24", 1, 5, fp);
@@ -140,7 +175,7 @@ int pipi_save_oric(pipi_image_t *img, char const *name)
     fwrite(name, 1, len - 4, fp);
     fwrite("\x00", 1, 1, fp);
 
-    if(img->w != WIDTH || img->h != HEIGHT)
+    if (img->w != WIDTH || img->h != HEIGHT)
         tmp = pipi_resize_bicubic(img, WIDTH, HEIGHT);
     else
         tmp = img;
@@ -149,7 +184,7 @@ int pipi_save_oric(pipi_image_t *img, char const *name)
     screen = malloc(WIDTH * HEIGHT / 6);
     write_screen(data, screen);
     pipi_release_pixels(tmp, p);
-    if(tmp != img)
+    if (tmp != img)
         pipi_free(tmp);
 
     fwrite(screen, 1, WIDTH * HEIGHT / 6, fp);
@@ -163,52 +198,6 @@ int pipi_save_oric(pipi_image_t *img, char const *name)
 /*
  * XXX: The following functions are local.
  */
-
-static int read_screen(char const *name, uint8_t *screen)
-{
-    FILE *fp;
-    int ch;
-
-    fp = fopen(name, "r");
-    if(!fp)
-        return -1;
-
-    /* Skip the sync bytes */
-    ch = fgetc(fp);
-    if(ch != 0x16)
-        goto syntax_error;
-    while((ch = fgetc(fp)) == 0x16)
-        ;
-    if(ch != 0x24)
-        goto syntax_error;
-
-    /* Skip the header, ignoring the last byte’s value */
-    if(fgetc(fp) != 0x00 || fgetc(fp) != 0xff || fgetc(fp) != 0x80
-        || fgetc(fp) != 0x00 || fgetc(fp) != 0xbf || fgetc(fp) != 0x3f
-        || fgetc(fp) != 0xa0 || fgetc(fp) != 0x00 || fgetc(fp) == EOF)
-        goto syntax_error;
-
-    /* Skip the file name, including trailing nul char */
-    for(;;)
-    {
-        ch = fgetc(fp);
-        if(ch == EOF)
-            goto syntax_error;
-        if(ch == 0x00)
-            break;
-    }
-
-    /* Read screen data */
-    if(fread(screen, 1, WIDTH * HEIGHT / 6, fp) != WIDTH * HEIGHT / 6)
-        goto syntax_error;
-
-    fclose(fp);
-    return 0;
-
-syntax_error:
-    fclose(fp);
-    return -1;
-}
 
 /* Error diffusion table, similar to Floyd-Steinberg. I choose not to
  * propagate 100% of the error, because doing so creates awful artifacts
@@ -253,9 +242,9 @@ static const int palette[8][6 * 3] =
 /* Set new background and foreground colours according to the given command. */
 static inline void domove(uint8_t command, uint8_t *bg, uint8_t *fg)
 {
-    if((command & 0x78) == 0x00)
+    if ((command & 0x78) == 0x00)
         *fg = command & 0x7;
-    else if((command & 0x78) == 0x10)
+    else if ((command & 0x78) == 0x10)
         *bg = command & 0x7;
 }
 
@@ -266,8 +255,8 @@ static inline int clamp(int p)
 {
 #if 0
     /* FIXME: doesn’t give terribly good results on eg. eatme.png */
-    if(p < - CLAMP) return - CLAMP;
-    if(p > 0xffff + CLAMP) return 0xffff + CLAMP;
+    if (p < - CLAMP) return - CLAMP;
+    if (p > 0xffff + CLAMP) return 0xffff + CLAMP;
 #endif
     return p;
 }
@@ -289,9 +278,9 @@ static inline int geterror(int const *in, int const *inerr,
     memcpy(tmperr, inerr, 3 * sizeof(int));
     memset(tmperr + 3, 0, 8 * 3 * sizeof(int));
 
-    for(i = 0; i < 6; i++)
+    for (i = 0; i < 6; i++)
     {
-        for(c = 0; c < 3; c++)
+        for (c = 0; c < 3; c++)
         {
             /* Experiment shows that this is important at small depths */
             int a = clamp(in[i * 3 + c] + tmperr[c]);
@@ -304,9 +293,9 @@ static inline int geterror(int const *in, int const *inerr,
         }
     }
 
-    for(i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++)
     {
-        for(c = 0; c < 3; c++)
+        for (c = 0; c < 3; c++)
         {
             /* Experiment shows that this is important at large depths */
             int a = ((in[i * 3 + c] + in[i * 3 + 3 + c]
@@ -320,7 +309,7 @@ static inline int geterror(int const *in, int const *inerr,
     /* Using the diffused error as a perceptual error component is stupid,
      * because that’s not what it is at all, but I found that it helped a
      * bit in some cases. */
-    for(i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
         ret += tmperr[i] / 256 * tmperr[i] / 256;
 
     memcpy(outerr, tmperr, 3 * sizeof(int));
@@ -348,7 +337,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
     /* Precompute sub-error for the case where we print pixels (and hence
      * don’t change the palette). It’s not the exact error because we should
      * be propagating the error to the first pixel here. */
-    if(depth > 0)
+    if (depth > 0)
     {
         int tmp[3] = { 0, 0, 0 };
         bestmove(in + 6 * 3, bg, fg, tmp, depth - 1, maxerror, &statice, NULL);
@@ -364,7 +353,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
     besterror = 0x7ffffff;
     bestcommand = 0x10;
     memcpy(bestrgb, voidrgb, 6 * 3 * sizeof(int));
-    for(j = 0; j < 34; j++)
+    for (j = 0; j < 34; j++)
     {
         static uint8_t const lookup[] =
         {
@@ -382,7 +371,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
 
         /* Keeping bg and fg is useless, because we could use standard
          * pixel printing instead */
-        if((command & 0x40) == 0x00 && newbg == bg && newfg == fg)
+        if ((command & 0x40) == 0x00 && newbg == bg && newfg == fg)
             continue;
 
         /* I *think* having newfg == newbg is useless, too, but I don’t
@@ -391,33 +380,33 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
 
 #if 0
         /* Bit 6 off and bit 5 on seems illegal */
-        if((command & 0x60) == 0x20)
+        if ((command & 0x60) == 0x20)
             continue;
 
         /* Bits 6 and 5 off and bit 3 on seems illegal */
-        if((command & 0x68) == 0x08)
+        if ((command & 0x68) == 0x08)
             continue;
 #endif
 
-        if((command & 0xf8) == 0x00)
+        if ((command & 0xf8) == 0x00)
         {
             curerror = voide;
             rgb = voidrgb;
             vec = voidvec;
         }
-        else if((command & 0xf8) == 0x80)
+        else if ((command & 0xf8) == 0x80)
         {
             curerror = nvoide;
             rgb = nvoidrgb;
             vec = nvoidvec;
         }
-        else if((command & 0xf8) == 0x10)
+        else if ((command & 0xf8) == 0x10)
         {
             rgb = palette[newbg];
             curerror = geterror(in, errvec, rgb, tmpvec);
             vec = tmpvec;
         }
-        else if((command & 0xf8) == 0x90)
+        else if ((command & 0xf8) == 0x90)
         {
             rgb = palette[7 - newbg];
             curerror = geterror(in, errvec, rgb, tmpvec);
@@ -427,7 +416,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
         {
             int const *bgcolor, *fgcolor;
 
-            if((command & 0x80) == 0x00)
+            if ((command & 0x80) == 0x00)
             {
                 bgcolor = palette[bg]; fgcolor = palette[fg];
             }
@@ -439,14 +428,14 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
             memcpy(tmpvec, errvec, 3 * sizeof(int));
             curerror = 0;
 
-            for(i = 0; i < 6; i++)
+            for (i = 0; i < 6; i++)
             {
                 int vec1[3], vec2[3];
                 int smalle1 = 0, smalle2 = 0;
 
                 memcpy(vec1, tmpvec, 3 * sizeof(int));
                 memcpy(vec2, tmpvec, 3 * sizeof(int));
-                for(c = 0; c < 3; c++)
+                for (c = 0; c < 3; c++)
                 {
                     int delta1, delta2;
                     delta1 = clamp(in[i * 3 + c] + tmpvec[c]) - bgcolor[c];
@@ -457,7 +446,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
                     smalle2 += delta2 / 256 * delta2;
                 }
 
-                if(smalle1 < smalle2)
+                if (smalle1 < smalle2)
                 {
                     memcpy(tmpvec, vec1, 3 * sizeof(int));
                     memcpy(tmprgb + i * 3, bgcolor, 3 * sizeof(int));
@@ -477,7 +466,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
             vec = tmpvec;
         }
 
-        if(curerror > besterror)
+        if (curerror > besterror)
             continue;
 
         /* Try to avoid bad decisions now that will have a high cost
@@ -485,9 +474,9 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
          * the current error. */
         curerror = curerror * 3 / 4;
 
-        if(depth == 0)
+        if (depth == 0)
             suberror = 0; /* It’s the end of the tree */
-        else if((command & 0x68) == 0x00)
+        else if ((command & 0x68) == 0x00)
         {
             bestmove(in + 6 * 3, newbg, newfg, vec, depth - 1,
                      besterror - curerror, &suberror, NULL);
@@ -496,16 +485,16 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
             /* Slight penalty for colour changes; they're hard to revert. The
              * value of 2 was determined empirically. 1.5 is not enough and
              * 3 is too much. */
-            if(newbg != bg)
+            if (newbg != bg)
                 suberror = suberror * 10 / 8;
-            else if(newfg != fg)
+            else if (newfg != fg)
                 suberror = suberror * 9 / 8;
 #endif
         }
         else
             suberror = statice;
 
-        if(curerror + suberror < besterror)
+        if (curerror + suberror < besterror)
         {
             besterror = curerror + suberror;
             bestcommand = command;
@@ -514,7 +503,7 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
     }
 
     *error = besterror;
-    if(out)
+    if (out)
         memcpy(out, bestrgb, 6 * 3 * sizeof(int));
 
     return bestcommand;
@@ -534,20 +523,20 @@ static void write_screen(float const *data, uint8_t *screen)
     memset(dst, 0, (WIDTH + 1) * (HEIGHT + 1) * 3 * sizeof(int));
 
     /* Import pixels into our custom format */
-    for(y = 0; y < HEIGHT; y++)
-        for(x = 0; x < WIDTH; x++)
-            for(c = 0; c < 3; c++)
+    for (y = 0; y < HEIGHT; y++)
+        for (x = 0; x < WIDTH; x++)
+            for (c = 0; c < 3; c++)
                 src[y * stride + x * 3 + c] =
                      0xffff * data[(y * WIDTH + x) * 4 + (2 - c)];
 
     /* Let the fun begin */
-    for(y = 0; y < HEIGHT; y++)
+    for (y = 0; y < HEIGHT; y++)
     {
         uint8_t bg = 0, fg = 7;
 
         //fprintf(stderr, "\rProcessing... %i%%", (y * 100 + 99) / HEIGHT);
 
-        for(x = 0; x < WIDTH; x += 6)
+        for (x = 0; x < WIDTH; x += 6)
         {
             int errvec[3] = { 0, 0, 0 };
             int dummy, i;
@@ -561,9 +550,9 @@ static void write_screen(float const *data, uint8_t *screen)
             command = bestmove(srcl, bg, fg, errvec, depth, 0x7fffff,
                                &dummy, dstl);
             /* Propagate error */
-            for(c = 0; c < 3; c++)
+            for (c = 0; c < 3; c++)
             {
-                for(i = 0; i < 6; i++)
+                for (i = 0; i < 6; i++)
                 {
                     int error = srcl[i * 3 + c] - dstl[i * 3 + c];
                     srcl[i * 3 + c + 3] =
@@ -573,7 +562,7 @@ static void write_screen(float const *data, uint8_t *screen)
                     srcl[i * 3 + c + stride + 3] += error * FS3 / FSX;
                 }
 
-                for(i = -1; i < 7; i++)
+                for (i = -1; i < 7; i++)
                     srcl[i * 3 + c + stride] = clamp(srcl[i * 3 + c + stride]);
             }
             /* Iterate */
@@ -585,4 +574,7 @@ static void write_screen(float const *data, uint8_t *screen)
 
     //fprintf(stderr, " done.\n");
 }
+#endif
+
+} /* namespace lol */
 

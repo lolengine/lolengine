@@ -35,7 +35,6 @@ static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
 #endif
-    REGISTER_IMAGE_CODEC(DummyImageCodec)
 #if defined USE_GDIPLUS
     REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
 #endif
@@ -48,11 +47,13 @@ static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
 #if defined USE_SDL_IMAGE
     REGISTER_IMAGE_CODEC(SdlImageCodec)
 #endif
-    REGISTER_IMAGE_CODEC(ZedImageCodec)
-    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
 #if defined USE_IMLIB2
     REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
 #endif
+    REGISTER_IMAGE_CODEC(DummyImageCodec)
+    REGISTER_IMAGE_CODEC(ZedImageCodec)
+    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
+    REGISTER_IMAGE_CODEC(OricImageCodec)
 
     return true;
 }
