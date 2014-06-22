@@ -1,288 +1,191 @@
-/*
- *  libpipi       Pathetic image processing interface library
- *  Copyright (c) 2004-2008 Sam Hocevar <sam@zoy.org>
- *                All Rights Reserved
- *
- *  $Id$
- *
- *  This library is free software. It comes without any warranty, to
- *  the extent permitted by applicable law. You can redistribute it
- *  and/or modify it under the terms of the Do What The Fuck You Want
- *  To Public License, Version 2, as published by Sam Hocevar. See
- *  http://sam.zoy.org/wtfpl/COPYING for more details.
- */
+//
+// Lol Engine
+//
+// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://www.wtfpl.net/ for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include "core.h"
 
 /*
- * color.c: colour manipulation functions
+ * Colour manipulation functions
  */
 
-#include "config.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#include "pipi.h"
-#include "pipi-internals.h"
-
-pipi_image_t *pipi_brightness(pipi_image_t *src, double val)
+namespace lol
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    int x, y, w, h, gray;
 
-    w = src->w;
-    h = src->h;
+Image Image::Brightness(float val) const
+{
+    Image ret = *this;
+    int count = GetSize().x * GetSize().y;
 
-    gray = (src->last_modified == PIPI_PIXELS_Y_F32);
-
-    srcp = gray ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = gray ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    if(val >= 0.0)
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
     {
-        for(y = 0; y < h; y++)
-        {
-            for(x = 0; x < w; x++)
-            {
-                if(gray)
-                {
-                    double p = srcdata[y * w + x];
-                    dstdata[y * w + x] = p < 1. - val ? p + val : 1.;
-                }
-                else
-                {
-                    double p;
-                    int d = 4 * (y * w + x);
-
-                    p = srcdata[d];
-                    dstdata[d] = p < 1. - val ? p + val : 1.;
-                    p = srcdata[d + 1];
-                    dstdata[d + 1] = p < 1. - val ? p + val : 1.;
-                    p = srcdata[d + 2];
-                    dstdata[d + 2] = p < 1. - val ? p + val : 1.;
-                    p = srcdata[d + 3];
-                    dstdata[d + 3] = p;
-                }
-            }
-        }
+        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = lol::clamp(pixels[n] + val, 0.f, 1.f);
+        ret.Unlock(pixels);
     }
     else
     {
-        for(y = 0; y < h; y++)
-        {
-            for(x = 0; x < w; x++)
-            {
-                if(gray)
-                {
-                    double p = srcdata[y * w + x];
-                    dstdata[y * w + x] = p > -val ? p + val : 0.;
-                }
-                else
-                {
-                    double p;
-                    int d = 4 * (y * w + x);
-
-                    p = srcdata[d];
-                    dstdata[d] = p > -val ? p + val : 0.;
-                    p = srcdata[d + 1];
-                    dstdata[d + 1] = p > -val ? p + val : 0.;
-                    p = srcdata[d + 2];
-                    dstdata[d + 2] = p > -val ? p + val : 0.;
-                    p = srcdata[d + 3];
-                    dstdata[d + 3] = p;
-                }
-            }
-        }
+        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = vec4(lol::clamp(pixels[n].rgb + vec3(val), 0.f, 1.f),
+                             pixels[n].a);
+        ret.Unlock(pixels);
     }
 
-    return dst;
+    return ret;
 }
 
-pipi_image_t *pipi_contrast(pipi_image_t *src, double val)
+Image Image::Contrast(float val) const
 {
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    int x, y, w, h, gray;
+    Image ret = *this;
+    int count = GetSize().x * GetSize().y;
 
-    w = src->w;
-    h = src->h;
-
-    gray = (src->last_modified == PIPI_PIXELS_Y_F32);
-
-    srcp = gray ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = gray ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    if(val >= 0.0)
+    if (val >= 0.f)
     {
-        if(val > 0.99999)
-            val = 0.99999;
+        if (val > 0.99999f)
+            val = 0.99999f;
 
-        val = 1. / (1. - val);
-
-        for(y = 0; y < h; y++)
-        {
-            for(x = 0; x < w; x++)
-            {
-                if(gray)
-                {
-                    double p = (srcdata[y * w + x] - 0.5) * val + 0.5;
-                    dstdata[y * w + x] = p < 0. ? 0. : p > 1. ? 1. : p;
-                }
-                else
-                {
-                    double p;
-                    int d = 4 * (y * w + x);
-
-                    p = (srcdata[d] - 0.5) * val + 0.5;
-                    dstdata[d] = p < 0. ? 0. : p > 1. ? 1. : p;
-                    p = (srcdata[d + 1] - 0.5) * val + 0.5;
-                    dstdata[d + 1] = p < 0. ? 0. : p > 1. ? 1. : p;
-                    p = (srcdata[d + 2] - 0.5) * val + 0.5;
-                    dstdata[d + 2] = p < 0. ? 0. : p > 1. ? 1. : p;
-                    p = srcdata[d + 3];
-                    dstdata[d + 3] = p;
-                }
-            }
-        }
+        val = 1.f / (1.f - val);
     }
     else
     {
-        if(val < -1.)
-            val = -1.;
-
-        val = 1. + val;
-
-        for(y = 0; y < h; y++)
-        {
-            for(x = 0; x < w; x++)
-            {
-                if(gray)
-                {
-                    double p = srcdata[y * w + x];
-                    dstdata[y * w + x] = (p - 0.5) * val + 0.5;
-                }
-                else
-                {
-                    double p;
-                    int d = 4 * (y * w + x);
-
-                    p = srcdata[d];
-                    dstdata[d] = (p - 0.5) * val + 0.5;
-                    p = srcdata[d + 1];
-                    dstdata[d + 1] = (p - 0.5) * val + 0.5;
-                    p = srcdata[d + 2];
-                    dstdata[d + 2] = (p - 0.5) * val + 0.5;
-                    p = srcdata[d + 3];
-                    dstdata[d + 3] = p;
-                }
-            }
-        }
+        val = lol::clamp(1.f + val, 0.f, 1.f);
     }
 
-    return dst;
-}
-
-pipi_image_t *pipi_invert(pipi_image_t *src)
-{
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    int x, y, w, h, gray;
-
-    w = src->w;
-    h = src->h;
-
-    gray = (src->last_modified == PIPI_PIXELS_Y_F32);
-
-    srcp = gray ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = gray ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    for(y = 0; y < h; y++)
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
     {
-        for(x = 0; x < w; x++)
-        {
-            if(gray)
-            {
-                dstdata[y * w + x] = 1. - srcdata[y * w + x];
-            }
-            else
-            {
-                int d = 4 * (y * w + x);
-
-                dstdata[d] = 1. - srcdata[d];
-                dstdata[d + 1] = 1. - srcdata[d + 1];
-                dstdata[d + 2] = 1. - srcdata[d + 2];
-                dstdata[d + 3] = 1. - srcdata[d + 3];
-            }
-        }
+        float add = -0.5f * val + 0.5f;
+        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = lol::clamp(pixels[n] * val + add, 0.f, 1.f);
+        ret.Unlock(pixels);
     }
-
-    return dst;
-}
-
-pipi_image_t *pipi_threshold(pipi_image_t *src, double val)
-{
-    pipi_image_t *dst;
-    pipi_pixels_t *srcp, *dstp;
-    float *srcdata, *dstdata;
-    int x, y, w, h, gray;
-
-    w = src->w;
-    h = src->h;
-
-    gray = (src->last_modified == PIPI_PIXELS_Y_F32);
-
-    srcp = gray ? pipi_get_pixels(src, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(src, PIPI_PIXELS_RGBA_F32);
-    srcdata = (float *)srcp->pixels;
-
-    dst = pipi_new(w, h);
-    dstp = gray ? pipi_get_pixels(dst, PIPI_PIXELS_Y_F32)
-                : pipi_get_pixels(dst, PIPI_PIXELS_RGBA_F32);
-    dstdata = (float *)dstp->pixels;
-
-    for(y = 0; y < h; y++)
+    else
     {
-        for(x = 0; x < w; x++)
-        {
-            if(gray)
-            {
-                dstdata[y * w + x] = srcdata[y * w + x] < val ? 0. : 1.;
-            }
-            else
-            {
-                int d = 4 * (y * w + x);
-
-                dstdata[d] = srcdata[d] < val ? 0. : 1.;
-                dstdata[d + 1] = srcdata[d + 1] < val ? 0. : 1.;
-                dstdata[d + 2] = srcdata[d + 2] < val ? 0. : 1.;
-                dstdata[d + 3] = srcdata[d + 3] < val ? 0. : 1.;
-            }
-        }
+        vec3 add = vec3(-0.5f * val + 0.5f);
+        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = vec4(lol::clamp(pixels[n].rgb * val + add, 0.f, 1.f),
+                             pixels[n].a);
+        ret.Unlock(pixels);
     }
 
-    return dst;
+    return ret;
 }
+
+/*
+ * TODO: the current approach is naive; we should use the histogram in order
+ * to decide how to change the contrast.
+ */
+Image Image::AutoContrast() const
+{
+    Image ret = *this;
+
+    float min_val = 1.f, max_val = 0.f;
+    int count = GetSize().x * GetSize().y;
+
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    {
+        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        for (int n = 0; n < count; ++n)
+        {
+            min_val = lol::min(min_val, pixels[n]);
+            max_val = lol::max(max_val, pixels[n]);
+        }
+
+        float t = max_val > min_val ? 1.f / (max_val - min_val) : 1.f;
+        for (int n = 0; n < count; ++n)
+            pixels[n] = (pixels[n] - min_val) * t;
+
+        ret.Unlock(pixels);
+    }
+    else
+    {
+        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        for (int n = 0; n < count; ++n)
+        {
+            min_val = lol::min(min_val, pixels[n].r);
+            min_val = lol::min(min_val, pixels[n].g);
+            min_val = lol::min(min_val, pixels[n].b);
+            max_val = lol::max(max_val, pixels[n].r);
+            max_val = lol::max(max_val, pixels[n].g);
+            max_val = lol::max(max_val, pixels[n].b);
+        }
+
+        float t = max_val > min_val ? 1.f / (max_val - min_val) : 1.f;
+        for (int n = 0; n < count; ++n)
+            pixels[n] = vec4((pixels[n].r - min_val) * t,
+                             (pixels[n].g - min_val) * t,
+                             (pixels[n].b - min_val) * t,
+                             pixels[n].a);;
+
+        ret.Unlock(pixels);
+    }
+
+    return ret;
+}
+
+Image Image::Invert() const
+{
+    Image ret = *this;
+    int count = GetSize().x * GetSize().y;
+
+    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    {
+        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = 1.f - pixels[n];
+        ret.Unlock(pixels);
+    }
+    else
+    {
+        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        for (int n = 0; n < count; ++n)
+            pixels[n] = vec4(vec3(1.f) -pixels[n].rgb, pixels[n].a);
+        ret.Unlock(pixels);
+    }
+
+    return ret;
+}
+
+Image Image::Threshold(float val) const
+{
+    Image ret = *this;
+    int count = GetSize().x * GetSize().y;
+
+    float *pixels = ret.Lock<PixelFormat::Y_F32>();
+    for (int n = 0; n < count; ++n)
+        pixels[n] = pixels[n] > val ? 1.f : 0.f;
+    ret.Unlock(pixels);
+
+    return ret;
+}
+
+Image Image::Threshold(vec3 val) const
+{
+    Image ret = *this;
+    int count = GetSize().x * GetSize().y;
+
+    vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+    for (int n = 0; n < count; ++n)
+        pixels[n] = vec4(pixels[n].r > val.r ? 1.f : 0.f,
+                         pixels[n].g > val.g ? 1.f : 0.f,
+                         pixels[n].b > val.b ? 1.f : 0.f,
+                         pixels[n].a);
+    ret.Unlock(pixels);
+
+    return ret;
+}
+
+} /* namespace lol */
 

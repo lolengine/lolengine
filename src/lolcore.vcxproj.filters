@@ -364,10 +364,13 @@
     <ClCompile Include="sys\thread.cpp">
       <Filter>sys</Filter>
     </ClCompile>
-    <ClCompile Include="image\filter\autocontrast.cpp">
+    <ClCompile Include="image\filter\color.cpp">
       <Filter>image\filter</Filter>
     </ClCompile>
     <ClCompile Include="image\filter\convolution.cpp">
+      <Filter>image\filter</Filter>
+    </ClCompile>
+    <ClCompile Include="image\filter\dilate.cpp">
       <Filter>image\filter</Filter>
     </ClCompile>
     <ClCompile Include="image\filter\median.cpp">

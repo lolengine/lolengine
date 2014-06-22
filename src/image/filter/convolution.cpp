@@ -83,6 +83,22 @@ Image Image::Convolution(Array2D<float> const &kernel)
     }
 }
 
+Image Image::Sharpen(Array2D<float> const &kernel)
+{
+    ivec2 ksize = kernel.GetSize();
+    Array2D<float> newkernel(ksize);
+
+    for (int dy = 0; dy < ksize.y; ++dy)
+        for (int dx = 0; dx < ksize.x; ++dx)
+        {
+            newkernel[dx][dy] = - kernel[dx][dy];
+            if (dx == ksize.x / 2 && dy == ksize.y / 2)
+                newkernel[dx][dy] += 2.f;
+        }
+
+    return Convolution(newkernel);
+}
+
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
 static Image NonSepConv(Image &src, Array2D<float> const &kernel)
 {

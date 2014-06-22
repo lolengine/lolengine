@@ -57,7 +57,7 @@ static inline vec3 GetDiffusion(float v)
     if (v < 0.f)
        v = 0.f;
 
-    for (int i = 1; i < sizeof(table) / sizeof(table[0]); ++i)
+    for (unsigned int i = 1; i < sizeof(table) / sizeof(table[0]); ++i)
     {
         if (v <= table[i][0])
         {

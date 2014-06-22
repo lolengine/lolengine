@@ -104,12 +104,20 @@ public:
 
     /* Image processing */
     Image AutoContrast() const;
+    Image Brightness(float val) const;
+    Image Contrast(float val) const;
     Image Convolution(Array2D<float> const &kernel);
     Image Crop(ibox2 box) const;
+    Image Dilate();
+    Image Erode();
+    Image Invert() const;
     Image Median(ivec2 radii) const;
     Image Median(Array2D<float> const &kernel) const;
-    Image YUVToRGB() const;
+    Image Sharpen(Array2D<float> const &kernel);
+    Image Threshold(float val) const;
+    Image Threshold(vec3 val) const;
     Image RGBToYUV() const;
+    Image YUVToRGB() const;
 
     /* Dithering */
     Image DitherRandom() const;
