@@ -91,9 +91,6 @@
     <Filter Include="image\filter">
       <UniqueIdentifier>{3f420a7d-0538-463a-925b-3f8968bf628e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="image\render">
-      <UniqueIdentifier>{23655fca-56e5-48ec-8cf0-a71322f4cc89}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\crop.cpp">
@@ -391,8 +388,11 @@
     <ClCompile Include="image\dither\random.cpp">
       <Filter>image\dither</Filter>
     </ClCompile>
-    <ClCompile Include="image\render\noise.cpp">
-      <Filter>image\render</Filter>
+    <ClCompile Include="image\noise.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
+    <ClCompile Include="image\resample.cpp">
+      <Filter>image</Filter>
     </ClCompile>
     <ClCompile Include="image\pixels.cpp">
       <Filter>image</Filter>

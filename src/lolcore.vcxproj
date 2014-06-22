@@ -161,8 +161,9 @@
     <ClCompile Include="image\crop.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\kernel.cpp" />
+    <ClCompile Include="image\noise.cpp" />
     <ClCompile Include="image\pixels.cpp" />
-    <ClCompile Include="image\render\noise.cpp" />
+    <ClCompile Include="image\resample.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
     <ClCompile Include="light.cpp" />
