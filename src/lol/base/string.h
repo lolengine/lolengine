@@ -115,11 +115,13 @@ public:
         ((Super &)*this).Last() = '\0';
     }
 
-    String Sub(int start, int count) const
+    String Sub(int start, int count = -1) const
     {
         ASSERT(start >= 0);
-        ASSERT(count >= 0);
-        ASSERT(start + count <= Count());
+        if (start >= Count())
+            return String();
+        if (count < 0 || count >= Count() - start)
+            count = Count() - start;
         return String(&(*this)[start], count);
     }
 
