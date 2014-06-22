@@ -41,6 +41,12 @@ enum class ScanMode : uint8_t
     Serpentine,
 };
 
+enum class ResampleAlgorithm : uint8_t
+{
+    Bicubic,
+    Bresenham,
+};
+
 enum class EdiffAlgorithm : uint8_t
 {
     FloydSteinberg,
@@ -102,12 +108,15 @@ public:
     /* Rendering */
     bool RenderRandom(ivec2 size);
 
+    /* Resize and crop */
+    Image Resize(ivec2 size, ResampleAlgorithm algorithm);
+    Image Crop(ibox2 box) const;
+
     /* Image processing */
     Image AutoContrast() const;
     Image Brightness(float val) const;
     Image Contrast(float val) const;
     Image Convolution(Array2D<float> const &kernel);
-    Image Crop(ibox2 box) const;
     Image Dilate();
     Image Erode();
     Image Invert() const;

@@ -46,7 +46,5 @@ Image:
      · pipi-internals.h
      · pipi-template.h
      · quantize/reduce.cpp
-     · resample/bicubic.cpp
-     · resample/bresenham.cpp
      · sequence.cpp
 

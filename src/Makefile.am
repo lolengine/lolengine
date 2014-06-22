@@ -111,7 +111,7 @@ liblolcore_sources = \
     sys/thread.cpp sys/threadbase.h \
     \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixels.cpp \
-    image/crop.cpp \
+    image/crop.cpp image/resample.cpp image/noise.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
     image/codec/sdl-image.cpp image/codec/ios-image.cpp \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
@@ -121,7 +121,6 @@ liblolcore_sources = \
     image/dither/ostromoukhov.cpp image/dither/ordered.cpp \
     image/filter/convolution.cpp image/filter/color.cpp \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
-    image/render/noise.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \
