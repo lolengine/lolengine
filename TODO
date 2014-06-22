@@ -34,10 +34,7 @@ Image:
      · context.cpp
      · dither/dbs.cpp
      · filter/blur.cpp
-     · filter/color.cpp
-     · filter/dilate.cpp
      · filter/rotate.cpp
-     · filter/sharpen.cpp
      · filter/transform.cpp
      · filter/wave.cpp
      · paint/bezier.cpp
@@ -52,5 +49,4 @@ Image:
      · resample/bicubic.cpp
      · resample/bresenham.cpp
      · sequence.cpp
-     · tiles.cpp
 
