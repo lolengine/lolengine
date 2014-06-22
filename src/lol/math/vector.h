@@ -1300,6 +1300,12 @@ extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
         for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
             ret[n] = -a[n]; \
         return ret; \
+    } \
+    \
+    tprefix \
+    inline tname<type> operator +(tname<type> const &a) \
+    { \
+        return a; \
     }
 
 #define LOL_UNARY_FUNS(tname, tprefix, type) \
