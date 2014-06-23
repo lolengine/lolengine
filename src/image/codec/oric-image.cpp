@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -24,7 +24,6 @@ namespace lol
  * DEPTH = 3 gives good quality, and higher values may improve the results
  * even more but at the cost of significantly longer computation times. */
 #define WIDTH 240
-#define HEIGHT 200
 #define DEPTH 2
 
 /*
@@ -39,6 +38,7 @@ public:
 
 private:
     static String ReadScreen(char const *name);
+    static void WriteScreen(Image &image, Array<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -110,7 +110,41 @@ bool OricImageCodec::Load(Image *image, char const *path)
 
 bool OricImageCodec::Save(Image *image, char const *path)
 {
-    return false;
+    int len = strlen(path);
+    if (len < 4 || path[len - 4] != '.'
+        || toupper(path[len - 3]) != 'T'
+        || toupper(path[len - 2]) != 'A'
+        || toupper(path[len - 1]) != 'P')
+        return false;
+
+    Array<uint8_t> result;
+
+    result << 0x16 << 0x16 << 0x16 << 0x16 << 0x24;
+    result << 0 << 0xff << 0x80 << 0 << 0xbf << 0x3f << 0xa0 << 0;
+
+    /* Add filename, except the last 4 characters */
+    for (char const *name = path; name[4]; ++name)
+        result << (uint8_t)name[0];
+    result << 0;
+
+    Image tmp;
+    ivec2 size = image->GetSize();
+    if (size.x != WIDTH)
+    {
+        size.y = (int)((float)size.y * WIDTH / size.x);
+        size.x = WIDTH;
+        tmp = image->Resize(size, ResampleAlgorithm::Bresenham);
+        image = &tmp;
+    }
+
+    WriteScreen(*image, result);
+
+    File f;
+    f.Open(path, FileAccess::Write);
+    f.Write(result.Data(), result.Bytes());
+    f.Close();
+
+    return true;
 }
 
 String OricImageCodec::ReadScreen(char const *name)
@@ -143,61 +177,6 @@ String OricImageCodec::ReadScreen(char const *name)
     /* Read screen data */
     return data.Sub(filename_end + 1);
 }
-
-#if 0
-
-pipi_image_t *pipi_load_oric(char const *name)
-{
-}
-
-int pipi_save_oric(pipi_image_t *img, char const *name)
-{
-    pipi_image_t *tmp = NULL;
-    pipi_pixels_t *p;
-    float *data;
-    uint8_t *screen;
-    FILE *fp;
-    size_t len;
-
-    len = strlen(name);
-    if (len < 4 || name[len - 4] != '.'
-        || toupper(name[len - 3]) != 'T'
-        || toupper(name[len - 2]) != 'A'
-        || toupper(name[len - 1]) != 'P')
-        return -1;
-
-    fp = fopen(name, "w");
-    if (!fp)
-        return -1;
-
-    fwrite("\x16\x16\x16\x16\x24", 1, 5, fp);
-    fwrite("\x00\xff\x80\x00\xbf\x3f\xa0\x00\x00", 1, 9, fp);
-    fwrite(name, 1, len - 4, fp);
-    fwrite("\x00", 1, 1, fp);
-
-    if (img->w != WIDTH || img->h != HEIGHT)
-        tmp = pipi_resize_bicubic(img, WIDTH, HEIGHT);
-    else
-        tmp = img;
-    p = pipi_get_pixels(tmp, PIPI_PIXELS_RGBA_F32);
-    data = p->pixels;
-    screen = malloc(WIDTH * HEIGHT / 6);
-    write_screen(data, screen);
-    pipi_release_pixels(tmp, p);
-    if (tmp != img)
-        pipi_free(tmp);
-
-    fwrite(screen, 1, WIDTH * HEIGHT / 6, fp);
-    fclose(fp);
-
-    free(screen);
-
-    return 0;
-}
-
-/*
- * XXX: The following functions are local.
- */
 
 /* Error diffusion table, similar to Floyd-Steinberg. I choose not to
  * propagate 100% of the error, because doing so creates awful artifacts
@@ -251,7 +230,7 @@ static inline void domove(uint8_t command, uint8_t *bg, uint8_t *fg)
 /* Clamp pixel value to avoid colour bleeding. Deactivated because it
  * does not give satisfactory results. */
 #define CLAMP 0x1000
-static inline int clamp(int p)
+static inline int myclamp(int p)
 {
 #if 0
     /* FIXME: doesn’t give terribly good results on eg. eatme.png */
@@ -283,7 +262,7 @@ static inline int geterror(int const *in, int const *inerr,
         for (c = 0; c < 3; c++)
         {
             /* Experiment shows that this is important at small depths */
-            int a = clamp(in[i * 3 + c] + tmperr[c]);
+            int a = myclamp(in[i * 3 + c] + tmperr[c]);
             int b = out[i * 3 + c];
             tmperr[c] = (a - b) * FS0 / FSX;
             tmperr[c + (i * 3 + 3)] += (a - b) * FS1 / FSX;
@@ -430,30 +409,30 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
 
             for (i = 0; i < 6; i++)
             {
-                int vec1[3], vec2[3];
+                int veca[3], vecb[3];
                 int smalle1 = 0, smalle2 = 0;
 
-                memcpy(vec1, tmpvec, 3 * sizeof(int));
-                memcpy(vec2, tmpvec, 3 * sizeof(int));
+                memcpy(veca, tmpvec, 3 * sizeof(int));
+                memcpy(vecb, tmpvec, 3 * sizeof(int));
                 for (c = 0; c < 3; c++)
                 {
                     int delta1, delta2;
-                    delta1 = clamp(in[i * 3 + c] + tmpvec[c]) - bgcolor[c];
-                    vec1[c] = delta1 * FS0 / FSX;
+                    delta1 = myclamp(in[i * 3 + c] + tmpvec[c]) - bgcolor[c];
+                    veca[c] = delta1 * FS0 / FSX;
                     smalle1 += delta1 / 256 * delta1;
-                    delta2 = clamp(in[i * 3 + c] + tmpvec[c]) - fgcolor[c];
-                    vec2[c] = delta2 * FS0 / FSX;
+                    delta2 = myclamp(in[i * 3 + c] + tmpvec[c]) - fgcolor[c];
+                    vecb[c] = delta2 * FS0 / FSX;
                     smalle2 += delta2 / 256 * delta2;
                 }
 
                 if (smalle1 < smalle2)
                 {
-                    memcpy(tmpvec, vec1, 3 * sizeof(int));
+                    memcpy(tmpvec, veca, 3 * sizeof(int));
                     memcpy(tmprgb + i * 3, bgcolor, 3 * sizeof(int));
                 }
                 else
                 {
-                    memcpy(tmpvec, vec2, 3 * sizeof(int));
+                    memcpy(tmpvec, vecb, 3 * sizeof(int));
                     memcpy(tmprgb + i * 3, fgcolor, 3 * sizeof(int));
                     command |= (1 << (5 - i));
                 }
@@ -509,72 +488,71 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
     return bestcommand;
 }
 
-static void write_screen(float const *data, uint8_t *screen)
+void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
 {
-    int *src, *srcl, *dst, *dstl;
-    int stride, x, y, depth, c;
+    ivec2 size = image.GetSize();
+    vec4 *pixels = image.Lock<PixelFormat::RGBA_F32>();
 
-    stride = (WIDTH + 1) * 3;
+    int stride = (size.x + 1);
 
-    src = malloc((WIDTH + 1) * (HEIGHT + 1) * 3 * sizeof(int));
-    memset(src, 0, (WIDTH + 1) * (HEIGHT + 1) * 3 * sizeof(int));
+    ivec3 *src = (ivec3 *)malloc((size.x + 1) * (size.y + 1) * sizeof(ivec3));
+    memset(src, 0, (size.x + 1) * (size.y + 1) * sizeof(ivec3));
 
-    dst = malloc((WIDTH + 1) * (HEIGHT + 1) * 3 * sizeof(int));
-    memset(dst, 0, (WIDTH + 1) * (HEIGHT + 1) * 3 * sizeof(int));
+    ivec3 *dst = (ivec3 *)malloc((size.x + 1) * (size.y + 1) * sizeof(ivec3));
+    memset(dst, 0, (size.x + 1) * (size.y + 1) * sizeof(ivec3));
 
     /* Import pixels into our custom format */
-    for (y = 0; y < HEIGHT; y++)
-        for (x = 0; x < WIDTH; x++)
-            for (c = 0; c < 3; c++)
-                src[y * stride + x * 3 + c] =
-                     0xffff * data[(y * WIDTH + x) * 4 + (2 - c)];
+    for (int y = 0; y < size.y; y++)
+        for (int x = 0; x < size.x; x++)
+            for (int c = 0; c < 3; c++)
+                src[y * stride + x][c] = 0xffff * pixels[y * size.x + x][2 - c];
 
     /* Let the fun begin */
-    for (y = 0; y < HEIGHT; y++)
+    for (int y = 0; y < size.y; y++)
     {
         uint8_t bg = 0, fg = 7;
 
-        //fprintf(stderr, "\rProcessing... %i%%", (y * 100 + 99) / HEIGHT);
+        //fprintf(stderr, "\rProcessing... %i%%", (y * 100 + 99) / size.y);
 
-        for (x = 0; x < WIDTH; x += 6)
+        for (int x = 0; x < size.x; x += 6)
         {
             int errvec[3] = { 0, 0, 0 };
-            int dummy, i;
+            int dummy;
             uint8_t command;
 
-            depth = (x + DEPTH < WIDTH) ? DEPTH : (WIDTH - x) / 6 - 1;
-            srcl = src + y * stride + x * 3;
-            dstl = dst + y * stride + x * 3;
+            int depth = (x + DEPTH < size.x) ? DEPTH : (size.x - x) / 6 - 1;
+            ivec3 *srcl = src + y * stride + x;
+            ivec3 *dstl = dst + y * stride + x;
 
             /* Recursively compute and apply best command */
-            command = bestmove(srcl, bg, fg, errvec, depth, 0x7fffff,
-                               &dummy, dstl);
+            command = bestmove((int *)srcl, bg, fg, errvec, depth, 0x7fffff,
+                               &dummy, (int *)dstl);
             /* Propagate error */
-            for (c = 0; c < 3; c++)
+            for (int c = 0; c < 3; c++)
             {
-                for (i = 0; i < 6; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    int error = srcl[i * 3 + c] - dstl[i * 3 + c];
-                    srcl[i * 3 + c + 3] =
-                            clamp(srcl[i * 3 + c + 3] + error * FS0 / FSX);
-                    srcl[i * 3 + c + stride - 3] += error * FS1 / FSX;
-                    srcl[i * 3 + c + stride] += error * FS2 / FSX;
-                    srcl[i * 3 + c + stride + 3] += error * FS3 / FSX;
+                    int error = srcl[i][c] - dstl[i][c];
+                    srcl[i + 1][c] = myclamp(srcl[i + 1][c] + error * FS0 / FSX);
+                    srcl[i + stride - 1][c] += error * FS1 / FSX;
+                    srcl[i + stride][c] += error * FS2 / FSX;
+                    srcl[i + stride + 1][c] += error * FS3 / FSX;
                 }
 
-                for (i = -1; i < 7; i++)
-                    srcl[i * 3 + c + stride] = clamp(srcl[i * 3 + c + stride]);
+                for (int i = -1; i < 7; i++)
+                    srcl[i + stride][c] = myclamp(srcl[i + stride][c]);
             }
             /* Iterate */
             domove(command, &bg, &fg);
             /* Write byte to file */
-            screen[y * (WIDTH / 6) + (x / 6)] = command;
+            result << command;
         }
     }
 
+    image.Unlock(pixels);
+
     //fprintf(stderr, " done.\n");
 }
-#endif
 
 } /* namespace lol */
 
