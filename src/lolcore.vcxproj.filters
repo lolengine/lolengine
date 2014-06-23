@@ -165,6 +165,9 @@
     <ClCompile Include="image\codec\ios-image.cpp">
       <Filter>image\codec</Filter>
     </ClCompile>
+    <ClCompile Include="image\codec\oric-image.cpp">
+      <Filter>image\codec</Filter>
+    </ClCompile>
     <ClCompile Include="image\codec\ps3-image.cpp">
       <Filter>image\codec</Filter>
     </ClCompile>

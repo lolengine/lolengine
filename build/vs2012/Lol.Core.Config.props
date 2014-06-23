@@ -11,13 +11,15 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
+    <ExceptionHandling>false</ExceptionHandling>
+    <FloatingPointModel>Fast</FloatingPointModel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='Win32'" Label="Configuration">
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
     <PlatformToolset>SNC</PlatformToolset>
