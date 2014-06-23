@@ -271,10 +271,10 @@ public:
      */
     static vec3 CIEXYZToCIELab(vec3 src, vec3 white_value)
     {
-        float const a = (6.0 * 6.0 * 6.0) / (29 * 29 * 29);
-        float const b = (29.0 * 29.0) / (3 * 6 * 6);
-        float const c = 4.0 / 29;
-        float const d = 1.0 / 3;
+        float const a = (6.0f * 6.0f * 6.0f) / (29 * 29 * 29);
+        float const b = (29.0f * 29.0f) / (3 * 6 * 6);
+        float const c = 4.0f / 29;
+        float const d = 1.0f / 3;
 
         src /= white_value;
 
