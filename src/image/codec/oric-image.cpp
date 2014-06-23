@@ -71,30 +71,29 @@ bool OricImageCodec::Load(Image *image, char const *path)
 
     for (int y = 0; y < image->GetSize().y; y++)
     {
-        int bg = 0, fg = 7;
+        u8vec2 bgfg(0, 7);
 
         for (int x = 0; x < 40; x++)
         {
-            int col;
             uint8_t c = screen[y * 40 + x];
 
             if (c & 0x40)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    col = (c & (1 << (5 - i))) ? (c & 0x80) ? 7 - fg : fg
-                                               : (c & 0x80) ? 7 - bg : bg;
+                    uint8_t id = (c & (1 << (5 - i))) ? bgfg[1] : bgfg[0];
+                    int col = (c & 0x80) ? 7 - id : id;
                     pixels[y * WIDTH + x * 6 + i] = pal[col];
                 }
             }
             else if ((c & 0x60) == 0x00)
             {
                 if (c & 0x10)
-                    bg = c & 0x7;
+                    bgfg[0] = c & 0x7;
                 else
-                    fg = c & 0x7;
+                    bgfg[1] = c & 0x7;
 
-                col = (c & 0x80) ? 7 - bg : bg;
+                int col = (c & 0x80) ? 7 - bgfg[0] : bgfg[0];
 
                 for (int i = 0; i < 6; i++)
                     pixels[y * WIDTH + x * 6 + i] = pal[col];
@@ -204,122 +203,114 @@ String OricImageCodec::ReadScreen(char const *name)
  * colour is repeated 6 times so that we can point to the palette to paste
  * whole blocks of 6 pixels. It’s also organised so that palette[7-x] is the
  * RGB negative of palette[x], and screen command X uses palette[X & 7]. */
-#define o 0x0000
-#define X 0xffff
-static const int palette[8][6 * 3] =
+#define V(a,b,c) ivec3(a,b,c),ivec3(a,b,c),ivec3(a,b,c),\
+                 ivec3(a,b,c),ivec3(a,b,c),ivec3(a,b,c),
+static const ivec3 palette[8][6] =
 {
-    { o, o, o,   o, o, o,   o, o, o,   o, o, o,   o, o, o,   o, o, o },
-    { X, o, o,   X, o, o,   X, o, o,   X, o, o,   X, o, o,   X, o, o },
-    { o, X, o,   o, X, o,   o, X, o,   o, X, o,   o, X, o,   o, X, o },
-    { X, X, o,   X, X, o,   X, X, o,   X, X, o,   X, X, o,   X, X, o },
-    { o, o, X,   o, o, X,   o, o, X,   o, o, X,   o, o, X,   o, o, X },
-    { X, o, X,   X, o, X,   X, o, X,   X, o, X,   X, o, X,   X, o, X },
-    { o, X, X,   o, X, X,   o, X, X,   o, X, X,   o, X, X,   o, X, X },
-    { X, X, X,   X, X, X,   X, X, X,   X, X, X,   X, X, X,   X, X, X },
+    { V(0x0000, 0x0000, 0x0000) },
+    { V(0xffff, 0x0000, 0x0000) },
+    { V(0x0000, 0xffff, 0x0000) },
+    { V(0xffff, 0xffff, 0x0000) },
+    { V(0x0000, 0x0000, 0xffff) },
+    { V(0xffff, 0x0000, 0xffff) },
+    { V(0x0000, 0xffff, 0xffff) },
+    { V(0xffff, 0xffff, 0xffff) },
 };
+#undef V
 
 /* Set new background and foreground colours according to the given command. */
-static inline void domove(uint8_t command, uint8_t *bg, uint8_t *fg)
+static inline u8vec2 domove(uint8_t command, u8vec2 bgfg)
 {
     if ((command & 0x78) == 0x00)
-        *fg = command & 0x7;
+        bgfg[1] = command & 0x7;
     else if ((command & 0x78) == 0x10)
-        *bg = command & 0x7;
+        bgfg[0] = command & 0x7;
+    return bgfg;
 }
 
 /* Clamp pixel value to avoid colour bleeding. Deactivated because it
  * does not give satisfactory results. */
-#define CLAMP 0x1000
-static inline int myclamp(int p)
+static inline ivec3 myclamp(ivec3 p)
 {
 #if 0
+    static int const CLAMP = 0x1000;
     /* FIXME: doesn’t give terribly good results on eg. eatme.png */
-    if (p < - CLAMP) return - CLAMP;
-    if (p > 0xffff + CLAMP) return 0xffff + CLAMP;
+    p = lol::clamp(p, -CLAMP, 0xffff + CLAMP);
 #endif
     return p;
 }
 
 /* Compute the perceptual error caused by replacing the input pixels "in"
- * with the output pixels "out". "inerr" is the diffused error that should
- * be applied to "in"’s first pixel. "outerr" will hold the diffused error
+ * with the output pixels "out". "indelta" is the diffused error that should
+ * be applied to "in"’s first pixel. "outdelta" will hold the diffused error
  * to apply after "in"’s last pixel upon next call. The return value does
  * not mean much physically; it is one part of the algorithm where you need
  * to play a bit in order to get appealing results. That’s how image
- * processing works, dude. */
-static inline int geterror(int const *in, int const *inerr,
-                           int const *out, int *outerr)
+ * processing works, folks. */
+static inline int geterror(ivec3 const *in, ivec3 indelta,
+                           ivec3 const *out, ivec3 *outdelta)
 {
-    int tmperr[9 * 3];
-    int i, c, ret = 0;
-
     /* 9 cells: 1 for the end of line, 8 for the errors below */
-    memcpy(tmperr, inerr, 3 * sizeof(int));
-    memset(tmperr + 3, 0, 8 * 3 * sizeof(int));
+    ivec3 tmpdelta[9] = { indelta, ivec3(0) };
 
-    for (i = 0; i < 6; i++)
+    int ret = 0;
+
+    /* Experiment shows that this is important at small depths */
+    for (int i = 0; i < 6; i++)
     {
-        for (c = 0; c < 3; c++)
-        {
-            /* Experiment shows that this is important at small depths */
-            int a = myclamp(in[i * 3 + c] + tmperr[c]);
-            int b = out[i * 3 + c];
-            tmperr[c] = (a - b) * FS0 / FSX;
-            tmperr[c + (i * 3 + 3)] += (a - b) * FS1 / FSX;
-            tmperr[c + (i * 3 + 6)] += (a - b) * FS2 / FSX;
-            tmperr[c + (i * 3 + 9)] += (a - b) * FS3 / FSX;
-            ret += (a - b) / 256 * (a - b) / 256;
-        }
+        ivec3 a = myclamp(in[i] + tmpdelta[0]);
+        ivec3 b = out[i];
+
+        tmpdelta[0] = (a - b) * FS0 / FSX;
+        tmpdelta[i + 1] += (a - b) * FS1 / FSX;
+        tmpdelta[i + 2] += (a - b) * FS2 / FSX;
+        tmpdelta[i + 3] += (a - b) * FS3 / FSX;
+
+        ret += dot((a - b) / 256, (a - b) / 256);
     }
 
-    for (i = 0; i < 4; i++)
+    /* Experiment shows that this is important at large depths */
+    for (int i = 0; i < 4; i++)
     {
-        for (c = 0; c < 3; c++)
-        {
-            /* Experiment shows that this is important at large depths */
-            int a = ((in[i * 3 + c] + in[i * 3 + 3 + c]
-                                    + in[i * 3 + 6 + c]) / 3);
-            int b = ((out[i * 3 + c] + out[i * 3 + 3 + c]
-                                     + out[i * 3 + 6 + c]) / 3);
-            ret += (a - b) / 256 * (a - b) / 256;
-        }
+        ivec3 a = (in[i] + in[i + 1] + in[i + 2]) / 3;
+        ivec3 b = (out[i] + out[i + 1] + out[i + 2]) / 3;
+
+        ret += dot((a - b) / 256, (a - b) / 256);
     }
 
     /* Using the diffused error as a perceptual error component is stupid,
      * because that’s not what it is at all, but I found that it helped a
      * bit in some cases. */
-    for (i = 0; i < 3; i++)
-        ret += tmperr[i] / 256 * tmperr[i] / 256;
+    ret += dot(tmpdelta[0] / 256, tmpdelta[0] / 256);
 
-    memcpy(outerr, tmperr, 3 * sizeof(int));
+    *outdelta = tmpdelta[0];
 
     return ret;
 }
 
-static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
-                        int const *errvec, int depth, int maxerror,
-                        int *error, int *out)
+static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
+                        ivec3 delta, int depth, int maxerror,
+                        int *error, ivec3 *out)
 {
-    int voidvec[3], nvoidvec[3], bestrgb[6 * 3], tmprgb[6 * 3], tmpvec[3];
-    int const *voidrgb, *nvoidrgb, *vec, *rgb;
-    int besterror, curerror, suberror, statice, voide, nvoide;
-    int i, j, c;
-    uint8_t command, bestcommand;
+    ivec3 tmprgb[6], bestrgb[6];
+    ivec3 nop_rgb_delta, inop_rgb_delta;
+    ivec3 const *rgb, *nop_rgb, *inop_rgb;
+    int suberror, statice, nop_error, inop_error;
 
     /* Precompute error for the case where we change the foreground colour
      * and hence only print the background colour or its negative */
-    voidrgb = palette[bg];
-    voide = geterror(in, errvec, voidrgb, voidvec);
-    nvoidrgb = palette[7 - bg];
-    nvoide = geterror(in, errvec, nvoidrgb, nvoidvec);
+    nop_rgb = palette[bgfg[0]];
+    nop_error = geterror(in, delta, nop_rgb, &nop_rgb_delta);
+    inop_rgb = palette[7 - bgfg[0]];
+    inop_error = geterror(in, delta, inop_rgb, &inop_rgb_delta);
 
     /* Precompute sub-error for the case where we print pixels (and hence
      * don’t change the palette). It’s not the exact error because we should
      * be propagating the error to the first pixel here. */
     if (depth > 0)
     {
-        int tmp[3] = { 0, 0, 0 };
-        bestmove(in + 6 * 3, bg, fg, tmp, depth - 1, maxerror, &statice, NULL);
+        bestmove(in + 6, bgfg, ivec3(0), depth - 1,
+                 maxerror, &statice, nullptr);
     }
 
     /* Check every likely command:
@@ -329,28 +320,29 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
      * 24-31: change background to 0-7, print negative background
      * 32: normal stuff
      * 33: inverse video stuff */
-    besterror = 0x7ffffff;
-    bestcommand = 0x10;
-    memcpy(bestrgb, voidrgb, 6 * 3 * sizeof(int));
-    for (j = 0; j < 34; j++)
+    static uint8_t const command_list[] =
     {
-        static uint8_t const lookup[] =
-        {
-            0x00, 0x04, 0x01, 0x05, 0x02, 0x06, 0x03, 0x07,
-            0x80, 0x84, 0x81, 0x85, 0x82, 0x86, 0x83, 0x87,
-            0x10, 0x14, 0x11, 0x15, 0x12, 0x16, 0x13, 0x17,
-            0x90, 0x94, 0x91, 0x95, 0x92, 0x96, 0x93, 0x97,
-            0x40, 0xc0
-        };
+        0x00, 0x04, 0x01, 0x05, 0x02, 0x06, 0x03, 0x07,
+        0x80, 0x84, 0x81, 0x85, 0x82, 0x86, 0x83, 0x87,
+        0x10, 0x14, 0x11, 0x15, 0x12, 0x16, 0x13, 0x17,
+        0x90, 0x94, 0x91, 0x95, 0x92, 0x96, 0x93, 0x97,
+        0x40, 0xc0
+    };
 
-        uint8_t newbg = bg, newfg = fg;
+    int besterror = 0x7ffffff;
+    uint8_t bestcommand = 0x10;
+    memcpy(bestrgb, nop_rgb, sizeof(bestrgb));
 
-        command = lookup[j];
-        domove(command, &newbg, &newfg);
+    for (uint8_t command : command_list)
+    {
+        ivec3 nexterr = ivec3(0);
+        int curerror = 0;
+
+        u8vec2 newbgfg = domove(command, bgfg);
 
         /* Keeping bg and fg is useless, because we could use standard
          * pixel printing instead */
-        if ((command & 0x40) == 0x00 && newbg == bg && newfg == fg)
+        if ((command & 0x40) == 0x00 && newbgfg == bgfg)
             continue;
 
         /* I *think* having newfg == newbg is useless, too, but I don’t
@@ -369,80 +361,65 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
 
         if ((command & 0xf8) == 0x00)
         {
-            curerror = voide;
-            rgb = voidrgb;
-            vec = voidvec;
+            curerror = nop_error;
+            rgb = nop_rgb;
+            nexterr = nop_rgb_delta;
         }
         else if ((command & 0xf8) == 0x80)
         {
-            curerror = nvoide;
-            rgb = nvoidrgb;
-            vec = nvoidvec;
+            curerror = inop_error;
+            rgb = inop_rgb;
+            nexterr = inop_rgb_delta;
         }
         else if ((command & 0xf8) == 0x10)
         {
-            rgb = palette[newbg];
-            curerror = geterror(in, errvec, rgb, tmpvec);
-            vec = tmpvec;
+            rgb = palette[newbgfg[0]];
+            curerror = geterror(in, delta, rgb, &nexterr);
         }
         else if ((command & 0xf8) == 0x90)
         {
-            rgb = palette[7 - newbg];
-            curerror = geterror(in, errvec, rgb, tmpvec);
-            vec = tmpvec;
+            rgb = palette[7 - newbgfg[0]];
+            curerror = geterror(in, delta, rgb, &nexterr);
         }
         else
         {
-            int const *bgcolor, *fgcolor;
+            ivec3 bgcolor, fgcolor;
 
             if ((command & 0x80) == 0x00)
             {
-                bgcolor = palette[bg]; fgcolor = palette[fg];
+                bgcolor = palette[bgfg[0]][0];
+                fgcolor = palette[bgfg[1]][0];
             }
             else
             {
-                bgcolor = palette[7 - bg]; fgcolor = palette[7 - fg];
+                bgcolor = palette[7 - bgfg[0]][0];
+                fgcolor = palette[7 - bgfg[1]][0];
             }
 
-            memcpy(tmpvec, errvec, 3 * sizeof(int));
-            curerror = 0;
+            ivec3 tmpvec = delta;
 
-            for (i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
-                int veca[3], vecb[3];
-                int smalle1 = 0, smalle2 = 0;
+                ivec3 delta1 = myclamp(in[i] + tmpvec) - bgcolor;
+                ivec3 delta2 = myclamp(in[i] + tmpvec) - fgcolor;
 
-                memcpy(veca, tmpvec, 3 * sizeof(int));
-                memcpy(vecb, tmpvec, 3 * sizeof(int));
-                for (c = 0; c < 3; c++)
+                if (dot(delta1 / 256, delta1) < dot(delta2 / 256, delta2))
                 {
-                    int delta1, delta2;
-                    delta1 = myclamp(in[i * 3 + c] + tmpvec[c]) - bgcolor[c];
-                    veca[c] = delta1 * FS0 / FSX;
-                    smalle1 += delta1 / 256 * delta1;
-                    delta2 = myclamp(in[i * 3 + c] + tmpvec[c]) - fgcolor[c];
-                    vecb[c] = delta2 * FS0 / FSX;
-                    smalle2 += delta2 / 256 * delta2;
-                }
-
-                if (smalle1 < smalle2)
-                {
-                    memcpy(tmpvec, veca, 3 * sizeof(int));
-                    memcpy(tmprgb + i * 3, bgcolor, 3 * sizeof(int));
+                    tmpvec = delta1 * FS0 / FSX;
+                    tmprgb[i] = bgcolor;
                 }
                 else
                 {
-                    memcpy(tmpvec, vecb, 3 * sizeof(int));
-                    memcpy(tmprgb + i * 3, fgcolor, 3 * sizeof(int));
+                    tmpvec = delta2 * FS0 / FSX;
+                    tmprgb[i] = fgcolor;
                     command |= (1 << (5 - i));
                 }
             }
 
             /* Recompute full error */
-            curerror += geterror(in, errvec, tmprgb, tmpvec);
+            curerror += geterror(in, delta, tmprgb, &nexterr);
 
             rgb = tmprgb;
-            vec = tmpvec;
         }
 
         if (curerror > besterror)
@@ -457,16 +434,16 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
             suberror = 0; /* It’s the end of the tree */
         else if ((command & 0x68) == 0x00)
         {
-            bestmove(in + 6 * 3, newbg, newfg, vec, depth - 1,
-                     besterror - curerror, &suberror, NULL);
+            bestmove(in + 6, newbgfg, nexterr, depth - 1,
+                     besterror - curerror, &suberror, nullptr);
 
 #if 0
             /* Slight penalty for colour changes; they're hard to revert. The
              * value of 2 was determined empirically. 1.5 is not enough and
              * 3 is too much. */
-            if (newbg != bg)
+            if (newbgfg[0] != bgfg[0])
                 suberror = suberror * 10 / 8;
-            else if (newfg != fg)
+            else if (newbgfg[1] != bgfg[1])
                 suberror = suberror * 9 / 8;
 #endif
         }
@@ -477,13 +454,13 @@ static uint8_t bestmove(int const *in, uint8_t bg, uint8_t fg,
         {
             besterror = curerror + suberror;
             bestcommand = command;
-            memcpy(bestrgb, rgb, 6 * 3 * sizeof(int));
+            memcpy(bestrgb, rgb, sizeof(bestrgb));
         }
     }
 
     *error = besterror;
     if (out)
-        memcpy(out, bestrgb, 6 * 3 * sizeof(int));
+        memcpy(out, bestrgb, sizeof(bestrgb));
 
     return bestcommand;
 }
@@ -510,40 +487,35 @@ void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
     /* Let the fun begin */
     for (int y = 0; y < size.y; y++)
     {
-        uint8_t bg = 0, fg = 7;
+        u8vec2 bgfg(0, 7);
 
         //fprintf(stderr, "\rProcessing... %i%%", (y * 100 + 99) / size.y);
 
         for (int x = 0; x < size.x; x += 6)
         {
-            int errvec[3] = { 0, 0, 0 };
-            int dummy;
-            uint8_t command;
-
             int depth = (x + DEPTH < size.x) ? DEPTH : (size.x - x) / 6 - 1;
             ivec3 *srcl = src + y * stride + x;
             ivec3 *dstl = dst + y * stride + x;
 
             /* Recursively compute and apply best command */
-            command = bestmove((int *)srcl, bg, fg, errvec, depth, 0x7fffff,
-                               &dummy, (int *)dstl);
+            int dummy;
+            uint8_t command = bestmove(srcl, bgfg, vec3(0), depth,
+                                       0x7fffff, &dummy, dstl);
             /* Propagate error */
-            for (int c = 0; c < 3; c++)
+            for (int i = 0; i < 6; i++)
             {
-                for (int i = 0; i < 6; i++)
-                {
-                    int error = srcl[i][c] - dstl[i][c];
-                    srcl[i + 1][c] = myclamp(srcl[i + 1][c] + error * FS0 / FSX);
-                    srcl[i + stride - 1][c] += error * FS1 / FSX;
-                    srcl[i + stride][c] += error * FS2 / FSX;
-                    srcl[i + stride + 1][c] += error * FS3 / FSX;
-                }
-
-                for (int i = -1; i < 7; i++)
-                    srcl[i + stride][c] = myclamp(srcl[i + stride][c]);
+                ivec3 delta = srcl[i] - dstl[i];
+                srcl[i + 1] = myclamp(srcl[i + 1] + delta * FS0 / FSX);
+                srcl[i + stride - 1] += delta * FS1 / FSX;
+                srcl[i + stride] += delta * FS2 / FSX;
+                srcl[i + stride + 1] += delta * FS3 / FSX;
             }
+
+            for (int i = -1; i < 7; i++)
+                srcl[i + stride] = myclamp(srcl[i + stride]);
+
             /* Iterate */
-            domove(command, &bg, &fg);
+            bgfg = domove(command, bgfg);
             /* Write byte to file */
             result << command;
         }
