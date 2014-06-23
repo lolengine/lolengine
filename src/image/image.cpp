@@ -156,6 +156,9 @@ ivec2 Image::GetSize() const
 
 void Image::SetSize(ivec2 size)
 {
+    ASSERT(size.x > 0);
+    ASSERT(size.y > 0);
+
     if (m_data->m_size != size)
     {
         /* FIXME: delete data or resize it */
@@ -163,14 +166,10 @@ void Image::SetSize(ivec2 size)
         {
             m_data->m_pixels.Remove((int)m_data->m_format);
         }
+        m_data->m_format = PixelFormat::Unknown;
     }
-    m_data->m_size = size;
 
-    /* FIXME: don’t do this! It’s useless. */
-    if (m_data->m_format != PixelFormat::Unknown)
-    {
-        Unlock(Lock<PixelFormat::RGBA_8>());
-    }
+    m_data->m_size = size;
 }
 
 /* Wrap-around mode for some operations */
