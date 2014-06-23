@@ -53,6 +53,15 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(a[3], 3);
     }
 
+    LOLUNIT_TEST(ArrayInitializer)
+    {
+        Array<int> a = { 2, 4, 6 };
+
+        LOLUNIT_ASSERT_EQUAL(a[0], 2);
+        LOLUNIT_ASSERT_EQUAL(a[1], 4);
+        LOLUNIT_ASSERT_EQUAL(a[2], 6);
+    }
+
     LOLUNIT_TEST(ArrayPushWithShift)
     {
         Array<int> a;
