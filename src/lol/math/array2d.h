@@ -36,7 +36,8 @@ template<typename T1, typename T2 = void, typename T3 = void,
 class Array2D : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
-    typedef typename Array<T1, T2, T3, T4, T5, T6, T7, T8>::Element Element;
+    typedef Array<T1, T2, T3, T4, T5, T6, T7, T8> Super;
+    typedef typename Super::Element Element;
 
     inline Array2D()
       : m_size(0, 0)
@@ -141,9 +142,9 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(ivec2 size)
+    inline void SetSize(ivec2 size, Element e = Element())
     {
-        this->Resize(size.x * size.y);
+        this->Resize(size.x * size.y, e);
         m_size = size;
     }
 
@@ -151,6 +152,12 @@ public:
     {
         return m_size;
     }
+
+public:
+    inline Element *Data() { return Super::Data(); }
+    inline Element const *Data() const { return Super::Data(); }
+    inline int Count() const { return Super::Count(); }
+    inline int Bytes() const { return Super::Bytes(); }
 
 private:
     ivec2 m_size;
