@@ -450,6 +450,22 @@ ivec2 Framebuffer::GetSize() const
     return m_data->m_size;
 }
 
+Image Framebuffer::GetImage() const
+{
+    Image ret(m_data->m_size);
+
+#if defined USE_D3D9 || defined _XBOX
+    /* TODO: implement D3D Framebuffer::GetImage() */
+#else
+    u8vec4 *buffer = ret.Lock<PixelFormat::RGBA_8>();
+    glReadPixels(0, 0, m_data->m_size.x, m_data->m_size.y,
+                 GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+    ret.Unlock(buffer);
+#endif
+
+    return ret;
+}
+
 void Framebuffer::Bind()
 {
     ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
