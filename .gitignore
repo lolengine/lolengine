@@ -97,6 +97,7 @@ demos/tutorial/03_noise
 demos/tutorial/04_texture
 demos/tutorial/05_easymesh
 demos/tutorial/06_sprite
+demos/tutorial/07_input
 demos/tutorial/08_fbo
 demos/tutorial/11_fractal
 demos/tutorial/12_voronoi

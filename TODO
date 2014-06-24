@@ -14,8 +14,9 @@ Scene:
 
 Image:
   - Handle pitch in SDL codec (and all others, actually)
-  - Fix the Floyd-Steinberg ode in pixels.cpp
+  - Fix the Floyd-Steinberg code in pixels.cpp
   - Add gamma handling in pixels.cpp
+  - Make some Image::Lock2D method that returns an Array2D
   - port libpipi files:
      · analysis/histogram.cpp
      · analysis/measure.cpp
@@ -31,7 +32,6 @@ Image:
      · combine/rgb.cpp
      · combine/subadd.cpp
      · context.cpp
-     · dither/dbs.cpp
      · filter/blur.cpp
      · filter/rotate.cpp
      · filter/transform.cpp
@@ -40,10 +40,6 @@ Image:
      · paint/floodfill.cpp
      · paint/line.cpp
      · paint/rectangle.cpp
-     · paint/tile.cpp
-     · pipi.h
-     · pipi-internals.h
-     · pipi-template.h
      · quantize/reduce.cpp
      · sequence.cpp
 
