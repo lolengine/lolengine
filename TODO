@@ -22,9 +22,7 @@ Image:
      · analysis/measure.cpp
      · codec/coreimage.cpp
      · codec/coreimage.h
-     · codec.cpp
      · codec/jpeg.cpp
-     · colorstring.cpp
      · combine/blit.cpp
      · combine/merge.cpp
      · combine/minmax.cpp
@@ -39,7 +37,6 @@ Image:
      · paint/bezier.cpp
      · paint/floodfill.cpp
      · paint/line.cpp
-     · paint/rectangle.cpp
      · quantize/reduce.cpp
      · sequence.cpp
 
