@@ -379,6 +379,9 @@
     <ClCompile Include="image\filter\yuv.cpp">
       <Filter>image\filter</Filter>
     </ClCompile>
+    <ClCompile Include="image\dither\dbs.cpp">
+      <Filter>image\dither</Filter>
+    </ClCompile>
     <ClCompile Include="image\dither\ediff.cpp">
       <Filter>image\dither</Filter>
     </ClCompile>

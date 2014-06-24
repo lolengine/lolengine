@@ -155,6 +155,7 @@
     <ClCompile Include="image\filter\dilate.cpp" />
     <ClCompile Include="image\filter\median.cpp" />
     <ClCompile Include="image\filter\yuv.cpp" />
+    <ClCompile Include="image\dither\dbs.cpp" />
     <ClCompile Include="image\dither\ediff.cpp" />
     <ClCompile Include="image\dither\ordered.cpp" />
     <ClCompile Include="image\dither\ostromoukhov.cpp" />

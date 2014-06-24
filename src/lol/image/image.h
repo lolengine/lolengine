@@ -135,6 +135,7 @@ public:
     Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
     Image DitherOrdered(Array2D<float> const &kernel) const;
     Image DitherHalftone(float radius, float angle) const;
+    Image DitherDbs() const;
 
 private:
     class ImageData *m_data;

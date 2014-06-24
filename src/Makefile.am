@@ -117,7 +117,7 @@ liblolcore_sources = \
     image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
     image/codec/oric-image.cpp image/codec/dummy-image.cpp \
     image/color/cie1931.cpp image/color/color.cpp \
-    image/dither/random.cpp image/dither/ediff.cpp \
+    image/dither/random.cpp image/dither/ediff.cpp image/dither/dbs.cpp \
     image/dither/ostromoukhov.cpp image/dither/ordered.cpp \
     image/filter/convolution.cpp image/filter/color.cpp \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
