@@ -19,6 +19,31 @@
 namespace lol
 {
 
+class PixelDataBase
+{
+public:
+    virtual void *Data() = 0;
+    virtual void const *Data() const = 0;
+    virtual void *Data2D() = 0;
+    virtual void const *Data2D() const = 0;
+
+    inline virtual ~PixelDataBase() {}
+};
+
+template<PixelFormat T>
+class PixelData : public PixelDataBase
+{
+public:
+    inline PixelData(ivec2 size) { m_array2d.SetSize(size); }
+
+    virtual void *Data() { return m_array2d.Data(); }
+    virtual void const *Data() const { return m_array2d.Data(); }
+    virtual void *Data2D() { return &m_array2d; }
+    virtual void const *Data2D() const { return &m_array2d; }
+
+    Array2D<typename PixelType<T>::type> m_array2d;
+};
+
 class ImageData
 {
     friend class Image;
@@ -37,7 +62,7 @@ public:
     WrapMode m_wrap_x, m_wrap_y;
 
     /* A map of the various available bitplanes */
-    Map<int, void *> m_pixels;
+    Map<int, PixelDataBase *> m_pixels;
     /* The last bitplane being accessed for writing */
     PixelFormat m_format;
 };

@@ -109,9 +109,9 @@ Image::Image (Image const &other)
     if (fmt != PixelFormat::Unknown)
     {
         SetFormat(fmt);
-        void *psrc = other.m_data->m_pixels[(int)fmt];
-        void *pdst = m_data->m_pixels[(int)fmt];
-        memcpy(pdst, psrc, size.x * size.y * BytesPerPixel(fmt));
+        memcpy(m_data->m_pixels[(int)fmt]->Data(),
+               other.m_data->m_pixels[(int)fmt]->Data(),
+               size.x * size.y * BytesPerPixel(fmt));
     }
 }
 
@@ -126,10 +126,8 @@ Image & Image::operator =(Image other)
 Image::~Image()
 {
     for (int k : m_data->m_pixels.Keys())
-    {
-        delete[] (uint8_t *)m_data->m_pixels[k];
-        m_data->m_pixels[k] = nullptr;
-    }
+        delete m_data->m_pixels[k];
+
     delete m_data;
 }
 
@@ -161,11 +159,12 @@ void Image::SetSize(ivec2 size)
 
     if (m_data->m_size != size)
     {
-        /* FIXME: delete data or resize it */
-        if (m_data->m_format != PixelFormat::Unknown)
+        for (int k : m_data->m_pixels.Keys())
         {
-            m_data->m_pixels.Remove((int)m_data->m_format);
+            delete m_data->m_pixels[k];
+            m_data->m_pixels[k] = nullptr;
         }
+
         m_data->m_format = PixelFormat::Unknown;
     }
 
@@ -194,17 +193,35 @@ template<PixelFormat T> typename PixelType<T>::type *Image::Lock()
 {
     SetFormat(T);
 
-    return (typename PixelType<T>::type *)m_data->m_pixels[(int)T];
+    return (typename PixelType<T>::type *)m_data->m_pixels[(int)T]->Data();
 }
 
-/* Explicit specialisations for the above template */
-#define _T(T) template PixelType<T>::type *Image::Lock<T>()
-_T(PixelFormat::Y_8);
-_T(PixelFormat::RGB_8);
-_T(PixelFormat::RGBA_8);
-_T(PixelFormat::Y_F32);
-_T(PixelFormat::RGB_F32);
-_T(PixelFormat::RGBA_F32);
+/* The Lock2D() method */
+template<PixelFormat T> Array2D<typename PixelType<T>::type> &Image::Lock2D()
+{
+    SetFormat(T);
+
+    return *(Array2D<typename PixelType<T>::type> *)m_data->m_pixels[(int)T]->Data2D();
+}
+
+template<typename T>
+void Image::Unlock2D(Array2D<T> const &array)
+{
+    ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
+    ASSERT(array.Data() == m_data->m_pixels[(int)m_data->m_format]->Data());
+}
+
+/* Explicit specialisations for the above templates */
+#define _T(T) \
+    template PixelType<T>::type *Image::Lock<T>(); \
+    template Array2D<PixelType<T>::type> &Image::Lock2D<T>(); \
+    template void Image::Unlock2D(Array2D<PixelType<T>::type> const &array);
+_T(PixelFormat::Y_8)
+_T(PixelFormat::RGB_8)
+_T(PixelFormat::RGBA_8)
+_T(PixelFormat::Y_F32)
+_T(PixelFormat::RGB_F32)
+_T(PixelFormat::RGBA_F32)
 #undef _T
 
 /* Special case for the "any" format: return the last active buffer */
@@ -212,20 +229,13 @@ void *Image::Lock()
 {
     ASSERT(m_data->m_format != PixelFormat::Unknown);
 
-    return m_data->m_pixels[(int)m_data->m_format];
+    return m_data->m_pixels[(int)m_data->m_format]->Data();
 }
 
 void Image::Unlock(void const *pixels)
 {
     ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
-
-    /* Ensure that the unlocked data is inside the buffer */
-    uintptr_t start = (uintptr_t)m_data->m_pixels[(int)m_data->m_format];
-    uintptr_t end = start + m_data->m_size.x * m_data->m_size.y
-                                 * BytesPerPixel(m_data->m_format);
-
-    ASSERT(start <= (uintptr_t)pixels);
-    ASSERT((uintptr_t)pixels <= end);
+    ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->Data());
 }
 
 bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
