@@ -400,7 +400,7 @@
     <ClCompile Include="image\resample.cpp">
       <Filter>image</Filter>
     </ClCompile>
-    <ClCompile Include="image\pixels.cpp">
+    <ClCompile Include="image\pixel.cpp">
       <Filter>image</Filter>
     </ClCompile>
   </ItemGroup>
@@ -697,6 +697,9 @@
       <Filter>lol\debug</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\image.h">
+      <Filter>lol\image</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\image\pixel.h">
       <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="input\keys.h">

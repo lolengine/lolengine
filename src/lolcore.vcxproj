@@ -164,7 +164,7 @@
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\kernel.cpp" />
     <ClCompile Include="image\noise.cpp" />
-    <ClCompile Include="image\pixels.cpp" />
+    <ClCompile Include="image\pixel.cpp" />
     <ClCompile Include="image\resample.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
@@ -313,6 +313,7 @@
     <ClInclude Include="lol\image\all.h" />
     <ClInclude Include="lol\image\color.h" />
     <ClInclude Include="lol\image\image.h" />
+    <ClInclude Include="lol\image\pixel.h" />
     <ClInclude Include="lol\math\all.h" />
     <ClInclude Include="lol\math\array2d.h" />
     <ClInclude Include="lol\math\constants.h" />

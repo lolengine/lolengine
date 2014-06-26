@@ -159,8 +159,8 @@ static inline int isnan(float f)
 #include <lol/math/all.h>
 #include <lol/algorithm/all.h>
 #include <lol/sys/all.h>
-#include <lol/gpu/all.h>
 #include <lol/image/all.h>
+#include <lol/gpu/all.h>
 #include <lol/debug/all.h>
 
 #include "utils.h"

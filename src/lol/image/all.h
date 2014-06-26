@@ -11,6 +11,7 @@
 #if !defined __LOL_IMAGE_ALL_H__
 #define __LOL_IMAGE_ALL_H__
 
+#include <lol/image/pixel.h>
 #include <lol/image/color.h>
 #include <lol/image/image.h>
 
