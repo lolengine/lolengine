@@ -36,9 +36,6 @@ LOLUNIT_FIXTURE(ArrayTest)
 
     void TearDown() {}
 
-/* HACK: we disable these tests because they fail with the
- * Xcode iPhone compiler. */
-#if !defined __clang__ || !defined __arm__
     LOLUNIT_TEST(ArrayPush)
     {
         Array<int> a;
@@ -55,11 +52,28 @@ LOLUNIT_FIXTURE(ArrayTest)
 
     LOLUNIT_TEST(ArrayInitializer)
     {
-        Array<int> a = { 2, 4, 6 };
+        Array<int> a({ 2, 4, 6 });
 
         LOLUNIT_ASSERT_EQUAL(a[0], 2);
         LOLUNIT_ASSERT_EQUAL(a[1], 4);
         LOLUNIT_ASSERT_EQUAL(a[2], 6);
+
+        Array<int> b = { 2, 4, 6 };
+
+        LOLUNIT_ASSERT_EQUAL(b[0], 2);
+        LOLUNIT_ASSERT_EQUAL(b[1], 4);
+        LOLUNIT_ASSERT_EQUAL(b[2], 6);
+
+        Array<int, float> c = { { 2, 3.0f },
+                                { 4, 5.0f },
+                                { 6, 7.0f } };
+
+        LOLUNIT_ASSERT_EQUAL(c[0].m1, 2);
+        LOLUNIT_ASSERT_EQUAL(c[0].m2, 3.0f);
+        LOLUNIT_ASSERT_EQUAL(c[1].m1, 4);
+        LOLUNIT_ASSERT_EQUAL(c[1].m2, 5.0f);
+        LOLUNIT_ASSERT_EQUAL(c[2].m1, 6);
+        LOLUNIT_ASSERT_EQUAL(c[2].m2, 7.0f);
     }
 
     LOLUNIT_TEST(ArrayPushWithShift)
@@ -126,7 +140,6 @@ LOLUNIT_FIXTURE(ArrayTest)
         LOLUNIT_ASSERT_EQUAL(b[0], 0);
         LOLUNIT_ASSERT_EQUAL(b[1], 3);
     }
-#endif
 
     LOLUNIT_TEST(EightElements)
     {
