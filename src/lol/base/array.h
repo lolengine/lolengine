@@ -52,7 +52,7 @@ public:
         m_count(0),
         m_reserved(0)
     {
-        Reserve(list.size);
+        Reserve(list.size());
         for (auto elem : list)
             Push(elem);
     }
@@ -546,8 +546,11 @@ template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
 class Array : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
-                               Array<T1, T2, T3, T4, T5, T6, T7, T8> >
+                               Array<T1, T2, T3, T4, T5, T6, T7, T8>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
+                    Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
                      T5 const &m5, T6 const &m6, T7 const &m7, T8 const &m8)
@@ -585,8 +588,11 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6, typename T7>
 class Array<T1, T2, T3, T4, T5, T6, T7, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
-                     Array<T1, T2, T3, T4, T5, T6, T7> >
+                     Array<T1, T2, T3, T4, T5, T6, T7>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
+                    Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
                      T5 const &m5, T6 const &m6, T7 const &m7)
@@ -622,8 +628,11 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6>
 class Array<T1, T2, T3, T4, T5, T6, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
-                     Array<T1, T2, T3, T4, T5, T6> >
+                     Array<T1, T2, T3, T4, T5, T6>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
+                    Array<T1, T2, T3, T4, T5, T6>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
                      T5 const &m5, T6 const &m6)
@@ -656,8 +665,11 @@ public:
 template<typename T1, typename T2, typename T3, typename T4, typename T5>
 class Array<T1, T2, T3, T4, T5, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
-                     Array<T1, T2, T3, T4, T5> >
+                     Array<T1, T2, T3, T4, T5>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
+                    Array<T1, T2, T3, T4, T5>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
                      T5 const &m5)
@@ -688,8 +700,11 @@ public:
 template<typename T1, typename T2, typename T3, typename T4>
 class Array<T1, T2, T3, T4, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
-                     Array<T1, T2, T3, T4> >
+                     Array<T1, T2, T3, T4>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
+                    Array<T1, T2, T3, T4>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4)
     {
@@ -716,8 +731,11 @@ public:
 template<typename T1, typename T2, typename T3>
 class Array<T1, T2, T3, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
-                     Array<T1, T2, T3> >
+                     Array<T1, T2, T3>>
 {
+    using ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
+                    Array<T1, T2, T3>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3)
     {
@@ -742,8 +760,11 @@ public:
 template<typename T1, typename T2>
 class Array<T1, T2, void, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
-                     Array<T1, T2> >
+                     Array<T1, T2>>
 {
+    using ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
+                    Array<T1, T2>>::ArrayBase;
+
 public:
     inline void Push(T1 const &m1, T2 const &m2)
     {
@@ -766,8 +787,10 @@ public:
 template<typename T>
 class Array<T, void, void, void, void, void, void, void>
   : public ArrayBase<T,
-                     Array<T> >
+                     Array<T>>
 {
+    using ArrayBase<T,
+                    Array<T>>::ArrayBase;
 };
 
 } /* namespace lol */
