@@ -472,17 +472,18 @@ void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
 
     int stride = (size.x + 1);
 
-    ivec3 *src = (ivec3 *)malloc((size.x + 1) * (size.y + 1) * sizeof(ivec3));
-    memset(src, 0, (size.x + 1) * (size.y + 1) * sizeof(ivec3));
+    Array2D<ivec3> src, dst;
+    src.SetSize(size + ivec2(1));
+    dst.SetSize(size + ivec2(1));
 
-    ivec3 *dst = (ivec3 *)malloc((size.x + 1) * (size.y + 1) * sizeof(ivec3));
-    memset(dst, 0, (size.x + 1) * (size.y + 1) * sizeof(ivec3));
+    memset(src.Data(), 0, src.Bytes());
+    memset(dst.Data(), 0, dst.Bytes());
 
     /* Import pixels into our custom format */
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
             for (int c = 0; c < 3; c++)
-                src[y * stride + x][c] = 0xffff * pixels[y * size.x + x][2 - c];
+                src[x][y][c] = 0xffff * pixels[y * size.x + x][2 - c];
 
     /* Let the fun begin */
     for (int y = 0; y < size.y; y++)
@@ -494,8 +495,8 @@ void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
         for (int x = 0; x < size.x; x += 6)
         {
             int depth = (x + DEPTH < size.x) ? DEPTH : (size.x - x) / 6 - 1;
-            ivec3 *srcl = src + y * stride + x;
-            ivec3 *dstl = dst + y * stride + x;
+            ivec3 *srcl = &src[x][y];
+            ivec3 *dstl = &dst[x][y];
 
             /* Recursively compute and apply best command */
             int dummy;
