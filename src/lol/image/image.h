@@ -21,14 +21,6 @@
 namespace lol
 {
 
-template <PixelFormat T> struct PixelType { typedef void type; };
-template<> struct PixelType<PixelFormat::Y_8> { typedef uint8_t type; };
-template<> struct PixelType<PixelFormat::RGB_8> { typedef u8vec3 type; };
-template<> struct PixelType<PixelFormat::RGBA_8> { typedef u8vec4 type; };
-template<> struct PixelType<PixelFormat::Y_F32> { typedef float type; };
-template<> struct PixelType<PixelFormat::RGB_F32> { typedef vec3 type; };
-template<> struct PixelType<PixelFormat::RGBA_F32> { typedef vec4 type; };
-
 enum class WrapMode : uint8_t
 {
     Clamp,

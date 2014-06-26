@@ -68,8 +68,12 @@ void Image::SetFormat(PixelFormat fmt)
     if (m_data->m_pixels[(int)fmt] == nullptr)
     {
         PixelDataBase *data = nullptr;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wswitch"
         switch (fmt)
         {
+            case PixelFormat::Unknown:
+                break;
             case PixelFormat::Y_8:
                 data = new PixelData<PixelFormat::Y_8>(size); break;
             case PixelFormat::RGB_8:
@@ -82,9 +86,9 @@ void Image::SetFormat(PixelFormat fmt)
                 data = new PixelData<PixelFormat::RGB_F32>(size); break;
             case PixelFormat::RGBA_F32:
                 data = new PixelData<PixelFormat::RGBA_F32>(size); break;
-            default:
-                ASSERT(false, "invalid pixel type %d", (int)fmt);
         }
+#pragma GCC diagnostic pop
+        ASSERT(data, "invalid pixel type %d", (int)fmt);
         m_data->m_pixels[(int)fmt] = data;
     }
 

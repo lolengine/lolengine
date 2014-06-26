@@ -50,7 +50,7 @@ liblolcore_headers = \
     lol/sys/timer.h \
     \
     lol/image/all.h \
-    lol/image/color.h lol/image/image.h \
+    lol/image/pixel.h lol/image/color.h lol/image/image.h \
     \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
@@ -110,7 +110,7 @@ liblolcore_sources = \
     sys/init.cpp sys/timer.cpp sys/file.cpp \
     sys/thread.cpp sys/threadbase.h \
     \
-    image/image.cpp image/image-private.h image/kernel.cpp image/pixels.cpp \
+    image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
     image/crop.cpp image/resample.cpp image/noise.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
     image/codec/sdl-image.cpp image/codec/ios-image.cpp \

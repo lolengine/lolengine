@@ -457,7 +457,7 @@ public:
             /* Create a texture of half the width and twice the height
              * so that we can upload four different subimages each frame. */
             m_texture = new Texture(ivec2(m_size.x / 2, m_size.y * 2),
-                                    PixelFormat::ABGR_8);
+                                    PixelFormat::RGBA_8);
 
             /* Ensure the texture data is complete at least once, otherwise
              * uploading subimages will not work. */
