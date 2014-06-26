@@ -47,7 +47,7 @@ public:
     {
     }
 
-    inline ArrayBase(std::initializer_list<Element> list)
+    inline ArrayBase(std::initializer_list<Element> const &list)
       : m_data(0),
         m_count(0),
         m_reserved(0)
