@@ -44,6 +44,21 @@ public:
     {
     }
 
+    inline Array3D(std::initializer_list<
+                   std::initializer_list<
+                   std::initializer_list<Element>>> const &list)
+      : m_size(list.size() && (*list.begin()).size() ?
+                   (*(*list.begin()).begin()).size() : 0,
+               list.size() ? (*list.begin()).size() : 0,
+               list.size())
+    {
+        Super::Reserve(m_size.x * m_size.y * m_size.z);
+        for (auto ll : list)
+            for (auto l : ll)
+                for (auto elem : l)
+                    Super::Push(elem);
+    }
+
     inline Array3D(int w, int h, int d)
     {
         SetSize(ivec3(w, h, d));

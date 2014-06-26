@@ -44,6 +44,17 @@ public:
     {
     }
 
+    inline Array2D(std::initializer_list<
+                   std::initializer_list<Element>> const &list)
+      : m_size(list.size() ? (*list.begin()).size() : 0,
+               list.size())
+    {
+        Super::Reserve(m_size.x * m_size.y);
+        for (auto l : list)
+            for (auto elem : l)
+                Super::Push(elem);
+    }
+
     inline Array2D(int w, int h)
     {
         SetSize(ivec2(w, h));
