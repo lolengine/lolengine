@@ -134,6 +134,19 @@ public:
     Image DitherHalftone(float radius, float angle) const;
     Image DitherDbs() const;
 
+    /* Combine images */
+    static Image Merge(Image &src1, Image &src2, float alpha);
+    static Image Mean(Image &src1, Image &src2);
+    static Image Min(Image &src1, Image &src2);
+    static Image Max(Image &src1, Image &src2);
+    static Image Overlay(Image &src1, Image &src2);
+    static Image Screen(Image &src1, Image &src2);
+    static Image Multiply(Image &src1, Image &src2);
+    static Image Divide(Image &src1, Image &src2);
+    static Image Add(Image &src1, Image &src2);
+    static Image Sub(Image &src1, Image &src2);
+    static Image Difference(Image &src1, Image &src2);
+
 private:
     class ImageData *m_data;
 };
