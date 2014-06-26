@@ -108,8 +108,8 @@ static Image NonSepConv(Image &src, Array2D<float> const &kernel)
     ivec2 const ksize = kernel.GetSize();
     Image dst(size);
 
-    pixel_t const *srcp = src.Lock<FORMAT>();
-    pixel_t *dstp = dst.Lock<FORMAT>();
+    Array2D<pixel_t> const &srcp = src.Lock2D<FORMAT>();
+    Array2D<pixel_t> &dstp = dst.Lock2D<FORMAT>();
 
     for (int y = 0; y < size.y; y++)
     {
@@ -135,16 +135,16 @@ static Image NonSepConv(Image &src, Array2D<float> const &kernel)
                     else if (x2 >= size.x)
                         x2 = WRAP_X ? x2 % size.x : size.x - 1;
 
-                    pixel += f * srcp[y2 * size.x + x2];
+                    pixel += f * srcp[x2][y2];
                 }
             }
 
-            dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
+            dstp[x][y] = lol::clamp(pixel, 0.0f, 1.0f);
         }
     }
 
-    src.Unlock(srcp);
-    dst.Unlock(dstp);
+    src.Unlock2D(srcp);
+    dst.Unlock2D(dstp);
 
     return dst;
 }
@@ -201,8 +201,8 @@ static Image SepConv(Image &src, Array<float> const &hvec,
     ivec2 const ksize(hvec.Count(), vvec.Count());
     Image dst(size);
 
-    pixel_t const *srcp = src.Lock<FORMAT>();
-    pixel_t *dstp = dst.Lock<FORMAT>();
+    Array2D<pixel_t> const &srcp = src.Lock2D<FORMAT>();
+    Array2D<pixel_t> &dstp = dst.Lock2D<FORMAT>();
 
     Array2D<pixel_t> tmp(size);
 
@@ -220,7 +220,7 @@ static Image SepConv(Image &src, Array<float> const &hvec,
                 else if (x2 >= size.x)
                     x2 = WRAP_X ? x2 % size.x : size.x - 1;
 
-                pixel += hvec[dx] * srcp[y * size.x + x2];
+                pixel += hvec[dx] * srcp[x2][y];
             }
 
             tmp[x][y] = pixel;
@@ -244,12 +244,12 @@ static Image SepConv(Image &src, Array<float> const &hvec,
                 pixel += vvec[j] * tmp[x][y2];
             }
 
-            dstp[y * size.x + x] = lol::clamp(pixel, 0.0f, 1.0f);
+            dstp[x][y] = lol::clamp(pixel, 0.0f, 1.0f);
         }
     }
 
-    src.Unlock(srcp);
-    dst.Unlock(dstp);
+    src.Unlock2D(srcp);
+    dst.Unlock2D(dstp);
 
     return dst;
 }

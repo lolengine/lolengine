@@ -94,6 +94,11 @@ public:
     void *Lock();
     void Unlock(void const *pixels);
 
+    template<PixelFormat T>
+        Array2D<typename PixelType<T>::type> &Lock2D();
+    template<typename T>
+        void Unlock2D(Array2D<T> const &);
+
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
     /* Image processing kernels */
