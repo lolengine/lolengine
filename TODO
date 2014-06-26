@@ -18,17 +18,12 @@ Image:
   - Add gamma handling in pixels.cpp
   - Make some Image::Lock2D method that returns an Array2D
   - port libpipi files:
-     · analysis/histogram.cpp
      · analysis/measure.cpp
      · codec/coreimage.cpp
      · codec/coreimage.h
      · codec/jpeg.cpp
      · combine/blit.cpp
-     · combine/merge.cpp
-     · combine/minmax.cpp
-     · combine/mulscreen.cpp
      · combine/rgb.cpp
-     · combine/subadd.cpp
      · context.cpp
      · filter/blur.cpp
      · filter/rotate.cpp

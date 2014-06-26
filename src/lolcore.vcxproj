@@ -161,6 +161,7 @@
     <ClCompile Include="image\dither\ostromoukhov.cpp" />
     <ClCompile Include="image\dither\random.cpp" />
     <ClCompile Include="image\crop.cpp" />
+    <ClCompile Include="image\combine.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\kernel.cpp" />
     <ClCompile Include="image\noise.cpp" />
