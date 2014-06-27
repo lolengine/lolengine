@@ -48,9 +48,9 @@ public:
                    std::initializer_list<
                    std::initializer_list<Element>>> const &list)
       : m_size(list.size() && (*list.begin()).size() ?
-                   (*(*list.begin()).begin()).size() : 0,
-               list.size() ? (*list.begin()).size() : 0,
-               list.size())
+                   (int)(*(*list.begin()).begin()).size() : 0,
+               list.size() ? (int)(*list.begin()).size() : 0,
+               (int)list.size())
     {
         Super::Reserve(m_size.x * m_size.y * m_size.z);
         for (auto ll : list)

@@ -46,8 +46,8 @@ public:
 
     inline Array2D(std::initializer_list<
                    std::initializer_list<Element>> const &list)
-      : m_size(list.size() ? (*list.begin()).size() : 0,
-               list.size())
+      : m_size(list.size() ? (int)(*list.begin()).size() : 0,
+               (int)list.size())
     {
         Super::Reserve(m_size.x * m_size.y);
         for (auto l : list)

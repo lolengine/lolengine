@@ -29,6 +29,9 @@
 namespace lol
 {
 
+/* Set this to 1 when Visual Studio finally understands the feature */
+#define INHERIT_CONSTRUCTORS 0
+
 #define INDEX_NONE -1
 
 /*
@@ -52,7 +55,7 @@ public:
         m_count(0),
         m_reserved(0)
     {
-        Reserve(list.size());
+        Reserve((int)list.size());
         for (auto elem : list)
             Push(elem);
     }
@@ -548,8 +551,19 @@ template<typename T1, typename T2 = void, typename T3 = void,
 class Array : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
                                Array<T1, T2, T3, T4, T5, T6, T7, T8>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
                     Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
+                  Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
+                  Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
@@ -590,8 +604,19 @@ class Array<T1, T2, T3, T4, T5, T6, T7, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
                      Array<T1, T2, T3, T4, T5, T6, T7>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
                     Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
+                  Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
+                  Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
@@ -630,8 +655,19 @@ class Array<T1, T2, T3, T4, T5, T6, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
                      Array<T1, T2, T3, T4, T5, T6>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
                     Array<T1, T2, T3, T4, T5, T6>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
+                  Array<T1, T2, T3, T4, T5, T6>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
+                  Array<T1, T2, T3, T4, T5, T6>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
@@ -667,8 +703,19 @@ class Array<T1, T2, T3, T4, T5, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
                      Array<T1, T2, T3, T4, T5>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
                     Array<T1, T2, T3, T4, T5>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
+                  Array<T1, T2, T3, T4, T5>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
+                  Array<T1, T2, T3, T4, T5>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
@@ -702,8 +749,19 @@ class Array<T1, T2, T3, T4, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
                      Array<T1, T2, T3, T4>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
                     Array<T1, T2, T3, T4>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
+                  Array<T1, T2, T3, T4>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
+                  Array<T1, T2, T3, T4>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4)
@@ -733,8 +791,19 @@ class Array<T1, T2, T3, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
                      Array<T1, T2, T3>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
                     Array<T1, T2, T3>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
+                  Array<T1, T2, T3>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
+                  Array<T1, T2, T3>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2, T3 const &m3)
@@ -762,8 +831,19 @@ class Array<T1, T2, void, void, void, void, void, void>
   : public ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
                      Array<T1, T2>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
                     Array<T1, T2>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
+                  Array<T1, T2>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
+                  Array<T1, T2>>::ArrayBase(list) {}
+#endif
 
 public:
     inline void Push(T1 const &m1, T2 const &m2)
@@ -789,8 +869,19 @@ class Array<T, void, void, void, void, void, void, void>
   : public ArrayBase<T,
                      Array<T>>
 {
+#if INHERIT_CONSTRUCTORS
     using ArrayBase<T,
                     Array<T>>::ArrayBase;
+#else
+public:
+    inline Array()
+      : ArrayBase<T,
+                  Array<T>>::ArrayBase() {}
+
+    inline Array(std::initializer_list<Element> const &list)
+      : ArrayBase<T,
+                  Array<T>>::ArrayBase(list) {}
+#endif
 };
 
 } /* namespace lol */
