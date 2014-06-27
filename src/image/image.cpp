@@ -74,7 +74,7 @@ public:
 
 private:
     Array<ImageCodec *> m_codecs;
-    Map<String, Image *> m_images;
+    map<String, Image *> m_images;
 }
 g_image_loader;
 
@@ -197,15 +197,15 @@ template<PixelFormat T> typename PixelType<T>::type *Image::Lock()
 }
 
 /* The Lock2D() method */
-template<PixelFormat T> Array2D<typename PixelType<T>::type> &Image::Lock2D()
+template<PixelFormat T> array2d<typename PixelType<T>::type> &Image::Lock2D()
 {
     SetFormat(T);
 
-    return *(Array2D<typename PixelType<T>::type> *)m_data->m_pixels[(int)T]->Data2D();
+    return *(array2d<typename PixelType<T>::type> *)m_data->m_pixels[(int)T]->Data2D();
 }
 
 template<typename T>
-void Image::Unlock2D(Array2D<T> const &array)
+void Image::Unlock2D(array2d<T> const &array)
 {
     ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
     ASSERT(array.Data() == m_data->m_pixels[(int)m_data->m_format]->Data());
@@ -214,8 +214,8 @@ void Image::Unlock2D(Array2D<T> const &array)
 /* Explicit specialisations for the above templates */
 #define _T(T) \
     template PixelType<T>::type *Image::Lock<T>(); \
-    template Array2D<PixelType<T>::type> &Image::Lock2D<T>(); \
-    template void Image::Unlock2D(Array2D<PixelType<T>::type> const &array);
+    template array2d<PixelType<T>::type> &Image::Lock2D<T>(); \
+    template void Image::Unlock2D(array2d<PixelType<T>::type> const &array);
 _T(PixelFormat::Y_8)
 _T(PixelFormat::RGB_8)
 _T(PixelFormat::RGBA_8)

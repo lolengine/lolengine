@@ -41,7 +41,7 @@ public:
     virtual void *Data2D() { return &m_array2d; }
     virtual void const *Data2D() const { return &m_array2d; }
 
-    Array2D<typename PixelType<T>::type> m_array2d;
+    array2d<typename PixelType<T>::type> m_array2d;
 };
 
 class ImageData
@@ -62,7 +62,7 @@ public:
     WrapMode m_wrap_x, m_wrap_y;
 
     /* A map of the various available bitplanes */
-    Map<int, PixelDataBase *> m_pixels;
+    map<int, PixelDataBase *> m_pixels;
     /* The last bitplane being accessed for writing */
     PixelFormat m_format;
 };

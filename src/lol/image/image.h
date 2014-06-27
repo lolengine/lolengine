@@ -87,20 +87,20 @@ public:
     void Unlock(void const *pixels);
 
     template<PixelFormat T>
-        Array2D<typename PixelType<T>::type> &Lock2D();
+        array2d<typename PixelType<T>::type> &Lock2D();
     template<typename T>
-        void Unlock2D(Array2D<T> const &);
+        void Unlock2D(array2d<T> const &);
 
     bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
 
     /* Image processing kernels */
-    static Array2D<float> BayerKernel(ivec2 size);
-    static Array2D<float> HalftoneKernel(ivec2 size);
-    static Array2D<float> BlueNoiseKernel(ivec2 size,
+    static array2d<float> BayerKernel(ivec2 size);
+    static array2d<float> HalftoneKernel(ivec2 size);
+    static array2d<float> BlueNoiseKernel(ivec2 size,
                                           ivec2 gsize = ivec2(7, 7));
-    static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
-    static Array2D<float> NormalizeKernel(Array2D<float> const &kernel);
-    static Array2D<float> GaussianKernel(vec2 radius,
+    static array2d<float> EdiffKernel(EdiffAlgorithm algorithm);
+    static array2d<float> NormalizeKernel(array2d<float> const &kernel);
+    static array2d<float> GaussianKernel(vec2 radius,
                                          float angle = 0.f,
                                          vec2 delta = vec2(0.f, 0.f));
 
@@ -115,13 +115,13 @@ public:
     Image AutoContrast() const;
     Image Brightness(float val) const;
     Image Contrast(float val) const;
-    Image Convolution(Array2D<float> const &kernel);
+    Image Convolution(array2d<float> const &kernel);
     Image Dilate();
     Image Erode();
     Image Invert() const;
     Image Median(ivec2 radii) const;
-    Image Median(Array2D<float> const &kernel) const;
-    Image Sharpen(Array2D<float> const &kernel);
+    Image Median(array2d<float> const &kernel) const;
+    Image Sharpen(array2d<float> const &kernel);
     Image Threshold(float val) const;
     Image Threshold(vec3 val) const;
     Image RGBToYUV() const;
@@ -129,10 +129,10 @@ public:
 
     /* Dithering */
     Image DitherRandom() const;
-    Image DitherEdiff(Array2D<float> const &kernel,
+    Image DitherEdiff(array2d<float> const &kernel,
                       ScanMode scan = ScanMode::Raster) const;
     Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
-    Image DitherOrdered(Array2D<float> const &kernel) const;
+    Image DitherOrdered(array2d<float> const &kernel) const;
     Image DitherHalftone(float radius, float angle) const;
     Image DitherDbs() const;
 

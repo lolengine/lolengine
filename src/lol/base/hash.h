@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -9,9 +9,9 @@
 //
 
 //
-// The Hash class
+// The hash class
 // --------------
-// A very simple Hash class.
+// A very simple hash class.
 //
 
 #if !defined __LOL_BASE_HASH_H__
@@ -20,32 +20,30 @@
 namespace lol
 {
 
-template<typename T> class Hash;
+template<typename T> struct hash;
 
-template<> class Hash<int8_t>   { public: uint32_t operator()(int8_t) const; };
-template<> class Hash<uint8_t>  { public: uint32_t operator()(uint8_t) const; };
-template<> class Hash<int16_t>  { public: uint32_t operator()(int16_t) const; };
-template<> class Hash<uint16_t> { public: uint32_t operator()(uint16_t) const; };
-template<> class Hash<int32_t>  { public: uint32_t operator()(int32_t) const; };
-template<> class Hash<uint32_t> { public: uint32_t operator()(uint32_t) const; };
-template<> class Hash<int64_t>  { public: uint32_t operator()(int64_t) const; };
-template<> class Hash<uint64_t> { public: uint32_t operator()(uint64_t) const; };
+template<> struct hash<int8_t>   { uint32_t operator()(int8_t) const; };
+template<> struct hash<uint8_t>  { uint32_t operator()(uint8_t) const; };
+template<> struct hash<int16_t>  { uint32_t operator()(int16_t) const; };
+template<> struct hash<uint16_t> { uint32_t operator()(uint16_t) const; };
+template<> struct hash<int32_t>  { uint32_t operator()(int32_t) const; };
+template<> struct hash<uint32_t> { uint32_t operator()(uint32_t) const; };
+template<> struct hash<int64_t>  { uint32_t operator()(int64_t) const; };
+template<> struct hash<uint64_t> { uint32_t operator()(uint64_t) const; };
 
-template<> class Hash<half>     { public: uint32_t operator()(half) const; };
-template<> class Hash<float>    { public: uint32_t operator()(float) const; };
-template<> class Hash<double>   { public: uint32_t operator()(double) const; };
-template<> class Hash<ldouble>  { public: uint32_t operator()(ldouble) const; };
+template<> struct hash<half>     { uint32_t operator()(half) const; };
+template<> struct hash<float>    { uint32_t operator()(float) const; };
+template<> struct hash<double>   { uint32_t operator()(double) const; };
+template<> struct hash<ldouble>  { uint32_t operator()(ldouble) const; };
 
-template<> class Hash<char const *>
+template<> struct hash<char const *>
 {
-public:
     uint32_t operator()(char const *x) const;
     uint32_t operator()(String const &s) const;
 };
 
-template<> class Hash<String>
+template<> struct hash<String>
 {
-public:
     uint32_t operator()(String const &s) const;
     uint32_t operator()(char const *x) const;
 };

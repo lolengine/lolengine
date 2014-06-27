@@ -99,8 +99,8 @@ private:
 #elif !defined __CELLOS_LV2__
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
-    Map<uint64_t, GLint> attrib_locations;
-    Map<uint64_t, bool> attrib_errors;
+    map<uint64_t, GLint> attrib_locations;
+    map<uint64_t, bool> attrib_errors;
 #else
     CGprogram vert_id, frag_id;
 #endif
@@ -112,12 +112,12 @@ private:
 
     /* Global shader cache */
     static Shader *shaders[];
-    static Hash<char const *> hash;
+    static hash<char const *> Hash;
     static int nshaders;
 };
 
 Shader *ShaderData::shaders[256];
-Hash<char const *> ShaderData::hash;
+hash<char const *> ShaderData::Hash;
 int ShaderData::nshaders = 0;
 
 /*
@@ -180,8 +180,8 @@ Shader *Shader::Create(String const &name, String const &code)
         Log::Error("no fragment shader found in %s… sorry, I’m gonna crash now.\n",
                    name.C());
 
-    uint32_t new_vert_crc = ShaderData::hash(vert);
-    uint32_t new_frag_crc = ShaderData::hash(frag);
+    uint32_t new_vert_crc = ShaderData::Hash(vert);
+    uint32_t new_frag_crc = ShaderData::Hash(frag);
 
     for (int n = 0; n < ShaderData::nshaders; n++)
     {
@@ -234,7 +234,7 @@ Shader::Shader(String const &name,
 #endif
 
     /* Compile vertex shader */
-    data->vert_crc = ShaderData::hash(vert);
+    data->vert_crc = ShaderData::Hash(vert);
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
     data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
@@ -286,7 +286,7 @@ Shader::Shader(String const &name,
 #endif
 
     /* Compile fragment shader */
-    data->frag_crc = ShaderData::hash(frag);
+    data->frag_crc = ShaderData::Hash(frag);
 #if defined USE_D3D9 || defined _XBOX
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, nullptr, "main",
                            "ps_3_0", 0, &shader_code, &error_msg,

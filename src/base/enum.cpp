@@ -21,9 +21,9 @@ namespace lol
  * Safe enum helpers
  */
 
-Map<int64_t, String> BuildEnumMap(char const *str, char const **custom)
+map<int64_t, String> BuildEnumMap(char const *str, char const **custom)
 {
-    Map<int64_t, String> ret;
+    map<int64_t, String> ret;
     char const *parser = str;
     int64_t next_value = 0;
     int64_t cur_idx = 0;

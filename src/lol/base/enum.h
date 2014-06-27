@@ -14,7 +14,7 @@
 namespace lol
 {
 
-extern Map<int64_t, String> BuildEnumMap(char const *str, char const **custom);
+extern map<int64_t, String> BuildEnumMap(char const *str, char const **custom);
 
 template<typename BASE, typename T = typename BASE::Type>
 class SafeEnum : public BASE
@@ -35,7 +35,7 @@ public:
     {
         /* FIXME: we all know this isn’t thread safe. But is it really
          * a big deal? */
-        static Map<int64_t, String> map;
+        static map<int64_t, String> map;
         static bool ready = false;
 
         if (!ready)

@@ -26,15 +26,15 @@ LOLUNIT_FIXTURE(MapTest)
 
     LOLUNIT_TEST(MapDeclare)
     {
-        Map<uint8_t, uint8_t> m1;
-        Map<int, int> m2;
-        Map<float, float> m3;
-        Map<char const *, char const *> m4;
+        map<uint8_t, uint8_t> m1;
+        map<int, int> m2;
+        map<float, float> m3;
+        map<char const *, char const *> m4;
     }
 
     LOLUNIT_TEST(MapSet)
     {
-        Map<int, int> map;
+        map<int, int> map;
 
         for (int i = 0; i < 1000; i++)
             map[i] = -1;
@@ -48,7 +48,7 @@ LOLUNIT_FIXTURE(MapTest)
 
     LOLUNIT_TEST(MapHasKey)
     {
-        Map<int, int> map;
+        map<int, int> map;
 
         map[0] = 1;
         map[2] = 2;
@@ -60,7 +60,7 @@ LOLUNIT_FIXTURE(MapTest)
 
     LOLUNIT_TEST(StringMap)
     {
-        Map<char const *, int> map;
+        map<char const *, int> map;
 
         map["foo"] = 42;
         map["bar"] = 12;
