@@ -79,6 +79,95 @@ Array2D<float> Image::HalftoneKernel(ivec2 size)
     return NormalizeKernel(ret);
 }
 
+Array2D<float> Image::BlueNoiseKernel(ivec2 size)
+{
+    /* FIXME: this function could be faster if we didn't do the convolution
+     * each time and instead work on the convoluted matrix. */
+    Array2D<float> ret(size);
+    float const epsilon = 1.f / (size.x * size.y + 1);
+
+    /* Create a small Gaussian kernel for filtering */
+    ivec2 const gsize = ivec2(9, 9);
+    Array2D<float> gaussian(gsize);
+    for (int j = 0; j < gsize.y; ++j)
+    for (int i = 0; i < gsize.x; ++i)
+    {
+        ivec2 const distance = gsize / 2 - ivec2(i, j);
+        gaussian[i][j] = lol::exp(-lol::sqlength(distance)
+                                    / (0.05f * gsize.x * gsize.y));
+    }
+
+    /* Helper function to find voids and clusters */
+    auto best = [&] (Array2D<float> const &p, float val, float mul) -> ivec2
+    {
+        float maxval = -size.x * size.y;
+        ivec2 coord(0, 0);
+        for (int y = 0; y < size.y; ++y)
+        for (int x = 0; x < size.x; ++x)
+        {
+            if (p[x][y] != val)
+                continue;
+
+            float total = 0.0f;
+            for (int j = 0; j < gsize.y; ++j)
+            for (int i = 0; i < gsize.x; ++i)
+                total += gaussian[i][j] *
+                         p[(x + i - gsize.x / 2 + size.x) % size.x]
+                          [(y + j - gsize.y / 2 + size.y) % size.y];
+            if (total * mul > maxval)
+            {
+                maxval = total * mul;
+                coord = ivec2(x, y);
+            }
+        }
+
+        return coord;
+    };
+
+    /* Generate an array with about 10% random dots */
+    Array2D<float> dots(size);
+    int const ndots = (size.x * size.y + 9) / 10;
+    memset(dots.Data(), 0, dots.Bytes());
+    for (int n = 0; n < ndots; )
+    {
+        int x = lol::rand(size.x);
+        int y = lol::rand(size.y);
+        if (dots[x][y])
+            continue;
+        dots[x][y] = 1.0f;
+        ++n;
+    }
+
+    /* Rearrange 1s so that they occupy the largest voids */
+    for (;;)
+    {
+        ivec2 bestcluster = best(dots, 1.0f, 1.0f);
+        dots[bestcluster] = 0.0f;
+        ivec2 bestvoid = best(dots, 0.0f, -1.0f);
+        dots[bestvoid] = 1.0f;
+        if (bestcluster == bestvoid)
+            break;
+    }
+
+    /* Reorder all 1s and replace them with 0.0001 */
+    for (int n = ndots; n--; )
+    {
+        ivec2 bestcluster = best(dots, 1.0f, 1.0f);
+        ret[bestcluster] = (n + 1.0f) * epsilon;
+        dots[bestcluster] = 0.0001f;
+    }
+
+    /* Reorder all 0s and replace them with 0.0001 */
+    for (int n = ndots; n < size.x * size.y; ++n)
+    {
+        ivec2 bestvoid = best(dots, 0.0f, -1.0f);
+        ret[bestvoid] = (n + 1.0f) * epsilon;
+        dots[bestvoid] = 0.0001f;
+    }
+
+    return ret;
+}
+
 struct Dot
 {
     int x, y;
@@ -108,7 +197,7 @@ Array2D<float> Image::NormalizeKernel(Array2D<float> const &kernel)
 
     Array2D<float> dst(size);
 
-    float epsilon = 1.f / (size.x * size.y + 1);
+    float const epsilon = 1.f / (size.x * size.y + 1);
     for (int n = 0; n < size.x * size.y; n++)
     {
         int x = tmp[n].x;
