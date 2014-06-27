@@ -16,22 +16,5 @@ Image:
   - Handle pitch in SDL codec (and all others, actually)
   - Fix the Floyd-Steinberg code in pixels.cpp
   - Add gamma handling in pixels.cpp
-  - Make some Image::Lock2D method that returns an Array2D
-  - port libpipi files:
-     · analysis/measure.cpp
-     · codec/coreimage.cpp
-     · codec/coreimage.h
-     · codec/jpeg.cpp
-     · combine/blit.cpp
-     · combine/rgb.cpp
-     · context.cpp
-     · filter/blur.cpp
-     · filter/rotate.cpp
-     · filter/transform.cpp
-     · filter/wave.cpp
-     · paint/bezier.cpp
-     · paint/floodfill.cpp
-     · paint/line.cpp
-     · quantize/reduce.cpp
-     · sequence.cpp
+  - Port remaining libpipi files from src/image/todo/:
 
