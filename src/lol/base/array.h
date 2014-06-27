@@ -556,12 +556,14 @@ class Array : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
                     Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase(list) {}
 #endif
 
@@ -609,12 +611,14 @@ class Array<T1, T2, T3, T4, T5, T6, T7, void>
                     Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, T4, T5, T6, T7, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase(list) {}
 #endif
 
@@ -660,12 +664,14 @@ class Array<T1, T2, T3, T4, T5, T6, void, void>
                     Array<T1, T2, T3, T4, T5, T6>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, T4, T5, T6, void, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5, T6>>::ArrayBase(list) {}
 #endif
 
@@ -708,12 +714,14 @@ class Array<T1, T2, T3, T4, T5, void, void, void>
                     Array<T1, T2, T3, T4, T5>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, T4, T5, void, void, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4, T5>>::ArrayBase(list) {}
 #endif
 
@@ -754,12 +762,14 @@ class Array<T1, T2, T3, T4, void, void, void, void>
                     Array<T1, T2, T3, T4>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, T4, void, void, void, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3, T4>>::ArrayBase(list) {}
 #endif
 
@@ -796,12 +806,14 @@ class Array<T1, T2, T3, void, void, void, void, void>
                     Array<T1, T2, T3>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, T3, void, void, void, void, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2, T3>>::ArrayBase(list) {}
 #endif
 
@@ -836,12 +848,14 @@ class Array<T1, T2, void, void, void, void, void, void>
                     Array<T1, T2>>::ArrayBase;
 #else
 public:
+    typedef ArrayElement<T1, T2, void, void, void, void, void, void> Element;
+
     inline Array()
-      : ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2>>::ArrayBase() {}
 
     inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
+      : ArrayBase<Element,
                   Array<T1, T2>>::ArrayBase(list) {}
 #endif
 
@@ -874,6 +888,8 @@ class Array<T, void, void, void, void, void, void, void>
                     Array<T>>::ArrayBase;
 #else
 public:
+    typedef T Element;
+
     inline Array()
       : ArrayBase<T,
                   Array<T>>::ArrayBase() {}
