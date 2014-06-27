@@ -98,22 +98,29 @@ Array2D<float> Image::BlueNoiseKernel(ivec2 size)
     }
 
     /* Helper function to find voids and clusters */
-    auto best = [&] (Array2D<float> const &p, float val, float mul) -> ivec2
+    auto setdot = [&] (Array2D<vec2> &p, ivec2 pos, float val)
+    {
+        float const delta = val - p[pos][0];
+        p[pos][0] = val;
+
+        for (int j = 0; j < gsize.y; ++j)
+        for (int i = 0; i < gsize.x; ++i)
+            p[(pos.x + i - gsize.x / 2 + size.x) % size.x]
+             [(pos.y + j - gsize.y / 2 + size.y) % size.y][1]
+                 += gaussian[i][j] * delta;
+    };
+
+    auto best = [&] (Array2D<vec2> const &p, float val, float mul) -> ivec2
     {
         float maxval = -size.x * size.y;
         ivec2 coord(0, 0);
         for (int y = 0; y < size.y; ++y)
         for (int x = 0; x < size.x; ++x)
         {
-            if (p[x][y] != val)
+            if (p[x][y][0] != val)
                 continue;
 
-            float total = 0.0f;
-            for (int j = 0; j < gsize.y; ++j)
-            for (int i = 0; i < gsize.x; ++i)
-                total += gaussian[i][j] *
-                         p[(x + i - gsize.x / 2 + size.x) % size.x]
-                          [(y + j - gsize.y / 2 + size.y) % size.y];
+            float total = p[x][y][1];
             if (total * mul > maxval)
             {
                 maxval = total * mul;
@@ -125,16 +132,16 @@ Array2D<float> Image::BlueNoiseKernel(ivec2 size)
     };
 
     /* Generate an array with about 10% random dots */
-    Array2D<float> dots(size);
+    Array2D<vec2> dots(size);
     int const ndots = (size.x * size.y + 9) / 10;
     memset(dots.Data(), 0, dots.Bytes());
     for (int n = 0; n < ndots; )
     {
         int x = lol::rand(size.x);
         int y = lol::rand(size.y);
-        if (dots[x][y])
+        if (dots[x][y][0])
             continue;
-        dots[x][y] = 1.0f;
+        setdot(dots, ivec2(x, y), 1.0f);
         ++n;
     }
 
@@ -142,9 +149,9 @@ Array2D<float> Image::BlueNoiseKernel(ivec2 size)
     for (;;)
     {
         ivec2 bestcluster = best(dots, 1.0f, 1.0f);
-        dots[bestcluster] = 0.0f;
+        setdot(dots, bestcluster, 0.0f);
         ivec2 bestvoid = best(dots, 0.0f, -1.0f);
-        dots[bestvoid] = 1.0f;
+        setdot(dots, bestvoid, 1.0f);
         if (bestcluster == bestvoid)
             break;
     }
@@ -154,7 +161,7 @@ Array2D<float> Image::BlueNoiseKernel(ivec2 size)
     {
         ivec2 bestcluster = best(dots, 1.0f, 1.0f);
         ret[bestcluster] = (n + 1.0f) * epsilon;
-        dots[bestcluster] = 0.0001f;
+        setdot(dots, bestcluster, 0.0001f);
     }
 
     /* Reorder all 0s and replace them with 0.0001 */
@@ -162,7 +169,7 @@ Array2D<float> Image::BlueNoiseKernel(ivec2 size)
     {
         ivec2 bestvoid = best(dots, 0.0f, -1.0f);
         ret[bestvoid] = (n + 1.0f) * epsilon;
-        dots[bestvoid] = 0.0001f;
+        setdot(dots, bestvoid, 0.0001f);
     }
 
     return ret;
