@@ -26,7 +26,7 @@ LOLUNIT_FIXTURE(Array2DTest)
 
     LOLUNIT_TEST(Array2DCreate)
     {
-        Array2D<int> a(ivec2(10, 10));
+        array2d<int> a(ivec2(10, 10));
 
         a[0][0] = 2;
         a[9][0] = 4;
@@ -38,7 +38,7 @@ LOLUNIT_FIXTURE(Array2DTest)
         LOLUNIT_ASSERT_EQUAL(a[0][9], 6);
         LOLUNIT_ASSERT_EQUAL(a[9][9], 8);
 
-        Array2D<int> const &b = a;
+        array2d<int> const &b = a;
 
         LOLUNIT_ASSERT_EQUAL(b[0][0], 2);
         LOLUNIT_ASSERT_EQUAL(b[9][0], 4);
@@ -48,7 +48,7 @@ LOLUNIT_FIXTURE(Array2DTest)
 
     LOLUNIT_TEST(Array2DInit)
     {
-        Array2D<int> a = { { 1, 2, 3, 4 },
+        array2d<int> a = { { 1, 2, 3, 4 },
                            { 5, 6, 7, 8 },
                            { 9, 8, 7, 6 } };
 

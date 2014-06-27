@@ -21,10 +21,10 @@
 namespace lol
 {
 
-static Image DitherHelper(Image const &image, Array2D<float> const &kernel,
+static Image DitherHelper(Image const &image, array2d<float> const &kernel,
                           float scale, float angle);
 
-Image Image::DitherOrdered(Array2D<float> const &kernel) const
+Image Image::DitherOrdered(array2d<float> const &kernel) const
 {
     return DitherHelper(*this, kernel, 1.0f, 0.0f);
 }
@@ -36,12 +36,12 @@ Image Image::DitherHalftone(float radius, float angle) const
      * the ditherer to scale it by 1/PRECISION. */
     float const PRECISION = 4.f;
     int k = (radius * PRECISION * lol::sqrt(2.f) + 0.5f);
-    Array2D<float> kernel = Image::HalftoneKernel(ivec2(k, k));
+    array2d<float> kernel = Image::HalftoneKernel(ivec2(k, k));
 
     return DitherHelper(*this, kernel, 1.f / PRECISION, angle + F_PI / 4.f);
 }
 
-static Image DitherHelper(Image const &image, Array2D<float> const &kernel,
+static Image DitherHelper(Image const &image, array2d<float> const &kernel,
                           float scale, float angle)
 {
     ivec2 size = image.GetSize();

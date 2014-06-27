@@ -15,6 +15,11 @@ au Syntax cpp
    \ syn keyword cType
    \ half ldouble lldouble real uint
 
+" Some custom container types
+au Syntax cpp
+   \ syn keyword cType
+   \ hash map array2d array3d
+
 " GLSL types and the Lol Engine extensions
 au Syntax cpp
    \ syn keyword cType

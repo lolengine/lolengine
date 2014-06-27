@@ -10,10 +10,10 @@
 //
 
 //
-// The Array3D class
+// The array3d class
 // -----------------
 // A very simple 3D array class allowing var[i][j][k] indexing, with some nice
-// additional features, eg. Array3D<int,float> for automatic arrays of tuples.
+// additional features, eg. array3d<int,float> for automatic arrays of tuples.
 //
 
 //
@@ -33,18 +33,18 @@ namespace lol
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
-class Array3D : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
+class array3d : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
     typedef Array<T1, T2, T3, T4, T5, T6, T7, T8> Super;
     typedef typename Super::Element Element;
 
-    inline Array3D()
+    inline array3d()
       : m_size(0, 0, 0)
     {
     }
 
-    inline Array3D(std::initializer_list<
+    inline array3d(std::initializer_list<
                    std::initializer_list<
                    std::initializer_list<Element>>> const &list)
       : m_size(list.size() && (*list.begin()).size() ?
@@ -59,12 +59,12 @@ public:
                     Super::Push(elem);
     }
 
-    inline Array3D(int w, int h, int d)
+    inline array3d(int w, int h, int d)
     {
         SetSize(ivec3(w, h, d));
     }
 
-    inline Array3D(ivec3 size)
+    inline array3d(ivec3 size)
     {
         SetSize(size);
     }
@@ -105,7 +105,7 @@ public:
     class Slice
     {
     public:
-        inline Slice(Array3D &array, int i)
+        inline Slice(array3d &array, int i)
           : m_array(array),
             m_slice(i)
         {
@@ -114,7 +114,7 @@ public:
         class Line
         {
         public:
-            inline Line(Array3D &array, ivec2 ij)
+            inline Line(array3d &array, ivec2 ij)
               : m_array(array),
                 m_line(ij)
             {
@@ -128,7 +128,7 @@ public:
             }
 
         private:
-            Array3D<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
+            array3d<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
             ivec2 m_line;
         };
 
@@ -140,14 +140,14 @@ public:
         }
 
     private:
-        Array3D<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
+        array3d<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
         int m_slice;
     };
 
     class ConstSlice
     {
     public:
-        inline ConstSlice(Array3D const &array, int i)
+        inline ConstSlice(array3d const &array, int i)
           : m_array(array),
             m_slice(i)
         {
@@ -156,7 +156,7 @@ public:
         class Line
         {
         public:
-            inline Line(Array3D const &array, ivec2 ij)
+            inline Line(array3d const &array, ivec2 ij)
               : m_array(array),
                 m_line(ij)
             {
@@ -170,7 +170,7 @@ public:
             }
 
         private:
-            Array3D<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
+            array3d<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
             ivec2 m_line;
         };
 
@@ -182,7 +182,7 @@ public:
         }
 
     private:
-        Array3D<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
+        array3d<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
         int m_slice;
     };
 

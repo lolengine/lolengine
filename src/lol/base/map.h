@@ -9,9 +9,9 @@
 //
 
 //
-// The Map class
+// The map class
 // -------------
-// A very simple Map class.
+// A very simple map class.
 //
 
 #if !defined __LOL_BASE_MAP_H__
@@ -21,10 +21,10 @@ namespace lol
 {
 
 /* A stupidly linear map for now. */
-template<typename K, typename V> class Map : protected Hash<K>
+template<typename K, typename V> class map : protected hash<K>
 {
 public:
-    /* If E is different from K, Hash<K> must implement operator()(E const&)
+    /* If E is different from K, hash<K> must implement operator()(E const&)
      * and an equality operator between K and E must exist in order to use
      * this method. */
 
@@ -43,13 +43,13 @@ public:
     inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
-        uint32_t hash = ((Hash<K> const &)*this)(key);
-        int i = FindIndex(key, hash);
+        uint32_t hashed = ((hash<K> const &)*this)(key);
+        int i = FindIndex(key, hashed);
         if (i >= 0)
             return m_array[i].m3;
 
         /* If not found, insert a new value. */
-        m_array.Push(hash, key, V());
+        m_array.Push(hashed, key, V());
         return m_array.Last().m3;
     }
 
@@ -95,10 +95,10 @@ public:
 
 private:
     template <typename E>
-    inline int FindIndex(E const &key, uint32_t hash)
+    inline int FindIndex(E const &key, uint32_t hashed)
     {
         for (int i = 0; i < m_array.Count(); ++i)
-            if (m_array[i].m1 == hash)
+            if (m_array[i].m1 == hashed)
                 if (m_array[i].m2 == key)
                     return i;
         return -1;
@@ -107,8 +107,8 @@ private:
     template <typename E>
     inline int FindIndex(E const &key)
     {
-        uint32_t hash = ((Hash<K> const &)*this)(key);
-        return FindIndex(key, hash);
+        uint32_t hashed = ((hash<K> const &)*this)(key);
+        return FindIndex(key, hashed);
     }
 
     Array<uint32_t, K, V> m_array;

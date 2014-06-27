@@ -23,9 +23,9 @@ namespace lol
 
 static Image SepConv(Image &src, Array<float> const &hvec,
                      Array<float> const &vvec);
-static Image NonSepConv(Image &src, Array2D<float> const &kernel);
+static Image NonSepConv(Image &src, array2d<float> const &kernel);
 
-Image Image::Convolution(Array2D<float> const &kernel)
+Image Image::Convolution(array2d<float> const &kernel)
 {
     /* Find the cell with the largest value */
     ivec2 ksize = kernel.GetSize();
@@ -83,10 +83,10 @@ Image Image::Convolution(Array2D<float> const &kernel)
     }
 }
 
-Image Image::Sharpen(Array2D<float> const &kernel)
+Image Image::Sharpen(array2d<float> const &kernel)
 {
     ivec2 ksize = kernel.GetSize();
-    Array2D<float> newkernel(ksize);
+    array2d<float> newkernel(ksize);
 
     for (int dy = 0; dy < ksize.y; ++dy)
         for (int dx = 0; dx < ksize.x; ++dx)
@@ -100,7 +100,7 @@ Image Image::Sharpen(Array2D<float> const &kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static Image NonSepConv(Image &src, Array2D<float> const &kernel)
+static Image NonSepConv(Image &src, array2d<float> const &kernel)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
@@ -108,8 +108,8 @@ static Image NonSepConv(Image &src, Array2D<float> const &kernel)
     ivec2 const ksize = kernel.GetSize();
     Image dst(size);
 
-    Array2D<pixel_t> const &srcp = src.Lock2D<FORMAT>();
-    Array2D<pixel_t> &dstp = dst.Lock2D<FORMAT>();
+    array2d<pixel_t> const &srcp = src.Lock2D<FORMAT>();
+    array2d<pixel_t> &dstp = dst.Lock2D<FORMAT>();
 
     for (int y = 0; y < size.y; y++)
     {
@@ -149,7 +149,7 @@ static Image NonSepConv(Image &src, Array2D<float> const &kernel)
     return dst;
 }
 
-static Image NonSepConv(Image &src, Array2D<float> const &kernel)
+static Image NonSepConv(Image &src, array2d<float> const &kernel)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
@@ -201,10 +201,10 @@ static Image SepConv(Image &src, Array<float> const &hvec,
     ivec2 const ksize(hvec.Count(), vvec.Count());
     Image dst(size);
 
-    Array2D<pixel_t> const &srcp = src.Lock2D<FORMAT>();
-    Array2D<pixel_t> &dstp = dst.Lock2D<FORMAT>();
+    array2d<pixel_t> const &srcp = src.Lock2D<FORMAT>();
+    array2d<pixel_t> &dstp = dst.Lock2D<FORMAT>();
 
-    Array2D<pixel_t> tmp(size);
+    array2d<pixel_t> tmp(size);
 
     for (int y = 0; y < size.y; y++)
     {

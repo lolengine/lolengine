@@ -33,7 +33,7 @@ Image Image::DitherDbs() const
     ivec2 size = GetSize();
 
     /* Build our human visual system kernel. */
-    Array2D<float> kernel;
+    array2d<float> kernel;
     kernel.SetSize(ivec2(NN, NN));
     float t = 0.f;
     for (int j = 0; j < NN; j++)
@@ -52,7 +52,7 @@ Image Image::DitherDbs() const
     /* A list of cells in our picture. If no change is done to a cell
      * for two iterations, we stop considering changes to it. */
     ivec2 csize = (size + ivec2(CELL - 1)) / CELL;
-    Array2D<int> changelist;
+    array2d<int> changelist;
     changelist.SetSize(csize);
     memset(changelist.Data(), 0, changelist.Bytes());
 

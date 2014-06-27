@@ -38,7 +38,7 @@ public:
 private:
     bool IsExpressionTrue(char const *buf);
 
-    Map<String, String> m_pp_defines;
+    map<String, String> m_pp_defines;
 
     enum
     {

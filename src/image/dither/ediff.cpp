@@ -27,7 +27,7 @@ namespace lol
  * Making the matrix generic is not terribly slower: the performance
  * hit is around 4% for Floyd-Steinberg and 13% for JaJuNi, with the
  * benefit of a lot less code. */
-Image Image::DitherEdiff(Array2D<float> const &kernel, ScanMode scan) const
+Image Image::DitherEdiff(array2d<float> const &kernel, ScanMode scan) const
 {
     Image dst = *this;
 

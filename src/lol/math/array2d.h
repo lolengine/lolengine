@@ -10,10 +10,10 @@
 //
 
 //
-// The Array2D class
+// The array2d class
 // -----------------
 // A very simple 2D array class allowing var[i][j] indexing, with some nice
-// additional features, eg. Array2D<int,float> for automatic arrays of tuples.
+// additional features, eg. array2d<int,float> for automatic arrays of tuples.
 //
 
 //
@@ -33,18 +33,18 @@ namespace lol
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
-class Array2D : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
+class array2d : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
     typedef Array<T1, T2, T3, T4, T5, T6, T7, T8> Super;
     typedef typename Super::Element Element;
 
-    inline Array2D()
+    inline array2d()
       : m_size(0, 0)
     {
     }
 
-    inline Array2D(std::initializer_list<
+    inline array2d(std::initializer_list<
                    std::initializer_list<Element>> const &list)
       : m_size(list.size() ? (int)(*list.begin()).size() : 0,
                (int)list.size())
@@ -55,12 +55,12 @@ public:
                 Super::Push(elem);
     }
 
-    inline Array2D(int w, int h)
+    inline array2d(int w, int h)
     {
         SetSize(ivec2(w, h));
     }
 
-    inline Array2D(ivec2 size)
+    inline array2d(ivec2 size)
     {
         SetSize(size);
     }
@@ -97,7 +97,7 @@ public:
     class Column
     {
     public:
-        inline Column(Array2D &array, int i)
+        inline Column(array2d &array, int i)
           : m_array(array),
             m_column(i)
         {
@@ -111,14 +111,14 @@ public:
         }
 
     private:
-        Array2D<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
+        array2d<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
         int m_column;
     };
 
     class ConstColumn
     {
     public:
-        inline ConstColumn(Array2D const &array, int i)
+        inline ConstColumn(array2d const &array, int i)
           : m_array(array),
             m_column(i)
         {
@@ -132,7 +132,7 @@ public:
         }
 
     private:
-        Array2D<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
+        array2d<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
         int m_column;
     };
 

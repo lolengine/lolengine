@@ -472,7 +472,7 @@ void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
 
     int stride = (size.x + 1);
 
-    Array2D<ivec3> src, dst;
+    array2d<ivec3> src, dst;
     src.SetSize(size + ivec2(1));
     dst.SetSize(size + ivec2(1));
 

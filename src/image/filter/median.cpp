@@ -46,7 +46,7 @@ Image Image::Median(ivec2 ksize) const
     if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
-        Array2D<float> list(lsize);
+        array2d<float> list(lsize);
 
         float *srcp = tmp.Lock<PixelFormat::Y_F32>();
         float *dstp = ret.Lock<PixelFormat::Y_F32>();
@@ -86,7 +86,7 @@ Image Image::Median(ivec2 ksize) const
     else
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
-        Array2D<vec3> list(lsize);
+        array2d<vec3> list(lsize);
 
         vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();
         vec4 *dstp = ret.Lock<PixelFormat::RGBA_F32>();
@@ -154,7 +154,7 @@ Image Image::Median(ivec2 ksize) const
     return ret;
 }
 
-Image Image::Median(Array2D<float> const &kernel) const
+Image Image::Median(array2d<float> const &kernel) const
 {
     ivec2 const size = GetSize();
     Image tmp = *this;
@@ -169,7 +169,7 @@ Image Image::Median(Array2D<float> const &kernel) const
 #endif
     {
         ivec2 const ksize = kernel.GetSize();
-        Array2D<vec3> list(ksize);
+        array2d<vec3> list(ksize);
 
         vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();
         vec4 *dstp = ret.Lock<PixelFormat::RGBA_F32>();
