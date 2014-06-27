@@ -44,8 +44,10 @@ template<> struct PixelType<PixelFormat::RGBA_F32> { typedef vec4 type; };
 /* Number of bytes used by each pixel format */
 static inline uint8_t BytesPerPixel(PixelFormat format)
 {
+#if __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic error "-Wswitch"
+#endif
     switch (format)
     {
     case PixelFormat::Unknown:
@@ -64,7 +66,9 @@ static inline uint8_t BytesPerPixel(PixelFormat format)
         return 16;
     }
     return 0;
+#if __GNUC__
 #pragma GCC diagnostic pop
+#endif
 };
 
 } /* namespace lol */

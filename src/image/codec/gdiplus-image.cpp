@@ -124,9 +124,8 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     image->SetSize(size);
     u8vec4 *pdst = image->Lock<PixelFormat::RGBA_8>();
     u8vec4 *psrc = static_cast<u8vec4 *>(bdata.Scan0);
-    for (int y = 0; y < size.y; y++)
-        for (int x = 0; x < size.x; x++)
-            *pdst++ = (*psrc++).bgra;
+    for (int n = 0; n < size.x * size.y; n++)
+        pdst[n] = psrc[n].bgra;
     image->Unlock(pdst);
 
     bitmap->UnlockBits(&bdata);
