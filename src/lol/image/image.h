@@ -96,7 +96,8 @@ public:
     /* Image processing kernels */
     static Array2D<float> BayerKernel(ivec2 size);
     static Array2D<float> HalftoneKernel(ivec2 size);
-    static Array2D<float> BlueNoiseKernel(ivec2 size);
+    static Array2D<float> BlueNoiseKernel(ivec2 size,
+                                          ivec2 gsize = ivec2(7, 7));
     static Array2D<float> EdiffKernel(EdiffAlgorithm algorithm);
     static Array2D<float> NormalizeKernel(Array2D<float> const &kernel);
     static Array2D<float> GaussianKernel(vec2 radius,
