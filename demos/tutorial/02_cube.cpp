@@ -24,32 +24,25 @@ class Cube : public WorldEntity
 {
 public:
     Cube()
+      : m_angle(0),
+        m_mesh({ /* Front vertices/colors */
+                 { vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0) },
+                 { vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0) },
+                 { vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0) },
+                 { vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0) },
+                 /* Back */
+                 { vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0) },
+                 { vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0) },
+                 { vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0) },
+                 { vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0) } }),
+        m_lines_indices({ 0, 1, 1, 2, 2, 3, 3, 0,
+                          4, 5, 5, 6, 6, 7, 7, 4,
+                          0, 4, 1, 5, 2, 6, 3, 7, }),
+        m_faces_indices({ 0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
+                          7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
+                          4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3, }),
+        m_ready(false)
     {
-        m_angle = 0;
-
-        /* Front vertices/colors */
-        m_mesh.Push(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
-        m_mesh.Push(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
-        m_mesh.Push(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
-        m_mesh.Push(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
-        /* Back */
-        m_mesh.Push(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
-        m_mesh.Push(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
-        m_mesh.Push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
-        m_mesh.Push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
-
-        m_faces_indices << 0 << 1 << 2 << 2 << 3 << 0;
-        m_faces_indices << 1 << 5 << 6 << 6 << 2 << 1;
-        m_faces_indices << 7 << 6 << 5 << 5 << 4 << 7;
-        m_faces_indices << 4 << 0 << 3 << 3 << 7 << 4;
-        m_faces_indices << 4 << 5 << 1 << 1 << 0 << 4;
-        m_faces_indices << 3 << 2 << 6 << 6 << 7 << 3;
-
-        m_lines_indices << 0 << 1 << 1 << 2 << 2 << 3 << 3 << 0;
-        m_lines_indices << 4 << 5 << 5 << 6 << 6 << 7 << 7 << 4;
-        m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
-
-        m_ready = false;
     }
 
     virtual void TickGame(float seconds)

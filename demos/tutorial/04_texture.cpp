@@ -25,23 +25,17 @@ LOLFX_RESOURCE_DECLARE(04_texture);
 class TextureDemo : public WorldEntity
 {
 public:
-    TextureDemo() :
+    TextureDemo()
+      : m_vertices({ vec2(-1.0,  1.0),
+                     vec2(-1.0, -1.0),
+                     vec2( 1.0, -1.0),
+                     vec2(-1.0,  1.0),
+                     vec2( 1.0, -1.0),
+                     vec2( 1.0,  1.0), }),
         m_frames(0),
         m_ready(false)
     {
-        m_vertices << vec2(-1.0,  1.0);
-        m_vertices << vec2(-1.0, -1.0);
-        m_vertices << vec2( 1.0, -1.0);
-        m_vertices << vec2(-1.0,  1.0);
-        m_vertices << vec2( 1.0, -1.0);
-        m_vertices << vec2( 1.0,  1.0);
-
-        m_heightmap = new uint8_t[TEXTURE_WIDTH * 1];
-    }
-
-    virtual ~TextureDemo()
-    {
-        delete m_heightmap;
+        m_heightmap.Resize(TEXTURE_WIDTH * 1);
     }
 
     virtual void TickGame(float seconds)
@@ -50,16 +44,16 @@ public:
 
         /* Generate a new heightmap at the beginning */
         if (m_frames == 0)
-            memset(m_heightmap, 255, TEXTURE_WIDTH);
+            memset(m_heightmap.Data(), 255, m_heightmap.Bytes());
 
         /* Scroll left */
-        for (int i = 0; i < TEXTURE_WIDTH - 1; i++)
+        for (int i = 0; i < m_heightmap.Count() - 1; i++)
             m_heightmap[i] = m_heightmap[i + 1];
 
-        int height = m_heightmap[TEXTURE_WIDTH - 1];
+        int height = m_heightmap.Last();
         height = (height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
-        m_heightmap[TEXTURE_WIDTH - 1] = height;
+        m_heightmap.Last() = height;
 
         /* Update frame counter */
         ++m_frames;
@@ -91,7 +85,7 @@ public:
         }
 
         /* Send new heightmap to GPU */
-        m_texture->SetData(m_heightmap);
+        m_texture->SetData(m_heightmap.Data());
 
         m_shader->Bind();
         m_shader->SetUniform(m_texture_uni, m_texture->GetTextureUniform(), 0);
@@ -109,7 +103,7 @@ private:
     ShaderUniform m_texture_uni;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-    uint8_t *m_heightmap;
+    Array<uint8_t> m_heightmap;
     int m_frames;
     bool m_ready;
 };

@@ -24,11 +24,11 @@ class Triangle : public WorldEntity
 {
 public:
     Triangle()
+      : m_vertices({ vec2( 0.0,  0.8),
+                     vec2(-0.8, -0.8),
+                     vec2( 0.8, -0.8) }),
+        m_ready(false)
     {
-        m_vertices << vec2( 0.0,  0.8);
-        m_vertices << vec2(-0.8, -0.8);
-        m_vertices << vec2( 0.8, -0.8);
-        m_ready = false;
     }
 
     virtual void TickDraw(float seconds, Scene &scene)

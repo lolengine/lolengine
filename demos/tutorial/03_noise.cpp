@@ -23,17 +23,16 @@ LOLFX_RESOURCE_DECLARE(03_noise);
 class NoiseDemo : public WorldEntity
 {
 public:
-    NoiseDemo() :
+    NoiseDemo()
+      : m_vertices({ vec2(-1.0,  1.0),
+                     vec2(-1.0, -1.0),
+                     vec2( 1.0, -1.0),
+                     vec2(-1.0,  1.0),
+                     vec2( 1.0, -1.0),
+                     vec2( 1.0,  1.0), }),
         m_time(0.0),
         m_ready(false)
     {
-        m_vertices << vec2(-1.0,  1.0);
-        m_vertices << vec2(-1.0, -1.0);
-        m_vertices << vec2( 1.0, -1.0);
-        m_vertices << vec2(-1.0,  1.0);
-        m_vertices << vec2( 1.0, -1.0);
-        m_vertices << vec2( 1.0,  1.0);
-        m_ready = false;
     }
 
     virtual void TickDraw(float seconds, Scene &scene)
