@@ -91,7 +91,7 @@ public:
     template<typename T>
         void Unlock2D(array2d<T> const &);
 
-    bool RetrieveTiles(Array<ivec2, ivec2>& tiles) const;
+    bool RetrieveTiles(array<ivec2, ivec2>& tiles) const;
 
     /* Image processing kernels */
     static array2d<float> BayerKernel(ivec2 size);

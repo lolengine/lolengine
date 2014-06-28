@@ -42,7 +42,7 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 {
     Imlib_Image priv = nullptr;
 
-    Array<String> pathlist = System::GetPathList(path);
+    array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); i++)
     {
         priv = imlib_load_image(pathlist[i].C());

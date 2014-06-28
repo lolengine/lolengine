@@ -34,7 +34,7 @@ private:
         InitViewportSize();
     }
 
-    Array<class pp::InputEvent>     m_input_events;
+    array<class pp::InputEvent>     m_input_events;
     class InputDeviceInternal*      m_mouse;
     class InputDeviceInternal*      m_keyboard;
 

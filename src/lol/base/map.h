@@ -80,9 +80,9 @@ public:
         return false;
     }
 
-    Array<K> Keys() const
+    array<K> Keys() const
     {
-        Array<K> ret;
+        array<K> ret;
         for (auto it : m_array)
             ret.Push(it.m2);
         return ret;
@@ -111,7 +111,7 @@ private:
         return FindIndex(key, hashed);
     }
 
-    Array<uint32_t, K, V> m_array;
+    array<uint32_t, K, V> m_array;
 };
 
 } /* namespace lol */

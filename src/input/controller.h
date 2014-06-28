@@ -60,7 +60,7 @@ protected:
     }
 
     /** m1 is the InputDevice, m2 is the key index on the InputDevice */
-    Array<const InputDevice*, int> m_keybindings;
+    array<const InputDevice*, int> m_keybindings;
     /** Value at the previous frame */
     bool m_current;
     /** Value at the current frame */
@@ -112,9 +112,9 @@ protected:
     float RetrieveCurrentValue();
 
     /** m1 is the InputDevice, m2 is the axis index on the InputDevice, m3 and m4 are an optional key indices to bind one or two keys over the axis */
-    Array<const InputDevice*, int> m_axisbindings;
+    array<const InputDevice*, int> m_axisbindings;
     /** m1 is the InputDevice, m2 is the key index on the InputDevice for the negative value, m3 is the key index on the InputDevice for the positive value. Only one key is required to bind key over axis. */
-    Array<const InputDevice*, int, int> m_keybindings;
+    array<const InputDevice*, int, int> m_keybindings;
     float m_current;
     float m_previous;
 
@@ -135,7 +135,7 @@ public:
     /** Deactivate the controller on next frame */
     void Deactivate();
     /** Deactivate every active controller on next frame and return an array of deactivated (previously active) controllers */
-    static Array<Controller*> DeactivateAll();
+    static array<Controller*> DeactivateAll();
 
     KeyBinding& GetKey(int index) { return m_keys[index]; }
     AxisBinding& GetAxis(int index) { return m_axis[index]; }
@@ -143,11 +143,11 @@ public:
     static Controller* Get(char const* name);
 
 protected:
-    Array<KeyBinding> m_keys;
-    Array<AxisBinding> m_axis;
+    array<KeyBinding> m_keys;
+    array<AxisBinding> m_axis;
 
 private:
-    static Array<Controller*> controllers;
+    static array<Controller*> controllers;
     String m_name;
     bool m_activate_nextframe;
     bool m_deactivate_nextframe;

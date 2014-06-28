@@ -26,10 +26,10 @@
 namespace lol
 {
 
-class String : protected Array<char>
+class String : protected array<char>
 {
 private:
-    typedef Array<char> Super;
+    typedef array<char> Super;
 
 public:
     inline String()

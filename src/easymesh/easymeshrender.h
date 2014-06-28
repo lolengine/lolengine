@@ -80,8 +80,8 @@ protected:
     uint16_t                            m_vert_decl_flags;
     Shader*                             m_shader;
     int                                    m_render_mode;
-    Array<lol::String, ShaderUniform>   m_shader_uniform;
-    Array<ShaderAttrib>                 m_shader_attrib;
+    array<lol::String, ShaderUniform>   m_shader_uniform;
+    array<ShaderAttrib>                 m_shader_attrib;
 };
 
 class DefaultShaderData : public GpuShaderData
@@ -96,7 +96,7 @@ public:
     void SetupDefaultData(bool with_UV);
     virtual void SetupShaderDatas(mat4 const &model);
     //--
-    Array<String>   m_uniform_names;
+    array<String>   m_uniform_names;
 };
 
 class GpuEasyMeshData
@@ -115,9 +115,9 @@ public:
 private:
     void SetupVertexData(uint16_t vdecl_flags, EasyMesh* src_mesh);
 
-    Array<GpuShaderData*>               m_gpudatas;
+    array<GpuShaderData*>               m_gpudatas;
     //uint16_t are the vdecl/vbo flags to avoid copy same vdecl several times.
-    Array<uint16_t, VertexDeclaration*,
+    array<uint16_t, VertexDeclaration*,
                     VertexBuffer*>      m_vdatas;
     int                                 m_vertexcount;
     //We only need only one ibo for the whole mesh

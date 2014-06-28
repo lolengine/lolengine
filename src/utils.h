@@ -33,7 +33,7 @@ template< class T > inline void Swap( T& A, T& B )
 //TODO: random struct
 //Gets a random Element from the given array<T>, considering you have implemented what follows :
 //NEEDS : float T::m_weight; //if m_weight is 0, it automatically assumes that this step is ignored.
-template< class T > inline int GetRandom(Array<T> src)
+template< class T > inline int GetRandom(array<T> src)
 {
     float r_total = 0.f;
     float r_alpha = rand(1.f);

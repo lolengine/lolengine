@@ -147,7 +147,7 @@ static Image ResizeBresenham(Image &image, ivec2 size)
     vec4 const *srcp = image.Lock<PixelFormat::RGBA_F32>();
     vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
 
-    Array<vec4> aline, line;
+    array<vec4> aline, line;
     aline.Resize(size.x);
     line.Resize(size.x);
     memset(line.Data(), 0, line.Bytes());

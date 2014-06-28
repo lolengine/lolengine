@@ -97,7 +97,7 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
 #   if defined _WIN32
     String buf = String(prefix[type]) + ": " + String::VPrintf(fmt, ap);
 
-    Array<WCHAR> widechar;
+    array<WCHAR> widechar;
     widechar.Resize(buf.Count() + 1);
     MultiByteToWideChar(CP_UTF8, 0, buf.C(), buf.Count() + 1, widechar.Data(), widechar.Count());
     OutputDebugStringW(widechar.Data());

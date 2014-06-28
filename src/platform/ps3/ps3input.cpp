@@ -39,7 +39,7 @@ class Ps3InputData
     friend class Ps3Input;
 
 #if defined __CELLOS_LV2__
-    Array<int, Stick *> m_joysticks;
+    array<int, Stick *> m_joysticks;
 
     vec2 mousepos;
     ivec3 mousebuttons;

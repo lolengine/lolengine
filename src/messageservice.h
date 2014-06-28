@@ -80,7 +80,7 @@ public:
     static bool FetchAll(MessageBucket id, String& message, time_t &first_timestamp);
 
 private:
-    Array<Array<MessageList> >  m_bucket;
+    array<array<MessageList> >  m_bucket;
 };
 
 extern MessageService *g_messageservice;

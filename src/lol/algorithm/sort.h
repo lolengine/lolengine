@@ -18,7 +18,7 @@ namespace lol
 {
 
 template<typename T, typename ARRAY>
-void ArrayBase<T, ARRAY>::Sort(int sort)
+void array_base<T, ARRAY>::Sort(int sort)
 {
     int s = 0;
     // Classic bubble
@@ -44,7 +44,7 @@ void ArrayBase<T, ARRAY>::Sort(int sort)
 }
 
 template<typename T, typename ARRAY>
-void ArrayBase<T, ARRAY>::SortQuickSwap(int start, int stop)
+void array_base<T, ARRAY>::SortQuickSwap(int start, int stop)
 {
     int m[3] =
     {

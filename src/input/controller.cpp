@@ -218,7 +218,7 @@ float AxisBinding::RetrieveCurrentValue()
 ///////////////////////////////////////////////////////////////////////////////
 // Controller
 
-Array<Controller*> Controller::controllers;
+array<Controller*> Controller::controllers;
 
 Controller::Controller(char const* name, int nb_keys, int nb_axis)
 {
@@ -290,9 +290,9 @@ void Controller::Deactivate()
     m_activate_nextframe = false;
 }
 
-Array<Controller*> Controller::DeactivateAll()
+array<Controller*> Controller::DeactivateAll()
 {
-    Array<Controller*> result;
+    array<Controller*> result;
 
     for (int i = 0; i < controllers.Count(); ++i)
     {

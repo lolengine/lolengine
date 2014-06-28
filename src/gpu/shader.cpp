@@ -129,7 +129,7 @@ Shader *Shader::Create(String const &name, String const &code)
     String src = String("\n") + code;
 
     /* Parse the crap */
-    Array<char const *, char const *> sections;
+    array<char const *, char const *> sections;
     char *key = nullptr;
     for (char *parser = src.C(); *parser; )
     {
@@ -699,7 +699,7 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
  * Uniform setters for arrays
  */
 
-void Shader::SetUniform(ShaderUniform const &uni, Array<float> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: this will not work properly because we don't know how tell DX9
@@ -722,7 +722,7 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<float> const &v)
 #endif
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, Array<vec2> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: this will not work properly because we don't know how tell DX9
@@ -745,7 +745,7 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec2> const &v)
 #endif
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, Array<vec3> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: this will not work properly because we don't know how tell DX9
@@ -768,7 +768,7 @@ void Shader::SetUniform(ShaderUniform const &uni, Array<vec3> const &v)
 #endif
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, Array<vec4> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)

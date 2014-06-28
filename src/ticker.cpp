@@ -57,8 +57,8 @@ public:
 
 private:
     /* Entity management */
-    Array<Entity *> m_todolist, m_autolist;
-    Array<Entity *> m_list[Entity::ALLGROUP_END];
+    array<Entity *> m_todolist, m_autolist;
+    array<Entity *> m_list[Entity::ALLGROUP_END];
     int nentities;
 
     /* Fixed framerate management */

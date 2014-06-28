@@ -19,12 +19,12 @@
 namespace lol
 {
 
-Array<InputDevice*> InputDevice::devices;
+array<InputDevice*> InputDevice::devices;
 bool InputDevice::m_capturemouse;
 
-Array<String> InputDevice::GetAvailableDevices()
+array<String> InputDevice::GetAvailableDevices()
 {
-    Array<String> result;
+    array<String> result;
     for (int i = 0; i < devices.Count(); ++i)
     {
         result.Push(devices[i]->m_name);

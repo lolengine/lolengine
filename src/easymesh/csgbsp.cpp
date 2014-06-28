@@ -68,9 +68,9 @@ int CsgBsp::TestPoint(int leaf_idx, vec3 point)
 void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2)
 {
     //<Leaf_Id, v0, v1, v2>
-    Array< int, vec3, vec3, vec3 > tri_to_process;
+    array< int, vec3, vec3, vec3 > tri_to_process;
     //<FW/BW, Leaf_Id, v0, v1, v2, twin_leaf>
-    Array< int, int, vec3, vec3, vec3, int > Leaf_to_add;
+    array< int, int, vec3, vec3, vec3, int > Leaf_to_add;
 
     //Tree is empty, so this leaf is the first
     if (m_tree.Count() == 0)
@@ -228,14 +228,14 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
 int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                                //In order to easily build the actual vertices list afterward, this list stores each Vertices location and its source vertices & Alpha.
                                //<Point_Loc, Src_V0, Src_V1, Alpha> as { Point_Loc = Src_V0 + (Src_V1 - Src_V0) * Alpha; }
-                               Array< vec3, int, int, float > &vert_list,
+                               array< vec3, int, int, float > &vert_list,
                                //This is the final triangle list : If Side_Status is LEAF_CURRENT, a new test will be done point by point.
                                //<{IN|OUT}side_status, v0, v1, v2>
-                               Array< int, int, int, int > &tri_list)
+                               array< int, int, int, int > &tri_list)
 {
     //This list stores the current triangles to process.
     //<Leaf_Id_List, v0, v1, v2, Should_Point_Test>
-    Array< Array< int >, int, int, int, int > tri_to_process;
+    array< array< int >, int, int, int, int > tri_to_process;
 
     //Tree is empty, ABORT !
     if (m_tree.Count() == 0)
@@ -248,7 +248,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
 
     //Let's push the triangle in here.
     tri_to_process.Reserve(20);
-    tri_to_process.Push( Array< int >(), 0, 1, 2, 0);
+    tri_to_process.Push( array< int >(), 0, 1, 2, 0);
     tri_to_process.Last().m1.Push(0);
 
     while (tri_to_process.Count())
@@ -371,7 +371,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                                                 t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0]);
                             else
                             {
-                                tri_to_process.Push(Array< int >(), t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
+                                tri_to_process.Push(array< int >(), t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
                                 tri_to_process.Last().m1.Push(0);
                             }
 
@@ -384,9 +384,9 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                             }
                             else
                             {
-                                tri_to_process.Push(Array< int >(), t[isec_base], t[((isec_base + 1) % 3)], new_v_idx[v_idx0], 0);
+                                tri_to_process.Push(array< int >(), t[isec_base], t[((isec_base + 1) % 3)], new_v_idx[v_idx0], 0);
                                 tri_to_process.Last().m1.Push(0);
-                                tri_to_process.Push(Array< int >(), t[isec_base], new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
+                                tri_to_process.Push(array< int >(), t[isec_base], new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
                                 tri_to_process.Last().m1.Push(0);
                             }
 #else
@@ -417,14 +417,14 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                                     continue;
 #endif
 #if 0 //Send the newly created triangle back to the beginning
-                                tri_to_process.Push(Array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
+                                tri_to_process.Push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
                                 tri_to_process.Last().m1.Push(0);
 #else //Inherit parent tree
                                 if (m_tree[leaf_idx].m_leaves[new_side[k / 3]] == LEAF_CURRENT && tri_to_process[tri_to_remove].m1.Count() == 1)
                                     tri_list.Push(new_side[k / 3], new_t[k], new_t[k + 1], new_t[k + 2]);
                                 else
                                 {
-                                    tri_to_process.Push(Array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
+                                    tri_to_process.Push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
                                     tri_to_process.Last().m1 = tri_to_process[tri_to_remove].m1;
                                     if (m_tree[leaf_idx].m_leaves[new_side[k / 3]] == LEAF_CURRENT)
                                         tri_to_process.Last().m1.Pop();
@@ -522,7 +522,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 res_total = res_total;
                 tri_list[i].m1 = LEAF_BACK;
 #if 0
-                tri_to_process.Push( Array< int >(), tri_list[i].m2, tri_list[i].m3, tri_list[i].m4, 0);
+                tri_to_process.Push( array< int >(), tri_list[i].m2, tri_list[i].m3, tri_list[i].m4, 0);
                 tri_to_process.Last().m1.Push(0);
                 tri_list.Remove(i--);
                 break;

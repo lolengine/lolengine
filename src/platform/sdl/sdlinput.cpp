@@ -59,7 +59,7 @@ private:
         m_mousecapture(false)
     { }
 
-    Array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
+    array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
     InputDeviceInternal* m_mouse;
     InputDeviceInternal* m_keyboard;
 

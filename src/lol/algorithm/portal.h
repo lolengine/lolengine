@@ -278,7 +278,7 @@ public:
 
 private:
     //Portals associated with this room.
-    Array<PortalDoor<TE>*>      m_doors;
+    array<PortalDoor<TE>*>      m_doors;
     TE*                         m_element;
 };
 
@@ -298,9 +298,9 @@ public:
     }
 
     //Visible room getter
-    void GetVisibleRooms(PortalDoor<TE>* see_through, PortalRoom<TE>* start_room, Array<PortalRoom<TE>*>& visible_rooms)
+    void GetVisibleRooms(PortalDoor<TE>* see_through, PortalRoom<TE>* start_room, array<PortalRoom<TE>*>& visible_rooms)
     {
-        Array<PortalDoor<TE>*> ignore_doors;
+        array<PortalDoor<TE>*> ignore_doors;
         GetVisibleRooms(see_through, start_room, visible_rooms, ignore_doors);
     #if LOL_BUILD_DEBUG
         for (auto room : visible_rooms)
@@ -322,7 +322,7 @@ public:
     #endif //LOL_BUILD_DEBUG
     }
 private:
-    void GetVisibleRooms(PortalDoor<TE>* see_through, PortalRoom<TE>* start_room, Array<PortalRoom<TE>*>& visible_rooms, Array<PortalDoor<TE>*>& ignore_doors)
+    void GetVisibleRooms(PortalDoor<TE>* see_through, PortalRoom<TE>* start_room, array<PortalRoom<TE>*>& visible_rooms, array<PortalDoor<TE>*>& ignore_doors)
     {
         for (auto door : start_room->m_doors)
         {
@@ -381,8 +381,8 @@ public:
 
 private:
     //Portals associated with this room.
-    Array<PortalRoom<TE>*>          m_rooms;
-    Array<PortalDoor<TE>*>          m_doors;
+    array<PortalRoom<TE>*>          m_rooms;
+    array<PortalDoor<TE>*>          m_doors;
 };
 
 } /* namespace lol */

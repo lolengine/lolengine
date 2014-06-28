@@ -72,11 +72,11 @@ public:
     void Close();
 
 private:
-    bool GetContent(Array<String>* files, Array<Directory>* directories);
+    bool GetContent(array<String>* files, array<Directory>* directories);
 public:
-    bool GetContent(Array<String>& files, Array<Directory>& directories);
-    bool GetContent(Array<Directory>& directories);
-    bool GetContent(Array<String>& files);
+    bool GetContent(array<String>& files, array<Directory>& directories);
+    bool GetContent(array<Directory>& directories);
+    bool GetContent(array<String>& files);
     String GetName();
 
     static String GetCurrent();

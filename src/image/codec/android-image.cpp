@@ -45,9 +45,9 @@ public:
     virtual uint8_t *GetData() const;
 
 private:
-    jobject bmp;
-    jintArray array;
-    jint *pixels;
+    jobject m_bmp;
+    jintArray m_array;
+    jint *m_pixels;
 };
 
 DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
@@ -76,35 +76,35 @@ bool AndroidImageCodec::Load(Image *image, char const *path)
     mid = env->GetMethodID(cls, "openImage",
                            "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
     jstring name = env->NewStringUTF(path);
-    bmp = env->CallObjectMethod(g_activity->clazz, mid, name);
+    m_bmp = env->CallObjectMethod(g_activity->clazz, mid, name);
     env->DeleteLocalRef(name);
-    if (!bmp)
+    if (!m_bmp)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not load %s\n", path);
 #endif
         return false;
     }
-    env->NewGlobalRef(bmp);
+    env->NewGlobalRef(m_bmp);
 
     /* Get image dimensions */
     mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    m_size.x = env->CallIntMethod(g_activity->clazz, mid, bmp);
+    m_size.x = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
     mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    m_size.y = env->CallIntMethod(g_activity->clazz, mid, bmp);
+    m_size.y = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
 
     /* Get pixels */
-    array = env->NewIntArray(m_size.x * m_size.y);
-    env->NewGlobalRef(array);
+    m_array = env->NewIntArray(m_size.x * m_size.y);
+    env->NewGlobalRef(m_array);
     mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
-    env->CallVoidMethod(g_activity->clazz, mid, bmp, array);
+    env->CallVoidMethod(g_activity->clazz, mid, m_bmp, m_array);
 
-    pixels = env->GetIntArrayElements(array, 0);
+    m_pixels = env->GetIntArrayElements(m_array, 0);
     for (int n = 0; n < m_size.x * m_size.y; n++)
     {
-        uint32_t u = pixels[n];
+        uint32_t u = m_pixels[n];
         u = (u & 0xff00ff00) | ((u & 0xff0000) >> 16) | ((u & 0xff) << 16);
-        pixels[n] = u;
+        m_pixels[n] = u;
     }
     m_format = PixelFormat::RGBA_8;
 
@@ -132,20 +132,20 @@ bool AndroidImageCodec::Close()
     jclass cls = env->GetObjectClass(g_activity->clazz);
     jmethodID mid;
 
-    env->ReleaseIntArrayElements(array, pixels, 0);
-    env->DeleteGlobalRef(array);
+    env->ReleaseIntArrayElements(m_array, m_pixels, 0);
+    env->DeleteGlobalRef(m_array);
 
     /* Free image */
     mid = env->GetMethodID(cls, "closeImage", "(Landroid/graphics/Bitmap;)V");
-    env->CallVoidMethod(g_activity->clazz, mid, bmp);
-    env->DeleteGlobalRef(bmp);
+    env->CallVoidMethod(g_activity->clazz, mid, m_bmp);
+    env->DeleteGlobalRef(m_bmp);
 
     return true;
 }
 
 uint8_t *AndroidImageCodec::GetData() const
 {
-    return (uint8_t *)pixels;
+    return (uint8_t *)m_pixels;
 }
 
 } /* namespace lol */

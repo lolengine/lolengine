@@ -52,7 +52,7 @@ extern void Init(int argc, char *argv[],
                  String const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
 extern void AddDataDir(String const &dir);
-extern Array<String> GetPathList(String const &file);
+extern array<String> GetPathList(String const &file);
 
 } /* namespace System */
 

@@ -33,7 +33,7 @@ class XboxInputData
 
 private:
 #if defined _XBOX
-    Array<int, Stick *> m_joysticks;
+    array<int, Stick *> m_joysticks;
 #endif
 };
 

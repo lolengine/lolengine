@@ -10,10 +10,10 @@
 //
 
 //
-// The Array class
+// The array class
 // ---------------
-// A very simple Array class not unlike the std::vector, with some nice
-// additional features, eg. Array<int,float> for automatic arrays of tuples.
+// A very simple array class not unlike the std::vector, with some nice
+// additional features, eg. array<int,float> for automatic arrays of tuples.
 //
 
 #if !defined __LOL_BASE_ARRAY_H__
@@ -41,16 +41,16 @@ namespace lol
  * m_count are allocated. The rest is uninitialised memory.
  */
 
-template<typename T, typename ARRAY> class ArrayBase
+template<typename T, typename ARRAY> class array_base
 {
 public:
-    typedef T Element;
+    typedef T element_t;
 
-    inline ArrayBase() : m_data(0), m_count(0), m_reserved(0)
+    inline array_base() : m_data(0), m_count(0), m_reserved(0)
     {
     }
 
-    inline ArrayBase(std::initializer_list<Element> const &list)
+    inline array_base(std::initializer_list<element_t> const &list)
       : m_data(0),
         m_count(0),
         m_reserved(0)
@@ -60,24 +60,24 @@ public:
             Push(elem);
     }
 
-    inline ~ArrayBase()
+    inline ~array_base()
     {
         for (int i = 0; i < m_count; i++)
-            m_data[i].~Element();
+            m_data[i].~element_t();
         delete[] reinterpret_cast<uint8_t *>(m_data);
     }
 
-    ArrayBase(ArrayBase const& that) : m_data(0), m_count(0), m_reserved(0)
+    array_base(array_base const& that) : m_data(0), m_count(0), m_reserved(0)
     {
         /* Reserve the exact number of values instead of what the other
          * array had reserved. Just a method for not wasting too much. */
         Reserve(that.m_count);
         for (int i = 0; i < that.m_count; i++)
-            new(&m_data[i]) Element(that[i]);
+            new(&m_data[i]) element_t(that[i]);
         m_count = that.m_count;
     }
 
-    ArrayBase& operator=(ArrayBase const& that)
+    array_base& operator=(array_base const& that)
     {
         if ((uintptr_t)this != (uintptr_t)&that)
         {
@@ -91,9 +91,9 @@ public:
                  * remaining elements. */
                 Reserve(that.m_count);
                 for (int i = 0; i < m_count && i < that.m_count; i++)
-                    m_data[i] = Element(that[i]);
+                    m_data[i] = element_t(that[i]);
                 for (int i = m_count; i < that.m_count; i++)
-                    new(&m_data[i]) Element(that[i]);
+                    new(&m_data[i]) element_t(that[i]);
             }
             else
             {
@@ -102,23 +102,23 @@ public:
                  * that we do not have, and finally destroy the remaining
                  * elements. */
                 for (int i = 0; i < m_count && i < that.m_count; i++)
-                    m_data[i] = Element(that[i]);
+                    m_data[i] = element_t(that[i]);
                 for (int i = m_count; i < that.m_count; i++)
-                    new(&m_data[i]) Element(that[i]);
+                    new(&m_data[i]) element_t(that[i]);
                 for (int i = that.m_count; i < m_count; i++)
-                    m_data[i].~Element();
+                    m_data[i].~element_t();
             }
             m_count = that.m_count;
         }
         return *this;
     }
 
-    ArrayBase& operator+=(ArrayBase const &that)
+    array_base& operator+=(array_base const &that)
     {
         int todo = that.m_count;
         Reserve(m_count + that.m_count);
         for (int i = 0; i < todo; i++)
-            new(&m_data[m_count + i]) Element(that[i]);
+            new(&m_data[m_count + i]) element_t(that[i]);
         m_count += todo;
         return *this;
     }
@@ -132,7 +132,7 @@ public:
         return ret;
     }
 
-    inline Element& operator[](int n)
+    inline element_t& operator[](int n)
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
@@ -141,14 +141,14 @@ public:
         return m_data[n];
     }
 
-    inline Element const& operator[](int n) const
+    inline element_t const& operator[](int n) const
     {
         ASSERT(n >= 0);
         ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
-    inline Element& operator[](uint32_t n)
+    inline element_t& operator[](uint32_t n)
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
@@ -157,14 +157,14 @@ public:
         return m_data[n];
     }
 
-    inline Element const& operator[](uint32_t n) const
+    inline element_t const& operator[](uint32_t n) const
     {
         ASSERT(n >= 0);
         ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
-    inline Element& operator[](uint64_t n)
+    inline element_t& operator[](uint64_t n)
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
@@ -173,52 +173,52 @@ public:
         return m_data[n];
     }
 
-    inline Element const& operator[](uint64_t n) const
+    inline element_t const& operator[](uint64_t n) const
     {
         ASSERT(n >= 0);
         ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
-    inline Element& Last()
+    inline element_t& Last()
     {
         ASSERT(m_count > 0);
         return m_data[m_count - 1];
     }
 
-    inline Element *Data()
+    inline element_t *Data()
     {
         return m_data;
     }
 
-    inline Element const *Data() const
+    inline element_t const *Data() const
     {
         return m_data;
     }
 
-    inline Element const& Last() const
+    inline element_t const& Last() const
     {
         ASSERT(m_count > 0);
         return m_data[m_count - 1];
     }
 
-    inline ArrayBase& operator<<(T const &x)
+    inline array_base& operator<<(T const &x)
     {
         if (m_count >= m_reserved)
         {
             T tmp = x;
             Grow();
-            new (&m_data[m_count]) Element(tmp);
+            new (&m_data[m_count]) element_t(tmp);
         }
         else
         {
-            new (&m_data[m_count]) Element(x);
+            new (&m_data[m_count]) element_t(x);
         }
         ++m_count;
         return *this;
     }
 
-    inline ArrayBase& operator>>(T const &x)
+    inline array_base& operator>>(T const &x)
     {
         RemoveItem(x);
         return *this;
@@ -248,10 +248,10 @@ public:
 
         for (int i = m_count; i > pos; --i)
         {
-            new (&m_data[i]) Element(m_data[i - 1]);
-            m_data[i - 1].~Element();
+            new (&m_data[i]) element_t(m_data[i - 1]);
+            m_data[i - 1].~element_t();
         }
-        new (&m_data[pos]) Element(x);
+        new (&m_data[pos]) element_t(x);
         ++m_count;
     }
 
@@ -312,7 +312,7 @@ public:
     inline T Pop()
     {
         ASSERT(m_count > 0);
-        Element tmp = Last();
+        element_t tmp = Last();
         Remove(m_count - 1, 1);
         return tmp;
     }
@@ -339,7 +339,7 @@ public:
         for (int i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
         for (int i = m_count - todelete; i < m_count; i++)
-            m_data[i].~Element();
+            m_data[i].~element_t();
         m_count -= todelete;
     }
 
@@ -355,23 +355,23 @@ public:
         {
             if (pos + i < m_count - 1 - i)
                 m_data[pos + i] = m_data[m_count - 1 - i];
-            m_data[m_count - 1 - i].~Element();
+            m_data[m_count - 1 - i].~element_t();
         }
         m_count -= todelete;
     }
 
-    void Resize(int count, Element e = Element())
+    void Resize(int count, element_t e = element_t())
     {
         ASSERT(count >= 0);
         Reserve(count);
 
         /* Too many elements? Remove them. */
         for (int i = count; i < m_count; ++i)
-            m_data[i].~Element();
+            m_data[i].~element_t();
 
         /* Not enough elements? Add some. */
         for (int i = m_count; i < count; ++i)
-            new(&m_data[i]) Element(e);
+            new(&m_data[i]) element_t(e);
 
         m_count = count;
     }
@@ -390,13 +390,13 @@ public:
          * information we could have. But until C++ gives us the proper
          * tools to deal with it, we assume new uint8_t[] returns properly
          * aligned data. */
-        Element *tmp = reinterpret_cast<Element *>(reinterpret_cast<uintptr_t>
-                               (new uint8_t[sizeof(Element) * toreserve]));
-        ASSERT(tmp, "out of memory in Array class");
+        element_t *tmp = reinterpret_cast<element_t *>(reinterpret_cast<uintptr_t>
+                               (new uint8_t[sizeof(element_t) * toreserve]));
+        ASSERT(tmp, "out of memory in array class");
         for (int i = 0; i < m_count; i++)
         {
-            new(&tmp[i]) Element(m_data[i]);
-            m_data[i].~Element();
+            new(&tmp[i]) element_t(m_data[i]);
+            m_data[i].~element_t();
         }
         delete[] reinterpret_cast<uint8_t *>(m_data);
         m_data = tmp;
@@ -410,7 +410,7 @@ public:
     class ConstIterator
     {
     public:
-        ConstIterator(ArrayBase const *array, int pos)
+        ConstIterator(array_base const *array, int pos)
           : m_pos(pos),
             m_array(array)
         { }
@@ -420,7 +420,7 @@ public:
             return m_pos != that.m_pos;
         }
 
-        Element const & operator *() const
+        element_t const & operator *() const
         {
             return (*m_array)[m_pos];
         }
@@ -433,13 +433,13 @@ public:
 
     private:
         int m_pos;
-        ArrayBase const *m_array;
+        array_base const *m_array;
     };
 
     class Iterator
     {
     public:
-        Iterator(ArrayBase *array, int pos)
+        Iterator(array_base *array, int pos)
           : m_pos(pos),
             m_array(array)
         { }
@@ -449,7 +449,7 @@ public:
             return m_pos != that.m_pos;
         }
 
-        Element operator *()
+        element_t operator *()
         {
             return (*m_array)[m_pos];
         }
@@ -462,7 +462,7 @@ public:
 
     private:
         int m_pos;
-        ArrayBase *m_array;
+        array_base *m_array;
     };
 
     ConstIterator begin() const { return ConstIterator(this, 0); }
@@ -472,7 +472,7 @@ public:
 
 public:
     inline int Count() const { return m_count; }
-    inline int Bytes() const { return m_count * sizeof(Element); }
+    inline int Bytes() const { return m_count * sizeof(element_t); }
 
 protected:
     void Grow()
@@ -480,18 +480,18 @@ protected:
         Reserve(m_count * 13 / 8 + 8);
     }
 
-    Element *m_data;
+    element_t *m_data;
     int m_count, m_reserved;
 };
 
 /*
- * Element types
+ * element_t types
  */
 
 template<typename T1, typename T2, typename T3 = void, typename T4 = void,
          typename T5 = void, typename T6 = void, typename T7 = void,
          typename T8 = void>
-class ArrayElement
+class array_element
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7; T8 m8;
@@ -499,7 +499,7 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6, typename T7>
-class ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>
+class array_element<T1, T2, T3, T4, T5, T6, T7, void>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7;
@@ -507,64 +507,64 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6>
-class ArrayElement<T1, T2, T3, T4, T5, T6, void, void>
+class array_element<T1, T2, T3, T4, T5, T6, void, void>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6;
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5>
-class ArrayElement<T1, T2, T3, T4, T5, void, void, void>
+class array_element<T1, T2, T3, T4, T5, void, void, void>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5;
 };
 
 template<typename T1, typename T2, typename T3, typename T4>
-class ArrayElement<T1, T2, T3, T4, void, void, void, void>
+class array_element<T1, T2, T3, T4, void, void, void, void>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4;
 };
 
 template<typename T1, typename T2, typename T3>
-class ArrayElement<T1, T2, T3, void, void, void, void, void>
+class array_element<T1, T2, T3, void, void, void, void, void>
 {
 public:
     T1 m1; T2 m2; T3 m3;
 };
 
 template<typename T1, typename T2>
-class ArrayElement<T1, T2, void, void, void, void, void, void>
+class array_element<T1, T2, void, void, void, void, void, void>
 {
 public:
     T1 m1; T2 m2;
 };
 
 /*
- * Array specialisations implementing specific setters
+ * array specialisations implementing specific setters
  */
 
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
-class Array : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
-                               Array<T1, T2, T3, T4, T5, T6, T7, T8>>
+class array : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
+                               array<T1, T2, T3, T4, T5, T6, T7, T8>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8>,
-                    Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
+                    array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, T4, T5, T6, T7, T8> Element;
+    typedef array_element<T1, T2, T3, T4, T5, T6, T7, T8> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6, T7, T8>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base(list) {}
 #endif
 
 public:
@@ -602,24 +602,24 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6, typename T7>
-class Array<T1, T2, T3, T4, T5, T6, T7, void>
-  : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
-                     Array<T1, T2, T3, T4, T5, T6, T7>>
+class array<T1, T2, T3, T4, T5, T6, T7, void>
+  : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
+                     array<T1, T2, T3, T4, T5, T6, T7>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, T7, void>,
-                    Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
+                    array<T1, T2, T3, T4, T5, T6, T7>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, T4, T5, T6, T7, void> Element;
+    typedef array_element<T1, T2, T3, T4, T5, T6, T7, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6, T7>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6, T7>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6, T7>>::array_base(list) {}
 #endif
 
 public:
@@ -655,24 +655,24 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6>
-class Array<T1, T2, T3, T4, T5, T6, void, void>
-  : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
-                     Array<T1, T2, T3, T4, T5, T6>>
+class array<T1, T2, T3, T4, T5, T6, void, void>
+  : public array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
+                     array<T1, T2, T3, T4, T5, T6>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, T6, void, void>,
-                    Array<T1, T2, T3, T4, T5, T6>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
+                    array<T1, T2, T3, T4, T5, T6>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, T4, T5, T6, void, void> Element;
+    typedef array_element<T1, T2, T3, T4, T5, T6, void, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5, T6>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5, T6>>::array_base(list) {}
 #endif
 
 public:
@@ -705,24 +705,24 @@ public:
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5>
-class Array<T1, T2, T3, T4, T5, void, void, void>
-  : public ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
-                     Array<T1, T2, T3, T4, T5>>
+class array<T1, T2, T3, T4, T5, void, void, void>
+  : public array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
+                     array<T1, T2, T3, T4, T5>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, T4, T5, void, void, void>,
-                    Array<T1, T2, T3, T4, T5>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
+                    array<T1, T2, T3, T4, T5>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, T4, T5, void, void, void> Element;
+    typedef array_element<T1, T2, T3, T4, T5, void, void, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4, T5>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3, T4, T5>>::array_base(list) {}
 #endif
 
 public:
@@ -753,24 +753,24 @@ public:
 };
 
 template<typename T1, typename T2, typename T3, typename T4>
-class Array<T1, T2, T3, T4, void, void, void, void>
-  : public ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
-                     Array<T1, T2, T3, T4>>
+class array<T1, T2, T3, T4, void, void, void, void>
+  : public array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
+                     array<T1, T2, T3, T4>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, T4, void, void, void, void>,
-                    Array<T1, T2, T3, T4>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
+                    array<T1, T2, T3, T4>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, T4, void, void, void, void> Element;
+    typedef array_element<T1, T2, T3, T4, void, void, void, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3, T4>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3, T4>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3, T4>>::array_base(list) {}
 #endif
 
 public:
@@ -797,24 +797,24 @@ public:
 };
 
 template<typename T1, typename T2, typename T3>
-class Array<T1, T2, T3, void, void, void, void, void>
-  : public ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
-                     Array<T1, T2, T3>>
+class array<T1, T2, T3, void, void, void, void, void>
+  : public array_base<array_element<T1, T2, T3, void, void, void, void, void>,
+                     array<T1, T2, T3>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, T3, void, void, void, void, void>,
-                    Array<T1, T2, T3>>::ArrayBase;
+    using array_base<array_element<T1, T2, T3, void, void, void, void, void>,
+                    array<T1, T2, T3>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, T3, void, void, void, void, void> Element;
+    typedef array_element<T1, T2, T3, void, void, void, void, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2, T3>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2, T3>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2, T3>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2, T3>>::array_base(list) {}
 #endif
 
 public:
@@ -839,24 +839,24 @@ public:
 };
 
 template<typename T1, typename T2>
-class Array<T1, T2, void, void, void, void, void, void>
-  : public ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
-                     Array<T1, T2>>
+class array<T1, T2, void, void, void, void, void, void>
+  : public array_base<array_element<T1, T2, void, void, void, void, void, void>,
+                     array<T1, T2>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<ArrayElement<T1, T2, void, void, void, void, void, void>,
-                    Array<T1, T2>>::ArrayBase;
+    using array_base<array_element<T1, T2, void, void, void, void, void, void>,
+                    array<T1, T2>>::array_base;
 #else
 public:
-    typedef ArrayElement<T1, T2, void, void, void, void, void, void> Element;
+    typedef array_element<T1, T2, void, void, void, void, void, void> element_t;
 
-    inline Array()
-      : ArrayBase<Element,
-                  Array<T1, T2>>::ArrayBase() {}
+    inline array()
+      : array_base<element_t,
+                  array<T1, T2>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<Element,
-                  Array<T1, T2>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<element_t,
+                  array<T1, T2>>::array_base(list) {}
 #endif
 
 public:
@@ -879,26 +879,32 @@ public:
 };
 
 template<typename T>
-class Array<T, void, void, void, void, void, void, void>
-  : public ArrayBase<T,
-                     Array<T>>
+class array<T, void, void, void, void, void, void, void>
+  : public array_base<T,
+                     array<T>>
 {
 #if INHERIT_CONSTRUCTORS
-    using ArrayBase<T,
-                    Array<T>>::ArrayBase;
+    using array_base<T,
+                    array<T>>::array_base;
 #else
 public:
-    typedef T Element;
+    typedef T element_t;
 
-    inline Array()
-      : ArrayBase<T,
-                  Array<T>>::ArrayBase() {}
+    inline array()
+      : array_base<T,
+                  array<T>>::array_base() {}
 
-    inline Array(std::initializer_list<Element> const &list)
-      : ArrayBase<T,
-                  Array<T>>::ArrayBase(list) {}
+    inline array(std::initializer_list<element_t> const &list)
+      : array_base<T,
+                  array<T>>::array_base(list) {}
 #endif
 };
+
+/* Transitional alias for the camelcase version of lol::array */
+template<typename T1, typename T2 = void, typename T3 = void,
+         typename T4 = void, typename T5 = void, typename T6 = void,
+         typename T7 = void, typename T8 = void>
+using Array = array<T1, T2, T3, T4, T5, T6, T7, T8>;
 
 } /* namespace lol */
 

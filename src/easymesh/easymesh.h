@@ -64,7 +64,7 @@ public:
     bool SetRender(bool should_render);
 
 private:
-    void UpdateVertexDict(Array< int, int > &vertex_dict);
+    void UpdateVertexDict(array< int, int > &vertex_dict);
 
     //-------------------------------------------------------------------------
     //Mesh CSG operations
@@ -378,11 +378,11 @@ public:
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 //private:
-    Array<uint16_t>     m_indices;
-    Array<VertexData>   m_vert;
+    array<uint16_t>     m_indices;
+    array<VertexData>   m_vert;
 
     //<vert count, indices count>
-    Array<int, int>     m_cursors;
+    array<int, int>     m_cursors;
 
     MeshRender          m_state;
 

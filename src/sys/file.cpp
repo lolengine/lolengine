@@ -144,7 +144,7 @@ class FileData
 
     String ReadString()
     {
-        Array<uint8_t> buf;
+        array<uint8_t> buf;
         buf.Resize(BUFSIZ);
         String ret;
         while (IsValid())
@@ -415,7 +415,7 @@ class DirectoryData
 #endif
     }
 
-    bool GetContentList(Array<String>* files, Array<String>* directories)
+    bool GetContentList(array<String>* files, array<String>* directories)
     {
         if (!IsValid())
             return false;
@@ -546,9 +546,9 @@ void Directory::Close()
 }
 
 //--
-bool Directory::GetContent(Array<String>* files, Array<Directory>* directories)
+bool Directory::GetContent(array<String>* files, array<Directory>* directories)
 {
-    Array<String> sfiles, sdirectories;
+    array<String> sfiles, sdirectories;
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
 
     if (directories)
@@ -563,19 +563,19 @@ bool Directory::GetContent(Array<String>* files, Array<Directory>* directories)
 }
 
 //--
-bool Directory::GetContent(Array<String>& files, Array<Directory>& directories)
+bool Directory::GetContent(array<String>& files, array<Directory>& directories)
 {
     return GetContent(&files, &directories);
 }
 
 //--
-bool Directory::GetContent(Array<Directory>& directories)
+bool Directory::GetContent(array<Directory>& directories)
 {
     return GetContent(nullptr, &directories);
 }
 
 //--
-bool Directory::GetContent(Array<String>& files)
+bool Directory::GetContent(array<String>& files)
 {
     return GetContent(&files, nullptr);
 }

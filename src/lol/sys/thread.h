@@ -103,7 +103,7 @@ protected:
     bool AddWork(ThreadJob* job);
 
     //Fetch Results
-    bool FetchResult(Array<ThreadJob*>& results);
+    bool FetchResult(array<ThreadJob*>& results);
     //Base thread work function
     static void *BaseThreadWork(void* data);
     virtual void TickGame(float seconds);
@@ -112,11 +112,11 @@ protected:
 
     /* Worker threads */
     int                     m_thread_count;
-    Array<Thread*>          m_threads;
+    array<Thread*>          m_threads;
     Queue<ThreadStatus>     m_spawnqueue, m_donequeue;
     Queue<ThreadJob*>       m_jobqueue;
     Queue<ThreadJob*>       m_resultqueue;
-    Array<ThreadJob*>       m_job_dispatch;
+    array<ThreadJob*>       m_job_dispatch;
 };
 
 //Generic class for thread manager, executes work and store results, for you to use
@@ -130,7 +130,7 @@ public:
 
     //Work stuff
     bool AddJob(ThreadJob* job) { return AddWork(job); }
-    bool GetWorkResult(Array<ThreadJob*>& results)
+    bool GetWorkResult(array<ThreadJob*>& results)
     {
         results += m_job_result;
         m_job_result.Empty();
@@ -140,7 +140,7 @@ public:
 protected:
     virtual void TreatResult(ThreadJob* result) { m_job_result << result; }
 
-    Array<ThreadJob*>       m_job_result;
+    array<ThreadJob*>       m_job_result;
 };
 #endif
 
