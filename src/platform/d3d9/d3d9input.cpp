@@ -35,7 +35,7 @@ class D3d9InputData
 
 private:
 #if defined USE_XINPUT
-    Array<int, InputDeviceInternal*> m_joysticks;
+    array<int, InputDeviceInternal*> m_joysticks;
 #endif // USE_XINPUT
 };
 

@@ -24,9 +24,9 @@ namespace lol
 struct CommandStack
 {
 private:
-    Array<int, int, int>    m_commands;
-    Array<float>            m_floats;
-    Array<int>              m_ints;
+    array<int, int, int>    m_commands;
+    array<float>            m_floats;
+    array<int>              m_ints;
     int                     m_f_cur;
     int                     m_i_cur;
 

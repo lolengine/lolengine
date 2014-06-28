@@ -70,7 +70,7 @@ bool BaseThreadManager::AddWork(ThreadJob* job)
     return false;
 }
 
-bool BaseThreadManager::FetchResult(Array<ThreadJob*>& results)
+bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
 {
     ThreadJob* result;
     while (m_resultqueue.TryPop(result))
@@ -112,7 +112,7 @@ void BaseThreadManager::TickGame(float seconds)
     while (m_job_dispatch.Count() > 0 && AddWork(m_job_dispatch.Last()))
         m_job_dispatch.Pop();
 
-    Array<ThreadJob*> result;
+    array<ThreadJob*> result;
     //Fetch and treat results
     if (FetchResult(result))
     {

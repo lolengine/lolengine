@@ -98,7 +98,7 @@ bool Ps3ImageCodec::Load(Image *image, char const *path)
     CellPngDecSubHandle hsub;
     CellPngDecOpnInfo open_info;
 
-    Array<String> pathlist = System::GetPathList(path);
+    array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
         String name = String(SYS_APP_HOME) + '/' + pathlist[i];

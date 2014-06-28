@@ -188,7 +188,7 @@ array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
 {
     ivec2 size = kernel.GetSize();
 
-    Array<Dot> tmp;
+    array<Dot> tmp;
     tmp.Resize(size.x * size.y);
 
     for (int y = 0; y < size.y; y++)

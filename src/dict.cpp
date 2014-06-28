@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    Array<Entity *> m_entities;
+    array<Entity *> m_entities;
     int nentities;
 };
 

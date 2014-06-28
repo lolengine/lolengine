@@ -86,7 +86,7 @@ Sample::Sample(char const *path)
     data->m_name = String("<sample> ") + path;
 
 #if __CELLOS_LV2__
-    Array<String> pathlist = System::GetPathList(path);
+    array<String> pathlist = System::GetPathList(path);
     File f;
     for (int i = 0; i < pathlist.Count(); ++i)
     {
@@ -103,7 +103,7 @@ Sample::Sample(char const *path)
         Log::Error("could not load sample %s\n", path);
     }
 #elif defined USE_SDL_MIXER
-    Array<String> pathlist = System::GetPathList(path);
+    array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); ++i)
     {
         data->m_chunk = Mix_LoadWAV(pathlist[i].C());

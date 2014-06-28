@@ -37,7 +37,7 @@ public:
     void Render();
 
 public:
-    Array<class SubMesh *> m_submeshes;
+    array<class SubMesh *> m_submeshes;
 };
 
 /*
@@ -68,10 +68,10 @@ protected:
     MeshPrimitive m_mesh_prim;
     Shader *m_shader;
     VertexDeclaration* m_vdecl;
-    Array<VertexBuffer *> m_vbos;
+    array<VertexBuffer *> m_vbos;
     IndexBuffer *m_ibo;
 
-    Array<String, Texture*> m_textures;
+    array<String, Texture*> m_textures;
 };
 
 } /* namespace lol */

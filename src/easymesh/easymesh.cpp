@@ -306,13 +306,13 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     }
 
     //A vertex dictionnary for vertices on the same spot.
-    Array< int, int > vertex_dict;
+    array< int, int > vertex_dict;
     //This list keeps track of the triangle that will need deletion at the end.
-    Array< int > triangle_to_kill;
+    array< int > triangle_to_kill;
     //Listing for each triangle of the vectors intersecting it. <tri_Id, <Point0, Point1, tri_isec_Normal>>
-    Array< int, Array< vec3, vec3, vec3 > > triangle_isec;
+    array< int, array< vec3, vec3, vec3 > > triangle_isec;
     //keep a track of the intersection point on the triangle. <pos, side_id>
-    Array< vec3, int > triangle_vertex;
+    array< vec3, int > triangle_vertex;
     for (int k = 0; k < 10; k++)
         triangle_vertex.Push(vec3(.0f), 0);
 
@@ -343,8 +343,8 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         int start_point     = (mesh_id == 0)?(cursor_start):(m_cursors.Last().m2);
         int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(indices_count);
         CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_1):(mesh_bsp_0);
-        Array< vec3, int, int, float > vert_list;
-        Array< int, int, int, int > tri_list;
+        array< vec3, int, int, float > vert_list;
+        array< int, int, int, int > tri_list;
         vec3 n0(.0f); vec3 n1(.0f);
         vec4 c0(.0f); vec4 c1(.0f);
 
@@ -699,7 +699,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
         BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
         return;
 
-    Array< Array<vec3> > normals;
+    array< array<vec3> > normals;
     normals.Resize(m_vert.Count());
     for (int i = 0; i < vcount; i += 3)
     {
@@ -734,7 +734,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 //-----------------------------------------------------------------------------
 void EasyMesh::VerticesCleanup()
 {
-    Array<int> vert_ids;
+    array<int> vert_ids;
     vert_ids.Resize(m_vert.Count(), 0);
 
     //1: Remove triangles with two vertices on each other
@@ -758,7 +758,7 @@ void EasyMesh::VerticesCleanup()
     }
 
     //2: Remove all unused vertices
-    Array<VertexData> old_vert = m_vert;
+    array<VertexData> old_vert = m_vert;
     int shift = 0;
     m_vert.Empty();
     for (int i = 0; i < vert_ids.Count(); ++i)
@@ -812,8 +812,8 @@ void EasyMesh::VerticesSeparate()
         return;
     }
 
-    Array< Array<int> > new_ids;
-    Array<int> vert_ids;
+    array< array<int> > new_ids;
+    array<int> vert_ids;
     vert_ids.Resize(m_vert.Count(), 0);
 
     //1: Mark all used vertices
@@ -855,7 +855,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     UNUSED(uv_scale, uv_offset);
 #if 0
     VertexDictionnary vert_dict;
-    Array<int> tri_list;
+    array<int> tri_list;
 
     tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
     for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
@@ -865,8 +865,8 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     }
 
     //full triangle count
-    Array<int> tri_done;
-    Array<int> tri_check;
+    array<int> tri_done;
+    array<int> tri_check;
     int tri_count = (m_indices.Count() - m_cursors.Last().m2) / 3;
 
     tri_check << tri_list[0];
@@ -962,7 +962,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             uv[2] = texu_dir * dot(v01, v02) + texv_dir * dot(v_dir, v02);
 
             //Set UV on ALL matching vertices!
-            Array<int> matching_vert;
+            array<int> matching_vert;
             for (int i = 0; i < 3; i++)
             {
 #if 1
@@ -1118,7 +1118,7 @@ void EasyMesh::RadialJitter(float r)
         return;
     }
 
-    Array<int> Welded;
+    array<int> Welded;
     Welded.Push(-1);
     for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
     {
@@ -1432,7 +1432,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
 
     int ibase = m_indices.Count();
 
-    Array<vec3> vertices;
+    array<vec3> vertices;
     float uv_h = 0;
     float uv_r = 0;
 
@@ -2434,10 +2434,10 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
     }
 
     VertexDictionnary vert_dict;
-    Array<vec3> smooth_buf[2];
-    Array<int> master_list;
-    Array<int> matching_ids;
-    Array<int> connected_vert;
+    array<vec3> smooth_buf[2];
+    array<int> master_list;
+    array<int> matching_ids;
+    array<int> connected_vert;
     int smbuf = 0;
 
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)

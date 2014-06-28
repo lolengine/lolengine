@@ -79,7 +79,7 @@ bool MessageService::Send(MessageBucket id, const char* message)
     {
         ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
-        Array<MessageList>& bucket = g.m_bucket[id];
+        array<MessageList>& bucket = g.m_bucket[id];
         bucket << MessageList(time(nullptr), String(message));
         return true;
     }
@@ -104,7 +104,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& times
     {
         ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
-        Array<MessageList>& bucket = g.m_bucket[id];
+        array<MessageList>& bucket = g.m_bucket[id];
 
         if (bucket.Count())
         {
@@ -135,7 +135,7 @@ bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_t
     {
         ASSERT(0 <= id && (int)id < g_messageservice->m_bucket.Count());
         MessageService& g = *g_messageservice;
-        Array<MessageList>& bucket = g.m_bucket[id];
+        array<MessageList>& bucket = g.m_bucket[id];
         message = String("");
 
         if (bucket.Count())

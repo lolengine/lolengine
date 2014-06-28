@@ -30,7 +30,7 @@ namespace lol
  * The bug was reported to Microsoft and fixed by them, but the fix
  * is not yet available.
  * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
-static bool RegisterAllCodecs(Array<ImageCodec *> &codeclist)
+static bool RegisterAllCodecs(array<ImageCodec *> &codeclist)
 {
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    Array<ImageCodec *> m_codecs;
+    array<ImageCodec *> m_codecs;
     map<String, Image *> m_images;
 }
 g_image_loader;
@@ -238,7 +238,7 @@ void Image::Unlock(void const *pixels)
     ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->Data());
 }
 
-bool Image::RetrieveTiles(Array<ivec2, ivec2>& tiles) const
+bool Image::RetrieveTiles(array<ivec2, ivec2>& tiles) const
 {
     /* TODO: re-implement this */
     //return m_data->m_codecdata->RetrieveTiles(tiles);

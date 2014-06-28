@@ -45,7 +45,7 @@ private:
     String m_name;
 
     /* Pixels, then texture coordinates */
-    Array<ibox2, box2> m_tiles;
+    array<ibox2, box2> m_tiles;
     ivec2 m_tile_size, m_image_size, m_texture_size;
 
     Image *m_image;
@@ -61,7 +61,7 @@ TileSet::TileSet(char const *path)
 {
     Init(path);
 
-    Array<ivec2, ivec2> tiles;
+    array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
@@ -72,7 +72,7 @@ TileSet::TileSet(char const *path, Image* image)
 {
     Init(path, image);
 
-    Array<ivec2, ivec2> tiles;
+    array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
@@ -102,7 +102,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
                       size * ivec2(i + 1, j + 1)));
     }
 
-    Array<ivec2, ivec2> tiles;
+    array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
@@ -132,7 +132,7 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
                       size * ivec2(i + 1, j + 1)));
     }
 
-    Array<ivec2, ivec2> tiles;
+    array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));

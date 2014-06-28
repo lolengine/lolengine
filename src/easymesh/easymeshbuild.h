@@ -167,7 +167,7 @@ public:
     inline CommandStack &CmdStack() { return m_stack; }
     inline int &Cmdi()              { return m_i_cmd; }
     inline int &CmdExecNb()         { return m_exec_nb; }
-    inline Array<int, int> &LoopStack(){ return m_loop_stack; }
+    inline array<int, int> &LoopStack(){ return m_loop_stack; }
     inline vec4 &ColorA()           { return m_color_a; }
     inline vec4 &ColorB()           { return m_color_b; }
     inline vec2 &TexCoordOffset()   { return m_texcoord_offset; }
@@ -359,15 +359,15 @@ public:
     CommandStack        m_stack;
     int                 m_i_cmd;
     int                 m_exec_nb;
-    Array<int, int>     m_loop_stack;
+    array<int, int>     m_loop_stack;
     vec4                m_color_a;
     vec4                m_color_b;
     vec2                m_texcoord_offset;
     vec2                m_texcoord_offset2;
     vec2                m_texcoord_scale;
     vec2                m_texcoord_scale2;
-    Array<vec2, vec2>   m_texcoord_custom_build[MeshType::MAX];
-    Array<vec2, vec2>   m_texcoord_custom_build2[MeshType::MAX];
+    array<vec2, vec2>   m_texcoord_custom_build[MeshType::MAX];
+    array<vec2, vec2>   m_texcoord_custom_build2[MeshType::MAX];
     uint32_t            m_texcoord_build_type[MeshType::MAX];
     uint32_t            m_texcoord_build_type2[MeshType::MAX];
     uint32_t            m_build_flags;
@@ -391,20 +391,20 @@ class VertexDictionnary
 {
 public:
     int FindVertexMaster(const int search_idx);
-    bool FindMatchingVertices(const int search_idx, Array<int> &matching_ids);
-    bool FindConnectedVertices(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_vert, Array<int> const *ignored_tri = nullptr);
-    bool FindConnectedTriangles(const int search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
-    bool FindConnectedTriangles(const ivec2 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
-    bool FindConnectedTriangles(const ivec3 &search_idx, const Array<uint16_t> &tri_list, const int tri0, Array<int> &connected_tri, Array<int> const *ignored_tri = nullptr);
+    bool FindMatchingVertices(const int search_idx, array<int> &matching_ids);
+    bool FindConnectedVertices(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_vert, array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const ivec2 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
+    bool FindConnectedTriangles(const ivec3 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
     void AddVertex(int vert_id, vec3 vert_coord);
     void RemoveVertex(int vert_id);
-    bool GetMasterList(Array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
+    bool GetMasterList(array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
     void Clear() { vertex_list.Empty(); }
 private:
     //<VertexId, VertexLocation, VertexMasterId>
-    Array<int, vec3, int>   vertex_list;
+    array<int, vec3, int>   vertex_list;
     //List of the master_ vertices
-    Array<int>              master_list;
+    array<int>              master_list;
 };
 
 } /* namespace lol */

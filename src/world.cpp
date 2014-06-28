@@ -47,7 +47,7 @@ class WorldData
         char const *filename = lua_tostring(L, 1);
         int status = LUA_ERRFILE;
 
-        Array<String> pathlist = System::GetPathList(filename);
+        array<String> pathlist = System::GetPathList(filename);
         File f;
         for (int i = 0; i < pathlist.Count(); ++i)
         {

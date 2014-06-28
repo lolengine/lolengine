@@ -47,7 +47,7 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
 
     //Put file in memory
     long file_size = file.GetSize();
-    Array<uint8_t> file_buffer;
+    array<uint8_t> file_buffer;
     file_buffer.Resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
     file.Close();

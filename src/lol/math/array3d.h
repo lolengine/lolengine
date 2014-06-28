@@ -33,11 +33,11 @@ namespace lol
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
-class array3d : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
+class array3d : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
-    typedef Array<T1, T2, T3, T4, T5, T6, T7, T8> Super;
-    typedef typename Super::Element Element;
+    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
+    typedef typename super::element_t element_t;
 
     inline array3d()
       : m_size(0, 0, 0)
@@ -46,17 +46,17 @@ public:
 
     inline array3d(std::initializer_list<
                    std::initializer_list<
-                   std::initializer_list<Element>>> const &list)
+                   std::initializer_list<element_t>>> const &list)
       : m_size(list.size() && (*list.begin()).size() ?
                    (int)(*(*list.begin()).begin()).size() : 0,
                list.size() ? (int)(*list.begin()).size() : 0,
                (int)list.size())
     {
-        Super::Reserve(m_size.x * m_size.y * m_size.z);
+        super::Reserve(m_size.x * m_size.y * m_size.z);
         for (auto ll : list)
             for (auto l : ll)
                 for (auto elem : l)
-                    Super::Push(elem);
+                    super::Push(elem);
     }
 
     inline array3d(int w, int h, int d)
@@ -70,7 +70,7 @@ public:
     }
 
     /* Access elements directly using an ivec3 index */
-    inline Element const &operator [](ivec3 pos) const
+    inline element_t const &operator [](ivec3 pos) const
     {
         ASSERT(pos.x >= 0);
         ASSERT(pos.y >= 0);
@@ -86,7 +86,7 @@ public:
         return this->m_data[n];
     }
 
-    inline Element &operator [](ivec3 pos)
+    inline element_t &operator [](ivec3 pos)
     {
         ASSERT(pos.x >= 0);
         ASSERT(pos.y >= 0);
@@ -120,7 +120,7 @@ public:
             {
             }
 
-            inline Element &operator [](int k)
+            inline element_t &operator [](int k)
             {
                 ASSERT(k >= 0);
                 ASSERT(k < m_array.m_size.z);
@@ -162,7 +162,7 @@ public:
             {
             }
 
-            inline Element const &operator [](int k) const
+            inline element_t const &operator [](int k) const
             {
                 ASSERT(k >= 0);
                 ASSERT(k < m_array.m_size.z);
@@ -203,7 +203,7 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(ivec3 size, Element e = Element())
+    inline void SetSize(ivec3 size, element_t e = element_t())
     {
         this->Resize(size.x * size.y * size.z, e);
         m_size = size;
@@ -215,10 +215,10 @@ public:
     }
 
 public:
-    inline Element *Data() { return Super::Data(); }
-    inline Element const *Data() const { return Super::Data(); }
-    inline int Count() const { return Super::Count(); }
-    inline int Bytes() const { return Super::Bytes(); }
+    inline element_t *Data() { return super::Data(); }
+    inline element_t const *Data() const { return super::Data(); }
+    inline int Count() const { return super::Count(); }
+    inline int Bytes() const { return super::Bytes(); }
 
 private:
     ivec3 m_size;

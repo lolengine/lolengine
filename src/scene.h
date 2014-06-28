@@ -67,7 +67,7 @@ public:
     void AddLine(vec2 a, vec2 b, vec4 color, float az=-1.f, float bz=-1.f);
 
     void AddLight(Light *light);
-    Array<Light *> const &GetLights() const;
+    array<Light *> const &GetLights() const;
 
 private:
     SceneData *data;

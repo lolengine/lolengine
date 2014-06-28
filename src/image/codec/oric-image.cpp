@@ -38,7 +38,7 @@ public:
 
 private:
     static String ReadScreen(char const *name);
-    static void WriteScreen(Image &image, Array<uint8_t> &result);
+    static void WriteScreen(Image &image, array<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -116,7 +116,7 @@ bool OricImageCodec::Save(Image *image, char const *path)
         || toupper(path[len - 1]) != 'P')
         return false;
 
-    Array<uint8_t> result;
+    array<uint8_t> result;
 
     result << 0x16 << 0x16 << 0x16 << 0x16 << 0x24;
     result << 0 << 0xff << 0x80 << 0 << 0xbf << 0x3f << 0xa0 << 0;
@@ -465,7 +465,7 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
     return bestcommand;
 }
 
-void OricImageCodec::WriteScreen(Image &image, Array<uint8_t> &result)
+void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
 {
     ivec2 size = image.GetSize();
     vec4 *pixels = image.Lock<PixelFormat::RGBA_F32>();

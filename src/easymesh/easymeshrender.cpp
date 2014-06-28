@@ -152,8 +152,8 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
     /* FIXME: this should be hidden in the shader */
-    Array<Light *> const &lights = g_scene->GetLights();
-    Array<vec4> light_data;
+    array<Light *> const &lights = g_scene->GetLights();
+    array<vec4> light_data;
     //This is not very nice, but necessary for emscripten WebGL generation.
     float f = 0.f;
 
@@ -224,7 +224,7 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
 
     if (!m_ibo)
     {
-        Array<uint16_t> indexlist;
+        array<uint16_t> indexlist;
         for (int i = 0; i < src_mesh->m_indices.Count(); i += 3)
         {
             indexlist << src_mesh->m_indices[i + 0];
@@ -292,7 +292,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        Array<vec3, vec3, u8vec4, vec4> vertexlist;
+        array<vec3, vec3, u8vec4, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord,
                             src_mesh->m_vert[i].m_normal,
@@ -309,7 +309,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        Array<vec3, vec3, u8vec4, vec2> vertexlist;
+        array<vec3, vec3, u8vec4, vec2> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord,
                             src_mesh->m_vert[i].m_normal,
@@ -321,7 +321,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     {
         new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
 
-        Array<vec3, vec4, vec4> vertexlist;
+        array<vec3, vec4, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_color, src_mesh->m_vert[i].m_texcoord);
         COPY_VBO;
@@ -334,7 +334,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
                           VertexUsage::Normal,
                           VertexUsage::Color));
 
-        Array<vec3,vec3,u8vec4> vertexlist;
+        array<vec3,vec3,u8vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord,
                             src_mesh->m_vert[i].m_normal,
@@ -345,7 +345,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     {
         new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        Array<vec3, vec4> vertexlist;
+        array<vec3, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord);
         COPY_VBO;
@@ -354,7 +354,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     {
         new_vdecl = new VertexDeclaration(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        Array<vec3, vec2> vertexlist;
+        array<vec3, vec2> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord.xy);
         COPY_VBO;
@@ -363,7 +363,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     {
         new_vdecl = new VertexDeclaration(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
 
-        Array<vec3, u8vec4> vertexlist;
+        array<vec3, u8vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.Count(); i++)
             vertexlist.Push(src_mesh->m_vert[i].m_coord, (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
         COPY_VBO;

@@ -46,7 +46,7 @@ private:
         BlockIsForeverFalse,
         BlockIsTrue,
     };
-    Array<int> m_pp_stack;
+    array<int> m_pp_stack;
 
     char const *m_input;
 };

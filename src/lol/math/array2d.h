@@ -33,11 +33,11 @@ namespace lol
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
-class array2d : protected Array<T1, T2, T3, T4, T5, T6, T7, T8>
+class array2d : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
-    typedef Array<T1, T2, T3, T4, T5, T6, T7, T8> Super;
-    typedef typename Super::Element Element;
+    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
+    typedef typename super::element_t element_t;
 
     inline array2d()
       : m_size(0, 0)
@@ -45,14 +45,14 @@ public:
     }
 
     inline array2d(std::initializer_list<
-                   std::initializer_list<Element>> const &list)
+                   std::initializer_list<element_t>> const &list)
       : m_size(list.size() ? (int)(*list.begin()).size() : 0,
                (int)list.size())
     {
-        Super::Reserve(m_size.x * m_size.y);
+        super::Reserve(m_size.x * m_size.y);
         for (auto l : list)
             for (auto elem : l)
-                Super::Push(elem);
+                super::Push(elem);
     }
 
     inline array2d(int w, int h)
@@ -66,7 +66,7 @@ public:
     }
 
     /* Access elements directly using an ivec2 index */
-    inline Element const &operator [](ivec2 pos) const
+    inline element_t const &operator [](ivec2 pos) const
     {
         ASSERT(pos.x >= 0);
         ASSERT(pos.y >= 0);
@@ -80,7 +80,7 @@ public:
         return this->m_data[n];
     }
 
-    inline Element &operator [](ivec2 pos)
+    inline element_t &operator [](ivec2 pos)
     {
         ASSERT(pos.x >= 0);
         ASSERT(pos.y >= 0);
@@ -103,7 +103,7 @@ public:
         {
         }
 
-        inline Element &operator [](int j)
+        inline element_t &operator [](int j)
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -124,7 +124,7 @@ public:
         {
         }
 
-        inline Element const &operator [](int j) const
+        inline element_t const &operator [](int j) const
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -153,7 +153,7 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(ivec2 size, Element e = Element())
+    inline void SetSize(ivec2 size, element_t e = element_t())
     {
         this->Resize(size.x * size.y, e);
         m_size = size;
@@ -165,10 +165,10 @@ public:
     }
 
 public:
-    inline Element *Data() { return Super::Data(); }
-    inline Element const *Data() const { return Super::Data(); }
-    inline int Count() const { return Super::Count(); }
-    inline int Bytes() const { return Super::Bytes(); }
+    inline element_t *Data() { return super::Data(); }
+    inline element_t const *Data() const { return super::Data(); }
+    inline int Count() const { return super::Count(); }
+    inline int Bytes() const { return super::Bytes(); }
 
 private:
     ivec2 m_size;

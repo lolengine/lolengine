@@ -37,7 +37,7 @@ namespace System
 #   define SEPARATOR '/'
 #endif
 
-static Array<String> data_dir;
+static array<String> data_dir;
 
 void Init(int argc, char *argv[],
           String const &projectdir,
@@ -157,9 +157,9 @@ void AddDataDir(String const &dir)
     data_dir << dir;
 }
 
-Array<String> GetPathList(String const &file)
+array<String> GetPathList(String const &file)
 {
-    Array<String> ret;
+    array<String> ret;
 
     for (int i = 0; i < data_dir.Count(); ++i)
         ret << data_dir[i] + file;

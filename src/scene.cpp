@@ -59,30 +59,30 @@ class SceneData
 
 private:
     /* New scenegraph */
-    Array<Primitive> m_primitives;
+    array<Primitive> m_primitives;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
     float   m_new_line_time;
     int     m_new_line_mask;
     float   m_new_line_segment_size;
     vec4    m_new_line_color;
-    Array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
+    array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
     int m_debug_mask;
     Shader *m_line_shader;
     VertexDeclaration *m_line_vdecl;
 
     int m_tile_cam;
-    Array<Tile> m_tiles;
-    Array<Tile> m_palettes;
-    Array<Light *> m_lights;
+    array<Tile> m_tiles;
+    array<Tile> m_palettes;
+    array<Light *> m_lights;
 
     Shader *m_tile_shader;
     Shader *m_palette_shader;
     VertexDeclaration *m_tile_vdecl;
-    Array<VertexBuffer *> m_tile_bufs;
+    array<VertexBuffer *> m_tile_bufs;
 
     Camera *m_default_cam;
-    Array<Camera *> m_camera_stack;
+    array<Camera *> m_camera_stack;
 };
 
 /*
@@ -236,7 +236,7 @@ void Scene::AddLight(Light *l)
     data->m_lights.Push(l);
 }
 
-Array<Light *> const &Scene::GetLights() const
+array<Light *> const &Scene::GetLights() const
 {
     return data->m_lights;
 }
@@ -277,8 +277,8 @@ void Scene::RenderPrimitives()
             u_normalmat = shader->GetUniformLocation("u_normalmat");
 
             /* Per-scene environment */
-            Array<Light *> const &lights = GetLights();
-            Array<vec4> light_data;
+            array<Light *> const &lights = GetLights();
+            array<vec4> light_data;
 
             /* FIXME: the 4th component of the position can be used for other things */
             /* FIXME: GetUniform("blabla") is costly */
@@ -325,7 +325,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     for (int p = 0; p < 2; p++)
     {
         Shader *shader      = (p == 0) ? data->m_tile_shader : data->m_palette_shader;
-        Array<Tile>& tiles  = (p == 0) ? data->m_tiles : data->m_palettes;
+        array<Tile>& tiles  = (p == 0) ? data->m_tiles : data->m_palettes;
 
         if (tiles.Count() == 0)
             continue;
@@ -434,7 +434,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     if (!data->m_line_shader)
         data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
 
-    Array<vec4, vec4, vec4, vec4> buff;
+    array<vec4, vec4, vec4, vec4> buff;
     buff.Resize(linecount);
     int real_linecount = 0;
     mat4 const inv_view_proj = inverse(g_scene->GetCamera()->GetProjection() * g_scene->GetCamera()->GetView());

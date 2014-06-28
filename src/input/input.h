@@ -48,14 +48,14 @@ public:
     float GetAxisSensitivity(int index) const { return m_axis[index].m2; }
 
     /** Gets a list of the name of all available keys in this device */
-    const Array<String>& GetAllKeys() const { return m_keynames; }
+    const array<String>& GetAllKeys() const { return m_keynames; }
     /** Gets a list of the name of all available axis in this device */
-    const Array<String>& GetAllAxis() const { return m_axisnames; }
+    const array<String>& GetAllAxis() const { return m_axisnames; }
     /** Gets a list of the name of all available cursors in this device */
-    const Array<String>& GetAllCursors() const { return m_cursornames; }
+    const array<String>& GetAllCursors() const { return m_cursornames; }
 
     /** Gets a list of the name of all available input devices */
-    static Array<String> GetAvailableDevices();
+    static array<String> GetAvailableDevices();
     /** Gets an input device by its name */
     static InputDevice* Get(const char* name) { return GetDevice(name); }
     /** Sets whether the mouse cursor should be captured. */
@@ -66,16 +66,16 @@ protected:
 
     String m_name;
 
-    Array<String> m_keynames;
-    Array<String> m_axisnames;
-    Array<String> m_cursornames;
+    array<String> m_keynames;
+    array<String> m_axisnames;
+    array<String> m_cursornames;
 
     /** key states (pressed/released) */
-    Array<bool> m_keys;
+    array<bool> m_keys;
     /** axis states (value and sensitivity) */
-    Array<float, float> m_axis;
+    array<float, float> m_axis;
     /** cursor position */
-    Array<vec2, ivec2> m_cursors;
+    array<vec2, ivec2> m_cursors;
 
     static bool m_capturemouse;
 
@@ -97,10 +97,10 @@ protected:
     }
 
 private:
-    static Array<InputDevice*> devices;
+    static array<InputDevice*> devices;
 
     template <typename T>
-    int GetItemIndex(const char* name, const Array<String, T>& array) const
+    int GetItemIndex(const char* name, const array<String, T>& array) const
     {
         for (int i = 0; i < array.Count(); ++i)
         {

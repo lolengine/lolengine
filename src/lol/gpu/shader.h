@@ -113,10 +113,10 @@ public:
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
     void SetUniform(ShaderUniform const &uni, TextureUniform tex, int index);
 
-    void SetUniform(ShaderUniform const &uni, Array<float> const &v);
-    void SetUniform(ShaderUniform const &uni, Array<vec2> const &v);
-    void SetUniform(ShaderUniform const &uni, Array<vec3> const &v);
-    void SetUniform(ShaderUniform const &uni, Array<vec4> const &v);
+    void SetUniform(ShaderUniform const &uni, array<float> const &v);
+    void SetUniform(ShaderUniform const &uni, array<vec2> const &v);
+    void SetUniform(ShaderUniform const &uni, array<vec3> const &v);
+    void SetUniform(ShaderUniform const &uni, array<vec4> const &v);
 
     void Bind() const;
     void Unbind() const;

@@ -58,7 +58,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
         return false;
     }
 
-    Array<String> pathlist = System::GetPathList(path);
+    array<String> pathlist = System::GetPathList(path);
     Gdiplus::Bitmap *bitmap = nullptr;
     for (auto fullpath : pathlist)
     {

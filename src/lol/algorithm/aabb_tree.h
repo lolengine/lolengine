@@ -29,9 +29,9 @@ namespace Debug {
 //--
 
 template<typename TREE, typename TE, typename TBB>
-void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
-               Array<TE *, int, vec4> &elements,
-               Array<int, TBB> &leaves, int children, vec4 color)
+void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
+               array<TE *, int, vec4> &elements,
+               array<int, TBB> &leaves, int children, vec4 color)
 {
     boxes.Push(tree->GetAABB(), Color::white);
     leaves.Push(0, boxes.Last().m1);
@@ -70,9 +70,9 @@ void DrawInner(TREE *tree, Array<TBB, vec4> &boxes,
 template <typename TE>
 void Draw(Quadtree<TE>* tree, vec4 color)
 {
-    Array<box2, vec4> boxes;
-    Array<TE*, int, vec4> elements;
-    Array<int, box2> leaves;
+    array<box2, vec4> boxes;
+    array<TE*, int, vec4> elements;
+    array<int, box2> leaves;
 
     DrawInner<Quadtree<TE>, TE, box2>(tree, boxes, elements, leaves, 4, color);
 
@@ -101,9 +101,9 @@ void Draw(Quadtree<TE>* tree, vec4 color)
 template <typename TE>
 void Draw(Octree<TE>* tree, vec4 color)
 {
-    Array<box3, vec4> boxes;
-    Array<TE*, int, vec4> elements;
-    Array<int, box3> leaves;
+    array<box3, vec4> boxes;
+    array<TE*, int, vec4> elements;
+    array<int, box3> leaves;
 
     DrawInner<Octree<TE>, TE, box3>(tree, boxes, elements, leaves, 8, color);
 
@@ -143,7 +143,7 @@ class AABBTree
         //Children pos in the list
         int             m_children[child_nb];
         //Element list
-        Array<int>      m_elements;
+        array<int>      m_elements;
 
         NodeLeaf(int parent)
         {
@@ -156,7 +156,7 @@ class AABBTree
     struct TreeElement
     {
         TE*             m_element;
-        Array<int>      m_leaves;
+        array<int>      m_leaves;
 
         inline bool operator==(const TE*& element) { return m_element == element; }
     };
@@ -235,7 +235,7 @@ private:
 
         TreeElement new_element;
         new_element.m_element = element;
-        new_element.m_leaves = Array<int>();
+        new_element.m_leaves = array<int>();
         m_elements << new_element;
         return m_elements.Count() - 1;
     }
@@ -254,7 +254,7 @@ private:
     }
 
     //--
-    bool                TestLeaf(int leaf, const TB& leaf_bb, const TB& test_bb, Array<TE*>& elements)
+    bool                TestLeaf(int leaf, const TB& leaf_bb, const TB& test_bb, array<TE*>& elements)
     {
         bool result = false;
         if (TestAABBVsAABB(leaf_bb, test_bb))
@@ -299,7 +299,7 @@ private:
                 depth < m_max_depth)
             {
                 //Extract elements
-                Array<int> elements = m_tree[leaf].m_elements;
+                array<int> elements = m_tree[leaf].m_elements;
                 elements.PushUnique(AddElement(element));
                 m_tree[leaf].m_elements.Empty();
                 //Add children
@@ -327,7 +327,7 @@ private:
 public:
     void                RegisterElement(TE* element)                        { RegisterElement(element, 0, GetAABB(), 0); }
     void                UnregisterElement(TE* element)                      { RemoveElement(element); }
-    bool                FindElements(const TB& bbox, Array<TE*>& elements)  { return TestLeaf(0, GetAABB(), bbox, elements); }
+    bool                FindElements(const TB& bbox, array<TE*>& elements)  { return TestLeaf(0, GetAABB(), bbox, elements); }
     void                Clear()
     {
         m_tree.Empty();
@@ -353,20 +353,20 @@ public:
     void                SetMaxDepth(int max_depth)      { m_max_depth = max_depth; }
     void                SetMaxElement(int max_element)  { m_max_element = max_element; }
 
-    Array<NodeLeaf> const & GetTree() const
+    array<NodeLeaf> const & GetTree() const
     {
         return m_tree;
     }
 
-    Array<TreeElement> const & GetElements() const
+    array<TreeElement> const & GetElements() const
     {
         return m_elements;
     }
 
 protected:
-    Array<NodeLeaf>     m_tree;         //actual tree
-    Array<TreeElement>  m_elements;     //elements to leaves
-    Array<int>          m_free_leaves;  //leaves removed from tree
+    array<NodeLeaf>     m_tree;         //actual tree
+    array<TreeElement>  m_elements;     //elements to leaves
+    array<int>          m_free_leaves;  //leaves removed from tree
     TV                  m_size;         //Main tree size
     int                 m_max_depth;    //Maximum depth possible
     int                 m_max_element;  //Maximum element per leaf

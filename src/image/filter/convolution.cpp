@@ -21,8 +21,8 @@
 namespace lol
 {
 
-static Image SepConv(Image &src, Array<float> const &hvec,
-                     Array<float> const &vvec);
+static Image SepConv(Image &src, array<float> const &hvec,
+                     array<float> const &vvec);
 static Image NonSepConv(Image &src, array2d<float> const &kernel);
 
 Image Image::Convolution(array2d<float> const &kernel)
@@ -67,7 +67,7 @@ Image Image::Convolution(array2d<float> const &kernel)
     if (separable)
     {
         /* Matrix rank is 1! Separate the filter. */
-        Array<float> hvec, vvec;
+        array<float> hvec, vvec;
 
         float norm = 1.0f / lol::sqrt(lol::abs(kernel[bestx][besty]));
         for (int dx = 0; dx < ksize.x; dx++)
@@ -192,8 +192,8 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static Image SepConv(Image &src, Array<float> const &hvec,
-                     Array<float> const &vvec)
+static Image SepConv(Image &src, array<float> const &hvec,
+                     array<float> const &vvec)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
@@ -254,8 +254,8 @@ static Image SepConv(Image &src, Array<float> const &hvec,
     return dst;
 }
 
-static Image SepConv(Image &src, Array<float> const &hvec,
-                     Array<float> const &vvec)
+static Image SepConv(Image &src, array<float> const &hvec,
+                     array<float> const &vvec)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
