@@ -57,8 +57,8 @@ array2d<float> Image::HalftoneKernel(ivec2 size)
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
         {
-            float dx = 2.f * x / size.x - 0.5f;
-            float dy = 2.f * (y + 0.07f) / size.y - 0.5f;
+            float dx = 2.f * (x + 0.02f) / size.x - 0.5f;
+            float dy = 2.f * (y + 0.03f) / size.y - 0.5f;
             bool flip = false;
             if (dx > 0.5f)
             {
@@ -207,7 +207,7 @@ array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
     {
         int x = tmp[n].x;
         int y = tmp[n].y;
-        dst[x][y] = (float)(n + 1) * epsilon;
+        dst[x][y] = (n + 1.f) * epsilon;
     }
 
     return dst;
@@ -215,138 +215,58 @@ array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
 
 array2d<float> Image::EdiffKernel(EdiffAlgorithm algorithm)
 {
-    array2d<float> ret;
-
-    switch(algorithm)
+    switch (algorithm)
     {
     case EdiffAlgorithm::FloydSteinberg:
-        ret.SetSize(ivec2(3, 2));
-        {
-            static float const myker[] =
-            {
-                   0.,     1.,  7./16,
-                3./16,  5./16,  1./16,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     1.f,  7.f/16, },
+                 { 3.f/16,  5.f/16,  1.f/16, }, };
+
     case EdiffAlgorithm::JaJuNi:
-        ret.SetSize(ivec2(5, 3));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  7./48,  5./48,
-                3./48,  5./48,  7./48,  5./48,  3./48,
-                1./48,  3./48,  5./48,  3./48,  1./48,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  7.f/48,  5.f/48, },
+                 { 3.f/48,  5.f/48,  7.f/48,  5.f/48,  3.f/48, },
+                 { 1.f/48,  3.f/48,  5.f/48,  3.f/48,  1.f/48, }, };
+
     case EdiffAlgorithm::Atkinson:
-        ret.SetSize(ivec2(4, 3));
-        {
-            static float const myker[] =
-            {
-                  0.,    1.,  1./8,  1./8,
-                1./8,  1./8,  1./8,    0.,
-                  0.,  1./8,    0.,    0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {   0.f,    1.f,  1.f/8,  1.f/8, },
+                 { 1.f/8,  1.f/8,  1.f/8,    0.f, },
+                 {   0.f,  1.f/8,    0.f,    0.f, }, };
+
     case EdiffAlgorithm::Fan:
-        ret.SetSize(ivec2(4, 2));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  7./16,
-                1./16,  3./16,  5./16,     0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  7.f/16, },
+                 { 1.f/16,  3.f/16,  5.f/16,     0.f, }, };
+
     case EdiffAlgorithm::ShiauFan:
-        ret.SetSize(ivec2(4, 2));
-        {
-            static float const myker[] =
-            {
-                  0.,    0.,    1.,  1./2,
-                1./8,  1./8,  1./4,    0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {   0.f,    0.f,    1.f,  1.f/2, },
+                 { 1.f/8,  1.f/8,  1.f/4,    0.f, }, };
+
     case EdiffAlgorithm::ShiauFan2:
-        ret.SetSize(ivec2(5, 2));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,    0.,    1.,  1./2,
-                1./16,  1./16,  1./8,  1./4,    0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,    0.f,    1.f,  1.f/2, },
+                 { 1.f/16,  1.f/16,  1.f/8,  1.f/4,    0.f, }, };
+
     case EdiffAlgorithm::Stucki:
-        ret.SetSize(ivec2(5, 3));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  8./42,  4./42,
-                2./42,  4./42,  8./42,  4./42,  2./42,
-                1./42,  2./42,  4./42,  2./42,  1./42,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  8.f/42,  4.f/42, },
+                 { 2.f/42,  4.f/42,  8.f/42,  4.f/42,  2.f/42, },
+                 { 1.f/42,  2.f/42,  4.f/42,  2.f/42,  1.f/42, }, };
+
     case EdiffAlgorithm::Burkes:
-        ret.SetSize(ivec2(5, 2));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  4./16,  2./16,
-                1./16,  2./16,  4./16,  2./16,  1./16,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  4.f/16,  2.f/16, },
+                 { 1.f/16,  2.f/16,  4.f/16,  2.f/16,  1.f/16, }, };
+
     case EdiffAlgorithm::Sierra:
-        ret.SetSize(ivec2(5, 3));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  5./32,  3./32,
-                2./32,  4./32,  5./32,  4./32,  2./32,
-                   0.,  2./32,  3./32,  2./32,     0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  5.f/32,  3.f/32, },
+                 { 2.f/32,  4.f/32,  5.f/32,  4.f/32,  2.f/32, },
+                 {    0.f,  2.f/32,  3.f/32,  2.f/32,     0.f, }, };
+
     case EdiffAlgorithm::Sierra2:
-        ret.SetSize(ivec2(5, 2));
-        {
-            static float const myker[] =
-            {
-                   0.,     0.,     1.,  4./16,  3./16,
-                1./16,  2./16,  3./16,  2./16,  1./16,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {    0.f,     0.f,     1.f,  4.f/16,  3.f/16, },
+                 { 1.f/16,  2.f/16,  3.f/16,  2.f/16,  1.f/16, }, };
+
     case EdiffAlgorithm::Lite:
-        ret.SetSize(ivec2(3, 2));
-        {
-            static float const myker[] =
-            {
-                  0.,    1.,  1./2,
-                1./4,  1./4,    0.,
-            };
-            memcpy(&ret[0][0], myker, sizeof(myker));
-        }
-        return ret;
+        return { {   0.f,    1.f,  1.f/2, },
+                 { 1.f/4,  1.f/4,    0.f, }, };
     }
 
-    return ret;
+    return { { 1.f } };
 }
 
 /* Any standard deviation below this value will be rounded up, in order
