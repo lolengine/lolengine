@@ -27,6 +27,7 @@
 #   include <dirent.h>
 #endif
 
+#include <atomic>
 #include <sys/stat.h>
 
 #include "core.h"
@@ -242,9 +243,9 @@ class FileData
 #elif HAVE_STDIO_H
     FILE *m_fd;
 #endif
-    Atomic<int>     m_refcount;
-    StreamType      m_type;
-    struct stat     m_stat;
+    std::atomic<int> m_refcount;
+    StreamType m_type;
+    struct stat m_stat;
 };
 
 //-- FILE --
@@ -475,7 +476,7 @@ class DirectoryData
 #elif HAVE_STDIO_H
     DIR *m_dd;
 #endif
-    Atomic<int> m_refcount;
+    std::atomic<int> m_refcount;
     StreamType m_type;
 };
 

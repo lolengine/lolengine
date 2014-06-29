@@ -12,7 +12,6 @@
 #define __LOL_SYS_ALL_H__
 
 #include <lol/sys/thread.h>
-#include <lol/sys/atomic.h>
 #include <lol/sys/init.h>
 #include <lol/sys/file.h>
 #include <lol/sys/timer.h>

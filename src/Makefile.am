@@ -46,8 +46,7 @@ liblolcore_headers = \
     lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
     \
     lol/sys/all.h \
-    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/atomic.h \
-    lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
     \
     lol/image/all.h \
     lol/image/pixel.h lol/image/color.h lol/image/image.h \

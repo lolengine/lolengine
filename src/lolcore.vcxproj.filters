@@ -633,9 +633,6 @@
     <ClInclude Include="lol\base\all.h">
       <Filter>lol\base</Filter>
     </ClInclude>
-    <ClInclude Include="lol\sys\atomic.h">
-      <Filter>lol\sys</Filter>
-    </ClInclude>
     <ClInclude Include="lol\math\constants.h">
       <Filter>lol\math</Filter>
     </ClInclude>
