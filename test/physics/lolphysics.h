@@ -48,10 +48,10 @@ struct RayCastResult
         m_hit_fraction_list.Empty();
     }
 
-    Array<EasyPhysic*>        m_collider_list;
-    Array<vec3>                m_hit_normal_list;
-    Array<vec3>                m_hit_point_list;
-    Array<float>            m_hit_fraction_list;
+    array<EasyPhysic*>        m_collider_list;
+    array<vec3>                m_hit_normal_list;
+    array<vec3>                m_hit_point_list;
+    array<float>            m_hit_fraction_list;
 
     short int                m_collision_filter_group;
     short int                 m_collision_filter_mask;
@@ -334,7 +334,7 @@ private:
     //Adds the given EasyPhysic to the correct list.
     void ObjectRegistration(bool AddObject, EasyPhysic* NewEP, eEasyPhysicType CurType)
     {
-        Array<EasyPhysic*>* SearchList = NULL;
+        array<EasyPhysic*>* SearchList = NULL;
         switch(CurType)
         {
             case EEPT_Dynamic:
@@ -388,7 +388,7 @@ private:
     }
     void ObjectRegistration(bool AddObject, EasyConstraint* NewEC)
     {
-        Array<EasyConstraint*>* SearchList = NULL;
+        array<EasyConstraint*>* SearchList = NULL;
         SearchList = &m_constraint_list;
 
         if (AddObject)
@@ -411,12 +411,12 @@ private:
     }
 
     //Easy Physics body List
-    Array<EasyPhysic*>                        m_dynamic_list;
-    Array<EasyPhysic*>                        m_static_list;
-    Array<EasyPhysic*>                        m_ghost_list;
-    Array<EasyPhysic*>                        m_collision_object_list;
-    Array<EasyPhysic*>                        m_character_controller_list;
-    Array<EasyConstraint*>                    m_constraint_list;
+    array<EasyPhysic*>                        m_dynamic_list;
+    array<EasyPhysic*>                        m_static_list;
+    array<EasyPhysic*>                        m_ghost_list;
+    array<EasyPhysic*>                        m_collision_object_list;
+    array<EasyPhysic*>                        m_character_controller_list;
+    array<EasyConstraint*>                    m_constraint_list;
 
     //Easy Physics data storage
     float                                    m_timestep;

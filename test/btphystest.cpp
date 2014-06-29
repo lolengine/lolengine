@@ -272,7 +272,7 @@ void BtPhysTest::InitApp()
 
 #if USE_ROPE
     {
-        Array<PhysicsObject*> RopeElements;
+        array<PhysicsObject*> RopeElements;
         for (int i = 0; i < 14; i++)
         {
             PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,

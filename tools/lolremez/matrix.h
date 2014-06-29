@@ -106,6 +106,6 @@ template<typename T> struct Matrix
     int m_cols, m_rows;
 
 private:
-    Array<T> m_data;
+    array<T> m_data;
 };
 
