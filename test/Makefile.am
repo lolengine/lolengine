@@ -19,9 +19,9 @@ testsuite_SOURCES = testsuite.cpp \
     unit/vector.cpp unit/matrix.cpp unit/half.cpp unit/trig.cpp \
     unit/build.cpp unit/real.cpp unit/image.cpp unit/quat.cpp unit/cmplx.cpp \
     unit/array.cpp unit/array2d.cpp unit/array3d.cpp unit/rotation.cpp \
-    unit/string.cpp unit/map.cpp unit/color.cpp unit/atomic.cpp \
+    unit/string.cpp unit/map.cpp unit/color.cpp unit/enum.cpp \
     unit/interp.cpp unit/box.cpp unit/rand.cpp unit/thread.cpp \
-    unit/camera.cpp unit/enum.cpp
+    unit/camera.cpp
 testsuite_CPPFLAGS = $(AM_CPPFLAGS)
 testsuite_DEPENDENCIES = @LOL_DEPS@
 noinst_DATA = data/gradient.png
