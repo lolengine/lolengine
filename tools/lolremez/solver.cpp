@@ -96,7 +96,7 @@ void RemezSolver::Init()
     m_control.Resize(m_order + 2);
 
     /* Pick up x_i where error will be 0 and compute f(x_i) */
-    Array<real> fxn;
+    array<real> fxn;
     for (int i = 0; i < m_order + 1; i++)
     {
         m_zeroes[i] = (real)(2 * i - m_order) / (real)(m_order + 1);
@@ -109,7 +109,7 @@ void RemezSolver::Init()
     for (int i = 0; i < m_order + 1; i++)
     {
         /* Compute the powers of x_i */
-        Array<real> powers;
+        array<real> powers;
         powers.Push(real(1.0));
         for (int n = 1; n < m_order + 1; n++)
              powers.Push(powers.Last() * m_zeroes[i]);
@@ -239,7 +239,7 @@ real RemezSolver::FindExtrema()
 void RemezSolver::Step()
 {
     /* Pick up x_i where error will be 0 and compute f(x_i) */
-    Array<real> fxn;
+    array<real> fxn;
     for (int i = 0; i < m_order + 2; i++)
         fxn.Push(EvalFunc(m_control[i]));
 
@@ -249,7 +249,7 @@ void RemezSolver::Step()
     for (int i = 0; i < m_order + 2; i++)
     {
         /* Compute the powers of x_i */
-        Array<real> powers;
+        array<real> powers;
         powers.Push(real(1.0));
         for (int n = 1; n < m_order + 1; n++)
              powers.Push(powers.Last() * m_control[i]);
@@ -307,7 +307,7 @@ void RemezSolver::PrintPoly()
 
     /* Transform Chebyshev polynomial weights into powers of X^i
      * in the [-1..1] range. */
-    Array<real> bn;
+    array<real> bn;
 
     for (int i = 0; i < m_order + 1; i++)
     {
@@ -319,7 +319,7 @@ void RemezSolver::PrintPoly()
 
     /* Transform a polynomial in the [-1..1] range into a polynomial
      * in the [a..b] range. */
-    Array<real> k1p, k2p, an;
+    array<real> k1p, k2p, an;
 
     for (int i = 0; i < m_order + 1; i++)
     {

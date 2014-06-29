@@ -88,7 +88,7 @@ private:
 
     static int const SPRITE_COUNT = 192;
     static int const FRAME_COUNT = 16;
-    Array<vec3, float> m_sprites;
+    array<vec3, float> m_sprites;
 
     bool m_ready;
 };

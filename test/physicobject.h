@@ -130,9 +130,9 @@ public:
         m_is_character(false),
         m_is_phys(false)
     {
-        Array<char const *> MeshRand;
-        Array<int> MeshLimit;
-        Array<int> MeshType;
+        array<char const *> MeshRand;
+        array<int> MeshLimit;
+        array<int> MeshType;
 
         MeshLimit << 0;
 

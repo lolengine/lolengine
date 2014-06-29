@@ -165,7 +165,7 @@ public:
         }
     }
 
-    Array<vec3>     m_targets;
+    array<vec3>     m_targets;
 };
 
 class MeshViewer : public WorldEntity
@@ -581,7 +581,7 @@ public:
                 if (new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.Count())
                 {
                     //Store current light datas, in World
-                    Array<LightData> light_datas;
+                    array<LightData> light_datas;
                     for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
                         light_datas << LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
 
@@ -890,7 +890,7 @@ public:
 
 private:
     SceneSetup*         m_ssetup;
-    Array<LightData>    m_light_datas;
+    array<LightData>    m_light_datas;
     Controller*         m_controller;
     short               m_input_usage;
     mat4                m_mat;
@@ -927,12 +927,12 @@ private:
     int                 m_mesh_render;
     int                 m_mesh_id;
     float               m_mesh_id1;
-    Array<EasyMesh*, EasyMesh*> m_meshes;
-    Array<EasyMesh*>    m_gizmos;
+    array<EasyMesh*, EasyMesh*> m_meshes;
+    array<EasyMesh*>    m_gizmos;
 
     //File data
     String              m_file_name;
-    Array<String>       m_cmdlist;
+    array<String>       m_cmdlist;
     float               m_stream_update_time;
     float               m_stream_update_timer;
 

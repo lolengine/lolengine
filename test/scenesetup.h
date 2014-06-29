@@ -40,8 +40,8 @@ public:
 
     //--
     vec4                    m_clear_color;
-    Array<Light *>          m_lights;
-    Array<String, String>   m_custom_cmd;
+    array<Light *>          m_lights;
+    array<String, String>   m_custom_cmd;
     bool                    m_show_gizmo;
     bool                    m_show_lights;
 };

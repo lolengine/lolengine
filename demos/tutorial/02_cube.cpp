@@ -118,8 +118,8 @@ public:
 private:
     float m_angle;
     mat4 m_matrix;
-    Array<vec3,vec3> m_mesh;
-    Array<uint16_t> m_lines_indices, m_faces_indices;
+    array<vec3,vec3> m_mesh;
+    array<uint16_t> m_lines_indices, m_faces_indices;
 
     Shader *m_shader;
     ShaderAttrib m_coord, m_color;

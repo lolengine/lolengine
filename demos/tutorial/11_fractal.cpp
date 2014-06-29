@@ -532,7 +532,7 @@ private:
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
     dvec2 m_texel2world;
-    Array<u8vec4> m_pixels, m_palette;
+    array<u8vec4> m_pixels, m_palette;
 
     Shader *m_shader;
     ShaderAttrib m_vertexattrib, m_texattrib;

@@ -113,7 +113,7 @@ public:
 
             for (int i = 0; i < MaxFboType; ++i)
             {
-                m_fbos.Push(new Framebuffer(Video::GetSize()), 0, Array<ShaderUniform>(), Array<ShaderAttrib>() );
+                m_fbos.Push(new Framebuffer(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
 
                 if (i == SrcVoronoiFbo)
                 {
@@ -394,8 +394,8 @@ public:
 
 private:
     Controller* m_controller;
-    Array<vec3, vec2> voronoi_points;
-    Array<vec2> m_vertices;
+    array<vec3, vec2> voronoi_points;
+    array<vec2> m_vertices;
     Shader *m_screen_shader;
     ShaderAttrib m_screen_coord;
     ShaderUniform m_screen_texture;
@@ -403,7 +403,7 @@ private:
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
 
-    Array<Framebuffer *, Shader *, Array<ShaderUniform>, Array<ShaderAttrib> > m_fbos;
+    array<Framebuffer *, Shader *, array<ShaderUniform>, array<ShaderAttrib> > m_fbos;
     Framebuffer *temp_buffer;
 
     int mode;

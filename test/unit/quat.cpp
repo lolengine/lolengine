@@ -536,7 +536,7 @@ LOLUNIT_FIXTURE(QuaternionTest)
     }
 
 private:
-    Array<vec3, vec3> m_vectorpairs;
+    array<vec3, vec3> m_vectorpairs;
 };
 
 } /* namespace lol */

@@ -44,9 +44,9 @@ private:
 private:
     int m_order;
 
-    lol::Array<lol::real> m_coeff;
-    lol::Array<lol::real> m_zeroes;
-    lol::Array<lol::real> m_control;
+    lol::array<lol::real> m_coeff;
+    lol::array<lol::real> m_zeroes;
+    lol::array<lol::real> m_control;
 
     RealFunc *m_func, *m_weight;
     lol::real m_k1, m_k2, m_invk1, m_invk2, m_epsilon;

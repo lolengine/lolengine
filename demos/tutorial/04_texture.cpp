@@ -96,14 +96,14 @@ public:
     }
 
 private:
-    Array<vec2> m_vertices;
+    array<vec2> m_vertices;
     Texture *m_texture;
     Shader *m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_texture_uni;
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo;
-    Array<uint8_t> m_heightmap;
+    array<uint8_t> m_heightmap;
     int m_frames;
     bool m_ready;
 };

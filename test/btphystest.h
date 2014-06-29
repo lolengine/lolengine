@@ -68,12 +68,12 @@ private:
     bool                            m_ready;
 
     lol::phys::Simulation*          m_simulation;
-    Array<EasyConstraint*>          m_constraint_list;
-    Array<PhysicsObject*, float>    m_physobj_list;
-    Array<PhysicsObject*>           m_ground_list;
-    Array<PhysicsObject*>           m_platform_list;
-    Array<PhysicsObject*>           m_character_list;
-    Array<PhysicsObject*>           m_stairs_list;
+    array<EasyConstraint*>          m_constraint_list;
+    array<PhysicsObject*, float>    m_physobj_list;
+    array<PhysicsObject*>           m_ground_list;
+    array<PhysicsObject*>           m_platform_list;
+    array<PhysicsObject*>           m_character_list;
+    array<PhysicsObject*>           m_stairs_list;
 
     float                           m_loop_value;
     float                           m_target_timer;

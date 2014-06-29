@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    Array<vec2> m_vertices;
+    array<vec2> m_vertices;
     Shader *m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_uni_flag, m_uni_point, m_uni_color, m_uni_texture;

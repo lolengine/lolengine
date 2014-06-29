@@ -144,7 +144,7 @@ public:
 
 private:
     Shader* m_custom_shader;
-    Array<EasyMesh, mat4, float> m_gears;
+    array<EasyMesh, mat4, float> m_gears;
     float m_angle;
     mat4 m_mat;
     Camera *m_camera;

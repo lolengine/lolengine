@@ -60,7 +60,7 @@ public:
     }
 
 private:
-    Array<vec2> m_vertices;
+    array<vec2> m_vertices;
     Shader *m_shader;
     ShaderAttrib m_coord;
     VertexDeclaration *m_vdecl;
