@@ -21,7 +21,7 @@ extern "C" {
 #include <android_native_app_glue.h>
 }
 
-#include "core.h"
+#include <lol/main.h>
 #include "../../image/image-private.h"
 
 using namespace std;

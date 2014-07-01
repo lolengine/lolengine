@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 /*
  * Generic error diffusion functions

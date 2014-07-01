@@ -29,9 +29,6 @@
 namespace lol
 {
 
-/* Set this to 1 when Visual Studio finally understands the feature */
-#define INHERIT_CONSTRUCTORS 0
-
 #define INDEX_NONE -1
 
 /*
@@ -551,7 +548,7 @@ template<typename T1, typename T2 = void, typename T3 = void,
 class array : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
                                array<T1, T2, T3, T4, T5, T6, T7, T8>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
                     array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base;
 #else
@@ -606,7 +603,7 @@ class array<T1, T2, T3, T4, T5, T6, T7, void>
   : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
                      array<T1, T2, T3, T4, T5, T6, T7>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
                     array<T1, T2, T3, T4, T5, T6, T7>>::array_base;
 #else
@@ -659,7 +656,7 @@ class array<T1, T2, T3, T4, T5, T6, void, void>
   : public array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
                      array<T1, T2, T3, T4, T5, T6>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
                     array<T1, T2, T3, T4, T5, T6>>::array_base;
 #else
@@ -709,7 +706,7 @@ class array<T1, T2, T3, T4, T5, void, void, void>
   : public array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
                      array<T1, T2, T3, T4, T5>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
                     array<T1, T2, T3, T4, T5>>::array_base;
 #else
@@ -757,7 +754,7 @@ class array<T1, T2, T3, T4, void, void, void, void>
   : public array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
                      array<T1, T2, T3, T4>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
                     array<T1, T2, T3, T4>>::array_base;
 #else
@@ -801,7 +798,7 @@ class array<T1, T2, T3, void, void, void, void, void>
   : public array_base<array_element<T1, T2, T3, void, void, void, void, void>,
                      array<T1, T2, T3>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, T3, void, void, void, void, void>,
                     array<T1, T2, T3>>::array_base;
 #else
@@ -843,7 +840,7 @@ class array<T1, T2, void, void, void, void, void, void>
   : public array_base<array_element<T1, T2, void, void, void, void, void, void>,
                      array<T1, T2>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<array_element<T1, T2, void, void, void, void, void, void>,
                     array<T1, T2>>::array_base;
 #else
@@ -883,7 +880,7 @@ class array<T, void, void, void, void, void, void, void>
   : public array_base<T,
                      array<T>>
 {
-#if INHERIT_CONSTRUCTORS
+#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<T,
                     array<T>>::array_base;
 #else

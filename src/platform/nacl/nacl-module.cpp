@@ -10,7 +10,7 @@
 #include <ppapi/cpp/module.h>
 #include <ppapi/gles2/gl2ext_ppapi.h>
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h" /* needed for GL_TRUE */
 
 #include "platform/nacl/nacl-instance.h"

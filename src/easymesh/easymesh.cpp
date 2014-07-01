@@ -19,7 +19,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "easymesh/easymesh-compiler.h"
 
 LOLFX_RESOURCE_DECLARE(shiny);

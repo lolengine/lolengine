@@ -19,7 +19,7 @@
 #   include <windows.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 
 LOLFX_RESOURCE_DECLARE(tile);

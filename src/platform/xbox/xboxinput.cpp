@@ -17,7 +17,7 @@
 #   include <xbdm.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "xboxinput.h"
 
 namespace lol

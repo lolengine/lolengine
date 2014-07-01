@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 #include "input/input_internal.h"
 

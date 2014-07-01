@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdlib>
 
-#include "core.h"
+#include <lol/main.h>
 
 #if defined _WIN32 || defined _XBOX
 #   define strcasecmp _stricmp

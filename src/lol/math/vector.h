@@ -25,6 +25,20 @@
 namespace lol
 {
 
+#if !LOL_FEATURE_CXX11_RELAXED_UNIONS
+#   define _____ const
+#else
+#   define _____ /* */
+#endif
+
+/* The generic "vec" type, which is a fixed-size vector */
+template<typename T, int N>
+struct vec
+{
+private:
+    T m_data[N];
+};
+
 #define LOL_VECTOR_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<half> f16##suffix; \
@@ -88,7 +102,7 @@ template<typename T, int N> struct XVec2
 {
     inline XVec2<T, N>& operator =(Vec2<T> that);
 
-#if 0
+#if LOL_FEATURE_CXX11_RELAXED_UNIONS
     inline XVec2<T, N>& operator =(XVec2<T, N> const &that)
     {
         return *this = (Vec2<T>)that;
@@ -111,7 +125,7 @@ template<typename T, int N> struct XVec3
 {
     inline XVec3<T, N>& operator =(Vec3<T> that);
 
-#if 0
+#if LOL_FEATURE_CXX11_RELAXED_UNIONS
     inline XVec3<T, N>& operator =(XVec3<T, N> const &that)
     {
         return *this = (Vec3<T>)that;
@@ -134,7 +148,7 @@ template<typename T, int N> struct XVec4
 {
     inline XVec4<T, N>& operator =(Vec4<T> that);
 
-#if 0
+#if LOL_FEATURE_CXX11_RELAXED_UNIONS
     inline XVec4<T, N>& operator =(XVec4<T, N> const &that)
     {
         return *this = (Vec4<T>)that;
@@ -197,7 +211,6 @@ template <typename T> struct BVec2
         struct { T s, t; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> _____ xy, rg, st;
         XVec2<T,0x10> _____ yx, gr, ts;
@@ -228,7 +241,6 @@ template <typename T> struct BVec2
         XVec4<T,0x1101> const yyxy, ggrg, ttst;
         XVec4<T,0x1110> const yyyx, gggr, ttts;
         XVec4<T,0x1111> const yyyy, gggg, tttt;
-#undef _____
 #endif
     };
 };
@@ -360,7 +372,6 @@ template <typename T> struct BVec3
         struct { T s, t, p; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> _____ xy, rg, st;
         XVec2<T,0x02> _____ xz, rb, sp;
@@ -480,7 +491,6 @@ template <typename T> struct BVec3
         XVec4<T,0x2220> const zzzx, bbbr, ppps;
         XVec4<T,0x2221> const zzzy, bbbg, pppt;
         XVec4<T,0x2222> const zzzz, bbbb, pppp;
-#undef _____
 #endif
     };
 };
@@ -561,7 +571,6 @@ template <typename T> struct BVec4
         struct { T s, t, p, q; };
 
 #if !_DOXYGEN_SKIP_ME
-#define _____ const /* We’ll get rid of this with Visual Studio 14 */
         XVec2<T,0x00> const xx, rr, ss;
         XVec2<T,0x01> _____ xy, rg, st;
         XVec2<T,0x02> _____ xz, rb, sp;
@@ -900,7 +909,6 @@ template <typename T> struct BVec4
         XVec4<T,0x3331> const wwwy, aaag, qqqt;
         XVec4<T,0x3332> const wwwz, aaab, qqqp;
         XVec4<T,0x3333> const wwww, aaaa, qqqq;
-#undef _____
 #endif
     };
 };

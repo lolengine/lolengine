@@ -668,7 +668,7 @@ using std::malloc;
 using std::realloc;
 using std::free;
 
-#include "core.h"
+#include <lol/main.h>
 #include "easymesh/easymesh-compiler.h"
 
 typedef lol::EasyMeshParser::token token;

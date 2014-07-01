@@ -10,7 +10,7 @@
 #include <ppapi/cpp/completion_callback.h>
 #include <ppapi/gles2/gl2ext_ppapi.h>
 
-#include "core.h"
+#include <lol/main.h>
 
 #include "platform/nacl/opengl_context.h"
 

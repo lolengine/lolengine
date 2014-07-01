@@ -30,7 +30,7 @@
 #include <atomic>
 #include <sys/stat.h>
 
-#include "core.h"
+#include <lol/main.h>
 
 namespace lol
 {

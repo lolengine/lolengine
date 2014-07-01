@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 #include <lol/math/real.h>
 

@@ -18,7 +18,7 @@
 #include <cell/sysmodule.h>
 #include <cell/codec/pngdec.h>
 
-#include "core.h"
+#include <lol/main.h>
 #include "../../image/image-private.h"
 
 using namespace std;

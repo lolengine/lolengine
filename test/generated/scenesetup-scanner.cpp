@@ -504,7 +504,7 @@ using std::malloc;
 using std::realloc;
 using std::free;
 
-#include "core.h"
+#include <lol/main.h>
 #include "../scenesetup.h"
 #include "../scenesetup-compiler.h"
 

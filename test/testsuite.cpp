@@ -15,7 +15,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "core.h"
+#include <lol/main.h>
 
 #include <lol/unit.h>
 

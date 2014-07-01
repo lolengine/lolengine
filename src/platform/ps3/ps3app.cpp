@@ -26,7 +26,7 @@
 #   include <cell/spurs/event_flag.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 #include "ps3app.h"
 #include "ps3input.h"

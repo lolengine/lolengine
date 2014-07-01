@@ -20,7 +20,7 @@
 #   include <sysutil/sysutil_sysparam.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "ps3input.h"
 
 using namespace std;

@@ -27,7 +27,7 @@ extern "C" {
 #include <android_native_app_glue.c>
 }
 
-#include "core.h"
+#include <lol/main.h>
 #include "androidapp.h"
 
 #include "input/input_internal.h"

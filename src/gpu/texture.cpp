@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 
 #if defined _WIN32 && defined USE_D3D9

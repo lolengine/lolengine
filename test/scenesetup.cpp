@@ -13,7 +13,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "scenesetup.h"
 #include "scenesetup-compiler.h"
 

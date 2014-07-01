@@ -450,6 +450,15 @@
     <ClInclude Include="lol\math\vector.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\engine.h">
+      <Filter>lol</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\extras.h">
+      <Filter>lol</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\main.h">
+      <Filter>lol</Filter>
+    </ClInclude>
     <ClInclude Include="lol\unit.h">
       <Filter>lol</Filter>
     </ClInclude>
@@ -481,9 +490,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="core.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="dict.h">
@@ -601,6 +607,9 @@
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\enum.h">
+      <Filter>lol\base</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\base\features.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\hash.h">

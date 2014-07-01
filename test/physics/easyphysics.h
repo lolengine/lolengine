@@ -17,7 +17,7 @@
 #if !defined __EASYPHYSICS_EASYPHYSICS_H__
 #define __EASYPHYSICS_EASYPHYSICS_H__
 
-#include "core.h"
+#include <lol/main.h>
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
