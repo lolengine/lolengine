@@ -14,7 +14,7 @@
 
 #include <string>
 
-#include "core.h"
+#include <lol/main.h>
 #include "gpu/lolfx-compiler.h"
 
 namespace lol

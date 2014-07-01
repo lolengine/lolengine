@@ -16,7 +16,7 @@
 #include <cstdlib> /* free() */
 #include <cstring> /* strdup() */
 
-#include "core.h"
+#include <lol/main.h>
 
 using namespace std;
 

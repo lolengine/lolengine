@@ -54,7 +54,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "easymesh/easymesh.h"
 
 #include <string>

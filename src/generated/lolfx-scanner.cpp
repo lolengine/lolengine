@@ -1672,7 +1672,7 @@ using std::realloc;
 using std::free;
 #include <iostream>
 
-#include "core.h"
+#include <lol/main.h>
 #include "gpu/lolfx-compiler.h"
 
 typedef lol::LolFxParser::token token;

@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <stdint.h>
 
-#include "core.h"
+#include <lol/main.h>
 
 namespace lol
 {

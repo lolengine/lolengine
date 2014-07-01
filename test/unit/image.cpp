@@ -14,7 +14,7 @@
 
 #include <cmath>
 
-#include "core.h"
+#include <lol/main.h>
 #include "lol/unit.h"
 
 namespace lol

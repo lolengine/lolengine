@@ -25,7 +25,7 @@
 #   include <SDL_image.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "../../image/image-private.h"
 
 using namespace std;

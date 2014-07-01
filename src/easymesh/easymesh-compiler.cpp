@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "core.h"
+#include <lol/main.h>
 #include "easymesh/easymesh-compiler.h"
 
 namespace lol

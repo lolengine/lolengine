@@ -18,6 +18,13 @@
 
 #include <stdint.h>
 
+/* External declaration for LolFx files. */
+#define LOLFX_RESOURCE_DECLARE(name) \
+    extern "C" char const *lolfx_resource_##name
+#define LOLFX_RESOURCE_HELPER(name) #name ".lolfx"
+#define LOLFX_RESOURCE_NAME(name) \
+    LOLFX_RESOURCE_HELPER(name), lolfx_resource_##name
+
 namespace lol
 {
 

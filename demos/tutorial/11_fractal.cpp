@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdio>
 
-#include "core.h"
+#include <lol/main.h>
 #include "loldebug.h"
 
 using namespace lol;

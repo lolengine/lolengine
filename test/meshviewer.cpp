@@ -16,7 +16,7 @@
 
 #include <cfloat> /* for FLT_MAX */
 
-#include "core.h"
+#include <lol/main.h>
 #include "scenesetup.h"
 
 using namespace std;

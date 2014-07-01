@@ -11,7 +11,7 @@
 #if !defined __LOL_INPUT_H__
 #define __LOL_INPUT_H__
 
-#include "core.h"
+#include <lol/main.h>
 
 namespace lol
 {

@@ -21,7 +21,7 @@ using namespace std;
 #include <windows.h>
 #include <gdiplus.h>
 
-#include "core.h"
+#include <lol/main.h>
 #include "../../image/image-private.h"
 
 namespace lol

@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 /*
  * This file contains code and data related to various CIE standards.

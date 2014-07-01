@@ -24,7 +24,7 @@
 #   endif
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"

@@ -14,7 +14,7 @@
 
 #include <cstdio>
 
-#include "core.h"
+#include <lol/main.h>
 
 using std::printf;
 using std::sqrt;

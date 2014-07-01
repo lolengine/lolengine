@@ -25,7 +25,7 @@
 #   endif
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 namespace lol
 {

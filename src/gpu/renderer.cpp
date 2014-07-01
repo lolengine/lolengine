@@ -28,7 +28,7 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 
 /* FIXME: find a way to pass g_hwnd from the windowing system */

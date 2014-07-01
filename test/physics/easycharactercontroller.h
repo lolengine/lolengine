@@ -20,7 +20,7 @@
 #if !defined __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 #define __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 
-#include "core.h"
+#include <lol/main.h>
 #include "easyphysics.h"
 #include "bulletcharactercontroller.h"
 #include <BulletDynamics/Character/btKinematicCharacterController.h>

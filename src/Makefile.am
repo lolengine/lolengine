@@ -6,7 +6,7 @@ SUBDIRS = bullet lua data
 noinst_LIBRARIES = liblolcore.a
 
 liblolcore_a_SOURCES = \
-    core.h tiler.cpp tiler.h dict.cpp dict.h \
+    tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
     entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
@@ -32,10 +32,13 @@ EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
               gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
 liblolcore_headers = \
+    lol/main.h lol/engine.h lol/extras.h \
+    lol/unit.h \
+    \
     lol/base/all.h \
-    lol/base/log.h lol/base/array.h lol/base/types.h lol/base/array.h \
+    lol/base/features.h lol/base/array.h lol/base/types.h lol/base/array.h \
     lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
-    lol/base/enum.h \
+    lol/base/enum.h lol/base/log.h \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
@@ -57,9 +60,7 @@ liblolcore_headers = \
     lol/gpu/renderer.h lol/gpu/rendercontext.h \
     \
     lol/debug/all.h \
-    lol/debug/lines.h \
-    \
-    lol/unit.h
+    lol/debug/lines.h
 
 liblolcore_sources = \
     generated/location.hh generated/position.hh generated/stack.hh \

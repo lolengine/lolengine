@@ -17,7 +17,7 @@
 #include <ppapi/cpp/module.h>
 #include <ppapi/cpp/completion_callback.h>
 
-#include "core.h"
+#include <lol/main.h>
 
 #include "platform/nacl/nacl-instance.h"
 #include "platform/nacl/opengl_context.h"

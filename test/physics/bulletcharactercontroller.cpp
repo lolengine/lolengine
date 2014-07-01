@@ -16,7 +16,7 @@
 
 #define USE_LOL_CTRLR_CHARAC
 
-#include "core.h"
+#include <lol/main.h>
 #include <stdio.h>
 #include "lolbtphysicsintegration.h"
 #include "lolphysics.h"

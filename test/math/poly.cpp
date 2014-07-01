@@ -14,7 +14,7 @@
 
 #include <cstdio>
 
-#include "core.h"
+#include <lol/main.h>
 
 using namespace lol;
 using namespace std;

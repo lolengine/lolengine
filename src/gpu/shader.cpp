@@ -31,7 +31,7 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 
 using namespace std;

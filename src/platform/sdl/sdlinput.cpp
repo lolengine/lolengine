@@ -20,7 +20,7 @@
 #   endif
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "sdlinput.h"
 
 #include "input/input_internal.h"

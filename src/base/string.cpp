@@ -21,7 +21,7 @@
 
 #include <cstdarg>
 
-#include "core.h"
+#include <lol/main.h>
 
 namespace lol
 {

@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <ctype.h>
 
-#include "core.h"
+#include <lol/main.h>
 
 #include "lua/lua.hpp"
 

@@ -32,7 +32,7 @@
 #   endif
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lolgl.h"
 #include "eglapp.h"
 #if defined USE_SDL

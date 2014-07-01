@@ -16,9 +16,30 @@
 #   include <fastmath.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 
 using namespace std;
+
+// Optimisation helpers
+#if defined __GNUC__
+#   define __likely(x)   __builtin_expect(!!(x), 1)
+#   define __unlikely(x) __builtin_expect(!!(x), 0)
+#   define INLINEATTR __attribute__((always_inline))
+#   if defined __CELLOS_LV2__ && !defined __SNC__
+#      define FP_USE(x) __asm__("" : "+f" (x))
+#   elif defined __x86_64__
+#      define FP_USE(x) __asm__("" : "+x" (x))
+#   elif defined __i386__ /* FIXME: this isn't good */
+#      define FP_USE(x) __asm__("" : "+m" (x))
+#   else
+#      define FP_USE(x) (void)(x)
+#   endif
+#else
+#   define __likely(x)   x
+#   define __unlikely(x) x
+#   define INLINEATTR
+#   define FP_USE(x) (void)(x)
+#endif
 
 namespace lol
 {
@@ -235,7 +256,7 @@ double lol_sin(double x)
 
     /* If branches are cheap, skip the cycle count when |x| < π/4,
      * and only do the Taylor series up to the required precision. */
-#if defined LOL_FEATURE_CHEAP_BRANCHES
+#if LOL_FEATURE_CHEAP_BRANCHES
     if (absx < QUARTER)
     {
         /* Computing x^4 is one multiplication too many we do, but it helps
@@ -272,7 +293,7 @@ double lol_sin(double x)
 
     /* If branches are very cheap, we have the option to do the Taylor
      * series at a much lower degree by splitting. */
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     if (lol_fabs(absx) > QUARTER)
     {
         sign = (x * absx >= 0.0) ? sign : -sign;
@@ -295,7 +316,7 @@ double lol_sin(double x)
     /* Compute a Tailor series for sin() and combine sign information. */
     double x2 = absx * absx;
     double x4 = x2 * x2;
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     double sub1 = (SC[3] * x4 + SC[1]) * x4 + ONE;
     double sub2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
 #else
@@ -311,7 +332,7 @@ double lol_cos(double x)
 {
     double absx = lol_fabs(x * INV_PI);
 
-#if defined LOL_FEATURE_CHEAP_BRANCHES
+#if LOL_FEATURE_CHEAP_BRANCHES
     if (absx < QUARTER)
     {
         double x2 = absx * absx;
@@ -340,7 +361,7 @@ double lol_cos(double x)
 #endif
     absx -= num_cycles;
 
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     if (lol_fabs(absx) > QUARTER)
     {
         double x1 = HALF - lol_fabs(absx);
@@ -356,7 +377,7 @@ double lol_cos(double x)
 
     double x2 = absx * absx;
     double x4 = x2 * x2;
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     double sub1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
     double sub2 = (CC[4] * x4 + CC[2]) * x4 + CC[0];
 #else
@@ -372,7 +393,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
 {
     double absx = lol_fabs(x * INV_PI);
 
-#if defined LOL_FEATURE_CHEAP_BRANCHES
+#if LOL_FEATURE_CHEAP_BRANCHES
     if (absx < QUARTER)
     {
         double x2 = absx * absx;
@@ -416,7 +437,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
 #endif
     absx -= num_cycles;
 
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     if (lol_fabs(absx) > QUARTER)
     {
         cos_sign = sin_sign;
@@ -446,7 +467,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
 
     double x2 = absx * absx;
     double x4 = x2 * x2;
-#if defined LOL_FEATURE_VERY_CHEAP_BRANCHES
+#if LOL_FEATURE_VERY_CHEAP_BRANCHES
     double subs1 = ((SC[5] * x4 + SC[3]) * x4 + SC[1]) * x4 + ONE;
     double subs2 = (SC[4] * x4 + SC[2]) * x4 + SC[0];
     double subc1 = ((CC[5] * x4 + CC[3]) * x4 + CC[1]) * x4 + ONE;
@@ -476,7 +497,7 @@ void lol_sincos(float x, float *sinx, float *cosx)
 
 double lol_tan(double x)
 {
-#if defined LOL_FEATURE_CHEAP_BRANCHES
+#if LOL_FEATURE_CHEAP_BRANCHES
     double absx = lol_fabs(x * INV_PI);
 
     /* This value was determined empirically to ensure an error of no

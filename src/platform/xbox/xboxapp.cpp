@@ -16,7 +16,7 @@
 #   include <xtl.h>
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "xboxapp.h"
 #include "xboxinput.h"
 

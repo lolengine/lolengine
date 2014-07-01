@@ -12,7 +12,7 @@
 #   include "config.h"
 #endif
 
-#include "core.h"
+#include <lol/main.h>
 #include "lol/unit.h"
 
 namespace lol
@@ -140,19 +140,6 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(x, y);
     }
 #endif
-
-    LOLUNIT_TEST(FastMathOverride)
-    {
-        double x, y;
-
-        y = x = 1.0 + rand(0.1f, 0.2f);
-        y += 4503599627370496.0;
-        FP_USE(y);
-        /* The compiler should not optimise this away */
-        y -= 4503599627370496.0;
-
-        LOLUNIT_ASSERT_EQUAL(1.0, y);
-    }
 };
 
 } /* namespace lol */
