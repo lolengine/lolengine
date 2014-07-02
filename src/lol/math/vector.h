@@ -83,7 +83,7 @@ private:
 };
 
 /* The generic "matrix" type, which is a fixed-size matrix */
-template<int ROWS, int COLS, typename T>
+template<int COLS, int ROWS, typename T>
 struct matrix
 {
 private:
@@ -123,6 +123,13 @@ LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 2 COMMA, >, mat2)
 LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 3 COMMA, >, mat3)
 LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 4 COMMA, >, mat4)
 
+LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 3 COMMA, >, mat2x3)
+LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 4 COMMA, >, mat2x4)
+LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 2 COMMA, >, mat3x2)
+LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 4 COMMA, >, mat3x4)
+LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 2 COMMA, >, mat4x2)
+LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 3 COMMA, >, mat4x3)
+
 LOL_VECTOR_TYPEDEFS(Cmplx<, >, cmplx)
 LOL_VECTOR_TYPEDEFS(Quat<, >, quat)
 
@@ -138,6 +145,12 @@ typedef vec4 float4;
 typedef mat2 float2x2;
 typedef mat3 float3x3;
 typedef mat4 float4x4;
+typedef mat2x3 float2x3;
+typedef mat2x4 float2x4;
+typedef mat3x2 float3x2;
+typedef mat3x4 float3x4;
+typedef mat4x2 float4x2;
+typedef mat4x3 float4x3;
 
 typedef ivec2 int2;
 typedef ivec3 int3;
@@ -145,6 +158,12 @@ typedef ivec4 int4;
 typedef imat2 int2x2;
 typedef imat3 int3x3;
 typedef imat4 int4x4;
+typedef imat2x3 int2x3;
+typedef imat2x4 int2x4;
+typedef imat3x2 int3x2;
+typedef imat3x4 int3x4;
+typedef imat4x2 int4x2;
+typedef imat4x3 int4x3;
 
 /*
  * Helper macros for vector type member functions
@@ -1420,8 +1439,10 @@ LOL_SWIZZLE_V_VV_FUN(fmod)
 #undef LOL_SWIZZLE_V_VV_FUN
 
 /*
- * vec clamp(vec, vec|scalar, vec|scalar)
- * vec mix(vec, vec, vec|scalar)
+ * vec clamp(vec, vec, vec)
+ * vec clamp(vec, scalar, vec)
+ * vec clamp(vec, vec, scalar)
+ * vec clamp(vec, scalar, scalar)
  */
 
 template<int N, int MASK1, int MASK2, int MASK3, typename T>
@@ -1455,6 +1476,11 @@ static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
 {
     return max(min(x, b), a);
 }
+
+/*
+ * vec mix(vec, vec, vec)
+ * vec mix(vec, vec, scalar)
+ */
 
 template<int N, int MASK1, int MASK2, int MASK3, typename T>
 static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
