@@ -20,7 +20,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 static size_t const TRIG_TABLE_SIZE = 128 * 1024;

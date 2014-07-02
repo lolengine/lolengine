@@ -18,8 +18,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
-
 // Optimisation helpers
 #if defined __GNUC__
 #   define __likely(x)   __builtin_expect(!!(x), 1)

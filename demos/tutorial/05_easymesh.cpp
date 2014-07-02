@@ -15,7 +15,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 #define USE_CUSTOM_SHADER 1

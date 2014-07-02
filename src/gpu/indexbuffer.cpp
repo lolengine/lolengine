@@ -25,8 +25,6 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-using namespace std;
-
 namespace lol
 {
 

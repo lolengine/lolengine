@@ -16,7 +16,6 @@
 #include <lol/main.h>
 #include "loldebug.h"
 
-using namespace std;
 using namespace lol;
 
 LOLFX_RESOURCE_DECLARE(12_voronoi);

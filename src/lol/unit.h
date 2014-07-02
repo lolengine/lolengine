@@ -24,8 +24,6 @@
 namespace lol
 {
 
-using namespace std;
-
 /*
  * This is the base class for all fixtures. It keeps track of all
  * fixtures registered through the LOLUNIT_FIXTURE macro and puts them

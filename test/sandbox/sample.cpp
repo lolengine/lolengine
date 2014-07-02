@@ -14,7 +14,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 int main(int argc, char **argv)

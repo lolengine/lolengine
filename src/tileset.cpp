@@ -28,8 +28,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
-
 namespace lol
 {
 

@@ -16,7 +16,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 void bench_real(int mode);

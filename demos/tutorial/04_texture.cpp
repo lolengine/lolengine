@@ -15,7 +15,6 @@
 #include <lol/main.h>
 #include "loldebug.h"
 
-using namespace std;
 using namespace lol;
 
 static int const TEXTURE_WIDTH = 256;

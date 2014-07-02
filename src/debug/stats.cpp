@@ -17,8 +17,6 @@
 #include <lol/main.h>
 #include "loldebug.h"
 
-using namespace std;
-
 namespace lol
 {
 

@@ -15,7 +15,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 class SpriteTutorial : public WorldEntity

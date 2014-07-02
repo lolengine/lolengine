@@ -17,7 +17,6 @@
 #include <lol/main.h>
 
 using namespace lol;
-using namespace std;
 
 mat4 multiply_copy(mat4 m1, mat4 m2, mat4 m3)
 {
