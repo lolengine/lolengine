@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include <cctype>
+
 #include <lol/main.h>
 #include "../../image/image-private.h"
 

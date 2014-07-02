@@ -462,11 +462,6 @@ public:
         array_base *m_array;
     };
 
-    ConstIterator begin() const { return ConstIterator(this, 0); }
-    ConstIterator end() const { return ConstIterator(this, m_count); }
-    Iterator begin() { return Iterator(this, 0); }
-    Iterator end() { return Iterator(this, m_count); }
-
 public:
     inline int Count() const { return m_count; }
     inline int Bytes() const { return m_count * sizeof(element_t); }
@@ -897,11 +892,50 @@ public:
 #endif
 };
 
-/* Transitional alias for the camelcase version of lol::array */
+/*
+ * C++11 iterators
+ */
+
+template<typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8>
+typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator begin(array<T1,T2,T3,T4,T5,T6,T7,T8> &a)
+{
+    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator(&a, 0);
+}
+
+template<typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8>
+typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator end(array<T1,T2,T3,T4,T5,T6,T7,T8> &a)
+{
+    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator(&a, a.Count());
+}
+
+template<typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8>
+typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator begin(array<T1,T2,T3,T4,T5,T6,T7,T8> const &a)
+{
+    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator(&a, 0);
+}
+
+template<typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8>
+typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator end(array<T1,T2,T3,T4,T5,T6,T7,T8> const &a)
+{
+    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator(&a, a.Count());
+}
+
+/*
+ * Transitional alias for the deprecated camelcase version of lol::array
+ */
+
+#if LOL_FEATURE_CXX11_TEMPLATE_ALIASES
 template<typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
 using Array = array<T1, T2, T3, T4, T5, T6, T7, T8>;
+#else
+#   define Array array
+#endif
 
 } /* namespace lol */
 

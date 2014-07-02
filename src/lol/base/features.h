@@ -45,6 +45,9 @@
 #define LOL_FEATURE_CXX11_CONSTEXPR 0
 #define LOL_FEATURE_CXX11_ISNAN 0
 
+/* This one is OK, except on GCC <= 4.6 */
+#define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
+
 #if defined __GNUC__ /* GCC */
 #   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
 #       undef LOL_FEATURE_CXX11_CONSTEXPR
@@ -52,17 +55,15 @@
 #       undef LOL_FEATURE_CXX11_ISNAN
 #       define LOL_FEATURE_CXX11_ISNAN 1
 #   endif
+#   if (__GNUC__ * 100 + __GNUC_MINOR__) < 470
+#       undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
+#       define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 0
+#   endif
 #elif defined __has_feature /* Clang */
 #   if __has_feature(cxx_constexpr)
 #       undef LOL_FEATURE_CXX11_CONSTEXPR
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #   endif
-#endif
-
-#if LOL_FEATURE_CXX11_CONSTEXPR
-#   define LOL_CONSTEXPR constexpr
-#else
-#   define LOL_CONSTEXPR /* Nothing */
 #endif
 
 
