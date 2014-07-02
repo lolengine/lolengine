@@ -139,7 +139,7 @@ Renderer::Renderer(ivec2 size)
 
     /* Initialise rendering states */
     m_data->m_viewport = ibox2(0, 0, 0, 0);
-    SetViewport(ibox2(vec2::zero, size));
+    SetViewport(ibox2(ivec2::zero, size));
 
     m_data->m_clear_color = vec4(-1.f);
     SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
@@ -257,17 +257,17 @@ ibox2 Renderer::GetViewport() const
 float Renderer::GetXYRatio() const
 {
     ibox2 a = GetViewport();
-    box2 b(a.A, a.B);
-    vec2 s = b.B - b.A;
-    return s.x / s.y;
+    ibox2 b(a.A, a.B);
+    ivec2 s = b.B - b.A;
+    return (float)s.x / s.y;
 }
 
 float Renderer::GetYXRatio() const
 {
     ibox2 a = GetViewport();
-    box2 b(a.A, a.B);
-    vec2 s = b.B - b.A;
-    return s.y / s.x;
+    ibox2 b(a.A, a.B);
+    ivec2 s = b.B - b.A;
+    return (float)s.y / s.x;
 }
 
 /*

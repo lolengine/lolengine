@@ -25,44 +25,106 @@
 namespace lol
 {
 
+#if !LOL_FEATURE_CXX11_CONSTEXPR
+#   define constexpr /* */
+#endif
+
 #if !LOL_FEATURE_CXX11_RELAXED_UNIONS
 #   define _____ const
 #else
 #   define _____ /* */
 #endif
 
-/* The generic "vec" type, which is a fixed-size vector */
-template<typename T, int N>
+/*
+ * Magic vector swizzling (part 1/2)
+ * These vectors are empty, but thanks to static_cast we can take their
+ * address and access the vector of T's that they are union'ed with. We
+ * use static_cast instead of reinterpret_cast because there is a stronger
+ * guarantee (by the standard) that the address will stay the same across
+ * casts.
+ * We need to implement an assignment operator _and_ override the default
+ * assignment operator. We try to pass arguments by value so that we don't
+ * have to care about overwriting ourselves (e.g. c.rgb = c.bgr).
+ * However, Visual Studio 2012 doesn't support unrestricted unions, so
+ * fuck it.
+ */
+
+template<int N, typename T, int MASK = -1>
 struct vec
+{
+    inline vec<N, T, MASK>& operator =(vec<N, T> that);
+
+#if LOL_FEATURE_CXX11_RELAXED_UNIONS
+    inline vec<N, T, MASK>& operator =(vec<N, T, MASK> const &that)
+    {
+        return *this = (vec<N,T>)that;
+    }
+#endif
+
+    inline T& operator[](size_t n)
+    {
+        int i = (MASK >> (4 * (N - 1 - n))) & 3;
+        return static_cast<T*>(static_cast<void*>(this))[i];
+    }
+
+    inline T const& operator[](size_t n) const
+    {
+        int i = (MASK >> (4 * (N - 1 - n))) & 3;
+        return static_cast<T const*>(static_cast<void const *>(this))[i];
+    }
+};
+
+/* The generic "vec" type, which is a fixed-size vector */
+template<int N, typename T>
+struct vec<N, T, -1>
 {
 private:
     T m_data[N];
 };
 
-#define LOL_VECTOR_TYPEDEFS(tname, suffix) \
-    template <typename T> struct tname; \
-    typedef tname<half> f16##suffix; \
-    typedef tname<float> suffix; \
-    typedef tname<double> d##suffix; \
-    typedef tname<ldouble> f128##suffix; \
-    typedef tname<int8_t> i8##suffix; \
-    typedef tname<uint8_t> u8##suffix; \
-    typedef tname<int16_t> i16##suffix; \
-    typedef tname<uint16_t> u16##suffix; \
-    typedef tname<int32_t> i##suffix; \
-    typedef tname<uint32_t> u##suffix; \
-    typedef tname<int64_t> i64##suffix; \
-    typedef tname<uint64_t> u64##suffix; \
-    typedef tname<real> r##suffix; \
+/* The generic "matrix" type, which is a fixed-size matrix */
+template<int ROWS, int COLS, typename T>
+struct matrix
+{
+private:
+    T m_data[COLS][ROWS];
+};
 
-LOL_VECTOR_TYPEDEFS(Vec2, vec2)
-LOL_VECTOR_TYPEDEFS(Cmplx, cmplx)
-LOL_VECTOR_TYPEDEFS(Vec3, vec3)
-LOL_VECTOR_TYPEDEFS(Vec4, vec4)
-LOL_VECTOR_TYPEDEFS(Quat, quat)
-LOL_VECTOR_TYPEDEFS(Mat2, mat2)
-LOL_VECTOR_TYPEDEFS(Mat3, mat3)
-LOL_VECTOR_TYPEDEFS(Mat4, mat4)
+/* The generic complex and quaternion types. */
+template<typename T> struct Cmplx;
+template<typename T> struct Quat;
+
+/*
+ * Generic GLSL-like type names
+ */
+
+#define COMMA ,
+
+#define LOL_VECTOR_TYPEDEFS(tleft, tright, suffix) \
+    typedef tleft half tright f16##suffix; \
+    typedef tleft float tright suffix; \
+    typedef tleft double tright d##suffix; \
+    typedef tleft ldouble tright f128##suffix; \
+    typedef tleft int8_t tright i8##suffix; \
+    typedef tleft uint8_t tright u8##suffix; \
+    typedef tleft int16_t tright i16##suffix; \
+    typedef tleft uint16_t tright u16##suffix; \
+    typedef tleft int32_t tright i##suffix; \
+    typedef tleft uint32_t tright u##suffix; \
+    typedef tleft int64_t tright i64##suffix; \
+    typedef tleft uint64_t tright u64##suffix; \
+    typedef tleft real tright r##suffix;
+
+LOL_VECTOR_TYPEDEFS(vec<2 COMMA, >, vec2)
+LOL_VECTOR_TYPEDEFS(vec<3 COMMA, >, vec3)
+LOL_VECTOR_TYPEDEFS(vec<4 COMMA, >, vec4)
+
+LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 2 COMMA, >, mat2)
+LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 3 COMMA, >, mat3)
+LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 4 COMMA, >, mat4)
+
+LOL_VECTOR_TYPEDEFS(Cmplx<, >, cmplx)
+LOL_VECTOR_TYPEDEFS(Quat<, >, quat)
 
 #undef LOL_VECTOR_TYPEDEFS
 
@@ -85,124 +147,138 @@ typedef imat3 int3x3;
 typedef imat4 int4x4;
 
 /*
- * Magic vector swizzling (part 1/2)
- * These vectors are empty, but thanks to static_cast we can take their
- * address and access the vector of T's that they are union'ed with. We
- * use static_cast instead of reinterpret_cast because there is a stronger
- * guarantee (by the standard) that the address will stay the same across
- * casts.
- * We need to implement an assignment operator _and_ override the default
- * assignment operator. We try to pass arguments by value so that we don't
- * have to care about overwriting ourselves (e.g. c.rgb = c.bgr).
- * However, Visual Studio 2012 doesn't support unrestricted unions, so
- * fuck it.
+ * Helper macros for vector type member functions
  */
 
-template<typename T, int N> struct XVec2
-{
-    inline XVec2<T, N>& operator =(Vec2<T> that);
-
-#if LOL_FEATURE_CXX11_RELAXED_UNIONS
-    inline XVec2<T, N>& operator =(XVec2<T, N> const &that)
-    {
-        return *this = (Vec2<T>)that;
+#define LOL_V_VV_OP(op) \
+    friend inline type operator op(type const &a, type const &b) \
+    { \
+        type ret; \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            ret[i] = a[i] op b[i]; \
+        return ret; \
     }
-#endif
 
-    inline T& operator[](size_t n)
-    {
-        int i = (N >> (4 * (1 - n))) & 3;
-        return static_cast<T*>(static_cast<void*>(this))[i];
+#define LOL_V_VV_ASSIGN_OP(op) \
+    friend inline type &operator op##=(type &a, type const &b) \
+    { \
+        return a = a op b; \
     }
-    inline T const& operator[](size_t n) const
-    {
-        int i = (N >> (4 * (1 - n))) & 3;
-        return static_cast<T const*>(static_cast<void const *>(this))[i];
+
+#define LOL_V_VS_OP(op) \
+    friend inline type operator op(type const &a, T const &val) \
+    { \
+        type ret; \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            ret[i] = a[i] op val; \
+        return ret; \
     }
-};
 
-template<typename T, int N> struct XVec3
-{
-    inline XVec3<T, N>& operator =(Vec3<T> that);
-
-#if LOL_FEATURE_CXX11_RELAXED_UNIONS
-    inline XVec3<T, N>& operator =(XVec3<T, N> const &that)
-    {
-        return *this = (Vec3<T>)that;
+#define LOL_V_VS_ASSIGN_OP(op) \
+    friend inline type operator op##=(type &a, T const &val) \
+    { \
+        return a = a op val; \
     }
-#endif
 
-    inline T& operator[](size_t n)
-    {
-        int i = (N >> (4 * (2 - n))) & 3;
-        return static_cast<T*>(static_cast<void*>(this))[i];
+#define LOL_B_VV_OP(op, op2, ret) \
+    friend inline bool operator op(type const &a, type const &b) \
+    { \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            if (!(a[i] op2 b[i])) \
+                return !ret; \
+        return ret; \
     }
-    inline T const& operator[](size_t n) const
-    {
-        int i = (N >> (4 * (2 - n))) & 3;
-        return static_cast<T const*>(static_cast<void const *>(this))[i];
-    }
-};
 
-template<typename T, int N> struct XVec4
-{
-    inline XVec4<T, N>& operator =(Vec4<T> that);
-
-#if LOL_FEATURE_CXX11_RELAXED_UNIONS
-    inline XVec4<T, N>& operator =(XVec4<T, N> const &that)
-    {
-        return *this = (Vec4<T>)that;
-    }
-#endif
-
-    inline T& operator[](size_t n)
-    {
-        int i = (N >> (4 * (3 - n))) & 3;
-        return static_cast<T*>(static_cast<void*>(this))[i];
-    }
-    inline T const& operator[](size_t n) const
-    {
-        int i = (N >> (4 * (3 - n))) & 3;
-        return static_cast<T const*>(static_cast<void const *>(this))[i];
-    }
-};
-
-/*
- * Helper macro for vector type member functions
- */
-
-#define LOL_MEMBER_OPS(tname, first) \
-    inline T& operator[](size_t n) { return *(&this->first + n); } \
-    inline T const& operator[](size_t n) const { return *(&this->first + n); } \
+#define LOL_COMMON_MEMBER_OPS(first) \
+    inline T& operator[](size_t n) { return (&this->first)[n]; } \
+    inline T const& operator[](size_t n) const { return (&this->first)[n]; } \
     \
     /* Visual Studio insists on having an assignment operator. */ \
-    inline tname<T> const & operator =(tname<T> const &that) \
+    inline type & operator =(type const &that) \
     { \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            (*this)[n] = that[n]; \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            (*this)[i] = that[i]; \
         return *this; \
     } \
     \
-    template<typename U> \
-    inline operator tname<U>() const \
+    void printf() const; \
+    String tostring() const; \
+    \
+    /* vec -(vec)
+     * vec +(vec) */ \
+    friend inline type operator -(type const &a) \
     { \
-        tname<U> ret; \
-        for (size_t n = 0; n < sizeof(*this) / sizeof(T); n++) \
-            ret[n] = static_cast<U>((*this)[n]); \
+        type ret; \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            ret[i] = -a[i]; \
         return ret; \
     } \
     \
-    void printf() const; \
-    String tostring() const;
+    friend inline type operator +(type const &a) \
+    { \
+        return a; \
+    } \
+    \
+    /* vec +(vec, vec)
+     * vec -(vec, vec)
+     * vec +=(vec, vec)
+     * vec -=(vec, vec) */ \
+    LOL_V_VV_OP(+); \
+    LOL_V_VV_OP(-); \
+    LOL_V_VV_ASSIGN_OP(+); \
+    LOL_V_VV_ASSIGN_OP(-); \
+    \
+    /* vec *(vec, scalar)
+     * vec /(vec, scalar)
+     * vec *=(vec, scalar)
+     * vec /=(vec, scalar) */ \
+    LOL_V_VS_OP(*) \
+    LOL_V_VS_OP(/) \
+    LOL_V_VS_ASSIGN_OP(*) \
+    LOL_V_VS_ASSIGN_OP(/) \
+    \
+    /* bool ==(vec, vec)
+     * bool !=(vec, vec) */ \
+    LOL_B_VV_OP(==, ==, true) \
+    LOL_B_VV_OP(!=, ==, false)
+
+#define LOL_VECTOR_MEMBER_OPS() \
+    /* vec *(vec, vec)
+     * vec /(vec, vec)
+     * vec *=(vec, vec)
+     * vec /=(vec, vec) */ \
+    LOL_V_VV_OP(*); \
+    LOL_V_VV_OP(/); \
+    LOL_V_VV_ASSIGN_OP(*); \
+    LOL_V_VV_ASSIGN_OP(/); \
+    \
+    /* bool >=(vec, vec)
+     * bool <=(vec, vec)
+     * bool >(vec, vec)
+     * bool <(vec, vec) */ \
+    LOL_B_VV_OP(<=, <=, true) \
+    LOL_B_VV_OP(>=, >=, true) \
+    LOL_B_VV_OP(<, <, true) \
+    LOL_B_VV_OP(>, >, true)
+
+#define LOL_NONVECTOR_MEMBER_OPS() \
+    /* vec *(scalar, vec) (no division, it works differently) */ \
+    friend inline type operator *(T const &val, type const &a) \
+    { \
+        type ret; \
+        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
+            ret[i] = val * a[i]; \
+        return ret; \
+    }
 
 /*
  * 2-element vectors
  */
 
-template <typename T> struct BVec2
+template <typename T> struct base_vec2
 {
-    explicit inline LOL_CONSTEXPR BVec2() {}
-    explicit inline LOL_CONSTEXPR BVec2(T X, T Y) : x(X), y(Y) {}
+    explicit inline constexpr base_vec2() {}
+    explicit inline constexpr base_vec2(T X, T Y) : x(X), y(Y) {}
 
     union
     {
@@ -211,79 +287,83 @@ template <typename T> struct BVec2
         struct { T s, t; };
 
 #if !_DOXYGEN_SKIP_ME
-        XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st;
-        XVec2<T,0x10> _____ yx, gr, ts;
-        XVec2<T,0x11> const yy, gg, tt;
+        vec<2,T,0x00> const xx, rr, ss;
+        vec<2,T,0x01> _____ xy, rg, st;
+        vec<2,T,0x10> _____ yx, gr, ts;
+        vec<2,T,0x11> const yy, gg, tt;
 
-        XVec3<T,0x000> const xxx, rrr, sss;
-        XVec3<T,0x001> const xxy, rrg, sst;
-        XVec3<T,0x010> const xyx, rgr, sts;
-        XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x100> const yxx, grr, tss;
-        XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x110> const yyx, ggr, tts;
-        XVec3<T,0x111> const yyy, ggg, ttt;
+        vec<3,T,0x000> const xxx, rrr, sss;
+        vec<3,T,0x001> const xxy, rrg, sst;
+        vec<3,T,0x010> const xyx, rgr, sts;
+        vec<3,T,0x011> const xyy, rgg, stt;
+        vec<3,T,0x100> const yxx, grr, tss;
+        vec<3,T,0x101> const yxy, grg, tst;
+        vec<3,T,0x110> const yyx, ggr, tts;
+        vec<3,T,0x111> const yyy, ggg, ttt;
 
-        XVec4<T,0x0000> const xxxx, rrrr, ssss;
-        XVec4<T,0x0001> const xxxy, rrrg, ssst;
-        XVec4<T,0x0010> const xxyx, rrgr, ssts;
-        XVec4<T,0x0011> const xxyy, rrgg, sstt;
-        XVec4<T,0x0100> const xyxx, rgrr, stss;
-        XVec4<T,0x0101> const xyxy, rgrg, stst;
-        XVec4<T,0x0110> const xyyx, rggr, stts;
-        XVec4<T,0x0111> const xyyy, rggg, sttt;
-        XVec4<T,0x1000> const yxxx, grrr, tsss;
-        XVec4<T,0x1001> const yxxy, grrg, tsst;
-        XVec4<T,0x1010> const yxyx, grgr, tsts;
-        XVec4<T,0x1011> const yxyy, grgg, tstt;
-        XVec4<T,0x1100> const yyxx, ggrr, ttss;
-        XVec4<T,0x1101> const yyxy, ggrg, ttst;
-        XVec4<T,0x1110> const yyyx, gggr, ttts;
-        XVec4<T,0x1111> const yyyy, gggg, tttt;
+        vec<4,T,0x0000> const xxxx, rrrr, ssss;
+        vec<4,T,0x0001> const xxxy, rrrg, ssst;
+        vec<4,T,0x0010> const xxyx, rrgr, ssts;
+        vec<4,T,0x0011> const xxyy, rrgg, sstt;
+        vec<4,T,0x0100> const xyxx, rgrr, stss;
+        vec<4,T,0x0101> const xyxy, rgrg, stst;
+        vec<4,T,0x0110> const xyyx, rggr, stts;
+        vec<4,T,0x0111> const xyyy, rggg, sttt;
+        vec<4,T,0x1000> const yxxx, grrr, tsss;
+        vec<4,T,0x1001> const yxxy, grrg, tsst;
+        vec<4,T,0x1010> const yxyx, grgr, tsts;
+        vec<4,T,0x1011> const yxyy, grgg, tstt;
+        vec<4,T,0x1100> const yyxx, ggrr, ttss;
+        vec<4,T,0x1101> const yyxy, ggrg, ttst;
+        vec<4,T,0x1110> const yyyx, gggr, ttts;
+        vec<4,T,0x1111> const yyyy, gggg, tttt;
 #endif
     };
 };
 
-template <> struct BVec2<half>
+template <> struct base_vec2<half>
 {
-    explicit inline BVec2() {}
-    explicit inline BVec2(half X, half Y) : x(X), y(Y) {}
+    explicit inline base_vec2() {}
+    explicit inline base_vec2(half X, half Y) : x(X), y(Y) {}
 
     half x, y;
 };
 
-template <> struct BVec2<real>
+template <> struct base_vec2<real>
 {
-    explicit inline BVec2() {}
-    explicit inline BVec2(real X, real Y) : x(X), y(Y) {}
+    explicit inline base_vec2() {}
+    explicit inline base_vec2(real X, real Y) : x(X), y(Y) {}
 
     real x, y;
 };
 
-template <typename T> struct Vec2 : BVec2<T>
+template <typename T>
+struct vec<2,T> : base_vec2<T>
 {
-    inline LOL_CONSTEXPR Vec2() {}
-    inline LOL_CONSTEXPR Vec2(T X, T Y) : BVec2<T>(X, Y) {}
+    typedef vec<2,T> type;
 
-    explicit LOL_CONSTEXPR inline Vec2(T X) : BVec2<T>(X, X) {}
+    inline constexpr vec() {}
+    inline constexpr vec(T X, T Y) : base_vec2<T>(X, Y) {}
 
-    template<int N>
-    inline LOL_CONSTEXPR Vec2(XVec2<T, N> const &v)
-      : BVec2<T>(v[0], v[1]) {}
+    explicit inline constexpr vec(T X) : base_vec2<T>(X, X) {}
 
-    template<typename U, int N>
-    explicit inline LOL_CONSTEXPR Vec2(XVec2<U, N> const &v)
-      : BVec2<T>(v[0], v[1]) {}
+    template<int MASK>
+    inline constexpr vec(vec<2, T, MASK> const &v)
+      : base_vec2<T>(v[0], v[1]) {}
 
-    LOL_MEMBER_OPS(Vec2, x)
+    template<typename U, int MASK>
+    explicit inline constexpr vec(vec<2, U, MASK> const &v)
+      : base_vec2<T>(v[0], v[1]) {}
 
-    static const Vec2<T> zero;
-    static const Vec2<T> axis_x;
-    static const Vec2<T> axis_y;
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
+
+    static const vec<2,T> zero;
+    static const vec<2,T> axis_x;
+    static const vec<2,T> axis_y;
 
     template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec2<U> const &v);
+    friend std::ostream &operator<<(std::ostream &stream, vec<2,U> const &v);
 };
 
 /*
@@ -292,11 +372,18 @@ template <typename T> struct Vec2 : BVec2<T>
 
 template <typename T> struct Cmplx
 {
-    inline LOL_CONSTEXPR Cmplx() {}
-    inline LOL_CONSTEXPR Cmplx(T X) : x(X), y(0) {}
-    inline LOL_CONSTEXPR Cmplx(T X, T Y) : x(X), y(Y) {}
+    typedef Cmplx<T> type;
 
-    LOL_MEMBER_OPS(Cmplx, x)
+    inline constexpr Cmplx() {}
+    inline constexpr Cmplx(T X) : x(X), y(0) {}
+    inline constexpr Cmplx(T X, T Y) : x(X), y(Y) {}
+
+    template<typename U>
+    explicit inline constexpr Cmplx(Cmplx<U> const &z)
+      : Cmplx<T>(z[0], z[1]) {}
+
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_NONVECTOR_MEMBER_OPS()
 
     inline Cmplx<T> operator *(Cmplx<T> const &val) const
     {
@@ -313,7 +400,6 @@ template <typename T> struct Cmplx
         return Cmplx<T>(x, -y);
     }
 
-    inline T norm() const { return length(*this); }
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
 
@@ -321,9 +407,44 @@ template <typename T> struct Cmplx
 };
 
 template<typename T>
-static inline Cmplx<T> re(Cmplx<T> const &val)
+static inline T dot(Cmplx<T> const &q1, Cmplx<T> const &q2)
 {
-    return ~val / sqlength(val);
+    T ret(0);
+    for (size_t i = 0; i < sizeof(ret) / sizeof(T); ++i)
+        ret += q1[i] * q2[i];
+    return ret;
+}
+
+template<typename T>
+static inline T sqlength(Cmplx<T> const &q)
+{
+    return dot(q, q);
+}
+
+template<typename T>
+static inline T length(Cmplx<T> const &q)
+{
+    /* FIXME: this is not very nice */
+    return (T)sqrt((double)sqlength(q));
+}
+
+template<typename T>
+static inline T norm(Cmplx<T> const &z)
+{
+    return length(z);
+}
+
+template<typename T>
+static inline Cmplx<T> re(Cmplx<T> const &z)
+{
+    return ~z / sqlength(z);
+}
+
+template<typename T>
+static inline Cmplx<T> normalize(Cmplx<T> const &z)
+{
+    T norm = (T)length(z);
+    return norm ? z / norm : Cmplx<T>(T(0));
 }
 
 template<typename T>
@@ -360,10 +481,10 @@ static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
  * 3-element vectors
  */
 
-template <typename T> struct BVec3
+template <typename T> struct base_vec3
 {
-    explicit inline LOL_CONSTEXPR BVec3() {}
-    explicit inline LOL_CONSTEXPR BVec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
+    explicit inline constexpr base_vec3() {}
+    explicit inline constexpr base_vec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
 
     union
     {
@@ -372,196 +493,222 @@ template <typename T> struct BVec3
         struct { T s, t, p; };
 
 #if !_DOXYGEN_SKIP_ME
-        XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st;
-        XVec2<T,0x02> _____ xz, rb, sp;
-        XVec2<T,0x10> _____ yx, gr, ts;
-        XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> _____ yz, gb, tp;
-        XVec2<T,0x20> _____ zx, br, ps;
-        XVec2<T,0x21> _____ zy, bg, pt;
-        XVec2<T,0x22> const zz, bb, pp;
+        vec<2,T,0x00> const xx, rr, ss;
+        vec<2,T,0x01> _____ xy, rg, st;
+        vec<2,T,0x02> _____ xz, rb, sp;
+        vec<2,T,0x10> _____ yx, gr, ts;
+        vec<2,T,0x11> const yy, gg, tt;
+        vec<2,T,0x12> _____ yz, gb, tp;
+        vec<2,T,0x20> _____ zx, br, ps;
+        vec<2,T,0x21> _____ zy, bg, pt;
+        vec<2,T,0x22> const zz, bb, pp;
 
-        XVec3<T,0x000> const xxx, rrr, sss;
-        XVec3<T,0x001> const xxy, rrg, sst;
-        XVec3<T,0x002> const xxz, rrb, ssp;
-        XVec3<T,0x010> const xyx, rgr, sts;
-        XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> _____ xyz, rgb, stp;
-        XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> _____ xzy, rbg, spt;
-        XVec3<T,0x022> const xzz, rbb, spp;
-        XVec3<T,0x100> const yxx, grr, tss;
-        XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> _____ yxz, grb, tsp;
-        XVec3<T,0x110> const yyx, ggr, tts;
-        XVec3<T,0x111> const yyy, ggg, ttt;
-        XVec3<T,0x112> const yyz, ggb, ttp;
-        XVec3<T,0x120> _____ yzx, gbr, tps;
-        XVec3<T,0x121> const yzy, gbg, tpt;
-        XVec3<T,0x122> const yzz, gbb, tpp;
-        XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> _____ zxy, brg, pst;
-        XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x210> _____ zyx, bgr, pts;
-        XVec3<T,0x211> const zyy, bgg, ptt;
-        XVec3<T,0x212> const zyz, bgb, ptp;
-        XVec3<T,0x220> const zzx, bbr, pps;
-        XVec3<T,0x221> const zzy, bbg, ppt;
-        XVec3<T,0x222> const zzz, bbb, ppp;
+        vec<3,T,0x000> const xxx, rrr, sss;
+        vec<3,T,0x001> const xxy, rrg, sst;
+        vec<3,T,0x002> const xxz, rrb, ssp;
+        vec<3,T,0x010> const xyx, rgr, sts;
+        vec<3,T,0x011> const xyy, rgg, stt;
+        vec<3,T,0x012> _____ xyz, rgb, stp;
+        vec<3,T,0x020> const xzx, rbr, sps;
+        vec<3,T,0x021> _____ xzy, rbg, spt;
+        vec<3,T,0x022> const xzz, rbb, spp;
+        vec<3,T,0x100> const yxx, grr, tss;
+        vec<3,T,0x101> const yxy, grg, tst;
+        vec<3,T,0x102> _____ yxz, grb, tsp;
+        vec<3,T,0x110> const yyx, ggr, tts;
+        vec<3,T,0x111> const yyy, ggg, ttt;
+        vec<3,T,0x112> const yyz, ggb, ttp;
+        vec<3,T,0x120> _____ yzx, gbr, tps;
+        vec<3,T,0x121> const yzy, gbg, tpt;
+        vec<3,T,0x122> const yzz, gbb, tpp;
+        vec<3,T,0x200> const zxx, brr, pss;
+        vec<3,T,0x201> _____ zxy, brg, pst;
+        vec<3,T,0x202> const zxz, brb, psp;
+        vec<3,T,0x210> _____ zyx, bgr, pts;
+        vec<3,T,0x211> const zyy, bgg, ptt;
+        vec<3,T,0x212> const zyz, bgb, ptp;
+        vec<3,T,0x220> const zzx, bbr, pps;
+        vec<3,T,0x221> const zzy, bbg, ppt;
+        vec<3,T,0x222> const zzz, bbb, ppp;
 
-        XVec4<T,0x0000> const xxxx, rrrr, ssss;
-        XVec4<T,0x0001> const xxxy, rrrg, ssst;
-        XVec4<T,0x0002> const xxxz, rrrb, sssp;
-        XVec4<T,0x0010> const xxyx, rrgr, ssts;
-        XVec4<T,0x0011> const xxyy, rrgg, sstt;
-        XVec4<T,0x0012> const xxyz, rrgb, sstp;
-        XVec4<T,0x0020> const xxzx, rrbr, ssps;
-        XVec4<T,0x0021> const xxzy, rrbg, sspt;
-        XVec4<T,0x0022> const xxzz, rrbb, sspp;
-        XVec4<T,0x0100> const xyxx, rgrr, stss;
-        XVec4<T,0x0101> const xyxy, rgrg, stst;
-        XVec4<T,0x0102> const xyxz, rgrb, stsp;
-        XVec4<T,0x0110> const xyyx, rggr, stts;
-        XVec4<T,0x0111> const xyyy, rggg, sttt;
-        XVec4<T,0x0112> const xyyz, rggb, sttp;
-        XVec4<T,0x0120> const xyzx, rgbr, stps;
-        XVec4<T,0x0121> const xyzy, rgbg, stpt;
-        XVec4<T,0x0122> const xyzz, rgbb, stpp;
-        XVec4<T,0x0200> const xzxx, rbrr, spss;
-        XVec4<T,0x0201> const xzxy, rbrg, spst;
-        XVec4<T,0x0202> const xzxz, rbrb, spsp;
-        XVec4<T,0x0210> const xzyx, rbgr, spts;
-        XVec4<T,0x0211> const xzyy, rbgg, sptt;
-        XVec4<T,0x0212> const xzyz, rbgb, sptp;
-        XVec4<T,0x0220> const xzzx, rbbr, spps;
-        XVec4<T,0x0221> const xzzy, rbbg, sppt;
-        XVec4<T,0x0222> const xzzz, rbbb, sppp;
-        XVec4<T,0x1000> const yxxx, grrr, tsss;
-        XVec4<T,0x1001> const yxxy, grrg, tsst;
-        XVec4<T,0x1002> const yxxz, grrb, tssp;
-        XVec4<T,0x1010> const yxyx, grgr, tsts;
-        XVec4<T,0x1011> const yxyy, grgg, tstt;
-        XVec4<T,0x1012> const yxyz, grgb, tstp;
-        XVec4<T,0x1020> const yxzx, grbr, tsps;
-        XVec4<T,0x1021> const yxzy, grbg, tspt;
-        XVec4<T,0x1022> const yxzz, grbb, tspp;
-        XVec4<T,0x1100> const yyxx, ggrr, ttss;
-        XVec4<T,0x1101> const yyxy, ggrg, ttst;
-        XVec4<T,0x1102> const yyxz, ggrb, ttsp;
-        XVec4<T,0x1110> const yyyx, gggr, ttts;
-        XVec4<T,0x1111> const yyyy, gggg, tttt;
-        XVec4<T,0x1112> const yyyz, gggb, tttp;
-        XVec4<T,0x1120> const yyzx, ggbr, ttps;
-        XVec4<T,0x1121> const yyzy, ggbg, ttpt;
-        XVec4<T,0x1122> const yyzz, ggbb, ttpp;
-        XVec4<T,0x1200> const yzxx, gbrr, tpss;
-        XVec4<T,0x1201> const yzxy, gbrg, tpst;
-        XVec4<T,0x1202> const yzxz, gbrb, tpsp;
-        XVec4<T,0x1210> const yzyx, gbgr, tpts;
-        XVec4<T,0x1211> const yzyy, gbgg, tptt;
-        XVec4<T,0x1212> const yzyz, gbgb, tptp;
-        XVec4<T,0x1220> const yzzx, gbbr, tpps;
-        XVec4<T,0x1221> const yzzy, gbbg, tppt;
-        XVec4<T,0x1222> const yzzz, gbbb, tppp;
-        XVec4<T,0x2000> const zxxx, brrr, psss;
-        XVec4<T,0x2001> const zxxy, brrg, psst;
-        XVec4<T,0x2002> const zxxz, brrb, pssp;
-        XVec4<T,0x2010> const zxyx, brgr, psts;
-        XVec4<T,0x2011> const zxyy, brgg, pstt;
-        XVec4<T,0x2012> const zxyz, brgb, pstp;
-        XVec4<T,0x2020> const zxzx, brbr, psps;
-        XVec4<T,0x2021> const zxzy, brbg, pspt;
-        XVec4<T,0x2022> const zxzz, brbb, pspp;
-        XVec4<T,0x2100> const zyxx, bgrr, ptss;
-        XVec4<T,0x2101> const zyxy, bgrg, ptst;
-        XVec4<T,0x2102> const zyxz, bgrb, ptsp;
-        XVec4<T,0x2110> const zyyx, bggr, ptts;
-        XVec4<T,0x2111> const zyyy, bggg, pttt;
-        XVec4<T,0x2112> const zyyz, bggb, pttp;
-        XVec4<T,0x2120> const zyzx, bgbr, ptps;
-        XVec4<T,0x2121> const zyzy, bgbg, ptpt;
-        XVec4<T,0x2122> const zyzz, bgbb, ptpp;
-        XVec4<T,0x2200> const zzxx, bbrr, ppss;
-        XVec4<T,0x2201> const zzxy, bbrg, ppst;
-        XVec4<T,0x2202> const zzxz, bbrb, ppsp;
-        XVec4<T,0x2210> const zzyx, bbgr, ppts;
-        XVec4<T,0x2211> const zzyy, bbgg, pptt;
-        XVec4<T,0x2212> const zzyz, bbgb, pptp;
-        XVec4<T,0x2220> const zzzx, bbbr, ppps;
-        XVec4<T,0x2221> const zzzy, bbbg, pppt;
-        XVec4<T,0x2222> const zzzz, bbbb, pppp;
+        vec<4,T,0x0000> const xxxx, rrrr, ssss;
+        vec<4,T,0x0001> const xxxy, rrrg, ssst;
+        vec<4,T,0x0002> const xxxz, rrrb, sssp;
+        vec<4,T,0x0010> const xxyx, rrgr, ssts;
+        vec<4,T,0x0011> const xxyy, rrgg, sstt;
+        vec<4,T,0x0012> const xxyz, rrgb, sstp;
+        vec<4,T,0x0020> const xxzx, rrbr, ssps;
+        vec<4,T,0x0021> const xxzy, rrbg, sspt;
+        vec<4,T,0x0022> const xxzz, rrbb, sspp;
+        vec<4,T,0x0100> const xyxx, rgrr, stss;
+        vec<4,T,0x0101> const xyxy, rgrg, stst;
+        vec<4,T,0x0102> const xyxz, rgrb, stsp;
+        vec<4,T,0x0110> const xyyx, rggr, stts;
+        vec<4,T,0x0111> const xyyy, rggg, sttt;
+        vec<4,T,0x0112> const xyyz, rggb, sttp;
+        vec<4,T,0x0120> const xyzx, rgbr, stps;
+        vec<4,T,0x0121> const xyzy, rgbg, stpt;
+        vec<4,T,0x0122> const xyzz, rgbb, stpp;
+        vec<4,T,0x0200> const xzxx, rbrr, spss;
+        vec<4,T,0x0201> const xzxy, rbrg, spst;
+        vec<4,T,0x0202> const xzxz, rbrb, spsp;
+        vec<4,T,0x0210> const xzyx, rbgr, spts;
+        vec<4,T,0x0211> const xzyy, rbgg, sptt;
+        vec<4,T,0x0212> const xzyz, rbgb, sptp;
+        vec<4,T,0x0220> const xzzx, rbbr, spps;
+        vec<4,T,0x0221> const xzzy, rbbg, sppt;
+        vec<4,T,0x0222> const xzzz, rbbb, sppp;
+        vec<4,T,0x1000> const yxxx, grrr, tsss;
+        vec<4,T,0x1001> const yxxy, grrg, tsst;
+        vec<4,T,0x1002> const yxxz, grrb, tssp;
+        vec<4,T,0x1010> const yxyx, grgr, tsts;
+        vec<4,T,0x1011> const yxyy, grgg, tstt;
+        vec<4,T,0x1012> const yxyz, grgb, tstp;
+        vec<4,T,0x1020> const yxzx, grbr, tsps;
+        vec<4,T,0x1021> const yxzy, grbg, tspt;
+        vec<4,T,0x1022> const yxzz, grbb, tspp;
+        vec<4,T,0x1100> const yyxx, ggrr, ttss;
+        vec<4,T,0x1101> const yyxy, ggrg, ttst;
+        vec<4,T,0x1102> const yyxz, ggrb, ttsp;
+        vec<4,T,0x1110> const yyyx, gggr, ttts;
+        vec<4,T,0x1111> const yyyy, gggg, tttt;
+        vec<4,T,0x1112> const yyyz, gggb, tttp;
+        vec<4,T,0x1120> const yyzx, ggbr, ttps;
+        vec<4,T,0x1121> const yyzy, ggbg, ttpt;
+        vec<4,T,0x1122> const yyzz, ggbb, ttpp;
+        vec<4,T,0x1200> const yzxx, gbrr, tpss;
+        vec<4,T,0x1201> const yzxy, gbrg, tpst;
+        vec<4,T,0x1202> const yzxz, gbrb, tpsp;
+        vec<4,T,0x1210> const yzyx, gbgr, tpts;
+        vec<4,T,0x1211> const yzyy, gbgg, tptt;
+        vec<4,T,0x1212> const yzyz, gbgb, tptp;
+        vec<4,T,0x1220> const yzzx, gbbr, tpps;
+        vec<4,T,0x1221> const yzzy, gbbg, tppt;
+        vec<4,T,0x1222> const yzzz, gbbb, tppp;
+        vec<4,T,0x2000> const zxxx, brrr, psss;
+        vec<4,T,0x2001> const zxxy, brrg, psst;
+        vec<4,T,0x2002> const zxxz, brrb, pssp;
+        vec<4,T,0x2010> const zxyx, brgr, psts;
+        vec<4,T,0x2011> const zxyy, brgg, pstt;
+        vec<4,T,0x2012> const zxyz, brgb, pstp;
+        vec<4,T,0x2020> const zxzx, brbr, psps;
+        vec<4,T,0x2021> const zxzy, brbg, pspt;
+        vec<4,T,0x2022> const zxzz, brbb, pspp;
+        vec<4,T,0x2100> const zyxx, bgrr, ptss;
+        vec<4,T,0x2101> const zyxy, bgrg, ptst;
+        vec<4,T,0x2102> const zyxz, bgrb, ptsp;
+        vec<4,T,0x2110> const zyyx, bggr, ptts;
+        vec<4,T,0x2111> const zyyy, bggg, pttt;
+        vec<4,T,0x2112> const zyyz, bggb, pttp;
+        vec<4,T,0x2120> const zyzx, bgbr, ptps;
+        vec<4,T,0x2121> const zyzy, bgbg, ptpt;
+        vec<4,T,0x2122> const zyzz, bgbb, ptpp;
+        vec<4,T,0x2200> const zzxx, bbrr, ppss;
+        vec<4,T,0x2201> const zzxy, bbrg, ppst;
+        vec<4,T,0x2202> const zzxz, bbrb, ppsp;
+        vec<4,T,0x2210> const zzyx, bbgr, ppts;
+        vec<4,T,0x2211> const zzyy, bbgg, pptt;
+        vec<4,T,0x2212> const zzyz, bbgb, pptp;
+        vec<4,T,0x2220> const zzzx, bbbr, ppps;
+        vec<4,T,0x2221> const zzzy, bbbg, pppt;
+        vec<4,T,0x2222> const zzzz, bbbb, pppp;
 #endif
     };
 };
 
-template <> struct BVec3<half>
+template <> struct base_vec3<half>
 {
-    explicit inline BVec3() {}
-    explicit inline BVec3(half X, half Y, half Z)
+    explicit inline base_vec3() {}
+    explicit inline base_vec3(half X, half Y, half Z)
       : x(X), y(Y), z(Z) {}
 
     half x, y, z;
 };
 
-template <> struct BVec3<real>
+template <> struct base_vec3<real>
 {
-    explicit inline BVec3() {}
-    explicit inline BVec3(real X, real Y, real Z) : x(X), y(Y), z(Z) {}
+    explicit inline base_vec3() {}
+    explicit inline base_vec3(real X, real Y, real Z) : x(X), y(Y), z(Z) {}
 
     real x, y, z;
 };
 
-template <typename T> struct Vec3 : BVec3<T>
+template <typename T>
+struct vec<3,T> : base_vec3<T>
 {
-    inline LOL_CONSTEXPR Vec3() {}
-    inline LOL_CONSTEXPR Vec3(T X, T Y, T Z) : BVec3<T>(X, Y, Z) {}
-    inline LOL_CONSTEXPR Vec3(Vec2<T> XY, T Z) : BVec3<T>(XY.x, XY.y, Z) {}
-    inline LOL_CONSTEXPR Vec3(T X, Vec2<T> YZ) : BVec3<T>(X, YZ.x, YZ.y) {}
+    typedef vec<3,T> type;
 
-    explicit inline LOL_CONSTEXPR Vec3(T X) : BVec3<T>(X, X, X) {}
+    inline constexpr vec() {}
+    inline constexpr vec(T X, T Y, T Z) : base_vec3<T>(X, Y, Z) {}
+    inline constexpr vec(vec<2,T> XY, T Z) : base_vec3<T>(XY.x, XY.y, Z) {}
+    inline constexpr vec(T X, vec<2,T> YZ) : base_vec3<T>(X, YZ.x, YZ.y) {}
 
-    template<int N>
-    inline LOL_CONSTEXPR Vec3(XVec3<T, N> const &v)
-      : BVec3<T>(v[0], v[1], v[2]) {}
+    explicit inline constexpr vec(T X) : base_vec3<T>(X, X, X) {}
 
-    template<typename U, int N>
-    explicit inline LOL_CONSTEXPR Vec3(XVec3<U, N> const &v)
-      : BVec3<T>(v[0], v[1], v[2]) {}
+    template<int MASK>
+    inline constexpr vec(vec<3, T, MASK> const &v)
+      : base_vec3<T>(v[0], v[1], v[2]) {}
 
-    static Vec3<T> toeuler_xyx(Quat<T> const &q);
-    static Vec3<T> toeuler_xzx(Quat<T> const &q);
-    static Vec3<T> toeuler_yxy(Quat<T> const &q);
-    static Vec3<T> toeuler_yzy(Quat<T> const &q);
-    static Vec3<T> toeuler_zxz(Quat<T> const &q);
-    static Vec3<T> toeuler_zyz(Quat<T> const &q);
+    template<typename U, int MASK>
+    explicit inline constexpr vec(vec<3, U, MASK> const &v)
+      : base_vec3<T>(v[0], v[1], v[2]) {}
 
-    static Vec3<T> toeuler_xyz(Quat<T> const &q);
-    static Vec3<T> toeuler_xzy(Quat<T> const &q);
-    static Vec3<T> toeuler_yxz(Quat<T> const &q);
-    static Vec3<T> toeuler_yzx(Quat<T> const &q);
-    static Vec3<T> toeuler_zxy(Quat<T> const &q);
-    static Vec3<T> toeuler_zyx(Quat<T> const &q);
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
 
-    LOL_MEMBER_OPS(Vec3, x)
+    static vec<3,T> toeuler_xyx(Quat<T> const &q);
+    static vec<3,T> toeuler_xzx(Quat<T> const &q);
+    static vec<3,T> toeuler_yxy(Quat<T> const &q);
+    static vec<3,T> toeuler_yzy(Quat<T> const &q);
+    static vec<3,T> toeuler_zxz(Quat<T> const &q);
+    static vec<3,T> toeuler_zyz(Quat<T> const &q);
 
-    static const Vec3<T> zero;
-    static const Vec3<T> axis_x;
-    static const Vec3<T> axis_y;
-    static const Vec3<T> axis_z;
+    static vec<3,T> toeuler_xyz(Quat<T> const &q);
+    static vec<3,T> toeuler_xzy(Quat<T> const &q);
+    static vec<3,T> toeuler_yxz(Quat<T> const &q);
+    static vec<3,T> toeuler_yzx(Quat<T> const &q);
+    static vec<3,T> toeuler_zxy(Quat<T> const &q);
+    static vec<3,T> toeuler_zyx(Quat<T> const &q);
+
+    /* Return the cross product (vector product) of "a" and "b" */ \
+    friend inline type cross(type const &a, type const &b)
+    {
+        return type(a.y * b.z - a.z * b.y,
+                    a.z * b.x - a.x * b.z,
+                    a.x * b.y - a.y * b.x);
+    }
+
+    /* Return a vector that is orthogonal to "a" */
+    friend inline type orthogonal(type const &a)
+    {
+        return lol::abs(a.x) > lol::abs(a.z)
+             ? type(-a.y, a.x, (T)0)
+             : type((T)0, -a.z, a.y);
+    }
+
+    /* Return a vector that is orthonormal to "a" */
+    friend inline type orthonormal(type const &a)
+    {
+        return normalize(orthogonal(a));
+    }
+
+    static const vec<3,T> zero;
+    static const vec<3,T> axis_x;
+    static const vec<3,T> axis_y;
+    static const vec<3,T> axis_z;
 
     template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec3<U> const &v);
+    friend std::ostream &operator<<(std::ostream &stream, vec<3,U> const &v);
 };
 
 /*
  * 4-element vectors
  */
 
-template <typename T> struct BVec4
+template <typename T> struct base_vec4
 {
-    explicit inline LOL_CONSTEXPR BVec4() {}
-    explicit inline LOL_CONSTEXPR BVec4(T X, T Y, T Z, T W)
+    explicit inline constexpr base_vec4() {}
+    explicit inline constexpr base_vec4(T X, T Y, T Z, T W)
       : x(X), y(Y), z(Z), w(W) {}
 
     union
@@ -571,404 +718,408 @@ template <typename T> struct BVec4
         struct { T s, t, p, q; };
 
 #if !_DOXYGEN_SKIP_ME
-        XVec2<T,0x00> const xx, rr, ss;
-        XVec2<T,0x01> _____ xy, rg, st;
-        XVec2<T,0x02> _____ xz, rb, sp;
-        XVec2<T,0x03> _____ xw, ra, sq;
-        XVec2<T,0x10> _____ yx, gr, ts;
-        XVec2<T,0x11> const yy, gg, tt;
-        XVec2<T,0x12> _____ yz, gb, tp;
-        XVec2<T,0x13> _____ yw, ga, tq;
-        XVec2<T,0x20> _____ zx, br, ps;
-        XVec2<T,0x21> _____ zy, bg, pt;
-        XVec2<T,0x22> const zz, bb, pp;
-        XVec2<T,0x23> _____ zw, ba, pq;
-        XVec2<T,0x30> _____ wx, ar, qs;
-        XVec2<T,0x31> _____ wy, ag, qt;
-        XVec2<T,0x32> _____ wz, ab, qp;
-        XVec2<T,0x33> const ww, aa, qq;
+        vec<2,T,0x00> const xx, rr, ss;
+        vec<2,T,0x01> _____ xy, rg, st;
+        vec<2,T,0x02> _____ xz, rb, sp;
+        vec<2,T,0x03> _____ xw, ra, sq;
+        vec<2,T,0x10> _____ yx, gr, ts;
+        vec<2,T,0x11> const yy, gg, tt;
+        vec<2,T,0x12> _____ yz, gb, tp;
+        vec<2,T,0x13> _____ yw, ga, tq;
+        vec<2,T,0x20> _____ zx, br, ps;
+        vec<2,T,0x21> _____ zy, bg, pt;
+        vec<2,T,0x22> const zz, bb, pp;
+        vec<2,T,0x23> _____ zw, ba, pq;
+        vec<2,T,0x30> _____ wx, ar, qs;
+        vec<2,T,0x31> _____ wy, ag, qt;
+        vec<2,T,0x32> _____ wz, ab, qp;
+        vec<2,T,0x33> const ww, aa, qq;
 
-        XVec3<T,0x000> const xxx, rrr, sss;
-        XVec3<T,0x001> const xxy, rrg, sst;
-        XVec3<T,0x002> const xxz, rrb, ssp;
-        XVec3<T,0x003> const xxw, rra, ssq;
-        XVec3<T,0x010> const xyx, rgr, sts;
-        XVec3<T,0x011> const xyy, rgg, stt;
-        XVec3<T,0x012> _____ xyz, rgb, stp;
-        XVec3<T,0x013> _____ xyw, rga, stq;
-        XVec3<T,0x020> const xzx, rbr, sps;
-        XVec3<T,0x021> _____ xzy, rbg, spt;
-        XVec3<T,0x022> const xzz, rbb, spp;
-        XVec3<T,0x023> _____ xzw, rba, spq;
-        XVec3<T,0x030> const xwx, rar, sqs;
-        XVec3<T,0x031> _____ xwy, rag, sqt;
-        XVec3<T,0x032> _____ xwz, rab, sqp;
-        XVec3<T,0x033> const xww, raa, sqq;
-        XVec3<T,0x100> const yxx, grr, tss;
-        XVec3<T,0x101> const yxy, grg, tst;
-        XVec3<T,0x102> _____ yxz, grb, tsp;
-        XVec3<T,0x103> _____ yxw, gra, tsq;
-        XVec3<T,0x110> const yyx, ggr, tts;
-        XVec3<T,0x111> const yyy, ggg, ttt;
-        XVec3<T,0x112> const yyz, ggb, ttp;
-        XVec3<T,0x113> const yyw, gga, ttq;
-        XVec3<T,0x120> _____ yzx, gbr, tps;
-        XVec3<T,0x121> const yzy, gbg, tpt;
-        XVec3<T,0x122> const yzz, gbb, tpp;
-        XVec3<T,0x123> _____ yzw, gba, tpq;
-        XVec3<T,0x130> _____ ywx, gar, tqs;
-        XVec3<T,0x131> const ywy, gag, tqt;
-        XVec3<T,0x132> _____ ywz, gab, tqp;
-        XVec3<T,0x133> const yww, gaa, tqq;
-        XVec3<T,0x200> const zxx, brr, pss;
-        XVec3<T,0x201> _____ zxy, brg, pst;
-        XVec3<T,0x202> const zxz, brb, psp;
-        XVec3<T,0x203> _____ zxw, bra, psq;
-        XVec3<T,0x210> _____ zyx, bgr, pts;
-        XVec3<T,0x211> const zyy, bgg, ptt;
-        XVec3<T,0x212> const zyz, bgb, ptp;
-        XVec3<T,0x213> _____ zyw, bga, ptq;
-        XVec3<T,0x220> const zzx, bbr, pps;
-        XVec3<T,0x221> const zzy, bbg, ppt;
-        XVec3<T,0x222> const zzz, bbb, ppp;
-        XVec3<T,0x223> const zzw, bba, ppq;
-        XVec3<T,0x230> _____ zwx, bar, pqs;
-        XVec3<T,0x231> _____ zwy, bag, pqt;
-        XVec3<T,0x232> const zwz, bab, pqp;
-        XVec3<T,0x233> const zww, baa, pqq;
-        XVec3<T,0x300> const wxx, arr, qss;
-        XVec3<T,0x301> _____ wxy, arg, qst;
-        XVec3<T,0x302> _____ wxz, arb, qsp;
-        XVec3<T,0x303> const wxw, ara, qsq;
-        XVec3<T,0x310> _____ wyx, agr, qts;
-        XVec3<T,0x311> const wyy, agg, qtt;
-        XVec3<T,0x312> _____ wyz, agb, qtp;
-        XVec3<T,0x313> const wyw, aga, qtq;
-        XVec3<T,0x320> _____ wzx, abr, qps;
-        XVec3<T,0x321> _____ wzy, abg, qpt;
-        XVec3<T,0x322> const wzz, abb, qpp;
-        XVec3<T,0x323> const wzw, aba, qpq;
-        XVec3<T,0x330> const wwx, aar, qqs;
-        XVec3<T,0x331> const wwy, aag, qqt;
-        XVec3<T,0x332> const wwz, aab, qqp;
-        XVec3<T,0x333> const www, aaa, qqq;
+        vec<3,T,0x000> const xxx, rrr, sss;
+        vec<3,T,0x001> const xxy, rrg, sst;
+        vec<3,T,0x002> const xxz, rrb, ssp;
+        vec<3,T,0x003> const xxw, rra, ssq;
+        vec<3,T,0x010> const xyx, rgr, sts;
+        vec<3,T,0x011> const xyy, rgg, stt;
+        vec<3,T,0x012> _____ xyz, rgb, stp;
+        vec<3,T,0x013> _____ xyw, rga, stq;
+        vec<3,T,0x020> const xzx, rbr, sps;
+        vec<3,T,0x021> _____ xzy, rbg, spt;
+        vec<3,T,0x022> const xzz, rbb, spp;
+        vec<3,T,0x023> _____ xzw, rba, spq;
+        vec<3,T,0x030> const xwx, rar, sqs;
+        vec<3,T,0x031> _____ xwy, rag, sqt;
+        vec<3,T,0x032> _____ xwz, rab, sqp;
+        vec<3,T,0x033> const xww, raa, sqq;
+        vec<3,T,0x100> const yxx, grr, tss;
+        vec<3,T,0x101> const yxy, grg, tst;
+        vec<3,T,0x102> _____ yxz, grb, tsp;
+        vec<3,T,0x103> _____ yxw, gra, tsq;
+        vec<3,T,0x110> const yyx, ggr, tts;
+        vec<3,T,0x111> const yyy, ggg, ttt;
+        vec<3,T,0x112> const yyz, ggb, ttp;
+        vec<3,T,0x113> const yyw, gga, ttq;
+        vec<3,T,0x120> _____ yzx, gbr, tps;
+        vec<3,T,0x121> const yzy, gbg, tpt;
+        vec<3,T,0x122> const yzz, gbb, tpp;
+        vec<3,T,0x123> _____ yzw, gba, tpq;
+        vec<3,T,0x130> _____ ywx, gar, tqs;
+        vec<3,T,0x131> const ywy, gag, tqt;
+        vec<3,T,0x132> _____ ywz, gab, tqp;
+        vec<3,T,0x133> const yww, gaa, tqq;
+        vec<3,T,0x200> const zxx, brr, pss;
+        vec<3,T,0x201> _____ zxy, brg, pst;
+        vec<3,T,0x202> const zxz, brb, psp;
+        vec<3,T,0x203> _____ zxw, bra, psq;
+        vec<3,T,0x210> _____ zyx, bgr, pts;
+        vec<3,T,0x211> const zyy, bgg, ptt;
+        vec<3,T,0x212> const zyz, bgb, ptp;
+        vec<3,T,0x213> _____ zyw, bga, ptq;
+        vec<3,T,0x220> const zzx, bbr, pps;
+        vec<3,T,0x221> const zzy, bbg, ppt;
+        vec<3,T,0x222> const zzz, bbb, ppp;
+        vec<3,T,0x223> const zzw, bba, ppq;
+        vec<3,T,0x230> _____ zwx, bar, pqs;
+        vec<3,T,0x231> _____ zwy, bag, pqt;
+        vec<3,T,0x232> const zwz, bab, pqp;
+        vec<3,T,0x233> const zww, baa, pqq;
+        vec<3,T,0x300> const wxx, arr, qss;
+        vec<3,T,0x301> _____ wxy, arg, qst;
+        vec<3,T,0x302> _____ wxz, arb, qsp;
+        vec<3,T,0x303> const wxw, ara, qsq;
+        vec<3,T,0x310> _____ wyx, agr, qts;
+        vec<3,T,0x311> const wyy, agg, qtt;
+        vec<3,T,0x312> _____ wyz, agb, qtp;
+        vec<3,T,0x313> const wyw, aga, qtq;
+        vec<3,T,0x320> _____ wzx, abr, qps;
+        vec<3,T,0x321> _____ wzy, abg, qpt;
+        vec<3,T,0x322> const wzz, abb, qpp;
+        vec<3,T,0x323> const wzw, aba, qpq;
+        vec<3,T,0x330> const wwx, aar, qqs;
+        vec<3,T,0x331> const wwy, aag, qqt;
+        vec<3,T,0x332> const wwz, aab, qqp;
+        vec<3,T,0x333> const www, aaa, qqq;
 
-        XVec4<T,0x0000> const xxxx, rrrr, ssss;
-        XVec4<T,0x0001> const xxxy, rrrg, ssst;
-        XVec4<T,0x0002> const xxxz, rrrb, sssp;
-        XVec4<T,0x0003> const xxxw, rrra, sssq;
-        XVec4<T,0x0010> const xxyx, rrgr, ssts;
-        XVec4<T,0x0011> const xxyy, rrgg, sstt;
-        XVec4<T,0x0012> const xxyz, rrgb, sstp;
-        XVec4<T,0x0013> const xxyw, rrga, sstq;
-        XVec4<T,0x0020> const xxzx, rrbr, ssps;
-        XVec4<T,0x0021> const xxzy, rrbg, sspt;
-        XVec4<T,0x0022> const xxzz, rrbb, sspp;
-        XVec4<T,0x0023> const xxzw, rrba, sspq;
-        XVec4<T,0x0030> const xxwx, rrar, ssqs;
-        XVec4<T,0x0031> const xxwy, rrag, ssqt;
-        XVec4<T,0x0032> const xxwz, rrab, ssqp;
-        XVec4<T,0x0033> const xxww, rraa, ssqq;
-        XVec4<T,0x0100> const xyxx, rgrr, stss;
-        XVec4<T,0x0101> const xyxy, rgrg, stst;
-        XVec4<T,0x0102> const xyxz, rgrb, stsp;
-        XVec4<T,0x0103> const xyxw, rgra, stsq;
-        XVec4<T,0x0110> const xyyx, rggr, stts;
-        XVec4<T,0x0111> const xyyy, rggg, sttt;
-        XVec4<T,0x0112> const xyyz, rggb, sttp;
-        XVec4<T,0x0113> const xyyw, rgga, sttq;
-        XVec4<T,0x0120> const xyzx, rgbr, stps;
-        XVec4<T,0x0121> const xyzy, rgbg, stpt;
-        XVec4<T,0x0122> const xyzz, rgbb, stpp;
-        XVec4<T,0x0123> _____ xyzw, rgba, stpq;
-        XVec4<T,0x0130> const xywx, rgar, stqs;
-        XVec4<T,0x0131> const xywy, rgag, stqt;
-        XVec4<T,0x0132> _____ xywz, rgab, stqp;
-        XVec4<T,0x0133> const xyww, rgaa, stqq;
-        XVec4<T,0x0200> const xzxx, rbrr, spss;
-        XVec4<T,0x0201> const xzxy, rbrg, spst;
-        XVec4<T,0x0202> const xzxz, rbrb, spsp;
-        XVec4<T,0x0203> const xzxw, rbra, spsq;
-        XVec4<T,0x0210> const xzyx, rbgr, spts;
-        XVec4<T,0x0211> const xzyy, rbgg, sptt;
-        XVec4<T,0x0212> const xzyz, rbgb, sptp;
-        XVec4<T,0x0213> _____ xzyw, rbga, sptq;
-        XVec4<T,0x0220> const xzzx, rbbr, spps;
-        XVec4<T,0x0221> const xzzy, rbbg, sppt;
-        XVec4<T,0x0222> const xzzz, rbbb, sppp;
-        XVec4<T,0x0223> const xzzw, rbba, sppq;
-        XVec4<T,0x0230> const xzwx, rbar, spqs;
-        XVec4<T,0x0231> _____ xzwy, rbag, spqt;
-        XVec4<T,0x0232> const xzwz, rbab, spqp;
-        XVec4<T,0x0233> const xzww, rbaa, spqq;
-        XVec4<T,0x0300> const xwxx, rarr, sqss;
-        XVec4<T,0x0301> const xwxy, rarg, sqst;
-        XVec4<T,0x0302> const xwxz, rarb, sqsp;
-        XVec4<T,0x0303> const xwxw, rara, sqsq;
-        XVec4<T,0x0310> const xwyx, ragr, sqts;
-        XVec4<T,0x0311> const xwyy, ragg, sqtt;
-        XVec4<T,0x0312> _____ xwyz, ragb, sqtp;
-        XVec4<T,0x0313> const xwyw, raga, sqtq;
-        XVec4<T,0x0320> const xwzx, rabr, sqps;
-        XVec4<T,0x0321> _____ xwzy, rabg, sqpt;
-        XVec4<T,0x0322> const xwzz, rabb, sqpp;
-        XVec4<T,0x0323> const xwzw, raba, sqpq;
-        XVec4<T,0x0330> const xwwx, raar, sqqs;
-        XVec4<T,0x0331> const xwwy, raag, sqqt;
-        XVec4<T,0x0332> const xwwz, raab, sqqp;
-        XVec4<T,0x0333> const xwww, raaa, sqqq;
-        XVec4<T,0x1000> const yxxx, grrr, tsss;
-        XVec4<T,0x1001> const yxxy, grrg, tsst;
-        XVec4<T,0x1002> const yxxz, grrb, tssp;
-        XVec4<T,0x1003> const yxxw, grra, tssq;
-        XVec4<T,0x1010> const yxyx, grgr, tsts;
-        XVec4<T,0x1011> const yxyy, grgg, tstt;
-        XVec4<T,0x1012> const yxyz, grgb, tstp;
-        XVec4<T,0x1013> const yxyw, grga, tstq;
-        XVec4<T,0x1020> const yxzx, grbr, tsps;
-        XVec4<T,0x1021> const yxzy, grbg, tspt;
-        XVec4<T,0x1022> const yxzz, grbb, tspp;
-        XVec4<T,0x1023> _____ yxzw, grba, tspq;
-        XVec4<T,0x1030> const yxwx, grar, tsqs;
-        XVec4<T,0x1031> const yxwy, grag, tsqt;
-        XVec4<T,0x1032> _____ yxwz, grab, tsqp;
-        XVec4<T,0x1033> const yxww, graa, tsqq;
-        XVec4<T,0x1100> const yyxx, ggrr, ttss;
-        XVec4<T,0x1101> const yyxy, ggrg, ttst;
-        XVec4<T,0x1102> const yyxz, ggrb, ttsp;
-        XVec4<T,0x1103> const yyxw, ggra, ttsq;
-        XVec4<T,0x1110> const yyyx, gggr, ttts;
-        XVec4<T,0x1111> const yyyy, gggg, tttt;
-        XVec4<T,0x1112> const yyyz, gggb, tttp;
-        XVec4<T,0x1113> const yyyw, ggga, tttq;
-        XVec4<T,0x1120> const yyzx, ggbr, ttps;
-        XVec4<T,0x1121> const yyzy, ggbg, ttpt;
-        XVec4<T,0x1122> const yyzz, ggbb, ttpp;
-        XVec4<T,0x1123> const yyzw, ggba, ttpq;
-        XVec4<T,0x1130> const yywx, ggar, ttqs;
-        XVec4<T,0x1131> const yywy, ggag, ttqt;
-        XVec4<T,0x1132> const yywz, ggab, ttqp;
-        XVec4<T,0x1133> const yyww, ggaa, ttqq;
-        XVec4<T,0x1200> const yzxx, gbrr, tpss;
-        XVec4<T,0x1201> const yzxy, gbrg, tpst;
-        XVec4<T,0x1202> const yzxz, gbrb, tpsp;
-        XVec4<T,0x1203> _____ yzxw, gbra, tpsq;
-        XVec4<T,0x1210> const yzyx, gbgr, tpts;
-        XVec4<T,0x1211> const yzyy, gbgg, tptt;
-        XVec4<T,0x1212> const yzyz, gbgb, tptp;
-        XVec4<T,0x1213> const yzyw, gbga, tptq;
-        XVec4<T,0x1220> const yzzx, gbbr, tpps;
-        XVec4<T,0x1221> const yzzy, gbbg, tppt;
-        XVec4<T,0x1222> const yzzz, gbbb, tppp;
-        XVec4<T,0x1223> const yzzw, gbba, tppq;
-        XVec4<T,0x1230> _____ yzwx, gbar, tpqs;
-        XVec4<T,0x1231> const yzwy, gbag, tpqt;
-        XVec4<T,0x1232> const yzwz, gbab, tpqp;
-        XVec4<T,0x1233> const yzww, gbaa, tpqq;
-        XVec4<T,0x1300> const ywxx, garr, tqss;
-        XVec4<T,0x1301> const ywxy, garg, tqst;
-        XVec4<T,0x1302> _____ ywxz, garb, tqsp;
-        XVec4<T,0x1303> const ywxw, gara, tqsq;
-        XVec4<T,0x1310> const ywyx, gagr, tqts;
-        XVec4<T,0x1311> const ywyy, gagg, tqtt;
-        XVec4<T,0x1312> const ywyz, gagb, tqtp;
-        XVec4<T,0x1313> const ywyw, gaga, tqtq;
-        XVec4<T,0x1320> _____ ywzx, gabr, tqps;
-        XVec4<T,0x1321> const ywzy, gabg, tqpt;
-        XVec4<T,0x1322> const ywzz, gabb, tqpp;
-        XVec4<T,0x1323> const ywzw, gaba, tqpq;
-        XVec4<T,0x1330> const ywwx, gaar, tqqs;
-        XVec4<T,0x1331> const ywwy, gaag, tqqt;
-        XVec4<T,0x1332> const ywwz, gaab, tqqp;
-        XVec4<T,0x1333> const ywww, gaaa, tqqq;
-        XVec4<T,0x2000> const zxxx, brrr, psss;
-        XVec4<T,0x2001> const zxxy, brrg, psst;
-        XVec4<T,0x2002> const zxxz, brrb, pssp;
-        XVec4<T,0x2003> const zxxw, brra, pssq;
-        XVec4<T,0x2010> const zxyx, brgr, psts;
-        XVec4<T,0x2011> const zxyy, brgg, pstt;
-        XVec4<T,0x2012> const zxyz, brgb, pstp;
-        XVec4<T,0x2013> _____ zxyw, brga, pstq;
-        XVec4<T,0x2020> const zxzx, brbr, psps;
-        XVec4<T,0x2021> const zxzy, brbg, pspt;
-        XVec4<T,0x2022> const zxzz, brbb, pspp;
-        XVec4<T,0x2023> const zxzw, brba, pspq;
-        XVec4<T,0x2030> const zxwx, brar, psqs;
-        XVec4<T,0x2031> _____ zxwy, brag, psqt;
-        XVec4<T,0x2032> const zxwz, brab, psqp;
-        XVec4<T,0x2033> const zxww, braa, psqq;
-        XVec4<T,0x2100> const zyxx, bgrr, ptss;
-        XVec4<T,0x2101> const zyxy, bgrg, ptst;
-        XVec4<T,0x2102> const zyxz, bgrb, ptsp;
-        XVec4<T,0x2103> _____ zyxw, bgra, ptsq;
-        XVec4<T,0x2110> const zyyx, bggr, ptts;
-        XVec4<T,0x2111> const zyyy, bggg, pttt;
-        XVec4<T,0x2112> const zyyz, bggb, pttp;
-        XVec4<T,0x2113> const zyyw, bgga, pttq;
-        XVec4<T,0x2120> const zyzx, bgbr, ptps;
-        XVec4<T,0x2121> const zyzy, bgbg, ptpt;
-        XVec4<T,0x2122> const zyzz, bgbb, ptpp;
-        XVec4<T,0x2123> const zyzw, bgba, ptpq;
-        XVec4<T,0x2130> _____ zywx, bgar, ptqs;
-        XVec4<T,0x2131> const zywy, bgag, ptqt;
-        XVec4<T,0x2132> const zywz, bgab, ptqp;
-        XVec4<T,0x2133> const zyww, bgaa, ptqq;
-        XVec4<T,0x2200> const zzxx, bbrr, ppss;
-        XVec4<T,0x2201> const zzxy, bbrg, ppst;
-        XVec4<T,0x2202> const zzxz, bbrb, ppsp;
-        XVec4<T,0x2203> const zzxw, bbra, ppsq;
-        XVec4<T,0x2210> const zzyx, bbgr, ppts;
-        XVec4<T,0x2211> const zzyy, bbgg, pptt;
-        XVec4<T,0x2212> const zzyz, bbgb, pptp;
-        XVec4<T,0x2213> const zzyw, bbga, pptq;
-        XVec4<T,0x2220> const zzzx, bbbr, ppps;
-        XVec4<T,0x2221> const zzzy, bbbg, pppt;
-        XVec4<T,0x2222> const zzzz, bbbb, pppp;
-        XVec4<T,0x2223> const zzzw, bbba, pppq;
-        XVec4<T,0x2230> const zzwx, bbar, ppqs;
-        XVec4<T,0x2231> const zzwy, bbag, ppqt;
-        XVec4<T,0x2232> const zzwz, bbab, ppqp;
-        XVec4<T,0x2233> const zzww, bbaa, ppqq;
-        XVec4<T,0x2300> const zwxx, barr, pqss;
-        XVec4<T,0x2301> _____ zwxy, barg, pqst;
-        XVec4<T,0x2302> const zwxz, barb, pqsp;
-        XVec4<T,0x2303> const zwxw, bara, pqsq;
-        XVec4<T,0x2310> _____ zwyx, bagr, pqts;
-        XVec4<T,0x2311> const zwyy, bagg, pqtt;
-        XVec4<T,0x2312> const zwyz, bagb, pqtp;
-        XVec4<T,0x2313> const zwyw, baga, pqtq;
-        XVec4<T,0x2320> const zwzx, babr, pqps;
-        XVec4<T,0x2321> const zwzy, babg, pqpt;
-        XVec4<T,0x2322> const zwzz, babb, pqpp;
-        XVec4<T,0x2323> const zwzw, baba, pqpq;
-        XVec4<T,0x2330> const zwwx, baar, pqqs;
-        XVec4<T,0x2331> const zwwy, baag, pqqt;
-        XVec4<T,0x2332> const zwwz, baab, pqqp;
-        XVec4<T,0x2333> const zwww, baaa, pqqq;
-        XVec4<T,0x3000> const wxxx, arrr, qsss;
-        XVec4<T,0x3001> const wxxy, arrg, qsst;
-        XVec4<T,0x3002> const wxxz, arrb, qssp;
-        XVec4<T,0x3003> const wxxw, arra, qssq;
-        XVec4<T,0x3010> const wxyx, argr, qsts;
-        XVec4<T,0x3011> const wxyy, argg, qstt;
-        XVec4<T,0x3012> _____ wxyz, argb, qstp;
-        XVec4<T,0x3013> const wxyw, arga, qstq;
-        XVec4<T,0x3020> const wxzx, arbr, qsps;
-        XVec4<T,0x3021> _____ wxzy, arbg, qspt;
-        XVec4<T,0x3022> const wxzz, arbb, qspp;
-        XVec4<T,0x3023> const wxzw, arba, qspq;
-        XVec4<T,0x3030> const wxwx, arar, qsqs;
-        XVec4<T,0x3031> const wxwy, arag, qsqt;
-        XVec4<T,0x3032> const wxwz, arab, qsqp;
-        XVec4<T,0x3033> const wxww, araa, qsqq;
-        XVec4<T,0x3100> const wyxx, agrr, qtss;
-        XVec4<T,0x3101> const wyxy, agrg, qtst;
-        XVec4<T,0x3102> _____ wyxz, agrb, qtsp;
-        XVec4<T,0x3103> const wyxw, agra, qtsq;
-        XVec4<T,0x3110> const wyyx, aggr, qtts;
-        XVec4<T,0x3111> const wyyy, aggg, qttt;
-        XVec4<T,0x3112> const wyyz, aggb, qttp;
-        XVec4<T,0x3113> const wyyw, agga, qttq;
-        XVec4<T,0x3120> _____ wyzx, agbr, qtps;
-        XVec4<T,0x3121> const wyzy, agbg, qtpt;
-        XVec4<T,0x3122> const wyzz, agbb, qtpp;
-        XVec4<T,0x3123> const wyzw, agba, qtpq;
-        XVec4<T,0x3130> const wywx, agar, qtqs;
-        XVec4<T,0x3131> const wywy, agag, qtqt;
-        XVec4<T,0x3132> const wywz, agab, qtqp;
-        XVec4<T,0x3133> const wyww, agaa, qtqq;
-        XVec4<T,0x3200> const wzxx, abrr, qpss;
-        XVec4<T,0x3201> _____ wzxy, abrg, qpst;
-        XVec4<T,0x3202> const wzxz, abrb, qpsp;
-        XVec4<T,0x3203> const wzxw, abra, qpsq;
-        XVec4<T,0x3210> _____ wzyx, abgr, qpts;
-        XVec4<T,0x3211> const wzyy, abgg, qptt;
-        XVec4<T,0x3212> const wzyz, abgb, qptp;
-        XVec4<T,0x3213> const wzyw, abga, qptq;
-        XVec4<T,0x3220> const wzzx, abbr, qpps;
-        XVec4<T,0x3221> const wzzy, abbg, qppt;
-        XVec4<T,0x3222> const wzzz, abbb, qppp;
-        XVec4<T,0x3223> const wzzw, abba, qppq;
-        XVec4<T,0x3230> const wzwx, abar, qpqs;
-        XVec4<T,0x3231> const wzwy, abag, qpqt;
-        XVec4<T,0x3232> const wzwz, abab, qpqp;
-        XVec4<T,0x3233> const wzww, abaa, qpqq;
-        XVec4<T,0x3300> const wwxx, aarr, qqss;
-        XVec4<T,0x3301> const wwxy, aarg, qqst;
-        XVec4<T,0x3302> const wwxz, aarb, qqsp;
-        XVec4<T,0x3303> const wwxw, aara, qqsq;
-        XVec4<T,0x3310> const wwyx, aagr, qqts;
-        XVec4<T,0x3311> const wwyy, aagg, qqtt;
-        XVec4<T,0x3312> const wwyz, aagb, qqtp;
-        XVec4<T,0x3313> const wwyw, aaga, qqtq;
-        XVec4<T,0x3320> const wwzx, aabr, qqps;
-        XVec4<T,0x3321> const wwzy, aabg, qqpt;
-        XVec4<T,0x3322> const wwzz, aabb, qqpp;
-        XVec4<T,0x3323> const wwzw, aaba, qqpq;
-        XVec4<T,0x3330> const wwwx, aaar, qqqs;
-        XVec4<T,0x3331> const wwwy, aaag, qqqt;
-        XVec4<T,0x3332> const wwwz, aaab, qqqp;
-        XVec4<T,0x3333> const wwww, aaaa, qqqq;
+        vec<4,T,0x0000> const xxxx, rrrr, ssss;
+        vec<4,T,0x0001> const xxxy, rrrg, ssst;
+        vec<4,T,0x0002> const xxxz, rrrb, sssp;
+        vec<4,T,0x0003> const xxxw, rrra, sssq;
+        vec<4,T,0x0010> const xxyx, rrgr, ssts;
+        vec<4,T,0x0011> const xxyy, rrgg, sstt;
+        vec<4,T,0x0012> const xxyz, rrgb, sstp;
+        vec<4,T,0x0013> const xxyw, rrga, sstq;
+        vec<4,T,0x0020> const xxzx, rrbr, ssps;
+        vec<4,T,0x0021> const xxzy, rrbg, sspt;
+        vec<4,T,0x0022> const xxzz, rrbb, sspp;
+        vec<4,T,0x0023> const xxzw, rrba, sspq;
+        vec<4,T,0x0030> const xxwx, rrar, ssqs;
+        vec<4,T,0x0031> const xxwy, rrag, ssqt;
+        vec<4,T,0x0032> const xxwz, rrab, ssqp;
+        vec<4,T,0x0033> const xxww, rraa, ssqq;
+        vec<4,T,0x0100> const xyxx, rgrr, stss;
+        vec<4,T,0x0101> const xyxy, rgrg, stst;
+        vec<4,T,0x0102> const xyxz, rgrb, stsp;
+        vec<4,T,0x0103> const xyxw, rgra, stsq;
+        vec<4,T,0x0110> const xyyx, rggr, stts;
+        vec<4,T,0x0111> const xyyy, rggg, sttt;
+        vec<4,T,0x0112> const xyyz, rggb, sttp;
+        vec<4,T,0x0113> const xyyw, rgga, sttq;
+        vec<4,T,0x0120> const xyzx, rgbr, stps;
+        vec<4,T,0x0121> const xyzy, rgbg, stpt;
+        vec<4,T,0x0122> const xyzz, rgbb, stpp;
+        vec<4,T,0x0123> _____ xyzw, rgba, stpq;
+        vec<4,T,0x0130> const xywx, rgar, stqs;
+        vec<4,T,0x0131> const xywy, rgag, stqt;
+        vec<4,T,0x0132> _____ xywz, rgab, stqp;
+        vec<4,T,0x0133> const xyww, rgaa, stqq;
+        vec<4,T,0x0200> const xzxx, rbrr, spss;
+        vec<4,T,0x0201> const xzxy, rbrg, spst;
+        vec<4,T,0x0202> const xzxz, rbrb, spsp;
+        vec<4,T,0x0203> const xzxw, rbra, spsq;
+        vec<4,T,0x0210> const xzyx, rbgr, spts;
+        vec<4,T,0x0211> const xzyy, rbgg, sptt;
+        vec<4,T,0x0212> const xzyz, rbgb, sptp;
+        vec<4,T,0x0213> _____ xzyw, rbga, sptq;
+        vec<4,T,0x0220> const xzzx, rbbr, spps;
+        vec<4,T,0x0221> const xzzy, rbbg, sppt;
+        vec<4,T,0x0222> const xzzz, rbbb, sppp;
+        vec<4,T,0x0223> const xzzw, rbba, sppq;
+        vec<4,T,0x0230> const xzwx, rbar, spqs;
+        vec<4,T,0x0231> _____ xzwy, rbag, spqt;
+        vec<4,T,0x0232> const xzwz, rbab, spqp;
+        vec<4,T,0x0233> const xzww, rbaa, spqq;
+        vec<4,T,0x0300> const xwxx, rarr, sqss;
+        vec<4,T,0x0301> const xwxy, rarg, sqst;
+        vec<4,T,0x0302> const xwxz, rarb, sqsp;
+        vec<4,T,0x0303> const xwxw, rara, sqsq;
+        vec<4,T,0x0310> const xwyx, ragr, sqts;
+        vec<4,T,0x0311> const xwyy, ragg, sqtt;
+        vec<4,T,0x0312> _____ xwyz, ragb, sqtp;
+        vec<4,T,0x0313> const xwyw, raga, sqtq;
+        vec<4,T,0x0320> const xwzx, rabr, sqps;
+        vec<4,T,0x0321> _____ xwzy, rabg, sqpt;
+        vec<4,T,0x0322> const xwzz, rabb, sqpp;
+        vec<4,T,0x0323> const xwzw, raba, sqpq;
+        vec<4,T,0x0330> const xwwx, raar, sqqs;
+        vec<4,T,0x0331> const xwwy, raag, sqqt;
+        vec<4,T,0x0332> const xwwz, raab, sqqp;
+        vec<4,T,0x0333> const xwww, raaa, sqqq;
+        vec<4,T,0x1000> const yxxx, grrr, tsss;
+        vec<4,T,0x1001> const yxxy, grrg, tsst;
+        vec<4,T,0x1002> const yxxz, grrb, tssp;
+        vec<4,T,0x1003> const yxxw, grra, tssq;
+        vec<4,T,0x1010> const yxyx, grgr, tsts;
+        vec<4,T,0x1011> const yxyy, grgg, tstt;
+        vec<4,T,0x1012> const yxyz, grgb, tstp;
+        vec<4,T,0x1013> const yxyw, grga, tstq;
+        vec<4,T,0x1020> const yxzx, grbr, tsps;
+        vec<4,T,0x1021> const yxzy, grbg, tspt;
+        vec<4,T,0x1022> const yxzz, grbb, tspp;
+        vec<4,T,0x1023> _____ yxzw, grba, tspq;
+        vec<4,T,0x1030> const yxwx, grar, tsqs;
+        vec<4,T,0x1031> const yxwy, grag, tsqt;
+        vec<4,T,0x1032> _____ yxwz, grab, tsqp;
+        vec<4,T,0x1033> const yxww, graa, tsqq;
+        vec<4,T,0x1100> const yyxx, ggrr, ttss;
+        vec<4,T,0x1101> const yyxy, ggrg, ttst;
+        vec<4,T,0x1102> const yyxz, ggrb, ttsp;
+        vec<4,T,0x1103> const yyxw, ggra, ttsq;
+        vec<4,T,0x1110> const yyyx, gggr, ttts;
+        vec<4,T,0x1111> const yyyy, gggg, tttt;
+        vec<4,T,0x1112> const yyyz, gggb, tttp;
+        vec<4,T,0x1113> const yyyw, ggga, tttq;
+        vec<4,T,0x1120> const yyzx, ggbr, ttps;
+        vec<4,T,0x1121> const yyzy, ggbg, ttpt;
+        vec<4,T,0x1122> const yyzz, ggbb, ttpp;
+        vec<4,T,0x1123> const yyzw, ggba, ttpq;
+        vec<4,T,0x1130> const yywx, ggar, ttqs;
+        vec<4,T,0x1131> const yywy, ggag, ttqt;
+        vec<4,T,0x1132> const yywz, ggab, ttqp;
+        vec<4,T,0x1133> const yyww, ggaa, ttqq;
+        vec<4,T,0x1200> const yzxx, gbrr, tpss;
+        vec<4,T,0x1201> const yzxy, gbrg, tpst;
+        vec<4,T,0x1202> const yzxz, gbrb, tpsp;
+        vec<4,T,0x1203> _____ yzxw, gbra, tpsq;
+        vec<4,T,0x1210> const yzyx, gbgr, tpts;
+        vec<4,T,0x1211> const yzyy, gbgg, tptt;
+        vec<4,T,0x1212> const yzyz, gbgb, tptp;
+        vec<4,T,0x1213> const yzyw, gbga, tptq;
+        vec<4,T,0x1220> const yzzx, gbbr, tpps;
+        vec<4,T,0x1221> const yzzy, gbbg, tppt;
+        vec<4,T,0x1222> const yzzz, gbbb, tppp;
+        vec<4,T,0x1223> const yzzw, gbba, tppq;
+        vec<4,T,0x1230> _____ yzwx, gbar, tpqs;
+        vec<4,T,0x1231> const yzwy, gbag, tpqt;
+        vec<4,T,0x1232> const yzwz, gbab, tpqp;
+        vec<4,T,0x1233> const yzww, gbaa, tpqq;
+        vec<4,T,0x1300> const ywxx, garr, tqss;
+        vec<4,T,0x1301> const ywxy, garg, tqst;
+        vec<4,T,0x1302> _____ ywxz, garb, tqsp;
+        vec<4,T,0x1303> const ywxw, gara, tqsq;
+        vec<4,T,0x1310> const ywyx, gagr, tqts;
+        vec<4,T,0x1311> const ywyy, gagg, tqtt;
+        vec<4,T,0x1312> const ywyz, gagb, tqtp;
+        vec<4,T,0x1313> const ywyw, gaga, tqtq;
+        vec<4,T,0x1320> _____ ywzx, gabr, tqps;
+        vec<4,T,0x1321> const ywzy, gabg, tqpt;
+        vec<4,T,0x1322> const ywzz, gabb, tqpp;
+        vec<4,T,0x1323> const ywzw, gaba, tqpq;
+        vec<4,T,0x1330> const ywwx, gaar, tqqs;
+        vec<4,T,0x1331> const ywwy, gaag, tqqt;
+        vec<4,T,0x1332> const ywwz, gaab, tqqp;
+        vec<4,T,0x1333> const ywww, gaaa, tqqq;
+        vec<4,T,0x2000> const zxxx, brrr, psss;
+        vec<4,T,0x2001> const zxxy, brrg, psst;
+        vec<4,T,0x2002> const zxxz, brrb, pssp;
+        vec<4,T,0x2003> const zxxw, brra, pssq;
+        vec<4,T,0x2010> const zxyx, brgr, psts;
+        vec<4,T,0x2011> const zxyy, brgg, pstt;
+        vec<4,T,0x2012> const zxyz, brgb, pstp;
+        vec<4,T,0x2013> _____ zxyw, brga, pstq;
+        vec<4,T,0x2020> const zxzx, brbr, psps;
+        vec<4,T,0x2021> const zxzy, brbg, pspt;
+        vec<4,T,0x2022> const zxzz, brbb, pspp;
+        vec<4,T,0x2023> const zxzw, brba, pspq;
+        vec<4,T,0x2030> const zxwx, brar, psqs;
+        vec<4,T,0x2031> _____ zxwy, brag, psqt;
+        vec<4,T,0x2032> const zxwz, brab, psqp;
+        vec<4,T,0x2033> const zxww, braa, psqq;
+        vec<4,T,0x2100> const zyxx, bgrr, ptss;
+        vec<4,T,0x2101> const zyxy, bgrg, ptst;
+        vec<4,T,0x2102> const zyxz, bgrb, ptsp;
+        vec<4,T,0x2103> _____ zyxw, bgra, ptsq;
+        vec<4,T,0x2110> const zyyx, bggr, ptts;
+        vec<4,T,0x2111> const zyyy, bggg, pttt;
+        vec<4,T,0x2112> const zyyz, bggb, pttp;
+        vec<4,T,0x2113> const zyyw, bgga, pttq;
+        vec<4,T,0x2120> const zyzx, bgbr, ptps;
+        vec<4,T,0x2121> const zyzy, bgbg, ptpt;
+        vec<4,T,0x2122> const zyzz, bgbb, ptpp;
+        vec<4,T,0x2123> const zyzw, bgba, ptpq;
+        vec<4,T,0x2130> _____ zywx, bgar, ptqs;
+        vec<4,T,0x2131> const zywy, bgag, ptqt;
+        vec<4,T,0x2132> const zywz, bgab, ptqp;
+        vec<4,T,0x2133> const zyww, bgaa, ptqq;
+        vec<4,T,0x2200> const zzxx, bbrr, ppss;
+        vec<4,T,0x2201> const zzxy, bbrg, ppst;
+        vec<4,T,0x2202> const zzxz, bbrb, ppsp;
+        vec<4,T,0x2203> const zzxw, bbra, ppsq;
+        vec<4,T,0x2210> const zzyx, bbgr, ppts;
+        vec<4,T,0x2211> const zzyy, bbgg, pptt;
+        vec<4,T,0x2212> const zzyz, bbgb, pptp;
+        vec<4,T,0x2213> const zzyw, bbga, pptq;
+        vec<4,T,0x2220> const zzzx, bbbr, ppps;
+        vec<4,T,0x2221> const zzzy, bbbg, pppt;
+        vec<4,T,0x2222> const zzzz, bbbb, pppp;
+        vec<4,T,0x2223> const zzzw, bbba, pppq;
+        vec<4,T,0x2230> const zzwx, bbar, ppqs;
+        vec<4,T,0x2231> const zzwy, bbag, ppqt;
+        vec<4,T,0x2232> const zzwz, bbab, ppqp;
+        vec<4,T,0x2233> const zzww, bbaa, ppqq;
+        vec<4,T,0x2300> const zwxx, barr, pqss;
+        vec<4,T,0x2301> _____ zwxy, barg, pqst;
+        vec<4,T,0x2302> const zwxz, barb, pqsp;
+        vec<4,T,0x2303> const zwxw, bara, pqsq;
+        vec<4,T,0x2310> _____ zwyx, bagr, pqts;
+        vec<4,T,0x2311> const zwyy, bagg, pqtt;
+        vec<4,T,0x2312> const zwyz, bagb, pqtp;
+        vec<4,T,0x2313> const zwyw, baga, pqtq;
+        vec<4,T,0x2320> const zwzx, babr, pqps;
+        vec<4,T,0x2321> const zwzy, babg, pqpt;
+        vec<4,T,0x2322> const zwzz, babb, pqpp;
+        vec<4,T,0x2323> const zwzw, baba, pqpq;
+        vec<4,T,0x2330> const zwwx, baar, pqqs;
+        vec<4,T,0x2331> const zwwy, baag, pqqt;
+        vec<4,T,0x2332> const zwwz, baab, pqqp;
+        vec<4,T,0x2333> const zwww, baaa, pqqq;
+        vec<4,T,0x3000> const wxxx, arrr, qsss;
+        vec<4,T,0x3001> const wxxy, arrg, qsst;
+        vec<4,T,0x3002> const wxxz, arrb, qssp;
+        vec<4,T,0x3003> const wxxw, arra, qssq;
+        vec<4,T,0x3010> const wxyx, argr, qsts;
+        vec<4,T,0x3011> const wxyy, argg, qstt;
+        vec<4,T,0x3012> _____ wxyz, argb, qstp;
+        vec<4,T,0x3013> const wxyw, arga, qstq;
+        vec<4,T,0x3020> const wxzx, arbr, qsps;
+        vec<4,T,0x3021> _____ wxzy, arbg, qspt;
+        vec<4,T,0x3022> const wxzz, arbb, qspp;
+        vec<4,T,0x3023> const wxzw, arba, qspq;
+        vec<4,T,0x3030> const wxwx, arar, qsqs;
+        vec<4,T,0x3031> const wxwy, arag, qsqt;
+        vec<4,T,0x3032> const wxwz, arab, qsqp;
+        vec<4,T,0x3033> const wxww, araa, qsqq;
+        vec<4,T,0x3100> const wyxx, agrr, qtss;
+        vec<4,T,0x3101> const wyxy, agrg, qtst;
+        vec<4,T,0x3102> _____ wyxz, agrb, qtsp;
+        vec<4,T,0x3103> const wyxw, agra, qtsq;
+        vec<4,T,0x3110> const wyyx, aggr, qtts;
+        vec<4,T,0x3111> const wyyy, aggg, qttt;
+        vec<4,T,0x3112> const wyyz, aggb, qttp;
+        vec<4,T,0x3113> const wyyw, agga, qttq;
+        vec<4,T,0x3120> _____ wyzx, agbr, qtps;
+        vec<4,T,0x3121> const wyzy, agbg, qtpt;
+        vec<4,T,0x3122> const wyzz, agbb, qtpp;
+        vec<4,T,0x3123> const wyzw, agba, qtpq;
+        vec<4,T,0x3130> const wywx, agar, qtqs;
+        vec<4,T,0x3131> const wywy, agag, qtqt;
+        vec<4,T,0x3132> const wywz, agab, qtqp;
+        vec<4,T,0x3133> const wyww, agaa, qtqq;
+        vec<4,T,0x3200> const wzxx, abrr, qpss;
+        vec<4,T,0x3201> _____ wzxy, abrg, qpst;
+        vec<4,T,0x3202> const wzxz, abrb, qpsp;
+        vec<4,T,0x3203> const wzxw, abra, qpsq;
+        vec<4,T,0x3210> _____ wzyx, abgr, qpts;
+        vec<4,T,0x3211> const wzyy, abgg, qptt;
+        vec<4,T,0x3212> const wzyz, abgb, qptp;
+        vec<4,T,0x3213> const wzyw, abga, qptq;
+        vec<4,T,0x3220> const wzzx, abbr, qpps;
+        vec<4,T,0x3221> const wzzy, abbg, qppt;
+        vec<4,T,0x3222> const wzzz, abbb, qppp;
+        vec<4,T,0x3223> const wzzw, abba, qppq;
+        vec<4,T,0x3230> const wzwx, abar, qpqs;
+        vec<4,T,0x3231> const wzwy, abag, qpqt;
+        vec<4,T,0x3232> const wzwz, abab, qpqp;
+        vec<4,T,0x3233> const wzww, abaa, qpqq;
+        vec<4,T,0x3300> const wwxx, aarr, qqss;
+        vec<4,T,0x3301> const wwxy, aarg, qqst;
+        vec<4,T,0x3302> const wwxz, aarb, qqsp;
+        vec<4,T,0x3303> const wwxw, aara, qqsq;
+        vec<4,T,0x3310> const wwyx, aagr, qqts;
+        vec<4,T,0x3311> const wwyy, aagg, qqtt;
+        vec<4,T,0x3312> const wwyz, aagb, qqtp;
+        vec<4,T,0x3313> const wwyw, aaga, qqtq;
+        vec<4,T,0x3320> const wwzx, aabr, qqps;
+        vec<4,T,0x3321> const wwzy, aabg, qqpt;
+        vec<4,T,0x3322> const wwzz, aabb, qqpp;
+        vec<4,T,0x3323> const wwzw, aaba, qqpq;
+        vec<4,T,0x3330> const wwwx, aaar, qqqs;
+        vec<4,T,0x3331> const wwwy, aaag, qqqt;
+        vec<4,T,0x3332> const wwwz, aaab, qqqp;
+        vec<4,T,0x3333> const wwww, aaaa, qqqq;
 #endif
     };
 };
 
-template <> struct BVec4<half>
+template <> struct base_vec4<half>
 {
-    explicit inline BVec4() {}
-    explicit inline BVec4(half X, half Y, half Z, half W)
+    explicit inline base_vec4() {}
+    explicit inline base_vec4(half X, half Y, half Z, half W)
      : x(X), y(Y), z(Z), w(W) {}
 
     half x, y, z, w;
 };
 
-template <> struct BVec4<real>
+template <> struct base_vec4<real>
 {
-    explicit inline BVec4() {}
-    explicit inline BVec4(real X, real Y, real Z, real W)
+    explicit inline base_vec4() {}
+    explicit inline base_vec4(real X, real Y, real Z, real W)
      : x(X), y(Y), z(Z), w(W) {}
 
     real x, y, z, w;
 };
 
-template <typename T> struct Vec4 : BVec4<T>
+template <typename T>
+struct vec<4,T> : base_vec4<T>
 {
-    inline LOL_CONSTEXPR Vec4() {}
-    inline LOL_CONSTEXPR Vec4(T X, T Y, T Z, T W)
-      : BVec4<T>(X, Y, Z, W) {}
-    inline LOL_CONSTEXPR Vec4(Vec2<T> XY, T Z, T W)
-      : BVec4<T>(XY.x, XY.y, Z, W) {}
-    inline LOL_CONSTEXPR Vec4(T X, Vec2<T> YZ, T W)
-      : BVec4<T>(X, YZ.x, YZ.y, W) {}
-    inline LOL_CONSTEXPR Vec4(T X, T Y, Vec2<T> ZW)
-      : BVec4<T>(X, Y, ZW.x, ZW.y) {}
-    inline LOL_CONSTEXPR Vec4(Vec2<T> XY, Vec2<T> ZW)
-      : BVec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
-    inline LOL_CONSTEXPR Vec4(Vec3<T> XYZ, T W)
-      : BVec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
-    inline LOL_CONSTEXPR Vec4(T X, Vec3<T> YZW)
-      : BVec4<T>(X, YZW.x, YZW.y, YZW.z) {}
+    typedef vec<4,T> type;
 
-    explicit inline LOL_CONSTEXPR Vec4(T X) : BVec4<T>(X, X, X, X) {}
+    inline constexpr vec() {}
+    inline constexpr vec(T X, T Y, T Z, T W)
+      : base_vec4<T>(X, Y, Z, W) {}
+    inline constexpr vec(vec<2,T> XY, T Z, T W)
+      : base_vec4<T>(XY.x, XY.y, Z, W) {}
+    inline constexpr vec(T X, vec<2,T> YZ, T W)
+      : base_vec4<T>(X, YZ.x, YZ.y, W) {}
+    inline constexpr vec(T X, T Y, vec<2,T> ZW)
+      : base_vec4<T>(X, Y, ZW.x, ZW.y) {}
+    inline constexpr vec(vec<2,T> XY, vec<2,T> ZW)
+      : base_vec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
+    inline constexpr vec(vec<3,T> XYZ, T W)
+      : base_vec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
+    inline constexpr vec(T X, vec<3,T> YZW)
+      : base_vec4<T>(X, YZW.x, YZW.y, YZW.z) {}
 
-    template<int N>
-    inline LOL_CONSTEXPR Vec4(XVec4<T, N> const &v)
-      : BVec4<T>(v[0], v[1], v[2], v[3]) {}
+    explicit inline constexpr vec(T X) : base_vec4<T>(X, X, X, X) {}
 
-    template<typename U, int N>
-    explicit inline LOL_CONSTEXPR Vec4(XVec4<U, N> const &v)
-      : BVec4<T>(v[0], v[1], v[2], v[3]) {}
+    template<int MASK>
+    inline constexpr vec(vec<4, T, MASK> const &v)
+      : base_vec4<T>(v[0], v[1], v[2], v[3]) {}
 
-    LOL_MEMBER_OPS(Vec4, x)
+    template<typename U, int MASK>
+    explicit inline constexpr vec(vec<4, U, MASK> const &v)
+      : base_vec4<T>(v[0], v[1], v[2], v[3]) {}
 
-    static const Vec4<T> zero;
-    static const Vec4<T> axis_x;
-    static const Vec4<T> axis_y;
-    static const Vec4<T> axis_z;
-    static const Vec4<T> axis_w;
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
+
+    static const vec<4,T> zero;
+    static const vec<4,T> axis_x;
+    static const vec<4,T> axis_y;
+    static const vec<4,T> axis_z;
+    static const vec<4,T> axis_w;
 
     template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Vec4<U> const &v);
+    friend std::ostream &operator<<(std::ostream &stream, vec<4,U> const &v);
 };
 
 /*
@@ -977,33 +1128,40 @@ template <typename T> struct Vec4 : BVec4<T>
 
 template <typename T> struct Quat
 {
-    inline LOL_CONSTEXPR Quat() {}
-    inline LOL_CONSTEXPR Quat(T W) : w(W),  x(0), y(0), z(0) {}
-    inline LOL_CONSTEXPR Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
+    typedef Quat<T> type;
 
-    Quat(Mat3<T> const &m);
-    Quat(Mat4<T> const &m);
+    inline constexpr Quat() {}
+    inline constexpr Quat(T W) : w(W),  x(0), y(0), z(0) {}
+    inline constexpr Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
 
-    LOL_MEMBER_OPS(Quat, w)
+    template<typename U>
+    explicit inline constexpr Quat(Quat<U> const &q)
+      : Quat<T>(q[0], q[1], q[2], q[3]) {}
+
+    Quat(matrix<3,3,T> const &m);
+    Quat(matrix<4,4,T> const &m);
+
+    LOL_COMMON_MEMBER_OPS(w)
+    LOL_NONVECTOR_MEMBER_OPS()
 
     /* Create a unit quaternion representing a rotation around an axis. */
     static Quat<T> rotate(T degrees, T x, T y, T z);
-    static Quat<T> rotate(T degrees, Vec3<T> const &v);
+    static Quat<T> rotate(T degrees, vec<3,T> const &v);
 
     /* Create a unit quaternion representing a rotation between two vectors.
      * Input vectors need not be normalised. */
-    static Quat<T> rotate(Vec3<T> const &src, Vec3<T> const &dst);
+    static Quat<T> rotate(vec<3,T> const &src, vec<3,T> const &dst);
 
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
      * If you want to rotate around static axes, just reverse the order
      * of the arguments. Angle values are in degrees. */
-    static Quat<T> fromeuler_xyx(Vec3<T> const &v);
-    static Quat<T> fromeuler_xzx(Vec3<T> const &v);
-    static Quat<T> fromeuler_yxy(Vec3<T> const &v);
-    static Quat<T> fromeuler_yzy(Vec3<T> const &v);
-    static Quat<T> fromeuler_zxz(Vec3<T> const &v);
-    static Quat<T> fromeuler_zyz(Vec3<T> const &v);
+    static Quat<T> fromeuler_xyx(vec<3,T> const &v);
+    static Quat<T> fromeuler_xzx(vec<3,T> const &v);
+    static Quat<T> fromeuler_yxy(vec<3,T> const &v);
+    static Quat<T> fromeuler_yzy(vec<3,T> const &v);
+    static Quat<T> fromeuler_zxz(vec<3,T> const &v);
+    static Quat<T> fromeuler_zyz(vec<3,T> const &v);
     static Quat<T> fromeuler_xyx(T phi, T theta, T psi);
     static Quat<T> fromeuler_xzx(T phi, T theta, T psi);
     static Quat<T> fromeuler_yxy(T phi, T theta, T psi);
@@ -1019,12 +1177,12 @@ template <typename T> struct Quat
      * If you want to rotate around static axes, reverse the order in
      * the function name (_zyx instead of _xyz) AND reverse the order
      * of the arguments. */
-    static Quat<T> fromeuler_xyz(Vec3<T> const &v);
-    static Quat<T> fromeuler_xzy(Vec3<T> const &v);
-    static Quat<T> fromeuler_yxz(Vec3<T> const &v);
-    static Quat<T> fromeuler_yzx(Vec3<T> const &v);
-    static Quat<T> fromeuler_zxy(Vec3<T> const &v);
-    static Quat<T> fromeuler_zyx(Vec3<T> const &v);
+    static Quat<T> fromeuler_xyz(vec<3,T> const &v);
+    static Quat<T> fromeuler_xzy(vec<3,T> const &v);
+    static Quat<T> fromeuler_yxz(vec<3,T> const &v);
+    static Quat<T> fromeuler_yzx(vec<3,T> const &v);
+    static Quat<T> fromeuler_zxy(vec<3,T> const &v);
+    static Quat<T> fromeuler_zyx(vec<3,T> const &v);
     static Quat<T> fromeuler_xyz(T phi, T theta, T psi);
     static Quat<T> fromeuler_xzy(T phi, T theta, T psi);
     static Quat<T> fromeuler_yxz(T phi, T theta, T psi);
@@ -1044,42 +1202,42 @@ template <typename T> struct Quat
         return Quat<T>(w, -x, -y, -z);
     }
 
-    inline Vec3<T> transform(Vec3<T> const &v) const
+    inline vec<3,T> transform(vec<3,T> const &v) const
     {
         Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
         Quat<T> q = *this * p / *this;
-        return Vec3<T>(q.x, q.y, q.z);
+        return vec<3,T>(q.x, q.y, q.z);
     }
 
-    inline Vec4<T> transform(Vec4<T> const &v) const
+    inline vec<4,T> transform(vec<4,T> const &v) const
     {
         Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
         Quat<T> q = *this * p / *this;
-        return Vec4<T>(q.x, q.y, q.z, v.w);
+        return vec<4,T>(q.x, q.y, q.z, v.w);
     }
 
-    inline Vec3<T> operator *(Vec3<T> const &v) const
+    inline vec<3,T> operator *(vec<3,T> const &v) const
     {
         return transform(v);
     }
 
-    inline Vec4<T> operator *(Vec4<T> const &v) const
+    inline vec<4,T> operator *(vec<4,T> const &v) const
     {
         return transform(v);
     }
 
-    inline Vec3<T> axis()
+    inline vec<3,T> axis()
     {
-        Vec3<T> v(x, y, z);
+        vec<3,T> v(x, y, z);
         T n2 = sqlength(v);
         if (n2 <= (T)1e-6)
-            return Vec3<T>::axis_x;
+            return vec<3,T>::axis_x;
         return normalize(v);
     }
 
     inline T angle()
     {
-        Vec3<T> v(x, y, z);
+        vec<3,T> v(x, y, z);
         T n2 = sqlength(v);
         if (n2 <= (T)1e-6)
             return (T)0;
@@ -1094,15 +1252,44 @@ template <typename T> struct Quat
 };
 
 template<typename T>
-inline T norm(Quat<T> const &val)
+static inline T dot(Quat<T> const &q1, Quat<T> const &q2)
 {
-    return length(val);
+    T ret(0);
+    for (size_t i = 0; i < sizeof(ret) / sizeof(T); ++i)
+        ret += q1[i] * q2[i];
+    return ret;
 }
 
 template<typename T>
-static inline Quat<T> re(Quat<T> const &val)
+static inline T sqlength(Quat<T> const &q)
 {
-    return ~val / sqlength(val);
+    return dot(q, q);
+}
+
+template<typename T>
+static inline T length(Quat<T> const &q)
+{
+    /* FIXME: this is not very nice */
+    return (T)sqrt((double)sqlength(q));
+}
+
+template<typename T>
+static inline T norm(Quat<T> const &q)
+{
+    return length(q);
+}
+
+template<typename T>
+static inline Quat<T> re(Quat<T> const &q)
+{
+    return ~q / sqlength(q);
+}
+
+template<typename T>
+static inline Quat<T> normalize(Quat<T> const &q)
+{
+    T norm = (T)length(q);
+    return norm ? q / norm : Quat<T>(T(0));
 }
 
 template<typename T>
@@ -1121,444 +1308,255 @@ template<typename T>
 extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
 
 /*
- * Common operators for all vector types, including quaternions
+ * Clean up our ugly macros.
  */
+
+#undef LOL_COMMON_MEMBER_OPS
+#undef LOL_VECTOR_MEMBER_OPS
+#undef LOL_NONVECTOR_MEMBER_OPS
+
+#undef LOL_V_VV_OP
+#undef LOL_V_VV_ASSIGN_OP
+#undef LOL_V_VS_OP
+#undef LOL_V_VS_ASSIGN_OP
+#undef LOL_B_VV_OP
 
 /*
- * vec +(vec, vec)   (also complex & quaternion)
- * vec -(vec, vec)   (also complex & quaternion)
- * vec *(vec, vec)
- * vec /(vec, vec)
+ * Operators for swizzled vectors. Since template deduction cannot be
+ * done for two arbitrary vec<> values, we help the compiler understand
+ * the expected type.
  */
-#define LOL_VECTOR_VECTOR_OP(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> operator op(tname<type> const &a, tname<type> const &b) \
+
+template<int N, int MASK1, int MASK2, typename T>
+static inline bool operator ==(vec<N,T,MASK1> const &a,
+                               vec<N,T,MASK2> const &b)
+{
+    for (size_t i = 0; i < N; ++i)
+        if (!(a[i] == b[i]))
+            return false;
+    return true;
+}
+
+template<int N, int MASK1, int MASK2, typename T>
+static inline bool operator !=(vec<N,T,MASK1> const &a,
+                               vec<N,T,MASK2> const &b)
+{
+    for (size_t i = 0; i < N; ++i)
+        if (a[i] != b[i])
+            return true;
+    return false;
+}
+
+#define LOL_SWIZZLE_V_VV_OP(op) \
+    template<int N, int MASK1, int MASK2, typename T> \
+    inline vec<N,T> operator op(vec<N,T,MASK1> const &a, \
+                                vec<N,T,MASK2> const &b) \
     { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] op b[n]; \
-        return ret; \
+        return vec<N,T>(a) op vec<N,T>(b); \
+    } \
+    \
+    template<int N, int MASK, typename T> \
+    inline vec<N,T> operator op(vec<N,T,MASK> a, T const &b) \
+    { \
+        return vec<N,T>(a) op b; \
     }
+
+LOL_SWIZZLE_V_VV_OP(+)
+LOL_SWIZZLE_V_VV_OP(-)
+LOL_SWIZZLE_V_VV_OP(*)
+LOL_SWIZZLE_V_VV_OP(/)
+
+#undef LOL_SWIZZLE_V_VV_OP
+
+template<int N, int MASK, typename T>
+static inline vec<N,T> operator *(T const &val, vec<N,T,MASK> const &a)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = val * a[i];
+    return ret;
+}
 
 /*
- * vec +=(vec, vec)   (also complex & quaternion)
- * vec -=(vec, vec)   (also complex & quaternion)
- * vec *=(vec, vec)
- * vec /=(vec, vec)
+ * vec min|max|fmod(vec, vec|scalar)
+ * vec min|max|fmod(scalar, vec)
  */
-#define LOL_VECTOR_VECTOR_NONCONST_OP(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> operator op##=(tname<type> &a, tname<type> const &b) \
+
+#define LOL_SWIZZLE_V_VV_FUN(fun) \
+    template<int N, int MASK1, int MASK2, typename T> \
+    inline vec<N,T> fun(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b) \
     { \
-        return a = a op b; \
+        using lol::fun; \
+        vec<N,T> ret; \
+        for (size_t i = 0; i < N; ++i) \
+            ret[i] = fun(a[i], b[i]); \
+        return ret; \
+    } \
+    \
+    template<int N, int MASK, typename T> \
+    inline vec<N,T> fun(vec<N,T,MASK> const &a, T const &b) \
+    { \
+        using lol::fun; \
+        vec<N,T> ret; \
+        for (size_t i = 0; i < N; ++i) \
+            ret[i] = fun(a[i], b); \
+        return ret; \
+    } \
+    \
+    template<int N, int MASK, typename T> \
+    inline vec<N,T> fun(T const &a, vec<N,T,MASK> const &b) \
+    { \
+        using lol::fun; \
+        vec<N,T> ret; \
+        for (size_t i = 0; i < N; ++i) \
+            ret[i] = fun(a, b[i]); \
+        return ret; \
     }
+
+LOL_SWIZZLE_V_VV_FUN(min)
+LOL_SWIZZLE_V_VV_FUN(max)
+LOL_SWIZZLE_V_VV_FUN(fmod)
+
+#undef LOL_SWIZZLE_V_VV_FUN
 
 /*
- * vec min(vec, vec)     (also max, fmod)
- * vec min(vec, scalar)  (also max, fmod)
- * vec min(scalar, vec)  (also max, fmod)
+ * vec clamp(vec, vec|scalar, vec|scalar)
+ * vec mix(vec, vec, vec|scalar)
  */
-#define LOL_VECTOR_MINMAX_FUN(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> op(tname<type> const &a, tname<type> const &b) \
-    { \
-        using lol::op; \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = op(a[n], b[n]); \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> op(tname<type> const &a, type const &b) \
-    { \
-        using lol::op; \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = op(a[n], b); \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> op(type const &a, tname<type> const &b) \
-    { \
-        using lol::op; \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(b) / sizeof(type); n++) \
-            ret[n] = op(a, b[n]); \
-        return ret; \
-    }
+
+template<int N, int MASK1, int MASK2, int MASK3, typename T>
+static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+                             vec<N,T,MASK2> const &a,
+                             vec<N,T,MASK3> const &b)
+{
+    return max(min(x, b), a);
+}
+
+template<int N, int MASK1, int MASK2, typename T>
+static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+                             T const &a,
+                             vec<N,T,MASK2> const &b)
+{
+    return max(min(x, b), a);
+}
+
+template<int N, int MASK1, int MASK2, typename T>
+static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+                             vec<N,T,MASK2> const &a,
+                             T const &b)
+{
+    return max(min(x, b), a);
+}
+
+template<int N, int MASK1, typename T>
+static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+                             T const &a,
+                             T const &b)
+{
+    return max(min(x, b), a);
+}
+
+template<int N, int MASK1, int MASK2, int MASK3, typename T>
+static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
+                           vec<N,T,MASK2> const &y,
+                           vec<N,T,MASK3> const &a)
+{
+    return x + a * (y - x);
+}
+
+template<int N, int MASK1, int MASK2, typename T>
+static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
+                           vec<N,T,MASK2> const &y,
+                           T const &a)
+{
+    return x + a * (y - x);
+}
 
 /*
- * vec clamp(vec, vec, vec)
- * vec clamp(vec, vec, scalar)
- * vec clamp(vec, scalar, vec)
- * vec clamp(vec, scalar, scalar)
+ * Some GLSL-like functions.
  */
-#define LOL_VECTOR_CLAMP_FUN(tname, tprefix, type) \
-    tprefix \
-    inline tname<type> clamp(tname<type> const &x, \
-                             tname<type> const &a, tname<type> const &b) \
-    { \
-        return max(min(x, b), a); \
-    } \
-    \
-    tprefix \
-    inline tname<type> clamp(tname<type> const &x, \
-                             type const &a, tname<type> const &b) \
-    { \
-        return max(min(x, b), a); \
-    } \
-    \
-    tprefix \
-    inline tname<type> clamp(tname<type> const &x, \
-                             tname<type> const &a, type const &b) \
-    { \
-        return max(min(x, b), a); \
-    } \
-    \
-    tprefix \
-    inline tname<type> clamp(tname<type> const &x, \
-                             type const &a, type const &b) \
-    { \
-        return max(min(x, b), a); \
-    }
 
-/*
- * vec mix(vec, vec, vec)
- * vec mix(vec, vec, scalar)
- */
-#define LOL_VECTOR_MIX_FUN(tname, tprefix, type) \
-    tprefix \
-    inline tname<type> mix(tname<type> const &x, \
-                           tname<type> const &y, tname<type> const &a) \
-    { \
-        return x + a * (y - x); \
-    } \
-    \
-    tprefix \
-    inline tname<type> mix(tname<type> const &x, \
-                           tname<type> const &y, type const &a) \
-    { \
-        return x + a * (y - x); \
-    }
+template<int N, int MASK1, int MASK2, typename T>
+static inline T dot(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b)
+{
+    T ret(0);
+    for (size_t i = 0; i < N; ++i)
+        ret += a[i] * b[i];
+    return ret;
+}
 
-/*
- * bool ==(vec, vec)   (also complex & quaternion)
- * bool !=(vec, vec)   (also complex & quaternion)
- * bool >=(vec, vec)
- * bool <=(vec, vec)
- * bool >(vec, vec)
- * bool <(vec, vec)
- */
-#define LOL_VECTOR_VECTOR_BOOL_OP(tname, op, op2, ret, tprefix, type) \
-    tprefix \
-    inline bool operator op(tname<type> const &a, tname<type> const &b) \
-    { \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            if (!(a[n] op2 b[n])) \
-                return !ret; \
-        return ret; \
-    }
+template<int N, int MASK, typename T>
+static inline T sqlength(vec<N,T,MASK> const &a)
+{
+    return dot(a, a);
+}
 
-/*
- * vec *(vec, scalar)   (also complex & quaternion)
- * vec /(vec, scalar)   (also complex & quaternion)
- */
-#define LOL_VECTOR_SCALAR_OP(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> operator op(tname<type> const &a, type const &val) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] op val; \
-        return ret; \
-    }
+template<int N, int MASK, typename T>
+static inline T length(vec<N,T,MASK> const &a)
+{
+    /* FIXME: this is not very nice */
+    return (T)sqrt((double)sqlength(a));
+}
 
-/*
- * vec *(scalar, vec)   (also complex & quaternion)
- * vec /(scalar, vec)   (NOT for complex & quaternion!)
- */
-#define LOL_SCALAR_VECTOR_OP(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> operator op(type const &val, tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] op val; \
-        return ret; \
-    }
+template<int N, int MASK1, int MASK2, typename T>
+static inline vec<N,T> lerp(vec<N,T,MASK1> const &a,
+                            vec<N,T,MASK2> const &b,
+                            T const &s)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = a[i] + s * (b[i] - a[i]);
+    return ret;
+}
 
-/*
- * vec *=(vec, scalar)   (also complex & quaternion)
- * vec /=(vec, scalar)   (also complex & quaternion)
- */
-#define LOL_VECTOR_SCALAR_NONCONST_OP(tname, op, tprefix, type) \
-    tprefix \
-    inline tname<type> operator op##=(tname<type> &a, type const &val) \
-    { \
-        return a = a op val; \
-    }
+template<int N, int MASK1, int MASK2, typename T>
+static inline T distance(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b)
+{
+    return length(a - b);
+}
 
-#define LOL_UNARY_OPS(tname, tprefix, type) \
-    tprefix \
-    inline tname<type> operator -(tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = -a[n]; \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> operator +(tname<type> const &a) \
-    { \
-        return a; \
-    }
+template<int N, int MASK, typename T>
+static inline vec<N,T> fract(vec<N,T,MASK> const &a)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = fract(a[i]);
+    return ret;
+}
 
-#define LOL_UNARY_FUNS(tname, tprefix, type) \
-    tprefix \
-    inline type sqlength(tname<type> const &a) \
-    { \
-        type acc = 0; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            acc += a[n] * a[n]; \
-        return acc; \
-    } \
-    \
-    tprefix \
-    inline type length(tname<type> const &a) \
-    { \
-        return (type)sqrt((double)sqlength(a)); \
-    } \
-    \
-    tprefix \
-    inline type distance(tname<type> const &a, tname<type> const &b) \
-    { \
-        return length(a - b); \
-    } \
-    \
-    tprefix \
-    inline tname<type> fract(tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = fract(a[n]); \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> normalize(tname<type> const &a) \
-    { \
-        type norm = (type)length(a); \
-        return norm ? a / norm : a * (type)0; \
-    } \
-    \
-    tprefix \
-    inline tname<type> abs(tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = lol::abs(a[n]); \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> degrees(tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = lol::degrees(a[n]); \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> radians(tname<type> const &a) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = lol::radians(a[n]); \
-        return ret; \
-    }
+template<int N, int MASK, typename T>
+static inline vec<N,T> normalize(vec<N,T,MASK> const &a)
+{
+    T norm = (T)length(a);
+    return norm ? a / norm : vec<N,T>(T(0));
+}
 
-#define LOL_BINARY_NONVECTOR_FUNS(tname, tprefix, type) \
-    tprefix \
-    inline type dot(tname<type> const &a, tname<type> const &b) \
-    { \
-        type ret = 0; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret += a[n] * b[n]; \
-        return ret; \
-    } \
-    \
-    tprefix \
-    inline tname<type> lerp(tname<type> const &a, \
-                            tname<type> const &b, type x) \
-    { \
-        tname<type> ret; \
-        for (size_t n = 0; n < sizeof(a) / sizeof(type); n++) \
-            ret[n] = a[n] + (b[n] - a[n]) * x; \
-        return ret; \
-    }
+template<int N, int MASK, typename T>
+static inline vec<N,T> abs(vec<N,T,MASK> const &a)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = lol::abs(a[i]);
+    return ret;
+}
 
-#define LOL_VEC_3_FUNS(tname, tprefix, type) \
-    /* Return the cross product (vector product) of "a" and "b" */ \
-    tprefix \
-    inline tname<type> cross(tname<type> const &a, tname<type> const &b) \
-    { \
-        return tname<type>((type)(a.y * b.z - a.z * b.y), \
-                           (type)(a.z * b.x - a.x * b.z), \
-                           (type)(a.x * b.y - a.y * b.x)); \
-    } \
-    \
-    /* Return a vector that is orthogonal to "a" */ \
-    tprefix \
-    inline tname<type> orthogonal(tname<type> const &a) \
-    { \
-        return lol::abs(a.x) > lol::abs(a.z) \
-             ? tname<type>(-a.y, a.x, (type)0) \
-             : tname<type>((type)0, -a.z, a.y); \
-    } \
-    \
-    /* Return a vector that is orthonormal to "a" */ \
-    tprefix \
-    inline tname<type> orthonormal(tname<type> const &a) \
-    { \
-        return normalize(orthogonal(a)); \
-    }
+template<int N, int MASK, typename T>
+static inline vec<N,T> degrees(vec<N,T,MASK> const &a)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = lol::degrees(a[i]);
+    return ret;
+}
 
-#define LOL_BINARY_NONVECTOR_OPS(tname, tprefix, type) \
-    LOL_VECTOR_VECTOR_OP(tname, -, tprefix, type) \
-    LOL_VECTOR_VECTOR_OP(tname, +, tprefix, type) \
-    LOL_VECTOR_SCALAR_OP(tname, *, tprefix, type) \
-    LOL_VECTOR_SCALAR_OP(tname, /, tprefix, type) \
-    LOL_SCALAR_VECTOR_OP(tname, *, tprefix, type) \
-    \
-    LOL_VECTOR_VECTOR_NONCONST_OP(tname, -, tprefix, type) \
-    LOL_VECTOR_VECTOR_NONCONST_OP(tname, +, tprefix, type) \
-    LOL_VECTOR_SCALAR_NONCONST_OP(tname, *, tprefix, type) \
-    LOL_VECTOR_SCALAR_NONCONST_OP(tname, /, tprefix, type) \
-    \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, ==, ==, true, tprefix, type) \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, !=, ==, false, tprefix, type)
-
-#define LOL_BINARY_VECTOR_OPS(tname, tprefix, type) \
-    LOL_SCALAR_VECTOR_OP(tname, /, tprefix, type)
-
-#define LOL_BINARY_VECTOR_FUNS(tname, tprefix, type) \
-    LOL_VECTOR_MINMAX_FUN(tname, min, tprefix, type) \
-    LOL_VECTOR_MINMAX_FUN(tname, max, tprefix, type) \
-    LOL_VECTOR_MINMAX_FUN(tname, fmod, tprefix, type) \
-    LOL_VECTOR_CLAMP_FUN(tname, tprefix, type) \
-    LOL_VECTOR_MIX_FUN(tname, tprefix, type) \
-    \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, <=, <=, true, tprefix, type) \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, >=, >=, true, tprefix, type) \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, <, <, true, tprefix, type) \
-    LOL_VECTOR_VECTOR_BOOL_OP(tname, >, >, true, tprefix, type)
-
-#define LOL_VECTOR_OPS(tname, tprefix, type) \
-    LOL_VECTOR_VECTOR_OP(tname, *, tprefix, type) \
-    LOL_VECTOR_VECTOR_OP(tname, /, tprefix, type) \
-    \
-    LOL_VECTOR_VECTOR_NONCONST_OP(tname, *, tprefix, type) \
-    LOL_VECTOR_VECTOR_NONCONST_OP(tname, /, tprefix, type)
-
-#define LOL_ALL_NONVECTOR_OPS_AND_FUNS(tname) \
-    LOL_BINARY_NONVECTOR_OPS(tname, template<typename T> static, T) \
-    LOL_BINARY_NONVECTOR_FUNS(tname, template<typename T> static, T) \
-    LOL_UNARY_OPS(tname, template<typename T> static, T) \
-    LOL_UNARY_FUNS(tname, template<typename T> static, T)
-
-#define LOL_ALL_VECTOR_OPS_INNER(tname, type) \
-    LOL_BINARY_VECTOR_OPS(tname, static, type) \
-    LOL_BINARY_NONVECTOR_OPS(tname, static, type) \
-    LOL_UNARY_OPS(tname, static, type) \
-    LOL_VECTOR_OPS(tname, static, type)
-
-#define LOL_ALL_VECTOR_FUNS_INNER(tname, type) \
-    LOL_BINARY_VECTOR_FUNS(tname, static, type) \
-    LOL_BINARY_NONVECTOR_FUNS(tname, static, type) \
-    LOL_UNARY_FUNS(tname, static, type)
-
-/* HACK: This trick fails with Apple’s clang++, which sometimes fails to deduce
- * the arguments for simple stuff such as vec3 + vec3. Disable it for now.
- * Note that llvm-g++ doesn’t have the problem. */
-#if defined __clang__
-#   define LOL_OPEN_NAMESPACE(x)
-#   define LOL_CLOSE_NAMESPACE(x)
-#else
-#   define LOL_OPEN_NAMESPACE(x) namespace x {
-#   define LOL_CLOSE_NAMESPACE(x) } using namespace x;
-#endif
-
-#define LOL_ALL_VECTOR_OPS_AND_FUNS(type) \
-    LOL_OPEN_NAMESPACE(x##type) \
-        LOL_ALL_VECTOR_OPS_INNER(Vec2, type) \
-        LOL_ALL_VECTOR_OPS_INNER(Vec3, type) \
-        LOL_ALL_VECTOR_OPS_INNER(Vec4, type) \
-    LOL_CLOSE_NAMESPACE(x##type) \
-    LOL_ALL_VECTOR_FUNS_INNER(Vec2, type) \
-    LOL_ALL_VECTOR_FUNS_INNER(Vec3, type) \
-    LOL_ALL_VECTOR_FUNS_INNER(Vec4, type) \
-    LOL_VEC_3_FUNS(Vec3, static, type)
-
-LOL_ALL_NONVECTOR_OPS_AND_FUNS(Cmplx)
-LOL_ALL_NONVECTOR_OPS_AND_FUNS(Quat)
-
-/* Disable warning about unary operator applied to unsigned type */
-#if defined _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable: 4146)
-#endif
-
-LOL_ALL_VECTOR_OPS_AND_FUNS(half)
-LOL_ALL_VECTOR_OPS_AND_FUNS(float)
-LOL_ALL_VECTOR_OPS_AND_FUNS(double)
-LOL_ALL_VECTOR_OPS_AND_FUNS(ldouble)
-LOL_ALL_VECTOR_OPS_AND_FUNS(real)
-
-LOL_ALL_VECTOR_OPS_AND_FUNS(int8_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(uint8_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(int16_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(uint16_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(int32_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(uint32_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(int64_t)
-LOL_ALL_VECTOR_OPS_AND_FUNS(uint64_t)
-
-#if defined _MSC_VER
-#   pragma warning(pop)
-#endif
-
-#undef LOL_MEMBER_OPS
-
-#undef LOL_VECTOR_VECTOR_OP
-#undef LOL_VECTOR_VECTOR_NONCONST_OP
-#undef LOL_VECTOR_MINMAX_FUN
-#undef LOL_VECTOR_CLAMP_FUN
-#undef LOL_VECTOR_MIX_FUN
-#undef LOL_VECTOR_VECTOR_BOOL_OP
-#undef LOL_VECTOR_SCALAR_OP
-#undef LOL_SCALAR_VECTOR_OP
-#undef LOL_VECTOR_SCALAR_OP
-
-#undef LOL_BINARY_VECTOR_OPS
-#undef LOL_BINARY_VECTOR_FUNS
-#undef LOL_BINARY_NONVECTOR_OPS
-#undef LOL_BINARY_NONVECTOR_FUNS
-#undef LOL_UNARY_OPS
-#undef LOL_UNARY_FUNS
-#undef LOL_VEC_3_FUNS
-#undef LOL_VECTOR_OPS
-
-#undef LOL_ALL_NONVECTOR_OPS_AND_FUNS
-#undef LOL_ALL_VECTOR_OPS_INNER
-#undef LOL_ALL_VECTOR_FUNS_INNER
-#undef LOL_ALL_VECTOR_OPS_AND_FUNS
-
-#undef LOL_OPEN_NAMESPACE
-#undef LOL_CLOSE_NAMESPACE
+template<int N, int MASK, typename T>
+static inline vec<N,T> radians(vec<N,T,MASK> const &a)
+{
+    vec<N,T> ret;
+    for (size_t i = 0; i < N; ++i)
+        ret[i] = lol::radians(a[i]);
+    return ret;
+}
 
 /*
  * Definition of additional functions requiring vector functions
@@ -1568,9 +1566,9 @@ template<typename T>
 inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
 {
     Quat<T> ret;
-    Vec3<T> v1(x, y, z);
-    Vec3<T> v2(val.x, val.y, val.z);
-    Vec3<T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
+    vec<3,T> v1(x, y, z);
+    vec<3,T> v2(val.x, val.y, val.z);
+    vec<3,T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
     return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
 }
 
@@ -1578,54 +1576,43 @@ inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
  * Magic vector swizzling (part 2/2)
  */
 
-template<typename T, int N>
-inline XVec2<T, N>& XVec2<T, N>::operator =(Vec2<T> that)
+#if LOL_FEATURE_CXX11_RELAXED_UNIONS
+template<int N, typename T, int MASK>
+inline vec<N, T, MASK>& vec<N, T, MASK>::operator =(vec<N,T> that)
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < N; ++i)
         (*this)[i] = that[i];
     return *this;
 }
-
-template<typename T, int N>
-inline XVec3<T, N>& XVec3<T, N>::operator =(Vec3<T> that)
-{
-    for (int i = 0; i < 3; i++)
-        (*this)[i] = that[i];
-    return *this;
-}
-
-template<typename T, int N>
-inline XVec4<T, N>& XVec4<T, N>::operator =(Vec4<T> that)
-{
-    for (int i = 0; i < 4; i++)
-        (*this)[i] = that[i];
-    return *this;
-}
+#endif
 
 /*
  * 2×2-element matrices
  */
 
-template <typename T> struct Mat2
+template <typename T>
+struct matrix<2, 2, T>
 {
-    inline Mat2() {}
-    inline Mat2(Vec2<T> V0, Vec2<T> V1)
+    typedef matrix<2,2,T> type;
+
+    inline matrix() {}
+    inline matrix(vec<2,T> V0, vec<2,T> V1)
       : v0(V0), v1(V1) {}
 
-    explicit inline Mat2(T val)
+    explicit inline matrix(T val)
       : v0(val, (T)0),
         v1((T)0, val) {}
 
-    explicit inline Mat2(Mat4<T> const &mat)
+    explicit inline matrix(matrix<4,4,T> const &mat)
       : v0(mat[0].xy),
         v1(mat[1].xy) {}
 
-    inline Vec2<T>& operator[](size_t n) { return (&v0)[n]; }
-    inline Vec2<T> const& operator[](size_t n) const { return (&v0)[n]; }
+    inline vec<2,T>& operator[](size_t n) { return (&v0)[n]; }
+    inline vec<2,T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
-    static Mat2<T> rotate(T degrees);
-    static inline Mat2<T> rotate(Mat2<T> mat, T degrees)
+    static matrix<2,2,T> rotate(T degrees);
+    static inline matrix<2,2,T> rotate(matrix<2,2,T> mat, T degrees)
     {
         return rotate(degrees) * mat;
     }
@@ -1634,41 +1621,42 @@ template <typename T> struct Mat2
     String tostring() const;
 
     template<class U>
-    friend std::ostream &operator<<(std::ostream &stream, Mat2<U> const &m);
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    matrix<2,2,U> const &m);
 
-    inline Mat2<T> operator +(Mat2<T> const m) const
+    inline matrix<2,2,T> operator +(matrix<2,2,T> const m) const
     {
-        return Mat2<T>(v0 + m[0], v1 + m[1]);
+        return matrix<2,2,T>(v0 + m[0], v1 + m[1]);
     }
 
-    inline Mat2<T> operator +=(Mat2<T> const m)
+    inline matrix<2,2,T> operator +=(matrix<2,2,T> const m)
     {
         return *this = *this + m;
     }
 
-    inline Mat2<T> operator -(Mat2<T> const m) const
+    inline matrix<2,2,T> operator -(matrix<2,2,T> const m) const
     {
-        return Mat2<T>(v0 - m[0], v1 - m[1]);
+        return matrix<2,2,T>(v0 - m[0], v1 - m[1]);
     }
 
-    inline Mat2<T> operator -=(Mat2<T> const m)
+    inline matrix<2,2,T> operator -=(matrix<2,2,T> const m)
     {
         return *this = *this - m;
     }
 
-    inline Mat2<T> operator *(Mat2<T> const m) const
+    inline matrix<2,2,T> operator *(matrix<2,2,T> const m) const
     {
-        return Mat2<T>(*this * m[0], *this * m[1]);
+        return matrix<2,2,T>(*this * m[0], *this * m[1]);
     }
 
-    inline Mat2<T> operator *=(Mat2<T> const m)
+    inline matrix<2,2,T> operator *=(matrix<2,2,T> const m)
     {
         return *this = *this * m;
     }
 
-    inline Vec2<T> operator *(Vec2<T> const m) const
+    inline vec<2,T> operator *(vec<2,T> const m) const
     {
-        Vec2<T> ret;
+        vec<2,T> ret;
         for (int j = 0; j < 2; j++)
         {
             T tmp = 0;
@@ -1679,80 +1667,83 @@ template <typename T> struct Mat2
         return ret;
     }
 
-    Vec2<T> v0, v1;
+    vec<2,T> v0, v1;
 
-    static const Mat2<T> identity;
+    static const matrix<2,2,T> identity;
 };
 
 /*
  * 3×3-element matrices
  */
 
-template <typename T> struct Mat3
+template <typename T>
+struct matrix<3,3,T>
 {
-    inline Mat3() {}
-    inline Mat3(Vec3<T> V0, Vec3<T> V1, Vec3<T> V2)
+    typedef matrix<3,3,T> type;
+
+    inline matrix() {}
+    inline matrix(vec<3,T> V0, vec<3,T> V1, vec<3,T> V2)
       : v0(V0), v1(V1), v2(V2) {}
 
-    explicit inline Mat3(T val)
+    explicit inline matrix(T val)
       : v0(val, (T)0, (T)0),
         v1((T)0, val, (T)0),
         v2((T)0, (T)0, val) {}
 
-    explicit inline Mat3(Mat2<T> mat)
+    explicit inline matrix(matrix<2,2,T> mat)
       : v0(mat[0], (T)0),
         v1(mat[1], (T)0),
         v2((T)0, (T)0, (T)0) {}
 
-    explicit inline Mat3(Mat2<T> mat, T val)
-      : v0(Vec3<T>(mat[0], (T)0)),
-        v1(Vec3<T>(mat[1], (T)0)),
+    explicit inline matrix(matrix<2,2,T> mat, T val)
+      : v0(vec<3,T>(mat[0], (T)0)),
+        v1(vec<3,T>(mat[1], (T)0)),
         v2((T)0, (T)0, val) {}
 
-    explicit inline Mat3(Mat4<T> const &mat)
+    explicit inline matrix(matrix<4,4,T> const &mat)
       : v0(mat[0].xyz),
         v1(mat[1].xyz),
         v2(mat[2].xyz) {}
 
-    explicit Mat3(Quat<T> const &q);
+    explicit matrix(Quat<T> const &q);
 
-    inline Vec3<T>& operator[](size_t n) { return (&v0)[n]; }
-    inline Vec3<T> const& operator[](size_t n) const { return (&v0)[n]; }
+    inline vec<3,T>& operator[](size_t n) { return (&v0)[n]; }
+    inline vec<3,T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
-    static Mat3<T> scale(T x);
-    static Mat3<T> scale(T x, T y, T z);
-    static Mat3<T> scale(Vec3<T> v);
-    static Mat3<T> rotate(T degrees, T x, T y, T z);
-    static Mat3<T> rotate(T degrees, Vec3<T> v);
+    static matrix<3,3,T> scale(T x);
+    static matrix<3,3,T> scale(T x, T y, T z);
+    static matrix<3,3,T> scale(vec<3,T> v);
+    static matrix<3,3,T> rotate(T degrees, T x, T y, T z);
+    static matrix<3,3,T> rotate(T degrees, vec<3,T> v);
 
-    static Mat3<T> fromeuler_xyz(Vec3<T> const &v);
-    static Mat3<T> fromeuler_xzy(Vec3<T> const &v);
-    static Mat3<T> fromeuler_yxz(Vec3<T> const &v);
-    static Mat3<T> fromeuler_yzx(Vec3<T> const &v);
-    static Mat3<T> fromeuler_zxy(Vec3<T> const &v);
-    static Mat3<T> fromeuler_zyx(Vec3<T> const &v);
-    static Mat3<T> fromeuler_xyz(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_xzy(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_yxz(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_yzx(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_zxy(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_zyx(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_xyz(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_xzy(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_yxz(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_yzx(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_zxy(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_zyx(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_xyz(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_xzy(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_yxz(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_yzx(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_zxy(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_zyx(T phi, T theta, T psi);
 
-    static Mat3<T> fromeuler_xyx(Vec3<T> const &v);
-    static Mat3<T> fromeuler_xzx(Vec3<T> const &v);
-    static Mat3<T> fromeuler_yxy(Vec3<T> const &v);
-    static Mat3<T> fromeuler_yzy(Vec3<T> const &v);
-    static Mat3<T> fromeuler_zxz(Vec3<T> const &v);
-    static Mat3<T> fromeuler_zyz(Vec3<T> const &v);
-    static Mat3<T> fromeuler_xyx(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_xzx(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_yxy(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_yzy(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_zxz(T phi, T theta, T psi);
-    static Mat3<T> fromeuler_zyz(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_xyx(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_xzx(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_yxy(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_yzy(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_zxz(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_zyz(vec<3,T> const &v);
+    static matrix<3,3,T> fromeuler_xyx(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_xzx(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_yxy(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_yzy(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_zxz(T phi, T theta, T psi);
+    static matrix<3,3,T> fromeuler_zyz(T phi, T theta, T psi);
 
-    static inline Mat3<T> rotate(Mat3<T> mat, T degrees, Vec3<T> v)
+    static inline matrix<3,3,T> rotate(matrix<3,3,T> mat, T degrees, vec<3,T> v)
     {
         return rotate(degrees, v) * mat;
     }
@@ -1761,41 +1752,42 @@ template <typename T> struct Mat3
     String tostring() const;
 
     template<class U>
-    friend std::ostream &operator<<(std::ostream &stream, Mat3<U> const &m);
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    matrix<3,3,U> const &m);
 
-    inline Mat3<T> operator +(Mat3<T> const m) const
+    inline matrix<3,3,T> operator +(matrix<3,3,T> const m) const
     {
-        return Mat3<T>(v0 + m[0], v1 + m[1], v2 + m[2]);
+        return matrix<3,3,T>(v0 + m[0], v1 + m[1], v2 + m[2]);
     }
 
-    inline Mat3<T> operator +=(Mat3<T> const m)
+    inline matrix<3,3,T> operator +=(matrix<3,3,T> const m)
     {
         return *this = *this + m;
     }
 
-    inline Mat3<T> operator -(Mat3<T> const m) const
+    inline matrix<3,3,T> operator -(matrix<3,3,T> const m) const
     {
-        return Mat3<T>(v0 - m[0], v1 - m[1], v2 - m[2]);
+        return matrix<3,3,T>(v0 - m[0], v1 - m[1], v2 - m[2]);
     }
 
-    inline Mat3<T> operator -=(Mat3<T> const m)
+    inline matrix<3,3,T> operator -=(matrix<3,3,T> const m)
     {
         return *this = *this - m;
     }
 
-    inline Mat3<T> operator *(Mat3<T> const m) const
+    inline matrix<3,3,T> operator *(matrix<3,3,T> const m) const
     {
-        return Mat3<T>(*this * m[0], *this * m[1], *this * m[2]);
+        return matrix<3,3,T>(*this * m[0], *this * m[1], *this * m[2]);
     }
 
-    inline Mat3<T> operator *=(Mat3<T> const m)
+    inline matrix<3,3,T> operator *=(matrix<3,3,T> const m)
     {
         return *this = *this * m;
     }
 
-    inline Vec3<T> operator *(Vec3<T> const m) const
+    inline vec<3,T> operator *(vec<3,T> const m) const
     {
-        Vec3<T> ret;
+        vec<3,T> ret;
         for (int j = 0; j < 3; j++)
         {
             T tmp = 0;
@@ -1806,170 +1798,174 @@ template <typename T> struct Mat3
         return ret;
     }
 
-    Vec3<T> v0, v1, v2;
+    vec<3,T> v0, v1, v2;
 
-    static const Mat3<T> identity;
+    static const matrix<3,3,T> identity;
 };
 
 /*
  * 4×4-element matrices
  */
 
-template <typename T> struct Mat4
+template <typename T>
+struct matrix<4, 4, T>
 {
-    inline Mat4() {}
-    inline Mat4(Vec4<T> V0, Vec4<T> V1, Vec4<T> V2, Vec4<T> V3)
+    typedef matrix<4,4,T> type;
+
+    inline matrix() {}
+    inline matrix(vec<4,T> V0, vec<4,T> V1, vec<4,T> V2, vec<4,T> V3)
       : v0(V0), v1(V1), v2(V2), v3(V3) {}
 
-    explicit inline Mat4(T val)
+    explicit inline matrix(T val)
       : v0(val, (T)0, (T)0, (T)0),
         v1((T)0, val, (T)0, (T)0),
         v2((T)0, (T)0, val, (T)0),
         v3((T)0, (T)0, (T)0, val) {}
 
-    explicit inline Mat4(Mat2<T> mat)
+    explicit inline matrix(matrix<2,2,T> mat)
       : v0(mat[0], (T)0, (T)0),
         v1(mat[1], (T)0, (T)0),
         v2((T)0, (T)0, (T)0, (T)0),
         v3((T)0, (T)0, (T)0, (T)0) {}
 
-    explicit inline Mat4(Mat2<T> mat, T val1, T val2)
+    explicit inline matrix(matrix<2,2,T> mat, T val1, T val2)
       : v0(mat[0], (T)0, (T)0),
         v1(mat[1], (T)0, (T)0),
         v2((T)0, (T)0, val1, (T)0),
         v3((T)0, (T)0, (T)0, val2) {}
 
-    explicit inline Mat4(Mat3<T> mat)
+    explicit inline matrix(matrix<3,3,T> mat)
       : v0(mat[0], (T)0),
         v1(mat[1], (T)0),
         v2(mat[2], (T)0),
         v3((T)0, (T)0, (T)0, (T)0) {}
 
-    explicit inline Mat4(Mat3<T> mat, T val)
+    explicit inline matrix(matrix<3,3,T> mat, T val)
       : v0(mat[0], (T)0),
         v1(mat[1], (T)0),
         v2(mat[2], (T)0),
         v3((T)0, (T)0, (T)0, val) {}
 
-    explicit Mat4(Quat<T> const &q);
+    explicit matrix(Quat<T> const &q);
 
-    inline Vec4<T>& operator[](size_t n) { return (&v0)[n]; }
-    inline Vec4<T> const& operator[](size_t n) const { return (&v0)[n]; }
+    inline vec<4,T>& operator[](size_t n) { return (&v0)[n]; }
+    inline vec<4,T> const& operator[](size_t n) const { return (&v0)[n]; }
 
     /* Helpers for transformation matrices */
-    static Mat4<T> translate(T x, T y, T z);
-    static Mat4<T> translate(Vec3<T> v);
+    static matrix<4,4,T> translate(T x, T y, T z);
+    static matrix<4,4,T> translate(vec<3,T> v);
 
-    static inline Mat4<T> scale(T x)
+    static inline matrix<4,4,T> scale(T x)
     {
-        return Mat4<T>(Mat3<T>::scale(x), (T)1);
+        return matrix<4,4,T>(matrix<3,3,T>::scale(x), (T)1);
     }
 
-    static inline Mat4<T> scale(T x, T y, T z)
+    static inline matrix<4,4,T> scale(T x, T y, T z)
     {
-        return Mat4<T>(Mat3<T>::scale(x, y, z), (T)1);
+        return matrix<4,4,T>(matrix<3,3,T>::scale(x, y, z), (T)1);
     }
 
-    static inline Mat4<T> scale(Vec3<T> v)
+    static inline matrix<4,4,T> scale(vec<3,T> v)
     {
-        return Mat4<T>(Mat3<T>::scale(v), (T)1);
+        return matrix<4,4,T>(matrix<3,3,T>::scale(v), (T)1);
     }
 
-    static inline Mat4<T> translate(Mat4<T> const &mat, Vec3<T> v)
+    static inline matrix<4,4,T> translate(matrix<4,4,T> const &mat, vec<3,T> v)
     {
         return translate(v) * mat;
     }
 
-    static inline Mat4<T> rotate(T degrees, T x, T y, T z)
+    static inline matrix<4,4,T> rotate(T degrees, T x, T y, T z)
     {
-        return Mat4<T>(Mat3<T>::rotate(degrees, x, y, z), (T)1);
+        return matrix<4,4,T>(matrix<3,3,T>::rotate(degrees, x, y, z), (T)1);
     }
 
-    static inline Mat4<T> rotate(T degrees, Vec3<T> v)
+    static inline matrix<4,4,T> rotate(T degrees, vec<3,T> v)
     {
-        return Mat4<T>(Mat3<T>::rotate(degrees, v), (T)1);
+        return matrix<4,4,T>(matrix<3,3,T>::rotate(degrees, v), (T)1);
     }
 
-    static inline Mat4<T> rotate(Mat4<T> &mat, T degrees, Vec3<T> v)
+    static inline matrix<4,4,T> rotate(matrix<4,4,T> &mat, T degrees, vec<3,T> v)
     {
         return rotate(degrees, v) * mat;
     }
 
-    static Mat4<T> fromeuler_xyz(Vec3<T> const &v);
-    static Mat4<T> fromeuler_xzy(Vec3<T> const &v);
-    static Mat4<T> fromeuler_yxz(Vec3<T> const &v);
-    static Mat4<T> fromeuler_yzx(Vec3<T> const &v);
-    static Mat4<T> fromeuler_zxy(Vec3<T> const &v);
-    static Mat4<T> fromeuler_zyx(Vec3<T> const &v);
-    static Mat4<T> fromeuler_xyz(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_xzy(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_yxz(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_yzx(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_zxy(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_zyx(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_xyz(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_xzy(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_yxz(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_yzx(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_zxy(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_zyx(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_xyz(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_xzy(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_yxz(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_yzx(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_zxy(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_zyx(T phi, T theta, T psi);
 
-    static Mat4<T> fromeuler_xyx(Vec3<T> const &v);
-    static Mat4<T> fromeuler_xzx(Vec3<T> const &v);
-    static Mat4<T> fromeuler_yxy(Vec3<T> const &v);
-    static Mat4<T> fromeuler_yzy(Vec3<T> const &v);
-    static Mat4<T> fromeuler_zxz(Vec3<T> const &v);
-    static Mat4<T> fromeuler_zyz(Vec3<T> const &v);
-    static Mat4<T> fromeuler_xyx(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_xzx(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_yxy(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_yzy(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_zxz(T phi, T theta, T psi);
-    static Mat4<T> fromeuler_zyz(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_xyx(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_xzx(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_yxy(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_yzy(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_zxz(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_zyz(vec<3,T> const &v);
+    static matrix<4,4,T> fromeuler_xyx(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_xzx(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_yxy(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_yzy(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_zxz(T phi, T theta, T psi);
+    static matrix<4,4,T> fromeuler_zyz(T phi, T theta, T psi);
 
     /* Helpers for view matrices */
-    static Mat4<T> lookat(Vec3<T> eye, Vec3<T> center, Vec3<T> up);
+    static matrix<4,4,T> lookat(vec<3,T> eye, vec<3,T> center, vec<3,T> up);
 
     /* Helpers for projection matrices */
-    static Mat4<T> ortho(T left, T right, T bottom, T top, T near, T far);
-    static Mat4<T> ortho(T width, T height, T near, T far);
-    static Mat4<T> frustum(T left, T right, T bottom, T top, T near, T far);
-    static Mat4<T> perspective(T fov_y, T width, T height, T near, T far);
-    static Mat4<T> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
+    static matrix<4,4,T> ortho(T left, T right, T bottom, T top, T near, T far);
+    static matrix<4,4,T> ortho(T width, T height, T near, T far);
+    static matrix<4,4,T> frustum(T left, T right, T bottom, T top, T near, T far);
+    static matrix<4,4,T> perspective(T fov_y, T width, T height, T near, T far);
+    static matrix<4,4,T> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
 
     void printf() const;
     String tostring() const;
 
     template<class U>
-    friend std::ostream &operator<<(std::ostream &stream, Mat4<U> const &m);
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    matrix<4,4,U> const &m);
 
-    inline Mat4<T> operator +(Mat4<T> const &m) const
+    inline matrix<4,4,T> operator +(matrix<4,4,T> const &m) const
     {
-        return Mat4<T>(v0 + m[0], v1 + m[1], v2 + m[2], v3 + m[3]);
+        return matrix<4,4,T>(v0 + m[0], v1 + m[1], v2 + m[2], v3 + m[3]);
     }
 
-    inline Mat4<T> operator +=(Mat4<T> const &m)
+    inline matrix<4,4,T> operator +=(matrix<4,4,T> const &m)
     {
         return *this = *this + m;
     }
 
-    inline Mat4<T> operator -(Mat4<T> const &m) const
+    inline matrix<4,4,T> operator -(matrix<4,4,T> const &m) const
     {
-        return Mat4<T>(v0 - m[0], v1 - m[1], v2 - m[2], v3 - m[3]);
+        return matrix<4,4,T>(v0 - m[0], v1 - m[1], v2 - m[2], v3 - m[3]);
     }
 
-    inline Mat4<T> operator -=(Mat4<T> const &m)
+    inline matrix<4,4,T> operator -=(matrix<4,4,T> const &m)
     {
         return *this = *this - m;
     }
 
-    inline Mat4<T> operator *(Mat4<T> const &m) const
+    inline matrix<4,4,T> operator *(matrix<4,4,T> const &m) const
     {
-        return Mat4<T>(*this * m[0], *this * m[1], *this * m[2], *this * m[3]);
+        return matrix<4,4,T>(*this * m[0], *this * m[1], *this * m[2], *this * m[3]);
     }
 
-    inline Mat4<T> operator *=(Mat4<T> const &m)
+    inline matrix<4,4,T> operator *=(matrix<4,4,T> const &m)
     {
         return *this = *this * m;
     }
 
-    inline Vec4<T> operator *(Vec4<T> const &m) const
+    inline vec<4,T> operator *(vec<4,T> const &m) const
     {
-        Vec4<T> ret;
+        vec<4,T> ret;
         for (int j = 0; j < 4; j++)
         {
             T tmp = 0;
@@ -1980,22 +1976,26 @@ template <typename T> struct Mat4
         return ret;
     }
 
-    Vec4<T> v0, v1, v2, v3;
+    vec<4,T> v0, v1, v2, v3;
 
-    static const Mat4<T> identity;
+    static const matrix<4,4,T> identity;
 };
 
-template<typename T> T determinant(Mat2<T> const &);
-template<typename T> T determinant(Mat3<T> const &);
-template<typename T> T determinant(Mat4<T> const &);
+template<typename T> T determinant(matrix<2,2,T> const &);
+template<typename T> T determinant(matrix<3,3,T> const &);
+template<typename T> T determinant(matrix<4,4,T> const &);
 
-template<typename T> Mat2<T> transpose(Mat2<T> const &);
-template<typename T> Mat3<T> transpose(Mat3<T> const &);
-template<typename T> Mat4<T> transpose(Mat4<T> const &);
+template<typename T> matrix<2,2,T> transpose(matrix<2,2,T> const &);
+template<typename T> matrix<3,3,T> transpose(matrix<3,3,T> const &);
+template<typename T> matrix<4,4,T> transpose(matrix<4,4,T> const &);
 
-template<typename T> Mat2<T> inverse(Mat2<T> const &);
-template<typename T> Mat3<T> inverse(Mat3<T> const &);
-template<typename T> Mat4<T> inverse(Mat4<T> const &);
+template<typename T> matrix<2,2,T> inverse(matrix<2,2,T> const &);
+template<typename T> matrix<3,3,T> inverse(matrix<3,3,T> const &);
+template<typename T> matrix<4,4,T> inverse(matrix<4,4,T> const &);
+
+#if !LOL_FEATURE_CXX11_CONSTEXPR
+#undef constexpr
+#endif
 
 } /* namespace lol */
 

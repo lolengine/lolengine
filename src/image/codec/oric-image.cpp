@@ -500,7 +500,7 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
 
             /* Recursively compute and apply best command */
             int dummy;
-            uint8_t command = bestmove(srcl, bgfg, vec3(0), depth,
+            uint8_t command = bestmove(srcl, bgfg, ivec3(0), depth,
                                        0x7fffff, &dummy, dstl);
             /* Propagate error */
             for (int i = 0; i < 6; i++)
