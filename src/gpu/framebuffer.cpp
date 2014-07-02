@@ -173,7 +173,11 @@ uint32_t FramebufferFormat::GetFormat()
     case RGBA_32:
     case RGBA_32_I:
     case RGBA_32_UI:
+#   if defined GL_BGRA
     case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
+#   else
+    case RGBA_32_F:     return GL_RGBA;
+#   endif
 #else
     case R_8:           return GL_R8;
     case R_8_I:         return GL_R8I;
@@ -290,7 +294,11 @@ uint32_t FramebufferFormat::GetFormatOrder()
     case RGBA_8:  case RGBA_8_I:  case RGBA_8_UI:  case RGBA_8_F:
     case RGBA_16: case RGBA_16_I: case RGBA_16_UI: case RGBA_16_F:
     case RGBA_32: case RGBA_32_I: case RGBA_32_UI: case RGBA_32_F:
+#   if defined GL_BGRA
         return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
+#   else
+        return GL_RGBA;
+#   endif
 #endif
     default:
         ASSERT(false, "unknown framebuffer format order %d", m_format);
@@ -457,7 +465,7 @@ Image Framebuffer::GetImage() const
 #else
     u8vec4 *buffer = ret.Lock<PixelFormat::RGBA_8>();
     glReadPixels(0, 0, m_data->m_size.x, m_data->m_size.y,
-                 GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+                 GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     ret.Unlock(buffer);
 #endif
 
