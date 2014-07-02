@@ -247,7 +247,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   if !defined HAVE_BCM_HOST_H
     XWindowAttributes gwa;
     XGetWindowAttributes(data->dpy, data->win, &gwa);
-    data->screen_size = ivec2(gwa.width, gwa.height);
+    data->screen_size = uvec2(gwa.width, gwa.height);
 #   endif
 
 #   if defined USE_SDL

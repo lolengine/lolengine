@@ -18,25 +18,25 @@ namespace lol {
 
 #define LOL_VEC_2_CONST(type, name, a, b) \
     template<> \
-    Vec2<type> const Vec2<type>::name = Vec2<type>((type)a, (type)b);
+    vec<2,type> const vec<2,type>::name = vec<2,type>((type)a, (type)b);
 
 #define LOL_VEC_3_CONST(type, name, a, b, c) \
     template<> \
-    Vec3<type> const Vec3<type>::name = Vec3<type>((type)a, (type)b, (type)c);
+    vec<3,type> const vec<3,type>::name = vec<3,type>((type)a, (type)b, (type)c);
 
 #define LOL_VEC_4_CONST(type, name, a, b, c, d) \
     template<> \
-    Vec4<type> const Vec4<type>::name = Vec4<type>((type)a, (type)b, (type)c, (type)d);
+    vec<4,type> const vec<4,type>::name = vec<4,type>((type)a, (type)b, (type)c, (type)d);
 
 #define LOL_MAT_CONST(type, name, a) \
     template<> \
-    Mat2<type> const Mat2<type>::name = Mat2<type>((type)a); \
+    matrix<2,2,type> const matrix<2,2,type>::name = matrix<2,2,type>((type)a); \
     \
     template<> \
-    Mat3<type> const Mat3<type>::name = Mat3<type>((type)a); \
+    matrix<3,3,type> const matrix<3,3,type>::name = matrix<3,3,type>((type)a); \
     \
     template<> \
-    Mat4<type> const Mat4<type>::name = Mat4<type>((type)a);
+    matrix<4,4,type> const matrix<4,4,type>::name = matrix<4,4,type>((type)a);
 
 #define LOL_ALL_CONST_INNER(type) \
     LOL_VEC_2_CONST(type, zero,     0, 0) \

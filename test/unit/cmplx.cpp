@@ -61,17 +61,17 @@ LOLUNIT_FIXTURE(ComplexTest)
     {
         cmplx a(3.0f, -4.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a.norm(), 5.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(a), 5.0f);
 
         cmplx b = a * ~a;
-        cmplx c = a.norm() * a.norm();
+        cmplx c = norm(a) * norm(a);
 
         LOLUNIT_ASSERT_EQUAL(b, c);
 
         cmplx d(5.0f, 12.0f);
 
-        LOLUNIT_ASSERT_EQUAL(d.norm(), 13.0f);
-        LOLUNIT_ASSERT_EQUAL((a * d).norm(), a.norm() * d.norm());
+        LOLUNIT_ASSERT_EQUAL(norm(d), 13.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(a * d), norm(a) * norm(d));
     }
 
     LOLUNIT_TEST(Base)
@@ -79,8 +79,8 @@ LOLUNIT_FIXTURE(ComplexTest)
         cmplx one(1.0f, 0.0f);
         cmplx i(0.0f, 1.0f);
 
-        LOLUNIT_ASSERT_EQUAL(one.norm(), 1.0f);
-        LOLUNIT_ASSERT_EQUAL(i.norm(), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(one), 1.0f);
+        LOLUNIT_ASSERT_EQUAL(norm(i), 1.0f);
 
         LOLUNIT_ASSERT_EQUAL(i * i, -one);
     }
@@ -90,7 +90,7 @@ LOLUNIT_FIXTURE(ComplexTest)
         cmplx a(3.0f, -4.0f);
         cmplx b = normalize(a);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(b.norm(), 1.0, 1e-8);
+        LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(b), 1.0, 1e-8);
     }
 
     LOLUNIT_TEST(Reciprocal)

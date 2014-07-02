@@ -33,8 +33,8 @@ public:
         m_size = size;
         m_size.x = (m_size.x + 15) & ~15;
         m_size.y = (m_size.y + 15) & ~15;
-        m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / m_size.xyxy;
-        m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * m_size.xyxy;
+        m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy;
+        m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy;
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
@@ -105,21 +105,21 @@ public:
 
 #if !defined __native_client__
         m_centertext = new Text(NULL, "data/font/ascii.png");
-        m_centertext->SetPos(ivec3(5, m_window_size.y - 15, 1));
+        m_centertext->SetPos(vec3(5, m_window_size.y - 15, 1));
         Ticker::Ref(m_centertext);
 
         m_mousetext = new Text(NULL, "data/font/ascii.png");
-        m_mousetext->SetPos(ivec3(5, m_window_size.y - 29, 1));
+        m_mousetext->SetPos(vec3(5, m_window_size.y - 29, 1));
         Ticker::Ref(m_mousetext);
 
         m_zoomtext = new Text(NULL, "data/font/ascii.png");
-        m_zoomtext->SetPos(ivec3(5, m_window_size.y - 43, 1));
+        m_zoomtext->SetPos(vec3(5, m_window_size.y - 43, 1));
         Ticker::Ref(m_zoomtext);
 #endif
 
-        m_position = ivec3(0, 0, 0);
+        m_position = vec3::zero;
         m_bbox[0] = m_position;
-        m_bbox[1] = ivec3(m_window_size, 0);
+        m_bbox[1] = vec3((vec2)m_window_size, 0);
         //Input::TrackMouse(this);
 
 #if LOL_FEATURE_THREADS
@@ -175,7 +175,8 @@ public:
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
 
-        rcmplx worldmouse = m_center + rcmplx(ScreenToWorldOffset(mousepos));
+        rcmplx worldmouse = m_center
+                          + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 
         uint32_t buttons = 0;
         //uint32_t buttons = Input::GetMouseButtons();
@@ -187,13 +188,13 @@ public:
                 m_oldmouse = mousepos;
                 m_drag = true;
             }
-            m_translate = ScreenToWorldOffset(m_oldmouse)
-                        - ScreenToWorldOffset(mousepos);
+            m_translate = rcmplx(ScreenToWorldOffset((vec2)m_oldmouse)
+                                  - ScreenToWorldOffset((vec2)mousepos));
             /* XXX: the purpose of this hack is to avoid translating by
              * an exact number of pixels. If this were to happen, the step()
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
-             * would have tie rankings in the distance calculation. */
+             * would have tied rankings in the distance calculation. */
             m_translate *= real(1023.0 / 1024.0);
             m_oldmouse = mousepos;
         }
@@ -203,7 +204,7 @@ public:
             if (m_translate != rcmplx(0.0, 0.0))
             {
                 m_translate *= real(std::pow(2.0, -seconds * 5.0));
-                if ((double)m_translate.norm() < m_radius * 1e-4)
+                if ((double)norm(m_translate) < m_radius * 1e-4)
                     m_translate = rcmplx(0.0, 0.0);
             }
         }
@@ -242,7 +243,8 @@ public:
 #if !defined __CELLOS_LV2__ && !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
-            worldmouse = m_center + rcmplx(ScreenToWorldOffset(mousepos));
+            worldmouse = m_center
+                       + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 #endif
 
             /* Store the transformation properties to go from m_frame - 1
@@ -352,7 +354,7 @@ public:
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
             double xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
-            dcmplx z0 = c + TexelToWorldOffset(ivec2(i, j));
+            dcmplx z0 = c + TexelToWorldOffset(vec2(i, j));
             //dcmplx r0(0.28693186889504513, 0.014286693904085048);
             //dcmplx r0(0.001643721971153, 0.822467633298876);
             //dcmplx r0(-1.207205434596, 0.315432814901);

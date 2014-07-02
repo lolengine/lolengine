@@ -35,7 +35,7 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites.Push(ivec3(rand(-96, 640), rand(-96, 480), 0),
+            m_sprites.Push(vec3(rand(-96, 640), rand(-96, 480), 0),
                            rand(0.f, 1.f));
         }
 
@@ -78,7 +78,7 @@ public:
             int frame = (int)(m_sprites[i].m2 * FRAME_COUNT);
 //            m_sprites[i].m1.z = frame;
             scene.AddTile(m_tileset, frame,
-                             (ivec3)m_sprites[i].m1, 0, vec2(2.f), 0.f);
+                          m_sprites[i].m1, 0, vec2(2.f), 0.f);
         }
     }
 

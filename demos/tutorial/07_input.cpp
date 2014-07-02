@@ -73,7 +73,7 @@ public:
         m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
 
         m_text = new Text("", "data/font/ascii.png");
-        m_text->SetPos(ivec3(5, 5, 1));
+        m_text->SetPos(vec3(5, 5, 1));
         Ticker::Ref(m_text);
 
         m_ready = false;

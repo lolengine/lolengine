@@ -407,7 +407,7 @@ template<> mat3 mat3::rotate(float degrees, vec3 v)
     return rotate(degrees, v.x, v.y, v.z);
 }
 
-template<> mat3::Mat3(quat const &q)
+template<> mat3::matrix(quat const &q)
 {
     float n = norm(q);
 
@@ -434,7 +434,7 @@ template<> mat3::Mat3(quat const &q)
     v2[2] = 1.0f - s * (q.x * q.x + q.y * q.y);
 }
 
-template<> mat4::Mat4(quat const &q)
+template<> mat4::matrix(quat const &q)
 {
     *this = mat4(mat3(q), 1.f);
 }

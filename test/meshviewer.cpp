@@ -19,7 +19,6 @@
 #include <lol/main.h>
 #include "scenesetup.h"
 
-using namespace std;
 using namespace lol;
 
 static int const TEXTURE_WIDTH = 256;
