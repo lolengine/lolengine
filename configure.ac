@@ -35,6 +35,9 @@ dnl  C++11 mode. Checked early so that we don't run into surprises.
 LOL_TRY_CXXFLAGS(-std=c++11,
  [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++11"
   CXXFLAGS="${CXXFLAGS} -std=c++11"])
+LOL_TRY_CXXFLAGS(-std=c++0x,
+ [AM_CXXFLAGS="${AM_CXXFLAGS} -std=c++0x"
+  CXXFLAGS="${CXXFLAGS} -std=c++0x"])
 
 AC_LANG_PUSH(C++)
 AC_MSG_CHECKING(for C++11 enum class support)

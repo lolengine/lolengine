@@ -375,12 +375,12 @@ template <typename T> struct Cmplx
     typedef Cmplx<T> type;
 
     inline constexpr Cmplx() {}
-    inline constexpr Cmplx(T X) : x(X), y(0) {}
+    inline constexpr Cmplx(T X) : x(X), y(T(0)) {}
     inline constexpr Cmplx(T X, T Y) : x(X), y(Y) {}
 
     template<typename U>
     explicit inline constexpr Cmplx(Cmplx<U> const &z)
-      : Cmplx<T>(z[0], z[1]) {}
+      : x(z.x), y(z.y) {}
 
     LOL_COMMON_MEMBER_OPS(x)
     LOL_NONVECTOR_MEMBER_OPS()
@@ -1136,7 +1136,7 @@ template <typename T> struct Quat
 
     template<typename U>
     explicit inline constexpr Quat(Quat<U> const &q)
-      : Quat<T>(q[0], q[1], q[2], q[3]) {}
+      : w(q.w), x(q.x), y(q.y), z(q.z) {}
 
     Quat(matrix<3,3,T> const &m);
     Quat(matrix<4,4,T> const &m);
