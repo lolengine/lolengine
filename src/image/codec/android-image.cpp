@@ -24,8 +24,6 @@ extern "C" {
 #include <lol/main.h>
 #include "../../image/image-private.h"
 
-using namespace std;
-
 namespace lol
 {
 

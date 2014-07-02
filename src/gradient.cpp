@@ -14,8 +14,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
-
 LOLFX_RESOURCE_DECLARE(gradient);
 
 namespace lol

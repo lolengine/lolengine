@@ -21,8 +21,6 @@
 #   include <d3d9.h>
 #endif
 
-using namespace std;
-
 namespace lol
 {
 

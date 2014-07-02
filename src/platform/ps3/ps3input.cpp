@@ -23,8 +23,6 @@
 #include <lol/main.h>
 #include "ps3input.h"
 
-using namespace std;
-
 namespace lol
 {
 

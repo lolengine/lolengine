@@ -16,8 +16,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 #include <windows.h>
 #include <gdiplus.h>
 

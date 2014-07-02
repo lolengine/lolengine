@@ -35,8 +35,6 @@
 #   include "eglapp.h"
 #endif
 
-using namespace std;
-
 namespace lol
 {
 

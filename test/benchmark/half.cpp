@@ -16,7 +16,6 @@
 
 #include <lol/main.h>
 
-using namespace std;
 using namespace lol;
 
 static size_t const HALF_TABLE_SIZE = 1024 * 1024;

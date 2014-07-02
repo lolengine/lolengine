@@ -29,8 +29,6 @@
 #include <lol/main.h>
 #include "lolgl.h"
 
-using namespace std;
-
 namespace lol
 {
 
