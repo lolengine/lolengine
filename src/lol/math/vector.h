@@ -9,14 +9,13 @@
 //
 
 //
-// The vector, complex, quaternion and matrix classes
-// --------------------------------------------------
+// The vector classes
+// ------------------
 //
 
 #if !defined __LOL_MATH_VECTOR_H__
 #define __LOL_MATH_VECTOR_H__
 
-#include <stdint.h>
 #include <ostream>
 
 #include <lol/math/half.h>
@@ -49,7 +48,7 @@ namespace lol
  * fuck it.
  */
 
-template<int N, typename T, int MASK = -1>
+template<int N, typename T, int MASK>
 struct vec
 {
     typedef vec<N,T> type;
@@ -59,6 +58,7 @@ struct vec
 #if LOL_FEATURE_CXX11_RELAXED_UNIONS
     inline vec<N, T, MASK>& operator =(vec<N, T, MASK> const &that)
     {
+        /* Pass by value in case this == &that */
         return *this = (vec<N,T>)that;
     }
 #endif
@@ -88,81 +88,6 @@ struct vec<N, T, -1>
 private:
     T m_data[N];
 };
-
-/* The generic complex and quaternion types. */
-template<typename T> struct Cmplx;
-template<typename T> struct Quat;
-
-/*
- * Generic GLSL-like type names
- */
-
-#define COMMA ,
-#define LOL_VECTOR_TYPEDEFS(tleft, tright, suffix) \
-    typedef tleft half tright f16##suffix; \
-    typedef tleft float tright suffix; \
-    typedef tleft double tright d##suffix; \
-    typedef tleft ldouble tright f128##suffix; \
-    typedef tleft int8_t tright i8##suffix; \
-    typedef tleft uint8_t tright u8##suffix; \
-    typedef tleft int16_t tright i16##suffix; \
-    typedef tleft uint16_t tright u16##suffix; \
-    typedef tleft int32_t tright i##suffix; \
-    typedef tleft uint32_t tright u##suffix; \
-    typedef tleft int64_t tright i64##suffix; \
-    typedef tleft uint64_t tright u64##suffix; \
-    typedef tleft real tright r##suffix;
-
-LOL_VECTOR_TYPEDEFS(vec<2 COMMA, >, vec2)
-LOL_VECTOR_TYPEDEFS(vec<3 COMMA, >, vec3)
-LOL_VECTOR_TYPEDEFS(vec<4 COMMA, >, vec4)
-
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 2 COMMA, >, mat2)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 3 COMMA, >, mat3)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 4 COMMA, >, mat4)
-
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 3 COMMA, >, mat2x3)
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 4 COMMA, >, mat2x4)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 2 COMMA, >, mat3x2)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 4 COMMA, >, mat3x4)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 2 COMMA, >, mat4x2)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 3 COMMA, >, mat4x3)
-
-LOL_VECTOR_TYPEDEFS(Cmplx<, >, cmplx)
-LOL_VECTOR_TYPEDEFS(Quat<, >, quat)
-
-#undef LOL_VECTOR_TYPEDEFS
-#undef COMMA
-
-/*
- * HLSL/Cg-compliant type names.
- */
-
-typedef vec2 float2;
-typedef vec3 float3;
-typedef vec4 float4;
-typedef mat2 float2x2;
-typedef mat3 float3x3;
-typedef mat4 float4x4;
-typedef mat2x3 float2x3;
-typedef mat2x4 float2x4;
-typedef mat3x2 float3x2;
-typedef mat3x4 float3x4;
-typedef mat4x2 float4x2;
-typedef mat4x3 float4x3;
-
-typedef ivec2 int2;
-typedef ivec3 int3;
-typedef ivec4 int4;
-typedef imat2 int2x2;
-typedef imat3 int3x3;
-typedef imat4 int4x4;
-typedef imat2x3 int2x3;
-typedef imat2x4 int2x4;
-typedef imat3x2 int3x2;
-typedef imat3x4 int3x4;
-typedef imat4x2 int4x2;
-typedef imat4x3 int4x3;
 
 /*
  * Helper macros for vector type member functions
@@ -383,117 +308,6 @@ struct vec<2,T> : base_vec2<T>
     template<typename U>
     friend std::ostream &operator<<(std::ostream &stream, vec<2,U> const &v);
 };
-
-/*
- * 2-element complexes
- */
-
-template <typename T> struct Cmplx
-{
-    typedef Cmplx<T> type;
-
-    inline constexpr Cmplx() {}
-    inline constexpr Cmplx(T X) : x(X), y(T(0)) {}
-    inline constexpr Cmplx(T X, T Y) : x(X), y(Y) {}
-
-    template<typename U>
-    explicit inline constexpr Cmplx(Cmplx<U> const &z)
-      : x(z.x), y(z.y) {}
-
-    LOL_COMMON_MEMBER_OPS(x)
-    LOL_NONVECTOR_MEMBER_OPS()
-
-    inline Cmplx<T> operator *(Cmplx<T> const &val) const
-    {
-        return Cmplx<T>(x * val.x - y * val.y, x * val.y + y * val.x);
-    }
-
-    inline Cmplx<T> operator *=(Cmplx<T> const &val)
-    {
-        return *this = (*this) * val;
-    }
-
-    inline Cmplx<T> operator ~() const
-    {
-        return Cmplx<T>(x, -y);
-    }
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
-
-    T x, y;
-};
-
-template<typename T>
-static inline T dot(Cmplx<T> const &z1, Cmplx<T> const &z2)
-{
-    T ret(0);
-    for (size_t i = 0; i < sizeof(Cmplx<T>) / sizeof(T); ++i)
-        ret += z1[i] * z2[i];
-    return ret;
-}
-
-template<typename T>
-static inline T sqlength(Cmplx<T> const &z)
-{
-    return dot(z, z);
-}
-
-template<typename T>
-static inline T length(Cmplx<T> const &z)
-{
-    /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(z));
-}
-
-template<typename T>
-static inline T norm(Cmplx<T> const &z)
-{
-    return length(z);
-}
-
-template<typename T>
-static inline Cmplx<T> re(Cmplx<T> const &z)
-{
-    return ~z / sqlength(z);
-}
-
-template<typename T>
-static inline Cmplx<T> normalize(Cmplx<T> const &z)
-{
-    T norm = (T)length(z);
-    return norm ? z / norm : Cmplx<T>(T(0));
-}
-
-template<typename T>
-static inline Cmplx<T> operator /(T a, Cmplx<T> const &b)
-{
-    return a * re(b);
-}
-
-template<typename T>
-static inline Cmplx<T> operator /(Cmplx<T> a, Cmplx<T> const &b)
-{
-    return a * re(b);
-}
-
-template<typename T>
-static inline bool operator ==(Cmplx<T> const &a, T b)
-{
-    return (a.x == b) && !a.y;
-}
-
-template<typename T>
-static inline bool operator !=(Cmplx<T> const &a, T b)
-{
-    return (a.x != b) || a.y;
-}
-
-template<typename T>
-static inline bool operator ==(T a, Cmplx<T> const &b) { return b == a; }
-
-template<typename T>
-static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
 
 /*
  * 3-element vectors
@@ -1141,205 +955,6 @@ struct vec<4,T> : base_vec4<T>
 };
 
 /*
- * 4-element quaternions
- */
-
-template <typename T> struct Quat
-{
-    typedef Quat<T> type;
-
-    inline constexpr Quat() {}
-    inline constexpr Quat(T W) : w(W),  x(0), y(0), z(0) {}
-    inline constexpr Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
-
-    template<typename U>
-    explicit inline constexpr Quat(Quat<U> const &q)
-      : w(q.w), x(q.x), y(q.y), z(q.z) {}
-
-    Quat(matrix<3,3,T> const &m);
-    Quat(matrix<4,4,T> const &m);
-
-    LOL_COMMON_MEMBER_OPS(w)
-    LOL_NONVECTOR_MEMBER_OPS()
-
-    /* Create a unit quaternion representing a rotation around an axis. */
-    static Quat<T> rotate(T degrees, T x, T y, T z);
-    static Quat<T> rotate(T degrees, vec<3,T> const &v);
-
-    /* Create a unit quaternion representing a rotation between two vectors.
-     * Input vectors need not be normalised. */
-    static Quat<T> rotate(vec<3,T> const &src, vec<3,T> const &dst);
-
-    /* Convert from Euler angles. The axes in fromeuler_xyx are
-     * x, then y', then x", ie. the axes are attached to the model.
-     * If you want to rotate around static axes, just reverse the order
-     * of the arguments. Angle values are in degrees. */
-    static Quat<T> fromeuler_xyx(vec<3,T> const &v);
-    static Quat<T> fromeuler_xzx(vec<3,T> const &v);
-    static Quat<T> fromeuler_yxy(vec<3,T> const &v);
-    static Quat<T> fromeuler_yzy(vec<3,T> const &v);
-    static Quat<T> fromeuler_zxz(vec<3,T> const &v);
-    static Quat<T> fromeuler_zyz(vec<3,T> const &v);
-    static Quat<T> fromeuler_xyx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_xzx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yxy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yzy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zxz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zyz(T phi, T theta, T psi);
-
-    /* Convert from Tait-Bryan angles (incorrectly called Euler angles,
-     * but since everyone does it…). The axes in fromeuler_xyz are
-     * x, then y', then z", ie. the axes are attached to the model.
-     * If you want to apply yaw around x, pitch around y, and roll
-     * around z, use fromeuler_xyz. Angle values are in degrees.
-     * If you want to rotate around static axes, reverse the order in
-     * the function name (_zyx instead of _xyz) AND reverse the order
-     * of the arguments. */
-    static Quat<T> fromeuler_xyz(vec<3,T> const &v);
-    static Quat<T> fromeuler_xzy(vec<3,T> const &v);
-    static Quat<T> fromeuler_yxz(vec<3,T> const &v);
-    static Quat<T> fromeuler_yzx(vec<3,T> const &v);
-    static Quat<T> fromeuler_zxy(vec<3,T> const &v);
-    static Quat<T> fromeuler_zyx(vec<3,T> const &v);
-    static Quat<T> fromeuler_xyz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_xzy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yxz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yzx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zxy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zyx(T phi, T theta, T psi);
-
-    inline Quat<T> operator *(Quat<T> const &val) const;
-
-    inline Quat<T> operator *=(Quat<T> const &val)
-    {
-        return *this = (*this) * val;
-    }
-
-    inline Quat<T> operator ~() const
-    {
-        return Quat<T>(w, -x, -y, -z);
-    }
-
-    inline vec<3,T> transform(vec<3,T> const &v) const
-    {
-        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
-        Quat<T> q = *this * p / *this;
-        return vec<3,T>(q.x, q.y, q.z);
-    }
-
-    inline vec<4,T> transform(vec<4,T> const &v) const
-    {
-        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
-        Quat<T> q = *this * p / *this;
-        return vec<4,T>(q.x, q.y, q.z, v.w);
-    }
-
-    inline vec<3,T> operator *(vec<3,T> const &v) const
-    {
-        return transform(v);
-    }
-
-    inline vec<4,T> operator *(vec<4,T> const &v) const
-    {
-        return transform(v);
-    }
-
-    inline vec<3,T> axis()
-    {
-        vec<3,T> v(x, y, z);
-        T n2 = sqlength(v);
-        if (n2 <= (T)1e-6)
-            return vec<3,T>::axis_x;
-        return normalize(v);
-    }
-
-    inline T angle()
-    {
-        vec<3,T> v(x, y, z);
-        T n2 = sqlength(v);
-        if (n2 <= (T)1e-6)
-            return (T)0;
-        return (T)2 * lol::atan2(lol::sqrt(n2), w);
-    }
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
-
-    /* XXX: storage order is wxyz, unlike vectors! */
-    T w, x, y, z;
-};
-
-template<typename T>
-static inline T dot(Quat<T> const &q1, Quat<T> const &q2)
-{
-    T ret(0);
-    for (size_t i = 0; i < sizeof(Quat<T>) / sizeof(T); ++i)
-        ret += q1[i] * q2[i];
-    return ret;
-}
-
-template<typename T>
-static inline T sqlength(Quat<T> const &q)
-{
-    return dot(q, q);
-}
-
-template<typename T>
-static inline T length(Quat<T> const &q)
-{
-    /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(q));
-}
-
-template<typename T>
-static inline T norm(Quat<T> const &q)
-{
-    return length(q);
-}
-
-template<typename T>
-static inline Quat<T> re(Quat<T> const &q)
-{
-    return ~q / sqlength(q);
-}
-
-template<typename T>
-static inline Quat<T> normalize(Quat<T> const &q)
-{
-    T norm = (T)length(q);
-    return norm ? q / norm : Quat<T>(T(0));
-}
-
-template<typename T>
-static inline Quat<T> operator /(T x, Quat<T> const &y)
-{
-    return x * re(y);
-}
-
-template<typename T>
-static inline Quat<T> operator /(Quat<T> const &x, Quat<T> const &y)
-{
-    return x * re(y);
-}
-
-template<typename T>
-extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
-
-/*
- * Clean up our ugly macros.
- */
-
-#undef LOL_COMMON_MEMBER_OPS
-#undef LOL_VECTOR_MEMBER_OPS
-#undef LOL_NONVECTOR_MEMBER_OPS
-
-#undef LOL_V_VV_OP
-#undef LOL_V_VV_ASSIGN_OP
-#undef LOL_V_VS_OP
-#undef LOL_V_VS_ASSIGN_OP
-#undef LOL_B_VV_OP
-
-/*
  * Operators for swizzled vectors. Since template deduction cannot be
  * done for two arbitrary vec<> values, we help the compiler understand
  * the expected type.
@@ -1581,20 +1196,6 @@ static inline vec<N,T> radians(vec<N,T,MASK> const &a)
     for (size_t i = 0; i < N; ++i)
         ret[i] = lol::radians(a[i]);
     return ret;
-}
-
-/*
- * Definition of additional functions requiring vector functions
- */
-
-template<typename T>
-inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
-{
-    Quat<T> ret;
-    vec<3,T> v1(x, y, z);
-    vec<3,T> v2(val.x, val.y, val.z);
-    vec<3,T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
-    return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
 }
 
 /*
