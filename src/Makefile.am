@@ -43,7 +43,7 @@ liblolcore_headers = \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
     lol/math/geometry.h lol/math/interp.h lol/math/rand.h lol/math/array2d.h \
-    lol/math/array3d.h lol/math/constants.h \
+    lol/math/array3d.h lol/math/constants.h lol/math/matrix.h \
     \
     lol/algorithm/all.h \
     lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
