@@ -30,13 +30,13 @@ namespace lol {
 
 #define LOL_MAT_CONST(type, name, a) \
     template<> \
-    matrix<2,2,type> const matrix<2,2,type>::name = matrix<2,2,type>((type)a); \
+    mat<2,2,type> const mat<2,2,type>::name = mat<2,2,type>((type)a); \
     \
     template<> \
-    matrix<3,3,type> const matrix<3,3,type>::name = matrix<3,3,type>((type)a); \
+    mat<3,3,type> const mat<3,3,type>::name = mat<3,3,type>((type)a); \
     \
     template<> \
-    matrix<4,4,type> const matrix<4,4,type>::name = matrix<4,4,type>((type)a);
+    mat<4,4,type> const mat<4,4,type>::name = mat<4,4,type>((type)a);
 
 #define LOL_ALL_CONST_INNER(type) \
     LOL_VEC_2_CONST(type, zero,     0, 0) \
