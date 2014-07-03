@@ -326,6 +326,7 @@
     <ClInclude Include="lol\math\geometry.h" />
     <ClInclude Include="lol\math\half.h" />
     <ClInclude Include="lol\math\interp.h" />
+    <ClInclude Include="lol\math\matrix.h" />
     <ClInclude Include="lol\math\rand.h" />
     <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\remez.h" />

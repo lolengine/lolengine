@@ -28,6 +28,10 @@ typedef Real<16> real;
 /* The “half” type used for 16-bit floating point numbers. */
 class half;
 
+/* Forward declaration of vec and matrix */
+template<int N, typename T, int MASK> struct vec;
+template<int COLS, int ROWS, typename T> struct matrix;
+
 } /* namespace lol */
 
 #endif // __LOL_BASE_TYPES_H__
