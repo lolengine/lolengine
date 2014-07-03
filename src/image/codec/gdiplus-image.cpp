@@ -15,6 +15,8 @@
 #if defined USE_GDIPLUS
 
 #include <algorithm>
+using std::min;
+using std::max;
 
 #include <windows.h>
 #include <gdiplus.h>
