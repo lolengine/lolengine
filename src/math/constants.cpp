@@ -16,45 +16,45 @@
 
 namespace lol {
 
-#define LOL_VEC_2_CONST(type, name, a, b) \
+#define LOL_VEC_2_CONST(T, name, a, b) \
     template<> \
-    vec<2,type> const vec<2,type>::name = vec<2,type>((type)a, (type)b);
+    vec_t<T,2> const vec_t<T,2>::name = vec_t<T,2>((T)a, (T)b);
 
-#define LOL_VEC_3_CONST(type, name, a, b, c) \
+#define LOL_VEC_3_CONST(T, name, a, b, c) \
     template<> \
-    vec<3,type> const vec<3,type>::name = vec<3,type>((type)a, (type)b, (type)c);
+    vec_t<T,3> const vec_t<T,3>::name = vec_t<T,3>((T)a, (T)b, (T)c);
 
-#define LOL_VEC_4_CONST(type, name, a, b, c, d) \
+#define LOL_VEC_4_CONST(T, name, a, b, c, d) \
     template<> \
-    vec<4,type> const vec<4,type>::name = vec<4,type>((type)a, (type)b, (type)c, (type)d);
+    vec_t<T,4> const vec_t<T,4>::name = vec_t<T,4>((T)a, (T)b, (T)c, (T)d);
 
-#define LOL_MAT_CONST(type, name, a) \
+#define LOL_MAT_CONST(T, name, a) \
     template<> \
-    mat<2,2,type> const mat<2,2,type>::name = mat<2,2,type>((type)a); \
+    mat_t<T,2,2> const mat_t<T,2,2>::name = mat_t<T,2,2>((T)a); \
     \
     template<> \
-    mat<3,3,type> const mat<3,3,type>::name = mat<3,3,type>((type)a); \
+    mat_t<T,3,3> const mat_t<T,3,3>::name = mat_t<T,3,3>((T)a); \
     \
     template<> \
-    mat<4,4,type> const mat<4,4,type>::name = mat<4,4,type>((type)a);
+    mat_t<T,4,4> const mat_t<T,4,4>::name = mat_t<T,4,4>((T)a);
 
-#define LOL_ALL_CONST_INNER(type) \
-    LOL_VEC_2_CONST(type, zero,     0, 0) \
-    LOL_VEC_2_CONST(type, axis_x,   1, 0) \
-    LOL_VEC_2_CONST(type, axis_y,   0, 1) \
+#define LOL_ALL_CONST_INNER(T) \
+    LOL_VEC_2_CONST(T, zero,     0, 0) \
+    LOL_VEC_2_CONST(T, axis_x,   1, 0) \
+    LOL_VEC_2_CONST(T, axis_y,   0, 1) \
     \
-    LOL_VEC_3_CONST(type, zero,     0, 0, 0) \
-    LOL_VEC_3_CONST(type, axis_x,   1, 0, 0) \
-    LOL_VEC_3_CONST(type, axis_y,   0, 1, 0) \
-    LOL_VEC_3_CONST(type, axis_z,   0, 0, 1) \
+    LOL_VEC_3_CONST(T, zero,     0, 0, 0) \
+    LOL_VEC_3_CONST(T, axis_x,   1, 0, 0) \
+    LOL_VEC_3_CONST(T, axis_y,   0, 1, 0) \
+    LOL_VEC_3_CONST(T, axis_z,   0, 0, 1) \
     \
-    LOL_VEC_4_CONST(type, zero,     0, 0, 0, 0) \
-    LOL_VEC_4_CONST(type, axis_x,   1, 0, 0, 0) \
-    LOL_VEC_4_CONST(type, axis_y,   0, 1, 0, 0) \
-    LOL_VEC_4_CONST(type, axis_z,   0, 0, 1, 0) \
-    LOL_VEC_4_CONST(type, axis_w,   0, 0, 0, 1) \
+    LOL_VEC_4_CONST(T, zero,     0, 0, 0, 0) \
+    LOL_VEC_4_CONST(T, axis_x,   1, 0, 0, 0) \
+    LOL_VEC_4_CONST(T, axis_y,   0, 1, 0, 0) \
+    LOL_VEC_4_CONST(T, axis_z,   0, 0, 1, 0) \
+    LOL_VEC_4_CONST(T, axis_w,   0, 0, 0, 1) \
     \
-    LOL_MAT_CONST(type, identity, 1)
+    LOL_MAT_CONST(T, identity, 1)
 
 LOL_ALL_CONST_INNER(half)
 LOL_ALL_CONST_INNER(float)

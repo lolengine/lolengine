@@ -49,7 +49,7 @@ template <typename T> struct Box2
         B(T(0))
     {}
 
-    inline Box2(vec<2,T> const &a, vec<2,T> const &b)
+    inline Box2(vec_t<T,2> const &a, vec_t<T,2> const &b)
       : A(a),
         B(b)
     {}
@@ -59,32 +59,32 @@ template <typename T> struct Box2
         B(bx, by)
     {}
 
-    Box2<T> operator +(vec<2,T> const &v) const
+    Box2<T> operator +(vec_t<T,2> const &v) const
     {
         return Box2<T>(A + v, B + v);
     }
 
-    Box2<T> &operator +=(vec<2,T> const &v)
+    Box2<T> &operator +=(vec_t<T,2> const &v)
     {
         return *this = *this + v;
     }
 
-    Box2<T> operator -(vec<2,T> const &v) const
+    Box2<T> operator -(vec_t<T,2> const &v) const
     {
         return Box2<T>(A - v, B - v);
     }
 
-    Box2<T> &operator -=(vec<2,T> const &v)
+    Box2<T> &operator -=(vec_t<T,2> const &v)
     {
         return *this = *this - v;
     }
 
-    Box2<T> operator *(vec<2,T> const &v) const
+    Box2<T> operator *(vec_t<T,2> const &v) const
     {
         return Box2<T>(A * v, B * v);
     }
 
-    Box2<T> &operator *=(vec<2,T> const &v)
+    Box2<T> &operator *=(vec_t<T,2> const &v)
     {
         return *this = *this * v;
     }
@@ -99,7 +99,7 @@ template <typename T> struct Box2
         return A != box.A || B != box.B;
     }
 
-    vec<2,T> A, B;
+    vec_t<T,2> A, B;
 };
 
 /*
@@ -113,7 +113,7 @@ template <typename T> struct Box3
         B(T(0))
     {}
 
-    inline Box3(vec<3,T> const &a, vec<3,T> const &b)
+    inline Box3(vec_t<T,3> const &a, vec_t<T,3> const &b)
       : A(a),
         B(b)
     {}
@@ -124,32 +124,32 @@ template <typename T> struct Box3
         B(bx, by, bz)
     {}
 
-    Box3<T> operator +(vec<3,T> const &v) const
+    Box3<T> operator +(vec_t<T,3> const &v) const
     {
         return Box3<T>(A + v, B + v);
     }
 
-    Box3<T> &operator +=(vec<3,T> const &v)
+    Box3<T> &operator +=(vec_t<T,3> const &v)
     {
         return *this = *this + v;
     }
 
-    Box3<T> operator -(vec<3,T> const &v) const
+    Box3<T> operator -(vec_t<T,3> const &v) const
     {
         return Box3<T>(A - v, B - v);
     }
 
-    Box3<T> &operator -=(vec<3,T> const &v)
+    Box3<T> &operator -=(vec_t<T,3> const &v)
     {
         return *this = *this - v;
     }
 
-    Box3<T> operator *(vec<3,T> const &v) const
+    Box3<T> operator *(vec_t<T,3> const &v) const
     {
         return Box3<T>(A * v, B * v);
     }
 
-    Box3<T> &operator *=(vec<3,T> const &v)
+    Box3<T> &operator *=(vec_t<T,3> const &v)
     {
         return *this = *this * v;
     }
@@ -164,7 +164,7 @@ template <typename T> struct Box3
         return A != box.A || B != box.B;
     }
 
-    vec<3,T> A, B;
+    vec_t<T,3> A, B;
 };
 
 /*

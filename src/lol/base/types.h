@@ -16,10 +16,7 @@
 namespace lol
 {
 
-/* There are many reasons for wanting single-word type names, the most
- * important one being compilation speedups in our vector.h: we can hide
- * some global methods in namespaces that contain the name of the type,
- * but namespaces cannot have spaces in their names. */
+/* It’s nice to have single-word type names, so define this. */
 typedef long double ldouble;
 
 /* The “real” type used for real numbers. It’s a specialisation of the
@@ -31,22 +28,23 @@ typedef Real<16> real;
 class half;
 
 /*
- * Forward declaration of vec and matrix
+ * Forward declaration of vec_t, mat_t, cmplx_t, quat_t
  */
 
 int const FULL_SWIZZLE = 0xaaaa;
 int const NO_SWIZZLE = 0xbbbb;
 
-template<int N, typename T, int SWIZZLE = FULL_SWIZZLE> struct vec;
-template<int COLS, int ROWS, typename T> struct mat;
-template<typename T> struct Cmplx;
-template<typename T> struct Quat;
+template<typename T, int N, int SWIZZLE = FULL_SWIZZLE> struct vec_t;
+template<typename T, int COLS, int ROWS> struct mat_t;
+template<typename T> struct cmplx_t;
+template<typename T> struct quat_t;
+template<typename T> struct dualquat_t;
 
 /*
  * Generic GLSL-like type names
  */
 
-#define LOL_VECTOR_TYPEDEFS(tleft, tright, suffix) \
+#define _T(tleft, tright, suffix) \
     typedef tleft half tright f16##suffix; \
     typedef tleft float tright suffix; \
     typedef tleft double tright d##suffix; \
@@ -62,28 +60,29 @@ template<typename T> struct Quat;
     typedef tleft real tright r##suffix;
 
 /* Idiotic hack to put "," inside a macro argument */
-#define COMMA ,
+#define _C ,
 
-LOL_VECTOR_TYPEDEFS(vec<2 COMMA, >, vec2)
-LOL_VECTOR_TYPEDEFS(vec<3 COMMA, >, vec3)
-LOL_VECTOR_TYPEDEFS(vec<4 COMMA, >, vec4)
+_T(vec_t<, _C 2>, vec2)
+_T(vec_t<, _C 3>, vec3)
+_T(vec_t<, _C 4>, vec4)
 
-LOL_VECTOR_TYPEDEFS(mat<2 COMMA 2 COMMA, >, mat2)
-LOL_VECTOR_TYPEDEFS(mat<3 COMMA 3 COMMA, >, mat3)
-LOL_VECTOR_TYPEDEFS(mat<4 COMMA 4 COMMA, >, mat4)
+_T(mat_t<, _C 2 _C 2>, mat2)
+_T(mat_t<, _C 3 _C 3>, mat3)
+_T(mat_t<, _C 4 _C 4>, mat4)
 
-LOL_VECTOR_TYPEDEFS(mat<2 COMMA 3 COMMA, >, mat2x3)
-LOL_VECTOR_TYPEDEFS(mat<2 COMMA 4 COMMA, >, mat2x4)
-LOL_VECTOR_TYPEDEFS(mat<3 COMMA 2 COMMA, >, mat3x2)
-LOL_VECTOR_TYPEDEFS(mat<3 COMMA 4 COMMA, >, mat3x4)
-LOL_VECTOR_TYPEDEFS(mat<4 COMMA 2 COMMA, >, mat4x2)
-LOL_VECTOR_TYPEDEFS(mat<4 COMMA 3 COMMA, >, mat4x3)
+_T(mat_t<, _C 2 _C 3>, mat2x3)
+_T(mat_t<, _C 2 _C 4>, mat2x4)
+_T(mat_t<, _C 3 _C 2>, mat3x2)
+_T(mat_t<, _C 3 _C 4>, mat3x4)
+_T(mat_t<, _C 4 _C 2>, mat4x2)
+_T(mat_t<, _C 4 _C 3>, mat4x3)
 
-LOL_VECTOR_TYPEDEFS(Cmplx<, >, cmplx)
-LOL_VECTOR_TYPEDEFS(Quat<, >, quat)
+_T(cmplx_t<, >, cmplx)
+_T(quat_t<, >, quat)
+_T(dualquat_t<, >, dualquat)
 
-#undef COMMA
-#undef LOL_VECTOR_TYPEDEFS
+#undef _C
+#undef _T
 
 /*
  * HLSL/Cg-compliant type names

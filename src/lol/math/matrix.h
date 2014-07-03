@@ -29,17 +29,17 @@ namespace lol
 #endif
 
 /*
- * The generic "matrix" type, which is fixed-size
+ * The generic “mat_t” type, which is fixed-size
  */
 
-template<int COLS, int ROWS, typename T>
-struct mat
+template<typename T, int COLS, int ROWS>
+struct mat_t
 {
-    typedef mat<COLS,ROWS,T> type;
+    typedef mat_t<T,COLS,ROWS> type;
 
-    inline mat() {}
+    inline mat_t() {}
 
-    explicit inline mat(T const &val)
+    explicit inline mat_t(T const &val)
     {
         T const zero = T(0);
         for (int i = 0; i < COLS; ++i)
@@ -47,11 +47,11 @@ struct mat
                 m_data[i][j] = i == j ? val : zero;
     }
 
-    inline vec<ROWS,T>& operator[](size_t n) { return m_data[n]; }
-    inline vec<ROWS,T> const& operator[](size_t n) const { return m_data[n]; }
+    inline vec_t<T,ROWS>& operator[](size_t n) { return m_data[n]; }
+    inline vec_t<T,ROWS> const& operator[](size_t n) const { return m_data[n]; }
 
 private:
-    vec<ROWS,T> m_data[COLS];
+    vec_t<T,ROWS> m_data[COLS];
 };
 
 /*
@@ -59,28 +59,28 @@ private:
  */
 
 template <typename T>
-struct mat<2, 2, T>
+struct mat_t<T, 2, 2>
 {
-    typedef mat<2,2,T> type;
+    typedef mat_t<T,2,2> type;
 
-    inline mat() {}
-    inline mat(vec<2,T> v0, vec<2,T> v1)
+    inline mat_t() {}
+    inline mat_t(vec_t<T,2> v0, vec_t<T,2> v1)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1 } {}
 #else
       : m_v0(v0), m_v1(v1) {}
 #endif
 
-    explicit inline mat(T const &val)
+    explicit inline mat_t(T const &val)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<2,T>(val, T(0)),
-                vec<2,T>(T(0), val) } {}
+      : m_data{ vec_t<T,2>(val, T(0)),
+                vec_t<T,2>(T(0), val) } {}
 #else
       : m_v0(val, T(0)),
         m_v1(T(0), val) {}
 #endif
 
-    explicit inline mat(mat<4,4,T> const &m)
+    explicit inline mat_t(mat_t<T,4,4> const &m)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ m[0].xy, m[1].xy } {}
 #else
@@ -88,16 +88,16 @@ struct mat<2, 2, T>
 #endif
 
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    inline vec<2,T>& operator[](size_t n) { return m_data[n]; }
-    inline vec<2,T> const& operator[](size_t n) const { return m_data[n]; }
+    inline vec_t<T,2>& operator[](size_t n) { return m_data[n]; }
+    inline vec_t<T,2> const& operator[](size_t n) const { return m_data[n]; }
 #else
-    inline vec<2,T>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec<2,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+    inline vec_t<T,2>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec_t<T,2> const& operator[](size_t n) const { return (&m_v0)[n]; }
 #endif
 
     /* Helpers for transformation matrices */
-    static mat<2,2,T> rotate(T degrees);
-    static inline mat<2,2,T> rotate(mat<2,2,T> m, T degrees)
+    static mat_t<T,2,2> rotate(T degrees);
+    static inline mat_t<T,2,2> rotate(mat_t<T,2,2> m, T degrees)
     {
         return rotate(degrees) * m;
     }
@@ -107,15 +107,15 @@ struct mat<2, 2, T>
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream,
-                                    mat<2,2,U> const &m);
+                                    mat_t<U,2,2> const &m);
 
-    static const mat<2,2,T> identity;
+    static const mat_t<T,2,2> identity;
 
 private:
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    vec<2,T> m_data[2];
+    vec_t<T,2> m_data[2];
 #else
-    vec<2,T> m_v0, m_v1;
+    vec_t<T,2> m_v0, m_v1;
 #endif
 };
 
@@ -124,91 +124,91 @@ private:
  */
 
 template <typename T>
-struct mat<3,3,T>
+struct mat_t<T, 3, 3>
 {
-    typedef mat<3,3,T> type;
+    typedef mat_t<T,3,3> type;
 
-    inline mat() {}
-    inline mat(vec<3,T> v0, vec<3,T> v1, vec<3,T> v2)
+    inline mat_t() {}
+    inline mat_t(vec_t<T,3> v0, vec_t<T,3> v1, vec_t<T,3> v2)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1, v2 } {}
 #else
       : m_v0(v0), m_v1(v1), m_v2(v2) {}
 #endif
 
-    explicit inline mat(T const &val)
+    explicit inline mat_t(T const &val)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<3,T>(val, (T)0, (T)0),
-                vec<3,T>((T)0, val, (T)0),
-                vec<3,T>((T)0, (T)0, val) } {}
+      : m_data{ vec_t<T,3>(val, (T)0, (T)0),
+                vec_t<T,3>((T)0, val, (T)0),
+                vec_t<T,3>((T)0, (T)0, val) } {}
 #else
       : m_v0(val, (T)0, (T)0),
         m_v1((T)0, val, (T)0),
         m_v2((T)0, (T)0, val) {}
 #endif
 
-    explicit inline mat(mat<2,2,T> m, T const &val = T(1))
+    explicit inline mat_t(mat_t<T,2,2> m, T const &val = T(1))
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<3,T>(m[0], (T)0),
-                vec<3,T>(m[1], (T)0),
-                vec<3,T>((T)0, (T)0, val) } {}
+      : m_data{ vec_t<T,3>(m[0], (T)0),
+                vec_t<T,3>(m[1], (T)0),
+                vec_t<T,3>((T)0, (T)0, val) } {}
 #else
       : m_v0(m[0], (T)0),
         m_v1(m[1], (T)0),
         m_v2((T)0, (T)0, val) {}
 #endif
 
-    explicit inline mat(mat<4,4,T> const &m)
+    explicit inline mat_t(mat_t<T,4,4> const &m)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ m[0].xyz, m[1].xyz, m[2].xyz } {}
 #else
       : m_v0(m[0].xyz), m_v1(m[1].xyz), m_v2(m[2].xyz) {}
 #endif
 
-    explicit mat(Quat<T> const &q);
+    explicit mat_t(quat_t<T> const &q);
 
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    inline vec<3,T>& operator[](size_t n) { return m_data[n]; }
-    inline vec<3,T> const& operator[](size_t n) const { return m_data[n]; }
+    inline vec_t<T,3>& operator[](size_t n) { return m_data[n]; }
+    inline vec_t<T,3> const& operator[](size_t n) const { return m_data[n]; }
 #else
-    inline vec<3,T>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec<3,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+    inline vec_t<T,3>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec_t<T,3> const& operator[](size_t n) const { return (&m_v0)[n]; }
 #endif
 
     /* Helpers for transformation matrices */
-    static mat<3,3,T> scale(T x);
-    static mat<3,3,T> scale(T x, T y, T z);
-    static mat<3,3,T> scale(vec<3,T> v);
-    static mat<3,3,T> rotate(T degrees, T x, T y, T z);
-    static mat<3,3,T> rotate(T degrees, vec<3,T> v);
+    static mat_t<T,3,3> scale(T x);
+    static mat_t<T,3,3> scale(T x, T y, T z);
+    static mat_t<T,3,3> scale(vec_t<T,3> v);
+    static mat_t<T,3,3> rotate(T degrees, T x, T y, T z);
+    static mat_t<T,3,3> rotate(T degrees, vec_t<T,3> v);
 
-    static mat<3,3,T> fromeuler_xyz(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_xzy(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_yxz(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_yzx(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_zxy(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_zyx(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_xyz(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_xzy(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_yxz(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_yzx(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_zxy(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_zyx(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_xyz(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_xzy(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_yxz(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_yzx(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_zxy(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_zyx(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_xyz(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_xzy(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_yxz(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_yzx(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_zxy(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_zyx(T phi, T theta, T psi);
 
-    static mat<3,3,T> fromeuler_xyx(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_xzx(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_yxy(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_yzy(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_zxz(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_zyz(vec<3,T> const &v);
-    static mat<3,3,T> fromeuler_xyx(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_xzx(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_yxy(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_yzy(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_zxz(T phi, T theta, T psi);
-    static mat<3,3,T> fromeuler_zyz(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_xyx(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_xzx(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_yxy(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_yzy(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_zxz(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_zyz(vec_t<T,3> const &v);
+    static mat_t<T,3,3> fromeuler_xyx(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_xzx(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_yxy(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_yzy(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_zxz(T phi, T theta, T psi);
+    static mat_t<T,3,3> fromeuler_zyz(T phi, T theta, T psi);
 
-    static inline mat<3,3,T> rotate(mat<3,3,T> m, T degrees, vec<3,T> v)
+    static inline mat_t<T,3,3> rotate(mat_t<T,3,3> m, T degrees, vec_t<T,3> v)
     {
         return rotate(degrees, v) * m;
     }
@@ -218,15 +218,15 @@ struct mat<3,3,T>
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream,
-                                    mat<3,3,U> const &m);
+                                    mat_t<U,3,3> const &m);
 
-    static const mat<3,3,T> identity;
+    static const mat_t<T,3,3> identity;
 
 private:
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    vec<3,T> m_data[3];
+    vec_t<T,3> m_data[3];
 #else
-    vec<3,T> m_v0, m_v1, m_v2;
+    vec_t<T,3> m_v0, m_v1, m_v2;
 #endif
 };
 
@@ -235,24 +235,24 @@ private:
  */
 
 template <typename T>
-struct mat<4, 4, T>
+struct mat_t<T, 4, 4>
 {
-    typedef mat<4,4,T> type;
+    typedef mat_t<T,4,4> type;
 
-    inline mat() {}
-    inline mat(vec<4,T> v0, vec<4,T> v1, vec<4,T> v2, vec<4,T> v3)
+    inline mat_t() {}
+    inline mat_t(vec_t<T,4> v0, vec_t<T,4> v1, vec_t<T,4> v2, vec_t<T,4> v3)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1, v2, v3 } {}
 #else
       : m_v0(v0), m_v1(v1), m_v2(v2), m_v3(v3) {}
 #endif
 
-    explicit inline mat(T const &val)
+    explicit inline mat_t(T const &val)
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<4,T>(val, (T)0, (T)0, (T)0),
-                vec<4,T>((T)0, val, (T)0, (T)0),
-                vec<4,T>((T)0, (T)0, val, (T)0),
-                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+      : m_data{ vec_t<T,4>(val, (T)0, (T)0, (T)0),
+                vec_t<T,4>((T)0, val, (T)0, (T)0),
+                vec_t<T,4>((T)0, (T)0, val, (T)0),
+                vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
 #else
       : m_v0(val, (T)0, (T)0, (T)0),
         m_v1((T)0, val, (T)0, (T)0),
@@ -260,12 +260,12 @@ struct mat<4, 4, T>
         m_v3((T)0, (T)0, (T)0, val) {}
 #endif
 
-    explicit inline mat(mat<2,2,T> m, T const &val = T(1))
+    explicit inline mat_t(mat_t<T,2,2> m, T const &val = T(1))
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<4,T>(m[0], (T)0, (T)0),
-                vec<4,T>(m[1], (T)0, (T)0),
-                vec<4,T>((T)0, (T)0, val, (T)0),
-                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+      : m_data{ vec_t<T,4>(m[0], (T)0, (T)0),
+                vec_t<T,4>(m[1], (T)0, (T)0),
+                vec_t<T,4>((T)0, (T)0, val, (T)0),
+                vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
 #else
       : m_v0(m[0], (T)0, (T)0),
         m_v1(m[1], (T)0, (T)0),
@@ -273,12 +273,12 @@ struct mat<4, 4, T>
         m_v3((T)0, (T)0, (T)0, val) {}
 #endif
 
-    explicit inline mat(mat<3,3,T> m, T const &val = T(1))
+    explicit inline mat_t(mat_t<T,3,3> m, T const &val = T(1))
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-      : m_data{ vec<4,T>(m[0], (T)0),
-                vec<4,T>(m[1], (T)0),
-                vec<4,T>(m[2], (T)0),
-                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+      : m_data{ vec_t<T,4>(m[0], (T)0),
+                vec_t<T,4>(m[1], (T)0),
+                vec_t<T,4>(m[2], (T)0),
+                vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
 #else
       : m_v0(m[0], (T)0),
         m_v1(m[1], (T)0),
@@ -286,120 +286,120 @@ struct mat<4, 4, T>
         m_v3((T)0, (T)0, (T)0, val) {}
 #endif
 
-    explicit mat(Quat<T> const &q);
+    explicit mat_t(quat_t<T> const &q);
 
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    inline vec<4,T>& operator[](size_t n) { return m_data[n]; }
-    inline vec<4,T> const& operator[](size_t n) const { return m_data[n]; }
+    inline vec_t<T,4>& operator[](size_t n) { return m_data[n]; }
+    inline vec_t<T,4> const& operator[](size_t n) const { return m_data[n]; }
 #else
-    inline vec<4,T>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec<4,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+    inline vec_t<T,4>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec_t<T,4> const& operator[](size_t n) const { return (&m_v0)[n]; }
 #endif
 
     /* Helpers for transformation matrices */
-    static mat<4,4,T> translate(T x, T y, T z);
-    static mat<4,4,T> translate(vec<3,T> v);
+    static mat_t<T,4,4> translate(T x, T y, T z);
+    static mat_t<T,4,4> translate(vec_t<T,3> v);
 
-    static inline mat<4,4,T> scale(T x)
+    static inline mat_t<T,4,4> scale(T x)
     {
-        return mat<4,4,T>(mat<3,3,T>::scale(x), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::scale(x), (T)1);
     }
 
-    static inline mat<4,4,T> scale(T x, T y, T z)
+    static inline mat_t<T,4,4> scale(T x, T y, T z)
     {
-        return mat<4,4,T>(mat<3,3,T>::scale(x, y, z), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::scale(x, y, z), (T)1);
     }
 
-    static inline mat<4,4,T> scale(vec<3,T> v)
+    static inline mat_t<T,4,4> scale(vec_t<T,3> v)
     {
-        return mat<4,4,T>(mat<3,3,T>::scale(v), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::scale(v), (T)1);
     }
 
-    static inline mat<4,4,T> translate(mat<4,4,T> const &m, vec<3,T> v)
+    static inline mat_t<T,4,4> translate(mat_t<T,4,4> const &m, vec_t<T,3> v)
     {
         return translate(v) * m;
     }
 
-    static inline mat<4,4,T> rotate(T degrees, T x, T y, T z)
+    static inline mat_t<T,4,4> rotate(T degrees, T x, T y, T z)
     {
-        return mat<4,4,T>(mat<3,3,T>::rotate(degrees, x, y, z), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(degrees, x, y, z), (T)1);
     }
 
-    static inline mat<4,4,T> rotate(T degrees, vec<3,T> v)
+    static inline mat_t<T,4,4> rotate(T degrees, vec_t<T,3> v)
     {
-        return mat<4,4,T>(mat<3,3,T>::rotate(degrees, v), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(degrees, v), (T)1);
     }
 
-    static inline mat<4,4,T> rotate(mat<4,4,T> &m, T degrees, vec<3,T> v)
+    static inline mat_t<T,4,4> rotate(mat_t<T,4,4> &m, T degrees, vec_t<T,3> v)
     {
         return rotate(degrees, v) * m;
     }
 
-    static mat<4,4,T> fromeuler_xyz(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_xzy(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_yxz(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_yzx(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_zxy(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_zyx(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_xyz(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_xzy(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_yxz(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_yzx(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_zxy(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_zyx(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_xyz(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_xzy(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_yxz(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_yzx(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_zxy(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_zyx(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_xyz(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_xzy(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_yxz(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_yzx(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_zxy(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_zyx(T phi, T theta, T psi);
 
-    static mat<4,4,T> fromeuler_xyx(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_xzx(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_yxy(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_yzy(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_zxz(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_zyz(vec<3,T> const &v);
-    static mat<4,4,T> fromeuler_xyx(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_xzx(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_yxy(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_yzy(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_zxz(T phi, T theta, T psi);
-    static mat<4,4,T> fromeuler_zyz(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_xyx(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_xzx(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_yxy(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_yzy(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_zxz(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_zyz(vec_t<T,3> const &v);
+    static mat_t<T,4,4> fromeuler_xyx(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_xzx(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_yxy(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_yzy(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_zxz(T phi, T theta, T psi);
+    static mat_t<T,4,4> fromeuler_zyz(T phi, T theta, T psi);
 
     /* Helpers for view matrices */
-    static mat<4,4,T> lookat(vec<3,T> eye, vec<3,T> center, vec<3,T> up);
+    static mat_t<T,4,4> lookat(vec_t<T,3> eye, vec_t<T,3> center, vec_t<T,3> up);
 
     /* Helpers for projection matrices */
-    static mat<4,4,T> ortho(T left, T right, T bottom, T top, T near, T far);
-    static mat<4,4,T> ortho(T width, T height, T near, T far);
-    static mat<4,4,T> frustum(T left, T right, T bottom, T top, T near, T far);
-    static mat<4,4,T> perspective(T fov_y, T width, T height, T near, T far);
-    static mat<4,4,T> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
+    static mat_t<T,4,4> ortho(T left, T right, T bottom, T top, T near, T far);
+    static mat_t<T,4,4> ortho(T width, T height, T near, T far);
+    static mat_t<T,4,4> frustum(T left, T right, T bottom, T top, T near, T far);
+    static mat_t<T,4,4> perspective(T fov_y, T width, T height, T near, T far);
+    static mat_t<T,4,4> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
 
     void printf() const;
     String tostring() const;
 
     template<class U>
     friend std::ostream &operator<<(std::ostream &stream,
-                                    mat<4,4,U> const &m);
+                                    mat_t<U,4,4> const &m);
 
-    static const mat<4,4,T> identity;
+    static const mat_t<T,4,4> identity;
 
 private:
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-    vec<4,T> m_data[4];
+    vec_t<T,4> m_data[4];
 #else
-    vec<4,T> m_v0, m_v1, m_v2, m_v3;
+    vec_t<T,4> m_v0, m_v1, m_v2, m_v3;
 #endif
 };
 
-template<typename T> T determinant(mat<2,2,T> const &);
-template<typename T> T determinant(mat<3,3,T> const &);
-template<typename T> T determinant(mat<4,4,T> const &);
+template<typename T> T determinant(mat_t<T,2,2> const &);
+template<typename T> T determinant(mat_t<T,3,3> const &);
+template<typename T> T determinant(mat_t<T,4,4> const &);
 
-template<typename T> mat<2,2,T> inverse(mat<2,2,T> const &);
-template<typename T> mat<3,3,T> inverse(mat<3,3,T> const &);
-template<typename T> mat<4,4,T> inverse(mat<4,4,T> const &);
+template<typename T> mat_t<T,2,2> inverse(mat_t<T,2,2> const &);
+template<typename T> mat_t<T,3,3> inverse(mat_t<T,3,3> const &);
+template<typename T> mat_t<T,4,4> inverse(mat_t<T,4,4> const &);
 
-template<int COLS, int ROWS, typename T>
-static inline mat<ROWS, COLS, T> transpose(mat<COLS, ROWS, T> const &m)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, ROWS, COLS> transpose(mat_t<T, COLS, ROWS> const &m)
 {
-    mat<ROWS, COLS, T> ret;
+    mat_t<T, ROWS, COLS> ret;
     for (int i = 0; i < COLS; ++i)
         for (int j = 0; j < ROWS; ++j)
             ret[j][i] = m[i][j];
@@ -410,50 +410,50 @@ static inline mat<ROWS, COLS, T> transpose(mat<COLS, ROWS, T> const &m)
  * Addition/subtraction/unary
  */
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> &operator +=(mat<COLS, ROWS, T> &a,
-                                              mat<COLS, ROWS, T> const &b)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> &operator +=(mat_t<T, COLS, ROWS> &a,
+                                                mat_t<T, COLS, ROWS> const &b)
 {
     for (int i = 0; i < COLS; ++i)
         a[i] += b[i];
     return a;
 }
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> operator +(mat<COLS, ROWS, T> const &a,
-                                            mat<COLS, ROWS, T> const &b)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> operator +(mat_t<T, COLS, ROWS> const &a,
+                                              mat_t<T, COLS, ROWS> const &b)
 {
-    mat<COLS, ROWS, T> ret = a;
+    mat_t<T, COLS, ROWS> ret = a;
     return ret += b;
 }
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> operator +(mat<COLS, ROWS, T> const &m)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> operator +(mat_t<T, COLS, ROWS> const &m)
 {
     return m;
 }
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> &operator -=(mat<COLS, ROWS, T> &a,
-                                              mat<COLS, ROWS, T> const &b)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> &operator -=(mat_t<T, COLS, ROWS> &a,
+                                                mat_t<T, COLS, ROWS> const &b)
 {
     for (int i = 0; i < COLS; ++i)
         a[i] -= b[i];
     return a;
 }
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> operator -(mat<COLS, ROWS, T> const &a,
-                                            mat<COLS, ROWS, T> const &b)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> operator -(mat_t<T, COLS, ROWS> const &a,
+                                              mat_t<T, COLS, ROWS> const &b)
 {
-    mat<COLS, ROWS, T> ret = a;
+    mat_t<T, COLS, ROWS> ret = a;
     return ret -= b;
 }
 
-template<int COLS, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> operator -(mat<COLS, ROWS, T> const &m)
+template<typename T, int COLS, int ROWS>
+static inline mat_t<T, COLS, ROWS> operator -(mat_t<T, COLS, ROWS> const &m)
 {
-    mat<COLS, ROWS, T> ret;
+    mat_t<T, COLS, ROWS> ret;
     for (int i = 0; i < COLS; ++i)
         ret[i] = -m[i];
     return ret;
@@ -463,21 +463,21 @@ static inline mat<COLS, ROWS, T> operator -(mat<COLS, ROWS, T> const &m)
  * Matrix-vector and vector-matrix multiplication
  */
 
-template<int COLS, int ROWS, int MASK, typename T>
-static inline vec<ROWS, T> operator *(mat<COLS, ROWS, T> const &m,
-                                      vec<COLS, T, MASK> const &v)
+template<typename T, int COLS, int ROWS, int SWIZZLE>
+static inline vec_t<T, ROWS> operator *(mat_t<T, COLS, ROWS> const &m,
+                                        vec_t<T, COLS, SWIZZLE> const &v)
 {
-    vec<ROWS, T> ret(T(0));
+    vec_t<T, ROWS> ret(T(0));
     for (int i = 0; i < COLS; ++i)
         ret += m[i] * v[i];
     return ret;
 }
 
-template<int COLS, int ROWS, int MASK, typename T>
-static inline vec<COLS, T> operator *(vec<ROWS, T, MASK> const &v,
-                                      mat<COLS, ROWS, T> const &m)
+template<typename T, int COLS, int ROWS, int SWIZZLE>
+static inline vec_t<T, COLS> operator *(vec_t<T, ROWS, SWIZZLE> const &v,
+                                        mat_t<T, COLS, ROWS> const &m)
 {
-    vec<COLS, T> ret(T(0));
+    vec_t<T, COLS> ret(T(0));
     for (int i = 0; i < COLS; ++i)
         ret[i] = dot(v, m[i]);
     return ret;
@@ -487,19 +487,19 @@ static inline vec<COLS, T> operator *(vec<ROWS, T, MASK> const &v,
  * Matrix-matrix multiplication
  */
 
-template<int COLS, int N, int ROWS, typename T>
-static inline mat<COLS, ROWS, T> operator *(mat<N, ROWS, T> const &a,
-                                            mat<COLS, N, T> const &b)
+template<typename T, int COLS, int N, int ROWS>
+static inline mat_t<T, COLS, ROWS> operator *(mat_t<T, N, ROWS> const &a,
+                                              mat_t<T, COLS, N> const &b)
 {
-    mat<COLS, ROWS, T> ret;
+    mat_t<T, COLS, ROWS> ret;
     for (int i = 0; i < COLS; ++i)
         ret[i] = a * b[i];
     return ret;
 }
 
-template<int N, typename T>
-static inline mat<N, N, T> &operator *=(mat<N, N, T> &a,
-                                        mat<N, N, T> const &b)
+template<typename T, int N>
+static inline mat_t<T, N, N> &operator *=(mat_t<T, N, N> &a,
+                                          mat_t<T, N, N> const &b)
 {
     return a = a * b;
 }

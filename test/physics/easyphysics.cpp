@@ -166,7 +166,7 @@ void EasyPhysic::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol
     {
         mat4 ThisMatrixLoc = NewMatrixLoc * inverse(PreviousMatrixLoc) * lol::mat4::translate(m_local_to_world[3].xyz);
         mat4 ThisMatrixRot = NewMatrixRot * inverse(PreviousMatrixRot) * lol::mat4(lol::quat(m_local_to_world));
-        SetTransform(ThisMatrixLoc[3].xyz, lol::mat4(lol::quat(ThisMatrixRot)));
+        SetTransform(ThisMatrixLoc[3].xyz, lol::quat(ThisMatrixRot));
     }
 }
 

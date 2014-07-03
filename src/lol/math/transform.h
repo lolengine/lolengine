@@ -9,17 +9,14 @@
 //
 
 //
-// The complex and quaternion classes
-// ----------------------------------
+// The complex, quaternion and dual quaternion classes
+// ---------------------------------------------------
 //
 
 #if !defined __LOL_MATH_TRANSFORM_H__
 #define __LOL_MATH_TRANSFORM_H__
 
 #include <ostream>
-
-#include <lol/math/half.h>
-#include <lol/math/real.h>
 
 namespace lol
 {
@@ -29,162 +26,114 @@ namespace lol
 #endif
 
 /*
- * 2-element complexes
+ * 2-element transforms: complex numbers
  */
 
-template <typename T> struct Cmplx
+template<typename T>
+struct cmplx_t
 {
-    typedef Cmplx<T> type;
+    typedef cmplx_t<T> type;
 
-    inline constexpr Cmplx() {}
-    inline constexpr Cmplx(T X) : x(X), y(T(0)) {}
-    inline constexpr Cmplx(T X, T Y) : x(X), y(Y) {}
+    inline constexpr cmplx_t() {}
+    inline constexpr cmplx_t(T X) : x(X), y(T(0)) {}
+    inline constexpr cmplx_t(T X, T Y) : x(X), y(Y) {}
 
     template<typename U>
-    explicit inline constexpr Cmplx(Cmplx<U> const &z)
+    explicit inline constexpr cmplx_t(cmplx_t<U> const &z)
       : x(z.x), y(z.y) {}
 
     LOL_COMMON_MEMBER_OPS(x)
     LOL_NONVECTOR_MEMBER_OPS()
 
-    inline Cmplx<T> operator *(Cmplx<T> const &val) const
+    inline cmplx_t<T> operator *(cmplx_t<T> const &val) const
     {
-        return Cmplx<T>(x * val.x - y * val.y, x * val.y + y * val.x);
+        return cmplx_t<T>(x * val.x - y * val.y, x * val.y + y * val.x);
     }
 
-    inline Cmplx<T> operator *=(Cmplx<T> const &val)
+    inline cmplx_t<T> operator *=(cmplx_t<T> const &val)
     {
         return *this = (*this) * val;
     }
 
-    inline Cmplx<T> operator ~() const
+    inline cmplx_t<T> operator ~() const
     {
-        return Cmplx<T>(x, -y);
+        return cmplx_t<T>(x, -y);
     }
 
     template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Cmplx<U> const &v);
+    friend std::ostream &operator<<(std::ostream &stream, cmplx_t<U> const &v);
 
     T x, y;
 };
 
-template<typename T>
-static inline T dot(Cmplx<T> const &z1, Cmplx<T> const &z2)
-{
-    T ret(0);
-    for (size_t i = 0; i < sizeof(Cmplx<T>) / sizeof(T); ++i)
-        ret += z1[i] * z2[i];
-    return ret;
-}
-
-template<typename T>
-static inline T sqlength(Cmplx<T> const &z)
-{
-    return dot(z, z);
-}
-
-template<typename T>
-static inline T length(Cmplx<T> const &z)
-{
-    /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(z));
-}
-
-template<typename T>
-static inline T norm(Cmplx<T> const &z)
-{
-    return length(z);
-}
-
-template<typename T>
-static inline Cmplx<T> re(Cmplx<T> const &z)
-{
-    return ~z / sqlength(z);
-}
-
-template<typename T>
-static inline Cmplx<T> normalize(Cmplx<T> const &z)
-{
-    T norm = (T)length(z);
-    return norm ? z / norm : Cmplx<T>(T(0));
-}
-
-template<typename T>
-static inline Cmplx<T> operator /(T a, Cmplx<T> const &b)
-{
-    return a * re(b);
-}
-
-template<typename T>
-static inline Cmplx<T> operator /(Cmplx<T> a, Cmplx<T> const &b)
-{
-    return a * re(b);
-}
-
-template<typename T>
-static inline bool operator ==(Cmplx<T> const &a, T b)
-{
-    return (a.x == b) && !a.y;
-}
-
-template<typename T>
-static inline bool operator !=(Cmplx<T> const &a, T b)
-{
-    return (a.x != b) || a.y;
-}
-
-template<typename T>
-static inline bool operator ==(T a, Cmplx<T> const &b) { return b == a; }
-
-template<typename T>
-static inline bool operator !=(T a, Cmplx<T> const &b) { return b != a; }
-
 /*
- * 4-element quaternions
+ * 4-element transforms: quaternions
  */
 
-template <typename T> struct Quat
+template<typename T>
+struct quat_t
 {
-    typedef Quat<T> type;
+    typedef quat_t<T> type;
 
-    inline constexpr Quat() {}
-    inline constexpr Quat(T W) : w(W),  x(0), y(0), z(0) {}
-    inline constexpr Quat(T W, T X, T Y, T Z) : w(W), x(X), y(Y), z(Z) {}
-
-    template<typename U>
-    explicit inline constexpr Quat(Quat<U> const &q)
+    /* Default constructor and copy constructor */
+    inline constexpr quat_t() : w(), x(), y(), z() {}
+    inline constexpr quat_t(quat_t<T> const &q)
       : w(q.w), x(q.x), y(q.y), z(q.z) {}
 
-    Quat(mat<3,3,T> const &m);
-    Quat(mat<4,4,T> const &m);
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline constexpr quat_t(quat_t<U> const &q)
+      : w(q.w), x(q.x), y(q.y), z(q.z) {}
+
+    /* Various explicit constructors */
+    explicit inline constexpr quat_t(T W, T X, T Y, T Z)
+      : w(W), x(X), y(Y), z(Z) {}
+    explicit inline constexpr quat_t(T W)
+      : w(W), x(0), y(0), z(0) {}
+
+    explicit quat_t(mat_t<T,3,3> const &m);
+    explicit quat_t(mat_t<T,4,4> const &m);
 
     LOL_COMMON_MEMBER_OPS(w)
     LOL_NONVECTOR_MEMBER_OPS()
 
+    inline quat_t operator *(quat_t const &val) const
+    {
+        vec_t<T,3> v1(x, y, z);
+        vec_t<T,3> v2(val.x, val.y, val.z);
+        vec_t<T,3> v3 = cross(v1, v2) + w * v2 + val.w * v1;
+        return quat_t(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
+    }
+
+    inline quat_t operator *=(quat_t const &val)
+    {
+        return *this = (*this * val);
+    }
+
     /* Create a unit quaternion representing a rotation around an axis. */
-    static Quat<T> rotate(T degrees, T x, T y, T z);
-    static Quat<T> rotate(T degrees, vec<3,T> const &v);
+    static quat_t rotate(T degrees, T x, T y, T z);
+    static quat_t rotate(T degrees, vec_t<T,3> const &v);
 
     /* Create a unit quaternion representing a rotation between two vectors.
      * Input vectors need not be normalised. */
-    static Quat<T> rotate(vec<3,T> const &src, vec<3,T> const &dst);
+    static quat_t rotate(vec_t<T,3> const &src, vec_t<T,3> const &dst);
 
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
      * If you want to rotate around static axes, just reverse the order
      * of the arguments. Angle values are in degrees. */
-    static Quat<T> fromeuler_xyx(vec<3,T> const &v);
-    static Quat<T> fromeuler_xzx(vec<3,T> const &v);
-    static Quat<T> fromeuler_yxy(vec<3,T> const &v);
-    static Quat<T> fromeuler_yzy(vec<3,T> const &v);
-    static Quat<T> fromeuler_zxz(vec<3,T> const &v);
-    static Quat<T> fromeuler_zyz(vec<3,T> const &v);
-    static Quat<T> fromeuler_xyx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_xzx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yxy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yzy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zxz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zyz(T phi, T theta, T psi);
+    static quat_t fromeuler_xyx(vec_t<T,3> const &v);
+    static quat_t fromeuler_xzx(vec_t<T,3> const &v);
+    static quat_t fromeuler_yxy(vec_t<T,3> const &v);
+    static quat_t fromeuler_yzy(vec_t<T,3> const &v);
+    static quat_t fromeuler_zxz(vec_t<T,3> const &v);
+    static quat_t fromeuler_zyz(vec_t<T,3> const &v);
+    static quat_t fromeuler_xyx(T phi, T theta, T psi);
+    static quat_t fromeuler_xzx(T phi, T theta, T psi);
+    static quat_t fromeuler_yxy(T phi, T theta, T psi);
+    static quat_t fromeuler_yzy(T phi, T theta, T psi);
+    static quat_t fromeuler_zxz(T phi, T theta, T psi);
+    static quat_t fromeuler_zyz(T phi, T theta, T psi);
 
     /* Convert from Tait-Bryan angles (incorrectly called Euler angles,
      * but since everyone does it…). The axes in fromeuler_xyz are
@@ -194,67 +143,60 @@ template <typename T> struct Quat
      * If you want to rotate around static axes, reverse the order in
      * the function name (_zyx instead of _xyz) AND reverse the order
      * of the arguments. */
-    static Quat<T> fromeuler_xyz(vec<3,T> const &v);
-    static Quat<T> fromeuler_xzy(vec<3,T> const &v);
-    static Quat<T> fromeuler_yxz(vec<3,T> const &v);
-    static Quat<T> fromeuler_yzx(vec<3,T> const &v);
-    static Quat<T> fromeuler_zxy(vec<3,T> const &v);
-    static Quat<T> fromeuler_zyx(vec<3,T> const &v);
-    static Quat<T> fromeuler_xyz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_xzy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yxz(T phi, T theta, T psi);
-    static Quat<T> fromeuler_yzx(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zxy(T phi, T theta, T psi);
-    static Quat<T> fromeuler_zyx(T phi, T theta, T psi);
+    static quat_t fromeuler_xyz(vec_t<T,3> const &v);
+    static quat_t fromeuler_xzy(vec_t<T,3> const &v);
+    static quat_t fromeuler_yxz(vec_t<T,3> const &v);
+    static quat_t fromeuler_yzx(vec_t<T,3> const &v);
+    static quat_t fromeuler_zxy(vec_t<T,3> const &v);
+    static quat_t fromeuler_zyx(vec_t<T,3> const &v);
+    static quat_t fromeuler_xyz(T phi, T theta, T psi);
+    static quat_t fromeuler_xzy(T phi, T theta, T psi);
+    static quat_t fromeuler_yxz(T phi, T theta, T psi);
+    static quat_t fromeuler_yzx(T phi, T theta, T psi);
+    static quat_t fromeuler_zxy(T phi, T theta, T psi);
+    static quat_t fromeuler_zyx(T phi, T theta, T psi);
 
-    inline Quat<T> operator *(Quat<T> const &val) const;
-
-    inline Quat<T> operator *=(Quat<T> const &val)
+    inline quat_t operator ~() const
     {
-        return *this = (*this) * val;
+        return quat_t(w, -x, -y, -z);
     }
 
-    inline Quat<T> operator ~() const
+    inline vec_t<T,3> transform(vec_t<T,3> const &v) const
     {
-        return Quat<T>(w, -x, -y, -z);
+        quat_t p = quat_t(0, v.x, v.y, v.z);
+        quat_t q = *this * p / *this;
+        return vec_t<T,3>(q.x, q.y, q.z);
     }
 
-    inline vec<3,T> transform(vec<3,T> const &v) const
+    inline vec_t<T,4> transform(vec_t<T,4> const &v) const
     {
-        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
-        Quat<T> q = *this * p / *this;
-        return vec<3,T>(q.x, q.y, q.z);
+        quat_t p = quat_t(0, v.x, v.y, v.z);
+        quat_t q = *this * p / *this;
+        return vec_t<T,4>(q.x, q.y, q.z, v.w);
     }
 
-    inline vec<4,T> transform(vec<4,T> const &v) const
-    {
-        Quat<T> p = Quat<T>(0, v.x, v.y, v.z);
-        Quat<T> q = *this * p / *this;
-        return vec<4,T>(q.x, q.y, q.z, v.w);
-    }
-
-    inline vec<3,T> operator *(vec<3,T> const &v) const
+    inline vec_t<T,3> operator *(vec_t<T,3> const &v) const
     {
         return transform(v);
     }
 
-    inline vec<4,T> operator *(vec<4,T> const &v) const
+    inline vec_t<T,4> operator *(vec_t<T,4> const &v) const
     {
         return transform(v);
     }
 
-    inline vec<3,T> axis()
+    inline vec_t<T,3> axis()
     {
-        vec<3,T> v(x, y, z);
+        vec_t<T,3> v(x, y, z);
         T n2 = sqlength(v);
         if (n2 <= (T)1e-6)
-            return vec<3,T>::axis_x;
+            return vec_t<T,3>::axis_x;
         return normalize(v);
     }
 
     inline T angle()
     {
-        vec<3,T> v(x, y, z);
+        vec_t<T,3> v(x, y, z);
         T n2 = sqlength(v);
         if (n2 <= (T)1e-6)
             return (T)0;
@@ -262,77 +204,152 @@ template <typename T> struct Quat
     }
 
     template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, Quat<U> const &v);
+    friend std::ostream &operator<<(std::ostream &stream, quat_t<U> const &v);
 
     /* XXX: storage order is wxyz, unlike vectors! */
     T w, x, y, z;
 };
 
+/*
+ * Common operations on transforms
+ */
+
 template<typename T>
-static inline T dot(Quat<T> const &q1, Quat<T> const &q2)
+static inline T dot(cmplx_t<T> const &t1, cmplx_t<T> const &t2)
 {
     T ret(0);
-    for (size_t i = 0; i < sizeof(Quat<T>) / sizeof(T); ++i)
-        ret += q1[i] * q2[i];
+    for (size_t i = 0; i < sizeof(t1) / sizeof(T); ++i)
+        ret += t1[i] * t2[i];
     return ret;
 }
 
 template<typename T>
-static inline T sqlength(Quat<T> const &q)
+static inline T sqlength(cmplx_t<T> const &t)
 {
-    return dot(q, q);
+    return dot(t, t);
 }
 
 template<typename T>
-static inline T length(Quat<T> const &q)
+static inline T length(cmplx_t<T> const &t)
 {
     /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(q));
+    return (T)sqrt((double)sqlength(t));
 }
 
 template<typename T>
-static inline T norm(Quat<T> const &q)
+static inline T norm(cmplx_t<T> const &t)
 {
-    return length(q);
+    return length(t);
 }
 
 template<typename T>
-static inline Quat<T> re(Quat<T> const &q)
+static inline cmplx_t<T> normalize(cmplx_t<T> const &z)
+{
+    T norm = (T)length(z);
+    return norm ? z / norm : cmplx_t<T>(T(0));
+}
+
+/* XXX: duplicate */
+
+template<typename T>
+static inline T dot(quat_t<T> const &t1, quat_t<T> const &t2)
+{
+    T ret(0);
+    for (size_t i = 0; i < sizeof(t1) / sizeof(T); ++i)
+        ret += t1[i] * t2[i];
+    return ret;
+}
+
+template<typename T>
+static inline T sqlength(quat_t<T> const &t)
+{
+    return dot(t, t);
+}
+
+template<typename T>
+static inline T length(quat_t<T> const &t)
+{
+    /* FIXME: this is not very nice */
+    return (T)sqrt((double)sqlength(t));
+}
+
+template<typename T>
+static inline T norm(quat_t<T> const &t)
+{
+    return length(t);
+}
+
+template<typename T>
+static inline quat_t<T> normalize(quat_t<T> const &z)
+{
+    T norm = (T)length(z);
+    return norm ? z / norm : quat_t<T>(T(0));
+}
+
+/*
+ * Complex numbers only
+ */
+
+template<typename T>
+static inline cmplx_t<T> re(cmplx_t<T> const &z)
+{
+    return ~z / sqlength(z);
+}
+
+template<typename T>
+static inline cmplx_t<T> operator /(T a, cmplx_t<T> const &b)
+{
+    return a * re(b);
+}
+
+template<typename T>
+static inline cmplx_t<T> operator /(cmplx_t<T> a, cmplx_t<T> const &b)
+{
+    return a * re(b);
+}
+
+template<typename T>
+static inline bool operator ==(cmplx_t<T> const &a, T b)
+{
+    return (a.x == b) && !a.y;
+}
+
+template<typename T>
+static inline bool operator !=(cmplx_t<T> const &a, T b)
+{
+    return (a.x != b) || a.y;
+}
+
+template<typename T>
+static inline bool operator ==(T a, cmplx_t<T> const &b) { return b == a; }
+
+template<typename T>
+static inline bool operator !=(T a, cmplx_t<T> const &b) { return b != a; }
+
+/*
+ * Quaternions only
+ */
+
+template<typename T>
+static inline quat_t<T> re(quat_t<T> const &q)
 {
     return ~q / sqlength(q);
 }
 
 template<typename T>
-static inline Quat<T> normalize(Quat<T> const &q)
-{
-    T norm = (T)length(q);
-    return norm ? q / norm : Quat<T>(T(0));
-}
-
-template<typename T>
-static inline Quat<T> operator /(T x, Quat<T> const &y)
+static inline quat_t<T> operator /(T x, quat_t<T> const &y)
 {
     return x * re(y);
 }
 
 template<typename T>
-static inline Quat<T> operator /(Quat<T> const &x, Quat<T> const &y)
+static inline quat_t<T> operator /(quat_t<T> const &x, quat_t<T> const &y)
 {
     return x * re(y);
 }
 
 template<typename T>
-extern Quat<T> slerp(Quat<T> const &qa, Quat<T> const &qb, T f);
-
-template<typename T>
-inline Quat<T> Quat<T>::operator *(Quat<T> const &val) const
-{
-    Quat<T> ret;
-    vec<3,T> v1(x, y, z);
-    vec<3,T> v2(val.x, val.y, val.z);
-    vec<3,T> v3 = cross(v1, v2) + w * v2 + val.w * v1;
-    return Quat<T>(w * val.w - dot(v1, v2), v3.x, v3.y, v3.z);
-}
+extern quat_t<T> slerp(quat_t<T> const &qa, quat_t<T> const &qb, T f);
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
 #undef constexpr
