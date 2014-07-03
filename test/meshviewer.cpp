@@ -493,7 +493,7 @@ public:
         TargetCamera tc;
         if (m_meshes.Count() && m_mesh_id >= 0)
             for (int i = 0; i < m_meshes[m_mesh_id].m1->GetVertexCount(); i++)
-                tc.AddTarget((m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i))).v3.xyz);
+                tc.AddTarget((m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i)))[3].xyz);
         tc.AddTarget(box3(vec3(0.f), vec3(1.f)));
         for (int k = 0; k < m_ssetup->m_lights.Count() && m_ssetup->m_show_lights; ++k)
         {
@@ -525,13 +525,13 @@ public:
 
                 //Get location in cam coordinates
                 target_mx = world_cam * target_mx;
-                vpos = target_mx.v3.xyz;
+                vpos = target_mx[3].xyz;
                 local_min_max[0] = min(vpos.xyz, local_min_max[0]);
                 local_min_max[1] = max(vpos.xyz, local_min_max[1]);
 
                 //Get location in screen coordinates
                 target_mx = cam_screen * target_mx;
-                vpos = (target_mx.v3 / target_mx.v3.w).xyz;
+                vpos = (target_mx[3] / target_mx[3].w).xyz;
                 screen_min_max[0] = min(screen_min_max[0], vpos.xy * vec2(RATIO_WH, 1.f));
                 screen_min_max[1] = max(screen_min_max[1], vpos.xy * vec2(RATIO_WH, 1.f));
 
@@ -846,7 +846,7 @@ public:
                 {
                     Light* ltmp = m_ssetup->m_lights[k];
                     mat4 world = mat4::translate(ltmp->GetPosition());
-                    mat4 local = mat4::translate((inverse(m_mat) * world).v3.xyz);
+                    mat4 local = mat4::translate((inverse(m_mat) * world)[3].xyz);
                     //dir light
                     if (ltmp->GetType() == LightType::Directional)
                     {
@@ -873,14 +873,14 @@ public:
                                     m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+2]]
                                     };
                 for (int k = 0; k < 3; k++)
-                    Debug::DrawLine((m_mat * mat4::translate(v[k].m_coord)).v3.xyz,
-                                    (m_mat * mat4::translate(v[(k+1)%3].m_coord)).v3.xyz, vec4(vec3((v[k].m_coord.z + 1.f)*.5f),1.f));
+                    Debug::DrawLine((m_mat * mat4::translate(v[k].m_coord))[3].xyz,
+                                    (m_mat * mat4::translate(v[(k+1)%3].m_coord))[3].xyz, vec4(vec3((v[k].m_coord.z + 1.f)*.5f),1.f));
             }
             for (int j = 0; j < m_meshes[i].m1->m_vert.Count(); j++)
             {
                 VertexData &v = m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j]];
-                Debug::DrawLine((m_mat * mat4::translate(v.m_coord)).v3.xyz,
-                                (m_mat * mat4::translate(v.m_coord)).v3.xyz +
+                Debug::DrawLine((m_mat * mat4::translate(v.m_coord))[3].xyz,
+                                (m_mat * mat4::translate(v.m_coord))[3].xyz +
                                 (m_mat * vec4(v.m_normal * 5.f, 0.f)).xyz, vec4(lol::abs(v.m_normal), 1.f));
             }
         }

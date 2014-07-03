@@ -48,15 +48,15 @@ namespace lol
  * fuck it.
  */
 
-template<int N, typename T, int MASK>
+template<int N, typename T, int SWIZZLE>
 struct vec
 {
     typedef vec<N,T> type;
 
-    inline vec<N, T, MASK>& operator =(vec<N, T> that);
+    inline vec<N, T, SWIZZLE>& operator =(vec<N, T> that);
 
 #if LOL_FEATURE_CXX11_RELAXED_UNIONS
-    inline vec<N, T, MASK>& operator =(vec<N, T, MASK> const &that)
+    inline vec<N, T, SWIZZLE>& operator =(vec<N, T, SWIZZLE> const &that)
     {
         /* Pass by value in case this == &that */
         return *this = (vec<N,T>)that;
@@ -65,18 +65,19 @@ struct vec
 
     inline T& operator[](size_t n)
     {
-        int i = (MASK >> (4 * (N - 1 - n))) & 3;
+        int i = (SWIZZLE >> (4 * (N - 1 - n))) & 3;
         return static_cast<T*>(static_cast<void*>(this))[i];
     }
 
     inline T const& operator[](size_t n) const
     {
-        int i = (MASK >> (4 * (N - 1 - n))) & 3;
+        int i = (SWIZZLE >> (4 * (N - 1 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
     }
 };
 
-/* The generic "vec" type, which is a fixed-size vector */
+/* The generic "vec" type, which is a fixed-size vector with no
+ * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<int N, typename T>
 struct vec<N, T, -1>
 {
@@ -218,10 +219,41 @@ private:
  * 2-element vectors
  */
 
-template <typename T> struct base_vec2
+template <typename T>
+struct vec<2,T>
 {
-    explicit inline constexpr base_vec2() {}
-    explicit inline constexpr base_vec2(T X, T Y) : x(X), y(Y) {}
+    typedef vec<2,T> type;
+
+    /* Default constructor, copy constructor, and destructor */
+    inline constexpr vec() : x(), y() {}
+    inline constexpr vec(vec<2,T> const &v) : x(v.x), y(v.y) {}
+    inline ~vec() { x.~T(); y.~T(); }
+
+    /* Implicit constructor for swizzling */
+    template<int SWIZZLE>
+    inline constexpr vec(vec<2, T, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]) {}
+
+    /* Explicit constructor for type conversion */
+    template<typename U, int SWIZZLE>
+    explicit inline constexpr vec(vec<2, U, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]) {}
+
+    /* Various explicit constructors */
+    explicit inline constexpr vec(T X, T Y)
+      : x(X), y(Y) {}
+    explicit inline constexpr vec(T X)
+      : x(X), y(X) {}
+
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
+
+    static const vec<2,T> zero;
+    static const vec<2,T> axis_x;
+    static const vec<2,T> axis_y;
+
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, vec<2,U> const &v);
 
     union
     {
@@ -264,59 +296,86 @@ template <typename T> struct base_vec2
     };
 };
 
-template <> struct base_vec2<half>
-{
-    explicit inline base_vec2() {}
-    explicit inline base_vec2(half X, half Y) : x(X), y(Y) {}
-
-    half x, y;
-};
-
-template <> struct base_vec2<real>
-{
-    explicit inline base_vec2() {}
-    explicit inline base_vec2(real X, real Y) : x(X), y(Y) {}
-
-    real x, y;
-};
-
-template <typename T>
-struct vec<2,T> : base_vec2<T>
-{
-    typedef vec<2,T> type;
-
-    inline constexpr vec() {}
-    inline constexpr vec(T X, T Y) : base_vec2<T>(X, Y) {}
-
-    explicit inline constexpr vec(T X) : base_vec2<T>(X, X) {}
-
-    template<int MASK>
-    inline constexpr vec(vec<2, T, MASK> const &v)
-      : base_vec2<T>(v[0], v[1]) {}
-
-    template<typename U, int MASK>
-    explicit inline constexpr vec(vec<2, U, MASK> const &v)
-      : base_vec2<T>(v[0], v[1]) {}
-
-    LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
-
-    static const vec<2,T> zero;
-    static const vec<2,T> axis_x;
-    static const vec<2,T> axis_y;
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec<2,U> const &v);
-};
-
 /*
  * 3-element vectors
  */
 
-template <typename T> struct base_vec3
+template <typename T>
+struct vec<3,T>
 {
-    explicit inline constexpr base_vec3() {}
-    explicit inline constexpr base_vec3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
+    typedef vec<3,T> type;
+
+    /* Default constructor, copy constructor, and destructor */
+    inline constexpr vec() : x(), y(), z() {}
+    inline constexpr vec(vec<3,T> const &v) : x(v.x), y(v.y), z(v.z) {}
+    inline ~vec() { x.~T(); y.~T(); z.~T(); }
+
+    /* Implicit constructor for swizzling */
+    template<int SWIZZLE>
+    inline constexpr vec(vec<3, T, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]), z(v[2]) {}
+
+    /* Explicit constructor for type conversion */
+    template<typename U, int SWIZZLE>
+    explicit inline constexpr vec(vec<3, U, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]), z(v[2]) {}
+
+    /* Various explicit constructors */
+    explicit inline constexpr vec(T X)
+      : x(X), y(X), z(X) {}
+    explicit inline constexpr vec(T X, T Y, T Z)
+      : x(X), y(Y), z(Z) {}
+    explicit inline constexpr vec(vec<2,T> XY, T Z)
+      : x(XY.x), y(XY.y), z(Z) {}
+    explicit inline constexpr vec(T X, vec<2,T> YZ)
+      : x(X), y(YZ.x), z(YZ.y) {}
+
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
+
+    static vec<3,T> toeuler_xyx(Quat<T> const &q);
+    static vec<3,T> toeuler_xzx(Quat<T> const &q);
+    static vec<3,T> toeuler_yxy(Quat<T> const &q);
+    static vec<3,T> toeuler_yzy(Quat<T> const &q);
+    static vec<3,T> toeuler_zxz(Quat<T> const &q);
+    static vec<3,T> toeuler_zyz(Quat<T> const &q);
+
+    static vec<3,T> toeuler_xyz(Quat<T> const &q);
+    static vec<3,T> toeuler_xzy(Quat<T> const &q);
+    static vec<3,T> toeuler_yxz(Quat<T> const &q);
+    static vec<3,T> toeuler_yzx(Quat<T> const &q);
+    static vec<3,T> toeuler_zxy(Quat<T> const &q);
+    static vec<3,T> toeuler_zyx(Quat<T> const &q);
+
+    /* Return the cross product (vector product) of "a" and "b" */ \
+    friend inline type cross(type const &a, type const &b)
+    {
+        return type(a.y * b.z - a.z * b.y,
+                    a.z * b.x - a.x * b.z,
+                    a.x * b.y - a.y * b.x);
+    }
+
+    /* Return a vector that is orthogonal to "a" */
+    friend inline type orthogonal(type const &a)
+    {
+        return lol::abs(a.x) > lol::abs(a.z)
+             ? type(-a.y, a.x, (T)0)
+             : type((T)0, -a.z, a.y);
+    }
+
+    /* Return a vector that is orthonormal to "a" */
+    friend inline type orthonormal(type const &a)
+    {
+        return normalize(orthogonal(a));
+    }
+
+    static const vec<3,T> zero;
+    static const vec<3,T> axis_x;
+    static const vec<3,T> axis_y;
+    static const vec<3,T> axis_z;
+
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, vec<3,U> const &v);
 
     union
     {
@@ -448,100 +507,59 @@ template <typename T> struct base_vec3
     };
 };
 
-template <> struct base_vec3<half>
-{
-    explicit inline base_vec3() {}
-    explicit inline base_vec3(half X, half Y, half Z)
-      : x(X), y(Y), z(Z) {}
-
-    half x, y, z;
-};
-
-template <> struct base_vec3<real>
-{
-    explicit inline base_vec3() {}
-    explicit inline base_vec3(real X, real Y, real Z) : x(X), y(Y), z(Z) {}
-
-    real x, y, z;
-};
-
-template <typename T>
-struct vec<3,T> : base_vec3<T>
-{
-    typedef vec<3,T> type;
-
-    inline constexpr vec() {}
-    inline constexpr vec(T X, T Y, T Z) : base_vec3<T>(X, Y, Z) {}
-    inline constexpr vec(vec<2,T> XY, T Z) : base_vec3<T>(XY.x, XY.y, Z) {}
-    inline constexpr vec(T X, vec<2,T> YZ) : base_vec3<T>(X, YZ.x, YZ.y) {}
-
-    explicit inline constexpr vec(T X) : base_vec3<T>(X, X, X) {}
-
-    template<int MASK>
-    inline constexpr vec(vec<3, T, MASK> const &v)
-      : base_vec3<T>(v[0], v[1], v[2]) {}
-
-    template<typename U, int MASK>
-    explicit inline constexpr vec(vec<3, U, MASK> const &v)
-      : base_vec3<T>(v[0], v[1], v[2]) {}
-
-    LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
-
-    static vec<3,T> toeuler_xyx(Quat<T> const &q);
-    static vec<3,T> toeuler_xzx(Quat<T> const &q);
-    static vec<3,T> toeuler_yxy(Quat<T> const &q);
-    static vec<3,T> toeuler_yzy(Quat<T> const &q);
-    static vec<3,T> toeuler_zxz(Quat<T> const &q);
-    static vec<3,T> toeuler_zyz(Quat<T> const &q);
-
-    static vec<3,T> toeuler_xyz(Quat<T> const &q);
-    static vec<3,T> toeuler_xzy(Quat<T> const &q);
-    static vec<3,T> toeuler_yxz(Quat<T> const &q);
-    static vec<3,T> toeuler_yzx(Quat<T> const &q);
-    static vec<3,T> toeuler_zxy(Quat<T> const &q);
-    static vec<3,T> toeuler_zyx(Quat<T> const &q);
-
-    /* Return the cross product (vector product) of "a" and "b" */ \
-    friend inline type cross(type const &a, type const &b)
-    {
-        return type(a.y * b.z - a.z * b.y,
-                    a.z * b.x - a.x * b.z,
-                    a.x * b.y - a.y * b.x);
-    }
-
-    /* Return a vector that is orthogonal to "a" */
-    friend inline type orthogonal(type const &a)
-    {
-        return lol::abs(a.x) > lol::abs(a.z)
-             ? type(-a.y, a.x, (T)0)
-             : type((T)0, -a.z, a.y);
-    }
-
-    /* Return a vector that is orthonormal to "a" */
-    friend inline type orthonormal(type const &a)
-    {
-        return normalize(orthogonal(a));
-    }
-
-    static const vec<3,T> zero;
-    static const vec<3,T> axis_x;
-    static const vec<3,T> axis_y;
-    static const vec<3,T> axis_z;
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec<3,U> const &v);
-};
-
 /*
  * 4-element vectors
  */
 
-template <typename T> struct base_vec4
+template <typename T>
+struct vec<4,T>
 {
-    explicit inline constexpr base_vec4() {}
-    explicit inline constexpr base_vec4(T X, T Y, T Z, T W)
+    typedef vec<4,T> type;
+
+    /* Default constructor, copy constructor, and destructor */
+    inline constexpr vec() : x(), y(), z(), w() {}
+    inline constexpr vec(vec<4,T> const &v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+    inline ~vec() { x.~T(); y.~T(); z.~T(); w.~T(); }
+
+    /* Implicit constructor for swizzling */
+    template<int SWIZZLE>
+    inline constexpr vec(vec<4, T, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+
+    /* Explicit constructor for type conversion */
+    template<typename U, int SWIZZLE>
+    explicit inline constexpr vec(vec<4, U, SWIZZLE> const &v)
+      : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+
+    /* Various explicit constructors */
+    explicit inline constexpr vec(T X)
+      : x(X), y(X), z(X), w(X) {}
+    explicit inline constexpr vec(T X, T Y, T Z, T W)
       : x(X), y(Y), z(Z), w(W) {}
+    explicit inline constexpr vec(vec<2,T> XY, T Z, T W)
+      : x(XY.x), y(XY.y), z(Z), w(W) {}
+    explicit inline constexpr vec(T X, vec<2,T> YZ, T W)
+      : x(X), y(YZ.x), z(YZ.y), w(W) {}
+    explicit inline constexpr vec(T X, T Y, vec<2,T> ZW)
+      : x(X), y(Y), z(ZW.x), w(ZW.y) {}
+    explicit inline constexpr vec(vec<2,T> XY, vec<2,T> ZW)
+      : x(XY.x), y(XY.y), z(ZW.x), w(ZW.y) {}
+    explicit inline constexpr vec(vec<3,T> XYZ, T W)
+      : x(XYZ.x), y(XYZ.y), z(XYZ.z), w(W) {}
+    explicit inline constexpr vec(T X, vec<3,T> YZW)
+      : x(X), y(YZW.x), z(YZW.y), w(YZW.z) {}
+
+    LOL_COMMON_MEMBER_OPS(x)
+    LOL_VECTOR_MEMBER_OPS()
+
+    static const vec<4,T> zero;
+    static const vec<4,T> axis_x;
+    static const vec<4,T> axis_y;
+    static const vec<4,T> axis_z;
+    static const vec<4,T> axis_w;
+
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &stream, vec<4,U> const &v);
 
     union
     {
@@ -892,77 +910,15 @@ template <typename T> struct base_vec4
     };
 };
 
-template <> struct base_vec4<half>
-{
-    explicit inline base_vec4() {}
-    explicit inline base_vec4(half X, half Y, half Z, half W)
-     : x(X), y(Y), z(Z), w(W) {}
-
-    half x, y, z, w;
-};
-
-template <> struct base_vec4<real>
-{
-    explicit inline base_vec4() {}
-    explicit inline base_vec4(real X, real Y, real Z, real W)
-     : x(X), y(Y), z(Z), w(W) {}
-
-    real x, y, z, w;
-};
-
-template <typename T>
-struct vec<4,T> : base_vec4<T>
-{
-    typedef vec<4,T> type;
-
-    inline constexpr vec() {}
-    inline constexpr vec(T X, T Y, T Z, T W)
-      : base_vec4<T>(X, Y, Z, W) {}
-    inline constexpr vec(vec<2,T> XY, T Z, T W)
-      : base_vec4<T>(XY.x, XY.y, Z, W) {}
-    inline constexpr vec(T X, vec<2,T> YZ, T W)
-      : base_vec4<T>(X, YZ.x, YZ.y, W) {}
-    inline constexpr vec(T X, T Y, vec<2,T> ZW)
-      : base_vec4<T>(X, Y, ZW.x, ZW.y) {}
-    inline constexpr vec(vec<2,T> XY, vec<2,T> ZW)
-      : base_vec4<T>(XY.x, XY.y, ZW.x, ZW.y) {}
-    inline constexpr vec(vec<3,T> XYZ, T W)
-      : base_vec4<T>(XYZ.x, XYZ.y, XYZ.z, W) {}
-    inline constexpr vec(T X, vec<3,T> YZW)
-      : base_vec4<T>(X, YZW.x, YZW.y, YZW.z) {}
-
-    explicit inline constexpr vec(T X) : base_vec4<T>(X, X, X, X) {}
-
-    template<int MASK>
-    inline constexpr vec(vec<4, T, MASK> const &v)
-      : base_vec4<T>(v[0], v[1], v[2], v[3]) {}
-
-    template<typename U, int MASK>
-    explicit inline constexpr vec(vec<4, U, MASK> const &v)
-      : base_vec4<T>(v[0], v[1], v[2], v[3]) {}
-
-    LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
-
-    static const vec<4,T> zero;
-    static const vec<4,T> axis_x;
-    static const vec<4,T> axis_y;
-    static const vec<4,T> axis_z;
-    static const vec<4,T> axis_w;
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec<4,U> const &v);
-};
-
 /*
  * Operators for swizzled vectors. Since template deduction cannot be
  * done for two arbitrary vec<> values, we help the compiler understand
  * the expected type.
  */
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline bool operator ==(vec<N,T,MASK1> const &a,
-                               vec<N,T,MASK2> const &b)
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline bool operator ==(vec<N,T,SWIZZLE1> const &a,
+                               vec<N,T,SWIZZLE2> const &b)
 {
     for (size_t i = 0; i < N; ++i)
         if (!(a[i] == b[i]))
@@ -970,9 +926,9 @@ static inline bool operator ==(vec<N,T,MASK1> const &a,
     return true;
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline bool operator !=(vec<N,T,MASK1> const &a,
-                               vec<N,T,MASK2> const &b)
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline bool operator !=(vec<N,T,SWIZZLE1> const &a,
+                               vec<N,T,SWIZZLE2> const &b)
 {
     for (size_t i = 0; i < N; ++i)
         if (a[i] != b[i])
@@ -981,15 +937,15 @@ static inline bool operator !=(vec<N,T,MASK1> const &a,
 }
 
 #define LOL_SWIZZLE_V_VV_OP(op) \
-    template<int N, int MASK1, int MASK2, typename T> \
-    inline vec<N,T> operator op(vec<N,T,MASK1> const &a, \
-                                vec<N,T,MASK2> const &b) \
+    template<int N, int SWIZZLE1, int SWIZZLE2, typename T> \
+    inline vec<N,T> operator op(vec<N,T,SWIZZLE1> const &a, \
+                                vec<N,T,SWIZZLE2> const &b) \
     { \
         return vec<N,T>(a) op vec<N,T>(b); \
     } \
     \
-    template<int N, int MASK, typename T> \
-    inline vec<N,T> operator op(vec<N,T,MASK> a, T const &b) \
+    template<int N, int SWIZZLE, typename T> \
+    inline vec<N,T> operator op(vec<N,T,SWIZZLE> a, T const &b) \
     { \
         return vec<N,T>(a) op b; \
     }
@@ -1001,8 +957,8 @@ LOL_SWIZZLE_V_VV_OP(/)
 
 #undef LOL_SWIZZLE_V_VV_OP
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> operator *(T const &val, vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> operator *(T const &val, vec<N,T,SWIZZLE> const &a)
 {
     vec<N,T> ret;
     for (size_t i = 0; i < N; ++i)
@@ -1016,8 +972,9 @@ static inline vec<N,T> operator *(T const &val, vec<N,T,MASK> const &a)
  */
 
 #define LOL_SWIZZLE_V_VV_FUN(fun) \
-    template<int N, int MASK1, int MASK2, typename T> \
-    inline vec<N,T> fun(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b) \
+    template<int N, int SWIZZLE1, int SWIZZLE2, typename T> \
+    inline vec<N,T> fun(vec<N,T,SWIZZLE1> const &a, \
+                        vec<N,T,SWIZZLE2> const &b) \
     { \
         using lol::fun; \
         vec<N,T> ret; \
@@ -1026,8 +983,8 @@ static inline vec<N,T> operator *(T const &val, vec<N,T,MASK> const &a)
         return ret; \
     } \
     \
-    template<int N, int MASK, typename T> \
-    inline vec<N,T> fun(vec<N,T,MASK> const &a, T const &b) \
+    template<int N, int SWIZZLE, typename T> \
+    inline vec<N,T> fun(vec<N,T,SWIZZLE> const &a, T const &b) \
     { \
         using lol::fun; \
         vec<N,T> ret; \
@@ -1036,8 +993,8 @@ static inline vec<N,T> operator *(T const &val, vec<N,T,MASK> const &a)
         return ret; \
     } \
     \
-    template<int N, int MASK, typename T> \
-    inline vec<N,T> fun(T const &a, vec<N,T,MASK> const &b) \
+    template<int N, int SWIZZLE, typename T> \
+    inline vec<N,T> fun(T const &a, vec<N,T,SWIZZLE> const &b) \
     { \
         using lol::fun; \
         vec<N,T> ret; \
@@ -1059,32 +1016,32 @@ LOL_SWIZZLE_V_VV_FUN(fmod)
  * vec clamp(vec, scalar, scalar)
  */
 
-template<int N, int MASK1, int MASK2, int MASK3, typename T>
-static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
-                             vec<N,T,MASK2> const &a,
-                             vec<N,T,MASK3> const &b)
+template<int N, int SWIZZLE1, int SWIZZLE2, int SWIZZLE3, typename T>
+static inline vec<N,T> clamp(vec<N,T,SWIZZLE1> const &x,
+                             vec<N,T,SWIZZLE2> const &a,
+                             vec<N,T,SWIZZLE3> const &b)
 {
     return max(min(x, b), a);
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline vec<N,T> clamp(vec<N,T,SWIZZLE1> const &x,
                              T const &a,
-                             vec<N,T,MASK2> const &b)
+                             vec<N,T,SWIZZLE2> const &b)
 {
     return max(min(x, b), a);
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
-                             vec<N,T,MASK2> const &a,
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline vec<N,T> clamp(vec<N,T,SWIZZLE1> const &x,
+                             vec<N,T,SWIZZLE2> const &a,
                              T const &b)
 {
     return max(min(x, b), a);
 }
 
-template<int N, int MASK1, typename T>
-static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
+template<int N, int SWIZZLE1, typename T>
+static inline vec<N,T> clamp(vec<N,T,SWIZZLE1> const &x,
                              T const &a,
                              T const &b)
 {
@@ -1096,17 +1053,17 @@ static inline vec<N,T> clamp(vec<N,T,MASK1> const &x,
  * vec mix(vec, vec, scalar)
  */
 
-template<int N, int MASK1, int MASK2, int MASK3, typename T>
-static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
-                           vec<N,T,MASK2> const &y,
-                           vec<N,T,MASK3> const &a)
+template<int N, int SWIZZLE1, int SWIZZLE2, int SWIZZLE3, typename T>
+static inline vec<N,T> mix(vec<N,T,SWIZZLE1> const &x,
+                           vec<N,T,SWIZZLE2> const &y,
+                           vec<N,T,SWIZZLE3> const &a)
 {
     return x + a * (y - x);
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
-                           vec<N,T,MASK2> const &y,
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline vec<N,T> mix(vec<N,T,SWIZZLE1> const &x,
+                           vec<N,T,SWIZZLE2> const &y,
                            T const &a)
 {
     return x + a * (y - x);
@@ -1116,8 +1073,8 @@ static inline vec<N,T> mix(vec<N,T,MASK1> const &x,
  * Some GLSL-like functions.
  */
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline T dot(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b)
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline T dot(vec<N,T,SWIZZLE1> const &a, vec<N,T,SWIZZLE2> const &b)
 {
     T ret(0);
     for (size_t i = 0; i < N; ++i)
@@ -1125,22 +1082,22 @@ static inline T dot(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b)
     return ret;
 }
 
-template<int N, int MASK, typename T>
-static inline T sqlength(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline T sqlength(vec<N,T,SWIZZLE> const &a)
 {
     return dot(a, a);
 }
 
-template<int N, int MASK, typename T>
-static inline T length(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline T length(vec<N,T,SWIZZLE> const &a)
 {
     /* FIXME: this is not very nice */
     return (T)sqrt((double)sqlength(a));
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline vec<N,T> lerp(vec<N,T,MASK1> const &a,
-                            vec<N,T,MASK2> const &b,
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline vec<N,T> lerp(vec<N,T,SWIZZLE1> const &a,
+                            vec<N,T,SWIZZLE2> const &b,
                             T const &s)
 {
     vec<N,T> ret;
@@ -1149,14 +1106,14 @@ static inline vec<N,T> lerp(vec<N,T,MASK1> const &a,
     return ret;
 }
 
-template<int N, int MASK1, int MASK2, typename T>
-static inline T distance(vec<N,T,MASK1> const &a, vec<N,T,MASK2> const &b)
+template<int N, int SWIZZLE1, int SWIZZLE2, typename T>
+static inline T distance(vec<N,T,SWIZZLE1> const &a, vec<N,T,SWIZZLE2> const &b)
 {
     return length(a - b);
 }
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> fract(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> fract(vec<N,T,SWIZZLE> const &a)
 {
     vec<N,T> ret;
     for (size_t i = 0; i < N; ++i)
@@ -1164,15 +1121,15 @@ static inline vec<N,T> fract(vec<N,T,MASK> const &a)
     return ret;
 }
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> normalize(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> normalize(vec<N,T,SWIZZLE> const &a)
 {
     T norm = (T)length(a);
     return norm ? a / norm : vec<N,T>(T(0));
 }
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> abs(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> abs(vec<N,T,SWIZZLE> const &a)
 {
     vec<N,T> ret;
     for (size_t i = 0; i < N; ++i)
@@ -1180,8 +1137,8 @@ static inline vec<N,T> abs(vec<N,T,MASK> const &a)
     return ret;
 }
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> degrees(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> degrees(vec<N,T,SWIZZLE> const &a)
 {
     vec<N,T> ret;
     for (size_t i = 0; i < N; ++i)
@@ -1189,8 +1146,8 @@ static inline vec<N,T> degrees(vec<N,T,MASK> const &a)
     return ret;
 }
 
-template<int N, int MASK, typename T>
-static inline vec<N,T> radians(vec<N,T,MASK> const &a)
+template<int N, int SWIZZLE, typename T>
+static inline vec<N,T> radians(vec<N,T,SWIZZLE> const &a)
 {
     vec<N,T> ret;
     for (size_t i = 0; i < N; ++i)
@@ -1203,8 +1160,8 @@ static inline vec<N,T> radians(vec<N,T,MASK> const &a)
  */
 
 #if LOL_FEATURE_CXX11_RELAXED_UNIONS
-template<int N, typename T, int MASK>
-inline vec<N, T, MASK>& vec<N, T, MASK>::operator =(vec<N,T> that)
+template<int N, typename T, int SWIZZLE>
+inline vec<N, T, SWIZZLE>& vec<N, T, SWIZZLE>::operator =(vec<N,T> that)
 {
     for (int i = 0; i < N; ++i)
         (*this)[i] = that[i];

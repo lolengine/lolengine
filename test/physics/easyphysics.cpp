@@ -157,16 +157,16 @@ void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& b
 //Internal callback when Base transform has changed.
 void EasyPhysic::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix)
 {
-    mat4 PreviousMatrixLoc = ((m_base_lock_location)?(PreviousMatrix):(lol::mat4::translate(PreviousMatrix.v3.xyz)));
+    mat4 PreviousMatrixLoc = ((m_base_lock_location)?(PreviousMatrix):(lol::mat4::translate(PreviousMatrix[3].xyz)));
     mat4 PreviousMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(PreviousMatrix))):(lol::mat4(1.f)));
-    mat4 NewMatrixLoc = ((m_base_lock_location)?(NewMatrix):(lol::mat4::translate(NewMatrix.v3.xyz)));
+    mat4 NewMatrixLoc = ((m_base_lock_location)?(NewMatrix):(lol::mat4::translate(NewMatrix[3].xyz)));
     mat4 NewMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(NewMatrix))):(lol::mat4(1.f)));
 
     if (m_ghost_object || (m_rigid_body->getCollisionFlags() & btCollisionObject::CF_KINEMATIC_OBJECT))
     {
-        mat4 ThisMatrixLoc = NewMatrixLoc * inverse(PreviousMatrixLoc) * lol::mat4::translate(m_local_to_world.v3.xyz);
+        mat4 ThisMatrixLoc = NewMatrixLoc * inverse(PreviousMatrixLoc) * lol::mat4::translate(m_local_to_world[3].xyz);
         mat4 ThisMatrixRot = NewMatrixRot * inverse(PreviousMatrixRot) * lol::mat4(lol::quat(m_local_to_world));
-        SetTransform(ThisMatrixLoc.v3.xyz, lol::mat4(lol::quat(ThisMatrixRot)));
+        SetTransform(ThisMatrixLoc[3].xyz, lol::mat4(lol::quat(ThisMatrixRot)));
     }
 }
 
@@ -247,7 +247,7 @@ void EasyPhysic::InitBodyToGhost()
     m_collision_object = m_ghost_object;
     m_collision_object->setUserPointer(this);
 
-    SetTransform(m_local_to_world.v3.xyz, lol::quat(m_local_to_world));
+    SetTransform(m_local_to_world[3].xyz, lol::quat(m_local_to_world));
 
     m_ghost_object->setCollisionFlags(m_ghost_object->getCollisionFlags());
 }
