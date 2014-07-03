@@ -426,25 +426,25 @@ template <typename T> struct Cmplx
 };
 
 template<typename T>
-static inline T dot(Cmplx<T> const &q1, Cmplx<T> const &q2)
+static inline T dot(Cmplx<T> const &z1, Cmplx<T> const &z2)
 {
     T ret(0);
-    for (size_t i = 0; i < sizeof(ret) / sizeof(T); ++i)
-        ret += q1[i] * q2[i];
+    for (size_t i = 0; i < sizeof(Cmplx<T>) / sizeof(T); ++i)
+        ret += z1[i] * z2[i];
     return ret;
 }
 
 template<typename T>
-static inline T sqlength(Cmplx<T> const &q)
+static inline T sqlength(Cmplx<T> const &z)
 {
-    return dot(q, q);
+    return dot(z, z);
 }
 
 template<typename T>
-static inline T length(Cmplx<T> const &q)
+static inline T length(Cmplx<T> const &z)
 {
     /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(q));
+    return (T)sqrt((double)sqlength(z));
 }
 
 template<typename T>
@@ -1274,7 +1274,7 @@ template<typename T>
 static inline T dot(Quat<T> const &q1, Quat<T> const &q2)
 {
     T ret(0);
-    for (size_t i = 0; i < sizeof(ret) / sizeof(T); ++i)
+    for (size_t i = 0; i < sizeof(Quat<T>) / sizeof(T); ++i)
         ret += q1[i] * q2[i];
     return ret;
 }
