@@ -38,7 +38,7 @@ int const FULL_SWIZZLE = 0xaaaa;
 int const NO_SWIZZLE = 0xbbbb;
 
 template<int N, typename T, int SWIZZLE = FULL_SWIZZLE> struct vec;
-template<int COLS, int ROWS, typename T> struct matrix;
+template<int COLS, int ROWS, typename T> struct mat;
 template<typename T> struct Cmplx;
 template<typename T> struct Quat;
 
@@ -68,16 +68,16 @@ LOL_VECTOR_TYPEDEFS(vec<2 COMMA, >, vec2)
 LOL_VECTOR_TYPEDEFS(vec<3 COMMA, >, vec3)
 LOL_VECTOR_TYPEDEFS(vec<4 COMMA, >, vec4)
 
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 2 COMMA, >, mat2)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 3 COMMA, >, mat3)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 4 COMMA, >, mat4)
+LOL_VECTOR_TYPEDEFS(mat<2 COMMA 2 COMMA, >, mat2)
+LOL_VECTOR_TYPEDEFS(mat<3 COMMA 3 COMMA, >, mat3)
+LOL_VECTOR_TYPEDEFS(mat<4 COMMA 4 COMMA, >, mat4)
 
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 3 COMMA, >, mat2x3)
-LOL_VECTOR_TYPEDEFS(matrix<2 COMMA 4 COMMA, >, mat2x4)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 2 COMMA, >, mat3x2)
-LOL_VECTOR_TYPEDEFS(matrix<3 COMMA 4 COMMA, >, mat3x4)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 2 COMMA, >, mat4x2)
-LOL_VECTOR_TYPEDEFS(matrix<4 COMMA 3 COMMA, >, mat4x3)
+LOL_VECTOR_TYPEDEFS(mat<2 COMMA 3 COMMA, >, mat2x3)
+LOL_VECTOR_TYPEDEFS(mat<2 COMMA 4 COMMA, >, mat2x4)
+LOL_VECTOR_TYPEDEFS(mat<3 COMMA 2 COMMA, >, mat3x2)
+LOL_VECTOR_TYPEDEFS(mat<3 COMMA 4 COMMA, >, mat3x4)
+LOL_VECTOR_TYPEDEFS(mat<4 COMMA 2 COMMA, >, mat4x2)
+LOL_VECTOR_TYPEDEFS(mat<4 COMMA 3 COMMA, >, mat4x3)
 
 LOL_VECTOR_TYPEDEFS(Cmplx<, >, cmplx)
 LOL_VECTOR_TYPEDEFS(Quat<, >, quat)

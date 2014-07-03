@@ -155,8 +155,8 @@ template <typename T> struct Quat
     explicit inline constexpr Quat(Quat<U> const &q)
       : w(q.w), x(q.x), y(q.y), z(q.z) {}
 
-    Quat(matrix<3,3,T> const &m);
-    Quat(matrix<4,4,T> const &m);
+    Quat(mat<3,3,T> const &m);
+    Quat(mat<4,4,T> const &m);
 
     LOL_COMMON_MEMBER_OPS(w)
     LOL_NONVECTOR_MEMBER_OPS()
