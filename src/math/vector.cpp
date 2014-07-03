@@ -378,7 +378,7 @@ template<> mat3 mat3::rotate(float degrees, vec3 v)
     return rotate(degrees, v.x, v.y, v.z);
 }
 
-template<> mat3::mat(quat const &q)
+template<> mat3::mat_t(quat const &q)
 {
     float n = norm(q);
 
@@ -405,7 +405,7 @@ template<> mat3::mat(quat const &q)
     (*this)[2][2] = 1.0f - s * (q.x * q.x + q.y * q.y);
 }
 
-template<> mat4::mat(quat const &q)
+template<> mat4::mat_t(quat const &q)
 {
     *this = mat4(mat3(q), 1.f);
 }
@@ -448,12 +448,12 @@ static inline void MatrixToQuat(quat &that, mat3 const &m)
     }
 }
 
-template<> quat::Quat(mat3 const &m)
+template<> quat::quat_t(mat3 const &m)
 {
     MatrixToQuat(*this, m);
 }
 
-template<> quat::Quat(mat4 const &m)
+template<> quat::quat_t(mat4 const &m)
 {
     MatrixToQuat(*this, mat3(m));
 }
