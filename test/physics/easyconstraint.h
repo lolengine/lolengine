@@ -83,15 +83,15 @@ private:
     void CustomInitConstraintToPoint2Point()
     {
         m_p2p_constraint = new btPoint2PointConstraint(*m_a_physobj->m_rigid_body, *m_b_physobj->m_rigid_body,
-                                                        LOL2BT_VEC3(m_a_transform.v3.xyz * LOL2BT_UNIT), LOL2BT_VEC3(m_b_transform.v3.xyz * LOL2BT_UNIT));
+                                                        LOL2BT_VEC3(m_a_transform[3].xyz * LOL2BT_UNIT), LOL2BT_VEC3(m_b_transform[3].xyz * LOL2BT_UNIT));
         m_typed_constraint = m_p2p_constraint;
     }
 
     void CustomInitConstraintToHinge()
     {
         m_hinge_constraint = new btHingeConstraint(*m_a_physobj->m_rigid_body, *m_b_physobj->m_rigid_body,
-                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform.v3.xyz * LOL2BT_UNIT)),
-                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform.v3.xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform[3].xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform[3].xyz * LOL2BT_UNIT)),
                                                         m_using_ref_a);
         m_typed_constraint = m_hinge_constraint;
     }
@@ -99,8 +99,8 @@ private:
     void CustomInitConstraintToSlider()
     {
         m_slider_constraint = new btSliderConstraint(*m_a_physobj->m_rigid_body, *m_b_physobj->m_rigid_body,
-                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform.v3.xyz * LOL2BT_UNIT)),
-                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform.v3.xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform[3].xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform[3].xyz * LOL2BT_UNIT)),
                                                         m_using_ref_a);
         m_typed_constraint = m_slider_constraint;
     }
@@ -108,16 +108,16 @@ private:
     void CustomInitConstraintToConeTwist()
     {
         m_cone_twist_constraint = new btConeTwistConstraint(*m_a_physobj->m_rigid_body, *m_b_physobj->m_rigid_body,
-                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform.v3.xyz * LOL2BT_UNIT)),
-                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform.v3.xyz * LOL2BT_UNIT)));
+                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform[3].xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform[3].xyz * LOL2BT_UNIT)));
         m_typed_constraint = m_cone_twist_constraint;
     }
 
     void CustomInitConstraintTo6Dof()
     {
         m_6dof_constraint = new btGeneric6DofConstraint(*m_a_physobj->m_rigid_body, *m_b_physobj->m_rigid_body,
-                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform.v3.xyz * LOL2BT_UNIT)),
-                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform.v3.xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_a_transform)), LOL2BT_VEC3(m_a_transform[3].xyz * LOL2BT_UNIT)),
+                                                        btTransform(LOL2BT_QUAT(quat(m_b_transform)), LOL2BT_VEC3(m_b_transform[3].xyz * LOL2BT_UNIT)),
                                                         m_using_ref_a);
         m_typed_constraint = m_6dof_constraint;
     }

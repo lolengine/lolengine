@@ -105,7 +105,7 @@ void RemezSolver::Init()
 
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
-    Matrix<real> mat(m_order + 1, m_order + 1);
+    LinearSystem<real> system(m_order + 1);
     for (int i = 0; i < m_order + 1; i++)
     {
         /* Compute the powers of x_i */
@@ -120,19 +120,19 @@ void RemezSolver::Init()
             real sum = 0.0;
             for (int k = 0; k < m_order + 1; k++)
                 sum += (real)Cheby(n, k) * powers[k];
-            mat.m(i, n) = sum;
+            system.m(i, n) = sum;
         }
     }
 
     /* Solve the system */
-    mat = mat.inv();
+    system = system.inv();
 
     /* Compute interpolation coefficients */
     for (int j = 0; j < m_order + 1; j++)
     {
         m_coeff[j] = 0;
         for (int i = 0; i < m_order + 1; i++)
-            m_coeff[j] += mat.m(j, i) * fxn[i];
+            m_coeff[j] += system.m(j, i) * fxn[i];
     }
 }
 
@@ -245,7 +245,7 @@ void RemezSolver::Step()
 
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
-    Matrix<real> mat(m_order + 2, m_order + 2);
+    LinearSystem<real> system(m_order + 2);
     for (int i = 0; i < m_order + 2; i++)
     {
         /* Compute the powers of x_i */
@@ -260,29 +260,29 @@ void RemezSolver::Step()
             real sum = 0.0;
             for (int k = 0; k < m_order + 1; k++)
                 sum += (real)Cheby(n, k) * powers[k];
-            mat.m(i, n) = sum;
+            system.m(i, n) = sum;
         }
         if (i & 1)
-            mat.m(i, m_order + 1) = fabs(Weight(m_control[i]));
+            system.m(i, m_order + 1) = fabs(Weight(m_control[i]));
         else
-            mat.m(i, m_order + 1) = -fabs(Weight(m_control[i]));
+            system.m(i, m_order + 1) = -fabs(Weight(m_control[i]));
     }
 
     /* Solve the system */
-    mat = mat.inv();
+    system = system.inv();
 
     /* Compute interpolation coefficients */
     for (int j = 0; j < m_order + 1; j++)
     {
         m_coeff[j] = 0;
         for (int i = 0; i < m_order + 2; i++)
-            m_coeff[j] += mat.m(j, i) * fxn[i];
+            m_coeff[j] += system.m(j, i) * fxn[i];
     }
 
     /* Compute the error */
     real error = 0;
     for (int i = 0; i < m_order + 2; i++)
-        error += mat.m(m_order + 1, i) * fxn[i];
+        error += system.m(m_order + 1, i) * fxn[i];
 }
 
 int RemezSolver::Cheby(int n, int k)

@@ -28,7 +28,10 @@ namespace lol
 #   define constexpr /* */
 #endif
 
-/* The generic "matrix" type, which is a fixed-size matrix */
+/*
+ * The generic "matrix" type, which is fixed-size
+ */
+
 template<int COLS, int ROWS, typename T>
 struct matrix
 {
@@ -61,25 +64,42 @@ struct matrix<2, 2, T>
     typedef matrix<2,2,T> type;
 
     inline matrix() {}
-    inline matrix(vec<2,T> V0, vec<2,T> V1)
-      : v0(V0), v1(V1) {}
+    inline matrix(vec<2,T> v0, vec<2,T> v1)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ v0, v1 } {}
+#else
+      : m_v0(v0), m_v1(v1) {}
+#endif
 
     explicit inline matrix(T const &val)
-      : v0(val, (T)0),
-        v1((T)0, val) {}
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<2,T>(val, T(0)),
+                vec<2,T>(T(0), val) } {}
+#else
+      : m_v0(val, T(0)),
+        m_v1(T(0), val) {}
+#endif
 
-    explicit inline matrix(matrix<4,4,T> const &mat)
-      : v0(mat[0].xy),
-        v1(mat[1].xy) {}
+    explicit inline matrix(matrix<4,4,T> const &m)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ m[0].xy, m[1].xy } {}
+#else
+      : m_v0(m[0].xy), m_v1(m[1].xy) {}
+#endif
 
-    inline vec<2,T>& operator[](size_t n) { return (&v0)[n]; }
-    inline vec<2,T> const& operator[](size_t n) const { return (&v0)[n]; }
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    inline vec<2,T>& operator[](size_t n) { return m_data[n]; }
+    inline vec<2,T> const& operator[](size_t n) const { return m_data[n]; }
+#else
+    inline vec<2,T>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec<2,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+#endif
 
     /* Helpers for transformation matrices */
     static matrix<2,2,T> rotate(T degrees);
-    static inline matrix<2,2,T> rotate(matrix<2,2,T> mat, T degrees)
+    static inline matrix<2,2,T> rotate(matrix<2,2,T> m, T degrees)
     {
-        return rotate(degrees) * mat;
+        return rotate(degrees) * m;
     }
 
     void printf() const;
@@ -89,9 +109,14 @@ struct matrix<2, 2, T>
     friend std::ostream &operator<<(std::ostream &stream,
                                     matrix<2,2,U> const &m);
 
-    vec<2,T> v0, v1;
-
     static const matrix<2,2,T> identity;
+
+private:
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    vec<2,T> m_data[2];
+#else
+    vec<2,T> m_v0, m_v1;
+#endif
 };
 
 /*
@@ -104,33 +129,51 @@ struct matrix<3,3,T>
     typedef matrix<3,3,T> type;
 
     inline matrix() {}
-    inline matrix(vec<3,T> V0, vec<3,T> V1, vec<3,T> V2)
-      : v0(V0), v1(V1), v2(V2) {}
+    inline matrix(vec<3,T> v0, vec<3,T> v1, vec<3,T> v2)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ v0, v1, v2 } {}
+#else
+      : m_v0(v0), m_v1(v1), m_v2(v2) {}
+#endif
 
     explicit inline matrix(T const &val)
-      : v0(val, (T)0, (T)0),
-        v1((T)0, val, (T)0),
-        v2((T)0, (T)0, val) {}
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<3,T>(val, (T)0, (T)0),
+                vec<3,T>((T)0, val, (T)0),
+                vec<3,T>((T)0, (T)0, val) } {}
+#else
+      : m_v0(val, (T)0, (T)0),
+        m_v1((T)0, val, (T)0),
+        m_v2((T)0, (T)0, val) {}
+#endif
 
-    explicit inline matrix(matrix<2,2,T> mat)
-      : v0(mat[0], (T)0),
-        v1(mat[1], (T)0),
-        v2((T)0, (T)0, (T)0) {}
+    explicit inline matrix(matrix<2,2,T> m, T const &val = T(1))
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<3,T>(m[0], (T)0),
+                vec<3,T>(m[1], (T)0),
+                vec<3,T>((T)0, (T)0, val) } {}
+#else
+      : m_v0(m[0], (T)0),
+        m_v1(m[1], (T)0),
+        m_v2((T)0, (T)0, val) {}
+#endif
 
-    explicit inline matrix(matrix<2,2,T> mat, T const &val)
-      : v0(vec<3,T>(mat[0], (T)0)),
-        v1(vec<3,T>(mat[1], (T)0)),
-        v2((T)0, (T)0, val) {}
-
-    explicit inline matrix(matrix<4,4,T> const &mat)
-      : v0(mat[0].xyz),
-        v1(mat[1].xyz),
-        v2(mat[2].xyz) {}
+    explicit inline matrix(matrix<4,4,T> const &m)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ m[0].xyz, m[1].xyz, m[2].xyz } {}
+#else
+      : m_v0(m[0].xyz), m_v1(m[1].xyz), m_v2(m[2].xyz) {}
+#endif
 
     explicit matrix(Quat<T> const &q);
 
-    inline vec<3,T>& operator[](size_t n) { return (&v0)[n]; }
-    inline vec<3,T> const& operator[](size_t n) const { return (&v0)[n]; }
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    inline vec<3,T>& operator[](size_t n) { return m_data[n]; }
+    inline vec<3,T> const& operator[](size_t n) const { return m_data[n]; }
+#else
+    inline vec<3,T>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec<3,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+#endif
 
     /* Helpers for transformation matrices */
     static matrix<3,3,T> scale(T x);
@@ -165,9 +208,9 @@ struct matrix<3,3,T>
     static matrix<3,3,T> fromeuler_zxz(T phi, T theta, T psi);
     static matrix<3,3,T> fromeuler_zyz(T phi, T theta, T psi);
 
-    static inline matrix<3,3,T> rotate(matrix<3,3,T> mat, T degrees, vec<3,T> v)
+    static inline matrix<3,3,T> rotate(matrix<3,3,T> m, T degrees, vec<3,T> v)
     {
-        return rotate(degrees, v) * mat;
+        return rotate(degrees, v) * m;
     }
 
     void printf() const;
@@ -177,9 +220,14 @@ struct matrix<3,3,T>
     friend std::ostream &operator<<(std::ostream &stream,
                                     matrix<3,3,U> const &m);
 
-    vec<3,T> v0, v1, v2;
-
     static const matrix<3,3,T> identity;
+
+private:
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    vec<3,T> m_data[3];
+#else
+    vec<3,T> m_v0, m_v1, m_v2;
+#endif
 };
 
 /*
@@ -192,43 +240,61 @@ struct matrix<4, 4, T>
     typedef matrix<4,4,T> type;
 
     inline matrix() {}
-    inline matrix(vec<4,T> V0, vec<4,T> V1, vec<4,T> V2, vec<4,T> V3)
-      : v0(V0), v1(V1), v2(V2), v3(V3) {}
+    inline matrix(vec<4,T> v0, vec<4,T> v1, vec<4,T> v2, vec<4,T> v3)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ v0, v1, v2, v3 } {}
+#else
+      : m_v0(v0), m_v1(v1), m_v2(v2), m_v3(v3) {}
+#endif
 
     explicit inline matrix(T const &val)
-      : v0(val, (T)0, (T)0, (T)0),
-        v1((T)0, val, (T)0, (T)0),
-        v2((T)0, (T)0, val, (T)0),
-        v3((T)0, (T)0, (T)0, val) {}
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<4,T>(val, (T)0, (T)0, (T)0),
+                vec<4,T>((T)0, val, (T)0, (T)0),
+                vec<4,T>((T)0, (T)0, val, (T)0),
+                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+#else
+      : m_v0(val, (T)0, (T)0, (T)0),
+        m_v1((T)0, val, (T)0, (T)0),
+        m_v2((T)0, (T)0, val, (T)0),
+        m_v3((T)0, (T)0, (T)0, val) {}
+#endif
 
-    explicit inline matrix(matrix<2,2,T> mat)
-      : v0(mat[0], (T)0, (T)0),
-        v1(mat[1], (T)0, (T)0),
-        v2((T)0, (T)0, (T)0, (T)0),
-        v3((T)0, (T)0, (T)0, (T)0) {}
+    explicit inline matrix(matrix<2,2,T> m, T const &val = T(1))
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<4,T>(m[0], (T)0, (T)0),
+                vec<4,T>(m[1], (T)0, (T)0),
+                vec<4,T>((T)0, (T)0, val, (T)0),
+                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+#else
+      : m_v0(m[0], (T)0, (T)0),
+        m_v1(m[1], (T)0, (T)0),
+        m_v2((T)0, (T)0, val, (T)0),
+        m_v3((T)0, (T)0, (T)0, val) {}
+#endif
 
-    explicit inline matrix(matrix<2,2,T> mat, T const &val1, T const &val2)
-      : v0(mat[0], (T)0, (T)0),
-        v1(mat[1], (T)0, (T)0),
-        v2((T)0, (T)0, val1, (T)0),
-        v3((T)0, (T)0, (T)0, val2) {}
-
-    explicit inline matrix(matrix<3,3,T> mat)
-      : v0(mat[0], (T)0),
-        v1(mat[1], (T)0),
-        v2(mat[2], (T)0),
-        v3((T)0, (T)0, (T)0, (T)0) {}
-
-    explicit inline matrix(matrix<3,3,T> mat, T const &val)
-      : v0(mat[0], (T)0),
-        v1(mat[1], (T)0),
-        v2(mat[2], (T)0),
-        v3((T)0, (T)0, (T)0, val) {}
+    explicit inline matrix(matrix<3,3,T> m, T const &val = T(1))
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ vec<4,T>(m[0], (T)0),
+                vec<4,T>(m[1], (T)0),
+                vec<4,T>(m[2], (T)0),
+                vec<4,T>((T)0, (T)0, (T)0, val) } {}
+#else
+      : m_v0(m[0], (T)0),
+        m_v1(m[1], (T)0),
+        m_v2(m[2], (T)0),
+        m_v3((T)0, (T)0, (T)0, val) {}
+#endif
 
     explicit matrix(Quat<T> const &q);
 
-    inline vec<4,T>& operator[](size_t n) { return (&v0)[n]; }
-    inline vec<4,T> const& operator[](size_t n) const { return (&v0)[n]; }
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    inline vec<4,T>& operator[](size_t n) { return m_data[n]; }
+    inline vec<4,T> const& operator[](size_t n) const { return m_data[n]; }
+#else
+    inline vec<4,T>& operator[](size_t n) { return (&m_v0)[n]; }
+    inline vec<4,T> const& operator[](size_t n) const { return (&m_v0)[n]; }
+#endif
 
     /* Helpers for transformation matrices */
     static matrix<4,4,T> translate(T x, T y, T z);
@@ -249,9 +315,9 @@ struct matrix<4, 4, T>
         return matrix<4,4,T>(matrix<3,3,T>::scale(v), (T)1);
     }
 
-    static inline matrix<4,4,T> translate(matrix<4,4,T> const &mat, vec<3,T> v)
+    static inline matrix<4,4,T> translate(matrix<4,4,T> const &m, vec<3,T> v)
     {
-        return translate(v) * mat;
+        return translate(v) * m;
     }
 
     static inline matrix<4,4,T> rotate(T degrees, T x, T y, T z)
@@ -264,9 +330,9 @@ struct matrix<4, 4, T>
         return matrix<4,4,T>(matrix<3,3,T>::rotate(degrees, v), (T)1);
     }
 
-    static inline matrix<4,4,T> rotate(matrix<4,4,T> &mat, T degrees, vec<3,T> v)
+    static inline matrix<4,4,T> rotate(matrix<4,4,T> &m, T degrees, vec<3,T> v)
     {
-        return rotate(degrees, v) * mat;
+        return rotate(degrees, v) * m;
     }
 
     static matrix<4,4,T> fromeuler_xyz(vec<3,T> const &v);
@@ -312,22 +378,33 @@ struct matrix<4, 4, T>
     friend std::ostream &operator<<(std::ostream &stream,
                                     matrix<4,4,U> const &m);
 
-    vec<4,T> v0, v1, v2, v3;
-
     static const matrix<4,4,T> identity;
+
+private:
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+    vec<4,T> m_data[4];
+#else
+    vec<4,T> m_v0, m_v1, m_v2, m_v3;
+#endif
 };
 
 template<typename T> T determinant(matrix<2,2,T> const &);
 template<typename T> T determinant(matrix<3,3,T> const &);
 template<typename T> T determinant(matrix<4,4,T> const &);
 
-template<typename T> matrix<2,2,T> transpose(matrix<2,2,T> const &);
-template<typename T> matrix<3,3,T> transpose(matrix<3,3,T> const &);
-template<typename T> matrix<4,4,T> transpose(matrix<4,4,T> const &);
-
 template<typename T> matrix<2,2,T> inverse(matrix<2,2,T> const &);
 template<typename T> matrix<3,3,T> inverse(matrix<3,3,T> const &);
 template<typename T> matrix<4,4,T> inverse(matrix<4,4,T> const &);
+
+template<int COLS, int ROWS, typename T>
+static inline matrix<ROWS, COLS, T> transpose(matrix<COLS, ROWS, T> const &m)
+{
+    matrix<ROWS, COLS, T> ret;
+    for (int i = 0; i < COLS; ++i)
+        for (int j = 0; j < ROWS; ++j)
+            ret[j][i] = m[i][j];
+    return ret;
+}
 
 /*
  * Addition/subtraction/unary
@@ -383,7 +460,7 @@ static inline matrix<COLS, ROWS, T> operator -(matrix<COLS, ROWS, T> const &m)
 }
 
 /*
- * Matrix-vector multiplication
+ * Matrix-vector and vector-matrix multiplication
  */
 
 template<int COLS, int ROWS, int MASK, typename T>
@@ -393,6 +470,16 @@ static inline vec<ROWS, T> operator *(matrix<COLS, ROWS, T> const &m,
     vec<ROWS, T> ret(T(0));
     for (int i = 0; i < COLS; ++i)
         ret += m[i] * v[i];
+    return ret;
+}
+
+template<int COLS, int ROWS, int MASK, typename T>
+static inline vec<COLS, T> operator *(vec<ROWS, T, MASK> const &v,
+                                      matrix<COLS, ROWS, T> const &m)
+{
+    vec<COLS, T> ret(T(0));
+    for (int i = 0; i < COLS; ++i)
+        ret[i] = dot(v, m[i]);
     return ret;
 }
 

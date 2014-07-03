@@ -1449,15 +1449,15 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 mat = mat3::rotate(degrees(asin(1.f / sqrt(2.f + phi))),
-                            vec3(0.f, 0.f, 1.f));
+    mat3 m = mat3::rotate(degrees(asin(1.f / sqrt(2.f + phi))),
+                          vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {
         float x = (i & 1) ? 0.5f : -0.5f;
         float y = (i & 2) ? phi * 0.5f : phi * -0.5f;
-        vertices << mat * vec3(x, y, 0.f);
-        vertices << mat * vec3(0.f, x, y);
-        vertices << mat * vec3(y, 0.f, x);
+        vertices << m * vec3(x, y, 0.f);
+        vertices << m * vec3(0.f, x, y);
+        vertices << m * vec3(y, 0.f, x);
     }
 
     static int const trilist[] =

@@ -17,38 +17,33 @@ using namespace lol;
  * naive inversion and is used for the Remez inversion method.
  */
 
-template<typename T> struct Matrix
+template<typename T> struct LinearSystem
 {
-    inline Matrix<T>(int cols, int rows)
-      : m_cols(cols),
-        m_rows(rows)
+    inline LinearSystem<T>(int cols)
+      : m_cols(cols)
     {
         ASSERT(cols > 0);
-        ASSERT(rows > 0);
 
-        m_data.Resize(m_cols * m_rows);
+        m_data.Resize(m_cols * m_cols);
     }
 
-    inline Matrix<T>(Matrix<T> const &other)
+    inline LinearSystem<T>(LinearSystem<T> const &other)
     {
         m_cols = other.m_cols;
-        m_rows = other.m_rows;
         m_data = other.m_data;
     }
 
     void Init(T const &x)
     {
-        for (int j = 0; j < m_rows; j++)
+        for (int j = 0; j < m_cols; j++)
             for (int i = 0; i < m_cols; i++)
                 m(i, j) = (i == j) ? x : (T)0;
     }
 
     /* Naive matrix inversion */
-    Matrix<T> inv() const
+    LinearSystem<T> inv() const
     {
-        ASSERT(m_cols == m_rows);
-
-        Matrix a(*this), b(m_cols, m_rows);
+        LinearSystem a(*this), b(m_cols);
 
         b.Init((T)1);
 
@@ -100,10 +95,10 @@ template<typename T> struct Matrix
         return b;
     }
 
-    inline T & m(int i, int j) { return m_data[m_rows * j + i]; }
-    inline T const & m(int i, int j) const { return m_data[m_rows * j + i]; }
+    inline T & m(int i, int j) { return m_data[m_cols * j + i]; }
+    inline T const & m(int i, int j) const { return m_data[m_cols * j + i]; }
 
-    int m_cols, m_rows;
+    int m_cols;
 
 private:
     array<T> m_data;

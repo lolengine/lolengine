@@ -46,125 +46,98 @@ static inline float det3(float a, float b, float c,
 /*
  * Return the cofactor of the (i,j) entry in a 2×2 matrix.
  */
-static inline float cofact(mat2 const &mat, int i, int j)
+static inline float cofact(mat2 const &m, int i, int j)
 {
-    float tmp = mat[(i + 1) & 1][(j + 1) & 1];
+    float tmp = m[(i + 1) & 1][(j + 1) & 1];
     return ((i + j) & 1) ? -tmp : tmp;
 }
 
 /*
  * Return the cofactor of the (i,j) entry in a 3×3 matrix.
  */
-static inline float cofact(mat3 const &mat, int i, int j)
+static inline float cofact(mat3 const &m, int i, int j)
 {
-    return det2(mat[(i + 1) % 3][(j + 1) % 3],
-                mat[(i + 2) % 3][(j + 1) % 3],
-                mat[(i + 1) % 3][(j + 2) % 3],
-                mat[(i + 2) % 3][(j + 2) % 3]);
+    return det2(m[(i + 1) % 3][(j + 1) % 3],
+                m[(i + 2) % 3][(j + 1) % 3],
+                m[(i + 1) % 3][(j + 2) % 3],
+                m[(i + 2) % 3][(j + 2) % 3]);
 }
 
 /*
  * Return the cofactor of the (i,j) entry in a 4×4 matrix.
  */
-static inline float cofact(mat4 const &mat, int i, int j)
+static inline float cofact(mat4 const &m, int i, int j)
 {
-    return det3(mat[(i + 1) & 3][(j + 1) & 3],
-                mat[(i + 2) & 3][(j + 1) & 3],
-                mat[(i + 3) & 3][(j + 1) & 3],
-                mat[(i + 1) & 3][(j + 2) & 3],
-                mat[(i + 2) & 3][(j + 2) & 3],
-                mat[(i + 3) & 3][(j + 2) & 3],
-                mat[(i + 1) & 3][(j + 3) & 3],
-                mat[(i + 2) & 3][(j + 3) & 3],
-                mat[(i + 3) & 3][(j + 3) & 3]) * (((i + j) & 1) ? -1.0f : 1.0f);
+    return det3(m[(i + 1) & 3][(j + 1) & 3],
+                m[(i + 2) & 3][(j + 1) & 3],
+                m[(i + 3) & 3][(j + 1) & 3],
+                m[(i + 1) & 3][(j + 2) & 3],
+                m[(i + 2) & 3][(j + 2) & 3],
+                m[(i + 3) & 3][(j + 2) & 3],
+                m[(i + 1) & 3][(j + 3) & 3],
+                m[(i + 2) & 3][(j + 3) & 3],
+                m[(i + 3) & 3][(j + 3) & 3]) * (((i + j) & 1) ? -1.0f : 1.0f);
 }
 
-template<> float determinant(mat2 const &mat)
+template<> float determinant(mat2 const &m)
 {
-    return det2(mat[0][0], mat[0][1],
-                mat[1][0], mat[1][1]);
+    return det2(m[0][0], m[0][1],
+                m[1][0], m[1][1]);
 }
 
-template<> mat2 transpose(mat2 const &mat)
+template<> mat2 inverse(mat2 const &m)
 {
     mat2 ret;
-    for (int j = 0; j < 2; j++)
-        for (int i = 0; i < 2; i++)
-            ret[j][i] = mat[i][j];
-    return ret;
-}
-
-template<> mat2 inverse(mat2 const &mat)
-{
-    mat2 ret;
-    float d = determinant(mat);
+    float d = determinant(m);
     if (d)
     {
         d = 1.0f / d;
         for (int j = 0; j < 2; j++)
             for (int i = 0; i < 2; i++)
-                ret[j][i] = cofact(mat, i, j) * d;
+                ret[j][i] = cofact(m, i, j) * d;
     }
     return ret;
 }
 
-template<> float determinant(mat3 const &mat)
+template<> float determinant(mat3 const &m)
 {
-    return det3(mat[0][0], mat[0][1], mat[0][2],
-                mat[1][0], mat[1][1], mat[1][2],
-                mat[2][0], mat[2][1], mat[2][2]);
+    return det3(m[0][0], m[0][1], m[0][2],
+                m[1][0], m[1][1], m[1][2],
+                m[2][0], m[2][1], m[2][2]);
 }
 
-template<> mat3 transpose(mat3 const &mat)
+template<> mat3 inverse(mat3 const &m)
 {
     mat3 ret;
-    for (int j = 0; j < 3; j++)
-        for (int i = 0; i < 3; i++)
-            ret[j][i] = mat[i][j];
-    return ret;
-}
-
-template<> mat3 inverse(mat3 const &mat)
-{
-    mat3 ret;
-    float d = determinant(mat);
+    float d = determinant(m);
     if (d)
     {
         d = 1.0f / d;
         for (int j = 0; j < 3; j++)
             for (int i = 0; i < 3; i++)
-                ret[j][i] = cofact(mat, i, j) * d;
+                ret[j][i] = cofact(m, i, j) * d;
     }
     return ret;
 }
 
-template<> float determinant(mat4 const &mat)
+template<> float determinant(mat4 const &m)
 {
     float ret = 0;
     for (int n = 0; n < 4; n++)
-        ret += mat[n][0] * cofact(mat, n, 0);
+        ret += m[n][0] * cofact(m, n, 0);
     return ret;
 }
 
-template<> mat4 transpose(mat4 const &mat)
+template<> mat4 inverse(mat4 const &m)
 {
     mat4 ret;
-    for (int j = 0; j < 4; j++)
-        for (int i = 0; i < 4; i++)
-            ret[j][i] = mat[i][j];
-    return ret;
-}
-
-template<> mat4 inverse(mat4 const &mat)
-{
-    mat4 ret;
-    float d = determinant(mat);
+    float d = determinant(m);
     if (d)
     {
         d = 1.0f / d;
         for (int j = 0; j < 4; j++)
             for (int i = 0; i < 4; i++)
-                ret[j][i] = cofact(mat, i, j) * d;
+                ret[j][i] = cofact(m, i, j) * d;
     }
     return ret;
 }
@@ -419,17 +392,17 @@ template<> mat3::matrix(quat const &q)
 
     float s = 2.0f / n;
 
-    v0[0] = 1.0f - s * (q.y * q.y + q.z * q.z);
-    v0[1] = s * (q.x * q.y + q.z * q.w);
-    v0[2] = s * (q.x * q.z - q.y * q.w);
+    (*this)[0][0] = 1.0f - s * (q.y * q.y + q.z * q.z);
+    (*this)[0][1] = s * (q.x * q.y + q.z * q.w);
+    (*this)[0][2] = s * (q.x * q.z - q.y * q.w);
 
-    v1[0] = s * (q.x * q.y - q.z * q.w);
-    v1[1] = 1.0f - s * (q.z * q.z + q.x * q.x);
-    v1[2] = s * (q.y * q.z + q.x * q.w);
+    (*this)[1][0] = s * (q.x * q.y - q.z * q.w);
+    (*this)[1][1] = 1.0f - s * (q.z * q.z + q.x * q.x);
+    (*this)[1][2] = s * (q.y * q.z + q.x * q.w);
 
-    v2[0] = s * (q.x * q.z + q.y * q.w);
-    v2[1] = s * (q.y * q.z - q.x * q.w);
-    v2[2] = 1.0f - s * (q.x * q.x + q.y * q.y);
+    (*this)[2][0] = s * (q.x * q.z + q.y * q.w);
+    (*this)[2][1] = s * (q.y * q.z - q.x * q.w);
+    (*this)[2][2] = 1.0f - s * (q.x * q.x + q.y * q.y);
 }
 
 template<> mat4::matrix(quat const &q)

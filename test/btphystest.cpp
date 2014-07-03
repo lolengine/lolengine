@@ -285,8 +285,8 @@ void BtPhysTest::InitApp()
             {
                 EasyConstraint* new_constraint = new EasyConstraint();
 
-                vec3 A2B = .5f * (RopeElements[i]->GetPhysic()->GetTransform().v3.xyz -
-                            RopeElements[i - 1]->GetPhysic()->GetTransform().v3.xyz);
+                vec3 A2B = .5f * (RopeElements[i]->GetPhysic()->GetTransform()[3].xyz -
+                            RopeElements[i - 1]->GetPhysic()->GetTransform()[3].xyz);
                 new_constraint->SetPhysObjA(RopeElements[i - 1]->GetPhysic(), lol::mat4::translate(A2B));
                 new_constraint->SetPhysObjB(RopeElements[i]->GetPhysic(), lol::mat4::translate(-A2B));
                 new_constraint->InitConstraintToPoint2Point();
@@ -349,7 +349,7 @@ void BtPhysTest::TickGame(float seconds)
         PhysicsObject* PhysObj = m_physobj_list[i].m1;
         float &Timer = m_physobj_list[i].m2;
 
-        vec3 obj_loc = PhysObj->GetPhysic()->GetTransform().v3.xyz;
+        vec3 obj_loc = PhysObj->GetPhysic()->GetTransform()[3].xyz;
 
         if (m_cam_target == -1 || m_cam_target == i)
         {
@@ -371,7 +371,7 @@ void BtPhysTest::TickGame(float seconds)
                     LocalPos = mat4::translate(vec3(4.f)) * LocalPos0;
 
                 LocalPos = cam_screen * LocalPos;
-                vpos = (LocalPos.v3 / LocalPos.v3.w).xyz;
+                vpos = (LocalPos[3] / LocalPos[3].w).xyz;
                 screen_min_max[0] = min(vpos.xy, screen_min_max[0]);
                 screen_min_max[1] = max(vpos.xy, screen_min_max[1]);
             }
@@ -427,7 +427,7 @@ void BtPhysTest::TickGame(float seconds)
             PhysicsObject* PhysObj = m_ground_list[i];
             mat4 GroundMat = PhysObj->GetTransform();
 
-            GroundBarycenter += GroundMat.v3.xyz;
+            GroundBarycenter += GroundMat[3].xyz;
             factor += 1.f;
         }
 
@@ -438,7 +438,7 @@ void BtPhysTest::TickGame(float seconds)
             PhysicsObject* PhysObj = m_ground_list[i];
 
             mat4 GroundMat = PhysObj->GetTransform();
-            vec3 CenterToGround = GroundMat.v3.xyz - GroundBarycenter;
+            vec3 CenterToGround = GroundMat[3].xyz - GroundBarycenter;
             vec3 CenterToCam = m_camera->GetPosition() - GroundBarycenter;
 
             if (dot(normalize(CenterToCam - CenterToGround),
@@ -462,7 +462,7 @@ void BtPhysTest::TickGame(float seconds)
             GroundMat = CenterMx *
                         mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
                         * GroundMat;
-            PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+            PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
         }
     }
 #endif //USE_ROTATION
@@ -477,14 +477,14 @@ void BtPhysTest::TickGame(float seconds)
             if (i == 0)
             {
                 GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(20.f, .0f, .0f) * seconds));
-                PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+                PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
             }
             else if (i == 1)
             {
                 GroundMat =
                     mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
                     mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
-                PhysObj->SetTransform(GroundMat.v3.xyz, quat(GroundMat));
+                PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
             }
         }
     }
@@ -512,7 +512,7 @@ void BtPhysTest::TickGame(float seconds)
             Character->SetMovementForFrame(CharMove);
 
             RayCastResult HitResult;
-            if (m_simulation->RayHits(HitResult, ERT_Closest, Character->GetTransform().v3.xyz, (Character->GetTransform().v3.xyz + vec3(.0f, -1.f, .0f)), Character))
+            if (m_simulation->RayHits(HitResult, ERT_Closest, Character->GetTransform()[3].xyz, (Character->GetTransform()[3].xyz + vec3(.0f, -1.f, .0f)), Character))
                 Character->AttachTo(HitResult.m_collider_list[0], true, true);
             else
                 Character->AttachTo(NULL);
@@ -530,7 +530,7 @@ void BtPhysTest::TickGame(float seconds)
             PhysicsObject* PhysObj = m_character_list[i];
             mat4 GroundMat = PhysObj->GetTransform();
 
-            PhysObjBarycenter += GroundMat.v3.xyz;
+            PhysObjBarycenter += GroundMat[3].xyz;
             factor += 1.f;
         }
 
@@ -550,7 +550,7 @@ void BtPhysTest::TickGame(float seconds)
             PhysicsObject* PhysObj = m_physobj_list[i].m1;
             mat4 GroundMat = PhysObj->GetTransform();
 
-            PhysObjBarycenter += GroundMat.v3.xyz;
+            PhysObjBarycenter += GroundMat[3].xyz;
             factor += 1.f;
         }
 

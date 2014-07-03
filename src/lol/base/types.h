@@ -34,7 +34,10 @@ class half;
  * Forward declaration of vec and matrix
  */
 
-template<int N, typename T, int MASK = -1> struct vec;
+int const FULL_SWIZZLE = 0xaaaa;
+int const NO_SWIZZLE = 0xbbbb;
+
+template<int N, typename T, int SWIZZLE = FULL_SWIZZLE> struct vec;
 template<int COLS, int ROWS, typename T> struct matrix;
 template<typename T> struct Cmplx;
 template<typename T> struct Quat;
@@ -98,6 +101,19 @@ typedef mat3x2 float3x2;
 typedef mat3x4 float3x4;
 typedef mat4x2 float4x2;
 typedef mat4x3 float4x3;
+
+typedef f16vec2 half2;
+typedef f16vec3 half3;
+typedef f16vec4 half4;
+typedef f16mat2 half2x2;
+typedef f16mat3 half3x3;
+typedef f16mat4 half4x4;
+typedef f16mat2x3 half2x3;
+typedef f16mat2x4 half2x4;
+typedef f16mat3x2 half3x2;
+typedef f16mat3x4 half3x4;
+typedef f16mat4x2 half4x2;
+typedef f16mat4x3 half4x3;
 
 typedef ivec2 int2;
 typedef ivec3 int3;

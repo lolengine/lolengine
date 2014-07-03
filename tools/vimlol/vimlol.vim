@@ -28,7 +28,7 @@ au Syntax cpp
 " HLSL types
 au Syntax cpp
    \ syn match cType
-   \ "\<\(int\|float\)[234]\(\|x[234]\)\>"
+   \ "\<\(int\|half\|float\)[234]\(\|x[234]\)\>"
 
 " More GLSL-like types from the Lol Engine
 au Syntax cpp

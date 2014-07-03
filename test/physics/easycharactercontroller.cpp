@@ -107,10 +107,10 @@ void EasyCharacterController::SetTransform(const lol::vec3& base_location, const
 {
     if (m_base_is_updating)
     {
-        m_base_cached_movement = base_location - m_local_to_world.v3.xyz;
-        m_local_to_world = lol::mat4::translate(m_local_to_world.v3.xyz) * lol::mat4(base_rotation);
+        m_base_cached_movement = base_location - m_local_to_world[3].xyz;
+        m_local_to_world = lol::mat4::translate(m_local_to_world[3].xyz) * lol::mat4(base_rotation);
         if (m_ghost_object)
-            m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * m_local_to_world.v3.xyz)));
+            m_ghost_object->setWorldTransform(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * m_local_to_world[3].xyz)));
     }
     else
         EasyPhysic::SetTransform(base_location, base_rotation);
