@@ -330,6 +330,7 @@
     <ClInclude Include="lol\math\rand.h" />
     <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\remez.h" />
+    <ClInclude Include="lol\math\transform.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\sys\all.h" />
     <ClInclude Include="lol\sys\file.h" />

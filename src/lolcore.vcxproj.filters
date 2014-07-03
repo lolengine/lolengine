@@ -450,6 +450,9 @@
     <ClInclude Include="lol\math\remez.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\transform.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\vector.h">
       <Filter>lol\math</Filter>
     </ClInclude>

@@ -16,10 +16,10 @@
 #if !defined __LOL_MATH_MATRIX_H__
 #define __LOL_MATH_MATRIX_H__
 
-#include <stdint.h>
 #include <ostream>
 
 #include <lol/math/vector.h>
+#include <lol/math/transform.h>
 
 namespace lol
 {
