@@ -17,6 +17,7 @@
 #define __LOL_MATH_VECTOR_H__
 
 #include <ostream>
+#include <type_traits>
 
 #include <lol/math/half.h>
 #include <lol/math/real.h>
@@ -33,6 +34,169 @@ namespace lol
 #else
 #   define _____ /* */
 #endif
+
+/*
+ * Utility namespaces for traits
+ */
+
+namespace swizzle_ops
+{
+
+
+
+}
+
+
+namespace linear_ops
+{
+
+struct base {};
+
+/*
+ * Unary plus and minus
+ */
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator +(V const &v)
+{
+    return v;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator -(V const &v)
+{
+    V ret;
+    for (size_t i = 0; i < sizeof(ret) / sizeof(ret[0]); ++i)
+        ret[i] = -v[i];
+    return ret;
+}
+
+/*
+ * Addition and subtraction
+ */
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator +(V const &a, V const &b)
+{
+    V ret;
+    for (size_t i = 0; i < sizeof(ret) / sizeof(ret[0]); ++i)
+        ret[i] = a[i] + b[i];
+    return ret;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+&operator +=(V &a, V const &b)
+{
+    return a = a + b;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator -(V const &a, V const &b)
+{
+    V ret;
+    for (size_t i = 0; i < sizeof(ret) / sizeof(ret[0]); ++i)
+        ret[i] = a[i] - b[i];
+    return ret;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+&operator -=(V &a, V const &b)
+{
+    return a = a - b;
+}
+
+} /* namespace linear_ops */
+
+namespace componentwise_ops
+{
+
+struct base {};
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator *(V const &a, V const &b)
+{
+    V ret;
+    for (size_t i = 0; i < sizeof(ret) / sizeof(ret[0]); ++i)
+        ret[i] = a[i] * b[i];
+    return ret;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+&operator *=(V &a, V const &b)
+{
+    return a = a * b;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+operator /(V const &a, V const &b)
+{
+    V ret;
+    for (size_t i = 0; i < sizeof(ret) / sizeof(ret[0]); ++i)
+        ret[i] = a[i] / b[i];
+    return ret;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, V>::type
+&operator /=(V &a, V const &b)
+{
+    return a = a / b;
+}
+
+/*
+ * Comparisons
+ */
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, bool>::type
+operator <(V const &a, V const &b)
+{
+    for (size_t i = 0; i < sizeof(a) / sizeof(a[0]); ++i)
+        if (!(a[i] < b[i]))
+            return false;
+    return true;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, bool>::type
+operator >(V const &a, V const &b)
+{
+    for (size_t i = 0; i < sizeof(a) / sizeof(a[0]); ++i)
+        if (!(a[i] > b[i]))
+            return false;
+    return true;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, bool>::type
+operator <=(V const &a, V const &b)
+{
+    for (size_t i = 0; i < sizeof(a) / sizeof(a[0]); ++i)
+        if (!(a[i] <= b[i]))
+            return false;
+    return true;
+}
+
+template<typename V>
+static inline typename std::enable_if<std::is_base_of<base, V>::value, bool>::type
+operator >=(V const &a, V const &b)
+{
+    for (size_t i = 0; i < sizeof(a) / sizeof(a[0]); ++i)
+        if (!(a[i] >= b[i]))
+            return false;
+    return true;
+}
+
+} /* namespace componentwise_ops */
 
 /*
  * Magic vector swizzling (part 1/2)
@@ -79,7 +243,9 @@ struct vec_t
 /* The generic “vec_t” type, which is a fixed-size vector with no
  * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<typename T, int N>
-struct vec_t<T, N, -1>
+struct vec_t<T, N, FULL_SWIZZLE>
+  : public linear_ops::base,
+    public componentwise_ops::base
 {
     typedef vec_t<T,N> type;
 
@@ -93,21 +259,6 @@ private:
 /*
  * Helper macros for vector type member functions
  */
-
-#define LOL_V_VV_OP(op) \
-    friend inline type operator op(type const &a, type const &b) \
-    { \
-        type ret; \
-        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
-            ret[i] = a[i] op b[i]; \
-        return ret; \
-    }
-
-#define LOL_V_VV_ASSIGN_OP(op) \
-    friend inline type &operator op##=(type &a, type const &b) \
-    { \
-        return a = a op b; \
-    }
 
 #define LOL_V_VS_OP(op) \
     friend inline type operator op(type const &a, T const &val) \
@@ -148,30 +299,6 @@ private:
     void printf() const; \
     String tostring() const; \
     \
-    /* vec_t -(vec_t)
-     * vec_t +(vec_t) */ \
-    friend inline type operator -(type const &a) \
-    { \
-        type ret; \
-        for (size_t i = 0; i < sizeof(type) / sizeof(T); ++i) \
-            ret[i] = -a[i]; \
-        return ret; \
-    } \
-    \
-    friend inline type operator +(type const &a) \
-    { \
-        return a; \
-    } \
-    \
-    /* vec_t +(vec_t, vec_t)
-     * vec_t -(vec_t, vec_t)
-     * vec_t +=(vec_t, vec_t)
-     * vec_t -=(vec_t, vec_t) */ \
-    LOL_V_VV_OP(+); \
-    LOL_V_VV_OP(-); \
-    LOL_V_VV_ASSIGN_OP(+); \
-    LOL_V_VV_ASSIGN_OP(-); \
-    \
     /* vec_t *(vec_t, scalar)
      * vec_t /(vec_t, scalar)
      * vec_t *=(vec_t, scalar)
@@ -185,25 +312,6 @@ private:
      * bool !=(vec_t, vec_t) */ \
     LOL_B_VV_OP(==, ==, true) \
     LOL_B_VV_OP(!=, ==, false)
-
-#define LOL_VECTOR_MEMBER_OPS() \
-    /* vec_t *(vec_t, vec_t)
-     * vec_t /(vec_t, vec_t)
-     * vec_t *=(vec_t, vec_t)
-     * vec_t /=(vec_t, vec_t) */ \
-    LOL_V_VV_OP(*); \
-    LOL_V_VV_OP(/); \
-    LOL_V_VV_ASSIGN_OP(*); \
-    LOL_V_VV_ASSIGN_OP(/); \
-    \
-    /* bool >=(vec_t, vec_t)
-     * bool <=(vec_t, vec_t)
-     * bool >(vec_t, vec_t)
-     * bool <(vec_t, vec_t) */ \
-    LOL_B_VV_OP(<=, <=, true) \
-    LOL_B_VV_OP(>=, >=, true) \
-    LOL_B_VV_OP(<, <, true) \
-    LOL_B_VV_OP(>, >, true)
 
 #define LOL_NONVECTOR_MEMBER_OPS() \
     /* vec_t *(scalar, vec_t) (no division, it works differently) */ \
@@ -221,6 +329,8 @@ private:
 
 template <typename T>
 struct vec_t<T,2>
+  : public linear_ops::base,
+    public componentwise_ops::base
 {
     typedef vec_t<T,2> type;
 
@@ -246,7 +356,6 @@ struct vec_t<T,2>
       : x(X), y(X) {}
 
     LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
 
     static const vec_t<T,2> zero;
     static const vec_t<T,2> axis_x;
@@ -302,6 +411,8 @@ struct vec_t<T,2>
 
 template <typename T>
 struct vec_t<T,3>
+  : public linear_ops::base,
+    public componentwise_ops::base
 {
     typedef vec_t<T,3> type;
 
@@ -331,7 +442,6 @@ struct vec_t<T,3>
       : x(X), y(YZ.x), z(YZ.y) {}
 
     LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
 
     static vec_t<T,3> toeuler_xyx(quat_t<T> const &q);
     static vec_t<T,3> toeuler_xzx(quat_t<T> const &q);
@@ -513,6 +623,8 @@ struct vec_t<T,3>
 
 template <typename T>
 struct vec_t<T,4>
+  : public linear_ops::base,
+    public componentwise_ops::base
 {
     typedef vec_t<T,4> type;
 
@@ -551,7 +663,6 @@ struct vec_t<T,4>
       : x(X), y(YZW.x), z(YZW.y), w(YZW.z) {}
 
     LOL_COMMON_MEMBER_OPS(x)
-    LOL_VECTOR_MEMBER_OPS()
 
     static const vec_t<T,4> zero;
     static const vec_t<T,4> axis_x;
@@ -939,10 +1050,20 @@ static inline bool operator !=(vec_t<T,N,SWIZZLE1> const &a,
 
 #define LOL_SWIZZLE_V_VV_OP(op) \
     template<typename T, int N, int SWIZZLE1, int SWIZZLE2> \
-    inline vec_t<T,N> operator op(vec_t<T,N,SWIZZLE1> const &a, \
-                                  vec_t<T,N,SWIZZLE2> const &b) \
+    inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE \
+                                || SWIZZLE2 != FULL_SWIZZLE,vec_t<T,N>>::type \
+        operator op(vec_t<T,N,SWIZZLE1> const &a, \
+                    vec_t<T,N,SWIZZLE2> const &b) \
     { \
         return vec_t<T,N>(a) op vec_t<T,N>(b); \
+    } \
+    \
+    template<typename T, int N, int SWIZZLE> \
+    inline typename std::enable_if<SWIZZLE != FULL_SWIZZLE,vec_t<T,N>>::type & \
+        operator op##=(vec_t<T,N> &a, \
+                       vec_t<T,N,SWIZZLE> const &b) \
+    { \
+        return a op##= vec_t<T,N>(b); \
     } \
     \
     template<typename T, int N, int SWIZZLE> \

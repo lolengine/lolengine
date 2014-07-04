@@ -33,7 +33,7 @@ namespace lol
  */
 
 template<typename T, int COLS, int ROWS>
-struct mat_t
+struct mat_t : public linear_ops::base
 {
     typedef mat_t<T,COLS,ROWS> type;
 
@@ -59,7 +59,7 @@ private:
  */
 
 template <typename T>
-struct mat_t<T, 2, 2>
+struct mat_t<T, 2, 2> : public linear_ops::base
 {
     typedef mat_t<T,2,2> type;
 
@@ -124,7 +124,7 @@ private:
  */
 
 template <typename T>
-struct mat_t<T, 3, 3>
+struct mat_t<T, 3, 3> : public linear_ops::base
 {
     typedef mat_t<T,3,3> type;
 
@@ -235,7 +235,7 @@ private:
  */
 
 template <typename T>
-struct mat_t<T, 4, 4>
+struct mat_t<T, 4, 4> : public linear_ops::base
 {
     typedef mat_t<T,4,4> type;
 
@@ -425,12 +425,6 @@ static inline mat_t<T, COLS, ROWS> operator +(mat_t<T, COLS, ROWS> const &a,
 {
     mat_t<T, COLS, ROWS> ret = a;
     return ret += b;
-}
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> operator +(mat_t<T, COLS, ROWS> const &m)
-{
-    return m;
 }
 
 template<typename T, int COLS, int ROWS>
