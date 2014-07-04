@@ -30,7 +30,7 @@ namespace lol
  */
 
 template<typename T>
-struct cmplx_t
+struct cmplx_t : public linear_ops::base
 {
     typedef cmplx_t<T> type;
 
@@ -71,7 +71,7 @@ struct cmplx_t
  */
 
 template<typename T>
-struct quat_t
+struct quat_t : public linear_ops::base
 {
     typedef quat_t<T> type;
 
