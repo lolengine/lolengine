@@ -34,7 +34,8 @@ sed -ne '/AC_CONFIG_FILES/,$p' configure.ac \
                 mkdir -p "${p%/*}"
                 ;;
         esac
-        echo "# Stub created by bootstrap" > "${required}"
+        echo '# Stub created by bootstrap' > "${required}"
+        echo 'include $(top_srcdir)/build/autotools/common.am' >> "${required}"
     fi
 done
 
