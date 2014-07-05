@@ -33,8 +33,11 @@ namespace lol
  */
 
 template<typename T, int COLS, int ROWS>
-struct mat_t : public linear_ops::base
+struct mat_t
+  : public linear_ops::base<vec_t<T,ROWS>>
 {
+    static int const count = COLS;
+    typedef vec_t<T,ROWS> element;
     typedef mat_t<T,COLS,ROWS> type;
 
     inline mat_t() {}
@@ -59,8 +62,11 @@ private:
  */
 
 template <typename T>
-struct mat_t<T, 2, 2> : public linear_ops::base
+struct mat_t<T, 2, 2>
+  : public linear_ops::base<vec_t<T,2>>
 {
+    static int const count = 2;
+    typedef vec_t<T,2> element;
     typedef mat_t<T,2,2> type;
 
     inline mat_t() {}
@@ -119,13 +125,25 @@ private:
 #endif
 };
 
+static_assert(sizeof(i8mat2) == 4, "sizeof(i8mat2) == 4");
+static_assert(sizeof(i16mat2) == 8, "sizeof(i16mat2) == 8");
+static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
+static_assert(sizeof(i64mat2) == 32, "sizeof(i64mat2) == 32");
+
+static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
+static_assert(sizeof(mat2) == 16, "sizeof(mat2) == 16");
+static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
+
 /*
  * 3×3-element matrices
  */
 
 template <typename T>
-struct mat_t<T, 3, 3> : public linear_ops::base
+struct mat_t<T, 3, 3>
+  : public linear_ops::base<vec_t<T,3>>
 {
+    static int const count = 3;
+    typedef vec_t<T,3> element;
     typedef mat_t<T,3,3> type;
 
     inline mat_t() {}
@@ -230,13 +248,25 @@ private:
 #endif
 };
 
+static_assert(sizeof(i8mat3) == 9, "sizeof(i8mat3) == 9");
+static_assert(sizeof(i16mat3) == 18, "sizeof(i16mat3) == 18");
+static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
+static_assert(sizeof(i64mat3) == 72, "sizeof(i64mat3) == 72");
+
+static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
+static_assert(sizeof(mat3) == 36, "sizeof(mat3) == 36");
+static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
+
 /*
  * 4×4-element matrices
  */
 
 template <typename T>
-struct mat_t<T, 4, 4> : public linear_ops::base
+struct mat_t<T, 4, 4>
+  : public linear_ops::base<vec_t<T,4>>
 {
+    static int const count = 4;
+    typedef vec_t<T,4> element;
     typedef mat_t<T,4,4> type;
 
     inline mat_t() {}
@@ -388,6 +418,15 @@ private:
 #endif
 };
 
+static_assert(sizeof(i8mat4) == 16, "sizeof(i8mat4) == 16");
+static_assert(sizeof(i16mat4) == 32, "sizeof(i16mat4) == 32");
+static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
+static_assert(sizeof(i64mat4) == 128, "sizeof(i64mat4) == 128");
+
+static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
+static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
+static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
+
 template<typename T> T determinant(mat_t<T,2,2> const &);
 template<typename T> T determinant(mat_t<T,3,3> const &);
 template<typename T> T determinant(mat_t<T,4,4> const &);
@@ -403,53 +442,6 @@ static inline mat_t<T, ROWS, COLS> transpose(mat_t<T, COLS, ROWS> const &m)
     for (int i = 0; i < COLS; ++i)
         for (int j = 0; j < ROWS; ++j)
             ret[j][i] = m[i][j];
-    return ret;
-}
-
-/*
- * Addition/subtraction/unary
- */
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> &operator +=(mat_t<T, COLS, ROWS> &a,
-                                                mat_t<T, COLS, ROWS> const &b)
-{
-    for (int i = 0; i < COLS; ++i)
-        a[i] += b[i];
-    return a;
-}
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> operator +(mat_t<T, COLS, ROWS> const &a,
-                                              mat_t<T, COLS, ROWS> const &b)
-{
-    mat_t<T, COLS, ROWS> ret = a;
-    return ret += b;
-}
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> &operator -=(mat_t<T, COLS, ROWS> &a,
-                                                mat_t<T, COLS, ROWS> const &b)
-{
-    for (int i = 0; i < COLS; ++i)
-        a[i] -= b[i];
-    return a;
-}
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> operator -(mat_t<T, COLS, ROWS> const &a,
-                                              mat_t<T, COLS, ROWS> const &b)
-{
-    mat_t<T, COLS, ROWS> ret = a;
-    return ret -= b;
-}
-
-template<typename T, int COLS, int ROWS>
-static inline mat_t<T, COLS, ROWS> operator -(mat_t<T, COLS, ROWS> const &m)
-{
-    mat_t<T, COLS, ROWS> ret;
-    for (int i = 0; i < COLS; ++i)
-        ret[i] = -m[i];
     return ret;
 }
 

@@ -441,6 +441,9 @@
     <ClInclude Include="lol\math\matrix.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\ops.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\rand.h">
       <Filter>lol\math</Filter>
     </ClInclude>

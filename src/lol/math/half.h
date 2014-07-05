@@ -116,6 +116,8 @@ public:
     uint16_t bits;
 };
 
+static_assert(sizeof(half) == 2, "sizeof(half) == 2");
+
 static inline half min(half a, half b) { return a < b ? a : b; }
 static inline half max(half a, half b) { return a > b ? a : b; }
 static inline float fmod(half a, half b)
