@@ -30,8 +30,10 @@ namespace lol
  */
 
 template<typename T>
-struct cmplx_t : public linear_ops::base
+struct cmplx_t : public linear_ops::base<T>
 {
+    static int const count = 2;
+    typedef T element;
     typedef cmplx_t<T> type;
 
     inline constexpr cmplx_t() {}
@@ -43,7 +45,6 @@ struct cmplx_t : public linear_ops::base
       : x(z.x), y(z.y) {}
 
     LOL_COMMON_MEMBER_OPS(x)
-    LOL_NONVECTOR_MEMBER_OPS()
 
     inline cmplx_t<T> operator *(cmplx_t<T> const &val) const
     {
@@ -66,13 +67,24 @@ struct cmplx_t : public linear_ops::base
     T x, y;
 };
 
+static_assert(sizeof(i8cmplx) == 2, "sizeof(i8cmplx) == 2");
+static_assert(sizeof(i16cmplx) == 4, "sizeof(i16cmplx) == 4");
+static_assert(sizeof(icmplx) == 8, "sizeof(icmplx) == 8");
+static_assert(sizeof(i64cmplx) == 16, "sizeof(i64cmplx) == 16");
+
+static_assert(sizeof(f16cmplx) == 4, "sizeof(f16cmplx) == 4");
+static_assert(sizeof(cmplx) == 8, "sizeof(cmplx) == 8");
+static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
+
 /*
  * 4-element transforms: quaternions
  */
 
 template<typename T>
-struct quat_t : public linear_ops::base
+struct quat_t : public linear_ops::base<T>
 {
+    static int const count = 4;
+    typedef T element;
     typedef quat_t<T> type;
 
     /* Default constructor and copy constructor */
@@ -95,7 +107,6 @@ struct quat_t : public linear_ops::base
     explicit quat_t(mat_t<T,4,4> const &m);
 
     LOL_COMMON_MEMBER_OPS(w)
-    LOL_NONVECTOR_MEMBER_OPS()
 
     inline quat_t operator *(quat_t const &val) const
     {
@@ -209,6 +220,15 @@ struct quat_t : public linear_ops::base
     /* XXX: storage order is wxyz, unlike vectors! */
     T w, x, y, z;
 };
+
+static_assert(sizeof(i8quat) == 4, "sizeof(i8quat) == 4");
+static_assert(sizeof(i16quat) == 8, "sizeof(i16quat) == 8");
+static_assert(sizeof(iquat) == 16, "sizeof(iquat) == 16");
+static_assert(sizeof(i64quat) == 32, "sizeof(i64quat) == 32");
+
+static_assert(sizeof(f16quat) == 8, "sizeof(f16quat) == 8");
+static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
+static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
 
 /*
  * Common operations on transforms
