@@ -26,7 +26,10 @@ namespace lol
 #undef min
 #undef max
 
+namespace half_ops { struct base {}; }
+
 class half
+  : half_ops::base
 {
 public:
     /* Constructors. Always inline so that the code can work in registers
@@ -118,6 +121,10 @@ public:
 
 static_assert(sizeof(half) == 2, "sizeof(half) == 2");
 
+/*
+ * Standard math and GLSL functions
+ */
+
 static inline half min(half a, half b) { return a < b ? a : b; }
 static inline half max(half a, half b) { return a > b ? a : b; }
 static inline float fmod(half a, half b)
@@ -135,51 +142,88 @@ static inline half clamp(half x, half a, half b)
     return (x < a) ? a : (x > b) ? b : x;
 }
 
+/*
+ * Standard math operators
+ */
 
-#define DECLARE_COERCE_HALF_NUMERIC_OPS(op, type, ret, x2, h2) \
-    inline ret operator op(type x, half h) { return x2 op h2; } \
-    inline ret operator op(half h, type x) { return h2 op x2; } \
-    inline type &operator op##=(type &x, half h) { return x = x op h2; } \
-    inline half &operator op##=(half &h, type x) { return h = h op x2; }
+namespace half_ops
+{
 
-#define DECLARE_COERCE_HALF_BOOL_OPS(op, type, x2, h2) \
-    inline bool operator op(type x, half h) { return x2 op h2; } \
-    inline bool operator op(half h, type x) { return h2 op x2; }
-
-#define DECLARE_COERCE_HALF_OPS(type, ret, x2, h2) \
-    DECLARE_COERCE_HALF_NUMERIC_OPS(+, type, ret, x2, h2) \
-    DECLARE_COERCE_HALF_NUMERIC_OPS(-, type, ret, x2, h2) \
-    DECLARE_COERCE_HALF_NUMERIC_OPS(*, type, ret, x2, h2) \
-    DECLARE_COERCE_HALF_NUMERIC_OPS(/, type, ret, x2, h2) \
+#define DECLARE_HALF_NUMERIC_OPS(op) \
+    /* integral + half */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,half>::type \
+    operator op(T x, half h) { return (half)(int)x op h; } \
     \
-    DECLARE_COERCE_HALF_BOOL_OPS(==, type, x2, h2) \
-    DECLARE_COERCE_HALF_BOOL_OPS(!=, type, x2, h2) \
-    DECLARE_COERCE_HALF_BOOL_OPS(>=, type, x2, h2) \
-    DECLARE_COERCE_HALF_BOOL_OPS(<=, type, x2, h2) \
-    DECLARE_COERCE_HALF_BOOL_OPS(>, type, x2, h2) \
-    DECLARE_COERCE_HALF_BOOL_OPS(<, type, x2, h2)
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,T&>::type \
+    operator op##=(T &x, half h) { return x = x op h; } \
+    \
+    /* half + integral */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,half>::type \
+    operator op(half h, T x) { return h op (half)(int)x; } \
+    \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,half&>::type \
+    operator op##=(half &h, T x) { return h = h op x; } \
+    \
+    /* floating point + half */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,T>::type \
+    operator op(T x, half h) { return x op (T)h; } \
+    \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,T&>::type \
+    operator op##=(T &x, half h) { return x = x op h; } \
+    \
+    /* half + floating point */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,T>::type \
+    operator op(half h, T x) { return (T)h op x; } \
+    \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,half&>::type \
+    operator op##=(half &h, T x) { return h = h op x; }
 
-#define DECLARE_COERCE_TO_HALF_OPS(type) \
-    DECLARE_COERCE_HALF_OPS(type, half, (half)(int)x, h)
+DECLARE_HALF_NUMERIC_OPS(+)
+DECLARE_HALF_NUMERIC_OPS(-)
+DECLARE_HALF_NUMERIC_OPS(*)
+DECLARE_HALF_NUMERIC_OPS(/)
 
-#define DECLARE_COERCE_FROM_HALF_OPS(type) \
-    DECLARE_COERCE_HALF_OPS(type, type, x, (type)h)
+#undef DECLARE_HALF_NUMERIC_OPS
 
-/* Only provide coercion rules above int32_t, since the standard says
- * all smaller base types are coerced to int. */
-DECLARE_COERCE_TO_HALF_OPS(int32_t)
-DECLARE_COERCE_TO_HALF_OPS(uint32_t)
-DECLARE_COERCE_TO_HALF_OPS(int64_t)
-DECLARE_COERCE_TO_HALF_OPS(uint64_t)
+#define DECLARE_HALF_BOOL_OPS(op) \
+    /* integral == half */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,bool>::type \
+    operator op(T x, half h) { return (half)(int)x op h; } \
+    \
+    /* half == integral */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_integral<T>::value,bool>::type \
+    operator op(half h, T x) { return h op (half)(int)x; } \
+    \
+    /* floating point == half */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,bool>::type \
+    operator op(T x, half h) { return x op (T)h; } \
+    \
+    /* half == floating point */ \
+    template<typename T> static inline \
+    typename std::enable_if<std::is_floating_point<T>::value,bool>::type \
+    operator op(half h, T x) { return (T)h op x; }
 
-DECLARE_COERCE_FROM_HALF_OPS(float)
-DECLARE_COERCE_FROM_HALF_OPS(double)
-DECLARE_COERCE_FROM_HALF_OPS(ldouble)
+DECLARE_HALF_BOOL_OPS(==)
+DECLARE_HALF_BOOL_OPS(!=)
+DECLARE_HALF_BOOL_OPS(>)
+DECLARE_HALF_BOOL_OPS(<)
+DECLARE_HALF_BOOL_OPS(>=)
+DECLARE_HALF_BOOL_OPS(<=)
 
-#undef DECLARE_COERCE_HALF_NUMERIC_OPS
-#undef DECLARE_COERCE_HALF_OPS
-#undef DECLARE_COERCE_TO_HALF_OPS
-#undef DECLARE_COERCE_FROM_HALF_OPS
+#undef DECLARE_HALF_BOOL_OPS
+
+} /* namespace half_ops */
 
 } /* namespace lol */
 
