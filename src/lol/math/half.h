@@ -148,43 +148,53 @@ static inline half clamp(half x, half a, half b)
 
 namespace half_ops
 {
+    /* Enumerate the types for which operations with half are valid */
+    template<typename FROM, typename TO = void> struct valid {};
+
+    template<typename TO> struct valid<uint8_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<int8_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<uint16_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<int16_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<uint32_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<int32_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<uint64_t, TO>
+        { typedef half from; typedef TO to; };
+    template<typename TO> struct valid<int64_t, TO>
+        { typedef half from; typedef TO to; };
+
+    template<typename TO> struct valid<float, TO>
+        { typedef float from; typedef TO to; };
+    template<typename TO> struct valid<double, TO>
+        { typedef double from; typedef TO to; };
+    template<typename TO> struct valid<ldouble, TO>
+        { typedef ldouble from; typedef TO to; };
 
 #define DECLARE_HALF_NUMERIC_OPS(op) \
-    /* integral + half */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,half>::type \
-    operator op(T x, half h) { return (half)(int)x op h; } \
+    /* other + half */ \
+    template<typename T> \
+    static inline typename valid<T>::from operator op(T x, half h) \
+    { return (typename valid<T>::from)x op (typename valid<T>::from)h; } \
     \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,T&>::type \
-    operator op##=(T &x, half h) { return x = x op h; } \
+    /* half + other */ \
+    template<typename T> \
+    static inline typename valid<T>::from operator op(half h, T x) \
+    { return (typename valid<T>::from)h op (typename valid<T>::from)x; } \
     \
-    /* half + integral */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,half>::type \
-    operator op(half h, T x) { return h op (half)(int)x; } \
+    /* other += half */ \
+    template<typename T> \
+    static inline typename valid<T,T>::to& operator op##=(T& x, half h) \
+    { return x = (typename valid<T>::from)x op (typename valid<T>::from)h; } \
     \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,half&>::type \
-    operator op##=(half &h, T x) { return h = h op x; } \
-    \
-    /* floating point + half */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,T>::type \
-    operator op(T x, half h) { return x op (T)h; } \
-    \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,T&>::type \
-    operator op##=(T &x, half h) { return x = x op h; } \
-    \
-    /* half + floating point */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,T>::type \
-    operator op(half h, T x) { return (T)h op x; } \
-    \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,half&>::type \
-    operator op##=(half &h, T x) { return h = h op x; }
+    /* half += other */ \
+    template<typename T> \
+    static inline typename valid<T,half>::to& operator op##=(half& h, T x) \
+    { return h = (typename valid<T>::from)h op (typename valid<T>::from)x; }
 
 DECLARE_HALF_NUMERIC_OPS(+)
 DECLARE_HALF_NUMERIC_OPS(-)
@@ -194,25 +204,15 @@ DECLARE_HALF_NUMERIC_OPS(/)
 #undef DECLARE_HALF_NUMERIC_OPS
 
 #define DECLARE_HALF_BOOL_OPS(op) \
-    /* integral == half */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,bool>::type \
-    operator op(T x, half h) { return (half)(int)x op h; } \
+    /* half == other */ \
+    template<typename T> \
+    static inline typename valid<T,bool>::to operator op(half h, T x) \
+    { return (typename valid<T>::from)h op (typename valid<T>::from)x; } \
     \
-    /* half == integral */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_integral<T>::value,bool>::type \
-    operator op(half h, T x) { return h op (half)(int)x; } \
-    \
-    /* floating point == half */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,bool>::type \
-    operator op(T x, half h) { return x op (T)h; } \
-    \
-    /* half == floating point */ \
-    template<typename T> static inline \
-    typename std::enable_if<std::is_floating_point<T>::value,bool>::type \
-    operator op(half h, T x) { return (T)h op x; }
+    /* other == half */ \
+    template<typename T> \
+    static inline typename valid<T,bool>::to operator op(T x, half h) \
+    { return (typename valid<T>::from)x op (typename valid<T>::from)h; }
 
 DECLARE_HALF_BOOL_OPS(==)
 DECLARE_HALF_BOOL_OPS(!=)
