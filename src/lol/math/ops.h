@@ -78,7 +78,7 @@ static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FU
     \
     template<typename T, int N, int SWIZZLE> \
     inline typename std::enable_if<SWIZZLE != FULL_SWIZZLE,vec_t<T,N>>::type \
-        operator op(vec_t<T,N,SWIZZLE> a, T const &b) \
+        operator op(vec_t<T,N,SWIZZLE> const &a, T const &b) \
     { \
         return vec_t<T,N>(a) op b; \
     }

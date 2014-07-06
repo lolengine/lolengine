@@ -81,6 +81,13 @@ struct vec_t
         int i = (SWIZZLE >> (4 * (N - 1 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
     }
+
+private:
+    /* Disable all default constructors and destructors; this object
+     * is only intended to exist as part of a union. */
+    vec_t();
+    vec_t(vec_t<T, N, SWIZZLE> const &);
+    ~vec_t();
 };
 
 /* The generic “vec_t” type, which is a fixed-size vector with no

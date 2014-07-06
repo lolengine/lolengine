@@ -141,6 +141,36 @@ LOLUNIT_FIXTURE(VectorTest)
 #endif
     }
 
+    LOLUNIT_TEST(VectorSwizzleMul)
+    {
+        ivec3 a(1, 2, 3);
+
+        ivec3 b = a * 2;
+        LOLUNIT_ASSERT_EQUAL(b.x, 2);
+        LOLUNIT_ASSERT_EQUAL(b.y, 4);
+        LOLUNIT_ASSERT_EQUAL(b.z, 6);
+
+        ivec3 c = (ivec3)a.zyx * 2;
+        LOLUNIT_ASSERT_EQUAL(c.x, 6);
+        LOLUNIT_ASSERT_EQUAL(c.y, 4);
+        LOLUNIT_ASSERT_EQUAL(c.z, 2);
+
+        ivec3 d = 2 * (ivec3)a.zyx;
+        LOLUNIT_ASSERT_EQUAL(d.x, 6);
+        LOLUNIT_ASSERT_EQUAL(d.y, 4);
+        LOLUNIT_ASSERT_EQUAL(d.z, 2);
+
+        ivec3 e = a.zyx * 2;
+        LOLUNIT_ASSERT_EQUAL(e.x, 6);
+        LOLUNIT_ASSERT_EQUAL(e.y, 4);
+        LOLUNIT_ASSERT_EQUAL(e.z, 2);
+
+        ivec3 f = 2 * a.zyx;
+        LOLUNIT_ASSERT_EQUAL(f.x, 6);
+        LOLUNIT_ASSERT_EQUAL(f.y, 4);
+        LOLUNIT_ASSERT_EQUAL(f.z, 2);
+    }
+
     LOLUNIT_TEST(VectorUnaryMinus)
     {
         vec2 a(1.0f, 3.0f);
