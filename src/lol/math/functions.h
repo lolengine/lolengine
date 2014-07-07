@@ -235,7 +235,8 @@ static inline ldouble ceil(ldouble x) { return std::ceil(x); }
     static inline T fract(T x) { return x - lol::floor(x); } \
     static inline T min(T x, T y) { return std::min(x, y); } \
     static inline T max(T x, T y) { return std::max(x, y); } \
-    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); }
+    static inline T clamp(T x, T y, T z) { return min(max(x, y), z); } \
+    static inline T saturate(T x) { return min(max(x, (T)0), (T)1); }
 
 #define LOL_GENERIC_FUNC_SIGNED(T) \
     LOL_GENERIC_FUNC(T) \
