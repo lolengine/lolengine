@@ -1033,6 +1033,15 @@ static inline vec_t<T,N> fract(vec_t<T,N,SWIZZLE> const &a)
 }
 
 template<typename T, int N, int SWIZZLE>
+static inline vec_t<T,N> saturate(vec_t<T,N,SWIZZLE> const &a)
+{
+    vec_t<T,N> ret;
+    for (int i = 0; i < N; ++i)
+        ret[i] = saturate(a[i]);
+    return ret;
+}
+
+template<typename T, int N, int SWIZZLE>
 static inline vec_t<T,N> normalize(vec_t<T,N,SWIZZLE> const &a)
 {
     T norm = (T)length(a);
