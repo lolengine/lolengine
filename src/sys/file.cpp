@@ -44,7 +44,10 @@ class FileData
 {
     friend class File;
 
-    FileData() : m_type(StreamType::File) { }
+    FileData()
+      : m_refcount(0),
+        m_type(StreamType::File)
+    { }
 
     void Open(StreamType stream)
     {
