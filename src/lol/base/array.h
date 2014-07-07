@@ -113,7 +113,7 @@ public:
     array_base& operator+=(array_base const &that)
     {
         int todo = that.m_count;
-        Reserve(m_count + that.m_count);
+        Reserve(m_count + todo);
         for (int i = 0; i < todo; i++)
             new(&m_data[m_count + i]) element_t(that[i]);
         m_count += todo;
