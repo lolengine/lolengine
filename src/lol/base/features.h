@@ -40,7 +40,7 @@
 
 /* Set these to 1 when Visual Studio finally understands the features
  * (planned for Visual Studion 14) */
-#define LOL_FEATURE_CXX11_RELAXED_UNIONS 0
+#define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 0
 #define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 0
 #define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 0
 #define LOL_FEATURE_CXX11_CONSTEXPR 0

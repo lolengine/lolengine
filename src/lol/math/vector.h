@@ -29,24 +29,27 @@ namespace lol
 #   define constexpr /* */
 #endif
 
-#if !LOL_FEATURE_CXX11_RELAXED_UNIONS
+#if !LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 #   define _____ const
 #else
 #   define _____ /* */
 #endif
 
 /*
- * Magic vector swizzling (part 1/2)
+ * Magic vector swizzling
+ *
  * These vectors are empty, but thanks to static_cast we can take their
  * address and access the vector of T's that they are union'ed with. We
  * use static_cast instead of reinterpret_cast because there is a stronger
  * guarantee (by the standard) that the address will stay the same across
  * casts.
+ *
+ * Using swizzled vectors as lvalues:
  * We need to implement an assignment operator _and_ override the default
  * assignment operator. We try to pass arguments by value so that we don't
  * have to care about overwriting ourselves (e.g. c.rgb = c.bgr).
- * However, Visual Studio 2012 doesn't support unrestricted unions, so
- * fuck it.
+ * However, Visual Studio 2013 doesn't support unrestricted unions, so
+ * fuck it for now.
  */
 
 template<typename T, int N, int SWIZZLE>
@@ -60,14 +63,28 @@ struct vec_t
     typedef T element;
     typedef vec_t<T,N> type;
 
-    inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that);
+    /* Disable all default constructors and destructors; this object
+     * is only intended to exist as part of a union. */
+    vec_t() = delete;
+    vec_t(vec_t<T, N, SWIZZLE> const &) = delete;
+    ~vec_t() = delete;
 
-#if LOL_FEATURE_CXX11_RELAXED_UNIONS
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
+    /* Allow the assignment operator if unrestricted unions are supported. */
+    inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that);
+    {
+        for (int i = 0; i < N; ++i)
+            (*this)[i] = that[i];
+        return *this;
+    }
+
     inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N, SWIZZLE> const &that)
     {
         /* Pass by value in case this == &that */
         return *this = (vec_t<T,N>)that;
     }
+#else
+    vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N, SWIZZLE> that) = delete;
 #endif
 
     inline T& operator[](size_t n)
@@ -81,13 +98,6 @@ struct vec_t
         int i = (SWIZZLE >> (4 * (N - 1 - n))) & 3;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
     }
-
-private:
-    /* Disable all default constructors and destructors; this object
-     * is only intended to exist as part of a union. */
-    vec_t();
-    vec_t(vec_t<T, N, SWIZZLE> const &);
-    ~vec_t();
 };
 
 /* The generic “vec_t” type, which is a fixed-size vector with no
@@ -1074,20 +1084,6 @@ static inline vec_t<T,N> radians(vec_t<T,N,SWIZZLE> const &a)
         ret[i] = lol::radians(a[i]);
     return ret;
 }
-
-/*
- * Magic vector swizzling (part 2/2)
- */
-
-#if LOL_FEATURE_CXX11_RELAXED_UNIONS
-template<int N, typename T, int SWIZZLE>
-inline vec_t<T, N, SWIZZLE>& vec_t<T, N, SWIZZLE>::operator =(vec_t<T,N> that)
-{
-    for (int i = 0; i < N; ++i)
-        (*this)[i] = that[i];
-    return *this;
-}
-#endif
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
 #undef constexpr
