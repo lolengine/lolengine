@@ -29,17 +29,14 @@
 namespace lol
 {
 
-template<size_t N, size_t L, typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
+template<size_t N, size_t L, typename ARRAY_TYPE>
 class arraynd_proxy
 {
 public:
 
-    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> array_type;
-    typedef arraynd_proxy<N, L - 1, T1, T2, T3, T4, T5, T6, T7, T8> subproxy;
+    typedef arraynd_proxy<N, L - 1, ARRAY_TYPE> subproxy;
 
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
+    inline arraynd_proxy(ARRAY_TYPE * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
         m_array(array),
         m_sizes(sizes),
         m_index(index),
@@ -54,23 +51,19 @@ public:
 
 private:
 
-    array_type * m_array;
+    ARRAY_TYPE * m_array;
     vec_t<size_t, N> const & m_sizes;
     size_t m_index;
     size_t m_accumulator;
 };
 
 
-template<size_t N, typename T1, typename T2, typename T3,
-         typename T4, typename T5, typename T6,
-         typename T7, typename T8>
-class arraynd_proxy<N, 1, T1, T2, T3, T4, T5, T6, T7, T8>
+template<size_t N, typename ARRAY_TYPE>
+class arraynd_proxy<N, 1, ARRAY_TYPE>
 {
 public:
 
-    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
+    inline arraynd_proxy(ARRAY_TYPE * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
         m_array(array),
         m_sizes(sizes),
         m_index(index),
@@ -78,222 +71,14 @@ public:
     {
     }
 
-    inline typename array_type::element_t & operator[](size_t pos)
+    inline typename ARRAY_TYPE::element_t & operator[](size_t pos)
     {
         return m_array[m_index + pos * m_accumulator];
     }
 
 private:
 
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2, typename T3,
-         typename T4, typename T5, typename T6,
-         typename T7>
-class arraynd_proxy<N, 1, T1, T2, T3, T4, T5, T6, T7, void>
-{
-public:
-
-    typedef array<T1, T2, T3, T4, T5, T6, T7, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2, typename T3,
-         typename T4, typename T5, typename T6>
-class arraynd_proxy<N, 1, T1, T2, T3, T4, T5, T6, void, void>
-{
-public:
-
-    typedef array<T1, T2, T3, T4, T5, T6, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2, typename T3,
-         typename T4, typename T5>
-class arraynd_proxy<N, 1, T1, T2, T3, T4, T5, void, void, void>
-{
-public:
-
-    typedef array<T1, T2, T3, T4, T5, void, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2, typename T3,
-         typename T4>
-class arraynd_proxy<N, 1, T1, T2, T3, T4, void, void, void, void>
-{
-public:
-
-    typedef array<T1, T2, T3, T4, void, void, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2, typename T3>
-class arraynd_proxy<N, 1, T1, T2, T3, void, void, void, void, void>
-{
-public:
-
-    typedef array<T1, T2, T3, void, void, void, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1, typename T2>
-class arraynd_proxy<N, 1, T1, T2, void, void, void, void, void, void>
-{
-public:
-
-    typedef array<T1, T2, void, void, void, void, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename T1>
-class arraynd_proxy<N, 1, T1, void, void, void, void, void, void, void>
-{
-public:
-
-    typedef array<T1, void, void, void, void, void, void, void> array_type;
-
-    inline arraynd_proxy(array_type * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename array_type::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    array_type * m_array;
+    ARRAY_TYPE * m_array;
     vec_t<size_t, N> const & m_sizes;
     size_t m_index;
     size_t m_accumulator;
@@ -308,7 +93,7 @@ class arraynd : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
 public:
     typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
     typedef typename super::element_t element_t;
-    typedef arraynd_proxy<N, N, T1, T2, T3, T4, T5, T6, T7, T8> proxy;
+    typedef arraynd_proxy<N, N, super> proxy;
 
     inline arraynd() :
         super(),
