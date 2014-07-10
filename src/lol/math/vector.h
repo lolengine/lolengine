@@ -111,6 +111,30 @@ struct vec_t<T, N, FULL_SWIZZLE>
     typedef T element;
     typedef vec_t<T,N> type;
 
+    /* Default constructor, copy constructor, and destructor */
+    inline constexpr vec_t() {}
+    inline vec_t(vec_t<T,N> const &v)
+    {
+        for (int i = 0; i < N; ++i)
+            m_data[i] = v.m_data[i];
+    }
+    inline ~vec_t() {}
+
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline vec_t(vec_t<U, N> const &v)
+    {
+        for (int i = 0; i < N; ++i)
+            m_data[i] = (T)v.m_data[i];
+    }
+
+    /* Various explicit constructors */
+    explicit inline vec_t(T X)
+    {
+        for (int i = 0; i < N; ++i)
+            m_data[i] = X;
+    }
+
     inline T& operator[](size_t n) { return m_data[n]; }
     inline T const& operator[](size_t n) const { return m_data[n]; }
 

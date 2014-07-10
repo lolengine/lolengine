@@ -225,6 +225,18 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_DOUBLES_EQUAL(length(orthonormal(b)), 1.f, 1e-6f);
         LOLUNIT_ASSERT_DOUBLES_EQUAL(length(orthonormal(c)), 1.f, 1e-6f);
     }
+
+    LOLUNIT_TEST(LargeVectors)
+    {
+        vec_t<int, 50> v0(0);
+        vec_t<int, 50> v1(1);
+        vec_t<int, 50> v2(2);
+        vec_t<int, 50> v3(3);
+
+        auto va = v0 + v3;
+        auto vb = v1 + v2;
+        LOLUNIT_ASSERT(va == vb);
+    }
 };
 
 } /* namespace lol */
