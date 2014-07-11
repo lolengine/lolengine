@@ -27,10 +27,10 @@ LOLUNIT_FIXTURE(ArrayNDTest)
 #if 0
     LOLUNIT_TEST(ArrayNDCreate)
     {
-        arraynd<int,10> a;
-        arraynd<float,20> b;
-        arraynd<uint8_t, 30> c;
-        arraynd<double,40> d;
+        arraynd<10, int> a;
+        arraynd<20, float> b;
+        arraynd<30, uint8_t> c;
+        arraynd<40, double> d;
     }
 
     LOLUNIT_TEST(ArrayNDInit)
@@ -40,7 +40,7 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         for (int i = 0; i < dimension; ++i)
             size[i] = 5;
 
-        arraynd<uint8_t, dimension> a(size);
+        arraynd<dimension, uint8_t> a(size);
         memset(a.Data(), 0, a.Bytes());
         LOLUNIT_ASSERT_EQUAL(a[2][3][2][0][1][4][0][1], 0x00);
 
