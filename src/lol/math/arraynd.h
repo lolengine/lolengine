@@ -153,13 +153,11 @@ private:
 };
 
 
-template<size_t N, typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
-class arraynd : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
+template<size_t N, typename... T>
+class arraynd : protected array<T...>
 {
 public:
-    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
+    typedef array<T...> super;
     typedef typename super::element_t element_t;
     typedef arraynd_proxy<N, N - 1, super> proxy;
 
