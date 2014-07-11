@@ -3,6 +3,7 @@
 //
 // Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//            (c) 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -17,7 +18,7 @@
 
 //
 // FIXME: This file is in lol/math/ instead of lol/base/ because it
-// uses ivec3.
+// uses vec_t.
 //
 
 #if !defined __LOL_MATH_ARRAYND_H__
@@ -85,6 +86,73 @@ private:
 };
 
 
+template<typename T, size_t L>
+class arraynd_initializer
+{
+public:
+
+    arraynd_initializer(std::initializer_list<arraynd_initializer<T, L - 1> > const & initializers) :
+        m_initializers(initializers)
+    {
+    }
+
+    void FillSizes(size_t * sizes)
+    {
+        *sizes = std::max(*sizes, m_initializers.size());
+
+        for (auto subinitializer : m_initializers)
+            subinitializer.FillSizes(sizes + 1);
+    }
+
+    void FillValues(T * values, size_t * sizes, size_t accumulator)
+    {
+        int pos = 0;
+
+        for (auto subinitializer : m_initializers)
+        {
+            subinitializer.FillValues(values + pos * accumulator, sizes + 1, accumulator * *sizes);
+            ++pos;
+        }
+    }
+
+private:
+
+    std::initializer_list<arraynd_initializer<T, L - 1> > const & m_initializers;
+};
+
+
+template<typename T>
+class arraynd_initializer<T, 1>
+{
+public:
+
+    arraynd_initializer(std::initializer_list<T> const & initializers) :
+        m_initializers(initializers)
+    {
+    }
+
+    void FillSizes(size_t * sizes)
+    {
+        *sizes = std::max(*sizes, m_initializers.size());
+    }
+
+    void FillValues(T * values, size_t * sizes, size_t accumulator)
+    {
+        int pos = 0;
+
+        for (auto value : m_initializers)
+        {
+            *(values + pos * accumulator) = value;
+            ++pos;
+        }
+    }
+
+private:
+
+    std::initializer_list<T> const & m_initializers;
+};
+
+
 template<size_t N, typename T1, typename T2 = void, typename T3 = void,
          typename T4 = void, typename T5 = void, typename T6 = void,
          typename T7 = void, typename T8 = void>
@@ -93,7 +161,7 @@ class arraynd : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
 public:
     typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
     typedef typename super::element_t element_t;
-    typedef arraynd_proxy<N, N, super> proxy;
+    typedef arraynd_proxy<N, N - 1, super> proxy;
 
     inline arraynd() :
         super(),
@@ -108,7 +176,16 @@ public:
         SetSize(m_sizes, e);
     }
 
-    /* Access elements directly using an ivec3 index */
+    inline arraynd(arraynd_initializer<element_t, N> initializer) :
+        super(),
+        m_sizes()
+    {
+        initializer.FillSizes(&m_sizes[0]);
+        SetSize(m_sizes);
+        initializer.FillValues(&super::operator[](0), &m_sizes[0], 1);
+    }
+
+    /* Access elements directly using index position */
     inline proxy operator [](size_t pos) const
     {
         return proxy(this, m_sizes, pos, m_sizes[0]);
