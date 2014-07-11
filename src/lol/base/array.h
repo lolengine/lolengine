@@ -477,418 +477,61 @@ protected:
 };
 
 /*
- * element_t types
- */
-
-template<typename T1, typename T2, typename T3 = void, typename T4 = void,
-         typename T5 = void, typename T6 = void, typename T7 = void,
-         typename T8 = void>
-class array_element
-{
-public:
-    T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7; T8 m8;
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5,
-         typename T6, typename T7>
-class array_element<T1, T2, T3, T4, T5, T6, T7, void>
-{
-public:
-    T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7;
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5,
-         typename T6>
-class array_element<T1, T2, T3, T4, T5, T6, void, void>
-{
-public:
-    T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6;
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5>
-class array_element<T1, T2, T3, T4, T5, void, void, void>
-{
-public:
-    T1 m1; T2 m2; T3 m3; T4 m4; T5 m5;
-};
-
-template<typename T1, typename T2, typename T3, typename T4>
-class array_element<T1, T2, T3, T4, void, void, void, void>
-{
-public:
-    T1 m1; T2 m2; T3 m3; T4 m4;
-};
-
-template<typename T1, typename T2, typename T3>
-class array_element<T1, T2, T3, void, void, void, void, void>
-{
-public:
-    T1 m1; T2 m2; T3 m3;
-};
-
-template<typename T1, typename T2>
-class array_element<T1, T2, void, void, void, void, void, void>
-{
-public:
-    T1 m1; T2 m2;
-};
-
-/*
  * array specialisations implementing specific setters
  */
 
-template<typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
-class array : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
-                               array<T1, T2, T3, T4, T5, T6, T7, T8>>
+template<typename... T>
+class array : public array_base<tuple<T...>, array<T...>>
 {
 #if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, T8>,
-                    array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base;
+    using array_base<tuple<T...>, array<T...>>::array_base;
 #else
 public:
-    typedef array_element<T1, T2, T3, T4, T5, T6, T7, T8> element_t;
+    typedef tuple<T...> element_t;
 
     inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base() {}
+      : array_base<element_t, array<T...>>::array_base()
+    {}
 
     inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6, T7, T8>>::array_base(list) {}
+      : array_base<element_t, array<T...>>::array_base(list)
+    {}
 #endif
 
 public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                     T5 const &m5, T6 const &m6, T7 const &m7, T8 const &m8)
+    inline void Push(T... args)
     {
         if (this->m_count >= this->m_reserved)
         {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7; T8 tmp8 = m8;
+            tuple<T...> tmp = { args... };
             this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-            new (&this->m_data[this->m_count].m4) T4(tmp4);
-            new (&this->m_data[this->m_count].m5) T5(tmp5);
-            new (&this->m_data[this->m_count].m6) T6(tmp6);
-            new (&this->m_data[this->m_count].m7) T7(tmp7);
-            new (&this->m_data[this->m_count].m8) T8(tmp8);
+            new (&this->m_data[this->m_count].m1) tuple<T...>(tmp);
         }
         else
         {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-            new (&this->m_data[this->m_count].m4) T4(m4);
-            new (&this->m_data[this->m_count].m5) T5(m5);
-            new (&this->m_data[this->m_count].m6) T6(m6);
-            new (&this->m_data[this->m_count].m7) T7(m7);
-            new (&this->m_data[this->m_count].m8) T8(m8);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5,
-         typename T6, typename T7>
-class array<T1, T2, T3, T4, T5, T6, T7, void>
-  : public array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
-                     array<T1, T2, T3, T4, T5, T6, T7>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, T4, T5, T6, T7, void>,
-                    array<T1, T2, T3, T4, T5, T6, T7>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, T3, T4, T5, T6, T7, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6, T7>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6, T7>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                     T5 const &m5, T6 const &m6, T7 const &m7)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            T5 tmp5 = m5; T6 tmp6 = m6; T7 tmp7 = m7;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-            new (&this->m_data[this->m_count].m4) T4(tmp4);
-            new (&this->m_data[this->m_count].m5) T5(tmp5);
-            new (&this->m_data[this->m_count].m6) T6(tmp6);
-            new (&this->m_data[this->m_count].m7) T7(tmp7);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-            new (&this->m_data[this->m_count].m4) T4(m4);
-            new (&this->m_data[this->m_count].m5) T5(m5);
-            new (&this->m_data[this->m_count].m6) T6(m6);
-            new (&this->m_data[this->m_count].m7) T7(m7);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5,
-         typename T6>
-class array<T1, T2, T3, T4, T5, T6, void, void>
-  : public array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
-                     array<T1, T2, T3, T4, T5, T6>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, T4, T5, T6, void, void>,
-                    array<T1, T2, T3, T4, T5, T6>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, T3, T4, T5, T6, void, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5, T6>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                     T5 const &m5, T6 const &m6)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            T5 tmp5 = m5; T6 tmp6 = m6;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-            new (&this->m_data[this->m_count].m4) T4(tmp4);
-            new (&this->m_data[this->m_count].m5) T5(tmp5);
-            new (&this->m_data[this->m_count].m6) T6(tmp6);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-            new (&this->m_data[this->m_count].m4) T4(m4);
-            new (&this->m_data[this->m_count].m5) T5(m5);
-            new (&this->m_data[this->m_count].m6) T6(m6);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5>
-class array<T1, T2, T3, T4, T5, void, void, void>
-  : public array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
-                     array<T1, T2, T3, T4, T5>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, T4, T5, void, void, void>,
-                    array<T1, T2, T3, T4, T5>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, T3, T4, T5, void, void, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3, T4, T5>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4,
-                     T5 const &m5)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            T5 tmp5 = m5;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-            new (&this->m_data[this->m_count].m4) T4(tmp4);
-            new (&this->m_data[this->m_count].m5) T5(tmp5);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-            new (&this->m_data[this->m_count].m4) T4(m4);
-            new (&this->m_data[this->m_count].m5) T5(m5);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2, typename T3, typename T4>
-class array<T1, T2, T3, T4, void, void, void, void>
-  : public array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
-                     array<T1, T2, T3, T4>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, T4, void, void, void, void>,
-                    array<T1, T2, T3, T4>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, T3, T4, void, void, void, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3, T4>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3, T4>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3, T4 const &m4)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3; T4 tmp4 = m4;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-            new (&this->m_data[this->m_count].m4) T4(tmp4);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-            new (&this->m_data[this->m_count].m4) T4(m4);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2, typename T3>
-class array<T1, T2, T3, void, void, void, void, void>
-  : public array_base<array_element<T1, T2, T3, void, void, void, void, void>,
-                     array<T1, T2, T3>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, T3, void, void, void, void, void>,
-                    array<T1, T2, T3>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, T3, void, void, void, void, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2, T3>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2, T3>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2, T3 const &m3)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2; T3 tmp3 = m3;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-            new (&this->m_data[this->m_count].m3) T3(tmp3);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
-            new (&this->m_data[this->m_count].m3) T3(m3);
-        }
-        ++this->m_count;
-    }
-};
-
-template<typename T1, typename T2>
-class array<T1, T2, void, void, void, void, void, void>
-  : public array_base<array_element<T1, T2, void, void, void, void, void, void>,
-                     array<T1, T2>>
-{
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<array_element<T1, T2, void, void, void, void, void, void>,
-                    array<T1, T2>>::array_base;
-#else
-public:
-    typedef array_element<T1, T2, void, void, void, void, void, void> element_t;
-
-    inline array()
-      : array_base<element_t,
-                  array<T1, T2>>::array_base() {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t,
-                  array<T1, T2>>::array_base(list) {}
-#endif
-
-public:
-    inline void Push(T1 const &m1, T2 const &m2)
-    {
-        if (this->m_count >= this->m_reserved)
-        {
-            T1 tmp1 = m1; T2 tmp2 = m2;
-            this->Grow();
-            new (&this->m_data[this->m_count].m1) T1(tmp1);
-            new (&this->m_data[this->m_count].m2) T2(tmp2);
-        }
-        else
-        {
-            new (&this->m_data[this->m_count].m1) T1(m1);
-            new (&this->m_data[this->m_count].m2) T2(m2);
+            new (&this->m_data[this->m_count]) tuple<T...>({ args... });
         }
         ++this->m_count;
     }
 };
 
 template<typename T>
-class array<T, void, void, void, void, void, void, void>
-  : public array_base<T,
-                     array<T>>
+class array<T>
+  : public array_base<T, array<T>>
 {
 #if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-    using array_base<T,
-                    array<T>>::array_base;
+    using array_base<T, array<T>>::array_base;
 #else
 public:
     typedef T element_t;
 
     inline array()
-      : array_base<T,
-                  array<T>>::array_base() {}
+      : array_base<T, array<T>>::array_base()
+    {}
 
     inline array(std::initializer_list<element_t> const &list)
-      : array_base<T,
-                  array<T>>::array_base(list) {}
+      : array_base<T, array<T>>::array_base(list)
+    {}
 #endif
 };
 
@@ -896,32 +539,28 @@ public:
  * C++11 iterators
  */
 
-template<typename T1, typename T2, typename T3, typename T4,
-         typename T5, typename T6, typename T7, typename T8>
-typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator begin(array<T1,T2,T3,T4,T5,T6,T7,T8> &a)
+template<typename... T>
+typename array<T...>::Iterator begin(array<T...> &a)
 {
-    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator(&a, 0);
+    return typename array<T...>::Iterator(&a, 0);
 }
 
-template<typename T1, typename T2, typename T3, typename T4,
-         typename T5, typename T6, typename T7, typename T8>
-typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator end(array<T1,T2,T3,T4,T5,T6,T7,T8> &a)
+template<typename... T>
+typename array<T...>::Iterator end(array<T...> &a)
 {
-    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::Iterator(&a, a.Count());
+    return typename array<T...>::Iterator(&a, a.Count());
 }
 
-template<typename T1, typename T2, typename T3, typename T4,
-         typename T5, typename T6, typename T7, typename T8>
-typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator begin(array<T1,T2,T3,T4,T5,T6,T7,T8> const &a)
+template<typename... T>
+typename array<T...>::ConstIterator begin(array<T...> const &a)
 {
-    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator(&a, 0);
+    return typename array<T...>::ConstIterator(&a, 0);
 }
 
-template<typename T1, typename T2, typename T3, typename T4,
-         typename T5, typename T6, typename T7, typename T8>
-typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator end(array<T1,T2,T3,T4,T5,T6,T7,T8> const &a)
+template<typename... T>
+typename array<T...>::ConstIterator end(array<T...> const &a)
 {
-    return typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator(&a, a.Count());
+    return typename array<T...>::ConstIterator(&a, a.Count());
 }
 
 /*
@@ -929,10 +568,7 @@ typename array<T1,T2,T3,T4,T5,T6,T7,T8>::ConstIterator end(array<T1,T2,T3,T4,T5,
  */
 
 #if LOL_FEATURE_CXX11_TEMPLATE_ALIASES
-template<typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
-using Array = array<T1, T2, T3, T4, T5, T6, T7, T8>;
+template<typename... T> using Array = array<T...>;
 #else
 #   define Array array
 #endif

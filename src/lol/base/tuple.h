@@ -18,15 +18,21 @@
 #if !defined __LOL_BASE_TUPLE_H__
 #define __LOL_BASE_TUPLE_H__
 
+#include <tuple>
+
 #include <lol/base/assert.h>
 
 namespace lol
 {
 
-template<typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
-class tuple
+template<typename... T>
+class tuple : public std::tuple<T...>
+{
+};
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5,
+         typename T6, typename T7, typename T8>
+class tuple<T1, T2, T3, T4, T5, T6, T7, T8>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7; T8 m8;
@@ -34,7 +40,7 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6, typename T7>
-class tuple<T1, T2, T3, T4, T5, T6, T7, void>
+class tuple<T1, T2, T3, T4, T5, T6, T7>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6; T7 m7;
@@ -42,42 +48,42 @@ public:
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5,
          typename T6>
-class tuple<T1, T2, T3, T4, T5, T6, void, void>
+class tuple<T1, T2, T3, T4, T5, T6>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5; T6 m6;
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5>
-class tuple<T1, T2, T3, T4, T5, void, void, void>
+class tuple<T1, T2, T3, T4, T5>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4; T5 m5;
 };
 
 template<typename T1, typename T2, typename T3, typename T4>
-class tuple<T1, T2, T3, T4, void, void, void, void>
+class tuple<T1, T2, T3, T4>
 {
 public:
     T1 m1; T2 m2; T3 m3; T4 m4;
 };
 
 template<typename T1, typename T2, typename T3>
-class tuple<T1, T2, T3, void, void, void, void, void>
+class tuple<T1, T2, T3>
 {
 public:
     T1 m1; T2 m2; T3 m3;
 };
 
 template<typename T1, typename T2>
-class tuple<T1, T2, void, void, void, void, void, void>
+class tuple<T1, T2>
 {
 public:
     T1 m1; T2 m2;
 };
 
 template<typename T1>
-class tuple<T1, void, void, void, void, void, void, void>
+class tuple<T1>
 {
 public:
     T1 m1;

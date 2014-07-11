@@ -30,13 +30,11 @@
 namespace lol
 {
 
-template<typename T1, typename T2 = void, typename T3 = void,
-         typename T4 = void, typename T5 = void, typename T6 = void,
-         typename T7 = void, typename T8 = void>
-class array3d : protected array<T1, T2, T3, T4, T5, T6, T7, T8>
+template<typename... T>
+class array3d : protected array<T...>
 {
 public:
-    typedef array<T1, T2, T3, T4, T5, T6, T7, T8> super;
+    typedef array<T...> super;
     typedef typename super::element_t element_t;
 
     inline array3d()
@@ -128,7 +126,7 @@ public:
             }
 
         private:
-            array3d<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
+            array3d<T...> &m_array;
             ivec2 m_line;
         };
 
@@ -140,7 +138,7 @@ public:
         }
 
     private:
-        array3d<T1, T2, T3, T4, T5, T6, T7, T8> &m_array;
+        array3d<T...> &m_array;
         int m_slice;
     };
 
@@ -170,7 +168,7 @@ public:
             }
 
         private:
-            array3d<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
+            array3d<T...> const &m_array;
             ivec2 m_line;
         };
 
@@ -182,7 +180,7 @@ public:
         }
 
     private:
-        array3d<T1, T2, T3, T4, T5, T6, T7, T8> const &m_array;
+        array3d<T...> const &m_array;
         int m_slice;
     };
 

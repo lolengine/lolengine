@@ -99,8 +99,8 @@ protected:
 private:
     static array<InputDevice*> devices;
 
-    template <typename T>
-    int GetItemIndex(const char* name, const array<String, T>& array) const
+    template <typename... T>
+    int GetItemIndex(const char* name, const array<String, T...>& array) const
     {
         for (int i = 0; i < array.Count(); ++i)
         {
