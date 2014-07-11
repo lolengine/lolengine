@@ -18,7 +18,7 @@ au Syntax cpp
 " Some custom container types
 au Syntax cpp
    \ syn keyword cType
-   \ array array2d array3d hash map
+   \ tuple array array2d array3d hash map
 
 " GLSL types and the Lol Engine extensions
 au Syntax cpp
