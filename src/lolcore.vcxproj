@@ -300,6 +300,7 @@
     <ClInclude Include="lol\base\map.h" />
     <ClInclude Include="lol\base\string.h" />
     <ClInclude Include="lol\base\types.h" />
+    <ClInclude Include="lol\base\tuple.h" />
     <ClInclude Include="lol\debug\all.h" />
     <ClInclude Include="lol\debug\lines.h" />
     <ClInclude Include="lol\engine.h" />

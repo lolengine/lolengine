@@ -15,6 +15,7 @@
 #include <lol/base/types.h>
 #include <lol/base/log.h>
 #include <lol/base/assert.h>
+#include <lol/base/tuple.h>
 #include <lol/base/array.h>
 #include <lol/base/string.h>
 #include <lol/base/hash.h>
