@@ -11,7 +11,7 @@
 //
 
 //
-// The arrayNd class
+// The arraynd class
 // -----------------
 // A N-Dimensional array class allowing var[i][j][k]... indexing,
 //
@@ -184,7 +184,7 @@ public:
     }
 
     /* Access elements directly using index position */
-    inline proxy operator [](size_t pos) const
+    inline proxy operator[](size_t pos) const
     {
         return proxy(this, m_sizes, pos, m_sizes[0]);
     }
@@ -219,6 +219,72 @@ public:
 
 private:
     vec_t<size_t, N> m_sizes;
+};
+
+
+template<typename... T>
+class arraynd<1, T...> : protected array<T...>
+{
+public:
+    typedef array<T...> super;
+    typedef typename super::element_t element_t;
+
+    inline arraynd() :
+        super(),
+        m_sizes()
+    {
+    }
+
+    inline arraynd(vec_t<size_t, 1> sizes, element_t e = element_t()) :
+        super(),
+        m_sizes(sizes)
+    {
+        SetSize(m_sizes, e);
+    }
+
+    inline arraynd(std::initializer_list<element_t> initializer) :
+        super(),
+        m_sizes()
+    {
+        m_sizes[0] = initializer.size();
+        SetSize(m_sizes[0]);
+
+        size_t pos = 0;
+        for (auto element : initializer)
+            (*this)[pos++] = element;
+    }
+
+    /* Access elements directly using index position */
+    inline element_t & operator[](size_t pos) const
+    {
+        return super::operator[](pos);
+    }
+
+    inline size_t ComputeTotalSize(vec_t<size_t, 1> sizes)
+    {
+        return m_sizes[0];
+    }
+
+    /* Resize the array.
+     * FIXME: data gets scrambled; should we care? */
+    inline void SetSize(vec_t<size_t, 1> sizes, element_t e = element_t())
+    {
+        this->Resize(ComputeTotalSize(sizes), e);
+    }
+
+    inline vec_t<size_t, 1> GetSize() const
+    {
+        return ComputeTotalSize(this->m_sizes);
+    }
+
+public:
+    inline element_t *Data() { return super::Data(); }
+    inline element_t const *Data() const { return super::Data(); }
+    inline int Count() const { return super::Count(); }
+    inline int Bytes() const { return super::Bytes(); }
+
+private:
+    vec_t<size_t, 1> m_sizes;
 };
 
 } /* namespace lol */
