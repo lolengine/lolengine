@@ -189,26 +189,21 @@ public:
         return proxy(this, m_sizes, pos, m_sizes[0]);
     }
 
-    inline size_t ComputeTotalSize(vec_t<size_t, N> sizes)
+    /* Resize the array.
+     * FIXME: data gets scrambled; should we care? */
+    inline void SetSize(vec_t<size_t, N> sizes, element_t e = element_t())
     {
         size_t total_size = 1;
 
         for (auto size : sizes)
             total_size *= size;
 
-        return total_size;
-    }
-
-    /* Resize the array.
-     * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<size_t, N> sizes, element_t e = element_t())
-    {
-        this->Resize(ComputeTotalSize(sizes), e);
+        this->Resize(total_size, e);
     }
 
     inline vec_t<size_t, N> GetSize() const
     {
-        return ComputeTotalSize(this->m_sizes);
+        return this->m_sizes;
     }
 
 public:
