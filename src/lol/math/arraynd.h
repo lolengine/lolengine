@@ -255,21 +255,16 @@ public:
         return super::operator[](pos);
     }
 
-    inline size_t ComputeTotalSize(vec_t<size_t, 1> sizes)
-    {
-        return m_sizes[0];
-    }
-
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
     inline void SetSize(vec_t<size_t, 1> sizes, element_t e = element_t())
     {
-        this->Resize(ComputeTotalSize(sizes), e);
+        this->Resize(m_sizes[0], e);
     }
 
     inline vec_t<size_t, 1> GetSize() const
     {
-        return ComputeTotalSize(this->m_sizes);
+        return this->m_sizes;
     }
 
 public:
