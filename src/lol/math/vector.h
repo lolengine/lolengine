@@ -128,9 +128,9 @@ struct vec_t<T, N, FULL_SWIZZLE>
             m_data[i] = (T)v.m_data[i];
     }
 
-    /* Explicit constructor for initializer_list. We need these ugly
+    /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
-    explicit inline vec_t(std::initializer_list<element> const &list)
+    inline vec_t(std::initializer_list<element> const &list)
     {
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
@@ -201,9 +201,9 @@ struct vec_t<T,2>
     explicit inline constexpr vec_t(vec_t<U, 2, SWIZZLE> const &v)
       : x(v[0]), y(v[1]) {}
 
-    /* Explicit constructor for initializer_list. We need these ugly
+    /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
-    explicit inline vec_t(std::initializer_list<element> const &list)
+    inline vec_t(std::initializer_list<element> const &list)
     {
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
@@ -308,9 +308,9 @@ struct vec_t<T,3>
     explicit inline constexpr vec_t(vec_t<U, 3, SWIZZLE> const &v)
       : x(v[0]), y(v[1]), z(v[2]) {}
 
-    /* Explicit constructor for initializer_list. We need these ugly
+    /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
-    explicit inline vec_t(std::initializer_list<element> const &list)
+    inline vec_t(std::initializer_list<element> const &list)
     {
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
@@ -546,9 +546,9 @@ struct vec_t<T,4>
     explicit inline constexpr vec_t(vec_t<U, 4, SWIZZLE> const &v)
       : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
 
-    /* Explicit constructor for initializer_list. We need these ugly
+    /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
-    explicit inline vec_t(std::initializer_list<element> const &list)
+    inline vec_t(std::initializer_list<element> const &list)
     {
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
