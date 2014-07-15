@@ -96,6 +96,36 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_LESS(a2, f2);
     }
 
+    LOLUNIT_TEST(VectorInit)
+    {
+        vec2 a { 1.f, 2.f };
+        LOLUNIT_ASSERT_EQUAL(1.f, a.x);
+        LOLUNIT_ASSERT_EQUAL(2.f, a.y);
+
+        vec3 b { 1.f, 2.f, 3.f };
+        LOLUNIT_ASSERT_EQUAL(1.f, b.x);
+        LOLUNIT_ASSERT_EQUAL(2.f, b.y);
+        LOLUNIT_ASSERT_EQUAL(3.f, b.z);
+
+        vec4 c { 1.f, 2.f, 3.f, 4.f };
+        LOLUNIT_ASSERT_EQUAL(1.f, c.x);
+        LOLUNIT_ASSERT_EQUAL(2.f, c.y);
+        LOLUNIT_ASSERT_EQUAL(3.f, c.z);
+        LOLUNIT_ASSERT_EQUAL(4.f, c.w);
+
+        vec_t<float, 10> d { 1.f, 2.f, 3.f, 4.f, 5.f };
+        LOLUNIT_ASSERT_EQUAL(1.f, d[0]);
+        LOLUNIT_ASSERT_EQUAL(2.f, d[1]);
+        LOLUNIT_ASSERT_EQUAL(3.f, d[2]);
+        LOLUNIT_ASSERT_EQUAL(4.f, d[3]);
+        LOLUNIT_ASSERT_EQUAL(5.f, d[4]);
+        LOLUNIT_ASSERT_EQUAL(0.f, d[5]);
+        LOLUNIT_ASSERT_EQUAL(0.f, d[6]);
+        LOLUNIT_ASSERT_EQUAL(0.f, d[7]);
+        LOLUNIT_ASSERT_EQUAL(0.f, d[8]);
+        LOLUNIT_ASSERT_EQUAL(0.f, d[9]);
+    }
+
     LOLUNIT_TEST(VectorSwizzle)
     {
         vec3 a(1.0f, 2.0f, 3.0f);
@@ -236,6 +266,42 @@ LOLUNIT_FIXTURE(VectorTest)
         auto va = v0 + v3;
         auto vb = v1 + v2;
         LOLUNIT_ASSERT(va == vb);
+    }
+
+    LOLUNIT_TEST(VectorIterator)
+    {
+        vec4 v4(1.125f, 1.25f, 1.375f, 1.25f);
+
+        for (auto x : v4)
+        {
+            LOLUNIT_ASSERT_GREATER(x, 1.0f);
+            LOLUNIT_ASSERT_LESS(x, 1.5f);
+        }
+
+        for (auto &x : v4)
+        {
+            LOLUNIT_ASSERT_GREATER(x, 1.0f);
+            LOLUNIT_ASSERT_LESS(x, 1.5f);
+        }
+
+        for (auto x : v4.zywx)
+        {
+            LOLUNIT_ASSERT_GREATER(x, 1.0f);
+            LOLUNIT_ASSERT_LESS(x, 1.5f);
+        }
+
+        vec4 const &v4c = v4;
+        for (auto x : v4c)
+        {
+            LOLUNIT_ASSERT_GREATER(x, 1.0f);
+            LOLUNIT_ASSERT_LESS(x, 1.5f);
+        }
+
+        for (auto &x : v4c)
+        {
+            LOLUNIT_ASSERT_GREATER(x, 1.0f);
+            LOLUNIT_ASSERT_LESS(x, 1.5f);
+        }
     }
 };
 
