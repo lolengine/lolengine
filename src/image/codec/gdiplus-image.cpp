@@ -138,7 +138,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
 {
     ULONG_PTR token;
     Gdiplus::GdiplusStartupInput input;
-    Gdiplus::GdiplusStartup(&token, &input, NULL);
+    Gdiplus::GdiplusStartup(&token, &input, nullptr);
 
     wchar_t const *fmt;
     if (strstr(path, ".gif"))
@@ -173,7 +173,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     }
 
     size_t len;
-    len = mbstowcs(NULL, path, 0);
+    len = mbstowcs(nullptr, path, 0);
     wchar_t *wpath = new wchar_t[len + 1];
     if (mbstowcs(wpath, path, len + 1) == (size_t)-1)
     {
@@ -212,7 +212,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     image->Unlock(pdst);
     b->UnlockBits(&bdata);
 
-    if (b->Save(wpath, &clsid, NULL) != Gdiplus::Ok)
+    if (b->Save(wpath, &clsid, nullptr) != Gdiplus::Ok)
     {
         Log::Error("could not save GDI+ image '%s'\n", path);
         delete[] wpath;

@@ -75,7 +75,7 @@ class FileData
 #if __CELLOS_LV2__
         String realfile = String(SYS_APP_HOME) + '/' + file;
         CellFsErrno err = cellFsOpen(realfile.C(), CELL_FS_O_RDONLY,
-                                     &m_fd, NULL, 0);
+                                     &m_fd, nullptr, 0);
         if (err != CELL_FS_SUCCEEDED)
             m_fd = -1;
 #elif __ANDROID__
