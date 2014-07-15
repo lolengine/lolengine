@@ -102,8 +102,7 @@ struct vec_t
  * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<typename T, int N>
 struct vec_t<T, N, FULL_SWIZZLE>
-  : public linear_ops::base<T>,
-    public componentwise_ops::base<T>
+  : public componentwise_ops::base<T>
 {
     static int const count = N;
     typedef T element;
@@ -176,9 +175,7 @@ private:
 
 template <typename T>
 struct vec_t<T,2>
-  : public swizzle_ops::base<T>,
-    public linear_ops::base<T>,
-    public componentwise_ops::base<T>
+  : public swizzle_ops::base<T>
 {
     static int const count = 2;
     typedef T element;
@@ -285,9 +282,7 @@ static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
 
 template <typename T>
 struct vec_t<T,3>
-  : public swizzle_ops::base<T>,
-    public linear_ops::base<T>,
-    public componentwise_ops::base<T>
+  : public swizzle_ops::base<T>
 {
     static int const count = 3;
     typedef T element;
@@ -524,9 +519,7 @@ static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
 
 template <typename T>
 struct vec_t<T,4>
-  : public swizzle_ops::base<T>,
-    public linear_ops::base<T>,
-    public componentwise_ops::base<T>
+  : public swizzle_ops::base<T>
 {
     static int const count = 4;
     typedef T element;

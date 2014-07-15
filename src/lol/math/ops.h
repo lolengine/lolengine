@@ -22,14 +22,45 @@
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 
+namespace lol
+{
+
 /*
  * Utility namespaces for traits -- this file uses a combination of
  * ADL black magic and enable_if to ensure that only the expected type
  * conversions are done.
+ *
+ * vec_t (swizzle) needs swizzle_ops
+ * vec_t (generic) needs linear_ops + componentwise_ops
+ * vec_t (specialisation) needs swizzle_ops + linear_ops + componentwise_ops
+ * mat_t (all) needs linear_ops
+ * cmplx_t quat_t need linear_ops
+ *
+ * We can only inherit from one class, because Visual Studio will not
+ * perform EBCO (empty base class optimisation) when there is multiple
+ * inheritance.
  */
 
-namespace lol
+namespace linear_ops
 {
+    template<typename T>
+    struct base {};
+}
+
+namespace componentwise_ops
+{
+    template<typename T>
+    struct base : public linear_ops::base<T> {};
+}
+
+namespace swizzle_ops
+{
+    template<typename T, int SWIZZLE = FULL_SWIZZLE>
+    struct base {};
+
+    template<typename T>
+    struct base<T, FULL_SWIZZLE> : public componentwise_ops::base<T> {};
+}
 
 /*
  * Operators for swizzled vectors. Since template deduction cannot be
@@ -40,20 +71,16 @@ namespace lol
 namespace swizzle_ops
 {
 
-template<typename T, int SWIZZLE = FULL_SWIZZLE>
-struct base {};
-
-
 template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
-static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type operator ==(vec_t<T,N,SWIZZLE1> const &a,
-                               vec_t<T,N,SWIZZLE2> const &b)
+static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type
+operator ==(vec_t<T,N,SWIZZLE1> const &a, vec_t<T,N,SWIZZLE2> const &b)
 {
     return vec_t<T,N>(a) == vec_t<T,N>(b);
 }
 
 template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
-static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type operator !=(vec_t<T,N,SWIZZLE1> const &a,
-                               vec_t<T,N,SWIZZLE2> const &b)
+static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type
+operator !=(vec_t<T,N,SWIZZLE1> const &a, vec_t<T,N,SWIZZLE2> const &b)
 {
     return vec_t<T,N>(a) != vec_t<T,N>(b);
 }
@@ -104,9 +131,6 @@ LOL_SWIZZLE_V_VV_OP(/)
 
 namespace linear_ops
 {
-
-template<typename T>
-struct base {};
 
 /*
  * Comparisons
@@ -254,9 +278,6 @@ operator /=(V &a, typename V::element const &val)
 
 namespace componentwise_ops
 {
-
-template<typename T>
-struct base {};
 
 template<typename V>
 static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type
