@@ -65,11 +65,11 @@ struct vec_t
 
     /* Disable all default constructors and destructors; this object
      * is only intended to exist as part of a union. */
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
     vec_t() = delete;
     vec_t(vec_t<T, N, SWIZZLE> const &) = delete;
     ~vec_t() = delete;
 
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
     /* Allow the assignment operator if unrestricted unions are supported. */
     inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that);
     {
@@ -83,8 +83,6 @@ struct vec_t
         /* Pass by value in case this == &that */
         return *this = (vec_t<T,N>)that;
     }
-#else
-    vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N, SWIZZLE> that) = delete;
 #endif
 
     inline T& operator[](size_t n)
@@ -275,7 +273,9 @@ static_assert(sizeof(i16vec2) == 4, "sizeof(i16vec2) == 4");
 static_assert(sizeof(ivec2) == 8, "sizeof(ivec2) == 8");
 static_assert(sizeof(i64vec2) == 16, "sizeof(i64vec2) == 16");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec2) == 4, "sizeof(f16vec2) == 4");
+#endif
 static_assert(sizeof(vec2) == 8, "sizeof(vec2) == 8");
 static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
 
@@ -512,7 +512,9 @@ static_assert(sizeof(i16vec3) == 6, "sizeof(i16vec3) == 6");
 static_assert(sizeof(ivec3) == 12, "sizeof(ivec3) == 12");
 static_assert(sizeof(i64vec3) == 24, "sizeof(i64vec3) == 24");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec3) == 6, "sizeof(f16vec3) == 6");
+#endif
 static_assert(sizeof(vec3) == 12, "sizeof(vec3) == 12");
 static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
 
@@ -942,7 +944,9 @@ static_assert(sizeof(i16vec4) == 8, "sizeof(i16vec4) == 8");
 static_assert(sizeof(ivec4) == 16, "sizeof(ivec4) == 16");
 static_assert(sizeof(i64vec4) == 32, "sizeof(i64vec4) == 32");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec4) == 8, "sizeof(f16vec4) == 8");
+#endif
 static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
 static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
 
@@ -951,7 +955,8 @@ static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
  */
 
 template<typename T, int N, int SWIZZLE>
-static inline vec_t<T,N> operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
+static inline typename std::enable_if<SWIZZLE != FULL_SWIZZLE, vec_t<T,N>>::type
+operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
 {
     vec_t<T,N> ret;
     for (int i = 0; i < N; ++i)
@@ -1178,14 +1183,14 @@ public:
     }
 
     template<int S = SWIZZLE>
-    inline typename std::enable_if<S != -1, T const &>::type
+    inline typename std::enable_if<S != FULL_SWIZZLE, T const &>::type
     operator *() const
     {
         return m_vec[m_pos];
     }
 
     template<int S = SWIZZLE>
-    inline typename std::enable_if<S == -1, T const &>::type
+    inline typename std::enable_if<S == FULL_SWIZZLE, T const &>::type
     operator *() const
     {
         return m_vec[m_pos];
