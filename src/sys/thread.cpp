@@ -98,7 +98,7 @@ void *BaseThreadManager::BaseThreadWork(void* data)
         }
     }
     that->m_donequeue.Push(ThreadStatus::THREAD_STOPPED);
-    return NULL;
+    return nullptr;
 }
 
 void BaseThreadManager::TickGame(float seconds)

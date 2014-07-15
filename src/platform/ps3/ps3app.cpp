@@ -224,7 +224,7 @@ Ps3App::Ps3App(char const *title, ivec2 res, float fps) :
 
     sys_ppu_thread_t thread;
     ret = sys_ppu_thread_create(&thread, Ps3AppData::MultiStreamThread,
-                                NULL, 0 /* Server prio */,
+                                nullptr, 0 /* Server prio */,
                                 0x4000 /* 16 KiB stack */,
                                 SYS_PPU_THREAD_CREATE_JOINABLE,
                                 "Audio Thread");

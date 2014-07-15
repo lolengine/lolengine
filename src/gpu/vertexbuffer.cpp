@@ -310,7 +310,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
 {
 #if defined _XBOX || defined USE_D3D9
     // Don't bother in DirectX world, shader attributes are not used
-    SetStream(vb, NULL);
+    SetStream(vb, nullptr);
 #else
     ShaderAttrib attribs[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
                            attr7, attr8, attr9, attr10, attr11, attr12 };
