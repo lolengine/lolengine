@@ -130,7 +130,9 @@ static_assert(sizeof(i16mat2) == 8, "sizeof(i16mat2) == 8");
 static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
 static_assert(sizeof(i64mat2) == 32, "sizeof(i64mat2) == 32");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
+#endif
 static_assert(sizeof(mat2) == 16, "sizeof(mat2) == 16");
 static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
 
@@ -253,7 +255,9 @@ static_assert(sizeof(i16mat3) == 18, "sizeof(i16mat3) == 18");
 static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
 static_assert(sizeof(i64mat3) == 72, "sizeof(i64mat3) == 72");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
+#endif
 static_assert(sizeof(mat3) == 36, "sizeof(mat3) == 36");
 static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
 
@@ -423,7 +427,9 @@ static_assert(sizeof(i16mat4) == 32, "sizeof(i16mat4) == 32");
 static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
 static_assert(sizeof(i64mat4) == 128, "sizeof(i64mat4) == 128");
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
+#endif
 static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
 static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
 
