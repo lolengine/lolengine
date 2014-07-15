@@ -54,7 +54,7 @@ namespace lol
 
 template<typename T, int N, int SWIZZLE>
 struct vec_t
-    /* MUST be a different base than e.g. vec_t<T,2> otherwise the unions
+    /* MUST have a different base than e.g. vec_t<T,2> otherwise the unions
      * in vec_t<T,2> with the same base will cause empty base optimisation
      * failures. */
   : public swizzle_ops::base<T, SWIZZLE>
@@ -128,6 +128,17 @@ struct vec_t<T, N, FULL_SWIZZLE>
             m_data[i] = (T)v.m_data[i];
     }
 
+    /* Explicit constructor for initializer_list. We need these ugly
+     * loops until C++ lets us initialize m_data directly. */
+    explicit inline vec_t(std::initializer_list<element> const &list)
+    {
+        auto l = list.begin();
+        for (int i = 0; i < count && l != list.end(); ++i, ++l)
+            m_data[i] = *l;
+        for (int i = list.size(); i < count; ++i)
+            m_data[i] = (T)0;
+    }
+
     /* Various explicit constructors */
     explicit inline vec_t(T X)
     {
@@ -139,7 +150,7 @@ struct vec_t<T, N, FULL_SWIZZLE>
     inline T const& operator[](size_t n) const { return m_data[n]; }
 
 private:
-    T m_data[N];
+    T m_data[count];
 };
 
 /*
@@ -189,6 +200,17 @@ struct vec_t<T,2>
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 2, SWIZZLE> const &v)
       : x(v[0]), y(v[1]) {}
+
+    /* Explicit constructor for initializer_list. We need these ugly
+     * loops until C++ lets us initialize m_data directly. */
+    explicit inline vec_t(std::initializer_list<element> const &list)
+    {
+        auto l = list.begin();
+        for (int i = 0; i < count && l != list.end(); ++i, ++l)
+            m_data[i] = *l;
+        for (int i = list.size(); i < count; ++i)
+            m_data[i] = (T)0;
+    }
 
     /* Various explicit constructors */
     explicit inline constexpr vec_t(T X, T Y)
@@ -243,6 +265,8 @@ struct vec_t<T,2>
         vec_t<T,4,0x1110> const yyyx, gggr, ttts;
         vec_t<T,4,0x1111> const yyyy, gggg, tttt;
 #endif
+
+        T m_data[count];
     };
 };
 
@@ -283,6 +307,17 @@ struct vec_t<T,3>
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 3, SWIZZLE> const &v)
       : x(v[0]), y(v[1]), z(v[2]) {}
+
+    /* Explicit constructor for initializer_list. We need these ugly
+     * loops until C++ lets us initialize m_data directly. */
+    explicit inline vec_t(std::initializer_list<element> const &list)
+    {
+        auto l = list.begin();
+        for (int i = 0; i < count && l != list.end(); ++i, ++l)
+            m_data[i] = *l;
+        for (int i = list.size(); i < count; ++i)
+            m_data[i] = (T)0;
+    }
 
     /* Various explicit constructors */
     explicit inline constexpr vec_t(T X)
@@ -467,6 +502,8 @@ struct vec_t<T,3>
         vec_t<T,4,0x2221> const zzzy, bbbg, pppt;
         vec_t<T,4,0x2222> const zzzz, bbbb, pppp;
 #endif
+
+        T m_data[count];
     };
 };
 
@@ -508,6 +545,17 @@ struct vec_t<T,4>
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 4, SWIZZLE> const &v)
       : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+
+    /* Explicit constructor for initializer_list. We need these ugly
+     * loops until C++ lets us initialize m_data directly. */
+    explicit inline vec_t(std::initializer_list<element> const &list)
+    {
+        auto l = list.begin();
+        for (int i = 0; i < count && l != list.end(); ++i, ++l)
+            m_data[i] = *l;
+        for (int i = list.size(); i < count; ++i)
+            m_data[i] = (T)0;
+    }
 
     /* Various explicit constructors */
     explicit inline constexpr vec_t(T X)
@@ -884,6 +932,8 @@ struct vec_t<T,4>
         vec_t<T,4,0x3332> const wwwz, aaab, qqqp;
         vec_t<T,4,0x3333> const wwww, aaaa, qqqq;
 #endif
+
+        T m_data[count];
     };
 };
 
@@ -1107,6 +1157,63 @@ static inline vec_t<T,N> radians(vec_t<T,N,SWIZZLE> const &a)
     for (int i = 0; i < N; ++i)
         ret[i] = lol::radians(a[i]);
     return ret;
+}
+
+/*
+ * C++11 iterators
+ */
+
+template<typename T, int N, int SWIZZLE>
+class vec_const_iter
+{
+public:
+    inline vec_const_iter(vec_t<T,N,SWIZZLE> const &vec, int pos)
+      : m_pos(pos),
+        m_vec(vec)
+    { }
+
+    inline bool operator !=(vec_const_iter<T,N,SWIZZLE> const & that) const
+    {
+        return m_pos != that.m_pos;
+    }
+
+    template<int S = SWIZZLE>
+    inline typename std::enable_if<S != -1, T const &>::type
+    operator *() const
+    {
+        return m_vec[m_pos];
+    }
+
+    template<int S = SWIZZLE>
+    inline typename std::enable_if<S == -1, T const &>::type
+    operator *() const
+    {
+        return m_vec[m_pos];
+    }
+
+    inline vec_const_iter<T,N,SWIZZLE> const & operator ++()
+    {
+        ++m_pos;
+        return *this;
+    }
+
+private:
+    int m_pos;
+    vec_t<T,N,SWIZZLE> const &m_vec;
+};
+
+/* FIXME: do we need a non-const iterator? Looks almost useless to me,
+ * and a lot of hassle with swizzling. */
+template<typename T, int N, int SWIZZLE>
+inline vec_const_iter<T,N,SWIZZLE> begin(vec_t<T,N,SWIZZLE> const &a)
+{
+    return vec_const_iter<T,N,SWIZZLE>(a, 0);
+}
+
+template<typename T, int N, int SWIZZLE>
+inline vec_const_iter<T,N,SWIZZLE> end(vec_t<T,N,SWIZZLE> const &a)
+{
+    return vec_const_iter<T,N,SWIZZLE>(a, N);
 }
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
