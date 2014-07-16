@@ -45,6 +45,7 @@
 #define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 0
 #define LOL_FEATURE_CXX11_CONSTEXPR 0
 #define LOL_FEATURE_CXX11_ISNAN 0
+#define LOL_FEATURE_CXX11_NULLPTR 0
 
 /* This one is OK, except on GCC <= 4.6 */
 #define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
@@ -57,6 +58,8 @@
 #       define LOL_FEATURE_CXX11_ISNAN 1
 #       undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #       define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
+#       undef LOL_FEATURE_CXX11_NULLPTR
+#       define LOL_FEATURE_CXX11_NULLPTR 1
 #   endif
 #   if (__GNUC__ * 100 + __GNUC_MINOR__) < 470
 #       undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
@@ -67,37 +70,39 @@
 #       undef LOL_FEATURE_CXX11_CONSTEXPR
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #   endif
+#   if __has_feature(cxx_nullptr)
+#       undef LOL_FEATURE_CXX11_NULLPTR
+#       define LOL_FEATURE_CXX11_NULLPTR 1
+#   endif
 #   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
+#elif defined _MSC_VER /* Visual Studio (lol) */
+#   if _MSC_VER < 1800
+#       error "sorry, Visual Studio 2013 or later is needed"
+#   endif
 #endif
+
+
+/*
+ * Ensure we have ptrdiff_t.
+ */
+
+#include <cstddef>
 
 
 /*
  * Ensure we have nullptr.
  */
 
-#if defined nullptr
-    /* do nothing */
-#elif defined __GNUC__
-#   define nullptr __null
-#else
-#   include <cstddef>
-#   define nullptr NULL
-#endif
-
-
-/*
- * Ensure we have ssize_t.
- */
-
-#if defined ssize_t
-    /* Do nothing, someone knows better than us it seems */
-#elif HAVE_SYS_TYPES_H
-#   include <sys/types.h>
-#elif _MSC_VER /* Visual Studio compiler */
-#   include <BaseTsd.h>
-#   define _MSC_STDINT_H_
-typedef SSIZE_T ssize_t;
+#if !LOL_FEATURE_CXX11_NULLPTR
+#   if defined nullptr
+        /* do nothing */
+#   elif defined __GNUC__
+#       define nullptr __null
+#   else
+#       include <cstddef>
+#       define nullptr NULL
+#   endif
 #endif
 
 
