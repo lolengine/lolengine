@@ -31,8 +31,7 @@ class half;
  * Forward declaration of vec_t, mat_t, cmplx_t, quat_t
  */
 
-int const FULL_SWIZZLE = 0xaaaa;
-int const NO_SWIZZLE = 0xbbbb;
+int const FULL_SWIZZLE = 0;
 
 template<typename T, int N, int SWIZZLE = FULL_SWIZZLE> struct vec_t;
 template<typename T, int COLS, int ROWS> struct mat_t;
