@@ -27,63 +27,10 @@
 #include <lol/base/array.h>
 #include <lol/base/assert.h>
 
+#include <type_traits>
+
 namespace lol
 {
-
-template<size_t N, size_t L, typename ARRAY_TYPE>
-class arraynd_proxy
-{
-public:
-
-    typedef arraynd_proxy<N, L - 1, ARRAY_TYPE> subproxy;
-
-    inline arraynd_proxy(ARRAY_TYPE * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline subproxy operator[](size_t pos)
-    {
-        return subproxy(m_array, this->m_sizes, m_index + pos * m_accumulator, m_accumulator * m_sizes[N - L]);
-    }
-
-private:
-
-    ARRAY_TYPE * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
-
-
-template<size_t N, typename ARRAY_TYPE>
-class arraynd_proxy<N, 1, ARRAY_TYPE>
-{
-public:
-
-    inline arraynd_proxy(ARRAY_TYPE * array, vec_t<size_t, N> const & sizes, size_t index, size_t accumulator) :
-        m_array(array),
-        m_sizes(sizes),
-        m_index(index),
-        m_accumulator(accumulator)
-    {
-    }
-
-    inline typename ARRAY_TYPE::element_t & operator[](size_t pos)
-    {
-        return m_array[m_index + pos * m_accumulator];
-    }
-
-private:
-
-    ARRAY_TYPE * m_array;
-    vec_t<size_t, N> const & m_sizes;
-    size_t m_index;
-    size_t m_accumulator;
-};
 
 
 template<typename T, size_t L>
@@ -159,7 +106,6 @@ class arraynd : protected array<T...>
 public:
     typedef array<T...> super;
     typedef typename super::element_t element_t;
-    typedef arraynd_proxy<N, N - 1, super> proxy;
 
     inline arraynd() :
         super(),
@@ -183,10 +129,81 @@ public:
         initializer.FillValues(&super::operator[](0), &m_sizes[0], 1);
     }
 
-    /* Access elements directly using index position */
-    inline proxy operator[](size_t pos) const
+    /* Access elements directly using an ivec2, ivec3 etc. index */
+    inline element_t const & operator[](vec_t<int, N> const &pos) const
     {
-        return proxy(this, m_sizes, pos, m_sizes[0]);
+        size_t n = pos[N - 1];
+        for (int i = N - 2; i >= 0; --i)
+            n = pos[i] + m_sizes[i + 1] * n;
+        return super::operator[](n);
+    }
+
+    inline element_t & operator[](vec_t<int, N> const &pos)
+    {
+        return const_cast<element_t &>(
+                   const_cast<arraynd<N, T...> const&>(*this)[pos]);
+    }
+
+    /* Proxy to access slices */
+    template<typename ARRAY_TYPE, size_t L = N - 1>
+    class slice
+    {
+    public:
+        typedef slice<ARRAY_TYPE, L - 1> subslice;
+
+        inline slice(ARRAY_TYPE &array, size_t index, size_t accumulator)
+          : m_array(array),
+            m_index(index),
+            m_accumulator(accumulator)
+        {
+        }
+
+        /* Accessors for the const version of the proxy */
+        template<bool V = L != 1 && std::is_const<ARRAY_TYPE>::value>
+        inline typename std::enable_if<V, subslice>::type
+        operator[](size_t pos) const
+        {
+            return subslice(m_array, m_index + pos * m_accumulator,
+                            m_accumulator * m_array.m_sizes[N - L]);
+        }
+
+        template<bool V = L == 1 && std::is_const<ARRAY_TYPE>::value>
+        inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
+        const & operator[](size_t pos) const
+        {
+            return m_array.super::operator[](m_index + pos * m_accumulator);
+        }
+
+        /* Accessors for the non-const version of the proxy */
+        template<bool V = L != 1 && !std::is_const<ARRAY_TYPE>::value>
+        inline typename std::enable_if<V, subslice>::type
+        operator[](size_t pos)
+        {
+            return subslice(m_array, m_index + pos * m_accumulator,
+                            m_accumulator * m_array.m_sizes[N - L]);
+        }
+
+        template<bool V = L == 1 && !std::is_const<ARRAY_TYPE>::value>
+        inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
+        & operator[](size_t pos)
+        {
+            return m_array.super::operator[](m_index + pos * m_accumulator);
+        }
+
+    private:
+        ARRAY_TYPE &m_array;
+        size_t m_index, m_accumulator;
+    };
+
+    /* Access addressable slices, allowing for array[i][j][...] syntax. */
+    inline slice<arraynd<N, T...> const> operator[](size_t pos) const
+    {
+        return slice<arraynd<N, T...> const>(*this, pos, m_sizes[0]);
+    }
+
+    inline slice<arraynd<N, T...>> operator[](size_t pos)
+    {
+        return slice<arraynd<N, T...>>(*this, pos, m_sizes[0]);
     }
 
     /* Resize the array.
@@ -214,67 +231,6 @@ public:
 
 private:
     vec_t<size_t, N> m_sizes;
-};
-
-
-template<typename... T>
-class arraynd<1, T...> : protected array<T...>
-{
-public:
-    typedef array<T...> super;
-    typedef typename super::element_t element_t;
-
-    inline arraynd() :
-        super(),
-        m_sizes()
-    {
-    }
-
-    inline arraynd(vec_t<size_t, 1> sizes, element_t e = element_t()) :
-        super(),
-        m_sizes(sizes)
-    {
-        SetSize(m_sizes, e);
-    }
-
-    inline arraynd(std::initializer_list<element_t> initializer) :
-        super(),
-        m_sizes()
-    {
-        m_sizes[0] = initializer.size();
-        SetSize(m_sizes[0]);
-
-        size_t pos = 0;
-        for (auto element : initializer)
-            (*this)[pos++] = element;
-    }
-
-    /* Access elements directly using index position */
-    inline element_t & operator[](size_t pos) const
-    {
-        return super::operator[](pos);
-    }
-
-    /* Resize the array.
-     * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<size_t, 1> sizes, element_t e = element_t())
-    {
-        this->Resize(m_sizes[0], e);
-    }
-
-    inline vec_t<size_t, 1> GetSize() const
-    {
-        return this->m_sizes;
-    }
-
-public:
-    inline element_t *Data() { return super::Data(); }
-    inline element_t const *Data() const { return super::Data(); }
-    inline int Count() const { return super::Count(); }
-    inline int Bytes() const { return super::Bytes(); }
-
-private:
-    vec_t<size_t, 1> m_sizes;
 };
 
 } /* namespace lol */

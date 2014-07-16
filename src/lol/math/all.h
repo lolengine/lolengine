@@ -19,6 +19,7 @@
 #include <lol/math/vector.h>
 #include <lol/math/matrix.h>
 #include <lol/math/transform.h>
+#include <lol/math/arraynd.h>
 #include <lol/math/array2d.h>
 #include <lol/math/array3d.h>
 #include <lol/math/geometry.h>

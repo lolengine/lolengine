@@ -24,7 +24,21 @@ LOLUNIT_FIXTURE(ArrayNDTest)
 
     void TearDown() {}
 
-#if 0
+    LOLUNIT_TEST(Array2D)
+    {
+        arraynd<2, int> a;
+        a.SetSize(vec_t<size_t, 2>(1, 2));
+
+        a[0][0] = 1;
+        a[0][1] = 2;
+        LOLUNIT_ASSERT_EQUAL(a[0][0], 1);
+        LOLUNIT_ASSERT_EQUAL(a[0][1], 2);
+
+        arraynd<2, int> const &b = a;
+        LOLUNIT_ASSERT_EQUAL(b[0][0], 1);
+        LOLUNIT_ASSERT_EQUAL(b[0][1], 2);
+    }
+
     LOLUNIT_TEST(ArrayNDCreate)
     {
         arraynd<10, int> a;
@@ -35,23 +49,26 @@ LOLUNIT_FIXTURE(ArrayNDTest)
 
     LOLUNIT_TEST(ArrayNDInit)
     {
-        int const dimension = 8;
-        vec_t<size_t, dimension> size;
-        for (int i = 0; i < dimension; ++i)
+        int const NDIM = 8;
+        vec_t<size_t, NDIM> size;
+        for (int i = 0; i < NDIM; ++i)
             size[i] = 5;
 
-        arraynd<dimension, uint8_t> a(size);
+        arraynd<NDIM, uint8_t> a(size);
         memset(a.Data(), 0, a.Bytes());
         LOLUNIT_ASSERT_EQUAL(a[2][3][2][0][1][4][0][1], 0x00);
 
-        vec_t<int, dimension> v{ 2, 3, 2, 0, 1, 4, 0, 1 };
+        vec_t<int, NDIM> v = { 2, 3, 2, 0, 1, 4, 0, 1 };
         LOLUNIT_ASSERT_EQUAL(a[v], 0x00);
 
         a[2][3][2][0][1][4][0][1] = 0xcd;
         LOLUNIT_ASSERT_EQUAL(a[2][3][2][0][1][4][0][1], 0xcd);
         LOLUNIT_ASSERT_EQUAL(a[v], 0xcd);
+
+        arraynd<NDIM, uint8_t> const &b = a;
+        LOLUNIT_ASSERT_EQUAL(b[2][3][2][0][1][4][0][1], 0xcd);
+        LOLUNIT_ASSERT_EQUAL(b[v], 0xcd);
     }
-#endif
 };
 
 } /* namespace lol */
