@@ -138,6 +138,11 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT_EQUAL(c.y, 2.0f);
         LOLUNIT_ASSERT_EQUAL(c.z, 3.0f);
 
+        c = a.zyx;
+        LOLUNIT_ASSERT_EQUAL(c.x, 3.0f);
+        LOLUNIT_ASSERT_EQUAL(c.y, 2.0f);
+        LOLUNIT_ASSERT_EQUAL(c.z, 1.0f);
+
 #if 0 /* Visual Studio doesn't support these yet. */
         c = a;
         c.xy = b.yz;
