@@ -85,6 +85,8 @@ public:
 
     void FillValues(T * values, size_t * sizes, size_t accumulator)
     {
+        UNUSED(sizes);
+
         int pos = 0;
 
         for (auto value : m_initializers)
