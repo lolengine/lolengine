@@ -25,7 +25,7 @@ void array_base<T, ARRAY>::Sort(int sort)
     if (s++ == sort)
     {
         int d = 1;
-        for (int i = 0; i < Count() - 1; i = lol::max(i + d, 0))
+        for (ptrdiff_t i = 0; i < Count() - 1; i = lol::max(i + d, (ptrdiff_t)0))
         {
             if (i <= 0 || m_data[i] < m_data[i + 1])
                 d = 1;
@@ -44,9 +44,9 @@ void array_base<T, ARRAY>::Sort(int sort)
 }
 
 template<typename T, typename ARRAY>
-void array_base<T, ARRAY>::SortQuickSwap(int start, int stop)
+void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
 {
-    int m[3] =
+    ptrdiff_t m[3] =
     {
         rand(start, stop),
         rand(start, stop),
@@ -57,7 +57,7 @@ void array_base<T, ARRAY>::SortQuickSwap(int start, int stop)
     {
         if (m_data[m[i+1]] < m_data[m[i]])
         {
-            int mt = m[i+1];
+            ptrdiff_t mt = m[i+1];
             m[i+1] = m[i];
             m[i] = mt;
             i = 0;
@@ -67,8 +67,8 @@ void array_base<T, ARRAY>::SortQuickSwap(int start, int stop)
     }
     //actual stuff
     T median = m_data[m[1]];
-    int i0 = start;
-    int i1 = stop - 1;
+    ptrdiff_t i0 = start;
+    ptrdiff_t i1 = stop - 1;
     bool swap = false;
     while (i0 < i1)
     {

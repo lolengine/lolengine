@@ -43,11 +43,11 @@ public:
     {
         using namespace std;
         ASSERT(str);
-        Resize((int)strlen(str));
+        Resize(strlen(str));
         memcpy(&(*this)[0], str, Count() + 1);
     }
 
-    inline String(char const *str, int count)
+    inline String(char const *str, ptrdiff_t count)
       : Super()
     {
         using namespace std;
@@ -62,16 +62,16 @@ public:
     {
     }
 
-    inline char &operator [](int n)
+    inline char &operator [](ptrdiff_t n)
     {
         /* Allow n == Count() because we might have reasonable reasons
          * to access that hidden null character. */
         ASSERT(n >= 0);
-        ASSERT((unsigned)n <= (unsigned)Count());
+        ASSERT(n <= Count());
         return ((Super &)*this)[n];
     }
 
-    inline char const &operator [](int n) const
+    inline char const &operator [](ptrdiff_t n) const
     {
         ASSERT(n >= 0);
         ASSERT(n <= Count());
@@ -90,7 +90,7 @@ public:
         return (*this)[Count() - 1];
     }
 
-    inline int Count() const
+    inline ptrdiff_t Count() const
     {
         return ((Super const &)*this).Count() - 1;
     }
@@ -108,14 +108,14 @@ public:
     }
 
     /* Does not initialise the newly allocated characters */
-    void Resize(int count)
+    void Resize(ptrdiff_t count)
     {
         ASSERT(count >= 0);
         ((Super &)*this).Resize(count + 1);
         ((Super &)*this).Last() = '\0';
     }
 
-    String Sub(int start, int count = -1) const
+    String Sub(ptrdiff_t start, ptrdiff_t count = -1) const
     {
         ASSERT(start >= 0);
         if (start >= Count())
@@ -125,20 +125,20 @@ public:
         return String(&(*this)[start], count);
     }
 
-    int IndexOf(char token) const
+    ptrdiff_t IndexOf(char token) const
     {
         using namespace std;
 
         char const *tmp = strchr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
     }
 
-    int IndexOf(char const* token) const
+    ptrdiff_t IndexOf(char const* token) const
     {
         using namespace std;
 
         char const *tmp = strstr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
     }
 
     bool Contains(String const &s) const
@@ -146,15 +146,16 @@ public:
         return IndexOf(s.C()) != INDEX_NONE;
     }
 
-    int LastIndexOf(char token) const
+    ptrdiff_t LastIndexOf(char token) const
     {
         using namespace std;
 
         char const *tmp = strrchr(C(), token);
-        return tmp ? (int)(intptr_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
     }
 
-    int Replace(const char old_token, const char new_token, bool all_occurence=false)
+    int Replace(char const old_token, char const new_token,
+                bool all_occurrences = false)
     {
         using namespace std;
 
@@ -164,7 +165,7 @@ public:
         {
             *tmp = new_token;
             res++;
-            if (!all_occurence)
+            if (!all_occurrences)
                 break;
         }
         return res;
@@ -173,7 +174,7 @@ public:
     inline String& ToLower()
     {
         char* p = C();
-        for (int i = 0; i < Count(); ++i)
+        for (ptrdiff_t i = 0; i < Count(); ++i)
             if ('A' <= p[i] && p[i] <= 'Z')
                 p[i] += 'a' - 'A';
         return *this;
@@ -182,18 +183,18 @@ public:
     inline String& ToUpper()
     {
         char* p = C();
-        for (int i = 0; i < Count(); ++i)
+        for (ptrdiff_t i = 0; i < Count(); ++i)
             if ('a' <= p[i] && p[i] <= 'z')
                 p[i] += 'A' - 'a';
         return *this;
     }
 
-    int LastIndexOf(char const* token) const
+    ptrdiff_t LastIndexOf(char const* token) const
     {
         using namespace std;
 
-        int token_len = (int)strlen(token);
-        for (int i = Count() - token_len; i >= 0; --i)
+        ptrdiff_t token_len = strlen(token);
+        for (ptrdiff_t i = Count() - token_len; i >= 0; --i)
             if (strstr(C() + i, token))
                 return i;
         return -1;
@@ -215,7 +216,7 @@ public:
 
     bool IsAlpha()
     {
-        for (int i = 0; i < m_count; i++)
+        for (ptrdiff_t i = 0; i < m_count; i++)
             if (m_data[i] != '\0' && (m_data[i] < '0' || '9' < m_data[i]))
                 return false;
         return true;
@@ -230,7 +231,7 @@ public:
     inline String& operator +=(String const &s)
     {
         using namespace std;
-        int old_count = Count();
+        ptrdiff_t old_count = Count();
         Resize(Count() + s.Count());
         memcpy(&(*this)[old_count], &s[0], Count() - old_count);
         return *this;
@@ -266,7 +267,7 @@ public:
         /* We parse the C string twice because of strlen + memcmp
          * but it's probably still faster than doing it by hand. */
         using namespace std;
-        int sz_len = (int)strlen(sz);
+        ptrdiff_t sz_len = strlen(sz);
         return Count() == sz_len
                 && memcmp(C(), sz, sz_len) == 0;
     }

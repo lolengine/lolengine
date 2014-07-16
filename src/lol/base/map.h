@@ -34,7 +34,7 @@ public:
     inline V const& operator[] (E const &key) const
     {
         /* Look for the hash in our table and return the value. */
-        int i = FindIndex(key);
+        ptrdiff_t i = FindIndex(key);
         ASSERT(i >= 0, "trying to read a nonexistent key in map");
         return m_array[i].m3;
     }
@@ -44,7 +44,7 @@ public:
     {
         /* Look for the hash in our table and return the value if found. */
         uint32_t hashed = ((hash<K> const &)*this)(key);
-        int i = FindIndex(key, hashed);
+        ptrdiff_t i = FindIndex(key, hashed);
         if (i >= 0)
             return m_array[i].m3;
 
@@ -56,7 +56,7 @@ public:
     template <typename E>
     inline void Remove(E const &key)
     {
-        int i = FindIndex(key);
+        ptrdiff_t i = FindIndex(key);
         if (i >= 0)
             m_array.Remove(i);
     }
@@ -70,7 +70,7 @@ public:
     template <typename E>
     inline bool TryGetValue(E const &key, V& value)
     {
-        int i = FindIndex(key);
+        ptrdiff_t i = FindIndex(key);
         if (i >= 0)
         {
             value = m_array[i].m3;
@@ -88,16 +88,16 @@ public:
         return ret;
     }
 
-    inline int Count() const
+    inline ptrdiff_t Count() const
     {
         return m_array.Count();
     }
 
 private:
     template <typename E>
-    inline int FindIndex(E const &key, uint32_t hashed)
+    inline ptrdiff_t FindIndex(E const &key, uint32_t hashed)
     {
-        for (int i = 0; i < m_array.Count(); ++i)
+        for (ptrdiff_t i = 0; i < m_array.Count(); ++i)
             if (m_array[i].m1 == hashed)
                 if (m_array[i].m2 == key)
                     return i;
@@ -105,7 +105,7 @@ private:
     }
 
     template <typename E>
-    inline int FindIndex(E const &key)
+    inline ptrdiff_t FindIndex(E const &key)
     {
         uint32_t hashed = ((hash<K> const &)*this)(key);
         return FindIndex(key, hashed);

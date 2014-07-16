@@ -29,7 +29,7 @@
 namespace lol
 {
 
-#define INDEX_NONE -1
+static ptrdiff_t const INDEX_NONE = -1;
 
 /*
  * The base array type.
@@ -52,14 +52,14 @@ public:
         m_count(0),
         m_reserved(0)
     {
-        Reserve((int)list.size());
+        Reserve(list.size());
         for (auto elem : list)
             Push(elem);
     }
 
     inline ~array_base()
     {
-        for (int i = 0; i < m_count; i++)
+        for (ptrdiff_t i = 0; i < m_count; i++)
             m_data[i].~element_t();
         delete[] reinterpret_cast<uint8_t *>(m_data);
     }
@@ -69,7 +69,7 @@ public:
         /* Reserve the exact number of values instead of what the other
          * array had reserved. Just a method for not wasting too much. */
         Reserve(that.m_count);
-        for (int i = 0; i < that.m_count; i++)
+        for (ptrdiff_t i = 0; i < that.m_count; i++)
             new(&m_data[i]) element_t(that[i]);
         m_count = that.m_count;
     }
@@ -87,9 +87,9 @@ public:
                  * elements, then use placement new directly for the
                  * remaining elements. */
                 Reserve(that.m_count);
-                for (int i = 0; i < m_count && i < that.m_count; i++)
+                for (ptrdiff_t i = 0; i < m_count && i < that.m_count; i++)
                     m_data[i] = element_t(that[i]);
-                for (int i = m_count; i < that.m_count; i++)
+                for (ptrdiff_t i = m_count; i < that.m_count; i++)
                     new(&m_data[i]) element_t(that[i]);
             }
             else
@@ -98,11 +98,11 @@ public:
                  * use placement new for the elements in the other array
                  * that we do not have, and finally destroy the remaining
                  * elements. */
-                for (int i = 0; i < m_count && i < that.m_count; i++)
+                for (ptrdiff_t i = 0; i < m_count && i < that.m_count; i++)
                     m_data[i] = element_t(that[i]);
-                for (int i = m_count; i < that.m_count; i++)
+                for (ptrdiff_t i = m_count; i < that.m_count; i++)
                     new(&m_data[i]) element_t(that[i]);
-                for (int i = that.m_count; i < m_count; i++)
+                for (ptrdiff_t i = that.m_count; i < m_count; i++)
                     m_data[i].~element_t();
             }
             m_count = that.m_count;
@@ -112,9 +112,9 @@ public:
 
     array_base& operator+=(array_base const &that)
     {
-        int todo = that.m_count;
+        ptrdiff_t todo = that.m_count;
         Reserve(m_count + todo);
-        for (int i = 0; i < todo; i++)
+        for (ptrdiff_t i = 0; i < todo; i++)
             new(&m_data[m_count + i]) element_t(that[i]);
         m_count += todo;
         return *this;
@@ -129,16 +129,16 @@ public:
         return ret;
     }
 
-    inline element_t& operator[](int n)
+    inline element_t& operator[](ptrdiff_t n)
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
         ASSERT(n >= 0);
-        ASSERT((unsigned)n < (unsigned)m_count || (!n && !m_count));
+        ASSERT(n < m_count || (!n && !m_count));
         return m_data[n];
     }
 
-    inline element_t const& operator[](int n) const
+    inline element_t const& operator[](ptrdiff_t n) const
     {
         ASSERT(n >= 0);
         ASSERT(n < m_count || (!n && !m_count));
@@ -203,7 +203,7 @@ public:
         return true;
     }
 
-    inline void Insert(T const &x, int pos)
+    inline void Insert(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0);
         ASSERT(pos <= m_count);
@@ -211,7 +211,7 @@ public:
         if (m_count >= m_reserved)
             Grow();
 
-        for (int i = m_count; i > pos; --i)
+        for (ptrdiff_t i = m_count; i > pos; --i)
         {
             new (&m_data[i]) element_t(m_data[i - 1]);
             m_data[i - 1].~element_t();
@@ -220,7 +220,7 @@ public:
         ++m_count;
     }
 
-    inline bool InsertUnique(T const &x, int pos)
+    inline bool InsertUnique(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0);
         ASSERT(pos <= m_count);
@@ -232,9 +232,9 @@ public:
         return true;
     }
 
-    inline int Find(T const &x)
+    inline ptrdiff_t Find(T const &x)
     {
-        for (int i = 0; i < m_count; ++i)
+        for (ptrdiff_t i = 0; i < m_count; ++i)
             if (m_data[i] == x)
                 return i;
         return INDEX_NONE;
@@ -242,7 +242,7 @@ public:
 
     bool RemoveItem(T const &x)
     {
-        int idx = Find(x);
+        ptrdiff_t idx = Find(x);
         if (idx != INDEX_NONE)
         {
             Remove(idx);
@@ -253,7 +253,7 @@ public:
 
     bool RemoveSwapItem(T const &x)
     {
-        int idx = Find(x);
+        ptrdiff_t idx = Find(x);
         if (idx != INDEX_NONE)
         {
             RemoveSwap(idx);
@@ -264,8 +264,8 @@ public:
 
     bool SwapItem(T const &x1, T const &x2)
     {
-        int idx1 = Find(x1);
-        int idx2 = Find(x2);
+        ptrdiff_t idx1 = Find(x1);
+        ptrdiff_t idx2 = Find(x2);
         if (idx1 != INDEX_NONE && idx2 != INDEX_NONE)
         {
             Swap(idx1, idx2);
@@ -282,7 +282,7 @@ public:
         return tmp;
     }
 
-    void Swap(int pos1, int pos2)
+    void Swap(ptrdiff_t pos1, ptrdiff_t pos2)
     {
         ASSERT(pos1 >= 0);
         ASSERT(pos2 >= 0);
@@ -293,7 +293,7 @@ public:
             std::swap((*this)[pos1], (*this)[pos2]);
     }
 
-    void Remove(int pos, int todelete = 1)
+    void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1);
@@ -301,14 +301,14 @@ public:
         if (pos < 0)
             pos = m_count + pos;
 
-        for (int i = pos; i + todelete < m_count; i++)
+        for (ptrdiff_t i = pos; i + todelete < m_count; i++)
             m_data[i] = m_data[i + todelete];
-        for (int i = m_count - todelete; i < m_count; i++)
+        for (ptrdiff_t i = m_count - todelete; i < m_count; i++)
             m_data[i].~element_t();
         m_count -= todelete;
     }
 
-    void RemoveSwap(int pos, int todelete = 1)
+    void RemoveSwap(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1);
@@ -316,7 +316,7 @@ public:
         if (pos < 0)
             pos = m_count + pos;
 
-        for (int i = 0; i < todelete; i++)
+        for (ptrdiff_t i = 0; i < todelete; i++)
         {
             if (pos + i < m_count - 1 - i)
                 m_data[pos + i] = m_data[m_count - 1 - i];
@@ -325,17 +325,17 @@ public:
         m_count -= todelete;
     }
 
-    void Resize(int count, element_t e = element_t())
+    void Resize(ptrdiff_t count, element_t e = element_t())
     {
         ASSERT(count >= 0);
         Reserve(count);
 
         /* Too many elements? Remove them. */
-        for (int i = count; i < m_count; ++i)
+        for (ptrdiff_t i = count; i < m_count; ++i)
             m_data[i].~element_t();
 
         /* Not enough elements? Add some. */
-        for (int i = m_count; i < count; ++i)
+        for (ptrdiff_t i = m_count; i < count; ++i)
             new(&m_data[i]) element_t(e);
 
         m_count = count;
@@ -346,9 +346,9 @@ public:
         Remove(0, m_count);
     }
 
-    void Reserve(int toreserve)
+    void Reserve(ptrdiff_t toreserve)
     {
-        if (toreserve <= (int)m_reserved)
+        if (toreserve <= m_reserved)
             return;
 
         /* This cast is not very nice, because we kill any alignment
@@ -358,7 +358,7 @@ public:
         element_t *tmp = reinterpret_cast<element_t *>(reinterpret_cast<uintptr_t>
                                (new uint8_t[sizeof(element_t) * toreserve]));
         ASSERT(tmp, "out of memory in array class");
-        for (int i = 0; i < m_count; i++)
+        for (ptrdiff_t i = 0; i < m_count; i++)
         {
             new(&tmp[i]) element_t(m_data[i]);
             m_data[i].~element_t();
@@ -369,15 +369,15 @@ public:
     }
 
     void Sort(int sort);
-    void SortQuickSwap(int start, int stop);
+    void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 
     /* Support C++11 range-based for loops */
     class ConstIterator
     {
     public:
-        ConstIterator(array_base const *array, int pos)
+        ConstIterator(array_base const *that, ptrdiff_t pos)
           : m_pos(pos),
-            m_array(array)
+            m_array(that)
         { }
 
         bool operator !=(const ConstIterator& that) const
@@ -397,16 +397,16 @@ public:
         }
 
     private:
-        int m_pos;
+        ptrdiff_t m_pos;
         array_base const *m_array;
     };
 
     class Iterator
     {
     public:
-        Iterator(array_base *array, int pos)
+        Iterator(array_base *that, ptrdiff_t pos)
           : m_pos(pos),
-            m_array(array)
+            m_array(that)
         { }
 
         bool operator !=(const Iterator& that) const
@@ -426,13 +426,13 @@ public:
         }
 
     private:
-        int m_pos;
+        ptrdiff_t m_pos;
         array_base *m_array;
     };
 
 public:
-    inline int Count() const { return m_count; }
-    inline int Bytes() const { return m_count * sizeof(element_t); }
+    inline ptrdiff_t Count() const { return m_count; }
+    inline ptrdiff_t Bytes() const { return m_count * sizeof(element_t); }
 
 protected:
     void Grow()
@@ -441,7 +441,7 @@ protected:
     }
 
     element_t *m_data;
-    int m_count, m_reserved;
+    ptrdiff_t m_count, m_reserved;
 };
 
 /*
