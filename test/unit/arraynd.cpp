@@ -27,16 +27,24 @@ LOLUNIT_FIXTURE(ArrayNDTest)
     LOLUNIT_TEST(Array2D)
     {
         arraynd<2, int> a;
-        a.SetSize(vec_t<size_t, 2>(1, 2));
+        a.SetSize(vec_t<size_t, 2>(2, 2));
 
+        /* Non-const accessors */
         a[0][0] = 1;
         a[0][1] = 2;
+        a[1][0] = 3;
+        a[1][1] = 4;
         LOLUNIT_ASSERT_EQUAL(a[0][0], 1);
         LOLUNIT_ASSERT_EQUAL(a[0][1], 2);
+        LOLUNIT_ASSERT_EQUAL(a[1][0], 3);
+        LOLUNIT_ASSERT_EQUAL(a[1][1], 4);
 
+        /* Const accessors */
         arraynd<2, int> const &b = a;
         LOLUNIT_ASSERT_EQUAL(b[0][0], 1);
         LOLUNIT_ASSERT_EQUAL(b[0][1], 2);
+        LOLUNIT_ASSERT_EQUAL(b[1][0], 3);
+        LOLUNIT_ASSERT_EQUAL(b[1][1], 4);
     }
 
     LOLUNIT_TEST(ArrayNDCreate)
