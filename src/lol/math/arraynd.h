@@ -107,25 +107,20 @@ public:
     typedef array<T...> super;
     typedef typename super::element_t element_t;
 
-    inline arraynd() :
-        super(),
-        m_sizes()
+    inline arraynd()
     {
     }
 
-    inline arraynd(vec_t<size_t, N> sizes, element_t e = element_t()) :
-        super(),
-        m_sizes(sizes)
+    inline arraynd(vec_t<size_t, N> sizes, element_t e = element_t())
+      : m_sizes(sizes)
     {
-        SetSize(m_sizes, e);
+        FixSizes(e);
     }
 
-    inline arraynd(arraynd_initializer<element_t, N> initializer) :
-        super(),
-        m_sizes()
+    inline arraynd(arraynd_initializer<element_t, N> initializer)
     {
         initializer.FillSizes(&m_sizes[0]);
-        SetSize(m_sizes);
+        FixSizes();
         initializer.FillValues(&super::operator[](0), &m_sizes[0], 1);
     }
 
@@ -210,12 +205,8 @@ public:
      * FIXME: data gets scrambled; should we care? */
     inline void SetSize(vec_t<size_t, N> sizes, element_t e = element_t())
     {
-        size_t total_size = 1;
-
-        for (auto size : sizes)
-            total_size *= size;
-
-        this->Resize(total_size, e);
+        m_sizes = sizes;
+        FixSizes(e);
     }
 
     inline vec_t<size_t, N> GetSize() const
@@ -230,6 +221,16 @@ public:
     inline int Bytes() const { return super::Bytes(); }
 
 private:
+    inline void FixSizes(element_t e = element_t())
+    {
+        size_t total_size = 1;
+
+        for (auto size : m_sizes)
+            total_size *= size;
+
+        this->Resize(total_size, e);
+    }
+
     vec_t<size_t, N> m_sizes;
 };
 
