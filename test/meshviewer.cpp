@@ -376,7 +376,7 @@ public:
 
         //Mesh Change
 #if NO_NACL_EM_INPUT
-        m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, m_meshes.Count() - 1);
+        m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, (int)m_meshes.Count() - 1);
 #endif //NO_NACL_EM_INPUT
         m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 

@@ -177,14 +177,14 @@ LOLUNIT_FIXTURE(StringTest)
     LOLUNIT_TEST(IndexOf)
     {
         String s1 = "Hello World";
-        int i1 = s1.IndexOf('H');
-        int i2 = s1.IndexOf('W');
-        int i3 = s1.IndexOf('d');
-        int i4 = s1.IndexOf("Hello");
-        int i5 = s1.IndexOf("World");
-        int i6 = s1.IndexOf("lo");
-        int i7 = s1.IndexOf("Hello World");
-        int i8 = s1.IndexOf("Sup' dude");
+        ptrdiff_t i1 = s1.IndexOf('H');
+        ptrdiff_t i2 = s1.IndexOf('W');
+        ptrdiff_t i3 = s1.IndexOf('d');
+        ptrdiff_t i4 = s1.IndexOf("Hello");
+        ptrdiff_t i5 = s1.IndexOf("World");
+        ptrdiff_t i6 = s1.IndexOf("lo");
+        ptrdiff_t i7 = s1.IndexOf("Hello World");
+        ptrdiff_t i8 = s1.IndexOf("Sup' dude");
 
         LOLUNIT_ASSERT(i1 == 0);
         LOLUNIT_ASSERT(i2 == 6);
@@ -199,15 +199,15 @@ LOLUNIT_FIXTURE(StringTest)
     LOLUNIT_TEST(LastIndexOf)
     {
         String s1 = "Hello World";
-        int i1 = s1.LastIndexOf('H');
-        int i2 = s1.LastIndexOf('W');
-        int i3 = s1.LastIndexOf('d');
-        int i4 = s1.LastIndexOf("Hello");
-        int i5 = s1.LastIndexOf("World");
-        int i6 = s1.LastIndexOf("lo");
-        int i7 = s1.LastIndexOf("Hello World");
-        int i8 = s1.LastIndexOf("Sup' dude");
-        int i9 = s1.LastIndexOf('l');
+        ptrdiff_t i1 = s1.LastIndexOf('H');
+        ptrdiff_t i2 = s1.LastIndexOf('W');
+        ptrdiff_t i3 = s1.LastIndexOf('d');
+        ptrdiff_t i4 = s1.LastIndexOf("Hello");
+        ptrdiff_t i5 = s1.LastIndexOf("World");
+        ptrdiff_t i6 = s1.LastIndexOf("lo");
+        ptrdiff_t i7 = s1.LastIndexOf("Hello World");
+        ptrdiff_t i8 = s1.LastIndexOf("Sup' dude");
+        ptrdiff_t i9 = s1.LastIndexOf('l');
 
         LOLUNIT_ASSERT(i1 == 0);
         LOLUNIT_ASSERT(i2 == 6);

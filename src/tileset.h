@@ -48,7 +48,7 @@ public:
     /* New methods */
     int AddTile(ibox2 rect);
     void AddTile(ivec2 count);
-    int GetTileCount() const;
+    ptrdiff_t GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
 
     Texture * GetTexture();

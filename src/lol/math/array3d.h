@@ -77,7 +77,7 @@ public:
         ASSERT(pos.y < m_size.y);
         ASSERT(pos.z < m_size.z);
 
-        int n = (pos.z * m_size.y + pos.y) * m_size.x + pos.x;
+        ptrdiff_t n = (pos.z * m_size.y + pos.y) * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
@@ -93,7 +93,7 @@ public:
         ASSERT(pos.y < m_size.y);
         ASSERT(pos.z < m_size.z);
 
-        int n = (pos.z * m_size.y + pos.y) * m_size.x + pos.x;
+        ptrdiff_t n = (pos.z * m_size.y + pos.y) * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
@@ -103,7 +103,7 @@ public:
     class Slice
     {
     public:
-        inline Slice(array3d &array, int i)
+        inline Slice(array3d &array, ptrdiff_t i)
           : m_array(array),
             m_slice(i)
         {
@@ -118,7 +118,7 @@ public:
             {
             }
 
-            inline element_t &operator [](int k)
+            inline element_t &operator [](ptrdiff_t k)
             {
                 ASSERT(k >= 0);
                 ASSERT(k < m_array.m_size.z);
@@ -130,7 +130,7 @@ public:
             ivec2 m_line;
         };
 
-        inline class Line operator [](int j)
+        inline class Line operator [](ptrdiff_t j)
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -139,13 +139,13 @@ public:
 
     private:
         array3d<T...> &m_array;
-        int m_slice;
+        ptrdiff_t m_slice;
     };
 
     class ConstSlice
     {
     public:
-        inline ConstSlice(array3d const &array, int i)
+        inline ConstSlice(array3d const &array, ptrdiff_t i)
           : m_array(array),
             m_slice(i)
         {
@@ -160,7 +160,7 @@ public:
             {
             }
 
-            inline element_t const &operator [](int k) const
+            inline element_t const &operator [](ptrdiff_t k) const
             {
                 ASSERT(k >= 0);
                 ASSERT(k < m_array.m_size.z);
@@ -172,7 +172,7 @@ public:
             ivec2 m_line;
         };
 
-        inline class Line operator [](int j) const
+        inline class Line operator [](ptrdiff_t j) const
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -181,18 +181,18 @@ public:
 
     private:
         array3d<T...> const &m_array;
-        int m_slice;
+        ptrdiff_t m_slice;
     };
 
     /* Access addressable slices, allowing for array[i][j][k] syntax. */
-    inline class Slice operator [](int i)
+    inline class Slice operator [](ptrdiff_t i)
     {
         ASSERT(i >= 0);
         ASSERT(i < m_size.x);
         return Slice(*this, i);
     }
 
-    inline class ConstSlice operator [](int i) const
+    inline class ConstSlice operator [](ptrdiff_t i) const
     {
         ASSERT(i >= 0);
         ASSERT(i < m_size.x);
@@ -215,8 +215,8 @@ public:
 public:
     inline element_t *Data() { return super::Data(); }
     inline element_t const *Data() const { return super::Data(); }
-    inline int Count() const { return super::Count(); }
-    inline int Bytes() const { return super::Bytes(); }
+    inline ptrdiff_t Count() const { return super::Count(); }
+    inline ptrdiff_t Bytes() const { return super::Bytes(); }
 
 private:
     ivec3 m_size;

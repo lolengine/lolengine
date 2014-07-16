@@ -42,10 +42,10 @@ public:
     ~TickerData()
     {
         ASSERT(nentities == 0,
-               "still %i entities in ticker\n", nentities);
+               "still %td entities in ticker\n", nentities);
         ASSERT(m_autolist.Count() == 0,
-               "still %i autoreleased entities\n", m_autolist.Count());
-        Log::Debug("%i frames required to quit\n", frame - quitframe);
+               "still %ti autoreleased entities\n", m_autolist.Count());
+        Log::Debug("%d frames required to quit\n", frame - quitframe);
 
 #if LOL_FEATURE_THREADS
         gametick.Push(0);
@@ -59,7 +59,7 @@ private:
     /* Entity management */
     array<Entity *> m_todolist, m_autolist;
     array<Entity *> m_list[Entity::ALLGROUP_END];
-    int nentities;
+    ptrdiff_t nentities;
 
     /* Fixed framerate management */
     int frame, recording;
@@ -221,13 +221,13 @@ void TickerData::GameThreadTick()
     Log::Debug("-------------------------------------\n");
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
-        Log::Debug("%s Group %i\n",
+        Log::Debug("%s Group %d\n",
                    (g < Entity::GAMEGROUP_END) ? "Game" : "Draw", g);
 
         for (int i = 0; i < data->m_list[g].Count(); ++i)
         {
             Entity *e = data->m_list[g][i];
-            Log::Debug("  \\-- [%p] %s (m_ref %i, destroy %i)\n",
+            Log::Debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
                        e, e->GetName(), e->m_ref, e->m_destroy);
         }
     }
@@ -290,7 +290,7 @@ void TickerData::GameThreadTick()
 
 #if !LOL_BUILD_RELEASE
         if (n)
-            Log::Error("%i entities stuck after %i frames, poked %i\n",
+            Log::Error("%td entities stuck after %d frames, poked %d\n",
                        data->nentities, data->quitdelay, n);
 #endif
 

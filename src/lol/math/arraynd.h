@@ -33,7 +33,7 @@ namespace lol
 {
 
 
-template<typename T, size_t L>
+template<typename T, ptrdiff_t L>
 class arraynd_initializer
 {
 public:
@@ -43,7 +43,7 @@ public:
     {
     }
 
-    void FillSizes(size_t * sizes)
+    void FillSizes(ptrdiff_t * sizes)
     {
         *sizes = std::max(*sizes, m_initializers.size());
 
@@ -51,9 +51,9 @@ public:
             subinitializer.FillSizes(sizes + 1);
     }
 
-    void FillValues(T * values, size_t * sizes, size_t accumulator)
+    void FillValues(T * values, ptrdiff_t * sizes, ptrdiff_t accumulator)
     {
-        int pos = 0;
+        ptrdiff_t pos = 0;
 
         for (auto subinitializer : m_initializers)
         {
@@ -78,16 +78,16 @@ public:
     {
     }
 
-    void FillSizes(size_t * sizes)
+    void FillSizes(ptrdiff_t * sizes)
     {
         *sizes = std::max(*sizes, m_initializers.size());
     }
 
-    void FillValues(T * values, size_t * sizes, size_t accumulator)
+    void FillValues(T * values, ptrdiff_t * sizes, ptrdiff_t accumulator)
     {
         UNUSED(sizes);
 
-        int pos = 0;
+        ptrdiff_t pos = 0;
 
         for (auto value : m_initializers)
         {
@@ -102,7 +102,7 @@ private:
 };
 
 
-template<size_t N, typename... T>
+template<ptrdiff_t N, typename... T>
 class arraynd : protected array<T...>
 {
 public:
@@ -113,7 +113,7 @@ public:
     {
     }
 
-    inline arraynd(vec_t<size_t, N> sizes, element_t e = element_t())
+    inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
         FixSizes(e);
@@ -129,26 +129,26 @@ public:
     /* Access elements directly using an ivec2, ivec3 etc. index */
     inline element_t const & operator[](vec_t<int, N> const &pos) const
     {
-        size_t n = pos[N - 1];
-        for (int i = N - 2; i >= 0; --i)
+        ptrdiff_t n = pos[N - 1];
+        for (ptrdiff_t i = N - 2; i >= 0; --i)
             n = pos[i] + m_sizes[i + 1] * n;
         return super::operator[](n);
     }
 
-    inline element_t & operator[](vec_t<int, N> const &pos)
+    inline element_t & operator[](vec_t<ptrdiff_t, N> const &pos)
     {
         return const_cast<element_t &>(
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
 
     /* Proxy to access slices */
-    template<typename ARRAY_TYPE, size_t L = N - 1>
+    template<typename ARRAY_TYPE, ptrdiff_t L = N - 1>
     class slice
     {
     public:
         typedef slice<ARRAY_TYPE, L - 1> subslice;
 
-        inline slice(ARRAY_TYPE &array, size_t index, size_t accumulator)
+        inline slice(ARRAY_TYPE &array, ptrdiff_t index, ptrdiff_t accumulator)
           : m_array(array),
             m_index(index),
             m_accumulator(accumulator)
@@ -158,7 +158,7 @@ public:
         /* Accessors for the const version of the proxy */
         template<bool V = L != 1 && std::is_const<ARRAY_TYPE>::value>
         inline typename std::enable_if<V, subslice>::type
-        operator[](size_t pos) const
+        operator[](ptrdiff_t pos) const
         {
             return subslice(m_array, m_index + pos * m_accumulator,
                             m_accumulator * m_array.m_sizes[N - L]);
@@ -166,7 +166,7 @@ public:
 
         template<bool V = L == 1 && std::is_const<ARRAY_TYPE>::value>
         inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
-        const & operator[](size_t pos) const
+        const & operator[](ptrdiff_t pos) const
         {
             return m_array.super::operator[](m_index + pos * m_accumulator);
         }
@@ -174,7 +174,7 @@ public:
         /* Accessors for the non-const version of the proxy */
         template<bool V = L != 1 && !std::is_const<ARRAY_TYPE>::value>
         inline typename std::enable_if<V, subslice>::type
-        operator[](size_t pos)
+        operator[](ptrdiff_t pos)
         {
             return subslice(m_array, m_index + pos * m_accumulator,
                             m_accumulator * m_array.m_sizes[N - L]);
@@ -182,36 +182,36 @@ public:
 
         template<bool V = L == 1 && !std::is_const<ARRAY_TYPE>::value>
         inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
-        & operator[](size_t pos)
+        & operator[](ptrdiff_t pos)
         {
             return m_array.super::operator[](m_index + pos * m_accumulator);
         }
 
     private:
         ARRAY_TYPE &m_array;
-        size_t m_index, m_accumulator;
+        ptrdiff_t m_index, m_accumulator;
     };
 
     /* Access addressable slices, allowing for array[i][j][...] syntax. */
-    inline slice<arraynd<N, T...> const> operator[](size_t pos) const
+    inline slice<arraynd<N, T...> const> operator[](ptrdiff_t pos) const
     {
         return slice<arraynd<N, T...> const>(*this, pos, m_sizes[0]);
     }
 
-    inline slice<arraynd<N, T...>> operator[](size_t pos)
+    inline slice<arraynd<N, T...>> operator[](ptrdiff_t pos)
     {
         return slice<arraynd<N, T...>>(*this, pos, m_sizes[0]);
     }
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<size_t, N> sizes, element_t e = element_t())
+    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
         FixSizes(e);
     }
 
-    inline vec_t<size_t, N> GetSize() const
+    inline vec_t<ptrdiff_t, N> GetSize() const
     {
         return this->m_sizes;
     }
@@ -219,13 +219,13 @@ public:
 public:
     inline element_t *Data() { return super::Data(); }
     inline element_t const *Data() const { return super::Data(); }
-    inline int Count() const { return super::Count(); }
-    inline int Bytes() const { return super::Bytes(); }
+    inline ptrdiff_t Count() const { return super::Count(); }
+    inline ptrdiff_t Bytes() const { return super::Bytes(); }
 
 private:
     inline void FixSizes(element_t e = element_t())
     {
-        size_t total_size = 1;
+        ptrdiff_t total_size = 1;
 
         for (auto size : m_sizes)
             total_size *= size;
@@ -233,7 +233,7 @@ private:
         this->Resize(total_size, e);
     }
 
-    vec_t<size_t, N> m_sizes;
+    vec_t<ptrdiff_t, N> m_sizes;
 };
 
 } /* namespace lol */

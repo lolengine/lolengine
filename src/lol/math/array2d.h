@@ -71,7 +71,7 @@ public:
         ASSERT(pos.x < m_size.x);
         ASSERT(pos.y < m_size.y);
 
-        int n = pos.y * m_size.x + pos.x;
+        ptrdiff_t n = pos.y * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
@@ -85,7 +85,7 @@ public:
         ASSERT(pos.x < m_size.x);
         ASSERT(pos.y < m_size.y);
 
-        int n = pos.y * m_size.x + pos.x;
+        ptrdiff_t n = pos.y * m_size.x + pos.x;
         ASSERT(n >= 0);
         ASSERT(n < this->m_count);
 
@@ -95,13 +95,13 @@ public:
     class Column
     {
     public:
-        inline Column(array2d &array, int i)
+        inline Column(array2d &array, ptrdiff_t i)
           : m_array(array),
             m_column(i)
         {
         }
 
-        inline element_t &operator [](int j)
+        inline element_t &operator [](ptrdiff_t j)
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -110,19 +110,19 @@ public:
 
     private:
         array2d<T...> &m_array;
-        int m_column;
+        ptrdiff_t m_column;
     };
 
     class ConstColumn
     {
     public:
-        inline ConstColumn(array2d const &array, int i)
+        inline ConstColumn(array2d const &array, ptrdiff_t i)
           : m_array(array),
             m_column(i)
         {
         }
 
-        inline element_t const &operator [](int j) const
+        inline element_t const &operator [](ptrdiff_t j) const
         {
             ASSERT(j >= 0);
             ASSERT(j < m_array.m_size.y);
@@ -131,18 +131,18 @@ public:
 
     private:
         array2d<T...> const &m_array;
-        int m_column;
+        ptrdiff_t m_column;
     };
 
     /* Access addressable columns, allowing for array[i][j] syntax. */
-    inline class Column operator [](int i)
+    inline class Column operator [](ptrdiff_t i)
     {
         ASSERT(i >= 0);
         ASSERT(i < m_size.x);
         return Column(*this, i);
     }
 
-    inline class ConstColumn operator [](int i) const
+    inline class ConstColumn operator [](ptrdiff_t i) const
     {
         ASSERT(i >= 0);
         ASSERT(i < m_size.x);
@@ -165,8 +165,8 @@ public:
 public:
     inline element_t *Data() { return super::Data(); }
     inline element_t const *Data() const { return super::Data(); }
-    inline int Count() const { return super::Count(); }
-    inline int Bytes() const { return super::Bytes(); }
+    inline ptrdiff_t Count() const { return super::Count(); }
+    inline ptrdiff_t Bytes() const { return super::Bytes(); }
 
 private:
     ivec2 m_size;
