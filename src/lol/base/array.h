@@ -145,38 +145,6 @@ public:
         return m_data[n];
     }
 
-    inline element_t& operator[](uint32_t n)
-    {
-        /* Allow array[0] even if size is zero so that people can
-         * always use &array[0] to get a pointer to the data. */
-        ASSERT(n >= 0);
-        ASSERT((uint32_t)n < (uint32_t)m_count || (!n && !m_count));
-        return m_data[n];
-    }
-
-    inline element_t const& operator[](uint32_t n) const
-    {
-        ASSERT(n >= 0);
-        ASSERT(n < m_count || (!n && !m_count));
-        return m_data[n];
-    }
-
-    inline element_t& operator[](uint64_t n)
-    {
-        /* Allow array[0] even if size is zero so that people can
-         * always use &array[0] to get a pointer to the data. */
-        ASSERT(n >= 0);
-        ASSERT((uint64_t)n < (uint64_t)m_count || (!n && !m_count));
-        return m_data[n];
-    }
-
-    inline element_t const& operator[](uint64_t n) const
-    {
-        ASSERT(n >= 0);
-        ASSERT(n < m_count || (!n && !m_count));
-        return m_data[n];
-    }
-
     inline element_t& Last()
     {
         ASSERT(m_count > 0);
