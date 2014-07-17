@@ -46,10 +46,10 @@ protected:
 
 public:
     /* New methods */
-    int AddTile(ibox2 rect);
+    ptrdiff_t AddTile(ibox2 rect);
     void AddTile(ivec2 count);
     ptrdiff_t GetTileCount() const;
-    ivec2 GetTileSize(int tileid) const;
+    ivec2 GetTileSize(ptrdiff_t tileid) const;
 
     Texture * GetTexture();
     Texture const * GetTexture() const;

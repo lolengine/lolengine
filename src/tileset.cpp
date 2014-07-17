@@ -61,7 +61,7 @@ TileSet::TileSet(char const *path)
 
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.Count(); i++)
+        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
@@ -72,7 +72,7 @@ TileSet::TileSet(char const *path, Image* image)
 
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.Count(); i++)
+        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
@@ -102,7 +102,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
 
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.Count(); i++)
+        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
 }
 
@@ -132,7 +132,7 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
 
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.Count(); i++)
+        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
             AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
 }
 
@@ -155,7 +155,7 @@ void TileSet::Init(char const *path, Image* image)
     m_drawgroup = DRAWGROUP_BEFORE;
 }
 
-int TileSet::AddTile(ibox2 rect)
+ptrdiff_t TileSet::AddTile(ibox2 rect)
 {
     m_data->m_tiles.Push(rect,
                          box2((vec2)rect.A / (vec2)m_data->m_texture_size,
@@ -233,12 +233,12 @@ char const *TileSet::GetName()
     return m_data->m_name.C();
 }
 
-int TileSet::GetTileCount() const
+ptrdiff_t TileSet::GetTileCount() const
 {
     return m_data->m_tiles.Count();
 }
 
-ivec2 TileSet::GetTileSize(int tileid) const
+ivec2 TileSet::GetTileSize(ptrdiff_t tileid) const
 {
     ibox2 const &box = m_data->m_tiles[tileid].m1;
     return box.B - box.A;
