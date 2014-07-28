@@ -629,7 +629,9 @@ VertexStreamBase VertexDeclaration::GetStream(int index) const
             case VertexStreamBase::Type##T: stream.AddStream<T>(n++, m_streams[i].usage); break;
 
             __T(void)
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
             __T(half)     __T(f16vec2) __T(f16vec3) __T(f16vec4)
+#endif
             __T(float)    __T(vec2)    __T(vec3)    __T(vec4)
             __T(double)   __T(dvec2)   __T(dvec3)   __T(dvec4)
             __T(int8_t)   __T(i8vec2)  __T(i8vec3)  __T(i8vec4)
