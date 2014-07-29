@@ -45,7 +45,7 @@ public:
 
     void FillSizes(ptrdiff_t * sizes)
     {
-        *sizes = std::max(*sizes, m_initializers.size());
+        *sizes = std::max(*sizes, (ptrdiff_t)(m_initializers.size()));
 
         for (auto subinitializer : m_initializers)
             subinitializer.FillSizes(sizes + 1);
@@ -80,7 +80,7 @@ public:
 
     void FillSizes(ptrdiff_t * sizes)
     {
-        *sizes = std::max(*sizes, m_initializers.size());
+        *sizes = std::max(*sizes, (ptrdiff_t)(m_initializers.size()));
     }
 
     void FillValues(T * values, ptrdiff_t * sizes, ptrdiff_t accumulator)
@@ -119,11 +119,19 @@ public:
         FixSizes(e);
     }
 
-    inline arraynd(arraynd_initializer<element_t, N> initializer)
+    inline arraynd(std::initializer_list<arraynd_initializer<element_t, N - 1> > initializer)
     {
-        initializer.FillSizes(&m_sizes[0]);
+        m_sizes[0] = initializer.size();
+
+        for (auto inner_initializer : initializer)
+            inner_initializer.FillSizes(&m_sizes[1]);
+
         FixSizes();
-        initializer.FillValues(&super::operator[](0), &m_sizes[0], 1);
+
+        ptrdiff_t pos = 0;
+
+        for (auto inner_initializer : initializer)
+            inner_initializer.FillValues(&super::operator[](pos++), &m_sizes[1], m_sizes[0]);
     }
 
     /* Access elements directly using an ivec2, ivec3 etc. index */
