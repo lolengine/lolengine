@@ -53,6 +53,16 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         arraynd<20, float> b;
         arraynd<30, uint8_t> c;
         arraynd<40, double> d;
+
+        arraynd<3, double> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} }};
+        LOLUNIT_ASSERT_EQUAL(e[0][0][0], 1);
+        LOLUNIT_ASSERT_EQUAL(e[0][0][1], 2);
+        LOLUNIT_ASSERT_EQUAL(e[0][1][0], 3);
+        LOLUNIT_ASSERT_EQUAL(e[0][1][1], 4);
+        LOLUNIT_ASSERT_EQUAL(e[1][0][0], 5);
+        LOLUNIT_ASSERT_EQUAL(e[1][0][1], 6);
+        LOLUNIT_ASSERT_EQUAL(e[1][1][0], 7);
+        LOLUNIT_ASSERT_EQUAL(e[1][1][1], 8);
     }
 
     LOLUNIT_TEST(ArrayNDInit)
