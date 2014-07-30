@@ -173,7 +173,9 @@
     <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
+    <ClCompile Include="math\matrix.cpp" />
     <ClCompile Include="math\real.cpp" />
+    <ClCompile Include="math\transform.cpp" />
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
     <ClCompile Include="mesh\mesh.cpp" />
