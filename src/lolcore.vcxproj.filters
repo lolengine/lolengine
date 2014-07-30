@@ -120,7 +120,13 @@
     <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="math\matrix.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
     <ClCompile Include="math\real.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\transform.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="math\trig.cpp">
