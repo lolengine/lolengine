@@ -126,8 +126,6 @@ private:
 };
 
 static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
-static_assert(sizeof(umat2) == 16, "sizeof(umat2) == 16");
-
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
 #endif
@@ -249,8 +247,6 @@ private:
 };
 
 static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
-static_assert(sizeof(umat3) == 36, "sizeof(umat3) == 36");
-
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
 #endif
@@ -419,21 +415,15 @@ private:
 };
 
 static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
-static_assert(sizeof(umat4) == 64, "sizeof(umat4) == 64");
-
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
 #endif
 static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
 static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
 
-template<typename T> T determinant(mat_t<T,2,2> const &);
-template<typename T> T determinant(mat_t<T,3,3> const &);
-template<typename T> T determinant(mat_t<T,4,4> const &);
-
-template<typename T> mat_t<T,2,2> inverse(mat_t<T,2,2> const &);
-template<typename T> mat_t<T,3,3> inverse(mat_t<T,3,3> const &);
-template<typename T> mat_t<T,4,4> inverse(mat_t<T,4,4> const &);
+/*
+ * Transpose any matrix
+ */
 
 template<typename T, int COLS, int ROWS>
 static inline mat_t<T, ROWS, COLS> transpose(mat_t<T, COLS, ROWS> const &m)
@@ -442,6 +432,74 @@ static inline mat_t<T, ROWS, COLS> transpose(mat_t<T, COLS, ROWS> const &m)
     for (int i = 0; i < COLS; ++i)
         for (int j = 0; j < ROWS; ++j)
             ret[j][i] = m[i][j];
+    return ret;
+}
+
+/*
+ * Compute a square submatrix, useful for minors and cofactor matrices
+ */
+
+template<typename T, int N>
+mat_t<T, N - 1, N - 1> submatrix(mat_t<T, N, N> const &m, int i, int j)
+{
+    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
+
+    mat_t<T, N - 1, N - 1> ret;
+    for (int i2 = 0; i2 < N - 1; ++i2)
+        for (int j2 = 0; j2 < N - 1; ++j2)
+            ret[i2][j2] = m[i2 + (i2 >= i)][j2 + (j2 >= j)];
+
+    return ret;
+}
+
+/*
+ * Compute square matrix cofactor
+ */
+
+template<typename T, int N>
+T cofactor(mat_t<T, N, N> const &m, int i, int j)
+{
+    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
+    T tmp = determinant(submatrix(m, i, j));
+    return ((i + j) & 1) ? -tmp : tmp;
+}
+
+/*
+ * Compute square matrix determinant, with a specialisation for 1×1 matrices
+ */
+
+template<typename T, int N>
+T determinant(mat_t<T, N, N> const &m)
+{
+    T ret = (T)0;
+    for (int i = 0; i < N; ++i)
+        ret += m[i][0] * cofactor(m, i, 0);
+    return ret;
+}
+
+template<typename T>
+T const & determinant(mat_t<T, 1, 1> const &m)
+{
+    return m[0][0];
+}
+
+/*
+ * Compute square matrix inverse
+ */
+
+template<typename T, int N>
+mat_t<T, N, N> inverse(mat_t<T, N, N> const &m)
+{
+    mat_t<T, N, N> ret;
+
+    T d = determinant(m);
+    if (d)
+    {
+        /* Transpose result matrix on the fly */
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < N; ++j)
+                ret[i][j] = cofactor(m, j, i) / d;
+    }
     return ret;
 }
 
