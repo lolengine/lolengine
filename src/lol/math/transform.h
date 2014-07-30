@@ -67,11 +67,6 @@ struct cmplx_t : public linear_ops::base<T>
     T x, y;
 };
 
-static_assert(sizeof(i8cmplx) == 2, "sizeof(i8cmplx) == 2");
-static_assert(sizeof(i16cmplx) == 4, "sizeof(i16cmplx) == 4");
-static_assert(sizeof(icmplx) == 8, "sizeof(icmplx) == 8");
-static_assert(sizeof(i64cmplx) == 16, "sizeof(i64cmplx) == 16");
-
 static_assert(sizeof(f16cmplx) == 4, "sizeof(f16cmplx) == 4");
 static_assert(sizeof(cmplx) == 8, "sizeof(cmplx) == 8");
 static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
@@ -220,11 +215,6 @@ struct quat_t : public linear_ops::base<T>
     /* XXX: storage order is wxyz, unlike vectors! */
     T w, x, y, z;
 };
-
-static_assert(sizeof(i8quat) == 4, "sizeof(i8quat) == 4");
-static_assert(sizeof(i16quat) == 8, "sizeof(i16quat) == 8");
-static_assert(sizeof(iquat) == 16, "sizeof(iquat) == 16");
-static_assert(sizeof(i64quat) == 32, "sizeof(i64quat) == 32");
 
 static_assert(sizeof(f16quat) == 8, "sizeof(f16quat) == 8");
 static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
