@@ -125,10 +125,8 @@ private:
 #endif
 };
 
-static_assert(sizeof(i8mat2) == 4, "sizeof(i8mat2) == 4");
-static_assert(sizeof(i16mat2) == 8, "sizeof(i16mat2) == 8");
 static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
-static_assert(sizeof(i64mat2) == 32, "sizeof(i64mat2) == 32");
+static_assert(sizeof(umat2) == 16, "sizeof(umat2) == 16");
 
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
@@ -250,10 +248,8 @@ private:
 #endif
 };
 
-static_assert(sizeof(i8mat3) == 9, "sizeof(i8mat3) == 9");
-static_assert(sizeof(i16mat3) == 18, "sizeof(i16mat3) == 18");
 static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
-static_assert(sizeof(i64mat3) == 72, "sizeof(i64mat3) == 72");
+static_assert(sizeof(umat3) == 36, "sizeof(umat3) == 36");
 
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
@@ -422,10 +418,8 @@ private:
 #endif
 };
 
-static_assert(sizeof(i8mat4) == 16, "sizeof(i8mat4) == 16");
-static_assert(sizeof(i16mat4) == 32, "sizeof(i16mat4) == 32");
 static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
-static_assert(sizeof(i64mat4) == 128, "sizeof(i64mat4) == 128");
+static_assert(sizeof(umat4) == 64, "sizeof(umat4) == 64");
 
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
