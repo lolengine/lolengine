@@ -17,17 +17,6 @@
 namespace lol
 {
 
-template<> mat3 mat3::scale(float x)
-{
-    mat3 ret(1.0f);
-
-    ret[0][0] = x;
-    ret[1][1] = x;
-    ret[2][2] = x;
-
-    return ret;
-}
-
 template<> mat3 mat3::scale(float x, float y, float z)
 {
     mat3 ret(1.0f);
@@ -37,6 +26,11 @@ template<> mat3 mat3::scale(float x, float y, float z)
     ret[2][2] = z;
 
     return ret;
+}
+
+template<> mat3 mat3::scale(float x)
+{
+    return scale(x, x, x);
 }
 
 template<> mat3 mat3::scale(vec3 v)
@@ -198,7 +192,10 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
     return ret;
 }
 
-//Returns a standard perspective matrix
+/*
+ * Return a standard perspective matrix
+ */
+
 template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
@@ -208,9 +205,14 @@ template<> mat4 mat4::perspective(float fov_y, float width,
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
 }
 
-//Returns a perspective matrix with the camera location shifted to be on the near plane
+/*
+ * Return a perspective matrix with the camera location shifted to be on
+ * the near plane
+ */
+
 template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
-                                          float screen_ratio_yx, float near, float far)
+                                          float screen_ratio_yx,
+                                          float near, float far)
 {
     float tan_y = tanf(radians(fov_y) * .5f);
     ASSERT(tan_y > 0.000001f);
