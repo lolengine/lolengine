@@ -54,7 +54,7 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         arraynd<30, uint8_t> c;
         arraynd<40, double> d;
 
-        arraynd<3, double> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
+        arraynd<3, int> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
         LOLUNIT_ASSERT_EQUAL(e[0][0][0], 1);
         LOLUNIT_ASSERT_EQUAL(e[1][0][0], 2);
         LOLUNIT_ASSERT_EQUAL(e[0][1][0], 3);
@@ -63,6 +63,24 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         LOLUNIT_ASSERT_EQUAL(e[1][0][1], 6);
         LOLUNIT_ASSERT_EQUAL(e[0][1][1], 7);
         LOLUNIT_ASSERT_EQUAL(e[1][1][1], 8);
+
+        arraynd<3, int> f = { { {1, 2, 3, 4}, {5, 6, 7} }, { {8, 9}, {10} } };
+        LOLUNIT_ASSERT_EQUAL(f[0][0][0], 1);
+        LOLUNIT_ASSERT_EQUAL(f[1][0][0], 2);
+        LOLUNIT_ASSERT_EQUAL(f[2][0][0], 3);
+        LOLUNIT_ASSERT_EQUAL(f[3][0][0], 4);
+        LOLUNIT_ASSERT_EQUAL(f[0][1][0], 5);
+        LOLUNIT_ASSERT_EQUAL(f[1][1][0], 6);
+        LOLUNIT_ASSERT_EQUAL(f[2][1][0], 7);
+        LOLUNIT_ASSERT_EQUAL(f[3][1][0], 0);
+        LOLUNIT_ASSERT_EQUAL(f[0][0][1], 8);
+        LOLUNIT_ASSERT_EQUAL(f[1][0][1], 9);
+        LOLUNIT_ASSERT_EQUAL(f[2][0][1], 0);
+        LOLUNIT_ASSERT_EQUAL(f[3][0][1], 0);
+        LOLUNIT_ASSERT_EQUAL(f[0][1][1], 10);
+        LOLUNIT_ASSERT_EQUAL(f[1][1][1], 0);
+        LOLUNIT_ASSERT_EQUAL(f[2][1][1], 0);
+        LOLUNIT_ASSERT_EQUAL(f[3][1][1], 0);
     }
 
     LOLUNIT_TEST(ArrayNDInit)
