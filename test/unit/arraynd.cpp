@@ -15,6 +15,8 @@
 #include <lol/main.h>
 #include "lol/unit.h"
 
+#include <iostream>
+
 namespace lol
 {
 
@@ -55,6 +57,11 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         arraynd<40, double> d;
 
         arraynd<3, int> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
+
+        LOLUNIT_ASSERT_EQUAL(e.GetSize()[0], 2);
+        LOLUNIT_ASSERT_EQUAL(e.GetSize()[1], 2);
+        LOLUNIT_ASSERT_EQUAL(e.GetSize()[2], 2);
+
         LOLUNIT_ASSERT_EQUAL(e[0][0][0], 1);
         LOLUNIT_ASSERT_EQUAL(e[1][0][0], 2);
         LOLUNIT_ASSERT_EQUAL(e[0][1][0], 3);
@@ -65,6 +72,11 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         LOLUNIT_ASSERT_EQUAL(e[1][1][1], 8);
 
         arraynd<3, int> f = { { {1, 2, 3, 4}, {5, 6, 7} }, { {8, 9}, {10} } };
+
+        LOLUNIT_ASSERT_EQUAL(f.GetSize()[0], 4);
+        LOLUNIT_ASSERT_EQUAL(f.GetSize()[1], 2);
+        LOLUNIT_ASSERT_EQUAL(f.GetSize()[2], 2);
+
         LOLUNIT_ASSERT_EQUAL(f[0][0][0], 1);
         LOLUNIT_ASSERT_EQUAL(f[1][0][0], 2);
         LOLUNIT_ASSERT_EQUAL(f[2][0][0], 3);
