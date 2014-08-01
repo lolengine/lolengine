@@ -32,7 +32,7 @@ Image Image::DitherEdiff(array2d<float> const &kernel, ScanMode scan) const
     Image dst = *this;
 
     ivec2 size = dst.GetSize();
-    ivec2 ksize = kernel.GetSize();
+    ivec2 ksize = (ivec2)kernel.GetSize();
 
     int kx;
     for (kx = 0; kx < ksize.x; kx++)
