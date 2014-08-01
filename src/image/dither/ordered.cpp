@@ -45,7 +45,7 @@ static Image DitherHelper(Image const &image, array2d<float> const &kernel,
                           float scale, float angle)
 {
     ivec2 size = image.GetSize();
-    ivec2 ksize = kernel.GetSize();
+    ivec2 ksize = (ivec2)kernel.GetSize();
 
     float cost = lol::cos(angle);
     float sint = lol::sin(angle);

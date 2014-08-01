@@ -28,7 +28,7 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel);
 Image Image::Convolution(array2d<float> const &kernel)
 {
     /* Find the cell with the largest value */
-    ivec2 ksize = kernel.GetSize();
+    ivec2 ksize = (ivec2)kernel.GetSize();
     int bestx = -1, besty = -1;
     float tmp = 0.f;
     for (int dy = 0; dy < ksize.y; ++dy)
@@ -85,7 +85,7 @@ Image Image::Convolution(array2d<float> const &kernel)
 
 Image Image::Sharpen(array2d<float> const &kernel)
 {
-    ivec2 ksize = kernel.GetSize();
+    ivec2 ksize = (ivec2)kernel.GetSize();
     array2d<float> newkernel(ksize);
 
     for (int dy = 0; dy < ksize.y; ++dy)
@@ -105,7 +105,7 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel)
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ivec2 const size = src.GetSize();
-    ivec2 const ksize = kernel.GetSize();
+    ivec2 const ksize = (ivec2)kernel.GetSize();
     Image dst(size);
 
     array2d<pixel_t> const &srcp = src.Lock2D<FORMAT>();

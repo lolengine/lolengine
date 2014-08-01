@@ -43,7 +43,7 @@ public:
     {
     }
 
-    void FillSizes(int * sizes)
+    void FillSizes(ptrdiff_t * sizes)
     {
         *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
 
@@ -51,7 +51,7 @@ public:
             subinitializer.FillSizes(sizes - 1);
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, int * sizes)
+    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
     {
         ptrdiff_t pos = 0;
 
@@ -75,12 +75,12 @@ public:
     {
     }
 
-    void FillSizes(int * sizes)
+    void FillSizes(ptrdiff_t * sizes)
     {
         *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, int * sizes)
+    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
     {
         UNUSED(sizes);
 
@@ -107,11 +107,18 @@ public:
     {
     }
 
-    inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
+    inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
         FixSizes(e);
     }
+
+    inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
+    {
+        m_sizes = vec_t<ptrdiff_t, N>(sizes);
+        FixSizes(e);
+    }
+
 
     inline arraynd(std::initializer_list<arraynd_initializer<element_t, N - 1> > initializer)
     {
@@ -126,6 +133,21 @@ public:
 
         for (auto inner_initializer : initializer)
             inner_initializer.FillValues(&super::operator[](0), pos++, &m_sizes[N - 2]);
+    }
+
+    /* Access elements directly using an vec_t<ptrdiff_t, N> index */
+    inline element_t const & operator[](vec_t<ptrdiff_t, N> const &pos) const
+    {
+        ptrdiff_t n = pos[N - 1];
+        for (ptrdiff_t i = N - 2; i >= 0; --i)
+            n = pos[i] + m_sizes[i + 1] * n;
+        return super::operator[](n);
+    }
+
+    inline element_t & operator[](vec_t<ptrdiff_t, N> const &pos)
+    {
+        return const_cast<element_t &>(
+                   const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
 
     /* Access elements directly using an ivec2, ivec3 etc. index */
@@ -207,13 +229,19 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
+    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
         FixSizes(e);
     }
 
-    inline vec_t<int, N> GetSize() const
+    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
+    {
+        m_sizes = vec_t<ptrdiff_t, N>(sizes);
+        FixSizes(e);
+    }
+
+    inline vec_t<ptrdiff_t, N> GetSize() const
     {
         return this->m_sizes;
     }
@@ -235,7 +263,7 @@ private:
         this->Resize(total_size, e);
     }
 
-    vec_t<int, N> m_sizes;
+    vec_t<ptrdiff_t, N> m_sizes;
 };
 
 template<typename... T> using array2d = arraynd<2, T...>;

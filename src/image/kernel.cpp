@@ -186,7 +186,7 @@ static int cmpdot(const void *p1, const void *p2)
 
 array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
 {
-    ivec2 size = kernel.GetSize();
+    ivec2 size = (ivec2)kernel.GetSize();
 
     array<Dot> tmp;
     tmp.Resize(size.x * size.y);
