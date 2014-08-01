@@ -115,7 +115,7 @@ struct vec_t<T, N, FULL_SWIZZLE>
     inline vec_t(vec_t<T,N> const &v)
     {
         for (int i = 0; i < N; ++i)
-            m_data[i] = v.m_data[i];
+            m_data[i] = v[i];
     }
     inline ~vec_t() {}
 
@@ -124,7 +124,7 @@ struct vec_t<T, N, FULL_SWIZZLE>
     explicit inline vec_t(vec_t<U, N> const &v)
     {
         for (int i = 0; i < N; ++i)
-            m_data[i] = (T)v.m_data[i];
+            m_data[i] = (T)v[i];
     }
 
     /* Constructor for initializer_list. We need these ugly
