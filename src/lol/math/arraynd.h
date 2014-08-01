@@ -43,15 +43,15 @@ public:
     {
     }
 
-    void FillSizes(ptrdiff_t * sizes)
+    void FillSizes(int * sizes)
     {
-        *sizes = std::max(*sizes, (ptrdiff_t)(m_initializers.size()));
+        *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
 
         for (auto subinitializer : m_initializers)
             subinitializer.FillSizes(sizes - 1);
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
+    void FillValues(T * origin, ptrdiff_t prev, int * sizes)
     {
         ptrdiff_t pos = 0;
 
@@ -75,12 +75,12 @@ public:
     {
     }
 
-    void FillSizes(ptrdiff_t * sizes)
+    void FillSizes(int * sizes)
     {
-        *sizes = std::max(*sizes, (ptrdiff_t)(m_initializers.size()));
+        *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
+    void FillValues(T * origin, ptrdiff_t prev, int * sizes)
     {
         UNUSED(sizes);
 
@@ -107,7 +107,7 @@ public:
     {
     }
 
-    inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
+    inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
         FixSizes(e);
@@ -137,7 +137,7 @@ public:
         return super::operator[](n);
     }
 
-    inline element_t & operator[](vec_t<ptrdiff_t, N> const &pos)
+    inline element_t & operator[](vec_t<int, N> const &pos)
     {
         return const_cast<element_t &>(
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
@@ -207,13 +207,13 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
+    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
         FixSizes(e);
     }
 
-    inline vec_t<ptrdiff_t, N> GetSize() const
+    inline vec_t<int, N> GetSize() const
     {
         return this->m_sizes;
     }
@@ -235,8 +235,11 @@ private:
         this->Resize(total_size, e);
     }
 
-    vec_t<ptrdiff_t, N> m_sizes;
+    vec_t<int, N> m_sizes;
 };
+
+template<typename... T> using array2d = arraynd<2, T...>;
+template<typename... T> using array3d = arraynd<3, T...>;
 
 } /* namespace lol */
 

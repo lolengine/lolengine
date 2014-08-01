@@ -29,7 +29,7 @@ LOLUNIT_FIXTURE(ArrayNDTest)
     LOLUNIT_TEST(Array2D)
     {
         arraynd<2, int> a;
-        a.SetSize(vec_t<ptrdiff_t, 2>(2, 2));
+        a.SetSize(vec_t<int, 2>(2, 2));
 
         /* Non-const accessors */
         a[0][0] = 1;
@@ -98,7 +98,7 @@ LOLUNIT_FIXTURE(ArrayNDTest)
     LOLUNIT_TEST(ArrayNDInit)
     {
         int const NDIM = 8;
-        vec_t<ptrdiff_t, NDIM> size;
+        vec_t<int, NDIM> size;
         for (int i = 0; i < NDIM; ++i)
             size[i] = 5;
 
