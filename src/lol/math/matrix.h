@@ -549,25 +549,6 @@ static inline mat_t<T, N, N> &operator *=(mat_t<T, N, N> &a,
 }
 
 /*
- * Matrix-matrix outer product (Kronecker product)
- */
-
-template<typename T, int COLS1, int COLS2, int ROWS1, int ROWS2>
-static inline mat_t<T, COLS1 * COLS2, ROWS1 * ROWS2>
-outer(mat_t<T, COLS1, ROWS1> const &a, mat_t<T, COLS2, ROWS2> const &b)
-{
-    /* FIXME: could this be optimised somehow? */
-    mat_t<T, COLS1 * COLS2, ROWS1 * ROWS2> ret;
-    for (int i1 = 0; i1 < COLS1; ++i1)
-        for (int j1 = 0; j1 < ROWS1; ++j1)
-            for (int i2 = 0; i2 < COLS2; ++i2)
-                for (int j2 = 0; j2 < ROWS2; ++j2)
-                    ret[i1 * COLS2 + i2][j1 * ROWS2 + j2]
-                        = a[i1][j1] * b[i2][j2];
-    return ret;
-}
-
-/*
  * Vector-vector outer product
  */
 
@@ -575,8 +556,28 @@ template<typename T, int COLS, int ROWS>
 static inline mat_t<T, COLS, ROWS> outer(vec_t<T, ROWS> const &a,
                                          vec_t<T, COLS> const &b)
 {
+    /* Valid cast because mat_t and vec_t have similar layouts */
     return *reinterpret_cast<mat_t<T, 1, ROWS> const *>(&a)
          * *reinterpret_cast<mat_t<T, COLS, 1> const *>(&b);
+}
+
+/*
+ * Matrix-matrix outer product (Kronecker product)
+ */
+
+template<typename T, int COLS1, int COLS2, int ROWS1, int ROWS2>
+static inline mat_t<T, COLS1 * COLS2, ROWS1 * ROWS2>
+outer(mat_t<T, COLS1, ROWS1> const &a, mat_t<T, COLS2, ROWS2> const &b)
+{
+    mat_t<T, COLS1 * COLS2, ROWS1 * ROWS2> ret;
+    for (int i1 = 0; i1 < COLS1; ++i1)
+        for (int i2 = 0; i2 < COLS2; ++i2)
+        {
+            /* Valid cast because mat_t and vec_t have similar layouts */
+            *reinterpret_cast<mat_t<T, ROWS1, ROWS2> *>(&ret[i1 * COLS2 + i2])
+                = outer(b[i2], a[i1]);
+        }
+    return ret;
 }
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
