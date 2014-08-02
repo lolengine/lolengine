@@ -158,6 +158,36 @@ LOLUNIT_FIXTURE(MatrixTest)
         LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
     }
 
+    LOLUNIT_TEST(Kronecker)
+    {
+        int const COLS1 = 2, ROWS1 = 3;
+        int const COLS2 = 5, ROWS2 = 7;
+
+        mat_t<int, COLS1, ROWS1> a;
+        mat_t<int, COLS2, ROWS2> b;
+
+        for (int i = 0; i < COLS1; ++i)
+            for (int j = 0; j < ROWS1; ++j)
+                a[i][j] = (i + 11) * (j + 13);
+
+        for (int i = 0; i < COLS2; ++i)
+            for (int j = 0; j < ROWS2; ++j)
+                b[i][j] = (i + 17) * (j + 19);
+
+        mat_t<int, COLS1 * COLS2, ROWS1 * ROWS2> m = outer(a, b);
+
+        for (int i1 = 0; i1 < COLS1; ++i1)
+        for (int j1 = 0; j1 < ROWS1; ++j1)
+        for (int i2 = 0; i2 < COLS2; ++i2)
+        for (int j2 = 0; j2 < ROWS2; ++j2)
+        {
+            int expected = a[i1][j1] * b[i2][j2];
+            int actual = m[i1 * COLS2 + i2][j1 * ROWS2 + j2];
+
+            LOLUNIT_ASSERT_EQUAL(actual, expected);
+        }
+    }
+
     mat2 tri2, id2, inv2;
     mat3 tri3, id3, inv3;
     mat4 tri4, id4, inv4;
