@@ -502,7 +502,6 @@ AC_CONFIG_FILES(
   test/Makefile
   test/math/Makefile
   test/sandbox/Makefile
-  test/xolotl/Makefile
   build/Makefile
   binaries/Makefile
   people/Makefile

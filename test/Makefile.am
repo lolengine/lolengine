@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = math sandbox xolotl
+SUBDIRS = math sandbox
 
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
