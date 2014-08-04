@@ -59,29 +59,15 @@ aclocalflags="`sed -ne 's/^[ \t]*ACLOCAL_AMFLAGS[ \t]*=//p' Makefile.am 2>/dev/n
 
 # Check for automake
 amvers="no"
-v=20; vend=5
-while [ "$v" -gt "$vend" ]; do
-  if automake-1.${v} --version >/dev/null 2>&1; then
-    amvers="-1.${v}"
-    break
-  elif automake1.${v} --version >/dev/null 2>&1; then
-    amvers="1.${v}"
+for v in "" "-1.15" "-1.14" "-1.13" "-1.12" "-1.11"; do
+  if automake${v} --version > /dev/null 2>&1; then
+    amvers=${v}
     break
   fi
-  v="`expr "$v" - 1`"
 done
 
-if test "${amvers}" = "no" && automake --version > /dev/null 2>&1; then
-  amvers="`automake --version | sed -e '1s/[^0-9]*//' -e q`"
-  if expr "$amvers" "<" "1.5" > /dev/null 2>&1; then
-    amvers="no"
-  else
-    amvers=""
-  fi
-fi
-
 if test "$amvers" = "no"; then
-  echo "$0: you need automake version 1.5 or later"
+  echo "$0: automake not found"
   exit 1
 fi
 
@@ -95,7 +81,7 @@ for v in "" "259" "253"; do
 done
 
 if test "$acvers" = "no"; then
-  echo "$0: you need autoconf"
+  echo "$0: autoconf not found"
   exit 1
 fi
 
@@ -114,7 +100,7 @@ if test "$libtool" = "yes"; then
   fi
 
   if test "$libtoolize" = "no"; then
-    echo "$0: you need libtool"
+    echo "$0: libtool not found"
     exit 1
   fi
 fi
@@ -122,7 +108,7 @@ fi
 # Check for pkg-config
 if test "$pkgconfig" = "yes"; then
   if ! pkg-config --version >/dev/null 2>&1; then
-    echo "$0: you need pkg-config"
+    echo "$0: pkg-config not found"
     exit 1
   fi
 fi

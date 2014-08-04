@@ -88,7 +88,6 @@ test/sandbox/sample
 test/math/pi
 test/math/poly
 test/nacl_phystest
-test/xolotl/xolotl
 tools/make-font
 demos/lol.js/lol.js
 demos/tutorial/01_triangle
