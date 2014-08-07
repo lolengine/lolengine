@@ -257,8 +257,10 @@ private:
     {
         ptrdiff_t total_size = 1;
 
-        for (auto size : m_sizes)
-            total_size *= size;
+        /* HACK: we can't use for (auto s : m_sizes) because of an ICE in
+         * the Visual Studio compiler. */
+        for (int i = 0; i < N; ++i)
+            total_size *= m_sizes[i];
 
         this->Resize(total_size, e);
     }
