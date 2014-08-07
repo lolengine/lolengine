@@ -87,7 +87,12 @@ public:
     void Unlock(void const *pixels);
 
     template<PixelFormat T>
-        array2d<typename PixelType<T>::type> &Lock2D();
+    inline array2d<typename PixelType<T>::type> &Lock2D()
+    {
+        /* Hack: this indirection is needed because of a Visual Studio ICE */
+        return *(array2d<typename PixelType<T>::type> *)Lock2DHelper(T);
+    }
+
     template<typename T>
         void Unlock2D(array2d<T> const &);
 
@@ -150,6 +155,8 @@ public:
     static Image Difference(Image &src1, Image &src2);
 
 private:
+    void *Lock2DHelper(PixelFormat T);
+
     class ImageData *m_data;
 };
 
