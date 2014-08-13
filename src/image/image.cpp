@@ -199,6 +199,8 @@ template<PixelFormat T> typename PixelType<T>::type *Image::Lock()
 /* The Lock2D() method */
 void *Image::Lock2DHelper(PixelFormat T)
 {
+    SetFormat(T);
+
     return m_data->m_pixels[(int)T]->Data2D();
 }
 
