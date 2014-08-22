@@ -107,11 +107,13 @@ public:
     {
     }
 
+#if PTRDIFF_MAX > INT_MAX
     inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
         FixSizes(e);
     }
+#endif
 
     inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
     {
@@ -136,6 +138,7 @@ public:
     }
 
     /* Access elements directly using an vec_t<ptrdiff_t, N> index */
+#if PTRDIFF_MAX > INT_MAX
     inline element_t const & operator[](vec_t<ptrdiff_t, N> const &pos) const
     {
         ptrdiff_t n = pos[N - 1];
@@ -149,6 +152,7 @@ public:
         return const_cast<element_t &>(
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
+#endif
 
     /* Access elements directly using an ivec2, ivec3 etc. index */
     inline element_t const & operator[](vec_t<int, N> const &pos) const
@@ -229,11 +233,13 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
+#if PTRDIFF_MAX > INT_MAX
     inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
         FixSizes(e);
     }
+#endif
 
     inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
     {
