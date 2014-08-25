@@ -455,10 +455,9 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
             linecount--;
         }
     }
-    int vb_size = sizeof(vec4) * 4 * real_linecount;
-    VertexBuffer *vb = new VertexBuffer(vb_size);
+    VertexBuffer *vb = new VertexBuffer(buff.Bytes());
     float *vertex = (float *)vb->Lock(0, 0);
-    memcpy(vertex, buff.Data(), vb_size);
+    memcpy(vertex, buff.Data(), buff.Bytes());
     vb->Unlock();
 
     data->m_line_shader->Bind();

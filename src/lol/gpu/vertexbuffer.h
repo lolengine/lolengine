@@ -55,6 +55,8 @@ class VertexStreamBase
 public:
     enum
     {
+        /* XXX: be sure to fix all appropriate places in vertexbuffer.cpp
+         * when modifying this list. */
         Typevoid = 0,
 #if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
         Typehalf,     Typef16vec2, Typef16vec3, Typef16vec4,
