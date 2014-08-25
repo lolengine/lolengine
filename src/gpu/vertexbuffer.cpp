@@ -399,7 +399,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         if (attr_index == m_count)
         {
             Log::Error("stream #%d with usage %x not found in declaration\n",
-                       index, usage);
+                       index, usage.ToScalar());
             attr_index = 0;
         }
 
@@ -423,7 +423,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         static struct { GLint size; GLenum type; } const tlut[] =
         {
             { 0, 0 },
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
             { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, /* half */
+#endif
             { 1, GL_FLOAT }, { 2, GL_FLOAT }, { 3, GL_FLOAT },
                 { 4, GL_FLOAT }, /* float */
             { 1, GL_DOUBLE }, { 2, GL_DOUBLE }, { 3, GL_DOUBLE },
@@ -514,7 +516,9 @@ void VertexDeclaration::Initialize()
     static D3DDECLTYPE const tlut[] =
     {
         D3DDECLTYPE_UNUSED,
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
         X, D3DDECLTYPE_FLOAT16_2, X, D3DDECLTYPE_FLOAT16_4, /* half */
+#endif
         D3DDECLTYPE_FLOAT1, D3DDECLTYPE_FLOAT2, D3DDECLTYPE_FLOAT3,
             D3DDECLTYPE_FLOAT4, /* float */
         X, X, X, X, /* double */
