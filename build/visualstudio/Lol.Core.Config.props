@@ -15,11 +15,17 @@
     <ExceptionHandling>false</ExceptionHandling>
     <FloatingPointModel>Fast</FloatingPointModel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Platform)'=='Win32' and '$(SolutionName)'=='Lol (vs2013)'" Label="Configuration">
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Platform)'=='Win32' and '$(SolutionName)'=='Lol (vs2014)'" Label="Configuration">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64' and '$(SolutionName)'=='Lol (vs2013)'" Label="Configuration">
     <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64' and '$(SolutionName)'=='Lol (vs2014)'" Label="Configuration">
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
     <PlatformToolset>SNC</PlatformToolset>

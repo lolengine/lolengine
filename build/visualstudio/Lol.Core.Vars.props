@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <ExternalDir>$(SolutionDir)\..\..\external</ExternalDir>
+    <ExternalDir>$(SolutionDir)\..\external</ExternalDir>
 
     <!-- Flex & Bison -->
     <FlexDir>$(ExternalDir)\flex-2.5.35</FlexDir>
@@ -128,7 +128,7 @@
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
   </ItemGroup>
   <PropertyGroup>
-    <OutDir>$(SolutionDir)..\..\binaries\$(Platform) $(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\binaries\$(Platform) $(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)\..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
 </Project>
