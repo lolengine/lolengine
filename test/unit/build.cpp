@@ -24,6 +24,7 @@ LOLUNIT_FIXTURE(BuildTest)
     {
         LOLUNIT_ASSERT_EQUAL(sizeof(half), 2);
 
+#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
         LOLUNIT_ASSERT_EQUAL(sizeof(f16vec2), 4);
         LOLUNIT_ASSERT_EQUAL(sizeof(f16vec3), 6);
         LOLUNIT_ASSERT_EQUAL(sizeof(f16vec4), 8);
@@ -31,6 +32,7 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(f16mat2), 8);
         LOLUNIT_ASSERT_EQUAL(sizeof(f16mat3), 18);
         LOLUNIT_ASSERT_EQUAL(sizeof(f16mat4), 32);
+#endif
     }
 
     LOLUNIT_TEST(TypeSizeFloat)
@@ -67,13 +69,6 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(u8vec3), 3);
         LOLUNIT_ASSERT_EQUAL(sizeof(i8vec4), 4);
         LOLUNIT_ASSERT_EQUAL(sizeof(u8vec4), 4);
-
-        LOLUNIT_ASSERT_EQUAL(sizeof(i8mat2), 4);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u8mat2), 4);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i8mat3), 9);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u8mat3), 9);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i8mat4), 16);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u8mat4), 16);
     }
 
     LOLUNIT_TEST(TypeSizeInt16)
@@ -84,13 +79,6 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(u16vec3), 6);
         LOLUNIT_ASSERT_EQUAL(sizeof(i16vec4), 8);
         LOLUNIT_ASSERT_EQUAL(sizeof(u16vec4), 8);
-
-        LOLUNIT_ASSERT_EQUAL(sizeof(i16mat2), 8);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u16mat2), 8);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i16mat3), 18);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u16mat3), 18);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i16mat4), 32);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u16mat4), 32);
     }
 
     LOLUNIT_TEST(TypeSizeInt32)
@@ -101,13 +89,6 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(uvec3), 12);
         LOLUNIT_ASSERT_EQUAL(sizeof(ivec4), 16);
         LOLUNIT_ASSERT_EQUAL(sizeof(uvec4), 16);
-
-        LOLUNIT_ASSERT_EQUAL(sizeof(imat2), 16);
-        LOLUNIT_ASSERT_EQUAL(sizeof(umat2), 16);
-        LOLUNIT_ASSERT_EQUAL(sizeof(imat3), 36);
-        LOLUNIT_ASSERT_EQUAL(sizeof(umat3), 36);
-        LOLUNIT_ASSERT_EQUAL(sizeof(imat4), 64);
-        LOLUNIT_ASSERT_EQUAL(sizeof(umat4), 64);
     }
 
     LOLUNIT_TEST(TypeSizeInt64)
@@ -118,13 +99,6 @@ LOLUNIT_FIXTURE(BuildTest)
         LOLUNIT_ASSERT_EQUAL(sizeof(u64vec3), 24);
         LOLUNIT_ASSERT_EQUAL(sizeof(i64vec4), 32);
         LOLUNIT_ASSERT_EQUAL(sizeof(u64vec4), 32);
-
-        LOLUNIT_ASSERT_EQUAL(sizeof(i64mat2), 32);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u64mat2), 32);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i64mat3), 72);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u64mat3), 72);
-        LOLUNIT_ASSERT_EQUAL(sizeof(i64mat4), 128);
-        LOLUNIT_ASSERT_EQUAL(sizeof(u64mat4), 128);
     }
 
 #if !defined LOL_BUILD_DEBUG
