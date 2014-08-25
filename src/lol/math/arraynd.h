@@ -115,11 +115,13 @@ public:
     }
 #endif
 
+#if PTRDIFF_MAX != INT_MAX
     inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
         FixSizes(e);
     }
+#endif
 
 
     inline arraynd(std::initializer_list<arraynd_initializer<element_t, N - 1> > initializer)
@@ -154,6 +156,7 @@ public:
     }
 #endif
 
+#if PTRDIFF_MAX != INT_MAX
     /* Access elements directly using an ivec2, ivec3 etc. index */
     inline element_t const & operator[](vec_t<int, N> const &pos) const
     {
@@ -168,6 +171,7 @@ public:
         return const_cast<element_t &>(
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
+#endif
 
     /* Proxy to access slices */
     template<typename ARRAY_TYPE, ptrdiff_t L = N - 1>
@@ -241,11 +245,13 @@ public:
     }
 #endif
 
+#if PTRDIFF_MAX != INT_MAX
     inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
         FixSizes(e);
     }
+#endif
 
     inline vec_t<ptrdiff_t, N> GetSize() const
     {

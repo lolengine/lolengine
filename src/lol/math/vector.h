@@ -1191,15 +1191,15 @@ public:
         return m_vec[m_pos];
     }
 
-    inline vec_const_iter<T,N,SWIZZLE> const & operator ++()
+    inline vec_const_iter<T,N,SWIZZLE> & operator ++()
     {
         ++m_pos;
         return *this;
     }
 
 private:
-    int m_pos;
     vec_t<T,N,SWIZZLE> const &m_vec;
+    int m_pos;
 };
 
 /* FIXME: do we need a non-const iterator? Looks almost useless to me,
