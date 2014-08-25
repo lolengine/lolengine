@@ -47,7 +47,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\Lol.Core.Config.props" />
+  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Config.props" />
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -60,10 +60,10 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(SolutionDir)\Lol.Core.Vars.props" />
+    <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="$(SolutionDir)\Lol.Core.Rules.props" />
+  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Rules.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -463,6 +463,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(SolutionDir)\Lol.Fx.targets" />
+    <Import Project="$(SolutionDir)\visualstudio\Lol.Fx.targets" />
   </ImportGroup>
 </Project>

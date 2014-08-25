@@ -55,18 +55,12 @@ perf.data*
 *.csproj.user
 binaries/*Debug
 binaries/*Release
-build/vs2010/ipch
-build/vs2010/*.opensdf
-build/vs2010/*.sdf
-build/vs2010/*.suo
-build/vs2010/*.log
-build/vs2010/*.XGD
-build/vs2012/ipch
-build/vs2012/*.opensdf
-build/vs2012/*.sdf
-build/vs2012/*.suo
-build/vs2012/*.log
-build/vs2012/*.XGD
+build/*.sdf
+build/*.suo
+build/*.opensdf
+build/visualstudio/ipch
+build/visualstudio/*.log
+build/visualstudio/*.XGD
 # ReSharper cruft
 _ReSharper.*
 # Do not exclude anything in external. There is no way to do this recursively

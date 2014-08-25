@@ -102,7 +102,7 @@ void Init(int argc, char *argv[],
         rootdir = solutiondir;
         if (rootdir.Count() && rootdir.Last() != SEPARATOR)
             rootdir += SEPARATOR;
-        rootdir += "../../src/"; /* FIXME: use SEPARATOR? */
+        rootdir += "../src/"; /* FIXME: use SEPARATOR? */
         AddDataDir(rootdir);
 
         /* This data dir is for project-specific stuff */
