@@ -207,6 +207,7 @@ LOL_TRY_CXXFLAGS(-Wcast-align, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-align"])
 LOL_TRY_CXXFLAGS(-Wcast-qual, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-qual"])
 LOL_TRY_CXXFLAGS(-Wshadow, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wshadow"])
 LOL_TRY_CXXFLAGS(-Wsign-compare, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wsign-compare"])
+LOL_TRY_CXXFLAGS(-Wstrict-overflow=1, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-overflow=1"])
 
 dnl  Add these even though they're implicitly set, so that we can safely
 dnl  remove them from within a Makefile.
