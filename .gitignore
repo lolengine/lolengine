@@ -73,17 +73,15 @@ _ReSharper.*
 !external/*/*/*/*/*/*
 !external/*/*/*/*/*/*/*
 # Our binaries
-test/benchsuite
-test/btphystest
-test/meshviewer
-test/nacl_phystest
-test/testsuite
-test/sandbox/sample
-test/math/pi
-test/math/poly
-test/nacl_phystest
-tools/make-font
 demos/lol.js/lol.js
+demos/test/benchsuite
+demos/test/btphystest
+demos/test/meshviewer
+demos/test/nacl_phystest
+demos/test/sandbox/sample
+demos/test/math/pi
+demos/test/math/poly
+demos/test/nacl_phystest
 demos/tutorial/01_triangle
 demos/tutorial/02_cube
 demos/tutorial/03_noise
@@ -94,6 +92,7 @@ demos/tutorial/07_input
 demos/tutorial/08_fbo
 demos/tutorial/11_fractal
 demos/tutorial/12_voronoi
+tools/make-font
 # Our data
 doc/doxygen.cfg
 doc/doxygen.log
@@ -101,8 +100,15 @@ doc/html
 doc/latex
 doc/man
 # Our test suites
-test/testsuite.log
-test/testsuite.trs
+build/check-*.log
+build/check-*.trs
+src/t/test-base
+src/t/test-math
+src/t/test-sys
+src/t/test-image
+src/t/test-entity
+src/t/test-*.log
+src/t/test-*.trs
 # Our tools
 tools/vslol/bin/*/*
 tools/vslol/obj/*/*

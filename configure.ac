@@ -191,10 +191,9 @@ AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
 
-dnl  No exceptions
+dnl  No exceptions…
 LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
 LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
-
 
 dnl  Debug symbols
 LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
@@ -500,9 +499,7 @@ AC_CONFIG_FILES(
   src/lua/Makefile
   src/data/Makefile
   src/data/font/Makefile
-  test/Makefile
-  test/math/Makefile
-  test/sandbox/Makefile
+  src/t/Makefile
   build/Makefile
   binaries/Makefile
   people/Makefile
@@ -544,15 +541,15 @@ AC_CONFIG_FILES(
 AC_CONFIG_FILES(
  [demos/tutorial/Makefile
   demos/lol.js/Makefile
+  demos/test/Makefile
+  demos/test/math/Makefile
+  demos/test/sandbox/Makefile
 ])
 AC_CONFIG_FILES(
  [tools/lolremez/Makefile
-])
-AC_CONFIG_FILES(
- [tools/neercs/Makefile
-])
-AC_CONFIG_FILES(
- [tools/pimp/Makefile
+  tools/lolunit/Makefile
+  tools/neercs/Makefile
+  tools/pimp/Makefile
 ])
 AC_CONFIG_FILES(
  [people/jnat/Makefile
