@@ -14,8 +14,9 @@ EXTRA_DIST =
 
 lol_recursive_rule = \
 	@if test -n "$(SUBDIRS)"; then for subdir in $(SUBDIRS); do \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $(patsubst %-recursive, %, $@)) || exit 1; \
-	done; fi
+	  if test "$$subdir" != "."; then \
+	    ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $(patsubst %-recursive, %, $@)) || exit 1; \
+	fi; done; fi
 
 bench: bench-recursive
 bench-recursive:
