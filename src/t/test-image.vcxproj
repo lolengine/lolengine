@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ORBIS">
+      <Configuration>Debug</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|PS3">
+      <Configuration>Debug</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Xbox 360">
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ORBIS">
+      <Configuration>Release</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|PS3">
+      <Configuration>Release</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Xbox 360">
+      <Configuration>Release</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test-common.cpp" />
+    <ClCompile Include="base\array.cpp" />
+    <ClCompile Include="base\enum.cpp" />
+    <ClCompile Include="base\map.cpp" />
+    <ClCompile Include="base\string.cpp" />
+    <ClCompile Include="base\types.cpp" />
+
+    <ClCompile Include="math\array2d.cpp" />
+    <ClCompile Include="math\array3d.cpp" />
+    <ClCompile Include="math\arraynd.cpp" />
+    <ClCompile Include="math\box.cpp" />
+    <ClCompile Include="math\cmplx.cpp" />
+    <ClCompile Include="math\half.cpp" />
+    <ClCompile Include="math\interp.cpp" />
+    <ClCompile Include="math\matrix.cpp" />
+    <ClCompile Include="math\quat.cpp" />
+    <ClCompile Include="math\rand.cpp" />
+    <ClCompile Include="math\real.cpp" />
+    <ClCompile Include="math\rotation.cpp" />
+    <ClCompile Include="math\trig.cpp" />
+    <ClCompile Include="math\vector.cpp" />
+
+    <ClCompile Include="sys\thread.cpp" />
+
+    <ClCompile Include="image\color.cpp" />
+    <ClCompile Include="image\image.cpp" />
+
+    <ClCompile Include="entity\camera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\..\src\lolcore.vcxproj">
+      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\..\src\bullet\lolbullet.vcxproj">
+      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\..\src\lua\lollua.vcxproj">
+      <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5a27ff18-a1ec-49be-9455-415f1c701153}</ProjectGuid>
+    <ConfigurationType>Application</ConfigurationType>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Config.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(SolutionDir)\visualstudio\Lol.Fx.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Vars.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Rules.props" />
+  <ItemDefinitionGroup />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(SolutionDir)\visualstudio\Lol.Fx.targets" />
+  </ImportGroup>
+</Project>

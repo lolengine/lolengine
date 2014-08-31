@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = bullet lua data
+SUBDIRS = bullet lua data . t
 
 noinst_LIBRARIES = liblolcore.a
 
@@ -11,8 +11,8 @@ liblolcore_a_SOURCES = \
     entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
-    profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h numeric.h utils.h \
-    messageservice.cpp messageservice.h \
+    profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
+    numeric.h utils.h messageservice.cpp messageservice.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h \
@@ -33,7 +33,6 @@ EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
 
 liblolcore_headers = \
     lol/main.h lol/engine.h lol/extras.h \
-    lol/unit.h \
     \
     lol/base/all.h \
     lol/base/features.h lol/base/tuple.h lol/base/types.h lol/base/array.h \
