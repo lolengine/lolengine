@@ -1168,8 +1168,8 @@ class vec_const_iter
 {
 public:
     inline vec_const_iter(vec_t<T,N,SWIZZLE> const &vec, int pos)
-      : m_pos(pos),
-        m_vec(vec)
+      : m_vec(vec),
+        m_pos(pos)
     { }
 
     inline bool operator !=(vec_const_iter<T,N,SWIZZLE> const & that) const
