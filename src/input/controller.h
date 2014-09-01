@@ -45,7 +45,7 @@ public:
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
-    int IsBound() const { return m_keybindings.Count(); }
+    ptrdiff_t IsBound() const { return m_keybindings.Count(); }
 
 protected:
     /** Update the binding value. Called internally by the controller, once per frame */
@@ -104,7 +104,7 @@ public:
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
-    int IsBound() const { return m_axisbindings.Count() + m_keybindings.Count(); }
+    ptrdiff_t IsBound() const { return m_axisbindings.Count() + m_keybindings.Count(); }
 
 
 protected:
