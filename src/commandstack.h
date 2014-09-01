@@ -32,8 +32,8 @@ private:
 
 public:
     //GET/SET exec
-    int     GetCmdNb()      { return m_commands.Count(); }
-    int     GetCmd(int i)
+    ptrdiff_t GetCmdNb() { return m_commands.Count(); }
+    ptrdiff_t GetCmd(int i)
     {
         ASSERT(0 <= i && i < m_commands.Count());
         m_f_cur = m_commands[i].m2;
@@ -42,7 +42,7 @@ public:
     }
 
     //cmd storage
-    void    AddCmd(int cmd) { m_commands.Push(cmd, m_floats.Count(), m_ints.Count()); }
+    void    AddCmd(int cmd) { m_commands.Push(cmd, (int)m_floats.Count(), (int)m_ints.Count()); }
 
     //GETTER
     inline float   F()      { return m_floats[m_f_cur++]; }

@@ -374,7 +374,7 @@ public:
 
     //Convenience functions
 public:
-    int GetVertexCount() { return m_vert.Count(); }
+    ptrdiff_t GetVertexCount() { return m_vert.Count(); }
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 //private:
