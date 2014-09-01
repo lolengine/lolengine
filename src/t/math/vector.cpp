@@ -273,6 +273,7 @@ LOLUNIT_FIXTURE(VectorTest)
         LOLUNIT_ASSERT(va == vb);
     }
 
+#if !LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER
     LOLUNIT_TEST(VectorIterator)
     {
         vec4 v4(1.125f, 1.25f, 1.375f, 1.25f);
@@ -308,6 +309,7 @@ LOLUNIT_FIXTURE(VectorTest)
             LOLUNIT_ASSERT_LESS(x, 1.5f);
         }
     }
+#endif
 };
 
 } /* namespace lol */

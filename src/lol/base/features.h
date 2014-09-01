@@ -17,11 +17,13 @@
 #define __LOL_BASE_FEATURES_H__
 
 /*
- * System and CPU features.
+ * System, CPU and compiler features.
  */
+
 #define LOL_FEATURE_THREADS 1
 #define LOL_FEATURE_CHEAP_BRANCHES 1
 #define LOL_FEATURE_VERY_CHEAP_BRANCHES 0
+#define LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER 0
 
 #if defined EMSCRIPTEN
 #   undef LOL_FEATURE_THREADS
@@ -31,6 +33,12 @@
 #if defined __CELLOS_LV2__
 #   undef LOL_FEATURE_CHEAP_BRANCHES
 #   define LOL_FEATURE_CHEAP_BRANCHES 0
+#endif
+
+/* Use this to disable code that causes compiler crashes. */
+#if defined _MSC_VER
+#   undef LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER
+#   define LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER 1
 #endif
 
 
