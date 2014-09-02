@@ -5,11 +5,11 @@
 //            (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#include <lol/main.h>
+#include <lol/engine.h>
 #include "loldebug.h"
 
 using namespace lol;

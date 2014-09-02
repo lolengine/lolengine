@@ -468,10 +468,13 @@
     <ClInclude Include="lol\engine.h">
       <Filter>lol</Filter>
     </ClInclude>
+    <ClInclude Include="lol\engine-internal.h">
+      <Filter>lol</Filter>
+    </ClInclude>
     <ClInclude Include="lol\extras.h">
       <Filter>lol</Filter>
     </ClInclude>
-    <ClInclude Include="lol\main.h">
+    <ClInclude Include="lol\public.h">
       <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="lol\unit.h">

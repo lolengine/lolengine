@@ -8,15 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
 
 #import <UIKit/UIKit.h>
 
-#include <lol/main.h>
 #include "../../image/image-private.h"
 
 namespace lol

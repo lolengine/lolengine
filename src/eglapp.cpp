@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
@@ -32,7 +30,6 @@
 #   endif
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 #include "eglapp.h"
 #if defined USE_SDL

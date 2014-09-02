@@ -17,7 +17,7 @@
 #if !defined __EASYCONSTRAINT_EASYCONSTRAINT_H__
 #define __EASYCONSTRAINT_EASYCONSTRAINT_H__
 
-#include <lol/main.h>
+#include <lol/engine.h>
 #include "easyphysics.h"
 
 namespace lol

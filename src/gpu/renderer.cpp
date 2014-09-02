@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 
@@ -28,7 +26,6 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 
 /* FIXME: find a way to pass g_hwnd from the windowing system */

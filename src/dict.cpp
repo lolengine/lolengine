@@ -8,14 +8,10 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstring>
 #include <cstdlib>
-
-#include <lol/main.h>
 
 #if defined _WIN32 || defined _XBOX
 #   define strcasecmp _stricmp

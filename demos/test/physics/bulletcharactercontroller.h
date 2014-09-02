@@ -18,7 +18,7 @@
 #if !defined __BULLETCHARACTERCONTROLLER_BULLETCHARACTERCONTROLLER_H__
 #define __BULLETCHARACTERCONTROLLER_BULLETCHARACTERCONTROLLER_H__
 
-#include <lol/main.h>
+#include <lol/engine.h>
 #include "easyphysics.h"
 //#include "BulletDynamics\Character\btCharacterControllerInterface.h"
 

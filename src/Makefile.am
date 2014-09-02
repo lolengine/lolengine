@@ -26,13 +26,14 @@ liblolcore_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
+#liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 
 EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
               gpu/lolfx-scanner.l gpu/lolfx-parser.y
 
 liblolcore_headers = \
-    lol/main.h lol/engine.h lol/extras.h \
+    lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
     \
     lol/base/all.h \
     lol/base/features.h lol/base/tuple.h lol/base/types.h lol/base/array.h \

@@ -8,15 +8,11 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if HAVE_EMSCRIPTEN_H
 #   include <emscripten.h>
 #endif
-
-#include <lol/main.h>
 
 #include "lolgl.h"
 

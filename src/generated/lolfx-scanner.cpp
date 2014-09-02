@@ -1661,9 +1661,7 @@ static yyconst flex_int16_t yy_chk[3114] =
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 using std::exit;
@@ -1672,7 +1670,6 @@ using std::realloc;
 using std::free;
 #include <iostream>
 
-#include <lol/main.h>
 #include "gpu/lolfx-compiler.h"
 
 typedef lol::LolFxParser::token token;

@@ -11,8 +11,6 @@
 #if !defined __LOL_INPUT_CONTROLLER_H__
 #define __LOL_INPUT_CONTROLLER_H__
 
-#include <lol/main.h>
-
 namespace lol
 {
 

@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if __ANDROID__
 
@@ -27,7 +25,6 @@ extern "C" {
 #include <android_native_app_glue.c>
 }
 
-#include <lol/main.h>
 #include "androidapp.h"
 
 #include "input/input_internal.h"

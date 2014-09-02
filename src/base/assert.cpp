@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if HAVE_CXXABI_H
 #   include <cxxabi.h>
@@ -22,8 +20,6 @@
 #if EMSCRIPTEN
 #   include <emscripten.h>
 #endif
-
-#include <lol/main.h>
 
 namespace lol
 {

@@ -11,7 +11,7 @@
 #if !defined __PHYSICOBJECT_H__
 #define __PHYSICOBJECT_H__
 
-#include <lol/main.h>
+#include <lol/engine.h>
 #include "easymesh/easymesh.h"
 #include "physics/easyphysics.h"
 #include "physics/easycharactercontroller.h"

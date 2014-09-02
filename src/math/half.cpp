@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined __CELLOS_LV2__
 #   if defined __SNC__
@@ -19,8 +17,6 @@
 #       include <altivec.h>
 #   endif
 #endif
-
-#include <lol/main.h>
 
 namespace lol
 {

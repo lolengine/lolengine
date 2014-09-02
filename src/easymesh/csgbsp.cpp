@@ -14,12 +14,7 @@
 // ------------------
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
-
-#include <lol/main.h>
-#include <lol/math/geometry.h>
+#include <lol/engine-internal.h>
 
 namespace lol
 {

@@ -13,16 +13,23 @@
 // ---------------
 //
 
-#if !defined __LOL_ENGINE_H__
-#define __LOL_ENGINE_H__
+#if !defined __LOL_MAIN_H__
+#define __LOL_MAIN_H__
 
-#include <lol/base/all.h>
-#include <lol/math/all.h>
-#include <lol/algorithm/all.h>
-#include <lol/sys/all.h>
-#include <lol/image/all.h>
-#include <lol/gpu/all.h>
-#include <lol/debug/all.h>
+/* If using NaCl or Android, override main() with our version */
+#if defined __native_client__
+#   define main lol_nacl_main
+#elif defined __ANDROID__
+#   define main lol_android_main
+#endif
 
-#endif // __LOL_ENGINE_H__
+/* If using SDL on Windows or OS X, let it override main() */
+#if defined USE_SDL && (defined _WIN32 || defined __APPLE__)
+#   include <SDL_main.h>
+#endif
+
+#include <lol/public.h>
+#include <lol/extras.h>
+
+#endif // __LOL_MAIN_H__
 

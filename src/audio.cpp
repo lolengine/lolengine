@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined USE_SDL_MIXER
 #   if defined HAVE_SDL_SDL_H
@@ -24,8 +22,6 @@
 #      include <SDL_mixer.h>
 #   endif
 #endif
-
-#include <lol/main.h>
 
 namespace lol
 {
