@@ -60,13 +60,13 @@ static float const ciede2k[] =
      2.0776f,   0.0795f,  -1.1350f,  0.9033f,  -0.0636f,  -0.5514f,  0.9082f,
 };
 
-LOLUNIT_FIXTURE(ColorTest)
+lolunit_declare_fixture(ColorTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(CIEDE2000)
+    lolunit_declare_test(CIEDE2000)
     {
         size_t count = sizeof(ciede2k) / sizeof(*ciede2k);
 
@@ -81,14 +81,14 @@ LOLUNIT_FIXTURE(ColorTest)
 
             /* Check that our function works, and check that
              * it is symmetrical. */
-            LOLUNIT_SET_CONTEXT(n / 7);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(d1, d2, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(d2, d3, 0.0001);
-            LOLUNIT_UNSET_CONTEXT(n / 7);
+            lolunit_set_context(n / 7);
+            lolunit_assert_doubles_equal(d1, d2, 0.0001);
+            lolunit_assert_doubles_equal(d2, d3, 0.0001);
+            lolunit_unset_context(n / 7);
         }
     }
 
-    LOLUNIT_TEST(RGBToHSV)
+    lolunit_declare_test(RGBToHSV)
     {
         for (int r = 0; r < 20; r++)
         for (int g = 0; g < 20; g++)
@@ -99,18 +99,18 @@ LOLUNIT_FIXTURE(ColorTest)
             vec3 v3 = Color::HSVToRGB(v2);
 
             String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
-            LOLUNIT_SET_CONTEXT(&rgb[0]);
+            lolunit_set_context(&rgb[0]);
 
             if (r != g || g != b)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.r, v3.r, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.g, v3.g, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v1.b, v3.b, 0.0001);
+                lolunit_assert_doubles_equal(v1.r, v3.r, 0.0001);
+            lolunit_assert_doubles_equal(v1.g, v3.g, 0.0001);
+            lolunit_assert_doubles_equal(v1.b, v3.b, 0.0001);
 
-            LOLUNIT_UNSET_CONTEXT(&rgb[0]);
+            lolunit_unset_context(&rgb[0]);
         }
     }
 
-    LOLUNIT_TEST(RGBToHSL)
+    lolunit_declare_test(RGBToHSL)
     {
         for (int r = 0; r < 20; r++)
         for (int g = 0; g < 20; g++)
@@ -121,17 +121,17 @@ LOLUNIT_FIXTURE(ColorTest)
             vec3 v3 = Color::HSVToHSL(Color::RGBToHSV(v1));
 
             String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
-            LOLUNIT_SET_CONTEXT(&rgb[0]);
+            lolunit_set_context(&rgb[0]);
 
             /* Don’t check hue if saturation is zero. */
             if (r != g || g != b)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.x, v3.x, 0.0001);
+                lolunit_assert_doubles_equal(v2.x, v3.x, 0.0001);
             /* Don’t check saturation if lightness is zero. */
             if (r || g || b)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.y, v3.y, 0.0001);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(v2.z, v3.z, 0.0001);
+                lolunit_assert_doubles_equal(v2.y, v3.y, 0.0001);
+            lolunit_assert_doubles_equal(v2.z, v3.z, 0.0001);
 
-            LOLUNIT_UNSET_CONTEXT(&rgb[0]);
+            lolunit_unset_context(&rgb[0]);
         }
     }
 };

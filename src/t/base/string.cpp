@@ -18,163 +18,163 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(StringTest)
+lolunit_declare_fixture(StringTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(StringBuild)
+    lolunit_declare_test(StringBuild)
     {
         String s1;
-        LOLUNIT_ASSERT_EQUAL(s1.Count(), 0);
-        LOLUNIT_ASSERT_EQUAL(s1[0], '\0');
+        lolunit_assert_equal(s1.Count(), 0);
+        lolunit_assert_equal(s1[0], '\0');
 
         String s2("");
-        LOLUNIT_ASSERT_EQUAL(s2.Count(), 0);
-        LOLUNIT_ASSERT_EQUAL(s2[0], '\0');
+        lolunit_assert_equal(s2.Count(), 0);
+        lolunit_assert_equal(s2[0], '\0');
 
         String s3("a");
-        LOLUNIT_ASSERT_EQUAL(s3.Count(), 1);
-        LOLUNIT_ASSERT_EQUAL(s3[0], 'a');
-        LOLUNIT_ASSERT_EQUAL(s3[1], '\0');
+        lolunit_assert_equal(s3.Count(), 1);
+        lolunit_assert_equal(s3[0], 'a');
+        lolunit_assert_equal(s3[1], '\0');
 
         String s4(s3);
-        LOLUNIT_ASSERT_EQUAL(s4.Count(), 1);
-        LOLUNIT_ASSERT_EQUAL(s4[0], 'a');
-        LOLUNIT_ASSERT_EQUAL(s4[1], '\0');
+        lolunit_assert_equal(s4.Count(), 1);
+        lolunit_assert_equal(s4[0], 'a');
+        lolunit_assert_equal(s4[1], '\0');
     }
 
-    LOLUNIT_TEST(StringAppendChar)
+    lolunit_declare_test(StringAppendChar)
     {
         String s;
         s += 'a';
         s += 'b';
         s += 'c';
 
-        LOLUNIT_ASSERT_EQUAL(s[0], 'a');
-        LOLUNIT_ASSERT_EQUAL(s[1], 'b');
-        LOLUNIT_ASSERT_EQUAL(s[2], 'c');
-        LOLUNIT_ASSERT_EQUAL(s[3], '\0');
+        lolunit_assert_equal(s[0], 'a');
+        lolunit_assert_equal(s[1], 'b');
+        lolunit_assert_equal(s[2], 'c');
+        lolunit_assert_equal(s[3], '\0');
     }
 
-    LOLUNIT_TEST(StringCopy)
+    lolunit_declare_test(StringCopy)
     {
         String s1 = "abc";
 
         String s2 = s1;
 
-        LOLUNIT_ASSERT_EQUAL(s1[0], s2[0]);
-        LOLUNIT_ASSERT_EQUAL(s1[1], s2[1]);
-        LOLUNIT_ASSERT_EQUAL(s1[2], s2[2]);
-        LOLUNIT_ASSERT_EQUAL(s1[3], s2[3]);
+        lolunit_assert_equal(s1[0], s2[0]);
+        lolunit_assert_equal(s1[1], s2[1]);
+        lolunit_assert_equal(s1[2], s2[2]);
+        lolunit_assert_equal(s1[3], s2[3]);
     }
 
-    LOLUNIT_TEST(StringConcat)
+    lolunit_declare_test(StringConcat)
     {
         String s1("ab"), s2("cd");
 
         String s3 = s1 + s2;
-        LOLUNIT_ASSERT_EQUAL(s3[0], 'a');
-        LOLUNIT_ASSERT_EQUAL(s3[1], 'b');
-        LOLUNIT_ASSERT_EQUAL(s3[2], 'c');
-        LOLUNIT_ASSERT_EQUAL(s3[3], 'd');
-        LOLUNIT_ASSERT_EQUAL(s3[4], '\0');
+        lolunit_assert_equal(s3[0], 'a');
+        lolunit_assert_equal(s3[1], 'b');
+        lolunit_assert_equal(s3[2], 'c');
+        lolunit_assert_equal(s3[3], 'd');
+        lolunit_assert_equal(s3[4], '\0');
     }
 
-    LOLUNIT_TEST(StringAppendString)
+    lolunit_declare_test(StringAppendString)
     {
         String s1("ab"), s2("cd");
 
         s1 += s2;
-        LOLUNIT_ASSERT_EQUAL(s1.Count(), 4);
-        LOLUNIT_ASSERT_EQUAL(s1[0], 'a');
-        LOLUNIT_ASSERT_EQUAL(s1[1], 'b');
-        LOLUNIT_ASSERT_EQUAL(s1[2], 'c');
-        LOLUNIT_ASSERT_EQUAL(s1[3], 'd');
-        LOLUNIT_ASSERT_EQUAL(s1[4], '\0');
+        lolunit_assert_equal(s1.Count(), 4);
+        lolunit_assert_equal(s1[0], 'a');
+        lolunit_assert_equal(s1[1], 'b');
+        lolunit_assert_equal(s1[2], 'c');
+        lolunit_assert_equal(s1[3], 'd');
+        lolunit_assert_equal(s1[4], '\0');
 
         s2 += s2;
-        LOLUNIT_ASSERT_EQUAL(s2.Count(), 4);
-        LOLUNIT_ASSERT_EQUAL(s2[0], 'c');
-        LOLUNIT_ASSERT_EQUAL(s2[1], 'd');
-        LOLUNIT_ASSERT_EQUAL(s2[2], 'c');
-        LOLUNIT_ASSERT_EQUAL(s2[3], 'd');
-        LOLUNIT_ASSERT_EQUAL(s2[4], '\0');
+        lolunit_assert_equal(s2.Count(), 4);
+        lolunit_assert_equal(s2[0], 'c');
+        lolunit_assert_equal(s2[1], 'd');
+        lolunit_assert_equal(s2[2], 'c');
+        lolunit_assert_equal(s2[3], 'd');
+        lolunit_assert_equal(s2[4], '\0');
     }
 
-    LOLUNIT_TEST(StringEqual)
+    lolunit_declare_test(StringEqual)
     {
         String s1("abc");
         String s2("abc");
         String s3("ab");
 
-        LOLUNIT_ASSERT(s1 == s2);
-        LOLUNIT_ASSERT(!(s1 == s3));
+        lolunit_assert(s1 == s2);
+        lolunit_assert(!(s1 == s3));
     }
 
-    LOLUNIT_TEST(StringDifferent)
+    lolunit_declare_test(StringDifferent)
     {
         String s1("abc");
         String s2("ab");
         String s3("abc");
 
-        LOLUNIT_ASSERT(s1 != s2);
-        LOLUNIT_ASSERT(!(s1 != s3));
+        lolunit_assert(s1 != s2);
+        lolunit_assert(!(s1 != s3));
     }
 
-    LOLUNIT_TEST(StringCharsEqual)
+    lolunit_declare_test(StringCharsEqual)
     {
         char const* sz = "abc";
         String s1("abc");
         String s2("ab");
 
-        LOLUNIT_ASSERT(s1 == sz);
-        LOLUNIT_ASSERT(sz == s1);
-        LOLUNIT_ASSERT(!(s2 == sz));
-        LOLUNIT_ASSERT(!(sz == s2));
+        lolunit_assert(s1 == sz);
+        lolunit_assert(sz == s1);
+        lolunit_assert(!(s2 == sz));
+        lolunit_assert(!(sz == s2));
     }
 
-    LOLUNIT_TEST(StringCharsDifferent)
+    lolunit_declare_test(StringCharsDifferent)
     {
         char const* sz = "abc";
         String s1("ab");
         String s2("abc");
 
-        LOLUNIT_ASSERT(s1 != sz);
-        LOLUNIT_ASSERT(sz != s1);
-        LOLUNIT_ASSERT(!(s2 != sz));
-        LOLUNIT_ASSERT(!(sz != s2));
+        lolunit_assert(s1 != sz);
+        lolunit_assert(sz != s1);
+        lolunit_assert(!(s2 != sz));
+        lolunit_assert(!(sz != s2));
     }
 
 
-    LOLUNIT_TEST(StringPrintf)
+    lolunit_declare_test(StringPrintf)
     {
         String s1 = "3a";
         String s2 = String::Printf("%d%x", 3, 10);
 
-        LOLUNIT_ASSERT(s1 == s2);
+        lolunit_assert(s1 == s2);
 
         String s3 = "abc 3";
         String s4 = String::Printf("abc %d", 3);
 
-        LOLUNIT_ASSERT(s3 == s4);
+        lolunit_assert(s3 == s4);
     }
 
-    LOLUNIT_TEST(SubString)
+    lolunit_declare_test(SubString)
     {
         String s1 = "Hello World";
 
         String s2 = s1.Sub(0, 5);
         String s3 = "Hello";
-        LOLUNIT_ASSERT(s2 == s3);
+        lolunit_assert(s2 == s3);
 
         String s4 = s1.Sub(6, 5);
         String s5 = "World";
-        LOLUNIT_ASSERT(s4 == s5);
+        lolunit_assert(s4 == s5);
     }
 
-    LOLUNIT_TEST(IndexOf)
+    lolunit_declare_test(IndexOf)
     {
         String s1 = "Hello World";
         ptrdiff_t i1 = s1.IndexOf('H');
@@ -186,17 +186,17 @@ LOLUNIT_FIXTURE(StringTest)
         ptrdiff_t i7 = s1.IndexOf("Hello World");
         ptrdiff_t i8 = s1.IndexOf("Sup' dude");
 
-        LOLUNIT_ASSERT(i1 == 0);
-        LOLUNIT_ASSERT(i2 == 6);
-        LOLUNIT_ASSERT(i3 == 10);
-        LOLUNIT_ASSERT(i4 == i1);
-        LOLUNIT_ASSERT(i5 == i2);
-        LOLUNIT_ASSERT(i6 == 3);
-        LOLUNIT_ASSERT(i7 == 0);
-        LOLUNIT_ASSERT(i8 == -1);
+        lolunit_assert(i1 == 0);
+        lolunit_assert(i2 == 6);
+        lolunit_assert(i3 == 10);
+        lolunit_assert(i4 == i1);
+        lolunit_assert(i5 == i2);
+        lolunit_assert(i6 == 3);
+        lolunit_assert(i7 == 0);
+        lolunit_assert(i8 == -1);
     }
 
-    LOLUNIT_TEST(LastIndexOf)
+    lolunit_declare_test(LastIndexOf)
     {
         String s1 = "Hello World";
         ptrdiff_t i1 = s1.LastIndexOf('H');
@@ -209,26 +209,26 @@ LOLUNIT_FIXTURE(StringTest)
         ptrdiff_t i8 = s1.LastIndexOf("Sup' dude");
         ptrdiff_t i9 = s1.LastIndexOf('l');
 
-        LOLUNIT_ASSERT(i1 == 0);
-        LOLUNIT_ASSERT(i2 == 6);
-        LOLUNIT_ASSERT(i3 == 10);
-        LOLUNIT_ASSERT(i4 == i1);
-        LOLUNIT_ASSERT(i5 == i2);
-        LOLUNIT_ASSERT(i6 == 3);
-        LOLUNIT_ASSERT(i7 == 0);
-        LOLUNIT_ASSERT(i8 == -1);
-        LOLUNIT_ASSERT(i9 == 9);
+        lolunit_assert(i1 == 0);
+        lolunit_assert(i2 == 6);
+        lolunit_assert(i3 == 10);
+        lolunit_assert(i4 == i1);
+        lolunit_assert(i5 == i2);
+        lolunit_assert(i6 == 3);
+        lolunit_assert(i7 == 0);
+        lolunit_assert(i8 == -1);
+        lolunit_assert(i9 == 9);
     }
 
-    LOLUNIT_TEST(StartsEndsWith)
+    lolunit_declare_test(StartsEndsWith)
     {
         String s = "lolilol";
-        LOLUNIT_ASSERT(s.StartsWith("loli"));
-        LOLUNIT_ASSERT(!s.StartsWith("lolo"));
-        LOLUNIT_ASSERT(!s.StartsWith("lolilolilol"));
-        LOLUNIT_ASSERT(s.EndsWith("ilol"));
-        LOLUNIT_ASSERT(!s.EndsWith("olol"));
-        LOLUNIT_ASSERT(!s.EndsWith("lolilolilol"));
+        lolunit_assert(s.StartsWith("loli"));
+        lolunit_assert(!s.StartsWith("lolo"));
+        lolunit_assert(!s.StartsWith("lolilolilol"));
+        lolunit_assert(s.EndsWith("ilol"));
+        lolunit_assert(!s.EndsWith("olol"));
+        lolunit_assert(!s.EndsWith("lolilolilol"));
     }
 };
 

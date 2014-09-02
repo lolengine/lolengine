@@ -20,24 +20,24 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(TrigTest)
+lolunit_declare_fixture(TrigTest)
 {
-    LOLUNIT_TEST(AngleConversions)
+    lolunit_declare_test(AngleConversions)
     {
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(D_PI, radians(180.0), 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(D_PI_2, radians(90.0), 1e-5);
+        lolunit_assert_doubles_equal(D_PI, radians(180.0), 1e-5);
+        lolunit_assert_doubles_equal(D_PI_2, radians(90.0), 1e-5);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(F_PI, radians(180.0f), 1e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(F_PI_2, radians(90.0f), 1e-5f);
+        lolunit_assert_doubles_equal(F_PI, radians(180.0f), 1e-5f);
+        lolunit_assert_doubles_equal(F_PI_2, radians(90.0f), 1e-5f);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(180.0, degrees(D_PI), 1e-5);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(90.0, degrees(D_PI_2), 1e-5);
+        lolunit_assert_doubles_equal(180.0, degrees(D_PI), 1e-5);
+        lolunit_assert_doubles_equal(90.0, degrees(D_PI_2), 1e-5);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(180.0f, degrees(F_PI), 1e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(90.0f, degrees(F_PI_2), 1e-5f);
+        lolunit_assert_doubles_equal(180.0f, degrees(F_PI), 1e-5f);
+        lolunit_assert_doubles_equal(90.0f, degrees(F_PI_2), 1e-5f);
     }
 
-    LOLUNIT_TEST(Sin)
+    lolunit_declare_test(Sin)
     {
         using std::fabs;
 
@@ -50,8 +50,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::sin(f);
 #endif
             double b = lol_sin(f);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -63,12 +63,12 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::sin(f);
 #endif
             double b = lol_sin(f);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
     }
 
-    LOLUNIT_TEST(Cos)
+    lolunit_declare_test(Cos)
     {
         using std::fabs;
 
@@ -81,8 +81,8 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::cos(f);
 #endif
             double b = lol_cos(f);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -94,12 +94,12 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::cos(f);
 #endif
             double b = lol_cos(f);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
     }
 
-    LOLUNIT_TEST(SinCos)
+    lolunit_declare_test(SinCos)
     {
         using std::fabs;
 
@@ -115,9 +115,9 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a1, b1, fabs(f) * 1e-11);
+            lolunit_assert_doubles_equal(a2, b2, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -132,13 +132,13 @@ LOLUNIT_FIXTURE(TrigTest)
 #endif
             double b1, b2;
             lol_sincos(f, &b1, &b2);
-            LOLUNIT_SET_CONTEXT(f);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, fabs(f) * 1e-11);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, fabs(f) * 1e-11);
+            lolunit_set_context(f);
+            lolunit_assert_doubles_equal(a1, b1, fabs(f) * 1e-11);
+            lolunit_assert_doubles_equal(a2, b2, fabs(f) * 1e-11);
         }
     }
 
-    LOLUNIT_TEST(Tan)
+    lolunit_declare_test(Tan)
     {
         using std::fabs;
 
@@ -151,13 +151,13 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::tan(f);
 #endif
             double b = lol_tan(f);
-            LOLUNIT_SET_CONTEXT(f);
+            lolunit_set_context(f);
             if (fabs(a) > 1e4)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(a) * 1e-11);
             else
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
 
         for (int i = -10000; i < 10000; i++)
@@ -169,13 +169,13 @@ LOLUNIT_FIXTURE(TrigTest)
             double a = std::tan(f);
 #endif
             double b = lol_tan(f);
-            LOLUNIT_SET_CONTEXT(f);
+            lolunit_set_context(f);
             if (fabs(a) > 1e4)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * fabs(a) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(a) * fabs(a) * 1e-11);
             else if (fabs(a) > 1.0)
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(a) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(a) * 1e-11);
             else
-                LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, fabs(f) * 1e-11);
+                lolunit_assert_doubles_equal(a, b, fabs(f) * 1e-11);
         }
     }
 };

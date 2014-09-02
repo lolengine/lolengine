@@ -18,91 +18,91 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(ComplexTest)
+lolunit_declare_fixture(ComplexTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(Equality)
+    lolunit_declare_test(Equality)
     {
         cmplx a2(1.0f, 2.0f);
         cmplx b2(0.0f, 2.0f);
         cmplx c2(1.0f, 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a2, a2);
-        LOLUNIT_ASSERT_NOT_DIFFERENT(a2, a2);
+        lolunit_assert_equal(a2, a2);
+        lolunit_assert_not_different(a2, a2);
 
-        LOLUNIT_ASSERT_DIFFERENT(a2, b2);
-        LOLUNIT_ASSERT_NOT_EQUAL(a2, b2);
-        LOLUNIT_ASSERT_DIFFERENT(a2, c2);
-        LOLUNIT_ASSERT_NOT_EQUAL(a2, c2);
+        lolunit_assert_different(a2, b2);
+        lolunit_assert_not_equal(a2, b2);
+        lolunit_assert_different(a2, c2);
+        lolunit_assert_not_equal(a2, c2);
     }
 
-    LOLUNIT_TEST(UnaryMinus)
+    lolunit_declare_test(UnaryMinus)
     {
         cmplx a(1.0f, 3.0f);
         cmplx b(-1.0f, -3.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a, -b);
-        LOLUNIT_ASSERT_EQUAL(-a, b);
+        lolunit_assert_equal(a, -b);
+        lolunit_assert_equal(-a, b);
     }
 
-    LOLUNIT_TEST(Conjugate)
+    lolunit_declare_test(Conjugate)
     {
         cmplx a(1.0f, 3.0f);
         cmplx b(1.0f, -3.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a, ~b);
-        LOLUNIT_ASSERT_EQUAL(~a, b);
+        lolunit_assert_equal(a, ~b);
+        lolunit_assert_equal(~a, b);
     }
 
-    LOLUNIT_TEST(Norm)
+    lolunit_declare_test(Norm)
     {
         cmplx a(3.0f, -4.0f);
 
-        LOLUNIT_ASSERT_EQUAL(norm(a), 5.0f);
+        lolunit_assert_equal(norm(a), 5.0f);
 
         cmplx b = a * ~a;
         cmplx c = norm(a) * norm(a);
 
-        LOLUNIT_ASSERT_EQUAL(b, c);
+        lolunit_assert_equal(b, c);
 
         cmplx d(5.0f, 12.0f);
 
-        LOLUNIT_ASSERT_EQUAL(norm(d), 13.0f);
-        LOLUNIT_ASSERT_EQUAL(norm(a * d), norm(a) * norm(d));
+        lolunit_assert_equal(norm(d), 13.0f);
+        lolunit_assert_equal(norm(a * d), norm(a) * norm(d));
     }
 
-    LOLUNIT_TEST(Base)
+    lolunit_declare_test(Base)
     {
         cmplx one(1.0f, 0.0f);
         cmplx i(0.0f, 1.0f);
 
-        LOLUNIT_ASSERT_EQUAL(norm(one), 1.0f);
-        LOLUNIT_ASSERT_EQUAL(norm(i), 1.0f);
+        lolunit_assert_equal(norm(one), 1.0f);
+        lolunit_assert_equal(norm(i), 1.0f);
 
-        LOLUNIT_ASSERT_EQUAL(i * i, -one);
+        lolunit_assert_equal(i * i, -one);
     }
 
-    LOLUNIT_TEST(Normalize)
+    lolunit_declare_test(Normalize)
     {
         cmplx a(3.0f, -4.0f);
         cmplx b = normalize(a);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(norm(b), 1.0, 1e-8);
+        lolunit_assert_doubles_equal(norm(b), 1.0, 1e-8);
     }
 
-    LOLUNIT_TEST(Reciprocal)
+    lolunit_declare_test(Reciprocal)
     {
         cmplx a(3.0f, -4.0f);
         cmplx b = re(a);
 
-        LOLUNIT_ASSERT_EQUAL(a * b, b * a);
+        lolunit_assert_equal(a * b, b * a);
 
         cmplx c = 1.0f;
 
-        LOLUNIT_ASSERT_EQUAL(a * b, c);
+        lolunit_assert_equal(a * b, c);
     }
 };
 

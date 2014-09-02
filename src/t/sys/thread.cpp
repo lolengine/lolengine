@@ -18,24 +18,24 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(ThreadTest)
+lolunit_declare_fixture(ThreadTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(QueueTryPush)
+    lolunit_declare_test(QueueTryPush)
     {
         Queue<int, 1> q;
 
         bool b1 = q.TryPush(0);
-        LOLUNIT_ASSERT_EQUAL(true, b1);
+        lolunit_assert_equal(true, b1);
 
         bool b2 = q.TryPush(1);
-        LOLUNIT_ASSERT_EQUAL(false, b2);
+        lolunit_assert_equal(false, b2);
     }
 
-    LOLUNIT_TEST(QueueTryPop)
+    lolunit_declare_test(QueueTryPop)
     {
         Queue<int, 1> q;
         int tmp;
@@ -43,12 +43,12 @@ LOLUNIT_FIXTURE(ThreadTest)
         q.Push(42);
 
         bool b1 = q.TryPop(tmp);
-        LOLUNIT_ASSERT_EQUAL(true, b1);
-        LOLUNIT_ASSERT_EQUAL(42, tmp);
+        lolunit_assert_equal(true, b1);
+        lolunit_assert_equal(42, tmp);
 
         bool b2 = q.TryPop(tmp);
-        LOLUNIT_ASSERT_EQUAL(false, b2);
-        LOLUNIT_ASSERT_EQUAL(42, tmp);
+        lolunit_assert_equal(false, b2);
+        lolunit_assert_equal(42, tmp);
     }
 };
 

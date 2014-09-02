@@ -18,40 +18,40 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(BoxTest)
+lolunit_declare_fixture(BoxTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(Box2DIsect)
+    lolunit_declare_test(Box2DIsect)
     {
         box2 b1(vec2(0.f, 0.f), vec2(10.f, 10.f));
         box2 b2(vec2(5.f, 8.f), vec2(8.f, 12.f));
         box2 b3(vec2(5.f, 11.f), vec2(8.f, 13.f));
 
-        LOLUNIT_ASSERT_EQUAL(true, TestAABBVsAABB(b1, b2));
-        LOLUNIT_ASSERT_EQUAL(false, TestAABBVsAABB(b1, b3));
+        lolunit_assert_equal(true, TestAABBVsAABB(b1, b2));
+        lolunit_assert_equal(false, TestAABBVsAABB(b1, b3));
 
         box2 b4(vec2(96.f, 33.f), vec2(144.f, 129.f));
         box2 b5(vec2(264.f, 91.f), vec2(244.f, 71.f));
 
-        LOLUNIT_ASSERT_EQUAL(false, TestAABBVsAABB(b4, b5));
+        lolunit_assert_equal(false, TestAABBVsAABB(b4, b5));
     }
 
-    LOLUNIT_TEST(Box2DMove)
+    lolunit_declare_test(Box2DMove)
     {
         box2 b1(vec2(0.f, 0.f), vec2(1.f, 1.f));
         box2 b2(vec2(2.f, 2.f), vec2(3.f, 3.f));
 
         b1 += vec2(0.6f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(false, TestAABBVsAABB(b1, b2));
+        lolunit_assert_equal(false, TestAABBVsAABB(b1, b2));
 
         b1 += vec2(0.6f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(true, TestAABBVsAABB(b1, b2));
+        lolunit_assert_equal(true, TestAABBVsAABB(b1, b2));
 
         b1 -= vec2(0.0f, 0.6f);
-        LOLUNIT_ASSERT_EQUAL(false, TestAABBVsAABB(b1, b2));
+        lolunit_assert_equal(false, TestAABBVsAABB(b1, b2));
     }
 };
 

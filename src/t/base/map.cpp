@@ -18,13 +18,13 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(MapTest)
+lolunit_declare_fixture(MapTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(MapDeclare)
+    lolunit_declare_test(MapDeclare)
     {
         map<uint8_t, uint8_t> m1;
         map<int, int> m2;
@@ -32,7 +32,7 @@ LOLUNIT_FIXTURE(MapTest)
         map<char const *, char const *> m4;
     }
 
-    LOLUNIT_TEST(MapSet)
+    lolunit_declare_test(MapSet)
     {
         map<int, int> map;
 
@@ -43,22 +43,22 @@ LOLUNIT_FIXTURE(MapTest)
             map[i] = i;
 
         for (int i = 0; i < 1000; i++)
-            LOLUNIT_ASSERT_EQUAL(map[i], i);
+            lolunit_assert_equal(map[i], i);
     }
 
-    LOLUNIT_TEST(MapHasKey)
+    lolunit_declare_test(MapHasKey)
     {
         map<int, int> map;
 
         map[0] = 1;
         map[2] = 2;
 
-        LOLUNIT_ASSERT(map.HasKey(0));
-        LOLUNIT_ASSERT(!map.HasKey(1));
-        LOLUNIT_ASSERT(map.HasKey(2));
+        lolunit_assert(map.HasKey(0));
+        lolunit_assert(!map.HasKey(1));
+        lolunit_assert(map.HasKey(2));
     }
 
-    LOLUNIT_TEST(StringMap)
+    lolunit_declare_test(StringMap)
     {
         map<char const *, int> map;
 
@@ -70,9 +70,9 @@ LOLUNIT_FIXTURE(MapTest)
         int bar = map["bar"];
         int baz = map["baz"];
 
-        LOLUNIT_ASSERT_EQUAL(42, foo);
-        LOLUNIT_ASSERT_EQUAL(12, bar);
-        LOLUNIT_ASSERT_EQUAL(2, baz);
+        lolunit_assert_equal(42, foo);
+        lolunit_assert_equal(12, bar);
+        lolunit_assert_equal(2, baz);
     }
 };
 

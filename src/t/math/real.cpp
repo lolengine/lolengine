@@ -20,56 +20,56 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(RealTest)
+lolunit_declare_fixture(RealTest)
 {
-    LOLUNIT_TEST(Constants)
+    lolunit_declare_test(Constants)
     {
         double a0 = real::R_0();
         double a1 = real::R_1();
         double a2 = real::R_2();
         double a10 = real::R_10();
 
-        LOLUNIT_ASSERT_EQUAL(a0, 0.0);
-        LOLUNIT_ASSERT_EQUAL(a1, 1.0);
-        LOLUNIT_ASSERT_EQUAL(a2, 2.0);
-        LOLUNIT_ASSERT_EQUAL(a10, 10.0);
+        lolunit_assert_equal(a0, 0.0);
+        lolunit_assert_equal(a1, 1.0);
+        lolunit_assert_equal(a2, 2.0);
+        lolunit_assert_equal(a10, 10.0);
 
         double b1 = log(real::R_E());
         double b2 = log2(real::R_2());
-        LOLUNIT_ASSERT_EQUAL(b1, 1.0);
-        LOLUNIT_ASSERT_EQUAL(b2, 1.0);
+        lolunit_assert_equal(b1, 1.0);
+        lolunit_assert_equal(b2, 1.0);
 
         double c1 = exp(re(real::R_LOG2E()));
         double c2 = log(exp2(real::R_LOG2E()));
-        LOLUNIT_ASSERT_EQUAL(c1, 2.0);
-        LOLUNIT_ASSERT_EQUAL(c2, 1.0);
+        lolunit_assert_equal(c1, 2.0);
+        lolunit_assert_equal(c2, 1.0);
 
         double d1 = exp(re(real::R_LOG10E()));
-        LOLUNIT_ASSERT_EQUAL(d1, 10.0);
+        lolunit_assert_equal(d1, 10.0);
 
         double e1 = exp(real::R_LN2());
-        LOLUNIT_ASSERT_EQUAL(e1, 2.0);
+        lolunit_assert_equal(e1, 2.0);
 
         double f1 = exp(real::R_LN10());
-        LOLUNIT_ASSERT_EQUAL(f1, 10.0);
+        lolunit_assert_equal(f1, 10.0);
 
         double g1 = sin(real::R_PI());
         double g2 = cos(real::R_PI());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(g1, 0.0, 1e-100);
-        LOLUNIT_ASSERT_EQUAL(g2, -1.0);
+        lolunit_assert_doubles_equal(g1, 0.0, 1e-100);
+        lolunit_assert_equal(g2, -1.0);
 
         double h1 = sin(real::R_PI_2());
         double h2 = cos(real::R_PI_2());
-        LOLUNIT_ASSERT_EQUAL(h1, 1.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(h2, 0.0, 1e-100);
+        lolunit_assert_equal(h1, 1.0);
+        lolunit_assert_doubles_equal(h2, 0.0, 1e-100);
 
         double i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
         double i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
-        LOLUNIT_ASSERT_EQUAL(i1, 0.5);
-        LOLUNIT_ASSERT_EQUAL(i2, 0.5);
+        lolunit_assert_equal(i1, 0.5);
+        lolunit_assert_equal(i2, 0.5);
     }
 
-    LOLUNIT_TEST(FloatToReal)
+    lolunit_declare_test(FloatToReal)
     {
         float a1 = real(0.0f);
         float a2 = real(-0.0f);
@@ -78,15 +78,15 @@ LOLUNIT_FIXTURE(RealTest)
         float a5 = real(1.5f);
         float a6 = real(12345678.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a1, 0.0f);
-        LOLUNIT_ASSERT_EQUAL(a2, -0.0f);
-        LOLUNIT_ASSERT_EQUAL(a3, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(a4, -1.0f);
-        LOLUNIT_ASSERT_EQUAL(a5, 1.5f);
-        LOLUNIT_ASSERT_EQUAL(a6, 12345678.0f);
+        lolunit_assert_equal(a1, 0.0f);
+        lolunit_assert_equal(a2, -0.0f);
+        lolunit_assert_equal(a3, 1.0f);
+        lolunit_assert_equal(a4, -1.0f);
+        lolunit_assert_equal(a5, 1.5f);
+        lolunit_assert_equal(a6, 12345678.0f);
     }
 
-    LOLUNIT_TEST(DoubleToReal)
+    lolunit_declare_test(DoubleToReal)
     {
         double a1 = real(0.0);
         double a2 = real(-0.0);
@@ -95,30 +95,30 @@ LOLUNIT_FIXTURE(RealTest)
         double a5 = real(1.5);
         double a6 = real(1234567876543210.0);
 
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, 0.0, 0.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, -0.0, 0.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a3, 1.0, 0.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a4, -1.0, 0.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a5, 1.5, 0.0);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 1234567876543210.0, 0.0);
+        lolunit_assert_doubles_equal(a1, 0.0, 0.0);
+        lolunit_assert_doubles_equal(a2, -0.0, 0.0);
+        lolunit_assert_doubles_equal(a3, 1.0, 0.0);
+        lolunit_assert_doubles_equal(a4, -1.0, 0.0);
+        lolunit_assert_doubles_equal(a5, 1.5, 0.0);
+        lolunit_assert_doubles_equal(a6, 1234567876543210.0, 0.0);
     }
 
-    LOLUNIT_TEST(Init)
+    lolunit_declare_test(Init)
     {
         real r;
         float f1 = (float)r;
 
-        LOLUNIT_ASSERT_EQUAL(f1, 0.0f);
+        lolunit_assert_equal(f1, 0.0f);
 
         rcmplx q;
         float f2 = (float)q.x;
         float f3 = (float)q.y;
 
-        LOLUNIT_ASSERT_EQUAL(f2, 0.0f);
-        LOLUNIT_ASSERT_EQUAL(f3, 0.0f);
+        lolunit_assert_equal(f2, 0.0f);
+        lolunit_assert_equal(f3, 0.0f);
     }
 
-    LOLUNIT_TEST(StringToReal)
+    lolunit_declare_test(StringToReal)
     {
         float a1 = real("0");
         float a2 = real("1");
@@ -129,47 +129,47 @@ LOLUNIT_FIXTURE(RealTest)
                         "6569604314863681793212890625")
                  * real("340282366920938463463374607431768211456");
 
-        LOLUNIT_ASSERT_EQUAL(a1, 0.0f);
-        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(a3, -1.0f);
-        LOLUNIT_ASSERT_EQUAL(a4, 1.0f);
+        lolunit_assert_equal(a1, 0.0f);
+        lolunit_assert_equal(a2, 1.0f);
+        lolunit_assert_equal(a3, -1.0f);
+        lolunit_assert_equal(a4, 1.0f);
     }
 
-    LOLUNIT_TEST(UnaryMinus)
+    lolunit_declare_test(UnaryMinus)
     {
         float a1 = - real(1.0f);
         float a2 = - real(-1.0f);
         float a3 = - real(0.0f);
         float a4 = - real(-0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(a1, -1.0f);
-        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(a3, -0.0f);
-        LOLUNIT_ASSERT_EQUAL(a4, 0.0f);
+        lolunit_assert_equal(a1, -1.0f);
+        lolunit_assert_equal(a2, 1.0f);
+        lolunit_assert_equal(a3, -0.0f);
+        lolunit_assert_equal(a4, 0.0f);
     }
 
-    LOLUNIT_TEST(Comparison)
+    lolunit_declare_test(Comparison)
     {
-        LOLUNIT_ASSERT(real(1.0f) > real(0.5f));
-        LOLUNIT_ASSERT(real(1.0f) >= real(0.5f));
-        LOLUNIT_ASSERT(real(1.0f) >= real(1.0f));
+        lolunit_assert(real(1.0f) > real(0.5f));
+        lolunit_assert(real(1.0f) >= real(0.5f));
+        lolunit_assert(real(1.0f) >= real(1.0f));
 
-        LOLUNIT_ASSERT(real(-1.0f) < real(-0.5f));
-        LOLUNIT_ASSERT(real(-1.0f) <= real(-0.5f));
-        LOLUNIT_ASSERT(real(-1.0f) <= real(-1.0f));
+        lolunit_assert(real(-1.0f) < real(-0.5f));
+        lolunit_assert(real(-1.0f) <= real(-0.5f));
+        lolunit_assert(real(-1.0f) <= real(-1.0f));
 
-        LOLUNIT_ASSERT(real(-1.0f) < real(0.5f));
-        LOLUNIT_ASSERT(real(-0.5f) < real(1.0f));
-        LOLUNIT_ASSERT(real(-1.0f) <= real(0.5f));
-        LOLUNIT_ASSERT(real(-0.5f) <= real(1.0f));
+        lolunit_assert(real(-1.0f) < real(0.5f));
+        lolunit_assert(real(-0.5f) < real(1.0f));
+        lolunit_assert(real(-1.0f) <= real(0.5f));
+        lolunit_assert(real(-0.5f) <= real(1.0f));
 
-        LOLUNIT_ASSERT(real(1.0f) > real(-0.5f));
-        LOLUNIT_ASSERT(real(0.5f) > real(-1.0f));
-        LOLUNIT_ASSERT(real(1.0f) >= real(-0.5f));
-        LOLUNIT_ASSERT(real(0.5f) >= real(-1.0f));
+        lolunit_assert(real(1.0f) > real(-0.5f));
+        lolunit_assert(real(0.5f) > real(-1.0f));
+        lolunit_assert(real(1.0f) >= real(-0.5f));
+        lolunit_assert(real(0.5f) >= real(-1.0f));
     }
 
-    LOLUNIT_TEST(Addition)
+    lolunit_declare_test(Addition)
     {
         float a1 = real(1.0f) + real(0.0f);
         float a2 = real(0.0f) + real(1.0f);
@@ -181,24 +181,24 @@ LOLUNIT_FIXTURE(RealTest)
         float a7 = real(1.0f) + real(-0.125f);
         double a8 = real(0.10000000002) + real(-2.0e-11);
 
-        LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(a2, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(a3, 2.0f);
-        LOLUNIT_ASSERT_EQUAL(a4, -2.0f);
-        LOLUNIT_ASSERT_EQUAL(a5, 1.125f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a6, 3.1361579, 0.000001);
-        LOLUNIT_ASSERT_EQUAL(a7, 0.875f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a8, 0.1, 1.0e-13);
+        lolunit_assert_equal(a1, 1.0f);
+        lolunit_assert_equal(a2, 1.0f);
+        lolunit_assert_equal(a3, 2.0f);
+        lolunit_assert_equal(a4, -2.0f);
+        lolunit_assert_equal(a5, 1.125f);
+        lolunit_assert_doubles_equal(a6, 3.1361579, 0.000001);
+        lolunit_assert_equal(a7, 0.875f);
+        lolunit_assert_doubles_equal(a8, 0.1, 1.0e-13);
     }
 
-    LOLUNIT_TEST(Subtraction)
+    lolunit_declare_test(Subtraction)
     {
         float a1 = real(1.0f) + real(1e20f) - real(1e20f);
 
-        LOLUNIT_ASSERT_EQUAL(a1, 1.0f);
+        lolunit_assert_equal(a1, 1.0f);
     }
 
-    LOLUNIT_TEST(Multiplication)
+    lolunit_declare_test(Multiplication)
     {
         real x(1.25f);
         real y(1.5f);
@@ -210,13 +210,13 @@ LOLUNIT_FIXTURE(RealTest)
         float m3 = z * z;
         float m4 = w * w;
 
-        LOLUNIT_ASSERT_EQUAL(m1, 1.25f * 1.25f);
-        LOLUNIT_ASSERT_EQUAL(m2, 1.5f * 1.5f);
-        LOLUNIT_ASSERT_EQUAL(m3, 1.99999f * 1.99999f);
-        LOLUNIT_ASSERT_EQUAL(m4, -1.5f * -1.5f);
+        lolunit_assert_equal(m1, 1.25f * 1.25f);
+        lolunit_assert_equal(m2, 1.5f * 1.5f);
+        lolunit_assert_equal(m3, 1.99999f * 1.99999f);
+        lolunit_assert_equal(m4, -1.5f * -1.5f);
     }
 
-    LOLUNIT_TEST(ExactDivision)
+    lolunit_declare_test(ExactDivision)
     {
         float m1 = real::R_1() / real::R_1();
         float m2 = real::R_2() / real::R_1();
@@ -224,65 +224,65 @@ LOLUNIT_FIXTURE(RealTest)
         float m4 = real::R_2() / real::R_2();
         float m5 = real::R_1() / -real::R_2();
 
-        LOLUNIT_ASSERT_EQUAL(m1, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2, 2.0f);
-        LOLUNIT_ASSERT_EQUAL(m3, 0.5f);
-        LOLUNIT_ASSERT_EQUAL(m4, 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m5, -0.5f);
+        lolunit_assert_equal(m1, 1.0f);
+        lolunit_assert_equal(m2, 2.0f);
+        lolunit_assert_equal(m3, 0.5f);
+        lolunit_assert_equal(m4, 1.0f);
+        lolunit_assert_equal(m5, -0.5f);
     }
 
-    LOLUNIT_TEST(InexactDivision)
+    lolunit_declare_test(InexactDivision)
     {
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
         real a = real::R_1() / real::R_3() * real::R_3();
         real b = ldexp(real::R_1() - a, real::BIGITS * real::BIGIT_BITS);
 
-        LOLUNIT_ASSERT_LEQUAL((double)fabs(b), 1.0);
+        lolunit_assert_lequal((double)fabs(b), 1.0);
     }
 
-    LOLUNIT_TEST(LoadExp)
+    lolunit_declare_test(LoadExp)
     {
         real a1(1.5);
         real a2(-1.5);
         real a3(0.0);
 
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a1, 7), 192.0);
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a1, -7), 0.01171875);
+        lolunit_assert_equal((double)ldexp(a1, 7), 192.0);
+        lolunit_assert_equal((double)ldexp(a1, -7), 0.01171875);
 
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a2, 7), -192.0);
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a2, -7), -0.01171875);
+        lolunit_assert_equal((double)ldexp(a2, 7), -192.0);
+        lolunit_assert_equal((double)ldexp(a2, -7), -0.01171875);
 
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a3, 7), 0.0);
-        LOLUNIT_ASSERT_EQUAL((double)ldexp(a3, -7), 0.0);
+        lolunit_assert_equal((double)ldexp(a3, 7), 0.0);
+        lolunit_assert_equal((double)ldexp(a3, -7), 0.0);
     }
 
-    LOLUNIT_TEST(Ulp)
+    lolunit_declare_test(Ulp)
     {
         real a1 = real::R_PI();
 
-        LOLUNIT_ASSERT_NOT_EQUAL((double)(a1 + ulp(a1) - a1), 0.0);
-        LOLUNIT_ASSERT_EQUAL((double)(a1 + ulp(a1) / 2 - a1), 0.0);
+        lolunit_assert_not_equal((double)(a1 + ulp(a1) - a1), 0.0);
+        lolunit_assert_equal((double)(a1 + ulp(a1) / 2 - a1), 0.0);
     }
 
-    LOLUNIT_TEST(Bool)
+    lolunit_declare_test(Bool)
     {
         real a = 0.0;
-        LOLUNIT_ASSERT(!a);
+        lolunit_assert(!a);
 
         a = -0.0;
-        LOLUNIT_ASSERT(!a);
+        lolunit_assert(!a);
 
         a = 1234.0;
-        LOLUNIT_ASSERT(a);
-        LOLUNIT_ASSERT(!!a);
+        lolunit_assert(a);
+        lolunit_assert(!!a);
 
         a = -1234.0;
-        LOLUNIT_ASSERT(a);
-        LOLUNIT_ASSERT(!!a);
+        lolunit_assert(a);
+        lolunit_assert(!!a);
     }
 
-    LOLUNIT_TEST(AsinAcos)
+    lolunit_declare_test(AsinAcos)
     {
         double tests[] =
         {
@@ -296,13 +296,13 @@ LOLUNIT_FIXTURE(RealTest)
             double b = sin(asin((real)a));
             double c = cos(acos((real)a));
 
-            LOLUNIT_SET_CONTEXT(a);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(b, a, 1e-100);
-            LOLUNIT_ASSERT_DOUBLES_EQUAL(c, a, 1e-100);
+            lolunit_set_context(a);
+            lolunit_assert_doubles_equal(b, a, 1e-100);
+            lolunit_assert_doubles_equal(c, a, 1e-100);
         }
     }
 
-    LOLUNIT_TEST(FloorCeilEtc)
+    lolunit_declare_test(FloorCeilEtc)
     {
         double tests[] =
         {
@@ -338,21 +338,21 @@ LOLUNIT_FIXTURE(RealTest)
             double a2 = round((real)tests[n]);
             double b2 = tests[n + 3];
 
-            LOLUNIT_ASSERT_EQUAL(b0, a0);
-            LOLUNIT_ASSERT_EQUAL(b1, a1);
-            LOLUNIT_ASSERT_EQUAL(b2, a2);
+            lolunit_assert_equal(b0, a0);
+            lolunit_assert_equal(b1, a1);
+            lolunit_assert_equal(b2, a2);
         }
     }
 
-    LOLUNIT_TEST(Pow)
+    lolunit_declare_test(Pow)
     {
         double a1 = pow(-real::R_2(), real::R_2());
         double b1 = 4.0;
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a1, b1, 1.0e-13);
+        lolunit_assert_doubles_equal(a1, b1, 1.0e-13);
 
         double a2 = pow(-real::R_2(), real::R_3());
         double b2 = -8.0;
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(a2, b2, 1.0e-13);
+        lolunit_assert_doubles_equal(a2, b2, 1.0e-13);
     }
 };
 

@@ -19,7 +19,7 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(CameraTest)
+lolunit_declare_fixture(CameraTest)
 {
     Camera  tc;
     vec3    eye;
@@ -54,11 +54,11 @@ LOLUNIT_FIXTURE(CameraTest)
     void TearDown() {}
 
 #define TEST_VECTOR(v0, v1) \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(v0.x, v1.x, 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(v0.y, v1.y, 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(v0.z, v1.z, 1.e-5f);
+        lolunit_assert_doubles_equal(v0.x, v1.x, 1.e-5f); \
+        lolunit_assert_doubles_equal(v0.y, v1.y, 1.e-5f); \
+        lolunit_assert_doubles_equal(v0.z, v1.z, 1.e-5f);
 
-    LOLUNIT_TEST(SetViewTest)
+    lolunit_declare_test(SetViewTest)
     {
         tc.SetView(eye, target, up);
         TEST_VECTOR(eye, tc.GetPosition());
@@ -85,108 +85,108 @@ LOLUNIT_FIXTURE(CameraTest)
     }
 
 #define TEST_MATRIX(m0, m1) \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[0][0], m1[0][0], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[1][0], m1[1][0], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[2][0], m1[2][0], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[3][0], m1[3][0], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[0][0], m1[0][0], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[1][0], m1[1][0], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[2][0], m1[2][0], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[3][0], m1[3][0], 1.e-5f); \
                                                                   \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[0][1], m1[0][1], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[1][1], m1[1][1], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[2][1], m1[2][1], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[3][1], m1[3][1], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[0][1], m1[0][1], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[1][1], m1[1][1], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[2][1], m1[2][1], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[3][1], m1[3][1], 1.e-5f); \
                                                                   \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[0][2], m1[0][2], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[1][2], m1[1][2], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[2][2], m1[2][2], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[3][2], m1[3][2], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[0][2], m1[0][2], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[1][2], m1[1][2], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[2][2], m1[2][2], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[3][2], m1[3][2], 1.e-5f); \
                                                                   \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[0][3], m1[0][3], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[1][3], m1[1][3], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[2][3], m1[2][3], 1.e-5f); \
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(m0[3][3], m1[3][3], 1.e-5f);
+        lolunit_assert_doubles_equal(m0[0][3], m1[0][3], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[1][3], m1[1][3], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[2][3], m1[2][3], 1.e-5f); \
+        lolunit_assert_doubles_equal(m0[3][3], m1[3][3], 1.e-5f);
 
 
-    LOLUNIT_TEST(SetProjectionTest)
+    lolunit_declare_test(SetProjectionTest)
     {
         mat4 refmx = mat4::perspective(fov, screen_size, screen_size * screen_ratio, near, far);
 
         tc.SetProjection(fov, near, far, screen_size, screen_ratio);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetProjection(fov, near, far);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetProjection(refmx);
         TEST_MATRIX(refmx, tc.GetProjection());
 
         tc.SetFov(fov);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetScreenInfos(screen_size);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetScreenInfos(screen_size, screen_ratio);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetDrawInfos(far);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         tc.SetDrawInfos(near, far);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
 
         is_shifted = true;
         refmx = mat4::shifted_perspective(fov, screen_size, screen_ratio, near, far);
 
         tc.UseShift(is_shifted);
         TEST_MATRIX(refmx, tc.GetProjection());
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(fov, tc.GetFov(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_size, tc.GetScreenSize(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(near, tc.GetNear(), 1.e-5f);
-        LOLUNIT_ASSERT_DOUBLES_EQUAL(far, tc.GetFar(), 1.e-5f);
-        LOLUNIT_ASSERT(is_shifted == tc.IsShifted());
+        lolunit_assert_doubles_equal(fov, tc.GetFov(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_size, tc.GetScreenSize(), 1.e-5f);
+        lolunit_assert_doubles_equal(screen_ratio, tc.GetScreenRatio(), 1.e-5f);
+        lolunit_assert_doubles_equal(near, tc.GetNear(), 1.e-5f);
+        lolunit_assert_doubles_equal(far, tc.GetFar(), 1.e-5f);
+        lolunit_assert(is_shifted == tc.IsShifted());
     }
 };
 

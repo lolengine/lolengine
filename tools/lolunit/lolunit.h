@@ -26,7 +26,7 @@ namespace lol
 
 /*
  * This is the base class for all fixtures. It keeps track of all
- * fixtures registered through the LOLUNIT_FIXTURE macro and puts them
+ * fixtures registered through the lolunit_declare_fixture macro and puts them
  * in a linked list.
  */
 class FixtureBase
@@ -81,7 +81,7 @@ private:
 
 /*
  * This template specialises FixtureBase and provides registration of
- * test cases in a linked list through the LOLUNIT_TEST macro.
+ * test cases in a linked list through the lolunit_declare_test macro.
  */
 template<class T> class Fixture : protected FixtureBase
 {
@@ -93,9 +93,15 @@ public:
         void (FixtureClass::* m_fun)();
         char const *m_testname;
         TestCase *m_next;
+
+    protected:
+        static inline std::string make_msg(std::string const str)
+        {
+            return "- " + str + "\n";
+        }
     };
 
-    Fixture<T>()
+    Fixture()
     {
         AddFixture(this);
     }
@@ -198,61 +204,61 @@ public:
             testcases += f->m_testcases;
             failcases += f->m_failcases;
         }
-        std::cout << std::endl;
+        std::cout << "\n";
 
-        std::cout << std::endl << std::endl;
+        std::cout << "\n\n";
         if (failcases)
         {
-            std::cout << "!!!FAILURES!!!" << std::endl;
-            std::cout << "Test Results:" << std::endl;
+            std::cout << "!!!FAILURES!!!\n";
+            std::cout << "Test Results:\n";
             std::cout << "Run:  " << testcases
                       << "  Failures: " << failcases
-                      << "  Errors: 0" << std::endl; /* TODO: handle errors */
+                      << "  Errors: 0\n"; /* TODO: handle errors */
 
             std::cout << errors.str();
             ret = false;
         }
         else
         {
-            std::cout << "OK (" << testcases << " tests)" << std::endl;
+            std::cout << "OK (" << testcases << " tests)\n";
         }
-        std::cout << std::endl << std::endl;
+        std::cout << "\n\n";
 
         return ret;
     }
 };
 
-#define LOLUNIT_ASSERT_GENERIC(msg, cond) \
+#define lolunit_assert_generic(msg, cond) \
     do { \
         m_asserts++; \
         if (True() && !(cond)) \
         { \
-            m_errorlog << std::endl << std::endl; \
+            m_errorlog << "\n\n"; \
             m_errorlog << ++m_failcases << ") test: " \
                        << lol_unit_helper_name(this) << "::" << m_currentname \
                        << " (F) line: " << __LINE__ << " " \
-                       << __FILE__ << std::endl; \
-            m_errorlog << "assertion failed" << std::endl; \
-            m_errorlog << "- Expression: " << #cond << std::endl; \
+                       << __FILE__ << "\n"; \
+            m_errorlog << "assertion failed\n"; \
+            m_errorlog << "- Expression: " << #cond << "\n"; \
             m_errorlog << msg; \
             m_failure = true; \
             return; \
         } \
     } while (!True())
 
-#define LOLUNIT_ASSERT_OP(op, modifier, opdesc, msg, a, b) \
+#define lolunit_assert_op(op, modifier, opdesc, msg, a, b) \
     do { \
         m_asserts++; \
         if (True() && !modifier((a) op (b))) \
         { \
-            m_errorlog << std::endl << std::endl; \
+            m_errorlog << "\n\n"; \
             m_errorlog << ++m_failcases << ") test: " \
                        << lol_unit_helper_name(this) << "::" << m_currentname \
                        << " (F) line: " << __LINE__ << " " \
-                       << __FILE__ << std::endl; \
-            m_errorlog << opdesc << " assertion failed" << std::endl; \
-            m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
-            m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
+                       << __FILE__ << "\n"; \
+            m_errorlog << opdesc << " assertion failed\n"; \
+            m_errorlog << "- Expected: " << #a << " = " << (a) << "\n"; \
+            m_errorlog << "- Actual  : " << #b << " = " << (b) << "\n"; \
             m_errorlog << msg; \
             m_errorlog << m_context.str(); \
             m_failure = true; \
@@ -260,26 +266,23 @@ public:
         } \
     } while (!True())
 
-#define LOLUNIT_MSG(msg) \
-    "- " << msg << std::endl
-
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(msg, a, b, t) \
+#define lolunit_assert_doubles_equal_generic(msg, a, b, t) \
     do { \
         m_asserts++; \
         using std::fabs; \
         if (True() && fabs((a) - (b)) > fabs((t))) \
         { \
-            m_errorlog << std::endl << std::endl; \
+            m_errorlog << "\n\n"; \
             m_errorlog << ++m_failcases << ") test: " \
                        << lol_unit_helper_name(this) << "::" << m_currentname \
                        << " (F) line: " << __LINE__ << " " \
-                       << __FILE__ << std::endl; \
-            m_errorlog << "double equality assertion failed" << std::endl; \
+                       << __FILE__ << "\n"; \
+            m_errorlog << "double equality assertion failed\n"; \
             std::streamsize old_prec = m_errorlog.precision(); \
             m_errorlog << std::setprecision(16); \
-            m_errorlog << "- Expected: " << #a << " = " << (a) << std::endl; \
-            m_errorlog << "- Actual  : " << #b << " = " << (b) << std::endl; \
-            m_errorlog << "- Delta   : " << (t) << std::endl; \
+            m_errorlog << "- Expected: " << #a << " = " << (a) << "\n"; \
+            m_errorlog << "- Actual  : " << #b << " = " << (b) << "\n"; \
+            m_errorlog << "- Delta   : " << (t) << "\n"; \
             m_errorlog << std::setprecision(old_prec); \
             m_errorlog << msg; \
             m_errorlog << m_context.str(); \
@@ -292,7 +295,7 @@ public:
  * Public helper macros
  */
 
-#define LOLUNIT_FIXTURE(N) \
+#define lolunit_declare_fixture(N) \
     class N; \
     /* This pattern allows us to statically create a Fixture instance \
      * before its exact implementation was defined. */ \
@@ -313,7 +316,7 @@ public:
     /* Now the user can define the implementation */ \
     class N : public lol::Fixture<N>
 
-#define LOLUNIT_TEST(N) \
+#define lolunit_declare_test(N) \
     /* For each test in the fixture, we create an object that will \
      * automatically register the test method in a list global to the \
      * specialised fixture. */ \
@@ -333,95 +336,95 @@ public:
  * Provide context for error messages
  */
 
-#define LOLUNIT_SET_CONTEXT(n) \
+#define lolunit_set_context(n) \
     do { \
         m_context.str(""); \
-        m_context << "- Context : " << #n << " = " << (n) << std::endl; \
+        m_context << "- Context : " << #n << " = " << (n) << "\n"; \
     } while (!True())
 
-#define LOLUNIT_UNSET_CONTEXT(n) \
+#define lolunit_unset_context(n) \
     m_context.str("")
 
 /*
  * Public assert macros
  */
 
-#define LOLUNIT_FAIL(msg) \
+#define lolunit_fail(msg) \
     do { \
         m_asserts++; \
-        m_errorlog << std::endl << std::endl; \
+        m_errorlog << "\n\n"; \
         m_errorlog << ++m_failcases << ") test: " \
                    << lol_unit_helper_name(this) << "::" << m_currentname \
                    << " (F) line: " << __LINE__ << " " \
-                   << __FILE__ << std::endl; \
-        m_errorlog << "forced failure" << std::endl; \
-        m_errorlog << LOLUNIT_MSG(msg); \
+                   << __FILE__ << "\n"; \
+        m_errorlog << "forced failure\n"; \
+        m_errorlog << make_msg(msg); \
         m_errorlog << m_context.str(); \
         m_failure = true; \
         return; \
     } while (!True())
 
-#define LOLUNIT_ASSERT(cond) \
-    LOLUNIT_ASSERT_GENERIC("", cond)
-#define LOLUNIT_ASSERT_MESSAGE(m, cond) \
-    LOLUNIT_ASSERT_GENERIC(LOLUNIT_MSG(m), cond)
+#define lolunit_assert(cond) \
+    lolunit_assert_generic("", cond)
+#define lolunit_assert_message(m, cond) \
+    lolunit_assert_generic(make_msg(m), cond)
 
 
-#define LOLUNIT_ASSERT_EQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(==, (bool), "equality", "", a, b)
-#define LOLUNIT_ASSERT_EQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(==, (bool), "equality", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_DIFFERENT(a, b) \
-    LOLUNIT_ASSERT_OP(!=, (bool), "inequality", "", a, b)
-#define LOLUNIT_ASSERT_DIFFERENT_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(!=, (bool), "inequality", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_LESS(a, b) \
-    LOLUNIT_ASSERT_OP(<, (bool), "less than", "", a, b)
-#define LOLUNIT_ASSERT_LESS_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<, (bool), "less than", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_LEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(<=, (bool), "less than or equal", "", a, b)
-#define LOLUNIT_ASSERT_LEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<=, (bool), "less than or equal", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_GREATER(a, b) \
-    LOLUNIT_ASSERT_OP(>, (bool), "greater than", "", a, b)
-#define LOLUNIT_ASSERT_GREATER_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>, (bool), "greater than", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_GEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(>=, (bool), "greater than or equal", "", a, b)
-#define LOLUNIT_ASSERT_GEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>=, (bool), "greater than or equal", LOLUNIT_MSG(m), a, b)
+#define lolunit_assert_equal(a, b) \
+    lolunit_assert_op(==, (bool), "equality", "", a, b)
+#define lolunit_assert_equal_message(m, a, b) \
+    lolunit_assert_op(==, (bool), "equality", make_msg(m), a, b)
+#define lolunit_assert_different(a, b) \
+    lolunit_assert_op(!=, (bool), "inequality", "", a, b)
+#define lolunit_assert_different_message(m, a, b) \
+    lolunit_assert_op(!=, (bool), "inequality", make_msg(m), a, b)
+#define lolunit_assert_less(a, b) \
+    lolunit_assert_op(<, (bool), "less than", "", a, b)
+#define lolunit_assert_less_message(m, a, b) \
+    lolunit_assert_op(<, (bool), "less than", make_msg(m), a, b)
+#define lolunit_assert_lequal(a, b) \
+    lolunit_assert_op(<=, (bool), "less than or equal", "", a, b)
+#define lolunit_assert_lequal_message(m, a, b) \
+    lolunit_assert_op(<=, (bool), "less than or equal", make_msg(m), a, b)
+#define lolunit_assert_greater(a, b) \
+    lolunit_assert_op(>, (bool), "greater than", "", a, b)
+#define lolunit_assert_greater_message(m, a, b) \
+    lolunit_assert_op(>, (bool), "greater than", make_msg(m), a, b)
+#define lolunit_assert_gequal(a, b) \
+    lolunit_assert_op(>=, (bool), "greater than or equal", "", a, b)
+#define lolunit_assert_gequal_message(m, a, b) \
+    lolunit_assert_op(>=, (bool), "greater than or equal", make_msg(m), a, b)
 
 
-#define LOLUNIT_ASSERT_NOT_EQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(==, !, "not equality", "", a, b)
-#define LOLUNIT_ASSERT_NOT_EQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(==, !, "not equality", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_NOT_DIFFERENT(a, b) \
-    LOLUNIT_ASSERT_OP(!=, !, "not inequality", "", a, b)
-#define LOLUNIT_ASSERT_NOT_DIFFERENT_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(!=, !, "not inequality", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_NOT_LESS(a, b) \
-    LOLUNIT_ASSERT_OP(<, !, "not less than", "", a, b)
-#define LOLUNIT_ASSERT_NOT_LESS_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<, !, "not less than", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_NOT_LEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(<=, !, "not less than or equal", "", a, b)
-#define LOLUNIT_ASSERT_NOT_LEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(<=, !, "not less than or equal", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_NOT_GREATER(a, b) \
-    LOLUNIT_ASSERT_OP(>, !, "not greater than", "", a, b)
-#define LOLUNIT_ASSERT_NOT_GREATER_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>, !, "not greater than", LOLUNIT_MSG(m), a, b)
-#define LOLUNIT_ASSERT_NOT_GEQUAL(a, b) \
-    LOLUNIT_ASSERT_OP(>=, !, "not greater than or equal", "", a, b)
-#define LOLUNIT_ASSERT_NOT_GEQUAL_MESSAGE(m, a, b) \
-    LOLUNIT_ASSERT_OP(>=, !, "not greater than or equal", LOLUNIT_MSG(m), a, b)
+#define lolunit_assert_not_equal(a, b) \
+    lolunit_assert_op(==, !, "not equality", "", a, b)
+#define lolunit_assert_not_equal_message(m, a, b) \
+    lolunit_assert_op(==, !, "not equality", make_msg(m), a, b)
+#define lolunit_assert_not_different(a, b) \
+    lolunit_assert_op(!=, !, "not inequality", "", a, b)
+#define lolunit_assert_not_different_message(m, a, b) \
+    lolunit_assert_op(!=, !, "not inequality", make_msg(m), a, b)
+#define lolunit_assert_not_less(a, b) \
+    lolunit_assert_op(<, !, "not less than", "", a, b)
+#define lolunit_assert_not_less_message(m, a, b) \
+    lolunit_assert_op(<, !, "not less than", make_msg(m), a, b)
+#define lolunit_assert_not_lequal(a, b) \
+    lolunit_assert_op(<=, !, "not less than or equal", "", a, b)
+#define lolunit_assert_not_lequal_message(m, a, b) \
+    lolunit_assert_op(<=, !, "not less than or equal", make_msg(m), a, b)
+#define lolunit_assert_not_greater(a, b) \
+    lolunit_assert_op(>, !, "not greater than", "", a, b)
+#define lolunit_assert_not_greater_message(m, a, b) \
+    lolunit_assert_op(>, !, "not greater than", make_msg(m), a, b)
+#define lolunit_assert_not_gequal(a, b) \
+    lolunit_assert_op(>=, !, "not greater than or equal", "", a, b)
+#define lolunit_assert_not_gequal_message(m, a, b) \
+    lolunit_assert_op(>=, !, "not greater than or equal", make_msg(m), a, b)
 
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL(a, b, t) \
-    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC("", a, b, t)
-#define LOLUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(msg, a, b, t) \
-    LOLUNIT_ASSERT_DOUBLES_EQUAL_GENERIC(LOLUNIT_MSG(msg), a, b, t)
+#define lolunit_assert_doubles_equal(a, b, t) \
+    lolunit_assert_doubles_equal_generic("", a, b, t)
+#define lolunit_assert_doubles_equal_message(msg, a, b, t) \
+    lolunit_assert_doubles_equal_generic(make_msg(msg), a, b, t)
 
 } /* namespace lol */
 
