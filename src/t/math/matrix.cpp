@@ -18,7 +18,7 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(MatrixTest)
+lolunit_declare_fixture(MatrixTest)
 {
     void SetUp()
     {
@@ -49,116 +49,116 @@ LOLUNIT_FIXTURE(MatrixTest)
 
     void TearDown() {}
 
-    LOLUNIT_TEST(Determinant)
+    lolunit_declare_test(Determinant)
     {
         float d1, d2;
 
         d1 = determinant(tri2);
-        LOLUNIT_ASSERT_EQUAL(d1, 2.0f);
+        lolunit_assert_equal(d1, 2.0f);
         d2 = determinant(inv2);
-        LOLUNIT_ASSERT_EQUAL(d2, -1.0f);
+        lolunit_assert_equal(d2, -1.0f);
 
         d1 = determinant(tri3);
-        LOLUNIT_ASSERT_EQUAL(d1, 6.0f);
+        lolunit_assert_equal(d1, 6.0f);
         d2 = determinant(inv3);
-        LOLUNIT_ASSERT_EQUAL(d2, 1.0f);
+        lolunit_assert_equal(d2, 1.0f);
 
         d1 = determinant(tri4);
-        LOLUNIT_ASSERT_EQUAL(d1, 24.0f);
+        lolunit_assert_equal(d1, 24.0f);
         d2 = determinant(inv4);
-        LOLUNIT_ASSERT_EQUAL(d2, -1.0f);
+        lolunit_assert_equal(d2, -1.0f);
     }
 
-    LOLUNIT_TEST(Multiplication)
+    lolunit_declare_test(Multiplication)
     {
         mat4 m0 = id4;
         mat4 m1 = id4;
         mat4 m2 = m0 * m1;
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
+        lolunit_assert_equal(m2[0][0], 1.0f);
+        lolunit_assert_equal(m2[1][0], 0.0f);
+        lolunit_assert_equal(m2[2][0], 0.0f);
+        lolunit_assert_equal(m2[3][0], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
+        lolunit_assert_equal(m2[0][1], 0.0f);
+        lolunit_assert_equal(m2[1][1], 1.0f);
+        lolunit_assert_equal(m2[2][1], 0.0f);
+        lolunit_assert_equal(m2[3][1], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
+        lolunit_assert_equal(m2[0][2], 0.0f);
+        lolunit_assert_equal(m2[1][2], 0.0f);
+        lolunit_assert_equal(m2[2][2], 1.0f);
+        lolunit_assert_equal(m2[3][2], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
+        lolunit_assert_equal(m2[0][3], 0.0f);
+        lolunit_assert_equal(m2[1][3], 0.0f);
+        lolunit_assert_equal(m2[2][3], 0.0f);
+        lolunit_assert_equal(m2[3][3], 1.0f);
     }
 
-    LOLUNIT_TEST(Inverse2x2)
+    lolunit_declare_test(Inverse2x2)
     {
         mat2 m0 = inv2;
         mat2 m1 = inverse(m0);
 
         mat2 m2 = m0 * m1;
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
+        lolunit_assert_equal(m2[0][0], 1.0f);
+        lolunit_assert_equal(m2[1][0], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
+        lolunit_assert_equal(m2[0][1], 0.0f);
+        lolunit_assert_equal(m2[1][1], 1.0f);
     }
 
-    LOLUNIT_TEST(Inverse3x3)
+    lolunit_declare_test(Inverse3x3)
     {
         mat3 m0 = inv3;
         mat3 m1 = inverse(m0);
 
         mat3 m2 = m0 * m1;
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
+        lolunit_assert_equal(m2[0][0], 1.0f);
+        lolunit_assert_equal(m2[1][0], 0.0f);
+        lolunit_assert_equal(m2[2][0], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
+        lolunit_assert_equal(m2[0][1], 0.0f);
+        lolunit_assert_equal(m2[1][1], 1.0f);
+        lolunit_assert_equal(m2[2][1], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
+        lolunit_assert_equal(m2[0][2], 0.0f);
+        lolunit_assert_equal(m2[1][2], 0.0f);
+        lolunit_assert_equal(m2[2][2], 1.0f);
     }
 
-    LOLUNIT_TEST(Inverse4x4)
+    lolunit_declare_test(Inverse4x4)
     {
         mat4 m0 = inv4;
         mat4 m1 = inverse(m0);
 
         mat4 m2 = m0 * m1;
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][0], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][0], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][0], 0.0f);
+        lolunit_assert_equal(m2[0][0], 1.0f);
+        lolunit_assert_equal(m2[1][0], 0.0f);
+        lolunit_assert_equal(m2[2][0], 0.0f);
+        lolunit_assert_equal(m2[3][0], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][1], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][1], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][1], 0.0f);
+        lolunit_assert_equal(m2[0][1], 0.0f);
+        lolunit_assert_equal(m2[1][1], 1.0f);
+        lolunit_assert_equal(m2[2][1], 0.0f);
+        lolunit_assert_equal(m2[3][1], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][2], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][2], 1.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][2], 0.0f);
+        lolunit_assert_equal(m2[0][2], 0.0f);
+        lolunit_assert_equal(m2[1][2], 0.0f);
+        lolunit_assert_equal(m2[2][2], 1.0f);
+        lolunit_assert_equal(m2[3][2], 0.0f);
 
-        LOLUNIT_ASSERT_EQUAL(m2[0][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[1][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[2][3], 0.0f);
-        LOLUNIT_ASSERT_EQUAL(m2[3][3], 1.0f);
+        lolunit_assert_equal(m2[0][3], 0.0f);
+        lolunit_assert_equal(m2[1][3], 0.0f);
+        lolunit_assert_equal(m2[2][3], 0.0f);
+        lolunit_assert_equal(m2[3][3], 1.0f);
     }
 
-    LOLUNIT_TEST(Kronecker)
+    lolunit_declare_test(Kronecker)
     {
         int const COLS1 = 2, ROWS1 = 3;
         int const COLS2 = 5, ROWS2 = 7;
@@ -184,7 +184,7 @@ LOLUNIT_FIXTURE(MatrixTest)
             int expected = a[i1][j1] * b[i2][j2];
             int actual = m[i1 * COLS2 + i2][j1 * ROWS2 + j2];
 
-            LOLUNIT_ASSERT_EQUAL(actual, expected);
+            lolunit_assert_equal(actual, expected);
         }
     }
 

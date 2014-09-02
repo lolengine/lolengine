@@ -20,13 +20,13 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(ArrayNDTest)
+lolunit_declare_fixture(ArrayNDTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(Array2D)
+    lolunit_declare_test(Array2D)
     {
         arraynd<2, int> a;
         a.SetSize(vec_t<int, 2>(2, 2));
@@ -36,20 +36,20 @@ LOLUNIT_FIXTURE(ArrayNDTest)
         a[0][1] = 2;
         a[1][0] = 3;
         a[1][1] = 4;
-        LOLUNIT_ASSERT_EQUAL(a[0][0], 1);
-        LOLUNIT_ASSERT_EQUAL(a[0][1], 2);
-        LOLUNIT_ASSERT_EQUAL(a[1][0], 3);
-        LOLUNIT_ASSERT_EQUAL(a[1][1], 4);
+        lolunit_assert_equal(a[0][0], 1);
+        lolunit_assert_equal(a[0][1], 2);
+        lolunit_assert_equal(a[1][0], 3);
+        lolunit_assert_equal(a[1][1], 4);
 
         /* Const accessors */
         arraynd<2, int> const &b = a;
-        LOLUNIT_ASSERT_EQUAL(b[0][0], 1);
-        LOLUNIT_ASSERT_EQUAL(b[0][1], 2);
-        LOLUNIT_ASSERT_EQUAL(b[1][0], 3);
-        LOLUNIT_ASSERT_EQUAL(b[1][1], 4);
+        lolunit_assert_equal(b[0][0], 1);
+        lolunit_assert_equal(b[0][1], 2);
+        lolunit_assert_equal(b[1][0], 3);
+        lolunit_assert_equal(b[1][1], 4);
     }
 
-    LOLUNIT_TEST(ArrayNDCreate)
+    lolunit_declare_test(ArrayNDCreate)
     {
         arraynd<10, int> a;
         arraynd<20, float> b;
@@ -58,44 +58,44 @@ LOLUNIT_FIXTURE(ArrayNDTest)
 
         arraynd<3, int> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
 
-        LOLUNIT_ASSERT_EQUAL(e.GetSize()[0], 2);
-        LOLUNIT_ASSERT_EQUAL(e.GetSize()[1], 2);
-        LOLUNIT_ASSERT_EQUAL(e.GetSize()[2], 2);
+        lolunit_assert_equal(e.GetSize()[0], 2);
+        lolunit_assert_equal(e.GetSize()[1], 2);
+        lolunit_assert_equal(e.GetSize()[2], 2);
 
-        LOLUNIT_ASSERT_EQUAL(e[0][0][0], 1);
-        LOLUNIT_ASSERT_EQUAL(e[1][0][0], 2);
-        LOLUNIT_ASSERT_EQUAL(e[0][1][0], 3);
-        LOLUNIT_ASSERT_EQUAL(e[1][1][0], 4);
-        LOLUNIT_ASSERT_EQUAL(e[0][0][1], 5);
-        LOLUNIT_ASSERT_EQUAL(e[1][0][1], 6);
-        LOLUNIT_ASSERT_EQUAL(e[0][1][1], 7);
-        LOLUNIT_ASSERT_EQUAL(e[1][1][1], 8);
+        lolunit_assert_equal(e[0][0][0], 1);
+        lolunit_assert_equal(e[1][0][0], 2);
+        lolunit_assert_equal(e[0][1][0], 3);
+        lolunit_assert_equal(e[1][1][0], 4);
+        lolunit_assert_equal(e[0][0][1], 5);
+        lolunit_assert_equal(e[1][0][1], 6);
+        lolunit_assert_equal(e[0][1][1], 7);
+        lolunit_assert_equal(e[1][1][1], 8);
 
         arraynd<3, int> f = { { {1, 2, 3, 4}, {5, 6, 7} }, { {8, 9}, {10} } };
 
-        LOLUNIT_ASSERT_EQUAL(f.GetSize()[0], 4);
-        LOLUNIT_ASSERT_EQUAL(f.GetSize()[1], 2);
-        LOLUNIT_ASSERT_EQUAL(f.GetSize()[2], 2);
+        lolunit_assert_equal(f.GetSize()[0], 4);
+        lolunit_assert_equal(f.GetSize()[1], 2);
+        lolunit_assert_equal(f.GetSize()[2], 2);
 
-        LOLUNIT_ASSERT_EQUAL(f[0][0][0], 1);
-        LOLUNIT_ASSERT_EQUAL(f[1][0][0], 2);
-        LOLUNIT_ASSERT_EQUAL(f[2][0][0], 3);
-        LOLUNIT_ASSERT_EQUAL(f[3][0][0], 4);
-        LOLUNIT_ASSERT_EQUAL(f[0][1][0], 5);
-        LOLUNIT_ASSERT_EQUAL(f[1][1][0], 6);
-        LOLUNIT_ASSERT_EQUAL(f[2][1][0], 7);
-        LOLUNIT_ASSERT_EQUAL(f[3][1][0], 0);
-        LOLUNIT_ASSERT_EQUAL(f[0][0][1], 8);
-        LOLUNIT_ASSERT_EQUAL(f[1][0][1], 9);
-        LOLUNIT_ASSERT_EQUAL(f[2][0][1], 0);
-        LOLUNIT_ASSERT_EQUAL(f[3][0][1], 0);
-        LOLUNIT_ASSERT_EQUAL(f[0][1][1], 10);
-        LOLUNIT_ASSERT_EQUAL(f[1][1][1], 0);
-        LOLUNIT_ASSERT_EQUAL(f[2][1][1], 0);
-        LOLUNIT_ASSERT_EQUAL(f[3][1][1], 0);
+        lolunit_assert_equal(f[0][0][0], 1);
+        lolunit_assert_equal(f[1][0][0], 2);
+        lolunit_assert_equal(f[2][0][0], 3);
+        lolunit_assert_equal(f[3][0][0], 4);
+        lolunit_assert_equal(f[0][1][0], 5);
+        lolunit_assert_equal(f[1][1][0], 6);
+        lolunit_assert_equal(f[2][1][0], 7);
+        lolunit_assert_equal(f[3][1][0], 0);
+        lolunit_assert_equal(f[0][0][1], 8);
+        lolunit_assert_equal(f[1][0][1], 9);
+        lolunit_assert_equal(f[2][0][1], 0);
+        lolunit_assert_equal(f[3][0][1], 0);
+        lolunit_assert_equal(f[0][1][1], 10);
+        lolunit_assert_equal(f[1][1][1], 0);
+        lolunit_assert_equal(f[2][1][1], 0);
+        lolunit_assert_equal(f[3][1][1], 0);
     }
 
-    LOLUNIT_TEST(ArrayNDInit)
+    lolunit_declare_test(ArrayNDInit)
     {
         int const NDIM = 8;
         vec_t<int, NDIM> size;
@@ -104,18 +104,18 @@ LOLUNIT_FIXTURE(ArrayNDTest)
 
         arraynd<NDIM, uint8_t> a(size);
         memset(a.Data(), 0, a.Bytes());
-        LOLUNIT_ASSERT_EQUAL(a[2][3][2][0][1][4][0][1], 0x00);
+        lolunit_assert_equal(a[2][3][2][0][1][4][0][1], 0x00);
 
         vec_t<int, NDIM> v = { 2, 3, 2, 0, 1, 4, 0, 1 };
-        LOLUNIT_ASSERT_EQUAL(a[v], 0x00);
+        lolunit_assert_equal(a[v], 0x00);
 
         a[2][3][2][0][1][4][0][1] = 0xcd;
-        LOLUNIT_ASSERT_EQUAL(a[2][3][2][0][1][4][0][1], 0xcd);
-        LOLUNIT_ASSERT_EQUAL(a[v], 0xcd);
+        lolunit_assert_equal(a[2][3][2][0][1][4][0][1], 0xcd);
+        lolunit_assert_equal(a[v], 0xcd);
 
         arraynd<NDIM, uint8_t> const &b = a;
-        LOLUNIT_ASSERT_EQUAL(b[2][3][2][0][1][4][0][1], 0xcd);
-        LOLUNIT_ASSERT_EQUAL(b[v], 0xcd);
+        lolunit_assert_equal(b[2][3][2][0][1][4][0][1], 0xcd);
+        lolunit_assert_equal(b[v], 0xcd);
     }
 };
 

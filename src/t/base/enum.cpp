@@ -18,13 +18,13 @@
 namespace lol
 {
 
-LOLUNIT_FIXTURE(EnumTest)
+lolunit_declare_fixture(EnumTest)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    LOLUNIT_TEST(EnumToString)
+    lolunit_declare_test(EnumToString)
     {
         LOL_SAFE_ENUM(MyEnum,
             First = -10,
@@ -33,18 +33,18 @@ LOLUNIT_FIXTURE(EnumTest)
         );
 
         MyEnum e = MyEnum::First;
-        LOLUNIT_ASSERT(e.ToString() == "First");
+        lolunit_assert(e.ToString() == "First");
 
         e = MyEnum::Second;
-        LOLUNIT_ASSERT(e.ToString() == "Second");
+        lolunit_assert(e.ToString() == "Second");
 
         e = MyEnum::Third;
-        LOLUNIT_ASSERT(e.ToString() == "Third");
+        lolunit_assert(e.ToString() == "Third");
 
         e = MyEnum(42);
-        LOLUNIT_ASSERT(e.ToString() != "First");
-        LOLUNIT_ASSERT(e.ToString() != "Second");
-        LOLUNIT_ASSERT(e.ToString() != "Third");
+        lolunit_assert(e.ToString() != "First");
+        lolunit_assert(e.ToString() != "Second");
+        lolunit_assert(e.ToString() != "Third");
     }
 };
 
