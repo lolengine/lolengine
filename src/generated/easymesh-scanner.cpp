@@ -658,9 +658,7 @@ static yyconst flex_int16_t yy_chk[502] =
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 using std::exit;
@@ -668,7 +666,6 @@ using std::malloc;
 using std::realloc;
 using std::free;
 
-#include <lol/main.h>
 #include "easymesh/easymesh-compiler.h"
 
 typedef lol::EasyMeshParser::token token;

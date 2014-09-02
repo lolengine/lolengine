@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstring>
 
@@ -18,7 +16,6 @@
 #   include <pipi.h>
 #endif
 
-#include <lol/main.h>
 #include "loldebug.h"
 
 namespace lol

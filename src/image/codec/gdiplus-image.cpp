@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined USE_GDIPLUS
 
@@ -21,7 +19,6 @@ using std::max;
 #include <windows.h>
 #include <gdiplus.h>
 
-#include <lol/main.h>
 #include "../../image/image-private.h"
 
 namespace lol

@@ -8,16 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined _XBOX
 #   include <xtl.h>
 #   include <xbdm.h>
 #endif
 
-#include <lol/main.h>
 #include "xboxinput.h"
 
 namespace lol

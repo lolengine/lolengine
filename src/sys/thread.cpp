@@ -9,11 +9,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
-
-#include <lol/main.h>
+#include <lol/engine-internal.h>
 
 namespace lol
 {

@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if USE_SDL
 #   if HAVE_SDL_SDL_H
@@ -20,7 +18,6 @@
 #   endif
 #endif
 
-#include <lol/main.h>
 #include "sdlinput.h"
 
 #include "input/input_internal.h"

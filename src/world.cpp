@@ -8,15 +8,11 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstring>
 #include <cstdlib>
 #include <ctype.h>
-
-#include <lol/main.h>
 
 #include "lua/lua.hpp"
 

@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 #include <stdint.h>
@@ -36,8 +34,6 @@
 #else
 #   include <SDL.h>
 #endif
-
-#include <lol/main.h>
 
 namespace lol
 {

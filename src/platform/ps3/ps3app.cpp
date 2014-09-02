@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined __CELLOS_LV2__
 #   include <sys/ppu_thread.h> /* sys_ppu_thread_get_stack_information */
@@ -26,7 +24,6 @@
 #   include <cell/spurs/event_flag.h>
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 #include "ps3app.h"
 #include "ps3input.h"

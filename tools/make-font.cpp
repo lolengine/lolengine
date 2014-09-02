@@ -3,7 +3,7 @@
 // Copyright (c) 2010 Sam Hocevar <sam@hocevar.net>
 //
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 

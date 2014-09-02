@@ -8,17 +8,21 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+//
+// The main header
+// ---------------
+//
 
-#include <cstdio>
-#include <cstdlib>
+#if !defined __LOL_ENGINE_H__
+#define __LOL_ENGINE_H__
 
-#include <lolunit.h>
+#include <lol/base/all.h>
+#include <lol/math/all.h>
+#include <lol/algorithm/all.h>
+#include <lol/sys/all.h>
+#include <lol/image/all.h>
+#include <lol/gpu/all.h>
+#include <lol/debug/all.h>
 
-int main(int argc, char **argv)
-{
-    UNUSED(argc, argv);
-
-    return EXIT_SUCCESS;
-}
+#endif // __LOL_ENGINE_H__
 

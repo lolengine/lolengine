@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <ppapi/cpp/instance.h>
 #include <ppapi/cpp/module.h>
 #include <ppapi/gles2/gl2ext_ppapi.h>
 
-#include <lol/main.h>
 #include "lolgl.h" /* needed for GL_TRUE */
 
 #include "platform/nacl/nacl-instance.h"

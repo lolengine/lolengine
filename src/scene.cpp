@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 
@@ -19,7 +17,6 @@
 #   include <windows.h>
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 
 LOLFX_RESOURCE_DECLARE(tile);

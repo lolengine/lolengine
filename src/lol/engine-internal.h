@@ -16,6 +16,11 @@
 #if !defined __LOL_MAIN_H__
 #define __LOL_MAIN_H__
 
+/* Include this as early as possible */
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 /* If using NaCl or Android, override main() with our version */
 #if defined __native_client__
 #   define main lol_nacl_main
@@ -28,7 +33,7 @@
 #   include <SDL_main.h>
 #endif
 
-#include <lol/engine.h>
+#include <lol/public.h>
 #include <lol/extras.h>
 
 #endif // __LOL_MAIN_H__

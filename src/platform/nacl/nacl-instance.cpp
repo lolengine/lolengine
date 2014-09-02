@@ -2,9 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -16,8 +14,6 @@
 #include <ppapi/cpp/var.h>
 #include <ppapi/cpp/module.h>
 #include <ppapi/cpp/completion_callback.h>
-
-#include <lol/main.h>
 
 #include "platform/nacl/nacl-instance.h"
 #include "platform/nacl/opengl_context.h"

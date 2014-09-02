@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined USE_SDL
 #   if defined HAVE_SDL_SDL_H
@@ -24,7 +22,6 @@
 #   endif
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"

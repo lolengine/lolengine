@@ -13,11 +13,8 @@
 // ---------------
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
-#include <lol/main.h>
 #include "gpu/lolfx-compiler.h"
 
 namespace lol

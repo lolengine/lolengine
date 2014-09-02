@@ -8,9 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if defined HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #if defined _XBOX
 #   include <xtl.h>
@@ -26,7 +24,6 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
-#include <lol/main.h>
 #include "lolgl.h"
 
 namespace lol
