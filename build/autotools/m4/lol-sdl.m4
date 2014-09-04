@@ -20,26 +20,28 @@ dnl    SDL_CFLAGS      -- flags for SDL compilation
 dnl    SDL_LIBS        -- flags for SDL linking
 
 ac_cv_my_have_sdl="no"
+ac_cv_my_have_sdl2="no"
 ac_cv_my_have_sdl_image="no"
 ac_cv_my_have_sdl_mixer="no"
 
 dnl  First, try the proper pkg-config check for SDL2
-dnl if test "x${ac_cv_my_have_sdl}" = xno; then
-dnl   PKG_CHECK_MODULES(SDL2, sdl2,
-dnl    [ac_cv_my_have_sdl="yes"
-dnl     PKG_CHECK_MODULES(SDL2MIXER, SDL2_mixer,
-dnl      [ac_cv_my_have_sdl_mixer="yes"
-dnl       AC_DEFINE(HAVE_SDL_MIXER_H, 1, Define to 1 to use SDL_mixer.h)],
-dnl      [:])
-dnl     PKG_CHECK_MODULES(SDL2IMAGE, SDL2_image,
-dnl      [ac_cv_my_have_sdl_image="yes"
-dnl       AC_DEFINE(HAVE_SDL_IMAGE_H, 1, Define to 1 to use SDL_image.h)],
-dnl      [:])
-dnl     SDL_CFLAGS="${SDL2_CFLAGS} ${SDL2MIXER_CFLAGS} ${SDL2IMAGE_CFLAGS}"
-dnl     SDL_LIBS="${SDL2_LIBS} ${SDL2MIXER_LIBS} ${SDL2IMAGE_LIBS}"
-dnl     AC_DEFINE(HAVE_SDL_H, 1, Define to 1 to use SDL.h)],
-dnl    [:])
-dnl fi
+if test "x${ac_cv_my_have_sdl}" = xno; then
+  PKG_CHECK_MODULES(SDL2, sdl2,
+   [ac_cv_my_have_sdl="yes"
+    ac_cv_my_have_sdl2="yes"
+    PKG_CHECK_MODULES(SDL2MIXER, SDL2_mixer,
+     [ac_cv_my_have_sdl_mixer="yes"
+      AC_DEFINE(HAVE_SDL_MIXER_H, 1, Define to 1 to use SDL_mixer.h)],
+     [:])
+    PKG_CHECK_MODULES(SDL2IMAGE, SDL2_image,
+     [ac_cv_my_have_sdl_image="yes"
+      AC_DEFINE(HAVE_SDL_IMAGE_H, 1, Define to 1 to use SDL_image.h)],
+     [:])
+    SDL_CFLAGS="${SDL2_CFLAGS} ${SDL2MIXER_CFLAGS} ${SDL2IMAGE_CFLAGS}"
+    SDL_LIBS="${SDL2_LIBS} ${SDL2MIXER_LIBS} ${SDL2IMAGE_LIBS}"
+    AC_DEFINE(HAVE_SDL_H, 1, Define to 1 to use SDL.h)],
+   [:])
+fi
 
 dnl  Then, try the proper pkg-config check for SDL 1.x
 if test "x${ac_cv_my_have_sdl}" = xno; then
@@ -104,6 +106,11 @@ else
   AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
 fi
 AM_CONDITIONAL(USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
+
+if test "x${ac_cv_my_have_sdl2}" != xno; then
+  AC_DEFINE(USE_SDL2, 1, Define to 1 to use SDL)
+fi
+AM_CONDITIONAL(USE_SDL2, test "x${ac_cv_my_have_sdl2}" = xyes)
 
 if test "x${ac_cv_my_have_sdl_mixer}" = xno; then
   AC_MSG_WARN([SDL_mixer not found])

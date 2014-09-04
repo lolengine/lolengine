@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -76,10 +76,12 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
   : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
 #endif //USE_SDL
 {
-#if USE_SDL
+#if USE_SDL && !USE_SDL2
     /* Enable Unicode translation of keyboard events */
     SDL_EnableUNICODE(1);
+#endif
 
+#if USE_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
@@ -102,7 +104,11 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
          *  - HDAPS, it's not a real joystick.
          *  - X360 controllers, Xinput handles them better since
          *    it won't think there is only one trigger axis. */
+#       if USE_SDL2
+        char const *name = SDL_JoystickName(sdlstick);
+#       else
         char const *name = SDL_JoystickName(i);
+#       endif
         if (strstr(name, "HDAPS")
 #       if USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
@@ -196,10 +202,12 @@ void SdlInputData::Tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
+#   if !USE_SDL2
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                 m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             else
                 m_mouse->SetAxis(4, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
+#   endif
             // TODO: mouse wheel as axis
             break;
         }
@@ -222,7 +230,11 @@ void SdlInputData::Tick(float seconds)
     if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
     {
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
+#   if USE_SDL2
+        SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
+#   else
         SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
+#   endif
         mouse = (ivec2)m_app / 2;
         SdlInputData::SetMousePos(mouse);
         //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
@@ -246,9 +258,11 @@ void SdlInputData::Tick(float seconds)
 
     //Mouse is focused, Validate the InScreen Key
     //Hardcoded 3, not very nice.
-#   if !EMSCRIPTEN
+#   if !EMSCRIPTEN && !USE_SDL2
     m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
-#else //Emscripten doesn't seem to handle SDL_APPMOUSEFOCUS
+#else
+    // Emscripten doesn't seem to handle SDL_APPMOUSEFOCUS
+    // SDL2 doesn't have SDL_APPMOUSEFOCUS either
     m_mouse->SetKey(3, true);
 #endif
 
@@ -260,8 +274,8 @@ void SdlInputData::Tick(float seconds)
 
     m_prevmouse = mouse;
 
-#   if SDL_VERSION_ATLEAST(1,3,0)
-    Uint8 *sdlstate = SDL_GetKeyboardState(nullptr);
+#   if USE_SDL2
+    Uint8 const *sdlstate = SDL_GetKeyboardState(nullptr);
 #   else
     Uint8 *sdlstate = SDL_GetKeyState(nullptr);
 #   endif
@@ -285,7 +299,7 @@ ivec2 SdlInputData::GetMousePos()
     ivec2 ret(-1, -1);
 
 #if USE_SDL
-#   if !EMSCRIPTEN
+#   if !EMSCRIPTEN && !USE_SDL2
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
 #   endif
     {
@@ -298,7 +312,9 @@ ivec2 SdlInputData::GetMousePos()
 
 void SdlInputData::SetMousePos(ivec2 position)
 {
-#if USE_SDL
+#if USE_SDL2
+    // FIXME: how do I warped mouse?
+#elif USE_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 #else
     UNUSED(position);
