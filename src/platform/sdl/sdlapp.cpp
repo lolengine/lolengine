@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -10,13 +10,13 @@
 
 #include <lol/engine-internal.h>
 
-#if defined USE_SDL
-#   if defined HAVE_SDL_SDL_H
+#if USE_SDL
+#   if HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
 #   endif
-#   if defined USE_D3D9
+#   if USE_D3D9
 #       include <d3d9.h>
 #       include <SDL_syswm.h>
 #   endif
@@ -25,11 +25,11 @@
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"
-#if defined USE_XINPUT
+#if USE_XINPUT
 #   include "platform/d3d9/d3d9input.h"
 #endif
 
-#if defined USE_SDL && defined USE_D3D9
+#if USE_SDL && USE_D3D9
 HWND g_hwnd = nullptr;
 #endif
 
@@ -45,7 +45,12 @@ class SdlAppData
     friend class SdlApp;
 
 private:
-    int unused;
+#if USE_SDL2
+    SDL_Window *m_window;
+    SDL_GLContext m_glcontext;
+#else
+    SDL_Surface *m_window;
+#endif
 };
 
 /*
@@ -55,55 +60,77 @@ private:
 SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
-#if defined USE_SDL
+#if USE_SDL
+    ivec2 window_size = res;
+    ivec2 screen_size = res;
+
     /* Initialise SDL */
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0)
     {
         Log::Error("cannot initialise SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
-    int screen_w = vidinfo->current_w;
-    int screen_h = vidinfo->current_h;
+#if USE_SDL2
+    data->m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      window_size.x, window_size.y,
+                                      SDL_WINDOW_OPENGL);
+    if (!data->m_window)
+    {
+        Log::Error("cannot create rendering window: %s\n", SDL_GetError());
+        SDL_Quit();
+        exit(EXIT_FAILURE);
+    }
+    SDL_GetWindowSize(data->m_window, &res.x, &res.y);
 
-#   if defined USE_D3D9
+    data->m_glcontext = SDL_GL_CreateContext(data->m_window);
+
+#else
+    const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
+    screen_size = ivec2(vidinfo->current_w, vidinfo->current_h);
+
+    SDL_WM_SetCaption(title, nullptr);
+
+#   if USE_D3D9
     SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 16, 0);
     SDL_SysWMinfo wminfo;
     SDL_VERSION(&wminfo.version);
     SDL_GetWMInfo(&wminfo);
     g_hwnd = wminfo.window;
-#   elif SDL_VERSION_ATLEAST(2,0,0)
-    TODO
 #   else
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
-    // TODO: when implementing fullscreen, be sure to overwrite screen_w and screen_h with the value of vidinfo after the call to SDL_SetVideoMode
-    SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
+    // TODO: when implementing fullscreen, be sure to overwrite screen_w
+    // and screen_h with the value of vidinfo after the call to
+    // SDL_SetVideoMode.
+    data->m_window = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
 #   endif
-    if (!video)
+
+    if (!data->m_window)
     {
         Log::Error("cannot create rendering window: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
 
-    SDL_WM_SetCaption(title, nullptr);
+    res = ivec2(data->m_window->w, data->m_window->h);
+#endif
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Video::Setup(ivec2(video->w, video->h));
+    Video::Setup(res);
     Audio::Setup(2);
 
     /* Autoreleased objects */
-#   if defined USE_XINPUT
+#if defined USE_XINPUT
     /* Prefer D3d9 for joysticks on Windows, because the X360 pads are not
      * advertised with the proper number of axes. */
     new D3d9Input();
-#   endif
+#endif
 
-    new SdlInput(video->w, video->h, screen_w, screen_h);
+    new SdlInput(res.x, res.y, screen_size.x, screen_size.y);
 #endif
 }
 
@@ -127,23 +154,36 @@ void SdlApp::Tick()
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     Ticker::TickDraw();
 
-#if defined USE_SDL && defined USE_D3D9
+#if USE_SDL2
+    SDL_GL_SwapWindow(data->m_window);
+#elif USE_SDL && USE_D3D9
     hr = d3d_dev->EndScene();
     if (FAILED(hr))
         Abort();
     hr = d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
     if (FAILED(hr))
         Abort();
-#elif defined USE_SDL
+#elif USE_SDL
     SDL_GL_SwapBuffers();
 #endif
 }
 
 SdlApp::~SdlApp()
 {
-#if defined USE_SDL
+#if USE_SDL
+    if (data->m_window)
+    {
+#   if USE_SDL2
+        SDL_GL_DeleteContext(data->m_glcontext);
+        SDL_DestroyWindow(data->m_window);
+#   else
+        SDL_DestroySurface(data->m_window);
+#   endif
+    }
+
     SDL_Quit();
 #endif
+
     delete data;
 }
 
