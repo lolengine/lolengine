@@ -8,16 +8,21 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-
-#if defined USE_GDIPLUS
-
-#include <algorithm>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+#if USE_GDIPLUS
+#   include <algorithm>
 using std::min;
 using std::max;
+#   include <windows.h>
+#   include <objidl.h> // for DEFINE_GUID
+#   include <gdiplus.h>
+#endif
 
-#include <windows.h>
-#include <gdiplus.h>
+#include <lol/engine-internal.h>
+
+#if USE_GDIPLUS
 
 #include "../../image/image-private.h"
 

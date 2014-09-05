@@ -13,23 +13,23 @@
 // ---------------
 //
 
-#if !defined __LOL_MAIN_H__
-#define __LOL_MAIN_H__
+#if !defined __LOL_ENGINE_H__
+#define __LOL_ENGINE_H__
 
 /* If using NaCl or Android, override main() with our version */
-#if defined __native_client__
+#if __native_client__
 #   define main lol_nacl_main
-#elif defined __ANDROID__
+#elif __ANDROID__
 #   define main lol_android_main
 #endif
 
 /* If using SDL on Windows or OS X, let it override main() */
-#if defined USE_SDL && (defined _WIN32 || defined __APPLE__)
+#if USE_SDL && (_WIN32 || __APPLE__)
 #   include <SDL_main.h>
 #endif
 
 #include <lol/public.h>
 #include <lol/extras.h>
 
-#endif // __LOL_MAIN_H__
+#endif // __LOL_ENGINE_H__
 

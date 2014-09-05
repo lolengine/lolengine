@@ -8,12 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
 #if defined USE_XINPUT
 #   include <d3d9.h>
 #   include <xinput.h>
 #endif
+
+#include <lol/engine-internal.h>
 
 #include "d3d9input.h"
 
