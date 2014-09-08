@@ -82,22 +82,30 @@ if test "x${ac_cv_my_have_sdl}" = xno; then
   if test "x${ac_cv_my_have_sdl}" != xno; then
     AC_CHECK_HEADERS(SDL_mixer.h SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
     AC_CHECK_HEADERS(SDL_image.h SDL/SDL_image.h, [ac_cv_my_have_sdl_image="yes"])
+
     AC_CHECK_LIB(SDL, main,
      [SDL_LIBS="${SDL_LIBS} -lSDL"],
      [AC_CHECK_LIB(SDL2, main,
        [SDL_LIBS="${SDL_LIBS} -lSDL2"
         ac_cv_my_have_sdl2="yes"],
        [ac_cv_my_have_sdl="no"])])
+
     AC_CHECK_LIB(SDLmain, main,
      [SDL_LIBS="${SDL_LIBS} -lSDLmain -lSDL"])
     AC_CHECK_LIB(SDL2main, main,
      [SDL_LIBS="${SDL_LIBS} -lSDL2main -lSDL2"])
+
     AC_CHECK_LIB(SDL_mixer, main,
      [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL_mixer"],
-     [ac_cv_my_have_sdl_mixer="no"])
+     [AC_CHECK_LIB(SDL2_mixer, main,
+       [SDLMIXER_LIBS="${SDLMIXER_LIBS} -lSDL2_mixer"],
+       [ac_cv_my_have_sdl_mixer="no"])])
+
     AC_CHECK_LIB(SDL_image, main,
      [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL_image"],
-     [ac_cv_my_have_sdl_image="no"])
+     [AC_CHECK_LIB(SDL2_image, main,
+       [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL2_image"],
+       [ac_cv_my_have_sdl_image="no"])])
   fi
   SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
   SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
