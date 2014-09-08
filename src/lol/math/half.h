@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Half class
 // --------------
 //
-
-#if !defined __LOL_MATH_HALF_H__
-#define __LOL_MATH_HALF_H__
 
 #include <cstdio>
 #include <stdint.h>
@@ -226,6 +225,4 @@ DECLARE_HALF_BOOL_OPS(<=)
 } /* namespace half_ops */
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_HALF_H__
 

@@ -8,6 +8,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The TileSet class
 // -----------------
@@ -16,8 +18,8 @@
 // zero, the texture is freed.
 //
 
-#if !defined __LOL_TILESET_H__
-#define __LOL_TILESET_H__
+#include <lol/image/image.h>
+#include <lol/gpu/texture.h>
 
 #include <stdint.h>
 
@@ -73,6 +75,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_TILESET_H__
 

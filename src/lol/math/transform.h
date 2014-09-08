@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The complex, quaternion and dual quaternion classes
 // ---------------------------------------------------
 //
-
-#if !defined __LOL_MATH_TRANSFORM_H__
-#define __LOL_MATH_TRANSFORM_H__
 
 #include <ostream>
 
@@ -366,6 +365,4 @@ extern quat_t<T> slerp(quat_t<T> const &qa, quat_t<T> const &qb, T f);
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_TRANSFORM_H__
 

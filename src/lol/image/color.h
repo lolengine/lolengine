@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Color class
 // ---------------
 // Provides various color conversion routines.
 //
-
-#if !defined __LOL_IMAGE_COLOR_H__
-#define __LOL_IMAGE_COLOR_H__
 
 #include <lol/math/vector.h>
 
@@ -332,6 +331,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_IMAGE_COLOR_H__
 

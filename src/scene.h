@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Scene class
 // ---------------
 //
-
-#if !defined __LOL_SCENE_H__
-#define __LOL_SCENE_H__
 
 #include <stdint.h>
 
@@ -76,6 +75,4 @@ private:
 extern Scene *g_scene;
 
 } /* namespace lol */
-
-#endif // __LOL_SCENE_H__
 

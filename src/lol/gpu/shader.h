@@ -8,15 +8,16 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Shader class
 // ----------------
 //
 
-#if !defined __LOL_GPU_SHADER_H__
-#define __LOL_GPU_SHADER_H__
-
 #include <stdint.h>
+
+#include "entity.h"
 
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \
@@ -137,6 +138,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GPU_SHADER_H__
 

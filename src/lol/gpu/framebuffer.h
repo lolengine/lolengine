@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Framebuffer class
 // ---------------------
 //
-
-#if !defined __LOL_GPU_FRAMEBUFFER_H__
-#define __LOL_GPU_FRAMEBUFFER_H__
 
 #include <cstring>
 
@@ -114,6 +113,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GPU_FRAMEBUFFER_H__
 

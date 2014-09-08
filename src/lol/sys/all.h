@@ -8,13 +8,10 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_SYS_ALL_H__
-#define __LOL_SYS_ALL_H__
+#pragma once
 
 #include <lol/sys/thread.h>
 #include <lol/sys/init.h>
 #include <lol/sys/file.h>
 #include <lol/sys/timer.h>
-
-#endif // __LOL_SYS_ALL_H__
 

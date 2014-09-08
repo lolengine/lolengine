@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Threading classes
 // ---------------------
 //
-
-#if !defined __LOL_SYS_THREAD_H__
-#define __LOL_SYS_THREAD_H__
 
 #if defined __CELLOS_LV2__
 #   include "platform/ps3/threadbase.h"
@@ -145,6 +144,4 @@ protected:
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_SYS_THREAD_H__
 

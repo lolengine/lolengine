@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The CommandStack struct
 // ------------------
 //
-
-#if !defined __COMMANDSTACK_COMMANDSTACK_H__
-#define __COMMANDSTACK_COMMANDSTACK_H__
 
 namespace lol
 {
@@ -87,4 +86,3 @@ public:
 
 } /* namespace lol */
 
-#endif /* __COMMANDSTACK_COMMANDSTACK_H__ */

@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Forge class
 // ---------------
 // The Forge is a static class that manages fonts.
 //
-
-#if !defined __LOL_FORGE_H__
-#define __LOL_FORGE_H__
 
 #include "font.h"
 
@@ -34,6 +33,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_FORGE_H__
 

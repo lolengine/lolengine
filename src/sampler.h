@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Sampler class
 // -----------------
 // The Sampler is a static class that manages samples.
 //
-
-#if !defined __LOL_SAMPLER_H__
-#define __LOL_SAMPLER_H__
 
 #include <stdint.h>
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SAMPLER_H__
 

@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Unit test framework
 // -----------------------
 //
-
-#if !defined __LOL_UNIT_H__
-#define __LOL_UNIT_H__
 
 #include <iostream>
 #include <iomanip>
@@ -427,6 +426,4 @@ public:
     lolunit_assert_doubles_equal_generic(make_msg(msg), a, b, t)
 
 } /* namespace lol */
-
-#endif // __LOL_UNIT_H__
 

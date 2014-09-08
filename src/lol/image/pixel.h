@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Pixel-related classes
 // -------------------------
 //
-
-#if !defined __LOL_IMAGE_PIXEL_H__
-#define __LOL_IMAGE_PIXEL_H__
 
 namespace lol
 {
@@ -72,6 +71,4 @@ static inline uint8_t BytesPerPixel(PixelFormat format)
 };
 
 } /* namespace lol */
-
-#endif // __LOL_IMAGE_PIXEL_H__
 

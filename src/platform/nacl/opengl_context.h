@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef EXAMPLES_TUMBLER_OPENGL_CONTEXT_H_
-#define EXAMPLES_TUMBLER_OPENGL_CONTEXT_H_
+#pragma once
 
 ///
 /// @file
@@ -91,6 +90,4 @@ class OpenGLContext : public pp::Graphics3DClient {
 };
 
 }  // namespace lol
-
-#endif  // EXAMPLES_TUMBLER_OPENGL_CONTEXT_H_
 

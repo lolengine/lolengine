@@ -8,15 +8,17 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Image class
 // ---------------
 //
 
-#if !defined __LOL_IMAGE_IMAGE_H__
-#define __LOL_IMAGE_IMAGE_H__
-
+#include <lol/math/arraynd.h>
 #include <lol/math/vector.h>
+#include <lol/math/geometry.h>
+#include <lol/image/pixel.h>
 
 namespace lol
 {
@@ -161,6 +163,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_IMAGE_IMAGE_H__
 

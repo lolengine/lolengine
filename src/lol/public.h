@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The main header
 // ---------------
 //
-
-#if !defined __LOL_ENGINE_H__
-#define __LOL_ENGINE_H__
 
 #include <lol/base/all.h>
 #include <lol/math/all.h>
@@ -23,6 +22,4 @@
 #include <lol/image/all.h>
 #include <lol/gpu/all.h>
 #include <lol/debug/all.h>
-
-#endif // __LOL_ENGINE_H__
 

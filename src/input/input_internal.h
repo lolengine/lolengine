@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_INPUT_DEVICE_INTERNAL_H__
-#define __LOL_INPUT_DEVICE_H__
+#pragma once
 
 namespace lol
 {
@@ -36,6 +35,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_INPUT_DEVICE_INTERNAL_H__
 

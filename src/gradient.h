@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Gradient class
 // ------------------
 //
-
-#if !defined __LOL_GRADIENT_H__
-#define __LOL_GRADIENT_H__
 
 #include "worldentity.h"
 
@@ -40,6 +39,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GRADIENT_H__
 

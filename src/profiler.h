@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Profiler class
 // -------------------
 // The Profiler is a static class that collects statistic counters.
 //
-
-#if !defined __LOL_PROFILER_H__
-#define __LOL_PROFILER_H__
 
 #include <stdint.h>
 
@@ -54,6 +53,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_PROFILER_H__
 

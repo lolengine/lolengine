@@ -10,8 +10,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#ifndef __EASYMESH_COMPILER_H__
-#define __EASYMESH_COMPILER_H__
+#pragma once
 
 #include <string>
 
@@ -56,6 +55,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif /* __EASYMESH_COMPILER_H__ */
 

@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef EXAMPLES_TUMBLER_OPENGL_CONTEXT_PTRS_H_
-#define EXAMPLES_TUMBLER_OPENGL_CONTEXT_PTRS_H_
+#pragma once
 
 // A convenience wrapper for a shared OpenGLContext pointer type.  As other
 // smart pointer types are needed, add them here.
@@ -17,6 +16,4 @@ class OpenGLContext;
 typedef std::tr1::shared_ptr<OpenGLContext> SharedOpenGLContext;
 
 }  // namespace lol
-
-#endif  // EXAMPLES_TUMBLER_OPENGL_CONTEXT_PTRS_H_
 

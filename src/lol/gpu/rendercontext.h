@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The RenderContext class
 // -----------------------
 //
-
-#if !defined __LOL_RENDERCONTEXT_H__
-#define __LOL_RENDERCONTEXT_H__
 
 namespace lol
 {
@@ -57,6 +56,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_RENDERCONTEXT_H__
 

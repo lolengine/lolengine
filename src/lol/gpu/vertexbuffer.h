@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The VertexBuffer and VertexDeclaration classes
 // ----------------------------------------------
 //
-
-#if !defined __LOL_GPU_VERTEXBUFFER_H__
-#define __LOL_GPU_VERTEXBUFFER_H__
 
 #include <cstring>
 
@@ -238,6 +237,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GPU_VERTEXBUFFER_H__
 

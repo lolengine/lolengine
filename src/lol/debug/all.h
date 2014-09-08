@@ -8,10 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_DEBUG_ALL_H__
-#define __LOL_DEBUG_ALL_H__
+#pragma once
 
 #include <lol/debug/lines.h>
-
-#endif // __LOL_DEBUG_ALL_H__
 

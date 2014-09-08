@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_BASE_ALL_H__
-#define __LOL_BASE_ALL_H__
+#pragma once
 
 #include <lol/base/features.h>
 #include <lol/base/types.h>
@@ -21,6 +20,4 @@
 #include <lol/base/hash.h>
 #include <lol/base/map.h>
 #include <lol/base/enum.h>
-
-#endif // __LOL_BASE_ALL_H__
 

@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Ticker class
 // ----------------
 // The Ticker is a static class that registers entities and ticks them.
 //
-
-#if !defined __LOL_TICKER_H__
-#define __LOL_TICKER_H__
 
 #include <stdint.h>
 
@@ -51,6 +50,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_TICKER_H__
 

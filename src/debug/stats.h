@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The DebugStats class
 // --------------------
 //
-
-#if !defined __LOL_DEBUGSTATS_H__
-#define __LOL_DEBUGSTATS_H__
 
 #include "entity.h"
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_DEBUGSTATS_H__
 

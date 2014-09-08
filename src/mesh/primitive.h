@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Primitive class
 // -------------------
 //
-
-#if !defined __MESH_PRIMITIVE_H__
-#define __MESH_PRIMITIVE_H__
 
 #include "mesh/mesh.h"
 
@@ -35,6 +34,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __MESH_PRIMITIVE_H__ */
 

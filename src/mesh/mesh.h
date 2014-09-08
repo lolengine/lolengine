@@ -8,13 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Mesh class
 // --------------
 //
 
-#if !defined __MESH_MESH_H__
-#define __MESH_MESH_H__
+#include <lol/gpu/vertexbuffer.h>
+#include <lol/gpu/indexbuffer.h>
 
 namespace lol
 {
@@ -75,6 +77,4 @@ protected:
 };
 
 } /* namespace lol */
-
-#endif /* __MESH_MESH_H__ */
 

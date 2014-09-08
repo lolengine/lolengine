@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Interpolator classes
 // --------------------
 //
-
-#if !defined __LOL_MATH_INTERP_H__
-#define __LOL_MATH_INTERP_H__
 
 namespace lol
 {
@@ -116,6 +115,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_INTERP_H__
 

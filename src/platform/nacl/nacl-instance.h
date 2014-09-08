@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef EXAMPLES_TUMBLER_TUMBLER_H_
-#define EXAMPLES_TUMBLER_TUMBLER_H_
+#pragma once
 
 #include <ppapi/cpp/instance.h>
 #include <ppapi/c/ppb_gamepad.h>
@@ -105,4 +104,3 @@ private:
 
 }  // namespace lol
 
-#endif  // EXAMPLES_TUMBLER_TUMBLER_H_

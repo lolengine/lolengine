@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Ps3Input class
 // ------------------
 //
-
-#if !defined __LOL_PS3INPUT_H__
-#define __LOL_PS3INPUT_H__
 
 #include "entity.h"
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_PS3INPUT_H__
 

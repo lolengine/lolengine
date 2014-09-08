@@ -8,12 +8,9 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_IMAGE_ALL_H__
-#define __LOL_IMAGE_ALL_H__
+#pragma once
 
 #include <lol/image/pixel.h>
 #include <lol/image/color.h>
 #include <lol/image/image.h>
-
-#endif // __LOL_IMAGE_ALL_H__
 

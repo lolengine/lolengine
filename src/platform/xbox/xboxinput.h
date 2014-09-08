@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The XboxInput class
 // -------------------
 //
-
-#if !defined __LOL_XBOXINPUT_H__
-#define __LOL_XBOXINPUT_H__
 
 #include "entity.h"
 
@@ -38,6 +37,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_XBOXINPUT_H__
 

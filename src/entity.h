@@ -8,6 +8,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Entity class
 // ---------------
@@ -15,9 +17,6 @@
 // loop. Entities are implemented as one or several linked lists. See the
 // Ticker class for the ticking logic and the linked list implementation.
 //
-
-#if !defined __LOL_ENTITY_H__
-#define __LOL_ENTITY_H__
 
 #include <stdint.h>
 
@@ -129,6 +128,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_ENTITY_H__
 

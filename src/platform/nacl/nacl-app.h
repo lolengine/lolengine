@@ -8,15 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The NaClApp class
 // -----------------
 //
 
-#if !defined __LOL_NACLAPP_H__
-#define __LOL_NACLAPP_H__
-
-#include "lol/math/vector.h"
+#include <lol/math/vector.h>
 
 namespace lol
 {
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_NACLAPP_H__
 

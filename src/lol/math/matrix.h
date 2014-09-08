@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The matrix classes
 // ------------------
 //
-
-#if !defined __LOL_MATH_MATRIX_H__
-#define __LOL_MATH_MATRIX_H__
 
 #include <ostream>
 
@@ -585,6 +584,4 @@ outer(mat_t<T, COLS1, ROWS1> const &a, mat_t<T, COLS2, ROWS2> const &b)
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_MATRIX_H__
 

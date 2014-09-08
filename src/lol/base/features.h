@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The build-time features
 // -----------------------
 //
-
-#if !defined __LOL_BASE_FEATURES_H__
-#define __LOL_BASE_FEATURES_H__
 
 /*
  * System, CPU and compiler features.
@@ -145,7 +144,4 @@ static inline int isnan(float f)
 #define Always Always
 #undef None
 #define None None
-
-
-#endif // __LOL_BASE_FEATURES_H__
 

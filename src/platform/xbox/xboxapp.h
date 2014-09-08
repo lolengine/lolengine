@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The XboxApp class
 // ----------------
 //
-
-#if !defined __LOL_XBOXAPP_H__
-#define __LOL_XBOXAPP_H__
 
 #include "lol/math/vector.h"
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_XBOXAPP_H__
 

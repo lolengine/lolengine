@@ -8,13 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The GraphicEntity class
 // -----------------------
 //
 
-#if !defined __LOL_WORLDENTITY_H__
-#define __LOL_WORLDENTITY_H__
+#include <lol/math/transform.h>
 
 #include "entity.h"
 
@@ -42,6 +43,4 @@ protected:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_WORLDENTITY_H__
 

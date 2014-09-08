@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Message Service class
 // ----------------
 //
-
-#if !defined __MESSAGESERVICE_H__
-#define __MESSAGESERVICE_H__
 
 namespace lol
 {
@@ -87,4 +86,3 @@ extern MessageService *g_messageservice;
 
 } /* namespace lol */
 
-#endif /* __MESSAGESERVICE_H__ */

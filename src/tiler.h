@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Tiler class
 // ---------------
 // The Tiler is a static class that manages tilesets.
 //
-
-#if !defined __LOL_TILER_H__
-#define __LOL_TILER_H__
 
 #include <stdint.h>
 
@@ -42,6 +41,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_TILER_H__
 

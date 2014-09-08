@@ -8,17 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Debug entity classes
 // --------------------
 //
 
-#if !defined __LOL_LOLDEBUG_H__
-#define __LOL_LOLDEBUG_H__
-
 #include "debug/fps.h"
 #include "debug/record.h"
 #include "debug/stats.h"
-
-#endif // __LOL_LOLDEBUG_H__
 

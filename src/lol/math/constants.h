@@ -8,13 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Various maths constants
 // -----------------------
 //
 
-#if !defined __LOL_MATH_CONSTANTS_H__
-#define __LOL_MATH_CONSTANTS_H__
+#include <lol/base/types.h>
 
 namespace lol
 {
@@ -41,6 +42,4 @@ LOL_MATH_CONSTANT(SQRT_1_2, 0.70710678118654752440084436210484903928483593768L)
 #undef LOL_MATH_CONSTANT
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_CONSTANTS_H__
 

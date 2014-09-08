@@ -10,6 +10,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyMesh class
 // ------------------
@@ -18,9 +20,6 @@
 #include "commandstack.h"
 #include "easymeshrender.h"
 #include "easymeshbuild.h"
-
-#if !defined __EASYMESH_EASYMESH_H__
-#define __EASYMESH_EASYMESH_H__
 
 namespace lol
 {
@@ -398,6 +397,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __EASYMESH_EASYMESH_H__ */
 

@@ -8,18 +8,17 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Sample class
 // ----------------
 // A Sample is a unique sound sample.
 //
 
-#if !defined __LOL_SAMPLE_H__
-#define __LOL_SAMPLE_H__
+#include "entity.h"
 
 #include <stdint.h>
-
-#include "entity.h"
 
 namespace lol
 {
@@ -48,6 +47,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SAMPLE_H__
 
