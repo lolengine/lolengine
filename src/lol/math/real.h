@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Real class
 // --------------
 //
-
-#if !defined __LOL_MATH_REAL_H__
-#define __LOL_MATH_REAL_H__
 
 #include <stdint.h>
 
@@ -326,6 +325,4 @@ template<> void real::print(int ndigits) const;
 template<> void real::sprintf(char *str, int ndigits) const;
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_REAL_H__
 

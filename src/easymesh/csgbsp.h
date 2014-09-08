@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyMesh class
 // ------------------
 //
-
-#if !defined __CSGBSP_CSGBSP_H__
-#define __CSGBSP_CSGBSP_H__
 
 namespace lol
 {
@@ -73,6 +72,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __CSGBSP_CSGBSP_H__ */
 

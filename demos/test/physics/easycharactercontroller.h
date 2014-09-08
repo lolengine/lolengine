@@ -9,6 +9,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyCharacterController class
 // ------------------
@@ -16,9 +18,6 @@
 
 //Should try to to make a btKinematicCharacterController for real.
 //
-
-#if !defined __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
-#define __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__
 
 #include <lol/engine.h>
 #include "easyphysics.h"
@@ -102,6 +101,4 @@ protected:
 } /* namespace phys */
 
 } /* namespace lol */
-
-#endif /* __EASYCHARACTERCONTROLLER_EASYCHARACTERCONTROLLER_H__ */
 

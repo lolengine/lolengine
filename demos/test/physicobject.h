@@ -6,12 +6,12 @@
 //            (c) 2012 Sam Hocevar <sam@hocevar.net>
 //
 
+#pragma once
+
 /* FIXME: this file is pure crap; it's only a test. */
 
-#if !defined __PHYSICOBJECT_H__
-#define __PHYSICOBJECT_H__
-
 #include <lol/engine.h>
+
 #include "easymesh/easymesh.h"
 #include "physics/easyphysics.h"
 #include "physics/easycharactercontroller.h"
@@ -353,6 +353,4 @@ private:
     bool m_is_character;
     bool m_is_phys; /* Only used in CAT_MODE */
 };
-
-#endif /* __PHYSICOBJECT_H__ */
 

@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The hash class
 // --------------
 // A very simple hash class.
 //
-
-#if !defined __LOL_BASE_HASH_H__
-#define __LOL_BASE_HASH_H__
 
 namespace lol
 {
@@ -49,6 +48,4 @@ template<> struct hash<String>
 };
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_HASH_H__
 

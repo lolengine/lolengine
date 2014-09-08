@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The DebugFps class
 // ------------------
 //
-
-#if !defined __LOL_DEBUGFPS_H__
-#define __LOL_DEBUGFPS_H__
 
 #include "entity.h"
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_DEBUGFPS_H__
 

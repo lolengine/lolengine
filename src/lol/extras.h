@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Extra includes that aren't proper part of the engine yet
 // --------------------------------------------------------
 //
-
-#if !defined __LOL_EXTRAS_H__
-#define __LOL_EXTRAS_H__
 
 #include <lol/../utils.h>
 #include <lol/../numeric.h>
@@ -59,6 +58,4 @@
 #include <lol/../forge.h>
 #include <lol/../tiler.h>
 #include <lol/../sampler.h>
-
-#endif // __LOL_EXTRAS_H__
 

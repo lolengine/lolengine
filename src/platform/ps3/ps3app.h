@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Ps3App class
 // ----------------
 //
-
-#if !defined __LOL_PS3APP_H__
-#define __LOL_PS3APP_H__
 
 #include "lol/math/vector.h"
 
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_PS3APP_H__
 

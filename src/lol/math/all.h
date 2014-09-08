@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_MATH_ALL_H__
-#define __LOL_MATH_ALL_H__
+#pragma once
 
 #include <lol/math/constants.h>
 #include <lol/math/functions.h>
@@ -23,6 +22,4 @@
 #include <lol/math/geometry.h>
 #include <lol/math/interp.h>
 #include <lol/math/rand.h>
-
-#endif // __LOL_MATH_ALL_H__
 

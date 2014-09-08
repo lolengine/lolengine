@@ -5,10 +5,10 @@
 //            (c) 2012 Sam Hocevar <sam@hocevar.net>
 //
 
-#if !defined __LOLPHYSICS_H__
-#define __LOLPHYSICS_H__
+#pragma once
 
 #include <cstring>
+
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
@@ -429,6 +429,4 @@ private:
 } /* namespace phys */
 
 } /* namespace lol */
-
-#endif // __LOLPHYSICS_H__
 

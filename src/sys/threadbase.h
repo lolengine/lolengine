@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The ThreadBase class
 // --------------------
 //
-
-#if !defined __LOL_THREADBASE_H__
-#define __LOL_THREADBASE_H__
 
 #if defined HAVE_PTHREAD_H
 #   include <pthread.h>
@@ -292,6 +291,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_THREADBASE_H__
 

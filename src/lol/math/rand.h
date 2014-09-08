@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Random number generators
 // ----------------------------
 //
-
-#if !defined __LOL_MATH_RAND_H__
-#define __LOL_MATH_RAND_H__
 
 #include <cstdlib>
 #include <stdint.h>
@@ -124,6 +123,4 @@ template<> inline double rand<double>() { return rand<double>(1.0); }
 template<> inline ldouble rand<ldouble>() { return rand<ldouble>(1.0); }
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_RAND_H__
 

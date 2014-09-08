@@ -9,15 +9,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyPhysic class
 // ------------------
 //
 
-#if !defined __EASYPHYSICS_EASYPHYSICS_H__
-#define __EASYPHYSICS_EASYPHYSICS_H__
-
 #include <lol/engine.h>
+
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -154,6 +154,4 @@ protected:
 } /* namespace phys */
 
 } /* namespace lol */
-
-#endif /* __EASYPHYSICS_EASYPHYSICS_H__ */
 

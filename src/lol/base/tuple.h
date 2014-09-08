@@ -9,18 +9,17 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The tuple class
 // ---------------
 // A very simple tuple class.
 //
 
-#if !defined __LOL_BASE_TUPLE_H__
-#define __LOL_BASE_TUPLE_H__
+#include <lol/base/assert.h>
 
 #include <tuple>
-
-#include <lol/base/assert.h>
 
 namespace lol
 {
@@ -90,6 +89,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_TUPLE_H__
 

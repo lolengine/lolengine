@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_GPU_ALL_H__
-#define __LOL_GPU_ALL_H__
+#pragma once
 
 #include <lol/gpu/shader.h>
 #include <lol/gpu/indexbuffer.h>
@@ -19,6 +18,4 @@
 #include <lol/gpu/lolfx.h>
 #include <lol/gpu/renderer.h>
 #include <lol/gpu/rendercontext.h>
-
-#endif // __LOL_GPU_ALL_H__
 

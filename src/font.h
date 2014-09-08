@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Font class
 // --------------
 //
-
-#if !defined __LOL_FONT_H__
-#define __LOL_FONT_H__
 
 #include "entity.h"
 
@@ -44,6 +43,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_FONT_H__
 

@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The LolFx class
 // ---------------
 //
-
-#if !defined __LOL_GPU_LOLFX_H__
-#define __LOL_GPU_LOLFX_H__
 
 #include <lol/gpu/shader.h>
 
@@ -43,6 +42,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __LOL_GPU_LOLFX_H__ */
 

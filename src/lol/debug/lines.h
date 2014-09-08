@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Debug line primitives
 // ---------------------
 //
-
-#if !defined __LOL_DEBUG_LINES_H__
-#define __LOL_DEBUG_LINES_H__
 
 #include <stdint.h>
 
@@ -112,6 +111,4 @@ void DrawViewProj(mat4 view, mat4 proj, vec4 color);
 } /* namespace Debug */
 
 } /* namespace lol */
-
-#endif // __LOL_DEBUG_LINES_H__
 

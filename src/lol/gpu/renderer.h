@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Renderer class
 // ------------------
 //
-
-#if !defined __LOL_RENDERER_H__
-#define __LOL_RENDERER_H__
 
 namespace lol
 {
@@ -181,6 +180,4 @@ private:
 extern Renderer *g_renderer;
 
 } /* namespace lol */
-
-#endif // __LOL_RENDERER_H__
 

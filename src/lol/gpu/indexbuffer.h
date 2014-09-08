@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The IndexBuffer class
 // ---------------------
 //
-
-#if !defined __LOL_GPU_INDEXBUFFER_H__
-#define __LOL_GPU_INDEXBUFFER_H__
 
 #include <cstring>
 
@@ -40,6 +39,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GPU_INDEXBUFFER_H__
 

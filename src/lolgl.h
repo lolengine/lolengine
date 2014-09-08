@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The GL support
 // --------------
 //
-
-#if !defined __LOL_LOLGL_H__
-#define __LOL_LOLGL_H__
 
 #define GL_GLEXT_PROTOTYPES
 
@@ -64,6 +63,4 @@
         GLenum error = glGetError(); \
         ASSERT(error == GL_NO_ERROR, "OpenGL error: 0x%04x\n", error); \
     }
-
-#endif // __LOL_LOLGL_H__
 

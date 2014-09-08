@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Text class
 // --------------
 //
-
-#if !defined __LOL_TEXT_H__
-#define __LOL_TEXT_H__
 
 #include "entity.h"
 
@@ -50,6 +49,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_TEXT_H__
 

@@ -8,19 +8,18 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The vector classes
 // ------------------
 //
 
-#if !defined __LOL_MATH_VECTOR_H__
-#define __LOL_MATH_VECTOR_H__
-
-#include <ostream>
-
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 #include <lol/math/ops.h>
+
+#include <ostream>
 
 namespace lol
 {
@@ -1221,6 +1220,4 @@ inline vec_const_iter<T,N,SWIZZLE> end(vec_t<T,N,SWIZZLE> const &a)
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_VECTOR_H__
 

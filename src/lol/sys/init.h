@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Various system helper functions
 // -------------------------------
 //
-
-#if !defined __LOL_SYS_INIT_H__
-#define __LOL_SYS_INIT_H__
 
 #include <stdint.h>
 
@@ -57,6 +56,4 @@ extern array<String> GetPathList(String const &file);
 } /* namespace System */
 
 } /* namespace lol */
-
-#endif // __LOL_SYS_INIT_H__
 

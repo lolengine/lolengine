@@ -9,8 +9,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_ALGORITHM_SORT_H__
-#define __LOL_ALGORITHM_SORT_H__
+#pragma once
 
 #include <lol/base/array.h>
 
@@ -96,6 +95,4 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
 }
 
 } /* namespace lol */
-
-#endif // __LOL_ALGORITHM_SORT_H__
 

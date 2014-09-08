@@ -10,6 +10,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The arraynd class
 // -----------------
@@ -20,9 +22,6 @@
 // FIXME: This file is in lol/math/ instead of lol/base/ because it
 // uses vec_t.
 //
-
-#if !defined __LOL_MATH_ARRAYND_H__
-#define __LOL_MATH_ARRAYND_H__
 
 #include <lol/base/array.h>
 #include <lol/base/assert.h>
@@ -277,6 +276,4 @@ template<typename... T> using array2d = arraynd<2, T...>;
 template<typename... T> using array3d = arraynd<3, T...>;
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_ARRAYND_H__
 

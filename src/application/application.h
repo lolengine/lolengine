@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Application class
 // ---------------------
 //
-
-#if !defined __LOL_APPLICATION_H__
-#define __LOL_APPLICATION_H__
 
 namespace lol
 {
@@ -38,6 +37,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_APPLICATION_H__
 

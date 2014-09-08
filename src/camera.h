@@ -8,13 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Camera class
 // ----------------
 //
 
-#if !defined __CAMERA_H__
-#define __CAMERA_H__
+#include <lol/math/matrix.h>
 
 #include "worldentity.h"
 
@@ -105,4 +106,3 @@ public:
 
 } /* namespace lol */
 
-#endif /* __CAMERA_H__ */

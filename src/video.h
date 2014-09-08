@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Video interface
 // -------------------
 // Helper GL functions to set up the scene.
 //
-
-#if !defined __LOL_VIDEO_H__
-#define __LOL_VIDEO_H__
 
 #include <stdint.h>
 
@@ -58,6 +57,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_VIDEO_H__
 

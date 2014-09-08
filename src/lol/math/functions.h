@@ -9,13 +9,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Various maths functions
 // -----------------------
 //
 
-#if !defined __LOL_MATH_FUNCTIONS_H__
-#define __LOL_MATH_FUNCTIONS_H__
+#include <lol/math/constants.h>
 
 #include <cmath>
 #include <cstdio>
@@ -260,6 +261,4 @@ LOL_GENERIC_FUNC_SIGNED(ldouble)
 #undef LOL_GENERIC_FUNC
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_FUNCTIONS_H__
 

@@ -8,14 +8,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The map class
 // -------------
 // A very simple map class.
 //
 
-#if !defined __LOL_BASE_MAP_H__
-#define __LOL_BASE_MAP_H__
+#include <lol/base/hash.h>
 
 namespace lol
 {
@@ -115,6 +116,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_MAP_H__
 

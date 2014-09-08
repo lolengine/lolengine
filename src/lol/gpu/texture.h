@@ -8,13 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Texture class
 // -----------------
 //
 
-#if !defined __LOL_GPU_TEXTURE_H__
-#define __LOL_GPU_TEXTURE_H__
+#include <lol/gpu/shader.h>
 
 namespace lol
 {
@@ -74,6 +75,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_GPU_TEXTURE_H__
 

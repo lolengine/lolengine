@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The ThreadBase class
 // --------------------
 //
-
-#if !defined __LOL_THREADBASE_H__
-#define __LOL_THREADBASE_H__
 
 #include <sys/ppu_thread.h>
 #include <sys/event.h>
@@ -177,6 +176,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_THREADBASE_H__
 

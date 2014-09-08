@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The D3d9Input class
 // -------------------
 //
-
-#if !defined __LOL_D3D9INPUT_H__
-#define __LOL_D3D9INPUT_H__
 
 #include "entity.h"
 
@@ -38,6 +37,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_D3D9INPUT_H__
 

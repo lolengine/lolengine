@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Light class
 // ---------------
 //
-
-#if !defined __LIGHT_H__
-#define __LIGHT_H__
 
 #include <cfloat> /* for FLT_MAX */
 
@@ -98,6 +97,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __LIGHT_H__ */
 

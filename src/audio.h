@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Audio interface
 // -------------------
 // Helper functions to set up the audio device.
 //
-
-#if !defined __LOL_AUDIO_H__
-#define __LOL_AUDIO_H__
 
 #include <stdint.h>
 
@@ -35,6 +34,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_AUDIO_H__
 

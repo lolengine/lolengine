@@ -9,15 +9,15 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyPhysic class
 // ------------------
 //
 
-#if !defined __EASYCONSTRAINT_EASYCONSTRAINT_H__
-#define __EASYCONSTRAINT_EASYCONSTRAINT_H__
-
 #include <lol/engine.h>
+
 #include "easyphysics.h"
 
 namespace lol
@@ -179,6 +179,4 @@ private:
 } /* namespace phys */
 
 } /* namespace lol */
-
-#endif /* __EASYCONSTRAINT_EASYCONSTRAINT_H__ */
 

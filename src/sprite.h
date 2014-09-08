@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Sprite class
 // ----------------
 //
-
-#if !defined __LOL_SPRITE_H__
-#define __LOL_SPRITE_H__
 
 #include "worldentity.h"
 #include "tileset.h"
@@ -39,6 +38,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SPRITE_H__
 

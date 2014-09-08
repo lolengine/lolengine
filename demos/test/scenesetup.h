@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Scene setup class
 // ----------------
 //
-
-#if !defined __SCENESETUP_H__
-#define __SCENESETUP_H__
 
 namespace lol
 {
@@ -48,4 +47,3 @@ public:
 
 } /* namespace lol */
 
-#endif /* __SCENESETUP_H__ */

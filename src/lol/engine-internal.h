@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-//
-// The main header
-// ---------------
-//
+#pragma once
 
-#if !defined__LOL_ENGINE_INTERNAL_H__
-#define __LOL_ENGINE_INTERNAL_H__
+//
+// The main header (for internal engine use only)
+// ----------------------------------------------
+//
 
 /* Include this as early as possible */
 #if HAVE_CONFIG_H
@@ -35,6 +34,4 @@
 
 #include <lol/public.h>
 #include <lol/extras.h>
-
-#endif // __LOL_ENGINE_INTERNAL_H__
 

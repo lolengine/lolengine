@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Various basic convenience functions
 // ------------------
 //
-
-#if !defined __LOL_UTILS_H__
-#define __LOL_UTILS_H__
 
 #include <lol/base/string.h>
 
@@ -74,6 +73,4 @@ template<class T> inline T FindValue(const char* name)
 }
 
 } /* namespace lol */
-
-#endif /* __LOL_UTILS_H__ */
 

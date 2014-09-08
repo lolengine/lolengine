@@ -8,13 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Matrix classes
 // ------------------
 //
 
-#if !defined __LOL_NUMERIC_H__
-#define __LOL_NUMERIC_H__
+#include <lol/math/functions.h>
 
 #include <cstdlib>
 #include <stdint.h>
@@ -76,6 +77,4 @@ static inline float SmoothClamp(float &x, float a, float b, float sd)
 }
 
 } /* namespace lol */
-
-#endif // __LOL_NUMERIC_H__
 

@@ -8,12 +8,9 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_ALGORITHM_ALL_H__
-#define __LOL_ALGORITHM_ALL_H__
+#pragma once
 
 #include <lol/algorithm/sort.h>
 #include <lol/algorithm/aabb_tree.h>
 #include <lol/algorithm/portal.h>
-
-#endif // __LOL_ALGORITHM_ALL_H__
 

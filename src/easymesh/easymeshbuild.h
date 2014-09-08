@@ -10,13 +10,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The EasyMesh class
 // ------------------
 //
-
-#if !defined __EASYMESHBUILD_EASYMESHBUILD_H__
-#define __EASYMESHBUILD_EASYMESHBUILD_H__
 
 namespace lol
 {
@@ -408,6 +407,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif /* __EASYMESHBUILD_EASYMESHBUILD_H__ */
 

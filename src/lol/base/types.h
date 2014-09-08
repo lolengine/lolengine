@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_BASE_TYPES_H__
-#define __LOL_BASE_TYPES_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -129,6 +128,4 @@ typedef imat4x2 int4x2;
 typedef imat4x3 int4x3;
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_TYPES_H__
 

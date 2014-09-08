@@ -8,15 +8,14 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The SdlApp class
 // ----------------
 //
 
-#if !defined __LOL_SDLAPP_H__
-#define __LOL_SDLAPP_H__
-
-#include "lol/math/vector.h"
+#include <lol/math/vector.h>
 
 namespace lol
 {
@@ -37,6 +36,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SDLAPP_H__
 

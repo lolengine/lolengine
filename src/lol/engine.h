@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-//
-// The main header
-// ---------------
-//
+#pragma once
 
-#if !defined __LOL_ENGINE_H__
-#define __LOL_ENGINE_H__
+//
+// The main header (for all applications)
+// --------------------------------------
+//
 
 /* If using NaCl or Android, override main() with our version */
 #if __native_client__
@@ -30,6 +29,4 @@
 
 #include <lol/public.h>
 #include <lol/extras.h>
-
-#endif // __LOL_ENGINE_H__
 

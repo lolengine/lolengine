@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_INPUT_H__
-#define __LOL_INPUT_H__
+#pragma once
 
 namespace lol
 {
@@ -120,6 +119,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_INPUT_H__
 

@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Timer class
 // ---------------
 //
-
-#if !defined __LOL_SYS_TIMER_H__
-#define __LOL_SYS_TIMER_H__
 
 namespace lol
 {
@@ -40,6 +39,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SYS_TIMER_H__
 

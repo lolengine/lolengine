@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The World class
 // ---------------
 //
-
-#if !defined __LOL_WORLD_H__
-#define __LOL_WORLD_H__
 
 namespace lol
 {
@@ -33,6 +32,4 @@ public:
 extern World g_world;
 
 } /* namespace lol */
-
-#endif // __LOL_WORLD_H__
 

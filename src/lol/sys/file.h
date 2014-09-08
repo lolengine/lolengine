@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // File and buffer reading
 // -----------------------
 //
-
-#if !defined __LOL_SYS_FILE_H__
-#define __LOL_SYS_FILE_H__
 
 #include <stdint.h>
 
@@ -88,6 +87,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_SYS_FILE_H__
 

@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Operations for vector classes
 // -----------------------------
 //
-
-#if !defined __LOL_MATH_OPS_H__
-#define __LOL_MATH_OPS_H__
 
 #include <ostream>
 #include <type_traits>
@@ -360,6 +359,4 @@ operator >=(V const &a, V const &b)
 } /* namespace componentwise_ops */
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_OPS_H__
 

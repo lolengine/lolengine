@@ -9,8 +9,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#ifndef __SCENESETUP_COMPILER_H__
-#define __SCENESETUP_COMPILER_H__
+#pragma once
 
 #include <string>
 
@@ -58,6 +57,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif /* __SCENESETUP_COMPILER_H__ */
 

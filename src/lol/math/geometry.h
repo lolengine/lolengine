@@ -9,18 +9,18 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Various geometry functions
 // --------------------------
 //
 
-#if !defined __LOL_MATH_GEOMETRY_H__
-#define __LOL_MATH_GEOMETRY_H__
+#include <lol/base/enum.h>
 
 #include <cmath>
 #include <cstdio>
 #include <algorithm>
-
 #include <stdint.h>
 
 namespace lol
@@ -346,6 +346,4 @@ float PointDistToSegment(TV const &p, TV const &a, TV const &b)
 }
 
 } /* namespace lol */
-
-#endif // __LOL_MATH_GEOMETRY_H__
 

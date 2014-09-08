@@ -9,6 +9,8 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The array class
 // ---------------
@@ -16,10 +18,8 @@
 // additional features, eg. array<int,float> for automatic arrays of tuples.
 //
 
-#if !defined __LOL_BASE_ARRAY_H__
-#define __LOL_BASE_ARRAY_H__
-
 #include <lol/base/assert.h>
+#include <lol/base/tuple.h>
 
 #include <new> /* for placement new */
 #include <algorithm> /* for std::swap */
@@ -542,6 +542,4 @@ template<typename... T> using Array = array<T...>;
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_ARRAY_H__
 

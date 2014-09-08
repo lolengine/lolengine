@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Platform interface
 // ----------------------
 // Helper functions to set up the platform.
 //
-
-#if !defined __LOL_PLATFORM_H__
-#define __LOL_PLATFORM_H__
 
 #include <stdint.h>
 
@@ -32,6 +31,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_PLATFORM_H__
 

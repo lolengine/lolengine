@@ -9,8 +9,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_PORTAL_H__
-#define __LOL_PORTAL_H__
+#pragma once
 
 #include <cfloat> /* for FLT_MAX */
 
@@ -386,6 +385,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_PORTAL_H__
 

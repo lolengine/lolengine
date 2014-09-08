@@ -8,8 +8,9 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_BASE_ASSERT_H__
-#define __LOL_BASE_ASSERT_H__
+#pragma once
+
+#include <lol/base/log.h>
 
 #include <cstdlib>
 
@@ -138,6 +139,4 @@ static inline void DebugAbort()
 #endif
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_ASSERT_H__
 

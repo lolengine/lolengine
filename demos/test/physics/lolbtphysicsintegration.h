@@ -9,13 +9,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // Bullet Physics integration in Lol
 // ------------------
 //
-
-#if !defined __LOLBTPHYSICSINTEGRATION_H__
-#define __LOLBTPHYSICSINTEGRATION_H__
 
 namespace lol
 {
@@ -45,6 +44,4 @@ namespace lol
 #define BT2LOL_QUAT(ELEMENT)    lol::quat((ELEMENT).getW(), BT2LOL_VEC3((ELEMENT).getAxis())
 
 } /* namespace lol */
-
-#endif /* __LOLBTPHYSICSINTEGRATION_H__ */
 

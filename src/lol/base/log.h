@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Log interface
 // -----------------
 // The central logging system.
 //
-
-#if !defined __LOL_BASE_LOG_H__
-#define __LOL_BASE_LOG_H__
 
 #include <stdint.h>
 #include <cstdarg>
@@ -50,6 +49,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_LOG_H__
 

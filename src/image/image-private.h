@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The ImageCodecData class
 // ------------------------
 //
-
-#if !defined __LOL_IMAGE_PRIVATE_H__
-#define __LOL_IMAGE_PRIVATE_H__
 
 namespace lol
 {
@@ -100,6 +99,4 @@ public:
     }
 
 } /* namespace lol */
-
-#endif // __LOL_IMAGE_PRIVATE_H__
 

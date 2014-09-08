@@ -5,8 +5,7 @@
 //            (c) 2012 Sam Hocevar <sam@hocevar.net>
 //
 
-#if !defined __BTPHYSTEST_H__
-#define __BTPHYSTEST_H__
+#pragma once
 
 class Nacl_PhysTest : public WorldEntity
 {
@@ -56,6 +55,4 @@ private:
     float                           m_fov_dp;
     float                           m_loc_dp;
 };
-
-#endif // __BTPHYSTEST_H__
 

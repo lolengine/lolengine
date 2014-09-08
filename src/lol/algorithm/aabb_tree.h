@@ -9,8 +9,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_AABB_TREE_H__
-#define __LOL_AABB_TREE_H__
+#pragma once
 
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
@@ -398,6 +397,4 @@ protected:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_AABB_TREE_H__
 

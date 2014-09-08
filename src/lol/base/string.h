@@ -8,14 +8,13 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The String class
 // ----------------
 // A very simple String class, based on Array.
 //
-
-#if !defined __LOL_BASE_STRING_H__
-#define __LOL_BASE_STRING_H__
 
 #include <lol/base/assert.h>
 #include <lol/base/array.h>
@@ -298,6 +297,4 @@ inline bool operator !=(char const* sz, String const &s)
 }
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_STRING_H__
 

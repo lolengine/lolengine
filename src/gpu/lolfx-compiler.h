@@ -8,8 +8,7 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#ifndef __LOLFX_COMPILER_H__
-#define __LOLFX_COMPILER_H__
+#pragma once
 
 #include <string>
 
@@ -66,6 +65,4 @@ public:
 };
 
 } /* namespace lol */
-
-#endif /* __LOLFX_COMPILER_H__ */
 

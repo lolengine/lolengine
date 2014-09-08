@@ -8,13 +8,12 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 //
 // The Emitter class
 // -----------------
 //
-
-#if !defined __LOL_EMITTER_H__
-#define __LOL_EMITTER_H__
 
 #include "entity.h"
 #include "tileset.h"
@@ -41,6 +40,4 @@ private:
 };
 
 } /* namespace lol */
-
-#endif // __LOL_EMITTER_H__
 

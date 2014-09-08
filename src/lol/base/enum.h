@@ -8,8 +8,9 @@
 //   http://www.wtfpl.net/ for more details.
 //
 
-#if !defined __LOL_BASE_ENUM_H__
-#define __LOL_BASE_ENUM_H__
+#pragma once
+
+#include <lol/base/map.h>
 
 namespace lol
 {
@@ -162,6 +163,4 @@ public:
     };
 
 } /* namespace lol */
-
-#endif // __LOL_BASE_ENUM_H__
 
