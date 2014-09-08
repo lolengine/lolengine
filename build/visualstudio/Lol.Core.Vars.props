@@ -10,10 +10,10 @@
 
     <!-- SDL -->
     <SdlDir>$(ExternalDir)\sdl-2.0.3</SdlDir>
-    <SdlImageDir>$(ExternalDir)\sdl-image-1.2.12</SdlImageDir>
-    <SdlMixerDir>$(ExternalDir)\sdl-mixer-1.2.12</SdlMixerDir>
+    <SdlImageDir>$(ExternalDir)\sdl-image-2.0.0</SdlImageDir>
+    <SdlMixerDir>$(ExternalDir)\sdl-mixer-2.0.0</SdlMixerDir>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
-    <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-mingw32;$(SdlMixerDir)\lib\i686-w64-mingw32</SdlLibs>
+    <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-msvc;$(SdlImageDir)\lib\i686-w64-msvc;$(SdlMixerDir)\lib\i686-w64-msvc</SdlLibs>
     <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc;$(SdlImageDir)\lib\x86_64-msvc;$(SdlMixerDir)\lib\x86_64-msvc</SdlLibs>
     <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
     <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
