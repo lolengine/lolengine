@@ -15,8 +15,8 @@
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
     <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-msvc;$(SdlImageDir)\lib\i686-w64-msvc;$(SdlMixerDir)\lib\i686-w64-msvc</SdlLibs>
     <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc;$(SdlImageDir)\lib\x86_64-msvc;$(SdlMixerDir)\lib\x86_64-msvc</SdlLibs>
-    <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
-    <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL_image.lib;SDL_mixer.lib</SdlDeps>
+    <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
+    <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
     <Win32Defines>HAVE_SDL_H;USE_SDL;USE_SDL2;$(Win32Defines)</Win32Defines>
     <Win32Defines>USE_SDL_MIXER;USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
 
