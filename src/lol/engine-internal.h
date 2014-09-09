@@ -28,7 +28,7 @@
 #endif
 
 /* If using SDL on Windows or OS X, let it override main() */
-#if USE_SDL && (_WIN32 || __APPLE__)
+#if (USE_SDL || USE_OLD_SDL) && (_WIN32 || __APPLE__)
 #   include <SDL_main.h>
 #endif
 

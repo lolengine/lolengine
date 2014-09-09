@@ -10,8 +10,10 @@
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL
-#   if HAVE_SDL_SDL_H
+#if USE_SDL || USE_OLD_SDL
+#   if HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
@@ -29,7 +31,7 @@
 #   include "platform/d3d9/d3d9input.h"
 #endif
 
-#if USE_SDL && USE_D3D9
+#if (USE_SDL || USE_OLD_SDL) && USE_D3D9
 HWND g_hwnd = nullptr;
 #endif
 
@@ -45,10 +47,10 @@ class SdlAppData
     friend class SdlApp;
 
 private:
-#if USE_SDL2
+#if USE_SDL
     SDL_Window *m_window;
     SDL_GLContext m_glcontext;
-#else
+#elif USE_OLD_SDL
     SDL_Surface *m_window;
 #endif
 };
@@ -60,7 +62,7 @@ private:
 SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
-#if USE_SDL
+#if USE_SDL || USE_OLD_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;
 
@@ -71,7 +73,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
         exit(EXIT_FAILURE);
     }
 
-#if USE_SDL2
+#if USE_SDL
     data->m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       window_size.x, window_size.y,
@@ -136,14 +138,14 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 
 void SdlApp::ShowPointer(bool show)
 {
-#if defined USE_SDL
+#if USE_SDL || USE_OLD_SDL
     SDL_ShowCursor(show ? 1 : 0);
 #endif
 }
 
 void SdlApp::Tick()
 {
-#if defined USE_SDL && defined USE_D3D9
+#if (USE_SDL || USE_OLD_SDL) && defined USE_D3D9
     IDirect3DDevice9 *d3d_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
     HRESULT hr;
     hr = d3d_dev->BeginScene();
@@ -154,16 +156,16 @@ void SdlApp::Tick()
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     Ticker::TickDraw();
 
-#if USE_SDL2
+#if USE_SDL
     SDL_GL_SwapWindow(data->m_window);
-#elif USE_SDL && USE_D3D9
+#elif USE_OLD_SDL && USE_D3D9
     hr = d3d_dev->EndScene();
     if (FAILED(hr))
         Abort();
     hr = d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
     if (FAILED(hr))
         Abort();
-#elif USE_SDL
+#elif USE_OLD_SDL
     SDL_GL_SwapBuffers();
 #endif
 }
@@ -173,14 +175,13 @@ SdlApp::~SdlApp()
 #if USE_SDL
     if (data->m_window)
     {
-#   if USE_SDL2
         SDL_GL_DeleteContext(data->m_glcontext);
         SDL_DestroyWindow(data->m_window);
-#   else
-        SDL_DestroySurface(data->m_window);
-#   endif
     }
-
+    SDL_Quit();
+#elif USE_OLD_SDL
+    if (data->m_window)
+        SDL_DestroySurface(data->m_window);
     SDL_Quit();
 #endif
 

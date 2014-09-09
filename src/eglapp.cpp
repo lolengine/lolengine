@@ -22,8 +22,10 @@
 #   include <EGL/eglext.h>
 #endif
 
-#if defined USE_SDL
-#   if defined HAVE_SDL_SDL_H
+#if USE_SDL || USE_OLD_SDL
+#   if HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
@@ -32,7 +34,7 @@
 
 #include "lolgl.h"
 #include "eglapp.h"
-#if defined USE_SDL
+#if USE_SDL || USE_OLD_SDL
 #   include "platform/sdl/sdlinput.h"
 #endif
 
@@ -247,7 +249,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data->screen_size = uvec2(gwa.width, gwa.height);
 #   endif
 
-#   if defined USE_SDL
+#   if USE_SDL || USE_OLD_SDL
     new SdlInput(res.x, res.y, data->screen_size.x, data->screen_size.y);
 #   endif
 
