@@ -83,9 +83,12 @@
 
     <!-- X360-specific -->
     <XboxDefines>$(XboxDefines)</XboxDefines>
+
   </PropertyGroup>
   <PropertyGroup />
+
   <ItemDefinitionGroup />
+
   <ItemGroup>
     <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
     <BuildMacro Include="FlexDir"><Value>$(FlexDir)</Value></BuildMacro>
@@ -127,8 +130,12 @@
     <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
   </ItemGroup>
+
   <PropertyGroup>
-    <OutDir>$(SolutionDir)\..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
+    <!-- Deliberately omit the \ before .. because of an Incredibuild or Visual Studio bug
+         that messes with the log file location. http://stackoverflow.com/q/12101464/111461 -->
+    <OutDir>$(SolutionDir)..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
+
 </Project>

@@ -96,7 +96,9 @@
         set A=$(SdlLibs)
         :again
         for /f "tokens=1* delims=;" %%I in ("%A%") do (
-          if not "%%I" == "" xcopy /y /c /d "%%I"\*.dll "$(TargetDir)" &amp;&amp; set A=%%J
+          if not "%%I" == "" echo xcopy /y /c /d "%%I"\*.dll "$(TargetDir)"
+          if not "%%I" == "" xcopy /y /c /d "%%I"\*.dll "$(TargetDir)"
+          if not "%%I" == "" set A=%%J
           if not "%%I" == "" goto again
         )
       </Command>
