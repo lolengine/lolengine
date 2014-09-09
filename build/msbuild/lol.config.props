@@ -1,34 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+     - Import settings that can be overridden by the user
+   -->
   <Import Project="config-build.xml" />
+
+  <!--
+     - Import defaults settings from Visual Studio
+   -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <!--
+     - Default settings for Debug configurations
+   -->
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
+
+  <!--
+     - Default settings for Release configurations
+   -->
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+
+  <!--
+     - Default settings for any configuration
+   -->
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
     <ExceptionHandling>false</ExceptionHandling>
     <FloatingPointModel>Fast</FloatingPointModel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='Win32' and '$(SolutionName)'=='Lol (vs2013)'" Label="Configuration">
-    <PlatformToolset>v120</PlatformToolset>
+
+  <!--
+     - Select the platform toolset depending on the platform
+   -->
+  <PropertyGroup Condition="'$(Platform)'=='Win32'" Label="Configuration">
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2013)'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2014)'">v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='Win32' and '$(SolutionName)'=='Lol (vs2014)'" Label="Configuration">
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64' and '$(SolutionName)'=='Lol (vs2013)'" Label="Configuration">
-    <PlatformToolset>v120</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64' and '$(SolutionName)'=='Lol (vs2014)'" Label="Configuration">
-    <PlatformToolset>v140</PlatformToolset>
+  <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2013)'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2014)'">v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
     <PlatformToolset>SNC</PlatformToolset>
   </PropertyGroup>
+
+  <!--
+     - Import final settings from Visual Studio
+   -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
 </Project>

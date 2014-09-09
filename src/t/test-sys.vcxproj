@@ -62,19 +62,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Config.props" />
+  <Import Project="$(SolutionDir)\msbuild\lol.config.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(SolutionDir)\visualstudio\Lol.Fx.props" />
+    <Import Project="$(SolutionDir)\msbuild\lolfx.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Vars.props" />
+    <Import Project="$(SolutionDir)\msbuild\lol.vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="$(SolutionDir)\visualstudio\Lol.Core.Rules.props" />
+  <Import Project="$(SolutionDir)\msbuild\lol.rules.props" />
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(SolutionDir)\visualstudio\Lol.Fx.targets" />
+    <Import Project="$(SolutionDir)\msbuild\lolfx.targets" />
   </ImportGroup>
 </Project>
