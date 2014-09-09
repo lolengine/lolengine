@@ -105,7 +105,7 @@ Renderer::Renderer(ivec2 size)
     d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
     d3dpp.BackBufferCount = 1;
     d3dpp.hDeviceWindow = g_hwnd;
-#   if defined USE_SDL
+#   if USE_SDL || USE_OLD_SDL
     d3dpp.Windowed = TRUE;
 #   endif
     d3dpp.EnableAutoDepthStencil = TRUE;

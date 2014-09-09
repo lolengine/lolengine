@@ -10,8 +10,10 @@
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL
-#   if HAVE_SDL_SDL_H
+#if USE_SDL || USE_OLD_SDL
+#   if HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif HAVE_SDL_SDL_H
 #      include <SDL/SDL.h>
 #   else
 #      include <SDL.h>
@@ -48,7 +50,7 @@ private:
     static ivec2 GetMousePos();
     static void SetMousePos(ivec2 position);
 
-#if USE_SDL
+#if USE_SDL || USE_OLD_SDL
     SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
         m_prevmouse(ivec2::zero),
         m_app(vec2((float)app_w, (float)app_h)),
@@ -72,16 +74,16 @@ private:
  */
 
 SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
-#if USE_SDL
+#if USE_SDL || USE_OLD_SDL
   : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
 #endif //USE_SDL
 {
-#if USE_SDL && !USE_SDL2
+#if USE_OLD_SDL
     /* Enable Unicode translation of keyboard events */
     SDL_EnableUNICODE(1);
 #endif
 
-#if USE_SDL
+#if USE_SDL || USE_OLD_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
@@ -104,9 +106,9 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
          *  - HDAPS, it's not a real joystick.
          *  - X360 controllers, Xinput handles them better since
          *    it won't think there is only one trigger axis. */
-#       if USE_SDL2
+#       if USE_SDL
         char const *name = SDL_JoystickName(sdlstick);
-#       else
+#       elif USE_OLD_SDL
         char const *name = SDL_JoystickName(i);
 #       endif
         if (strstr(name, "HDAPS")
@@ -137,7 +139,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
 SdlInput::~SdlInput()
 {
-#if USE_SDL && !EMSCRIPTEN
+#if (USE_SDL || USE_OLD_SDL) && !EMSCRIPTEN
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.Count())
     {
@@ -169,7 +171,7 @@ void SdlInput::TickDraw(float seconds, Scene &scene)
 
 void SdlInputData::Tick(float seconds)
 {
-#if USE_SDL
+#if USE_SDL || USE_OLD_SDL
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
@@ -202,7 +204,7 @@ void SdlInputData::Tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
-#   if !USE_SDL2
+#   if USE_OLD_SDL
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                 m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             else
@@ -230,9 +232,9 @@ void SdlInputData::Tick(float seconds)
     if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
     {
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
-#   if USE_SDL2
+#   if USE_SDL
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
-#   else
+#   elif USE_OLD_SDL
         SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
 #   endif
         mouse = (ivec2)m_app / 2;
@@ -258,13 +260,13 @@ void SdlInputData::Tick(float seconds)
 
     //Mouse is focused, Validate the InScreen Key
     //Hardcoded 3, not very nice.
-#   if !EMSCRIPTEN && !USE_SDL2
+#   if !EMSCRIPTEN && USE_OLD_SDL
     m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
-#else
+#   else
     // Emscripten doesn't seem to handle SDL_APPMOUSEFOCUS
-    // SDL2 doesn't have SDL_APPMOUSEFOCUS either
+    // FIXME: SDL2 doesn't have SDL_APPMOUSEFOCUS either
     m_mouse->SetKey(3, true);
-#endif
+#   endif
 
     if (m_mousecapture)
     {
@@ -274,9 +276,9 @@ void SdlInputData::Tick(float seconds)
 
     m_prevmouse = mouse;
 
-#   if USE_SDL2
+#   if USE_SDL
     Uint8 const *sdlstate = SDL_GetKeyboardState(nullptr);
-#   else
+#   elif USE_OLD_SDL
     Uint8 *sdlstate = SDL_GetKeyState(nullptr);
 #   endif
 
@@ -298,27 +300,27 @@ ivec2 SdlInputData::GetMousePos()
 {
     ivec2 ret(-1, -1);
 
-#if USE_SDL
-#   if !EMSCRIPTEN && !USE_SDL2
+#if USE_SDL || USE_OLD_SDL
+#   if !EMSCRIPTEN && USE_OLD_SDL
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
 #   endif
     {
         SDL_GetMouseState(&ret.x, &ret.y);
         ret.y = Video::GetSize().y - 1 - ret.y;
     }
-#endif //USE_SDL
+#endif
     return ret;
 }
 
 void SdlInputData::SetMousePos(ivec2 position)
 {
-#if USE_SDL2
+#if USE_SDL
     // FIXME: how do I warped mouse?
-#elif USE_SDL
+#elif USE_OLD_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 #else
     UNUSED(position);
-#endif //USE_SDL
+#endif
 }
 
 } /* namespace lol */
