@@ -27,10 +27,11 @@
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */
 #define SDL_FORCE_POLL_JOYSTICK 1
+
 #if EMSCRIPTEN
-#define MOUSE_SPEED_MOD 10.f
+#   define MOUSE_SPEED_MOD 10.f
 #else
-#define MOUSE_SPEED_MOD 100.f
+#   define MOUSE_SPEED_MOD 100.f
 #endif
 
 namespace lol
@@ -50,23 +51,26 @@ private:
     static ivec2 GetMousePos();
     static void SetMousePos(ivec2 position);
 
-#if USE_SDL || USE_OLD_SDL
     SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
         m_prevmouse(ivec2::zero),
         m_app(vec2((float)app_w, (float)app_h)),
         m_screen(vec2((float)screen_w, (float)screen_h)),
-        m_mousecapture(false)
+        m_mousecapture(false),
+        m_tick_in_draw_thread(false)
     { }
 
-    array<SDL_Joystick*, InputDeviceInternal*> m_joysticks;
-    InputDeviceInternal* m_mouse;
-    InputDeviceInternal* m_keyboard;
+#if USE_SDL || USE_OLD_SDL
+    array<SDL_Joystick *, InputDeviceInternal *> m_joysticks;
+    InputDeviceInternal *m_mouse;
+    InputDeviceInternal *m_keyboard;
+#endif // USE_SDL
 
     ivec2 m_prevmouse;
     vec2 m_app;
     vec2 m_screen;
+
     bool m_mousecapture;
-#endif // USE_SDL
+    bool m_tick_in_draw_thread;
 };
 
 /*
@@ -74,10 +78,12 @@ private:
  */
 
 SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
-#if USE_SDL || USE_OLD_SDL
   : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
-#endif //USE_SDL
 {
+#if _WIN32
+    m_data->m_tick_in_draw_thread = true;
+#endif
+
 #if USE_OLD_SDL
     /* Enable Unicode translation of keyboard events */
     SDL_EnableUNICODE(1);
@@ -85,10 +91,12 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
 #if USE_SDL || USE_OLD_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
+#endif
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 
+#if USE_SDL || USE_OLD_SDL
 #   if !EMSCRIPTEN
 #       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
@@ -130,9 +138,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
         m_data->m_joysticks.Push(sdlstick, stick);
     }
 #   endif //EMSCRIPTEN
-#else
-    UNUSED(app_w, app_h, screen_w, screen_h);
-#endif //USE_SDL
+#endif
 
     m_gamegroup = GAMEGROUP_BEFORE;
 }
@@ -155,18 +161,16 @@ void SdlInput::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 
-#if !_WIN32
-    m_data->Tick(seconds);
-#endif
+    if (!m_data->m_tick_in_draw_thread)
+        m_data->Tick(seconds);
 }
 
 void SdlInput::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
 
-#if _WIN32
-    m_data->Tick(seconds);
-#endif //_WIN32
+    if (m_data->m_tick_in_draw_thread)
+        m_data->Tick(seconds);
 }
 
 void SdlInputData::Tick(float seconds)
@@ -277,18 +281,30 @@ void SdlInputData::Tick(float seconds)
     m_prevmouse = mouse;
 
 #   if USE_SDL
+    /* FIXME: the keyboard state now has scancodes rather than
+     * ASCII representations of characters. */
     Uint8 const *sdlstate = SDL_GetKeyboardState(nullptr);
-#   elif USE_OLD_SDL
-    Uint8 *sdlstate = SDL_GetKeyState(nullptr);
-#   endif
 
     int keyindex = 0;
 #       define KEY_FUNC(name, index) \
             m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
         /* FIXME: we ignore SDLK_WORLD_0, which means our list of
          * keys and SDL's list of keys could be out of sync. */
-#    include "input/keys.h"
-#    undef KEY_FUNC
+#       include "input/keys.h"
+#       undef KEY_FUNC
+
+#   elif USE_OLD_SDL
+    Uint8 *sdlstate = SDL_GetKeyState(nullptr);
+
+    int keyindex = 0;
+#       define KEY_FUNC(name, index) \
+            m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
+        /* FIXME: we ignore SDLK_WORLD_0, which means our list of
+         * keys and SDL's list of keys could be out of sync. */
+#       include "input/keys.h"
+#       undef KEY_FUNC
+#   endif
+
 
 #else
     UNUSED(seconds);
