@@ -285,7 +285,6 @@
     <ClInclude Include="input\input.h" />
     <ClInclude Include="input\input_internal.h" />
     <ClInclude Include="input\keys.h" />
-    <ClInclude Include="input\scancodes.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />

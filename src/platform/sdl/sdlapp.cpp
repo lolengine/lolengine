@@ -181,7 +181,7 @@ SdlApp::~SdlApp()
     SDL_Quit();
 #elif USE_OLD_SDL
     if (data->m_window)
-        SDL_DestroySurface(data->m_window);
+        SDL_FreeSurface(data->m_window);
     SDL_Quit();
 #endif
 

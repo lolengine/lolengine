@@ -28,40 +28,57 @@ array<String> InputDevice::GetAvailableDevices()
     return result;
 }
 
-void InputDeviceInternal::AddKey(const char* name)
+void InputDeviceInternal::AddKey(int index, const char* name)
 {
-    m_keynames.Push(name);
-    m_keys.Push(false);
+    if (index == -1)
+        index = m_keynames.Count();
+
+    while (index >= m_keynames.Count())
+    {
+        m_keynames.Push(name);
+        m_keys.Push(false);
+    }
+
+    m_keynames.Last() = name;
 }
 
-void InputDeviceInternal::AddAxis(const char* name, float sensitivity)
+void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
 {
-    m_axisnames.Push(name);
-    m_axis.Push(0.0f, sensitivity);
+    if (index == -1)
+        index = m_axisnames.Count();
+
+    while (index >= m_axisnames.Count())
+    {
+        m_axisnames.Push(name);
+        m_axis.Push(0.0f, 1.0f);
+    }
+
+    m_axisnames.Last() = name;
+    m_axis.Last().m1 = 0.0f;
+    m_axis.Last().m2 = sensitivity;
 }
 
-void InputDeviceInternal::AddCursor(const char* name)
+void InputDeviceInternal::AddCursor(int index, const char* name)
 {
-    m_cursornames.Push(name);
-    m_cursors.Push(vec2::zero, ivec2::zero);
+    if (index == -1)
+        index = m_cursornames.Count();
+
+    while (index >= m_cursornames.Count())
+    {
+        m_cursornames.Push(name);
+        m_cursors.Push(vec2::zero, ivec2::zero);
+    }
+
+    m_cursornames.Last() = name;
 }
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 {
     InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.C());
 
-#if USE_OLD_SDL
-    /* TODO: deprecate this */
-#   define KEY_FUNC(key, value) \
-        keyboard->AddKey(#key);
+    /* Register all scancodes known to SDL (from the USB standard) */
+#   define _SC(id, str, name) keyboard->AddKey(id, #name);
 #   include "input/keys.h"
-#   undef KEY_FUNC
-#else
-    /* "value" is unused, what matters is the index. */
-#   define _SC(value, str, name) \
-        keyboard->AddKey(#name);
-#   include "input/scancodes.h"
-#endif
 
     return keyboard;
 }

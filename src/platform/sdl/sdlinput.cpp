@@ -37,6 +37,20 @@
 namespace lol
 {
 
+#if USE_OLD_SDL
+/* Quick and dirty for now... This is deprecated anyway. */
+static int sdl12_to_scancode(int ch, int sc)
+{
+    if (ch >= 'a' && ch <= 'z')
+        ch = ch - 'a' + 'A';
+
+#   define _SC(id, str, name) if (ch == str[0]) return id;
+#   include "input/keys.h"
+
+    return 0;
+}
+#endif
+
 /*
  * SDL Input implementation class
  */
@@ -199,12 +213,21 @@ void SdlInputData::Tick(float seconds)
         case SDL_QUIT:
             Ticker::Shutdown();
             break;
-#if 0
+
         case SDL_KEYDOWN:
-            if (event.key.keysym.unicode)
-                fprintf(stderr, "%c (0x%04X)\n", event.key.keysym.unicode, event.key.keysym.unicode);
-            break;
+        case SDL_KEYUP:
+#if USE_OLD_SDL
+            if (int sc = sdl12_to_scancode(event.key.keysym.sym,
+                                           event.key.keysym.scancode))
+#else
+            if (int sc = event.key.keysym.scancode)
 #endif
+                m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
+            else
+                Log::Error("unknown keypress (sym 0x%02x, scancode %0d)\n",
+                           event.key.keysym.sym, event.key.keysym.scancode);
+            break;
+
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
@@ -279,25 +302,6 @@ void SdlInputData::Tick(float seconds)
     }
 
     m_prevmouse = mouse;
-
-#   if USE_SDL
-    Uint8 const *sdlstate = SDL_GetKeyboardState(nullptr);
-    int keyindex = 0;
-#       define _SC(value, str, name) \
-            m_keyboard->SetKey(keyindex++, sdlstate[value] != 0);
-#       include "input/scancodes.h"
-
-#   elif USE_OLD_SDL
-    Uint8 *sdlstate = SDL_GetKeyState(nullptr);
-    int keyindex = 0;
-#       define KEY_FUNC(name, index) \
-            m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
-        /* FIXME: we ignore SDLK_WORLD_0, which means our list of
-         * keys and SDL's list of keys could be out of sync. */
-#       include "input/keys.h"
-#       undef KEY_FUNC
-#   endif
-
 
 #else
     UNUSED(seconds);
