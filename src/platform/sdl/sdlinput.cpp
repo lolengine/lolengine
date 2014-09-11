@@ -281,21 +281,14 @@ void SdlInputData::Tick(float seconds)
     m_prevmouse = mouse;
 
 #   if USE_SDL
-    /* FIXME: the keyboard state now has scancodes rather than
-     * ASCII representations of characters. */
     Uint8 const *sdlstate = SDL_GetKeyboardState(nullptr);
-
     int keyindex = 0;
-#       define KEY_FUNC(name, index) \
-            m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);
-        /* FIXME: we ignore SDLK_WORLD_0, which means our list of
-         * keys and SDL's list of keys could be out of sync. */
-#       include "input/keys.h"
-#       undef KEY_FUNC
+#       define _SC(value, str, name) \
+            m_keyboard->SetKey(keyindex++, sdlstate[value] != 0);
+#       include "input/scancodes.h"
 
 #   elif USE_OLD_SDL
     Uint8 *sdlstate = SDL_GetKeyState(nullptr);
-
     int keyindex = 0;
 #       define KEY_FUNC(name, index) \
             m_keyboard->SetKey(keyindex++, sdlstate[index] != 0);

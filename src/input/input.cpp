@@ -49,11 +49,20 @@ void InputDeviceInternal::AddCursor(const char* name)
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 {
     InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.C());
-    /* "value" is unused, what matters is the index. */
+
+#if USE_OLD_SDL
+    /* TODO: deprecate this */
 #   define KEY_FUNC(key, value) \
         keyboard->AddKey(#key);
 #   include "input/keys.h"
 #   undef KEY_FUNC
+#else
+    /* "value" is unused, what matters is the index. */
+#   define _SC(value, str, name) \
+        keyboard->AddKey(#name);
+#   include "input/scancodes.h"
+#endif
+
     return keyboard;
 }
 
