@@ -738,6 +738,9 @@
     <ClInclude Include="input\keys.h">
       <Filter>input</Filter>
     </ClInclude>
+    <ClInclude Include="input\scancodes.h">
+      <Filter>input</Filter>
+    </ClInclude>
     <ClInclude Include="input\controller.h">
       <Filter>input</Filter>
     </ClInclude>
