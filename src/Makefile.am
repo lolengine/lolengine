@@ -93,7 +93,7 @@ liblolcore_sources = \
     gpu/rendercontext.cpp \
     \
     input/input.cpp input/input.h input/input_internal.h input/keys.h \
-    input/scancodes.h input/controller.cpp input/controller.h \
+    input/controller.cpp input/controller.h \
     \
     gpu/defaultmaterial.lolfx \
     gpu/tile.lolfx gpu/palette.lolfx gpu/line.lolfx \
