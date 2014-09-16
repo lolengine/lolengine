@@ -28,6 +28,13 @@ array<String> InputDevice::GetAvailableDevices()
     return result;
 }
 
+String InputDevice::GetText()
+{
+    String ret = m_text;
+    m_text = "";
+    return ret;
+}
+
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)

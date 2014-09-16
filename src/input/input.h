@@ -26,19 +26,19 @@ public:
     }
 
     /** Gets the index of the corresponding key, needed to call GetKey */
-    ptrdiff_t GetKeyIndex(const char* name) const
+    ptrdiff_t GetKeyIndex(String const &name) const
     {
         return GetItemIndex(name, m_keynames);
     }
 
     /** Gets the index of the corresponding axis, needed to call GetAxis */
-    ptrdiff_t GetAxisIndex(const char* name) const
+    ptrdiff_t GetAxisIndex(String const &name) const
     {
         return GetItemIndex(name, m_axisnames);
     }
 
     /** Gets the index of the corresponding cursor, needed to call GetCursor */
-    ptrdiff_t GetCursorIndex(const char* name) const
+    ptrdiff_t GetCursorIndex(String const &name) const
     {
         return GetItemIndex(name, m_cursornames);
     }
@@ -49,6 +49,9 @@ public:
     {
         return m_keys[index];
     }
+
+    /** Gets the latest contents of text input. */
+    String GetText();
 
     /** Gets the current value of the given axis. Devices should try to
       * clamp this value between -1 and 1, though it is not guaranteed. */
@@ -107,7 +110,7 @@ public:
     static array<String> GetAvailableDevices();
 
     /** Gets an input device by its name */
-    static InputDevice* Get(const char* name)
+    static InputDevice* Get(String const &name)
     {
         return GetDevice(name);
     }
@@ -127,18 +130,21 @@ protected:
     array<String> m_axisnames;
     array<String> m_cursornames;
 
-    /** key states (pressed/released) */
+    /** Key states (pressed/released) */
     array<bool> m_keys;
 
-    /** axis states (value and sensitivity) */
+    /** Text input state */
+    String m_text;
+
+    /** Axis states (value and sensitivity) */
     array<float, float> m_axis;
 
-    /** cursor position */
+    /** Cursor position */
     array<vec2, ivec2> m_cursors;
 
     static bool m_capturemouse;
 
-    InputDevice(const char* name) : m_name(name)
+    InputDevice(String const &name) : m_name(name)
     {
         devices.Push(this);
     }
@@ -159,7 +165,7 @@ private:
     static array<InputDevice*> devices;
 
     template <typename... T>
-    ptrdiff_t GetItemIndex(const char* name, const array<String, T...>& a) const
+    ptrdiff_t GetItemIndex(String const &name, const array<String, T...>& a) const
     {
         for (ptrdiff_t i = 0; i < a.Count(); ++i)
         {
@@ -169,7 +175,7 @@ private:
         return -1;
     }
 
-    static InputDevice* GetDevice(const char* name)
+    static InputDevice* GetDevice(String const &name)
     {
         for (ptrdiff_t i = 0; i < devices.Count(); ++i)
         {
