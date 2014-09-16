@@ -47,6 +47,11 @@ public:
         m_keys[id] = state;
     }
 
+    void AddText(String const &text)
+    {
+        m_text += text;
+    }
+
     void SetAxis(int id, float value)
     {
         m_axis[id].m1 = value;
