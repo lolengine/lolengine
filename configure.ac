@@ -562,6 +562,7 @@ AC_CONFIG_FILES(
   people/touky/Makefile
   people/touky/sprite_sorter/Makefile
   people/touky/squad_shooter/Makefile
+  people/touky/top_shooter/Makefile
   people/touky/touky_demo/Makefile
   people/touky/tactics/Makefile
   people/touky/the_unfortunate_voronoid/Makefile
