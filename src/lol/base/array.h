@@ -481,6 +481,22 @@ public:
         }
         ++this->m_count;
     }
+    inline void Insert(ptrdiff_t pos, T... args)
+    {
+        ASSERT(pos >= 0);
+        ASSERT(pos <= m_count);
+
+        if (m_count >= m_reserved)
+            Grow();
+
+        for (ptrdiff_t i = m_count; i > pos; --i)
+        {
+            new (&m_data[i]) element_t(m_data[i - 1]);
+            m_data[i - 1].~element_t();
+        }
+        new (&this->m_data[pos]) tuple<T...>({ args... });
+        ++m_count;
+    }
 };
 
 template<typename T>
