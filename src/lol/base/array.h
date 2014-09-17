@@ -484,18 +484,18 @@ public:
     inline void Insert(ptrdiff_t pos, T... args)
     {
         ASSERT(pos >= 0);
-        ASSERT(pos <= m_count);
+        ASSERT(pos <= this->m_count);
 
-        if (m_count >= m_reserved)
-            Grow();
+        if (this->m_count >= this->m_reserved)
+            this->Grow();
 
-        for (ptrdiff_t i = m_count; i > pos; --i)
+        for (ptrdiff_t i = this->m_count; i > pos; --i)
         {
-            new (&m_data[i]) element_t(m_data[i - 1]);
-            m_data[i - 1].~element_t();
+            new (&this->m_data[i]) element_t(this->m_data[i - 1]);
+            this->m_data[i - 1].~element_t();
         }
         new (&this->m_data[pos]) tuple<T...>({ args... });
-        ++m_count;
+        ++this->m_count;
     }
 };
 
