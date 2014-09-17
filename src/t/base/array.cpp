@@ -188,33 +188,28 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(7, a[2]);
         lolunit_assert_equal(2, a[3]);
         lolunit_assert_equal(6, a[4]);
+    }
 
-        /*
-        array<int, int, int> b;
-        b.Insert(0, 5, 6, 7);
+    lolunit_declare_test(ArrayInsertTuple)
+    {
+        array<int, float, String> b;
+        b.Insert(0, 5, 6.f, "lol");
         lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6, b[0].m2);
-        lolunit_assert_equal(7, b[0].m3);
+        lolunit_assert_equal(6.f, b[0].m2);
 
-        b.Insert(1, 8, 9, 6);
+        b.Insert(1, 8, 9.f, "hi there");
         lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6, b[0].m2);
-        lolunit_assert_equal(7, b[0].m3);
+        lolunit_assert_equal(6.f, b[0].m2);
         lolunit_assert_equal(8, b[1].m1);
-        lolunit_assert_equal(9, b[1].m2);
-        lolunit_assert_equal(6, b[1].m3);
+        lolunit_assert_equal(9.f, b[1].m2);
 
-        b.Insert(1, 4, 5, 3);
+        b.Insert(1, 4, 5.f, "anyone home?");
         lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6, b[0].m2);
-        lolunit_assert_equal(7, b[0].m3);
-        lolunit_assert_equal(4, b[2].m1);
-        lolunit_assert_equal(5, b[2].m2);
-        lolunit_assert_equal(3, b[2].m3);
+        lolunit_assert_equal(6.f, b[0].m2);
+        lolunit_assert_equal(4, b[1].m1);
+        lolunit_assert_equal(5.f, b[1].m2);
         lolunit_assert_equal(8, b[2].m1);
-        lolunit_assert_equal(9, b[2].m2);
-        lolunit_assert_equal(6, b[2].m3);
-        */
+        lolunit_assert_equal(9.f, b[2].m2);
     }
 
     lolunit_declare_test(ArrayConcat)

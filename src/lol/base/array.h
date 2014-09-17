@@ -481,11 +481,11 @@ public:
         }
         ++this->m_count;
     }
-    /*
+
     inline void Insert(ptrdiff_t pos, T... args)
     {
-        //ASSERT(pos >= 0);
-        //ASSERT(pos <= this->m_count);
+        ASSERT(pos >= 0);
+        ASSERT(pos <= this->m_count);
 
         if (this->m_count >= this->m_reserved)
             this->Grow();
@@ -498,7 +498,6 @@ public:
         new (&this->m_data[pos]) tuple<T...>({ args... });
         ++this->m_count;
     }
-    */
 };
 
 template<typename T>
