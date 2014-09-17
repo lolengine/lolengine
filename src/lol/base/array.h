@@ -481,6 +481,7 @@ public:
         }
         ++this->m_count;
     }
+    /*
     inline void Insert(ptrdiff_t pos, T... args)
     {
         //ASSERT(pos >= 0);
@@ -497,6 +498,7 @@ public:
         new (&this->m_data[pos]) tuple<T...>({ args... });
         ++this->m_count;
     }
+    */
 };
 
 template<typename T>
