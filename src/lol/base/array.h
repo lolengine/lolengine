@@ -483,8 +483,8 @@ public:
     }
     inline void Insert(ptrdiff_t pos, T... args)
     {
-        ASSERT(pos >= 0);
-        ASSERT(pos <= this->m_count);
+        //ASSERT(pos >= 0);
+        //ASSERT(pos <= this->m_count);
 
         if (this->m_count >= this->m_reserved)
             this->Grow();
