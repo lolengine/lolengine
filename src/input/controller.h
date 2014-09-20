@@ -35,10 +35,12 @@ public:
     /** Unbind a previously bound physical device and key. Returns true if the binding was existing. */
     bool Unbind(const String& device_name, const String& key_name);
     /* Small helpers */
-    void BindMouse(const String& key_name)        { Bind(g_name_mouse, key_name); }
-    void BindKeyboard(const String& key_name)     { Bind(g_name_keyboard, key_name); }
-    bool UnbindMouse(const String& key_name)      { return Unbind(g_name_mouse, key_name); }
-    bool UnbindKeyboard(const String& key_name)   { return Unbind(g_name_mouse, key_name); }
+    void BindMouse(const String& key_name)                          { Bind(g_name_mouse, key_name); }
+    void BindKeyboard(const String& key_name)                       { Bind(g_name_keyboard, key_name); }
+    void BindJoystick(const uint64_t num, const String& key_name)   { Bind(g_name_joystick(num), key_name); }
+    bool UnbindMouse(const String& key_name)                        { return Unbind(g_name_mouse, key_name); }
+    bool UnbindKeyboard(const String& key_name)                     { return Unbind(g_name_keyboard, key_name); }
+    bool UnbindJoystick(const uint64_t num, const String& key_name) { return Unbind(g_name_joystick(num), key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
@@ -98,6 +100,13 @@ public:
     bool UnbindMouse(const String& axis_name)                                   { return Unbind(g_name_mouse, axis_name); }
     bool UnbindMouseKey(const String& key_name)                                 { return UnbindKey(g_name_mouse, key_name); }
     bool UnbindMouseKeys(const String& min_key_name, const String& max_key_name){ return UnbindKeys(g_name_mouse, min_key_name, max_key_name); }
+    /* */
+    void BindJoystick(const uint64_t num, const String& axis_name)                                     { Bind(g_name_joystick(num), axis_name); }
+    void BindJoystickKey(const uint64_t num, const String& key_name)                                   { BindKey(g_name_joystick(num), key_name); }
+    void BindJoystickKeys(const uint64_t num, const String& min_key_name, const String& max_key_name)  { BindKeys(g_name_joystick(num), min_key_name, max_key_name); }
+    bool UnbindJoystick(const uint64_t num, const String& axis_name)                                   { return Unbind(g_name_joystick(num), axis_name); }
+    bool UnbindJoystickKey(const uint64_t num, const String& key_name)                                 { return UnbindKey(g_name_joystick(num), key_name); }
+    bool UnbindJoystickKeys(const uint64_t num, const String& min_key_name, const String& max_key_name){ return UnbindKeys(g_name_joystick(num), min_key_name, max_key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
@@ -122,7 +131,7 @@ protected:
 class Controller : public Entity
 {
 public:
-    Controller(char const* name, int nb_keys, int nb_axis);
+    Controller(String const &name, int nb_keys, int nb_axis);
     ~Controller();
 
     virtual void TickGame(float seconds);
@@ -137,7 +146,7 @@ public:
     KeyBinding& GetKey(int index) { return m_keys[index]; }
     AxisBinding& GetAxis(int index) { return m_axis[index]; }
 
-    static Controller* Get(char const* name);
+    static Controller* Get(String const &name);
 
 protected:
     array<KeyBinding> m_keys;

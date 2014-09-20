@@ -17,6 +17,18 @@ namespace lol
 
 extern map<int64_t, String> BuildEnumMap(char const *str, char const **custom);
 
+class Enum
+{
+public:
+    template<typename T>
+    static String EnumToString(T& parameter)
+    {
+        //Create your own
+        ASSERT(0);
+        return String();
+    }
+};
+
 template<typename BASE, typename T = typename BASE::Type>
 class SafeEnum : public BASE
 {
