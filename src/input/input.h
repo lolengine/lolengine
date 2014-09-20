@@ -13,8 +13,47 @@
 namespace lol
 {
 
+const String g_name_max("MAX");
 const String g_name_mouse("Mouse");
 const String g_name_keyboard("Keyboard");
+static String g_name_joystick(const uint64_t num)
+{
+    return String::Printf("Joystick%i", num);
+}
+
+//Mouse default buttons/axis
+const String g_name_mouse_key_left("Left");
+const String g_name_mouse_key_middle("Middle");
+const String g_name_mouse_key_right("Right");
+const String g_name_mouse_key_inScreen("InScreen");
+const String g_name_mouse_axis_x("X");
+const String g_name_mouse_axis_y("Y");
+const String g_name_mouse_axis_xpixel("XPixel");
+const String g_name_mouse_axis_ypixel("YPixel");
+const String g_name_mouse_axis_scroll("Scroll");
+const String g_name_mouse_cursor("Cursor");
+
+//Xbox default buttons/axis
+const String g_name_xbox_key_dpad_up("DPadUp");
+const String g_name_xbox_key_dpad_down("DPadDown");
+const String g_name_xbox_key_dpad_left("DPadLeft");
+const String g_name_xbox_key_dpad_right("DPadRight");
+const String g_name_xbox_key_left_thumb("LeftThumb");
+const String g_name_xbox_key_right_thumb("RightThumb");
+const String g_name_xbox_key_left_shoulder("LeftShoulder");
+const String g_name_xbox_key_right_shoulder("Rightshoulder");
+const String g_name_xbox_key_a("A");
+const String g_name_xbox_key_b("B");
+const String g_name_xbox_key_x("X");
+const String g_name_xbox_key_y("Y");
+const String g_name_xbox_key_start("Start");
+const String g_name_xbox_key_back("Back");
+const String g_name_xbox_axis_left_x("Axis1");
+const String g_name_xbox_axis_left_y("Axis2");
+const String g_name_xbox_axis_right_x("Axis3");
+const String g_name_xbox_axis_right_y("Axis4");
+const String g_name_xbox_axis_left_trigger("Axis5");
+const String g_name_xbox_axis_right_trigger("Axis6");
 
 class InputDevice
 {
@@ -115,6 +154,20 @@ public:
         return GetDevice(name);
     }
 
+    /** Default helpers */
+    static InputDevice* GetKeyboard()
+    {
+        return GetDevice(g_name_keyboard);
+    }
+    static InputDevice* GetMouse()
+    {
+        return GetDevice(g_name_mouse);
+    }
+    static InputDevice* GetJoystick(const uint64_t num)
+    {
+        return GetDevice(g_name_joystick(num));
+    }
+
     /** Sets whether the mouse cursor should be captured. */
     static void CaptureMouse(bool activated)
     {
@@ -146,7 +199,7 @@ protected:
 
     InputDevice(String const &name) : m_name(name)
     {
-        devices.Push(this);
+        devices.PushUnique(this);
     }
 
     ~InputDevice()

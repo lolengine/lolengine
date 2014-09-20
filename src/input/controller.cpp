@@ -225,7 +225,7 @@ float AxisBinding::RetrieveCurrentValue()
 
 array<Controller*> Controller::controllers;
 
-Controller::Controller(char const* name, int nb_keys, int nb_axis)
+Controller::Controller(String const &name, int nb_keys, int nb_axis)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
     m_name = name;
@@ -236,7 +236,7 @@ Controller::Controller(char const* name, int nb_keys, int nb_axis)
     m_active = false;
     if (Get(name) != nullptr)
     {
-        Log::Warn("controller “%s” has already been registered", name);
+        Log::Warn("controller “%s” has already been registered", name.C());
     }
     controllers.Push(this);
 }
@@ -253,7 +253,7 @@ Controller::~Controller()
     }
 }
 
-Controller* Controller::Get(char const* name)
+Controller* Controller::Get(String const &name)
 {
     for (int i = 0; i < controllers.Count(); ++i)
     {

@@ -17,6 +17,10 @@ namespace lol
  * Safe enum helpers
  */
 
+map<int64_t, String> BuildEnumMap(String const &str, char const **custom)
+{
+    return BuildEnumMap(str.C(), custom);
+}
 map<int64_t, String> BuildEnumMap(char const *str, char const **custom)
 {
     map<int64_t, String> ret;

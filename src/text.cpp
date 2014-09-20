@@ -60,7 +60,6 @@ void Text::SetPos(vec3 pos)
     data->pos = pos;
 }
 
-
 vec3 Text::GetPos()
 {
     return (vec3)data->pos;
@@ -69,6 +68,12 @@ vec3 Text::GetPos()
 void Text::SetAlign(int align)
 {
     data->align = align;
+}
+
+ivec2 Text::GetFontSize()
+{
+    Font *font = Forge::GetFont(data->font);
+    return font->GetSize();
 }
 
 void Text::TickDraw(float seconds, Scene &scene)

@@ -93,19 +93,19 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
 {
     InputDeviceInternal* mouse = new InputDeviceInternal(g_name_mouse.C());
-    mouse->AddKey("Left");
-    mouse->AddKey("Middle");
-    mouse->AddKey("Right");
+    mouse->AddKey(g_name_mouse_key_left.C());
+    mouse->AddKey(g_name_mouse_key_middle.C());
+    mouse->AddKey(g_name_mouse_key_right.C());
     //Added to manage if mouse is in the screen or not.
-    mouse->AddKey("InScreen");
+    mouse->AddKey(g_name_mouse_key_inScreen.C());
 
-    mouse->AddAxis("X");
-    mouse->AddAxis("Y");
-    mouse->AddAxis("XPixel");
-    mouse->AddAxis("YPixel");
-    mouse->AddAxis("Scroll");
+    mouse->AddAxis(g_name_mouse_axis_x.C());
+    mouse->AddAxis(g_name_mouse_axis_y.C());
+    mouse->AddAxis(g_name_mouse_axis_xpixel.C());
+    mouse->AddAxis(g_name_mouse_axis_ypixel.C());
+    mouse->AddAxis(g_name_mouse_axis_scroll.C());
 
-    mouse->AddCursor("Cursor");
+    mouse->AddCursor(g_name_mouse_cursor.C());
 
     // TODO: extended button, and wheel (as axis or as buttons? or both?)
     return mouse;

@@ -54,23 +54,28 @@ D3d9Input::D3d9Input()
             continue;
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
         InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
-        for (int j = 0; j < 4; ++j)
-            stick->AddAxis(String::Printf("Axis%d", j+1).C());
 
-        stick->AddKey("DPadUp");
-        stick->AddKey("DPadDown");
-        stick->AddKey("DPadLeft");
-        stick->AddKey("DPadRight");
-        stick->AddKey("Start");
-        stick->AddKey("Back");
-        stick->AddKey("LeftThumb");
-        stick->AddKey("RightThumb");
-        stick->AddKey("LeftShoulder");
-        stick->AddKey("RightShoulder");
-        stick->AddKey("A");
-        stick->AddKey("B");
-        stick->AddKey("X");
-        stick->AddKey("Y");
+        stick->AddAxis(g_name_xbox_axis_left_x.C());
+        stick->AddAxis(g_name_xbox_axis_left_y.C());
+        stick->AddAxis(g_name_xbox_axis_right_x.C());
+        stick->AddAxis(g_name_xbox_axis_right_y.C());
+        stick->AddAxis(g_name_xbox_axis_left_trigger.C());
+        stick->AddAxis(g_name_xbox_axis_right_trigger.C());
+
+        stick->AddKey(g_name_xbox_key_dpad_up.C());
+        stick->AddKey(g_name_xbox_key_dpad_down.C());
+        stick->AddKey(g_name_xbox_key_dpad_left.C());
+        stick->AddKey(g_name_xbox_key_dpad_right.C());
+        stick->AddKey(g_name_xbox_key_start.C());
+        stick->AddKey(g_name_xbox_key_back.C());
+        stick->AddKey(g_name_xbox_key_left_thumb.C());
+        stick->AddKey(g_name_xbox_key_right_thumb.C());
+        stick->AddKey(g_name_xbox_key_left_shoulder.C());
+        stick->AddKey(g_name_xbox_key_right_shoulder.C());
+        stick->AddKey(g_name_xbox_key_a.C());
+        stick->AddKey(g_name_xbox_key_b.C());
+        stick->AddKey(g_name_xbox_key_x.C());
+        stick->AddKey(g_name_xbox_key_y.C());
 
         m_data->m_joysticks.Push(i, stick);
     }
@@ -107,6 +112,8 @@ void D3d9Input::TickGame(float seconds)
         m_data->m_joysticks[i].m2->SetAxis(1, -(float)state.Gamepad.sThumbLY / 32768.f);
         m_data->m_joysticks[i].m2->SetAxis(2, (float)state.Gamepad.sThumbRX / 32768.f);
         m_data->m_joysticks[i].m2->SetAxis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
+        m_data->m_joysticks[i].m2->SetAxis(4, (float)state.Gamepad.bLeftTrigger / 32768.f);
+        m_data->m_joysticks[i].m2->SetAxis(5, (float)state.Gamepad.bRightTrigger / 32768.f);
 
         for (int b = 0; b < 16; b++)
         {

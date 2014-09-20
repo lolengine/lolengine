@@ -33,6 +33,7 @@ public:
     void SetPos(vec3 pos);
     vec3 GetPos();
     void SetAlign(int align);
+    ivec2 GetFontSize();
 
     enum
     {
