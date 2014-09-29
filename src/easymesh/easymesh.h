@@ -33,12 +33,6 @@ LOL_SAFE_ENUM(CSGUsage,
     Xor
 );
 
-LOL_SAFE_ENUM(Axis,
-    X,
-    Y,
-    Z
-);
-
 LOL_SAFE_ENUM(MeshTransform,
     Taper,
     Twist,

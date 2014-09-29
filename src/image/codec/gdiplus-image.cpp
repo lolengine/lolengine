@@ -207,11 +207,12 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     }
 
     u8vec4 *psrc = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *psrc0 = psrc;
     u8vec4 *pdst = static_cast<u8vec4 *>(bdata.Scan0);
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
             *pdst++ = (*psrc++).bgra;
-    image->Unlock(pdst);
+    image->Unlock(psrc0);
     b->UnlockBits(&bdata);
 
     if (b->Save(wpath, &clsid, nullptr) != Gdiplus::Ok)

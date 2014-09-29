@@ -339,8 +339,9 @@ void TickerData::GameThreadTick()
     }
 
     /* Tick objects for the game loop */
-    for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END; ++g)
-        for (int i = 0; i < data->m_list[g].Count(); ++i)
+    for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)
+    {
+        for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
         {
             Entity *e = data->m_list[g][i];
 
@@ -361,6 +362,7 @@ void TickerData::GameThreadTick()
 #endif
             }
         }
+    }
 
     Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
@@ -370,7 +372,7 @@ void TickerData::DrawThreadTick()
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
     /* Tick objects for the draw loop */
-    for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END; ++g)
+    for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
         switch (g)
         {
@@ -382,7 +384,8 @@ void TickerData::DrawThreadTick()
             break;
         }
 
-        for (int i = 0; i < data->m_list[g].Count(); ++i)
+        //Stop as soon as required
+        for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
         {
             Entity *e = data->m_list[g][i];
 

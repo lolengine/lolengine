@@ -98,7 +98,8 @@ vec3 Debug::ScreenToWorld(vec3 pos, mat4 view, mat4 proj)
 }
 
 //Draw stuff in World
-//-- LINE: 3D -2D - 3D_to_2D
+//-- LINE: 3D -2D - 3D_to_2D --------------------------------------------------
+
 void Debug::DrawLine(vec3 a, vec3 b)                                { Debug::DrawLine(a, b, g_scene->GetLineColor()); }
 void Debug::DrawLine(vec2 a, vec3 b, float az)                      { Debug::DrawLine(a, b, g_scene->GetLineColor(), az); }
 void Debug::DrawLine(vec2 a, vec2 b, float az, float bz)            { Debug::DrawLine(a, b, g_scene->GetLineColor(), az, bz); }
@@ -106,7 +107,56 @@ void Debug::DrawLine(vec3 a, vec3 b, vec4 color)                    { g_scene->A
 void Debug::DrawLine(vec2 a, vec3 b, vec4 color, float az)          { g_scene->AddLine(a, b, color, az); }
 void Debug::DrawLine(vec2 a, vec2 b, vec4 color, float az, float bz){ g_scene->AddLine(a, b, color, az, bz); }
 
-//-- ARROW: 3D -2D - 3D_to_2D
+//-- GIZMO --------------------------------------------------------------------
+void Debug::DrawGizmo(vec3 pos, vec3 x, vec3 y, vec3 z, float size)
+{
+    Debug::DrawLine(pos, pos + x * size, Color::red);
+    Debug::DrawLine(pos, pos + y * size, Color::green);
+    Debug::DrawLine(pos, pos + z * size, Color::blue);
+}
+void Debug::DrawGizmo(vec2 pos, vec3 x, vec3 y, vec3 z, float size, float posz)
+{
+    Debug::DrawLine(pos, pos + x.xy * size, Color::red, posz, posz + x.z * size);
+    Debug::DrawLine(pos, pos + y.xy * size, Color::green, posz, posz + y.z * size);
+    Debug::DrawLine(pos, pos + z.xy * size, Color::blue, posz, posz + z.z * size);
+}
+
+//-- GRID ---------------------------------------------------------------------
+void Debug::DrawGrid(vec3 pos, vec3 x, vec3 y, vec3 z, float size, bool draw_3d)
+{
+    float seg_sz = g_scene->GetLineSegmentSize();
+    int seg_nb = lol::max((int)(size / seg_sz), 1);
+    seg_sz = size / (float)seg_nb;
+
+    //Draw Gizmo
+    Debug::DrawGizmo(pos, x, y, z, size);
+    Debug::DrawLine(pos, pos - x * size, Color::gray);
+    Debug::DrawLine(pos, pos - y * size, Color::gray);
+    Debug::DrawLine(pos, pos - z * size, Color::gray);
+
+    //grid
+    for (float i = -seg_nb; i <= seg_nb; i++)
+    {
+        if (i != 0)
+        {
+            float iter = seg_sz * ((float)i);
+            Debug::DrawLine(vec3(-size, 0, iter), vec3(size, 0, iter), Color::gray_dark);
+            Debug::DrawLine(vec3(iter, 0, -size), vec3(iter, 0, size), Color::gray_dark);
+
+            if (draw_3d)
+            {
+                Debug::DrawLine(vec3(0, -size, iter), vec3(0, size, iter), Color::gray_dark);
+                Debug::DrawLine(vec3(0, iter, -size), vec3(0, iter, size), Color::gray_dark);
+
+                Debug::DrawLine(vec3(-size, iter, 0), vec3(size, iter, 0), Color::gray_dark);
+                Debug::DrawLine(vec3(iter, -size, 0), vec3(iter, size, 0), Color::gray_dark);
+            }
+        }
+    }
+
+}
+
+//-- ARROW: 3D -2D - 3D_to_2D -------------------------------------------------
 void Debug::DrawArrow(vec3 a, vec3 b, vec2 s)                       { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y)); }
 void Debug::DrawArrow(vec2 a, vec3 b, vec2 s, float az)             { Debug::DrawArrow(a, b.xy, vec3(s.x, s.y, s.y), az, b.z); }
 void Debug::DrawArrow(vec2 a, vec2 b, vec2 s, float az, float bz)   { Debug::DrawArrow(a, b, vec3(s.x, s.y, s.y), az, bz); }
@@ -161,7 +211,7 @@ void Debug::DrawArrow(vec2 a, vec2 b, vec3 s, vec4 color, float az, float bz)
     Debug::DrawLine(b - (z + y).xy, b - (z - y).xy, color, bz - (z + y).z, bz - (z - y).z);
 }
 
-//-- BOX: 3D -2D - 3D_to_2D
+//-- BOX: 3D -2D - 3D_to_2D ---------------------------------------------------
 void Debug::DrawBox(box3 a)                             { Debug::DrawBox(a.A, a.B, g_scene->GetLineColor()); }
 void Debug::DrawBox(box2 a)                             { Debug::DrawBox(a.A, a.B, g_scene->GetLineColor()); }
 void Debug::DrawBox(box3 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
@@ -219,7 +269,7 @@ void Debug::DrawBox(vec2 a, float s, mat2 transform, vec4 color)
     Debug::DrawBox(a - b, a + b, transform, color);
 }
 
-//-- CIRCLE
+//-- CIRCLE -------------------------------------------------------------------
 void Debug::DrawCircle(vec2 a, float s)                 { Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n)                  { Debug::DrawCircle(a, n, g_scene->GetLineColor()); }
 void Debug::DrawCircle(vec2 a, vec2 s)                  { Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), g_scene->GetLineColor()); }
@@ -274,7 +324,7 @@ void Debug::DrawCircle(vec2 a, vec2 x, vec2 y, vec4 color)
     }
 }
 
-//-- SPHERE
+//-- SPHERE -------------------------------------------------------------------
 void Debug::DrawSphere(vec3 a, float s)                 { Debug::DrawSphere(a, s, g_scene->GetLineColor()); }
 void Debug::DrawSphere(vec3 a, float s, vec4 color)     { Debug::DrawSphere(a, vec3::axis_x * s, vec3::axis_y * s, vec3::axis_z * s, color); }
 void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z)  { Debug::DrawSphere(a, x, y, z, g_scene->GetLineColor()); }
@@ -291,7 +341,7 @@ void Debug::DrawSphere(vec3 a, vec3 x, vec3 y, vec3 z, vec4 color)
     Debug::DrawCircle(a, y, (z - x) * .707f, color);
 }
 
-//-- CAPSULE
+//-- CAPSULE ------------------------------------------------------------------
 void Debug::DrawCapsule(vec3 a, float s, vec3 h)                { Debug::DrawCapsule(a, s, h, g_scene->GetLineColor()); }
 void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h) { Debug::DrawCapsule(a, x, y, z, h, g_scene->GetLineColor()); }
 void Debug::DrawCapsule(vec3 a, float s, vec3 h, vec4 color)
@@ -327,7 +377,7 @@ void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h, vec4 color)
     }
 }
 
-//-- VIEW PROJ
+//-- VIEW PROJ ----------------------------------------------------------------
 void Debug::DrawViewProj(mat4 view, mat4 proj)  { Debug::DrawViewProj(view, proj, g_scene->GetLineColor()); }
 void Debug::DrawViewProj(mat4 view_proj)        { Debug::DrawViewProj(view_proj, g_scene->GetLineColor()); }
 void Debug::DrawViewProj(mat4 view, mat4 proj, vec4 color)

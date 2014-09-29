@@ -103,6 +103,8 @@ void EasyMesh::MeshConvert()
     m_submeshes.Push(new SubMesh(shader, vdecl));
     m_submeshes.Last()->SetIndexBuffer(ibo);
     m_submeshes.Last()->SetVertexBuffer(0, vbo);
+
+    m_state = MeshRender::CanRender;
 }
 
 //-----------------------------------------------------------------------------

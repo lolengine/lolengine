@@ -368,6 +368,7 @@ public:
         m_reserved = toreserve;
     }
 
+    void Shuffle();
     void Sort(int sort);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 

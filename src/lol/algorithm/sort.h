@@ -17,6 +17,18 @@ namespace lol
 {
 
 template<typename T, typename ARRAY>
+void array_base<T, ARRAY>::Shuffle()
+{
+    auto n = Count();
+    auto ni = n;
+    while (n > 0)
+    {
+        ni = lol::rand(n--) | 0;
+        Swap(ni, n);
+    }
+}
+
+template<typename T, typename ARRAY>
 void array_base<T, ARRAY>::Sort(int sort)
 {
     int s = 0;
