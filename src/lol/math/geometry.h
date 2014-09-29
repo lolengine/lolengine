@@ -26,6 +26,18 @@
 namespace lol
 {
 
+struct AxisBase
+{
+    enum Type
+    {
+        X = 0, Y, Z, MAX, XY = 2, XYZ = 3,
+    };
+protected:
+    static inline char const *GetDescription()      { return "X,Y,Z,MAX,XY,XYZ"; }
+    static inline char const **GetCustomString()    { return nullptr; }
+};
+typedef SafeEnum<AxisBase> Axis;
+
 #define LOL_BOX_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<float> suffix; \

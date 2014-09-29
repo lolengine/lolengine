@@ -51,6 +51,11 @@ void DrawLine(vec2 a, vec2 b, float az=-1.f, float bz=-1.f);
 void DrawLine(vec3 a, vec3 b, vec4 color);
 void DrawLine(vec2 a, vec3 b, vec4 color, float az=-1.f);
 void DrawLine(vec2 a, vec2 b, vec4 color, float az=-1.f, float bz=-1.f);
+//-- GIZMO
+void DrawGizmo(vec3 pos, vec3 x, vec3 y, vec3 z, float size);
+void DrawGizmo(vec2 pos, vec3 x, vec3 y, vec3 z, float size, float posz = -1.f);
+//-- GRID
+void DrawGrid(vec3 pos, vec3 x, vec3 y, vec3 z, float size, bool draw_3d=false);
 //-- ARROW
 void DrawArrow(vec3 a, vec3 b, vec2 s);
 void DrawArrow(vec2 a, vec3 b, vec2 s, float az=-1.f);

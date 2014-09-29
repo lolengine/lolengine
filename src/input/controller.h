@@ -114,7 +114,11 @@ public:
 
 
 protected:
-    void Update() { m_previous = m_current; m_current = IsBound() ? RetrieveCurrentValue() : 0.0f; }
+    void Update()
+    {
+        m_previous = m_current;
+        m_current = IsBound() ? RetrieveCurrentValue() : 0.0f;
+    }
     float RetrieveCurrentValue();
 
     /** m1 is the InputDevice, m2 is the axis index on the InputDevice, m3 and m4 are an optional key indices to bind one or two keys over the axis */

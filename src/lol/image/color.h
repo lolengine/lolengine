@@ -327,7 +327,7 @@ public:
     /*
      * Some predefined colours
      */
-    static const vec4 black, red, green, yellow, blue, magenta, cyan, white;
+    static const vec4 black, red, green, yellow, blue, magenta, cyan, white, gray_dark, gray, gray_light;
 };
 
 } /* namespace lol */

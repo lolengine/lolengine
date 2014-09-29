@@ -173,7 +173,7 @@ void Camera::SetPosition(vec3 pos, bool keep_target)
     if (keep_target)
         SetView(pos, GetTarget(), GetUp());
     else
-        SetView(GetView() * mat4::translate(pos - m_position));
+        SetView(GetView() * mat4::translate(m_position - pos));
     m_position = pos;
 }
 
