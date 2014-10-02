@@ -186,7 +186,7 @@ GpuEasyMeshData::~GpuEasyMeshData()
     m_gpudatas.Empty();
     m_vdatas.Empty();
     if (m_ibo)
-        delete(m_ibo);
+        delete m_ibo;
 }
 
 #define BUILD_VFLAG(bool_value, flag_value, check_flag) \

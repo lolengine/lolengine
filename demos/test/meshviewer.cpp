@@ -235,7 +235,7 @@ public:
         if (m_camera)
             g_scene->PopCamera(m_camera);
         if (m_ssetup)
-            delete(m_ssetup);
+            delete m_ssetup;
         MessageService::Destroy();
 
         m_controller = nullptr;
@@ -585,7 +585,7 @@ public:
                         light_datas << LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
 
                     if (m_ssetup)
-                        delete(m_ssetup);
+                        delete m_ssetup;
                     m_ssetup = new_ssetup;
                     m_ssetup->Startup();
 
@@ -616,7 +616,7 @@ public:
                 else
                 {
                     m_ssetup->m_custom_cmd += new_ssetup->m_custom_cmd;
-                    delete(new_ssetup);
+                    delete new_ssetup;
                 }
             }
         }
@@ -639,7 +639,7 @@ public:
                         m_meshes.Push(em, nullptr);
                     }
                     else
-                        delete(em);
+                        delete em;
                 }
             }
         }
@@ -773,7 +773,7 @@ public:
                         newtmp->ExecuteCmdStack(false);
 
                         m_meshes[i].m1 = newtmp;
-                        delete(tmp);
+                        delete tmp;
                     }
                 }
             }

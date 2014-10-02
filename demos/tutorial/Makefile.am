@@ -51,3 +51,7 @@ endif
 12_voronoi_CPPFLAGS = $(AM_CPPFLAGS)
 12_voronoi_DEPENDENCIES = @LOL_DEPS@
 
+13_shader_builder_SOURCES = 13_shader_builder.cpp
+13_shader_builder_CPPFLAGS = $(AM_CPPFLAGS)
+13_shader_builder_DEPENDENCIES = @LOL_DEPS@
+
