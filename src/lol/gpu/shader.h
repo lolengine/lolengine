@@ -52,6 +52,44 @@ LOL_SAFE_ENUM(VertexUsage,
     MAX,
 );
 
+//Enum definitions ------------------------------------------------------------
+struct ShaderVariableBase
+{
+    enum Type
+    {
+        //Main shader parameters
+        Attribute = 0,
+        Uniform,
+        Varying,
+
+        //Passed variables, defined as local main() variables
+        InOut,
+
+        MAX
+    };
+protected:
+    static inline char const *GetDescription()      { return nullptr; }
+    static inline char const **GetCustomString()    { return nullptr; }
+};
+typedef SafeEnum<ShaderVariableBase> ShaderVariable;
+
+struct ShaderProgramBase
+{
+    enum Type
+    {
+        Geometry = 0,
+        Vertex,
+        Pixel,
+
+        MAX
+    };
+protected:
+    static inline char const *GetDescription()      { return nullptr; }
+    static inline char const **GetCustomString()    { return nullptr; }
+};
+typedef SafeEnum<ShaderProgramBase> ShaderProgram;
+
+//ShaderUniform ---------------------------------------------------------------
 struct ShaderUniform
 {
     friend class Shader;
@@ -65,6 +103,7 @@ private:
     uint32_t flags;
 };
 
+//ShaderAttrib ----------------------------------------------------------------
 struct ShaderAttrib
 {
     friend class Shader;
@@ -80,6 +119,7 @@ private:
     uint64_t m_flags;
 };
 
+//TextureUniform --------------------------------------------------------------
 struct TextureUniform
 {
     friend class Shader;
@@ -98,6 +138,7 @@ private:
 
 class ShaderData;
 
+//Shader ----------------------------------------------------------------------
 class Shader : public Entity
 {
 public:
@@ -135,6 +176,81 @@ protected:
 
 private:
     ShaderData *data;
+
+public:
+    static String GetVariablePrefix(const ShaderVariable variable);
+    static String GetVariableQualifier(const ShaderVariable variable);
+    static String GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program);
+    static String GetProgramQualifier(const ShaderProgram program);
+    static String GetProgramOutVariable(const ShaderProgram program);
+    static String GetProgramOutVariableLocal(const ShaderProgram program);
+};
+
+//ShaderBlock -----------------------------------------------------------------
+class ShaderBlock
+{
+    friend class ShaderBuilder;
+
+protected:
+    String m_name;
+
+    //--------------------------
+    //map : <var_name, var_type>
+    //--------------------------
+
+    //Main shader parameters
+    map<String, String> m_parameters[ShaderVariable::MAX];
+
+    //Actual code
+    String m_code_main;
+    String m_code_custom;
+
+public:
+    ShaderBlock(String const& name) : m_name(name) { }
+    ~ShaderBlock() { }
+
+    String const& GetName() { return m_name; }
+    //Sets code that will be used in the main
+    void SetMainCode(String const& code_main) { m_code_main = code_main; }
+    //Sets custom code that will be put before the main -so functions-
+    void SetCustomCode(String const& code_custom) { m_code_custom = code_custom; }
+    //Add parameter to the block
+    void Add(const ShaderVariable variable, String const& type, String const& name);
+
+protected:
+    void AddCallParameters(const ShaderVariable variable, map<String, String> const& variables, String& result);
+    void AddDefinitionParameters(const ShaderVariable variable, const ShaderProgram program, map<String, String>& variables, String& result);
+    void Build(const ShaderProgram program, String& call, String& function);
+};
+
+//Shaderbuilder ---------------------------------------------------------------
+class ShaderBuilder
+{
+protected:
+    String m_name;
+    String m_version;
+    ShaderProgram m_current_program = ShaderProgram::MAX;
+
+    //Blocks
+    array<ShaderBlock*> m_blocks[ShaderProgram::MAX];
+
+    //Final shader parameters
+    map<String, String> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
+
+public:
+    ShaderBuilder(String const& name, String const& version);
+    ~ShaderBuilder();
+
+    String const& GetName();
+    ShaderBuilder& operator<<(const ShaderProgram program);
+    ShaderBuilder& operator<<(ShaderBlock* block);
+
+protected:
+    String AddSlotOutVariableLocal(const ShaderProgram program);
+    void MergeParameters(map<String, String>& variables, map<String, String>& merged);
+
+public:
+    void Build(String& code);
 };
 
 } /* namespace lol */

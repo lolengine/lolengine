@@ -395,7 +395,8 @@ Shader::Shader(String const &name,
         VertexUsage usage = VertexUsage::MAX;
         for (int j = 0; j < (int)VertexUsage::MAX; ++j)
         {
-            if (name.StartsWith(attribute_names[j]))
+            if (name.StartsWith(attribute_names[j]) ||
+                name.StartsWith(String(attribute_names[j]).ToLower()))
             {
                 usage = VertexUsage(j);
                 char* idx_ptr = name.C() + strlen(attribute_names[j]);
@@ -1019,6 +1020,344 @@ String ShaderData::Patch(String const &code, ShaderType type)
     patched_code.Resize(strlen(patched_code.C()));
 
     return patched_code;
+}
+
+static const String g_ret = "\n";
+static const String g_tab = "    ";
+
+//----
+String Shader::GetVariablePrefix(const ShaderVariable variable)
+{
+    switch (variable.ToScalar())
+    {
+        case ShaderVariable::Attribute:  return String("in_");
+        case ShaderVariable::Uniform:    return String("u_");
+        case ShaderVariable::Varying:    return String("pass_");
+        case ShaderVariable::InOut:
+        default: return String();
+    }
+}
+
+//----
+String Shader::GetVariableQualifier(const ShaderVariable variable)
+{
+    switch (variable.ToScalar())
+    {
+        case ShaderVariable::Attribute: return String("attribute");
+        case ShaderVariable::Uniform:   return String("uniform");
+        case ShaderVariable::Varying:   return String("varying");
+        case ShaderVariable::InOut:
+        default: return String();
+    }
+}
+
+//----
+String Shader::GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program)
+{
+    switch (program.ToScalar())
+    {
+        case ShaderProgram::Geometry:
+        {
+            //TODO : L O L ----------------
+            return String();
+        }
+        case ShaderProgram::Vertex:
+        {
+            switch (variable.ToScalar())
+            {
+                case ShaderVariable::Attribute:  return String("in");
+                case ShaderVariable::Uniform:    return String("in");
+                case ShaderVariable::Varying:    return String("inout");
+                case ShaderVariable::InOut:      return String("inout");
+                default: return String();
+            }
+            return String();
+        }
+        case ShaderProgram::Pixel:
+        {
+            switch (variable.ToScalar())
+            {
+                case ShaderVariable::Attribute:  return String("in");
+                case ShaderVariable::Uniform:    return String("in");
+                case ShaderVariable::Varying:    return String("in");
+                case ShaderVariable::InOut:      return String("inout");
+                default: return String();
+            }
+            return String();
+        }
+        default:
+        {
+            return String();
+        }
+    }
+}
+
+//----
+String Shader::GetProgramQualifier(const ShaderProgram program)
+{
+    switch (program.ToScalar())
+    {
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Vertex:   return String("[vert.glsl]");
+        case ShaderProgram::Pixel:    return String("[frag.glsl]");
+        default: return String();
+    }
+}
+
+//----
+String Shader::GetProgramOutVariable(const ShaderProgram program)
+{
+    switch (program.ToScalar())
+    {
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Vertex:   return String("gl_Position");
+        case ShaderProgram::Pixel:    return String("gl_FragColor");
+        default: return String();
+    }
+}
+
+//----
+String Shader::GetProgramOutVariableLocal(const ShaderProgram program)
+{
+    switch (program.ToScalar())
+    {
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Vertex:   return String("out_position");
+        case ShaderProgram::Pixel:    return String("out_frag_color");
+        default: return String();
+    }
+}
+
+//Shader Block implementation class -------------------------------------------
+void ShaderBlock::Add(const ShaderVariable parameter, String const &type, String const &name)
+{
+    ASSERT(!m_parameters[parameter.ToScalar()].HasKey(name));
+    m_parameters[parameter.ToScalar()][name] = type;
+}
+
+//----
+void ShaderBlock::AddCallParameters(const ShaderVariable type, map<String, String> const& variables, String& result)
+{
+    array<String> keys = variables.Keys();
+    for (String key : keys)
+    {
+        if (result.Count() > 0)
+            result += ", ";
+        result += Shader::GetVariablePrefix(type) + key;
+    }
+}
+
+//----
+void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, map<String, String>& variables, String& result)
+{
+    array<String> keys = variables.Keys();
+    for (String key : keys)
+    {
+        if (result.Count() > 0)
+            result += ", ";
+        result += Shader::GetFunctionQualifier(type, program) + " ";
+        result += variables[key];
+        result += String(" ");
+        result += Shader::GetVariablePrefix(type);
+        result += key;
+    }
+}
+
+//----
+void ShaderBlock::Build(const ShaderProgram program, String& call, String& function)
+{
+    ASSERT(m_name.Count());
+    ASSERT(m_parameters[ShaderVariable::InOut].Count());
+
+    //Build call in main
+    String call_name = String("Call_") + m_name;
+    call = call_name + "(";
+    String call_parameters;
+    for (int i = 0; i < ShaderVariable::MAX; i++)
+        AddCallParameters((ShaderVariable)i, m_parameters[i], call_parameters);
+    call += call_parameters + ");";
+
+    //Build function declaration
+    function = String("void ") + call_name + "(";
+    String def_parameters;
+    for (int i = 0; i < ShaderVariable::MAX; i++)
+        AddDefinitionParameters((ShaderVariable)i, program, m_parameters[i], def_parameters);
+    function += def_parameters + ")" + g_ret +
+        "{" + g_ret +
+        m_code_main + ((m_code_main.EndsWith(g_ret)) ? (String()) : (g_ret)) +
+        "}";
+}
+
+//Shader Builder implementation class -----------------------------------------
+ShaderBuilder::ShaderBuilder(String const& name, String const& version)
+    : m_name(name), m_version(version)
+{
+    ASSERT(name.Count());
+    ASSERT(version.Count());
+}
+
+//----
+ShaderBuilder::~ShaderBuilder()
+{
+}
+
+//----
+String const& ShaderBuilder::GetName()
+{
+    return m_name;
+}
+
+//----
+ShaderBuilder& ShaderBuilder::operator<<(const ShaderProgram program)
+{
+    m_current_program = program;
+    return *this;
+}
+
+//----
+ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
+{
+    ASSERT(m_current_program != ShaderProgram::MAX);
+    m_blocks[m_current_program.ToScalar()].PushUnique(block);
+    return *this;
+}
+
+//----
+String ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
+{
+    ShaderVariable var = ShaderVariable::InOut;
+    String result = Shader::GetProgramOutVariableLocal(program);
+    switch (program.ToScalar())
+    {
+        case ShaderProgram::Geometry:
+        {
+            //TODO : L O L ----------------
+            break;
+        }
+        case ShaderProgram::Vertex:
+        {
+            m_parameters[program.ToScalar()][var.ToScalar()][result] = "vec4";
+            break;
+        }
+        case ShaderProgram::Pixel:
+        {
+            m_parameters[program.ToScalar()][var.ToScalar()][result] = "vec4";
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+    return result;
+}
+
+//----
+void ShaderBuilder::MergeParameters(map<String, String>& variables, map<String, String>& merged)
+{
+    array<String> keys = variables.Keys();
+    for (String key : keys)
+    {
+        bool has_key = merged.HasKey(key);
+        //Key exists, check the type to make sure it's the same
+        ASSERT(!(has_key && merged[key] != variables[key]));
+
+        //does not exist, had it
+        if (!has_key)
+            merged[key] = variables[key];
+    }
+}
+
+//----
+void ShaderBuilder::Build(String& code)
+{
+    //Cleanup first
+    for (int prog = 0; prog < ShaderProgram::MAX; prog++)
+        for (int var = 0; var < ShaderVariable::MAX; var++)
+            m_parameters[prog][var].Empty();
+
+    //Start building
+    for (int prog = 0; prog < ShaderProgram::MAX; prog++)
+    {
+        //Add default local out in merged variables
+        String out_local_var = AddSlotOutVariableLocal((ShaderProgram)prog);
+
+        if (!out_local_var.Count())
+            continue;
+
+        //Merge all variables
+        for (int var = 0; var < ShaderVariable::MAX; var++)
+            for (int block = 0; block < m_blocks[prog].Count(); block++)
+                MergeParameters(m_blocks[prog][block]->m_parameters[var], m_parameters[prog][var]);
+
+        //Actually write code
+        code += Shader::GetProgramQualifier((ShaderProgram)prog) + g_ret;
+
+        //Add actual code
+        code += String("#version ") + m_version + g_ret + g_ret;
+
+        //Added shader variables
+        for (int var = 0; var < ShaderVariable::InOut; var++)
+        {
+            array<String> keys = m_parameters[prog][var].Keys();
+            if (keys.Count())
+            {
+                code += String("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
+                for (String key : keys)
+                {
+                    code += Shader::GetVariableQualifier((ShaderVariable)var) + " ";
+                    code += m_parameters[prog][var][key] + " " +
+                        Shader::GetVariablePrefix((ShaderVariable)var) + key + ";" + g_ret;
+                }
+                if (var + 1 < ShaderVariable::InOut)
+                    code += g_ret;
+            }
+        }
+        code += g_ret;
+
+        //Build Blocks code and add it
+        array<String> calls;
+        for (int block = 0; block < m_blocks[prog].Count(); block++)
+        {
+            String call;
+            String function;
+            m_blocks[prog][block]->Build(ShaderProgram(prog), call, function);
+            calls << call;
+            if (m_blocks[prog][block]->m_code_custom.Count())
+            {
+                code += String("//- ") + m_blocks[prog][block]->GetName() + " custom code ----" + g_ret;
+                code += m_blocks[prog][block]->m_code_custom + g_ret + g_ret;
+            }
+            code += String("//- ") + m_blocks[prog][block]->GetName() + " main code ----" + g_ret;
+            code += function + g_ret + g_ret;
+        }
+
+        //Added main definition
+        code += String("//- Main ----") + g_ret +
+            String("void main(void)") + g_ret + "{" + g_ret;
+
+        //Add local variables
+        int var = ShaderVariable::InOut;
+        array<String> keys = m_parameters[prog][var].Keys();
+        for (String key : keys)
+        {
+            if (keys.Count())
+            {
+                code += g_tab + m_parameters[prog][var][key] + " " +
+                    Shader::GetVariablePrefix((ShaderVariable)var) + key + ";" + g_ret;
+            }
+        }
+        code += g_ret;
+
+        //Add calls
+        code += g_tab + String("//- Calls ----") + g_ret;
+        for (String call : calls)
+            code += g_tab + call + g_ret;
+        code += g_ret;
+
+        code += g_tab + Shader::GetProgramOutVariable((ShaderProgram)prog) + " = " + out_local_var + ";" + g_ret +
+            String("}") + g_ret + g_ret;
+    }
 }
 
 } /* namespace lol */

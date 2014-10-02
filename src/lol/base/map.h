@@ -94,6 +94,11 @@ public:
         return m_array.Count();
     }
 
+    inline void Empty()
+    {
+        m_array.Empty();
+    }
+
 private:
     template <typename E>
     inline ptrdiff_t FindIndex(E const &key, uint32_t hashed)
