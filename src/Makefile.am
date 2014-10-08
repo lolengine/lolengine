@@ -47,7 +47,7 @@ liblolcore_headers = \
     lol/math/transform.h \
     \
     lol/algorithm/all.h \
-    lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
+    lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h lol/algorithm/avl_tree.h \
     \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
