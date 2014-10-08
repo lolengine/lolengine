@@ -47,7 +47,7 @@ public:
 
         String vertex_out = Shader::GetProgramOutVariableLocal(ShaderProgram::Vertex);
         String pixel_out = Shader::GetProgramOutVariableLocal(ShaderProgram::Pixel);
-        
+
         String in_position = Shader::GetVariablePrefix(ShaderVariable::Attribute) + "position";
         String in_color = Shader::GetVariablePrefix(ShaderVariable::Attribute) + "color";
         String pass_color = Shader::GetVariablePrefix(ShaderVariable::Varying) + "color";
