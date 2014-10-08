@@ -141,22 +141,32 @@ private:
 				this->m_lo->m_hi = this;
 				this->m_lo = lo_hi;
 
-				// TODO : Rebalance
+				this->compute_balance();
+				lo_hi->compute_balance();
 
 				return lo;
 			}
 			else // rotation == CCW
 			{
-				tree_node * lo = this->m_lo;
-				tree_node * lo_hi = this->m_lo->m_hi;
+				tree_node * hi = this->m_hi;
+				tree_node * hi_lo = this->m_hi->m_lo;
 
-				this->m_lo->m_hi = this;
-				this->m_lo = lo_hi;
+				this->m_hi->m_lo = this;
+				this->m_hi = hi_lo;
 
-				// TODO : Rebalance
+				this->compute_balance();
+				hi_lo->compute_balance();
 
 				return lo;
 			}
+
+			return 0;
+		}
+
+		void compute_balance()
+		{
+			this->m_stairs_lo = this->m_lo ? this->m_lo->m_stairs_lo + this->m_lo->m_stairs_hi : 0;
+			this->m_stairs_hi = this->m_hi ? this->m_hi->m_stairs_lo + this->m_lo->m_stairs_hi : 0;
 		}
 
 	private:
