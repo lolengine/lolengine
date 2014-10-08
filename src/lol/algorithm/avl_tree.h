@@ -56,9 +56,9 @@ private:
             m_key(key),
             m_value(value),
             m_lo(0),
-            m_hi(0)
+            m_hi(0),
             m_stairs_lo(0),
-            m_stairs_hi(0),
+            m_stairs_hi(0)
         {
         }
 
@@ -89,9 +89,9 @@ private:
         int path_update_balance(K const & key)
         {
             if (key < this->m_key)
-                this->m_stairs_lo = lol::max(this->m_lo->path_update_balance(node), this->m_stairs_lo);
+                this->m_stairs_lo = lol::max(this->m_lo->path_update_balance(key), this->m_stairs_lo);
             else if (this->m_key < key)
-                this->m_stairs_hi = lol::max(this->m_hi->path_update_balance(node), this->m_stairs_hi);
+                this->m_stairs_hi = lol::max(this->m_hi->path_update_balance(key), this->m_stairs_hi);
 
             return lol::max(this->m_stairs_lo, this->m_stairs_hi) + 1;
         }
@@ -104,7 +104,7 @@ private:
                 if (node)
                 {
                     this->m_lo = node;
-                    --this->m_lo;
+                    --this->m_stairs_lo;
                 }
             }
             else if (this->m_key < key)
@@ -113,7 +113,7 @@ private:
                 if (node)
                 {
                     this->m_hi = node;
-                    --this->m_hi;
+                    --this->m_stairs_hi;
                 }
             }
 
@@ -142,7 +142,7 @@ private:
                 this->m_lo = lo_hi;
 
                 this->compute_balance();
-                lo_hi->compute_balance();
+                lo->compute_balance();
 
                 return lo;
             }
@@ -155,9 +155,9 @@ private:
                 this->m_hi = hi_lo;
 
                 this->compute_balance();
-                hi_lo->compute_balance();
+                hi->compute_balance();
 
-                return lo;
+                return hi;
             }
 
             return 0;
