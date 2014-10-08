@@ -20,6 +20,8 @@ namespace lol
 template<typename K, typename V>
 class avl_tree
 {
+public:
+
     avl_tree() :
         m_root(0)
     {
@@ -35,9 +37,9 @@ class avl_tree
 
             if (created)
             {
-                this->m_root->path_update_balance(created);
+                this->m_root->path_update_balance(key);
 
-                tree_node * new_root = this->m_root->path_rebalance(created);
+                tree_node * new_root = this->m_root->path_rebalance(key);
                 if (new_root)
                     this->m_root = new_root;
             }
@@ -48,10 +50,12 @@ class avl_tree
         return true;
     }
 
-private:
+protected:
 
     class tree_node
     {
+    public:
+
         tree_node(K key, V value) :
             m_key(key),
             m_value(value),
@@ -100,7 +104,7 @@ private:
         {
             if (key < this->m_key)
             {
-                tree_node * node = this->m_lo->path_rebalance();
+                tree_node * node = this->m_lo->path_rebalance(key);
                 if (node)
                 {
                     this->m_lo = node;
@@ -109,7 +113,7 @@ private:
             }
             else if (this->m_key < key)
             {
-                tree_node * node = this->m_hi->path_rebalance();
+                tree_node * node = this->m_hi->path_rebalance(key);
                 if (node)
                 {
                     this->m_hi = node;
@@ -117,16 +121,16 @@ private:
                 }
             }
 
-            if (this->m_stairs_lo - this->m_stairs_hi == 2)
+            if (this->get_balance() == 2)
             {
-                return this->rotate();
+                return this->rotate(CW);
             }
-            else if (this->m_stairs_lo - this->m_stairs_hi == -2)
+            else if (this->get_balance() == -2)
             {
-                return this->rotate();
+                return this->rotate(CCW);
             }
             else
-                assert(lol::abs(this->m_stairs_lo - this->m_stairs_hi) < 3);
+                ASSERT(lol::abs(this->m_stairs_lo - this->m_stairs_hi) < 3);
         }
 
         enum Rotation { CW = 0, CCW = 1 };
@@ -169,7 +173,12 @@ private:
             this->m_stairs_hi = this->m_hi ? this->m_hi->m_stairs_lo + this->m_lo->m_stairs_hi : 0;
         }
 
-    private:
+        int get_balance()
+        {
+            return this->m_stairs_lo - this->m_stairs_hi;
+        }
+
+    protected:
 
         K m_key;
         V m_value;
