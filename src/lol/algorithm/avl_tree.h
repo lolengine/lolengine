@@ -123,14 +123,16 @@ protected:
 
             if (this->get_balance() == 2)
             {
-                return this->rotate(CW);
+                return this->rotate(CCW);
             }
             else if (this->get_balance() == -2)
             {
-                return this->rotate(CCW);
+                return this->rotate(CW);
             }
             else
-                ASSERT(lol::abs(this->m_stairs_lo - this->m_stairs_hi) < 3);
+                ASSERT(lol::abs(this->m_stairs_hi - this->m_stairs_lo) < 3);
+
+            return 0;
         }
 
         enum Rotation { CW = 0, CCW = 1 };
@@ -169,13 +171,13 @@ protected:
 
         void compute_balance()
         {
-            this->m_stairs_lo = this->m_lo ? this->m_lo->m_stairs_lo + this->m_lo->m_stairs_hi : 0;
-            this->m_stairs_hi = this->m_hi ? this->m_hi->m_stairs_lo + this->m_lo->m_stairs_hi : 0;
+            this->m_stairs_lo = this->m_lo ? this->m_lo->m_stairs_lo + this->m_lo->m_stairs_hi + 1 : 0;
+            this->m_stairs_hi = this->m_hi ? this->m_hi->m_stairs_lo + this->m_hi->m_stairs_hi + 1 : 0;
         }
 
         int get_balance()
         {
-            return this->m_stairs_lo - this->m_stairs_hi;
+            return this->m_stairs_hi - this->m_stairs_lo;
         }
 
     protected:
