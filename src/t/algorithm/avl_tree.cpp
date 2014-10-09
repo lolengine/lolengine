@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include <lol/algorithm/avl_tree.h>
+
 #include <lolunit.h>
 
 namespace lol
@@ -60,6 +62,9 @@ lolunit_declare_fixture(AvlTreeTest)
 
         lolunit_assert_equal(tree.insert(-1, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), -1);
+
+        lolunit_assert_equal(tree.insert(-2, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
     }
 };
 
