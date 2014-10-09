@@ -171,8 +171,8 @@ protected:
 
         void compute_balance()
         {
-            this->m_stairs_lo = this->m_lo ? this->m_lo->m_stairs_lo + this->m_lo->m_stairs_hi + 1 : 0;
-            this->m_stairs_hi = this->m_hi ? this->m_hi->m_stairs_lo + this->m_hi->m_stairs_hi + 1 : 0;
+            this->m_stairs_lo = this->m_lo ? lol::max(this->m_lo->m_stairs_lo, this->m_lo->m_stairs_hi) + 1 : 0;
+            this->m_stairs_hi = this->m_hi ? lol::max(this->m_hi->m_stairs_lo, this->m_hi->m_stairs_hi) + 1 : 0;
         }
 
         int get_balance()
