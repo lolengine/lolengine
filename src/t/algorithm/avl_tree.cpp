@@ -59,7 +59,7 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(-1, 1), true);
-        lolunit_assert_equal(tree.get_root_balance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
     }
 };
 
