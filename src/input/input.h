@@ -18,7 +18,7 @@ const String g_name_mouse("Mouse");
 const String g_name_keyboard("Keyboard");
 static String g_name_joystick(const uint64_t num)
 {
-    return String::Printf("Joystick%i", num);
+    return String::Printf("Joystick%d", (int)num);
 }
 
 //Mouse default buttons/axis
