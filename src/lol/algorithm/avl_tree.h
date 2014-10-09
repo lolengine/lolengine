@@ -21,9 +21,8 @@ template<typename K, typename V>
 class avl_tree
 {
 public:
-
     avl_tree() :
-        m_root(0)
+        m_root(nullptr)
     {
     }
 
@@ -55,15 +54,12 @@ protected:
     class tree_node
     {
     public:
-
         tree_node(K key, V value) :
             m_key(key),
-            m_value(value),
-            m_lo(0),
-            m_hi(0),
-            m_stairs_lo(0),
-            m_stairs_hi(0)
+            m_value(value)
         {
+            m_child[0] = m_child[1] = nullptr;
+            m_stairs[0] = m_stairs[1] = 0;
         }
 
         tree_node * insert(K const & key, V const & value)
@@ -72,17 +68,17 @@ protected:
 
             if (key < this->m_key)
             {
-                if (this->m_lo)
-                    ret = this->m_lo->insert(key, value);
+                if (this->m_child[0])
+                    ret = this->m_child[0]->insert(key, value);
                 else
-                    ret = this->m_lo = new tree_node(key, value);
+                    ret = this->m_child[0] = new tree_node(key, value);
             }
             else if (this->m_key < key)
             {
-                if (this->m_hi)
-                    ret = this->m_hi->insert(key, value);
+                if (this->m_child[1])
+                    ret = this->m_child[1]->insert(key, value);
                 else
-                    ret = this->m_hi = new tree_node(key, value);
+                    ret = this->m_child[1] = new tree_node(key, value);
             }
             else
                 this->m_value = value;
@@ -93,31 +89,31 @@ protected:
         int path_update_balance(K const & key)
         {
             if (key < this->m_key)
-                this->m_stairs_lo = lol::max(this->m_lo->path_update_balance(key), this->m_stairs_lo);
+                this->m_stairs[0] = lol::max(this->m_child[0]->path_update_balance(key), this->m_stairs[0]);
             else if (this->m_key < key)
-                this->m_stairs_hi = lol::max(this->m_hi->path_update_balance(key), this->m_stairs_hi);
+                this->m_stairs[1] = lol::max(this->m_child[1]->path_update_balance(key), this->m_stairs[1]);
 
-            return lol::max(this->m_stairs_lo, this->m_stairs_hi) + 1;
+            return lol::max(this->m_stairs[0], this->m_stairs[1]) + 1;
         }
 
         tree_node * path_rebalance(K const & key)
         {
             if (key < this->m_key)
             {
-                tree_node * node = this->m_lo->path_rebalance(key);
+                tree_node * node = this->m_child[0]->path_rebalance(key);
                 if (node)
                 {
-                    this->m_lo = node;
-                    --this->m_stairs_lo;
+                    this->m_child[0] = node;
+                    --this->m_stairs[0];
                 }
             }
             else if (this->m_key < key)
             {
-                tree_node * node = this->m_hi->path_rebalance(key);
+                tree_node * node = this->m_child[1]->path_rebalance(key);
                 if (node)
                 {
-                    this->m_hi = node;
-                    --this->m_stairs_hi;
+                    this->m_child[1] = node;
+                    --this->m_stairs[1];
                 }
             }
 
@@ -129,9 +125,8 @@ protected:
             {
                 return this->rotate(CW);
             }
-            else
-                ASSERT(lol::abs(this->m_stairs_hi - this->m_stairs_lo) < 3);
 
+            ASSERT(lol::abs(this->m_stairs[1] - this->m_stairs[0]) < 3);
             return 0;
         }
 
@@ -141,29 +136,29 @@ protected:
         {
             if (rotation == CW)
             {
-                tree_node * lo = this->m_lo;
-                tree_node * lo_hi = this->m_lo->m_hi;
+                tree_node * newhead = this->m_child[0];
+                tree_node * tmp = this->m_child[0]->m_child[1];
 
-                this->m_lo->m_hi = this;
-                this->m_lo = lo_hi;
+                this->m_child[0]->m_child[1] = this;
+                this->m_child[0] = tmp;
 
                 this->compute_balance();
-                lo->compute_balance();
+                newhead->compute_balance();
 
-                return lo;
+                return newhead;
             }
             else // rotation == CCW
             {
-                tree_node * hi = this->m_hi;
-                tree_node * hi_lo = this->m_hi->m_lo;
+                tree_node * newhead = this->m_child[1];
+                tree_node * tmp = this->m_child[1]->m_child[0];
 
-                this->m_hi->m_lo = this;
-                this->m_hi = hi_lo;
+                this->m_child[1]->m_child[0] = this;
+                this->m_child[1] = tmp;
 
                 this->compute_balance();
-                hi->compute_balance();
+                newhead->compute_balance();
 
-                return hi;
+                return newhead;
             }
 
             return 0;
@@ -171,13 +166,13 @@ protected:
 
         void compute_balance()
         {
-            this->m_stairs_lo = this->m_lo ? lol::max(this->m_lo->m_stairs_lo, this->m_lo->m_stairs_hi) + 1 : 0;
-            this->m_stairs_hi = this->m_hi ? lol::max(this->m_hi->m_stairs_lo, this->m_hi->m_stairs_hi) + 1 : 0;
+            this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
+            this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
         }
 
         int get_balance()
         {
-            return this->m_stairs_hi - this->m_stairs_lo;
+            return this->m_stairs[1] - this->m_stairs[0];
         }
 
     protected:
@@ -185,11 +180,8 @@ protected:
         K m_key;
         V m_value;
 
-        tree_node * m_lo;
-        tree_node * m_hi;
-
-        int m_stairs_lo;
-        int m_stairs_hi;
+        tree_node *m_child[2];
+        int m_stairs[2];
     };
 
     tree_node * m_root;
