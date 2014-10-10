@@ -130,12 +130,10 @@ protected:
             if (key < this->m_key)
             {
                 this->m_child[0]->increase_path(key);
-                this->compute_balance();
             }
             if (this->m_key < key)
             {
                 this->m_child[1]->increase_path(key);
-                this->compute_balance();
             }
         }
 
@@ -190,33 +188,25 @@ protected:
         void rotateLL()
         {
             tree_node * newhead = this->m_child[0]->rotate(CCW);
-
             this->m_child[0] = newhead;
-            this->compute_balance();
         }
 
         void rotateLR()
         {
             tree_node * newhead = this->m_child[0]->rotate(CW);
-
             this->m_child[0] = newhead;
-            this->compute_balance();
         }
 
         void rotateRL()
         {
             tree_node * newhead = this->m_child[1]->rotate(CCW);
-
             this->m_child[1] = newhead;
-            this->compute_balance();
         }
 
         void rotateRR()
         {
             tree_node * newhead = this->m_child[1]->rotate(CW);
-
             this->m_child[1] = newhead;
-            this->compute_balance();
         }
 
         enum Rotation { CW = 0, CCW = 1 };
