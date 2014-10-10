@@ -55,6 +55,26 @@ public:
         return true;
     }
 
+    bool erase(K const & key)
+    {
+        if (this->m_root)
+        {
+            tree_node * parent = this->m_root->get_parent(key);
+
+            if (parent)
+            {
+                parent->delete_child(key);
+                this->m_root->update_balance(parent);
+            }
+            else if (this->m_root->get_key() == key)
+            {
+                // TODO
+            }
+        }
+
+        return false;
+    }
+
 protected:
 
     class tree_node
@@ -247,6 +267,90 @@ protected:
         {
             this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
             this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
+        }
+
+        bool is_equal(K const & key)
+        {
+            return !(key < this->m_key) && !(this->m_key < key);
+        }
+
+        /* Retrieve the parent of an inserted key.
+         * Do not call "get_parent" if key is not already present in the tree. */
+        tree_node * get_parent(K const & key)
+        {
+            if (key < this->m_key)
+            {
+                if (this->m_child[0]->is_equal(key))
+                    return this;
+                else
+                    return this->m_child[0]->get_parent(key);
+            }
+            else if (this->m_key < key)
+            {
+                if (this->m_child[1]->is_equal(key))
+                    return this;
+                else
+                    return this->m_child[1]->get_parent(key);
+            }
+            else
+                ASSERT(false); // Something went really really bad
+        }
+
+        void delete_child(tree_node * parent, K const & key)
+        {
+            if (key < this->m_key)
+            {
+                tree_node * child = this->m_child[0];
+
+                if (this->m_child[0]->get_balance() == -1)
+                {
+                    //TODO
+                }
+                else
+                {
+                    // TODO
+                }
+
+                child->m_child[0] = nullptr;
+                child->m_child[1] = nullptr;
+                delete child;
+            }
+            else if (this->m_key < key)
+            {
+                // TODO
+            }
+            else
+                ASSERT(false) // Do not delete the "this" node here
+        }
+
+        tree_node * get_previous()
+        {
+            tree_node * previous = this->m_child[0];
+
+            if (previous)
+            {
+                while (previous->m_child[1])
+                {
+                    previous = previous->m_child[1];
+                }
+            }
+
+            return previous;
+        }
+
+        tree_node * get_next()
+        {
+            tree_node * next = this->m_child[1];
+
+            if (next)
+            {
+                while (next->m_child[0])
+                {
+                    next = next->m_child[0];
+                }
+            }
+
+            return next;
         }
 
         int get_balance()

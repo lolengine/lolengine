@@ -46,23 +46,32 @@ lolunit_declare_fixture(AvlTreeTest)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.insert(1, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 0);
 
-        lolunit_assert_equal(tree.insert(2, 1), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 1);
 
-        lolunit_assert_equal(tree.insert(3, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 0);
 
-        lolunit_assert_equal(tree.insert(0, 1), true);
+        lolunit_assert_equal(tree.insert(00, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), -1);
 
-        lolunit_assert_equal(tree.insert(-1, 1), true);
+        lolunit_assert_equal(tree.insert(-10, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), -1);
 
-        lolunit_assert_equal(tree.insert(-2, 1), true);
+        lolunit_assert_equal(tree.insert(-20, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(-20, 1), false);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(11, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.insert(13, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
     }
 };
 
