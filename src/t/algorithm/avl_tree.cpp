@@ -73,6 +73,26 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.insert(13, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 1);
     }
+
+    lolunit_declare_test(AvlTreeDeletion)
+    {
+        test_tree tree;
+
+        lolunit_assert_equal(tree.insert(10, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(20, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.insert(30, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.erase(30), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
+
+        lolunit_assert_equal(tree.erase(20), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
+    }
 };
 
 }
