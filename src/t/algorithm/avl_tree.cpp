@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include <lol/algorithm/avl_tree.h>
+
 #include <lolunit.h>
 
 namespace lol
