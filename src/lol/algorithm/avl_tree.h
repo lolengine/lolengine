@@ -97,42 +97,32 @@ protected:
 
         bool exists(K key)
         {
-            if (key < this->m_key)
-            {
-                if (this->m_child[0])
-                    return this->m_child[0]->exists(key);
-                else
-                    return false;
-            }
-            if (this->m_key < key)
-            {
-                if (this->m_child[1])
-                    return this->m_child[1]->exists(key);
-                else
-                    return false;
-            }
+            int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
-            return true;
+            if (i < 0)
+                return true;
+
+            if (this->m_child[i])
+                return this->m_child[i]->exists(key);
+
+            return false;
         }
 
         void insert_or_update(K const & key, V const & value)
         {
-            if (key < this->m_key)
+            int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
+
+            if (i < 0)
             {
-                if (this->m_child[0])
-                    this->m_child[0]->insert_or_update(key, value);
-                else
-                    this->m_child[0] = new tree_node(key, value);
-            }
-            else if (this->m_key < key)
-            {
-                if (this->m_child[1])
-                    this->m_child[1]->insert_or_update(key, value);
-                else
-                    this->m_child[1] = new tree_node(key, value);
+                this->m_value = value;
             }
             else
-                this->m_value = value;
+            {
+                if (this->m_child[i])
+                    this->m_child[i]->insert_or_update(key, value);
+                else
+                    this->m_child[i] = new tree_node(key, value);
+            }
         }
 
         void update_balance(tree_node * node)
@@ -183,43 +173,19 @@ protected:
             if (key < this->m_key)
             {
                 if (this->m_child[0]->get_balance() == 2)
-                    this->rotateLL();
-                if (this->m_child[0]->get_balance() == -2)
-                    this->rotateLR();
+                    this->m_child[0] = this->m_child[0]->rotate(CCW);
+                else if (this->m_child[0]->get_balance() == -2)
+                    this->m_child[0] = this->m_child[0]->rotate(CW);
             }
             else if (this->m_key < key)
             {
                 if (this->m_child[1]->get_balance() == 2)
-                    this->rotateRL();
-                if (this->m_child[1]->get_balance() == -2)
-                    this->rotateRR();
+                    this->m_child[1] = this->m_child[1]->rotate(CCW);
+                else if (this->m_child[1]->get_balance() == -2)
+                    this->m_child[1] = this->m_child[1]->rotate(CW);
             }
             else
                 ASSERT(false) // Do not rebalance the "this" node here
-        }
-
-        void rotateLL()
-        {
-            tree_node * newhead = this->m_child[0]->rotate(CCW);
-            this->m_child[0] = newhead;
-        }
-
-        void rotateLR()
-        {
-            tree_node * newhead = this->m_child[0]->rotate(CW);
-            this->m_child[0] = newhead;
-        }
-
-        void rotateRL()
-        {
-            tree_node * newhead = this->m_child[1]->rotate(CCW);
-            this->m_child[1] = newhead;
-        }
-
-        void rotateRR()
-        {
-            tree_node * newhead = this->m_child[1]->rotate(CW);
-            this->m_child[1] = newhead;
         }
 
         enum Rotation { CW = 0, CCW = 1 };
@@ -322,13 +288,13 @@ protected:
 
             if (this->get_balance() == -1)
             {
-                replacement = this->get_deeper_previous();
+                replacement = this->get_deeper(0);
                 if (replacement)
                     this->get_parent(replacement)->m_child[1] = replacement->m_child[0];
             }
             else // this->get_balance() >= 0
             {
-                replacement = this->get_deeper_next();
+                replacement = this->get_deeper(1);
                 if (replacement)
                     this->get_parent(replacement)->m_child[0] = replacement->m_child[1];
             }
@@ -351,34 +317,19 @@ protected:
             to->m_child[1] = nullptr;
         }
 
-        tree_node * get_deeper_previous()
+        tree_node * get_deeper(int index)
         {
-            tree_node * previous = this->m_child[0];
+            tree_node * previous = this->m_child[index];
 
             if (previous)
             {
-                while (previous->m_child[1])
+                while (previous->m_child[1 - index])
                 {
-                    previous = previous->m_child[1];
+                    previous = previous->m_child[1 - index];
                 }
             }
 
             return previous;
-        }
-
-        tree_node * get_deeper_next()
-        {
-            tree_node * next = this->m_child[1];
-
-            if (next)
-            {
-                while (next->m_child[0])
-                {
-                    next = next->m_child[0];
-                }
-            }
-
-            return next;
         }
 
         int get_balance()
