@@ -104,8 +104,8 @@ void Debug::DrawLine(vec3 a, vec3 b)                                { Debug::Dra
 void Debug::DrawLine(vec2 a, vec3 b, float az)                      { Debug::DrawLine(a, b, g_scene->GetLineColor(), az); }
 void Debug::DrawLine(vec2 a, vec2 b, float az, float bz)            { Debug::DrawLine(a, b, g_scene->GetLineColor(), az, bz); }
 void Debug::DrawLine(vec3 a, vec3 b, vec4 color)                    { g_scene->AddLine(a, b, color); }
-void Debug::DrawLine(vec2 a, vec3 b, vec4 color, float az)          { g_scene->AddLine(a, b, color, az); }
-void Debug::DrawLine(vec2 a, vec2 b, vec4 color, float az, float bz){ g_scene->AddLine(a, b, color, az, bz); }
+void Debug::DrawLine(vec2 a, vec3 b, vec4 color, float az)          { g_scene->AddLine(vec3(a, az), b, color); }
+void Debug::DrawLine(vec2 a, vec2 b, vec4 color, float az, float bz){ g_scene->AddLine(vec3(a, az), vec3(b, bz), color); }
 
 //-- GIZMO --------------------------------------------------------------------
 void Debug::DrawGizmo(vec3 pos, vec3 x, vec3 y, vec3 z, float size)

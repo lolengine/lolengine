@@ -215,17 +215,8 @@ vec4 Scene::GetLineColor()                  { return data->m_new_line_color; }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
-    data->m_lines.Push(a, b, color, data->m_new_line_time, data->m_new_line_mask, false, false);
-}
-
-void Scene::AddLine(vec2 a, vec3 b, vec4 color, float az)
-{
-    data->m_lines.Push(vec3(a, az), b, color, data->m_new_line_time, data->m_new_line_mask, true, false);
-}
-
-void Scene::AddLine(vec2 a, vec2 b, vec4 color, float az, float bz)
-{
-    data->m_lines.Push(vec3(a, az), vec3(b, bz), color, data->m_new_line_time, data->m_new_line_mask, true, true);
+    data->m_lines.Push(a, b, color, data->m_new_line_time,
+                       data->m_new_line_mask, false, false);
 }
 
 void Scene::AddLight(Light *l)
