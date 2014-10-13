@@ -22,7 +22,7 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
 
     if (!device)
     {
-        Log::Warn("Trying to bind key to nonexistent input device %s",
+        Log::Warn("trying to bind key to nonexistent input device %s\n",
                   device_name.C());
         return;
     }
@@ -30,7 +30,7 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
     int keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
-        Log::Warn("Trying to bind nonexistent key %s.%s",
+        Log::Warn("trying to bind nonexistent key %s.%s\n",
                   device_name.C(), key_name.C());
         return;
     }
@@ -67,7 +67,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
-        Log::Warn("Trying to bind axis to nonexistent input device %s",
+        Log::Warn("trying to bind axis to nonexistent input device %s\n",
                   device_name.C());
         return;
     }
@@ -75,7 +75,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
     int axisindex = device->GetAxisIndex(axis_name);
     if (axisindex < 0)
     {
-        Log::Warn("Trying to bind nonexistent axis %s.%s",
+        Log::Warn("trying to bind nonexistent axis %s.%s\n",
                   device_name.C(), axis_name.C());
         return;
     }
@@ -88,7 +88,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
-        Log::Warn("Trying to bind axis key to nonexistent input device %s",
+        Log::Warn("trying to bind axis key to nonexistent input device %s\n",
                   device_name.C());
         return;
     }
@@ -96,7 +96,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
     int keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
-        Log::Warn("Trying to bind nonexistent axis key %s.%s",
+        Log::Warn("trying to bind nonexistent axis key %s.%s\n",
                   device_name.C(), key_name.C());
         return;
     }
@@ -109,7 +109,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
-        Log::Warn("Trying to bind axis keys to nonexistent input device %s",
+        Log::Warn("trying to bind axis keys to nonexistent input device %s\n",
                   device_name.C());
         return;
     }
@@ -117,7 +117,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     int minkeyindex = device->GetKeyIndex(min_key_name);
     if (minkeyindex < 0)
     {
-        Log::Warn("Trying to bind nonexistent axis key %s.%s",
+        Log::Warn("trying to bind nonexistent axis key %s.%s\n",
                   device_name.C(), min_key_name.C());
         return;
     }
@@ -125,7 +125,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     int maxkeyindex = device->GetKeyIndex(max_key_name);
     if (maxkeyindex < 0)
     {
-        Log::Warn("Trying to bind nonexistent axis key %s.%s",
+        Log::Warn("trying to bind nonexistent axis key %s.%s\n",
                   device_name.C(), max_key_name.C());
         return;
     }
@@ -236,7 +236,7 @@ Controller::Controller(String const &name, int nb_keys, int nb_axis)
     m_active = false;
     if (Get(name) != nullptr)
     {
-        Log::Warn("controller “%s” has already been registered", name.C());
+        Log::Warn("controller “%s” has already been registered\n", name.C());
     }
     controllers.Push(this);
 }
