@@ -18,9 +18,18 @@ using namespace lol;
 
 int main(int argc, char **argv)
 {
-    UNUSED(argc, argv);
+    ivec2 size(128, 128);
 
-    /* Insert any test code here */
+    if (argc > 1)
+        size.x = size.y = atoi(argv[1]);
+    if (argc > 2)
+        size.y = atoi(argv[2]);
+
+    array2d<float> vac = Image::BlueNoiseKernel(size);
+    for (int y = 0; y < size.y; ++y)
+        for (int x = 0; x < size.x; ++x)
+            printf("%d %d %f\n", x, y, vac[x][y]);
+
     return EXIT_SUCCESS;
 }
 
