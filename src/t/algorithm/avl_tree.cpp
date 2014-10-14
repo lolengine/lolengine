@@ -20,6 +20,7 @@ namespace lol
 class test_tree : public avl_tree<int, int>
 {
 public:
+    virtual ~test_tree() {}
 
 	int get_root_balance()
 	{
