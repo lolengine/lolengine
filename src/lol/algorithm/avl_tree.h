@@ -66,8 +66,7 @@ protected:
         }
 
         /* Insert a value in tree and return true or update an existing value for
-         * the existing key and return false
-         */
+         * the existing key and return false */
         bool insert(K const & key, V const & value, tree_node * & parent_slot)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
@@ -94,6 +93,7 @@ protected:
             return created;
         }
 
+        /* Erase a value in tree and return true or return false */
         bool erase(K const & key, tree_node * & parent_slot)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
@@ -101,7 +101,7 @@ protected:
             if (i < 0)
             {
                 this->erase_self(parent_slot);
-                delete this; // FUCK YEAH !!
+                delete this;
                 return true;
             }
             else if(this->m_child[i]->erase(key, this->m_child[i]))
@@ -189,6 +189,12 @@ protected:
 
             if (i || this->m_child[1])
                 replacement = this->m_child[1 - i]->detach_deepest(i, this->m_child[1 - i]);
+
+            if (replacement)
+            {
+                replacement->m_child[0] = this->m_child[0];
+                replacement->m_child[1] = this->m_child[1];
+            }
 
             parent_slot = replacement;
         }
