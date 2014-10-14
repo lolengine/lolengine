@@ -12,8 +12,6 @@
 
 #include <lol/engine-internal.h>
 
-#include <lol/algorithm/avl_tree.h>
-
 #include <lolunit.h>
 
 namespace lol
@@ -94,6 +92,37 @@ lolunit_declare_fixture(AvlTreeTest)
 
         lolunit_assert_equal(tree.erase(20), true);
         lolunit_assert_equal(tree.insert(20, 1), true);
+    }
+
+    lolunit_declare_test(AvlTreeExistence)
+    {
+        test_tree tree;
+
+        lolunit_assert_equal(tree.insert(10, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(20, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.erase(10), true);
+        lolunit_assert_equal(tree.exists(20), true);
+        lolunit_assert_equal(tree.exists(10), false);
+
+        lolunit_assert_equal(tree.insert(10, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
+
+        lolunit_assert_equal(tree.insert(30, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(40, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.insert(50, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.erase(30), true);
+        lolunit_assert_equal(tree.exists(40), true);
+        lolunit_assert_equal(tree.exists(50), true);
     }
 };
 
