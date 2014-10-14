@@ -52,6 +52,15 @@ public:
         return this->m_root->exists(key);
     }
 
+    virtual ~avl_tree()
+    {
+        if (this->m_root)
+        {
+            this->m_root->cascade_delete();
+            delete this->m_root;
+        }
+    }
+
 protected:
 
     class tree_node
@@ -167,6 +176,21 @@ protected:
                 return this->m_child[i]->exists(key);
 
             return false;
+        }
+
+        void cascade_delete()
+        {
+            if (this->m_child[0])
+            {
+                this->m_child[0]->cascade_delete();
+                delete this->m_child[0];
+            }
+
+            if (this->m_child[1])
+            {
+                this->m_child[1]->cascade_delete();
+                delete this->m_child[1];
+            }
         }
 
         int get_balance()
