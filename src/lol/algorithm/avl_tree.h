@@ -52,6 +52,14 @@ public:
         return this->m_root->exists(key);
     }
 
+    bool try_get_value(K const & key, V * & value_ptr)
+    {
+        if (this->m_root)
+            return this->m_root->try_get_value(key, value_ptr);
+
+        return false;
+    }
+
     virtual ~avl_tree()
     {
         if (this->m_root)
@@ -118,6 +126,22 @@ protected:
                 this->rebalance_if_needed(parent_slot);
                 return true;
             }
+
+            return false;
+        }
+
+        bool try_get_value(K const & key, V * & value_ptr)
+        {
+            int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
+
+            if (i < 0)
+            {
+                value_ptr = &this->m_value;
+                return true;
+            }
+
+            if (this->m_child[i])
+                return this->m_child[i]->try_get_value(key, value_ptr);
 
             return false;
         }
