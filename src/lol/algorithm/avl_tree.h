@@ -29,11 +29,11 @@ public:
     {
         if (!m_root)
         {
-            this->m_root = new tree_node(key, value);
+            this->m_root = new tree_node(key, value, &this->m_root);
             return true;
         }
 
-        return this->m_root->insert(key, value, this->m_root);
+        return this->m_root->insert(key, value);
     }
 
     bool erase(K const & key)
@@ -41,7 +41,7 @@ public:
         if (!m_root)
             return false;
 
-        return this->m_root->erase(key, this->m_root);
+        return this->m_root->erase(key);
     }
 
     bool exists(K const & key)
@@ -74,9 +74,10 @@ protected:
     class tree_node
     {
     public:
-        tree_node(K key, V value) :
+        tree_node(K key, V value, tree_node ** parent_slot) :
             m_key(key),
-            m_value(value)
+            m_value(value),
+            m_parent_slot(parent_slot)
         {
             m_child[0] = m_child[1] = nullptr;
             m_stairs[0] = m_stairs[1] = 0;
@@ -84,7 +85,7 @@ protected:
 
         /* Insert a value in tree and return true or update an existing value for
          * the existing key and return false */
-        bool insert(K const & key, V const & value, tree_node * & parent_slot)
+        bool insert(K const & key, V const & value)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -97,33 +98,33 @@ protected:
             bool created = false;
 
             if (this->m_child[i])
-                created = this->m_child[i]->insert(key, value, this->m_child[i]);
+                created = this->m_child[i]->insert(key, value);
             else
             {
-                this->m_child[i] = new tree_node(key, value);
+                this->m_child[i] = new tree_node(key, value, &this->m_child[i]);
                 created = true;
             }
 
             if (created)
-                this->rebalance_if_needed(parent_slot);
+                this->rebalance_if_needed();
 
             return created;
         }
 
         /* Erase a value in tree and return true or return false */
-        bool erase(K const & key, tree_node * & parent_slot)
+        bool erase(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
             if (i < 0)
             {
-                this->erase_self(parent_slot);
+                this->erase_self();
                 delete this;
                 return true;
             }
-            else if(this->m_child[i]->erase(key, this->m_child[i]))
+            else if(this->m_child[i]->erase(key))
             {
-                this->rebalance_if_needed(parent_slot);
+                this->rebalance_if_needed();
                 return true;
             }
 
@@ -146,31 +147,13 @@ protected:
             return false;
         }
 
-        tree_node * detach_deepest(int i, tree_node * & parent_slot)
-        {
-            tree_node * ret = nullptr;
-
-            if (this->m_child[i])
-                ret = this->m_child[i]->detach_deepest(i, this->m_child[i]);
-            else
-            {
-                parent_slot = this->m_child[(i ? 0 : 1)];
-                this->m_child[(i ? 0 : 1)] = nullptr;
-                ret = this;
-            }
-
-            this->rebalance_if_needed(parent_slot);
-
-            return ret;
-        }
-
         void update_balance()
         {
             this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
             this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
         }
 
-        void rebalance_if_needed(tree_node * & parent_slot)
+        void rebalance_if_needed()
         {
             this->update_balance();
 
@@ -179,14 +162,25 @@ protected:
 
             if (i || j)
             {
-                tree_node * swap = this->m_child[i];
-                this->m_child[i] = swap->m_child[j];
-                swap->m_child[j] = this;
-                parent_slot = swap;
+                tree_node * save = this->m_child[i];
+                tree_node ** save_parent = this->m_parent_slot;
+
+                this->set_child(i, save->m_child[j]);
+                save->set_child(j, this);
+
+                save->m_parent_slot = save_parent;
+                *save_parent = save;
 
                 this->update_balance();
-                swap->update_balance();
+                save->update_balance();
             }
+        }
+
+        void set_child(int i, tree_node * node)
+        {
+            this->m_child[i] = node;
+            if (node)
+                node->m_parent_slot = &this->m_child[i];
         }
 
         bool exists(K const & key)
@@ -229,22 +223,35 @@ protected:
 
     protected:
 
-        void erase_self(tree_node * & parent_slot)
+        void erase_self()
         {
             int i = (this->get_balance() == -1);
 
-            tree_node * replacement = nullptr;
-
-            if (i || this->m_child[1])
-                replacement = this->m_child[1 - i]->detach_deepest(i, this->m_child[1 - i]);
+            tree_node * replacement = this->m_child[1 - i];
 
             if (replacement)
             {
+                while (replacement->m_child[i])
+                    replacement = replacement->m_child[i];
+            }
+            if (replacement)
+            {
+                *replacement->m_parent_slot = replacement->m_child[1 - i];
+                if (*replacement->m_parent_slot)
+                    (*replacement->m_parent_slot)->rebalance_if_needed();
+
+                replacement->m_parent_slot = this->m_parent_slot;
+                *replacement->m_parent_slot = replacement;
+
                 replacement->m_child[0] = this->m_child[0];
                 replacement->m_child[1] = this->m_child[1];
             }
+            else
+                *this->m_parent_slot = nullptr;
 
-            parent_slot = replacement;
+            this->m_parent_slot = nullptr;
+            this->m_child[0] = nullptr;
+            this->m_child[1] = nullptr;
         }
 
         K m_key;
@@ -252,6 +259,8 @@ protected:
 
         tree_node *m_child[2];
         int m_stairs[2];
+
+        tree_node ** m_parent_slot;
     };
 
     tree_node * m_root;
