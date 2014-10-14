@@ -71,7 +71,7 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.insert(11, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 1);
 
-        lolunit_assert_equal(tree.insert(13, 1), true);
+        lolunit_assert_equal(tree.insert(13, 2), true);
         lolunit_assert_equal(tree.get_root_balance(), 1);
     }
 
@@ -124,6 +124,53 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.erase(30), true);
         lolunit_assert_equal(tree.exists(40), true);
         lolunit_assert_equal(tree.exists(50), true);
+    }
+
+
+    lolunit_declare_test(AvlTreeGetValue)
+    {
+        test_tree tree;
+
+        lolunit_assert_equal(tree.insert(10, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(20, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.insert(30, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(00, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
+
+        lolunit_assert_equal(tree.insert(-10, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
+
+        lolunit_assert_equal(tree.insert(-20, 1), true);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(-20, 1), false);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
+
+        lolunit_assert_equal(tree.insert(11, 2), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        lolunit_assert_equal(tree.insert(13, 3), true);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
+
+        int * value_ptr = nullptr;
+
+        lolunit_assert_equal(tree.try_get_value(-10, value_ptr), true);
+        lolunit_assert_equal(*value_ptr, 1);
+
+        lolunit_assert_equal(tree.try_get_value(11, value_ptr), true);
+        lolunit_assert_equal(*value_ptr, 2);
+
+        lolunit_assert_equal(tree.try_get_value(13, value_ptr), true);
+        lolunit_assert_equal(*value_ptr, 3);
+
+        lolunit_assert_equal(tree.try_get_value(67, value_ptr), false);
+        lolunit_assert_equal(*value_ptr, 3);
     }
 };
 
