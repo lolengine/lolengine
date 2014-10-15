@@ -12,7 +12,6 @@
 
 #pragma once
 
-
 namespace lol
 {
 
@@ -27,13 +26,21 @@ public:
 
     bool insert(K const & key, V const & value)
     {
+        bool created = false;
         if (!m_root)
         {
-            this->m_root = new tree_node(key, value, &this->m_root);
-            return true;
+
+            this->m_root = this->m_allocator.allocate(key, value, &this->m_root);
+            created = true;
         }
 
-        return this->m_root->insert(key, value);
+        if (!created)
+            created = this->m_root->insert(key, value);
+
+        if (this->m_allocator.check_reallocation())
+            this->m_allocator.repair_root(&this->m_root);
+
+        return created;
     }
 
     bool erase(K const & key)
@@ -60,20 +67,18 @@ public:
         return false;
     }
 
-    virtual ~avl_tree()
-    {
-        if (this->m_root)
-        {
-            this->m_root->cascade_delete();
-            delete this->m_root;
-        }
-    }
-
 protected:
 
     class tree_node
     {
     public:
+        tree_node() :
+            m_parent_slot(nullptr)
+        {
+            m_child[0] = m_child[1] = nullptr;
+            m_stairs[0] = m_stairs[1] = 0;
+        }
+
         tree_node(K key, V value, tree_node ** parent_slot) :
             m_key(key),
             m_value(value),
@@ -101,7 +106,7 @@ protected:
                 created = this->m_child[i]->insert(key, value);
             else
             {
-                this->m_child[i] = new tree_node(key, value, &this->m_child[i]);
+                this->m_child[i] = this->m_allocator->allocate(key, value, &this->m_child[i]);
                 created = true;
             }
 
@@ -119,7 +124,7 @@ protected:
             if (i < 0)
             {
                 this->erase_self();
-                delete this;
+                this->m_allocator->deallocate(this);
                 return true;
             }
             else if(this->m_child[i]->erase(key))
@@ -196,21 +201,6 @@ protected:
             return false;
         }
 
-        void cascade_delete()
-        {
-            if (this->m_child[0])
-            {
-                this->m_child[0]->cascade_delete();
-                delete this->m_child[0];
-            }
-
-            if (this->m_child[1])
-            {
-                this->m_child[1]->cascade_delete();
-                delete this->m_child[1];
-            }
-        }
-
         int get_balance()
         {
             return this->m_stairs[1] - this->m_stairs[0];
@@ -220,6 +210,113 @@ protected:
         {
             return this->m_key;
         }
+
+        class tree_node_allocator
+        {
+        public:
+
+            tree_node_allocator() :
+                m_current(0),
+                m_size(1),
+                m_allocated(0)
+            {
+                m_buffers[0] = new tree_node[1];
+                m_buffers[1] = nullptr;
+            }
+
+            ~tree_node_allocator()
+            {
+                delete[] this->m_buffers[this->m_current];
+            }
+
+            tree_node * allocate(K const & key, V const & value, tree_node ** parent_slot)
+            {
+                tree_node * new_node = &this->m_buffers[this->m_current][this->m_allocated++];
+
+                new_node->m_key = key;
+                new_node->m_value = value;
+                new_node->m_parent_slot = parent_slot;
+                new_node->m_allocator = this;
+
+                return new_node;
+            }
+
+            bool check_reallocation()
+            {
+                if (this->m_allocated == this->m_size)
+                {
+                    int next = this->m_current ? 0 : 1;
+                    size_t new_size = this->m_size * 2;
+
+                    this->m_buffers[next] = new tree_node[new_size];
+
+                    for (int i = 0 ; i < this->m_size ; ++i)
+                        this->m_buffers[next][i] = this->m_buffers[this->m_current][i];
+
+                    // Fix new links between child and parents and the new_array
+                    for (int i = 0 ; i < this->m_size ; ++i)
+                    {
+                        for (int j = 0 ; j < 2 ; ++j)
+                        {
+                            if (this->m_buffers[this->m_current][i].m_child[j])
+                            {
+                                ptrdiff_t position0 = this->m_buffers[this->m_current][i].m_child[j] - this->m_buffers[this->m_current];
+                                this->m_buffers[next][i].m_child[j] = &this->m_buffers[next][position0];
+                                this->m_buffers[next][position0].m_parent_slot = &this->m_buffers[next][i].m_child[j];
+                            }
+                        }
+                    }
+
+                    delete[] this->m_buffers[this->m_current];
+                    this->m_buffers[this->m_current] = nullptr;
+                    this->m_current = next;
+                    this->m_size = new_size;
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            void deallocate(tree_node * replace)
+            {
+                *replace = this->m_buffers[m_current][this->m_allocated - 1];
+                if (replace->m_parent_slot)
+                    *replace->m_parent_slot = replace;
+
+                this->m_buffers[m_current][this->m_allocated - 1] = tree_node();
+
+                for (int i = 0 ; i < 2 ; ++i)
+                    if (replace->m_child[i])
+                        replace->m_child[i]->m_parent_slot = &replace->m_child[i];
+
+                --this->m_allocated;
+            }
+
+            void repair_root(tree_node ** root)
+            {
+                bool root_found = false;
+
+                for (int i = 0 ; i < this->m_allocated ; ++i)
+                {
+                    if (this->m_buffers[this->m_current][i].m_parent_slot == root)
+                    {
+                        *root = &this->m_buffers[this->m_current][i];
+                        root_found = true;
+                    }
+                }
+
+                ASSERT(root_found); // Something went really bad
+            }
+
+        private:
+
+            tree_node * m_buffers[2];
+            int m_current;
+
+            size_t m_size;
+            ptrdiff_t m_allocated;
+        };
 
     protected:
 
@@ -261,9 +358,11 @@ protected:
         int m_stairs[2];
 
         tree_node ** m_parent_slot;
+        tree_node_allocator * m_allocator;
     };
 
     tree_node * m_root;
+    typename tree_node::tree_node_allocator m_allocator;
 };
 
 }
