@@ -85,7 +85,7 @@ public:
         return false;
     }
 
-    bool try_get_max(K const * & key, V * & value_ptr) const
+    bool try_get_max(K const * & key_ptr, V * & value_ptr) const
     {
         tree_node * max_node = nullptr;
 
