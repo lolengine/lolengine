@@ -81,6 +81,7 @@ protected:
         {
             m_child[0] = m_child[1] = nullptr;
             m_stairs[0] = m_stairs[1] = 0;
+            m_chain[0] = m_chain[1] = nullptr;
         }
 
         /* Insert a value in tree and return true or update an existing value for
@@ -101,8 +102,16 @@ protected:
                 created = this->m_child[i]->insert(key, value);
             else
             {
-                this->m_child[i] = new tree_node(key, value, &this->m_child[i]);
                 created = true;
+
+                this->m_child[i] = new tree_node(key, value, &this->m_child[i]);
+
+                this->m_child[i]->m_chain[i] = this->m_chain[i];
+                this->m_child[i]->m_chain[i ? 0 : 1] = this;
+
+                if (this->m_chain[i])
+                    this->m_chain[i]->m_chain[i ? 0 : 1] = this->m_child[i];
+                this->m_chain[i] = this->m_child[i];
             }
 
             if (created)
@@ -147,42 +156,6 @@ protected:
             return false;
         }
 
-        void update_balance()
-        {
-            this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
-            this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
-        }
-
-        void rebalance_if_needed()
-        {
-            this->update_balance();
-
-            int i = (this->get_balance() ==  2);
-            int j = (this->get_balance() == -2);
-
-            if (i || j)
-            {
-                tree_node * save = this->m_child[i];
-                tree_node ** save_parent = this->m_parent_slot;
-
-                this->set_child(i, save->m_child[j]);
-                save->set_child(j, this);
-
-                save->m_parent_slot = save_parent;
-                *save_parent = save;
-
-                this->update_balance();
-                save->update_balance();
-            }
-        }
-
-        void set_child(int i, tree_node * node)
-        {
-            this->m_child[i] = node;
-            if (node)
-                node->m_parent_slot = &this->m_child[i];
-        }
-
         bool exists(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
@@ -223,6 +196,42 @@ protected:
 
     protected:
 
+        void update_balance()
+        {
+            this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
+            this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
+        }
+
+        void rebalance_if_needed()
+        {
+            this->update_balance();
+
+            int i = (this->get_balance() ==  2);
+            int j = (this->get_balance() == -2);
+
+            if (i || j)
+            {
+                tree_node * save = this->m_child[i];
+                tree_node ** save_parent = this->m_parent_slot;
+
+                this->set_child(i, save->m_child[j]);
+                save->set_child(j, this);
+
+                save->m_parent_slot = save_parent;
+                *save_parent = save;
+
+                this->update_balance();
+                save->update_balance();
+            }
+        }
+
+        void set_child(int i, tree_node * node)
+        {
+            this->m_child[i] = node;
+            if (node)
+                node->m_parent_slot = &this->m_child[i];
+        }
+
         void erase_self()
         {
             int i = (this->get_balance() == -1);
@@ -234,6 +243,7 @@ protected:
                 while (replacement->m_child[i])
                     replacement = replacement->m_child[i];
             }
+
             if (replacement)
             {
                 *replacement->m_parent_slot = replacement->m_child[1 - i];
@@ -249,9 +259,26 @@ protected:
             else
                 *this->m_parent_slot = nullptr;
 
+            this->replace_chain(replacement);
+
             this->m_parent_slot = nullptr;
             this->m_child[0] = nullptr;
             this->m_child[1] = nullptr;
+            this->m_chain[0] = nullptr;
+            this->m_chain[1] = nullptr;
+        }
+
+        void replace_chain(tree_node * replacement)
+        {
+            for (int i = 0 ; i < 2 ; ++i)
+            {
+                if (this->m_chain[i])
+                {
+                    this->m_chain[i]->m_chain[i ? 0 : 1] = replacement;
+                    if (replacement)
+                        replacement->m_chain[i ? 0 : 1] = this->m_chain[i];
+                }
+            }
         }
 
         K m_key;
@@ -261,6 +288,8 @@ protected:
         int m_stairs[2];
 
         tree_node ** m_parent_slot;
+
+        tree_node * m_chain[2]; // Linked list used to keep order between nodes
     };
 
     tree_node * m_root;

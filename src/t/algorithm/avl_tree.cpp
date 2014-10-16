@@ -93,6 +93,7 @@ lolunit_declare_fixture(AvlTreeTest)
 
         lolunit_assert_equal(tree.erase(20), true);
         lolunit_assert_equal(tree.insert(20, 1), true);
+        lolunit_assert_equal(tree.exists(10), true);
     }
 
     lolunit_declare_test(AvlTreeExistence)
