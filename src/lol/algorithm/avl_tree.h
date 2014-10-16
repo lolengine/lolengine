@@ -25,6 +25,15 @@ public:
     {
     }
 
+    ~avl_tree()
+    {
+        if (this->m_root)
+        {
+            this->m_root->cascade_delete();
+            delete this->m_root;
+        }
+    }
+
     bool insert(K const & key, V const & value)
     {
         if (!m_root)
@@ -52,7 +61,7 @@ public:
         return this->m_root->exists(key);
     }
 
-    bool try_get_value(K const & key, V * & value_ptr)
+    bool try_get_value(K const & key, V * & value_ptr) const
     {
         if (this->m_root)
             return this->m_root->try_get_value(key, value_ptr);
@@ -60,13 +69,35 @@ public:
         return false;
     }
 
-    virtual ~avl_tree()
+    bool try_get_min(K const * & key_ptr, V * & value_ptr) const
     {
+        tree_node * min_node = nullptr;
+
         if (this->m_root)
         {
-            this->m_root->cascade_delete();
-            delete this->m_root;
+            this->m_root->get_min(min_node);
+            key_ptr = &min_node->m_key;
+            value_ptr = &min_node->m_value;
+
+            return true;
         }
+
+        return false;
+    }
+
+    bool try_get_max(K const * & key, V * & value_ptr) const
+    {
+        tree_node * max_node = nullptr;
+
+        if (this->m_root)
+        {
+            this->m_root->get_max(max_node);
+            value_ptr = &max_node->value;
+
+            return true;
+        }
+
+        return false;
     }
 
 protected:
@@ -82,6 +113,16 @@ protected:
             m_child[0] = m_child[1] = nullptr;
             m_stairs[0] = m_stairs[1] = 0;
             m_chain[0] = m_chain[1] = nullptr;
+        }
+
+        K const & get_key()
+        {
+            return this->m_key;
+        }
+
+        V & get_value()
+        {
+            return this->m_value;
         }
 
         /* Insert a value in tree and return true or update an existing value for
@@ -169,6 +210,22 @@ protected:
             return false;
         }
 
+        void get_min(tree_node * & min_node) const
+        {
+            min_node = this;
+
+            while (this->m_child[0])
+                min_node = this->m_child[0];
+        }
+
+        void get_max(tree_node * & max_node) const
+        {
+            max_node = this;
+
+            while (this->m_child[1])
+                max_node = this->m_child[1];
+        }
+
         void cascade_delete()
         {
             if (this->m_child[0])
@@ -184,14 +241,19 @@ protected:
             }
         }
 
-        int get_balance()
+        int get_balance() const
         {
             return this->m_stairs[1] - this->m_stairs[0];
         }
 
-        K get_key()
+        tree_node * get_previous() const
         {
-            return this->m_key;
+            return this->m_chain[0];
+        }
+
+        tree_node * get_next() const
+        {
+            return this->m_chain[1];
         }
 
     protected:
@@ -291,6 +353,160 @@ protected:
 
         tree_node * m_chain[2]; // Linked list used to keep order between nodes
     };
+
+public:
+
+    /* Iterators related */
+
+    struct OutputValue
+    {
+        OutputValue(K const & key, V & value) :
+            m_key(key),
+            m_value(value)
+        {
+        }
+
+        K const & m_key;
+        V & m_value;
+    };
+
+    class Iterator
+    {
+    public:
+
+        Iterator(tree_node * node) :
+            m_node(node)
+        {
+        }
+
+        Iterator & operator++(int)
+        {
+            ASSERT(this->m_node);
+
+            this->m_node = this->m_node->get_next();
+
+            return *this;
+        }
+
+        Iterator & operator--(int)
+        {
+            ASSERT(this->m_node);
+
+            this->m_node = this->m_node->get_previous();
+
+            return *this;
+        }
+
+        Iterator operator++()
+        {
+            ASSERT(this->m_node);
+
+            tree_node * ret = this->m_node;
+            this->m_node = this->m_node->get_next();
+
+            return Iterator(ret);
+        }
+
+        Iterator operator--()
+        {
+            ASSERT(this->m_node);
+
+            tree_node * ret = this->m_node;
+            this->m_node = this->m_node->get_previous();
+
+            return Iterator(ret);
+        }
+
+        OutputValue operator*()
+        {
+            return OutputValue(this->m_node->get_key(), this->m_node->get_value());
+        }
+
+        bool operator==(Iterator const & that) const
+        {
+            return this->m_node = that->m_node;
+        }
+
+    protected:
+
+        tree_node * m_node;
+    };
+
+    struct ConstOutputValue
+    {
+        ConstOutputValue(K const & key, V const & value) :
+            m_key(key),
+            m_value(value)
+        {
+        }
+
+        K const & m_key;
+        V const & m_value;
+    };
+
+    class ConstIterator
+    {
+    public:
+
+        ConstIterator(tree_node * node) :
+            m_node(node)
+        {
+        }
+
+        ConstIterator & operator++(int)
+        {
+            ASSERT(this->m_node);
+
+            this->m_node = this->m_node->get_next();
+
+            return *this;
+        }
+
+        ConstIterator & operator--(int)
+        {
+            ASSERT(this->m_node);
+
+            this->m_node = this->m_node->get_previous();
+
+            return *this;
+        }
+
+        ConstIterator operator++()
+        {
+            ASSERT(this->m_node);
+
+            tree_node * ret = this->m_node;
+            this->m_node = this->m_node->get_next();
+
+            return ConstIterator(ret);
+        }
+
+        ConstIterator operator--()
+        {
+            ASSERT(this->m_node);
+
+            tree_node * ret = this->m_node;
+            this->m_node = this->m_node->get_previous();
+
+            return ConstIterator(ret);
+        }
+
+        ConstOutputValue operator*()
+        {
+            return ConstOutputValue(this->m_node->get_key(), this->m_node->get_value());
+        }
+
+        bool operator==(ConstIterator const & that) const
+        {
+            return this->m_node = that->m_node;
+        }
+
+    protected:
+
+        tree_node * m_node;
+    };
+
+protected:
 
     tree_node * m_root;
 };
