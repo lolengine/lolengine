@@ -76,8 +76,8 @@ public:
         if (this->m_root)
         {
             this->m_root->get_min(min_node);
-            key_ptr = &min_node->m_key;
-            value_ptr = &min_node->m_value;
+            key_ptr = &min_node->get_key();
+            value_ptr = &min_node->get_value();
 
             return true;
         }
@@ -92,12 +92,36 @@ public:
         if (this->m_root)
         {
             this->m_root->get_max(max_node);
-            value_ptr = &max_node->value;
+            key_ptr = &max_node->get_key();
+            value_ptr = &max_node->get_value();
 
             return true;
         }
 
         return false;
+    }
+
+    class Iterator;
+    class ConstIterator;
+
+    Iterator get_iterator()
+    {
+        tree_node * node = nullptr;
+
+        if (this->m_root)
+            node = this->m_root->get_min();
+
+        return Iterator(node);
+    }
+
+    ConstIterator get_iterator() const
+    {
+        tree_node * node = nullptr;
+
+        if (this->m_root)
+            node = this->m_root->get_min();
+
+        return ConstIterator(node);
     }
 
 protected:
