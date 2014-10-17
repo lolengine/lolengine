@@ -12,7 +12,6 @@
 
 #pragma once
 
-
 namespace lol
 {
 
@@ -104,24 +103,34 @@ public:
     class Iterator;
     class ConstIterator;
 
-    Iterator get_iterator()
+    Iterator begin()
     {
         tree_node * node = nullptr;
 
         if (this->m_root)
-            node = this->m_root->get_min();
+            this->m_root->get_min(node);
 
         return Iterator(node);
     }
 
-    ConstIterator get_iterator() const
+    ConstIterator begin() const
     {
         tree_node * node = nullptr;
 
         if (this->m_root)
-            node = this->m_root->get_min();
+            this->m_root->get_min(node);
 
         return ConstIterator(node);
+    }
+
+    Iterator end()
+    {
+        return Iterator(nullptr);
+    }
+
+    ConstIterator end() const
+    {
+        return ConstIterator(nullptr);
     }
 
 protected:
@@ -234,34 +243,31 @@ protected:
             return false;
         }
 
-        void get_min(tree_node * & min_node) const
+        void get_min(tree_node * & min_node)
         {
             min_node = this;
 
-            while (this->m_child[0])
-                min_node = this->m_child[0];
+            while (min_node->m_child[0])
+                min_node = min_node->m_child[0];
         }
 
         void get_max(tree_node * & max_node) const
         {
             max_node = this;
 
-            while (this->m_child[1])
-                max_node = this->m_child[1];
+            while (max_node->m_child[1])
+                max_node = max_node->m_child[1];
         }
 
         void cascade_delete()
         {
-            if (this->m_child[0])
+            for (int i = 0 ; i < 2 ; ++i)
             {
-                this->m_child[0]->cascade_delete();
-                delete this->m_child[0];
-            }
-
-            if (this->m_child[1])
-            {
-                this->m_child[1]->cascade_delete();
-                delete this->m_child[1];
+                if (this->m_child[i])
+                {
+                    this->m_child[i]->cascade_delete();
+                    delete this->m_child[i];
+                }
             }
         }
 
@@ -384,14 +390,14 @@ public:
 
     struct OutputValue
     {
-        OutputValue(K const & key, V & value) :
-            m_key(key),
-            m_value(value)
+        OutputValue(K const & _key, V & _value) :
+            key(_key),
+            value(_value)
         {
         }
 
-        K const & m_key;
-        V & m_value;
+        K const & key;
+        V & value;
     };
 
     class Iterator
@@ -446,9 +452,9 @@ public:
             return OutputValue(this->m_node->get_key(), this->m_node->get_value());
         }
 
-        bool operator==(Iterator const & that) const
+        bool operator!=(Iterator const & that) const
         {
-            return this->m_node = that->m_node;
+            return this->m_node != that.m_node;
         }
 
     protected:
@@ -458,14 +464,14 @@ public:
 
     struct ConstOutputValue
     {
-        ConstOutputValue(K const & key, V const & value) :
-            m_key(key),
-            m_value(value)
+        ConstOutputValue(K const & _key, V const & _value) :
+            key(_key),
+            value(_value)
         {
         }
 
-        K const & m_key;
-        V const & m_value;
+        K const & key;
+        V const & value;
     };
 
     class ConstIterator
@@ -520,9 +526,9 @@ public:
             return ConstOutputValue(this->m_node->get_key(), this->m_node->get_value());
         }
 
-        bool operator==(ConstIterator const & that) const
+        bool operator!=(ConstIterator const & that) const
         {
-            return this->m_node = that->m_node;
+            return this->m_node != that.m_node;
         }
 
     protected:

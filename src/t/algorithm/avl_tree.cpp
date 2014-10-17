@@ -173,6 +173,23 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.try_get_value(67, value_ptr), false);
         lolunit_assert_equal(*value_ptr, 3);
     }
+
+    lolunit_declare_test(AvlTreeTestIteratorRead)
+    {
+        test_tree tree;
+
+        for (int i = 1 ; i < 100 ; ++i)
+            tree.insert(i, 2 * i + i % 3);
+
+        int tmp = 0;
+
+        for (auto iterator : tree)
+        {
+            lolunit_assert_equal(iterator.key > tmp, true);
+            lolunit_assert_equal(iterator.value == (iterator.key * 2 + iterator.key % 3), true);
+            tmp = iterator.key;
+        }
+    }
 };
 
 }
