@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <lol/base/avl_tree.h>
 #include <lol/base/features.h>
 #include <lol/base/types.h>
 #include <lol/base/log.h>
