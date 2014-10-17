@@ -410,20 +410,28 @@ protected:
             this->m_parent_slot = nullptr;
             this->m_child[0] = nullptr;
             this->m_child[1] = nullptr;
-            this->m_chain[0] = nullptr;
-            this->m_chain[1] = nullptr;
         }
 
         void replace_chain(tree_node * replacement)
         {
             for (int i = 0 ; i < 2 ; ++i)
             {
-                if (this->m_chain[i])
+                if (replacement)
                 {
-                    this->m_chain[i]->m_chain[i ? 0 : 1] = replacement;
-                    if (replacement)
-                        replacement->m_chain[i ? 0 : 1] = this->m_chain[i];
+                    if (replacement->m_chain[i])
+                        replacement->m_chain[i]->m_chain[i ? 0 : 1] = replacement->m_chain[i ? 0 : 1];
+
+                    replacement->m_chain[i] = this->m_chain[i];
+                    if (replacement->m_chain[i])
+                        replacement->m_chain[i]->m_chain[i ? 0 : 1] = replacement;
                 }
+                else
+                {
+                    if (this->m_chain[i])
+                        this->m_chain[i]->m_chain[i ? 0 : 1] = this->m_chain[i ? 0 : 1];
+                }
+
+                this->m_chain[i] = nullptr;
             }
         }
 

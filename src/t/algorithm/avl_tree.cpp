@@ -91,6 +91,15 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.get_count(), 3);
 
         lolunit_assert_equal(tree.erase(30), true);
+
+        int test = 0;
+
+        for (auto iterator : tree)
+        {
+            test += 10;
+            lolunit_assert_equal(iterator.key, test);
+        }
+
         lolunit_assert_equal(tree.get_count(), 2);
         lolunit_assert_equal(tree.insert(30, 1), true);
 
@@ -98,6 +107,13 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.exists(10), true);
 
+        test = 0;
+
+        for (auto iterator : tree)
+        {
+            test += 10;
+            lolunit_assert_equal(iterator.key, test);
+        }
     }
 
     lolunit_declare_test(AvlTreeExistence)
