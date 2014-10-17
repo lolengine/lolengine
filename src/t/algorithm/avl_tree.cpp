@@ -190,6 +190,25 @@ lolunit_declare_fixture(AvlTreeTest)
             tmp = iterator.key;
         }
     }
+
+    lolunit_declare_test(AvlTreeTestIteratorCopy)
+    {
+        test_tree tree;
+
+        for (int i = 1 ; i < 100 ; ++i)
+            tree.insert(i, 2 * i + i % 3);
+
+        test_tree other = tree;
+
+        int tmp = 0;
+
+        for (auto iterator : other)
+        {
+            lolunit_assert_equal(iterator.key > tmp, true);
+            lolunit_assert_equal(iterator.value == (iterator.key * 2 + iterator.key % 3), true);
+            tmp = iterator.key;
+        }
+    }
 };
 
 }
