@@ -20,12 +20,14 @@ class avl_tree
 {
 public:
     avl_tree() :
-        m_root(nullptr)
+        m_root(nullptr),
+        m_count(0)
     {
     }
 
     avl_tree(avl_tree const & other) :
-        m_root(nullptr)
+        m_root(nullptr),
+        m_count(0)
     {
         for (auto iterator : other)
             this->insert(iterator.key, iterator.value);
@@ -39,6 +41,8 @@ public:
             delete this->m_root;
             this->m_root = nullptr;
         }
+
+        this->m_count = other->m_count;
 
         for (auto iterator : other)
             this->insert(iterator.key, iterator.value);
@@ -58,10 +62,17 @@ public:
         if (!m_root)
         {
             this->m_root = new tree_node(key, value, &this->m_root);
+            ++this->m_count;
             return true;
         }
 
-        return this->m_root->insert(key, value);
+        if(this->m_root->insert(key, value))
+        {
+            ++this->m_count;
+            return true;
+        }
+
+        return false;
     }
 
     bool erase(K const & key)
@@ -69,7 +80,13 @@ public:
         if (!m_root)
             return false;
 
-        return this->m_root->erase(key);
+        if(this->m_root->erase(key))
+        {
+            --this->m_count;
+            return true;
+        }
+
+        return false;
     }
 
     bool exists(K const & key)
@@ -78,6 +95,16 @@ public:
             return false;
 
         return this->m_root->exists(key);
+    }
+
+    void clear()
+    {
+        if (this->m_root)
+        {
+            this->m_root->cascade_delete();
+            delete this->m_root;
+            this->m_root = nullptr;
+        }
     }
 
     bool try_get_value(K const & key, V * & value_ptr) const
@@ -141,6 +168,11 @@ public:
             this->m_root->get_min(node);
 
         return ConstIterator(node);
+    }
+
+    int get_count() const
+    {
+        return this->m_count;
     }
 
     Iterator end()
@@ -559,6 +591,8 @@ public:
 protected:
 
     tree_node * m_root;
+
+    int m_count;
 };
 
 }

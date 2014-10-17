@@ -88,12 +88,16 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.get_root_balance(), 0);
 
+        lolunit_assert_equal(tree.get_count(), 3);
+
         lolunit_assert_equal(tree.erase(30), true);
+        lolunit_assert_equal(tree.get_count(), 2);
         lolunit_assert_equal(tree.insert(30, 1), true);
 
         lolunit_assert_equal(tree.erase(20), true);
         lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.exists(10), true);
+
     }
 
     lolunit_declare_test(AvlTreeExistence)
@@ -189,6 +193,8 @@ lolunit_declare_fixture(AvlTreeTest)
             lolunit_assert_equal(iterator.value == (iterator.key * 2 + iterator.key % 3), true);
             tmp = iterator.key;
         }
+
+        lolunit_assert_equal(tree.get_count(), 99);
     }
 
     lolunit_declare_test(AvlTreeTestIteratorCopy)
@@ -208,6 +214,8 @@ lolunit_declare_fixture(AvlTreeTest)
             lolunit_assert_equal(iterator.value == (iterator.key * 2 + iterator.key % 3), true);
             tmp = iterator.key;
         }
+
+        lolunit_assert_equal(other.get_count(), 99);
     }
 };
 
