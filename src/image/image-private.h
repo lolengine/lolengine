@@ -72,6 +72,12 @@ public:
     virtual bool Load(Image *image, char const *path) = 0;
     virtual bool Save(Image *image, char const *path) = 0;
 
+    /* TODO: For animated GIFs. Maybe move this to a Movie object instead? */
+    virtual bool Save(array<Image *> const &images, char const *path)
+    {
+        return false;
+    }
+
     /* TODO: this should become more fine-grained */
     int m_priority;
 };
