@@ -36,8 +36,8 @@ liblolcore_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
     \
     lol/base/all.h \
-    lol/base/features.h lol/base/tuple.h lol/base/types.h lol/base/array.h \
-    lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
+    lol/base/avl_tree.h lol/base/features.h lol/base/tuple.h lol/base/types.h \
+    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
     lol/base/enum.h lol/base/log.h \
     \
     lol/math/all.h \
@@ -47,7 +47,7 @@ liblolcore_headers = \
     lol/math/transform.h \
     \
     lol/algorithm/all.h \
-    lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h lol/algorithm/avl_tree.h \
+    lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
     \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \

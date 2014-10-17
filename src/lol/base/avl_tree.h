@@ -15,6 +15,8 @@
 namespace lol
 {
 
+#include <lol/base/all.h>
+
 template<typename K, typename V>
 class avl_tree
 {
@@ -330,8 +332,8 @@ protected:
 
         void update_balance()
         {
-            this->m_stairs[0] = this->m_child[0] ? lol::max(this->m_child[0]->m_stairs[0], this->m_child[0]->m_stairs[1]) + 1 : 0;
-            this->m_stairs[1] = this->m_child[1] ? lol::max(this->m_child[1]->m_stairs[0], this->m_child[1]->m_stairs[1]) + 1 : 0;
+            this->m_stairs[0] = this->m_child[0] ? (this->m_child[0]->m_stairs[0] > this->m_child[0]->m_stairs[1] ? this->m_child[0]->m_stairs[0] : this->m_child[0]->m_stairs[1]) + 1 : 0;
+            this->m_stairs[1] = this->m_child[1] ? (this->m_child[1]->m_stairs[0] > this->m_child[1]->m_stairs[1] ? this->m_child[1]->m_stairs[0] : this->m_child[1]->m_stairs[1]) + 1 : 0;
         }
 
         void rebalance_if_needed()
@@ -459,8 +461,6 @@ public:
 
         Iterator & operator++(int)
         {
-            ASSERT(this->m_node);
-
             this->m_node = this->m_node->get_next();
 
             return *this;
@@ -468,8 +468,6 @@ public:
 
         Iterator & operator--(int)
         {
-            ASSERT(this->m_node);
-
             this->m_node = this->m_node->get_previous();
 
             return *this;
@@ -477,8 +475,6 @@ public:
 
         Iterator operator++()
         {
-            ASSERT(this->m_node);
-
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->get_next();
 
@@ -487,8 +483,6 @@ public:
 
         Iterator operator--()
         {
-            ASSERT(this->m_node);
-
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->get_previous();
 
@@ -533,8 +527,6 @@ public:
 
         ConstIterator & operator++(int)
         {
-            ASSERT(this->m_node);
-
             this->m_node = this->m_node->get_next();
 
             return *this;
@@ -542,8 +534,6 @@ public:
 
         ConstIterator & operator--(int)
         {
-            ASSERT(this->m_node);
-
             this->m_node = this->m_node->get_previous();
 
             return *this;
@@ -551,8 +541,6 @@ public:
 
         ConstIterator operator++()
         {
-            ASSERT(this->m_node);
-
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->get_next();
 
@@ -561,8 +549,6 @@ public:
 
         ConstIterator operator--()
         {
-            ASSERT(this->m_node);
-
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->get_previous();
 

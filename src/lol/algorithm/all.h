@@ -12,6 +12,5 @@
 
 #include <lol/algorithm/sort.h>
 #include <lol/algorithm/aabb_tree.h>
-#include <lol/algorithm/avl_tree.h>
 #include <lol/algorithm/portal.h>
 

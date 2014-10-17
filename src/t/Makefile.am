@@ -7,17 +7,12 @@ TESTS = $(testsuite)
 
 # Conditionally built for now because of STLport issues
 if !USE_ANDROID
-testsuite = test-algorithm test-base test-math test-sys test-image test-entity
+testsuite = test-base test-math test-sys test-image test-entity
 endif
 
-test_algorithm_SOURCES = test-common.cpp \
-    algorithm/avl_tree.cpp
-test_algorithm_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
-test_algorithm_DEPENDENCIES = @LOL_DEPS@
-
 test_base_SOURCES = test-common.cpp \
-    base/array.cpp base/enum.cpp base/map.cpp base/string.cpp \
-    base/types.cpp
+    base/avl_tree.cpp base/array.cpp base/enum.cpp base/map.cpp \
+    base/string.cpp base/types.cpp
 test_base_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_base_DEPENDENCIES = @LOL_DEPS@
 
