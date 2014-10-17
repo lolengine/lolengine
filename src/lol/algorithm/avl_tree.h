@@ -105,6 +105,8 @@ public:
             delete this->m_root;
             this->m_root = nullptr;
         }
+
+        this->m_count = 0;
     }
 
     bool try_get_value(K const & key, V * & value_ptr) const
