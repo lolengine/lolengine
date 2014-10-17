@@ -288,6 +288,14 @@ build()
 {
     cd "$top_srcdir"
     case "$platform" in
+        win*-i386)
+            # Because of locking issues in Wine’s winepath.exe, we only
+            # build the static libraries in parallel.
+            make -j$LOL_PARALLEL -C src/bullet
+            make -j$LOL_PARALLEL -C src/lua
+            make -j$LOL_PARALLEL -C src/ liblolcore.a
+            make
+            ;;
         *)
             make -j$LOL_PARALLEL
             ;;
