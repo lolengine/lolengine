@@ -35,12 +35,7 @@ public:
 
     avl_tree & operator=(avl_tree const & other)
     {
-        if (this->m_root)
-        {
-            this->m_root->cascade_delete();
-            delete this->m_root;
-            this->m_root = nullptr;
-        }
+        this->clear();
 
         this->m_count = other->m_count;
 
@@ -50,11 +45,7 @@ public:
 
     ~avl_tree()
     {
-        if (this->m_root)
-        {
-            this->m_root->cascade_delete();
-            delete this->m_root;
-        }
+        this->clear();
     }
 
     bool insert(K const & key, V const & value)
@@ -101,11 +92,18 @@ public:
     {
         if (this->m_root)
         {
-            this->m_root->cascade_delete();
-            delete this->m_root;
-            this->m_root = nullptr;
+            tree_node * node = nullptr;
+            this->m_root->get_min(node);
+
+            while (node)
+            {
+                tree_node * next = node->get_next();
+                delete node;
+                node = next;
+            }
         }
 
+        this->m_root = nullptr;
         this->m_count = 0;
     }
 
@@ -311,18 +309,6 @@ protected:
 
             while (max_node->m_child[1])
                 max_node = max_node->m_child[1];
-        }
-
-        void cascade_delete()
-        {
-            for (int i = 0 ; i < 2 ; ++i)
-            {
-                if (this->m_child[i])
-                {
-                    this->m_child[i]->cascade_delete();
-                    delete this->m_child[i];
-                }
-            }
         }
 
         int get_balance() const
