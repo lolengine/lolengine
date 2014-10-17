@@ -24,6 +24,26 @@ public:
     {
     }
 
+    avl_tree(avl_tree const & other) :
+        m_root(nullptr)
+    {
+        for (auto iterator : other)
+            this->insert(iterator.key, iterator.value);
+    }
+
+    avl_tree & operator=(avl_tree const & other)
+    {
+        if (this->m_root)
+        {
+            this->m_root->cascade_delete();
+            delete this->m_root;
+            this->m_root = nullptr;
+        }
+
+        for (auto iterator : other)
+            this->insert(iterator.key, iterator.value);
+    }
+
     ~avl_tree()
     {
         if (this->m_root)
