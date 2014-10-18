@@ -16,8 +16,8 @@
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\src\bullet;$(SolutionDir)\..\tools\lolunit;$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!-- Escape backslashes for C++, but replace \ with / on the PS3
