@@ -443,6 +443,19 @@ fi
 AM_CONDITIONAL(USE_IMLIB2, test "${ac_cv_my_have_imlib2}" = "yes")
 
 
+# Use libavcodec? (required for movie encoding)
+ac_cv_my_have_ffmpeg=yes
+PKG_CHECK_MODULES([LIBAVCODEC], [libavcodec], [:], [ac_cv_my_have_ffmpeg=no])
+PKG_CHECK_MODULES([LIBAVFORMAT], [libavformat], [:], [ac_cv_my_have_ffmpeg=no])
+PKG_CHECK_MODULES([LIBSWSCALE], [libswscale], [:], [ac_cv_my_have_ffmpeg=no])
+if test "${ac_cv_my_have_ffmpeg}" != "no"; then
+  AC_DEFINE(USE_FFMPEG, 1, Define to 1 to use FFmpeg)
+  LOL_CFLAGS="${LOL_CFLAGS} ${LIBAVFORMAT_CFLAGS} ${LIBAVCODEC_CFLAGS} ${CFLAGSWSCALE_LIBS}"
+  LOL_LIBS="${LOL_LIBS} ${LIBAVFORMAT_LIBS} ${LIBAVCODEC_LIBS} ${LIBSWSCALE_LIBS}"
+fi
+AM_CONDITIONAL(USE_FFMPEG, test "${ac_cv_my_have_ffmpeg}" != "no")
+
+
 dnl Use GTK+? (required for the deushax editor)
 ac_cv_my_have_gtkgl="no"
 PKG_CHECK_MODULES(GTK, gtk+-2.0, [ac_cv_my_have_gtkgl="yes"], [:])
