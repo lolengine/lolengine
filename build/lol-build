@@ -167,6 +167,7 @@ configure()
             fi
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/gtkglarea-2.0.1/lib/pkgconfig"
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
+            LDFLAGS="$LDFLAGS -L$PWD/external/ffmpeg-20141018/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-2.0.3/lib/i686-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-2.0.0/lib/i686-w64-mingw32"
@@ -192,6 +193,7 @@ configure()
             fi
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/gtkglarea-2.0.1/lib/pkgconfig"
             PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PWD/external/libcaca-0.99.beta18/lib/pkgconfig"
+            LDFLAGS="$LDFLAGS -L$PWD/external/ffmpeg-20141018/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/glew-1.9.0/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-2.0.3/lib/x86_64-w64-mingw32"
             LDFLAGS="$LDFLAGS -L$PWD/external/sdl-image-2.0.0/lib/x86_64-mingw32"
@@ -254,6 +256,7 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-2.0.3/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-2.0.0/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-mixer-2.0.0/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/ffmpeg-20141018/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/glew-1.9.0/include/GL -DGLEW_STATIC"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/glib-2.0/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/gtk-2.0/include"
