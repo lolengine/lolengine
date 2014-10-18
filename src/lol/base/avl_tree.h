@@ -39,7 +39,7 @@ public:
     {
         this->clear();
 
-        this->m_count = other->m_count;
+        this->m_count = other.m_count;
 
         for (auto iterator : other)
             this->insert(iterator.key, iterator.value);
