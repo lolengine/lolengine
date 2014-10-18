@@ -227,6 +227,17 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(!s.EndsWith("olol"));
         lolunit_assert(!s.EndsWith("lolilolilol"));
     }
+
+    lolunit_declare_test(StringCompare)
+    {
+        String s1 = "lolilol";
+        String s2 = s1;
+        String s3 = "trololol";
+
+        lolunit_assert(!(s1 < s2));
+        lolunit_assert(!(s2 < s1));
+        lolunit_assert(s1 < s3);
+    }
 };
 
 } /* namespace lol */
