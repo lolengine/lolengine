@@ -72,7 +72,6 @@ public:
 
     bool Load(char const *path);
     bool Save(char const *path);
-    static bool Save(array<Image *> const &images, char const *path);
 
     /* Low level access */
     ivec2 GetSize() const;
