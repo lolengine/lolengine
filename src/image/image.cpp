@@ -144,14 +144,6 @@ bool Image::Save(char const *path)
     return false;
 }
 
-bool Image::Save(array<Image *> const &images, char const *path)
-{
-    for (auto codec : g_image_loader.m_codecs)
-        if (codec->Save(images, path))
-            return true;
-    return false;
-}
-
 ivec2 Image::GetSize() const
 {
     return m_data->m_size;
