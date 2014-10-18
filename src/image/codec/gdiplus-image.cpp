@@ -260,12 +260,19 @@ bool GdiPlusImageCodec::Save(array<Image *> const &images, char const *path)
 
     Gdiplus::Image *root_image = nullptr;
 
-#if 0
     Gdiplus::Bitmap *tmp = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
     unsigned int param_count = tmp->GetEncoderParameterListSize(&clsid);
     printf("%d parameters\n", param_count);
+
+    Gdiplus::EncoderParameters *params = (Gdiplus::EncoderParameters *)malloc(sizeof(params->Count) + param_count * sizeof(params->Parameter[0]));
+    tmp->GetEncoderParameterList(&clsid, param_count, params);
+    for (int i = 0; i < param_count; ++i)
+    {
+        printf("parameter %d has type %d and GUID %08x-%04x-%04x\n", i, params->Parameter[i].Type, params->Parameter[i].Guid.Data1, params->Parameter[i].Guid.Data2, params->Parameter[i].Guid.Data3);
+        //params->Parameter[i];
+    }
+    delete params;
     delete tmp;
-#endif
 
     for (int i = 0; i < images.Count(); ++i)
     {
@@ -304,7 +311,9 @@ bool GdiPlusImageCodec::Save(array<Image *> const &images, char const *path)
         }
         else
         {
-            ret = root_image->SaveAdd(b, nullptr);
+            Gdiplus::EncoderParameters eparm;
+            eparm.Count = 0;
+            ret = root_image->SaveAdd(b, &eparm);
         }
 
         if (ret != Gdiplus::Ok)
