@@ -276,6 +276,18 @@ public:
         return !(*this == sz);
     }
 
+    inline bool operator <(String const & that)
+    {
+        auto it_this = begin(*this);
+        auto it_that = begin(that);
+
+        for ( ; it_this != end(*this) && it_that != end(that) ; ++it_this, ++it_that)
+            if (*it_this < *it_that)
+                return true;
+
+        return (!(it_this != end(*this)) && (it_that != end(that)));
+    }
+
 #ifdef __GNUC__
 #   define LOL_FMT_ATTR(n, p) __attribute__((format(printf, n, p)))
 #else
