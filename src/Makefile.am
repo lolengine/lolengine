@@ -37,8 +37,8 @@ liblolcore_headers = \
     \
     lol/base/all.h \
     lol/base/avl_tree.h lol/base/features.h lol/base/tuple.h lol/base/types.h \
-    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/hash.h lol/base/map.h \
-    lol/base/enum.h lol/base/log.h \
+    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/hash.h \
+    lol/base/map.h lol/base/enum.h lol/base/log.h \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
@@ -53,7 +53,7 @@ liblolcore_headers = \
     lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
     \
     lol/image/all.h \
-    lol/image/pixel.h lol/image/color.h lol/image/image.h \
+    lol/image/pixel.h lol/image/color.h lol/image/image.h lol/image/movie.h \
     \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
@@ -122,6 +122,7 @@ liblolcore_sources = \
     image/dither/ostromoukhov.cpp image/dither/ordered.cpp \
     image/filter/convolution.cpp image/filter/color.cpp \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
+    image/movie.cpp \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \

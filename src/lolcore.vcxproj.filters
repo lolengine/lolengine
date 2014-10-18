@@ -105,6 +105,9 @@
     <ClCompile Include="debug\fps.cpp">
       <Filter>debug</Filter>
     </ClCompile>
+    <ClCompile Include="image\movie.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
     <ClCompile Include="debug\record.cpp">
       <Filter>debug</Filter>
     </ClCompile>
@@ -733,6 +736,9 @@
       <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\pixel.h">
+      <Filter>lol\image</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\image\movie.h">
       <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="input\keys.h">
