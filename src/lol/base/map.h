@@ -16,6 +16,7 @@
 // A very simple map class.
 //
 
+#include <lol/base/avl_tree.h>
 #include <lol/base/hash.h>
 
 namespace lol
@@ -35,46 +36,54 @@ public:
     inline V const& operator[] (E const &key) const
     {
         /* Look for the hash in our table and return the value. */
-        ptrdiff_t i = FindIndex(key);
-        ASSERT(i >= 0, "trying to read a nonexistent key in map");
-        return m_array[i].m3;
+        V * value_ptr = nullptr;
+        ASSERT(m_tree.try_get_value(key, value_ptr), "trying to read a nonexistent key in map");
+
+        return *value_ptr;
     }
 
     template <typename E>
     inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
-        uint32_t hashed = ((hash<K> const &)*this)(key);
-        ptrdiff_t i = FindIndex(key, hashed);
-        if (i >= 0)
-            return m_array[i].m3;
+
+        K typed_key(key);
+        V * value_ptr = nullptr;
+
+        if (!m_tree.try_get_value(typed_key, value_ptr))
+        {
+            V default_value = V();
+            m_tree.insert(typed_key, default_value);
+        }
+
+        ASSERT(m_tree.try_get_value(typed_key, value_ptr), "inner tree is messed up in map");
 
         /* If not found, insert a new value. */
-        m_array.Push(hashed, key, V());
-        return m_array.Last().m3;
+        return *value_ptr;
     }
 
     template <typename E>
     inline void Remove(E const &key)
     {
-        ptrdiff_t i = FindIndex(key);
-        if (i >= 0)
-            m_array.Remove(i);
+        K typed_key(key);
+        m_tree.erase(typed_key);
     }
 
     template <typename E>
     inline bool HasKey(E const &key)
     {
-        return FindIndex(key) >= 0;
+        K typed_key(key);
+        return m_tree.exists(typed_key);
     }
 
     template <typename E>
     inline bool TryGetValue(E const &key, V& value)
     {
-        ptrdiff_t i = FindIndex(key);
-        if (i >= 0)
+        K typed_key(key);
+        V * value_ptr;
+        if (m_tree.try_get_value(typed_key, value_ptr))
         {
-            value = m_array[i].m3;
+            value = *value_ptr;
             return true;
         }
 
@@ -84,40 +93,26 @@ public:
     array<K> Keys() const
     {
         array<K> ret;
-        for (auto it : m_array)
-            ret.Push(it.m2);
+
+        for (auto iterator : m_tree)
+            ret.Push(iterator.key);
+
         return ret;
     }
 
     inline ptrdiff_t Count() const
     {
-        return m_array.Count();
+        return m_tree.get_count();
     }
 
     inline void Empty()
     {
-        m_array.Empty();
+        m_tree.clear();
     }
 
 private:
-    template <typename E>
-    inline ptrdiff_t FindIndex(E const &key, uint32_t hashed)
-    {
-        for (ptrdiff_t i = 0; i < m_array.Count(); ++i)
-            if (m_array[i].m1 == hashed)
-                if (m_array[i].m2 == key)
-                    return i;
-        return -1;
-    }
 
-    template <typename E>
-    inline ptrdiff_t FindIndex(E const &key)
-    {
-        uint32_t hashed = ((hash<K> const &)*this)(key);
-        return FindIndex(key, hashed);
-    }
-
-    array<uint32_t, K, V> m_array;
+    avl_tree<K, V> m_tree;
 };
 
 } /* namespace lol */

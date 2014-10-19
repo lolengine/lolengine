@@ -276,16 +276,10 @@ public:
         return !(*this == sz);
     }
 
-    inline bool operator <(String const & that)
+    inline bool operator <(String const & s) const
     {
-        auto it_this = begin(*this);
-        auto it_that = begin(that);
-
-        for ( ; it_this != end(*this) && it_that != end(that) ; ++it_this, ++it_that)
-            if (*it_this < *it_that)
-                return true;
-
-        return (!(it_this != end(*this)) && (it_that != end(that)));
+        using namespace std;
+        return memcmp(C(), s.C(), Count()) < 0;
     }
 
 #ifdef __GNUC__

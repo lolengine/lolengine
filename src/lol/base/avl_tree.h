@@ -43,6 +43,8 @@ public:
 
         for (auto iterator : other)
             this->insert(iterator.key, iterator.value);
+
+        return *this;
     }
 
     ~avl_tree()
