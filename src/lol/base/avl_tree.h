@@ -32,27 +32,25 @@ public:
         m_count(0)
     {
         for (auto iterator : other)
-            this->insert(iterator.key, iterator.value);
+            this->Insert(iterator.key, iterator.value);
     }
 
     avl_tree & operator=(avl_tree const & other)
     {
-        this->clear();
-
-        this->m_count = other.m_count;
+        this->Clear();
 
         for (auto iterator : other)
-            this->insert(iterator.key, iterator.value);
+            this->Insert(iterator.key, iterator.value);
 
         return *this;
     }
 
     ~avl_tree()
     {
-        this->clear();
+        this->Clear();
     }
 
-    bool insert(K const & key, V const & value)
+    bool Insert(K const & key, V const & value)
     {
         if (!m_root)
         {
@@ -61,7 +59,7 @@ public:
             return true;
         }
 
-        if(this->m_root->insert(key, value))
+        if(this->m_root->Insert(key, value))
         {
             ++this->m_count;
             return true;
@@ -70,12 +68,12 @@ public:
         return false;
     }
 
-    bool erase(K const & key)
+    bool Erase(K const & key)
     {
         if (!m_root)
             return false;
 
-        if(this->m_root->erase(key))
+        if(this->m_root->Erase(key))
         {
             --this->m_count;
             return true;
@@ -84,24 +82,24 @@ public:
         return false;
     }
 
-    bool exists(K const & key)
+    bool Exists(K const & key)
     {
         if (!m_root)
             return false;
 
-        return this->m_root->exists(key);
+        return this->m_root->Exists(key);
     }
 
-    void clear()
+    void Clear()
     {
         if (this->m_root)
         {
             tree_node * node = nullptr;
-            this->m_root->get_min(node);
+            this->m_root->GetMin(node);
 
             while (node)
             {
-                tree_node * next = node->get_next();
+                tree_node * next = node->GetNext();
                 delete node;
                 node = next;
             }
@@ -111,23 +109,23 @@ public:
         this->m_count = 0;
     }
 
-    bool try_get_value(K const & key, V * & value_ptr) const
+    bool TryGetValue(K const & key, V * & value_ptr) const
     {
         if (this->m_root)
-            return this->m_root->try_get_value(key, value_ptr);
+            return this->m_root->TryGetValue(key, value_ptr);
 
         return false;
     }
 
-    bool try_get_min(K const * & key_ptr, V * & value_ptr) const
+    bool TryGetMin(K const * & key_ptr, V * & value_ptr) const
     {
         tree_node * min_node = nullptr;
 
         if (this->m_root)
         {
-            this->m_root->get_min(min_node);
-            key_ptr = &min_node->get_key();
-            value_ptr = &min_node->get_value();
+            this->m_root->GetMin(min_node);
+            key_ptr = &min_node->GetKey();
+            value_ptr = &min_node->GetValue();
 
             return true;
         }
@@ -135,15 +133,15 @@ public:
         return false;
     }
 
-    bool try_get_max(K const * & key_ptr, V * & value_ptr) const
+    bool TryGetMax(K const * & key_ptr, V * & value_ptr) const
     {
         tree_node * max_node = nullptr;
 
         if (this->m_root)
         {
-            this->m_root->get_max(max_node);
-            key_ptr = &max_node->get_key();
-            value_ptr = &max_node->get_value();
+            this->m_root->GetMax(max_node);
+            key_ptr = &max_node->GetKey();
+            value_ptr = &max_node->GetValue();
 
             return true;
         }
@@ -159,7 +157,7 @@ public:
         tree_node * node = nullptr;
 
         if (this->m_root)
-            this->m_root->get_min(node);
+            this->m_root->GetMin(node);
 
         return Iterator(node);
     }
@@ -169,12 +167,12 @@ public:
         tree_node * node = nullptr;
 
         if (this->m_root)
-            this->m_root->get_min(node);
+            this->m_root->GetMin(node);
 
         return ConstIterator(node);
     }
 
-    int get_count() const
+    int GetCount() const
     {
         return this->m_count;
     }
@@ -204,19 +202,19 @@ protected:
             m_chain[0] = m_chain[1] = nullptr;
         }
 
-        K const & get_key()
+        K const & GetKey()
         {
             return this->m_key;
         }
 
-        V & get_value()
+        V & GetValue()
         {
             return this->m_value;
         }
 
         /* Insert a value in tree and return true or update an existing value for
          * the existing key and return false */
-        bool insert(K const & key, V const & value)
+        bool Insert(K const & key, V const & value)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -229,7 +227,7 @@ protected:
             bool created = false;
 
             if (this->m_child[i])
-                created = this->m_child[i]->insert(key, value);
+                created = this->m_child[i]->Insert(key, value);
             else
             {
                 created = true;
@@ -245,32 +243,32 @@ protected:
             }
 
             if (created)
-                this->rebalance_if_needed();
+                this->RebalanceIfNeeded();
 
             return created;
         }
 
         /* Erase a value in tree and return true or return false */
-        bool erase(K const & key)
+        bool Erase(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
             if (i < 0)
             {
-                this->erase_self();
+                this->EraseSelf();
                 delete this;
                 return true;
             }
-            else if(this->m_child[i]->erase(key))
+            else if(this->m_child[i]->Erase(key))
             {
-                this->rebalance_if_needed();
+                this->RebalanceIfNeeded();
                 return true;
             }
 
             return false;
         }
 
-        bool try_get_value(K const & key, V * & value_ptr)
+        bool TryGetValue(K const & key, V * & value_ptr)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -281,12 +279,12 @@ protected:
             }
 
             if (this->m_child[i])
-                return this->m_child[i]->try_get_value(key, value_ptr);
+                return this->m_child[i]->TryGetValue(key, value_ptr);
 
             return false;
         }
 
-        bool exists(K const & key)
+        bool Exists(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -294,12 +292,12 @@ protected:
                 return true;
 
             if (this->m_child[i])
-                return this->m_child[i]->exists(key);
+                return this->m_child[i]->Exists(key);
 
             return false;
         }
 
-        void get_min(tree_node * & min_node)
+        void GetMin(tree_node * & min_node)
         {
             min_node = this;
 
@@ -307,7 +305,7 @@ protected:
                 min_node = min_node->m_child[0];
         }
 
-        void get_max(tree_node * & max_node) const
+        void GetMax(tree_node * & max_node) const
         {
             max_node = this;
 
@@ -315,62 +313,62 @@ protected:
                 max_node = max_node->m_child[1];
         }
 
-        int get_balance() const
+        int GetBalance() const
         {
             return this->m_stairs[1] - this->m_stairs[0];
         }
 
-        tree_node * get_previous() const
+        tree_node * GetPrevious() const
         {
             return this->m_chain[0];
         }
 
-        tree_node * get_next() const
+        tree_node * GetNext() const
         {
             return this->m_chain[1];
         }
 
     protected:
 
-        void update_balance()
+        void UpdateBalance()
         {
             this->m_stairs[0] = this->m_child[0] ? (this->m_child[0]->m_stairs[0] > this->m_child[0]->m_stairs[1] ? this->m_child[0]->m_stairs[0] : this->m_child[0]->m_stairs[1]) + 1 : 0;
             this->m_stairs[1] = this->m_child[1] ? (this->m_child[1]->m_stairs[0] > this->m_child[1]->m_stairs[1] ? this->m_child[1]->m_stairs[0] : this->m_child[1]->m_stairs[1]) + 1 : 0;
         }
 
-        void rebalance_if_needed()
+        void RebalanceIfNeeded()
         {
-            this->update_balance();
+            this->UpdateBalance();
 
-            int i = (this->get_balance() ==  2);
-            int j = (this->get_balance() == -2);
+            int i = (this->GetBalance() ==  2);
+            int j = (this->GetBalance() == -2);
 
             if (i || j)
             {
                 tree_node * save = this->m_child[i];
                 tree_node ** save_parent = this->m_parent_slot;
 
-                this->set_child(i, save->m_child[j]);
-                save->set_child(j, this);
+                this->SetChild(i, save->m_child[j]);
+                save->SetChild(j, this);
 
                 save->m_parent_slot = save_parent;
                 *save_parent = save;
 
-                this->update_balance();
-                save->update_balance();
+                this->UpdateBalance();
+                save->UpdateBalance();
             }
         }
 
-        void set_child(int i, tree_node * node)
+        void SetChild(int i, tree_node * node)
         {
             this->m_child[i] = node;
             if (node)
                 node->m_parent_slot = &this->m_child[i];
         }
 
-        void erase_self()
+        void EraseSelf()
         {
-            int i = (this->get_balance() == -1);
+            int i = (this->GetBalance() == -1);
 
             tree_node * replacement = this->m_child[1 - i];
 
@@ -384,7 +382,7 @@ protected:
             {
                 *replacement->m_parent_slot = replacement->m_child[1 - i];
                 if (*replacement->m_parent_slot)
-                    (*replacement->m_parent_slot)->rebalance_if_needed();
+                    (*replacement->m_parent_slot)->RebalanceIfNeeded();
 
                 replacement->m_parent_slot = this->m_parent_slot;
                 *replacement->m_parent_slot = replacement;
@@ -478,7 +476,7 @@ public:
         Iterator operator++()
         {
             tree_node * ret = this->m_node;
-            this->m_node = this->m_node->get_next();
+            this->m_node = this->m_node->GetNext();
 
             return Iterator(ret);
         }
@@ -486,14 +484,14 @@ public:
         Iterator operator--()
         {
             tree_node * ret = this->m_node;
-            this->m_node = this->m_node->get_previous();
+            this->m_node = this->m_node->GetPrevious();
 
             return Iterator(ret);
         }
 
         OutputValue operator*()
         {
-            return OutputValue(this->m_node->get_key(), this->m_node->get_value());
+            return OutputValue(this->m_node->GetKey(), this->m_node->GetValue());
         }
 
         bool operator!=(Iterator const & that) const
@@ -544,7 +542,7 @@ public:
         ConstIterator operator++()
         {
             tree_node * ret = this->m_node;
-            this->m_node = this->m_node->get_next();
+            this->m_node = this->m_node->GetNext();
 
             return ConstIterator(ret);
         }
@@ -552,14 +550,14 @@ public:
         ConstIterator operator--()
         {
             tree_node * ret = this->m_node;
-            this->m_node = this->m_node->get_previous();
+            this->m_node = this->m_node->GetPrevious();
 
             return ConstIterator(ret);
         }
 
         ConstOutputValue operator*()
         {
-            return ConstOutputValue(this->m_node->get_key(), this->m_node->get_value());
+            return ConstOutputValue(this->m_node->GetKey(), this->m_node->GetValue());
         }
 
         bool operator!=(ConstIterator const & that) const
