@@ -8,6 +8,12 @@
     <FlexDir>$(ExternalDir)\flex-2.5.35</FlexDir>
     <FlexIncludes>$(FlexDir)\include</FlexIncludes>
 
+    <!-- libgcc (from mingw-w64) -->
+    <LibGccDir>$(ExternalDir)\libgcc-4.9</LibGccDir>
+    <LibGccLibs Condition="'$(Platform)'=='Win32'">$(LibGccDir)\lib\i686-w64-mingw32</LibGccLibs>
+    <LibGccLibs Condition="'$(Platform)'=='x64'">$(LibGccDir)\lib\x86_64-w64-mingw32</LibGccLibs>
+    <LibGccDeps>libgcc.lib</LibGccDeps>
+
     <!-- SDL -->
     <SdlDir>$(ExternalDir)\sdl-2.0.3</SdlDir>
     <SdlImageDir>$(ExternalDir)\sdl-image-2.0.0</SdlImageDir>
@@ -101,6 +107,9 @@
     <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
     <BuildMacro Include="FlexDir"><Value>$(FlexDir)</Value></BuildMacro>
     <BuildMacro Include="FlexIncludes"><Value>$(FlexIncludes)</Value></BuildMacro>
+    <BuildMacro Include="LibGccDir"><Value>$(LibGccDir)</Value></BuildMacro>
+    <BuildMacro Include="LibGccLibs"><Value>$(LibGccLibs)</Value></BuildMacro>
+    <BuildMacro Include="LibGccDeps"><Value>$(LibGccDeps)</Value></BuildMacro>
     <BuildMacro Include="SdlDir"><Value>$(SdlDir)</Value></BuildMacro>
     <BuildMacro Include="SdlImageDir"><Value>$(SdlImageDir)</Value></BuildMacro>
     <BuildMacro Include="SdlMixerDir"><Value>$(SdlMixerDir)</Value></BuildMacro>
