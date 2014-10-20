@@ -37,7 +37,7 @@ public:
     {
         /* Look for the hash in our table and return the value. */
         V * value_ptr = nullptr;
-        ASSERT(m_tree.try_get_value(key, value_ptr), "trying to read a nonexistent key in map");
+        ASSERT(m_tree.TryGetValue(key, value_ptr), "trying to read a nonexistent key in map");
 
         return *value_ptr;
     }
@@ -50,13 +50,13 @@ public:
         K typed_key(key);
         V * value_ptr = nullptr;
 
-        if (!m_tree.try_get_value(typed_key, value_ptr))
+        if (!m_tree.TryGetValue(typed_key, value_ptr))
         {
             V default_value = V();
-            m_tree.insert(typed_key, default_value);
+            m_tree.Insert(typed_key, default_value);
         }
 
-        ASSERT(m_tree.try_get_value(typed_key, value_ptr), "inner tree is messed up in map");
+        ASSERT(m_tree.TryGetValue(typed_key, value_ptr), "inner tree is messed up in map");
 
         /* If not found, insert a new value. */
         return *value_ptr;
@@ -66,14 +66,14 @@ public:
     inline void Remove(E const &key)
     {
         K typed_key(key);
-        m_tree.erase(typed_key);
+        m_tree.Erase(typed_key);
     }
 
     template <typename E>
     inline bool HasKey(E const &key)
     {
         K typed_key(key);
-        return m_tree.exists(typed_key);
+        return m_tree.Exists(typed_key);
     }
 
     template <typename E>
@@ -81,7 +81,7 @@ public:
     {
         K typed_key(key);
         V * value_ptr;
-        if (m_tree.try_get_value(typed_key, value_ptr))
+        if (m_tree.TryGetValue(typed_key, value_ptr))
         {
             value = *value_ptr;
             return true;
@@ -102,12 +102,12 @@ public:
 
     inline ptrdiff_t Count() const
     {
-        return m_tree.get_count();
+        return m_tree.GetCount();
     }
 
     inline void Empty()
     {
-        m_tree.clear();
+        m_tree.Clear();
     }
 
 private:
