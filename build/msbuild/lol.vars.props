@@ -34,12 +34,14 @@
     <GtkDeps>gobject-2.0.lib;gthread-2.0.lib;glib-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkgl-2.0.lib</GtkDeps>
 
     <!-- FFmpeg -->
+<!--
     <FfmpegDir>$(ExternalDir)\ffmpeg-20141018</FfmpegDir>
     <FfmpegIncludes>$(FfmpegDir)\include</FfmpegIncludes>
     <FfmpegLibs Condition="'$(Platform)'=='Win32'">$(FfmpegDir)\lib\i686-w64-mingw32</FfmpegLibs>
     <FfmpegLibs Condition="'$(Platform)'=='x64'">$(FfmpegDir)\lib\x86_64-w64-mingw32</FfmpegLibs>
     <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib</FfmpegDeps>
     <Win32Defines>USE_FFMPEG;$(Win32Defines)</Win32Defines>
+-->
 
     <!-- libcaca -->
     <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
