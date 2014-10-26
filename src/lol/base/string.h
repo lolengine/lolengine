@@ -279,7 +279,12 @@ public:
     inline bool operator <(String const & s) const
     {
         using namespace std;
-        return memcmp(C(), s.C(), Count()) < 0;
+        int res = memcmp(C(), s.C(), Count() < s.Count() ? Count() : s.Count());
+
+        if (!res)
+            return Count() < s.Count();
+
+        return res < 0;
     }
 
 #ifdef __GNUC__
