@@ -27,7 +27,6 @@ lolunit_declare_fixture(MapTest)
         map<int, int> m2;
         map<float, float> m3;
         map<char const *, char const *> m4;
-        map<String, String> m4;
     }
 
     lolunit_declare_test(MapSet)
