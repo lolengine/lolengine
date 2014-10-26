@@ -27,45 +27,46 @@ lolunit_declare_fixture(MapTest)
         map<int, int> m2;
         map<float, float> m3;
         map<char const *, char const *> m4;
+        map<String, String> m4;
     }
 
     lolunit_declare_test(MapSet)
     {
-        map<int, int> map;
+        map<int, int> m;
 
         for (int i = 0; i < 1000; i++)
-            map[i] = -1;
+            m[i] = -1;
 
         for (int i = 0; i < 1000; i++)
-            map[i] = i;
+            m[i] = i;
 
         for (int i = 0; i < 1000; i++)
-            lolunit_assert_equal(map[i], i);
+            lolunit_assert_equal(m[i], i);
     }
 
     lolunit_declare_test(MapHasKey)
     {
-        map<int, int> map;
+        map<int, int> m;
 
-        map[0] = 1;
-        map[2] = 2;
+        m[0] = 1;
+        m[2] = 2;
 
-        lolunit_assert(map.HasKey(0));
-        lolunit_assert(!map.HasKey(1));
-        lolunit_assert(map.HasKey(2));
+        lolunit_assert(m.HasKey(0));
+        lolunit_assert(!m.HasKey(1));
+        lolunit_assert(m.HasKey(2));
     }
 
     lolunit_declare_test(StringMap)
     {
-        map<char const *, int> map;
+        map<char const *, int> m;
 
-        map["foo"] = 42;
-        map["bar"] = 12;
-        map["baz"] = 2;
+        m["foo"] = 42;
+        m["bar"] = 12;
+        m["baz"] = 2;
 
-        int foo = map["foo"];
-        int bar = map["bar"];
-        int baz = map["baz"];
+        int foo = m["foo"];
+        int bar = m["bar"];
+        int baz = m["baz"];
 
         lolunit_assert_equal(42, foo);
         lolunit_assert_equal(12, bar);
