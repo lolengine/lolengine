@@ -233,10 +233,13 @@ lolunit_declare_fixture(StringTest)
         String s1 = "lolilol";
         String s2 = s1;
         String s3 = "trololol";
+        String s4 = "lolilololol";
 
         lolunit_assert(!(s1 < s2));
         lolunit_assert(!(s2 < s1));
         lolunit_assert(s1 < s3);
+        lolunit_assert(s1 < s4);
+        lolunit_assert(!(s4 < s1));
     }
 };
 
