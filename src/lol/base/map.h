@@ -56,7 +56,7 @@ public:
             m_tree.Insert(typed_key, default_value);
         }
 
-        ASSERT(m_tree.TryGetValue(typed_key, value_ptr), "inner tree is messed up in map");
+        ASSERT(m_tree.TryGetValue(typed_key, value_ptr), "inserted key can’t be retrieved. key operator < must behave as a comparator (a<b => !b<a)");
 
         /* If not found, insert a new value. */
         return *value_ptr;
