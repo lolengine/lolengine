@@ -15,28 +15,6 @@
 namespace lol
 {
 
-// Vector helpers
-template<int N>
-vec_t<int, N> GetUniformPoint(int value) // constexpr ?
-{
-    vec_t<int, N> result;
-    for (int i = 0 ; i < N ; ++i)
-        result[i] = value;
-
-    return result;
-}
-
-template<typename T, typename U, int N>
-float SquareDistance(vec_t<T, N> const & a, vec_t<U, N> const & b)
-{
-    float result = 0;
-
-    for (int i = 0 ; i < N ; ++i)
-        result += (a[i] - b[i]) * (a[i] - b[i]);
-
-    return result;
-}
-
 template<int N /* Dimension of the space */, typename T = float /* floating type used for interpolation */>
 class simplex_interpolator
 {
@@ -69,36 +47,63 @@ public:
         vec_t<int, N> reference;
         int sign;
 
-        this->GetReference(decimal_point, reference, sign);
+        this->GetReference(floor_point, decimal_point, reference, sign);
 
-        // TODO : Last interpolation step
-
-        return 0;
+        return this->LastInterp(floor_point, decimal_point, reference, sign);
     }
 
 protected:
 
-    void GetReference(vec_t<T, N> const & decimal_point, vec_t<int, N> & reference, int & sign)
+    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, vec_t<int, N> const & reference, int const & sign)
+    {
+        vec_t<T, N> mass_center;
+
+        if (sign < 0)
+            mass_center = 3 * this->diagonal / 4;
+        else
+            mass_center = this->diagonal / 2;
+
+        T result = 0;
+
+        for (int i = 0 ; i < N ; ++i)
+        {
+            vec_t<T, N> point_compare = reference + sign * this->base[i];
+            vec_t<int, N> samples_index = floor_point;
+
+            samples_index[i] += sign;
+            this->ModFloor(samples_index);
+
+            result += (1 - 2 * dot(decimal_point - point_compare, mass_center - point_compare) / length(this->diagonal));
+        }
+
+        result += (1 - 2 * dot(decimal_point - reference, mass_center - reference) / length(this->diagonal));
+    }
+
+    inline void ModFloor(vec_t<int, N> & samples_index)
+    {
+        for (int i = 0 ; i < N ; ++i)
+            samples_index[i] %= this->samples.GetSize()[i];
+    }
+
+    inline void GetReference(vec_t<T, N> const & decimal_point, vec_t<int, N> & reference, int & sign)
     {
         // Choosing the reference point which determines in which simplex we are working
-        // ie. (0, 0, 0, …) and upper or (1, 1, 1, …) and lower
-        vec_t<int, N> diagonal_point = GetUniformPoint(1);
-        vec_t<int, N> zero_point = GetUniformPoint(0);
+        // ie. (0, 0, 0, …) and upper or (this->diagonal) and lower
+        vec_t<int, N> zeros(0);
 
-
-        if (SquareDistance(zero_point, floor_point) < SquareDistance(diagonal_point, floor_point))
+        if (sqlength(zeros - floor_point) < sqlength(ones - floor_point))
         {
-            reference = zero_point;
+            reference = zeros;
             sign = 1;
         }
         else
         {
-            reference = diagonal_point;
+            reference = diagonal;
             sign = -1;
         }
     }
 
-    void ExtractFloorDecimal(vec_t<T, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point)
+    inline void ExtractFloorDecimal(vec_t<T, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point)
     {
         // Finding floor point index
         for (int i = 0 ; i < N ; ++i)
@@ -107,6 +112,18 @@ protected:
         // Extracting decimal part from simplex sample
         for (int i = 0 ; i < N ; ++i)
             decimal_point[i] = simplex_position[i] - floor_point[i];
+    }
+
+    inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position)
+    {
+        vec_t<T, N> result;
+
+        for (int i = 0 ; i < N ; ++i)
+        {
+            result[i] = dot(base_inverse[i], position);
+        }
+
+        return result;
     }
 
     inline void InitBase()
@@ -118,31 +135,19 @@ protected:
         {
             for (int j = i ; j < N ; ++j)
             {
-                base[i][j] = sqrt((i+2)/(2*i+2)) / (j > i ? i+2 : 1);
-                base_inverse[i][j] = sqrt((2*j+2)/(j+2)) * (j > i ? (1 / (float)(j+1)) : 1);
+                this->base[i][j] = sqrt((i+2)/(2*i+2)) / (j > i ? i+2 : 1);
+                this->base_inverse[i][j] = sqrt((2*j+2) / (j+2)) * (j > i ? (1 / (float)(j+1)) : 1);
+                this->diagonal[i] += (this->base[i][j]);
             }
         }
     }
 
-    inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position)
-    {
-        vec_t<T, N> result;
-
-        for (int i = 0 ; i < N ; ++i)
-        {
-            for (int j = i ; j < N ; ++j)
-            {
-                result[i] += base_inverse[i][j] * position[j];
-            }
-        }
-
-        return result;
-    }
-
-    arraynd<2, T> base;
-    arraynd<2, T> base_inverse;
+    vec_t<N, vec_t<N, T> > base;
+    vec_t<N, vec_t<N, T> > base_inverse;
 
     arraynd<N, T> samples;
+
+    vec_t<T, N> diagonal;
 };
 
 }
