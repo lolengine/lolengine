@@ -73,10 +73,10 @@ protected:
             samples_index[i] += sign;
             this->ModFloor(samples_index);
 
-            result += (1 - 2 * dot(decimal_point - point_compare, mass_center - point_compare) / length(this->diagonal));
+            result += samples[samples_index] * (1 - 2 * dot(decimal_point - point_compare, mass_center - point_compare) / length(this->diagonal));
         }
 
-        result += (1 - 2 * dot(decimal_point - reference, mass_center - reference) / length(this->diagonal));
+        result += samples[reference] * (1 - 2 * dot(decimal_point - reference, mass_center - reference) / length(this->diagonal));
     }
 
     inline void ModFloor(vec_t<int, N> & samples_index)
