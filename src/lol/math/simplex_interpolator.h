@@ -36,7 +36,6 @@ public:
         // Computing position in simplex referential
         vec_t<T, N> simplex_position = this->ToSimplexRef(position);
 
-
         // Retrieving the closest floor point and decimals
         vec_t<int, N> & floor_point;
         vec_t<T, N> & decimal_point;
@@ -56,50 +55,50 @@ protected:
 
     inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, vec_t<int, N> const & reference, int const & sign)
     {
-        vec_t<T, N> mass_center;
-
-        if (sign < 0)
-            mass_center = 3 * this->diagonal / 4;
-        else
-            mass_center = this->diagonal / 2;
-
         T result = 0;
 
         for (int i = 0 ; i < N ; ++i)
         {
-            vec_t<T, N> point_compare = reference + sign * this->base[i];
             vec_t<int, N> samples_index = floor_point;
+            samples_index[i] = this->mod(samples_index[i] + sign, i);
 
-            samples_index[i] += sign;
-            this->ModFloor(samples_index);
-
-            result += samples[samples_index] * (1 - 2 * dot(decimal_point - point_compare, mass_center - point_compare) / length(this->diagonal));
+            result += (1 - decimal_point[i]) * this->samples[samples_index];
         }
 
-        result += samples[reference] * (1 - 2 * dot(decimal_point - reference, mass_center - reference) / length(this->diagonal));
-    }
-
-    inline void ModFloor(vec_t<int, N> & samples_index)
-    {
         for (int i = 0 ; i < N ; ++i)
-            samples_index[i] %= this->samples.GetSize()[i];
+            result += samples[floor_point] * decimal_point[i];
+
+        return result / N;
     }
 
-    inline void GetReference(vec_t<T, N> const & decimal_point, vec_t<int, N> & reference, int & sign)
+    inline int Mod(int value, int index)
+    {
+        samples_index[index] %= this->samples.GetSize()[index];
+    }
+
+    inline void GetReference(vec_t<T, N> & floor_point, vec_t<T, N> & decimal_point, vec_t<int, N> & reference, int & sign)
     {
         // Choosing the reference point which determines in which simplex we are working
         // ie. (0, 0, 0, …) and upper or (this->diagonal) and lower
+        vec_t<int, N> ones(1);
         vec_t<int, N> zeros(0);
 
-        if (sqlength(zeros - floor_point) < sqlength(ones - floor_point))
+        T cumul = 0;
+        for (int i = 0 ; i < N ; ++i)
+            cumul += decimal_point[i];
+
+        if (cumul < (sqrt(N) / 2))
         {
             reference = zeros;
             sign = 1;
         }
         else
         {
-            reference = diagonal;
+            reference = ones;
             sign = -1;
+
+            decimal_point = 1 - decimal_point;
+            floor_point += 1;
         }
     }
 
@@ -112,6 +111,9 @@ protected:
         // Extracting decimal part from simplex sample
         for (int i = 0 ; i < N ; ++i)
             decimal_point[i] = simplex_position[i] - floor_point[i];
+
+        for (int i = 0 ; i < N ; ++i)
+            floor_point[i] = this->Mod(floor_point[i], i);
     }
 
     inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position)
