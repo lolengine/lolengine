@@ -43,7 +43,6 @@ public:
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
         // Retrieving simplex samples to use
-        vec_t<int, N> reference;
         int sign;
 
         this->GetReference(floor_point, decimal_point, reference, sign);
@@ -53,22 +52,28 @@ public:
 
 protected:
 
-    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, vec_t<int, N> const & reference, int const & sign)
+    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, int const & sign)
     {
         T result = 0;
+        T divider = 0;
 
         for (int i = 0 ; i < N ; ++i)
         {
             vec_t<int, N> samples_index = floor_point;
             samples_index[i] = this->mod(samples_index[i] + sign, i);
 
-            result += (1 - decimal_point[i]) * this->samples[samples_index];
+            result += decimal_point[i] * this->samples[samples_index];
+            divider += decimal_point[i];
         }
 
+        T floor_coeff = 0;
         for (int i = 0 ; i < N ; ++i)
-            result += samples[floor_point] * decimal_point[i];
+            floor_coeff += (1 - decimal_point[i]);
 
-        return result / N;
+        result += (2 * sqrt(floor_coeff) / sqrt(N)) * this->samples[floor_point];
+        divider += (2 * sqrt(floor_coeff) / sqrt(N));
+
+        return result / divider;
     }
 
     inline int Mod(int value, int index)
@@ -76,7 +81,7 @@ protected:
         samples_index[index] %= this->samples.GetSize()[index];
     }
 
-    inline void GetReference(vec_t<T, N> & floor_point, vec_t<T, N> & decimal_point, vec_t<int, N> & reference, int & sign)
+    inline void GetReference(vec_t<T, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
     {
         // Choosing the reference point which determines in which simplex we are working
         // ie. (0, 0, 0, …) and upper or (this->diagonal) and lower
@@ -89,12 +94,10 @@ protected:
 
         if (cumul < (sqrt(N) / 2))
         {
-            reference = zeros;
             sign = 1;
         }
         else
         {
-            reference = ones;
             sign = -1;
 
             decimal_point = 1 - decimal_point;
@@ -112,6 +115,7 @@ protected:
         for (int i = 0 ; i < N ; ++i)
             decimal_point[i] = simplex_position[i] - floor_point[i];
 
+        // Never exceed the size of the samples and loop on it
         for (int i = 0 ; i < N ; ++i)
             floor_point[i] = this->Mod(floor_point[i], i);
     }
