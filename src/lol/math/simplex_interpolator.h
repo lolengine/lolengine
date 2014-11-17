@@ -31,14 +31,14 @@ public:
     }
 
     // Single interpolation
-    inline T interp(vec_t<T, N> position)
+    inline T Interp(vec_t<T, N> position)
     {
         // Computing position in simplex referential
         vec_t<T, N> simplex_position = this->ToSimplexRef(position);
 
         // Retrieving the closest floor point and decimals
-        vec_t<int, N> & floor_point;
-        vec_t<T, N> & decimal_point;
+        vec_t<int, N> floor_point;
+        vec_t<T, N> decimal_point;
 
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
@@ -60,7 +60,7 @@ protected:
         for (int i = 0 ; i < N ; ++i)
         {
             vec_t<int, N> samples_index = floor_point;
-            samples_index[i] = this->mod(samples_index[i] + sign, i);
+            samples_index[i] = this->Mod(samples_index[i] + sign, i);
 
             result += decimal_point[i] * this->samples[samples_index];
             divider += decimal_point[i];
@@ -81,7 +81,7 @@ protected:
         return value %= this->samples.GetSize()[index];
     }
 
-    inline void GetReference(vec_t<T, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
+    inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
     {
         // Choosing the reference point which determines in which simplex we are working
         // ie. (0, 0, 0, …) and upper or (this->diagonal) and lower
@@ -100,8 +100,11 @@ protected:
         {
             sign = -1;
 
-            decimal_point = 1 - decimal_point;
-            floor_point += 1;
+            for (int i = 0 ; i < N ; ++i)
+            {
+                decimal_point[i] = 1 - decimal_point[i];
+                floor_point[i] += 1;
+            }
         }
     }
 

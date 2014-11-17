@@ -13,6 +13,7 @@
 #include <lolunit.h>
 
 // To be removed when fully tested
+#include <iostream>
 #include <lol/math/simplex_interpolator.h>
 	
 namespace lol
@@ -27,6 +28,10 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
     lolunit_declare_test(Interp2D)
     {
     	simplex_interpolator<2> interpolator;
+
+    	interpolator.GetSamples() = arraynd<2, float>({{1, 1, 2}, {1, 1, 2}, {2, 2, 2}});
+
+    	std::cout << interpolator.Interp(vec_t<float, 2>{0, 0}) << std::endl;
     }
 };
 
