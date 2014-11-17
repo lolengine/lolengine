@@ -45,9 +45,9 @@ public:
         // Retrieving simplex samples to use
         int sign;
 
-        this->GetReference(floor_point, decimal_point, reference, sign);
+        this->GetReference(floor_point, decimal_point, sign);
 
-        return this->LastInterp(floor_point, decimal_point, reference, sign);
+        return this->LastInterp(floor_point, decimal_point, sign);
     }
 
 protected:
@@ -70,15 +70,15 @@ protected:
         for (int i = 0 ; i < N ; ++i)
             floor_coeff += (1 - decimal_point[i]);
 
-        result += (2 * sqrt(floor_coeff) / sqrt(N)) * this->samples[floor_point];
-        divider += (2 * sqrt(floor_coeff) / sqrt(N));
+        result += (2 * sqrt(floor_coeff) / sqrt((float)N)) * this->samples[floor_point];
+        divider += (2 * sqrt(floor_coeff) / sqrt((float)N));
 
         return result / divider;
     }
 
     inline int Mod(int value, int index)
     {
-        samples_index[index] %= this->samples.GetSize()[index];
+        return value %= this->samples.GetSize()[index];
     }
 
     inline void GetReference(vec_t<T, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
@@ -92,7 +92,7 @@ protected:
         for (int i = 0 ; i < N ; ++i)
             cumul += decimal_point[i];
 
-        if (cumul < (sqrt(N) / 2))
+        if (cumul < (sqrt((float)N) / 2))
         {
             sign = 1;
         }
@@ -134,22 +134,22 @@ protected:
 
     inline void InitBase()
     {
-        base.SetSize(vec_t<int, 2>(N, N));
-        base_inverse.SetSize(vec_t<int, 2>(N, N));
+        this->samples.SetSize(vec_t<int, 2>(N, N));
+        this->samples.SetSize(vec_t<int, 2>(N, N));
 
         for (int i = 0 ; i < N ; ++i)
         {
             for (int j = i ; j < N ; ++j)
             {
-                this->base[i][j] = sqrt((i+2)/(2*i+2)) / (j > i ? i+2 : 1);
-                this->base_inverse[i][j] = sqrt((2*j+2) / (j+2)) * (j > i ? (1 / (float)(j+1)) : 1);
+                this->base[i][j] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
+                this->base_inverse[i][j] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (1 / (float)(j+1)) : 1);
                 this->diagonal[i] += (this->base[i][j]);
             }
         }
     }
 
-    vec_t<N, vec_t<N, T> > base;
-    vec_t<N, vec_t<N, T> > base_inverse;
+    vec_t<vec_t<T, N>, N> base;
+    vec_t<vec_t<T, N>, N> base_inverse;
 
     arraynd<N, T> samples;
 

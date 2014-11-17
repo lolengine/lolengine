@@ -12,8 +12,6 @@
 
 #include <lolunit.h>
 
-#include <iostream>
-
 namespace lol
 {
 
