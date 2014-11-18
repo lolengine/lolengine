@@ -55,6 +55,7 @@ protected:
     inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, int const & sign)
     {
         T result = 0;
+        T floor_coeff = 0;
         T divider = 0;
 
         for (int i = 0 ; i < N ; ++i)
@@ -63,15 +64,14 @@ protected:
             samples_index[i] = this->Mod(samples_index[i] + sign, i);
 
             result += decimal_point[i] * this->samples[samples_index];
+            floor_coeff += decimal_point[i];
             divider += decimal_point[i];
         }
 
-        T floor_coeff = 0;
-        for (int i = 0 ; i < N ; ++i)
-            floor_coeff += (1 - decimal_point[i]);
+        T norm = sqrt((float)N);
 
-        result += (2 * sqrt(floor_coeff) / sqrt((float)N)) * this->samples[floor_point];
-        divider += (2 * sqrt(floor_coeff) / sqrt((float)N));
+        result += (1 - 4 * floor_coeff / (norm * norm)) * this->samples[floor_point];
+        divider += (1 - 4 * floor_coeff / (norm * norm));
 
         return result / divider;
     }
@@ -84,27 +84,20 @@ protected:
     inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
     {
         // Choosing the reference point which determines in which simplex we are working
-        // ie. (0, 0, 0, …) and upper or (this->diagonal) and lower
-        vec_t<int, N> ones(1);
-        vec_t<int, N> zeros(0);
+        // ie. (0, 0, 0, …) and upper or (1, 1, 1, …) and lower
 
         T cumul = 0;
         for (int i = 0 ; i < N ; ++i)
             cumul += decimal_point[i];
 
         if (cumul < (sqrt((float)N) / 2))
-        {
             sign = 1;
-        }
         else
         {
             sign = -1;
 
-            for (int i = 0 ; i < N ; ++i)
-            {
-                decimal_point[i] = 1 - decimal_point[i];
-                floor_point[i] += 1;
-            }
+            decimal_point = vec_t<T, N>(1) - decimal_point;
+            floor_point = floor_point + vec_t<int, N>(1);
         }
     }
 
@@ -128,9 +121,7 @@ protected:
         vec_t<T, N> result;
 
         for (int i = 0 ; i < N ; ++i)
-        {
             result[i] = dot(base_inverse[i], position);
-        }
 
         return result;
     }
