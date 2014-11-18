@@ -70,8 +70,8 @@ protected:
 
         T norm = sqrt((float)N);
 
-        result += (1 - 4 * floor_coeff / (norm * norm)) * this->samples[floor_point];
-        divider += (1 - 4 * floor_coeff / (norm * norm));
+        result += (1 - 2 * floor_coeff / (norm * norm)) * this->samples[floor_point];
+        divider += (1 - 2 * floor_coeff / (norm * norm));
 
         return result / divider;
     }
