@@ -128,16 +128,12 @@ protected:
 
     inline void InitBase()
     {
-        this->samples.SetSize(vec_t<int, 2>(N, N));
-        this->samples.SetSize(vec_t<int, 2>(N, N));
-
         for (int i = 0 ; i < N ; ++i)
         {
             for (int j = i ; j < N ; ++j)
             {
-                this->base[i][j] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
-                this->base_inverse[i][j] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (1 / (float)(j+1)) : 1);
-                this->diagonal[i] += (this->base[i][j]);
+                this->base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
+                this->base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
             }
         }
     }
@@ -147,7 +143,6 @@ protected:
 
     arraynd<N, T> samples;
 
-    vec_t<T, N> diagonal;
 };
 
 }
