@@ -121,7 +121,8 @@ protected:
         vec_t<T, N> result;
 
         for (int i = 0 ; i < N ; ++i)
-            result[i] = dot(base_inverse[i], position);
+            for (int j = 0 ; j < N ; ++j)
+                result[i] += this->base_inverse[j][i] * position[j];
 
         return result;
     }
