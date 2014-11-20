@@ -79,7 +79,8 @@ protected:
 
     inline int Mod(int value, int index) const
     {
-        return value %= this->m_samples.GetSize()[index];
+        int const dim = this->m_samples.GetSize()[index];
+        return value % dim + (value >= 0 ? 0 : dim);
     }
 
     inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign) const
