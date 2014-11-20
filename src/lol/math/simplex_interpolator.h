@@ -69,10 +69,10 @@ protected:
             divider += decimal_point[i];
         }
 
-        T norm = sqrt((float)N);
+        T sqr_norm = N;
 
-        result += (1 - 2 * floor_coeff / (norm * norm)) * this->m_samples[floor_point];
-        divider += (1 - 2 * floor_coeff / (norm * norm));
+        result += (1 - 2 * floor_coeff / sqr_norm) * this->m_samples[floor_point];
+        divider += (1 - 2 * floor_coeff / sqr_norm);
 
         return result / divider;
     }
@@ -130,6 +130,9 @@ protected:
 
     inline void InitBase()
     {
+        this->m_base.SetSize(vec_t<int, 2>{N, N});
+        this->m_base_inverse.SetSize(vec_t<int, 2>{N, N});
+
         for (int i = 0 ; i < N ; ++i)
         {
             for (int j = i ; j < N ; ++j)
@@ -140,8 +143,8 @@ protected:
         }
     }
 
-    vec_t<vec_t<T, N>, N> m_base;
-    vec_t<vec_t<T, N>, N> m_base_inverse;
+    arraynd<2, T> m_base;
+    arraynd<2, T> m_base_inverse;
 
     arraynd<N, T> m_samples;
 };
