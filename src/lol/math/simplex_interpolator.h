@@ -26,13 +26,13 @@ public:
         this->InitBase();
     }
 
-    inline arraynd<N, T> const & GetSamples()
+    inline arraynd<N, T> const & GetSamples() const
     {
         return this->m_samples;
     }
 
     // Single interpolation
-    inline T Interp(vec_t<T, N> position)
+    inline T Interp(vec_t<T, N> position) const
     {
         // Computing position in simplex referential
         vec_t<T, N> simplex_position = this->ToSimplexRef(position);
@@ -53,7 +53,7 @@ public:
 
 protected:
 
-    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, int const & sign)
+    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, int const & sign) const
     {
         T result = 0;
         T floor_coeff = 0;
@@ -77,12 +77,12 @@ protected:
         return result / divider;
     }
 
-    inline int Mod(int value, int index)
+    inline int Mod(int value, int index) const
     {
         return value %= this->m_samples.GetSize()[index];
     }
 
-    inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
+    inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign) const
     {
         // Choosing the reference point which determines in which simplex we are working
         // ie. (0, 0, 0, …) and upper or (1, 1, 1, …) and lower
@@ -102,7 +102,7 @@ protected:
         }
     }
 
-    inline void ExtractFloorDecimal(vec_t<T, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point)
+    inline void ExtractFloorDecimal(vec_t<T, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point) const
     {
         // Finding floor point index
         for (int i = 0 ; i < N ; ++i)
@@ -117,7 +117,7 @@ protected:
             floor_point[i] = this->Mod(floor_point[i], i);
     }
 
-    inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position)
+    inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position) const
     {
         vec_t<T, N> result;
 
