@@ -25,9 +25,7 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
     lolunit_declare_test(Interp2D9PointsTest)
     {
-        simplex_interpolator<2> interpolator;
-
-        interpolator.GetSamples() = arraynd<2, float>({{1, 1, 2}, {1, 2, 2}, {2, 2, 2}});
+        simplex_interpolator<2> interpolator({{1, 1, 2}, {1, 2, 2}, {2, 2, 2}});
 
         lolunit_assert_equal(interpolator.Interp(vec_t<float, 2>{0, 0}), 1);
         lolunit_assert_equal(interpolator.Interp(vec_t<float, 2>{1, 0}), 1);
