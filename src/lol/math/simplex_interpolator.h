@@ -20,14 +20,15 @@ class simplex_interpolator
 {
 public:
 
-    simplex_interpolator()
+    simplex_interpolator(arraynd<N, T> const & samples) :
+        m_samples(samples)
     {
         this->InitBase();
     }
 
-    inline arraynd<N, T> & GetSamples()
+    inline arraynd<N, T> const & GetSamples()
     {
-        return this->samples;
+        return this->m_samples;
     }
 
     // Single interpolation
@@ -63,14 +64,14 @@ protected:
             vec_t<int, N> samples_index = floor_point;
             samples_index[i] = this->Mod(samples_index[i] + sign, i);
 
-            result += decimal_point[i] * this->samples[samples_index];
+            result += decimal_point[i] * this->m_samples[samples_index];
             floor_coeff += decimal_point[i];
             divider += decimal_point[i];
         }
 
         T norm = sqrt((float)N);
 
-        result += (1 - 2 * floor_coeff / (norm * norm)) * this->samples[floor_point];
+        result += (1 - 2 * floor_coeff / (norm * norm)) * this->m_samples[floor_point];
         divider += (1 - 2 * floor_coeff / (norm * norm));
 
         return result / divider;
@@ -78,7 +79,7 @@ protected:
 
     inline int Mod(int value, int index)
     {
-        return value %= this->samples.GetSize()[index];
+        return value %= this->m_samples.GetSize()[index];
     }
 
     inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign)
@@ -122,7 +123,7 @@ protected:
 
         for (int i = 0 ; i < N ; ++i)
             for (int j = 0 ; j < N ; ++j)
-                result[i] += this->base_inverse[j][i] * position[j];
+                result[i] += this->m_base_inverse[j][i] * position[j];
 
         return result;
     }
@@ -133,17 +134,16 @@ protected:
         {
             for (int j = i ; j < N ; ++j)
             {
-                this->base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
-                this->base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
+                this->m_base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
+                this->m_base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
             }
         }
     }
 
-    vec_t<vec_t<T, N>, N> base;
-    vec_t<vec_t<T, N>, N> base_inverse;
+    vec_t<vec_t<T, N>, N> m_base;
+    vec_t<vec_t<T, N>, N> m_base_inverse;
 
-    arraynd<N, T> samples;
-
+    arraynd<N, T> m_samples;
 };
 
 }
