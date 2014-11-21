@@ -23,6 +23,31 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
     void TearDown() {}
 
+    lolunit_declare_test(GridPoints2D1x1)
+    {
+        simplex_interpolator<2> s({{1.f}});
+        float val;
+
+        val = s.Interp(GridPoint2D(-1, -1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(0, -1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(1, -1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(-1, 0));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(0, 0));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(1, 0));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(-1, 1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(0, 1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+        val = s.Interp(GridPoint2D(1, 1));
+        lolunit_assert_doubles_equal(1.f, val, 1e-5f);
+    }
+
     lolunit_declare_test(GridPoints2D2x2)
     {
         simplex_interpolator<2> s({{1.f, 1.f}, {1.f, 2.f}});
