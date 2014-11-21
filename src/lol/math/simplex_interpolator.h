@@ -15,7 +15,8 @@
 namespace lol
 {
 
-template<int N /* Dimension of the space */, typename T = float /* floating type used for interpolation */>
+template<int N, /* Dimension of the space */
+         typename T = float> /* Interpolated type */
 class simplex_interpolator
 {
 public:
@@ -35,7 +36,7 @@ public:
     inline T Interp(vec_t<T, N> position) const
     {
         // Computing position in simplex referential
-        vec_t<T, N> simplex_position = this->ToSimplexRef(position);
+        vec_t<T, N> simplex_position = m_base_inverse * position;
 
         // Retrieving the closest floor point and decimals
         vec_t<int, N> floor_point;
@@ -53,7 +54,9 @@ public:
 
 protected:
 
-    inline T LastInterp(vec_t<int, N> const & floor_point, vec_t<T, N> const & decimal_point, int const & sign) const
+    inline T LastInterp(vec_t<int, N> const & floor_point,
+                        vec_t<T, N> const & decimal_point,
+                        int const & sign) const
     {
         T result = 0;
         T floor_coeff = 0;
@@ -118,35 +121,25 @@ protected:
             floor_point[i] = this->Mod(floor_point[i], i);
     }
 
-    inline vec_t<T, N> ToSimplexRef(vec_t<T, N> const & position) const
-    {
-        vec_t<T, N> result;
-
-        for (int i = 0 ; i < N ; ++i)
-            for (int j = 0 ; j < N ; ++j)
-                result[i] += this->m_base_inverse[j][i] * position[j];
-
-        return result;
-    }
-
     inline void InitBase()
     {
-        this->m_base.SetSize(vec_t<int, 2>{N, N});
-        this->m_base_inverse.SetSize(vec_t<int, 2>{N, N});
-
-        for (int i = 0 ; i < N ; ++i)
+        for (int i = 0; i < N; ++i)
         {
-            for (int j = i ; j < N ; ++j)
+            for (int j = 0; j < i; ++j)
             {
-                this->m_base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
-                this->m_base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
+                m_base[j][i] = 0;
+                m_base_inverse[j][i] = 0;
+            }
+
+            for (int j = i; j < N; ++j)
+            {
+                m_base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
+                m_base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
             }
         }
     }
 
-    arraynd<2, T> m_base;
-    arraynd<2, T> m_base_inverse;
-
+    mat_t<T, N, N> m_base, m_base_inverse;
     arraynd<N, T> m_samples;
 };
 
