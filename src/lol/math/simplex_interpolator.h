@@ -33,14 +33,14 @@ public:
     }
 
     // Single interpolation
-    inline T Interp(vec_t<T, N> position) const
+    inline T Interp(vec_t<float, N> position) const
     {
         // Computing position in simplex referential
-        vec_t<T, N> simplex_position = m_base_inverse * position;
+        vec_t<float, N> simplex_position = m_base_inverse * position;
 
         // Retrieving the closest floor point and decimals
         vec_t<int, N> floor_point;
-        vec_t<T, N> decimal_point;
+        vec_t<float, N> decimal_point;
 
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
@@ -55,12 +55,12 @@ public:
 protected:
 
     inline T LastInterp(vec_t<int, N> const & floor_point,
-                        vec_t<T, N> const & decimal_point,
+                        vec_t<float, N> const & decimal_point,
                         int const & sign) const
     {
-        T result = 0;
-        T floor_coeff = 0;
-        T divider = 0;
+        T result(0);
+        float floor_coeff = 0;
+        float divider = 0;
 
         for (int i = 0 ; i < N ; ++i)
         {
@@ -72,7 +72,7 @@ protected:
             divider += decimal_point[i];
         }
 
-        T sqr_norm = N;
+        float sqr_norm = N;
 
         result += (1 - 2 * floor_coeff / sqr_norm) * this->m_samples[floor_point];
         divider += (1 - 2 * floor_coeff / sqr_norm);
@@ -87,12 +87,12 @@ protected:
         return ret >= 0 ? ret : ret + dim;
     }
 
-    inline void GetReference(vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point, int & sign) const
+    inline void GetReference(vec_t<int, N> & floor_point, vec_t<float, N> & decimal_point, int & sign) const
     {
         // Choosing the reference point which determines in which simplex we are working
         // ie. (0, 0, 0, …) and upper or (1, 1, 1, …) and lower
 
-        T cumul = 0;
+        float cumul = 0;
         for (int i = 0 ; i < N ; ++i)
             cumul += decimal_point[i];
 
@@ -102,12 +102,12 @@ protected:
         {
             sign = -1;
 
-            decimal_point = vec_t<T, N>(1) - decimal_point;
+            decimal_point = vec_t<float, N>(1) - decimal_point;
             floor_point = floor_point + vec_t<int, N>(1);
         }
     }
 
-    inline void ExtractFloorDecimal(vec_t<T, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<T, N> & decimal_point) const
+    inline void ExtractFloorDecimal(vec_t<float, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<float, N> & decimal_point) const
     {
         // Finding floor point index
         for (int i = 0 ; i < N ; ++i)
@@ -140,7 +140,7 @@ protected:
         }
     }
 
-    mat_t<T, N, N> m_base, m_base_inverse;
+    mat_t<float, N, N> m_base, m_base_inverse;
     arraynd<N, T> m_samples;
 };
 
