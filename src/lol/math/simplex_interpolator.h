@@ -124,18 +124,32 @@ protected:
 
     inline void InitBase()
     {
+        /*  Matrix coordinate transformation to skew simplex referential is done
+            by inversing the base matrix M which is written as follows: 
+
+             M = | a b b b … |        M^(-1) = | c d d d … |
+                 | b a b b … |                 | d c d d … |
+                 | b b a b … |                 | d d c d … |
+                 | …         |                 | …         |
+
+            where a and b are computed below ↴
+        */
+
+        T b = (1 - sqrt((N+1)))/(N * N * N));
+        T a = b + sqrt((N+1)/N);
+
+        // determinant of matrix M
+        T det = a * (a + (N-2) * b) - (b * b) * (N-1);
+
+        T c = (a + (N-2)*b) / det;
+        T d = b / det;
+
         for (int i = 0; i < N; ++i)
         {
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < N; ++j)
             {
-                m_base[j][i] = 0;
-                m_base_inverse[j][i] = 0;
-            }
-
-            for (int j = i; j < N; ++j)
-            {
-                m_base[j][i] = sqrt((i+2)/((float)(2*i+2))) / (j > i ? i+2 : 1);
-                m_base_inverse[j][i] = sqrt((2*j+2) / ((float)(j+2))) * (j > i ? (-1 / (float)(j+1)) : 1);
+                m_base[i][j] = (i == j ? a : b);
+                m_base_inverse[i][j] = (i == j ? c : d);
             }
         }
     }
