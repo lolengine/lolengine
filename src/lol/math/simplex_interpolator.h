@@ -135,14 +135,14 @@ protected:
             where a and b are computed below ↴
         */
 
-        T b = (1 - sqrt((T)(N+1)))/sqrt((T)(N * N * N));
-        T a = b + sqrt((N+1)/(T)N);
+        float b = (1.f - lol::sqrt(N + 1.f)) / lol::sqrt((float)N * N * N);
+        float a = b + lol::sqrt(N + 1.f) / N;
 
         // determinant of matrix M
-        T det = a * (a + (N-2) * b) - (b * b) * (N-1);
+        float det = a * (a + (N - 2) * b) - (b * b) * (N - 1);
 
-        T c = (a + (N-2)*b) / det;
-        T d = -b / det;
+        float c = (a + (N - 2) * b) / det;
+        float d = -b / det;
 
         for (int i = 0; i < N; ++i)
         {
