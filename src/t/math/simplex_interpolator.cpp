@@ -12,10 +12,48 @@
 
 #include <lol/engine-internal.h>
 
+#include <lol/math/simplex_interpolator.h>
+
 #include <lolunit.h>
 
 namespace lol
 {
+
+template<int N, typename T = float>
+class test_interpolator : public simplex_interpolator<N, T>
+{
+public:
+
+    test_interpolator(arraynd<N, T> const & samples) :
+        simplex_interpolator<N, T>(samples)
+    {
+    }
+
+
+    void DumpMatrix()
+    {
+        std::cout << std::endl;
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                std::cout << this->m_base[i][j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                std::cout << this->m_base_inverse[i][j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+    }
+};
 
 lolunit_declare_fixture(SimplexInterpolatorTest)
 {
@@ -23,6 +61,16 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
     void TearDown() {}
 
+    lolunit_declare_test(CoordinateMatrixTest)
+    {
+        test_interpolator<2> s2({{1.f}});
+        s2.DumpMatrix();
+
+        test_interpolator<3> s3(arraynd<3, float>({{{1.f}}}));
+        s3.DumpMatrix();
+    }
+
+#if 0
     lolunit_declare_test(FloatGridPoints2D1x1)
     {
         simplex_interpolator<2> s({{1.f}});
@@ -151,6 +199,7 @@ private:
 
         return (float)i * vi + (float)j * vj;
     }
+#endif
 };
 
 }
