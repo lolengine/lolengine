@@ -61,6 +61,12 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
     void TearDown() {}
 
+    lolunit_declare_test(CompoundVariable)
+    {
+        test_interpolator<2, real> b({{ real(0) }});
+        test_interpolator<2, vec2> c({{ vec2(0) }});
+    }
+
     lolunit_declare_test(CoordinateMatrixTest)
     {
         test_interpolator<2> s2({{1.f}});
