@@ -136,7 +136,7 @@ protected:
         */
 
         float b = (1.f - lol::sqrt(N + 1.f)) / lol::sqrt((float)N * N * N);
-        float a = b + lol::sqrt(N + 1.f) / N;
+        float a = b + lol::sqrt((N + 1.f) / N);
 
         // determinant of matrix M
         float det = a * (a + (N - 2) * b) - (b * b) * (N - 1);

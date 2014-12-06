@@ -39,7 +39,7 @@ public:
             {
                 std::cout << this->m_base[i][j] << ", ";
             }
-            std::cout << std::endl;
+            std::cout << ";";
         }
 
         std::cout << std::endl;
@@ -50,8 +50,10 @@ public:
             {
                 std::cout << this->m_base_inverse[i][j] << ", ";
             }
-            std::cout << std::endl;
+            std::cout << ";";
         }
+
+        std::cout << std::endl;
     }
 };
 
