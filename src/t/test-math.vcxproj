@@ -52,10 +52,12 @@
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\interp.cpp" />
     <ClCompile Include="math\matrix.cpp" />
+    <ClCompile Include="math\polynomial.cpp" />
     <ClCompile Include="math\quat.cpp" />
     <ClCompile Include="math\rand.cpp" />
     <ClCompile Include="math\real.cpp" />
     <ClCompile Include="math\rotation.cpp" />
+    <ClCompile Include="math\simplex_interpolation.cpp" />
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
   </ItemGroup>
