@@ -22,3 +22,5 @@
 #include <lol/math/geometry.h>
 #include <lol/math/interp.h>
 #include <lol/math/rand.h>
+#include <lol/math/polynomial.h>
+#include <lol/math/simplex_interpolator.h>
