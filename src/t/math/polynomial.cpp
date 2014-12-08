@@ -159,6 +159,41 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], 22.f);
         lolunit_assert_equal(r[3], 15.f);
     }
+
+    lolunit_declare_test(Chebyshev)
+    {
+        polynomial<float> t0 = polynomial<float>::chebyshev(0);
+        polynomial<float> t1 = polynomial<float>::chebyshev(1);
+        polynomial<float> t2 = polynomial<float>::chebyshev(2);
+        polynomial<float> t3 = polynomial<float>::chebyshev(3);
+        polynomial<float> t4 = polynomial<float>::chebyshev(4);
+
+        /* Taken from the sequence at http://oeis.org/A028297 */
+        lolunit_assert_equal(t0.degree(), 0);
+        lolunit_assert_equal(t0[0], 1.f);
+
+        lolunit_assert_equal(t1.degree(), 1);
+        lolunit_assert_equal(t1[0], 0.f);
+        lolunit_assert_equal(t1[1], 1.f);
+
+        lolunit_assert_equal(t2.degree(), 2);
+        lolunit_assert_equal(t2[0], -1.f);
+        lolunit_assert_equal(t2[1], 0.f);
+        lolunit_assert_equal(t2[2], 2.f);
+
+        lolunit_assert_equal(t3.degree(), 3);
+        lolunit_assert_equal(t3[0], 0.f);
+        lolunit_assert_equal(t3[1], -3.f);
+        lolunit_assert_equal(t3[2], 0.f);
+        lolunit_assert_equal(t3[3], 4.f);
+
+        lolunit_assert_equal(t4.degree(), 4);
+        lolunit_assert_equal(t4[0], 1.f);
+        lolunit_assert_equal(t4[1], 0.f);
+        lolunit_assert_equal(t4[2], -8.f);
+        lolunit_assert_equal(t4[3], 0.f);
+        lolunit_assert_equal(t4[4], 8.f);
+    }
 };
 
 } /* namespace lol */
