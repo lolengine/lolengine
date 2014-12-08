@@ -214,6 +214,43 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], 1.f);
     }
 
+    lolunit_declare_test(RootsDegree0)
+    {
+        /* p(x) = 42 */
+        polynomial<float> p { 42.f };
+        auto roots = p.roots();
+
+        lolunit_assert_equal(roots.Count(), 0);
+    }
+
+    lolunit_declare_test(RootsDegree1)
+    {
+        /* p(x) = -6 + 2x */
+        polynomial<float> p { -6.f, 2.f };
+        auto roots = p.roots();
+
+        lolunit_assert_equal(roots.Count(), 1);
+        lolunit_assert_equal(roots[0], 3.f);
+    }
+
+    lolunit_declare_test(RootsDegree2)
+    {
+        /* p(x) = 81 - 18x + x² */
+        polynomial<float> p { 81.f, -18.f, 1.f };
+        auto roots1 = p.roots();
+
+        lolunit_assert_equal(roots1.Count(), 1);
+        lolunit_assert_equal(roots1[0], 9.f);
+
+        /* p(x) = 42 - 20x + 2x² */
+        polynomial<float> q { 42.f, -20.f, 2.f };
+        auto roots2 = q.roots();
+
+        lolunit_assert_equal(roots2.Count(), 2);
+        lolunit_assert_equal(roots2[0], 3.f);
+        lolunit_assert_equal(roots2[1], 7.f);
+    }
+
     lolunit_declare_test(Chebyshev)
     {
         polynomial<float> t0 = polynomial<float>::chebyshev(0);
