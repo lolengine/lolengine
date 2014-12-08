@@ -14,6 +14,9 @@
 // The polynomial class
 // --------------------
 //
+// The data structure is a simple dynamic array of scalars, with the
+// added guarantee that the leading coefficient is always non-zero.
+//
 
 #include <functional>
 
@@ -105,50 +108,56 @@ struct polynomial
 
     array<T> roots() const
     {
-        ASSERT(degree() >= 0, "roots() called on the null polynomial");
+        /* For now we can only solve polynomials of degrees 0, 1 or 2. */
+        ASSERT(degree() >= 0 && degree() <= 2,
+               "roots() called on polynomial of degree %d", degree());
 
         if (degree() == 0)
         {
-             /* p(x) = a > 0 */
-             return array<T> {};
+            /* p(x) = a > 0 */
+            return array<T> {};
         }
         else if (degree() == 1)
         {
-             /* p(x) = ax + b */
-             T const &a = m_coefficients[1];
-             T const &b = m_coefficients[0];
-             return array<T> { -b / a };
+            /* p(x) = ax + b */
+            T const &a = m_coefficients[1];
+            T const &b = m_coefficients[0];
+            return array<T> { -b / a };
         }
         else if (degree() == 2)
         {
-             /* p(x) = ax² + bx + c */
-             T const &a = m_coefficients[2];
-             T const &b = m_coefficients[1];
-             T const &c = m_coefficients[0];
+            /* p(x) = ax² + bx + c */
+            T const &a = m_coefficients[2];
+            T const &b = m_coefficients[1];
+            T const &c = m_coefficients[0];
 
-             T const k = b / (a + a);
-             T const delta = k * k - c / a;
+            T const k = b / (a + a);
+            T const delta = k * k - c / a;
 
-             if (delta < T(0))
-             {
+            if (delta < T(0))
+            {
                  return array<T> {};
-             }
-             else if (delta > T(0))
-             {
+            }
+            else if (delta > T(0))
+            {
                  T const sqrt_delta = sqrt(delta);
                  return array<T> { -k - sqrt_delta, -k + sqrt_delta };
-             }
-             else
-             {
+            }
+            else
+            {
                  return array<T> { -k };
-             }
+            }
         }
 
-        ASSERT(false, "roots() called on polynomial of degree %d > 2",
-                      degree());
+        /* It is an error to reach this point. */
+        ASSERT(false);
         return array<T> {};
     }
 
+    /* Access individual coefficients. This is read-only and returns a
+     * copy because we cannot let the user mess with the integrity of
+     * the structure (i.e. the guarantee that the leading coefficient
+     * remains non-zero). */
     inline T operator[](ptrdiff_t n) const
     {
         if (n < 0 || n > degree())
@@ -157,11 +166,13 @@ struct polynomial
         return m_coefficients[n];
     }
 
+    /* Unary plus */
     polynomial<T> operator +() const
     {
         return *this;
     }
 
+    /* Unary minus */
     polynomial<T> operator -() const
     {
         polynomial<T> ret;
@@ -170,6 +181,7 @@ struct polynomial
         return ret;
     }
 
+    /* Add two polynomials */
     polynomial<T> &operator +=(polynomial<T> const &p)
     {
         int min_degree = lol::min(p.degree(), degree());
@@ -189,6 +201,7 @@ struct polynomial
         return polynomial<T>(*this) += p;
     }
 
+    /* Subtract two polynomials */
     polynomial<T> &operator -=(polynomial<T> const &p)
     {
         return *this += -p;
@@ -199,6 +212,7 @@ struct polynomial
         return polynomial<T>(*this) += -p;
     }
 
+    /* Multiply polynomial by a scalar */
     polynomial<T> &operator *=(T const &k)
     {
         for (auto &a : m_coefficients)
@@ -212,6 +226,18 @@ struct polynomial
         return polynomial<T>(*this) *= k;
     }
 
+    /* Divide polynomial by a scalar */
+    polynomial<T> &operator /=(T const &k)
+    {
+        return *this *= (T(1) / k);
+    }
+
+    polynomial<T> operator /(T const &k) const
+    {
+        return *this * (T(1) / k);
+    }
+
+    /* Multiply polynomial by another polynomial */
     polynomial<T> &operator *=(polynomial<T> const &p)
     {
         return *this = *this * p;
@@ -239,6 +265,7 @@ struct polynomial
     }
 
 private:
+    /* Enforce the non-zero leading coefficient rule. */
     void reduce_degree()
     {
         while (m_coefficients.Count() && m_coefficients.Last() == T(0))
