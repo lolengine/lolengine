@@ -40,8 +40,6 @@ void RemezSolver::Run(real a, real b,
     m_weight = weight;
     m_k1 = (b + a) / 2;
     m_k2 = (b - a) / 2;
-    m_invk2 = re(m_k2);
-    m_invk1 = -m_k1 * m_invk2;
     m_epsilon = pow((real)10, (real)-(m_decimals + 2));
 
     Init();
@@ -271,36 +269,17 @@ void RemezSolver::PrintPoly()
     using std::printf;
 
     /* Transform our polynomial in the [-1..1] range into a polynomial
-     * in the [a..b] range. */
-    array<real> k1p, k2p, an;
-
-    for (int i = 0; i < m_order + 1; i++)
-    {
-        k1p.Push(i ? k1p[i - 1] * m_invk1 : (real)1);
-        k2p.Push(i ? k2p[i - 1] * m_invk2 : (real)1);
-    }
-
-    std::function<int(int, int)> comb = [&](int n, int k)
-    {
-        if (k == 0 || k == n)
-            return 1;
-        return comb(n - 1, k - 1) + comb(n - 1, k);
-    };
-
-    for (int i = 0; i < m_order + 1; i++)
-    {
-        real tmp = 0;
-        for (int j = i; j < m_order + 1; j++)
-            tmp += (real)comb(j, i) * k1p[j - i] * m_estimate[j];
-        an.Push(tmp * k2p[i]);
-    }
+     * in the [a..b] range by composing it with q:
+     *  q(x) = 2x / (b-a) - (b+a) / (b-a) */
+    polynomial<real> q ({ -m_k1 / m_k2, real(1) / m_k2 });
+    polynomial<real> r = m_estimate.eval(q);
 
     printf("Polynomial estimate: ");
     for (int j = 0; j < m_order + 1; j++)
     {
         if (j)
             printf(" + x**%i * ", j);
-        an[j].print(m_decimals);
+        r[j].print(m_decimals);
     }
     printf("\n\n");
 }
