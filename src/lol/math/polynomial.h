@@ -103,6 +103,52 @@ struct polynomial
         return ret;
     }
 
+    array<T> roots() const
+    {
+        ASSERT(degree() >= 0, "roots() called on the null polynomial");
+
+        if (degree() == 0)
+        {
+             /* p(x) = a > 0 */
+             return array<T> {};
+        }
+        else if (degree() == 1)
+        {
+             /* p(x) = ax + b */
+             T const &a = m_coefficients[1];
+             T const &b = m_coefficients[0];
+             return array<T> { -b / a };
+        }
+        else if (degree() == 2)
+        {
+             /* p(x) = ax² + bx + c */
+             T const &a = m_coefficients[2];
+             T const &b = m_coefficients[1];
+             T const &c = m_coefficients[0];
+
+             T const k = b / (a + a);
+             T const delta = k * k - c / a;
+
+             if (delta < T(0))
+             {
+                 return array<T> {};
+             }
+             else if (delta > T(0))
+             {
+                 T const sqrt_delta = sqrt(delta);
+                 return array<T> { -k - sqrt_delta, -k + sqrt_delta };
+             }
+             else
+             {
+                 return array<T> { -k };
+             }
+        }
+
+        ASSERT(false, "roots() called on polynomial of degree %d > 2",
+                      degree());
+        return array<T> {};
+    }
+
     inline T operator[](ptrdiff_t n) const
     {
         if (n < 0 || n > degree())
