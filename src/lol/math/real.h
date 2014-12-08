@@ -43,8 +43,10 @@ public:
 
     Real(float f);
     Real(double f);
-    Real(int i);
-    Real(unsigned int i);
+    Real(int32_t i);
+    Real(uint32_t i);
+    Real(int64_t i);
+    Real(uint64_t i);
 
     Real(char const *str);
 
@@ -212,8 +214,10 @@ template<> real const &real::operator =(real const &x);
 template<> real::~Real();
 template<> real::Real(float f);
 template<> real::Real(double f);
-template<> real::Real(int i);
-template<> real::Real(unsigned int i);
+template<> real::Real(int32_t i);
+template<> real::Real(uint32_t i);
+template<> real::Real(int64_t i);
+template<> real::Real(uint64_t i);
 template<> real::Real(char const *str);
 
 template<> real::operator float() const;
