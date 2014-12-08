@@ -69,6 +69,10 @@ void RemezSolver::Run(real a, real b,
     PrintPoly();
 }
 
+/*
+ * This is basically the first Remez step: we solve a system of
+ * order N+1 and get a good initial polynomial estimate.
+ */
 void RemezSolver::Init()
 {
     /* m_order + 1 zeroes of the error function */
@@ -111,6 +115,54 @@ void RemezSolver::Init()
     }
 }
 
+/*
+ * Every subsequent iteration of the Remez algorithm: we solve a system
+ * of order N+2 to both refine the estimate and compute the error.
+ */
+void RemezSolver::Step()
+{
+    /* Pick up x_i where error will be 0 and compute f(x_i) */
+    array<real> fxn;
+    for (int i = 0; i < m_order + 2; i++)
+        fxn.Push(EvalFunc(m_control[i]));
+
+    /* We build a matrix of Chebishev evaluations: row i contains the
+     * evaluations of x_i for polynomial order n = 0, 1, ... */
+    LinearSystem<real> system(m_order + 2);
+    for (int n = 0; n < m_order + 1; n++)
+    {
+        auto p = polynomial<real>::chebyshev(n);
+        for (int i = 0; i < m_order + 2; i++)
+            system[i][n] = p.eval(m_control[i]);
+    }
+
+    /* The last line of the system is the oscillating error */
+    for (int i = 0; i < m_order + 2; i++)
+    {
+        real error = fabs(EvalWeight(m_control[i]));
+        system[i][m_order + 1] = (i & 1) ? error : -error;
+    }
+
+    /* Solve the system */
+    system = system.inverse();
+
+    /* Compute new polynomial estimate */
+    m_estimate = polynomial<real>();
+    for (int n = 0; n < m_order + 1; n++)
+    {
+        real weight = 0;
+        for (int i = 0; i < m_order + 2; i++)
+            weight += system[n][i] * fxn[i];
+
+        m_estimate += weight * polynomial<real>::chebyshev(n);
+    }
+
+    /* Compute the error (FIXME: unused?) */
+    real error = 0;
+    for (int i = 0; i < m_order + 2; i++)
+        error += system[m_order + 1][i] * fxn[i];
+}
+
 void RemezSolver::FindZeroes()
 {
     /* Find m_order + 1 zeroes of the error function. No need to
@@ -121,16 +173,16 @@ void RemezSolver::FindZeroes()
         struct { real value, error; } left, right, mid;
 
         left.value = m_control[i];
-        left.error = EvalCheby(left.value) - EvalFunc(left.value);
+        left.error = EvalEstimate(left.value) - EvalFunc(left.value);
         right.value = m_control[i + 1];
-        right.error = EvalCheby(right.value) - EvalFunc(right.value);
+        right.error = EvalEstimate(right.value) - EvalFunc(right.value);
 
         static real limit = ldexp((real)1, -500);
         static real zero = (real)0;
         while (fabs(left.value - right.value) > limit)
         {
             mid.value = (left.value + right.value) / 2;
-            mid.error = EvalCheby(mid.value) - EvalFunc(mid.value);
+            mid.error = EvalEstimate(mid.value) - EvalFunc(mid.value);
 
             if ((left.error <= zero && mid.error <= zero)
                  || (left.error >= zero && mid.error >= zero))
@@ -175,7 +227,7 @@ real RemezSolver::FindExtrema()
                 if (r == 0 || (k & 1))
                 {
                     ++evals;
-                    real error = fabs(EvalCheby(c) - EvalFunc(c));
+                    real error = fabs(EvalEstimate(c) - EvalFunc(c));
                     real weight = fabs(EvalWeight(c));
                     /* if error/weight >= maxerror/maxweight */
                     if (error * maxweight >= maxerror * weight)
@@ -214,54 +266,10 @@ real RemezSolver::FindExtrema()
     }
 
     printf("Iterations: Rounds %d Evals %d\n", rounds, evals);
-    printf("Times: Cheby %f Func %f EvalWeight %f\n",
+    printf("Times: Estimate %f Func %f EvalWeight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
 
     return final;
-}
-
-void RemezSolver::Step()
-{
-    /* Pick up x_i where error will be 0 and compute f(x_i) */
-    array<real> fxn;
-    for (int i = 0; i < m_order + 2; i++)
-        fxn.Push(EvalFunc(m_control[i]));
-
-    /* We build a matrix of Chebishev evaluations: row i contains the
-     * evaluations of x_i for polynomial order n = 0, 1, ... */
-    LinearSystem<real> system(m_order + 2);
-    for (int n = 0; n < m_order + 1; n++)
-    {
-        auto p = polynomial<real>::chebyshev(n);
-        for (int i = 0; i < m_order + 2; i++)
-            system[i][n] = p.eval(m_control[i]);
-    }
-
-    /* The last line of the system is the oscillating error */
-    for (int i = 0; i < m_order + 2; i++)
-    {
-        real error = fabs(EvalWeight(m_control[i]));
-        system[i][m_order + 1] = (i & 1) ? error : -error;
-    }
-
-    /* Solve the system */
-    system = system.inverse();
-
-    /* Compute new polynomial estimate */
-    m_estimate = polynomial<real>();
-    for (int n = 0; n < m_order + 1; n++)
-    {
-        real weight = 0;
-        for (int i = 0; i < m_order + 2; i++)
-            weight += system[n][i] * fxn[i];
-
-        m_estimate += weight * polynomial<real>::chebyshev(n);
-    }
-
-    /* Compute the error */
-    real error = 0;
-    for (int i = 0; i < m_order + 2; i++)
-        error += system[m_order + 1][i] * fxn[i];
 }
 
 void RemezSolver::PrintPoly()
@@ -284,7 +292,7 @@ void RemezSolver::PrintPoly()
     printf("\n\n");
 }
 
-real RemezSolver::EvalCheby(real const &x)
+real RemezSolver::EvalEstimate(real const &x)
 {
     Timer t;
     real ret = m_estimate.eval(x);
