@@ -415,7 +415,7 @@ public:
             return m_pos != that.m_pos;
         }
 
-        element_t operator *()
+        element_t & operator *()
         {
             return (*m_array)[m_pos];
         }
