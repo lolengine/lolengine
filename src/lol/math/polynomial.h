@@ -26,6 +26,13 @@ struct polynomial
     /* The zero polynomial */
     explicit inline polynomial() {}
 
+    /* A constant polynomial */
+    explicit inline polynomial(T const &a)
+    {
+        m_coefficients.Push(a);
+        reduce_degree();
+    }
+
     /* Create a polynomial from a list of coefficients */
     explicit polynomial(std::initializer_list<T> const &init)
     {
@@ -76,11 +83,23 @@ struct polynomial
         reduce_degree();
     }
 
-    T eval(T x) const
+    /* Evaluate polynomial at a given value. This method can also
+     * be used to compose polynomials, i.e. using another polynomial
+     * as the value instead of a scalar. */
+    template<typename U> U eval(U x) const
     {
-        T ret = this->operator[](degree());
+        U ret((*this)[degree()]);
         for (int i = degree() - 1; i >= 0; --i)
-            ret = ret * x + m_coefficients[i];
+            ret = ret * x + U(m_coefficients[i]);
+        return ret;
+    }
+
+    polynomial<T> derive() const
+    {
+        /* No need to reduce the degree after deriving. */
+        polynomial<T> ret;
+        for (int i = 1; i <= degree(); ++i)
+            ret.m_coefficients.Push(m_coefficients[i] * T(i));
         return ret;
     }
 

@@ -50,6 +50,29 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(s.degree(), -1);
     }
 
+    lolunit_declare_test(Derive)
+    {
+        polynomial<float> p {};
+        p = p.derive();
+        lolunit_assert_equal(p.degree(), -1);
+
+        polynomial<float> q { 1.f };
+        q = q.derive();
+        lolunit_assert_equal(q.degree(), -1);
+
+        polynomial<float> r { 1.f, 2.f };
+        r = r.derive();
+        lolunit_assert_equal(r.degree(), 0);
+        lolunit_assert_equal(r[0], 2.f);
+
+        polynomial<float> s { 1.f, 2.f, 3.f, 4.f };
+        s = s.derive();
+        lolunit_assert_equal(s.degree(), 2);
+        lolunit_assert_equal(s[0], 2.f);
+        lolunit_assert_equal(s[1], 6.f);
+        lolunit_assert_equal(s[2], 12.f);
+    }
+
     lolunit_declare_test(Eval)
     {
         /* Special null polynomial */
@@ -158,6 +181,37 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[1], 13.f);
         lolunit_assert_equal(r[2], 22.f);
         lolunit_assert_equal(r[3], 15.f);
+    }
+
+    lolunit_declare_test(Composition1)
+    {
+        /* p(x) = 1 + x² */
+        polynomial<float> p({ 1, 0, 1 });
+
+        /* q(x) = (p o p)(x) = 2 + 2x² + x⁴ */
+        polynomial<float> q = p.eval(p);
+        lolunit_assert_equal(q.degree(), 4);
+        lolunit_assert_equal(q[0], 2.f);
+        lolunit_assert_equal(q[1], 0.f);
+        lolunit_assert_equal(q[2], 2.f);
+        lolunit_assert_equal(q[3], 0.f);
+        lolunit_assert_equal(q[4], 1.f);
+    }
+
+    lolunit_declare_test(Composition2)
+    {
+        /* p(x) = 1 + x */
+        polynomial<float> p({ 1, 1 });
+
+        /* q(x) = 1 + x + x² */
+        polynomial<float> q({ 1, 1, 1 });
+
+        /* r(x) = (q o p)(x) = 3 + 3x + x² */
+        polynomial<float> r = q.eval(p);
+        lolunit_assert_equal(r.degree(), 2);
+        lolunit_assert_equal(r[0], 3.f);
+        lolunit_assert_equal(r[1], 3.f);
+        lolunit_assert_equal(r[2], 1.f);
     }
 
     lolunit_declare_test(Chebyshev)
