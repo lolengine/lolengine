@@ -24,11 +24,15 @@ class test_interpolator : public simplex_interpolator<N, T>
 {
 public:
 
+    test_interpolator() :
+        simplex_interpolator<N, T>()
+    {
+    }
+
     test_interpolator(arraynd<N, T> const & samples) :
         simplex_interpolator<N, T>(samples)
     {
     }
-
 
     void DumpMatrix()
     {
@@ -55,6 +59,35 @@ public:
 
         std::cout << std::endl;
     }
+
+    void DumpMatrix(float result[N][N])
+    {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                result[i][j] = this->m_base[i][j];
+            }
+        }
+    }
+
+    void DumpCheckInverse(float result[N][N])
+    {
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < N; ++j)
+                result[i][j] = 0;
+
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                for (int k = 0; k < N; ++k)
+                {
+                    result[i][j] += this->m_base[i][k] * this->m_base_inverse[k][j];
+                }
+            }
+        }
+    }
 };
 
 lolunit_declare_fixture(SimplexInterpolatorTest)
@@ -69,13 +102,72 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
         test_interpolator<2, vec2> c({{ vec2(0) }});
     }
 
+    template<int N>
+    void check_base_matrix()
+    {
+        test_interpolator<N> s;
+
+        float result[N][N];
+        s.DumpCheckInverse(result);
+
+        // Check base matrix inverse
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                if (i == j)
+                    lolunit_assert_doubles_equal(1, result[i][j], 1e-6);
+                else
+                    lolunit_assert_doubles_equal(0, result[i][j], 1e-6);
+            }
+        }
+
+        s.DumpMatrix(result);
+
+        // Check base vectors’ norms
+        for (int i = 0; i < N; ++i)
+        {
+            float norm = 0;
+
+            for (int j = 0; j < N; ++j)
+            {
+                norm += result[i][j] * result[i][j];
+            }
+
+            lolunit_assert_doubles_equal(1, norm, 1e-6);
+        }
+
+        // Check result of vectors x, y z => must have norm = 1
+        float vec_result[N];
+        for (int i = 0; i < N; ++i)
+        {
+            vec_result[i] = 0;
+            for (int j = 0; j < N; ++j)
+            {
+                vec_result[i] += result[i][j];
+            }
+        }
+
+        float norm = 0;
+        for (int i = 0 ; i < N ; ++i)
+        {
+            norm += vec_result[i] * vec_result[i];
+        }
+        lolunit_assert_doubles_equal(1, norm, 1e-6);
+    }
+
     lolunit_declare_test(CoordinateMatrixTest)
     {
-        test_interpolator<2> s2({{1.f}});
-        s2.DumpMatrix();
-
-        test_interpolator<3> s3(arraynd<3, float>({{{1.f}}}));
-        s3.DumpMatrix();
+        check_base_matrix<1>();
+        check_base_matrix<2>();
+        check_base_matrix<3>();
+        check_base_matrix<4>();
+        check_base_matrix<5>();
+        check_base_matrix<6>();
+        check_base_matrix<7>();
+        check_base_matrix<8>();
+        check_base_matrix<9>();
+        check_base_matrix<10>();
     }
 
 #if 0

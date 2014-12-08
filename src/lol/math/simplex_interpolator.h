@@ -21,10 +21,21 @@ class simplex_interpolator
 {
 public:
 
+    simplex_interpolator() :
+        m_samples()
+    {
+        this->InitBase();
+    }
+
     simplex_interpolator(arraynd<N, T> const & samples) :
         m_samples(samples)
     {
         this->InitBase();
+    }
+
+    inline void SetSamples(arraynd<N, T> const & samples)
+    {
+        this->m_samples = samples;
     }
 
     inline arraynd<N, T> const & GetSamples() const
@@ -132,7 +143,7 @@ protected:
                 | b b a b … |                 | d d c d … |
                 | …         |                 | …         |
 
-            where a and b are computed below ↴
+            where a, b, c, d are computed below ↴
         */
 
         float b = (1.f - lol::sqrt(N + 1.f)) / lol::sqrt((float)N * N * N);
