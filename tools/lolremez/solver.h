@@ -28,28 +28,31 @@ public:
              RealFunc *func, RealFunc *weight = nullptr);
 
 private:
-    lol::real EvalCheby(lol::real const &x);
     void Init();
     void FindZeroes();
     lol::real FindExtrema();
     void Step();
-
-    int Cheby(int n, int k);
-    int Comb(int n, int k);
-
     void PrintPoly();
+
+    lol::real EvalCheby(lol::real const &x);
     lol::real EvalFunc(lol::real const &x);
-    lol::real Weight(lol::real const &x);
+    lol::real EvalWeight(lol::real const &x);
 
 private:
     int m_order;
 
-    lol::array<lol::real> m_coeff;
+    lol::polynomial<lol::real> m_estimate;
+
     lol::array<lol::real> m_zeroes;
     lol::array<lol::real> m_control;
 
     RealFunc *m_func, *m_weight;
     lol::real m_k1, m_k2, m_invk1, m_invk2, m_epsilon;
     int m_decimals;
+
+    /* Statistics */
+    float m_stats_cheby;
+    float m_stats_func;
+    float m_stats_weight;
 };
 

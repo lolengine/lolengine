@@ -12,9 +12,12 @@
 #   include "config.h"
 #endif
 
+#include <functional>
+
 #include <lol/engine.h>
 
 #include <lol/math/real.h>
+#include <lol/math/polynomial.h>
 
 #include "matrix.h"
 #include "solver.h"
@@ -68,34 +71,16 @@ void RemezSolver::Run(real a, real b,
     PrintPoly();
 }
 
-real RemezSolver::EvalCheby(real const &x)
-{
-    real ret = 0.0, xn = 1.0;
-
-    for (int i = 0; i < m_order + 1; i++)
-    {
-        real mul = 0;
-        for (int j = 0; j < m_order + 1; j++)
-            mul += m_coeff[j] * (real)Cheby(j, i);
-        ret += mul * xn;
-        xn *= x;
-    }
-
-    return ret;
-}
-
 void RemezSolver::Init()
 {
-    /* m_order + 1 Chebyshev coefficients, plus 1 error value */
-    m_coeff.Resize(m_order + 2);
-
     /* m_order + 1 zeroes of the error function */
     m_zeroes.Resize(m_order + 1);
 
     /* m_order + 2 control points */
     m_control.Resize(m_order + 2);
 
-    /* Pick up x_i where error will be 0 and compute f(x_i) */
+    /* Initial estimates for the x_i where the error will be zero and
+     * precompute f(x_i). */
     array<real> fxn;
     for (int i = 0; i < m_order + 1; i++)
     {
@@ -106,33 +91,25 @@ void RemezSolver::Init()
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
     LinearSystem<real> system(m_order + 1);
-    for (int i = 0; i < m_order + 1; i++)
+    for (int n = 0; n < m_order + 1; n++)
     {
-        /* Compute the powers of x_i */
-        array<real> powers;
-        powers.Push(real(1.0));
-        for (int n = 1; n < m_order + 1; n++)
-             powers.Push(powers.Last() * m_zeroes[i]);
-
-        /* Compute the Chebishev evaluations at x_i */
-        for (int n = 0; n < m_order + 1; n++)
-        {
-            real sum = 0.0;
-            for (int k = 0; k < m_order + 1; k++)
-                sum += (real)Cheby(n, k) * powers[k];
-            system.m(i, n) = sum;
-        }
+        auto p = polynomial<real>::chebyshev(n);
+        for (int i = 0; i < m_order + 1; i++)
+            system.m(i, n) = p.eval(m_zeroes[i]);
     }
 
     /* Solve the system */
     system = system.inv();
 
-    /* Compute interpolation coefficients */
-    for (int j = 0; j < m_order + 1; j++)
+    /* Compute new Chebyshev estimate */
+    m_estimate = polynomial<real>();
+    for (int n = 0; n < m_order + 1; n++)
     {
-        m_coeff[j] = 0;
+        real weight = 0;
         for (int i = 0; i < m_order + 1; i++)
-            m_coeff[j] += system.m(j, i) * fxn[i];
+            weight += system.m(n, i) * fxn[i];
+
+        m_estimate += weight * polynomial<real>::chebyshev(n);
     }
 }
 
@@ -168,6 +145,7 @@ void RemezSolver::FindZeroes()
     }
 }
 
+/* XXX: this is the real costly function */
 real RemezSolver::FindExtrema()
 {
     using std::printf;
@@ -177,6 +155,9 @@ real RemezSolver::FindExtrema()
      * different locations than the absolute error’s. */
     real final = 0;
 
+    m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
+    int evals = 0, rounds = 0;
+
     for (int i = 0; i < m_order + 2; i++)
     {
         real a = -1, b = 1;
@@ -185,7 +166,7 @@ real RemezSolver::FindExtrema()
         if (i < m_order + 1)
             b = m_zeroes[i];
 
-        for (int round = 0; ; round++)
+        for (int r = 0; ; ++r, ++rounds)
         {
             real maxerror = 0, maxweight = 0;
             int best = -1;
@@ -193,10 +174,11 @@ real RemezSolver::FindExtrema()
             real c = a, delta = (b - a) / 4;
             for (int k = 0; k <= 4; k++)
             {
-                if (round == 0 || (k & 1))
+                if (r == 0 || (k & 1))
                 {
+                    ++evals;
                     real error = fabs(EvalCheby(c) - EvalFunc(c));
-                    real weight = fabs(Weight(c));
+                    real weight = fabs(EvalWeight(c));
                     /* if error/weight >= maxerror/maxweight */
                     if (error * maxweight >= maxerror * weight)
                     {
@@ -233,6 +215,10 @@ real RemezSolver::FindExtrema()
         }
     }
 
+    printf("Iterations: Rounds %d Evals %d\n", rounds, evals);
+    printf("Times: Cheby %f Func %f EvalWeight %f\n",
+           m_stats_cheby, m_stats_func, m_stats_weight);
+
     return final;
 }
 
@@ -246,37 +232,32 @@ void RemezSolver::Step()
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
     LinearSystem<real> system(m_order + 2);
+    for (int n = 0; n < m_order + 1; n++)
+    {
+        auto p = polynomial<real>::chebyshev(n);
+        for (int i = 0; i < m_order + 2; i++)
+            system.m(i, n) = p.eval(m_control[i]);
+    }
+
+    /* The last line of the system is the oscillating error */
     for (int i = 0; i < m_order + 2; i++)
     {
-        /* Compute the powers of x_i */
-        array<real> powers;
-        powers.Push(real(1.0));
-        for (int n = 1; n < m_order + 1; n++)
-             powers.Push(powers.Last() * m_control[i]);
-
-        /* Compute the Chebishev evaluations at x_i */
-        for (int n = 0; n < m_order + 1; n++)
-        {
-            real sum = 0.0;
-            for (int k = 0; k < m_order + 1; k++)
-                sum += (real)Cheby(n, k) * powers[k];
-            system.m(i, n) = sum;
-        }
-        if (i & 1)
-            system.m(i, m_order + 1) = fabs(Weight(m_control[i]));
-        else
-            system.m(i, m_order + 1) = -fabs(Weight(m_control[i]));
+        real error = fabs(EvalWeight(m_control[i]));
+        system.m(i, m_order + 1) = (i & 1) ? error : -error;
     }
 
     /* Solve the system */
     system = system.inv();
 
-    /* Compute interpolation coefficients */
-    for (int j = 0; j < m_order + 1; j++)
+    /* Compute new polynomial estimate */
+    m_estimate = polynomial<real>();
+    for (int n = 0; n < m_order + 1; n++)
     {
-        m_coeff[j] = 0;
+        real weight = 0;
         for (int i = 0; i < m_order + 2; i++)
-            m_coeff[j] += system.m(j, i) * fxn[i];
+            weight += system.m(n, i) * fxn[i];
+
+        m_estimate += weight * polynomial<real>::chebyshev(n);
     }
 
     /* Compute the error */
@@ -285,39 +266,11 @@ void RemezSolver::Step()
         error += system.m(m_order + 1, i) * fxn[i];
 }
 
-int RemezSolver::Cheby(int n, int k)
-{
-    if (k > n || k < 0)
-        return 0;
-    if (n <= 1)
-        return (n ^ k ^ 1) & 1;
-    return 2 * Cheby(n - 1, k - 1) - Cheby(n - 2, k);
-}
-
-int RemezSolver::Comb(int n, int k)
-{
-    if (k == 0 || k == n)
-        return 1;
-    return Comb(n - 1, k - 1) + Comb(n - 1, k);
-}
-
 void RemezSolver::PrintPoly()
 {
     using std::printf;
 
-    /* Transform Chebyshev polynomial weights into powers of X^i
-     * in the [-1..1] range. */
-    array<real> bn;
-
-    for (int i = 0; i < m_order + 1; i++)
-    {
-        real tmp = 0;
-        for (int j = 0; j < m_order + 1; j++)
-            tmp += m_coeff[j] * (real)Cheby(j, i);
-        bn.Push(tmp);
-    }
-
-    /* Transform a polynomial in the [-1..1] range into a polynomial
+    /* Transform our polynomial in the [-1..1] range into a polynomial
      * in the [a..b] range. */
     array<real> k1p, k2p, an;
 
@@ -327,11 +280,18 @@ void RemezSolver::PrintPoly()
         k2p.Push(i ? k2p[i - 1] * m_invk2 : (real)1);
     }
 
+    std::function<int(int, int)> comb = [&](int n, int k)
+    {
+        if (k == 0 || k == n)
+            return 1;
+        return comb(n - 1, k - 1) + comb(n - 1, k);
+    };
+
     for (int i = 0; i < m_order + 1; i++)
     {
         real tmp = 0;
         for (int j = i; j < m_order + 1; j++)
-            tmp += (real)Comb(j, i) * k1p[j - i] * bn[j];
+            tmp += (real)comb(j, i) * k1p[j - i] * m_estimate[j];
         an.Push(tmp * k2p[i]);
     }
 
@@ -345,15 +305,27 @@ void RemezSolver::PrintPoly()
     printf("\n\n");
 }
 
-real RemezSolver::EvalFunc(real const &x)
+real RemezSolver::EvalCheby(real const &x)
 {
-    return m_func(x * m_k2 + m_k1);
+    Timer t;
+    real ret = m_estimate.eval(x);
+    m_stats_cheby += t.Get();
+    return ret;
 }
 
-real RemezSolver::Weight(real const &x)
+real RemezSolver::EvalFunc(real const &x)
 {
-    if (m_weight)
-        return m_weight(x * m_k2 + m_k1);
-    return 1;
+    Timer t;
+    real ret = m_func(x * m_k2 + m_k1);
+    m_stats_func += t.Get();
+    return ret;
+}
+
+real RemezSolver::EvalWeight(real const &x)
+{
+    Timer t;
+    real ret = m_weight ? m_weight(x * m_k2 + m_k1) : real(1);
+    m_stats_weight += t.Get();
+    return ret;
 }
 
