@@ -17,53 +17,50 @@ using namespace lol;
  * naive inversion and is used for the Remez inversion method.
  */
 
-template<typename T> struct LinearSystem
+template<typename T>
+struct LinearSystem : public array2d<T>
 {
     inline LinearSystem<T>(int cols)
-      : m_cols(cols)
     {
         ASSERT(cols > 0);
 
-        m_data.Resize(m_cols * m_cols);
-    }
-
-    inline LinearSystem<T>(LinearSystem<T> const &other)
-    {
-        m_cols = other.m_cols;
-        m_data = other.m_data;
+        this->SetSize(ivec2(cols));
     }
 
     void Init(T const &x)
     {
-        for (int j = 0; j < m_cols; j++)
-            for (int i = 0; i < m_cols; i++)
-                m(i, j) = (i == j) ? x : (T)0;
+        int const n = this->GetSize().x;
+
+        for (int j = 0; j < n; j++)
+            for (int i = 0; i < n; i++)
+                (*this)[i][j] = (i == j) ? x : (T)0;
     }
 
     /* Naive matrix inversion */
-    LinearSystem<T> inv() const
+    LinearSystem<T> inverse() const
     {
-        LinearSystem a(*this), b(m_cols);
+        int const n = this->GetSize().x;
+        LinearSystem a(*this), b(n);
 
         b.Init((T)1);
 
         /* Inversion method: iterate through all columns and make sure
          * all the terms are 1 on the diagonal and 0 everywhere else */
-        for (int i = 0; i < m_cols; i++)
+        for (int i = 0; i < n; i++)
         {
             /* If the expected coefficient is zero, add one of
              * the other lines. The first we meet will do. */
-            if (!a.m(i, i))
+            if (!a[i][i])
             {
-                for (int j = i + 1; j < m_cols; j++)
+                for (int j = i + 1; j < n; j++)
                 {
-                    if (!a.m(i, j))
+                    if (!a[i][j])
                         continue;
                     /* Add row j to row i */
-                    for (int n = 0; n < m_cols; n++)
+                    for (int k = 0; k < n; k++)
                     {
-                        a.m(n, i) += a.m(n, j);
-                        b.m(n, i) += b.m(n, j);
+                        a[k][i] += a[k][j];
+                        b[k][i] += b[k][j];
                     }
                     break;
                 }
@@ -71,36 +68,28 @@ template<typename T> struct LinearSystem
 
             /* Now we know the diagonal term is non-zero. Get its inverse
              * and use that to nullify all other terms in the column */
-            T x = (T)1 / a.m(i, i);
-            for (int j = 0; j < m_cols; j++)
+            T x = (T)1 / a[i][i];
+            for (int j = 0; j < n; j++)
             {
                 if (j == i)
                     continue;
-                T mul = x * a.m(i, j);
-                for (int n = 0; n < m_cols; n++)
+                T mul = x * a[i][j];
+                for (int k = 0; k < n; k++)
                 {
-                    a.m(n, j) -= mul * a.m(n, i);
-                    b.m(n, j) -= mul * b.m(n, i);
+                    a[k][j] -= mul * a[k][i];
+                    b[k][j] -= mul * b[k][i];
                 }
             }
 
             /* Finally, ensure the diagonal term is 1 */
-            for (int n = 0; n < m_cols; n++)
+            for (int k = 0; k < n; k++)
             {
-                a.m(n, i) *= x;
-                b.m(n, i) *= x;
+                a[k][i] *= x;
+                b[k][i] *= x;
             }
         }
 
         return b;
     }
-
-    inline T & m(int i, int j) { return m_data[m_cols * j + i]; }
-    inline T const & m(int i, int j) const { return m_data[m_cols * j + i]; }
-
-    int m_cols;
-
-private:
-    array<T> m_data;
 };
 

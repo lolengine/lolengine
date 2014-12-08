@@ -93,11 +93,11 @@ void RemezSolver::Init()
     {
         auto p = polynomial<real>::chebyshev(n);
         for (int i = 0; i < m_order + 1; i++)
-            system.m(i, n) = p.eval(m_zeroes[i]);
+            system[i][n] = p.eval(m_zeroes[i]);
     }
 
     /* Solve the system */
-    system = system.inv();
+    system = system.inverse();
 
     /* Compute new Chebyshev estimate */
     m_estimate = polynomial<real>();
@@ -105,7 +105,7 @@ void RemezSolver::Init()
     {
         real weight = 0;
         for (int i = 0; i < m_order + 1; i++)
-            weight += system.m(n, i) * fxn[i];
+            weight += system[n][i] * fxn[i];
 
         m_estimate += weight * polynomial<real>::chebyshev(n);
     }
@@ -234,18 +234,18 @@ void RemezSolver::Step()
     {
         auto p = polynomial<real>::chebyshev(n);
         for (int i = 0; i < m_order + 2; i++)
-            system.m(i, n) = p.eval(m_control[i]);
+            system[i][n] = p.eval(m_control[i]);
     }
 
     /* The last line of the system is the oscillating error */
     for (int i = 0; i < m_order + 2; i++)
     {
         real error = fabs(EvalWeight(m_control[i]));
-        system.m(i, m_order + 1) = (i & 1) ? error : -error;
+        system[i][m_order + 1] = (i & 1) ? error : -error;
     }
 
     /* Solve the system */
-    system = system.inv();
+    system = system.inverse();
 
     /* Compute new polynomial estimate */
     m_estimate = polynomial<real>();
@@ -253,7 +253,7 @@ void RemezSolver::Step()
     {
         real weight = 0;
         for (int i = 0; i < m_order + 2; i++)
-            weight += system.m(n, i) * fxn[i];
+            weight += system[n][i] * fxn[i];
 
         m_estimate += weight * polynomial<real>::chebyshev(n);
     }
@@ -261,7 +261,7 @@ void RemezSolver::Step()
     /* Compute the error */
     real error = 0;
     for (int i = 0; i < m_order + 2; i++)
-        error += system.m(m_order + 1, i) * fxn[i];
+        error += system[m_order + 1][i] * fxn[i];
 }
 
 void RemezSolver::PrintPoly()
