@@ -98,9 +98,13 @@ template<> real::~Real()
     delete[] m_mantissa;
 }
 
+/* FIXME: 64-bit integer loading is incorrect,we lose precision. */
+template<> real::Real(int32_t i) { new(this) real((double)i); }
+template<> real::Real(uint32_t i) { new(this) real((double)i); }
+template<> real::Real(int64_t i) { new(this) real((double)i); }
+template<> real::Real(uint64_t i) { new(this) real((double)i); }
+
 template<> real::Real(float f) { new(this) real((double)f); }
-template<> real::Real(int i) { new(this) real((double)i); }
-template<> real::Real(unsigned int i) { new(this) real((double)i); }
 
 template<> real::Real(double d)
 {
