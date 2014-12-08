@@ -47,7 +47,7 @@ private:
     lol::array<lol::real> m_control;
 
     RealFunc *m_func, *m_weight;
-    lol::real m_k1, m_k2, m_invk1, m_invk2, m_epsilon;
+    lol::real m_k1, m_k2, m_epsilon;
     int m_decimals;
 
     /* Statistics */
