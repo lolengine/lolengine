@@ -34,7 +34,7 @@ private:
     void Step();
     void PrintPoly();
 
-    lol::real EvalCheby(lol::real const &x);
+    lol::real EvalEstimate(lol::real const &x);
     lol::real EvalFunc(lol::real const &x);
     lol::real EvalWeight(lol::real const &x);
 
