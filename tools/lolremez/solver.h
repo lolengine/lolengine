@@ -39,16 +39,17 @@ private:
     lol::real EvalWeight(lol::real const &x);
 
 private:
-    int m_order;
+    /* User-defined parameters */
+    RealFunc *m_func, *m_weight;
+    int m_order, m_decimals;
 
+    /* Solver state */
     lol::polynomial<lol::real> m_estimate;
 
     lol::array<lol::real> m_zeroes;
     lol::array<lol::real> m_control;
 
-    RealFunc *m_func, *m_weight;
     lol::real m_k1, m_k2, m_epsilon;
-    int m_decimals;
 
     /* Statistics */
     float m_stats_cheby;
