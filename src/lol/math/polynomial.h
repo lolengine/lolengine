@@ -91,7 +91,7 @@ struct polynomial
      * as the value instead of a scalar. */
     template<typename U> U eval(U x) const
     {
-        U ret((*this)[degree()]);
+        U ret(leading());
         for (int i = degree() - 1; i >= 0; --i)
             ret = ret * x + U(m_coefficients[i]);
         return ret;
@@ -164,6 +164,12 @@ struct polynomial
             return T(0);
 
         return m_coefficients[n];
+    }
+
+    /* Return the leading coefficient */
+    inline T leading() const
+    {
+        return (*this)[degree()];
     }
 
     /* Unary plus */
@@ -259,6 +265,30 @@ struct polynomial
                     ret.m_coefficients[i + j] += p[i] * q[j];
 
             ret.reduce_degree();
+        }
+
+        return ret;
+    }
+
+    /* Divide a polynomial by another one. There is no /= variant because
+     * the return value contains both the quotient and the remainder. */
+    tuple<polynomial<T>, polynomial<T>> operator /(polynomial<T> p) const
+    {
+        ASSERT(p.degree() >= 0);
+
+        tuple<polynomial<T>, polynomial<T>> ret;
+        polynomial<T> &quotient = ret.m1;
+        polynomial<T> &remainder = ret.m2;
+
+        remainder = *this / p.leading();
+        p /= p.leading();
+
+        for (int n = remainder.degree() - p.degree(); n >= 0; --n)
+        {
+            quotient.set(n, remainder.leading());
+            remainder.m_coefficients.Pop();
+            for (int i = 0; i < p.degree(); ++i)
+                remainder.m_coefficients[n + i] -= remainder.leading() * p[i];
         }
 
         return ret;
