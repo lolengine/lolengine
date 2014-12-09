@@ -100,12 +100,7 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
     LIBS="$LIBS_save"])
 fi
 
-if test "${ac_cv_my_have_gl}" = "no"; then
-  AC_MSG_ERROR([[No OpenGL or OpenGL ES implementation found]])
-fi
-
-
-dnl Use Glew?
+dnl  Use Glew?
 ac_cv_my_have_glew="no"
 PKG_CHECK_MODULES(GLEW, glew,
  [ac_cv_my_have_glew="yes"
@@ -130,11 +125,16 @@ if test "${ac_cv_my_have_glew}" != "no"; then
 fi
 AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 
-dnl Poor man's GL feature detection if all else failed.
+dnl  Poor man's GL feature detection if all else failed.
 save_LIBS="${LIBS}"
 LIBS="${LIBS} ${GL_LIBS} ${GLES2_LIBS}"
 AC_CHECK_FUNCS(glBegin)
 LIBS="${save_LIBS}"
+
+dnl  Warn if we couldn't find an OpenGL-like API
+if test "${ac_cv_my_have_gl}" = "no"; then
+  AC_MSG_WARN([[No OpenGL or OpenGL ES implementation found]])
+fi
 
 ])# LOL_CHECK_OPENGL
 

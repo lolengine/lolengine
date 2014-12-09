@@ -21,9 +21,10 @@ class Enum
 {
 public:
     template<typename T>
-    static String EnumToString(T& parameter)
+    static String EnumToString(T const& parameter)
     {
-        //Create your own
+        UNUSED(parameter);
+        // Create your own
         ASSERT(0);
         return String();
     }
