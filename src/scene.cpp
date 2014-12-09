@@ -302,9 +302,11 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined HAVE_GLES_2X
+    /* TODO */
+#elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #endif
+
     if (!data->m_tile_shader)
         data->m_tile_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
     if (!data->m_palette_shader)
@@ -400,7 +402,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */
-#elif !defined HAVE_GLES_2X
+#elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
 #endif
 }

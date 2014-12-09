@@ -65,7 +65,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         {
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
-#else
+#elif defined USE_GLEW || defined HAVE_GL_2X
             glEnable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
@@ -75,7 +75,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         {
 #if defined USE_D3D9 || defined _XBOX
 #elif defined HAVE_GLES_2X
-#else
+#elif defined USE_GLEW || defined HAVE_GL_2X
             glDisable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
@@ -105,7 +105,7 @@ void Video::Capture(uint32_t *buffer)
 {
 #if defined USE_D3D9 || defined _XBOX
     /* TODO */
-#else
+#elif defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];
 #   if defined __CELLOS_LV2__
     // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
