@@ -55,10 +55,10 @@ public:
 
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
-        // Retrieving simplex samples to use
-        int sign;
+        // Resetting decimal point in regular orthonormal coordinates
+        decimal_point = m_base * decimal_point;
 
-        this->GetReference(floor_point, decimal_point, sign);
+        vec_t<float, N> index_order = this->GetIndexOrder(decimal_point);
 
         return this->LastInterp(floor_point, decimal_point, sign);
     }
@@ -69,26 +69,31 @@ protected:
                         vec_t<float, N> const & decimal_point,
                         int const & sign) const
     {
-        T result(0);
-        float floor_coeff = 0;
-        float divider = 0;
+        // There is still a lot of work to do…
+        return T();
+    }
+
+    inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point)
+    {
+        vec_t<int, N> result;
+        for (int i = 0 ; i < N ; ++i)
+            result[i] = i;
 
         for (int i = 0 ; i < N ; ++i)
         {
-            vec_t<int, N> samples_index = floor_point;
-            samples_index[i] = this->Mod(samples_index[i] + sign, i);
-
-            result += decimal_point[i] * this->m_samples[samples_index];
-            floor_coeff += decimal_point[i];
-            divider += decimal_point[i];
+            for (int j = i + 1 ; j < N ; ++j)
+            {
+                if (decimal_point[result[i]] > decimal_point[result[j]])
+                {
+                    // just swapping…
+                    result[i] ^= result[j];
+                    result[j] ^= result[i];
+                    result[i] ^= result[j];
+                }
+            }
         }
 
-        float sqr_norm = N;
-
-        result += (1 - 2 * floor_coeff / sqr_norm) * this->m_samples[floor_point];
-        divider += (1 - 2 * floor_coeff / sqr_norm);
-
-        return result / divider;
+        return result;
     }
 
     inline int Mod(int value, int index) const
@@ -96,26 +101,6 @@ protected:
         int const dim = this->m_samples.GetSize()[index];
         int const ret = value % dim;
         return ret >= 0 ? ret : ret + dim;
-    }
-
-    inline void GetReference(vec_t<int, N> & floor_point, vec_t<float, N> & decimal_point, int & sign) const
-    {
-        // Choosing the reference point which determines in which simplex we are working
-        // ie. (0, 0, 0, …) and upper or (1, 1, 1, …) and lower
-
-        float cumul = 0;
-        for (int i = 0 ; i < N ; ++i)
-            cumul += decimal_point[i];
-
-        if (cumul < (sqrt((float)N) / 2))
-            sign = 1;
-        else
-        {
-            sign = -1;
-
-            decimal_point = vec_t<float, N>(1) - decimal_point;
-            floor_point = floor_point + vec_t<int, N>(1);
-        }
     }
 
     inline void ExtractFloorDecimal(vec_t<float, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<float, N> & decimal_point) const
