@@ -183,6 +183,22 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[3], 15.f);
     }
 
+    lolunit_declare_test(Division)
+    {
+        /* p(x) = -4 - 2x² + x³ */
+        /* q(x) = -3 + x */
+        polynomial<float> p { -4.f, 0.f, -2.f, 1.f };
+        polynomial<float> q { -3.f, 1.f };
+
+        auto r = p / q;
+        lolunit_assert_equal(r.m1.degree(), 2);
+        lolunit_assert_doubles_equal(r.m1[0], 3.f, 1e-5f);
+        lolunit_assert_doubles_equal(r.m1[1], 1.f, 1e-5f);
+        lolunit_assert_doubles_equal(r.m1[2], 1.f, 1e-5f);
+        lolunit_assert_equal(r.m2.degree(), 0);
+        lolunit_assert_doubles_equal(r.m2[0], 5.f, 1e-5f);
+    }
+
     lolunit_declare_test(Composition1)
     {
         /* p(x) = 1 + x² */
