@@ -88,6 +88,11 @@ public:
             }
         }
     }
+
+    vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point)
+    {
+        return simplex_interpolator<N, T>::GetIndexOrder(decimal_point);
+    }
 };
 
 lolunit_declare_fixture(SimplexInterpolatorTest)
@@ -137,7 +142,7 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
             lolunit_assert_doubles_equal(1, norm, 1e-6);
         }
 
-        // Check result of vectors x, y z => must have norm = 1
+        // Check result of sum of base vectors => must have norm = 1
         float vec_result[N];
         for (int i = 0; i < N; ++i)
         {
@@ -168,6 +173,46 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
         check_base_matrix<8>();
         check_base_matrix<9>();
         check_base_matrix<10>();
+    }
+
+    template<int N>
+    void check_index_ordering()
+    {
+        static int gen = 12345678;
+        test_interpolator<N> s;
+
+        vec_t<float, N> vec_ref;
+        for (int i = 0 ; i < N ; ++i)
+            vec_ref[i] = (gen = gen * gen + gen);
+
+        vec_t<int, N> result = s.GetIndexOrder(vec_ref);
+
+        for (int i = 1 ; i < N ; ++i)
+            lolunit_assert(vec_ref[result[i]] >= vec_ref[result[i-1]]);
+    }
+
+    lolunit_declare_test(IndexOrderTest)
+    {
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<1>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<2>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<3>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<4>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<5>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<6>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<7>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<8>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<9>();
+        for (int i = 1 ; i < 10 ; ++i)
+            check_index_ordering<10>();
     }
 
 #if 0
