@@ -190,6 +190,9 @@ lolunit_declare_fixture(PolynomialTest)
         polynomial<float> p { -4.f, 0.f, -2.f, 1.f };
         polynomial<float> q { -3.f, 1.f };
 
+        /* p(x) = r(x) q(x) + s(x)
+         * r(x) = 3 + x + x²
+         * s(x) = 5 */
         auto r = p / q;
         lolunit_assert_equal(r.m1.degree(), 2);
         lolunit_assert_doubles_equal(r.m1[0], 3.f, 1e-5f);
