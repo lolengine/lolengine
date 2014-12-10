@@ -22,25 +22,19 @@ class simplex_interpolator
 public:
 
     simplex_interpolator() :
-        m_samples()
+        m_gradients()
     {
         this->InitBase();
     }
 
-    simplex_interpolator(arraynd<N, T> const & samples) :
-        m_samples(samples)
+    inline void SetGradients(arraynd<N, vec_t<float, N> > const & gradients)
     {
-        this->InitBase();
+        this->m_gradients = gradients;
     }
 
-    inline void SetSamples(arraynd<N, T> const & samples)
+    inline arraynd<N, vec_t<float, N> > const & GetGradients() const
     {
-        this->m_samples = samples;
-    }
-
-    inline arraynd<N, T> const & GetSamples() const
-    {
-        return this->m_samples;
+        return this->m_gradients;
     }
 
     // Single interpolation
@@ -55,22 +49,38 @@ public:
 
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
+        vec_t<float, N> index_order = this->GetIndexOrder(decimal_point);
+
         // Resetting decimal point in regular orthonormal coordinates
         decimal_point = m_base * decimal_point;
 
-        vec_t<float, N> index_order = this->GetIndexOrder(decimal_point);
-
-        return this->LastInterp(floor_point, decimal_point, sign);
+        return this->LastInterp(floor_point, decimal_point, index_order);
     }
 
 protected:
 
     inline T LastInterp(vec_t<int, N> const & floor_point,
                         vec_t<float, N> const & decimal_point,
-                        int const & sign) const
+                        vec_t<float, N> index_order) const
     {
-        // There is still a lot of work to do…
-        return T();
+        vec_t<float, N> point_of_interest;
+        float result = 0;
+
+        for (int i = 0 ; i < N ; ++i)
+        {
+            float dist = 0.5 - sqlength(decimal_point - point_of_interest);
+            vec_t<float, N> gradient = this->m_gradients[floor_point];
+
+            if (dist > 0)
+            {
+                result += dist * dist * dist * dist * dot(gradient, decimal_point - point_of_interest);
+            }
+
+            point_of_interest[index_order[i]] += 1;
+            floor_point[i] = this->Mod(floor_point[i] + 1, index_order[i]);
+        }
+
+        return result;
     }
 
     inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point)
@@ -98,7 +108,7 @@ protected:
 
     inline int Mod(int value, int index) const
     {
-        int const dim = this->m_samples.GetSize()[index];
+        int const dim = this->m_gradients.GetSize()[index];
         int const ret = value % dim;
         return ret >= 0 ? ret : ret + dim;
     }
@@ -113,7 +123,7 @@ protected:
         for (int i = 0 ; i < N ; ++i)
             decimal_point[i] = simplex_position[i] - floor_point[i];
 
-        // Never exceed the size of the samples and loop on it
+        // Never exceed the size of the gradients and loop on it
         for (int i = 0 ; i < N ; ++i)
             floor_point[i] = this->Mod(floor_point[i], i);
     }
@@ -151,7 +161,7 @@ protected:
     }
 
     mat_t<float, N, N> m_base, m_base_inverse;
-    arraynd<N, T> m_samples;
+    arraynd<N, vec_t<float, N> > m_gradients;
 };
 
 }
