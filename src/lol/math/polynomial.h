@@ -286,9 +286,9 @@ struct polynomial
         for (int n = remainder.degree() - p.degree(); n >= 0; --n)
         {
             quotient.set(n, remainder.leading());
-            remainder.m_coefficients.Pop();
             for (int i = 0; i < p.degree(); ++i)
                 remainder.m_coefficients[n + i] -= remainder.leading() * p[i];
+            remainder.m_coefficients.Pop();
         }
 
         return ret;
