@@ -29,11 +29,6 @@ public:
     {
     }
 
-    test_interpolator(arraynd<N, T> const & samples) :
-        simplex_interpolator<N, T>(samples)
-    {
-    }
-
     void DumpMatrix()
     {
         std::cout << std::endl;
@@ -101,11 +96,11 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
     void TearDown() {}
 
-    lolunit_declare_test(CompoundVariable)
-    {
-        test_interpolator<2, real> b({{ real(0) }});
-        test_interpolator<2, vec2> c({{ vec2(0) }});
-    }
+    // lolunit_declare_test(CompoundVariable)
+    // {
+    //     test_interpolator<2, real> b({{ real(0) }});
+    //     test_interpolator<2, vec2> c({{ vec2(0) }});
+    // }
 
     template<int N>
     void check_base_matrix()
