@@ -22,10 +22,10 @@ class test_tree : public avl_tree<int, int>
 public:
     virtual ~test_tree() {}
 
-	int GetRootBalance()
-	{
-		return this->m_root->GetBalance();
-	}
+    int GetRootBalance()
+    {
+        return this->m_root->GetBalance();
+    }
 };
 
 lolunit_declare_fixture(AvlTreeTest)

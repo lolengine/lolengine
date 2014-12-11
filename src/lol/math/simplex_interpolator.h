@@ -131,7 +131,7 @@ protected:
     inline void InitBase()
     {
         /*  Matrix coordinate transformation to skew simplex referential is done
-            by inversing the base matrix M which is written as follows: 
+            by inversing the base matrix M which is written as follows:
 
             M = | a b b b … |        M^(-1) = | c d d d … |
                 | b a b b … |                 | d c d d … |
