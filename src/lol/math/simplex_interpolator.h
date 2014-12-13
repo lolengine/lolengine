@@ -15,8 +15,7 @@
 namespace lol
 {
 
-template<int N, /* Dimension of the space */
-         typename T = float> /* Interpolated type */
+template<int N>
 class simplex_interpolator
 {
 public:
@@ -38,7 +37,7 @@ public:
     }
 
     // Single interpolation
-    inline T Interp(vec_t<float, N> position) const
+    inline float Interp(vec_t<float, N> position) const
     {
         // Computing position in simplex referential
         vec_t<float, N> simplex_position = m_base_inverse * position;
@@ -49,7 +48,7 @@ public:
 
         this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
 
-        vec_t<float, N> index_order = this->GetIndexOrder(decimal_point);
+        vec_t<int, N> index_order = this->GetIndexOrder(decimal_point);
 
         // Resetting decimal point in regular orthonormal coordinates
         decimal_point = m_base * decimal_point;
@@ -59,9 +58,9 @@ public:
 
 protected:
 
-    inline T LastInterp(vec_t<int, N> const & floor_point,
+    inline float LastInterp(vec_t<int, N> & floor_point,
                         vec_t<float, N> const & decimal_point,
-                        vec_t<float, N> index_order) const
+                        vec_t<int, N> index_order) const
     {
         vec_t<float, N> point_of_interest;
         float result = 0;
@@ -83,7 +82,7 @@ protected:
         return result;
     }
 
-    inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point)
+    inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point) const
     {
         vec_t<int, N> result;
         for (int i = 0 ; i < N ; ++i)
