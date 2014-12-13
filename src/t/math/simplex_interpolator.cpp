@@ -19,13 +19,13 @@
 namespace lol
 {
 
-template<int N, typename T = float>
-class test_interpolator : public simplex_interpolator<N, T>
+template<int N>
+class test_interpolator : public simplex_interpolator<N>
 {
 public:
 
     test_interpolator() :
-        simplex_interpolator<N, T>()
+        simplex_interpolator<N>()
     {
     }
 
@@ -86,7 +86,7 @@ public:
 
     vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point)
     {
-        return simplex_interpolator<N, T>::GetIndexOrder(decimal_point);
+        return simplex_interpolator<N>::GetIndexOrder(decimal_point);
     }
 };
 
@@ -95,12 +95,6 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
     void SetUp() {}
 
     void TearDown() {}
-
-    // lolunit_declare_test(CompoundVariable)
-    // {
-    //     test_interpolator<2, real> b({{ real(0) }});
-    //     test_interpolator<2, vec2> c({{ vec2(0) }});
-    // }
 
     template<int N>
     void check_base_matrix()
@@ -208,6 +202,28 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
             check_index_ordering<9>();
         for (int i = 1 ; i < 10 ; ++i)
             check_index_ordering<10>();
+    }
+
+    void check_sample_creation_order2()
+    {
+        static int gen = 12345678;
+
+        arraynd<2, vec_t<float, 2> > gradients(vec_t<ptrdiff_t, 2>({10, 10}));
+        for (int i = 0 ; i < 10 ; ++i)
+        {
+            for (int j = 0 ; j < 10 ; ++j)
+            {
+                float x1 = (gen = gen * gen + gen) % 255;
+                float x2 = (gen = gen * gen + gen) % 255;
+
+                vec_t<float, 2> v = {x1, x2};
+
+                gradients[i][j] = v;
+            }
+        }
+
+        simplex_interpolator<2> s;
+        s.SetGradients(gradients);
     }
 
 #if 0
