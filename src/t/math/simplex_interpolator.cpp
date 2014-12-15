@@ -204,7 +204,7 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
             check_index_ordering<10>();
     }
 
-    void check_sample_creation_order2()
+    lolunit_declare_test(CheckSampleOrder2)
     {
         static int gen = 12345678;
 
@@ -224,6 +224,14 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
 
         simplex_interpolator<2> s;
         s.SetGradients(gradients);
+
+        for (int i = 0 ; i < 10 ; ++i)
+        {
+            for (int j = 0 ; j < 10 ; ++j)
+            {
+                std::cout << s.Interp(vec_t<float, 2>({i, j})) << std::endl;
+            }
+        }
     }
 
 #if 0
