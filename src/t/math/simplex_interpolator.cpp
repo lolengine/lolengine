@@ -177,7 +177,7 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
         vec_t<int, N> result = s.GetIndexOrder(vec_ref);
 
         for (int i = 1 ; i < N ; ++i)
-            lolunit_assert(vec_ref[result[i]] >= vec_ref[result[i-1]]);
+            lolunit_assert(vec_ref[result[i]] < vec_ref[result[i-1]]);
     }
 
     lolunit_declare_test(IndexOrderTest)
@@ -225,13 +225,16 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
         simplex_interpolator<2> s;
         s.SetGradients(gradients);
 
-        for (int i = 0 ; i < 10 ; ++i)
+        std::cout << std::endl;
+        for (int i = 0 ; i < 32 ; ++i)
         {
-            for (int j = 0 ; j < 10 ; ++j)
+            for (int j = 0 ; j < 32 ; ++j)
             {
-                std::cout << s.Interp(vec_t<float, 2>({i, j})) << std::endl;
+                std::cout << s.Interp(vec_t<float, 2>({i * 0.1f, j * 0.1f})) << ", ";
             }
+            std::cout << std::endl;
         }
+        std::cout << std::endl;
     }
 
 #if 0

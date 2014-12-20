@@ -51,7 +51,7 @@ public:
         vec_t<int, N> index_order = this->GetIndexOrder(decimal_point);
 
         // Resetting decimal point in regular orthonormal coordinates
-        decimal_point = m_base * decimal_point;
+        //decimal_point = m_base * decimal_point;
 
         return this->LastInterp(floor_point, decimal_point, index_order);
     }
@@ -62,21 +62,22 @@ protected:
                         vec_t<float, N> const & decimal_point,
                         vec_t<int, N> index_order) const
     {
-        vec_t<float, N> point_of_interest;
+        vec_t<float, N> point_of_interest(0);
         float result = 0;
 
-        for (int i = 0 ; i < N ; ++i)
+        for (int i = 0 ; i < N+1 ; ++i)
         {
-            float dist = 0.5 - sqlength(decimal_point - point_of_interest);
+            float dist = 0.5 - 0.75f * sqlength(this->m_base * (decimal_point - point_of_interest));
             vec_t<float, N> gradient = this->m_gradients[floor_point];
 
             if (dist > 0)
-            {
-                result += dist * dist * dist * dist * dot(gradient, decimal_point - point_of_interest);
-            }
+                result += dist * dist * dist * dist * dot(gradient, this->m_base * (decimal_point - point_of_interest));
 
-            point_of_interest[index_order[i]] += 1;
-            floor_point[i] = this->Mod(floor_point[i] + 1, index_order[i]);
+            if (i < N)
+            {
+                point_of_interest[index_order[i]] += 1;
+                floor_point[index_order[i]] = this->Mod(floor_point[index_order[i]] + 1, index_order[i]);
+            }
         }
 
         return result;
@@ -92,7 +93,7 @@ protected:
         {
             for (int j = i + 1 ; j < N ; ++j)
             {
-                if (decimal_point[result[i]] > decimal_point[result[j]])
+                if (decimal_point[result[i]] < decimal_point[result[j]])
                 {
                     // just swapping…
                     result[i] ^= result[j];
