@@ -117,7 +117,7 @@ protected:
     {
         // Finding floor point index
         for (int i = 0 ; i < N ; ++i)
-            floor_point[i] = (int) simplex_position[i];
+            floor_point[i] = ((int) simplex_position[i]) - (simplex_position[i] < 0 ? 1 : 0);
 
         // Extracting decimal part from simplex sample
         for (int i = 0 ; i < N ; ++i)
