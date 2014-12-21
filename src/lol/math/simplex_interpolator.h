@@ -80,7 +80,9 @@ protected:
             }
         }
 
-        return result;
+        // Approximative scaling factor “100” seems to work well
+        // ie. gives a max value of 1 (a bit more in fact) for normed gradients
+        return result * 100;
     }
 
     inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point) const
