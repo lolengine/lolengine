@@ -226,9 +226,9 @@ lolunit_declare_fixture(SimplexInterpolatorTest)
         s.SetGradients(gradients);
 
         std::cout << std::endl;
-        for (int i = 0 ; i < 32 ; ++i)
+        for (int i = -64 ; i < 64 ; ++i)
         {
-            for (int j = 0 ; j < 32 ; ++j)
+            for (int j = -64 ; j < 64 ; ++j)
             {
                 std::cout << s.Interp(vec_t<float, 2>({i * 0.1f, j * 0.1f})) << ", ";
             }
