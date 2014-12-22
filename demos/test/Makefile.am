@@ -6,7 +6,8 @@ SUBDIRS = math sandbox
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-noinst_PROGRAMS = benchsuite btphystest nacl_phystest meshviewer
+noinst_PROGRAMS = benchsuite btphystest nacl_phystest meshviewer \
+    simplex
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
@@ -52,4 +53,8 @@ meshviewer_LDFLAGS = $(AM_LDFLAGS)
 if USE_EMSCRIPTEN
 meshviewer_LDFLAGS += -s EXPORTED_FUNCTIONS="['_main', '_C_Send']"
 endif
+
+simplex_SOURCES = simplex.cpp
+simplex_CPPFLAGS = $(AM_CPPFLAGS)
+simplex_DEPENDENCIES = @LOL_DEPS@
 
