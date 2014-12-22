@@ -82,6 +82,7 @@ demos/test/sandbox/sample
 demos/test/math/pi
 demos/test/math/poly
 demos/test/nacl_phystest
+demos/test/simplex
 demos/tutorial/01_triangle
 demos/tutorial/02_cube
 demos/tutorial/03_noise
