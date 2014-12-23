@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     UNUSED(argc, argv);
 
     int const period = 10;
-    float const zoom = 0.03f;
+    float const zoom = 0.02f;
 
     /* Create some gradients */
     array2d<vec2> gradients(vec_t<ptrdiff_t, 2>({period, period}));
@@ -41,12 +41,12 @@ int main(int argc, char **argv)
     for (int j = 0; j < size.y; ++j)
     for (int i = 0; i < size.x; ++i)
     {
-        float p = 0.5f + 0.5f * s.Interp(zoom * vec2(i, j));
+        float p = 0.5f * s.Interp(zoom * vec2(i, j));
 #if 0
-        for (int k = 2; k < 32; k *= 2)
+        for (int k = 2; k < 128; k *= 2)
             p += 0.5f / k * s.Interp(zoom * k * vec2(i, j));
 #endif
-        data[i][j] = vec4(saturate(p), 0.f, 0.f, 1.f);
+        data[i][j] = vec4(saturate(0.5f + p), 0.f, 0.f, 1.f);
     }
 
     /* Mark simplex vertices */

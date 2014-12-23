@@ -51,39 +51,48 @@ public:
         vec_t<int, N> index_order = this->GetIndexOrder(pos);
 
         // Resetting decimal point in regular orthonormal coordinates
-        // pos = m_base * pos;
+        pos = m_base * pos;
 
         return this->LastInterp(origin, pos, index_order);
     }
 
 protected:
 
-    inline float LastInterp(vec_t<int, N> & origin,
+    inline float LastInterp(vec_t<int, N> origin,
                             vec_t<float, N> const & pos,
-                            vec_t<int, N> index_order) const
+                            vec_t<int, N> const & index_order) const
     {
-        // “corner” will traverse the simplex along its edges
+        // “corner” will traverse the simplex along its edges in
+        // orthonormal coordinates
         vec_t<float, N> corner(0);
         float result = 0;
 
         for (int i = 0; i < N + 1; ++i)
         {
-            float dist = 0.5f - 0.75f * sqlength(this->m_base * (pos - corner));
+            vec_t<float, N> const delta = pos - corner;
             vec_t<float, N> const &gradient = this->m_gradients[origin];
 
+            // FIXME: where does the 0.75 come from?
+            float dist = 0.5f - 0.75f * sqlength(delta);
             if (dist > 0)
-                result += dist * dist * dist * dist * dot(gradient, this->m_base * (pos - corner));
+            {
+                dist *= dist;
+                result += dist * dist * dot(gradient, delta);
+            }
 
             if (i < N)
             {
-                corner[index_order[i]] += 1;
-                origin[index_order[i]] = this->Mod(origin[index_order[i]] + 1, index_order[i]);
+                corner += m_base[index_order[i]];
+                origin[index_order[i]] = this->Mod(origin[index_order[i]] + 1,
+                                                   index_order[i]);
             }
         }
 
         // Approximative scaling factor “100” seems to work well
         // ie. gives a max value of 1 (a bit more in fact) for normed gradients
-        return result * 100;
+        // FIXME: another paper uses the value 70 for dimension 2, 32 for
+        // dimension 3, and 27 for dimension 4; find where this comes from.
+        return result * 100.f;
     }
 
     /* For a given position [0…1]^n inside a square/cube/hypercube etc.,
