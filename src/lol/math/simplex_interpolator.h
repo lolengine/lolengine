@@ -43,40 +43,41 @@ public:
         vec_t<float, N> simplex_position = m_base_inverse * position;
 
         // Retrieving the closest floor point and decimals
-        vec_t<int, N> floor_point;
-        vec_t<float, N> decimal_point;
+        vec_t<int, N> origin;
+        vec_t<float, N> pos;
 
-        this->ExtractFloorDecimal(simplex_position, floor_point, decimal_point);
+        this->ExtractFloorDecimal(simplex_position, origin, pos);
 
-        vec_t<int, N> index_order = this->GetIndexOrder(decimal_point);
+        vec_t<int, N> index_order = this->GetIndexOrder(pos);
 
         // Resetting decimal point in regular orthonormal coordinates
-        //decimal_point = m_base * decimal_point;
+        // pos = m_base * pos;
 
-        return this->LastInterp(floor_point, decimal_point, index_order);
+        return this->LastInterp(origin, pos, index_order);
     }
 
 protected:
 
-    inline float LastInterp(vec_t<int, N> & floor_point,
-                        vec_t<float, N> const & decimal_point,
-                        vec_t<int, N> index_order) const
+    inline float LastInterp(vec_t<int, N> & origin,
+                            vec_t<float, N> const & pos,
+                            vec_t<int, N> index_order) const
     {
-        vec_t<float, N> point_of_interest(0);
+        // “corner” will traverse the simplex along its edges
+        vec_t<float, N> corner(0);
         float result = 0;
 
-        for (int i = 0 ; i < N+1 ; ++i)
+        for (int i = 0; i < N + 1; ++i)
         {
-            float dist = 0.5 - 0.75f * sqlength(this->m_base * (decimal_point - point_of_interest));
-            vec_t<float, N> gradient = this->m_gradients[floor_point];
+            float dist = 0.5f - 0.75f * sqlength(this->m_base * (pos - corner));
+            vec_t<float, N> const &gradient = this->m_gradients[origin];
 
             if (dist > 0)
-                result += dist * dist * dist * dist * dot(gradient, this->m_base * (decimal_point - point_of_interest));
+                result += dist * dist * dist * dist * dot(gradient, this->m_base * (pos - corner));
 
             if (i < N)
             {
-                point_of_interest[index_order[i]] += 1;
-                floor_point[index_order[i]] = this->Mod(floor_point[index_order[i]] + 1, index_order[i]);
+                corner[index_order[i]] += 1;
+                origin[index_order[i]] = this->Mod(origin[index_order[i]] + 1, index_order[i]);
             }
         }
 
@@ -85,25 +86,19 @@ protected:
         return result * 100;
     }
 
-    inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & decimal_point) const
+    /* For a given position [0…1]^n inside a square/cube/hypercube etc.,
+     * find the simplex which contains that position, and return the path
+     * from (0,0,…,0) to (1,1,…,1) that describes that simplex. */
+    inline vec_t<int, N> GetIndexOrder(vec_t<float, N> const & pos) const
     {
         vec_t<int, N> result;
-        for (int i = 0 ; i < N ; ++i)
+        for (int i = 0; i < N; ++i)
             result[i] = i;
 
-        for (int i = 0 ; i < N ; ++i)
-        {
-            for (int j = i + 1 ; j < N ; ++j)
-            {
-                if (decimal_point[result[i]] < decimal_point[result[j]])
-                {
-                    // just swapping…
-                    result[i] ^= result[j];
-                    result[j] ^= result[i];
-                    result[i] ^= result[j];
-                }
-            }
-        }
+        for (int i = 0; i < N; ++i)
+            for (int j = i + 1; j < N; ++j)
+                if (pos[result[i]] < pos[result[j]])
+                    std::swap(result[i], result[j]);
 
         return result;
     }
@@ -115,19 +110,22 @@ protected:
         return ret >= 0 ? ret : ret + dim;
     }
 
-    inline void ExtractFloorDecimal(vec_t<float, N> const & simplex_position, vec_t<int, N> & floor_point, vec_t<float, N> & decimal_point) const
+    /* For a given world position, extract grid coordinates (origin) and
+     * the corresponding delta position (pos). */
+    inline void ExtractFloorDecimal(vec_t<float, N> const & simplex_position,
+                                    vec_t<int, N> & origin,
+                                    vec_t<float, N> & pos) const
     {
         // Finding floor point index
-        for (int i = 0 ; i < N ; ++i)
-            floor_point[i] = ((int) simplex_position[i]) - (simplex_position[i] < 0 ? 1 : 0);
+        for (int i = 0; i < N; ++i)
+            origin[i] = ((int) simplex_position[i]) - (simplex_position[i] < 0 ? 1 : 0);
 
         // Extracting decimal part from simplex sample
-        for (int i = 0 ; i < N ; ++i)
-            decimal_point[i] = simplex_position[i] - floor_point[i];
+        pos = simplex_position - (vec_t<float, N>)origin;
 
         // Never exceed the size of the gradients and loop on it
-        for (int i = 0 ; i < N ; ++i)
-            floor_point[i] = this->Mod(floor_point[i], i);
+        for (int i = 0; i < N; ++i)
+            origin[i] = this->Mod(origin[i], i);
     }
 
     inline void InitBase()
