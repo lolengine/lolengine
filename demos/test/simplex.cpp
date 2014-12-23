@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    int const period = 2;
+    int const period = 10;
     float const zoom = 0.03f;
 
     /* Create some gradients */
@@ -50,8 +50,9 @@ int main(int argc, char **argv)
     }
 
     /* Mark simplex vertices */
-    vec2 dx(1.f, 0.f);
-    vec2 dy = mat2::rotate(60.f) * dx;
+    vec2 diagonal = normalize(vec2(1.f));
+    vec2 dx = mat2::rotate(60.f) * diagonal;
+    vec2 dy = mat2::rotate(-60.f) * diagonal;
     for (int j = -100; j < 100; ++j)
     for (int i = -100; i < 100; ++i)
     {
