@@ -72,8 +72,10 @@ protected:
             vec_t<float, N> const delta = pos - corner;
             vec_t<float, N> const &gradient = this->m_gradients[origin];
 
-            // FIXME: where does the 0.75 come from?
-            float dist = 0.5f - 0.75f * sqlength(delta);
+            /* We use 4/3 because the maximum radius of influence for
+             * a given corner is sqrt(3/4). FIXME: check whether this
+             * holds for higher dimensions. */
+            float dist = 1.0f - 4.f / 3.f * sqlength(delta);
             if (dist > 0)
             {
                 dist *= dist;
@@ -88,11 +90,9 @@ protected:
             }
         }
 
-        // Approximative scaling factor “100” seems to work well
-        // ie. gives a max value of 1 (a bit more in fact) for normed gradients
         // FIXME: another paper uses the value 70 for dimension 2, 32 for
         // dimension 3, and 27 for dimension 4; find where this comes from.
-        return result * 100.f;
+        return result * 70.f / 16.f;
     }
 
     /* For a given position [0…1]^n inside a square/cube/hypercube etc.,
