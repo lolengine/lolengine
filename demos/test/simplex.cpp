@@ -42,9 +42,10 @@ int main(int argc, char **argv)
     for (int i = 0; i < size.x; ++i)
     {
         float p = 0.5f * s.Interp(zoom * vec2(i, j));
-#if 0
+#if 1
         for (int k = 2; k < 128; k *= 2)
             p += 0.5f / k * s.Interp(zoom * k * vec2(i, j));
+            //p += 0.5f / k * lol::abs(s.Interp(zoom * k * vec2(i, j)));
 #endif
         data[i][j] = vec4(saturate(0.5f + p), 0.f, 0.f, 1.f);
     }
