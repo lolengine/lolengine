@@ -21,51 +21,37 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    int const period = 10;
-    float const zoom = 0.02f;
-
-    /* Create some gradients */
-    array2d<vec2> gradients(vec_t<ptrdiff_t, 2>({period, period}));
-    for (int i = 0 ; i < period ; ++i)
-        for (int j = 0 ; j < period ; ++j)
-            gradients[i][j] = normalize(vec2(rand(-1.f, 1.f), rand(-1.f, 1.f)));
-    simplex_interpolator<2> s;
-    s.SetGradients(gradients);
+    float const zoom = 0.03f;
+    int const octaves = 10;
 
     /* Create an image */
-    ivec2 const size(800, 600);
+    ivec2 const size(1280, 720);
     Image img(size);
     array2d<vec4> &data = img.Lock2D<PixelFormat::RGBA_F32>();
 
     /* Fill image with simplex noise */
+    simplex_interpolator<2> s2;
+    simplex_interpolator<3> s3;
+    simplex_interpolator<4> s4;
+
     for (int j = 0; j < size.y; ++j)
     for (int i = 0; i < size.x; ++i)
     {
-        float p = 0.5f * s.Interp(zoom * vec2(i, j));
-#if 1
-        for (int k = 2; k < 128; k *= 2)
-            p += 0.5f / k * s.Interp(zoom * k * vec2(i, j));
-            //p += 0.5f / k * lol::abs(s.Interp(zoom * k * vec2(i, j)));
-#endif
-        data[i][j] = vec4(saturate(0.5f + p), 0.f, 0.f, 1.f);
-    }
+        float sum = 0.f;
+        int maxoctave = (j < size.y / 2) ? 1 : (1 << octaves);
 
-    /* Mark simplex vertices */
-    vec2 diagonal = normalize(vec2(1.f));
-    vec2 dx = mat2::rotate(60.f) * diagonal;
-    vec2 dy = mat2::rotate(-60.f) * diagonal;
-    for (int j = -100; j < 100; ++j)
-    for (int i = -100; i < 100; ++i)
-    {
-        ivec2 coord = ivec2(i / zoom * dx + j / zoom * dy);
-        if (coord.x >= 0 && coord.x < size.x - 1
-             && coord.y >= 0 && coord.y < size.y - 1)
+        for (int k = 1; k <= maxoctave; k *= 2)
         {
-            data[coord.x][coord.y] = vec4(1.f, 0.f, 1.f, 1.f);
-            data[coord.x + 1][coord.y] = vec4(1.f, 0.f, 1.f, 1.f);
-            data[coord.x][coord.y + 1] = vec4(1.f, 0.f, 1.f, 1.f);
-            data[coord.x + 1][coord.y + 1] = vec4(1.f, 0.f, 1.f, 1.f);
+            if (i < size.x / 3)
+                sum += 0.5f / k * s2.Interp(zoom * k * vec2(i, j));
+            else if (i < size.x * 2 / 3)
+                sum += 0.5f / k * s3.Interp(zoom * k * vec3(i, j, 0.0f));
+            else
+                sum += 0.5f / k * s4.Interp(zoom * k * vec4(i, j, 0.0f, 0.0f));
         }
+
+        float c = saturate(0.5f + sum);
+        data[i][j] = vec4(c, c, c, 1.f);
     }
 
     /* Save image */
