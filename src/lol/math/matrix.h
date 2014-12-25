@@ -49,6 +49,14 @@ struct mat_t
                 m_data[i][j] = i == j ? val : zero;
     }
 
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline mat_t(mat_t<U, COLS, ROWS> const &m)
+    {
+        for (int i = 0; i < COLS; ++i)
+            m_data[i] = (vec_t<T,ROWS>)m[i];
+    }
+
     inline vec_t<T,ROWS>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,ROWS> const& operator[](size_t n) const { return m_data[n]; }
 
@@ -90,6 +98,15 @@ struct mat_t<T, 2, 2>
       : m_data{ m[0].xy, m[1].xy } {}
 #else
       : m_v0(m[0].xy), m_v1(m[1].xy) {}
+#endif
+
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline mat_t(mat_t<U,2,2> const &m)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ (element)m[0], (element)m[1] } {}
+#else
+      : m_v0((element)m[0]), m_v1((element)m[1]) {}
 #endif
 
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
@@ -178,6 +195,15 @@ struct mat_t<T, 3, 3>
       : m_data{ m[0].xyz, m[1].xyz, m[2].xyz } {}
 #else
       : m_v0(m[0].xyz), m_v1(m[1].xyz), m_v2(m[2].xyz) {}
+#endif
+
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline mat_t(mat_t<U,3,3> const &m)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ (element)m[0], (element)m[1], (element)m[2] } {}
+#else
+      : m_v0((element)m[0]), m_v1((element)m[1], m_v2((element)m[2]) {}
 #endif
 
     explicit mat_t(quat_t<T> const &q);
@@ -309,6 +335,17 @@ struct mat_t<T, 4, 4>
         m_v1(m[1], (T)0),
         m_v2(m[2], (T)0),
         m_v3((T)0, (T)0, (T)0, val) {}
+#endif
+
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline mat_t(mat_t<U,4,4> const &m)
+#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+      : m_data{ (element)m[0], (element)m[1],
+                (element)m[2], (element)m[3] } {}
+#else
+      : m_v0((element)m[0]), m_v1((element)m[1],
+        m_v2((element)m[2]), m_v3((element)m[3]) {}
 #endif
 
     explicit mat_t(quat_t<T> const &q);
