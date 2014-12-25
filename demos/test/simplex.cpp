@@ -32,22 +32,23 @@ int main(int argc, char **argv)
     /* Fill image with simplex noise */
     simplex_interpolator<2> s2;
     simplex_interpolator<3> s3;
-    simplex_interpolator<4> s4;
+    simplex_interpolator<7> s7;
 
     for (int j = 0; j < size.y; ++j)
     for (int i = 0; i < size.x; ++i)
     {
+        float x = (float)i, y = (float)j;
         float sum = 0.f;
         int maxoctave = (j < size.y / 2) ? 1 : (1 << octaves);
 
         for (int k = 1; k <= maxoctave; k *= 2)
         {
             if (i < size.x / 3)
-                sum += 0.5f / k * s2.Interp(zoom * k * vec2(i, j));
+                sum += 0.5f / k * s2.Interp(zoom * k * vec2(x, y));
             else if (i < size.x * 2 / 3)
-                sum += 0.5f / k * s3.Interp(zoom * k * vec3(i, j, 0.0f));
+                sum += 0.5f / k * s3.Interp(zoom * k * vec3(x, y, 0.f));
             else
-                sum += 0.5f / k * s4.Interp(zoom * k * vec4(i, j, 0.0f, 0.0f));
+                sum += 0.5f / k * s7.Interp(zoom * k * vec7(x, 0.f, 0.f, 0.f, y, 0.f, 0.f));
         }
 
         float c = saturate(0.5f + sum);
