@@ -46,39 +46,7 @@ public:
       : m_seed(seed)
     {
 #if 0
-        // Print some debug information
-        printf("Simplex Noise of Dimension %d\n", N);
-
-        long long int n = 1; for (int i = 1; i <= N; ++i) n *= i;
-        printf(" - each hypercube cell has %lld simplices "
-               "with %d vertices and %d edges\n", n, N + 1, N * (N + 1) / 2);
-
-        vec_t<float, N> diagonal(1.f);
-        printf(" - length of hypercube edges is 1, diagonal is %f\n",
-               length(diagonal));
-        printf(" - length of parallelotope edges and diagonal is %f\n",
-               length(unskew(diagonal)));
-
-        vec_t<float, N> vertices[N + 1];
-        vertices[0] = vec_t<float, N>(0.f);
-        for (int i = 0; i < N; ++i)
-        {
-            vertices[i + 1] = vertices[i];
-            vertices[i + 1][i] += 1.f;
-        }
-        float minlength = 10.0f;
-        float maxlength = 0.0f;
-        for (int i = 0; i < N + 1; ++i)
-            for (int j = i + 1; j < N + 1; ++j)
-            {
-                float l = length(unskew(vertices[i] - vertices[j]));
-                minlength = min(minlength, l);
-                maxlength = max(maxlength, l);
-            }
-        printf(" - edge lengths between %f and %f\n", minlength, maxlength);
-        printf(" - predicted: %f and %f\n", sqrt((float)N/(N+1)),
-                                            sqrt((N+1)*(N+1)/4/(float)(N+1)));
-        printf("\n");
+        debugprint();
 #endif
     }
 
@@ -99,6 +67,7 @@ public:
         vec_t<int, N> origin;
         vec_t<float, N> pos;
         get_origin(skew(position), origin, pos);
+
         return get_gradient(origin);
     }
 
@@ -127,16 +96,19 @@ protected:
         /* “corner” will traverse the simplex along its edges in world
          * coordinates. */
         vec_t<float, N> world_corner(0.f);
-        float result = 0.f, coeff = 0.f;
+        float result = 0.f, sum = 0.f;
 
         for (int i = 0; i < N + 1; ++i)
         {
 #if 1
-            // FIXME: In “Noise Hardware” (2-17) Perlin uses 0.6 but Gustavson
-            // makes an exception for dimension 2 and uses 0.5 instead.
-            // I think m should actually increase with the dimension count.
-            float const m = N == 2 ? 0.5f : 0.6f;
-            float d = m - sqlength(world_pos - world_corner);
+            // In “Noise Hardware” (2-17) Perlin uses 0.6 but Gustavson uses
+            // 0.5 instead, saying “else the noise is not continuous at
+            // simplex boundaries”.
+            // And indeed, the distance between any given simplex vertex and
+            // the opposite hyperplane is 1/sqrt(2), so the contribution of
+            // that vertex should never be > 0 for points further than
+            // 1/sqrt(2). Hence 0.5 - d².
+            float d = 0.5f - sqlength(world_pos - world_corner);
 #else
             // DEBUG: this is the linear contribution of each vertex
             // in the skewed simplex. Unfortunately it creates artifacts.
@@ -146,18 +118,17 @@ protected:
 
             if (d > 0)
             {
-                vec_t<float, N> const &gradient = get_gradient(origin);
-
                 // Perlin uses 8d⁴ whereas Gustavson uses d⁴ and a final
-                // multiplication factor at the end.
-                //d = 8.f * d * d * d * d;
+                // multiplication factor at the end. Let’s go with
+                // Gustavson, it’s a few multiplications less.
                 d = d * d * d * d;
 
                 //d = (3.f - 2.f * d) * d * d;
                 //d = ((6 * d - 15) * d + 10) * d * d * d;
 
-                result += d * dot(gradient, world_pos - world_corner);
-                coeff += d;
+                result += d * dot(get_gradient(origin),
+                                  world_pos - world_corner);
+                sum += d;
             }
 
             if (i < N)
@@ -170,10 +141,14 @@ protected:
         }
 
         // FIXME: Gustavson uses the value 70 for dimension 2, 32 for
-        // dimension 3, and 27 for dimension 4; find where this comes from
-        // and maybe find a reasonable formula.
-        //return 70.f * result / coeff;
-        float const k = N == 2 ? 70 : N == 3 ? 32 : N == 4 ? 27 : 20;
+        // dimension 3, and 27 for dimension 4, and uses non-unit gradients
+        // of length sqrt(2), sqrt(2) and sqrt(3). Find out where this comes
+        // from and maybe find a more generic formula.
+        float const k = N == 2 ? (70.f * sqrt(2.f)) // approx. 99
+                      : N == 3 ? (70.f * sqrt(2.f)) // approx. 45
+                      : N == 4 ? (70.f * sqrt(3.f)) // approx. 47
+                      :          50.f;
+        //return k * result / sum;
         return k * result;
     }
 
@@ -255,15 +230,126 @@ protected:
 
     /* For a given world position, extract grid coordinates (origin) and
      * the corresponding delta position (pos). */
-    inline void get_origin(vec_t<float, N> const & simplex_position,
+    inline void get_origin(vec_t<float, N> const & world_position,
                            vec_t<int, N> & origin, vec_t<float, N> & pos) const
     {
         // Finding floor point index
         for (int i = 0; i < N; ++i)
-            origin[i] = ((int) simplex_position[i]) - (simplex_position[i] < 0 ? 1 : 0);
+            origin[i] = ((int)world_position[i]) - (world_position[i] < 0);
 
         // Extracting decimal part from simplex sample
-        pos = simplex_position - (vec_t<float, N>)origin;
+        pos = world_position - (vec_t<float, N>)origin;
+    }
+
+private:
+    void debugprint()
+    {
+        // Print some debug information
+        printf("Simplex Noise of Dimension %d\n", N);
+
+        long long int n = 1; for (int i = 1; i <= N; ++i) n *= i;
+        printf(" - each hypercube cell has %lld simplices "
+               "with %d vertices and %d edges\n", n, N + 1, N * (N + 1) / 2);
+
+        vec_t<float, N> diagonal(1.f);
+        printf(" - regular hypercube:\n");
+        printf("   · edge length 1\n");
+        printf("   · diagonal length %f\n", length(diagonal));
+        printf(" - unskewed parallelotope:\n");
+        printf("   · edge length %f\n", length(unskew(diagonal)));
+        printf("   · diagonal length %f\n", length(unskew(diagonal)));
+        printf("   · simplex edge lengths between %f and %f\n",
+               sqrt((float)N/(N+1)), sqrt((N+1)*(N+1)/4/(float)(N+1)));
+
+        /* Generate simplex vertices */
+        vec_t<float, N> vertices[N + 1];
+        vertices[0] = vec_t<float, N>(0.f);
+        for (int i = 0; i < N; ++i)
+        {
+            vertices[i + 1] = vertices[i];
+            vertices[i + 1][i] += 1.f;
+        }
+        for (int i = 0; i < N + 1; ++i)
+            vertices[i] = unskew(vertices[i]);
+
+        for (int i = 0; i < N + 1; ++i)
+        {
+            printf(" - vertex %d\n", i);
+
+#if 0
+            /* Coordinates for debugging purposes */
+            printf("   · [");
+            for (int k = 0; k < N; ++k)
+                printf(" %f", vertices[i][k]);
+            printf(" ]\n");
+#endif
+
+            /* Analyze edge lengths from that vertex */
+            float minlength = 1.0f;
+            float maxlength = 0.0f;
+            for (int j = 0; j < N + 1; ++j)
+            {
+                if (i == j)
+                    continue;
+
+                float l = length(vertices[i] - vertices[j]);
+                minlength = min(minlength, l);
+                maxlength = max(maxlength, l);
+            }
+            printf("   · edge lengths between %f and %f\n",
+                   minlength, maxlength);
+
+#if 0
+            /* Experimental calculation of the distance to the opposite
+             * hyperplane, by picking random points. Works reasonably
+             * well up to dimension 6. After that, we’d need something
+             * better such as gradient walk. */
+            float mindist = 1.0f;
+            for (int run = 0; run < 10000000; ++run)
+            {
+                vec_t<float, N> p(0.f);
+                float sum = 0.f;
+                for (int j = 0; j < N + 1; ++j)
+                {
+                    if (i == j)
+                        continue;
+                    float k = rand(1.f);
+                    p += k * vertices[j];
+                    sum += k;
+                }
+                mindist = min(mindist, distance(vertices[i], p / sum));
+            }
+            printf("   · approx. dist. to opposite hyperplane: %f\n", mindist);
+#endif
+
+#if 0
+            /* Find a normal vector to the opposite hyperplane. First, pick
+             * any point p(i0) on the hyperplane. We just need i0 != i. Then,
+             * build a matrix where each row is p(i0)p(j) for all j != i0.
+             * Multiplying this matrix by the normal vectors gives a vector
+             * full of zeroes except at position i. So we build a vector
+             * full of zeroes except at position i, and multiply it by the
+             * matrix inverse. */
+            int i0 = (i == 0) ? 1 : 0;
+            mat_t<float, N, N> m;
+            for (int j = 0; j < N; ++j)
+            {
+                auto v = vertices[j < i0 ? j : j + 1] - vertices[i0];
+                for (int k = 0; k < N; ++k)
+                    m[k][j] = v[k];
+            }
+            vec_t<float, N> p(0.f);
+            p[i < i0 ? i : i - 1] = 1.f;
+            auto normal = normalize(inverse(m) * p);
+
+            /* Find distance from current vertex to the opposite hyperplane.
+             * Just use the projection theorem in N dimensions. */
+            auto w = vertices[i] - vertices[i0];
+            float dist = abs(dot(normal, w));
+            printf("   · distance to opposite hyperplane: %f\n", dist);
+#endif
+        }
+        printf("\n");
     }
 
     /* A user-provided random seed. Defaults to zero. */
