@@ -20,6 +20,7 @@
 #include <lol/math/ops.h>
 
 #include <ostream>
+#include <type_traits>
 
 namespace lol
 {
@@ -118,6 +119,14 @@ struct vec_t<T, N, FULL_SWIZZLE>
     }
     inline ~vec_t() {}
 
+    /* Explicit constructor that takes exactly N arguments thanks to SFINAE. */
+    template<typename... ARGS>
+    explicit inline vec_t(typename std::enable_if<sizeof...(ARGS) == N - 1, T>
+                                      ::type const &x, ARGS... args)
+    {
+        internal_init(m_data, x, args...);
+    }
+
     /* Explicit constructor for type conversion */
     template<typename U>
     explicit inline vec_t(vec_t<U, N> const &v)
@@ -148,6 +157,18 @@ struct vec_t<T, N, FULL_SWIZZLE>
     inline T const& operator[](size_t n) const { return m_data[n]; }
 
 private:
+    template<typename... ARGS>
+    static inline void internal_init(T *data, T const &x, ARGS... args)
+    {
+        *data++ = x;
+        internal_init(data, args...);
+    }
+
+    static inline void internal_init(T *data)
+    {
+        UNUSED(data);
+    }
+
     T m_data[count];
 };
 

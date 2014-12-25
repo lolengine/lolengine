@@ -65,6 +65,14 @@ template<typename T> struct dualquat_t;
 _T(vec_t<, _C 2>, vec2)
 _T(vec_t<, _C 3>, vec3)
 _T(vec_t<, _C 4>, vec4)
+_T(vec_t<, _C 5>, vec5)
+_T(vec_t<, _C 6>, vec6)
+_T(vec_t<, _C 7>, vec7)
+_T(vec_t<, _C 8>, vec8)
+_T(vec_t<, _C 9>, vec9)
+_T(vec_t<, _C 10>, vec10)
+_T(vec_t<, _C 11>, vec11)
+_T(vec_t<, _C 12>, vec12)
 
 _T(mat_t<, _C 2 _C 2>, mat2)
 _T(mat_t<, _C 3 _C 3>, mat3)
@@ -91,6 +99,14 @@ _T(dualquat_t<, >, dualquat)
 typedef vec2 float2;
 typedef vec3 float3;
 typedef vec4 float4;
+typedef vec5 float5;
+typedef vec6 float6;
+typedef vec7 float7;
+typedef vec8 float8;
+typedef vec9 float9;
+typedef vec10 float10;
+typedef vec11 float11;
+typedef vec12 float12;
 typedef mat2 float2x2;
 typedef mat3 float3x3;
 typedef mat4 float4x4;
@@ -117,6 +133,14 @@ typedef f16mat4x3 half4x3;
 typedef ivec2 int2;
 typedef ivec3 int3;
 typedef ivec4 int4;
+typedef ivec5 int5;
+typedef ivec6 int6;
+typedef ivec7 int7;
+typedef ivec8 int8;
+typedef ivec9 int9;
+typedef ivec10 int10;
+typedef ivec11 int11;
+typedef ivec12 int12;
 typedef imat2 int2x2;
 typedef imat3 int3x3;
 typedef imat4 int4x4;
