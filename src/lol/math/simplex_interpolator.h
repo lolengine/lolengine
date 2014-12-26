@@ -50,8 +50,8 @@ public:
 #endif
     }
 
-    /* Single interpolation */
-    inline float Interp(vec_t<float, N> position) const
+    /* Evaluate noise at a given point */
+    inline float eval(vec_t<float, N> position) const
     {
         // Retrieve the containing hypercube origin and associated decimals
         vec_t<int, N> origin;
@@ -61,8 +61,9 @@ public:
         return get_noise(origin, pos);
     }
 
-    /* Only for debug purposes: return the gradient vector */
-    inline vec_t<float, N> GetGradient(vec_t<float, N> position) const
+    /* Only for debug purposes: return the gradient vector of the given
+     * point’s simplex origin. */
+    inline vec_t<float, N> gradient(vec_t<float, N> position) const
     {
         vec_t<int, N> origin;
         vec_t<float, N> pos;
@@ -83,7 +84,8 @@ protected:
         for (int i = 0; i < N; ++i)
             traversal_order[i] = i;
 
-        /* Naïve bubble sort — enough for now */
+        /* Naïve bubble sort — enough for now since the general complexity
+         * of our algorithm is O(N²). Sorting in O(N²) will not hurt more! */
         for (int i = 0; i < N; ++i)
             for (int j = i + 1; j < N; ++j)
                 if (pos[traversal_order[i]] < pos[traversal_order[j]])
@@ -96,24 +98,41 @@ protected:
         /* “corner” will traverse the simplex along its edges in world
          * coordinates. */
         vec_t<float, N> world_corner(0.f);
-        float result = 0.f, sum = 0.f;
+        float result = 0.f, sum = 0.f, special = 0.f;
+        UNUSED(sum, special);
 
         for (int i = 0; i < N + 1; ++i)
         {
 #if 1
-            // In “Noise Hardware” (2-17) Perlin uses 0.6 but Gustavson uses
-            // 0.5 instead, saying “else the noise is not continuous at
-            // simplex boundaries”.
-            // And indeed, the distance between any given simplex vertex and
-            // the opposite hyperplane is 1/sqrt(2), so the contribution of
-            // that vertex should never be > 0 for points further than
-            // 1/sqrt(2). Hence 0.5 - d².
-            float d = 0.5f - sqlength(world_pos - world_corner);
+            /* In “Noise Hardware” (2-17) Perlin uses 0.6 - d².
+             *
+             * In an errata to “Simplex noise demystified”, Gustavson uses
+             * 0.5 - d² instead, saying “else the noise is not continuous at
+             * simplex boundaries”.
+             * And indeed, the distance between any given simplex vertex and
+             * the opposite hyperplane is 1/sqrt(2), so the contribution of
+             * that vertex should never be > 0 for points further than
+             * 1/sqrt(2). Hence 0.5 - d².
+             *
+             * I prefer to use 1 - 2d² and compensate for the d⁴ below by
+             * dividing the final result by 2⁴, because manipulating values
+             * between 0 and 1 is more convenient. */
+            float d = 1.0f - 2.f * sqlength(world_pos - world_corner);
 #else
             // DEBUG: this is the linear contribution of each vertex
             // in the skewed simplex. Unfortunately it creates artifacts.
             float d = ((i == 0) ? 1.f : pos[traversal_order[i - 1]])
                     - ((i == N) ? 0.f : pos[traversal_order[i]]);
+#endif
+
+#if 0
+            // DEBUG: identify simplex features:
+            //  -4.f: centre (-2.f),
+            //  -3.f: r=0.38 sphere of influence (contribution = 1/4)
+            //  -2.f: r=0.52 sphere of influence (contribution = 1/24)
+            if (d > 0.99f) special = min(special, -4.f);
+            if (d > 0.7f && d < 0.72f) special = min(special, -3.f);
+            if (d > 0.44f && d < 0.46f) special = min(special, -2.f);
 #endif
 
             if (d > 0)
@@ -140,16 +159,30 @@ protected:
             }
         }
 
-        // FIXME: Gustavson uses the value 70 for dimension 2, 32 for
-        // dimension 3, and 27 for dimension 4, and uses non-unit gradients
-        // of length sqrt(2), sqrt(2) and sqrt(3). Find out where this comes
-        // from and maybe find a more generic formula.
-        float const k = N == 2 ? (70.f * sqrt(2.f)) // approx. 99
-                      : N == 3 ? (70.f * sqrt(2.f)) // approx. 45
-                      : N == 4 ? (70.f * sqrt(3.f)) // approx. 47
-                      :          50.f;
-        //return k * result / sum;
-        return k * result;
+#if 0
+        if (special < 0.f)
+            return special;
+#endif
+
+        return get_scale() * result;
+    }
+
+    static inline float get_scale()
+    {
+        /* FIXME: Gustavson uses the value 70 for dimension 2, 32 for
+         * dimension 3, and 27 for dimension 4, and uses non-unit gradients
+         * of length sqrt(2), sqrt(2) and sqrt(3), saying “The result is
+         * scaled to stay just inside [-1,1]” which honestly is just not
+         * true.
+         * Experiments show that the scaling factor is remarkably close
+         * to 6.7958 for all high dimensions (measured up to 12). */
+        return N ==  2 ? 6.2003f
+             : N ==  3 ? 6.7297f
+             : N ==  4 ? 6.7861f
+             : N ==  5 ? 6.7950f
+             : N ==  6 ? 6.7958f
+             : N ==  7 ? 6.7958f
+             : /* 7+ */  6.7958f;
     }
 
     inline vec_t<float, N> get_gradient(vec_t<int, N> origin) const
@@ -272,12 +305,13 @@ private:
         for (int i = 0; i < N + 1; ++i)
             vertices[i] = unskew(vertices[i]);
 
+        /* Output information for each vertex */
         for (int i = 0; i < N + 1; ++i)
         {
             printf(" - vertex %d\n", i);
 
-#if 0
             /* Coordinates for debugging purposes */
+#if 0
             printf("   · [");
             for (int k = 0; k < N; ++k)
                 printf(" %f", vertices[i][k]);
@@ -285,6 +319,7 @@ private:
 #endif
 
             /* Analyze edge lengths from that vertex */
+#if 0
             float minlength = 1.0f;
             float maxlength = 0.0f;
             for (int j = 0; j < N + 1; ++j)
@@ -298,12 +333,13 @@ private:
             }
             printf("   · edge lengths between %f and %f\n",
                    minlength, maxlength);
+#endif
 
-#if 0
             /* Experimental calculation of the distance to the opposite
              * hyperplane, by picking random points. Works reasonably
              * well up to dimension 6. After that, we’d need something
              * better such as gradient walk. */
+#if 0
             float mindist = 1.0f;
             for (int run = 0; run < 10000000; ++run)
             {
@@ -322,7 +358,6 @@ private:
             printf("   · approx. dist. to opposite hyperplane: %f\n", mindist);
 #endif
 
-#if 0
             /* Find a normal vector to the opposite hyperplane. First, pick
              * any point p(i0) on the hyperplane. We just need i0 != i. Then,
              * build a matrix where each row is p(i0)p(j) for all j != i0.
@@ -330,6 +365,7 @@ private:
              * full of zeroes except at position i. So we build a vector
              * full of zeroes except at position i, and multiply it by the
              * matrix inverse. */
+#if 0
             int i0 = (i == 0) ? 1 : 0;
             mat_t<float, N, N> m;
             for (int j = 0; j < N; ++j)
@@ -349,6 +385,68 @@ private:
             printf("   · distance to opposite hyperplane: %f\n", dist);
 #endif
         }
+
+        /* Compute some statistics about the noise. TODO: histogram */
+#if 0
+        vec_t<float, N> input(0.f);
+        for (int run = 0; run < 1000000; ++run)
+        {
+            float t = eval(input);
+
+            input[run % N] = rand(1000.f);
+        }
+#endif
+
+        /* Try to find max noise value by climbing gradient */
+        float minval = 0.f, maxval = 0.f;
+        array<vec_t<float, N>> deltas;
+        for (int i = 0; i < N; ++i)
+        {
+            vec_t<float, N> v(0.f);
+            v[i] = 1.f;
+            deltas << v << -v;
+        }
+        for (int run = 0; run < 1000; ++run)
+        {
+            /* Pick a random vector */
+            vec_t<float, N> v;
+            for (int i = 0; i < N; ++i)
+                v[i] = rand(-100.f, 100.f);
+            float t = eval(v);
+            float e = 0.1f;
+            /* Climb up gradient in all dimensions */
+            while (e > 1e-6f)
+            {
+                int best_delta = -1;
+                float best_t2 = t;
+                for (int i = 0; i < deltas.Count(); ++i)
+                {
+                    float t2 = eval(v + e * deltas[i]);
+                    if (abs(t2) > abs(best_t2))
+                    {
+                        best_delta = i;
+                        best_t2 = t2;
+                    }
+                }
+                if (best_delta == -1)
+                    e *= 0.5f;
+                else
+                {
+                    v += e * deltas[best_delta];
+                    t = best_t2;
+                }
+            }
+            minval = min(t, minval);
+            maxval = max(t, maxval);
+        }
+        printf(" - noise value min/max: %f %f\n", minval, maxval);
+        float newscale = 1.f / max(-minval, maxval);
+        if (newscale < 1.f)
+             printf(" - could replace scale %f with %f\n",
+                    get_scale(), newscale * get_scale());
+        else
+             printf(" - scale looks OK\n");
+
         printf("\n");
     }
 
