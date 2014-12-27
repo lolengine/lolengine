@@ -333,6 +333,7 @@
     <ClInclude Include="lol\math\interp.h" />
     <ClInclude Include="lol\math\matrix.h" />
     <ClInclude Include="lol\math\noise\gradient.h" />
+    <ClInclude Include="lol\math\noise\perlin.h" />
     <ClInclude Include="lol\math\noise\simplex.h" />
     <ClInclude Include="lol\math\ops.h" />
     <ClInclude Include="lol\math\polynomial.h" />

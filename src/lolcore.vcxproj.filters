@@ -456,6 +456,9 @@
     <ClInclude Include="lol\math\noise\gradient.h">
       <Filter>lol\math\noise</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\noise\perlin.h">
+      <Filter>lol\math\noise</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\noise\simplex.h">
       <Filter>lol\math\noise</Filter>
     </ClInclude>

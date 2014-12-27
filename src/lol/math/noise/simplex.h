@@ -213,7 +213,7 @@ protected:
     {
         // Finding floor point index
         for (int i = 0; i < N; ++i)
-            origin[i] = ((int)world_position[i]) - (world_position[i] < 0);
+            origin[i] = (int)world_position[i] - (world_position[i] < 0);
 
         // Extracting decimal part from simplex sample
         pos = world_position - (vec_t<float, N>)origin;
