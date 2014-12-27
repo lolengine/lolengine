@@ -25,4 +25,6 @@
 #include <lol/math/polynomial.h>
 
 #include <lol/math/noise/gradient.h>
+#include <lol/math/noise/perlin.h>
 #include <lol/math/noise/simplex.h>
+
