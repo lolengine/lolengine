@@ -40,6 +40,9 @@
     <Filter Include="lol\math">
       <UniqueIdentifier>{1e0b7a4c-425f-4d4f-945e-ba2ac9386ce0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lol\math\noise">
+      <UniqueIdentifier>{97d023b5-9715-4f30-bacb-846d89025f5b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="math">
       <UniqueIdentifier>{2caadbda-b9f1-446d-bbd2-55c959db342c}</UniqueIdentifier>
     </Filter>
@@ -450,6 +453,12 @@
     <ClInclude Include="lol\math\matrix.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\noise\gradient.h">
+      <Filter>lol\math\noise</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\math\noise\simplex.h">
+      <Filter>lol\math\noise</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\ops.h">
       <Filter>lol\math</Filter>
     </ClInclude>
@@ -463,9 +472,6 @@
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\remez.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\simplex_interpolator.h">
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\transform.h">

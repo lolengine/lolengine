@@ -20,8 +20,7 @@ test_math_SOURCES = test-common.cpp \
     math/array2d.cpp math/array3d.cpp math/arraynd.cpp math/box.cpp \
     math/cmplx.cpp math/half.cpp math/interp.cpp math/matrix.cpp \
     math/quat.cpp math/rand.cpp math/real.cpp math/rotation.cpp \
-    math/trig.cpp math/vector.cpp math/simplex_interpolator.cpp \
-    math/polynomial.cpp
+    math/trig.cpp math/vector.cpp math/polynomial.cpp math/noise/simplex.cpp
 test_math_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_math_DEPENDENCIES = @LOL_DEPS@
 
