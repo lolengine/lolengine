@@ -135,6 +135,16 @@ struct vec_t<T, N, FULL_SWIZZLE>
             m_data[i] = (T)v[i];
     }
 
+    /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
+    static inline vec_t<T, N> axis(int i)
+    {
+        ASSERT(i >= 0);
+        ASSERT(i < N);
+        vec_t<T, N> ret((T)0);
+        ret[i] = (T)1;
+        return ret;
+    }
+
     /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
     inline vec_t(std::initializer_list<element> const &list)
@@ -234,6 +244,14 @@ struct vec_t<T,2>
       : x(X), y(Y) {}
     explicit inline constexpr vec_t(T X)
       : x(X), y(X) {}
+
+    /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
+    static inline vec_t<T,2> axis(int i)
+    {
+        ASSERT(i >= 0);
+        ASSERT(i < 2);
+        return vec_t<T,2>((T)(i == 0), (T)(i == 1));
+    }
 
     LOL_COMMON_MEMBER_OPS(x)
 
@@ -345,6 +363,14 @@ struct vec_t<T,3>
       : x(XY.x), y(XY.y), z(Z) {}
     explicit inline constexpr vec_t(T X, vec_t<T,2> YZ)
       : x(X), y(YZ.x), z(YZ.y) {}
+
+    /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
+    static inline vec_t<T,3> axis(int i)
+    {
+        ASSERT(i >= 0);
+        ASSERT(i < 3);
+        return vec_t<T,3>((T)(i == 0), (T)(i == 1), (T)(i == 2));
+    }
 
     LOL_COMMON_MEMBER_OPS(x)
 
@@ -591,6 +617,14 @@ struct vec_t<T,4>
       : x(XYZ.x), y(XYZ.y), z(XYZ.z), w(W) {}
     explicit inline constexpr vec_t(T X, vec_t<T,3> YZW)
       : x(X), y(YZW.x), z(YZW.y), w(YZW.z) {}
+
+    /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
+    static inline vec_t<T,4> axis(int i)
+    {
+        ASSERT(i >= 0);
+        ASSERT(i < 4);
+        return vec_t<T,4>((T)(i == 0), (T)(i == 1), (T)(i == 2), (T)(i == 3));
+    }
 
     LOL_COMMON_MEMBER_OPS(x)
 
