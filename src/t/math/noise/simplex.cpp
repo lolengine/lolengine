@@ -12,14 +12,12 @@
 
 #include <lol/engine-internal.h>
 
-#include <lol/math/simplex_interpolator.h>
-
 #include <lolunit.h>
 
 namespace lol
 {
 
-lolunit_declare_fixture(SimplexevalolatorTest)
+lolunit_declare_fixture(SimplexNoise)
 {
     void SetUp() {}
 

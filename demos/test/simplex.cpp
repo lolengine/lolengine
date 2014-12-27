@@ -33,17 +33,17 @@ int main(int argc, char **argv)
     array2d<vec4> &data = img.Lock2D<PixelFormat::RGBA_F32>();
 
     /* Declare plenty of allocators */
-    simplex_interpolator<2> s2;
-    simplex_interpolator<3> s3;
-    simplex_interpolator<4> s4;
-    simplex_interpolator<5> s5;
-    simplex_interpolator<6> s6;
-    simplex_interpolator<7> s7;
-    simplex_interpolator<8> s8;
-    simplex_interpolator<9> s9;
-    simplex_interpolator<10> s10;
-    simplex_interpolator<11> s11;
-    simplex_interpolator<12> s12;
+    simplex_noise<2> s2;
+    simplex_noise<3> s3;
+    simplex_noise<4> s4;
+    simplex_noise<5> s5;
+    simplex_noise<6> s6;
+    simplex_noise<7> s7;
+    simplex_noise<8> s8;
+    simplex_noise<9> s9;
+    simplex_noise<10> s10;
+    simplex_noise<11> s11;
+    simplex_noise<12> s12;
 
     /* Fill image with simplex noise */
     for (int j = 0; j < size.y; ++j)
