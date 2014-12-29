@@ -203,7 +203,7 @@ struct mat_t<T, 3, 3>
 #if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ (element)m[0], (element)m[1], (element)m[2] } {}
 #else
-      : m_v0((element)m[0]), m_v1((element)m[1], m_v2((element)m[2]) {}
+      : m_v0((element)m[0]), m_v1((element)m[1]), m_v2((element)m[2]) {}
 #endif
 
     explicit mat_t(quat_t<T> const &q);
@@ -344,7 +344,7 @@ struct mat_t<T, 4, 4>
       : m_data{ (element)m[0], (element)m[1],
                 (element)m[2], (element)m[3] } {}
 #else
-      : m_v0((element)m[0]), m_v1((element)m[1],
+      : m_v0((element)m[0]), m_v1((element)m[1]),
         m_v2((element)m[2]), m_v3((element)m[3]) {}
 #endif
 
@@ -498,6 +498,15 @@ T cofactor(mat_t<T, N, N> const &m, int i, int j)
     ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
     T tmp = determinant(submatrix(m, i, j));
     return ((i + j) & 1) ? -tmp : tmp;
+}
+
+template<typename T>
+T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
+{
+    /* This specialisation shouldn't be needed, but Visual Studio. */
+    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < 2); ASSERT(j < 2);
+    T tmp = m[1 - i][1 - j];
+    return (i ^ j) ? -tmp : tmp;
 }
 
 /*

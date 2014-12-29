@@ -99,7 +99,7 @@ int Dict::MakeSlot(char const *name)
     {
         if (slotid == data->m_entities.Count())
         {
-            empty = data->m_entities.Count();
+            empty = (int)data->m_entities.Count();
             data->m_entities.Push(nullptr);
         }
 
