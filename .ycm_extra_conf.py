@@ -1,3 +1,7 @@
+
+# The following line might come handy in ~/.vimrc:
+#   let g:ycm_extra_conf_globlist = ['~/lol/*','!~/*']
+
 import os
 import ycm_core
 
@@ -21,7 +25,7 @@ flags = [
 def FlagsForFile(filename, **kwargs):
 
     extension = os.path.splitext(filename)[1]
-    if extension not in [ 'cpp', 'h' ]:
+    if extension not in [ '.c', '.cpp', '.h' ]:
         return None
 
     final_flags = flags
