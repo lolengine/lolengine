@@ -589,6 +589,7 @@ AC_CONFIG_FILES(
   people/jylam/private/Makefile
   people/jylam/private/chat/Makefile
   people/jylam/private/lander/Makefile
+  people/jylam/private/oric_convert/Makefile
   people/sam/Makefile
   people/sam/ld27/Makefile
   people/sam/vip2014/Makefile
