@@ -15,6 +15,8 @@
 // --------------
 //
 
+#include <lol/base/types.h>
+
 #include <stdint.h>
 
 namespace lol

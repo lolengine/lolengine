@@ -84,10 +84,12 @@ public:
     WrapMode GetWrapY() const;
     void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
 
+    /* Lock continuous arrays of pixels for writing */
     template<PixelFormat T> typename PixelType<T>::type *Lock();
     void *Lock();
     void Unlock(void const *pixels);
 
+    /* Lock 2D arrays of pixels for writing */
     template<PixelFormat T>
     inline array2d<typename PixelType<T>::type> &Lock2D()
     {
@@ -96,8 +98,9 @@ public:
     }
 
     template<typename T>
-        void Unlock2D(array2d<T> const &);
+    void Unlock2D(array2d<T> const &);
 
+    /* XXX: this does not belong here */
     bool RetrieveTiles(array<ivec2, ivec2>& tiles) const;
 
     /* Image processing kernels */

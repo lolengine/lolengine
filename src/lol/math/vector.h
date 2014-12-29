@@ -15,6 +15,8 @@
 // ------------------
 //
 
+#include <lol/base/assert.h>
+#include <lol/math/functions.h>
 #include <lol/math/half.h>
 #include <lol/math/real.h>
 #include <lol/math/ops.h>
@@ -199,7 +201,7 @@ private:
     } \
     \
     void printf() const; \
-    String tostring() const;
+    class String tostring() const;
 
 /*
  * 2-element vectors

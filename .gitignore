@@ -50,6 +50,7 @@ perf.data*
 # Editor cruft
 .*.swp
 *~
+.ycm_extra_conf.pyc
 # Visual Studio cruft
 *.vcxproj.user
 *.csproj.user
