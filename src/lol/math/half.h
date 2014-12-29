@@ -15,6 +15,9 @@
 // --------------
 //
 
+#include <lol/base/types.h>
+
+#include <cmath>
 #include <cstdio>
 #include <stdint.h>
 
