@@ -68,6 +68,11 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 
     image->SetSize(size);
     u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
+    uint8_t *orig = (uint8_t*)imlib_image_get_data_for_reading_only();
+    for(int i = 0; i < size.x*size.y; i++) {
+        data[i] = ((u8vec4 *)&orig[i * 4])->bgra;
+    }
+
     memcpy(data, imlib_image_get_data(), 4 * size.x * size.y);
     image->Unlock(data);
 
