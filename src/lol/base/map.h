@@ -1,7 +1,8 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            (c) 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -22,7 +23,6 @@
 namespace lol
 {
 
-/* A stupidly linear map for now. */
 template<typename K, typename V> class map : protected hash<K>
 {
 public:
@@ -36,8 +36,10 @@ public:
     inline V const& operator[] (E const &key) const
     {
         /* Look for the hash in our table and return the value. */
-        V * value_ptr = nullptr;
-        ASSERT(m_tree.TryGetValue(key, value_ptr), "trying to read a nonexistent key in map");
+        V *value_ptr = nullptr;
+        bool found = m_tree.TryGetValue(key, value_ptr);
+
+        ASSERT(found, "trying to read a nonexistent key in map");
 
         return *value_ptr;
     }
@@ -46,19 +48,21 @@ public:
     inline V & operator[] (E const &key)
     {
         /* Look for the hash in our table and return the value if found. */
-
         K typed_key(key);
-        V * value_ptr = nullptr;
+        V *value_ptr = nullptr;
 
-        if (!m_tree.TryGetValue(typed_key, value_ptr))
+        bool found = m_tree.TryGetValue(key, value_ptr);
+        if (!found)
         {
-            V default_value = V();
-            m_tree.Insert(typed_key, default_value);
+            /* If not found, insert a new value. */
+            m_tree.Insert(typed_key, V());
+            found = m_tree.TryGetValue(key, value_ptr);
         }
 
-        ASSERT(m_tree.TryGetValue(typed_key, value_ptr), "inserted key can’t be retrieved. key operator < must behave as a comparator (a<b => !b<a)");
+        /* This may happen if the key operator < does not behave as
+         * a comparator (i.e. doesn’t enforce a<b => !b<a) */
+        ASSERT(found, "inserted key can’t be retrieved");
 
-        /* If not found, insert a new value. */
         return *value_ptr;
     }
 
@@ -80,7 +84,7 @@ public:
     inline bool TryGetValue(E const &key, V& value)
     {
         K typed_key(key);
-        V * value_ptr;
+        V *value_ptr;
         if (m_tree.TryGetValue(typed_key, value_ptr))
         {
             value = *value_ptr;
