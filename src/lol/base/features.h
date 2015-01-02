@@ -133,6 +133,21 @@ static inline int isnan(float f)
 #endif
 
 
+/*
+ * A handy endianness test function
+ */
+
+namespace lol
+{
+    static inline bool is_big_endian()
+    {
+        union { int i; char c; } u;
+        u.i = 1;
+        return u.c == 0;
+    }
+}
+
+
 /* XXX: workaround for a compilation bug in NaCl headers */
 #if defined __native_client__
 #   define typeid(x) (*(type_info*)nullptr)

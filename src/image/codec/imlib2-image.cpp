@@ -14,6 +14,12 @@
 
 #include <Imlib2.h>
 
+/* Check that the Imlib2 types are safe */
+static_assert(sizeof(DATA64) == sizeof(uint64_t), "Imlib2 type DATA64 is broken");
+static_assert(sizeof(DATA32) == sizeof(uint32_t), "Imlib2 type DATA32 is broken");
+static_assert(sizeof(DATA16) == sizeof(uint16_t), "Imlib2 type DATA16 is broken");
+static_assert(sizeof(DATA8)  == sizeof(uint8_t),  "Imlib2 type DATA8 is broken");
+
 #include "../../image/image-private.h"
 
 namespace lol
@@ -35,17 +41,17 @@ DECLARE_IMAGE_CODEC(Imlib2ImageCodec, 70)
 
 bool Imlib2ImageCodec::Load(Image *image, char const *path)
 {
-    Imlib_Image priv = nullptr;
+    Imlib_Image im = nullptr;
 
     array<String> pathlist = System::GetPathList(path);
     for (int i = 0; i < pathlist.Count(); i++)
     {
-        priv = imlib_load_image(pathlist[i].C());
-        if (priv)
+        im = imlib_load_image(pathlist[i].C());
+        if (im)
             break;
     }
 
-    if (!priv)
+    if (!im)
     {
 #if !LOL_BUILD_RELEASE
         Log::Error("could not load image %s\n", path);
@@ -53,9 +59,10 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
         return false;
     }
 
-    imlib_context_set_image(priv);
+    imlib_context_set_image(im);
+    u8vec4 const *srcdata = (u8vec4 *)imlib_image_get_data_for_reading_only();
 
-    if (!imlib_image_get_data())
+    if (!srcdata)
     {
         imlib_free_image();
 #if !LOL_BUILD_RELEASE
@@ -65,16 +72,18 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
     }
 
     ivec2 size(imlib_image_get_width(), imlib_image_get_height());
-
     image->SetSize(size);
-    u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
-    uint8_t *orig = (uint8_t*)imlib_image_get_data_for_reading_only();
-    for(int i = 0; i < size.x*size.y; i++) {
-        data[i] = ((u8vec4 *)&orig[i * 4])->bgra;
-    }
 
-    memcpy(data, imlib_image_get_data(), 4 * size.x * size.y);
-    image->Unlock(data);
+    u8vec4 *dstdata = image->Lock<PixelFormat::RGBA_8>();
+
+    for (int i = 0; i < size.x * size.y; i++)
+    {
+        if (is_big_endian())
+            dstdata[i] = srcdata[i].argb;
+        else
+            dstdata[i] = srcdata[i].bgra;
+    }
+    image->Unlock(dstdata);
 
     imlib_free_image();
 
@@ -89,9 +98,19 @@ bool Imlib2ImageCodec::Save(Image *image, char const *path)
     imlib_context_set_image(priv);
     imlib_image_set_has_alpha(1);
 
-    u8vec4 *data = image->Lock<PixelFormat::RGBA_8>();
-    memcpy(imlib_image_get_data(), data, 4 * size.x * size.y);
-    image->Unlock(data);
+    u8vec4 const *srcdata = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *dstdata = (u8vec4 *)imlib_image_get_data();
+
+    for (int i = 0; i < size.x * size.y; i++)
+    {
+        if (is_big_endian())
+            dstdata[i] = srcdata[i].argb;
+        else
+            dstdata[i] = srcdata[i].bgra;
+    }
+
+    imlib_image_put_back_data((DATA32 *)dstdata);
+    image->Unlock(srcdata);
 
     imlib_save_image(path);
     imlib_free_image();
