@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2004-2015 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -47,159 +47,135 @@ Image Image::DitherDbs() const
 
     /* A list of cells in our picture. If no change is done to a cell
      * for two iterations, we stop considering changes to it. */
-    ivec2 csize = (size + ivec2(CELL - 1)) / CELL;
-    array2d<int> changelist;
-    changelist.SetSize(csize);
+    ivec2 const csize = (size + ivec2(CELL - 1)) / CELL;
+    array2d<int> changelist(csize);
     memset(changelist.Data(), 0, changelist.Bytes());
 
     Image dst = *this;
     dst.SetFormat(PixelFormat::Y_F32);
 
     Image tmp1 = dst.Convolution(kernel);
-    float *tmp1data = tmp1.Lock<PixelFormat::Y_F32>();
+    array2d<float> &tmp1data = tmp1.Lock2D<PixelFormat::Y_F32>();
 
     dst = dst.DitherRandom();
-    float *dstdata = dst.Lock<PixelFormat::Y_F32>();
+    array2d<float> &dstdata = dst.Lock2D<PixelFormat::Y_F32>();
 
     Image tmp2 = dst.Convolution(kernel);
-    float *tmp2data = tmp2.Lock<PixelFormat::Y_F32>();
+    array2d<float> &tmp2data = tmp2.Lock2D<PixelFormat::Y_F32>();
 
-    for (;;)
+    for (int run = 0, last_change = 0; ; ++run)
     {
-        int allchanges = 0;
+        int const cell = run % (csize.x * csize.y);
+        int const cx = cell % csize.x;
+        int const cy = cell / csize.x;
 
-        for (int cy = 0; cy < csize.y; ++cy)
-        for (int cx = 0; cx < csize.x; ++cx)
+        /* Bail out if no change was done for the last full image run */
+        if (run > last_change + csize.x * csize.y)
+            break;
+
+        /* Skip cell if it was already ignored twice */
+        if (changelist[cx][cy] >= 2)
+            continue;
+
+        int changes = 0;
+
+        for (int pixel = 0; pixel < CELL * CELL; ++pixel)
         {
-            int changes = 0;
+            ivec2 const pos(cx * CELL + pixel % CELL,
+                            cy * CELL + pixel / CELL);
 
-            if (changelist[cx][cy] >= 2)
+            if (!(pos >= ivec2(0)) || !(pos < size))
                 continue;
 
-            for (int y = cy * CELL; y < (cy + 1) * CELL; ++y)
-            for (int x = cx * CELL; x < (cx + 1) * CELL; ++x)
+            /* The best operation we can do */
+            ivec2 best_op(0);
+            float best_error = 0.f;
+
+            float d = dstdata[pos];
+
+            /* Compute the effect of all possible toggle and swaps */
+            static ivec2 const op_list[] =
             {
-                int opx = -1, opy = -1;
+                { 0, 0 },
+                { 0, 1 },   { 0, -1 }, { -1, 0 }, { 1, 0 },
+                { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 },
+            };
 
-                float d = dstdata[y * size.x + x];
-                float d2;
-
-                /* Compute the effect of a toggle */
-                float e = 0.f, best = 0.f;
-                for (int j = -N; j < N + 1; j++)
-                {
-                    if (y + j < 0 || y + j >= size.y)
-                        continue;
-
-                    for (int i = -N; i < N + 1; i++)
-                    {
-                        if (x + i < 0 || x + i >= size.x)
-                            continue;
-
-                        float m = kernel[i + N][j + N];
-                        float p = tmp1data[(y + j) * size.x + x + i];
-                        float q1 = tmp2data[(y + j) * size.x + x + i];
-                        float q2 = q1 - m * d + m * (1. - d);
-                        e += (q1 - p) * (q1 - p) - (q2 - p) * (q2 - p);
-                    }
-                }
-
-                if (e > best)
-                {
-                    best = e;
-                    opx = opy = 0;
-                }
-
-                /* Compute the effect of swaps */
-                for (int n = 0; n < 8; n++)
-                {
-                    static int const step[] =
-                      { 0, 1, 0, -1, -1, 0, 1, 0, -1, -1, -1, 1, 1, -1, 1, 1 };
-                    int idx = step[n * 2], idy = step[n * 2 + 1];
-                    if (y + idy < 0 || y + idy >= size.y
-                         || x + idx < 0 || x + idx >= size.x)
-                        continue;
-                    d2 = dstdata[(y + idy) * size.x + x + idx];
-                    if (d2 == d)
-                        continue;
-                    e = 0.;
-                    for (int j = -N; j < N + 1; j++)
-                    {
-                        if (y + j < 0 || y + j >= size.y)
-                            continue;
-                        if (j - idy + N < 0 || j - idy + N >= NN)
-                            continue;
-                        for (int i = -N; i < N + 1; i++)
-                        {
-                            if (x + i < 0 || x + i >= size.x)
-                                continue;
-                            if (i - idx + N < 0 || i - idx + N >= NN)
-                                continue;
-                            float ma = kernel[i + N][j + N];
-                            float mb = kernel[i - idx + N][j - idy + N];
-                            float p = tmp1data[(y + j) * size.x + x + i];
-                            float q1 = tmp2data[(y + j) * size.x + x + i];
-                            float q2 = q1 - ma * d + ma * d2 - mb * d2 + mb * d;
-                            e += (q1 - p) * (q1 - p) - (q2 - p) * (q2 - p);
-                        }
-                    }
-
-                    if (e > best)
-                    {
-                        best = e;
-                        opx = idx;
-                        opy = idy;
-                    }
-                }
-
-                /* Apply the change if interesting */
-                if (best <= 0.f)
+            for (ivec2 const op : op_list)
+            {
+                if (!(pos + op >= ivec2(0)) || !(pos + op < size))
                     continue;
 
-                if (opx || opy)
-                {
-                    d2 = dstdata[(y + opy) * size.x + x + opx];
-                    dstdata[(y + opy) * size.x + x + opx] = d;
-                }
-                else
-                    d2 = 1. - d;
-                dstdata[y * size.x + x] = d2;
+                bool flip = (op == ivec2(0));
 
-                for (int j = -N; j < N + 1; j++)
-                for (int i = -N; i < N + 1; i++)
+                float d2 = flip ? 1 - d : dstdata[pos + op];
+
+                if (!flip && d2 == d)
+                    continue;
+
+                /* TODO: implement min/max for 3+ arguments */
+                int imin = max(max(-N, op.x - N), -pos.x);
+                int imax = min(min(N + 1, op.x + NN - N), size.x - pos.x);
+                int jmin = max(max(-N, op.y - N), -pos.y);
+                int jmax = min(min(N + 1, op.y + NN - N), size.y - pos.y);
+
+                float error = 0.f;
+                for (int j = jmin; j < jmax; j++)
+                for (int i = imin; i < imax; i++)
                 {
+                    ivec2 pos2 = pos + ivec2(i, j);
+
                     float m = kernel[i + N][j + N];
-                    if (y + j >= 0 && y + j < size.y
-                         && x + i >= 0 && x + i < size.x)
-                    {
-                        t = tmp2data[(y + j) * size.x + x + i];
-                        tmp2data[(y + j) * size.x + x + i] = t + m * (d2 - d);
-                    }
-                    if ((opx || opy) && y + opy + j >= 0 && y + opy + j < size.y
-                                    && x + opx + i >= 0 && x + opx + i < size.x)
-                    {
-                        t = tmp2data[(y + opy + j) * size.x + x + opx + i];
-                        tmp2data[(y + opy + j) * size.x + x + opx + i]
-                                = t + m * (d - d2);
-                    }
+                    if (!flip)
+                        m -= kernel[i - op.x + N][j - op.y + N];
+                    float p = tmp1data[pos2];
+                    float q1 = tmp2data[pos2];
+                    float q2 = q1 + m * (d2 - d);
+                    error += sq(q1 - p) - sq(q2 - p);
                 }
 
-                changes++;
+                if (error > best_error)
+                {
+                    best_error = error;
+                    best_op = op;
+                }
             }
 
-            if (changes == 0)
-                ++changelist[cx][cy];
+            /* Only apply the change if interesting */
+            if (best_error > 0.f)
+            {
+                bool flip = (best_op == ivec2(0));
 
-            allchanges += changes;
+                float d2 = flip ? 1 - d : dstdata[pos + best_op];
+                dstdata[pos + best_op] = d;
+                dstdata[pos] = d2;
+
+                for (int j = -N; j <= N; j++)
+                for (int i = -N; i <= N; i++)
+                {
+                    ivec2 off(i, j);
+                    float delta = (d2 - d) * kernel[i + N][j + N];
+
+                    if (pos + off >= ivec2(0) && pos + off < size)
+                        tmp2data[pos + off] += delta;
+
+                    if (!flip && pos + off + best_op >= ivec2(0)
+                         && pos + off + best_op < size)
+                        tmp2data[pos + off + best_op] -= delta;
+                }
+
+                ++changes;
+                last_change = run;
+            }
         }
 
-        if (allchanges == 0)
-            break;
+        if (changes == 0)
+            ++changelist[cx][cy];
     }
 
-    tmp1.Unlock(tmp1data);
-    tmp2.Unlock(tmp2data);
-    dst.Unlock(dstdata);
+    tmp1.Unlock2D(tmp1data);
+    tmp2.Unlock2D(tmp2data);
+    dst.Unlock2D(dstdata);
 
     return dst;
 }
