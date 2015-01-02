@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
 //            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
@@ -133,15 +133,17 @@ public:
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
-        ASSERT(n >= 0);
-        ASSERT(n < m_count || (!n && !m_count));
+        ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
+               "cannot access index %lld in array of size %lld",
+               (long long int)n, (long long int)m_count);
         return m_data[n];
     }
 
     inline element_t const& operator[](ptrdiff_t n) const
     {
-        ASSERT(n >= 0);
-        ASSERT(n < m_count || (!n && !m_count));
+        ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
+               "cannot access index %lld in array of size %lld",
+               (long long int)n, (long long int)m_count);
         return m_data[n];
     }
 
@@ -205,8 +207,9 @@ public:
 
     inline void Insert(T const &x, ptrdiff_t pos)
     {
-        ASSERT(pos >= 0);
-        ASSERT(pos <= m_count);
+        ASSERT(pos >= 0 && pos <= m_count,
+               "cannot insert at index %lld in array of size %lld",
+               (long long int)pos, (long long int)m_count);
 
         if (m_count >= m_reserved)
             Grow();
@@ -222,8 +225,9 @@ public:
 
     inline bool InsertUnique(T const &x, ptrdiff_t pos)
     {
-        ASSERT(pos >= 0);
-        ASSERT(pos <= m_count);
+        ASSERT(pos >= 0 && pos <= m_count,
+               "cannot insert at index %lld in array of size %lld",
+               (long long int)pos, (long long int)m_count);
 
         if (Find(x) != INDEX_NONE)
             return false;
@@ -284,10 +288,12 @@ public:
 
     void Swap(ptrdiff_t pos1, ptrdiff_t pos2)
     {
-        ASSERT(pos1 >= 0);
-        ASSERT(pos2 >= 0);
-        ASSERT(pos1 < m_count);
-        ASSERT(pos2 < m_count);
+        ASSERT(pos1 >= 0 && pos1 <= m_count,
+               "cannot swap index %lld in array of size %lld",
+               (long long int)pos1, (long long int)m_count);
+        ASSERT(pos2 >= 0 && pos2 <= m_count,
+               "cannot swap index %lld in array of size %lld",
+               (long long int)pos2, (long long int)m_count);
 
         if (pos1 != pos2)
             std::swap((*this)[pos1], (*this)[pos2]);
@@ -296,8 +302,11 @@ public:
     void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
-        ASSERT(pos - todelete >= -m_count - 1);
-        ASSERT(pos + todelete <= m_count);
+        ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
+               "cannot remove %lld elements at %lld in array of size %lld",
+               (long long int)todelete, (long long int)pos,
+               (long long int)m_count);
+
         if (pos < 0)
             pos = m_count + pos;
 
@@ -311,8 +320,11 @@ public:
     void RemoveSwap(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
-        ASSERT(pos - todelete >= -m_count - 1);
-        ASSERT(pos + todelete <= m_count);
+        ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
+               "cannot remove %lld elements at %lld in array of size %lld",
+               (long long int)todelete, (long long int)pos,
+               (long long int)m_count);
+
         if (pos < 0)
             pos = m_count + pos;
 
@@ -485,8 +497,9 @@ public:
 
     inline void Insert(ptrdiff_t pos, T... args)
     {
-        ASSERT(pos >= 0);
-        ASSERT(pos <= this->m_count);
+        ASSERT(pos >= 0 && pos <= this->m_count,
+               "cannot insert at index %lld in array of size %lld",
+               (long long int)pos, (long long int)this->m_count);
 
         if (this->m_count >= this->m_reserved)
             this->Grow();
