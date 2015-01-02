@@ -1,7 +1,7 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
+// Copyright: © 2004—2015 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -14,6 +14,9 @@
 // The Pixel-related classes
 // -------------------------
 //
+
+#include <lol/base/types.h>
+#include <lol/math/vector.h>
 
 namespace lol
 {
@@ -52,17 +55,17 @@ static inline uint8_t BytesPerPixel(PixelFormat format)
     case PixelFormat::Unknown:
         break;
     case PixelFormat::Y_8:
-        return 1;
+        return sizeof(PixelType<PixelFormat::Y_8>::type);
     case PixelFormat::RGB_8:
-        return 3;
+        return sizeof(PixelType<PixelFormat::RGB_8>::type);
     case PixelFormat::RGBA_8:
-        return 4;
+        return sizeof(PixelType<PixelFormat::RGBA_8>::type);
     case PixelFormat::Y_F32:
-        return 4;
+        return sizeof(PixelType<PixelFormat::Y_F32>::type);
     case PixelFormat::RGB_F32:
-        return 12;
+        return sizeof(PixelType<PixelFormat::RGB_F32>::type);
     case PixelFormat::RGBA_F32:
-        return 16;
+        return sizeof(PixelType<PixelFormat::RGBA_F32>::type);
     }
     return 0;
 #if __GNUC__
