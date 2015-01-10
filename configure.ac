@@ -143,9 +143,8 @@ else
   AC_DEFINE(LOL_BUILD_RELEASE, 1, Define to 1 to activate final release)
   LOL_TRY_CXXFLAGS(-Os, [AM_CXXFLAGS="${AM_CXXFLAGS} -Os"])
   LOL_TRY_CXXFLAGS(-ffast-math, [AM_CXXFLAGS="${AM_CXXFLAGS} -ffast-math"])
-dnl Removed this so .nexe build ok.
-dnl  LOL_TRY_CXXFLAGS(-fomit-frame-pointer, [AM_CXXFLAGS="${AM_CXXFLAGS} -fomit-frame-pointer"])
-dnl  LOL_TRY_CXXFLAGS(-fno-strength-reduce, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-strength-reduce"])
+  LOL_TRY_CXXFLAGS(-fomit-frame-pointer, [AM_CXXFLAGS="${AM_CXXFLAGS} -fomit-frame-pointer"])
+  LOL_TRY_CXXFLAGS(-fno-strength-reduce, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-strength-reduce"])
 fi
 
 
@@ -190,10 +189,6 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 AM_CONDITIONAL(USE_DOT, test "${DOT}" != "no")
 
-
-dnl  No exceptions…
-LOL_TRY_CXXFLAGS(-fno-exceptions, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-exceptions"])
-LOL_TRY_CXXFLAGS(-fno-rtti, [AM_CXXFLAGS="${AM_CXXFLAGS} -fno-rtti"])
 
 dnl  Debug symbols
 LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
@@ -350,6 +345,13 @@ AC_CHECK_HEADERS(FlexLexer.h,
 AC_LANG_POP(C++)
 if test "x${ac_cv_my_have_flexlexer_h}" = "xno"; then
   LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/flex-2.5.35/include"
+fi
+
+
+dnl  Use pegtl? Yes, always
+if true; then
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/pegtl-0.32/include"
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/axe-1.5.4.164/include"
 fi
 
 

@@ -15,7 +15,7 @@
       <!-- We should use %(RelativeDir) here but for some reason it's an _absolute_ dir. WTF. -->
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\src\bullet;$(SolutionDir)\..\tools\lolunit;$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\src\bullet;$(SolutionDir)\..\tools\lolunit;$(PegtlIncludes);$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
