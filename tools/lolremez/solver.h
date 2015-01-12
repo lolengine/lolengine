@@ -1,11 +1,13 @@
 //
-// LolRemez - Remez algorithm implementation
+//  LolRemez - Remez algorithm implementation
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -17,15 +19,15 @@
 
 #include <cstdio>
 
+#include "expression.h"
+
 class RemezSolver
 {
 public:
-    typedef lol::real RealFunc(lol::real const &x);
-
     RemezSolver(int order, int decimals);
 
     void Run(lol::real a, lol::real b,
-             RealFunc *func, RealFunc *weight = nullptr);
+             char const *func, char const *weight = nullptr);
 
 private:
     void Init();
@@ -40,8 +42,9 @@ private:
 
 private:
     /* User-defined parameters */
-    RealFunc *m_func, *m_weight;
+    expression m_func, m_weight;
     int m_order, m_decimals;
+    bool m_has_weight;
 
     /* Solver state */
     lol::polynomial<lol::real> m_estimate;
