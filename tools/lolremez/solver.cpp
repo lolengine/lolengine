@@ -179,28 +179,39 @@ void RemezSolver::FindZeroes()
      * place as the absolute error! */
     for (int i = 0; i < m_order + 1; i++)
     {
-        struct { real value, error; } left, right, mid;
+        struct { real value, error; } a, b, c;
 
-        left.value = m_control[i];
-        left.error = EvalEstimate(left.value) - EvalFunc(left.value);
-        right.value = m_control[i + 1];
-        right.error = EvalEstimate(right.value) - EvalFunc(right.value);
+        a.value = m_control[i];
+        a.error = EvalEstimate(a.value) - EvalFunc(a.value);
+        b.value = m_control[i + 1];
+        b.error = EvalEstimate(b.value) - EvalFunc(b.value);
 
         static real limit = ldexp((real)1, -500);
         static real zero = (real)0;
-        while (fabs(left.value - right.value) > limit)
+        while (fabs(a.value - b.value) > limit)
         {
-            mid.value = (left.value + right.value) / 2;
-            mid.error = EvalEstimate(mid.value) - EvalFunc(mid.value);
+            /* Interpolate linearly instead of taking the midpoint, this
+             * leads to far better convergence (6:1 speedups). */
+            real t = abs(b.error) / (abs(a.error) + abs(b.error));
+            real newc = b.value + t * (a.value - b.value);
 
-            if ((left.error <= zero && mid.error <= zero)
-                 || (left.error >= zero && mid.error >= zero))
-                left = mid;
+            /* If the third point didn't change since last iteration,
+             * we may be at an inflection point. Use the midpoint to get
+             * out of this situation. */
+            c.value = newc == c.value ? (a.value + b.value) / 2 : newc;
+            c.error = EvalEstimate(c.value) - EvalFunc(c.value);
+
+            if (c.error == zero)
+                break;
+
+            if ((a.error < zero && c.error < zero)
+                 || (a.error > zero && c.error > zero))
+                a = c;
             else
-                right = mid;
+                b = c;
         }
 
-        m_zeroes[i] = mid.value;
+        m_zeroes[i] = c.value;
     }
 
     printf(" -:- times for zeroes: estimate %f func %f weight %f\n",
