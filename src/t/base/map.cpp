@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -50,9 +52,9 @@ lolunit_declare_fixture(MapTest)
         m[0] = 1;
         m[2] = 2;
 
-        lolunit_assert(m.HasKey(0));
-        lolunit_assert(!m.HasKey(1));
-        lolunit_assert(m.HasKey(2));
+        lolunit_assert(m.has_key(0));
+        lolunit_assert(!m.has_key(1));
+        lolunit_assert(m.has_key(2));
     }
 
     lolunit_declare_test(StringMap)

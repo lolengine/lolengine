@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -197,15 +199,11 @@ Shader *Shader::Create(String const &name, String const &code)
 {
     lolfx_parser p(code);
 
-    if (!p.m_programs.HasKey("vert.glsl"))
-    {
-        ASSERT(false, "no vertex shader found in %s", name.C());
-    }
+    ASSERT(p.m_programs.has_key("vert.glsl"),
+           "no vertex shader in %s", name.C());
 
-    if (!p.m_programs.HasKey("frag.glsl"))
-    {
-        ASSERT(false, "no fragment shader found in %s", name.C());
-    }
+    ASSERT(p.m_programs.has_key("frag.glsl"),
+           "no fragment shader in %s", name.C());
 
     String vert = p.m_programs["vert.glsl"];
     String frag = p.m_programs["frag.glsl"];
@@ -452,7 +450,7 @@ Shader::Shader(String const &name,
             flags |= (uint64_t)(uint16_t)index;
             // TODO: this is here just in case. Remove this once everything has been correctly tested
 #if _DEBUG
-            if (data->attrib_locations.HasKey(flags))
+            if (data->attrib_locations.has_key(flags))
             {
                 Log::Error("error while parsing attribute semantics in %s\n",
                            name.C());
@@ -469,7 +467,7 @@ Shader::Shader(String const &name,
 int Shader::GetAttribCount() const
 {
 #if !defined __CELLOS_LV2__
-    return data->attrib_locations.Count();
+    return data->attrib_locations.count();
 #else
     // TODO
     return 0;
@@ -485,10 +483,10 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
 #elif !defined __CELLOS_LV2__
     GLint l = -1;
 
-    if (!data->attrib_locations.TryGetValue(ret.m_flags, l))
+    if (!data->attrib_locations.try_get(ret.m_flags, l))
     {
         /* Only spit an error once, we don’t need to flood the console. */
-        if (!data->attrib_errors.HasKey(ret.m_flags))
+        if (!data->attrib_errors.has_key(ret.m_flags))
         {
             Log::Error("attribute %s not found in shader %s\n",
                        usage.ToString().C(), data->m_name.C());
@@ -1166,14 +1164,14 @@ String Shader::GetProgramOutVariableLocal(const ShaderProgram program)
 //Shader Block implementation class -------------------------------------------
 void ShaderBlock::Add(const ShaderVariable parameter, String const &type, String const &name)
 {
-    ASSERT(!m_parameters[parameter.ToScalar()].HasKey(name));
+    ASSERT(!m_parameters[parameter.ToScalar()].has_key(name));
     m_parameters[parameter.ToScalar()][name] = type;
 }
 
 //----
 void ShaderBlock::AddCallParameters(const ShaderVariable type, map<String, String> const& variables, String& result)
 {
-    array<String> keys = variables.Keys();
+    array<String> keys = variables.keys();
     for (String key : keys)
     {
         if (result.Count() > 0)
@@ -1185,7 +1183,7 @@ void ShaderBlock::AddCallParameters(const ShaderVariable type, map<String, Strin
 //----
 void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, map<String, String>& variables, String& result)
 {
-    array<String> keys = variables.Keys();
+    array<String> keys = variables.keys();
     for (String key : keys)
     {
         if (result.Count() > 0)
@@ -1202,7 +1200,7 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
 void ShaderBlock::Build(const ShaderProgram program, String& call, String& function)
 {
     ASSERT(m_name.Count());
-    ASSERT(m_parameters[ShaderVariable::InOut].Count());
+    ASSERT(m_parameters[ShaderVariable::InOut].count());
 
     //Build call in main
     String call_name = String("Call_") + m_name;
@@ -1290,10 +1288,10 @@ String ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
 //----
 void ShaderBuilder::MergeParameters(map<String, String>& variables, map<String, String>& merged)
 {
-    array<String> keys = variables.Keys();
+    array<String> keys = variables.keys();
     for (String key : keys)
     {
-        bool has_key = merged.HasKey(key);
+        bool has_key = merged.has_key(key);
         //Key exists, check the type to make sure it's the same
         ASSERT(!(has_key && merged[key] != variables[key]));
 
@@ -1309,7 +1307,7 @@ void ShaderBuilder::Build(String& code)
     //Cleanup first
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
         for (int var = 0; var < ShaderVariable::MAX; var++)
-            m_parameters[prog][var].Empty();
+            m_parameters[prog][var].empty();
 
     //Start building
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
@@ -1334,7 +1332,7 @@ void ShaderBuilder::Build(String& code)
         //Added shader variables
         for (int var = 0; var < ShaderVariable::InOut; var++)
         {
-            array<String> keys = m_parameters[prog][var].Keys();
+            array<String> keys = m_parameters[prog][var].keys();
             if (keys.Count())
             {
                 code += String("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
@@ -1373,7 +1371,7 @@ void ShaderBuilder::Build(String& code)
 
         //Add local variables
         int var = ShaderVariable::InOut;
-        array<String> keys = m_parameters[prog][var].Keys();
+        array<String> keys = m_parameters[prog][var].keys();
         for (String key : keys)
         {
             if (keys.Count())

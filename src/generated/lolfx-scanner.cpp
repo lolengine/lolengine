@@ -3803,7 +3803,7 @@ YY_RULE_SETUP
     while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
         tmp++;
     String key(tmp2, (int)(tmp - tmp2));
-    if (m_pp_defines.HasKey(key))
+    if (m_pp_defines.has_key(key))
     {
         m_pp_stack.Push(BlockIsTrue);
     }
@@ -3828,7 +3828,7 @@ YY_RULE_SETUP
     while (*tmp != ' ' && *tmp != '\n' && *tmp != '\0')
         tmp++;
     String key(tmp2, (int)(tmp - tmp2));
-    if (m_pp_defines.HasKey(key))
+    if (m_pp_defines.has_key(key))
     {
         m_pp_stack.Push(BlockIsFalse);
         BEGIN(PREPROCESSOR_COMMENT);
@@ -3870,7 +3870,7 @@ YY_RULE_SETUP
     String key(tmp2, (int)(tmp - tmp2));
 
     Log::Debug("undef macro: ‘%s’\n", key.C());
-    m_pp_defines.Remove(key);
+    m_pp_defines.remove(key);
 }
 	YY_BREAK
 case 373:

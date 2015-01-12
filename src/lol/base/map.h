@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -37,7 +39,7 @@ public:
     {
         /* Look for the hash in our table and return the value. */
         V *value_ptr = nullptr;
-        bool found = m_tree.TryGetValue(key, value_ptr);
+        bool found = m_tree.try_get(key, value_ptr);
 
         ASSERT(found, "trying to read a nonexistent key in map");
 
@@ -51,12 +53,12 @@ public:
         K typed_key(key);
         V *value_ptr = nullptr;
 
-        bool found = m_tree.TryGetValue(key, value_ptr);
+        bool found = m_tree.try_get(key, value_ptr);
         if (!found)
         {
             /* If not found, insert a new value. */
-            m_tree.Insert(typed_key, V());
-            found = m_tree.TryGetValue(key, value_ptr);
+            m_tree.insert(typed_key, V());
+            found = m_tree.try_get(key, value_ptr);
         }
 
         /* This may happen if the key operator < does not behave as
@@ -67,25 +69,25 @@ public:
     }
 
     template <typename E>
-    inline void Remove(E const &key)
+    inline void remove(E const &key)
     {
         K typed_key(key);
-        m_tree.Erase(typed_key);
+        m_tree.erase(typed_key);
     }
 
     template <typename E>
-    inline bool HasKey(E const &key)
+    inline bool has_key(E const &key)
     {
         K typed_key(key);
-        return m_tree.Exists(typed_key);
+        return m_tree.exists(typed_key);
     }
 
     template <typename E>
-    inline bool TryGetValue(E const &key, V& value)
+    inline bool try_get(E const &key, V& value)
     {
         K typed_key(key);
         V *value_ptr;
-        if (m_tree.TryGetValue(typed_key, value_ptr))
+        if (m_tree.try_get(typed_key, value_ptr))
         {
             value = *value_ptr;
             return true;
@@ -94,7 +96,7 @@ public:
         return false;
     }
 
-    array<K> Keys() const
+    array<K> keys() const
     {
         array<K> ret;
 
@@ -104,18 +106,17 @@ public:
         return ret;
     }
 
-    inline ptrdiff_t Count() const
+    inline ptrdiff_t count() const
     {
         return m_tree.GetCount();
     }
 
-    inline void Empty()
+    inline void empty()
     {
-        m_tree.Clear();
+        m_tree.clear();
     }
 
 private:
-
     avl_tree<K, V> m_tree;
 };
 

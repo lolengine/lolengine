@@ -1,13 +1,15 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -31,26 +33,26 @@ public:
         m_root(nullptr),
         m_count(0)
     {
-        for (auto iterator : other)
-            this->Insert(iterator.key, iterator.value);
+        for (auto it : other)
+            this->insert(it.key, it.value);
     }
 
     avl_tree & operator=(avl_tree const & other)
     {
-        this->Clear();
+        this->clear();
 
-        for (auto iterator : other)
-            this->Insert(iterator.key, iterator.value);
+        for (auto it : other)
+            this->insert(it.key, it.value);
 
         return *this;
     }
 
     ~avl_tree()
     {
-        this->Clear();
+        this->clear();
     }
 
-    bool Insert(K const & key, V const & value)
+    bool insert(K const & key, V const & value)
     {
         if (!m_root)
         {
@@ -59,7 +61,7 @@ public:
             return true;
         }
 
-        if(this->m_root->Insert(key, value))
+        if(this->m_root->insert(key, value))
         {
             ++this->m_count;
             return true;
@@ -68,12 +70,12 @@ public:
         return false;
     }
 
-    bool Erase(K const & key)
+    bool erase(K const & key)
     {
         if (!m_root)
             return false;
 
-        if(this->m_root->Erase(key))
+        if(this->m_root->erase(key))
         {
             --this->m_count;
             return true;
@@ -82,15 +84,15 @@ public:
         return false;
     }
 
-    bool Exists(K const & key)
+    bool exists(K const & key)
     {
         if (!m_root)
             return false;
 
-        return this->m_root->Exists(key);
+        return this->m_root->exists(key);
     }
 
-    void Clear()
+    void clear()
     {
         if (this->m_root)
         {
@@ -109,15 +111,15 @@ public:
         this->m_count = 0;
     }
 
-    bool TryGetValue(K const & key, V * & value_ptr) const
+    bool try_get(K const & key, V * & value_ptr) const
     {
         if (this->m_root)
-            return this->m_root->TryGetValue(key, value_ptr);
+            return this->m_root->try_get(key, value_ptr);
 
         return false;
     }
 
-    bool TryGetMin(K const * & key_ptr, V * & value_ptr) const
+    bool try_get_min(K const * & key_ptr, V * & value_ptr) const
     {
         tree_node * min_node = nullptr;
 
@@ -133,7 +135,7 @@ public:
         return false;
     }
 
-    bool TryGetMax(K const * & key_ptr, V * & value_ptr) const
+    bool try_get_max(K const * & key_ptr, V * & value_ptr) const
     {
         tree_node * max_node = nullptr;
 
@@ -149,27 +151,27 @@ public:
         return false;
     }
 
-    class Iterator;
-    class ConstIterator;
+    class iterator;
+    class const_iterator;
 
-    Iterator begin()
+    iterator begin()
     {
         tree_node * node = nullptr;
 
         if (this->m_root)
             this->m_root->GetMin(node);
 
-        return Iterator(node);
+        return iterator(node);
     }
 
-    ConstIterator begin() const
+    const_iterator begin() const
     {
         tree_node * node = nullptr;
 
         if (this->m_root)
             this->m_root->GetMin(node);
 
-        return ConstIterator(node);
+        return const_iterator(node);
     }
 
     int GetCount() const
@@ -177,14 +179,14 @@ public:
         return this->m_count;
     }
 
-    Iterator end()
+    iterator end()
     {
-        return Iterator(nullptr);
+        return iterator(nullptr);
     }
 
-    ConstIterator end() const
+    const_iterator end() const
     {
-        return ConstIterator(nullptr);
+        return const_iterator(nullptr);
     }
 
 protected:
@@ -214,7 +216,7 @@ protected:
 
         /* Insert a value in tree and return true or update an existing value for
          * the existing key and return false */
-        bool Insert(K const & key, V const & value)
+        bool insert(K const & key, V const & value)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -224,13 +226,13 @@ protected:
                 return false;
             }
 
-            bool created = false;
+            bool b_created = false;
 
             if (this->m_child[i])
-                created = this->m_child[i]->Insert(key, value);
+                b_created = this->m_child[i]->insert(key, value);
             else
             {
-                created = true;
+                b_created = true;
 
                 this->m_child[i] = new tree_node(key, value, &this->m_child[i]);
 
@@ -242,14 +244,14 @@ protected:
                 this->m_chain[i] = this->m_child[i];
             }
 
-            if (created)
+            if (b_created)
                 this->RebalanceIfNeeded();
 
-            return created;
+            return b_created;
         }
 
         /* Erase a value in tree and return true or return false */
-        bool Erase(K const & key)
+        bool erase(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -259,7 +261,7 @@ protected:
                 delete this;
                 return true;
             }
-            else if(this->m_child[i]->Erase(key))
+            else if(this->m_child[i]->erase(key))
             {
                 this->RebalanceIfNeeded();
                 return true;
@@ -268,7 +270,7 @@ protected:
             return false;
         }
 
-        bool TryGetValue(K const & key, V * & value_ptr)
+        bool try_get(K const & key, V * & value_ptr)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -279,12 +281,12 @@ protected:
             }
 
             if (this->m_child[i])
-                return this->m_child[i]->TryGetValue(key, value_ptr);
+                return this->m_child[i]->try_get(key, value_ptr);
 
             return false;
         }
 
-        bool Exists(K const & key)
+        bool exists(K const & key)
         {
             int i = -1 + (key < this->m_key) + 2 * (this->m_key < key);
 
@@ -292,7 +294,7 @@ protected:
                 return true;
 
             if (this->m_child[i])
-                return this->m_child[i]->Exists(key);
+                return this->m_child[i]->exists(key);
 
             return false;
         }
@@ -450,43 +452,43 @@ public:
         V & value;
     };
 
-    class Iterator
+    class iterator
     {
     public:
 
-        Iterator(tree_node * node) :
+        iterator(tree_node * node) :
             m_node(node)
         {
         }
 
-        Iterator & operator++(int)
+        iterator & operator++(int)
         {
             this->m_node = this->m_node->get_next();
 
             return *this;
         }
 
-        Iterator & operator--(int)
+        iterator & operator--(int)
         {
             this->m_node = this->m_node->get_previous();
 
             return *this;
         }
 
-        Iterator operator++()
+        iterator operator++()
         {
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->GetNext();
 
-            return Iterator(ret);
+            return iterator(ret);
         }
 
-        Iterator operator--()
+        iterator operator--()
         {
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->GetPrevious();
 
-            return Iterator(ret);
+            return iterator(ret);
         }
 
         OutputValue operator*()
@@ -494,7 +496,7 @@ public:
             return OutputValue(this->m_node->GetKey(), this->m_node->GetValue());
         }
 
-        bool operator!=(Iterator const & that) const
+        bool operator!=(iterator const & that) const
         {
             return this->m_node != that.m_node;
         }
@@ -516,43 +518,43 @@ public:
         V const & value;
     };
 
-    class ConstIterator
+    class const_iterator
     {
     public:
 
-        ConstIterator(tree_node * node) :
+        const_iterator(tree_node * node) :
             m_node(node)
         {
         }
 
-        ConstIterator & operator++(int)
+        const_iterator & operator++(int)
         {
             this->m_node = this->m_node->get_next();
 
             return *this;
         }
 
-        ConstIterator & operator--(int)
+        const_iterator & operator--(int)
         {
             this->m_node = this->m_node->get_previous();
 
             return *this;
         }
 
-        ConstIterator operator++()
+        const_iterator operator++()
         {
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->GetNext();
 
-            return ConstIterator(ret);
+            return const_iterator(ret);
         }
 
-        ConstIterator operator--()
+        const_iterator operator--()
         {
             tree_node * ret = this->m_node;
             this->m_node = this->m_node->GetPrevious();
 
-            return ConstIterator(ret);
+            return const_iterator(ret);
         }
 
         ConstOutputValue operator*()
@@ -560,7 +562,7 @@ public:
             return ConstOutputValue(this->m_node->GetKey(), this->m_node->GetValue());
         }
 
-        bool operator!=(ConstIterator const & that) const
+        bool operator!=(const_iterator const & that) const
         {
             return this->m_node != that.m_node;
         }
