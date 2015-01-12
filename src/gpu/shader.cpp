@@ -29,6 +29,8 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
+#include "pegtl.hh"
+
 #include "lolgl.h"
 
 namespace lol
@@ -116,64 +118,97 @@ hash<char const *> ShaderData::Hash;
 int ShaderData::nshaders = 0;
 
 /*
+ * LolFx parser
+ */
+
+using namespace pegtl;
+
+struct lolfx_parser
+{
+public:
+    lolfx_parser(String const &code)
+      : m_section("header")
+    {
+        basic_parse_string<struct lolfx>(std::string(code.C()), this);
+    }
+
+public:
+    String m_section;
+    map<String, String> m_programs;
+
+private:
+    struct do_title : action_base<do_title>
+    {
+        static void apply(std::string const &ctx, lolfx_parser *that)
+        {
+            that->m_section = ctx.c_str();
+        }
+    };
+
+    struct do_code : action_base<do_code>
+    {
+        static void apply(std::string const &ctx, lolfx_parser *that)
+        {
+            that->m_programs[that->m_section] = ctx.c_str();
+        }
+    };
+
+    // title <- '[' (!']')+ ']' .{eol}
+    struct title
+      : seq<one<'['>,
+            ifapply<plus<not_one<']'>>, do_title>,
+            one<']'>,
+            until<eol, any>> {};
+
+    // FIXME: I’m using this rule because the ifapply<> above also
+    // gets triggered when using at<> which is non-consuming.
+    struct title_ignore
+      : seq<one<'['>,
+            plus<not_one<']'>>,
+            one<']'>,
+            until<eol, any>> {};
+
+    // code_line <- .{eol}
+    struct code_line
+      : until<eol, any> {};
+
+    // code_section < code_line{&(title / eof)}
+    struct code_section
+      : ifapply<until<at<sor<title_ignore, eof>>, code_line>, do_code> {};
+
+    // shader < title code_section
+    struct shader
+      : seq<title, code_section> {};
+
+    // header < code_section
+    struct header
+      : code_section {};
+
+    // lolfx < header code_section*
+    struct lolfx
+      : seq<header, star<shader>> {};
+};
+
+/*
  * Public Shader class
  */
 
 Shader *Shader::Create(String const &name, String const &code)
 {
-    String src = String("\n") + code;
+    lolfx_parser p(code);
 
-    /* Parse the crap */
-    array<char const *, char const *> sections;
-    char *key = nullptr;
-    for (char *parser = src.C(); *parser; )
+    if (!p.m_programs.HasKey("vert.glsl"))
     {
-        if (key == nullptr && (parser[0] == '\n' || parser[0] == '\r')
-             && parser[1] == '[')
-        {
-            *parser = '\0';
-            parser += 2;
-            key = parser;
-        }
-        else if (key && parser[0] == ']')
-        {
-            *parser++ = '\0';
-        }
-        else if (key && (parser[0] == '\n' || parser[0] == '\r'))
-        {
-            sections.Push(key, parser);
-            parser++;
-            key = nullptr;
-        }
-        else
-        {
-            parser++;
-        }
+        ASSERT(false, "no vertex shader found in %s", name.C());
     }
 
-    char const *vert = nullptr, *frag = nullptr;
-    for (int i = 0; i < sections.Count(); i++)
+    if (!p.m_programs.HasKey("frag.glsl"))
     {
-#if !defined __CELLOS_LV2__ && !defined _XBOX && !defined USE_D3D9
-        if (!strcmp(sections[i].m1, "vert.glsl"))
-            vert = sections[i].m2;
-        if (!strcmp(sections[i].m1, "frag.glsl"))
-            frag = sections[i].m2;
-#else
-        if (!strcmp(sections[i].m1, "vert.hlsl"))
-            vert = sections[i].m2;
-        if (!strcmp(sections[i].m1, "frag.hlsl"))
-            frag = sections[i].m2;
-#endif
+        ASSERT(false, "no fragment shader found in %s", name.C());
     }
 
-    /* FIXME: we don’t know how to handle these yet. */
-    if (!vert)
-        Log::Error("no vertex shader found in %s… sorry, I’m gonna crash now.\n",
-                   name.C());
-    if (!frag)
-        Log::Error("no fragment shader found in %s… sorry, I’m gonna crash now.\n",
-                   name.C());
+    String vert = p.m_programs["vert.glsl"];
+    String frag = p.m_programs["frag.glsl"];
 
     uint32_t new_vert_crc = ShaderData::Hash(vert);
     uint32_t new_frag_crc = ShaderData::Hash(frag);
@@ -201,7 +236,7 @@ void Shader::Destroy(Shader *shader)
 }
 
 Shader::Shader(String const &name,
-               char const *vert, char const *frag)
+               String const &vert, String const &frag)
   : data(new ShaderData())
 {
     data->m_name = name;
