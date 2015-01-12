@@ -58,7 +58,7 @@ void RemezSolver::Run(real a, real b, char const *func, char const *weight)
     for (int n = 0; ; n++)
     {
         real newerror = FindExtrema();
-        printf("Step %i error: ", n);
+        printf(" -:- error at step %i: ", n);
         newerror.print(m_decimals);
         printf("\n");
 
@@ -172,6 +172,8 @@ void RemezSolver::Step()
 
 void RemezSolver::FindZeroes()
 {
+    m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
+
     /* Find m_order + 1 zeroes of the error function. No need to
      * compute the relative error: its zeroes are at the same
      * place as the absolute error! */
@@ -200,6 +202,9 @@ void RemezSolver::FindZeroes()
 
         m_zeroes[i] = mid.value;
     }
+
+    printf(" -:- times for zeroes: estimate %f func %f weight %f\n",
+           m_stats_cheby, m_stats_func, m_stats_weight);
 }
 
 /* XXX: this is the real costly function */
@@ -272,9 +277,9 @@ real RemezSolver::FindExtrema()
         }
     }
 
-    printf("Iterations: Rounds %d Evals %d\n", rounds, evals);
-    printf("Times: Estimate %f Func %f EvalWeight %f\n",
+    printf(" -:- times for extrema: estimate %f func %f weight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
+    printf(" -:- calls: %d rounds, %d evals\n", rounds, evals);
 
     return final;
 }
@@ -289,7 +294,7 @@ void RemezSolver::PrintPoly()
     polynomial<real> q ({ -m_k1 / m_k2, real(1) / m_k2 });
     polynomial<real> r = m_estimate.eval(q);
 
-    printf("Polynomial estimate: ");
+    printf("\n");
     for (int j = 0; j < m_order + 1; j++)
     {
         if (j)
