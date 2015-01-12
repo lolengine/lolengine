@@ -26,14 +26,14 @@
 
 using lol::real;
 
-RemezSolver::RemezSolver(int order, int decimals)
+remez_solver::remez_solver(int order, int decimals)
   : m_order(order),
     m_decimals(decimals),
     m_has_weight(false)
 {
 }
 
-void RemezSolver::Run(real a, real b, char const *func, char const *weight)
+void remez_solver::run(real a, real b, char const *func, char const *weight)
 {
     using std::printf;
 
@@ -49,38 +49,32 @@ void RemezSolver::Run(real a, real b, char const *func, char const *weight)
     m_k2 = (b - a) / 2;
     m_epsilon = pow((real)10, (real)-(m_decimals + 2));
 
-    Init();
-
-    PrintPoly();
-
-    real error = -1;
+    remez_init();
+    print_poly();
 
     for (int n = 0; ; n++)
     {
-        real newerror = FindExtrema();
-        printf(" -:- error at step %i: ", n);
-        newerror.print(m_decimals);
-        printf("\n");
+        real old_error = m_error;
 
-        Step();
+        find_extrema();
+        remez_step();
 
-        if (error >= (real)0 && fabs(newerror - error) < error * m_epsilon)
+        if (m_error >= (real)0
+             && fabs(m_error - old_error) < m_error * m_epsilon)
             break;
-        error = newerror;
 
-        PrintPoly();
-
-        FindZeroes();
+        print_poly();
+        find_zeroes();
     }
 
-    PrintPoly();
+    print_poly();
 }
 
 /*
  * This is basically the first Remez step: we solve a system of
  * order N+1 and get a good initial polynomial estimate.
  */
-void RemezSolver::Init()
+void remez_solver::remez_init()
 {
     /* m_order + 1 zeroes of the error function */
     m_zeroes.Resize(m_order + 1);
@@ -94,7 +88,7 @@ void RemezSolver::Init()
     for (int i = 0; i < m_order + 1; i++)
     {
         m_zeroes[i] = (real)(2 * i - m_order) / (real)(m_order + 1);
-        fxn.Push(EvalFunc(m_zeroes[i]));
+        fxn.Push(eval_func(m_zeroes[i]));
     }
 
     /* We build a matrix of Chebishev evaluations: row i contains the
@@ -126,12 +120,12 @@ void RemezSolver::Init()
  * Every subsequent iteration of the Remez algorithm: we solve a system
  * of order N+2 to both refine the estimate and compute the error.
  */
-void RemezSolver::Step()
+void remez_solver::remez_step()
 {
     /* Pick up x_i where error will be 0 and compute f(x_i) */
     array<real> fxn;
     for (int i = 0; i < m_order + 2; i++)
-        fxn.Push(EvalFunc(m_control[i]));
+        fxn.Push(eval_func(m_control[i]));
 
     /* We build a matrix of Chebishev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
@@ -146,7 +140,7 @@ void RemezSolver::Step()
     /* The last line of the system is the oscillating error */
     for (int i = 0; i < m_order + 2; i++)
     {
-        real error = fabs(EvalWeight(m_control[i]));
+        real error = fabs(eval_weight(m_control[i]));
         system[i][m_order + 1] = (i & 1) ? error : -error;
     }
 
@@ -170,7 +164,7 @@ void RemezSolver::Step()
         error += system[m_order + 1][i] * fxn[i];
 }
 
-void RemezSolver::FindZeroes()
+void remez_solver::find_zeroes()
 {
     m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
 
@@ -182,9 +176,9 @@ void RemezSolver::FindZeroes()
         struct { real value, error; } a, b, c;
 
         a.value = m_control[i];
-        a.error = EvalEstimate(a.value) - EvalFunc(a.value);
+        a.error = eval_estimate(a.value) - eval_func(a.value);
         b.value = m_control[i + 1];
-        b.error = EvalEstimate(b.value) - EvalFunc(b.value);
+        b.error = eval_estimate(b.value) - eval_func(b.value);
 
         static real limit = ldexp((real)1, -500);
         static real zero = (real)0;
@@ -199,7 +193,7 @@ void RemezSolver::FindZeroes()
              * we may be at an inflection point. Use the midpoint to get
              * out of this situation. */
             c.value = newc == c.value ? (a.value + b.value) / 2 : newc;
-            c.error = EvalEstimate(c.value) - EvalFunc(c.value);
+            c.error = eval_estimate(c.value) - eval_func(c.value);
 
             if (c.error == zero)
                 break;
@@ -214,19 +208,19 @@ void RemezSolver::FindZeroes()
         m_zeroes[i] = c.value;
     }
 
-    printf(" -:- times for zeroes: estimate %f func %f weight %f\n",
+    printf(" -:- timings for zeroes: estimate %f func %f weight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
 }
 
 /* XXX: this is the real costly function */
-real RemezSolver::FindExtrema()
+void remez_solver::find_extrema()
 {
     using std::printf;
 
     /* Find m_order + 2 extrema of the error function. We need to
      * compute the relative error, since its extrema are at slightly
      * different locations than the absolute error’s. */
-    real final = 0;
+    m_error = 0;
 
     m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
     int evals = 0, rounds = 0;
@@ -250,8 +244,8 @@ real RemezSolver::FindExtrema()
                 if (r == 0 || (k & 1))
                 {
                     ++evals;
-                    real error = fabs(EvalEstimate(c) - EvalFunc(c));
-                    real weight = fabs(EvalWeight(c));
+                    real error = fabs(eval_estimate(c) - eval_func(c));
+                    real weight = fabs(eval_weight(c));
                     /* if error/weight >= maxerror/maxweight */
                     if (error * maxweight >= maxerror * weight)
                     {
@@ -280,22 +274,23 @@ real RemezSolver::FindExtrema()
             if (delta < m_epsilon)
             {
                 real e = fabs(maxerror / maxweight);
-                if (e > final)
-                    final = e;
+                if (e > m_error)
+                    m_error = e;
                 m_control[i] = (a + b) / 2;
                 break;
             }
         }
     }
 
-    printf(" -:- times for extrema: estimate %f func %f weight %f\n",
+    printf(" -:- timings for extrema: estimate %f func %f weight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
     printf(" -:- calls: %d rounds, %d evals\n", rounds, evals);
-
-    return final;
+    printf(" -:- error: ");
+    m_error.print(m_decimals);
+    printf("\n");
 }
 
-void RemezSolver::PrintPoly()
+void remez_solver::print_poly()
 {
     using std::printf;
 
@@ -315,7 +310,7 @@ void RemezSolver::PrintPoly()
     printf("\n\n");
 }
 
-real RemezSolver::EvalEstimate(real const &x)
+real remez_solver::eval_estimate(real const &x)
 {
     Timer t;
     real ret = m_estimate.eval(x);
@@ -323,7 +318,7 @@ real RemezSolver::EvalEstimate(real const &x)
     return ret;
 }
 
-real RemezSolver::EvalFunc(real const &x)
+real remez_solver::eval_func(real const &x)
 {
     Timer t;
     real ret = m_func.eval(x * m_k2 + m_k1);
@@ -331,7 +326,7 @@ real RemezSolver::EvalFunc(real const &x)
     return ret;
 }
 
-real RemezSolver::EvalWeight(real const &x)
+real remez_solver::eval_weight(real const &x)
 {
     Timer t;
     real ret = m_has_weight ? m_weight.eval(x * m_k2 + m_k1) : real(1);
