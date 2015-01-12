@@ -171,7 +171,7 @@ public:
     void Unbind() const;
 
 protected:
-    Shader(String const &name, char const *vert, char const *frag);
+    Shader(String const &name, String const &vert, String const &frag);
     ~Shader();
 
 private:

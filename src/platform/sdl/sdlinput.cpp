@@ -65,7 +65,9 @@ private:
     static ivec2 GetMousePos();
     static void SetMousePos(ivec2 position);
 
-    SdlInputData(int app_w, int app_h, int screen_w, int screen_h) :
+    SdlInputData(int app_w, int app_h, int screen_w, int screen_h)
+      : m_mouse(nullptr),
+        m_keyboard(nullptr),
         m_prevmouse(ivec2::zero),
         m_app(vec2((float)app_w, (float)app_h)),
         m_screen(vec2((float)screen_w, (float)screen_h)),
