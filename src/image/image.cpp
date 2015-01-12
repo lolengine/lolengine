@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -122,7 +124,7 @@ Image & Image::operator =(Image other)
 
 Image::~Image()
 {
-    for (int k : m_data->m_pixels.Keys())
+    for (int k : m_data->m_pixels.keys())
         delete m_data->m_pixels[k];
 
     delete m_data;
@@ -156,7 +158,7 @@ void Image::SetSize(ivec2 size)
 
     if (m_data->m_size != size)
     {
-        for (int k : m_data->m_pixels.Keys())
+        for (int k : m_data->m_pixels.keys())
         {
             delete m_data->m_pixels[k];
             m_data->m_pixels[k] = nullptr;
@@ -204,7 +206,7 @@ void *Image::Lock2DHelper(PixelFormat T)
 template<typename T>
 void Image::Unlock2D(array2d<T> const &array)
 {
-    ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
+    ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
     ASSERT(array.Data() == m_data->m_pixels[(int)m_data->m_format]->Data());
 }
 
@@ -231,7 +233,7 @@ void *Image::Lock()
 
 void Image::Unlock(void const *pixels)
 {
-    ASSERT(m_data->m_pixels.HasKey((int)m_data->m_format));
+    ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
     ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->Data());
 }
 

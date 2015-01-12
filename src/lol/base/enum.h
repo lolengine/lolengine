@@ -1,11 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -49,15 +52,15 @@ public:
     {
         /* FIXME: we all know this isn’t thread safe. But is it really
          * a big deal? */
-        static map<int64_t, String> map;
+        static map<int64_t, String> enum_map;
         static bool ready = false;
 
         if (!ready)
-            map = BuildEnumMap(BASE::GetDescription(), BASE::GetCustomString());
+            enum_map = BuildEnumMap(BASE::GetDescription(), BASE::GetCustomString());
         ready = true;
 
-        if (map.HasKey((int64_t)m_value))
-            return map[(int64_t)m_value];
+        if (enum_map.has_key((int64_t)m_value))
+            return enum_map[(int64_t)m_value];
         return "<invalid enum>";
     }
 

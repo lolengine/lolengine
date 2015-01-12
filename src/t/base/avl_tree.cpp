@@ -1,13 +1,15 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -38,40 +40,40 @@ lolunit_declare_fixture(AvlTreeTest)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.Insert(1, 1), true);
-        lolunit_assert_equal(tree.Insert(2, 3), true);
-        lolunit_assert_equal(tree.Insert(2, 0), false);
+        lolunit_assert_equal(tree.insert(1, 1), true);
+        lolunit_assert_equal(tree.insert(2, 3), true);
+        lolunit_assert_equal(tree.insert(2, 0), false);
     }
 
     lolunit_declare_test(AvlTreeBalanceCheck)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.Insert(10, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(20, 1), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(30, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(00, 1), true);
+        lolunit_assert_equal(tree.insert(0, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), -1);
 
-        lolunit_assert_equal(tree.Insert(-10, 1), true);
+        lolunit_assert_equal(tree.insert(-10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), -1);
 
-        lolunit_assert_equal(tree.Insert(-20, 1), true);
+        lolunit_assert_equal(tree.insert(-20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(-20, 1), false);
+        lolunit_assert_equal(tree.insert(-20, 1), false);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(11, 1), true);
+        lolunit_assert_equal(tree.insert(11, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(13, 2), true);
+        lolunit_assert_equal(tree.insert(13, 2), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
     }
 
@@ -79,18 +81,18 @@ lolunit_declare_fixture(AvlTreeTest)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.Insert(10, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(20, 1), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(30, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
         lolunit_assert_equal(tree.GetCount(), 3);
 
-        lolunit_assert_equal(tree.Erase(30), true);
+        lolunit_assert_equal(tree.erase(30), true);
 
         int test = 0;
 
@@ -101,11 +103,11 @@ lolunit_declare_fixture(AvlTreeTest)
         }
 
         lolunit_assert_equal(tree.GetCount(), 2);
-        lolunit_assert_equal(tree.Insert(30, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
 
-        lolunit_assert_equal(tree.Erase(20), true);
-        lolunit_assert_equal(tree.Insert(20, 1), true);
-        lolunit_assert_equal(tree.Exists(10), true);
+        lolunit_assert_equal(tree.erase(20), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
+        lolunit_assert_equal(tree.exists(10), true);
 
         test = 0;
 
@@ -120,31 +122,31 @@ lolunit_declare_fixture(AvlTreeTest)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.Insert(10, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(20, 1), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Erase(10), true);
-        lolunit_assert_equal(tree.Exists(20), true);
-        lolunit_assert_equal(tree.Exists(10), false);
+        lolunit_assert_equal(tree.erase(10), true);
+        lolunit_assert_equal(tree.exists(20), true);
+        lolunit_assert_equal(tree.exists(10), false);
 
-        lolunit_assert_equal(tree.Insert(10, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), -1);
 
-        lolunit_assert_equal(tree.Insert(30, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(40, 1), true);
+        lolunit_assert_equal(tree.insert(40, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(50, 1), true);
+        lolunit_assert_equal(tree.insert(50, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Erase(30), true);
-        lolunit_assert_equal(tree.Exists(40), true);
-        lolunit_assert_equal(tree.Exists(50), true);
+        lolunit_assert_equal(tree.erase(30), true);
+        lolunit_assert_equal(tree.exists(40), true);
+        lolunit_assert_equal(tree.exists(50), true);
     }
 
 
@@ -152,45 +154,45 @@ lolunit_declare_fixture(AvlTreeTest)
     {
         test_tree tree;
 
-        lolunit_assert_equal(tree.Insert(10, 1), true);
+        lolunit_assert_equal(tree.insert(10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(20, 1), true);
+        lolunit_assert_equal(tree.insert(20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(30, 1), true);
+        lolunit_assert_equal(tree.insert(30, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(00, 1), true);
+        lolunit_assert_equal(tree.insert(0, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), -1);
 
-        lolunit_assert_equal(tree.Insert(-10, 1), true);
+        lolunit_assert_equal(tree.insert(-10, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), -1);
 
-        lolunit_assert_equal(tree.Insert(-20, 1), true);
+        lolunit_assert_equal(tree.insert(-20, 1), true);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(-20, 1), false);
+        lolunit_assert_equal(tree.insert(-20, 1), false);
         lolunit_assert_equal(tree.GetRootBalance(), 0);
 
-        lolunit_assert_equal(tree.Insert(11, 2), true);
+        lolunit_assert_equal(tree.insert(11, 2), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
-        lolunit_assert_equal(tree.Insert(13, 3), true);
+        lolunit_assert_equal(tree.insert(13, 3), true);
         lolunit_assert_equal(tree.GetRootBalance(), 1);
 
         int * value_ptr = nullptr;
 
-        lolunit_assert_equal(tree.TryGetValue(-10, value_ptr), true);
+        lolunit_assert_equal(tree.try_get(-10, value_ptr), true);
         lolunit_assert_equal(*value_ptr, 1);
 
-        lolunit_assert_equal(tree.TryGetValue(11, value_ptr), true);
+        lolunit_assert_equal(tree.try_get(11, value_ptr), true);
         lolunit_assert_equal(*value_ptr, 2);
 
-        lolunit_assert_equal(tree.TryGetValue(13, value_ptr), true);
+        lolunit_assert_equal(tree.try_get(13, value_ptr), true);
         lolunit_assert_equal(*value_ptr, 3);
 
-        lolunit_assert_equal(tree.TryGetValue(67, value_ptr), false);
+        lolunit_assert_equal(tree.try_get(67, value_ptr), false);
         lolunit_assert_equal(*value_ptr, 3);
     }
 
@@ -199,7 +201,7 @@ lolunit_declare_fixture(AvlTreeTest)
         test_tree tree;
 
         for (int i = 1 ; i < 100 ; ++i)
-            tree.Insert(i, 2 * i + i % 3);
+            tree.insert(i, 2 * i + i % 3);
 
         int tmp = 0;
 
@@ -218,7 +220,7 @@ lolunit_declare_fixture(AvlTreeTest)
         test_tree tree;
 
         for (int i = 1 ; i < 100 ; ++i)
-            tree.Insert(i, 2 * i + i % 3);
+            tree.insert(i, 2 * i + i % 3);
 
         test_tree other = tree;
 
@@ -239,10 +241,10 @@ lolunit_declare_fixture(AvlTreeTest)
         avl_tree<int, int> test1, test2;
 
         for (int i = 0 ; i < 10 ; ++i)
-            test1.Insert(i, 2*i);
+            test1.insert(i, 2*i);
 
         for (int i = 10 ; i < 15 ; ++i)
-            test2.Insert(i, 3*i);
+            test2.insert(i, 3*i);
 
         lolunit_assert_equal(test1.GetCount(), 10);
         lolunit_assert_equal(test2.GetCount(), 5);
