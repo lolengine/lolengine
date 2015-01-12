@@ -13,32 +13,34 @@
 #pragma once
 
 //
-// The RemezSolver class
-// ---------------------
+// The remez_solver class
+// ----------------------
 //
 
 #include <cstdio>
 
 #include "expression.h"
 
-class RemezSolver
+class remez_solver
 {
 public:
-    RemezSolver(int order, int decimals);
+    remez_solver(int order, int decimals);
 
-    void Run(lol::real a, lol::real b,
+    void run(lol::real a, lol::real b,
              char const *func, char const *weight = nullptr);
 
 private:
-    void Init();
-    void FindZeroes();
-    lol::real FindExtrema();
-    void Step();
-    void PrintPoly();
+    void remez_init();
+    void remez_step();
 
-    lol::real EvalEstimate(lol::real const &x);
-    lol::real EvalFunc(lol::real const &x);
-    lol::real EvalWeight(lol::real const &x);
+    void find_zeroes();
+    void find_extrema();
+
+    void print_poly();
+
+    lol::real eval_estimate(lol::real const &x);
+    lol::real eval_func(lol::real const &x);
+    lol::real eval_weight(lol::real const &x);
 
 private:
     /* User-defined parameters */
@@ -52,7 +54,7 @@ private:
     lol::array<lol::real> m_zeroes;
     lol::array<lol::real> m_control;
 
-    lol::real m_k1, m_k2, m_epsilon;
+    lol::real m_k1, m_k2, m_epsilon, m_error;
 
     /* Statistics */
     float m_stats_cheby;

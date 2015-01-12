@@ -81,8 +81,8 @@ int main(int argc, char **argv)
         FAIL();
     }
 
-    RemezSolver solver(degree + 1, 20);
-    solver.Run(xmin, xmax, f, g);
+    remez_solver solver(degree + 1, 20);
+    solver.run(xmin, xmax, f, g);
 
     return 0;
 }
