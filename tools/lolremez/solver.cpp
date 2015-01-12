@@ -1,11 +1,13 @@
 //
-// LolRemez - Remez algorithm implementation
+//  LolRemez - Remez algorithm implementation
 //
-// Copyright: (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -26,18 +28,23 @@ using lol::real;
 
 RemezSolver::RemezSolver(int order, int decimals)
   : m_order(order),
-    m_decimals(decimals)
+    m_decimals(decimals),
+    m_has_weight(false)
 {
 }
 
-void RemezSolver::Run(real a, real b,
-                      RemezSolver::RealFunc *func,
-                      RemezSolver::RealFunc *weight)
+void RemezSolver::Run(real a, real b, char const *func, char const *weight)
 {
     using std::printf;
 
-    m_func = func;
-    m_weight = weight;
+    m_func.parse(func);
+
+    if (weight)
+    {
+        m_weight.parse(weight);
+        m_has_weight = true;
+    }
+
     m_k1 = (b + a) / 2;
     m_k2 = (b - a) / 2;
     m_epsilon = pow((real)10, (real)-(m_decimals + 2));
@@ -303,7 +310,7 @@ real RemezSolver::EvalEstimate(real const &x)
 real RemezSolver::EvalFunc(real const &x)
 {
     Timer t;
-    real ret = m_func(x * m_k2 + m_k1);
+    real ret = m_func.eval(x * m_k2 + m_k1);
     m_stats_func += t.Get();
     return ret;
 }
@@ -311,7 +318,7 @@ real RemezSolver::EvalFunc(real const &x)
 real RemezSolver::EvalWeight(real const &x)
 {
     Timer t;
-    real ret = m_weight ? m_weight(x * m_k2 + m_k1) : real(1);
+    real ret = m_has_weight ? m_weight.eval(x * m_k2 + m_k1) : real(1);
     m_stats_weight += t.Get();
     return ret;
 }
