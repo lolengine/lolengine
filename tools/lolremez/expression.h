@@ -226,21 +226,32 @@ private:
 
     struct r_expr;
 
-    // Rule for unary function calls
+    // r_ <- <blank> *
+    struct _ : star<space> {};
+
+    // r_call_unary <- <unary_op> "(" r_expr ")"
     template<op OP>
     struct r_call_unary : ifapply<seq<r_call_string<OP>,
+                                      _,
                                       one<'('>,
+                                      _,
                                       r_expr,
+                                      _,
                                       one<')'>>,
                                   do_op<OP>> {};
 
-    // Rule for binary function calls
+    // r_call_binary <- <binary_op> "(" r_expr "," r_expr ")"
     template<op OP>
     struct r_call_binary : ifapply<seq<r_call_string<OP>,
+                                       _,
                                        one<'('>,
+                                       _,
                                        r_expr,
+                                       _,
                                        one<','>,
+                                       _,
                                        r_expr,
+                                       _,
                                        one<')'>>,
                                    do_op<OP>> {};
 
@@ -250,8 +261,7 @@ private:
     // r_var <- "x"
     struct r_var : ifapply<one<'x'>, do_op<op::x>> {};
 
-    // r_call <- <unary_op> "(" r_expr ")"
-    //         / <binary_op> "(" r_expr "," r_expr ")"
+    // r_call <- r_call_unary / r_call_binary
     struct r_call : sor<r_call_unary<op::sqrt>,
                         r_call_unary<op::cbrt>,
                         r_call_unary<op::exp>,
@@ -274,7 +284,11 @@ private:
                         r_call_binary<op::max>> {};
 
     // r_parentheses <- "(" r_expr ")"
-    struct r_parentheses : seq<one<'('>, r_expr, one<')'>> {};
+    struct r_parentheses : seq<one<'('>,
+                               _,
+                               r_expr,
+                               _,
+                               one<')'>> {};
 
     // r_terminal <- r_call / r_var / r_constant / r_parentheses
     struct r_terminal : sor<r_call,
@@ -284,7 +298,9 @@ private:
 
     // r_exponent <- ( "^" | "**" ) r_terminal
     // r_factor <- r_terminal ( r_exponent ) *
-    struct r_exponent : ifapply<seq<sor<one<'^'>, string<'*', '*'>>,
+    struct r_exponent : ifapply<seq<_,
+                                    sor<one<'^'>, string<'*', '*'>>,
+                                    _,
                                     r_terminal>, do_op<op::pow>> {};
     struct r_factor : seq<r_terminal,
                           star<r_exponent>> {};
@@ -292,21 +308,21 @@ private:
     // r_mul <- "*" r_factor
     // r_div <- "/" r_factor
     // term <- r_factor ( r_mul / r_div ) *
-    struct r_mul : ifapply<seq<one<'*'>, r_factor>, do_op<op::mul>> {};
-    struct r_div : ifapply<seq<one<'/'>, r_factor>, do_op<op::div>> {};
+    struct r_mul : ifapply<seq<_, one<'*'>, _, r_factor>, do_op<op::mul>> {};
+    struct r_div : ifapply<seq<_, one<'/'>, _, r_factor>, do_op<op::div>> {};
     struct r_term : seq<r_factor,
                         star<sor<r_mul, r_div>>> {};
 
     // add <- "+" r_term
     // sub <- "-" r_term
     // r_expr <- r_term ( add / sub ) *
-    struct r_add : ifapply<seq<one<'+'>, r_term>, do_op<op::add>> {};
-    struct r_sub : ifapply<seq<one<'-'>, r_term>, do_op<op::sub>> {};
+    struct r_add : ifapply<seq<_, one<'+'>, _, r_term>, do_op<op::add>> {};
+    struct r_sub : ifapply<seq<_, one<'-'>, _, r_term>, do_op<op::sub>> {};
     struct r_expr : seq<r_term,
                         star<sor<r_add, r_sub>>> {};
 
     // stmt <- r_expr <end>
-    struct r_stmt : ifapply<seq<r_expr, eof>, do_success> {};
+    struct r_stmt : ifapply<seq<_, r_expr, _, eof>, do_success> {};
 };
 
 } /* namespace grammar */

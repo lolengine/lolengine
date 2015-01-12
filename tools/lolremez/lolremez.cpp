@@ -28,9 +28,11 @@ void FAIL()
 {
     printf("Usage:\n");
     printf("  lolremez [-d degree] [-i xmin xmax] x-expression [x-error]\n");
+    printf("\n");
     printf("Example:\n");
     printf("  lolremez -d 4 -i -1 1 \"atan(exp(1+x))\"\n");
     printf("  lolremez -d 4 -i -1 1 \"atan(exp(1+x))\" \"exp(1+x)\"\n");
+    printf("\n");
 
     exit(EXIT_FAILURE);
 }
