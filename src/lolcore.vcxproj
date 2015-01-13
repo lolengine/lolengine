@@ -101,7 +101,6 @@
     <ClCompile Include="debug\stats.cpp" />
     <ClCompile Include="dict.cpp" />
     <ClCompile Include="easymesh\csgbsp.cpp" />
-    <ClCompile Include="easymesh\easymesh-compiler.cpp" />
     <ClCompile Include="easymesh\easymesh.cpp" />
     <ClCompile Include="easymesh\easymeshbuild.cpp" />
     <ClCompile Include="easymesh\easymeshrender.cpp" />
@@ -110,13 +109,8 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="forge.cpp" />
-    <ClCompile Include="generated\easymesh-parser.cpp" />
-    <ClCompile Include="generated\easymesh-scanner.cpp" />
-    <ClCompile Include="generated\lolfx-parser.cpp" />
-    <ClCompile Include="generated\lolfx-scanner.cpp" />
     <ClCompile Include="gpu\framebuffer.cpp" />
     <ClCompile Include="gpu\indexbuffer.cpp" />
-    <ClCompile Include="gpu\lolfx-compiler.cpp" />
     <ClCompile Include="gpu\lolfx.cpp" />
     <ClCompile Include="gpu\rendercontext.cpp" />
     <ClCompile Include="gpu\renderer.cpp" />
@@ -239,7 +233,6 @@
     <ClInclude Include="debug\stats.h" />
     <ClInclude Include="dict.h" />
     <ClInclude Include="easymesh\csgbsp.h" />
-    <ClInclude Include="easymesh\easymesh-compiler.h" />
     <ClInclude Include="easymesh\easymesh.h" />
     <ClInclude Include="easymesh\easymeshbuild.h" />
     <ClInclude Include="easymesh\easymeshrender.h" />
@@ -248,12 +241,6 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="forge.h" />
-    <ClInclude Include="generated\easymesh-parser.h" />
-    <ClInclude Include="generated\location.hh" />
-    <ClInclude Include="generated\lolfx-parser.h" />
-    <ClInclude Include="generated\position.hh" />
-    <ClInclude Include="generated\stack.hh" />
-    <ClInclude Include="gpu\lolfx-compiler.h" />
     <ClInclude Include="gradient.h" />
     <ClInclude Include="image\image-private.h" />
     <ClInclude Include="input\controller.h" />
@@ -406,10 +393,6 @@
     <LolFxCompile Include="gradient.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="easymesh\easymesh-parser.y" />
-    <None Include="easymesh\easymesh-scanner.l" />
-    <None Include="gpu\lolfx-parser.y" />
-    <None Include="gpu\lolfx-scanner.l" />
     <None Include="Makefile.am" />
   </ItemGroup>
   <ItemGroup>

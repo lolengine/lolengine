@@ -13,9 +13,6 @@
     <Filter Include="easymesh">
       <UniqueIdentifier>{07117029-d79d-4d59-beec-691b00a97c8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="generated">
-      <UniqueIdentifier>{8d536fa6-9ef8-4bdb-b945-48fe4549e8ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="gpu">
       <UniqueIdentifier>{ec9b94fc-c716-4ef2-9c3b-c7f3447574b0}</UniqueIdentifier>
     </Filter>
@@ -269,24 +266,6 @@
     </ClCompile>
     <ClCompile Include="easymesh\easymesh.cpp">
       <Filter>easymesh</Filter>
-    </ClCompile>
-    <ClCompile Include="easymesh\easymesh-compiler.cpp">
-      <Filter>easymesh</Filter>
-    </ClCompile>
-    <ClCompile Include="generated\easymesh-parser.cpp">
-      <Filter>generated</Filter>
-    </ClCompile>
-    <ClCompile Include="generated\easymesh-scanner.cpp">
-      <Filter>generated</Filter>
-    </ClCompile>
-    <ClCompile Include="generated\lolfx-parser.cpp">
-      <Filter>generated</Filter>
-    </ClCompile>
-    <ClCompile Include="generated\lolfx-scanner.cpp">
-      <Filter>generated</Filter>
-    </ClCompile>
-    <ClCompile Include="gpu\lolfx-compiler.cpp">
-      <Filter>gpu</Filter>
     </ClCompile>
     <ClCompile Include="gpu\lolfx.cpp">
       <Filter>gpu</Filter>
@@ -591,29 +570,8 @@
     <ClInclude Include="world.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="generated\position.hh">
-      <Filter>generated</Filter>
-    </ClInclude>
-    <ClInclude Include="generated\location.hh">
-      <Filter>generated</Filter>
-    </ClInclude>
-    <ClInclude Include="generated\stack.hh">
-      <Filter>generated</Filter>
-    </ClInclude>
     <ClInclude Include="easymesh\easymesh.h">
       <Filter>easymesh</Filter>
-    </ClInclude>
-    <ClInclude Include="easymesh\easymesh-compiler.h">
-      <Filter>easymesh</Filter>
-    </ClInclude>
-    <ClInclude Include="generated\easymesh-parser.h">
-      <Filter>generated</Filter>
-    </ClInclude>
-    <ClInclude Include="gpu\lolfx-compiler.h">
-      <Filter>gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="generated\lolfx-parser.h">
-      <Filter>gpu</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>
@@ -821,18 +779,6 @@
     </LolFxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="easymesh\easymesh-parser.y">
-      <Filter>easymesh</Filter>
-    </None>
-    <None Include="easymesh\easymesh-scanner.l">
-      <Filter>easymesh</Filter>
-    </None>
-    <None Include="gpu\lolfx-scanner.l">
-      <Filter>gpu</Filter>
-    </None>
-    <None Include="gpu\lolfx-parser.y">
-      <Filter>gpu</Filter>
-    </None>
     <None Include="Makefile.am" />
   </ItemGroup>
 </Project>
