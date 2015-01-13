@@ -35,8 +35,6 @@ remez_solver::remez_solver(int order, int decimals)
 
 void remez_solver::run(real a, real b, char const *func, char const *weight)
 {
-    using std::printf;
-
     m_func.parse(func);
 
     if (weight)
@@ -122,6 +120,8 @@ void remez_solver::remez_init()
  */
 void remez_solver::remez_step()
 {
+    Timer t;
+
     /* Pick up x_i where error will be 0 and compute f(x_i) */
     array<real> fxn;
     for (int i = 0; i < m_order + 2; i++)
@@ -162,6 +162,9 @@ void remez_solver::remez_step()
     real error = 0;
     for (int i = 0; i < m_order + 2; i++)
         error += system[m_order + 1][i] * fxn[i];
+
+    using std::printf;
+    printf(" -:- timing for inversion: %f ms\n", t.Get() * 1000.f);
 }
 
 /*
@@ -188,8 +191,8 @@ void remez_solver::find_zeroes()
         static real zero = (real)0;
         while (fabs(a.x - b.x) > limit)
         {
-            real t = abs(b.err) / (abs(a.err) + abs(b.err));
-            real newc = b.x + t * (a.x - b.x);
+            real s = abs(b.err) / (abs(a.err) + abs(b.err));
+            real newc = b.x + s * (a.x - b.x);
 
             /* If the third point didn't change since last iteration,
              * we may be at an inflection point. Use the midpoint to get
@@ -210,6 +213,7 @@ void remez_solver::find_zeroes()
         m_zeroes[i] = c.x;
     }
 
+    using std::printf;
     printf(" -:- timing for zeroes: %f ms\n", t.Get() * 1000.f);
 }
 
@@ -225,8 +229,6 @@ void remez_solver::find_zeroes()
 void remez_solver::find_extrema()
 {
     Timer t;
-
-    using std::printf;
 
     m_control[0] = -1;
     m_control[m_order + 1] = 1;
@@ -276,6 +278,7 @@ void remez_solver::find_extrema()
         m_control[i] = c.x;
     }
 
+    using std::printf;
     printf(" -:- timing for extrema: %f ms\n", t.Get() * 1000.f);
     printf(" -:- error: ");
     m_error.print(m_decimals);
@@ -284,14 +287,13 @@ void remez_solver::find_extrema()
 
 void remez_solver::print_poly()
 {
-    using std::printf;
-
     /* Transform our polynomial in the [-1..1] range into a polynomial
      * in the [a..b] range by composing it with q:
      *  q(x) = 2x / (b-a) - (b+a) / (b-a) */
     polynomial<real> q ({ -m_k1 / m_k2, real(1) / m_k2 });
     polynomial<real> r = m_estimate.eval(q);
 
+    using std::printf;
     printf("\n");
     for (int j = 0; j < m_order + 1; j++)
     {
