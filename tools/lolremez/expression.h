@@ -29,7 +29,7 @@ enum class op : uint8_t
     x,
     constant,
     /* Unary functions/operators */
-    plus, minus,
+    plus, minus, abs,
     sqrt, cbrt,
     exp, exp2, log, log2, log10,
     sin, cos, tan,
@@ -44,6 +44,7 @@ enum class op : uint8_t
 // Map operation enums to pegl::string<> rules
 template<op OP> struct r_call_string {};
 
+template<> struct r_call_string<op::abs>   : string<'a','b','s'> {};
 template<> struct r_call_string<op::sqrt>  : string<'s','q','r','t'> {};
 template<> struct r_call_string<op::cbrt>  : string<'c','b','r','t'> {};
 template<> struct r_call_string<op::exp>   : string<'e','x','p'> {};
@@ -78,7 +79,7 @@ struct expression
 
         basic_parse_string<r_stmt>(str, this);
     }
-        
+
     /*
      * Evaluate expression at x
      */
@@ -95,6 +96,9 @@ struct expression
                 break;
             case op::minus:
                 stack.Push(-stack.Pop());
+                break;
+            case op::abs:
+                stack.Push(fabs(stack.Pop()));
                 break;
             case op::sqrt:
                 stack.Push(sqrt(stack.Pop()));
@@ -216,14 +220,6 @@ private:
         }
     };
 
-    struct do_success : action_base<do_success>
-    {
-        static void apply(std::string const &ctx, expression *that)
-        {
-            UNUSED(ctx, that);
-        }
-    };
-
     struct r_expr;
 
     // r_ <- <blank> *
@@ -255,14 +251,21 @@ private:
                                        one<')'>>,
                                    do_op<OP>> {};
 
-    // r_constant <- <digit> +
-    struct r_constant : ifapply<plus<digit>, do_constant> {};
+    // r_constant <- <digit> + ( "." <digit> * ) ? ( [eE] [+-] ? <digit> + ) ?
+    struct r_constant : ifapply<seq<plus<digit>,
+                                    opt<seq<one<'.'>,
+                                            star<digit>>>,
+                                    opt<seq<one<'e', 'E'>,
+                                            opt<one<'+', '-'>>,
+                                            plus<digit>>>>,
+                                do_constant> {};
 
     // r_var <- "x"
     struct r_var : ifapply<one<'x'>, do_op<op::x>> {};
 
     // r_call <- r_call_unary / r_call_binary
-    struct r_call : sor<r_call_unary<op::sqrt>,
+    struct r_call : sor<r_call_unary<op::abs>,
+                        r_call_unary<op::sqrt>,
                         r_call_unary<op::cbrt>,
                         r_call_unary<op::exp>,
                         r_call_unary<op::exp2>,
@@ -296,13 +299,20 @@ private:
                             r_constant,
                             r_parentheses> {};
 
-    // r_exponent <- ( "^" | "**" ) r_terminal
-    // r_factor <- r_terminal ( r_exponent ) *
+    // r_signed <- "-" r_signed / "+" r_signed / r_terminal
+    struct r_signed : sor<ifapply<seq<one<'-'>, _, r_signed>,
+                                  do_op<op::minus>>,
+                          seq<one<'+'>, _, r_signed>,
+                          r_terminal> {};
+
+    // r_exponent <- ( "^" / "**" ) r_signed
     struct r_exponent : ifapply<seq<_,
                                     sor<one<'^'>, string<'*', '*'>>,
                                     _,
-                                    r_terminal>, do_op<op::pow>> {};
-    struct r_factor : seq<r_terminal,
+                                    r_signed>, do_op<op::pow>> {};
+
+    // r_factor <- r_signed ( r_exponent ) *
+    struct r_factor : seq<r_signed,
                           star<r_exponent>> {};
 
     // r_mul <- "*" r_factor
@@ -322,7 +332,7 @@ private:
                         star<sor<r_add, r_sub>>> {};
 
     // stmt <- r_expr <end>
-    struct r_stmt : ifapply<seq<_, r_expr, _, eof>, do_success> {};
+    struct r_stmt : seq<_, r_expr, _, eof> {};
 };
 
 } /* namespace grammar */
