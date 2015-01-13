@@ -1,7 +1,7 @@
 //
 //  LolRemez - Remez algorithm implementation
 //
-//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -317,21 +317,21 @@ private:
 
     // r_mul <- "*" r_factor
     // r_div <- "/" r_factor
-    // term <- r_factor ( r_mul / r_div ) *
+    // r_term <- r_factor ( r_mul / r_div ) *
     struct r_mul : ifapply<seq<_, one<'*'>, _, r_factor>, do_op<op::mul>> {};
     struct r_div : ifapply<seq<_, one<'/'>, _, r_factor>, do_op<op::div>> {};
     struct r_term : seq<r_factor,
                         star<sor<r_mul, r_div>>> {};
 
-    // add <- "+" r_term
-    // sub <- "-" r_term
-    // r_expr <- r_term ( add / sub ) *
+    // r_add <- "+" r_term
+    // r_sub <- "-" r_term
+    // r_expr <- r_term ( r_add / r_sub ) *
     struct r_add : ifapply<seq<_, one<'+'>, _, r_term>, do_op<op::add>> {};
     struct r_sub : ifapply<seq<_, one<'-'>, _, r_term>, do_op<op::sub>> {};
     struct r_expr : seq<r_term,
                         star<sor<r_add, r_sub>>> {};
 
-    // stmt <- r_expr <end>
+    // r_stmt <- r_expr <end>
     struct r_stmt : seq<_, r_expr, _, eof> {};
 };
 
