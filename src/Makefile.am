@@ -42,7 +42,7 @@ liblolcore_headers = \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
     lol/math/geometry.h lol/math/interp.h lol/math/rand.h lol/math/array2d.h \
     lol/math/array3d.h lol/math/constants.h lol/math/matrix.h lol/math/ops.h \
-    lol/math/transform.h lol/math/polynomial.h \
+    lol/math/transform.h lol/math/polynomial.h lol/math/bigint.h \
     lol/math/noise/gradient.h lol/math/noise/perlin.h \
     lol/math/noise/simplex.h \
     \

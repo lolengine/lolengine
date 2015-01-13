@@ -40,6 +40,7 @@
     <ClCompile Include="math\array3d.cpp" />
     <ClCompile Include="math\arraynd.cpp" />
     <ClCompile Include="math\box.cpp" />
+    <ClCompile Include="math\bigint.cpp" />
     <ClCompile Include="math\cmplx.cpp" />
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\interp.cpp" />
