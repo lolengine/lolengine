@@ -29,11 +29,6 @@
 #   define LOL_FEATURE_THREADS 0
 #endif
 
-#if defined __CELLOS_LV2__
-#   undef LOL_FEATURE_CHEAP_BRANCHES
-#   define LOL_FEATURE_CHEAP_BRANCHES 0
-#endif
-
 /* Use this to disable code that causes compiler crashes. */
 #if defined _MSC_VER
 #   undef LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER

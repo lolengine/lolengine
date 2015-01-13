@@ -47,13 +47,6 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
       GL_LIBS="${GL_LIBS} -lGLESv2 -lEGL -lvcos -lvchiq_arm -lbcm_host"])])
 fi
 
-dnl  Use the PS3 PSGL?
-if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
-  AC_CHECK_HEADERS(PSGL/psgl.h,
-   [ac_cv_my_have_gl="yes"
-    ac_cv_my_stop_looking_for_gl="yes"])
-fi
-
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   PKG_CHECK_MODULES(GLES2, glesv2,
    [ac_cv_my_have_gl="yes"

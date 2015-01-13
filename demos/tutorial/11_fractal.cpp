@@ -63,7 +63,7 @@ public:
             m_deltascale[i] = real("1");
             m_dirty[i] = 2;
         }
-#if defined __CELLOS_LV2__ || defined _XBOX
+#if defined _XBOX
         //m_center = rcmplx(-.22815528839841, -1.11514249704382);
         //m_center = rcmplx(0.001643721971153, 0.822467633298876);
         m_center = rcmplx("-0.65823419062254", "0.50221777363480");
@@ -96,7 +96,7 @@ public:
             uint8_t red = r * 255.99f;
             uint8_t green = g * 255.99f;
             uint8_t blue = b * 255.99f;
-#if defined __CELLOS_LV2__ || defined _XBOX
+#if defined _XBOX
             m_palette.Push(u8vec4(255, red, green, blue));
 #elif defined __native_client__
             m_palette.Push(u8vec4(red, green, blue, 255));
@@ -182,7 +182,7 @@ public:
 
         uint32_t buttons = 0;
         //uint32_t buttons = Input::GetMouseButtons();
-#if !defined __CELLOS_LV2__ && !defined _XBOX
+#if !defined _XBOX
         if (buttons & 0x2)
         {
             if (!m_drag)
@@ -242,7 +242,7 @@ public:
                 zoom = 1e-14 / m_radius;
             }
             m_radius *= zoom;
-#if !defined __CELLOS_LV2__ && !defined _XBOX
+#if !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
             worldmouse = m_center
@@ -421,7 +421,7 @@ public:
             }
             else
             {
-#if defined __CELLOS_LV2__ || defined _XBOX
+#if defined _XBOX
                 *m_pixelstart++ = u8vec4(255, 0, 0, 0);
 #else
                 *m_pixelstart++ = u8vec4(0, 0, 0, 255);
@@ -502,15 +502,9 @@ public:
 
             m_dirty[m_frame]--;
 
-#if defined __CELLOS_LV2__
-            /* glTexSubImage2D is extremely slow on the PS3, to the point
-             * that uploading the whole texture is 40 times faster. */
-            m_texture->SetData(&m_pixels[0]);
-#else
             m_texture->SetSubData(ivec2(0, m_frame * m_size.y / 2),
                                   m_size / 2,
                                   &m_pixels[m_size.x * m_size.y / 4 * m_frame]);
-#endif
         }
 
         m_shader->Bind();

@@ -75,30 +75,6 @@ SUFFIXES += .lolfx
 
 
 #
-# PS3 fself support rules
-#
-
-fself_gen = $(fself_gen_$(V))
-fself_gen_ = $(fself_gen_$(AM_DEFAULT_VERBOSITY))
-fself_gen_0 = echo "  FSELF " $${x}.self;
-fself_gen_1 = echo make_fself $${x}$(EXEEXT) $${x}.self;
-
-all-local: all-local-ps3
-all-local-ps3: $(PROGRAMS) $(noinst_PROGRAMS)
-	@if test -n "$^"; then for x in $(^:%$(EXEEXT)=%); do \
-	  if test x$(MAKE_FSELF) != xno; then \
-	    $(fself_gen) \
-	    make_fself $${x}$(EXEEXT) $${x}.self; \
-	  fi; \
-	done; fi
-
-CLEANFILES += $(PROGRAMS:%$(EXEEXT)=%.self) \
-              $(PROGRAMS:%$(EXEEXT)=%.elf) \
-              $(noinst_PROGRAMS:%$(EXEEXT)=%.self) \
-              $(noinst_PROGRAMS:%$(EXEEXT)=%.elf)
-
-
-#
 # Win32 rules
 #
 

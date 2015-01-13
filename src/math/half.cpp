@@ -10,14 +10,6 @@
 
 #include <lol/engine-internal.h>
 
-#if defined __CELLOS_LV2__
-#   if defined __SNC__
-#       include <ppu_altivec_internals.h>
-#   else
-#       include <altivec.h>
-#   endif
-#endif
-
 namespace lol
 {
 
@@ -244,13 +236,10 @@ size_t half::convert(float *dst, half const *src, size_t nelem)
     for (size_t i = 0; i < nelem; i++)
     {
         union { float f; uint32_t x; } u;
-#if !defined __CELLOS_LV2__
+
         /* This code is really too slow on the PS3, even with the denormal
          * handling stripped off. */
         u.x = half_to_float_nobranch((*src++).bits);
-#else
-        u.x = half_to_float_branch((*src++).bits);
-#endif
         *dst++ = u.f;
     }
 

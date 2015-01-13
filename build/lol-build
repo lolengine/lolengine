@@ -25,7 +25,6 @@
 #  - ios-arm
 #  - osx-amd64
 #  - android-arm
-#  - ps3-ppu
 #  - win*-i386
 #  - win*-amd64
 #  - raspi-arm
@@ -249,9 +248,6 @@ configure()
             # HACK: use clang++ because of a memory leak in llvm-g++.
             do_configure CXX=clang++ CC=clang
             ;;
-        ps3-ppu)
-            PATH="$PATH" do_configure CXX=ppu-lv2-g++ CC=ppu-lv2-gcc ac_cv_exeext=.elf --host=powerpc
-            ;;
         win*-i386|win*-amd64)
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-2.0.3/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-2.0.0/include"
@@ -314,8 +310,6 @@ check()
         android-arm)
             ;;
         raspi-arm)
-            ;;
-        ps3-ppu)
             ;;
         nacl-*)
             ;;

@@ -17,7 +17,7 @@ namespace lol
 {
 
 /*
- * PS3 App implementation class
+ * NaCl App implementation class
  */
 
 class NaClAppData

@@ -49,9 +49,6 @@
 #   if defined __APPLE__ && defined __MACH__
 #       include <OpenGLES/ES2/gl.h>
 #       include <OpenGLES/ES2/glext.h>
-#   elif defined __CELLOS_LV2__
-#       include <PSGL/psgl.h>
-#       include <PSGL/psglu.h>
 #   else
 #       include <GLES2/gl2.h>
 #       include <GLES2/gl2ext.h>

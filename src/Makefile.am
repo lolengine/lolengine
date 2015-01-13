@@ -20,7 +20,6 @@ liblolcore_a_SOURCES = \
     $(liblolcore_headers) \
     $(liblolcore_sources) \
     \
-    $(ps3_sources) \
     $(xbox_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
@@ -144,14 +143,6 @@ nacl_sources = \
     platform/nacl/nacl-module.cpp \
     platform/nacl/opengl_context.cpp platform/nacl/opengl_context.h \
     platform/nacl/opengl_context_ptrs.h
-endif
-
-if USE_PS3
-ps3_sources = \
-    image/codec/ps3-image.cpp \
-    platform/ps3/threadbase.h \
-    platform/ps3/ps3app.cpp platform/ps3/ps3app.h \
-    platform/ps3/ps3input.cpp platform/ps3/ps3input.h
 endif
 
 if USE_X360

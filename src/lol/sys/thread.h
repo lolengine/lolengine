@@ -18,12 +18,7 @@
 // ---------------------
 //
 
-#if defined __CELLOS_LV2__
-#   include "platform/ps3/threadbase.h"
-#else
-#   include "sys/threadbase.h"
-#endif
-
+#include "sys/threadbase.h"
 #include "entity.h"
 
 #include <functional>

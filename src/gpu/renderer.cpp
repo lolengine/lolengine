@@ -799,7 +799,7 @@ void Renderer::SetPolygonMode(PolygonMode mode)
         m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
         break;
     }
-#elif defined __CELLOS_LV2__ || defined GL_VERSION_1_1
+#elif defined GL_VERSION_1_1
     switch (mode)
     {
     case PolygonMode::Point:

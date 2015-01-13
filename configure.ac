@@ -237,45 +237,6 @@ AC_TRY_LINK(
 AC_LANG_POP(C++)
 
 
-dnl  Are we on the PS3?
-ac_cv_my_have_ps3="no"
-AC_CHECK_LIB(sysmodule_stub, cellSysmoduleLoadModule,
- [ac_cv_my_have_ps3="yes"
-  LOL_LIBS="${LOL_LIBS} -lsysmodule_stub -lsysutil_stub -lresc_stub"
-  dnl  For PSGL
-  AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available) # FIXME: hack
-  GL_LIBS="${GL_LIBS} -lPSGL -lgcm_cmd -lgcm_sys_stub"
-  dnl  This is the old way; we now use CELL_SDK instead of CELLSDK
-  if test "x${CELLSDK}" != x -a "x${CELL_SDK}" = x; then
-    CELL_SDK="${CELLSDK}"
-  fi
-  if test "x${enable_debug}" = xyes; then
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/debug"
-  elif test "x${enable_release}" = xyes; then
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/ultra-opt"
-  else
-    GL_LIBS="${GL_LIBS} -L${CELL_SDK}/target/ppu/lib/PSGL/RSX/opt"
-  fi
-  dnl  For the runtime Cg compiler
-  GL_LIBS="${GL_LIBS} -lcgc -lPSGLcgc"
-  dnl  For the PNG decoder
-  LOL_LIBS="${LOL_LIBS} -lpngdec_stub"
-  dnl  For the pad library
-  LOL_LIBS="${LOL_LIBS} -lio_stub -lusbd_stub -lpadfilter"
-  dnl  For the audio library
-  LOL_LIBS="${LOL_LIBS} -laudio_stub -lspurs_stub -lmstreamSPURSMP3"
-  dnl  For the filesystem support
-  LOL_LIBS="${LOL_LIBS} -lfs_stub"
-  dnl  Disable this warning, it's too verbose with vector.h
-  AM_CXXFLAGS="${AM_CXXFLAGS} -Wno-sign-compare"
-  AC_PATH_PROG(MAKE_FSELF, make_fself, no)
-  if test "${MAKE_FSELF}" = "no"; then
-    AC_MSG_ERROR([[Building for PS3 but make_fself not found]])
-  fi],
- [MAKE_FSELF=no])
-AM_CONDITIONAL(USE_PS3, test "${ac_cv_my_have_ps3}" != "no")
-
-
 dnl  Are we building using MinGW?
 LOL_TRY_CXXFLAGS(-mwindows -mwin32,
  [AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"

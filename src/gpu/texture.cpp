@@ -129,11 +129,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
         { 0, 0, 0, 0 }, /* Unknown */
 
         /* FIXME: this is all mixed up for the RGBA/ARGB combinations */
-#if __CELLOS_LV2__
-        { GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
-        { GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 3 },
-        { GL_ARGB_SCE, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, 4 },
-#elif defined __native_client__ || defined HAVE_GLES_2X
+#if defined __native_client__ || defined HAVE_GLES_2X
         { GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
         { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },
@@ -158,12 +154,6 @@ Texture::Texture(ivec2 size, PixelFormat format)
     glGenTextures(1, &m_data->m_texture);
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
 
-#   if defined __CELLOS_LV2__
-    /* We need this hint because by default the storage type is
-     * GL_TEXTURE_SWIZZLED_GPU_SCE. */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ALLOCATION_HINT_SCE,
-                    GL_TEXTURE_TILED_GPU_SCE);
-#   endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 #endif
@@ -334,9 +324,6 @@ void Texture::GenerateMipmaps()
     m_data->m_texture->->GenerateMipSubLevels();
 #elif defined _XBOX
     /* FIXME: No direct mipmap generation support on X360 */
-#elif defined __CELLOS_LV2__
-    glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
-    glGenerateMipmapOES(GL_TEXTURE_2D);
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     glGenerateMipmap(GL_TEXTURE_2D);

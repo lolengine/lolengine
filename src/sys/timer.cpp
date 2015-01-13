@@ -25,10 +25,6 @@
 #elif _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#elif __CELLOS_LV2__
-#   include <sys/sys_time.h>
-#   include <sys/timer.h>
-#   include <sys/time_util.h>
 #elif HAVE_SDL_SDL_H
 #   include <SDL/SDL.h>
 #else
@@ -108,35 +104,6 @@ private:
     }
 
     LARGE_INTEGER m_cycles;
-
-#elif __CELLOS_LV2__
-    inline void Init()
-    {
-        m_cycles = 0;
-    }
-
-    float GetSeconds(bool reset)
-    {
-        static float secs_per_cycle = GetSecondsPerCycle();
-        uint64_t cycles, cycles0 = m_cycles;
-        SYS_TIMEBASE_GET(cycles);
-        if (reset)
-            m_cycles = cycles;
-        return secs_per_cycle * (cycles - cycles0);
-    }
-
-    static void WaitSeconds(float seconds)
-    {
-        if (seconds > 0.0f)
-            sys_timer_usleep((int)(seconds * 1e6f));
-    }
-
-    static float GetSecondsPerCycle()
-    {
-        return 1.f / sys_time_get_timebase_frequency();
-    }
-
-    uint64_t m_cycles;
 
 #else
     inline void Init()

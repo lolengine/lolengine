@@ -270,7 +270,7 @@ void VertexDeclaration::Unbind()
         }
     /* "NULL is an invalid input to SetVertexDeclaration" (DX9 guide), so
      * we just don't touch the current vertex declaration. */
-#elif !defined __CELLOS_LV2__
+#else
     for (int i = 0; i < m_count; i++)
     {
         if (m_streams[i].reg >= 0)
@@ -283,12 +283,6 @@ void VertexDeclaration::Unbind()
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-#else
-    /* Or even: */
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
 #endif
 }
 
@@ -361,27 +355,8 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         uint32_t index = attribs[n].m_flags & 0xffff;
         uint32_t reg = attribs[n].m_flags >> 32;
 
-#   if !defined __CELLOS_LV2__
         if (reg != 0xffffffffu)
             glEnableVertexAttribArray((GLint)reg);
-#   else
-        switch (usage.ToScalar())
-        {
-        case VertexUsage::Position:
-            glEnableClientState(GL_VERTEX_ARRAY);
-            break;
-        case VertexUsage::TexCoord:
-        case VertexUsage::TexCoordExt:
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            break;
-        case VertexUsage::Normal:
-            glEnableClientState(GL_NORMAL_ARRAY);
-            break;
-        case VertexUsage::Color:
-            glEnableClientState(GL_COLOR_ARRAY);
-            break;
-        }
-#   endif
 
         /* We need to parse the whole vertex declaration to retrieve
          * the information. It sucks. */
@@ -446,7 +421,6 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
             type_index = 0;
 
 
-#   if !defined __CELLOS_LV2__
         if (reg != 0xffffffff)
         {
             if (tlut[type_index].type == GL_FLOAT
@@ -476,31 +450,6 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
             }
 #       endif
         }
-#   else
-        switch (usage)
-        {
-        case VertexUsage::Position:
-            glVertexPointer(tlut[type_index].size, tlut[type_index].type,
-                            stride, (GLvoid const *)(uintptr_t)offset);
-            break;
-        case VertexUsage::TexCoord:
-        case VertexUsage::TexCoordExt:
-            glTexCoordPointer(tlut[type_index].size, tlut[type_index].type,
-                              stride, (GLvoid const *)(uintptr_t)offset);
-            break;
-        case VertexUsage::Normal:
-            glNormalPointer(tlut[type_index].type,
-                            stride, (GLvoid const *)(uintptr_t)offset);
-            break;
-        case VertexUsage::Color:
-            glColorPointer(tlut[type_index].size, tlut[type_index].type,
-                           stride, (GLvoid const *)(uintptr_t)offset);
-            break;
-        default:
-            Log::Error("vertex usage %d is not supported yet\n", usage);
-            break;
-        }
-#   endif
     }
 #endif
 }

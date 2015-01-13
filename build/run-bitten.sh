@@ -162,21 +162,6 @@ fi
 append ""
 
 #
-# PS3 development kit
-#
-
-append "[ps3sdk]"
-# Try to "detect" the SNC compiler on Windows
-if [ -n "$SN_PS3_PATH" ]; then
-    append "version = 410"
-fi
-# The setup is easier to detect on Linux
-if [ -f "$CELLSDK/version-SDK" ]; then
-    append "version = $(cat "$CELLSDK/version-SDK")"
-fi
-append ""
-
-#
 # mingw32 / mingw-w64
 #
 

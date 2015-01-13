@@ -95,13 +95,11 @@ private:
     D3DVertexShader *vert_shader;
     D3DPixelShader *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
-#elif !defined __CELLOS_LV2__
+#else
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
     map<uint64_t, GLint> attrib_locations;
     map<uint64_t, bool> attrib_errors;
-#else
-    CGprogram vert_id, frag_id;
 #endif
     uint32_t vert_crc, frag_crc;
 
@@ -249,16 +247,12 @@ Shader::Shader(String const &name,
 #endif
         { nullptr, nullptr }
     };
-#elif !defined __CELLOS_LV2__
+#else
     char errbuf[4096];
     String shader_code;
     GLchar const *gl_code;
     GLint status;
     GLsizei len;
-#else
-    /* Initialise the runtime shader compiler. FIXME: this needs only
-     * to be done once. */
-    cgRTCgcInit();
 #endif
 
     /* Compile vertex shader */
@@ -282,7 +276,7 @@ Shader::Shader(String const &name,
     data->m_dev->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
                                     &data->vert_shader);
     shader_code->Release();
-#elif !defined __CELLOS_LV2__
+#else
     shader_code = ShaderData::Patch(vert, ShaderType::Vertex);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     gl_code = shader_code.C();
@@ -302,15 +296,6 @@ Shader::Shader(String const &name,
         Log::Debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
         Log::Debug("shader source:\n%s\n", shader_code.C());
     }
-#else
-    data->vert_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, vert,
-                                    cgGLGetLatestProfile(CG_GL_VERTEX),
-                                    nullptr, nullptr);
-    if (data->vert_id == nullptr)
-    {
-        Log::Error("failed to compile vertex shader %s\n", name.C());
-        Log::Error("shader source:\n%s\n", vert);
-    }
 #endif
 
     /* Compile fragment shader */
@@ -328,7 +313,7 @@ Shader::Shader(String const &name,
     data->m_dev->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
                                    &data->frag_shader);
     shader_code->Release();
-#elif !defined __CELLOS_LV2__
+#else
     shader_code = ShaderData::Patch(frag, ShaderType::Fragment);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     gl_code = shader_code.C();
@@ -348,15 +333,6 @@ Shader::Shader(String const &name,
         Log::Debug("compile log for fragment shader %s: %s\n",
                    name.C(), errbuf);
         Log::Debug("shader source:\n%s\n", shader_code.C());
-    }
-#else
-    data->frag_id = cgCreateProgram(cgCreateContext(), CG_SOURCE, frag,
-                                    cgGLGetLatestProfile(CG_GL_FRAGMENT),
-                                    nullptr, nullptr);
-    if (data->frag_id == nullptr)
-    {
-        Log::Error("failed to compile fragment shader %s\n", name.C());
-        Log::Error("shader source:\n%s\n", frag);
     }
 #endif
 
@@ -379,7 +355,7 @@ Shader::Shader(String const &name,
         D3DXHANDLE h = data->vert_table->GetConstant(nullptr, i);
         data->frag_table->GetConstantDesc(h, &cdesc, &count);
     }
-#elif !defined __CELLOS_LV2__
+#else
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -466,12 +442,7 @@ Shader::Shader(String const &name,
 
 int Shader::GetAttribCount() const
 {
-#if !defined __CELLOS_LV2__
     return data->attrib_locations.count();
-#else
-    // TODO
-    return 0;
-#endif
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
@@ -480,7 +451,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     ret.m_flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
     ret.m_flags |= (uint64_t)(uint16_t)index;
 #if defined USE_D3D9 || defined _XBOX
-#elif !defined __CELLOS_LV2__
+#else
     GLint l = -1;
 
     if (!data->attrib_locations.try_get(ret.m_flags, l))
@@ -494,8 +465,6 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
         }
     }
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
-#else
-    /* FIXME: can we do this at all on the PS3? */
 #endif
     return ret;
 }
@@ -529,12 +498,9 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
         ret.vert = cdesc.RegisterIndex;
         ret.flags |= 2;
     }
-#elif !defined __CELLOS_LV2__
+#else
     ret.frag = (uintptr_t)glGetUniformLocation(data->prog_id, uni);
     ret.vert = 0;
-#else
-    ret.frag = (uintptr_t)cgGetNamedParameter(data->frag_id, uni);
-    ret.vert = (uintptr_t)cgGetNamedParameter(data->vert_id, uni);
 #endif
     return ret;
 }
@@ -547,10 +513,8 @@ void Shader::SetUniform(ShaderUniform const &uni, int i)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(i, 0, 0, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform1i(uni.frag, i);
 #else
-    /* FIXME: does this exist at all? cgGLSetParameter1i doesn't. */
+    glUniform1i(uni.frag, i);
 #endif
 }
 
@@ -558,10 +522,8 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(v, 0, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform2i(uni.frag, v.x, v.y);
 #else
-    /* FIXME: does this exist at all? */
+    glUniform2i(uni.frag, v.x, v.y);
 #endif
 }
 
@@ -569,10 +531,8 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(v, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform3i(uni.frag, v.x, v.y, v.z);
 #else
-    /* FIXME: does this exist at all? */
+    glUniform3i(uni.frag, v.x, v.y, v.z);
 #endif
 }
 
@@ -583,10 +543,8 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
         data->m_dev->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
-#elif !defined __CELLOS_LV2__
-    glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
 #else
-    /* FIXME: does this exist at all? */
+    glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
 #endif
 }
 
@@ -594,13 +552,8 @@ void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(f, 0, 0, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform1f(uni.frag, f);
 #else
-    if (uni.frag)
-        cgGLSetParameter1f((CGparameter)uni.frag, f);
-    if (uni.vert)
-        cgGLSetParameter1f((CGparameter)uni.vert, f);
+    glUniform1f(uni.frag, f);
 #endif
 }
 
@@ -608,13 +561,8 @@ void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform2fv(uni.frag, 1, &v[0]);
 #else
-    if (uni.frag)
-        cgGLSetParameter2fv((CGparameter)uni.frag, &v[0]);
-    if (uni.vert)
-        cgGLSetParameter2fv((CGparameter)uni.vert, &v[0]);
+    glUniform2fv(uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -622,13 +570,8 @@ void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 {
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0));
-#elif !defined __CELLOS_LV2__
-    glUniform3fv(uni.frag, 1, &v[0]);
 #else
-    if (uni.frag)
-        cgGLSetParameter3fv((CGparameter)uni.frag, &v[0]);
-    if (uni.vert)
-        cgGLSetParameter3fv((CGparameter)uni.vert, &v[0]);
+    glUniform3fv(uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -639,13 +582,8 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
-#elif !defined __CELLOS_LV2__
-    glUniform4fv(uni.frag, 1, &v[0]);
 #else
-    if (uni.frag)
-        cgGLSetParameter4fv((CGparameter)uni.frag, &v[0]);
-    if (uni.vert)
-        cgGLSetParameter4fv((CGparameter)uni.vert, &v[0]);
+    glUniform4fv(uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -657,14 +595,8 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
-#elif !defined __CELLOS_LV2__
-    glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    mat4 tmp(m, 1.0f, 1.0f);
-    if (uni.frag)
-        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
-    if (uni.vert)
-        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
+    glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -678,15 +610,8 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
-#elif !defined __CELLOS_LV2__
-    glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    /* FIXME: check it's the proper way to do this */
-    mat4 tmp(m, 1.0f);
-    if (uni.frag)
-        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
-    if (uni.vert)
-        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
+    glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -697,13 +622,8 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
-#elif !defined __CELLOS_LV2__
-    glUniformMatrix4fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #else
-    if (uni.frag)
-        cgGLSetMatrixParameterfc((CGparameter)uni.frag, &m[0][0]);
-    if (uni.vert)
-        cgGLSetMatrixParameterfc((CGparameter)uni.vert, &m[0][0]);
+    glUniformMatrix4fv(uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -714,13 +634,11 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
     data->m_dev->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
     data->m_dev->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
     data->m_dev->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
-#elif !defined __CELLOS_LV2__
+#else
     glActiveTexture(GL_TEXTURE0 + index);
     //glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, (int)tex.m_flags);
     SetUniform(uni, index);
-#else
-    /* FIXME: unimplemented */
 #endif
 }
 
@@ -739,15 +657,8 @@ void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0], v.Count() / 4);
-#elif !defined __CELLOS_LV2__
-    glUniform1fv(uni.frag, v.Count(), &v[0]);
 #else
-    if (uni.frag)
-        cgGLSetParameterArray1f((CGparameter)uni.frag,
-                                0, v.Count(), &v[0]);
-    if (uni.vert)
-        cgGLSetParameterArray1f((CGparameter)uni.vert,
-                                0, v.Count(), &v[0]);
+    glUniform1fv(uni.frag, v.Count(), &v[0]);
 #endif
 }
 
@@ -762,15 +673,8 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count() / 2);
-#elif !defined __CELLOS_LV2__
-    glUniform2fv(uni.frag, v.Count(), &v[0][0]);
 #else
-    if (uni.frag)
-        cgGLSetParameterArray2f((CGparameter)uni.frag,
-                                0, v.Count(), &v[0][0]);
-    if (uni.vert)
-        cgGLSetParameterArray2f((CGparameter)uni.vert,
-                                0, v.Count(), &v[0][0]);
+    glUniform2fv(uni.frag, v.Count(), &v[0][0]);
 #endif
 }
 
@@ -785,15 +689,8 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
-#elif !defined __CELLOS_LV2__
-    glUniform3fv(uni.frag, v.Count(), &v[0][0]);
 #else
-    if (uni.frag)
-        cgGLSetParameterArray3f((CGparameter)uni.frag,
-                                0, v.Count(), &v[0][0]);
-    if (uni.vert)
-        cgGLSetParameterArray3f((CGparameter)uni.vert,
-                                0, v.Count(), &v[0][0]);
+    glUniform3fv(uni.frag, v.Count(), &v[0][0]);
 #endif
 }
 
@@ -806,15 +703,8 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
-#elif !defined __CELLOS_LV2__
-    glUniform4fv(uni.frag, v.Count(), &v[0][0]);
 #else
-    if (uni.frag)
-        cgGLSetParameterArray4f((CGparameter)uni.frag,
-                                0, v.Count(), &v[0][0]);
-    if (uni.vert)
-        cgGLSetParameterArray4f((CGparameter)uni.vert,
-                                0, v.Count(), &v[0][0]);
+    glUniform4fv(uni.frag, v.Count(), &v[0][0]);
 #endif
 }
 
@@ -824,13 +714,8 @@ void Shader::Bind() const
     HRESULT hr;
     hr = data->m_dev->SetVertexShader(data->vert_shader);
     hr = data->m_dev->SetPixelShader(data->frag_shader);
-#elif !defined __CELLOS_LV2__
-    glUseProgram(data->prog_id);
 #else
-    cgGLEnableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
-    cgGLBindProgram(data->vert_id);
-    cgGLEnableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
-    cgGLBindProgram(data->frag_id);
+    glUseProgram(data->prog_id);
 #endif
 }
 
@@ -840,13 +725,9 @@ void Shader::Unbind() const
     HRESULT hr;
     hr = data->m_dev->SetVertexShader(nullptr);
     hr = data->m_dev->SetPixelShader(nullptr);
-#elif !defined __CELLOS_LV2__
-    /* FIXME: untested */
-    glUseProgram(0);
 #else
     /* FIXME: untested */
-    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_VERTEX));
-    cgGLDisableProfile(cgGLGetLatestProfile(CG_GL_FRAGMENT));
+    glUseProgram(0);
 #endif
 }
 
@@ -857,15 +738,12 @@ Shader::~Shader()
     data->vert_table->Release();
     data->frag_shader->Release();
     data->frag_table->Release();
-#elif !defined __CELLOS_LV2__
+#else
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
-#else
-    cgDestroyProgram(data->vert_id);
-    cgDestroyProgram(data->frag_id);
 #endif
     delete data;
 }
@@ -875,7 +753,7 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
-#if !defined USE_D3D9 && !defined _XBOX && !defined __CELLOS_LV2__
+#if !defined USE_D3D9 && !defined _XBOX
     if (!version)
     {
 #if defined HAVE_GLES_2X

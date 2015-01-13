@@ -10,10 +10,7 @@
 
 #include <lol/engine-internal.h>
 
-#if __CELLOS_LV2__
-#   include <sys/paths.h>
-#   include <cell/cell_fs.h>
-#elif __ANDROID__
+#if __ANDROID__
 #   include <sys/types.h>
 #   include <android/asset_manager_jni.h>
 #endif
@@ -53,9 +50,7 @@ class FileData
         m_type = stream;
         switch (stream.ToScalar())
         {
-#if __CELLOS_LV2__
-        /* FIXME: no modes, no error checking, no nothing */
-#elif __ANDROID__
+#if __ANDROID__
         /* FIXME: no modes, no error checking, no nothing */
 #elif HAVE_STDIO_H
             case StreamType::StdIn:  m_fd = stdin;  break;
@@ -68,13 +63,7 @@ class FileData
     void Open(String const &file, FileAccess mode, bool force_binary)
     {
         m_type = (force_binary) ? (StreamType::FileBinary) : (StreamType::File);
-#if __CELLOS_LV2__
-        String realfile = String(SYS_APP_HOME) + '/' + file;
-        CellFsErrno err = cellFsOpen(realfile.C(), CELL_FS_O_RDONLY,
-                                     &m_fd, nullptr, 0);
-        if (err != CELL_FS_SUCCEEDED)
-            m_fd = -1;
-#elif __ANDROID__
+#if __ANDROID__
         ASSERT(g_assets);
         m_asset = AAssetManager_open(g_assets, file.C(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
@@ -88,9 +77,7 @@ class FileData
 
     inline bool IsValid() const
     {
-#if __CELLOS_LV2__
-        return m_fd > -1;
-#elif __ANDROID__
+#if __ANDROID__
         return !!m_asset;
 #elif HAVE_STDIO_H
         return !!m_fd;
@@ -104,11 +91,7 @@ class FileData
         if (m_type != StreamType::File &&
             m_type != StreamType::FileBinary)
             return;
-#if __CELLOS_LV2__
-        if (m_fd >= 0)
-            cellFsClose(m_fd);
-        m_fd = -1;
-#elif __ANDROID__
+#if __ANDROID__
         if (m_asset)
             AAsset_close(m_asset);
         m_asset = nullptr;
@@ -121,15 +104,7 @@ class FileData
 
     int Read(uint8_t *buf, int count)
     {
-#if __CELLOS_LV2__
-        uint64_t done;
-        CellFsErrno err = cellFsRead(m_fd, buf, count, &done);
-
-        if (err != CELL_FS_SUCCEEDED)
-            return -1;
-
-        return (int)done;
-#elif __ANDROID__
+#if __ANDROID__
         return AAsset_read(m_asset, buf, count);
 #elif HAVE_STDIO_H
         size_t done = fread(buf, 1, count, m_fd);
@@ -165,18 +140,7 @@ class FileData
 
     int Write(uint8_t const *buf, int count)
     {
-#if __CELLOS_LV2__
-/*
-        uint64_t done;
-        CellFsErrno err = cellFsRead(m_fd, buf, count, &done);
-
-        if (err != CELL_FS_SUCCEEDED)
-            return -1;
-
-        return (int)done;
-*/
-        return 0;
-#elif __ANDROID__
+#if __ANDROID__
         //return AAsset_read(m_asset, buf, count);
         return 0;
 #elif HAVE_STDIO_H
@@ -197,9 +161,7 @@ class FileData
 
     long int GetPosFromStart()
     {
-#if __CELLOS_LV2__
-        return 0;
-#elif __ANDROID__
+#if __ANDROID__
         return 0;
 #elif HAVE_STDIO_H
         return ftell(m_fd);
@@ -210,9 +172,7 @@ class FileData
 
     void SetPosFromStart(long int pos)
     {
-#if __CELLOS_LV2__
-        //NOT IMPLEMENTED
-#elif __ANDROID__
+#if __ANDROID__
         //NOT IMPLEMENTED
 #elif HAVE_STDIO_H
         fseek(m_fd, pos, SEEK_SET);
@@ -223,9 +183,7 @@ class FileData
 
     long int GetSize()
     {
-#if __CELLOS_LV2__
-        return 0;
-#elif __ANDROID__
+#if __ANDROID__
         return 0;
 #elif HAVE_STDIO_H
         return m_stat.st_size;
@@ -235,9 +193,7 @@ class FileData
     }
 
 
-#if __CELLOS_LV2__
-    int m_fd;
-#elif __ANDROID__
+#if __ANDROID__
     AAsset *m_asset;
 #elif HAVE_STDIO_H
     FILE *m_fd;
@@ -365,7 +321,7 @@ class DirectoryData
 
     DirectoryData() : m_type(StreamType::File)
     {
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         m_handle = INVALID_HANDLE_VALUE;
@@ -377,7 +333,7 @@ class DirectoryData
     void Open(String const &directory, FileAccess mode)
     {
         m_type = StreamType::File;
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         m_directory = directory;
@@ -397,7 +353,7 @@ class DirectoryData
 
         if (IsValid())
         {
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
             /* FIXME: not implemented */
 #elif defined(_WIN32)
             FindClose(m_handle);
@@ -406,7 +362,7 @@ class DirectoryData
 #endif
         }
 
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         m_handle = INVALID_HANDLE_VALUE;
@@ -420,7 +376,7 @@ class DirectoryData
         if (!IsValid())
             return false;
 
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         String filter = m_directory + String("*");
@@ -456,7 +412,7 @@ class DirectoryData
 
     inline bool IsValid() const
     {
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         return (m_handle != INVALID_HANDLE_VALUE);
@@ -467,7 +423,7 @@ class DirectoryData
 #endif
     }
 
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     HANDLE m_handle;
@@ -590,7 +546,7 @@ String Directory::GetName()
 String Directory::GetCurrent()
 {
     String result;
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     TCHAR buff[MAX_PATH * 2];
@@ -606,7 +562,7 @@ String Directory::GetCurrent()
 //--
 bool Directory::SetCurrent(String directory)
 {
-#if __CELLOS_LV2__ || __ANDROID__
+#if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     String result = directory;
