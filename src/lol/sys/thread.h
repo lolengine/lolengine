@@ -1,11 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -23,27 +26,29 @@
 
 #include "entity.h"
 
+#include <functional>
+
 namespace lol
 {
 
-class Mutex : public MutexBase
+class mutex : public mutex_base
 {
 public:
-    Mutex() : MutexBase() {}
+    mutex() : mutex_base() {}
 };
 
-template<typename T, int N = 128> class Queue : public QueueBase<T, N>
+template<typename T, int N = 128> class queue : public queue_base<T, N>
 {
 public:
-    Queue() : QueueBase<T, N>() {}
+    queue() : queue_base<T, N>() {}
 };
 
 #if LOL_FEATURE_THREADS
-class Thread : ThreadBase
+class thread : thread_base
 {
 public:
-    Thread(void *(*fn)(void *), void *data) : ThreadBase(fn, data) {}
-    virtual ~Thread() {}
+    thread(std::function<void(void)> fn) : thread_base(fn) {}
+    virtual ~thread() {}
 };
 
 struct ThreadStatus
@@ -104,18 +109,19 @@ protected:
     //Fetch Results
     bool FetchResult(array<ThreadJob*>& results);
     //Base thread work function
-    static void *BaseThreadWork(void* data);
+    void BaseThreadWork();
+
     virtual void TickGame(float seconds);
     //Default behaviour : delete the job result
     virtual void TreatResult(ThreadJob* result) { delete(result); }
 
     /* Worker threads */
-    int                     m_thread_count;
-    array<Thread*>          m_threads;
-    Queue<ThreadStatus>     m_spawnqueue, m_donequeue;
-    Queue<ThreadJob*>       m_jobqueue;
-    Queue<ThreadJob*>       m_resultqueue;
-    array<ThreadJob*>       m_job_dispatch;
+    int                 m_thread_count;
+    array<thread*>      m_threads;
+    queue<ThreadStatus> m_spawnqueue, m_donequeue;
+    queue<ThreadJob*>   m_jobqueue;
+    queue<ThreadJob*>   m_resultqueue;
+    array<ThreadJob*>   m_job_dispatch;
 };
 
 //Generic class for thread manager, executes work and store results, for you to use

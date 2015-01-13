@@ -1,18 +1,21 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2014—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
-// The ThreadBase class
-// --------------------
+// The base classes for multithreading
+// -----------------------------------
 //
 
 #if defined HAVE_PTHREAD_H
@@ -32,10 +35,10 @@
 namespace lol
 {
 
-class MutexBase
+class mutex_base
 {
 public:
-    MutexBase()
+    mutex_base()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_init(&m_mutex, nullptr);
@@ -44,7 +47,7 @@ public:
 #endif
     }
 
-    ~MutexBase()
+    ~mutex_base()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_destroy(&m_mutex);
@@ -53,7 +56,7 @@ public:
 #endif
     }
 
-    void Lock()
+    void lock()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -62,7 +65,7 @@ public:
 #endif
     }
 
-    void Unlock()
+    void unlock()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_unlock(&m_mutex);
@@ -79,10 +82,11 @@ private:
 #endif
 };
 
-template<typename T, int N> class QueueBase
+template<typename T, int N>
+class queue_base
 {
 public:
-    QueueBase()
+    queue_base()
     {
         m_start = m_count = 0;
 #if defined HAVE_PTHREAD_H
@@ -97,7 +101,7 @@ public:
 #endif
     }
 
-    ~QueueBase()
+    ~queue_base()
     {
 #if defined HAVE_PTHREAD_H
         pthread_cond_destroy(&m_empty_cond);
@@ -110,7 +114,7 @@ public:
 #endif
     }
 
-    void Push(T value)
+    void push(T value)
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -139,7 +143,7 @@ public:
 #endif
     }
 
-    bool TryPush(T value)
+    bool try_push(T value)
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -173,7 +177,7 @@ public:
         return true;
     }
 
-    T Pop()
+    T pop()
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -207,7 +211,7 @@ public:
         return ret;
     }
 
-    bool TryPop(T &ret)
+    bool try_pop(T &ret)
     {
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
@@ -255,24 +259,24 @@ private:
 #endif
 };
 
-class ThreadBase
+class thread_base
 {
 public:
-    ThreadBase(void *(*fn)(void *), void *data)
+    thread_base(std::function<void(void)>)
     {
 #if defined HAVE_PTHREAD_H
         /* Set the joinable attribute for systems who don't play nice */
         pthread_attr_t attr;
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-        pthread_create(&m_thread, &attr, fn, data);
+        pthread_create(&m_thread, &attr, trampoline, this);
 #elif defined _WIN32
-        m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)fn,
-                                data, 0, &m_tid);
+        m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)trampoline,
+                                this, 0, &m_tid);
 #endif
     }
 
-    virtual ~ThreadBase()
+    virtual ~thread_base()
     {
 #if defined HAVE_PTHREAD_H
         pthread_join(m_thread, nullptr);
@@ -282,6 +286,15 @@ public:
     }
 
 private:
+    static void *trampoline(void *data)
+    {
+        thread_base *that = (thread_base *)data;
+        that->m_function();
+        return nullptr;
+    }
+
+    std::function<void(void)> m_function;
+
 #if defined HAVE_PTHREAD_H
     pthread_t m_thread;
 #elif defined _WIN32

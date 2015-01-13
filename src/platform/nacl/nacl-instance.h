@@ -96,8 +96,8 @@ private:
         char **m_argv;
         char **m_env;
     };
-    static Mutex main_mutex;
-    static Queue<Args *, 1> main_queue;
+    static mutex main_mutex;
+    static queue<Args *, 1> main_queue;
 
     Thread *m_main_thread;
 };

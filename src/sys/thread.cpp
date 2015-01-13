@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//                     2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2014—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -34,9 +36,10 @@ bool BaseThreadManager::Start()
     /* Spawn worker threads and wait for their readiness. */
     m_threads.Resize(m_thread_count);
     for (int i = 0; i < m_thread_count; i++)
-        m_threads[i] = new Thread(BaseThreadWork, this);
+        m_threads[i] = new thread(std::bind(&BaseThreadManager::BaseThreadWork,
+                                            this));
     for (int i = 0; i < m_thread_count; i++)
-        m_spawnqueue.Pop();
+        m_spawnqueue.pop();
 
     return true;
 }
@@ -51,9 +54,9 @@ bool BaseThreadManager::Stop()
         * them to quit. */
     ThreadJob stop_job(ThreadJobType::THREAD_STOP);
     for (int i = 0; i < m_thread_count; i++)
-        m_jobqueue.Push(&stop_job);
+        m_jobqueue.push(&stop_job);
     for (int i = 0; i < m_thread_count; i++)
-        m_donequeue.Pop();
+        m_donequeue.pop();
 
     return true;
 }
@@ -61,7 +64,7 @@ bool BaseThreadManager::Stop()
 //Work stuff
 bool BaseThreadManager::AddWork(ThreadJob* job)
 {
-    if (m_jobqueue.TryPush(job))
+    if (m_jobqueue.try_push(job))
         return true;
     return false;
 }
@@ -69,19 +72,18 @@ bool BaseThreadManager::AddWork(ThreadJob* job)
 bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
 {
     ThreadJob* result;
-    while (m_resultqueue.TryPop(result))
+    while (m_resultqueue.try_pop(result))
         results << result;
     return results.Count() > 0;
 }
 
 //Base thread work function
-void *BaseThreadManager::BaseThreadWork(void* data)
+void BaseThreadManager::BaseThreadWork()
 {
-    BaseThreadManager *that = (BaseThreadManager *)data;
-    that->m_spawnqueue.Push(ThreadStatus::THREAD_STARTED);
+    m_spawnqueue.push(ThreadStatus::THREAD_STARTED);
     for ( ; ; )
     {
-        ThreadJob* job = that->m_jobqueue.Pop();
+        ThreadJob* job = m_jobqueue.pop();
         if (job->GetJobType() == ThreadJobType::THREAD_STOP)
             break;
         else if (*job == ThreadJobType::WORK_TODO)
@@ -90,11 +92,10 @@ void *BaseThreadManager::BaseThreadWork(void* data)
                 job->SetJobType(ThreadJobType::WORK_DONE);
             else
                 job->SetJobType(ThreadJobType::WORK_FAILED);
-            that->m_resultqueue.Push(job);
+            m_resultqueue.push(job);
         }
     }
-    that->m_donequeue.Push(ThreadStatus::THREAD_STOPPED);
-    return nullptr;
+    m_donequeue.push(ThreadStatus::THREAD_STOPPED);
 }
 
 void BaseThreadManager::TickGame(float seconds)
@@ -106,7 +107,7 @@ void BaseThreadManager::TickGame(float seconds)
 
     //Dispatch work task
     while (m_job_dispatch.Count() > 0 && AddWork(m_job_dispatch.Last()))
-        m_job_dispatch.Pop();
+        m_job_dispatch.pop();
 
     array<ThreadJob*> result;
     //Fetch and treat results

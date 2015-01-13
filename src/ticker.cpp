@@ -1,17 +1,20 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
 #include <cstdlib>
 #include <stdint.h>
+#include <functional>
 
 namespace lol
 {
@@ -44,8 +47,8 @@ public:
         Log::Debug("%d frames required to quit\n", frame - quitframe);
 
 #if LOL_FEATURE_THREADS
-        gametick.Push(0);
-        disktick.Push(0);
+        gametick.push(0);
+        disktick.push(0);
         delete gamethread;
         delete diskthread;
 #endif
@@ -72,11 +75,11 @@ private:
 
 #if LOL_FEATURE_THREADS
     /* The associated background threads */
-    static void *GameThreadMain(void *p);
-    static void *DrawThreadMain(void *p); /* unused */
-    static void *DiskThreadMain(void *p);
-    Thread *gamethread, *drawthread, *diskthread;
-    Queue<int> gametick, drawtick, disktick;
+    void GameThreadMain();
+    void DrawThreadMain(); /* unused */
+    void DiskThreadMain();
+    thread *gamethread, *drawthread, *diskthread;
+    queue<int> gametick, drawtick, disktick;
 #endif
 
     /* Shutdown management */
@@ -95,10 +98,10 @@ void Ticker::Register(Entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    data->m_todolist.Push(entity);
+    data->m_todolist.push(entity);
 
     /* Objects are autoreleased by default. Put them in a list. */
-    data->m_autolist.Push(entity);
+    data->m_autolist.push(entity);
     entity->m_autorelease = 1;
     entity->m_ref = 1;
 
@@ -143,7 +146,7 @@ int Ticker::Unref(Entity *entity)
 }
 
 #if LOL_FEATURE_THREADS
-void *TickerData::GameThreadMain(void * /* p */)
+void TickerData::GameThreadMain()
 {
 #if LOL_BUILD_DEBUG
     Log::Info("ticker game thread initialised\n");
@@ -151,27 +154,25 @@ void *TickerData::GameThreadMain(void * /* p */)
 
     for (;;)
     {
-        int tick = data->gametick.Pop();
+        int tick = gametick.pop();
         if (!tick)
             break;
 
         GameThreadTick();
 
-        data->drawtick.Push(1);
+        drawtick.push(1);
     }
 
-    data->drawtick.Push(0);
+    drawtick.push(0);
 
 #if LOL_BUILD_DEBUG
     Log::Info("ticker game thread terminated\n");
 #endif
-
-    return nullptr;
 }
 #endif /* LOL_FEATURE_THREADS */
 
 #if LOL_FEATURE_THREADS
-void *TickerData::DrawThreadMain(void * /* p */)
+void TickerData::DrawThreadMain()
 {
 #if LOL_BUILD_DEBUG
     Log::Info("ticker draw thread initialised\n");
@@ -179,30 +180,26 @@ void *TickerData::DrawThreadMain(void * /* p */)
 
     for (;;)
     {
-        int tick = data->drawtick.Pop();
+        int tick = drawtick.pop();
         if (!tick)
             break;
 
         DrawThreadTick();
 
-        data->gametick.Push(1);
+        gametick.push(1);
     }
 
 #if LOL_BUILD_DEBUG
     Log::Info("ticker draw thread terminated\n");
 #endif
-
-    return nullptr;
 }
 #endif /* LOL_FEATURE_THREADS */
 
 #if LOL_FEATURE_THREADS
-void *TickerData::DiskThreadMain(void * /* p */)
+void TickerData::DiskThreadMain()
 {
     /* FIXME: temporary hack to avoid crashes on the PS3 */
-    data->disktick.Pop();
-
-    return nullptr;
+    disktick.pop();
 }
 #endif /* LOL_FEATURE_THREADS */
 
@@ -437,17 +434,17 @@ void Ticker::Setup(float fps)
     data->fps = fps;
 
 #if LOL_FEATURE_THREADS
-    data->gamethread = new Thread(TickerData::GameThreadMain, nullptr);
-    data->gametick.Push(1);
+    data->gamethread = new thread(std::bind(&TickerData::GameThreadMain, data));
+    data->gametick.push(1);
 
-    data->diskthread = new Thread(TickerData::DiskThreadMain, nullptr);
+    data->diskthread = new thread(std::bind(&TickerData::DiskThreadMain, data));
 #endif
 }
 
 void Ticker::TickDraw()
 {
 #if LOL_FEATURE_THREADS
-    data->drawtick.Pop();
+    data->drawtick.pop();
 #else
     TickerData::GameThreadTick();
 #endif
@@ -458,7 +455,7 @@ void Ticker::TickDraw()
 
     /* Signal game thread that it can carry on */
 #if LOL_FEATURE_THREADS
-    data->gametick.Push(1);
+    data->gametick.push(1);
 #else
     TickerData::DiskThreadTick();
 #endif
