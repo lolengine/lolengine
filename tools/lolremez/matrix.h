@@ -1,7 +1,7 @@
 //
 //  LolRemez - Remez algorithm implementation
 //
-//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,16 +20,16 @@ using namespace lol;
  */
 
 template<typename T>
-struct LinearSystem : public array2d<T>
+struct linear_system : public array2d<T>
 {
-    inline LinearSystem<T>(int cols)
+    inline linear_system<T>(int cols)
     {
         ASSERT(cols > 0);
 
         this->SetSize(ivec2(cols));
     }
 
-    void Init(T const &x)
+    void init(T const &x)
     {
         int const n = this->GetSize().x;
 
@@ -39,12 +39,12 @@ struct LinearSystem : public array2d<T>
     }
 
     /* Naive matrix inversion */
-    LinearSystem<T> inverse() const
+    linear_system<T> inverse() const
     {
         int const n = this->GetSize().x;
-        LinearSystem a(*this), b(n);
+        linear_system a(*this), b(n);
 
-        b.Init((T)1);
+        b.init((T)1);
 
         /* Inversion method: iterate through all columns and make sure
          * all the terms are 1 on the diagonal and 0 everywhere else */

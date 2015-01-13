@@ -1,7 +1,7 @@
 //
 //  LolRemez - Remez algorithm implementation
 //
-//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -91,9 +91,9 @@ void remez_solver::remez_init()
         fxn.Push(eval_func(m_zeroes[i]));
     }
 
-    /* We build a matrix of Chebishev evaluations: row i contains the
+    /* We build a matrix of Chebyshev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
-    LinearSystem<real> system(m_order + 1);
+    linear_system<real> system(m_order + 1);
     for (int n = 0; n < m_order + 1; n++)
     {
         auto p = polynomial<real>::chebyshev(n);
@@ -127,9 +127,9 @@ void remez_solver::remez_step()
     for (int i = 0; i < m_order + 2; i++)
         fxn.Push(eval_func(m_control[i]));
 
-    /* We build a matrix of Chebishev evaluations: row i contains the
+    /* We build a matrix of Chebyshev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
-    LinearSystem<real> system(m_order + 2);
+    linear_system<real> system(m_order + 2);
     for (int n = 0; n < m_order + 1; n++)
     {
         auto p = polynomial<real>::chebyshev(n);
@@ -173,7 +173,7 @@ void remez_solver::remez_step()
  */
 void remez_solver::find_zeroes()
 {
-    m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
+    Timer t;
 
     for (int i = 0; i < m_order + 1; i++)
     {
@@ -210,8 +210,7 @@ void remez_solver::find_zeroes()
         m_zeroes[i] = c.x;
     }
 
-    printf(" -:- timings for zeroes: estimate %f func %f weight %f\n",
-           m_stats_cheby, m_stats_func, m_stats_weight);
+    printf(" -:- timing for zeroes: %f ms\n", t.Get() * 1000.f);
 }
 
 /*
@@ -225,13 +224,13 @@ void remez_solver::find_zeroes()
  */
 void remez_solver::find_extrema()
 {
+    Timer t;
+
     using std::printf;
 
     m_control[0] = -1;
     m_control[m_order + 1] = 1;
     m_error = 0;
-
-    m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
 
     for (int i = 1; i < m_order + 1; i++)
     {
@@ -277,8 +276,7 @@ void remez_solver::find_extrema()
         m_control[i] = c.x;
     }
 
-    printf(" -:- timings for extrema: estimate %f func %f weight %f\n",
-           m_stats_cheby, m_stats_func, m_stats_weight);
+    printf(" -:- timing for extrema: %f ms\n", t.Get() * 1000.f);
     printf(" -:- error: ");
     m_error.print(m_decimals);
     printf("\n");
@@ -306,26 +304,17 @@ void remez_solver::print_poly()
 
 real remez_solver::eval_estimate(real const &x)
 {
-    Timer t;
-    real ret = m_estimate.eval(x);
-    m_stats_cheby += t.Get();
-    return ret;
+    return m_estimate.eval(x);
 }
 
 real remez_solver::eval_func(real const &x)
 {
-    Timer t;
-    real ret = m_func.eval(x * m_k2 + m_k1);
-    m_stats_func += t.Get();
-    return ret;
+    return m_func.eval(x * m_k2 + m_k1);
 }
 
 real remez_solver::eval_weight(real const &x)
 {
-    Timer t;
-    real ret = m_has_weight ? m_weight.eval(x * m_k2 + m_k1) : real(1);
-    m_stats_weight += t.Get();
-    return ret;
+    return m_has_weight ? m_weight.eval(x * m_k2 + m_k1) : real(1);
 }
 
 real remez_solver::eval_error(real const &x)

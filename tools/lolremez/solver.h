@@ -1,7 +1,7 @@
 //
 //  LolRemez - Remez algorithm implementation
 //
-//  Copyright © 2005-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -56,10 +56,5 @@ private:
     lol::array<lol::real> m_control;
 
     lol::real m_k1, m_k2, m_epsilon, m_error;
-
-    /* Statistics */
-    float m_stats_cheby;
-    float m_stats_func;
-    float m_stats_weight;
 };
 
