@@ -1,11 +1,13 @@
 //
-// Lol Engine - Fractal tutorial
+//  Lol Engine - Fractal tutorial
 //
-// Copyright: (c) 2011-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -125,9 +127,9 @@ public:
 #if LOL_FEATURE_THREADS
         /* Spawn worker threads and wait for their readiness. */
         for (int i = 0; i < MAX_THREADS; i++)
-            m_threads[i] = new Thread(DoWorkHelper, this);
+            m_threads[i] = new thread(std::bind(&Fractal::DoWorkHelper, this));
         for (int i = 0; i < MAX_THREADS; i++)
-            m_spawnqueue.Pop();
+            m_spawnqueue.pop();
 #endif
     }
 
@@ -137,9 +139,9 @@ public:
         /* Signal worker threads for completion and wait for
          * them to quit. */
         for (int i = 0; i < MAX_THREADS; i++)
-            m_jobqueue.Push(-1);
+            m_jobqueue.push(-1);
         for (int i = 0; i < MAX_THREADS; i++)
-            m_donequeue.Pop();
+            m_donequeue.pop();
 #endif
 
         //Input::UntrackMouse(this);
@@ -310,7 +312,7 @@ public:
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
             {
 #if LOL_FEATURE_THREADS
-                m_jobqueue.Push(i);
+                m_jobqueue.push(i);
 #else
                 DoWork(i);
 #endif
@@ -319,20 +321,18 @@ public:
     }
 
 #if LOL_FEATURE_THREADS
-    static void *DoWorkHelper(void *data)
+    void DoWorkHelper()
     {
-        Fractal *that = (Fractal *)data;
-        that->m_spawnqueue.Push(0);
+        m_spawnqueue.push(0);
         for ( ; ; )
         {
-            int line = that->m_jobqueue.Pop();
+            int line = m_jobqueue.pop();
             if (line == -1)
                 break;
-            that->DoWork(line);
-            that->m_donequeue.Push(0);
+            DoWork(line);
+            m_donequeue.push(0);
         }
-        that->m_donequeue.Push(0);
-        return NULL;
+        m_donequeue.push(0);
     };
 #endif
 
@@ -497,7 +497,7 @@ public:
         {
 #if LOL_FEATURE_THREADS
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
-                m_donequeue.Pop();
+                m_donequeue.pop();
 #endif
 
             m_dirty[m_frame]--;
@@ -556,8 +556,8 @@ private:
 
 #if LOL_FEATURE_THREADS
     /* Worker threads */
-    Thread *m_threads[MAX_THREADS];
-    Queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
+    thread *m_threads[MAX_THREADS];
+    queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
 #endif
 
 #if !defined __native_client__

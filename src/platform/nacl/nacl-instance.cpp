@@ -69,8 +69,8 @@ void NaClInstance::TickCallback(void* data, int32_t result)
     instance->m_input_data->Tick(DELTA_MS);
 }
 
-Mutex NaClInstance::main_mutex;
-Queue<NaClInstance::Args *, 1> NaClInstance::main_queue;
+mutex NaClInstance::main_mutex;
+queue<NaClInstance::Args *, 1> NaClInstance::main_queue;
 
 bool NaClInstance::Init(uint32_t argc,
                         const char* /* argn */[],
@@ -81,7 +81,7 @@ bool NaClInstance::Init(uint32_t argc,
     char *env[] = { nullptr };
     Args arglist(argc, const_cast<char **>(argv), const_cast<char **>(env));
     main_queue.Push(&arglist);
-    m_main_thread = new Thread(MainRun, nullptr);
+    m_main_thread = new thread(MainRun, nullptr);
     /* Push so that only MainSignal() can unblock us */
     main_queue.Push(nullptr);
     main_queue.Push(nullptr);
