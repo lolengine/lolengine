@@ -417,6 +417,9 @@
     <ClInclude Include="lol\math\all.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\math\bigint.h">
+      <Filter>lol\math</Filter>
+    </ClInclude>
     <ClInclude Include="lol\math\matrix.h">
       <Filter>lol\math</Filter>
     </ClInclude>
