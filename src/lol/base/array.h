@@ -54,7 +54,7 @@ public:
         m_count(0),
         m_reserved(0)
     {
-        Reserve(list.size());
+        reserve(list.size());
         for (auto elem : list)
             push(elem);
     }
@@ -70,7 +70,7 @@ public:
     {
         /* Reserve the exact number of values instead of what the other
          * array had reserved. Just a method for not wasting too much. */
-        Reserve(that.m_count);
+        reserve(that.m_count);
         for (ptrdiff_t i = 0; i < that.m_count; i++)
             new(&m_data[i]) element_t(that[i]);
         m_count = that.m_count;
@@ -88,7 +88,7 @@ public:
                 /* If not enough space, reserve memory, overwrite the first
                  * elements, then use placement new directly for the
                  * remaining elements. */
-                Reserve(that.m_count);
+                reserve(that.m_count);
                 for (ptrdiff_t i = 0; i < m_count && i < that.m_count; i++)
                     m_data[i] = element_t(that[i]);
                 for (ptrdiff_t i = m_count; i < that.m_count; i++)
@@ -115,7 +115,7 @@ public:
     array_base& operator+=(array_base const &that)
     {
         ptrdiff_t todo = that.m_count;
-        Reserve(m_count + todo);
+        reserve(m_count + todo);
         for (ptrdiff_t i = 0; i < todo; i++)
             new(&m_data[m_count + i]) element_t(that[i]);
         m_count += todo;
@@ -125,7 +125,7 @@ public:
     ARRAY operator+(ARRAY const &that) const
     {
         ARRAY ret;
-        ret.Reserve(m_count + that.m_count);
+        ret.reserve(m_count + that.m_count);
         ret += *this;
         ret += that;
         return ret;
@@ -149,23 +149,23 @@ public:
         return m_data[n];
     }
 
-    inline element_t& Last()
+    inline element_t& last()
     {
         ASSERT(m_count > 0);
         return m_data[m_count - 1];
     }
 
-    inline element_t *Data()
+    inline element_t *data()
     {
         return m_data;
     }
 
-    inline element_t const *Data() const
+    inline element_t const *data() const
     {
         return m_data;
     }
 
-    inline element_t const& Last() const
+    inline element_t const& last() const
     {
         ASSERT(m_count > 0);
         return m_data[m_count - 1];
@@ -176,7 +176,7 @@ public:
         if (m_count >= m_reserved)
         {
             T tmp = x;
-            Grow();
+            grow();
             new (&m_data[m_count]) element_t(tmp);
         }
         else
@@ -189,7 +189,7 @@ public:
 
     inline array_base& operator>>(T const &x)
     {
-        RemoveItem(x);
+        remove_item(x);
         return *this;
     }
 
@@ -200,21 +200,21 @@ public:
 
     inline bool push_unique(T const &x)
     {
-        if (Find(x) != INDEX_NONE)
+        if (find(x) != INDEX_NONE)
             return false;
 
         push(x);
         return true;
     }
 
-    inline void Insert(T const &x, ptrdiff_t pos)
+    inline void insert(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0 && pos <= m_count,
                "cannot insert at index %lld in array of size %lld",
                (long long int)pos, (long long int)m_count);
 
         if (m_count >= m_reserved)
-            Grow();
+            grow();
 
         for (ptrdiff_t i = m_count; i > pos; --i)
         {
@@ -225,20 +225,20 @@ public:
         ++m_count;
     }
 
-    inline bool InsertUnique(T const &x, ptrdiff_t pos)
+    inline bool insert_unique(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0 && pos <= m_count,
                "cannot insert at index %lld in array of size %lld",
                (long long int)pos, (long long int)m_count);
 
-        if (Find(x) != INDEX_NONE)
+        if (find(x) != INDEX_NONE)
             return false;
 
-        Insert(x, pos);
+        insert(x, pos);
         return true;
     }
 
-    inline ptrdiff_t Find(T const &x)
+    inline ptrdiff_t find(T const &x)
     {
         for (ptrdiff_t i = 0; i < m_count; ++i)
             if (m_data[i] == x)
@@ -246,9 +246,9 @@ public:
         return INDEX_NONE;
     }
 
-    bool RemoveItem(T const &x)
+    bool remove_item(T const &x)
     {
-        ptrdiff_t idx = Find(x);
+        ptrdiff_t idx = find(x);
         if (idx != INDEX_NONE)
         {
             remove(idx);
@@ -259,7 +259,7 @@ public:
 
     bool RemoveSwapItem(T const &x)
     {
-        ptrdiff_t idx = Find(x);
+        ptrdiff_t idx = find(x);
         if (idx != INDEX_NONE)
         {
             RemoveSwap(idx);
@@ -270,8 +270,8 @@ public:
 
     bool SwapItem(T const &x1, T const &x2)
     {
-        ptrdiff_t idx1 = Find(x1);
-        ptrdiff_t idx2 = Find(x2);
+        ptrdiff_t idx1 = find(x1);
+        ptrdiff_t idx2 = find(x2);
         if (idx1 != INDEX_NONE && idx2 != INDEX_NONE)
         {
             swap(idx1, idx2);
@@ -283,7 +283,7 @@ public:
     inline T pop()
     {
         ASSERT(m_count > 0);
-        element_t tmp = Last();
+        element_t tmp = last();
         remove(m_count - 1, 1);
         return tmp;
     }
@@ -339,20 +339,20 @@ public:
         m_count -= todelete;
     }
 
-    void Resize(ptrdiff_t count, element_t e = element_t())
+    void resize(ptrdiff_t item_count, element_t e = element_t())
     {
-        ASSERT(count >= 0);
-        Reserve(count);
+        ASSERT(item_count >= 0);
+        reserve(item_count);
 
         /* Too many elements? Remove them. */
-        for (ptrdiff_t i = count; i < m_count; ++i)
+        for (ptrdiff_t i = item_count; i < m_count; ++i)
             m_data[i].~element_t();
 
         /* Not enough elements? Add some. */
-        for (ptrdiff_t i = m_count; i < count; ++i)
+        for (ptrdiff_t i = m_count; i < item_count; ++i)
             new(&m_data[i]) element_t(e);
 
-        m_count = count;
+        m_count = item_count;
     }
 
     inline void empty()
@@ -360,7 +360,7 @@ public:
         remove(0, m_count);
     }
 
-    void Reserve(ptrdiff_t toreserve)
+    void reserve(ptrdiff_t toreserve)
     {
         if (toreserve <= m_reserved)
             return;
@@ -393,6 +393,18 @@ public:
     inline void Swap(ptrdiff_t pos1, ptrdiff_t pos2) { return swap(pos1, pos2); }
     inline void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1) { return remove(pos, todelete); }
     inline void Empty() { empty(); }
+    inline element_t& Last() { return last(); }
+    inline element_t *Data() { return data(); }
+    inline element_t const *Data() const { return data(); }
+    inline element_t const& Last() const { return last(); }
+    inline void Insert(T const &x, ptrdiff_t pos) { return insert(x, pos); }
+    inline bool InsertUnique(T const &x, ptrdiff_t pos) { return insert_unique(x, pos); }
+    inline ptrdiff_t Find(T const &x) { return find(x); }
+    inline bool RemoveItem(T const &x) { return remove_item(x); }
+    inline void Resize(ptrdiff_t item_count, element_t e = element_t()) { return resize(item_count, e); }
+    inline void Reserve(ptrdiff_t toreserve) { return reserve(toreserve); }
+    inline ptrdiff_t Count() const { return count(); }
+    inline ptrdiff_t Bytes() const { return bytes(); }
 
     /* Support C++11 range-based for loops */
     class ConstIterator
@@ -454,13 +466,13 @@ public:
     };
 
 public:
-    inline ptrdiff_t Count() const { return m_count; }
-    inline ptrdiff_t Bytes() const { return m_count * sizeof(element_t); }
+    inline ptrdiff_t count() const { return m_count; }
+    inline ptrdiff_t bytes() const { return m_count * sizeof(element_t); }
 
 protected:
-    void Grow()
+    void grow()
     {
-        Reserve(m_count * 13 / 8 + 8);
+        reserve(m_count * 13 / 8 + 8);
     }
 
     element_t *m_data;
@@ -495,7 +507,7 @@ public:
         if (this->m_count >= this->m_reserved)
         {
             tuple<T...> tmp = { args... };
-            this->Grow();
+            this->grow();
             new (&this->m_data[this->m_count].m1) tuple<T...>(tmp);
         }
         else
@@ -512,7 +524,7 @@ public:
                (long long int)pos, (long long int)this->m_count);
 
         if (this->m_count >= this->m_reserved)
-            this->Grow();
+            this->grow();
 
         for (ptrdiff_t i = this->m_count; i > pos; --i)
         {
@@ -561,7 +573,7 @@ typename array<T...>::Iterator begin(array<T...> &a)
 template<typename... T>
 typename array<T...>::Iterator end(array<T...> &a)
 {
-    return typename array<T...>::Iterator(&a, a.Count());
+    return typename array<T...>::Iterator(&a, a.count());
 }
 
 template<typename... T>
@@ -573,7 +585,7 @@ typename array<T...>::ConstIterator begin(array<T...> const &a)
 template<typename... T>
 typename array<T...>::ConstIterator end(array<T...> const &a)
 {
-    return typename array<T...>::ConstIterator(&a, a.Count());
+    return typename array<T...>::ConstIterator(&a, a.count());
 }
 
 /*
