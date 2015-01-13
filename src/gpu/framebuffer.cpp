@@ -98,14 +98,6 @@ uint32_t FramebufferFormat::GetFormat()
     case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
     case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
     case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
-#elif defined __CELLOS_LV2__
-    /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
-     * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
-    case RGB_16_F:      return GL_RGB16F_ARB;
-    case RGB_32_F:      return GL_RGB32F_ARB;
-    case RGBA_8:        return GL_ARGB_SCE;
-    case RGBA_16_F:     return GL_RGBA16F_ARB;
-    case RGBA_32_F:     return GL_RGBA32F_ARB;
 #elif defined HAVE_GLES_2X
     /* FIXME: incomplete */
     case RGBA_8:
@@ -240,8 +232,6 @@ uint32_t FramebufferFormat::GetFormatOrder()
     {
 #if defined USE_D3D9 || defined _XBOX
     /* FIXME: not implemented at all */
-#elif defined __CELLOS_LV2__
-    /* FIXME: not implemented at all */
 #elif defined HAVE_GLES_2X
     /* FIXME: incomplete */
     case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
@@ -342,11 +332,6 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormatOrder();
     GLenum depth = GL_DEPTH_COMPONENT;
-#   elif defined __CELLOS_LV2__
-    /* Supported drawable formats on the PS3: GL_ARGB_SCE, GL_RGB16F_ARB,
-     * GL_RGBA16F_ARB, GL_RGB32F_ARB, GL_RGBA32F_ARB, GL_LUMINANCE32F_ARB. */
-    GLenum internal_format = fbo_format.GetFormat();
-    GLenum format = fbo_format.GetFormatOrder();
 #   elif GL_ES_VERSION_2_0
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();

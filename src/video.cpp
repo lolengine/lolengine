@@ -107,13 +107,7 @@ void Video::Capture(uint32_t *buffer)
     /* TODO */
 #elif defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];
-#   if defined __CELLOS_LV2__
-    // FIXME: use psglCreateDeviceAuto && psglGetDeviceDimensions
-    v[2] = 1920;
-    v[3] = 1080;
-#   else
     glGetIntegerv(GL_VIEWPORT, v);
-#   endif
     int width = v[2], height = v[3];
 
 #   if defined HAVE_GL_2X

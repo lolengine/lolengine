@@ -82,9 +82,6 @@
     <Filter Include="platform\d3d9">
       <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform\ps3">
-      <UniqueIdentifier>{c6c6b597-ed6c-4d82-a166-964beeeeb525}</UniqueIdentifier>
-    </Filter>
     <Filter Include="platform\nacl">
       <UniqueIdentifier>{f6cc3470-c841-4581-969b-e60cea841c27}</UniqueIdentifier>
     </Filter>
@@ -178,9 +175,6 @@
       <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\oric-image.cpp">
-      <Filter>image\codec</Filter>
-    </ClCompile>
-    <ClCompile Include="image\codec\ps3-image.cpp">
       <Filter>image\codec</Filter>
     </ClCompile>
     <ClCompile Include="image\codec\sdl-image.cpp">
@@ -290,12 +284,6 @@
     </ClCompile>
     <ClCompile Include="generated\lolfx-scanner.cpp">
       <Filter>generated</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\ps3\ps3app.cpp">
-      <Filter>platform\ps3</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\ps3\ps3input.cpp">
-      <Filter>platform\ps3</Filter>
     </ClCompile>
     <ClCompile Include="gpu\lolfx-compiler.cpp">
       <Filter>gpu</Filter>
@@ -626,15 +614,6 @@
     </ClInclude>
     <ClInclude Include="generated\lolfx-parser.h">
       <Filter>gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\ps3\ps3app.h">
-      <Filter>platform\ps3</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\ps3\ps3input.h">
-      <Filter>platform\ps3</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\ps3\threadbase.h">
-      <Filter>platform\ps3</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>

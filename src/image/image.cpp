@@ -40,9 +40,6 @@ static bool RegisterAllCodecs(array<ImageCodec *> &codeclist)
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
     REGISTER_IMAGE_CODEC(IosImageCodec)
 #endif
-#if defined __CELLOS_LV2__
-    REGISTER_IMAGE_CODEC(Ps3ImageCodec)
-#endif
 #if defined USE_SDL_IMAGE
     REGISTER_IMAGE_CODEC(SdlImageCodec)
 #endif

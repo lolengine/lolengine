@@ -36,10 +36,6 @@ String String::Printf(char const *format, ...)
 
 String String::VPrintf(char const *format, va_list ap)
 {
-#if defined __CELLOS_LV2__
-    using std::vsnprintf;
-#endif
-
     String ret;
 
     va_list ap2;

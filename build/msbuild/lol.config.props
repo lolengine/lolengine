@@ -47,9 +47,6 @@
     <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2013)'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2014)'">v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='PS3'" Label="Configuration">
-    <PlatformToolset>SNC</PlatformToolset>
-  </PropertyGroup>
 
   <!--
      - Import final settings from Visual Studio

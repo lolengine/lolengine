@@ -16,9 +16,7 @@
 
 #include "lolgl.h"
 
-#if __CELLOS_LV2__
-#   include "platform/ps3/ps3app.h"
-#elif _XBOX
+#if _XBOX
 #   include "platform/xbox/xboxapp.h"
 #elif __native_client__
 #   include "platform/nacl/nacl-app.h"
@@ -42,9 +40,7 @@ class ApplicationData
         : app(name, resolution, framerate)
     { }
 
-#if __CELLOS_LV2__
-    Ps3App app;
-#elif _XBOX
+#if _XBOX
     XboxApp app;
 #elif __native_client__
     NaClApp app;

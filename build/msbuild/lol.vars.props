@@ -64,13 +64,9 @@
     <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
     <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
-    <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Debug'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\debug</GlLibs>
-    <GlLibs Condition="'$(Platform)|$(Configuration)'=='PS3|Release'">$(SCE_PS3_ROOT)\target\ppu\lib\PSGL\RSX\opt</GlLibs>
     <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
-    <GlDeps Condition="'$(Platform)'=='PS3'">libPSGL.a;libgcm_cmd.a;libgcm_sys_stub.a;libcgc.a;libPSGLcgc.a</GlDeps>
     <Win32Defines Condition="'$(UseOpenGL)'=='true'">HAVE_GL_2X;USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
-    <Ps3Defines>HAVE_GLES_2X;$(Ps3Defines)</Ps3Defines>
 
     <!-- Direct3D 9 -->
     <D3d9Includes>$(DXSDK_DIR)\Include</D3d9Includes>
@@ -89,12 +85,6 @@
 
     <!-- Windows-specific -->
     <Win32Defines>HAVE_STDIO_H;$(Win32Defines)</Win32Defines>
-
-    <!-- PS3-specific -->
-    <Ps3Deps>libsysmodule_stub.a;libsysutil_stub.a;libresc_stub.a;
-             libpngdec_stub.a;
-             libio_stub.a;libusbd_stub.a;libpadfilter.a;
-             libaudio_stub.a;libspurs_stub.a;libmstreamSPURSMP3.a</Ps3Deps>
 
     <!-- PS4-specific -->
     <OrbisDefines>HAVE_STDIO_H;
@@ -152,9 +142,6 @@
     <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>
     <BuildMacro Include="Win32Defines"><Value>$(Win32Defines)</Value></BuildMacro>
     <BuildMacro Include="XboxDefines"><Value>$(XboxDefines)</Value></BuildMacro>
-    <BuildMacro Include="Ps3Deps"><Value>$(Ps3Deps)</Value></BuildMacro>
-    <BuildMacro Include="Ps3Libs"><Value>$(Ps3Libs)</Value></BuildMacro>
-    <BuildMacro Include="Ps3Defines"><Value>$(Ps3Defines)</Value></BuildMacro>
     <BuildMacro Include="OrbisDeps"><Value>$(OrbisDeps)</Value></BuildMacro>
     <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>

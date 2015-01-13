@@ -19,9 +19,7 @@
 #   define __likely(x)   __builtin_expect(!!(x), 1)
 #   define __unlikely(x) __builtin_expect(!!(x), 0)
 #   define INLINEATTR __attribute__((always_inline))
-#   if defined __CELLOS_LV2__ && !defined __SNC__
-#      define FP_USE(x) __asm__("" : "+f" (x))
-#   elif defined __x86_64__
+#   if defined __x86_64__
 #      define FP_USE(x) __asm__("" : "+x" (x))
 #   elif defined __i386__ /* FIXME: this isn't good */
 #      define FP_USE(x) __asm__("" : "+m" (x))
@@ -104,119 +102,15 @@ static const double TC[] =
     2.373e5,
 };
 
-#if defined __CELLOS_LV2__
-static inline double lol_fctid(double x) INLINEATTR;
-static inline double lol_fctidz(double x) INLINEATTR;
-static inline double lol_fcfid(double x) INLINEATTR;
-static inline double lol_frsqrte(double x) INLINEATTR;
-static inline double lol_fsel(double c, double gte, double lt) INLINEATTR;
-static inline double lol_fres(double x) INLINEATTR;
-static inline double lol_fdiv(double a, double b) INLINEATTR;
-#endif
 static inline double lol_fabs(double x) INLINEATTR;
 #if defined __GNUC__
 static inline double lol_round(double x) INLINEATTR;
 static inline double lol_trunc(double x) INLINEATTR;
 #endif
 
-#if defined __CELLOS_LV2__
-static inline double lol_fctid(double x)
-{
-    double r;
-#if defined __SNC__
-    r = __builtin_fctid(x);
-#else
-    __asm__ ("fctid %0, %1"
-             : "=f" (r) : "f" (x));
-#endif
-    return r;
-}
-
-static double lol_fctidz(double x)
-{
-    double r;
-#if defined __SNC__
-    r = __builtin_fctidz(x);
-#else
-    __asm__ ("fctidz %0, %1"
-             : "=f" (r) : "f" (x));
-#endif
-    return r;
-}
-
-static double lol_fcfid(double x)
-{
-    double r;
-#if defined __SNC__
-    r = __builtin_fcfid(x);
-#else
-    __asm__ ("fcfid %0, %1"
-             : "=f" (r) : "f" (x));
-#endif
-    return r;
-}
-
-static double lol_frsqrte(double x)
-{
-#if defined __SNC__
-    return __builtin_frsqrte(x);
-#else
-    double r;
-    __asm__ ("frsqrte %0, %1"
-             : "=f" (r) : "f" (x));
-    return r;
-#endif
-}
-
-static inline double lol_fsel(double c, double gte, double lt)
-{
-#if defined __CELLOS_LV2__ && defined __SNC__
-    return __fsel(c, gte, lt);
-#elif defined __CELLOS_LV2__
-    double r;
-    __asm__ ("fsel %0, %1, %2, %3"
-             : "=f" (r) : "f" (c), "f" (gte), "f" (lt));
-    return r;
-#else
-    return (c >= 0) ? gte : lt;
-#endif
-}
-
-static inline double lol_fres(double x)
-{
-    double ret;
-#if defined __SNC__
-    ret = __builtin_fre(x);
-#else
-    __asm__ ("fres %0, %1"
-             : "=f" (ret) : "f" (x));
-#endif
-    return ret;
-}
-
-static inline double lol_fdiv(double a, double b)
-{
-    /* Estimate */
-    double x0 = lol_fres(b);
-
-    /* Two steps of Newton-Raphson */
-    x0 = (b * x0 - ONE) * -x0 + x0;
-    x0 = (b * x0 - ONE) * -x0 + x0;
-
-    return a * x0;
-}
-#endif /* __CELLOS_LV2__ */
-
 static inline double lol_fabs(double x)
 {
-#if defined __CELLOS_LV2__ && defined __SNC__
-    return __fabs(x);
-#elif defined __CELLOS_LV2__
-    double r;
-    __asm__ ("fabs %0, %1"
-             : "=f" (r) : "f" (x));
-    return r;
-#elif defined __GNUC__
+#if defined __GNUC__
     return __builtin_fabs(x);
 #else
     using std::fabs;
@@ -227,20 +121,12 @@ static inline double lol_fabs(double x)
 #if defined __GNUC__
 static inline double lol_round(double x)
 {
-#if defined __CELLOS_LV2__
-    return lol_fcfid(lol_fctid(x));
-#else
     return __builtin_round(x);
-#endif
 }
 
 static inline double lol_trunc(double x)
 {
-#if defined __CELLOS_LV2__
-    return lol_fcfid(lol_fctidz(x));
-#else
     return __builtin_trunc(x);
-#endif
 }
 #endif
 
@@ -267,12 +153,6 @@ double lol_sin(double x)
     /* Wrap |x| to the range [-1, 1] and keep track of the number of
      * cycles required. If odd, we'll need to change the sign of the
      * result. */
-#if defined __CELLOS_LV2__
-    double sign = lol_fsel(x, D_PI, -D_PI);
-    double num_cycles = lol_round(absx);
-    double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
-    sign = lol_fsel(is_even, sign, -sign);
-#else
     double num_cycles = absx + TWO_EXP_52;
     FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
@@ -282,7 +162,7 @@ double lol_sin(double x)
     FP_USE(is_even);
     is_even -= TWO * num_cycles - ONE;
     double sign = is_even;
-#endif
+
     absx -= num_cycles;
 
     /* If branches are very cheap, we have the option to do the Taylor
@@ -303,9 +183,7 @@ double lol_sin(double x)
     }
 #endif
 
-#if !defined __CELLOS_LV2__
     sign *= (x >= 0.0) ? D_PI : -D_PI;
-#endif
 
     /* Compute a Tailor series for sin() and combine sign information. */
     double x2 = absx * absx;
@@ -338,11 +216,6 @@ double lol_cos(double x)
     }
 #endif
 
-#if defined __CELLOS_LV2__
-    double num_cycles = lol_round(absx);
-    double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
-    double sign = lol_fsel(is_even, ONE, NEG_ONE);
-#else
     double num_cycles = absx + TWO_EXP_52;
     FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
@@ -352,7 +225,7 @@ double lol_cos(double x)
     FP_USE(is_even);
     is_even -= TWO * num_cycles - ONE;
     double sign = is_even;
-#endif
+
     absx -= num_cycles;
 
 #if LOL_FEATURE_VERY_CHEAP_BRANCHES
@@ -410,14 +283,6 @@ void lol_sincos(double x, double *sinx, double *cosx)
     }
 #endif
 
-#if defined __CELLOS_LV2__
-    double num_cycles = lol_round(absx);
-    double is_even = lol_trunc(num_cycles * HALF) - (num_cycles * HALF);
-
-    double sin_sign = lol_fsel(x, D_PI, -D_PI);
-    sin_sign = lol_fsel(is_even, sin_sign, -sin_sign);
-    double cos_sign = lol_fsel(is_even, ONE, NEG_ONE);
-#else
     double num_cycles = absx + TWO_EXP_52;
     FP_USE(num_cycles); num_cycles -= TWO_EXP_52;
 
@@ -428,7 +293,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
     is_even -= TWO * num_cycles - ONE;
     double sin_sign = is_even;
     double cos_sign = is_even;
-#endif
+
     absx -= num_cycles;
 
 #if LOL_FEATURE_VERY_CHEAP_BRANCHES
@@ -455,9 +320,7 @@ void lol_sincos(double x, double *sinx, double *cosx)
     }
 #endif
 
-#if !defined __CELLOS_LV2__
     sin_sign *= (x >= 0.0) ? D_PI : -D_PI;
-#endif
 
     double x2 = absx * absx;
     double x4 = x2 * x2;
@@ -514,15 +377,10 @@ double lol_tan(double x)
 
     /* Ensure cosx isn't zero. FIXME: we lose the cosx sign here. */
     double absc = lol_fabs(cosx);
-#if defined __CELLOS_LV2__
-    double is_cos_not_zero = absc - VERY_SMALL_NUMBER;
-    cosx = lol_fsel(is_cos_not_zero, cosx, VERY_SMALL_NUMBER);
-    return lol_fdiv(sinx, cosx);
-#else
+
     if (__unlikely(absc < VERY_SMALL_NUMBER))
         cosx = VERY_SMALL_NUMBER;
     return sinx / cosx;
-#endif
 }
 
 } /* namespace lol */
