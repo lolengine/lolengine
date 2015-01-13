@@ -262,7 +262,8 @@ private:
 class thread_base
 {
 public:
-    thread_base(std::function<void(void)>)
+    thread_base(std::function<void(void)> function)
+      : m_function(function)
     {
 #if defined HAVE_PTHREAD_H
         /* Set the joinable attribute for systems who don't play nice */
