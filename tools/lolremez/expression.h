@@ -82,7 +82,7 @@ struct expression
     /*
      * Evaluate expression at x
      */
-    lol::real eval(lol::real const &x)
+    lol::real eval(lol::real const &x) const
     {
         lol::array<lol::real> stack;
         lol::real tmp;

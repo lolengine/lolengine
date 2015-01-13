@@ -41,6 +41,7 @@ private:
     lol::real eval_estimate(lol::real const &x);
     lol::real eval_func(lol::real const &x);
     lol::real eval_weight(lol::real const &x);
+    lol::real eval_error(lol::real const &x);
 
 private:
     /* User-defined parameters */

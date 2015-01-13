@@ -81,7 +81,7 @@ int main(int argc, char **argv)
         FAIL();
     }
 
-    remez_solver solver(degree + 1, 20);
+    remez_solver solver(degree, 20);
     solver.run(xmin, xmax, f, g);
 
     return 0;
