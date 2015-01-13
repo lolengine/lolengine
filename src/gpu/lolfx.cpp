@@ -15,8 +15,6 @@
 
 #include <lol/engine-internal.h>
 
-#include "gpu/lolfx-compiler.h"
-
 namespace lol
 {
 
@@ -33,8 +31,9 @@ LolFx::LolFx()
 
 bool LolFx::Compile(char const *command)
 {
-    LolFxCompiler lc(*this);
-    return lc.ParseString(command);
+    UNUSED(command);
+
+    return false;
 }
 
 } /* namespace lol */

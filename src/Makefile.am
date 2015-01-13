@@ -28,8 +28,7 @@ liblolcore_a_SOURCES = \
 #liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 
-EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y \
-              gpu/lolfx-scanner.l gpu/lolfx-parser.y
+EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
 
 liblolcore_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
@@ -65,8 +64,6 @@ liblolcore_headers = \
     lol/debug/lines.h
 
 liblolcore_sources = \
-    generated/location.hh generated/position.hh generated/stack.hh \
-    \
     application/application.cpp application/application.h \
     eglapp.cpp eglapp.h \
     \
@@ -79,9 +76,6 @@ liblolcore_sources = \
     easymesh/shinydebugwireframe.lolfx \
     easymesh/shinydebuglighting.lolfx easymesh/shinydebugnormal.lolfx \
     easymesh/shinydebugUV.lolfx easymesh/shiny_SK.lolfx \
-    easymesh/easymesh-compiler.cpp easymesh/easymesh-compiler.h \
-    generated/easymesh-parser.cpp generated/easymesh-parser.h \
-    generated/easymesh-scanner.cpp \
     \
     base/assert.cpp base/hash.cpp base/log.cpp base/string.cpp \
     base/enum.cpp \
@@ -102,9 +96,6 @@ liblolcore_sources = \
     gpu/testmaterial.lolfx \
     \
     gpu/lolfx.cpp \
-    gpu/lolfx-compiler.cpp gpu/lolfx-compiler.h \
-    generated/lolfx-parser.cpp generated/lolfx-parser.h \
-    generated/lolfx-scanner.cpp \
     \
     mesh/mesh.cpp mesh/mesh.h \
     mesh/primitive.cpp mesh/primitive.h \

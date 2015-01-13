@@ -17,8 +17,6 @@
 
 #include <lol/engine-internal.h>
 
-#include "easymesh/easymesh-compiler.h"
-
 LOLFX_RESOURCE_DECLARE(shiny);
 
 namespace lol
@@ -51,6 +49,8 @@ EasyMesh::EasyMesh(const EasyMesh& em)
 bool EasyMesh::Compile(char const *command, bool Execute)
 {
     bool res = false;
+    // FIXME: make this work again
+#if 0
     EasyMeshCompiler mc(*this);
     BD()->Enable(MeshBuildOperation::CommandRecording);
     if ((res = mc.ParseString(command)))
@@ -59,6 +59,7 @@ bool EasyMesh::Compile(char const *command, bool Execute)
         if (Execute)
             ExecuteCmdStack();
     }
+#endif
     return res;
 }
 

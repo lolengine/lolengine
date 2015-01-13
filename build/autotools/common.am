@@ -28,30 +28,6 @@ lolcheck-recursive:
 
 
 #
-# Flex and Bison files build rule
-#
-
-generated: generated-recursive
-generated-recursive:
-	$(lol_recursive_rule)
-	@if test -n "$(filter %-scanner.l, $(EXTRA_DIST))"; then \
-	  echo $(MKDIR_P) generated; \
-	  $(MKDIR_P) generated; \
-	  rm -f generated/[a-zA-Z]*; \
-	  for scanner in $(patsubst %-scanner.l, %, $(filter %-scanner.l, $(EXTRA_DIST))); do \
-	    b="`basename $$scanner`"; \
-	    echo flex -v -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l"; \
-	    flex -v -o "generated/$$b-scanner.cpp" "$$scanner-scanner.l" || exit 1; \
-	  done; \
-	  for parser in $(patsubst %-parser.y, %, $(filter %-parser.y, $(EXTRA_DIST))); do \
-	    b="`basename $$parser`"; \
-	    echo bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y"; \
-	    bison -o "generated/$$b-parser.cpp" --defines="generated/$$b-parser.h" -d -b "generated/$$b" "$$parser-parser.y" || exit 1; \
-	  done; \
-	fi
-
-
-#
 # .lolfx build rule
 #
 
@@ -134,5 +110,5 @@ clean-local-android:
 EXTRA_DIST += $(foreach p, $(PROGRAMS), $($(p)_DATA))
 
 
-.PHONY: bench lolcheck generated
+.PHONY: bench lolcheck
 
