@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -80,7 +82,7 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
     T median = m_data[m[1]];
     ptrdiff_t i0 = start;
     ptrdiff_t i1 = stop - 1;
-    bool swap = false;
+    bool b_swap = false;
     while (i0 < i1)
     {
         if (!(m_data[i0] < median) && m_data[i1] < median)
@@ -88,7 +90,7 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
             Swap(i0, i1);
             i0++;
             i1--;
-            swap = true;
+            b_swap = true;
         }
         else
         {
@@ -98,7 +100,7 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
                 i1--;
         }
     }
-    if (stop - start == 1 || !swap)
+    if (stop - start == 1 || !b_swap)
         return;
     if (start < i0)
         SortQuickSwap(start, i0);

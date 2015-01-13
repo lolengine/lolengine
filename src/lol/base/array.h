@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -54,7 +56,7 @@ public:
     {
         Reserve(list.size());
         for (auto elem : list)
-            Push(elem);
+            push(elem);
     }
 
     inline ~array_base()
@@ -191,17 +193,17 @@ public:
         return *this;
     }
 
-    inline void Push(T const &x)
+    inline void push(T const &x)
     {
         *this << x;
     }
 
-    inline bool PushUnique(T const &x)
+    inline bool push_unique(T const &x)
     {
         if (Find(x) != INDEX_NONE)
             return false;
 
-        Push(x);
+        push(x);
         return true;
     }
 
@@ -249,7 +251,7 @@ public:
         ptrdiff_t idx = Find(x);
         if (idx != INDEX_NONE)
         {
-            Remove(idx);
+            remove(idx);
             return true;
         }
         return false;
@@ -272,21 +274,21 @@ public:
         ptrdiff_t idx2 = Find(x2);
         if (idx1 != INDEX_NONE && idx2 != INDEX_NONE)
         {
-            Swap(idx1, idx2);
+            swap(idx1, idx2);
             return true;
         }
         return false;
     }
 
-    inline T Pop()
+    inline T pop()
     {
         ASSERT(m_count > 0);
         element_t tmp = Last();
-        Remove(m_count - 1, 1);
+        remove(m_count - 1, 1);
         return tmp;
     }
 
-    void Swap(ptrdiff_t pos1, ptrdiff_t pos2)
+    void swap(ptrdiff_t pos1, ptrdiff_t pos2)
     {
         ASSERT(pos1 >= 0 && pos1 <= m_count,
                "cannot swap index %lld in array of size %lld",
@@ -299,7 +301,7 @@ public:
             std::swap((*this)[pos1], (*this)[pos2]);
     }
 
-    void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
+    void remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
@@ -353,9 +355,9 @@ public:
         m_count = count;
     }
 
-    inline void Empty()
+    inline void empty()
     {
-        Remove(0, m_count);
+        remove(0, m_count);
     }
 
     void Reserve(ptrdiff_t toreserve)
@@ -383,6 +385,14 @@ public:
     void Shuffle();
     void Sort(int sort);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
+
+    /* TODO: remove these legacy functions one day */
+    inline void Push(T const &x) { push(x); }
+    inline bool PushUnique(T const &x) { return push_unique(x); }
+    inline T Pop() { return pop(); }
+    inline void Swap(ptrdiff_t pos1, ptrdiff_t pos2) { return swap(pos1, pos2); }
+    inline void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1) { return remove(pos, todelete); }
+    inline void Empty() { empty(); }
 
     /* Support C++11 range-based for loops */
     class ConstIterator
@@ -480,7 +490,7 @@ public:
 #endif
 
 public:
-    inline void Push(T... args)
+    inline void push(T... args)
     {
         if (this->m_count >= this->m_reserved)
         {
@@ -495,7 +505,7 @@ public:
         ++this->m_count;
     }
 
-    inline void Insert(ptrdiff_t pos, T... args)
+    inline void insert(ptrdiff_t pos, T... args)
     {
         ASSERT(pos >= 0 && pos <= this->m_count,
                "cannot insert at index %lld in array of size %lld",
@@ -512,6 +522,10 @@ public:
         new (&this->m_data[pos]) tuple<T...>({ args... });
         ++this->m_count;
     }
+
+    /* TODO: remove these legacy functions one day */
+    inline void Push(T... args) { push(args...); }
+    inline void Insert(ptrdiff_t pos, T... args) { insert(pos, args...); }
 };
 
 template<typename T>
