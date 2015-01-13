@@ -164,127 +164,121 @@ void remez_solver::remez_step()
         error += system[m_order + 1][i] * fxn[i];
 }
 
+/*
+ * Find m_order + 1 zeroes of the error function. No need to compute the
+ * relative error: its zeroes are at the same place as the absolute error!
+ *
+ * The algorithm used here is naïve regula falsi. It still performs a lot
+ * better than the midpoint algorithm.
+ */
 void remez_solver::find_zeroes()
 {
     m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
 
-    /* Find m_order + 1 zeroes of the error function. No need to
-     * compute the relative error: its zeroes are at the same
-     * place as the absolute error! */
     for (int i = 0; i < m_order + 1; i++)
     {
-        struct { real value, error; } a, b, c;
+        struct { real x, err; } a, b, c;
 
-        a.value = m_control[i];
-        a.error = eval_estimate(a.value) - eval_func(a.value);
-        b.value = m_control[i + 1];
-        b.error = eval_estimate(b.value) - eval_func(b.value);
+        a.x = m_control[i];
+        a.err = eval_estimate(a.x) - eval_func(a.x);
+        b.x = m_control[i + 1];
+        b.err = eval_estimate(b.x) - eval_func(b.x);
 
         static real limit = ldexp((real)1, -500);
         static real zero = (real)0;
-        while (fabs(a.value - b.value) > limit)
+        while (fabs(a.x - b.x) > limit)
         {
-            /* Interpolate linearly instead of taking the midpoint, this
-             * leads to far better convergence (6:1 speedups). */
-            real t = abs(b.error) / (abs(a.error) + abs(b.error));
-            real newc = b.value + t * (a.value - b.value);
+            real t = abs(b.err) / (abs(a.err) + abs(b.err));
+            real newc = b.x + t * (a.x - b.x);
 
             /* If the third point didn't change since last iteration,
              * we may be at an inflection point. Use the midpoint to get
              * out of this situation. */
-            c.value = newc == c.value ? (a.value + b.value) / 2 : newc;
-            c.error = eval_estimate(c.value) - eval_func(c.value);
+            c.x = newc == c.x ? (a.x + b.x) / 2 : newc;
+            c.err = eval_estimate(c.x) - eval_func(c.x);
 
-            if (c.error == zero)
+            if (c.err == zero)
                 break;
 
-            if ((a.error < zero && c.error < zero)
-                 || (a.error > zero && c.error > zero))
+            if ((a.err < zero && c.err < zero)
+                 || (a.err > zero && c.err > zero))
                 a = c;
             else
                 b = c;
         }
 
-        m_zeroes[i] = c.value;
+        m_zeroes[i] = c.x;
     }
 
     printf(" -:- timings for zeroes: estimate %f func %f weight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
 }
 
-/* XXX: this is the real costly function */
+/*
+ * Find m_order extrema of the error function. We maximise the relative
+ * error, since its extrema are at slightly different locations than the
+ * absolute error’s.
+ *
+ * The algorithm used here is successive parabolic interpolation. FIXME: we
+ * could use Brent’s method instead, which combines parabolic interpolation
+ * and golden ratio search and has superlinear convergence.
+ */
 void remez_solver::find_extrema()
 {
     using std::printf;
 
-    /* Find m_order + 2 extrema of the error function. We need to
-     * compute the relative error, since its extrema are at slightly
-     * different locations than the absolute error’s. */
+    m_control[0] = -1;
+    m_control[m_order + 1] = 1;
     m_error = 0;
 
     m_stats_cheby = m_stats_func = m_stats_weight = 0.f;
-    int evals = 0, rounds = 0;
 
-    for (int i = 0; i < m_order + 2; i++)
+    for (int i = 1; i < m_order + 1; i++)
     {
-        real a = -1, b = 1;
-        if (i > 0)
-            a = m_zeroes[i - 1];
-        if (i < m_order + 1)
-            b = m_zeroes[i];
+        struct { real x, err; } a, b, c, d;
 
-        for (int r = 0; ; ++r, ++rounds)
+        a.x = m_zeroes[i - 1];
+        b.x = m_zeroes[i];
+        c.x = a.x + (b.x - a.x) * real(rand(0.4f, 0.6f));
+
+        a.err = eval_error(a.x);
+        b.err = eval_error(b.x);
+        c.err = eval_error(c.x);
+
+        while (b.x - a.x > m_epsilon)
         {
-            real maxerror = 0, maxweight = 0;
-            int best = -1;
+            real d1 = c.x - a.x, d2 = c.x - b.x;
+            real k1 = d1 * (c.err - b.err);
+            real k2 = d2 * (c.err - a.err);
+            d.x = c.x - (d1 * k1 - d2 * k2) / (k1 - k2) / 2;
 
-            real c = a, delta = (b - a) / 4;
-            for (int k = 0; k <= 4; k++)
+            /* If parabolic interpolation failed, pick a number
+             * inbetween. */
+            if (d.x <= a.x || d.x >= b.x)
+                d.x = (a.x + b.x) / 2;
+
+            d.err = eval_error(d.x);
+
+            /* Update bracketing depending on the new point. */
+            if (d.err < c.err)
             {
-                if (r == 0 || (k & 1))
-                {
-                    ++evals;
-                    real error = fabs(eval_estimate(c) - eval_func(c));
-                    real weight = fabs(eval_weight(c));
-                    /* if error/weight >= maxerror/maxweight */
-                    if (error * maxweight >= maxerror * weight)
-                    {
-                        maxerror = error;
-                        maxweight = weight;
-                        best = k;
-                    }
-                }
-                c += delta;
+                (d.x > c.x ? b : a) = d;
             }
-
-            switch (best)
+            else
             {
-            case 0:
-                b = a + delta * 2;
-                break;
-            case 4:
-                a = b - delta * 2;
-                break;
-            default:
-                b = a + delta * (best + 1);
-                a = a + delta * (best - 1);
-                break;
-            }
-
-            if (delta < m_epsilon)
-            {
-                real e = fabs(maxerror / maxweight);
-                if (e > m_error)
-                    m_error = e;
-                m_control[i] = (a + b) / 2;
-                break;
+                (d.x > c.x ? a : b) = c;
+                c = d;
             }
         }
+
+        if (c.err > m_error)
+            m_error = c.err;
+
+        m_control[i] = c.x;
     }
 
     printf(" -:- timings for extrema: estimate %f func %f weight %f\n",
            m_stats_cheby, m_stats_func, m_stats_weight);
-    printf(" -:- calls: %d rounds, %d evals\n", rounds, evals);
     printf(" -:- error: ");
     m_error.print(m_decimals);
     printf("\n");
@@ -332,5 +326,10 @@ real remez_solver::eval_weight(real const &x)
     real ret = m_has_weight ? m_weight.eval(x * m_k2 + m_k1) : real(1);
     m_stats_weight += t.Get();
     return ret;
+}
+
+real remez_solver::eval_error(real const &x)
+{
+    return fabs((eval_estimate(x) - eval_func(x)) / eval_weight(x));
 }
 
