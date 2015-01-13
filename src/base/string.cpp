@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -51,11 +53,11 @@ String String::VPrintf(char const *format, va_list ap)
     size_t needed = vsnprintf(nullptr, 0, format, ap2) + 1;
 
 #if defined va_copy || !defined _MSC_VER
-    /* do not call va_end() if va_copy() wasn�t called. */
+    /* do not call va_end() if va_copy() wasn't called. */
     va_end(ap2);
 #endif
 
-    ((Super &)ret).Reserve(needed);
+    ((super &)ret).reserve(needed);
     ret.m_count = needed;
 
     vsnprintf(&ret[0], needed, format, ap);

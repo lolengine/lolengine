@@ -1,11 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2014—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -15,34 +18,34 @@
 namespace lol
 {
 
-lolunit_declare_fixture(StringTest)
+lolunit_declare_fixture(string_test)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    lolunit_declare_test(StringBuild)
+    lolunit_declare_test(string_build)
     {
         String s1;
-        lolunit_assert_equal(s1.Count(), 0);
+        lolunit_assert_equal(s1.count(), 0);
         lolunit_assert_equal(s1[0], '\0');
 
         String s2("");
-        lolunit_assert_equal(s2.Count(), 0);
+        lolunit_assert_equal(s2.count(), 0);
         lolunit_assert_equal(s2[0], '\0');
 
         String s3("a");
-        lolunit_assert_equal(s3.Count(), 1);
+        lolunit_assert_equal(s3.count(), 1);
         lolunit_assert_equal(s3[0], 'a');
         lolunit_assert_equal(s3[1], '\0');
 
         String s4(s3);
-        lolunit_assert_equal(s4.Count(), 1);
+        lolunit_assert_equal(s4.count(), 1);
         lolunit_assert_equal(s4[0], 'a');
         lolunit_assert_equal(s4[1], '\0');
     }
 
-    lolunit_declare_test(StringAppendChar)
+    lolunit_declare_test(string_append_char)
     {
         String s;
         s += 'a';
@@ -55,7 +58,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert_equal(s[3], '\0');
     }
 
-    lolunit_declare_test(StringCopy)
+    lolunit_declare_test(string_copy)
     {
         String s1 = "abc";
 
@@ -67,7 +70,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert_equal(s1[3], s2[3]);
     }
 
-    lolunit_declare_test(StringConcat)
+    lolunit_declare_test(string_concat)
     {
         String s1("ab"), s2("cd");
 
@@ -79,12 +82,12 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert_equal(s3[4], '\0');
     }
 
-    lolunit_declare_test(StringAppendString)
+    lolunit_declare_test(string_append_string)
     {
         String s1("ab"), s2("cd");
 
         s1 += s2;
-        lolunit_assert_equal(s1.Count(), 4);
+        lolunit_assert_equal(s1.count(), 4);
         lolunit_assert_equal(s1[0], 'a');
         lolunit_assert_equal(s1[1], 'b');
         lolunit_assert_equal(s1[2], 'c');
@@ -92,7 +95,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert_equal(s1[4], '\0');
 
         s2 += s2;
-        lolunit_assert_equal(s2.Count(), 4);
+        lolunit_assert_equal(s2.count(), 4);
         lolunit_assert_equal(s2[0], 'c');
         lolunit_assert_equal(s2[1], 'd');
         lolunit_assert_equal(s2[2], 'c');
@@ -100,7 +103,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert_equal(s2[4], '\0');
     }
 
-    lolunit_declare_test(StringEqual)
+    lolunit_declare_test(string_equal)
     {
         String s1("abc");
         String s2("abc");
@@ -110,7 +113,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(!(s1 == s3));
     }
 
-    lolunit_declare_test(StringDifferent)
+    lolunit_declare_test(string_different)
     {
         String s1("abc");
         String s2("ab");
@@ -120,7 +123,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(!(s1 != s3));
     }
 
-    lolunit_declare_test(StringCharsEqual)
+    lolunit_declare_test(string_chars_equal)
     {
         char const* sz = "abc";
         String s1("abc");
@@ -132,7 +135,7 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(!(sz == s2));
     }
 
-    lolunit_declare_test(StringCharsDifferent)
+    lolunit_declare_test(string_chars_different)
     {
         char const* sz = "abc";
         String s1("ab");
@@ -145,7 +148,7 @@ lolunit_declare_fixture(StringTest)
     }
 
 
-    lolunit_declare_test(StringPrintf)
+    lolunit_declare_test(string_printf)
     {
         String s1 = "3a";
         String s2 = String::Printf("%d%x", 3, 10);
@@ -158,30 +161,30 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(s3 == s4);
     }
 
-    lolunit_declare_test(SubString)
+    lolunit_declare_test(substring)
     {
         String s1 = "Hello World";
 
-        String s2 = s1.Sub(0, 5);
+        String s2 = s1.sub(0, 5);
         String s3 = "Hello";
         lolunit_assert(s2 == s3);
 
-        String s4 = s1.Sub(6, 5);
+        String s4 = s1.sub(6, 5);
         String s5 = "World";
         lolunit_assert(s4 == s5);
     }
 
-    lolunit_declare_test(IndexOf)
+    lolunit_declare_test(index_of)
     {
         String s1 = "Hello World";
-        ptrdiff_t i1 = s1.IndexOf('H');
-        ptrdiff_t i2 = s1.IndexOf('W');
-        ptrdiff_t i3 = s1.IndexOf('d');
-        ptrdiff_t i4 = s1.IndexOf("Hello");
-        ptrdiff_t i5 = s1.IndexOf("World");
-        ptrdiff_t i6 = s1.IndexOf("lo");
-        ptrdiff_t i7 = s1.IndexOf("Hello World");
-        ptrdiff_t i8 = s1.IndexOf("Sup' dude");
+        ptrdiff_t i1 = s1.index_of('H');
+        ptrdiff_t i2 = s1.index_of('W');
+        ptrdiff_t i3 = s1.index_of('d');
+        ptrdiff_t i4 = s1.index_of("Hello");
+        ptrdiff_t i5 = s1.index_of("World");
+        ptrdiff_t i6 = s1.index_of("lo");
+        ptrdiff_t i7 = s1.index_of("Hello World");
+        ptrdiff_t i8 = s1.index_of("Sup' dude");
 
         lolunit_assert(i1 == 0);
         lolunit_assert(i2 == 6);
@@ -193,18 +196,18 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(i8 == -1);
     }
 
-    lolunit_declare_test(LastIndexOf)
+    lolunit_declare_test(last_index_of)
     {
         String s1 = "Hello World";
-        ptrdiff_t i1 = s1.LastIndexOf('H');
-        ptrdiff_t i2 = s1.LastIndexOf('W');
-        ptrdiff_t i3 = s1.LastIndexOf('d');
-        ptrdiff_t i4 = s1.LastIndexOf("Hello");
-        ptrdiff_t i5 = s1.LastIndexOf("World");
-        ptrdiff_t i6 = s1.LastIndexOf("lo");
-        ptrdiff_t i7 = s1.LastIndexOf("Hello World");
-        ptrdiff_t i8 = s1.LastIndexOf("Sup' dude");
-        ptrdiff_t i9 = s1.LastIndexOf('l');
+        ptrdiff_t i1 = s1.last_index_of('H');
+        ptrdiff_t i2 = s1.last_index_of('W');
+        ptrdiff_t i3 = s1.last_index_of('d');
+        ptrdiff_t i4 = s1.last_index_of("Hello");
+        ptrdiff_t i5 = s1.last_index_of("World");
+        ptrdiff_t i6 = s1.last_index_of("lo");
+        ptrdiff_t i7 = s1.last_index_of("Hello World");
+        ptrdiff_t i8 = s1.last_index_of("Sup' dude");
+        ptrdiff_t i9 = s1.last_index_of('l');
 
         lolunit_assert(i1 == 0);
         lolunit_assert(i2 == 6);
@@ -217,18 +220,18 @@ lolunit_declare_fixture(StringTest)
         lolunit_assert(i9 == 9);
     }
 
-    lolunit_declare_test(StartsEndsWith)
+    lolunit_declare_test(starts_ends_with)
     {
         String s = "lolilol";
-        lolunit_assert(s.StartsWith("loli"));
-        lolunit_assert(!s.StartsWith("lolo"));
-        lolunit_assert(!s.StartsWith("lolilolilol"));
-        lolunit_assert(s.EndsWith("ilol"));
-        lolunit_assert(!s.EndsWith("olol"));
-        lolunit_assert(!s.EndsWith("lolilolilol"));
+        lolunit_assert(s.starts_with("loli"));
+        lolunit_assert(!s.starts_with("lolo"));
+        lolunit_assert(!s.starts_with("lolilolilol"));
+        lolunit_assert(s.ends_with("ilol"));
+        lolunit_assert(!s.ends_with("olol"));
+        lolunit_assert(!s.ends_with("lolilolilol"));
     }
 
-    lolunit_declare_test(StringCompare)
+    lolunit_declare_test(string_compare)
     {
         String s1 = "lolilol";
         String s2 = s1;
