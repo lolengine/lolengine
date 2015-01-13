@@ -31,6 +31,26 @@ remez_solver::remez_solver(int order, int decimals)
     m_decimals(decimals),
     m_has_weight(false)
 {
+    /* Spawn 4 worker threads */
+    for (int i = 0; i < 4; ++i)
+    {
+        auto th = new thread(std::bind(&remez_solver::worker_thread, this));
+        m_workers.push(th);
+    }
+}
+
+remez_solver::~remez_solver()
+{
+    /* Signal worker threads to quit, wait for worker threads to answer,
+     * and kill worker threads. */
+    for (auto worker : m_workers)
+        UNUSED(worker), m_questions.push(-1);
+
+    for (auto worker : m_workers)
+        UNUSED(worker), m_answers.pop();
+
+    for (auto worker : m_workers)
+        delete worker;
 }
 
 void remez_solver::run(real a, real b, char const *func, char const *weight)
@@ -75,10 +95,16 @@ void remez_solver::run(real a, real b, char const *func, char const *weight)
 void remez_solver::remez_init()
 {
     /* m_order + 1 zeroes of the error function */
-    m_zeroes.Resize(m_order + 1);
+    m_zeroes.resize(m_order + 1);
+
+    /* m_order + 1 zeroes to find */
+    m_zeroes_state.resize(m_order + 1);
 
     /* m_order + 2 control points */
-    m_control.Resize(m_order + 2);
+    m_control.resize(m_order + 2);
+
+    /* m_order extrema to find */
+    m_extrema_state.resize(m_order);
 
     /* Initial estimates for the x_i where the error will be zero and
      * precompute f(x_i). */
@@ -86,7 +112,7 @@ void remez_solver::remez_init()
     for (int i = 0; i < m_order + 1; i++)
     {
         m_zeroes[i] = (real)(2 * i - m_order) / (real)(m_order + 1);
-        fxn.Push(eval_func(m_zeroes[i]));
+        fxn.push(eval_func(m_zeroes[i]));
     }
 
     /* We build a matrix of Chebyshev evaluations: row i contains the
@@ -125,7 +151,7 @@ void remez_solver::remez_step()
     /* Pick up x_i where error will be 0 and compute f(x_i) */
     array<real> fxn;
     for (int i = 0; i < m_order + 2; i++)
-        fxn.Push(eval_func(m_control[i]));
+        fxn.push(eval_func(m_control[i]));
 
     /* We build a matrix of Chebyshev evaluations: row i contains the
      * evaluations of x_i for polynomial order n = 0, 1, ... */
@@ -178,39 +204,40 @@ void remez_solver::find_zeroes()
 {
     Timer t;
 
+    static real const limit = ldexp((real)1, -500);
+    static real const zero = (real)0;
+
+    /* Initialise an [a,b] bracket for each zero we try to find */
     for (int i = 0; i < m_order + 1; i++)
     {
-        struct { real x, err; } a, b, c;
+        point &a = m_zeroes_state[i].m1;
+        point &b = m_zeroes_state[i].m2;
 
         a.x = m_control[i];
         a.err = eval_estimate(a.x) - eval_func(a.x);
         b.x = m_control[i + 1];
         b.err = eval_estimate(b.x) - eval_func(b.x);
 
-        static real limit = ldexp((real)1, -500);
-        static real zero = (real)0;
-        while (fabs(a.x - b.x) > limit)
+        m_questions.push(i);
+    }
+
+    /* Watch all brackets for updates from worker threads */
+    for (int finished = 0; finished < m_order + 1; )
+    {
+        int i = m_answers.pop();
+
+        point &a = m_zeroes_state[i].m1;
+        point &b = m_zeroes_state[i].m2;
+        point &c = m_zeroes_state[i].m3;
+
+        if (c.err == zero || fabs(a.x - b.x) <= limit)
         {
-            real s = abs(b.err) / (abs(a.err) + abs(b.err));
-            real newc = b.x + s * (a.x - b.x);
-
-            /* If the third point didn't change since last iteration,
-             * we may be at an inflection point. Use the midpoint to get
-             * out of this situation. */
-            c.x = newc == c.x ? (a.x + b.x) / 2 : newc;
-            c.err = eval_estimate(c.x) - eval_func(c.x);
-
-            if (c.err == zero)
-                break;
-
-            if ((a.err < zero && c.err < zero)
-                 || (a.err > zero && c.err > zero))
-                a = c;
-            else
-                b = c;
+            m_zeroes[i] = c.x;
+            ++finished;
+            continue;
         }
 
-        m_zeroes[i] = c.x;
+        m_questions.push(i);
     }
 
     using std::printf;
@@ -234,48 +261,43 @@ void remez_solver::find_extrema()
     m_control[m_order + 1] = 1;
     m_error = 0;
 
-    for (int i = 1; i < m_order + 1; i++)
+    /* Initialise an [a,b,c] bracket for each extremum we try to find */
+    for (int i = 0; i < m_order; i++)
     {
-        struct { real x, err; } a, b, c, d;
+        point &a = m_extrema_state[i].m1;
+        point &b = m_extrema_state[i].m2;
+        point &c = m_extrema_state[i].m3;
 
-        a.x = m_zeroes[i - 1];
-        b.x = m_zeroes[i];
+        a.x = m_zeroes[i];
+        b.x = m_zeroes[i + 1];
         c.x = a.x + (b.x - a.x) * real(rand(0.4f, 0.6f));
 
         a.err = eval_error(a.x);
         b.err = eval_error(b.x);
         c.err = eval_error(c.x);
 
-        while (b.x - a.x > m_epsilon)
+        m_questions.push(i + 1000);
+    }
+
+    /* Watch all brackets for updates from worker threads */
+    for (int finished = 0; finished < m_order; )
+    {
+        int i = m_answers.pop();
+
+        point &a = m_extrema_state[i - 1000].m1;
+        point &b = m_extrema_state[i - 1000].m2;
+        point &c = m_extrema_state[i - 1000].m3;
+
+        if (b.x - a.x <= m_epsilon)
         {
-            real d1 = c.x - a.x, d2 = c.x - b.x;
-            real k1 = d1 * (c.err - b.err);
-            real k2 = d2 * (c.err - a.err);
-            d.x = c.x - (d1 * k1 - d2 * k2) / (k1 - k2) / 2;
-
-            /* If parabolic interpolation failed, pick a number
-             * inbetween. */
-            if (d.x <= a.x || d.x >= b.x)
-                d.x = (a.x + b.x) / 2;
-
-            d.err = eval_error(d.x);
-
-            /* Update bracketing depending on the new point. */
-            if (d.err < c.err)
-            {
-                (d.x > c.x ? b : a) = d;
-            }
-            else
-            {
-                (d.x > c.x ? a : b) = c;
-                c = d;
-            }
+            m_control[i - 1000 + 1] = c.x;
+            if (c.err > m_error)
+                m_error = c.err;
+            ++finished;
+            continue;
         }
 
-        if (c.err > m_error)
-            m_error = c.err;
-
-        m_control[i] = c.x;
+        m_questions.push(i);
     }
 
     using std::printf;
@@ -322,5 +344,76 @@ real remez_solver::eval_weight(real const &x)
 real remez_solver::eval_error(real const &x)
 {
     return fabs((eval_estimate(x) - eval_func(x)) / eval_weight(x));
+}
+
+void remez_solver::worker_thread()
+{
+    static real const zero = (real)0;
+
+    for (;;)
+    {
+        int i = m_questions.pop();
+
+        if (i < 0)
+        {
+            m_answers.push(i);
+            break;
+        }
+        else if (i < 1000)
+        {
+            point &a = m_zeroes_state[i].m1;
+            point &b = m_zeroes_state[i].m2;
+            point &c = m_zeroes_state[i].m3;
+
+            real s = abs(b.err) / (abs(a.err) + abs(b.err));
+            real newc = b.x + s * (a.x - b.x);
+
+            /* If the third point didn't change since last iteration,
+             * we may be at an inflection point. Use the midpoint to get
+             * out of this situation. */
+            c.x = newc != c.x ? newc : (a.x + b.x) / 2;
+            c.err = eval_estimate(c.x) - eval_func(c.x);
+
+            if ((a.err < zero && c.err < zero)
+                 || (a.err > zero && c.err > zero))
+                a = c;
+            else
+                b = c;
+
+            m_answers.push(i);
+        }
+        else if (i < 2000)
+        {
+            point &a = m_extrema_state[i - 1000].m1;
+            point &b = m_extrema_state[i - 1000].m2;
+            point &c = m_extrema_state[i - 1000].m3;
+            point d;
+
+            real d1 = c.x - a.x, d2 = c.x - b.x;
+            real k1 = d1 * (c.err - b.err);
+            real k2 = d2 * (c.err - a.err);
+            d.x = c.x - (d1 * k1 - d2 * k2) / (k1 - k2) / 2;
+
+            /* If parabolic interpolation failed, pick a number
+             * inbetween. */
+            if (d.x <= a.x || d.x >= b.x)
+                d.x = (a.x + b.x) / 2;
+
+            d.err = eval_error(d.x);
+
+            /* Update bracketing depending on the new point. */
+            if (d.err < c.err)
+            {
+                (d.x > c.x ? b : a) = d;
+            }
+            else
+            {
+                (d.x > c.x ? a : b) = c;
+                c = d;
+            }
+
+            m_answers.push(i);
+        }
+    }
 }
 

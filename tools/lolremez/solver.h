@@ -25,6 +25,7 @@ class remez_solver
 {
 public:
     remez_solver(int order, int decimals);
+    ~remez_solver();
 
     void run(lol::real a, lol::real b,
              char const *func, char const *weight = nullptr);
@@ -35,6 +36,8 @@ private:
 
     void find_zeroes();
     void find_extrema();
+
+    void worker_thread();
 
     void print_poly();
 
@@ -56,5 +59,17 @@ private:
     lol::array<lol::real> m_control;
 
     lol::real m_k1, m_k2, m_epsilon, m_error;
+
+    struct point
+    {
+        lol::real x, err;
+    };
+
+    lol::array<point, point, point> m_zeroes_state;
+    lol::array<point, point, point> m_extrema_state;
+
+    /* Threading information */
+    lol::array<lol::thread *> m_workers;
+    lol::queue<int> m_questions, m_answers;
 };
 
