@@ -46,13 +46,178 @@ lolunit_declare_fixture(bigint_test)
         lolunit_assert_equal((uint32_t)c, ~(uint32_t)0);
     }
 
-    lolunit_declare_test(empty_bigint_is_zero)
+    lolunit_declare_test(operator_equal)
     {
-        bigint<0> a, b(1), c(-1);
+        bigint<> a(-1), b(0), c(1);
 
-        lolunit_assert_equal((int)a, 0);
-        lolunit_assert_equal((int)b, 0);
-        lolunit_assert_equal((int)c, 0);
+        lolunit_assert(a == a);
+        lolunit_assert(!(a == b));
+        lolunit_assert(!(a == c));
+
+        lolunit_assert(!(b == a));
+        lolunit_assert(b == b);
+        lolunit_assert(!(b == c));
+
+        lolunit_assert(!(c == a));
+        lolunit_assert(!(c == b));
+        lolunit_assert(c == c);
+    }
+
+    lolunit_declare_test(operator_notequal)
+    {
+        bigint<> a(-1), b(0), c(1);
+
+        lolunit_assert(!(a != a));
+        lolunit_assert(a != b);
+        lolunit_assert(a != c);
+
+        lolunit_assert(b != a);
+        lolunit_assert(!(b != b));
+        lolunit_assert(b != c);
+
+        lolunit_assert(c != a);
+        lolunit_assert(c != b);
+        lolunit_assert(!(c != c));
+    }
+
+    lolunit_declare_test(operator_smaller)
+    {
+        bigint<> a(-10), b(-1), c(0), d(1), e(10);
+
+        lolunit_assert(!(a < a));
+        lolunit_assert(a < b);
+        lolunit_assert(a < c);
+        lolunit_assert(a < d);
+        lolunit_assert(a < e);
+
+        lolunit_assert(!(b < a));
+        lolunit_assert(!(b < b));
+        lolunit_assert(b < c);
+        lolunit_assert(b < d);
+        lolunit_assert(b < e);
+
+        lolunit_assert(!(c < a));
+        lolunit_assert(!(c < b));
+        lolunit_assert(!(c < c));
+        lolunit_assert(c < d);
+        lolunit_assert(c < e);
+
+        lolunit_assert(!(d < a));
+        lolunit_assert(!(d < b));
+        lolunit_assert(!(d < c));
+        lolunit_assert(!(d < d));
+        lolunit_assert(d < e);
+
+        lolunit_assert(!(e < a));
+        lolunit_assert(!(e < b));
+        lolunit_assert(!(e < c));
+        lolunit_assert(!(e < d));
+        lolunit_assert(!(e < e));
+    }
+
+    lolunit_declare_test(operator_smaller_or_equal)
+    {
+        bigint<> a(-10), b(-1), c(0), d(1), e(10);
+
+        lolunit_assert(a <= a);
+        lolunit_assert(a <= b);
+        lolunit_assert(a <= c);
+        lolunit_assert(a <= d);
+        lolunit_assert(a <= e);
+
+        lolunit_assert(!(b <= a));
+        lolunit_assert(b <= b);
+        lolunit_assert(b <= c);
+        lolunit_assert(b <= d);
+        lolunit_assert(b <= e);
+
+        lolunit_assert(!(c <= a));
+        lolunit_assert(!(c <= b));
+        lolunit_assert(c <= c);
+        lolunit_assert(c <= d);
+        lolunit_assert(c <= e);
+
+        lolunit_assert(!(d <= a));
+        lolunit_assert(!(d <= b));
+        lolunit_assert(!(d <= c));
+        lolunit_assert(d <= d);
+        lolunit_assert(d <= e);
+
+        lolunit_assert(!(e <= a));
+        lolunit_assert(!(e <= b));
+        lolunit_assert(!(e <= c));
+        lolunit_assert(!(e <= d));
+        lolunit_assert(e <= e);
+    }
+
+    lolunit_declare_test(operator_greater)
+    {
+        bigint<> a(-10), b(-1), c(0), d(1), e(10);
+
+        lolunit_assert(!(a > a));
+        lolunit_assert(!(a > b));
+        lolunit_assert(!(a > c));
+        lolunit_assert(!(a > d));
+        lolunit_assert(!(a > e));
+
+        lolunit_assert(b > a);
+        lolunit_assert(!(b > b));
+        lolunit_assert(!(b > c));
+        lolunit_assert(!(b > d));
+        lolunit_assert(!(b > e));
+
+        lolunit_assert(c > a);
+        lolunit_assert(c > b);
+        lolunit_assert(!(c > c));
+        lolunit_assert(!(c > d));
+        lolunit_assert(!(c > e));
+
+        lolunit_assert(d > a);
+        lolunit_assert(d > b);
+        lolunit_assert(d > c);
+        lolunit_assert(!(d > d));
+        lolunit_assert(!(d > e));
+
+        lolunit_assert(e > a);
+        lolunit_assert(e > b);
+        lolunit_assert(e > c);
+        lolunit_assert(e > d);
+        lolunit_assert(!(e > e));
+    }
+
+    lolunit_declare_test(operator_greater_or_equal)
+    {
+        bigint<> a(-10), b(-1), c(0), d(1), e(10);
+
+        lolunit_assert(a >= a);
+        lolunit_assert(!(a >= b));
+        lolunit_assert(!(a >= c));
+        lolunit_assert(!(a >= d));
+        lolunit_assert(!(a >= e));
+
+        lolunit_assert(b >= a);
+        lolunit_assert(b >= b);
+        lolunit_assert(!(b >= c));
+        lolunit_assert(!(b >= d));
+        lolunit_assert(!(b >= e));
+
+        lolunit_assert(c >= a);
+        lolunit_assert(c >= b);
+        lolunit_assert(c >= c);
+        lolunit_assert(!(c >= d));
+        lolunit_assert(!(c >= e));
+
+        lolunit_assert(d >= a);
+        lolunit_assert(d >= b);
+        lolunit_assert(d >= c);
+        lolunit_assert(d >= d);
+        lolunit_assert(!(d >= e));
+
+        lolunit_assert(e >= a);
+        lolunit_assert(e >= b);
+        lolunit_assert(e >= c);
+        lolunit_assert(e >= d);
+        lolunit_assert(e >= e);
     }
 };
 
