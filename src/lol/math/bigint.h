@@ -41,8 +41,8 @@ namespace lol
 template<unsigned int N = 16, typename T = uint32_t>
 class bigint
 {
-    int const bits_per_digit = sizeof(T) * 8 - 1;
-    T const digit_mask = ~((T)1 << bits_per_digit);
+    static int const bits_per_digit = sizeof(T) * 8 - 1;
+    static T const digit_mask = ~((T)1 << bits_per_digit);
 
 public:
     inline bigint()
@@ -123,6 +123,7 @@ public:
     {
         for (unsigned int i = 0; i < N; ++i)
             m_digits[i] &= x.m_digits[i];
+        return *this;
     }
 
     inline bigint<N,T> operator &(bigint<N,T> const &x) const
@@ -137,6 +138,7 @@ public:
     {
         for (unsigned int i = 0; i < N; ++i)
             m_digits[i] |= x.m_digits[i];
+        return *this;
     }
 
     inline bigint<N,T> operator |(bigint<N,T> const &x) const
@@ -151,6 +153,7 @@ public:
     {
         for (unsigned int i = 0; i < N; ++i)
             m_digits[i] ^= x.m_digits[i];
+        return *this;
     }
 
     inline bigint<N,T> operator ^(bigint<N,T> const &x) const
@@ -234,36 +237,7 @@ public:
     template<unsigned int M>
     bigint<N + M, T> operator *(bigint<M,T> const &x) const
     {
-        /* FIXME: other digit sizes are not supported */
-        static_assert(sizeof(T) == sizeof(uint32_t), "ensure T is uint32_t");
-
-        if (x.is_negative())
-            return -(*this * -x);
-        if (is_negative())
-            return -(-*this * x);
-
-        bigint<N + M> ret(0);
-        for (unsigned int i = 0; i < N; ++i)
-        {
-            T carry(0);
-            for (unsigned int j = 0; j < M; ++j)
-            {
-                uint64_t digit = ret.m_digits[i + j]
-                               + (uint64_t)m_digits[i] * x.m_digits[j]
-                               + carry;
-                ret.m_digits[i + j] = (T)digit & digit_mask;
-                carry = (digit >> bits_per_digit) & digit_mask;
-            }
-
-            for (unsigned int j = M; i + j < M + N && carry != 0; ++i)
-            {
-                T digit = ret.m_digits[i + j] + carry;
-                ret.m_digits[i + j] = (T)digit & digit_mask;
-                carry = (digit & ~digit_mask) ? T(1) : T(0);
-            }
-        }
-
-        return ret;
+        return mul_naive(*this, x);
     }
 
     /*
@@ -353,6 +327,37 @@ private:
         uint32_t ret = m_digits[digit_index] >> bit_index;
         if (bits_per_digit - bit_index < 32 && digit_index < N - 1)
             ret |= m_digits[digit_index + 1] << (bits_per_digit - bit_index);
+        return ret;
+    }
+
+    template<unsigned int M>
+    static inline bigint<N + M, T> mul_naive(bigint<N,T> const &a,
+                                             bigint<M,T> const &b)
+    {
+        /* FIXME: other digit sizes are not supported */
+        static_assert(sizeof(T) == sizeof(uint32_t), "ensure T is uint32_t");
+
+        bigint<N + M> ret(0);
+        for (unsigned int i = 0; i < N; ++i)
+        {
+            T carry(0);
+            for (unsigned int j = 0; j < M; ++j)
+            {
+                uint64_t digit = ret.m_digits[i + j]
+                               + (uint64_t)a.m_digits[i] * b.m_digits[j]
+                               + carry;
+                ret.m_digits[i + j] = (T)digit & a.digit_mask;
+                carry = (digit >> a.bits_per_digit) & a.digit_mask;
+            }
+
+            for (unsigned int j = M; i + j < M + N && carry != 0; ++i)
+            {
+                T digit = ret.m_digits[i + j] + carry;
+                ret.m_digits[i + j] = (T)digit & a.digit_mask;
+                carry = (digit & ~digit_mask) ? T(1) : T(0);
+            }
+        }
+
         return ret;
     }
 
