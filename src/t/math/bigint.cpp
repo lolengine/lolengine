@@ -219,6 +219,23 @@ lolunit_declare_fixture(bigint_test)
         lolunit_assert(e >= d);
         lolunit_assert(e >= e);
     }
+
+    lolunit_declare_test(multiply)
+    {
+        bigint<> a(-10), b(0), c(10);
+
+        lolunit_assert_equal((int32_t)(a * a), 100);
+        lolunit_assert_equal((int32_t)(a * b), 0);
+        lolunit_assert_equal((int32_t)(a * c), -100);
+
+        lolunit_assert_equal((int32_t)(b * a), 0);
+        lolunit_assert_equal((int32_t)(b * b), 0);
+        lolunit_assert_equal((int32_t)(b * c), 0);
+
+        lolunit_assert_equal((int32_t)(c * a), -100);
+        lolunit_assert_equal((int32_t)(c * b), 0);
+        lolunit_assert_equal((int32_t)(c * c), 100);
+    }
 };
 
 } /* namespace lol */
