@@ -207,6 +207,7 @@ public:
     /*
      * bigint subtraction: a combination of addition and unary minus;
      * we add the result of flipping digits and adding one.
+     * FIXME: this could be factored with operator+().
      */
     template<unsigned int M>
     bigint<(N > M) ? N : M, T> operator -(bigint<M,T> const &x) const
@@ -223,6 +224,45 @@ public:
             ret.m_digits[i] = digit & digit_mask;
             carry = (digit & ~digit_mask) ? T(1) : T(0);
         }
+        return ret;
+    }
+
+    /*
+     * bigint multiplication: the resulting integer has as many digits
+     * as the sum of the two operands.
+     */
+    template<unsigned int M>
+    bigint<N + M, T> operator *(bigint<M,T> const &x) const
+    {
+        /* FIXME: other digit sizes are not supported */
+        static_assert(sizeof(T) == sizeof(uint32_t), "ensure T is uint32_t");
+
+        if (x.is_negative())
+            return -(*this * -x);
+        if (is_negative())
+            return -(-*this * x);
+
+        bigint<N + M> ret(0);
+        for (unsigned int i = 0; i < N; ++i)
+        {
+            T carry(0);
+            for (unsigned int j = 0; j < M; ++j)
+            {
+                uint64_t digit = ret.m_digits[i + j]
+                               + (uint64_t)m_digits[i] * x.m_digits[j]
+                               + carry;
+                ret.m_digits[i + j] = (T)digit & digit_mask;
+                carry = (digit >> bits_per_digit) & digit_mask;
+            }
+
+            for (unsigned int j = M; i + j < M + N && carry != 0; ++i)
+            {
+                T digit = ret.m_digits[i + j] + carry;
+                ret.m_digits[i + j] = (T)digit & digit_mask;
+                carry = (digit & ~digit_mask) ? T(1) : T(0);
+            }
+        }
+
         return ret;
     }
 
@@ -274,6 +314,22 @@ public:
         return !(*this > x);
     }
 
+    void print() const
+    {
+        printf("0x");
+
+        int n = (bits_per_digit * N + 31) / 32;
+        while (n > 1 && get_uint32(n) == 0)
+            --n;
+
+        if (n > 0)
+            printf("%x", get_uint32(--n));
+        while (n--)
+            printf("%08x", get_uint32(n));
+
+        printf("\n");
+    }
+
 private:
     /* Allow other types of bigints to access our private members */
     template<unsigned int, typename> friend class bigint;
@@ -282,7 +338,22 @@ private:
     {
         if (N < 1)
             return false;
-        return (m_digits[N - 1] & ((T)1 << (bits_per_digit - 1))) != 0;
+        return (m_digits[N - 1] >> (bits_per_digit - 1)) != 0;
+    }
+
+    inline uint32_t get_uint32(int offset) const
+    {
+        unsigned int bit = offset * 32;
+        unsigned int digit_index = bit / bits_per_digit;
+        unsigned int bit_index = bit % bits_per_digit;
+
+        if (digit_index >= N)
+            return 0;
+
+        uint32_t ret = m_digits[digit_index] >> bit_index;
+        if (bits_per_digit - bit_index < 32 && digit_index < N - 1)
+            ret |= m_digits[digit_index + 1] << (bits_per_digit - bit_index);
+        return ret;
     }
 
     T m_digits[N];
