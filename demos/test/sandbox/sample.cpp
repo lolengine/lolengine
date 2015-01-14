@@ -23,10 +23,14 @@ int main()
     bigint<16> i;
     bigint<16> x(2), y(12);
     auto z = x + y;
-    printf("%d\n", (int)z);
+    printf("0x%x\n", (int)z);
+    z.print();
 
     bigint<0> lol;
     auto w = z + lol;
-    printf("%d\n", (int)w);
+    printf("0x%x\n", (int)w);
+
+    bigint<2> f(0x10101010), g(0x20202020);
+    (f * f * f * g - g).print();
 }
 
