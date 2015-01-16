@@ -13,7 +13,12 @@
 #pragma once
 
 //
-// Parser tools for a simple calculator grammar with + - * /
+// Powerful arithmetic expression parser/evaluator
+//
+// Usage:
+//   expression e;
+//   e.parse(" 2*x^3 + 3 * sin(x - atan(x))");
+//   auto y = e.eval("1.5");
 //
 
 #include "pegtl.hh"
@@ -85,114 +90,68 @@ struct expression
      */
     lol::real eval(lol::real const &x) const
     {
+        /* Use a stack */
         lol::array<lol::real> stack;
-        lol::real tmp;
 
         for (int i = 0; i < m_ops.Count(); ++i)
         {
+            /* Rules that do not consume stack elements */
+            if (m_ops[i].m1 == op::x)
+            {
+                stack.push(x);
+                continue;
+            }
+            else if (m_ops[i].m1 == op::constant)
+            {
+                stack.push(m_constants[m_ops[i].m2]);
+                continue;
+            }
+
+            /* All other rules consume at least the head of the stack */
+            lol::real head = stack.pop();
+
             switch (m_ops[i].m1)
             {
-            case op::plus:
-                break;
-            case op::minus:
-                stack.Push(-stack.Pop());
-                break;
-            case op::abs:
-                stack.Push(fabs(stack.Pop()));
-                break;
-            case op::sqrt:
-                stack.Push(sqrt(stack.Pop()));
-                break;
-            case op::cbrt:
-                stack.Push(cbrt(stack.Pop()));
-                break;
-            case op::exp:
-                stack.Push(exp(stack.Pop()));
-                break;
-            case op::exp2:
-                stack.Push(exp2(stack.Pop()));
-                break;
-            case op::log:
-                stack.Push(log(stack.Pop()));
-                break;
-            case op::log2:
-                stack.Push(log2(stack.Pop()));
-                break;
-            case op::log10:
-                stack.Push(log10(stack.Pop()));
-                break;
-            case op::sin:
-                stack.Push(sin(stack.Pop()));
-                break;
-            case op::cos:
-                stack.Push(cos(stack.Pop()));
-                break;
-            case op::tan:
-                stack.Push(tan(stack.Pop()));
-                break;
-            case op::asin:
-                stack.Push(asin(stack.Pop()));
-                break;
-            case op::acos:
-                stack.Push(acos(stack.Pop()));
-                break;
-            case op::atan:
-                stack.Push(atan(stack.Pop()));
-                break;
-            case op::sinh:
-                stack.Push(sinh(stack.Pop()));
-                break;
-            case op::cosh:
-                stack.Push(cosh(stack.Pop()));
-                break;
-            case op::tanh:
-                stack.Push(tanh(stack.Pop()));
-                break;
+            case op::plus:  stack.push(head);  break;
+            case op::minus: stack.push(-head); break;
 
-            case op::add:
-                tmp = stack.Pop();
-                stack.Push(stack.Pop() + tmp);
-                break;
-            case op::sub:
-                tmp = stack.Pop();
-                stack.Push(stack.Pop() - tmp);
-                break;
-            case op::mul:
-                tmp = stack.Pop();
-                stack.Push(stack.Pop() * tmp);
-                break;
-            case op::div:
-                tmp = stack.Pop();
-                stack.Push(stack.Pop() / tmp);
-                break;
-            case op::atan2:
-                tmp = stack.Pop();
-                stack.Push(atan2(stack.Pop(), tmp));
-                break;
-            case op::pow:
-                tmp = stack.Pop();
-                stack.Push(pow(stack.Pop(), tmp));
-                break;
-            case op::min:
-                tmp = stack.Pop();
-                stack.Push(min(stack.Pop(), tmp));
-                break;
-            case op::max:
-                tmp = stack.Pop();
-                stack.Push(max(stack.Pop(), tmp));
-                break;
+            case op::abs:   stack.push(fabs(head));  break;
+            case op::sqrt:  stack.push(sqrt(head));  break;
+            case op::cbrt:  stack.push(cbrt(head));  break;
+            case op::exp:   stack.push(exp(head));   break;
+            case op::exp2:  stack.push(exp2(head));  break;
+            case op::log:   stack.push(log(head));   break;
+            case op::log2:  stack.push(log2(head));  break;
+            case op::log10: stack.push(log10(head)); break;
+            case op::sin:   stack.push(sin(head));   break;
+            case op::cos:   stack.push(cos(head));   break;
+            case op::tan:   stack.push(tan(head));   break;
+            case op::asin:  stack.push(asin(head));  break;
+            case op::acos:  stack.push(acos(head));  break;
+            case op::atan:  stack.push(atan(head));  break;
+            case op::sinh:  stack.push(sinh(head));  break;
+            case op::cosh:  stack.push(cosh(head));  break;
+            case op::tanh:  stack.push(tanh(head));  break;
+
+            case op::add:   stack.push(stack.pop() + head); break;
+            case op::sub:   stack.push(stack.pop() - head); break;
+            case op::mul:   stack.push(stack.pop() * head); break;
+            case op::div:   stack.push(stack.pop() / head); break;
+
+            case op::atan2: stack.push(atan2(stack.pop(), head)); break;
+            case op::pow:   stack.push(pow(stack.pop(), head));   break;
+            case op::min:   stack.push(min(stack.pop(), head));   break;
+            case op::max:   stack.push(max(stack.pop(), head));   break;
 
             case op::x:
-                stack.Push(x);
-                break;
-
             case op::constant:
-                stack.Push(m_constants[m_ops[i].m2]);
+                /* Already handled above */
                 break;
             }
         }
 
-        return stack.Pop();
+        ASSERT(stack.count() == 1);
+        return stack.pop();
     }
 
 private:
@@ -205,8 +164,8 @@ private:
         static void apply(std::string const &ctx, expression *that)
         {
             /* FIXME: check if the constant is already in the list */
-            that->m_ops.Push(op::constant, that->m_constants.Count());
-            that->m_constants.Push(lol::real(ctx.c_str()));
+            that->m_ops.push(op::constant, that->m_constants.Count());
+            that->m_constants.push(lol::real(ctx.c_str()));
         }
     };
 
@@ -216,7 +175,7 @@ private:
         static void apply(std::string const &ctx, expression *that)
         {
             UNUSED(ctx);
-            that->m_ops.Push(OP, -1);
+            that->m_ops.push(OP, -1);
         }
     };
 
