@@ -251,10 +251,10 @@ public:
     }
 
 public:
-    inline element_t *Data() { return super::Data(); }
-    inline element_t const *Data() const { return super::Data(); }
-    inline ptrdiff_t Count() const { return super::Count(); }
-    inline ptrdiff_t Bytes() const { return super::Bytes(); }
+    inline element_t *data() { return super::data(); }
+    inline element_t const *data() const { return super::data(); }
+    inline ptrdiff_t count() const { return super::count(); }
+    inline ptrdiff_t bytes() const { return super::bytes(); }
 
 private:
     inline void FixSizes(element_t e = element_t())

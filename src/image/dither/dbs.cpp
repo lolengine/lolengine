@@ -49,7 +49,7 @@ Image Image::DitherDbs() const
      * for two iterations, we stop considering changes to it. */
     ivec2 const csize = (size + ivec2(CELL - 1)) / CELL;
     array2d<int> changelist(csize);
-    memset(changelist.Data(), 0, changelist.Bytes());
+    memset(changelist.data(), 0, changelist.bytes());
 
     Image dst = *this;
     dst.SetFormat(PixelFormat::Y_F32);

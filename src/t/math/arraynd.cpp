@@ -98,7 +98,7 @@ lolunit_declare_fixture(ArrayNDTest)
             size[i] = 5;
 
         arraynd<NDIM, uint8_t> a(size);
-        memset(a.Data(), 0, a.Bytes());
+        memset(a.data(), 0, a.bytes());
         lolunit_assert_equal(a[2][3][2][0][1][4][0][1], 0x00);
 
         vec_t<int, NDIM> v = { 2, 3, 2, 0, 1, 4, 0, 1 };
