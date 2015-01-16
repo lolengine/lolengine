@@ -21,10 +21,10 @@ namespace lol
 class PixelDataBase
 {
 public:
-    virtual void *Data() = 0;
-    virtual void const *Data() const = 0;
-    virtual void *Data2D() = 0;
-    virtual void const *Data2D() const = 0;
+    virtual void *data() = 0;
+    virtual void const *data() const = 0;
+    virtual void *data2d() = 0;
+    virtual void const *data2d() const = 0;
 
     inline virtual ~PixelDataBase() {}
 };
@@ -35,10 +35,10 @@ class PixelData : public PixelDataBase
 public:
     inline PixelData(ivec2 size) { m_array2d.SetSize(size); }
 
-    virtual void *Data() { return m_array2d.Data(); }
-    virtual void const *Data() const { return m_array2d.Data(); }
-    virtual void *Data2D() { return &m_array2d; }
-    virtual void const *Data2D() const { return &m_array2d; }
+    virtual void *data() { return m_array2d.data(); }
+    virtual void const *data() const { return m_array2d.data(); }
+    virtual void *data2d() { return &m_array2d; }
+    virtual void const *data2d() const { return &m_array2d; }
 
     array2d<typename PixelType<T>::type> m_array2d;
 };
@@ -82,7 +82,7 @@ public:
         /* Insert image codecs in a sorted list */ \
         ImageCodec *codec = Register##name(); \
         int i = 0, prio = codec->m_priority; \
-        for ( ; i < codeclist.Count(); ++i) \
+        for ( ; i < codeclist.count(); ++i) \
         { \
             if (codeclist[i]->m_priority <= prio) \
                 break; \

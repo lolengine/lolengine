@@ -146,13 +146,13 @@ static Image ResizeBresenham(Image &image, ivec2 size)
     array<vec4> aline, line;
     aline.Resize(size.x);
     line.Resize(size.x);
-    memset(line.Data(), 0, line.Bytes());
+    memset(line.data(), 0, line.bytes());
 
     int remy = 0;
 
     for (int y = 0, y0 = 0; y < size.y; y++)
     {
-        memset(aline.Data(), 0, aline.Bytes());
+        memset(aline.data(), 0, aline.bytes());
 
         for (int toty = 0; toty < oldsize.y; )
         {

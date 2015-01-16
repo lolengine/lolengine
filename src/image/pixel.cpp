@@ -156,64 +156,64 @@ void Image::SetFormat(PixelFormat fmt)
     /* Easy conversions: just add or remove channels */
     if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGB_8)
     {
-        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8vec3(src[n]);
     }
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGBA_8)
     {
-        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8vec4(u8vec3(src[n]), 255);
     }
     else if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::RGB_8)
     {
-        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = src[n].rgb;
     }
     else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::RGBA_8)
     {
-        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8vec4(src[n], 255);
     }
     else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::RGB_F32)
     {
-        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = src[n].rgb;
     }
     else if (old_fmt == PixelFormat::RGB_F32 && fmt == PixelFormat::RGBA_F32)
     {
-        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = vec4(src[n], 1.f);
     }
     else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGB_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = vec3(src[n]);
     }
     else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = vec4(vec3(src[n]), 1.0f);
@@ -221,56 +221,56 @@ void Image::SetFormat(PixelFormat fmt)
     /* Lossless conversions: u8 to float */
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::Y_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        float *dest = (float *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        float *dest = (float *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(src[n]);
     }
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGB_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(u8vec3(src[n]));
     }
     else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::RGB_F32)
     {
-        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(src[n]);
     }
     else if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::RGB_F32)
     {
-        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(src[n].rgb);
     }
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGBA_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(u8vec4(u8vec3(src[n]), 255));
     }
     else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::RGBA_F32)
     {
-        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec3 *src = (u8vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(u8vec4(src[n], 255));
     }
     else if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::RGBA_F32)
     {
-        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->Data();
-        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        u8vec4 *src = (u8vec4 *)m_data->m_pixels[(int)old_fmt]->data();
+        vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = u8tof32(src[n]);
@@ -278,8 +278,8 @@ void Image::SetFormat(PixelFormat fmt)
     /* Other conversions */
     else if (old_fmt == PixelFormat::RGB_F32 && fmt == PixelFormat::Y_F32)
     {
-        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        float *dest = (float *)m_data->m_pixels[(int)fmt]->Data();
+        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        float *dest = (float *)m_data->m_pixels[(int)fmt]->data();
 
         vec3 const coeff(0.299f, 0.587f, 0.114f);
 
@@ -288,24 +288,24 @@ void Image::SetFormat(PixelFormat fmt)
     }
     else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::Y_8)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->Data();
-        uint8_t *dest = (uint8_t *)m_data->m_pixels[(int)fmt]->Data();
+        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        uint8_t *dest = (uint8_t *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = f32tou8(src[n]);
     }
     else if (old_fmt == PixelFormat::RGB_F32 && fmt == PixelFormat::RGB_8)
     {
-        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->Data();
+        vec3 *src = (vec3 *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec3 *dest = (u8vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = f32tou8(src[n]);
     }
     else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::RGBA_8)
     {
-        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt]->Data();
-        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->Data();
+        vec4 *src = (vec4 *)m_data->m_pixels[(int)old_fmt]->data();
+        u8vec4 *dest = (u8vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
             dest[n] = f32tou8(src[n]);

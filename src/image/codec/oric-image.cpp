@@ -137,7 +137,7 @@ bool OricImageCodec::Save(Image *image, char const *path)
 
     File f;
     f.Open(path, FileAccess::Write);
-    f.Write(result.Data(), result.Bytes());
+    f.Write(result.data(), result.bytes());
     f.Close();
 
     return true;
@@ -473,8 +473,8 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
     src.SetSize(size + ivec2(1));
     dst.SetSize(size + ivec2(1));
 
-    memset(src.Data(), 0, src.Bytes());
-    memset(dst.Data(), 0, dst.Bytes());
+    memset(src.data(), 0, src.bytes());
+    memset(dst.data(), 0, dst.bytes());
 
     /* Import pixels into our custom format */
     for (int y = 0; y < size.y; y++)

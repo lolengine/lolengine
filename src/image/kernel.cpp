@@ -129,7 +129,7 @@ array2d<float> Image::BlueNoiseKernel(ivec2 size, ivec2 gsize)
 
     /* Generate an array with about 10% random dots */
     int const ndots = (size.x * size.y + 9) / 10;
-    memset(dots.Data(), 0, dots.Bytes());
+    memset(dots.data(), 0, dots.bytes());
     for (int n = 0; n < ndots; )
     {
         ivec2 pos(lol::rand(size.x), lol::rand(size.y));
@@ -194,7 +194,7 @@ array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
             tmp[y * size.x + x].y = y;
             tmp[y * size.x + x].val = kernel[x][y];
         }
-    std::qsort(tmp.Data(), size.x * size.y, sizeof(Dot), cmpdot);
+    std::qsort(tmp.data(), size.x * size.y, sizeof(Dot), cmpdot);
 
     array2d<float> dst(size);
 
