@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="btphystest.h" />
+    <ClInclude Include="physicobject.h" />
+    <ClInclude Include="physics\easycharactercontroller.h">
+      <filter>physics</filter>
+    </ClInclude>
+    <ClInclude Include="physics\lolphysics.h">
+      <filter>physics</filter>
+    </ClInclude>
+    <ClInclude Include="physics\easyconstraint.h">
+      <filter>physics</filter>
+    </ClInclude>
+    <ClInclude Include="physics\easyphysics.h">
+      <filter>physics</filter>
+    </ClInclude>
+    <ClInclude Include="physics\lolbtphysicsintegration.h">
+      <filter>physics</filter>
+    </ClInclude>
+    <ClInclude Include="physics\bulletcharactercontroller.h">
+      <filter>physics</filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="btphystest.cpp" />
+    <ClCompile Include="physics\easycharactercontroller.cpp">
+      <filter>physics</filter>
+    </ClCompile>
+    <ClCompile Include="physics\easyconstraint.cpp">
+      <filter>physics</filter>
+    </ClCompile>
+    <ClCompile Include="physics\easyphysics.cpp">
+      <filter>physics</filter>
+    </ClCompile>
+    <ClCompile Include="physics\bulletcharactercontroller.cpp">
+      <filter>physics</filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="generated">
+      <UniqueIdentifier>{4fc7662b-b17a-49b9-acd1-0cf767183b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="physics">
+      <UniqueIdentifier>{ccecd634-9321-4c49-9471-e9da50dda6d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile.am" />
+  </ItemGroup>
+  <ItemGroup>
+    <LolFxCompile Include="front_camera_sprite.lolfx" />
+  </ItemGroup>
+</Project>

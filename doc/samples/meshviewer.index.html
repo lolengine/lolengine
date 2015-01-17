@@ -1,0 +1,396 @@
+<DOCTYPE html>
+<html>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+
+  <!--
+  Copyright (c) 2012 The Native Client Authors. All rights reserved.
+  Use of this source code is governed by a BSD-style license that can be
+  found in the LICENSE file.
+  -->
+
+<head>
+
+<style type="text/css">
+body
+{
+    font:12px Consolas;
+}
+button
+{
+    font:14px Consolas;
+}
+textarea
+{
+    font:14px Consolas;
+}
+#id_div_progress_status
+{
+    font:12px Consolas;
+}
+#id_div_progress
+{
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    right: 30%;
+    z-index: 3;
+    background-color:white;
+    border:1px solid #000000;
+    visibility: hidden;
+    z-index: 1;
+}
+progress
+{
+    background-color: #f3f3f3;  
+    border: 0;  
+    height: 18px;
+    width: 200px;
+    border-radius: 9px;
+}
+progress::-webkit-progress-bar
+{
+    background-color: #f3f3f3;
+    border: 1px solid #000000;
+    padding: 2px 2px;
+    height: 20px;
+    border-radius: 0px;
+}
+progress::-webkit-progress-value
+{
+    background-color: #22BB22;
+    border: 0px;
+    height: 14px;
+    border-radius: 0px;
+}
+#id_div_listener
+{
+    position: relative;
+}
+#id_div_frame_embed
+{
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: 0;
+}
+#BGCanvas
+{
+    border:1px solid #000000;
+}
+#id_div_helper_cmd_0 
+{
+    margin-left: 5px;
+}
+</style>
+
+<title>Mesh Viewer Web Edition</title>
+
+</head>
+
+<script type="text/javascript">
+    //Base data Setup : GLOBAL STYLE
+    g_div_frame_embed_save  = '';
+    g_div_frame_embed       = null;
+    g_txtarea_code_src      = null;
+    g_div_helper_cmd        = [null, null];
+    g_div_helper_args       = null;
+    g_div_helper_cmnt       = null;
+    g_div_helper_vars       = null;
+    g_div_alphabet          = null;
+    g_div_progress          = null;
+    g_div_progress_status   = null;
+    g_progress_bar          = null;
+    g_var_progress_bar      = -1;
+    g_frame_embed           = null;
+    //This is the module pointer : can be either the NaCl or Em one depending on the context.
+    g_embed_module          = null;
+
+    var g_autosave_timer    = 4.0;
+    var g_autosave_time     = 4.0;
+    var g_code_addin        = [' custom setmesh "#CODE#" ', '#CODE#'];
+    var g_code_base         = [];
+    var CodeDictionnary     = [];
+
+    var g_code_id           = 0;
+    g_code_base[0]          = "//This is a comment\nsc#f8f afcb 1 1 1 0";
+    g_code_base[1]          = "//This is a comment\naddlight 0.0 position (4 -1 -4) color (.0 .2 .5 1)\naddlight 0.0 position (8 2 6) color #ffff\nshowgizmo true\nshowlight true";
+    
+function machinchose() { return 'test machin '; }
+    function GetTextAreaCodeSrc()   { return g_txtarea_code_src; }
+    function GetDivProgress()       { return g_div_progress; }
+    function GetProgressBar()       { return g_progress_bar; }
+    function GetDivProgressStatus() { return g_div_progress_status; }
+    function GetDivEmbedData()      { return g_div_frame_embed; }
+    function GetDivEmbedDataSave()  { return g_div_frame_embed_save; }
+    function GetFrameData()         { return g_frame_embed; }
+
+    //Communication with iframe content.
+    function InitModuleVar()        { g_embed_module = GetiFrameModuleVar(); }
+    function GetiFrameDivEmbed()    { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetDivEmbed()); }
+    function GetiFrameModuleVar()   { return (!g_frame_embed) ? (null) : (g_frame_embed.contentWindow.GetEmbedModule()); }
+    function IsUsingNaCl()          { return window.chrome; }
+</script>
+
+<script src="../javascript/utils.js"></script>
+<script src="../javascript/progressstatus.js"></script>
+<script type="text/javascript">
+    //Used by typedictionnary.js
+    function GetCmdDictionnary()    { return CodeDictionnary[g_code_id]; }
+    g_code_id = 1;
+</script>
+<script src="../javascript/typedictionnary.js"></script>
+<!-- Init Scene setup dictionnary -->
+<script type="text/javascript">
+    CodeDictionnary[g_code_id] = new TypeDictionnary("SceneSetup");
+</script>
+<script src="./scenesetupdictionnary.js"></script>
+<!-- Init Easy mesh dictionnary -->
+<script type="text/javascript">
+    g_code_id--;
+    CodeDictionnary[g_code_id] = new TypeDictionnary("EasyMesh");
+</script>
+<script src="./easymeshdictionnary.js"></script>
+<!-- Revert datas to normal -->
+<script type="text/javascript">
+    g_code_id = 0;
+</script>
+
+<script type="text/javascript">
+    //Base init for all datas
+    function VarInit()
+    {
+        //Init frame variable first.
+        g_frame_embed           = document.getElementById('id_frame_embed');
+        //This is in an iframe.
+        g_div_frame_embed       = g_frame_embed.contentDocument.getElementById('id_div_frame_embed');
+        //The rest of these are in this page.
+        g_txtarea_code_src      = document.getElementById('id_txtarea_code_src');
+        g_div_helper_cmd[0]     = document.getElementById('id_div_helper_cmd_0');
+        g_div_helper_cmd[1]     = document.getElementById('id_div_helper_cmd_1');
+        g_div_helper_args       = document.getElementById('id_div_helper_args');
+        g_div_helper_cmnt       = document.getElementById('id_div_helper_cmnt');
+        g_div_helper_vars       = document.getElementById('id_div_helper_vars');
+        g_div_alphabet          = document.getElementById('id_div_alphabet');
+        g_div_progress          = document.getElementById('id_div_progress');
+        g_div_progress_status   = document.getElementById('id_div_progress_status');
+        g_progress_bar          = document.getElementById('id_progress_bar');
+    }
+
+    //Base init
+    function Init()
+    {
+        VarInit();
+
+        //Put here any cookie update
+        if (DoesLolCookieExist("LolMeshViewerAutosave"))
+        {
+            var lol_cookie = GetLolCookie("LolMeshViewerAutosave", false);
+            var value_list = lol_cookie.m_value.split(";");
+            for (var i = 0; i < g_code_base.length && i < value_list.length; i++)
+            {
+                g_code_base[i] = value_list[i];
+                var addins = g_code_addin[i].split('#CODE#');
+                for (var j = 0; j < addins.length; j++)
+                    if (addins[j] && addins[j] != '')
+                        g_code_base[i] = g_code_base[i].replace(addins[j], "");
+            }
+            g_txtarea_code_src.value = g_code_base[g_code_id];
+        }
+        else if (!g_txtarea_code_src.value)
+            g_txtarea_code_src.value = g_code_base[g_code_id];
+
+        //Fill the TOC
+        if (!g_div_alphabet.innerHTML)
+        {
+            for (var i = 0; i < CodeDictionnary.length; i++)
+            {
+                g_code_id = i;
+                var new_toc = BuildTOC(true);
+                var pattern = new RegExp("^[a-zA-Z\.]");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "<b>$&");
+                pattern = new RegExp("[a-zA-Z\.]$");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$&</b>");
+                pattern = new RegExp("([a-zA-Z])([\.])");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$1</b>$2");
+                pattern = new RegExp("([\.])([a-zA-Z])");
+                while (pattern.test(new_toc))
+                    new_toc = new_toc.replace(pattern, "$1<b>$2");
+                CodeDictionnary[i].m_alphabet = new_toc;
+            }
+            g_code_id = 0;
+            InitEditValues();
+        }
+
+        //NaCl Specific
+        if (IsUsingNaCl())
+        {
+            DynLoadFile("../javascript/naclloading.js");
+            g_frame_embed.src = 'meshviewer.nacl.html';
+        }
+        else
+            g_frame_embed.src = 'meshviewer.em.html';
+
+        g_frame_embed.onload = function() { VarInit(); }
+
+        //Tick has been done, start Tick
+        window.setTimeout("Tick(.2)", 200);
+    }
+
+    function Tick(seconds)
+    {
+        window.setTimeout("Tick(.1)", 100);
+
+        var text_src = g_txtarea_code_src;
+        var div_cmds = g_div_helper_cmd;
+        var div_args = g_div_helper_args;
+        var div_cmnt = g_div_helper_cmnt;
+        var div_vars = g_div_helper_vars;
+        CmdLookup(div_cmds, div_args, div_cmnt, div_vars, text_src);
+
+        g_autosave_timer -= seconds;
+        if (g_autosave_timer < 0.0)
+        {
+            g_autosave_timer = g_autosave_time;
+            StoreCodeCookie();
+        }
+    }
+
+    function StoreCodeCookie()
+    {
+        var result = '';
+        for (var i = 0; i < g_code_base.length; i++)
+        { result += g_code_addin[i].replace('#CODE#', g_code_base[i]) + ";"; }
+        StoreLolCookie(new LolCookieDays("LolMeshViewerAutosave", result, 10));
+    }
+
+    function StoreTextAreaValue()
+    {
+        g_code_base[g_code_id] = GetTextAreaCodeSrc().value;
+    }
+
+    function ExchangeSetup()
+    {
+        StoreTextAreaValue();
+        g_code_id = (g_code_id + 1) % 2;
+        InitEditValues();
+    }
+
+    function InitEditValues()
+    {
+        GetTextAreaCodeSrc().value = g_code_base[g_code_id];
+        g_div_alphabet.innerHTML = '&nbsp;Table of content<br>&nbsp;[' + CodeDictionnary[g_code_id].m_alphabet + ']&nbsp;<br>&nbsp;';
+    }
+
+    //Handle message from the NaCl module
+    function ModuleSentMessage(message)
+    {
+        alert('Module sent message: ' + message.data);
+    }
+
+    //When module is live, it calls this.
+    function ModuleIsLive()
+    {
+        for (var i = 0; i < g_code_base.length; i++)
+        {
+            SendMessageToModule();
+            ExchangeSetup();
+        }
+    }
+
+    //Called by the "Send Mesh Command !" button
+    function SendMessageToModule()
+    {
+        StoreTextAreaValue();
+        if (g_embed_module)
+        {
+            StoreCodeCookie();
+            g_embed_module.SendMessage(g_code_addin[g_code_id].replace('#CODE#', g_code_base[g_code_id]));
+        }
+        else
+            alert("Module not loaded !");
+    }
+</script>
+
+<body>
+
+<h1>Mesh Viewer : Web version.</h1>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr height="404">
+        <td>
+
+            <p>
+                <div id="final_div">
+                    <div id="id_div_listener" align="center" style="width:800px;height:400px">
+                        <canvas id="BGCanvas" width="802" height="402"></canvas>
+                        <div id="id_div_progress">
+                            <br>&nbsp;
+                            <progress id="id_progress_bar" align="left"></progress>
+                            <div id="id_div_progress_status">....</div>&nbsp;
+                        </div>
+                        <div id="id_div_frame_embed">
+                            <iframe onload="Init();" id="id_frame_embed" src="../javascript/empty.html" width=800 height=400 frameborder=0 scrolling=no></iframe>
+                        </div>
+                    </div>
+                </div>
+            </p>
+
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="802">
+                <tr>
+                    <td align="left">
+                        <div><button onclick="SendMessageToModule()">Update program</button></div>
+                    </td>
+                    <td align="right">
+                        <div><button onclick="ExchangeSetup()">Change edit data</button></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td height="1%">
+                        <div id="bouton">
+                            <textarea autofocus id="id_txtarea_code_src" rows="6" cols="94" style="font: 14px Consolas; resize: none;"></textarea>
+                        </div>
+                    </td>
+                    <td valign="top" rowspan="3">&nbsp;</td>
+                    <td valign="top" rowspan="3">
+                        <div><b><u>Variable Types usage :</u></b></div>
+                        <div id="id_div_helper_vars"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="1%">
+                        <div id="id_div_alphabet"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td valign="top"><div id="id_div_helper_cmd_0"></div></td>
+                                <td valign="top"><div id="id_div_helper_cmd_1"></div></td>
+                                <td valign="top"><div id="id_div_helper_args"    ></div></td>
+                                <td valign="top"><div id="id_div_helper_cmnt" ></div></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
