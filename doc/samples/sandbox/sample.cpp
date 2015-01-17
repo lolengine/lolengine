@@ -20,17 +20,23 @@ using namespace lol;
 
 int main()
 {
-    bigint<16> i;
-    bigint<16> x(2), y(12);
-    auto z = x + y;
-    printf("0x%x\n", (int)z);
+    Timer t;
+
+    bigint<128> x(17), y(23);
+    x.print();
+    y.print();
+
+    auto z = x * y;
     z.print();
 
-    bigint<0> lol;
-    auto w = z + lol;
-    printf("0x%x\n", (int)w);
+    for (int i = 0; i < 500000; ++i)
+    {
+        x = (bigint<128>)(x * x);
+        x ^= y;
+    }
 
-    bigint<2> f(0x10101010), g(0x20202020);
-    (f * f * f * g - g).print();
+    printf("%d %d\n", (int)x, (int)y);
+
+    printf("Time: %f s\n", t.Get());
 }
 
