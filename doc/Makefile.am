@@ -1,5 +1,9 @@
 include $(top_srcdir)/build/autotools/common.am
 
+SUBDIRS =
+SUBDIRS += tutorial
+SUBDIRS += samples
+
 EXTRA_DIST += doxygen.cfg.in doxygen.css footer.html header.html \
               $(man_MANS) $(doxygen_DOX)
 CLEANFILES += doxygen.log stamp-latex stamp-doxygen

@@ -491,6 +491,10 @@ AC_CONFIG_FILES(
   tools/vslol/Makefile
   doc/Makefile
   doc/doxygen.cfg
+  doc/samples/Makefile
+  doc/samples/math/Makefile
+  doc/samples/sandbox/Makefile
+  doc/tutorial/Makefile
 ])
 AC_CONFIG_FILES(
  [games/monsterz/Makefile
@@ -520,11 +524,7 @@ AC_CONFIG_FILES(
  [games/singlshot/Makefile
 ])
 AC_CONFIG_FILES(
- [demos/tutorial/Makefile
-  demos/lol.js/Makefile
-  demos/test/Makefile
-  demos/test/math/Makefile
-  demos/test/sandbox/Makefile
+ [demos/lol.js/Makefile
 ])
 AC_CONFIG_FILES(
  [tools/lolremez/Makefile
