@@ -412,13 +412,20 @@ PKG_CHECK_MODULES([LIBAVCODEC], [libavcodec], [:], [ac_cv_my_have_ffmpeg=no])
 PKG_CHECK_MODULES([LIBAVFORMAT], [libavformat], [:], [ac_cv_my_have_ffmpeg=no])
 PKG_CHECK_MODULES([LIBSWSCALE], [libswscale], [:], [ac_cv_my_have_ffmpeg=no])
 if test "${ac_cv_my_have_ffmpeg}" = "no"; then
-  AC_CHECK_HEADERS(libavformat/avformat.h,
-   [ac_cv_my_have_ffmpeg="yes"
-    LOL_LIBS="${LOL_LIBS} -lswscale -lavformat -lavcodec -lswresample -lavutil -lws2_32"])
+  ac_cv_my_have_ffmpeg="yes"
+  AC_CHECK_HEADERS(libavcodec/avcodec.h, [:], [ac_cv_my_have_ffmpeg=no])
+  AC_CHECK_HEADERS(libavformat/avformat.h, [:], [ac_cv_my_have_ffmpeg=no])
+  AC_CHECK_HEADERS(libswscale/swscale.h, [:], [ac_cv_my_have_ffmpeg=no])
+  if test "${ac_cv_my_have_ffmpeg}" = "yes"; then
+    LIBAVFORMAT_LIBS="-lavformat"
+    LIBAVCODEC_LIBS="-lavcodec -lavutil"
+    LIBSWSCALE_LIBS="-lswscale -lswresample"
+    AC_CHECK_LIB(ws2_32, main, LOL_LIBS="${LOL_LIBS} -lws2_32")
+  fi
 fi
 if test "${ac_cv_my_have_ffmpeg}" != "no"; then
   AC_DEFINE(USE_FFMPEG, 1, Define to 1 to use FFmpeg)
-  LOL_CFLAGS="${LOL_CFLAGS} ${LIBAVFORMAT_CFLAGS} ${LIBAVCODEC_CFLAGS} ${CFLAGSWSCALE_LIBS}"
+  LOL_CFLAGS="${LOL_CFLAGS} ${LIBAVFORMAT_CFLAGS} ${LIBAVCODEC_CFLAGS} ${SWSCALE_CFLAGS}"
   LOL_LIBS="${LOL_LIBS} ${LIBAVFORMAT_LIBS} ${LIBAVCODEC_LIBS} ${LIBSWSCALE_LIBS}"
 fi
 AM_CONDITIONAL(USE_FFMPEG, test "${ac_cv_my_have_ffmpeg}" != "no")
