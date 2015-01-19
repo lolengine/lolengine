@@ -529,6 +529,35 @@ T const & determinant(mat_t<T, 1, 1> const &m)
 }
 
 /*
+ * Compute LU-decomposition
+ */
+
+template<typename T, int N>
+void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N> & U)
+{
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            T sum = 0;
+            for (int k = 0 ; k < min(i, j) ; ++k)
+                sum += L[i][k] * U[k][j];
+
+            if (i < j)
+            {
+                L[i][j] = 0;
+                U[i][j] = (m[i][j] - sum) / L[i][i];
+            }
+            else /* if (i >= j) */
+            {
+                U[i][j] = i == j ? 1 : 0;
+                L[i][j] = (m[i][j] - sum) / U[j][j];
+            }
+        }
+    }
+}
+
+/*
  * Compute square matrix inverse
  */
 
