@@ -541,17 +541,17 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
         {
             T sum = 0;
             for (int k = 0 ; k < min(i, j) ; ++k)
-                sum += L[i][k] * U[k][j];
+                sum += L[k][j] * U[i][k];
 
             if (i < j)
             {
-                L[i][j] = 0;
-                U[i][j] = (m[i][j] - sum) / L[i][i];
+                U[i][j] = 0;
+                L[i][j] = (m[i][j] - sum) / U[i][i];
             }
             else /* if (i >= j) */
             {
-                U[i][j] = i == j ? 1 : 0;
-                L[i][j] = (m[i][j] - sum) / U[j][j];
+                L[i][j] = i == j ? 1 : 0;
+                U[i][j] = (m[i][j] - sum) / L[j][j];
             }
         }
     }
