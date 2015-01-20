@@ -222,17 +222,17 @@ lolunit_declare_fixture(MatrixTest)
 
         mat3 m2 = m0 * m1;
 
-        lolunit_assert_doubles_equal(m2[0][0], 1.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[1][0], 0.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[2][0], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[0][0], 1.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[1][0], 0.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[2][0], 0.0f, 1e-4);
 
-        lolunit_assert_doubles_equal(m2[0][1], 0.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[1][1], 1.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[2][1], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[0][1], 0.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[1][1], 1.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[2][1], 0.0f, 1e-4);
 
-        lolunit_assert_doubles_equal(m2[0][2], 0.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[1][2], 0.0f, 1e-5);
-        lolunit_assert_doubles_equal(m2[2][2], 1.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[0][2], 0.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[1][2], 0.0f, 1e-4);
+        lolunit_assert_doubles_equal(m2[2][2], 1.0f, 1e-4);
     }
 
     lolunit_declare_test(Inverse4x4)

@@ -612,16 +612,11 @@ mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
 template<typename T, int N>
 mat_t<T, N, N> inverse(mat_t<T, N, N> const &m)
 {
-    mat_t<T, N, N> ret;
+    mat_t<T, N, N> L, U;
+    lu_decomposition(m, L, U);
 
-    T d = determinant(m);
-    if (d)
-    {
-        /* Transpose result matrix on the fly */
-        for (int i = 0; i < N; ++i)
-            for (int j = 0; j < N; ++j)
-                ret[i][j] = cofactor(m, j, i) / d;
-    }
+    mat_t<T, N, N> ret = u_inverse(U) * l_inverse(L);
+
     return ret;
 }
 
