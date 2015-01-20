@@ -556,6 +556,31 @@ T determinant(mat_t<T, N, N> const &m)
 }
 
 /*
+ * Compute L matrix inverse
+ */
+
+template<typename T, int N>
+mat_t<T, N, N> l_inverse(mat_t<T, N, N> const & L)
+{
+    mat_t<T, N, N> ret;
+
+    for (int i = 0 ; i < N ; ++i)
+    {
+        for (int j = i ; j >= 0 ; --j)
+        {
+            T sum = 0;
+
+            for (int k = i ; k >= j ; --k)
+                sum += ret[k][i] * L[j][k];
+
+            ret[j][i] = ((i == j ? 1 : 0) - sum) / L[j][j];
+        }
+    }
+
+    return ret;
+}
+
+/*
  * Compute square matrix inverse
  */
 

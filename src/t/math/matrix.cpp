@@ -159,6 +159,34 @@ lolunit_declare_fixture(MatrixTest)
         }
     }
 
+    lolunit_declare_test(LInverse3x3)
+    {
+        mat3 m0 = inv3;
+        mat3 L, U;
+        lu_decomposition(inv3, L, U);
+        mat3 l_inv = l_inverse(L);
+
+        mat3 identity = l_inv * L;
+
+        for (int i = 0 ; i < 3 ; ++i)
+            for (int j = 0 ; j < 3 ; ++j)
+                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
+    }
+
+    lolunit_declare_test(LInverse4x4)
+    {
+        mat4 m0 = inv4;
+        mat4 L, U;
+        lu_decomposition(inv4, L, U);
+        mat4 l_inv = l_inverse(L);
+
+        mat4 identity = l_inv * L;
+
+        for (int i = 0 ; i < 4 ; ++i)
+            for (int j = 0 ; j < 4 ; ++j)
+                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
+    }
+
     lolunit_declare_test(Inverse3x3)
     {
         mat3 m0 = inv3;
