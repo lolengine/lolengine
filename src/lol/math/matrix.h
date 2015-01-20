@@ -570,10 +570,35 @@ mat_t<T, N, N> l_inverse(mat_t<T, N, N> const & L)
         {
             T sum = 0;
 
-            for (int k = i ; k >= j ; --k)
+            for (int k = i ; k > j ; --k)
                 sum += ret[k][i] * L[j][k];
 
             ret[j][i] = ((i == j ? 1 : 0) - sum) / L[j][j];
+        }
+    }
+
+    return ret;
+}
+
+/*
+ * Compute U matrix inverse
+ */
+
+template<typename T, int N>
+mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
+{
+    mat_t<T, N, N> ret;
+
+    for (int i = 0 ; i < N ; ++i)
+    {
+        for (int j = i ; j < N ; ++j)
+        {
+            T sum = 0;
+
+            for (int k = i ; k < j ; ++k)
+                sum += ret[k][i] * U[j][k];
+
+            ret[j][i] = ((i == j ? 1 : 0) - sum) / U[j][j];
         }
     }
 
