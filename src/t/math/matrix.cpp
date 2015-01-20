@@ -51,19 +51,19 @@ lolunit_declare_fixture(MatrixTest)
         float d1, d2;
 
         d1 = determinant(tri2);
-        lolunit_assert_equal(d1, 2.0f);
+        lolunit_assert_doubles_equal(d1, 2.0f, 1e-5);
         d2 = determinant(inv2);
-        lolunit_assert_equal(d2, -1.0f);
+        lolunit_assert_doubles_equal(d2, -1.0f, 1e-5);
 
         d1 = determinant(tri3);
-        lolunit_assert_equal(d1, 6.0f);
+        lolunit_assert_doubles_equal(d1, 6.0f, 1e-5);
         d2 = determinant(inv3);
-        lolunit_assert_equal(d2, 1.0f);
+        lolunit_assert_doubles_equal(d2, 1.0f, 1e-5);
 
         d1 = determinant(tri4);
-        lolunit_assert_equal(d1, 24.0f);
+        lolunit_assert_doubles_equal(d1, 24.0f, 1e-5);
         d2 = determinant(inv4);
-        lolunit_assert_equal(d2, -1.0f);
+        lolunit_assert_doubles_equal(d2, -1.0f, 1e-5);
     }
 
     lolunit_declare_test(Multiplication)
@@ -166,17 +166,17 @@ lolunit_declare_fixture(MatrixTest)
 
         mat3 m2 = m0 * m1;
 
-        lolunit_assert_equal(m2[0][0], 1.0f);
-        lolunit_assert_equal(m2[1][0], 0.0f);
-        lolunit_assert_equal(m2[2][0], 0.0f);
+        lolunit_assert_doubles_equal(m2[0][0], 1.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[1][0], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[2][0], 0.0f, 1e-5);
 
-        lolunit_assert_equal(m2[0][1], 0.0f);
-        lolunit_assert_equal(m2[1][1], 1.0f);
-        lolunit_assert_equal(m2[2][1], 0.0f);
+        lolunit_assert_doubles_equal(m2[0][1], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[1][1], 1.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[2][1], 0.0f, 1e-5);
 
-        lolunit_assert_equal(m2[0][2], 0.0f);
-        lolunit_assert_equal(m2[1][2], 0.0f);
-        lolunit_assert_equal(m2[2][2], 1.0f);
+        lolunit_assert_doubles_equal(m2[0][2], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[1][2], 0.0f, 1e-5);
+        lolunit_assert_doubles_equal(m2[2][2], 1.0f, 1e-5);
     }
 
     lolunit_declare_test(Inverse4x4)

@@ -510,25 +510,6 @@ T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 }
 
 /*
- * Compute square matrix determinant, with a specialisation for 1×1 matrices
- */
-
-template<typename T, int N>
-T determinant(mat_t<T, N, N> const &m)
-{
-    T ret = (T)0;
-    for (int i = 0; i < N; ++i)
-        ret += m[i][0] * cofactor(m, i, 0);
-    return ret;
-}
-
-template<typename T>
-T const & determinant(mat_t<T, 1, 1> const &m)
-{
-    return m[0][0];
-}
-
-/*
  * Compute LU-decomposition
  */
 
@@ -555,6 +536,23 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
             }
         }
     }
+}
+
+/*
+ * Compute square matrix determinant, with a specialisation for 1×1 matrices
+ */
+
+template<typename T, int N>
+T determinant(mat_t<T, N, N> const &m)
+{
+    mat_t<T, N, N> L, U;
+    lu_decomposition(m, L, U);
+
+    T det = 1;
+    for (int i = 0 ; i < N ; ++i)
+        det *= U[i][i];
+
+    return det;
 }
 
 /*
