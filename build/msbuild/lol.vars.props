@@ -47,6 +47,16 @@
     <Win32Defines>USE_FFMPEG;$(Win32Defines)</Win32Defines>
 -->
 
+    <!-- Assimp -->
+    <AssimpDir>$(ExternalDir)\assimp-3.1.1</AssimpDir>
+    <AssimpIncludes>$(AssimpDir)\include</AssimpIncludes>
+    <AssimpLibs Condition="'$(Platform)'=='Win32'">$(AssimpDir)\lib\win32</AssimpLibs>
+    <AssimpLibs Condition="'$(Platform)'=='x64'">$(AssimpDir)\lib\x64</AssimpLibs>
+    <!-- <AssimpDeps>zlibstatic.lib;assimp.lib</AssimpDeps> -->
+    <AssimpDeps Condition="'$(Configuration)'=='Release'">zlibstatic.lib;assimp.lib</AssimpDeps>
+    <AssimpDeps Condition="'$(Configuration)'=='Debug'">zlibstaticd.lib;assimpd.lib</AssimpDeps>
+    <Win32Defines>USE_ASSIMP;$(Win32Defines)</Win32Defines>
+
     <!-- libcaca -->
     <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
     <CacaIncludes>$(CacaDir)\include</CacaIncludes>
@@ -125,6 +135,10 @@
     <BuildMacro Include="FfmpegIncludes"><Value>$(FfmpegIncludes)</Value></BuildMacro>
     <BuildMacro Include="FfmpegLibs"><Value>$(FfmpegLibs)</Value></BuildMacro>
     <BuildMacro Include="FfmpegDeps"><Value>$(FfmpegDeps)</Value></BuildMacro>
+    <BuildMacro Include="AssimpDir"><Value>$(AssimpDir)</Value></BuildMacro>
+    <BuildMacro Include="AssimpIncludes"><Value>$(AssimpIncludes)</Value></BuildMacro>
+    <BuildMacro Include="AssimpLibs"><Value>$(AssimpLibs)</Value></BuildMacro>
+    <BuildMacro Include="AssimpDeps"><Value>$(AssimpDeps)</Value></BuildMacro>
     <BuildMacro Include="CacaDir"><Value>$(CacaDir)</Value></BuildMacro>
     <BuildMacro Include="CacaIncludes"><Value>$(CacaIncludes)</Value></BuildMacro>
     <BuildMacro Include="CacaLibs"><Value>$(CacaLibs)</Value></BuildMacro>
