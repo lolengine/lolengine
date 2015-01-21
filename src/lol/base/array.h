@@ -383,7 +383,7 @@ public:
     }
 
     void Shuffle();
-    void Sort(int sort);
+    void Sort(int sort = 0);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 
     /* TODO: remove these legacy functions one day */
