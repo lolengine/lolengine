@@ -26,6 +26,7 @@
 namespace lol
 {
 
+//AxisBase --------------------------------------------------------------------
 struct AxisBase
 {
     enum Type
@@ -38,6 +39,20 @@ protected:
 };
 typedef SafeEnum<AxisBase> Axis;
 
+//DirectionBase ---------------------------------------------------------------
+struct DirectionBase
+{
+    enum Type
+    {
+        Up = 0, Down, Left, Right, MAX,
+    };
+protected:
+    static inline char const *GetDescription()      { return "Up,Down,Left,Right,MAX"; }
+    static inline char const **GetCustomString()    { return nullptr; }
+};
+typedef SafeEnum<DirectionBase> Direction;
+
+//LOL_BOX_TYPEDEFS ------------------------------------------------------------
 #define LOL_BOX_TYPEDEFS(tname, suffix) \
     template <typename T> struct tname; \
     typedef tname<float> suffix; \

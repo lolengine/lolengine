@@ -33,10 +33,12 @@ void array_base<T, ARRAY>::Shuffle()
 template<typename T, typename ARRAY>
 void array_base<T, ARRAY>::Sort(int sort)
 {
+#if SORT_WORKS // yeah cause it's shite.
     int s = 0;
     // Classic bubble
     if (s++ == sort)
     {
+#endif //SORT_WORKS
         int d = 1;
         for (ptrdiff_t i = 0; i < Count() - 1; i = lol::max(i + d, (ptrdiff_t)0))
         {
@@ -48,12 +50,14 @@ void array_base<T, ARRAY>::Sort(int sort)
                 d = -1;
             }
         }
+#if SORT_WORKS
     }
     // Quick sort with swap
     else if (s++ == sort)
     {
         SortQuickSwap(0, Count());
     }
+#endif //SORT_WORKS
 }
 
 template<typename T, typename ARRAY>
