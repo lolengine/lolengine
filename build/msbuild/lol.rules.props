@@ -16,8 +16,8 @@
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
       <AdditionalIncludeDirectories>$(SolutionDir)\..\src;$(SolutionDir)\..\src\bullet;$(SolutionDir)\..\tools\lolunit;$(PegtlIncludes);$(FlexIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(AssimpIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(AssimpIncludes);$(D3d9Includes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!-- Escape backslashes for C++, but replace \ with / on the PS4
@@ -57,13 +57,14 @@
 
     <Link>
       <!-- FIXME: not for the static library! -->
-      <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(UseOpenGL)'=='true' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(UseOpenGL)'=='false' And ('$(Platform)'=='Win32' Or '$(Platform)'=='x64')">$(D3d9Deps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(LibGccLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(FfmpegLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(AssimpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(XinputLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
