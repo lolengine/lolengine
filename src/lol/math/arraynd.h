@@ -26,11 +26,12 @@
 #include <lol/base/array.h>
 #include <lol/base/assert.h>
 
+#include <cstddef>
+#include <climits>
 #include <type_traits>
 
 namespace lol
 {
-
 
 template<typename T, ptrdiff_t L>
 class arraynd_initializer
@@ -274,6 +275,10 @@ private:
 
 template<typename... T> using array2d = arraynd<2, T...>;
 template<typename... T> using array3d = arraynd<3, T...>;
+
+/* Make sure these macros exist since we use them in preprocessor tests. */
+static_assert(PTRDIFF_MAX > 0, "missing PTRDIFF_MAX");
+static_assert(INT_MAX > 0,     "missing INT_MAX");
 
 } /* namespace lol */
 
