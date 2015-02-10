@@ -383,7 +383,7 @@ public:
     }
 
     void Shuffle();
-    void Sort(int sort = 0);
+    void Sort(enum class SortAlgorithm : uint8_t);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 
     /* TODO: remove these legacy functions one day */
