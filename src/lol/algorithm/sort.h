@@ -18,6 +18,12 @@
 namespace lol
 {
 
+enum class SortAlgorithm : uint8_t
+{
+    QuickSwap,
+    Bubble,
+};
+
 template<typename T, typename ARRAY>
 void array_base<T, ARRAY>::Shuffle()
 {
@@ -31,14 +37,15 @@ void array_base<T, ARRAY>::Shuffle()
 }
 
 template<typename T, typename ARRAY>
-void array_base<T, ARRAY>::Sort(int sort)
+void array_base<T, ARRAY>::Sort(SortAlgorithm algorithm)
 {
-#if SORT_WORKS // yeah cause it's shite.
-    int s = 0;
+#if !SORT_WORKS // yeah cause it's shite.
+    algorithm = SortAlgorithm::Bubble;
+#endif
+
     // Classic bubble
-    if (s++ == sort)
+    if (algorithm == SortAlgorithm::Bubble)
     {
-#endif //SORT_WORKS
         int d = 1;
         for (ptrdiff_t i = 0; i < Count() - 1; i = lol::max(i + d, (ptrdiff_t)0))
         {
@@ -50,14 +57,12 @@ void array_base<T, ARRAY>::Sort(int sort)
                 d = -1;
             }
         }
-#if SORT_WORKS
     }
     // Quick sort with swap
-    else if (s++ == sort)
+    else if (algorithm == SortAlgorithm::QuickSwap)
     {
         SortQuickSwap(0, Count());
     }
-#endif //SORT_WORKS
 }
 
 template<typename T, typename ARRAY>
