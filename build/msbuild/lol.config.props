@@ -41,11 +41,11 @@
    -->
   <PropertyGroup Condition="'$(Platform)'=='Win32'" Label="Configuration">
     <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2013)'">v120</PlatformToolset>
-    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2014)'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2015)'">v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
     <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2013)'">v120</PlatformToolset>
-    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2014)'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(SolutionName)'=='Lol (vs2015)'">v140</PlatformToolset>
   </PropertyGroup>
 
   <!--
