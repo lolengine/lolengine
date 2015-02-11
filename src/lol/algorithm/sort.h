@@ -18,12 +18,6 @@
 namespace lol
 {
 
-enum class SortAlgorithm : uint8_t
-{
-    QuickSwap,
-    Bubble,
-};
-
 template<typename T, typename ARRAY>
 void array_base<T, ARRAY>::Shuffle()
 {

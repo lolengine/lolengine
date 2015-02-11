@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -123,10 +125,17 @@ struct vec_t<T, N, FULL_SWIZZLE>
 
     /* Explicit constructor that takes exactly N arguments thanks to SFINAE. */
     template<typename... ARGS>
-    explicit inline vec_t(typename std::enable_if<sizeof...(ARGS) == N - 1, T>
-                                      ::type const &x, ARGS... args)
+    explicit inline vec_t(typename std::enable_if<(sizeof...(ARGS) == N - 1) && (N > 1), T>
+                                      ::type const &X, ARGS... args)
     {
-        internal_init(m_data, x, args...);
+        internal_init(m_data, X, args...);
+    }
+
+    /* Various explicit constructors */
+    explicit inline vec_t(T const &X)
+    {
+        for (auto &value : m_data)
+            value = X;
     }
 
     /* Explicit constructor for type conversion */
@@ -134,7 +143,7 @@ struct vec_t<T, N, FULL_SWIZZLE>
     explicit inline vec_t(vec_t<U, N> const &v)
     {
         for (int i = 0; i < N; ++i)
-            m_data[i] = (T)v[i];
+            m_data[i] = T(v[i]);
     }
 
     /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
@@ -142,8 +151,8 @@ struct vec_t<T, N, FULL_SWIZZLE>
     {
         ASSERT(i >= 0);
         ASSERT(i < N);
-        vec_t<T, N> ret((T)0);
-        ret[i] = (T)1;
+        vec_t<T, N> ret(T(0));
+        ret[i] = T(1);
         return ret;
     }
 
@@ -154,19 +163,14 @@ struct vec_t<T, N, FULL_SWIZZLE>
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
             m_data[i] = *l;
-        for (int i = list.size(); i < count; ++i)
-            m_data[i] = (T)0;
-    }
-
-    /* Various explicit constructors */
-    explicit inline vec_t(T X)
-    {
-        for (int i = 0; i < N; ++i)
-            m_data[i] = X;
+        for (int i = (int)list.size(); i < count; ++i)
+            m_data[i] = T(0);
     }
 
     inline T& operator[](size_t n) { return m_data[n]; }
     inline T const& operator[](size_t n) const { return m_data[n]; }
+
+    static const vec_t<T,N> zero;
 
 private:
     template<typename... ARGS>
@@ -228,7 +232,7 @@ struct vec_t<T,2>
     /* Explicit constructor for type conversion */
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 2, SWIZZLE> const &v)
-      : x(v[0]), y(v[1]) {}
+      : x(T(v[0])), y(T(v[1])) {}
 
     /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
@@ -237,8 +241,8 @@ struct vec_t<T,2>
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
             m_data[i] = *l;
-        for (int i = list.size(); i < count; ++i)
-            m_data[i] = (T)0;
+        for (int i = (int)list.size(); i < count; ++i)
+            m_data[i] = T(0);
     }
 
     /* Various explicit constructors */
@@ -252,7 +256,7 @@ struct vec_t<T,2>
     {
         ASSERT(i >= 0);
         ASSERT(i < 2);
-        return vec_t<T,2>((T)(i == 0), (T)(i == 1));
+        return vec_t<T,2>(T(i == 0), T(i == 1));
     }
 
     LOL_COMMON_MEMBER_OPS(x)
@@ -343,7 +347,7 @@ struct vec_t<T,3>
     /* Explicit constructor for type conversion */
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 3, SWIZZLE> const &v)
-      : x(v[0]), y(v[1]), z(v[2]) {}
+      : x(T(v[0])), y(T(v[1])), z(T(v[2])) {}
 
     /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
@@ -352,8 +356,8 @@ struct vec_t<T,3>
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
             m_data[i] = *l;
-        for (int i = list.size(); i < count; ++i)
-            m_data[i] = (T)0;
+        for (int i = (int)list.size(); i < count; ++i)
+            m_data[i] = T(0);
     }
 
     /* Various explicit constructors */
@@ -371,7 +375,7 @@ struct vec_t<T,3>
     {
         ASSERT(i >= 0);
         ASSERT(i < 3);
-        return vec_t<T,3>((T)(i == 0), (T)(i == 1), (T)(i == 2));
+        return vec_t<T,3>(T(i == 0), T(i == 1), T(i == 2));
     }
 
     LOL_COMMON_MEMBER_OPS(x)
@@ -402,8 +406,8 @@ struct vec_t<T,3>
     friend inline type orthogonal(type const &a)
     {
         return lol::abs(a.x) > lol::abs(a.z)
-             ? type(-a.y, a.x, (T)0)
-             : type((T)0, -a.z, a.y);
+             ? type(-a.y, a.x, T(0))
+             : type(T(0), -a.z, a.y);
     }
 
     /* Return a vector that is orthonormal to “a” */
@@ -589,7 +593,7 @@ struct vec_t<T,4>
     /* Explicit constructor for type conversion */
     template<typename U, int SWIZZLE>
     explicit inline constexpr vec_t(vec_t<U, 4, SWIZZLE> const &v)
-      : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+      : x(T(v[0])), y(T(v[1])), z(T(v[2])), w(T(v[3])) {}
 
     /* Constructor for initializer_list. We need these ugly
      * loops until C++ lets us initialize m_data directly. */
@@ -598,8 +602,8 @@ struct vec_t<T,4>
         auto l = list.begin();
         for (int i = 0; i < count && l != list.end(); ++i, ++l)
             m_data[i] = *l;
-        for (int i = list.size(); i < count; ++i)
-            m_data[i] = (T)0;
+        for (int i = (int)list.size(); i < count; ++i)
+            m_data[i] = T(0);
     }
 
     /* Various explicit constructors */
@@ -625,7 +629,7 @@ struct vec_t<T,4>
     {
         ASSERT(i >= 0);
         ASSERT(i < 4);
-        return vec_t<T,4>((T)(i == 0), (T)(i == 1), (T)(i == 2), (T)(i == 3));
+        return vec_t<T,4>(T(i == 0), T(i == 1), T(i == 2), T(i == 3));
     }
 
     LOL_COMMON_MEMBER_OPS(x)
@@ -1142,7 +1146,7 @@ template<typename T, int N, int SWIZZLE>
 static inline T length(vec_t<T,N,SWIZZLE> const &a)
 {
     /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(a));
+    return T(sqrt((double)sqlength(a)));
 }
 
 template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
@@ -1184,7 +1188,7 @@ static inline vec_t<T,N> saturate(vec_t<T,N,SWIZZLE> const &a)
 template<typename T, int N, int SWIZZLE>
 static inline vec_t<T,N> normalize(vec_t<T,N,SWIZZLE> const &a)
 {
-    T norm = (T)length(a);
+    T norm = T(length(a));
     return norm ? a / norm : vec_t<T,N>(T(0));
 }
 
@@ -1271,6 +1275,40 @@ inline vec_const_iter<T,N,SWIZZLE> end(vec_t<T,N,SWIZZLE> const &a)
 {
     return vec_const_iter<T,N,SWIZZLE>(a, N);
 }
+
+/*
+ * Constants
+ */
+
+template<typename T, int N>
+vec_t<T,N> const vec_t<T,N>::zero = vec_t<T,N>(T(0));
+template<typename T>
+vec_t<T,2> const vec_t<T,2>::zero = vec_t<T,2>(T(0));
+template<typename T>
+vec_t<T,3> const vec_t<T,3>::zero = vec_t<T,3>(T(0));
+template<typename T>
+vec_t<T,4> const vec_t<T,4>::zero = vec_t<T,4>(T(0));
+
+template<typename T>
+vec_t<T,2> const vec_t<T,2>::axis_x = vec_t<T,2>(T(1), T(0));
+template<typename T>
+vec_t<T,2> const vec_t<T,2>::axis_y = vec_t<T,2>(T(0), T(1));
+
+template<typename T>
+vec_t<T,3> const vec_t<T,3>::axis_x = vec_t<T,3>(T(1), T(0), T(0));
+template<typename T>
+vec_t<T,3> const vec_t<T,3>::axis_y = vec_t<T,3>(T(0), T(1), T(0));
+template<typename T>
+vec_t<T,3> const vec_t<T,3>::axis_z = vec_t<T,3>(T(0), T(0), T(1));
+
+template<typename T>
+vec_t<T,4> const vec_t<T,4>::axis_x = vec_t<T,4>(T(1), T(0), T(0), T(0));
+template<typename T>
+vec_t<T,4> const vec_t<T,4>::axis_y = vec_t<T,4>(T(0), T(1), T(0), T(0));
+template<typename T>
+vec_t<T,4> const vec_t<T,4>::axis_z = vec_t<T,4>(T(0), T(0), T(1), T(0));
+template<typename T>
+vec_t<T,4> const vec_t<T,4>::axis_w = vec_t<T,4>(T(0), T(0), T(0), T(1));
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
 #undef constexpr
