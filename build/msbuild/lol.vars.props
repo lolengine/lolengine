@@ -54,7 +54,7 @@
     <AssimpLibs Condition="'$(Platform)'=='x64'">$(AssimpDir)\lib\x64</AssimpLibs>
     <!-- <AssimpDeps>zlibstatic.lib;assimp.lib</AssimpDeps> -->
     <AssimpDeps Condition="'$(Configuration)'=='Release'">zlibstatic.lib;assimp.lib</AssimpDeps>
-    <AssimpDeps Condition="'$(Configuration)'=='Debug'">zlibstaticd.lib;assimpd.lib</AssimpDeps>
+    <AssimpDeps Condition="'$(Configuration)'=='Debug'">zlibstatic.lib;assimp.lib</AssimpDeps>
     <Win32Defines>USE_ASSIMP;$(Win32Defines)</Win32Defines>
 
     <!-- libcaca -->
