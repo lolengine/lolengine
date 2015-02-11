@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -531,7 +533,7 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
             }
             else /* if (i >= j) */
             {
-                L[i][j] = i == j ? 1 : 0;
+                L[i][j] = i == j ? T(1) : T(0);
                 U[i][j] = (m[i][j] - sum) / L[j][j];
             }
         }
@@ -696,6 +698,17 @@ outer(mat_t<T, COLS1, ROWS1> const &a, mat_t<T, COLS2, ROWS2> const &b)
         }
     return ret;
 }
+
+/*
+ * Constants
+ */
+
+template<typename T>
+mat_t<T,2,2> const mat_t<T,2,2>::identity = mat_t<T,2,2>((T)1);
+template<typename T>
+mat_t<T,3,3> const mat_t<T,3,3>::identity = mat_t<T,3,3>((T)1);
+template<typename T>
+mat_t<T,4,4> const mat_t<T,4,4>::identity = mat_t<T,4,4>((T)1);
 
 #if !LOL_FEATURE_CXX11_CONSTEXPR
 #undef constexpr

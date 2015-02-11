@@ -34,6 +34,16 @@ namespace lol
 static ptrdiff_t const INDEX_NONE = -1;
 
 /*
+ * Sorting algorithm list
+ */
+
+enum class SortAlgorithm : uint8_t
+{
+    QuickSwap,
+    Bubble,
+};
+
+/*
  * The base array type.
  *
  * Contains an m_data memory array of Elements, of which only the first
@@ -383,7 +393,7 @@ public:
     }
 
     void Shuffle();
-    void Sort(enum class SortAlgorithm : uint8_t);
+    void Sort(SortAlgorithm algorithm);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 
     /* TODO: remove these legacy functions one day */

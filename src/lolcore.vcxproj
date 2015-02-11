@@ -212,6 +212,7 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\file.cpp" />
+    <ClCompile Include="sys\hacks.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="sys\thread.cpp" />
     <ClCompile Include="sys\timer.cpp" />

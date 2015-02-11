@@ -31,6 +31,20 @@ namespace lol
 /* Avoid issues with NaCl headers */
 #undef log2
 
+template<unsigned int N, typename T>
+class bigint_digits
+{
+protected:
+    T m_digits[N];
+};
+
+template<typename T>
+class bigint_digits<0, T>
+{
+protected:
+    static T const m_digits[1];
+};
+
 /*
  * A bigint stores its digits in an array of integers. The MSB of the
  * integers are unused. The highest used bit is the sign bit.
@@ -39,7 +53,7 @@ namespace lol
  */
 
 template<unsigned int N = 16, typename T = uint32_t>
-class bigint
+class bigint : public bigint_digits<N, T>
 {
     static int const bits_per_digit = sizeof(T) * 8 - 1;
     static T const digit_mask = ~((T)1 << bits_per_digit);
@@ -190,9 +204,9 @@ public:
      * and pad missing digits if one of the two operands is shorter.
      */
     template<unsigned int M>
-    bigint<(N > M) ? N : M, T> operator +(bigint<M,T> const &x) const
+    bigint<((N > M) ? N : M), T> operator +(bigint<M,T> const &x) const
     {
-        bigint<(N > M) ? N : M, T> ret;
+        bigint<((N > M) ? N : M), T> ret;
         T padding = is_negative() ? digit_mask : (T)0;
         T x_padding = x.is_negative() ? digit_mask : (T)0;
         T carry(0);
@@ -213,7 +227,7 @@ public:
      * FIXME: this could be factored with operator+().
      */
     template<unsigned int M>
-    bigint<(N > M) ? N : M, T> operator -(bigint<M,T> const &x) const
+    bigint<((N > M) ? N : M), T> operator -(bigint<M,T> const &x) const
     {
         bigint<(N > M) ? N : M, T> ret;
         T padding = is_negative() ? digit_mask : (T)0;
@@ -359,7 +373,7 @@ private:
     }
 
     template<unsigned int M>
-    typename std::enable_if<(N == M && N >= 64), bigint<N + M, T>>
+    typename std::enable_if<(N == M) && (N >= 64), bigint<N + M, T>>
     ::type inline multiply(bigint<M,T> const &b) const
     {
         bigint<2 * N, T> ret, tmp(0);
@@ -379,8 +393,8 @@ private:
         return ret + tmp;
     }
 
-    template<unsigned int M>
-    typename std::enable_if<(N == M && N == 1), bigint<N + M, T>>
+    template<unsigned int M, int = 0>
+    typename std::enable_if<(N == M) && (N == 1), bigint<N + M, T>>
     ::type inline multiply(bigint<M,T> const &b) const
     {
         bigint<2, T> ret;
@@ -404,8 +418,6 @@ private:
             ret |= m_digits[digit_index + 1] << (bits_per_digit - bit_index);
         return ret;
     }
-
-    T m_digits[N];
 };
 
 /*

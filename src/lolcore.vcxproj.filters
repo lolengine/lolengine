@@ -297,6 +297,9 @@
     <ClCompile Include="easymesh\csgbsp.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="sys\hacks.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
     <ClCompile Include="sys\init.cpp">
       <Filter>sys</Filter>
     </ClCompile>
