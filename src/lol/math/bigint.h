@@ -31,20 +31,6 @@ namespace lol
 /* Avoid issues with NaCl headers */
 #undef log2
 
-template<unsigned int N, typename T>
-class bigint_digits
-{
-protected:
-    T m_digits[N];
-};
-
-template<typename T>
-class bigint_digits<0, T>
-{
-protected:
-    static T const m_digits[1];
-};
-
 /*
  * A bigint stores its digits in an array of integers. The MSB of the
  * integers are unused. The highest used bit is the sign bit.
@@ -53,7 +39,7 @@ protected:
  */
 
 template<unsigned int N = 16, typename T = uint32_t>
-class bigint : public bigint_digits<N, T>
+class bigint
 {
     static int const bits_per_digit = sizeof(T) * 8 - 1;
     static T const digit_mask = ~((T)1 << bits_per_digit);
@@ -260,12 +246,12 @@ public:
      */
     inline bool operator ==(bigint<N,T> const &x) const
     {
-        return memcmp(m_digits, x.m_digits, sizeof(m_digits)) == 0;
+        return m_digits == x.m_digits;
     }
 
     inline bool operator !=(bigint<N,T> const &x) const
     {
-        return !(*this == x);
+        return m_digits != x.m_digits;
     }
 
     /*
@@ -418,6 +404,9 @@ private:
             ret |= m_digits[digit_index + 1] << (bits_per_digit - bit_index);
         return ret;
     }
+
+    /* Use std::array instead of C-style array to handle N == 0. */
+    std::array<T, N> m_digits;
 };
 
 /*
