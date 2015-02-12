@@ -19,7 +19,8 @@
 
 #include <lol/base/types.h>
 
-#include <stdint.h>
+#include <array>
+#include <cstdint>
 
 namespace lol
 {

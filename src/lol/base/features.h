@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -40,48 +42,65 @@
  * Check for C++11 features.
  */
 
-/* Set these to 1 when Visual Studio finally understands the features
- * (planned for Visual Studion 14) */
-#define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 0
-#define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 0
-#define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 0
-#define LOL_FEATURE_CXX11_CONSTEXPR 0
-#define LOL_FEATURE_CXX11_ISNAN 0
-#define LOL_FEATURE_CXX11_NULLPTR 0
+/* These features aren't necessarily supported by all compilers */
+#undef LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
+#undef LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
+#undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+#undef LOL_FEATURE_CXX11_CONSTEXPR
+#undef LOL_FEATURE_CXX11_ISNAN /* FIXME: is this the right place? */
+#undef LOL_FEATURE_CXX11_NULLPTR
+#undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
+#undef LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
 
-/* This one is OK, except on GCC <= 4.6 */
-#define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
-
-#if defined __GNUC__ /* GCC */
+/* Features supported by GCC */
+#if defined __GNUC__
+#   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
+#   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
 #   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
-#       undef LOL_FEATURE_CXX11_CONSTEXPR
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
-#       undef LOL_FEATURE_CXX11_ISNAN
 #       define LOL_FEATURE_CXX11_ISNAN 1
-#       undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #       define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
-#       undef LOL_FEATURE_CXX11_NULLPTR
 #       define LOL_FEATURE_CXX11_NULLPTR 1
+#       define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
 #   endif
-#   if (__GNUC__ * 100 + __GNUC_MINOR__) < 470
-#       undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
-#       define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 0
+#   if (__GNUC__ * 100 + __GNUC_MINOR__) >= 470
+#       define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
 #   endif
-#elif defined __has_feature /* Clang */
+#endif
+
+/* Features supported by Clang */
+#if !defined __GNUC__ && defined __has_feature
+#   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
+#   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
+#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
 #   if __has_feature(cxx_constexpr)
-#       undef LOL_FEATURE_CXX11_CONSTEXPR
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #   endif
+#   define LOL_FEATURE_CXX11_ISNAN 1
 #   if __has_feature(cxx_nullptr)
-#       undef LOL_FEATURE_CXX11_NULLPTR
 #       define LOL_FEATURE_CXX11_NULLPTR 1
 #   endif
-#   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
-#elif defined _MSC_VER /* Visual Studio (lol) */
-#   if _MSC_VER < 1800
+#   define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
+#   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
+#endif
+
+/* Features supported by Visual Studio */
+#if defined _MSC_VER
+#   define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
+#   define LOL_FEATURE_CXX11_ISNAN 1
+#   if _MSC_VER >= 1900 /* 2015 CTP (not too bad) */
+#       define LOL_FEATURE_CXX11_NULLPTR 1
+#       define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
+#       define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
+#   endif
+#   if _MSC_VER < 1800 /* 2012 or older (ugly piece of shit) */
 #       error "sorry, Visual Studio 2013 or later is needed"
 #   endif
+    /* Supported in VS 2015 but causes massive warning output */
+#   undef LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
+    /* Still unsupported as of VS 2015 */
+#   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
+#   undef LOL_FEATURE_CXX11_CONSTEXPR
 #endif
 
 
