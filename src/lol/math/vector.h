@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -75,7 +75,7 @@ struct vec_t
     ~vec_t() = delete;
 
     /* Allow the assignment operator if unrestricted unions are supported. */
-    inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that);
+    inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that)
     {
         for (int i = 0; i < N; ++i)
             (*this)[i] = that[i];
@@ -125,10 +125,17 @@ struct vec_t<T, N, FULL_SWIZZLE>
 
     /* Explicit constructor that takes exactly N arguments thanks to SFINAE. */
     template<typename... ARGS>
-    explicit inline vec_t(typename std::enable_if<(sizeof...(ARGS) == N - 1) && (N > 1), T>
-                                      ::type const &X, ARGS... args)
+#if LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
+    explicit inline vec_t(T const &X,
+        typename std::enable_if<sizeof...(ARGS) + 2 == N, T>::type const &Y,
+        ARGS... args)
+#else
+    explicit inline vec_t(T const &X, T const &Y, ARGS... args)
+#endif
     {
-        internal_init(m_data, X, args...);
+        static_assert(sizeof...(ARGS) + 2 == N,
+                      "wrong argument count in vec_t constructor");
+        internal_init(m_data, X, Y, args...);
     }
 
     /* Various explicit constructors */

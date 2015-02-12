@@ -377,7 +377,7 @@ protected:
 template <typename TE>
 class Quadtree : public AABBTree<TE, vec2, box2, 4>
 {
-    friend void Debug::Draw<TE>(Octree<TE>* tree, vec4 color);
+    friend void Debug::Draw<TE,void>(Octree<TE>* tree, vec4 color);
 public:
     Quadtree()          { m_debug_y_offset = 0.f; }
     virtual ~Quadtree() { }
@@ -390,7 +390,7 @@ protected:
 template <typename TE>
 class Octree : public AABBTree<TE, vec3, box3, 8>
 {
-    friend void Debug::Draw<TE>(Octree<TE>* tree, vec4 color);
+    friend void Debug::Draw<TE,void>(Octree<TE>* tree, vec4 color);
 public:
     Octree()            { }
     virtual ~Octree()   { }

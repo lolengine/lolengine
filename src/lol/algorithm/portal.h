@@ -13,11 +13,11 @@
 
 #pragma once
 
-#include <cfloat> /* for FLT_MAX */
-
 #include <lol/base/array.h>
 #include <lol/debug/lines.h>
 #include <lol/image/color.h>
+
+#include <cfloat> /* for FLT_MAX */
 
 namespace lol
 {
@@ -52,7 +52,7 @@ class PortalDoor
 {
     friend class PortalSet<TE>;
     friend class PortalRoom<TE>;
-    friend void Debug::Draw<TE>(PortalDoor<TE>& port, vec4 color);
+    friend void Debug::Draw<TE,void>(PortalDoor<TE>& port, vec4 color);
 
 private:
     void Init()
