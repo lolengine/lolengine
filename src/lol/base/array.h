@@ -496,12 +496,15 @@ protected:
 template<typename... T>
 class array : public array_base<tuple<T...>, array<T...>>
 {
+public:
+    /* GCC needs this but Clang doesn’t */
+    typedef tuple<T...> element_t;
+
 #if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
+private:
     using array_base<tuple<T...>, array<T...>>::array_base;
 #else
 public:
-    typedef tuple<T...> element_t;
-
     inline array()
       : array_base<element_t, array<T...>>::array_base()
     {}
