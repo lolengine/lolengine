@@ -19,13 +19,11 @@ lolunit_declare_fixture(MatrixTest)
 {
     void SetUp()
     {
-        id2 = mat2(1.0f);
         tri2 = mat2(vec2(1.0f, 0.0f),
                     vec2(7.0f, 2.0f));
         inv2 = mat2(vec2(4.0f, 3.0f),
                     vec2(3.0f, 2.0f));
 
-        id3 = mat3(1.0f);
         tri3 = mat3(vec3(1.0f, 0.0f, 0.0f),
                     vec3(7.0f, 2.0f, 0.0f),
                     vec3(1.0f, 5.0f, 3.0f));
@@ -33,7 +31,6 @@ lolunit_declare_fixture(MatrixTest)
                     vec3(3.0f, 2.0f, 3.0f),
                     vec3(9.0f, 5.0f, 7.0f));
 
-        id4 = mat4(1.0f);
         tri4 = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
                     vec4(7.0f, 2.0f, 0.0f, 0.0f),
                     vec4(1.0f, 5.0f, 3.0f, 0.0f),
@@ -68,8 +65,8 @@ lolunit_declare_fixture(MatrixTest)
 
     lolunit_declare_test(Multiplication)
     {
-        mat4 m0 = id4;
-        mat4 m1 = id4;
+        mat4 m0(1.f);
+        mat4 m1(1.f);
         mat4 m2 = m0 * m1;
 
         lolunit_assert_equal(m2[0][0], 1.0f);
@@ -235,32 +232,27 @@ lolunit_declare_fixture(MatrixTest)
         lolunit_assert_doubles_equal(m2[2][2], 1.0f, 1e-4);
     }
 
-    lolunit_declare_test(Inverse4x4)
+    lolunit_declare_test(inverse_4x4_1)
     {
-        mat4 m0 = inv4;
-        mat4 m1 = inverse(m0);
+        mat4 m = inv4;
+        mat4 m2 = inverse(m) * m;
 
-        mat4 m2 = m0 * m1;
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+            lolunit_assert_equal(m2[i][j], mat4(1.f)[i][j]);
+    }
 
-        lolunit_assert_equal(m2[0][0], 1.0f);
-        lolunit_assert_equal(m2[1][0], 0.0f);
-        lolunit_assert_equal(m2[2][0], 0.0f);
-        lolunit_assert_equal(m2[3][0], 0.0f);
+    lolunit_declare_test(inverse_4x4_2)
+    {
+        mat4 m(vec4(1.f,  0.f,  0.f, 0.f),
+               vec4(0.f,  0.f,  1.f, 0.f),
+               vec4(0.f, -1.f,  0.f, 0.f),
+               vec4(0.f,  0.f, -1.f, 1.f));
+        mat4 m2 = inverse(m) * m;
 
-        lolunit_assert_equal(m2[0][1], 0.0f);
-        lolunit_assert_equal(m2[1][1], 1.0f);
-        lolunit_assert_equal(m2[2][1], 0.0f);
-        lolunit_assert_equal(m2[3][1], 0.0f);
-
-        lolunit_assert_equal(m2[0][2], 0.0f);
-        lolunit_assert_equal(m2[1][2], 0.0f);
-        lolunit_assert_equal(m2[2][2], 1.0f);
-        lolunit_assert_equal(m2[3][2], 0.0f);
-
-        lolunit_assert_equal(m2[0][3], 0.0f);
-        lolunit_assert_equal(m2[1][3], 0.0f);
-        lolunit_assert_equal(m2[2][3], 0.0f);
-        lolunit_assert_equal(m2[3][3], 1.0f);
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+            lolunit_assert_equal(m2[i][j], mat4(1.f)[i][j]);
     }
 
     lolunit_declare_test(Kronecker)
@@ -293,9 +285,9 @@ lolunit_declare_fixture(MatrixTest)
         }
     }
 
-    mat2 tri2, id2, inv2;
-    mat3 tri3, id3, inv3;
-    mat4 tri4, id4, inv4;
+    mat2 tri2, inv2;
+    mat3 tri3, inv3;
+    mat4 tri4, inv4;
 };
 
 } /* namespace lol */
