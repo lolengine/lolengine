@@ -149,7 +149,7 @@ class AABBTree
         NodeLeaf(int parent)
         {
             m_parent = parent;
-            for (int i = 0; i < child_nb; i++)
+            for (size_t i = 0; i < child_nb; ++i)
                 m_children[i] = 0;
         }
     };
@@ -189,7 +189,7 @@ private:
     bool                CleanupEmptyLeaves(int leaf=0)
     {
         int empty_children = 0;
-        for (int i = 0; i < child_nb; i++)
+        for (size_t i = 0; i < child_nb; ++i)
         {
             bool child_empty = false;
             if (m_tree[leaf].m_children[i] != 0)
@@ -198,7 +198,7 @@ private:
         }
         if (empty_children == 4 && leaf != 0)
         {
-            for (int i = 0; i < child_nb; i++)
+            for (size_t i = 0; i < child_nb; ++i)
             {
                 int old_leaf = m_tree[leaf].m_children[i];
                 if (old_leaf != 0)
@@ -261,7 +261,7 @@ private:
         if (TestAABBVsAABB(leaf_bb, test_bb))
         {
             NodeLeaf& node = m_tree[leaf];
-            for (int i = 0; i < child_nb; i++)
+            for (size_t i = 0; i < child_nb; ++i)
             {
                 if (node.m_children[i] != 0)
                 {
@@ -284,7 +284,7 @@ private:
         if (TestAABBVsAABB(leaf_bb, element->GetAABB()))
         {
             bool found_child = false;
-            for (int i = 0; i < child_nb; i++)
+            for (size_t i = 0; i < child_nb; ++i)
             {
                 TB child_bb = GetSubAABB(leaf_bb, i);
                 int child_leaf = m_tree[leaf].m_children[i];
@@ -304,7 +304,7 @@ private:
                 elements.PushUnique(AddElement(element));
                 m_tree[leaf].m_elements.Empty();
                 //Add children
-                for (int j = 0; j < child_nb; j++)
+                for (size_t j = 0; j < child_nb; ++j)
                     m_tree[leaf].m_children[j] = AddLeaf(leaf);
                 //Re-run extracted elements
                 while (elements.Count())
