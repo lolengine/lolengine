@@ -23,12 +23,20 @@
 
 extern "C" {
 
+#if _M_X64
 void *__imp___iob_func(void)
+#else
+void *_imp____iob_func(void)
+#endif
 {
     return NULL;
 }
 
+#if _M_X64
 int __imp_fprintf(FILE *stream, char const *fmt, ...)
+#else
+int _imp__fprintf(FILE *stream, char const *fmt, ...)
+#endif
 {
     va_list va;
     va_start(va, fmt);
