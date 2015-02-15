@@ -38,7 +38,7 @@ struct StructSafeEnum
 {
 protected:
     /* Convert to string stuff */
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { return false; }
+    virtual bool BuildEnumMap(map<int64_t, String>&) { return false; }
 };
 //-----------------------------------------------------------------------------
 template<typename BASE, typename T = typename BASE::Type>
@@ -63,7 +63,7 @@ public:
         static map<int64_t, String> enum_map;
         static bool ready = false;
 
-		if (ready || BuildEnumMap(enum_map))
+		if (ready || this->BuildEnumMap(enum_map))
 		{
 			ready = true;
 			if (enum_map.has_key((int64_t)m_value))
