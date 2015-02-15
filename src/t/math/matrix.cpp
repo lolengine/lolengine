@@ -63,199 +63,209 @@ lolunit_declare_fixture(MatrixTest)
         lolunit_assert_doubles_equal(d2, -1.0f, 1e-5);
     }
 
-    lolunit_declare_test(Multiplication)
+    lolunit_declare_test(multiplication_4x4)
     {
         mat4 m0(1.f);
         mat4 m1(1.f);
         mat4 m2 = m0 * m1;
 
-        lolunit_assert_equal(m2[0][0], 1.0f);
-        lolunit_assert_equal(m2[1][0], 0.0f);
-        lolunit_assert_equal(m2[2][0], 0.0f);
-        lolunit_assert_equal(m2[3][0], 0.0f);
-
-        lolunit_assert_equal(m2[0][1], 0.0f);
-        lolunit_assert_equal(m2[1][1], 1.0f);
-        lolunit_assert_equal(m2[2][1], 0.0f);
-        lolunit_assert_equal(m2[3][1], 0.0f);
-
-        lolunit_assert_equal(m2[0][2], 0.0f);
-        lolunit_assert_equal(m2[1][2], 0.0f);
-        lolunit_assert_equal(m2[2][2], 1.0f);
-        lolunit_assert_equal(m2[3][2], 0.0f);
-
-        lolunit_assert_equal(m2[0][3], 0.0f);
-        lolunit_assert_equal(m2[1][3], 0.0f);
-        lolunit_assert_equal(m2[2][3], 0.0f);
-        lolunit_assert_equal(m2[3][3], 1.0f);
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(Inverse2x2)
+    lolunit_declare_test(inverse_2x2)
     {
         mat2 m0 = inv2;
         mat2 m1 = inverse(m0);
-
         mat2 m2 = m0 * m1;
 
-        lolunit_assert_equal(m2[0][0], 1.0f);
-        lolunit_assert_equal(m2[1][0], 0.0f);
-
-        lolunit_assert_equal(m2[0][1], 0.0f);
-        lolunit_assert_equal(m2[1][1], 1.0f);
+        for (int j = 0; j < 2; ++j)
+        for (int i = 0; i < 2; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat2(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(LUDecomposition3x3)
+    lolunit_declare_test(lu_decomposition_3x3)
     {
-        mat3 m0 = inv3;
-
+        mat3 m(vec3(2, 3, 5),
+               vec3(3, 2, 3),
+               vec3(9, 5, 7));
         mat3 L, U;
+        lu_decomposition(m, L, U);
+        mat3 m2 = L * U;
 
-        lu_decomposition(inv3, L, U);
-
-        mat3 result = L * U;
-
+        for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
         {
-            for (int j = 0; j < 3; ++j)
-            {
-                if (i > j)
-                    lolunit_assert_equal(L[i][j], 0);
-                else if (i < j)
-                    lolunit_assert_equal(U[i][j], 0);
-                else
-                    lolunit_assert_equal(L[i][j], 1);
+            lolunit_assert(!isnan(U[i][j]));
+            lolunit_assert(!isnan(L[i][j]));
 
-                lolunit_assert_equal(result[i][j], inv3[i][j]);
-            }
+            if (i < j)
+                lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
+            if (i == j)
+                lolunit_assert_doubles_equal(L[i][j], 1.f, 1e-5);
+            if (j < i)
+                lolunit_assert_doubles_equal(L[i][j], 0.f, 1e-5);
+
+            lolunit_assert_doubles_equal(m2[i][j], m[i][j], 1e-5);
         }
     }
 
-    lolunit_declare_test(LUDecomposition4x4)
+    lolunit_declare_test(lu_decomposition_4x4_full)
     {
-        mat4 m0 = inv4;
-
+        mat4 m(vec4( 1,  1,  2, -1),
+               vec4(-2, -1, -2,  2),
+               vec4( 4,  2,  5, -4),
+               vec4( 5, -3, -7, -6));
         mat4 L, U;
+        lu_decomposition(m, L, U);
+        mat4 m2 = L * U;
 
-        lu_decomposition(inv4, L, U);
-
-        mat4 result = L * U;
-
+        for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
         {
-            for (int j = 0; j < 4; ++j)
-            {
-                if (i > j)
-                    lolunit_assert_equal(L[i][j], 0);
-                else if (i < j)
-                    lolunit_assert_equal(U[i][j], 0);
-                else
-                    lolunit_assert_equal(L[i][j], 1);
+            lolunit_assert(!isnan(U[i][j]));
+            lolunit_assert(!isnan(L[i][j]));
 
-                lolunit_assert_equal(result[i][j], inv4[i][j]);
-            }
+            if (i < j)
+                lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
+            if (i == j)
+                lolunit_assert_doubles_equal(L[i][j], 1.f, 1e-5);
+            if (j < i)
+                lolunit_assert_doubles_equal(L[i][j], 0.f, 1e-5);
+
+            lolunit_assert_doubles_equal(m2[i][j], m[i][j], 1e-5);
         }
     }
 
-    lolunit_declare_test(LInverse3x3)
+    lolunit_declare_test(lu_decomposition_4x4_sparse)
     {
-        mat3 m0 = inv3;
-        mat3 L, U;
-        lu_decomposition(inv3, L, U);
-        mat3 l_inv = l_inverse(L);
-
-        mat3 identity = l_inv * L;
-
-        for (int i = 0 ; i < 3 ; ++i)
-            for (int j = 0 ; j < 3 ; ++j)
-                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
-    }
-
-    lolunit_declare_test(LInverse4x4)
-    {
-        mat4 m0 = inv4;
+        mat4 m(vec4(1,  0,  0,  0),
+               vec4(0,  0,  1,  0),
+               vec4(0, -1,  0,  0),
+               vec4(0,  0, -1,  1));
         mat4 L, U;
-        lu_decomposition(inv4, L, U);
-        mat4 l_inv = l_inverse(L);
+        lu_decomposition(m, L, U);
+        mat4 m2 = L * U;
 
-        mat4 identity = l_inv * L;
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+        {
+            lolunit_assert(!isnan(U[i][j]));
+            lolunit_assert(!isnan(L[i][j]));
 
-        for (int i = 0 ; i < 4 ; ++i)
-            for (int j = 0 ; j < 4 ; ++j)
-                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
+            if (i < j)
+                lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
+            if (i == j)
+                lolunit_assert_doubles_equal(L[i][j], 1.f, 1e-5);
+            if (j < i)
+                lolunit_assert_doubles_equal(L[i][j], 0.f, 1e-5);
+
+            lolunit_assert_doubles_equal(m2[i][j], m[i][j], 1e-5);
+        }
     }
 
-    lolunit_declare_test(UInverse3x3)
+    lolunit_declare_test(l_inverse_3x3)
     {
-        mat3 m0 = inv3;
+        mat3 m(vec3(2, 3, 5),
+               vec3(3, 2, 3),
+               vec3(9, 5, 7));
         mat3 L, U;
-        lu_decomposition(inv3, L, U);
-        mat3 u_inv = u_inverse(U);
+        lu_decomposition(m, L, U);
+        mat3 m1 = l_inverse(L);
+        mat3 m2 = m1 * L;
 
-        mat3 identity = u_inv * U;
-
-        for (int i = 0 ; i < 3 ; ++i)
-            for (int j = 0 ; j < 3 ; ++j)
-                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
+        for (int j = 0; j < 3; ++j)
+        for (int i = 0; i < 3; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(UInverse4x4)
+    lolunit_declare_test(l_inverse_4x4)
     {
-        mat4 m0 = inv4;
+        mat4 m(vec4( 1,  1,  2, -1),
+               vec4(-2, -1, -2,  2),
+               vec4( 4,  2,  5, -4),
+               vec4( 5, -3, -7, -6));
         mat4 L, U;
-        lu_decomposition(inv4, L, U);
-        mat4 u_inv = u_inverse(U);
+        lu_decomposition(m, L, U);
+        mat4 m1 = l_inverse(L);
+        mat4 m2 = m1 * L;
 
-        mat4 identity = u_inv * U;
-
-        for (int i = 0 ; i < 4 ; ++i)
-            for (int j = 0 ; j < 4 ; ++j)
-                lolunit_assert_doubles_equal(identity[i][j], i == j ? 1 : 0, 1e-5);
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(Inverse3x3)
+    lolunit_declare_test(u_inverse_3x3)
     {
-        mat3 m0 = inv3;
-        mat3 m1 = inverse(m0);
+        mat3 m(vec3(2, 3, 5),
+               vec3(3, 2, 3),
+               vec3(9, 5, 7));
+        mat3 L, U;
+        lu_decomposition(m, L, U);
+        mat3 m1 = u_inverse(U);
+        mat3 m2 = m1 * U;
 
-        mat3 m2 = m0 * m1;
-
-        lolunit_assert_doubles_equal(m2[0][0], 1.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[1][0], 0.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[2][0], 0.0f, 1e-4);
-
-        lolunit_assert_doubles_equal(m2[0][1], 0.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[1][1], 1.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[2][1], 0.0f, 1e-4);
-
-        lolunit_assert_doubles_equal(m2[0][2], 0.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[1][2], 0.0f, 1e-4);
-        lolunit_assert_doubles_equal(m2[2][2], 1.0f, 1e-4);
+        for (int j = 0; j < 3; ++j)
+        for (int i = 0; i < 3; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(inverse_4x4_1)
+    lolunit_declare_test(u_inverse_4x4)
     {
-        mat4 m = inv4;
+        mat4 m(vec4( 1,  1,  2, -1),
+               vec4(-2, -1, -2,  2),
+               vec4( 4,  2,  5, -4),
+               vec4( 5, -3, -7, -6));
+        mat4 L, U;
+        lu_decomposition(m, L, U);
+        mat4 m1 = u_inverse(U);
+        mat4 m2 = m1 * U;
+
+        for (int j = 0; j < 4; ++j)
+        for (int i = 0; i < 4; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+    }
+
+    lolunit_declare_test(inverse_3x3)
+    {
+        mat3 m(vec3(2, 3, 5),
+               vec3(3, 2, 3),
+               vec3(9, 5, 7));
+        mat3 m2 = inverse(m) * m;
+
+        for (int j = 0; j < 3; ++j)
+        for (int i = 0; i < 3; ++i)
+            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
+    }
+
+    lolunit_declare_test(inverse_4x4_full)
+    {
+        mat4 m(vec4( 1,  1,  2, -1),
+               vec4(-2, -1, -2,  2),
+               vec4( 4,  2,  5, -4),
+               vec4( 5, -3, -7, -6));
         mat4 m2 = inverse(m) * m;
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_equal(m2[i][j], mat4(1.f)[i][j]);
+            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(inverse_4x4_2)
+    lolunit_declare_test(inverse_4x4_sparse)
     {
-        mat4 m(vec4(1.f,  0.f,  0.f, 0.f),
-               vec4(0.f,  0.f,  1.f, 0.f),
-               vec4(0.f, -1.f,  0.f, 0.f),
-               vec4(0.f,  0.f, -1.f, 1.f));
+        mat4 m(vec4(1,  0,  0,  0),
+               vec4(0,  0,  1,  0),
+               vec4(0, -1,  0,  0),
+               vec4(0,  0, -1,  1));
         mat4 m2 = inverse(m) * m;
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_equal(m2[i][j], mat4(1.f)[i][j]);
+            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
     }
 
-    lolunit_declare_test(Kronecker)
+    lolunit_declare_test(kronecker_product)
     {
         int const COLS1 = 2, ROWS1 = 3;
         int const COLS2 = 5, ROWS2 = 7;
