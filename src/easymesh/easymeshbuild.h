@@ -20,127 +20,256 @@
 namespace lol
 {
 
-struct MeshBuildOperation
+//MeshBuildOperation ----------------------------------------------------------
+struct MeshBuildOperationBase : public StructSafeEnum
 {
-    DEF_VALUE
+    enum Type
+    {
         //When this flag is up, negative scaling will not invert faces.
-        ADD_VALUE_SET(ScaleWinding                , (1 << 0))
-        ADD_VALUE_SET(CommandRecording            , (1 << 1))
-        ADD_VALUE_SET(CommandExecution            , (1 << 2))
-        ADD_VALUE_SET(QuadWeighting               , (1 << 3))
-        ADD_VALUE_SET(IgnoreQuadWeighting         , (1 << 4))
-        ADD_VALUE_SET(PostBuildComputeNormals     , (1 << 5))
-        ADD_VALUE_SET(PreventVertCleanup          , (1 << 6))
+        ScaleWinding = (1 << 0),
+        CommandRecording = (1 << 1),
+        CommandExecution = (1 << 2),
+        QuadWeighting = (1 << 3),
+        IgnoreQuadWeighting = (1 << 4),
+        PostBuildComputeNormals = (1 << 5),
+        PreventVertCleanup = (1 << 6),
 
-        ADD_VALUE_SET(All                         , 0xffff)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(MeshBuildOperation)
+        All = 0xffff,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[ScaleWinding] = "ScaleWinding";
+        enum_map[CommandRecording] = "CommandRecording";
+        enum_map[CommandExecution] = "CommandExecution";
+        enum_map[QuadWeighting] = "QuadWeighting";
+        enum_map[IgnoreQuadWeighting] = "IgnoreQuadWeighting";
+        enum_map[PostBuildComputeNormals] = "PostBuildComputeNormals";
+        enum_map[PreventVertCleanup] = "PreventVertCleanup";
+        enum_map[All] = "All";
+        return true;
+    }
 };
+typedef SafeEnum<MeshBuildOperationBase> MeshBuildOperation;
 
-struct EasyMeshCmdType
+//EasyMeshCmdType -------------------------------------------------------------
+struct EasyMeshCmdTypeBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE(MeshCsg)
+    enum Type
+    {
+        MeshCsg,
 
-        ADD_VALUE(LoopStart)
-        ADD_VALUE(LoopEnd)
-        ADD_VALUE(OpenBrace)
-        ADD_VALUE(CloseBrace)
+        LoopStart,
+        LoopEnd,
+        OpenBrace,
+        CloseBrace,
 
-        ADD_VALUE(ScaleWinding)
-        ADD_VALUE(QuadWeighting)
-        ADD_VALUE(PostBuildNormal)
-        ADD_VALUE(PreventVertCleanup)
-        ADD_VALUE(SetColorA)
-        ADD_VALUE(SetColorB)
-        ADD_VALUE(SetVertColor)
+        ScaleWinding,
+        QuadWeighting,
+        PostBuildNormal,
+        PreventVertCleanup,
+        SetColorA,
+        SetColorB,
+        SetVertColor,
 
-        ADD_VALUE(VerticesMerge)
-        ADD_VALUE(VerticesSeparate)
+        VerticesMerge,
+        VerticesSeparate,
 
-        ADD_VALUE(Translate)
-        ADD_VALUE(Rotate)
-        ADD_VALUE(RadialJitter)
-        ADD_VALUE(MeshTranform)
-        ADD_VALUE(Scale)
-        ADD_VALUE(DupAndScale)
-        ADD_VALUE(Chamfer)
+        Translate,
+        Rotate,
+        RadialJitter,
+        MeshTranform,
+        Scale,
+        DupAndScale,
+        Chamfer,
 
-        ADD_VALUE(SplitTriangles)
-        ADD_VALUE(SmoothMesh)
+        SplitTriangles,
+        SmoothMesh,
 
-        ADD_VALUE(AppendCylinder)
-        ADD_VALUE(AppendCapsule)
-        ADD_VALUE(AppendTorus)
-        ADD_VALUE(AppendBox)
-        ADD_VALUE(AppendStar)
-        ADD_VALUE(AppendExpandedStar)
-        ADD_VALUE(AppendDisc)
-        ADD_VALUE(AppendSimpleTriangle)
-        ADD_VALUE(AppendSimpleQuad)
-        ADD_VALUE(AppendCog)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(EasyMeshCmdType)
+        AppendCylinder,
+        AppendCapsule,
+        AppendTorus,
+        AppendBox,
+        AppendStar,
+        AppendExpandedStar,
+        AppendDisc,
+        AppendSimpleTriangle,
+        AppendSimpleQuad,
+        AppendCog,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[MeshCsg] = "MeshCsg";
+        enum_map[LoopStart] = "LoopStart";
+        enum_map[LoopEnd] = "LoopEnd";
+        enum_map[OpenBrace] = "OpenBrace";
+        enum_map[CloseBrace] = "CloseBrace";
+        enum_map[ScaleWinding] = "ScaleWinding";
+        enum_map[QuadWeighting] = "QuadWeighting";
+        enum_map[PostBuildNormal] = "PostBuildNormal";
+        enum_map[PreventVertCleanup] = "PreventVertCleanup";
+        enum_map[SetColorA] = "SetColorA";
+        enum_map[SetColorB] = "SetColorB";
+        enum_map[SetVertColor] = "SetVertColor";
+        enum_map[VerticesMerge] = "VerticesMerge";
+        enum_map[VerticesSeparate] = "VerticesSeparate";
+        enum_map[Translate] = "Translate";
+        enum_map[Rotate] = "Rotate";
+        enum_map[RadialJitter] = "RadialJitter";
+        enum_map[MeshTranform] = "MeshTranform";
+        enum_map[Scale] = "Scale";
+        enum_map[DupAndScale] = "DupAndScale";
+        enum_map[Chamfer] = "Chamfer";
+        enum_map[SplitTriangles] = "SplitTriangles";
+        enum_map[SmoothMesh] = "SmoothMesh";
+        enum_map[AppendCylinder] = "AppendCylinder";
+        enum_map[AppendCapsule] = "AppendCapsule";
+        enum_map[AppendTorus] = "AppendTorus";
+        enum_map[AppendBox] = "AppendBox";
+        enum_map[AppendStar] = "AppendStar";
+        enum_map[AppendExpandedStar] = "AppendExpandedStar";
+        enum_map[AppendDisc] = "AppendDisc";
+        enum_map[AppendSimpleTriangle] = "AppendSimpleTriangle";
+        enum_map[AppendSimpleQuad] = "AppendSimpleQuad";
+        enum_map[AppendCog] = "AppendCog";
+        return true;
+    }
 };
+typedef SafeEnum<EasyMeshCmdTypeBase> EasyMeshCmdType;
 
-LOL_SAFE_ENUM(MeshType,
-    Triangle,
-    Quad,
-    Box,
-    Sphere,
-    Capsule,
-    Torus,
-    Cylinder,
-    Disc,
-    Star,
-    ExpandedStar,
-    Cog,
-
-    MAX
-);
-
-struct TexCoordBuildType
+//MeshTypeBase ----------------------------------------------------------------
+struct MeshTypeBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE_SET(TriangleDefault     , 0)
-        ADD_VALUE_SET(QuadDefault         , 0)
-        ADD_VALUE_SET(BoxDefault          , 0)
-        ADD_VALUE_SET(SphereDefault       , 0)
-        ADD_VALUE_SET(CapsuleDefault      , 0)
-        ADD_VALUE_SET(TorusDefault        , 0)
-        ADD_VALUE_SET(CylinderDefault     , 0)
-        ADD_VALUE_SET(DiscDefault         , 0)
-        ADD_VALUE_SET(StarDefault         , 0)
-        ADD_VALUE_SET(ExpandedStarDefault , 0)
-        ADD_VALUE_SET(CogDefault          , 0)
+    /* A safe enum for Primitive edge face. */
+    enum Type
+    {
+        Triangle,
+        Quad,
+        Box,
+        Sphere,
+        Capsule,
+        Torus,
+        Cylinder,
+        Disc,
+        Star,
+        ExpandedStar,
+        Cog,
+
+        MAX
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Triangle] = "Triangle";
+        enum_map[Quad] = "Quad";
+        enum_map[Box] = "Box";
+        enum_map[Sphere] = "Sphere";
+        enum_map[Capsule] = "Capsule";
+        enum_map[Torus] = "Torus";
+        enum_map[Cylinder] = "Cylinder";
+        enum_map[Disc] = "Disc";
+        enum_map[Star] = "Star";
+        enum_map[ExpandedStar] = "ExpandedStar";
+        enum_map[Cog] = "Cog";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
+};
+typedef SafeEnum<MeshTypeBase> MeshType;
+
+//TexCoordBuildType -----------------------------------------------------------
+struct TexCoordBuildTypeBase : public StructSafeEnum
+{
+    enum Type
+    {
+        TriangleDefault,
+        QuadDefault,
+        BoxDefault,
+        SphereDefault,
+        CapsuleDefault,
+        TorusDefault,
+        CylinderDefault,
+        DiscDefault,
+        StarDefault,
+        ExpandedStarDefault,
+        CogDefault,
 
         //NEVER FORGET TO INCREMENT THIS WHEN ADDING A VALUE
-        ADD_VALUE_SET(Max                 , 1)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(TexCoordBuildType)
+        Max
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[TriangleDefault] = "TriangleDefault";
+        enum_map[QuadDefault] = "QuadDefault";
+        enum_map[BoxDefault] = "BoxDefault";
+        enum_map[SphereDefault] = "SphereDefault";
+        enum_map[CapsuleDefault] = "CapsuleDefault";
+        enum_map[TorusDefault] = "TorusDefault";
+        enum_map[CylinderDefault] = "CylinderDefault";
+        enum_map[DiscDefault] = "DiscDefault";
+        enum_map[StarDefault] = "StarDefault";
+        enum_map[ExpandedStarDefault] = "ExpandedStarDefault";
+        enum_map[CogDefault] = "CogDefault";
+        enum_map[Max] = "Max";
+        return true;
+    }
 };
+typedef SafeEnum<TexCoordBuildTypeBase> TexCoordBuildType;
 
-LOL_SAFE_ENUM(MeshFaceType,
-    BoxFront    = 0,
-    QuadDefault = 0,
-    BoxLeft     = 1,
-    BoxBack     = 2,
-    BoxRight    = 3,
-    BoxTop      = 4,
-    BoxBottom   = 5,
+//MeshFaceType ----------------------------------------------------------------
+struct MeshFaceTypeBase : public StructSafeEnum
+{
+    enum Type
+    {
+        BoxFront = 0,
+        QuadDefault = 0,
+        BoxLeft = 1,
+        BoxBack = 2,
+        BoxRight = 3,
+        BoxTop = 4,
+        BoxBottom = 5,
 
-    Max
-);
+        MAX
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[BoxFront] = "BoxFront";
+        enum_map[QuadDefault] = "QuadDefault";
+        enum_map[BoxLeft] = "BoxLeft";
+        enum_map[BoxBack] = "BoxBack";
+        enum_map[BoxRight] = "BoxRight";
+        enum_map[BoxTop] = "BoxTop";
+        enum_map[BoxBottom] = "BoxBottom";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
+};
+typedef SafeEnum<MeshFaceTypeBase> MeshFaceType;
 
-LOL_SAFE_ENUM(TexCoordPos,
-    BL, // Bottom Left
-    BR, // Bottom Right
-    TL, // Top Left
-    TR  // Top Right
-);
+//TexCoordPos -----------------------------------------------------------------
+struct TexCoordPosBase : public StructSafeEnum
+{
+    enum Type
+    {
+        BL, // Bottom Left
+        BR, // Bottom Right
+        TL, // Top Left
+        TR  // Top Right
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[BL] = "BL";
+        enum_map[BR] = "BR";
+        enum_map[TL] = "TL";
+        enum_map[TR] = "TR";
+        return true;
+    }
+};
+typedef SafeEnum<TexCoordPosBase> TexCoordPos;
 
 class EasyMeshBuildData
 {
@@ -175,7 +304,7 @@ public:
     inline vec2 &TexCoordScale2()   { return m_texcoord_scale2; }
 
     //UV1
-    void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt.ToScalar()] = (1 << (tcbt + 1)) | (m_texcoord_build_type[mt.ToScalar()] & 1); }
+    void SetTexCoordBuildType(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type[mt.ToScalar()] = (1 << (tcbt.ToScalar() + 1)) | (m_texcoord_build_type[mt.ToScalar()] & 1); }
     TexCoordBuildType GetTexCoordBuildType(MeshType mt)
     {
         uint32_t flag = (uint32_t)((m_texcoord_build_type[mt.ToScalar()] & ~(1)) >> 1);
@@ -263,7 +392,7 @@ public:
     }
 
     // UV2
-    void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt.ToScalar()] = (1 << (tcbt + 1)) | (m_texcoord_build_type2[mt.ToScalar()] & 1); }
+    void SetTexCoordBuildType2(MeshType mt, TexCoordBuildType tcbt) { m_texcoord_build_type2[mt.ToScalar()] = (1 << (tcbt.ToScalar() + 1)) | (m_texcoord_build_type2[mt.ToScalar()] & 1); }
     TexCoordBuildType GetTexCoordBuildType2(MeshType mt)
     {
         uint32_t flag = ((m_texcoord_build_type2[mt.ToScalar()] & ~(1)) >> 1);
@@ -348,10 +477,10 @@ public:
         return res * m_texcoord_scale + m_texcoord_offset2;
     }
 
-    inline bool IsEnabled(MeshBuildOperation mbo) { return (m_build_flags & mbo) != 0; }
-    inline void Enable(MeshBuildOperation mbo) { m_build_flags |= mbo; }
-    inline void Disable(MeshBuildOperation mbo) { m_build_flags &= ~mbo; }
-    inline void Toggle(MeshBuildOperation mbo) { m_build_flags ^= mbo; }
+    inline bool IsEnabled(MeshBuildOperation mbo) { return (m_build_flags & mbo.ToScalar()) != 0; }
+    inline void Enable(MeshBuildOperation mbo) { m_build_flags |= mbo.ToScalar(); }
+    inline void Disable(MeshBuildOperation mbo) { m_build_flags &= ~mbo.ToScalar(); }
+    inline void Toggle(MeshBuildOperation mbo) { m_build_flags ^= mbo.ToScalar(); }
     inline void Set(MeshBuildOperation mbo, bool value) { if (value) Enable(mbo); else Disable(mbo); }
 
 public:
@@ -372,17 +501,25 @@ public:
     uint32_t            m_build_flags;
 };
 
-/* A safe enum for VertexDictionnary operations. */
-struct VDictType
+//VDictType -- A safe enum for VertexDictionnary operations. ------------------
+struct VDictTypeBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE_SET(DoesNotExist  , -3)
-        ADD_VALUE_SET(Alone         , -2)
-        ADD_VALUE_SET(Master        , -1)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(VDictType)
+    enum Type
+    {
+        DoesNotExist = -3,
+        Alone = -2,
+        Master = -1,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[DoesNotExist] = "DoesNotExist";
+        enum_map[Alone] = "Alone";
+        enum_map[Master] = "Master";
+        return true;
+    }
 };
+typedef SafeEnum<VDictTypeBase> VDictType;
 
 /* TODO : replace VDict by a proper Half-edge system */
 //a class whose goal is to keep a list of the adjacent vertices for mesh operations purposes

@@ -33,26 +33,57 @@ namespace lol
  * now there is only TexCoord and not TexCoord0 TexCoord1 etc. because
  * we can always reorganise the vertex declaration for the indices to
  * match. If the need arises these enums will be added. */
-LOL_SAFE_ENUM(VertexUsage,
-    Position,
-    BlendWeight,
-    BlendIndices,
-    Normal,
-    PointSize,
-    TexCoord,
-    TexCoordExt,
-    Tangent,
-    Binormal,
-    TessFactor,
-    PositionT,
-    Color,
-    Fog,
-    Depth,
-    Sample,
-    MAX,
-);
+//VertexUsageBase -------------------------------------------------------------
+struct VertexUsageBase : public StructSafeEnum
+{
 
-//Enum definitions ------------------------------------------------------------
+    enum Type
+    {
+        Position,
+        BlendWeight,
+        BlendIndices,
+        Normal,
+        PointSize,
+        TexCoord,
+        TexCoordExt,
+        Tangent,
+        Binormal,
+        TessFactor,
+        PositionT,
+        Color,
+        Fog,
+        Depth,
+        Sample,
+        MAX,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Position] = "Position";
+        enum_map[BlendWeight] = "BlendWeight";
+        enum_map[BlendIndices] = "BlendIndices";
+        enum_map[Normal] = "Normal";
+        enum_map[PointSize] = "PointSize";
+        enum_map[TexCoord] = "TexCoord";
+        enum_map[TexCoordExt] = "TexCoordExt";
+        enum_map[Tangent] = "Tangent";
+        enum_map[Binormal] = "Binormal";
+        enum_map[TessFactor] = "TessFactor";
+        enum_map[PositionT] = "PositionT";
+        enum_map[Color] = "Color";
+        enum_map[Fog] = "Fog";
+        enum_map[Depth] = "Depth";
+        enum_map[Sample] = "Sample";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
+};
+typedef SafeEnum<VertexUsageBase> VertexUsage;
+
+//-----------------------------------------------------------------------------
+//Enum definitions
+//-----------------------------------------------------------------------------
+//ShaderVariableBase ----------------------------------------------------------
 struct ShaderVariableBase
 {
     enum Type
@@ -68,11 +99,19 @@ struct ShaderVariableBase
         MAX
     };
 protected:
-    static inline char const *GetDescription()      { return nullptr; }
-    static inline char const **GetCustomString()    { return nullptr; }
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Attribute] = "Attribute";
+        enum_map[Uniform] = "Uniform";
+        enum_map[Varying] = "Varying";
+        enum_map[InOut] = "InOut";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
 };
 typedef SafeEnum<ShaderVariableBase> ShaderVariable;
 
+//ShaderProgramBase -----------------------------------------------------------
 struct ShaderProgramBase
 {
     enum Type
@@ -84,8 +123,14 @@ struct ShaderProgramBase
         MAX
     };
 protected:
-    static inline char const *GetDescription()      { return nullptr; }
-    static inline char const **GetCustomString()    { return nullptr; }
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Geometry] = "Geometry";
+        enum_map[Vertex] = "Vertex";
+        enum_map[Pixel] = "Pixel";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
 };
 typedef SafeEnum<ShaderProgramBase> ShaderProgram;
 

@@ -20,13 +20,28 @@
 namespace lol
 {
 
-// Utility enum for renderers
-LOL_SAFE_ENUM(MeshRender,
-    NeedData,
-    NeedConvert,
-    CanRender,
-    IgnoreRender,
-);
+//MeshRenderBase --------------------------------------------------------------
+//Utility enum for renderers
+struct MeshRenderBase : public StructSafeEnum
+{
+    enum Type
+    {
+        NeedData,
+        NeedConvert,
+        CanRender,
+        IgnoreRender,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[NeedData] = "NeedData";
+        enum_map[NeedConvert] = "NeedConvert";
+        enum_map[CanRender] = "CanRender";
+        enum_map[IgnoreRender] = "IgnoreRender";
+        return true;
+    }
+};
+typedef SafeEnum<MeshRenderBase> MeshRender;
 
 //Vertex datas for easymesh vertex list.
 //TODO : <COORD, NORM, COLOR, UV>

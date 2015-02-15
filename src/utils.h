@@ -60,7 +60,7 @@ template< class T > inline int GetRandom(array<T> src)
     return (r_total > .0f)?(r_j):(-1);
 }
 
-// Gets the value for the given LOL_SAFE_ENUM type.
+// Gets the value for the given enum type.
 template<class T> inline T FindValue(const char* name)
 {
     String n = name;

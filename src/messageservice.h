@@ -19,27 +19,47 @@
 namespace lol
 {
 
-// Utility enum for message service
-struct MessageBucket
+//MessageBucket -- Utility enum for message service ---------------------------
+struct MessageBucketBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE(AppIn)
-        ADD_VALUE(AppOut)
+    enum Type
+    {
+        AppIn,
+        AppOut,
 
-        ADD_VALUE(Bckt0)
-        ADD_VALUE(Bckt1)
-        ADD_VALUE(Bckt2)
-        ADD_VALUE(Bckt3)
-        ADD_VALUE(Bckt4)
-        ADD_VALUE(Bckt5)
-        ADD_VALUE(Bckt6)
-        ADD_VALUE(Bckt7)
-        ADD_VALUE(Bckt8)
-        ADD_VALUE(Bckt9)
-    END_E_VALUE
+        Bckt0,
+        Bckt1,
+        Bckt2,
+        Bckt3,
+        Bckt4,
+        Bckt5,
+        Bckt6,
+        Bckt7,
+        Bckt8,
+        Bckt9,
 
-    LOL_DECLARE_ENUM_METHODS(MessageBucket)
+        MAX
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[AppIn] = "AppIn";
+        enum_map[AppOut] = "AppOut";
+        enum_map[Bckt0] = "Bckt0";
+        enum_map[Bckt1] = "Bckt1";
+        enum_map[Bckt2] = "Bckt2";
+        enum_map[Bckt3] = "Bckt3";
+        enum_map[Bckt4] = "Bckt4";
+        enum_map[Bckt5] = "Bckt5";
+        enum_map[Bckt6] = "Bckt6";
+        enum_map[Bckt7] = "Bckt7";
+        enum_map[Bckt8] = "Bckt8";
+        enum_map[Bckt9] = "Bckt9";
+        enum_map[MAX] = "MAX";
+        return true;
+    }
 };
+typedef SafeEnum<MessageBucketBase> MessageBucket;
 
 //Message list container with time in it
 struct MessageList

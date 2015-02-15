@@ -20,18 +20,47 @@
 namespace lol
 {
 
-LOL_SAFE_ENUM(FileAccess,
-    Read = 0,
-    Write
-);
+//FileAccessBase --------------------------------------------------------------
+struct FileAccessBase : public StructSafeEnum
+{
+    enum Type
+    {
+        Read = 0,
+        Write
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Read]  = "Read";
+        enum_map[Write] = "Write";
+        return true;
+    }
+};
+typedef SafeEnum<FileAccessBase> FileAccess;
 
-LOL_SAFE_ENUM(StreamType,
-    StdIn,
-    StdOut,
-    StdErr,
-    File,
-    FileBinary
-);
+//StreamTypeBase --------------------------------------------------------------
+struct StreamTypeBase : public StructSafeEnum
+{
+    enum Type
+    {
+        StdIn,
+        StdOut,
+        StdErr,
+        File,
+        FileBinary
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[StdIn]      = "StdIn";
+        enum_map[StdOut]     = "StdOut";
+        enum_map[StdErr]     = "StdErr";
+        enum_map[File]       = "File";
+        enum_map[FileBinary] = "FileBinary";
+        return true;
+    }
+};
+typedef SafeEnum<StreamTypeBase> StreamType;
 
 class File
 {
