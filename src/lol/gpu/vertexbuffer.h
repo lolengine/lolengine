@@ -39,13 +39,29 @@ private:
 
 /* A safe enum to indicate what kind of primitive to draw. Used in
  * VertexDeclaration::DrawElements() for instance. */
-LOL_SAFE_ENUM(MeshPrimitive,
-    Triangles,
-    TriangleStrips,
-    TriangleFans,
-    Points,
-    Lines,
-);
+//MeshPrimitiveBase -- A safe enum for Primitive edge face. -------------------
+struct MeshPrimitiveBase : public StructSafeEnum
+{
+    enum Type
+    {
+        Triangles,
+        TriangleStrips,
+        TriangleFans,
+        Points,
+        Lines,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Triangles]      = "Triangles";
+        enum_map[TriangleStrips] = "TriangleStrips";
+        enum_map[TriangleFans]   = "TriangleFans";
+        enum_map[Points]         = "Points";
+        enum_map[Lines]          = "Lines";
+        return true;
+    }
+};
+typedef SafeEnum<MeshPrimitiveBase> MeshPrimitive;
 
 class VertexStreamBase
 {

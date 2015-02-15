@@ -27,28 +27,43 @@ namespace lol
 {
 
 //AxisBase --------------------------------------------------------------------
-struct AxisBase
+    struct AxisBase : public StructSafeEnum
 {
     enum Type
     {
         X = 0, Y, Z, MAX, XY = 2, XYZ = 3,
     };
 protected:
-    static inline char const *GetDescription()      { return "X,Y,Z,MAX,XY,XYZ"; }
-    static inline char const **GetCustomString()    { return nullptr; }
+	virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+	{
+		enum_map[X]   = "X";
+		enum_map[Y]   = "Y";
+		enum_map[Z]   = "Z";
+        enum_map[MAX] = "MAX";
+		enum_map[XY]  = "XY";
+		enum_map[XYZ] = "XYZ";
+		return true;
+	}
 };
 typedef SafeEnum<AxisBase> Axis;
 
 //DirectionBase ---------------------------------------------------------------
-struct DirectionBase
+struct DirectionBase : public StructSafeEnum
 {
     enum Type
     {
         Up = 0, Down, Left, Right, MAX,
     };
 protected:
-    static inline char const *GetDescription()      { return "Up,Down,Left,Right,MAX"; }
-    static inline char const **GetCustomString()    { return nullptr; }
+	virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+	{
+		enum_map[Up]    = "Up";
+		enum_map[Down]  = "Down";
+		enum_map[Left]  = "Left";
+		enum_map[Right] = "Right";
+        enum_map[MAX]   = "MAX";
+		return true;
+	}
 };
 typedef SafeEnum<DirectionBase> Direction;
 
@@ -265,18 +280,30 @@ bool TestRayVsTriangle(vec3 const &ray_point, vec3 const &ray_dir,
                       vec3 const &tri_p0, vec3 const &tri_p1, vec3 const &tri_p2,
                       vec3 &vi);
 
-struct RayIntersect
+//RayIntersect ----------------------------------------------------------------
+struct RayIntersectBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE(Nothing)
-        ADD_VALUE(All)
-        ADD_VALUE(None)
-        ADD_VALUE(P0)
-        ADD_VALUE(P1)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(RayIntersect)
+    enum Type
+    {
+        Nothing,
+        All,
+        None,
+        P0,
+        P1,
+    };
+    //LOL_DECLARE_ENUM_METHODS(RayIntersectBase)
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Nothing] = "Nothing";
+        enum_map[All] = "All";
+        enum_map[None] = "None";
+        enum_map[P0] = "P0";
+        enum_map[P1] = "P1";
+        return true;
+    }
 };
+typedef SafeEnum<RayIntersectBase> RayIntersect;
 
 #define RAY_ISECT_NOTHING   0
 #define RAY_ISECT_ALL       1
@@ -322,12 +349,24 @@ bool TestRayVsPlane(const TV &ray_p0,  const TV &ray_p1,
     return true;
 }
 
-/* A safe enum for Primitive edge face. */
-LOL_SAFE_ENUM(PlaneIntersection,
-    Back,
-    Front,
-    Plane,
-);
+//PlaneIntersectionBase -------------------------------------------------------
+struct PlaneIntersectionBase : public StructSafeEnum
+{
+    /* A safe enum for Primitive edge face. */
+    enum Type
+    {
+        Back, Front, Plane,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Back]  = "Back";
+        enum_map[Front] = "Front";
+        enum_map[Plane] = "Plane";
+        return true;
+    }
+};
+typedef SafeEnum<PlaneIntersectionBase> PlaneIntersection;
 
 //Point/Plane : Normal must be given normalized.
 template <typename TV>

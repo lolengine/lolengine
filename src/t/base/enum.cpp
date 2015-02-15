@@ -23,11 +23,24 @@ lolunit_declare_fixture(EnumTest)
 
     lolunit_declare_test(EnumToString)
     {
-        LOL_SAFE_ENUM(MyEnum,
-            First = -10,
-            Second,
-            Third = 5,
-        );
+        struct MyEnumBase : public StructSafeEnum
+        {
+            enum Type
+            {
+                First = -10,
+                Second,
+                Third = 5,
+            };
+        protected:
+            virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+            {
+                enum_map[First] = "First";
+                enum_map[Second] = "Second";
+                enum_map[Third] = "Third";
+                return true;
+            }
+        };
+        typedef SafeEnum<MyEnumBase> MyEnum;
 
         MyEnum e = MyEnum::First;
         lolunit_assert(e.ToString() == "First");

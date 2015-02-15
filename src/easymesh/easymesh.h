@@ -24,22 +24,54 @@
 namespace lol
 {
 
+//CSGUsage --------------------------------------------------------------------
 /* A safe enum for MeshCSG operations. */
-LOL_SAFE_ENUM(CSGUsage,
-    Union,
-    Substract,
-    SubstractLoss, // will remove B from A, but not add inverted B
-    And,
-    Xor
-);
+struct CSGUsageBase : public StructSafeEnum
+{
+    enum Type
+    {
+        Union,
+        Substract,
+        SubstractLoss, // will remove B from A, but not add inverted B
+        And,
+        Xor
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Union] = "Union";
+        enum_map[Substract] = "Substract";
+        enum_map[SubstractLoss] = "SubstractLoss";
+        enum_map[And] = "And";
+        enum_map[Xor] = "Xor";
+        return true;
+    }
+};
+typedef SafeEnum<CSGUsageBase> CSGUsage;
 
-LOL_SAFE_ENUM(MeshTransform,
-    Taper,
-    Twist,
-    Bend,
-    Stretch,
-    Shear
-);
+//MeshTransform ---------------------------------------------------------------
+struct MeshTransformBase : public StructSafeEnum
+{
+    enum Type
+    {
+        Taper,
+        Twist,
+        Bend,
+        Stretch,
+        Shear
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Taper] = "Taper";
+        enum_map[Twist] = "Twist";
+        enum_map[Bend] = "Bend";
+        enum_map[Stretch] = "Stretch";
+        enum_map[Shear] = "Shear";
+        return true;
+    }
+};
+typedef SafeEnum<MeshTransformBase> MeshTransform;
 
 class EasyMesh : public Mesh
 {

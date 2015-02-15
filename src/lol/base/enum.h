@@ -18,21 +18,29 @@
 namespace lol
 {
 
-extern map<int64_t, String> BuildEnumMap(char const *str, char const **custom);
+////MyType --------------------------------------------------------------------
+//struct MyTypeBase : public StructSafeEnum
+//{
+//    enum Type
+//    {
+//    };
+//protected:
+//    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+//    {
+//        enum_map[] = "";
+//        return true;
+//    }
+//};
+//typedef SafeEnum<MyTypeBase> MyType;
 
-class Enum
+//-----------------------------------------------------------------------------
+struct StructSafeEnum
 {
-public:
-    template<typename T>
-    static String EnumToString(T const& parameter)
-    {
-        UNUSED(parameter);
-        // Create your own
-        ASSERT(0);
-        return String();
-    }
+protected:
+    /* Convert to string stuff */
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { return false; }
 };
-
+//-----------------------------------------------------------------------------
 template<typename BASE, typename T = typename BASE::Type>
 class SafeEnum : public BASE
 {
@@ -47,20 +55,20 @@ public:
     inline explicit SafeEnum(int i) : m_value(T(i)) {}
     inline Type ToScalar() const { return m_value; }
 
-    /* Convert to string description */
-    inline class String ToString() const
+	/* Convert to string stuff */
+    inline class String ToString()
     {
         /* FIXME: we all know this isn’t thread safe. But is it really
          * a big deal? */
         static map<int64_t, String> enum_map;
         static bool ready = false;
 
-        if (!ready)
-            enum_map = BuildEnumMap(BASE::GetDescription(), BASE::GetCustomString());
-        ready = true;
-
-        if (enum_map.has_key((int64_t)m_value))
-            return enum_map[(int64_t)m_value];
+		if (ready || BuildEnumMap(enum_map))
+		{
+			ready = true;
+			if (enum_map.has_key((int64_t)m_value))
+				return enum_map[(int64_t)m_value];
+		}
         return "<invalid enum>";
     }
 
@@ -90,93 +98,6 @@ public:
         return a.m_value >= b.m_value;
     }
 };
-
-#define LOL_OPEN_SAFE_ENUM(name, ...) \
-    struct name ## Base \
-    { \
-        enum Type {__VA_ARGS__}; \
-    protected: \
-        static inline char const *GetDescription() { return #__VA_ARGS__; }
-#define LOL_SAFE_ENUM_CUSTOM_TOSTRING(...) \
-        static inline char const **GetCustomString() \
-        { \
-            static char const *custom_list[] = { __VA_ARGS__ }; \
-            return &custom_list[0]; \
-        }
-#define LOL_CLOSE_SAFE_ENUM(name) \
-    }; \
-    typedef SafeEnum<name ## Base> name;
-
-#define LOL_SAFE_ENUM(name, ...) \
-    struct name ## Base \
-    { \
-        enum Type {__VA_ARGS__}; \
-    protected: \
-        static inline char const *GetDescription()      { return #__VA_ARGS__; } \
-        static inline char const **GetCustomString()    { return nullptr; } \
-    }; \
-    typedef SafeEnum<name ## Base> name;
-
-//-- STRUCT TEMPLATE:
-// enum E {
-//    DEF_VALUE
-//        ADD_VALUE(NEW_VALUE)
-//        ADD_VALUE_SET(NEW_VALUE, VALUE_SET)
-//    END_E_VALUE
-//    DEF_TEXT
-//        ADD_TEXT(NEW_VALUE)
-//    END_TEXT
-//    LOL_DECLARE_ENUM_METHODS(E)
-// };
-
-#define LOL_DECLARE_ENUM_METHODS(E) \
-    inline E()                       : m_value(MAX) {}           \
-    inline E(Value v)                : m_value(v) {}             \
-    inline E(const int8_t    & v)    : m_value((Value)v) {}      \
-    inline E(const int16_t   & v)    : m_value((Value)v) {}      \
-    inline E(const int32_t   & v)    : m_value((Value)v) {}      \
-    inline E(const int64_t   & v)    : m_value((Value)v) {}      \
-    inline E(const uint8_t   & v)    : m_value((Value)v) {}      \
-    inline E(const uint16_t  & v)    : m_value((Value)v) {}      \
-    inline E(const uint32_t  & v)    : m_value((Value)v) {}      \
-    inline E(const uint64_t  & v)    : m_value((Value)v) {}      \
-    inline operator Value() { return m_value; } \
-    inline int32_t  I()     { return (int32_t ) m_value; } \
-    inline int8_t   I8()    { return (int8_t  ) m_value; } \
-    inline int16_t  I16()   { return (int16_t ) m_value; } \
-    inline int32_t  I32()   { return (int32_t ) m_value; } \
-    inline int64_t  I64()   { return (int64_t ) m_value; } \
-    inline uint32_t UI()    { return (uint32_t) m_value; } \
-    inline uint8_t  UI8()   { return (uint8_t ) m_value; } \
-    inline uint16_t UI16()  { return (uint16_t) m_value; } \
-    inline uint32_t UI32()  { return (uint32_t) m_value; } \
-    inline uint64_t UI64()  { return (uint64_t) m_value; } \
-    bool operator==(const E & v) { return m_value == v.m_value; } \
-    bool operator!=(const E & v) { return m_value != v.m_value; } \
-    bool operator<(const E & v)  { return m_value < v.m_value; }  \
-    bool operator>(const E & v)  { return m_value > v.m_value; }  \
-    bool operator<=(const E & v) { return m_value <= v.m_value; } \
-    bool operator>=(const E & v) { return m_value >= v.m_value; }
-
-#define DEF_VALUE                           enum Value { INVALID = -1,
-#define ADD_VALUE(NEW_VALUE)                NEW_VALUE,
-#define ADD_VALUE_SET(NEW_VALUE, VALUE_SET) NEW_VALUE = VALUE_SET,
-#define END_E_VALUE                         MAX } m_value;
-
-#define DEF_TEXT \
-    inline String C() \
-    { \
-        static const String text[] = {
-
-#define ADD_TEXT(NEW_TEXT) String(#NEW_TEXT),
-#define ADD_TEXT_PADDING   String(""),
-
-#define END_TEXT \
-        }; \
-        if (m_value < 0 || m_value >= MAX) \
-            return "INVALID"; \
-        return text[m_value]; \
-    };
 
 } /* namespace lol */
 

@@ -46,25 +46,50 @@ public:
     virtual ~thread() {}
 };
 
-struct ThreadStatus
+//ThreadStatus ----------------------------------------------------------------
+struct ThreadStatusBase : public StructSafeEnum
 {
-    DEF_VALUE
-        ADD_VALUE(NOTHING)
-        ADD_VALUE(THREAD_STARTED)
-        ADD_VALUE(THREAD_STOPPED)
-    END_E_VALUE
-
-    LOL_DECLARE_ENUM_METHODS(ThreadStatus)
+    enum Type
+    {
+        NOTHING,
+        THREAD_STARTED,
+        THREAD_STOPPED,
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[NOTHING] = "NOTHING";
+        enum_map[THREAD_STARTED] = "THREAD_STARTED";
+        enum_map[THREAD_STOPPED] = "THREAD_STOPPED";
+        return true;
+    }
 };
+typedef SafeEnum<ThreadStatusBase> ThreadStatus;
 
-LOL_SAFE_ENUM(ThreadJobType,
-    NONE,
-    WORK_TODO,
-    WORK_DONE,
-    WORK_FAILED,
-    WORK_FETCHED,
-    THREAD_STOP
-);
+struct ThreadJobTypeBase : public StructSafeEnum
+{
+    enum Type
+    {
+        NONE,
+        WORK_TODO,
+        WORK_DONE,
+        WORK_FAILED,
+        WORK_FETCHED,
+        THREAD_STOP
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[NONE]         = "NONE";
+        enum_map[WORK_TODO]    = "WORK_TODO";
+        enum_map[WORK_DONE]    = "WORK_DONE";
+        enum_map[WORK_FAILED]  = "WORK_FAILED";
+        enum_map[WORK_FETCHED] = "WORK_FETCHED";
+        enum_map[THREAD_STOP]  = "THREAD_STOP";
+        return true;
+    }
+};
+typedef SafeEnum<ThreadJobTypeBase> ThreadJobType;
 
 class ThreadJob
 {
