@@ -547,6 +547,7 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
 template<typename T, int N>
 T determinant(mat_t<T, N, N> const &m)
 {
+#if 0 /* XXX: LU decomposition is currently broken */
     mat_t<T, N, N> L, U;
     lu_decomposition(m, L, U);
 
@@ -555,6 +556,18 @@ T determinant(mat_t<T, N, N> const &m)
         det *= U[i][i];
 
     return det;
+#else
+    T ret = (T)0;
+    for (int i = 0; i < N; ++i)
+        ret += m[i][0] * cofactor(m, i, 0);
+    return ret;
+#endif
+}
+
+template<typename T>
+T const & determinant(mat_t<T, 1, 1> const &m)
+{
+    return m[0][0];
 }
 
 /*
@@ -614,12 +627,26 @@ mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
 template<typename T, int N>
 mat_t<T, N, N> inverse(mat_t<T, N, N> const &m)
 {
+#if 0 /* XXX: LU decomposition is currently broken */
     mat_t<T, N, N> L, U;
     lu_decomposition(m, L, U);
 
     mat_t<T, N, N> ret = u_inverse(U) * l_inverse(L);
 
     return ret;
+#else
+    mat_t<T, N, N> ret;
+
+    T d = determinant(m);
+    if (d)
+    {
+        /* Transpose result matrix on the fly */
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < N; ++j)
+                ret[i][j] = cofactor(m, j, i) / d;
+    }
+    return ret;
+#endif
 }
 
 /*
