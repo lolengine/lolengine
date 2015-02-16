@@ -58,10 +58,10 @@ public:
 	/* Convert to string stuff */
     inline class String ToString()
     {
-        /* FIXME: we all know this isn’t thread safe. But is it really
-         * a big deal? */
-        static map<int64_t, String> enum_map;
-        static bool ready = false;
+		/* FIXME: we all know this isn’t thread safe. But is it really
+		* a big deal? */
+		static map<int64_t, String> enum_map;
+		static bool ready = false;
 
 		if (ready || this->BuildEnumMap(enum_map))
 		{
