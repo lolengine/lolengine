@@ -548,6 +548,7 @@ AC_CONFIG_FILES(
   people/benlitz/voxel/Makefile
   people/benlitz/lolui/Makefile
   people/touky/Makefile
+  people/touky/shared/Makefile
   people/touky/sprite_sorter/Makefile
   people/touky/squad_shooter/Makefile
   people/touky/top_shooter/Makefile
