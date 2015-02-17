@@ -94,6 +94,7 @@ doc/tutorial/07_input
 doc/tutorial/08_fbo
 doc/tutorial/11_fractal
 doc/tutorial/12_voronoi
+doc/tutorial/13_shader_builder
 tools/make-font
 # Our data
 doc/doxygen.cfg
