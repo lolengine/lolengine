@@ -24,8 +24,10 @@
 using lol::real;
 using lol::String;
 
-void FAIL()
+void FAIL(char const *message)
 {
+    printf("Error: %s\n", message);
+    printf("\n");
     printf("Usage:\n");
     printf("  lolremez [-d degree] [-i xmin xmax] x-expression [x-error]\n");
     printf("\n");
@@ -49,22 +51,21 @@ int main(int argc, char **argv)
         if (argv[i] == String("-d"))
         {
             if (i + 1 >= argc)
-                FAIL();
+                FAIL("not enough arguments for -d");
 
             degree = atoi(argv[++i]);
         }
         else if (argv[i] == String("-i"))
         {
             if (i + 2 >= argc)
-                FAIL();
+                FAIL("not enough arguments for -i");
 
             xmin = argv[++i];
             xmax = argv[++i];
-            i += 2;
         }
         else if (g)
         {
-            FAIL();
+            FAIL("unknown argument");
         }
         else if (f)
         {
@@ -76,10 +77,11 @@ int main(int argc, char **argv)
         }
     }
 
-    if (!f || real(xmin) >= real(xmax))
-    {
-        FAIL();
-    }
+    if (!f)
+        FAIL("no function specified");
+
+    if (real(xmin) >= real(xmax))
+        FAIL("invalid range");
 
     remez_solver solver(degree, 20);
     solver.run(xmin, xmax, f, g);
