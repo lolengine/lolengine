@@ -71,18 +71,14 @@ lolunit_declare_fixture(MapTest)
             m[i] = i;
         a.Shuffle();
         for (int i = 0; i < a.Count(); i++)
-        {
-            std::cout << m[a[i]] << " " << a[i] << std::endl;
             m.remove(a[i]);
-        }
     }
 
     lolunit_declare_test(MapRemoveBug)
     {
         map<uint64_t, uint64_t> m;
-        array<uint64_t> a;
 
-        for (int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < 20; i++)
             m[i] = i;
 
         m.remove(12);
