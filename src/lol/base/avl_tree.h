@@ -421,6 +421,8 @@ protected:
                     replacement->m_chain[0]->m_chain[1] = replacement;
                 if (replacement->m_chain[1])
                     replacement->m_chain[1]->m_chain[0] = replacement;
+
+                replacement->update_balance();
             }
             else
             {
