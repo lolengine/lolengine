@@ -108,7 +108,7 @@ public:
 
     inline ptrdiff_t count() const
     {
-        return m_tree.GetCount();
+        return m_tree.count();
     }
 
     inline void empty()

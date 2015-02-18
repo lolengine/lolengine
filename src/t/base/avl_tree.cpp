@@ -24,19 +24,19 @@ class test_tree : public avl_tree<int, int>
 public:
     virtual ~test_tree() {}
 
-    int GetRootBalance()
+    int get_root_balance()
     {
-        return this->m_root->GetBalance();
+        return this->m_root->get_balance();
     }
 };
 
-lolunit_declare_fixture(AvlTreeTest)
+lolunit_declare_fixture(avl_tree_test)
 {
     void SetUp() {}
 
     void TearDown() {}
 
-    lolunit_declare_test(AvlTreeInsert)
+    lolunit_declare_test(insert)
     {
         test_tree tree;
 
@@ -45,52 +45,52 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert_equal(tree.insert(2, 0), false);
     }
 
-    lolunit_declare_test(AvlTreeBalanceCheck)
+    lolunit_declare_test(balance_check)
     {
         test_tree tree;
 
         lolunit_assert_equal(tree.insert(10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(30, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(0, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), -1);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(-10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), -1);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(-20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(-20, 1), false);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(11, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(13, 2), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
     }
 
-    lolunit_declare_test(AvlTreeDeletion)
+    lolunit_declare_test(deletion)
     {
         test_tree tree;
 
         lolunit_assert_equal(tree.insert(10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(30, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
-        lolunit_assert_equal(tree.GetCount(), 3);
+        lolunit_assert_equal(tree.count(), 3);
 
         lolunit_assert_equal(tree.erase(30), true);
 
@@ -102,7 +102,7 @@ lolunit_declare_fixture(AvlTreeTest)
             lolunit_assert_equal(iterator.key, test);
         }
 
-        lolunit_assert_equal(tree.GetCount(), 2);
+        lolunit_assert_equal(tree.count(), 2);
         lolunit_assert_equal(tree.insert(30, 1), true);
 
         lolunit_assert_equal(tree.erase(20), true);
@@ -123,26 +123,26 @@ lolunit_declare_fixture(AvlTreeTest)
         test_tree tree;
 
         lolunit_assert_equal(tree.insert(10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.erase(10), true);
         lolunit_assert_equal(tree.exists(20), true);
         lolunit_assert_equal(tree.exists(10), false);
 
         lolunit_assert_equal(tree.insert(10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), -1);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(30, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(40, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(50, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.erase(30), true);
         lolunit_assert_equal(tree.exists(40), true);
@@ -155,31 +155,31 @@ lolunit_declare_fixture(AvlTreeTest)
         test_tree tree;
 
         lolunit_assert_equal(tree.insert(10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(30, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(0, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), -1);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(-10, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), -1);
+        lolunit_assert_equal(tree.get_root_balance(), -1);
 
         lolunit_assert_equal(tree.insert(-20, 1), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(-20, 1), false);
-        lolunit_assert_equal(tree.GetRootBalance(), 0);
+        lolunit_assert_equal(tree.get_root_balance(), 0);
 
         lolunit_assert_equal(tree.insert(11, 2), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         lolunit_assert_equal(tree.insert(13, 3), true);
-        lolunit_assert_equal(tree.GetRootBalance(), 1);
+        lolunit_assert_equal(tree.get_root_balance(), 1);
 
         int * value_ptr = nullptr;
 
@@ -212,7 +212,7 @@ lolunit_declare_fixture(AvlTreeTest)
             tmp = iterator.key;
         }
 
-        lolunit_assert_equal(tree.GetCount(), 99);
+        lolunit_assert_equal(tree.count(), 99);
     }
 
     lolunit_declare_test(AvlTreeTestIteratorCopy)
@@ -233,7 +233,7 @@ lolunit_declare_fixture(AvlTreeTest)
             tmp = iterator.key;
         }
 
-        lolunit_assert_equal(other.GetCount(), 99);
+        lolunit_assert_equal(other.count(), 99);
     }
 
     lolunit_declare_test(AvlTreeTestCopy)
@@ -246,8 +246,8 @@ lolunit_declare_fixture(AvlTreeTest)
         for (int i = 10 ; i < 15 ; ++i)
             test2.insert(i, 3*i);
 
-        lolunit_assert_equal(test1.GetCount(), 10);
-        lolunit_assert_equal(test2.GetCount(), 5);
+        lolunit_assert_equal(test1.count(), 10);
+        lolunit_assert_equal(test2.count(), 5);
 
         int i = -1;
         for (auto iterator : test1)
@@ -278,8 +278,8 @@ lolunit_declare_fixture(AvlTreeTest)
         lolunit_assert(!(it1 != test1.end()));
         lolunit_assert(!(it2 != test2.end()));
 
-        lolunit_assert_equal(test1.GetCount(), 10);
-        lolunit_assert_equal(test2.GetCount(), 10);
+        lolunit_assert_equal(test1.count(), 10);
+        lolunit_assert_equal(test2.count(), 10);
     }
 };
 
