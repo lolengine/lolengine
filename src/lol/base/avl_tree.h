@@ -386,23 +386,22 @@ protected:
             if (replacement)
             {
                 *replacement->m_parent_slot = replacement->m_child[1 - i];
-                if (*replacement->m_parent_slot)
-                    (*replacement->m_parent_slot)->rebalance_if_needed();
 
                 replacement->m_parent_slot = m_parent_slot;
                 *replacement->m_parent_slot = replacement;
 
                 replacement->m_child[0] = m_child[0];
+                if (replacement->m_child[0])
+                    replacement->m_child[0]->m_parent_slot = &replacement->m_child[0];
+
                 replacement->m_child[1] = m_child[1];
+                if (replacement->m_child[1])
+                    replacement->m_child[1]->m_parent_slot = &replacement->m_child[1];
             }
             else
                 *m_parent_slot = nullptr;
 
             replace_chain(replacement);
-
-            m_parent_slot = nullptr;
-            m_child[0] = nullptr;
-            m_child[1] = nullptr;
         }
 
         void replace_chain(tree_node * replacement)
@@ -423,8 +422,6 @@ protected:
                     if (m_chain[i])
                         m_chain[i]->m_chain[i ? 0 : 1] = m_chain[i ? 0 : 1];
                 }
-
-                m_chain[i] = nullptr;
             }
         }
 
