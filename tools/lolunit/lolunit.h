@@ -207,23 +207,30 @@ public:
         }
         std::cout << "\n";
 
-        std::cout << "\n\n";
+        std::stringstream summary;
+        summary << "\n\n";
         if (failcases)
         {
-            std::cout << "!!!FAILURES!!!\n";
-            std::cout << "Test Results:\n";
-            std::cout << "Run:  " << testcases
-                      << "  Failures: " << failcases
-                      << "  Errors: 0\n"; /* TODO: handle errors */
+            summary << "!!!FAILURES!!!\n";
+            summary << "Test Results:\n";
+            summary << "Run:  " << testcases
+                    << "  Failures: " << failcases
+                    << "  Errors: 0\n"; /* TODO: handle errors */
+            summary << errors.str();
 
-            std::cout << errors.str();
             ret = false;
         }
         else
         {
-            std::cout << "OK (" << testcases << " tests)\n";
+            summary << "OK (" << testcases << " tests)\n";
         }
-        std::cout << "\n\n";
+        summary << "\n\n";
+
+#if _WIN32
+        ::OutputDebugStringA(summary.str().c_str());
+#else
+        std::cout << summary.str();
+#endif
 
         return ret;
     }
