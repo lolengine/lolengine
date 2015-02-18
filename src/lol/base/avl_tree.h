@@ -264,7 +264,7 @@ protected:
                 delete this;
                 return true;
             }
-            else if (m_child[i]->erase(key))
+            else if (m_child[i] && m_child[i]->erase(key))
             {
                 rebalance_if_needed();
                 return true;
@@ -406,22 +406,28 @@ protected:
 
         void replace_chain(tree_node * replacement)
         {
-            for (int i = 0 ; i < 2 ; ++i)
+            if (replacement)
             {
-                if (replacement)
-                {
-                    if (replacement->m_chain[i])
-                        replacement->m_chain[i]->m_chain[i ? 0 : 1] = replacement->m_chain[i ? 0 : 1];
+                if (replacement->m_chain[0])
+                    replacement->m_chain[0]->m_chain[1] = replacement->m_chain[1];
 
-                    replacement->m_chain[i] = m_chain[i];
-                    if (replacement->m_chain[i])
-                        replacement->m_chain[i]->m_chain[i ? 0 : 1] = replacement;
-                }
-                else
-                {
-                    if (m_chain[i])
-                        m_chain[i]->m_chain[i ? 0 : 1] = m_chain[i ? 0 : 1];
-                }
+                if (replacement->m_chain[1])
+                    replacement->m_chain[1]->m_chain[0] = replacement->m_chain[0];
+
+                replacement->m_chain[0] = m_chain[0];
+                replacement->m_chain[1] = m_chain[1];
+
+                if (replacement->m_chain[0])
+                    replacement->m_chain[0]->m_chain[1] = replacement;
+                if (replacement->m_chain[1])
+                    replacement->m_chain[1]->m_chain[0] = replacement;
+            }
+            else
+            {
+                if (m_chain[0])
+                    m_chain[0]->m_chain[1] = m_chain[1];
+                if (m_chain[1])
+                    m_chain[1]->m_chain[0] = m_chain[0];
             }
         }
 
