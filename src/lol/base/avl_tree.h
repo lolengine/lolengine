@@ -39,10 +39,13 @@ public:
 
     avl_tree & operator=(avl_tree const & other)
     {
-        clear();
+        if (&other != this)
+        {
+            clear();
 
-        for (auto it : other)
-            insert(it.key, it.value);
+            for (auto it : other)
+                insert(it.key, it.value);
+        }
 
         return *this;
     }
