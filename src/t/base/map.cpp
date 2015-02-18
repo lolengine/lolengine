@@ -57,6 +57,23 @@ lolunit_declare_fixture(MapTest)
         lolunit_assert(m.has_key(2));
     }
 
+    lolunit_declare_test(MapRemove)
+    {
+        map<uint64_t, uint64_t> m;
+        array<uint64_t> a;
+
+        for (int i = 0; i < 20; i++)
+        {
+            a << i;
+            m[i] = -1;
+        }
+        for (int i = 0; i < a.Count(); i++)
+            m[i] = i;
+        a.Shuffle();
+        for (int i = 0; i < a.Count(); i++)
+            m.remove(a[i]);
+    }
+
     lolunit_declare_test(StringMap)
     {
         map<char const *, int> m;
