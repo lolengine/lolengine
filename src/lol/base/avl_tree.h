@@ -397,6 +397,8 @@ protected:
                 replacement->m_child[1] = m_child[1];
                 if (replacement->m_child[1])
                     replacement->m_child[1]->m_parent_slot = &replacement->m_child[1];
+
+                replacement->update_balance();
             }
             else
                 *m_parent_slot = nullptr;
@@ -421,8 +423,6 @@ protected:
                     replacement->m_chain[0]->m_chain[1] = replacement;
                 if (replacement->m_chain[1])
                     replacement->m_chain[1]->m_chain[0] = replacement;
-
-                replacement->update_balance();
             }
             else
             {
