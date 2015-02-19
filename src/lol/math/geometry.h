@@ -34,16 +34,16 @@ namespace lol
         X = 0, Y, Z, MAX, XY = 2, XYZ = 3,
     };
 protected:
-	virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
-	{
-		enum_map[X]   = "X";
-		enum_map[Y]   = "Y";
-		enum_map[Z]   = "Z";
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[X]   = "X";
+        enum_map[Y]   = "Y";
+        enum_map[Z]   = "Z";
         enum_map[MAX] = "MAX";
-		enum_map[XY]  = "XY";
-		enum_map[XYZ] = "XYZ";
-		return true;
-	}
+        enum_map[XY]  = "XY";
+        enum_map[XYZ] = "XYZ";
+        return true;
+    }
 };
 typedef SafeEnum<AxisBase> Axis;
 
@@ -55,15 +55,15 @@ struct DirectionBase : public StructSafeEnum
         Up = 0, Down, Left, Right, MAX,
     };
 protected:
-	virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
-	{
-		enum_map[Up]    = "Up";
-		enum_map[Down]  = "Down";
-		enum_map[Left]  = "Left";
-		enum_map[Right] = "Right";
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[Up]    = "Up";
+        enum_map[Down]  = "Down";
+        enum_map[Left]  = "Left";
+        enum_map[Right] = "Right";
         enum_map[MAX]   = "MAX";
-		return true;
-	}
+        return true;
+    }
 };
 typedef SafeEnum<DirectionBase> Direction;
 

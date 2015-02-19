@@ -55,20 +55,20 @@ public:
     inline explicit SafeEnum(int i) : m_value(T(i)) {}
     inline Type ToScalar() const { return m_value; }
 
-	/* Convert to string stuff */
+    /* Convert to string stuff */
     inline class String ToString()
     {
-		/* FIXME: we all know this isn’t thread safe. But is it really
-		* a big deal? */
-		static map<int64_t, String> enum_map;
-		static bool ready = false;
+        /* FIXME: we all know this isn’t thread safe. But is it really
+        * a big deal? */
+        static map<int64_t, String> enum_map;
+        static bool ready = false;
 
-		if (ready || this->BuildEnumMap(enum_map))
-		{
-			ready = true;
-			if (enum_map.has_key((int64_t)m_value))
-				return enum_map[(int64_t)m_value];
-		}
+        if (ready || this->BuildEnumMap(enum_map))
+        {
+            ready = true;
+            if (enum_map.has_key((int64_t)m_value))
+                return enum_map[(int64_t)m_value];
+        }
         return "<invalid enum>";
     }
 
