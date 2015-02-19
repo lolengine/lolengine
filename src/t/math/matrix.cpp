@@ -79,11 +79,16 @@ lolunit_declare_fixture(MatrixTest)
         mat2 m(vec2(4, 3),
                vec2(3, 2));
 
+        /* Invert matrix and check that the results are finite */
         mat2 m1 = inverse(m);
         for (int j = 0; j < 2; ++j)
         for (int i = 0; i < 2; ++i)
-            lolunit_assert_equal(m1[i][j], m1[i][j]);
+        {
+            lolunit_assert_less(m1[i][j], FLT_MAX);
+            lolunit_assert_greater(m1[i][j], -FLT_MAX);
+        }
 
+        /* Multiply with original matrix and check that we get identity */
         mat2 m2 = m1 * m;
         for (int j = 0; j < 2; ++j)
         for (int i = 0; i < 2; ++i)
@@ -103,8 +108,11 @@ lolunit_declare_fixture(MatrixTest)
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
         {
-            lolunit_assert(!isnan(U[i][j]));
-            lolunit_assert(!isnan(L[i][j]));
+            /* Check that the LU decomposition has valid values */
+            lolunit_assert_less(U[i][j], FLT_MAX);
+            lolunit_assert_greater(U[i][j], -FLT_MAX);
+            lolunit_assert_less(L[i][j], FLT_MAX);
+            lolunit_assert_greater(L[i][j], -FLT_MAX);
 
             if (i < j)
                 lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
@@ -130,8 +138,11 @@ lolunit_declare_fixture(MatrixTest)
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
         {
-            lolunit_assert(!isnan(U[i][j]));
-            lolunit_assert(!isnan(L[i][j]));
+            /* Check that the LU decomposition has valid values */
+            lolunit_assert_less(U[i][j], FLT_MAX);
+            lolunit_assert_greater(U[i][j], -FLT_MAX);
+            lolunit_assert_less(L[i][j], FLT_MAX);
+            lolunit_assert_greater(L[i][j], -FLT_MAX);
 
             if (i < j)
                 lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
@@ -157,8 +168,11 @@ lolunit_declare_fixture(MatrixTest)
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
         {
-            lolunit_assert(!isnan(U[i][j]));
-            lolunit_assert(!isnan(L[i][j]));
+            /* Check that the LU decomposition has valid values */
+            lolunit_assert_less(U[i][j], FLT_MAX);
+            lolunit_assert_greater(U[i][j], -FLT_MAX);
+            lolunit_assert_less(L[i][j], FLT_MAX);
+            lolunit_assert_greater(L[i][j], -FLT_MAX);
 
             if (i < j)
                 lolunit_assert_doubles_equal(U[i][j], 0.f, 1e-5);
@@ -240,11 +254,16 @@ lolunit_declare_fixture(MatrixTest)
                vec3(3, 2, 3),
                vec3(9, 5, 7));
 
+        /* Invert matrix and check that the results are finite */
         mat3 m1 = inverse(m);
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
-            lolunit_assert_equal(m1[i][j], m1[i][j]);
+        {
+            lolunit_assert_less(m1[i][j], FLT_MAX);
+            lolunit_assert_greater(m1[i][j], -FLT_MAX);
+        }
 
+        /* Multiply with original matrix and check that we get identity */
         mat3 m2 = m1 * m;
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
@@ -258,11 +277,16 @@ lolunit_declare_fixture(MatrixTest)
                vec4( 4,  2,  5, -4),
                vec4( 5, -3, -7, -6));
 
+        /* Invert matrix and check that the results are finite */
         mat4 m1 = inverse(m);
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_equal(m1[i][j], m1[i][j]);
+        {
+            lolunit_assert_less(m1[i][j], FLT_MAX);
+            lolunit_assert_greater(m1[i][j], -FLT_MAX);
+        }
 
+        /* Multiply with original matrix and check that we get identity */
         mat4 m2 = m1 * m;
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
@@ -275,11 +299,16 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0,  0,  1,  0),
                vec4(0, -1,  0,  0),
                vec4(0,  0, -1,  1));
+        /* Invert matrix and check that the results are finite */
         mat4 m1 = inverse(m);
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_equal(m1[i][j], m1[i][j]);
+        {
+            lolunit_assert_less(m1[i][j], FLT_MAX);
+            lolunit_assert_greater(m1[i][j], -FLT_MAX);
+        }
 
+        /* Multiply with original matrix and check that we get identity */
         mat4 m2 = m1 * m;
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
