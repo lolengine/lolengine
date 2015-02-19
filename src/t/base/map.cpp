@@ -74,6 +74,23 @@ lolunit_declare_fixture(MapTest)
             m.remove(a[i]);
     }
 
+    lolunit_declare_test(MapRemoveString)
+    {
+        map<String, uint64_t> m;
+        array<String> a;
+
+        for (int i = 0; i < 20; i++)
+        {
+            a << String::Printf("test_str_%i", i);
+            m[a.Last()] = -1;
+        }
+        for (int i = 0; i < a.Count(); i++)
+            m[a[i]] = i;
+        a.Shuffle();
+        for (int i = 0; i < a.Count(); i++)
+            m.remove(a[i]);
+    }
+
     lolunit_declare_test(MapRemoveBug)
     {
         map<uint64_t, uint64_t> m;
