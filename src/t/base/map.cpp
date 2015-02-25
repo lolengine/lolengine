@@ -109,6 +109,52 @@ lolunit_declare_fixture(MapTest)
         lolunit_assert_equal(m[8], 8);
     }
 
+    lolunit_declare_test(MapRandomAddRemove)
+    {
+        map<unsigned char, unsigned char> m;
+
+        unsigned char a = 1, b = 1, c = 1;
+
+        char presence[256];
+        char value[256];
+
+        for (int i = 0 ; i < 256 ; ++i)
+        {
+            presence[i] = 0;
+        }
+
+        for (int i = 0 ; i < 10000 ; ++i)
+        {
+            m[a] = b;
+            m.remove(b);
+
+            presence[a] = 1;
+            value[a] = b;
+            presence[b] = 0;
+
+            a = a * b + c;
+            b = b * c + a;
+            c = c * a + b;
+
+            // debug output
+            // std::cout << "a " << (int)a << ", b " << (int)b  << std::endl;
+
+            for (int j = 0 ; j < 256 ; ++j)
+            {
+                unsigned char v;
+                if (presence[j])
+                {
+                    lolunit_assert(m.try_get(j, v));
+                    lolunit_assert_equal((int) value[j], (int) v);
+                }
+                else
+                {
+                    lolunit_assert(!m.try_get(j, v));
+                }
+            }
+        }
+    }
+
     lolunit_declare_test(StringMap)
     {
         map<char const *, int> m;
