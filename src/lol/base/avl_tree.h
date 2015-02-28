@@ -223,19 +223,15 @@ protected:
         {
             int i = -1 + (key < m_key) + 2 * (m_key < key);
 
+            bool created = false;
+
             if (i < 0)
-            {
                 m_value = value;
-                return false;
-            }
-
-            bool b_created = false;
-
-            if (m_child[i])
-                b_created = m_child[i]->insert(key, value);
+            else if (m_child[i])
+                created = m_child[i]->insert(key, value);
             else
             {
-                b_created = true;
+                created = true;
 
                 m_child[i] = new tree_node(key, value, &m_child[i]);
 
@@ -247,10 +243,13 @@ protected:
                 m_chain[i] = m_child[i];
             }
 
-            if (b_created)
+            if (created)
+            {
                 rebalance_if_needed();
+            }
 
-            return b_created;
+
+            return created;
         }
 
         /* Erase a value in tree and return true or return false */
@@ -258,19 +257,21 @@ protected:
         {
             int i = -1 + (key < m_key) + 2 * (m_key < key);
 
+            bool erased = false;
+
             if (i < 0)
             {
                 erase_self();
                 delete this;
-                return true;
+                erased = true;
             }
             else if (m_child[i] && m_child[i]->erase(key))
             {
                 rebalance_if_needed();
-                return true;
+                erased = true;
             }
 
-            return false;
+            return erased;
         }
 
         bool try_get(K const & key, V * & value_ptr)
@@ -345,30 +346,57 @@ protected:
         {
             update_balance();
 
-            int i = (get_balance() ==  2);
-            int j = (get_balance() == -2);
+            int i = -1 + (get_balance() == -2) + 2 * (get_balance() == 2);
 
-            if (i || j)
+            if (i != -1)
             {
-                tree_node * save = m_child[i];
-                tree_node ** save_parent = m_parent_slot;
+                tree_node * replacement = nullptr;
 
-                set_child(i, save->m_child[j]);
-                save->set_child(j, this);
 
-                save->m_parent_slot = save_parent;
-                *save_parent = save;
+                if (get_balance() / 2 + m_child[i]->get_balance() == 0)
+                {
+                    replacement = m_child[i]->m_child[1 - i];
+                    tree_node * save0 = replacement->m_child[i];
+                    tree_node * save1 = replacement->m_child[1 - i];
 
-                update_balance();
-                save->update_balance();
+                    replacement->m_parent_slot = this->m_parent_slot;
+                    *replacement->m_parent_slot = replacement;
+
+                    replacement->m_child[i] = m_child[i];
+                    m_child[i]->m_parent_slot = &replacement->m_child[i];
+
+                    replacement->m_child[1 - i] = this;
+                    this->m_parent_slot = &replacement->m_child[1 - i];
+
+                    replacement->m_child[i]->m_child[1 - i] = save0;
+                    if (save0)
+                        save0->m_parent_slot = &replacement->m_child[i]->m_child[1 - i];
+
+                    replacement->m_child[1 - i]->m_child[i] = save1;
+                    if (save1)
+                        save1->m_parent_slot = &replacement->m_child[i]->m_child[1 - i];
+                }
+                else
+                {
+
+                    replacement = m_child[i];
+                    tree_node * save = replacement->m_child[1 - i];
+
+                    replacement->m_parent_slot = this->m_parent_slot;
+                    *replacement->m_parent_slot = replacement;
+
+                    replacement->m_child[1 - i] = this;
+                    this->m_parent_slot = &replacement->m_child[1 - i];
+
+                    this->m_child[i] = save;
+                    if (save)
+                        save->m_parent_slot = &this->m_child[i];
+                }
+
+                replacement->m_child[0]->update_balance();
+                replacement->m_child[1]->update_balance();
+                replacement->update_balance();
             }
-        }
-
-        void set_child(int i, tree_node * node)
-        {
-            m_child[i] = node;
-            if (node)
-                node->m_parent_slot = &m_child[i];
         }
 
         void erase_self()
@@ -398,12 +426,25 @@ protected:
                 if (replacement->m_child[1])
                     replacement->m_child[1]->m_parent_slot = &replacement->m_child[1];
 
+                if (replacement->m_child[1-i])
+                    replacement->m_child[1-i]->deep_balance(replacement->m_key);
+
                 replacement->update_balance();
             }
             else
                 *m_parent_slot = nullptr;
 
             replace_chain(replacement);
+        }
+
+        void deep_balance(K const & key)
+        {
+            int i = -1 + (key < m_key) + 2 * (m_key < key);
+
+            if (i != -1 && m_child[i])
+                m_child[i]->deep_balance(key);
+
+            update_balance();
         }
 
         void replace_chain(tree_node * replacement)
