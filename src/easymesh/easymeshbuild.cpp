@@ -144,7 +144,7 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const ar
 
 //-----------------------------------------------------------------------------
 //Will update the given list with all the vertices on the same spot.
-void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
+void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
 {
     for (int j = 0; j < vertex_list.Count(); j++)
         if (vertex_list[j].m1 == vert_id)
@@ -172,7 +172,7 @@ void VertexDictionnary::AddVertex(const int vert_id, const vec3 vert_coord)
     }
 
     //We're here because we couldn't find any matching vertex
-    master_list.Push(vertex_list.Count());
+    master_list.Push((int)vertex_list.Count());
     vertex_list.Push(vert_id, vert_coord, VDictType::Alone);
 }
 

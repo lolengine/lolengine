@@ -206,12 +206,12 @@ public:
                 float mi = (float)maxi;
                 float j = (float)i;
                 float f_time = (float)m_time;
-                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.0 * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.0 * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 64.f *  vec3(lol::cos( f_time + j * 2.0 * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 32.f *  vec3(lol::cos(-f_time + j * 2.0 * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) +  64.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.Push(vec3(256.f) +  32.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
             }
-            voronoi_points.Push(vec3(256.f), vec2(.0f));
+            voronoi_points.Push(vec3(256.f), vec2(0.f));
         }
 
         temp_buffer->Bind();

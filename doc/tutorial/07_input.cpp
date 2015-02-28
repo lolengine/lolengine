@@ -181,13 +181,13 @@ public:
         m_shader->SetUniform(m_mvp, m_matrix);
         m_lines_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, 0, 0,
-                                     m_mesh.Count(), 0, m_lines_indices.Count());
+                                    (int)m_mesh.Count(), 0, (int)m_lines_indices.Count());
         m_lines_ibo->Unbind();
 
         m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
         m_faces_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
-                                     m_mesh.Count(), 0, m_faces_indices.Count());
+                                    (int)m_mesh.Count(), 0, (int)m_faces_indices.Count());
         m_faces_ibo->Unbind();
 
         m_vdecl->Unbind();

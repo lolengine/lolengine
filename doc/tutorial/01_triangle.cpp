@@ -23,9 +23,9 @@ class Triangle : public WorldEntity
 {
 public:
     Triangle()
-      : m_vertices({ vec2( 0.0,  0.8),
-                     vec2(-0.8, -0.8),
-                     vec2( 0.8, -0.8) }),
+      : m_vertices({ vec2( 0.0f,  0.8f),
+                     vec2(-0.8f, -0.8f),
+                     vec2( 0.8f, -0.8f) }),
         m_ready(false)
     {
     }

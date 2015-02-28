@@ -388,6 +388,12 @@
     <ClCompile Include="image\pixel.cpp">
       <Filter>image</Filter>
     </ClCompile>
+    <ClCompile Include="easymesh\easymeshprimitive.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="easymesh\easymeshtransform.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">

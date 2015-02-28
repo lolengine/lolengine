@@ -93,9 +93,9 @@ public:
                 b *= f;
             }
 
-            uint8_t red = r * 255.99f;
-            uint8_t green = g * 255.99f;
-            uint8_t blue = b * 255.99f;
+            uint8_t red   = (uint8_t)r * 256;
+            uint8_t green = (uint8_t)g * 256;
+            uint8_t blue  = (uint8_t)b * 256;
 #if defined _XBOX
             m_palette.Push(u8vec4(255, red, green, blue));
 #elif defined __native_client__
@@ -107,15 +107,15 @@ public:
 
 #if !defined __native_client__
         m_centertext = new Text(NULL, "data/font/ascii.png");
-        m_centertext->SetPos(vec3(5, m_window_size.y - 15, 1));
+        m_centertext->SetPos(vec3(5, (float)m_window_size.y - 15, 1));
         Ticker::Ref(m_centertext);
 
         m_mousetext = new Text(NULL, "data/font/ascii.png");
-        m_mousetext->SetPos(vec3(5, m_window_size.y - 29, 1));
+        m_mousetext->SetPos(vec3(5, (float)m_window_size.y - 29, 1));
         Ticker::Ref(m_mousetext);
 
         m_zoomtext = new Text(NULL, "data/font/ascii.png");
-        m_zoomtext->SetPos(vec3(5, m_window_size.y - 43, 1));
+        m_zoomtext->SetPos(vec3(5, (float)m_window_size.y - 43, 1));
         Ticker::Ref(m_zoomtext);
 #endif
 
@@ -285,8 +285,8 @@ public:
         /* Precompute texture offset change instead of doing it in GLSL */
         for (int i = 0; i < 4; i++)
         {
-            m_zoom_settings[i][0] += 0.5 * (1.0 - m_zoom_settings[i][2]);
-            m_zoom_settings[i][1] -= 0.5 * (1.0 - m_zoom_settings[i][2]);
+            m_zoom_settings[i][0] += 0.5f * (1.0f - m_zoom_settings[i][2]);
+            m_zoom_settings[i][1] -= 0.5f * (1.0f - m_zoom_settings[i][2]);
         }
 
 #if !defined __native_client__
@@ -354,7 +354,7 @@ public:
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
             double xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
-            dcmplx z0 = c + TexelToWorldOffset(vec2(i, j));
+            dcmplx z0 = c + TexelToWorldOffset(vec2(ivec2(i, j)));
             //dcmplx r0(0.28693186889504513, 0.014286693904085048);
             //dcmplx r0(0.001643721971153, 0.822467633298876);
             //dcmplx r0(-1.207205434596, 0.315432814901);
@@ -409,7 +409,7 @@ public:
                 /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
                 double f = iter;
                 union { double n; uint64_t x; } u = { n };
-                double k = (u.x >> 42) - (((1 << 10) - 1) << 10);
+                double k = (double)(u.x >> 42) - (((1 << 10) - 1) << 10);
                 k *= k1;
 
                 /* Approximate log2(k) in [1,2]. */
