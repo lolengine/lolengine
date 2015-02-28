@@ -394,6 +394,15 @@
     <ClCompile Include="easymesh\easymeshtransform.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="easymesh\easymeshcsg.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="easymesh\easymeshinternal.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
+    <ClCompile Include="easymesh\easymeshcursor.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">

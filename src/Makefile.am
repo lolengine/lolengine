@@ -70,8 +70,10 @@ liblolcore_sources = \
     commandstack.h \
     easymesh/easymeshbuild.cpp easymesh/easymeshbuild.h \
     easymesh/easymeshrender.cpp easymesh/easymeshrender.h \
-    easymesh/easymesh.cpp easymesh/easymeshprimitive.cpp \
-    easymesh/easymeshtransform.cpp easymesh/easymesh.h \
+    easymesh/easymesh.cpp \
+    easymesh/easymeshinternal.cpp easymesh/easymeshcsg.cpp \
+    easymesh/easymeshprimitive.cpp easymesh/easymeshtransform.cpp \
+    easymesh/easymeshcursor.cpp easymesh/easymesh.h \
     easymesh/csgbsp.cpp easymesh/csgbsp.h \
     easymesh/shiny.lolfx easymesh/shinyflat.lolfx \
     easymesh/shinydebugwireframe.lolfx \

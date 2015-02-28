@@ -241,7 +241,7 @@ void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
     int tlen = (int)m_indices.Count() - m_cursors.Last().m2;
 
     for (int i = 0; i < vlen; i++)
-        AddDuplicateVertex(m_cursors.Last().m1++);
+        AddDupVertex(m_cursors.Last().m1++);
 
     for (int i = 0; i < tlen; i++)
         m_indices << m_indices[m_cursors.Last().m2++] + vlen;
@@ -343,9 +343,9 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
                     vert_dict->RegisterVertex(vbase + j, m_vert[vbase + j].m_coord);
             }
             //Add new triangles
-            InternalAddTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
-            InternalAddTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
-            InternalAddTriangle(vbase, vbase + 1, vbase + 2, 0);
+            AddTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
+            AddTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
+            AddTriangle(vbase, vbase + 1, vbase + 2, 0);
             //Change current triangle
             m_indices[i + 1] = vbase;
             m_indices[i + 2] = vbase + 2;
