@@ -125,15 +125,15 @@ lolunit_declare_fixture(MapTest)
 
         for (int i = 0 ; i < 10000 ; ++i)
         {
+            // debug output
+            // std::cout << "i " << i << ", a " << (int)a << ", b " << (int)b  << std::endl;
+
             m[a] = b;
             m.remove(b);
 
             presence[a] = 1;
             value[a] = b;
             presence[b] = 0;
-
-            // debug output
-            // std::cout << "a " << (int)a << ", b " << (int)b  << std::endl;
 
             a = a * b + c;
             b = b * c + a;
