@@ -38,7 +38,7 @@ String InputDevice::GetText()
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)
-        index = m_keynames.Count();
+        index = (int)m_keynames.Count();
 
     while (index >= m_keynames.Count())
     {
@@ -52,7 +52,7 @@ void InputDeviceInternal::AddKey(int index, const char* name)
 void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
 {
     if (index == -1)
-        index = m_axisnames.Count();
+        index = (int)m_axisnames.Count();
 
     while (index >= m_axisnames.Count())
     {
@@ -68,7 +68,7 @@ void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity
 void InputDeviceInternal::AddCursor(int index, const char* name)
 {
     if (index == -1)
-        index = m_cursornames.Count();
+        index = (int)m_cursornames.Count();
 
     while (index >= m_cursornames.Count())
     {

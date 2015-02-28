@@ -1,9 +1,9 @@
 //
 // Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
+//            (c) 2009-2015 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -199,7 +199,7 @@ void EasyMesh::ExecuteCmdStack(bool ExecAllStack)
         VerticesCleanup();
 
     if (BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
-        ComputeNormals(0, m_indices.Count());
+        ComputeNormals(0, (int)m_indices.Count());
 
     BD()->Disable(MeshBuildOperation::PostBuildComputeNormals);
     BD()->Disable(MeshBuildOperation::PreventVertCleanup);
@@ -258,7 +258,7 @@ void EasyMesh::OpenBrace()
         return;
     }
 
-    m_cursors.Push(m_vert.Count(), m_indices.Count());
+    m_cursors.Push((int)m_vert.Count(), (int)m_indices.Count());
 }
 
 //-----------------------------------------------------------------------------
@@ -292,7 +292,7 @@ bool EasyMesh::SetRender(bool should_render)
 }
 
 //-------------------
-// "Collisions" functions
+//Mesh Cursor operations
 //-------------------
 
 //-----------------------------------------------------------------------------
@@ -327,22 +327,22 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     int cursor_start = (m_cursors.Count() < 2)?(0):(m_cursors[(m_cursors.Count() - 2)].m2);
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        int start_point     = (mesh_id == 0)?(cursor_start):(m_cursors.Last().m2);
-        int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(m_indices.Count());
-        CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_0):(mesh_bsp_1);
-        for (int i = start_point; i < end_point; i += 3)
-            mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m_coord,
+        ptrdiff_t start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.Last().m2);
+        ptrdiff_t end_point   = (mesh_id == 0) ? (m_cursors.Last().m2) : (m_indices.Count());
+        CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_0) : (mesh_bsp_1);
+        for (ptrdiff_t i = start_point; i < end_point; i += 3)
+            mesh_bsp.AddTriangleToTree((int)i, m_vert[m_indices[i]].m_coord,
                                           m_vert[m_indices[i + 1]].m_coord,
                                           m_vert[m_indices[i + 2]].m_coord);
     }
 
     //BSP Usage : let's crunch all triangles on the correct BSP
-    int indices_count = m_indices.Count();
-    for (int mesh_id = 0; mesh_id < 2; mesh_id++)
+    ptrdiff_t indices_count = m_indices.Count();
+    for (ptrdiff_t mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        int start_point     = (mesh_id == 0)?(cursor_start):(m_cursors.Last().m2);
-        int end_point       = (mesh_id == 0)?(m_cursors.Last().m2):(indices_count);
-        CsgBsp &mesh_bsp  = (mesh_id == 0)?(mesh_bsp_1):(mesh_bsp_0);
+        ptrdiff_t start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.Last().m2);
+        ptrdiff_t end_point   = (mesh_id == 0) ? (m_cursors.Last().m2) : (indices_count);
+        CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_1) : (mesh_bsp_0);
         array< vec3, int, int, float > vert_list;
         array< int, int, int, int > tri_list;
         vec3 n0(.0f); vec3 n1(.0f);
@@ -352,25 +352,25 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         vert_list.Reserve(3);
         tri_list.Reserve(3);
 
-        for (int i = start_point; i < end_point; i += 3)
+        for (ptrdiff_t i = start_point; i < end_point; i += 3)
         {
             int Result = mesh_bsp.TestTriangleToTree(m_vert[m_indices[i]].m_coord,
                                                      m_vert[m_indices[i + 1]].m_coord,
                                                      m_vert[m_indices[i + 2]].m_coord, vert_list, tri_list);
-            int tri_base_idx = m_indices.Count();
+            ptrdiff_t tri_base_idx = m_indices.Count();
 
             //one split has been done, we need to had the new vertices & the new triangles.
             if (Result == 1)
             {
-                triangle_to_kill.Push(i);
+                triangle_to_kill.Push((int)i);
 #if 1
-                int base_idx = m_vert.Count();
-                for (int k = 3; k < vert_list.Count(); k++)
+                ptrdiff_t base_idx = m_vert.Count();
+                for (ptrdiff_t k = 3; k < vert_list.Count(); k++)
                 {
-                    int P0 = (vert_list[k].m2 < 3)?(m_indices[i + vert_list[k].m2]):(base_idx + vert_list[k].m2 - 3);
-                    int P1 = (vert_list[k].m3 < 3)?(m_indices[i + vert_list[k].m3]):(base_idx + vert_list[k].m3 - 3);
+                    ptrdiff_t P0 = (vert_list[k].m2 < 3) ? (m_indices[i + vert_list[k].m2]) : (base_idx + vert_list[k].m2 - 3);
+                    ptrdiff_t P1 = (vert_list[k].m3 < 3) ? (m_indices[i + vert_list[k].m3]) : (base_idx + vert_list[k].m3 - 3);
 
-                    AddVertex(vert_list[k].m1);
+                    InternalAddVertex(vert_list[k].m1);
 
                     //Normal : bad calculations there.
                     n0 = m_vert[P0].m_normal;
@@ -390,12 +390,12 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         SetCurVertColor(vec4(.0f, 1.0f, 1.0f, 1.0f));
 #endif
                 }
-                for (int k = 0; k < tri_list.Count(); k++)
+                for (ptrdiff_t k = 0; k < tri_list.Count(); k++)
                 {
-                    int P0 = (tri_list[k].m2 < 3)?(m_indices[i + tri_list[k].m2]):(base_idx + (tri_list[k].m2 - 3));
-                    int P1 = (tri_list[k].m3 < 3)?(m_indices[i + tri_list[k].m3]):(base_idx + (tri_list[k].m3 - 3));
-                    int P2 = (tri_list[k].m4 < 3)?(m_indices[i + tri_list[k].m4]):(base_idx + (tri_list[k].m4 - 3));
-                    AppendTriangle(P0, P1, P2, 0);
+                    int P0 = (int)(tri_list[k].m2 < 3) ? (m_indices[i + tri_list[k].m2]) : ((int)base_idx + (tri_list[k].m2 - 3));
+                    int P1 = (int)(tri_list[k].m3 < 3) ? (m_indices[i + tri_list[k].m3]) : ((int)base_idx + (tri_list[k].m3 - 3));
+                    int P2 = (int)(tri_list[k].m4 < 3) ? (m_indices[i + tri_list[k].m4]) : ((int)base_idx + (tri_list[k].m4 - 3));
+                    InternalAddTriangle(P0, P1, P2, 0);
                 }
 #endif
             }
@@ -405,7 +405,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
             {
                 for (int k = 0; k < tri_list.Count(); k++)
                 {
-                    int tri_idx = ((tri_list.Count() == 1)?(i):(tri_base_idx + k * 3));
+                    ptrdiff_t tri_idx = (ptrdiff_t)((tri_list.Count() == 1) ? (i) : ((int)tri_base_idx + k * 3));
 
                     //Triangle Kill Test
                     if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
@@ -420,7 +420,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         //csga : CSGAnd() -> m0_Inside + m1_Inside
                         (csg_operation == CSGUsage::And && tri_list[k].m1 == LEAF_FRONT))
                     {
-                        triangle_to_kill.Push(tri_idx);
+                        triangle_to_kill.Push((int)tri_idx);
                     }
 
                     //Triangle Invert Test
@@ -433,16 +433,16 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         //TODO : This operation disconnect all triangle, in some cases, not a good thing.
                         if (csg_operation == CSGUsage::Xor)
                         {
-                            for (int l = 0; l < 3; l++)
+                            for (ptrdiff_t l = 0; l < 3; l++)
                             {
                                 AddDuplicateVertex(m_indices[tri_idx + l]);
-                                m_indices[tri_idx + l] = m_vert.Count() - 1;
+                                m_indices[tri_idx + l] = (uint16_t)m_vert.Count() - 1;
                             }
                         }
                         m_indices[tri_idx + 1] += m_indices[tri_idx + 2];
                         m_indices[tri_idx + 2]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
                         m_indices[tri_idx + 1]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
-                        ComputeNormals(tri_idx, 3);
+                        ComputeNormals((int)tri_idx, 3);
                     }
                 }
             }
@@ -476,11 +476,11 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         if (i == 0 && dir == -1)
             dir = 1;
     }
-    for (int i = triangle_to_kill.Count() - 1; i >= 0; i--)
+    for (ptrdiff_t i = triangle_to_kill.Count() - 1; i >= 0; i--)
         m_indices.Remove(triangle_to_kill[i], 3);
 
-    m_cursors.Last().m1 = m_vert.Count();
-    m_cursors.Last().m2 = m_indices.Count();
+    m_cursors.Last().m1 = (int)m_vert.Count();
+    m_cursors.Last().m2 = (int)m_indices.Count();
 
     VerticesCleanup();
     //DONE for the splitting !
@@ -582,7 +582,7 @@ void EasyMesh::SetVertColor(vec4 const &color)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AddVertex(vec3 const &coord)
+void EasyMesh::InternalAddVertex(vec3 const &coord)
 {
     m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->ColorA()));
     m_state = MeshRender::NeedConvert;
@@ -627,12 +627,12 @@ VertexData EasyMesh::GetLerpVertex(VertexData const &vi, VertexData const &vj, f
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
+void EasyMesh::InternalAddQuad(int i1, int i2, int i3, int i4, int base)
 {
     if (BD()->IsEnabled(MeshBuildOperation::QuadWeighting) &&
         !BD()->IsEnabled(MeshBuildOperation::IgnoreQuadWeighting))
     {
-        int i5 = m_vert.Count();
+        int i5 = (int)m_vert.Count();
         AddLerpVertex(GetLerpVertex(base + i1, base + i3, .5f),
                       GetLerpVertex(base + i2, base + i4, .5f), .5f);
         m_indices << i1 + base;
@@ -664,19 +664,19 @@ void EasyMesh::AppendQuad(int i1, int i2, int i3, int i4, int base)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base)
+void EasyMesh::InternalAddQuadDupVerts(int i1, int i2, int i3, int i4, int base)
 {
-    int vbase = m_vert.Count();
+    int vbase = (int)m_vert.Count();
     AddDuplicateVertex(base + i1);
     AddDuplicateVertex(base + i2);
     AddDuplicateVertex(base + i3);
     AddDuplicateVertex(base + i4);
 
-    AppendQuad(0, 1, 2, 3, vbase);
+    InternalAddQuad(0, 1, 2, 3, vbase);
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendTriangle(int i1, int i2, int i3, int base)
+void EasyMesh::InternalAddTriangle(int i1, int i2, int i3, int base)
 {
     m_indices << base + i1;
     m_indices << base + i2;
@@ -684,11 +684,11 @@ void EasyMesh::AppendTriangle(int i1, int i2, int i3, int base)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base)
+void EasyMesh::InternalAddTriangleDupVerts(int i1, int i2, int i3, int base)
 {
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i1);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i2);
-    m_indices << m_vert.Count(); AddDuplicateVertex(base + i3);
+    m_indices << (uint16_t)m_vert.Count(); AddDuplicateVertex(base + i1);
+    m_indices << (uint16_t)m_vert.Count(); AddDuplicateVertex(base + i2);
+    m_indices << (uint16_t)m_vert.Count(); AddDuplicateVertex(base + i3);
 }
 
 //-----------------------------------------------------------------------------
@@ -789,7 +789,7 @@ void EasyMesh::VerticesMerge()
     //1: Crunch all vertices in the dictionnary
     VertexDictionnary vert_dict;
     for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        vert_dict.AddVertex(i, m_vert[i].m_coord);
+        vert_dict.RegisterVertex(i, m_vert[i].m_coord);
 
     //2: Update the indices
     for (int i = 0; i < m_indices.Count(); ++i)
@@ -822,14 +822,14 @@ void EasyMesh::VerticesSeparate()
 
     //2: Update the vertices
     int vbase = m_cursors.Last().m1;
-    int vcount = m_vert.Count();
+    int vcount = (int)m_vert.Count();
     new_ids.Resize(vcount);
     for (int i = vbase; i < vcount; i++)
     {
         while (vert_ids[i] > 1)
         {
             //Add duplicate
-            new_ids[i] << m_vert.Count();
+            new_ids[i] << (int)m_vert.Count();
             AddDuplicateVertex(i);
             vert_ids[i]--;
         }
@@ -860,7 +860,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
     for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
     {
-        vert_dict.AddVertex(m_indices[i], m_vert[m_indices[i]].m_coord);
+        vert_dict.RegisterVertex(m_indices[i], m_vert[m_indices[i]].m_coord);
         tri_list << m_indices[i];
     }
 
@@ -1069,1435 +1069,6 @@ void EasyMesh::SetCurVertTexCoord(vec2 const &texcoord)
 void EasyMesh::SetCurVertTexCoord2(vec2 const &texcoord)
 {
     m_vert[m_vert.Count() - 1].m_texcoord = vec4(m_vert[m_vert.Count() - 1].m_texcoord.xy, texcoord);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::Translate(vec3 const &v)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::Translate);
-        BD()->CmdStack() << v;
-        return;
-    }
-
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        m_vert[i].m_coord += v;
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::RotateX(float angle) { Rotate(angle, vec3(1, 0, 0)); }
-void EasyMesh::RotateY(float angle) { Rotate(angle, vec3(0, 1, 0)); }
-void EasyMesh::RotateZ(float angle) { Rotate(angle, vec3(0, 0, 1)); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::Rotate(float angle, vec3 const &axis)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::Rotate);
-        BD()->CmdStack() << angle << axis;
-        return;
-    }
-
-    mat3 m = mat3::rotate(angle, axis);
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-    {
-        m_vert[i].m_coord  = m * m_vert[i].m_coord;
-        m_vert[i].m_normal = m * m_vert[i].m_normal;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::RadialJitter(float r)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::RadialJitter);
-        BD()->CmdStack() << r;
-        return;
-    }
-
-    array<int> Welded;
-    Welded.Push(-1);
-    for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
-    {
-        int j, k;
-        for (j = m_cursors.Last().m1, k = 0; j < i; j++, k++)
-        {
-            if(Welded[k] < 0)
-            {
-                vec3 diff = m_vert[i].m_coord - m_vert[j].m_coord;
-
-                if(diff.x > 0.1f || diff.x < -0.1f)
-                    continue;
-
-                if(diff.y > 0.1f || diff.y < -0.1f)
-                    continue;
-
-                if(diff.z > 0.1f || diff.z < -0.1f)
-                    continue;
-
-                break;
-            }
-        }
-
-        if(j == i)
-            Welded.Push(-1);
-        else
-            Welded.Push(j);
-    }
-
-    int i, j;
-    for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
-    {
-        if(Welded[j] == -1)
-            m_vert[i].m_coord *= 1.0f + rand(r);
-        else
-            m_vert[i].m_coord = m_vert[Welded[j]].m_coord;
-    }
-
-    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::TaperX(float ny, float nz, float xoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::X, Axis::X, ny, nz, xoff, absolute); }
-void EasyMesh::TaperY(float nx, float nz, float yoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
-void EasyMesh::TaperZ(float nx, float ny, float zoff, bool absolute) { DoMeshTransform(MeshTransform::Taper, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::TwistX(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::X, Axis::X, t, t, toff); }
-void EasyMesh::TwistY(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Y, Axis::Y, t, t, toff); }
-void EasyMesh::TwistZ(float t, float toff) { DoMeshTransform(MeshTransform::Twist, Axis::Z, Axis::Z, t, t, toff); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::ShearX(float ny, float nz, float xoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::X, Axis::X, ny, nz, xoff, absolute); }
-void EasyMesh::ShearY(float nx, float nz, float yoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Y, Axis::Y, nz, nx, yoff, absolute); }
-void EasyMesh::ShearZ(float nx, float ny, float zoff, bool absolute) { DoMeshTransform(MeshTransform::Shear, Axis::Z, Axis::Z, nx, ny, zoff, absolute); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::StretchX(float ny, float nz, float xoff) { DoMeshTransform(MeshTransform::Stretch, Axis::X, Axis::X, ny, nz, xoff); }
-void EasyMesh::StretchY(float nx, float nz, float yoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Y, Axis::Y, nz, nx, yoff); }
-void EasyMesh::StretchZ(float nx, float ny, float zoff) { DoMeshTransform(MeshTransform::Stretch, Axis::Z, Axis::Z, nx, ny, zoff); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::BendXY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Y, t, t, toff); }
-void EasyMesh::BendXZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::X, Axis::Z, t, t, toff); }
-void EasyMesh::BendYX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::X, t, t, toff); }
-void EasyMesh::BendYZ(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Y, Axis::Z, t, t, toff); }
-void EasyMesh::BendZX(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::X, t, t, toff); }
-void EasyMesh::BendZY(float t, float toff) { DoMeshTransform(MeshTransform::Bend, Axis::Z, Axis::Y, t, t, toff); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n0, float n1, float noff, bool absolute)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::MeshTranform);
-        BD()->CmdStack() << ct << axis0 << axis1 << n0 << n1 << noff << absolute;
-        return;
-    }
-
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-    {
-        switch (ct.ToScalar())
-        {
-            case MeshTransform::Taper:
-            {
-                float value = m_vert[i].m_coord[axis0.ToScalar()];
-                if (absolute) value = abs(value);
-                m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
-                m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
-                break;
-            }
-            case MeshTransform::Twist:
-            {
-                vec3 rotaxis = vec3(1.f); rotaxis[(axis0.ToScalar() + 1) % 3] = .0f; rotaxis[(axis0.ToScalar() + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
-                break;
-            }
-            case MeshTransform::Shear:
-            {
-                float value = m_vert[i].m_coord[axis0.ToScalar()];
-                if (absolute) value = abs(value);
-                m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] += (n0 * value + noff);
-                m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] += (n1 * value + noff);
-                break;
-            }
-            case MeshTransform::Stretch:
-            {
-                //float value = abs(m_vert[i].m1[axis0.ToScalar()]);
-                //m_vert[i].m1[(axis0.ToScalar() + 1) % 3] += (lol::pow(value, n0) + noff);
-                //m_vert[i].m1[(axis0.ToScalar() + 2) % 3] += (lol::pow(value, n1) + noff);
-                break;
-            }
-            case MeshTransform::Bend:
-            {
-                vec3 rotaxis = vec3(1.f); rotaxis[(axis1.ToScalar() + 1) % 3] = .0f; rotaxis[(axis1.ToScalar() + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
-                break;
-            }
-        }
-    }
-    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::Scale(vec3 const &s)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::Scale);
-        BD()->CmdStack() << s;
-        return;
-    }
-
-    vec3 const invs = vec3(1) / s;
-
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-    {
-        m_vert[i].m_coord *= s;
-        m_vert[i].m_normal = normalize(m_vert[i].m_normal * invs);
-    }
-
-    /* Flip winding if the scaling involves mirroring */
-    if (!BD()->IsEnabled(MeshBuildOperation::ScaleWinding) && s.x * s.y * s.z < 0)
-    {
-        for (int i = m_cursors.Last().m2; i < m_indices.Count(); i += 3)
-        {
-            uint16_t tmp = m_indices[i + 0];
-            m_indices[i + 0] = m_indices[i + 1];
-            m_indices[i + 1] = tmp;
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::MirrorX() { DupAndScale(vec3(-1, 1, 1)); }
-void EasyMesh::MirrorY() { DupAndScale(vec3(1, -1, 1)); }
-void EasyMesh::MirrorZ() { DupAndScale(vec3(1, 1, -1)); }
-
-//-----------------------------------------------------------------------------
-void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::DupAndScale);
-        BD()->CmdStack() << s << open_brace;
-        return;
-    }
-
-    int vlen = m_vert.Count() - m_cursors.Last().m1;
-    int tlen = m_indices.Count() - m_cursors.Last().m2;
-
-    for (int i = 0; i < vlen; i++)
-        AddDuplicateVertex(m_cursors.Last().m1++);
-
-    for (int i = 0; i < tlen; i++)
-        m_indices << m_indices[m_cursors.Last().m2++] + vlen;
-
-    Scale(s);
-
-    m_cursors.Last().m1 -= vlen;
-    m_cursors.Last().m2 -= tlen;
-
-    if (open_brace)
-    {
-        OpenBrace();
-
-        m_cursors.Last().m1 -= vlen;
-        m_cursors.Last().m2 -= tlen;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
-                              bool dualside, bool smooth, bool close)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCylinder);
-        BD()->CmdStack() << nsides << h << d1 << d2 << dualside << smooth << close;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r1 = d1 * .5f;
-    float r2 = d2 * .5f;
-
-    //SAVE
-    vec4 Saved_ColorA = BD()->ColorA();
-    vec4 Saved_ColorB = BD()->ColorB();
-    vec2 Save_texcoord_offset = BD()->TexCoordOffset();
-    vec2 Save_texcoord_scale = BD()->TexCoordScale();
-
-    int vbase = m_vert.Count();
-
-    mat3 rotmat = mat3::rotate(360.0f / (float)nsides, 0.f, 1.f, 0.f);
-    vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
-    vec2 uv1(.0f, .0f), uv2(.0f, 1.0f), uvadd(1.0f / (float)nsides, .0f);
-    if (close)
-        SetTexCoordData(vec2(.0f), vec2(1.0f, .5f));
-
-    /* Construct normal */
-    if (r2 != .0f)
-        n = vec3(r2, h * .5f, 0.f);
-    else
-        n = vec3(r1, h * .5f, 0.f);
-    n.y = r1 * (r1 - r2) / h;
-    if (!smooth)
-        n = mat3::rotate(180.0f / nsides, 0.f, 1.f, 0.f) * n;
-    n = normalize(n);
-
-    //Two passes necessary to ensure "weighted quad" compatibility
-    //First pass : Add vertices
-    for (int i = 0; i < nsides; i++)
-    {
-        /* FIXME: normals should be flipped in two-sided mode, but that
-         * means duplicating the vertices again... */
-        AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
-        AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2); SetCurVertColor(BD()->ColorB());
-
-        p1 = rotmat * p1; uv1 += uvadd;
-        p2 = rotmat * p2; uv2 += uvadd;
-
-        if (!smooth)
-        {
-            AddVertex(p1); SetCurVertNormal(n); SetCurVertTexCoord(uv1); SetCurVertTexCoord2(uv1);
-            AddVertex(p2); SetCurVertNormal(n); SetCurVertTexCoord(uv2); SetCurVertTexCoord2(uv2); SetCurVertColor(BD()->ColorB());
-        }
-
-        n = rotmat * n;
-    }
-    //Second pass : Build quad
-    for (int i = 0; i < nsides; i++)
-    {
-        if (smooth)
-        {
-            int j = (i + 1) % nsides;
-            AppendQuad(j * 2, j * 2 + 1, i * 2 + 1, i * 2, vbase);
-            if (dualside)
-                AppendQuad(i * 2, i * 2 + 1, j * 2 + 1, j * 2, vbase);
-        }
-        else
-        {
-            AppendQuad(i * 4 + 2, i * 4 + 3, i * 4 + 1, i * 4, vbase);
-            if (dualside)
-                AppendQuad(i * 4, i * 4 + 1, i * 4 + 3, i * 4 + 2, vbase);
-        }
-
-    }
-
-    if (close)
-    {
-        //START
-        OpenBrace();
-        //LOWER DISC
-        SetTexCoordData(vec2(.0f, .5f), vec2(.5f, .5f));
-        SetCurColorA(BD()->ColorA());
-        AppendDisc(nsides, d1);
-        Translate(vec3(.0f, h, .0f));
-        RotateX(180.0f);
-        //UPPER DISC
-        SetTexCoordData(vec2(.5f, .5f), vec2(.5f, .5f));
-        SetCurColorA(BD()->ColorB());
-        AppendDisc(nsides, d2);
-        Translate(vec3(.0f, h * .5f, .0f));
-        CloseBrace();
-    }
-    //RESTORE
-    SetCurColorA(Saved_ColorA);
-    SetCurColorB(Saved_ColorB);
-    SetTexCoordData(Save_texcoord_offset, Save_texcoord_scale);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSphere(int ndivisions, float d)
-{
-    AppendCapsule(ndivisions, 0.f, d);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCapsule);
-        BD()->CmdStack() << ndivisions << h << d;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r = d * .5f;
-
-    int ibase = m_indices.Count();
-
-    array<vec3> vertices;
-    float uv_h = 0;
-    float uv_r = 0;
-
-    /* FIXME: we don't know how to handle even-divided capsules, so we
-     * force the count to be odd. */
-    if (h)
-    {
-        ndivisions |= 1;
-        //calculate uv h&r percents
-        uv_h = (float)h / (float)(h + r * 2);
-        uv_r = (float)r / (float)(h + r * 2);
-    }
-
-    /* Fill in the icosahedron vertices, rotating them so that there
-     * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
-    float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 m = mat3::rotate(degrees(asin(1.f / sqrt(2.f + phi))),
-                          vec3(0.f, 0.f, 1.f));
-    for (int i = 0; i < 4; i++)
-    {
-        float x = (i & 1) ? 0.5f : -0.5f;
-        float y = (i & 2) ? phi * 0.5f : phi * -0.5f;
-        vertices << m * vec3(x, y, 0.f);
-        vertices << m * vec3(0.f, x, y);
-        vertices << m * vec3(y, 0.f, x);
-    }
-
-    static int const trilist[] =
-    {
-        0, 1, 2, 2, 4, 6, 3, 8, 1, 9, 4, 8,
-        7, 0, 5, 7, 11, 3, 10, 5, 6, 10, 9, 11,
-
-        0, 3, 1, 7, 3, 0, 1, 4, 2, 8, 4, 1,
-        2, 5, 0, 6, 5, 2, 6, 9, 10, 4, 9, 6,
-        7, 10, 11, 5, 10, 7, 8, 11, 9, 3, 11, 8
-    };
-
-    for (unsigned i = 0; i < sizeof(trilist) / sizeof(*trilist); i += 3)
-    {
-        vec3 const &a = vertices[trilist[i]];
-        vec3 const &b = vertices[trilist[i + 1]];
-        vec3 const &c = vertices[trilist[i + 2]];
-
-        vec3 const vb = 1.f / ndivisions * (b - a);
-        vec3 const vc = 1.f / ndivisions * (c - a);
-
-        int line = ndivisions + 1;
-
-        for (int v = 0, x = 0, y = 0; x < ndivisions + 1; v++)
-        {
-            vec3 p[] = { a + (float)x * vb + (float)y * vc,
-                         p[0] + vb,
-                         p[0] + vc,
-                         p[0] + vb + vc };
-            vec2 uv[4];
-
-            /* FIXME: when we normalise here, we get a volume that is slightly
-             * smaller than the sphere of radius 1, since we are not using
-             * the midradius. */
-            for (int k = 0; k < 4; k++)
-            {
-                //keep normalized until the end of the UV calculations
-                p[k] = normalize(p[k]);
-
-                uv[k].x = (lol::atan2(p[k].z, p[k].x) + F_PI) / (F_PI * 2.f);
-                if (abs(p[k].y) >= 1.0f)
-                    uv[k].x = -1.f;
-                uv[k].y = lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) / F_PI + 0.5f;
-                if (h)
-                {
-                    if (uv[k].y > .5f)
-                        uv[k].y = uv_r + uv_h + (uv[k].y - .5f) * uv_r * 2.f;
-                    else
-                        uv[k].y *= uv_r * 2.f;
-                }
-                p[k] *= r;
-            }
-
-            /* If this is a capsule, grow in the Y direction */
-            if (h > 0.f)
-            {
-                for (int k = 0; k < 4; k++)
-                    p[k].y += (p[k].y > 0.f) ? 0.5f * h : -0.5f * h;
-            }
-
-            /* Add zero, one or two triangles */
-            int id[] = { 0, 1, 2,
-                         1, 3 ,2 };
-            int l = 6;
-            while ((l -= 3) >= 0)
-            {
-                if ((l == 0 && y < line - 1) || (l == 3 && y < line - 2))
-                {
-                    int k = -1;
-                    while (++k < 3)
-                    {
-                        int rid[] = { id[k + l], id[(k + 1) % 3 + l] };
-                        if (uv[rid[0]].x >= .0f &&
-                            uv[rid[1]].x >= .0f &&
-                            abs(uv[rid[0]].x - uv[rid[1]].x) > .5f)
-                        {
-                            if (uv[rid[0]].x < uv[rid[1]].x)
-                                uv[rid[0]].x += 1.0f;
-                            else
-                                uv[rid[1]].x += 1.0f;
-                        }
-                    }
-                    k = -1;
-                    while (++k < 3)
-                    {
-                        int rid[] = { id[k + l], id[(k + 1) % 3 + l], id[(k + 2) % 3 + l] };
-                        AddVertex(p[rid[0]]);
-                        vec2 new_uv;
-                        if (uv[rid[0]].x < .0f)
-                            new_uv = vec2((uv[rid[1]].x + uv[rid[2]].x) * .5f, uv[rid[0]].y);
-                        else
-                            new_uv = uv[rid[0]];
-                        SetCurVertTexCoord(vec2(0.f, 1.f) - new_uv);
-                        SetCurVertTexCoord2(vec2(0.f, 1.f) - new_uv);
-                    }
-                    AppendTriangle(0, 2, 1, m_vert.Count() - 3);
-                }
-            }
-
-            y++;
-            if (y == line)
-            {
-                x++;
-                y = 0;
-                line--;
-            }
-        }
-    }
-
-    ComputeNormals(ibase, m_indices.Count() - ibase);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendTorus);
-        BD()->CmdStack() << ndivisions << d1 << d2;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r1 = d1 * .5f;
-    float r2 = d2 * .5f;
-
-    int ibase = m_indices.Count();
-    int nidiv = ndivisions; /* Cross-section */
-    int njdiv = ndivisions; /* Full circumference */
-
-    for (int j = 0; j < njdiv; j++)
-    for (int i = 0; i < 2 * nidiv; i++)
-    {
-        for (int di = 0; di < 2; di++)
-        for (int dj = 0; dj < 2; dj++)
-        {
-            int i2 = (i + di) % nidiv;
-            int j2 = (j + dj) % njdiv;
-
-            //Location on the donut
-            float x = 0.5f * (r2 - r1) * (float)lol::cos(2.f * F_PI * i2 / nidiv) + 0.5f * (r1 + r2);
-            float y = 0.5f * (r2 - r1) * (float)lol::sin(2.f * F_PI * i2 / nidiv);
-            float z = 0.0f;
-
-            //Center circle
-            float ca = (float)lol::cos(2.f * F_PI * j2 / njdiv);
-            float sa = (float)lol::sin(2.f * F_PI * j2 / njdiv);
-
-            //Actual location
-            float x2 = x * ca - z * sa;
-            float z2 = z * ca + x * sa;
-
-            AddVertex(vec3(x2, y, z2));
-            SetCurVertTexCoord(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
-            SetCurVertTexCoord2(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
-        }
-
-        AppendTriangle(0, 2, 3, m_vert.Count() - 4);
-        AppendTriangle(0, 3, 1, m_vert.Count() - 4);
-    }
-
-    ComputeNormals(ibase, m_indices.Count() - ibase);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendBox(vec3 const &size, float chamf)
-{
-    AppendBox(size, chamf, false);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSmoothChamfBox(vec3 const &size, float chamf)
-{
-    AppendBox(size, chamf, true);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendFlatChamfBox(vec3 const &size, float chamf)
-{
-    AppendBox(size, chamf, false);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendBox);
-        BD()->CmdStack() << size << chamf << smooth;
-        return;
-    }
-
-    if (chamf < 0.0f)
-    {
-        AppendBox(size + vec3(chamf * 2.0f), -chamf, smooth);
-        return;
-    }
-
-    int vbase = m_vert.Count();
-    int ibase = m_indices.Count();
-
-    vec3 d = size * 0.5f;
-
-    MeshType mt = MeshType::Box;
-    TexCoordPos bl = TexCoordPos::BL;
-    TexCoordPos br = TexCoordPos::BR;
-    TexCoordPos tl = TexCoordPos::TL;
-    TexCoordPos tr = TexCoordPos::TR;
-
-    //--
-    //Side vertices
-    //--
-    MeshFaceType mft = MeshFaceType::BoxFront;
-    AddVertex(vec3(-d.x, -d.y, -d.z - chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x, +d.y, -d.z - chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, +d.y, -d.z - chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, -d.y, -d.z - chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    //--
-    mft = MeshFaceType::BoxLeft;
-    AddVertex(vec3(-d.x - chamf, -d.y, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x - chamf, +d.y, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x - chamf, +d.y, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x - chamf, -d.y, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    //--
-    mft = MeshFaceType::BoxBack;
-    AddVertex(vec3(+d.x, -d.y, +d.z + chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, +d.y, +d.z + chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x, +d.y, +d.z + chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x, -d.y, +d.z + chamf));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    //--
-    mft = MeshFaceType::BoxRight;
-    AddVertex(vec3(+d.x + chamf, -d.y, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x + chamf, +d.y, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x + chamf, +d.y, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x + chamf, -d.y, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    //--
-    //Bottom vertices
-    //--
-    mft = MeshFaceType::BoxBottom;
-    AddVertex(vec3(-d.x, -d.y - chamf, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, -d.y - chamf, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, -d.y - chamf, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    //--
-    //Top vertices
-    //--
-    mft = MeshFaceType::BoxTop;
-    AddVertex(vec3(-d.x, +d.y + chamf, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(-d.x, +d.y + chamf, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, +d.y + chamf, +d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    //--
-    AddVertex(vec3(+d.x, +d.y + chamf, -d.z));
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-
-    ComputeNormals(ibase, m_indices.Count() - ibase);
-    ibase = m_indices.Count();
-
-    //Build the box at the end : The 6 quads on each side of the box.
-    for (int i = 0; i < 24; i += 4)
-        AppendQuad(i, i + 1, i + 2, i + 3, vbase);
-
-    /* The 8 quads at each edge of the box */
-    if (chamf)
-    {
-        static int const quadlist[48] =
-        {
-            0, 3, 18, 17, 4, 7, 17, 16, 8, 11, 16, 19, 12, 15, 19, 18,
-            2, 1, 20, 23, 6, 5, 21, 20, 10, 9, 22, 21, 14, 13, 23, 22,
-            1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12, 3, 2,
-        };
-
-        for (int i = 0; i < 48; i += 4)
-        {
-            if (smooth)
-                AppendQuad(quadlist[i],     quadlist[i + 1],
-                           quadlist[i + 2], quadlist[i + 3], vbase);
-            else
-                AppendQuadDuplicateVerts(quadlist[i],     quadlist[i + 1],
-                                         quadlist[i + 2], quadlist[i + 3], vbase);
-        }
-    }
-
-    /* The 8 triangles at each corner of the box */
-    if (chamf)
-    {
-        static int const trilist[24] =
-        {
-            3, 12, 18, 15, 8, 19, 11, 4, 16, 7, 0, 17,
-            2, 23, 13, 14, 22, 9, 10, 21, 5, 6, 20, 1,
-        };
-
-        for (int i = 0; i < 24; i += 3)
-        {
-            if (smooth)
-                AppendTriangle(trilist[i], trilist[i + 1], trilist[i + 2], vbase);
-            else
-                AppendTriangleDuplicateVerts(trilist[i], trilist[i + 1], trilist[i + 2], vbase);
-        }
-    }
-
-    if (!smooth)
-        ComputeNormals(ibase, m_indices.Count() - ibase);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendStar(int nbranches, float d1, float d2,
-                          bool fade, bool fade2)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendStar);
-        BD()->CmdStack() << nbranches << d1 << d2 << fade << fade2;
-        return;
-    }
-
-    //Should ignore quad weight, as it does not destroy star symmetry
-    BD()->Enable(MeshBuildOperation::IgnoreQuadWeighting);
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r1 = d1 * .5f;
-    float r2 = d2 * .5f;
-
-    //TODO: It would probably be good to think of another way of UV painting this, like "branch repeating"
-    int vbase = m_vert.Count();
-    float maxr = max(r1, r2);
-
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
-
-    mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
-    vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f);
-    vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
-         uv2(0.f, 0.f, -.5f * ((float)r2 / maxr));
-
-    p2 = rotmat * p2; uv2 = rotmat * uv2;
-    rotmat = rotmat * rotmat;
-
-    for (int i = 0; i < nbranches; i++)
-    {
-        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
-        if (fade2)
-            SetCurVertColor(BD()->ColorB());
-
-        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
-        if (fade)
-            SetCurVertColor(BD()->ColorB());
-
-        //Append quad at the end
-        AppendQuad(0, 2 * i + 1, 2 * i + 2, (2 * i + 3) % (2 * nbranches), vbase);
-
-        p1 = rotmat * p1; uv1 = rotmat * uv1;
-        p2 = rotmat * p2; uv2 = rotmat * uv2;
-    }
-
-    //Restore
-    BD()->Disable(MeshBuildOperation::IgnoreQuadWeighting);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extrad)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendExpandedStar);
-        BD()->CmdStack() << nbranches << d1 << d2 << extrad;
-        return;
-    }
-
-    //Should ignore quad weight, as it does not destroy star symmetry
-    BD()->Enable(MeshBuildOperation::IgnoreQuadWeighting);
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r1 = d1 * .5f;
-    float r2 = d2 * .5f;
-    float extrar = extrad * .5f;
-
-    int vbase = m_vert.Count();
-    float maxr = (float)max(max(r1, r2), max(r1 + extrar, r2 + extrar));
-
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
-
-    mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
-    vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f),
-         p3(r1 + extrar, 0.f, 0.f), p4(r2 + extrar, 0.f, 0.f);;
-    vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
-         uv2(0.f, 0.f, -.5f * ((float)r2 / maxr)),
-         uv3(0.f, 0.f, -.5f * ((float)(r1 + extrar) / maxr)),
-         uv4(0.f, 0.f, -.5f * ((float)(r2 + extrar) / maxr));
-
-    p2 = rotmat * p2; uv2 = rotmat * uv2;
-    p4 = rotmat * p4; uv4 = rotmat * uv4;
-    rotmat = rotmat * rotmat;
-
-    for (int i = 0; i < nbranches; i++)
-    {
-        AddVertex(p1); SetCurVertTexCoord(uv1.xz + vec2(.5f)); SetCurVertTexCoord2(uv1.xz + vec2(.5f));
-        AddVertex(p2); SetCurVertTexCoord(uv2.xz + vec2(.5f)); SetCurVertTexCoord2(uv2.xz + vec2(.5f));
-        AddVertex(p3); SetCurVertTexCoord(uv3.xz + vec2(.5f)); SetCurVertTexCoord2(uv3.xz + vec2(.5f)); SetCurVertColor(BD()->ColorB());
-        AddVertex(p4); SetCurVertTexCoord(uv4.xz + vec2(.5f)); SetCurVertTexCoord2(uv4.xz + vec2(.5f)); SetCurVertColor(BD()->ColorB());
-
-        int j = (i + 1) % nbranches;
-        //
-        AppendQuad(0, 4 * i + 1, 4 * i + 2, 4 * j + 1, vbase);
-        AppendQuad(4 * i + 1, 4 * i + 3, 4 * i + 4, 4 * i + 2, vbase);
-        AppendQuad(4 * j + 1, 4 * i + 2, 4 * i + 4, 4 * j + 3, vbase);
-
-        p1 = rotmat * p1; uv1 = rotmat * uv1;
-        p2 = rotmat * p2; uv2 = rotmat * uv2;
-        p3 = rotmat * p3; uv3 = rotmat * uv3;
-        p4 = rotmat * p4; uv4 = rotmat * uv4;
-    }
-
-    //Restore
-    BD()->Disable(MeshBuildOperation::IgnoreQuadWeighting);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendDisc(int nsides, float d, bool fade)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendDisc);
-        BD()->CmdStack() << nsides << d << fade;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r = d * .5f;
-
-    int vbase = m_vert.Count();
-
-    AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
-
-    mat3 rotmat = mat3::rotate(360.0f / nsides, 0.f, 1.f, 0.f);
-    vec3 p1(r, 0.f, 0.f);
-    vec3 uv(.5f, .0f, .0f);
-
-    for (int i = 0; i < nsides; i++)
-    {
-        AddVertex(p1); SetCurVertTexCoord(uv.xz + vec2(.5f, .5f)); SetCurVertTexCoord2(uv.xz + vec2(.5f, .5f));
-        if (fade)
-            SetCurVertColor(BD()->ColorB());
-        AppendTriangle(0, i + 1, ((i + 1) % nsides) + 1, vbase);
-        p1 = rotmat * p1;
-        uv = rotmat * uv;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleTriangle(float d, bool fade)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendSimpleTriangle);
-        BD()->CmdStack() << d << fade;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float size = d * .5f;
-
-    mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
-    vec3 p(0.f, 0.f, size);
-
-    AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f)); SetCurVertTexCoord2(vec2(.5f, 0.133975f));
-    p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(0.f, 1.f)); SetCurVertTexCoord2(vec2(0.f, 1.f));
-    if (fade)
-        SetCurVertColor(BD()->ColorB());
-    p = m * p;
-    AddVertex(p); SetCurVertTexCoord(vec2(1.f, 1.f)); SetCurVertTexCoord2(vec2(1.f, 1.f));
-    if (fade)
-        SetCurVertColor(BD()->ColorB());
-
-    AppendTriangle(0, 1, 2, m_vert.Count() - 3);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleQuad(float size, bool fade)
-{
-    AppendSimpleQuad(vec2(size * .5f), vec2(size * -.5f), 0.f, fade);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendSimpleQuad);
-        BD()->CmdStack() << p1 << p2 << z << fade;
-        return;
-    }
-
-    MeshType mt = MeshType::Quad;
-    MeshFaceType mft = MeshFaceType::QuadDefault;
-
-    //--
-    AddVertex(vec3(p2.x, z, -p1.y));
-    TexCoordPos br = TexCoordPos::BR;
-    SetCurVertTexCoord(BD()->TexCoord(mt, br, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, br, mft));
-    //--
-    AddVertex(vec3(p2.x, z, -p2.y));
-    TexCoordPos bl = TexCoordPos::BL;
-    SetCurVertTexCoord(BD()->TexCoord(mt, bl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, bl, mft));
-    //--
-    AddVertex(vec3(p1.x, z, -p2.y));
-    TexCoordPos tl = TexCoordPos::TL;
-    SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tl, mft));
-    if (fade) SetCurVertColor(BD()->ColorB());
-    //--
-    AddVertex(vec3(p1.x, z, -p1.y));
-    TexCoordPos tr = TexCoordPos::TR;
-    SetCurVertTexCoord(BD()->TexCoord(mt, tr, mft));
-    SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
-    if (fade) SetCurVertColor(BD()->ColorB());
-
-    AppendQuad(0, 1, 2, 3, m_vert.Count() - 4);
-    ComputeNormals(m_indices.Count() - 6, 6);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
-                         float d11, float d21, float d12, float d22,
-                         float sidemul, bool offset)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::AppendCog);
-        BD()->CmdStack() << nbsides << h
-                         << d10 << d20
-                         << d11 << d21
-                         << d12 << d22
-                         << sidemul << offset;
-        return;
-    }
-
-    //XXX : This operation is done to convert radius to diameter without changing all the code.
-    float r10 = d10 * .5f;
-    float r20 = d20 * .5f;
-    float r11 = d11 * .5f;
-    float r21 = d21 * .5f;
-    float r12 = d12 * .5f;
-    float r22 = d22 * .5f;
-
-    int ibase = m_indices.Count();
-    int vbase = m_vert.Count();
-
-    /* FIXME: enforce this some other way */
-    if (r12 < 0)
-        h = -h;
-
-    mat3 rotmat = mat3::rotate(180.0f / nbsides, 0.f, 1.f, 0.f);
-    mat3 smat1 = mat3::rotate(sidemul * 180.0f / nbsides, 0.f, 1.f, 0.f);
-    mat3 smat2 = mat3::rotate(sidemul * -360.0f / nbsides, 0.f, 1.f, 0.f);
-
-    vec3 p[12];
-
-    //Upper points
-    p[0] = vec3(r10, h * .5f, 0.f);
-    p[1] = rotmat * p[0];
-    p[2] = vec3(r11, h * .5f, 0.f);
-    p[3] = rotmat * p[2];
-    p[4] = smat1 * (rotmat * vec3(r11 + r12, h * .5f, 0.f));
-    p[5] = smat2 * (rotmat * p[4]);
-
-    //Lower points
-    p[6] = vec3(r20, h * -.5f, 0.f);
-    p[7] = rotmat * p[6];
-    p[8] = vec3(r21, h * -.5f, 0.f);
-    p[9] = rotmat * p[8];
-    p[10] = smat1 * (rotmat * vec3(r21 + r22, h * -.5f, 0.f));
-    p[11] = smat2 * (rotmat * p[10]);
-
-    if (offset)
-        for (int n = 0; n < 12; n++)
-            p[n] = rotmat * p[n];
-
-    rotmat = rotmat * rotmat;
-
-    //UV base computation
-    float maxr = max(max(r11 + r12, r21 + r22), max(r10, r20));
-    float InLn = length(p[1] - p[0]);
-    float CogLn[8] = { .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f };
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0, k = 2; j < 8 && k < 12; j += 4, k += 6)
-        {
-            CogLn[j + i] = length(p[k + i + 1] - p[k + i]);
-            CogLn[j + 3] += CogLn[j + i];
-            if (i == 1) //Add 3to4 twice since it's automatically completed by +1 loop.
-                CogLn[j + 3] += CogLn[j + i];
-        }
-    }
-
-    //Choose the biggest cog length
-    int CogSrc = (CogLn[7] > CogLn[3])?(4):(0);
-    CogLn[3] = CogLn[CogSrc + 3];
-    for (int i = 0; i < 3; i++)
-        CogLn[i] = CogLn[CogSrc + i] / CogLn[CogSrc + 3];
-
-    //Calculate Cog Modifiers
-    vec2 InUV[2] = { vec2(.0f), vec2(.5f) };
-    vec2 CogUV[2] = { vec2(.0f), vec2(.5f) };
-    vec2 upadd = vec2(.25f, .75f);
-    vec2 lowadd = vec2(.75f, .75f);
-    {
-        if (h < InLn)
-        {
-            InUV[0].x  = 1.0f;
-            InUV[0].y  = h / InLn;
-            InUV[1].x  = .0f;
-            InUV[1].y -= InUV[0].y * .5f;
-        }
-        else
-        {
-            InUV[0].x  = InLn / h;
-            InUV[0].y  = 1.0f;
-            InUV[1].x -= InUV[0].x * .5f;
-            InUV[1].y = .0f;
-        }
-        if (h < CogLn[3])
-        {
-            CogUV[0].x  = 1.0f;
-            CogUV[0].y  = h / CogLn[3];
-            CogUV[1].x  = .0f;
-            CogUV[1].y -= CogUV[0].y * .5f;
-        }
-        else
-        {
-            CogUV[0].x  = CogLn[3] / h;
-            CogUV[0].y  = 1.0f;
-            CogUV[1].x -= CogUV[0].x * .5f;
-            CogUV[1].y  = .0f;
-        }
-        if (InUV[0].x + CogUV[0].x < .5f)
-        {
-            InUV[1].x = .0f;
-            CogUV[1].x = .5f - CogUV[0].x;
-            upadd  = vec2(.75f, .25f);
-            lowadd = vec2(.75f, .75f);
-        }
-        else if (InUV[0].y + CogUV[0].y < .5f)
-        {
-            InUV[1].y = .0f;
-            CogUV[1].y = .5f - CogUV[0].y;
-        }
-        else
-        {
-            InUV[0] *= .5f;
-            InUV[1] *= .5f;
-            CogUV[0] *= .5f;
-            CogUV[1] *= .5f;
-            InUV[1] += vec2(.5f, .0f);
-        }
-    }
-
-    //Build UV tab
-    vec2 uv[12]; float CogSz;
-    //Upper points
-    CogSz = 1.0f - CogLn[1];
-    uv[0]  = vec2(0.f,   0.f) * InUV[0]  + InUV[1];
-    uv[1]  = vec2(1.f,   0.f) * InUV[0]  + InUV[1];
-    uv[5]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[2];
-    uv[4]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[1];
-    uv[3]  = vec2(CogSz, 0.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[0];
-    uv[2]  = vec2(0.f,   0.f) * CogUV[0] + CogUV[1];
-
-    //Lower points
-    CogSz = 1.0f - CogLn[1];
-    uv[6]  = vec2(0.f,   1.f) * InUV[0]  + InUV[1];
-    uv[7]  = vec2(1.f,   1.f) * InUV[0]  + InUV[1];
-    uv[11] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[2];
-    uv[10] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[1];
-    uv[ 9] = vec2(CogSz, 1.f) * CogUV[0] + CogUV[1]; CogSz -= CogLn[0];
-    uv[ 8] = vec2(0.f,   1.f) * CogUV[0] + CogUV[1];
-
-#define DEF_J_K_Q                         \
-    int j = 3 * 12 * i,                   \
-        k = 3 * 12 * ((i + 1) % nbsides); \
-    int q[] = {                \
-/* The top and bottom faces */ \
-                j, j, j, j, \
-                j, j, j, j, \
-                j, j, k, k, \
-                k, k, j, j, \
-                j, j, j, k, \
-                k, j, j, j, \
-/* The inner side quads */  \
-                j, j, j, j, \
-                j, k, k, j, \
-/* The outer side quads */  \
-                j, j, j, j, \
-                j, j, j, j, \
-                j, j, j, j, \
-                k, j, j, k  \
-                };          \
-    UNUSED(q);
-    int m[] = { /* The top and bottom faces */
-                0,  2,  3,  1,
-                7,  9,  8,  6,
-                1,  3,  2,  0,
-                6,  8,  9,  7,
-                3,  4,  5,  2,
-                8, 11, 10,  9,
-                /* The inner side quads */
-                0,  1,  7,  6,
-                1,  0,  6,  7,
-                /* The outer side quads */
-                3,  2,  8,  9,
-                4,  3,  9, 10,
-                5,  4, 10, 11,
-                2,  5, 11, 8
-                };
-    int a[] = { /* The top and bottom faces */
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                /* The inner side quads */
-                1, 1, 1, 1,
-                2, 2, 2, 2,
-                /* The outer side quads */
-                1, 1, 1, 1,
-                1, 2, 2, 1,
-                1, 2, 2, 1,
-                2, 2, 2, 2
-                };
-    //Gear generation loop
-    //Two passes necessary to ensure "weighted quad" compatibility
-    //First pass : Add vertices
-    for (int i = 0; i < nbsides; i++)
-    {
-        DEF_J_K_Q;
-
-        /* Each vertex will share three faces, so three different
-         * normals, therefore we add each vertex three times. */
-        for (int n = 0; n < 3 * 12; n++)
-        {
-            int d = n / 3;
-            int e = d % 6;
-            AddVertex(p[d]);
-            if (n % 3 == 0) //Top-Bottom logic
-            {
-                vec2 tmp = (p[d].xz / maxr);
-                vec2 add;
-                if (d >= 6)
-                {
-                    tmp *= -1.0f;
-                    add = lowadd;
-                }
-                else
-                    add = upadd;
-                SetCurVertTexCoord(tmp * vec2(.25f) + add);
-                SetCurVertTexCoord2(tmp * vec2(.25f) + add);
-            }
-            else if (e == 0 || e == 1) //inner Logic
-            {
-                SetCurVertTexCoord(uv[d]);
-                SetCurVertTexCoord2(uv[d]);
-            }
-            else //Cog logic
-            {
-                if (e == 2 && n % 3 == 2)
-                {
-                    SetCurVertTexCoord(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
-                    SetCurVertTexCoord2(vec2(1.f, (d == 2)?(0.f):(1.f)) * CogUV[0] + CogUV[1]);
-                }
-                else
-                {
-                    SetCurVertTexCoord(uv[d]);
-                    SetCurVertTexCoord2(uv[d]);
-                }
-            }
-            if (d >= 6)
-                SetCurVertColor(BD()->ColorB());
-        }
-
-        for (int n = 0; n < 12; n++)
-            p[n] = rotmat * p[n];
-    }
-    //Second pass : Build quad
-    for (int i = 0; i < nbsides; i++)
-    {
-        DEF_J_K_Q;
-        int l = -4;
-        while ((l += 4) < 48)
-            AppendQuad(q[l + 0] + m[l + 0] * 3 + a[l + 0],
-                       q[l + 1] + m[l + 1] * 3 + a[l + 1],
-                       q[l + 2] + m[l + 2] * 3 + a[l + 2],
-                       q[l + 3] + m[l + 3] * 3 + a[l + 3],
-                       vbase);
-    }
-
-    ComputeNormals(ibase, m_indices.Count() - ibase);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::Chamfer(float f)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::Chamfer);
-        BD()->CmdStack() << f;
-        return;
-    }
-
-    int vlen = m_vert.Count() - m_cursors.Last().m1;
-    int ilen = m_indices.Count() - m_cursors.Last().m2;
-
-    /* Step 1: enumerate all faces. This is done by merging triangles
-     * that are coplanar and share an edge. */
-    int *triangle_classes = new int[ilen / 3];
-    for (int i = 0; i < ilen / 3; i++)
-        triangle_classes[i] = -1;
-
-    for (int i = 0; i < ilen / 3; i++)
-    {
-
-    }
-
-    /* Fun shit: reduce all triangles */
-    int *vertices = new int[vlen];
-    memset(vertices, 0, vlen * sizeof(int));
-    for (int i = 0; i < ilen; i++)
-        vertices[m_indices[i]]++;
-
-    for (int i = 0; i < ilen / 3; i++)
-
-    {
-    #if 0
-        if (vertices[m_indices[i * 3]] > 1)
-            continue;
-        if (vertices[m_indices[i * 3 + 1]] > 1)
-            continue;
-        if (vertices[m_indices[i * 3 + 2]] > 1)
-            continue;
-    #endif
-
-        vec3 bary = 1.f / 3.f * (m_vert[m_indices[i * 3]].m_coord +
-                                 m_vert[m_indices[i * 3 + 1]].m_coord +
-                                 m_vert[m_indices[i * 3 + 2]].m_coord);
-        for (int k = 0; k < 3; k++)
-        {
-            vec3 &p = m_vert[m_indices[i * 3 + k]].m_coord;
-            p -= normalize(p - bary) * f;
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::SplitTriangles(int pass)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::SplitTriangles);
-        BD()->CmdStack() << pass;
-        return;
-    }
-
-    SplitTriangles(pass, nullptr);
-}
-
-//-----------------------------------------------------------------------------
-void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
-{
-    while (pass--)
-    {
-        int trimax = m_indices.Count();
-        for (int i = m_cursors.Last().m2; i < trimax; i += 3)
-        {
-            int vbase = m_vert.Count();
-            int j = -1;
-            while (++j < 3)
-            {
-                AddLerpVertex(m_indices[i + j], m_indices[i + (j + 1) % 3], .5f);
-                if (vert_dict)
-                    vert_dict->AddVertex(vbase + j, m_vert[vbase + j].m_coord);
-            }
-            //Add new triangles
-            AppendTriangle(vbase, m_indices[i + 1], vbase + 1, 0);
-            AppendTriangle(vbase + 2, vbase + 1, m_indices[i + 2], 0);
-            AppendTriangle(vbase, vbase + 1, vbase + 2, 0);
-            //Change current triangle
-            m_indices[i + 1] = vbase;
-            m_indices[i + 2] = vbase + 2;
-        }
-    }
-    ComputeNormals(m_cursors.Last().m2, m_indices.Count() - m_cursors.Last().m2);
-}
-
-//-----------------------------------------------------------------------------
-//TODO : Add an half-edges implementation to refine smooth.
-//TODO : Smooth should only use connected vertices that are on edges of the mesh (See box).
-void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per_main_pass)
-{
-    if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
-    {
-        BD()->CmdStack().AddCmd(EasyMeshCmdType::SmoothMesh);
-        BD()->CmdStack() << main_pass << split_per_main_pass << smooth_per_main_pass;
-        return;
-    }
-
-    VertexDictionnary vert_dict;
-    array<vec3> smooth_buf[2];
-    array<int> master_list;
-    array<int> matching_ids;
-    array<int> connected_vert;
-    int smbuf = 0;
-
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-        vert_dict.AddVertex(i, m_vert[i].m_coord);
-
-    while (main_pass--)
-    {
-        int split_pass = split_per_main_pass;
-        int smooth_pass = smooth_per_main_pass;
-
-        SplitTriangles(split_pass, &vert_dict);
-
-        matching_ids.Reserve(m_vert.Count() - m_cursors.Last().m1);
-        connected_vert.Reserve(m_vert.Count() - m_cursors.Last().m1);
-        smooth_buf[0].Resize(m_vert.Count() - m_cursors.Last().m1);
-        smooth_buf[1].Resize(m_vert.Count() - m_cursors.Last().m1);
-
-        for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-            smooth_buf[smbuf][i - m_cursors.Last().m1] = m_vert[i].m_coord;
-
-        while (smooth_pass--)
-        {
-            master_list.Empty();
-            if (vert_dict.GetMasterList(master_list))
-            {
-                for (int i = 0; i < master_list.Count(); i++)
-                {
-                    connected_vert.Empty();
-                    if (vert_dict.FindConnectedVertices(master_list[i], m_indices, m_cursors.Last().m2, connected_vert))
-                    {
-                        //Calculate vertices sum
-                        vec3 vert_sum = vec3(.0f);
-                        for (int j = 0; j < connected_vert.Count(); j++)
-                            vert_sum += smooth_buf[smbuf][connected_vert[j] - m_cursors.Last().m1];
-
-                        //Calculate new master vertex
-                        float n = (float)connected_vert.Count();
-                        //b(n) = 5/4 - pow(3 + 2 * cos(2.f * F_PI / n), 2) / 32
-                        float beta = 3.f + 2.f * cos(2.f * F_PI / n);
-                        beta = 5.f / 4.f - beta * beta / 32.f;
-                        //a(n) = n * (1 - b(n)) / b(n)
-                        float alpha = (n * (1 - beta)) / beta;
-                        //V = (a(n) * v + v1 + ... + vn) / (a(n) + n)
-                        vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.Last().m1] + vert_sum) / (alpha + n);
-
-                        //Set all matching vertices to new value
-                        matching_ids.Empty();
-                        matching_ids << master_list[i];
-                        vert_dict.FindMatchingVertices(master_list[i], matching_ids);
-                        for (int j = 0; j < matching_ids.Count(); j++)
-                            smooth_buf[1 - smbuf][matching_ids[j] - m_cursors.Last().m1] = new_vert;
-                    }
-                }
-            }
-            smbuf = 1 - smbuf;
-        }
-
-        for (int i = 0; i < smooth_buf[smbuf].Count(); i++)
-            m_vert[i + m_cursors.Last().m1].m_coord = smooth_buf[smbuf][i];
-    }
 }
 
 } /* namespace lol */

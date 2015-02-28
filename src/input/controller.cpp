@@ -35,7 +35,7 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
         return;
     }
 
-    m_keybindings.Push(device, keyindex);
+    m_keybindings.Push(device, (int)keyindex);
 }
 
 bool KeyBinding::Unbind(const String& device_name, const String& key_name)
@@ -80,7 +80,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
         return;
     }
 
-    m_axisbindings.Push(device, axisindex);
+    m_axisbindings.Push(device, (int)axisindex);
 }
 
 void AxisBinding::BindKey(const String& device_name, const String& key_name)
@@ -101,7 +101,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
         return;
     }
 
-    m_keybindings.Push(device, -1, keyindex);
+    m_keybindings.Push(device, -1, (int)keyindex);
 }
 
 void AxisBinding::BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
@@ -130,7 +130,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    m_keybindings.Push(device, minkeyindex, maxkeyindex);
+    m_keybindings.Push(device, (int)minkeyindex, (int)maxkeyindex);
 }
 
 bool AxisBinding::Unbind(const String& device_name, const String& axis_name)

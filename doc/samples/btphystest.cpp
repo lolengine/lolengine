@@ -339,7 +339,7 @@ void BtPhysTest::TickGame(float seconds)
     {
         m_target_timer = TARGET_TIMER;
         if (m_cam_target == -1)
-            m_cam_target = rand(m_physobj_list.Count());
+            m_cam_target = rand((int)m_physobj_list.Count());
         else
             m_cam_target = -1;
     }

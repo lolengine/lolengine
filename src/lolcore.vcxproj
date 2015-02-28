@@ -103,7 +103,9 @@
     <ClCompile Include="easymesh\csgbsp.cpp" />
     <ClCompile Include="easymesh\easymesh.cpp" />
     <ClCompile Include="easymesh\easymeshbuild.cpp" />
+    <ClCompile Include="easymesh\easymeshprimitive.cpp" />
     <ClCompile Include="easymesh\easymeshrender.cpp" />
+    <ClCompile Include="easymesh\easymeshtransform.cpp" />
     <ClCompile Include="eglapp.cpp" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="entity.cpp" />

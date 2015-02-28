@@ -33,9 +33,9 @@ int CsgBsp::AddLeaf(int leaf_type, vec3 origin, vec3 normal, int above_idx)
             m_tree[above_idx].m_leaves[leaf_type] == -1))
     {
         if (m_tree.Count() != 0)
-            m_tree[above_idx].m_leaves[leaf_type] = m_tree.Count();
+            m_tree[above_idx].m_leaves[leaf_type] = (int32_t)m_tree.Count();
         m_tree.Push(CsgBspLeaf(origin, normal, above_idx));
-        return m_tree.Count() - 1;
+        return (int)m_tree.Count() - 1;
     }
 
     return -1;
@@ -133,7 +133,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
             if (m_tree[leaf_idx].m_leaves[1 - leaf_type] == LEAF_CURRENT)
             {
                 Leaf_to_add.Push(1 - leaf_type, leaf_idx, v[isec_base], v[((isec_base + 1) % 3)], isec_v[v_idx0], -1);
-                Leaf_to_add.Push(1 - leaf_type, leaf_idx, v[isec_base], isec_v[v_idx0], isec_v[v_idx1], Leaf_to_add.Count() - 1);
+                Leaf_to_add.Push(1 - leaf_type, leaf_idx, v[isec_base], isec_v[v_idx0], isec_v[v_idx1], (int)Leaf_to_add.Count() - 1);
             }
             else
             {
@@ -344,7 +344,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                                 if (skip_point)
                                     continue;
 #endif
-                                new_v_idx[k] = vert_list.Count();
+                                new_v_idx[k] = (int)vert_list.Count();
                                 vec3 PmV0 = (isec_v[k] - vert_list[t[isec_i[k]]].m1);
                                 vec3 V1mV0 = (vert_list[t[(isec_i[k] + 1) % 3]].m1 - vert_list[t[isec_i[k]]].m1);
                                 float alpha = length(PmV0) / length(V1mV0);
@@ -358,7 +358,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                             int v_idx1 = (isec_base == 1)?(0):(1);
                             //Leaf_type is the type for the triangle that is alone on its side.
                             int leaf_type = res_side[(isec_base + 2) % 3];
-                            int tri_to_remove = tri_to_process.Count() - 1;
+                            int tri_to_remove = (int)tri_to_process.Count() - 1;
 
 #if 0
                             if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT && tri_to_process.Last().m1.Last() == 1)

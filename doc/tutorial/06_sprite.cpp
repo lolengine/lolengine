@@ -34,7 +34,7 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites.Push(vec3(rand(-96, 640), rand(-96, 480), 0),
+            m_sprites.Push(vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
                            rand(0.f, 1.f));
         }
 
@@ -56,7 +56,7 @@ public:
             m_sprites[i].m1.y += 50.f * seconds;
             m_sprites[i].m2 = lol::fmod(m_sprites[i].m2 + seconds, 1.f);
             if (m_sprites[i].m1.y > 480 + 48)
-                m_sprites[i].m1.y = rand(-96, -48);
+                m_sprites[i].m1.y = (float)rand(-96, -48);
         }
 
         WorldEntity::TickGame(seconds);

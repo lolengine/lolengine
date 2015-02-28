@@ -110,7 +110,7 @@ public:
     void CsgXor()   { MeshCsg(CSGUsage::Xor); }
 
     //-------------------------------------------------------------------------
-    //Mesh Base operations
+    //Mesh Cursor operations
     //-------------------------------------------------------------------------
 public:
     /* [cmd:lp[ ]] will perform a loop of loopnb */
@@ -142,16 +142,16 @@ public:
     //Internal : Basic triangle/vertex operations
     //-------------------------------------------------------------------------
 private:
-    void AddVertex(vec3 const &coord);
+    void InternalAddVertex(vec3 const &coord);
     void AddDuplicateVertex(int i);
     void AddLerpVertex(int i, int j, float alpha);
     void AddLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
     VertexData GetLerpVertex(int i, int j, float alpha);
     VertexData GetLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
-    void AppendQuad(int i1, int i2, int i3, int i4, int base);
-    void AppendQuadDuplicateVerts(int i1, int i2, int i3, int i4, int base);
-    void AppendTriangle(int i1, int i2, int i3, int base);
-    void AppendTriangleDuplicateVerts(int i1, int i2, int i3, int base);
+    void InternalAddQuad(int i1, int i2, int i3, int i4, int base);
+    void InternalAddQuadDupVerts(int i1, int i2, int i3, int i4, int base);
+    void InternalAddTriangle(int i1, int i2, int i3, int base);
+    void InternalAddTriangleDupVerts(int i1, int i2, int i3, int base);
     void ComputeNormals(int start, int vcount);
 public:
     /* Remove all unused */
@@ -179,7 +179,6 @@ public:
     //-------------------------------------------------------------------------
     //Mesh transform operations
     //-------------------------------------------------------------------------
-
     /* [cmd:t/tx/ty/tz] Translate vertices
         - v : Translation quantity.
      */
@@ -261,19 +260,13 @@ public:
     /* [cmd:s/sx/sy/sz] Scale vertices
         - s : scale quantity.
      */
+    void Scale(float s);
     void Scale(vec3 const &s);
-    void Scale(float s) { Scale(vec3(s)); }
-    /* [cmd:mx] Mirror vertices through X-plane
+    /* [cmd:m*] Mirror vertices through *-plane
         Acts as an OpenBrace
      */
     void MirrorX();
-    /* [cmd:my] Mirror vertices through Y-plane
-        Acts as an OpenBrace
-     */
     void MirrorY();
-    /* [cmd:mz] Mirror vertices through Z-plane
-        Acts as an OpenBrace
-     */
     void MirrorZ();
     /* [no-cmd] Duplicates vertices and scale duplicate
         Acts as an OpenBrace
@@ -298,9 +291,8 @@ public:
     void SmoothMesh(int pass, int split_per_pass, int smooth_per_pass);
 
     //-------------------------------------------------------------------------
-    //Mesh shape operations
+    //Mesh shape primitive operations
     //-------------------------------------------------------------------------
-
     /* [cmd:ac] Cylinder centered on (0,0,0) with BBox [-.5*max(d1, d2), -.5*h, -.5*max(d1, d2)]
         - nbsides : Number of sides.                   [+.5*max(d1, d2), +.5*h, +.5*max(d1, d2)]
         - h : Height of the cylinder.

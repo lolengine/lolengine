@@ -532,7 +532,7 @@ public:
     bool FindConnectedTriangles(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
     bool FindConnectedTriangles(const ivec2 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
     bool FindConnectedTriangles(const ivec3 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
-    void AddVertex(int vert_id, vec3 vert_coord);
+    void RegisterVertex(int vert_id, vec3 vert_coord);
     void RemoveVertex(int vert_id);
     bool GetMasterList(array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
     void Clear() { vertex_list.Empty(); }

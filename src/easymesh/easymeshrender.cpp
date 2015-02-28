@@ -156,7 +156,7 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
     for (int i = 0; i < lights.Count(); ++i)
-        light_data << vec4(lights[i]->GetPosition(), lights[i]->GetType()) << lights[i]->GetColor();
+        light_data << vec4(lights[i]->GetPosition(), (float)lights[i]->GetType()) << lights[i]->GetColor();
     while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
         light_data << vec4::zero << vec4::zero;
 
@@ -233,13 +233,13 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
         memcpy(indices, &indexlist[0], indexlist.Bytes());
         m_ibo->Unlock();
 
-        m_indexcount = indexlist.Count();
+        m_indexcount = (int)indexlist.Count();
     }
 
     //init to a minimum of gpudata->m_render_mode size
     if (m_gpudatas.Count() <= gpudata->m_render_mode)
     {
-        int i = m_gpudatas.Count();
+        int i = (int)m_gpudatas.Count();
         int max = gpudata->m_render_mode + 1;
         m_gpudatas.Reserve(max);
         for (; i < max; i++)
@@ -262,8 +262,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 
 #define COPY_VBO \
     vbo_data = &vertexlist[0]; \
-    vbo_bytes = vertexlist.Bytes(); \
-    m_vertexcount = vertexlist.Count(); \
+    vbo_bytes = (int)vertexlist.Bytes(); \
+    m_vertexcount = (int)vertexlist.Count(); \
     new_vbo = new VertexBuffer(vbo_bytes); \
     void *mesh = new_vbo->Lock(0, 0); \
     memcpy(mesh, vbo_data, vbo_bytes); \

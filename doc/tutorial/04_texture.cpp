@@ -50,7 +50,7 @@ public:
             m_heightmap[i] = m_heightmap[i + 1];
 
         int height = m_heightmap.Last();
-        height = (height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
+        height = (int)(height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
         m_heightmap.Last() = height;
 

@@ -124,12 +124,12 @@ class FileData
         String ret;
         while (IsValid())
         {
-            int done = Read(&buf[0], buf.Count());
+            int done = Read(&buf[0], (int)buf.Count());
 
             if (done <= 0)
                 break;
 
-            int oldsize = ret.Count();
+            int oldsize = (int)ret.Count();
             ret.Resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
@@ -156,7 +156,7 @@ class FileData
 
     int WriteString(const String &buf)
     {
-        return Write((uint8_t const *)buf.C(), buf.Count());
+        return Write((uint8_t const *)buf.C(), (int)buf.Count());
     }
 
     long int GetPosFromStart()

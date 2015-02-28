@@ -186,7 +186,7 @@ public:
 
 private:
     //--
-    bool                CleanupEmptyLeaves(int leaf=0)
+    bool CleanupEmptyLeaves(int leaf=0)
     {
         int empty_children = 0;
         for (size_t i = 0; i < child_nb; ++i)
@@ -210,7 +210,7 @@ private:
         return false;
     }
     //--
-    void                RemoveElement(TE* element)
+    void RemoveElement(TE* element)
     {
         int idx = INDEX_NONE;
         for (int i = 0; i < m_elements.Count(); ++i)
@@ -228,7 +228,7 @@ private:
         CleanupEmptyLeaves();
     }
     //--
-    int                 AddElement(TE* element)
+    int AddElement(TE* element)
     {
         for (int i = 0; i < m_elements.Count(); ++i)
             if (m_elements[i].m_element == element)
@@ -238,12 +238,12 @@ private:
         new_element.m_element = element;
         new_element.m_leaves = array<int>();
         m_elements << new_element;
-        return m_elements.Count() - 1;
+        return (int)m_elements.Count() - 1;
     }
     //--
-    int                 AddLeaf(int parent)
+    int AddLeaf(int parent)
     {
-        int idx = m_tree.Count();
+        int idx = (int)m_tree.Count();
         if (m_free_leaves.Count())
         {
             idx = m_free_leaves.Pop();
@@ -255,7 +255,7 @@ private:
     }
 
     //--
-    bool                TestLeaf(int leaf, const TB& leaf_bb, const TB& test_bb, array<TE*>& elements)
+    bool TestLeaf(int leaf, const TB& leaf_bb, const TB& test_bb, array<TE*>& elements)
     {
         bool result = false;
         if (TestAABBVsAABB(leaf_bb, test_bb))
@@ -265,7 +265,7 @@ private:
             {
                 if (node.m_children[i] != 0)
                 {
-                    TB sub_aabb = GetSubAABB(leaf_bb, i);
+                    TB sub_aabb = GetSubAABB(leaf_bb, (int)i);
                     result = result | TestLeaf(node.m_children[i], sub_aabb, test_bb, elements);
                 }
                 else
@@ -279,14 +279,14 @@ private:
         return result;
     }
     //--
-    bool                RegisterElement(TE* element, int leaf, TB leaf_bb, int depth)
+    bool RegisterElement(TE* element, int leaf, TB leaf_bb, int depth)
     {
         if (TestAABBVsAABB(leaf_bb, element->GetAABB()))
         {
             bool found_child = false;
             for (size_t i = 0; i < child_nb; ++i)
             {
-                TB child_bb = GetSubAABB(leaf_bb, i);
+                TB child_bb = GetSubAABB(leaf_bb, (int)i);
                 int child_leaf = m_tree[leaf].m_children[i];
                 //there is a child, go further down
                 if (child_leaf != 0)

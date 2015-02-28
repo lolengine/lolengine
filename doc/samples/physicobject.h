@@ -173,7 +173,7 @@ public:
         MeshRand << "[sc#aad asph1 2]";
 #endif
 
-        MeshLimit << MeshRand.Count();
+        MeshLimit << (int)MeshRand.Count();
         MeshType << 1;
 #endif //USE_SPHERE
 
@@ -215,7 +215,7 @@ public:
 
         int RandLimit = RandValue;
         if (MeshLimit.Count() <= RandValue || RandValue < 0)
-            RandLimit = rand(MeshLimit.Count() - 1);
+            RandLimit = rand((int)MeshLimit.Count() - 1);
         RandValue = rand(MeshLimit[RandLimit], MeshLimit[RandLimit + 1]);
 
         m_physics = new EasyPhysic(this);
