@@ -94,20 +94,20 @@ private:
     //-------------------------------------------------------------------------
     //Mesh CSG operations
     //-------------------------------------------------------------------------
-private:
-    void MeshCsg(CSGUsage csg_operation);
-
 public:
     /* [cmd:csgu] Performs a Union operation as (mesh0_Outside + mesh1_Outside) */
-    void CsgUnion() { MeshCsg(CSGUsage::Union); }
+    void CsgUnion();
     /* [cmd:csgs] Performs a Substract operation as (mesh0_Outside + mesh1_Inside-inverted) */
-    void CsgSub()   { MeshCsg(CSGUsage::Substract); }
+    void CsgSub();
     /* [cmd:csgsl] Performs a Substract operation without keeping the mesh1 part */
-    void CsgSubL()  { MeshCsg(CSGUsage::SubstractLoss); }
+    void CsgSubL();
     /* [cmd:csga] Performs an And operation as (mesh0_Inside + mesh1_Inside) */
-    void CsgAnd()   { MeshCsg(CSGUsage::And); }
+    void CsgAnd();
     /* [cmd:csgx] Performs a Xor operation as (m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted) */
-    void CsgXor()   { MeshCsg(CSGUsage::Xor); }
+    void CsgXor();
+
+private:
+    void MeshCsg(CSGUsage csg_operation);
 
     //-------------------------------------------------------------------------
     //Mesh Cursor operations
@@ -127,7 +127,7 @@ public:
     void ToggleQuadWeighting();
     /* [cmd:tpbn] When active, normal will be computed after the build */
     void TogglePostBuildNormal();
-    /* [cmd:tpbn] When active, normal will be computed after the build */
+    /* [cmd:tpbn] When active, prevents vertices cleanup */
     void ToggleVerticeNoCleanup();
     /* [cmd:sc] Set both color */
     void SetCurColor(vec4 const &color);
@@ -142,16 +142,14 @@ public:
     //Internal : Basic triangle/vertex operations
     //-------------------------------------------------------------------------
 private:
-    void InternalAddVertex(vec3 const &coord);
-    void AddDuplicateVertex(int i);
+    void AddVertex(vec3 const &coord);
+    void AddDupVertex(int i);
     void AddLerpVertex(int i, int j, float alpha);
     void AddLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
     VertexData GetLerpVertex(int i, int j, float alpha);
     VertexData GetLerpVertex(VertexData const &vi, VertexData const &vj, float alpha);
-    void InternalAddQuad(int i1, int i2, int i3, int i4, int base);
-    void InternalAddQuadDupVerts(int i1, int i2, int i3, int i4, int base);
-    void InternalAddTriangle(int i1, int i2, int i3, int base);
-    void InternalAddTriangleDupVerts(int i1, int i2, int i3, int base);
+    void AddQuad(int i1, int i2, int i3, int i4, int base, bool duplicate = false);
+    void AddTriangle(int i1, int i2, int i3, int base, bool duplicate = false);
     void ComputeNormals(int start, int vcount);
 public:
     /* Remove all unused */
