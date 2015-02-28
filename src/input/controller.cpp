@@ -27,7 +27,7 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    ptrdiff_t keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         Log::Warn("trying to bind nonexistent key %s.%s\n",
@@ -72,7 +72,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
         return;
     }
 
-    int axisindex = device->GetAxisIndex(axis_name);
+    ptrdiff_t axisindex = device->GetAxisIndex(axis_name);
     if (axisindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis %s.%s\n",
@@ -93,7 +93,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    ptrdiff_t keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -114,7 +114,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    int minkeyindex = device->GetKeyIndex(min_key_name);
+    ptrdiff_t minkeyindex = device->GetKeyIndex(min_key_name);
     if (minkeyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -122,7 +122,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    int maxkeyindex = device->GetKeyIndex(max_key_name);
+    ptrdiff_t maxkeyindex = device->GetKeyIndex(max_key_name);
     if (maxkeyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -231,7 +231,7 @@ Controller::Controller(String const &name, int nb_keys, int nb_axis)
     m_name = name;
     m_keys.Resize(nb_keys);
     m_axis.Resize(nb_axis);
-    m_activate_nextframe = false;
+    m_activate_nextframe = true;
     m_deactivate_nextframe = false;
     m_active = false;
     if (Get(name) != nullptr)
@@ -267,11 +267,14 @@ void Controller::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 
-    for (int i = 0; i < m_keys.Count(); ++i)
-        m_keys[i].Update();
+    if (m_active)
+    {
+        for (int i = 0; i < m_keys.Count(); ++i)
+            m_keys[i].Update();
 
-    for (int i = 0; i < m_axis.Count(); ++i)
-        m_axis[i].Update();
+        for (int i = 0; i < m_axis.Count(); ++i)
+            m_axis[i].Update();
+    }
 
     if (m_activate_nextframe)
         m_active = true;

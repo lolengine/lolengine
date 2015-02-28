@@ -13,6 +13,7 @@
 namespace lol
 {
 
+//-----------------------------------------------------------------------------
 class KeyBinding
 {
 public:
@@ -68,6 +69,7 @@ protected:
     friend class Controller;
 };
 
+//-----------------------------------------------------------------------------
 class AxisBinding
 {
 public:
@@ -131,12 +133,12 @@ protected:
     friend class Controller;
 };
 
-
+//-----------------------------------------------------------------------------
 class Controller : public Entity
 {
 public:
     Controller(String const &name, int nb_keys, int nb_axis);
-    ~Controller();
+    virtual ~Controller();
 
     virtual void TickGame(float seconds);
 
