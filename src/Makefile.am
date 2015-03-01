@@ -10,6 +10,7 @@ liblolcore_a_SOURCES = \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
     entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
+    baselua.cpp baselua.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     numeric.h utils.h messageservice.cpp messageservice.h \

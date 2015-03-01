@@ -88,6 +88,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\application.cpp" />
+    <ClCompile Include="application\baselua.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
@@ -231,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
+    <ClInclude Include="application\baselua.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="commandstack.h" />
