@@ -257,18 +257,22 @@ protected:
             int i = -1 + (key < m_key) + 2 * (m_key < key);
 
             bool erased = false;
+            bool suicide = false;
 
             if (i < 0)
             {
                 erase_self();
-                delete this;
                 erased = true;
+                suicide = true;
             }
             else if (m_child[i] && m_child[i]->erase(key))
             {
                 rebalance_if_needed();
                 erased = true;
             }
+
+            if (suicide)
+                delete this;
 
             return erased;
         }
@@ -391,8 +395,12 @@ protected:
                         save->m_parent_slot = &this->m_child[i];
                 }
 
-                replacement->m_child[0]->update_balance();
-                replacement->m_child[1]->update_balance();
+                if (replacement->m_child[0])
+                    replacement->m_child[0]->update_balance();
+
+                if (replacement->m_child[1])
+                    replacement->m_child[1]->update_balance();
+
                 replacement->update_balance();
             }
         }
