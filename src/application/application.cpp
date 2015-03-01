@@ -74,7 +74,9 @@ Application::Application(char const *name, ivec2 resolution, float framerate)
     data = new ApplicationData(name, resolution, framerate);
 
     g_world.ExecLua("lua/init.lua");
-    int32_t gravity = g_world.GetVar<int32_t>("gravity");
+    float gravity = g_world.GetLuaNumber("gravity");
+    gravity = g_world.GetVar<float>("gravity");
+    gravity = gravity;
 }
 
 bool Application::MustTick()
