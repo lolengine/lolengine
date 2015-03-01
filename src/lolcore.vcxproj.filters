@@ -403,6 +403,9 @@
     <ClCompile Include="easymesh\easymeshcursor.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="application\baselua.cpp">
+      <Filter>application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -753,6 +756,9 @@
     </ClInclude>
     <ClInclude Include="lol\algorithm\portal.h">
       <Filter>lol\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="application\baselua.h">
+      <Filter>application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

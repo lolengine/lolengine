@@ -118,6 +118,7 @@
     <ClInclude Include="lua.h" />
     <ClInclude Include="lua.hpp" />
     <ClInclude Include="lualib.h" />
+    <ClInclude Include="luawrapper.hpp" />
     <ClInclude Include="lundump.h" />
     <ClInclude Include="lvm.h" />
     <ClInclude Include="lzio.h" />

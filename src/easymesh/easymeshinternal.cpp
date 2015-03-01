@@ -60,6 +60,16 @@ void EasyMesh::AddQuad(int i1, int i2, int i3, int i4, int base, bool duplicate)
 {
     if (duplicate)
     {
+        int vbase = (int)m_vert.Count();
+        AddDupVertex(base + i1);
+        AddDupVertex(base + i2);
+        AddDupVertex(base + i3);
+        AddDupVertex(base + i4);
+
+        AddQuad(0, 1, 2, 3, vbase);
+    }
+    else
+    {
         if (BD()->IsEnabled(MeshBuildOperation::QuadWeighting) &&
             !BD()->IsEnabled(MeshBuildOperation::IgnoreQuadWeighting))
         {
@@ -93,16 +103,6 @@ void EasyMesh::AddQuad(int i1, int i2, int i3, int i4, int base, bool duplicate)
             m_indices << i3 + base;
         }
     }
-    else
-    {
-        int vbase = (int)m_vert.Count();
-        AddDupVertex(base + i1);
-        AddDupVertex(base + i2);
-        AddDupVertex(base + i3);
-        AddDupVertex(base + i4);
-
-        AddQuad(0, 1, 2, 3, vbase);
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -110,15 +110,15 @@ void EasyMesh::AddTriangle(int i1, int i2, int i3, int base, bool duplicate)
 {
     if (duplicate)
     {
-        m_indices << base + i1;
-        m_indices << base + i2;
-        m_indices << base + i3;
-    }
-    else
-    {
         m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i1);
         m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i2);
         m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i3);
+    }
+    else
+    {
+        m_indices << base + i1;
+        m_indices << base + i2;
+        m_indices << base + i3;
     }
 }
 
