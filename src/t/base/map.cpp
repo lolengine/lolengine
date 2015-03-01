@@ -123,7 +123,7 @@ lolunit_declare_fixture(MapTest)
             presence[i] = 0;
         }
 
-        for (int i = 0 ; i < 10000 ; ++i)
+        for (int i = 0 ; i < 198 ; ++i)
         {
             // debug output
             // std::cout << "i " << i << ", a " << (int)a << ", b " << (int)b  << std::endl;
