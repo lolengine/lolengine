@@ -248,7 +248,6 @@ protected:
                 rebalance_if_needed();
             }
 
-
             return created;
         }
 
@@ -374,11 +373,10 @@ protected:
 
                     replacement->m_child[1 - i]->m_child[i] = save1;
                     if (save1)
-                        save1->m_parent_slot = &replacement->m_child[i]->m_child[1 - i];
+                        save1->m_parent_slot = &replacement->m_child[1 - i]->m_child[i];
                 }
                 else
                 {
-
                     replacement = m_child[i];
                     tree_node * save = replacement->m_child[1 - i];
 
@@ -414,6 +412,8 @@ protected:
             if (replacement)
             {
                 *replacement->m_parent_slot = replacement->m_child[1 - i];
+                if (replacement->m_child[1 - i])
+                    replacement->m_child[1 - i]->m_parent_slot = replacement->m_parent_slot;
 
                 replacement->m_parent_slot = m_parent_slot;
                 *replacement->m_parent_slot = replacement;
@@ -432,7 +432,13 @@ protected:
                 replacement->update_balance();
             }
             else
-                *m_parent_slot = nullptr;
+            {
+                *m_parent_slot = m_child[i];
+                if (m_child[i])
+                    m_child[i]->m_parent_slot = m_parent_slot;
+
+                replacement = m_child[i];
+            }
 
             replace_chain(replacement);
         }
