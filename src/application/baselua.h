@@ -20,6 +20,8 @@ namespace lol
 {
 
 //-----------------------------------------------------------------------------
+// Class available to link C++ class to Lua methods
+//--
 class LuaObject
 {
 protected:
@@ -27,11 +29,22 @@ protected:
     struct LuaLibrary
     {
         LuaLibrary() { }
-        void LoadTo(lua_State* l) { luaW_register<T>(l, name, statics, methods, ctor); }
+        void LoadTo(lua_State* l)
+        {
+#define LOLUA_WRAPPER 1
+#if LOLUA_WRAPPER
+            luaW_register<T>(l, name, statics, methods, ctor);
+#else
+            luaL_newlib(L, statics);
+            luaL_newlib(L, methods);
+#endif
+        }
     };
 };
 
 //-----------------------------------------------------------------------------
+// 
+//--
 struct LuaFunction
 {
     LuaFunction(lua_State* l, const char* name, int (*function)(lua_State*))
@@ -106,7 +119,6 @@ public:
     virtual ~LuaLoader();
 
     bool ExecLua(String const &lua);
-    double GetLuaNumber(String const &var);
 
     template<typename T>
     T GetVar(String const &name)
