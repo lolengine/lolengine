@@ -95,6 +95,47 @@ lolunit_declare_fixture(MatrixTest)
             lolunit_assert_doubles_equal(m2[i][j], mat2(1.f)[i][j], 1e-5);
     }
 
+    lolunit_declare_test(PMatrixTest)
+    {
+        mat4 m1(vec4(0,  1,  0,  0),
+               vec4(1,  0,  0,  0),
+               vec4(0,  0,  0,  1),
+               vec4(0,  0,  1,  0));
+
+        mat4 P1 = p_matrix(m1);
+        P1 = P1 * m1;
+
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+            for (int j = 0 ; j < 4 ; ++j)
+            {
+                if (i == j)
+                    lolunit_assert_equal(P1[i][j], 1);
+                else
+                    lolunit_assert_equal(P1[i][j], 0);
+            }
+        }
+
+        mat4 m2(vec4(0,  1,  0,  0),
+               vec4(0,  0,  1,  0),
+               vec4(0,  0,  0,  1),
+               vec4(1,  0,  0,  0));
+
+        mat4 P2 = p_matrix(m2);
+        P2 = P2 * m2;
+
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+            for (int j = 0 ; j < 4 ; ++j)
+            {
+                if (i == j)
+                    lolunit_assert_equal(P2[i][j], 1);
+                else
+                    lolunit_assert_equal(P2[i][j], 0);
+            }
+        }
+    }
+
 #if 0 /* XXX: LU decomposition is currently broken */
     lolunit_declare_test(lu_decomposition_3x3)
     {
