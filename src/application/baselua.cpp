@@ -93,16 +93,6 @@ bool LuaLoader::ExecLua(String const &lua)
 }
 
 //-----------------------------------------------------------------------------
-double LuaLoader::GetLuaNumber(String const &var)
-{
-    double ret;
-    lua_getglobal(m_lua_state, var.C());
-    ret = lua_tonumber(m_lua_state, -1);
-    lua_pop(m_lua_state, 1);
-    return ret;
-}
-
-//-----------------------------------------------------------------------------
 lua_State* LuaLoader::GetLuaState()
 {
     return m_lua_state;
