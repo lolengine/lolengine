@@ -592,13 +592,7 @@ mat_t<T, N, N> p_matrix(mat_t<T, N, N> const & m)
 
         for (int j = 0 ; j < N ; ++j)
         {
-            while (j < N && used[j])
-                ++j;
-
-            if (j >= N)
-                break;
-
-            if (index_max == -1 || m[i][j] > m[i][index_max])
+            if (!used[j] && (index_max == -1 || m[i][j] > m[i][index_max]))
                 index_max = j;
         }
 
