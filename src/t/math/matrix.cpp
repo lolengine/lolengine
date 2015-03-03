@@ -102,17 +102,17 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0,  0,  0,  1),
                vec4(0,  0,  1,  0));
 
-        mat4 P1 = p_matrix(m1);
-        P1 = P1 * m1;
+        vec_t<int, 4> perm1 = p_vector(m1);
+        m1 = permute(m1, perm1);
 
         for (int i = 0 ; i < 4 ; ++i)
         {
             for (int j = 0 ; j < 4 ; ++j)
             {
                 if (i == j)
-                    lolunit_assert_equal(P1[i][j], 1);
+                    lolunit_assert_equal(m1[i][j], 1);
                 else
-                    lolunit_assert_equal(P1[i][j], 0);
+                    lolunit_assert_equal(m1[i][j], 0);
             }
         }
 
@@ -121,17 +121,17 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0,  0,  0,  1),
                vec4(1,  0,  0,  0));
 
-        mat4 P2 = p_matrix(m2);
-        P2 = P2 * m2;
+        vec_t<int, 4> perm2 = p_vector(m2);
+        m2 = permute(m2, perm2);
 
         for (int i = 0 ; i < 4 ; ++i)
         {
             for (int j = 0 ; j < 4 ; ++j)
             {
                 if (i == j)
-                    lolunit_assert_equal(P2[i][j], 1);
+                    lolunit_assert_equal(m2[i][j], 1);
                 else
-                    lolunit_assert_equal(P2[i][j], 0);
+                    lolunit_assert_equal(m2[i][j], 0);
             }
         }
     }
