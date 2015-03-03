@@ -571,19 +571,19 @@ T const & determinant(mat_t<T, 1, 1> const &m)
 }
 
 /*
- * Compute permutation matrix
+ * Compute permutation vector of a square matrix
  */
 
 template<typename T, int N>
-mat_t<T, N, N> p_matrix(mat_t<T, N, N> const & m)
+vec_t<int, N> p_vector(mat_t<T, N, N> const & m)
 {
-    int used[N];
-    int order[N];
+    vec_t<int, N> used;
+    vec_t<int, N> permutation;
 
     for (int i = 0 ; i < N ; ++i)
     {
         used[i] = 0;
-        order[i] = -1;
+        permutation[i] = -1;
     }
 
     for (int i = 0 ; i < N ; ++i)
@@ -599,15 +599,31 @@ mat_t<T, N, N> p_matrix(mat_t<T, N, N> const & m)
         ASSERT(index_max != -1);
         ASSERT(index_max < N);
 
-        order[i] = index_max;
+        permutation[i] = index_max;
         used[index_max] = 1;
     }
 
-    mat_t<T, N, N> P;
-    for (int i = 0 ; i < N ; ++i)
-        P[order[i]][i] = 1.0f;
+    return permutation;
+}
 
-    return P;
+/*
+ * Compute the permutation of a square matrix according to the permutation vector
+ */
+
+template<typename T, int N>
+mat_t<T, N, N> permute(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
+{
+    mat_t<T, N, N> result;
+
+    for (int i = 0 ; i < N ; ++i)
+    {
+        for (int j = 0 ; j < N ; ++j)
+        {
+            result[i][j] = m[i][permutation[j]];
+        }
+    }
+
+    return result;
 }
 
 /*
