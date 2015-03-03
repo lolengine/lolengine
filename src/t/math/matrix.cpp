@@ -103,7 +103,7 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0,  0,  1,  0));
 
         vec_t<int, 4> perm1 = p_vector(m1);
-        m1 = permute(m1, perm1);
+        m1 = permute_rows(m1, perm1);
 
         for (int i = 0 ; i < 4 ; ++i)
         {
@@ -122,7 +122,7 @@ lolunit_declare_fixture(MatrixTest)
                vec4(1,  0,  0,  0));
 
         vec_t<int, 4> perm2 = p_vector(m2);
-        m2 = permute(m2, perm2);
+        m2 = permute_rows(m2, perm2);
 
         for (int i = 0 ; i < 4 ; ++i)
         {

@@ -611,7 +611,7 @@ vec_t<int, N> p_vector(mat_t<T, N, N> const & m)
  */
 
 template<typename T, int N>
-mat_t<T, N, N> permute(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
+mat_t<T, N, N> permute_rows(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
 {
     mat_t<T, N, N> result;
 
@@ -621,6 +621,29 @@ mat_t<T, N, N> permute(mat_t<T, N, N> const & m, vec_t<int, N> const & permutati
         {
             result[i][j] = m[i][permutation[j]];
         }
+    }
+
+    return result;
+}
+
+/*
+ * Compute the determinant of a permutation square matrix corresponding to the permutation vector
+ */
+
+template<int N>
+int permutation_det(vec_t<int, N> const & permutation)
+{
+    int result = 1;
+
+    for (int i = 0 ; i < N ; ++i)
+    {
+        int relative_index = permutation[i];
+
+        for (int j = 0 ; j < i ; ++j)
+            if (permutation[j] < permutation[i])
+                --relative_index;
+
+        result *= (relative_index % 2 ? -1 : 1);
     }
 
     return result;
