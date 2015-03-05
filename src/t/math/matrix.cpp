@@ -136,7 +136,6 @@ lolunit_declare_fixture(MatrixTest)
         }
     }
 
-#if 0 /* XXX: LU decomposition is currently broken */
     lolunit_declare_test(lu_decomposition_3x3)
     {
         mat3 m(vec3(2, 3, 5),
@@ -203,8 +202,11 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0, -1,  0,  0),
                vec4(0,  0, -1,  1));
         mat4 L, U;
-        lu_decomposition(m, L, U);
-        mat4 m2 = L * U;
+        vec_t<int, 4> P = p_vector(m);
+        mat4 permuted = permute_rows(m, P);
+
+        lu_decomposition(permute_rows(m, P), L, U);
+        mat4 m2 = permute_rows(L * U, p_transpose(P));
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
@@ -287,7 +289,6 @@ lolunit_declare_fixture(MatrixTest)
         for (int i = 0; i < 4; ++i)
             lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
     }
-#endif
 
     lolunit_declare_test(inverse_3x3)
     {

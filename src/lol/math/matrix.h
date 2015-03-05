@@ -547,21 +547,15 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
 template<typename T, int N>
 T determinant(mat_t<T, N, N> const &m)
 {
-#if 0 /* XXX: LU decomposition is currently broken */
     mat_t<T, N, N> L, U;
-    lu_decomposition(m, L, U);
+    vec_t<int, N> P = p_vector(m);
+    lu_decomposition(permute_rows(m, P), L, U);
 
     T det = 1;
     for (int i = 0 ; i < N ; ++i)
         det *= U[i][i];
 
-    return det;
-#else
-    T ret = (T)0;
-    for (int i = 0; i < N; ++i)
-        ret += m[i][0] * cofactor(m, i, 0);
-    return ret;
-#endif
+    return permutation_det(P) * det;
 }
 
 template<typename T>
@@ -592,7 +586,7 @@ vec_t<int, N> p_vector(mat_t<T, N, N> const & m)
 
         for (int j = 0 ; j < N ; ++j)
         {
-            if (!used[j] && (index_max == -1 || m[i][j] > m[i][index_max]))
+            if (!used[j] && (index_max == -1 || abs(m[i][j]) > abs(m[i][index_max])))
                 index_max = j;
         }
 
@@ -622,6 +616,33 @@ mat_t<T, N, N> permute_rows(mat_t<T, N, N> const & m, vec_t<int, N> const & perm
             result[i][j] = m[i][permutation[j]];
         }
     }
+
+    return result;
+}
+
+template<typename T, int N>
+mat_t<T, N, N> permute_cols(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
+{
+    mat_t<T, N, N> result;
+
+    for (int i = 0 ; i < N ; ++i)
+    {
+        for (int j = 0 ; j < N ; ++j)
+        {
+            result[i][j] = m[permutation[i]][j];
+        }
+    }
+
+    return result;
+}
+
+template<int N>
+vec_t<int, N> p_transpose(vec_t<int, N> P)
+{
+    vec_t<int, N> result;
+
+    for (int i = 0 ; i < N ; ++i)
+        result[P[i]] = i;
 
     return result;
 }
@@ -706,26 +727,14 @@ mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
 template<typename T, int N>
 mat_t<T, N, N> inverse(mat_t<T, N, N> const &m)
 {
-#if 0 /* XXX: LU decomposition is currently broken */
     mat_t<T, N, N> L, U;
-    lu_decomposition(m, L, U);
+    vec_t<int, N> P = p_vector(m);
 
-    mat_t<T, N, N> ret = u_inverse(U) * l_inverse(L);
+    lu_decomposition(permute_rows(m, P), L, U);
+
+    mat_t<T, N, N> ret = permute_cols(u_inverse(U) * l_inverse(L), p_transpose(P));
 
     return ret;
-#else
-    mat_t<T, N, N> ret;
-
-    T d = determinant(m);
-    if (d)
-    {
-        /* Transpose result matrix on the fly */
-        for (int i = 0; i < N; ++i)
-            for (int j = 0; j < N; ++j)
-                ret[i][j] = cofactor(m, j, i) / d;
-    }
-    return ret;
-#endif
 }
 
 /*
