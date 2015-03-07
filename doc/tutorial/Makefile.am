@@ -3,7 +3,7 @@ include $(top_srcdir)/build/autotools/common.am
 
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
                   06_sprite 07_input 08_fbo 11_fractal \
-                  12_voronoi 13_shader_builder
+                  12_voronoi 13_shader_builder 14_lol_lua
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
 01_triangle_CPPFLAGS = $(AM_CPPFLAGS)
@@ -54,4 +54,8 @@ endif
 13_shader_builder_SOURCES = 13_shader_builder.cpp
 13_shader_builder_CPPFLAGS = $(AM_CPPFLAGS)
 13_shader_builder_DEPENDENCIES = @LOL_DEPS@
+
+14_lol_lua_SOURCES = 14_lol_lua.cpp
+14_lol_lua_CPPFLAGS = $(AM_CPPFLAGS)
+14_lol_lua_DEPENDENCIES = @LOL_DEPS@
 

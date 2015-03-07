@@ -23,9 +23,9 @@ namespace lol
 //-----------------------------------------------------------------------------
 class LuaBaseData
 {
-    friend class LuaLoader;
+    friend class Lolua::Loader;
 
-    static int LuaPanic(lua_State* L)
+    static int LuaPanic(Lolua::State* L)
     {
         char const *message = lua_tostring(L, -1);
         Log::Error("%s\n", message);
@@ -33,12 +33,12 @@ class LuaBaseData
         return 0;
     }
 
-    static int LuaDoFile(lua_State *L)
+    static int LuaDoFile(Lolua::State *L)
     {
         if (lua_isnoneornil(L, 1))
             return LUA_ERRFILE;
 
-        LuaVar<char const*> var(L, 1);
+        Lolua::Var<char const*> var(L, 1);
         char const *filename = var.V();// lua_tostring(L, 1);
         int status = LUA_ERRFILE;
 
@@ -67,25 +67,28 @@ class LuaBaseData
     }
 };
 
+namespace Lolua
+{
+
 //-----------------------------------------------------------------------------
-LuaLoader::LuaLoader()
+Loader::Loader()
 {
     m_lua_state = luaL_newstate();
     lua_atpanic(m_lua_state, LuaBaseData::LuaPanic);
     luaL_openlibs(m_lua_state);
 
     /* Override dofile() */
-    LuaFunction do_file(m_lua_state, "dofile", LuaBaseData::LuaDoFile);
+    Lolua::Function do_file(m_lua_state, "dofile", LuaBaseData::LuaDoFile);
 }
 
 //-----------------------------------------------------------------------------
-LuaLoader::~LuaLoader()
+Loader::~Loader()
 {
     lua_close(m_lua_state);
 }
 
 //-----------------------------------------------------------------------------
-bool LuaLoader::ExecLua(String const &lua)
+bool Loader::ExecLua(String const &lua)
 {
     const char* c = lua_pushstring(m_lua_state, lua.C());
     int status = LuaBaseData::LuaDoFile(m_lua_state);
@@ -93,10 +96,12 @@ bool LuaLoader::ExecLua(String const &lua)
 }
 
 //-----------------------------------------------------------------------------
-lua_State* LuaLoader::GetLuaState()
+Lolua::State* Loader::GetLuaState()
 {
     return m_lua_state;
 }
+
+} /* namespace Lolua */
 
 } /* namespace lol */
 
