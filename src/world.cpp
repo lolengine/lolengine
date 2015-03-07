@@ -14,8 +14,6 @@
 #include <cstdlib>
 #include <ctype.h>
 
-//#include "lua/lua.hpp"
-
 namespace lol
 {
 
@@ -36,21 +34,10 @@ World g_world;
  * Public World class
  */
 
-const luaL_Reg test1Lua::m_statics[] = { { "getTest", test1Lua::getTest }, { NULL, NULL } };
-const luaL_Reg test1Lua::m_methods[] = { { NULL, NULL } };
-const char     test1Lua::m_class[]   = "test1";
-
 World::World()
-    : LuaLoader()
+    : Lolua::Loader()
 {
     g_world_data.m_lua_state = GetLuaState();
-    //------ DEBUG TEST
-    //m_test1.LoadTo(GetLuaState());
-    //luaL_loadfile(GetLuaState(), "lua/init.lua");
-    //LuaVar<int32_t> var(GetLuaState(), 1);
-    //test1Lua::Library m_test1(GetLuaState());
-    //------ DEBUG TEST
-
 }
 
 World::~World()
