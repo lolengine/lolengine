@@ -269,7 +269,7 @@ public:
     T* GetPtr(String const &name)
     {
         lua_getglobal(m_lua_state, name.C());
-        LuaPtr<T> var(m_lua_state, -1);
+        VarPtr<T> var(m_lua_state, -1);
         lua_pop(m_lua_state, 1);
         return var.V();
     }
