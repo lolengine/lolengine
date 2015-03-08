@@ -19,47 +19,56 @@
 using namespace lol;
 
 //-----------------------------------------------------------------------------
-class FooTestLua : public Lolua::ObjectDef
+class DemoObject : public Lolua::ObjectDef
 {
 public:
-    FooTestLua() : Lolua::ObjectDef() {}
-    virtual ~FooTestLua() {}
-    static FooTestLua* New(Lolua::State* l, int arg_nb)
+    DemoObject() : Lolua::ObjectDef() {}
+    virtual ~DemoObject() {}
+    static DemoObject* New(Lolua::State* l, int arg_nb)
     {
-        return new FooTestLua();
+        UNUSED(l);
+        UNUSED(arg_nb);
+        return new DemoObject();
     }
-    static const char* GetClassName();
-    static const char* GetClassLibName();
-    static const char* GetClassInstName();
+    static const char* GetClassName() { static const char name[] = "LoluaDemo"; return name; }
+    static const char* GetClassLibName() { static const char name[] = "LoluaDemoLib"; return name; }
+    static const char* GetClassInstName() { static const char name[] = "LoluaDemoInst"; return name; }
+
     static const Lolua::ClassMethod* GetStaticMethods();
     static const Lolua::ClassMethod* GetInstanceMethods();
-    static int Test1(Lolua::State* L)
+
+    static int AddFive(Lolua::State* l)
     {
-        Lolua::Var<int> i1(L, 1);
-        i1 += 5;
-        return i1.Return(L);
+        Lolua::Var<int> i(l, 1);
+        i += 5;
+        return i.Return(l);
     }
-    static int Test2(Lolua::State* L)
+    static int AddTenInstance(Lolua::State* l)
     {
-        Lolua::VarPtr<FooTestLua> foo(L, 1);
-        Lolua::Var<float> i1(L, 2);
-        i1 = foo.V()->Test2Inst(i1.V());
-        return i1.Return(L);
+        Lolua::VarPtr<DemoObject> obj(l, 1);
+        Lolua::Var<float> f(l, 2);
+        f = obj.V()->AddTenMethod(f.V());
+        return f.Return(l);
     }
-    float Test2Inst(float f)
+    float AddTenMethod(float f)
     {
         return (f + 10);
     }
 };
 
-static const Lolua::ClassMethod FooTest_statics[] = { { "Test1", &FooTestLua::Test1 }, { NULL, NULL } };
-const Lolua::ClassMethod FooTest_methods[] = { { "Test2", &FooTestLua::Test2 }, { NULL, NULL } };
+//-----------------------------------------------------------------------------
+static const Lolua::ClassMethod loluademo_statics[] = { { "AddFive", &DemoObject::AddFive }, { NULL, NULL } };
+static const Lolua::ClassMethod loluademo_methods[] = { { "AddTenInstance", &DemoObject::AddTenInstance }, { NULL, NULL } };
+const Lolua::ClassMethod* DemoObject::GetStaticMethods() { return loluademo_statics; }
+const Lolua::ClassMethod* DemoObject::GetInstanceMethods() { return loluademo_methods; }
 
-const char* FooTestLua::GetClassName() { static const char name[] = "FooTest"; return name; }
-const char* FooTestLua::GetClassLibName() { static const char name[] = "FooTestLib"; return name; }
-const char* FooTestLua::GetClassInstName() { static const char name[] = "FooTestInst"; return name; }
-const Lolua::ClassMethod* FooTestLua::GetStaticMethods() { return FooTest_statics; }
-const Lolua::ClassMethod* FooTestLua::GetInstanceMethods() { return FooTest_methods; }
+//-----------------------------------------------------------------------------
+static int GlobalAddString(Lolua::State* l)
+{
+    Lolua::Var<String> s(l, 1);
+    s += "_added";
+    return s.Return(l);
+}
 
 //-----------------------------------------------------------------------------
 class LoluaDemoLoader : public Lolua::Loader
@@ -69,9 +78,11 @@ public:
     {
         Lolua::State* l = GetLuaState();
 
-        Lolua::Object::Register<FooTestLua>(l);
+        //Registering demo object
+        Lolua::Object::Register<DemoObject>(l);
 
-        ExecLua("14_lol_lua.lua");
+        //Registering function
+        Lolua::Function add_string(l, "GlobalAddString", &GlobalAddString);
     }
     virtual ~LoluaDemoLoader()
     {
@@ -93,15 +104,31 @@ public:
 
         LoluaDemoLoader* demo_loader = new LoluaDemoLoader();
 
-        float TestValueNum = demo_loader->GetVar<float>("TestValueNum");
-        int32_t TestValueInt = demo_loader->GetVar<int32_t>("TestValueInt");
-        uint32_t TestValueUint = demo_loader->GetVar<uint32_t>("TestValueUint");
-        String TestValueStr = demo_loader->GetVar<String>("TestValueStr");
-        int32_t testtruc_return = demo_loader->GetVar<int32_t>("footest_return");
-        float testtruc_return2 = demo_loader->GetVar<float>("footest_return2");
+        //Execute script
+        demo_loader->ExecLua("14_lol_lua.lua");
 
-        String::Printf("Lua Vars: TestValueNum: %.2f, TestValueInt: %i, TestValueUint: %i, TestValueStr: %s.", 
-                                  TestValueNum, TestValueInt, TestValueUint, TestValueStr);
+        //Grab global test values
+        float testvalue_num = demo_loader->GetVar<float>("testvalue_num");
+        int32_t testvalue_int = demo_loader->GetVar<int32_t>("testvalue_int");
+        uint32_t testvalue_uint = demo_loader->GetVar<uint32_t>("testvalue_uint");
+        String testvalue_str = demo_loader->GetVar<String>("testvalue_str");
+
+        //Grab string modified with function
+        String function_return = demo_loader->GetVar<String>("function_return");
+
+        //Grab global values modified with DemoObject
+        int32_t loluademo_return = demo_loader->GetVar<int32_t>("loluademo_return");
+        float loluademo_inst_return = demo_loader->GetVar<float>("loluademo_inst_return");
+        DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
+
+        String loluademo_inst_name = loluademo_inst->GetClassName();
+
+        Log::Info("Lua Vars: \
+            testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n", 
+            testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
+        Log::Info("Lua Vars: \
+            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_inst_name: %s.\n",
+            function_return.C(), loluademo_return, loluademo_inst_return, loluademo_inst_name.C());
 
         delete demo_loader;
 
