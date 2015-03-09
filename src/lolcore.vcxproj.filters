@@ -88,7 +88,7 @@
     <Filter Include="image\filter">
       <UniqueIdentifier>{3f420a7d-0538-463a-925b-3f8968bf628e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua">
+    <Filter Include="lolua">
       <UniqueIdentifier>{25cc0513-ad71-4fbe-bd24-acc88aa66833}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -409,8 +409,8 @@
     <ClCompile Include="easymesh\easymeshlua.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
-    <ClCompile Include="application\baselua.cpp">
-      <Filter>lua</Filter>
+    <ClCompile Include="lolua\baselua.cpp">
+      <Filter>lolua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -766,8 +766,8 @@
     <ClInclude Include="easymesh\easymeshlua.h">
       <Filter>easymesh</Filter>
     </ClInclude>
-    <ClInclude Include="application\baselua.h">
-      <Filter>lua</Filter>
+    <ClInclude Include="lolua\baselua.h">
+      <Filter>lolua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

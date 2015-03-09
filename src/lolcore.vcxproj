@@ -88,7 +88,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\application.cpp" />
-    <ClCompile Include="application\baselua.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
@@ -156,6 +155,7 @@
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="lolua\baselua.cpp" />
     <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
@@ -233,7 +233,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
-    <ClInclude Include="application\baselua.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="commandstack.h" />
@@ -260,6 +259,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
+    <ClInclude Include="lolua\baselua.h" />
     <ClInclude Include="lol\algorithm\aabb_tree.h" />
     <ClInclude Include="lol\algorithm\all.h" />
     <ClInclude Include="lol\algorithm\portal.h" />
