@@ -1,5 +1,5 @@
 //
-// Lol Engine
+// EasyMesh-Build: The code belonging to Vertex build operations
 //
 // Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //            (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
@@ -11,11 +11,6 @@
 //
 
 #pragma once
-
-//
-// The EasyMesh class
-// ------------------
-//
 
 namespace lol
 {

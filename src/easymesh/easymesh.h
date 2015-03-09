@@ -1,5 +1,6 @@
 //
-// Lol Engine
+// EasyMesh: A class about generating 3D mesh without using the hands
+//           Mesh can be generated using C++ or lua code
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
@@ -12,14 +13,10 @@
 
 #pragma once
 
-//
-// The EasyMesh class
-// ------------------
-//
-
 #include "commandstack.h"
 #include "easymeshrender.h"
 #include "easymeshbuild.h"
+#include "easymeshlua.h"
 
 namespace lol
 {
@@ -81,12 +78,19 @@ class EasyMesh : public Mesh
 public:
     EasyMesh();
     EasyMesh(const EasyMesh& em);
-
-    bool Compile(char const *command, bool Execute = true);
-    void ExecuteCmdStack(bool ExecAllStack = true);
-    void MeshConvert();
     MeshRender GetMeshState() { return m_state; }
     bool SetRender(bool should_render);
+
+    //-------------------------------------------------------------------------
+    //Render-build operation
+    //-------------------------------------------------------------------------
+    void MeshConvert();
+
+    //-------------------------------------------------------------------------
+    //Command-build (lua now) operations
+    //-------------------------------------------------------------------------
+    bool Compile(char const *command, bool Execute = true);
+    void ExecuteCmdStack(bool ExecAllStack = true);
 
 private:
     void UpdateVertexDict(array< int, int > &vertex_dict);

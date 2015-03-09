@@ -30,13 +30,8 @@ public:
         UNUSED(arg_nb);
         return new DemoObject();
     }
-    static const char* GetClassName() { static const char name[] = "LoluaDemo"; return name; }
-    static const char* GetClassLibName() { static const char name[] = "LoluaDemoLib"; return name; }
-    static const char* GetClassInstName() { static const char name[] = "LoluaDemoInst"; return name; }
 
-    static const Lolua::ClassMethod* GetStaticMethods();
-    static const Lolua::ClassMethod* GetInstanceMethods();
-
+    //-------------------------------------------------------------------------
     static int AddFive(Lolua::State* l)
     {
         Lolua::Var<int> i(l, 1);
@@ -54,13 +49,35 @@ public:
     {
         return (f + 10);
     }
-};
 
-//-----------------------------------------------------------------------------
-static const Lolua::ClassMethod loluademo_statics[] = { { "AddFive", &DemoObject::AddFive }, { NULL, NULL } };
-static const Lolua::ClassMethod loluademo_methods[] = { { "AddTenInstance", &DemoObject::AddTenInstance }, { NULL, NULL } };
-const Lolua::ClassMethod* DemoObject::GetStaticMethods() { return loluademo_statics; }
-const Lolua::ClassMethod* DemoObject::GetInstanceMethods() { return loluademo_methods; }
+    static int GetX(Lolua::State* l)
+    {
+        Lolua::VarPtr<DemoObject> obj(l, 1);
+        Lolua::Var<int32_t> i;
+        i = obj.V()->m_x;
+        return i.Return(l);
+    }
+    static int SetX(Lolua::State* l)
+    {
+        Lolua::VarPtr<DemoObject> obj(l, 1);
+        Lolua::Var<int32_t> i(l, 2);
+        obj.V()->m_x = i.V();
+        return 0;
+    }
+
+    //-------------------------------------------------------------------------
+    static const Lolua::ObjectLib* GetLib()
+    {
+        static const Lolua::ObjectLib lib = Lolua::ObjectLib(
+            "LoluaDemo",
+            { { "AddFive", &DemoObject::AddFive } },
+            { { "AddTenInstance", &DemoObject::AddTenInstance } },
+            { { "X", &DemoObject::GetX, &DemoObject::SetX } });
+        return &lib;
+    }
+
+    int m_x = 0;
+};
 
 //-----------------------------------------------------------------------------
 static int GlobalAddString(Lolua::State* l)
@@ -88,6 +105,29 @@ public:
     {
 
     }
+    void TestStuff()
+    {
+        Lolua::State* l = GetLuaState();
+
+        /*
+        //create property
+        lua_pushnumber(l, 5.0);
+        lua_setfield(l, -2, "x");
+
+        lua_getglobal(l, "vector");
+        int table = lua_istable(l, -1);
+        lua_getfield(l, -1, "x");
+        Lolua::Var<float> var(l, -1);
+        lua_pop(l, 2);
+        vec3 t;
+        */
+        
+        //table = lua_isuserdata(l, -1);
+        //Var<T> var(m_lua_state, -1);
+        //lua_pop(m_lua_state, 1);
+        //lua_getfield (lua_State *L, int index, const char *k);
+        //return var.V();
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -106,6 +146,7 @@ public:
 
         //Execute script
         demo_loader->ExecLua("14_lol_lua.lua");
+        demo_loader->TestStuff();
 
         //Grab global test values
         float testvalue_num = demo_loader->GetVar<float>("testvalue_num");
@@ -118,17 +159,16 @@ public:
 
         //Grab global values modified with DemoObject
         int32_t loluademo_return = demo_loader->GetVar<int32_t>("loluademo_return");
+        int32_t loluademo_getx = demo_loader->GetVar<int32_t>("loluademo_getx");
         float loluademo_inst_return = demo_loader->GetVar<float>("loluademo_inst_return");
         DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
-
-        String loluademo_inst_name = loluademo_inst->GetClassName();
 
         Log::Info("Lua Vars: \
             testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n", 
             testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
         Log::Info("Lua Vars: \
-            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_inst_name: %s.\n",
-            function_return.C(), loluademo_return, loluademo_inst_return, loluademo_inst_name.C());
+            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
+            function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
 
         delete demo_loader;
 

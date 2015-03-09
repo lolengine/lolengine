@@ -88,6 +88,9 @@
     <Filter Include="image\filter">
       <UniqueIdentifier>{3f420a7d-0538-463a-925b-3f8968bf628e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{25cc0513-ad71-4fbe-bd24-acc88aa66833}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\crop.cpp">
@@ -403,8 +406,11 @@
     <ClCompile Include="easymesh\easymeshcursor.cpp">
       <Filter>easymesh</Filter>
     </ClCompile>
+    <ClCompile Include="easymesh\easymeshlua.cpp">
+      <Filter>easymesh</Filter>
+    </ClCompile>
     <ClCompile Include="application\baselua.cpp">
-      <Filter>application</Filter>
+      <Filter>lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -757,8 +763,11 @@
     <ClInclude Include="lol\algorithm\portal.h">
       <Filter>lol\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="easymesh\easymeshlua.h">
+      <Filter>easymesh</Filter>
+    </ClInclude>
     <ClInclude Include="application\baselua.h">
-      <Filter>application</Filter>
+      <Filter>lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

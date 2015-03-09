@@ -1,5 +1,5 @@
 //
-// Lol Engine
+// EasyMesh-Csg: The code belonging to CSG operations
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //            (c) 2010-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
@@ -7,11 +7,6 @@
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
 //   http://www.wtfpl.net/ for more details.
-//
-
-//
-// The EasyMesh class
-// ------------------
 //
 
 #include <lol/engine-internal.h>

@@ -25,7 +25,74 @@ namespace Lolua
 
 //-----------------------------------------------------------------------------
 typedef luaL_Reg ClassMethod;
+typedef struct ClassVar
+{
+    const char *name;
+    lua_CFunction get;
+    lua_CFunction set;
+} ClassVar;
 typedef lua_State State;
+
+//-----------------------------------------------------------------------------
+struct ObjectLib
+{
+    typedef struct ClassVarStr
+    {
+        ClassVarStr() { }
+        ClassVarStr(String var_name, lua_CFunction get, lua_CFunction set)
+        {
+            m_get_name = String("Get") + var_name;
+            m_set_name = String("Set") + var_name;
+            m_get = get;
+            m_set = set;
+        }
+        String m_get_name = "";
+        String m_set_name = "";
+        lua_CFunction m_get = nullptr;
+        lua_CFunction m_set = nullptr;
+    } ClassVarStr;
+
+    ObjectLib(String class_name,
+        array<ClassMethod> statics,
+        array<ClassMethod> methods,
+        array<ClassVar> variables)
+    {
+        m_class_name = class_name;
+        m_static_name = class_name + "_lib";
+        m_method_name = class_name + "_inst";
+
+        m_statics = statics;
+        if (m_statics.Count() == 0
+            || m_statics.Last().name != nullptr
+            || m_statics.Last().func != nullptr)
+            m_statics.Push({ nullptr, nullptr });
+
+        m_methods = methods;
+        if (m_methods.Count() == 0
+            || m_methods.Last().name != nullptr
+            || m_methods.Last().func != nullptr)
+            m_methods.Push({ nullptr, nullptr });
+
+        for (ClassVar& cv : variables)
+        {
+            if (cv.name && cv.get && cv.set)
+            {
+                m_variables.Push({ cv.name, cv.get, cv.set });
+            }
+        }
+        if (m_variables.Count() == 0
+            || variables.Last().name != nullptr
+            || variables.Last().get != nullptr
+            || variables.Last().set != nullptr)
+            m_variables.Push(ClassVarStr());
+    }
+    String m_class_name = "";
+    String m_static_name = "";
+    String m_method_name = "";
+    array<ClassMethod> m_statics;
+    array<ClassMethod> m_methods;
+    array<ClassVarStr> m_variables;
+};
 
 //-----------------------------------------------------------------------------
 class ObjectDef
@@ -40,11 +107,7 @@ public:
         ASSERT(false);
         return nullptr;
     }
-    static const char* GetClassName()               { ASSERT(false); return nullptr; }
-    static const char* GetClassLibName()            { ASSERT(false); return nullptr;; }
-    static const char* GetClassInstName()           { ASSERT(false); return nullptr; }
-    static const ClassMethod* GetStaticMethods()    { ASSERT(false); return nullptr; }
-    static const ClassMethod* GetInstanceMethods()  { ASSERT(false); return nullptr; }
+    static const ObjectLib* GetLib() { ASSERT(false); return nullptr; }
 };
 
 //-----------------------------------------------------------------------------
@@ -64,7 +127,7 @@ public:
         //Default statics
         static const luaL_Reg default_statics[]
         {
-            { "New",  New<TLuaClass> },
+            { "New", New<TLuaClass> },
             { "__gc", Del<TLuaClass> },
             { NULL, NULL }
         };
@@ -82,25 +145,65 @@ public:
         //__le : Less than or equal to(<= )
 
         //Create Static metatable
-        luaL_newmetatable(l, TLuaClass::GetClassLibName());
+        luaL_newmetatable(l, GetStaticName<TLuaClass>());
         //Register default statics and template one
         luaL_setfuncs(l, default_statics, 0);
-        luaL_setfuncs(l, TLuaClass::GetStaticMethods(), 0);
-        //Push funcs on metatable
+        luaL_setfuncs(l, GetStaticMethods<TLuaClass>(), 0);
+        //Push metatable on stack
         lua_pushvalue(l, -1);
         //Set the "__index" field of the metatable to point to itself, pops the stack
         lua_setfield(l, -1, "__index");
         //Set it global to validate the operation
-        lua_setglobal(l, TLuaClass::GetClassName());
+        lua_setglobal(l, GetObjectName<TLuaClass>());
 
         //Repeat all the operations for instance metatable
-        luaL_newmetatable(l, TLuaClass::GetClassInstName());
-        luaL_setfuncs(l, TLuaClass::GetInstanceMethods(), 0);
+        luaL_newmetatable(l, GetMethodName<TLuaClass>());
+        luaL_setfuncs(l, GetInstanceMethods<TLuaClass>(), 0);
         lua_pushvalue(l, -1);
         lua_setfield(l, -1, "__index");
+
+        //Create variables Get/Set
+        const array<ObjectLib::ClassVarStr>& variables = GetVariables<TLuaClass>();
+        for (const ObjectLib::ClassVarStr& var : variables)
+        {
+            if (!var.m_get || !var.m_set)
+                continue;
+
+            //Add getter
+            lua_pushcfunction(l, var.m_get);
+            lua_setfield(l, -2, var.m_get_name.C());
+
+            //Add setter
+            lua_pushcfunction(l, var.m_set);
+            lua_setfield(l, -2, var.m_set_name.C());
+        }
+
         //Don't set it to global, but pop the stack to hide the metatable
         lua_pop(l, 1);
     }
+
+private:
+    template <typename TLuaClass>
+    static const ObjectLib* GetLib()
+    {
+        const ObjectLib* lib = TLuaClass::GetLib();
+        ASSERT(lib);
+        return lib;
+    }
+
+public:
+    template <typename TLuaClass>
+    static const char* GetObjectName() { return GetLib<TLuaClass>()->m_class_name.C(); }
+    template <typename TLuaClass>
+    static const char* GetStaticName() { return GetLib<TLuaClass>()->m_static_name.C(); }
+    template <typename TLuaClass>
+    static const char* GetMethodName() { return GetLib<TLuaClass>()->m_method_name.C(); }
+    template <typename TLuaClass>
+    static const ClassMethod* GetStaticMethods() { return GetLib<TLuaClass>()->m_statics.Data(); }
+    template <typename TLuaClass>
+    static const ClassMethod* GetInstanceMethods() { return GetLib<TLuaClass>()->m_methods.Data(); }
+    template <typename TLuaClass>
+    static const array<ObjectLib::ClassVarStr>& GetVariables() { return GetLib<TLuaClass>()->m_variables; }
 
 protected:
     //-------------------------------------------------------------------------
@@ -115,7 +218,7 @@ protected:
         *data = TLuaClass::New(l, n_args);
 
         //Retrieve instance table
-        luaL_getmetatable(l, TLuaClass::GetClassInstName());
+        luaL_getmetatable(l, GetMethodName<TLuaClass>());
         //Set metatable to instance
         lua_setmetatable(l, -2);
         //Return 1 so Lua will get the UserData and clean the stack.
@@ -134,10 +237,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-//
-//--
-struct Function
+class Function
 {
+public:
     Function(State* l, const char* name, int(*function)(State*))
     {
         lua_pushcfunction(l, function);
@@ -147,7 +249,7 @@ struct Function
 
 //-----------------------------------------------------------------------------
 template<typename T>
-struct VarPtr
+class VarPtr
 {
 protected:
     T* m_value = nullptr;
@@ -155,15 +257,15 @@ protected:
 public:
     VarPtr()                        { }
     VarPtr(T* value)                { m_value = value; }
-    VarPtr(State* l, int index) { InnerGet(l, index); }
+    VarPtr(State* l, int index)     { InnerGet(l, index); }
     inline T* V()                   { return m_value; }
     inline T* operator=(T* value)   { m_value = value; }
-    inline int Return(State* l) { InnerPush(l); return 1; }
+    inline int Return(State* l)     { InnerPush(l); return 1; }
 
 protected:
     virtual void InnerGet(State* l, int index)
     {
-        T** obj = static_cast<T**>(luaL_checkudata(l, index, T::GetClassInstName()));
+        T** obj = static_cast<T**>(luaL_checkudata(l, index, Object::GetMethodName<T>()));
         m_value = obj ? *obj : nullptr;
     }
     void InnerPush(State* l)
@@ -174,7 +276,7 @@ protected:
 };
 //-----------------------------------------------------------------------------
 template<typename T>
-struct VarPtrLight
+class VarPtrLight
 {
 public:
     VarPtrLight() : VarPtr() { }
@@ -183,14 +285,14 @@ public:
 protected:
     virtual void InnerGet(State* l, int index)
     {
-        T** obj = static_cast<T**>(luaL_testudata(l, index, T::GetClassInstName()));
+        T** obj = static_cast<T**>(luaL_testudata(l, index, Object::GetMethodName<T>()));
         m_value = obj ? *obj : nullptr;
     }
 };
 
 //-----------------------------------------------------------------------------
 template<typename T>
-struct Var
+class Var
 {
 private:
     T m_value;
@@ -201,20 +303,20 @@ public:
     Var(State* l, int index)    { InnerGet(l, index); }
     inline T& V()               { return m_value; }
     inline int Return(State* l) { InnerPush(l); return 1; }
-    inline Var<T>&  operator-(const T& value)  { m_value  - value; return *this; }
-    inline Var<T>&  operator+(const T& value)  { m_value  + value; return *this; }
+    inline Var<T>&  operator-(const T& value)  { m_value - value; return *this; }
+    inline Var<T>&  operator+(const T& value)  { m_value + value; return *this; }
     inline Var<T>&  operator*(const T& value)  { m_value  * value; return *this; }
-    inline Var<T>&  operator/(const T& value)  { m_value  / value; return *this; }
-    inline Var<T>&  operator=(const T& value)  { m_value  = value; return *this; }
+    inline Var<T>&  operator/(const T& value)  { m_value / value; return *this; }
+    inline Var<T>&  operator=(const T& value)  { m_value = value; return *this; }
     inline Var<T>& operator-=(const T& value)  { m_value -= value; return *this; }
     inline Var<T>& operator+=(const T& value)  { m_value += value; return *this; }
     inline Var<T>& operator*=(const T& value)  { m_value *= value; return *this; }
     inline Var<T>& operator/=(const T& value)  { m_value /= value; return *this; }
-    inline Var<T>&  operator-(const Var<T>& o) { m_value  - o.m_value; return *this; }
-    inline Var<T>&  operator+(const Var<T>& o) { m_value  + o.m_value; return *this; }
+    inline Var<T>&  operator-(const Var<T>& o) { m_value - o.m_value; return *this; }
+    inline Var<T>&  operator+(const Var<T>& o) { m_value + o.m_value; return *this; }
     inline Var<T>&  operator*(const Var<T>& o) { m_value  * o.m_value; return *this; }
-    inline Var<T>&  operator/(const Var<T>& o) { m_value  / o.m_value; return *this; }
-    inline Var<T>&  operator=(const Var<T>& o) { m_value  = o.m_value; return *this; }
+    inline Var<T>&  operator/(const Var<T>& o) { m_value / o.m_value; return *this; }
+    inline Var<T>&  operator=(const Var<T>& o) { m_value = o.m_value; return *this; }
     inline Var<T>& operator-=(const Var<T>& o) { m_value -= o.m_value; return *this; }
     inline Var<T>& operator+=(const Var<T>& o) { m_value += o.m_value; return *this; }
     inline Var<T>& operator*=(const Var<T>& o) { m_value *= o.m_value; return *this; }
