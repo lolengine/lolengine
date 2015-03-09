@@ -43,7 +43,7 @@
 #include <lol/../sprite.h>
 #include <lol/../text.h>
 #include <lol/../tileset.h>
-#include <lol/../application/baselua.h>
+#include <lol/../lolua/baselua.h>
 #include <lol/../world.h>
 
 // Other objects
