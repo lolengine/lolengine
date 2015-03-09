@@ -65,7 +65,9 @@ liblolcore_headers = \
 
 liblolcore_sources = \
     application/application.cpp application/application.h \
-    application/baselua.cpp application/baselua.h \
+    \
+    lolua/baselua.cpp lolua/baselua.h \
+    \
     eglapp.cpp eglapp.h \
     \
     commandstack.h \
