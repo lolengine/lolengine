@@ -1,5 +1,5 @@
 //
-// Lol Engine
+// EasyMesh-Build: The code belonging to Vertex build operations
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
@@ -8,11 +8,6 @@
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
 //   http://www.wtfpl.net/ for more details.
-//
-
-//
-// The EasyMesh class
-// ------------------
 //
 
 #include <lol/engine-internal.h>

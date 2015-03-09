@@ -1,5 +1,5 @@
 //
-// Lol Engine
+// EasyMesh-Render: The code belonging to render operations
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
 //            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
@@ -8,11 +8,6 @@
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
 //   http://www.wtfpl.net/ for more details.
-//
-
-//
-// The EasyMesh class
-// ------------------
 //
 
 #include <lol/engine-internal.h>
@@ -27,6 +22,52 @@ LOLFX_RESOURCE_DECLARE(shinydebuglighting);
 LOLFX_RESOURCE_DECLARE(shinydebugnormal);
 LOLFX_RESOURCE_DECLARE(shinydebugUV);
 LOLFX_RESOURCE_DECLARE(shiny_SK);
+
+//-----------------------------------------------------------------------------
+void EasyMesh::MeshConvert()
+{
+    /* Default material */
+    Shader *shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+
+    /* Push index buffer to GPU */
+    IndexBuffer *ibo = new IndexBuffer(m_indices.Count() * sizeof(uint16_t));
+    uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
+    for (int i = 0; i < m_indices.Count(); ++i)
+        indices[i] = m_indices[i];
+    ibo->Unlock();
+
+    /* Push vertex buffer to GPU */
+    struct Vertex
+    {
+        vec3 pos, normal;
+        u8vec4 color;
+        vec4 texcoord;
+    };
+
+    VertexDeclaration *vdecl = new VertexDeclaration(
+        VertexStream<vec3, vec3, u8vec4, vec4>(VertexUsage::Position,
+                                               VertexUsage::Normal,
+                                               VertexUsage::Color,
+                                               VertexUsage::TexCoord));
+
+    VertexBuffer *vbo = new VertexBuffer(m_vert.Count() * sizeof(Vertex));
+    Vertex *vert = (Vertex *)vbo->Lock(0, 0);
+    for (int i = 0; i < m_vert.Count(); ++i)
+    {
+        vert[i].pos = m_vert[i].m_coord,
+        vert[i].normal = m_vert[i].m_normal,
+        vert[i].color = (u8vec4)(m_vert[i].m_color * 255.f);
+        vert[i].texcoord = m_vert[i].m_texcoord;
+    }
+    vbo->Unlock();
+
+    /* Reference our new data in our submesh */
+    m_submeshes.Push(new SubMesh(shader, vdecl));
+    m_submeshes.Last()->SetIndexBuffer(ibo);
+    m_submeshes.Last()->SetVertexBuffer(0, vbo);
+
+    m_state = MeshRender::CanRender;
+}
 
 //-----------------------------------------------------------------------------
 GpuShaderData::GpuShaderData()
