@@ -16,6 +16,11 @@ namespace lol
 {
 
 //-----------------------------------------------------------------------------
+void EasyMesh::TranslateX(float t) { Translate(vec3(t, 0.f, 0.f)); }
+void EasyMesh::TranslateY(float t) { Translate(vec3(0.f, t, 0.f)); }
+void EasyMesh::TranslateZ(float t) { Translate(vec3(0.f, 0.f, t)); }
+
+//-----------------------------------------------------------------------------
 void EasyMesh::Translate(vec3 const &v)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
@@ -188,6 +193,9 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
 
 //-----------------------------------------------------------------------------
 void EasyMesh::Scale(float s) { Scale(vec3(s)); }
+void EasyMesh::ScaleX(float s) { Scale(vec3(s, 0.f, 0.f)); }
+void EasyMesh::ScaleY(float s) { Scale(vec3(0.f, s, 0.f)); }
+void EasyMesh::ScaleZ(float s) { Scale(vec3(0.f, 0.f, s)); }
 void EasyMesh::Scale(vec3 const &s)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))

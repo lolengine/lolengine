@@ -35,7 +35,7 @@ World g_world;
  */
 
 World::World()
-    : Lolua::Loader()
+    : LuaLoader()
 {
     g_world_data.m_lua_state = GetLuaState();
 }

@@ -19,12 +19,13 @@
 using namespace lol;
 
 //-----------------------------------------------------------------------------
-class DemoObject : public Lolua::ObjectDef
+class DemoObject : public LuaObjectDef
 {
+    typedef Lolua::VarPtr<DemoObject> LuaDemoObjectPtr;
 public:
-    DemoObject() : Lolua::ObjectDef() {}
+    DemoObject() : LuaObjectDef() {}
     virtual ~DemoObject() {}
-    static DemoObject* New(Lolua::State* l, int arg_nb)
+    static DemoObject* New(LuaState* l, int arg_nb)
     {
         UNUSED(l);
         UNUSED(arg_nb);
@@ -32,17 +33,19 @@ public:
     }
 
     //-------------------------------------------------------------------------
-    static int AddFive(Lolua::State* l)
+    static int AddFive(LuaState* l)
     {
-        Lolua::Var<int> i(l, 1);
+        LuaInt32 i; i.Get(l, 1);
         i += 5;
         return i.Return(l);
     }
-    static int AddTenInstance(Lolua::State* l)
+    static int AddTenInstance(LuaState* l)
     {
-        Lolua::VarPtr<DemoObject> obj(l, 1);
-        Lolua::Var<float> f(l, 2);
-        f = obj.V()->AddTenMethod(f.V());
+        LuaStack stack(l);
+        LuaDemoObjectPtr obj;
+        LuaFloat f;
+        stack >> obj >> f;
+        f = obj->AddTenMethod(f);
         return f.Return(l);
     }
     float AddTenMethod(float f)
@@ -50,25 +53,29 @@ public:
         return (f + 10);
     }
 
-    static int GetX(Lolua::State* l)
+    static int GetX(LuaState* l)
     {
-        Lolua::VarPtr<DemoObject> obj(l, 1);
-        Lolua::Var<int32_t> i;
-        i = obj.V()->m_x;
-        return i.Return(l);
+        LuaStack stack(l);
+        LuaDemoObjectPtr obj;
+        LuaInt32 i;
+        stack >> obj;
+        i = obj->m_x;
+        return stack << i;
     }
-    static int SetX(Lolua::State* l)
+    static int SetX(LuaState* l)
     {
-        Lolua::VarPtr<DemoObject> obj(l, 1);
-        Lolua::Var<int32_t> i(l, 2);
-        obj.V()->m_x = i.V();
+        LuaStack stack(l);
+        LuaDemoObjectPtr obj;
+        LuaInt32 i;
+        stack >> obj >> i;
+        obj->m_x = i;
         return 0;
     }
 
     //-------------------------------------------------------------------------
-    static const Lolua::ObjectLib* GetLib()
+    static const LuaObjectLib* GetLib()
     {
-        static const Lolua::ObjectLib lib = Lolua::ObjectLib(
+        static const LuaObjectLib lib = LuaObjectLib(
             "LoluaDemo",
             { { "AddFive", &DemoObject::AddFive } },
             { { "AddTenInstance", &DemoObject::AddTenInstance } },
@@ -80,26 +87,26 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-static int GlobalAddString(Lolua::State* l)
+static int GlobalAddString(LuaState* l)
 {
-    Lolua::Var<String> s(l, 1);
-    s += "_added";
+    LuaString s; s.Get(l, 1);
+    s() += "_added";
     return s.Return(l);
 }
 
 //-----------------------------------------------------------------------------
-class LoluaDemoLoader : public Lolua::Loader
+class LoluaDemoLoader : public LuaLoader
 {
 public:
-    LoluaDemoLoader() : Lolua::Loader()
+    LoluaDemoLoader() : LuaLoader()
     {
-        Lolua::State* l = GetLuaState();
+        LuaState* l = GetLuaState();
 
         //Registering demo object
-        Lolua::Object::Register<DemoObject>(l);
+        LuaObject::Register<DemoObject>(l);
 
         //Registering function
-        Lolua::Function add_string(l, "GlobalAddString", &GlobalAddString);
+        LuaFunction add_string(l, "GlobalAddString", &GlobalAddString);
     }
     virtual ~LoluaDemoLoader()
     {
@@ -107,7 +114,7 @@ public:
     }
     void TestStuff()
     {
-        Lolua::State* l = GetLuaState();
+        LuaState* l = GetLuaState();
 
         /*
         //create property

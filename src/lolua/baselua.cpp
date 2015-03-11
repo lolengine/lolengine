@@ -25,7 +25,7 @@ class LuaBaseData
 {
     friend class Lolua::Loader;
 
-    static int LuaPanic(Lolua::State* L)
+    static int LuaPanic(LuaState* L)
     {
         char const *message = lua_tostring(L, -1);
         Log::Error("%s\n", message);
@@ -33,13 +33,13 @@ class LuaBaseData
         return 0;
     }
 
-    static int LuaDoFile(Lolua::State *L)
+    static int LuaDoFile(LuaState *L)
     {
         if (lua_isnoneornil(L, 1))
             return LUA_ERRFILE;
 
-        Lolua::Var<char const*> var(L, 1);
-        char const *filename = var.V();// lua_tostring(L, 1);
+        LuaCharPtr var; var.Get(L, 1);
+        char const *filename = var;// lua_tostring(L, 1);
         int status = LUA_ERRFILE;
 
         array<String> pathlist = System::GetPathList(filename);
@@ -78,7 +78,7 @@ Loader::Loader()
     luaL_openlibs(m_lua_state);
 
     /* Override dofile() */
-    Lolua::Function do_file(m_lua_state, "dofile", LuaBaseData::LuaDoFile);
+    LuaFunction do_file(m_lua_state, "dofile", LuaBaseData::LuaDoFile);
 }
 
 //-----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ bool Loader::ExecLua(String const &lua)
 }
 
 //-----------------------------------------------------------------------------
-Lolua::State* Loader::GetLuaState()
+LuaState* Loader::GetLuaState()
 {
     return m_lua_state;
 }

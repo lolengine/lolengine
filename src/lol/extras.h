@@ -53,6 +53,7 @@
 #include <lol/../application/application.h>
 #include <lol/../easymesh/csgbsp.h>
 #include <lol/../easymesh/easymesh.h>
+#include <lol/../easymesh/easymeshlua.h>
 
 // Managers
 #include <lol/../ticker.h>

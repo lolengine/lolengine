@@ -22,12 +22,12 @@
 using namespace lol;
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaLoader::EasyMeshLuaLoader() : Lolua::Loader()
+EasyMeshLuaLoader::EasyMeshLuaLoader() : LuaLoader()
 {
-    Lolua::State* l = GetLuaState();
+    LuaState* l = GetLuaState();
 
     //Registering demo object
-    Lolua::Object::Register<EasyMeshLuaObject>(l);
+    LuaObject::Register<EasyMeshLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ EasyMeshLuaLoader::~EasyMeshLuaLoader()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject::EasyMeshLuaObject() : Lolua::ObjectDef()
+EasyMeshLuaObject::EasyMeshLuaObject() : LuaObjectDef()
 {
 }
 
@@ -47,20 +47,104 @@ EasyMeshLuaObject::~EasyMeshLuaObject()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject* EasyMeshLuaObject::New(Lolua::State* l, int arg_nb)
+EasyMeshLuaObject* EasyMeshLuaObject::New(LuaState* l, int arg_nb)
 {
     UNUSED(l);
     UNUSED(arg_nb);
     return new EasyMeshLuaObject();
 }
 
-//-------------------------------------------------------------------------
-const Lolua::ObjectLib* EasyMeshLuaObject::GetLib()
+//-----------------------------------------------------------------------------
+const LuaObjectLib* EasyMeshLuaObject::GetLib()
 {
-    static const Lolua::ObjectLib lib = Lolua::ObjectLib(
+    static const LuaObjectLib lib = LuaObjectLib(
         "EasyMesh",
-        { { nullptr, nullptr } },
-        { { nullptr, nullptr } },
+        //Statics
+        { /*{ nullptr, nullptr }*/ },
+        //Methods
+        {
+            //-----------------------------------------------------------------
+            { "AddCylinder", &AppendCylinder }, { "ac", &AppendCylinder },
+            { "AddSphere", &AppendSphere }, { "asph", &AppendSphere },
+            { "AddCapsule", &AppendCapsule }, { "acap", &AppendCapsule },
+            { "AddTorus", &AppendTorus }, { "ato", &AppendTorus },
+            { "AddBox", &AppendBox }, { "ab", &AppendBox },
+            { "AddStar", &AppendStar }, { "as", &AppendStar },
+            { "AddExpandedStar", &AppendExpandedStar }, { "aes", &AppendExpandedStar },
+            { "AddDisc", &AppendDisc }, { "ad", &AppendDisc },
+            { "AddTriangle", &AppendSimpleTriangle }, { "at", &AppendSimpleTriangle },
+            { "AddQuad", &AppendSimpleQuad }, { "aq", &AppendSimpleQuad },
+            { "AddCog", &AppendCog }, { "acog", &AppendCog },
+            //-----------------------------------------------------------------
+            { "setcolor", &SetCurColor }, { "sc", &SetCurColor },
+            { "setcolora", &SetCurColorA }, { "sca", &SetCurColorA },
+            { "setcolorb", &SetCurColorB }, { "scb", &SetCurColorB },
+            { "setcolorv", &SetVertColor }, { "scv", &SetVertColor },
+            //-----------------------------------------------------------------
+            { "TranslateX", &TranslateX }, { "tx", &TranslateX },
+            { "TranslateY", &TranslateY }, { "ty", &TranslateY },
+            { "TranslateZ", &TranslateZ }, { "tz", &TranslateZ },
+            { "Translate",  &Translate },  { "t",  &Translate },
+            //-----------------------------------------------------------------
+            { "RotateX", &RotateX }, { "rx", &RotateX },
+            { "RotateY", &RotateY }, { "ry", &RotateY },
+            { "RotateZ", &RotateZ }, { "rz", &RotateZ },
+            { "Rotate",  &Rotate },  { "r",  &Rotate },
+            //-----------------------------------------------------------------
+            { "ScaleX", &ScaleX }, { "sx", &ScaleX },
+            { "ScaleY", &ScaleY }, { "sy", &ScaleY },
+            { "ScaleZ", &ScaleZ }, { "sz", &ScaleZ },
+            { "Scale", &Scale }, { "s", &Scale },
+            //-----------------------------------------------------------------
+            { "RadialJitter", &RadialJitter }, { "rj", &RadialJitter },
+            //-----------------------------------------------------------------
+            { "TaperX", &TaperX }, { "tax", &TaperX },
+            { "TaperY", &TaperY }, { "tay", &TaperY },
+            { "TaperZ", &TaperZ }, { "taz", &TaperZ },
+            //-----------------------------------------------------------------
+            { "TwistX", &TwistX }, { "twx", &TwistX },
+            { "TwistY", &TwistY }, { "twy", &TwistY },
+            { "TwistZ", &TwistZ }, { "twz", &TwistZ },
+            //-----------------------------------------------------------------
+            { "ShearX", &ShearX }, { "shx", &ShearX },
+            { "ShearY", &ShearY }, { "shy", &ShearY },
+            { "ShearZ", &ShearZ }, { "shz", &ShearZ },
+            //-----------------------------------------------------------------
+            { "StretchX", &StretchX }, { "stx", &StretchX },
+            { "StretchY", &StretchY }, { "sty", &StretchY },
+            { "StretchZ", &StretchZ }, { "stz", &StretchZ },
+            //-----------------------------------------------------------------
+            { "BendXY", &BendXY }, { "bdxy", &BendXY },
+            { "BendXZ", &BendXZ }, { "bdxz", &BendXZ },
+            { "BendYX", &BendYX }, { "bdyx", &BendYX },
+            { "BendYZ", &BendYZ }, { "bdyz", &BendYZ },
+            { "BendZX", &BendZX }, { "bdzx", &BendZX },
+            { "BendZY", &BendZY }, { "bdzy", &BendZY },
+            //-----------------------------------------------------------------
+            { "MirrorX", &MirrorX }, { "mx", &MirrorX },
+            { "MirrorY", &MirrorY }, { "my", &MirrorY },
+            { "MirrorZ", &MirrorZ }, { "mz", &MirrorZ },
+            //-----------------------------------------------------------------
+            { "Loop", &LoopStart }, { "lp", &LoopStart },
+            { "LoopDo", &LoopEnd }, { "ld", &LoopEnd },
+            { "BraceOpen", &OpenBrace }, { "bop", &OpenBrace },
+            { "BraceClose", &CloseBrace }, { "bcl", &CloseBrace },
+            //-----------------------------------------------------------------
+            { "VerticeMerge", &VerticesMerge }, { "vm", &VerticesMerge },
+            { "VerticeSeparate", &VerticesSeparate }, { "vs", &VerticesSeparate },
+            //-----------------------------------------------------------------
+            { "Duplicate", &Duplicate }, { "dup", &Duplicate },
+            { "Smooth", &Smooth }, { "smth", &Smooth },
+            { "SplitTriangles", &SplitTriangles }, { "splt", &SplitTriangles },
+            { "Chamfer", &Chamfer }, { "cf", &Chamfer },
+            //-----------------------------------------------------------------
+            { "ToggleScaleWinding", &ToggleScaleWinding }, { "tsw", &ToggleScaleWinding },
+            { "ToggleQuadWeighting", &ToggleQuadWeighting }, { "tqw", &ToggleQuadWeighting },
+            { "TogglePostBuildNormal", &TogglePostBuildNormal }, { "tpbn", &TogglePostBuildNormal },
+            { "ToggleVerticeNoCleanup", &ToggleVerticeNoCleanup }, { "tvnc", &ToggleVerticeNoCleanup },
+            //-----------------------------------------------------------------
+        },
+        //Variables
         { { nullptr, nullptr, nullptr } });
     return &lib;
 }
