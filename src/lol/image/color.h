@@ -21,7 +21,7 @@
 namespace lol
 {
 
-class Color
+class Color : public vec4
 {
 public:
     /*
@@ -317,15 +317,20 @@ public:
     static vec3 WavelengthToCIExyY(float nm);
 
     /*
-     * Convert colors to hex strings.
-     */
+    * Convert colors to hex strings.
+    */
     static String HexString4Bpp(vec3 c);
     static String HexString4Bpp(vec4 c);
     static String HexString8Bpp(vec3 c);
     static String HexString8Bpp(vec4 c);
 
     /*
-     * Some predefined colours
+    * Convert hex strings to colors.
+    */
+    static vec4 C8BppHexString(String c);
+    
+    /*
+    * Some predefined colours
      */
     static const vec4 black, red, green, yellow, blue, magenta, cyan, white, gray_dark, gray, gray_light;
 };

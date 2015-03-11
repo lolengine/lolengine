@@ -55,5 +55,35 @@ String Color::HexString8Bpp(vec4 c)
     return String::Printf("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
 }
 
+/*
+* Conversion from colours to hexadecimal
+*/
+vec4 Color::C8BppHexString(String s)
+{
+    String c = s[0] == '#' ? &s[1] : s;
+    uint32_t tmp = std::strtol(c.C(), nullptr, 16);
+    if (c.Count() == 3)
+    {
+        tmp = 0x11000000u * (tmp >> 8)
+            | 0x00110000u * ((tmp >> 4) & 0xf)
+            | 0x00001100u * (tmp & 0xf)
+            | 0x000000ffu;
+    }
+    else if (c.Count() == 4)
+    {
+        tmp = 0x11000000u * (tmp >> 12)
+            | 0x00110000u * ((tmp >> 8) & 0xf)
+            | 0x00001100u * ((tmp >> 4) & 0xf)
+            | 0x00000011u * (tmp & 0xf);
+    }
+    else if (c.Count() == 6)
+    {
+        tmp = 0xffu | 0x100u * tmp;
+    }
+    vec4 color(0.f);
+    ivec4 v(tmp >> 24, (tmp >> 16) & 0xff, (tmp >> 8) & 0xff, tmp & 0xff);
+    return vec4(v) * (1.f / 255.f);
+}
+
 } /* namespace lol */
 

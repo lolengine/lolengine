@@ -16,7 +16,6 @@
 #include "commandstack.h"
 #include "easymeshrender.h"
 #include "easymeshbuild.h"
-#include "easymeshlua.h"
 
 namespace lol
 {
@@ -181,6 +180,12 @@ public:
     //-------------------------------------------------------------------------
     //Mesh transform operations
     //-------------------------------------------------------------------------
+    /* See Translate */
+    void TranslateX(float t);
+    /* See Translate */
+    void TranslateY(float t);
+    /* See Translate */
+    void TranslateZ(float t);
     /* [cmd:t/tx/ty/tz] Translate vertices
         - v : Translation quantity.
      */
@@ -263,6 +268,9 @@ public:
         - s : scale quantity.
      */
     void Scale(float s);
+    void ScaleX(float s);
+    void ScaleY(float s);
+    void ScaleZ(float s);
     void Scale(vec3 const &s);
     /* [cmd:m*] Mirror vertices through *-plane
         Acts as an OpenBrace

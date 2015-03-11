@@ -18,7 +18,7 @@
 namespace lol
 {
 
-class World : public Lolua::Loader
+class World : public LuaLoader
 {
 public:
     World();
