@@ -48,6 +48,11 @@
       <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="05_easymesh.lua">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1c5b8702-290c-42da-aa9e-671348f5b747}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>

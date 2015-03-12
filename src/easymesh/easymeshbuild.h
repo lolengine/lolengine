@@ -493,7 +493,7 @@ public:
     array<vec2, vec2>   m_texcoord_custom_build2[MeshType::MAX];
     uint32_t            m_texcoord_build_type[MeshType::MAX];
     uint32_t            m_texcoord_build_type2[MeshType::MAX];
-    uint32_t            m_build_flags;
+    uint32_t            m_build_flags = MeshBuildOperation::PreventVertCleanup;
 };
 
 //VDictType -- A safe enum for VertexDictionnary operations. ------------------
