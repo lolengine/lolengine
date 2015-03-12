@@ -328,7 +328,7 @@ public:
     * Convert hex strings to colors.
     */
     static vec4 C8BppHexString(String c);
-    
+
     /*
     * Some predefined colours
      */
