@@ -22,7 +22,7 @@ public:
     EasyMeshLuaLoader();
     virtual ~EasyMeshLuaLoader();
 };
-    
+
 //-----------------------------------------------------------------------------
 class EasyMeshLuaObject : public LuaObjectDef
 {

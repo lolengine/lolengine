@@ -128,7 +128,7 @@ public:
         lua_pop(l, 2);
         vec3 t;
         */
-        
+
         //table = lua_isuserdata(l, -1);
         //Var<T> var(m_lua_state, -1);
         //lua_pop(m_lua_state, 1);
@@ -171,7 +171,7 @@ public:
         DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
 
         Log::Info("Lua Vars: \
-            testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n", 
+            testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n",
             testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
         Log::Info("Lua Vars: \
             function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
