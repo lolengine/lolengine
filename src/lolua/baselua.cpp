@@ -25,21 +25,21 @@ class LuaBaseData
 {
     friend class Lolua::Loader;
 
-    static int LuaPanic(LuaState* L)
+    static int LuaPanic(LuaState* l)
     {
-        char const *message = lua_tostring(L, -1);
+        char const *message = lua_tostring(l, -1);
         Log::Error("%s\n", message);
         DebugAbort();
         return 0;
     }
 
-    static int LuaDoFile(LuaState *L)
+    static int LuaDoFile(LuaState *l)
     {
-        if (lua_isnoneornil(L, 1))
+        if (lua_isnoneornil(l, 1))
             return LUA_ERRFILE;
 
-        LuaCharPtr var; var.Get(L, 1);
-        char const *filename = var;// lua_tostring(L, 1);
+        LuaCharPtr var; var.Get(l, 1);
+        char const *filename = var;// lua_tostring(l, 1);
         int status = LUA_ERRFILE;
 
         array<String> pathlist = System::GetPathList(filename);
@@ -53,15 +53,21 @@ class LuaBaseData
                 f.Close();
 
                 Log::Debug("loading Lua file %s\n", pathlist[i].C());
-                status = luaL_dostring(L, s.C());
+                status = luaL_dostring(l, s.C());
                 break;
             }
         }
 
         if (status == LUA_ERRFILE)
             Log::Error("could not find Lua file %s\n", filename);
+        else if (status == 1)
+        {
+            LuaString error; error.Get(l, -1);
+            Log::Error("Lua error %s\n", error().C());
+            lua_pop(l, 1);
+        }
 
-        lua_pop(L, 1);
+        lua_pop(l, 1);
 
         return status;
     }

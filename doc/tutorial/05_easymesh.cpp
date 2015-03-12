@@ -27,26 +27,33 @@ class EasyMeshTutorial : public WorldEntity
 public:
     EasyMeshTutorial()
     {
-        m_gears.Push(EasyMesh(), mat4(1.0f), 0.0f);
-        m_gears.Push(EasyMesh(), mat4(1.0f), 0.0f);
-        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.Push(EasyMesh(), mat4(1.0f), 180.0f / 18);
+        EasyMeshLuaLoader EzMhLoader;
+        EzMhLoader.ExecLua("05_easymesh.lua");
 
+        EasyMeshLuaObject* gears0 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g0");
+        EasyMeshLuaObject* gears1 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g1");
+        EasyMeshLuaObject* gears2 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g2");
+        EasyMeshLuaObject* gears3 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g3");
+        EasyMeshLuaObject* gears4 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g4");
+
+        m_gears.Push(gears0->GetMesh(), mat4(1.0f), 0.0f);
+        m_gears.Push(gears1->GetMesh(), mat4(1.0f), 0.0f);
+        m_gears.Push(gears2->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.Push(gears3->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.Push(gears4->GetMesh(), mat4(1.0f), 180.0f / 18);
+
+        /*
         m_gears[0].m1.Compile("[sc#00f ab 8 1 8 ty -.25]"
                               "[sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0 s .1 .1 .1 ty -.1 csgu]"
                               "[sc#fff scb#000 acg 12 10 10 10 20 20 5 5 0.1 0 s .05 .05 .05 tx -1.5 ty .3 csgu]"
                               "[sc#00f ab 5 3 9 tx 2.5 csgs]"
                               "[[ sc#fff ab 3   1.4 2   tx -2 tz -2 "
                               "[sc#fff ab 2.1  .7 1.1 ty .5 tx -1.4 tz -1.4 csgs] mz] csgu]");
-        //m_gears[0].m1.Compile("[sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0 s .1 .1 .1 [sc#00f ab 3 1 2 ty .25 tx 1 csgs]]");
         m_gears[1].m1.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0 s .1 .1 .1");
-        //m_gears[2].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1 [sc#00f scb#00f ab 2 2 2 tx 1.5]");
-        //m_gears[3].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1 [sc#00f scb#00f ab 2 2 2 tx 1.5]");
-        //m_gears[4].m1.Compile("sc#9ff scb#9ff acg 18 10 5 5 30 30 5 5 0.1 0 s .1 .1 .1 [sc#00f scb#00f ab 2 2 2 tx 1.5]");
         m_gears[2].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgu]]");
         m_gears[3].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgs]]");
         m_gears[4].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csga]]");
+        */
 
         m_angle = 0;
 

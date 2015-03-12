@@ -32,6 +32,7 @@ public:
     //-------------------------------------------------------------------------
     EasyMeshLuaObject();
     virtual ~EasyMeshLuaObject();
+    EasyMesh& GetMesh() { return m_instance; }
 
     //-------------------------------------------------------------------------
     static EasyMeshLuaObject* New(LuaState* l, int arg_nb);
@@ -558,6 +559,14 @@ public:
         m->m_instance.VerticesSeparate();
         return 0;
     }
+    static int VerticesCleanup(LuaState* l)
+    {
+        LuaStack s(l);
+        EzMeshPtr m;
+        s >> m;
+        m->m_instance.VerticesCleanup();
+        return 0;
+    }
     //-------------------------------------------------------------------------
     static int Duplicate(LuaState* l)
     {
@@ -602,7 +611,7 @@ public:
         EzMeshPtr m;
         s >> m;
         LuaVec4 c;
-        if (s.GetArgs() == 1 && !c.IsValid(l, 2))
+        if (s.GetArgs() == 2 && !c.IsValid(l, 2))
         {
             LuaString str;
             s >> str;
