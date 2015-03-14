@@ -35,10 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="generated\scenesetup-parser.cpp" />
-    <ClCompile Include="generated\scenesetup-scanner.cpp" />
     <ClCompile Include="meshviewer.cpp" />
-    <ClCompile Include="scenesetup-compiler.cpp" />
     <ClCompile Include="scenesetup.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -56,10 +53,6 @@
     <None Include="data\mesh-buffer.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="generated\location.hh" />
-    <None Include="generated\position.hh" />
-    <None Include="generated\scenesetup-parser.output" />
-    <None Include="generated\stack.hh" />
     <None Include="meshviewer.index.html">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -72,11 +65,11 @@
     <None Include="meshviewer.nacl.nmf">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="scenesetup-parser.y" />
-    <None Include="scenesetup-scanner.l" />
     <None Include="easymeshdictionnary.js">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="meshviewer_buffer.lua" />
+    <None Include="meshviewer_init.lua" />
     <None Include="scenesetupdictionnary.js">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -98,8 +91,6 @@
     <LolFxCompile Include="shinymvtexture.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="generated\scenesetup-parser.h" />
-    <ClInclude Include="scenesetup-compiler.h" />
     <ClInclude Include="scenesetup.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

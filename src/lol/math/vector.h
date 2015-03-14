@@ -280,38 +280,39 @@ struct vec_t<T,2>
         struct { T x, y; };
         struct { T r, g; };
         struct { T s, t; };
+        struct { T r, t; };
 
 #if !_DOXYGEN_SKIP_ME
-        vec_t<T,2,9000> const xx, rr, ss;
-        vec_t<T,2,9001> _____ xy, rg, st;
-        vec_t<T,2,9010> _____ yx, gr, ts;
-        vec_t<T,2,9011> const yy, gg, tt;
+        vec_t<T, 2, 9000> const xx, rr, ss/**/;
+        vec_t<T, 2, 9001> _____ xy, rg, st, rt;
+        vec_t<T, 2, 9010> _____ yx, gr, ts, tr;
+        vec_t<T, 2, 9011> const yy, gg, tt/**/;
 
-        vec_t<T,3,90000> const xxx, rrr, sss;
-        vec_t<T,3,90001> const xxy, rrg, sst;
-        vec_t<T,3,90010> const xyx, rgr, sts;
-        vec_t<T,3,90011> const xyy, rgg, stt;
-        vec_t<T,3,90100> const yxx, grr, tss;
-        vec_t<T,3,90101> const yxy, grg, tst;
-        vec_t<T,3,90110> const yyx, ggr, tts;
-        vec_t<T,3,90111> const yyy, ggg, ttt;
+        vec_t<T, 3, 90000> const xxx, rrr, sss /**/;
+        vec_t<T, 3, 90001> const xxy, rrg, sst, rrt;
+        vec_t<T, 3, 90010> const xyx, rgr, sts, rtr;
+        vec_t<T, 3, 90011> const xyy, rgg, stt, rtt;
+        vec_t<T, 3, 90100> const yxx, grr, tss, trr;
+        vec_t<T, 3, 90101> const yxy, grg, tst, trt;
+        vec_t<T, 3, 90110> const yyx, ggr, tts, ttr;
+        vec_t<T, 3, 90111> const yyy, ggg, ttt /**/;
 
-        vec_t<T,4,900000> const xxxx, rrrr, ssss;
-        vec_t<T,4,900001> const xxxy, rrrg, ssst;
-        vec_t<T,4,900010> const xxyx, rrgr, ssts;
-        vec_t<T,4,900011> const xxyy, rrgg, sstt;
-        vec_t<T,4,900100> const xyxx, rgrr, stss;
-        vec_t<T,4,900101> const xyxy, rgrg, stst;
-        vec_t<T,4,900110> const xyyx, rggr, stts;
-        vec_t<T,4,900111> const xyyy, rggg, sttt;
-        vec_t<T,4,901000> const yxxx, grrr, tsss;
-        vec_t<T,4,901001> const yxxy, grrg, tsst;
-        vec_t<T,4,901010> const yxyx, grgr, tsts;
-        vec_t<T,4,901011> const yxyy, grgg, tstt;
-        vec_t<T,4,901100> const yyxx, ggrr, ttss;
-        vec_t<T,4,901101> const yyxy, ggrg, ttst;
-        vec_t<T,4,901110> const yyyx, gggr, ttts;
-        vec_t<T,4,901111> const yyyy, gggg, tttt;
+        vec_t<T, 4, 900000> const xxxx, rrrr, ssss  /**/;
+        vec_t<T, 4, 900001> const xxxy, rrrg, ssst, rrrt;
+        vec_t<T, 4, 900010> const xxyx, rrgr, ssts, rrtr;
+        vec_t<T, 4, 900011> const xxyy, rrgg, sstt, rrtt;
+        vec_t<T, 4, 900100> const xyxx, rgrr, stss, rtrr;
+        vec_t<T, 4, 900101> const xyxy, rgrg, stst, rtrt;
+        vec_t<T, 4, 900110> const xyyx, rggr, stts, rttr;
+        vec_t<T, 4, 900111> const xyyy, rggg, sttt, rttt;
+        vec_t<T, 4, 901000> const yxxx, grrr, tsss, trrr;
+        vec_t<T, 4, 901001> const yxxy, grrg, tsst, trrt;
+        vec_t<T, 4, 901010> const yxyx, grgr, tsts, trtr;
+        vec_t<T, 4, 901011> const yxyy, grgg, tstt, trtt;
+        vec_t<T, 4, 901100> const yyxx, ggrr, ttss, ttrr;
+        vec_t<T, 4, 901101> const yyxy, ggrg, ttst, ttrt;
+        vec_t<T, 4, 901110> const yyyx, gggr, ttts, tttr;
+        vec_t<T, 4, 901111> const yyyy, gggg, tttt  /**/;
 #endif
 
         T m_data[count];
@@ -436,45 +437,46 @@ struct vec_t<T,3>
         struct { T x, y, z; };
         struct { T r, g, b; };
         struct { T s, t, p; };
+        struct { T r, t, p; };
 
 #if !_DOXYGEN_SKIP_ME
-        vec_t<T,2,9000> const xx, rr, ss;
-        vec_t<T,2,9001> _____ xy, rg, st;
-        vec_t<T,2,9002> _____ xz, rb, sp;
-        vec_t<T,2,9010> _____ yx, gr, ts;
-        vec_t<T,2,9011> const yy, gg, tt;
-        vec_t<T,2,9012> _____ yz, gb, tp;
-        vec_t<T,2,9020> _____ zx, br, ps;
-        vec_t<T,2,9021> _____ zy, bg, pt;
-        vec_t<T,2,9022> const zz, bb, pp;
+        vec_t<T, 2, 9000> const xx, rr, ss/**/;
+        vec_t<T, 2, 9001> _____ xy, rg, st, rt;
+        vec_t<T, 2, 9002> _____ xz, rb, sp, rp;
+        vec_t<T, 2, 9010> _____ yx, gr, ts, tr;
+        vec_t<T, 2, 9011> const yy, gg, tt/**/;
+        vec_t<T, 2, 9012> _____ yz, gb, tp/**/;
+        vec_t<T, 2, 9020> _____ zx, br, ps, pr;
+        vec_t<T, 2, 9021> _____ zy, bg, pt/**/;
+        vec_t<T, 2, 9022> const zz, bb, pp/**/;
 
-        vec_t<T,3,90000> const xxx, rrr, sss;
-        vec_t<T,3,90001> const xxy, rrg, sst;
-        vec_t<T,3,90002> const xxz, rrb, ssp;
-        vec_t<T,3,90010> const xyx, rgr, sts;
-        vec_t<T,3,90011> const xyy, rgg, stt;
-        vec_t<T,3,90012> _____ xyz, rgb, stp;
-        vec_t<T,3,90020> const xzx, rbr, sps;
-        vec_t<T,3,90021> _____ xzy, rbg, spt;
-        vec_t<T,3,90022> const xzz, rbb, spp;
-        vec_t<T,3,90100> const yxx, grr, tss;
-        vec_t<T,3,90101> const yxy, grg, tst;
-        vec_t<T,3,90102> _____ yxz, grb, tsp;
-        vec_t<T,3,90110> const yyx, ggr, tts;
-        vec_t<T,3,90111> const yyy, ggg, ttt;
-        vec_t<T,3,90112> const yyz, ggb, ttp;
-        vec_t<T,3,90120> _____ yzx, gbr, tps;
-        vec_t<T,3,90121> const yzy, gbg, tpt;
-        vec_t<T,3,90122> const yzz, gbb, tpp;
-        vec_t<T,3,90200> const zxx, brr, pss;
-        vec_t<T,3,90201> _____ zxy, brg, pst;
-        vec_t<T,3,90202> const zxz, brb, psp;
-        vec_t<T,3,90210> _____ zyx, bgr, pts;
-        vec_t<T,3,90211> const zyy, bgg, ptt;
-        vec_t<T,3,90212> const zyz, bgb, ptp;
-        vec_t<T,3,90220> const zzx, bbr, pps;
-        vec_t<T,3,90221> const zzy, bbg, ppt;
-        vec_t<T,3,90222> const zzz, bbb, ppp;
+        vec_t<T, 3, 90000> const xxx, rrr, sss /**/;
+        vec_t<T, 3, 90001> const xxy, rrg, sst, rrt;
+        vec_t<T, 3, 90002> const xxz, rrb, ssp, rrp;
+        vec_t<T, 3, 90010> const xyx, rgr, sts, rtr;
+        vec_t<T, 3, 90011> const xyy, rgg, stt, rtt;
+        vec_t<T, 3, 90012> _____ xyz, rgb, stp, rtp;
+        vec_t<T, 3, 90020> const xzx, rbr, sps, rpr;
+        vec_t<T, 3, 90021> _____ xzy, rbg, spt, rpt;
+        vec_t<T, 3, 90022> const xzz, rbb, spp, rpp;
+        vec_t<T, 3, 90100> const yxx, grr, tss, trr;
+        vec_t<T, 3, 90101> const yxy, grg, tst, trt;
+        vec_t<T, 3, 90102> _____ yxz, grb, tsp, trp;
+        vec_t<T, 3, 90110> const yyx, ggr, tts, ttr;
+        vec_t<T, 3, 90111> const yyy, ggg, ttt /**/;
+        vec_t<T, 3, 90112> const yyz, ggb, ttp /**/;
+        vec_t<T, 3, 90120> _____ yzx, gbr, tps, tpr;
+        vec_t<T, 3, 90121> const yzy, gbg, tpt /**/;
+        vec_t<T, 3, 90122> const yzz, gbb, tpp /**/;
+        vec_t<T, 3, 90200> const zxx, brr, pss, prr;
+        vec_t<T, 3, 90201> _____ zxy, brg, pst, prt;
+        vec_t<T, 3, 90202> const zxz, brb, psp, prp;
+        vec_t<T, 3, 90210> _____ zyx, bgr, pts, ptr;
+        vec_t<T, 3, 90211> const zyy, bgg, ptt /**/;
+        vec_t<T, 3, 90212> const zyz, bgb, ptp /**/;
+        vec_t<T, 3, 90220> const zzx, bbr, pps, ppr;
+        vec_t<T, 3, 90221> const zzy, bbg, ppt /**/;
+        vec_t<T, 3, 90222> const zzz, bbb, ppp /**/;
 
         vec_t<T,4,900000> const xxxx, rrrr, ssss;
         vec_t<T,4,900001> const xxxy, rrrg, ssst;
@@ -1218,11 +1220,51 @@ static inline vec_t<T,N> degrees(vec_t<T,N,SWIZZLE> const &a)
 }
 
 template<typename T, int N, int SWIZZLE>
-static inline vec_t<T,N> radians(vec_t<T,N,SWIZZLE> const &a)
+static inline vec_t<T, N> radians(vec_t<T, N, SWIZZLE> const &a)
 {
-    vec_t<T,N> ret;
+    vec_t<T, N> ret;
     for (int i = 0; i < N; ++i)
         ret[i] = lol::radians(a[i]);
+    return ret;
+}
+
+//Cartesian operation consider that you're in spherical coordinate
+template<typename T, int SWIZZLE>
+static inline vec_t<T, 2> cartesian(vec_t<T, 2, SWIZZLE> const &a)
+{
+    vec_t<T, 2> ret;
+    ret.x = r * lol::cos(t);
+    ret.y = r * lol::sin(t);
+    return ret;
+}
+
+template<typename T, int SWIZZLE>
+static inline vec_t<T, 3> cartesian(vec_t<T, 3, SWIZZLE> const &a)
+{
+    vec_t<T, 3> ret;
+    ret.x = r * lol::sin(t) * lol::cos(p);
+    ret.y = r * lol::sin(t) * lol::sin(p);
+    ret.z = r * lol::cos(t);
+    return ret;
+}
+
+//Spherical operation consider that you're in cartesian coordinate
+template<typename T, int SWIZZLE>
+static inline vec_t<T, 2> spherical(vec_t<T, 2, SWIZZLE> const &a)
+{
+    vec_t<T, 2> ret;
+    ret.r = lol::sqrt(lol::sq(x) + lol::sq(y));
+    ret.t = lol::atan2(y, x);
+    return ret;
+}
+
+template<typename T, int SWIZZLE>
+static inline vec_t<T, 3> spherical(vec_t<T, 3, SWIZZLE> const &a)
+{
+    vec_t<T, 3> ret;
+    ret.r = lol::sqrt(lol::sq(x) + lol::sq(y) + lol::sq(z));
+    ret.t = lol::acos(z / ret.x);
+    ret.p = lol::atan(y / x);
     return ret;
 }
 

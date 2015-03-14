@@ -68,10 +68,14 @@ template<class T> inline T FindValue(const char* name)
     for (int i = 0; i < T::Max; ++i)
     {
         String s = T(i).ToString().to_lower();
-        if (s == n)
+        if (s.Contains(n))
             return T(i);
     }
     return T::Max;
+}
+template<class T> inline T FindValue(String const& name)
+{
+    return FindValue<T>(name.C());
 }
 
 } /* namespace lol */
