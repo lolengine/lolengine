@@ -99,5 +99,27 @@ public:
     }
 };
 
+//-------------------------------------------------------------------------
+struct DisplayFlagBase : public StructSafeEnum
+{
+    enum Type
+    {
+        On,
+        Off,
+        Toggle,
+
+        MAX
+    };
+protected:
+    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    {
+        enum_map[On] = "On";
+        enum_map[Off] = "Off";
+        enum_map[Toggle] = "Toggle";
+        return true;
+    }
+};
+typedef SafeEnum<DisplayFlagBase> DisplayFlag;
+
 } /* namespace lol */
 

@@ -609,14 +609,8 @@ public:
     {
         LuaStack s(l);
         EzMeshPtr m;
-        s >> m;
-        LuaVec4 c;
-        if (s.GetArgs() == 2 && !c.IsValid(l, 2))
-        {
-            LuaString str;
-            s >> str;
-            c = Color::C8BppHexString(str);
-        }
+        LuaColor c;
+        s >> m >> c;
         m->m_instance.SetCurColor(c);
         return 0;
     }
@@ -624,14 +618,8 @@ public:
     {
         LuaStack s(l);
         EzMeshPtr m;
-        s >> m;
-        LuaVec4 c;
-        if (s.GetArgs() == 1 && !c.IsValid(l, 2))
-        {
-            LuaString str;
-            s >> str;
-            c = Color::C8BppHexString(str);
-        }
+        LuaColor c;
+        s >> m >> c;
         m->m_instance.SetCurColorA(c);
         return 0;
     }
@@ -639,14 +627,7 @@ public:
     {
         LuaStack s(l);
         EzMeshPtr m;
-        s >> m;
-        LuaVec4 c;
-        if (s.GetArgs() == 1 && !c.IsValid(l, 2))
-        {
-            LuaString str;
-            s >> str;
-            c = Color::C8BppHexString(str);
-        }
+        LuaColor c;
         m->m_instance.SetCurColorB(c);
         return 0;
     }
@@ -654,14 +635,8 @@ public:
     {
         LuaStack s(l);
         EzMeshPtr m;
-        s >> m;
-        LuaVec4 c;
-        if (s.GetArgs() == 1 && !c.IsValid(l, 2))
-        {
-            LuaString str;
-            s >> str;
-            c = Color::C8BppHexString(str);
-        }
+        LuaColor c;
+        s >> m >> c;
         m->m_instance.SetVertColor(c);
         return 0;
     }

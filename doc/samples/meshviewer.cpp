@@ -183,6 +183,9 @@ public:
         m_camera = nullptr;
         m_controller = nullptr;
 
+        //Scene setup
+        m_setup_loader.ExecLua("meshviewer_init.lua");
+
         //Compile ref meshes
         m_gizmos << new EasyMesh();
         m_gizmos.Last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .075 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
@@ -331,9 +334,12 @@ public:
             m_meshes.Push(em, nullptr);
         }
 #else
+        //TOUKY CHANGE THAT
+        /*
         m_ssetup->Compile("addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) "
                           "addlight 0.0 position (8 2 6) color #ffff "
                           "showgizmo true ");
+        */
         m_ssetup->Startup();
 #endif //NO_SC_SETUP
         for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
@@ -577,7 +583,7 @@ public:
             while (o-- > 0)
             {
                 SceneSetup* new_ssetup = new SceneSetup();
-                if (new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.Count())
+                if (false) //new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.Count())
                 {
                     //Store current light datas, in World
                     array<LightData> light_datas;
@@ -889,6 +895,7 @@ public:
 
 private:
     SceneSetup*         m_ssetup;
+    SceneSetupLuaLoader m_setup_loader;
     array<LightData>    m_light_datas;
     Controller*         m_controller;
     short               m_input_usage;

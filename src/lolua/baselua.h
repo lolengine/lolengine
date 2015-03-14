@@ -257,15 +257,23 @@ protected:
     bool m_optional = false;
 
 public:
-    VarPtr() { }
-    VarPtr(T* value, bool optional = false)
+    VarPtr(bool optional = false)
     {
-        m_value = value;
         m_optional = optional;
     }
-    VarPtr(LuaState* l, int& index, bool optional = false)
+    VarPtr(T* value, bool optional = false)
+        : VarPtr(optional)
     {
-        m_optional = optional;
+        m_value = value;
+    }
+    VarPtr(LuaState* l, int& index, bool optional = false)
+        : VarPtr(optional)
+    {
+        GetInc(l, index);
+    }
+    VarPtr(T* value, LuaState* l, int& index, bool optional = false)
+        : VarPtr(value, optional)
+    {
         GetInc(l, index);
     }
     inline T* operator ()()        { return m_value; }
@@ -318,9 +326,10 @@ template<typename T>
 class VarPtrLight
 {
 public:
-    VarPtrLight() : VarPtr() { }
+    VarPtrLight(bool optional = false) : VarPtr(optional) { }
     VarPtrLight(T* value, bool optional = false) : VarPtr(value, optional) { }
     VarPtrLight(LuaState* l, int& index, bool optional = false) : VarPtr(l, index, optional) { }
+    VarPtrLight(T* value, LuaState* l, int& index, bool optional = false) : VarPtr(value, l, index, optional) { }
 protected:
     virtual void InnerGet(LuaState* l, int& index)
     {
@@ -333,7 +342,7 @@ protected:
 template<typename T>
 class Var
 {
-private:
+protected:
     bool m_optional = false;
     T m_value;
 
@@ -353,11 +362,22 @@ public:
         m_optional = optional;
         GetInc(l, index);
     }
-    inline operator T()            { return m_value; }
-    inline T& operator ()()        { return m_value; }
+    Var(T value, LuaState* l, int& index, bool optional = false)
+    {
+        m_optional = optional;
+        m_value = value;
+        GetInc(l, index);
+    }
+    inline operator T()     { return m_value; }
+    inline T& operator ()() { return m_value; }
+    inline T& GetValue()    { return m_value; }
     inline bool IsValid(LuaState* l, int index)
     {
         return InnerIsValid(l, index);
+    }
+    inline bool IsOptional()
+    {
+        return m_optional;
     }
 private:
     void GetInc(LuaState* l, int& index)
@@ -402,7 +422,7 @@ public:
     inline bool operator==(const Var<T>& o)    { return m_value == o.m_value; }
     inline bool operator!=(const Var<T>& o)    { return m_value != o.m_value; }
 
-private:
+protected:
     void InnerInit()                          { m_value = T(0); }
     bool InnerIsValid(LuaState* l, int index) { UNUSED(l); UNUSED(index); ASSERT(false); return false; }
     void InnerGet(LuaState* l, int& index)    { UNUSED(l); UNUSED(index); ASSERT(false); }
@@ -557,7 +577,7 @@ template<> inline bool Var<vec2>::InnerIsValid(LuaState* l, int index)
 template<> inline void Var<vec2>::InnerGet(LuaState* l, int& index)
 {
     Var<float> x(l, index);
-    Var<float> y(x(), true); y.Get(l, index);
+    Var<float> y(x(), l, index, true);
     m_value = vec2(x, y);
 }
 template<> inline int Var<vec2>::InnerPush(LuaState* l)
@@ -575,8 +595,8 @@ template<> inline bool Var<vec3>::InnerIsValid(LuaState* l, int index)
 template<> inline void Var<vec3>::InnerGet(LuaState* l, int& index)
 {
     Var<float> x(l, index);
-    Var<float> y(x(), true); y.Get(l, index);
-    Var<float> z(x(), true); z.Get(l, index);
+    Var<float> y(x(), l, index, true);
+    Var<float> z(x(), l, index, true);
     m_value = vec3(x, y, z);
 }
 template<> inline int Var<vec3>::InnerPush(LuaState* l)
@@ -595,9 +615,9 @@ template<> inline bool Var<vec4>::InnerIsValid(LuaState* l, int index)
 template<> inline void Var<vec4>::InnerGet(LuaState* l, int& index)
 {
     Var<float> x(l, index);
-    Var<float> y(x(), true); y.Get(l, index);
-    Var<float> z(x(), true); z.Get(l, index);
-    Var<float> w(x(), true); w.Get(l, index);
+    Var<float> y(x(), l, index, true);
+    Var<float> z(x(), l, index, true);
+    Var<float> w(x(), l, index, true);
     m_value = vec4(x, y, z, w);
 }
 template<> inline int Var<vec4>::InnerPush(LuaState* l)
@@ -608,6 +628,226 @@ template<> inline int Var<vec4>::InnerPush(LuaState* l)
     Var<float> w = m_value.w;
     return (x.Return(l) + y.Return(l) + z.Return(l) + w.Return(l));
 }
+
+//-----------------------------------------------------------------------------
+class VarColor
+{
+protected:
+    Var<vec4> m_value;
+
+public:
+    VarColor(bool optional = false)
+    {
+        m_value = Var<vec4>(optional);
+        InnerInit();
+    }
+    VarColor(vec4 value, bool optional = false)
+    {
+        m_value = Var<vec4>(value, optional);
+    }
+    VarColor(LuaState* l, int& index, bool optional = false)
+        : VarColor(optional)
+    {
+        GetInc(l, index);
+    }
+    VarColor(vec4 value, LuaState* l, int& index, bool optional = false)
+        : VarColor(value, optional)
+    {
+        GetInc(l, index);
+    }
+
+    inline operator vec4()     { return m_value; }
+    inline vec4& operator ()() { return m_value(); }
+    inline vec4& GetValue()    { return m_value.GetValue(); }
+    inline bool IsValid(LuaState* l, int index)
+    {
+        return InnerIsValid(l, index);
+    }
+private:
+    void GetInc(LuaState* l, int& index)
+    {
+        bool is_nil = lua_isnil(l, index);
+        if (!m_value.IsOptional() || (!is_nil && InnerIsValid(l, index)))
+        {
+            ASSERT(!is_nil);
+            InnerGet(l, index);
+        }
+    }
+public:
+    inline void Get(LuaState* l, int index)
+    {
+        int idx = index;
+        GetInc(l, idx);
+    }
+    inline int Return(LuaState* l)
+    {
+        return InnerPush(l);
+    }
+    inline VarColor&  operator-(const vec4& value)  { m_value - value; return *this; }
+    inline VarColor&  operator+(const vec4& value)  { m_value + value; return *this; }
+    inline VarColor&  operator*(const vec4& value)  { m_value  * value; return *this; }
+    inline VarColor&  operator/(const vec4& value)  { m_value / value; return *this; }
+    inline VarColor&  operator=(const vec4& value)  { m_value = value; return *this; }
+    inline VarColor& operator-=(const vec4& value)  { m_value -= value; return *this; }
+    inline VarColor& operator+=(const vec4& value)  { m_value += value; return *this; }
+    inline VarColor& operator*=(const vec4& value)  { m_value *= value; return *this; }
+    inline VarColor& operator/=(const vec4& value)  { m_value /= value; return *this; }
+    inline VarColor&  operator-(const Var<vec4>& o) { m_value - o; return *this; }
+    inline VarColor&  operator+(const Var<vec4>& o) { m_value + o; return *this; }
+    inline VarColor&  operator*(const Var<vec4>& o) { m_value  * o; return *this; }
+    inline VarColor&  operator/(const Var<vec4>& o) { m_value / o; return *this; }
+    inline VarColor&  operator=(const Var<vec4>& o) { m_value = o; return *this; }
+    inline VarColor& operator-=(const Var<vec4>& o) { m_value -= o; return *this; }
+    inline VarColor& operator+=(const Var<vec4>& o) { m_value += o; return *this; }
+    inline VarColor& operator*=(const Var<vec4>& o) { m_value *= o; return *this; }
+    inline VarColor& operator/=(const Var<vec4>& o) { m_value /= o; return *this; }
+    inline bool operator==(const vec4& value)     { return m_value == value; }
+    inline bool operator!=(const vec4& value)     { return m_value != value; }
+    inline bool operator==(const Var<vec4>& o)    { return m_value == o; }
+    inline bool operator!=(const Var<vec4>& o)    { return m_value != o; }
+    inline VarColor&  operator-(const VarColor& v)  { m_value -  v.m_value; return *this; }
+    inline VarColor&  operator+(const VarColor& v)  { m_value +  v.m_value; return *this; }
+    inline VarColor&  operator*(const VarColor& v)  { m_value  * v.m_value; return *this; }
+    inline VarColor&  operator/(const VarColor& v)  { m_value /  v.m_value; return *this; }
+    inline VarColor&  operator=(const VarColor& v)  { m_value =  v.m_value; return *this; }
+    inline VarColor& operator-=(const VarColor& v)  { m_value -= v.m_value; return *this; }
+    inline VarColor& operator+=(const VarColor& v)  { m_value += v.m_value; return *this; }
+    inline VarColor& operator*=(const VarColor& v)  { m_value *= v.m_value; return *this; }
+    inline VarColor& operator/=(const VarColor& v)  { m_value /= v.m_value; return *this; }
+    inline bool operator==(const VarColor& v)     { return m_value == v.m_value; }
+    inline bool operator!=(const VarColor& v)     { return m_value != v.m_value; }
+
+protected:
+    void InnerInit()
+    {
+        m_value = vec4::zero;
+    }
+    bool InnerIsValid(LuaState* l, int index)
+    {
+        Var<String> s;
+        return m_value.IsValid(l, index) || s.IsValid(l, index);
+    }
+    void InnerGet(LuaState* l, int& index)
+    {
+        //Try vec4 first
+        if (m_value.IsValid(l, index))
+        {
+            m_value.Get(l, index);
+        }
+        else
+        {
+            Var<String> c(l, index);
+            *this = Color::C8BppHexString(c);
+        }
+    }
+    int InnerPush(LuaState* l)
+    {
+        Var<String> c = Color::HexString8Bpp(m_value);
+        return c.Return(l);
+    }
+};
+
+//-----------------------------------------------------------------------------
+template<typename E>
+class VarEnum
+{
+protected:
+    SafeEnum<E> m_value;
+    bool m_optional = false;
+
+public:
+    VarEnum(bool optional = false)
+    {
+        m_optional = optional;
+        InnerInit();
+    }
+    VarEnum(SafeEnum<E> value, bool optional = false)
+        : VarEnum(optional)
+    {
+        m_value = value;
+    }
+    VarEnum(LuaState* l, int& index, bool optional = false)
+        : VarEnum(optional)
+    {
+        GetInc(l, index);
+    }
+    VarEnum(vec4 value, LuaState* l, int& index, bool optional = false)
+        : VarEnum(value, optional)
+    {
+        GetInc(l, index);
+    }
+
+    inline operator SafeEnum<E>()     { return m_value; }
+    inline SafeEnum<E>& operator ()() { return m_value; }
+    inline SafeEnum<E>& GetValue()    { return m_value; }
+    inline bool IsValid(LuaState* l, int index)
+    {
+        return InnerIsValid(l, index);
+    }
+private:
+    void GetInc(LuaState* l, int& index)
+    {
+        bool is_nil = lua_isnil(l, index);
+        if (!m_optional || (!is_nil && InnerIsValid(l, index)))
+        {
+            ASSERT(!is_nil);
+            InnerGet(l, index);
+        }
+    }
+public:
+    inline void Get(LuaState* l, int index)
+    {
+        int idx = index;
+        GetInc(l, idx);
+    }
+    inline int Return(LuaState* l)
+    {
+        return InnerPush(l);
+    }
+    inline VarEnum<E>&  operator-(const SafeEnum<E>& value)  { m_value - value; return *this; }
+    inline VarEnum<E>&  operator+(const SafeEnum<E>& value)  { m_value + value; return *this; }
+    inline VarEnum<E>&  operator*(const SafeEnum<E>& value)  { m_value  * value; return *this; }
+    inline VarEnum<E>&  operator/(const SafeEnum<E>& value)  { m_value / value; return *this; }
+    inline VarEnum<E>&  operator=(const SafeEnum<E>& value)  { m_value = value; return *this; }
+    inline VarEnum<E>& operator-=(const SafeEnum<E>& value)  { m_value -= value; return *this; }
+    inline VarEnum<E>& operator+=(const SafeEnum<E>& value)  { m_value += value; return *this; }
+    inline VarEnum<E>& operator*=(const SafeEnum<E>& value)  { m_value *= value; return *this; }
+    inline VarEnum<E>& operator/=(const SafeEnum<E>& value)  { m_value /= value; return *this; }
+    inline bool operator==(const SafeEnum<E>& value)     { return m_value == value; }
+    inline bool operator!=(const SafeEnum<E>& value)     { return m_value != value; }
+    inline VarEnum<E>&  operator-(const VarEnum<E>& v)  { m_value - v.m_value; return *this; }
+    inline VarEnum<E>&  operator+(const VarEnum<E>& v)  { m_value + v.m_value; return *this; }
+    inline VarEnum<E>&  operator*(const VarEnum<E>& v)  { m_value  * v.m_value; return *this; }
+    inline VarEnum<E>&  operator/(const VarEnum<E>& v)  { m_value / v.m_value; return *this; }
+    inline VarEnum<E>&  operator=(const VarEnum<E>& v)  { m_value = v.m_value; return *this; }
+    inline VarEnum<E>& operator-=(const VarEnum<E>& v)  { m_value -= v.m_value; return *this; }
+    inline VarEnum<E>& operator+=(const VarEnum<E>& v)  { m_value += v.m_value; return *this; }
+    inline VarEnum<E>& operator*=(const VarEnum<E>& v)  { m_value *= v.m_value; return *this; }
+    inline VarEnum<E>& operator/=(const VarEnum<E>& v)  { m_value /= v.m_value; return *this; }
+    inline bool operator==(const VarEnum<E>& v)     { return m_value == v.m_value; }
+    inline bool operator!=(const VarEnum<E>& v)     { return m_value != v.m_value; }
+
+protected:
+    void InnerInit()
+    {
+        m_value = SafeEnum<E>(0);
+    }
+    bool InnerIsValid(LuaState* l, int index)
+    {
+        Var<String> s;
+        return s.IsValid(l, index);
+    }
+    void InnerGet(LuaState* l, int& index)
+    {
+        Var<String> c(l, index);
+        *this = FindValue<SafeEnum<E> >(c);
+    }
+    int InnerPush(LuaState* l)
+    {
+        Var<String> s = this->GetValue().ToString();
+        return s.Return(l);
+    }
+};
 
 //-----------------------------------------------------------------------------
 class Stack
@@ -627,10 +867,17 @@ public:
 
     //-------------------------------------------------------------------------
     template<typename T>
+    Stack& operator>>(T& var)
+    {
+        var = T(m_state, m_index);
+        return *this;
+    }
+    /*
+    template<typename T>
     Stack& operator>>(Var<T>& var)
     {
-        var = Var<T>(m_state, m_index);
-        return *this;
+    var = Var<T>(m_state, m_index);
+    return *this;
     }
     template<typename T>
     Stack& operator>>(VarPtr<T>& var)
@@ -644,8 +891,16 @@ public:
         var = VarPtrLight<T>(m_state, m_index);
         return *this;
     }
+    */
 
     //-------------------------------------------------------------------------
+    template<typename T>
+    Stack& operator<<(T& var)
+    {
+        m_result += var.Return(m_state);
+        return *this;
+    }
+    /*
     template<typename T>
     Stack& operator<<(Var<T>& var)
     {
@@ -664,6 +919,7 @@ public:
         m_result += var.Return(m_state);
         return *this;
     }
+    */
 
 private:
     LuaState*  m_state = nullptr;
@@ -723,6 +979,7 @@ typedef Lolua::Var<uint64_t>    LuaUInt64;
 typedef Lolua::Var<vec2>        LuaVec2;
 typedef Lolua::Var<vec3>        LuaVec3;
 typedef Lolua::Var<vec4>        LuaVec4;
+typedef Lolua::VarColor         LuaColor;
 typedef Lolua::Stack            LuaStack;
 
 } /* namespace lol */
