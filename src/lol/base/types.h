@@ -93,6 +93,13 @@ _T(dualquat_t<, >, dualquat)
 #undef _T
 
 /*
+* Practical useage typedefs
+*/
+typedef vec4 color;
+typedef vec2 spheric2;
+typedef vec3 spheric3;
+
+/*
  * HLSL/Cg-compliant type names
  */
 
