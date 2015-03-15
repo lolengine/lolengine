@@ -22,15 +22,17 @@ public:
         m_previous(false)
     {}
 
+    //Status methods ----------------------------------------------------------
     /** Indicates wheither the key is currently down */
-    bool IsDown() const { return m_current; }
+    bool IsPressed() const { return m_current; }
     /** Indicates wheither the key is currently up */
-    bool IsUp() const { return !m_current; }
+    bool IsReleased() const { return !m_current; }
     /** Indicates wheither the key has just been pressed */
-    bool IsPressed() const { return m_current && !m_previous; }
+    bool JustPressed() const { return m_current && !m_previous; }
     /** Indicates wheither the key has just been released */
-    bool IsReleased() const { return !m_current && m_previous; }
+    bool JustReleased() const { return !m_current && m_previous; }
 
+    //Binding methods ---------------------------------------------------------
     /** Bind a physical device and key */
     void Bind(const String& device_name, const String& key_name);
     /** Unbind a previously bound physical device and key. Returns true if the binding was existing. */
@@ -78,11 +80,13 @@ public:
         m_previous(0.0f)
     {}
 
+    //Status methods ----------------------------------------------------------
     /** Gets the current absolute value of this axis */
     float GetValue() const { return m_current; }
     /** Gets the current delta value of this axis */
     float GetDelta() const { return m_current - m_previous; }
 
+    //Binding methods ---------------------------------------------------------
     /** Bind a physical device and axis */
     void Bind(const String& device_name, const String& axis_name);
     /** Bind a physical device and key over this axis. The axis value will be 0 if the key is up and 1 if it's down */
@@ -113,7 +117,6 @@ public:
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
     ptrdiff_t IsBound() const { return m_axisbindings.Count() + m_keybindings.Count(); }
-
 
 protected:
     void Update()
