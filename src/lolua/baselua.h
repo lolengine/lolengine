@@ -54,9 +54,9 @@ struct ObjectLib
     } ClassVarStr;
 
     ObjectLib(String class_name,
-        array<ClassMethod> statics,
-        array<ClassMethod> methods,
-        array<ClassVar> variables)
+        array<ClassMethod> const& statics,
+        array<ClassMethod> const& methods,
+        array<ClassVar> const& variables)
     {
         m_class_name = class_name;
         m_static_name = class_name + "_lib";
@@ -74,7 +74,7 @@ struct ObjectLib
             || m_methods.Last().func != nullptr)
             m_methods.Push({ nullptr, nullptr });
 
-        for (ClassVar& cv : variables)
+        for (ClassVar const& cv : variables)
         {
             if (cv.name && cv.get && cv.set)
             {
@@ -934,7 +934,8 @@ public:
     Loader();
     virtual ~Loader();
 
-    bool ExecLua(String const &lua);
+    bool ExecLuaFile(String const &lua);
+    bool ExecLuaCode(String const &lua);
 
     template<typename T>
     T GetVar(String const &name)

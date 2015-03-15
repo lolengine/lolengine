@@ -222,6 +222,7 @@
     <ClCompile Include="sys\hacks.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="sys\thread.cpp" />
+    <ClCompile Include="sys\threadtypes.cpp" />
     <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="ticker.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="lol\sys\file.h" />
     <ClInclude Include="lol\sys\init.h" />
     <ClInclude Include="lol\sys\thread.h" />
+    <ClInclude Include="lol\sys\threadtypes.h" />
     <ClInclude Include="lol\sys\timer.h" />
     <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />

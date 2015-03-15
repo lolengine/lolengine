@@ -152,7 +152,7 @@ public:
         LoluaDemoLoader* demo_loader = new LoluaDemoLoader();
 
         //Execute script
-        demo_loader->ExecLua("14_lol_lua.lua");
+        demo_loader->ExecLuaFile("14_lol_lua.lua");
         demo_loader->TestStuff();
 
         //Grab global test values

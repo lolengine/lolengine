@@ -18,6 +18,7 @@
 
 #include <lol/engine.h>
 #include "scenesetup.h"
+#include "meshviewer.h"
 
 using namespace lol;
 
@@ -184,7 +185,7 @@ public:
         m_controller = nullptr;
 
         //Scene setup
-        m_setup_loader.ExecLua("meshviewer_init.lua");
+        m_setup_loader.ExecLuaFile("meshviewer_init.lua");
 
         //Compile ref meshes
         m_gizmos << new EasyMesh();

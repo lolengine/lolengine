@@ -28,7 +28,7 @@ public:
     EasyMeshTutorial()
     {
         EasyMeshLuaLoader EzMhLoader;
-        EzMhLoader.ExecLua("05_easymesh.lua");
+        EzMhLoader.ExecLuaFile("05_easymesh.lua");
 
         EasyMeshLuaObject* gears0 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g0");
         EasyMeshLuaObject* gears1 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g1");
