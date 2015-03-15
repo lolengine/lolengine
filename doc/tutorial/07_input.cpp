@@ -91,7 +91,7 @@ public:
         /* Handle keyboard */
         if (m_keyboard)
         {
-            if (m_controller->GetKey(KEY_MANUAL_ROTATION).IsPressed())
+            if (m_controller->GetKey(KEY_MANUAL_ROTATION).JustPressed())
                 m_autorot = !m_autorot;
         }
 
@@ -107,7 +107,7 @@ public:
         /* Handle mouse */
         if (m_mouse)
         {
-            if (m_controller->GetKey(KEY_DRAG_MESH).IsDown())
+            if (m_controller->GetKey(KEY_DRAG_MESH).IsPressed())
             {
                 InputDevice::CaptureMouse(true);
                 m_pitch_angle -= m_controller->GetAxis(AXIS_DRAG_PITCH).GetValue() * seconds * 100;
