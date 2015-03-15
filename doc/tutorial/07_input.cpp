@@ -24,7 +24,8 @@ class InputTutorial : public WorldEntity
 public:
     InputTutorial()
     {
-        m_controller = new Controller("Default", KEY_MAX, AXIS_MAX);
+        m_controller = new Controller("Default");
+        m_controller->SetInputCount(KEY_MAX, AXIS_MAX);
 
         m_keyboard = InputDevice::Get("Keyboard");
         if (m_keyboard)

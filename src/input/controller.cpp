@@ -226,12 +226,10 @@ float AxisBinding::RetrieveCurrentValue()
 array<Controller*> Controller::controllers;
 
 //-----------------------------------------------------------------------------
-Controller::Controller(String const &name, int nb_keys, int nb_axis)
+Controller::Controller(String const &name)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
     m_name = name;
-    m_keys.Resize(nb_keys);
-    m_axis.Resize(nb_axis);
     m_activate_nextframe = true;
     m_deactivate_nextframe = false;
     m_active = false;
@@ -243,7 +241,7 @@ Controller::Controller(String const &name, int nb_keys, int nb_axis)
 }
 
 Controller::Controller(String const &name, InputProfile const& profile)
-    : Controller(name, 0, 0)
+    : Controller(name)
 {
     Init(profile);
 }
@@ -259,6 +257,34 @@ Controller::~Controller()
             break;
         }
     }
+}
+
+//Init mode 1: Input profile system -------------------------------------------
+void Controller::Init(InputProfile const& profile)
+{
+    UnbindProfile();
+    BindProfile(profile);
+}
+void Controller::ClearProfile()
+{
+    UnbindProfile();
+}
+
+//Init mode 2: By hand, key/axis by key/axis ----------------------------------
+void Controller::SetInputCount(int nb_keys, int nb_axis)
+{
+    m_keys.Resize(nb_keys);
+    m_axis.Resize(nb_axis);
+}
+
+//GetKeys/Axis stuff ----------------------------------------------------------
+KeyBinding& Controller::GetKey(int index)
+{
+    return m_keys[index];
+}
+AxisBinding& Controller::GetAxis(int index)
+{
+    return m_axis[index];
 }
 
 //-----------------------------------------------------------------------------

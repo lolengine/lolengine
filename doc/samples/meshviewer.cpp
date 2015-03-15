@@ -264,7 +264,8 @@ public:
 
 #if NO_NACL_EM_INPUT
         /* Register an input controller for the keyboard */
-        m_controller = new Controller("Default", MAX_KEYS, MAX_AXIS);
+        m_controller = new Controller("Default");
+        m_controller->SetInputCount(MAX_KEYS, MAX_AXIS);
 
         if (InputDevice::Get(g_name_mouse.C()))
         {

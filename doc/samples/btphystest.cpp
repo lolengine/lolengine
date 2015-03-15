@@ -72,7 +72,8 @@ void BtPhysTest::InitApp()
 #endif //CAT_MODE
 
     /* Register an input controller for the keyboard */
-    m_controller = new Controller("Default", KEY_MAX, 0);
+    m_controller = new Controller("Default");
+    m_controller->SetInputCount(KEY_MAX, 0);
     m_controller->GetKey(KEY_MOVE_FORWARD).Bind("Keyboard", "Up");
     m_controller->GetKey(KEY_MOVE_BACK).Bind("Keyboard", "Down");
     m_controller->GetKey(KEY_MOVE_LEFT).Bind("Keyboard", "Left");
