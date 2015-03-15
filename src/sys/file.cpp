@@ -192,7 +192,18 @@ class FileData
 #endif
     }
 
+    long int GetModificationTime()
+    {
+#if __ANDROID__
+        return 0;
+#elif HAVE_STDIO_H
+        return m_stat.st_mtime;
+#else
+        return 0;
+#endif
+    }
 
+    //-----------------------
 #if __ANDROID__
     AAsset *m_asset;
 #elif HAVE_STDIO_H
@@ -312,6 +323,12 @@ void File::SetPosFromStart(long int pos)
 long int File::GetSize()
 {
     return m_data->GetSize();
+}
+
+//--
+long int File::GetModificationTime()
+{
+    return m_data->GetModificationTime();
 }
 
 //---------------

@@ -412,6 +412,9 @@
     <ClCompile Include="lolua\baselua.cpp">
       <Filter>lolua</Filter>
     </ClCompile>
+    <ClCompile Include="sys\threadtypes.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -768,6 +771,9 @@
     </ClInclude>
     <ClInclude Include="lolua\baselua.h">
       <Filter>lolua</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\threadtypes.h">
+      <Filter>lol\sys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

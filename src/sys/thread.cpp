@@ -16,9 +16,16 @@
 namespace lol
 {
 
-#if LOL_FEATURE_THREADS
+//BaseThreadManager -----------------------------------------------------------
 BaseThreadManager::BaseThreadManager(int thread_count)
 {
+    m_thread_min = thread_count;
+    m_thread_count = thread_count;
+}
+
+BaseThreadManager::BaseThreadManager(int thread_min, int thread_count)
+{
+    m_thread_min = thread_min;
     m_thread_count = thread_count;
 }
 
@@ -30,16 +37,12 @@ BaseThreadManager::~BaseThreadManager()
 //Initialize, Ticker::Ref and start the thread
 bool BaseThreadManager::Start()
 {
-    if (m_threads.Count() > 0)
+    if (m_threads.count() > 0)
         return false;
 
-    /* Spawn worker threads and wait for their readiness. */
+    //Add minimum threads
     m_threads.Resize(m_thread_count);
-    for (int i = 0; i < m_thread_count; i++)
-        m_threads[i] = new thread(std::bind(&BaseThreadManager::BaseThreadWork,
-                                            this));
-    for (int i = 0; i < m_thread_count; i++)
-        m_spawnqueue.pop();
+    AddThreads(m_thread_min);
 
     return true;
 }
@@ -47,18 +50,44 @@ bool BaseThreadManager::Start()
 //Stop the threads
 bool BaseThreadManager::Stop()
 {
-    if (m_threads.Count() <= 0)
+    if (m_threads.count() <= 0)
         return false;
 
-    /* Signal worker threads for completion and wait for
-        * them to quit. */
-    ThreadJob stop_job(ThreadJobType::THREAD_STOP);
-    for (int i = 0; i < m_thread_count; i++)
-        m_jobqueue.push(&stop_job);
-    for (int i = 0; i < m_thread_count; i++)
-        m_donequeue.pop();
+    //Stop all threads
+    StopThreads(m_threads.count());
 
     return true;
+}
+
+//----
+void BaseThreadManager::AddThreads(int nb)
+{
+    //Don't add threads if not availables
+#if LOL_FEATURE_THREADS
+    //Spawn worker threads and ...
+    for (int i = 0; i < nb; i++)
+        m_threads << new thread(std::bind(&BaseThreadManager::BaseThreadWork, this));
+
+    //... Wait for their readiness.
+    for (int i = 0; i < m_thread_count; i++)
+        m_spawnqueue.pop();
+#endif //LOL_FEATURE_THREADS
+}
+
+//----
+void BaseThreadManager::StopThreads(int nb)
+{
+    //Don't stop threads if not availables
+#if LOL_FEATURE_THREADS
+    //Signal worker threads for completion and ...
+    ThreadJob stop_job(ThreadJobType::THREAD_STOP);
+    for (int i = 0; i < nb; i++)
+        m_jobqueue.push(&stop_job);
+    
+    //... Wait for them to quit.
+    for (int i = 0; i < nb; i++)
+        m_donequeue.pop();
+#endif //LOL_FEATURE_THREADS
 }
 
 //Work stuff
@@ -69,23 +98,34 @@ bool BaseThreadManager::AddWork(ThreadJob* job)
     return false;
 }
 
+//----
 bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
 {
     ThreadJob* result;
     while (m_resultqueue.try_pop(result))
         results << result;
-    return results.Count() > 0;
+    return results.count() > 0;
 }
 
 //Base thread work function
 void BaseThreadManager::BaseThreadWork()
 {
+#if !LOL_FEATURE_THREADS
+    //Register that the thread has started
     m_spawnqueue.push(ThreadStatus::THREAD_STARTED);
     for ( ; ; )
+#endif //!LOL_FEATURE_THREADS
     {
+        //Try to retrieve a job
         ThreadJob* job = m_jobqueue.pop();
+        //Stop thread
         if (job->GetJobType() == ThreadJobType::THREAD_STOP)
+        {
+#if !LOL_FEATURE_THREADS
             break;
+#endif //!LOL_FEATURE_THREADS
+        }
+        //Or work
         else if (*job == ThreadJobType::WORK_TODO)
         {
             if (job->DoWork())
@@ -95,9 +135,13 @@ void BaseThreadManager::BaseThreadWork()
             m_resultqueue.push(job);
         }
     }
+#if !LOL_FEATURE_THREADS
+    //Register that the thread has stopped
     m_donequeue.push(ThreadStatus::THREAD_STOPPED);
+#endif //!LOL_FEATURE_THREADS
 }
 
+//----
 void BaseThreadManager::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
@@ -109,11 +153,16 @@ void BaseThreadManager::TickGame(float seconds)
     while (m_job_dispatch.Count() > 0 && AddWork(m_job_dispatch.Last()))
         m_job_dispatch.pop();
 
+    //Execute one task per frame if thread are not available
+#if !LOL_FEATURE_THREADS
+    BaseThreadWork();
+#endif // !LOL_FEATURE_THREADS
+
     array<ThreadJob*> result;
     //Fetch and treat results
     if (FetchResult(result))
     {
-        for (int i = 0; i < result.Count(); i++)
+        for (int i = 0; i < result.count(); i++)
         {
             ThreadJob* job = result[i];
             if (job->GetJobType() == ThreadJobType::WORK_DONE)
@@ -123,7 +172,12 @@ void BaseThreadManager::TickGame(float seconds)
             }
         }
     }
+
+    //Resize thread count if needed
+    if (m_threads.count() > m_jobqueue.count() && m_threads.count() > m_thread_min)
+        StopThreads(m_threads.Count() - m_thread_min);
+    else if (m_threads.count() < m_jobqueue.count())
+        AddThreads(lol::min(m_jobqueue.count(), (ptrdiff_t)m_thread_count) - m_threads.count());
 }
-#endif //LOL_FEATURE_THREADS
 
 } /* namespace lol */

@@ -225,6 +225,7 @@ float AxisBinding::RetrieveCurrentValue()
 
 array<Controller*> Controller::controllers;
 
+//-----------------------------------------------------------------------------
 Controller::Controller(String const &name, int nb_keys, int nb_axis)
 {
     m_gamegroup = GAMEGROUP_BEFORE;
@@ -241,8 +242,15 @@ Controller::Controller(String const &name, int nb_keys, int nb_axis)
     controllers.Push(this);
 }
 
+Controller::Controller(String const &name, InputProfile const& profile)
+    : Controller(name, 0, 0)
+{
+    Init(profile);
+}
+
 Controller::~Controller()
 {
+    ClearProfile();
     for (int i = 0; i < controllers.Count(); ++i)
     {
         if (controllers[i] == this)
@@ -253,6 +261,7 @@ Controller::~Controller()
     }
 }
 
+//-----------------------------------------------------------------------------
 Controller* Controller::Get(String const &name)
 {
     for (int i = 0; i < controllers.Count(); ++i)
@@ -263,6 +272,102 @@ Controller* Controller::Get(String const &name)
     return nullptr;
 }
 
+//Input profile system --------------------------------------------------------
+void Controller::UnbindProfile()
+{
+    if (m_profile.IsEmpty())
+        return;
+
+    m_mutex.lock();
+
+    //Keyboard
+    if (m_keyboard)
+    {
+        for (InputProfile::Keyboard& key : m_profile.m_keys)
+            GetKey(key.m_idx).UnbindKeyboard(key.m_name);
+        m_keyboard = nullptr;
+    }
+
+    //Mouse
+    if (m_mouse)
+    {
+        for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)
+            GetKey(key.m_idx).UnbindMouse(key.m_name);
+        for (InputProfile::MouseAxis& axis : m_profile.m_mouse_axis)
+            GetAxis(axis.m_idx).UnbindMouse(axis.m_name);
+        m_mouse = nullptr;
+    }
+
+    //Joystick
+    for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
+    {
+        if (m_joystick_idx.Find(key.m_joy) != INDEX_NONE)
+            GetKey(key.m_idx).UnbindJoystick(key.m_joy, key.m_name);
+    }
+    for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
+    {
+        if (m_joystick_idx.Find(axis.m_joy) != INDEX_NONE)
+            GetAxis(axis.m_idx).UnbindJoystick(axis.m_joy, axis.m_name);
+    }
+    m_joystick.Empty();
+    m_joystick_idx.Empty();
+
+    m_mutex.unlock();
+}
+//Input profile system --------------------------------------------------------
+void Controller::BindProfile(InputProfile const& setup)
+{
+    ASSERT(!setup.IsEmpty());
+
+    m_mutex.lock();
+    m_profile = setup;
+
+    m_keys.Resize(m_profile.GetKeyCount());
+    m_axis.Resize(m_profile.GetAxisCount());
+
+    //Keyboard
+    m_keyboard = InputDevice::GetKeyboard();
+    if (m_keyboard)
+    {
+        for (InputProfile::Keyboard& key : m_profile.m_keys)
+            GetKey(key.m_idx).BindKeyboard(key.m_name);
+    }
+
+    //Mouse
+    m_mouse = InputDevice::GetMouse();
+    if (m_mouse)
+    {
+        for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)
+            GetKey(key.m_idx).BindMouse(key.m_name);
+        for (InputProfile::MouseAxis& axis : m_profile.m_mouse_axis)
+            GetAxis(axis.m_idx).BindMouse(axis.m_name);
+    }
+
+    //Joystick
+    for (uint64_t joy_idx : m_profile.m_joystick)
+    {
+        class InputDevice* joystick = InputDevice::GetJoystick(joy_idx);
+        if (joystick)
+        {
+            m_joystick << joystick;
+            m_joystick_idx << joy_idx;
+        }
+    }
+    for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
+    {
+        if (m_joystick_idx.Find(key.m_joy) != INDEX_NONE)
+            GetKey(key.m_idx).BindJoystick(key.m_joy, key.m_name);
+    }
+    for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
+    {
+        if (m_joystick_idx.Find(axis.m_joy) != INDEX_NONE)
+            GetAxis(axis.m_idx).BindJoystick(axis.m_joy, axis.m_name);
+    }
+
+    m_mutex.unlock();
+}
+
+//-----------------------------------------------------------------------------
 void Controller::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
@@ -286,6 +391,7 @@ void Controller::TickGame(float seconds)
     m_deactivate_nextframe = false;
 }
 
+//-----------------------------------------------------------------------------
 void Controller::Activate()
 {
     m_activate_nextframe = true;
@@ -298,6 +404,7 @@ void Controller::Deactivate()
     m_activate_nextframe = false;
 }
 
+//-----------------------------------------------------------------------------
 array<Controller*> Controller::DeactivateAll()
 {
     array<Controller*> result;

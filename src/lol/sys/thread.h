@@ -38,7 +38,6 @@ public:
     queue() : queue_base<T, N>() {}
 };
 
-#if LOL_FEATURE_THREADS
 class thread : thread_base
 {
 public:
@@ -91,6 +90,7 @@ protected:
 };
 typedef SafeEnum<ThreadJobTypeBase> ThreadJobType;
 
+//ThreadJob -------------------------------------------------------------------
 class ThreadJob
 {
     friend class BaseThreadManager;
@@ -109,11 +109,12 @@ protected:
     ThreadJobType m_type;
 };
 
-//Base class for thread manager
+//Base class for thread manager -----------------------------------------------
 class BaseThreadManager : public Entity
 {
 public:
     BaseThreadManager(int thread_count);
+    BaseThreadManager(int thread_count, int thread_min);
     ~BaseThreadManager();
 
     char const *GetName() { return "<BaseThreadManager>"; }
@@ -122,7 +123,16 @@ public:
     bool Start();
     //Stop the threads
     bool Stop();
+
+    //Children class intergace
+    virtual bool AddJob(ThreadJob* job) { ASSERT(false); return false; }
+    virtual bool GetWorkResult(array<ThreadJob*>& results) { ASSERT(false); return false; }
+
 protected:
+    //Thread addition
+    void AddThreads(int nb);
+    void StopThreads(int nb);
+
     //Work stuff
     bool AddWork(ThreadJob* job);
 
@@ -137,37 +147,13 @@ protected:
 
     /* Worker threads */
     int                 m_thread_count;
+    int                 m_thread_min;
     array<thread*>      m_threads;
     queue<ThreadStatus> m_spawnqueue, m_donequeue;
     queue<ThreadJob*>   m_jobqueue;
     queue<ThreadJob*>   m_resultqueue;
     array<ThreadJob*>   m_job_dispatch;
 };
-
-//Generic class for thread manager, executes work and store results, for you to use
-class GenericThreadManager : public BaseThreadManager
-{
-public:
-    GenericThreadManager(int thread_count)
-        : BaseThreadManager(thread_count) { }
-
-    char const *GetName() { return "<GenericThreadManager>"; }
-
-    //Work stuff
-    bool AddJob(ThreadJob* job) { return AddWork(job); }
-    bool GetWorkResult(array<ThreadJob*>& results)
-    {
-        results += m_job_result;
-        m_job_result.Empty();
-        return results.Count() > 0;
-    }
-
-protected:
-    virtual void TreatResult(ThreadJob* result) { m_job_result << result; }
-
-    array<ThreadJob*>       m_job_result;
-};
-#endif
 
 } /* namespace lol */
 

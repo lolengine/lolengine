@@ -133,11 +133,190 @@ protected:
     friend class Controller;
 };
 
+//-------------------------------------------------------------------------
+class InputProfile
+{
+    friend class Controller;
+private:
+    //---------------------------------------------------------------------
+    class Key
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        Key() { }
+        Key(int idx, String const& name) : m_idx(idx), m_name(name) { }
+        Key(const Key& other) : m_idx(other.m_idx), m_name(other.m_name) { }
+        ~Key() { }
+        bool operator==(const Key& other) { return m_name == other.m_name; }
+    private:
+        int m_idx = 0;
+        String m_name;
+    };
+    //---------------------------------------------------------------------
+    class Joystick
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        Joystick() { }
+        Joystick(uint64_t joy, int idx, String const& name) : m_joy(joy), m_idx(idx), m_name(name) { }
+        Joystick(const Joystick& other) : m_joy(other.m_joy), m_idx(other.m_idx), m_name(other.m_name) { }
+        ~Joystick() { }
+        bool operator==(const Joystick& other) { return m_name == other.m_name; }
+    private:
+        uint64_t m_joy = 0;
+        int m_idx = 0;
+        String m_name;
+    };
+public:
+    //---------------------------------------------------------------------
+    class Keyboard : public Key
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        Keyboard() : Key() { }
+        Keyboard(int idx, String const& name) : Key(idx, name) { }
+        Keyboard(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+    };
+    //---------------------------------------------------------------------
+    class MouseKey : public Key
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        MouseKey() : Key() { }
+        MouseKey(int idx, String const& name) : Key(idx, name) { }
+        MouseKey(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+    };
+    //---------------------------------------------------------------------
+    class MouseAxis : public Key
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        MouseAxis() : Key() { }
+        MouseAxis(int idx, String const& name) : Key(idx, name) { }
+        MouseAxis(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+    };
+    //---------------------------------------------------------------------
+    class JoystickKey : public Joystick
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        JoystickKey() : Joystick() { }
+        JoystickKey(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
+        JoystickKey(const JoystickKey& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
+    };
+    //---------------------------------------------------------------------
+    class JoystickAxis : public Joystick
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        JoystickAxis() : Joystick() { }
+        JoystickAxis(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
+        JoystickAxis(const JoystickAxis& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
+    };
+public:
+    InputProfile() { }
+    InputProfile(const InputProfile& other)
+    {
+        m_keys = other.m_keys;
+        m_mouse_keys = other.m_mouse_keys;
+        m_mouse_axis = other.m_mouse_axis;
+        m_joystick = other.m_joystick;
+        m_joystick_keys = other.m_joystick_keys;
+        m_joystick_axis = other.m_joystick_axis;
+    }
+    virtual ~InputProfile() { }
+
+    bool IsEmpty() const
+    {
+        return !(GetKeyCount() && GetAxisCount());
+    }
+    int GetKeyCount() const
+    {
+        return (int)(m_keys.Count() + m_mouse_keys.Count() + m_joystick_keys.Count());
+    }
+    int GetAxisCount() const
+    {
+        return (int)(m_mouse_axis.Count() + m_joystick_axis.Count());
+    }
+    InputProfile& operator<<(InputProfile::Keyboard const& binding)
+    {
+        m_keys.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::Keyboard> const& bindings)
+    {
+        m_keys += bindings;
+        return *this;
+    }
+    InputProfile& operator<<(InputProfile::MouseKey const& binding)
+    {
+        m_mouse_keys.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::MouseKey> const& bindings)
+    {
+        m_mouse_keys += bindings;
+        return *this;
+    }
+    InputProfile& operator<<(InputProfile::MouseAxis const& binding)
+    {
+        m_mouse_axis.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::MouseAxis> const& bindings)
+    {
+        m_mouse_axis += bindings;
+        return *this;
+    }
+    InputProfile& operator<<(InputProfile::JoystickKey const& binding)
+    {
+        m_joystick.PushUnique(binding.m_joy);
+        m_joystick_keys.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::JoystickKey> const& bindings)
+    {
+        for (InputProfile::JoystickKey const& binding : bindings)
+            m_joystick.PushUnique(binding.m_joy);
+        m_joystick_keys += bindings;
+        return *this;
+    }
+    InputProfile& operator<<(InputProfile::JoystickAxis const& binding)
+    {
+        m_joystick.PushUnique(binding.m_joy);
+        m_joystick_axis.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::JoystickAxis> const& bindings)
+    {
+        for (InputProfile::JoystickAxis const& binding : bindings)
+            m_joystick.PushUnique(binding.m_joy);
+        m_joystick_axis += bindings;
+        return *this;
+    }
+
+private:
+    array<Keyboard>     m_keys;
+    array<MouseKey>     m_mouse_keys;
+    array<MouseAxis>    m_mouse_axis;
+    array<uint64_t>     m_joystick;
+    array<JoystickKey>  m_joystick_keys;
+    array<JoystickAxis> m_joystick_axis;
+};
+
 //-----------------------------------------------------------------------------
 class Controller : public Entity
 {
 public:
-    Controller(String const &name, int nb_keys, int nb_axis);
+    Controller(String const &name, int nb_keys = 0, int nb_axis = 0);
+    Controller(String const &name, InputProfile const& setup);
     virtual ~Controller();
 
     virtual void TickGame(float seconds);
@@ -149,21 +328,45 @@ public:
     /** Deactivate every active controller on next frame and return an array of deactivated (previously active) controllers */
     static array<Controller*> DeactivateAll();
 
+    /** Input profile system */
+    void Init(InputProfile const& profile)
+    {
+        UnbindProfile();
+        BindProfile(profile);
+    }
+    void ClearProfile()
+    {
+        UnbindProfile();
+    }
+
+    /** GetKeys/Axis stuff */
     KeyBinding& GetKey(int index) { return m_keys[index]; }
     AxisBinding& GetAxis(int index) { return m_axis[index]; }
 
     static Controller* Get(String const &name);
 
 protected:
+    /** Input profile system */
+    void UnbindProfile();
+    void BindProfile(InputProfile const& setup);
+
+private:
     array<KeyBinding> m_keys;
     array<AxisBinding> m_axis;
 
-private:
     static array<Controller*> controllers;
     String m_name;
     bool m_activate_nextframe;
     bool m_deactivate_nextframe;
     bool m_active;
+
+    //Input profile stuff
+    mutex m_mutex;
+    class InputProfile m_profile;
+    class InputDevice* m_keyboard = nullptr;
+    class InputDevice* m_mouse = nullptr;
+    array<class InputDevice*> m_joystick;
+    array<uint64_t> m_joystick_idx;
 };
 
 } /* namespace lol */

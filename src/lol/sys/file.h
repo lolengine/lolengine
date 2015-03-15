@@ -82,6 +82,7 @@ public:
     long int GetPosFromStart();
     void SetPosFromStart(long int pos);
     long int GetSize();
+    long int GetModificationTime();
 
 private:
     class FileData *m_data;

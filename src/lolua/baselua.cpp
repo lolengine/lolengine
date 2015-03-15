@@ -33,6 +33,11 @@ class LuaBaseData
         return 0;
     }
 
+    static int LuaDoCode(LuaState *l, String const& s)
+    {
+        return luaL_dostring(l, s.C());
+    }
+
     static int LuaDoFile(LuaState *l)
     {
         if (lua_isnoneornil(l, 1))
@@ -53,7 +58,7 @@ class LuaBaseData
                 f.Close();
 
                 Log::Debug("loading Lua file %s\n", pathlist[i].C());
-                status = luaL_dostring(l, s.C());
+                status = LuaDoCode(l, s);
                 break;
             }
         }
@@ -94,11 +99,17 @@ Loader::~Loader()
 }
 
 //-----------------------------------------------------------------------------
-bool Loader::ExecLua(String const &lua)
+bool Loader::ExecLuaFile(String const &lua)
 {
     const char* c = lua_pushstring(m_lua_state, lua.C());
     int status = LuaBaseData::LuaDoFile(m_lua_state);
     return status == 0;
+}
+
+//-----------------------------------------------------------------------------
+bool Loader::ExecLuaCode(String const &lua)
+{
+    return 0 == LuaBaseData::LuaDoCode(m_lua_state, lua);
 }
 
 //-----------------------------------------------------------------------------

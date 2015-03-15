@@ -91,6 +91,7 @@
     <LolFxCompile Include="shinymvtexture.lolfx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="meshviewer.h" />
     <ClInclude Include="scenesetup.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
