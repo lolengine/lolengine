@@ -26,10 +26,10 @@ class DefaultThreadManager : public BaseThreadManager
 {
 public:
     DefaultThreadManager(int thread_count)
-        : DefaultThreadManager(thread_count, thread_count)
+        : BaseThreadManager(thread_count, thread_count)
     { }
     DefaultThreadManager(int thread_count, int thread_min)
-        : DefaultThreadManager(thread_count, thread_min)
+        : BaseThreadManager(thread_count, thread_min)
     { }
 
     char const *GetName() { return "<DefaultThreadManager>"; }

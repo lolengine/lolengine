@@ -315,7 +315,7 @@ private:
 class Controller : public Entity
 {
 public:
-    Controller(String const &name, int nb_keys = 0, int nb_axis = 0);
+    Controller(String const &name);
     Controller(String const &name, InputProfile const& setup);
     virtual ~Controller();
 
@@ -328,20 +328,16 @@ public:
     /** Deactivate every active controller on next frame and return an array of deactivated (previously active) controllers */
     static array<Controller*> DeactivateAll();
 
-    /** Input profile system */
-    void Init(InputProfile const& profile)
-    {
-        UnbindProfile();
-        BindProfile(profile);
-    }
-    void ClearProfile()
-    {
-        UnbindProfile();
-    }
+    /** Init mode 1: Input profile system */
+    void Init(InputProfile const& profile);
+    void ClearProfile();
+
+    /** Init mode 2: By hand, key/axis by key/axis */
+    void SetInputCount(int nb_keys, int nb_axis);
 
     /** GetKeys/Axis stuff */
-    KeyBinding& GetKey(int index) { return m_keys[index]; }
-    AxisBinding& GetAxis(int index) { return m_axis[index]; }
+    KeyBinding& GetKey(int index);
+    AxisBinding& GetAxis(int index);
 
     static Controller* Get(String const &name);
 
