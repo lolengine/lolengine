@@ -98,17 +98,7 @@ Image::Image(ivec2 size)
 Image::Image (Image const &other)
   : m_data(new ImageData())
 {
-    ivec2 size = other.GetSize();
-    PixelFormat fmt = other.GetFormat();
-
-    SetSize(size);
-    if (fmt != PixelFormat::Unknown)
-    {
-        SetFormat(fmt);
-        memcpy(m_data->m_pixels[(int)fmt]->data(),
-               other.m_data->m_pixels[(int)fmt]->data(),
-               size.x * size.y * BytesPerPixel(fmt));
-    }
+    Copy(other);
 }
 
 Image & Image::operator =(Image other)
@@ -127,19 +117,67 @@ Image::~Image()
     delete m_data;
 }
 
+void Image::DummyFill()
+{
+    //TODO: This is not very beautiful
+    for (auto codec : g_image_loader.m_codecs)
+    {
+        if (String(codec->GetName()).Contains("Dummy"))
+        {
+            codec->Load(this, nullptr);
+            return;
+        }
+    }
+}
+
+void Image::Copy(Image const &other)
+{
+    ivec2 size = other.GetSize();
+    PixelFormat fmt = other.GetFormat();
+
+    SetSize(size);
+    if (fmt != PixelFormat::Unknown)
+    {
+        SetFormat(fmt);
+        memcpy(m_data->m_pixels[(int)fmt]->data(),
+            other.m_data->m_pixels[(int)fmt]->data(),
+            size.x * size.y * BytesPerPixel(fmt));
+    }
+}
+
 bool Image::Load(char const *path)
 {
+    ImageCodec* last_codec = nullptr;
     for (auto codec : g_image_loader.m_codecs)
+    {
+        last_codec = codec;
         if (codec->Load(this, path))
+        {
+            Log::Info("Image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
             return true;
+        }
+    }
+
+    //Log error, because we shouldn't be here
+    Log::Error("Image::Load: Last codec %s, Error loading image %s.\n", last_codec->GetName(), path);
     return false;
 }
 
 bool Image::Save(char const *path)
 {
+    ImageCodec* last_codec = nullptr;
     for (auto codec : g_image_loader.m_codecs)
+    {
+        last_codec = codec;
         if (codec->Save(this, path))
+        {
+            Log::Info("Image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
             return true;
+        }
+    }
+
+    //Log error, because we shouldn't be here
+    Log::Error("Image::Save: Last codec %s, Error saving image %s.\n", last_codec->GetName(), path);
     return false;
 }
 

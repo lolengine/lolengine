@@ -22,11 +22,12 @@ namespace lol
 class ZedPaletteImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<ZedPaletteImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
 };
 
-DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 0)
+DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
 
 /*
  * Public Image class

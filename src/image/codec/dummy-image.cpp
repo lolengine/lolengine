@@ -22,10 +22,12 @@ namespace lol
 class DummyImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<DummyImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
 };
 
+//Priority 0 because it's supposed to be the last one
 DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
 
 /*
@@ -49,14 +51,15 @@ bool DummyImageCodec::Load(Image *image, char const *path)
         }
     image->Unlock(pixels);
 
-    return true;
+    //return false, because we're not supposed to be here.
+    return false;
 }
 
 bool DummyImageCodec::Save(Image *image, char const *path)
 {
     UNUSED(path);
 
-    return true;
+    return false;
 }
 
 } /* namespace lol */

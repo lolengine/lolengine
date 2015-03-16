@@ -69,6 +69,7 @@ public:
 class ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<ImageCodec>"; }
     virtual bool Load(Image *image, char const *path) = 0;
     virtual bool Save(Image *image, char const *path) = 0;
 
