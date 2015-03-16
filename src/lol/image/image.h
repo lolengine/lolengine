@@ -56,6 +56,7 @@ enum class EdiffAlgorithm : uint8_t
     Lite,
 };
 
+//Image -----------------------------------------------------------------------
 class Image
 {
 public:
@@ -70,6 +71,8 @@ public:
     Image & operator =(Image other);
     ~Image();
 
+    void DummyFill();
+    void Copy(Image const &other);
     bool Load(char const *path);
     bool Save(char const *path);
 

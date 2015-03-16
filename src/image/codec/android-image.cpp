@@ -33,6 +33,7 @@ extern ANativeActivity *g_activity;
 class AndroidImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<AndroidImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
     virtual bool Close();

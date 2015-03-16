@@ -23,6 +23,7 @@ namespace lol
 class ZedImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<ZedImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
 
@@ -39,7 +40,7 @@ private:
     array<ivec2, ivec2> m_tiles;
 };
 
-DECLARE_IMAGE_CODEC(ZedImageCodec, 0)
+DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
 
 /*
  * Public Image class

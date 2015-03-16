@@ -36,6 +36,7 @@ namespace lol
 class GdiPlusImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<GdiPlusImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
 };

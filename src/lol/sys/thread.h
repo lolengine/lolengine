@@ -113,20 +113,15 @@ protected:
 class BaseThreadManager : public Entity
 {
 public:
+    char const *GetName() { return "<BaseThreadManager>"; }
     BaseThreadManager(int thread_count);
     BaseThreadManager(int thread_count, int thread_min);
     ~BaseThreadManager();
-
-    char const *GetName() { return "<BaseThreadManager>"; }
 
     //Initialize, Ticker::Ref and start the thread
     bool Start();
     //Stop the threads
     bool Stop();
-
-    //Children class intergace
-    virtual bool AddJob(ThreadJob* job) { ASSERT(false); return false; }
-    virtual bool GetWorkResult(array<ThreadJob*>& results) { ASSERT(false); return false; }
 
 protected:
     //Thread addition

@@ -30,6 +30,7 @@ namespace lol
 class OricImageCodec : public ImageCodec
 {
 public:
+    virtual char const *GetName() { return "<OricImageCodec>"; }
     virtual bool Load(Image *image, char const *path);
     virtual bool Save(Image *image, char const *path);
 
