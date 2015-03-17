@@ -24,6 +24,8 @@
 #   endif
 #endif
 
+#include "textureimage-private.h"
+
 namespace lol
 {
 
@@ -31,30 +33,38 @@ namespace lol
  * TileSet implementation class
  */
 
-class TileSetData
+class TileSetData : public TextureImageData
 {
     friend class TileSet;
 
-private:
-    String m_name;
-
+protected:
     /* Pixels, then texture coordinates */
     array<ibox2, box2> m_tiles;
-    ivec2 m_tile_size, m_image_size, m_texture_size;
-
-    Image *m_image;
-    Texture *m_texture;
+    ivec2 m_tile_size;
 };
+
+TextureImageData* TileSet::GetNewData()
+{
+    return new TileSetData();
+}
+
+TileSetData* TileSet::GetData()
+{
+    return (TileSetData*)m_data;
+}
+
+TileSetData const* TileSet::GetData() const
+{
+    return (TileSetData const*)m_data;
+}
 
 /*
  * Public TileSet class
  */
 
 TileSet::TileSet(char const *path)
-  : m_data(new TileSetData())
+    : TextureImage(path)
 {
-    Init(path);
-
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (ptrdiff_t i = 0; i < tiles.Count(); i++)
@@ -62,10 +72,8 @@ TileSet::TileSet(char const *path)
 }
 
 TileSet::TileSet(char const *path, Image* image)
-  : m_data(new TileSetData())
+    : TextureImage(path, image)
 {
-    Init(path, image);
-
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (ptrdiff_t i = 0; i < tiles.Count(); i++)
@@ -73,10 +81,8 @@ TileSet::TileSet(char const *path, Image* image)
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
-  : m_data(new TileSetData())
+    : TileSet(path)
 {
-    Init(path);
-
     /* If count is valid, fix size; otherwise, fix count. */
     if (count.x > 0 && count.y > 0)
     {
@@ -95,18 +101,11 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
         AddTile(ibox2(size * ivec2(i, j),
                       size * ivec2(i + 1, j + 1)));
     }
-
-    array<ivec2, ivec2> tiles;
-    if (m_data->m_image->RetrieveTiles(tiles))
-        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
-            AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
 }
 
 TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
-  : m_data(new TileSetData())
+    : TileSet(path, image)
 {
-    Init(path, image);
-
     /* If count is valid, fix size; otherwise, fix count. */
     if (count.x > 0 && count.y > 0)
     {
@@ -125,38 +124,33 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
         AddTile(ibox2(size * ivec2(i, j),
                       size * ivec2(i + 1, j + 1)));
     }
-
-    array<ivec2, ivec2> tiles;
-    if (m_data->m_image->RetrieveTiles(tiles))
-        for (ptrdiff_t i = 0; i < tiles.Count(); i++)
-            AddTile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
 }
 
-void TileSet::Init(char const *path)
+TileSet::~TileSet()
 {
-    Init(path, new Image(path));
 }
 
 void TileSet::Init(char const *path, Image* image)
 {
+    super::Init(path, image);
+
     m_data->m_name = String("<tileset> ") + path;
-
-    m_palette = nullptr;
-    m_data->m_texture = 0;
-    m_data->m_image = image;
-    m_data->m_image_size = m_data->m_image->GetSize();
-    m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
-                                   PotUp(m_data->m_image_size.y));
-
-    m_drawgroup = DRAWGROUP_BEFORE;
 }
 
+//Inherited from Entity -------------------------------------------------------
+char const *TileSet::GetName()
+{
+    return m_data->m_name.C();
+}
+
+//New methods -----------------------------------------------------------------
 ptrdiff_t TileSet::AddTile(ibox2 rect)
 {
-    m_data->m_tiles.Push(rect,
-                         box2((vec2)rect.A / (vec2)m_data->m_texture_size,
-                              (vec2)rect.B / (vec2)m_data->m_texture_size));
-    return m_data->m_tiles.Count() - 1;
+    TileSetData* data = GetData();
+    data->m_tiles.Push(rect,
+                        box2((vec2)rect.A / (vec2)m_data->m_texture_size,
+                            (vec2)rect.B / (vec2)m_data->m_texture_size));
+    return data->m_tiles.Count() - 1;
 }
 
 void TileSet::AddTile(ivec2 count)
@@ -171,100 +165,18 @@ void TileSet::AddTile(ivec2 count)
     }
 }
 
-TileSet::~TileSet()
-{
-    delete m_data;
-}
-
-void TileSet::TickDraw(float seconds, Scene &scene)
-{
-    Entity::TickDraw(seconds, scene);
-
-    if (IsDestroying())
-    {
-        if (m_data->m_image)
-        {
-            delete m_data->m_image;
-            m_data->m_image = nullptr;
-        }
-        else
-        {
-            delete m_data->m_texture;
-            m_data->m_texture = nullptr;
-        }
-    }
-    else if (m_data->m_image)
-    {
-        PixelFormat format = m_data->m_image->GetFormat();
-        int planes = BytesPerPixel(format);
-
-        int w = m_data->m_texture_size.x;
-        int h = m_data->m_texture_size.y;
-
-        uint8_t *pixels = (uint8_t *)m_data->m_image->Lock();
-        bool resized = false;
-        if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
-        {
-            uint8_t *tmp = new uint8_t[planes * w * h];
-            for (int line = 0; line < m_data->m_image_size.y; line++)
-                memcpy(tmp + planes * w * line,
-                       pixels + planes * m_data->m_image_size.x * line,
-                       planes * m_data->m_image_size.x);
-            pixels = tmp;
-            resized = false;
-        }
-
-        m_data->m_texture = new Texture(ivec2(w, h), format);
-        m_data->m_texture->SetData(pixels);
-
-        if (resized)
-            delete[] pixels;
-        delete m_data->m_image;
-        m_data->m_image = nullptr;
-    }
-}
-
-char const *TileSet::GetName()
-{
-    return m_data->m_name.C();
-}
-
 ptrdiff_t TileSet::GetTileCount() const
 {
-    return m_data->m_tiles.Count();
+    return GetData()->m_tiles.Count();
 }
 
 ivec2 TileSet::GetTileSize(ptrdiff_t tileid) const
 {
-    ibox2 const &box = m_data->m_tiles[tileid].m1;
+    ibox2 const &box = GetData()->m_tiles[tileid].m1;
     return box.B - box.A;
 }
 
-ivec2 TileSet::GetTextureSize() const
-{
-    return m_data->m_texture_size;
-}
-
-Texture * TileSet::GetTexture()
-{
-    return m_data->m_texture;
-}
-
-Texture const * TileSet::GetTexture() const
-{
-    return m_data->m_texture;
-}
-
-Image * TileSet::GetImage()
-{
-    return m_data->m_image;
-}
-
-Image const * TileSet::GetImage() const
-{
-    return m_data->m_image;
-}
-
+//Palette ---------------------------------------------------------------------
 void TileSet::SetPalette(TileSet* palette)
 {
     m_palette = palette;
@@ -280,22 +192,12 @@ TileSet const* TileSet::GetPalette() const
     return m_palette;
 }
 
-void TileSet::Bind()
-{
-    if (!m_data->m_image && m_data->m_texture)
-        m_data->m_texture->Bind();
-}
-
-void TileSet::Unbind()
-{
-    ;
-}
-
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
                        vec3 *vertex, vec2 *texture)
 {
-    ibox2 pixels = m_data->m_tiles[id].m1;
-    box2 texels = m_data->m_tiles[id].m2;
+    TileSetData* data = GetData();
+    ibox2 pixels = data->m_tiles[id].m1;
+    box2 texels = data->m_tiles[id].m2;
     float dtx = texels.B.x - texels.A.x;
     float dty = texels.B.y - texels.A.y;
     float tx = texels.A.x;

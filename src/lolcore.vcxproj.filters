@@ -91,6 +91,12 @@
     <Filter Include="lolua">
       <UniqueIdentifier>{25cc0513-ad71-4fbe-bd24-acc88aa66833}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tileset">
+      <UniqueIdentifier>{7fb4105d-4f17-4824-8d40-948553fdcde1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="entities">
+      <UniqueIdentifier>{3bd5fe6f-c9cd-45f3-98a9-958d86d415e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\crop.cpp">
@@ -210,9 +216,6 @@
     <ClCompile Include="emitter.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="entity.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="font.cpp">
       <Filter>...</Filter>
     </ClCompile>
@@ -249,19 +252,10 @@
     <ClCompile Include="text.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="tiler.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="tileset.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="video.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="worldentity.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="gpu\framebuffer.cpp">
@@ -415,6 +409,21 @@
     <ClCompile Include="sys\threadtypes.cpp">
       <Filter>sys</Filter>
     </ClCompile>
+    <ClCompile Include="tiler.cpp">
+      <Filter>tileset</Filter>
+    </ClCompile>
+    <ClCompile Include="tileset.cpp">
+      <Filter>tileset</Filter>
+    </ClCompile>
+    <ClCompile Include="worldentity.cpp">
+      <Filter>entities</Filter>
+    </ClCompile>
+    <ClCompile Include="entity.cpp">
+      <Filter>entities</Filter>
+    </ClCompile>
+    <ClCompile Include="textureimage.cpp">
+      <Filter>tileset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -537,9 +546,6 @@
     <ClInclude Include="emitter.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="entity.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="font.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -586,15 +592,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="ticker.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="worldentity.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="tiler.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="tileset.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="video.h">
@@ -775,6 +772,24 @@
     <ClInclude Include="lol\sys\threadtypes.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
+    <ClInclude Include="tiler.h">
+      <Filter>tileset</Filter>
+    </ClInclude>
+    <ClInclude Include="tileset.h">
+      <Filter>tileset</Filter>
+    </ClInclude>
+    <ClInclude Include="worldentity.h">
+      <Filter>entities</Filter>
+    </ClInclude>
+    <ClInclude Include="entity.h">
+      <Filter>entities</Filter>
+    </ClInclude>
+    <ClInclude Include="textureimage.h">
+      <Filter>tileset</Filter>
+    </ClInclude>
+    <ClInclude Include="textureimage-private.h">
+      <Filter>tileset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="gpu\emptymaterial.lolfx">
@@ -793,9 +808,6 @@
       <Filter>...</Filter>
     </LolFxCompile>
     <LolFxCompile Include="gpu\line.lolfx">
-      <Filter>...</Filter>
-    </LolFxCompile>
-    <LolFxCompile Include="gpu\tile.lolfx">
       <Filter>...</Filter>
     </LolFxCompile>
     <LolFxCompile Include="easymesh\shiny_SK.lolfx">
@@ -818,6 +830,9 @@
     </LolFxCompile>
     <LolFxCompile Include="gpu\palette.lolfx">
       <Filter>...</Filter>
+    </LolFxCompile>
+    <LolFxCompile Include="gpu\tile.lolfx">
+      <Filter>tileset</Filter>
     </LolFxCompile>
   </ItemGroup>
   <ItemGroup>

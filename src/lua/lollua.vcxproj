@@ -123,6 +123,11 @@
     <ClInclude Include="lvm.h" />
     <ClInclude Include="lzio.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile.am">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(SolutionDir)\msbuild\lolfx.targets" />

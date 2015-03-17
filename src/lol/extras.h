@@ -42,9 +42,11 @@
 #include <lol/../sample.h>
 #include <lol/../sprite.h>
 #include <lol/../text.h>
+#include <lol/../textureimage.h>
 #include <lol/../tileset.h>
 #include <lol/../lolua/baselua.h>
 #include <lol/../world.h>
+#include <lol/../imgui/lolimgui.h>
 
 // Other objects
 #include <lol/../dict.h>

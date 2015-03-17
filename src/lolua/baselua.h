@@ -322,6 +322,7 @@ protected:
     }
 };
 //-----------------------------------------------------------------------------
+/* TODO: FIX THAT TOUKY !!
 template<typename T>
 class VarPtrLight
 {
@@ -337,7 +338,7 @@ protected:
         m_value = obj ? *obj : nullptr;
     }
 };
-
+*/
 //-----------------------------------------------------------------------------
 template<typename T>
 class Var

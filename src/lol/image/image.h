@@ -72,6 +72,7 @@ public:
     ~Image();
 
     void DummyFill();
+    void Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt);
     void Copy(Image const &other);
     bool Load(char const *path);
     bool Save(char const *path);
