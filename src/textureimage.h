@@ -18,61 +18,51 @@
 // zero, the texture is freed.
 //
 
-/*
 #include <lol/image/image.h>
 #include <lol/gpu/texture.h>
 
 #include <stdint.h>
 
 #include "entity.h"
-*/
-#include "textureimage.h"
 
 namespace lol
 {
 
 class TextureImageData;
-class TileSetData;
 
-class TileSet : public TextureImage
+class TextureImage : public Entity
 {
-    typedef TextureImage super;
+    typedef Entity super;
 protected:
     virtual TextureImageData* GetNewData();
-    TileSetData* GetData();
-    TileSetData const* GetData() const;
 
 public:
-    TileSet(char const *path);
-    TileSet(char const *path, Image* image);
-
-    /* Old style: path to PNG file */
-    TileSet(char const *path, ivec2 size, ivec2 count);
-    TileSet(char const *path, Image* image, ivec2 size, ivec2 count);
-    
-    virtual ~TileSet();
+    TextureImage(char const *path);
+    TextureImage(char const *path, Image* image);
+    virtual ~TextureImage();
 
 protected:
+    void Init(char const *path);
     virtual void Init(char const *path, Image* image);
+
+protected:
+    virtual void TickDraw(float seconds, Scene &scene);
 
 public:
     /* Inherited from Entity */
     virtual char const *GetName();
 
-    /* New methods */
-    ptrdiff_t AddTile(ibox2 rect);
-    void AddTile(ivec2 count);
-    ptrdiff_t GetTileCount() const;
-    ivec2 GetTileSize(ptrdiff_t tileid) const;
-
-    void SetPalette(TileSet* palette);
-    TileSet* GetPalette();
-    TileSet const * GetPalette() const;
-    void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
-                  vec3 *vertex, vec2 *texture);
+    void UpdateTexture(Image* image);
+    Texture * GetTexture();
+    Texture const * GetTexture() const;
+    Image * GetImage();
+    Image const * GetImage() const;
+    ivec2 GetTextureSize() const;
+    void Bind();
+    void Unbind();
 
 protected:
-    TileSet*        m_palette;
+    TextureImageData* m_data = nullptr;
 };
 
 } /* namespace lol */

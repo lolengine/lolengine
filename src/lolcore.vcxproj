@@ -225,6 +225,7 @@
     <ClCompile Include="sys\threadtypes.cpp" />
     <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
+    <ClCompile Include="textureimage.cpp" />
     <ClCompile Include="ticker.cpp" />
     <ClCompile Include="tiler.cpp" />
     <ClCompile Include="tileset.cpp" />
@@ -381,6 +382,8 @@
     <ClInclude Include="sprite.h" />
     <ClInclude Include="sys\threadbase.h" />
     <ClInclude Include="text.h" />
+    <ClInclude Include="textureimage-private.h" />
+    <ClInclude Include="textureimage.h" />
     <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
@@ -406,7 +409,9 @@
     <LolFxCompile Include="gradient.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Makefile.am" />
+    <None Include="Makefile.am">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bullet\lolbullet.vcxproj">

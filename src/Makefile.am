@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = bullet lua data . t
+SUBDIRS = bullet lua imgui data . t
 
 noinst_LIBRARIES = liblolcore.a
 
@@ -9,7 +9,8 @@ liblolcore_a_SOURCES = \
     tiler.cpp tiler.h dict.cpp dict.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
     entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
-    tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
+    textureimage.cpp textureimage.h tileset.cpp tileset.h \
+    forge.cpp forge.h video.cpp video.h \
     world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     numeric.h utils.h messageservice.cpp messageservice.h \
@@ -25,8 +26,8 @@ liblolcore_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
-#liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
-liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
+#liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua -I$(srcdir)/imgui
+liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua -I$(srcdir)/imgui
 
 EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
 
