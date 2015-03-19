@@ -10,14 +10,9 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
 
 #include <cstdio>
-
-#include <lol/engine.h>
-#include "loldebug.h"
 
 using namespace lol;
 
@@ -145,7 +140,7 @@ void LolImGui::TickGame(float seconds)
         // Build texture
         unsigned char* pixels;
         ivec2 size;
-        io.Fonts->GetTexDataAsAlpha8(&pixels, &size.w, &size.h);
+        io.Fonts->GetTexDataAsAlpha8(&pixels, &size.x, &size.y);
 
         Image* image = new Image();
         image->Copy(pixels, size, PixelFormat::RGBA_8);
@@ -174,7 +169,7 @@ void LolImGui::TickGame(float seconds)
     // Setup display size (every frame to accommodate for window resizing)
     vec2 video_size = vec2(0);
     video_size = vec2(Video::GetSize());
-    io.DisplaySize = ImVec2(video_size.w, video_size.h);
+    io.DisplaySize = ImVec2(video_size.x, video_size.y);
 
     // Setup time step
     io.DeltaTime = seconds;
