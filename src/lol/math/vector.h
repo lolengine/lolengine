@@ -280,8 +280,6 @@ struct vec_t<T,2>
         struct { T x, y; }; /* axis */
         struct { T r, g; }; /* red, green */
         struct { T s, t; }; 
-        struct { T r, t; }; /* radius, theta */
-        struct { T w, h; }; /* width, height */
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T, 2, 9000> const xx, rr, ss/**/, ww;
@@ -438,8 +436,6 @@ struct vec_t<T,3>
         struct { T x, y, z; }; /* axis */
         struct { T r, g, b; }; /* red, green, blue */
         struct { T s, t, p; };
-        struct { T r, t, p; }; /* radius, theta, phi */
-        struct { T w, h, d; }; /* width, height, depth */
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T, 2, 9000> const xx, rr, ss/**/, ww;
@@ -1230,13 +1226,13 @@ static inline vec_t<T, N> radians(vec_t<T, N, SWIZZLE> const &a)
     return ret;
 }
 
-//Cartesian operation consider that you're in spherical coordinate
+// Cartesian operation consider that you're in spherical coordinate
 template<typename T, int SWIZZLE>
 static inline vec_t<T, 2> cartesian(vec_t<T, 2, SWIZZLE> const &a)
 {
     vec_t<T, 2> ret;
-    ret.x = r * lol::cos(t);
-    ret.y = r * lol::sin(t);
+    ret.x = a[0] * lol::cos(a[1]);
+    ret.y = a[0] * lol::sin(a[1]);
     return ret;
 }
 
@@ -1244,19 +1240,19 @@ template<typename T, int SWIZZLE>
 static inline vec_t<T, 3> cartesian(vec_t<T, 3, SWIZZLE> const &a)
 {
     vec_t<T, 3> ret;
-    ret.x = r * lol::sin(t) * lol::cos(p);
-    ret.y = r * lol::sin(t) * lol::sin(p);
-    ret.z = r * lol::cos(t);
+    ret.x = a[0] * lol::sin(a[1]) * lol::cos(a[2]);
+    ret.y = a[0] * lol::sin(a[1]) * lol::sin(a[2]);
+    ret.z = a[0] * lol::cos(a[1]);
     return ret;
 }
 
-//Spherical operation consider that you're in cartesian coordinate
+// Spherical operation consider that you're in cartesian coordinate
 template<typename T, int SWIZZLE>
 static inline vec_t<T, 2> spherical(vec_t<T, 2, SWIZZLE> const &a)
 {
     vec_t<T, 2> ret;
-    ret.r = lol::sqrt(lol::sq(x) + lol::sq(y));
-    ret.t = lol::atan2(y, x);
+    ret[0] = sqlength(a);
+    ret[1] = lol::atan2(a.y, a.x);
     return ret;
 }
 
@@ -1264,9 +1260,9 @@ template<typename T, int SWIZZLE>
 static inline vec_t<T, 3> spherical(vec_t<T, 3, SWIZZLE> const &a)
 {
     vec_t<T, 3> ret;
-    ret.r = lol::sqrt(lol::sq(x) + lol::sq(y) + lol::sq(z));
-    ret.t = lol::acos(z / ret.x);
-    ret.p = lol::atan(y / x);
+    ret[0] = sqlength(a);
+    ret[1] = lol::acos(a.z / ret[a.x]);
+    ret[2] = lol::atan(a.y / a.x);
     return ret;
 }
 

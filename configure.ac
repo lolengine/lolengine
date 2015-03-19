@@ -485,6 +485,7 @@ AC_CONFIG_FILES(
   src/Makefile
   src/bullet/Makefile
   src/lua/Makefile
+  src/imgui/Makefile
   src/data/Makefile
   src/data/font/Makefile
   src/t/Makefile
