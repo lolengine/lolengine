@@ -135,8 +135,6 @@ void LolImGui::TickGame(float seconds)
     //Init Texture
     if (!m_font)
     {
-        ImGuiIO& io = ImGui::GetIO();
-
         // Build texture
         unsigned char* pixels;
         ivec2 size;

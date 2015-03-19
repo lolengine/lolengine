@@ -227,14 +227,7 @@ protected:
     }
 
     //-------------------------------------------------------------------------
-    template <typename TLuaClass>
-    static int Del(LuaState * l)
-    {
-        VarPtr<TLuaClass> obj; obj.Get(l, 1);
-        ASSERT(obj());
-        delete obj();
-        return 0;
-    }
+    template <typename TLuaClass> static int Del(LuaState * l);
 };
 
 //-----------------------------------------------------------------------------
@@ -281,7 +274,7 @@ public:
     inline T* operator=(T* value)  { m_value = value; }
     inline bool IsValid(LuaState* l, int index)
     {
-        return InnerValid(l, index);
+        return InnerIsValid(l, index);
     }
 private:
     inline void GetInc(LuaState* l, int& index)
@@ -321,6 +314,21 @@ protected:
         *data = m_value;
     }
 };
+
+//
+// Object member implementations that require VarPtr
+//
+
+template <typename TLuaClass>
+int Object::Del(LuaState * l)
+{
+    VarPtr<TLuaClass> obj;
+    obj.Get(l, 1);
+    ASSERT(obj());
+    delete obj();
+    return 0;
+}
+
 //-----------------------------------------------------------------------------
 /* TODO: FIX THAT TOUKY !!
 template<typename T>
