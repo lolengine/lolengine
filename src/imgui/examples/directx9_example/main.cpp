@@ -30,6 +30,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             ImGui_ImplDX9_CreateDeviceObjects();
         }
         return 0;
+    case WM_SYSCOMMAND:
+        if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+            return 0;
+        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -37,7 +41,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     // Create application window
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, LoadCursor(NULL, IDC_ARROW), NULL, NULL, L"ImGui Example", NULL };
@@ -111,7 +115,8 @@ int main(int argc, char** argv)
         // 2. Show another simple window, this time using an explicit Begin/End pair
         if (show_another_window)
         {
-            ImGui::Begin("Another Window", &show_another_window, ImVec2(200,100));
+            ImGui::SetNextWindowSize(ImVec2(200,100), ImGuiSetCond_FirstUseEver);
+            ImGui::Begin("Another Window", &show_another_window);
             ImGui::Text("Hello");
             ImGui::End();
         }

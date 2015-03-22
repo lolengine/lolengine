@@ -7,10 +7,10 @@
 
 static void error_callback(int error, const char* description)
 {
-    fprintf(stderr, "Error: %s\n", description);
+    fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     // Setup window
     glfwSetErrorCallback(error_callback);
@@ -53,7 +53,8 @@ int main(int argc, char** argv)
         // 2. Show another simple window, this time using an explicit Begin/End pair
         if (show_another_window)
         {
-            ImGui::Begin("Another Window", &show_another_window, ImVec2(200,100));
+            ImGui::SetNextWindowSize(ImVec2(200,100), ImGuiSetCond_FirstUseEver);
+            ImGui::Begin("Another Window", &show_another_window);
             ImGui::Text("Hello");
             ImGui::End();
         }
