@@ -45,58 +45,63 @@ public:
         ShaderBlock green_pixel("GreenPixel");
         ShaderBlock blue_pixel("BluePixel");
 
-        String vertex_out = Shader::GetProgramOutVariableLocal(ShaderProgram::Vertex);
-        String pixel_out = Shader::GetProgramOutVariableLocal(ShaderProgram::Pixel);
+        ShaderVar out_vertex = ShaderVar::GetShaderOut(ShaderProgram::Vertex);
+        ShaderVar out_pixel = ShaderVar::GetShaderOut(ShaderProgram::Pixel);
 
-        String in_position = Shader::GetVariablePrefix(ShaderVariable::Attribute) + "position";
-        String in_color = Shader::GetVariablePrefix(ShaderVariable::Attribute) + "color";
-        String pass_color = Shader::GetVariablePrefix(ShaderVariable::Varying) + "color";
+        ShaderVar in_position = ShaderVar(ShaderVariable::Attribute, ShaderVariableType::Vec3, "position");
+        ShaderVar in_color = ShaderVar(ShaderVariable::Attribute, ShaderVariableType::Vec4, "color");
+        ShaderVar pass_color = ShaderVar(ShaderVariable::Varying, ShaderVariableType::Vec4, "color");
 
-        nothing_vertex.Add(ShaderVariable::Attribute, "vec3", "position");
-        nothing_vertex.Add(ShaderVariable::Attribute, "vec4", "color");
-        nothing_vertex.Add(ShaderVariable::Varying, "vec4", "color");
-        nothing_vertex.Add(ShaderVariable::InOut, "vec4", vertex_out);
-        nothing_vertex.SetMainCode(
-            String("    ") + pass_color + " = " + in_color + ";\n" +
-            String("    ") + vertex_out + " = vec4(" + in_position + ", 0.f);\n"
+        nothing_vertex << in_position
+                        << in_color
+                        << pass_color;
+        nothing_vertex.AddVar(out_vertex);
+        nothing_vertex.SetMainCode(String() +
+            Line(pass_color + " = " + in_color + ";") +
+            Line(out_vertex + " = vec4(" + in_position + ", 0.f);")
             );
 
-        red_pixel.Add(ShaderVariable::Varying, "vec4", "color");
-        red_pixel.Add(ShaderVariable::InOut, "vec4", pixel_out);
-        red_pixel.Add(ShaderVariable::InOut, "vec4", "ambient");
-        red_pixel.SetMainCode(
-            String("    ") + pixel_out + " = " + pass_color + ";\n" +
-            String("    ") + pixel_out + ".r = 1.0;\n" +
-            String("    ") + "ambient = vec4(1.0);\n"
+        ShaderVar ambient = ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, "ambient");
+
+        red_pixel.AddVar(pass_color);
+        red_pixel.AddVar(out_pixel);
+        red_pixel.AddVar(ambient);
+        red_pixel.SetMainCode(String() +
+            out_pixel + " = " + pass_color + ";\n" +
+            out_pixel + ".r = 1.0;\n" +
+            "ambient = vec4(1.0);\n"
             );
 
-        green_pixel.Add(ShaderVariable::Varying, "vec4", "color");
-        green_pixel.Add(ShaderVariable::InOut, "vec4", pixel_out);
-        green_pixel.Add(ShaderVariable::InOut, "vec4", "ambient");
-        green_pixel.SetMainCode(
-            String("    ") + pixel_out + " = " + pass_color + ";\n" +
-            String("    ") + pixel_out + ".g = 1.0;\n" +
-            String("    ") + "ambient.r = 0.0;\n"
+        green_pixel.AddVar(pass_color);
+        green_pixel.AddVar(out_pixel);
+        green_pixel.AddVar(ambient);
+        green_pixel.SetMainCode(String() +
+            out_pixel + " = " + pass_color + ";\n" +
+            out_pixel + ".g = 1.0;\n" +
+            "ambient.r = 0.0;\n"
             );
 
-        blue_pixel.Add(ShaderVariable::Varying, "vec4", "color");
-        blue_pixel.Add(ShaderVariable::InOut, "vec4", pixel_out);
-        blue_pixel.Add(ShaderVariable::InOut, "vec4", "ambient");
-        blue_pixel.SetCustomCode(
-            String("void SetAmbient(inout vec4 ambient)\n{\n    ambient = vec4(1.0, 1.0, 1.0, 1.0);\n}"));
-        blue_pixel.SetMainCode(
-            String("    ") + pixel_out + " = " + pass_color + ";\n" +
-            String("    ") + pixel_out + ".b = 1.0;\n" +
-            String("    ") + "SetAmbient(ambient);\n" +
-            String("    ") + pixel_out + " *= ambient;\n"
+        blue_pixel.AddVar(pass_color);
+        blue_pixel.AddVar(out_pixel);
+        blue_pixel.AddVar(ambient);
+        blue_pixel.SetCustomCode(String() +
+            "void SetAmbient(inout vec4 ambient)\n" +
+            "{\n" +
+            "    ambient = vec4(1.0, 1.0, 1.0, 1.0);\n" +
+            "}\n");
+        blue_pixel.SetMainCode(String() +
+            out_pixel + " = " + pass_color + ";\n" +
+            out_pixel + ".b = 1.0;\n" +
+            "SetAmbient(ambient);\n" +
+            out_pixel + " *= ambient;\n"
             );
 
         builder << ShaderProgram::Vertex
-            << &nothing_vertex
+            << nothing_vertex
             << ShaderProgram::Pixel
-            << &red_pixel
-            << &green_pixel
-            << &blue_pixel;
+            << red_pixel
+            << green_pixel
+            << blue_pixel;
 
         builder.Build(code);
 

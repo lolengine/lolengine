@@ -133,8 +133,8 @@ void Image::DummyFill()
 void Image::Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt)
 {
     ASSERT(fmt != PixelFormat::Unknown);
-    SetFormat(fmt);
     SetSize(size);
+    SetFormat(fmt);
     memcpy(m_data->m_pixels[(int)fmt]->data(), pixels,
             size.x * size.y * BytesPerPixel(fmt));
 }

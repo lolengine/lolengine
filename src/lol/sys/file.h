@@ -107,6 +107,7 @@ public:
     bool GetContent(array<Directory>& directories);
     bool GetContent(array<String>& files);
     String GetName();
+    long int GetModificationTime();
 
     static String GetCurrent();
     static bool SetCurrent(String directory);

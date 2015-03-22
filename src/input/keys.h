@@ -283,5 +283,10 @@ _SC(282, "", Sleep)
 _SC(283, "", App1)
 _SC(284, "", App2)
 
+//Custom Lock management
+_SC(285, "", CapsLockStatus)
+_SC(286, "", ScrollLockStatus)
+_SC(287, "", NumLockClearStatus)
+
 #undef _SC
 

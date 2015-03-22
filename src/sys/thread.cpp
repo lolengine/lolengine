@@ -54,7 +54,7 @@ bool BaseThreadManager::Stop()
         return false;
 
     //Stop all threads
-    StopThreads(m_threads.count());
+    StopThreads((int)m_threads.count());
 
     return true;
 }
@@ -173,9 +173,9 @@ void BaseThreadManager::TickGame(float seconds)
 
     //Resize thread count if needed
     if (m_threads.count() > m_jobqueue.count() && m_threads.count() > m_thread_min)
-        StopThreads(m_threads.Count() - m_thread_min);
+        StopThreads((int)(m_threads.Count() - m_thread_min));
     else if (m_threads.count() < m_jobqueue.count())
-        AddThreads(lol::min(m_jobqueue.count(), (ptrdiff_t)m_thread_count) - m_threads.count());
+        AddThreads((int)(lol::min(m_jobqueue.count(), (ptrdiff_t)m_thread_count) - m_threads.count()));
 }
 
 } /* namespace lol */

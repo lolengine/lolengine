@@ -317,6 +317,22 @@ public:
     static vec3 WavelengthToCIExyY(float nm);
 
     /*
+    * Convert uint color to vec4.
+    */
+    static vec4 FromRGBA32(uint32_t c);
+    static vec4 FromRGB32(uint32_t c);
+    static vec4 FromRGBA16(uint16_t c);
+    static vec4 FromRGB16(uint16_t c);
+
+    /*
+    * Convert uint color to vec4.
+    */
+    static uint32_t ToRGBA32(vec4 c);
+    static uint32_t ToRGB32(vec4 c);
+    static uint16_t ToRGBA16(vec4 c);
+    static uint16_t ToRGB16(vec4 c);
+
+    /*
     * Convert colors to hex strings.
     */
     static String HexString4Bpp(vec3 c);

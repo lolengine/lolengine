@@ -21,6 +21,9 @@ static String g_name_joystick(const uint64_t num)
     return String::Printf("Joystick%d", (int)num);
 }
 
+#   define _SC(id, str, name) const String g_name_key_##name(#name);
+#   include "input/keys.h"
+
 //Mouse default buttons/axis
 const String g_name_mouse_key_left("Left");
 const String g_name_mouse_key_middle("Middle");

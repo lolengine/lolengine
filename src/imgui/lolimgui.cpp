@@ -19,13 +19,77 @@ using namespace lol;
 //-----------------------------------------------------------------------------
 LolImGui::LolImGui()
 {
+    m_gamegroup = GAMEGROUP_BEFORE;
     m_drawgroup = DRAWGROUP_HUD;
+
+    //Build shader code -------------------------------------------------------
+    ShaderVar out_vertex = ShaderVar::GetShaderOut(ShaderProgram::Vertex);
+    ShaderVar out_pixel = ShaderVar::GetShaderOut(ShaderProgram::Pixel);
+
+    ShaderVar pass_texcoord = ShaderVar(ShaderVariable::Varying, ShaderVariableType::Vec2, "texcoord");
+    ShaderVar pass_color = ShaderVar(ShaderVariable::Varying, ShaderVariableType::Vec4, "color");
+
+    ShaderVar in_position = ShaderVar(ShaderVariable::Attribute, ShaderVariableType::Vec2, "position");
+    ShaderVar in_texcoord = ShaderVar(ShaderVariable::Attribute, ShaderVariableType::Vec2, "texcoord");
+    ShaderVar in_color = ShaderVar(ShaderVariable::Attribute, ShaderVariableType::Vec4, "color");
+
+    m_ortho.m_var = ShaderVar(ShaderVariable::Uniform, ShaderVariableType::Mat4, "ortho");
+    m_texture.m_var = ShaderVar(ShaderVariable::Uniform, ShaderVariableType::sampler2D, "texture");
+
+    ShaderBlock imgui_vertex("imgui_vertex");
+    imgui_vertex
+        << out_vertex << m_ortho << in_position
+        << pass_texcoord << in_texcoord
+        << pass_color << in_color;
+    imgui_vertex.SetMainCode(String() +
+        Line(out_vertex + " = .5 *" + m_ortho + " * vec4(" + in_position + ", -1.0, 1.0);")
+        + Line(pass_texcoord + " = " + in_texcoord + ";")
+        + Line(pass_color + " = " + in_color + ";")
+        );
+
+    ShaderBlock imgui_pixel("imgui_pixel");
+    imgui_pixel << m_texture << pass_texcoord << pass_color << out_pixel;
+    imgui_pixel.SetMainCode(String() +
+        Line(String()
+        + "vec4 col = " + pass_color + " * texture2D(" + m_texture + ", " + pass_texcoord + ");")
+        + Line("if (col.a == 0.0) discard; ")
+        + Line(out_pixel + " = col;")
+        );
+
+    m_builder
+        << ShaderProgram::Vertex << imgui_vertex
+        << ShaderProgram::Pixel << imgui_pixel;
+
+    //Input Setup -------------------------------------------------------------
+    for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
+        m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).ToString());
+    for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
+        m_profile << InputProfile::MouseKey(i, LolImGuiKey(i).ToString());
+
+    for (int i = LolImGuiAxis::MOUSE_AXIS_START; i < LolImGuiAxis::MOUSE_AXIS_END; ++i)
+        m_profile << InputProfile::MouseAxis(i, LolImGuiAxis(i).ToString());
+
+    Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
+    m_controller->Init(m_profile);
+    //InputDevice::CaptureMouse(true);
+    m_mouse = InputDevice::GetMouse();
+    m_keyboard = InputDevice::GetKeyboard();
+
+    //m_controller->Get
+    //#   define KB InputProfile::Keyboard
+//    m_profile
+//        << InputProfile::Keyboard(idx, g_name_key_Left);
+//#   undef KB
+
 }
 LolImGui::~LolImGui()
 {
     ImGui::GetIO().Fonts->TexID = nullptr;
     Ticker::Unref(m_font);
     m_font = nullptr;
+
+    Shader::Destroy(m_shader);
+    delete m_vdecl;
 }
 
 //-------------------------------------------------------------------------
@@ -35,69 +99,34 @@ void LolImGui::Init()
     Ticker::Ref(g_lolimgui = new LolImGui());
 
     ImGuiIO& io = ImGui::GetIO();
-    //io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;                 // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
-    //io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-    //io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-    //io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-    //io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-    //io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-    //io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-    //io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-    //io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-    //io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-    //io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-    //io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-    //io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-    //io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-    //io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-    //io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-    //io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+    //ImFont* font0 = io.Fonts->AddFontDefault();
+
+    // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
+    io.KeyMap[ImGuiKey_Tab]         = LolImGuiKey::Tab;
+    io.KeyMap[ImGuiKey_LeftArrow]   = LolImGuiKey::LeftArrow;
+    io.KeyMap[ImGuiKey_RightArrow]  = LolImGuiKey::RightArrow;
+    io.KeyMap[ImGuiKey_UpArrow]     = LolImGuiKey::UpArrow;
+    io.KeyMap[ImGuiKey_DownArrow]   = LolImGuiKey::DownArrow;
+    io.KeyMap[ImGuiKey_Home]        = LolImGuiKey::Home;
+    io.KeyMap[ImGuiKey_End]         = LolImGuiKey::End;
+    io.KeyMap[ImGuiKey_Delete]      = LolImGuiKey::Delete;
+    io.KeyMap[ImGuiKey_Backspace]   = LolImGuiKey::Backspace;
+    io.KeyMap[ImGuiKey_Enter]       = LolImGuiKey::Enter;
+    io.KeyMap[ImGuiKey_Escape]      = LolImGuiKey::Escape;
+    io.KeyMap[ImGuiKey_A]           = LolImGuiKey::A;
+    io.KeyMap[ImGuiKey_C]           = LolImGuiKey::C;
+    io.KeyMap[ImGuiKey_V]           = LolImGuiKey::V;
+    io.KeyMap[ImGuiKey_X]           = LolImGuiKey::X;
+    io.KeyMap[ImGuiKey_Y]           = LolImGuiKey::Y;
+    io.KeyMap[ImGuiKey_Z]           = LolImGuiKey::Z;
 
     //Func pointer
     io.RenderDrawListsFn = LolImGui::RenderDrawLists;
     io.SetClipboardTextFn = LolImGui::SetClipboard;
     io.GetClipboardTextFn = LolImGui::GetClipboard;
-
-    /* nope
-#ifdef _MSC_VER
-    io.ImeWindowHandle = glfwGetWin32Window(g_Window);
-#endif
-    */
-
-    /* Callback not needed but look into these to send IO stuff
-    if (install_callbacks)
-    {
-        glfwSetMouseButtonCallback(window, ImGui_ImplGlfw_MouseButtonCallback);
-        glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
-        glfwSetKeyCallback(window, ImGui_ImplGlFw_KeyCallback);
-        glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
-    }
-    */
 }
 
 /* CALLBACKS
-void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-if (action == GLFW_PRESS && button >= 0 && button < 3)
-g_MousePressed[button] = true;
-}
-
-void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
-}
-
-void ImGui_ImplGlFw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-ImGuiIO& io = ImGui::GetIO();
-if (action == GLFW_PRESS)
-io.KeysDown[key] = true;
-if (action == GLFW_RELEASE)
-io.KeysDown[key] = false;
-io.KeyCtrl = (mods & GLFW_MOD_CONTROL) != 0;
-io.KeyShift = (mods & GLFW_MOD_SHIFT) != 0;
-}
-
 void ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c)
 {
 ImGuiIO& io = ImGui::GetIO();
@@ -138,25 +167,12 @@ void LolImGui::TickGame(float seconds)
         // Build texture
         unsigned char* pixels;
         ivec2 size;
-        io.Fonts->GetTexDataAsAlpha8(&pixels, &size.x, &size.y);
+        io.Fonts->GetTexDataAsRGBA32(&pixels, &size.x, &size.y);
 
         Image* image = new Image();
         image->Copy(pixels, size, PixelFormat::RGBA_8);
-        image->SetSize(size);
 
         Ticker::Ref(m_font = new TextureImage("", image));
-
-        //// Create texture
-        //glGenTextures(1, &g_FontTexture);
-        //glBindTexture(GL_TEXTURE_2D, g_FontTexture);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
-
-        //// Store our identifier
-        //io.Fonts->TexID = (void *)(intptr_t)g_FontTexture;
-
-        //return true;
     }
     //Texture has been created
     if (m_font && m_font->GetTexture())
@@ -169,40 +185,73 @@ void LolImGui::TickGame(float seconds)
     video_size = vec2(Video::GetSize());
     io.DisplaySize = ImVec2(video_size.x, video_size.y);
 
-    // Setup time step
+    //Setup time step
     io.DeltaTime = seconds;
+    io.MouseDrawCursor = true;
 
-    // Setup inputs
-    // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-    //double mouse_x, mouse_y;
-    //glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-    //mouse_x *= (float)display_w / w;                                                    // Convert mouse coordinates to pixels
-    //mouse_y *= (float)display_h / h;
-    //io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);                               // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
-
-    /*
-    for (int i = 0; i < 3; i++)
+    //Update Keyboard
+    io.KeyCtrl = false;
+    io.KeyShift = false;
+    for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
     {
-        io.MouseDown[i] = g_MousePressed[i] || glfwGetMouseButton(g_Window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-        g_MousePressed[i] = false;
+        switch (i)
+        {
+        default:
+            io.KeysDown[i] = m_controller->GetKey(i).IsPressed();
+            break;
+        case LolImGuiKey::LShift:
+        case LolImGuiKey::RShift:
+            io.KeyShift = (io.KeyShift || m_controller->GetKey(i).IsPressed());
+            break;
+        case LolImGuiKey::LCtrl:
+        case LolImGuiKey::RCtrl:
+            io.KeyCtrl = (io.KeyCtrl || m_controller->GetKey(i).IsPressed());
+            break;
+        }
     }
 
-    io.MouseWheel = g_MouseWheel;
-    g_MouseWheel = 0.0f;
-    */
+    //Update text input
+    String text = m_keyboard->GetText();
+    //text.case_change(io.KeyShift);
+    for (int i = 0; i < text.count(); ++i)
+        io.AddInputCharacter(text[i]);
+
+    //Update mouse
+    if (m_mouse)
+    {
+        vec2 cursor = m_mouse->GetCursor(0);
+        cursor.y = 1.f - cursor.y;
+        cursor *= video_size;
+        io.MousePos = ImVec2(cursor.x, cursor.y);
+        io.MouseWheel = m_controller->GetAxis(LolImGuiAxis::Scroll).GetValue();
+
+        for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
+        {
+            switch (i)
+            {
+            default:
+                io.MouseDown[i - LolImGuiKey::MOUSE_KEY_START] = m_controller->GetKey(i).IsPressed();
+                break;
+            case LolImGuiKey::Focus:
+                if (m_controller->GetKey(i).IsPressed())
+                    io.MousePos = ImVec2(-1.f, -1.f);
+                break;
+            }
+        }
+    }
 
     // Start the frame
     ImGui::NewFrame();
-
 }
 void LolImGui::TickDraw(float seconds, Scene &scene)
 {
     super::TickDraw(seconds, scene);
 
-    ImGui::Render();
+    ImGuiIO& io = ImGui::GetIO();
+
+    if (io.Fonts->TexID)
+        ImGui::Render();
 }
-
-
 
 
 
@@ -220,73 +269,125 @@ void LolImGui::TickDraw(float seconds, Scene &scene)
 //-------------------------------------------------------------------------
 void LolImGui::RenderDrawLists(ImDrawList** const cmd_lists, int cmd_lists_count)
 {
+    g_lolimgui->RenderDrawListsMethod(cmd_lists, cmd_lists_count);
+}
+void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists_count)
+{
     if (cmd_lists_count == 0)
         return;
 
-    /*
-    // We are using the OpenGL fixed pipeline to make the example code simpler to read!
-    // A probable faster way to render would be to collate all vertices from all cmd_lists into a single vertex buffer.
-    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers.
-    glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnable(GL_TEXTURE_2D);
+    vec2 size = vec2(Video::GetSize());
+    float alpha = 1.f;
+    mat4 ortho = mat4::ortho(size.x * alpha, size.y * alpha, -1000.f, 1000.f)
+        * mat4::lookat(vec3::axis_z, vec3::zero, vec3::axis_y)
+        * mat4::scale(vec3::axis_x - vec3::axis_y - vec3::axis_z)
+        * mat4::translate(-size.x * .5f * alpha, -size.y * .5f * alpha, 0.f);
 
-    // Setup orthographic projection matrix
-    const float width = ImGui::GetIO().DisplaySize.x;
-    const float height = ImGui::GetIO().DisplaySize.y;
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, -1.0f, +1.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    //Create shader
+    if (!m_shader)
+    {
+        String code;
+        m_builder.Build(code);
 
-    // Render command lists
-#define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
+        m_shader = Shader::Create(m_builder.GetName(), code);
+        ASSERT(m_shader);
+
+        m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var);
+        m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var);
+
+        m_attribs
+            << m_shader->GetAttribLocation(VertexUsage::Position, 0)
+            << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
+            << m_shader->GetAttribLocation(VertexUsage::Color, 0);
+
+        m_vdecl = new VertexDeclaration(
+            VertexStream<vec2, vec2, u8vec4>(
+                VertexUsage::Position,
+                VertexUsage::TexCoord,
+                VertexUsage::Color));
+    }
+
+    //Do not render without shader
+    if (!m_shader)
+        return;
+
+    RenderContext rc;
+    rc.SetCullMode(CullMode::Disabled);
+    rc.SetDepthFunc(DepthFunc::Disabled);
+
+    m_shader->Bind();
     for (int n = 0; n < cmd_lists_count; n++)
     {
         const ImDrawList* cmd_list = cmd_lists[n];
         const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->vtx_buffer.front();
-        glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void*)(vtx_buffer + OFFSETOF(ImDrawVert, pos)));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void*)(vtx_buffer + OFFSETOF(ImDrawVert, uv)));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void*)(vtx_buffer + OFFSETOF(ImDrawVert, col)));
+
+        //Register uniforms
+        m_shader->SetUniform(m_ortho, ortho);
+        m_shader->SetUniform(m_texture, m_font->GetTexture()->GetTextureUniform(), 0);
 
         int vtx_offset = 0;
         for (size_t cmd_i = 0; cmd_i < cmd_list->commands.size(); cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->commands[cmd_i];
-            if (pcmd->user_callback)
+
+            struct Vertex
             {
-                pcmd->user_callback(cmd_list, pcmd);
-            }
-            else
+                vec2 pos, tex;
+                u8vec4 color;
+            };
+
+            VertexBuffer* vbo = new VertexBuffer(pcmd->vtx_count * sizeof(Vertex));
+            Vertex *vert = (Vertex *)vbo->Lock(0, 0);
+
+#ifdef SHOW_IMGUI_DEBUG
+            //-----------------------------------------------------------------
+            //<Debug render> --------------------------------------------------
+            //-----------------------------------------------------------------
+            float mod = -200.f;
+            vec3 off = vec3(vec2(-size.x, -size.y), 0.f);
+            vec3 pos[4] = {
+                (1.f / mod) * (off + vec3(0.f)),
+                (1.f / mod) * (off + size.x * vec3::axis_x),
+                (1.f / mod) * (off + size.x * vec3::axis_x + size.y * vec3::axis_y),
+                (1.f / mod) * (off + size.y * vec3::axis_y)
+            };
+            for (int i = 0; i < 4; ++i)
+                Debug::DrawLine(pos[i], pos[(i + 1) % 4], Color::white);
+            ImDrawVert* buf = (ImDrawVert*)(vtx_buffer + vtx_offset);
+            for (uint16_t i = 0; i < pcmd->vtx_count; i += 3)
             {
-                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->texture_id);
-                glScissor((int)pcmd->clip_rect.x, (int)(height - pcmd->clip_rect.w), (int)(pcmd->clip_rect.z - pcmd->clip_rect.x), (int)(pcmd->clip_rect.w - pcmd->clip_rect.y));
-                glDrawArrays(GL_TRIANGLES, vtx_offset, pcmd->vtx_count);
+                vec2 pos[3];
+                pos[0] = vec2(buf[i + 0].pos.x, buf[i + 0].pos.y);
+                pos[1] = vec2(buf[i + 1].pos.x, buf[i + 1].pos.y);
+                pos[2] = vec2(buf[i + 2].pos.x, buf[i + 2].pos.y);
+                vec4 col[3];
+                col[0] = vec4(Color::FromRGBA32(buf[i + 0].col).arg, 1.f);
+                col[1] = vec4(Color::FromRGBA32(buf[i + 1].col).arg, 1.f);
+                col[2] = vec4(Color::FromRGBA32(buf[i + 2].col).arg, 1.f);
+                Debug::DrawLine((off + vec3(pos[0], 0.f)) / mod, (off + vec3(pos[1], 0.f)) / mod, col[0]);
+                Debug::DrawLine((off + vec3(pos[1], 0.f)) / mod, (off + vec3(pos[2], 0.f)) / mod, col[1]);
+                Debug::DrawLine((off + vec3(pos[2], 0.f)) / mod, (off + vec3(pos[0], 0.f)) / mod, col[2]);
             }
-            vtx_offset += pcmd->vtx_count;
+            //-----------------------------------------------------------------
+            //<\Debug render> -------------------------------------------------
+            //-----------------------------------------------------------------
+#endif //SHOW_IMGUI_DEBUG
+
+            memcpy(vert, vtx_buffer + vtx_offset, pcmd->vtx_count * sizeof(Vertex));
+            vbo->Unlock();
+
+            m_font->Bind();
+            m_vdecl->Bind();
+            m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
+            m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, pcmd->vtx_count);
+            m_vdecl->Unbind();
+            m_font->Unbind();
+
+            vtx_offset += pcmd->vtx_count * sizeof(Vertex);
+
+            delete vbo;
         }
     }
-#undef OFFSETOF
-
-    // Restore modified state
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glPopAttrib();
-    */
+    m_shader->Unbind();
 }
 

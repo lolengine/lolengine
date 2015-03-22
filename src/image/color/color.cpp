@@ -56,6 +56,55 @@ String Color::HexString8Bpp(vec4 c)
 }
 
 /*
+* Convert uint color to vec4.
+*/
+vec4 Color::FromRGBA32(uint32_t c)
+{
+    ivec4 v(c >> 24, (c >> 16) & 0xff, (c >> 8) & 0xff, c & 0xff);
+    return vec4(v) * (1.f / 255.f);
+}
+vec4 Color::FromRGB32(uint32_t c)
+{
+    return Color::FromRGBA32((c << 8) | 0x000000ffu);
+}
+vec4 Color::FromRGBA16(uint16_t c)
+{
+    return Color::FromRGBA32
+        ( 0x11000000u * (c >> 12)
+        | 0x00110000u * ((c >> 8) & 0xf)
+        | 0x00001100u * ((c >> 4) & 0xf)
+        | 0x00000011u * (c & 0xf));
+}
+vec4 Color::FromRGB16(uint16_t c)
+{
+    return Color::FromRGBA16((c << 4) | 0xfu);
+}
+
+/*
+* Convert uint color to vec4.
+*/
+uint32_t Color::ToRGBA32(vec4 c)
+{
+    ivec4 v(c * 0xff);
+    return (uint32_t)((v.r << 24) | (v.g << 16) | (v.b << 8) | v.a);
+}
+uint32_t Color::ToRGB32(vec4 c)
+{
+    ivec4 v(c * 0xff);
+    return (uint32_t)((v.r << 16) | (v.g << 8) | v.b);
+}
+uint16_t Color::ToRGBA16(vec4 c)
+{
+    ivec4 v(c * 0xf);
+    return (uint16_t)((v.r << 12) | (v.g << 8) | (v.b << 4) | v.a);
+}
+uint16_t Color::ToRGB16(vec4 c)
+{
+    ivec4 v(c * 0xf);
+    return (uint16_t)((v.r << 8) | (v.g << 4) | v.b);
+}
+
+/*
 * Conversion from colours to hexadecimal
 */
 vec4 Color::C8BppHexString(String s)

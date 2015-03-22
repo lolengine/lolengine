@@ -315,6 +315,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+//TODO: Add mask|layer system to prevent several controllers from interfering with another. (input overlay in menus)
 class Controller : public Entity
 {
 public:
