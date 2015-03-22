@@ -49,6 +49,48 @@ static int sdl12_to_scancode(int ch, int sc)
 
     return 0;
 }
+#else
+    //-------------------------------------------------------------------------
+#   define _SC(id, str, name) static const uint16_t SDLOL_##name = id;
+#   include "input/keys.h"
+    //-------------------------------------------------------------------------
+    static bool ScanCodeIsValid(int sc)
+    {
+        switch (sc)
+        {
+#   define _SC(id, str, name) \
+        case id: return true;
+#   include "input/keys.h"
+        default: return false;
+        }
+        return false;
+    }
+    //-------------------------------------------------------------------------
+    static String ScanCodeToText(int sc)
+    {
+        switch (sc)
+        {
+#   define _SC(id, str, name) \
+        case id: return String(str);
+#   include "input/keys.h"
+        default:
+            Log::Error(Line("ScanCodeToText unknown scancode %0d."), sc);
+        }
+        return String();
+    }
+    //-------------------------------------------------------------------------
+    static String ScanCodeToName(int sc)
+    {
+        switch (sc)
+        {
+#   define _SC(id, str, name) \
+        case id: return String(#name);
+#   include "input/keys.h"
+        default:
+            Log::Error(Line("ScanCodeToText unknown scancode %0d."), sc);
+        }
+        return String();
+    }
 #endif
 
 /*
@@ -218,30 +260,102 @@ void SdlInputData::Tick(float seconds)
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-#if USE_OLD_SDL
-            if (int sc = sdl12_to_scancode(event.key.keysym.sym,
-                                           event.key.keysym.scancode))
-#else
-            if (int sc = event.key.keysym.scancode)
-#endif
-                m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
-            else
-                Log::Error("unknown keypress (sym 0x%02x, scancode %0d)\n",
-                           event.key.keysym.sym, event.key.keysym.scancode);
+#   if USE_OLD_SDL
+            switch (int sc = sdl12_to_scancode(event.key.keysym.sym,
+                                               event.key.keysym.scancode))
+#   else
+            switch (int sc = event.key.keysym.scancode)
+#   endif
+            {
+                //Lock management
+            case SDLOL_CapsLock:
+            case SDLOL_ScrollLock:
+            case SDLOL_NumLockClear:
+                //Update status on key down only
+                if (event.type == SDL_KEYDOWN)
+                {
+                    int sc2 = sc;
+                    switch (sc)
+                    {
+                    case SDLOL_CapsLock:
+                        sc2 = SDLOL_CapsLockStatus;
+                        break;
+                    case SDLOL_ScrollLock:
+                        sc2 = SDLOL_ScrollLockStatus;
+                        break;
+                    case SDLOL_NumLockClear:
+                        sc2 = SDLOL_NumLockClearStatus;
+                        break;
+                    }
+                    m_keyboard->SetKey(sc2, !m_keyboard->GetKey(sc2));
+                    /* DEBUG STUFF
+                    Log::Info(Line("Repeat: 0x%02x : %s/%s/%s/%i"),
+                        (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
+                        m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
+                    */
+                }
+            default:
+                if (ScanCodeIsValid(sc))
+                {
+                    m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
+                    if (event.type == SDL_KEYDOWN
+                        && !m_keyboard->GetKey(SDLOL_RCtrl)
+                        && !m_keyboard->GetKey(SDLOL_LCtrl)
+                        && !m_keyboard->GetKey(SDLOL_RAlt)
+                        && !m_keyboard->GetKey(SDLOL_LAlt))
+                    {
+                        String str = ScanCodeToText(sc);
+                        str.CaseChange(m_keyboard->GetKey(SDLOL_CapsLockStatus)
+                                        ^ (m_keyboard->GetKey(SDLOL_RShift)
+                                        || m_keyboard->GetKey(SDLOL_LShift)));
+                        m_keyboard->AddText(str);
+                    }
+                    /* DEBUG STUFF
+                    Log::Info(Line("Repeat: 0x%02x : %s/%s/%s/%i"),
+                        (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
+                        event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
+                    */
+                }
+                /* DEBUG STUFF
+                else
+                    Log::Error("unknown keypress (sym 0x%02x, scancode %0d)\n",
+                                event.key.keysym.sym, event.key.keysym.scancode);
+                */
+            }
             break;
 
+#   if USE_OLD_SDL
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
-        {
-#   if USE_OLD_SDL
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                 m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             else
                 m_mouse->SetAxis(4, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
-#   endif
-            // TODO: mouse wheel as axis
+            break;
+#   else
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            break;
+        case SDL_MOUSEWHEEL:
+            m_mouse->SetAxis(4, (float)event.button.y);
+            break;
+        case SDL_WINDOWEVENT:
+        {
+            switch (event.window.event)
+            {
+                case SDL_WINDOWEVENT_ENTER:
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    m_mouse->SetKey(3, true);
+                    break;
+                case SDL_WINDOWEVENT_LEAVE:
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                    m_mouse->SetKey(3, false);
+                    break;
+            }
             break;
         }
+#   endif
 
 #   if !SDL_FORCE_POLL_JOYSTICK
         case SDL_JOYAXISMOTION:
@@ -292,9 +406,7 @@ void SdlInputData::Tick(float seconds)
 #   if !EMSCRIPTEN && USE_OLD_SDL
     m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
 #   else
-    // Emscripten doesn't seem to handle SDL_APPMOUSEFOCUS
-    // FIXME: SDL2 doesn't have SDL_APPMOUSEFOCUS either
-    m_mouse->SetKey(3, true);
+    //Handled in PollEvent
 #   endif
 
     if (m_mousecapture)

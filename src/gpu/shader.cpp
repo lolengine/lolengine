@@ -442,7 +442,7 @@ Shader::Shader(String const &name,
 
 int Shader::GetAttribCount() const
 {
-    return data->attrib_locations.count();
+    return (int)data->attrib_locations.count();
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
@@ -469,6 +469,10 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     return ret;
 }
 
+ShaderUniform Shader::GetUniformLocation(String const& uni) const
+{
+    return GetUniformLocation(uni.C());
+}
 ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
     ShaderUniform ret;
@@ -514,7 +518,7 @@ void Shader::SetUniform(ShaderUniform const &uni, int i)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(i, 0, 0, 0));
 #else
-    glUniform1i(uni.frag, i);
+    glUniform1i((GLint)uni.frag, i);
 #endif
 }
 
@@ -523,7 +527,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(v, 0, 0));
 #else
-    glUniform2i(uni.frag, v.x, v.y);
+    glUniform2i((GLint)uni.frag, v.x, v.y);
 #endif
 }
 
@@ -532,7 +536,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, ivec4(v, 0));
 #else
-    glUniform3i(uni.frag, v.x, v.y, v.z);
+    glUniform3i((GLint)uni.frag, v.x, v.y, v.z);
 #endif
 }
 
@@ -544,7 +548,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
 #else
-    glUniform4i(uni.frag, v.x, v.y, v.z, v.w);
+    glUniform4i((GLint)uni.frag, v.x, v.y, v.z, v.w);
 #endif
 }
 
@@ -553,7 +557,7 @@ void Shader::SetUniform(ShaderUniform const &uni, float f)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(f, 0, 0, 0));
 #else
-    glUniform1f(uni.frag, f);
+    glUniform1f((GLint)uni.frag, f);
 #endif
 }
 
@@ -562,7 +566,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0, 0));
 #else
-    glUniform2fv(uni.frag, 1, &v[0]);
+    glUniform2fv((GLint)uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -571,7 +575,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 #if defined USE_D3D9 || defined _XBOX
     SetUniform(uni, vec4(v, 0));
 #else
-    glUniform3fv(uni.frag, 1, &v[0]);
+    glUniform3fv((GLint)uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -583,7 +587,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
 #else
-    glUniform4fv(uni.frag, 1, &v[0]);
+    glUniform4fv((GLint)uni.frag, 1, &v[0]);
 #endif
 }
 
@@ -596,7 +600,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
 #else
-    glUniformMatrix2fv(uni.frag, 1, GL_FALSE, &m[0][0]);
+    glUniformMatrix2fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -611,7 +615,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
 #else
-    glUniformMatrix3fv(uni.frag, 1, GL_FALSE, &m[0][0]);
+    glUniformMatrix3fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -623,7 +627,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
 #else
-    glUniformMatrix4fv(uni.frag, 1, GL_FALSE, &m[0][0]);
+    glUniformMatrix4fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
 #endif
 }
 
@@ -658,7 +662,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0], v.Count() / 4);
 #else
-    glUniform1fv(uni.frag, v.Count(), &v[0]);
+    glUniform1fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0]);
 #endif
 }
 
@@ -674,7 +678,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count() / 2);
 #else
-    glUniform2fv(uni.frag, v.Count(), &v[0][0]);
+    glUniform2fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
 #endif
 }
 
@@ -690,7 +694,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
 #else
-    glUniform3fv(uni.frag, v.Count(), &v[0][0]);
+    glUniform3fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
 #endif
 }
 
@@ -704,7 +708,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
                                               &v[0][0], v.Count());
 #else
-    glUniform4fv(uni.frag, v.Count(), &v[0][0]);
+    glUniform4fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
 #endif
 }
 
@@ -934,6 +938,9 @@ String ShaderData::Patch(String const &code, ShaderType type)
 }
 
 static const String g_ret = "\n";
+static const String g_eol = ";";
+static const String g_bop = "{";
+static const String g_bcl = "}";
 static const String g_tab = "    ";
 
 //----
@@ -1008,7 +1015,7 @@ String Shader::GetProgramQualifier(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
         case ShaderProgram::Vertex:   return String("[vert.glsl]");
         case ShaderProgram::Pixel:    return String("[frag.glsl]");
         default: return String();
@@ -1020,7 +1027,7 @@ String Shader::GetProgramOutVariable(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
         case ShaderProgram::Vertex:   return String("gl_Position");
         case ShaderProgram::Pixel:    return String("gl_FragColor");
         default: return String();
@@ -1032,29 +1039,44 @@ String Shader::GetProgramOutVariableLocal(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ----------------
+        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
         case ShaderProgram::Vertex:   return String("out_position");
         case ShaderProgram::Pixel:    return String("out_frag_color");
         default: return String();
     }
 }
 
-//Shader Block implementation class -------------------------------------------
-void ShaderBlock::Add(const ShaderVariable parameter, String const &type, String const &name)
+//ShaderVar -------------------------------------------------------------------
+ShaderVar ShaderVar::GetShaderOut(ShaderProgram program)
 {
-    ASSERT(!m_parameters[parameter.ToScalar()].has_key(name));
-    m_parameters[parameter.ToScalar()][name] = type;
+    switch (program.ToScalar())
+    {
+    case ShaderProgram::Geometry: //TODO : L O L ------------------------------
+    default: ASSERT(false); return ShaderVar();
+    case ShaderProgram::Vertex:   return ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, Shader::GetProgramOutVariableLocal(program));
+    case ShaderProgram::Pixel:    return ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, Shader::GetProgramOutVariableLocal(program));
+    }
+}
+
+//Shader Block implementation class -------------------------------------------
+void ShaderBlock::AddVar(ShaderVar const& var)
+{
+    ShaderVariable qualifier = var.GetQualifier();
+    String type = var.GetType();
+    String name = Shader::GetVariablePrefix(qualifier) + var.m_name;
+    ASSERT(!m_parameters[qualifier.ToScalar()].has_key(name));
+    m_parameters[qualifier.ToScalar()][name] = type;
 }
 
 //----
-void ShaderBlock::AddCallParameters(const ShaderVariable type, map<String, String> const& variables, String& result)
+void ShaderBlock::AddCallParameters(map<String, String> const& variables, String& result)
 {
     array<String> keys = variables.keys();
     for (String key : keys)
     {
         if (result.Count() > 0)
             result += ", ";
-        result += Shader::GetVariablePrefix(type) + key;
+        result += key;
     }
 }
 
@@ -1069,7 +1091,6 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
         result += Shader::GetFunctionQualifier(type, program) + " ";
         result += variables[key];
         result += String(" ");
-        result += Shader::GetVariablePrefix(type);
         result += key;
     }
 }
@@ -1085,7 +1106,7 @@ void ShaderBlock::Build(const ShaderProgram program, String& call, String& funct
     call = call_name + "(";
     String call_parameters;
     for (int i = 0; i < ShaderVariable::MAX; i++)
-        AddCallParameters((ShaderVariable)i, m_parameters[i], call_parameters);
+        AddCallParameters(/*(ShaderVariable)i, */m_parameters[i], call_parameters);
     call += call_parameters + ");";
 
     //Build function declaration
@@ -1134,6 +1155,14 @@ ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
 }
 
 //----
+ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock const& block)
+{
+    ASSERT(m_current_program != ShaderProgram::MAX);
+    m_blocks[m_current_program.ToScalar()].PushUnique(new ShaderBlock(block));
+    return *this;
+}
+
+//----
 String ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
 {
     ShaderVariable var = ShaderVariable::InOut;
@@ -1170,8 +1199,11 @@ void ShaderBuilder::MergeParameters(map<String, String>& variables, map<String, 
     for (String key : keys)
     {
         bool has_key = merged.has_key(key);
+
         //Key exists, check the type to make sure it's the same
-        ASSERT(!(has_key && merged[key] != variables[key]));
+        ASSERT(!has_key || (has_key && merged[key] == variables[key]),
+            "has_key=%d, key=%s merged[key]=%s, variables[key]=%s\n",
+            (int)has_key, key.C(), merged[key].C(), variables[key].C());
 
         //does not exist, had it
         if (!has_key)
@@ -1217,8 +1249,7 @@ void ShaderBuilder::Build(String& code)
                 for (String key : keys)
                 {
                     code += Shader::GetVariableQualifier((ShaderVariable)var) + " ";
-                    code += m_parameters[prog][var][key] + " " +
-                        Shader::GetVariablePrefix((ShaderVariable)var) + key + ";" + g_ret;
+                    code += m_parameters[prog][var][key] + " " + key + ";" + g_ret;
                 }
                 if (var + 1 < ShaderVariable::InOut)
                     code += g_ret;
@@ -1254,8 +1285,7 @@ void ShaderBuilder::Build(String& code)
         {
             if (keys.Count())
             {
-                code += g_tab + m_parameters[prog][var][key] + " " +
-                    Shader::GetVariablePrefix((ShaderVariable)var) + key + ";" + g_ret;
+                code += g_tab + m_parameters[prog][var][key] + " " + key + ";" + g_ret;
             }
         }
         code += g_ret;

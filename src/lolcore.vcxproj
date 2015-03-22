@@ -417,6 +417,9 @@
     <ProjectReference Include="bullet\lolbullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
     </ProjectReference>
+    <ProjectReference Include="imgui\lolimgui.vcxproj">
+      <Project>{a7f6fdf8-937e-41ef-b44d-04cd1a48c179}</Project>
+    </ProjectReference>
     <ProjectReference Include="lua\lollua.vcxproj">
       <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
     </ProjectReference>

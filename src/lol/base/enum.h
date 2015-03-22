@@ -54,6 +54,7 @@ public:
     /* Allow conversion from int and to the underlying type */
     inline explicit SafeEnum(int i) : m_value(T(i)) {}
     inline Type ToScalar() const { return m_value; }
+    //inline class String ToString() const { return ToString(); }
 
     /* Convert to string stuff */
     inline class String ToString()

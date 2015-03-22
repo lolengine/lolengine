@@ -197,7 +197,7 @@ class FileData
 #if __ANDROID__
         return 0;
 #elif HAVE_STDIO_H
-        return m_stat.st_mtime;
+        return (long int)m_stat.st_mtime;
 #else
         return 0;
 #endif
@@ -358,8 +358,10 @@ class DirectoryData
         filter.Replace('/', '\\', true);
         WIN32_FIND_DATA FindFileData;
         m_handle = FindFirstFile(filter.C(), &FindFileData);
+        stat(directory.C(), &m_stat);
 #elif HAVE_STDIO_H
         m_dd = opendir(directory.C());
+        stat(directory.C(), &m_stat);
 #endif
     }
 
@@ -440,6 +442,17 @@ class DirectoryData
 #endif
     }
 
+    long int GetModificationTime()
+    {
+#if __ANDROID__
+        return 0;
+#elif HAVE_STDIO_H
+        return (long int)m_stat.st_mtime;
+#else
+        return 0;
+#endif
+    }
+
 #if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
@@ -450,6 +463,7 @@ class DirectoryData
 #endif
     std::atomic<int> m_refcount;
     StreamType m_type;
+    struct stat m_stat;
 };
 
 //-- DIRECTORY --
@@ -557,6 +571,12 @@ bool Directory::GetContent(array<String>& files)
 String Directory::GetName()
 {
     return m_name;
+}
+
+//--
+long int Directory::GetModificationTime()
+{
+    return m_data->GetModificationTime();
 }
 
 //--

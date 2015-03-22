@@ -16,7 +16,7 @@ namespace lol
 /** Internal class (not public) that allows to construct an InputDevice
   * dynamically, when the keys, axis and cursors are not known at
   * compile time. */
-class InputDeviceInternal : InputDevice
+class InputDeviceInternal : public InputDevice
 {
 public:
     inline InputDeviceInternal(char const * name) : InputDevice(name) { }
