@@ -26,7 +26,7 @@ int gNumObjects = 64;
 Nacl_PhysTest::Nacl_PhysTest(bool editor)
 {
     /* Register an input controller for the keyboard */
-    m_controller = new Controller("Default", KEY_MAX, 0);
+    m_controller = new Controller("Default");
     m_controller->GetKey(KEY_MOVE_FORWARD).Bind("Keyboard", "Up");
     m_controller->GetKey(KEY_MOVE_BACK).Bind("Keyboard", "Down");
     m_controller->GetKey(KEY_MOVE_LEFT).Bind("Keyboard", "Left");
@@ -76,7 +76,7 @@ void Nacl_PhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
 
-    if (m_controller->GetKey(KEY_QUIT).IsReleased())
+    if (m_controller->IsKeyReleased(KEY_QUIT))
         Ticker::Shutdown();
 }
 

@@ -18,7 +18,6 @@
 
 #include <lol/engine.h>
 #include "scenesetup.h"
-#include "meshviewer.h"
 
 using namespace lol;
 
