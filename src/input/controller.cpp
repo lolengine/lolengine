@@ -295,12 +295,48 @@ bool Controller::IsLayerActive()
 //GetKeys/Axis stuff ----------------------------------------------------------
 KeyBinding& Controller::GetKey(int index)
 {
-//#error do something better IsLayerActive()
+    return m_keys[index];
+}
+KeyBinding const& Controller::GetKey(int index) const
+{
     return m_keys[index];
 }
 AxisBinding& Controller::GetAxis(int index)
 {
     return m_axis[index];
+}
+AxisBinding const& Controller::GetAxis(int index) const
+{
+    return m_axis[index];
+}
+
+//Key methods: should not go directly to binding ------------------------------
+bool Controller::IsKeyPressed(int index) const
+{
+//#error do something better IsLayerActive()
+    return GetKey(index).IsPressed();
+}
+bool Controller::IsKeyReleased(int index) const
+{
+    return GetKey(index).IsReleased();
+}
+bool Controller::WasKeyPressed(int index) const
+{
+    return GetKey(index).WasKeyPressed();
+}
+bool Controller::WasKeyReleased(int index) const
+{
+    return GetKey(index).WasKeyReleased();
+}
+
+//Axis methods: should not go directly to binding -----------------------------
+float Controller::GetAxisValue(int index) const
+{
+    return GetAxis(index).GetValue();
+}
+float Controller::GetAxisDelta(int index) const
+{
+    return GetAxis(index).GetDelta();
 }
 
 //-----------------------------------------------------------------------------

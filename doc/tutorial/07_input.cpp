@@ -107,27 +107,27 @@ public:
         /* Handle keyboard */
         if (m_keyboard)
         {
-            if (m_controller->GetKey(KEY_MANUAL_ROTATION).JustPressed())
+            if (m_controller->WasKeyPressed(KEY_MANUAL_ROTATION))
                 m_autorot = !m_autorot;
         }
 
         /* Handle joystick */
         if (m_joystick)
         {
-            if (lol::abs(m_controller->GetAxis(AXIS_PITCH).GetValue()) > 0.2f)
-                m_pitch_angle += m_controller->GetAxis(AXIS_PITCH).GetValue() * seconds * 100;
-            if (lol::abs(m_controller->GetAxis(AXIS_YAW).GetValue()) > 0.2f)
-                m_yaw_angle += m_controller->GetAxis(AXIS_YAW).GetValue() * seconds * 100;
+            if (lol::abs(m_controller->GetAxisValue(AXIS_PITCH)) > 0.2f)
+                m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds * 100;
+            if (lol::abs(m_controller->GetAxisValue(AXIS_YAW)) > 0.2f)
+                m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds * 100;
         }
 
         /* Handle mouse */
         if (m_mouse)
         {
-            if (m_controller->GetKey(KEY_DRAG_MESH).IsPressed())
+            if (m_controller->IsKeyPressed(KEY_DRAG_MESH))
             {
                 InputDevice::CaptureMouse(true);
-                m_pitch_angle -= m_controller->GetAxis(AXIS_DRAG_PITCH).GetValue() * seconds * 100;
-                m_yaw_angle += m_controller->GetAxis(AXIS_DRAG_YAW).GetValue() * seconds * 100;
+                m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 100;
+                m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 100;
             }
             else
             {

@@ -16,22 +16,25 @@ namespace lol
 //-----------------------------------------------------------------------------
 class KeyBinding
 {
+    friend class Controller;
 public:
     KeyBinding()
       : m_current(false),
         m_previous(false)
     {}
 
+protected:
     //Status methods ----------------------------------------------------------
     /** Indicates wheither the key is currently down */
     bool IsPressed() const { return m_current; }
     /** Indicates wheither the key is currently up */
     bool IsReleased() const { return !m_current; }
     /** Indicates wheither the key has just been pressed */
-    bool JustPressed() const { return m_current && !m_previous; }
+    bool WasKeyPressed() const { return m_current && !m_previous; }
     /** Indicates wheither the key has just been released */
-    bool JustReleased() const { return !m_current && m_previous; }
+    bool WasKeyReleased() const { return !m_current && m_previous; }
 
+public:
     //Binding methods ---------------------------------------------------------
     /** Bind a physical device and key */
     void Bind(const String& device_name, const String& key_name);
@@ -67,25 +70,26 @@ protected:
     bool m_current;
     /** Value at the current frame */
     bool m_previous;
-
-    friend class Controller;
 };
 
 //-----------------------------------------------------------------------------
 class AxisBinding
 {
+    friend class Controller;
 public:
     AxisBinding()
       : m_current(0.0f),
         m_previous(0.0f)
     {}
 
+protected:
     //Status methods ----------------------------------------------------------
     /** Gets the current absolute value of this axis */
     float GetValue() const { return m_current; }
     /** Gets the current delta value of this axis */
     float GetDelta() const { return m_current - m_previous; }
 
+public:
     //Binding methods ---------------------------------------------------------
     /** Bind a physical device and axis */
     void Bind(const String& device_name, const String& axis_name);
@@ -132,8 +136,6 @@ protected:
     array<const InputDevice*, int, int> m_keybindings;
     float m_current;
     float m_previous;
-
-    friend class Controller;
 };
 
 //-------------------------------------------------------------------------
@@ -348,8 +350,27 @@ public:
 
     /** GetKeys/Axis stuff */
     KeyBinding& GetKey(int index);
+    KeyBinding const& GetKey(int index) const;
     AxisBinding& GetAxis(int index);
+    AxisBinding const& GetAxis(int index) const;
 
+    /** Key methods: should not go directly to binding */
+    /** Indicates wheither the key is currently down */
+    bool IsKeyPressed(int index) const;
+    /** Indicates wheither the key is currently up */
+    bool IsKeyReleased(int index) const;
+    /** Indicates wheither the key has just been pressed */
+    bool WasKeyPressed(int index) const;
+    /** Indicates wheither the key has just been released */
+    bool WasKeyReleased(int index) const;
+
+    /** Axis methods: should not go directly to binding */
+    /** Gets the current absolute value of this axis */
+    float GetAxisValue(int index) const;
+    /** Gets the current delta value of this axis */
+    float GetAxisDelta(int index) const;
+
+    /** Get named controller */
     static Controller* Get(String const &name);
 
 protected:

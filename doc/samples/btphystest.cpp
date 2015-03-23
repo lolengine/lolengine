@@ -317,7 +317,7 @@ void BtPhysTest::TickGame(float seconds)
     }
 
 
-    if (m_controller->GetKey(KEY_QUIT).JustReleased())
+    if (m_controller->WasKeyReleased(KEY_QUIT))
         Ticker::Shutdown();
 
     m_loop_value += seconds;
@@ -500,15 +500,15 @@ void BtPhysTest::TickGame(float seconds)
             mat4 CtlrMx = Character->GetTransform();
 
             vec3 movement(0.f);
-            movement.z = (m_controller->GetKey(KEY_MOVE_RIGHT).IsPressed() ? 1.f : 0.f)
-                       - (m_controller->GetKey(KEY_MOVE_LEFT).IsPressed() ? 1.f : 0.f);
-            movement.x = (m_controller->GetKey(KEY_MOVE_FORWARD).IsPressed() ? 1.f : 0.f)
-                       - (m_controller->GetKey(KEY_MOVE_BACK).IsPressed() ? 1.f : 0.f);
-            movement.y = (m_controller->GetKey(KEY_MOVE_UP).IsPressed() ? 1.f : 0.f)
-                       - (m_controller->GetKey(KEY_MOVE_DOWN).IsPressed() ? 1.f : 0.f);
+            movement.z = (m_controller->IsKeyPressed(KEY_MOVE_RIGHT) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(KEY_MOVE_LEFT) ? 1.f : 0.f);
+            movement.x = (m_controller->IsKeyPressed(KEY_MOVE_FORWARD) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(KEY_MOVE_BACK) ? 1.f : 0.f);
+            movement.y = (m_controller->IsKeyPressed(KEY_MOVE_UP) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(KEY_MOVE_DOWN) ? 1.f : 0.f);
             vec3 CharMove = movement * seconds * vec3(4.f, 10.f, 4.f);
 
-            if (m_controller->GetKey(KEY_MOVE_JUMP).JustReleased())
+            if (m_controller->WasKeyReleased(KEY_MOVE_JUMP))
                 Character->Jump();
             Character->SetMovementForFrame(CharMove);
 

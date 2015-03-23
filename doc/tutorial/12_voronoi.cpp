@@ -78,7 +78,7 @@ public:
 
         {
             //Shutdown logic
-            if (m_controller->GetKey(KEY_ESC).JustReleased())
+            if (m_controller->WasKeyReleased(KEY_ESC))
                 Ticker::Shutdown();
         }
 
@@ -169,16 +169,16 @@ public:
 
         {
             //Shutdown logic
-            if (m_controller->GetKey(KEY_POP).JustReleased())
+            if (m_controller->WasKeyReleased(KEY_POP))
                 voronoi_points.Pop();
-            else if (m_controller->GetKey(KEY_PUSH).JustReleased())
+            else if (m_controller->WasKeyReleased(KEY_PUSH))
                 voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                         vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
-            else if (m_controller->GetKey(KEY_F1).JustReleased())
+            else if (m_controller->WasKeyReleased(KEY_F1))
                 m_cur_fbo = SrcVoronoiFbo;
-            else if (m_controller->GetKey(KEY_F2).JustReleased())
+            else if (m_controller->WasKeyReleased(KEY_F2))
                 m_cur_fbo = VoronoiFbo;
-            else if (m_controller->GetKey(KEY_F3).JustReleased())
+            else if (m_controller->WasKeyReleased(KEY_F3))
             {
                 voronoi_points.Empty();
                 if (mode == 0)
