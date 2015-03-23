@@ -27,8 +27,8 @@ Entity::Entity() :
 #if !LOL_BUILD_RELEASE
     m_tickstate = STATE_IDLE;
 #endif
-    m_gamegroup = GAMEGROUP_DEFAULT;
-    m_drawgroup = DRAWGROUP_DEFAULT;
+    m_gamegroup = GAMEGROUP_ENTITY;
+    m_drawgroup = DRAWGROUP_ENTITY;
     Ticker::Register(this);
 }
 

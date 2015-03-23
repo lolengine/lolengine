@@ -81,7 +81,7 @@ D3d9Input::D3d9Input()
     }
 #endif
 
-    m_gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_INPUT;
 }
 
 D3d9Input::~D3d9Input()

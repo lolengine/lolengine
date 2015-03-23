@@ -20,8 +20,8 @@ Light::Light()
   : m_color(1.f),
     m_type(LightType::Directional)
 {
-    m_gamegroup = GAMEGROUP_BEFORE;
-    m_drawgroup = DRAWGROUP_CAMERA;
+    m_gamegroup = GAMEGROUP_LIGHT;
+    m_drawgroup = DRAWGROUP_LIGHT;
 
     SetPosition(vec3::zero);
 }

@@ -19,8 +19,8 @@ using namespace lol;
 //-----------------------------------------------------------------------------
 LolImGui::LolImGui()
 {
-    m_gamegroup = GAMEGROUP_BEFORE;
-    m_drawgroup = DRAWGROUP_HUD;
+    m_gamegroup = GAMEGROUP_IMGUI;
+    m_drawgroup = DRAWGROUP_IMGUI;
 
     //Build shader code -------------------------------------------------------
     ShaderVar out_vertex = ShaderVar::GetShaderOut(ShaderProgram::Vertex);

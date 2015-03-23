@@ -74,7 +74,7 @@ void TextureImage::Init(char const *path, Image* image)
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
                                    PotUp(m_data->m_image_size.y));
 
-    m_drawgroup = DRAWGROUP_BEFORE;
+    m_drawgroup = DRAWGROUP_TEXTURE;
 }
 
 void TextureImage::TickDraw(float seconds, Scene &scene)

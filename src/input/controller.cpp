@@ -224,11 +224,12 @@ float AxisBinding::RetrieveCurrentValue()
 // Controller
 
 array<Controller*> Controller::controllers;
+uint32_t Controller::m_active_layer = ~((uint32_t)0);
 
 //-----------------------------------------------------------------------------
 Controller::Controller(String const &name)
 {
-    m_gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_INPUT;
     m_name = name;
     m_activate_nextframe = true;
     m_deactivate_nextframe = false;
@@ -277,9 +278,24 @@ void Controller::SetInputCount(int nb_keys, int nb_axis)
     m_axis.Resize(nb_axis);
 }
 
+//Layer mask stuff ------------------------------------------------------------
+void Controller::SetLayerMask(uint32_t layer_mask)
+{
+    m_layer_mask = layer_mask;
+}
+uint32_t Controller::GetLayerMask()
+{
+    return m_layer_mask;
+}
+bool Controller::IsLayerActive()
+{
+    return !!(m_layer_mask & m_active_layer);
+}
+
 //GetKeys/Axis stuff ----------------------------------------------------------
 KeyBinding& Controller::GetKey(int index)
 {
+//#error do something better IsLayerActive()
     return m_keys[index];
 }
 AxisBinding& Controller::GetAxis(int index)

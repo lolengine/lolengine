@@ -421,7 +421,7 @@ class DirectoryData
                 }
             }
             //Go for next one
-            file_valid = (bool)FindNextFile(m_handle, &find_data);
+            file_valid = !!FindNextFile(m_handle, &find_data);
         }
 #elif HAVE_STDIO_H
         /* FIXME: not implemented */
@@ -604,7 +604,7 @@ bool Directory::SetCurrent(String directory)
 #elif defined(_WIN32)
     String result = directory;
     result.Replace('/', '\\', true);
-    return (bool)SetCurrentDirectory(result.C());
+    return !!SetCurrentDirectory(result.C());
 #elif HAVE_STDIO_H
     /* FIXME: not implemented */
 #endif

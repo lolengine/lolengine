@@ -25,7 +25,7 @@ namespace lol
 
 Camera::Camera()
 {
-    m_gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_CAMERA;
     m_drawgroup = DRAWGROUP_CAMERA;
 
     //Arbitrary values when g_renderer is not ready.

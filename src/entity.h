@@ -64,35 +64,53 @@ protected:
 
     enum
     {
-        GAMEGROUP_BEFORE = 0,
-        GAMEGROUP_DEFAULT,
-        GAMEGROUP_AFTER,
-        GAMEGROUP_AFTER_0,
-        GAMEGROUP_AFTER_1,
+        GAMEGROUP_BEGIN = 0, //Must be the first element
 
-        // Must be the last element
-        GAMEGROUP_END
+        GAMEGROUP_INPUT,    //Input should be polled before everything else
+        GAMEGROUP_IMGUI,    //Debug update needs to be called before the rest for init purposes
+        GAMEGROUP_ENTITY,   //Default entity update
+        //------------------//Split entity update:
+        GAMEGROUP_PLAYER,   //Player updates before AI to ensure player actions is prevalent
+        GAMEGROUP_AI,       //AI update
+        GAMEGROUP_OTHER_0,  //Other misc updates here
+        GAMEGROUP_OTHER_1,  //Same ------------------
+        GAMEGROUP_OTHER_2,  //Same ------------------
+        GAMEGROUP_OTHER_3,  //Same ------------------
+        //------------------//Primitives updates
+        GAMEGROUP_MESH,     //Update Mesh/Animation to ensure correct sync with PLY/AI
+        GAMEGROUP_FX,       //Update FX/other to ensure correct sync with WorldPos and Meshes
+        GAMEGROUP_LIGHT,    //Update after FX because it could some
+        GAMEGROUP_CAMERA,   //Update camera at the end of the frame, once everything is settled
+        GAMEGROUP_STATS,    //Stats updates
+
+        GAMEGROUP_END       //Must be the last element
     }
     m_gamegroup;
 
     enum
     {
-        DRAWGROUP_BEFORE = GAMEGROUP_END,
-        DRAWGROUP_LIGHT,
-        DRAWGROUP_CAMERA,
-        DRAWGROUP_DEFAULT,
-        DRAWGROUP_AFTER,
-        DRAWGROUP_AFTER_0,
-        DRAWGROUP_AFTER_1,
+        DRAWGROUP_BEGIN = GAMEGROUP_END,
+
+        DRAWGROUP_CAMERA,   //Update camera first for rendering
+        DRAWGROUP_TEXTURE,  //Texture
+        DRAWGROUP_LIGHT,    //
+        DRAWGROUP_WORLD,    //Other misc updates here
+        DRAWGROUP_ENTITY,   //
+        DRAWGROUP_FX,       //
+        DRAWGROUP_OTHER_0,  //Other misc updates here
+        DRAWGROUP_OTHER_1,  //Same ------------------
+        DRAWGROUP_OTHER_2,  //Same ------------------
+        DRAWGROUP_OTHER_3,  //Same ------------------
         DRAWGROUP_HUD,
+        DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
-        // Must be the last element
-        DRAWGROUP_END
+        
+        DRAWGROUP_END       //Must be the last element
     }
     m_drawgroup;
 
-    static int const GAMEGROUP_BEGIN = 0;
-    static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
+    //static int const GAMEGROUP_BEGIN = 0;
+    //static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
     static int const ALLGROUP_END = DRAWGROUP_END;
 
     /* The initialisation state */
