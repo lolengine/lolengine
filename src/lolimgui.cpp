@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include "imgui.cpp"
+
 #include <cstdio>
 
 using namespace lol;

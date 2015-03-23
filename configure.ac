@@ -312,7 +312,12 @@ fi
 dnl  Use pegtl? Yes, always
 if true; then
   LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/pegtl-0.32/include"
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/axe-1.5.4.164/include"
+fi
+
+
+dnl  Use Imgui? Yes, always
+if true; then
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/imgui-1.36"
 fi
 
 
@@ -485,7 +490,6 @@ AC_CONFIG_FILES(
   src/Makefile
   src/bullet/Makefile
   src/lua/Makefile
-  src/imgui/Makefile
   src/data/Makefile
   src/data/font/Makefile
   src/t/Makefile

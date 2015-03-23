@@ -155,6 +155,7 @@
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="lolimgui.cpp" />
     <ClCompile Include="lolua\baselua.cpp" />
     <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
+    <ClInclude Include="lolimgui.h" />
     <ClInclude Include="lolua\baselua.h" />
     <ClInclude Include="lol\algorithm\aabb_tree.h" />
     <ClInclude Include="lol\algorithm\all.h" />
@@ -416,9 +418,6 @@
   <ItemGroup>
     <ProjectReference Include="bullet\lolbullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-    <ProjectReference Include="imgui\lolimgui.vcxproj">
-      <Project>{a7f6fdf8-937e-41ef-b44d-04cd1a48c179}</Project>
     </ProjectReference>
     <ProjectReference Include="lua\lollua.vcxproj">
       <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>

@@ -1,9 +1,0 @@
-## Last revision ##
-Revision: efd927e30095d4a38df6a13f9d1c962514f52a23
-Author: ocornut <omarcornut@gmail.com>
-Date: 21/03/2015 20:00:49
-Message:
-ShowTestWindow: missing TreePop() call in Mouse Cursor section.
-----
-Modified: imgui.cpp
-
