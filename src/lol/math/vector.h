@@ -279,7 +279,7 @@ struct vec_t<T,2>
     {
         struct { T x, y; }; /* axis */
         struct { T r, g; }; /* red, green */
-        struct { T s, t; }; 
+        struct { T s, t; };
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T, 2, 9000> const xx, rr, ss/**/, ww;

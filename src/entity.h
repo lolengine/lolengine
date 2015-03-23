@@ -104,7 +104,7 @@ protected:
         DRAWGROUP_HUD,
         DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
-        
+
         DRAWGROUP_END       //Must be the last element
     }
     m_drawgroup;

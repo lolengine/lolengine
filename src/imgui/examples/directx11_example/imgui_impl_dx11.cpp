@@ -79,7 +79,7 @@ static void ImGui_ImplDX11_RenderDrawLists(ImDrawList** const cmd_lists, int cmd
         const float R = ImGui::GetIO().DisplaySize.x;
         const float B = ImGui::GetIO().DisplaySize.y;
         const float T = 0.0f;
-        const float mvp[4][4] = 
+        const float mvp[4][4] =
         {
             { 2.0f/(R-L),   0.0f,           0.0f,       0.0f},
             { 0.0f,         2.0f/(T-B),     0.0f,       0.0f,},
@@ -134,7 +134,7 @@ static void ImGui_ImplDX11_RenderDrawLists(ImDrawList** const cmd_lists, int cmd
             {
                 const D3D11_RECT r = { (LONG)pcmd->clip_rect.x, (LONG)pcmd->clip_rect.y, (LONG)pcmd->clip_rect.z, (LONG)pcmd->clip_rect.w };
                 g_pd3dDeviceContext->PSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)&pcmd->texture_id);
-                g_pd3dDeviceContext->RSSetScissorRects(1, &r); 
+                g_pd3dDeviceContext->RSSetScissorRects(1, &r);
                 g_pd3dDeviceContext->Draw(pcmd->vtx_count, vtx_offset);
             }
             vtx_offset += pcmd->vtx_count;
@@ -156,20 +156,20 @@ LRESULT ImGui_ImplDX11_WndProcHandler(HWND, UINT msg, WPARAM wParam, LPARAM lPar
         io.MouseDown[0] = true;
         return true;
     case WM_LBUTTONUP:
-        io.MouseDown[0] = false; 
+        io.MouseDown[0] = false;
         return true;
     case WM_RBUTTONDOWN:
-        io.MouseDown[1] = true; 
+        io.MouseDown[1] = true;
         return true;
     case WM_RBUTTONUP:
-        io.MouseDown[1] = false; 
+        io.MouseDown[1] = false;
         return true;
     case WM_MOUSEWHEEL:
         io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f;
         return true;
     case WM_MOUSEMOVE:
         io.MousePos.x = (signed short)(lParam);
-        io.MousePos.y = (signed short)(lParam >> 16); 
+        io.MousePos.y = (signed short)(lParam >> 16);
         return true;
     case WM_KEYDOWN:
         if (wParam < 256)
@@ -257,7 +257,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
 
     // Create the vertex shader
     {
-        static const char* vertexShader = 
+        static const char* vertexShader =
             "cbuffer vertexBuffer : register(c0) \
             {\
             float4x4 ProjectionMatrix; \
@@ -315,7 +315,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
 
     // Create the pixel shader
     {
-        static const char* pixelShader = 
+        static const char* pixelShader =
             "struct PS_INPUT\
             {\
             float4 pos : SV_POSITION;\
@@ -396,7 +396,7 @@ bool    ImGui_ImplDX11_Init(void* hwnd, ID3D11Device* device, ID3D11DeviceContex
     g_pd3dDevice = device;
     g_pd3dDeviceContext = device_context;
 
-    if (!QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond)) 
+    if (!QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond))
         return false;
     if (!QueryPerformanceCounter((LARGE_INTEGER *)&g_Time))
         return false;
@@ -449,7 +449,7 @@ void ImGui_ImplDX11_NewFrame()
 
     // Setup time step
     INT64 current_time;
-    QueryPerformanceCounter((LARGE_INTEGER *)&current_time); 
+    QueryPerformanceCounter((LARGE_INTEGER *)&current_time);
     io.DeltaTime = (float)(current_time - g_Time) / g_TicksPerSecond;
     g_Time = current_time;
 

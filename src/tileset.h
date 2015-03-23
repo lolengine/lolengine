@@ -49,7 +49,7 @@ public:
     /* Old style: path to PNG file */
     TileSet(char const *path, ivec2 size, ivec2 count);
     TileSet(char const *path, Image* image, ivec2 size, ivec2 count);
-    
+
     virtual ~TileSet();
 
 protected:

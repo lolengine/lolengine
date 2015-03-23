@@ -83,7 +83,7 @@ void BaseThreadManager::StopThreads(int nb)
     ThreadJob stop_job(ThreadJobType::THREAD_STOP);
     for (int i = 0; i < nb; i++)
         m_jobqueue.push(&stop_job);
-    
+
     //... Wait for them to quit.
     for (int i = 0; i < nb; i++)
         m_donequeue.pop();
