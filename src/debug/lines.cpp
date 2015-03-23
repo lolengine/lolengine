@@ -140,16 +140,16 @@ void Debug::DrawGrid(vec3 pos, vec3 x, vec3 y, vec3 z, float size, bool draw_3d)
         if (i != 0)
         {
             float iter = seg_sz * ((float)i);
-            Debug::DrawLine(vec3(-size, 0, iter), vec3(size, 0, iter), Color::gray_dark);
-            Debug::DrawLine(vec3(iter, 0, -size), vec3(iter, 0, size), Color::gray_dark);
+            Debug::DrawLine(vec3(-size, 0, iter), vec3(size, 0, iter), Color::dark_gray);
+            Debug::DrawLine(vec3(iter, 0, -size), vec3(iter, 0, size), Color::dark_gray);
 
             if (draw_3d)
             {
-                Debug::DrawLine(vec3(0, -size, iter), vec3(0, size, iter), Color::gray_dark);
-                Debug::DrawLine(vec3(0, iter, -size), vec3(0, iter, size), Color::gray_dark);
+                Debug::DrawLine(vec3(0, -size, iter), vec3(0, size, iter), Color::dark_gray);
+                Debug::DrawLine(vec3(0, iter, -size), vec3(0, iter, size), Color::dark_gray);
 
-                Debug::DrawLine(vec3(-size, iter, 0), vec3(size, iter, 0), Color::gray_dark);
-                Debug::DrawLine(vec3(iter, -size, 0), vec3(iter, size, 0), Color::gray_dark);
+                Debug::DrawLine(vec3(-size, iter, 0), vec3(size, iter, 0), Color::dark_gray);
+                Debug::DrawLine(vec3(iter, -size, 0), vec3(iter, size, 0), Color::dark_gray);
             }
         }
     }
