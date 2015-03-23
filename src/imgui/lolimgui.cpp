@@ -197,15 +197,15 @@ void LolImGui::TickGame(float seconds)
         switch (i)
         {
         default:
-            io.KeysDown[i] = m_controller->GetKey(i).IsPressed();
+            io.KeysDown[i] = m_controller->IsKeyPressed(i);
             break;
         case LolImGuiKey::LShift:
         case LolImGuiKey::RShift:
-            io.KeyShift = (io.KeyShift || m_controller->GetKey(i).IsPressed());
+            io.KeyShift = (io.KeyShift || m_controller->IsKeyPressed(i));
             break;
         case LolImGuiKey::LCtrl:
         case LolImGuiKey::RCtrl:
-            io.KeyCtrl = (io.KeyCtrl || m_controller->GetKey(i).IsPressed());
+            io.KeyCtrl = (io.KeyCtrl || m_controller->IsKeyPressed(i));
             break;
         }
     }
@@ -223,17 +223,17 @@ void LolImGui::TickGame(float seconds)
         cursor.y = 1.f - cursor.y;
         cursor *= video_size;
         io.MousePos = ImVec2(cursor.x, cursor.y);
-        io.MouseWheel = m_controller->GetAxis(LolImGuiAxis::Scroll).GetValue();
+        io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
         for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
         {
             switch (i)
             {
             default:
-                io.MouseDown[i - LolImGuiKey::MOUSE_KEY_START] = m_controller->GetKey(i).IsPressed();
+                io.MouseDown[i - LolImGuiKey::MOUSE_KEY_START] = m_controller->IsKeyPressed(i);
                 break;
             case LolImGuiKey::Focus:
-                if (m_controller->GetKey(i).IsPressed())
+                if (m_controller->IsKeyPressed(i))
                     io.MousePos = ImVec2(-1.f, -1.f);
                 break;
             }
