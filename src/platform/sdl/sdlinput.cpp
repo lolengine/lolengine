@@ -198,7 +198,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 #   endif //EMSCRIPTEN
 #endif
 
-    m_gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_INPUT;
 }
 
 SdlInput::~SdlInput()

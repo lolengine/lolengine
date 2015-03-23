@@ -25,6 +25,8 @@ public:
     InputTutorial()
     {
         m_controller = new Controller("Default");
+
+#       ifdef OLD_SCHOOL
         m_controller->SetInputCount(KEY_MAX, AXIS_MAX);
 
         m_keyboard = InputDevice::Get("Keyboard");
@@ -45,6 +47,20 @@ public:
             m_controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
             m_controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
         }
+#       else
+        m_profile
+            << InputProfile::Keyboard(KEY_MANUAL_ROTATION, "Space")
+            << InputProfile::MouseKey(KEY_DRAG_MESH, "Left")
+            << InputProfile::JoystickAxis(1, AXIS_PITCH, "Axis2")
+            << InputProfile::JoystickAxis(1, AXIS_YAW, "Axis1")
+            << InputProfile::MouseAxis(AXIS_DRAG_PITCH, "Y")
+            << InputProfile::MouseAxis(AXIS_DRAG_YAW, "X");
+
+        m_controller->Init(m_profile);
+        m_keyboard = InputDevice::GetKeyboard();
+        m_mouse = InputDevice::GetMouse();
+        m_joystick = InputDevice::GetJoystick(1);
+#       endif //OLD_SCHOOL
 
         m_pitch_angle = 0;
         m_yaw_angle = 0;
@@ -213,6 +229,7 @@ private:
 
     InputDevice *m_keyboard, *m_mouse, *m_joystick;
     Controller *m_controller;
+    InputProfile m_profile;
 
     bool m_autorot;
     float m_pitch_angle;

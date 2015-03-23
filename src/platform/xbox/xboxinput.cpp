@@ -55,7 +55,7 @@ XboxInput::XboxInput()
     }
 #endif
 
-    m_gamegroup = GAMEGROUP_BEFORE;
+    m_gamegroup = GAMEGROUP_INPUT;
 }
 
 XboxInput::~XboxInput()

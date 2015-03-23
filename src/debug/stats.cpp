@@ -38,7 +38,7 @@ DebugStats::DebugStats(char const *path)
 {
     data->fp = fopen(path, "w+");
 
-    m_gamegroup = GAMEGROUP_AFTER;
+    m_gamegroup = GAMEGROUP_STATS;
 }
 
 void DebugStats::TickGame(float seconds)
