@@ -16,17 +16,17 @@ namespace lol
 /*
  * Hardcoded constants for colours
  */
-vec4 const Color::black     = vec4(0, 0, 0, 1);
-vec4 const Color::red       = vec4(1, 0, 0, 1);
-vec4 const Color::green     = vec4(0, 1, 0, 1);
-vec4 const Color::yellow    = vec4(1, 1, 0, 1);
-vec4 const Color::blue      = vec4(0, 0, 1, 1);
-vec4 const Color::magenta   = vec4(1, 0, 1, 1);
-vec4 const Color::cyan      = vec4(0, 1, 1, 1);
-vec4 const Color::white     = vec4(1, 1, 1, 1);
-vec4 const Color::gray_dark = vec4(.25f, .25f, .25f, 1);
-vec4 const Color::gray      = vec4(.5f, .5f, .5f, 1);
-vec4 const Color::gray_light= vec4(.75f, .75f, .75f, 1);
+vec4 const Color::black      = vec4(0, 0, 0, 1);
+vec4 const Color::red        = vec4(1, 0, 0, 1);
+vec4 const Color::green      = vec4(0, 1, 0, 1);
+vec4 const Color::yellow     = vec4(1, 1, 0, 1);
+vec4 const Color::blue       = vec4(0, 0, 1, 1);
+vec4 const Color::magenta    = vec4(1, 0, 1, 1);
+vec4 const Color::cyan       = vec4(0, 1, 1, 1);
+vec4 const Color::white      = vec4(1, 1, 1, 1);
+vec4 const Color::dark_gray  = vec4(.25f, .25f, .25f, 1);
+vec4 const Color::gray       = vec4(.5f, .5f, .5f, 1);
+vec4 const Color::light_gray = vec4(.75f, .75f, .75f, 1);
 
 /*
  * Conversion from colours to hexadecimal
