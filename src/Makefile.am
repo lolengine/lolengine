@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = bullet lua imgui data . t
+SUBDIRS = bullet lua data . t
 
 noinst_LIBRARIES = liblolcore.a
 
@@ -16,7 +16,7 @@ liblolcore_a_SOURCES = \
     numeric.h utils.h messageservice.cpp messageservice.h \
     worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
-    light.cpp light.h \
+    light.cpp light.h lolimgui.cpp lolimgui.h \
     \
     $(liblolcore_headers) \
     $(liblolcore_sources) \
@@ -26,8 +26,8 @@ liblolcore_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
-#liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua -I$(srcdir)/imgui
-liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua -I$(srcdir)/imgui
+#liblolcore_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
+liblolcore_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 
 EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
 
