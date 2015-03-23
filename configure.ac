@@ -286,28 +286,6 @@ LOL_CHECK_OPENGL
 
 LOL_CHECK_SDL
 
-dnl  Use Flex's FlexLexer.h or ours?
-ac_cv_my_have_flexlexer_h="no"
-AC_LANG_PUSH(C++)
-AC_CHECK_HEADERS(FlexLexer.h,
- dnl  Ensure that FlexLexer::yleng is of type int, and not size_t like
- dnl  on recent Apple systems. It would break all our existing code.
- [AC_MSG_CHECKING(for FlexLexer.h validity)
-  AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM([#include <FlexLexer.h>
-      class Foo : public FlexLexer
-      {
-          Foo() { int &test = yyleng; }
-      };],
-     [])],
-   [AC_MSG_RESULT(yes)
-    ac_cv_my_have_flexlexer_h="yes"],
-   [AC_MSG_RESULT(no)])])
-AC_LANG_POP(C++)
-if test "x${ac_cv_my_have_flexlexer_h}" = "xno"; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/flex-2.5.35/include"
-fi
-
 
 dnl  Use pegtl? Yes, always
 if true; then

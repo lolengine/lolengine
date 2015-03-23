@@ -7,8 +7,6 @@
 
 # Vim doesn't like CRLF, even on Windows
 *.vim eol=lf
-# Bison doesn't like CRLF
-external/*/share/bison/* eol=lf
 
 # Source files should be normalised in the repository
 *.c     eol=lf

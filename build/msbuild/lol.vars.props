@@ -4,10 +4,6 @@
   <PropertyGroup Label="UserMacros">
     <ExternalDir>$(SolutionDir)\..\external</ExternalDir>
 
-    <!-- Flex & Bison -->
-    <FlexDir>$(ExternalDir)\flex-2.5.35</FlexDir>
-    <FlexIncludes>$(FlexDir)\include</FlexIncludes>
-
     <!-- PEGTL -->
     <PegtlDir>$(ExternalDir)\pegtl-0.32</PegtlDir>
     <PegtlIncludes>$(PegtlDir)\include</PegtlIncludes>
@@ -115,8 +111,6 @@
 
   <ItemGroup>
     <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
-    <BuildMacro Include="FlexDir"><Value>$(FlexDir)</Value></BuildMacro>
-    <BuildMacro Include="FlexIncludes"><Value>$(FlexIncludes)</Value></BuildMacro>
     <BuildMacro Include="PegtlDir"><Value>$(PegtlDir)</Value></BuildMacro>
     <BuildMacro Include="PegtlIncludes"><Value>$(PegtlIncludes)</Value></BuildMacro>
     <BuildMacro Include="ImguiDir"><Value>$(ImguiDir)</Value></BuildMacro>
