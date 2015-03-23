@@ -120,20 +120,20 @@ LRESULT ImGui_ImplDX9_WndProcHandler(HWND, UINT msg, WPARAM wParam, LPARAM lPara
         io.MouseDown[0] = true;
         return true;
     case WM_LBUTTONUP:
-        io.MouseDown[0] = false; 
+        io.MouseDown[0] = false;
         return true;
     case WM_RBUTTONDOWN:
-        io.MouseDown[1] = true; 
+        io.MouseDown[1] = true;
         return true;
     case WM_RBUTTONUP:
-        io.MouseDown[1] = false; 
+        io.MouseDown[1] = false;
         return true;
     case WM_MOUSEWHEEL:
         io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f;
         return true;
     case WM_MOUSEMOVE:
         io.MousePos.x = (signed short)(lParam);
-        io.MousePos.y = (signed short)(lParam >> 16); 
+        io.MousePos.y = (signed short)(lParam >> 16);
         return true;
     case WM_KEYDOWN:
         if (wParam < 256)
@@ -157,7 +157,7 @@ bool    ImGui_ImplDX9_Init(void* hwnd, IDirect3DDevice9* device)
     g_hWnd = (HWND)hwnd;
     g_pd3dDevice = device;
 
-    if (!QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond)) 
+    if (!QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond))
         return false;
     if (!QueryPerformanceCounter((LARGE_INTEGER *)&g_Time))
         return false;
@@ -212,10 +212,10 @@ static void ImGui_ImplDX9_CreateFontsTexture()
         return;
     }
     D3DLOCKED_RECT tex_locked_rect;
-    if (pTexture->LockRect(0, &tex_locked_rect, NULL, 0) != D3D_OK) 
-    {	
-        IM_ASSERT(0); 
-        return; 
+    if (pTexture->LockRect(0, &tex_locked_rect, NULL, 0) != D3D_OK)
+    {
+        IM_ASSERT(0);
+        return;
     }
     for (int y = 0; y < height; y++)
         memcpy((unsigned char *)tex_locked_rect.pBits + tex_locked_rect.Pitch * y, pixels + (width * bytes_per_pixel) * y, (width * bytes_per_pixel));
@@ -267,7 +267,7 @@ void ImGui_ImplDX9_NewFrame()
 
     // Setup time step
     INT64 current_time;
-    QueryPerformanceCounter((LARGE_INTEGER *)&current_time); 
+    QueryPerformanceCounter((LARGE_INTEGER *)&current_time);
     io.DeltaTime = (float)(current_time - g_Time) / g_TicksPerSecond;
     g_Time = current_time;
 

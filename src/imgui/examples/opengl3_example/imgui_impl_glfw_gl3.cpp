@@ -48,10 +48,10 @@ static void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawList** const cmd_lists, int 
     const float height = ImGui::GetIO().DisplaySize.y;
     const float ortho_projection[4][4] =
     {
-        { 2.0f/width,	0.0f,			0.0f,		0.0f },
-        { 0.0f,			2.0f/-height,	0.0f,		0.0f },
-        { 0.0f,			0.0f,			-1.0f,		0.0f },
-        { -1.0f,		1.0f,			0.0f,		1.0f },
+        { 2.0f/width,    0.0f,            0.0f,        0.0f },
+        { 0.0f,            2.0f/-height,    0.0f,        0.0f },
+        { 0.0f,            0.0f,            -1.0f,        0.0f },
+        { -1.0f,        1.0f,            0.0f,        1.0f },
     };
     glUseProgram(g_ShaderHandle);
     glUniform1i(g_AttribLocationTex, 0);
@@ -183,9 +183,9 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects()
         "out vec4 Frag_Color;\n"
         "void main()\n"
         "{\n"
-        "	Frag_UV = UV;\n"
-        "	Frag_Color = Color;\n"
-        "	gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
+        "    Frag_UV = UV;\n"
+        "    Frag_Color = Color;\n"
+        "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
     const GLchar* fragment_shader =
@@ -196,7 +196,7 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects()
         "out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
+        "    Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
         "}\n";
 
     g_ShaderHandle = glCreateProgram();
@@ -331,15 +331,15 @@ void ImGui_ImplGlfwGL3_NewFrame()
     // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
     if (glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
     {
-    	double mouse_x, mouse_y;
-    	glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-    	mouse_x *= (float)display_w / w;                        // Convert mouse coordinates to pixels
-    	mouse_y *= (float)display_h / h;
-    	io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
+        double mouse_x, mouse_y;
+        glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
+        mouse_x *= (float)display_w / w;                        // Convert mouse coordinates to pixels
+        mouse_y *= (float)display_h / h;
+        io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
     }
     else
     {
-    	io.MousePos = ImVec2(-1,-1);
+        io.MousePos = ImVec2(-1,-1);
     }
 
     for (int i = 0; i < 3; i++)

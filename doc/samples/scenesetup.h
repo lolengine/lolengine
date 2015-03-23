@@ -188,7 +188,7 @@ setup_command:
 T_OBJPOSITION   v3              { if (uc.m_last_cmd == "ADDLIGHT")
 uc.m_sstp.m_lights.Last()->SetPosition(vec3($2[0], $2[1], $2[2])); }
 | T_OBJLOOKAT     v3              { if (uc.m_last_cmd == "ADDLIGHT")
-{ 
+{
 } }
 | T_OBJCOLOR      v4{ if (uc.m_last_cmd == "ADDLIGHT")
 uc.m_sstp.m_lights.Last()->SetColor(vec4($2[0], $2[1], $2[2], $2[3])); }
