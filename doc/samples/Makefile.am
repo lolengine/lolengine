@@ -41,9 +41,9 @@ nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
 nacl_phystest_DEPENDENCIES = @LOL_DEPS@
 nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
 
-meshviewer_SOURCES = meshviewer.cpp meshviewer.h \
-    shinymvtexture.lolfx shinyfur.lolfx \
-    scenesetup.cpp scenesetup.h
+meshviewer_SOURCES = meshviewer/meshviewer.cpp meshviewer/meshviewer.h \
+    meshviewer/scenesetup.cpp meshviewer/scenesetup.h \
+    data/shinymvtexture.lolfx data/shinyfur.lolfx
 meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
 meshviewer_DEPENDENCIES = @LOL_DEPS@
 meshviewer_LDFLAGS = $(AM_LDFLAGS)
