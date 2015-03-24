@@ -148,6 +148,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolremez", "..\tools\lolremez\lolremez.vcxproj", "{73F1A804-1116-46C3-922A-9C0ADEB33F52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B6297FF2-63D0-41EE-BE13-EFF720C9B0FA}"
+	ProjectSection(SolutionItems) = preProject
+		..\doc\samples\Makefile.am = ..\doc\samples\Makefile.am
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{65FD48E9-C936-4A23-AD46-BF738B6D4733}"
 EndProject
