@@ -320,13 +320,13 @@ bool Controller::IsKeyReleased(int index) const
 {
     return GetKey(index).IsReleased();
 }
-bool Controller::WasKeyPressed(int index) const
+bool Controller::WasKeyPressedThisFrame(int index) const
 {
-    return GetKey(index).WasKeyPressed();
+    return GetKey(index).WasPressedThisFrame();
 }
-bool Controller::WasKeyReleased(int index) const
+bool Controller::WasKeyReleasedThisFrame(int index) const
 {
-    return GetKey(index).WasKeyReleased();
+    return GetKey(index).WasReleasedThisFrame();
 }
 
 //Axis methods: should not go directly to binding -----------------------------

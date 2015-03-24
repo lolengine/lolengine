@@ -30,9 +30,9 @@ protected:
     /** Indicates wheither the key is currently up */
     bool IsReleased() const { return !m_current; }
     /** Indicates wheither the key has just been pressed */
-    bool WasKeyPressed() const { return m_current && !m_previous; }
+    bool WasPressedThisFrame() const { return m_current && !m_previous; }
     /** Indicates wheither the key has just been released */
-    bool WasKeyReleased() const { return !m_current && m_previous; }
+    bool WasReleasedThisFrame() const { return !m_current && m_previous; }
 
 public:
     //Binding methods ---------------------------------------------------------
@@ -360,9 +360,9 @@ public:
     /** Indicates wheither the key is currently up */
     bool IsKeyReleased(int index) const;
     /** Indicates wheither the key has just been pressed */
-    bool WasKeyPressed(int index) const;
+    bool WasKeyPressedThisFrame(int index) const;
     /** Indicates wheither the key has just been released */
-    bool WasKeyReleased(int index) const;
+    bool WasKeyReleasedThisFrame(int index) const;
 
     /** Axis methods: should not go directly to binding */
     /** Gets the current absolute value of this axis */

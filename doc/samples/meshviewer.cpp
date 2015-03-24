@@ -247,11 +247,11 @@ public:
     }
 
 #if NO_NACL_EM_INPUT
-    bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->WasKeyReleased(index)); }
-    bool  KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->WasKeyPressed(index)); }
+    bool  KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->WasKeyReleasedThisFrame(index)); }
+    bool  KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->WasKeyPressedThisFrame(index)); }
     bool  KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->IsKeyPressed(index)); }
-    bool  KeyReleased(MVMouseKeyList index) { return (HAS_MOUSE  && m_controller->WasKeyReleased(index)); }
-    bool  KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->WasKeyPressed(index)); }
+    bool  KeyReleased(MVMouseKeyList index) { return (HAS_MOUSE  && m_controller->WasKeyReleasedThisFrame(index)); }
+    bool  KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->WasKeyPressedThisFrame(index)); }
     bool  KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->IsKeyPressed(index)); }
     float AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE) ? (m_controller->GetAxisValue(index)) : (0.f); }
 #endif //NO_NACL_EM_INPUT

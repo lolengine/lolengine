@@ -107,7 +107,7 @@ public:
         /* Handle keyboard */
         if (m_keyboard)
         {
-            if (m_controller->WasKeyPressed(KEY_MANUAL_ROTATION))
+            if (m_controller->WasKeyPressedThisFrame(KEY_MANUAL_ROTATION))
                 m_autorot = !m_autorot;
         }
 
