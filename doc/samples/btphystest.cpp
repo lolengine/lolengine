@@ -317,7 +317,7 @@ void BtPhysTest::TickGame(float seconds)
     }
 
 
-    if (m_controller->WasKeyReleased(KEY_QUIT))
+    if (m_controller->WasKeyReleasedThisFrame(KEY_QUIT))
         Ticker::Shutdown();
 
     m_loop_value += seconds;
@@ -508,7 +508,7 @@ void BtPhysTest::TickGame(float seconds)
                 - (m_controller->IsKeyPressed(KEY_MOVE_DOWN) ? 1.f : 0.f);
             vec3 CharMove = movement * seconds * vec3(4.f, 10.f, 4.f);
 
-            if (m_controller->WasKeyReleased(KEY_MOVE_JUMP))
+            if (m_controller->WasKeyReleasedThisFrame(KEY_MOVE_JUMP))
                 Character->Jump();
             Character->SetMovementForFrame(CharMove);
 
