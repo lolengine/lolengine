@@ -28,7 +28,7 @@ static String g_name_joystick(const uint64_t num)
 const String g_name_mouse_key_left("Left");
 const String g_name_mouse_key_middle("Middle");
 const String g_name_mouse_key_right("Right");
-const String g_name_mouse_key_inScreen("InScreen");
+const String g_name_mouse_key_in_screen("InScreen");
 const String g_name_mouse_axis_x("X");
 const String g_name_mouse_axis_y("Y");
 const String g_name_mouse_axis_xpixel("XPixel");

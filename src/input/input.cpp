@@ -97,7 +97,7 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
     mouse->AddKey(g_name_mouse_key_middle.C());
     mouse->AddKey(g_name_mouse_key_right.C());
     //Added to manage if mouse is in the screen or not.
-    mouse->AddKey(g_name_mouse_key_inScreen.C());
+    mouse->AddKey(g_name_mouse_key_in_screen.C());
 
     mouse->AddAxis(g_name_mouse_axis_x.C());
     mouse->AddAxis(g_name_mouse_axis_y.C());

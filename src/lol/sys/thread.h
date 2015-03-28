@@ -71,20 +71,20 @@ struct ThreadJobTypeBase : public StructSafeEnum
     {
         NONE,
         WORK_TODO,
-        WORK_DONE,
+        WORK_SUCCESSED,
         WORK_FAILED,
-        WORK_FETCHED,
+        WORK_DONE,
         THREAD_STOP
     };
 protected:
     virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
     {
-        enum_map[NONE]         = "NONE";
-        enum_map[WORK_TODO]    = "WORK_TODO";
-        enum_map[WORK_DONE]    = "WORK_DONE";
-        enum_map[WORK_FAILED]  = "WORK_FAILED";
-        enum_map[WORK_FETCHED] = "WORK_FETCHED";
-        enum_map[THREAD_STOP]  = "THREAD_STOP";
+        enum_map[NONE]          = "NONE";
+        enum_map[WORK_TODO]     = "WORK_TODO";
+        enum_map[WORK_SUCCESSED] = "WORK_SUCCESSED";
+        enum_map[WORK_FAILED]   = "WORK_FAILED";
+        enum_map[WORK_DONE]  = "WORK_DONE";
+        enum_map[THREAD_STOP]   = "THREAD_STOP";
         return true;
     }
 };
@@ -95,9 +95,10 @@ class ThreadJob
 {
     friend class BaseThreadManager;
 
+protected:
+    inline ThreadJob(ThreadJobType type) : m_type(type) {}
 public:
     inline ThreadJob() : m_type(ThreadJobType::NONE) {}
-    inline ThreadJob(ThreadJobType type) : m_type(type) {}
     virtual ~ThreadJob() {}
 
     ThreadJobType GetJobType()              { return m_type; }

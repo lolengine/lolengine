@@ -19,11 +19,11 @@
 using namespace lol;
 
 //-----------------------------------------------------------------------------
-class DemoObject : public LuaObjectDef
+class DemoObject : public LuaObject
 {
     typedef Lolua::VarPtr<DemoObject> LuaDemoObjectPtr;
 public:
-    DemoObject() : LuaObjectDef() {}
+    DemoObject() : LuaObject() {}
     virtual ~DemoObject() {}
     static DemoObject* New(LuaState* l, int arg_nb)
     {
@@ -103,7 +103,7 @@ public:
         LuaState* l = GetLuaState();
 
         //Registering demo object
-        LuaObject::Register<DemoObject>(l);
+        LuaObjectDef::Register<DemoObject>(l);
 
         //Registering function
         LuaFunction add_string(l, "GlobalAddString", &GlobalAddString);

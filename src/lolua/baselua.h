@@ -96,12 +96,12 @@ struct ObjectLib
 };
 
 //-----------------------------------------------------------------------------
-class ObjectDef
+class Object
 {
 public:
-    ObjectDef() { }
-    virtual ~ObjectDef() { }
-    static ObjectDef* New(LuaState* l, int arg_nb)
+    Object() { }
+    virtual ~Object() { }
+    static Object* New(LuaState* l, int arg_nb)
     {
         UNUSED(l);
         UNUSED(arg_nb);
@@ -114,12 +114,12 @@ public:
 //-----------------------------------------------------------------------------
 // Class available to link C++ class to Lua methods
 //--
-class Object
+class ObjectDef
 {
 public:
     //-------------------------------------------------------------------------
-    Object() { }
-    virtual ~Object() { }
+    ObjectDef() { }
+    virtual ~ObjectDef() { }
 
     //-------------------------------------------------------------------------
     template <typename TLuaClass>
@@ -129,6 +129,7 @@ public:
         static const luaL_Reg default_statics[]
         {
             { "New", New<TLuaClass> },
+            { "Store", Store<TLuaClass> },
             { "__gc", Del<TLuaClass> },
             { NULL, NULL }
         };
@@ -227,6 +228,7 @@ protected:
     }
 
     //-------------------------------------------------------------------------
+    template <typename TLuaClass> static int Store(LuaState * l);
     template <typename TLuaClass> static int Del(LuaState * l);
 };
 
@@ -305,7 +307,7 @@ protected:
     }
     virtual void InnerGet(LuaState* l, int& index)
     {
-        T** obj = static_cast<T**>(luaL_checkudata(l, index++, Object::GetMethodName<T>()));
+        T** obj = static_cast<T**>(luaL_checkudata(l, index++, ObjectDef::GetMethodName<T>()));
         m_value = obj ? *obj : nullptr;
     }
     void InnerPush(LuaState* l)
@@ -314,20 +316,6 @@ protected:
         *data = m_value;
     }
 };
-
-//
-// Object member implementations that require VarPtr
-//
-
-template <typename TLuaClass>
-int Object::Del(LuaState * l)
-{
-    VarPtr<TLuaClass> obj;
-    obj.Get(l, 1);
-    ASSERT(obj());
-    delete obj();
-    return 0;
-}
 
 //-----------------------------------------------------------------------------
 /* TODO: FIX THAT TOUKY !!
@@ -342,7 +330,7 @@ public:
 protected:
     virtual void InnerGet(LuaState* l, int& index)
     {
-        T** obj = static_cast<T**>(luaL_testudata(l, index++, Object::GetMethodName<T>()));
+        T** obj = static_cast<T**>(luaL_testudata(l, index++, ObjectDef::GetMethodName<T>()));
         m_value = obj ? *obj : nullptr;
     }
 };
@@ -939,6 +927,7 @@ private:
 //-----------------------------------------------------------------------------
 class Loader
 {
+    friend class ObjectDef;
 public:
     Loader();
     virtual ~Loader();
@@ -965,16 +954,44 @@ public:
 
 protected:
     LuaState* GetLuaState();
+    static void Store(LuaState* l, Loader* loader);
+    static void Release(LuaState* l, Loader* loader);
+    static void StoreObject(LuaState* l, Object* obj);
+    //Virtual Store lua object ------------------------------------------------
+    virtual void Store(Object* obj) { }
 
 private:
     LuaState* m_lua_state;
 };
 
+//-----------------------------------------------------------------------------
+// ObjectDef member implementations that require VarPtr
+
+template <typename TLuaClass>
+int ObjectDef::Store(LuaState * l)
+{
+    VarPtr<TLuaClass> obj;
+    obj.Get(l, 1);
+    ASSERT(obj());
+    Loader::StoreObject(l, obj());
+    return 0;
+}
+
+template <typename TLuaClass>
+int ObjectDef::Del(LuaState * l)
+{
+    VarPtr<TLuaClass> obj;
+    obj.Get(l, 1);
+    ASSERT(obj());
+    delete obj();
+    return 0;
+}
+
 } /* namespace Lolua */
 
 typedef Lolua::Function         LuaFunction;
-typedef Lolua::Object           LuaObject;
 typedef Lolua::ObjectDef        LuaObjectDef;
+typedef Lolua::Object           LuaObject;
 typedef Lolua::ObjectLib        LuaObjectLib;
 typedef Lolua::Loader           LuaLoader;
 typedef Lolua::Var<bool>        LuaBool;

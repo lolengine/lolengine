@@ -96,6 +96,7 @@ class LolImGui : public Entity
             enum_map[LeftClick] = g_name_mouse_key_left;
             enum_map[RightClick] = g_name_mouse_key_right;
             enum_map[MiddleClick] = g_name_mouse_key_middle;
+            enum_map[Focus] = g_name_mouse_key_in_screen;
 
             return true;
         }
@@ -124,8 +125,6 @@ class LolImGui : public Entity
         }
     };
     typedef SafeEnum<LolImGuiAxisBase> LolImGuiAxis;
-
-
 
 public:
     //-------------------------------------------------------------------------

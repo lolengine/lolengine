@@ -16,15 +16,7 @@ namespace lol
 {
 
 //-----------------------------------------------------------------------------
-class EasyMeshLuaLoader : public LuaLoader
-{
-public:
-    EasyMeshLuaLoader();
-    virtual ~EasyMeshLuaLoader();
-};
-
-//-----------------------------------------------------------------------------
-class EasyMeshLuaObject : public LuaObjectDef
+class EasyMeshLuaObject : public LuaObject
 {
     typedef Lolua::VarPtr<EasyMeshLuaObject> EzMeshPtr;
     EasyMesh m_instance;
@@ -648,6 +640,17 @@ public:
     (csgx|csgxor)            { return token::T_CSGXOR; }
     */
 
+};
+
+//-----------------------------------------------------------------------------
+class EasyMeshLuaLoader : public LuaLoader
+{
+public:
+    EasyMeshLuaLoader();
+    virtual ~EasyMeshLuaLoader();
+    //Virtual Store lua object ------------------------------------------------
+    virtual void Store(LuaObject* obj);
+    array<EasyMeshLuaObject*>& GetInstances();
 };
 
 } /* namespace lol */

@@ -23,18 +23,19 @@ using namespace lol;
 
 static int const TEXTURE_WIDTH = 256;
 
-#define     NO_NACL_EM          (!__native_client__ && !EMSCRIPTEN)
-#define     NACL_EM             (__native_client__ || EMSCRIPTEN)
-#define     NO_NACL_EM_INPUT    (1)
+//Basic build defines ---------------------------------------------------------
+#define     HAS_WEB             (__native_client__ || EMSCRIPTEN)
+#define     HAS_INPUT           (_WIN32 && !HAS_WEB)
 
+//Basic config defines --------------------------------------------------------
 #define     R_M                 1.f
-#if NACL_EM
+#if HAS_WEB
 #define     DEFAULT_WIDTH       (800.f * R_M)
 #define     DEFAULT_HEIGHT      (400.f * R_M)
 #else
 #define     DEFAULT_WIDTH       (1200.f * R_M)
 #define     DEFAULT_HEIGHT      (400.f * R_M)
-#endif //NACL_EM
+#endif //HAS_WEB
 #define     WIDTH               ((float)Video::GetSize().x)
 #define     HEIGHT              ((float)Video::GetSize().y)
 #define     SCREEN_W            (10.f / WIDTH)
@@ -65,27 +66,7 @@ static int const TEXTURE_WIDTH = 256;
 LOLFX_RESOURCE_DECLARE(shinyfur);
 LOLFX_RESOURCE_DECLARE(shinymvtexture);
 
-enum GizmoType
-{
-    GZ_Editor = 0,
-    GZ_LightPos,
-    GZ_LightDir,
-
-    GZ_MAX
-};
-
-struct LightData
-{
-    LightData(vec3 pos, vec4 col)
-    {
-        m_pos = pos;
-        m_col = col;
-    }
-
-    vec3 m_pos;
-    vec4 m_col;
-};
-
+//TargetCamera ----------------------------------------------------------------
 class TargetCamera
 {
 public:
@@ -114,21 +95,203 @@ public:
     array<vec3>     m_targets;
 };
 
-MeshViewer::MeshViewer(char const *file_name = "data/mesh-buffer.txt")
-    : m_file_name(file_name)
+//EasyMeshLoadJob -------------------------------------------------------------
+bool EasyMeshLoadJob::DoWork()
 {
-    m_init = false;
-    m_first_tick = false;
+    if (m_loader.ExecLuaFile(m_path))
+    {
+        array<EasyMeshLuaObject*>& objs = m_loader.GetInstances();
+        for (EasyMeshLuaObject* obj : objs)
+            m_meshes << new EasyMeshViewerObject(obj->GetMesh());
+    }
+    return !!m_meshes.count();
+}
 
-    // Message Service
-    MessageService::Setup();
+//-----------------------------------------------------------------------------
+MeshViewerLoadJob* EasyMeshLoadJob::GetInstance(String const& path)
+{
+    if (Check(path))
+        return new MeshViewerLoadJob(path);
+    return nullptr;
+}
 
-    m_ssetup = nullptr;
-    m_camera = nullptr;
-    m_controller = nullptr;
+//-----------------------------------------------------------------------------
+void EasyMeshLoadJob::RetrieveResult(class MeshViewer* app)
+{
+    for (EasyMeshViewerObject* mesh : m_meshes)
+        app->AddViewerObj(mesh);
+    m_meshes.Empty();
+}
+
+//MeshViewer ------------------------------------------------------------------
+MeshViewer::MeshViewer(char const *file_name)
+    : m_file_name(file_name)
+{ }
+
+//-----------------------------------------------------------------------------
+MeshViewer::~MeshViewer()
+{
+    Stop();
+}
+
+//-----------------------------------------------------------------------------
+void MeshViewer::Start()
+{
+    /** OLD STUFF **/
+    //Prepare();
 
     //Scene setup
     m_setup_loader.ExecLuaFile("meshviewer_init.lua");
+
+    //Threads setup
+    m_entities << (m_file_check = new FileUpdateTester());
+    m_file_status = m_file_check->RegisterFile(m_file_name);
+
+    m_entities << (m_file_loader = new DefaultThreadManager(1, 1));
+
+    //Camera setup
+    m_camera = new Camera();
+    m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3::zero, vec3::axis_y);
+    m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
+    m_camera->UseShift(true);
+    g_scene->PushCamera(m_camera);
+
+#if HAS_INPUT
+    InputProfile& ip = m_profile;
+    ip.AddBindings<MeshViewerKeyInput, MeshViewerKeyInput::KBD_BEG, MeshViewerKeyInput::KBD_END>(InputProfileType::Keyboard);
+    ip.AddBindings<MeshViewerKeyInput, MeshViewerKeyInput::MSE_BEG, MeshViewerKeyInput::MSE_END>(InputProfileType::Keyboard);
+
+    m_entities << (m_controller = new Controller("MeshViewer"));
+    m_controller->Init(m_profile);
+#endif //HAS_INPUT
+
+    /** ----- Register all entities ----- **/
+    for (Entity* entity : m_entities) Ticker::Ref(entity);
+
+    /** ----- Init is done ----- **/
+    m_init = true;
+
+    /** ----- Start threads ----- **/
+    m_file_check->Start();
+
+}
+
+//-----------------------------------------------------------------------------
+void MeshViewer::Stop()
+{
+    //Destroy core stuff
+    if (m_camera) g_scene->PopCamera(m_camera);
+    if (m_ssetup) delete m_ssetup;
+
+    m_file_check->UnregisterFile(m_file_status);
+
+    //Register all entities
+    for (Entity* entity : m_entities) Ticker::Unref(entity);
+    
+    //Delete objs
+    while (m_objs.count()) delete m_objs.Pop();
+
+    //Nullify all
+    m_ssetup = nullptr;
+    m_camera = nullptr;
+    m_controller = nullptr;
+    m_file_check = nullptr;
+    m_file_loader = nullptr;
+
+    /** ----- Init is needed ----- **/
+    m_init = false;
+}
+
+//-----------------------------------------------------------------------------
+MeshViewerLoadJob* MeshViewer::GetLoadJob(String const& path)
+{
+    MeshViewerLoadJob* job = nullptr;
+    if (job = EasyMeshLoadJob::GetInstance(path)) return job;
+    return job;
+}
+
+//-----------------------------------------------------------------------------
+void MeshViewer::TickGame(float seconds)
+{
+    super::TickGame(seconds);
+
+    if (!m_init && g_scene) Start();
+    if (!m_init) return;
+
+    m_first_tick = true;
+
+    //Check file update
+    ASSERT(m_file_status);
+    if (m_file_status->HasUpdated())
+    {
+        MeshViewerLoadJob* job = GetLoadJob(m_file_name);
+        if (!job)
+            m_file_loader->AddWork(job);
+    }
+
+    //Check work done
+    {
+        array<ThreadJob*> result;
+        m_file_loader->GetWorkResult(result);
+        if (result.count())
+        {
+            for (ThreadJob* job : result)
+            {
+                if (job->GetJobType() == ThreadJobType::WORK_SUCCESSED)
+                {
+                    MeshViewerLoadJob* mvjob = static_cast<MeshViewerLoadJob*>(job);
+                    mvjob->RetrieveResult(this);
+                }
+                delete job;
+            }
+        }
+    }
+
+    /** OLD STUFF **/
+    //Update(seconds);
+}
+
+//-----------------------------------------------------------------------------
+void MeshViewer::TickDraw(float seconds, Scene &scene)
+{
+    super::TickDraw(seconds, scene);
+
+    /** OLD STUFF **/
+    //Draw(seconds);
+}
+
+//The basic main --------------------------------------------------------------
+int main(int argc, char **argv)
+{
+    System::Init(argc, argv);
+
+    Application app("MeshViewer", ivec2((int)DEFAULT_WIDTH, (int)DEFAULT_HEIGHT), 60.0f);
+    if (argc > 1)
+        new MeshViewer(argv[1]);
+    else
+        new MeshViewer();
+    app.Run();
+
+    return EXIT_SUCCESS;
+}
+
+//-------------------------------------------------------------------------
+//OLD ---------------------------------------------------------------------
+//-------------------------------------------------------------------------
+#if HAS_INPUT
+bool  MeshViewer::KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->WasKeyReleasedThisFrame(index)); }
+bool  MeshViewer::KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->WasKeyPressedThisFrame(index)); }
+bool  MeshViewer::KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->IsKeyPressed(index)); }
+bool  MeshViewer::KeyReleased(MVMouseKeyList index) { return (HAS_MOUSE  && m_controller->WasKeyReleasedThisFrame(index)); }
+bool  MeshViewer::KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->WasKeyPressedThisFrame(index)); }
+bool  MeshViewer::KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->IsKeyPressed(index)); }
+float MeshViewer::AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE) ? (m_controller->GetAxisValue(index)) : (0.f); }
+#endif //HAS_INPUT
+
+void MeshViewer::Prepare()
+{
+    // Message Service
+    MessageService::Setup();
 
     //Compile ref meshes
     m_gizmos << new EasyMesh();
@@ -175,44 +338,18 @@ MeshViewer::MeshViewer(char const *file_name = "data/mesh-buffer.txt")
     //stream update
     m_stream_update_time = 2.0f;
     m_stream_update_timer = 1.0f;
-}
 
-MeshViewer::~MeshViewer()
-{
-    if (m_camera)
-        g_scene->PopCamera(m_camera);
-    if (m_ssetup)
-        delete m_ssetup;
-    MessageService::Destroy();
-
-    m_controller = nullptr;
-    m_camera = nullptr;
-    m_ssetup = nullptr;
-}
-
-#if NO_NACL_EM_INPUT
-bool  MeshViewer::KeyReleased(MVKeyboardList index) { return (HAS_KBOARD && m_controller->WasKeyReleasedThisFrame(index)); }
-bool  MeshViewer::KeyPressed(MVKeyboardList index)  { return (HAS_KBOARD && m_controller->WasKeyPressedThisFrame(index)); }
-bool  MeshViewer::KeyDown(MVKeyboardList index)     { return (HAS_KBOARD && m_controller->IsKeyPressed(index)); }
-bool  MeshViewer::KeyReleased(MVMouseKeyList index) { return (HAS_MOUSE  && m_controller->WasKeyReleasedThisFrame(index)); }
-bool  MeshViewer::KeyPressed(MVMouseKeyList index)  { return (HAS_MOUSE  && m_controller->WasKeyPressedThisFrame(index)); }
-bool  MeshViewer::KeyDown(MVMouseKeyList index)     { return (HAS_MOUSE  && m_controller->IsKeyPressed(index)); }
-float MeshViewer::AxisValue(MVMouseAxisList index)  { return (HAS_MOUSE) ? (m_controller->GetAxisValue(index)) : (0.f); }
-#endif //NO_NACL_EM_INPUT
-
-void MeshViewer::Init()
-{
     m_init = true;
     m_input_usage = 0;
 
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     /* Register an input controller for the keyboard */
     m_controller = new Controller("Default");
     m_controller->SetInputCount(MAX_KEYS, MAX_AXIS);
 
     if (InputDevice::Get(g_name_mouse.C()))
     {
-        m_input_usage |= (1<<IPT_MV_MOUSE);
+        m_input_usage |= (1 << IPT_MV_MOUSE);
 
         m_controller->GetKey(MSE_CAM_ROT).BindMouse("Left");
         m_controller->GetKey(MSE_CAM_POS).BindMouse("Right");
@@ -224,17 +361,17 @@ void MeshViewer::Init()
 
     if (InputDevice::Get(g_name_keyboard.C()))
     {
-        m_input_usage |= (1<<IPT_MV_KBOARD);
+        m_input_usage |= (1 << IPT_MV_KBOARD);
 
         //Camera keyboard rotation
-        m_controller->GetKey(KEY_CAM_UP   ).BindKeyboard("Up");
-        m_controller->GetKey(KEY_CAM_DOWN ).BindKeyboard("Down");
-        m_controller->GetKey(KEY_CAM_LEFT ).BindKeyboard("Left");
+        m_controller->GetKey(KEY_CAM_UP).BindKeyboard("Up");
+        m_controller->GetKey(KEY_CAM_DOWN).BindKeyboard("Down");
+        m_controller->GetKey(KEY_CAM_LEFT).BindKeyboard("Left");
         m_controller->GetKey(KEY_CAM_RIGHT).BindKeyboard("Right");
 
         //Camera keyboard position switch
-        m_controller->GetKey(KEY_CAM_POS  ).BindKeyboard("LeftShift");
-        m_controller->GetKey(KEY_CAM_FOV  ).BindKeyboard("LeftCtrl");
+        m_controller->GetKey(KEY_CAM_POS).BindKeyboard("LeftShift");
+        m_controller->GetKey(KEY_CAM_FOV).BindKeyboard("LeftCtrl");
 
         //Camera unzoom switch
         m_controller->GetKey(KEY_CAM_RESET).BindKeyboard("Space");
@@ -251,7 +388,7 @@ void MeshViewer::Init()
         m_controller->GetKey(KEY_F5).BindKeyboard("F5");
         m_controller->GetKey(KEY_ESC).BindKeyboard("Escape");
     }
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
 
     m_camera = new Camera();
@@ -282,8 +419,8 @@ void MeshViewer::Init()
     //TOUKY CHANGE THAT
     /*
     m_ssetup->Compile("addlight 0.0 position (4 -1 -4) color (.0 .2 .5 1) "
-                        "addlight 0.0 position (8 2 6) color #ffff "
-                        "showgizmo true ");
+    "addlight 0.0 position (8 2 6) color #ffff "
+    "showgizmo true ");
     */
     m_ssetup->Startup();
 #endif //NO_SC_SETUP
@@ -295,29 +432,35 @@ void MeshViewer::Init()
     }
 }
 
-void MeshViewer::TickGame(float seconds)
+void MeshViewer::Unprepare()
 {
-    WorldEntity::TickGame(seconds);
+    if (m_camera) g_scene->PopCamera(m_camera);
+    if (m_ssetup) delete m_ssetup;
 
-    if (!m_init && g_scene)
-    {
-        Init();
-        return;
-    }
+    MessageService::Destroy();
 
-    if (!m_init)
-        return;
+    //Register all entities
+    for (Entity* entity : m_entities)
+        Ticker::Unref(entity);
 
-    m_first_tick = true;
+    m_controller = nullptr;
+    m_camera = nullptr;
+    m_ssetup = nullptr;
 
+    /** ----- Init is needed ----- **/
+    m_init = false;
+}
+
+void MeshViewer::Update(float seconds)
+{
     //TODO : This should probably be "standard LoL behaviour"
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     {
         //Shutdown logic
         if (KeyReleased(KEY_ESC))
             Ticker::Shutdown();
     }
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
     //Compute render mesh count
     float a_j = lol::abs(m_render_max[1]);
@@ -326,9 +469,9 @@ void MeshViewer::TickGame(float seconds)
     m_render_max[1] = a_j * ((RATIO_WH * 1.f) / ((i_trans != 0.f)?(i_trans):(RATIO_WH))) - RATIO_HW * .3f;
 
     //Mesh Change
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, (int)m_meshes.Count() - 1);
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
     m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
 #if ALL_FEATURES
@@ -352,7 +495,7 @@ void MeshViewer::TickGame(float seconds)
     bool is_hsc = false;
     vec2 tmpv = vec2::zero;
 
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     is_pos = KeyDown(KEY_CAM_POS) || KeyDown(MSE_CAM_POS);
     is_fov = KeyDown(KEY_CAM_FOV) || KeyDown(MSE_CAM_FOV);
 
@@ -369,7 +512,7 @@ void MeshViewer::TickGame(float seconds)
 
     tmpv += vec2((float)KeyDown(KEY_CAM_UP   ) - (float)KeyDown(KEY_CAM_DOWN),
                     (float)KeyDown(KEY_CAM_RIGHT) - (float)KeyDown(KEY_CAM_LEFT));
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
     //Base data
     vec2 rot = (!is_pos && !is_fov)?(tmpv):(vec2(.0f)); rot = vec2(rot.x, -rot.y);
@@ -389,7 +532,7 @@ void MeshViewer::TickGame(float seconds)
 
     m_rot += m_rot_speed * seconds;
 
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     if (m_reset_timer >= 0.f)
         m_reset_timer -= seconds;
     if (KeyPressed(KEY_CAM_RESET))
@@ -411,7 +554,7 @@ void MeshViewer::TickGame(float seconds)
         m_zoom += m_zoom_speed * seconds;
         m_hist_scale += m_hist_scale_speed * seconds;
     }
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
     //clamp
     vec2 rot_mesh = vec2(SmoothClamp(m_rot.x, -ROT_CLAMP, ROT_CLAMP, ROT_CLAMP * .1f), m_rot.y);
@@ -422,13 +565,13 @@ void MeshViewer::TickGame(float seconds)
     vec2 hist_scale_mesh = vec2(SmoothClamp(m_hist_scale.x, 0.f, HST_CLAMP, HST_CLAMP * .1f),
                                 SmoothClamp(m_hist_scale.y, 0.f, HST_CLAMP, HST_CLAMP * .1f));
 
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     if (KeyDown(KEY_CAM_RESET) && m_reset_timer < 0.f)
     {
         pos_mesh = vec2::zero;
         zoom_mesh = 0.f;
     }
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
     m_rot_mesh = vec2(damp(m_rot_mesh.x, rot_mesh.x, .2f, seconds), damp(m_rot_mesh.y, rot_mesh.y, .2f, seconds));
     m_pos_mesh = vec2(damp(m_pos_mesh.x, pos_mesh.x, .2f, seconds), damp(m_pos_mesh.y, pos_mesh.y, .2f, seconds));
@@ -597,7 +740,7 @@ void MeshViewer::TickGame(float seconds)
     m_ssetup->m_custom_cmd.Empty();
 #endif //ALL_FEATURES
 
-#if NACL_EM
+#if HAS_WEB
 /*
     if (m_stream_update_time > .0f)
     {
@@ -636,24 +779,23 @@ void MeshViewer::TickGame(float seconds)
 #endif //WINDOWS
 }
 
-void MeshViewer::TickDraw(float seconds, Scene &scene)
+void MeshViewer::Draw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds, scene);
 
     if (!m_init || !m_first_tick)
         return;
 
     //TODO : This should probably be "standard LoL behaviour"
-#if NO_NACL_EM_INPUT
+#if HAS_INPUT
     {
         if (KeyReleased(KEY_F2))
             Video::SetDebugRenderMode((Video::GetDebugRenderMode() + 1) % DebugRenderMode::Max);
         else if (KeyReleased(KEY_F1))
             Video::SetDebugRenderMode((Video::GetDebugRenderMode() + DebugRenderMode::Max - 1) % DebugRenderMode::Max);
     }
-#endif //NO_NACL_EM_INPUT
+#endif //HAS_INPUT
 
-#if NO_NACL_EM && WITH_TEXTURE
+#if !HAS_WEB && WITH_TEXTURE
     if (!m_default_texture)
     {
         m_texture_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinymvtexture));
@@ -662,7 +804,7 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
     }
     else if (m_texture && m_default_texture)
         m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
-#endif //NO_NACL_EM
+#endif //!HAS_WEB && WITH_TEXTURE
 
     g_renderer->SetClearColor(m_ssetup->m_clear_color);
 
@@ -837,19 +979,3 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
     }
 #endif
 }
-
-//The basic main :
-int main(int argc, char **argv)
-{
-    System::Init(argc, argv);
-
-    Application app("MeshViewer", ivec2((int)DEFAULT_WIDTH, (int)DEFAULT_HEIGHT), 60.0f);
-    if (argc > 1)
-        new MeshViewer(argv[1]);
-    else
-        new MeshViewer();
-    app.Run();
-
-    return EXIT_SUCCESS;
-}
-
