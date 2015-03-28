@@ -250,6 +250,7 @@ public:
     {
         return (int)(m_mouse_axis.Count() + m_joystick_axis.Count());
     }
+    //Keys --------------------------------------------------------------------
     InputProfile& operator<<(InputProfile::Keyboard const& binding)
     {
         m_keys.PushUnique(binding);
@@ -260,6 +261,7 @@ public:
         m_keys += bindings;
         return *this;
     }
+    //------
     InputProfile& operator<<(InputProfile::MouseKey const& binding)
     {
         m_mouse_keys.PushUnique(binding);
@@ -270,16 +272,7 @@ public:
         m_mouse_keys += bindings;
         return *this;
     }
-    InputProfile& operator<<(InputProfile::MouseAxis const& binding)
-    {
-        m_mouse_axis.PushUnique(binding);
-        return *this;
-    }
-    InputProfile& operator<<(array<InputProfile::MouseAxis> const& bindings)
-    {
-        m_mouse_axis += bindings;
-        return *this;
-    }
+    //------
     InputProfile& operator<<(InputProfile::JoystickKey const& binding)
     {
         m_joystick.PushUnique(binding.m_joy);
@@ -293,6 +286,18 @@ public:
         m_joystick_keys += bindings;
         return *this;
     }
+    //Axis --------------------------------------------------------------------
+    InputProfile& operator<<(InputProfile::MouseAxis const& binding)
+    {
+        m_mouse_axis.PushUnique(binding);
+        return *this;
+    }
+    InputProfile& operator<<(array<InputProfile::MouseAxis> const& bindings)
+    {
+        m_mouse_axis += bindings;
+        return *this;
+    }
+    //------
     InputProfile& operator<<(InputProfile::JoystickAxis const& binding)
     {
         m_joystick.PushUnique(binding.m_joy);
@@ -306,6 +311,41 @@ public:
         m_joystick_axis += bindings;
         return *this;
     }
+    
+    //BindingType -------------------------------------------------------------
+    struct InputTypeBase : public StructSafeEnum
+    {
+        enum Type
+        {
+            Keyboard = 0,
+            MouseKey,
+            JoystickKey,
+            MouseAxis,
+            JoystickAxis,
+
+            MAX,
+        };
+    protected:
+        virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { return true; }
+    };
+    typedef SafeEnum<InputTypeBase> InputType;
+
+    //Template helper ---------------------------------------------------------
+    template <typename T, ptrdiff_t BEGIN, ptrdiff_t END>
+    void AddBindings(InputType const& type, uint64_t joy = 0)
+    {
+        for (ptrdiff_t i = BEGIN; i < END; ++i)
+        {
+            switch (type.ToScalar())
+            {
+            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/(int)i, T((int)i).ToString()); break;
+            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/(int)i, T((int)i).ToString()); break;
+            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, (int)i, T((int)i).ToString()); break;
+            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/(int)i, T((int)i).ToString()); break;
+            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, (int)i, T((int)i).ToString()); break;
+            }
+        }
+    }
 
 private:
     array<Keyboard>     m_keys;
@@ -315,6 +355,7 @@ private:
     array<JoystickKey>  m_joystick_keys;
     array<JoystickAxis> m_joystick_axis;
 };
+typedef InputProfile::InputType InputProfileType;
 
 //-----------------------------------------------------------------------------
 //TODO: Add mask|layer system to prevent several controllers from interfering with another. (input overlay in menus)

@@ -145,7 +145,7 @@ void SceneSetup::Set(SceneSetup::Display const& d, DisplayFlag const& f)
 }
 
 //-----------------------------------------------------------------------------
-SceneSetupLuaObject::SceneSetupLuaObject(String& name) : LuaObjectDef()
+SceneSetupLuaObject::SceneSetupLuaObject(String& name) : LuaObject()
 {
     m_setup = new SceneSetup(name);
     SceneSetupLuaLoader::RegisterSetup(m_setup);
@@ -273,11 +273,25 @@ SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
     LuaState* l = GetLuaState();
 
-    LuaObject::Register<SceneSetupLuaObject>(l);
+    LuaObjectDef::Register<SceneSetupLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------
 SceneSetupLuaLoader::~SceneSetupLuaLoader() { }
+
+//-----------------------------------------------------------------------------
+static array<SceneSetupLuaObject*> g_instances;
+void SceneSetupLuaLoader::Store(LuaObject* obj)
+{
+    SceneSetupLuaObject* ezm = static_cast<SceneSetupLuaObject*>(obj);
+    g_instances << ezm;
+}
+
+//-----------------------------------------------------------------------------
+array<SceneSetupLuaObject*>& SceneSetupLuaLoader::GetInstances()
+{
+    return g_instances;
+}
 
 //-----------------------------------------------------------------------------
 void SceneSetupLuaLoader::RegisterSetup(SceneSetup* setup)

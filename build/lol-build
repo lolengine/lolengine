@@ -263,7 +263,7 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/gdk-pixbuf-2.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/atk-1.0"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtkglarea-2.0.1/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/external/imgui-1.36/include"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/imgui-1.37/include"
             CPPFLAGS="$CPPFLAGS -mms-bitfields"
             LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
             GTK_LIBS="$GTK_LIBS -lgtkgl-2.0 -lopengl32 -lglew32 -lgdi32"

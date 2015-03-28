@@ -25,6 +25,7 @@ class LuaBaseData
 {
     friend class Lolua::Loader;
 
+    //PANIC PANIC -------------------------------------------------------------
     static int LuaPanic(LuaState* l)
     {
         char const *message = lua_tostring(l, -1);
@@ -33,11 +34,13 @@ class LuaBaseData
         return 0;
     }
 
+    //Exec lua code -----------------------------------------------------------
     static int LuaDoCode(LuaState *l, String const& s)
     {
         return luaL_dostring(l, s.C());
     }
 
+    //Open a file and exec lua code -------------------------------------------
     static int LuaDoFile(LuaState *l)
     {
         if (lua_isnoneornil(l, 1))
@@ -90,12 +93,49 @@ Loader::Loader()
 
     /* Override dofile() */
     LuaFunction do_file(m_lua_state, "dofile", LuaBaseData::LuaDoFile);
+
+    //Store this instance
+    Loader::Store(m_lua_state, this);
 }
 
 //-----------------------------------------------------------------------------
 Loader::~Loader()
 {
+    //Release this instance
+    Loader::Store(m_lua_state, this);
+
     lua_close(m_lua_state);
+}
+
+//Store loader ------------------------------------------------------------
+static array<LuaState*, Lolua::Loader*> g_loaders;
+void Loader::Store(LuaState* l, Lolua::Loader* loader)
+{
+    g_loaders.push(l, loader);
+}
+void Loader::Release(LuaState* l, Lolua::Loader* loader)
+{
+    for (ptrdiff_t i = 0; i < g_loaders.count(); ++i)
+    {
+        if (g_loaders[i].m1 == l && g_loaders[i].m2 == loader)
+        {
+            g_loaders.remove(i);
+            return;
+        }
+    }
+}
+
+//Store lua object --------------------------------------------------------
+void Loader::StoreObject(LuaState* l, Object* obj)
+{
+    for (ptrdiff_t i = 0; i < g_loaders.count(); ++i)
+    {
+        if (g_loaders[i].m1 == l)
+        {
+            g_loaders[i].m2->Store(obj);
+            return;
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

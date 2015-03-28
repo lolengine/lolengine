@@ -27,7 +27,7 @@ EasyMeshLuaLoader::EasyMeshLuaLoader() : LuaLoader()
     LuaState* l = GetLuaState();
 
     //Registering demo object
-    LuaObject::Register<EasyMeshLuaObject>(l);
+    LuaObjectDef::Register<EasyMeshLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------
@@ -37,7 +37,21 @@ EasyMeshLuaLoader::~EasyMeshLuaLoader()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject::EasyMeshLuaObject() : LuaObjectDef()
+static array<EasyMeshLuaObject*> g_instances;
+void EasyMeshLuaLoader::Store(LuaObject* obj)
+{
+    EasyMeshLuaObject* ezm = static_cast<EasyMeshLuaObject*>(obj);
+    g_instances << ezm;
+}
+
+//-----------------------------------------------------------------------------
+array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
+{
+    return g_instances;
+}
+
+//-----------------------------------------------------------------------------
+EasyMeshLuaObject::EasyMeshLuaObject() : LuaObject()
 {
 }
 

@@ -129,7 +129,7 @@ void BaseThreadManager::BaseThreadWork()
         else if (*job == ThreadJobType::WORK_TODO)
         {
             if (job->DoWork())
-                job->SetJobType(ThreadJobType::WORK_DONE);
+                job->SetJobType(ThreadJobType::WORK_SUCCESSED);
             else
                 job->SetJobType(ThreadJobType::WORK_FAILED);
             m_resultqueue.push(job);
@@ -165,8 +165,6 @@ void BaseThreadManager::TickGame(float seconds)
         for (int i = 0; i < result.count(); i++)
         {
             ThreadJob* job = result[i];
-            if (job->GetJobType() == ThreadJobType::WORK_DONE)
-                job->SetJobType(ThreadJobType::WORK_FETCHED);
             TreatResult(job);
         }
     }

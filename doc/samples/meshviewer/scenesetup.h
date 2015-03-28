@@ -106,7 +106,7 @@ public:
 typedef Lolua::VarEnum<SceneSetup::DisplayBase> LuaDisplay;
 
 //-----------------------------------------------------------------------------
-class SceneSetupLuaObject : public LuaObjectDef
+class SceneSetupLuaObject : public LuaObject
 {
     typedef Lolua::VarPtr<SceneSetupLuaObject> LuaSSetupPtr;
 public:
@@ -154,6 +154,9 @@ class SceneSetupLuaLoader : public LuaLoader
 public:
     SceneSetupLuaLoader();
     virtual ~SceneSetupLuaLoader();
+    //Virtual Store lua object ------------------------------------------------
+    virtual void Store(LuaObject* obj) { }
+    array<SceneSetupLuaObject*>& GetInstances();
 
     //-------------------------------------------------------------------------
 protected:

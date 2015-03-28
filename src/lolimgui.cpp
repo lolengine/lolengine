@@ -63,8 +63,10 @@ LolImGui::LolImGui()
         << ShaderProgram::Pixel << imgui_pixel;
 
     //Input Setup -------------------------------------------------------------
-    for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
-        m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).ToString());
+    InputProfile& ip = m_profile;
+    ip.AddBindings<LolImGuiKey, LolImGuiKey::KEY_START, LolImGuiKey::KEY_END>(InputProfileType::Keyboard);
+    //for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
+    //    m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).ToString());
     for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
         m_profile << InputProfile::MouseKey(i, LolImGuiKey(i).ToString());
 
