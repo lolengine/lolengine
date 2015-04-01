@@ -41,7 +41,7 @@ bool BaseThreadManager::Start()
         return false;
 
     //Add minimum threads
-    m_threads.Resize(m_thread_count);
+    m_threads.reserve(m_thread_count);
     AddThreads(m_thread_min);
 
     return true;
@@ -91,11 +91,12 @@ void BaseThreadManager::StopThreads(int nb)
 }
 
 //Work stuff
-bool BaseThreadManager::AddWork(ThreadJob* job)
+bool BaseThreadManager::AddWork(ThreadJob* job, bool force)
 {
-    if (m_jobqueue.try_push(job))
-        return true;
-    return false;
+    if (!force)
+        return m_jobqueue.try_push(job);
+    m_jobqueue.push(job);
+    return true;
 }
 
 //----
@@ -110,20 +111,20 @@ bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
 //Base thread work function
 void BaseThreadManager::BaseThreadWork()
 {
-#if !LOL_FEATURE_THREADS
+#if LOL_FEATURE_THREADS
     //Register that the thread has started
     m_spawnqueue.push(ThreadStatus::THREAD_STARTED);
     for ( ; ; )
-#endif //!LOL_FEATURE_THREADS
+#endif //LOL_FEATURE_THREADS
     {
         //Try to retrieve a job
         ThreadJob* job = m_jobqueue.pop();
         //Stop thread
         if (job->GetJobType() == ThreadJobType::THREAD_STOP)
         {
-#if !LOL_FEATURE_THREADS
+#if LOL_FEATURE_THREADS
             break;
-#endif //!LOL_FEATURE_THREADS
+#endif //LOL_FEATURE_THREADS
         }
         //Or work
         else if (*job == ThreadJobType::WORK_TODO)
@@ -135,10 +136,10 @@ void BaseThreadManager::BaseThreadWork()
             m_resultqueue.push(job);
         }
     }
-#if !LOL_FEATURE_THREADS
+#if LOL_FEATURE_THREADS
     //Register that the thread has stopped
     m_donequeue.push(ThreadStatus::THREAD_STOPPED);
-#endif //!LOL_FEATURE_THREADS
+#endif //LOL_FEATURE_THREADS
 }
 
 //----
@@ -150,7 +151,7 @@ void BaseThreadManager::TickGame(float seconds)
     Start();
 
     //Dispatch work task
-    while (m_job_dispatch.Count() > 0 && AddWork(m_job_dispatch.Last()))
+    while (m_job_dispatch.count() > 0 && AddWork(m_job_dispatch.last()))
         m_job_dispatch.pop();
 
     //Execute one task per frame if thread are not available

@@ -147,7 +147,7 @@ void MeshViewer::Start()
     m_entities << (m_file_check = new FileUpdateTester());
     m_file_status = m_file_check->RegisterFile(m_file_name);
 
-    m_entities << (m_file_loader = new DefaultThreadManager(1, 1));
+    //m_entities << (m_file_loader = new DefaultThreadManager(1, 1));
 
     //Camera setup
     m_camera = new Camera();
@@ -222,7 +222,7 @@ void MeshViewer::TickGame(float seconds)
 
     //Check file update
     ASSERT(m_file_status);
-    if (m_file_status->HasUpdated())
+    if (false && m_file_status->HasUpdated())
     {
         MeshViewerLoadJob* job = GetLoadJob(m_file_name);
         if (!job)
@@ -230,6 +230,7 @@ void MeshViewer::TickGame(float seconds)
     }
 
     //Check work done
+    if (false)
     {
         array<ThreadJob*> result;
         m_file_loader->GetWorkResult(result);

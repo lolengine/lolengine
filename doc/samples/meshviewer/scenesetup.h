@@ -155,7 +155,7 @@ public:
     SceneSetupLuaLoader();
     virtual ~SceneSetupLuaLoader();
     //Virtual Store lua object ------------------------------------------------
-    virtual void Store(LuaObject* obj) { }
+    virtual void Store(LuaObject* obj);
     array<SceneSetupLuaObject*>& GetInstances();
 
     //-------------------------------------------------------------------------
