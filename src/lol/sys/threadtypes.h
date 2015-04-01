@@ -50,6 +50,7 @@ class FileUpdateTester : public BaseThreadManager
 public:
     class Status
     {
+        friend class FileUpdateTester;
     protected:
         mutex m_mutex;
         long int m_time = 0;

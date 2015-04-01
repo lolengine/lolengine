@@ -240,7 +240,7 @@ public:
 
     bool IsEmpty() const
     {
-        return !(GetKeyCount() && GetAxisCount());
+        return !GetKeyCount() && !GetAxisCount();
     }
     int GetKeyCount() const
     {

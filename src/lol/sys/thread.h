@@ -130,7 +130,7 @@ protected:
     void StopThreads(int nb);
 
     //Work stuff
-    bool AddWork(ThreadJob* job);
+    bool AddWork(ThreadJob* job, bool force = false);
 
     //Fetch Results
     bool FetchResult(array<ThreadJob*>& results);
@@ -145,10 +145,11 @@ protected:
     int                 m_thread_count;
     int                 m_thread_min;
     array<thread*>      m_threads;
+    array<ThreadJob*>   m_job_dispatch;
+private:
     queue<ThreadStatus> m_spawnqueue, m_donequeue;
     queue<ThreadJob*>   m_jobqueue;
     queue<ThreadJob*>   m_resultqueue;
-    array<ThreadJob*>   m_job_dispatch;
 };
 
 } /* namespace lol */

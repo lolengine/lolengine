@@ -143,39 +143,6 @@ public:
         return current_count;
     }
 
-    ptrdiff_t try_count()
-    {
-        ptrdiff_t current_count = 0;
-
-#if defined HAVE_PTHREAD_H
-        pthread_mutex_lock(&m_mutex);
-        /* If queue is full, wait on the "full" cond var. */
-        if (m_count == CAPACITY)
-        {
-            pthread_mutex_unlock(&m_mutex);
-            return false;
-        }
-#elif defined _WIN32
-        DWORD status = WaitForSingleObject(m_empty_sem, 0);
-        if (status == WAIT_TIMEOUT)
-            return 0;
-        EnterCriticalSection(&m_mutex);
-#endif
-
-        current_count = (ptrdiff_t)m_count;
-
-#if defined HAVE_PTHREAD_H
-        /* If there were poppers waiting, signal the "empty" cond var. */
-        if (m_poppers)
-            pthread_cond_signal(&m_empty_cond);
-        pthread_mutex_unlock(&m_mutex);
-#elif defined _WIN32
-        LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_full_sem, 1, nullptr);
-#endif
-        return current_count;
-    }
-
     void push(T value)
     {
 #if defined HAVE_PTHREAD_H

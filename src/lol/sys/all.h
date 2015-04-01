@@ -10,9 +10,9 @@
 
 #pragma once
 
+#include <lol/sys/timer.h>
 #include <lol/sys/thread.h>
 #include <lol/sys/threadtypes.h>
 #include <lol/sys/init.h>
 #include <lol/sys/file.h>
-#include <lol/sys/timer.h>
 
