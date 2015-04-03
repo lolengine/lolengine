@@ -226,7 +226,7 @@ void MeshViewer::TickGame(float seconds)
     {
         MeshViewerLoadJob* job = GetLoadJob(m_file_name);
         if (!job)
-            m_file_loader->AddWork(job);
+            m_file_loader->AddJob(job);
     }
 
     //Check work done

@@ -34,7 +34,7 @@ public:
     { }
 
     //Work stuff
-    bool AddWork(ThreadJob* job);
+    bool AddJob(ThreadJob* job);
     bool GetWorkResult(array<ThreadJob*>& results);
 
 protected:
