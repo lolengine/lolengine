@@ -147,7 +147,9 @@ protected:
     array<thread*>      m_threads;
     array<ThreadJob*>   m_job_dispatch;
 private:
+#if LOL_FEATURE_THREADS
     queue<ThreadStatus> m_spawnqueue, m_donequeue;
+#endif //LOL_FEATURE_THREADS
     queue<ThreadJob*>   m_jobqueue;
     queue<ThreadJob*>   m_resultqueue;
 };

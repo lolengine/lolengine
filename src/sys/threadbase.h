@@ -40,46 +40,56 @@ class mutex_base
 public:
     mutex_base()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_init(&m_mutex, nullptr);
 #elif defined _WIN32
         InitializeCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     ~mutex_base()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_destroy(&m_mutex);
 #elif defined _WIN32
         DeleteCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     void lock()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
 #elif defined _WIN32
         EnterCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     void unlock()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_unlock(&m_mutex);
 #elif defined _WIN32
         LeaveCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
 private:
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
     pthread_mutex_t m_mutex;
 #elif defined _WIN32
     CRITICAL_SECTION m_mutex;
 #endif
+#endif //LOL_FEATURE_THREADS
 };
 
 template<typename T, int N>
@@ -89,6 +99,7 @@ public:
     queue_base()
     {
         m_start = m_count = 0;
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         m_poppers = m_pushers = 0;
         pthread_mutex_init(&m_mutex, nullptr);
@@ -99,10 +110,12 @@ public:
         m_full_sem = CreateSemaphore(nullptr, 0, CAPACITY, nullptr);
         InitializeCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     ~queue_base()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_cond_destroy(&m_empty_cond);
         pthread_cond_destroy(&m_full_cond);
@@ -112,39 +125,12 @@ public:
         CloseHandle(m_full_sem);
         DeleteCriticalSection(&m_mutex);
 #endif
-    }
-
-    ptrdiff_t count()
-    {
-        ptrdiff_t current_count = 0;
-#if defined HAVE_PTHREAD_H
-        pthread_mutex_lock(&m_mutex);
-        /* If queue is full, wait on the "full" cond var. */
-        m_pushers++;
-        while (m_count == CAPACITY)
-            pthread_cond_wait(&m_full_cond, &m_mutex);
-        m_pushers--;
-#elif defined _WIN32
-        WaitForSingleObject(m_empty_sem, INFINITE);
-        EnterCriticalSection(&m_mutex);
-#endif
-
-        current_count = (ptrdiff_t)m_count;
-
-#if defined HAVE_PTHREAD_H
-        /* If there were poppers waiting, signal the "empty" cond var. */
-        if (m_poppers)
-            pthread_cond_signal(&m_empty_cond);
-        pthread_mutex_unlock(&m_mutex);
-#elif defined _WIN32
-        LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_full_sem, 1, nullptr);
-#endif
-        return current_count;
+#endif //LOL_FEATURE_THREADS
     }
 
     void push(T value)
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* If queue is full, wait on the "full" cond var. */
@@ -156,11 +142,13 @@ public:
         WaitForSingleObject(m_empty_sem, INFINITE);
         EnterCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
 
         /* Push value */
         m_values[(m_start + m_count) % CAPACITY] = value;
         m_count++;
 
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
@@ -170,10 +158,12 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     bool try_push(T value)
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* If queue is full, wait on the "full" cond var. */
@@ -188,11 +178,13 @@ public:
             return false;
         EnterCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
 
         /* Push value */
         m_values[(m_start + m_count) % CAPACITY] = value;
         m_count++;
 
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
@@ -202,12 +194,14 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
+#endif //LOL_FEATURE_THREADS
 
         return true;
     }
 
     T pop()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* Wait until there is something in the queue. Be careful, we
@@ -221,12 +215,19 @@ public:
         WaitForSingleObject(m_full_sem, INFINITE);
         EnterCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
+
+#if !LOL_FEATURE_THREADS
+        if (m_count == 0)
+            return T(0);
+#endif //!LOL_FEATURE_THREADS
 
         /* Pop value */
         T ret = m_values[m_start];
         m_start = (m_start + 1) % CAPACITY;
         m_count--;
 
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
@@ -236,12 +237,14 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_empty_sem, 1, nullptr);
 #endif
+#endif //LOL_FEATURE_THREADS
 
         return ret;
     }
 
     bool try_pop(T &ret)
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         if (m_count == 0)
@@ -255,12 +258,19 @@ public:
             return false;
         EnterCriticalSection(&m_mutex);
 #endif
+#endif //LOL_FEATURE_THREADS
+
+#if !LOL_FEATURE_THREADS
+        if (m_count == 0)
+            return false;
+#endif //!LOL_FEATURE_THREADS
 
         /* Pop value */
         ret = m_values[m_start];
         m_start = (m_start + 1) % CAPACITY;
         m_count--;
 
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
@@ -270,6 +280,7 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_empty_sem, 1, nullptr);
 #endif
+#endif //LOL_FEATURE_THREADS
 
         return true;
     }
@@ -278,6 +289,7 @@ private:
     static size_t const CAPACITY = N;
     T m_values[CAPACITY];
     size_t m_start, m_count;
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
     size_t m_poppers, m_pushers;
     pthread_mutex_t m_mutex;
@@ -286,6 +298,7 @@ private:
     HANDLE m_empty_sem, m_full_sem;
     CRITICAL_SECTION m_mutex;
 #endif
+#endif //LOL_FEATURE_THREADS
 };
 
 class thread_base
@@ -294,6 +307,7 @@ public:
     thread_base(std::function<void(void)> function)
       : m_function(function)
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         /* Set the joinable attribute for systems who don't play nice */
         pthread_attr_t attr;
@@ -304,15 +318,18 @@ public:
         m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)trampoline,
                                 this, 0, &m_tid);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
     virtual ~thread_base()
     {
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
         pthread_join(m_thread, nullptr);
 #elif defined _WIN32
         WaitForSingleObject(m_thread, INFINITE);
 #endif
+#endif //LOL_FEATURE_THREADS
     }
 
 private:
@@ -325,12 +342,14 @@ private:
 
     std::function<void(void)> m_function;
 
+#if LOL_FEATURE_THREADS
 #if defined HAVE_PTHREAD_H
     pthread_t m_thread;
 #elif defined _WIN32
     HANDLE m_thread;
     DWORD m_tid;
 #endif
+#endif //LOL_FEATURE_THREADS
 };
 
 } /* namespace lol */

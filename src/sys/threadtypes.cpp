@@ -16,7 +16,7 @@
 using namespace lol;
 
 //DefaultThreadManager --------------------------------------------------------
-bool DefaultThreadManager::AddWork(ThreadJob* job)
+bool DefaultThreadManager::AddJob(ThreadJob* job)
 {
     return AddWork(job);
 }
@@ -40,6 +40,7 @@ public:
         m_path = path;
     }
     String& GetPath()   { return m_path; }
+    long int GetTime()  { return m_time; }
     bool HasUpdated()   { return m_updated; }
     void Restart()
     {
@@ -135,7 +136,7 @@ void FileUpdateTester::TreatResult(ThreadJob* result)
     FileUpdateTesterJob* job = static_cast<FileUpdateTesterJob*>(result);
     if (job->HasUpdated())
     {
-        m_files[job->GetPath()]->SetTime(job->m_time);
+        m_files[job->GetPath()]->SetTime(job->GetTime());
         m_files[job->GetPath()]->SetUpdated(true);
         job->Restart();
         m_job_done << job;

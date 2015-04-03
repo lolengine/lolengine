@@ -42,7 +42,7 @@ bool BaseThreadManager::Start()
 
     //Add minimum threads
     m_threads.reserve(m_thread_count);
-    AddThreads(m_thread_min);
+    AddThreads(m_thread_count /*FIX THAT (TOUKY) m_thread_min*/);
 
     return true;
 }
@@ -119,15 +119,19 @@ void BaseThreadManager::BaseThreadWork()
     {
         //Try to retrieve a job
         ThreadJob* job = m_jobqueue.pop();
+#if LOL_FEATURE_THREADS
         //Stop thread
         if (job->GetJobType() == ThreadJobType::THREAD_STOP)
         {
-#if LOL_FEATURE_THREADS
             break;
-#endif //LOL_FEATURE_THREADS
         }
         //Or work
-        else if (*job == ThreadJobType::WORK_TODO)
+        else
+#else //LOL_FEATURE_THREADS
+        if (!job)
+            return;
+#endif //LOL_FEATURE_THREADS
+        if (*job == ThreadJobType::WORK_TODO)
         {
             if (job->DoWork())
                 job->SetJobType(ThreadJobType::WORK_SUCCESSED);
@@ -170,11 +174,14 @@ void BaseThreadManager::TickGame(float seconds)
         }
     }
 
+    //TODO: TOUKY: FIX THAT
+    /*
     //Resize thread count if needed
     if (m_threads.count() > m_jobqueue.count() && m_threads.count() > m_thread_min)
         StopThreads((int)(m_threads.Count() - m_thread_min));
     else if (m_threads.count() < m_jobqueue.count())
         AddThreads((int)(lol::min(m_jobqueue.count(), (ptrdiff_t)m_thread_count) - m_threads.count()));
+    */
 }
 
 } /* namespace lol */
