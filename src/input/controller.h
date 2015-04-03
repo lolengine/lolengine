@@ -311,7 +311,7 @@ public:
         m_joystick_axis += bindings;
         return *this;
     }
-    
+
     //BindingType -------------------------------------------------------------
     struct InputTypeBase : public StructSafeEnum
     {

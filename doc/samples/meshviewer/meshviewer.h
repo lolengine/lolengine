@@ -248,7 +248,7 @@ private:
 
     //Object data
     array<ViewerObject*>    m_objs;
-    
+
     //Entities listing
     array<Entity*>          m_entities;
 
