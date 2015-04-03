@@ -187,7 +187,7 @@ void MeshViewer::Stop()
 
     //Register all entities
     for (Entity* entity : m_entities) Ticker::Unref(entity);
-    
+
     //Delete objs
     while (m_objs.count()) delete m_objs.Pop();
 
