@@ -121,18 +121,11 @@ for file in $FILES; do
     esac
 
     case "$file" in
-      # These files aren't ours, don't fix
+      # These files aren't ours, but fix their line endings
       src/bullet/*|\
       src/lua/*|\
       external/*|\
       web/plugins/*)
-          continue
-          ;;
-    esac
-
-    case "$file" in
-      # These files aren't ours, but fix their line endings
-      */generated/*)
           should_check_spaces=false
           ;;
     esac
