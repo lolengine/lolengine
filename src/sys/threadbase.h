@@ -18,7 +18,13 @@
 // -----------------------------------
 //
 
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+/* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+#   include <thread>
+#   include <mutex>
+#   include <condition_variable>
+#elif defined HAVE_PTHREAD_H
 #   include <pthread.h>
 #elif defined _XBOX
 #   include <xtl.h>
@@ -38,60 +44,90 @@ namespace lol
 class mutex_base
 {
 public:
+    //-------------------------------------------------------------------------
     mutex_base()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Nothing */
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_init(&m_mutex, nullptr);
 #elif defined _WIN32
         InitializeCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //-------------------------------------------------------------------------
     ~mutex_base()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Nothing */
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_destroy(&m_mutex);
 #elif defined _WIN32
         DeleteCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //Will block the thread if another has already locked ---------------------
     void lock()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        m_mutex.lock();
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
 #elif defined _WIN32
         EnterCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //Will not block if another thread has already locked ---------------------
+    bool try_lock()
+    {
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        return m_mutex.try_lock();
+#elif defined HAVE_PTHREAD_H
+        return !pthread_mutex_trylock(&m_mutex);
+#elif defined _WIN32
+        return !!TryEnterCriticalSection(&m_mutex);
+#endif
+    }
+
+    //-------------------------------------------------------------------------
     void unlock()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        m_mutex.unlock();
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_unlock(&m_mutex);
 #elif defined _WIN32
         LeaveCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //-------------------------------------------------------------------------
 private:
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+    /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+    std::mutex m_mutex;
+#elif defined HAVE_PTHREAD_H
     pthread_mutex_t m_mutex;
 #elif defined _WIN32
     CRITICAL_SECTION m_mutex;
 #endif
-#endif //LOL_FEATURE_THREADS
 };
 
+//A FIFO queue for threads ----------------------------------------------------
 template<typename T, int N>
 class queue_base
 {
@@ -99,8 +135,11 @@ public:
     queue_base()
     {
         m_start = m_count = 0;
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Nothing */
+#elif defined HAVE_PTHREAD_H
         m_poppers = m_pushers = 0;
         pthread_mutex_init(&m_mutex, nullptr);
         pthread_cond_init(&m_empty_cond, nullptr);
@@ -110,13 +149,15 @@ public:
         m_full_sem = CreateSemaphore(nullptr, 0, CAPACITY, nullptr);
         InitializeCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
     ~queue_base()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Nothing */
+#elif defined HAVE_PTHREAD_H
         pthread_cond_destroy(&m_empty_cond);
         pthread_cond_destroy(&m_full_cond);
         pthread_mutex_destroy(&m_mutex);
@@ -125,13 +166,18 @@ public:
         CloseHandle(m_full_sem);
         DeleteCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //Will block the thread if another has already locked ---------------------
     void push(T value)
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Wait for the mutex availability or non-fullness */
+        std::unique_lock<std::mutex> uni_lock(m_mutex);
+        m_full_cond.wait(uni_lock, [&]{return m_count < CAPACITY; });
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* If queue is full, wait on the "full" cond var. */
         m_pushers++;
@@ -142,14 +188,16 @@ public:
         WaitForSingleObject(m_empty_sem, INFINITE);
         EnterCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
 
-        /* Push value */
-        m_values[(m_start + m_count) % CAPACITY] = value;
-        m_count++;
+        do_push(value); /* Push value */
 
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Release lock and notify empty condition var (in that order) */
+        uni_lock.unlock();
+        m_empty_cond.notify_one();
+#elif defined HAVE_PTHREAD_H
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
@@ -158,15 +206,31 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
+    //Will not block if another has already locked ----------------------------
     bool try_push(T value)
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
-        pthread_mutex_lock(&m_mutex);
-        /* If queue is full, wait on the "full" cond var. */
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        if (m_count == CAPACITY)
+            return false;
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Same as Push(), except .... */
+        std::unique_lock<std::mutex> uni_lock(m_mutex, std::try_to_lock);
+        /* Bail on fail try_lock fail */
+        if (!uni_lock.owns_lock())
+            return false;
+        /* Bail on max CAPACITY */
+        if (m_count == CAPACITY)
+        {
+            uni_lock.unlock();
+            return false;
+        }
+#elif defined HAVE_PTHREAD_H
+        /* Bail on fail try_lock */
+        if (pthread_mutex_trylock(&m_mutex))
+            return false;
+        /* Bail on max CAPACITY */
         if (m_count == CAPACITY)
         {
             pthread_mutex_unlock(&m_mutex);
@@ -178,14 +242,16 @@ public:
             return false;
         EnterCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
 
-        /* Push value */
-        m_values[(m_start + m_count) % CAPACITY] = value;
-        m_count++;
+        do_push(value); /* Push value */
 
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Release lock and notify empty condition var (in that order) */
+        uni_lock.unlock();
+        m_empty_cond.notify_one();
+#elif defined HAVE_PTHREAD_H
         /* If there were poppers waiting, signal the "empty" cond var. */
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
@@ -194,15 +260,20 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
-#endif //LOL_FEATURE_THREADS
 
         return true;
     }
 
+    //Will block the thread if another has already locked ---------------------
     T pop()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        ASSERT(0, "Pop should only be used with threads. Use try_pop instead.");
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Wait for the mutex availability or non-emptiness */
+        std::unique_lock<std::mutex> uni_lock(m_mutex);
+        m_empty_cond.wait(uni_lock, [&]{return m_count > 0; });
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         /* Wait until there is something in the queue. Be careful, we
          * could get woken up but another thread may have eaten the
@@ -215,20 +286,16 @@ public:
         WaitForSingleObject(m_full_sem, INFINITE);
         EnterCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
 
-#if !LOL_FEATURE_THREADS
-        if (m_count == 0)
-            return T(0);
-#endif //!LOL_FEATURE_THREADS
+        T ret = do_pop(); /* Pop value */
 
-        /* Pop value */
-        T ret = m_values[m_start];
-        m_start = (m_start + 1) % CAPACITY;
-        m_count--;
-
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Release lock and notify full condition var (in that order) */
+        uni_lock.unlock();
+        m_full_cond.notify_one();
+#elif defined HAVE_PTHREAD_H
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
             pthread_cond_signal(&m_full_cond);
@@ -237,15 +304,29 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_empty_sem, 1, nullptr);
 #endif
-#endif //LOL_FEATURE_THREADS
 
         return ret;
     }
 
+    //Will not block if another has already locked ----------------------------
     bool try_pop(T &ret)
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        if (m_count == 0)
+            return false;
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Same as Pop(), except .... */
+        std::unique_lock<std::mutex> uni_lock(m_mutex, std::try_to_lock);
+        /* Bail on fail try_lock fail */
+        if (!uni_lock.owns_lock())
+            return false;
+        /* Bail on zero count */
+        if (m_count == 0)
+        {
+            uni_lock.unlock();
+            return false;
+        }
+#elif defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
         if (m_count == 0)
         {
@@ -258,20 +339,16 @@ public:
             return false;
         EnterCriticalSection(&m_mutex);
 #endif
-#endif //LOL_FEATURE_THREADS
 
-#if !LOL_FEATURE_THREADS
-        if (m_count == 0)
-            return false;
-#endif //!LOL_FEATURE_THREADS
+        ret = do_pop(); /* Pop value */
 
-        /* Pop value */
-        ret = m_values[m_start];
-        m_start = (m_start + 1) % CAPACITY;
-        m_count--;
-
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        /* Release lock and notify full condition var (in that order) */
+        uni_lock.unlock();
+        m_full_cond.notify_one();
+#elif defined HAVE_PTHREAD_H
         /* If there were pushers waiting, signal the "full" cond var. */
         if (m_pushers)
             pthread_cond_signal(&m_full_cond);
@@ -280,17 +357,37 @@ public:
         LeaveCriticalSection(&m_mutex);
         ReleaseSemaphore(m_empty_sem, 1, nullptr);
 #endif
-#endif //LOL_FEATURE_THREADS
 
         return true;
     }
 
+    //Inner methods for actual update -----------------------------------------
+private:
+    void do_push(T &value)
+    {
+        m_values[(m_start + m_count) % CAPACITY] = value;
+        m_count++;
+    }
+
+    T& do_pop()
+    {
+        size_t idx = m_start;
+        m_start = (m_start + 1) % CAPACITY;
+        m_count--;
+        return m_values[idx];
+    }
+
+    //-------------------------------------------------------------------------
 private:
     static size_t const CAPACITY = N;
     T m_values[CAPACITY];
     size_t m_start, m_count;
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+    /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+    std::mutex m_mutex;
+    std::condition_variable m_empty_cond, m_full_cond;
+#elif defined HAVE_PTHREAD_H
     size_t m_poppers, m_pushers;
     pthread_mutex_t m_mutex;
     pthread_cond_t m_empty_cond, m_full_cond;
@@ -298,17 +395,23 @@ private:
     HANDLE m_empty_sem, m_full_sem;
     CRITICAL_SECTION m_mutex;
 #endif
-#endif //LOL_FEATURE_THREADS
 };
 
+//Base class for threads ------------------------------------------------------
 class thread_base
 {
 public:
     thread_base(std::function<void(void)> function)
-      : m_function(function)
+        : m_function(function)
+    { }
+
+    void Init()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        m_thread = std::thread(trampoline, this);
+#elif defined HAVE_PTHREAD_H
         /* Set the joinable attribute for systems who don't play nice */
         pthread_attr_t attr;
         pthread_attr_init(&attr);
@@ -318,38 +421,50 @@ public:
         m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)trampoline,
                                 this, 0, &m_tid);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
     virtual ~thread_base()
     {
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+        /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+        m_thread.join();
+#elif defined HAVE_PTHREAD_H
         pthread_join(m_thread, nullptr);
 #elif defined _WIN32
         WaitForSingleObject(m_thread, INFINITE);
 #endif
-#endif //LOL_FEATURE_THREADS
     }
 
 private:
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+    /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+    static void trampoline(thread_base *that)
+    {
+        that->m_function();
+    }
+#else
     static void *trampoline(void *data)
     {
         thread_base *that = (thread_base *)data;
         that->m_function();
         return nullptr;
     }
+#endif
 
     std::function<void(void)> m_function;
 
-#if LOL_FEATURE_THREADS
-#if defined HAVE_PTHREAD_H
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+    /* Nothing */
+#elif LOL_FEATURE_CXX11_THREADS
+    std::thread m_thread;
+#elif defined HAVE_PTHREAD_H
     pthread_t m_thread;
 #elif defined _WIN32
     HANDLE m_thread;
     DWORD m_tid;
 #endif
-#endif //LOL_FEATURE_THREADS
 };
 
 } /* namespace lol */

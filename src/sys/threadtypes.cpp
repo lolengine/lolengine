@@ -16,9 +16,9 @@
 using namespace lol;
 
 //DefaultThreadManager --------------------------------------------------------
-bool DefaultThreadManager::AddJob(ThreadJob* job)
+void DefaultThreadManager::AddJob(ThreadJob* job)
 {
-    return AddWork(job);
+    DispatchJob(job);
 }
 bool DefaultThreadManager::GetWorkResult(array<ThreadJob*>& results)
 {
@@ -32,6 +32,7 @@ class FileUpdateTesterJob : public ThreadJob
 {
     friend class FileUpdateTester;
 public:
+    char const *GetName() { return "<FileUpdateTesterJob>"; }
     FileUpdateTesterJob()
         : ThreadJob(ThreadJobType::NONE) { }
     FileUpdateTesterJob(String path)
@@ -82,7 +83,7 @@ FileUpdateTester::~FileUpdateTester()
 //File interface --------------------------------------------------------------
 FileUpdateTester::Status* FileUpdateTester::RegisterFile(String const& path)
 {
-    m_job_dispatch << new FileUpdateTesterJob(path);
+    DispatchJob(new FileUpdateTesterJob(path));
     m_files[path] = new FileUpdateTester::Status();
     return m_files[path];
 }
@@ -115,7 +116,7 @@ void FileUpdateTester::TickGame(float seconds)
 {
     super::TickGame(seconds);
 
-    if (!m_job_dispatch.count() && m_job_done.count())
+    if (!GetDispatchCount() && m_job_done.count())
     {
         if (m_frame_count++ < m_frame_skip)
             return;
@@ -125,7 +126,7 @@ void FileUpdateTester::TickGame(float seconds)
         for (String key : keys)
             m_files[key]->SetUpdated(false);
 
-        m_job_dispatch = m_job_done;
+        DispatchJob(m_job_done);
         m_job_done.empty();
     }
 }
@@ -147,6 +148,7 @@ void FileUpdateTester::TreatResult(ThreadJob* result)
 class AsyncImageJob : public ThreadJob
 {
 public:
+    char const *GetName() { return "<AsyncImageJob>"; }
     AsyncImageJob()
         : ThreadJob(ThreadJobType::NONE)
     {
@@ -180,7 +182,7 @@ Image* AsyncImageLoader::Load(const lol::String& path)
     //Link the two
     m_images[path] = image;
     //Add job
-    AddWork(job);
+    DispatchJob(job);
     //return Dummy image
     return image;
 }
@@ -202,7 +204,7 @@ void AsyncImageLoader::TreatResult(ThreadJob* result)
     AsyncImageJob* job = dynamic_cast<AsyncImageJob*>(result);
     ASSERT(job);
     //Copy image if work is OK
-    if (job->GetJobType() == ThreadJobType::WORK_SUCCESSED)
+    if (job->GetJobType() == ThreadJobType::WORK_SUCCEEDED)
     {
         Image* src = m_images[job->GetPath()];
         m_images.remove(job->GetPath());

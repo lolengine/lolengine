@@ -152,6 +152,11 @@ Timer::~Timer()
     delete data;
 }
 
+void Timer::Reset()
+{
+    (void)data->GetSeconds(true);
+}
+
 float Timer::Get()
 {
     return data->GetSeconds(true);

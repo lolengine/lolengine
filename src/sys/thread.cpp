@@ -17,16 +17,12 @@ namespace lol
 {
 
 //BaseThreadManager -----------------------------------------------------------
-BaseThreadManager::BaseThreadManager(int thread_count)
-{
-    m_thread_min = thread_count;
-    m_thread_count = thread_count;
-}
+BaseThreadManager::BaseThreadManager(int thread_max) : BaseThreadManager(thread_max, thread_max)
+{ }
 
-BaseThreadManager::BaseThreadManager(int thread_min, int thread_count)
+BaseThreadManager::BaseThreadManager(int thread_max, int thread_min)
 {
-    m_thread_min = thread_min;
-    m_thread_count = thread_count;
+    Setup(thread_max, thread_min);
 }
 
 BaseThreadManager::~BaseThreadManager()
@@ -34,72 +30,158 @@ BaseThreadManager::~BaseThreadManager()
     Stop();
 }
 
-//Initialize, Ticker::Ref and start the thread
+//Base Setup ------------------------------------------------------------------
+void BaseThreadManager::Setup(int thread_max)
+{
+    Setup(thread_max, thread_max);
+}
+void BaseThreadManager::Setup(int thread_max, int thread_min)
+{
+#if LOL_FEATURE_THREADS
+    m_thread_max = thread_max;
+    m_thread_min = thread_min;
+#endif //LOL_FEATURE_THREADS
+}
+
+//Initialize, Ticker::Ref and start the thread --------------------------------
 bool BaseThreadManager::Start()
 {
+#if LOL_FEATURE_THREADS
+    ASSERT(!!m_thread_max, "Thread count shouldn't be zero");
+
     if (m_threads.count() > 0)
         return false;
 
     //Add minimum threads
-    m_threads.reserve(m_thread_count);
-    AddThreads(m_thread_count /*FIX THAT (TOUKY) m_thread_min*/);
+    m_threads.reserve(m_thread_max);
+    //AddThreads(m_thread_min);
+    AdjustThreadCount(m_thread_min);
+#endif //LOL_FEATURE_THREADS
 
     return true;
 }
 
-//Stop the threads
+//Stop the threads ------------------------------------------------------------
 bool BaseThreadManager::Stop()
 {
+#if LOL_FEATURE_THREADS
     if (m_threads.count() <= 0)
         return false;
 
-    //Stop all threads
-    StopThreads((int)m_threads.count());
+    //End all threads
+    //RemoveThreads((int)m_threads.count());
+    AdjustThreadCount(0);
+    CleanAddedThread(true);
+    CleanRemovedThread(true);
+#endif //LOL_FEATURE_THREADS
 
     return true;
 }
 
-//----
-void BaseThreadManager::AddThreads(int nb)
+//Work stuff ------------------------------------------------------------------
+bool BaseThreadManager::AddThreadWork(ThreadJob* job)
 {
-    //Don't add threads if not availables
-#if LOL_FEATURE_THREADS
-    //Spawn worker threads and ...
-    for (int i = 0; i < nb; i++)
-        m_threads << new thread(std::bind(&BaseThreadManager::BaseThreadWork, this));
+    return m_jobqueue.try_push(job);
+}
 
+//-----------------------------------------------------------------------------
+void BaseThreadManager::AdjustThreadCount(int count)
+{
+#if LOL_FEATURE_THREADS
+    int actual_count = (int)m_threads.count() - m_thread_removed;
+    int diff = count - actual_count;
+
+    for (int i = 0; i < lol::abs(diff); i++)
+    {
+        if (diff > 0)
+        {
+            //Spawn worker threads and ...
+            m_threads << new thread(std::bind(&BaseThreadManager::BaseThreadWork, this, std::placeholders::_1));
+            m_thread_added++;
+            m_thread_added_timer.Reset();
+        }
+        else
+        {
+            //Signal worker threads for completion and ...
+            m_jobqueue.push(new ThreadJob(ThreadJobType::THREAD_STOP));
+            m_thread_removed++;
+            m_thread_removed_timer.Reset();
+        }
+    }
+#endif //LOL_FEATURE_THREADS
+}
+
+//-----------------------------------------------------------------------------
+void BaseThreadManager::CleanAddedThread(bool wait)
+{
+#if LOL_FEATURE_THREADS
     //... Wait for their readiness.
-    for (int i = 0; i < m_thread_count; i++)
-        m_spawnqueue.pop();
+    while (m_thread_added > 0)
+    {
+        thread* inst = nullptr;
+        bool found = false;
+        if (wait)
+            found = !!(inst = m_spawnqueue.pop());
+        else
+            found = m_spawnqueue.try_pop(inst);
+        if (found)
+            m_thread_added--;
+        else
+            break;
+    }
+    //Assert if spawning took too much time
+    //ASSERT(!(m_thread_added > 0 && m_thread_added_timer.Poll() > 5.f));
 #endif //LOL_FEATURE_THREADS
 }
 
-//----
-void BaseThreadManager::StopThreads(int nb)
+//-----------------------------------------------------------------------------
+void BaseThreadManager::CleanRemovedThread(bool wait)
 {
-    //Don't stop threads if not availables
 #if LOL_FEATURE_THREADS
-    //Signal worker threads for completion and ...
-    ThreadJob stop_job(ThreadJobType::THREAD_STOP);
-    for (int i = 0; i < nb; i++)
-        m_jobqueue.push(&stop_job);
-
     //... Wait for them to quit.
-    for (int i = 0; i < nb; i++)
-        m_donequeue.pop();
+    while (m_thread_removed > 0)
+    {
+        thread* inst = nullptr;
+        bool found = false;
+        if (wait)
+            found = !!(inst = m_donequeue.pop());
+        else
+            found = m_donequeue.try_pop(inst);
+        if (found)
+        {
+            m_thread_removed--;
+            m_threads.remove_swap_item(inst);
+            delete inst;
+        }
+        else
+            break;
+    }
+    //Assert if stopping took too much time
+    //ASSERT(!(m_thread_removed > 0 && m_thread_removed_timer.Poll() > 5.f));
 #endif //LOL_FEATURE_THREADS
 }
 
-//Work stuff
-bool BaseThreadManager::AddWork(ThreadJob* job, bool force)
+//-----------------------------------------------------------------------------
+int BaseThreadManager::GetDispatchCount()
 {
-    if (!force)
-        return m_jobqueue.try_push(job);
-    m_jobqueue.push(job);
-    return true;
+    return (int)m_job_dispatch.count();
+}
+int BaseThreadManager::GetDispatchedCount()
+{
+    return m_job_dispatched;
 }
 
-//----
+//-----------------------------------------------------------------------------
+void BaseThreadManager::DispatchJob(ThreadJob* job)
+{
+    m_job_dispatch << job;
+}
+void BaseThreadManager::DispatchJob(array<ThreadJob*> const& jobs)
+{
+    m_job_dispatch += jobs;
+}
+
+//-----------------------------------------------------------------------------
 bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
 {
     ThreadJob* result;
@@ -108,45 +190,54 @@ bool BaseThreadManager::FetchResult(array<ThreadJob*>& results)
     return results.count() > 0;
 }
 
-//Base thread work function
-void BaseThreadManager::BaseThreadWork()
+//Base thread work function ---------------------------------------------------
+void BaseThreadManager::BaseThreadWork(thread* inst)
 {
+    ThreadJob* job = nullptr;
 #if LOL_FEATURE_THREADS
     //Register that the thread has started
-    m_spawnqueue.push(ThreadStatus::THREAD_STARTED);
-    for ( ; ; )
-#endif //LOL_FEATURE_THREADS
+    m_statusqueue.push(ThreadStatus::THREAD_STARTED);
+    m_spawnqueue.push(inst);
+    for (;;)
+#else //LOL_FEATURE_THREADS
+    while (m_jobqueue.try_pop(job))
+#endif
     {
-        //Try to retrieve a job
-        ThreadJob* job = m_jobqueue.pop();
 #if LOL_FEATURE_THREADS
+        //Retrieve a job
+        job = m_jobqueue.pop();
         //Stop thread
         if (job->GetJobType() == ThreadJobType::THREAD_STOP)
         {
+            delete job;
             break;
         }
         //Or work
         else
-#else //LOL_FEATURE_THREADS
-        if (!job)
-            return;
 #endif //LOL_FEATURE_THREADS
         if (*job == ThreadJobType::WORK_TODO)
         {
+#if LOL_FEATURE_THREADS
+            m_statusqueue.push(ThreadStatus::THREAD_WORKING);
+#endif //LOL_FEATURE_THREADS
             if (job->DoWork())
-                job->SetJobType(ThreadJobType::WORK_SUCCESSED);
+                job->SetJobType(ThreadJobType::WORK_SUCCEEDED);
             else
                 job->SetJobType(ThreadJobType::WORK_FAILED);
             m_resultqueue.push(job);
+#if LOL_FEATURE_THREADS
+            m_statusqueue.push(ThreadStatus::THREAD_IDLE);
+#endif //LOL_FEATURE_THREADS
         }
     }
 #if LOL_FEATURE_THREADS
     //Register that the thread has stopped
-    m_donequeue.push(ThreadStatus::THREAD_STOPPED);
+    m_statusqueue.push(ThreadStatus::THREAD_STOPPED);
+    m_donequeue.push(inst);
 #endif //LOL_FEATURE_THREADS
 }
 
-//----
+//-----------------------------------------------------------------------------
 void BaseThreadManager::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
@@ -155,12 +246,16 @@ void BaseThreadManager::TickGame(float seconds)
     Start();
 
     //Dispatch work task
-    while (m_job_dispatch.count() > 0 && AddWork(m_job_dispatch.last()))
-        m_job_dispatch.pop();
+    while (m_job_dispatch.count() > 0 && AddThreadWork(m_job_dispatch[0]))
+    {
+        m_job_dispatch.remove(0);
+        //Keep track of added jobs
+        m_job_dispatched++;
+    }
 
     //Execute one task per frame if thread are not available
-#if !LOL_FEATURE_THREADS
-    BaseThreadWork();
+#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
+    BaseThreadWork(nullptr);
 #endif // !LOL_FEATURE_THREADS
 
     array<ThreadJob*> result;
@@ -171,17 +266,21 @@ void BaseThreadManager::TickGame(float seconds)
         {
             ThreadJob* job = result[i];
             TreatResult(job);
+            //Remove job from count as it has been treated
+            m_job_dispatched--;
         }
     }
 
-    //TODO: TOUKY: FIX THAT
-    /*
     //Resize thread count if needed
-    if (m_threads.count() > m_jobqueue.count() && m_threads.count() > m_thread_min)
-        StopThreads((int)(m_threads.Count() - m_thread_min));
-    else if (m_threads.count() < m_jobqueue.count())
-        AddThreads((int)(lol::min(m_jobqueue.count(), (ptrdiff_t)m_thread_count) - m_threads.count()));
-    */
+#if LOL_FEATURE_THREADS
+    ThreadStatus status;
+    while (m_statusqueue.try_pop(status))
+        m_thread_active += status == ThreadStatus::THREAD_IDLE ? -1 : +1;
+
+    AdjustThreadCount(lol::clamp(m_job_dispatched, m_thread_min, m_thread_max));
+    CleanAddedThread();
+    CleanRemovedThread();
+#endif //LOL_FEATURE_THREADS
 }
 
 } /* namespace lol */

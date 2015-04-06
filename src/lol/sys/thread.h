@@ -41,8 +41,22 @@ public:
 class thread : thread_base
 {
 public:
-    thread(std::function<void(void)> fn) : thread_base(fn) {}
-    virtual ~thread() {}
+    thread(std::function<void(thread*)> fn)
+        : thread_base(std::bind(&thread::do_trampoline, this)),
+        m_thread_function(fn)
+    {
+        Init();
+    }
+    virtual ~thread()
+    { }
+
+protected:
+    static void do_trampoline(thread *that)
+    {
+        that->m_thread_function(that);
+    }
+
+    std::function<void(thread*)> m_thread_function;
 };
 
 //ThreadStatus ----------------------------------------------------------------
@@ -52,6 +66,8 @@ struct ThreadStatusBase : public StructSafeEnum
     {
         NOTHING,
         THREAD_STARTED,
+        THREAD_WORKING,
+        THREAD_IDLE,
         THREAD_STOPPED,
     };
 protected:
@@ -71,7 +87,7 @@ struct ThreadJobTypeBase : public StructSafeEnum
     {
         NONE,
         WORK_TODO,
-        WORK_SUCCESSED,
+        WORK_SUCCEEDED,
         WORK_FAILED,
         WORK_DONE,
         THREAD_STOP
@@ -81,7 +97,7 @@ protected:
     {
         enum_map[NONE]          = "NONE";
         enum_map[WORK_TODO]     = "WORK_TODO";
-        enum_map[WORK_SUCCESSED] = "WORK_SUCCESSED";
+        enum_map[WORK_SUCCEEDED] = "WORK_SUCCEEDED";
         enum_map[WORK_FAILED]   = "WORK_FAILED";
         enum_map[WORK_DONE]  = "WORK_DONE";
         enum_map[THREAD_STOP]   = "THREAD_STOP";
@@ -98,6 +114,7 @@ class ThreadJob
 protected:
     inline ThreadJob(ThreadJobType type) : m_type(type) {}
 public:
+    char const *GetName() { return "<ThreadJob>"; }
     inline ThreadJob() : m_type(ThreadJobType::NONE) {}
     virtual ~ThreadJob() {}
 
@@ -115,40 +132,62 @@ class BaseThreadManager : public Entity
 {
 public:
     char const *GetName() { return "<BaseThreadManager>"; }
-    BaseThreadManager(int thread_count);
-    BaseThreadManager(int thread_count, int thread_min);
-    ~BaseThreadManager();
+    BaseThreadManager(int thread_max);
+    BaseThreadManager(int thread_max, int thread_min);
+    virtual ~BaseThreadManager();
+
+    //Base setup
+    void Setup(int thread_max);
+    void Setup(int thread_max, int thread_min);
 
     //Initialize, Ticker::Ref and start the thread
     bool Start();
     //Stop the threads
     bool Stop();
 
-protected:
-    //Thread addition
-    void AddThreads(int nb);
-    void StopThreads(int nb);
-
+private:
     //Work stuff
-    bool AddWork(ThreadJob* job, bool force = false);
+    bool AddThreadWork(ThreadJob* job);
 
+protected:
+    //Thread count management
+    void AdjustThreadCount(int count);
+    void CleanAddedThread(bool wait = false);
+    void CleanRemovedThread(bool wait = false);
+
+    int GetDispatchCount();
+    int GetDispatchedCount();
+
+    //Dispatch job to threads
+    void DispatchJob(ThreadJob* job);
+    void DispatchJob(array<ThreadJob*> const& jobs);
     //Fetch Results
     bool FetchResult(array<ThreadJob*>& results);
     //Base thread work function
-    void BaseThreadWork();
+    void BaseThreadWork(thread* inst);
 
     virtual void TickGame(float seconds);
     //Default behaviour : delete the job result
     virtual void TreatResult(ThreadJob* result) { delete(result); }
 
-    /* Worker threads */
-    int                 m_thread_count;
-    int                 m_thread_min;
-    array<thread*>      m_threads;
-    array<ThreadJob*>   m_job_dispatch;
 private:
+    /* Jobs */
+    array<ThreadJob*>   m_job_dispatch;
+    int                 m_job_dispatched = 0;
+
 #if LOL_FEATURE_THREADS
-    queue<ThreadStatus> m_spawnqueue, m_donequeue;
+    /* Worker threads */
+    int                 m_thread_max = 0;
+    int                 m_thread_min = 0;
+    int                 m_thread_active = 0;
+    array<thread*>      m_threads;
+    Timer               m_thread_added_timer;
+    int                 m_thread_added = 0;
+    Timer               m_thread_removed_timer;
+    int                 m_thread_removed = 0;
+
+    queue<ThreadStatus> m_statusqueue;
+    queue<thread*>      m_spawnqueue, m_donequeue;
 #endif //LOL_FEATURE_THREADS
     queue<ThreadJob*>   m_jobqueue;
     queue<ThreadJob*>   m_resultqueue;
