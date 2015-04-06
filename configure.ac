@@ -295,7 +295,7 @@ fi
 
 dnl  Use Imgui? Yes, always
 if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/imgui-1.37"
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/imgui"
 fi
 
 
