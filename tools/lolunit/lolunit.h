@@ -21,6 +21,19 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdio>
+#if defined _XBOX
+#   include <xtl.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#elif defined _WIN32
+#   if defined USE_D3D9
+#      include <d3d9.h>
+#   endif
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
 
 namespace lol
 {
