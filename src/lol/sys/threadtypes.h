@@ -26,15 +26,15 @@ class DefaultThreadManager : public BaseThreadManager
 {
 public:
     char const *GetName() { return "<DefaultThreadManager>"; }
-    DefaultThreadManager(int thread_count)
-        : BaseThreadManager(thread_count, thread_count)
+    DefaultThreadManager(int thread_max)
+        : BaseThreadManager(thread_max, thread_max)
     { }
-    DefaultThreadManager(int thread_count, int thread_min)
-        : BaseThreadManager(thread_count, thread_min)
+    DefaultThreadManager(int thread_max, int thread_min)
+        : BaseThreadManager(thread_max, thread_min)
     { }
 
     //Work stuff
-    bool AddJob(ThreadJob* job);
+    void AddJob(ThreadJob* job);
     bool GetWorkResult(array<ThreadJob*>& results);
 
 protected:
@@ -115,8 +115,8 @@ class AsyncImageLoader : public BaseThreadManager
 {
 public:
     char const *GetName() { return "<AsyncImageLoader>"; }
-    AsyncImageLoader(int thread_count)
-        : BaseThreadManager(thread_count, 0)
+    AsyncImageLoader(int thread_max)
+        : BaseThreadManager(thread_max, 0)
     {
         m_dummy_image.DummyFill();
     }

@@ -127,7 +127,7 @@ public:
 #if LOL_FEATURE_THREADS
         /* Spawn worker threads and wait for their readiness. */
         for (int i = 0; i < MAX_THREADS; i++)
-            m_threads[i] = new thread(std::bind(&Fractal::DoWorkHelper, this));
+            m_threads[i] = new thread(std::bind(&Fractal::DoWorkHelper, this, std::placeholders::_1));
         for (int i = 0; i < MAX_THREADS; i++)
             m_spawnqueue.pop();
 #endif
@@ -321,7 +321,7 @@ public:
     }
 
 #if LOL_FEATURE_THREADS
-    void DoWorkHelper()
+    void DoWorkHelper(thread *inst)
     {
         m_spawnqueue.push(0);
         for ( ; ; )

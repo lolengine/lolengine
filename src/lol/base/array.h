@@ -267,12 +267,12 @@ public:
         return false;
     }
 
-    bool RemoveSwapItem(T const &x)
+    bool remove_swap_item(T const &x)
     {
         ptrdiff_t idx = find(x);
         if (idx != INDEX_NONE)
         {
-            RemoveSwap(idx);
+            remove_swap(idx);
             return true;
         }
         return false;
@@ -329,7 +329,7 @@ public:
         m_count -= todelete;
     }
 
-    void RemoveSwap(ptrdiff_t pos, ptrdiff_t todelete = 1)
+    void remove_swap(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
@@ -400,8 +400,9 @@ public:
     inline void Push(T const &x) { push(x); }
     inline bool PushUnique(T const &x) { return push_unique(x); }
     inline T Pop() { return pop(); }
-    inline void Swap(ptrdiff_t pos1, ptrdiff_t pos2) { return swap(pos1, pos2); }
-    inline void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1) { return remove(pos, todelete); }
+    inline void Swap(ptrdiff_t pos1, ptrdiff_t pos2) { swap(pos1, pos2); }
+    inline void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1) { remove(pos, todelete); }
+    inline void RemoveSwap(ptrdiff_t pos, ptrdiff_t todelete = 1) { remove_swap(pos, todelete); }
     inline void Empty() { empty(); }
     inline element_t& Last() { return last(); }
     inline element_t *Data() { return data(); }
@@ -411,6 +412,7 @@ public:
     inline bool InsertUnique(T const &x, ptrdiff_t pos) { return insert_unique(x, pos); }
     inline ptrdiff_t Find(T const &x) { return find(x); }
     inline bool RemoveItem(T const &x) { return remove_item(x); }
+    inline bool RemoveSwapItem(T const &x) { return remove_swap_item(x); }
     inline void Resize(ptrdiff_t item_count, element_t e = element_t()) { return resize(item_count, e); }
     inline void Reserve(ptrdiff_t toreserve) { return reserve(toreserve); }
     inline ptrdiff_t Count() const { return count(); }

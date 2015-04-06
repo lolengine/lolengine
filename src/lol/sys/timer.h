@@ -26,6 +26,7 @@ public:
     Timer();
     ~Timer();
 
+    void Reset();
     float Get();
     float Poll();
     void Wait(float seconds);

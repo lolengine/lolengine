@@ -238,7 +238,7 @@ void MeshViewer::TickGame(float seconds)
         {
             for (ThreadJob* job : result)
             {
-                if (job->GetJobType() == ThreadJobType::WORK_SUCCESSED)
+                if (job->GetJobType() == ThreadJobType::WORK_SUCCEEDED)
                 {
                     MeshViewerLoadJob* mvjob = static_cast<MeshViewerLoadJob*>(job);
                     mvjob->RetrieveResult(this);
