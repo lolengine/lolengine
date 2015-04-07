@@ -483,6 +483,7 @@ AC_CONFIG_FILES(
   doc/doxygen.cfg
   doc/samples/Makefile
   doc/samples/math/Makefile
+  doc/samples/meshviewer/Makefile
   doc/samples/sandbox/Makefile
   doc/tutorial/Makefile
 ])

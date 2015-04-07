@@ -77,7 +77,7 @@ _ReSharper.*
 demos/lol.js/lol.js
 doc/samples/benchsuite
 doc/samples/btphystest
-doc/samples/meshviewer
+doc/samples/meshviewer/meshviewer
 doc/samples/nacl_phystest
 doc/samples/sandbox/sample
 doc/samples/math/pi
