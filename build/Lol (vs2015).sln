@@ -92,7 +92,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benlitz", "Benlitz", "{B583
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benlitzTest1", "..\people\benlitz\test1\benlitzTest1.vcxproj", "{FAF82AD2-D9F4-4694-9A01-103BC5B771B4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meshviewer", "..\doc\samples\meshviewer.vcxproj", "{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "meshviewer", "..\doc\samples\meshviewer\meshviewer.vcxproj", "{7CE9FE12-E4AB-4A22-90D4-2C15F0C30D4E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tactics", "..\people\touky\tactics\tactics.vcxproj", "{25493FC8-75AC-4703-AD58-AB0C4A0FB79C}"
 EndProject

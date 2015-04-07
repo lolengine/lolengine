@@ -1,13 +1,12 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = math sandbox
+SUBDIRS = math meshviewer sandbox
 
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-noinst_PROGRAMS = benchsuite btphystest nacl_phystest meshviewer \
-    simplex
+noinst_PROGRAMS = benchsuite btphystest nacl_phystest simplex
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
@@ -40,16 +39,6 @@ nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
     -DHAVE_PHYS_USE_BULLET
 nacl_phystest_DEPENDENCIES = @LOL_DEPS@
 nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
-
-meshviewer_SOURCES = meshviewer/meshviewer.cpp meshviewer/meshviewer.h \
-    meshviewer/scenesetup.cpp meshviewer/scenesetup.h \
-    data/shinymvtexture.lolfx data/shinyfur.lolfx
-meshviewer_CPPFLAGS = $(AM_CPPFLAGS)
-meshviewer_DEPENDENCIES = @LOL_DEPS@
-meshviewer_LDFLAGS = $(AM_LDFLAGS)
-if USE_EMSCRIPTEN
-meshviewer_LDFLAGS += -s EXPORTED_FUNCTIONS="['_main', '_C_Send']"
-endif
 
 simplex_SOURCES = simplex.cpp
 simplex_CPPFLAGS = $(AM_CPPFLAGS)
