@@ -67,7 +67,7 @@ public:
             m_mutex.lock();
             long int time = m_time;
             m_mutex.unlock();
-            return m_time;
+            return time;
         }
         void SetUpdated(bool updated)
         {

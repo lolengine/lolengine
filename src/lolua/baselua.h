@@ -958,7 +958,7 @@ protected:
     static void Release(LuaState* l, Loader* loader);
     static void StoreObject(LuaState* l, Object* obj);
     //Virtual Store lua object ------------------------------------------------
-    virtual void Store(Object* obj) { }
+    virtual void Store(Object* obj) { UNUSED(obj); }
 
 private:
     LuaState* m_lua_state;

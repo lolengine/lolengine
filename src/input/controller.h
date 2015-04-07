@@ -326,7 +326,7 @@ public:
             MAX,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { return true; }
+        virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { UNUSED(enum_map); return true; }
     };
     typedef SafeEnum<InputTypeBase> InputType;
 
