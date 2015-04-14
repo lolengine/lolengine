@@ -22,7 +22,7 @@ class EasyMeshLuaObject : public LuaObject
     EasyMesh m_instance;
 public:
     //-------------------------------------------------------------------------
-    EasyMeshLuaObject();
+    EasyMeshLuaObject(String const& name);
     virtual ~EasyMeshLuaObject();
     EasyMesh& GetMesh() { return m_instance; }
 
@@ -645,12 +645,23 @@ public:
 //-----------------------------------------------------------------------------
 class EasyMeshLuaLoader : public LuaLoader
 {
+    friend class EasyMeshLuaObject;
+
 public:
     EasyMeshLuaLoader();
     virtual ~EasyMeshLuaLoader();
     //Virtual Store lua object ------------------------------------------------
     virtual void Store(LuaObject* obj);
     array<EasyMeshLuaObject*>& GetInstances();
+
+    //-------------------------------------------------------------------------
+protected:
+    static void RegisterMesh(EasyMeshLuaObject* mesh, String const& name);
+public:
+    static bool GetRegisteredMeshes(map<String, EasyMeshLuaObject*>& meshes);
+
+private:
+    static map<String, EasyMeshLuaObject*> m_meshes;
 };
 
 } /* namespace lol */

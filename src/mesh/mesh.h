@@ -49,6 +49,8 @@ namespace lol
 
 class Mesh
 {
+    friend class Scene;
+
 public:
     Mesh();
     ~Mesh();
@@ -56,9 +58,10 @@ public:
     /* FIXME: this should eventually take a “material” as argument, which
      * may behave differently between submeshes. */
     void SetMaterial(Shader *shader);
+
+protected:
     void Render();
 
-public:
     array<class SubMesh *> m_submeshes;
 };
 
@@ -72,6 +75,9 @@ public:
 
 class SubMesh
 {
+    friend class PrimitiveMesh;
+    friend class Mesh;
+
 public:
     SubMesh(Shader *shader, VertexDeclaration* vdecl);
     ~SubMesh();
@@ -84,9 +90,9 @@ public:
     void SetIndexBuffer(IndexBuffer* ibo);
     void AddTexture(const char* name, Texture* texture);
 
+protected:
     void Render();
 
-protected:
     MeshPrimitive m_mesh_prim;
     Shader *m_shader;
     VertexDeclaration* m_vdecl;

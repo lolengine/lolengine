@@ -174,7 +174,7 @@ int BaseThreadManager::GetDispatchedCount()
 //-----------------------------------------------------------------------------
 void BaseThreadManager::DispatchJob(ThreadJob* job)
 {
-    m_job_dispatch << job;
+    if (job) m_job_dispatch << job;
 }
 void BaseThreadManager::DispatchJob(array<ThreadJob*> const& jobs)
 {

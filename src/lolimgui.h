@@ -173,6 +173,14 @@ protected:
     //map<ImGuiKey_, LolImGuiKey> m_keys;
 };
 
+//-----------------------------------------------------------------------------
+class PrimitiveLolImGui : public Primitive
+{
+public:
+    PrimitiveLolImGui() { }
+    virtual void Render() const;
+};
+
 //bool        ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks);
 //void        ImGui_ImplGlfw_Shutdown();
 //void        ImGui_ImplGlfw_NewFrame();

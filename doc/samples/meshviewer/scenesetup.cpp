@@ -299,4 +299,18 @@ void SceneSetupLuaLoader::RegisterSetup(SceneSetup* setup)
     m_setups[setup->m_name] = setup;
 }
 
+//-----------------------------------------------------------------------------
+bool SceneSetupLuaLoader::GetRegisteredSetups(map<String, SceneSetup*>& setups)
+{
+    setups = m_setups;
+    return !!m_setups.count();
+}
+
+//-----------------------------------------------------------------------------
+bool SceneSetupLuaLoader::GetLoadedSetups(map<String, SceneSetup*>& setups)
+{
+    return GetRegisteredSetups(setups);
+}
+
+
 } /* namespace lol */

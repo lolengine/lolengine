@@ -161,6 +161,9 @@ public:
     //-------------------------------------------------------------------------
 protected:
     static void RegisterSetup(SceneSetup* setup);
+    static bool GetRegisteredSetups(map<String, SceneSetup*>& setups);
+public:
+    bool GetLoadedSetups(map<String, SceneSetup*>& setups);
 
 private:
     static map<String, SceneSetup*> m_setups;

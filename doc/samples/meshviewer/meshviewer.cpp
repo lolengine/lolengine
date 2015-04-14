@@ -34,7 +34,7 @@ static int const TEXTURE_WIDTH = 256;
 #define     DEFAULT_HEIGHT      (400.f * R_M)
 #else
 #define     DEFAULT_WIDTH       (1200.f * R_M)
-#define     DEFAULT_HEIGHT      (400.f * R_M)
+#define     DEFAULT_HEIGHT      (800.f * R_M)
 #endif //HAS_WEB
 #define     WIDTH               ((float)Video::GetSize().x)
 #define     HEIGHT              ((float)Video::GetSize().y)
@@ -95,14 +95,26 @@ public:
     array<vec3>     m_targets;
 };
 
+//EasyMeshViewerObject --------------------------------------------------------
+void EasyMeshViewerObject::TickDraw(float seconds, Scene &scene)
+{
+    switch (m_mesh.GetMeshState().ToScalar())
+    {
+    case MeshRender::NeedConvert: { m_mesh.MeshConvert(); break; }
+    case MeshRender::CanRender: { scene.AddPrimitive(m_mesh, mat4::identity/*TODO:FIX THAT*/); break; }
+    default: break;
+    }
+}
+
 //EasyMeshLoadJob -------------------------------------------------------------
 bool EasyMeshLoadJob::DoWork()
 {
-    if (m_loader.ExecLuaFile(m_path))
+    map<String, EasyMeshLuaObject*> meshes;
+    if (m_loader.ExecLuaFile(m_path) && EasyMeshLuaLoader::GetRegisteredMeshes(meshes))
     {
-        array<EasyMeshLuaObject*>& objs = m_loader.GetInstances();
-        for (EasyMeshLuaObject* obj : objs)
-            m_meshes << new EasyMeshViewerObject(obj->GetMesh());
+        array<String> keys = meshes.keys();
+        for (String key : keys)
+            m_meshes << new EasyMeshViewerObject(key, meshes[key]->GetMesh());
     }
     return !!m_meshes.count();
 }
@@ -111,7 +123,7 @@ bool EasyMeshLoadJob::DoWork()
 MeshViewerLoadJob* EasyMeshLoadJob::GetInstance(String const& path)
 {
     if (Check(path))
-        return new MeshViewerLoadJob(path);
+        return new EasyMeshLoadJob(path);
     return nullptr;
 }
 
@@ -126,11 +138,14 @@ void EasyMeshLoadJob::RetrieveResult(class MeshViewer* app)
 //MeshViewer ------------------------------------------------------------------
 MeshViewer::MeshViewer(char const *file_name)
     : m_file_name(file_name)
-{ }
+{
+    LolImGui::Init();
+}
 
 //-----------------------------------------------------------------------------
 MeshViewer::~MeshViewer()
 {
+    LolImGui::Shutdown();
     Stop();
 }
 
@@ -140,26 +155,30 @@ void MeshViewer::Start()
     /** OLD STUFF **/
     //Prepare();
 
-    //Scene setup
-    m_setup_loader.ExecLuaFile("meshviewer_init.lua");
-
     //Threads setup
     m_entities << (m_file_check = new FileUpdateTester());
-    m_file_status = m_file_check->RegisterFile(m_file_name);
+    m_entities << (m_file_loader = new DefaultThreadManager(4, 0));
 
-    //m_entities << (m_file_loader = new DefaultThreadManager(1, 1));
+    //Scene setup
+    m_ssetup_file_name = "data/meshviewer.init.lua";
+    UpdateSceneSetup();
+
+    //Mesh file
+    m_file_status = m_file_check->RegisterFile(m_file_name);
+    m_file_loader->AddJob(GetLoadJob(m_file_name));
 
     //Camera setup
     m_camera = new Camera();
-    m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3::zero, vec3::axis_y);
-    m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
-    m_camera->UseShift(true);
+    m_camera->SetView(vec3(10.f, 10.f, 10.f), vec3::zero, vec3::axis_y);
+    m_camera->SetProjection(40.f, .0001f, 2000.f);
+    //m_camera->SetProjection(90.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
+    //m_camera->UseShift(true);
     g_scene->PushCamera(m_camera);
 
 #if HAS_INPUT
     InputProfile& ip = m_profile;
     ip.AddBindings<MeshViewerKeyInput, MeshViewerKeyInput::KBD_BEG, MeshViewerKeyInput::KBD_END>(InputProfileType::Keyboard);
-    ip.AddBindings<MeshViewerKeyInput, MeshViewerKeyInput::MSE_BEG, MeshViewerKeyInput::MSE_END>(InputProfileType::Keyboard);
+    ip.AddBindings<MeshViewerKeyInput, MeshViewerKeyInput::MSE_BEG, MeshViewerKeyInput::MSE_END>(InputProfileType::MouseKey);
 
     m_entities << (m_controller = new Controller("MeshViewer"));
     m_controller->Init(m_profile);
@@ -179,9 +198,11 @@ void MeshViewer::Start()
 //-----------------------------------------------------------------------------
 void MeshViewer::Stop()
 {
+    //Destroy scene setup
+    UpdateSceneSetup(true);
+
     //Destroy core stuff
     if (m_camera) g_scene->PopCamera(m_camera);
-    if (m_ssetup) delete m_ssetup;
 
     m_file_check->UnregisterFile(m_file_status);
 
@@ -192,7 +213,6 @@ void MeshViewer::Stop()
     while (m_objs.count()) delete m_objs.Pop();
 
     //Nullify all
-    m_ssetup = nullptr;
     m_camera = nullptr;
     m_controller = nullptr;
     m_file_check = nullptr;
@@ -200,6 +220,35 @@ void MeshViewer::Stop()
 
     /** ----- Init is needed ----- **/
     m_init = false;
+}
+
+//-----------------------------------------------------------------------------
+void MeshViewer::UpdateSceneSetup(bool only_destroy)
+{
+    //Delete previous setups
+    array<String> keys = m_ssetups.keys();
+    for (String key : keys)
+        delete m_ssetups[key];
+    m_ssetups.empty();
+    if (m_ssetup_file_status)
+    {
+        m_file_check->UnregisterFile(m_ssetup_file_status);
+        delete m_ssetup_file_status;
+    }
+    m_ssetup_file_status = nullptr;
+
+    //Init new setups
+    if (!only_destroy)
+    {
+        m_ssetup_loader.ExecLuaFile(m_ssetup_file_name);
+        if (m_ssetup_loader.GetLoadedSetups(m_ssetups))
+        {
+            m_ssetup_file_status = m_file_check->RegisterFile(m_ssetup_file_name);
+            array<String> keys = m_ssetups.keys();
+            if (!m_ssetup_name.count() || !keys.find(m_ssetup_name))
+                m_ssetup_name = keys[0];
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -220,17 +269,67 @@ void MeshViewer::TickGame(float seconds)
 
     m_first_tick = true;
 
-    //Check file update
-    ASSERT(m_file_status);
-    if (false && m_file_status->HasUpdated())
+#if HAS_INPUT
     {
-        MeshViewerLoadJob* job = GetLoadJob(m_file_name);
-        if (!job)
-            m_file_loader->AddJob(job);
+        //Shutdown logic
+        if (m_controller->IsKeyPressed(MeshViewerKeyInput::Exit))
+            Ticker::Shutdown();
+    }
+#endif //HAS_INPUT
+
+    static bool default_open = true;
+    //static float fov = 40.f;
+    //static vec3 sphere_pos = vec3(20.f, 45.f, 45.f);
+    //static bool use_custom_cam = true;
+    //static float f;
+    //static int mesh_idx = 0;
+    //static array<char*> mesh_names_char;
+    //static array<String> mesh_names_str;
+
+    //Draw viewer objects
+    m_menu_mesh_names_char.empty();
+    m_menu_mesh_names_str.empty();
+    for (ViewerObject* obj : m_objs)
+        m_menu_mesh_names_str << obj->GetName();
+    for (ptrdiff_t i = 0; i < m_menu_mesh_names_str.count(); ++i)
+        m_menu_mesh_names_char << m_menu_mesh_names_str[i].C();
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui::Begin("Camera Setup" /*, &default_open, ImGuiWindowFlags_AlwaysAutoResize*/);
+    {
+        ImGui::Text("Hello, world!");
+        ImGui::Checkbox("Use custom cam", &m_menu_cam_useage);
+        ImGui::Text("MousePos! %.2f/%.2f", io.MousePos.x, io.MousePos.y);
+        ImGui::Text("Left Mouse: %s", io.MouseDown[0] ? "true" : "false");
+        ImGui::SliderFloat("Cam FOV", &m_menu_cam_fov, 0.1f, 120.0f);
+        ImGui::SliderFloat("Cam Distance", &m_menu_cam_pos.x, 0.1f, 30.f);
+        ImGui::SliderFloat("Cam H-axis", &m_menu_cam_pos.y, -180.f, 180.f);
+        ImGui::SliderFloat("Cam V-axis", &m_menu_cam_pos.z, -89.f, 89.f);
+        ImGui::ListBox("Meshes", &m_menu_mesh_idx, (const char**)m_menu_mesh_names_char.data(), (int)m_menu_mesh_names_char.count());
+        //ImGui::ListBox()
+    }
+    ImGui::End();
+
+    //Camera
+    if (m_menu_cam_useage)
+    {
+        vec3 sphere_pos_rad = m_menu_cam_pos;
+        sphere_pos_rad.z = (sphere_pos_rad.z > 0.f) ? (90.f - sphere_pos_rad.z) : (sphere_pos_rad.z - 90.f);
+        sphere_pos_rad = vec3(sphere_pos_rad.x, radians(sphere_pos_rad.y), radians(sphere_pos_rad.z));
+        m_camera->SetFov(m_menu_cam_fov);
+        m_camera->SetPosition(cartesian(sphere_pos_rad));
+        m_camera->SetTarget(vec3::zero, vec3::axis_y);
     }
 
+    //Check file update
+    ASSERT(m_file_status);
+    //if (false) //DEBUG
+    //m_file_status->GetTime()
+    if (m_file_status->HasUpdated())
+        m_file_loader->AddJob(GetLoadJob(m_file_name));
+
     //Check work done
-    if (false)
+    //if (false) //DEBUG
     {
         array<ThreadJob*> result;
         m_file_loader->GetWorkResult(result);
@@ -256,6 +355,16 @@ void MeshViewer::TickGame(float seconds)
 void MeshViewer::TickDraw(float seconds, Scene &scene)
 {
     super::TickDraw(seconds, scene);
+
+    //Draw viewer objects
+    if (m_menu_mesh_idx >= 0 && m_menu_mesh_idx < m_objs.count())
+        m_objs[m_menu_mesh_idx]->TickDraw(seconds, scene);
+
+    //Draw gizmos & grid
+    Debug::DrawGizmo(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
+    Debug::DrawSetupColor(Color::white);
+    Debug::DrawSetupSegment(1.f);
+    Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
     /** OLD STUFF **/
     //Draw(seconds);

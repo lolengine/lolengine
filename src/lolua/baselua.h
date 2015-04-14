@@ -271,12 +271,18 @@ public:
     {
         GetInc(l, index);
     }
-    inline T* operator ()()        { return m_value; }
-    inline T* operator ->()        { return m_value; }
-    inline T* operator=(T* value)  { m_value = value; }
+
+    inline T* operator ()()       { return m_value; }
+    inline T* operator ->()       { return m_value; }
+    inline T* operator=(T* value) { m_value = value; }
+    inline T* GetValue()          { return m_value; }
     inline bool IsValid(LuaState* l, int index)
     {
         return InnerIsValid(l, index);
+    }
+    inline bool IsOptional()
+    {
+        return m_optional;
     }
 private:
     inline void GetInc(LuaState* l, int& index)
@@ -660,6 +666,10 @@ public:
     {
         return InnerIsValid(l, index);
     }
+    inline bool IsOptional()
+    {
+        return m_value.IsOptional();
+    }
 private:
     void GetInc(LuaState* l, int& index)
     {
@@ -768,7 +778,7 @@ public:
     {
         GetInc(l, index);
     }
-    VarEnum(vec4 value, LuaState* l, int& index, bool optional = false)
+    VarEnum(SafeEnum<E> value, LuaState* l, int& index, bool optional = false)
         : VarEnum(value, optional)
     {
         GetInc(l, index);
@@ -780,6 +790,10 @@ public:
     inline bool IsValid(LuaState* l, int index)
     {
         return InnerIsValid(l, index);
+    }
+    inline bool IsOptional()
+    {
+        return m_optional;
     }
 private:
     void GetInc(LuaState* l, int& index)
@@ -866,20 +880,36 @@ public:
     template<typename T>
     Stack& operator>>(T& var)
     {
-        var = T(m_state, m_index);
+        var = T(var.GetValue(), m_state, m_index, var.IsOptional());
         return *this;
     }
+
     /*
     template<typename T>
     Stack& operator>>(Var<T>& var)
     {
-    var = Var<T>(m_state, m_index);
-    return *this;
+        var = Var<T>(var.GetValue(), m_state, m_index, var.IsOptional());
+        return *this;
+    }
+    template<typename T>
+    Stack& operator>>(Var<T>& var)
+    {
+        var = Var<T>(var.GetValue(), m_state, m_index, var.IsOptional());
+        return *this;
     }
     template<typename T>
     Stack& operator>>(VarPtr<T>& var)
     {
         var = VarPtr<T>(m_state, m_index);
+        return *this;
+    }
+    */
+    /*
+    template<typename T>
+    Stack& operator>>(T& var)
+    {
+        Var<T> ret(m_state, m_index);
+        var = ret.GetValue();
         return *this;
     }
     template<typename T>
@@ -899,9 +929,10 @@ public:
     }
     /*
     template<typename T>
-    Stack& operator<<(Var<T>& var)
+    Stack& operator<<(T& var)
     {
-        m_result += var.Return(m_state);
+        Var<T> ret(var, false);
+        m_result += ret.Return(m_state);
         return *this;
     }
     template<typename T>
