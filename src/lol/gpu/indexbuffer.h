@@ -22,6 +22,8 @@ namespace lol
 
 class IndexBuffer
 {
+    friend class Mesh;
+
 public:
     IndexBuffer(size_t size);
     ~IndexBuffer();
@@ -33,6 +35,9 @@ public:
 
     void Bind();
     void Unbind();
+
+protected:
+    uint16_t *GetData();
 
 private:
     class IndexBufferData *m_data;

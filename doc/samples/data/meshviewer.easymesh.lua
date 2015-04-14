@@ -1,19 +1,17 @@
-s0 = SceneSetup.New("DefaultSetup")
+-- Gear 0: New style
+em0 = EasyMesh.New("Mesh0");
 
-s0:AddLight("Point")
-    s0:Position(0, 0, 15)
-    s0:Color("#bbb")
-s0:AddLight("Directional")
-    s0:Position(0, 0, 15)
-    s0:Color("#bbb")
---addlight 1 position (3 10 0) color #444
+em0:SetColor("#f00")
+em0:AddBox(2)
+em0:TranslateY(1.5)
+em0:AddBox(2.5)
 
-s0:Setup()
-    s0:Color("#ddd")
-    s0:Show("Gizmo")
-    s0:Show("Light")
+-- Gear 1: New style
+em1 = EasyMesh.New("Mesh1");
 
---SCENE SETUP END
+em1:SetColor("#0f0")
+em1:AddBox(2.5)
+em1:TranslateY(2)
+em1:AddBox(2)
 
---addlight 0.0 position (1 0 1) color #0ff
---addlight 0.0 position (-0.2 -1 -0.5) color (.0 .2 .5 1)
+

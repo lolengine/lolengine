@@ -52,19 +52,28 @@ public:
 protected:
     virtual bool DoWork()
     {
+        array<String> pathlist = System::GetPathList(m_path);
         File f;
-        f.Open(m_path, FileAccess::Read);
-        if (!f.IsValid())
-            return false;
-        if (!m_ready)
-            m_time = f.GetModificationTime();
-        else
+        for (String path : pathlist)
         {
-            long int new_time = f.GetModificationTime();
-            if (new_time > m_time)
-                m_updated = true;
+            f.Open(path, FileAccess::Read);
+            if (f.IsValid())
+            {
+                long int new_time = f.GetModificationTime();
+                if (!m_ready)
+                {
+                    m_time = new_time;
+                    m_ready = true;
+                }
+                else if (new_time > m_time)
+                {
+                    m_time = new_time;
+                    m_updated = true;
+                }
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     //-----------------
@@ -114,6 +123,11 @@ void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 //-----------------------------------------------------------------------------
 void FileUpdateTester::TickGame(float seconds)
 {
+    //Reset update for this frame
+    array<String> keys = m_files.keys();
+    for (String key : keys)
+        m_files[key]->SetUpdated(false);
+
     super::TickGame(seconds);
 
     if (!GetDispatchCount() && m_job_done.count())
@@ -121,10 +135,6 @@ void FileUpdateTester::TickGame(float seconds)
         if (m_frame_count++ < m_frame_skip)
             return;
         m_frame_count = 0;
-
-        array<String> keys = m_files.keys();
-        for (String key : keys)
-            m_files[key]->SetUpdated(false);
 
         DispatchJob(m_job_done);
         m_job_done.empty();
@@ -139,9 +149,9 @@ void FileUpdateTester::TreatResult(ThreadJob* result)
     {
         m_files[job->GetPath()]->SetTime(job->GetTime());
         m_files[job->GetPath()]->SetUpdated(true);
-        job->Restart();
-        m_job_done << job;
     }
+    job->Restart();
+    m_job_done << job;
 }
 
 //AsyncImageJob ---------------------------------------------------------------

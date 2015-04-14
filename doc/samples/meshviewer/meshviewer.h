@@ -131,31 +131,41 @@ class ViewerObject
 {
 public:
     ViewerObject() { }
+    ViewerObject(String const& name) : m_name(name) { }
     virtual ~ViewerObject() { }
 
+    virtual void TickDraw(float seconds, Scene &scene) { }
+    String GetName() { return m_name; }
+
 protected:
+    String m_name;
 };
 
 //EasyMeshViewerObject --------------------------------------------------------
 class EasyMeshViewerObject : public ViewerObject
 {
+    typedef ViewerObject super;
+
 public:
     EasyMeshViewerObject()
         : ViewerObject() { }
-    EasyMeshViewerObject(EasyMesh const& mesh)
-        : EasyMeshViewerObject()
+    EasyMeshViewerObject(String const& name, EasyMesh const& mesh)
+        : ViewerObject(name)
     {
-        Init(mesh);
+        Init(name, mesh);
     }
     virtual ~EasyMeshViewerObject() { }
 
-    void Init(EasyMesh const& mesh)
+    virtual void TickDraw(float seconds, Scene &scene);
+
+    void Init(String const& name, EasyMesh const& mesh)
     {
+        m_name = name;
         m_mesh = mesh;
     }
 
 protected:
-    EasyMesh    m_mesh;
+    EasyMesh m_mesh;
 };
 
 //MeshViewerLoadJob -----------------------------------------------------------
@@ -214,6 +224,8 @@ public:
     void Start();
     void Stop();
 
+    void UpdateSceneSetup(bool only_destroy = false);
+
     MeshViewerLoadJob* GetLoadJob(String const& path);
     void AddViewerObj(ViewerObject* obj) { m_objs << obj; }
 
@@ -238,9 +250,22 @@ private:
     bool                    m_init = false;
     bool                    m_first_tick = false;
     InputProfile            m_profile;
-    Camera *                m_camera = nullptr;
-    SceneSetup*             m_ssetup = nullptr;
-    SceneSetupLuaLoader     m_setup_loader;
+    Camera*                 m_camera = nullptr;
+
+    //ImGui stuff
+    bool                    m_menu_cam_useage = true;
+    float                   m_menu_cam_fov = 40.f;
+    vec3                    m_menu_cam_pos = vec3(20.f, 45.f, 45.f);
+    int                     m_menu_mesh_idx = 0;
+    array<char*>            m_menu_mesh_names_char;
+    array<String>           m_menu_mesh_names_str;
+
+    //Scene setup data
+    SceneSetupLuaLoader     m_ssetup_loader;
+    FileUpdateStatus*       m_ssetup_file_status = nullptr;
+    String                  m_ssetup_file_name;
+    String                  m_ssetup_name;
+    map<String, SceneSetup*> m_ssetups;
 
     //File data
     String                  m_file_name;
@@ -260,6 +285,7 @@ private:
     DefaultThreadManager*   m_file_loader = nullptr;
 
     //OLD ---------------------------------------------------------------------
+    SceneSetup*             m_ssetup = nullptr;
     array<LightData>    m_light_datas;
     short               m_input_usage;
     mat4                m_mat;

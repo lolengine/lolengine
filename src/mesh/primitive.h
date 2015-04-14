@@ -15,18 +15,17 @@
 // -------------------
 //
 
-#include "mesh/mesh.h"
-
 namespace lol
 {
 
-class Primitive
+class PrimitiveMesh : public Primitive
 {
     friend class Scene;
 
 public:
-    Primitive(SubMesh *submesh, mat4 const &matrix);
-    ~Primitive();
+    PrimitiveMesh(SubMesh *submesh, mat4 const &matrix);
+    virtual ~PrimitiveMesh();
+    virtual void Render() const;
 
 private:
     SubMesh *m_submesh;

@@ -56,7 +56,7 @@ class SceneData
 
 private:
     /* New scenegraph */
-    array<Primitive> m_primitives;
+    array<Primitive*> m_primitives;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
     float   m_new_line_time;
@@ -91,7 +91,7 @@ Scene::Scene(ivec2 size)
 {
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
-    mat4 proj = mat4::ortho(0.f, size.x, 0.f, size.y, -1000.f, 1000.f);
+    mat4 proj = mat4::ortho(0.f, (float)size.x, 0.f, (float)size.y, -1000.f, 1000.f);
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
@@ -133,7 +133,7 @@ int Scene::PushCamera(Camera *cam)
 
     Ticker::Ref(cam);
     data->m_camera_stack.Push(cam);
-    return data->m_camera_stack.Count() - 1;
+    return (int)data->m_camera_stack.Count() - 1;
 }
 
 void Scene::PopCamera(Camera *cam)
@@ -142,7 +142,7 @@ void Scene::PopCamera(Camera *cam)
 
     /* Parse from the end because that’s probably where we’ll find
      * our camera first. */
-    for (int i = data->m_camera_stack.Count(); i--; )
+    for (ptrdiff_t i = data->m_camera_stack.Count(); i--; )
     {
         if (data->m_camera_stack[i] == cam)
         {
@@ -174,16 +174,24 @@ void Scene::Reset()
     data->m_tile_bufs.Empty();
 
     data->m_lights.Empty();
+
+    for (int i = 0; i < data->m_primitives.count(); i++)
+        delete data->m_primitives[i];
     data->m_primitives.Empty();
 }
 
+/*TODO: SAM/TOUKY: Change that*/
 void Scene::AddPrimitive(Mesh const &mesh, mat4 const &matrix)
 {
     for (int i = 0; i < mesh.m_submeshes.Count(); ++i)
     {
-        data->m_primitives.Push(Primitive(mesh.m_submeshes[i],
-                                          matrix));
+        AddPrimitive(new PrimitiveMesh(mesh.m_submeshes[i], matrix));
     }
+}
+
+void Scene::AddPrimitive(Primitive* primitive)
+{
+    data->m_primitives.Push(primitive);
 }
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle)
@@ -192,7 +200,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
 
     Tile t;
     /* FIXME: this sorting only works for a 45-degree camera */
-    t.prio = -pos.y - (int)(2 * 32 * pos.z) + (o ? 0 : 32);
+    t.prio = (uint32_t)(-pos.y - (int)(2 * 32 * pos.z) + ((float)o ? 0 : 32));
     t.tileset = tileset;
     t.id = id;
     t.pos = pos;
@@ -234,57 +242,9 @@ void Scene::RenderPrimitives()
     /* TODO: this should be the main entry for rendering of all
      * primitives found in the scene graph. When we have one. */
 
-    Shader *shader = nullptr;
-    ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
-    ShaderAttrib a_pos, a_tex;
-
-    for (Primitive const &p : data->m_primitives)
+    for (Primitive* p : data->m_primitives)
     {
-        /* If this primitive uses a new shader, update attributes */
-        if (p.m_submesh->GetShader() != shader)
-        {
-            shader = p.m_submesh->GetShader();
-
-            a_pos = shader->GetAttribLocation(VertexUsage::Position, 0);
-            a_tex = shader->GetAttribLocation(VertexUsage::TexCoord, 0);
-
-            shader->Bind();
-
-            /* Per-scene matrices */
-            ShaderUniform u_mat;
-            u_mat = shader->GetUniformLocation("u_projection");
-            shader->SetUniform(u_mat, GetCamera()->GetProjection());
-            u_mat = shader->GetUniformLocation("u_view");
-            shader->SetUniform(u_mat, GetCamera()->GetView());
-            u_mat = shader->GetUniformLocation("u_inv_view");
-            shader->SetUniform(u_mat, inverse(GetCamera()->GetView()));
-
-            /* Per-object matrices, will be set later */
-            u_model = shader->GetUniformLocation("u_model");
-            u_modelview = shader->GetUniformLocation("u_modelview");
-            u_normalmat = shader->GetUniformLocation("u_normalmat");
-
-            /* Per-scene environment */
-            array<Light *> const &lights = GetLights();
-            array<vec4> light_data;
-
-            /* FIXME: the 4th component of the position can be used for other things */
-            /* FIXME: GetUniform("blabla") is costly */
-            for (auto l : lights)
-                light_data << vec4(l->GetPosition(), l->GetType()) << l->GetColor();
-            while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
-                light_data << vec4::zero << vec4::zero;
-
-            ShaderUniform u_lights = shader->GetUniformLocation("u_lights");
-            shader->SetUniform(u_lights, light_data);
-        }
-
-        shader->SetUniform(u_model, p.m_matrix);
-        mat4 modelview = GetCamera()->GetView() * p.m_matrix;
-        shader->SetUniform(u_modelview, modelview);
-        shader->SetUniform(u_normalmat, transpose(inverse(mat3(modelview))));
-
-        p.m_submesh->Render();
+        p->Render();
     }
 }
 
@@ -419,7 +379,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-    int linecount = data->m_lines.Count();
+    int linecount = (int)data->m_lines.Count();
 
     if (!data->m_line_shader)
         data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));

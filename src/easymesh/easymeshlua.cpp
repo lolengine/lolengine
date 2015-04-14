@@ -51,8 +51,24 @@ array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject::EasyMeshLuaObject() : LuaObject()
+map<String, EasyMeshLuaObject*> EasyMeshLuaLoader::m_meshes;
+void EasyMeshLuaLoader::RegisterMesh(EasyMeshLuaObject* mesh, String const& name)
 {
+    m_meshes[name] = mesh;
+}
+
+//-----------------------------------------------------------------------------
+bool EasyMeshLuaLoader::GetRegisteredMeshes(map<String, EasyMeshLuaObject*>& meshes)
+{
+    meshes = m_meshes;
+    return !!m_meshes.count();
+}
+
+//-----------------------------------------------------------------------------
+EasyMeshLuaObject::EasyMeshLuaObject(String const& name) : LuaObject()
+{
+    if (!!name.count())
+        EasyMeshLuaLoader::RegisterMesh(this, name);
 }
 
 //-----------------------------------------------------------------------------
@@ -65,7 +81,10 @@ EasyMeshLuaObject* EasyMeshLuaObject::New(LuaState* l, int arg_nb)
 {
     UNUSED(l);
     UNUSED(arg_nb);
-    return new EasyMeshLuaObject();
+    LuaStack s(l);
+    LuaString n("", true);
+    s >> n;
+    return new EasyMeshLuaObject(n());
 }
 
 //-----------------------------------------------------------------------------

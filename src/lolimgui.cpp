@@ -96,7 +96,7 @@ LolImGui::~LolImGui()
     delete m_vdecl;
 }
 
-//-------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 LolImGui* g_lolimgui = nullptr;
 void LolImGui::Init()
 {
@@ -147,7 +147,7 @@ void LolImGui::Shutdown()
     ImGui::Shutdown();
 }
 
-//-------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 static String g_clipboard;
 void LolImGui::SetClipboard(const char* text)
 {
@@ -158,7 +158,7 @@ const char* LolImGui::GetClipboard()
     return g_clipboard.C();
 }
 
-//-------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void LolImGui::TickGame(float seconds)
 {
     super::TickGame(seconds);
@@ -227,6 +227,7 @@ void LolImGui::TickGame(float seconds)
         cursor.y = 1.f - cursor.y;
         cursor *= video_size;
         io.MousePos = ImVec2(cursor.x, cursor.y);
+        Log::Debug(Line("%.2f/%.2f"), io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
         for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
@@ -237,8 +238,13 @@ void LolImGui::TickGame(float seconds)
                 io.MouseDown[i - LolImGuiKey::MOUSE_KEY_START] = m_controller->IsKeyPressed(i);
                 break;
             case LolImGuiKey::Focus:
-                if (m_controller->IsKeyPressed(i))
+                if (m_controller->IsKeyReleased(i))
+                {
+                    Log::Debug(Line("Not focused ....."));
                     io.MousePos = ImVec2(-1.f, -1.f);
+                }
+                else
+                    Log::Debug(Line("Focused !!"));
                 break;
             }
         }
@@ -247,17 +253,22 @@ void LolImGui::TickGame(float seconds)
     // Start the frame
     ImGui::NewFrame();
 }
+
+//-----------------------------------------------------------------------------
 void LolImGui::TickDraw(float seconds, Scene &scene)
 {
     super::TickDraw(seconds, scene);
 
-    ImGuiIO& io = ImGui::GetIO();
+    scene.AddPrimitive(new PrimitiveLolImGui());
+}
+void PrimitiveLolImGui::Render() const
+{
+    g_renderer->Clear(ClearMask::Depth);
 
+    ImGuiIO& io = ImGui::GetIO();
     if (io.Fonts->TexID)
         ImGui::Render();
 }
-
-
 
 //// Data
 //static GLFWwindow*  g_Window = NULL;

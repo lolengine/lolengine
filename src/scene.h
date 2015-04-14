@@ -20,7 +20,6 @@
 #include "tileset.h"
 #include "light.h"
 #include "camera.h"
-#include "mesh/primitive.h"
 
 #define LOL_MAX_LIGHT_COUNT 8
 
@@ -29,6 +28,20 @@ namespace lol
 
 class SceneData;
 
+//-----------------------------------------------------------------------------
+class Primitive
+{
+    friend class Scene;
+
+public:
+    Primitive() { }
+    virtual ~Primitive() { }
+    virtual void Render() const { }
+
+private:
+};
+
+//-----------------------------------------------------------------------------
 class Scene
 {
     friend class Video;
@@ -51,6 +64,7 @@ public:
 
     /* New scenegraph */
     void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
+    void AddPrimitive(Primitive* primitive);
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
