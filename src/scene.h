@@ -20,6 +20,7 @@
 #include "tileset.h"
 #include "light.h"
 #include "camera.h"
+#include "mesh/mesh.h"
 
 #define LOL_MAX_LIGHT_COUNT 8
 
