@@ -295,6 +295,7 @@ void MeshViewer::TickGame(float seconds)
         m_menu_mesh_names_char << m_menu_mesh_names_str[i].C();
 
     ImGuiIO& io = ImGui::GetIO();
+    //CAMERA UI ---------------------------------------------------------------
     ImGui::Begin("Camera Setup" /*, &default_open, ImGuiWindowFlags_AlwaysAutoResize*/);
     {
         ImGui::Text("Hello, world!");
@@ -305,6 +306,8 @@ void MeshViewer::TickGame(float seconds)
         ImGui::SliderFloat("Cam Distance", &m_menu_cam_pos.x, 0.1f, 30.f);
         ImGui::SliderFloat("Cam H-axis", &m_menu_cam_pos.y, -180.f, 180.f);
         ImGui::SliderFloat("Cam V-axis", &m_menu_cam_pos.z, -89.f, 89.f);
+        ImGui::Combo("Scene Setup", &m_menu_mesh_idx, (const char**)m_menu_mesh_names_char.data(), (int)m_menu_mesh_names_char.count());
+
         ImGui::ListBox("Meshes", &m_menu_mesh_idx, (const char**)m_menu_mesh_names_char.data(), (int)m_menu_mesh_names_char.count());
         //ImGui::ListBox()
     }
