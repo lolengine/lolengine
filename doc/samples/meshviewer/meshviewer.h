@@ -218,7 +218,7 @@ class MeshViewer : public WorldEntity
 {
     typedef WorldEntity super;
 public:
-    MeshViewer(char const *file_name = "data/meshviewer.easymesh.lua");
+    MeshViewer(char const *file_name = "../data/meshviewer.easymesh.lua");
     ~MeshViewer();
 
     void Start();
