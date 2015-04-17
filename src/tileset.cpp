@@ -33,7 +33,7 @@ namespace lol
  * TileSet implementation class
  */
 
-class TileSetData : public TextureImageData
+class TileSetData
 {
     friend class TileSet;
 
@@ -43,27 +43,14 @@ protected:
     ivec2 m_tile_size;
 };
 
-TextureImageData* TileSet::GetNewData()
-{
-    return new TileSetData();
-}
-
-TileSetData* TileSet::GetData()
-{
-    return (TileSetData*)m_data;
-}
-
-TileSetData const* TileSet::GetData() const
-{
-    return (TileSetData const*)m_data;
-}
-
 /*
  * Public TileSet class
  */
 
 TileSet::TileSet(char const *path)
-    : TextureImage(path)
+  : TextureImage(path),
+    m_tileset_data(new TileSetData()),
+    m_palette(nullptr)
 {
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
@@ -72,7 +59,9 @@ TileSet::TileSet(char const *path)
 }
 
 TileSet::TileSet(char const *path, Image* image)
-    : TextureImage(path, image)
+  : TextureImage(path, image),
+    m_tileset_data(new TileSetData()),
+    m_palette(nullptr)
 {
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
@@ -81,7 +70,7 @@ TileSet::TileSet(char const *path, Image* image)
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
-    : TileSet(path)
+  : TileSet(path)
 {
     /* If count is valid, fix size; otherwise, fix count. */
     if (count.x > 0 && count.y > 0)
@@ -104,7 +93,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
 }
 
 TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
-    : TileSet(path, image)
+  : TileSet(path, image)
 {
     /* If count is valid, fix size; otherwise, fix count. */
     if (count.x > 0 && count.y > 0)
@@ -128,6 +117,7 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
 
 TileSet::~TileSet()
 {
+    delete m_tileset_data;
 }
 
 void TileSet::Init(char const *path, Image* image)
@@ -146,11 +136,10 @@ char const *TileSet::GetName()
 //New methods -----------------------------------------------------------------
 ptrdiff_t TileSet::AddTile(ibox2 rect)
 {
-    TileSetData* data = GetData();
-    data->m_tiles.Push(rect,
-                        box2((vec2)rect.A / (vec2)m_data->m_texture_size,
-                            (vec2)rect.B / (vec2)m_data->m_texture_size));
-    return data->m_tiles.Count() - 1;
+    m_tileset_data->m_tiles.Push(rect,
+             box2((vec2)rect.A / (vec2)m_data->m_texture_size,
+                  (vec2)rect.B / (vec2)m_data->m_texture_size));
+    return m_tileset_data->m_tiles.Count() - 1;
 }
 
 void TileSet::AddTile(ivec2 count)
@@ -167,12 +156,12 @@ void TileSet::AddTile(ivec2 count)
 
 ptrdiff_t TileSet::GetTileCount() const
 {
-    return GetData()->m_tiles.Count();
+    return m_tileset_data->m_tiles.Count();
 }
 
 ivec2 TileSet::GetTileSize(ptrdiff_t tileid) const
 {
-    ibox2 const &box = GetData()->m_tiles[tileid].m1;
+    ibox2 const &box = m_tileset_data->m_tiles[tileid].m1;
     return box.B - box.A;
 }
 
@@ -195,9 +184,8 @@ TileSet const* TileSet::GetPalette() const
 void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
                        vec3 *vertex, vec2 *texture)
 {
-    TileSetData* data = GetData();
-    ibox2 pixels = data->m_tiles[id].m1;
-    box2 texels = data->m_tiles[id].m2;
+    ibox2 pixels = m_tileset_data->m_tiles[id].m1;
+    box2 texels = m_tileset_data->m_tiles[id].m2;
     float dtx = texels.B.x - texels.A.x;
     float dty = texels.B.y - texels.A.y;
     float tx = texels.A.x;

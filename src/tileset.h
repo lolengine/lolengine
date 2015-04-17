@@ -37,10 +37,6 @@ class TileSetData;
 class TileSet : public TextureImage
 {
     typedef TextureImage super;
-protected:
-    virtual TextureImageData* GetNewData();
-    TileSetData* GetData();
-    TileSetData const* GetData() const;
 
 public:
     TileSet(char const *path);
@@ -72,7 +68,8 @@ public:
                   vec3 *vertex, vec2 *texture);
 
 protected:
-    TileSet*        m_palette;
+    TileSetData *m_tileset_data;
+    TileSet *m_palette;
 };
 
 } /* namespace lol */
