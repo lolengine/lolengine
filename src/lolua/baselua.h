@@ -511,6 +511,8 @@ template<> inline int Var<float>::InnerPush(LuaState* l)
     Var<double> v = (double)m_value;
     return v.Return(l);
 }
+
+#if 0
 //-----------------------------------------------------------------------------
 template<> inline bool Var<int64_t>::InnerIsValid(LuaState* l, int index)
 {
@@ -525,6 +527,8 @@ template<> inline int Var<int64_t>::InnerPush(LuaState* l)
     lua_pushinteger(l, m_value);
     return 1;
 }
+#endif
+
 //-----------------------------------------------------------------------------
 template<> inline bool Var<int32_t>::InnerIsValid(LuaState* l, int index)
 {
@@ -541,6 +545,7 @@ template<> inline int Var<int32_t>::InnerPush(LuaState* l)
     Var<int64_t> v = (int64_t)m_value;
     return v.Return(l);
 }
+
 //-----------------------------------------------------------------------------
 template<> inline bool Var<uint32_t>::InnerIsValid(LuaState* l, int index)
 {
@@ -555,6 +560,8 @@ template<> inline int Var<uint32_t>::InnerPush(LuaState* l)
     lua_pushunsigned(l, m_value);
     return 1;
 }
+
+#if 0
 //-----------------------------------------------------------------------------
 template<> inline bool Var<uint64_t>::InnerIsValid(LuaState* l, int index)
 {
@@ -571,6 +578,8 @@ template<> inline int Var<uint64_t>::InnerPush(LuaState* l)
     Var<uint32_t> v = (uint32_t)m_value;
     return v.Return(l);
 }
+#endif
+
 //-----------------------------------------------------------------------------
 template<> inline bool Var<vec2>::InnerIsValid(LuaState* l, int index)
 {
