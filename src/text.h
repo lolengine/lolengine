@@ -22,25 +22,37 @@ namespace lol
 
 class TextData;
 
+enum class TextAlign
+{
+    Left,
+    Right,
+    Center,
+};
+
 class Text : public Entity
 {
 public:
     Text(String const &text, char const *font);
     virtual ~Text();
 
+    /** Set the text that will be displayed */
     void SetText(String const &text);
     void SetInt(int val);
-    void SetPos(vec3 pos);
-    vec3 GetPos();
-    void SetAlign(int align);
-    ivec2 GetFontSize();
 
-    enum
-    {
-        ALIGN_LEFT,
-        ALIGN_RIGHT,
-        ALIGN_CENTER,
-    };
+    /** Set the position of the text object, in the 3D world. */
+    void SetPos(vec3 pos);
+
+    /** Set the text scaling */
+    void SetScale(vec2 scale);
+
+    /** Set the spacing between characters, as a fraction of character width */
+    void SetSpacing(float spacing);
+
+    /** Set the alignment method */
+    void SetAlign(TextAlign align);
+
+    vec3 GetPos();
+    ivec2 GetFontSize();
 
 protected:
     virtual void TickDraw(float seconds, Scene &scene);

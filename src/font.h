@@ -35,7 +35,7 @@ protected:
 
 public:
     /* New methods */
-    void Print(vec3 pos, char const *str, vec2 scale = vec2(1.0f));
+    void Print(vec3 pos, char const *str, vec2 scale = vec2(1.0f), float spacing = 0.0f);
     ivec2 GetSize() const;
 
 private:

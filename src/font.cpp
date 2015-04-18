@@ -62,7 +62,7 @@ char const *Font::GetName()
     return data->m_name.C();
 }
 
-void Font::Print(vec3 pos, char const *str, vec2 scale)
+void Font::Print(vec3 pos, char const *str, vec2 scale, float spacing)
 {
     float origin_x = pos.x;
     while (*str)
@@ -87,6 +87,8 @@ void Font::Print(vec3 pos, char const *str, vec2 scale)
             pos.x += data->size.x * scale.x;
             break;
         }
+
+        pos.x += data->size.x * scale.x * spacing;
     }
 }
 

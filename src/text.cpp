@@ -28,9 +28,12 @@ class TextData
     friend class Text;
 
 private:
-    int font, align;
+    int m_font;
+    TextAlign m_align;
     String m_text;
-    vec3 pos;
+    vec3 m_pos;
+    vec2 m_scale;
+    float m_spacing;
 };
 
 /*
@@ -40,9 +43,12 @@ private:
 Text::Text(String const &text, char const *font)
   : data(new TextData())
 {
-    data->font = Forge::Register(font);
+    data->m_font = Forge::Register(font);
+    data->m_align = TextAlign::Left;
     data->m_text = text;
-    data->pos = vec3(0, 0, 0);
+    data->m_pos = vec3(0, 0, 0);
+    data->m_scale = vec2(1.f);
+    data->m_spacing = 0.f;
 
     m_drawgroup = DRAWGROUP_HUD;
 }
@@ -59,22 +65,32 @@ void Text::SetInt(int val)
 
 void Text::SetPos(vec3 pos)
 {
-    data->pos = pos;
+    data->m_pos = pos;
+}
+
+void Text::SetScale(vec2 scale)
+{
+    data->m_scale = scale;
+}
+
+void Text::SetSpacing(float spacing)
+{
+    data->m_spacing = spacing;
+}
+
+void Text::SetAlign(TextAlign align)
+{
+    data->m_align = align;
 }
 
 vec3 Text::GetPos()
 {
-    return (vec3)data->pos;
-}
-
-void Text::SetAlign(int align)
-{
-    data->align = align;
+    return (vec3)data->m_pos;
 }
 
 ivec2 Text::GetFontSize()
 {
-    Font *font = Forge::GetFont(data->font);
+    Font *font = Forge::GetFont(data->m_font);
     return font->GetSize();
 }
 
@@ -82,22 +98,26 @@ void Text::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
 
-    int length = data->m_text.count();
-    if (length)
+    if (auto length = data->m_text.count())
     {
-        Font *font = Forge::GetFont(data->font);
+        Font *font = Forge::GetFont(data->m_font);
         vec3 delta(0.0f);
-        if (data->align == ALIGN_RIGHT)
-            delta.x -= length * font->GetSize().x;
-        else if (data->align == ALIGN_CENTER)
-            delta.x -= length * font->GetSize().x / 2;
-        font->Print(data->pos + delta, data->m_text.C());
+        float text_width = length * font->GetSize().x
+                         + (length - 1) * data->m_spacing;
+
+        if (data->m_align == TextAlign::Right)
+            delta.x -= text_width * data->m_scale.x;
+        else if (data->m_align == TextAlign::Center)
+            delta.x -= 0.5f * text_width * data->m_scale.x;
+
+        font->Print(data->m_pos + delta, data->m_text.C(),
+                    data->m_scale, data->m_spacing);
     }
 }
 
 Text::~Text()
 {
-    Forge::Deregister(data->font);
+    Forge::Deregister(data->m_font);
     delete data;
 }
 
