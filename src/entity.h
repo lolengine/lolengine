@@ -102,7 +102,7 @@ protected:
         DRAWGROUP_OTHER_1,  //Same ------------------
         DRAWGROUP_OTHER_2,  //Same ------------------
         DRAWGROUP_OTHER_3,  //Same ------------------
-        GAMEGROUP_APP,      //Main application Draw
+        DRAWGROUP_APP,      //Main application Draw
         DRAWGROUP_HUD,
         DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
