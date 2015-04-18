@@ -68,6 +68,7 @@ protected:
 
         GAMEGROUP_INPUT,    //Input should be polled before everything else
         GAMEGROUP_IMGUI,    //Debug update needs to be called before the rest for init purposes
+        GAMEGROUP_APP,      //Main application update
         GAMEGROUP_ENTITY,   //Default entity update
         //------------------//Split entity update:
         GAMEGROUP_PLAYER,   //Player updates before AI to ensure player actions is prevalent
@@ -101,6 +102,7 @@ protected:
         DRAWGROUP_OTHER_1,  //Same ------------------
         DRAWGROUP_OTHER_2,  //Same ------------------
         DRAWGROUP_OTHER_3,  //Same ------------------
+        GAMEGROUP_APP,      //Main application Draw
         DRAWGROUP_HUD,
         DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
