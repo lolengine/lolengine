@@ -428,7 +428,9 @@ public:
 #if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
         /* Nothing */
 #elif LOL_FEATURE_CXX11_THREADS
-        m_thread.join();
+        /* FIXME: this does not work in Visual Studio 2013! */
+        //m_thread.join();
+        m_thread.detach();
 #elif defined HAVE_PTHREAD_H
         pthread_join(m_thread, nullptr);
 #elif defined _WIN32
