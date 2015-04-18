@@ -55,6 +55,12 @@ Font::~Font()
 void Font::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
+
+    if (data->tileset->GetTexture())
+    {
+        data->tileset->GetTexture()->SetMinFiltering(TextureMinFilter::LINEAR_TEXEL_NO_MIPMAP);
+        data->tileset->GetTexture()->SetMagFiltering(TextureMagFilter::LINEAR_TEXEL);
+    }
 }
 
 char const *Font::GetName()
