@@ -26,16 +26,17 @@
 #   include <condition_variable>
 #elif defined HAVE_PTHREAD_H
 #   include <pthread.h>
-#elif defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
+#else
+#   error No threading support yet :(
+#endif
+
+/* XXX: workaround for a bug in Visual Studio 2012 and 2013!
+ * https://connect.microsoft.com/VisualStudio/feedback/details/747145 */
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#   define LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND 1
 #   include <windows.h>
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
-#else
-#   error No threading support yet :(
 #endif
 
 namespace lol
@@ -53,8 +54,6 @@ public:
         /* Nothing */
 #elif defined HAVE_PTHREAD_H
         pthread_mutex_init(&m_mutex, nullptr);
-#elif defined _WIN32
-        InitializeCriticalSection(&m_mutex);
 #endif
     }
 
@@ -67,8 +66,6 @@ public:
         /* Nothing */
 #elif defined HAVE_PTHREAD_H
         pthread_mutex_destroy(&m_mutex);
-#elif defined _WIN32
-        DeleteCriticalSection(&m_mutex);
 #endif
     }
 
@@ -81,8 +78,6 @@ public:
         m_mutex.lock();
 #elif defined HAVE_PTHREAD_H
         pthread_mutex_lock(&m_mutex);
-#elif defined _WIN32
-        EnterCriticalSection(&m_mutex);
 #endif
     }
 
@@ -95,8 +90,6 @@ public:
         return m_mutex.try_lock();
 #elif defined HAVE_PTHREAD_H
         return !pthread_mutex_trylock(&m_mutex);
-#elif defined _WIN32
-        return !!TryEnterCriticalSection(&m_mutex);
 #endif
     }
 
@@ -109,8 +102,6 @@ public:
         m_mutex.unlock();
 #elif defined HAVE_PTHREAD_H
         pthread_mutex_unlock(&m_mutex);
-#elif defined _WIN32
-        LeaveCriticalSection(&m_mutex);
 #endif
     }
 
@@ -122,8 +113,6 @@ private:
     std::mutex m_mutex;
 #elif defined HAVE_PTHREAD_H
     pthread_mutex_t m_mutex;
-#elif defined _WIN32
-    CRITICAL_SECTION m_mutex;
 #endif
 };
 
@@ -144,10 +133,6 @@ public:
         pthread_mutex_init(&m_mutex, nullptr);
         pthread_cond_init(&m_empty_cond, nullptr);
         pthread_cond_init(&m_full_cond, nullptr);
-#elif defined _WIN32
-        m_empty_sem = CreateSemaphore(nullptr, CAPACITY, CAPACITY, nullptr);
-        m_full_sem = CreateSemaphore(nullptr, 0, CAPACITY, nullptr);
-        InitializeCriticalSection(&m_mutex);
 #endif
     }
 
@@ -161,10 +146,6 @@ public:
         pthread_cond_destroy(&m_empty_cond);
         pthread_cond_destroy(&m_full_cond);
         pthread_mutex_destroy(&m_mutex);
-#elif defined _WIN32
-        CloseHandle(m_empty_sem);
-        CloseHandle(m_full_sem);
-        DeleteCriticalSection(&m_mutex);
 #endif
     }
 
@@ -184,9 +165,6 @@ public:
         while (m_count == CAPACITY)
             pthread_cond_wait(&m_full_cond, &m_mutex);
         m_pushers--;
-#elif defined _WIN32
-        WaitForSingleObject(m_empty_sem, INFINITE);
-        EnterCriticalSection(&m_mutex);
 #endif
 
         do_push(value); /* Push value */
@@ -202,9 +180,6 @@ public:
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
         pthread_mutex_unlock(&m_mutex);
-#elif defined _WIN32
-        LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
     }
 
@@ -236,11 +211,6 @@ public:
             pthread_mutex_unlock(&m_mutex);
             return false;
         }
-#elif defined _WIN32
-        DWORD status = WaitForSingleObject(m_empty_sem, 0);
-        if (status == WAIT_TIMEOUT)
-            return false;
-        EnterCriticalSection(&m_mutex);
 #endif
 
         do_push(value); /* Push value */
@@ -256,9 +226,6 @@ public:
         if (m_poppers)
             pthread_cond_signal(&m_empty_cond);
         pthread_mutex_unlock(&m_mutex);
-#elif defined _WIN32
-        LeaveCriticalSection(&m_mutex);
-        ReleaseSemaphore(m_full_sem, 1, nullptr);
 #endif
 
         return true;
@@ -282,9 +249,6 @@ public:
         while (m_count == 0)
             pthread_cond_wait(&m_empty_cond, &m_mutex);
         m_poppers--;
-#elif defined _WIN32
-        WaitForSingleObject(m_full_sem, INFINITE);
-        EnterCriticalSection(&m_mutex);
 #endif
 
         T ret = do_pop(); /* Pop value */
@@ -333,11 +297,6 @@ public:
             pthread_mutex_unlock(&m_mutex);
             return false;
         }
-#elif defined _WIN32
-        DWORD status = WaitForSingleObject(m_full_sem, 0);
-        if (status == WAIT_TIMEOUT)
-            return false;
-        EnterCriticalSection(&m_mutex);
 #endif
 
         ret = do_pop(); /* Pop value */
@@ -391,9 +350,6 @@ private:
     size_t m_poppers, m_pushers;
     pthread_mutex_t m_mutex;
     pthread_cond_t m_empty_cond, m_full_cond;
-#elif defined _WIN32
-    HANDLE m_empty_sem, m_full_sem;
-    CRITICAL_SECTION m_mutex;
 #endif
 };
 
@@ -417,9 +373,6 @@ public:
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
         pthread_create(&m_thread, &attr, trampoline, this);
-#elif defined _WIN32
-        m_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)trampoline,
-                                this, 0, &m_tid);
 #endif
     }
 
@@ -428,13 +381,13 @@ public:
 #if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
         /* Nothing */
 #elif LOL_FEATURE_CXX11_THREADS
-        /* FIXME: this does not work in Visual Studio 2013! */
-        //m_thread.join();
+#   if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
         m_thread.detach();
+#   else
+        m_thread.join();
+#   endif
 #elif defined HAVE_PTHREAD_H
         pthread_join(m_thread, nullptr);
-#elif defined _WIN32
-        WaitForSingleObject(m_thread, INFINITE);
 #endif
     }
 
@@ -445,6 +398,9 @@ private:
     static void trampoline(thread_base *that)
     {
         that->m_function();
+#   if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
+        ExitThread(0);
+#   endif
     }
 #else
     static void *trampoline(void *data)
@@ -463,9 +419,6 @@ private:
     std::thread m_thread;
 #elif defined HAVE_PTHREAD_H
     pthread_t m_thread;
-#elif defined _WIN32
-    HANDLE m_thread;
-    DWORD m_tid;
 #endif
 };
 
