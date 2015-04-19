@@ -102,8 +102,8 @@ void Text::TickDraw(float seconds, Scene &scene)
     {
         Font *font = Forge::GetFont(data->m_font);
         vec3 delta(0.0f);
-        float text_width = (length - 0.5f) * font->GetSize().x
-                         + (length - 1) * data->m_spacing;
+        float text_width = ((length - 0.5f) + (length - 1) * data->m_spacing)
+                         * font->GetSize().x;
 
         if (data->m_align == TextAlign::Right)
             delta.x -= text_width * data->m_scale.x;
