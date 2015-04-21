@@ -515,6 +515,9 @@ AC_CONFIG_FILES(
  [games/singlshot/Makefile
 ])
 AC_CONFIG_FILES(
+ [games/sot3000/Makefile
+])
+AC_CONFIG_FILES(
  [demos/lol.js/Makefile
 ])
 AC_CONFIG_FILES(
@@ -547,7 +550,6 @@ AC_CONFIG_FILES(
   people/jylam/private/oric_convert/Makefile
   people/sam/Makefile
   people/sam/ld27/Makefile
-  people/sam/ld32/Makefile
   people/sam/vip2014/Makefile
   people/sam/kanagawa/Makefile
   people/sam/sapp/Makefile
