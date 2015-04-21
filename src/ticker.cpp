@@ -203,6 +203,7 @@ void TickerData::DiskThreadMain()
 }
 #endif /* LOL_FEATURE_THREADS */
 
+//-----------------------------------------------------------------------------
 void TickerData::GameThreadTick()
 {
     Profiler::Stop(Profiler::STAT_TICK_FRAME);
@@ -329,7 +330,8 @@ void TickerData::GameThreadTick()
 
         data->m_todolist.Remove(-1);
         data->m_list[e->m_gamegroup].Push(e);
-        data->m_list[e->m_drawgroup].Push(e);
+        if (e->m_drawgroup != Entity::DRAWGROUP_NONE)
+            data->m_list[e->m_drawgroup].Push(e);
 
         // Initialize the entity
         e->InitGame();
@@ -364,6 +366,7 @@ void TickerData::GameThreadTick()
     Profiler::Stop(Profiler::STAT_TICK_GAME);
 }
 
+//-----------------------------------------------------------------------------
 void TickerData::DrawThreadTick()
 {
     Profiler::Start(Profiler::STAT_TICK_DRAW);
@@ -429,6 +432,7 @@ void Ticker::SetStateWhenMatch(Entity * /* entity */, uint32_t /* state */,
 
 }
 
+//-----------------------------------------------------------------------------
 void Ticker::Setup(float fps)
 {
     data->fps = fps;
