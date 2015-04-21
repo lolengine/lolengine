@@ -107,7 +107,8 @@ protected:
         DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
 
-        DRAWGROUP_END       //Must be the last element
+        DRAWGROUP_END,      //Must be the next-to-last element
+        DRAWGROUP_NONE      //This group is for non draw-ticked
     }
     m_drawgroup;
 
