@@ -57,7 +57,7 @@ public:
 private:
     /* Entity management */
     array<Entity *> m_todolist, m_autolist;
-    array<Entity *> m_list[Entity::ALLGROUP_END];
+    array<Entity *> m_list[Entity::ALLGROUP_END]; //TODO: Add NO-DRAW entity support
     ptrdiff_t nentities;
 
     /* Fixed framerate management */
@@ -120,7 +120,7 @@ void Ticker::Ref(Entity *entity)
         /* Get the entity out of the m_autorelease list. This is usually
          * very fast since the last entry in autolist is the last
          * registered entity. */
-        for (int i = data->m_autolist.Count(); i--; )
+        for (ptrdiff_t i = data->m_autolist.Count(); i--; )
         {
             if (data->m_autolist[i] == entity)
             {
@@ -172,7 +172,7 @@ void TickerData::GameThreadMain()
 #endif /* LOL_FEATURE_THREADS */
 
 #if LOL_FEATURE_THREADS
-void TickerData::DrawThreadMain()
+void TickerData::DrawThreadMain() /* unused */
 {
 #if LOL_BUILD_DEBUG
     Log::Info("ticker draw thread initialised\n");
@@ -295,7 +295,7 @@ void TickerData::GameThreadTick()
      * in the tick lists can be marked for destruction. */
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
-        for (int i = data->m_list[g].Count(); i--; )
+        for (ptrdiff_t i = data->m_list[g].Count(); i--;)
         {
             Entity *e = data->m_list[g][i];
 
@@ -374,7 +374,7 @@ void TickerData::DrawThreadTick()
         switch (g)
         {
         case Entity::DRAWGROUP_BEGIN:
-            g_scene->Reset();
+            Scene::Reset();
             g_renderer->Clear(ClearMask::All);
             break;
         default:
@@ -394,7 +394,7 @@ void TickerData::DrawThreadTick()
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                e->TickDraw(data->deltatime, *g_scene);
+                e->TickDraw(data->deltatime, *Scene::g_scene);
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity %s [%p] missed super draw tick\n",
@@ -405,9 +405,9 @@ void TickerData::DrawThreadTick()
         }
 
         /* Do this render step */
-        g_scene->RenderPrimitives();
-        g_scene->RenderTiles();
-        g_scene->RenderLines(data->deltatime);
+        Scene::RenderPrimitives();
+        Scene::RenderTiles();
+        Scene::RenderLines(data->deltatime);
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

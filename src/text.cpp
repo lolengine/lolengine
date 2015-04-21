@@ -110,8 +110,8 @@ void Text::TickDraw(float seconds, Scene &scene)
         else if (data->m_align == TextAlign::Center)
             delta.x -= 0.5f * text_width * data->m_scale.x;
 
-        font->Print(data->m_pos + delta, data->m_text.C(),
-                    data->m_scale, data->m_spacing);
+        font->Print(scene, data->m_pos + delta, data->m_text.C(),
+                           data->m_scale, data->m_spacing);
     }
 }
 
