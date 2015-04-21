@@ -110,14 +110,14 @@ public:
     inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
-        FixSizes(e);
+        fix_sizes(e);
     }
 
 #if PTRDIFF_MAX > INT_MAX
     inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
-        FixSizes(e);
+        fix_sizes(e);
     }
 #endif
 
@@ -128,7 +128,7 @@ public:
         for (auto inner_initializer : initializer)
             inner_initializer.FillSizes(&m_sizes[N - 2]);
 
-        FixSizes();
+        fix_sizes();
 
         ptrdiff_t pos = 0;
 
@@ -232,24 +232,37 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
+    inline void set_size(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
-        FixSizes(e);
+        fix_sizes(e);
     }
 
 #if PTRDIFF_MAX > INT_MAX
-    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
+    inline void set_size(vec_t<int, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
-        FixSizes(e);
+        fix_sizes(e);
     }
 #endif
 
-    inline vec_t<ptrdiff_t, N> GetSize() const
+    inline vec_t<ptrdiff_t, N> get_size() const
     {
         return this->m_sizes;
     }
+
+    /* TODO: remove these legacy functions one day */
+    inline vec_t<ptrdiff_t, N> GetSize() const { return get_size(); }
+    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
+    {
+        return set_size(sizes, e);
+    }
+#if PTRDIFF_MAX > INT_MAX
+    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
+    {
+        return set_size(sizes, e);
+    }
+#endif
 
 public:
     inline element_t *data() { return super::data(); }
@@ -258,7 +271,7 @@ public:
     inline ptrdiff_t bytes() const { return super::bytes(); }
 
 private:
-    inline void FixSizes(element_t e = element_t())
+    inline void fix_sizes(element_t e = element_t())
     {
         ptrdiff_t total_size = 1;
 
