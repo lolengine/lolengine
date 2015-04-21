@@ -173,7 +173,7 @@ void MeshViewer::Start()
     m_camera->SetProjection(40.f, .0001f, 2000.f);
     //m_camera->SetProjection(90.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     //m_camera->UseShift(true);
-    g_scene->PushCamera(m_camera);
+    Scene::PushCamera(m_camera);
 
 #if HAS_INPUT
     InputProfile& ip = m_profile;
@@ -183,9 +183,6 @@ void MeshViewer::Start()
     m_entities << (m_controller = new Controller("MeshViewer"));
     m_controller->Init(m_profile);
 #endif //HAS_INPUT
-
-    /** ----- Register all entities ----- **/
-    for (Entity* entity : m_entities) Ticker::Ref(entity);
 
     /** ----- Init is done ----- **/
     m_init = true;
@@ -202,11 +199,11 @@ void MeshViewer::Stop()
     UpdateSceneSetup(true);
 
     //Destroy core stuff
-    if (m_camera) g_scene->PopCamera(m_camera);
+    if (m_camera) Scene::PopCamera(m_camera);
 
     m_file_check->UnregisterFile(m_file_status);
 
-    //Register all entities
+    //Unref all entities
     for (Entity* entity : m_entities) Ticker::Unref(entity);
 
     //Delete objs
@@ -264,7 +261,7 @@ void MeshViewer::TickGame(float seconds)
 {
     super::TickGame(seconds);
 
-    if (!m_init && g_scene) Start();
+    if (!m_init && Scene::IsReady()) Start();
     if (!m_init) return;
 
     m_first_tick = true;
@@ -508,7 +505,7 @@ void MeshViewer::Prepare()
     m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3::zero, vec3::axis_y);
     m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     m_camera->UseShift(true);
-    g_scene->PushCamera(m_camera);
+    Scene::PushCamera(m_camera);
 
     //Lights setup
     m_ssetup = new SceneSetup();
@@ -547,7 +544,7 @@ void MeshViewer::Prepare()
 
 void MeshViewer::Unprepare()
 {
-    if (m_camera) g_scene->PopCamera(m_camera);
+    if (m_camera) Scene::PopCamera(m_camera);
     if (m_ssetup) delete m_ssetup;
 
     MessageService::Destroy();

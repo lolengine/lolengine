@@ -69,7 +69,7 @@ void Light::TickDraw(float seconds, Scene &scene)
 {
     WorldEntity::TickDraw(seconds, scene);
 
-    g_scene->AddLight(this);
+    Scene::AddLight(this);
 }
 
 } /* namespace lol */

@@ -68,7 +68,7 @@ char const *Font::GetName()
     return data->m_name.C();
 }
 
-void Font::Print(vec3 pos, char const *str, vec2 scale, float spacing)
+void Font::Print(Scene &scene, vec3 pos, char const *str, vec2 scale, float spacing)
 {
     float origin_x = pos.x;
     while (*str)
@@ -89,7 +89,7 @@ void Font::Print(vec3 pos, char const *str, vec2 scale, float spacing)
             break;
         default:
             if (ch != ' ')
-                g_scene->AddTile(data->tileset, ch & 255, pos, 0, scale, 0.0f);
+                scene.AddTile(data->tileset, ch & 255, pos, 0, scale, 0.0f);
             pos.x += data->size.x * scale.x;
             break;
         }

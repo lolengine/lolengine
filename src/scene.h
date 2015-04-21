@@ -46,22 +46,30 @@ private:
 class Scene
 {
     friend class Video;
+    friend class TickerData; //TODO: Smells shitty
 
 private:
+    static Scene *g_scene;
+
     Scene(ivec2 size);
     ~Scene();
 
+    static bool GetScene(Scene*& scene);
+    static bool GetSceneData(SceneData*& data);
+
 public:
-    Camera *GetCamera(int cam_idx=-1);
-    int PushCamera(Camera *cam);
-    void PopCamera(Camera *cam);
-    void SetTileCam(int cam_idx);
+    static bool IsReady();
 
-    void Reset();
+    static Camera *GetCamera(int cam_idx=-1);
+private:
+    static int PushCamera(Scene* scene, Camera *cam);
+    static void PopCamera(Scene* scene, Camera *cam);
+public:
+    static int PushCamera(Camera *cam);
+    static void PopCamera(Camera *cam);
+    static void SetTileCam(int cam_idx);
 
-    void RenderPrimitives();
-    void RenderTiles();
-    void RenderLines(float seconds);
+    static void Reset();
 
     /* New scenegraph */
     void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
@@ -70,22 +78,32 @@ public:
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle);
-    void SetLineTime(float new_time=-1.f);
-    void SetLineMask(int new_mask=0xFFFFFFFF);
-    void SetLineSegmentSize(float new_segment_size=100000.f);
-    float GetLineSegmentSize();
-    void SetLineColor(vec4 new_color=vec4(1.f));
-    vec4 GetLineColor();
-    void AddLine(vec3 a, vec3 b, vec4 color);
 
-    void AddLight(Light *light);
-    array<Light *> const &GetLights() const;
+private:
+    static void SetLineTime(Scene* scene, float new_time = -1.f);
+    static void SetLineMask(Scene* scene, int new_mask = 0xFFFFFFFF);
+    static void SetLineSegmentSize(Scene* scene, float new_segment_size = 100000.f);
+    static void SetLineColor(Scene* scene, vec4 new_color = vec4(1.f));
+public:
+    static void SetLineTime(float new_time = -1.f);
+    static void SetLineMask(int new_mask = 0xFFFFFFFF);
+    static void SetLineSegmentSize(float new_segment_size = 100000.f);
+    static void SetLineColor(vec4 new_color = vec4(1.f));
+
+    static float GetLineSegmentSize();
+    static vec4 GetLineColor();
+    static void AddLine(vec3 a, vec3 b, vec4 color);
+
+    static void AddLight(Light *light);
+    static array<Light *> const &GetLights();
+
+    static void RenderPrimitives();
+    static void RenderTiles();
+    static void RenderLines(float seconds);
 
 private:
     SceneData *data;
 };
-
-extern Scene *g_scene;
 
 } /* namespace lol */
 
