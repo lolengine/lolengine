@@ -22,7 +22,7 @@ namespace lol
 Image Image::Crop(ibox2 box) const
 {
     ivec2 const srcsize = GetSize();
-    ivec2 const dstsize = box.B - box.A;
+    ivec2 const dstsize = box.extent();
 
     Image dst(dstsize);
     PixelFormat format = GetFormat();
@@ -36,24 +36,24 @@ Image Image::Crop(ibox2 box) const
 
         int len = dstsize.x;
 
-        if (box.A.x < 0)
+        if (box.aa.x < 0)
         {
-            len += box.A.x;
-            box.A.x = 0;
+            len += box.aa.x;
+            box.aa.x = 0;
         }
 
-        if (box.A.x + len > srcsize.x)
-            len = srcsize.x - box.A.x;
+        if (box.aa.x + len > srcsize.x)
+            len = srcsize.x - box.aa.x;
 
         if (len > 0)
         {
             for (int y = 0; y < dstsize.y; y++)
             {
-                if (y + box.A.y < 0 || y + box.A.y >= srcsize.y)
+                if (y + box.aa.y < 0 || y + box.aa.y >= srcsize.y)
                     continue;
 
                 memcpy(dstp + y * dstsize.x * bpp,
-                       srcp + ((y + box.A.y) * srcsize.x + box.A.x) * bpp,
+                       srcp + ((y + box.aa.y) * srcsize.x + box.aa.x) * bpp,
                        len * bpp);
             }
         }

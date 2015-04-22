@@ -120,8 +120,8 @@ public:
 #endif
 
         m_position = vec3::zero;
-        m_bbox[0] = m_position;
-        m_bbox[1] = vec3((vec2)m_window_size, 0);
+        m_aabb.aa = m_position;
+        m_aabb.bb = vec3((vec2)m_window_size, 0);
         //Input::TrackMouse(this);
 
 #if LOL_FEATURE_THREADS

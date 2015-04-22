@@ -235,12 +235,12 @@ void Renderer::SetViewport(ibox2 viewport)
         return;
 
 #if defined USE_D3D9 || defined _XBOX
-    D3DVIEWPORT9 vp = { viewport.A.x, viewport.A.y,
-                        viewport.B.x, viewport.B.y,
+    D3DVIEWPORT9 vp = { viewport.aa.x, viewport.aa.y,
+                        viewport.bb.x, viewport.bb.y,
                         0.0f, 1.0f };
     m_data->m_d3d_dev->SetViewport(&vp);
 #else
-    glViewport(viewport.A.x, viewport.A.y, viewport.B.x, viewport.B.y);
+    glViewport(viewport.aa.x, viewport.aa.y, viewport.bb.x, viewport.bb.y);
 #endif
 
     m_data->m_viewport = viewport;
@@ -253,17 +253,13 @@ ibox2 Renderer::GetViewport() const
 
 float Renderer::GetXYRatio() const
 {
-    ibox2 a = GetViewport();
-    ibox2 b(a.A, a.B);
-    ivec2 s = b.B - b.A;
+    ivec2 s = GetViewport().extent();
     return (float)s.x / s.y;
 }
 
 float Renderer::GetYXRatio() const
 {
-    ibox2 a = GetViewport();
-    ibox2 b(a.A, a.B);
-    ivec2 s = b.B - b.A;
+    ivec2 s = GetViewport().extent();
     return (float)s.y / s.x;
 }
 

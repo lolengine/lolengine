@@ -132,9 +132,7 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-    ibox2 viewport = g_renderer->GetViewport();
-
-    return viewport.B - viewport.A;
+    return g_renderer->GetViewport().extent();
 }
 
 } /* namespace lol */

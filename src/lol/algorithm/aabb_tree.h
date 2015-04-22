@@ -81,8 +81,8 @@ void Draw(Quadtree<TE>* tree, vec4 color)
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.Count() > 0)
     {
-        Debug::DrawBox(vec3(boxes[0].m1.A.x, tree->m_debug_y_offset, boxes[0].m1.A.y),
-                       vec3(boxes[0].m1.B.x, tree->m_debug_y_offset, boxes[0].m1.B.y),
+        Debug::DrawBox(vec3(boxes[0].m1.aa.x, tree->m_debug_y_offset, boxes[0].m1.aa.y),
+                       vec3(boxes[0].m1.bb.x, tree->m_debug_y_offset, boxes[0].m1.bb.y),
                        boxes[0].m2);
         boxes.Remove(0);
     }
@@ -90,8 +90,8 @@ void Draw(Quadtree<TE>* tree, vec4 color)
     {
         while (elements[0].m2 > 0)
         {
-            Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().A.y) + off * (float)elements[0].m2,
-                           vec3(elements[0].m1->GetAABB().B.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().B.y) + off * (float)elements[0].m2,
+            Debug::DrawBox(vec3(elements[0].m1->GetAABB().aa.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().aa.y) + off * (float)elements[0].m2,
+                           vec3(elements[0].m1->GetAABB().bb.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().bb.y) + off * (float)elements[0].m2,
                            elements[0].m3);
             elements[0].m2--;
         }
@@ -112,9 +112,9 @@ void Draw(Octree<TE>* tree, vec4 color)
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.Count() > 0)
     {
-        //float size = boxes[0].m1.B.x - boxes[0].m1.A.x;
-        Debug::DrawBox(vec3(boxes[0].m1.A.x, boxes[0].m1.A.y, boxes[0].m1.A.z) /* + off * (m_size.x / size) */,
-                        vec3(boxes[0].m1.B.x, boxes[0].m1.B.y, boxes[0].m1.B.z) /* + off * (m_size.x / size) */,
+        //float size = boxes[0].m1.bb.x - boxes[0].m1.aa.x;
+        Debug::DrawBox(vec3(boxes[0].m1.aa.x, boxes[0].m1.aa.y, boxes[0].m1.aa.z) /* + off * (m_size.x / size) */,
+                        vec3(boxes[0].m1.bb.x, boxes[0].m1.bb.y, boxes[0].m1.bb.z) /* + off * (m_size.x / size) */,
                         boxes[0].m2);
         //off += add;
         boxes.Remove(0);
@@ -123,8 +123,8 @@ void Draw(Octree<TE>* tree, vec4 color)
     {
         while (elements[0].m2 > 0)
         {
-            Debug::DrawBox(vec3(elements[0].m1->GetAABB().A.x, elements[0].m1->GetAABB().A.y, elements[0].m1->GetAABB().A.z) + off * (float)elements[0].m2,
-                            vec3(elements[0].m1->GetAABB().B.x, elements[0].m1->GetAABB().B.y, elements[0].m1->GetAABB().B.z) + off * (float)elements[0].m2,
+            Debug::DrawBox(vec3(elements[0].m1->GetAABB().aa.x, elements[0].m1->GetAABB().aa.y, elements[0].m1->GetAABB().aa.z) + off * (float)elements[0].m2,
+                            vec3(elements[0].m1->GetAABB().bb.x, elements[0].m1->GetAABB().bb.y, elements[0].m1->GetAABB().bb.z) + off * (float)elements[0].m2,
                             elements[0].m3);
             elements[0].m2--;
         }
@@ -341,9 +341,9 @@ public:
     virtual TB          GetSubAABB(const TB& bbox, int sub)
     {
         TV v(GetSubOffset(sub));
-        TV half_vec = (bbox.B - bbox.A) * .5f;
-        return TB(bbox.A + half_vec * v,
-                  bbox.A + half_vec * (v + TV(1.f)));
+        TV half_vec = bbox.extent() * .5f;
+        return TB(bbox.aa + half_vec * v,
+                  bbox.aa + half_vec * (v + TV(1.f)));
     }
 
     //--
