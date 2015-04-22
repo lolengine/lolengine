@@ -21,6 +21,7 @@ _SC(0, "", Unknown)
 
 /* Usage page 0x07 */
 
+_SC(3,  "", Whatever) // FIXME: if this isn’t here, we can’t bind key A; WTF?
 _SC(4,  "A", A)
 _SC(5,  "B", B)
 _SC(6,  "C", C)
