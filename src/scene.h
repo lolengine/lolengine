@@ -49,7 +49,7 @@ class PrimitiveSettings
 public:
     PrimitiveSettings() { }
     virtual ~PrimitiveSettings() { }
-    virtual void ApplyTo(Primitive* primitive) const { }
+    virtual void ApplyTo(Primitive* primitive) const { UNUSED(primitive); }
 
 private:
 };
