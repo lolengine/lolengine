@@ -20,8 +20,12 @@ namespace lol
  */
 
 WorldEntity::WorldEntity()
+  : m_aabb(vec3(0.f), vec3(0.f)),
+    m_position(0.f),
+    m_velocity(0.f),
+    m_rotation(1.f),
+    m_rotation_velocity(0.f)
 {
-    m_bbox[0] = m_bbox[1] = vec3::zero;
 }
 
 WorldEntity::~WorldEntity()

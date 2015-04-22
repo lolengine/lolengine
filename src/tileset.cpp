@@ -137,8 +137,8 @@ char const *TileSet::GetName()
 ptrdiff_t TileSet::AddTile(ibox2 rect)
 {
     m_tileset_data->m_tiles.Push(rect,
-             box2((vec2)rect.A / (vec2)m_data->m_texture_size,
-                  (vec2)rect.B / (vec2)m_data->m_texture_size));
+             box2((vec2)rect.aa / (vec2)m_data->m_texture_size,
+                  (vec2)rect.bb / (vec2)m_data->m_texture_size));
     return m_tileset_data->m_tiles.Count() - 1;
 }
 
@@ -161,8 +161,7 @@ ptrdiff_t TileSet::GetTileCount() const
 
 ivec2 TileSet::GetTileSize(ptrdiff_t tileid) const
 {
-    ibox2 const &box = m_tileset_data->m_tiles[tileid].m1;
-    return box.B - box.A;
+    return m_tileset_data->m_tiles[tileid].m1.extent();
 }
 
 //Palette ---------------------------------------------------------------------
@@ -186,14 +185,14 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
 {
     ibox2 pixels = m_tileset_data->m_tiles[id].m1;
     box2 texels = m_tileset_data->m_tiles[id].m2;
-    float dtx = texels.B.x - texels.A.x;
-    float dty = texels.B.y - texels.A.y;
-    float tx = texels.A.x;
-    float ty = texels.A.y;
+    float dtx = texels.extent().x;
+    float dty = texels.extent().y;
+    float tx = texels.aa.x;
+    float ty = texels.aa.y;
 
-    int dx =         (int)((float)(pixels.B.x - pixels.A.x) * scale.x);
-    int dy = o ? 0 : (int)((float)(pixels.B.y - pixels.A.y) * scale.y);
-    int dz = o ?     (int)((float)(pixels.B.y - pixels.A.y) * scale.y) : 0;
+    int dx =         (int)(pixels.extent().x * scale.x);
+    int dy = o ? 0 : (int)(pixels.extent().y * scale.y);
+    int dz = o ?     (int)(pixels.extent().y * scale.y) : 0;
 
     /* If scaling is negative, switch triangle winding */
     if (scale.x * scale.y < 0.0f)

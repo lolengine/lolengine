@@ -38,8 +38,8 @@ Gradient::Gradient(vec3 aa, vec3 bb)
 {
     /* FIXME: this should not be hardcoded */
     m_position = aa;
-    m_bbox[0] = aa;
-    m_bbox[1] = bb;
+    m_aabb.aa = aa;
+    m_aabb.bb = bb;
 
     data->shader = nullptr;
 }
@@ -53,12 +53,12 @@ void Gradient::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
 
-    float const vertex[] = { m_bbox[0].x, m_bbox[0].y, 0.0f,
-                             m_bbox[1].x, m_bbox[0].y, 0.0f,
-                             m_bbox[0].x, m_bbox[1].y, 0.0f,
-                             m_bbox[1].x, m_bbox[1].y, 0.0f,
-                             m_bbox[0].x, m_bbox[1].y, 0.0f,
-                             m_bbox[1].x, m_bbox[0].y, 0.0f, };
+    float const vertex[] = { m_aabb.aa.x, m_aabb.aa.y, 0.0f,
+                             m_aabb.bb.x, m_aabb.aa.y, 0.0f,
+                             m_aabb.aa.x, m_aabb.bb.y, 0.0f,
+                             m_aabb.bb.x, m_aabb.bb.y, 0.0f,
+                             m_aabb.aa.x, m_aabb.bb.y, 0.0f,
+                             m_aabb.bb.x, m_aabb.aa.y, 0.0f, };
 
     float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
                             0.73f, 0.85f, 0.85f, 1.0f,

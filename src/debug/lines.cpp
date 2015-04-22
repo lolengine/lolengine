@@ -212,20 +212,20 @@ void Debug::DrawArrow(vec2 a, vec2 b, vec3 s, vec4 color, float az, float bz)
 }
 
 //-- BOX: 3D -2D - 3D_to_2D ---------------------------------------------------
-void Debug::DrawBox(box3 a)                             { Debug::DrawBox(a.A, a.B, Scene::GetLineColor()); }
-void Debug::DrawBox(box2 a)                             { Debug::DrawBox(a.A, a.B, Scene::GetLineColor()); }
-void Debug::DrawBox(box3 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
-void Debug::DrawBox(box2 a, vec4 color)                 { Debug::DrawBox(a.A, a.B, color); }
+void Debug::DrawBox(box3 a)                             { Debug::DrawBox(a.aa, a.bb, Scene::GetLineColor()); }
+void Debug::DrawBox(box2 a)                             { Debug::DrawBox(a.aa, a.bb, Scene::GetLineColor()); }
+void Debug::DrawBox(box3 a, vec4 color)                 { Debug::DrawBox(a.aa, a.bb, color); }
+void Debug::DrawBox(box2 a, vec4 color)                 { Debug::DrawBox(a.aa, a.bb, color); }
 void Debug::DrawBox(vec3 a, vec3 b)                     { Debug::DrawBox(a, b, Scene::GetLineColor()); }
 void Debug::DrawBox(vec2 a, vec2 b)                     { Debug::DrawBox(a, b, Scene::GetLineColor()); }
 void Debug::DrawBox(vec2 a, float s)                    { Debug::DrawBox(a, s, Scene::GetLineColor()); }
 void Debug::DrawBox(vec3 a, vec3 b, vec4 color)         { Debug::DrawBox(a, b, mat4::identity, color); }
 void Debug::DrawBox(vec2 a, vec2 b, vec4 color)         { Debug::DrawBox(a, b, mat2::identity, color); }
 void Debug::DrawBox(vec2 a, float s, vec4 color)        { Debug::DrawBox(a, s, mat2::identity, color); }
-void Debug::DrawBox(box3 a, mat4 transform)             { Debug::DrawBox(a.A, a.B, transform, Scene::GetLineColor()); }
-void Debug::DrawBox(box2 a, mat2 transform)             { Debug::DrawBox(a.A, a.B, transform, Scene::GetLineColor()); }
-void Debug::DrawBox(box3 a, mat4 transform, vec4 color) { Debug::DrawBox(a.A, a.B, transform, color); }
-void Debug::DrawBox(box2 a, mat2 transform, vec4 color) { Debug::DrawBox(a.A, a.B, transform, color); }
+void Debug::DrawBox(box3 a, mat4 transform)             { Debug::DrawBox(a.aa, a.bb, transform, Scene::GetLineColor()); }
+void Debug::DrawBox(box2 a, mat2 transform)             { Debug::DrawBox(a.aa, a.bb, transform, Scene::GetLineColor()); }
+void Debug::DrawBox(box3 a, mat4 transform, vec4 color) { Debug::DrawBox(a.aa, a.bb, transform, color); }
+void Debug::DrawBox(box2 a, mat2 transform, vec4 color) { Debug::DrawBox(a.aa, a.bb, transform, color); }
 void Debug::DrawBox(vec3 a, vec3 b, mat4 transform)     { Debug::DrawBox(a, b, transform, Scene::GetLineColor()); }
 void Debug::DrawBox(vec2 a, vec2 b, mat2 transform)     { Debug::DrawBox(a, b, transform, Scene::GetLineColor()); }
 void Debug::DrawBox(vec2 a, float s, mat2 transform)    { Debug::DrawBox(a, s, transform, Scene::GetLineColor()); }

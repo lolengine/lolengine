@@ -75,8 +75,8 @@ public:
     //This considers the box usage A to B as top-left to bottom-right
     void AddTarget(box3 new_target)
     {
-        vec3 base_off = .5f * (new_target.B - new_target.A);
-        vec3 base_pos = new_target.A + base_off;
+        vec3 base_off = .5f * new_target.extent();
+        vec3 base_pos = new_target.center();
         int pass = 0;
         while (pass < 3)
         {

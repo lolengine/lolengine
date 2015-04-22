@@ -87,23 +87,23 @@ LOL_BOX_TYPEDEFS(Box3, box3)
 template <typename T> struct Box2
 {
     inline Box2()
-      : A(T(0)),
-        B(T(0))
+      : aa(T(0)),
+        bb(T(0))
     {}
 
     inline Box2(vec_t<T,2> const &a, vec_t<T,2> const &b)
-      : A(a),
-        B(b)
+      : aa(a),
+        bb(b)
     {}
 
     inline Box2(T const &ax, T const &ay, T const &bx, T const &by)
-      : A(ax, ay),
-        B(bx, by)
+      : aa(ax, ay),
+        bb(bx, by)
     {}
 
     Box2<T> operator +(vec_t<T,2> const &v) const
     {
-        return Box2<T>(A + v, B + v);
+        return Box2<T>(aa + v, bb + v);
     }
 
     Box2<T> &operator +=(vec_t<T,2> const &v)
@@ -113,7 +113,7 @@ template <typename T> struct Box2
 
     Box2<T> operator -(vec_t<T,2> const &v) const
     {
-        return Box2<T>(A - v, B - v);
+        return Box2<T>(aa - v, bb - v);
     }
 
     Box2<T> &operator -=(vec_t<T,2> const &v)
@@ -123,7 +123,7 @@ template <typename T> struct Box2
 
     Box2<T> operator *(vec_t<T,2> const &v) const
     {
-        return Box2<T>(A * v, B * v);
+        return Box2<T>(aa * v, bb * v);
     }
 
     Box2<T> &operator *=(vec_t<T,2> const &v)
@@ -131,17 +131,31 @@ template <typename T> struct Box2
         return *this = *this * v;
     }
 
-    bool operator ==(Box2<T> const &box)
+    Box2<T> operator *(T const &s) const
     {
-        return A == box.A && B == box.B;
+        return Box2<T>(aa * s, bb * s);
     }
 
-    bool operator !=(Box2<T> const &box)
+    Box2<T> &operator *=(T const &s)
     {
-        return A != box.A || B != box.B;
+        return *this = *this * s;
     }
 
-    vec_t<T,2> A, B;
+    bool operator ==(Box2<T> const &box) const
+    {
+        return aa == box.aa && bb == box.bb;
+    }
+
+    bool operator !=(Box2<T> const &box) const
+    {
+        return aa != box.aa || bb != box.bb;
+    }
+
+    inline vec_t<T,2> center() const { return (bb + aa) / 2; }
+
+    inline vec_t<T,2> extent() const { return bb - aa; }
+
+    vec_t<T,2> aa, bb;
 };
 
 /*
@@ -151,24 +165,24 @@ template <typename T> struct Box2
 template <typename T> struct Box3
 {
     inline Box3()
-      : A(T(0)),
-        B(T(0))
+      : aa(T(0)),
+        bb(T(0))
     {}
 
     inline Box3(vec_t<T,3> const &a, vec_t<T,3> const &b)
-      : A(a),
-        B(b)
+      : aa(a),
+        bb(b)
     {}
 
     inline Box3(T const &ax, T const &ay, T const &az,
                 T const &bx, T const &by, T const &bz)
-      : A(ax, ay, az),
-        B(bx, by, bz)
+      : aa(ax, ay, az),
+        bb(bx, by, bz)
     {}
 
     Box3<T> operator +(vec_t<T,3> const &v) const
     {
-        return Box3<T>(A + v, B + v);
+        return Box3<T>(aa + v, bb + v);
     }
 
     Box3<T> &operator +=(vec_t<T,3> const &v)
@@ -178,7 +192,7 @@ template <typename T> struct Box3
 
     Box3<T> operator -(vec_t<T,3> const &v) const
     {
-        return Box3<T>(A - v, B - v);
+        return Box3<T>(aa - v, bb - v);
     }
 
     Box3<T> &operator -=(vec_t<T,3> const &v)
@@ -188,7 +202,7 @@ template <typename T> struct Box3
 
     Box3<T> operator *(vec_t<T,3> const &v) const
     {
-        return Box3<T>(A * v, B * v);
+        return Box3<T>(aa * v, bb * v);
     }
 
     Box3<T> &operator *=(vec_t<T,3> const &v)
@@ -196,17 +210,31 @@ template <typename T> struct Box3
         return *this = *this * v;
     }
 
-    bool operator ==(Box3<T> const &box)
+    Box3<T> operator *(T const &s) const
     {
-        return A == box.A && B == box.B;
+        return Box3<T>(aa * s, bb * s);
     }
 
-    bool operator !=(Box3<T> const &box)
+    Box3<T> &operator *=(T const &s)
     {
-        return A != box.A || B != box.B;
+        return *this = *this * s;
     }
 
-    vec_t<T,3> A, B;
+    bool operator ==(Box3<T> const &box) const
+    {
+        return aa == box.aa && bb == box.bb;
+    }
+
+    bool operator !=(Box3<T> const &box) const
+    {
+        return aa != box.aa || bb != box.bb;
+    }
+
+    inline vec_t<T,3> center() const { return (bb + aa) / 2; }
+
+    inline vec_t<T,3> extent() const { return bb - aa; }
+
+    vec_t<T,3> aa, bb;
 };
 
 /*
@@ -243,9 +271,9 @@ bool operator>=(float value, const TestEpsilon& epsilon);
 //--
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
-    vec2 c  = 0.5f * ((b1.A + b1.B) - (b2.A + b2.B));
-    vec2 e1 = 0.5f *  (b1.B - b1.A);
-    vec2 e2 = 0.5f *  (b2.B - b2.A);
+    vec2 c = b1.center() - b2.center();
+    vec2 e1 = 0.5f * b1.extent();
+    vec2 e2 = 0.5f * b2.extent();
 
     return abs(c.x) <= e1.x + e2.x
         && abs(c.y) <= e1.y + e2.y;
@@ -257,9 +285,9 @@ static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
 
 static inline bool TestAABBVsAABB(box3 const &b1, box3 const &b2)
 {
-    vec3 c =  0.5f * ((b1.A + b1.B) - (b2.A + b2.B));
-    vec3 e1 = 0.5f *  (b1.B - b1.A);
-    vec3 e2 = 0.5f *  (b2.B - b2.A);
+    vec3 c = b1.center() - b2.center();
+    vec3 e1 = 0.5f * b1.extent();
+    vec3 e2 = 0.5f * b2.extent();
 
     return abs(c.x) <= e1.x + e2.x
         && abs(c.y) <= e1.y + e2.y

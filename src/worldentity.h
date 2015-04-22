@@ -28,11 +28,11 @@ public:
     virtual char const *GetName();
 
 public:
+    box3 m_aabb;
     vec3 m_position = vec3::zero;
     vec3 m_velocity = vec3::zero;
     quat m_rotation = quat(1);
     vec3 m_rotation_velocity = vec3::zero;
-    vec3 m_bbox[2];
 
 protected:
     WorldEntity();
