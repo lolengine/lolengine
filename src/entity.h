@@ -41,6 +41,7 @@ struct InitState
 
 class Entity
 {
+    friend class Scene;
     friend class Ticker;
     friend class TickerData;
     friend class Dict;
@@ -146,6 +147,7 @@ private:
 
 private:
     int m_ref, m_autorelease, m_destroy;
+    uint64_t m_scene_mask = 0;
 };
 
 } /* namespace lol */

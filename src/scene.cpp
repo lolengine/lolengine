@@ -27,10 +27,10 @@ namespace lol
 {
 
 /*
- * The global g_scene object, initialised by Video::Init
+ * The global g_scenes object, initialised by Video::Init
  */
 
-    Scene *Scene::g_scene = nullptr;
+array<Scene*> Scene::g_scenes;
 
 /*
  * A quick and dirty Tile structure for 2D blits
@@ -55,8 +55,25 @@ class SceneData
     friend class Scene;
 
 private:
+    SceneData()
+    {
+        /* TODO: FIX THAT */
+        ASSERT(!(m_used_id & ((uint64_t)1 << 63)), "Too many scenes !!!!");
+        m_mask_id = m_used_id;
+        m_used_id = m_used_id << 1;
+    }
+
+    /* Mask ID */
+    /* TODO: Do a mask class that handles more than 64 slots */
+    static uint64_t m_used_id;
+    uint64_t m_mask_id = 0;
+
     /* New scenegraph */
     array<Primitive*> m_primitives;
+    /* Primitives will be kept until:
+     * - Updated by entity
+     * - Scene is destroyed */
+    map<uint32_t, array<Primitive*, PrimitiveSettings*> > m_primitives_;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
     float   m_new_line_time;
@@ -81,6 +98,7 @@ private:
     Camera *m_default_cam;
     array<Camera *> m_camera_stack;
 };
+uint64_t SceneData::m_used_id = 1;
 
 /*
  * Public Scene class
@@ -128,23 +146,63 @@ Scene::~Scene()
 }
 
 //-----------------------------------------------------------------------------
+Scene* Scene::AddNew(ivec2 size)
+{
+    Scene::g_scenes << new Scene(size);
+    return Scene::g_scenes.last();
+}
+void Scene::DestroyScene(Scene* scene)
+{
+    Scene::g_scenes.remove_item(scene);
+    delete scene;
+}
+void Scene::DestroyAll()
+{
+    while (Scene::g_scenes.count())
+        delete Scene::g_scenes.pop();
+}
+ptrdiff_t Scene::GetCount()
+{
+    return g_scenes.count();
+}
+
+//-----------------------------------------------------------------------------
+Scene* Scene::GetScene(ptrdiff_t index)
+{
+    ASSERT(0 <= index && index < g_scenes.count(), "Trying to get a non-existent scene");
+    return g_scenes[index];
+}
+
+//-----------------------------------------------------------------------------
 bool Scene::GetScene(Scene*& scene)
 {
-    ASSERT(!!g_scene, "Trying to access a non-ready scene");
-    return (scene = g_scene) != nullptr;
+    ASSERT(!!g_scenes.count(), "Trying to access a non-ready scene");
+    return (scene = g_scenes[0]) != nullptr;
 }
 
 //-----------------------------------------------------------------------------
 bool Scene::GetSceneData(SceneData*& data)
 {
-    ASSERT(!!g_scene, "Trying to access a non-ready scene");
-    return (data = g_scene->data) != nullptr;
+    ASSERT(!!g_scenes.count(), "Trying to access a non-ready scene");
+    return (data = g_scenes[0]->data) != nullptr;
 }
 
 //-----------------------------------------------------------------------------
 bool Scene::IsReady()
 {
-    return !!g_scene;
+    return !!g_scenes[0];
+}
+
+//-----------------------------------------------------------------------------
+void Scene::Apply(Entity* entity)
+{
+    entity->m_scene_mask |= data->m_mask_id;
+}
+
+//-----------------------------------------------------------------------------
+bool Scene::IsRelevant(Entity* entity)
+{
+    return !!(entity->m_scene_mask & data->m_mask_id);
 }
 
 //-----------------------------------------------------------------------------
@@ -248,6 +306,12 @@ void Scene::AddPrimitive(Mesh const &mesh, mat4 const &matrix)
 void Scene::AddPrimitive(Primitive* primitive)
 {
     data->m_primitives.Push(primitive);
+}
+
+//-----------------------------------------------------------------------------
+void Scene::AddPrimitive(Entity* entity, Primitive* primitive)
+{
+    data->m_primitives_[(uint32_t)entity /* I don't like that */].push(primitive, nullptr);
 }
 
 //-----------------------------------------------------------------------------

@@ -57,7 +57,8 @@ public:
 private:
     /* Entity management */
     array<Entity *> m_todolist, m_autolist;
-    array<Entity *> m_list[Entity::ALLGROUP_END]; //TODO: Add NO-DRAW entity support
+    array<Entity *> m_list[Entity::ALLGROUP_END];
+    array<ptrdiff_t> m_scenes[Entity::ALLGROUP_END];
     ptrdiff_t nentities;
 
     /* Fixed framerate management */
@@ -328,10 +329,32 @@ void TickerData::GameThreadTick()
     {
         Entity *e = data->m_todolist.Last();
 
-        data->m_todolist.Remove(-1);
-        data->m_list[e->m_gamegroup].Push(e);
+        //If the entity has no mask, default it
+        if (e->m_scene_mask == 0)
+        {
+            Scene::GetScene(0)->Apply(e);
+        }
+
+        data->m_todolist.remove(-1);
+        data->m_list[e->m_gamegroup].push(e);
         if (e->m_drawgroup != Entity::DRAWGROUP_NONE)
-            data->m_list[e->m_drawgroup].Push(e);
+        {
+            if (data->m_scenes[e->m_drawgroup].count() < Scene::GetCount())
+                data->m_scenes[e->m_drawgroup].resize(Scene::GetCount());
+
+            ptrdiff_t add = 0;
+            for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+            {
+                //If entity is concerned by this scene, add it in the list
+                if (Scene::GetScene(i)->IsRelevant(e))
+                {
+                    data->m_list[e->m_drawgroup].insert(e, data->m_scenes[e->m_drawgroup][i]);
+                    add++;
+                }
+                //Update scene index
+                data->m_scenes[e->m_drawgroup][i] += add;
+            }
+        }
 
         // Initialize the entity
         e->InitGame();
@@ -340,10 +363,9 @@ void TickerData::GameThreadTick()
     /* Tick objects for the game loop */
     for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
-        for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
+        for (ptrdiff_t i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
         {
             Entity *e = data->m_list[g][i];
-
             if (!e->m_destroy)
             {
 #if !LOL_BUILD_RELEASE
@@ -374,6 +396,8 @@ void TickerData::DrawThreadTick()
     /* Tick objects for the draw loop */
     for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
+        ptrdiff_t scene_idx = 0;
+        //Scene::GetScene[scene_idx]->EnableDisplay(); //TODO
         switch (g)
         {
         case Entity::DRAWGROUP_BEGIN:
@@ -384,9 +408,16 @@ void TickerData::DrawThreadTick()
             break;
         }
 
-        //Stop as soon as required
         for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
         {
+            //We're outside of the range of the current scene, on to the next
+            if (i >= data->m_scenes[g][scene_idx])
+            {
+                //Scene::GetScene[scene_idx]->DisableDisplay(); //TODO
+                scene_idx++;
+                //Scene::GetScene[scene_idx]->EnableDisplay(); //TODO
+            }
+
             Entity *e = data->m_list[g][i];
 
             if (!e->m_destroy)
@@ -397,7 +428,7 @@ void TickerData::DrawThreadTick()
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                e->TickDraw(data->deltatime, *Scene::g_scene);
+                e->TickDraw(data->deltatime, *Scene::GetScene(scene_idx));
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity %s [%p] missed super draw tick\n",

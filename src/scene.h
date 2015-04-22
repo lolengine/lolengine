@@ -42,25 +42,49 @@ public:
 private:
 };
 
+class PrimitiveSettings
+{
+    friend class Scene;
+
+public:
+    PrimitiveSettings() { }
+    virtual ~PrimitiveSettings() { }
+    virtual void ApplyTo(Primitive* primitive) const { }
+
+private:
+};
+
+//-----------------------------------------------------------------------------
+
 //-----------------------------------------------------------------------------
 class Scene
 {
     friend class Video;
-    friend class TickerData; //TODO: Smells shitty
-
+    
 private:
-    static Scene *g_scene;
+    static array<Scene*> g_scenes;
 
     Scene(ivec2 size);
     ~Scene();
+public:
+    static Scene* AddNew(ivec2 size);
+    static void DestroyScene(Scene* scene);
+    static void DestroyAll();
+    static ptrdiff_t GetCount();
 
+    static Scene* GetScene(ptrdiff_t index);
+private:
     static bool GetScene(Scene*& scene);
     static bool GetSceneData(SceneData*& data);
 
 public:
     static bool IsReady();
+    //TODO: don't like the name
+    void Apply(Entity* entity);
+    bool IsRelevant(Entity* entity);
 
-    static Camera *GetCamera(int cam_idx=-1);
+public:
+    static Camera *GetCamera(int cam_idx = -1);
 private:
     static int PushCamera(Scene* scene, Camera *cam);
     static void PopCamera(Scene* scene, Camera *cam);
@@ -74,6 +98,7 @@ public:
     /* New scenegraph */
     void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
     void AddPrimitive(Primitive* primitive);
+    void AddPrimitive(Entity* entity, Primitive* primitive);
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
