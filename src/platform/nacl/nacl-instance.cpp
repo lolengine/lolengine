@@ -253,7 +253,7 @@ void NaClInputData::Tick(float seconds)
 //----
 void NaClInputData::InitViewportSize()
 {
-    if (g_scene)
+    if (g_scenes.count())
     {
         m_app = vec2(Video::GetSize());
         //Dunno if its the good idea.
