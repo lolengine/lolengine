@@ -73,7 +73,7 @@ private:
     /* Primitives will be kept until:
      * - Updated by entity
      * - Scene is destroyed */
-    map<uint32_t, array<Primitive*, PrimitiveSettings*> > m_primitives_;
+    map<uintptr_t, array<Primitive*, PrimitiveSettings*> > m_primitives_;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
     float   m_new_line_time;
@@ -311,7 +311,8 @@ void Scene::AddPrimitive(Primitive* primitive)
 //-----------------------------------------------------------------------------
 void Scene::AddPrimitive(Entity* entity, Primitive* primitive)
 {
-    data->m_primitives_[(uint32_t)entity /* I don't like that */].push(primitive, nullptr);
+    /* FIXME: data->m_primitives_ is never emptied or even used. */
+    data->m_primitives_[(uintptr_t)entity /* I don't like that */].push(primitive, nullptr);
 }
 
 //-----------------------------------------------------------------------------
