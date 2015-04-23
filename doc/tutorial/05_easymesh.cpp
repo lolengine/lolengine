@@ -146,7 +146,7 @@ public:
 
         for (int i = 0; i < m_gears.Count(); i++)
         {
-            scene.AddPrimitive(m_gears[i].m1, m_mat * m_gears[i].m2);
+            m_gears[i].m1.Render(scene, m_mat * m_gears[i].m2);
         }
     }
 

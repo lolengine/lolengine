@@ -334,9 +334,9 @@ protected:
             else if (m_should_render)
             {
                 if (m_is_character)
-                    scene.AddPrimitive(m_mesh, m_character->GetTransform());
+                    m_mesh.Render(scene, m_character->GetTransform());
                 else
-                    scene.AddPrimitive(m_mesh, m_physics->GetTransform());
+                    m_mesh.Render(scene, m_physics->GetTransform());
             }
         }
     }

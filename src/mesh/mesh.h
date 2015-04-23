@@ -59,6 +59,8 @@ public:
      * may behave differently between submeshes. */
     void SetMaterial(Shader *shader);
 
+    //TODO: Not sure about the name
+    void Render(Scene& scene, mat4 const &matrix);
 protected:
     void Render();
 

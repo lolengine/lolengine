@@ -28,6 +28,12 @@ Mesh::~Mesh()
 {
 }
 
+void Mesh::Render(Scene& scene, mat4 const &matrix)
+{
+    for (int i = 0; i < m_submeshes.Count(); ++i)
+        scene.AddPrimitive(new PrimitiveMesh(m_submeshes[i], matrix));
+}
+
 void Mesh::Render()
 {
     for (int i = 0; i < m_submeshes.Count(); ++i)

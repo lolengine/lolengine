@@ -255,16 +255,6 @@ void Scene::Reset()
 }
 
 //-----------------------------------------------------------------------------
-/*TODO: SAM/TOUKY: Change that*/
-void Scene::AddPrimitive(Mesh const &mesh, mat4 const &matrix)
-{
-    for (int i = 0; i < mesh.m_submeshes.Count(); ++i)
-    {
-        AddPrimitive(new PrimitiveMesh(mesh.m_submeshes[i], matrix));
-    }
-}
-
-//-----------------------------------------------------------------------------
 void Scene::AddPrimitive(Primitive* primitive)
 {
     data->m_primitives.Push(primitive);
