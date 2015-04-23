@@ -25,7 +25,7 @@ class PrimitiveMesh : public Primitive
 public:
     PrimitiveMesh(SubMesh *submesh, mat4 const &matrix);
     virtual ~PrimitiveMesh();
-    virtual void Render() const;
+    virtual void Render(Scene& scene);
 
 private:
     SubMesh *m_submesh;

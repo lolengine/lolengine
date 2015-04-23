@@ -110,7 +110,7 @@ Scene::Scene(ivec2 size)
     data->m_default_cam = new Camera();
     mat4 proj = mat4::ortho(0.f, (float)size.x, 0.f, (float)size.y, -1000.f, 1000.f);
     data->m_default_cam->SetProjection(proj);
-    Scene::PushCamera(this, data->m_default_cam);
+    PushCamera(data->m_default_cam);
 
     data->m_tile_cam = -1;
     data->m_tile_shader = 0;
@@ -123,16 +123,16 @@ Scene::Scene(ivec2 size)
 
     data->m_debug_mask = 1;
 
-    SetLineTime(this);
-    SetLineMask(this);
-    SetLineSegmentSize(this);
-    SetLineColor(this);
+    SetLineTime();
+    SetLineMask();
+    SetLineSegmentSize();
+    SetLineColor();
 }
 
 //-----------------------------------------------------------------------------
 Scene::~Scene()
 {
-    Scene::PopCamera(this, data->m_default_cam);
+    PopCamera(data->m_default_cam);
 
     /* FIXME: this must be done while the GL context is still active.
      * Change the code architecture to make sure of that. */
@@ -146,10 +146,9 @@ Scene::~Scene()
 }
 
 //-----------------------------------------------------------------------------
-Scene* Scene::AddNew(ivec2 size)
+void Scene::AddNew(ivec2 size)
 {
     Scene::g_scenes << new Scene(size);
-    return Scene::g_scenes.last();
 }
 void Scene::DestroyScene(Scene* scene)
 {
@@ -167,34 +166,20 @@ ptrdiff_t Scene::GetCount()
 }
 
 //-----------------------------------------------------------------------------
-Scene* Scene::GetScene(ptrdiff_t index)
+bool Scene::IsReady(ptrdiff_t index)
 {
-    ASSERT(0 <= index && index < g_scenes.count(), "Trying to get a non-existent scene");
-    return g_scenes[index];
+    return 0 <= index && index < g_scenes.count() && !!g_scenes[index];
 }
 
 //-----------------------------------------------------------------------------
-bool Scene::GetScene(Scene*& scene)
+Scene& Scene::GetScene(ptrdiff_t index)
 {
-    ASSERT(!!g_scenes.count(), "Trying to access a non-ready scene");
-    return (scene = g_scenes[0]) != nullptr;
+    ASSERT(0 <= index && index < g_scenes.count() && !!g_scenes[index], "Trying to get a non-existent scene");
+    return *g_scenes[index];
 }
 
 //-----------------------------------------------------------------------------
-bool Scene::GetSceneData(SceneData*& data)
-{
-    ASSERT(!!g_scenes.count(), "Trying to access a non-ready scene");
-    return (data = g_scenes[0]->data) != nullptr;
-}
-
-//-----------------------------------------------------------------------------
-bool Scene::IsReady()
-{
-    return !!g_scenes[0];
-}
-
-//-----------------------------------------------------------------------------
-void Scene::Apply(Entity* entity)
+void Scene::Link(Entity* entity)
 {
     entity->m_scene_mask |= data->m_mask_id;
 }
@@ -206,10 +191,9 @@ bool Scene::IsRelevant(Entity* entity)
 }
 
 //-----------------------------------------------------------------------------
-Camera *Scene::GetCamera(int cam_idx)
+Camera* Scene::GetCamera(int cam_idx)
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     return (0 <= cam_idx && cam_idx < data->m_camera_stack.Count()) ?
             data->m_camera_stack[cam_idx] :
@@ -217,30 +201,28 @@ Camera *Scene::GetCamera(int cam_idx)
 }
 
 //-----------------------------------------------------------------------------
-int Scene::PushCamera(Scene* scene, Camera *cam)
+int Scene::PushCamera(Camera *cam)
 {
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     Ticker::Ref(cam);
-    scene->data->m_camera_stack.Push(cam);
-    return (int)scene->data->m_camera_stack.Count() - 1;
+    data->m_camera_stack.Push(cam);
+    return (int)data->m_camera_stack.Count() - 1;
 }
 
 //-----------------------------------------------------------------------------
-void Scene::PopCamera(Scene* scene, Camera *cam)
+void Scene::PopCamera(Camera *cam)
 {
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     /* Parse from the end because that’s probably where we’ll find
     * our camera first. */
-    for (ptrdiff_t i = scene->data->m_camera_stack.Count(); i--;)
+    for (ptrdiff_t i = data->m_camera_stack.Count(); i--;)
     {
-        if (scene->data->m_camera_stack[i] == cam)
+        if (data->m_camera_stack[i] == cam)
         {
             Ticker::Unref(cam);
-            scene->data->m_camera_stack.Remove(i);
+            data->m_camera_stack.Remove(i);
             return;
         }
     }
@@ -249,28 +231,9 @@ void Scene::PopCamera(Scene* scene, Camera *cam)
 }
 
 //-----------------------------------------------------------------------------
-int Scene::PushCamera(Camera *cam)
-{
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
-
-    return PushCamera(scene, cam);
-}
-
-//-----------------------------------------------------------------------------
-void Scene::PopCamera(Camera *cam)
-{
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
-
-    PopCamera(scene, cam);
-}
-
-//-----------------------------------------------------------------------------
 void Scene::SetTileCam(int cam_idx)
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     data->m_tile_cam = cam_idx;
 }
@@ -278,8 +241,7 @@ void Scene::SetTileCam(int cam_idx)
 //-----------------------------------------------------------------------------
 void Scene::Reset()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     for (int i = 0; i < data->m_tile_bufs.Count(); i++)
         delete data->m_tile_bufs[i];
@@ -337,77 +299,41 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
 }
 
 //-----------------------------------------------------------------------------
-void Scene::SetLineTime(Scene* scene, float new_time)
-{
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
-
-    scene->data->m_new_line_time = new_time;
-}
-void Scene::SetLineMask(Scene* scene, int new_mask)
-{
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
-
-    scene->data->m_new_line_mask = new_mask;
-}
-void Scene::SetLineSegmentSize(Scene* scene, float new_segment_size)
-{
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
-
-    scene->data->m_new_line_segment_size = new_segment_size;
-}
-void Scene::SetLineColor(Scene* scene, vec4 new_color)
-{
-    ASSERT(!!scene, "Trying to access a non-ready scene");
-    ASSERT(!!scene->data, "Trying to access a non-ready scene");
-
-    scene->data->m_new_line_color = new_color;
-}
-
-//-----------------------------------------------------------------------------
 void Scene::SetLineTime(float new_time)
 {
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
-    SetLineTime(scene, new_time);
+    data->m_new_line_time = new_time;
 }
 void Scene::SetLineMask(int new_mask)
 {
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
-    SetLineMask(scene, new_mask);
+    data->m_new_line_mask = new_mask;
 }
 void Scene::SetLineSegmentSize(float new_segment_size)
 {
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
-    SetLineSegmentSize(scene, new_segment_size);
+    data->m_new_line_segment_size = new_segment_size;
 }
 void Scene::SetLineColor(vec4 new_color)
 {
-    Scene* scene;
-    ASSERT(GetScene(scene), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
-    SetLineColor(scene, new_color);
+    data->m_new_line_color = new_color;
 }
 
 //-----------------------------------------------------------------------------
 float Scene::GetLineSegmentSize()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     return data->m_new_line_segment_size;
 }
 vec4 Scene::GetLineColor()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     return data->m_new_line_color;
 }
@@ -415,18 +341,16 @@ vec4 Scene::GetLineColor()
 //-----------------------------------------------------------------------------
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_lines.Push(a, b, color, data->m_new_line_time,
-                       data->m_new_line_mask, false, false);
+    data->m_lines.Push(a, b, color,
+                        data->m_new_line_time, data->m_new_line_mask, false, false);
 }
 
 //-----------------------------------------------------------------------------
 void Scene::AddLight(Light *l)
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     data->m_lights.Push(l);
 }
@@ -434,8 +358,7 @@ void Scene::AddLight(Light *l)
 //-----------------------------------------------------------------------------
 array<Light *> const &Scene::GetLights()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     return data->m_lights;
 }
@@ -443,23 +366,20 @@ array<Light *> const &Scene::GetLights()
 //-----------------------------------------------------------------------------
 void Scene::RenderPrimitives()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     /* TODO: this should be the main entry for rendering of all
      * primitives found in the scene graph. When we have one. */
-
     for (Primitive* p : data->m_primitives)
     {
-        p->Render();
+        p->Render(*this);
     }
 }
 
 //-----------------------------------------------------------------------------
 void Scene::RenderTiles() // XXX: rename to Blit()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     RenderContext rc;
 
@@ -581,8 +501,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 //-----------------------------------------------------------------------------
 void Scene::RenderLines(float seconds) // XXX: rename to Blit()
 {
-    SceneData* data;
-    ASSERT(GetSceneData(data), "Trying to access a non-ready scene");
+    ASSERT(!!data, "Trying to access a non-ready scene");
 
     RenderContext rc;
 
@@ -602,7 +521,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     array<vec4, vec4, vec4, vec4> buff;
     buff.Resize(linecount);
     int real_linecount = 0;
-    mat4 const inv_view_proj = inverse(Scene::GetCamera()->GetProjection() * Scene::GetCamera()->GetView());
+    mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
     for (int i = 0; i < linecount; i++)
     {
         if (data->m_lines[i].m5 & data->m_debug_mask)

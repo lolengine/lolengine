@@ -62,7 +62,8 @@ public:
         m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
                                        vec3(0.f, -1.f, 0.f),
                                        vec3(0.f, 1.f, 0.f)));
-        Scene::PushCamera(m_camera);
+        Scene& scene = Scene::GetScene();
+        scene.PushCamera(m_camera);
 
         /* Add a white directional light */
         m_light1 = new Light();
@@ -83,7 +84,8 @@ public:
 
     ~EasyMeshTutorial()
     {
-        Scene::PopCamera(m_camera);
+        Scene& scene = Scene::GetScene();
+        scene.PopCamera(m_camera);
         Ticker::Unref(m_light1);
         Ticker::Unref(m_light2);
     }

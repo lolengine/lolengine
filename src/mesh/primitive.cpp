@@ -30,7 +30,7 @@ PrimitiveMesh::~PrimitiveMesh()
 {
 }
 
-void PrimitiveMesh::Render() const
+void PrimitiveMesh::Render(Scene& scene)
 {
     /* TODO: this should be the main entry for rendering of all
     * primitives found in the scene graph. When we have one. */
@@ -53,11 +53,11 @@ void PrimitiveMesh::Render() const
             /* Per-scene matrices */
             ShaderUniform u_mat;
             u_mat = shader->GetUniformLocation("u_projection");
-            shader->SetUniform(u_mat, Scene::GetCamera()->GetProjection());
             u_mat = shader->GetUniformLocation("u_view");
-            shader->SetUniform(u_mat, Scene::GetCamera()->GetView());
             u_mat = shader->GetUniformLocation("u_inv_view");
-            shader->SetUniform(u_mat, inverse(Scene::GetCamera()->GetView()));
+            shader->SetUniform(u_mat, scene.GetCamera()->GetProjection());
+            shader->SetUniform(u_mat, scene.GetCamera()->GetView());
+            shader->SetUniform(u_mat, inverse(scene.GetCamera()->GetView()));
 
             /* Per-object matrices, will be set later */
             u_model = shader->GetUniformLocation("u_model");
@@ -65,7 +65,7 @@ void PrimitiveMesh::Render() const
             u_normalmat = shader->GetUniformLocation("u_normalmat");
 
             /* Per-scene environment */
-            array<Light *> const &lights = Scene::GetLights();
+            array<Light *> const &lights = scene.GetLights();
             array<vec4> light_data;
 
             /* FIXME: the 4th component of the position can be used for other things */
@@ -80,7 +80,7 @@ void PrimitiveMesh::Render() const
         }
 
         shader->SetUniform(u_model, m_matrix);
-        mat4 modelview = Scene::GetCamera()->GetView() * m_matrix;
+        mat4 modelview = scene.GetCamera()->GetView() * m_matrix;
         shader->SetUniform(u_modelview, modelview);
         shader->SetUniform(u_normalmat, transpose(inverse(mat3(modelview))));
 

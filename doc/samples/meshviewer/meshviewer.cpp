@@ -173,7 +173,8 @@ void MeshViewer::Start()
     m_camera->SetProjection(40.f, .0001f, 2000.f);
     //m_camera->SetProjection(90.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     //m_camera->UseShift(true);
-    Scene::PushCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    scene.PushCamera(m_camera);
 
 #if HAS_INPUT
     InputProfile& ip = m_profile;
@@ -199,7 +200,8 @@ void MeshViewer::Stop()
     UpdateSceneSetup(true);
 
     //Destroy core stuff
-    if (m_camera) Scene::PopCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    if (m_camera) scene.PopCamera(m_camera);
 
     m_file_check->UnregisterFile(m_file_status);
 
@@ -505,7 +507,8 @@ void MeshViewer::Prepare()
     m_camera->SetView(vec3(0.f, 0.f, 10.f), vec3::zero, vec3::axis_y);
     m_camera->SetProjection(0.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     m_camera->UseShift(true);
-    Scene::PushCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    scene.PushCamera(m_camera);
 
     //Lights setup
     m_ssetup = new SceneSetup();
@@ -544,7 +547,8 @@ void MeshViewer::Prepare()
 
 void MeshViewer::Unprepare()
 {
-    if (m_camera) Scene::PopCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    if (m_camera) scene.PopCamera(m_camera);
     if (m_ssetup) delete m_ssetup;
 
     MessageService::Destroy();

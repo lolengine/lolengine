@@ -37,7 +37,7 @@ class Primitive
 public:
     Primitive() { }
     virtual ~Primitive() { }
-    virtual void Render() const { }
+    virtual void Render(Scene& scene) { }
 
 private:
 };
@@ -66,34 +66,31 @@ private:
 
     Scene(ivec2 size);
     ~Scene();
-public:
-    static Scene* AddNew(ivec2 size);
-    static void DestroyScene(Scene* scene);
-    static void DestroyAll();
-    static ptrdiff_t GetCount();
 
-    static Scene* GetScene(ptrdiff_t index);
+public:
+    static void AddNew(ivec2 size);
 private:
-    static bool GetScene(Scene*& scene);
-    static bool GetSceneData(SceneData*& data);
+    //Private because I don't know if we should have it
+    static void DestroyScene(Scene* scene);
+private:
+    static void DestroyAll();
+public:
+    static ptrdiff_t GetCount();
+    static bool IsReady(ptrdiff_t index = 0);
+    static Scene& GetScene(ptrdiff_t index = 0);
 
 public:
-    static bool IsReady();
     //TODO: don't like the name
-    void Apply(Entity* entity);
+    void Link(Entity* entity);
     bool IsRelevant(Entity* entity);
 
 public:
-    static Camera *GetCamera(int cam_idx = -1);
-private:
-    static int PushCamera(Scene* scene, Camera *cam);
-    static void PopCamera(Scene* scene, Camera *cam);
-public:
-    static int PushCamera(Camera *cam);
-    static void PopCamera(Camera *cam);
-    static void SetTileCam(int cam_idx);
+    Camera* GetCamera(int cam_idx = -1);
+    int PushCamera(Camera *cam);
+    void PopCamera(Camera *cam);
+    void SetTileCam(int cam_idx);
 
-    static void Reset();
+    void Reset();
 
     /* New scenegraph */
     void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
@@ -104,27 +101,22 @@ public:
      * the architecture we want to build */
     void AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle);
 
-private:
-    static void SetLineTime(Scene* scene, float new_time = -1.f);
-    static void SetLineMask(Scene* scene, int new_mask = 0xFFFFFFFF);
-    static void SetLineSegmentSize(Scene* scene, float new_segment_size = 100000.f);
-    static void SetLineColor(Scene* scene, vec4 new_color = vec4(1.f));
 public:
-    static void SetLineTime(float new_time = -1.f);
-    static void SetLineMask(int new_mask = 0xFFFFFFFF);
-    static void SetLineSegmentSize(float new_segment_size = 100000.f);
-    static void SetLineColor(vec4 new_color = vec4(1.f));
+    void SetLineTime(float new_time = -1.f);
+    void SetLineMask(int new_mask = 0xFFFFFFFF);
+    void SetLineSegmentSize(float new_segment_size = 100000.f);
+    void SetLineColor(vec4 new_color = vec4(1.f));
 
-    static float GetLineSegmentSize();
-    static vec4 GetLineColor();
-    static void AddLine(vec3 a, vec3 b, vec4 color);
+    float GetLineSegmentSize();
+    vec4 GetLineColor();
+    void AddLine(vec3 a, vec3 b, vec4 color);
 
-    static void AddLight(Light *light);
-    static array<Light *> const &GetLights();
+    void AddLight(Light *light);
+    array<Light *> const &GetLights();
 
-    static void RenderPrimitives();
-    static void RenderTiles();
-    static void RenderLines(float seconds);
+    void RenderPrimitives();
+    void RenderTiles();
+    void RenderLines(float seconds);
 
 private:
     SceneData *data;
