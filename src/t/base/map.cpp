@@ -98,14 +98,9 @@ lolunit_declare_fixture(MapTest)
         for (int i = 0; i < 20; i++)
             m[i] = i;
 
-        m.remove(12);
-        m.remove(0);
-        m.remove(17);
-        m.remove(2);
-        m.remove(9);
-        m.remove(4);
-        m.remove(15);
-        m.remove(10);
+        for (int i : { 12, 0, 17, 2, 9, 4, 15, 10 })
+            m.remove(i);
+
         lolunit_assert_equal(m[8], 8);
     }
 
