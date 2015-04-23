@@ -295,6 +295,8 @@ void TickerData::GameThreadTick()
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already
      * in the tick lists can be marked for destruction. */
+    array<Entity*> destroy_list;
+    bool do_reserve = true;
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
         for (ptrdiff_t i = data->m_list[g].Count(); i--;)
@@ -303,18 +305,37 @@ void TickerData::GameThreadTick()
 
             if (e->m_destroy && g < Entity::GAMEGROUP_END)
             {
-                /* If entity is to be destroyed, remove it from the
-                 * game tick list. */
+                /* Game tick list:
+                * If entity is to be destroyed, remove it */
                 data->m_list[g].RemoveSwap(i);
+                if (do_reserve)
+                {
+                    do_reserve = false;
+                    destroy_list.reserve(data->nentities); //Should it be less ?
+                }
+                destroy_list.push_unique(e);
             }
             else if (e->m_destroy)
             {
-                /* If entity is to be destroyed, remove it from the
-                 * draw tick list and destroy it. */
+                /* Draw tick list:
+                * If entity is to be destroyed,
+                * remove it and store it. */
                 data->m_list[g].RemoveSwap(i);
-                delete e;
-
-                data->nentities--;
+                ptrdiff_t removal_count = 0;
+                for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+                {
+                    //If entity is concerned by this scene, add it in the list
+                    if (Scene::GetScene(i)->IsRelevant(e))
+                        removal_count++;
+                    //Update scene index
+                    data->m_scenes[e->m_drawgroup][i] -= removal_count;
+                }
+                if (do_reserve)
+                {
+                    do_reserve = false;
+                    destroy_list.reserve(data->nentities); //Should it be less ?
+                }
+                destroy_list.push_unique(e);
             }
             else
             {
@@ -322,6 +343,12 @@ void TickerData::GameThreadTick()
                     e->m_destroy = 1;
             }
         }
+    }
+    if (!!destroy_list.count())
+    {
+        data->nentities -= destroy_list.count();
+        for (Entity* e : destroy_list)
+            delete e;
     }
 
     /* Insert waiting objects into the appropriate lists */
@@ -342,17 +369,17 @@ void TickerData::GameThreadTick()
             if (data->m_scenes[e->m_drawgroup].count() < Scene::GetCount())
                 data->m_scenes[e->m_drawgroup].resize(Scene::GetCount());
 
-            ptrdiff_t add = 0;
+            ptrdiff_t added_count = 0;
             for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
             {
                 //If entity is concerned by this scene, add it in the list
                 if (Scene::GetScene(i)->IsRelevant(e))
                 {
                     data->m_list[e->m_drawgroup].insert(e, data->m_scenes[e->m_drawgroup][i]);
-                    add++;
+                    added_count++;
                 }
                 //Update scene index
-                data->m_scenes[e->m_drawgroup][i] += add;
+                data->m_scenes[e->m_drawgroup][i] += added_count;
             }
         }
 
@@ -443,6 +470,7 @@ void TickerData::DrawThreadTick()
         Scene::RenderTiles();
         Scene::RenderLines(data->deltatime);
     }
+    //Scene::GetScene[scene_idx]->DisableDisplay(); //TODO
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
 }
