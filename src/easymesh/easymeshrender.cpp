@@ -184,12 +184,13 @@ void DefaultShaderData::SetupDefaultData(bool with_UV)
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupShaderDatas(mat4 const &model)
 {
-    mat4 proj = Scene::GetCamera()->GetProjection();
-    mat4 view = Scene::GetCamera()->GetView();
+    Scene& scene = Scene::GetScene();
+    mat4 proj = scene.GetCamera()->GetProjection();
+    mat4 view = scene.GetCamera()->GetView();
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
     /* FIXME: this should be hidden in the shader */
-    array<Light *> const &lights = Scene::GetLights();
+    array<Light *> const &lights = scene.GetLights();
     array<vec4> light_data;
     //This is not very nice, but necessary for emscripten WebGL generation.
     float f = 0.f;

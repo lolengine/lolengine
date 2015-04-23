@@ -99,7 +99,8 @@ void BtPhysTest::InitApp()
                       vec3(0, 1, 0));
     m_camera->SetProjection(45.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
 #endif
-    Scene::PushCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    scene.PushCamera(m_camera);
 
     m_ready = false;
 
@@ -332,8 +333,9 @@ void BtPhysTest::TickGame(float seconds)
     vec3 cam_center(0.f);
     float cam_factor = .0f;
     vec2 screen_min_max[2] = { vec2(FLT_MAX), vec2(-FLT_MAX) };
-    mat4 world_cam = Scene::GetCamera()->GetView();
-    mat4 cam_screen = Scene::GetCamera()->GetProjection();
+    Scene& scene = Scene::GetScene();
+    mat4 world_cam = scene.GetCamera()->GetView();
+    mat4 cam_screen = scene.GetCamera()->GetProjection();
 
     m_target_timer -= seconds;
     if (m_target_timer < .0f)
@@ -619,7 +621,8 @@ void BtPhysTest::TickDraw(float seconds, Scene &scene)
 
 BtPhysTest::~BtPhysTest()
 {
-    Scene::PopCamera(m_camera);
+    Scene& scene = Scene::GetScene();
+    scene.PopCamera(m_camera);
     Ticker::Unref(m_light1);
     Ticker::Unref(m_light2);
 
@@ -700,8 +703,9 @@ void CatShaderData::SetupDefaultData()
 //-----------------------------------------------------------------------------
 void CatShaderData::SetupShaderDatas(mat4 const &model)
 {
-    mat4 proj = Scene::GetCamera()->GetProjection();
-    mat4 view = Scene::GetCamera()->GetView();
+    Scene& scene = Scene::GetScene();
+    mat4 proj = scene.GetCamera()->GetProjection();
+    mat4 view = scene.GetCamera()->GetView();
 
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(view)));

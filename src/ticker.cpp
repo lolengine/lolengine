@@ -325,7 +325,7 @@ void TickerData::GameThreadTick()
                 for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
                 {
                     //If entity is concerned by this scene, add it in the list
-                    if (Scene::GetScene(i)->IsRelevant(e))
+                    if (Scene::GetScene(i).IsRelevant(e))
                         removal_count++;
                     //Update scene index
                     data->m_scenes[e->m_drawgroup][i] -= removal_count;
@@ -359,7 +359,7 @@ void TickerData::GameThreadTick()
         //If the entity has no mask, default it
         if (e->m_scene_mask == 0)
         {
-            Scene::GetScene(0)->Apply(e);
+            Scene::GetScene().Link(e);
         }
 
         data->m_todolist.remove(-1);
@@ -373,7 +373,7 @@ void TickerData::GameThreadTick()
             for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
             {
                 //If entity is concerned by this scene, add it in the list
-                if (Scene::GetScene(i)->IsRelevant(e))
+                if (Scene::GetScene(i).IsRelevant(e))
                 {
                     data->m_list[e->m_drawgroup].insert(e, data->m_scenes[e->m_drawgroup][i]);
                     added_count++;
@@ -423,27 +423,23 @@ void TickerData::DrawThreadTick()
     /* Tick objects for the draw loop */
     for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
-        ptrdiff_t scene_idx = 0;
-        //Scene::GetScene[scene_idx]->EnableDisplay(); //TODO
         switch (g)
         {
         case Entity::DRAWGROUP_BEGIN:
-            Scene::Reset();
+            for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+                Scene::GetScene(i).Reset();
             g_renderer->Clear(ClearMask::All);
             break;
         default:
             break;
         }
 
+        ptrdiff_t scene_idx = 0;
         for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
         {
             //We're outside of the range of the current scene, on to the next
             if (i >= data->m_scenes[g][scene_idx])
-            {
-                //Scene::GetScene[scene_idx]->DisableDisplay(); //TODO
-                scene_idx++;
-                //Scene::GetScene[scene_idx]->EnableDisplay(); //TODO
-            }
+                ++scene_idx;
 
             Entity *e = data->m_list[g][i];
 
@@ -455,7 +451,7 @@ void TickerData::DrawThreadTick()
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                e->TickDraw(data->deltatime, *Scene::GetScene(scene_idx));
+                e->TickDraw(data->deltatime, Scene::GetScene(scene_idx));
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                     Log::Error("entity %s [%p] missed super draw tick\n",
@@ -465,12 +461,24 @@ void TickerData::DrawThreadTick()
             }
         }
 
-        /* Do this render step */
-        Scene::RenderPrimitives();
-        Scene::RenderTiles();
-        Scene::RenderLines(data->deltatime);
     }
-    //Scene::GetScene[scene_idx]->DisableDisplay(); //TODO
+
+    //Do the scene render loop
+    for (ptrdiff_t idx = 0; idx < Scene::GetCount(); ++idx)
+    {
+        Scene& scene = Scene::GetScene(idx);
+
+        /* Enable display */
+        //scene.EnableDisplay(); //TODO
+
+        /* Do the render step */
+        scene.RenderPrimitives();
+        scene.RenderTiles();
+        scene.RenderLines(data->deltatime);
+
+        /* Disable display */
+        //scene.DisableDisplay(); //TODO
+    }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
 }
