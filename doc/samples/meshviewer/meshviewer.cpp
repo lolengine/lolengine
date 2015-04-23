@@ -101,7 +101,7 @@ void EasyMeshViewerObject::TickDraw(float seconds, Scene &scene)
     switch (m_mesh.GetMeshState().ToScalar())
     {
     case MeshRender::NeedConvert: { m_mesh.MeshConvert(); break; }
-    case MeshRender::CanRender: { scene.AddPrimitive(m_mesh, mat4::identity/*TODO:FIX THAT*/); break; }
+    case MeshRender::CanRender: { m_mesh.Render(scene, mat4::identity/*TODO:FIX THAT*/); break; }
     default: break;
     }
 }
@@ -1030,12 +1030,12 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                 //Camera projection
                 mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                 m_camera->SetProjection(new_proj);
-                scene.AddPrimitive(*m_meshes[i].m1, m_mat);
+                m_meshes[i].m1->Render(scene, m_mat);
                 g_renderer->Clear(ClearMask::Depth);
             }
             m_camera->SetProjection(save_proj);
 #else
-            scene.AddPrimitive(*m_meshes[i].m1, m_mat);
+            m_meshes[i].m1->Render(scene, m_mat);
 #endif //ALL_FEATURES
         }
     }
@@ -1045,7 +1045,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
     {
         m_camera->SetProjection(mat_gizmo);
         if (m_ssetup->m_show_gizmo)
-            scene.AddPrimitive(*m_gizmos[GZ_Editor], m_mat);
+            m_gizmos[GZ_Editor]->Render(scene, m_mat);
 
         if (m_ssetup->m_show_lights)
         {
@@ -1057,12 +1057,12 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                 //dir light
                 if (ltmp->GetType() == LightType::Directional)
                 {
-                    scene.AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * inverse(local));
-                    scene.AddPrimitive(*m_gizmos[GZ_LightDir], inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition(), vec3::axis_y)));
+                    m_gizmos[GZ_LightPos]->Render(scene, m_mat * inverse(local));
+                    m_gizmos[GZ_LightDir]->Render(scene, inverse(world) * inverse(mat4::lookat(vec3::zero, -ltmp->GetPosition(), vec3::axis_y)));
                 }
                 else //point light
                 {
-                    scene.AddPrimitive(*m_gizmos[GZ_LightPos], m_mat * local);
+                    m_gizmos[GZ_LightPos]->Render(scene, m_mat * local);
                 }
             }
         }

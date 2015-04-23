@@ -93,7 +93,6 @@ public:
     void Reset();
 
     /* New scenegraph */
-    void AddPrimitive(Mesh const &mesh, mat4 const &matrix);
     void AddPrimitive(Primitive* primitive);
     void AddPrimitive(Entity* entity, Primitive* primitive);
 
