@@ -30,26 +30,26 @@ namespace lol
 class SceneData;
 
 //-----------------------------------------------------------------------------
-class Primitive
+class PrimitiveSource
 {
     friend class Scene;
 
 public:
-    Primitive() { }
-    virtual ~Primitive() { }
+    PrimitiveSource() { }
+    virtual ~PrimitiveSource() { }
     virtual void Render(Scene& scene) { }
 
 private:
 };
 
-class PrimitiveSettings
+class PrimitiveRenderer
 {
     friend class Scene;
 
 public:
-    PrimitiveSettings() { }
-    virtual ~PrimitiveSettings() { }
-    virtual void ApplyTo(Primitive* primitive) const { UNUSED(primitive); }
+    PrimitiveRenderer() { }
+    virtual ~PrimitiveRenderer() { }
+    virtual void Render(PrimitiveSource* primitive) const { UNUSED(primitive); }
 
 private:
 };
@@ -69,8 +69,7 @@ private:
 
 public:
     static void AddNew(ivec2 size);
-private:
-    //Private because I don't know if we should have it
+private: //Private because I don't know if we should have it
     static void DestroyScene(Scene* scene);
 private:
     static void DestroyAll();
@@ -93,8 +92,38 @@ public:
     void Reset();
 
     /* New scenegraph */
-    void AddPrimitive(Primitive* primitive);
-    void AddPrimitive(Entity* entity, Primitive* primitive);
+    void AddPrimitive(PrimitiveSource* primitive);
+
+    /* === Primitive source stuff === */
+    /* Returns the number of primitive source set to the given entity */
+    ptrdiff_t HasPrimitiveSource(Entity* entity);
+    /* Add a primitive sources linked to the given entity
+     * Returns the slot number */
+    ptrdiff_t AddPrimitiveSource(Entity* entity, PrimitiveSource* source);
+    /* Update the primitive source at index linked to the given entity
+     * Deletes the old one
+     * The slot is kept even if source == nullptr */
+    void SetPrimitiveSource(ptrdiff_t index, Entity* entity, PrimitiveSource* source);
+    /* Remove primitive source at index set to the given entity */
+    void ReleasePrimitiveSource(ptrdiff_t index, Entity* entity);
+    /* Remove all primitive source set to the given entity */
+    void ReleaseAllPrimitiveSource(Entity* entity);
+
+    /* === Primitive renderer stuff === */
+    /* Returns the number of primitive renderer set to the given entity */
+    ptrdiff_t HasPrimitiveRenderer(Entity* entity);
+    /* Add a primitive renderer linked to the given entity
+     * Returns the slot number */
+    ptrdiff_t AddPrimitiveRenderer(Entity* entity, PrimitiveRenderer* renderer);
+    /* Update the primitive renderer linked to the given entity
+     * Deletes the old one
+     * Will assert if renderer == nullptr */
+    void SetPrimitiveRenderer(ptrdiff_t index, Entity* entity, PrimitiveRenderer* renderer);
+    /* Remove primitive renderer at index set to the given entity */
+    void ReleasePrimitiveRenderer(ptrdiff_t index, Entity* entity);
+    /* Remove all primitive renderer set to the given entity */
+    void ReleaseAllPrimitiveRenderer(Entity* entity);
+
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
