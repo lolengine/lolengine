@@ -18,7 +18,7 @@
 namespace lol
 {
 
-class PrimitiveMesh : public Primitive
+class PrimitiveMesh : public PrimitiveSource
 {
     friend class Scene;
 

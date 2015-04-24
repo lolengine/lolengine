@@ -174,7 +174,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class PrimitiveLolImGui : public Primitive
+class PrimitiveLolImGui : public PrimitiveSource
 {
 public:
     PrimitiveLolImGui() { }
