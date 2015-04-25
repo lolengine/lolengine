@@ -134,7 +134,7 @@
     <ClCompile Include="image\codec\zed-palette-image.cpp" />
     <ClCompile Include="image\color\cie1931.cpp" />
     <ClCompile Include="image\color\color.cpp" />
-    <ClCompile Include="image\filter\color.cpp" />
+    <ClCompile Include="image\filter\colors.cpp" />
     <ClCompile Include="image\filter\convolution.cpp" />
     <ClCompile Include="image\filter\dilate.cpp" />
     <ClCompile Include="image\filter\median.cpp" />

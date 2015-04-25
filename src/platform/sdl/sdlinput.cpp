@@ -268,6 +268,7 @@ void SdlInputData::Tick(float seconds)
 #   endif
             {
                 //Lock management
+#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
             case SDLOL_CapsLock:
             case SDLOL_ScrollLock:
             case SDLOL_NumLockClear:
@@ -294,7 +295,11 @@ void SdlInputData::Tick(float seconds)
                         m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
                     */
                 }
+#   endif
             default:
+#   if USE_OLD_SDL
+                m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
+#   else
                 if (ScanCodeIsValid(sc))
                 {
                     m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
@@ -321,6 +326,7 @@ void SdlInputData::Tick(float seconds)
                     Log::Error("unknown keypress (sym 0x%02x, scancode %0d)\n",
                                 event.key.keysym.sym, event.key.keysym.scancode);
                 */
+#   endif
             }
             break;
 
