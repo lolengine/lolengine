@@ -32,6 +32,87 @@
 namespace lol
 {
 
+//-----------------------------------------------------------------------------
+class ApplicationDisplayData
+{
+    friend class ApplicationDisplay;
+
+    ApplicationDisplayData(char const *name, ivec2 resolution)
+        : display(name, resolution)
+    { }
+
+protected:
+    void SetResolution(ivec2 resolution)
+    {
+        display.SetResolution(resolution);
+    }
+    void SetPosition(ivec2 position)
+    {
+        display.SetPosition(position);
+    }
+    void Enable()
+    {
+        display.Enable();
+    }
+    void Disable()
+    {
+        display.Disable();
+    }
+
+#if _XBOX
+    //NOT HANDLED YET
+#elif __native_client__
+    //NOT HANDLED YET
+#elif __ANDROID__
+    //NOT HANDLED YET
+#elif USE_SDL || USE_OLD_SDL
+    SdlAppDisplay display;
+#elif HAVE_GLES_2X
+    /* FIXME: this macro is only deactivated if we include "lolgl.h" */
+    //NOT HANDLED YET
+#else
+#   error No application class available on this platform
+#endif
+};
+
+ApplicationDisplay::ApplicationDisplay(char const *name, ivec2 resolution)
+{
+    data = new ApplicationDisplayData(name, resolution);
+}
+
+ApplicationDisplay::~ApplicationDisplay()
+{
+    delete data;
+}
+
+void ApplicationDisplay::SetResolution(ivec2 resolution)
+{
+    super::SetResolution(resolution);
+
+    data->SetResolution(resolution);
+}
+void ApplicationDisplay::SetPosition(ivec2 position)
+{
+    super::SetPosition(position);
+
+    data->SetPosition(position);
+}
+
+void ApplicationDisplay::Enable()
+{
+    super::Enable();
+
+    data->Enable();
+}
+
+void ApplicationDisplay::Disable()
+{
+    data->Disable();
+
+    super::Disable();
+}
+    
+//-----------------------------------------------------------------------------
 class ApplicationData
 {
     friend class Application;
@@ -71,6 +152,7 @@ static void AppCallback()
 
 Application::Application(char const *name, ivec2 resolution, float framerate)
 {
+    SceneDisplay::Add(new ApplicationDisplay(name, resolution));
     data = new ApplicationData(name, resolution, framerate);
     g_world.ExecLuaFile("lua/init.lua");
 }

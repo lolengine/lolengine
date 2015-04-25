@@ -304,7 +304,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     m_data->m_size = size;
     m_data->m_bound = false;
 #if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
 
     if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1,
                                             D3DUSAGE_RENDERTARGET,
@@ -315,7 +315,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
 #elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
 
     if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1, 0,
                                             (D3DFORMAT)fbo_format.GetFormat(),
@@ -474,8 +474,8 @@ void Framebuffer::Bind()
     /* FIXME: this should be done in the RenderContext object
      * instead, maybe by getting rid of Framebuffer::Bind() and
      * creating RenderContext::SetFramebuffer() instead. */
-    m_data->m_saved_viewport = g_renderer->GetViewport();
-    g_renderer->SetViewport(ibox2(ivec2::zero, m_data->m_size));
+    m_data->m_saved_viewport = Renderer::Get()->GetViewport();
+    Renderer::Get()->SetViewport(ibox2(ivec2::zero, m_data->m_size));
     m_data->m_bound = true;
 }
 
@@ -501,7 +501,7 @@ void Framebuffer::Unbind()
 #   endif
 #endif
 
-    g_renderer->SetViewport(m_data->m_saved_viewport);
+    Renderer::Get()->SetViewport(m_data->m_saved_viewport);
     m_data->m_bound = false;
 }
 

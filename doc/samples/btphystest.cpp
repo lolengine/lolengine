@@ -307,7 +307,7 @@ void BtPhysTest::TickGame(float seconds)
 
     if (!m_init_status)
     {
-        if (g_renderer)
+        if (Renderer::GetCount())
             InitApp();
         return;
     }

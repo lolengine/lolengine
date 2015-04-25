@@ -529,9 +529,9 @@ void VertexDeclaration::Initialize()
     elements[m_count] = end_element[0];
 
 #   if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
 #   endif
 
     if (FAILED(m_data->m_dev->CreateVertexDeclaration(elements,
@@ -614,9 +614,9 @@ VertexBuffer::VertexBuffer(size_t size)
         return;
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
 #   endif
 
     if (FAILED(m_data->m_dev->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,

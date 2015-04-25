@@ -45,7 +45,8 @@ DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 
 void Video::Setup(ivec2 size)
 {
-    g_renderer = new Renderer(size);
+    //g_renderer = new Renderer(size);
+    Renderer::AddNew(size);
     Scene::AddNew(size);
 
     /* Initialise reasonable scene default properties */
@@ -95,9 +96,10 @@ DebugRenderMode Video::GetDebugRenderMode()
 void Video::Destroy()
 {
     Scene::DestroyAll();
+    Renderer::DestroyAll();
 
-    delete g_renderer;
-    g_renderer = nullptr;
+    //delete g_renderer;
+    //g_renderer = nullptr;
 }
 
 void Video::Capture(uint32_t *buffer)
@@ -132,7 +134,7 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-    return g_renderer->GetViewport().extent();
+    return Renderer::Get()->GetViewport().extent();
 }
 
 } /* namespace lol */

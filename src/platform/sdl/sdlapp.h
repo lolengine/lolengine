@@ -20,6 +20,28 @@
 namespace lol
 {
 
+//-----------------------------------------------------------------------------
+class SdlAppDisplayData;
+
+class SdlAppDisplay
+{
+    friend class ApplicationDisplayData;
+public:
+    SdlAppDisplay(char const *title, ivec2 resolution);
+    virtual ~SdlAppDisplay();
+
+protected:
+    void SetResolution(ivec2 resolution);
+    void SetPosition(ivec2 position);
+
+    void Enable();
+    void Disable();
+
+private:
+    SdlAppDisplayData *data;
+};
+
+//-----------------------------------------------------------------------------
 class SdlAppData;
 
 class SdlApp

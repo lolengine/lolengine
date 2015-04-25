@@ -70,9 +70,9 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
 #if defined USE_D3D9 || defined _XBOX
 #   if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)g_renderer->GetDevice();
+    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
 #   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)g_renderer->GetDevice();
+    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
 #   endif
 
     static struct

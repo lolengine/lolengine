@@ -145,7 +145,7 @@ public:
                     RenderContext rc;
                     rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                     rc.SetClearDepth(1.f);
-                    g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+                    Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
                 }
                 m_fbos.Last().m1->Unbind();
             }
@@ -156,7 +156,7 @@ public:
                 RenderContext rc;
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             temp_buffer->Unbind();
 
@@ -220,7 +220,7 @@ public:
             RenderContext rc;
             rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
             rc.SetClearDepth(1.f);
-            g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+            Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
         }
         temp_buffer->Unbind();
 
@@ -250,7 +250,7 @@ public:
                 RenderContext rc;
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[f].m1->Unbind();
 
@@ -273,7 +273,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                g_renderer->Clear(ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Depth);
                 m_fbos[f].m2->Bind();
 
                 int i = 0;
@@ -292,7 +292,7 @@ public:
             }
         }
 
-        g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
 
         //FRAME BUFFER DRAW
         m_timer -= seconds;
@@ -304,7 +304,7 @@ public:
                 RenderContext rc;
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                g_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[m_cur_fbo].m1->Unbind();
 
@@ -335,7 +335,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                g_renderer->Clear(ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Depth);
                 shader->Bind();
 
                 //08_FBO ??
