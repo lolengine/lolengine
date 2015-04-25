@@ -106,7 +106,7 @@ liblolcore_sources = \
     gpu/lolfx.cpp \
     \
     mesh/mesh.cpp mesh/mesh.h \
-    mesh/primitive.cpp mesh/primitive.h \
+    mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
     sys/init.cpp sys/timer.cpp sys/file.cpp sys/hacks.cpp \
     sys/thread.cpp sys/threadbase.h \

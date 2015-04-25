@@ -152,6 +152,8 @@ MeshViewer::~MeshViewer()
 //-----------------------------------------------------------------------------
 void MeshViewer::Start()
 {
+    if (m_init) return;
+
     /** OLD STUFF **/
     //Prepare();
 
@@ -185,17 +187,24 @@ void MeshViewer::Start()
     m_controller->Init(m_profile);
 #endif //HAS_INPUT
 
-    /** ----- Init is done ----- **/
-    m_init = true;
+    //Ref all entities
+    for (Entity* entity : m_entities) Ticker::Ref(entity);
 
     /** ----- Start threads ----- **/
     m_file_check->Start();
 
+    /** ----- Init is done ----- **/
+    m_init = true;
 }
 
 //-----------------------------------------------------------------------------
 void MeshViewer::Stop()
 {
+    if (!m_init) return;
+
+    /** OLD STUFF **/
+    //Unprepare();
+
     //Destroy scene setup
     UpdateSceneSetup(true);
 
@@ -272,7 +281,10 @@ void MeshViewer::TickGame(float seconds)
     {
         //Shutdown logic
         if (m_controller->IsKeyPressed(MeshViewerKeyInput::Exit))
+        {
             Ticker::Shutdown();
+            return;
+        }
     }
 #endif //HAS_INPUT
 
