@@ -37,7 +37,7 @@ class PrimitiveSource
 public:
     PrimitiveSource() { }
     virtual ~PrimitiveSource() { }
-    virtual void Render(Scene& scene) { }
+    virtual void Render(Scene& scene);
 
 private:
 };
@@ -49,12 +49,11 @@ class PrimitiveRenderer
 public:
     PrimitiveRenderer() { }
     virtual ~PrimitiveRenderer() { }
-    virtual void Render(PrimitiveSource* primitive) const { UNUSED(primitive); }
+    virtual void Render(Scene& scene, PrimitiveSource* primitive);
 
 private:
+    bool m_fire_and_forget = false;
 };
-
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class Scene
@@ -92,38 +91,108 @@ public:
     void Reset();
 
     /* New scenegraph */
-    void AddPrimitive(PrimitiveSource* primitive);
+    void AddPrimitive(class PrimitiveSource* primitive);
 
+    /* ============================== */
+#   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
+    /* ============================== */
+private:
+    ptrdiff_t HasPrimitiveSource(uintptr_t key);
+    ptrdiff_t AddPrimitiveSource(uintptr_t key, class PrimitiveSource* source);
+    void SetPrimitiveSource(ptrdiff_t index, uintptr_t key, class PrimitiveSource* source);
+    void ReleasePrimitiveSource(ptrdiff_t index, uintptr_t key);
+    void ReleaseAllPrimitiveSource(uintptr_t key);
+public:
     /* === Primitive source stuff === */
     /* Returns the number of primitive source set to the given entity */
-    ptrdiff_t HasPrimitiveSource(Entity* entity);
+    template <typename T>
+    ptrdiff_t HasPrimitiveSource(T* key)
+    {
+        ASSERT(key);
+        return HasPrimitiveSource(_KEY_IDX);
+    }
     /* Add a primitive sources linked to the given entity
      * Returns the slot number */
-    ptrdiff_t AddPrimitiveSource(Entity* entity, PrimitiveSource* source);
+    template <typename T>
+    ptrdiff_t AddPrimitiveSource(T* key, class PrimitiveSource* source)
+    {
+        ASSERT(key);
+        return AddPrimitiveSource(_KEY_IDX, source);
+    }
     /* Update the primitive source at index linked to the given entity
      * Deletes the old one
      * The slot is kept even if source == nullptr */
-    void SetPrimitiveSource(ptrdiff_t index, Entity* entity, PrimitiveSource* source);
+    template <typename T>
+    void SetPrimitiveSource(ptrdiff_t index, T* key, class PrimitiveSource* source)
+    {
+        ASSERT(key);
+        SetPrimitiveSource(index, _KEY_IDX, source);
+    }
     /* Remove primitive source at index set to the given entity */
-    void ReleasePrimitiveSource(ptrdiff_t index, Entity* entity);
+    template <typename T>
+    void ReleasePrimitiveSource(ptrdiff_t index, T* key)
+    {
+        ASSERT(key);
+        ReleasePrimitiveSource(index, _KEY_IDX);
+    }
     /* Remove all primitive source set to the given entity */
-    void ReleaseAllPrimitiveSource(Entity* entity);
+    template <typename T>
+    void ReleaseAllPrimitiveSource(T* key)
+    {
+        ASSERT(key);
+        ReleaseAllPrimitiveSource(_KEY_IDX);
+    }
 
+private:
+    ptrdiff_t HasPrimitiveRenderer(uintptr_t key);
+    void AddPrimitiveRenderer(uintptr_t key, class PrimitiveRenderer* renderer);
+    void SetPrimitiveRenderer(ptrdiff_t index, uintptr_t key, class PrimitiveRenderer* renderer);
+    void ReleasePrimitiveRenderer(ptrdiff_t index, uintptr_t key);
+    void ReleaseAllPrimitiveRenderer(uintptr_t key);
+public:
     /* === Primitive renderer stuff === */
     /* Returns the number of primitive renderer set to the given entity */
-    ptrdiff_t HasPrimitiveRenderer(Entity* entity);
+    template <typename T>
+    ptrdiff_t HasPrimitiveRenderer(T* key)
+    {
+        ASSERT(key);
+        return HasPrimitiveRenderer(_KEY_IDX);
+    }
     /* Add a primitive renderer linked to the given entity
-     * Returns the slot number */
-    ptrdiff_t AddPrimitiveRenderer(Entity* entity, PrimitiveRenderer* renderer);
+     * The primitive is considered as Fire&Forget and
+     * will be destroyed at the end of the frame */
+    template <typename T>
+    void AddPrimitiveRenderer(T* key, class PrimitiveRenderer* renderer)
+    {
+        ASSERT(key);
+        AddPrimitiveRenderer(_KEY_IDX, renderer);
+    }
     /* Update the primitive renderer linked to the given entity
      * Deletes the old one
      * Will assert if renderer == nullptr */
-    void SetPrimitiveRenderer(ptrdiff_t index, Entity* entity, PrimitiveRenderer* renderer);
+    template <typename T>
+    void SetPrimitiveRenderer(ptrdiff_t index, T* key, class PrimitiveRenderer* renderer)
+    {
+        ASSERT(key && renderer);
+        SetPrimitiveRenderer(index, _KEY_IDX, renderer);
+    }
     /* Remove primitive renderer at index set to the given entity */
-    void ReleasePrimitiveRenderer(ptrdiff_t index, Entity* entity);
+    template <typename T>
+    void ReleasePrimitiveRenderer(ptrdiff_t index, T* key)
+    {
+        ASSERT(key);
+        ReleasePrimitiveRenderer(index, _KEY_IDX);
+    }
     /* Remove all primitive renderer set to the given entity */
-    void ReleaseAllPrimitiveRenderer(Entity* entity);
-
+    template <typename T>
+    void ReleaseAllPrimitiveRenderer(T* key)
+    {
+        ASSERT(key);
+        ReleaseAllPrimitiveRenderer(_KEY_IDX);
+    }
+    /* ============================== */
+#   undef _KEY_IDX /* (uintptr_t)key *//* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
+    /* ============================== */
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */

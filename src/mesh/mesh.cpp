@@ -30,8 +30,11 @@ Mesh::~Mesh()
 
 void Mesh::Render(Scene& scene, mat4 const &matrix)
 {
-    for (int i = 0; i < m_submeshes.Count(); ++i)
-        scene.AddPrimitive(new PrimitiveMesh(m_submeshes[i], matrix));
+    //if (scene.HasPrimitiveRenderer(this) < m_submeshes.Count())
+    {
+        for (int i = 0; i < m_submeshes.Count(); ++i)
+            scene.AddPrimitiveRenderer(this, new PrimitiveMesh(m_submeshes[i], matrix));
+    }
 }
 
 void Mesh::Render()

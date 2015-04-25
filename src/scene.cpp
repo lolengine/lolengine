@@ -47,6 +47,16 @@ struct Tile
 };
 
 /*
+* Scene implementation class
+*/
+void PrimitiveSource::Render(Scene& scene) { UNUSED(scene); }
+void PrimitiveRenderer::Render(Scene& scene, PrimitiveSource* primitive)
+{
+    UNUSED(scene);
+    UNUSED(primitive);
+}
+
+/*
  * Scene implementation class
  */
 
@@ -249,6 +259,15 @@ void Scene::Reset()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
+    /* New scenegraph: Release fire&forget primitives */
+    array<uintptr_t> keys = data->m_prim_renderers.keys();
+    for (uintptr_t key : keys)
+    {
+        for (ptrdiff_t idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
+            if (data->m_prim_renderers[key][idx]->m_fire_and_forget)
+                ReleasePrimitiveRenderer(idx--, key);
+    }
+
     for (int i = 0; i < data->m_tile_bufs.Count(); i++)
         delete data->m_tile_bufs[i];
     data->m_tile_bufs.Empty();
@@ -267,71 +286,68 @@ void Scene::AddPrimitive(PrimitiveSource* primitive)
 }
 
 //---- Primitive source stuff -------------------------------------------------
-#define _ENT_IDX (uintptr_t)entity /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
-//---- Primitive source stuff -------------------------------------------------
-ptrdiff_t Scene::HasPrimitiveSource(Entity* entity)
+ptrdiff_t Scene::HasPrimitiveSource(uintptr_t key)
 {
-    ASSERT(entity);
     ptrdiff_t count;
     SceneData::m_prim_mutex.lock();
     {
-        count = SceneData::m_prim_sources[_ENT_IDX].count();
+        count = SceneData::m_prim_sources[key].count();
     }
     SceneData::m_prim_mutex.unlock();
     return count;
 }
-ptrdiff_t Scene::AddPrimitiveSource(Entity* entity, PrimitiveSource* source)
+ptrdiff_t Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
 {
-    ASSERT(entity);
     ptrdiff_t count;
     SceneData::m_prim_mutex.lock();
     {
-        count = SceneData::m_prim_sources[_ENT_IDX].count();
-        SceneData::m_prim_sources[_ENT_IDX].push(source);
+        count = SceneData::m_prim_sources[key].count();
+        SceneData::m_prim_sources[key].push(source);
     }
     SceneData::m_prim_mutex.unlock();
     return count;
 }
-void Scene::SetPrimitiveSource(ptrdiff_t index, Entity* entity, PrimitiveSource* source)
+void Scene::SetPrimitiveSource(ptrdiff_t index, uintptr_t key, PrimitiveSource* source)
 {
-    ASSERT(entity);
+    ASSERT(source);
+    ASSERT(index < 0);
     PrimitiveSource* old = nullptr;
     SceneData::m_prim_mutex.lock();
     {
-        ASSERT(0 <= index && index < SceneData::m_prim_sources[_ENT_IDX].count());
-        old = SceneData::m_prim_sources[_ENT_IDX][index];
-        SceneData::m_prim_sources[_ENT_IDX][index] = source;
+        if (index < SceneData::m_prim_sources[key].count())
+            old = SceneData::m_prim_sources[key][index];
+        else
+            SceneData::m_prim_sources[key].resize(index + 1);
+        SceneData::m_prim_sources[key][index] = source;
     }
     SceneData::m_prim_mutex.unlock();
 
     //Delete old AFTER having released the lock
     if (old) delete old;
 }
-void Scene::ReleasePrimitiveSource(ptrdiff_t index, Entity* entity)
+void Scene::ReleasePrimitiveSource(ptrdiff_t index, uintptr_t key)
 {
-    ASSERT(entity);
     PrimitiveSource* old = nullptr;
     SceneData::m_prim_mutex.lock();
     {
-        ASSERT(0 <= index && index < SceneData::m_prim_sources[_ENT_IDX].count());
-        old = SceneData::m_prim_sources[_ENT_IDX][index];
-        SceneData::m_prim_sources[_ENT_IDX].remove(index);
+        ASSERT(0 <= index && index < SceneData::m_prim_sources[key].count());
+        old = SceneData::m_prim_sources[key][index];
+        SceneData::m_prim_sources[key].remove(index);
     }
     SceneData::m_prim_mutex.unlock();
 
     //Delete old AFTER having released the lock
     if (old) delete old;
 }
-void Scene::ReleaseAllPrimitiveSource(Entity* entity)
+void Scene::ReleaseAllPrimitiveSource(uintptr_t key)
 {
-    ASSERT(entity);
     array<PrimitiveSource*> oldies;
     SceneData::m_prim_mutex.lock();
     {
-        oldies.reserve(SceneData::m_prim_sources[_ENT_IDX].count());
-        for (PrimitiveSource* source : SceneData::m_prim_sources[_ENT_IDX])
+        oldies.reserve(SceneData::m_prim_sources[key].count());
+        for (PrimitiveSource* source : SceneData::m_prim_sources[key])
             oldies << source;
-        SceneData::m_prim_sources[_ENT_IDX].empty();
+        SceneData::m_prim_sources[key].empty();
     }
     SceneData::m_prim_mutex.unlock();
 
@@ -341,45 +357,43 @@ void Scene::ReleaseAllPrimitiveSource(Entity* entity)
 }
 
 //---- Primitive renderer stuff -----------------------------------------------
-ptrdiff_t Scene::HasPrimitiveRenderer(Entity* entity)
+ptrdiff_t Scene::HasPrimitiveRenderer(uintptr_t key)
 {
-    ASSERT(entity);
-    return data->m_prim_renderers[_ENT_IDX].count();
+    return data->m_prim_renderers[key].count();
 }
-ptrdiff_t Scene::AddPrimitiveRenderer(Entity* entity, PrimitiveRenderer* renderer)
+void Scene::AddPrimitiveRenderer(uintptr_t key, PrimitiveRenderer* renderer)
 {
-    ASSERT(entity);
-    data->m_prim_renderers[_ENT_IDX].push(renderer);
-    return data->m_prim_renderers[_ENT_IDX].count() - 1;
+    renderer->m_fire_and_forget = true;
+    data->m_prim_renderers[key].push(renderer);
 }
-void Scene::SetPrimitiveRenderer(ptrdiff_t index, Entity* entity, PrimitiveRenderer* renderer)
+void Scene::SetPrimitiveRenderer(ptrdiff_t index, uintptr_t key, PrimitiveRenderer* renderer)
 {
-    ASSERT(entity && renderer);
-    ASSERT(0 <= index && index < data->m_prim_renderers[_ENT_IDX].count());
-    ASSERT(data->m_prim_renderers[_ENT_IDX][index]);
-    delete data->m_prim_renderers[_ENT_IDX][index];
-    data->m_prim_renderers[_ENT_IDX][index] = renderer;
+    ASSERT(renderer);
+    ASSERT(index < 0);
+    if (index < data->m_prim_renderers[key].count())
+    {
+        ASSERT(data->m_prim_renderers[key][index]);
+        delete data->m_prim_renderers[key][index];
+    }
+    else
+        data->m_prim_renderers[key].resize(index + 1);
+    data->m_prim_renderers[key][index] = renderer;
 }
-void Scene::ReleasePrimitiveRenderer(ptrdiff_t index, Entity* entity)
+void Scene::ReleasePrimitiveRenderer(ptrdiff_t index, uintptr_t key)
 {
-    ASSERT(entity);
-    ASSERT(0 <= index && index < data->m_prim_renderers[_ENT_IDX].count());
-    ASSERT(data->m_prim_renderers[_ENT_IDX][index]);
-    delete data->m_prim_renderers[_ENT_IDX][index];
-    data->m_prim_renderers[_ENT_IDX].remove(index);
+    ASSERT(0 <= index && index < data->m_prim_renderers[key].count());
+    ASSERT(data->m_prim_renderers[key][index]);
+    delete data->m_prim_renderers[key][index];
+    data->m_prim_renderers[key].remove(index);
 }
-void Scene::ReleaseAllPrimitiveRenderer(Entity* entity)
+void Scene::ReleaseAllPrimitiveRenderer(uintptr_t key)
 {
-    ASSERT(entity);
-    for (PrimitiveRenderer* renderer : data->m_prim_renderers[_ENT_IDX])
+    for (PrimitiveRenderer* renderer : data->m_prim_renderers[key])
     {
         ASSERT(renderer);
         delete renderer;
     }
 }
-//---- Primitive source stuff -------------------------------------------------
-#undef _ENT_IDX //(uintptr_t)entity /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
-//---- Primitive source stuff -------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float angle)
@@ -478,6 +492,7 @@ void Scene::RenderPrimitives()
     {
         p->Render(*this);
     }
+
     /* new scenegraph */
     array<uintptr_t> keys = data->m_prim_renderers.keys();
     for (uintptr_t key : keys)
@@ -485,7 +500,7 @@ void Scene::RenderPrimitives()
         for (ptrdiff_t idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
-            data->m_prim_renderers[key][idx]->Render(idx < SceneData::m_prim_sources[key].count() ? SceneData::m_prim_sources[key][idx] : nullptr);
+            data->m_prim_renderers[key][idx]->Render(*this, idx < SceneData::m_prim_sources[key].count() ? SceneData::m_prim_sources[key][idx] : nullptr);
         }
     }
 }

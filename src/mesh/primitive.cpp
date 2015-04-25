@@ -30,7 +30,7 @@ PrimitiveMesh::~PrimitiveMesh()
 {
 }
 
-void PrimitiveMesh::Render(Scene& scene)
+void PrimitiveMesh::Render(Scene& scene, PrimitiveSource* primitive)
 {
     /* TODO: this should be the main entry for rendering of all
     * primitives found in the scene graph. When we have one. */
@@ -53,10 +53,10 @@ void PrimitiveMesh::Render(Scene& scene)
             /* Per-scene matrices */
             ShaderUniform u_mat;
             u_mat = shader->GetUniformLocation("u_projection");
-            u_mat = shader->GetUniformLocation("u_view");
-            u_mat = shader->GetUniformLocation("u_inv_view");
             shader->SetUniform(u_mat, scene.GetCamera()->GetProjection());
+            u_mat = shader->GetUniformLocation("u_view");
             shader->SetUniform(u_mat, scene.GetCamera()->GetView());
+            u_mat = shader->GetUniformLocation("u_inv_view");
             shader->SetUniform(u_mat, inverse(scene.GetCamera()->GetView()));
 
             /* Per-object matrices, will be set later */

@@ -95,7 +95,7 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
 
     array<WCHAR> widechar;
     widechar.Resize(buf.Count() + 1);
-    MultiByteToWideChar(CP_UTF8, 0, buf.C(), (int)buf.Count() + 1, widechar.Data(), widechar.Count());
+    MultiByteToWideChar(CP_UTF8, 0, buf.C(), (int)buf.Count() + 1, widechar.Data(), (int)widechar.Count());
     OutputDebugStringW(widechar.Data());
 #   else
     fprintf(stderr, "%s: ", prefix[type]);

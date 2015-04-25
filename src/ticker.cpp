@@ -464,7 +464,7 @@ void TickerData::DrawThreadTick()
     }
 
     //Do the scene render loop
-    for (ptrdiff_t idx = 0; idx < Scene::GetCount(); ++idx)
+    for (ptrdiff_t idx = 0; idx < Scene::GetCount() && !data->quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
