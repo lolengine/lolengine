@@ -343,6 +343,7 @@ public:
             case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, (int)i, T((int)i).ToString()); break;
             case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/(int)i, T((int)i).ToString()); break;
             case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, (int)i, T((int)i).ToString()); break;
+            default: break;
             }
         }
     }
