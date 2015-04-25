@@ -298,7 +298,8 @@ void SdlInputData::Tick(float seconds)
 #   endif
             default:
 #   if USE_OLD_SDL
-                m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
+                m_keyboard->SetKey(sc ? sc : event.key.keysym.scancode,
+                                   event.type == SDL_KEYDOWN);
 #   else
                 if (ScanCodeIsValid(sc))
                 {
