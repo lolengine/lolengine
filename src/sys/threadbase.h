@@ -81,11 +81,12 @@ public:
 #endif
     }
 
-    //Will not block if another thread has already locked ---------------------
+    // Will not block if another thread has already locked ---------------------
     bool try_lock()
     {
 #if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
         /* Nothing */
+        return false;
 #elif LOL_FEATURE_CXX11_THREADS
         return m_mutex.try_lock();
 #elif defined HAVE_PTHREAD_H
