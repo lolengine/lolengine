@@ -97,6 +97,9 @@
     <Filter Include="entities">
       <UniqueIdentifier>{3bd5fe6f-c9cd-45f3-98a9-958d86d415e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="display">
+      <UniqueIdentifier>{869f0b25-469b-4b06-a2a2-325449fc868f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image\crop.cpp">
@@ -225,9 +228,6 @@
     <ClCompile Include="light.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="ticker.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="platform.cpp">
       <Filter>...</Filter>
     </ClCompile>
@@ -240,16 +240,10 @@
     <ClCompile Include="sampler.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="scene.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
     <ClCompile Include="sprite.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="text.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="video.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
@@ -425,6 +419,15 @@
     <ClCompile Include="mesh\primitivemesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
+    <ClCompile Include="ticker.cpp">
+      <Filter>display</Filter>
+    </ClCompile>
+    <ClCompile Include="video.cpp">
+      <Filter>display</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -577,9 +580,6 @@
     <ClInclude Include="sampler.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="simd.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -587,12 +587,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="text.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="ticker.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="video.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="world.h">
@@ -791,6 +785,15 @@
     <ClInclude Include="lolimgui.h" />
     <ClInclude Include="mesh\primitivemesh.h">
       <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ticker.h">
+      <Filter>display</Filter>
+    </ClInclude>
+    <ClInclude Include="video.h">
+      <Filter>display</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

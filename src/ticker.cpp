@@ -428,7 +428,6 @@ void TickerData::DrawThreadTick()
         case Entity::DRAWGROUP_BEGIN:
             for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
                 Scene::GetScene(i).Reset();
-            g_renderer->Clear(ClearMask::All);
             break;
         default:
             break;
@@ -469,7 +468,9 @@ void TickerData::DrawThreadTick()
         Scene& scene = Scene::GetScene(idx);
 
         /* Enable display */
-        //scene.EnableDisplay(); //TODO
+        scene.EnableDisplay();
+
+        Renderer::Get(idx)->Clear(ClearMask::All);
 
         /* Do the render step */
         scene.RenderPrimitives();
@@ -477,7 +478,7 @@ void TickerData::DrawThreadTick()
         scene.RenderLines(data->deltatime);
 
         /* Disable display */
-        //scene.DisableDisplay(); //TODO
+        scene.DisableDisplay();
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

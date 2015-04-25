@@ -73,33 +73,33 @@ RenderContext::RenderContext()
 RenderContext::~RenderContext()
 {
     if (m_data->m_viewport.HasChanged())
-        g_renderer->SetViewport(m_data->m_viewport.GetValue());
+        Renderer::Get()->SetViewport(m_data->m_viewport.GetValue());
 
     if (m_data->m_clear_color.HasChanged())
-        g_renderer->SetClearColor(m_data->m_clear_color.GetValue());
+        Renderer::Get()->SetClearColor(m_data->m_clear_color.GetValue());
 
     if (m_data->m_clear_depth.HasChanged())
-        g_renderer->SetClearDepth(m_data->m_clear_depth.GetValue());
+        Renderer::Get()->SetClearDepth(m_data->m_clear_depth.GetValue());
 
     if (m_data->m_alpha_func.HasChanged())
-        g_renderer->SetAlphaFunc(m_data->m_alpha_func.GetValue(),
+        Renderer::Get()->SetAlphaFunc(m_data->m_alpha_func.GetValue(),
                                  m_data->m_alpha_value.GetValue());
 
     if (m_data->m_blend_src.HasChanged())
-        g_renderer->SetBlendFunc(m_data->m_blend_src.GetValue(),
+        Renderer::Get()->SetBlendFunc(m_data->m_blend_src.GetValue(),
                                  m_data->m_blend_dst.GetValue());
 
     if (m_data->m_depth_func.HasChanged())
-        g_renderer->SetDepthFunc(m_data->m_depth_func.GetValue());
+        Renderer::Get()->SetDepthFunc(m_data->m_depth_func.GetValue());
 
     if (m_data->m_depth_mask.HasChanged())
-        g_renderer->SetDepthMask(m_data->m_depth_mask.GetValue());
+        Renderer::Get()->SetDepthMask(m_data->m_depth_mask.GetValue());
 
     if (m_data->m_cull_mode.HasChanged())
-        g_renderer->SetCullMode(m_data->m_cull_mode.GetValue());
+        Renderer::Get()->SetCullMode(m_data->m_cull_mode.GetValue());
 
     if (m_data->m_polygon_mode.HasChanged())
-        g_renderer->SetPolygonMode(m_data->m_polygon_mode.GetValue());
+        Renderer::Get()->SetPolygonMode(m_data->m_polygon_mode.GetValue());
 
     delete m_data;
 }
@@ -107,152 +107,152 @@ RenderContext::~RenderContext()
 void RenderContext::SetViewport(ibox2 viewport)
 {
     if (!m_data->m_viewport.HasChanged())
-        m_data->m_viewport.TrackValue(g_renderer->GetViewport());
+        m_data->m_viewport.TrackValue(Renderer::Get()->GetViewport());
 
-    g_renderer->SetViewport(viewport);
+    Renderer::Get()->SetViewport(viewport);
 }
 
 ibox2 RenderContext::GetViewport()
 {
-    return g_renderer->GetViewport();
+    return Renderer::Get()->GetViewport();
 }
 
 void RenderContext::SetClearColor(vec4 color)
 {
     if (!m_data->m_clear_color.HasChanged())
-        m_data->m_clear_color.TrackValue(g_renderer->GetClearColor());
+        m_data->m_clear_color.TrackValue(Renderer::Get()->GetClearColor());
 
-    g_renderer->SetClearColor(color);
+    Renderer::Get()->SetClearColor(color);
 }
 
 vec4 RenderContext::GetClearColor()
 {
-    return g_renderer->GetClearColor();
+    return Renderer::Get()->GetClearColor();
 }
 
 void RenderContext::SetClearDepth(float depth)
 {
     if (!m_data->m_clear_depth.HasChanged())
-        m_data->m_clear_depth.TrackValue(g_renderer->GetClearDepth());
+        m_data->m_clear_depth.TrackValue(Renderer::Get()->GetClearDepth());
 
-    g_renderer->SetClearDepth(depth);
+    Renderer::Get()->SetClearDepth(depth);
 }
 
 float RenderContext::GetClearDepth()
 {
-    return g_renderer->GetClearDepth();
+    return Renderer::Get()->GetClearDepth();
 }
 
 void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
 {
     if (!m_data->m_alpha_func.HasChanged())
-        m_data->m_alpha_func.TrackValue(g_renderer->GetAlphaFunc());
+        m_data->m_alpha_func.TrackValue(Renderer::Get()->GetAlphaFunc());
     if (!m_data->m_alpha_value.HasChanged())
-        m_data->m_alpha_value.TrackValue(g_renderer->GetAlphaValue());
+        m_data->m_alpha_value.TrackValue(Renderer::Get()->GetAlphaValue());
 
-    g_renderer->SetAlphaFunc(func, alpha);
+    Renderer::Get()->SetAlphaFunc(func, alpha);
 }
 
 AlphaFunc RenderContext::GetAlphaFunc()
 {
-    return g_renderer->GetAlphaFunc();
+    return Renderer::Get()->GetAlphaFunc();
 }
 
 float RenderContext::GetAlphaValue()
 {
-    return g_renderer->GetAlphaValue();
+    return Renderer::Get()->GetAlphaValue();
 }
 
 void RenderContext::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
 {
     if (!m_data->m_blend_rgb.HasChanged())
-        m_data->m_blend_rgb.TrackValue(g_renderer->GetBlendEquationRgb());
+        m_data->m_blend_rgb.TrackValue(Renderer::Get()->GetBlendEquationRgb());
     if (!m_data->m_blend_alpha.HasChanged())
-        m_data->m_blend_alpha.TrackValue(g_renderer->GetBlendEquationAlpha());
+        m_data->m_blend_alpha.TrackValue(Renderer::Get()->GetBlendEquationAlpha());
 
-    g_renderer->SetBlendEquation(rgb, alpha);
+    Renderer::Get()->SetBlendEquation(rgb, alpha);
 }
 
 BlendEquation RenderContext::GetBlendEquationRgb()
 {
-    return g_renderer->GetBlendEquationRgb();
+    return Renderer::Get()->GetBlendEquationRgb();
 }
 
 BlendEquation RenderContext::GetBlendEquationAlpha()
 {
-    return g_renderer->GetBlendEquationAlpha();
+    return Renderer::Get()->GetBlendEquationAlpha();
 }
 
 void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
 {
     if (!m_data->m_blend_src.HasChanged())
-        m_data->m_blend_src.TrackValue(g_renderer->GetBlendFuncSrc());
+        m_data->m_blend_src.TrackValue(Renderer::Get()->GetBlendFuncSrc());
     if (!m_data->m_blend_dst.HasChanged())
-        m_data->m_blend_dst.TrackValue(g_renderer->GetBlendFuncDst());
+        m_data->m_blend_dst.TrackValue(Renderer::Get()->GetBlendFuncDst());
 
-    g_renderer->SetBlendFunc(src, dst);
+    Renderer::Get()->SetBlendFunc(src, dst);
 }
 
 BlendFunc RenderContext::GetBlendFuncSrc()
 {
-    return g_renderer->GetBlendFuncSrc();
+    return Renderer::Get()->GetBlendFuncSrc();
 }
 
 BlendFunc RenderContext::GetBlendFuncDst()
 {
-    return g_renderer->GetBlendFuncDst();
+    return Renderer::Get()->GetBlendFuncDst();
 }
 
 void RenderContext::SetDepthFunc(DepthFunc func)
 {
     if (!m_data->m_depth_func.HasChanged())
-        m_data->m_depth_func.TrackValue(g_renderer->GetDepthFunc());
+        m_data->m_depth_func.TrackValue(Renderer::Get()->GetDepthFunc());
 
-    g_renderer->SetDepthFunc(func);
+    Renderer::Get()->SetDepthFunc(func);
 }
 
 DepthFunc RenderContext::GetDepthFunc()
 {
-    return g_renderer->GetDepthFunc();
+    return Renderer::Get()->GetDepthFunc();
 }
 
 void RenderContext::SetDepthMask(DepthMask mask)
 {
     if (!m_data->m_depth_mask.HasChanged())
-        m_data->m_depth_mask.TrackValue(g_renderer->GetDepthMask());
+        m_data->m_depth_mask.TrackValue(Renderer::Get()->GetDepthMask());
 
-    g_renderer->SetDepthMask(mask);
+    Renderer::Get()->SetDepthMask(mask);
 }
 
 DepthMask RenderContext::GetDepthMask()
 {
-    return g_renderer->GetDepthMask();
+    return Renderer::Get()->GetDepthMask();
 }
 
 void RenderContext::SetCullMode(CullMode mode)
 {
     if (!m_data->m_cull_mode.HasChanged())
-        m_data->m_cull_mode.TrackValue(g_renderer->GetCullMode());
+        m_data->m_cull_mode.TrackValue(Renderer::Get()->GetCullMode());
 
-    g_renderer->SetCullMode(mode);
+    Renderer::Get()->SetCullMode(mode);
 }
 
 CullMode RenderContext::GetCullMode()
 {
-    return g_renderer->GetCullMode();
+    return Renderer::Get()->GetCullMode();
 }
 
 void RenderContext::SetPolygonMode(PolygonMode mode)
 {
     if (!m_data->m_polygon_mode.HasChanged())
-        m_data->m_polygon_mode.TrackValue(g_renderer->GetPolygonMode());
+        m_data->m_polygon_mode.TrackValue(Renderer::Get()->GetPolygonMode());
 
-    g_renderer->SetPolygonMode(mode);
+    Renderer::Get()->SetPolygonMode(mode);
 }
 
 PolygonMode RenderContext::GetPolygonMode()
 {
-    return g_renderer->GetPolygonMode();
+    return Renderer::Get()->GetPolygonMode();
 }
 
 } /* namespace lol */

@@ -273,14 +273,14 @@ void Debug::DrawBox(vec2 a, vec2 b, mat2 transform, vec4 color)
 }
 void Debug::DrawBox(vec2 a, float s, mat2 transform, vec4 color)
 {
-    vec2 b = s * vec2(1.f, g_renderer->GetXYRatio());
+    vec2 b = s * vec2(1.f, Renderer::Get()->GetXYRatio());
     Debug::DrawBox(a - b, a + b, transform, color);
 }
 
 //-- CIRCLE -------------------------------------------------------------------
-void Debug::DrawCircle(vec2 a, float s)                 { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), scene.GetLineColor()); }
+void Debug::DrawCircle(vec2 a, float s)                 { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, s * vec2(1.f, Renderer::Get()->GetXYRatio()), scene.GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n)                  { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, n, scene.GetLineColor()); }
-void Debug::DrawCircle(vec2 a, vec2 s)                  { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, s * vec2(1.f, g_renderer->GetXYRatio()), scene.GetLineColor()); }
+void Debug::DrawCircle(vec2 a, vec2 s)                  { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, s * vec2(1.f, Renderer::Get()->GetXYRatio()), scene.GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y)          { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, x, y, scene.GetLineColor()); }
 void Debug::DrawCircle(vec2 a, vec2 x, vec2 y)          { Scene& scene = Scene::GetScene(); Debug::DrawCircle(a, x, y, scene.GetLineColor()); }
 void Debug::DrawCircle(vec3 a, vec3 n, vec4 color)

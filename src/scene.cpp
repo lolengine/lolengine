@@ -46,8 +46,45 @@ struct Tile
     int id, o;
 };
 
+//-----------------------------------------------------------------------------
+static array<SceneDisplay*> m_scene_displays;
+
 /*
-* Scene implementation class
+* Public SceneDisplay class
+*/
+void SceneDisplay::Add(SceneDisplay* display)
+{
+    m_scene_displays << display;
+}
+ptrdiff_t SceneDisplay::GetCount()
+{
+    return m_scene_displays.count();
+}
+SceneDisplay* SceneDisplay::GetDisplay(ptrdiff_t index)
+{
+    ASSERT(0 <= index && index < m_scene_displays.count());
+    return m_scene_displays[index];
+}
+void SceneDisplay::DestroyAll()
+{
+    for (SceneDisplay* display : m_scene_displays)
+        delete display;
+    m_scene_displays.Empty();
+}
+
+/* ------------------------------------------------ */
+void SceneDisplay::Enable()
+{
+    //TODO: PROFILER STUFF
+}
+void SceneDisplay::Disable()
+{
+    //TODO: PROFILER STUFF
+}
+
+//-----------------------------------------------------------------------------
+/*
+* Primitive implementation class
 */
 void PrimitiveSource::Render(Scene& scene) { UNUSED(scene); }
 void PrimitiveRenderer::Render(Scene& scene, PrimitiveSource* primitive)
@@ -56,10 +93,10 @@ void PrimitiveRenderer::Render(Scene& scene, PrimitiveSource* primitive)
     UNUSED(primitive);
 }
 
+//-----------------------------------------------------------------------------
 /*
  * Scene implementation class
  */
-
 class SceneData
 {
     friend class Scene;
@@ -78,12 +115,15 @@ private:
     static uint64_t m_used_id;
     uint64_t m_mask_id = 0;
 
-    /* New scenegraph */
-    array<PrimitiveSource*> m_primitives;
-    /* Primitives are shared by all scenes.
+    /* Scene display: if none has been set to the scene,
+     * the default one created by the app will be used */
+    SceneDisplay* m_display = nullptr;
+
+    /* Sources are shared by all scenes.
      * Renderers are scene-dependent. They get the primitive in the identical slot to render with the given scene
      * Primitives and renderers will be kept until:
      * - Updated by entity
+     * - Marked Fire&Forget
      * - Scene is destroyed */
     map<uintptr_t, array<PrimitiveRenderer*> > m_prim_renderers;
     static map<uintptr_t, array<PrimitiveSource*> > m_prim_sources;
@@ -273,16 +313,6 @@ void Scene::Reset()
     data->m_tile_bufs.Empty();
 
     data->m_lights.Empty();
-
-    for (int i = 0; i < data->m_primitives.count(); i++)
-        delete data->m_primitives[i];
-    data->m_primitives.Empty();
-}
-
-//-----------------------------------------------------------------------------
-void Scene::AddPrimitive(PrimitiveSource* primitive)
-{
-    data->m_primitives.Push(primitive);
 }
 
 //---- Primitive source stuff -------------------------------------------------
@@ -482,16 +512,34 @@ array<Light *> const &Scene::GetLights()
 }
 
 //-----------------------------------------------------------------------------
+void Scene::SetDisplay(SceneDisplay* display)
+{
+    data->m_display = display;
+}
+
+//-----------------------------------------------------------------------------
+void Scene::EnableDisplay()
+{
+    //If no display has been set, use the default one
+    if (!data->m_display)
+        SetDisplay(SceneDisplay::GetDisplay());
+    data->m_display->Enable();
+}
+void Scene::DisableDisplay()
+{
+    ASSERT(data->m_display);
+    data->m_display->Disable();
+}
+
+//-----------------------------------------------------------------------------
 void Scene::RenderPrimitives()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    /* TODO: this should be the main entry for rendering of all
-     * primitives found in the scene graph. When we have one. */
-    for (PrimitiveSource* p : data->m_primitives)
-    {
-        p->Render(*this);
-    }
+    /* FIXME: Temp fix for mesh having no render context*/
+    RenderContext rc;
+    rc.SetCullMode(CullMode::Clockwise);
+    rc.SetDepthFunc(DepthFunc::LessOrEqual);
 
     /* new scenegraph */
     array<uintptr_t> keys = data->m_prim_renderers.keys();

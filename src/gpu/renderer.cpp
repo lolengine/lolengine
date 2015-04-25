@@ -39,10 +39,11 @@ namespace lol
 {
 
 /*
- * The global g_renderer object, initialised by Video::Init
+ * The global g_renderers object, initialised by Video::Setup
  */
 
-Renderer *g_renderer = nullptr;
+//Renderer *g_renderer = nullptr;
+array<Renderer*> g_renderers;
 
 /*
  * Private RendererData class
@@ -223,6 +224,29 @@ void Renderer::Clear(ClearMask mask)
         m |= GL_STENCIL_BUFFER_BIT;
     glClear(m);
 #endif
+}
+
+/*
+* Renderer static
+*/
+
+void Renderer::AddNew(ivec2 size)
+{
+    g_renderers << new Renderer(size);
+}
+ptrdiff_t Renderer::GetCount()
+{
+    return g_renderers.count();
+}
+Renderer* Renderer::Get(ptrdiff_t index)
+{
+    return g_renderers[index];
+}
+void Renderer::DestroyAll()
+{
+    for (Renderer* renderer : g_renderers)
+        delete renderer;
+    g_renderers.empty();
 }
 
 /*

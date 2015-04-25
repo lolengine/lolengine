@@ -29,7 +29,7 @@ Camera::Camera()
     m_drawgroup = DRAWGROUP_CAMERA;
 
     //Arbitrary values when g_renderer is not ready.
-    ivec2 screen_size = (g_renderer)?(Video::GetSize()):(ivec2(800, 600));
+    ivec2 screen_size = (Renderer::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));
     m_fov = 45.f;
     m_near = -1000.f;
     m_far = 1000.f;

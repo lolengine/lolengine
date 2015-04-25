@@ -263,7 +263,7 @@ void LolImGui::TickDraw(float seconds, Scene &scene)
 }
 void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 {
-    g_renderer->Clear(ClearMask::Depth);
+    Renderer::Get()->Clear(ClearMask::Depth);
 
     ImGuiIO& io = ImGui::GetIO();
     if (io.Fonts->TexID)

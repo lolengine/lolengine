@@ -162,7 +162,7 @@ void MeshViewer::Start()
     m_entities << (m_file_loader = new DefaultThreadManager(4, 0));
 
     //Scene setup
-    m_ssetup_file_name = "data/meshviewer.init.lua";
+    m_ssetup_file_name = "../data/meshviewer.init.lua";
     UpdateSceneSetup();
 
     //Mesh file
@@ -394,6 +394,12 @@ int main(int argc, char **argv)
         new MeshViewer(argv[1]);
     else
         new MeshViewer();
+    /*
+    //SceneDisplay* display = new ApplicationDisplay("newDisplay", ivec2(800, 600));
+    //SceneDisplay::Add(display);
+    //Scene::GetScene(Scene::GetCount() - 1).SetDisplay(display);
+    */
+
     app.Run();
 
     return EXIT_SUCCESS;
@@ -932,7 +938,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
         m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
 #endif //!HAS_WEB && WITH_TEXTURE
 
-    g_renderer->SetClearColor(m_ssetup->m_clear_color);
+    Renderer::Get()->SetClearColor(m_ssetup->m_clear_color);
 
     for (int i = 0; i < m_gizmos.Count(); ++i)
     {
@@ -1043,7 +1049,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                 mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                 m_camera->SetProjection(new_proj);
                 m_meshes[i].m1->Render(scene, m_mat);
-                g_renderer->Clear(ClearMask::Depth);
+                Renderer::Get()->Clear(ClearMask::Depth);
             }
             m_camera->SetProjection(save_proj);
 #else

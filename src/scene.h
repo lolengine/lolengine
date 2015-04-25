@@ -27,8 +27,6 @@
 namespace lol
 {
 
-class SceneData;
-
 //-----------------------------------------------------------------------------
 class PrimitiveSource
 {
@@ -56,6 +54,41 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+class SceneDisplayData;
+
+class SceneDisplay
+{
+    friend class Scene;
+
+public:
+    SceneDisplay() { }
+    virtual ~SceneDisplay() { }
+
+    /* pos/size/... methods */
+    virtual void SetResolution(ivec2 resolution) { }
+    virtual void SetPosition(ivec2 position) { }
+
+    /* TODO: Should that be there or in Video ? */
+    static void Add(SceneDisplay* display);
+    static ptrdiff_t GetCount();
+    static SceneDisplay* GetDisplay(ptrdiff_t index = 0);
+    static void DestroyAll();
+
+    /* Implement these in the platform section */
+    static ptrdiff_t GetPhysicalCount();
+    static const char* GetPhysicalName(ptrdiff_t index = 0);
+
+protected:
+    virtual void Enable();
+    virtual void Disable();
+
+private:
+    SceneDisplayData *data;
+};
+
+//-----------------------------------------------------------------------------
+class SceneData;
+
 class Scene
 {
     friend class Video;
@@ -89,9 +122,6 @@ public:
     void SetTileCam(int cam_idx);
 
     void Reset();
-
-    /* New scenegraph */
-    void AddPrimitive(class PrimitiveSource* primitive);
 
     /* ============================== */
 #   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
@@ -210,6 +240,11 @@ public:
 
     void AddLight(Light *light);
     array<Light *> const &GetLights();
+
+    /* === Render stuff === */
+    void SetDisplay(SceneDisplay* display);
+    void EnableDisplay();
+    void DisableDisplay();
 
     void RenderPrimitives();
     void RenderTiles();

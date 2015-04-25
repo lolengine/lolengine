@@ -137,6 +137,11 @@ public:
 
     void *GetDevice();
 
+    static void AddNew(ivec2 size);
+    static ptrdiff_t GetCount();
+    static Renderer* Get(ptrdiff_t index = 0);
+    static void DestroyAll();
+
 public:
     void SetViewport(ibox2 viewport);
     ibox2 GetViewport() const;
@@ -177,7 +182,7 @@ private:
     RendererData *m_data;
 };
 
-extern Renderer *g_renderer;
+//extern Renderer *g_renderer;
 
 } /* namespace lol */
 

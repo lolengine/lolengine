@@ -70,7 +70,7 @@ public:
 
         if (!m_ready)
         {
-            g_renderer->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+            Renderer::Get()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
             m_ready = true;
         }
 
