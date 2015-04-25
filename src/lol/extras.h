@@ -51,7 +51,7 @@
 // Other objects
 #include <lol/../dict.h>
 #include <lol/../mesh/mesh.h>
-#include <lol/../mesh/primitive.h>
+#include <lol/../mesh/primitivemesh.h>
 #include <lol/../application/application.h>
 #include <lol/../easymesh/csgbsp.h>
 #include <lol/../easymesh/easymesh.h>

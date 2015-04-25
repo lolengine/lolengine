@@ -147,9 +147,6 @@
     <ClCompile Include="mesh\mesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
-    <ClCompile Include="mesh\primitive.cpp">
-      <Filter>mesh</Filter>
-    </ClCompile>
     <ClCompile Include="gpu\rendercontext.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
@@ -424,6 +421,10 @@
     <ClCompile Include="textureimage.cpp">
       <Filter>tileset</Filter>
     </ClCompile>
+    <ClCompile Include="lolimgui.cpp" />
+    <ClCompile Include="mesh\primitivemesh.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug\fps.h">
@@ -508,9 +509,6 @@
       <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="mesh\mesh.h">
-      <Filter>mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh\primitive.h">
       <Filter>mesh</Filter>
     </ClInclude>
     <ClInclude Include="application\application.h">
@@ -789,6 +787,10 @@
     </ClInclude>
     <ClInclude Include="textureimage-private.h">
       <Filter>tileset</Filter>
+    </ClInclude>
+    <ClInclude Include="lolimgui.h" />
+    <ClInclude Include="mesh\primitivemesh.h">
+      <Filter>mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
