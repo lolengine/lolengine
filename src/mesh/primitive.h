@@ -18,14 +18,14 @@
 namespace lol
 {
 
-class PrimitiveMesh : public PrimitiveSource
+class PrimitiveMesh : public PrimitiveRenderer
 {
     friend class Scene;
 
 public:
     PrimitiveMesh(SubMesh *submesh, mat4 const &matrix);
     virtual ~PrimitiveMesh();
-    virtual void Render(Scene& scene);
+    virtual void Render(Scene& scene, PrimitiveSource* primitive);
 
 private:
     SubMesh *m_submesh;

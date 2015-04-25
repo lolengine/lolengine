@@ -174,11 +174,11 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class PrimitiveLolImGui : public PrimitiveSource
+class PrimitiveLolImGui : public PrimitiveRenderer
 {
 public:
     PrimitiveLolImGui() { }
-    virtual void Render() const;
+    virtual void Render(Scene& scene, PrimitiveSource* primitive);
 };
 
 //bool        ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks);

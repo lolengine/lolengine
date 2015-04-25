@@ -259,9 +259,9 @@ void LolImGui::TickDraw(float seconds, Scene &scene)
 {
     super::TickDraw(seconds, scene);
 
-    scene.AddPrimitive(new PrimitiveLolImGui());
+    scene.AddPrimitiveRenderer(this, new PrimitiveLolImGui());
 }
-void PrimitiveLolImGui::Render() const
+void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 {
     g_renderer->Clear(ClearMask::Depth);
 
