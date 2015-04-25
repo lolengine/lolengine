@@ -88,6 +88,7 @@ void Application::Tick()
 void Application::Run()
 {
 #if EMSCRIPTEN
+    g_app = this;
     emscripten_set_main_loop(AppCallback, 0, 1);
 #else
     while (MustTick())
