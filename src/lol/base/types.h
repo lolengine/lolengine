@@ -27,7 +27,7 @@ typedef Real<16> real;
 class half;
 
 /*
- * Forward declaration of vec_t, mat_t, cmplx_t, quat_t
+ * Forward declaration of vec_t, mat_t, cmplx_t, quat_t, etc.
  */
 
 /* HACK: if this is declared int const, Visual Studio becomes unable
@@ -35,6 +35,7 @@ class half;
 #define FULL_SWIZZLE (0)
 
 template<typename T, int N, int SWIZZLE = FULL_SWIZZLE> struct vec_t;
+template<typename T, int N> struct box_t;
 template<typename T, int COLS, int ROWS> struct mat_t;
 template<typename T> struct cmplx_t;
 template<typename T> struct quat_t;

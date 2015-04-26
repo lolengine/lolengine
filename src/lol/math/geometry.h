@@ -67,175 +67,111 @@ protected:
 };
 typedef SafeEnum<DirectionBase> Direction;
 
-//LOL_BOX_TYPEDEFS ------------------------------------------------------------
-#define LOL_BOX_TYPEDEFS(tname, suffix) \
-    template <typename T> struct tname; \
-    typedef tname<float> suffix; \
-    typedef tname<double> d##suffix; \
-    typedef tname<int32_t> i##suffix; \
-    typedef tname<uint32_t> u##suffix;
-
-LOL_BOX_TYPEDEFS(Box2, box2)
-LOL_BOX_TYPEDEFS(Box3, box3)
-
-#undef LOL_BOX_TYPEDEFS
-
 /*
- * 2D boxes
+ * Generic box type names
  */
 
-template <typename T> struct Box2
+#define _T(tleft, tright, suffix) \
+    typedef tleft float tright suffix; \
+    typedef tleft double tright d##suffix; \
+    typedef tleft int32_t tright i##suffix; \
+    typedef tleft uint32_t tright u##suffix;
+
+/* Idiotic hack to put "," inside a macro argument */
+#define _C ,
+
+_T(box_t<, _C 2>, box2)
+_T(box_t<, _C 3>, box3)
+_T(box_t<, _C 4>, box4)
+
+#undef _C
+#undef _T
+
+template<typename T, int N>
+struct box_t
 {
-    inline Box2()
-      : aa(T(0)),
-        bb(T(0))
+    inline box_t()
+      : aa(vec_t<T, N>(T(0))),
+        bb(vec_t<T, N>(T(0)))
     {}
 
-    inline Box2(vec_t<T,2> const &a, vec_t<T,2> const &b)
+    inline box_t(vec_t<T,N> const &a, vec_t<T,N> const &b)
       : aa(a),
         bb(b)
     {}
 
-    inline Box2(T const &ax, T const &ay, T const &bx, T const &by)
+    inline box_t(T const &ax, T const &ay, T const &bx, T const &by)
       : aa(ax, ay),
         bb(bx, by)
     {}
 
-    Box2<T> operator +(vec_t<T,2> const &v) const
-    {
-        return Box2<T>(aa + v, bb + v);
-    }
-
-    Box2<T> &operator +=(vec_t<T,2> const &v)
-    {
-        return *this = *this + v;
-    }
-
-    Box2<T> operator -(vec_t<T,2> const &v) const
-    {
-        return Box2<T>(aa - v, bb - v);
-    }
-
-    Box2<T> &operator -=(vec_t<T,2> const &v)
-    {
-        return *this = *this - v;
-    }
-
-    Box2<T> operator *(vec_t<T,2> const &v) const
-    {
-        return Box2<T>(aa * v, bb * v);
-    }
-
-    Box2<T> &operator *=(vec_t<T,2> const &v)
-    {
-        return *this = *this * v;
-    }
-
-    Box2<T> operator *(T const &s) const
-    {
-        return Box2<T>(aa * s, bb * s);
-    }
-
-    Box2<T> &operator *=(T const &s)
-    {
-        return *this = *this * s;
-    }
-
-    bool operator ==(Box2<T> const &box) const
-    {
-        return aa == box.aa && bb == box.bb;
-    }
-
-    bool operator !=(Box2<T> const &box) const
-    {
-        return aa != box.aa || bb != box.bb;
-    }
-
-    inline vec_t<T,2> center() const { return (bb + aa) / 2; }
-
-    inline vec_t<T,2> extent() const { return bb - aa; }
-
-    vec_t<T,2> aa, bb;
-};
-
-/*
- * 3D boxes
- */
-
-template <typename T> struct Box3
-{
-    inline Box3()
-      : aa(T(0)),
-        bb(T(0))
-    {}
-
-    inline Box3(vec_t<T,3> const &a, vec_t<T,3> const &b)
-      : aa(a),
-        bb(b)
-    {}
-
-    inline Box3(T const &ax, T const &ay, T const &az,
-                T const &bx, T const &by, T const &bz)
+    inline box_t(T const &ax, T const &ay, T const &az,
+                 T const &bx, T const &by, T const &bz)
       : aa(ax, ay, az),
         bb(bx, by, bz)
     {}
 
-    Box3<T> operator +(vec_t<T,3> const &v) const
+    box_t<T,N> operator +(vec_t<T,N> const &v) const
     {
-        return Box3<T>(aa + v, bb + v);
+        return box_t<T,N>(aa + v, bb + v);
     }
 
-    Box3<T> &operator +=(vec_t<T,3> const &v)
+    box_t<T,N> &operator +=(vec_t<T,N> const &v)
     {
         return *this = *this + v;
     }
 
-    Box3<T> operator -(vec_t<T,3> const &v) const
+    box_t<T,N> operator -(vec_t<T,N> const &v) const
     {
-        return Box3<T>(aa - v, bb - v);
+        return box_t<T,N>(aa - v, bb - v);
     }
 
-    Box3<T> &operator -=(vec_t<T,3> const &v)
+    box_t<T,N> &operator -=(vec_t<T,N> const &v)
     {
         return *this = *this - v;
     }
 
-    Box3<T> operator *(vec_t<T,3> const &v) const
+    box_t<T,N> operator *(vec_t<T,N> const &v) const
     {
-        return Box3<T>(aa * v, bb * v);
+        return box_t<T,N>(aa * v, bb * v);
     }
 
-    Box3<T> &operator *=(vec_t<T,3> const &v)
+    box_t<T,N> &operator *=(vec_t<T,N> const &v)
     {
         return *this = *this * v;
     }
 
-    Box3<T> operator *(T const &s) const
+    box_t<T,N> operator *(T const &s) const
     {
-        return Box3<T>(aa * s, bb * s);
+        return box_t<T,N>(aa * s, bb * s);
     }
 
-    Box3<T> &operator *=(T const &s)
+    box_t<T,N> &operator *=(T const &s)
     {
         return *this = *this * s;
     }
 
-    bool operator ==(Box3<T> const &box) const
+    bool operator ==(box_t<T,N> const &box) const
     {
         return aa == box.aa && bb == box.bb;
     }
 
-    bool operator !=(Box3<T> const &box) const
+    bool operator !=(box_t<T,N> const &box) const
     {
         return aa != box.aa || bb != box.bb;
     }
 
-    inline vec_t<T,3> center() const { return (bb + aa) / 2; }
+    inline vec_t<T,N> center() const { return (bb + aa) / 2; }
 
-    inline vec_t<T,3> extent() const { return bb - aa; }
+    inline vec_t<T,N> extent() const { return bb - aa; }
 
-    vec_t<T,3> aa, bb;
+    vec_t<T,N> aa, bb;
 };
+
+static_assert(sizeof(box2) == 16, "sizeof(box2) == 16");
+static_assert(sizeof(box3) == 24, "sizeof(box3) == 24");
+static_assert(sizeof(dbox2) == 32, "sizeof(dbox2) == 32");
+static_assert(sizeof(dbox3) == 48, "sizeof(dbox3) == 48");
 
 /*
  * Helper geometry functions
