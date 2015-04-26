@@ -65,8 +65,8 @@ public:
     virtual ~SceneDisplay() { }
 
     /* pos/size/... methods */
-    virtual void SetResolution(ivec2 resolution) { }
-    virtual void SetPosition(ivec2 position) { }
+    virtual void SetResolution(ivec2 resolution) { UNUSED(resolution); }
+    virtual void SetPosition(ivec2 position) { UNUSED(position); }
 
     /* TODO: Should that be there or in Video ? */
     static void Add(SceneDisplay* display);
