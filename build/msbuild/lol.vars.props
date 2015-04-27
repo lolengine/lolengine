@@ -98,7 +98,6 @@
 
     <!-- PS4-specific -->
     <OrbisDefines>HAVE_STDIO_H;
-                  HAVE_PTHREAD_H;
                   $(OrbisDefines)</OrbisDefines>
 
     <!-- X360-specific -->

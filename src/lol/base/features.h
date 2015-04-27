@@ -28,7 +28,6 @@
 
 #if defined EMSCRIPTEN
 #   undef LOL_FEATURE_THREADS
-#   define LOL_FEATURE_THREADS 0
 #endif
 
 /* Use this to disable code that causes compiler crashes. */
@@ -51,9 +50,6 @@
 #undef LOL_FEATURE_CXX11_NULLPTR
 #undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
 #undef LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
-#undef LOL_FEATURE_CXX11_THREADS /* Touky: Is it really needed ? */
-
-#define LOL_FEATURE_CXX11_THREADS 1 /* Touky: This should be available everywhere */
 
 /* Features supported by GCC */
 #if defined __GNUC__
