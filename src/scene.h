@@ -78,7 +78,7 @@ public:
     static ptrdiff_t GetPhysicalCount();
     static const char* GetPhysicalName(ptrdiff_t index = 0);
 
-protected:
+//protected:
     virtual void Enable();
     virtual void Disable();
 

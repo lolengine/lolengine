@@ -479,6 +479,8 @@ void TickerData::DrawThreadTick()
 
         /* Disable display */
         scene.DisableDisplay();
+
+        //break;
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
