@@ -146,16 +146,16 @@ public:
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
         ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
-               "cannot access index %lld in array of size %lld",
-               (long long int)n, (long long int)m_count);
+               "cannot access index %ld in array of size %ld",
+               (long int)n, (long int)m_count);
         return m_data[n];
     }
 
     inline element_t const& operator[](ptrdiff_t n) const
     {
         ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
-               "cannot access index %lld in array of size %lld",
-               (long long int)n, (long long int)m_count);
+               "cannot access index %ld in array of size %ld",
+               (long int)n, (long int)m_count);
         return m_data[n];
     }
 
@@ -220,8 +220,8 @@ public:
     inline void insert(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0 && pos <= m_count,
-               "cannot insert at index %lld in array of size %lld",
-               (long long int)pos, (long long int)m_count);
+               "cannot insert at index %ld in array of size %ld",
+               (long int)pos, (long int)m_count);
 
         if (m_count >= m_reserved)
             grow();
@@ -238,8 +238,8 @@ public:
     inline bool insert_unique(T const &x, ptrdiff_t pos)
     {
         ASSERT(pos >= 0 && pos <= m_count,
-               "cannot insert at index %lld in array of size %lld",
-               (long long int)pos, (long long int)m_count);
+               "cannot insert at index %ld in array of size %ld",
+               (long int)pos, (long int)m_count);
 
         if (find(x) != INDEX_NONE)
             return false;
@@ -289,8 +289,8 @@ public:
     inline void swap(ptrdiff_t i, ptrdiff_t j)
     {
         ASSERT(i >= 0 && i < m_count && j >= 0 && j < m_count,
-               "cannot swap elements %lld and %lld in array of size %lld",
-               (long long int)i, (long long int)j, (long long int)m_count);
+               "cannot swap elements %ld and %ld in array of size %ld",
+               (long int)i, (long int)j, (long int)m_count);
 
         std::swap(m_data[i], m_data[j]);
     }
@@ -299,9 +299,8 @@ public:
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
-               "cannot remove %lld elements at %lld in array of size %lld",
-               (long long int)todelete, (long long int)pos,
-               (long long int)m_count);
+               "cannot remove %ld elements at %ld in array of size %ld",
+               (long int)todelete, (long int)pos, (long int)m_count);
 
         if (pos < 0)
             pos = m_count + pos;
@@ -317,9 +316,8 @@ public:
     {
         ASSERT(todelete >= 0);
         ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
-               "cannot remove %lld elements at %lld in array of size %lld",
-               (long long int)todelete, (long long int)pos,
-               (long long int)m_count);
+               "cannot remove %ld elements at %ld in array of size %ld",
+               (long int)todelete, (long int)pos, (long int)m_count);
 
         if (pos < 0)
             pos = m_count + pos;
@@ -500,8 +498,8 @@ public:
     inline void insert(ptrdiff_t pos, T... args)
     {
         ASSERT(pos >= 0 && pos <= this->m_count,
-               "cannot insert at index %lld in array of size %lld",
-               (long long int)pos, (long long int)this->m_count);
+               "cannot insert at index %ld in array of size %ld",
+               (long int)pos, (long int)this->m_count);
 
         if (this->m_count >= this->m_reserved)
             this->grow();
