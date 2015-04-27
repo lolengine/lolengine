@@ -30,7 +30,7 @@ void EasyMesh::Translate(vec3 const &v)
         return;
     }
 
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
         m_vert[i].m_coord += v;
 }
 
@@ -50,7 +50,7 @@ void EasyMesh::Rotate(float angle, vec3 const &axis)
     }
 
     mat3 m = mat3::rotate(angle, axis);
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
     {
         m_vert[i].m_coord  = m * m_vert[i].m_coord;
         m_vert[i].m_normal = m * m_vert[i].m_normal;
@@ -67,14 +67,14 @@ void EasyMesh::RadialJitter(float r)
         return;
     }
 
-    array<int> Welded;
-    Welded.Push(-1);
-    for (int i = m_cursors.Last().m1 + 1; i < m_vert.Count(); i++)
+    array<int> welded;
+    welded.push(-1);
+    for (int i = m_cursors.last().m1 + 1; i < m_vert.count(); i++)
     {
         int j, k;
-        for (j = m_cursors.Last().m1, k = 0; j < i; j++, k++)
+        for (j = m_cursors.last().m1, k = 0; j < i; j++, k++)
         {
-            if(Welded[k] < 0)
+            if(welded[k] < 0)
             {
                 vec3 diff = m_vert[i].m_coord - m_vert[j].m_coord;
 
@@ -91,22 +91,19 @@ void EasyMesh::RadialJitter(float r)
             }
         }
 
-        if(j == i)
-            Welded.Push(-1);
-        else
-            Welded.Push(j);
+        welded.push(j != i ? j : -1);
     }
 
     int i, j;
-    for (i = m_cursors.Last().m1, j = 0; i < m_vert.Count(); i++, j++)
+    for (i = m_cursors.last().m1, j = 0; i < m_vert.count(); i++, j++)
     {
-        if(Welded[j] == -1)
+        if(welded[j] == -1)
             m_vert[i].m_coord *= 1.0f + rand(r);
         else
-            m_vert[i].m_coord = m_vert[Welded[j]].m_coord;
+            m_vert[i].m_coord = m_vert[welded[j]].m_coord;
     }
 
-    ComputeNormals(m_cursors.Last().m2, (int)m_indices.Count() - m_cursors.Last().m2);
+    ComputeNormals(m_cursors.last().m2, m_indices.count() - m_cursors.last().m2);
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +144,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
         return;
     }
 
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
     {
         switch (ct.ToScalar())
         {
@@ -188,7 +185,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             }
         }
     }
-    ComputeNormals(m_cursors.Last().m2, (int)m_indices.Count() - m_cursors.Last().m2);
+    ComputeNormals(m_cursors.last().m2, m_indices.count() - m_cursors.last().m2);
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +204,7 @@ void EasyMesh::Scale(vec3 const &s)
 
     vec3 const invs = vec3(1) / s;
 
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
     {
         m_vert[i].m_coord *= s;
         m_vert[i].m_normal = normalize(m_vert[i].m_normal * invs);
@@ -216,7 +213,7 @@ void EasyMesh::Scale(vec3 const &s)
     /* Flip winding if the scaling involves mirroring */
     if (!BD()->IsEnabled(MeshBuildOperation::ScaleWinding) && s.x * s.y * s.z < 0)
     {
-        for (int i = m_cursors.Last().m2; i < m_indices.Count(); i += 3)
+        for (int i = m_cursors.last().m2; i < m_indices.count(); i += 3)
         {
             uint16_t tmp = m_indices[i + 0];
             m_indices[i + 0] = m_indices[i + 1];
@@ -240,26 +237,26 @@ void EasyMesh::DupAndScale(vec3 const &s, bool open_brace)
         return;
     }
 
-    int vlen = (int)m_vert.Count() - m_cursors.Last().m1;
-    int tlen = (int)m_indices.Count() - m_cursors.Last().m2;
+    int vlen = m_vert.count() - m_cursors.last().m1;
+    int tlen = m_indices.count() - m_cursors.last().m2;
 
     for (int i = 0; i < vlen; i++)
-        AddDupVertex(m_cursors.Last().m1++);
+        AddDupVertex(m_cursors.last().m1++);
 
     for (int i = 0; i < tlen; i++)
-        m_indices << m_indices[m_cursors.Last().m2++] + vlen;
+        m_indices << m_indices[m_cursors.last().m2++] + vlen;
 
     Scale(s);
 
-    m_cursors.Last().m1 -= vlen;
-    m_cursors.Last().m2 -= tlen;
+    m_cursors.last().m1 -= vlen;
+    m_cursors.last().m2 -= tlen;
 
     if (open_brace)
     {
         OpenBrace();
 
-        m_cursors.Last().m1 -= vlen;
-        m_cursors.Last().m2 -= tlen;
+        m_cursors.last().m1 -= vlen;
+        m_cursors.last().m2 -= tlen;
     }
 }
 
@@ -273,8 +270,8 @@ void EasyMesh::Chamfer(float f)
         return;
     }
 
-    int vlen = (int)m_vert.Count() - m_cursors.Last().m1;
-    int ilen = (int)m_indices.Count() - m_cursors.Last().m2;
+    int vlen = m_vert.count() - m_cursors.last().m1;
+    int ilen = m_indices.count() - m_cursors.last().m2;
 
     /* Step 1: enumerate all faces. This is done by merging triangles
      * that are coplanar and share an edge. */
@@ -334,10 +331,10 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
 {
     while (pass--)
     {
-        int trimax = (int)m_indices.Count();
-        for (int i = m_cursors.Last().m2; i < trimax; i += 3)
+        int trimax = m_indices.count();
+        for (int i = m_cursors.last().m2; i < trimax; i += 3)
         {
-            int vbase = (int)m_vert.Count();
+            int vbase = m_vert.count();
             int j = -1;
             while (++j < 3)
             {
@@ -354,7 +351,7 @@ void EasyMesh::SplitTriangles(int pass, VertexDictionnary *vert_dict)
             m_indices[i + 2] = vbase + 2;
         }
     }
-    ComputeNormals(m_cursors.Last().m2, (int)m_indices.Count() - m_cursors.Last().m2);
+    ComputeNormals(m_cursors.last().m2, m_indices.count() - m_cursors.last().m2);
 }
 
 //-----------------------------------------------------------------------------
@@ -376,7 +373,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
     array<int> connected_vert;
     int smbuf = 0;
 
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
         vert_dict.RegisterVertex(i, m_vert[i].m_coord);
 
     while (main_pass--)
@@ -386,53 +383,53 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
 
         SplitTriangles(split_pass, &vert_dict);
 
-        matching_ids.Reserve(m_vert.Count() - m_cursors.Last().m1);
-        connected_vert.Reserve(m_vert.Count() - m_cursors.Last().m1);
-        smooth_buf[0].Resize(m_vert.Count() - m_cursors.Last().m1);
-        smooth_buf[1].Resize(m_vert.Count() - m_cursors.Last().m1);
+        matching_ids.reserve(m_vert.count() - m_cursors.last().m1);
+        connected_vert.reserve(m_vert.count() - m_cursors.last().m1);
+        smooth_buf[0].resize(m_vert.count() - m_cursors.last().m1);
+        smooth_buf[1].resize(m_vert.count() - m_cursors.last().m1);
 
-        for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
-            smooth_buf[smbuf][i - m_cursors.Last().m1] = m_vert[i].m_coord;
+        for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
+            smooth_buf[smbuf][i - m_cursors.last().m1] = m_vert[i].m_coord;
 
         while (smooth_pass--)
         {
-            master_list.Empty();
+            master_list.empty();
             if (vert_dict.GetMasterList(master_list))
             {
-                for (int i = 0; i < master_list.Count(); i++)
+                for (int i = 0; i < master_list.count(); i++)
                 {
-                    connected_vert.Empty();
-                    if (vert_dict.FindConnectedVertices(master_list[i], m_indices, m_cursors.Last().m2, connected_vert))
+                    connected_vert.empty();
+                    if (vert_dict.FindConnectedVertices(master_list[i], m_indices, m_cursors.last().m2, connected_vert))
                     {
                         //Calculate vertices sum
                         vec3 vert_sum = vec3(.0f);
-                        for (int j = 0; j < connected_vert.Count(); j++)
-                            vert_sum += smooth_buf[smbuf][connected_vert[j] - m_cursors.Last().m1];
+                        for (int j = 0; j < connected_vert.count(); j++)
+                            vert_sum += smooth_buf[smbuf][connected_vert[j] - m_cursors.last().m1];
 
                         //Calculate new master vertex
-                        float n = (float)connected_vert.Count();
+                        float n = (float)connected_vert.count();
                         //b(n) = 5/4 - pow(3 + 2 * cos(2.f * F_PI / n), 2) / 32
                         float beta = 3.f + 2.f * cos(2.f * F_PI / n);
                         beta = 5.f / 4.f - beta * beta / 32.f;
                         //a(n) = n * (1 - b(n)) / b(n)
                         float alpha = (n * (1 - beta)) / beta;
                         //V = (a(n) * v + v1 + ... + vn) / (a(n) + n)
-                        vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.Last().m1] + vert_sum) / (alpha + n);
+                        vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.last().m1] + vert_sum) / (alpha + n);
 
                         //Set all matching vertices to new value
-                        matching_ids.Empty();
+                        matching_ids.empty();
                         matching_ids << master_list[i];
                         vert_dict.FindMatchingVertices(master_list[i], matching_ids);
-                        for (int j = 0; j < matching_ids.Count(); j++)
-                            smooth_buf[1 - smbuf][matching_ids[j] - m_cursors.Last().m1] = new_vert;
+                        for (int j = 0; j < matching_ids.count(); j++)
+                            smooth_buf[1 - smbuf][matching_ids[j] - m_cursors.last().m1] = new_vert;
                     }
                 }
             }
             smbuf = 1 - smbuf;
         }
 
-        for (int i = 0; i < smooth_buf[smbuf].Count(); i++)
-            m_vert[i + m_cursors.Last().m1].m_coord = smooth_buf[smbuf][i];
+        for (int i = 0; i < smooth_buf[smbuf].count(); i++)
+            m_vert[i + m_cursors.last().m1].m_coord = smooth_buf[smbuf][i];
     }
 }
 

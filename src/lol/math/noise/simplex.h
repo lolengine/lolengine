@@ -362,7 +362,7 @@ private:
             {
                 int best_delta = -1;
                 float best_t2 = t;
-                for (int i = 0; i < deltas.Count(); ++i)
+                for (int i = 0; i < deltas.count(); ++i)
                 {
                     float t2 = eval(v + e * deltas[i]);
                     if (abs(t2) > abs(best_t2))

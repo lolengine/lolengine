@@ -48,10 +48,9 @@ bool SdlImageCodec::Load(Image *image, char const *path)
 {
     SDL_Surface *surface = nullptr;
 
-    array<String> pathlist = System::GetPathList(path);
-    for (int i = 0; i < pathlist.Count(); i++)
+    for (auto candidate : System::GetPathList(path))
     {
-        surface = IMG_Load(pathlist[i].C());
+        surface = IMG_Load(candidate.C());
         if (surface)
             break;
     }

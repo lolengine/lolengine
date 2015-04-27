@@ -35,7 +35,7 @@ DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
 
 bool ZedPaletteImageCodec::Load(Image *image, char const *path)
 {
-    if (!lol::String(path).EndsWith(".pal"))
+    if (!lol::String(path).ends_with(".pal"))
         return false;
 
     File file;
@@ -44,7 +44,7 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
     //Put file in memory
     long file_size = file.GetSize();
     array<uint8_t> file_buffer;
-    file_buffer.Resize(file_size);
+    file_buffer.resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
     file.Close();
 
@@ -63,7 +63,7 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
 #endif
 
     u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
-    for (int i = 0; i < file_buffer.Count();)
+    for (int i = 0; i < file_buffer.count();)
     {
         pixels->r = file_buffer[i++];
         pixels->g = file_buffer[i++];

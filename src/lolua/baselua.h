@@ -63,29 +63,29 @@ struct ObjectLib
         m_method_name = class_name + "_inst";
 
         m_statics = statics;
-        if (m_statics.Count() == 0
-            || m_statics.Last().name != nullptr
-            || m_statics.Last().func != nullptr)
-            m_statics.Push({ nullptr, nullptr });
+        if (m_statics.count() == 0
+            || m_statics.last().name != nullptr
+            || m_statics.last().func != nullptr)
+            m_statics.push({ nullptr, nullptr });
 
         m_methods = methods;
-        if (m_methods.Count() == 0
-            || m_methods.Last().name != nullptr
-            || m_methods.Last().func != nullptr)
-            m_methods.Push({ nullptr, nullptr });
+        if (m_methods.count() == 0
+            || m_methods.last().name != nullptr
+            || m_methods.last().func != nullptr)
+            m_methods.push({ nullptr, nullptr });
 
         for (ClassVar const& cv : variables)
         {
             if (cv.name && cv.get && cv.set)
             {
-                m_variables.Push({ cv.name, cv.get, cv.set });
+                m_variables.push({ cv.name, cv.get, cv.set });
             }
         }
-        if (m_variables.Count() == 0
-            || variables.Last().name != nullptr
-            || variables.Last().get != nullptr
-            || variables.Last().set != nullptr)
-            m_variables.Push(ClassVarStr());
+        if (m_variables.count() == 0
+            || variables.last().name != nullptr
+            || variables.last().get != nullptr
+            || variables.last().set != nullptr)
+            m_variables.push(ClassVarStr());
     }
     String m_class_name = "";
     String m_static_name = "";
@@ -201,9 +201,9 @@ public:
     template <typename TLuaClass>
     static const char* GetMethodName() { return GetLib<TLuaClass>()->m_method_name.C(); }
     template <typename TLuaClass>
-    static const ClassMethod* GetStaticMethods() { return GetLib<TLuaClass>()->m_statics.Data(); }
+    static const ClassMethod* GetStaticMethods() { return GetLib<TLuaClass>()->m_statics.data(); }
     template <typename TLuaClass>
-    static const ClassMethod* GetInstanceMethods() { return GetLib<TLuaClass>()->m_methods.Data(); }
+    static const ClassMethod* GetInstanceMethods() { return GetLib<TLuaClass>()->m_methods.data(); }
     template <typename TLuaClass>
     static const array<ObjectLib::ClassVarStr>& GetVariables() { return GetLib<TLuaClass>()->m_variables; }
 

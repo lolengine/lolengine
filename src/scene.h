@@ -70,13 +70,13 @@ public:
 
     /* TODO: Should that be there or in Video ? */
     static void Add(SceneDisplay* display);
-    static ptrdiff_t GetCount();
-    static SceneDisplay* GetDisplay(ptrdiff_t index = 0);
+    static int GetCount();
+    static SceneDisplay* GetDisplay(int index = 0);
     static void DestroyAll();
 
     /* Implement these in the platform section */
-    static ptrdiff_t GetPhysicalCount();
-    static const char* GetPhysicalName(ptrdiff_t index = 0);
+    static int GetPhysicalCount();
+    static const char* GetPhysicalName(int index = 0);
 
 //protected:
     virtual void Enable();
@@ -106,9 +106,9 @@ private: //Private because I don't know if we should have it
 private:
     static void DestroyAll();
 public:
-    static ptrdiff_t GetCount();
-    static bool IsReady(ptrdiff_t index = 0);
-    static Scene& GetScene(ptrdiff_t index = 0);
+    static int GetCount();
+    static bool IsReady(int index = 0);
+    static Scene& GetScene(int index = 0);
 
 public:
     //TODO: don't like the name
@@ -127,16 +127,16 @@ public:
 #   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
     /* ============================== */
 private:
-    ptrdiff_t HasPrimitiveSource(uintptr_t key);
-    ptrdiff_t AddPrimitiveSource(uintptr_t key, class PrimitiveSource* source);
-    void SetPrimitiveSource(ptrdiff_t index, uintptr_t key, class PrimitiveSource* source);
-    void ReleasePrimitiveSource(ptrdiff_t index, uintptr_t key);
+    int HasPrimitiveSource(uintptr_t key);
+    int AddPrimitiveSource(uintptr_t key, class PrimitiveSource* source);
+    void SetPrimitiveSource(int index, uintptr_t key, class PrimitiveSource* source);
+    void ReleasePrimitiveSource(int index, uintptr_t key);
     void ReleaseAllPrimitiveSource(uintptr_t key);
 public:
     /* === Primitive source stuff === */
     /* Returns the number of primitive source set to the given entity */
     template <typename T>
-    ptrdiff_t HasPrimitiveSource(T* key)
+    int HasPrimitiveSource(T* key)
     {
         ASSERT(key);
         return HasPrimitiveSource(_KEY_IDX);
@@ -144,7 +144,7 @@ public:
     /* Add a primitive sources linked to the given entity
      * Returns the slot number */
     template <typename T>
-    ptrdiff_t AddPrimitiveSource(T* key, class PrimitiveSource* source)
+    int AddPrimitiveSource(T* key, class PrimitiveSource* source)
     {
         ASSERT(key);
         return AddPrimitiveSource(_KEY_IDX, source);
@@ -153,14 +153,14 @@ public:
      * Deletes the old one
      * The slot is kept even if source == nullptr */
     template <typename T>
-    void SetPrimitiveSource(ptrdiff_t index, T* key, class PrimitiveSource* source)
+    void SetPrimitiveSource(int index, T* key, class PrimitiveSource* source)
     {
         ASSERT(key);
         SetPrimitiveSource(index, _KEY_IDX, source);
     }
     /* Remove primitive source at index set to the given entity */
     template <typename T>
-    void ReleasePrimitiveSource(ptrdiff_t index, T* key)
+    void ReleasePrimitiveSource(int index, T* key)
     {
         ASSERT(key);
         ReleasePrimitiveSource(index, _KEY_IDX);
@@ -174,16 +174,16 @@ public:
     }
 
 private:
-    ptrdiff_t HasPrimitiveRenderer(uintptr_t key);
+    int HasPrimitiveRenderer(uintptr_t key);
     void AddPrimitiveRenderer(uintptr_t key, class PrimitiveRenderer* renderer);
-    void SetPrimitiveRenderer(ptrdiff_t index, uintptr_t key, class PrimitiveRenderer* renderer);
-    void ReleasePrimitiveRenderer(ptrdiff_t index, uintptr_t key);
+    void SetPrimitiveRenderer(int index, uintptr_t key, class PrimitiveRenderer* renderer);
+    void ReleasePrimitiveRenderer(int index, uintptr_t key);
     void ReleaseAllPrimitiveRenderer(uintptr_t key);
 public:
     /* === Primitive renderer stuff === */
     /* Returns the number of primitive renderer set to the given entity */
     template <typename T>
-    ptrdiff_t HasPrimitiveRenderer(T* key)
+    int HasPrimitiveRenderer(T* key)
     {
         ASSERT(key);
         return HasPrimitiveRenderer(_KEY_IDX);
@@ -201,14 +201,14 @@ public:
      * Deletes the old one
      * Will assert if renderer == nullptr */
     template <typename T>
-    void SetPrimitiveRenderer(ptrdiff_t index, T* key, class PrimitiveRenderer* renderer)
+    void SetPrimitiveRenderer(int index, T* key, class PrimitiveRenderer* renderer)
     {
         ASSERT(key && renderer);
         SetPrimitiveRenderer(index, _KEY_IDX, renderer);
     }
     /* Remove primitive renderer at index set to the given entity */
     template <typename T>
-    void ReleasePrimitiveRenderer(ptrdiff_t index, T* key)
+    void ReleasePrimitiveRenderer(int index, T* key)
     {
         ASSERT(key);
         ReleasePrimitiveRenderer(index, _KEY_IDX);

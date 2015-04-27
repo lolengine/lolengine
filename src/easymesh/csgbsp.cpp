@@ -20,17 +20,17 @@ int CsgBsp::AddLeaf(int leaf_type, vec3 origin, vec3 normal, int above_idx)
     if (leaf_type > 2 && leaf_type < -1)
         return -1;
 
-    if ((m_tree.Count() == 0 && above_idx == -1) ||
+    if ((m_tree.count() == 0 && above_idx == -1) ||
         (above_idx >= 0 &&
-            above_idx < m_tree.Count() &&
+            above_idx < m_tree.count() &&
             leaf_type > LEAF_CURRENT &&
             leaf_type < LEAF_ABOVE &&
             m_tree[above_idx].m_leaves[leaf_type] == -1))
     {
-        if (m_tree.Count() != 0)
-            m_tree[above_idx].m_leaves[leaf_type] = (int32_t)m_tree.Count();
-        m_tree.Push(CsgBspLeaf(origin, normal, above_idx));
-        return (int)m_tree.Count() - 1;
+        if (m_tree.count() != 0)
+            m_tree[above_idx].m_leaves[leaf_type] = (int32_t)m_tree.count();
+        m_tree.push(CsgBspLeaf(origin, normal, above_idx));
+        return m_tree.count() - 1;
     }
 
     return -1;
@@ -38,7 +38,7 @@ int CsgBsp::AddLeaf(int leaf_type, vec3 origin, vec3 normal, int above_idx)
 
 int CsgBsp::TestPoint(int leaf_idx, vec3 point)
 {
-    if (leaf_idx >= 0 && leaf_idx < m_tree.Count())
+    if (leaf_idx >= 0 && leaf_idx < m_tree.count())
     {
         vec3 p2o = point - m_tree[leaf_idx].m_origin;
 
@@ -63,20 +63,20 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
     array< int, int, vec3, vec3, vec3, int > Leaf_to_add;
 
     //Tree is empty, so this leaf is the first
-    if (m_tree.Count() == 0)
+    if (m_tree.count() == 0)
     {
         AddLeaf(LEAF_CURRENT, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), LEAF_CURRENT);
-        m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
+        m_tree.last().m_tri_list.push(tri_idx, tri_p0, tri_p1, tri_p2);
         return;
     }
 
-    tri_to_process.Reserve(20);
-    tri_to_process.Push(0, tri_p0, tri_p1, tri_p2);
+    tri_to_process.reserve(20);
+    tri_to_process.push(0, tri_p0, tri_p1, tri_p2);
 
-    while (tri_to_process.Count())
+    while (tri_to_process.count())
     {
-        int leaf_idx = tri_to_process.Last().m1;
-        vec3 v[3] = { tri_to_process.Last().m2, tri_to_process.Last().m3, tri_to_process.Last().m4 };
+        int leaf_idx = tri_to_process.last().m1;
+        vec3 v[3] = { tri_to_process.last().m2, tri_to_process.last().m3, tri_to_process.last().m4 };
 
         int res_nb[3] = { 0, 0, 0 };
         int res_side[3] = { -1, -1, -1 };
@@ -117,23 +117,23 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
             int v_idx1 = (isec_base == 1)?(0):(1);
             int leaf_type = res_side[(isec_base + 2) % 3];
 
-            tri_to_process.Pop();
+            tri_to_process.pop();
 
 #if 1
             if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT)
-                Leaf_to_add.Push(leaf_type, leaf_idx, v[((isec_base + 2) % 3)], isec_v[v_idx1], isec_v[v_idx0], -1);
+                Leaf_to_add.push(leaf_type, leaf_idx, v[((isec_base + 2) % 3)], isec_v[v_idx1], isec_v[v_idx0], -1);
             else
-                tri_to_process.Push(leaf_idx, v[((isec_base + 2) % 3)], isec_v[v_idx1], isec_v[v_idx0]);
+                tri_to_process.push(leaf_idx, v[((isec_base + 2) % 3)], isec_v[v_idx1], isec_v[v_idx0]);
 
             if (m_tree[leaf_idx].m_leaves[1 - leaf_type] == LEAF_CURRENT)
             {
-                Leaf_to_add.Push(1 - leaf_type, leaf_idx, v[isec_base], v[((isec_base + 1) % 3)], isec_v[v_idx0], -1);
-                Leaf_to_add.Push(1 - leaf_type, leaf_idx, v[isec_base], isec_v[v_idx0], isec_v[v_idx1], (int)Leaf_to_add.Count() - 1);
+                Leaf_to_add.push(1 - leaf_type, leaf_idx, v[isec_base], v[((isec_base + 1) % 3)], isec_v[v_idx0], -1);
+                Leaf_to_add.push(1 - leaf_type, leaf_idx, v[isec_base], isec_v[v_idx0], isec_v[v_idx1], Leaf_to_add.count() - 1);
             }
             else
             {
-                tri_to_process.Push(m_tree[leaf_idx].m_leaves[1 - leaf_type], v[isec_base], v[((isec_base + 1) % 3)], isec_v[v_idx0]);
-                tri_to_process.Push(m_tree[leaf_idx].m_leaves[1 - leaf_type], v[isec_base], isec_v[v_idx0], isec_v[v_idx1]);
+                tri_to_process.push(m_tree[leaf_idx].m_leaves[1 - leaf_type], v[isec_base], v[((isec_base + 1) % 3)], isec_v[v_idx0]);
+                tri_to_process.push(m_tree[leaf_idx].m_leaves[1 - leaf_type], v[isec_base], isec_v[v_idx0], isec_v[v_idx1]);
             }
 #else
             vec3 new_v[9] = { v[((isec_base + 2) % 3)], isec_v[v_idx1],             isec_v[v_idx0],
@@ -158,7 +158,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
                 if (skip_tri)
                     continue;
 
-                tri_to_process.Push(0, new_v[k], new_v[k + 1], new_v[k + 2]);
+                tri_to_process.push(0, new_v[k], new_v[k + 1], new_v[k + 2]);
             }
 #endif
         }
@@ -171,43 +171,43 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
             //No leaf exist, so add a new one
             if (new_leaf == LEAF_CURRENT)
             {
-                tri_to_process.Pop();
-                Leaf_to_add.Push(new_leaf_type, leaf_idx, v[0], v[1], v[2], -1);
+                tri_to_process.pop();
+                Leaf_to_add.push(new_leaf_type, leaf_idx, v[0], v[1], v[2], -1);
             }
             else
-                tri_to_process.Last().m1 = new_leaf;
+                tri_to_process.last().m1 = new_leaf;
         }
         //All points are on the current leaf, add the tri_idx to the list of this leaf.
         else
         {
-            tri_to_process.Pop();
+            tri_to_process.pop();
 
             bool already_exist = false;
-            for (int i = 0; !already_exist && i < m_tree[leaf_idx].m_tri_list.Count(); i++)
+            for (int i = 0; !already_exist && i < m_tree[leaf_idx].m_tri_list.count(); i++)
                 already_exist = (m_tree[leaf_idx].m_tri_list[i].m1 == tri_idx);
             if (!already_exist)
-                m_tree[leaf_idx].m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
+                m_tree[leaf_idx].m_tri_list.push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
     }
 
     //Add all leaves to the tree.
-    for (int i = 0; i < Leaf_to_add.Count(); i++)
+    for (int i = 0; i < Leaf_to_add.count(); i++)
     {
         //If we had it to an already existing leaf.
-        if (Leaf_to_add[i].m2 < m_tree.Count() && m_tree[Leaf_to_add[i].m2].m_leaves[Leaf_to_add[i].m1] == LEAF_CURRENT)
+        if (Leaf_to_add[i].m2 < m_tree.count() && m_tree[Leaf_to_add[i].m2].m_leaves[Leaf_to_add[i].m1] == LEAF_CURRENT)
         {
             AddLeaf(Leaf_to_add[i].m1, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), Leaf_to_add[i].m2);
-            m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
+            m_tree.last().m_tri_list.push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
 
         /*
         if (Leaf_to_add[i].m6 == -1)
         {
             AddLeaf(Leaf_to_add[i].m1, tri_p0, cross(normalize(tri_p1 - tri_p0), normalize(tri_p2 - tri_p1)), Leaf_to_add[i].m2);
-            m_tree.Last().m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
+            m_tree.last().m_tri_list.push(tri_idx, tri_p0, tri_p1, tri_p2);
         }
         else
-            m_tree[Leaf_to_add[i].m6].m_tri_list.Push(tri_idx, tri_p0, tri_p1, tri_p2);
+            m_tree[Leaf_to_add[i].m6].m_tri_list.push(tri_idx, tri_p0, tri_p1, tri_p2);
         */
     }
 }
@@ -228,27 +228,27 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
     array< array< int >, int, int, int, int > tri_to_process;
 
     //Tree is empty, ABORT !
-    if (m_tree.Count() == 0)
+    if (m_tree.count() == 0)
         return -1;
 
     //Let's push the source vertices in here.
-    vert_list.Push(tri_p0, -1, -1, .0f);
-    vert_list.Push(tri_p1, -1, -1, .0f);
-    vert_list.Push(tri_p2, -1, -1, .0f);
+    vert_list.push(tri_p0, -1, -1, .0f);
+    vert_list.push(tri_p1, -1, -1, .0f);
+    vert_list.push(tri_p2, -1, -1, .0f);
 
     //Let's push the triangle in here.
-    tri_to_process.Reserve(20);
-    tri_to_process.Push( array< int >(), 0, 1, 2, 0);
-    tri_to_process.Last().m1.Push(0);
+    tri_to_process.reserve(20);
+    tri_to_process.push( array< int >(), 0, 1, 2, 0);
+    tri_to_process.last().m1.push(0);
 
-    while (tri_to_process.Count())
+    while (tri_to_process.count())
     {
-        while (tri_to_process.Count())
+        while (tri_to_process.count())
         {
-            int leaf_idx = tri_to_process.Last().m1.Last();
-            int t[3] = { tri_to_process.Last().m2,
-                            tri_to_process.Last().m3,
-                            tri_to_process.Last().m4 };
+            int leaf_idx = tri_to_process.last().m1.last();
+            int t[3] = { tri_to_process.last().m2,
+                            tri_to_process.last().m3,
+                            tri_to_process.last().m4 };
             vec3 v[3] = { vert_list[t[0]].m1,
                             vert_list[t[1]].m1,
                             vert_list[t[2]].m1 };
@@ -277,7 +277,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 int isec_idx = 0;
 
                 int i = 0;
-                for (; i < m_tree[leaf_idx].m_tri_list.Count(); i++)
+                for (; i < m_tree[leaf_idx].m_tri_list.count(); i++)
                 {
                     if (TestTriangleVsTriangle(v[0], v[1], v[2],
                                                 m_tree[leaf_idx].m_tri_list[i].m2, m_tree[leaf_idx].m_tri_list[i].m3, m_tree[leaf_idx].m_tri_list[i].m4,
@@ -286,27 +286,27 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 }
 
                 //There was no triangle intersection, the complex case.
-                if (i == m_tree[leaf_idx].m_tri_list.Count())
+                if (i == m_tree[leaf_idx].m_tri_list.count())
                 {
                     if (m_tree[leaf_idx].m_leaves[LEAF_FRONT] == LEAF_CURRENT &&
                         m_tree[leaf_idx].m_leaves[LEAF_BACK] == LEAF_CURRENT &&
-                        tri_to_process.Last().m1.Count() == 1)
+                        tri_to_process.last().m1.count() == 1)
                     {
-                        tri_list.Push(LEAF_CURRENT, tri_to_process.Last().m2, tri_to_process.Last().m3, tri_to_process.Last().m4);
-                        tri_to_process.Pop();
+                        tri_list.push(LEAF_CURRENT, tri_to_process.last().m2, tri_to_process.last().m3, tri_to_process.last().m4);
+                        tri_to_process.pop();
                     }
                     else
                     {
-                        tri_to_process.Last().m1.Pop();
+                        tri_to_process.last().m1.pop();
 
                         //Register the triangle as needing to intersect with Front & back leaves.
                         if (m_tree[leaf_idx].m_leaves[LEAF_FRONT] != LEAF_CURRENT)
-                            tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_FRONT]);
+                            tri_to_process.last().m1.push(m_tree[leaf_idx].m_leaves[LEAF_FRONT]);
                         if (m_tree[leaf_idx].m_leaves[LEAF_BACK] != LEAF_CURRENT)
-                            tri_to_process.Last().m1.Push(m_tree[leaf_idx].m_leaves[LEAF_BACK]);
+                            tri_to_process.last().m1.push(m_tree[leaf_idx].m_leaves[LEAF_BACK]);
                         //Mark the triangle as needing point by point test
 
-                        tri_to_process.Last().m5 = 1;
+                        tri_to_process.last().m5 = 1;
                     }
                 }
                 //there was an intersection, so let's split the triangle.
@@ -339,11 +339,11 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                                 if (skip_point)
                                     continue;
 #endif
-                                new_v_idx[k] = (int)vert_list.Count();
+                                new_v_idx[k] = vert_list.count();
                                 vec3 PmV0 = (isec_v[k] - vert_list[t[isec_i[k]]].m1);
                                 vec3 V1mV0 = (vert_list[t[(isec_i[k] + 1) % 3]].m1 - vert_list[t[isec_i[k]]].m1);
                                 float alpha = length(PmV0) / length(V1mV0);
-                                vert_list.Push(isec_v[k],
+                                vert_list.push(isec_v[k],
                                                 t[isec_i[k]], t[(isec_i[k] + 1) % 3],
                                                 //Alpha = length((Point_Loc - Src_V0) / (Src_V1 - Src_V0));
                                                 alpha);
@@ -353,31 +353,31 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                             int v_idx1 = (isec_base == 1)?(0):(1);
                             //Leaf_type is the type for the triangle that is alone on its side.
                             int leaf_type = res_side[(isec_base + 2) % 3];
-                            int tri_to_remove = (int)tri_to_process.Count() - 1;
+                            int tri_to_remove = tri_to_process.count() - 1;
 
 #if 0
-                            if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT && tri_to_process.Last().m1.Last() == 1)
-                                tri_list.Push(leaf_type,
+                            if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT && tri_to_process.last().m1.last() == 1)
+                                tri_list.push(leaf_type,
                                                 t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0]);
                             else
                             {
-                                tri_to_process.Push(array< int >(), t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
-                                tri_to_process.Last().m1.Push(0);
+                                tri_to_process.push(array< int >(), t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0], 0);
+                                tri_to_process.last().m1.push(0);
                             }
 
-                            if (m_tree[leaf_idx].m_leaves[1 - leaf_type] == LEAF_CURRENT && tri_to_process.Last().m1.Last() == 1)
+                            if (m_tree[leaf_idx].m_leaves[1 - leaf_type] == LEAF_CURRENT && tri_to_process.last().m1.last() == 1)
                             {
-                                tri_list.Push((tri_to_process.Last().m5)?(LEAF_CURRENT):(1 - leaf_type),
+                                tri_list.push((tri_to_process.last().m5)?(LEAF_CURRENT):(1 - leaf_type),
                                                 t[isec_base], new_v_idx[((isec_base + 1) % 3)], new_v_idx[v_idx0]);
-                                tri_list.Push((tri_to_process.Last().m5)?(LEAF_CURRENT):(1 - leaf_type),
+                                tri_list.push((tri_to_process.last().m5)?(LEAF_CURRENT):(1 - leaf_type),
                                                 t[isec_base], new_v_idx[v_idx0], new_v_idx[v_idx1]);
                             }
                             else
                             {
-                                tri_to_process.Push(array< int >(), t[isec_base], t[((isec_base + 1) % 3)], new_v_idx[v_idx0], 0);
-                                tri_to_process.Last().m1.Push(0);
-                                tri_to_process.Push(array< int >(), t[isec_base], new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
-                                tri_to_process.Last().m1.Push(0);
+                                tri_to_process.push(array< int >(), t[isec_base], t[((isec_base + 1) % 3)], new_v_idx[v_idx0], 0);
+                                tri_to_process.last().m1.push(0);
+                                tri_to_process.push(array< int >(), t[isec_base], new_v_idx[v_idx0], new_v_idx[v_idx1], 0);
+                                tri_to_process.last().m1.push(0);
                             }
 #else
                             int new_t[9] = { t[(isec_base + 2) % 3], new_v_idx[v_idx1],         new_v_idx[v_idx0],
@@ -407,25 +407,25 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                                     continue;
 #endif
 #if 0 //Send the newly created triangle back to the beginning
-                                tri_to_process.Push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
-                                tri_to_process.Last().m1.Push(0);
+                                tri_to_process.push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
+                                tri_to_process.last().m1.push(0);
 #else //Inherit parent tree
-                                if (m_tree[leaf_idx].m_leaves[new_side[k / 3]] == LEAF_CURRENT && tri_to_process[tri_to_remove].m1.Count() == 1)
-                                    tri_list.Push(new_side[k / 3], new_t[k], new_t[k + 1], new_t[k + 2]);
+                                if (m_tree[leaf_idx].m_leaves[new_side[k / 3]] == LEAF_CURRENT && tri_to_process[tri_to_remove].m1.count() == 1)
+                                    tri_list.push(new_side[k / 3], new_t[k], new_t[k + 1], new_t[k + 2]);
                                 else
                                 {
-                                    tri_to_process.Push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
-                                    tri_to_process.Last().m1 = tri_to_process[tri_to_remove].m1;
+                                    tri_to_process.push(array< int >(), new_t[k], new_t[k + 1], new_t[k + 2], 0);
+                                    tri_to_process.last().m1 = tri_to_process[tri_to_remove].m1;
                                     if (m_tree[leaf_idx].m_leaves[new_side[k / 3]] == LEAF_CURRENT)
-                                        tri_to_process.Last().m1.Pop();
+                                        tri_to_process.last().m1.pop();
                                     else
-                                        tri_to_process.Last().m1.Last() = m_tree[leaf_idx].m_leaves[new_side[k / 3]];
+                                        tri_to_process.last().m1.last() = m_tree[leaf_idx].m_leaves[new_side[k / 3]];
                                 }
 #endif
                             }
 #endif
 
-                            tri_to_process.Remove(tri_to_remove);
+                            tri_to_process.remove(tri_to_remove);
                         }
                     }
                 }
@@ -440,29 +440,29 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 if (new_leaf == LEAF_CURRENT)
                 {
                     //We still need to test other leaves.
-                    if (tri_to_process.Last().m1.Count() > 1)
-                        tri_to_process.Last().m1.Pop();
+                    if (tri_to_process.last().m1.count() > 1)
+                        tri_to_process.last().m1.pop();
                     else
                     {
-                        tri_list.Push((tri_to_process.Last().m5)?(LEAF_CURRENT):(new_leaf_type),
-                                        tri_to_process.Last().m2, tri_to_process.Last().m3, tri_to_process.Last().m4);
-                        tri_to_process.Pop();
+                        tri_list.push((tri_to_process.last().m5)?(LEAF_CURRENT):(new_leaf_type),
+                                        tri_to_process.last().m2, tri_to_process.last().m3, tri_to_process.last().m4);
+                        tri_to_process.pop();
                     }
                 }
                 else
-                    tri_to_process.Last().m1.Last() = new_leaf;
+                    tri_to_process.last().m1.last() = new_leaf;
             }
             //All points are on the current leaf, add the tri_idx to the list of this leaf.
             else
             {
                 //TODO : Special case, handle coplanar cut.
-                tri_list.Push(LEAF_CURRENT, tri_to_process.Last().m2, tri_to_process.Last().m3, tri_to_process.Last().m4);
-                tri_to_process.Pop();
+                tri_list.push(LEAF_CURRENT, tri_to_process.last().m2, tri_to_process.last().m3, tri_to_process.last().m4);
+                tri_to_process.pop();
             }
         }
 
         //Now that we have all the split points, let's double-check the results
-        for (int i = 0; i < tri_list.Count(); i++)
+        for (int i = 0; i < tri_list.count(); i++)
         {
 #define TEST_MAX 4
             int t[3] = { tri_list[i].m2,
@@ -512,9 +512,9 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 res_total = res_total;
                 tri_list[i].m1 = LEAF_BACK;
 #if 0
-                tri_to_process.Push( array< int >(), tri_list[i].m2, tri_list[i].m3, tri_list[i].m4, 0);
-                tri_to_process.Last().m1.Push(0);
-                tri_list.Remove(i--);
+                tri_to_process.push( array< int >(), tri_list[i].m2, tri_list[i].m3, tri_list[i].m4, 0);
+                tri_to_process.last().m1.push(0);
+                tri_list.remove(i--);
                 break;
 #endif
             }
@@ -534,7 +534,7 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
         }
     }
 
-    if (tri_list.Count() == 1)
+    if (tri_list.count() == 1)
         return 0;
     return 1;
 }

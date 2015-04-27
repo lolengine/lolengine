@@ -36,7 +36,7 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
     vec2 Save_texcoord_offset = BD()->TexCoordOffset();
     vec2 Save_texcoord_scale = BD()->TexCoordScale();
 
-    int vbase = (int)m_vert.Count();
+    int vbase = m_vert.count();
 
     mat3 rotmat = mat3::rotate(360.0f / (float)nsides, 0.f, 1.f, 0.f);
     vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
@@ -135,7 +135,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r = d * .5f;
 
-    int ibase = (int)m_indices.Count();
+    int ibase = m_indices.count();
 
     array<vec3> vertices;
     float uv_h = 0;
@@ -258,7 +258,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                         SetCurVertTexCoord(vec2(0.f, 1.f) - new_uv);
                         SetCurVertTexCoord2(vec2(0.f, 1.f) - new_uv);
                     }
-                    AddTriangle(0, 2, 1, (int)m_vert.Count() - 3);
+                    AddTriangle(0, 2, 1, m_vert.count() - 3);
                 }
             }
 
@@ -272,7 +272,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
         }
     }
 
-    ComputeNormals(ibase, (int)m_indices.Count() - ibase);
+    ComputeNormals(ibase, m_indices.count() - ibase);
 }
 
 //-----------------------------------------------------------------------------
@@ -289,7 +289,7 @@ void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
     float r1 = d1 * .5f;
     float r2 = d2 * .5f;
 
-    int ibase = (int)m_indices.Count();
+    int ibase = m_indices.count();
     int nidiv = ndivisions; /* Cross-section */
     int njdiv = ndivisions; /* Full circumference */
 
@@ -320,11 +320,11 @@ void EasyMesh::AppendTorus(int ndivisions, float d1, float d2)
             SetCurVertTexCoord2(vec2((float)(i + di) / (float)nidiv, (float)(j + dj) / (float)nidiv));
         }
 
-        AddTriangle(0, 2, 3, (int)m_vert.Count() - 4);
-        AddTriangle(0, 3, 1, (int)m_vert.Count() - 4);
+        AddTriangle(0, 2, 3, m_vert.count() - 4);
+        AddTriangle(0, 3, 1, m_vert.count() - 4);
     }
 
-    ComputeNormals(ibase, (int)m_indices.Count() - ibase);
+    ComputeNormals(ibase, m_indices.count() - ibase);
 }
 
 //-----------------------------------------------------------------------------
@@ -361,8 +361,8 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
         return;
     }
 
-    int vbase = (int)m_vert.Count();
-    int ibase = (int)m_indices.Count();
+    int vbase = m_vert.count();
+    int ibase = m_indices.count();
 
     vec3 d = size * 0.5f;
 
@@ -486,8 +486,8 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
     SetCurVertTexCoord(BD()->TexCoord(mt, tl, mft));
     SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
 
-    ComputeNormals(ibase, (int)m_indices.Count() - ibase);
-    ibase = (int)m_indices.Count();
+    ComputeNormals(ibase, m_indices.count() - ibase);
+    ibase = m_indices.count();
 
     //Build the box at the end : The 6 quads on each side of the box.
     for (int i = 0; i < 24; i += 4)
@@ -521,7 +521,7 @@ void EasyMesh::AppendBox(vec3 const &size, float chamf, bool smooth)
     }
 
     if (!smooth)
-        ComputeNormals(ibase, (int)m_indices.Count() - ibase);
+        ComputeNormals(ibase, m_indices.count() - ibase);
 }
 
 //-----------------------------------------------------------------------------
@@ -543,7 +543,7 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
     float r2 = d2 * .5f;
 
     //TODO: It would probably be good to think of another way of UV painting this, like "branch repeating"
-    int vbase = (int)m_vert.Count();
+    int vbase = m_vert.count();
     float maxr = max(r1, r2);
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
@@ -595,7 +595,7 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
     float r2 = d2 * .5f;
     float extrar = extrad * .5f;
 
-    int vbase = (int)m_vert.Count();
+    int vbase = m_vert.count();
     float maxr = lol::max(lol::max(r1, r2), lol::max(r1 + extrar, r2 + extrar));
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
@@ -648,7 +648,7 @@ void EasyMesh::AppendDisc(int nsides, float d, bool fade)
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float r = d * .5f;
 
-    int vbase = (int)m_vert.Count();
+    int vbase = m_vert.count();
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
@@ -693,7 +693,7 @@ void EasyMesh::AppendSimpleTriangle(float d, bool fade)
     if (fade)
         SetCurVertColor(BD()->ColorB());
 
-    AddTriangle(0, 1, 2, (int)m_vert.Count() - 3);
+    AddTriangle(0, 1, 2, m_vert.count() - 3);
 }
 
 //-----------------------------------------------------------------------------
@@ -738,8 +738,8 @@ void EasyMesh::AppendSimpleQuad(vec2 p1, vec2 p2, float z, bool fade)
     SetCurVertTexCoord2(BD()->TexCoord2(mt, tr, mft));
     if (fade) SetCurVertColor(BD()->ColorB());
 
-    AddQuad(0, 1, 2, 3, (int)m_vert.Count() - 4);
-    ComputeNormals((int)m_indices.Count() - 6, 6);
+    AddQuad(0, 1, 2, 3, m_vert.count() - 4);
+    ComputeNormals(m_indices.count() - 6, 6);
 }
 
 //-----------------------------------------------------------------------------
@@ -766,8 +766,8 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     float r12 = d12 * .5f;
     float r22 = d22 * .5f;
 
-    int ibase = (int)m_indices.Count();
-    int vbase = (int)m_vert.Count();
+    int ibase = m_indices.count();
+    int vbase = m_vert.count();
 
     /* FIXME: enforce this some other way */
     if (r12 < 0)
@@ -1011,13 +1011,13 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
         int l = -4;
         while ((l += 4) < 48)
             AddQuad(q[l + 0] + m[l + 0] * 3 + a[l + 0],
-                       q[l + 1] + m[l + 1] * 3 + a[l + 1],
-                       q[l + 2] + m[l + 2] * 3 + a[l + 2],
-                       q[l + 3] + m[l + 3] * 3 + a[l + 3],
-                       vbase);
+                    q[l + 1] + m[l + 1] * 3 + a[l + 1],
+                    q[l + 2] + m[l + 2] * 3 + a[l + 2],
+                    q[l + 3] + m[l + 3] * 3 + a[l + 3],
+                    vbase);
     }
 
-    ComputeNormals(ibase, (int)m_indices.Count() - ibase);
+    ComputeNormals(ibase, m_indices.count() - ibase);
 }
 
 } /* namespace lol */

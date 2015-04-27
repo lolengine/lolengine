@@ -151,12 +151,12 @@ lolunit_declare_fixture(string_test)
     lolunit_declare_test(string_printf)
     {
         String s1 = "3a";
-        String s2 = String::Printf("%d%x", 3, 10);
+        String s2 = String::format("%d%x", 3, 10);
 
         lolunit_assert(s1 == s2);
 
         String s3 = "abc 3";
-        String s4 = String::Printf("abc %d", 3);
+        String s4 = String::format("abc %d", 3);
 
         lolunit_assert(s3 == s4);
     }
@@ -177,14 +177,14 @@ lolunit_declare_fixture(string_test)
     lolunit_declare_test(index_of)
     {
         String s1 = "Hello World";
-        ptrdiff_t i1 = s1.index_of('H');
-        ptrdiff_t i2 = s1.index_of('W');
-        ptrdiff_t i3 = s1.index_of('d');
-        ptrdiff_t i4 = s1.index_of("Hello");
-        ptrdiff_t i5 = s1.index_of("World");
-        ptrdiff_t i6 = s1.index_of("lo");
-        ptrdiff_t i7 = s1.index_of("Hello World");
-        ptrdiff_t i8 = s1.index_of("Sup' dude");
+        int i1 = s1.index_of('H');
+        int i2 = s1.index_of('W');
+        int i3 = s1.index_of('d');
+        int i4 = s1.index_of("Hello");
+        int i5 = s1.index_of("World");
+        int i6 = s1.index_of("lo");
+        int i7 = s1.index_of("Hello World");
+        int i8 = s1.index_of("Sup' dude");
 
         lolunit_assert(i1 == 0);
         lolunit_assert(i2 == 6);
@@ -199,15 +199,15 @@ lolunit_declare_fixture(string_test)
     lolunit_declare_test(last_index_of)
     {
         String s1 = "Hello World";
-        ptrdiff_t i1 = s1.last_index_of('H');
-        ptrdiff_t i2 = s1.last_index_of('W');
-        ptrdiff_t i3 = s1.last_index_of('d');
-        ptrdiff_t i4 = s1.last_index_of("Hello");
-        ptrdiff_t i5 = s1.last_index_of("World");
-        ptrdiff_t i6 = s1.last_index_of("lo");
-        ptrdiff_t i7 = s1.last_index_of("Hello World");
-        ptrdiff_t i8 = s1.last_index_of("Sup' dude");
-        ptrdiff_t i9 = s1.last_index_of('l');
+        int i1 = s1.last_index_of('H');
+        int i2 = s1.last_index_of('W');
+        int i3 = s1.last_index_of('d');
+        int i4 = s1.last_index_of("Hello");
+        int i5 = s1.last_index_of("World");
+        int i6 = s1.last_index_of("lo");
+        int i7 = s1.last_index_of("Hello World");
+        int i8 = s1.last_index_of("Sup' dude");
+        int i9 = s1.last_index_of('l');
 
         lolunit_assert(i1 == 0);
         lolunit_assert(i2 == 6);

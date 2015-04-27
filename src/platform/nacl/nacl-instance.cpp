@@ -80,11 +80,11 @@ bool NaClInstance::Init(uint32_t argc,
     main_mutex.Lock();
     char *env[] = { nullptr };
     Args arglist(argc, const_cast<char **>(argv), const_cast<char **>(env));
-    main_queue.Push(&arglist);
+    main_queue.push(&arglist);
     m_main_thread = new thread(MainRun, nullptr);
     /* Push so that only MainSignal() can unblock us */
-    main_queue.Push(nullptr);
-    main_queue.Push(nullptr);
+    main_queue.push(nullptr);
+    main_queue.push(nullptr);
     main_mutex.Unlock();
 
     // My timer callback
@@ -101,7 +101,7 @@ bool NaClInstance::Init(uint32_t argc,
 void * NaClInstance::MainRun(void *data)
 {
     UNUSED(data);
-    Args *arglist = main_queue.Pop();
+    Args *arglist = main_queue.pop();
 
     /* Call the user's main() function. One of these will work. */
     lol_nacl_main();
@@ -114,8 +114,8 @@ void * NaClInstance::MainRun(void *data)
 void NaClInstance::MainSignal()
 {
     /* FIXME: find something more elegant. */
-    main_queue.Pop();
-    main_queue.Pop();
+    main_queue.pop();
+    main_queue.pop();
 }
 
 void NaClInstance::HandleMessage(const pp::Var& message)
@@ -173,7 +173,7 @@ void NaClInputData::Tick(float seconds)
     ivec2 mousepos = m_mouse->GetCursorPixelPos(0);
     vec2 mousepos_prev = vec2(mousepos);
     /* Handle keyboard and WM events */
-    for (int i = 0; i < m_input_events.Count(); ++i)
+    for (int i = 0; i < m_input_events.count(); ++i)
     {
         pp::InputEvent &e = m_input_events[i];
         switch (e.GetType())
@@ -223,7 +223,7 @@ void NaClInputData::Tick(float seconds)
             }
         }
     }
-    m_input_events.Empty();
+    m_input_events.empty();
 
     /* Handle mouse input */
     if (IsViewportSizeValid())

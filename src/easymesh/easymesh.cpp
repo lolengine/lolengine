@@ -22,7 +22,7 @@ namespace lol
 EasyMesh::EasyMesh()
   : m_build_data(nullptr)
 {
-    m_cursors.Push(0, 0);
+    m_cursors.push(0, 0);
     m_state = MeshRender::NeedData;
 }
 
@@ -35,7 +35,7 @@ EasyMesh::EasyMesh(const EasyMesh& em)
     m_build_data = nullptr;
     if (em.m_build_data)
         m_build_data = new EasyMeshBuildData(*em.m_build_data);
-    if (m_indices.Count() && m_vert.Count() && m_cursors.Count())
+    if (m_indices.count() && m_vert.count() && m_cursors.count())
         m_state = MeshRender::NeedConvert;
     else
         m_state = MeshRender::NeedData;

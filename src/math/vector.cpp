@@ -17,7 +17,7 @@ namespace lol
 
 #define LOL_PRINTF_TOSTRING(type, ...) \
 template<> void type::printf() const        { Log::Debug(__VA_ARGS__); } \
-template<> String type::tostring() const    { return String::Printf(__VA_ARGS__); }
+template<> String type::tostring() const    { return String::format(__VA_ARGS__); }
 
 LOL_PRINTF_TOSTRING(vec2,   "[ %6.6f %6.6f ]\n", x, y);
 LOL_PRINTF_TOSTRING(ivec2,  "[ %i %i ]\n", x, y);
@@ -40,8 +40,8 @@ template<> String mat2::tostring() const
 {
     mat2 const &p = *this;
 
-    return String::Printf("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
-           String::Printf("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+    return String::format("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
+           String::format("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
 }
 
 template<> void mat3::printf() const
@@ -57,9 +57,9 @@ template<> String mat3::tostring() const
 {
     mat3 const &p = *this;
 
-    return String::Printf("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
-           String::Printf("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
-           String::Printf("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
+    return String::format("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
+           String::format("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
+           String::format("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
 template<> void mat4::printf() const
@@ -80,13 +80,13 @@ template<> String mat4::tostring() const
 {
     mat4 const &p = *this;
 
-    return String::Printf("[ %6.6f %6.6f %6.6f %6.6f\n",
+    return String::format("[ %6.6f %6.6f %6.6f %6.6f\n",
                             p[0][0], p[1][0], p[2][0], p[3][0]) +
-           String::Printf("  %6.6f %6.6f %6.6f %6.6f\n",
+           String::format("  %6.6f %6.6f %6.6f %6.6f\n",
                             p[0][1], p[1][1], p[2][1], p[3][1]) +
-           String::Printf("  %6.6f %6.6f %6.6f %6.6f\n",
+           String::format("  %6.6f %6.6f %6.6f %6.6f\n",
                             p[0][2], p[1][2], p[2][2], p[3][2]) +
-           String::Printf("  %6.6f %6.6f %6.6f %6.6f ]\n",
+           String::format("  %6.6f %6.6f %6.6f %6.6f ]\n",
                             p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 

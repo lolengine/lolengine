@@ -79,8 +79,8 @@ struct expression
      */
     void parse(std::string const &str)
     {
-        m_ops.Empty();
-        m_constants.Empty();
+        m_ops.empty();
+        m_constants.empty();
 
         basic_parse_string<r_stmt>(str, this);
     }
@@ -93,7 +93,7 @@ struct expression
         /* Use a stack */
         lol::array<lol::real> stack;
 
-        for (int i = 0; i < m_ops.Count(); ++i)
+        for (int i = 0; i < m_ops.count(); ++i)
         {
             /* Rules that do not consume stack elements */
             if (m_ops[i].m1 == op::x)
@@ -164,7 +164,7 @@ private:
         static void apply(std::string const &ctx, expression *that)
         {
             /* FIXME: check if the constant is already in the list */
-            that->m_ops.push(op::constant, that->m_constants.Count());
+            that->m_ops.push(op::constant, that->m_constants.count());
             that->m_constants.push(lol::real(ctx.c_str()));
         }
     };

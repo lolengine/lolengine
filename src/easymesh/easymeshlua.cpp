@@ -293,7 +293,7 @@ void EasyMesh::ExecuteCmdStack(bool ExecAllStack)
         VerticesCleanup();
 
     if (BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
-        ComputeNormals(0, (int)m_indices.Count());
+        ComputeNormals(0, m_indices.count());
 
     BD()->Disable(MeshBuildOperation::PostBuildComputeNormals);
     BD()->Disable(MeshBuildOperation::PreventVertCleanup);

@@ -38,7 +38,7 @@ SceneSetup::~SceneSetup()
 //-----------------------------------------------------------------------------
 bool SceneSetup::Startup()
 {
-    for (int i = 0; i < m_lights.Count(); i++)
+    for (int i = 0; i < m_lights.count(); i++)
         Ticker::Ref(m_lights[i]);
     return true;
 }
@@ -46,12 +46,12 @@ bool SceneSetup::Startup()
 //-----------------------------------------------------------------------------
 bool SceneSetup::Shutdown(bool destroy)
 {
-    for (int i = 0; i < m_lights.Count(); i++)
+    for (int i = 0; i < m_lights.count(); i++)
         if (m_lights[i]->IsTicked())
             Ticker::Unref(m_lights[i]);
 
     if (destroy)
-        m_lights.Empty();
+        m_lights.empty();
     return true;
 }
 
@@ -60,7 +60,7 @@ void SceneSetup::AddLight(LightType type)
 {
     m_last_cmd = SceneSetup::Command::AddLight;
     m_lights << new Light();
-    m_lights.Last()->SetType(type);
+    m_lights.last()->SetType(type);
 }
 
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void SceneSetup::SetPosition(vec3 const& v)
     switch (m_last_cmd.ToScalar())
     {
     case SceneSetup::Command::AddLight:
-        m_lights.Last()->SetPosition(v);
+        m_lights.last()->SetPosition(v);
         break;
     }
 }
@@ -87,7 +87,7 @@ void SceneSetup::SetLookAt(vec3 const& v)
     {
     case SceneSetup::Command::AddLight:
         //TODO: Do better
-        m_lights.Last()->SetPosition(v - m_lights.Last()->GetPosition());
+        m_lights.last()->SetPosition(v - m_lights.last()->GetPosition());
         break;
     }
 }
@@ -98,7 +98,7 @@ void SceneSetup::SetColor(vec4 const& c)
     switch (m_last_cmd.ToScalar())
     {
     case SceneSetup::Command::AddLight:
-        m_lights.Last()->SetColor(c);
+        m_lights.last()->SetColor(c);
         break;
     case SceneSetup::Command::SetupScene:
         m_clear_color = c;

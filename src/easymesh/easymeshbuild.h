@@ -310,8 +310,8 @@ public:
     }
     void SetTexCoordCustomBuild(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
     {
-        if (face.ToScalar() >= m_texcoord_custom_build[mt.ToScalar()].Count())
-            m_texcoord_custom_build[mt.ToScalar()].Resize(face.ToScalar() + 1);
+        if (face.ToScalar() >= m_texcoord_custom_build[mt.ToScalar()].count())
+            m_texcoord_custom_build[mt.ToScalar()].resize(face.ToScalar() + 1);
         m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1 = BL;
         m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2 = TR;
         m_texcoord_build_type[mt.ToScalar()] |= 1;
@@ -323,7 +323,7 @@ public:
         vec2 BL = vec2(0.f);
         vec2 TR = vec2(0.f);
         if (m_texcoord_build_type[mt.ToScalar()] & 1
-             && face.ToScalar() < m_texcoord_custom_build[mt.ToScalar()].Count())
+             && face.ToScalar() < m_texcoord_custom_build[mt.ToScalar()].count())
         {
             BL = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1;
             TR = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2;
@@ -398,8 +398,8 @@ public:
     }
     void SetTexCoordCustomBuild2(MeshType mt, MeshFaceType face, vec2 BL, vec2 TR)
     {
-        if (face.ToScalar() >= m_texcoord_custom_build2[mt.ToScalar()].Count())
-            m_texcoord_custom_build2[mt.ToScalar()].Resize(face.ToScalar() + 1);
+        if (face.ToScalar() >= m_texcoord_custom_build2[mt.ToScalar()].count())
+            m_texcoord_custom_build2[mt.ToScalar()].resize(face.ToScalar() + 1);
         m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1 = BL;
         m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2 = TR;
         m_texcoord_build_type2[mt.ToScalar()] |= 1;
@@ -410,7 +410,7 @@ public:
         vec2 BL = vec2(0.f);
         vec2 TR = vec2(0.f);
         if (m_texcoord_build_type2[mt.ToScalar()] & 1
-             && face.ToScalar() < m_texcoord_custom_build2[mt.ToScalar()].Count())
+             && face.ToScalar() < m_texcoord_custom_build2[mt.ToScalar()].count())
         {
             BL = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1;
             TR = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2;
@@ -529,8 +529,8 @@ public:
     bool FindConnectedTriangles(const ivec3 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri = nullptr);
     void RegisterVertex(int vert_id, vec3 vert_coord);
     void RemoveVertex(int vert_id);
-    bool GetMasterList(array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.Count() > 0; }
-    void Clear() { vertex_list.Empty(); }
+    bool GetMasterList(array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.count() > 0; }
+    void Clear() { vertex_list.empty(); }
 private:
     //<VertexId, VertexLocation, VertexMasterId>
     array<int, vec3, int>   vertex_list;

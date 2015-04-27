@@ -30,22 +30,22 @@ Mesh::~Mesh()
 
 void Mesh::Render(Scene& scene, mat4 const &matrix)
 {
-    //if (scene.HasPrimitiveRenderer(this) < m_submeshes.Count())
+    //if (scene.HasPrimitiveRenderer(this) < m_submeshes.count())
     {
-        for (int i = 0; i < m_submeshes.Count(); ++i)
+        for (int i = 0; i < m_submeshes.count(); ++i)
             scene.AddPrimitiveRenderer(this, new PrimitiveMesh(m_submeshes[i], matrix));
     }
 }
 
 void Mesh::Render()
 {
-    for (int i = 0; i < m_submeshes.Count(); ++i)
+    for (int i = 0; i < m_submeshes.count(); ++i)
         m_submeshes[i]->Render();
 }
 
 void Mesh::SetMaterial(Shader *shader)
 {
-    for (int i = 0; i < m_submeshes.Count(); ++i)
+    for (int i = 0; i < m_submeshes.count(); ++i)
         m_submeshes[i]->SetShader(shader);
 }
 
@@ -91,8 +91,8 @@ void SubMesh::SetVertexDeclaration(VertexDeclaration *vdecl)
 
 void SubMesh::SetVertexBuffer(int index, VertexBuffer* vbo)
 {
-    while (index >= m_vbos.Count())
-        m_vbos.Push(nullptr);
+    while (index >= m_vbos.count())
+        m_vbos.push(nullptr);
 
     m_vbos[index] = vbo;
 }
@@ -104,14 +104,14 @@ void SubMesh::SetIndexBuffer(IndexBuffer* ibo)
 
 void SubMesh::AddTexture(const char* name, Texture* texture)
 {
-    m_textures.Push(String(name), texture);
+    m_textures.push(String(name), texture);
 }
 
 void SubMesh::Render()
 {
     int vertex_count = 0;
 
-    for (int i = 0; i < m_vbos.Count(); ++i)
+    for (int i = 0; i < m_vbos.count(); ++i)
     {
         ShaderAttrib attribs[12];
 
@@ -130,12 +130,12 @@ void SubMesh::Render()
             attribs[j] = m_shader->GetAttribLocation(usage, usages[usage_index]++);
         }
 
-        vertex_count = (int)m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
+        vertex_count = m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
 
         m_vdecl->SetStream(m_vbos[i], attribs);
     }
 
-    for (int i = 0; i < m_textures.Count(); ++i)
+    for (int i = 0; i < m_textures.count(); ++i)
     {
         // TODO: might be good to cache this
         ShaderUniform u_tex = m_shader->GetUniformLocation(m_textures[i].m1.C());
@@ -145,7 +145,7 @@ void SubMesh::Render()
     m_ibo->Bind();
     m_vdecl->Bind();
     m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, vertex_count,
-                                 0, (int)m_ibo->GetSize() / sizeof(uint16_t));
+                                 0, m_ibo->GetSize() / sizeof(uint16_t));
     m_vdecl->Unbind();
     m_ibo->Unbind();
 }

@@ -33,7 +33,7 @@
 namespace lol
 {
 
-template<typename T, ptrdiff_t L>
+template<typename T, int L>
 class arraynd_initializer
 {
 public:
@@ -45,15 +45,15 @@ public:
 
     void FillSizes(ptrdiff_t * sizes)
     {
-        *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
+        *sizes = max(*sizes, (ptrdiff_t)m_initializers.size());
 
         for (auto subinitializer : m_initializers)
             subinitializer.FillSizes(sizes - 1);
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
+    void FillValues(T * origin, int prev, ptrdiff_t * sizes)
     {
-        ptrdiff_t pos = 0;
+        int pos = 0;
 
         for (auto subinitializer : m_initializers)
             subinitializer.FillValues(origin, pos++ + prev * *sizes, sizes - 1);
@@ -77,14 +77,12 @@ public:
 
     void FillSizes(ptrdiff_t * sizes)
     {
-        *sizes = std::max((ptrdiff_t)*sizes, (ptrdiff_t)(m_initializers.size()));
+        *sizes = max(*sizes, (ptrdiff_t)m_initializers.size());
     }
 
-    void FillValues(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
+    void FillValues(T * origin, int prev, ptrdiff_t * sizes)
     {
-        UNUSED(sizes);
-
-        ptrdiff_t pos = 0;
+        int pos = 0;
 
         for (auto value : m_initializers)
             *(origin + prev * *sizes + pos++) = value;
@@ -96,7 +94,7 @@ private:
 };
 
 
-template<ptrdiff_t N, typename... T>
+template<int N, typename... T>
 class arraynd : protected array<T...>
 {
 public:
@@ -130,7 +128,7 @@ public:
 
         fix_sizes();
 
-        ptrdiff_t pos = 0;
+        int pos = 0;
 
         for (auto inner_initializer : initializer)
             inner_initializer.FillValues(&super::operator[](0), pos++, &m_sizes[N - 2]);
@@ -169,7 +167,7 @@ public:
 #endif
 
     /* Proxy to access slices */
-    template<typename ARRAY_TYPE, ptrdiff_t L = N - 1>
+    template<typename ARRAY_TYPE, int L = N - 1>
     class slice
     {
     public:
@@ -232,43 +230,34 @@ public:
 
     /* Resize the array.
      * FIXME: data gets scrambled; should we care? */
-    inline void set_size(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
+    inline void resize(vec_t<int, N> sizes, element_t e = element_t())
+    {
+        resize_s(vec_t<ptrdiff_t, N>(sizes), e);
+    }
+
+    inline void resize_s(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
         fix_sizes(e);
     }
 
-#if PTRDIFF_MAX > INT_MAX
-    inline void set_size(vec_t<int, N> sizes, element_t e = element_t())
+    inline vec_t<int, N> size() const
     {
-        m_sizes = vec_t<ptrdiff_t, N>(sizes);
-        fix_sizes(e);
+        return vec_t<int, N>(this->m_sizes);
     }
-#endif
 
-    inline vec_t<ptrdiff_t, N> get_size() const
+    inline vec_t<ptrdiff_t, N> size_s() const
     {
         return this->m_sizes;
     }
 
-    /* TODO: remove these legacy functions one day */
-    inline vec_t<ptrdiff_t, N> GetSize() const { return get_size(); }
-    inline void SetSize(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
-    {
-        return set_size(sizes, e);
-    }
-#if PTRDIFF_MAX > INT_MAX
-    inline void SetSize(vec_t<int, N> sizes, element_t e = element_t())
-    {
-        return set_size(sizes, e);
-    }
-#endif
-
 public:
     inline element_t *data() { return super::data(); }
     inline element_t const *data() const { return super::data(); }
-    inline ptrdiff_t count() const { return super::count(); }
-    inline ptrdiff_t bytes() const { return super::bytes(); }
+    inline int count() const { return super::count(); }
+    inline int bytes() const { return super::bytes(); }
+    inline ptrdiff_t count_s() const { return super::count_s(); }
+    inline ptrdiff_t bytes_s() const { return super::bytes_s(); }
 
 private:
     inline void fix_sizes(element_t e = element_t())
@@ -280,7 +269,7 @@ private:
         for (int i = 0; i < N; ++i)
             total_size *= m_sizes[i];
 
-        this->Resize(total_size, e);
+        this->array<T...>::resize(total_size, e);
     }
 
     vec_t<ptrdiff_t, N> m_sizes;

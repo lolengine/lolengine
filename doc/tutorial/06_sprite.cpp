@@ -35,7 +35,7 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites.Push(vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
+            m_sprites.push(vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
                            rand(0.f, 1.f));
         }
 

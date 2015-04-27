@@ -78,7 +78,7 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
         ANDROID_LOG_ERROR
     };
 
-    String buf = String::VPrintf(fmt, ap);
+    String buf = String::vformat(fmt, ap);
     __android_log_print(prio[type], "LOL", "[%d] %s", (int)gettid(), &buf[0]);
 
 #else
@@ -91,12 +91,12 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
     };
 
 #   if defined _WIN32
-    String buf = String(prefix[type]) + ": " + String::VPrintf(fmt, ap);
+    String buf = String(prefix[type]) + ": " + String::vformat(fmt, ap);
 
     array<WCHAR> widechar;
-    widechar.Resize(buf.Count() + 1);
-    MultiByteToWideChar(CP_UTF8, 0, buf.C(), (int)buf.Count() + 1, widechar.Data(), (int)widechar.Count());
-    OutputDebugStringW(widechar.Data());
+    widechar.Resize(buf.count() + 1);
+    MultiByteToWideChar(CP_UTF8, 0, buf.C(), buf.count() + 1, widechar.data(), widechar.count());
+    OutputDebugStringW(widechar.data());
 #   else
     fprintf(stderr, "%s: ", prefix[type]);
     vfprintf(stderr, fmt, ap);

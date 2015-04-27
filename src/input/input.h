@@ -18,7 +18,7 @@ const String g_name_mouse("Mouse");
 const String g_name_keyboard("Keyboard");
 static String g_name_joystick(const uint64_t num)
 {
-    return String::Printf("Joystick%d", (int)num);
+    return String::format("Joystick%d", (int)num);
 }
 
 #   define _SC(id, str, name) const String g_name_key_##name(#name);
@@ -202,16 +202,16 @@ protected:
 
     InputDevice(String const &name) : m_name(name)
     {
-        devices.PushUnique(this);
+        devices.push_unique(this);
     }
 
     ~InputDevice()
     {
-        for (ptrdiff_t i = 0; i < devices.Count(); ++i)
+        for (int i = 0; i < devices.count(); ++i)
         {
             if (devices[i] == this)
             {
-                devices.Remove(i);
+                devices.remove(i);
                 return;
             }
         }
@@ -223,7 +223,7 @@ private:
     template <typename... T>
     ptrdiff_t GetItemIndex(String const &name, const array<String, T...>& a) const
     {
-        for (ptrdiff_t i = 0; i < a.Count(); ++i)
+        for (int i = 0; i < a.count(); ++i)
         {
             if (a[i] == name)
                 return i;
@@ -233,7 +233,7 @@ private:
 
     static InputDevice* GetDevice(String const &name)
     {
-        for (ptrdiff_t i = 0; i < devices.Count(); ++i)
+        for (int i = 0; i < devices.count(); ++i)
         {
             if (devices[i]->m_name == name)
                 return devices[i];

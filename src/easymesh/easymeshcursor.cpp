@@ -28,8 +28,8 @@ void EasyMesh::LoopStart(int loopnb)
     else if (BD()->IsEnabled(MeshBuildOperation::CommandExecution))
     {
         //Only register if we're not the current loop command
-        if (!BD()->LoopStack().Count() || BD()->LoopStack().Last().m1 != BD()->Cmdi())
-            BD()->LoopStack().Push(BD()->Cmdi(), loopnb);
+        if (!BD()->LoopStack().count() || BD()->LoopStack().last().m1 != BD()->Cmdi())
+            BD()->LoopStack().push(BD()->Cmdi(), loopnb);
     }
 }
 
@@ -45,13 +45,13 @@ void EasyMesh::LoopEnd()
     else if (BD()->IsEnabled(MeshBuildOperation::CommandExecution))
     {
         //Only register if we're not the current loop command
-        if (BD()->LoopStack().Count())
+        if (BD()->LoopStack().count())
         {
-            BD()->LoopStack().Last().m2--;
-            if (BD()->LoopStack().Last().m2 > 0)
-                BD()->Cmdi() = BD()->LoopStack().Last().m1 - 1;
+            BD()->LoopStack().last().m2--;
+            if (BD()->LoopStack().last().m2 > 0)
+                BD()->Cmdi() = BD()->LoopStack().last().m1 - 1;
             else
-                BD()->LoopStack().Pop();
+                BD()->LoopStack().pop();
         }
     }
 }
@@ -65,7 +65,7 @@ void EasyMesh::OpenBrace()
         return;
     }
 
-    m_cursors.Push((int)m_vert.Count(), (int)m_indices.Count());
+    m_cursors.push(m_vert.count(), m_indices.count());
 }
 
 //-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void EasyMesh::CloseBrace()
         return;
     }
 
-    m_cursors.Pop();
+    m_cursors.pop();
 }
 
 //-----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void EasyMesh::SetVertColor(vec4 const &color)
         return;
     }
 
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
         m_vert[i].m_color = color;
 }
 

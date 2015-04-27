@@ -21,9 +21,9 @@ bool InputDevice::m_capturemouse;
 array<String> InputDevice::GetAvailableDevices()
 {
     array<String> result;
-    for (int i = 0; i < devices.Count(); ++i)
+    for (int i = 0; i < devices.count(); ++i)
     {
-        result.Push(devices[i]->m_name);
+        result.push(devices[i]->m_name);
     }
     return result;
 }
@@ -38,45 +38,45 @@ String InputDevice::GetText()
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)
-        index = (int)m_keynames.Count();
+        index = m_keynames.count();
 
-    while (index >= m_keynames.Count())
+    while (index >= m_keynames.count())
     {
-        m_keynames.Push(name);
-        m_keys.Push(false);
+        m_keynames.push(name);
+        m_keys.push(false);
     }
 
-    m_keynames.Last() = name;
+    m_keynames.last() = name;
 }
 
 void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
 {
     if (index == -1)
-        index = (int)m_axisnames.Count();
+        index = m_axisnames.count();
 
-    while (index >= m_axisnames.Count())
+    while (index >= m_axisnames.count())
     {
-        m_axisnames.Push(name);
-        m_axis.Push(0.0f, 1.0f);
+        m_axisnames.push(name);
+        m_axis.push(0.0f, 1.0f);
     }
 
-    m_axisnames.Last() = name;
-    m_axis.Last().m1 = 0.0f;
-    m_axis.Last().m2 = sensitivity;
+    m_axisnames.last() = name;
+    m_axis.last().m1 = 0.0f;
+    m_axis.last().m2 = sensitivity;
 }
 
 void InputDeviceInternal::AddCursor(int index, const char* name)
 {
     if (index == -1)
-        index = (int)m_cursornames.Count();
+        index = m_cursornames.count();
 
-    while (index >= m_cursornames.Count())
+    while (index >= m_cursornames.count())
     {
-        m_cursornames.Push(name);
-        m_cursors.Push(vec2::zero, ivec2::zero);
+        m_cursornames.push(name);
+        m_cursors.push(vec2::zero, ivec2::zero);
     }
 
-    m_cursornames.Last() = name;
+    m_cursornames.last() = name;
 }
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()

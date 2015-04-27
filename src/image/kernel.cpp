@@ -182,10 +182,10 @@ static int cmpdot(const void *p1, const void *p2)
 
 array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
 {
-    ivec2 size = (ivec2)kernel.GetSize();
+    ivec2 size = kernel.size();
 
     array<Dot> tmp;
-    tmp.Resize(size.x * size.y);
+    tmp.resize(size.x * size.y);
 
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
@@ -294,7 +294,7 @@ array2d<float> Image::GaussianKernel(vec2 radius, float angle, vec2 delta)
     float const Kx = -1.f / (2.f * radius.x * radius.x);
     float const Ky = -1.f / (2.f * radius.y * radius.y);
 
-    kernel.SetSize(size);
+    kernel.resize(size);
 
     float t = 0.f;
 

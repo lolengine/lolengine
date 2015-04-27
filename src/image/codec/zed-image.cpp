@@ -29,9 +29,9 @@ public:
 
     virtual bool RetrieveTiles(array<ivec2, ivec2>& tiles)
     {
-        bool result = m_tiles.Count() > 0;
+        bool result = m_tiles.count() > 0;
         tiles += m_tiles;
-        m_tiles.Empty();
+        m_tiles.empty();
         return result;
     }
 
@@ -48,7 +48,7 @@ DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
 
 bool ZedImageCodec::Load(Image *image, char const *path)
 {
-    if (!lol::String(path).EndsWith(".RSC"))
+    if (!lol::String(path).ends_with(".RSC"))
         return false;
 
     // Compacter definition
@@ -73,7 +73,7 @@ bool ZedImageCodec::Load(Image *image, char const *path)
             {
                 m_primary << CompactMain(start << i);
                 for (int j = 0; j < count; j++)
-                    m_primary.Last().m_secondary << CompactSecondary(start << j);
+                    m_primary.last().m_secondary << CompactSecondary(start << j);
             }
         }
         void StepSetup(int32_t start, int32_t interval, int32_t count)
@@ -82,27 +82,27 @@ bool ZedImageCodec::Load(Image *image, char const *path)
             {
                 m_primary << CompactMain(start + interval * i);
                 for (int j = 0; j < count; j++)
-                    m_primary.Last().m_secondary << CompactSecondary(start + interval * j);
+                    m_primary.last().m_secondary << CompactSecondary(start + interval * j);
             }
         }
         void CustomSetup(array<int32_t> custom_list)
         {
-            for (int i = 0; i < custom_list.Count(); i++)
+            for (int i = 0; i < custom_list.count(); i++)
             {
                 m_primary << CompactMain(custom_list[i]);
-                for (int j = 0; j < custom_list.Count(); j++)
-                    m_primary.Last().m_secondary << CompactSecondary(custom_list[j]);
+                for (int j = 0; j < custom_list.count(); j++)
+                    m_primary.last().m_secondary << CompactSecondary(custom_list[j]);
             }
         }
         void Store(int32_t tile, ivec2 size)
         {
-            for (int i = 0; i < m_primary.Count(); i++)
+            for (int i = 0; i < m_primary.count(); i++)
             {
-                if (size.y <= m_primary[i].m_size || i == m_primary.Count() - 1)
+                if (size.y <= m_primary[i].m_size || i == m_primary.count() - 1)
                 {
-                    for (int j = 0; j < m_primary[i].m_secondary.Count(); j++)
+                    for (int j = 0; j < m_primary[i].m_secondary.count(); j++)
                     {
-                        if (size.x <= m_primary[i].m_secondary[j].m_size || j == m_primary[i].m_secondary.Count() - 1)
+                        if (size.x <= m_primary[i].m_secondary[j].m_size || j == m_primary[i].m_secondary.count() - 1)
                         {
                             m_primary[i].m_secondary[j].m_tiles << tile;
                             m_primary[i].m_count++;
@@ -122,7 +122,7 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     //Put file in memory
     long file_size = file.GetSize();
     array<uint8_t> file_buffer;
-    file_buffer.Resize(file_size);
+    file_buffer.resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
     file.Close();
 
@@ -132,24 +132,24 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     file_count = *((uint16_t*)(&file_buffer[file_pos]));
     file_pos += sizeof(uint16_t);
 
-    array<long int> file_offset;
-    file_offset.Resize(file_count);
+    array<uint32_t> file_offset;
+    file_offset.resize(file_count);
     //Get all the file offsets
     for (int i = 0; i < file_count; i++)
     {
-        file_offset[i] = *((long int*)(&file_buffer[file_pos]));
-        file_pos += sizeof(long int);
+        file_offset[i] = *((uint32_t*)(&file_buffer[file_pos]));
+        file_pos += sizeof(uint32_t);
     }
     file_offset << file_size;
 
-    m_tiles.Reserve(file_count);
+    m_tiles.reserve(file_count);
 
     Compacter2d compacter;
     compacter.StepSetup(8, 8, 10);
 
     uint32_t total_size = 0;
     array<uint8_t> file_convert;
-    file_convert.Reserve(file_size);
+    file_convert.reserve(file_size);
     array<ivec2> available_sizes;
     for (int i = 0; i < file_count; i++)
     {
@@ -173,23 +173,23 @@ bool ZedImageCodec::Load(Image *image, char const *path)
         /* Seems useless in the end
         //Retrieve Header & footer
         array<uint8_t> header_data;
-        header_data.Resize(header_length);
+        header_data.resize(header_length);
         memcpy(&header_data[0], &file_buffer[file_offset[i]], header_length);
         array<uint8_t> footer_data;
-        uint32_t footer_length = lol::min((uint32_t)file_buffer.Count(), data_pos + data_length + header_length) - (data_pos + data_length);
+        uint32_t footer_length = lol::min((uint32_t)file_buffer.count(), data_pos + data_length + header_length) - (data_pos + data_length);
         if (footer_length > 0)
         {
-            footer_data.Resize(footer_length);
+            footer_data.resize(footer_length);
             memcpy(&footer_data[0], &file_buffer[data_pos + data_length], footer_length);
         }
         */
 
         //Prepare buffer and tiles infos
-        int32_t convert_pos = file_convert.Count();
+        int32_t convert_pos = file_convert.count();
         ivec2 size = ivec2(size_x, size_y);
-        compacter.Store(m_tiles.Count(), ivec2(size_x, size_y));
-        m_tiles.Push(ivec2(file_convert.Count(), data_length), ivec2(size_x, size_y));
-        file_convert.Resize(convert_pos + data_length);
+        compacter.Store(m_tiles.count(), ivec2(size_x, size_y));
+        m_tiles.push(ivec2(file_convert.count(), data_length), ivec2(size_x, size_y));
+        file_convert.resize(convert_pos + data_length);
 
         //Retrieve actual datas
         file_pos = data_pos;
@@ -220,10 +220,10 @@ bool ZedImageCodec::Load(Image *image, char const *path)
                 s_16 <<= 1;
             }
             int j = 0;
-            for (; j < available_sizes.Count(); j++)
+            for (; j < available_sizes.count(); j++)
                 if (available_sizes[j] == size_16)
                     break;
-            if (j >= available_sizes.Count())
+            if (j >= available_sizes.count())
                 available_sizes << size_16;
         }
     }
@@ -239,22 +239,22 @@ bool ZedImageCodec::Load(Image *image, char const *path)
 
     //Data refactor stage
     ivec2 pos = ivec2(0);
-    for (int j = compacter.m_primary.Count() - 1; j >= 0; j--)
+    for (int j = compacter.m_primary.count() - 1; j >= 0; j--)
     {
-        for (int k = compacter.m_primary[j].m_secondary.Count() - 1; k >= 0; k--)
+        for (int k = compacter.m_primary[j].m_secondary.count() - 1; k >= 0; k--)
         {
             //Try something smaller
             if (pos.x + compacter.m_primary[j].m_secondary[k].m_size >= tex_size)
                 continue;
 
-            while (compacter.m_primary[j].m_secondary[k].m_tiles.Count() > 0)
+            while (compacter.m_primary[j].m_secondary[k].m_tiles.count() > 0)
             {
                 //Try something smaller
                 if (pos.x + compacter.m_primary[j].m_secondary[k].m_size >= tex_size)
                     break;
 
                 compacter.m_primary[j].m_count--;
-                int i = compacter.m_primary[j].m_secondary[k].m_tiles.Pop();
+                int i = compacter.m_primary[j].m_secondary[k].m_tiles.pop();
                 int32_t file_off = m_tiles[i].m1[0];
                 ivec2 t_size = m_tiles[i].m2;
 

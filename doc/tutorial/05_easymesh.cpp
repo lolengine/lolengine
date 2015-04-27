@@ -36,11 +36,11 @@ public:
         EasyMeshLuaObject* gears3 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g3");
         EasyMeshLuaObject* gears4 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g4");
 
-        m_gears.Push(gears0->GetMesh(), mat4(1.0f), 0.0f);
-        m_gears.Push(gears1->GetMesh(), mat4(1.0f), 0.0f);
-        m_gears.Push(gears2->GetMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.Push(gears3->GetMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.Push(gears4->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.push(gears0->GetMesh(), mat4(1.0f), 0.0f);
+        m_gears.push(gears1->GetMesh(), mat4(1.0f), 0.0f);
+        m_gears.push(gears2->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.push(gears3->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.push(gears4->GetMesh(), mat4(1.0f), 180.0f / 18);
 
         /*
         m_gears[0].m1.Compile("[sc#00f ab 8 1 8 ty -.25]"
@@ -129,7 +129,7 @@ public:
             Renderer::Get()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
             /* Upload vertex data to GPU */
-            for (int i = 0; i < m_gears.Count(); i++)
+            for (int i = 0; i < m_gears.count(); i++)
                 m_gears[i].m1.MeshConvert();
 
 #if USE_CUSTOM_SHADER
@@ -137,14 +137,14 @@ public:
             Shader *custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
             // any other shader stuf here (Get uniform, mostly, and set texture)
 
-            for (int i = 0; i < m_gears.Count(); i++)
+            for (int i = 0; i < m_gears.count(); i++)
                 m_gears[i].m1.SetMaterial(custom_shader);
 #endif
 
             m_ready = true;
         }
 
-        for (int i = 0; i < m_gears.Count(); i++)
+        for (int i = 0; i < m_gears.count(); i++)
         {
             m_gears[i].m1.Render(scene, m_mat * m_gears[i].m2);
         }

@@ -60,7 +60,7 @@ void Text::SetText(String const &text)
 
 void Text::SetInt(int val)
 {
-    data->m_text = String::Printf("%i", val);
+    data->m_text = String::format("%i", val);
 }
 
 void Text::SetPos(vec3 pos)

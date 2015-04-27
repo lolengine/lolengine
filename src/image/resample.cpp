@@ -144,8 +144,8 @@ static Image ResizeBresenham(Image &image, ivec2 size)
     vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
 
     array<vec4> aline, line;
-    aline.Resize(size.x);
-    line.Resize(size.x);
+    aline.resize(size.x);
+    line.resize(size.x);
     memset(line.data(), 0, line.bytes());
 
     int remy = 0;

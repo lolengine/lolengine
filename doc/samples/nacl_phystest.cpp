@@ -42,7 +42,7 @@ Nacl_PhysTest::Nacl_PhysTest(bool editor)
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
     m_camera->SetProjection(45.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
-    g_scene->PushCamera(m_camera);
+    Scene::GetScene().PushCamera(m_camera);
 
     m_ready = false;
 
@@ -96,7 +96,8 @@ void Nacl_PhysTest::TickDraw(float seconds, Scene &scene)
 
 Nacl_PhysTest::~Nacl_PhysTest()
 {
-    g_scene->PopCamera(m_camera);
+    Scene::GetScene().PopCamera(m_camera);
+
     Ticker::Unref(m_light1);
     Ticker::Unref(m_light2);
 

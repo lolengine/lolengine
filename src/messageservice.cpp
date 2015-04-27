@@ -42,14 +42,14 @@ MessageService::MessageService()
 
 MessageService::~MessageService()
 {
-    m_bucket.Empty();
+    m_bucket.empty();
 }
 
 //Setup/Destroy
 void MessageService::Setup()
 {
     g_messageservice = new MessageService();
-    g_messageservice->m_bucket.Resize(MessageBucket::MAX);
+    g_messageservice->m_bucket.resize(MessageBucket::MAX);
 }
 
 void MessageService::Destroy()
@@ -63,7 +63,7 @@ bool MessageService::Send(MessageBucket id, const String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         return g_messageservice->Send(id, message.C());
     }
     return false;
@@ -73,7 +73,7 @@ bool MessageService::Send(MessageBucket id, const char* message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
         array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
         bucket << MessageList(time(nullptr), String(message));
@@ -87,7 +87,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         time_t timestamp;
         return g_messageservice->FetchFirst(id, message, timestamp);
     }
@@ -98,15 +98,15 @@ bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& times
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
         array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
 
-        if (bucket.Count())
+        if (bucket.count())
         {
             message = bucket[0].m_message;
             timestamp = bucket[0].m_timestamp;
-            bucket.Remove(0);
+            bucket.remove(0);
             return true;
         }
     }
@@ -118,7 +118,7 @@ bool MessageService::FetchAll(MessageBucket id, String& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         time_t timestamp;
         return g_messageservice->FetchAll(id, message, timestamp);
     }
@@ -129,17 +129,17 @@ bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_t
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.Count());
+        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
         array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
         message = String("");
 
-        if (bucket.Count())
+        if (bucket.count())
         {
             first_timestamp = bucket[0].m_timestamp;
-            for (int i = 0; i < bucket.Count(); ++i)
+            for (int i = 0; i < bucket.count(); ++i)
                 message += bucket[i].m_message;
-            bucket.Empty();
+            bucket.empty();
             return true;
         }
     }
@@ -147,3 +147,4 @@ bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_t
 }
 
 } /* namespace lol */
+

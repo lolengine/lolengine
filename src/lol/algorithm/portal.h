@@ -260,21 +260,21 @@ public:
     {
         for (auto door : m_doors)
             door->DisconnectRoom(this);
-        m_doors.Empty();
+        m_doors.empty();
     }
 
     PortalRoom& operator<<(class PortalDoor<TE>* door)
     {
-        m_doors.PushUnique(door);
+        m_doors.push_unique(door);
         return *this;
     }
     PortalRoom& operator>>(class PortalDoor<TE>* door)
     {
-        m_doors.RemoveSwapItem(door);
+        m_doors.remove_swap_item(door);
         return *this;
     }
 
-    int GetDoorCount()              { return m_doors.Count(); }
+    int GetDoorCount()              { return m_doors.count(); }
     PortalDoor<TE>* GetDoor(int i)  { return m_doors[i]; }
 
 private:
@@ -294,8 +294,8 @@ public:
             delete door;
         for (auto room : m_rooms)
             delete room;
-        m_doors.Empty();
-        m_rooms.Empty();
+        m_doors.empty();
+        m_rooms.empty();
     }
 
     //Visible room getter
@@ -336,8 +336,8 @@ private:
                 if (visible_rooms.Find(other_room) != INDEX_NONE)
                     continue;
 
-                ignore_doors.PushUnique(door);
-                visible_rooms.PushUnique(other_room);
+                ignore_doors.push_unique(door);
+                visible_rooms.push_unique(other_room);
                 door->BuildViewProj(see_through->m_view, see_through->m_proj);
                 GetVisibleRooms(door, other_room, visible_rooms, ignore_doors);
             }
@@ -348,9 +348,9 @@ public:
     //Operator
     PortalSet<TE>& operator<<(class PortalRoom<TE>* room)
     {
-        m_rooms.PushUnique(room);
+        m_rooms.push_unique(room);
         for (auto door : room->m_doors)
-            m_doors.PushUnique(door);
+            m_doors.push_unique(door);
         return *this;
     }
     //--
@@ -358,26 +358,26 @@ public:
     {
         for (auto door : room->m_doors)
             *this >> door;
-        m_rooms.RemoveItem(room);
+        m_rooms.remove_item(room);
         return *this;
     }
     //--
     PortalSet<TE>& operator<<(class PortalDoor<TE>* door)
     {
-        m_doors.PushUnique(door);
+        m_doors.push_unique(door);
         return *this;
     }
     //--
     PortalSet<TE>& operator>>(class PortalDoor<TE>* door)
     {
-        m_doors.RemoveItem(door);
+        m_doors.remove_item(door);
         return *this;
     }
 
     //--
-    int GetDoorCount()              { return m_doors.Count(); }
+    int GetDoorCount()              { return m_doors.count(); }
     PortalDoor<TE>* GetDoor(int i)  { return m_doors[i]; }
-    int GetRoomCount()              { return m_rooms.Count(); }
+    int GetRoomCount()              { return m_rooms.count(); }
     PortalRoom<TE>* GetRoom(int i)  { return m_rooms[i]; }
 
 private:

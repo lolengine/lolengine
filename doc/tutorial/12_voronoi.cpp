@@ -102,9 +102,9 @@ public:
         {
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.Bytes());
+            m_vbo = new VertexBuffer(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
+            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
 
             m_screen_shader = Shader::Create(LOLFX_RESOURCE_NAME(12_texture_to_screen));
@@ -113,7 +113,7 @@ public:
 
             for (int i = 0; i < MaxFboType; ++i)
             {
-                m_fbos.Push(new Framebuffer(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
+                m_fbos.push(new Framebuffer(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
 
                 if (i == SrcVoronoiFbo)
                 {
@@ -140,14 +140,14 @@ public:
                     m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_distance));
                 }
 
-                m_fbos.Last().m1->Bind();
+                m_fbos.last().m1->Bind();
                 {
                     RenderContext rc;
                     rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                     rc.SetClearDepth(1.f);
                     Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
                 }
-                m_fbos.Last().m1->Unbind();
+                m_fbos.last().m1->Unbind();
             }
 
             temp_buffer = new Framebuffer(Video::GetSize());
@@ -170,9 +170,9 @@ public:
         {
             //Shutdown logic
             if (m_controller->WasKeyReleasedThisFrame(KEY_POP))
-                voronoi_points.Pop();
+                voronoi_points.pop();
             else if (m_controller->WasKeyReleasedThisFrame(KEY_PUSH))
-                voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                         vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
             else if (m_controller->WasKeyReleasedThisFrame(KEY_F1))
                 m_cur_fbo = SrcVoronoiFbo;
@@ -180,12 +180,12 @@ public:
                 m_cur_fbo = VoronoiFbo;
             else if (m_controller->WasKeyReleasedThisFrame(KEY_F3))
             {
-                voronoi_points.Empty();
+                voronoi_points.empty();
                 if (mode == 0)
                 {
                     int i = 4;
                     while (i-- > 0)
-                        voronoi_points.Push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                        voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
                                             vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
                                             //vec2::zero
                                             );
@@ -200,19 +200,19 @@ public:
 
         if (mode == 0)
         {
-            voronoi_points.Empty();
+            voronoi_points.empty();
             int maxi = 6;
             for (int i = 0; i < maxi; ++i)
             {
                 float mi = (float)maxi;
                 float j = (float)i;
                 float f_time = (float)m_time;
-                voronoi_points.Push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) +  64.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.Push(vec3(256.f) +  32.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.push(vec3(256.f) +  64.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.push(vec3(256.f) +  32.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
             }
-            voronoi_points.Push(vec3(256.f), vec2(0.f));
+            voronoi_points.push(vec3(256.f), vec2(0.f));
         }
 
         temp_buffer->Bind();
@@ -227,7 +227,7 @@ public:
         {
             vec2 limit(1.f, 511.f);
             //SRC SETUP
-            for (int j = 0; j < voronoi_points.Count(); ++j)
+            for (int j = 0; j < voronoi_points.count(); ++j)
             {
                 voronoi_points[j].m1 = vec3(voronoi_points[j].m1.xy + voronoi_points[j].m2 * seconds, voronoi_points[j].m1.z);
                 if (voronoi_points[j].m1.x >= limit.y || voronoi_points[j].m1.x <= limit.x)
@@ -240,7 +240,7 @@ public:
                     voronoi_points[j].m2.y *= -1.f;
                     voronoi_points[j].m1.y = clamp(voronoi_points[j].m1.y, limit.x, limit.y);
                 }
-                voronoi_points[j].m1.z = ((float)j + 1) / ((float)voronoi_points.Count());
+                voronoi_points[j].m1.z = ((float)j + 1) / ((float)voronoi_points.count());
             }
 
             int f = SrcVoronoiFbo;
@@ -254,8 +254,8 @@ public:
             }
             m_fbos[f].m1->Unbind();
 
-            int buf = voronoi_points.Count() % 2;
-            for (int j = 0; j < voronoi_points.Count(); ++j)
+            int buf = voronoi_points.count() % 2;
+            for (int j = 0; j < voronoi_points.count(); ++j)
             {
                 Framebuffer *dst_buf;
                 Framebuffer *src_buf;
@@ -281,7 +281,7 @@ public:
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], voronoi_points[j].m1); //"in_source_point"
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], vec2(512.f, 512.f)); //"in_screen_res"
 
-                m_vdecl->SetStream(m_vbo, m_fbos[f].m4.Last());
+                m_vdecl->SetStream(m_vbo, m_fbos[f].m4.last());
                 m_vdecl->Bind();
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();
@@ -345,7 +345,7 @@ public:
                 * This code snippet should be moved inside the Framebuffer class. */
                 //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_flag, 1.f);
                 //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
-                //m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.Last());
+                //m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
                 //m_vdecl->Bind();
                 //m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 //m_vdecl->Unbind();
@@ -361,7 +361,7 @@ public:
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], vec2(512.f, 512.f)); //"in_screen_res"
                 }
 
-                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.Last());
+                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
                 m_vdecl->Bind();
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();

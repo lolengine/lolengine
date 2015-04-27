@@ -38,9 +38,9 @@ lolunit_declare_fixture(thread_test)
         {
             Timer timer;
             m_done = false;
-            Log::Info(Line("%s: STARTED WORK"), GetName());
+            Log::Info("%s: STARTED WORK\n", GetName());
             timer.Wait(2.f);
-            Log::Info(Line("%s: ENDED WORK"), GetName());
+            Log::Info("%s: ENDED WORK\n", GetName());
             m_done = true;
             return true;
         }
@@ -81,15 +81,15 @@ lolunit_declare_fixture(thread_test)
 
         void AddJob(ThreadJob* job)
         {
-            Log::Info(Line("%s DISPATCHING JOB %s"), GetName(), job->GetName());
+            Log::Info("%s DISPATCHING JOB %s\n", GetName(), job->GetName());
             DispatchJob(job);
         }
         bool GetWorkResult(array<ThreadJob*>& results)
         {
             results += m_job_result;
-            m_job_result.Empty();
-            Log::Info(Line("%s GETWORKRESULT (%i)"), GetName(), results.count());
-            return results.Count() > 0;
+            m_job_result.empty();
+            Log::Info("%s GETWORKRESULT (%i)\n", GetName(), results.count());
+            return results.count() > 0;
         }
 
         virtual void TickGame(float seconds)
@@ -99,7 +99,7 @@ lolunit_declare_fixture(thread_test)
             case UnitTestStatus::NOT_QUEUED:
                 if (!!GetDispatchCount())
                 {
-                    Log::Info(Line("%s TICKGAME %s"), GetName(), m_status.ToString().C());
+                    Log::Info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
                     m_status = UnitTestStatus::QUEUED;
                 }
                 break;
@@ -110,14 +110,14 @@ lolunit_declare_fixture(thread_test)
                 if (GetDispatchedCount())
 #endif
                 {
-                    Log::Info(Line("%s TICKGAME %s"), GetName(), m_status.ToString().C());
+                    Log::Info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
                     m_status = UnitTestStatus::RETRIEVED;
                 }
                 break;
             case UnitTestStatus::RETRIEVED:
                 if (m_job_result.count() == 4)
                 {
-                    Log::Info(Line("%s TICKGAME %s"), GetName(), m_status.ToString().C());
+                    Log::Info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
                     m_status = UnitTestStatus::DONE;
                 }
                 break;
@@ -151,10 +151,10 @@ lolunit_declare_fixture(thread_test)
 
     lolunit_declare_test(threads)
     {
-        Log::Info(Line("%s START"), m_manager.GetName());
+        Log::Info("%s START\n", m_manager.GetName());
         //Start threads manager
         m_manager.Start();
-        Log::Info(Line("%s STARTED"), m_manager.GetName());
+        Log::Info("%s STARTED\n", m_manager.GetName());
 
         UnitTestJob job[4];
         lolunit_assert_equal(0, m_manager.Test_GetDispatchCount());
@@ -187,10 +187,10 @@ lolunit_declare_fixture(thread_test)
         m_manager.GetWorkResult(results);
         lolunit_assert_equal(4, results.count());
 
-        Log::Info(Line("%s STOP"), m_manager.GetName());
+        Log::Info("%s STOP\n", m_manager.GetName());
         //Stop manager
         m_manager.Stop();
-        Log::Info(Line("%s STOPPED"), m_manager.GetName());
+        Log::Info("%s STOPPED\n", m_manager.GetName());
     }
 
     lolunit_declare_test(queue_try_push)

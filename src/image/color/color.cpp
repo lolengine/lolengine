@@ -34,25 +34,25 @@ vec4 const Color::light_gray = vec4(.75f, .75f, .75f, 1);
 String Color::HexString4Bpp(vec3 c)
 {
     uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
-    return String::Printf("%01x%01x%01x", c2.r, c2.g, c2.b);
+    return String::format("%01x%01x%01x", c2.r, c2.g, c2.b);
 }
 
 String Color::HexString4Bpp(vec4 c)
 {
     uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
-    return String::Printf("%01x%1x%01x%01x", c2.r, c2.g, c2.b, c2.a);
+    return String::format("%01x%1x%01x%01x", c2.r, c2.g, c2.b, c2.a);
 }
 
 String Color::HexString8Bpp(vec3 c)
 {
     uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
-    return String::Printf("%02x%02x%02x", c2.r, c2.g, c2.b);
+    return String::format("%02x%02x%02x", c2.r, c2.g, c2.b);
 }
 
 String Color::HexString8Bpp(vec4 c)
 {
     uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
-    return String::Printf("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
+    return String::format("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
 }
 
 /*
@@ -111,21 +111,21 @@ vec4 Color::C8BppHexString(String s)
 {
     String c = s[0] == '#' ? &s[1] : s;
     uint32_t tmp = std::strtol(c.C(), nullptr, 16);
-    if (c.Count() == 3)
+    if (c.count() == 3)
     {
         tmp = 0x11000000u * (tmp >> 8)
             | 0x00110000u * ((tmp >> 4) & 0xf)
             | 0x00001100u * (tmp & 0xf)
             | 0x000000ffu;
     }
-    else if (c.Count() == 4)
+    else if (c.count() == 4)
     {
         tmp = 0x11000000u * (tmp >> 12)
             | 0x00110000u * ((tmp >> 8) & 0xf)
             | 0x00001100u * ((tmp >> 4) & 0xf)
             | 0x00000011u * (tmp & 0xf);
     }
-    else if (c.Count() == 6)
+    else if (c.count() == 6)
     {
         tmp = 0xffu | 0x100u * tmp;
     }

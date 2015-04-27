@@ -185,24 +185,24 @@ custom              { return token::T_CUSTOMCMD;    }
 light_command:
 T_ADDLIGHT                      { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT"; }
 | T_ADDLIGHT      fv              { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
-uc.m_sstp.m_lights.Last()->SetType(LightType($2)); }
+uc.m_sstp.m_lights.last()->SetType(LightType($2)); }
 | T_ADDLIGHT      svv             { uc.m_sstp.m_lights << new Light(); uc.m_last_cmd = "ADDLIGHT";
-uc.m_sstp.m_lights.Last()->SetType(FindValue<LightType>($2)); }
+uc.m_sstp.m_lights.last()->SetType(FindValue<LightType>($2)); }
 ;
 
 setup_command:
 T_OBJPOSITION   v3              { if (uc.m_last_cmd == "ADDLIGHT")
-uc.m_sstp.m_lights.Last()->SetPosition(vec3($2[0], $2[1], $2[2])); }
+uc.m_sstp.m_lights.last()->SetPosition(vec3($2[0], $2[1], $2[2])); }
 | T_OBJLOOKAT     v3              { if (uc.m_last_cmd == "ADDLIGHT")
 {
 } }
 | T_OBJCOLOR      v4{ if (uc.m_last_cmd == "ADDLIGHT")
-uc.m_sstp.m_lights.Last()->SetColor(vec4($2[0], $2[1], $2[2], $2[3])); }
+uc.m_sstp.m_lights.last()->SetColor(vec4($2[0], $2[1], $2[2], $2[3])); }
 | T_OBJCOLOR      COLOR{ uint32_t x = $2;
 ivec4 v(x >> 24, (x >> 16) & 0xff, (x >> 8) & 0xff, x & 0xff);
 vec4 vv = vec4(v) * (1.f / 255.f);
 if (uc.m_last_cmd == "ADDLIGHT")
-uc.m_sstp.m_lights.Last()->SetColor(vv); }
+uc.m_sstp.m_lights.last()->SetColor(vv); }
 ;
 
 scene_command:
@@ -215,7 +215,7 @@ uc.m_sstp.m_clear_color = vec4(v) * (1.f / 255.f); }
 ;
 
 custom_command:
-T_CUSTOMCMD     svv sv{ uc.m_sstp.m_custom_cmd.Push($2, $3); }
+T_CUSTOMCMD     svv sv{ uc.m_sstp.m_custom_cmd.push($2, $3); }
 ;
 
 */

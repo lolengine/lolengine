@@ -33,7 +33,7 @@ template<PixelFormat T>
 class PixelData : public PixelDataBase
 {
 public:
-    inline PixelData(ivec2 size) { m_array2d.SetSize(size); }
+    inline PixelData(ivec2 size) { m_array2d.resize(size); }
 
     virtual void *data() { return m_array2d.data(); }
     virtual void const *data() const { return m_array2d.data(); }
@@ -88,7 +88,7 @@ public:
             if (codeclist[i]->m_priority <= prio) \
                 break; \
         } \
-        codeclist.Insert(codec, i); \
+        codeclist.insert(codec, i); \
     }
 
 #define DECLARE_IMAGE_CODEC(name, priority) \

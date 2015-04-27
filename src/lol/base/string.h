@@ -49,7 +49,7 @@ public:
         memcpy(&(*this)[0], str, count() + 1);
     }
 
-    inline String(char const *str, ptrdiff_t item_count)
+    inline String(char const *str, int item_count)
       : super()
     {
         using namespace std;
@@ -64,7 +64,7 @@ public:
     {
     }
 
-    inline char &operator [](ptrdiff_t n)
+    inline char &operator [](int n)
     {
         /* Allow n == count() because we might have reasonable reasons
          * to access that hidden null character. */
@@ -73,7 +73,7 @@ public:
         return ((super &)*this)[n];
     }
 
-    inline char const &operator [](ptrdiff_t n) const
+    inline char const &operator [](int n) const
     {
         ASSERT(n >= 0);
         ASSERT(n <= count());
@@ -92,7 +92,7 @@ public:
         return (*this)[count() - 1];
     }
 
-    inline ptrdiff_t count() const
+    inline int count() const
     {
         return ((super const &)*this).count() - 1;
     }
@@ -110,14 +110,14 @@ public:
     }
 
     /* Does not initialise the newly allocated characters */
-    void resize(ptrdiff_t item_count)
+    void resize(int item_count)
     {
         ASSERT(item_count >= 0);
         ((super &)*this).resize(item_count + 1);
         ((super &)*this).last() = '\0';
     }
 
-    String sub(ptrdiff_t start, ptrdiff_t item_count = -1) const
+    String sub(int start, int item_count = -1) const
     {
         ASSERT(start >= 0);
         if (start >= count())
@@ -132,40 +132,40 @@ public:
         return index_of(s.C()) != INDEX_NONE;
     }
 
-    ptrdiff_t index_of(char token) const
+    int index_of(char token) const
     {
         using namespace std;
 
         char const *tmp = strchr(C(), token);
-        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? int(tmp - C()) : INDEX_NONE;
     }
 
-    ptrdiff_t index_of(String const& token) const { return index_of(token.C()); }
-    ptrdiff_t index_of(char const* token) const
+    int index_of(String const& token) const { return index_of(token.C()); }
+    int index_of(char const* token) const
     {
         using namespace std;
 
         char const *tmp = strstr(C(), token);
-        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? int(tmp - C()) : INDEX_NONE;
     }
 
-    ptrdiff_t last_index_of(char token) const
+    int last_index_of(char token) const
     {
         using namespace std;
 
         char const *tmp = strrchr(C(), token);
-        return tmp ? (ptrdiff_t)(tmp - C()) : INDEX_NONE;
+        return tmp ? int(tmp - C()) : INDEX_NONE;
     }
 
-    ptrdiff_t last_index_of(String const& token) const { return last_index_of(token.C()); }
-    ptrdiff_t last_index_of(char const* token) const
+    int last_index_of(String const& token) const { return last_index_of(token.C()); }
+    int last_index_of(char const* token) const
     {
         using namespace std;
 
-        ptrdiff_t token_len = strlen(token);
-        for (ptrdiff_t i = count() - token_len; i >= 0; --i)
-        if (strstr(C() + i, token))
-            return i;
+        int token_len = strlen(token);
+        for (int i = count() - token_len; i >= 0; --i)
+            if (strstr(C() + i, token))
+                return i;
         return -1;
     }
 
@@ -189,7 +189,7 @@ public:
     inline String& to_lower()
     {
         String ret(*this);
-        for (ptrdiff_t i = 0; i < ret.count(); ++i)
+        for (int i = 0; i < ret.count(); ++i)
         {
             if ('A' <= ret[i] && ret[i] <= 'Z')
                 ret[i] += 'a' - 'A';
@@ -201,7 +201,7 @@ public:
     inline String& to_upper()
     {
         String ret(*this);
-        for (ptrdiff_t i = 0; i < ret.count(); ++i)
+        for (int i = 0; i < ret.count(); ++i)
         {
             if ('a' <= ret[i] && ret[i] <= 'z')
                 ret[i] += 'A' - 'a';
@@ -230,7 +230,7 @@ public:
 
     bool is_alpha() const
     {
-        for (ptrdiff_t i = 0; i < m_count; i++)
+        for (int i = 0; i < m_count; i++)
             if (m_data[i] != '\0' && (m_data[i] < '0' || '9' < m_data[i]))
                 return false;
         return true;
@@ -251,7 +251,7 @@ public:
     inline String& operator +=(String const &s)
     {
         using namespace std;
-        ptrdiff_t old_count = count();
+        int old_count = count();
         resize(count() + s.count());
         memcpy(&(*this)[old_count], &s[0], count() - old_count);
         return *this;
@@ -281,7 +281,7 @@ public:
         /* We parse the C string twice because of strlen + memcmp
          * but it's probably still faster than doing it by hand. */
         using namespace std;
-        ptrdiff_t sz_len = strlen(sz);
+        int sz_len = strlen(sz);
         return count() == sz_len
                 && memcmp(C(), sz, sz_len) == 0;
     }
@@ -307,47 +307,9 @@ public:
 #else
 #   define LOL_FMT_ATTR(n, p)
 #endif
-    static String Printf(char const *format, ...) LOL_FMT_ATTR(1, 2);
+    static String format(char const *format, ...) LOL_FMT_ATTR(1, 2);
 #undef LOL_FMT_ATTR
-    static String VPrintf(char const *format, va_list ap);
-
-    /* TODO: remove these legacy functions one day */
-    inline char &Last() { return last(); }
-    inline char const &Last() const { return last(); }
-    inline void Resize(ptrdiff_t item_count) { return resize(item_count); }
-    inline String& ToLower() { return to_lower(); }
-    inline String& ToUpper() { return to_upper(); }
-    inline String& CaseChange(bool case_to_upper) { return case_to_upper ? ToUpper() : ToLower(); }
-    inline String Sub(ptrdiff_t start, ptrdiff_t item_count = -1) const { return sub(start, item_count); }
-    inline bool Contains(String const &s) const { return contains(s); }
-    inline ptrdiff_t IndexOf(char token) const { return index_of(token); }
-    inline ptrdiff_t IndexOf(char const* token) const { return index_of(token); }
-    inline ptrdiff_t LastIndexOf(char token) const { return last_index_of(token); }
-    inline int Replace(char const old_token, char const new_token, bool all_occurrences = false) { return replace(old_token, new_token, all_occurrences); }
-    inline bool EndsWith(String const &s) const { return ends_with(s); }
-    inline bool IsAlpha() const { return is_alpha(); }
-    inline bool StartsWith(String const &s) const { return starts_with(s); }
-    inline ptrdiff_t Count() const { return count(); }
-};
-
-class Line
-{
-public:
-    Line(String const& s)
-    {
-        m_line = s + "\n";
-    }
-    inline operator String()
-    {
-        return m_line;
-    }
-    inline operator const char*()
-    {
-        return m_line.C();
-    }
-
-private:
-    String m_line;
+    static String vformat(char const *format, va_list ap);
 };
 
 inline bool operator ==(char const* sz, String const &s)

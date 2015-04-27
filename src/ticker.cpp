@@ -41,9 +41,9 @@ public:
     ~TickerData()
     {
         ASSERT(nentities == 0,
-               "still %td entities in ticker\n", nentities);
-        ASSERT(m_autolist.Count() == 0,
-               "still %ti autoreleased entities\n", m_autolist.Count());
+               "still %d entities in ticker\n", nentities);
+        ASSERT(m_autolist.count() == 0,
+               "still %d autoreleased entities\n", m_autolist.count());
         Log::Debug("%d frames required to quit\n", frame - quitframe);
 
 #if LOL_FEATURE_THREADS
@@ -58,8 +58,8 @@ private:
     /* Entity management */
     array<Entity *> m_todolist, m_autolist;
     array<Entity *> m_list[Entity::ALLGROUP_END];
-    array<ptrdiff_t> m_scenes[Entity::ALLGROUP_END];
-    ptrdiff_t nentities;
+    array<int> m_scenes[Entity::ALLGROUP_END];
+    int nentities;
 
     /* Fixed framerate management */
     int frame, recording;
@@ -121,11 +121,11 @@ void Ticker::Ref(Entity *entity)
         /* Get the entity out of the m_autorelease list. This is usually
          * very fast since the last entry in autolist is the last
          * registered entity. */
-        for (ptrdiff_t i = data->m_autolist.Count(); i--; )
+        for (int i = data->m_autolist.count(); i--; )
         {
             if (data->m_autolist[i] == entity)
             {
-                data->m_autolist.RemoveSwap(i);
+                data->m_autolist.remove_swap(i);
                 break;
             }
         }
@@ -219,7 +219,7 @@ void TickerData::GameThreadTick()
         Log::Debug("%s Group %d\n",
                    (g < Entity::GAMEGROUP_END) ? "Game" : "Draw", g);
 
-        for (int i = 0; i < data->m_list[g].Count(); ++i)
+        for (int i = 0; i < data->m_list[g].count(); ++i)
         {
             Entity *e = data->m_list[g][i];
             Log::Debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
@@ -270,7 +270,7 @@ void TickerData::GameThreadTick()
         data->panic = 2 * (data->panic + 1);
 
         for (int g = 0; g < Entity::ALLGROUP_END && n < data->panic; ++g)
-        for (int i = 0; i < data->m_list[g].Count() && n < data->panic; ++i)
+        for (int i = 0; i < data->m_list[g].count() && n < data->panic; ++i)
         {
             Entity * e = data->m_list[g][i];
             if (e->m_ref)
@@ -285,7 +285,7 @@ void TickerData::GameThreadTick()
 
 #if !LOL_BUILD_RELEASE
         if (n)
-            Log::Error("%td entities stuck after %d frames, poked %d\n",
+            Log::Error("%d entities stuck after %d frames, poked %d\n",
                        data->nentities, data->quitdelay, n);
 #endif
 
@@ -299,7 +299,7 @@ void TickerData::GameThreadTick()
     bool do_reserve = true;
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
-        for (ptrdiff_t i = data->m_list[g].Count(); i--;)
+        for (int i = data->m_list[g].count(); i--;)
         {
             Entity *e = data->m_list[g][i];
 
@@ -307,7 +307,7 @@ void TickerData::GameThreadTick()
             {
                 /* Game tick list:
                 * If entity is to be destroyed, remove it */
-                data->m_list[g].RemoveSwap(i);
+                data->m_list[g].remove_swap(i);
                 if (do_reserve)
                 {
                     do_reserve = false;
@@ -320,15 +320,15 @@ void TickerData::GameThreadTick()
                 /* Draw tick list:
                 * If entity is to be destroyed,
                 * remove it and store it. */
-                data->m_list[g].RemoveSwap(i);
-                ptrdiff_t removal_count = 0;
-                for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+                data->m_list[g].remove_swap(i);
+                int removal_count = 0;
+                for (int j = 0; j < Scene::GetCount(); j++)
                 {
                     //If entity is concerned by this scene, add it in the list
-                    if (Scene::GetScene(i).IsRelevant(e))
+                    if (Scene::GetScene(j).IsRelevant(e))
                         removal_count++;
                     //Update scene index
-                    data->m_scenes[e->m_drawgroup][i] -= removal_count;
+                    data->m_scenes[e->m_drawgroup][j] -= removal_count;
                 }
                 if (do_reserve)
                 {
@@ -352,9 +352,9 @@ void TickerData::GameThreadTick()
     }
 
     /* Insert waiting objects into the appropriate lists */
-    while (data->m_todolist.Count())
+    while (data->m_todolist.count())
     {
-        Entity *e = data->m_todolist.Last();
+        Entity *e = data->m_todolist.last();
 
         //If the entity has no mask, default it
         if (e->m_scene_mask == 0)
@@ -369,8 +369,8 @@ void TickerData::GameThreadTick()
             if (data->m_scenes[e->m_drawgroup].count() < Scene::GetCount())
                 data->m_scenes[e->m_drawgroup].resize(Scene::GetCount());
 
-            ptrdiff_t added_count = 0;
-            for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+            int added_count = 0;
+            for (int i = 0; i < Scene::GetCount(); i++)
             {
                 //If entity is concerned by this scene, add it in the list
                 if (Scene::GetScene(i).IsRelevant(e))
@@ -390,7 +390,7 @@ void TickerData::GameThreadTick()
     /* Tick objects for the game loop */
     for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
-        for (ptrdiff_t i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
+        for (int i = 0; i < data->m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
         {
             Entity *e = data->m_list[g][i];
             if (!e->m_destroy)
@@ -426,15 +426,15 @@ void TickerData::DrawThreadTick()
         switch (g)
         {
         case Entity::DRAWGROUP_BEGIN:
-            for (ptrdiff_t i = 0; i < Scene::GetCount(); i++)
+            for (int i = 0; i < Scene::GetCount(); i++)
                 Scene::GetScene(i).Reset();
             break;
         default:
             break;
         }
 
-        ptrdiff_t scene_idx = 0;
-        for (int i = 0; i < data->m_list[g].Count() && !data->quit /* Stop as soon as required */; ++i)
+        int scene_idx = 0;
+        for (int i = 0; i < data->m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
         {
             //We're outside of the range of the current scene, on to the next
             if (i >= data->m_scenes[g][scene_idx])
@@ -463,7 +463,7 @@ void TickerData::DrawThreadTick()
     }
 
     //Do the scene render loop
-    for (ptrdiff_t idx = 0; idx < Scene::GetCount() && !data->quit /* Stop as soon as required */; ++idx)
+    for (int idx = 0; idx < Scene::GetCount() && !data->quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
@@ -571,10 +571,10 @@ int Ticker::GetFrameNum()
 void Ticker::Shutdown()
 {
     /* We're bailing out. Release all m_autorelease objects. */
-    while (data->m_autolist.Count())
+    while (data->m_autolist.count())
     {
-        data->m_autolist.Last()->m_ref--;
-        data->m_autolist.Remove(-1);
+        data->m_autolist.last()->m_ref--;
+        data->m_autolist.remove(-1);
     }
 
     data->quit = 1;

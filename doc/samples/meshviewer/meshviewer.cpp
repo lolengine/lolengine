@@ -70,7 +70,7 @@ LOLFX_RESOURCE_DECLARE(shinymvtexture);
 class TargetCamera
 {
 public:
-    void EmptyTargets()             { m_targets.Empty(); }
+    void EmptyTargets()             { m_targets.empty(); }
     void AddTarget(vec3 new_target) { m_targets << new_target; }
     //This considers the box usage A to B as top-left to bottom-right
     void AddTarget(box3 new_target)
@@ -132,7 +132,7 @@ void EasyMeshLoadJob::RetrieveResult(class MeshViewer* app)
 {
     for (EasyMeshViewerObject* mesh : m_meshes)
         app->AddViewerObj(mesh);
-    m_meshes.Empty();
+    m_meshes.empty();
 }
 
 //MeshViewer ------------------------------------------------------------------
@@ -223,7 +223,7 @@ void MeshViewer::Stop()
     for (Entity* entity : m_entities) Ticker::Unref(entity);
 
     //Delete objs
-    while (m_objs.count()) delete m_objs.Pop();
+    while (m_objs.count()) delete m_objs.pop();
 
     //Nullify all
     m_camera = nullptr;
@@ -307,8 +307,8 @@ void MeshViewer::TickGame(float seconds)
     m_menu_mesh_names_str.empty();
     for (ViewerObject* obj : m_objs)
         m_menu_mesh_names_str << obj->GetName();
-    for (ptrdiff_t i = 0; i < m_menu_mesh_names_str.count(); ++i)
-        m_menu_mesh_names_char << m_menu_mesh_names_str[i].C();
+    for (auto str : m_menu_mesh_names_str)
+        m_menu_mesh_names_char << str.C();
 
     ImGuiIO& io = ImGui::GetIO();
     //CAMERA UI ---------------------------------------------------------------
@@ -432,11 +432,11 @@ void MeshViewer::Prepare()
 
     //Compile ref meshes
     m_gizmos << new EasyMesh();
-    m_gizmos.Last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .075 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
+    m_gizmos.last()->Compile("[sc#0f0 ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .075 ty .5 dup[rz 90 ry 90 scv#00f dup[ry 90 scv#f00]]][sc#fff ab .1]");
     m_gizmos << new EasyMesh();
-    m_gizmos.Last()->Compile("[sc#666 acap 1 .5 .5 ty -.5 sc#fff asph 2 1]");
+    m_gizmos.last()->Compile("[sc#666 acap 1 .5 .5 ty -.5 sc#fff asph 2 1]");
     m_gizmos << new EasyMesh();
-    m_gizmos.Last()->Compile("[sc#fff ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 [ad 3 .1 sy -1] ty 1 rz 90 ry 90]");
+    m_gizmos.last()->Compile("[sc#fff ac 3 .5 .4 0 ty .25 [ad 3 .4 sy -1] ty .5 ac 3 1 .1 ty .5 [ad 3 .1 sy -1] ty 1 rz 90 ry 90]");
 
     // Mesh Setup
     m_render_max = vec2(-.9f, 4.1f);
@@ -539,19 +539,19 @@ void MeshViewer::Prepare()
     m_ssetup = new SceneSetup();
 #if NO_SC_SETUP
     m_ssetup->m_lights << new Light();
-    m_ssetup->m_lights.Last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
-    m_ssetup->m_lights.Last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
-    Ticker::Ref(m_ssetup->m_lights.Last());
+    m_ssetup->m_lights.last()->SetPosition(vec4(4.f, -1.f, -4.f, 0.f));
+    m_ssetup->m_lights.last()->SetColor(vec4(.0f, .2f, .5f, 1.f));
+    Ticker::Ref(m_ssetup->m_lights.last());
     m_ssetup->m_lights << new Light();
-    m_ssetup->m_lights.Last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
-    m_ssetup->m_lights.Last()->SetColor(vec4(1.f));
-    Ticker::Ref(m_ssetup->m_lights.Last());
+    m_ssetup->m_lights.last()->SetPosition(vec4(8.f, 2.f, 6.f, 0.f));
+    m_ssetup->m_lights.last()->SetColor(vec4(1.f));
+    Ticker::Ref(m_ssetup->m_lights.last());
     EasyMesh* em = new EasyMesh();
     if (em->Compile("sc#fff ab 1"))
     {
-        if (m_mesh_id == m_meshes.Count() - 1)
+        if (m_mesh_id == m_meshes.count() - 1)
             m_mesh_id++;
-        m_meshes.Push(em, nullptr);
+        m_meshes.push(em, nullptr);
     }
 #else
     //TOUKY CHANGE THAT
@@ -562,7 +562,7 @@ void MeshViewer::Prepare()
     */
     m_ssetup->Startup();
 #endif //NO_SC_SETUP
-    for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+    for (int i = 0; i < m_ssetup->m_lights.count(); ++i)
     {
         m_light_datas << LightData(m_ssetup->m_lights[i]->GetPosition().xyz, m_ssetup->m_lights[i]->GetColor());
         m_ssetup->m_lights[i]->SetPosition(vec3::zero);
@@ -609,14 +609,14 @@ void MeshViewer::Update(float seconds)
 
     //Mesh Change
 #if HAS_INPUT
-    m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, (int)m_meshes.Count() - 1);
+    m_mesh_id = clamp(m_mesh_id + ((int)KeyPressed(KEY_MESH_PREV) - (int)KeyPressed(KEY_MESH_NEXT)), 0, m_meshes.count() - 1);
 #endif //HAS_INPUT
     m_mesh_id1 = damp(m_mesh_id1, (float)m_mesh_id, .2f, seconds);
 
 #if ALL_FEATURES
 
     //Update light position & damping
-    for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+    for (int i = 0; i < m_ssetup->m_lights.count(); ++i)
     {
         vec3 pos = (m_mat * inverse(m_mat_prev) * vec4(m_ssetup->m_lights[i]->GetPosition(), 1.f)).xyz;
         vec3 tgt = (m_mat * vec4(m_light_datas[i].m_pos, 1.f)).xyz;
@@ -724,11 +724,11 @@ void MeshViewer::Update(float seconds)
 
     //Target List Setup
     TargetCamera tc;
-    if (m_meshes.Count() && m_mesh_id >= 0)
+    if (m_meshes.count() && m_mesh_id >= 0)
         for (int i = 0; i < m_meshes[m_mesh_id].m1->GetVertexCount(); i++)
             tc.AddTarget((m_mat * mat4::translate(m_meshes[m_mesh_id].m1->GetVertexLocation(i)))[3].xyz);
     tc.AddTarget(box3(vec3(0.f), vec3(1.f)));
-    for (int k = 0; k < m_ssetup->m_lights.Count() && m_ssetup->m_show_lights; ++k)
+    for (int k = 0; k < m_ssetup->m_lights.count() && m_ssetup->m_show_lights; ++k)
     {
         vec3 light_pos = m_ssetup->m_lights[k]->GetPosition();
         mat4 world_cam = m_camera->GetView();
@@ -748,7 +748,7 @@ void MeshViewer::Update(float seconds)
     mat4 cam_screen = m_camera->GetProjection();
 
     //target on-screen computation
-    for (int i = 0; i < tc.m_targets.Count(); i++)
+    for (int i = 0; i < tc.m_targets.count(); i++)
     {
         vec3 obj_loc = tc.m_targets[i];
         {
@@ -810,11 +810,11 @@ void MeshViewer::Update(float seconds)
         while (o-- > 0)
         {
             SceneSetup* new_ssetup = new SceneSetup();
-            if (false) //new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.Count())
+            if (false) //new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.count())
             {
                 //Store current light datas, in World
                 array<LightData> light_datas;
-                for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+                for (int i = 0; i < m_ssetup->m_lights.count(); ++i)
                     light_datas << LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
 
                 if (m_ssetup)
@@ -824,18 +824,18 @@ void MeshViewer::Update(float seconds)
 
                 //Restore all light datas so blend can occur
                 mat4 light_mat = m_mat * inverse(mat4(quat::fromeuler_xyz(vec3::zero)));
-                for (int i = 0; i < m_ssetup->m_lights.Count(); ++i)
+                for (int i = 0; i < m_ssetup->m_lights.count(); ++i)
                 {
                     //Store local dst in current m_ld
                     LightData ltmp = LightData(m_ssetup->m_lights[i]->GetPosition(), m_ssetup->m_lights[i]->GetColor());
-                    if (i < m_light_datas.Count())
+                    if (i < m_light_datas.count())
                         m_light_datas[i] = ltmp;
                     else
                         m_light_datas << ltmp;
 
                     vec3 loc = vec3::zero;
                     vec4 col = vec4::zero;
-                    if (i < light_datas.Count())
+                    if (i < light_datas.count())
                     {
                         loc = light_datas[i].m_pos;
                         col = light_datas[i].m_col;
@@ -858,7 +858,7 @@ void MeshViewer::Update(float seconds)
     int o = 1;
     while (o-- > 0)
     {
-        for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.Count(); ++i)
+        for (int i = 0; m_ssetup && i < m_ssetup->m_custom_cmd.count(); ++i)
         {
             if (m_ssetup->m_custom_cmd[i].m1 == "setmesh")
             {
@@ -867,16 +867,16 @@ void MeshViewer::Update(float seconds)
                 if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C(), false))
                 {
                     em->BD()->Cmdi() = 0;
-                    if (m_mesh_id == m_meshes.Count() - 1)
+                    if (m_mesh_id == m_meshes.count() - 1)
                         m_mesh_id++;
-                    m_meshes.Push(em, nullptr);
+                    m_meshes.push(em, nullptr);
                 }
                 else
                     delete em;
             }
         }
     }
-    m_ssetup->m_custom_cmd.Empty();
+    m_ssetup->m_custom_cmd.empty();
 #endif //ALL_FEATURES
 
 #if HAS_WEB
@@ -908,8 +908,8 @@ void MeshViewer::Update(float seconds)
         String cmd = f.ReadString();
         f.Close();
 
-        if (cmd.Count()
-                && (!m_cmdlist.Count() || cmd != m_cmdlist.Last()))
+        if (cmd.count()
+                && (!m_cmdlist.count() || cmd != m_cmdlist.last()))
         {
             m_cmdlist << cmd;
             MessageService::Send(MessageBucket::AppIn, cmd);
@@ -947,7 +947,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
 
     Renderer::Get()->SetClearColor(m_ssetup->m_clear_color);
 
-    for (int i = 0; i < m_gizmos.Count(); ++i)
+    for (int i = 0; i < m_gizmos.count(); ++i)
     {
         if (m_gizmos[i]->GetMeshState() == MeshRender::NeedConvert)
             m_gizmos[i]->MeshConvert();
@@ -960,7 +960,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
         if (m_build_time < .0f)
         {
             m_build_time = m_build_timer;
-            for (int i = 0; i < m_meshes.Count(); ++i)
+            for (int i = 0; i < m_meshes.count(); ++i)
             {
                 if (m_meshes[i].m1 && m_meshes[i].m1->BD()->Cmdi() < m_meshes[i].m1->BD()->CmdStack().GetCmdNb())
                 {
@@ -1024,7 +1024,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                             //Align right meshes
     mat4 mat_align =      mat4::translate(x - x * RATIO_HW);
     mat4 mat_gizmo = mat_obj_offset * mat_align * save_proj;
-    for (int i = 0; i < m_meshes.Count(); i++)
+    for (int i = 0; i < m_meshes.count(); i++)
     {
         {
             if (m_meshes[i].m1->GetMeshState() == MeshRender::NeedConvert)
@@ -1038,7 +1038,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
 #endif //WITH_TEXTURE
             }
 #if ALL_FEATURES
-            float j = -(float)(m_meshes.Count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.Count() - 1));
+            float j = -(float)(m_meshes.count() - (i + 1)) + (-m_mesh_id1 + (float)(m_meshes.count() - 1));
 
             if (m_mesh_id1 - m_render_max[0] > (float)i && m_mesh_id1 - m_render_max[1] < (float)i &&
                 m_meshes[i].m1->GetMeshState() > MeshRender::NeedConvert)
@@ -1074,7 +1074,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
 
         if (m_ssetup->m_show_lights)
         {
-            for (int k = 0; k < m_ssetup->m_lights.Count(); ++k)
+            for (int k = 0; k < m_ssetup->m_lights.count(); ++k)
             {
                 Light* ltmp = m_ssetup->m_lights[k];
                 mat4 world = mat4::translate(ltmp->GetPosition());
@@ -1096,9 +1096,9 @@ void MeshViewer::Draw(float seconds, Scene &scene)
 #endif //NORMAL_USAGE
 
 #if 0 //Debug normal draw
-    for (int i = m_meshes.Count() - 1; 0 <= i && i < m_meshes.Count(); i++)
+    for (int i = m_meshes.count() - 1; 0 <= i && i < m_meshes.count(); i++)
     {
-        for (int j = 0; j < m_meshes[i].m1->m_indices.Count(); j += 3)
+        for (int j = 0; j < m_meshes[i].m1->m_indices.count(); j += 3)
         {
             VertexData v[3] = { m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j  ]],
                                 m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j+1]],
@@ -1108,7 +1108,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                 Debug::DrawLine((m_mat * mat4::translate(v[k].m_coord))[3].xyz,
                                 (m_mat * mat4::translate(v[(k+1)%3].m_coord))[3].xyz, vec4(vec3((v[k].m_coord.z + 1.f)*.5f),1.f));
         }
-        for (int j = 0; j < m_meshes[i].m1->m_vert.Count(); j++)
+        for (int j = 0; j < m_meshes[i].m1->m_vert.count(); j++)
         {
             VertexData &v = m_meshes[i].m1->m_vert[m_meshes[i].m1->m_indices[j]];
             Debug::DrawLine((m_mat * mat4::translate(v.m_coord))[3].xyz,

@@ -239,7 +239,7 @@ lolunit_declare_fixture(PolynomialTest)
         polynomial<float> p { 42.f };
         auto roots = p.roots();
 
-        lolunit_assert_equal(roots.Count(), 0);
+        lolunit_assert_equal(roots.count(), 0);
     }
 
     lolunit_declare_test(RootsDegree1)
@@ -248,7 +248,7 @@ lolunit_declare_fixture(PolynomialTest)
         polynomial<float> p { -6.f, 2.f };
         auto roots = p.roots();
 
-        lolunit_assert_equal(roots.Count(), 1);
+        lolunit_assert_equal(roots.count(), 1);
         lolunit_assert_equal(roots[0], 3.f);
     }
 
@@ -258,14 +258,14 @@ lolunit_declare_fixture(PolynomialTest)
         polynomial<float> p { 81.f, -18.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.Count(), 1);
+        lolunit_assert_equal(roots1.count(), 1);
         lolunit_assert_equal(roots1[0], 9.f);
 
         /* p(x) = 42 - 20x + 2x² */
         polynomial<float> q { 42.f, -20.f, 2.f };
         auto roots2 = q.roots();
 
-        lolunit_assert_equal(roots2.Count(), 2);
+        lolunit_assert_equal(roots2.count(), 2);
         lolunit_assert_equal(roots2[0], 3.f);
         lolunit_assert_equal(roots2[1], 7.f);
     }

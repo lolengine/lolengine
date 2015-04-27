@@ -74,7 +74,7 @@ static int sdl12_to_scancode(int ch, int sc)
         case id: return String(str);
 #   include "input/keys.h"
         default:
-            Log::Error(Line("ScanCodeToText unknown scancode %0d."), sc);
+            Log::Error("ScanCodeToText unknown scancode %0d\n", sc);
         }
         return String();
     }
@@ -87,7 +87,7 @@ static int sdl12_to_scancode(int ch, int sc)
         case id: return String(#name);
 #   include "input/keys.h"
         default:
-            Log::Error(Line("ScanCodeToText unknown scancode %0d."), sc);
+            Log::Error("ScanCodeToText unknown scancode %0d\n", sc);
         }
         return String();
     }
@@ -187,13 +187,13 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
             continue;
         }
 
-        InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+        InputDeviceInternal* stick = new InputDeviceInternal(String::format("Joystick%d", i+1).C());
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
-            stick->AddAxis(String::Printf("Axis%d", j + 1).C());
+            stick->AddAxis(String::format("Axis%d", j + 1).C());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
-            stick->AddKey(String::Printf("Button%d", j + 1).C());
+            stick->AddKey(String::format("Button%d", j + 1).C());
 
-        m_data->m_joysticks.Push(sdlstick, stick);
+        m_data->m_joysticks.push(sdlstick, stick);
     }
 #   endif //EMSCRIPTEN
 #endif
@@ -205,11 +205,11 @@ SdlInput::~SdlInput()
 {
 #if (USE_SDL || USE_OLD_SDL) && !EMSCRIPTEN
     /* Unregister all the joysticks we added */
-    while (m_data->m_joysticks.Count())
+    while (m_data->m_joysticks.count())
     {
         SDL_JoystickClose(m_data->m_joysticks[0].m1);
         delete m_data->m_joysticks[0].m2;
-        m_data->m_joysticks.Remove(0);
+        m_data->m_joysticks.remove(0);
     }
 #endif
     delete m_data;
@@ -237,7 +237,7 @@ void SdlInputData::Tick(float seconds)
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
-    for (int j = 0; j < m_joysticks.Count(); j++)
+    for (int j = 0; j < m_joysticks.count(); j++)
     {
         for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
             m_joysticks[j].m2->SetKey(i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
@@ -290,7 +290,7 @@ void SdlInputData::Tick(float seconds)
                     }
                     m_keyboard->SetKey(sc2, !m_keyboard->GetKey(sc2));
                     /* DEBUG STUFF
-                    Log::Info(Line("Repeat: 0x%02x : %s/%s/%s/%i"),
+                    Log::Info("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
                         m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
                     */
@@ -311,13 +311,13 @@ void SdlInputData::Tick(float seconds)
                         && !m_keyboard->GetKey(SDLOL_LAlt))
                     {
                         String str = ScanCodeToText(sc);
-                        str.CaseChange(m_keyboard->GetKey(SDLOL_CapsLockStatus)
-                                        ^ (m_keyboard->GetKey(SDLOL_RShift)
-                                        || m_keyboard->GetKey(SDLOL_LShift)));
+                        str.case_change(m_keyboard->GetKey(SDLOL_CapsLockStatus)
+                                         ^ (m_keyboard->GetKey(SDLOL_RShift)
+                                         || m_keyboard->GetKey(SDLOL_LShift)));
                         m_keyboard->AddText(str);
                     }
                     /* DEBUG STUFF
-                    Log::Info(Line("Repeat: 0x%02x : %s/%s/%s/%i"),
+                    Log::Info("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
                         event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
                     */

@@ -404,8 +404,8 @@ Shader::Shader(String const &name,
         VertexUsage usage = VertexUsage::MAX;
         for (int j = 0; j < (int)VertexUsage::MAX; ++j)
         {
-            if (name.StartsWith(attribute_names[j]) ||
-                name.StartsWith(String(attribute_names[j]).ToLower()))
+            if (name.starts_with(attribute_names[j]) ||
+                name.starts_with(String(attribute_names[j]).to_lower()))
             {
                 usage = VertexUsage(j);
                 char* idx_ptr = name.C() + strlen(attribute_names[j]);
@@ -442,7 +442,7 @@ Shader::Shader(String const &name,
 
 int Shader::GetAttribCount() const
 {
-    return (int)data->attrib_locations.count();
+    return data->attrib_locations.count();
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
@@ -657,12 +657,12 @@ void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
      * it's a bunch of floats instead of vec4. */
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0], v.Count() / 4);
+                                             &v[0], v.count() / 4);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0], v.Count() / 4);
+                                              &v[0], v.count() / 4);
 #else
-    glUniform1fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0]);
+    glUniform1fv((GLint)uni.frag, (GLsizei)v.count(), &v[0]);
 #endif
 }
 
@@ -673,12 +673,12 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
      * it's a bunch of vec2 instead of vec4. */
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.Count() / 2);
+                                             &v[0][0], v.count() / 2);
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.Count() / 2);
+                                              &v[0][0], v.count() / 2);
 #else
-    glUniform2fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
+    glUniform2fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
 #endif
 }
 
@@ -689,12 +689,12 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
      * it's a bunch of vec3 instead of vec4. */
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.Count());
+                                             &v[0][0], v.count());
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.Count());
+                                              &v[0][0], v.count());
 #else
-    glUniform3fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
+    glUniform3fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
 #endif
 }
 
@@ -703,12 +703,12 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
 #if defined USE_D3D9 || defined _XBOX
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.Count());
+                                             &v[0][0], v.count());
     if (uni.flags & 2)
         data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.Count());
+                                              &v[0][0], v.count());
 #else
-    glUniform4fv((GLint)uni.frag, (GLsizei)v.Count(), &v[0][0]);
+    glUniform4fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
 #endif
 }
 
@@ -838,7 +838,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
     if (ver_shader > 120 && ver_driver <= 120)
     {
-        char const *end = patched_code.C() + patched_code.Count() + 1;
+        char const *end = patched_code.C() + patched_code.count() + 1;
 
         /* Find main() */
         parser = strstr(patched_code.C(), "main");
@@ -932,7 +932,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
         }
     }
 
-    patched_code.Resize(strlen(patched_code.C()));
+    patched_code.resize(strlen(patched_code.C()));
 
     return patched_code;
 }
@@ -1074,7 +1074,7 @@ void ShaderBlock::AddCallParameters(map<String, String> const& variables, String
     array<String> keys = variables.keys();
     for (String key : keys)
     {
-        if (result.Count() > 0)
+        if (result.count() > 0)
             result += ", ";
         result += key;
     }
@@ -1086,7 +1086,7 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
     array<String> keys = variables.keys();
     for (String key : keys)
     {
-        if (result.Count() > 0)
+        if (result.count() > 0)
             result += ", ";
         result += Shader::GetFunctionQualifier(type, program) + " ";
         result += variables[key];
@@ -1098,7 +1098,7 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
 //----
 void ShaderBlock::Build(const ShaderProgram program, String& call, String& function)
 {
-    ASSERT(m_name.Count());
+    ASSERT(m_name.count());
     ASSERT(m_parameters[ShaderVariable::InOut].count());
 
     //Build call in main
@@ -1116,7 +1116,7 @@ void ShaderBlock::Build(const ShaderProgram program, String& call, String& funct
         AddDefinitionParameters((ShaderVariable)i, program, m_parameters[i], def_parameters);
     function += def_parameters + ")" + g_ret +
         "{" + g_ret +
-        m_code_main + ((m_code_main.EndsWith(g_ret)) ? (String()) : (g_ret)) +
+        m_code_main + ((m_code_main.ends_with(g_ret)) ? (String()) : (g_ret)) +
         "}";
 }
 
@@ -1124,8 +1124,8 @@ void ShaderBlock::Build(const ShaderProgram program, String& call, String& funct
 ShaderBuilder::ShaderBuilder(String const& name, String const& version)
     : m_name(name), m_version(version)
 {
-    ASSERT(name.Count());
-    ASSERT(version.Count());
+    ASSERT(name.count());
+    ASSERT(version.count());
 }
 
 //----
@@ -1150,7 +1150,7 @@ ShaderBuilder& ShaderBuilder::operator<<(const ShaderProgram program)
 ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
 {
     ASSERT(m_current_program != ShaderProgram::MAX);
-    m_blocks[m_current_program.ToScalar()].PushUnique(block);
+    m_blocks[m_current_program.ToScalar()].push_unique(block);
     return *this;
 }
 
@@ -1158,7 +1158,7 @@ ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
 ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock const& block)
 {
     ASSERT(m_current_program != ShaderProgram::MAX);
-    m_blocks[m_current_program.ToScalar()].PushUnique(new ShaderBlock(block));
+    m_blocks[m_current_program.ToScalar()].push_unique(new ShaderBlock(block));
     return *this;
 }
 
@@ -1225,12 +1225,12 @@ void ShaderBuilder::Build(String& code)
         //Add default local out in merged variables
         String out_local_var = AddSlotOutVariableLocal((ShaderProgram)prog);
 
-        if (!out_local_var.Count())
+        if (!out_local_var.count())
             continue;
 
         //Merge all variables
         for (int var = 0; var < ShaderVariable::MAX; var++)
-            for (int block = 0; block < m_blocks[prog].Count(); block++)
+            for (int block = 0; block < m_blocks[prog].count(); block++)
                 MergeParameters(m_blocks[prog][block]->m_parameters[var], m_parameters[prog][var]);
 
         //Actually write code
@@ -1243,7 +1243,7 @@ void ShaderBuilder::Build(String& code)
         for (int var = 0; var < ShaderVariable::InOut; var++)
         {
             array<String> keys = m_parameters[prog][var].keys();
-            if (keys.Count())
+            if (keys.count())
             {
                 code += String("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
                 for (String key : keys)
@@ -1259,13 +1259,13 @@ void ShaderBuilder::Build(String& code)
 
         //Build Blocks code and add it
         array<String> calls;
-        for (int block = 0; block < m_blocks[prog].Count(); block++)
+        for (int block = 0; block < m_blocks[prog].count(); block++)
         {
             String call;
             String function;
             m_blocks[prog][block]->Build(ShaderProgram(prog), call, function);
             calls << call;
-            if (m_blocks[prog][block]->m_code_custom.Count())
+            if (m_blocks[prog][block]->m_code_custom.count())
             {
                 code += String("//- ") + m_blocks[prog][block]->GetName() + " custom code ----" + g_ret;
                 code += m_blocks[prog][block]->m_code_custom + g_ret + g_ret;
@@ -1283,7 +1283,7 @@ void ShaderBuilder::Build(String& code)
         array<String> keys = m_parameters[prog][var].keys();
         for (String key : keys)
         {
-            if (keys.Count())
+            if (keys.count())
             {
                 code += g_tab + m_parameters[prog][var][key] + " " + key + ";" + g_ret;
             }

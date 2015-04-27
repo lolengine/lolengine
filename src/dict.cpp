@@ -68,7 +68,7 @@ int Dict::MakeSlot(char const *name)
 
     /* If the entry is already registered, remember its ID. Look for an
      * empty slot at the same time. */
-    for (slotid = 0; slotid < data->m_entities.Count(); slotid++)
+    for (slotid = 0; slotid < data->m_entities.count(); slotid++)
     {
         Entity *e = data->m_entities[slotid];
         if (!e)
@@ -95,12 +95,12 @@ int Dict::MakeSlot(char const *name)
     }
 
     /* If this is a new entry, create a new slot for it. */
-    if (slotid == data->m_entities.Count() || !data->m_entities[slotid])
+    if (slotid == data->m_entities.count() || !data->m_entities[slotid])
     {
-        if (slotid == data->m_entities.Count())
+        if (slotid == data->m_entities.count())
         {
-            empty = (int)data->m_entities.Count();
-            data->m_entities.Push(nullptr);
+            empty = (int)data->m_entities.count();
+            data->m_entities.push(nullptr);
         }
 
         data->m_entities[empty] = nullptr;
@@ -126,7 +126,7 @@ void Dict::RemoveSlot(int slotid)
 
 void Dict::RemoveSlot(Entity *entity)
 {
-    for (int slotid = 0; slotid < data->m_entities.Count(); slotid++)
+    for (int slotid = 0; slotid < data->m_entities.count(); slotid++)
         if (data->m_entities[slotid] == entity)
         {
             RemoveSlot(slotid);
