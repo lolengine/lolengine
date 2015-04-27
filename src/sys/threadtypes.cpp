@@ -1,8 +1,8 @@
-//
+ï»¿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
-//            © 2014—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//  Copyright Â© 2010â€”2015 Sam Hocevar <sam@hocevar.net>
+//            Â© 2014â€”2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -223,7 +223,7 @@ void AsyncImageLoader::TreatResult(ThreadJob* result)
     }
     else
     {
-        Log::Error("AsyncImageJob FAILED. See load image error above.\n");
+        msg::error("AsyncImageJob FAILED. See load image error above.\n");
     }
     //Delete all that
     delete(result);

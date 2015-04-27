@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -55,14 +56,14 @@ bool AndroidImageCodec::Load(Image *image, char const *path)
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
-        Log::Error("JVM environment not found, trying to attach thread\n");
+        msg::error("JVM environment not found, trying to attach thread\n");
 #endif
         res = g_activity->vm->AttachCurrentThread(&env, nullptr);
     }
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
-        Log::Error("JVM environment not found, cannot open image %s\n", path);
+        msg::error("JVM environment not found, cannot open image %s\n", path);
 #endif
         return false;
     }
@@ -77,7 +78,7 @@ bool AndroidImageCodec::Load(Image *image, char const *path)
     if (!m_bmp)
     {
 #if !LOL_BUILD_RELEASE
-        Log::Error("could not load %s\n", path);
+        msg::error("could not load %s\n", path);
 #endif
         return false;
     }
@@ -121,7 +122,7 @@ bool AndroidImageCodec::Close()
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
-        Log::Error("JVM environment not found, cannot close image\n");
+        msg::error("JVM environment not found, cannot close image\n");
 #endif
         return false;
     }

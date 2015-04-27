@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -88,7 +89,7 @@ Renderer::Renderer(ivec2 size)
     m_data->m_d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
     if (!m_data->m_d3d_ctx)
     {
-        Log::Error("cannot initialise D3D\n");
+        msg::error("cannot initialise D3D\n");
         exit(EXIT_FAILURE);
     }
 
@@ -119,7 +120,7 @@ Renderer::Renderer(ivec2 size)
                                                  &d3dpp, &m_data->m_d3d_dev);
     if (FAILED(hr))
     {
-        Log::Error("cannot create D3D device\n");
+        msg::error("cannot create D3D device\n");
         exit(EXIT_FAILURE);
     }
 
@@ -129,7 +130,7 @@ Renderer::Renderer(ivec2 size)
     GLenum glerr = glewInit();
     if (glerr != GLEW_OK)
     {
-        Log::Error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
+        msg::error("cannot initialise GLEW: %s\n", glewGetErrorString(glerr));
         exit(EXIT_FAILURE);
     }
 #   endif

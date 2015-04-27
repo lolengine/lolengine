@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -64,7 +65,7 @@ Sample::Sample(char const *path)
     }
     if (!data->m_chunk)
     {
-        Log::Error("could not load sample %s: %s\n", path, Mix_GetError());
+        msg::error("could not load sample %s: %s\n", path, Mix_GetError());
     }
     data->m_channel = -1;
 #endif

@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine — Graphing tutorial
 //
-// Lol Engine - Graphing tutorial
+//  Copyright: © 2012—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -170,10 +171,10 @@ public:
         float loluademo_inst_return = demo_loader->GetVar<float>("loluademo_inst_return");
         DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
 
-        Log::Info("Lua Vars: \
+        msg::info("Lua Vars: \
             testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n",
             testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
-        Log::Info("Lua Vars: \
+        msg::info("Lua Vars: \
             function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
             function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
 

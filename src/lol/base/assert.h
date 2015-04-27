@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -109,13 +110,13 @@ static inline void DebugAbort()
  */
 
 #define LOL_ERROR_1(t) \
-    lol::Log::Error("assertion at %s:%d: %s\n", __FILE__, __LINE__, #t)
+    lol::msg::error("assertion at %s:%d: %s\n", __FILE__, __LINE__, #t)
 
 #define LOL_ERROR_2(t, s) \
-    lol::Log::Error("assertion at %s:%d: %s\n", __FILE__, __LINE__, s)
+    lol::msg::error("assertion at %s:%d: %s\n", __FILE__, __LINE__, s)
 
 #define LOL_ERROR_3(t, s, ...) \
-    lol::Log::Error("assertion at %s:%d: " s "\n", __FILE__, __LINE__, __VA_ARGS__)
+    lol::msg::error("assertion at %s:%d: " s "\n", __FILE__, __LINE__, __VA_ARGS__)
 
 #if LOL_BUILD_RELEASE
 #   define ASSERT(...) UNUSED(LOL_CALL(LOL_1ST, (__VA_ARGS__)))

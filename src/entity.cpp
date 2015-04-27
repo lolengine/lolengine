@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -36,7 +37,7 @@ Entity::~Entity()
 {
 #if !LOL_BUILD_RELEASE
     if (!m_destroy)
-        Log::Error("entity destructor called directly\n");
+        msg::error("entity destructor called directly\n");
 #endif
 }
 
@@ -58,7 +59,7 @@ void Entity::TickGame(float seconds)
     UNUSED(seconds);
 #if !LOL_BUILD_RELEASE
     if (m_tickstate != STATE_PRETICK_GAME)
-        Log::Error("invalid entity game tick\n");
+        msg::error("invalid entity game tick\n");
     m_tickstate = STATE_POSTTICK_GAME;
 #endif
 }
@@ -68,7 +69,7 @@ void Entity::TickDraw(float seconds, Scene &scene)
     (void)seconds;
 #if !LOL_BUILD_RELEASE
     if (m_tickstate != STATE_PRETICK_DRAW)
-        Log::Error("invalid entity draw tick\n");
+        msg::error("invalid entity draw tick\n");
     m_tickstate = STATE_POSTTICK_DRAW;
 #endif
 }

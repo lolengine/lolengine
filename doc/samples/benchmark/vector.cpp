@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine — Benchmark program
 //
-// Lol Engine - Benchmark program
+//  Copyright: © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -79,11 +80,11 @@ void bench_matrix(int mode)
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1e9f / (MATRIX_TABLE_SIZE * MATRIX_RUNS);
 
-    Log::Info("                          ns/elem\n");
-    Log::Info("mat4 = mat4              %7.3f\n", result[0]);
-    Log::Info("float = mat4.det()       %7.3f\n", result[1]);
-    Log::Info("mat4 *= mat4             %7.3f\n", result[2]);
-    Log::Info("mat4 += mat4             %7.3f\n", result[3]);
-    Log::Info("mat4 = mat4.invert()     %7.3f\n", result[4]);
+    msg::info("                          ns/elem\n");
+    msg::info("mat4 = mat4              %7.3f\n", result[0]);
+    msg::info("float = mat4.det()       %7.3f\n", result[1]);
+    msg::info("mat4 *= mat4             %7.3f\n", result[2]);
+    msg::info("mat4 += mat4             %7.3f\n", result[3]);
+    msg::info("mat4 = mat4.invert()     %7.3f\n", result[4]);
 }
 

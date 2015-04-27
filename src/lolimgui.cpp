@@ -1,9 +1,9 @@
-//
+﻿//
 //  imGui integration in lolengine
 //
-//  Copyright � 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//  Copyright © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //
-//  This program is free software. It comes without any warranty, to
+//  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -230,7 +230,7 @@ void LolImGui::TickGame(float seconds)
         cursor.y = 1.f - cursor.y;
         cursor *= video_size;
         io.MousePos = ImVec2(cursor.x, cursor.y);
-        Log::Debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
+        msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
         for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
@@ -243,11 +243,11 @@ void LolImGui::TickGame(float seconds)
             case LolImGuiKey::Focus:
                 if (m_controller->IsKeyReleased(i))
                 {
-                    Log::Debug("Not focused .....\n");
+                    msg::debug("Not focused .....\n");
                     io.MousePos = ImVec2(-1.f, -1.f);
                 }
                 else
-                    Log::Debug("Focused !!\n");
+                    msg::debug("Focused !!\n");
                 break;
             }
         }

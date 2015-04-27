@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -80,7 +81,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data->dpy = XOpenDisplay(nullptr);
     if (data->dpy == nullptr)
     {
-        Log::Error("cannot connect to X server\n");
+        msg::error("cannot connect to X server\n");
         exit(EXIT_FAILURE);
     }
 
@@ -110,13 +111,13 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   endif
     if (data->egl_dpy == EGL_NO_DISPLAY)
     {
-        Log::Error("cannot get EGL display\n");
+        msg::error("cannot get EGL display\n");
         exit(EXIT_FAILURE);
     }
 
     if (!eglInitialize(data->egl_dpy, nullptr, nullptr))
     {
-        Log::Error("cannot initialize EGL\n");
+        msg::error("cannot initialize EGL\n");
         exit(EXIT_FAILURE);
     }
 
@@ -138,19 +139,19 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     EGLint num_config;
     if (!eglChooseConfig(data->egl_dpy, attr, &ecfg, 1, &num_config))
     {
-        Log::Error("cannot choose EGL config (%i)\n", eglGetError());
+        msg::error("cannot choose EGL config (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 
     if (num_config != 1)
     {
-        Log::Error("cannot choose between %i EGL configs\n", num_config);
+        msg::error("cannot choose between %i EGL configs\n", num_config);
         exit(EXIT_FAILURE);
     }
 
     if (!eglBindAPI(EGL_OPENGL_ES_API))
     {
-        Log::Error("cannot bind OpenGL ES API (%i)\n", eglGetError());
+        msg::error("cannot bind OpenGL ES API (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 
@@ -197,28 +198,28 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
         switch (eglGetError())
         {
         case EGL_BAD_DISPLAY:
-            Log::Error("missing EGL display connection\n");
+            msg::error("missing EGL display connection\n");
             break;
         case EGL_NOT_INITIALIZED:
-            Log::Error("EGL display not initialized\n");
+            msg::error("EGL display not initialized\n");
             break;
         case EGL_BAD_CONFIG:
-            Log::Error("invalid EGL configuration\n");
+            msg::error("invalid EGL configuration\n");
             break;
         case EGL_BAD_NATIVE_WINDOW:
-            Log::Error("invalid EGL native window\n");
+            msg::error("invalid EGL native window\n");
             break;
         case EGL_BAD_ATTRIBUTE:
-            Log::Error("invalid EGL window attribute\n");
+            msg::error("invalid EGL window attribute\n");
             break;
         case EGL_BAD_ALLOC:
-            Log::Error("cannot allocate EGL surface\n");
+            msg::error("cannot allocate EGL surface\n");
             break;
         case EGL_BAD_MATCH:
-            Log::Error("unsupported EGL window\n");
+            msg::error("unsupported EGL window\n");
             break;
         default:
-            Log::Error("cannot create EGL surface (%i)\n", eglGetError());
+            msg::error("cannot create EGL surface (%i)\n", eglGetError());
             break;
         }
 
@@ -236,7 +237,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
                                      EGL_NO_CONTEXT, ctxattr);
     if (data->egl_ctx == EGL_NO_CONTEXT)
     {
-        Log::Error("cannot create EGL context (%i)\n", eglGetError());
+        msg::error("cannot create EGL context (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 

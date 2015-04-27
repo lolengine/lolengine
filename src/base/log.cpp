@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -28,38 +29,38 @@ namespace lol
 {
 
 /*
- * Public Log class
+ * Public log class
  */
 
-void Log::Debug(char const *fmt, ...)
+void msg::debug(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    Helper(DebugMessage, fmt, ap);
+    helper(MessageType::Debug, fmt, ap);
     va_end(ap);
 }
 
-void Log::Info(char const *fmt, ...)
+void msg::info(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    Helper(InfoMessage, fmt, ap);
+    helper(MessageType::Info, fmt, ap);
     va_end(ap);
 }
 
-void Log::Warn(char const *fmt, ...)
+void msg::warn(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    Helper(WarnMessage, fmt, ap);
+    helper(MessageType::Warning, fmt, ap);
     va_end(ap);
 }
 
-void Log::Error(char const *fmt, ...)
+void msg::error(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    Helper(ErrorMessage, fmt, ap);
+    helper(MessageType::Error, fmt, ap);
     va_end(ap);
 }
 
@@ -67,10 +68,10 @@ void Log::Error(char const *fmt, ...)
  * Private helper function
  */
 
-void Log::Helper(MessageType type, char const *fmt, va_list ap)
+void msg::helper(MessageType type, char const *fmt, va_list ap)
 {
 #if defined __ANDROID__
-    int const prio[] =
+    static int const prio[] =
     {
         ANDROID_LOG_DEBUG,
         ANDROID_LOG_INFO,
@@ -79,10 +80,10 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
     };
 
     String buf = String::vformat(fmt, ap);
-    __android_log_print(prio[type], "LOL", "[%d] %s", (int)gettid(), &buf[0]);
+    __android_log_print(prio[(int)type], "LOL", "[%d] %s", (int)gettid(), &buf[0]);
 
 #else
-    char const *prefix[] =
+    static char const * const prefix[] =
     {
         "DEBUG",
         "INFO",
@@ -91,14 +92,14 @@ void Log::Helper(MessageType type, char const *fmt, va_list ap)
     };
 
 #   if defined _WIN32
-    String buf = String(prefix[type]) + ": " + String::vformat(fmt, ap);
+    String buf = String(prefix[(int)type]) + ": " + String::vformat(fmt, ap);
 
     array<WCHAR> widechar;
     widechar.Resize(buf.count() + 1);
     MultiByteToWideChar(CP_UTF8, 0, buf.C(), buf.count() + 1, widechar.data(), widechar.count());
     OutputDebugStringW(widechar.data());
 #   else
-    fprintf(stderr, "%s: ", prefix[type]);
+    fprintf(stderr, "%s: ", prefix[(int)type]);
     vfprintf(stderr, fmt, ap);
 #   endif
 #endif

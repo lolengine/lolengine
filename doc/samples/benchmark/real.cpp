@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine — Benchmark program
 //
-// Lol Engine - Benchmark program
+//  Copyright: © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -70,11 +71,11 @@ void bench_real(int mode)
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1e9f / (REAL_TABLE_SIZE * REAL_RUNS);
 
-    Log::Info("                              ns/elem\n");
-    Log::Info("real = real + real           %7.3f\n", result[0]);
-    Log::Info("real = real * real           %7.3f\n", result[1]);
-    Log::Info("real = real / real           %7.3f\n", result[2]);
-    Log::Info("real = sin(real)             %7.3f\n", result[3]);
-    Log::Info("real = exp(real)             %7.3f\n", result[4]);
+    msg::info("                              ns/elem\n");
+    msg::info("real = real + real           %7.3f\n", result[0]);
+    msg::info("real = real * real           %7.3f\n", result[1]);
+    msg::info("real = real / real           %7.3f\n", result[2]);
+    msg::info("real = sin(real)             %7.3f\n", result[3]);
+    msg::info("real = exp(real)             %7.3f\n", result[4]);
 }
 

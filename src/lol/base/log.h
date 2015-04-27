@@ -1,17 +1,18 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
-// The Log interface
+// The msg interface
 // -----------------
 // The central logging system.
 //
@@ -22,7 +23,7 @@
 namespace lol
 {
 
-class Log
+class msg
 {
 public:
 #ifdef __GNUC__
@@ -30,22 +31,22 @@ public:
 #else
 #   define LOL_FMT_ATTR(n, p)
 #endif
-    static void Debug(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void Info(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void Warn(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void Error(char const *format, ...) LOL_FMT_ATTR(1, 2);
+    static void debug(char const *format, ...) LOL_FMT_ATTR(1, 2);
+    static void info(char const *format, ...) LOL_FMT_ATTR(1, 2);
+    static void warn(char const *format, ...) LOL_FMT_ATTR(1, 2);
+    static void error(char const *format, ...) LOL_FMT_ATTR(1, 2);
 #undef LOL_FMT_ATTR
 
 private:
-    enum MessageType
+    enum class MessageType
     {
-        DebugMessage,
-        InfoMessage,
-        WarnMessage,
-        ErrorMessage
+        Debug,
+        Info,
+        Warning,
+        Error
     };
 
-    static void Helper(MessageType type, char const *fmt, va_list ap);
+    static void helper(MessageType type, char const *fmt, va_list ap);
 };
 
 } /* namespace lol */

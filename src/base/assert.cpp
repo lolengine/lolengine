@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -28,7 +29,7 @@ void DumpStack()
 {
 #if EMSCRIPTEN
     /* This would require demangling but we don't care yet. */
-    Log::Debug("%s\n", emscripten_run_script_string("(new Error).stack"));
+    msg::debug("%s\n", emscripten_run_script_string("(new Error).stack"));
 #elif HAVE_CXA_DEMANGLE && HAVE_BACKTRACE_SYMBOLS
     /* Get current stack frames */
     void *stack_ptrs[50];
@@ -36,7 +37,7 @@ void DumpStack()
     char **callstack = backtrace_symbols(stack_ptrs, size);
 
     if (size > 1)
-        Log::Debug("%d functions in stack trace:\n", (int)size - 1);
+        msg::debug("%d functions in stack trace:\n", (int)size - 1);
 
     /* Parse stack frames, skipping the first element (because
      * that’s ourselves) and print information. */
@@ -67,13 +68,13 @@ void DumpStack()
             if (ret == 0)
                 name = realname;
 
-            Log::Debug("#%d %s: %s+%s %s\n", (int)i,
+            msg::debug("#%d %s: %s+%s %s\n", (int)i,
                        callstack[i], name, offset, address);
             free(realname);
         }
         else
         {
-            Log::Debug("#%d %s\n", (int)i, callstack[i]);
+            msg::debug("#%d %s\n", (int)i, callstack[i]);
         }
     }
 

@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -367,20 +367,20 @@ public:
         m_reserved = toreserve;
     }
 
-    void Shuffle();
-    void Sort(SortAlgorithm algorithm);
-    void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
+    void shuffle();
+
+    void sort(SortAlgorithm algorithm);
 
     /* Support C++11 range-based for loops */
-    class ConstIterator
+    class const_iterator
     {
     public:
-        ConstIterator(array_base const *that, ptrdiff_t pos)
+        const_iterator(array_base const *that, ptrdiff_t pos)
           : m_pos(pos),
             m_array(that)
         { }
 
-        bool operator !=(const ConstIterator& that) const
+        bool operator !=(const const_iterator& that) const
         {
             return m_pos != that.m_pos;
         }
@@ -390,7 +390,7 @@ public:
             return (*m_array)[m_pos];
         }
 
-        ConstIterator const & operator ++()
+        const_iterator const & operator ++()
         {
             ++m_pos;
             return *this;
@@ -401,15 +401,15 @@ public:
         array_base const *m_array;
     };
 
-    class Iterator
+    class iterator
     {
     public:
-        Iterator(array_base *that, ptrdiff_t pos)
+        iterator(array_base *that, ptrdiff_t pos)
           : m_pos(pos),
             m_array(that)
         { }
 
-        bool operator !=(const Iterator& that) const
+        bool operator !=(const iterator& that) const
         {
             return m_pos != that.m_pos;
         }
@@ -419,7 +419,7 @@ public:
             return (*m_array)[m_pos];
         }
 
-        Iterator const & operator ++()
+        iterator const & operator ++()
         {
             ++m_pos;
             return *this;
@@ -532,38 +532,28 @@ public:
  */
 
 template<typename... T>
-typename array<T...>::Iterator begin(array<T...> &a)
+typename array<T...>::iterator begin(array<T...> &a)
 {
-    return typename array<T...>::Iterator(&a, 0);
+    return typename array<T...>::iterator(&a, 0);
 }
 
 template<typename... T>
-typename array<T...>::Iterator end(array<T...> &a)
+typename array<T...>::iterator end(array<T...> &a)
 {
-    return typename array<T...>::Iterator(&a, a.count());
+    return typename array<T...>::iterator(&a, a.count());
 }
 
 template<typename... T>
-typename array<T...>::ConstIterator begin(array<T...> const &a)
+typename array<T...>::const_iterator begin(array<T...> const &a)
 {
-    return typename array<T...>::ConstIterator(&a, 0);
+    return typename array<T...>::const_iterator(&a, 0);
 }
 
 template<typename... T>
-typename array<T...>::ConstIterator end(array<T...> const &a)
+typename array<T...>::const_iterator end(array<T...> const &a)
 {
-    return typename array<T...>::ConstIterator(&a, a.count());
+    return typename array<T...>::const_iterator(&a, a.count());
 }
-
-/*
- * Transitional alias for the deprecated camelcase version of lol::array
- */
-
-#if LOL_FEATURE_CXX11_TEMPLATE_ALIASES
-template<typename... T> using Array = array<T...>;
-#else
-#   define Array array
-#endif
 
 } /* namespace lol */
 

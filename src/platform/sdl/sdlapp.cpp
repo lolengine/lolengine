@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -69,7 +70,7 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0)
         {
-            Log::Error("cannot initialise SDL: %s\n", SDL_GetError());
+            msg::error("cannot initialise SDL: %s\n", SDL_GetError());
             exit(EXIT_FAILURE);
         }
     }
@@ -85,7 +86,7 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
         SDL_WINDOW_OPENGL);
     if (!data->m_window)
     {
-        Log::Error("cannot create rendering window: %s\n", SDL_GetError());
+        msg::error("cannot create rendering window: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
@@ -116,7 +117,7 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
 
     if (!data->m_window)
     {
-        Log::Error("cannot create rendering window: %s\n", SDL_GetError());
+        msg::error("cannot create rendering window: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }

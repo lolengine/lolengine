@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine — Benchmark program
 //
-// Lol Engine - Benchmark program
+//  Copyright: © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -110,16 +111,16 @@ void bench_half(int mode)
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1e9f / (HALF_TABLE_SIZE * HALF_RUNS);
 
-    Log::Info("                          ns/elem\n");
-    Log::Info("float = half (array)     %7.3f\n", result[0]);
-    Log::Info("float = half (fast)      %7.3f\n", result[1]);
-    Log::Info("float = float            %7.3f\n", result[2]);
-    Log::Info("float += half            %7.3f\n", result[3]);
-    Log::Info("half = half              %7.3f\n", result[4]);
-    Log::Info("half = -half             %7.3f\n", result[5]);
-    Log::Info("half = float (array)     %7.3f\n", result[6]);
-    Log::Info("half = float (fast)      %7.3f\n", result[7]);
-    Log::Info("half = float (accurate)  %7.3f\n", result[8]);
-    Log::Info("half += float            %7.3f\n", result[9]);
+    msg::info("                          ns/elem\n");
+    msg::info("float = half (array)     %7.3f\n", result[0]);
+    msg::info("float = half (fast)      %7.3f\n", result[1]);
+    msg::info("float = float            %7.3f\n", result[2]);
+    msg::info("float += half            %7.3f\n", result[3]);
+    msg::info("half = half              %7.3f\n", result[4]);
+    msg::info("half = -half             %7.3f\n", result[5]);
+    msg::info("half = float (array)     %7.3f\n", result[6]);
+    msg::info("half = float (fast)      %7.3f\n", result[7]);
+    msg::info("half = float (accurate)  %7.3f\n", result[8]);
+    msg::info("half += float            %7.3f\n", result[9]);
 }
 

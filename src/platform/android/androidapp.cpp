@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -40,7 +41,7 @@ AAssetManager *g_assets;
 extern "C" jint
 JNI_OnLoad(JavaVM* vm, void* reserved)
 {
-    Log::Info("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
+    msg::info("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
     return JNI_VERSION_1_4;
 }
 
@@ -142,7 +143,7 @@ int lol::AndroidAppData::CreateDisplay()
 
     if (eglMakeCurrent(m_display, m_surface, m_surface, m_context) == EGL_FALSE)
     {
-        Log::Error("unable to eglMakeCurrent");
+        msg::error("unable to eglMakeCurrent");
         return -1;
     }
 
@@ -150,7 +151,7 @@ int lol::AndroidAppData::CreateDisplay()
     eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &h);
 
     /* Launch our renderer */
-    Log::Info("Java layer initialising renderer (%dx%d)", w, h);
+    msg::info("Java layer initialising renderer (%dx%d)", w, h);
     Video::Setup(ivec2(w, h));
 
     return 0;
@@ -265,7 +266,7 @@ AndroidAppData *g_data;
 
 void android_main(android_app* native_app)
 {
-    Log::Info("Java layer calling android_main() for app 0x%08lx",
+    msg::info("Java layer calling android_main() for app 0x%08lx",
               (long)native_app);
 
     /* Register native activity */
@@ -276,12 +277,12 @@ void android_main(android_app* native_app)
     jint res = g_activity->vm->GetEnv((void **)&jni_env, JNI_VERSION_1_2);
     if (res < 0)
     {
-        Log::Info("JVM environment not found, trying to attach thread\n");
+        msg::info("JVM environment not found, trying to attach thread\n");
         res = g_activity->vm->AttachCurrentThread(&jni_env, nullptr);
     }
     if (res < 0)
     {
-        Log::Error("JVM environment not found, cannot run main()\n");
+        msg::error("JVM environment not found, cannot run main()\n");
         return;
     }
 
@@ -327,7 +328,7 @@ void android_main(android_app* native_app)
             source->process(native_app, source);
     }
 
-    Log::Info("Java layer running real main()\n");
+    msg::info("Java layer running real main()\n");
 
     /* Call the user's main() function. One of these will work. */
     lol_android_main();
@@ -339,7 +340,7 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
   : m_data(g_data)
 {
     /* Launch our ticker */
-    Log::Info("Java layer initialising ticker at %g fps", fps);
+    msg::info("Java layer initialising ticker at %g fps", fps);
     Ticker::Setup(fps);
 
     m_data->m_wanted_resolution = res;

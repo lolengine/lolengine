@@ -1,9 +1,9 @@
-//
+﻿//
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-//  This program is free software. It comes without any warranty, to
+//  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -162,13 +162,13 @@ bool Image::Load(char const *path)
         last_codec = codec;
         if (codec->Load(this, path))
         {
-            Log::Info("Image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
+            msg::info("Image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
-    Log::Error("Image::Load: Last codec %s, Error loading image %s.\n", last_codec->GetName(), path);
+    msg::error("Image::Load: Last codec %s, Error loading image %s.\n", last_codec->GetName(), path);
     return false;
 }
 
@@ -180,13 +180,13 @@ bool Image::Save(char const *path)
         last_codec = codec;
         if (codec->Save(this, path))
         {
-            Log::Info("Image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
+            msg::info("Image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
-    Log::Error("Image::Save: Last codec %s, Error saving image %s.\n", last_codec->GetName(), path);
+    msg::error("Image::Save: Last codec %s, Error saving image %s.\n", last_codec->GetName(), path);
     return false;
 }
 

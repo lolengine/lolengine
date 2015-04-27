@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine — Benchmark program
 //
-// Lol Engine - Benchmark program
+//  Copyright: © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -173,18 +174,18 @@ void bench_trig(int mode)
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)
         result[i] *= 1e9f / (TRIG_TABLE_SIZE * TRIG_RUNS);
 
-    Log::Info("                              ns/elem\n");
-    Log::Info("float = sinf(float)          %7.3f\n", result[0]);
-    Log::Info("float = f_sinf(float)        %7.3f\n", result[1]);
-    Log::Info("float = lol_sin(float)       %7.3f\n", result[2]);
-    Log::Info("float = cosf(float)          %7.3f\n", result[3]);
-    Log::Info("float = f_cosf(float)        %7.3f\n", result[4]);
-    Log::Info("float = lol_cos(float)       %7.3f\n", result[5]);
-    Log::Info("float = sinf,cosf(float)     %7.3f\n", result[6]);
-    Log::Info("float = f_sinf,f_cosf(float) %7.3f\n", result[7]);
-    Log::Info("float = lol_sincos(float)    %7.3f\n", result[8]);
-    Log::Info("float = tanf(float)          %7.3f\n", result[9]);
-    Log::Info("float = f_tanf(float)        %7.3f\n", result[10]);
-    Log::Info("float = lol_tanf(float)      %7.3f\n", result[11]);
+    msg::info("                              ns/elem\n");
+    msg::info("float = sinf(float)          %7.3f\n", result[0]);
+    msg::info("float = f_sinf(float)        %7.3f\n", result[1]);
+    msg::info("float = lol_sin(float)       %7.3f\n", result[2]);
+    msg::info("float = cosf(float)          %7.3f\n", result[3]);
+    msg::info("float = f_cosf(float)        %7.3f\n", result[4]);
+    msg::info("float = lol_cos(float)       %7.3f\n", result[5]);
+    msg::info("float = sinf,cosf(float)     %7.3f\n", result[6]);
+    msg::info("float = f_sinf,f_cosf(float) %7.3f\n", result[7]);
+    msg::info("float = lol_sincos(float)    %7.3f\n", result[8]);
+    msg::info("float = tanf(float)          %7.3f\n", result[9]);
+    msg::info("float = f_tanf(float)        %7.3f\n", result[10]);
+    msg::info("float = lol_tanf(float)      %7.3f\n", result[11]);
 }
 

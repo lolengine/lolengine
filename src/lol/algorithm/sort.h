@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -18,8 +18,12 @@
 namespace lol
 {
 
+/*
+ * Shuffle an array.
+ */
+
 template<typename T, typename ARRAY>
-void array_base<T, ARRAY>::Shuffle()
+void array_base<T, ARRAY>::shuffle()
 {
     auto n = count();
     auto ni = n;
@@ -30,8 +34,16 @@ void array_base<T, ARRAY>::Shuffle()
     }
 }
 
+/*
+ * Sort an array
+ */
+
 template<typename T, typename ARRAY>
-void array_base<T, ARRAY>::Sort(SortAlgorithm algorithm)
+static void quick_swap_sort(array_base<T, ARRAY> &a,
+                            ptrdiff_t start, ptrdiff_t stop);
+
+template<typename T, typename ARRAY>
+void array_base<T, ARRAY>::sort(SortAlgorithm algorithm)
 {
 #if !SORT_WORKS // yeah cause it's shite.
     algorithm = SortAlgorithm::Bubble;
@@ -55,12 +67,13 @@ void array_base<T, ARRAY>::Sort(SortAlgorithm algorithm)
     // Quick sort with swap
     else if (algorithm == SortAlgorithm::QuickSwap)
     {
-        SortQuickSwap(0, count_s());
+        quick_swap_sort(*this, 0, count_s());
     }
 }
 
 template<typename T, typename ARRAY>
-void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
+static void quick_swap_sort(array_base<T, ARRAY> &a,
+                            ptrdiff_t start, ptrdiff_t stop)
 {
     ptrdiff_t m[3] =
     {
@@ -71,7 +84,7 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
 
     for (int i = 0; i < 2; )
     {
-        if (m_data[m[i+1]] < m_data[m[i]])
+        if (a[m[i+1]] < a[m[i]])
         {
             ptrdiff_t mt = m[i+1];
             m[i+1] = m[i];
@@ -81,34 +94,34 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
         else
             i++;
     }
-    //actual stuff
-    T median = m_data[m[1]];
-    ptrdiff_t i0 = start;
-    ptrdiff_t i1 = stop - 1;
+
+    // actual stuff
+    T median = a[m[1]];
+    ptrdiff_t i0 = start, i1 = stop - 1;
     bool b_swap = false;
     while (i0 < i1)
     {
-        if (!(m_data[i0] < median) && m_data[i1] < median)
+        if (!(a[i0] < median) && a[i1] < median)
         {
-            std::swap(m_data[i0], m_data[i1]);
+            std::swap(a[i0], a[i1]);
             i0++;
             i1--;
             b_swap = true;
         }
         else
         {
-            if (m_data[i0] < median)
+            if (a[i0] < median)
                 i0++;
-            if (!(m_data[i1] < median))
+            if (!(a[i1] < median))
                 i1--;
         }
     }
     if (stop - start == 1 || !b_swap)
         return;
     if (start < i0)
-        SortQuickSwap(start, i0);
+        quick_swap_sort(a, start, i0);
     if (i0 < stop)
-        SortQuickSwap(i0, stop);
+        quick_swap_sort(a, i0, stop);
 }
 
 } /* namespace lol */

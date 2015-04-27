@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -16,7 +17,7 @@ namespace lol
 {
 
 #define LOL_PRINTF_TOSTRING(type, ...) \
-template<> void type::printf() const        { Log::Debug(__VA_ARGS__); } \
+template<> void type::printf() const        { msg::debug(__VA_ARGS__); } \
 template<> String type::tostring() const    { return String::format(__VA_ARGS__); }
 
 LOL_PRINTF_TOSTRING(vec2,   "[ %6.6f %6.6f ]\n", x, y);
@@ -32,8 +33,8 @@ template<> void mat2::printf() const
 {
     mat2 const &p = *this;
 
-    Log::Debug("[ %6.6f %6.6f\n", p[0][0], p[1][0]);
-    Log::Debug("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+    msg::debug("[ %6.6f %6.6f\n", p[0][0], p[1][0]);
+    msg::debug("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
 }
 
 template<> String mat2::tostring() const
@@ -48,9 +49,9 @@ template<> void mat3::printf() const
 {
     mat3 const &p = *this;
 
-    Log::Debug("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]);
-    Log::Debug("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]);
-    Log::Debug("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
+    msg::debug("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]);
+    msg::debug("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]);
+    msg::debug("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
 template<> String mat3::tostring() const
@@ -66,13 +67,13 @@ template<> void mat4::printf() const
 {
     mat4 const &p = *this;
 
-    Log::Debug("[ %6.6f %6.6f %6.6f %6.6f\n",
+    msg::debug("[ %6.6f %6.6f %6.6f %6.6f\n",
                p[0][0], p[1][0], p[2][0], p[3][0]);
-    Log::Debug("  %6.6f %6.6f %6.6f %6.6f\n",
+    msg::debug("  %6.6f %6.6f %6.6f %6.6f\n",
                p[0][1], p[1][1], p[2][1], p[3][1]);
-    Log::Debug("  %6.6f %6.6f %6.6f %6.6f\n",
+    msg::debug("  %6.6f %6.6f %6.6f %6.6f\n",
                p[0][2], p[1][2], p[2][2], p[3][2]);
-    Log::Debug("  %6.6f %6.6f %6.6f %6.6f ]\n",
+    msg::debug("  %6.6f %6.6f %6.6f %6.6f ]\n",
                p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 

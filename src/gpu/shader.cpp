@@ -1,9 +1,9 @@
-//
+﻿//
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-//  This program is free software. It comes without any warranty, to
+//  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -269,9 +269,9 @@ Shader::Shader(String const &name,
                            &data->vert_table);
     if (FAILED(hr))
     {
-        Log::Error("failed to compile vertex shader %s: %s\n", name.C(),
+        msg::error("failed to compile vertex shader %s: %s\n", name.C(),
                    error_msg ? error_msg->GetBufferPointer() : "error");
-        Log::Error("shader source:\n%s\n", vert);
+        msg::error("shader source:\n%s\n", vert);
     }
     data->m_dev->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
                                     &data->vert_shader);
@@ -287,14 +287,14 @@ Shader::Shader(String const &name,
     glGetShaderiv(data->vert_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to compile vertex shader %s: %s\n",
+        msg::error("failed to compile vertex shader %s: %s\n",
                    name.C(), errbuf);
-        Log::Error("shader source:\n%s\n", shader_code.C());
+        msg::error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
-        Log::Debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
-        Log::Debug("shader source:\n%s\n", shader_code.C());
+        msg::debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
+        msg::debug("shader source:\n%s\n", shader_code.C());
     }
 #endif
 
@@ -306,9 +306,9 @@ Shader::Shader(String const &name,
                            &data->frag_table);
     if (FAILED(hr))
     {
-        Log::Error("failed to compile fragment shader %s: %s\n", name.C(),
+        msg::error("failed to compile fragment shader %s: %s\n", name.C(),
                    error_msg ? error_msg->GetBufferPointer() : "error");
-        Log::Error("shader source:\n%s\n", frag);
+        msg::error("shader source:\n%s\n", frag);
     }
     data->m_dev->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
                                    &data->frag_shader);
@@ -324,15 +324,15 @@ Shader::Shader(String const &name,
     glGetShaderiv(data->frag_id, GL_COMPILE_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to compile fragment shader %s: %s\n",
+        msg::error("failed to compile fragment shader %s: %s\n",
                    name.C(), errbuf);
-        Log::Error("shader source:\n%s\n", shader_code.C());
+        msg::error("shader source:\n%s\n", shader_code.C());
     }
     else if (len > 16)
     {
-        Log::Debug("compile log for fragment shader %s: %s\n",
+        msg::debug("compile log for fragment shader %s: %s\n",
                    name.C(), errbuf);
-        Log::Debug("shader source:\n%s\n", shader_code.C());
+        msg::debug("shader source:\n%s\n", shader_code.C());
     }
 #endif
 
@@ -366,11 +366,11 @@ Shader::Shader(String const &name,
     glGetProgramiv(data->prog_id, GL_LINK_STATUS, &status);
     if (status != GL_TRUE)
     {
-        Log::Error("failed to link program %s: %s\n", name.C(), errbuf);
+        msg::error("failed to link program %s: %s\n", name.C(), errbuf);
     }
     else if (len > 16)
     {
-        Log::Debug("link log for program %s: %s\n", name.C(), errbuf);
+        msg::debug("link log for program %s: %s\n", name.C(), errbuf);
     }
 
     GLint validated;
@@ -378,7 +378,7 @@ Shader::Shader(String const &name,
     glGetProgramiv(data->prog_id, GL_VALIDATE_STATUS, &validated);
     if (validated != GL_TRUE)
     {
-        Log::Error("failed to validate program %s\n", name.C());
+        msg::error("failed to validate program %s\n", name.C());
     }
 
     GLint num_attribs;
@@ -416,7 +416,7 @@ Shader::Shader(String const &name,
 
         if (usage == VertexUsage::MAX || index == -1)
         {
-            Log::Error("unable to parse attribute semantic from name: %s\n",
+            msg::error("unable to parse attribute semantic from name: %s\n",
                        name_buffer);
         }
         else
@@ -428,7 +428,7 @@ Shader::Shader(String const &name,
 #if _DEBUG
             if (data->attrib_locations.has_key(flags))
             {
-                Log::Error("error while parsing attribute semantics in %s\n",
+                msg::error("error while parsing attribute semantics in %s\n",
                            name.C());
             }
 #endif
@@ -459,7 +459,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
         /* Only spit an error once, we don’t need to flood the console. */
         if (!data->attrib_errors.has_key(ret.m_flags))
         {
-            Log::Error("attribute %s not found in shader %s\n",
+            msg::error("attribute %s not found in shader %s\n",
                        usage.ToString().C(), data->m_name.C());
             data->attrib_errors[ret.m_flags] = true;
         }

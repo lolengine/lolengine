@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -55,7 +56,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     status = Gdiplus::GdiplusStartup(&token, &input, nullptr);
     if (status != Gdiplus::Ok)
     {
-        Log::Error("error %d while initialising GDI+\n", status);
+        msg::error("error %d while initialising GDI+\n", status);
         return false;
     }
 
@@ -68,7 +69,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
         wchar_t *wpath = new wchar_t[len + 1];
         if (mbstowcs(wpath, fullpath.C(), len + 1) == (size_t)-1)
         {
-            Log::Error("invalid image name %s\n", fullpath.C());
+            msg::error("invalid image name %s\n", fullpath.C());
             delete[] wpath;
             continue;
         }
@@ -82,7 +83,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
             if (status != Gdiplus::Ok)
             {
                 if (status != Gdiplus::InvalidParameter)
-                    Log::Error("error %d loading %s\n",
+                    msg::error("error %d loading %s\n",
                                status, fullpath.C());
                 delete bitmap;
                 bitmap = nullptr;
@@ -96,7 +97,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
 
     if (!bitmap)
     {
-        Log::Error("could not load %s\n", path);
+        msg::error("could not load %s\n", path);
         return false;
     }
 
@@ -106,7 +107,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
                            PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
     {
-        Log::Error("could not lock bits in %s\n", path);
+        msg::error("could not lock bits in %s\n", path);
         delete bitmap;
         return false;
     }
@@ -149,7 +150,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     Gdiplus::GetImageEncodersSize(&num, &encoder_size);
     if (num == 0)
     {
-        Log::Error("no GDI+ image encoders found\n");
+        msg::error("no GDI+ image encoders found\n");
         return false;
     }
     Gdiplus::ImageCodecInfo *codecs
@@ -170,7 +171,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     wchar_t *wpath = new wchar_t[len + 1];
     if (mbstowcs(wpath, path, len + 1) == (size_t)-1)
     {
-        Log::Error("could not convert GDI+ filename '%s' to widechar\n", path);
+        msg::error("could not convert GDI+ filename '%s' to widechar\n", path);
         delete[] wpath;
         delete[] codecs;
         return false;
@@ -186,7 +187,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
     if (b->LockBits(&rect, (unsigned int)Gdiplus::ImageLockModeWrite,
                     PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
     {
-        Log::Error("could not lock GDI+ image bits\n");
+        msg::error("could not lock GDI+ image bits\n");
         delete b;
         delete[] wpath;
         delete[] codecs;
@@ -204,7 +205,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
 
     if (b->Save(wpath, &clsid, nullptr) != Gdiplus::Ok)
     {
-        Log::Error("could not save GDI+ image '%s'\n", path);
+        msg::error("could not save GDI+ image '%s'\n", path);
         delete[] wpath;
         delete[] codecs;
         delete b;

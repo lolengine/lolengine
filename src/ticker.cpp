@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -44,7 +44,7 @@ public:
                "still %d entities in ticker\n", nentities);
         ASSERT(m_autolist.count() == 0,
                "still %d autoreleased entities\n", m_autolist.count());
-        Log::Debug("%d frames required to quit\n", frame - quitframe);
+        msg::debug("%d frames required to quit\n", frame - quitframe);
 
 #if LOL_FEATURE_THREADS
         gametick.push(0);
@@ -150,7 +150,7 @@ int Ticker::Unref(Entity *entity)
 void TickerData::GameThreadMain()
 {
 #if LOL_BUILD_DEBUG
-    Log::Info("ticker game thread initialised\n");
+    msg::info("ticker game thread initialised\n");
 #endif
 
     for (;;)
@@ -167,7 +167,7 @@ void TickerData::GameThreadMain()
     drawtick.push(0);
 
 #if LOL_BUILD_DEBUG
-    Log::Info("ticker game thread terminated\n");
+    msg::info("ticker game thread terminated\n");
 #endif
 }
 #endif /* LOL_FEATURE_THREADS */
@@ -176,7 +176,7 @@ void TickerData::GameThreadMain()
 void TickerData::DrawThreadMain() /* unused */
 {
 #if LOL_BUILD_DEBUG
-    Log::Info("ticker draw thread initialised\n");
+    msg::info("ticker draw thread initialised\n");
 #endif
 
     for (;;)
@@ -191,7 +191,7 @@ void TickerData::DrawThreadMain() /* unused */
     }
 
 #if LOL_BUILD_DEBUG
-    Log::Info("ticker draw thread terminated\n");
+    msg::info("ticker draw thread terminated\n");
 #endif
 }
 #endif /* LOL_FEATURE_THREADS */
@@ -213,16 +213,16 @@ void TickerData::GameThreadTick()
     Profiler::Start(Profiler::STAT_TICK_GAME);
 
 #if 0
-    Log::Debug("-------------------------------------\n");
+    msg::debug("-------------------------------------\n");
     for (int g = 0; g < Entity::ALLGROUP_END; ++g)
     {
-        Log::Debug("%s Group %d\n",
+        msg::debug("%s Group %d\n",
                    (g < Entity::GAMEGROUP_END) ? "Game" : "Draw", g);
 
         for (int i = 0; i < data->m_list[g].count(); ++i)
         {
             Entity *e = data->m_list[g][i];
-            Log::Debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
+            msg::debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
                        e, e->GetName(), e->m_ref, e->m_destroy);
         }
     }
@@ -255,7 +255,7 @@ void TickerData::GameThreadTick()
     data->keepalive += data->deltatime;
     if (data->keepalive > 10.f)
     {
-        Log::Info("ticker keepalive: tick!\n");
+        msg::info("ticker keepalive: tick!\n");
         data->keepalive = 0.f;
     }
 #endif
@@ -276,7 +276,7 @@ void TickerData::GameThreadTick()
             if (e->m_ref)
             {
 #if !LOL_BUILD_RELEASE
-                Log::Error("poking %s\n", e->GetName());
+                msg::error("poking %s\n", e->GetName());
 #endif
                 e->m_ref--;
                 n++;
@@ -285,7 +285,7 @@ void TickerData::GameThreadTick()
 
 #if !LOL_BUILD_RELEASE
         if (n)
-            Log::Error("%d entities stuck after %d frames, poked %d\n",
+            msg::error("%d entities stuck after %d frames, poked %d\n",
                        data->nentities, data->quitdelay, n);
 #endif
 
@@ -397,14 +397,14 @@ void TickerData::GameThreadTick()
             {
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_IDLE)
-                    Log::Error("entity %s [%p] not idle for game tick\n",
+                    msg::error("entity %s [%p] not idle for game tick\n",
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
                 e->TickGame(data->deltatime);
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
-                    Log::Error("entity %s [%p] missed super game tick\n",
+                    msg::error("entity %s [%p] missed super game tick\n",
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
@@ -446,14 +446,14 @@ void TickerData::DrawThreadTick()
             {
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_IDLE)
-                    Log::Error("entity %s [%p] not idle for draw tick\n",
+                    msg::error("entity %s [%p] not idle for draw tick\n",
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
                 e->TickDraw(data->deltatime, Scene::GetScene(scene_idx));
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
-                    Log::Error("entity %s [%p] missed super draw tick\n",
+                    msg::error("entity %s [%p] missed super draw tick\n",
                                e->GetName(), e);
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif

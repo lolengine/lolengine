@@ -1,10 +1,10 @@
-//
+﻿//
 //  Base Lua class for Lua script loading
 //
-//  Copyright: (c) 2009-2015 Sam Hocevar <sam@hocevar.net>
-//                 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//  Copyright: © 2009—2015 Sam Hocevar <sam@hocevar.net>
+//             © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //
-//  This program is free software. It comes without any warranty, to
+//  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -29,7 +29,7 @@ class LuaBaseData
     static int LuaPanic(LuaState* l)
     {
         char const *message = lua_tostring(l, -1);
-        Log::Error("%s\n", message);
+        msg::error("%s\n", message);
         DebugAbort();
         return 0;
     }
@@ -59,18 +59,18 @@ class LuaBaseData
                 String s = f.ReadString();
                 f.Close();
 
-                Log::Debug("loading Lua file %s\n", candidate.C());
+                msg::debug("loading Lua file %s\n", candidate.C());
                 status = LuaDoCode(l, s);
                 break;
             }
         }
 
         if (status == LUA_ERRFILE)
-            Log::Error("could not find Lua file %s\n", filename);
+            msg::error("could not find Lua file %s\n", filename);
         else if (status == 1)
         {
             LuaString error; error.Get(l, -1);
-            Log::Error("Lua error %s\n", error().C());
+            msg::error("Lua error %s\n", error().C());
             lua_pop(l, 1);
         }
 

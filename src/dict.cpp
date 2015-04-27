@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -39,7 +40,7 @@ public:
     {
 #if !LOL_BUILD_RELEASE
         if (nentities)
-            Log::Error("still %i entities in dict\n", nentities);
+            msg::error("still %i entities in dict\n", nentities);
 #endif
     }
 
@@ -134,7 +135,7 @@ void Dict::RemoveSlot(Entity *entity)
         }
 
 #if !LOL_BUILD_RELEASE
-    Log::Error("removing unregistered entity %p (%s)\n",
+    msg::error("removing unregistered entity %p (%s)\n",
                entity, entity->GetName());
 #endif
 }

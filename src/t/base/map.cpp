@@ -1,7 +1,7 @@
+﻿//
+//  Lol Engine — unit tests
 //
-//  Lol Engine
-//
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -69,7 +69,7 @@ lolunit_declare_fixture(MapTest)
         }
         for (int i = 0; i < a.count(); i++)
             m[i] = i;
-        a.Shuffle();
+        a.shuffle();
         for (int i = 0; i < a.count(); i++)
             m.remove(a[i]);
     }
@@ -86,7 +86,7 @@ lolunit_declare_fixture(MapTest)
         }
         for (int i = 0; i < a.count(); i++)
             m[a[i]] = i;
-        a.Shuffle();
+        a.shuffle();
         for (int i = 0; i < a.count(); i++)
             m.remove(a[i]);
     }

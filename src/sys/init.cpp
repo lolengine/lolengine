@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -42,9 +43,9 @@ void Init(int argc, char *argv[],
 {
     using namespace std;
 
-    Log::Debug("project dir: “%s”\n", projectdir.C());
-    Log::Debug("solution dir: “%s”\n", solutiondir.C());
-    Log::Debug("source subdir: “%s”\n", sourcesubdir.C());
+    msg::debug("project dir: “%s”\n", projectdir.C());
+    msg::debug("solution dir: “%s”\n", solutiondir.C());
+    msg::debug("source subdir: “%s”\n", sourcesubdir.C());
 
     /*
      * Retrieve binary directory, defaulting to no directory on Android
@@ -138,9 +139,9 @@ void Init(int argc, char *argv[],
         got_rootdir = true;
     }
 
-    Log::Debug("binary dir: “%s”\n", binarydir.C());
+    msg::debug("binary dir: “%s”\n", binarydir.C());
     for (int i = 0; i < data_dir.count(); ++i)
-        Log::Debug("data dir %d/%d: “%s”\n", i + 1, data_dir.count(),
+        msg::debug("data dir %d/%d: “%s”\n", i + 1, data_dir.count(),
                    data_dir[i].C());
 }
 

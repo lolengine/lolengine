@@ -1,11 +1,12 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -74,7 +75,7 @@ static int sdl12_to_scancode(int ch, int sc)
         case id: return String(str);
 #   include "input/keys.h"
         default:
-            Log::Error("ScanCodeToText unknown scancode %0d\n", sc);
+            msg::error("ScanCodeToText unknown scancode %0d\n", sc);
         }
         return String();
     }
@@ -87,7 +88,7 @@ static int sdl12_to_scancode(int ch, int sc)
         case id: return String(#name);
 #   include "input/keys.h"
         default:
-            Log::Error("ScanCodeToText unknown scancode %0d\n", sc);
+            msg::error("ScanCodeToText unknown scancode %0d\n", sc);
         }
         return String();
     }
@@ -290,7 +291,7 @@ void SdlInputData::Tick(float seconds)
                     }
                     m_keyboard->SetKey(sc2, !m_keyboard->GetKey(sc2));
                     /* DEBUG STUFF
-                    Log::Info("Repeat: 0x%02x : %s/%s/%s/%i\n",
+                    msg::info("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
                         m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
                     */
@@ -317,14 +318,14 @@ void SdlInputData::Tick(float seconds)
                         m_keyboard->AddText(str);
                     }
                     /* DEBUG STUFF
-                    Log::Info("Repeat: 0x%02x : %s/%s/%s/%i\n",
+                    msg::info("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
                         event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
                     */
                 }
                 /* DEBUG STUFF
                 else
-                    Log::Error("unknown keypress (sym 0x%02x, scancode %0d)\n",
+                    msg::error("unknown keypress (sym 0x%02x, scancode %0d)\n",
                                 event.key.keysym.sym, event.key.keysym.scancode);
                 */
 #   endif
