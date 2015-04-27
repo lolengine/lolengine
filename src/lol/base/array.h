@@ -286,6 +286,15 @@ public:
         return tmp;
     }
 
+    inline void swap(ptrdiff_t i, ptrdiff_t j)
+    {
+        ASSERT(i >= 0 && i < m_count && j >= 0 && j < m_count,
+               "cannot swap elements %lld and %lld in array of size %lld",
+               (long long int)i, (long long int)j, (long long int)m_count);
+
+        std::swap(m_data[i], m_data[j]);
+    }
+
     void remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
         ASSERT(todelete >= 0);

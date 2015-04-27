@@ -1,13 +1,14 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright: © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//             © 2013—2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//             © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the Do What The Fuck You Want To
+//  Public License, Version 2, as published by Sam Hocevar. See
+//  http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -94,7 +95,7 @@ protected:
         for (int i = 0; i < N; ++i)
             for (int j = i + 1; j < N; ++j)
                 if (pos[traversal_order[i]] < pos[traversal_order[j]])
-                    std::swap(traversal_order[i], traversal_order[j]);
+                    traversal_order.swap(i, j);
 
 
         /* Get the position in world coordinates, too */
