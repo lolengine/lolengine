@@ -1,12 +1,13 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright: © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the Do What The Fuck You Want To
-//  Public License, Version 2, as published by Sam Hocevar. See
-//  http://www.wtfpl.net/ for more details.
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -95,7 +96,7 @@ void msg::helper(MessageType type, char const *fmt, va_list ap)
     String buf = String(prefix[(int)type]) + ": " + String::vformat(fmt, ap);
 
     array<WCHAR> widechar;
-    widechar.Resize(buf.count() + 1);
+    widechar.resize(buf.count() + 1);
     MultiByteToWideChar(CP_UTF8, 0, buf.C(), buf.count() + 1, widechar.data(), widechar.count());
     OutputDebugStringW(widechar.data());
 #   else

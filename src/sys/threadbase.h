@@ -39,6 +39,15 @@
 #   undef far /* Fuck Microsoft again */
 #endif
 
+/* XXX: workaround for missing std::thread in mingw */
+#if _GLIBCXX_MUTEX && !_GLIBCXX_HAS_GTHREADS && _WIN32
+#   include "mingw.thread.h"
+#   include "mingw.mutex.h"
+#   include "mingw.condition_variable.h"
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
+
 namespace lol
 {
 

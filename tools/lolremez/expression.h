@@ -1,5 +1,5 @@
 //
-//  LolRemez - Remez algorithm implementation
+//  LolRemez — Remez algorithm implementation
 //
 //  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //
@@ -291,7 +291,7 @@ private:
                         star<sor<r_add, r_sub>>> {};
 
     // r_stmt <- r_expr <end>
-    struct r_stmt : seq<_, r_expr, _, eof> {};
+    struct r_stmt : seq<_, r_expr, _, pegtl::eof> {};
 };
 
 } /* namespace grammar */
