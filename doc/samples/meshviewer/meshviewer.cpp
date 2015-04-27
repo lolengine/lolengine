@@ -172,11 +172,16 @@ void MeshViewer::Start()
     //Camera setup
     m_camera = new Camera();
     m_camera->SetView(vec3(10.f, 10.f, 10.f), vec3::zero, vec3::axis_y);
-    m_camera->SetProjection(40.f, .0001f, 2000.f);
+    m_camera->SetProjection(40.f, .0001f, 200.f);
     //m_camera->SetProjection(90.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     //m_camera->UseShift(true);
     Scene& scene = Scene::GetScene();
     scene.PushCamera(m_camera);
+    scene.SetTileCam(0);
+
+    //Text setup
+    m_entities << (m_text = new Text("", "data/font/ascii.png"));
+    m_text->SetPos(vec3(0, 0 /*(float)-m_text->GetFontSize().y*/, 0));
 
 #if HAS_INPUT
     InputProfile& ip = m_profile;
@@ -374,6 +379,8 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
     if (m_menu_mesh_idx >= 0 && m_menu_mesh_idx < m_objs.count())
         m_objs[m_menu_mesh_idx]->TickDraw(seconds, scene);
 
+    m_text->SetText(String("CECI EST UN TEST\n"));
+
     //Draw gizmos & grid
     Debug::DrawGizmo(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
     Debug::DrawSetupColor(Color::white);
@@ -394,11 +401,11 @@ int main(int argc, char **argv)
         new MeshViewer(argv[1]);
     else
         new MeshViewer();
-    /*
+
+    ////DEBUG TEST
     //SceneDisplay* display = new ApplicationDisplay("newDisplay", ivec2(800, 600));
     //SceneDisplay::Add(display);
     //Scene::GetScene(Scene::GetCount() - 1).SetDisplay(display);
-    */
 
     app.Run();
 

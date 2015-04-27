@@ -251,6 +251,7 @@ private:
     bool                    m_first_tick = false;
     InputProfile            m_profile;
     Camera*                 m_camera = nullptr;
+    Text*                   m_text = nullptr;
 
     //ImGui stuff
     bool                    m_menu_cam_useage = true;

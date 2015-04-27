@@ -75,6 +75,10 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     }
 
 #if USE_SDL
+    /* This seems to fix the swap context bug.
+     * However, perfs warning have been may occur. */
+    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+
     data->m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         window_size.x, window_size.y,
