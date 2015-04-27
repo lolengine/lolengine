@@ -11,7 +11,6 @@
 ///
 
 #include <assert.h>
-#include <pthread.h>
 
 #include <algorithm>
 #include <string>

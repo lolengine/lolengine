@@ -99,7 +99,7 @@ AC_ARG_ENABLE(doc,
 
 dnl  Common C headers
 AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h math.h)
-AC_CHECK_HEADERS(fastmath.h pthread.h libutil.h util.h pty.h glob.h unistd.h io.h)
+AC_CHECK_HEADERS(fastmath.h libutil.h util.h pty.h glob.h unistd.h io.h)
 AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h sys/time.h sys/types.h)
