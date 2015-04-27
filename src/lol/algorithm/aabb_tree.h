@@ -34,14 +34,14 @@ void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
                array<TE *, int, vec4> &elements,
                array<int, TBB> &leaves, int children, vec4 color)
 {
-    boxes.Push(tree->GetAABB(), Color::white);
-    leaves.Push(0, boxes.Last().m1);
-    while (leaves.Count() > 0)
+    boxes.push(tree->GetAABB(), Color::white);
+    leaves.push(0, boxes.last().m1);
+    while (leaves.count() > 0)
     {
-        for (int j = 0; j < tree->GetTree()[leaves[0].m1].m_elements.Count(); j++)
+        for (int j = 0; j < tree->GetTree()[leaves[0].m1].m_elements.count(); j++)
         {
             bool done = false;
-            for (int k = 0; k < elements.Count(); k++)
+            for (int k = 0; k < elements.count(); k++)
             {
                 if (elements[k].m1 == tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element)
                 {
@@ -51,7 +51,7 @@ void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
                 }
             }
             if (!done)
-                elements.Push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, Color::red);
+                elements.push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, Color::red);
         }
 
         for (int i = 0; i < children; i++)
@@ -59,11 +59,11 @@ void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
             if (tree->GetTree()[leaves[0].m1].m_children[i] != 0)
             {
                 TBB bbox = tree->GetSubAABB(leaves[0].m2, i);
-                leaves.Push(tree->GetTree()[leaves[0].m1].m_children[i], bbox);
-                boxes.Push(bbox, color);
+                leaves.push(tree->GetTree()[leaves[0].m1].m_children[i], bbox);
+                boxes.push(bbox, color);
             }
         }
-        leaves.Remove(0);
+        leaves.remove(0);
     }
 }
 
@@ -79,14 +79,14 @@ void Draw(Quadtree<TE>* tree, vec4 color)
 
     vec3 off = vec3(0.0f, 0.1f, 0.0f);
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
-    while (boxes.Count() > 0)
+    while (boxes.count() > 0)
     {
         Debug::DrawBox(vec3(boxes[0].m1.aa.x, tree->m_debug_y_offset, boxes[0].m1.aa.y),
                        vec3(boxes[0].m1.bb.x, tree->m_debug_y_offset, boxes[0].m1.bb.y),
                        boxes[0].m2);
-        boxes.Remove(0);
+        boxes.remove(0);
     }
-    while (elements.Count() > 0)
+    while (elements.count() > 0)
     {
         while (elements[0].m2 > 0)
         {
@@ -95,7 +95,7 @@ void Draw(Quadtree<TE>* tree, vec4 color)
                            elements[0].m3);
             elements[0].m2--;
         }
-        elements.Remove(0);
+        elements.remove(0);
     }
 }
 //--
@@ -110,16 +110,16 @@ void Draw(Octree<TE>* tree, vec4 color)
 
     vec3 off = vec3(0.0f, 0.1f, 0.0f);
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
-    while (boxes.Count() > 0)
+    while (boxes.count() > 0)
     {
         //float size = boxes[0].m1.bb.x - boxes[0].m1.aa.x;
         Debug::DrawBox(vec3(boxes[0].m1.aa.x, boxes[0].m1.aa.y, boxes[0].m1.aa.z) /* + off * (m_size.x / size) */,
                         vec3(boxes[0].m1.bb.x, boxes[0].m1.bb.y, boxes[0].m1.bb.z) /* + off * (m_size.x / size) */,
                         boxes[0].m2);
         //off += add;
-        boxes.Remove(0);
+        boxes.remove(0);
     }
-    while (elements.Count() > 0)
+    while (elements.count() > 0)
     {
         while (elements[0].m2 > 0)
         {
@@ -128,7 +128,7 @@ void Draw(Octree<TE>* tree, vec4 color)
                             elements[0].m3);
             elements[0].m2--;
         }
-        elements.Remove(0);
+        elements.remove(0);
     }
 }
 //--
@@ -213,7 +213,7 @@ private:
     void RemoveElement(TE* element)
     {
         int idx = INDEX_NONE;
-        for (int i = 0; i < m_elements.Count(); ++i)
+        for (int i = 0; i < m_elements.count(); ++i)
             if (m_elements[i].m_element == element)
                 idx = i;
 
@@ -221,8 +221,8 @@ private:
             return;
 
         //Remove item from tree leaves
-        for (int i = 0; i < m_elements[idx].m_leaves.Count(); i++)
-            m_tree[m_elements[idx].m_leaves[i]].m_elements.RemoveItem(idx);
+        for (int i = 0; i < m_elements[idx].m_leaves.count(); i++)
+            m_tree[m_elements[idx].m_leaves[i]].m_elements.removeItem(idx);
 
         //Try leaves cleanup
         CleanupEmptyLeaves();
@@ -230,7 +230,7 @@ private:
     //--
     int AddElement(TE* element)
     {
-        for (int i = 0; i < m_elements.Count(); ++i)
+        for (int i = 0; i < m_elements.count(); ++i)
             if (m_elements[i].m_element == element)
                 return i;
 
@@ -238,15 +238,15 @@ private:
         new_element.m_element = element;
         new_element.m_leaves = array<int>();
         m_elements << new_element;
-        return (int)m_elements.Count() - 1;
+        return m_elements.count() - 1;
     }
     //--
     int AddLeaf(int parent)
     {
-        int idx = (int)m_tree.Count();
-        if (m_free_leaves.Count())
+        int idx = m_tree.count();
+        if (m_free_leaves.count())
         {
-            idx = m_free_leaves.Pop();
+            idx = m_free_leaves.pop();
             m_tree[idx] = NodeLeaf(parent);
         }
         else
@@ -270,8 +270,8 @@ private:
                 }
                 else
                 {
-                    for (int j = 0; j < node.m_elements.Count(); j++)
-                        elements.PushUnique(m_elements[node.m_elements[j]].m_element);
+                    for (int j = 0; j < node.m_elements.count(); j++)
+                        elements.push_unique(m_elements[node.m_elements[j]].m_element);
                     result = true;
                 }
             }
@@ -296,29 +296,29 @@ private:
                 return true;
 
             //Too much elements, we need to re-dispatch the elements
-            if (m_tree[leaf].m_elements.Count() + 1 > m_max_element &&
+            if (m_tree[leaf].m_elements.count() + 1 > m_max_element &&
                 depth < m_max_depth)
             {
                 //Extract elements
                 array<int> elements = m_tree[leaf].m_elements;
-                elements.PushUnique(AddElement(element));
-                m_tree[leaf].m_elements.Empty();
+                elements.push_unique(AddElement(element));
+                m_tree[leaf].m_elements.empty();
                 //Add children
                 for (size_t j = 0; j < child_nb; ++j)
                     m_tree[leaf].m_children[j] = AddLeaf(leaf);
                 //Re-run extracted elements
-                while (elements.Count())
+                while (elements.count())
                 {
                     RegisterElement(m_elements[elements[0]].m_element, leaf, leaf_bb, depth);
-                    elements.Remove(0);
+                    elements.remove(0);
                 }
             }
             //else add to list.
             else
             {
                 int idx = AddElement(element);
-                m_elements[idx].m_leaves.PushUnique(leaf);
-                m_tree[leaf].m_elements.PushUnique(idx);
+                m_elements[idx].m_leaves.push_unique(leaf);
+                m_tree[leaf].m_elements.push_unique(idx);
             }
             return true;
         }
@@ -331,8 +331,8 @@ public:
     bool                FindElements(const TB& bbox, array<TE*>& elements)  { return TestLeaf(0, GetAABB(), bbox, elements); }
     void                Clear()
     {
-        m_tree.Empty();
-        m_elements.Empty();
+        m_tree.empty();
+        m_elements.empty();
     }
 
     //--

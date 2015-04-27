@@ -18,7 +18,7 @@ namespace lol
 //-----------------------------------------------------------------------------
 void EasyMesh::AddVertex(vec3 const &coord)
 {
-    m_vert.Push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->ColorA()));
+    m_vert.push(VertexData(coord, vec3(0.f, 1.f, 0.f), BD()->ColorA()));
     m_state = MeshRender::NeedConvert;
 }
 
@@ -33,7 +33,7 @@ void EasyMesh::AddDupVertex(int i)
 void EasyMesh::AddLerpVertex(int i, int j, float alpha) { AddLerpVertex(m_vert[i], m_vert[j], alpha); }
 void EasyMesh::AddLerpVertex(VertexData const &vi, VertexData const &vj, float alpha)
 {
-    m_vert.Push(GetLerpVertex(vi, vj, alpha));
+    m_vert.push(GetLerpVertex(vi, vj, alpha));
     m_state = MeshRender::NeedConvert;
 }
 
@@ -55,7 +55,7 @@ void EasyMesh::AddQuad(int i1, int i2, int i3, int i4, int base, bool duplicate)
 {
     if (duplicate)
     {
-        int vbase = (int)m_vert.Count();
+        int vbase = m_vert.count();
         AddDupVertex(base + i1);
         AddDupVertex(base + i2);
         AddDupVertex(base + i3);
@@ -68,7 +68,7 @@ void EasyMesh::AddQuad(int i1, int i2, int i3, int i4, int base, bool duplicate)
         if (BD()->IsEnabled(MeshBuildOperation::QuadWeighting) &&
             !BD()->IsEnabled(MeshBuildOperation::IgnoreQuadWeighting))
         {
-            int i5 = (int)m_vert.Count();
+            int i5 = m_vert.count();
             AddLerpVertex(GetLerpVertex(base + i1, base + i3, .5f),
                           GetLerpVertex(base + i2, base + i4, .5f), .5f);
             m_indices << i1 + base;
@@ -105,9 +105,9 @@ void EasyMesh::AddTriangle(int i1, int i2, int i3, int base, bool duplicate)
 {
     if (duplicate)
     {
-        m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i1);
-        m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i2);
-        m_indices << (uint16_t)m_vert.Count(); AddDupVertex(base + i3);
+        m_indices << (uint16_t)m_vert.count(); AddDupVertex(base + i1);
+        m_indices << (uint16_t)m_vert.count(); AddDupVertex(base + i2);
+        m_indices << (uint16_t)m_vert.count(); AddDupVertex(base + i3);
     }
     else
     {
@@ -126,7 +126,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
         return;
 
     array< array<vec3> > normals;
-    normals.Resize(m_vert.Count());
+    normals.resize(m_vert.count());
     for (int i = 0; i < vcount; i += 3)
     {
         vec3 v0 = m_vert[m_indices[start + i + 2]].m_coord
@@ -139,20 +139,20 @@ void EasyMesh::ComputeNormals(int start, int vcount)
             normals[m_indices[start + i + j]] << n;
     }
 
-    for (int i = 0; i < normals.Count(); i++)
+    for (int i = 0; i < normals.count(); i++)
     {
-        if (normals[i].Count() > 0)
+        if (normals[i].count() > 0)
         {
             //remove doubles
-            for (int j = 0; j < normals[i].Count(); ++j)
-                for (int k = j + 1; k < normals[i].Count(); ++k)
+            for (int j = 0; j < normals[i].count(); ++j)
+                for (int k = j + 1; k < normals[i].count(); ++k)
                     if (1.f - dot(normals[i][k], normals[i][j]) < .00001f)
-                        normals[i].Remove(k--);
+                        normals[i].remove(k--);
 
             vec3 newv = vec3::zero;
-            for (int j = 0; j < normals[i].Count(); ++j)
+            for (int j = 0; j < normals[i].count(); ++j)
                 newv += normals[i][j];
-            m_vert[i].m_normal = normalize(newv / (float)normals[i].Count());
+            m_vert[i].m_normal = normalize(newv / (float)normals[i].count());
         }
     }
 }
@@ -161,10 +161,10 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 void EasyMesh::VerticesCleanup()
 {
     array<int> vert_ids;
-    vert_ids.Resize(m_vert.Count(), 0);
+    vert_ids.resize(m_vert.count(), 0);
 
     //1: Remove triangles with two vertices on each other
-    for (int i = 0; i < m_indices.Count(); i += 3)
+    for (int i = 0; i < m_indices.count(); i += 3)
     {
         bool remove = false;
         for (int j = 0; !remove && j < 3; ++j)
@@ -172,7 +172,7 @@ void EasyMesh::VerticesCleanup()
                 remove = true;
         if (remove)
         {
-            m_indices.RemoveSwap(i, 3);
+            m_indices.remove_swap(i, 3);
             i -= 3;
         }
         else
@@ -186,8 +186,8 @@ void EasyMesh::VerticesCleanup()
     //2: Remove all unused vertices
     array<VertexData> old_vert = m_vert;
     int shift = 0;
-    m_vert.Empty();
-    for (int i = 0; i < vert_ids.Count(); ++i)
+    m_vert.empty();
+    for (int i = 0; i < vert_ids.count(); ++i)
     {
         //Unused vertex, update the shift quantity instead of keeping it.
         if (vert_ids[i] == 0)
@@ -199,7 +199,7 @@ void EasyMesh::VerticesCleanup()
     }
 
     //3: Update the indices
-    for (int i = 0; i < m_indices.Count(); ++i)
+    for (int i = 0; i < m_indices.count(); ++i)
         m_indices[i] -= vert_ids[m_indices[i]];
 }
 
@@ -214,11 +214,11 @@ void EasyMesh::VerticesMerge()
 
     //1: Crunch all vertices in the dictionnary
     VertexDictionnary vert_dict;
-    for (int i = m_cursors.Last().m1; i < m_vert.Count(); i++)
+    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
         vert_dict.RegisterVertex(i, m_vert[i].m_coord);
 
     //2: Update the indices
-    for (int i = 0; i < m_indices.Count(); ++i)
+    for (int i = 0; i < m_indices.count(); ++i)
     {
         int master = vert_dict.FindVertexMaster(m_indices[i]);
         if (master >= 0)
@@ -240,33 +240,33 @@ void EasyMesh::VerticesSeparate()
 
     array< array<int> > new_ids;
     array<int> vert_ids;
-    vert_ids.Resize(m_vert.Count(), 0);
+    vert_ids.resize(m_vert.count(), 0);
 
     //1: Mark all used vertices
-    for (int i = 0; i < m_indices.Count(); ++i)
+    for (int i = 0; i < m_indices.count(); ++i)
         vert_ids[m_indices[i]]++;
 
     //2: Update the vertices
-    int vbase = m_cursors.Last().m1;
-    int vcount = (int)m_vert.Count();
-    new_ids.Resize(vcount);
+    int vbase = m_cursors.last().m1;
+    int vcount = m_vert.count();
+    new_ids.resize(vcount);
     for (int i = vbase; i < vcount; i++)
     {
         while (vert_ids[i] > 1)
         {
             //Add duplicate
-            new_ids[i] << (int)m_vert.Count();
+            new_ids[i] << m_vert.count();
             AddDupVertex(i);
             vert_ids[i]--;
         }
     }
 
     //3: Update the indices
-    for (int i = 0; i < m_indices.Count(); ++i)
+    for (int i = 0; i < m_indices.count(); ++i)
     {
-        if (new_ids[m_indices[i]].Count())
+        if (new_ids[m_indices[i]].count())
         {
-            int j = new_ids[m_indices[i]].Pop();
+            int j = new_ids[m_indices[i]].pop();
             m_indices[i] = j;
         }
     }
@@ -283,8 +283,8 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     VertexDictionnary vert_dict;
     array<int> tri_list;
 
-    tri_list.Reserve(m_indices.Count() - m_cursors.Last().m2);
-    for (int i = m_cursors.Last().m2; i < m_indices.Count(); i++)
+    tri_list.Reserve(m_indices.count() - m_cursors.last().m2);
+    for (int i = m_cursors.last().m2; i < m_indices.count(); i++)
     {
         vert_dict.RegisterVertex(m_indices[i], m_vert[m_indices[i]].m_coord);
         tri_list << m_indices[i];
@@ -293,11 +293,11 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     //full triangle count
     array<int> tri_done;
     array<int> tri_check;
-    int tri_count = (m_indices.Count() - m_cursors.Last().m2) / 3;
+    int tri_count = (m_indices.count() - m_cursors.last().m2) / 3;
 
     tri_check << tri_list[0];
 
-    while (tri_check.Count())
+    while (tri_check.count())
     {
         int cur_tri = tri_check[0];
         int v[3]   = { tri_list[cur_tri + uv_offset % 3], tri_list[cur_tri + (1 + uv_offset) % 3], tri_list[cur_tri + (2 + uv_offset) % 3] };
@@ -396,7 +396,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
                 //Deactivation is a test.
                 matching_vert << v[i];
                 vert_dict.FindMatchingVertices(v[i], matching_vert);
-                for (int j = 0; j < matching_vert.Count(); j++)
+                for (int j = 0; j < matching_vert.count(); j++)
                     if (m_vert[matching_vert[j]].m_texcoord.xy == vec2(-1.0f))
                         m_vert[matching_vert[j]].m_texcoord = vec4(abs(uv[i]), m_vert[matching_vert[j]].m_texcoord.zw);
 #else
@@ -405,7 +405,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             }
 
             tri_done << cur_tri;
-            tri_check.Remove(0);
+            tri_check.remove(0);
 
             //Get connected triangles and go from there.
             for (int j = 0; j < 3; j++)
@@ -433,22 +433,22 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             //uv[2] = vec2(-1.0f);
             /*
             bool tri_present = false;
-            for (int j = 0; j < tri_done.Count(); j++)
+            for (int j = 0; j < tri_done.count(); j++)
                 if (cur_tri == tri_done[j])
                     tri_present = true;
             if (!tri_present)
                 tri_done << cur_tri;
-            tri_check.Remove(0);
+            tri_check.remove(0);
             */
         }
 
-        if (tri_check.Count() == 0 && tri_done.Count() != tri_count)
+        if (tri_check.count() == 0 && tri_done.count() != tri_count)
         {
             //look for unset triangle
-            for (int i = 0; !tri_check.Count() && i < tri_list.Count(); i += 3)
+            for (int i = 0; !tri_check.count() && i < tri_list.count(); i += 3)
             {
                 bool tri_present = false;
-                for (int j = 0; j < tri_done.Count(); j++)
+                for (int j = 0; j < tri_done.count(); j++)
                     if (i == tri_done[j])
                         tri_present = true;
                 if (!tri_present)
@@ -476,25 +476,26 @@ void EasyMesh::SetTexCoordData2(vec2 const &new_offset, vec2 const &new_scale)
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertNormal(vec3 const &normal)
 {
-    m_vert[m_vert.Count() - 1].m_normal = normal;
+    m_vert.last().m_normal = normal;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertColor(vec4 const &color)
 {
-    m_vert[m_vert.Count() - 1].m_color = color;
+    m_vert.last().m_color = color;
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertTexCoord(vec2 const &texcoord)
 {
-    m_vert[m_vert.Count() - 1].m_texcoord = vec4(texcoord, m_vert[m_vert.Count() - 1].m_texcoord.zw);
+    m_vert.last().m_texcoord = vec4(texcoord, m_vert.last().m_texcoord.zw);
 }
 
 //-----------------------------------------------------------------------------
 void EasyMesh::SetCurVertTexCoord2(vec2 const &texcoord)
 {
-    m_vert[m_vert.Count() - 1].m_texcoord = vec4(m_vert[m_vert.Count() - 1].m_texcoord.xy, texcoord);
+    m_vert.last().m_texcoord = vec4(m_vert.last().m_texcoord.xy, texcoord);
 }
 
 } /* namespace lol */
+

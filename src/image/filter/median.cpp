@@ -164,7 +164,7 @@ Image Image::Median(array2d<float> const &kernel) const
     else
 #endif
     {
-        ivec2 const ksize = (ivec2)kernel.GetSize();
+        ivec2 const ksize = kernel.size();
         array2d<vec3> list(ksize);
 
         vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();

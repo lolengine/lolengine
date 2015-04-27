@@ -67,15 +67,15 @@ public:
         m_autorot = true;
 
         /* Front vertices/colors */
-        m_mesh.Push(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
-        m_mesh.Push(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
-        m_mesh.Push(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
-        m_mesh.Push(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
+        m_mesh.push(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
+        m_mesh.push(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
+        m_mesh.push(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
+        m_mesh.push(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
         /* Back */
-        m_mesh.Push(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
-        m_mesh.Push(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
-        m_mesh.Push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
-        m_mesh.Push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
+        m_mesh.push(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
+        m_mesh.push(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
+        m_mesh.push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
+        m_mesh.push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
 
         m_faces_indices << 0 << 1 << 2 << 2 << 3 << 0;
         m_faces_indices << 1 << 5 << 6 << 6 << 2 << 1;
@@ -136,7 +136,7 @@ public:
                     m_yaw_angle += seconds * 20;
             }
 
-            m_text->SetText(String::Printf(
+            m_text->SetText(String::format(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
                 m_mouse->GetCursor(0).x, m_mouse->GetCursor(0).y,
                 m_mouse->GetCursorPixel(0).x, m_mouse->GetCursorPixel(0).y));
@@ -170,19 +170,19 @@ public:
               new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,
                                                             VertexUsage::Color));
 
-            m_vbo = new VertexBuffer(m_mesh.Bytes());
+            m_vbo = new VertexBuffer(m_mesh.bytes());
             void *mesh = m_vbo->Lock(0, 0);
-            memcpy(mesh, &m_mesh[0], m_mesh.Bytes());
+            memcpy(mesh, &m_mesh[0], m_mesh.bytes());
             m_vbo->Unlock();
 
-            m_lines_ibo = new IndexBuffer(m_lines_indices.Bytes());
+            m_lines_ibo = new IndexBuffer(m_lines_indices.bytes());
             void *indices = m_lines_ibo->Lock(0, 0);
-            memcpy(indices, &m_lines_indices[0], m_lines_indices.Bytes());
+            memcpy(indices, &m_lines_indices[0], m_lines_indices.bytes());
             m_lines_ibo->Unlock();
 
-            m_faces_ibo = new IndexBuffer(m_faces_indices.Bytes());
+            m_faces_ibo = new IndexBuffer(m_faces_indices.bytes());
             indices = m_faces_ibo->Lock(0, 0);
-            memcpy(indices, &m_faces_indices[0], m_faces_indices.Bytes());
+            memcpy(indices, &m_faces_indices[0], m_faces_indices.bytes());
             m_faces_ibo->Unlock();
 
             /* FIXME: this object never cleans up */
@@ -198,13 +198,13 @@ public:
         m_shader->SetUniform(m_mvp, m_matrix);
         m_lines_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, 0, 0,
-                                    (int)m_mesh.Count(), 0, (int)m_lines_indices.Count());
+                                    m_mesh.count(), 0, m_lines_indices.count());
         m_lines_ibo->Unbind();
 
         m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
         m_faces_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
-                                    (int)m_mesh.Count(), 0, (int)m_faces_indices.Count());
+                                    m_mesh.count(), 0, m_faces_indices.count());
         m_faces_ibo->Unbind();
 
         m_vdecl->Unbind();

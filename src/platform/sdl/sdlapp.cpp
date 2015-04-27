@@ -198,13 +198,14 @@ void SdlAppDisplay::Disable()
 }
 
 #if USE_SDL
-ptrdiff_t SceneDisplay::GetPhysicalCount()
+int SceneDisplay::GetPhysicalCount()
 {
-    return (ptrdiff_t)SDL_GetNumVideoDisplays();
+    return SDL_GetNumVideoDisplays();
 }
-const char* SceneDisplay::GetPhysicalName(ptrdiff_t index)
+
+const char* SceneDisplay::GetPhysicalName(int index)
 {
-    return SDL_GetDisplayName((int)index);
+    return SDL_GetDisplayName(index);
 }
 #elif USE_OLD_SDL && USE_D3D9
 //  Not implemented

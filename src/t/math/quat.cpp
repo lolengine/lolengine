@@ -20,16 +20,16 @@ lolunit_declare_fixture(QuaternionTest)
     void SetUp()
     {
         /* Generate identity quaternions */
-        m_vectorpairs.Push(vec3::axis_x, vec3::axis_x);
-        m_vectorpairs.Push(2.f * vec3::axis_x, 3.f * vec3::axis_x);
+        m_vectorpairs.push(vec3::axis_x, vec3::axis_x);
+        m_vectorpairs.push(2.f * vec3::axis_x, 3.f * vec3::axis_x);
 
         /* Generate 90-degree rotations */
-        m_vectorpairs.Push(vec3::axis_x, vec3::axis_y);
-        m_vectorpairs.Push(2.f * vec3::axis_x, 3.f * vec3::axis_y);
+        m_vectorpairs.push(vec3::axis_x, vec3::axis_y);
+        m_vectorpairs.push(2.f * vec3::axis_x, 3.f * vec3::axis_y);
 
         /* Generate 180-degree rotations */
-        m_vectorpairs.Push(vec3::axis_x, -vec3::axis_x);
-        m_vectorpairs.Push(2.f * vec3::axis_x, -3.f * vec3::axis_x);
+        m_vectorpairs.push(vec3::axis_x, -vec3::axis_x);
+        m_vectorpairs.push(2.f * vec3::axis_x, -3.f * vec3::axis_x);
 
         /* Fill array with random test values */
         for (int i = 0; i < 10000; ++i)
@@ -38,7 +38,7 @@ lolunit_declare_fixture(QuaternionTest)
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
             vec3 v2 = lol::pow(10.f, rand(-5.f, 5.f))
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
-            m_vectorpairs.Push(v1, v2);
+            m_vectorpairs.push(v1, v2);
         }
     }
 

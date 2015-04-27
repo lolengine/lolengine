@@ -18,6 +18,8 @@
 
 using namespace lol;
 
+#define Line(x) ((x) + "\n")
+
 class ShaderBuilderDemo : public WorldEntity
 {
 public:

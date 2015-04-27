@@ -42,10 +42,10 @@ struct RayCastResult
     }
     void Reset()
     {
-        m_collider_list.Empty();
-        m_hit_normal_list.Empty();
-        m_hit_point_list.Empty();
-        m_hit_fraction_list.Empty();
+        m_collider_list.empty();
+        m_hit_normal_list.empty();
+        m_hit_point_list.empty();
+        m_hit_fraction_list.empty();
     }
 
     array<EasyPhysic*>        m_collider_list;
@@ -376,14 +376,7 @@ private:
         else
         {
             NewEP->m_owner_simulation = NULL;
-            for (int i = 0; i < SearchList->Count(); ++i)
-            {
-                if ((*SearchList)[i] == NewEP)
-                {
-                    SearchList->Remove(i--);
-                    break;
-                }
-            }
+            SearchList->remove_item(NewEP);
         }
     }
     void ObjectRegistration(bool AddObject, EasyConstraint* NewEC)
@@ -399,14 +392,7 @@ private:
         else
         {
             NewEC->m_owner_simulation = NULL;
-            for (int i = 0; i < SearchList->Count(); ++i)
-            {
-                if ((*SearchList)[i] == NewEC)
-                {
-                    SearchList->Remove(i--);
-                    break;
-                }
-            }
+            SearchList->remove_item(NewEC);
         }
     }
 

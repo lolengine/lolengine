@@ -30,7 +30,7 @@ Image Image::DitherDbs() const
 
     /* Build our human visual system kernel. */
     array2d<float> kernel;
-    kernel.SetSize(ivec2(NN, NN));
+    kernel.resize(ivec2(NN, NN));
     float t = 0.f;
     for (int j = 0; j < NN; j++)
         for (int i = 0; i < NN; i++)

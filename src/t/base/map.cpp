@@ -67,10 +67,10 @@ lolunit_declare_fixture(MapTest)
             a << i;
             m[i] = -1;
         }
-        for (int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < a.count(); i++)
             m[i] = i;
         a.Shuffle();
-        for (int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < a.count(); i++)
             m.remove(a[i]);
     }
 
@@ -81,13 +81,13 @@ lolunit_declare_fixture(MapTest)
 
         for (int i = 0; i < 20; i++)
         {
-            a << String::Printf("test_str_%i", i);
-            m[a.Last()] = -1;
+            a << String::format("test_str_%i", i);
+            m[a.last()] = -1;
         }
-        for (int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < a.count(); i++)
             m[a[i]] = i;
         a.Shuffle();
-        for (int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < a.count(); i++)
             m.remove(a[i]);
     }
 
@@ -284,10 +284,10 @@ lolunit_declare_fixture(MapTest)
         "Cyberano_Ns:Feather17" };
 
         map<String, int> bones_map;
-        for (int i = 0; i < bones.Count(); ++i)
+        for (int i = 0; i < bones.count(); ++i)
             bones_map[bones[i]] = i;
 
-        for (int i = 0; i < bones.Count(); ++i)
+        for (int i = 0; i < bones.count(); ++i)
             lolunit_assert_equal(bones_map[bones[i]], i);
     }
 };

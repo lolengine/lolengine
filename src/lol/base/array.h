@@ -278,37 +278,12 @@ public:
         return false;
     }
 
-    bool SwapItem(T const &x1, T const &x2)
-    {
-        ptrdiff_t idx1 = find(x1);
-        ptrdiff_t idx2 = find(x2);
-        if (idx1 != INDEX_NONE && idx2 != INDEX_NONE)
-        {
-            swap(idx1, idx2);
-            return true;
-        }
-        return false;
-    }
-
     inline T pop()
     {
         ASSERT(m_count > 0);
         element_t tmp = last();
         remove(m_count - 1, 1);
         return tmp;
-    }
-
-    void swap(ptrdiff_t pos1, ptrdiff_t pos2)
-    {
-        ASSERT(pos1 >= 0 && pos1 <= m_count,
-               "cannot swap index %lld in array of size %lld",
-               (long long int)pos1, (long long int)m_count);
-        ASSERT(pos2 >= 0 && pos2 <= m_count,
-               "cannot swap index %lld in array of size %lld",
-               (long long int)pos2, (long long int)m_count);
-
-        if (pos1 != pos2)
-            std::swap((*this)[pos1], (*this)[pos2]);
     }
 
     void remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
@@ -396,28 +371,6 @@ public:
     void Sort(SortAlgorithm algorithm);
     void SortQuickSwap(ptrdiff_t start, ptrdiff_t stop);
 
-    /* TODO: remove these legacy functions one day */
-    inline void Push(T const &x) { push(x); }
-    inline bool PushUnique(T const &x) { return push_unique(x); }
-    inline T Pop() { return pop(); }
-    inline void Swap(ptrdiff_t pos1, ptrdiff_t pos2) { swap(pos1, pos2); }
-    inline void Remove(ptrdiff_t pos, ptrdiff_t todelete = 1) { remove(pos, todelete); }
-    inline void RemoveSwap(ptrdiff_t pos, ptrdiff_t todelete = 1) { remove_swap(pos, todelete); }
-    inline void Empty() { empty(); }
-    inline element_t& Last() { return last(); }
-    inline element_t *Data() { return data(); }
-    inline element_t const *Data() const { return data(); }
-    inline element_t const& Last() const { return last(); }
-    inline void Insert(T const &x, ptrdiff_t pos) { return insert(x, pos); }
-    inline bool InsertUnique(T const &x, ptrdiff_t pos) { return insert_unique(x, pos); }
-    inline ptrdiff_t Find(T const &x) { return find(x); }
-    inline bool RemoveItem(T const &x) { return remove_item(x); }
-    inline bool RemoveSwapItem(T const &x) { return remove_swap_item(x); }
-    inline void Resize(ptrdiff_t item_count, element_t e = element_t()) { return resize(item_count, e); }
-    inline void Reserve(ptrdiff_t toreserve) { return reserve(toreserve); }
-    inline ptrdiff_t Count() const { return count(); }
-    inline ptrdiff_t Bytes() const { return bytes(); }
-
     /* Support C++11 range-based for loops */
     class ConstIterator
     {
@@ -478,8 +431,11 @@ public:
     };
 
 public:
-    inline ptrdiff_t count() const { return m_count; }
-    inline ptrdiff_t bytes() const { return m_count * sizeof(element_t); }
+    inline int count() const { return (int)m_count; }
+    inline int bytes() const { return (int)(m_count * sizeof(element_t)); }
+
+    inline ptrdiff_t count_s() const { return m_count; }
+    inline ptrdiff_t bytes_s() const { return m_count * sizeof(element_t); }
 
 protected:
     void grow()
@@ -549,10 +505,6 @@ public:
         new (&this->m_data[pos]) tuple<T...>({ args... });
         ++this->m_count;
     }
-
-    /* TODO: remove these legacy functions one day */
-    inline void Push(T... args) { push(args...); }
-    inline void Insert(ptrdiff_t pos, T... args) { insert(pos, args...); }
 };
 
 template<typename T>

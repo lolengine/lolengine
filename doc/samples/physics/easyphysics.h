@@ -114,7 +114,7 @@ public:
         if (NewBase)
         {
             bool bAlreadyExists = false;
-            for (int i = 0; i < NewBase->m_based_physic_list.Count(); ++i)
+            for (int i = 0; i < NewBase->m_based_physic_list.count(); ++i)
                 if (NewBase->m_based_physic_list[i] == this)
                     bAlreadyExists = true;
             if (!bAlreadyExists)
@@ -125,9 +125,9 @@ public:
         }
         else if (m_base_physic)
         {
-            for (int i = 0; i < m_base_physic->m_based_physic_list.Count(); ++i)
+            for (int i = 0; i < m_base_physic->m_based_physic_list.count(); ++i)
                 if (m_base_physic->m_based_physic_list[i] == this)
-                    m_base_physic->m_based_physic_list.Remove(i--);
+                    m_base_physic->m_based_physic_list.remove(i--);
             m_base_physic = NULL;
         }
     }

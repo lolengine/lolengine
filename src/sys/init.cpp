@@ -86,24 +86,24 @@ void Init(int argc, char *argv[],
      * add current directory in case we were launched from another place.
      */
 
-    if (!got_rootdir && projectdir.Count() && solutiondir.Count())
+    if (!got_rootdir && projectdir.count() && solutiondir.count())
     {
         /* This data dir is for standalone executables */
         String rootdir = binarydir;
-        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+        if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
         AddDataDir(rootdir);
 
         /* This data dir is for engine stuff */
         rootdir = solutiondir;
-        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+        if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
         rootdir += "../src/"; /* FIXME: use SEPARATOR? */
         AddDataDir(rootdir);
 
         /* This data dir is for project-specific stuff */
         rootdir = projectdir;
-        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+        if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
         AddDataDir(rootdir);
 
@@ -119,13 +119,13 @@ void Init(int argc, char *argv[],
         /* First climb back the hierarchy to get to the engine root and
          * add a data dir for engine stuff. */
         String rootdir = binarydir;
-        if (rootdir.Count() && rootdir.Last() != SEPARATOR)
+        if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
-        for (int i = 1; i < sourcesubdir.Count(); ++i)
+        for (int i = 1; i < sourcesubdir.count(); ++i)
         {
             if ((sourcesubdir[i] == SEPARATOR
                   && sourcesubdir[i - 1] != SEPARATOR)
-                 || i == sourcesubdir.Count() - 1)
+                 || i == sourcesubdir.count() - 1)
                 rootdir += "../";
         }
         rootdir += "src/";
@@ -139,8 +139,8 @@ void Init(int argc, char *argv[],
     }
 
     Log::Debug("binary dir: “%s”\n", binarydir.C());
-    for (int i = 0; i < data_dir.Count(); ++i)
-        Log::Debug("data dir %d/%d: “%s”\n", i + 1, data_dir.Count(),
+    for (int i = 0; i < data_dir.count(); ++i)
+        Log::Debug("data dir %d/%d: “%s”\n", i + 1, data_dir.count(),
                    data_dir[i].C());
 }
 
@@ -157,10 +157,10 @@ array<String> GetPathList(String const &file)
 {
     array<String> ret;
 
-    for (int i = 0; i < data_dir.Count(); ++i)
+    for (int i = 0; i < data_dir.count(); ++i)
         ret << data_dir[i] + file;
 
-    if (ret.Count() == 0)
+    if (ret.count() == 0)
         ret << file;
 
     return ret;

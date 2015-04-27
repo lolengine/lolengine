@@ -24,7 +24,7 @@ lolunit_declare_fixture(ArrayNDTest)
     lolunit_declare_test(Array2D)
     {
         arraynd<2, int> a;
-        a.SetSize(vec_t<int, 2>(2, 2));
+        a.resize(vec_t<int, 2>(2, 2));
 
         /* Non-const accessors */
         a[0][0] = 1;
@@ -53,9 +53,9 @@ lolunit_declare_fixture(ArrayNDTest)
 
         arraynd<3, int> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
 
-        lolunit_assert_equal(e.GetSize()[0], 2);
-        lolunit_assert_equal(e.GetSize()[1], 2);
-        lolunit_assert_equal(e.GetSize()[2], 2);
+        lolunit_assert_equal(e.size()[0], 2);
+        lolunit_assert_equal(e.size()[1], 2);
+        lolunit_assert_equal(e.size()[2], 2);
 
         lolunit_assert_equal(e[0][0][0], 1);
         lolunit_assert_equal(e[1][0][0], 2);
@@ -68,9 +68,9 @@ lolunit_declare_fixture(ArrayNDTest)
 
         arraynd<3, int> f = { { {1, 2, 3, 4}, {5, 6, 7} }, { {8, 9}, {10} } };
 
-        lolunit_assert_equal(f.GetSize()[0], 4);
-        lolunit_assert_equal(f.GetSize()[1], 2);
-        lolunit_assert_equal(f.GetSize()[2], 2);
+        lolunit_assert_equal(f.size()[0], 4);
+        lolunit_assert_equal(f.size()[1], 2);
+        lolunit_assert_equal(f.size()[2], 2);
 
         lolunit_assert_equal(f[0][0][0], 1);
         lolunit_assert_equal(f[1][0][0], 2);

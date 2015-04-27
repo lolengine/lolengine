@@ -27,7 +27,7 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
         return;
     }
 
-    ptrdiff_t keyindex = device->GetKeyIndex(key_name);
+    int keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         Log::Warn("trying to bind nonexistent key %s.%s\n",
@@ -35,18 +35,18 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
         return;
     }
 
-    m_keybindings.Push(device, (int)keyindex);
+    m_keybindings.push(device, keyindex);
 }
 
 bool KeyBinding::Unbind(const String& device_name, const String& key_name)
 {
-    for (int i = 0; i < m_keybindings.Count(); ++i)
+    for (int i = 0; i < m_keybindings.count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
             if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(key_name))
             {
-                m_keybindings.Remove(i);
+                m_keybindings.remove(i);
                 return true;
             }
         }
@@ -56,7 +56,7 @@ bool KeyBinding::Unbind(const String& device_name, const String& key_name)
 
 void KeyBinding::ClearBindings()
 {
-    m_keybindings.Empty();
+    m_keybindings.empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
         return;
     }
 
-    ptrdiff_t axisindex = device->GetAxisIndex(axis_name);
+    int axisindex = device->GetAxisIndex(axis_name);
     if (axisindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis %s.%s\n",
@@ -80,7 +80,7 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
         return;
     }
 
-    m_axisbindings.Push(device, (int)axisindex);
+    m_axisbindings.push(device, axisindex);
 }
 
 void AxisBinding::BindKey(const String& device_name, const String& key_name)
@@ -93,7 +93,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
         return;
     }
 
-    ptrdiff_t keyindex = device->GetKeyIndex(key_name);
+    int keyindex = device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -101,7 +101,7 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
         return;
     }
 
-    m_keybindings.Push(device, -1, (int)keyindex);
+    m_keybindings.push(device, -1, keyindex);
 }
 
 void AxisBinding::BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
@@ -114,7 +114,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    ptrdiff_t minkeyindex = device->GetKeyIndex(min_key_name);
+    int minkeyindex = device->GetKeyIndex(min_key_name);
     if (minkeyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -122,7 +122,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    ptrdiff_t maxkeyindex = device->GetKeyIndex(max_key_name);
+    int maxkeyindex = device->GetKeyIndex(max_key_name);
     if (maxkeyindex < 0)
     {
         Log::Warn("trying to bind nonexistent axis key %s.%s\n",
@@ -130,18 +130,18 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
         return;
     }
 
-    m_keybindings.Push(device, (int)minkeyindex, (int)maxkeyindex);
+    m_keybindings.push(device, minkeyindex, maxkeyindex);
 }
 
 bool AxisBinding::Unbind(const String& device_name, const String& axis_name)
 {
-    for (int i = 0; i < m_keybindings.Count(); ++i)
+    for (int i = 0; i < m_keybindings.count(); ++i)
     {
         if (m_axisbindings[i].m1->GetName() == device_name)
         {
             if (m_axisbindings[i].m2 == m_axisbindings[i].m1->GetAxisIndex(axis_name))
             {
-                m_axisbindings.Remove(i);
+                m_axisbindings.remove(i);
                 return true;
             }
         }
@@ -151,13 +151,13 @@ bool AxisBinding::Unbind(const String& device_name, const String& axis_name)
 
 bool AxisBinding::UnbindKey(const String& device_name, const String& key_name)
 {
-    for (int i = 0; i < m_keybindings.Count(); ++i)
+    for (int i = 0; i < m_keybindings.count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
             if (m_keybindings[i].m2 == -1 && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(key_name))
             {
-                m_keybindings.Remove(i);
+                m_keybindings.remove(i);
                 return true;
             }
         }
@@ -167,14 +167,14 @@ bool AxisBinding::UnbindKey(const String& device_name, const String& key_name)
 
 bool AxisBinding::UnbindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
 {
-    for (int i = 0; i < m_keybindings.Count(); ++i)
+    for (int i = 0; i < m_keybindings.count(); ++i)
     {
         if (m_keybindings[i].m1->GetName() == device_name)
         {
             if (m_keybindings[i].m2 == m_keybindings[i].m1->GetKeyIndex(min_key_name)
                 && m_keybindings[i].m3 == m_keybindings[i].m1->GetKeyIndex(max_key_name))
             {
-                m_keybindings.Remove(i);
+                m_keybindings.remove(i);
                 return true;
             }
         }
@@ -185,8 +185,8 @@ bool AxisBinding::UnbindKeys(const String& device_name, const String& min_key_na
 
 void AxisBinding::ClearBindings()
 {
-    m_axisbindings.Empty();
-    m_keybindings.Empty();
+    m_axisbindings.empty();
+    m_keybindings.empty();
 }
 
 float AxisBinding::RetrieveCurrentValue()
@@ -194,7 +194,7 @@ float AxisBinding::RetrieveCurrentValue()
     float max_positive = 0.0f;
     float max_negative = 0.0f;
 
-    for (int i = 0; i < m_axisbindings.Count(); ++i)
+    for (int i = 0; i < m_axisbindings.count(); ++i)
     {
         float value = m_axisbindings[i].m1->GetAxis(m_axisbindings[i].m2);
         if (value > max_positive)
@@ -203,7 +203,7 @@ float AxisBinding::RetrieveCurrentValue()
             max_negative = value;
     }
 
-    for (int i = 0; i < m_keybindings.Count(); ++i)
+    for (int i = 0; i < m_keybindings.count(); ++i)
     {
         float value = 0.0f;
         m_keybindings[i].m1->GetKey(m_keybindings[i].m2);
@@ -238,7 +238,7 @@ Controller::Controller(String const &name)
     {
         Log::Warn("controller “%s” has already been registered\n", name.C());
     }
-    controllers.Push(this);
+    controllers.push(this);
 }
 
 Controller::Controller(String const &name, InputProfile const& profile)
@@ -250,11 +250,11 @@ Controller::Controller(String const &name, InputProfile const& profile)
 Controller::~Controller()
 {
     ClearProfile();
-    for (int i = 0; i < controllers.Count(); ++i)
+    for (int i = 0; i < controllers.count(); ++i)
     {
         if (controllers[i] == this)
         {
-            controllers.Remove(i);
+            controllers.remove(i);
             break;
         }
     }
@@ -274,8 +274,8 @@ void Controller::ClearProfile()
 //Init mode 2: By hand, key/axis by key/axis ----------------------------------
 void Controller::SetInputCount(int nb_keys, int nb_axis)
 {
-    m_keys.Resize(nb_keys);
-    m_axis.Resize(nb_axis);
+    m_keys.resize(nb_keys);
+    m_axis.resize(nb_axis);
 }
 
 //Layer mask stuff ------------------------------------------------------------
@@ -342,7 +342,7 @@ float Controller::GetAxisDelta(int index) const
 //-----------------------------------------------------------------------------
 Controller* Controller::Get(String const &name)
 {
-    for (int i = 0; i < controllers.Count(); ++i)
+    for (int i = 0; i < controllers.count(); ++i)
     {
         if (controllers[i]->m_name == name)
             return controllers[i];
@@ -379,16 +379,16 @@ void Controller::UnbindProfile()
     //Joystick
     for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
     {
-        if (m_joystick_idx.Find(key.m_joy) != INDEX_NONE)
+        if (m_joystick_idx.find(key.m_joy) != INDEX_NONE)
             GetKey(key.m_idx).UnbindJoystick(key.m_joy, key.m_name);
     }
     for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
     {
-        if (m_joystick_idx.Find(axis.m_joy) != INDEX_NONE)
+        if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
             GetAxis(axis.m_idx).UnbindJoystick(axis.m_joy, axis.m_name);
     }
-    m_joystick.Empty();
-    m_joystick_idx.Empty();
+    m_joystick.empty();
+    m_joystick_idx.empty();
 
     m_mutex.unlock();
 }
@@ -400,8 +400,8 @@ void Controller::BindProfile(InputProfile const& setup)
     m_mutex.lock();
     m_profile = setup;
 
-    m_keys.Resize(m_profile.GetKeyCount());
-    m_axis.Resize(m_profile.GetAxisCount());
+    m_keys.resize(m_profile.GetKeyCount());
+    m_axis.resize(m_profile.GetAxisCount());
 
     //Keyboard
     m_keyboard = InputDevice::GetKeyboard();
@@ -433,12 +433,12 @@ void Controller::BindProfile(InputProfile const& setup)
     }
     for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
     {
-        if (m_joystick_idx.Find(key.m_joy) != INDEX_NONE)
+        if (m_joystick_idx.find(key.m_joy) != INDEX_NONE)
             GetKey(key.m_idx).BindJoystick(key.m_joy, key.m_name);
     }
     for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
     {
-        if (m_joystick_idx.Find(axis.m_joy) != INDEX_NONE)
+        if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
             GetAxis(axis.m_idx).BindJoystick(axis.m_joy, axis.m_name);
     }
 
@@ -452,10 +452,10 @@ void Controller::TickGame(float seconds)
 
     if (m_active)
     {
-        for (int i = 0; i < m_keys.Count(); ++i)
+        for (int i = 0; i < m_keys.count(); ++i)
             m_keys[i].Update();
 
-        for (int i = 0; i < m_axis.Count(); ++i)
+        for (int i = 0; i < m_axis.count(); ++i)
             m_axis[i].Update();
     }
 
@@ -487,11 +487,11 @@ array<Controller*> Controller::DeactivateAll()
 {
     array<Controller*> result;
 
-    for (int i = 0; i < controllers.Count(); ++i)
+    for (int i = 0; i < controllers.count(); ++i)
     {
         if (controllers[i]->m_active || controllers[i]->m_activate_nextframe)
         {
-            result.Push(controllers[i]);
+            result.push(controllers[i]);
             controllers[i]->Deactivate();
         }
     }

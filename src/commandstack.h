@@ -31,17 +31,17 @@ private:
 
 public:
     //GET/SET exec
-    ptrdiff_t GetCmdNb() { return m_commands.Count(); }
-    ptrdiff_t GetCmd(int i)
+    int GetCmdNb() { return m_commands.count(); }
+    int GetCmd(int i)
     {
-        ASSERT(0 <= i && i < m_commands.Count());
+        ASSERT(0 <= i && i < m_commands.count());
         m_f_cur = m_commands[i].m2;
         m_i_cur = m_commands[i].m3;
         return m_commands[i].m1;
     }
 
     //cmd storage
-    void    AddCmd(int cmd) { m_commands.Push(cmd, (int)m_floats.Count(), (int)m_ints.Count()); }
+    void    AddCmd(int cmd) { m_commands.push(cmd, m_floats.count(), m_ints.count()); }
 
     //GETTER
     inline float   F()      { return m_floats[m_f_cur++]; }

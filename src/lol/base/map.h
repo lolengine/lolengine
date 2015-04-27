@@ -101,14 +101,19 @@ public:
         array<K> ret;
 
         for (auto iterator : m_tree)
-            ret.Push(iterator.key);
+            ret.push(iterator.key);
 
         return ret;
     }
 
-    inline ptrdiff_t count() const
+    inline int count() const
     {
         return m_tree.count();
+    }
+
+    inline ptrdiff_t count_s() const
+    {
+        return m_tree.count_s();
     }
 
     inline void empty()

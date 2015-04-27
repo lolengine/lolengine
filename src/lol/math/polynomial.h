@@ -32,7 +32,7 @@ struct polynomial
     /* A constant polynomial */
     explicit inline polynomial(T const &a)
     {
-        m_coefficients.Push(a);
+        m_coefficients.push(a);
         reduce_degree();
     }
 
@@ -40,7 +40,7 @@ struct polynomial
     explicit polynomial(std::initializer_list<T> const &init)
     {
         for (auto a : init)
-            m_coefficients.Push(a);
+            m_coefficients.push(a);
 
         reduce_degree();
     }
@@ -60,7 +60,7 @@ struct polynomial
 
         polynomial<T> ret;
         for (int k = 0; k <= n; ++k)
-            ret.m_coefficients.Push(T(coeff(k, n)));
+            ret.m_coefficients.push(T(coeff(k, n)));
         return ret;
     }
 
@@ -68,11 +68,11 @@ struct polynomial
      * degree -1 on purpose. */
     inline int degree() const
     {
-        return (int)m_coefficients.Count() - 1;
+        return (int)m_coefficients.count() - 1;
     }
 
     /* Set one of the polynomial’s coefficients */
-    void set(ptrdiff_t n, T const &a)
+    void set(int n, T const &a)
     {
         ASSERT(n >= 0);
 
@@ -80,7 +80,7 @@ struct polynomial
             return;
 
         while (n > degree())
-            m_coefficients.Push(T(0));
+            m_coefficients.push(T(0));
 
         m_coefficients[n] = a;
         reduce_degree();
@@ -102,7 +102,7 @@ struct polynomial
         /* No need to reduce the degree after deriving. */
         polynomial<T> ret;
         for (int i = 1; i <= degree(); ++i)
-            ret.m_coefficients.Push(m_coefficients[i] * T(i));
+            ret.m_coefficients.push(m_coefficients[i] * T(i));
         return ret;
     }
 
@@ -183,7 +183,7 @@ struct polynomial
     {
         polynomial<T> ret;
         for (auto a : m_coefficients)
-            ret.m_coefficients.Push(-a);
+            ret.m_coefficients.push(-a);
         return ret;
     }
 
@@ -196,7 +196,7 @@ struct polynomial
             m_coefficients[i] += p[i];
 
         for (int i = min_degree + 1; i <= p.degree(); ++i)
-            m_coefficients.Push(p[i]);
+            m_coefficients.push(p[i]);
 
         reduce_degree();
         return *this;
@@ -258,7 +258,7 @@ struct polynomial
         {
             int n = p.degree() + q.degree();
             for (int i = 0; i <= n; ++i)
-                ret.m_coefficients.Push(T(0));
+                ret.m_coefficients.push(T(0));
 
             for (int i = 0; i <= p.degree(); ++i)
                 for (int j = 0; j <= q.degree(); ++j)
@@ -288,7 +288,7 @@ struct polynomial
             quotient.set(n, remainder.leading());
             for (int i = 0; i < p.degree(); ++i)
                 remainder.m_coefficients[n + i] -= remainder.leading() * p[i];
-            remainder.m_coefficients.Pop();
+            remainder.m_coefficients.pop();
         }
 
         return ret;
@@ -298,8 +298,8 @@ private:
     /* Enforce the non-zero leading coefficient rule. */
     void reduce_degree()
     {
-        while (m_coefficients.Count() && m_coefficients.Last() == T(0))
-            m_coefficients.Pop();
+        while (m_coefficients.count() && m_coefficients.last() == T(0))
+            m_coefficients.pop();
     }
 
     /* The polynomial coefficients */

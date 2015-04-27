@@ -21,12 +21,12 @@ namespace lol
 template<typename T, typename ARRAY>
 void array_base<T, ARRAY>::Shuffle()
 {
-    auto n = Count();
+    auto n = count();
     auto ni = n;
     while (n > 0)
     {
         ni = lol::rand(n--) | 0;
-        Swap(ni, n);
+        std::swap(m_data[ni], m_data[n]);
     }
 }
 
@@ -41,13 +41,13 @@ void array_base<T, ARRAY>::Sort(SortAlgorithm algorithm)
     if (algorithm == SortAlgorithm::Bubble)
     {
         int d = 1;
-        for (ptrdiff_t i = 0; i < Count() - 1; i = lol::max(i + d, (ptrdiff_t)0))
+        for (ptrdiff_t i = 0; i < count_s() - 1; i = lol::max(i + d, (ptrdiff_t)0))
         {
             if (i <= 0 || m_data[i] < m_data[i + 1])
                 d = 1;
             if (m_data[i + 1] < m_data[i])
             {
-                Swap(i, i + 1);
+                std::swap(m_data[i], m_data[i + 1]);
                 d = -1;
             }
         }
@@ -55,7 +55,7 @@ void array_base<T, ARRAY>::Sort(SortAlgorithm algorithm)
     // Quick sort with swap
     else if (algorithm == SortAlgorithm::QuickSwap)
     {
-        SortQuickSwap(0, Count());
+        SortQuickSwap(0, count_s());
     }
 }
 
@@ -90,7 +90,7 @@ void array_base<T, ARRAY>::SortQuickSwap(ptrdiff_t start, ptrdiff_t stop)
     {
         if (!(m_data[i0] < median) && m_data[i1] < median)
         {
-            Swap(i0, i1);
+            std::swap(m_data[i0], m_data[i1]);
             i0++;
             i1--;
             b_swap = true;

@@ -95,7 +95,7 @@ lolunit_declare_fixture(ColorTest)
             vec3 v2 = Color::RGBToHSV(v1);
             vec3 v3 = Color::HSVToRGB(v2);
 
-            String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
+            String rgb = String::format("[%f %f %f]", v1.r, v1.g, v1.b);
             lolunit_set_context(&rgb[0]);
 
             if (r != g || g != b)
@@ -117,7 +117,7 @@ lolunit_declare_fixture(ColorTest)
             vec3 v2 = Color::RGBToHSL(v1);
             vec3 v3 = Color::HSVToHSL(Color::RGBToHSV(v1));
 
-            String rgb = String::Printf("[%f %f %f]", v1.r, v1.g, v1.b);
+            String rgb = String::format("[%f %f %f]", v1.r, v1.g, v1.b);
             lolunit_set_context(&rgb[0]);
 
             /* Don’t check hue if saturation is zero. */

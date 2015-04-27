@@ -66,9 +66,9 @@ public:
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.Bytes());
+            m_vbo = new VertexBuffer(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
+            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
 
             m_fbo = new Framebuffer(Video::GetSize());

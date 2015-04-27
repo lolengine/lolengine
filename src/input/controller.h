@@ -50,7 +50,7 @@ public:
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
-    ptrdiff_t IsBound() const { return m_keybindings.Count(); }
+    int IsBound() const { return m_keybindings.count(); }
 
 protected:
     /** Update the binding value. Called internally by the controller, once per frame */
@@ -58,7 +58,7 @@ protected:
     {
         m_previous = m_current;
         m_current = false;
-        for (int i = 0; i < m_keybindings.Count(); ++i)
+        for (int i = 0; i < m_keybindings.count(); ++i)
         {
             m_current = m_current || m_keybindings[i].m1->GetKey(m_keybindings[i].m2);
         }
@@ -120,7 +120,7 @@ public:
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
-    ptrdiff_t IsBound() const { return m_axisbindings.Count() + m_keybindings.Count(); }
+    int IsBound() const { return m_axisbindings.count() + m_keybindings.count(); }
 
 protected:
     void Update()
@@ -244,16 +244,16 @@ public:
     }
     int GetKeyCount() const
     {
-        return (int)(m_keys.Count() + m_mouse_keys.Count() + m_joystick_keys.Count());
+        return m_keys.count() + m_mouse_keys.count() + m_joystick_keys.count();
     }
     int GetAxisCount() const
     {
-        return (int)(m_mouse_axis.Count() + m_joystick_axis.Count());
+        return m_mouse_axis.count() + m_joystick_axis.count();
     }
     //Keys --------------------------------------------------------------------
     InputProfile& operator<<(InputProfile::Keyboard const& binding)
     {
-        m_keys.PushUnique(binding);
+        m_keys.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::Keyboard> const& bindings)
@@ -264,7 +264,7 @@ public:
     //------
     InputProfile& operator<<(InputProfile::MouseKey const& binding)
     {
-        m_mouse_keys.PushUnique(binding);
+        m_mouse_keys.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::MouseKey> const& bindings)
@@ -275,21 +275,21 @@ public:
     //------
     InputProfile& operator<<(InputProfile::JoystickKey const& binding)
     {
-        m_joystick.PushUnique(binding.m_joy);
-        m_joystick_keys.PushUnique(binding);
+        m_joystick.push_unique(binding.m_joy);
+        m_joystick_keys.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::JoystickKey> const& bindings)
     {
         for (InputProfile::JoystickKey const& binding : bindings)
-            m_joystick.PushUnique(binding.m_joy);
+            m_joystick.push_unique(binding.m_joy);
         m_joystick_keys += bindings;
         return *this;
     }
     //Axis --------------------------------------------------------------------
     InputProfile& operator<<(InputProfile::MouseAxis const& binding)
     {
-        m_mouse_axis.PushUnique(binding);
+        m_mouse_axis.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::MouseAxis> const& bindings)
@@ -300,14 +300,14 @@ public:
     //------
     InputProfile& operator<<(InputProfile::JoystickAxis const& binding)
     {
-        m_joystick.PushUnique(binding.m_joy);
-        m_joystick_axis.PushUnique(binding);
+        m_joystick.push_unique(binding.m_joy);
+        m_joystick_axis.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::JoystickAxis> const& bindings)
     {
         for (InputProfile::JoystickAxis const& binding : bindings)
-            m_joystick.PushUnique(binding.m_joy);
+            m_joystick.push_unique(binding.m_joy);
         m_joystick_axis += bindings;
         return *this;
     }
@@ -331,18 +331,18 @@ public:
     typedef SafeEnum<InputTypeBase> InputType;
 
     //Template helper ---------------------------------------------------------
-    template <typename T, ptrdiff_t BEGIN, ptrdiff_t END>
+    template <typename T, int N_BEGIN, int N_END>
     void AddBindings(InputType const& type, uint64_t joy = 0)
     {
-        for (ptrdiff_t i = BEGIN; i < END; ++i)
+        for (int i = N_BEGIN; i < N_END; ++i)
         {
             switch (type.ToScalar())
             {
-            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/(int)i, T((int)i).ToString()); break;
-            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/(int)i, T((int)i).ToString()); break;
-            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, (int)i, T((int)i).ToString()); break;
-            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/(int)i, T((int)i).ToString()); break;
-            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, (int)i, T((int)i).ToString()); break;
+            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/i, T(i).ToString()); break;
+            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/i, T(i).ToString()); break;
+            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, i, T(i).ToString()); break;
+            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/i, T(i).ToString()); break;
+            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, i, T(i).ToString()); break;
             default: break;
             }
         }

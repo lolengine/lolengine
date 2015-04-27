@@ -56,11 +56,12 @@ void SceneDisplay::Add(SceneDisplay* display)
 {
     m_scene_displays << display;
 }
-ptrdiff_t SceneDisplay::GetCount()
+
+int SceneDisplay::GetCount()
 {
     return m_scene_displays.count();
 }
-SceneDisplay* SceneDisplay::GetDisplay(ptrdiff_t index)
+SceneDisplay* SceneDisplay::GetDisplay(int index)
 {
     ASSERT(0 <= index && index < m_scene_displays.count());
     return m_scene_displays[index];
@@ -69,7 +70,7 @@ void SceneDisplay::DestroyAll()
 {
     for (SceneDisplay* display : m_scene_displays)
         delete display;
-    m_scene_displays.Empty();
+    m_scene_displays.empty();
 }
 
 /* ------------------------------------------------ */
@@ -206,29 +207,32 @@ void Scene::AddNew(ivec2 size)
 {
     Scene::g_scenes << new Scene(size);
 }
+
 void Scene::DestroyScene(Scene* scene)
 {
     Scene::g_scenes.remove_item(scene);
     delete scene;
 }
+
 void Scene::DestroyAll()
 {
     while (Scene::g_scenes.count())
         delete Scene::g_scenes.pop();
 }
-ptrdiff_t Scene::GetCount()
+
+int Scene::GetCount()
 {
     return g_scenes.count();
 }
 
 //-----------------------------------------------------------------------------
-bool Scene::IsReady(ptrdiff_t index)
+bool Scene::IsReady(int index)
 {
     return 0 <= index && index < g_scenes.count() && !!g_scenes[index];
 }
 
 //-----------------------------------------------------------------------------
-Scene& Scene::GetScene(ptrdiff_t index)
+Scene& Scene::GetScene(int index)
 {
     ASSERT(0 <= index && index < g_scenes.count() && !!g_scenes[index], "Trying to get a non-existent scene");
     return *g_scenes[index];
@@ -251,9 +255,9 @@ Camera* Scene::GetCamera(int cam_idx)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    return (0 <= cam_idx && cam_idx < data->m_camera_stack.Count()) ?
+    return (0 <= cam_idx && cam_idx < data->m_camera_stack.count()) ?
             data->m_camera_stack[cam_idx] :
-            data->m_camera_stack.Last();
+            data->m_camera_stack.last();
 }
 
 //-----------------------------------------------------------------------------
@@ -262,8 +266,8 @@ int Scene::PushCamera(Camera *cam)
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     Ticker::Ref(cam);
-    data->m_camera_stack.Push(cam);
-    return (int)data->m_camera_stack.Count() - 1;
+    data->m_camera_stack.push(cam);
+    return (int)data->m_camera_stack.count() - 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -273,12 +277,12 @@ void Scene::PopCamera(Camera *cam)
 
     /* Parse from the end because that’s probably where we’ll find
     * our camera first. */
-    for (ptrdiff_t i = data->m_camera_stack.Count(); i--;)
+    for (int i = data->m_camera_stack.count(); i--;)
     {
         if (data->m_camera_stack[i] == cam)
         {
             Ticker::Unref(cam);
-            data->m_camera_stack.Remove(i);
+            data->m_camera_stack.remove(i);
             return;
         }
     }
@@ -303,22 +307,22 @@ void Scene::Reset()
     array<uintptr_t> keys = data->m_prim_renderers.keys();
     for (uintptr_t key : keys)
     {
-        for (ptrdiff_t idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
+        for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
             if (data->m_prim_renderers[key][idx]->m_fire_and_forget)
                 ReleasePrimitiveRenderer(idx--, key);
     }
 
-    for (int i = 0; i < data->m_tile_bufs.Count(); i++)
+    for (int i = 0; i < data->m_tile_bufs.count(); i++)
         delete data->m_tile_bufs[i];
-    data->m_tile_bufs.Empty();
+    data->m_tile_bufs.empty();
 
-    data->m_lights.Empty();
+    data->m_lights.empty();
 }
 
 //---- Primitive source stuff -------------------------------------------------
-ptrdiff_t Scene::HasPrimitiveSource(uintptr_t key)
+int Scene::HasPrimitiveSource(uintptr_t key)
 {
-    ptrdiff_t count;
+    int count;
     SceneData::m_prim_mutex.lock();
     {
         count = SceneData::m_prim_sources[key].count();
@@ -326,9 +330,9 @@ ptrdiff_t Scene::HasPrimitiveSource(uintptr_t key)
     SceneData::m_prim_mutex.unlock();
     return count;
 }
-ptrdiff_t Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
+int Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
 {
-    ptrdiff_t count;
+    int count;
     SceneData::m_prim_mutex.lock();
     {
         count = SceneData::m_prim_sources[key].count();
@@ -337,7 +341,7 @@ ptrdiff_t Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
     SceneData::m_prim_mutex.unlock();
     return count;
 }
-void Scene::SetPrimitiveSource(ptrdiff_t index, uintptr_t key, PrimitiveSource* source)
+void Scene::SetPrimitiveSource(int index, uintptr_t key, PrimitiveSource* source)
 {
     ASSERT(source);
     ASSERT(index < 0);
@@ -355,7 +359,7 @@ void Scene::SetPrimitiveSource(ptrdiff_t index, uintptr_t key, PrimitiveSource* 
     //Delete old AFTER having released the lock
     if (old) delete old;
 }
-void Scene::ReleasePrimitiveSource(ptrdiff_t index, uintptr_t key)
+void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
 {
     PrimitiveSource* old = nullptr;
     SceneData::m_prim_mutex.lock();
@@ -387,7 +391,7 @@ void Scene::ReleaseAllPrimitiveSource(uintptr_t key)
 }
 
 //---- Primitive renderer stuff -----------------------------------------------
-ptrdiff_t Scene::HasPrimitiveRenderer(uintptr_t key)
+int Scene::HasPrimitiveRenderer(uintptr_t key)
 {
     return data->m_prim_renderers[key].count();
 }
@@ -396,7 +400,7 @@ void Scene::AddPrimitiveRenderer(uintptr_t key, PrimitiveRenderer* renderer)
     renderer->m_fire_and_forget = true;
     data->m_prim_renderers[key].push(renderer);
 }
-void Scene::SetPrimitiveRenderer(ptrdiff_t index, uintptr_t key, PrimitiveRenderer* renderer)
+void Scene::SetPrimitiveRenderer(int index, uintptr_t key, PrimitiveRenderer* renderer)
 {
     ASSERT(renderer);
     ASSERT(index < 0);
@@ -409,7 +413,7 @@ void Scene::SetPrimitiveRenderer(ptrdiff_t index, uintptr_t key, PrimitiveRender
         data->m_prim_renderers[key].resize(index + 1);
     data->m_prim_renderers[key][index] = renderer;
 }
-void Scene::ReleasePrimitiveRenderer(ptrdiff_t index, uintptr_t key)
+void Scene::ReleasePrimitiveRenderer(int index, uintptr_t key)
 {
     ASSERT(0 <= index && index < data->m_prim_renderers[key].count());
     ASSERT(data->m_prim_renderers[key][index]);
@@ -441,9 +445,9 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
     t.angle = angle;
 
     if (tileset->GetPalette())
-        data->m_palettes.Push(t);
+        data->m_palettes.push(t);
     else
-        data->m_tiles.Push(t);
+        data->m_tiles.push(t);
 }
 
 //-----------------------------------------------------------------------------
@@ -491,7 +495,7 @@ void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_lines.Push(a, b, color,
+    data->m_lines.push(a, b, color,
                         data->m_new_line_time, data->m_new_line_mask, false, false);
 }
 
@@ -500,7 +504,7 @@ void Scene::AddLight(Light *l)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_lights.Push(l);
+    data->m_lights.push(l);
 }
 
 //-----------------------------------------------------------------------------
@@ -545,7 +549,7 @@ void Scene::RenderPrimitives()
     array<uintptr_t> keys = data->m_prim_renderers.keys();
     for (uintptr_t key : keys)
     {
-        for (ptrdiff_t idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
+        for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
             data->m_prim_renderers[key][idx]->Render(*this, idx < SceneData::m_prim_sources[key].count() ? SceneData::m_prim_sources[key][idx] : nullptr);
@@ -561,7 +565,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     RenderContext rc;
 
     /* Early test if nothing needs to be rendered */
-    if (!data->m_tiles.Count() && !data->m_palettes.Count())
+    if (!data->m_tiles.count() && !data->m_palettes.count())
         return;
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
@@ -585,7 +589,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
         Shader *shader      = (p == 0) ? data->m_tile_shader : data->m_palette_shader;
         array<Tile>& tiles  = (p == 0) ? data->m_tiles : data->m_palettes;
 
-        if (tiles.Count() == 0)
+        if (tiles.count() == 0)
             continue;
 
         ShaderUniform uni_mat, uni_tex, uni_pal, uni_texsize;
@@ -606,10 +610,10 @@ void Scene::RenderTiles() // XXX: rename to Blit()
         uni_pal = data->m_palette_shader->GetUniformLocation("u_palette");
         uni_texsize = shader->GetUniformLocation("u_texsize");
 
-        for (int buf = 0, i = 0, n; i < tiles.Count(); i = n, buf += 2)
+        for (int buf = 0, i = 0, n; i < tiles.count(); i = n, buf += 2)
         {
             /* Count how many quads will be needed */
-            for (n = i + 1; n < tiles.Count(); n++)
+            for (n = i + 1; n < tiles.count(); n++)
                 if (tiles[i].tileset != tiles[n].tileset)
                     break;
 
@@ -619,8 +623,8 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
             vec2 *texture = (vec2 *)vb2->Lock(0, 0);
 
-            data->m_tile_bufs.Push(vb1);
-            data->m_tile_bufs.Push(vb2);
+            data->m_tile_bufs.push(vb1);
+            data->m_tile_bufs.push(vb2);
 
             for (int j = i; j < n; j++)
             {
@@ -662,7 +666,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             tiles[i].tileset->Unbind();
         }
 
-        tiles.Empty();
+        tiles.empty();
 
         shader->Unbind();
     }
@@ -682,7 +686,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
 
     RenderContext rc;
 
-    if (!data->m_lines.Count())
+    if (!data->m_lines.count())
         return;
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
@@ -690,13 +694,13 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-    int linecount = (int)data->m_lines.Count();
+    int linecount = (int)data->m_lines.count();
 
     if (!data->m_line_shader)
         data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
 
     array<vec4, vec4, vec4, vec4> buff;
-    buff.Resize(linecount);
+    buff.resize(linecount);
     int real_linecount = 0;
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
     for (int i = 0; i < linecount; i++)
@@ -712,13 +716,13 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
         data->m_lines[i].m4 -= seconds;
         if (data->m_lines[i].m4 < 0.f)
         {
-            data->m_lines.RemoveSwap(i--);
+            data->m_lines.remove_swap(i--);
             linecount--;
         }
     }
-    VertexBuffer *vb = new VertexBuffer(buff.Bytes());
+    VertexBuffer *vb = new VertexBuffer(buff.bytes());
     float *vertex = (float *)vb->Lock(0, 0);
-    memcpy(vertex, buff.Data(), buff.Bytes());
+    memcpy(vertex, buff.data(), buff.bytes());
     vb->Unlock();
 
     data->m_line_shader->Bind();
@@ -741,7 +745,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     data->m_line_vdecl->Unbind();
     data->m_line_shader->Unbind();
 
-    //data->m_lines.Empty();
+    //data->m_lines.empty();
     delete vb;
 }
 

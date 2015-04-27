@@ -54,7 +54,7 @@ public:
 
         m_oldmouse = ivec2(0, 0);
 
-        m_pixels.Resize(m_size.x * m_size.y);
+        m_pixels.resize(m_size.x * m_size.y);
         m_frame = -1;
         m_slices = 4;
         for (int i = 0; i < 4; i++)
@@ -97,11 +97,11 @@ public:
             uint8_t green = (uint8_t)g * 256;
             uint8_t blue  = (uint8_t)b * 256;
 #if defined _XBOX
-            m_palette.Push(u8vec4(255, red, green, blue));
+            m_palette.push(u8vec4(255, red, green, blue));
 #elif defined __native_client__
-            m_palette.Push(u8vec4(red, green, blue, 255));
+            m_palette.push(u8vec4(red, green, blue, 255));
 #else
-            m_palette.Push(u8vec4(blue, green, red, 255));
+            m_palette.push(u8vec4(blue, green, red, 255));
 #endif
         }
 

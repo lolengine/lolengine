@@ -234,14 +234,17 @@ void Renderer::AddNew(ivec2 size)
 {
     g_renderers << new Renderer(size);
 }
-ptrdiff_t Renderer::GetCount()
+
+int Renderer::GetCount()
 {
     return g_renderers.count();
 }
-Renderer* Renderer::Get(ptrdiff_t index)
+
+Renderer* Renderer::Get(int index)
 {
     return g_renderers[index];
 }
+
 void Renderer::DestroyAll()
 {
     for (Renderer* renderer : g_renderers)

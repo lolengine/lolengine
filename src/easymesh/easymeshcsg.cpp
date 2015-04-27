@@ -41,34 +41,34 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     //keep a track of the intersection point on the triangle. <pos, side_id>
     array< vec3, int > triangle_vertex;
     for (int k = 0; k < 10; k++)
-        triangle_vertex.Push(vec3(.0f), 0);
+        triangle_vertex.push(vec3(.0f), 0);
 
     //bsp infos
     CsgBsp mesh_bsp_0;
     CsgBsp mesh_bsp_1;
 
-    if (m_cursors.Count() == 0)
+    if (m_cursors.count() == 0)
         return;
 
     //BSP BUILD : We use the brace logic, csg should be used as : "[ exp .... [exp .... csg]]"
-    int cursor_start = (m_cursors.Count() < 2)?(0):(m_cursors[(m_cursors.Count() - 2)].m2);
+    int cursor_start = (m_cursors.count() < 2)?(0):(m_cursors[(m_cursors.count() - 2)].m2);
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        ptrdiff_t start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.Last().m2);
-        ptrdiff_t end_point   = (mesh_id == 0) ? (m_cursors.Last().m2) : (m_indices.Count());
+        int start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.last().m2);
+        int end_point   = (mesh_id == 0) ? (m_cursors.last().m2) : (m_indices.count());
         CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_0) : (mesh_bsp_1);
-        for (ptrdiff_t i = start_point; i < end_point; i += 3)
-            mesh_bsp.AddTriangleToTree((int)i, m_vert[m_indices[i]].m_coord,
+        for (int i = start_point; i < end_point; i += 3)
+            mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m_coord,
                                           m_vert[m_indices[i + 1]].m_coord,
                                           m_vert[m_indices[i + 2]].m_coord);
     }
 
     //BSP Usage : let's crunch all triangles on the correct BSP
-    ptrdiff_t indices_count = m_indices.Count();
-    for (ptrdiff_t mesh_id = 0; mesh_id < 2; mesh_id++)
+    int indices_count = m_indices.count();
+    for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        ptrdiff_t start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.Last().m2);
-        ptrdiff_t end_point   = (mesh_id == 0) ? (m_cursors.Last().m2) : (indices_count);
+        int start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.last().m2);
+        int end_point   = (mesh_id == 0) ? (m_cursors.last().m2) : (indices_count);
         CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_1) : (mesh_bsp_0);
         array< vec3, int, int, float > vert_list;
         array< int, int, int, int > tri_list;
@@ -76,26 +76,26 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         vec4 c0(.0f); vec4 c1(.0f);
 
         //Reserve some memory
-        vert_list.Reserve(3);
-        tri_list.Reserve(3);
+        vert_list.reserve(3);
+        tri_list.reserve(3);
 
-        for (ptrdiff_t i = start_point; i < end_point; i += 3)
+        for (int i = start_point; i < end_point; i += 3)
         {
             int Result = mesh_bsp.TestTriangleToTree(m_vert[m_indices[i]].m_coord,
                                                      m_vert[m_indices[i + 1]].m_coord,
                                                      m_vert[m_indices[i + 2]].m_coord, vert_list, tri_list);
-            ptrdiff_t tri_base_idx = m_indices.Count();
+            int tri_base_idx = m_indices.count();
 
             //one split has been done, we need to had the new vertices & the new triangles.
             if (Result == 1)
             {
-                triangle_to_kill.Push((int)i);
+                triangle_to_kill.push(i);
 #if 1
-                ptrdiff_t base_idx = m_vert.Count();
-                for (ptrdiff_t k = 3; k < vert_list.Count(); k++)
+                int base_idx = m_vert.count();
+                for (int k = 3; k < vert_list.count(); k++)
                 {
-                    ptrdiff_t P0 = (vert_list[k].m2 < 3) ? (m_indices[i + vert_list[k].m2]) : (base_idx + vert_list[k].m2 - 3);
-                    ptrdiff_t P1 = (vert_list[k].m3 < 3) ? (m_indices[i + vert_list[k].m3]) : (base_idx + vert_list[k].m3 - 3);
+                    int P0 = (vert_list[k].m2 < 3) ? (m_indices[i + vert_list[k].m2]) : (base_idx + vert_list[k].m2 - 3);
+                    int P1 = (vert_list[k].m3 < 3) ? (m_indices[i + vert_list[k].m3]) : (base_idx + vert_list[k].m3 - 3);
 
                     AddVertex(vert_list[k].m1);
 
@@ -117,11 +117,11 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         SetCurVertColor(vec4(.0f, 1.0f, 1.0f, 1.0f));
 #endif
                 }
-                for (ptrdiff_t k = 0; k < tri_list.Count(); k++)
+                for (int k = 0; k < tri_list.count(); k++)
                 {
-                    int P0 = (int)(tri_list[k].m2 < 3) ? (m_indices[i + tri_list[k].m2]) : ((int)base_idx + (tri_list[k].m2 - 3));
-                    int P1 = (int)(tri_list[k].m3 < 3) ? (m_indices[i + tri_list[k].m3]) : ((int)base_idx + (tri_list[k].m3 - 3));
-                    int P2 = (int)(tri_list[k].m4 < 3) ? (m_indices[i + tri_list[k].m4]) : ((int)base_idx + (tri_list[k].m4 - 3));
+                    int P0 = (tri_list[k].m2 < 3) ? (m_indices[i + tri_list[k].m2]) : (base_idx + (tri_list[k].m2 - 3));
+                    int P1 = (tri_list[k].m3 < 3) ? (m_indices[i + tri_list[k].m3]) : (base_idx + (tri_list[k].m3 - 3));
+                    int P2 = (tri_list[k].m4 < 3) ? (m_indices[i + tri_list[k].m4]) : (base_idx + (tri_list[k].m4 - 3));
                     AddTriangle(P0, P1, P2, 0);
                 }
 #endif
@@ -130,9 +130,9 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
             //Main case
             if (Result >= 0)
             {
-                for (int k = 0; k < tri_list.Count(); k++)
+                for (int k = 0; k < tri_list.count(); k++)
                 {
-                    ptrdiff_t tri_idx = (ptrdiff_t)((tri_list.Count() == 1) ? (i) : ((int)tri_base_idx + k * 3));
+                    int tri_idx = (tri_list.count() == 1) ? (i) : (tri_base_idx + k * 3);
 
                     //Triangle Kill Test
                     if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
@@ -147,7 +147,7 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         //csga : CSGAnd() -> m0_Inside + m1_Inside
                         (csg_operation == CSGUsage::And && tri_list[k].m1 == LEAF_FRONT))
                     {
-                        triangle_to_kill.Push((int)tri_idx);
+                        triangle_to_kill.push(tri_idx);
                     }
 
                     //Triangle Invert Test
@@ -160,37 +160,37 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                         //TODO : This operation disconnect all triangle, in some cases, not a good thing.
                         if (csg_operation == CSGUsage::Xor)
                         {
-                            for (ptrdiff_t l = 0; l < 3; l++)
+                            for (int l = 0; l < 3; l++)
                             {
                                 AddDupVertex(m_indices[tri_idx + l]);
-                                m_indices[tri_idx + l] = (uint16_t)m_vert.Count() - 1;
+                                m_indices[tri_idx + l] = (uint16_t)m_vert.count() - 1;
                             }
                         }
                         m_indices[tri_idx + 1] += m_indices[tri_idx + 2];
                         m_indices[tri_idx + 2]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
                         m_indices[tri_idx + 1]  = m_indices[tri_idx + 1] - m_indices[tri_idx + 2];
-                        ComputeNormals((int)tri_idx, 3);
+                        ComputeNormals(tri_idx, 3);
                     }
                 }
             }
 #endif
-            vert_list.Empty();
-            tri_list.Empty();
+            vert_list.empty();
+            tri_list.empty();
         }
     }
 
-    for (int i = 0; i < m_vert.Count(); i++)
+    for (int i = 0; i < m_vert.count(); i++)
         if (length(m_vert[i].m_normal) < 1.0f)
             i = i;
 
     int dir = 1;
-    for (int i = 0; i >= 0 && i < triangle_to_kill.Count() - 1; i += dir)
+    for (int i = 0; i >= 0 && i < triangle_to_kill.count() - 1; i += dir)
     {
         if (triangle_to_kill[i] < triangle_to_kill[i + 1] && dir < 0)
             dir = 1;
         if (triangle_to_kill[i] == triangle_to_kill[i + 1])
         {
-            triangle_to_kill.Remove(i);
+            triangle_to_kill.remove(i);
             dir = -1;
         }
         if (triangle_to_kill[i] > triangle_to_kill[i + 1])
@@ -203,11 +203,11 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         if (i == 0 && dir == -1)
             dir = 1;
     }
-    for (ptrdiff_t i = triangle_to_kill.Count() - 1; i >= 0; i--)
-        m_indices.Remove(triangle_to_kill[i], 3);
+    for (int i = triangle_to_kill.count() - 1; i >= 0; i--)
+        m_indices.remove(triangle_to_kill[i], 3);
 
-    m_cursors.Last().m1 = (int)m_vert.Count();
-    m_cursors.Last().m2 = (int)m_indices.Count();
+    m_cursors.last().m1 = m_vert.count();
+    m_cursors.last().m2 = m_indices.count();
 
     VerticesCleanup();
     //DONE for the splitting !

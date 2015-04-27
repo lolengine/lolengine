@@ -24,19 +24,19 @@
 namespace lol
 {
 
-String String::Printf(char const *format, ...)
+String String::format(char const *format, ...)
 {
     String ret;
 
     va_list ap;
     va_start(ap, format);
-    ret = String::VPrintf(format, ap);
+    ret = String::vformat(format, ap);
     va_end(ap);
 
     return ret;
 }
 
-String String::VPrintf(char const *format, va_list ap)
+String String::vformat(char const *format, va_list ap)
 {
     String ret;
 

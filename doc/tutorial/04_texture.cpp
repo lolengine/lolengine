@@ -34,7 +34,7 @@ public:
         m_frames(0),
         m_ready(false)
     {
-        m_heightmap.Resize(TEXTURE_WIDTH * 1);
+        m_heightmap.resize(TEXTURE_WIDTH * 1);
     }
 
     virtual void TickGame(float seconds)
@@ -43,16 +43,16 @@ public:
 
         /* Generate a new heightmap at the beginning */
         if (m_frames == 0)
-            memset(m_heightmap.Data(), 255, m_heightmap.Bytes());
+            memset(m_heightmap.data(), 255, m_heightmap.bytes());
 
         /* Scroll left */
-        for (int i = 0; i < m_heightmap.Count() - 1; i++)
+        for (int i = 0; i < m_heightmap.count() - 1; i++)
             m_heightmap[i] = m_heightmap[i + 1];
 
-        int height = m_heightmap.Last();
+        int height = m_heightmap.last();
         height = (int)(height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
-        m_heightmap.Last() = height;
+        m_heightmap.last() = height;
 
         /* Update frame counter */
         ++m_frames;
@@ -73,9 +73,9 @@ public:
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.Bytes());
+            m_vbo = new VertexBuffer(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
+            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
 
             m_ready = true;
@@ -84,7 +84,7 @@ public:
         }
 
         /* Send new heightmap to GPU */
-        m_texture->SetData(m_heightmap.Data());
+        m_texture->SetData(m_heightmap.data());
 
         m_shader->Bind();
         m_shader->SetUniform(m_texture_uni, m_texture->GetTextureUniform(), 0);

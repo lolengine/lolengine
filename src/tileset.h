@@ -56,10 +56,10 @@ public:
     virtual char const *GetName();
 
     /* New methods */
-    ptrdiff_t AddTile(ibox2 rect);
+    int AddTile(ibox2 rect);
     void AddTile(ivec2 count);
-    ptrdiff_t GetTileCount() const;
-    ivec2 GetTileSize(ptrdiff_t tileid) const;
+    int GetTileCount() const;
+    ivec2 GetTileSize(int tileid) const;
 
     void SetPalette(TileSet* palette);
     TileSet* GetPalette();

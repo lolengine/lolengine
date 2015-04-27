@@ -23,8 +23,8 @@ void DefaultThreadManager::AddJob(ThreadJob* job)
 bool DefaultThreadManager::GetWorkResult(array<ThreadJob*>& results)
 {
     results += m_job_result;
-    m_job_result.Empty();
-    return results.Count() > 0;
+    m_job_result.empty();
+    return results.count() > 0;
 }
 
 //FileUpdateTesterJob ---------------------------------------------------------
@@ -219,7 +219,7 @@ void AsyncImageLoader::TreatResult(ThreadJob* result)
         Image* src = m_images[job->GetPath()];
         m_images.remove(job->GetPath());
         src->Copy(job->GetImage());
-        m_loaded_images.PushUnique(src);
+        m_loaded_images.push_unique(src);
     }
     else
     {

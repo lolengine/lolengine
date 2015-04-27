@@ -26,12 +26,12 @@ struct linear_system : public array2d<T>
     {
         ASSERT(cols > 0);
 
-        this->SetSize(ivec2(cols));
+        this->resize(ivec2(cols));
     }
 
     void init(T const &x)
     {
-        int const n = this->GetSize().x;
+        int const n = this->size().x;
 
         for (int j = 0; j < n; j++)
             for (int i = 0; i < n; i++)
@@ -41,7 +41,7 @@ struct linear_system : public array2d<T>
     /* Naive matrix inversion */
     linear_system<T> inverse() const
     {
-        int const n = this->GetSize().x;
+        int const n = this->size().x;
         linear_system a(*this), b(n);
 
         b.init((T)1);

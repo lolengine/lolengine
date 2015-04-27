@@ -51,7 +51,7 @@ XboxInput::XboxInput()
         Stick *stick = Input::CreateStick();
         stick->SetAxisCount(4);
         stick->SetButtonCount(16);
-        m_data->m_joysticks.Push(i, stick);
+        m_data->m_joysticks.push(i, stick);
     }
 #endif
 
@@ -62,10 +62,10 @@ XboxInput::~XboxInput()
 {
 #if defined _XBOX
     /* Unregister all the joysticks we added */
-    while (m_data->m_joysticks.Count())
+    while (m_data->m_joysticks.count())
     {
         Input::DestroyStick(m_data->m_joysticks[0].m2);
-        m_data->m_joysticks.Remove(0);
+        m_data->m_joysticks.remove(0);
     }
 #endif
     delete m_data;
@@ -81,7 +81,7 @@ void XboxInput::TickDraw(float seconds, Scene &scene)
     Entity::TickDraw(seconds, scene);
 
 #if defined _XBOX
-    for (int i = 0; i < m_data->m_joysticks.Count(); i++)
+    for (int i = 0; i < m_data->m_joysticks.count(); i++)
     {
         XINPUT_STATE state;
         if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)

@@ -341,6 +341,7 @@ lolunit_declare_fixture(MatrixTest)
                vec4(0,  0,  1,  0),
                vec4(0, -1,  0,  0),
                vec4(0,  0, -1,  1));
+
         /* Invert matrix and check that the results are finite */
         mat4 m1 = inverse(m);
         for (int j = 0; j < 4; ++j)

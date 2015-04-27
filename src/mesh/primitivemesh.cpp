@@ -72,7 +72,7 @@ void PrimitiveMesh::Render(Scene& scene, PrimitiveSource* primitive)
             /* FIXME: GetUniform("blabla") is costly */
             for (auto l : lights)
                 light_data << vec4(l->GetPosition(), (float)l->GetType()) << l->GetColor();
-            while (light_data.Count() < LOL_MAX_LIGHT_COUNT)
+            while (light_data.count() < LOL_MAX_LIGHT_COUNT)
                 light_data << vec4::zero << vec4::zero;
 
             ShaderUniform u_lights = shader->GetUniformLocation("u_lights");

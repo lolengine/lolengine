@@ -122,7 +122,7 @@ void Image::DummyFill()
     //TODO: This is not very beautiful
     for (auto codec : g_image_loader.m_codecs)
     {
-        if (String(codec->GetName()).Contains("Dummy"))
+        if (String(codec->GetName()).contains("Dummy"))
         {
             codec->Load(this, nullptr);
             return;

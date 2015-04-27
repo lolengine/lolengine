@@ -61,9 +61,11 @@ public:
 
     //TODO: Not sure about the name
     void Render(Scene& scene, mat4 const &matrix);
+
 protected:
     void Render();
 
+public:
     array<class SubMesh *> m_submeshes;
 };
 

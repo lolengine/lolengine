@@ -49,8 +49,8 @@ lolunit_declare_fixture(Array2DTest)
                            { 5, 6, 7, 8 },
                            { 9, 8, 7, 6 } };
 
-        lolunit_assert_equal(a.GetSize().x, 4);
-        lolunit_assert_equal(a.GetSize().y, 3);
+        lolunit_assert_equal(a.size().x, 4);
+        lolunit_assert_equal(a.size().y, 3);
 
         lolunit_assert_equal(a[0][0], 1);
         lolunit_assert_equal(a[1][0], 2);

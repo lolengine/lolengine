@@ -74,19 +74,19 @@ public:
               new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,
                                                             VertexUsage::Color));
 
-            m_vbo = new VertexBuffer(m_mesh.Bytes());
+            m_vbo = new VertexBuffer(m_mesh.bytes());
             void *mesh = m_vbo->Lock(0, 0);
-            memcpy(mesh, &m_mesh[0], m_mesh.Bytes());
+            memcpy(mesh, &m_mesh[0], m_mesh.bytes());
             m_vbo->Unlock();
 
-            m_lines_ibo = new IndexBuffer(m_lines_indices.Bytes());
+            m_lines_ibo = new IndexBuffer(m_lines_indices.bytes());
             void *indices = m_lines_ibo->Lock(0, 0);
-            memcpy(indices, &m_lines_indices[0], m_lines_indices.Bytes());
+            memcpy(indices, &m_lines_indices[0], m_lines_indices.bytes());
             m_lines_ibo->Unlock();
 
-            m_faces_ibo = new IndexBuffer(m_faces_indices.Bytes());
+            m_faces_ibo = new IndexBuffer(m_faces_indices.bytes());
             indices = m_faces_ibo->Lock(0, 0);
-            memcpy(indices, &m_faces_indices[0], m_faces_indices.Bytes());
+            memcpy(indices, &m_faces_indices[0], m_faces_indices.bytes());
             m_faces_ibo->Unlock();
 
             /* FIXME: this object never cleans up */
@@ -102,13 +102,13 @@ public:
         m_shader->SetUniform(m_mvp, m_matrix);
         m_lines_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, 0, 0,
-                                    (int)m_mesh.Count(), 0, (int)m_lines_indices.Count());
+                                    m_mesh.count(), 0, m_lines_indices.count());
         m_lines_ibo->Unbind();
 
         m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
         m_faces_ibo->Bind();
         m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0,
-                                    (int)m_mesh.Count(), 0, (int)m_faces_indices.Count());
+                                    m_mesh.count(), 0, m_faces_indices.count());
         m_faces_ibo->Unbind();
 
         m_vdecl->Unbind();

@@ -50,17 +50,16 @@ class LuaBaseData
         char const *filename = var;// lua_tostring(l, 1);
         int status = LUA_ERRFILE;
 
-        array<String> pathlist = System::GetPathList(filename);
         File f;
-        for (int i = 0; i < pathlist.Count(); ++i)
+        for (auto candidate : System::GetPathList(filename))
         {
-            f.Open(pathlist[i], FileAccess::Read);
+            f.Open(candidate, FileAccess::Read);
             if (f.IsValid())
             {
                 String s = f.ReadString();
                 f.Close();
 
-                Log::Debug("loading Lua file %s\n", pathlist[i].C());
+                Log::Debug("loading Lua file %s\n", candidate.C());
                 status = LuaDoCode(l, s);
                 break;
             }
@@ -115,7 +114,7 @@ void Loader::Store(LuaState* l, Lolua::Loader* loader)
 }
 void Loader::Release(LuaState* l, Lolua::Loader* loader)
 {
-    for (ptrdiff_t i = 0; i < g_loaders.count(); ++i)
+    for (int i = 0; i < g_loaders.count(); ++i)
     {
         if (g_loaders[i].m1 == l && g_loaders[i].m2 == loader)
         {
@@ -128,11 +127,11 @@ void Loader::Release(LuaState* l, Lolua::Loader* loader)
 //Store lua object --------------------------------------------------------
 void Loader::StoreObject(LuaState* l, Object* obj)
 {
-    for (ptrdiff_t i = 0; i < g_loaders.count(); ++i)
+    for (auto loader : g_loaders)
     {
-        if (g_loaders[i].m1 == l)
+        if (loader.m1 == l)
         {
-            g_loaders[i].m2->Store(obj);
+            loader.m2->Store(obj);
             return;
         }
     }

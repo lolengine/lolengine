@@ -53,7 +53,7 @@ D3d9Input::D3d9Input()
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
-        InputDeviceInternal* stick = new InputDeviceInternal(String::Printf("Joystick%d", i+1).C());
+        InputDeviceInternal* stick = new InputDeviceInternal(String::format("Joystick%d", i+1).C());
 
         stick->AddAxis(g_name_xbox_axis_left_x.C());
         stick->AddAxis(g_name_xbox_axis_left_y.C());
@@ -77,7 +77,7 @@ D3d9Input::D3d9Input()
         stick->AddKey(g_name_xbox_key_x.C());
         stick->AddKey(g_name_xbox_key_y.C());
 
-        m_data->m_joysticks.Push(i, stick);
+        m_data->m_joysticks.push(i, stick);
     }
 #endif
 
@@ -88,10 +88,10 @@ D3d9Input::~D3d9Input()
 {
 #if defined USE_XINPUT
     /* Unregister all the joysticks we added */
-    while (m_data->m_joysticks.Count())
+    while (m_data->m_joysticks.count())
     {
         delete m_data->m_joysticks[0].m2;
-        m_data->m_joysticks.Remove(0);
+        m_data->m_joysticks.remove(0);
     }
 #endif
     delete m_data;
@@ -102,7 +102,7 @@ void D3d9Input::TickGame(float seconds)
     Entity::TickGame(seconds);
 
 #if defined USE_XINPUT
-    for (int i = 0; i < m_data->m_joysticks.Count(); i++)
+    for (int i = 0; i < m_data->m_joysticks.count(); i++)
     {
         XINPUT_STATE state;
         if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)

@@ -18,6 +18,8 @@
 
 using namespace lol;
 
+#define Line(s) ((s) + "\n")
+
 //-----------------------------------------------------------------------------
 LolImGui::LolImGui()
 {
@@ -54,7 +56,8 @@ LolImGui::LolImGui()
     imgui_pixel.SetMainCode(String() +
         Line(String()
         + "vec4 col = " + pass_color + " * texture2D(" + m_texture + ", " + pass_texcoord + ");")
-        + Line("if (col.a == 0.0) discard; ")
+        + Line(String()
+        + "if (col.a == 0.0) discard; ")
         + Line(out_pixel + " = col;")
         );
 
@@ -227,7 +230,7 @@ void LolImGui::TickGame(float seconds)
         cursor.y = 1.f - cursor.y;
         cursor *= video_size;
         io.MousePos = ImVec2(cursor.x, cursor.y);
-        Log::Debug(Line("%.2f/%.2f"), io.MousePos.x, io.MousePos.y);
+        Log::Debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
         for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
@@ -240,11 +243,11 @@ void LolImGui::TickGame(float seconds)
             case LolImGuiKey::Focus:
                 if (m_controller->IsKeyReleased(i))
                 {
-                    Log::Debug(Line("Not focused ....."));
+                    Log::Debug("Not focused .....\n");
                     io.MousePos = ImVec2(-1.f, -1.f);
                 }
                 else
-                    Log::Debug(Line("Focused !!"));
+                    Log::Debug("Focused !!\n");
                 break;
             }
         }

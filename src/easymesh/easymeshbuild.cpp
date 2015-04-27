@@ -20,7 +20,7 @@ namespace lol
 int VertexDictionnary::FindVertexMaster(const int search_idx)
 {
     //Resolve current vertex idx in the dictionnary (if exist)
-    for (int j = 0; j < vertex_list.Count(); j++)
+    for (int j = 0; j < vertex_list.count(); j++)
         if (vertex_list[j].m1 == search_idx)
             return vertex_list[j].m3;
     return VDictType::DoesNotExist;
@@ -40,11 +40,11 @@ bool VertexDictionnary::FindMatchingVertices(const int search_idx, array<int> &m
     else
         matching_ids << vertex_list[cur_mast].m1;
 
-    for (int j = 0; j < vertex_list.Count(); j++)
+    for (int j = 0; j < vertex_list.count(); j++)
         if (vertex_list[j].m3 == cur_mast && vertex_list[j].m1 != search_idx)
             matching_ids << vertex_list[j].m1;
 
-    return (matching_ids.Count() > 0);
+    return (matching_ids.count() > 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool VertexDictionnary::FindConnectedVertices(const int search_idx, const array<
     array<int> connected_tri;
     FindConnectedTriangles(search_idx, tri_list, tri0, connected_tri, ignored_tri);
 
-    for (int i = 0; i < connected_tri.Count(); i++)
+    for (int i = 0; i < connected_tri.count(); i++)
     {
         for (int j = 0; j < 3; j++)
         {
@@ -67,7 +67,7 @@ bool VertexDictionnary::FindConnectedVertices(const int search_idx, const array<
                 if (found_master != search_idx)
                 {
                     bool already_exist = false;
-                    for (int k = 0; !already_exist && k < connected_vert.Count(); k++)
+                    for (int k = 0; !already_exist && k < connected_vert.count(); k++)
                         if (connected_vert[k] == found_master)
                             already_exist = true;
                     if (!already_exist)
@@ -76,7 +76,7 @@ bool VertexDictionnary::FindConnectedVertices(const int search_idx, const array<
             }
         }
     }
-    return (connected_vert.Count() > 0);
+    return (connected_vert.count() > 0);
 }
 //-----------------------------------------------------------------------------
 bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri)
@@ -108,12 +108,12 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const ar
         }
     }
 
-    for (int i = tri0; i < tri_list.Count(); i += 3)
+    for (int i = tri0; i < tri_list.count(); i += 3)
     {
         if (ignored_tri)
         {
             bool should_pass = false;
-            for (int j = 0; !should_pass && j < ignored_tri->Count(); j++)
+            for (int j = 0; !should_pass && j < ignored_tri->count(); j++)
                 if ((*ignored_tri)[j] == i)
                     should_pass = true;
             if (should_pass)
@@ -123,7 +123,7 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const ar
         for (int j = 0; j < 3; j++)
         {
             bool validated = false;
-            for (int k = 0; !validated && k < vert_list[j].Count(); k++)
+            for (int k = 0; !validated && k < vert_list[j].count(); k++)
                 for (int l = 0; !validated && l < 3; l++)
                     if (vert_list[j][k] == tri_list[i + l])
                         validated = true;
@@ -134,20 +134,20 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const ar
             connected_tri << i;
     }
 
-    return (connected_tri.Count() > 0);
+    return (connected_tri.count() > 0);
 }
 
 //-----------------------------------------------------------------------------
 //Will update the given list with all the vertices on the same spot.
 void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
 {
-    for (int j = 0; j < vertex_list.Count(); j++)
+    for (int j = 0; j < vertex_list.count(); j++)
         if (vertex_list[j].m1 == vert_id)
             return;
 
     //First, build the vertex Dictionnary
     int i = 0;
-    for (; i < master_list.Count(); i++)
+    for (; i < master_list.count(); i++)
     {
         int cur_mast  = master_list[i];
         int cur_id    = vertex_list[cur_mast].m1;
@@ -161,14 +161,14 @@ void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
         {
             if (cur_type == VDictType::Alone)
                 cur_type = VDictType::Master;
-            vertex_list.Push(vert_id, vert_coord, cur_mast);
+            vertex_list.push(vert_id, vert_coord, cur_mast);
             return;
         }
     }
 
     //We're here because we couldn't find any matching vertex
-    master_list.Push((int)vertex_list.Count());
-    vertex_list.Push(vert_id, vert_coord, VDictType::Alone);
+    master_list.push(vertex_list.count());
+    vertex_list.push(vert_id, vert_coord, VDictType::Alone);
 }
 
 //-----------------------------------------------------------------------------
@@ -176,7 +176,7 @@ void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
 void VertexDictionnary::RemoveVertex(const int vert_id)
 {
     int j = 0;
-    for (; j < vertex_list.Count(); j++)
+    for (; j < vertex_list.count(); j++)
         if (vertex_list[j].m1 == vert_id)
             break;
 
@@ -184,7 +184,7 @@ void VertexDictionnary::RemoveVertex(const int vert_id)
     {
         int jf = -1;
         //change all the master ref in the list
-        for (int i = 0; i < vertex_list.Count(); i++)
+        for (int i = 0; i < vertex_list.count(); i++)
         {
             if (vertex_list[i].m3 == j)
             {
@@ -198,8 +198,8 @@ void VertexDictionnary::RemoveVertex(const int vert_id)
             }
         }
     }
-    vertex_list.Remove(j);
-    for (int i = 0; i < master_list.Count(); i++)
+    vertex_list.remove(j);
+    for (int i = 0; i < master_list.count(); i++)
         if (master_list[j] == j)
             break;
 }

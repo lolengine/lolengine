@@ -138,8 +138,8 @@ public:
     void *GetDevice();
 
     static void AddNew(ivec2 size);
-    static ptrdiff_t GetCount();
-    static Renderer* Get(ptrdiff_t index = 0);
+    static int GetCount();
+    static Renderer* Get(int index = 0);
     static void DestroyAll();
 
 public:

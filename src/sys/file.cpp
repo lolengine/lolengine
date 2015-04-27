@@ -120,20 +120,20 @@ class FileData
     String ReadString()
     {
         array<uint8_t> buf;
-        buf.Resize(BUFSIZ);
+        buf.resize(BUFSIZ);
         String ret;
         while (IsValid())
         {
-            int done = Read(&buf[0], (int)buf.Count());
+            int done = Read(&buf[0], buf.count());
 
             if (done <= 0)
                 break;
 
-            int oldsize = (int)ret.Count();
-            ret.Resize(oldsize + done);
+            int oldsize = ret.count();
+            ret.resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
-            buf.Resize(buf.Count() * 3 / 2);
+            buf.resize(buf.count() * 3 / 2);
         }
         return ret;
     }
@@ -148,7 +148,7 @@ class FileData
         if (done <= 0)
             return -1;
 
-        return (int)done;
+        return done;
 #else
         return 0;
 #endif
@@ -156,7 +156,7 @@ class FileData
 
     int WriteString(const String &buf)
     {
-        return Write((uint8_t const *)buf.C(), (int)buf.Count());
+        return Write((uint8_t const *)buf.C(), buf.count());
     }
 
     long int GetPosFromStart()
@@ -355,7 +355,7 @@ class DirectoryData
 #elif defined(_WIN32)
         m_directory = directory;
         String filter = m_directory + String("*");
-        filter.Replace('/', '\\', true);
+        filter.replace('/', '\\', true);
         WIN32_FIND_DATA FindFileData;
         m_handle = FindFirstFile(filter.C(), &FindFileData);
         stat(directory.C(), &m_stat);
@@ -399,7 +399,7 @@ class DirectoryData
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         String filter = m_directory + String("*");
-        filter.Replace('/', '\\', true);
+        filter.replace('/', '\\', true);
         WIN32_FIND_DATA find_data;
         HANDLE handle = FindFirstFile(filter.C(), &find_data);
         bool file_valid = (handle != INVALID_HANDLE_VALUE);
@@ -426,7 +426,7 @@ class DirectoryData
 #elif HAVE_STDIO_H
         /* FIXME: not implemented */
 #endif
-        return ((files && files->Count()) || (directories && directories->Count()));
+        return ((files && files->count()) || (directories && directories->count()));
     }
 
     inline bool IsValid() const
@@ -539,14 +539,14 @@ bool Directory::GetContent(array<String>* files, array<Directory>* directories)
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
 
     if (directories)
-        for (int i = 0; i < sdirectories.Count(); i++)
-            directories->Push(Directory(m_name + sdirectories[i]));
+        for (int i = 0; i < sdirectories.count(); i++)
+            directories->push(Directory(m_name + sdirectories[i]));
 
     if (files)
-        for (int i = 0; i < sfiles.Count(); i++)
-            files->Push(m_name + sfiles[i]);
+        for (int i = 0; i < sfiles.count(); i++)
+            files->push(m_name + sfiles[i]);
 
-    return (files && files->Count()) || (directories || directories->Count());
+    return (files && files->count()) || (directories || directories->count());
 }
 
 //--
@@ -589,7 +589,7 @@ String Directory::GetCurrent()
     TCHAR buff[MAX_PATH * 2];
     GetCurrentDirectory(MAX_PATH, buff);
     result = buff;
-    result.Replace('\\', '/', true);
+    result.replace('\\', '/', true);
 #elif HAVE_STDIO_H
     /* FIXME: not implemented */
 #endif
@@ -603,7 +603,7 @@ bool Directory::SetCurrent(String directory)
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     String result = directory;
-    result.Replace('/', '\\', true);
+    result.replace('/', '\\', true);
     return !!SetCurrentDirectory(result.C());
 #elif HAVE_STDIO_H
     /* FIXME: not implemented */

@@ -60,10 +60,10 @@ bool OricImageCodec::Load(Image *image, char const *path)
     };
 
     String screen = ReadScreen(path);
-    if (screen.Count() == 0)
+    if (screen.count() == 0)
         return false;
 
-    image->SetSize(ivec2(WIDTH, screen.Count() * 6 / WIDTH));
+    image->SetSize(ivec2(WIDTH, screen.count() * 6 / WIDTH));
 
     u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
 
@@ -162,17 +162,17 @@ String OricImageCodec::ReadScreen(char const *name)
     ++header;
 
     /* Skip the header, ignoring the last byte’s value */
-    if (data.Sub(header, 8) != String("\x00\xff\x80\x00\xbf\x3f\xa0\x00", 8))
+    if (data.sub(header, 8) != String("\x00\xff\x80\x00\xbf\x3f\xa0\x00", 8))
         return "";
 
     /* Skip the file name, including trailing nul char */
-    data = data.Sub(header + 8);
-    int filename_end = data.IndexOf('\0');
+    data = data.sub(header + 8);
+    int filename_end = data.index_of('\0');
     if (filename_end < 0)
             return "";
 
     /* Read screen data */
-    return data.Sub(filename_end + 1);
+    return data.sub(filename_end + 1);
 }
 
 /* Error diffusion table, similar to Floyd-Steinberg. I choose not to
@@ -471,8 +471,8 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
     int stride = (size.x + 1);
 
     array2d<ivec3> src, dst;
-    src.SetSize(size + ivec2(1));
-    dst.SetSize(size + ivec2(1));
+    src.resize(size + ivec2(1));
+    dst.resize(size + ivec2(1));
 
     memset(src.data(), 0, src.bytes());
     memset(dst.data(), 0, dst.bytes());

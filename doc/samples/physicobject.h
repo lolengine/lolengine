@@ -144,7 +144,7 @@ public:
         MeshRand << "[sc#ada afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
         MeshRand << "[sc#aad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
 
-        MeshLimit << MeshRand.Count();
+        MeshLimit << MeshRand.count();
         MeshType << 0;
 #endif //USE_BOX
 
@@ -173,7 +173,7 @@ public:
         MeshRand << "[sc#aad asph1 2]";
 #endif
 
-        MeshLimit << (int)MeshRand.Count();
+        MeshLimit << MeshRand.count();
         MeshType << 1;
 #endif //USE_SPHERE
 
@@ -185,7 +185,7 @@ public:
         MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
         MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
 
-        MeshLimit << MeshRand.Count();
+        MeshLimit << MeshRand.count();
         MeshType << 2;
 #endif //USE_CONE
 
@@ -197,7 +197,7 @@ public:
         MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
         MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
 
-        MeshLimit << MeshRand.Count();
+        MeshLimit << MeshRand.count();
         MeshType << 3;
 #endif //USE_CYLINDER
 
@@ -209,13 +209,13 @@ public:
         MeshRand << "[sc#ada scb#ada acap1 2 1]";
         MeshRand << "[sc#aad scb#aad acap1 2 1]";
 
-        MeshLimit << MeshRand.Count();
+        MeshLimit << MeshRand.count();
         MeshType << 4;
 #endif //USE_CAPSULE
 
         int RandLimit = RandValue;
-        if (MeshLimit.Count() <= RandValue || RandValue < 0)
-            RandLimit = rand((int)MeshLimit.Count() - 1);
+        if (MeshLimit.count() <= RandValue || RandValue < 0)
+            RandLimit = rand((int)MeshLimit.count() - 1);
         RandValue = rand(MeshLimit[RandLimit], MeshLimit[RandLimit + 1]);
 
         m_physics = new EasyPhysic(this);

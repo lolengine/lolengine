@@ -41,8 +41,7 @@ template< class T > inline int GetRandom(array<T> src)
     float r_value = 0.f;
     int r_j = 0;
 
-    int i = 0;
-    for (; i < src.Count(); ++i)
+    for (int i = 0; i < src.count(); ++i)
     {
         T& tmp = src[i];
         if (tmp.m_weight > .0f)
@@ -68,7 +67,7 @@ template<class T> inline T FindValue(const char* name)
     for (int i = 0; i < T::Max; ++i)
     {
         String s = T(i).ToString().to_lower();
-        if (s.Contains(n))
+        if (s.contains(n))
             return T(i);
     }
     return T::Max;

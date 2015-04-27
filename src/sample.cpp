@@ -56,10 +56,9 @@ Sample::Sample(char const *path)
     data->m_name = String("<sample> ") + path;
 
 #if defined USE_SDL_MIXER
-    array<String> pathlist = System::GetPathList(path);
-    for (int i = 0; i < pathlist.Count(); ++i)
+    for (auto candidate : System::GetPathList(path))
     {
-        data->m_chunk = Mix_LoadWAV(pathlist[i].C());
+        data->m_chunk = Mix_LoadWAV(candidate.C());
         if (data->m_chunk)
             break;
     }
