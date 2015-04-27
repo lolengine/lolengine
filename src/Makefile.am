@@ -109,8 +109,7 @@ liblolcore_sources = \
     mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
     sys/init.cpp sys/timer.cpp sys/file.cpp sys/hacks.cpp \
-    sys/thread.cpp sys/threadbase.h \
-	sys/threadtypes.cpp \
+    sys/thread.cpp sys/threadtypes.cpp \
     \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
     image/crop.cpp image/resample.cpp image/noise.cpp image/combine.cpp \
