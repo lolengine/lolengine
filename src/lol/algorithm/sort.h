@@ -30,7 +30,7 @@ void array_base<T, ARRAY>::shuffle()
     while (n > 0)
     {
         ni = lol::rand(n--) | 0;
-        std::swap(m_data[ni], m_data[n]);
+        this->swap(ni, n);
     }
 }
 
@@ -59,7 +59,7 @@ void array_base<T, ARRAY>::sort(SortAlgorithm algorithm)
                 d = 1;
             if (m_data[i + 1] < m_data[i])
             {
-                std::swap(m_data[i], m_data[i + 1]);
+                this->swap(i, i + 1);
                 d = -1;
             }
         }
@@ -103,7 +103,7 @@ static void quick_swap_sort(array_base<T, ARRAY> &a,
     {
         if (!(a[i0] < median) && a[i1] < median)
         {
-            std::swap(a[i0], a[i1]);
+            a.swap(i0, i1);
             i0++;
             i1--;
             b_swap = true;
