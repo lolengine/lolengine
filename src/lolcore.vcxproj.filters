@@ -697,9 +697,6 @@
     <ClInclude Include="lol\gpu\lolfx.h">
       <Filter>lol\gpu</Filter>
     </ClInclude>
-    <ClInclude Include="sys\threadbase.h">
-      <Filter>sys</Filter>
-    </ClInclude>
     <ClInclude Include="lol\debug\all.h">
       <Filter>lol\debug</Filter>
     </ClInclude>

@@ -382,7 +382,6 @@
     <ClInclude Include="scene.h" />
     <ClInclude Include="simd.h" />
     <ClInclude Include="sprite.h" />
-    <ClInclude Include="sys\threadbase.h" />
     <ClInclude Include="text.h" />
     <ClInclude Include="textureimage-private.h" />
     <ClInclude Include="textureimage.h" />
