@@ -1,9 +1,9 @@
+﻿//
+//  Lol Engine — Unit tests
 //
-//  Lol Engine
-//
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            © 2013-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//            © 2013—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it

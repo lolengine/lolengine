@@ -1,5 +1,5 @@
-//
-//  Lol Engine - Sandbox program
+﻿//
+//  Lol Engine — Sandbox program
 //
 //  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
 //

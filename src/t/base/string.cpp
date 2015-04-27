@@ -1,5 +1,5 @@
-//
-//  Lol Engine
+﻿//
+//  Lol Engine — Unit tests
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>

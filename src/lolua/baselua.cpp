@@ -1,8 +1,8 @@
 ﻿//
 //  Base Lua class for Lua script loading
 //
-//  Copyright: © 2009—2015 Sam Hocevar <sam@hocevar.net>
-//             © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//  Copyright © 2009—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
