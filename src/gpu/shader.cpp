@@ -174,7 +174,7 @@ private:
 
     // code_section < code_line{&(title / eof)}
     struct code_section
-      : ifapply<until<at<sor<title_ignore, eof>>, code_line>, do_code> {};
+      : ifapply<until<at<sor<title_ignore, pegtl::eof>>, code_line>, do_code> {};
 
     // shader < title code_section
     struct shader

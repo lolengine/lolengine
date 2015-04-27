@@ -287,6 +287,12 @@ LOL_CHECK_OPENGL
 LOL_CHECK_SDL
 
 
+dnl  Use mingw threads if necessary
+if true; then
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/mingw-std-threads-0.0.ac5c9e3b/include/"
+fi
+
+
 dnl  Use pegtl? Yes, always
 if true; then
   LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/pegtl-0.32/include"
