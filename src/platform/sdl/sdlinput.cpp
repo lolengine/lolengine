@@ -189,7 +189,8 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
             continue;
         }
 
-        InputDeviceInternal* stick = new InputDeviceInternal(String::format("Joystick%d", i+1).C());
+        //String::format("Joystick%d", i + 1).C()
+        InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
             stick->AddAxis(String::format("Axis%d", j + 1).C());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
@@ -344,6 +345,7 @@ void SdlInputData::Tick(float seconds)
 #   else
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
+            //event.button.which
             m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:

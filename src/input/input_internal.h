@@ -19,7 +19,7 @@ namespace lol
 class InputDeviceInternal : public InputDevice
 {
 public:
-    inline InputDeviceInternal(char const * name) : InputDevice(name) { }
+    inline InputDeviceInternal(String const& name) : InputDevice(name) { }
 
     void AddKey(int id, char const * name);
 

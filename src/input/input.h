@@ -16,6 +16,10 @@ namespace lol
 const String g_name_max("MAX");
 const String g_name_mouse("Mouse");
 const String g_name_keyboard("Keyboard");
+static String g_name_joystick()
+{
+    return String("Joystick");
+}
 static String g_name_joystick(const uint64_t num)
 {
     return String::format("Joystick%d", (int)num);
@@ -166,6 +170,10 @@ public:
     {
         return GetDevice(g_name_mouse);
     }
+    static int GetJoystickCount()
+    {
+        return joystick_count;
+    }
     static InputDevice* GetJoystick(const uint64_t num)
     {
         return GetDevice(g_name_joystick(num));
@@ -219,6 +227,7 @@ protected:
 
 private:
     static array<InputDevice*> devices;
+    static int joystick_count;
 
     template <typename... T>
     ptrdiff_t GetItemIndex(String const &name, const array<String, T...>& a) const
@@ -233,6 +242,9 @@ private:
 
     static InputDevice* GetDevice(String const &name)
     {
+        //Count the device types. TODO: Multi mouse/keyboard
+        if (name.contains(g_name_joystick())) joystick_count++;
+
         for (int i = 0; i < devices.count(); ++i)
         {
             if (devices[i]->m_name == name)

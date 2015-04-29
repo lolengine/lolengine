@@ -53,7 +53,7 @@ D3d9Input::D3d9Input()
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
-        InputDeviceInternal* stick = new InputDeviceInternal(String::format("Joystick%d", i+1).C());
+        InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
 
         stick->AddAxis(g_name_xbox_axis_left_x.C());
         stick->AddAxis(g_name_xbox_axis_left_y.C());
