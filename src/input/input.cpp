@@ -16,6 +16,7 @@ namespace lol
 {
 
 array<InputDevice*> InputDevice::devices;
+int InputDevice::joystick_count = 0;
 bool InputDevice::m_capturemouse;
 
 array<String> InputDevice::GetAvailableDevices()
