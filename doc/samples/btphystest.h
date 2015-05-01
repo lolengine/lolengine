@@ -43,26 +43,50 @@ protected:
     void InitApp();
 
 private:
-    enum
+    //MeshViewerInput ---------------------------------------------------------
+    struct BtPhysTestKeyInputBase : public StructSafeEnum
     {
-        KEY_MOVE_FORWARD,
-        KEY_MOVE_BACK,
-        KEY_MOVE_LEFT,
-        KEY_MOVE_RIGHT,
-        KEY_MOVE_UP,
-        KEY_MOVE_DOWN,
-        KEY_MOVE_JUMP,
-        KEY_QUIT,
-        KEY_MAX,
+        enum Type
+        {
+            KEY_START = 0,
+
+            KEY_MOVE_FORWARD = KEY_START,
+            KEY_MOVE_BACK,
+            KEY_MOVE_LEFT,
+            KEY_MOVE_RIGHT,
+            KEY_MOVE_UP,
+            KEY_MOVE_DOWN,
+            KEY_MOVE_JUMP,
+            KEY_QUIT,
+
+            KEY_MAX
+        };
+    protected:
+        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        {
+            enum_map[KEY_MOVE_FORWARD] = g_name_key_Up;
+            enum_map[KEY_MOVE_BACK] = g_name_key_Down;
+            enum_map[KEY_MOVE_LEFT] = g_name_key_Left;
+            enum_map[KEY_MOVE_RIGHT] = g_name_key_Right;
+            enum_map[KEY_MOVE_UP] = g_name_key_PageUp;
+            enum_map[KEY_MOVE_DOWN] = g_name_key_PageDown;
+            enum_map[KEY_MOVE_JUMP] = g_name_key_Space;
+            enum_map[KEY_QUIT] = g_name_key_Escape;
+
+            return true;
+        }
     };
+    typedef SafeEnum<BtPhysTestKeyInputBase> BtPhysTestKeyInput;
+
 
     TileSet*                        m_cat_texture;
     Shader*                         m_cat_shader;
     CatShaderData*                  m_cat_sdata;
     Camera*                         m_camera;
-    Controller *                    m_controller;
-    Light *                         m_light1;
-    Light *                         m_light2;
+    Controller*                     m_controller;
+    InputProfile                    m_profile;
+    Light*                          m_light1;
+    Light*                          m_light2;
     int                             m_init_status;
     bool                            m_ready;
 

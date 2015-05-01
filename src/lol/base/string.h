@@ -45,7 +45,7 @@ public:
     {
         using namespace std;
         ASSERT(str);
-        resize(strlen(str));
+        resize((int)strlen(str));
         memcpy(&(*this)[0], str, count() + 1);
     }
 
@@ -162,7 +162,7 @@ public:
     {
         using namespace std;
 
-        int token_len = strlen(token);
+        int token_len = (int)strlen(token);
         for (int i = count() - token_len; i >= 0; --i)
             if (strstr(C() + i, token))
                 return i;
@@ -281,7 +281,7 @@ public:
         /* We parse the C string twice because of strlen + memcmp
          * but it's probably still faster than doing it by hand. */
         using namespace std;
-        int sz_len = strlen(sz);
+        int sz_len = (int)strlen(sz);
         return count() == sz_len
                 && memcmp(C(), sz, sz_len) == 0;
     }

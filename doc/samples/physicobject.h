@@ -42,7 +42,10 @@ public:
     {
         m_physics = new EasyPhysic(this);
 
-        m_mesh.Compile("[sc#ddd afcb 60 1 60 -.1]");
+        //m_mesh.Compile("[sc#ddd afcb 60 1 60 -.1]");
+        m_mesh.SetCurColor(Color::white);
+        m_mesh.AppendFlatChamfBox(vec3(60.f, 1.f, 60.f), -.1f);
+
         vec3 BoxSize = vec3(60.f, 1.f, 60.f);
         m_physics->SetCollisionChannel(0, 0xFF);
         m_physics->SetShapeToBox(BoxSize);
@@ -130,88 +133,168 @@ public:
         m_is_character(false),
         m_is_phys(false)
     {
-        array<char const *> MeshRand;
-        array<int> MeshLimit;
-        array<int> MeshType;
+        static array<EasyMesh> MeshRand;
+        static array<int> MeshLimit;
+        static array<int> MeshType;
 
-        MeshLimit << 0;
+        if (!MeshRand.count())
+        {
+            array<String> colors_base = { "#add", "#dad", "#dda", "#daa", "#ada", "#aad" };
+
+            MeshLimit << 0;
 
 #if USE_BOX
-        MeshRand << "[sc#add afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
-        MeshRand << "[sc#dad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
-        MeshRand << "[sc#dda afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
-        MeshRand << "[sc#daa afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
-        MeshRand << "[sc#ada afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
-        MeshRand << "[sc#aad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            {
+                array<String> colors = colors_base;
+                while (colors.count())
+                {
+                    EasyMesh m;
+                    vec4 color = Color::C8BppHexString(colors.pop());
+                    m.SetCurColor(color);
+                    m.AppendFlatChamfBox(vec3(1.7f), .4f);
+                    m.OpenBrace();
+                    {
+                        m.SetCurColor(Color::black);
+                        m.ToggleScaleWinding();
+                        m.AppendFlatChamfBox(vec3(1.9f), .4f);
+                        m.ScaleX(-1.f);
+                        m.ScaleY(-1.f);
+                        m.ScaleZ(-1.f);
+                    }
+                    m.CloseBrace();
+                    MeshRand << m;
+                }
+            }
+            //MeshRand << "[sc#add afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            //MeshRand << "[sc#dad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            //MeshRand << "[sc#dda afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            //MeshRand << "[sc#daa afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            //MeshRand << "[sc#ada afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
+            //MeshRand << "[sc#aad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
 
-        MeshLimit << MeshRand.count();
-        MeshType << 0;
+            MeshLimit << MeshRand.count();
+            MeshType << 0;
 #endif //USE_BOX
 
 
 #if USE_SPHERE
 #if CAT_MODE
-        int nb_sprite = NB_SPRITE;
-        //SPRITE
-        vec2 start_point = vec2((float)rand(nb_sprite), (float)rand(nb_sprite)) / vec2((float)nb_sprite);
-                           //vec2(0.f, .0f) / vec2((float)nb_sprite);
-        vec2 size = vec2(1.f) / vec2((float)nb_sprite);
-        m_mesh.BD()->SetTexCoordCustomBuild(MeshType::Quad, MeshFaceType::QuadDefault,
-                                            start_point, start_point + size);
-        m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
-                                             vec2(-PARTICLE_SIZE), vec2(PARTICLE_SIZE));
-        MeshRand << "[tpbn tvnc sc#ffff aq 0 0]";
-        MeshRand << "[tpbn tvnc sc#faaf aq 0 0]";
-        MeshRand << "[tpbn tvnc sc#afaf aq 0 0]";
-        MeshRand << "[tpbn tvnc sc#aaff aq 0 0]";
+            int nb_sprite = NB_SPRITE;
+            //SPRITE
+            vec2 start_point = vec2((float)rand(nb_sprite), (float)rand(nb_sprite)) / vec2((float)nb_sprite);
+            //vec2(0.f, .0f) / vec2((float)nb_sprite);
+            vec2 size = vec2(1.f) / vec2((float)nb_sprite);
+            m_mesh.BD()->SetTexCoordCustomBuild(MeshType::Quad, MeshFaceType::QuadDefault,
+                start_point, start_point + size);
+            m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
+                vec2(-PARTICLE_SIZE), vec2(PARTICLE_SIZE));
+            MeshRand << "[tpbn tvnc sc#ffff aq 0 0]";
+            MeshRand << "[tpbn tvnc sc#faaf aq 0 0]";
+            MeshRand << "[tpbn tvnc sc#afaf aq 0 0]";
+            MeshRand << "[tpbn tvnc sc#aaff aq 0 0]";
 #else
-        MeshRand << "[sc#add asph1 2]";
-        MeshRand << "[sc#dad asph1 2]";
-        MeshRand << "[sc#dda asph1 2]";
-        MeshRand << "[sc#daa asph1 2]";
-        MeshRand << "[sc#ada asph1 2]";
-        MeshRand << "[sc#aad asph1 2]";
+            {
+                array<String> colors = colors_base;
+                while (colors.count())
+                {
+                    EasyMesh m;
+                    vec4 color = Color::C8BppHexString(colors.pop());
+                    m.SetCurColor(color);
+                    m.AppendSphere(1, 2.f);
+                    MeshRand << m;
+                }
+            }
+            //MeshRand << "[sc#add asph1 2]";
+            //MeshRand << "[sc#dad asph1 2]";
+            //MeshRand << "[sc#dda asph1 2]";
+            //MeshRand << "[sc#daa asph1 2]";
+            //MeshRand << "[sc#ada asph1 2]";
+            //MeshRand << "[sc#aad asph1 2]";
 #endif
 
-        MeshLimit << MeshRand.count();
-        MeshType << 1;
+            MeshLimit << MeshRand.count();
+            MeshType << 1;
 #endif //USE_SPHERE
 
 #if USE_CONE
-        MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
-        MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
-        MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
-        MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
-        MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
-        MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            {
+                array<String> colors = colors_base;
+                while (colors.count())
+                {
+                    EasyMesh m;
+                    vec4 color = Color::C8BppHexString(colors.pop());
+                    m.SetCurColor(color);
+                    m.SetCurColorB(color);
+                    m.AppendDisc(8, 2.f);
+                    m.RotateX(180.f);
+                    m.TranslateY(-1.f);
+                    m.AppendCylinder(8, 2.f, 2.f, 0.f);
+                    MeshRand << m;
+                }
+            }
+            //MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            //MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            //MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            //MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            //MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
+            //MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
 
-        MeshLimit << MeshRand.count();
-        MeshType << 2;
+            MeshLimit << MeshRand.count();
+            MeshType << 2;
 #endif //USE_CONE
 
 #if USE_CYLINDER
-        MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
-        MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
-        MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
-        MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
-        MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
-        MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            {
+                array<String> colors = colors_base;
+                while (colors.count())
+                {
+                    EasyMesh m;
+                    vec4 color = Color::C8BppHexString(colors.pop());
+                    m.SetCurColor(color);
+                    m.SetCurColorB(color);
+                    m.AppendDisc(8, 2.f);
+                    m.RotateX(180.f);
+                    m.TranslateY(-1.f);
+                    m.MirrorY();
+                    m.AppendCylinder(8.f, 2.f, 2.f, 2.f);
+                    MeshRand << m;
+                }
+            }
+            //MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            //MeshRand << "[sc#dad scb#dad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            //MeshRand << "[sc#dda scb#dda ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            //MeshRand << "[sc#daa scb#daa ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            //MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
+            //MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
 
-        MeshLimit << MeshRand.count();
-        MeshType << 3;
+            MeshLimit << MeshRand.count();
+            MeshType << 3;
 #endif //USE_CYLINDER
 
 #if USE_CAPSULE
-        MeshRand << "[sc#add scb#add acap1 2 1]";
-        MeshRand << "[sc#dad scb#dad acap1 2 1]";
-        MeshRand << "[sc#dda scb#dda acap1 2 1]";
-        MeshRand << "[sc#daa scb#daa acap1 2 1]";
-        MeshRand << "[sc#ada scb#ada acap1 2 1]";
-        MeshRand << "[sc#aad scb#aad acap1 2 1]";
+            {
+                array<String> colors = colors_base;
+                while (colors.count())
+                {
+                    EasyMesh m;
+                    vec4 color = Color::C8BppHexString(colors.pop());
+                    m.SetCurColor(color);
+                    m.SetCurColorB(color);
+                    m.AppendCapsule(1, 2.f, 1.f);
+                    MeshRand << m;
+                }
+            }
+            //MeshRand << "[sc#add scb#add acap1 2 1]";
+            //MeshRand << "[sc#dad scb#dad acap1 2 1]";
+            //MeshRand << "[sc#dda scb#dda acap1 2 1]";
+            //MeshRand << "[sc#daa scb#daa acap1 2 1]";
+            //MeshRand << "[sc#ada scb#ada acap1 2 1]";
+            //MeshRand << "[sc#aad scb#aad acap1 2 1]";
 
-        MeshLimit << MeshRand.count();
-        MeshType << 4;
+            MeshLimit << MeshRand.count();
+            MeshType << 4;
 #endif //USE_CAPSULE
+        }
 
         int RandLimit = RandValue;
         if (MeshLimit.count() <= RandValue || RandValue < 0)
@@ -220,7 +303,8 @@ public:
 
         m_physics = new EasyPhysic(this);
 
-        m_mesh.Compile(MeshRand[RandValue]);
+        //m_mesh.Compile(MeshRand[RandValue]);
+        m_mesh = MeshRand[RandValue];
         m_mesh.Scale(vec3(OBJ_SIZE));
         vec3 BoxSize = vec3(2.0f) * OBJ_SIZE;
         int ColGroup = 1;

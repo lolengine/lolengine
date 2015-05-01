@@ -17,7 +17,7 @@ using namespace lol;
 #include "physics/lolphysics.h"
 #include "physics/easyphysics.h"
 
-#define CAT_MODE        1
+#define CAT_MODE        0
 #define OBJ_SIZE        2.f
 #define NB_SPRITE       4
 #define PARTICLE_SIZE   4
@@ -36,17 +36,17 @@ using namespace lol::phys;
 #define JUMP_STRAFE         .5f
 #define TARGET_TIMER        10.f + (rand(4.f) - 2.f)
 
-int gNumObjects = 64;
+int gNumObjects = 16;
 
 #if CAT_MODE
 #define USE_WALL        1
 #define USE_BODIES      1
 #else
 #define USE_WALL        1
-#define USE_PLATFORM    1
+#define USE_PLATFORM    0
 #define USE_ROPE        0
 #define USE_BODIES      1
-#define USE_ROTATION    0
+#define USE_ROTATION    1
 #define USE_CHARACTER   0
 #define USE_STAIRS      0
 #endif
@@ -71,6 +71,14 @@ void BtPhysTest::InitApp()
     m_loc_dp = .0f;
 #endif //CAT_MODE
 
+#if 1 //HAS_INPUT
+    InputProfile& ip = m_profile;
+    ip.AddBindings<BtPhysTestKeyInput, BtPhysTestKeyInput::KEY_START, BtPhysTestKeyInput::KEY_MAX>(InputProfileType::Keyboard);
+
+    m_controller = new Controller("Default");
+    m_controller->Init(m_profile);
+    Ticker::Ref(m_controller);
+#else
     /* Register an input controller for the keyboard */
     m_controller = new Controller("Default");
     m_controller->SetInputCount(KEY_MAX, 0);
@@ -82,6 +90,7 @@ void BtPhysTest::InitApp()
     m_controller->GetKey(KEY_MOVE_UP).Bind("Keyboard", "PageUp");
     m_controller->GetKey(KEY_MOVE_DOWN).Bind("Keyboard", "PageDown");
     m_controller->GetKey(KEY_QUIT).Bind("Keyboard", "Escape");
+#endif
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
@@ -301,6 +310,88 @@ void BtPhysTest::InitApp()
 #endif //USE_ROPE
 }
 
+BtPhysTest::~BtPhysTest()
+{
+    Scene& scene = Scene::GetScene();
+    scene.PopCamera(m_camera);
+    Ticker::Unref(m_controller);
+    Ticker::Unref(m_light1);
+    Ticker::Unref(m_light2);
+
+#if CAT_MODE
+    /* cat datas setup */
+    Shader::Destroy(m_cat_shader);
+    Tiler::Deregister(m_cat_texture);
+#endif //CAT_MODE
+
+    while (m_constraint_list.count())
+    {
+        EasyConstraint* CurPop = m_constraint_list.last();
+        m_constraint_list.pop();
+        CurPop->RemoveFromSimulation(m_simulation);
+        delete CurPop;
+    }
+    array<PhysicsObject*> objects
+        = m_ground_list
+        + m_stairs_list
+        + m_character_list
+        + m_platform_list;
+    while (m_physobj_list.count())
+    {
+        objects << m_physobj_list.last().m1;
+        m_physobj_list.pop();
+    }
+    m_ground_list.empty();
+    m_stairs_list.empty();
+    m_character_list.empty();
+    m_platform_list.empty();
+
+    while (objects.count())
+    {
+        PhysicsObject* CurPop = objects.pop();
+        CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+        Ticker::Unref(CurPop);
+    }
+
+    //while (m_ground_list.count())
+    //{
+    //    PhysicsObject* CurPop = m_ground_list.last();
+    //    m_ground_list.pop();
+    //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+    //    Ticker::Unref(CurPop);
+    //}
+    //while (m_stairs_list.count())
+    //{
+    //    PhysicsObject* CurPop = m_stairs_list.last();
+    //    m_stairs_list.pop();
+    //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+    //    Ticker::Unref(CurPop);
+    //}
+    //while (m_character_list.count())
+    //{
+    //    PhysicsObject* CurPop = m_character_list.last();
+    //    m_character_list.pop();
+    //    CurPop->GetCharacter()->RemoveFromSimulation(m_simulation);
+    //    Ticker::Unref(CurPop);
+    //}
+    //while (m_platform_list.count())
+    //{
+    //    PhysicsObject* CurPop = m_platform_list.last();
+    //    m_platform_list.pop();
+    //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+    //    Ticker::Unref(CurPop);
+    //}
+    //while (m_physobj_list.count())
+    //{
+    //    PhysicsObject* CurPop = m_physobj_list.last().m1;
+    //    m_physobj_list.pop();
+    //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
+    //    Ticker::Unref(CurPop);
+    //}
+    Ticker::Unref(m_simulation);
+
+}
+
 void BtPhysTest::TickGame(float seconds)
 {
     WorldEntity::TickGame(seconds);
@@ -317,8 +408,10 @@ void BtPhysTest::TickGame(float seconds)
         return;
     }
 
+    Debug::DrawSetupSegment(1.f);
+    Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
-    if (m_controller->WasKeyReleasedThisFrame(KEY_QUIT))
+    if (m_controller->WasKeyReleasedThisFrame(BtPhysTestKeyInput::KEY_QUIT))
         Ticker::Shutdown();
 
     m_loop_value += seconds;
@@ -616,65 +709,6 @@ void BtPhysTest::TickDraw(float seconds, Scene &scene)
     }
 
     //Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
-
-}
-
-BtPhysTest::~BtPhysTest()
-{
-    Scene& scene = Scene::GetScene();
-    scene.PopCamera(m_camera);
-    Ticker::Unref(m_light1);
-    Ticker::Unref(m_light2);
-
-#if CAT_MODE
-    /* cat datas setup */
-    Shader::Destroy(m_cat_shader);
-    Tiler::Deregister(m_cat_texture);
-#endif //CAT_MODE
-
-    while (m_constraint_list.count())
-    {
-        EasyConstraint* CurPop = m_constraint_list.last();
-        m_constraint_list.pop();
-        CurPop->RemoveFromSimulation(m_simulation);
-        delete CurPop;
-    }
-    while (m_ground_list.count())
-    {
-        PhysicsObject* CurPop = m_ground_list.last();
-        m_ground_list.pop();
-        CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
-        Ticker::Unref(CurPop);
-    }
-    while (m_stairs_list.count())
-    {
-        PhysicsObject* CurPop = m_stairs_list.last();
-        m_stairs_list.pop();
-        CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
-        Ticker::Unref(CurPop);
-    }
-    while (m_character_list.count())
-    {
-        PhysicsObject* CurPop = m_character_list.last();
-        m_character_list.pop();
-        CurPop->GetCharacter()->RemoveFromSimulation(m_simulation);
-        Ticker::Unref(CurPop);
-    }
-    while (m_platform_list.count())
-    {
-        PhysicsObject* CurPop = m_platform_list.last();
-        m_platform_list.pop();
-        CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
-        Ticker::Unref(CurPop);
-    }
-    while (m_physobj_list.count())
-    {
-        PhysicsObject* CurPop = m_physobj_list.last().m1;
-        m_physobj_list.pop();
-        CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
-        Ticker::Unref(CurPop);
-    }
-    Ticker::Unref(m_simulation);
 
 }
 
