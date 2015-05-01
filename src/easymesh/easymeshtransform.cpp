@@ -35,21 +35,21 @@ void EasyMesh::Translate(vec3 const &v)
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::RotateX(float angle) { Rotate(angle, vec3(1, 0, 0)); }
-void EasyMesh::RotateY(float angle) { Rotate(angle, vec3(0, 1, 0)); }
-void EasyMesh::RotateZ(float angle) { Rotate(angle, vec3(0, 0, 1)); }
+void EasyMesh::RotateX(float degrees) { Rotate(degrees, vec3(1, 0, 0)); }
+void EasyMesh::RotateY(float degrees) { Rotate(degrees, vec3(0, 1, 0)); }
+void EasyMesh::RotateZ(float degrees) { Rotate(degrees, vec3(0, 0, 1)); }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::Rotate(float angle, vec3 const &axis)
+void EasyMesh::Rotate(float degrees, vec3 const &axis)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
         BD()->CmdStack().AddCmd(EasyMeshCmdType::Rotate);
-        BD()->CmdStack() << angle << axis;
+        BD()->CmdStack() << degrees << axis;
         return;
     }
 
-    mat3 m = mat3::rotate(angle, axis);
+    mat3 m = mat3::rotate(degrees, axis);
     for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
     {
         m_vert[i].m_coord  = m * m_vert[i].m_coord;

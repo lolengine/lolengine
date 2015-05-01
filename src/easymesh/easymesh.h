@@ -191,16 +191,16 @@ public:
      */
     void Translate(vec3 const &v);
     /* See Rotate */
-    void RotateX(float angle);
+    void RotateX(float degrees);
     /* See Rotate */
-    void RotateY(float angle);
+    void RotateY(float degrees);
     /* See Rotate */
-    void RotateZ(float angle);
+    void RotateZ(float degrees);
     /* [cmd:r/rx/ry/rz] Rotate vertices
-        - angle : rotation quantity.
+        - degrees : rotation quantity.
         - axis : rotation axis.
      */
-    void Rotate(float angle, vec3 const &axis);
+    void Rotate(float degrees, vec3 const &axis);
     /* [cmd:rj] Randomly move vertices along Origin-to-vertex as f(vtx) = vtx + o2v * (1.0 + rand(r))
         - r : jitter maximum value.
      */

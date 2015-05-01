@@ -932,7 +932,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
         }
     }
 
-    patched_code.resize(strlen(patched_code.C()));
+    patched_code.resize((int)strlen(patched_code.C()));
 
     return patched_code;
 }

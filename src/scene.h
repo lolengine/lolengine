@@ -231,7 +231,7 @@ public:
 public:
     void SetLineTime(float new_time = -1.f);
     void SetLineMask(int new_mask = 0xFFFFFFFF);
-    void SetLineSegmentSize(float new_segment_size = 100000.f);
+    void SetLineSegmentSize(float new_segment_size = 1.f);
     void SetLineColor(vec4 new_color = vec4(1.f));
 
     float GetLineSegmentSize();
