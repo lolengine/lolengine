@@ -111,8 +111,11 @@
     <ClCompile Include="easymesh\easymeshrender.cpp" />
     <ClCompile Include="easymesh\easymeshtransform.cpp" />
     <ClCompile Include="eglapp.cpp" />
+    <ClCompile Include="engine\entity.cpp" />
+    <ClCompile Include="engine\ticker.cpp" />
+    <ClCompile Include="engine\world.cpp" />
+    <ClCompile Include="engine\worldentity.cpp" />
     <ClCompile Include="emitter.cpp" />
-    <ClCompile Include="entity.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="forge.cpp" />
     <ClCompile Include="gpu\framebuffer.cpp" />
@@ -227,12 +230,9 @@
     <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
-    <ClCompile Include="ticker.cpp" />
     <ClCompile Include="tiler.cpp" />
     <ClCompile Include="tileset.cpp" />
     <ClCompile Include="video.cpp" />
-    <ClCompile Include="world.cpp" />
-    <ClCompile Include="worldentity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
@@ -250,7 +250,10 @@
     <ClInclude Include="easymesh\easymeshrender.h" />
     <ClInclude Include="eglapp.h" />
     <ClInclude Include="emitter.h" />
-    <ClInclude Include="entity.h" />
+    <ClInclude Include="engine\entity.h" />
+    <ClInclude Include="engine\ticker.h" />
+    <ClInclude Include="engine\worldentity.h" />
+    <ClInclude Include="engine\world.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="forge.h" />
     <ClInclude Include="gradient.h" />
@@ -385,13 +388,10 @@
     <ClInclude Include="text.h" />
     <ClInclude Include="textureimage-private.h" />
     <ClInclude Include="textureimage.h" />
-    <ClInclude Include="ticker.h" />
     <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
-    <ClInclude Include="world.h" />
-    <ClInclude Include="worldentity.h" />
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="easymesh\shiny.lolfx" />

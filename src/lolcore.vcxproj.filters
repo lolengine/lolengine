@@ -94,7 +94,7 @@
     <Filter Include="tileset">
       <UniqueIdentifier>{7fb4105d-4f17-4824-8d40-948553fdcde1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="entities">
+    <Filter Include="engine">
       <UniqueIdentifier>{3bd5fe6f-c9cd-45f3-98a9-958d86d415e8}</UniqueIdentifier>
     </Filter>
     <Filter Include="display">
@@ -244,9 +244,6 @@
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="text.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="world.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="gpu\framebuffer.cpp">
@@ -406,11 +403,17 @@
     <ClCompile Include="tileset.cpp">
       <Filter>tileset</Filter>
     </ClCompile>
-    <ClCompile Include="worldentity.cpp">
-      <Filter>entities</Filter>
+    <ClCompile Include="engine\entity.cpp">
+      <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="entity.cpp">
-      <Filter>entities</Filter>
+    <ClCompile Include="engine\ticker.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\world.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\worldentity.cpp">
+      <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="textureimage.cpp">
       <Filter>tileset</Filter>
@@ -418,9 +421,6 @@
     <ClCompile Include="lolimgui.cpp" />
     <ClCompile Include="mesh\primitivemesh.cpp">
       <Filter>mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ticker.cpp">
-      <Filter>display</Filter>
     </ClCompile>
     <ClCompile Include="video.cpp">
       <Filter>display</Filter>
@@ -589,7 +589,7 @@
     <ClInclude Include="text.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="world.h">
+    <ClInclude Include="engine\world.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="easymesh\easymesh.h">
@@ -767,11 +767,17 @@
     <ClInclude Include="tileset.h">
       <Filter>tileset</Filter>
     </ClInclude>
-    <ClInclude Include="worldentity.h">
-      <Filter>entities</Filter>
+    <ClInclude Include="engine\entity.h">
+      <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="entity.h">
-      <Filter>entities</Filter>
+    <ClInclude Include="engine\ticker.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\world.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\worldentity.h">
+      <Filter>engine</Filter>
     </ClInclude>
     <ClInclude Include="textureimage.h">
       <Filter>tileset</Filter>
@@ -782,9 +788,6 @@
     <ClInclude Include="lolimgui.h" />
     <ClInclude Include="mesh\primitivemesh.h">
       <Filter>mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ticker.h">
-      <Filter>display</Filter>
     </ClInclude>
     <ClInclude Include="video.h">
       <Filter>display</Filter>

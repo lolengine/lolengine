@@ -17,7 +17,7 @@
 
 #include <lol/math/transform.h>
 
-#include "entity.h"
+#include "engine/entity.h"
 
 namespace lol
 {
