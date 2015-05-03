@@ -15,7 +15,7 @@
 // ----------------
 //
 
-#include "worldentity.h"
+#include "engine/worldentity.h"
 #include "tileset.h"
 
 namespace lol

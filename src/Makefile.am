@@ -6,15 +6,14 @@ SUBDIRS = bullet lua data . t
 noinst_LIBRARIES = liblolcore.a
 
 liblolcore_a_SOURCES = \
-    tiler.cpp tiler.h dict.cpp dict.h \
+    tiler.cpp tiler.h dict.cpp dict.h lolgl.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
-    entity.cpp entity.h ticker.cpp ticker.h lolgl.h \
     textureimage.cpp textureimage.h tileset.cpp tileset.h \
     forge.cpp forge.h video.cpp video.h \
-    world.cpp world.h sample.cpp sample.h sampler.cpp sampler.h \
+    sample.cpp sample.h sampler.cpp sampler.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     numeric.h utils.h messageservice.cpp messageservice.h \
-    worldentity.cpp worldentity.h gradient.cpp gradient.h gradient.lolfx \
+    gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h lolimgui.cpp lolimgui.h \
     \
@@ -123,6 +122,11 @@ liblolcore_sources = \
     image/filter/convolution.cpp image/filter/colors.cpp \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
     image/movie.cpp \
+    \
+    engine/ticker.cpp engine/ticker.h \
+    engine/entity.cpp engine/entity.h \
+    engine/world.cpp engine/world.h \
+    engine/worldentity.cpp engine/worldentity.h \
     \
     loldebug.h \
     debug/fps.cpp debug/fps.h debug/lines.cpp \

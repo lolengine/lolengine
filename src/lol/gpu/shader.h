@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 
-#include "entity.h"
+#include "engine/entity.h"
 
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \

@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 
-#include "entity.h"
+#include "engine/entity.h"
 
 namespace lol
 {

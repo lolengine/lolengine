@@ -18,6 +18,9 @@
 #include <lol/../utils.h>
 #include <lol/../numeric.h>
 
+// Lua
+#include <lol/../lolua/baselua.h>
+
 // Static classes
 #include <lol/../platform.h>
 #include <lol/../video.h>
@@ -30,10 +33,13 @@
 #include <lol/../input/input.h>
 #include <lol/../input/controller.h>
 
-// Entities
-#include <lol/../entity.h>
-#include <lol/../worldentity.h>
+// Engine
+#include <lol/../engine/ticker.h>
+#include <lol/../engine/world.h>
+#include <lol/../engine/entity.h>
+#include <lol/../engine/worldentity.h>
 
+// Entities
 #include <lol/../camera.h>
 #include <lol/../light.h>
 #include <lol/../emitter.h>
@@ -44,8 +50,6 @@
 #include <lol/../text.h>
 #include <lol/../textureimage.h>
 #include <lol/../tileset.h>
-#include <lol/../lolua/baselua.h>
-#include <lol/../world.h>
 #include <lol/../lolimgui.h>
 
 // Other objects
@@ -58,7 +62,6 @@
 #include <lol/../easymesh/easymeshlua.h>
 
 // Managers
-#include <lol/../ticker.h>
 #include <lol/../forge.h>
 #include <lol/../tiler.h>
 #include <lol/../sampler.h>

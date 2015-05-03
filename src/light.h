@@ -17,7 +17,7 @@
 
 #include <cfloat> /* for FLT_MAX */
 
-#include "worldentity.h"
+#include "engine/worldentity.h"
 
 namespace lol
 {

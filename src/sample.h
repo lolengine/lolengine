@@ -16,7 +16,7 @@
 // A Sample is a unique sound sample.
 //
 
-#include "entity.h"
+#include "engine/entity.h"
 
 #include <stdint.h>
 

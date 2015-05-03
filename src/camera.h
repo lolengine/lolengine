@@ -17,7 +17,7 @@
 
 #include <lol/math/matrix.h>
 
-#include "worldentity.h"
+#include "engine/worldentity.h"
 
 namespace lol
 {

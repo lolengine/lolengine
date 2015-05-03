@@ -15,7 +15,7 @@
 // ------------------
 //
 
-#include "worldentity.h"
+#include "engine/worldentity.h"
 
 namespace lol
 {
