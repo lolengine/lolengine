@@ -96,7 +96,7 @@ protected:
         for (int i = 0; i < N; ++i)
             for (int j = i + 1; j < N; ++j)
                 if (pos[traversal_order[i]] < pos[traversal_order[j]])
-                    traversal_order.swap(i, j);
+                    std::swap(traversal_order[i], traversal_order[j]);
 
 
         /* Get the position in world coordinates, too */
