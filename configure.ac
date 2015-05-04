@@ -495,6 +495,11 @@ AC_CONFIG_FILES(
 ])
 AC_CONFIG_FILES(
  [games/monsterz/Makefile
+  games/mrpigeon/Makefile
+  games/orbital/Makefile
+  games/singlshot/Makefile
+  games/thonik/Makefile
+  games/sot3000/Makefile
 ])
 AC_CONFIG_FILES(
  [games/deushax/Makefile
@@ -504,24 +509,12 @@ AC_CONFIG_FILES(
   games/deushax/maps/Makefile
 ])
 AC_CONFIG_FILES(
- [games/mrpigeon/Makefile
-])
-AC_CONFIG_FILES(
- [games/orbital/Makefile
-])
-AC_CONFIG_FILES(
  [games/abuse/Makefile
   games/abuse/src/Makefile
   games/abuse/data/Makefile
   games/abuse/doc/Makefile
   games/abuse/doc/abuse.6
   games/abuse/doc/abuse-tool.6
-])
-AC_CONFIG_FILES(
- [games/singlshot/Makefile
-])
-AC_CONFIG_FILES(
- [games/sot3000/Makefile
 ])
 AC_CONFIG_FILES(
  [demos/lol.js/Makefile
