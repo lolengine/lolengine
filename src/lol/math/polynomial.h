@@ -20,6 +20,11 @@
 
 #include <functional>
 
+#if 1
+#include <complex>
+#endif
+
+
 namespace lol
 {
 
@@ -109,8 +114,13 @@ struct polynomial
     array<T> roots() const
     {
         /* For now we can only solve polynomials of degrees 0, 1 or 2. */
+#ifdef ENABLE_3SOLVE
+        ASSERT(degree() >= 0 && degree() <= 3,
+               "roots() called on polynomial of degree %d", degree());
+#else
         ASSERT(degree() >= 0 && degree() <= 2,
                "roots() called on polynomial of degree %d", degree());
+#endif
 
         if (degree() == 0)
         {
@@ -148,6 +158,75 @@ struct polynomial
                  return array<T> { -k };
             }
         }
+#ifdef ENABLE_3SOLVE // Development in progress
+        else if (degree() == 3)
+        {
+            /* p(x) = ax³ + bx² + cx + d */
+            T const &a = m_coefficients[3];
+            T const &b = m_coefficients[2];
+            T const &c = m_coefficients[1];
+            T const &d = m_coefficients[0];
+
+            /* Using x = (X - k) so that p2(X) = p(X - k) = aX³ + 0×X² + mX + n */
+            T const k = b / (3 * a);
+            T const m = 3 * a * k * k - 2 * b * k + c;
+            T const n = -a * k * k * k + b * k * k + c * k + d;
+
+            std::cout << "k,m,n: " << k << ", " << m << ", " << n << std::endl;
+
+            /* Assuming X = u + v and 3uv = -m, then
+             * p2(u + v) = a(u + v) + n
+             *
+             * We then need to solve the following system:
+             *    u³v³ = -m³/27
+             * u³ + v³ = -n/a
+             *
+             * which gives :
+             * u³ - v³ = √((n/a)² + 4m³/27)
+             * u³ + v³ = -n/a
+             *
+             * u³ = -n/2a + √((n/a)² + 4m³/27)/2
+             * v³ = -n/2a - √((n/a)² + 4m³/27)/2
+             */
+            T const delta = (m * m) / (a * a) + 4 * m * m * m / 27;
+
+            std::complex<T> u3, v3;
+
+            if (delta < 0)
+            {
+                u3 = std::complex<T>(-n/(2.0f*a),  sqrt(abs(delta)));
+                v3 = std::complex<T>(-n/(2.0f*a), -sqrt(abs(delta)));
+            }
+            else
+            {
+                u3 = std::complex<T>(-n/(2.0f*a) + sqrt(delta), 0);
+                v3 = std::complex<T>(-n/(2.0f*a) - sqrt(delta), 0);
+            }
+
+            std::cout << "delta,u3,v3: " << delta << ", " << u3 << "," << v3 << std::endl;
+
+            T const u3_angle = atan2(u3.imag(), u3.real());
+            T const v3_angle = atan2(v3.imag(), v3.real());
+
+            std::cout << "u3_angle,v3_angle: " << u3_angle << "," << v3_angle << std::endl;
+
+            std::complex<T> complex_solutions[3];
+
+            for (int i = 0 ; i < 3 ; ++i)
+            {
+                T u_angle = u3_angle / 3 + i * 2 * M_PI / 3;
+                T v_angle = v3_angle / 3 - i * 2 * M_PI / 3;
+
+                std::cout << i << " => u_angle,v_angle: " << u_angle << "," << v_angle << std::endl;
+
+                complex_solutions[i] =
+                    pow(abs(u3), 1.0f/3.0f) * std::complex<T>(cos(u_angle), sin(u_angle)) +
+                    pow(abs(v3), 1.0f/3.0f) * std::complex<T>(cos(v_angle), sin(v_angle));
+            }
+
+            return array<T> {complex_solutions[0].real(), complex_solutions[1].real(), complex_solutions[2].real()};
+        }
+#endif
 
         /* It is an error to reach this point. */
         ASSERT(false);
