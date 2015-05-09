@@ -272,6 +272,18 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots2[1], 7.f);
     }
 
+#ifdef ENABLE_3SOLVE // Development in progress
+    lolunit_declare_test(RootsDegree3)
+    {
+        polynomial<float> p { 2.f, 0.f, 0.f, 1.f };
+        auto roots1 = p.roots();
+
+        lolunit_assert_equal(roots1.count(), 3);
+
+        std::cout << roots1[0] << ", " << roots1[1] << ", " << roots1[2] << std::endl;
+    }
+#endif
+
     lolunit_declare_test(Chebyshev)
     {
         polynomial<float> t0 = polynomial<float>::chebyshev(0);
