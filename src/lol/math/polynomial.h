@@ -24,7 +24,6 @@
 #include <complex>
 #endif
 
-
 namespace lol
 {
 
@@ -188,41 +187,49 @@ struct polynomial
              * u³ = -n/2a + √((n/a)² + 4m³/27)/2
              * v³ = -n/2a - √((n/a)² + 4m³/27)/2
              */
-            T const delta = (m * m) / (a * a) + 4 * m * m * m / 27;
+            T const delta = (n * n) / (a * a) + 4 * m * m * m / 27;
 
-            std::complex<T> u3, v3;
+            /* Because 3×u×v = -m and m is not complex
+             * angle(u³) + angle(v³) must equal 0.
+             *
+             * This is why we compute u³ and v³ by norm and angle separately instead of
+             * using a std::complex class
+             */
+            T u3_norm, u3_angle;
+            T v3_norm, v3_angle;
 
             if (delta < 0)
             {
-                u3 = std::complex<T>(-n/(2.0f*a),  sqrt(abs(delta)));
-                v3 = std::complex<T>(-n/(2.0f*a), -sqrt(abs(delta)));
+                v3_norm = u3_norm = sqrt((-n/(2.0f*a)) * (-n/(2.0f*a)) + abs(delta)) / 2.f;
+
+                u3_angle = atan2(sqrt(abs(delta)), (-n/(2.0f*a)));
+                v3_angle = -u3_angle;
             }
             else
             {
-                u3 = std::complex<T>(-n/(2.0f*a) + sqrt(delta), 0);
-                v3 = std::complex<T>(-n/(2.0f*a) - sqrt(delta), 0);
+                u3_norm = -n/(2.0f*a) + sqrt(delta) / 2.f;
+                v3_norm = -n/(2.0f*a) - sqrt(delta) / 2.f;
+
+                u3_angle = u3_norm >= 0 ? 0 :  M_PI;
+                v3_angle = v3_norm >= 0 ? 0 : -M_PI;
+
+                u3_norm = abs(u3_norm);
+                v3_norm = abs(v3_norm);
             }
-
-            std::cout << "delta,u3,v3: " << delta << ", " << u3 << "," << v3 << std::endl;
-
-            T const u3_angle = atan2(u3.imag(), u3.real());
-            T const v3_angle = atan2(v3.imag(), v3.real());
-
-            std::cout << "u3_angle,v3_angle: " << u3_angle << "," << v3_angle << std::endl;
 
             std::complex<T> complex_solutions[3];
 
             for (int i = 0 ; i < 3 ; ++i)
             {
-                T u_angle = u3_angle / 3 + i * 2 * M_PI / 3;
-                T v_angle = v3_angle / 3 - i * 2 * M_PI / 3;
-
-                std::cout << i << " => u_angle,v_angle: " << u_angle << "," << v_angle << std::endl;
+                T u_angle = u3_angle / 3.f + i * 2.f * M_PI / 3.f;
+                T v_angle = v3_angle / 3.f - i * 2.f * M_PI / 3.f;
 
                 complex_solutions[i] =
-                    pow(abs(u3), 1.0f/3.0f) * std::complex<T>(cos(u_angle), sin(u_angle)) +
-                    pow(abs(v3), 1.0f/3.0f) * std::complex<T>(cos(v_angle), sin(v_angle));
+                    pow(u3_norm, 1.f / 3.f) * std::complex<T>(cos(u_angle), sin(u_angle)) +
+                    pow(v3_norm, 1.f / 3.f) * std::complex<T>(cos(v_angle), sin(v_angle));
             }
+
+            std::cout << "complex_solutions: " << complex_solutions[0] << ", " << complex_solutions[1] << ", " << complex_solutions[2] << std::endl;
 
             return array<T> {complex_solutions[0].real(), complex_solutions[1].real(), complex_solutions[2].real()};
         }
