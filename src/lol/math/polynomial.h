@@ -20,7 +20,10 @@
 
 #include <functional>
 
-#if 1
+// #define ENABLE_3SOLVE
+// #include <iostream>
+
+#ifdef ENABLE_3SOLVE
 #include <complex>
 #endif
 
@@ -169,7 +172,7 @@ struct polynomial
             /* Using x = (X - k) so that p2(X) = p(X - k) = aX³ + 0×X² + mX + n */
             T const k = b / (3 * a);
             T const m = 3 * a * k * k - 2 * b * k + c;
-            T const n = -a * k * k * k + b * k * k + c * k + d;
+            T const n = -a * k * k * k + b * k * k - c * k + d;
 
             std::cout << "k,m,n: " << k << ", " << m << ", " << n << std::endl;
 
@@ -184,8 +187,8 @@ struct polynomial
              * u³ - v³ = √((n/a)² + 4m³/27)
              * u³ + v³ = -n/a
              *
-             * u³ = -n/2a + √((n/a)² + 4m³/27)/2
-             * v³ = -n/2a - √((n/a)² + 4m³/27)/2
+             * u³ = (-n/a + √((n/a)² + 4m³/27))/2
+             * v³ = (-n/a - √((n/a)² + 4m³/27))/2
              */
             T const delta = (n * n) / (a * a) + 4 * m * m * m / 27;
 
@@ -229,9 +232,11 @@ struct polynomial
                     pow(v3_norm, 1.f / 3.f) * std::complex<T>(cos(v_angle), sin(v_angle));
             }
 
+            std::cout << "delta: " << delta << std::endl;
+
             std::cout << "complex_solutions: " << complex_solutions[0] << ", " << complex_solutions[1] << ", " << complex_solutions[2] << std::endl;
 
-            return array<T> {complex_solutions[0].real(), complex_solutions[1].real(), complex_solutions[2].real()};
+            return array<T> {complex_solutions[0].real() - k, complex_solutions[1].real() - k, complex_solutions[2].real() - k};
         }
 #endif
 
