@@ -275,7 +275,7 @@ lolunit_declare_fixture(PolynomialTest)
 #ifdef ENABLE_3SOLVE // Development in progress
     lolunit_declare_test(RootsDegree3)
     {
-        polynomial<float> p { 2.f, 0.f, 0.f, 1.f };
+        polynomial<float> p { 1.f, 0.f, 0.f, 1.f };
         auto roots1 = p.roots();
 
         lolunit_assert_equal(roots1.count(), 3);
@@ -285,7 +285,7 @@ lolunit_declare_fixture(PolynomialTest)
 
     lolunit_declare_test(RootsDegree3_2)
     {
-        polynomial<float> p { -1.f, 0.f, 0.f, 1.f };
+        polynomial<float> p { 0.f, -2.f, 0.f, 1.f };
         auto roots1 = p.roots();
 
         lolunit_assert_equal(roots1.count(), 3);
