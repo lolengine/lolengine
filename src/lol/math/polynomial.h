@@ -23,10 +23,6 @@
 // #define ENABLE_3SOLVE
 // #include <iostream>
 
-#ifdef ENABLE_3SOLVE
-#include <complex>
-#endif
-
 namespace lol
 {
 
@@ -160,7 +156,7 @@ struct polynomial
                  return array<T> { -k };
             }
         }
-#ifdef ENABLE_3SOLVE // Development in progress
+#ifdef ENABLE_3SOLVE
         else if (degree() == 3)
         {
             /* p(x) = ax³ + bx² + cx + d */
@@ -173,8 +169,6 @@ struct polynomial
             T const k = b / (3 * a);
             T const m = 3 * a * k * k - 2 * b * k + c;
             T const n = -a * k * k * k + b * k * k - c * k + d;
-
-            std::cout << "k,m,n: " << k << ", " << m << ", " << n << std::endl;
 
             /* Assuming X = u + v and 3uv = -m, then
              * p2(u + v) = a(u + v) + n
@@ -190,7 +184,7 @@ struct polynomial
              * u³ = (-n/a + √((n/a)² + 4m³/27))/2
              * v³ = (-n/a - √((n/a)² + 4m³/27))/2
              */
-            T const delta = (n * n) / (a * a) + 4 * m * m * m / 27;
+            T const delta = (n * n) / (a * a) + 4.f * m * m * m / 27.f;
 
             /* Because 3×u×v = -m and m is not complex
              * angle(u³) + angle(v³) must equal 0.
@@ -203,9 +197,9 @@ struct polynomial
 
             if (delta < 0)
             {
-                v3_norm = u3_norm = sqrt((-n/(2.0f*a)) * (-n/(2.0f*a)) + abs(delta)) / 2.f;
+                v3_norm = u3_norm = sqrt((-n/a) * (-n/a) + abs(delta)) / 2.f;
 
-                u3_angle = atan2(sqrt(abs(delta)), (-n/(2.0f*a)));
+                u3_angle = atan2(sqrt(abs(delta)), (-n/(2.f*a)));
                 v3_angle = -u3_angle;
             }
             else
@@ -220,23 +214,31 @@ struct polynomial
                 v3_norm = abs(v3_norm);
             }
 
-            std::complex<T> complex_solutions[3];
+            T solutions[3];
 
             for (int i = 0 ; i < 3 ; ++i)
             {
                 T u_angle = u3_angle / 3.f + i * 2.f * M_PI / 3.f;
                 T v_angle = v3_angle / 3.f - i * 2.f * M_PI / 3.f;
 
-                complex_solutions[i] =
-                    pow(u3_norm, 1.f / 3.f) * std::complex<T>(cos(u_angle), sin(u_angle)) +
-                    pow(v3_norm, 1.f / 3.f) * std::complex<T>(cos(v_angle), sin(v_angle));
+                solutions[i] =
+                    pow(u3_norm, 1.f / 3.f) * cos(u_angle) +
+                    pow(v3_norm, 1.f / 3.f) * cos(v_angle);
             }
 
-            std::cout << "delta: " << delta << std::endl;
-
-            std::cout << "complex_solutions: " << complex_solutions[0] << ", " << complex_solutions[1] << ", " << complex_solutions[2] << std::endl;
-
-            return array<T> {complex_solutions[0].real() - k, complex_solutions[1].real() - k, complex_solutions[2].real() - k};
+            if (delta < 0)
+                return array<T> {solutions[0] - k, solutions[1] - k, solutions[2] - k};
+            else
+            {
+                if (u3_norm > 0)
+                {
+                    return array<T> {solutions[0] - k, solutions[1] - k};
+                }
+                else
+                {
+                    return array<T> {solutions[0] - k};
+                }
+            }
         }
 #endif
 

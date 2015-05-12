@@ -272,25 +272,29 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots2[1], 7.f);
     }
 
-#ifdef ENABLE_3SOLVE // Development in progress
-    lolunit_declare_test(RootsDegree3)
+#ifdef ENABLE_3SOLVE
+    lolunit_declare_test(RootsDegree3TripleSolution)
     {
-        polynomial<float> p { 1.f, 0.f, 0.f, 1.f };
+        polynomial<float> p { 1.f, 3.f, 3.f, 1.f };
         auto roots1 = p.roots();
 
         lolunit_assert_equal(roots1.count(), 3);
-
-        std::cout << roots1[0] << ", " << roots1[1] << ", " << roots1[2] << std::endl;
     }
 
-    lolunit_declare_test(RootsDegree3_2)
+    lolunit_declare_test(RootsDegree3DoubleSolution)
     {
-        polynomial<float> p { 0.f, -2.f, 0.f, 1.f };
+        polynomial<float> p { 2.f, 5.f, 4.f, 1.f };
         auto roots1 = p.roots();
 
         lolunit_assert_equal(roots1.count(), 3);
+    }
 
-        std::cout << roots1[0] << ", " << roots1[1] << ", " << roots1[2] << std::endl;
+    lolunit_declare_test(RootsDegree3SingleSolutions)
+    {
+        polynomial<float> p { 6.f, 11.f, 6.f, 1.f };
+        auto roots1 = p.roots();
+
+        lolunit_assert_equal(roots1.count(), 3);
     }
 #endif
 
