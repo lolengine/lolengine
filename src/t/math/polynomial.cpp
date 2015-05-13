@@ -272,13 +272,13 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots2[1], 7.f);
     }
 
-#ifdef ENABLE_3SOLVE
     lolunit_declare_test(RootsDegree3TripleSolution)
     {
         polynomial<float> p { 1.f, 3.f, 3.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_equal(roots1.count(), 1);
+        lolunit_assert_doubles_equal(roots1[0], -1, 0);
     }
 
     lolunit_declare_test(RootsDegree3DoubleSolution)
@@ -286,7 +286,11 @@ lolunit_declare_fixture(PolynomialTest)
         polynomial<float> p { 2.f, 5.f, 4.f, 1.f };
         auto roots1 = p.roots();
 
+        // Should have 2 solutions only, but precision leads to 3 solutions
         lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_doubles_equal(roots1[0], -1, 1e-3);
+        lolunit_assert_doubles_equal(roots1[1], -2, 1e-6);
+        lolunit_assert_doubles_equal(roots1[2], -1, 1e-3);
     }
 
     lolunit_declare_test(RootsDegree3SingleSolutions)
@@ -295,8 +299,10 @@ lolunit_declare_fixture(PolynomialTest)
         auto roots1 = p.roots();
 
         lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_doubles_equal(roots1[0], -1, 1e-8);
+        lolunit_assert_doubles_equal(roots1[1], -3, 1e-8);
+        lolunit_assert_doubles_equal(roots1[2], -2, 1e-8);
     }
-#endif
 
     lolunit_declare_test(Chebyshev)
     {

@@ -20,8 +20,6 @@
 
 #include <functional>
 
-// #define ENABLE_3SOLVE
-// #include <iostream>
 
 namespace lol
 {
@@ -111,14 +109,9 @@ struct polynomial
 
     array<T> roots() const
     {
-        /* For now we can only solve polynomials of degrees 0, 1 or 2. */
-#ifdef ENABLE_3SOLVE
+        /* For now we can only solve polynomials of degrees 0, 1, 2 or 3. */
         ASSERT(degree() >= 0 && degree() <= 3,
                "roots() called on polynomial of degree %d", degree());
-#else
-        ASSERT(degree() >= 0 && degree() <= 2,
-               "roots() called on polynomial of degree %d", degree());
-#endif
 
         if (degree() == 0)
         {
@@ -156,7 +149,6 @@ struct polynomial
                  return array<T> { -k };
             }
         }
-#ifdef ENABLE_3SOLVE
         else if (degree() == 3)
         {
             /* p(x) = ax³ + bx² + cx + d */
@@ -226,21 +218,15 @@ struct polynomial
                     pow(v3_norm, 1.f / 3.f) * cos(v_angle);
             }
 
-            if (delta < 0)
+            if (delta < 0) // 3 real solutions
                 return array<T> {solutions[0] - k, solutions[1] - k, solutions[2] - k};
-            else
-            {
-                if (u3_norm > 0)
-                {
-                    return array<T> {solutions[0] - k, solutions[1] - k};
-                }
-                else
-                {
-                    return array<T> {solutions[0] - k};
-                }
-            }
+            else if (delta > 0) // 1 real solution
+                return array<T> {solutions[0] - k};
+            else if (u3_norm > 0) // 2 real solutions
+                return array<T> {solutions[0] - k, solutions[1] - k};
+            else // one triple solution
+                return array<T> {solutions[0] - k};
         }
-#endif
 
         /* It is an error to reach this point. */
         ASSERT(false);
