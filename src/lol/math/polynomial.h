@@ -191,13 +191,13 @@ struct polynomial
             {
                 v3_norm = u3_norm = sqrt((-n/a) * (-n/a) + abs(delta)) / 2.f;
 
-                u3_angle = atan2(sqrt(abs(delta)), (-n/(2.f*a)));
+                u3_angle = atan2(sqrt(abs(delta)), -n/a);
                 v3_angle = -u3_angle;
             }
             else
             {
-                u3_norm = -n/(2.0f*a) + sqrt(delta) / 2.f;
-                v3_norm = -n/(2.0f*a) - sqrt(delta) / 2.f;
+                u3_norm = (-n/a + sqrt(delta)) / 2.f;
+                v3_norm = (-n/a - sqrt(delta)) / 2.f;
 
                 u3_angle = u3_norm >= 0 ? 0 :  M_PI;
                 v3_angle = v3_norm >= 0 ? 0 : -M_PI;
