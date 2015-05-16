@@ -304,6 +304,18 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(roots1[2], -2, 1e-8);
     }
 
+    lolunit_declare_test(RootsDegree3BiggerSolutions)
+    {
+        polynomial<float> p { -12000.f, 1000.f - 1200.f - 120.f, 100.f + 10.0f - 12.f, 1.f };
+        auto roots1 = p.roots();
+
+        lolunit_assert_equal(roots1.count(), 3);
+
+        lolunit_assert_doubles_equal(roots1[0], 12, 1e-5);
+        lolunit_assert_doubles_equal(roots1[1], -100, 1e-5);
+        lolunit_assert_doubles_equal(roots1[2], -10, 1e-5);
+    }
+
     lolunit_declare_test(Chebyshev)
     {
         polynomial<float> t0 = polynomial<float>::chebyshev(0);
