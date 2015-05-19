@@ -160,9 +160,9 @@ struct polynomial
             T const &d = m_coefficients[0];
 
             /* Using x = (X - k) so that p2(X) = p(X - k) = aX³ + 0×X² + mX + n */
-            T const k = b / (3 * a);
-            T const m = 3 * a * k * k - 2 * b * k + c;
-            T const n = -a * k * k * k + b * k * k - c * k + d;
+            T const k = b / (T(3) * a);
+            T const m = c - b * k;
+            T const n = (T(2) / T(3) * b * k - c) * k + d;
 
             /* Assuming X = u + v and 3uv = -m, then
              * p2(u + v) = a(u + v) + n
