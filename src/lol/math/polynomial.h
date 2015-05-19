@@ -159,47 +159,47 @@ struct polynomial
             T const &c = m_coefficients[1];
             T const &d = m_coefficients[0];
 
-            /* Using x = (X - k) so that p2(X) = p(X - k) = aX³ + 0×X² + mX + n */
+            /* Find k, m and n such that:
+             * q(x) = p(x - k) / a = x³ + amx + n */
             T const k = b / (T(3) * a);
             T const m = c - b * k;
-            T const n = (T(2) / T(3) * b * k - c) * k + d;
+            T const n = ((T(2) / T(3) * b * k - c) * k + d) / a;
 
-            /* Assuming X = u + v and 3uv = -m, then
-             * p2(u + v) = a(u + v) + n
+            /* Assuming x = u + v and 3uv = -m, then
+             * q(u + v) = a(u + v) + n
              *
              * We then need to solve the following system:
              *    u³v³ = -m³/27
-             * u³ + v³ = -n/a
+             * u³ + v³ = -n
              *
              * which gives :
-             * u³ - v³ = √((n/a)² + 4m³/27)
-             * u³ + v³ = -n/a
+             * u³ - v³ = √(n² + 4m³/27)
+             * u³ + v³ = -n
              *
-             * u³ = (-n/a + √((n/a)² + 4m³/27))/2
-             * v³ = (-n/a - √((n/a)² + 4m³/27))/2
+             * u³ = (-n + √(n² + 4m³/27)) / 2
+             * v³ = (-n - √(n² + 4m³/27)) / 2
              */
-            T const delta = (n * n) / (a * a) + T(4) * m * m * m / T(27);
+            T const delta = n * n + T(4) / T(27) * m * m * m;
 
-            /* Because 3×u×v = -m and m is not complex
+            /* Because 3uv = -m and m is not complex
              * angle(u³) + angle(v³) must equal 0.
              *
              * This is why we compute u³ and v³ by norm and angle separately
-             * instead of using a std::complex class
-             */
+             * instead of using a std::complex class */
             T u3_norm, u3_angle;
             T v3_norm, v3_angle;
 
             if (delta < 0)
             {
-                v3_norm = u3_norm = sqrt((-n/a) * (-n/a) + abs(delta)) / T(2);
+                v3_norm = u3_norm = sqrt(n * n + abs(delta)) / T(2);
 
-                u3_angle = atan2(sqrt(abs(delta)), -n/a);
+                u3_angle = atan2(sqrt(abs(delta)), -n);
                 v3_angle = -u3_angle;
             }
             else
             {
-                u3_norm = (-n/a + sqrt(delta)) / T(2);
-                v3_norm = (-n/a - sqrt(delta)) / T(2);
+                u3_norm = (-n + sqrt(delta)) / T(2);
+                v3_norm = (-n - sqrt(delta)) / T(2);
 
                 u3_angle = u3_norm >= 0 ? 0 :  pi;
                 v3_angle = v3_norm >= 0 ? 0 : -pi;
@@ -210,14 +210,13 @@ struct polynomial
 
             T solutions[3];
 
-            for (int i = 0 ; i < 3 ; ++i)
+            for (int i : { 0, 1, 2 })
             {
-                T u_angle = (u3_angle + i * T(2) * pi) / T(3);
-                T v_angle = (v3_angle - i * T(2) * pi) / T(3);
+                T u_angle = (u3_angle + T(2 * i) * pi) / T(3);
+                T v_angle = (v3_angle - T(2 * i) * pi) / T(3);
 
-                solutions[i] =
-                    pow(u3_norm, T(1) / T(3)) * cos(u_angle) +
-                    pow(v3_norm, T(1) / T(3)) * cos(v_angle);
+                solutions[i] = pow(u3_norm, T(1) / T(3)) * cos(u_angle)
+                             + pow(v3_norm, T(1) / T(3)) * cos(v_angle);
             }
 
             if (delta < 0) // 3 real solutions
