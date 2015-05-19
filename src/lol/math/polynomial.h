@@ -151,6 +151,8 @@ struct polynomial
         }
         else if (degree() == 3)
         {
+            static T const pi = acos(T(-1));
+
             /* p(x) = ax³ + bx² + cx + d */
             T const &a = m_coefficients[3];
             T const &b = m_coefficients[2];
@@ -176,31 +178,31 @@ struct polynomial
              * u³ = (-n/a + √((n/a)² + 4m³/27))/2
              * v³ = (-n/a - √((n/a)² + 4m³/27))/2
              */
-            T const delta = (n * n) / (a * a) + 4.f * m * m * m / 27.f;
+            T const delta = (n * n) / (a * a) + T(4) * m * m * m / T(27);
 
             /* Because 3×u×v = -m and m is not complex
              * angle(u³) + angle(v³) must equal 0.
              *
-             * This is why we compute u³ and v³ by norm and angle separately instead of
-             * using a std::complex class
+             * This is why we compute u³ and v³ by norm and angle separately
+             * instead of using a std::complex class
              */
             T u3_norm, u3_angle;
             T v3_norm, v3_angle;
 
             if (delta < 0)
             {
-                v3_norm = u3_norm = sqrt((-n/a) * (-n/a) + abs(delta)) / 2.f;
+                v3_norm = u3_norm = sqrt((-n/a) * (-n/a) + abs(delta)) / T(2);
 
                 u3_angle = atan2(sqrt(abs(delta)), -n/a);
                 v3_angle = -u3_angle;
             }
             else
             {
-                u3_norm = (-n/a + sqrt(delta)) / 2.f;
-                v3_norm = (-n/a - sqrt(delta)) / 2.f;
+                u3_norm = (-n/a + sqrt(delta)) / T(2);
+                v3_norm = (-n/a - sqrt(delta)) / T(2);
 
-                u3_angle = u3_norm >= 0 ? 0 :  M_PI;
-                v3_angle = v3_norm >= 0 ? 0 : -M_PI;
+                u3_angle = u3_norm >= 0 ? 0 :  pi;
+                v3_angle = v3_norm >= 0 ? 0 : -pi;
 
                 u3_norm = abs(u3_norm);
                 v3_norm = abs(v3_norm);
@@ -210,22 +212,28 @@ struct polynomial
 
             for (int i = 0 ; i < 3 ; ++i)
             {
-                T u_angle = u3_angle / 3.f + i * 2.f * M_PI / 3.f;
-                T v_angle = v3_angle / 3.f - i * 2.f * M_PI / 3.f;
+                T u_angle = (u3_angle + i * T(2) * pi) / T(3);
+                T v_angle = (v3_angle - i * T(2) * pi) / T(3);
 
                 solutions[i] =
-                    pow(u3_norm, 1.f / 3.f) * cos(u_angle) +
-                    pow(v3_norm, 1.f / 3.f) * cos(v_angle);
+                    pow(u3_norm, T(1) / T(3)) * cos(u_angle) +
+                    pow(v3_norm, T(1) / T(3)) * cos(v_angle);
             }
 
             if (delta < 0) // 3 real solutions
-                return array<T> {solutions[0] - k, solutions[1] - k, solutions[2] - k};
-            else if (delta > 0) // 1 real solution
-                return array<T> {solutions[0] - k};
-            else if (u3_norm > 0) // 2 real solutions
-                return array<T> {solutions[0] - k, solutions[1] - k};
-            else // one triple solution
-                return array<T> {solutions[0] - k};
+                return array<T> { solutions[0] - k,
+                                  solutions[1] - k,
+                                  solutions[2] - k };
+
+            if (delta > 0) // 1 real solution
+                return array<T> { solutions[0] - k };
+
+            if (u3_norm > 0) // 2 real solutions
+                return array<T> { solutions[0] - k,
+                                  solutions[1] - k };
+
+            // one triple solution
+            return array<T> { solutions[0] - k };
         }
 
         /* It is an error to reach this point. */
