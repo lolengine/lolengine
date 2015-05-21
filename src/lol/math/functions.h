@@ -35,6 +35,9 @@ namespace lol
 static inline double sqrt(double const &x) { return std::sqrt(x); }
 static inline float sqrt(float const &x) { return std::sqrt(x); }
 
+static inline double cbrt(double const &x) { return std::cbrt(x); }
+static inline float cbrt(float const &x) { return std::cbrt(x); }
+
 static inline double exp(double const &x) { return std::exp(x); }
 static inline float exp(float const &x) { return std::exp(x); }
 
