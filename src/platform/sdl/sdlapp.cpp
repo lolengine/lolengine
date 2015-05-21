@@ -143,7 +143,7 @@ SdlAppDisplay::~SdlAppDisplay()
     if (data->m_window)
         SDL_FreeSurface(data->m_window);
 #endif
-    
+
     delete data;
 }
 

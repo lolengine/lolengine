@@ -111,7 +111,7 @@ void ApplicationDisplay::Disable()
 
     super::Disable();
 }
-    
+
 //-----------------------------------------------------------------------------
 class ApplicationData
 {
